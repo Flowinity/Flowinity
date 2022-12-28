@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">31.81% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/22</span>
+                <span class='fraction'>22/22</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">26.31% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>5/19</span>
+                <span class='fraction'>19/19</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -211,12 +211,12 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -255,10 +255,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -277,9 +277,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -307,10 +307,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -332,8 +332,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -348,12 +348,12 @@ const HTTP_STATUS_CREATED = 201;
 export class ExampleController {
     router: Router;
 &nbsp;
-<span class="fstat-no" title="function not covered" >    constructor(private readonly <span class="cstat-no" title="statement not covered" >e</span>xampleService: E</span>xampleService) {
-<span class="cstat-no" title="statement not covered" >        this.configureRouter();</span>
+    constructor(private readonly exampleService: ExampleService) {
+        this.configureRouter();
     }
 &nbsp;
-    private <span class="fstat-no" title="function not covered" >configureRouter(</span>): void {
-<span class="cstat-no" title="statement not covered" >        this.router = Router();</span>
+    private configureRouter(): void {
+        this.router = Router();
         /**
          * @swagger
          *
@@ -392,10 +392,10 @@ export class ExampleController {
          *           $ref: '#/definitions/Message'
          *
          */
-<span class="cstat-no" title="statement not covered" >        this.router.get('/', <span class="fstat-no" title="function not covered" >async (r</span>eq: Request, res: Response) =&gt;<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" > {</span></span></span>
+        this.router.get('/', async (req: Request, res: Response) =&gt; {
             // Send the request to the service and send the response
-            const time: Message = <span class="cstat-no" title="statement not covered" >await this.exampleService.helloWorld();</span>
-<span class="cstat-no" title="statement not covered" >            res.json(time);</span>
+            const time: Message = await this.exampleService.helloWorld();
+            res.json(time);
         });
 &nbsp;
         /**
@@ -414,9 +414,9 @@ export class ExampleController {
          *         schema:
          *           $ref: '#/definitions/Message'
          */
-<span class="cstat-no" title="statement not covered" >        this.router.get('/about', <span class="fstat-no" title="function not covered" >(r</span>eq: Request, res: Response) =&gt; {</span>
+        this.router.get('/about', (req: Request, res: Response) =&gt; {
             // Send the request to the service and send the response
-<span class="cstat-no" title="statement not covered" >            res.json(this.exampleService.about());</span>
+            res.json(this.exampleService.about());
         });
 &nbsp;
         /**
@@ -444,10 +444,10 @@ export class ExampleController {
          *       201:
          *         description: Created
          */
-<span class="cstat-no" title="statement not covered" >        this.router.post('/send', <span class="fstat-no" title="function not covered" >(r</span>eq: Request, res: Response) =&gt; {</span>
-            const message: Message = <span class="cstat-no" title="statement not covered" >req.body;</span>
-<span class="cstat-no" title="statement not covered" >            this.exampleService.storeMessage(message);</span>
-<span class="cstat-no" title="statement not covered" >            res.sendStatus(HTTP_STATUS_CREATED);</span>
+        this.router.post('/send', (req: Request, res: Response) =&gt; {
+            const message: Message = req.body;
+            this.exampleService.storeMessage(message);
+            res.sendStatus(HTTP_STATUS_CREATED);
         });
 &nbsp;
         /**
@@ -469,8 +469,8 @@ export class ExampleController {
          *           items:
          *             $ref: '#/definitions/Message'
          */
-<span class="cstat-no" title="statement not covered" >        this.router.get('/all', <span class="fstat-no" title="function not covered" >(r</span>eq: Request, res: Response) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            res.json(this.exampleService.getAllMessages());</span>
+        this.router.get('/all', (req: Request, res: Response) =&gt; {
+            res.json(this.exampleService.getAllMessages());
         });
     }
 }
@@ -481,7 +481,7 @@ export class ExampleController {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2022-12-28T04:06:17.045Z
+                at 2022-12-28T04:07:06.729Z
             </div>
         <script src="../prettify.js"></script>
         <script>

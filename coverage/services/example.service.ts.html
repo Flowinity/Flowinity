@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">35.71% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>5/14</span>
+                <span class='fraction'>14/14</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/12</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -116,43 +116,43 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { DateService } from '@app/services/date.service';
@@ -162,28 +162,28 @@ import { Service } from 'typedi';
 @Service()
 export class ExampleService {
     clientMessages: Message[];
-<span class="fstat-no" title="function not covered" >    constructor(private readonly <span class="cstat-no" title="statement not covered" >d</span>ateService: D</span>ateService) {
-<span class="cstat-no" title="statement not covered" >        this.clientMessages = [];</span>
+    constructor(private readonly dateService: DateService) {
+        this.clientMessages = [];
     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    about(</span>): Message {
-<span class="cstat-no" title="statement not covered" >        return {</span>
+    about(): Message {
+        return {
             title: 'Basic Server About Page',
             body: 'Try calling /api/docs to get the documentation',
         };
     }
 &nbsp;
-    async <span class="fstat-no" title="function not covered" >helloWorld(</span>): Promise&lt;Message&gt; {
-<span class="cstat-no" title="statement not covered" >        return this.dateService</span>
+    async helloWorld(): Promise&lt;Message&gt; {
+        return this.dateService
             .currentTime()
-            .then(<span class="fstat-no" title="function not covered" >(t</span>imeMessage: Message) =&gt; {
-<span class="cstat-no" title="statement not covered" >                return {</span>
+            .then((timeMessage: Message) =&gt; {
+                return {
                     title: 'Hello world',
                     body: 'Time is ' + timeMessage.body,
                 };
             })
-            .catch(<span class="fstat-no" title="function not covered" >(e</span>rror: unknown) =&gt; {
-<span class="cstat-no" title="statement not covered" >                return {</span>
+            .catch((error: unknown) =&gt; {
+                return {
                     title: 'Error',
                     body: error as string,
                 };
@@ -191,14 +191,14 @@ export class ExampleService {
     }
 &nbsp;
     // TODO : ceci est à titre d'exemple. À enlever pour la remise
-<span class="fstat-no" title="function not covered" >    storeMessage(</span>message: Message): void {
+    storeMessage(message: Message): void {
         // eslint-disable-next-line no-console
-<span class="cstat-no" title="statement not covered" >        console.log(message);</span>
-<span class="cstat-no" title="statement not covered" >        this.clientMessages.push(message);</span>
+        console.log(message);
+        this.clientMessages.push(message);
     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    getAllMessages(</span>): Message[] {
-<span class="cstat-no" title="statement not covered" >        return this.clientMessages;</span>
+    getAllMessages(): Message[] {
+        return this.clientMessages;
     }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -208,7 +208,7 @@ export class ExampleService {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2022-12-28T04:06:17.045Z
+                at 2022-12-28T04:07:06.729Z
             </div>
         <script src="../prettify.js"></script>
         <script>

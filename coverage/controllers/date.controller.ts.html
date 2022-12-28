@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">42.85% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/14</span>
+                <span class='fraction'>14/14</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>4/12</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -140,16 +140,12 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -182,19 +178,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -208,12 +208,12 @@ import { Service } from 'typedi';
 export class DateController {
     router: Router;
 &nbsp;
-<span class="fstat-no" title="function not covered" >    constructor(private readonly <span class="cstat-no" title="statement not covered" >d</span>ateService: D</span>ateService) {
-<span class="cstat-no" title="statement not covered" >        this.configureRouter();</span>
+    constructor(private readonly dateService: DateService) {
+        this.configureRouter();
     }
 &nbsp;
-    private <span class="fstat-no" title="function not covered" >configureRouter(</span>): void {
-<span class="cstat-no" title="statement not covered" >        this.router = Router();</span>
+    private configureRouter(): void {
+        this.router = Router();
 &nbsp;
         /**
          * @swagger
@@ -250,19 +250,19 @@ export class DateController {
          *         schema:
          *           $ref: '#/definitions/Message'
          */
-<span class="cstat-no" title="statement not covered" >        this.router.get('/', <span class="fstat-no" title="function not covered" >(r</span>eq: Request, res: Response) =&gt; {</span>
+        this.router.get('/', (req: Request, res: Response) =&gt; {
             // Send the request to the service and send the response
-<span class="cstat-no" title="statement not covered" >            this.dateService</span>
+            this.dateService
                 .currentTime()
-                .then(<span class="fstat-no" title="function not covered" >(t</span>ime: Message) =&gt; {
-<span class="cstat-no" title="statement not covered" >                    res.json(time);</span>
+                .then((time: Message) =&gt; {
+                    res.json(time);
                 })
-                .catch(<span class="fstat-no" title="function not covered" >(r</span>eason: unknown) =&gt; {
-                    const errorMessage: Message = <span class="cstat-no" title="statement not covered" >{</span>
+                .catch((reason: unknown) =&gt; {
+                    const errorMessage: Message = {
                         title: 'Error',
                         body: reason as string,
                     };
-<span class="cstat-no" title="statement not covered" >                    res.json(errorMessage);</span>
+                    res.json(errorMessage);
                 });
         });
     }
@@ -274,7 +274,7 @@ export class DateController {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2022-12-28T04:06:17.045Z
+                at 2022-12-28T04:07:06.729Z
             </div>
         <script src="../prettify.js"></script>
         <script>
