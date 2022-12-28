@@ -1,0 +1,27 @@
+# Exclusion des dépendences du projet. Elles peuvent être regénérées
+# automatiquement.
+.nyc_output/
+node_modules/
+false/
+
+# Exclusion des fichiers Javascripts
+out/
+
+# NPM Debug Log
+npm-debug.log
+
+##Typescrit compilation ##
+
+*.js.map
+*.js
+
+
+# Garder les fichiers necessaires pour les tests
+!systemjs.config.js
+!karma.conf.js
+!karma-test-shim.js
+!systemjs.config.extras.js
+!tsconfig.app.json
+!tsconfig.spec.json
+!tsconfig.json
+!package-lock.json

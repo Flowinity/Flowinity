@@ -1,0 +1,16 @@
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "ignorePatterns": ["projects/**/*"],
+    "extends": ["../.eslintrc.json"],
+    "rules": {
+        "jsdoc/check-indentation": "off"
+    },
+    "globals": {
+        "NodeJS": true,
+        "Express": true,
+        "Mocha": true
+    },
+    "overrides": []
+}
