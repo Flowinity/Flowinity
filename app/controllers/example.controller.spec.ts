@@ -1,6 +1,6 @@
 import { Application } from '@app/app';
 import { ExampleService } from '@app/services/example.service';
-import { Message } from '@common/message';
+import { Message } from '@app/interfaces/message';
 import { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes';
 import { createStubInstance, SinonStubbedInstance } from 'sinon';

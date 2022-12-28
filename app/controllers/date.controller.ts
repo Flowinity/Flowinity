@@ -1,5 +1,5 @@
 import { DateService } from '@app/services/date.service';
-import { Message } from '@common/message';
+import { Message } from '@app/interfaces/message';
 import { Request, Response, Router } from 'express';
 import { Service } from 'typedi';
 
