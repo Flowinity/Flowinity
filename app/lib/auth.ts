@@ -2,6 +2,7 @@ import { Response, Request, NextFunction } from "express"
 import { Session } from "@app/models/session.model"
 import { User } from "@app/models/user.model"
 import { Plan } from "@app/models/plan.model"
+import { Theme } from "@app/models/theme.model"
 
 function checkScope(requiredScope: string, scope: string) {
   if (scope === "*") {
@@ -27,7 +28,6 @@ const auth = (scope: string) => {
       const token = req.header("Authorization")
       if (!scope) scope = "*"
       if (token) {
-        // @ts-ignore
         const session = await Session.findOne({
           where: {
             token: token
@@ -41,6 +41,10 @@ const auth = (scope: string) => {
                 {
                   model: Plan,
                   as: "plan"
+                },
+                {
+                  model: Theme,
+                  as: "theme"
                 }
               ]
             }

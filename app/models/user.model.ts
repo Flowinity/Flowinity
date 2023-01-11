@@ -9,6 +9,7 @@ import {
   BelongsTo
 } from "sequelize-typescript"
 import { Plan } from "@app/models/plan.model"
+import { Theme } from "@app/models/theme.model"
 
 @DefaultScope(() => ({
   attributes: {
@@ -110,4 +111,7 @@ export class User extends Model {
 
   @BelongsTo(() => Plan, "planId")
   plan: Plan
+
+  @BelongsTo(() => Theme, "themeId")
+  theme: Theme
 }

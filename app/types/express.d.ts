@@ -1,5 +1,5 @@
 import { Request } from "express"
-import { UserModel } from "@app/types/user"
+import { User } from "@app/models/user.model"
 export interface RequestAuth extends Request {
-  user: UserModel
+  user: User
 }
