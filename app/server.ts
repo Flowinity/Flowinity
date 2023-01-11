@@ -2,6 +2,8 @@ import { Application } from "@app/app"
 import * as http from "http"
 import { AddressInfo } from "net"
 import { Service } from "typedi"
+import sequelize from "@app/db"
+import { caching } from "cache-manager"
 
 @Service()
 export class Server {
@@ -10,6 +12,9 @@ export class Server {
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   private static readonly baseDix: number = 10
   private server: http.Server
+
+  // @ts-ignore
+  private db: any
 
   constructor(private readonly application: Application) {}
 
@@ -26,9 +31,12 @@ export class Server {
       return false
     }
   }
-  init(): void {
+  async init(): Promise<void> {
     this.application.app.set("port", Server.appPort)
-
+    this.application.app.set("trust proxy", 1)
+    const memoryCache = await caching("memory")
+    this.application.app.set("cache", memoryCache)
+    this.db = sequelize
     this.server = http.createServer(this.application.app)
 
     this.server.listen(Server.appPort)
@@ -67,8 +75,7 @@ export class Server {
    */
   private onListening(): void {
     const addr = this.server.address() as AddressInfo
-    const bind: string =
-      typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`
+    const bind: string = `port ${addr.port}`
     // eslint-disable-next-line no-console
     console.log(`Listening on ${bind}`)
   }

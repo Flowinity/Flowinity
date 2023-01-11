@@ -25,3 +25,7 @@ npm-debug.log
 !tsconfig.spec.json
 !tsconfig.json
 !package-lock.json
+
+
+app/config/config.json
+app/config/tpu.json
