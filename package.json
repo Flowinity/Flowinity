@@ -1,8 +1,12 @@
 {
-    "name": "server",
+    "name": "upload-server",
     "description": "TPUv2 Server",
-    "version": "1.2.0",
+    "version": "1.0.0",
     "private": true,
+    "authors": [
+        "Troplo <troplo@troplo.com>",
+        "The Loose Goose"
+    ],
     "scripts": {
         "start": "nodemon",
         "serve": "nodemon",
