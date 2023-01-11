@@ -65,6 +65,10 @@ export class User extends Model {
   })
   openGraph: OpenGraph
 
+  @Default(false)
+  @Column
+  discordPrecache: boolean
+
   @AllowNull
   @Column
   avatar?: string

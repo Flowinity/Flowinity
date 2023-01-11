@@ -29,12 +29,6 @@ export class CollectionUser extends Model {
   @Column
   senderId: number
 
-  @Column
-  createdAt: Date
-
-  @Column
-  updatedAt: Date
-
   @BelongsTo(() => Collection, "collectionId")
   collection: Collection
 

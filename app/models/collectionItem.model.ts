@@ -22,12 +22,6 @@ export class CollectionItem extends Model {
   @Column
   userId: number
 
-  @Column
-  createdAt: Date
-
-  @Column
-  updatedAt: Date
-
   @Unique
   @AllowNull
   @Column

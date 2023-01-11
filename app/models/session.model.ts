@@ -28,12 +28,6 @@ export class Session extends Model {
   @Column
   expiredAt: Date
 
-  @Column
-  createdAt: Date
-
-  @Column
-  updatedAt: Date
-
   @AllowNull
   @Column
   name?: string

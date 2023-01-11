@@ -7,6 +7,7 @@ import swaggerUi from "swagger-ui-express"
 import { Service } from "typedi"
 import { UserUtilsController } from "@app/controllers/userutils.controller"
 import { CoreController } from "@app/controllers/core.controller"
+import { GalleryController } from "@app/controllers/gallery.controller"
 import Errors from "@app/lib/errors"
 
 @Service()
@@ -17,7 +18,8 @@ export class Application {
   constructor(
     private readonly userutilsController: UserUtilsController,
     private readonly dateController: DateController,
-    private readonly coreController: CoreController
+    private readonly coreController: CoreController,
+    private readonly galleryController: GalleryController
   ) {
     this.app = express()
 
@@ -45,6 +47,7 @@ export class Application {
     )
     this.app.use("/api/v2/user", this.userutilsController.router)
     this.app.use("/api/v2/core", this.coreController.router)
+    this.app.use("/api/v2/gallery", this.galleryController.router)
     this.app.use("/api/date", this.dateController.router)
     this.app.use("*", (req, res) => {
       throw Errors.NOT_FOUND

@@ -6,6 +6,10 @@ let Errors = {
   NOT_FOUND: {
     message: "Route not implemented yet",
     status: 404
+  },
+  USER_NOT_FOUND: {
+    message: "User not found",
+    status: 404
   }
 }
 

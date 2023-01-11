@@ -12,12 +12,6 @@ export class CollectionPin extends Model {
   @Column
   userId: number
 
-  @Column
-  createdAt: Date
-
-  @Column
-  updatedAt: Date
-
   @BelongsTo(() => User, "userId")
   user: User
 }

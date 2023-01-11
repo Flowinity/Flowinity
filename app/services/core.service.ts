@@ -25,20 +25,6 @@ export class CoreService {
       announcements: await Announcement.count(),
       usage: await User.sum("quota"),
       usagePercentage: (await User.sum("quota")) / 1000000000000,
-      //      users: user.count,
-      //       uploads: upload.count,
-      //       domains: domain.count,
-      //       usage: usage[0],
-      //       collections,
-      //       collectionItems,
-      //       registrationGraph,
-      //       uploadGraph,
-      //       pulse: Math.round(
-      //         pulses.reduce((acc, pulse) => acc + pulse.timeSpent, 0) / 3600000
-      //       ),
-      //       pulses: await Pulse.count(),
-      //       invites,
-      //       inviteMilestone: Math.ceil(invites / 20) * 20
       collections: await Collection.count(),
       collectionItems: await CollectionItem.count(),
       // TODO

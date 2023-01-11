@@ -12,12 +12,6 @@ export class Announcement extends Model {
   @Column
   type: string
 
-  @Column
-  createdAt: Date
-
-  @Column
-  updatedAt: Date
-
   @BelongsTo(() => User, "userId")
   user: User
 }

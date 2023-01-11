@@ -15,6 +15,20 @@ export class CoreController {
   private configureRouter(): void {
     this.router = Router()
 
+    /**
+     * @swagger
+     *
+     * /api/v2/core/experiments:
+     *   get:
+     *     description: Return the current website experiment opt-in configuration.
+     *     tags:
+     *       - CoreService
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: OK
+     */
     this.router.get("/experiments", async (req: Request, res: Response) => {
       // Send the request to the service and send the response
       try {
@@ -26,6 +40,20 @@ export class CoreController {
       }
     })
 
+    /**
+     * @swagger
+     *
+     * /api/v2/core:
+     *   get:
+     *     description: Return the website state, with statistics.
+     *     tags:
+     *       - CoreService
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: OK
+     */
     this.router.get("/", async (req: Request, res: Response) => {
       try {
         const cache = req.app.get("cache")
@@ -55,6 +83,36 @@ export class CoreController {
         console.log(response)
         cache.set("site-state", response)
         return res.json(response)
+      } catch (e) {
+        console.error(e)
+        return res.sendStatus(500)
+      }
+    })
+
+    /**
+     * @swagger
+     *
+     * /api/v2/core/stats:
+     *   get:
+     *     description: Return just the website stats. Has a cache of 30 minutes, compared to infinite of state.
+     *     tags:
+     *       - CoreService
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: OK
+     */
+    this.router.get("/stats", async (req: Request, res: Response) => {
+      try {
+        const cache = req.app.get("cache")
+        if (await cache.get("stats")) {
+          console.log("cache received")
+          return res.json(await cache.get("stats"))
+        }
+        const stats = await this.coreService.getStats()
+        cache.set("stats", stats, 1800)
+        return res.json(stats)
       } catch (e) {
         console.error(e)
         return res.sendStatus(500)

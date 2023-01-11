@@ -5,7 +5,8 @@ import {
   BelongsTo,
   Unique,
   HasOne,
-  HasMany
+  HasMany,
+  BelongsToMany
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
@@ -46,32 +47,7 @@ export class Upload extends Model {
     type: "json"
   })
   data: object
-  //    Uploads.belongsTo(models.User)
-  //       Uploads.belongsTo(models.User, {
-  //         as: "user",
-  //         foreignKey: "UserId"
-  //       })
-  //       Uploads.hasMany(models.CollectionItem, {
-  //         as: "items",
-  //         foreignKey: "attachmentId"
-  //       })
-  //       Uploads.hasOne(models.CollectionItem, {
-  //         as: "item",
-  //         foreignKey: "attachmentId"
-  //       })
-  //       Uploads.hasOne(models.Star, {
-  //         as: "starred",
-  //         foreignKey: "attachmentId"
-  //       })
-  //       Uploads.belongsToMany(models.Collection, {
-  //         through: "collectionItems",
-  //         as: "collections",
-  //         foreignKey: "attachmentId"
-  //       })
-  //       Uploads.belongsTo(models.Folder, {
-  //         as: "folder",
-  //         foreignKey: "folderId"
-  //       })
+
   @BelongsTo(() => User, "userId")
   user: User
 
@@ -81,8 +57,13 @@ export class Upload extends Model {
   @HasOne(() => CollectionPin, "attachmentId")
   starred: CollectionPin
 
-  @BelongsTo(() => Collection, "collectionId")
-  collection: Collection
+  @BelongsToMany(
+    () => Collection,
+    () => CollectionItem,
+    "attachmentId",
+    "collectionId"
+  )
+  collections: Collection[]
 
   @HasMany(() => CollectionItem, "attachmentId")
   items: CollectionItem[]
