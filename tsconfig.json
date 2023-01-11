@@ -18,8 +18,7 @@
         "strictNullChecks": true,
         "resolveJsonModule": false, // DO NOT CHANGE
         "paths": {
-            "@app/*": ["./app/*"],
-            "@common/*": ["../common/*"],
+            "@app/*": ["./app/*"]
         }
     }
 }

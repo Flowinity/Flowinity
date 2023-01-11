@@ -6,5 +6,5 @@
     "ignore": [
         "app/**/*.spec.ts"
     ],
-    "exec": "npm run build && node --inspect out/server/app/index.js"
+    "exec": "npm run build && node --inspect out/index.js"
 }

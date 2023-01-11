@@ -1,10 +1,11 @@
 {
     "name": "server",
-    "description": "Serveur du projet de base pour le cours de LOG2990",
+    "description": "TPUv2 Server",
     "version": "1.2.0",
     "private": true,
     "scripts": {
         "start": "nodemon",
+        "serve": "nodemon",
         "build": "rimraf out && tsc --project tsconfig.app.json",
         "format": "prettier --config ../.prettierrc.yaml --write \"app/**/*\"",
         "lint": "eslint -c .eslintrc.json \"./app/**/*.ts\" --format stylish",
@@ -45,8 +46,7 @@
         "instrument": true
     },
     "_moduleAliases": {
-        "@app": "out/server/app",
-        "@common": "out/common"
+        "@app": "out"
     },
     "dependencies": {
         "cookie-parser": "1.4.5",
