@@ -1,16 +1,17 @@
 import { UserUtilsService } from "@app/services/userutils.service"
-import { Request, Response, Router } from "express"
+import { Request, Response } from "express"
 import { Service } from "typedi"
 import { StatusCodes } from "http-status-codes"
 import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
 import Errors from "@app/lib/errors"
+import Router from "express-promise-router"
 
 //const HTTP_STATUS_CREATED = 201;
 
 @Service()
 export class UserUtilsController {
-  router: Router
+  router: any
 
   constructor(private readonly userUtilsService: UserUtilsService) {
     this.configureRouter()

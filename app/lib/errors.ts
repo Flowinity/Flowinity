@@ -1,6 +1,6 @@
 let Errors = {
   UNKNOWN: {
-    message: "Unknown error",
+    message: "An unknown error has occurred.",
     status: 500
   },
   NOT_FOUND: {
@@ -10,6 +10,18 @@ let Errors = {
   USER_NOT_FOUND: {
     message: "User not found",
     status: 404
+  },
+  FILE_EXPECTED: {
+    message: "A file was expected but was not present.",
+    status: 400
+  },
+  INVALID_CREDENTIALS: {
+    message: "Your username or password was incorrect.",
+    status: 401
+  },
+  INVALID_TOTP: {
+    message: "Your TOTP/2FA code was incorrect.",
+    status: 401
   }
 }
 

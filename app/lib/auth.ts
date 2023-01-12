@@ -85,7 +85,6 @@ const auth = (scope: string) => {
           })
         }
       } else {
-        console.log(69)
         res.status(401)
         res.json({
           errors: [

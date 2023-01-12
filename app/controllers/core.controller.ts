@@ -58,7 +58,6 @@ export class CoreController {
       try {
         const cache = req.app.get("cache")
         if (await cache.get("site-state")) {
-          console.log("cache received")
           return res.json(await cache.get("site-state"))
         }
         const response = {
@@ -80,7 +79,6 @@ export class CoreController {
           stats: await this.coreService.getStats(),
           maintenance: config.maintenance
         }
-        console.log(response)
         cache.set("site-state", response)
         return res.json(response)
       } catch (e) {

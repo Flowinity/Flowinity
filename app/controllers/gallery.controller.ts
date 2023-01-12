@@ -1,30 +1,11 @@
-import { Response, Router } from "express"
+import { NextFunction, Response, Router } from "express"
 import { Service } from "typedi"
 import { StatusCodes } from "http-status-codes"
 import { GalleryService } from "@app/services/gallery.service"
 import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
-import path from "path"
-import multer from "multer"
-import cryptoRandomString from "crypto-random-string"
-
-const storage = multer.diskStorage({
-  destination: process.env.STORAGE,
-  filename: (req, file, cb) => {
-    // path.extname = file extension
-    cb(
-      null,
-      cryptoRandomString({ length: 12 }) + path.extname(file.originalname)
-    )
-  }
-})
-
-const uploader = multer({
-  storage: storage,
-  fileFilter(req, file, cb) {
-    cb(null, true)
-  }
-})
+import uploader from "@app/lib/upload"
+import Errors from "@app/lib/errors"
 
 @Service()
 export class GalleryController {
@@ -59,7 +40,10 @@ export class GalleryController {
         try {
           const gallery = await this.galleryService.getGallery(
             req.user.id,
-            parseInt(<string>req.query.page) || 1
+            parseInt(<string>req.query.page) || 1,
+            req.query?.search?.toString(),
+            req.query?.filter?.toString(),
+            req.query?.textMetadata?.toString() === "true"
           )
           res.json(gallery)
         } catch (e) {
@@ -73,7 +57,38 @@ export class GalleryController {
       "/",
       auth("gallery.create"),
       uploader.single("attachment"),
-      async (req: RequestAuth, res: Response) => {}
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const upload = await this.galleryService.createUpload(
+            req.user.id,
+            req.file
+          )
+          res.json(upload)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.post(
+      "/site",
+      auth("gallery.create"),
+      uploader.array("attachments"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          let files = []
+          if (!req?.files?.length) throw Errors.FILE_EXPECTED
+          // @ts-ignore
+          for (const upload of req.files) {
+            files.push(
+              await this.galleryService.createUpload(req.user.id, upload)
+            )
+          }
+          res.json()
+        } catch (e) {
+          next(e)
+        }
+      }
     )
   }
 }
