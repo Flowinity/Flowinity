@@ -36,12 +36,17 @@ export class AuthService {
       throw Errors.INVALID_CREDENTIALS
     }
     if (user.totpEnable && user.totpSecret) {
-      let tokenValidation = speakeasy.totp.verify({
-        secret: user.totpSecret,
-        encoding: "base32",
-        token: totp
-      })
-      if (!tokenValidation) {
+      try {
+        let tokenValidation = speakeasy.totp.verify({
+          secret: user.totpSecret,
+          token: totp,
+          encoding: "base32"
+        })
+        if (!tokenValidation) {
+          throw Errors.INVALID_TOTP
+        }
+      } catch (e) {
+        console.log(e)
         throw Errors.INVALID_TOTP
       }
     }

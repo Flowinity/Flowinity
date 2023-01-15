@@ -22,6 +22,14 @@ let Errors = {
   INVALID_TOTP: {
     message: "Your TOTP/2FA code was incorrect.",
     status: 401
+  },
+  COLLECTION_NOT_FOUND: {
+    message: "The requested collection could not be found.",
+    status: 404
+  },
+  PLACEHOLDER: {
+    message: "This is a placeholder error.",
+    status: 500
   }
 }
 

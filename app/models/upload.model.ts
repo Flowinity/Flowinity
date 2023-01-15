@@ -6,7 +6,8 @@ import {
   Unique,
   HasOne,
   HasMany,
-  BelongsToMany
+  BelongsToMany,
+  DataType
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
@@ -44,7 +45,7 @@ export class Upload extends Model {
   deletable: boolean
 
   @Column({
-    type: "json"
+    type: DataType.JSON
   })
   data: object
 

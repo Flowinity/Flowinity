@@ -3,8 +3,9 @@ import cryptoRandomString from "crypto-random-string"
 import path from "path"
 
 const storage = multer.diskStorage({
-  destination: "../../storage",
+  destination: "storage",
   filename: (req, file, cb) => {
+    console.log(file)
     // path.extname = file extension
     cb(
       null,

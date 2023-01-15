@@ -22,7 +22,7 @@ function checkScope(requiredScope: string, scope: string) {
   return false
 }
 
-const auth = (scope: string) => {
+const auth = (scope: string, passthrough: boolean = false) => {
   return async function (req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.header("Authorization")
@@ -52,6 +52,10 @@ const auth = (scope: string) => {
         })
         if (session) {
           if (!checkScope(scope, session.scopes)) {
+            if (passthrough) {
+              req["user"] = null
+              return next()
+            }
             res.status(401)
             res.json({
               errors: [
@@ -66,12 +70,20 @@ const auth = (scope: string) => {
             return
           }
           if (session.user?.banned) {
+            if (passthrough) {
+              req["user"] = null
+              return next()
+            }
             res.sendStatus(401)
           } else {
             req["user"] = session.user
             next()
           }
         } else {
+          if (passthrough) {
+            req["user"] = null
+            return next()
+          }
           res.status(401)
           res.json({
             errors: [
@@ -85,6 +97,10 @@ const auth = (scope: string) => {
           })
         }
       } else {
+        if (passthrough) {
+          req["user"] = null
+          return next()
+        }
         res.status(401)
         res.json({
           errors: [
@@ -98,6 +114,10 @@ const auth = (scope: string) => {
       }
     } catch (err) {
       console.log(err)
+      if (passthrough) {
+        req["user"] = null
+        return next()
+      }
       res.status(401)
       res.json({
         errors: [

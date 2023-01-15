@@ -1,4 +1,11 @@
-import { Table, Column, Model, BelongsTo, Default } from "sequelize-typescript"
+import {
+  Table,
+  Column,
+  Model,
+  BelongsTo,
+  Default,
+  DataType
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 
@@ -20,7 +27,7 @@ export class AutoCollectRule extends Model {
 
   @Default([])
   @Column({
-    type: "json"
+    type: DataType.JSON
   })
   rules: object
 

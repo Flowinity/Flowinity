@@ -1,7 +1,14 @@
-import { Table, Column, Model, BelongsTo, Default } from "sequelize-typescript"
+import {
+  Table,
+  Column,
+  Model,
+  BelongsTo,
+  Default,
+  DataType
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
-import { Upload } from "@app/models/upload"
+import { Upload } from "@app/models/upload.model"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 
 @Table
@@ -23,7 +30,7 @@ export class AutoCollectApproval extends Model {
 
   @Default([])
   @Column({
-    type: "json"
+    type: DataType.JSON
   })
   info: boolean
 

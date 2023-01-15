@@ -11,6 +11,8 @@ import { GalleryController } from "@app/controllers/gallery.controller"
 import Errors from "@app/lib/errors"
 import { HttpException } from "@app/classes/http.exception"
 import { AuthController } from "@app/controllers/auth.controller"
+import { FileController } from "@app/controllers/file.controller"
+import { CollectionController } from "@app/controllers/collection.controller"
 
 @Service()
 export class Application {
@@ -22,7 +24,9 @@ export class Application {
     private readonly dateController: DateController,
     private readonly coreController: CoreController,
     private readonly galleryController: GalleryController,
-    private readonly authController: AuthController
+    private readonly authController: AuthController,
+    private readonly fileController: FileController,
+    private readonly collectionController: CollectionController
   ) {
     this.app = express()
 
@@ -52,6 +56,8 @@ export class Application {
     this.app.use("/api/v2/core", this.coreController.router)
     this.app.use("/api/v2/gallery", this.galleryController.router)
     this.app.use("/api/v2/auth", this.authController.router)
+    this.app.use("/api/v2/collections", this.collectionController.router)
+    this.app.use("/i", this.fileController.router)
     this.app.use("/api/date", this.dateController.router)
     this.app.use("*", (req, res) => {
       throw Errors.NOT_FOUND

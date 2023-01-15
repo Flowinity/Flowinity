@@ -3,7 +3,11 @@ import * as http from "http"
 import { AddressInfo } from "net"
 import { Service } from "typedi"
 import sequelize from "@app/db"
+import redis from "@app/redis"
 import { caching } from "cache-manager"
+import config from "@app/config/tpu.json"
+import { cacheInit } from "@app/lib/cache"
+import dayjs from "dayjs"
 
 @Service()
 export class Server {
@@ -12,9 +16,6 @@ export class Server {
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   private static readonly baseDix: number = 10
   private server: http.Server
-
-  // @ts-ignore
-  private db: any
 
   constructor(private readonly application: Application) {}
 
@@ -36,7 +37,11 @@ export class Server {
     this.application.app.set("trust proxy", 1)
     const memoryCache = await caching("memory")
     this.application.app.set("cache", memoryCache)
-    this.db = sequelize
+    global.db = sequelize
+    global.redis = redis
+    global.config = config
+    global.dayjs = dayjs
+    cacheInit()
     this.server = http.createServer(this.application.app)
 
     this.server.listen(Server.appPort)

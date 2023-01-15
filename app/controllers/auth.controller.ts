@@ -44,7 +44,7 @@ export class AuthController {
         await this.authService.login(
           req.body.email,
           req.body.password,
-          req.body.totp
+          req.body.code
         )
       )
     })

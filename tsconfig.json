@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "baseUrl": "./",
-        "target": "es6",
+        "target": "es2017",
         "types": ["reflect-metadata", "@types/mocha", "mocha", "node", "webpack-env", "@types/sequelize"],
         "typeRoots": ["./app/types"],
         "module": "commonjs",

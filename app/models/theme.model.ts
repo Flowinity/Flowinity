@@ -3,7 +3,8 @@ import {
   Column,
   Model,
   //BelongsTo,
-  Default
+  Default,
+  DataType
 } from "sequelize-typescript"
 @Table
 export class Theme extends Model {
@@ -109,7 +110,7 @@ export class Theme extends Model {
     }
   })
   @Column({
-    type: "json"
+    type: DataType.JSON
   })
   theme: ThemeObject
 }

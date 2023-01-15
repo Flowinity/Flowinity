@@ -6,7 +6,8 @@ import {
   Default,
   AllowNull,
   DefaultScope,
-  BelongsTo
+  BelongsTo,
+  DataType
 } from "sequelize-typescript"
 import { Plan } from "@app/models/plan.model"
 import { Theme } from "@app/models/theme.model"
@@ -61,7 +62,7 @@ export class User extends Model {
     customFields: []
   })
   @Column({
-    type: "json"
+    type: DataType.JSON
   })
   openGraph: OpenGraph
 

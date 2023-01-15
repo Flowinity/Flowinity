@@ -1,5 +1,5 @@
 //import { User } from "@app/models/user.model"
-import { Upload } from "@app/models/upload"
+import { Upload } from "@app/models/upload.model"
 import tesseract from "node-tesseract-ocr"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Collection } from "@app/models/collection.model"
@@ -292,7 +292,7 @@ async function processFile(upload: Upload, textMetadata: string) {
 
 async function postUpload(upload: Upload) {
   tesseract
-    .recognize("../storage/" + upload.attachment, {
+    .recognize("storage/" + upload.attachment, {
       lang: "eng"
     })
     .then((text) => {
@@ -827,7 +827,7 @@ function getTypeByExt(ext: string) {
     dll: "binary",
     so: "binary"
   }
-
+  console.log("filetype: " + ext + " -> " + types[ext])
   return types[ext] || "binary"
 }
 

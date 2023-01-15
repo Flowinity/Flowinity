@@ -10,6 +10,7 @@ import {
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { CollectionPin } from "@app/models/collectionPin.model"
+import { Upload } from "@app/models/upload.model"
 
 @Table
 export class CollectionItem extends Model {
@@ -35,4 +36,7 @@ export class CollectionItem extends Model {
 
   @HasOne(() => CollectionPin, "collectionItemId")
   pinned: CollectionPin
+
+  @BelongsTo(() => Upload, "attachmentId")
+  attachment: Upload
 }

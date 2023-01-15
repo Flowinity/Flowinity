@@ -84,7 +84,7 @@ export class GalleryController {
               await this.galleryService.createUpload(req.user.id, upload)
             )
           }
-          res.json()
+          res.json(files)
         } catch (e) {
           next(e)
         }

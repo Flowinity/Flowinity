@@ -3,7 +3,8 @@ import {
   Column,
   Model,
   //BelongsTo,
-  Default
+  Default,
+  DataType
 } from "sequelize-typescript"
 @Table
 export class Plan extends Model {
@@ -17,7 +18,7 @@ export class Plan extends Model {
   price: bigint
 
   @Column({
-    type: "json"
+    type: DataType.JSON
   })
   features: object
 
@@ -32,7 +33,7 @@ export class Plan extends Model {
   purchasable: boolean
 
   @Column({
-    type: "json"
+    type: DataType.JSON
   })
   internalFeatures: object
 

@@ -1,21 +1,28 @@
 import { Service } from "typedi"
-import { Upload } from "@app/models/upload"
+import { Upload } from "@app/models/upload.model"
 import paginate from "jw-paginate"
 import { Collection } from "@app/models/collection.model"
 import { Op } from "sequelize"
 import utils from "@app/lib/utils"
 import { User } from "@app/models/user.model"
 import sequelize from "@app/db"
+import path from "path"
+import { CollectionItem } from "@app/models/collectionItem.model"
+//import { CollectionPin } from "@app/models/collectionPin.model"
+
 @Service()
 export class GalleryService {
   async createUpload(userId: number, file: any) {
     const upload = await Upload.create({
       attachment: file.filename, // Attachment hash
-      UserId: userId,
+      userId: userId,
       originalFilename: file.originalname,
       name: file.originalname,
-      type: utils.getTypeByExt(file.extname) || "binary",
-      fileSize: file.size
+      type:
+        utils.getTypeByExt(path.extname(file.originalname)?.split(".")[1]) ||
+        "binary",
+      fileSize: file.size,
+      deletable: true
     })
     await User.update(
       {
@@ -34,16 +41,19 @@ export class GalleryService {
     }
   }
   async getGallery(
-    userId: number,
+    id: number,
     page: number = 1,
     search?: string,
     filter: string = "all",
-    showMetadata: boolean = true
+    showMetadata: boolean = true,
+    type: "user" | "collection" | "starred" | "autoCollect" = "user"
   ): Promise<Object> {
     const offset = page * 12 - 12 || 0
-    const base = {
-      userId,
+    let base = {
       deletable: true
+    }
+    if (type === "user") {
+      base["userId"] = id
     }
     const metadata = {
       [Op.or]: [
@@ -67,20 +77,61 @@ export class GalleryService {
     const where = showMetadata
       ? { ...base, ...metadata }
       : { ...base, ...noMetadata }
-    const uploads = await Upload.findAll({
-      where,
-      include: [
+    let include: object = []
+    if (type === "collection") {
+      include = [
+        {
+          model: CollectionItem,
+          as: "item",
+          where: {
+            collectionId: id
+          },
+          attributes: ["id"],
+          required: true,
+          include: [
+            /*{
+              model: CollectionPin,
+              as: "pinned",
+              required: false,
+              where: {
+                collectionId: id
+              }
+            }*/
+          ]
+        },
         {
           model: Collection,
           as: "collections"
+        },
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username"]
         }
-      ],
+      ]
+    } else {
+      include = [
+        {
+          model: Collection,
+          as: "collections"
+        },
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username"]
+        }
+      ]
+    }
+    const uploads = await Upload.findAll({
+      where,
+      include,
       limit: 12,
       offset,
       order: [["createdAt", "DESC"]]
     })
     const uploadCount = await Upload.count({
-      where
+      where,
+      include
     })
     const pager = paginate(uploadCount || uploads.length, page, 12)
     return {

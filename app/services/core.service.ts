@@ -3,11 +3,33 @@ import { Announcement } from "@app/models/announcement.model"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
-import { Upload } from "@app/models/upload"
-
+import { Upload } from "@app/models/upload.model"
+import { refreshState } from "@app/lib/cache"
+import { Op } from "sequelize"
+import { Pulse } from "@app/models/pulse.model"
 @Service()
 export class CoreService {
-  async getAnnouncements(): Promise<any> {
+  async getState(): Promise<object> {
+    return {
+      name: config.siteName,
+      release: config.release,
+      route: null,
+      loading: false,
+      matomoId: null,
+      hostname: config.hostname,
+      hostnameWithProtocol: config.hostnameWithProtocol,
+      announcements: await this.getAnnouncements(),
+      flowinityId: config.flowinityId,
+      stats: await this.getStats(),
+      maintenance: config.maintenance
+    }
+  }
+
+  async getCachedState(): Promise<object> {
+    return (await redis.json.get("core:state")) || (await refreshState())
+  }
+
+  async getAnnouncements(): Promise<Announcement[]> {
     return await Announcement.findAll({
       order: [["createdAt", "DESC"]],
       include: [
@@ -19,7 +41,30 @@ export class CoreService {
     })
   }
 
-  async getStats(): Promise<any> {
+  async getStats(): Promise<object> {
+    let resultUploads = {}
+    const uploadStats = await Upload.findAll({
+      where: {
+        // gte 7d
+        createdAt: {
+          [Op.gte]: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
+        }
+      }
+    })
+    let uploadGraphInterim = uploadStats.reduce(function (result, upload) {
+      let day = dayjs(upload.createdAt).format("YYYY-MM-DD")
+      if (!resultUploads[day]) {
+        resultUploads[day] = 0
+      }
+      resultUploads[day]++
+      return resultUploads
+    }, {})
+
+    let uploadGraph = {
+      data: Object.values(uploadGraphInterim),
+      labels: Object.keys(uploadGraphInterim)
+    }
+
     return {
       users: await User.count(),
       announcements: await Announcement.count(),
@@ -27,10 +72,21 @@ export class CoreService {
       usagePercentage: (await User.sum("quota")) / 1000000000000,
       collections: await Collection.count(),
       collectionItems: await CollectionItem.count(),
-      // TODO
-      registrationGraph: null,
-      uploadGraph: null,
-      uploads: await Upload.count()
+      uploadGraph,
+      uploads: await Upload.count(),
+      pulse: Math.round(
+        (await Pulse.sum("timeSpent", {
+          where: {
+            other: {
+              type: "session"
+            }
+          }
+        })) /
+          1000 /
+          60 /
+          60
+      ),
+      pulses: await Pulse.count()
     }
   }
   getExperiments(): object {

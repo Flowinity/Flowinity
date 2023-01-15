@@ -29,3 +29,4 @@ npm-debug.log
 
 app/config/config.json
 app/config/tpu.json
+storage/*
