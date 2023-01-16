@@ -42,8 +42,8 @@ export class FileController {
         upload.type === "video" ||
         upload.type === "audio"
       ) {
-        res.sendFile(config.storage + "/" + upload.attachment, {
-          root: __dirname + "/../../",
+        res.sendFile("/" + upload.attachment, {
+          root: config.storage,
           name: upload.originalFilename
         })
       } else {
