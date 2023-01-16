@@ -70,7 +70,7 @@ export class Application {
     })
     this.app.use((err: any, req: any, res: any, next: any) => {
       console.warn(err)
-      if (err?.status) {
+      if (err?.status && !err?.errno) {
         res.status(err?.status || 500).send({
           errors: [err]
         })

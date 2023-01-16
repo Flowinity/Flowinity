@@ -292,13 +292,20 @@ async function processFile(upload: Upload, textMetadata: string) {
 
 async function postUpload(upload: Upload) {
   await tesseract
-    .recognize("storage/" + upload.attachment, {
+    .recognize(config.storage + "/" + upload.attachment, {
       lang: "eng"
     })
     .then(async (text) => {
-      await upload.update({
-        textMetadata: text
-      })
+      await Upload.update(
+        {
+          textMetadata: text
+        },
+        {
+          where: {
+            id: upload.id
+          }
+        }
+      )
       await processFile(upload, text)
     })
     .catch(async (error) => {

@@ -49,6 +49,11 @@ export class Upload extends Model {
   })
   data: object
 
+  @Column({
+    type: DataType.TEXT
+  })
+  textMetadata: string
+
   @BelongsTo(() => User, "userId")
   user: User
 

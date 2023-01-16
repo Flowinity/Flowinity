@@ -42,12 +42,15 @@ export class FileController {
         upload.type === "video" ||
         upload.type === "audio"
       ) {
-        res.sendFile("storage/" + upload.attachment, {
+        res.sendFile(config.storage + "/" + upload.attachment, {
           root: __dirname + "/../../",
           name: upload.originalFilename
         })
       } else {
-        res.download("storage/" + upload.attachment, upload.originalFilename)
+        res.download(
+          config.storage + "/" + upload.attachment,
+          upload.originalFilename
+        )
       }
     })
   }

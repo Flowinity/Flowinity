@@ -1,9 +1,10 @@
 import multer from "multer"
 import cryptoRandomString from "crypto-random-string"
 import path from "path"
+import config from "@app/config/tpu.json"
 
 const storage = multer.diskStorage({
-  destination: "storage",
+  destination: config.storage,
   filename: (req, file, cb) => {
     console.log(file)
     // path.extname = file extension

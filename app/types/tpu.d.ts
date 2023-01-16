@@ -6,6 +6,7 @@ declare interface TpuConfig {
   maintenance: boolean
   siteName: string
   release: string
+  storage: string
   redis: {
     username?: string | undefined
     password?: string | undefined
