@@ -117,6 +117,32 @@ export class UserUtilsController {
       }
     )
 
+    /**
+     * @swagger
+     *
+     * /api/v2/user/inviteV2/{key}:
+     *   get:
+     *     description: Get InviteV2 invite key information.
+     *     tags:
+     *       - UserUtilsService
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: OK
+     *     parameters:
+     *         - in: header
+     *           name: Authorization
+     *           schema:
+     *             type: string
+     *             format: TPU-KEY
+     *           required: true
+     *         - in: path
+     *           name: username
+     *           schema:
+     *             type: string
+     *           required: true
+     */
     this.router.get("/inviteV2/:key", async (req: Request, res: Response) => {
       // Send the request to the service and send the response
       try {
@@ -126,5 +152,83 @@ export class UserUtilsController {
         res.sendStatus(StatusCodes.UNAUTHORIZED)
       }
     })
+
+    /**
+     * @swagger
+     *
+     * /api/v2/user/domain:
+     *   patch:
+     *     description: Set user domain.
+     *     tags:
+     *       - UserUtilsService
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: OK
+     *     parameters:
+     *         - in: header
+     *           name: Authorization
+     *           schema:
+     *             type: string
+     *             format: TPU-KEY
+     *           required: true
+     *         - in: path
+     *           name: username
+     *           schema:
+     *             type: string
+     *           required: true
+     */
+    this.router.patch(
+      "/domain",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        await this.userUtilsService.setDefaultDomain(
+          req.user.id,
+          req.body.domain
+        )
+        res.sendStatus(204)
+      }
+    )
+
+    /**
+     * @swagger
+     *
+     * /api/v2/user/feedback:
+     *   post:
+     *     description: Provide user feedback about TPUv2.
+     *     tags:
+     *       - UserUtilsService
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: OK
+     *     parameters:
+     *         - in: header
+     *           name: Authorization
+     *           schema:
+     *             type: string
+     *             format: TPU-KEY
+     *           required: true
+     *         - in: path
+     *           name: username
+     *           schema:
+     *             type: string
+     *           required: true
+     */
+    this.router.post(
+      "/feedback",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        await this.userUtilsService.sendFeedback(
+          req.user.id,
+          req.body.text,
+          req.body.starRating,
+          req.body.route
+        )
+        res.sendStatus(204)
+      }
+    )
   }
 }

@@ -1,6 +1,9 @@
 import { Service } from "typedi"
 import { User } from "@app/models/user.model"
 import { Plan } from "@app/models/plan.model"
+import Errors from "@app/lib/errors"
+import { Domain } from "@app/models/domain.model"
+import { Feedback } from "@app/models/feedback.model"
 
 @Service()
 export class UserUtilsService {
@@ -53,6 +56,44 @@ export class UserUtilsService {
           as: "plan"
         }
       ]
+    })
+  }
+
+  async setDefaultDomain(
+    id: number,
+    domainName: string
+  ): Promise<[affectedCount: number]> {
+    const domain = await Domain.findOne({
+      where: {
+        domain: domainName,
+        active: true
+      }
+    })
+    if (!domain) throw Errors.PLACEHOLDER
+    return await User.update(
+      {
+        domainId: domain.id
+      },
+      {
+        where: {
+          id
+        }
+      }
+    )
+  }
+
+  async sendFeedback(
+    id: number,
+    feedbackText: string,
+    starRating: number,
+    route: string
+  ): Promise<void> {
+    await Feedback.create({
+      userId: id,
+      feedbackText,
+      starRating,
+      route,
+      debugInfo: "isTPUV2"
     })
   }
 }

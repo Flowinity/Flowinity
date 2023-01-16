@@ -11,6 +11,7 @@ import {
 } from "sequelize-typescript"
 import { Plan } from "@app/models/plan.model"
 import { Theme } from "@app/models/theme.model"
+import { Domain } from "@app/models/domain.model"
 
 @DefaultScope(() => ({
   attributes: {
@@ -119,4 +120,7 @@ export class User extends Model {
 
   @BelongsTo(() => Theme, "themeId")
   theme: Theme
+
+  @BelongsTo(() => Domain, "domainId")
+  domain: Domain
 }

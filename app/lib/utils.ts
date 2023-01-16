@@ -10,6 +10,7 @@ import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import cryptoRandomString from "crypto-random-string"
 import { Session } from "@app/models/session.model"
+import { Domain } from "@app/models/domain.model"
 
 async function generateAPIKey(type: "session" | "api") {
   switch (type) {
@@ -258,7 +259,6 @@ async function processFile(upload: Upload, textMetadata: string) {
           })
         }
       }
-      console.log(results)
       if (results.some((result) => result.value) && rule.requireApproval) {
         await AutoCollectApproval.create({
           userId: upload.userId,
@@ -291,24 +291,24 @@ async function processFile(upload: Upload, textMetadata: string) {
 }
 
 async function postUpload(upload: Upload) {
-  tesseract
+  await tesseract
     .recognize("storage/" + upload.attachment, {
       lang: "eng"
     })
-    .then((text) => {
-      upload.update({
+    .then(async (text) => {
+      await upload.update({
         textMetadata: text
       })
-      processFile(upload, text)
+      await processFile(upload, text)
     })
-    .catch((error) => {
+    .catch(async (error) => {
       console.log(error.message)
-      processFile(upload, "")
+      await processFile(upload, "")
     })
 }
 
 async function getUserDomain(userId: number): Promise<string> {
-  /*const user = await User.findOne({
+  const user = await User.findOne({
     where: {
       id: userId
     },
@@ -316,16 +316,11 @@ async function getUserDomain(userId: number): Promise<string> {
       {
         model: Domain,
         as: "domain"
-      },
-      {
-        model: Subdomain,
-        as: "subdomain"
       }
     ]
-  })*/
+  })
 
-  //TODO
-  return "https://i.troplo.com/i/"
+  return user?.domain.domain + "/i/" || "https://i.troplo.com/i/"
 }
 
 function getTypeByExt(ext: string) {
@@ -827,7 +822,6 @@ function getTypeByExt(ext: string) {
     dll: "binary",
     so: "binary"
   }
-  console.log("filetype: " + ext + " -> " + types[ext])
   return types[ext] || "binary"
 }
 

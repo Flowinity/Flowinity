@@ -4,7 +4,7 @@ let Errors = {
     status: 500
   },
   NOT_FOUND: {
-    message: "Route not implemented yet",
+    message: "Route not implemented yet.",
     status: 404
   },
   USER_NOT_FOUND: {
@@ -30,6 +30,10 @@ let Errors = {
   PLACEHOLDER: {
     message: "This is a placeholder error.",
     status: 500
+  },
+  ADMIN_ONLY: {
+    message: "You must be an administrator to access this resource.",
+    status: 403
   }
 }
 

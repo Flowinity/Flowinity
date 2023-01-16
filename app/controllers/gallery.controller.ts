@@ -53,8 +53,9 @@ export class GalleryController {
       }
     )
 
+    // /upload is for legacy clients
     this.router.post(
-      "/",
+      ["/", "/upload"],
       auth("gallery.create"),
       uploader.single("attachment"),
       async (req: RequestAuth, res: Response, next: NextFunction) => {

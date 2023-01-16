@@ -3,6 +3,7 @@ import { Session } from "@app/models/session.model"
 import { User } from "@app/models/user.model"
 import { Plan } from "@app/models/plan.model"
 import { Theme } from "@app/models/theme.model"
+import { Domain } from "@app/models/domain.model"
 
 function checkScope(requiredScope: string, scope: string) {
   if (scope === "*") {
@@ -38,6 +39,10 @@ const auth = (scope: string, passthrough: boolean = false) => {
               as: "user",
               required: true,
               include: [
+                {
+                  model: Domain,
+                  as: "domain"
+                },
                 {
                   model: Plan,
                   as: "plan"

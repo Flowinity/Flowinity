@@ -9,6 +9,7 @@ import sequelize from "@app/db"
 import path from "path"
 import { CollectionItem } from "@app/models/collectionItem.model"
 //import { CollectionPin } from "@app/models/collectionPin.model"
+import queue from "@app/lib/queue"
 
 @Service()
 export class GalleryService {
@@ -34,7 +35,7 @@ export class GalleryService {
         }
       }
     )
-    utils.postUpload(upload)
+    await queue.queue.add(upload.id, upload)
     return {
       upload,
       url: (await utils.getUserDomain(userId)) + upload.attachment
@@ -51,6 +52,9 @@ export class GalleryService {
     const offset = page * 12 - 12 || 0
     let base = {
       deletable: true
+    }
+    if (filter !== "all") {
+      base["type"] = filter
     }
     if (type === "user") {
       base["userId"] = id

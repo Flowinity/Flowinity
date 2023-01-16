@@ -87,7 +87,7 @@ export class CollectionController {
       auth("collections.view", true),
       async (req: RequestAuth, res: Response) => {
         if (!req.user) {
-          const collection = await redis.json.get(`shareLink:${req.params.id}`)
+          const collection = await redis.json.get(`shareLinks:${req.params.id}`)
           if (collection) {
             return res.json(collection)
           } else {
@@ -114,7 +114,7 @@ export class CollectionController {
       auth("collections.view", true),
       async (req: RequestAuth, res: Response) => {
         if (!req.user) {
-          const collection = await redis.json.get(`shareLink:${req.params.id}`)
+          const collection = await redis.json.get(`shareLinks:${req.params.id}`)
           if (collection) {
             return res.json(
               await this.galleryService.getGallery(

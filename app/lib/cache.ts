@@ -21,19 +21,9 @@ export async function refreshState() {
   return state
 }
 
-export async function generateCollectionCache() {
-  console.info("[REDIS] Generating collections cache...")
-  let start = new Date().getTime()
-  const users = await User.findAll()
-  for (const user of users) {
-    let collectionService: CollectionService = new CollectionService()
-    const collections = await collectionService.getCollections(user.id)
-    redis.json.set(`collections:${user.id}`, "$", collections)
-  }
-  let end = new Date().getTime()
-  console.info(`[REDIS] Collections cache generated in ${end - start}ms`)
+export async function generateShareLinkCache() {
   console.info("[REDIS] Generating collections ShareLink cache...")
-  start = new Date().getTime()
+  const start = new Date().getTime()
   const collections = await Collection.findAll({
     where: {
       shareLink: {
@@ -74,12 +64,35 @@ export async function generateCollectionCache() {
     ]
   })
   for (const collection of collections) {
-    redis.json.set(`shareLink:${collection.shareLink}`, "$", collection)
+    redis.json.set(`shareLinks:${collection.shareLink}`, "$", collection)
   }
-  end = new Date().getTime()
+  const end = new Date().getTime()
   console.info(
     `[REDIS] Collections ShareLink cache generated in ${end - start}ms`
   )
+}
+
+export async function generateCollectionCache() {
+  console.info("[REDIS] Generating collections cache...")
+  let start = new Date().getTime()
+  const users = await User.findAll()
+  for (const user of users) {
+    let collectionService: CollectionService = new CollectionService()
+    const collections = await collectionService.getCollections(user.id)
+    redis.json.set(`collections:${user.id}`, "$", collections)
+  }
+  let end = new Date().getTime()
+  console.info(`[REDIS] Collections cache generated in ${end - start}ms`)
+}
+
+export async function generateCollectionCacheForUser(id: number) {
+  console.info("[REDIS] Generating collections cache for user...")
+  let start = new Date().getTime()
+  let collectionService: CollectionService = new CollectionService()
+  const collections = await collectionService.getCollections(id)
+  redis.json.set(`collections:${id}`, "$", collections)
+  let end = new Date().getTime()
+  console.info(`[REDIS] User collections cache generated in ${end - start}ms`)
 }
 
 export function cacheInit() {
@@ -87,14 +100,18 @@ export function cacheInit() {
   setInterval(refreshState, 600000)
   // 1 hour
   setInterval(generateCollectionCache, 3600000)
+  setInterval(generateShareLinkCache, 3600000)
 
-  refreshState()
-  generateCollectionCache()
+  refreshState().then(() => {})
+  generateCollectionCache().then(() => {})
+  generateShareLinkCache().then(() => {})
   return true
 }
 
 export default {
   cacheInit,
   refreshState,
-  generateCollectionCache
+  generateCollectionCache,
+  generateShareLinkCache,
+  generateCollectionCacheForUser
 }

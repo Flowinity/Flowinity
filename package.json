@@ -55,6 +55,7 @@
     "dependencies": {
         "@levminer/speakeasy": "^1.4.0",
         "argon2": "^0.30.3",
+        "bullmq": "^3.5.6",
         "cache-manager": "^5.1.4",
         "cookie-parser": "1.4.5",
         "cors": "2.8.5",
