@@ -2,7 +2,7 @@ import { SocketAuth } from "@app/types/socket"
 import { User } from "@app/models/user.model"
 import { Pulse } from "@app/models/pulse.model"
 
-const auth = require("./authSocket")
+import auth from "@app/lib/authSocket"
 
 export default {
   init(app: any, server: any) {
@@ -12,7 +12,7 @@ export default {
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
       }
     })
-    io.use(auth.default)
+    io.use(auth)
     io.on("connection", async (socket: SocketAuth) => {
       const user = await User.findOne({
         where: {
