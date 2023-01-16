@@ -10,6 +10,7 @@ import path from "path"
 import { CollectionItem } from "@app/models/collectionItem.model"
 //import { CollectionPin } from "@app/models/collectionPin.model"
 import queue from "@app/lib/queue"
+import { Star } from "@app/models/star.model"
 
 @Service()
 export class GalleryService {
@@ -93,6 +94,7 @@ export class GalleryService {
           attributes: ["id"],
           required: true,
           include: [
+            // TODO: FIX BROKEN
             /*{
               model: CollectionPin,
               as: "pinned",
@@ -111,6 +113,17 @@ export class GalleryService {
           model: User,
           as: "user",
           attributes: ["id", "username"]
+        }
+      ]
+    } else if (type === "starred") {
+      include = [
+        {
+          model: Star,
+          as: "starred",
+          required: true,
+          where: {
+            userId: id
+          }
         }
       ]
     } else {

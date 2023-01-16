@@ -274,6 +274,28 @@ export class CollectionController {
       }
     )
 
-    this.router.patch("/")
+    this.router.patch(
+      "/share",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            req.body.id,
+            req.user.id,
+            "configure"
+          )
+        if (!collection) {
+          throw Errors.COLLECTION_NO_PERMISSION
+        }
+        res.json(
+          await this.collectionService.updateShareLink(
+            req.body.id,
+            req.body.type
+          )
+        )
+        await this.cacheService.resetCollectionCache(req.body.id)
+        await this.cacheService.generateShareLinkCache()
+      }
+    )
   }
 }

@@ -71,6 +71,42 @@ export class GalleryController {
       }
     )
 
+    /**
+     * @swagger
+     *
+     * /api/v2/gallery/starred:
+     *   get:
+     *     description: Return the current user's gallery.
+     *     tags:
+     *       - GalleryService
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: OK
+     */
+    this.router.get(
+      "/starred",
+      auth("uploads.view"),
+      async (req: RequestAuth, res: Response) => {
+        // Send the request to the service and send the response
+        try {
+          const gallery = await this.galleryService.getGallery(
+            req.user.id,
+            parseInt(<string>req.query.page) || 1,
+            req.query?.search?.toString(),
+            req.query?.filter?.toString(),
+            req.query?.textMetadata?.toString() === "true",
+            "starred"
+          )
+          res.json(gallery)
+        } catch (e) {
+          console.error(e)
+          res.sendStatus(StatusCodes.UNAUTHORIZED)
+        }
+      }
+    )
+
     this.router.post(
       "/site",
       auth("uploads.create"),

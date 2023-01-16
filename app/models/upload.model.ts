@@ -13,6 +13,7 @@ import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { CollectionPin } from "@app/models/collectionPin.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
+import { Star } from "@app/models/star.model"
 
 @Table
 export class Upload extends Model {
@@ -61,7 +62,7 @@ export class Upload extends Model {
   item: CollectionItem
 
   @HasOne(() => CollectionPin, "attachmentId")
-  starred: CollectionPin
+  pinned: CollectionPin
 
   @BelongsToMany(
     () => Collection,
@@ -73,4 +74,7 @@ export class Upload extends Model {
 
   @HasMany(() => CollectionItem, "attachmentId")
   items: CollectionItem[]
+
+  @HasOne(() => Star, "attachmentId")
+  starred: Star
 }

@@ -6,11 +6,12 @@ import {
   Unique,
   AllowNull,
   HasOne
+  //HasMany
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
-import { CollectionPin } from "@app/models/collectionPin.model"
 import { Upload } from "@app/models/upload.model"
+import { CollectionPin } from "@app/models/collectionPin.model"
 
 @Table
 export class CollectionItem extends Model {
@@ -34,9 +35,9 @@ export class CollectionItem extends Model {
   @BelongsTo(() => Collection, "collectionId")
   collection: Collection
 
-  @HasOne(() => CollectionPin, "collectionItemId")
-  pinned: CollectionPin
-
   @BelongsTo(() => Upload, "attachmentId")
   attachment: Upload
+
+  @HasOne(() => CollectionPin, "collectionItemId")
+  pinned: CollectionPin
 }

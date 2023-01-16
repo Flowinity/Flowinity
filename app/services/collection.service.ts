@@ -345,7 +345,7 @@ export class CollectionService {
   async updateShareLink(collectionId: number, type: "nobody" | "link") {
     switch (type) {
       case "link":
-        const shareLink = cryptoRandomString({ length: 24 })
+        const shareLink = cryptoRandomString({ length: 64 })
         await Collection.update(
           {
             shareLink
