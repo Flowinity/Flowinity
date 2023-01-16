@@ -240,14 +240,16 @@ export class CollectionService {
     } else {
       let items = []
       for (const upload of uploadId) {
-        items.push(
-          await CollectionItem.create({
-            collectionId,
-            attachmentId: upload,
-            userId,
-            identifier: upload + "-" + collectionId
-          })
-        )
+        try {
+          items.push(
+            await CollectionItem.create({
+              collectionId,
+              attachmentId: upload,
+              userId,
+              identifier: upload + "-" + collectionId
+            })
+          )
+        } catch {}
       }
       return items
     }
