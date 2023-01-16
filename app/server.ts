@@ -8,6 +8,7 @@ import { caching } from "cache-manager"
 import config from "@app/config/tpu.json"
 import { cacheInit } from "@app/lib/cache"
 import dayjs from "dayjs"
+import socket from "./lib/socket"
 
 @Service()
 export class Server {
@@ -45,6 +46,7 @@ export class Server {
     this.server = http.createServer(this.application.app)
 
     this.server.listen(Server.appPort)
+    socket.init(this.application.app, this.server)
     this.server.on("error", (error: NodeJS.ErrnoException) =>
       this.onError(error)
     )

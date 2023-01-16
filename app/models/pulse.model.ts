@@ -11,6 +11,13 @@ import { User } from "@app/models/user.model"
 
 @Table
 export class Pulse extends Model {
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+    primaryKey: true
+  })
+  id: string
+
   @Column
   userId: number
 
