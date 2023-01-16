@@ -32,6 +32,9 @@ export class AuthService {
     if (!user) {
       throw Errors.INVALID_CREDENTIALS
     }
+    if (user.password === "sso-enforced") {
+      throw Errors.SSO_ENFORCED
+    }
     if (!(await argon2.verify(user.password, password))) {
       throw Errors.INVALID_CREDENTIALS
     }

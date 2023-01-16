@@ -1,5 +1,5 @@
 import { Service } from "typedi"
-import cache from "@app/lib/cache"
+import { CacheService } from "@app/services/cache.service"
 export enum CacheType {
   "everything",
   "state",
@@ -8,6 +8,7 @@ export enum CacheType {
 }
 @Service()
 export class AdminService {
+  constructor(private readonly cacheService: CacheService) {}
   async getStats() {
     //TODO
     return {}
@@ -16,18 +17,18 @@ export class AdminService {
   async purgeCache(type: CacheType) {
     switch (type) {
       case CacheType.everything:
-        await cache.refreshState()
-        await cache.generateCollectionCache()
-        await cache.generateShareLinkCache()
+        await this.cacheService.refreshState()
+        await this.cacheService.generateCollectionCache()
+        await this.cacheService.generateShareLinkCache()
         return true
       case CacheType.state:
-        await cache.refreshState()
+        await this.cacheService.refreshState()
         return true
       case CacheType.collections:
-        await cache.generateCollectionCache()
+        await this.cacheService.generateCollectionCache()
         return true
       case CacheType.sharelinks:
-        await cache.generateShareLinkCache()
+        await this.cacheService.generateShareLinkCache()
         return true
       default:
         return false
@@ -35,7 +36,7 @@ export class AdminService {
   }
 
   async purgeUserCache(id: number) {
-    await cache.generateCollectionCacheForUser(id)
+    await this.cacheService.generateCollectionCacheForUser(id)
     return true
   }
 }

@@ -6,7 +6,7 @@ import sequelize from "@app/db"
 import redis from "@app/redis"
 import { caching } from "cache-manager"
 import config from "@app/config/tpu.json"
-import { cacheInit } from "@app/lib/cache"
+import { CacheService } from "@app/services/cache.service"
 import dayjs from "dayjs"
 import socket from "./lib/socket"
 
@@ -18,7 +18,10 @@ export class Server {
   private static readonly baseDix: number = 10
   private server: http.Server
 
-  constructor(private readonly application: Application) {}
+  constructor(
+    private readonly application: Application,
+    private readonly cacheService: CacheService
+  ) {}
 
   private static normalizePort(
     val: number | string
@@ -42,7 +45,7 @@ export class Server {
     global.redis = redis
     global.config = config
     global.dayjs = dayjs
-    cacheInit()
+    this.cacheService.cacheInit()
     this.server = http.createServer(this.application.app)
 
     this.server.listen(Server.appPort)

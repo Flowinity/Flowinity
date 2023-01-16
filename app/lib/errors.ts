@@ -34,6 +34,35 @@ let Errors = {
   ADMIN_ONLY: {
     message: "You must be an administrator to access this resource.",
     status: 403
+  },
+  SSO_ENFORCED: {
+    message:
+      "You are using a legacy auth method, please reset your password on TPUv1 to continue.",
+    status: 401
+  },
+  NO_SCOPES_PROVIDED: {
+    message: "No scopes were provided.",
+    status: 400
+  },
+  INVALID_SCOPES_PROVIDED: {
+    message: "Invalid scopes were provided.",
+    status: 400
+  },
+  COLLECTION_NO_PERMISSION: {
+    message: "You do not have permission to modify this collection.",
+    status: 403
+  },
+  COLLECTION_ITEM_NOT_FOUND: {
+    message: "The requested item could not be found in this collection.",
+    status: 404
+  },
+  COLLECTION_USER_NOT_FOUND: {
+    message: "The requested user could not be found in this collection.",
+    status: 404
+  },
+  INVALID_PARAMETERS: {
+    message: "Invalid parameters were provided.",
+    status: 400
   }
 }
 

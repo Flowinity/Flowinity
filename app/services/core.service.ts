@@ -4,7 +4,6 @@ import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Upload } from "@app/models/upload.model"
-import { refreshState } from "@app/lib/cache"
 import { Op } from "sequelize"
 import { Pulse } from "@app/models/pulse.model"
 @Service()
@@ -23,10 +22,6 @@ export class CoreService {
       stats: await this.getStats(),
       maintenance: config.maintenance
     }
-  }
-
-  async getCachedState(): Promise<object> {
-    return (await redis.json.get("core:state")) || (await refreshState())
   }
 
   async getAnnouncements(): Promise<Announcement[]> {

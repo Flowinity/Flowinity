@@ -2,12 +2,16 @@ import { Request, Response, Router } from "express"
 import { Service } from "typedi"
 import { StatusCodes } from "http-status-codes"
 import { CoreService } from "@app/services/core.service"
+import { CacheService } from "@app/services/cache.service"
 
 @Service()
 export class CoreController {
   router: Router
 
-  constructor(private readonly coreService: CoreService) {
+  constructor(
+    private readonly coreService: CoreService,
+    private readonly cacheService: CacheService
+  ) {
     this.configureRouter()
   }
 
@@ -56,7 +60,10 @@ export class CoreController {
      */
     this.router.get("/", async (req: Request, res: Response) => {
       try {
-        return res.json(await this.coreService.getCachedState())
+        return res.json(
+          (await redis.json.get("core:state")) ||
+            (await this.cacheService.refreshState())
+        )
       } catch (e) {
         console.error(e)
         return res.sendStatus(500)

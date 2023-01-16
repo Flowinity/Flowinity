@@ -7,8 +7,6 @@ import { RequestAuth } from "@app/types/express"
 import Errors from "@app/lib/errors"
 import Router from "express-promise-router"
 
-//const HTTP_STATUS_CREATED = 201;
-
 @Service()
 export class UserUtilsController {
   router: any

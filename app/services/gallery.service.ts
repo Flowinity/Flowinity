@@ -38,7 +38,7 @@ export class GalleryService {
     await queue.queue.add(upload.id, upload)
     return {
       upload,
-      url: (await utils.getUserDomain(userId)) + upload.attachment
+      url: "https://" + (await utils.getUserDomain(userId)) + upload.attachment
     }
   }
   async getGallery(

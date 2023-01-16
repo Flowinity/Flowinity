@@ -7,6 +7,7 @@ import { CollectionService } from "@app/services/collection.service"
 import { CollectionCache } from "@app/types/collection"
 import Errors from "@app/lib/errors"
 import { GalleryService } from "@app/services/gallery.service"
+import { CacheService } from "@app/services/cache.service"
 
 @Service()
 export class CollectionController {
@@ -14,7 +15,8 @@ export class CollectionController {
 
   constructor(
     private readonly collectionService: CollectionService,
-    private readonly galleryService: GalleryService
+    private readonly galleryService: GalleryService,
+    private readonly cacheService: CacheService
   ) {
     this.configureRouter()
   }
@@ -47,16 +49,11 @@ export class CollectionController {
       "/",
       auth("collections.view"),
       async (req: RequestAuth, res: Response) => {
-        let collections = await this.collectionService.getCachedCollections(
-          req.user.id
+        let collections = await this.collectionService.getCollectionsFilter(
+          req.user.id,
+          req.query?.type?.toString() || "all",
+          req.query?.search?.toString() || ""
         )
-        if (req.query.write) {
-          collections.filter(
-            (collection: CollectionCache) =>
-              collection.permissionsMetadata.write ||
-              collection.permissionsMetadata.configure
-          )
-        }
         res.json(collections)
       }
     )
@@ -94,7 +91,7 @@ export class CollectionController {
             throw Errors.COLLECTION_NOT_FOUND
           }
         }
-        let collections = await this.collectionService.getCachedCollections(
+        let collections = await this.cacheService.getCachedCollections(
           req.user.id
         )
         let collection = collections.find(
@@ -130,7 +127,7 @@ export class CollectionController {
             throw Errors.COLLECTION_NOT_FOUND
           }
         }
-        let collections = await this.collectionService.getCachedCollections(
+        let collections = await this.cacheService.getCachedCollections(
           req.user.id
         )
         let collection = collections.find(
@@ -156,7 +153,7 @@ export class CollectionController {
 
     this.router.post(
       "/attachment",
-      auth("collections.create"),
+      auth("collections.modify"),
       async (req: RequestAuth, res: Response) => {
         const collection =
           await this.collectionService.getCollectionPermissions(
@@ -165,7 +162,7 @@ export class CollectionController {
             "write"
           )
         if (!collection) {
-          throw Errors.COLLECTION_NOT_FOUND
+          throw Errors.COLLECTION_NO_PERMISSION
         }
         const attachment = await this.collectionService.addToCollection(
           req.body.collectionId,
@@ -175,5 +172,108 @@ export class CollectionController {
         res.json(attachment)
       }
     )
+
+    this.router.delete(
+      "/:collectionId/remove/:attachmentId",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const id = parseInt(req.params.collectionId)
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            id,
+            req.user.id,
+            "configure"
+          )
+        if (!collection) {
+          throw Errors.COLLECTION_NO_PERMISSION
+        }
+        await this.collectionService.removeFromCollection(
+          id,
+          parseInt(req.params.attachmentId)
+        )
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.delete(
+      "/:collectionId/user/:id",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const id = parseInt(req.params.collectionId)
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            id,
+            req.user.id,
+            "configure"
+          )
+        if (!collection) {
+          throw Errors.COLLECTION_NO_PERMISSION
+        }
+        await this.collectionService.removeUserFromCollection(
+          id,
+          parseInt(req.params.id)
+        )
+        res.sendStatus(204)
+        await this.cacheService.generateCollectionCacheForUser(
+          parseInt(req.params.id)
+        )
+        await this.cacheService.resetCollectionCache(id)
+      }
+    )
+
+    this.router.post(
+      "/:collectionId/user",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const id = parseInt(req.params.collectionId)
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            id,
+            req.user.id,
+            "configure"
+          )
+        if (!collection) {
+          throw Errors.COLLECTION_NO_PERMISSION
+        }
+        await this.collectionService.addUserToCollection(
+          id,
+          req.user.id,
+          req.body.username,
+          req.body.write,
+          req.body.configure,
+          req.body.read
+        )
+        res.sendStatus(204)
+        await this.cacheService.resetCollectionCache(id)
+      }
+    )
+
+    this.router.patch(
+      "/:collectionId/user",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const id = parseInt(req.params.collectionId)
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            id,
+            req.user.id,
+            "configure"
+          )
+        if (!collection) {
+          throw Errors.COLLECTION_NO_PERMISSION
+        }
+        await this.collectionService.updateUser(
+          id,
+          req.body.id,
+          req.body.write,
+          req.body.configure,
+          req.body.read
+        )
+        res.sendStatus(204)
+        await this.cacheService.resetCollectionCache(id)
+      }
+    )
+
+    this.router.patch("/")
   }
 }

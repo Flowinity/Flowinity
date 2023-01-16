@@ -34,7 +34,7 @@ export class GalleryController {
      */
     this.router.get(
       "/",
-      auth("gallery.view"),
+      auth("uploads.view"),
       async (req: RequestAuth, res: Response) => {
         // Send the request to the service and send the response
         try {
@@ -56,7 +56,7 @@ export class GalleryController {
     // /upload is for legacy clients
     this.router.post(
       ["/", "/upload"],
-      auth("gallery.create"),
+      auth("uploads.create"),
       uploader.single("attachment"),
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {
@@ -73,7 +73,7 @@ export class GalleryController {
 
     this.router.post(
       "/site",
-      auth("gallery.create"),
+      auth("uploads.create"),
       uploader.array("attachments"),
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {
