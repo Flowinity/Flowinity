@@ -76,7 +76,7 @@
     "reflect-metadata": "0.1.13",
     "sequelize": "^6.28.0",
     "sequelize-pool": "8.0.0",
-    "sequelize-typescript": "git+https://github.com/Bytedefined/sequelize-typescript",
+    "sequelize-typescript": "^2.1.5",
     "serve-favicon": "2.5.0",
     "socket.io": "^4.5.4",
     "swagger-jsdoc": "6.2.5",
