@@ -16,6 +16,7 @@ import { CollectionController } from "@app/controllers/collection.controller"
 import { DomainController } from "@app/controllers/domain.controller"
 import { AdminController } from "@app/controllers/admin.controller"
 import { SecurityController } from "@app/controllers/security.controller"
+import { AutoCollectController } from "@app/controllers/autoCollect.controller";
 
 @Service()
 export class Application {
@@ -32,7 +33,8 @@ export class Application {
     private readonly collectionController: CollectionController,
     private readonly domainController: DomainController,
     private readonly adminController: AdminController,
-    private readonly securityController: SecurityController
+    private readonly securityController: SecurityController,
+    private readonly autoCollectController: AutoCollectController
   ) {
     this.app = express()
 
@@ -66,6 +68,7 @@ export class Application {
     this.app.use("/api/v2/domains", this.domainController.router)
     this.app.use("/api/v2/admin", this.adminController.router)
     this.app.use("/api/v2/security", this.securityController.router)
+    this.app.use("/api/v2/autoCollect", this.autoCollectController.router)
     this.app.use("/i", this.fileController.router)
     this.app.use("/api/date", this.dateController.router)
     this.app.use("*", (req, res) => {

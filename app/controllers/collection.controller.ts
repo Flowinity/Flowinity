@@ -297,5 +297,27 @@ export class CollectionController {
         await this.cacheService.generateShareLinkCache()
       }
     )
+
+    this.router.patch(
+      "/:collectionId/pin/:attachmentId",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const id = parseInt(req.params.collectionId)
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            id,
+            req.user.id,
+            "configure"
+          )
+
+        if (!collection) {
+          throw Errors.COLLECTION_NO_PERMISSION
+        }
+
+        await this.collectionService.updatePin(id)
+        res.sendStatus(204)
+        await this.cacheService.resetCollectionCache(id)
+      }
+    )
   }
 }

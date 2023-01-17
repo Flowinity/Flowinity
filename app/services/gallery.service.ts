@@ -8,7 +8,6 @@ import { User } from "@app/models/user.model"
 import sequelize from "@app/db"
 import path from "path"
 import { CollectionItem } from "@app/models/collectionItem.model"
-//import { CollectionPin } from "@app/models/collectionPin.model"
 import queue from "@app/lib/queue"
 import { Star } from "@app/models/star.model"
 
@@ -42,6 +41,7 @@ export class GalleryService {
       url: "https://" + (await utils.getUserDomain(userId)) + upload.attachment
     }
   }
+
   async getGallery(
     id: number,
     page: number = 1,
@@ -93,17 +93,6 @@ export class GalleryService {
           },
           attributes: ["id"],
           required: true,
-          include: [
-            // TODO: FIX BROKEN
-            /*{
-              model: CollectionPin,
-              as: "pinned",
-              required: false,
-              where: {
-                collectionId: id
-              }
-            }*/
-          ]
         },
         {
           model: Collection,
@@ -143,8 +132,7 @@ export class GalleryService {
       where,
       include,
       limit: 12,
-      offset,
-      order: [["createdAt", "DESC"]]
+      offset
     })
     const uploadCount = await Upload.count({
       where,

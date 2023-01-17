@@ -11,7 +11,6 @@ import {
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
-import { CollectionPin } from "@app/models/collectionPin.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Star } from "@app/models/star.model"
 
@@ -60,9 +59,6 @@ export class Upload extends Model {
 
   @HasOne(() => CollectionItem, "attachmentId")
   item: CollectionItem
-
-  @HasOne(() => CollectionPin, "attachmentId")
-  pinned: CollectionPin
 
   @BelongsToMany(
     () => Collection,

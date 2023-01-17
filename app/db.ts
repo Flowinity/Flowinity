@@ -9,4 +9,5 @@ const sequelize = new Sequelize({
     return true
   }
 })
+
 export default sequelize

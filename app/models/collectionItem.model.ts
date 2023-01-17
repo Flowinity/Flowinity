@@ -5,13 +5,12 @@ import {
   BelongsTo,
   Unique,
   AllowNull,
-  HasOne
+  //HasOne
   //HasMany
-} from "sequelize-typescript"
+} from "sequelize-typescript";
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { Upload } from "@app/models/upload.model"
-import { CollectionPin } from "@app/models/collectionPin.model"
 
 @Table
 export class CollectionItem extends Model {
@@ -29,15 +28,16 @@ export class CollectionItem extends Model {
   @Column
   identifier: string
 
+  @Column
+  pinned: boolean
+
   @BelongsTo(() => User, "userId")
   user: User
 
+  // associate collectionItem with collection
   @BelongsTo(() => Collection, "collectionId")
   collection: Collection
 
   @BelongsTo(() => Upload, "attachmentId")
   attachment: Upload
-
-  @HasOne(() => CollectionPin, "collectionItemId")
-  pinned: CollectionPin
 }

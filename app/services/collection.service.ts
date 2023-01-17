@@ -49,14 +49,15 @@ export class CollectionService {
         }
       ]
     })
-    if (!collection) {
-      throw Errors.COLLECTION_NOT_FOUND
-    }
+
+    if (!collection) throw Errors.COLLECTION_NOT_FOUND
+
     collection.dataValues.items = await CollectionItem.count({
       where: {
         collectionId: collection.id
       }
     })
+
     return collection
   }
 
@@ -196,11 +197,13 @@ export class CollectionService {
         (collection) => collection.permissionsMetadata.configure
       )
     }
+
     if (search) {
       collections = collections.filter((collection) =>
         collection.name.toLowerCase().includes(search.toLowerCase())
       )
     }
+
     return collections
   }
 
@@ -210,14 +213,12 @@ export class CollectionService {
     permission: "write" | "configure" | "read"
   ) {
     const collections = await redis.json.get(`collections:${userId}`)
-
+    console.log(collections)
     const collection = collections.find(
       (collection: CollectionCache) => collection.id === collectionId
     )
 
-    if (!collection) {
-      return false
-    }
+    if (!collection) return false
 
     return collection.permissionsMetadata[permission]
   }
@@ -265,9 +266,9 @@ export class CollectionService {
         attachmentId: uploadId
       }
     })
-    if (!result) {
-      throw Errors.COLLECTION_ITEM_NOT_FOUND
-    }
+
+    if (!result) throw Errors.COLLECTION_ITEM_NOT_FOUND
+
     return result
   }
 
@@ -278,9 +279,9 @@ export class CollectionService {
         recipientId
       }
     })
-    if (!result) {
-      throw Errors.COLLECTION_USER_NOT_FOUND
-    }
+
+    if (!result) throw Errors.COLLECTION_USER_NOT_FOUND
+
     return result
   }
 
@@ -297,17 +298,21 @@ export class CollectionService {
         id: collectionId
       }
     })
+
     if (!collection) {
       throw Errors.COLLECTION_NOT_FOUND
     }
+
     const user = await User.findOne({
       where: {
         username
       }
     })
+
     if (!user) {
       throw Errors.USER_NOT_FOUND
     }
+
     return await CollectionUser.create({
       collectionId,
       recipientId: user.id,
@@ -338,9 +343,9 @@ export class CollectionService {
         }
       }
     )
-    if (!result) {
-      throw Errors.COLLECTION_USER_NOT_FOUND
-    }
+
+    if (!result) throw Errors.COLLECTION_USER_NOT_FOUND
+
     return result
   }
 
@@ -377,6 +382,24 @@ export class CollectionService {
         }
       default:
         throw Errors.INVALID_PARAMETERS
+    }
+  }
+
+  async updatePin(collectionItemId: number) {
+    const collectionItem = await CollectionItem.findOne({
+      where: {
+        id: collectionItemId
+      }
+    })
+
+    if (!collectionItem) throw Errors.COLLECTION_ITEM_NOT_FOUND
+
+    await collectionItem.update({
+      pinned: !collectionItem.pinned
+    })
+
+    return {
+      pinned: collectionItem.pinned
     }
   }
 }

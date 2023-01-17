@@ -10,7 +10,6 @@ import { CoreService } from "@app/services/core.service"
 
 @Service()
 export class CacheService {
-  constructor(private readonly collectionService: CollectionService) {}
   async refreshState() {
     const start = new Date().getTime()
     console.info("[REDIS] Generating state cache...")
@@ -26,11 +25,12 @@ export class CacheService {
   }
 
   async getCachedCollections(userId: number) {
+    const collectionService = Container.get(CollectionService)
     if (await redis.json.get(`collections:${userId}`)) {
       return await redis.json.get(`collections:${userId}`)
     } else {
       this.generateCollectionCache().then(() => {})
-      return await this.collectionService.getCollections(userId)
+      return await collectionService.getCollections(userId)
     }
   }
 
@@ -86,11 +86,12 @@ export class CacheService {
   }
 
   async generateCollectionCache() {
+    const collectionService = Container.get(CollectionService)
     console.info("[REDIS] Generating collections cache...")
     let start = new Date().getTime()
     const users = await User.findAll()
     for (const user of users) {
-      const collections = await this.collectionService.getCollections(user.id)
+      const collections = await collectionService.getCollections(user.id)
       redis.json.set(`collections:${user.id}`, "$", collections)
     }
     let end = new Date().getTime()
@@ -98,20 +99,22 @@ export class CacheService {
   }
 
   async generateCollectionCacheForUser(id: number) {
+    const collectionService = Container.get(CollectionService)
     console.info("[REDIS] Generating collections cache for user...")
     let start = new Date().getTime()
-    const collections = await this.collectionService.getCollections(id)
+    const collections = await collectionService.getCollections(id)
     redis.json.set(`collections:${id}`, "$", collections)
     let end = new Date().getTime()
     console.info(`[REDIS] User collections cache generated in ${end - start}ms`)
   }
 
   async resetCollectionCache(id: number) {
+    const collectionService = Container.get(CollectionService)
     console.info(
       "[REDIS] Generating collections cache for individual collection..."
     )
     let start = new Date().getTime()
-    const collection = await this.collectionService.getCollection(id)
+    const collection = await collectionService.getCollection(id)
 
     async function updateCache(user: CollectionUser) {
       const id = user.recipientId
