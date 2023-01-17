@@ -83,10 +83,6 @@ export class GalleryService {
     if (type === "collection") {
       include = [
         {
-          model: Collection,
-          as: "collections",
-        },
-        {
           model: CollectionItem,
           as: "item",
           where: {
@@ -127,7 +123,7 @@ export class GalleryService {
           model: Collection,
           as: "collections"
         },*/
-    const uploads = await Upload.findAll({
+    let uploads = await Upload.findAll({
       where,
       include,
       limit: 12,
@@ -147,6 +143,23 @@ export class GalleryService {
       ]
     })
 
+    // for each upload in the uploads array, get the other collections that that particular image is in and store the data for those collections in an array called collections within each upload
+    for(let upload of uploads) {
+      // only return collection from collectionitem
+      const items = await CollectionItem.findAll({
+        where: {
+          attachmentId: upload.id
+        },
+        include: [
+          {
+            model: Collection,
+            as: "collection"
+          }
+          ]
+      })
+      upload.dataValues.collections = items.map(item => item.dataValues.collection)
+      // also this hack caused the performance to go from 30-90ms to 300ms per page
+    }
     const uploadCount = await Upload.count({
       where,
       include
