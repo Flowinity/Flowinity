@@ -37,15 +37,8 @@ export class AuthController {
      *           required: true
      */
     this.router.post("/login", async (req: Request, res: Response) => {
-      if (!req.body.email || !req.body.password)
-        throw Errors.INVALID_CREDENTIALS
-      res.json(
-        await this.authService.login(
-          req.body.email,
-          req.body.password,
-          req.body.code
-        )
-      )
+      if (!req.body.email || !req.body.password) throw Errors.INVALID_CREDENTIALS
+      res.json(await this.authService.login(req.body.email, req.body.password, req.body.code))
     })
   }
 }

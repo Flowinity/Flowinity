@@ -1,23 +1,23 @@
 {
-  "development": {
-    "username": "username",
-    "password": "password",
-    "database": "database",
-    "host": "host",
-    "dialect": "mysql"
+  "development" : {
+    "username" : "username",
+    "password" : "password",
+    "database" : "database",
+    "host" : "host",
+    "dialect" : "mysql"
   },
-  "test": {
-    "username": "username",
-    "password": "password",
-    "database": "database",
-    "host": "host",
-    "dialect": "mysql"
+  "test" : {
+    "username" : "username",
+    "password" : "password",
+    "database" : "database",
+    "host" : "host",
+    "dialect" : "mysql"
   },
-  "production": {
-    "username": "username",
-    "password": "password",
-    "database": "database",
-    "host": "host",
-    "dialect": "mysql"
+  "production" : {
+    "username" : "username",
+    "password" : "password",
+    "database" : "database",
+    "host" : "host",
+    "dialect" : "mysql"
   }
 }

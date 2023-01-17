@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Service } from "typedi"
 import { Upload } from "@app/models/upload.model"
 import paginate from "jw-paginate"
@@ -19,9 +21,7 @@ export class GalleryService {
       userId: userId,
       originalFilename: file.originalname,
       name: file.originalname,
-      type:
-        utils.getTypeByExt(path.extname(file.originalname)?.split(".")[1]) ||
-        "binary",
+      type: utils.getTypeByExt(path.extname(file.originalname)?.split(".")[1]) || "binary",
       fileSize: file.size,
       deletable: true
     })
@@ -41,7 +41,6 @@ export class GalleryService {
       url: "https://" + (await utils.getUserDomain(userId)) + upload.attachment
     }
   }
-
   async getGallery(
     id: number,
     page: number = 1,
@@ -79,24 +78,20 @@ export class GalleryService {
         { data: { [Op.like]: "%" + search + "%" } }
       ]
     }
-    const where = showMetadata
-      ? { ...base, ...metadata }
-      : { ...base, ...noMetadata }
+    const where = showMetadata ? { ...base, ...metadata } : { ...base, ...noMetadata }
     let include: object = []
     if (type === "collection") {
       include = [
+        {
+          model: Collection,
+          as: "collections",
+        },
         {
           model: CollectionItem,
           as: "item",
           where: {
             collectionId: id
           },
-          attributes: ["id"],
-          required: true,
-        },
-        {
-          model: Collection,
-          as: "collections"
         },
         {
           model: User,
@@ -128,12 +123,30 @@ export class GalleryService {
         }
       ]
     }
+/*       {
+          model: Collection,
+          as: "collections"
+        },*/
     const uploads = await Upload.findAll({
       where,
       include,
       limit: 12,
-      offset
+      offset,
+      order: type === "collection" ? [
+        [
+          {
+            model: CollectionItem,
+            as: "item"
+          },
+          "pinned",
+          "DESC"
+        ],
+        ["createdAt", "DESC"]
+      ] : [
+        ["createdAt", "DESC"]
+      ]
     })
+
     const uploadCount = await Upload.count({
       where,
       include

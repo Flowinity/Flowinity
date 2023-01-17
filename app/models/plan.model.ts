@@ -6,6 +6,7 @@ import {
   Default,
   DataType
 } from "sequelize-typescript"
+
 @Table
 export class Plan extends Model {
   @Column

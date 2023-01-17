@@ -8,10 +8,7 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     console.log(file)
     // path.extname = file extension
-    cb(
-      null,
-      cryptoRandomString({ length: 12 }) + path.extname(file.originalname)
-    )
+    cb(null, cryptoRandomString({ length: 12 }) + path.extname(file.originalname))
   }
 })
 

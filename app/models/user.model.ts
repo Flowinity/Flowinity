@@ -41,8 +41,8 @@ export class User extends Model {
   darkTheme: boolean
 
   /*@Default(false)
-  @Column
-  emailVerified: boolean*/
+    @Column
+    emailVerified: boolean*/
 
   @Default(false)
   @Column

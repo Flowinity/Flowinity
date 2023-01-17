@@ -1,14 +1,17 @@
 import { Service } from "typedi"
 import { CacheService } from "@app/services/cache.service"
+
 export enum CacheType {
   "everything",
   "state",
   "collections",
   "sharelinks"
 }
+
 @Service()
 export class AdminService {
   constructor(private readonly cacheService: CacheService) {}
+
   async getStats() {
     //TODO
     return {}

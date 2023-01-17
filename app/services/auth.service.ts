@@ -20,14 +20,7 @@ export class AuthService {
           }
         ]
       },
-      attributes: [
-        "id",
-        "username",
-        "password",
-        "email",
-        "totpEnable",
-        "totpSecret"
-      ]
+      attributes: ["id", "username", "password", "email", "totpEnable", "totpSecret"]
     })
     if (!user) {
       throw Errors.INVALID_CREDENTIALS

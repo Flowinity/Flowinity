@@ -1,14 +1,4 @@
-import {
-  Table,
-  Column,
-  Model,
-  Default,
-  DefaultScope,
-  BelongsTo,
-  DataType,
-  Unique,
-  HasMany
-} from "sequelize-typescript"
+import { Table, Column, Model, Default, DefaultScope, BelongsTo, DataType, Unique, HasMany } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 
 @DefaultScope(() => ({

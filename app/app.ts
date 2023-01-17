@@ -16,7 +16,7 @@ import { CollectionController } from "@app/controllers/collection.controller"
 import { DomainController } from "@app/controllers/domain.controller"
 import { AdminController } from "@app/controllers/admin.controller"
 import { SecurityController } from "@app/controllers/security.controller"
-import { AutoCollectController } from "@app/controllers/autoCollect.controller";
+import { AutoCollectController } from "@app/controllers/autoCollect.controller"
 
 @Service()
 export class Application {
@@ -55,11 +55,7 @@ export class Application {
   }
 
   bindRoutes(): void {
-    this.app.use(
-      "/api/docs",
-      swaggerUi.serve,
-      swaggerUi.setup(swaggerJSDoc(this.swaggerOptions))
-    )
+    this.app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)))
     this.app.use("/api/v2/user", this.userutilsController.router)
     this.app.use("/api/v2/core", this.coreController.router)
     this.app.use("/api/v2/gallery", this.galleryController.router)
@@ -99,41 +95,31 @@ export class Application {
 
   private errorHandling(): void {
     // When previous handlers have not served a request: path wasn't found
-    this.app.use(
-      (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
-      ) => {
-        const err: HttpException = new HttpException("Not Found")
-        next(err)
-      }
-    )
+    this.app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+      const err: HttpException = new HttpException("Not Found")
+      next(err)
+    })
 
     // development error handler
     // will print stacktrace
     if (this.app.get("env") === "development") {
-      this.app.use(
-        (err: HttpException, req: express.Request, res: express.Response) => {
-          res.status(err.status || 500)
-          res.send({
-            message: err.message,
-            error: err
-          })
-        }
-      )
+      this.app.use((err: HttpException, req: express.Request, res: express.Response) => {
+        res.status(err.status || 500)
+        res.send({
+          message: err.message,
+          error: err
+        })
+      })
     }
 
     // production error handler
     // no stacktraces  leaked to user (in production env only)
-    this.app.use(
-      (err: HttpException, req: express.Request, res: express.Response) => {
-        res.status(err.status || 500)
-        res.send({
-          message: err.message,
-          error: {}
-        })
-      }
-    )
+    this.app.use((err: HttpException, req: express.Request, res: express.Response) => {
+      res.status(err.status || 500)
+      res.send({
+        message: err.message,
+        error: {}
+      })
+    })
   }
 }

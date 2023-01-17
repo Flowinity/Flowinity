@@ -66,8 +66,7 @@ const auth = (scope: string, passthrough: boolean = false) => {
               errors: [
                 {
                   name: "unauthScope",
-                  message:
-                    "You do not have permission to access this resource due to your current API key scopes.",
+                  message: "You do not have permission to access this resource due to your current API key scopes.",
                   status: 401
                 }
               ]
@@ -94,8 +93,7 @@ const auth = (scope: string, passthrough: boolean = false) => {
             errors: [
               {
                 name: "noJWT",
-                message:
-                  "You must provide a token in the Authorization header.",
+                message: "You must provide a token in the Authorization header.",
                 status: 401
               }
             ]

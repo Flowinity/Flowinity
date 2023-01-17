@@ -6,6 +6,7 @@ import { CollectionItem } from "@app/models/collectionItem.model"
 import { Upload } from "@app/models/upload.model"
 import { Op } from "sequelize"
 import { Pulse } from "@app/models/pulse.model"
+
 @Service()
 export class CoreService {
   async getState(): Promise<object> {
@@ -84,6 +85,7 @@ export class CoreService {
       pulses: await Pulse.count()
     }
   }
+
   getExperiments(): object {
     const experiments = {
       API_VERSION_V2: true,
@@ -111,8 +113,7 @@ export class CoreService {
       AUG_2021_UI: false,
       meta: {
         API_VERSION_V2: {
-          description:
-            "Use the new TypeScript rewritten API for TPU (incomplete)",
+          description: "Use the new TypeScript rewritten API for TPU (incomplete)",
           createdAt: "2023-01-11T00:00:00.000Z",
           refresh: true
         },
@@ -156,8 +157,7 @@ export class CoreService {
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         HOVER_CHIP_HOVER: {
-          description:
-            "Whether the hover chip component is always expanded or expand on hover.",
+          description: "Whether the hover chip component is always expanded or expand on hover.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         PULSE_INTERVAL: {
@@ -169,8 +169,7 @@ export class CoreService {
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         EXPERIENCE_FLUID: {
-          description:
-            "Whether the gallery, and other pages are fluid on low resolution displays.",
+          description: "Whether the gallery, and other pages are fluid on low resolution displays.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         EXPERIENCE_ITEMS_PER_PAGE: {
@@ -186,8 +185,7 @@ export class CoreService {
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         ANDROID_CONFIG: {
-          description:
-            "Ability to download Automate configuration files in Client Settings.",
+          description: "Ability to download Automate configuration files in Client Settings.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         EXPERIENCE_API_KEY_LOGIN: {
@@ -195,13 +193,11 @@ export class CoreService {
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         LEGACY_ATTRIBUTES_UI: {
-          description:
-            "Whether the legacy attributes UI in Settings > About is enabled.",
+          description: "Whether the legacy attributes UI in Settings > About is enabled.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         LEGACY_FLOWINITY_SSO: {
-          description:
-            "Re-enable the ability to login, and link a Flowinity SSO account.",
+          description: "Re-enable the ability to login, and link a Flowinity SSO account.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         FORCE_DEV_MODE: {

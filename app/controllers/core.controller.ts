@@ -8,10 +8,7 @@ import { CacheService } from "@app/services/cache.service"
 export class CoreController {
   router: Router
 
-  constructor(
-    private readonly coreService: CoreService,
-    private readonly cacheService: CacheService
-  ) {
+  constructor(private readonly coreService: CoreService, private readonly cacheService: CacheService) {
     this.configureRouter()
   }
 
@@ -60,10 +57,7 @@ export class CoreController {
      */
     this.router.get("/", async (req: Request, res: Response) => {
       try {
-        return res.json(
-          (await redis.json.get("core:state")) ||
-            (await this.cacheService.refreshState())
-        )
+        return res.json((await redis.json.get("core:state")) || (await this.cacheService.refreshState()))
       } catch (e) {
         console.error(e)
         return res.sendStatus(500)

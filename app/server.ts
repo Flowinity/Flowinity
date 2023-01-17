@@ -12,22 +12,15 @@ import socket from "./lib/socket"
 
 @Service()
 export class Server {
-  private static readonly appPort: string | number | boolean =
-    Server.normalizePort(process.env.PORT || "34582")
+  private static readonly appPort: string | number | boolean = Server.normalizePort(process.env.PORT || "34582")
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   private static readonly baseDix: number = 10
   private server: http.Server
 
-  constructor(
-    private readonly application: Application,
-    private readonly cacheService: CacheService
-  ) {}
+  constructor(private readonly application: Application, private readonly cacheService: CacheService) {}
 
-  private static normalizePort(
-    val: number | string
-  ): number | string | boolean {
-    const port: number =
-      typeof val === "string" ? parseInt(val, this.baseDix) : val
+  private static normalizePort(val: number | string): number | string | boolean {
+    const port: number = typeof val === "string" ? parseInt(val, this.baseDix) : val
     if (isNaN(port)) {
       return val
     } else if (port >= 0) {
@@ -36,6 +29,7 @@ export class Server {
       return false
     }
   }
+
   async init(): Promise<void> {
     this.application.app.set("port", Server.appPort)
     this.application.app.set("trust proxy", 1)
@@ -50,9 +44,7 @@ export class Server {
 
     this.server.listen(Server.appPort)
     socket.init(this.application.app, this.server)
-    this.server.on("error", (error: NodeJS.ErrnoException) =>
-      this.onError(error)
-    )
+    this.server.on("error", (error: NodeJS.ErrnoException) => this.onError(error))
     this.server.on("listening", () => this.onListening())
   }
 
@@ -60,10 +52,7 @@ export class Server {
     if (error.syscall !== "listen") {
       throw error
     }
-    const bind: string =
-      typeof Server.appPort === "string"
-        ? "Pipe " + Server.appPort
-        : "Port " + Server.appPort
+    const bind: string = typeof Server.appPort === "string" ? "Pipe " + Server.appPort : "Port " + Server.appPort
     switch (error.code) {
       case "EACCES":
         // eslint-disable-next-line no-console

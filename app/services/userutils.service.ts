@@ -59,10 +59,7 @@ export class UserUtilsService {
     })
   }
 
-  async setDefaultDomain(
-    id: number,
-    domainName: string
-  ): Promise<[affectedCount: number]> {
+  async setDefaultDomain(id: number, domainName: string): Promise<[affectedCount: number]> {
     const domain = await Domain.findOne({
       where: {
         domain: domainName,
@@ -82,12 +79,7 @@ export class UserUtilsService {
     )
   }
 
-  async sendFeedback(
-    id: number,
-    feedbackText: string,
-    starRating: number,
-    route: string
-  ): Promise<void> {
+  async sendFeedback(id: number, feedbackText: string, starRating: number, route: string): Promise<void> {
     await Feedback.create({
       userId: id,
       feedbackText,

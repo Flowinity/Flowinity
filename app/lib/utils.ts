@@ -21,11 +21,7 @@ async function generateAPIKey(type: "session" | "api") {
   }
 }
 
-async function createSession(
-  userId: number,
-  scopes: string,
-  type: "session" | "api"
-) {
+async function createSession(userId: number, scopes: string, type: "session" | "api") {
   const token = await generateAPIKey(type)
   await Session.create({
     token,
@@ -127,12 +123,7 @@ async function getCollection(id: number, userId: number) {
   return collection
 }
 
-function checkOperator(
-  text: any,
-  operator: string,
-  value: string,
-  ruleId: number
-) {
+function checkOperator(text: any, operator: string, value: string, ruleId: number) {
   if (["lt", "lte", "gt", "gte"].includes(operator)) {
     if (!Number.isInteger(text)) {
       text = text?.length || 0
@@ -183,6 +174,7 @@ function checkOperator(
     return console.error("Unknown operator.")
   }
 }
+
 async function processFile(upload: Upload, textMetadata: string) {
   try {
     const rules = await AutoCollectRule.findAll({
@@ -201,52 +193,19 @@ async function processFile(upload: Upload, textMetadata: string) {
         let resultsOfSubrule = []
         for (const subsubrule of subrule.rules) {
           if (subsubrule.type === "metadata") {
-            resultsOfSubrule.push(
-              checkOperator(
-                textMetadata,
-                subsubrule.operator,
-                subsubrule.value,
-                rule.id
-              )
-            )
+            resultsOfSubrule.push(checkOperator(textMetadata, subsubrule.operator, subsubrule.value, rule.id))
           } else if (subsubrule.type === "name") {
             resultsOfSubrule.push(
-              checkOperator(
-                upload.originalFilename,
-                subsubrule.operator,
-                subsubrule.value,
-                rule.id
-              )
+              checkOperator(upload.originalFilename, subsubrule.operator, subsubrule.value, rule.id)
             )
           } else if (subsubrule.type === "extension") {
             const extension = upload.originalFilename?.split(".")?.pop()
-            resultsOfSubrule.push(
-              checkOperator(
-                extension,
-                subsubrule.operator,
-                subsubrule.value,
-                rule.id
-              )
-            )
+            resultsOfSubrule.push(checkOperator(extension, subsubrule.operator, subsubrule.value, rule.id))
           } else if (subsubrule.type === "metadata-word-length") {
             const wordCount = textMetadata?.split(" ")?.length || 0
-            resultsOfSubrule.push(
-              checkOperator(
-                wordCount,
-                subsubrule.operator,
-                subsubrule.value,
-                rule.id
-              )
-            )
+            resultsOfSubrule.push(checkOperator(wordCount, subsubrule.operator, subsubrule.value, rule.id))
           } else if (subsubrule.type === "metadata-char-length") {
-            resultsOfSubrule.push(
-              checkOperator(
-                textMetadata.length,
-                subsubrule.operator,
-                subsubrule.value,
-                rule.id
-              )
-            )
+            resultsOfSubrule.push(checkOperator(textMetadata.length, subsubrule.operator, subsubrule.value, rule.id))
           }
         }
         if (!resultsOfSubrule.some((result) => !result?.value)) {
@@ -268,15 +227,12 @@ async function processFile(upload: Upload, textMetadata: string) {
           info: results
         })
         /*if (req) {
-          const io = req.app.get("io")
-          io.to(upload.UserId).emit("autoCollectApproval", {
-            type: "new"
-          })
-        }*/
-      } else if (
-        results.some((result) => result.value) &&
-        !rule.requireApproval
-      ) {
+                  const io = req.app.get("io")
+                  io.to(upload.UserId).emit("autoCollectApproval", {
+                    type: "new"
+                  })
+                }*/
+      } else if (results.some((result) => result.value) && !rule.requireApproval) {
         await CollectionItem.create({
           collectionId: rule.collectionId,
           attachmentId: upload.id,

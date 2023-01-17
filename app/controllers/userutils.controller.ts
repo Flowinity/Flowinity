@@ -39,13 +39,9 @@ export class UserUtilsController {
      *             format: TPU-KEY
      *           required: true
      */
-    this.router.get(
-      "/",
-      auth("user.view"),
-      async (req: RequestAuth, res: Response) => {
-        res.json(req.user)
-      }
-    )
+    this.router.get("/", auth("user.view"), async (req: RequestAuth, res: Response) => {
+      res.json(req.user)
+    })
 
     /**
      * @swagger
@@ -68,13 +64,9 @@ export class UserUtilsController {
      *             format: TPU-KEY
      *           required: true
      */
-    this.router.get(
-      "/all",
-      auth("user.view"),
-      async (req: Request, res: Response) => {
-        res.json(await this.userUtilsService.getAllUsers())
-      }
-    )
+    this.router.get("/all", auth("user.view"), async (req: Request, res: Response) => {
+      res.json(await this.userUtilsService.getAllUsers())
+    })
 
     /**
      * @swagger
@@ -102,18 +94,14 @@ export class UserUtilsController {
      *             type: string
      *           required: true
      */
-    this.router.get(
-      "/profile/:username",
-      auth("user.view"),
-      async (req: Request, res: Response) => {
-        const user = await this.userUtilsService.getUser(req.params.username)
-        if (user) {
-          res.json(user)
-        } else {
-          throw Errors.USER_NOT_FOUND
-        }
+    this.router.get("/profile/:username", auth("user.view"), async (req: Request, res: Response) => {
+      const user = await this.userUtilsService.getUser(req.params.username)
+      if (user) {
+        res.json(user)
+      } else {
+        throw Errors.USER_NOT_FOUND
       }
-    )
+    })
 
     /**
      * @swagger
@@ -177,17 +165,10 @@ export class UserUtilsController {
      *             type: string
      *           required: true
      */
-    this.router.patch(
-      "/domain",
-      auth("user.modify"),
-      async (req: RequestAuth, res: Response) => {
-        await this.userUtilsService.setDefaultDomain(
-          req.user.id,
-          req.body.domain
-        )
-        res.sendStatus(204)
-      }
-    )
+    this.router.patch("/domain", auth("user.modify"), async (req: RequestAuth, res: Response) => {
+      await this.userUtilsService.setDefaultDomain(req.user.id, req.body.domain)
+      res.sendStatus(204)
+    })
 
     /**
      * @swagger
@@ -215,18 +196,9 @@ export class UserUtilsController {
      *             type: string
      *           required: true
      */
-    this.router.post(
-      "/feedback",
-      auth("user.modify"),
-      async (req: RequestAuth, res: Response) => {
-        await this.userUtilsService.sendFeedback(
-          req.user.id,
-          req.body.text,
-          req.body.starRating,
-          req.body.route
-        )
-        res.sendStatus(204)
-      }
-    )
+    this.router.post("/feedback", auth("user.modify"), async (req: RequestAuth, res: Response) => {
+      await this.userUtilsService.sendFeedback(req.user.id, req.body.text, req.body.starRating, req.body.route)
+      res.sendStatus(204)
+    })
   }
 }

@@ -37,12 +37,8 @@ export class DomainController {
      *             format: TPU-KEY
      *           required: true
      */
-    this.router.get(
-      "/",
-      auth("user.view"),
-      async (req: RequestAuth, res: Response) => {
-        res.json(await this.domainService.getDomains())
-      }
-    )
+    this.router.get("/", auth("user.view"), async (req: RequestAuth, res: Response) => {
+      res.json(await this.domainService.getDomains())
+    })
   }
 }

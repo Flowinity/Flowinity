@@ -80,9 +80,7 @@ export class CacheService {
       redis.json.set(`shareLinks:${collection.shareLink}`, "$", collection)
     }
     const end = new Date().getTime()
-    console.info(
-      `[REDIS] Collections ShareLink cache generated in ${end - start}ms`
-    )
+    console.info(`[REDIS] Collections ShareLink cache generated in ${end - start}ms`)
   }
 
   async generateCollectionCache() {
@@ -110,9 +108,7 @@ export class CacheService {
 
   async resetCollectionCache(id: number) {
     const collectionService = Container.get(CollectionService)
-    console.info(
-      "[REDIS] Generating collections cache for individual collection..."
-    )
+    console.info("[REDIS] Generating collections cache for individual collection...")
     let start = new Date().getTime()
     const collection = await collectionService.getCollection(id)
 
@@ -121,9 +117,7 @@ export class CacheService {
 
       console.info("[REDIS] Patching cache for user", id)
       const collections = await redis.json.get(`collections:${id}`)
-      const index: number = collections.findIndex(
-        (c: Collection) => c.id === collection.id
-      )
+      const index: number = collections.findIndex((c: Collection) => c.id === collection.id)
       if (index === -1) {
         collections.push({
           ...collection.toJSON(),
@@ -158,9 +152,7 @@ export class CacheService {
     } as CollectionUser)
 
     let end = new Date().getTime()
-    console.info(
-      `[REDIS] Individual collection cache generated in ${end - start}ms`
-    )
+    console.info(`[REDIS] Individual collection cache generated in ${end - start}ms`)
   }
 
   cacheInit() {

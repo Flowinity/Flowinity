@@ -1,12 +1,4 @@
-import {
-  Table,
-  Column,
-  Model,
-  BelongsTo,
-  AllowNull,
-  HasMany,
-  HasOne
-} from "sequelize-typescript"
+import { Table, Column, Model, BelongsTo, AllowNull, HasMany, HasOne } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { CollectionUser } from "@app/models/collectionUser.model"
@@ -44,5 +36,5 @@ export class Collection extends Model {
 
   //TODO
   /*@HasMany(() => AutoCollectApproval, "collectionId")
-  autoCollectApprovals: AutoCollectApproval[]*/
+    autoCollectApprovals: AutoCollectApproval[]*/
 }

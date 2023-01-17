@@ -1,11 +1,4 @@
-import {
-  Table,
-  Column,
-  Model,
-  BelongsTo,
-  Default,
-  DataType
-} from "sequelize-typescript"
+import { Table, Column, Model, BelongsTo, Default, DataType } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { Upload } from "@app/models/upload.model"

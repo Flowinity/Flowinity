@@ -37,20 +37,13 @@ export class FileController {
       if (!upload) {
         throw Errors.NOT_FOUND
       }
-      if (
-        upload.type === "image" ||
-        upload.type === "video" ||
-        upload.type === "audio"
-      ) {
+      if (upload.type === "image" || upload.type === "video" || upload.type === "audio") {
         res.sendFile("/" + upload.attachment, {
           root: config.storage,
           name: upload.originalFilename
         })
       } else {
-        res.download(
-          config.storage + "/" + upload.attachment,
-          upload.originalFilename
-        )
+        res.download(config.storage + "/" + upload.attachment, upload.originalFilename)
       }
     })
   }

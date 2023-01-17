@@ -1,14 +1,4 @@
-import {
-  Table,
-  Column,
-  Model,
-  BelongsTo,
-  Unique,
-  HasOne,
-  HasMany,
-  BelongsToMany,
-  DataType
-} from "sequelize-typescript"
+import { Table, Column, Model, BelongsTo, Unique, HasOne, HasMany, BelongsToMany, DataType } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
@@ -60,12 +50,7 @@ export class Upload extends Model {
   @HasOne(() => CollectionItem, "attachmentId")
   item: CollectionItem
 
-  @BelongsToMany(
-    () => Collection,
-    () => CollectionItem,
-    "attachmentId",
-    "collectionId"
-  )
+  @BelongsToMany(() => Collection, () => CollectionItem, "attachmentId", "collectionId")
   collections: Collection[]
 
   @HasMany(() => CollectionItem, "attachmentId")

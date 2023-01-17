@@ -1,12 +1,12 @@
-'use strict';
+"use strict"
 
-/** @type {import('sequelize-cli').Migration} */
+/** @type {import("sequelize-cli").Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.renameColumn("Uploads", "UserId", "userId")
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     /**
      * Add reverting commands here.
      *
@@ -14,4 +14,4 @@ module.exports = {
      * await queryInterface.dropTable('users');
      */
   }
-};
+}

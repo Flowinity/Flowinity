@@ -5,12 +5,14 @@ import { RequestAuth } from "@app/types/express"
 import Errors from "@app/lib/errors"
 import Router from "express-promise-router"
 import { AdminService } from "@app/services/admin.service"
+
 export enum CacheType {
   "everything",
   "state",
   "collections",
   "sharelinks"
 }
+
 @Service()
 export class AdminController {
   router: any
@@ -22,16 +24,12 @@ export class AdminController {
   private configureRouter(): void {
     this.router = Router()
 
-    this.router.all(
-      "*",
-      auth("*"),
-      async (req: RequestAuth, res: Response, next: any) => {
-        if (!req.user.administrator) {
-          throw Errors.ADMIN_ONLY
-        }
-        next()
+    this.router.all("*", auth("*"), async (req: RequestAuth, res: Response, next: any) => {
+      if (!req.user.administrator) {
+        throw Errors.ADMIN_ONLY
       }
-    )
+      next()
+    })
 
     /**
      * @swagger
@@ -80,20 +78,14 @@ export class AdminController {
      *             format: TPU-KEY
      *           required: true
      */
-    this.router.delete(
-      ["/cache/:id", "/cache/:id/:uid"],
-      auth("*"),
-      async (req: RequestAuth, res: Response) => {
-        if (req.params.uid) {
-          res.sendStatus(204)
-          await this.adminService.purgeUserCache(parseInt(req.params.uid))
-        } else {
-          res.sendStatus(204)
-          await this.adminService.purgeCache(
-            parseInt(req.params.id) as CacheType
-          )
-        }
+    this.router.delete(["/cache/:id", "/cache/:id/:uid"], auth("*"), async (req: RequestAuth, res: Response) => {
+      if (req.params.uid) {
+        res.sendStatus(204)
+        await this.adminService.purgeUserCache(parseInt(req.params.uid))
+      } else {
+        res.sendStatus(204)
+        await this.adminService.purgeCache(parseInt(req.params.id) as CacheType)
       }
-    )
+    })
   }
 }

@@ -15,13 +15,7 @@ module.exports = {
         type: Sequelize.BIGINT
       },
       paymentMethodType: {
-        type: Sequelize.ENUM([
-          "crypto",
-          "paypal",
-          "manual",
-          "stripe",
-          "credits"
-        ]),
+        type: Sequelize.ENUM(["crypto", "paypal", "manual", "stripe", "credits"]),
         defaultValue: "manual"
       },
       paymentMethodId: {

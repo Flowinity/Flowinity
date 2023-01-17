@@ -32,26 +32,22 @@ export class GalleryController {
      *       200:
      *         description: OK
      */
-    this.router.get(
-      "/",
-      auth("uploads.view"),
-      async (req: RequestAuth, res: Response) => {
-        // Send the request to the service and send the response
-        try {
-          const gallery = await this.galleryService.getGallery(
-            req.user.id,
-            parseInt(<string>req.query.page) || 1,
-            req.query?.search?.toString(),
-            req.query?.filter?.toString(),
-            req.query?.textMetadata?.toString() === "true"
-          )
-          res.json(gallery)
-        } catch (e) {
-          console.error(e)
-          res.sendStatus(StatusCodes.UNAUTHORIZED)
-        }
+    this.router.get("/", auth("uploads.view"), async (req: RequestAuth, res: Response) => {
+      // Send the request to the service and send the response
+      try {
+        const gallery = await this.galleryService.getGallery(
+          req.user.id,
+          parseInt(<string>req.query.page) || 1,
+          req.query?.search?.toString(),
+          req.query?.filter?.toString(),
+          req.query?.textMetadata?.toString() === "true"
+        )
+        res.json(gallery)
+      } catch (e) {
+        console.error(e)
+        res.sendStatus(StatusCodes.UNAUTHORIZED)
       }
-    )
+    })
 
     // /upload is for legacy clients
     this.router.post(
@@ -60,10 +56,7 @@ export class GalleryController {
       uploader.single("attachment"),
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {
-          const upload = await this.galleryService.createUpload(
-            req.user.id,
-            req.file
-          )
+          const upload = await this.galleryService.createUpload(req.user.id, req.file)
           res.json(upload)
         } catch (e) {
           next(e)
@@ -85,27 +78,23 @@ export class GalleryController {
      *       200:
      *         description: OK
      */
-    this.router.get(
-      "/starred",
-      auth("uploads.view"),
-      async (req: RequestAuth, res: Response) => {
-        // Send the request to the service and send the response
-        try {
-          const gallery = await this.galleryService.getGallery(
-            req.user.id,
-            parseInt(<string>req.query.page) || 1,
-            req.query?.search?.toString(),
-            req.query?.filter?.toString(),
-            req.query?.textMetadata?.toString() === "true",
-            "starred"
-          )
-          res.json(gallery)
-        } catch (e) {
-          console.error(e)
-          res.sendStatus(StatusCodes.UNAUTHORIZED)
-        }
+    this.router.get("/starred", auth("uploads.view"), async (req: RequestAuth, res: Response) => {
+      // Send the request to the service and send the response
+      try {
+        const gallery = await this.galleryService.getGallery(
+          req.user.id,
+          parseInt(<string>req.query.page) || 1,
+          req.query?.search?.toString(),
+          req.query?.filter?.toString(),
+          req.query?.textMetadata?.toString() === "true",
+          "starred"
+        )
+        res.json(gallery)
+      } catch (e) {
+        console.error(e)
+        res.sendStatus(StatusCodes.UNAUTHORIZED)
       }
-    )
+    })
 
     this.router.post(
       "/site",
@@ -117,9 +106,7 @@ export class GalleryController {
           if (!req?.files?.length) throw Errors.FILE_EXPECTED
           // @ts-ignore
           for (const upload of req.files) {
-            files.push(
-              await this.galleryService.createUpload(req.user.id, upload)
-            )
+            files.push(await this.galleryService.createUpload(req.user.id, upload))
           }
           res.json(files)
         } catch (e) {
