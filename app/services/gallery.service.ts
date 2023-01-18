@@ -142,10 +142,9 @@ export class GalleryService {
         ["createdAt", "DESC"]
       ]
     })
-
-    // for each upload in the uploads array, get the other collections that that particular image is in and store the data for those collections in an array called collections within each upload
+    // TODO: FIX ME
+    // this hack caused the performance to go from 30-90ms to 300ms per page
     for(let upload of uploads) {
-      // only return collection from collectionitem
       const items = await CollectionItem.findAll({
         where: {
           attachmentId: upload.id
@@ -158,7 +157,6 @@ export class GalleryService {
           ]
       })
       upload.dataValues.collections = items.map(item => item.dataValues.collection)
-      // also this hack caused the performance to go from 30-90ms to 300ms per page
     }
     const uploadCount = await Upload.count({
       where,
