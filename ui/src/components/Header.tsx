@@ -28,6 +28,10 @@ import HistoryIcon from "@mui/icons-material/History"
 import GiftIcon from "@mui/icons-material/Redeem"
 import GanttChartIcon from "@mui/icons-material/BarChart"
 import { Link, useLocation } from "react-router-dom"
+import { useAppSelector } from "../store/hooks"
+import { AuthButtons } from "./Header/AuthButtons"
+import { MenuLoggedIn } from "./Header/MenuLoggedIn"
+
 const drawerWidth = 250
 
 function ResponsiveDrawer() {
@@ -167,11 +171,12 @@ function ResponsiveDrawer() {
     </div>
   )
 
+  const username = useAppSelector((state) => state.user.username)
+
   return (
-    <Box>
-      <CssBaseline />
+    <div>
       <AppBar
-        position="sticky"
+        position="fixed"
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
@@ -197,44 +202,44 @@ function ResponsiveDrawer() {
               background: `linear-gradient(#0179f3, #0190ea)`,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
-              fontWeight: 500
+              fontWeight: 500,
+              flexGrow: 1
             }}
           >
-            TPUv2
+            TPUv2 - React Alpha
           </Typography>
+          {username ? <MenuLoggedIn /> : <AuthButtons />}
         </Toolbar>
       </AppBar>
-      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label="mailbox folders">
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true // Better open performance on mobile.
-          }}
-          sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth }
-          }}
-          PaperProps={{ sx: { border: "none", backgroundColor: "nav" } }}
-          color="nav"
-        >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: "none", sm: "block" },
-            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth }
-          }}
-          PaperProps={{ sx: { border: "none", backgroundColor: "nav" } }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-    </Box>
+      {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true // Better open performance on mobile.
+        }}
+        sx={{
+          display: { xs: "block", sm: "none" },
+          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth }
+        }}
+        PaperProps={{ sx: { border: "none", backgroundColor: "nav" } }}
+        color="nav"
+      >
+        {drawer}
+      </Drawer>
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: { xs: "none", sm: "block" },
+          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth }
+        }}
+        PaperProps={{ sx: { border: "none", backgroundColor: "nav" } }}
+        open
+      >
+        {drawer}
+      </Drawer>
+    </div>
   )
 }
 

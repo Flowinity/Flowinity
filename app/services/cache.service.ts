@@ -7,7 +7,6 @@ import { CollectionItem } from "@app/models/collectionItem.model"
 import { Upload } from "@app/models/upload.model"
 import { Container, Service } from "typedi"
 import { CoreService } from "@app/services/core.service"
-import { CollectionCache } from "@app/types/collection"
 
 @Service()
 export class CacheService {
@@ -25,7 +24,7 @@ export class CacheService {
     return state
   }
 
-  async getCachedCollections(userId: number): Promise<CollectionCache[]> {
+  async getCachedCollections(userId: number) {
     const collectionService = Container.get(CollectionService)
     if (await redis.json.get(`collections:${userId}`)) {
       return await redis.json.get(`collections:${userId}`)
@@ -35,7 +34,7 @@ export class CacheService {
     }
   }
 
-  async getCachedCollection(userId: number, collectionId: number): Promise<CollectionCache | Collection> {
+  async getCachedCollection(userId: number, collectionId: number) {
     const collectionService = Container.get(CollectionService)
     if (await redis.json.get(`collections:${userId}`)) {
       const collections = await redis.json.get(`collections:${userId}`)

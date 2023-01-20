@@ -2,8 +2,8 @@ import { DateController } from "@app/controllers/date.controller"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import express from "express"
-import swaggerJSDoc from "swagger-jsdoc"
-import swaggerUi from "swagger-ui-express"
+//import swaggerJSDoc from "swagger-jsdoc"
+//import swaggerUi from "swagger-ui-express"
 import { Service } from "typedi"
 import { UserUtilsController } from "@app/controllers/userutils.controller"
 import { CoreController } from "@app/controllers/core.controller"
@@ -21,7 +21,7 @@ import { AutoCollectController } from "@app/controllers/autoCollect.controller"
 @Service()
 export class Application {
   app: express.Application
-  private readonly swaggerOptions: swaggerJSDoc.Options
+  //private readonly swaggerOptions: swaggerJSDoc.Options
 
   constructor(
     private readonly userutilsController: UserUtilsController,
@@ -38,7 +38,7 @@ export class Application {
   ) {
     this.app = express()
 
-    this.swaggerOptions = {
+    /* this.swaggerOptions = {
       swaggerDefinition: {
         openapi: "3.0.0",
         info: {
@@ -46,8 +46,8 @@ export class Application {
           version: "1.0.0"
         }
       },
-      apis: ["**/*.ts"]
-    }
+      apis: ["**\/*.ts"]
+    }*/
 
     this.config()
 
@@ -55,7 +55,7 @@ export class Application {
   }
 
   bindRoutes(): void {
-    this.app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)))
+    //this.app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)))
     this.app.use("/api/v2/user", this.userutilsController.router)
     this.app.use("/api/v2/core", this.coreController.router)
     this.app.use("/api/v2/gallery", this.galleryController.router)

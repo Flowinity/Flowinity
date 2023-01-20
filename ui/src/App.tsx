@@ -10,19 +10,30 @@ import theme from "./themes/default"
 import routes from "./router"
 import Header from "./components/Header"
 import { BrowserRouter as Router } from "react-router-dom"
+import ErrorHandler from "./lib/errorHandler"
+import { useAppDispatch, useAppSelector } from "./store/hooks"
+import { authenticate } from "./features/user"
 
 function App() {
+  const dispatch = useAppDispatch()
+  dispatch(authenticate())
+  // get breakpoint from MUI
+
   return (
     <>
-      <React.StrictMode>
-        <Router>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Header></Header>
-          </ThemeProvider>
-          <Container>{routes}</Container>
-        </Router>
-      </React.StrictMode>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <ErrorHandler>
+            <Box sx={{ display: "flex" }}>
+              <CssBaseline />
+              <Header></Header>
+              <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
+                <div className="sidebar-offset">{routes}</div>
+              </Box>
+            </Box>
+          </ErrorHandler>
+        </ThemeProvider>
+      </Router>
     </>
   )
 }
