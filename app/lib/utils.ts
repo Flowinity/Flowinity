@@ -11,6 +11,8 @@ import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import cryptoRandomString from "crypto-random-string"
 import { Session } from "@app/models/session.model"
 import { Domain } from "@app/models/domain.model"
+import { Container } from "typedi"
+import { CacheService } from "@app/services/cache.service"
 
 async function generateAPIKey(type: "session" | "api") {
   switch (type) {
@@ -219,13 +221,30 @@ async function processFile(upload: Upload, textMetadata: string) {
         }
       }
       if (results.some((result) => result.value) && rule.requireApproval) {
-        await AutoCollectApproval.create({
+        const cache = Container.get(CacheService)
+        const collection = await cache.getCachedCollection(rule.userId, rule.collectionId)
+        console.log(collection.id)
+        const autoCollect = await AutoCollectApproval.create({
           userId: upload.userId,
           uploadId: upload.id,
           autoCollectRuleId: rule.id,
           collectionId: rule.collectionId,
           info: results
         })
+        let autoCollects = await redis.json.get(`autoCollects:${upload.userId}`)
+        if (autoCollects?.length) {
+          autoCollects
+            .find((collection: Collection) => collection.id === rule.collectionId)
+            .autoCollects.push(autoCollect)
+          await redis.json.set(`autoCollects:${upload.userId}`, autoCollects)
+        } else {
+          await redis.json.append(`autoCollects:${upload.userId}`, [
+            {
+              ...rule.collection,
+              autoCollects: [autoCollect]
+            }
+          ])
+        }
         /*if (req) {
                   const io = req.app.get("io")
                   io.to(upload.UserId).emit("autoCollectApproval", {

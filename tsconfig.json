@@ -2,6 +2,7 @@
   "compilerOptions" : {
     "baseUrl" : "./",
     "target" : "es2017",
+    "incremental": true,
     "types" : [
       "reflect-metadata",
       "@types/mocha",

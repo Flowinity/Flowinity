@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "start": "nodemon",
-    "serve": "nodemon",
+    "serve": "tsc-watch --project tsconfig.app.json --onSuccess 'node ./out/index.js'",
     "build": "rimraf out && tsc --project tsconfig.app.json",
     "format": "prettier --config ../.prettierrc.yaml --write \"app/**/*\"",
     "lint": "eslint -c .eslintrc.json \"./app/**/*.ts\" --format stylish",
@@ -120,6 +120,7 @@
     "source-map-support": "0.5.21",
     "supertest": "6.2.4",
     "ts-node": "10.9.1",
+    "tsc-watch": "^6.0.0",
     "tsconfig-paths": "4.1.2",
     "typescript": "^4.9.4"
   }
