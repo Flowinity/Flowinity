@@ -7,6 +7,7 @@ import { CollectionItem } from "@app/models/collectionItem.model"
 import { Upload } from "@app/models/upload.model"
 import { Container, Service } from "typedi"
 import { CoreService } from "@app/services/core.service"
+import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 
 @Service()
 export class CacheService {
@@ -31,6 +32,57 @@ export class CacheService {
     } else {
       this.generateCollectionCache().then(() => {})
       return await collectionService.getCollections(userId)
+    }
+  }
+
+  async generateAutoCollectCache() {
+    console.info("[REDIS] Generating User AutoCollection cache...")
+    let start = new Date().getTime()
+    const users = await User.findAll()
+    for (const user of users) {
+      let result = []
+      let autoCollects = await AutoCollectApproval.findAll({
+        where: {
+          userId: user.id
+        }
+      })
+      const collectionIds = [
+        ...new Set(autoCollects.map((a) => a.collectionId))
+      ]
+      for (const id of collectionIds) {
+        result.push({
+          ...(await this.getCachedCollection(user.id, id)),
+          autoCollectApprovals: autoCollects.filter(
+            (a) => a.collectionId === id
+          )
+        })
+      }
+      redis.json.set(`autoCollects:${user.id}`, "$", result)
+    }
+    let end = new Date().getTime()
+    console.info(
+      `[REDIS] User AutoCollection cache generated in ${end - start}ms`
+    )
+  }
+
+  async patchAutoCollectCache(
+    userId: number,
+    collectionId: number,
+    approvalId: number
+  ) {
+    console.log("[REDIS] Patching AutoCollect cache for user...")
+    const autoCollects = await redis.json.get(`autoCollects:${userId}`)
+    const collection = autoCollects.find(
+      (c: Collection) => c.id === collectionId
+    )
+    if (collection) {
+      collection.autoCollectApprovals = collection.autoCollectApprovals.filter(
+        (a: AutoCollectApproval) => a.id !== approvalId
+      )
+      if (!collection.autoCollectApprovals.length) {
+        autoCollects.splice(autoCollects.indexOf(collection), 1)
+      }
+      redis.json.set(`autoCollects:${userId}`, "$", autoCollects)
     }
   }
 
@@ -91,7 +143,9 @@ export class CacheService {
       redis.json.set(`shareLinks:${collection.shareLink}`, "$", collection)
     }
     const end = new Date().getTime()
-    console.info(`[REDIS] Collections ShareLink cache generated in ${end - start}ms`)
+    console.info(
+      `[REDIS] Collections ShareLink cache generated in ${end - start}ms`
+    )
   }
 
   async generateCollectionCache() {
@@ -105,6 +159,7 @@ export class CacheService {
     }
     let end = new Date().getTime()
     console.info(`[REDIS] Collections cache generated in ${end - start}ms`)
+    this.generateAutoCollectCache().then(() => {})
   }
 
   async generateCollectionCacheForUser(id: number) {
@@ -119,7 +174,9 @@ export class CacheService {
 
   async resetCollectionCache(id: number) {
     const collectionService = Container.get(CollectionService)
-    console.info("[REDIS] Generating collections cache for individual collection...")
+    console.info(
+      "[REDIS] Generating collections cache for individual collection..."
+    )
     let start = new Date().getTime()
     const collection = await collectionService.getCollection(id)
 
@@ -128,7 +185,9 @@ export class CacheService {
 
       console.info("[REDIS] Patching cache for user", id)
       const collections = await redis.json.get(`collections:${id}`)
-      const index: number = collections.findIndex((c: Collection) => c.id === collection.id)
+      const index: number = collections.findIndex(
+        (c: Collection) => c.id === collection.id
+      )
       if (index === -1) {
         collections.push({
           ...collection.toJSON(),
@@ -163,7 +222,9 @@ export class CacheService {
     } as CollectionUser)
 
     let end = new Date().getTime()
-    console.info(`[REDIS] Individual collection cache generated in ${end - start}ms`)
+    console.info(
+      `[REDIS] Individual collection cache generated in ${end - start}ms`
+    )
   }
 
   cacheInit() {

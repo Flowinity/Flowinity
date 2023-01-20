@@ -8,3 +8,12 @@ type CollectionCache = Collection & {
   }
   shared: boolean
 }
+
+type AutoCollectCache = Collection & {
+  permissionsMetadata: {
+    write: boolean
+    read: boolean
+    configure: boolean
+  }
+  autoCollectApprovals: []
+}

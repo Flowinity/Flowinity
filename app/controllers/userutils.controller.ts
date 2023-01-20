@@ -6,6 +6,7 @@ import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
 import Errors from "@app/lib/errors"
 import Router from "express-promise-router"
+import { AutoCollectCache } from "@app/types/collection"
 
 @Service()
 export class UserUtilsController {
@@ -39,9 +40,26 @@ export class UserUtilsController {
      *             format: TPU-KEY
      *           required: true
      */
-    this.router.get("/", auth("user.view"), async (req: RequestAuth, res: Response) => {
-      res.json(req.user)
-    })
+    this.router.get(
+      "/",
+      auth("user.view"),
+      async (req: RequestAuth, res: Response) => {
+        const pendingAutoCollects = await redis.json
+          .get(`autoCollects:${req.user.id}`)
+          .then((autoCollects: AutoCollectCache[]) => {
+            if (!autoCollects?.length) return 0
+            return autoCollects?.filter(
+              (autoCollect) => autoCollect.autoCollectApprovals.length > 0
+            ).length
+          })
+        console.log(pendingAutoCollects)
+        res.json({
+          ...req.user.toJSON(),
+          // is an array of objects which include an array of autoCollectApprovals which need to be counted, like [{autoCollectApprovals: [{}, {}]}, {autoCollectApprovals: [{}, {}]}]
+          pendingAutoCollects
+        })
+      }
+    )
 
     /**
      * @swagger
@@ -64,9 +82,13 @@ export class UserUtilsController {
      *             format: TPU-KEY
      *           required: true
      */
-    this.router.get("/all", auth("user.view"), async (req: Request, res: Response) => {
-      res.json(await this.userUtilsService.getAllUsers())
-    })
+    this.router.get(
+      "/all",
+      auth("user.view"),
+      async (req: Request, res: Response) => {
+        res.json(await this.userUtilsService.getAllUsers())
+      }
+    )
 
     /**
      * @swagger
@@ -94,14 +116,18 @@ export class UserUtilsController {
      *             type: string
      *           required: true
      */
-    this.router.get("/profile/:username", auth("user.view"), async (req: Request, res: Response) => {
-      const user = await this.userUtilsService.getUser(req.params.username)
-      if (user) {
-        res.json(user)
-      } else {
-        throw Errors.USER_NOT_FOUND
+    this.router.get(
+      "/profile/:username",
+      auth("user.view"),
+      async (req: Request, res: Response) => {
+        const user = await this.userUtilsService.getUser(req.params.username)
+        if (user) {
+          res.json(user)
+        } else {
+          throw Errors.USER_NOT_FOUND
+        }
       }
-    })
+    )
 
     /**
      * @swagger
@@ -165,10 +191,17 @@ export class UserUtilsController {
      *             type: string
      *           required: true
      */
-    this.router.patch("/domain", auth("user.modify"), async (req: RequestAuth, res: Response) => {
-      await this.userUtilsService.setDefaultDomain(req.user.id, req.body.domain)
-      res.sendStatus(204)
-    })
+    this.router.patch(
+      "/domain",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        await this.userUtilsService.setDefaultDomain(
+          req.user.id,
+          req.body.domain
+        )
+        res.sendStatus(204)
+      }
+    )
 
     /**
      * @swagger
@@ -196,9 +229,18 @@ export class UserUtilsController {
      *             type: string
      *           required: true
      */
-    this.router.post("/feedback", auth("user.modify"), async (req: RequestAuth, res: Response) => {
-      await this.userUtilsService.sendFeedback(req.user.id, req.body.text, req.body.starRating, req.body.route)
-      res.sendStatus(204)
-    })
+    this.router.post(
+      "/feedback",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        await this.userUtilsService.sendFeedback(
+          req.user.id,
+          req.body.text,
+          req.body.starRating,
+          req.body.route
+        )
+        res.sendStatus(204)
+      }
+    )
   }
 }

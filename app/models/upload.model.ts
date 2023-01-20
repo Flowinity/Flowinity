@@ -1,8 +1,19 @@
-import { Table, Column, Model, BelongsTo, Unique, HasOne, HasMany, BelongsToMany, DataType } from "sequelize-typescript"
+import {
+  Table,
+  Column,
+  Model,
+  BelongsTo,
+  Unique,
+  HasOne,
+  HasMany,
+  BelongsToMany,
+  DataType
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Star } from "@app/models/star.model"
+import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 
 @Table
 export class Upload extends Model {
@@ -50,7 +61,12 @@ export class Upload extends Model {
   @HasOne(() => CollectionItem, "attachmentId")
   item: CollectionItem
 
-  @BelongsToMany(() => Collection, () => CollectionItem, "attachmentId", "collectionId")
+  @BelongsToMany(
+    () => Collection,
+    () => CollectionItem,
+    "attachmentId",
+    "collectionId"
+  )
   collections: Collection[]
 
   @HasMany(() => CollectionItem, "attachmentId")
@@ -58,4 +74,7 @@ export class Upload extends Model {
 
   @HasOne(() => Star, "attachmentId")
   starred: Star
+
+  @HasOne(() => AutoCollectApproval, "uploadId")
+  autoCollectApproval: AutoCollectApproval
 }

@@ -36,7 +36,8 @@ let Errors = {
     status: 403
   },
   SSO_ENFORCED: {
-    message: "You are using a legacy auth method, please reset your password on TPUv1 to continue.",
+    message:
+      "You are using a legacy auth method, please reset your password on TPUv1 to continue.",
     status: 401
   },
   NO_SCOPES_PROVIDED: {
@@ -62,6 +63,10 @@ let Errors = {
   INVALID_PARAMETERS: {
     message: "Invalid parameters were provided.",
     status: 400
+  },
+  SLIDESHOW_NOT_FOUND: {
+    message: "The requested slideshow could not be found.",
+    status: 404
   }
 }
 
@@ -100,7 +105,12 @@ let ProcessedErrors = {
   },
   sequelizeValidation: function (sequelize: any, obj: ErrorObject) {
     return new sequelize.ValidationError(obj.error, [
-      new sequelize.ValidationErrorItem(obj.error, "Validation error", obj.path, obj.value)
+      new sequelize.ValidationErrorItem(
+        obj.error,
+        "Validation error",
+        obj.path,
+        obj.value
+      )
     ])
   }
 }

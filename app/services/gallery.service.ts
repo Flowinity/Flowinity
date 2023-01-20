@@ -12,6 +12,7 @@ import path from "path"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import queue from "@app/lib/queue"
 import { Star } from "@app/models/star.model"
+import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 
 @Service()
 export class GalleryService {
@@ -21,7 +22,9 @@ export class GalleryService {
       userId: userId,
       originalFilename: file.originalname,
       name: file.originalname,
-      type: utils.getTypeByExt(path.extname(file.originalname)?.split(".")[1]) || "binary",
+      type:
+        utils.getTypeByExt(path.extname(file.originalname)?.split(".")[1]) ||
+        "binary",
       fileSize: file.size,
       deletable: true
     })
@@ -47,7 +50,8 @@ export class GalleryService {
     search?: string,
     filter: string = "all",
     showMetadata: boolean = true,
-    type: "user" | "collection" | "starred" | "autoCollect" = "user"
+    type: "user" | "collection" | "starred" | "autoCollect" = "user",
+    userId?: number
   ): Promise<Object> {
     const offset = page * 12 - 12 || 0
     let base = {
@@ -78,7 +82,9 @@ export class GalleryService {
         { data: { [Op.like]: "%" + search + "%" } }
       ]
     }
-    const where = showMetadata ? { ...base, ...metadata } : { ...base, ...noMetadata }
+    const where = showMetadata
+      ? { ...base, ...metadata }
+      : { ...base, ...noMetadata }
     let include: object = []
     if (type === "collection") {
       include = [
@@ -87,12 +93,16 @@ export class GalleryService {
           as: "item",
           where: {
             collectionId: id
-          },
+          }
         },
         {
           model: User,
           as: "user",
           attributes: ["id", "username"]
+        },
+        {
+          model: Collection,
+          as: "collections"
         }
       ]
     } else if (type === "starred") {
@@ -104,6 +114,22 @@ export class GalleryService {
           where: {
             userId: id
           }
+        }
+      ]
+    } else if (type === "autoCollect") {
+      include = [
+        {
+          model: AutoCollectApproval,
+          as: "autoCollectApproval",
+          required: true,
+          where: {
+            userId: userId,
+            collectionId: id
+          }
+        },
+        {
+          model: Collection,
+          as: "collections"
         }
       ]
     } else {
@@ -119,7 +145,7 @@ export class GalleryService {
         }
       ]
     }
-/*       {
+    /*       {
           model: Collection,
           as: "collections"
         },*/
@@ -128,23 +154,24 @@ export class GalleryService {
       include,
       limit: 12,
       offset,
-      order: type === "collection" ? [
-        [
-          {
-            model: CollectionItem,
-            as: "item"
-          },
-          "pinned",
-          "DESC"
-        ],
-        ["createdAt", "DESC"]
-      ] : [
-        ["createdAt", "DESC"]
-      ]
+      order: [["createdAt", "DESC"]]
+      /* type === "collection"
+          ? [
+              [
+                {
+                  model: CollectionItem,
+                  as: "item"
+                },
+                "pinned",
+                "DESC"
+              ],
+              ["createdAt", "DESC"]
+            ]
+          : [["createdAt", "DESC"]]*/
     })
     // TODO: FIX ME
     // this hack caused the performance to go from 30-90ms to 300ms per page
-    for(let upload of uploads) {
+    /*for (let upload of uploads) {
       const items = await CollectionItem.findAll({
         where: {
           attachmentId: upload.id
@@ -154,10 +181,12 @@ export class GalleryService {
             model: Collection,
             as: "collection"
           }
-          ]
+        ]
       })
-      upload.dataValues.collections = items.map(item => item.dataValues.collection)
-    }
+      upload.dataValues.collections = items.map(
+        (item) => item.dataValues.collection
+      )
+    }*/
     const uploadCount = await Upload.count({
       where,
       include

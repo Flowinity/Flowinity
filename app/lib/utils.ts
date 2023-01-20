@@ -223,7 +223,6 @@ async function processFile(upload: Upload, textMetadata: string) {
       if (results.some((result) => result.value) && rule.requireApproval) {
         const cache = Container.get(CacheService)
         const collection = await cache.getCachedCollection(rule.userId, rule.collectionId)
-        console.log(collection.id)
         const autoCollect = await AutoCollectApproval.create({
           userId: upload.userId,
           uploadId: upload.id,
@@ -233,15 +232,24 @@ async function processFile(upload: Upload, textMetadata: string) {
         })
         let autoCollects = await redis.json.get(`autoCollects:${upload.userId}`)
         if (autoCollects?.length) {
-          autoCollects
-            .find((collection: Collection) => collection.id === rule.collectionId)
-            .autoCollects.push(autoCollect)
-          await redis.json.set(`autoCollects:${upload.userId}`, autoCollects)
+          try {
+            autoCollects
+              .find((collection: Collection) => collection.id === rule.collectionId)
+              .autoCollectApprovals.push(autoCollect)
+            await redis.json.set(`autoCollects:${upload.userId}`, "$", autoCollects)
+          } catch {
+            autoCollects.push({
+              id: rule.collectionId,
+              collection,
+              autoCollectApprovals: [autoCollect]
+            })
+            await redis.json.set(`autoCollects:${upload.userId}`, "$", autoCollects)
+          }
         } else {
-          await redis.json.append(`autoCollects:${upload.userId}`, [
+          await redis.json.set(`autoCollects:${upload.userId}`, "$", [
             {
-              ...rule.collection,
-              autoCollects: [autoCollect]
+              ...collection,
+              autoCollectApprovals: [autoCollect]
             }
           ])
         }

@@ -17,6 +17,7 @@ import { DomainController } from "@app/controllers/domain.controller"
 import { AdminController } from "@app/controllers/admin.controller"
 import { SecurityController } from "@app/controllers/security.controller"
 import { AutoCollectController } from "@app/controllers/autoCollect.controller"
+import { SlideshowController } from "@app/controllers/slideshow.controller"
 
 @Service()
 export class Application {
@@ -34,7 +35,8 @@ export class Application {
     private readonly domainController: DomainController,
     private readonly adminController: AdminController,
     private readonly securityController: SecurityController,
-    private readonly autoCollectController: AutoCollectController
+    private readonly autoCollectController: AutoCollectController,
+    private readonly slideshowController: SlideshowController
   ) {
     this.app = express()
 
@@ -64,7 +66,8 @@ export class Application {
     this.app.use("/api/v2/domains", this.domainController.router)
     this.app.use("/api/v2/admin", this.adminController.router)
     this.app.use("/api/v2/security", this.securityController.router)
-    this.app.use("/api/v2/autoCollect", this.autoCollectController.router)
+    this.app.use("/api/v2/autoCollects", this.autoCollectController.router)
+    this.app.use("/api/v2/slideshows", this.slideshowController.router)
     this.app.use("/i", this.fileController.router)
     this.app.use("/api/date", this.dateController.router)
     this.app.use("*", (req, res) => {
@@ -95,31 +98,41 @@ export class Application {
 
   private errorHandling(): void {
     // When previous handlers have not served a request: path wasn't found
-    this.app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-      const err: HttpException = new HttpException("Not Found")
-      next(err)
-    })
+    this.app.use(
+      (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+      ) => {
+        const err: HttpException = new HttpException("Not Found")
+        next(err)
+      }
+    )
 
     // development error handler
     // will print stacktrace
     if (this.app.get("env") === "development") {
-      this.app.use((err: HttpException, req: express.Request, res: express.Response) => {
-        res.status(err.status || 500)
-        res.send({
-          message: err.message,
-          error: err
-        })
-      })
+      this.app.use(
+        (err: HttpException, req: express.Request, res: express.Response) => {
+          res.status(err.status || 500)
+          res.send({
+            message: err.message,
+            error: err
+          })
+        }
+      )
     }
 
     // production error handler
     // no stacktraces  leaked to user (in production env only)
-    this.app.use((err: HttpException, req: express.Request, res: express.Response) => {
-      res.status(err.status || 500)
-      res.send({
-        message: err.message,
-        error: {}
-      })
-    })
+    this.app.use(
+      (err: HttpException, req: express.Request, res: express.Response) => {
+        res.status(err.status || 500)
+        res.send({
+          message: err.message,
+          error: {}
+        })
+      }
+    )
   }
 }
