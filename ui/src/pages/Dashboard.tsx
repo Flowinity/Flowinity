@@ -8,7 +8,7 @@ export default function Dashboard() {
 
   return (
     <Container maxWidth={false}>
-      <Grid container sx={{ mt: 4 }} spacing={2}>
+      <Grid container spacing={2}>
         <Grid item xs={6}>
           <Paper
             sx={{

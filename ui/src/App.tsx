@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import "./App.css"
 import "@fontsource/inter/300.css"
 import "@fontsource/inter/400.css"
@@ -16,8 +16,10 @@ import { authenticate } from "./features/user"
 
 function App() {
   const dispatch = useAppDispatch()
-  dispatch(authenticate())
-  // get breakpoint from MUI
+
+  useEffect(() => {
+    dispatch(authenticate())
+  }, [])
 
   return (
     <>
@@ -27,7 +29,7 @@ function App() {
             <Box sx={{ display: "flex" }}>
               <CssBaseline />
               <Header></Header>
-              <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
+              <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3, mt: 7 }}>
                 <div className="sidebar-offset">{routes}</div>
               </Box>
             </Box>

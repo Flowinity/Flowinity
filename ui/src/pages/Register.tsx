@@ -4,7 +4,7 @@ import theme from "../themes/default"
 export default function Register() {
   return (
     <>
-      <ThemeProvider theme={theme}>deez</ThemeProvider>
+      <ThemeProvider theme={theme}>placeholder</ThemeProvider>
     </>
   )
 }

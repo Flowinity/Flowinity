@@ -39,7 +39,6 @@ export default function Login() {
       setLoading(false)
       console.log(e)
       setError("Invalid username or password")
-      return <Snackbar open={true} autoHideDuration={6000} message="deez" onClose={() => {}}></Snackbar>
     }
   }
 
