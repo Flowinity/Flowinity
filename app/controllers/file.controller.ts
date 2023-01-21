@@ -29,21 +29,41 @@ export class FileController {
      *         description: OK
      */
     this.router.get("/:attachment", async (req: Request, res: Response) => {
-      const upload = await Upload.findOne({
-        where: {
-          attachment: req.params.attachment
-        }
-      })
-      if (!upload) {
-        throw Errors.NOT_FOUND
-      }
-      if (upload.type === "image" || upload.type === "video" || upload.type === "audio") {
-        res.sendFile("/" + upload.attachment, {
-          root: config.storage,
-          name: upload.originalFilename
+      try {
+        const upload = await Upload.findOne({
+          where: {
+            attachment: req.params.attachment
+          }
         })
-      } else {
-        res.download(config.storage + "/" + upload.attachment, upload.originalFilename)
+        if (!upload) {
+          throw Errors.NOT_FOUND
+        }
+        if (
+          upload.type === "image" ||
+          upload.type === "video" ||
+          upload.type === "audio"
+        ) {
+          res.sendFile("/" + upload.attachment, {
+            root: config.storage,
+            name: upload.originalFilename
+          })
+        } else {
+          res.download(
+            config.storage + "/" + upload.attachment,
+            upload.originalFilename
+          )
+        }
+      } catch (err) {
+        res.status(404)
+        res.json({
+          errors: [
+            {
+              name: "NOT_FOUND",
+              message: "The requested resource could not be found.",
+              status: 404
+            }
+          ]
+        })
       }
     })
   }
