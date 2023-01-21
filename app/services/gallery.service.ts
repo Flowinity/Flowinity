@@ -43,7 +43,7 @@ export class GalleryService {
     try {
       if (precache && config.discord?.token) {
         if (upload.type === "image" || upload.type === "video") {
-          axios.post(config.discord.token, {
+          axios.post(config.discord.webhook, {
             content: url + " precache."
           })
         }
