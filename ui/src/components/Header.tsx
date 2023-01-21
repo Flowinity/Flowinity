@@ -31,6 +31,7 @@ import { Link, useLocation } from "react-router-dom"
 import { useAppSelector } from "../store/hooks"
 import { AuthButtons } from "./Header/AuthButtons"
 import { MenuLoggedIn } from "./Header/MenuLoggedIn"
+import { SwipeableDrawer } from "@mui/material"
 
 const drawerWidth = 250
 
@@ -160,7 +161,13 @@ function ResponsiveDrawer() {
     <div>
       <List>
         {items.map((item) => (
-          <ListItem button component={Link} key={item.id} disablePadding to={item.path}>
+          <ListItem
+            button
+            component={Link}
+            key={item.id}
+            disablePadding
+            to={item.path}
+          >
             <ListItemButton selected={location.pathname === item.path}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.name} />
@@ -212,10 +219,11 @@ function ResponsiveDrawer() {
         </Toolbar>
       </AppBar>
       {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-      <Drawer
+      <SwipeableDrawer
         variant="temporary"
         open={mobileOpen}
         onClose={handleDrawerToggle}
+        onOpen={handleDrawerToggle}
         ModalProps={{
           keepMounted: true // Better open performance on mobile.
         }}
@@ -227,7 +235,7 @@ function ResponsiveDrawer() {
         color="nav"
       >
         {drawer}
-      </Drawer>
+      </SwipeableDrawer>
       <Drawer
         variant="permanent"
         sx={{
