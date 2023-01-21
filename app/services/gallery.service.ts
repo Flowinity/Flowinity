@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { Service } from "typedi"
 import { Upload } from "@app/models/upload.model"
 import paginate from "jw-paginate"
@@ -13,10 +11,11 @@ import { CollectionItem } from "@app/models/collectionItem.model"
 import queue from "@app/lib/queue"
 import { Star } from "@app/models/star.model"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
+import axios from "axios"
 
 @Service()
 export class GalleryService {
-  async createUpload(userId: number, file: any) {
+  async createUpload(userId: number, file: any, precache: boolean = false) {
     const upload = await Upload.create({
       attachment: file.filename, // Attachment hash
       userId: userId,
@@ -38,10 +37,23 @@ export class GalleryService {
         }
       }
     )
+    const url =
+      "https://" + (await utils.getUserDomain(userId)) + upload.attachment
     await queue.queue.add(upload.id, upload)
+    try {
+      if (precache && config.discord?.token) {
+        if (upload.type === "image" || upload.type === "video") {
+          axios.post(config.discord.token, {
+            content: url + " precache."
+          })
+        }
+      }
+    } catch {
+      //
+    }
     return {
       upload,
-      url: "https://" + (await utils.getUserDomain(userId)) + upload.attachment
+      url
     }
   }
   async getGallery(

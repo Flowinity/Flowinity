@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "@levminer/speakeasy": "^1.4.0",
+    "@types/axios": "^0.14.0",
     "@types/nodemailer": "^6.4.7",
     "@types/ua-parser-js": "^0.7.36",
     "argon2": "^0.30.3",
