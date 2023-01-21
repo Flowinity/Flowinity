@@ -18,6 +18,9 @@ import { AdminController } from "@app/controllers/admin.controller"
 import { SecurityController } from "@app/controllers/security.controller"
 import { AutoCollectController } from "@app/controllers/autoCollect.controller"
 import { SlideshowController } from "@app/controllers/slideshow.controller"
+import { InviteController } from "@app/controllers/invite.controller"
+import sequelize from "sequelize"
+import { PulseController } from "@app/controllers/pulse.controller"
 
 @Service()
 export class Application {
@@ -36,7 +39,9 @@ export class Application {
     private readonly adminController: AdminController,
     private readonly securityController: SecurityController,
     private readonly autoCollectController: AutoCollectController,
-    private readonly slideshowController: SlideshowController
+    private readonly slideshowController: SlideshowController,
+    private readonly inviteController: InviteController,
+    private readonly pulseController: PulseController
   ) {
     this.app = express()
 
@@ -68,18 +73,39 @@ export class Application {
     this.app.use("/api/v2/security", this.securityController.router)
     this.app.use("/api/v2/autoCollects", this.autoCollectController.router)
     this.app.use("/api/v2/slideshows", this.slideshowController.router)
-    this.app.use("/i", this.fileController.router)
+    this.app.use("/api/v2/invites", this.inviteController.router)
+    this.app.use("/api/v2/pulse", this.pulseController.router)
+    this.app.use("/i/", this.fileController.router)
     this.app.use("/api/date", this.dateController.router)
+    this.app.use("/api/v1", async (req, res) => {
+      res.status(410).json({
+        errors: [Errors.API_REMOVED]
+      })
+    })
     this.app.use("*", (req, res) => {
       throw Errors.NOT_FOUND
     })
     this.app.use((err: any, req: any, res: any, next: any) => {
-      console.warn(err)
       if (err?.status && !err?.errno) {
+        console.log(err)
         res.status(err?.status || 500).send({
           errors: [err]
         })
+      } else if (err instanceof sequelize.ValidationError) {
+        res.status(400).send({
+          errors: err.errors.map((e: any) => {
+            return {
+              status: 400,
+              message: e.message
+                ?.replace(/Validation (.*?) on (.*?) failed/, "$2 is invalid.")
+                .replace("notNull Violation: ", "")
+                .replace("cannot be null", "is required."),
+              name: "Troplo/ValidationError"
+            }
+          })
+        })
       } else {
+        console.log(err)
         res.status(500).send({
           errors: [Errors.UNKNOWN]
         })

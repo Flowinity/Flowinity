@@ -37,19 +37,45 @@ export class SecurityController {
      *             format: TPU-KEY
      *           required: true
      */
-    this.router.get("/keys", auth("*"), async (req: RequestAuth, res: Response) => {
-      const keys = await this.securityService.getKeys(req.user.id)
-      res.json(keys)
-    })
+    this.router.get(
+      "/keys",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const keys = await this.securityService.getKeys(req.user.id)
+        res.json(keys)
+      }
+    )
 
-    this.router.delete("/keys/:id", auth("*"), async (req: RequestAuth, res: Response) => {
-      await this.securityService.deleteKey(req.user.id, req.params.id)
-      res.sendStatus(204)
-    })
+    this.router.delete(
+      "/keys/:id",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        await this.securityService.deleteKey(req.user.id, req.params.id)
+        res.sendStatus(204)
+      }
+    )
 
-    this.router.post("/keys", auth("*"), async (req: RequestAuth, res: Response) => {
-      const key = await this.securityService.createKey(req.user.id, req.body.name, req.body.scopes, req.body.expiry)
-      res.json(key)
-    })
+    this.router.post(
+      "/keys",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const key = await this.securityService.createKey(
+          req.user.id,
+          req.body.name,
+          req.body.scopes,
+          req.body.expiry
+        )
+        res.json(key)
+      }
+    )
+
+    this.router.get(
+      "/logins",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const logins = await this.securityService.getSessions(req.user.id)
+        res.json(logins)
+      }
+    )
   }
 }

@@ -8,7 +8,60 @@ import speakeasy from "@levminer/speakeasy"
 
 @Service()
 export class AuthService {
-  async login(username: string, password: string, totp: string): Promise<any> {
+  async passwordResetConfirm(code: string, password: string) {
+    if (password?.length < 8) {
+      throw Errors.PASSWORD_TOO_SHORT
+    }
+    const user = await User.findOne({
+      where: {
+        passwordResetCode: code,
+        passwordResetExpiry: {
+          [Op.gt]: new Date()
+        }
+      }
+    })
+
+    if (!user) {
+      throw Errors.INVALID_PASSWORD_RESET_CODE
+    }
+
+    await user.update({
+      password: await argon2.hash(password),
+      passwordResetCode: null,
+      passwordResetExpiry: null,
+      flowinityId: null
+    })
+
+    return {
+      username: user.username
+    }
+  }
+
+  async passwordReset(email: string): Promise<any> {
+    const user = await User.findOne({
+      where: {
+        email
+      }
+    })
+    if (!user) {
+      throw Errors.INVALID_EMAIL
+    }
+    const code = await utils.generateAPIKey("email")
+    await user.update({
+      passwordResetCode: code,
+      passwordResetCodeExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000)
+    })
+    return {
+      code,
+      username: user.username,
+      email: user.email
+    }
+  }
+  async login(
+    username: string,
+    password: string,
+    totp: string
+  ): Promise<Login> {
     const user = await User.findOne({
       where: {
         [Op.or]: [
@@ -20,7 +73,14 @@ export class AuthService {
           }
         ]
       },
-      attributes: ["id", "username", "password", "email", "totpEnable", "totpSecret"]
+      attributes: [
+        "id",
+        "username",
+        "password",
+        "email",
+        "totpEnable",
+        "totpSecret"
+      ]
     })
     if (!user) {
       throw Errors.INVALID_CREDENTIALS
@@ -46,6 +106,32 @@ export class AuthService {
         throw Errors.INVALID_TOTP
       }
     }
+    const session = await utils.createSession(user.id, "*", "session")
+    return {
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      },
+      token: session
+    }
+  }
+
+  async register(
+    username: string,
+    password: string,
+    email: string,
+    inviteId?: number
+  ): Promise<Login> {
+    if (password.length < 8) {
+      throw Errors.PASSWORD_TOO_SHORT
+    }
+    const user = await User.create({
+      username,
+      password: await argon2.hash(password),
+      email,
+      inviteId: inviteId || null
+    })
     const session = await utils.createSession(user.id, "*", "session")
     return {
       user: {

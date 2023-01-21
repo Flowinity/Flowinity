@@ -8,9 +8,41 @@ import { Upload } from "@app/models/upload.model"
 import { Container, Service } from "typedi"
 import { CoreService } from "@app/services/core.service"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
-
+import { PulseService } from "@app/services/pulse.service"
 @Service()
 export class CacheService {
+  async generateInsightsCache() {
+    const pulseService = Container.get(PulseService)
+    console.info("[REDIS] Generating insights cache...")
+    const start = new Date().getTime()
+    const users = await User.findAll()
+    const years = ["2021", "2022", "2023", "latest"]
+    for (const user of users) {
+      let result = {}
+      for (const year of years) {
+        result[year] = {
+          ...(await pulseService.getInsights(user.id, year, false)),
+          _redis: new Date().toISOString()
+        }
+      }
+      redis.json.set(`insights:${user.id}`, "$", result)
+    }
+    let result = {}
+    for (const year of years) {
+      result[year] = {
+        ...(await pulseService.getInsights(null, year, true)),
+        _redis: new Date().toISOString()
+      }
+    }
+    redis.json.set(`insights:global`, "$", result)
+    const end = new Date().getTime()
+    console.info(`[REDIS] Insights cache generated in ${end - start}ms`)
+  }
+  async purgeInvite(inviteKey: string) {
+    console.info("[REDIS] Purging invite from cache...")
+    redis.json.del(`invites:${inviteKey}`)
+  }
+
   async refreshState() {
     const start = new Date().getTime()
     console.info("[REDIS] Generating state cache...")
@@ -234,9 +266,13 @@ export class CacheService {
     setInterval(this.generateCollectionCache, 3600000)
     setInterval(this.generateShareLinkCache, 3600000)
 
+    // 4 hours
+    setInterval(this.generateInsightsCache, 14400000)
+
     this.refreshState().then(() => {})
     this.generateCollectionCache().then(() => {})
     this.generateShareLinkCache().then(() => {})
+    this.generateInsightsCache().then(() => {})
     return true
   }
 }

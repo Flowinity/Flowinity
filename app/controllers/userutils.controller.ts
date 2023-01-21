@@ -52,7 +52,6 @@ export class UserUtilsController {
               (autoCollect) => autoCollect.autoCollectApprovals.length > 0
             ).length
           })
-        console.log(pendingAutoCollects)
         res.json({
           ...req.user.toJSON(),
           // is an array of objects which include an array of autoCollectApprovals which need to be counted, like [{autoCollectApprovals: [{}, {}]}, {autoCollectApprovals: [{}, {}]}]
@@ -240,6 +239,59 @@ export class UserUtilsController {
           req.body.route
         )
         res.sendStatus(204)
+      }
+    )
+
+    this.router.patch(
+      "/",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        await this.userUtilsService.updateUser(req.user.id, req.body)
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.patch(
+      "/totp",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        switch (req.body.action) {
+          case "enable":
+            if (
+              !(await this.userUtilsService.checkPassword(
+                req.user.id,
+                req.body.password
+              ))
+            ) {
+              throw Errors.INVALID_CREDENTIALS
+            }
+            const response = await this.userUtilsService.enable2FA(req.user.id)
+            return res.json(response)
+          case "disable":
+            if (
+              !(await this.userUtilsService.checkPassword(
+                req.user.id,
+                req.body.password
+              ))
+            ) {
+              throw Errors.INVALID_CREDENTIALS
+            }
+            await this.userUtilsService.act2FA(
+              req.user.id,
+              req.body.code,
+              "disable"
+            )
+            return res.sendStatus(204)
+          case "validate":
+            await this.userUtilsService.act2FA(
+              req.user.id,
+              req.body.code,
+              "validate"
+            )
+            return res.sendStatus(204)
+          default:
+            throw Errors.INVALID_PARAMETERS
+        }
       }
     )
   }

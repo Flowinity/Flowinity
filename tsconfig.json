@@ -1,7 +1,7 @@
 {
   "compilerOptions" : {
     "baseUrl" : "./",
-    "target" : "es2017",
+    "target" : "es2021",
     "incremental": true,
     "types" : [
       "reflect-metadata",
@@ -28,8 +28,7 @@
     "noImplicitReturns" : true,
     "suppressImplicitAnyIndexErrors" : true,
     "strictNullChecks" : true,
-    "resolveJsonModule" : true,
-    // DO NOT CHANGE (I changed it :))
+    "resolveJsonModule" : true,  // DO NOT CHANGE (I changed it :))
     "paths" : {
       "@app/*" : [
         "./app/*"

@@ -1,4 +1,12 @@
-import { Table, Column, Model, BelongsTo, Default, AllowNull, DataType } from "sequelize-typescript"
+import {
+  Table,
+  Column,
+  Model,
+  BelongsTo,
+  Default,
+  AllowNull,
+  DataType
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 
 @Table
@@ -33,7 +41,7 @@ export class Pulse extends Model {
 
   @AllowNull
   @Column
-  timeSpent: bigint
+  timeSpent: number
 
   @AllowNull
   @Column
@@ -42,7 +50,7 @@ export class Pulse extends Model {
   @Column({
     type: DataType.JSON
   })
-  sysInfo: object
+  sysInfo: PulseSysInfo
 
   @AllowNull
   @Column

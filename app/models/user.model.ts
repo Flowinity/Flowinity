@@ -7,7 +7,10 @@ import {
   AllowNull,
   DefaultScope,
   BelongsTo,
-  DataType
+  DataType,
+  Unique,
+  IsEmail,
+  Length
 } from "sequelize-typescript"
 import { Plan } from "@app/models/plan.model"
 import { Theme } from "@app/models/theme.model"
@@ -15,19 +18,48 @@ import { Domain } from "@app/models/domain.model"
 
 @DefaultScope(() => ({
   attributes: {
-    exclude: ["password", "totpSecret"]
+    exclude: [
+      "password",
+      "totpSecret",
+      "passwordResetEnabled",
+      "passwordResetCode",
+      "passwordResetExpiry"
+    ]
   }
 }))
 @Table
 export class User extends Model {
+  @AllowNull(false)
+  @Unique
+  @Length({
+    msg: "Length of your username must be between 2-16 characters.",
+    min: 2,
+    max: 16
+  })
   @Column
   username: string
 
+  @AllowNull(false)
+  @Unique
+  @IsEmail
   @Column
   email: string
 
   @Column
   password: string
+
+  @AllowNull(false)
+  @Default(false)
+  @Column
+  passwordResetEnabled: boolean
+
+  @Column
+  passwordResetCode: string
+
+  @Column({
+    type: DataType.DATE
+  })
+  passwordResetExpiry: Date
 
   @Column
   description?: string
@@ -75,9 +107,12 @@ export class User extends Model {
   @Column
   avatar?: string
 
-  @Default(1)
   @Column
   subdomainId?: number
+
+  @Default(1)
+  @Column
+  domainId: number
 
   @Default(false)
   @Column

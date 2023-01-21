@@ -67,6 +67,32 @@ let Errors = {
   SLIDESHOW_NOT_FOUND: {
     message: "The requested slideshow could not be found.",
     status: 404
+  },
+  INVITE_NOT_FOUND: {
+    message: "The requested invite could not be found.",
+    status: 404
+  },
+  INVITE_ALREADY_USED: {
+    message: "The requested invite has already been used.",
+    status: 400
+  },
+  PASSWORD_TOO_SHORT: {
+    message: "Your password must be at least 8 characters long.",
+    status: 400
+  },
+  API_REMOVED: {
+    message:
+      "TroploPrivateUploader API version 1 is no longer available from 2023-03-01, please check the relevant API documentation for v2 at /api/docs.",
+    status: 410
+  },
+  INVALID_EMAIL: {
+    message:
+      "The provided email address is invalid (Please use your email, not username!).",
+    status: 400
+  },
+  INVALID_PASSWORD_RESET_CODE: {
+    message: "The provided password reset code has expired or is invalid.",
+    status: 400
   }
 }
 

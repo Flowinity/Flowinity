@@ -1,4 +1,12 @@
-import { Table, Column, Model, BelongsTo, Default, AllowNull } from "sequelize-typescript"
+import {
+  Table,
+  Column,
+  Model,
+  BelongsTo,
+  Default,
+  AllowNull,
+  DataType
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 
 @Table
@@ -24,6 +32,11 @@ export class Session extends Model {
   @AllowNull
   @Column
   name?: string
+
+  @Column({
+    type: DataType.JSON
+  })
+  info: SessionInfo
 
   @BelongsTo(() => User, "userId")
   user: User

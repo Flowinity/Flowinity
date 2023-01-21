@@ -54,6 +54,8 @@
   },
   "dependencies": {
     "@levminer/speakeasy": "^1.4.0",
+    "@types/nodemailer": "^6.4.7",
+    "@types/ua-parser-js": "^0.7.36",
     "argon2": "^0.30.3",
     "bullmq": "^3.5.6",
     "cache-manager": "^5.1.4",
@@ -64,13 +66,17 @@
     "debug": "4.3.4",
     "express": "4.18.1",
     "express-promise-router": "^4.1.1",
+    "express-rate-limit": "^6.7.0",
     "http-status-codes": "2.1.4",
     "husky": "^8.0.3",
     "jw-paginate": "^1.0.4",
+    "mailgen": "^2.0.27",
     "mariadb": "^3.0.2",
+    "maxmind": "^4.3.8",
     "module-alias": "^2.2.2",
     "multer": "^1.4.5-lts.1",
     "node-tesseract-ocr": "^2.2.1",
+    "nodemailer": "^6.9.0",
     "prettier": "2.7.1",
     "redis": "^4.5.1",
     "reflect-metadata": "0.1.13",
@@ -81,7 +87,8 @@
     "socket.io": "^4.5.4",
     "swagger-jsdoc": "6.2.5",
     "swagger-ui-express": "4.5.0",
-    "typedi": "0.10.0"
+    "typedi": "0.10.0",
+    "ua-parser-js": "^1.0.32"
   },
   "devDependencies": {
     "@types/body-parser": "1.19.1",

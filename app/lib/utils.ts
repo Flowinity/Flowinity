@@ -14,16 +14,22 @@ import { Domain } from "@app/models/domain.model"
 import { Container } from "typedi"
 import { CacheService } from "@app/services/cache.service"
 
-async function generateAPIKey(type: "session" | "api") {
+async function generateAPIKey(type: "session" | "api" | "email") {
   switch (type) {
     case "session":
       return "TPU-WEB-" + cryptoRandomString({ length: 128 })
+    case "email":
+      return "TPU-EMAIL-" + cryptoRandomString({ length: 128 })
     default:
       return "TPU-API-" + cryptoRandomString({ length: 128 })
   }
 }
 
-async function createSession(userId: number, scopes: string, type: "session" | "api") {
+async function createSession(
+  userId: number,
+  scopes: string,
+  type: "session" | "api"
+) {
   const token = await generateAPIKey(type)
   await Session.create({
     token,
@@ -125,7 +131,12 @@ async function getCollection(id: number, userId: number) {
   return collection
 }
 
-function checkOperator(text: any, operator: string, value: string, ruleId: number) {
+function checkOperator(
+  text: any,
+  operator: string,
+  value: string,
+  ruleId: number
+) {
   if (["lt", "lte", "gt", "gte"].includes(operator)) {
     if (!Number.isInteger(text)) {
       text = text?.length || 0
@@ -195,19 +206,52 @@ async function processFile(upload: Upload, textMetadata: string) {
         let resultsOfSubrule = []
         for (const subsubrule of subrule.rules) {
           if (subsubrule.type === "metadata") {
-            resultsOfSubrule.push(checkOperator(textMetadata, subsubrule.operator, subsubrule.value, rule.id))
+            resultsOfSubrule.push(
+              checkOperator(
+                textMetadata,
+                subsubrule.operator,
+                subsubrule.value,
+                rule.id
+              )
+            )
           } else if (subsubrule.type === "name") {
             resultsOfSubrule.push(
-              checkOperator(upload.originalFilename, subsubrule.operator, subsubrule.value, rule.id)
+              checkOperator(
+                upload.originalFilename,
+                subsubrule.operator,
+                subsubrule.value,
+                rule.id
+              )
             )
           } else if (subsubrule.type === "extension") {
             const extension = upload.originalFilename?.split(".")?.pop()
-            resultsOfSubrule.push(checkOperator(extension, subsubrule.operator, subsubrule.value, rule.id))
+            resultsOfSubrule.push(
+              checkOperator(
+                extension,
+                subsubrule.operator,
+                subsubrule.value,
+                rule.id
+              )
+            )
           } else if (subsubrule.type === "metadata-word-length") {
             const wordCount = textMetadata?.split(" ")?.length || 0
-            resultsOfSubrule.push(checkOperator(wordCount, subsubrule.operator, subsubrule.value, rule.id))
+            resultsOfSubrule.push(
+              checkOperator(
+                wordCount,
+                subsubrule.operator,
+                subsubrule.value,
+                rule.id
+              )
+            )
           } else if (subsubrule.type === "metadata-char-length") {
-            resultsOfSubrule.push(checkOperator(textMetadata.length, subsubrule.operator, subsubrule.value, rule.id))
+            resultsOfSubrule.push(
+              checkOperator(
+                textMetadata.length,
+                subsubrule.operator,
+                subsubrule.value,
+                rule.id
+              )
+            )
           }
         }
         if (!resultsOfSubrule.some((result) => !result?.value)) {
@@ -222,7 +266,10 @@ async function processFile(upload: Upload, textMetadata: string) {
       }
       if (results.some((result) => result.value) && rule.requireApproval) {
         const cache = Container.get(CacheService)
-        const collection = await cache.getCachedCollection(rule.userId, rule.collectionId)
+        const collection = await cache.getCachedCollection(
+          rule.userId,
+          rule.collectionId
+        )
         const autoCollect = await AutoCollectApproval.create({
           userId: upload.userId,
           uploadId: upload.id,
@@ -234,16 +281,26 @@ async function processFile(upload: Upload, textMetadata: string) {
         if (autoCollects?.length) {
           try {
             autoCollects
-              .find((collection: Collection) => collection.id === rule.collectionId)
+              .find(
+                (collection: Collection) => collection.id === rule.collectionId
+              )
               .autoCollectApprovals.push(autoCollect)
-            await redis.json.set(`autoCollects:${upload.userId}`, "$", autoCollects)
+            await redis.json.set(
+              `autoCollects:${upload.userId}`,
+              "$",
+              autoCollects
+            )
           } catch {
             autoCollects.push({
               id: rule.collectionId,
               collection,
               autoCollectApprovals: [autoCollect]
             })
-            await redis.json.set(`autoCollects:${upload.userId}`, "$", autoCollects)
+            await redis.json.set(
+              `autoCollects:${upload.userId}`,
+              "$",
+              autoCollects
+            )
           }
         } else {
           await redis.json.set(`autoCollects:${upload.userId}`, "$", [
@@ -259,7 +316,10 @@ async function processFile(upload: Upload, textMetadata: string) {
                     type: "new"
                   })
                 }*/
-      } else if (results.some((result) => result.value) && !rule.requireApproval) {
+      } else if (
+        results.some((result) => result.value) &&
+        !rule.requireApproval
+      ) {
         await CollectionItem.create({
           collectionId: rule.collectionId,
           attachmentId: upload.id,
@@ -310,7 +370,7 @@ async function getUserDomain(userId: number): Promise<string> {
     ]
   })
 
-  return user?.domain.domain + "/i/" || "https://i.troplo.com/i/"
+  return user?.domain?.domain + "/i/" || "https://i.troplo.com/i/"
 }
 
 function getTypeByExt(ext: string) {

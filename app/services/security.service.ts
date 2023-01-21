@@ -2,9 +2,39 @@ import { Service } from "typedi"
 import { Session } from "@app/models/session.model"
 import Errors from "@app/lib/errors"
 import utils from "@app/lib/utils"
+import { Op } from "sequelize"
 
 @Service()
 export class SecurityService {
+  async getSessions(id: number): Promise<Session[]> {
+    return await Session.findAll({
+      where: {
+        userId: id,
+        type: "session",
+        scopes: "*",
+        expiredAt: {
+          [Op.or]: [
+            {
+              [Op.gt]: new Date()
+            },
+            {
+              [Op.is]: null
+            }
+          ]
+        }
+      },
+      attributes: [
+        "id",
+        "name",
+        "scopes",
+        "expiredAt",
+        "createdAt",
+        "info",
+        "updatedAt"
+      ],
+      order: [["updatedAt", "DESC"]]
+    })
+  }
   async getKeys(id: number): Promise<Session[]> {
     return await Session.findAll({
       where: {
@@ -23,7 +53,12 @@ export class SecurityService {
     })
   }
 
-  async createKey(uid: number, name: string, scopes: string[], expiry: Date | null): Promise<Session> {
+  async createKey(
+    uid: number,
+    name: string,
+    scopes: string[],
+    expiry: Date | null
+  ): Promise<Session> {
     if (!scopes.length) {
       throw Errors.NO_SCOPES_PROVIDED
     }

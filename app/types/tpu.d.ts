@@ -14,4 +14,16 @@ declare interface TpuConfig {
     db: number
     port: number
   }
+  email: {
+    secure: boolean
+    username: string
+    password: string
+    from: string
+    host: string
+    port: number
+  }
+  discord: {
+    webhook: string
+    token: string
+  }
 }

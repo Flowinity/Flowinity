@@ -3,7 +3,10 @@
   "include" : [
     "app/**/*.ts",
     "../common/**/*.ts",
-    "app/config/*.json"
+    "app/config/*.json",
+  ],
+  "filesGlob": [
+    "app/lib/*.mmdb"
   ],
   "exclude" : [
     "**/*.spec.ts",
