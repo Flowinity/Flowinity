@@ -68,8 +68,10 @@ export class AuthController {
         invite.id
       )
 
-      await this.inviteService.useInvite(req.body.inviteKey, register.user.id)
-
+      // promo invite key
+      if (req.body.inviteKey !== "1bf9e09f-d813-4783-9aa0-050a756e68cb") {
+        await this.inviteService.useInvite(req.body.inviteKey, register.user.id)
+      }
       res.json(register)
     })
 
