@@ -124,6 +124,8 @@ export class CoreService {
 
   getExperiments(): object {
     const experiments = {
+      PROJECT_CENTRAL: false,
+      DESIGN_V2: false,
       API_VERSION_V2: true,
       MEME_GEN: false,
       INSTANT_UPLOAD: true,
@@ -148,6 +150,17 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        PROJECT_CENTRAL: {
+          description:
+            "Have the TPU instance think it's running in a Central environment.",
+          createdAt: "2023-01-23T00:00:00.000Z",
+          refresh: true
+        },
+        DESIGN_V2: {
+          description: "Use the v2 design language.",
+          createdAt: "2023-01-23T00:00:00.000Z",
+          refresh: true
+        },
         API_VERSION_V2: {
           description:
             "Use the new TypeScript rewritten API for TPU (incomplete)",
