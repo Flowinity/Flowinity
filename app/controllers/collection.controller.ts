@@ -8,6 +8,7 @@ import { CollectionCache } from "@app/types/collection"
 import Errors from "@app/lib/errors"
 import { GalleryService } from "@app/services/gallery.service"
 import { CacheService } from "@app/services/cache.service"
+import { AdminService } from "@app/services/admin.service"
 
 @Service()
 export class CollectionController {
@@ -16,7 +17,8 @@ export class CollectionController {
   constructor(
     private readonly collectionService: CollectionService,
     private readonly galleryService: GalleryService,
-    private readonly cacheService: CacheService
+    private readonly cacheService: CacheService,
+    protected readonly adminService: AdminService
   ) {
     this.configureRouter()
   }
@@ -45,14 +47,18 @@ export class CollectionController {
      *             format: TPU-KEY
      *           required: true
      */
-    this.router.get("/", auth("collections.view"), async (req: RequestAuth, res: Response) => {
-      let collections = await this.collectionService.getCollectionsFilter(
-        req.user.id,
-        req.query?.type?.toString() || "all",
-        req.query?.search?.toString() || ""
-      )
-      res.json(collections)
-    })
+    this.router.get(
+      "/",
+      auth("collections.view"),
+      async (req: RequestAuth, res: Response) => {
+        let collections = await this.collectionService.getCollectionsFilter(
+          req.user.id,
+          req.query?.type?.toString() || "all",
+          req.query?.search?.toString() || ""
+        )
+        res.json(collections)
+      }
+    )
 
     /**
      * @swagger
@@ -75,91 +81,118 @@ export class CollectionController {
      *             format: TPU-KEY
      *           required: true
      */
-    this.router.get("/:id", auth("collections.view", true), async (req: RequestAuth, res: Response) => {
-      if (!req.user) {
-        const collection = await redis.json.get(`shareLinks:${req.params.id}`)
-        if (collection) {
-          return res.json(collection)
-        } else {
-          throw Errors.COLLECTION_NOT_FOUND
+    this.router.get(
+      "/:id",
+      auth("collections.view", true),
+      async (req: RequestAuth, res: Response) => {
+        if (!req.user) {
+          const collection = await redis.json.get(`shareLinks:${req.params.id}`)
+          if (collection) {
+            return res.json(collection)
+          } else {
+            throw Errors.COLLECTION_NOT_FOUND
+          }
         }
-      }
-      let collections = await this.cacheService.getCachedCollections(req.user.id)
-      let collection = collections.find(
-        (collection: CollectionCache) =>
-          collection.id === parseInt(req.params.id) || collection.shareLink === req.params.id
-      )
-      if (!collection) {
-        throw Errors.COLLECTION_NOT_FOUND
-      }
-      return res.json(collection)
-    })
-
-    this.router.get("/:id/gallery", auth("collections.view", true), async (req: RequestAuth, res: Response) => {
-      if (!req.user) {
-        const collection = await redis.json.get(`shareLinks:${req.params.id}`)
-        if (collection) {
-          return res.json(
-            await this.galleryService.getGallery(
-              collection.id,
-              parseInt(<string>req.query.page) || 1,
-              req.query?.search?.toString(),
-              req.query?.filter?.toString(),
-              req.query?.textMetadata?.toString() === "true",
-              "collection"
-            )
-          )
-        } else {
-          throw Errors.COLLECTION_NOT_FOUND
-        }
-      }
-      let collections = await this.cacheService.getCachedCollections(req.user.id)
-      let collection = collections.find(
-        (collection: CollectionCache) =>
-          collection.id === parseInt(req.params.id) || collection.shareLink === req.params.id
-      )
-      if (!collection) {
-        throw Errors.COLLECTION_NOT_FOUND
-      }
-      return res.json(
-        await this.galleryService.getGallery(
-          collection.id,
-          parseInt(<string>req.query.page) || 1,
-          req.query?.search?.toString(),
-          req.query?.filter?.toString(),
-          req.query?.textMetadata?.toString() === "true",
-          "collection"
+        let collections = await this.cacheService.getCachedCollections(
+          req.user.id
         )
-      )
-    })
-
-    this.router.post("/attachment", auth("collections.modify"), async (req: RequestAuth, res: Response) => {
-      const collection = await this.collectionService.getCollectionPermissions(
-        req.body.collectionId,
-        req.user.id,
-        "write"
-      )
-      if (!collection) {
-        throw Errors.COLLECTION_NO_PERMISSION
+        let collection = collections.find(
+          (collection: CollectionCache) =>
+            collection.id === parseInt(req.params.id) ||
+            collection.shareLink === req.params.id
+        )
+        if (!collection) {
+          throw Errors.COLLECTION_NOT_FOUND
+        }
+        return res.json(collection)
       }
-      const attachment = await this.collectionService.addToCollection(
-        req.body.collectionId,
-        req.body.attachmentId || req.body.items,
-        req.user.id
-      )
-      res.json(attachment)
-    })
+    )
+
+    this.router.get(
+      "/:id/gallery",
+      auth("collections.view", true),
+      async (req: RequestAuth, res: Response) => {
+        if (!req.user) {
+          const collection = await redis.json.get(`shareLinks:${req.params.id}`)
+          if (collection) {
+            return res.json(
+              await this.galleryService.getGallery(
+                collection.id,
+                parseInt(<string>req.query.page) || 1,
+                req.query?.search?.toString(),
+                req.query?.filter?.toString(),
+                req.query?.textMetadata?.toString() === "true",
+                "collection"
+              )
+            )
+          } else {
+            throw Errors.COLLECTION_NOT_FOUND
+          }
+        }
+        let collections = await this.cacheService.getCachedCollections(
+          req.user.id
+        )
+        let collection = collections.find(
+          (collection: CollectionCache) =>
+            collection.id === parseInt(req.params.id) ||
+            collection.shareLink === req.params.id
+        )
+        if (!collection) {
+          throw Errors.COLLECTION_NOT_FOUND
+        }
+        return res.json(
+          await this.galleryService.getGallery(
+            collection.id,
+            parseInt(<string>req.query.page) || 1,
+            req.query?.search?.toString(),
+            req.query?.filter?.toString(),
+            req.query?.textMetadata?.toString() === "true",
+            "collection"
+          )
+        )
+      }
+    )
+
+    this.router.post(
+      "/attachment",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            req.body.collectionId,
+            req.user.id,
+            "write"
+          )
+        if (!collection) {
+          throw Errors.COLLECTION_NO_PERMISSION
+        }
+        const attachment = await this.collectionService.addToCollection(
+          req.body.collectionId,
+          req.body.attachmentId || req.body.items,
+          req.user.id
+        )
+        res.json(attachment)
+      }
+    )
 
     this.router.delete(
       "/:collectionId/remove/:attachmentId",
       auth("collections.modify"),
       async (req: RequestAuth, res: Response) => {
         const id = parseInt(req.params.collectionId)
-        const collection = await this.collectionService.getCollectionPermissions(id, req.user.id, "configure")
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            id,
+            req.user.id,
+            "configure"
+          )
         if (!collection) {
           throw Errors.COLLECTION_NO_PERMISSION
         }
-        await this.collectionService.removeFromCollection(id, parseInt(req.params.attachmentId))
+        await this.collectionService.removeFromCollection(
+          id,
+          parseInt(req.params.attachmentId)
+        )
         res.sendStatus(204)
       }
     )
@@ -169,69 +202,168 @@ export class CollectionController {
       auth("collections.modify"),
       async (req: RequestAuth, res: Response) => {
         const id = parseInt(req.params.collectionId)
-        const collection = await this.collectionService.getCollectionPermissions(id, req.user.id, "configure")
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            id,
+            req.user.id,
+            "configure"
+          )
         if (!collection) {
           throw Errors.COLLECTION_NO_PERMISSION
         }
-        await this.collectionService.removeUserFromCollection(id, parseInt(req.params.id))
+        await this.collectionService.removeUserFromCollection(
+          id,
+          parseInt(req.params.id)
+        )
+        await this.cacheService.resetCollectionCache(id)
         res.sendStatus(204)
-        await this.cacheService.generateCollectionCacheForUser(parseInt(req.params.id))
+        await this.cacheService.generateCollectionCacheForUser(
+          parseInt(req.params.id)
+        )
+      }
+    )
+
+    this.router.post(
+      "/:collectionId/user",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const id = parseInt(req.params.collectionId)
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            id,
+            req.user.id,
+            "configure"
+          )
+        if (!collection) {
+          throw Errors.COLLECTION_NO_PERMISSION
+        }
+        const user = await this.collectionService.addUserToCollection(
+          id,
+          req.user.id,
+          req.body.username,
+          req.body.write,
+          req.body.configure,
+          req.body.read
+        )
+        await this.cacheService.resetCollectionCache(id)
+        res.json({
+          ...user,
+          user: {
+            id: user.user.id,
+            username: user.user.username
+          }
+        })
+        /*await this.adminService.sendEmail(
+          {
+            body: {
+              intro: `You are invited to ${user.collection.name} by ${req.user.username}`,
+              action: [
+                {
+                  instructions: `TPU is a free invite-only image and file hosting service.`,
+                  button: {
+                    color: "#0190ea",
+                    text: "Go to the collection",
+                    link:
+                      config.hostnameWithProtocol +
+                      "/collection/" +
+                      collection.id
+                  }
+                }
+              ],
+              outro:
+                "You are receiving this as you are a user of TPU, and friend of the sender."
+            }
+          },
+          user.user.email,
+          `You have been invited to participate in ${user.collection.name}!`
+        )*/
+      }
+    )
+
+    this.router.patch(
+      "/:collectionId/user",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const id = parseInt(req.params.collectionId)
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            id,
+            req.user.id,
+            "configure"
+          )
+        if (!collection) {
+          throw Errors.COLLECTION_NO_PERMISSION
+        }
+        await this.collectionService.updateUser(
+          id,
+          req.body.id,
+          req.body.write,
+          req.body.configure,
+          req.body.read
+        )
+        res.sendStatus(204)
         await this.cacheService.resetCollectionCache(id)
       }
     )
 
-    this.router.post("/:collectionId/user", auth("collections.modify"), async (req: RequestAuth, res: Response) => {
-      const id = parseInt(req.params.collectionId)
-      const collection = await this.collectionService.getCollectionPermissions(id, req.user.id, "configure")
-      if (!collection) {
-        throw Errors.COLLECTION_NO_PERMISSION
+    this.router.patch(
+      "/share",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            req.body.id,
+            req.user.id,
+            "configure"
+          )
+        if (!collection) {
+          throw Errors.COLLECTION_NO_PERMISSION
+        }
+        res.json(
+          await this.collectionService.updateShareLink(
+            req.body.id,
+            req.body.type
+          )
+        )
+        await this.cacheService.resetCollectionCache(req.body.id)
+        await this.cacheService.generateShareLinkCache()
       }
-      await this.collectionService.addUserToCollection(
-        id,
-        req.user.id,
-        req.body.username,
-        req.body.write,
-        req.body.configure,
-        req.body.read
-      )
-      res.sendStatus(204)
-      await this.cacheService.resetCollectionCache(id)
-    })
-
-    this.router.patch("/:collectionId/user", auth("collections.modify"), async (req: RequestAuth, res: Response) => {
-      const id = parseInt(req.params.collectionId)
-      const collection = await this.collectionService.getCollectionPermissions(id, req.user.id, "configure")
-      if (!collection) {
-        throw Errors.COLLECTION_NO_PERMISSION
-      }
-      await this.collectionService.updateUser(id, req.body.id, req.body.write, req.body.configure, req.body.read)
-      res.sendStatus(204)
-      await this.cacheService.resetCollectionCache(id)
-    })
-
-    this.router.patch("/share", auth("collections.modify"), async (req: RequestAuth, res: Response) => {
-      const collection = await this.collectionService.getCollectionPermissions(req.body.id, req.user.id, "configure")
-      if (!collection) {
-        throw Errors.COLLECTION_NO_PERMISSION
-      }
-      res.json(await this.collectionService.updateShareLink(req.body.id, req.body.type))
-      await this.cacheService.resetCollectionCache(req.body.id)
-      await this.cacheService.generateShareLinkCache()
-    })
+    )
 
     this.router.patch(
       "/:collectionId/pin/:attachmentId",
       auth("collections.modify"),
       async (req: RequestAuth, res: Response) => {
         const id = parseInt(req.params.collectionId)
-        const collection = await this.collectionService.getCollectionPermissions(id, req.user.id, "configure")
+        const collection =
+          await this.collectionService.getCollectionPermissions(
+            id,
+            req.user.id,
+            "configure"
+          )
 
         if (!collection) {
           throw Errors.COLLECTION_NO_PERMISSION
         }
 
-        await this.collectionService.updatePin(parseInt(req.params.attachmentId), id)
+        await this.collectionService.updatePin(
+          parseInt(req.params.attachmentId),
+          id
+        )
         res.sendStatus(204)
+      }
+    )
+
+    this.router.post(
+      "/",
+      auth("collections.create"),
+      async (req: RequestAuth, res: Response) => {
+        const collection = await this.collectionService.createCollection(
+          req.user.id,
+          req.body.name
+        )
+        res.json(collection)
+        await this.cacheService.generateCollectionCacheForUser(req.user.id)
       }
     )
   }

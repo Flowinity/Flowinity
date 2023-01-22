@@ -6,9 +6,124 @@ import { Domain } from "@app/models/domain.model"
 import { Feedback } from "@app/models/feedback.model"
 import argon2 from "argon2"
 import speakeasy from "@levminer/speakeasy"
+import { CollectionCache } from "@app/types/collection"
+import { Friend } from "@app/models/friend.model"
+import { Notification } from "@app/models/notification.model"
 
 @Service()
 export class UserUtilsService {
+  async createNotification(
+    userId: number,
+    message: string,
+    route?: string
+  ): Promise<void> {
+    const notification = await Notification.create({
+      userId,
+      message,
+      route
+    })
+    socket.to(userId).emit("notification", notification)
+  }
+
+  async removeFriend(userId: number, friendId: number): Promise<void> {
+    await Friend.destroy({
+      where: {
+        userId,
+        friendId
+      }
+    })
+    await Friend.destroy({
+      where: {
+        userId: friendId,
+        friendId: userId
+      }
+    })
+  }
+
+  async friend(userId: number, friendId: number): Promise<boolean> {
+    if (userId === friendId) throw Errors.CANNOT_FRIEND_SELF
+    const user = await User.findOne({
+      where: {
+        id: userId
+      },
+      attributes: ["username"]
+    })
+
+    if (!user) throw Errors.USER_NOT_FOUND
+
+    const friend = await Friend.findOne({
+      where: {
+        userId,
+        friendId
+      }
+    })
+    if (!friend) {
+      // Prevent user spam by avoiding to send the notification if the request is made <30minutes
+      if (!(await redis.get(`friendNotification:${friendId}:${userId}`))) {
+        await redis.set(
+          `friendNotification:${friendId}:${userId}`,
+          "true",
+          "EX",
+          1800
+        )
+        await this.createNotification(
+          friendId,
+          `${user.username} has sent you a friend request!`,
+          `/u/${user.username}`
+        )
+      }
+      await Friend.create({
+        userId,
+        friendId,
+        status: "outgoing"
+      })
+      await Friend.create({
+        userId: friendId,
+        friendId: userId,
+        status: "incoming"
+      })
+      return true
+    }
+
+    switch (friend.status) {
+      case "outgoing":
+        await this.removeFriend(userId, friendId)
+        return true
+      case "incoming":
+        await Friend.update(
+          {
+            status: "accepted"
+          },
+          {
+            where: {
+              userId,
+              friendId
+            }
+          }
+        )
+        await Friend.update(
+          {
+            status: "accepted"
+          },
+          {
+            where: {
+              userId: friendId,
+              friendId: userId
+            }
+          }
+        )
+        await this.createNotification(
+          friendId,
+          `${user.username} has accepted your friend request!`,
+          `/u/${user.username}`
+        )
+        return true
+      case "accepted":
+        await this.removeFriend(userId, friendId)
+        return true
+    }
+  }
+
   async enable2FA(id: number): Promise<object> {
     const code = speakeasy.generateSecret({
       name: "TroploPrivateUploader"
@@ -138,10 +253,80 @@ export class UserUtilsService {
     })
   }
 
-  async getUser(username: string): Promise<User | null> {
-    return await User.findOne({
+  async getMutualFriends(userId: number, friendId: number): Promise<Friend[]> {
+    const friends = await Friend.findAll({
       where: {
-        username: username
+        userId,
+        status: "accepted"
+      },
+      attributes: ["friendId"]
+    })
+    return await Friend.findAll({
+      where: {
+        userId: friends.map((f) => f.friendId),
+        friendId: friendId,
+        status: "accepted"
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username", "avatar", "description"]
+        }
+      ],
+      attributes: ["id", "friendId", "userId"]
+    })
+  }
+
+  async getMutualCollections(
+    userId: number,
+    otherUserId: number
+  ): Promise<CollectionCache[]> {
+    const collections = await redis.json.get(`collections:${userId}`)
+    const userCollections = await redis.json.get(`collections:${otherUserId}`)
+
+    if (collections && userCollections) {
+      return (
+        collections
+          .filter((collection: CollectionCache) =>
+            userCollections.some(
+              (userCollection: CollectionCache) =>
+                userCollection.id === collection.id
+            )
+          )
+          .map((collection: CollectionCache) => {
+            return {
+              id: collection.id,
+              name: collection.name,
+              image: collection.image,
+              preview: collection.preview?.attachment?.attachment,
+              items: collection.items
+            }
+          }) || []
+      )
+    } else {
+      return []
+    }
+  }
+
+  async getFriendStatus(
+    userId: number,
+    otherUserId: number
+  ): Promise<string | false> {
+    const friend = await Friend.findOne({
+      where: {
+        userId,
+        friendId: otherUserId
+      }
+    })
+    if (!friend) return false
+    return friend.status
+  }
+
+  async getUser(username: string, userId: number): Promise<User | null> {
+    let user = await User.findOne({
+      where: {
+        username
       },
       attributes: [
         "id",
@@ -152,7 +337,9 @@ export class UserUtilsService {
         "darkTheme",
         "banned",
         "inviteId",
-        "avatar"
+        "avatar",
+        "createdAt",
+        "updatedAt"
       ],
       include: [
         {
@@ -161,6 +348,15 @@ export class UserUtilsService {
         }
       ]
     })
+    if (!user) return null
+    user.dataValues.collections = await this.getMutualCollections(
+      userId,
+      user.id
+    )
+    user.dataValues.friend = await this.getFriendStatus(userId, user.id)
+    user.dataValues.friends = await this.getMutualFriends(user.id, userId)
+    user.dataValues.stats = await redis.json.get(`userStats:${user.id}`)
+    return user
   }
 
   async setDefaultDomain(

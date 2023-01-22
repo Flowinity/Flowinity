@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.BIGINT
       },
       name: {
-        type: Sequelize.STRING(191)
+        type: Sequelize.STRING
       },
       quotaMax: {
         type: Sequelize.BIGINT
@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.JSON
       },
       color: {
-        type: Sequelize.STRING(191)
+        type: Sequelize.STRING
       }
     })
   },

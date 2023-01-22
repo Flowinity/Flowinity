@@ -20,7 +20,7 @@ export default {
         }
       })
       if (user && socket.user.id) {
-        socket.join(user.id.toString())
+        socket.join(user.id)
         socket.emit("pulseConfig", {
           interval: 10000
         })
@@ -112,7 +112,8 @@ export default {
         })
       }
     })
-    console.log("WS OK")
     app.set("io", io)
+    global.socket = io
+    console.log("WS OK")
   }
 }

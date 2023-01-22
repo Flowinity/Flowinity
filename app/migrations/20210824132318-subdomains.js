@@ -17,13 +17,13 @@ module.exports = {
         allowNull: false
       },
       zone: {
-        type: Sequelize.STRING(191)
+        type: Sequelize.STRING
       },
       cfId: {
-        type: Sequelize.STRING(191)
+        type: Sequelize.STRING
       },
       name: {
-        type: Sequelize.STRING(191)
+        type: Sequelize.STRING
       }
     })
   },

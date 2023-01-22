@@ -9,11 +9,11 @@ module.exports = {
         type: Sequelize.BIGINT
       },
       name: {
-        type: Sequelize.STRING(191),
+        type: Sequelize.STRING,
         allowNull: false
       },
       internalName: {
-        type: Sequelize.STRING(191),
+        type: Sequelize.STRING,
         allowNull: false
       },
       deletable: {

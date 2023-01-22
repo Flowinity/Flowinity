@@ -128,5 +128,39 @@ export class GalleryController {
         }
       }
     )
+
+    this.router.delete(
+      "/:id",
+      auth("uploads.modify"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          await this.galleryService.deleteUpload(
+            parseInt(req.params.id),
+            req.user.id
+          )
+          res.sendStatus(204)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.post(
+      "/delete",
+      auth("uploads.modify"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          if (!req.body.items.length || req.body.items.length > 15) {
+            throw Errors.TOO_MANY_ITEMS_DELETE
+          }
+          for (const id of req.body.items) {
+            await this.galleryService.deleteUpload(parseInt(id), req.user.id)
+          }
+          res.sendStatus(204)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
   }
 }

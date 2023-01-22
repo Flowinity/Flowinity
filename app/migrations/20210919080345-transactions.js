@@ -9,13 +9,19 @@ module.exports = {
         type: Sequelize.BIGINT
       },
       name: {
-        type: Sequelize.STRING(191)
+        type: Sequelize.STRING
       },
       price: {
         type: Sequelize.BIGINT
       },
       paymentMethodType: {
-        type: Sequelize.ENUM(["crypto", "paypal", "manual", "stripe", "credits"]),
+        type: Sequelize.ENUM([
+          "crypto",
+          "paypal",
+          "manual",
+          "stripe",
+          "credits"
+        ]),
         defaultValue: "manual"
       },
       paymentMethodId: {

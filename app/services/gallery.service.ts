@@ -12,9 +12,51 @@ import queue from "@app/lib/queue"
 import { Star } from "@app/models/star.model"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import axios from "axios"
+import * as fs from "fs"
 
 @Service()
 export class GalleryService {
+  async deleteUpload(id: number, userId: number) {
+    const upload = await Upload.findOne({
+      where: {
+        id,
+        userId
+      }
+    })
+    if (upload) {
+      await fs.unlinkSync(path.join(config.storage, upload.attachment))
+      await User.update(
+        {
+          quota: sequelize.literal("quota -" + upload.fileSize)
+        },
+        {
+          where: {
+            id: userId
+          }
+        }
+      )
+      await CollectionItem.destroy({
+        where: {
+          attachmentId: id
+        }
+      })
+      await Star.destroy({
+        where: {
+          attachmentId: id
+        }
+      })
+      await AutoCollectApproval.destroy({
+        where: {
+          uploadId: id
+        }
+      })
+      await upload.destroy()
+      return true
+    } else {
+      return false
+    }
+  }
+
   async createUpload(userId: number, file: any, precache: boolean = false) {
     const upload = await Upload.create({
       attachment: file.filename, // Attachment hash

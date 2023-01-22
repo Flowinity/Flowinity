@@ -7,7 +7,7 @@ import { RequestAuth } from "@app/types/express"
 import Errors from "@app/lib/errors"
 import Router from "express-promise-router"
 import { AutoCollectCache } from "@app/types/collection"
-
+const { Notification } = require("@app/models/notification.model")
 @Service()
 export class UserUtilsController {
   router: any
@@ -52,11 +52,47 @@ export class UserUtilsController {
               (autoCollect) => autoCollect.autoCollectApprovals.length > 0
             ).length
           })
+
+        const notifications = await Notification.findAll({
+          where: {
+            userId: req.user.id
+          },
+          order: [["createdAt", "DESC"]],
+          limit: 15
+        })
+
         res.json({
           ...req.user.toJSON(),
-          // is an array of objects which include an array of autoCollectApprovals which need to be counted, like [{autoCollectApprovals: [{}, {}]}, {autoCollectApprovals: [{}, {}]}]
-          pendingAutoCollects
+          pendingAutoCollects,
+          notifications
         })
+      }
+    )
+
+    this.router.patch(
+      "/notifications",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        await Notification.update(
+          {
+            dismissed: true
+          },
+          {
+            where: {
+              userId: req.user.id
+            }
+          }
+        )
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.post(
+      "/friends/:id",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        await this.userUtilsService.friend(req.user.id, parseInt(req.params.id))
+        res.sendStatus(204)
       }
     )
 
@@ -118,8 +154,11 @@ export class UserUtilsController {
     this.router.get(
       "/profile/:username",
       auth("user.view"),
-      async (req: Request, res: Response) => {
-        const user = await this.userUtilsService.getUser(req.params.username)
+      async (req: RequestAuth, res: Response) => {
+        const user = await this.userUtilsService.getUser(
+          req.params.username,
+          req.user.id
+        )
         if (user) {
           res.json(user)
         } else {

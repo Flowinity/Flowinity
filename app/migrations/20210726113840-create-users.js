@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.BIGINT
       },
       username: {
-        type: Sequelize.STRING(191),
+        type: Sequelize.STRING,
         allowNull: false
       },
       email: {

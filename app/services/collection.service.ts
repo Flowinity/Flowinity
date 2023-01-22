@@ -7,9 +7,17 @@ import { Upload } from "@app/models/upload.model"
 import Errors from "@app/lib/errors"
 import { CollectionCache } from "@app/types/collection"
 import cryptoRandomString from "crypto-random-string"
+import { Friend } from "@app/models/friend.model"
 
 @Service()
 export class CollectionService {
+  async createCollection(userId: number, name: string) {
+    return await Collection.create({
+      userId,
+      name
+    })
+  }
+
   // this is not used by any routes!!
   async getCollection(id: number) {
     const collection = await Collection.findOne({
@@ -179,35 +187,55 @@ export class CollectionService {
   }
 
   async getCollectionsFilter(userId: number, type: string, search: string) {
-    let collections: CollectionCache[] = (await redis.json.get(`collections:${userId}`)) || this.getCollections(userId)
+    let collections: CollectionCache[] =
+      (await redis.json.get(`collections:${userId}`)) ||
+      this.getCollections(userId)
     if (type === "owned") {
-      collections = collections.filter((collection) => collection.userId === userId)
+      collections = collections.filter(
+        (collection) => collection.userId === userId
+      )
     } else if (type === "shared") {
       collections = collections.filter((collection) => collection.shared)
     } else if (type === "write") {
-      collections = collections.filter((collection) => collection.permissionsMetadata.write)
+      collections = collections.filter(
+        (collection) => collection.permissionsMetadata.write
+      )
     } else if (type === "configure") {
-      collections = collections.filter((collection) => collection.permissionsMetadata.configure)
+      collections = collections.filter(
+        (collection) => collection.permissionsMetadata.configure
+      )
     }
 
     if (search) {
-      collections = collections.filter((collection) => collection.name.toLowerCase().includes(search.toLowerCase()))
+      collections = collections.filter((collection) =>
+        collection.name.toLowerCase().includes(search.toLowerCase())
+      )
     }
 
     return collections
   }
 
-  async getCollectionPermissions(collectionId: number, userId: number, permission: "write" | "configure" | "read") {
+  async getCollectionPermissions(
+    collectionId: number,
+    userId: number,
+    permission: "write" | "configure" | "read"
+  ) {
     const collections = await redis.json.get(`collections:${userId}`)
-    console.log(collections)
-    const collection = collections.find((collection: CollectionCache) => collection.id === collectionId)
+
+    const collection = collections.find(
+      (collection: CollectionCache) => collection.id === collectionId
+    )
 
     if (!collection) return false
 
     return collection.permissionsMetadata[permission]
   }
 
-  async addToCollection(collectionId: number, uploadId: number | Array<number>, userId: number) {
+  async addToCollection(
+    collectionId: number,
+    uploadId: number | Array<number>,
+    userId: number
+  ) {
     if (typeof uploadId === "object" && uploadId?.length > 20) {
       throw Errors.PLACEHOLDER
     }
@@ -236,7 +264,10 @@ export class CollectionService {
     }
   }
 
-  async removeFromCollection(collectionId: number, uploadId: number | Array<number>) {
+  async removeFromCollection(
+    collectionId: number,
+    uploadId: number | Array<number>
+  ) {
     const result = await CollectionItem.destroy({
       where: {
         collectionId,
@@ -290,17 +321,44 @@ export class CollectionService {
       throw Errors.USER_NOT_FOUND
     }
 
-    return await CollectionUser.create({
-      collectionId,
-      recipientId: user.id,
-      senderId: senderId,
-      write,
-      configure,
-      read
+    const friend = await Friend.findOne({
+      where: {
+        userId: senderId,
+        friendId: user.id,
+        status: "accepted"
+      }
     })
+
+    if (!friend) {
+      throw Errors.NOT_FRIENDS_WITH_USER_COLLECTION
+    }
+
+    return {
+      ...(
+        await CollectionUser.create({
+          collectionId,
+          recipientId: user.id,
+          senderId: senderId,
+          write,
+          configure,
+          read
+        })
+      ).dataValues,
+      user,
+      collection: {
+        id: collection.id,
+        name: collection.name
+      }
+    }
   }
 
-  async updateUser(collectionId: number, recipientId: number, write: boolean, configure: boolean, read: boolean) {
+  async updateUser(
+    collectionId: number,
+    recipientId: number,
+    write: boolean,
+    configure: boolean,
+    read: boolean
+  ) {
     const result = await CollectionUser.update(
       {
         write,

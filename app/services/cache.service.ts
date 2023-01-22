@@ -11,6 +11,21 @@ import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import { PulseService } from "@app/services/pulse.service"
 @Service()
 export class CacheService {
+  async generateUserStatsCache() {
+    try {
+      console.info("[REDIS] Generating user stats cache...")
+      let start = new Date().getTime()
+      const coreService = Container.get(CoreService)
+      const users = await User.findAll()
+      for (const user of users) {
+        const result = await coreService.getStats(user)
+        redis.json.set(`userStats:${user.id}`, "$", result)
+      }
+      let end = new Date().getTime()
+      console.info(`[REDIS] User stats cache generated in ${end - start}ms`)
+    } catch {}
+  }
+
   async generateInsightsCache() {
     try {
       const pulseService = Container.get(PulseService)
@@ -275,6 +290,8 @@ export class CacheService {
     try {
       // 10 minutes
       setInterval(this.refreshState, 1000 * 60 * 10)
+      // 30 minutes
+      setInterval(this.generateUserStatsCache, 1000 * 60 * 30)
       // 1 hour
       setInterval(this.generateCollectionCache, 3600000)
       setInterval(this.generateShareLinkCache, 3600000)
@@ -286,6 +303,7 @@ export class CacheService {
       this.generateCollectionCache().then(() => {})
       this.generateShareLinkCache().then(() => {})
       this.generateInsightsCache().then(() => {})
+      this.generateUserStatsCache().then(() => {})
       return true
     } catch {
       return false

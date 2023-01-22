@@ -93,6 +93,20 @@ let Errors = {
   INVALID_PASSWORD_RESET_CODE: {
     message: "The provided password reset code has expired or is invalid.",
     status: 400
+  },
+  CANNOT_FRIEND_SELF: {
+    message:
+      "You can't be friends with yourself, should Jitsi with real people instead.",
+    status: 400
+  },
+  NOT_FRIENDS_WITH_USER_COLLECTION: {
+    message:
+      "You must be friends with the user you are trying to add to the collection.",
+    status: 400
+  },
+  TOO_MANY_ITEMS_DELETE: {
+    message: "You cannot bulk delete more than 12 items.",
+    status: 400
   }
 }
 

@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.BIGINT
       },
       domain: {
-        type: Sequelize.STRING(191),
+        type: Sequelize.STRING,
         allowNull: false,
         unique: true
       },

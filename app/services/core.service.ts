@@ -6,6 +6,7 @@ import { CollectionItem } from "@app/models/collectionItem.model"
 import { Upload } from "@app/models/upload.model"
 import { Op } from "sequelize"
 import { Pulse } from "@app/models/pulse.model"
+import { HoursOfDay } from "@app/services/pulse.service"
 
 @Service()
 export class CoreService {
@@ -37,11 +38,12 @@ export class CoreService {
     })
   }
 
-  async getStats(): Promise<object> {
+  async getStats(user?: User): Promise<object> {
     let resultUploads = {}
+    const where = user ? { userId: user.id } : {}
     const uploadStats = await Upload.findAll({
       where: {
-        // gte 7d
+        ...where,
         createdAt: {
           [Op.gte]: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
         }
@@ -60,29 +62,63 @@ export class CoreService {
       data: Object.values(uploadGraphInterim),
       labels: Object.keys(uploadGraphInterim)
     }
-
-    return {
-      users: await User.count(),
-      announcements: await Announcement.count(),
-      usage: await User.sum("quota"),
-      usagePercentage: (await User.sum("quota")) / 1000000000000,
-      collections: await Collection.count(),
-      collectionItems: await CollectionItem.count(),
-      uploadGraph,
-      uploads: await Upload.count(),
-      pulse: Math.round(
-        (await Pulse.sum("timeSpent", {
-          where: {
-            other: {
-              type: "session"
+    if (!user) {
+      return {
+        users: await User.count(),
+        announcements: await Announcement.count(),
+        usage: await User.sum("quota"),
+        usagePercentage: (await User.sum("quota")) / 1000000000000,
+        collections: await Collection.count(),
+        collectionItems: await CollectionItem.count(),
+        uploadGraph,
+        uploads: await Upload.count(),
+        pulse: Math.round(
+          (await Pulse.sum("timeSpent", {
+            where: {
+              other: {
+                type: "session"
+              }
             }
+          })) /
+            1000 /
+            60 /
+            60
+        ),
+        pulses: await Pulse.count()
+      }
+    } else {
+      const pulses = await Pulse.findAll({
+        where: {
+          userId: user.id,
+          other: {
+            type: "session"
           }
-        })) /
-          1000 /
-          60 /
-          60
-      ),
-      pulses: await Pulse.count()
+        }
+      })
+      let hours = new HoursOfDay().hours
+      const uploads = await Upload.findAll({
+        where: {
+          userId: user.id
+        }
+      })
+      for (const upload of uploads) {
+        const hour = dayjs(upload.createdAt).format("h A")
+        hours[hour] = (hours[hour] || 0) + 1
+      }
+      return {
+        uploads: await Upload.count({
+          where
+        }),
+        uploadGraph,
+        pulse: Math.round(
+          pulses.reduce((acc, pulse) => acc + pulse.timeSpent, 0) / 3600000
+        ),
+        pulses: await Pulse.count({ where: { userId: user.id } }),
+        usage: user.quota,
+        hours,
+        collections: await Collection.count({ where }),
+        collectionItems: await CollectionItem.count({ where })
+      }
     }
   }
 
@@ -91,7 +127,7 @@ export class CoreService {
       API_VERSION_V2: true,
       MEME_GEN: false,
       INSTANT_UPLOAD: true,
-      USER_V2: false,
+      USER_V2: true,
       SFX_KFX: false,
       SFX_KOLF: false,
       HOVER_CHIP_CLOSE_DELAY: 35,
@@ -113,7 +149,8 @@ export class CoreService {
       AUG_2021_UI: false,
       meta: {
         API_VERSION_V2: {
-          description: "Use the new TypeScript rewritten API for TPU (incomplete)",
+          description:
+            "Use the new TypeScript rewritten API for TPU (incomplete)",
           createdAt: "2023-01-11T00:00:00.000Z",
           refresh: true
         },
@@ -157,7 +194,8 @@ export class CoreService {
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         HOVER_CHIP_HOVER: {
-          description: "Whether the hover chip component is always expanded or expand on hover.",
+          description:
+            "Whether the hover chip component is always expanded or expand on hover.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         PULSE_INTERVAL: {
@@ -169,7 +207,8 @@ export class CoreService {
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         EXPERIENCE_FLUID: {
-          description: "Whether the gallery, and other pages are fluid on low resolution displays.",
+          description:
+            "Whether the gallery, and other pages are fluid on low resolution displays.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         EXPERIENCE_ITEMS_PER_PAGE: {
@@ -185,7 +224,8 @@ export class CoreService {
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         ANDROID_CONFIG: {
-          description: "Ability to download Automate configuration files in Client Settings.",
+          description:
+            "Ability to download Automate configuration files in Client Settings.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         EXPERIENCE_API_KEY_LOGIN: {
@@ -193,11 +233,13 @@ export class CoreService {
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         LEGACY_ATTRIBUTES_UI: {
-          description: "Whether the legacy attributes UI in Settings > About is enabled.",
+          description:
+            "Whether the legacy attributes UI in Settings > About is enabled.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         LEGACY_FLOWINITY_SSO: {
-          description: "Re-enable the ability to login, and link a Flowinity SSO account.",
+          description:
+            "Re-enable the ability to login, and link a Flowinity SSO account.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         FORCE_DEV_MODE: {

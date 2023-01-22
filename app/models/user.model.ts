@@ -15,6 +15,7 @@ import {
 import { Plan } from "@app/models/plan.model"
 import { Theme } from "@app/models/theme.model"
 import { Domain } from "@app/models/domain.model"
+import { CollectionCache } from "@app/types/collection"
 
 @DefaultScope(() => ({
   attributes: {
@@ -61,6 +62,11 @@ export class User extends Model {
   })
   passwordResetExpiry: Date
 
+  @Length({
+    msg: "Length of your description must be between 0-255 characters.",
+    min: 0,
+    max: 255
+  })
   @Column
   description?: string
 
@@ -158,4 +164,6 @@ export class User extends Model {
 
   @BelongsTo(() => Domain, "domainId")
   domain: Domain
+
+  collections?: CollectionCache[]
 }
