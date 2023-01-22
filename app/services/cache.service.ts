@@ -12,31 +12,33 @@ import { PulseService } from "@app/services/pulse.service"
 @Service()
 export class CacheService {
   async generateInsightsCache() {
-    const pulseService = Container.get(PulseService)
-    console.info("[REDIS] Generating insights cache...")
-    const start = new Date().getTime()
-    const users = await User.findAll()
-    const years = ["2021", "2022", "2023", "latest"]
-    for (const user of users) {
+    try {
+      const pulseService = Container.get(PulseService)
+      console.info("[REDIS] Generating insights cache...")
+      const start = new Date().getTime()
+      const users = await User.findAll()
+      const years = ["2021", "2022", "2023", "latest"]
+      for (const user of users) {
+        let result = {}
+        for (const year of years) {
+          result[year] = {
+            ...(await pulseService.getInsights(user.id, year, false)),
+            _redis: new Date().toISOString()
+          }
+        }
+        redis.json.set(`insights:${user.id}`, "$", result)
+      }
       let result = {}
       for (const year of years) {
         result[year] = {
-          ...(await pulseService.getInsights(user.id, year, false)),
+          ...(await pulseService.getInsights(null, year, true)),
           _redis: new Date().toISOString()
         }
       }
-      redis.json.set(`insights:${user.id}`, "$", result)
-    }
-    let result = {}
-    for (const year of years) {
-      result[year] = {
-        ...(await pulseService.getInsights(null, year, true)),
-        _redis: new Date().toISOString()
-      }
-    }
-    redis.json.set(`insights:global`, "$", result)
-    const end = new Date().getTime()
-    console.info(`[REDIS] Insights cache generated in ${end - start}ms`)
+      redis.json.set(`insights:global`, "$", result)
+      const end = new Date().getTime()
+      console.info(`[REDIS] Insights cache generated in ${end - start}ms`)
+    } catch {}
   }
   async purgeInvite(inviteKey: string) {
     console.info("[REDIS] Purging invite from cache...")
@@ -44,17 +46,21 @@ export class CacheService {
   }
 
   async refreshState() {
-    const start = new Date().getTime()
-    console.info("[REDIS] Generating state cache...")
-    const core = Container.get(CoreService)
-    const state = await core.getState()
-    redis.json.set("core:state", "$", {
-      ...state,
-      _redis: new Date().toISOString()
-    })
-    const end = new Date().getTime()
-    console.info(`[REDIS] State cache generated in ${end - start}ms`)
-    return state
+    try {
+      const start = new Date().getTime()
+      console.info("[REDIS] Generating state cache...")
+      const core = Container.get(CoreService)
+      const state = await core.getState()
+      redis.json.set("core:state", "$", {
+        ...state,
+        _redis: new Date().toISOString()
+      })
+      const end = new Date().getTime()
+      console.info(`[REDIS] State cache generated in ${end - start}ms`)
+      return state
+    } catch {
+      return null
+    }
   }
 
   async getCachedCollections(userId: number) {
@@ -68,33 +74,35 @@ export class CacheService {
   }
 
   async generateAutoCollectCache() {
-    console.info("[REDIS] Generating User AutoCollection cache...")
-    let start = new Date().getTime()
-    const users = await User.findAll()
-    for (const user of users) {
-      let result = []
-      let autoCollects = await AutoCollectApproval.findAll({
-        where: {
-          userId: user.id
-        }
-      })
-      const collectionIds = [
-        ...new Set(autoCollects.map((a) => a.collectionId))
-      ]
-      for (const id of collectionIds) {
-        result.push({
-          ...(await this.getCachedCollection(user.id, id)),
-          autoCollectApprovals: autoCollects.filter(
-            (a) => a.collectionId === id
-          )
+    try {
+      console.info("[REDIS] Generating User AutoCollection cache...")
+      let start = new Date().getTime()
+      const users = await User.findAll()
+      for (const user of users) {
+        let result = []
+        let autoCollects = await AutoCollectApproval.findAll({
+          where: {
+            userId: user.id
+          }
         })
+        const collectionIds = [
+          ...new Set(autoCollects.map((a) => a.collectionId))
+        ]
+        for (const id of collectionIds) {
+          result.push({
+            ...(await this.getCachedCollection(user.id, id)),
+            autoCollectApprovals: autoCollects.filter(
+              (a) => a.collectionId === id
+            )
+          })
+        }
+        redis.json.set(`autoCollects:${user.id}`, "$", result)
       }
-      redis.json.set(`autoCollects:${user.id}`, "$", result)
-    }
-    let end = new Date().getTime()
-    console.info(
-      `[REDIS] User AutoCollection cache generated in ${end - start}ms`
-    )
+      let end = new Date().getTime()
+      console.info(
+        `[REDIS] User AutoCollection cache generated in ${end - start}ms`
+      )
+    } catch {}
   }
 
   async patchAutoCollectCache(
@@ -181,17 +189,19 @@ export class CacheService {
   }
 
   async generateCollectionCache() {
-    const collectionService = Container.get(CollectionService)
-    console.info("[REDIS] Generating collections cache...")
-    let start = new Date().getTime()
-    const users = await User.findAll()
-    for (const user of users) {
-      const collections = await collectionService.getCollections(user.id)
-      redis.json.set(`collections:${user.id}`, "$", collections)
-    }
-    let end = new Date().getTime()
-    console.info(`[REDIS] Collections cache generated in ${end - start}ms`)
-    this.generateAutoCollectCache().then(() => {})
+    try {
+      const collectionService = Container.get(CollectionService)
+      console.info("[REDIS] Generating collections cache...")
+      let start = new Date().getTime()
+      const users = await User.findAll()
+      for (const user of users) {
+        const collections = await collectionService.getCollections(user.id)
+        redis.json.set(`collections:${user.id}`, "$", collections)
+      }
+      let end = new Date().getTime()
+      console.info(`[REDIS] Collections cache generated in ${end - start}ms`)
+      this.generateAutoCollectCache().then(() => {})
+    } catch {}
   }
 
   async generateCollectionCacheForUser(id: number) {
@@ -205,74 +215,80 @@ export class CacheService {
   }
 
   async resetCollectionCache(id: number) {
-    const collectionService = Container.get(CollectionService)
-    console.info(
-      "[REDIS] Generating collections cache for individual collection..."
-    )
-    let start = new Date().getTime()
-    const collection = await collectionService.getCollection(id)
-
-    async function updateCache(user: CollectionUser) {
-      const id = user.recipientId
-
-      console.info("[REDIS] Patching cache for user", id)
-      const collections = await redis.json.get(`collections:${id}`)
-      const index: number = collections.findIndex(
-        (c: Collection) => c.id === collection.id
+    try {
+      const collectionService = Container.get(CollectionService)
+      console.info(
+        "[REDIS] Generating collections cache for individual collection..."
       )
-      if (index === -1) {
-        collections.push({
-          ...collection.toJSON(),
-          permissionsMetadata: {
-            write: user.write,
-            read: user.read,
-            configure: user.configure
-          }
-        })
-      } else {
-        collections[index] = {
-          ...collection.toJSON(),
-          permissionsMetadata: {
-            write: user.write,
-            read: user.read,
-            configure: user.configure
+      let start = new Date().getTime()
+      const collection = await collectionService.getCollection(id)
+
+      async function updateCache(user: CollectionUser) {
+        const id = user.recipientId
+
+        console.info("[REDIS] Patching cache for user", id)
+        const collections = await redis.json.get(`collections:${id}`)
+        const index: number = collections.findIndex(
+          (c: Collection) => c.id === collection.id
+        )
+        if (index === -1) {
+          collections.push({
+            ...collection.toJSON(),
+            permissionsMetadata: {
+              write: user.write,
+              read: user.read,
+              configure: user.configure
+            }
+          })
+        } else {
+          collections[index] = {
+            ...collection.toJSON(),
+            permissionsMetadata: {
+              write: user.write,
+              read: user.read,
+              configure: user.configure
+            }
           }
         }
+        redis.json.set(`collections:${id}`, "$", collections)
       }
-      redis.json.set(`collections:${id}`, "$", collections)
-    }
 
-    for (const user of collection.users) {
-      await updateCache(user)
-    }
+      for (const user of collection.users) {
+        await updateCache(user)
+      }
 
-    await updateCache({
-      recipientId: collection.userId,
-      write: true,
-      read: true,
-      configure: true
-    } as CollectionUser)
+      await updateCache({
+        recipientId: collection.userId,
+        write: true,
+        read: true,
+        configure: true
+      } as CollectionUser)
 
-    let end = new Date().getTime()
-    console.info(
-      `[REDIS] Individual collection cache generated in ${end - start}ms`
-    )
+      let end = new Date().getTime()
+      console.info(
+        `[REDIS] Individual collection cache generated in ${end - start}ms`
+      )
+    } catch {}
   }
 
   cacheInit() {
-    // 10 minutes
-    setInterval(this.refreshState, 1000 * 60 * 10)
-    // 1 hour
-    setInterval(this.generateCollectionCache, 3600000)
-    setInterval(this.generateShareLinkCache, 3600000)
+    try {
+      // 10 minutes
+      setInterval(this.refreshState, 1000 * 60 * 10)
+      // 1 hour
+      setInterval(this.generateCollectionCache, 3600000)
+      setInterval(this.generateShareLinkCache, 3600000)
 
-    // 4 hours
-    setInterval(this.generateInsightsCache, 14400000)
+      // 4 hours
+      setInterval(this.generateInsightsCache, 14400000)
 
-    this.refreshState().then(() => {})
-    this.generateCollectionCache().then(() => {})
-    this.generateShareLinkCache().then(() => {})
-    this.generateInsightsCache().then(() => {})
-    return true
+      this.refreshState().then(() => {})
+      this.generateCollectionCache().then(() => {})
+      this.generateShareLinkCache().then(() => {})
+      this.generateInsightsCache().then(() => {})
+      return true
+    } catch {
+      return false
+    }
   }
 }
