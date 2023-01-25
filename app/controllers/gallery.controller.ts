@@ -162,5 +162,21 @@ export class GalleryController {
         }
       }
     )
+
+    this.router.get(
+      "/random",
+      auth("uploads.view"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const attachment = await this.galleryService.getRandomAttachment(
+            req.user.id,
+            "user"
+          )
+          res.json(attachment)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
   }
 }

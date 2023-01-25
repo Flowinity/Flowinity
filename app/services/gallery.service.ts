@@ -16,6 +16,55 @@ import * as fs from "fs"
 
 @Service()
 export class GalleryService {
+  async getRandomAttachment(
+    id: number,
+    type: "user" | "collection" | "starred" = "user",
+    userId?: number
+  ): Promise<Upload> {
+    let include: object[]
+
+    switch (type) {
+      case "collection":
+        include = [
+          {
+            model: CollectionItem,
+            as: "item",
+            required: true,
+            where: {
+              collectionId: id
+            }
+          }
+        ]
+        break
+      case "starred":
+        include = [
+          {
+            model: Star,
+            as: "star",
+            required: true,
+            where: {
+              userId: userId
+            }
+          }
+        ]
+        break
+      default:
+        include = []
+    }
+
+    const where = type === "starred" || type === "user" ? { userId: id } : {}
+
+    return await Upload.findOne({
+      where: {
+        ...where,
+        deletable: true
+      },
+      include,
+      // @ts-ignore
+      order: [[sequelize.literal("RAND()")]]
+    })
+  }
+
   async deleteUpload(id: number, userId: number) {
     const upload = await Upload.findOne({
       where: {

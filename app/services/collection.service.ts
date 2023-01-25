@@ -216,10 +216,19 @@ export class CollectionService {
   }
 
   async getCollectionPermissions(
-    collectionId: number,
-    userId: number,
+    collectionId: number | string,
+    userId: number | null,
     permission: "write" | "configure" | "read"
   ) {
+    if (!userId) {
+      const collection = await redis.json.get(`shareLinks:${collectionId}`)
+      if (!collection) return false
+      return {
+        write: false,
+        configure: false,
+        read: true
+      }
+    }
     const collections = await redis.json.get(`collections:${userId}`)
 
     const collection = collections.find(
@@ -229,6 +238,23 @@ export class CollectionService {
     if (!collection) return false
 
     return collection.permissionsMetadata[permission]
+  }
+
+  async getCollectionOrShare(
+    collectionId: number | string,
+    userId: number | null
+  ) {
+    if (!userId) {
+      const collection = await redis.json.get(`shareLinks:${collectionId}`)
+      if (!collection) return false
+      return collection
+    }
+    const collections = await redis.json.get(`collections:${userId}`)
+    const collection = collections.find(
+      (collection: CollectionCache) => collection.id === collectionId
+    )
+    if (!collection) return false
+    return collection
   }
 
   async addToCollection(

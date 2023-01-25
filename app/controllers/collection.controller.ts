@@ -1,4 +1,4 @@
-import { Response } from "express"
+import { Response, NextFunction } from "express"
 import { Service } from "typedi"
 import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
@@ -50,13 +50,17 @@ export class CollectionController {
     this.router.get(
       "/",
       auth("collections.view"),
-      async (req: RequestAuth, res: Response) => {
-        let collections = await this.collectionService.getCollectionsFilter(
-          req.user.id,
-          req.query?.type?.toString() || "all",
-          req.query?.search?.toString() || ""
-        )
-        res.json(collections)
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          let collections = await this.collectionService.getCollectionsFilter(
+            req.user.id,
+            req.query?.type?.toString() || "all",
+            req.query?.search?.toString() || ""
+          )
+          res.json(collections)
+        } catch (e) {
+          next(e)
+        }
       }
     )
 
@@ -333,37 +337,71 @@ export class CollectionController {
     this.router.patch(
       "/:collectionId/pin/:attachmentId",
       auth("collections.modify"),
-      async (req: RequestAuth, res: Response) => {
-        const id = parseInt(req.params.collectionId)
-        const collection =
-          await this.collectionService.getCollectionPermissions(
-            id,
-            req.user.id,
-            "configure"
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const id = parseInt(req.params.collectionId)
+          const collection =
+            await this.collectionService.getCollectionPermissions(
+              id,
+              req.user.id,
+              "configure"
+            )
+
+          if (!collection) {
+            throw Errors.COLLECTION_NO_PERMISSION
+          }
+
+          await this.collectionService.updatePin(
+            parseInt(req.params.attachmentId),
+            id
           )
-
-        if (!collection) {
-          throw Errors.COLLECTION_NO_PERMISSION
+          res.sendStatus(204)
+        } catch (e) {
+          next(e)
         }
-
-        await this.collectionService.updatePin(
-          parseInt(req.params.attachmentId),
-          id
-        )
-        res.sendStatus(204)
       }
     )
 
     this.router.post(
       "/",
       auth("collections.create"),
-      async (req: RequestAuth, res: Response) => {
-        const collection = await this.collectionService.createCollection(
-          req.user.id,
-          req.body.name
-        )
-        res.json(collection)
-        await this.cacheService.generateCollectionCacheForUser(req.user.id)
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const collection = await this.collectionService.createCollection(
+            req.user.id,
+            req.body.name
+          )
+          res.json(collection)
+          await this.cacheService.generateCollectionCacheForUser(req.user.id)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.get(
+      "/:collectionId/random",
+      auth("collections.view", true),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const collection = await this.collectionService.getCollectionOrShare(
+            parseInt(req.params.collectionId) || req.params.collectionId,
+            req.user?.id
+          )
+
+          if (!collection) {
+            throw Errors.COLLECTION_NOT_FOUND
+          }
+
+          res.json(
+            await this.galleryService.getRandomAttachment(
+              collection.id,
+              "collection"
+            )
+          )
+        } catch (e) {
+          return next(e)
+        }
       }
     )
   }
