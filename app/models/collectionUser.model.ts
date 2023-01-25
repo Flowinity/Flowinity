@@ -1,4 +1,12 @@
-import { Table, Column, Model, BelongsTo, Default } from "sequelize-typescript"
+import {
+  Table,
+  Column,
+  Model,
+  BelongsTo,
+  Default,
+  Unique,
+  AllowNull
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 
@@ -28,6 +36,14 @@ export class CollectionUser extends Model {
 
   @Column
   senderId: number
+
+  @Unique({
+    msg: "This user is already in the collection.",
+    name: "UNIQUE_COLLECTION_USER_IDENTIFIER"
+  })
+  @AllowNull
+  @Column
+  identifier: string
 
   @BelongsTo(() => Collection, "collectionId")
   collection: Collection

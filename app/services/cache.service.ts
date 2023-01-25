@@ -252,7 +252,8 @@ export class CacheService {
             permissionsMetadata: {
               write: user.write,
               read: user.read,
-              configure: user.configure
+              configure: user.configure,
+              recipient: user?.id ? user : null
             }
           })
         } else {
@@ -262,7 +263,8 @@ export class CacheService {
               write: user.write,
               read: user.read,
               configure: user.configure
-            }
+            },
+            recipient: user?.id ? user : null
           }
         }
         redis.json.set(`collections:${id}`, "$", collections)

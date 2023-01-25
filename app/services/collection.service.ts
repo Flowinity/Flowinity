@@ -263,7 +263,7 @@ export class CollectionService {
     userId: number
   ) {
     if (typeof uploadId === "object" && uploadId?.length > 20) {
-      throw Errors.PLACEHOLDER
+      throw Errors.INVALID_PARAMETERS
     }
     if (typeof uploadId === "number") {
       return await CollectionItem.create({
@@ -347,6 +347,10 @@ export class CollectionService {
       throw Errors.USER_NOT_FOUND
     }
 
+    if (collection.userId === user.id) {
+      throw Errors.CANNOT_ADD_OWNER
+    }
+
     const friend = await Friend.findOne({
       where: {
         userId: senderId,
@@ -367,7 +371,8 @@ export class CollectionService {
           senderId: senderId,
           write,
           configure,
-          read
+          read,
+          identifier: collectionId + "-" + user.id
         })
       ).dataValues,
       user,
