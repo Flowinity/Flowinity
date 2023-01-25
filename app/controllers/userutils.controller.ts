@@ -48,9 +48,10 @@ export class UserUtilsController {
           .get(`autoCollects:${req.user.id}`)
           .then((autoCollects: AutoCollectCache[]) => {
             if (!autoCollects?.length) return 0
-            return autoCollects?.filter(
-              (autoCollect) => autoCollect.autoCollectApprovals.length > 0
-            ).length
+            return autoCollects.reduce(
+              (acc, curr) => acc + curr.autoCollectApprovals.length,
+              0
+            )
           })
 
         const notifications = await Notification.findAll({

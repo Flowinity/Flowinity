@@ -137,6 +137,44 @@ export class AutoCollectController {
     )
 
     this.router.post(
+      "/bulk",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const autoCollects = await AutoCollectApproval.findAll({
+          where: {
+            userId: req.user.id,
+            id: req.body.ids
+          }
+        })
+
+        for (const autoCollect of autoCollects) {
+          await this.autoCollectService.actAutoCollect(
+            req.user.id,
+            autoCollect,
+            req.body.action
+          )
+          await this.cacheService.patchAutoCollectCache(
+            req.user.id,
+            autoCollect.collectionId,
+            autoCollect.id
+          )
+        }
+
+        res.sendStatus(204)
+
+        const collectionIds = Array.from(
+          new Set(autoCollects.map((autoCollect) => autoCollect.collectionId))
+        )
+        for (const collectionId of collectionIds) {
+          await queue.cacheQueue.add(String(collectionId), collectionId, {
+            delay: 30000,
+            jobId: collectionId + "-autoCollect"
+          })
+        }
+      }
+    )
+
+    this.router.post(
       "/:id",
       auth("collections.modify"),
       async (req: RequestAuth, res: Response) => {

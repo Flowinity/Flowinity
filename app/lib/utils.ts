@@ -293,7 +293,7 @@ async function processFile(upload: Upload, textMetadata: string) {
           } catch {
             autoCollects.push({
               id: rule.collectionId,
-              collection,
+              ...collection,
               autoCollectApprovals: [autoCollect]
             })
             await redis.json.set(
@@ -310,12 +310,9 @@ async function processFile(upload: Upload, textMetadata: string) {
             }
           ])
         }
-        /*if (req) {
-                  const io = req.app.get("io")
-                  io.to(upload.UserId).emit("autoCollectApproval", {
-                    type: "new"
-                  })
-                }*/
+        socket.to(upload.userId).emit("autoCollectApproval", {
+          type: "new"
+        })
       } else if (
         results.some((result) => result.value) &&
         !rule.requireApproval

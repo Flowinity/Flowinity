@@ -37,7 +37,9 @@ export class AuthService {
     }
   }
 
-  async passwordReset(email: string): Promise<any> {
+  async passwordReset(
+    email: string
+  ): Promise<{ code: string; username: string; email: string }> {
     const user = await User.findOne({
       where: {
         email
@@ -57,6 +59,7 @@ export class AuthService {
       email: user.email
     }
   }
+
   async login(
     username: string,
     password: string,
