@@ -49,7 +49,7 @@ export class AuthService {
     const code = await utils.generateAPIKey("email")
     await user.update({
       passwordResetCode: code,
-      passwordResetCodeExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000)
+      passwordResetExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000)
     })
     return {
       code,
