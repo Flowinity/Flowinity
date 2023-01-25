@@ -41,7 +41,6 @@ function checkScope(requiredScope: string, scope: string) {
 
 async function updateSession(session: Session, ip: string) {
   if (session.updatedAt.getTime() + 5 * 60 * 1000 > new Date().getTime()) return
-  console.log("deeza")
   if (session.type === "session") {
     session
       .update({
