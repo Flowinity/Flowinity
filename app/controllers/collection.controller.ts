@@ -127,7 +127,8 @@ export class CollectionController {
                 req.query?.search?.toString(),
                 req.query?.filter?.toString(),
                 req.query?.textMetadata?.toString() === "true",
-                "collection"
+                "collection",
+                0
               )
             )
           } else {
@@ -152,7 +153,8 @@ export class CollectionController {
             req.query?.search?.toString(),
             req.query?.filter?.toString(),
             req.query?.textMetadata?.toString() === "true",
-            "collection"
+            "collection",
+            req.user.id
           )
         )
       }
