@@ -33,7 +33,7 @@ export class CoreService {
       include: [
         {
           model: User,
-          attributes: ["id", "username", "avatar"]
+          attributes: ["id", "username", "avatar", "moderator", "administrator"]
         }
       ]
     })

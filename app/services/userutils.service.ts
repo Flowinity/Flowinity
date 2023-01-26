@@ -238,7 +238,9 @@ export class UserUtilsService {
         "darkTheme",
         "banned",
         "inviteId",
-        "avatar"
+        "avatar",
+        "moderator",
+        "createdAt"
       ],
       order: [["createdAt", "DESC"]],
       include: [
@@ -268,7 +270,14 @@ export class UserUtilsService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar", "description"]
+          attributes: [
+            "id",
+            "username",
+            "avatar",
+            "description",
+            "administrator",
+            "moderator"
+          ]
         }
       ],
       attributes: ["id", "friendId", "userId"]
