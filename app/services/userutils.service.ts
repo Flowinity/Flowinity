@@ -331,6 +331,7 @@ export class UserUtilsService {
         "email",
         "description",
         "administrator",
+        "moderator",
         "darkTheme",
         "banned",
         "inviteId",
