@@ -163,9 +163,9 @@ const auth = (scope: string, passthrough: boolean = false) => {
           res.json({
             errors: [
               {
-                name: "noJWT",
+                name: "invalidToken",
                 message:
-                  "You must provide a token in the Authorization header.",
+                  "The authorization token you provided is invalid or has expired.",
                 status: 401
               }
             ]
@@ -180,8 +180,9 @@ const auth = (scope: string, passthrough: boolean = false) => {
         res.json({
           errors: [
             {
-              name: "noJWT",
-              message: "You must provide a token in the Authorization header.",
+              name: "invalidToken",
+              message:
+                "The authorization token you provided is invalid or has expired.",
               status: 401
             }
           ]

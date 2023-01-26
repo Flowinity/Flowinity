@@ -226,9 +226,6 @@ export class UserUtilsService {
 
     return await user.update(body)
   }
-  async getInvite(key: string): Promise<string> {
-    return key
-  }
 
   async getAllUsers(): Promise<User[]> {
     return User.findAll({

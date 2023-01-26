@@ -54,6 +54,8 @@
   },
   "dependencies": {
     "@levminer/speakeasy": "^1.4.0",
+    "@troplo/sequelize": "^0.0.0-troplo-dev3",
+    "@troplo/sequelize-typescript": "^2.1.5-troplo-dev3",
     "@types/axios": "^0.14.0",
     "@types/nodemailer": "^6.4.7",
     "@types/ua-parser-js": "^0.7.36",

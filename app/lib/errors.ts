@@ -82,7 +82,7 @@ let Errors = {
   },
   API_REMOVED: {
     message:
-      "TroploPrivateUploader API version 1 is no longer available from 2023-03-01, please check the relevant API documentation for v2 at /api/docs.",
+      "TroploPrivateUploader API version 1 is no longer available from 2023-01-26, please check the relevant API documentation for v2 at /api/docs.",
     status: 410
   },
   INVALID_EMAIL: {
@@ -110,6 +110,18 @@ let Errors = {
   },
   CANNOT_ADD_OWNER: {
     message: "You cannot add the owner to a collection.",
+    status: 400
+  },
+  NO_FILE: {
+    message: "No file was provided.",
+    status: 400
+  },
+  ATTACHMENT_NOT_FOUND: {
+    message: "The requested attachment could not be found.",
+    status: 404
+  },
+  ATTACHMENT_NOT_FOUND_ROUTE: {
+    message: "The requested attachment could not be found.",
     status: 400
   }
 }

@@ -38,6 +38,39 @@ export class HoursOfDay {
 
 @Service()
 export class PulseService {
+  async getCachedLeaderboard() {
+    const leaderboard = await redis.json.get(`insights:leaderboard`)
+    if (leaderboard) {
+      return leaderboard
+    } else {
+      const leaderboard = await this.getLeaderboard()
+      await redis.json.set(`insights:leaderboard`, leaderboard)
+      return leaderboard
+    }
+  }
+
+  async getLeaderboard() {
+    const users = await User.findAll()
+    const totalUploads = await Upload.count()
+    let result = []
+    for (let user of users) {
+      const count = await Upload.count({
+        where: {
+          userId: user.id
+        }
+      })
+      result.push({
+        username: user.username,
+        id: user.id,
+        avatar: user.avatar,
+        // @ts-ignore
+        uploads: count,
+        percentage: Math.round((count / totalUploads) * 100 * 100) / 100
+      })
+    }
+    return result.sort((a, b) => b.uploads - a.uploads)
+  }
+
   async getCachedInsights(
     userId: number,
     year: string | number,
@@ -254,6 +287,7 @@ export class PulseService {
     const autoCollectPulses = await Pulse.findAll({
       where: {
         ...where,
+        ...userWhere,
         [Op.or]: [
           {
             action: "auto-collect-rejected"
@@ -266,7 +300,10 @@ export class PulseService {
     })
     // get all collection Pulses
     const collectionPulses = await CollectionItem.findAll({
-      where
+      where: {
+        ...where,
+        ...userWhere
+      }
     })
     // generate hours graph
     let autoCollectHours = new HoursOfDay().hours

@@ -515,6 +515,35 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.0.tgz#96116f2a912e0c02817345b3c10751069920d553"
   integrity sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==
 
+"@troplo/sequelize-typescript@^2.1.5-troplo-dev3":
+  version "2.1.5-troplo-dev3"
+  resolved "https://npm.troplo.com/@troplo%2fsequelize-typescript/-/sequelize-typescript-2.1.5-troplo-dev3.tgz#230d98dde5dbc1dddc9f2eccf60fa2ae4cf3f14f"
+  integrity sha512-ALd5QbsucWVPIPl1PamWFOLIkCRZxahkBBojs0Kwe94BB2bNghu6iV73CgkA3tR6PlCVDJ4yeRYGE2kkBJsmNA==
+  dependencies:
+    glob "7.2.0"
+
+"@troplo/sequelize@^0.0.0-troplo-dev3":
+  version "0.0.0-troplo-dev3"
+  resolved "https://npm.troplo.com/@troplo%2fsequelize/-/sequelize-0.0.0-troplo-dev3.tgz#a6b7304b77730bb9d55ae2c34760546bded95b0a"
+  integrity sha512-PnuIoqk3gPuoQU2Sy8d4VpjjbZW8R6vWQ8I47QPBq33It4G4Pd6QiwCBX+IwrOE7oU94d/bUodWRFE3tLWOjGw==
+  dependencies:
+    "@types/debug" "^4.1.7"
+    "@types/validator" "^13.7.1"
+    debug "^4.3.3"
+    dottie "^2.0.2"
+    inflection "^1.13.2"
+    lodash "^4.17.21"
+    moment "^2.29.1"
+    moment-timezone "^0.5.34"
+    pg-connection-string "^2.5.0"
+    retry-as-promised "^7.0.3"
+    semver "^7.3.5"
+    sequelize-pool "^7.1.0"
+    toposort-class "^1.0.1"
+    uuid "^8.3.2"
+    validator "^13.7.0"
+    wkx "^0.5.0"
+
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@tsconfig/node10/-/node10-1.0.9.tgz#df4907fc07a886922637b15e02d4cebc4c0021b2"
@@ -796,10 +825,15 @@
   resolved "https://registry.yarnpkg.com/@types/ua-parser-js/-/ua-parser-js-0.7.36.tgz#9bd0b47f26b5a3151be21ba4ce9f5fa457c5f190"
   integrity sha512-N1rW+njavs70y2cApeIw1vLMYXRwfBy+7trgavGuuTfOd7j1Yh7QTRc/yqsPl6ncokt72ZXuxEU0PiCp9bSwNQ==
 
-"@types/validator@*", "@types/validator@^13.7.1":
+"@types/validator@*":
   version "13.7.10"
   resolved "https://registry.yarnpkg.com/@types/validator/-/validator-13.7.10.tgz#f9763dc0933f8324920afa9c0790308eedf55ca7"
   integrity sha512-t1yxFAR2n0+VO6hd/FJ9F2uezAZVWHLmpmlJzm1eX03+H7+HsuTAp7L8QJs+2pQCfWkP1+EXsGK9Z9v7o/qPVQ==
+
+"@types/validator@^13.7.1":
+  version "13.7.11"
+  resolved "https://registry.yarnpkg.com/@types/validator/-/validator-13.7.11.tgz#96f158d89c16375189a7aa42adbdbe3adc971dbe"
+  integrity sha512-WqTos+CnAKN64YwyBMhgUYhb5VsTNKwUY6AuzG5qu9/pFZJar/RJFMZBXwX7VS+uzYi+lIAr3WkvuWqEI9F2eg==
 
 "@types/webpack-env@^1.18.0":
   version "1.18.0"

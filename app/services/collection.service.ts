@@ -463,4 +463,40 @@ export class CollectionService {
       pinned: collectionItem.pinned
     }
   }
+
+  async updateCollection(id: number, name: string) {
+    const collection = await Collection.findOne({
+      where: {
+        id
+      }
+    })
+
+    if (!collection) throw Errors.COLLECTION_NOT_FOUND
+
+    await collection.update({
+      name
+    })
+
+    return {
+      name
+    }
+  }
+
+  async updateBanner(id: number, banner: string | null) {
+    const collection = await Collection.findOne({
+      where: {
+        id
+      }
+    })
+
+    if (!collection) throw Errors.COLLECTION_NOT_FOUND
+
+    await collection.update({
+      image: banner
+    })
+
+    return {
+      banner
+    }
+  }
 }

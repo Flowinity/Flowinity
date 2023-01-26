@@ -23,7 +23,7 @@ export class GalleryController {
      *
      * /api/v2/gallery:
      *   get:
-     *     description: Return the current user's gallery.
+     *     summary: Return the current user's gallery.
      *     tags:
      *       - GalleryService
      *     produces:
@@ -31,6 +31,36 @@ export class GalleryController {
      *     responses:
      *       200:
      *         description: OK
+     *       401:
+     *         description: Unauthorized
+     *     parameters:
+     *         - in: header
+     *           name: Authorization
+     *           schema:
+     *             type: string
+     *             format: TPU-KEY
+     *           required: true
+     *         - in: query
+     *           name: page
+     *           schema:
+     *             type: integer
+     *           description: The desired page number.
+     *         - in: query
+     *           name: search
+     *           schema:
+     *             type: string
+     *           description: The search filter query.
+     *         - in: query
+     *           name: filter
+     *           schema:
+     *             type: string
+     *             enum: ["all", "image", "video", "link", "binary", "text", "audio", "paste"]
+     *           description: Filter the result by filetype.
+     *         - in: query
+     *           name: showMetadata
+     *           schema:
+     *             type: boolean
+     *           description: Include search results from inside the image content from OCR text scanning.
      */
     this.router.get(
       "/",
@@ -53,13 +83,44 @@ export class GalleryController {
       }
     )
 
-    // /upload is for legacy clients
+    /**
+     * @swagger
+     *
+     * /api/v2/gallery:
+     *   post:
+     *     summary: Upload a single file to TPU.
+     *     tags:
+     *       - GalleryService
+     *     produces:
+     *       - application/json
+     *     consumes:
+     *       - multipart/form-data
+     *     responses:
+     *       200:
+     *         description: OK
+     *       401:
+     *         description: Unauthorized
+     *     parameters:
+     *         - in: header
+     *           name: Authorization
+     *           schema:
+     *             type: string
+     *             format: TPU-KEY
+     *           required: true
+     *         - in: formData
+     *           name: attachment
+     *           type: file
+     *           description: The file to upload to TPU.
+     *           required: true
+     */
     this.router.post(
       ["/", "/upload"],
       auth("uploads.create"),
       uploader.single("attachment"),
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {
+          console.log(req)
+          if (!req.file) throw Errors.NO_FILE
           const upload = await this.galleryService.createUpload(
             req.user.id,
             req.file,
@@ -77,7 +138,7 @@ export class GalleryController {
      *
      * /api/v2/gallery/starred:
      *   get:
-     *     description: Return the current user's gallery.
+     *     description: Return the current user's starred gallery.
      *     tags:
      *       - GalleryService
      *     produces:
@@ -85,6 +146,36 @@ export class GalleryController {
      *     responses:
      *       200:
      *         description: OK
+     *       401:
+     *         description: Unauthorized
+     *     parameters:
+     *         - in: header
+     *           name: Authorization
+     *           schema:
+     *             type: string
+     *             format: TPU-KEY
+     *           required: true
+     *         - in: query
+     *           name: page
+     *           schema:
+     *             type: integer
+     *           description: The desired page number.
+     *         - in: query
+     *           name: search
+     *           schema:
+     *             type: string
+     *           description: The search filter query.
+     *         - in: query
+     *           name: filter
+     *           schema:
+     *             type: string
+     *             enum: ["all", "image", "video", "link", "binary", "text", "audio", "paste"]
+     *           description: Filter the result by filetype.
+     *         - in: query
+     *           name: showMetadata
+     *           schema:
+     *             type: boolean
+     *           description: Include search results from inside the image content from OCR text scanning.
      */
     this.router.get(
       "/starred",
@@ -173,6 +264,23 @@ export class GalleryController {
             "user"
           )
           res.json(attachment)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.post(
+      "/star/:attachment",
+      auth("uploads.modify"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          res.json({
+            status: await this.galleryService.starUpload(
+              req.params.attachment,
+              req.user.id
+            )
+          })
         } catch (e) {
           next(e)
         }

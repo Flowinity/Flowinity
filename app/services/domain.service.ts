@@ -9,7 +9,9 @@ export class DomainService {
   async getDomains() {
     return await Domain.findAll({
       attributes: {
-        include: [[Sequelize.fn("COUNT", Sequelize.col("users.id")), "activeUsersCount"]]
+        include: [
+          [Sequelize.fn("COUNT", Sequelize.col("users.id")), "activeUsersCount"]
+        ]
       },
       include: [
         {

@@ -7,6 +7,7 @@ import { Upload } from "@app/models/upload.model"
 import { Op } from "sequelize"
 import { Pulse } from "@app/models/pulse.model"
 import { HoursOfDay } from "@app/services/pulse.service"
+import { Invite } from "@app/models/invite.model"
 
 @Service()
 export class CoreService {
@@ -63,6 +64,13 @@ export class CoreService {
       labels: Object.keys(uploadGraphInterim)
     }
     if (!user) {
+      const invites = await Invite.count({
+        where: {
+          registerUserId: {
+            [Op.ne]: null
+          }
+        }
+      })
       return {
         users: await User.count(),
         announcements: await Announcement.count(),
@@ -72,6 +80,8 @@ export class CoreService {
         collectionItems: await CollectionItem.count(),
         uploadGraph,
         uploads: await Upload.count(),
+        invites,
+        inviteMilestone: Math.ceil(invites / 20) * 20,
         pulse: Math.round(
           (await Pulse.sum("timeSpent", {
             where: {

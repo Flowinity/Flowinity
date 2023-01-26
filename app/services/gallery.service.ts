@@ -13,6 +13,7 @@ import { Star } from "@app/models/star.model"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import axios from "axios"
 import * as fs from "fs"
+import Errors from "@app/lib/errors"
 
 @Service()
 export class GalleryService {
@@ -106,7 +107,12 @@ export class GalleryService {
     }
   }
 
-  async createUpload(userId: number, file: any, precache: boolean = false) {
+  async createUpload(
+    userId: number,
+    file: any,
+    precache: boolean = false,
+    deletable: boolean = true
+  ) {
     const upload = await Upload.create({
       attachment: file.filename, // Attachment hash
       userId: userId,
@@ -116,7 +122,7 @@ export class GalleryService {
         utils.getTypeByExt(path.extname(file.originalname)?.split(".")[1]) ||
         "binary",
       fileSize: file.size,
-      deletable: true
+      deletable
     })
     await User.update(
       {
@@ -192,20 +198,20 @@ export class GalleryService {
     if (type === "collection") {
       include = [
         {
-          model: CollectionItem,
-          as: "item",
+          model: Star,
+          as: "starred",
+          required: false,
           where: {
-            collectionId: id
+            userId: userId
           }
         },
         {
-          model: User,
-          as: "user",
-          attributes: ["id", "username"]
-        },
-        {
-          model: Collection,
-          as: "collections"
+          model: CollectionItem,
+          as: "item",
+          required: true,
+          where: {
+            collectionId: id
+          }
         }
       ]
     } else if (type === "starred") {
@@ -221,6 +227,14 @@ export class GalleryService {
       ]
     } else if (type === "autoCollect") {
       include = [
+        {
+          model: Star,
+          as: "starred",
+          required: false,
+          where: {
+            userId: userId
+          }
+        },
         {
           model: AutoCollectApproval,
           as: "autoCollectApproval",
@@ -238,6 +252,14 @@ export class GalleryService {
     } else {
       include = [
         {
+          model: Star,
+          as: "starred",
+          required: false,
+          where: {
+            userId: id
+          }
+        },
+        {
           model: Collection,
           as: "collections"
         },
@@ -248,48 +270,68 @@ export class GalleryService {
         }
       ]
     }
-    /*       {
-          model: Collection,
-          as: "collections"
-        },*/
-    let uploads = await Upload.findAll({
-      where,
-      include,
-      limit: 12,
-      offset,
-      order: [["createdAt", "DESC"]]
-      /* type === "collection"
-          ? [
-              [
-                {
-                  model: CollectionItem,
-                  as: "item"
-                },
-                "pinned",
-                "DESC"
-              ],
-              ["createdAt", "DESC"]
-            ]
-          : [["createdAt", "DESC"]]*/
-    })
-    // TODO: FIX ME
-    // this hack caused the performance to go from 30-90ms to 300ms per page
-    /*for (let upload of uploads) {
-      const items = await CollectionItem.findAll({
+    let uploads
+    if (type === "collection") {
+      uploads = await CollectionItem.findAll({
         where: {
-          attachmentId: upload.id
+          collectionId: id
         },
         include: [
           {
-            model: Collection,
-            as: "collection"
+            model: User,
+            as: "user",
+            attributes: ["id", "username"]
+          },
+          {
+            model: Upload,
+            as: "attachment",
+            include: [
+              {
+                model: Collection,
+                as: "collections"
+              }
+            ]
           }
+        ],
+        offset,
+        limit: 12,
+        order: [
+          ["pinned", "DESC"],
+          ["createdAt", "DESC"]
         ]
       })
-      upload.dataValues.collections = items.map(
-        (item) => item.dataValues.collection
-      )
-    }*/
+      uploads = uploads.map((upload: any) => {
+        return {
+          item: {
+            ...upload.toJSON(),
+            attachment: null
+          },
+          user: upload.user.toJSON(),
+          ...upload.attachment.toJSON()
+        }
+      })
+    } else {
+      uploads = await Upload.findAll({
+        where,
+        include,
+        limit: 12,
+        offset,
+        order: [["createdAt", "DESC"]]
+        /* type === "collection"
+            ? [
+                [
+                  {
+                    model: CollectionItem,
+                    as: "item"
+                  },
+                  "pinned",
+                  "DESC"
+                ],
+                ["createdAt", "DESC"]
+              ]
+            : [["createdAt", "DESC"]]*/
+      })
+    }
     const uploadCount = await Upload.count({
       where,
       include
@@ -298,6 +340,33 @@ export class GalleryService {
     return {
       gallery: uploads,
       pager
+    }
+  }
+
+  async starUpload(attachment: string, userId: number) {
+    const upload = await Upload.findOne({
+      where: {
+        attachment
+      }
+    })
+    if (!upload) {
+      throw Errors.ATTACHMENT_NOT_FOUND_ROUTE
+    }
+    const star = await Star.findOne({
+      where: {
+        userId,
+        attachmentId: upload.id
+      }
+    })
+    if (star) {
+      await star.destroy()
+      return false
+    } else {
+      await Star.create({
+        userId,
+        attachmentId: upload.id
+      })
+      return true
     }
   }
 }

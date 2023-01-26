@@ -9,6 +9,7 @@ import Errors from "@app/lib/errors"
 import { GalleryService } from "@app/services/gallery.service"
 import { CacheService } from "@app/services/cache.service"
 import { AdminService } from "@app/services/admin.service"
+import uploader from "@app/lib/upload"
 
 @Service()
 export class CollectionController {
@@ -401,6 +402,91 @@ export class CollectionController {
           )
         } catch (e) {
           return next(e)
+        }
+      }
+    )
+
+    this.router.patch(
+      "/:collectionId",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const id = parseInt(req.params.collectionId)
+          const collection =
+            await this.collectionService.getCollectionPermissions(
+              id,
+              req.user.id,
+              "configure"
+            )
+
+          if (!collection) {
+            throw Errors.COLLECTION_NO_PERMISSION
+          }
+
+          res.json(
+            await this.collectionService.updateCollection(id, req.body.name)
+          )
+          await this.cacheService.resetCollectionCache(id)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.post(
+      "/:collectionId/banner",
+      auth("collections.modify"),
+      uploader.single("banner"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const id = parseInt(req.params.collectionId)
+          const collection =
+            await this.collectionService.getCollectionPermissions(
+              id,
+              req.user.id,
+              "configure"
+            )
+          if (!collection) {
+            throw Errors.COLLECTION_NO_PERMISSION
+          }
+          const banner = await this.galleryService.createUpload(
+            req.user.id,
+            req.file,
+            false,
+            false
+          )
+          await this.collectionService.updateBanner(
+            id,
+            banner.upload.attachment
+          )
+          await this.cacheService.resetCollectionCache(id)
+          res.json(banner)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.delete(
+      "/:collectionId/banner",
+      auth("collections.modify"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const id = parseInt(req.params.collectionId)
+          const collection =
+            await this.collectionService.getCollectionPermissions(
+              id,
+              req.user.id,
+              "configure"
+            )
+          if (!collection) {
+            throw Errors.COLLECTION_NO_PERMISSION
+          }
+          await this.collectionService.updateBanner(id, null)
+          await this.cacheService.resetCollectionCache(id)
+          res.sendStatus(204)
+        } catch (e) {
+          next(e)
         }
       }
     )

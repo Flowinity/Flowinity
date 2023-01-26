@@ -1,4 +1,4 @@
-import { Response } from "express"
+import { Response, NextFunction } from "express"
 import { Service } from "typedi"
 import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
@@ -6,6 +6,8 @@ import Errors from "@app/lib/errors"
 import Router from "express-promise-router"
 import { AdminService } from "@app/services/admin.service"
 import { CacheService } from "@app/services/cache.service"
+import { User } from "@app/models/user.model"
+import { UserUtilsService } from "@app/services/userutils.service"
 
 export enum CacheType {
   "everything",
@@ -20,7 +22,8 @@ export class AdminController {
 
   constructor(
     private readonly adminService: AdminService,
-    private readonly cacheService: CacheService
+    private readonly cacheService: CacheService,
+    private readonly userUtilsService: UserUtilsService
   ) {
     this.configureRouter()
   }
@@ -201,6 +204,45 @@ export class AdminController {
         )
         res.json(announcement)
         await this.cacheService.refreshState()
+      }
+    )
+
+    this.router.post(
+      "/notification",
+      auth("*"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          if (req.body.username === "allOfThem") {
+            const users = await User.findAll()
+            for (const user of users) {
+              await this.userUtilsService.createNotification(
+                user.id,
+                req.body.content,
+                req.body.link
+              )
+            }
+            res.sendStatus(204)
+            return
+          }
+          const user = await User.findOne({
+            where: {
+              username: req.body.username
+            }
+          })
+
+          if (!user) {
+            throw Errors.USER_NOT_FOUND
+          }
+
+          await this.userUtilsService.createNotification(
+            user.id,
+            req.body.content,
+            req.body.link
+          )
+          res.sendStatus(204)
+        } catch (e) {
+          next(e)
+        }
       }
     )
   }

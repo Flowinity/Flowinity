@@ -30,6 +30,10 @@ export class CacheService {
     try {
       const pulseService = Container.get(PulseService)
       console.info("[REDIS] Generating insights cache...")
+      // Leaderboard
+      const leaderboard = await pulseService.getLeaderboard()
+      redis.json.set(`insights:leaderboard`, "$", leaderboard)
+      // Insights
       const start = new Date().getTime()
       const users = await User.findAll()
       const years = ["2021", "2022", "2023", "latest"]

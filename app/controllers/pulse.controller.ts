@@ -17,6 +17,15 @@ export class PulseController {
     this.router = Router()
 
     this.router.get(
+      "/insights/leaderboard",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const leaderboard = await this.pulseService.getCachedLeaderboard()
+        res.json(leaderboard)
+      }
+    )
+
+    this.router.get(
       ["/insights/:year/:id", "/insights/:year", "/insights"],
       auth("*"),
       async (req: RequestAuth, res: Response) => {

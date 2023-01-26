@@ -1,7 +1,6 @@
 import { UserUtilsService } from "@app/services/userutils.service"
 import { Request, Response } from "express"
 import { Service } from "typedi"
-import { StatusCodes } from "http-status-codes"
 import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
 import Errors from "@app/lib/errors"
@@ -32,6 +31,8 @@ export class UserUtilsController {
      *     responses:
      *       200:
      *         description: OK
+     *       401:
+     *         description: Unauthorized
      *     parameters:
      *         - in: header
      *           name: Authorization
@@ -70,6 +71,27 @@ export class UserUtilsController {
       }
     )
 
+    /**
+     * @swagger
+     *
+     * /api/v2/user:
+     *   patch:
+     *     description: Sets all current notifications as read.
+     *     tags:
+     *       - UserUtilsService
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       204:
+     *         description: OK
+     *     parameters:
+     *         - in: header
+     *           name: Authorization
+     *           schema:
+     *             type: string
+     *             format: TPU-KEY
+     *           required: true
+     */
     this.router.patch(
       "/notifications",
       auth("user.modify"),
@@ -110,6 +132,8 @@ export class UserUtilsController {
      *     responses:
      *       200:
      *         description: OK
+     *       401:
+     *         description: Unauthorized
      *     parameters:
      *         - in: header
      *           name: Authorization
@@ -171,42 +195,6 @@ export class UserUtilsController {
     /**
      * @swagger
      *
-     * /api/v2/user/inviteV2/{key}:
-     *   get:
-     *     description: Get InviteV2 invite key information.
-     *     tags:
-     *       - UserUtilsService
-     *     produces:
-     *       - application/json
-     *     responses:
-     *       200:
-     *         description: OK
-     *     parameters:
-     *         - in: header
-     *           name: Authorization
-     *           schema:
-     *             type: string
-     *             format: TPU-KEY
-     *           required: true
-     *         - in: path
-     *           name: username
-     *           schema:
-     *             type: string
-     *           required: true
-     */
-    this.router.get("/inviteV2/:key", async (req: Request, res: Response) => {
-      // Send the request to the service and send the response
-      try {
-        const invite = this.userUtilsService.getInvite(req.params.key)
-        res.json(invite)
-      } catch {
-        res.sendStatus(StatusCodes.UNAUTHORIZED)
-      }
-    })
-
-    /**
-     * @swagger
-     *
      * /api/v2/user/domain:
      *   patch:
      *     description: Set user domain.
@@ -224,8 +212,8 @@ export class UserUtilsController {
      *             type: string
      *             format: TPU-KEY
      *           required: true
-     *         - in: path
-     *           name: username
+     *         - in: body
+     *           name: domain
      *           schema:
      *             type: string
      *           required: true
@@ -242,32 +230,6 @@ export class UserUtilsController {
       }
     )
 
-    /**
-     * @swagger
-     *
-     * /api/v2/user/feedback:
-     *   post:
-     *     description: Provide user feedback about TPUv2.
-     *     tags:
-     *       - UserUtilsService
-     *     produces:
-     *       - application/json
-     *     responses:
-     *       200:
-     *         description: OK
-     *     parameters:
-     *         - in: header
-     *           name: Authorization
-     *           schema:
-     *             type: string
-     *             format: TPU-KEY
-     *           required: true
-     *         - in: path
-     *           name: username
-     *           schema:
-     *             type: string
-     *           required: true
-     */
     this.router.post(
       "/feedback",
       auth("user.modify"),

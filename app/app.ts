@@ -1,9 +1,8 @@
-import { DateController } from "@app/controllers/date.controller"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import express from "express"
-//import swaggerJSDoc from "swagger-jsdoc"
-//import swaggerUi from "swagger-ui-express"
+import swaggerJSDoc from "swagger-jsdoc"
+import swaggerUi from "swagger-ui-express"
 import { Service } from "typedi"
 import { UserUtilsController } from "@app/controllers/userutils.controller"
 import { CoreController } from "@app/controllers/core.controller"
@@ -25,11 +24,10 @@ import { PulseController } from "@app/controllers/pulse.controller"
 @Service()
 export class Application {
   app: express.Application
-  //private readonly swaggerOptions: swaggerJSDoc.Options
+  private readonly swaggerOptions: swaggerJSDoc.Options
 
   constructor(
     private readonly userutilsController: UserUtilsController,
-    private readonly dateController: DateController,
     private readonly coreController: CoreController,
     private readonly galleryController: GalleryController,
     private readonly authController: AuthController,
@@ -45,16 +43,18 @@ export class Application {
   ) {
     this.app = express()
 
-    /* this.swaggerOptions = {
+    this.swaggerOptions = {
       swaggerDefinition: {
         openapi: "3.0.0",
         info: {
           title: "TPUv2 Server",
-          version: "1.0.0"
+          version: "1.0.0",
+          description:
+            "Documentation is currently a work in progress and is very incomplete."
         }
       },
-      apis: ["**\/*.ts"]
-    }*/
+      apis: ["app/controllers/*.ts"]
+    }
 
     this.config()
 
@@ -62,7 +62,20 @@ export class Application {
   }
 
   bindRoutes(): void {
-    //this.app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)))
+    this.app.use((req, res, next) => {
+      res.setHeader("X-Powered-By", "TroploPrivateUploader/2.0.0")
+      next()
+    })
+    this.app.use(
+      "/api/docs",
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerJSDoc(this.swaggerOptions))
+    )
+    this.app.use(
+      "/api/v2/docs",
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerJSDoc(this.swaggerOptions))
+    )
     this.app.use("/api/v2/user", this.userutilsController.router)
     this.app.use("/api/v2/core", this.coreController.router)
     this.app.use("/api/v2/gallery", this.galleryController.router)
@@ -76,7 +89,8 @@ export class Application {
     this.app.use("/api/v2/invites", this.inviteController.router)
     this.app.use("/api/v2/pulse", this.pulseController.router)
     this.app.use("/i/", this.fileController.router)
-    this.app.use("/api/date", this.dateController.router)
+    this.app.use("/api/v1/gallery", this.galleryController.router)
+    this.app.use("/api/v1/site", this.coreController.router)
     this.app.use("/api/v1", async (req, res) => {
       res.status(410).json({
         errors: [Errors.API_REMOVED]

@@ -4,7 +4,8 @@ import {
   Model,
   BelongsTo,
   Unique,
-  AllowNull, DataType
+  AllowNull,
+  DataType
   //HasOne
   //HasMany
 } from "sequelize-typescript"
@@ -14,6 +15,11 @@ import { Upload } from "@app/models/upload.model"
 
 @Table
 export class CollectionItem extends Model {
+  @Column({
+    primaryKey: true,
+    autoIncrement: true
+  })
+  id: number
   @Column
   collectionId: number
 
