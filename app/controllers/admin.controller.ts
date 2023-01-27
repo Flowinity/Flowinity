@@ -246,13 +246,13 @@ export class AdminController {
       }
     )
 
-    this.router.get(
+    /*    this.router.get(
       "/online",
       auth("*"),
       async (req: RequestAuth, res: Response) => {
         const online = await this.adminService.getConnectedUsers()
         res.json(online)
       }
-    )
+    )*/
   }
 }
