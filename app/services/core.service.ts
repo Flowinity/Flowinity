@@ -141,6 +141,8 @@ export class CoreService {
 
   getExperiments(): object {
     const experiments = {
+      CREEPY_SFX_BUTTON: false,
+      PROFILE_BANNER: true,
       PROJECT_CENTRAL: false,
       DESIGN_V2: false,
       API_VERSION_V2: true,
@@ -167,6 +169,14 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        CREEPY_SFX_BUTTON: {
+          description: "Allow the ability to send creepy sfx's to friends.",
+          createdAt: "2023-01-28T00:00:00.000Z"
+        },
+        PROFILE_BANNER: {
+          description: "Can change UserV2 banner.",
+          createdAt: "2023-01-28T00:00:00.000Z"
+        },
         PROJECT_CENTRAL: {
           description:
             "Have the TPU instance think it's running in a Central environment.",

@@ -6,12 +6,17 @@ import { RequestAuth } from "@app/types/express"
 import Errors from "@app/lib/errors"
 import Router from "express-promise-router"
 import { AutoCollectCache } from "@app/types/collection"
+import { GalleryService } from "@app/services/gallery.service"
+import uploader from "@app/lib/upload"
 const { Notification } = require("@app/models/notification.model")
 @Service()
 export class UserUtilsController {
   router: any
 
-  constructor(private readonly userUtilsService: UserUtilsService) {
+  constructor(
+    private readonly userUtilsService: UserUtilsService,
+    private readonly galleryService: GalleryService
+  ) {
     this.configureRouter()
   }
 
@@ -294,6 +299,25 @@ export class UserUtilsController {
           default:
             throw Errors.INVALID_PARAMETERS
         }
+      }
+    )
+
+    this.router.post(
+      "/banner",
+      auth("user.modify"),
+      uploader.single("banner"),
+      async (req: RequestAuth, res: Response) => {
+        const banner = await this.galleryService.createUpload(
+          req.user.id,
+          req.file,
+          false,
+          false
+        )
+        await this.userUtilsService.updateBanner(
+          req.user.id,
+          banner.upload.attachment
+        )
+        res.sendStatus(204)
       }
     )
   }

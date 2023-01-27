@@ -12,6 +12,19 @@ import { Notification } from "@app/models/notification.model"
 
 @Service()
 export class UserUtilsService {
+  async updateBanner(userId: number, banner: string) {
+    return await User.update(
+      {
+        banner
+      },
+      {
+        where: {
+          id: userId
+        }
+      }
+    )
+  }
+
   async createNotification(
     userId: number,
     message: string,
@@ -360,7 +373,8 @@ export class UserUtilsService {
         "inviteId",
         "avatar",
         "createdAt",
-        "updatedAt"
+        "updatedAt",
+        "banner"
       ],
       include: [
         {

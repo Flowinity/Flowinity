@@ -165,6 +165,9 @@ export class User extends Model {
   })
   itemsPerPage: number
 
+  @Column
+  banner?: string
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 
