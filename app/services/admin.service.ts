@@ -142,4 +142,10 @@ export class AdminService {
       html: emailBody
     })
   }
+
+  async getConnectedUsers() {
+    console.log(socket)
+    const clients = socket.socket.sockets
+    return clients
+  }
 }
