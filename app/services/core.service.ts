@@ -50,6 +50,11 @@ export class CoreService {
         }
       }
     })
+
+    for (let i = 7; i >= 0; i--) {
+      let day = dayjs().subtract(i, "days").format("YYYY-MM-DD")
+      resultUploads[day] = 0
+    }
     let uploadGraphInterim = uploadStats.reduce(function (result, upload) {
       let day = dayjs(upload.createdAt).format("YYYY-MM-DD")
       if (!resultUploads[day]) {
@@ -58,7 +63,9 @@ export class CoreService {
       resultUploads[day]++
       return resultUploads
     }, {})
-
+    if (!uploadStats.length) {
+      uploadGraphInterim = resultUploads
+    }
     let uploadGraph = {
       data: Object.values(uploadGraphInterim),
       labels: Object.keys(uploadGraphInterim)
