@@ -15,6 +15,7 @@ type PatchUser = {
   discordPrecache?: boolean
   darkTheme?: boolean
   description?: string
+  itemsPerPage?: number
 }
 
 type SessionInfo = {

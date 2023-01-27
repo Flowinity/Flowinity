@@ -105,7 +105,7 @@ let Errors = {
     status: 400
   },
   TOO_MANY_ITEMS_DELETE: {
-    message: "You cannot bulk delete more than 12 items.",
+    message: "You cannot bulk delete more than 24 items.",
     status: 400
   },
   CANNOT_ADD_OWNER: {

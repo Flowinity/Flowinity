@@ -128,6 +128,7 @@ export class CollectionController {
                 req.query?.filter?.toString(),
                 req.query?.textMetadata?.toString() === "true",
                 "collection",
+                12,
                 0
               )
             )
@@ -154,6 +155,7 @@ export class CollectionController {
             req.query?.filter?.toString(),
             req.query?.textMetadata?.toString() === "true",
             "collection",
+            req.user.itemsPerPage,
             req.user.id
           )
         )

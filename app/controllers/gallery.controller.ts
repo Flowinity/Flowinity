@@ -73,7 +73,9 @@ export class GalleryController {
             parseInt(<string>req.query.page) || 1,
             req.query?.search?.toString(),
             req.query?.filter?.toString(),
-            req.query?.textMetadata?.toString() === "true"
+            req.query?.textMetadata?.toString() === "true",
+            "user",
+            req.user.itemsPerPage
           )
           res.json(gallery)
         } catch (e) {
@@ -189,7 +191,8 @@ export class GalleryController {
             req.query?.search?.toString(),
             req.query?.filter?.toString(),
             req.query?.textMetadata?.toString() === "true",
-            "starred"
+            "starred",
+            req.user.itemsPerPage
           )
           res.json(gallery)
         } catch (e) {
@@ -241,7 +244,7 @@ export class GalleryController {
       auth("uploads.modify"),
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {
-          if (!req.body.items.length || req.body.items.length > 15) {
+          if (!req.body.items.length || req.body.items.length > 24) {
             throw Errors.TOO_MANY_ITEMS_DELETE
           }
           for (const id of req.body.items) {

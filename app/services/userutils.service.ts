@@ -204,8 +204,22 @@ export class UserUtilsService {
     })
     if (!user) throw Errors.USER_NOT_FOUND
 
+    const allowedFields = [
+      "username",
+      "email",
+      "password",
+      "currentPassword",
+      "discordPrecache",
+      "darkTheme",
+      "description",
+      "itemsPerPage"
+    ]
+
     // from body, remove all empty values
     for (const key in body) {
+      if (!allowedFields.includes(key)) {
+        delete body[key]
+      }
       if (body[key] === "") {
         delete body[key]
       }
@@ -223,7 +237,7 @@ export class UserUtilsService {
       delete body.currentPassword
       delete body.username
     }
-
+    console.log(body.itemsPerPage)
     return await user.update(body)
   }
 

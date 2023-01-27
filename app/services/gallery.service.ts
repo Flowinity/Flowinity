@@ -160,9 +160,10 @@ export class GalleryService {
     filter: string = "all",
     showMetadata: boolean = true,
     type: "user" | "collection" | "starred" | "autoCollect" = "user",
+    itemsPerPage: number = 12,
     userId?: number
   ): Promise<Object> {
-    const offset = page * 12 - 12 || 0
+    const offset = page * itemsPerPage - itemsPerPage || 0
     let base = {
       deletable: true
     }
@@ -294,7 +295,7 @@ export class GalleryService {
           }
         ],
         offset,
-        limit: 12,
+        limit: itemsPerPage,
         order: [
           ["pinned", "DESC"],
           ["createdAt", "DESC"]
@@ -314,7 +315,7 @@ export class GalleryService {
       uploads = await Upload.findAll({
         where,
         include,
-        limit: 12,
+        limit: itemsPerPage,
         offset,
         order: [["createdAt", "DESC"]]
         /* type === "collection"
@@ -336,7 +337,7 @@ export class GalleryService {
       where,
       include
     })
-    const pager = paginate(uploadCount || uploads.length, page, 12)
+    const pager = paginate(uploadCount || uploads.length, page, itemsPerPage)
     return {
       gallery: uploads,
       pager

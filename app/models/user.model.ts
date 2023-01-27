@@ -156,6 +156,15 @@ export class User extends Model {
   @Column
   themeId: number
 
+  @Default(12)
+  @Column({
+    validate: {
+      min: 12,
+      max: 72
+    }
+  })
+  itemsPerPage: number
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 
