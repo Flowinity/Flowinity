@@ -38,6 +38,12 @@ export class FileController {
         if (!upload) {
           throw Errors.NOT_FOUND
         }
+        if (req.query.force) {
+          res.download(
+            config.storage + "/" + upload.attachment,
+            upload.originalFilename
+          )
+        }
         if (
           upload.type === "image" ||
           upload.type === "video" ||
