@@ -3,6 +3,8 @@ import { Service } from "typedi"
 import { StatusCodes } from "http-status-codes"
 import { CoreService } from "@app/services/core.service"
 import { CacheService } from "@app/services/cache.service"
+import auth from "@app/lib/auth"
+import { RequestAuth } from "@app/types/express"
 
 @Service()
 export class CoreController {
@@ -32,16 +34,22 @@ export class CoreController {
      *       200:
      *         description: OK
      */
-    this.router.get("/experiments", async (req: Request, res: Response) => {
-      // Send the request to the service and send the response
-      try {
-        const experiments = this.coreService.getExperiments()
-        res.json(experiments)
-      } catch (e) {
-        console.error(e)
-        res.sendStatus(StatusCodes.UNAUTHORIZED)
+    this.router.get(
+      "/experiments",
+      auth("user.view", true),
+      async (req: RequestAuth, res: Response) => {
+        try {
+          const dev = req.user
+            ? req.user.administrator || req.user.moderator
+            : false
+          const experiments = this.coreService.getExperiments(dev)
+          res.json(experiments)
+        } catch (e) {
+          console.error(e)
+          res.sendStatus(StatusCodes.UNAUTHORIZED)
+        }
       }
-    })
+    )
 
     /**
      * @swagger

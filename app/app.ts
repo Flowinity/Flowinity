@@ -20,6 +20,7 @@ import { SlideshowController } from "@app/controllers/slideshow.controller"
 import { InviteController } from "@app/controllers/invite.controller"
 import sequelize from "sequelize"
 import { PulseController } from "@app/controllers/pulse.controller"
+import { NoteController } from "@app/controllers/note.controller"
 
 @Service()
 export class Application {
@@ -39,7 +40,8 @@ export class Application {
     private readonly autoCollectController: AutoCollectController,
     private readonly slideshowController: SlideshowController,
     private readonly inviteController: InviteController,
-    private readonly pulseController: PulseController
+    private readonly pulseController: PulseController,
+    private readonly noteController: NoteController
   ) {
     this.app = express()
 
@@ -88,6 +90,7 @@ export class Application {
     this.app.use("/api/v2/slideshows", this.slideshowController.router)
     this.app.use("/api/v2/invites", this.inviteController.router)
     this.app.use("/api/v2/pulse", this.pulseController.router)
+    this.app.use("/api/v2/notes", this.noteController.router)
     this.app.use("/i/", this.fileController.router)
     this.app.use("/api/v1/gallery", this.galleryController.router)
     this.app.use("/api/v1/site", this.coreController.router)

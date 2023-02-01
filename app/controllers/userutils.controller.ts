@@ -8,7 +8,8 @@ import Router from "express-promise-router"
 import { AutoCollectCache } from "@app/types/collection"
 import { GalleryService } from "@app/services/gallery.service"
 import uploader from "@app/lib/upload"
-const { Notification } = require("@app/models/notification.model")
+import { Notification } from "@app/models/notification.model"
+
 @Service()
 export class UserUtilsController {
   router: any

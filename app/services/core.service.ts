@@ -139,8 +139,9 @@ export class CoreService {
     }
   }
 
-  getExperiments(): object {
+  getExperiments(dev: boolean = false): object {
     const experiments = {
+      INTERACTIVE_NOTES: false,
       CREEPY_SFX_BUTTON: false,
       PROFILE_BANNER: true,
       PROJECT_CENTRAL: false,
@@ -169,6 +170,11 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        INTERACTIVE_NOTES: {
+          description:
+            "Allow the ability to view and create interactive TPU notes.",
+          createdAt: "2023-01-31T00:00:00.000Z"
+        },
         CREEPY_SFX_BUTTON: {
           description: "Allow the ability to send creepy sfx's to friends.",
           createdAt: "2023-01-28T00:00:00.000Z"
@@ -292,10 +298,11 @@ export class CoreService {
         }
       }
     }
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === "development" || dev) {
       experiments.FORCE_DEV_MODE = true
       experiments.FORCE_STABLE_MODE = false
       experiments.USER_V2 = true
+      experiments.INTERACTIVE_NOTES = true
       return experiments
     } else {
       return experiments
