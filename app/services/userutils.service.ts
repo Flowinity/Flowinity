@@ -304,6 +304,12 @@ export class UserUtilsService {
             "description",
             "administrator",
             "moderator"
+          ],
+          include: [
+            {
+              model: Plan,
+              as: "plan"
+            }
           ]
         }
       ],
