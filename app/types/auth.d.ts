@@ -30,3 +30,10 @@ type AccessedFrom = {
   date: string
   asn: any
 }
+
+type AlternatePassword = {
+  password: string
+  scopes: string
+  totp: boolean
+  name: string
+}

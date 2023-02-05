@@ -77,5 +77,31 @@ export class SecurityController {
         res.json(logins)
       }
     )
+
+    this.router.get(
+      "/passwords",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const passwords = await this.securityService.getAlternatePasswords(
+          req.user.id
+        )
+        res.json(passwords)
+      }
+    )
+
+    this.router.post(
+      "/passwords",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        await this.securityService.createAlternatePassword(
+          req.user.id,
+          req.body.password,
+          req.body.scopes,
+          req.body.name,
+          req.body.totp
+        )
+        res.sendStatus(204)
+      }
+    )
   }
 }

@@ -63,7 +63,7 @@ export class NoteController {
 
     this.router.patch(
       "/:id",
-      auth("workspaces.edit"),
+      auth("workspaces.modify"),
       async (req: RequestAuth, res: Response) => {
         const { id } = req.params
         const { data } = req.body
@@ -92,7 +92,7 @@ export class NoteController {
 
     this.router.patch(
       "/:id/share",
-      auth("workspaces.edit"),
+      auth("workspaces.modify"),
       async (req: RequestAuth, res: Response) => {
         const { id } = req.params
         const note = await this.noteService.toggleShareLink(

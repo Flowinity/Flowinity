@@ -82,7 +82,8 @@ export class AuthService {
         "password",
         "email",
         "totpEnable",
-        "totpSecret"
+        "totpSecret",
+        "alternatePasswords"
       ]
     })
     if (!user) {
@@ -91,10 +92,22 @@ export class AuthService {
     if (user.password === "sso-enforced") {
       throw Errors.SSO_ENFORCED
     }
+    let alternatePassword = null
     if (!(await argon2.verify(user.password, password))) {
-      throw Errors.INVALID_CREDENTIALS
+      if (!user.alternatePasswords) {
+        throw Errors.INVALID_CREDENTIALS
+      }
+      for (const pw of user.alternatePasswords) {
+        if (await argon2.verify(pw.password, password)) {
+          alternatePassword = pw
+          break
+        }
+      }
+      if (!alternatePassword?.scopes) {
+        throw Errors.INVALID_CREDENTIALS
+      }
     }
-    if (user.totpEnable && user.totpSecret) {
+    if (user.totpEnable && user.totpSecret && !alternatePassword) {
       try {
         let tokenValidation = speakeasy.totp.verify({
           secret: user.totpSecret,
@@ -109,7 +122,11 @@ export class AuthService {
         throw Errors.INVALID_TOTP
       }
     }
-    const session = await utils.createSession(user.id, "*", "session")
+    const session = await utils.createSession(
+      user.id,
+      alternatePassword?.scopes ? alternatePassword?.scopes : "*",
+      "session"
+    )
     return {
       user: {
         id: user.id,

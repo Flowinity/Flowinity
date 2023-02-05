@@ -149,6 +149,7 @@ const auth = (scope: string, passthrough: boolean = false) => {
             updateSession(session, req.ip).then(() => {})
             return
           } else {
+            session.user.dataValues.scopes = session.scopes
             req.user = session.user
             next()
             updateSession(session, req.ip).then(() => {})

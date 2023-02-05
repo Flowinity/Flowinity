@@ -24,7 +24,8 @@ import { CollectionCache } from "@app/types/collection"
       "totpSecret",
       "passwordResetEnabled",
       "passwordResetCode",
-      "passwordResetExpiry"
+      "passwordResetExpiry",
+      "alternatePasswords"
     ]
   }
 }))
@@ -168,6 +169,12 @@ export class User extends Model {
   @Column
   banner?: string
 
+  @Column({
+    type: DataType.JSON,
+    defaultValue: []
+  })
+  alternatePasswords: AlternatePassword[]
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 
@@ -178,4 +185,5 @@ export class User extends Model {
   domain: Domain
 
   collections?: CollectionCache[]
+  scopes: string
 }
