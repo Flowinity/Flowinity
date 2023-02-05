@@ -148,14 +148,12 @@ export class NoteService {
         id
       }
     })
-    console.log(note, userId)
-    if (!note || !userId) {
+    if (!note || !userId || id.toString().length === 64) {
       const note = await Note.findOne({
         where: {
           shareLink: id
         }
       })
-      console.log("hmm")
       if (!note) throw Errors.NOT_FOUND
       return {
         ...note.toJSON(),
