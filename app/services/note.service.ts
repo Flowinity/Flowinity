@@ -3,6 +3,7 @@ import { Workspace } from "@app/models/workspace.model"
 import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
 import { Note } from "@app/models/note.model"
 import Errors from "@app/lib/errors"
+import cryptoRandomString from "crypto-random-string"
 
 //create class of NoteData
 export class NoteField {
@@ -47,6 +48,10 @@ export class NoteData {
     this.lastEditorId = userId
   }
 }
+
+export class NoteDataV2 {
+  blocks: object[]
+}
 @Service()
 export class NoteService {
   constructor() {}
@@ -59,15 +64,48 @@ export class NoteService {
     })
   }
 
-  async getWorkspace(id: number, userId: number) {
+  async getWorkspace(id: number, userId: number, type: "workspace" | "folder") {
     const workspace = await Workspace.findOne({
       where: {
         id,
         userId
       }
     })
+    if (type === "folder") {
+      const workspace = await Workspace.findOne({
+        where: {
+          userId
+        },
+        include: [
+          {
+            model: WorkspaceFolder,
+            as: "folder",
+            where: {
+              id
+            },
+            required: true
+          }
+        ]
+      })
+      if (!workspace) throw Errors.NOT_FOUND
+      const folders = await WorkspaceFolder.findAll({
+        where: {
+          workspaceId: workspace.id
+        },
+        include: [
+          {
+            model: Note,
+            as: "children"
+          }
+        ]
+      })
+      return {
+        ...workspace.toJSON(),
+        folders
+      }
+    }
     if (!workspace) throw Errors.NOT_FOUND
-    let folders = await WorkspaceFolder.findAll({
+    const folders = await WorkspaceFolder.findAll({
       where: {
         workspaceId: workspace.id
       },
@@ -96,11 +134,106 @@ export class NoteService {
     })
 
     await Note.create({
-      name: `${name} Workspace's Document`,
+      name: `Document 1`,
       workspaceFolderId: folder.id,
-      data: new NoteData(userId)
+      data: {}
     })
 
     return workspace
+  }
+
+  async getNote(id: number | string, userId: number) {
+    const note = await Note.findOne({
+      where: {
+        id
+      }
+    })
+    if (!note || !userId) {
+      const note = await Note.findOne({
+        where: {
+          shareLink: id
+        }
+      })
+      if (!note) throw Errors.NOT_FOUND
+      return {
+        ...note.toJSON(),
+        permissions: {
+          modify: false,
+          configure: false,
+          read: true
+        }
+      }
+    }
+    const workspace = await this.getWorkspace(
+      note.workspaceFolderId,
+      userId,
+      "folder"
+    )
+    if (!workspace) throw Errors.NOT_FOUND
+    return {
+      ...note.toJSON(),
+      permissions: {
+        modify: true,
+        configure: true,
+        read: true
+      }
+    }
+  }
+
+  async saveNote(id: number, data: NoteDataV2, userId: number) {
+    const note = await Note.findOne({
+      where: {
+        id
+      }
+    })
+    if (!note) throw Errors.NOT_FOUND
+    const workspace = await this.getWorkspace(
+      note.workspaceFolderId,
+      userId,
+      "folder"
+    )
+    if (!workspace) throw Errors.NOT_FOUND
+    await note.update({
+      data
+    })
+    return note
+  }
+
+  async createNote(name: string, workspaceFolderId: number, userId: number) {
+    const workspace = await this.getWorkspace(
+      workspaceFolderId,
+      userId,
+      "folder"
+    )
+    if (!workspace) throw Errors.NOT_FOUND
+    return await Note.create({
+      name,
+      workspaceFolderId,
+      data: {}
+    })
+  }
+
+  async toggleShareLink(id: number, userId: number) {
+    const note = await Note.findOne({
+      where: {
+        id
+      }
+    })
+    if (!note) throw Errors.NOT_FOUND
+    const workspace = await this.getWorkspace(
+      note.workspaceFolderId,
+      userId,
+      "folder"
+    )
+    if (!workspace) throw Errors.NOT_FOUND
+    const shareLink = note.shareLink
+      ? null
+      : await cryptoRandomString({ length: 64 })
+    await note.update({
+      shareLink
+    })
+    return {
+      shareLink
+    }
   }
 }

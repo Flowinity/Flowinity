@@ -44,9 +44,62 @@ export class NoteController {
         const { id } = req.params
         const workspace = await this.noteService.getWorkspace(
           parseInt(id),
-          req.user.id
+          req.user.id,
+          "workspace"
         )
         res.json(workspace)
+      }
+    )
+
+    this.router.get(
+      "/:id",
+      auth("workspaces.view", true),
+      async (req: RequestAuth, res: Response) => {
+        const { id } = req.params
+        const note = await this.noteService.getNote(id, req.user?.id)
+        res.json(note)
+      }
+    )
+
+    this.router.patch(
+      "/:id",
+      auth("workspaces.edit"),
+      async (req: RequestAuth, res: Response) => {
+        const { id } = req.params
+        const { data } = req.body
+        const note = await this.noteService.saveNote(
+          parseInt(id),
+          data,
+          req.user.id
+        )
+        res.json(note)
+      }
+    )
+
+    this.router.post(
+      "/",
+      auth("workspaces.create"),
+      async (req: RequestAuth, res: Response) => {
+        const { name, workspaceFolderId } = req.body
+        const note = await this.noteService.createNote(
+          name,
+          workspaceFolderId,
+          req.user.id
+        )
+        res.json(note)
+      }
+    )
+
+    this.router.patch(
+      "/:id/share",
+      auth("workspaces.edit"),
+      async (req: RequestAuth, res: Response) => {
+        const { id } = req.params
+        const note = await this.noteService.toggleShareLink(
+          parseInt(id),
+          req.user.id
+        )
+        res.json(note)
       }
     )
   }

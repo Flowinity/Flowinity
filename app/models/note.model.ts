@@ -13,4 +13,7 @@ export class Note extends Model {
 
   @Column
   workspaceFolderId: number
+
+  @Column
+  shareLink: string
 }

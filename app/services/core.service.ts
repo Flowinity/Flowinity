@@ -141,6 +141,8 @@ export class CoreService {
 
   getExperiments(dev: boolean = false): object {
     const experiments = {
+      ACCOUNT_DEV_ELIGIBLE: false,
+      QUICK_NOTES: false,
       INTERACTIVE_NOTES: false,
       CREEPY_SFX_BUTTON: false,
       PROFILE_BANNER: true,
@@ -170,6 +172,15 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        ACCOUNT_DEV_ELIGIBLE: {
+          description:
+            "This toggle does nothing, it simply tells whether your account is eligible for development features based on inherit value.",
+          createdAt: "2022-02-04T00:00:00.000Z"
+        },
+        QUICK_NOTES: {
+          description: "Allow the ability to create quick notes.",
+          createdAt: "2023-02-04T00:00:00.000Z"
+        },
         INTERACTIVE_NOTES: {
           description:
             "Allow the ability to view and create interactive TPU notes.",
@@ -298,11 +309,13 @@ export class CoreService {
         }
       }
     }
-    if (process.env.NODE_ENV === "development" || dev) {
-      experiments.FORCE_DEV_MODE = true
-      experiments.FORCE_STABLE_MODE = false
+    if (dev) {
+      //experiments.FORCE_DEV_MODE = false
+      //experiments.FORCE_STABLE_MODE = false
       experiments.USER_V2 = true
       experiments.INTERACTIVE_NOTES = true
+      experiments.QUICK_NOTES = true
+      experiments.ACCOUNT_DEV_ELIGIBLE = true
       return experiments
     } else {
       return experiments

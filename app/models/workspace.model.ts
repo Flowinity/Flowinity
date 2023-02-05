@@ -1,4 +1,11 @@
-import { Table, Column, Model, BelongsTo, HasMany } from "sequelize-typescript"
+import {
+  Table,
+  Column,
+  Model,
+  BelongsTo,
+  HasMany,
+  HasOne
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
 
@@ -18,4 +25,7 @@ export class Workspace extends Model {
 
   @HasMany(() => WorkspaceFolder, "workspaceId")
   folders: WorkspaceFolder[]
+
+  @HasOne(() => WorkspaceFolder, "workspaceId")
+  folder: WorkspaceFolder
 }
