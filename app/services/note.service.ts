@@ -56,6 +56,63 @@ export class NoteDataV2 {
 export class NoteService {
   constructor() {}
 
+  async renameFolder(id: number, name: string, userId: number) {
+    const folder = await this.getWorkspace(id, userId, "folder")
+    if (!folder) throw Errors.NOT_FOUND
+    await WorkspaceFolder.update(
+      {
+        name
+      },
+      {
+        where: {
+          id
+        }
+      }
+    )
+    return true
+  }
+
+  async deleteFolder(id: number, userId: number) {
+    const folder = await this.getWorkspace(id, userId, "folder")
+    if (!folder) throw Errors.NOT_FOUND
+    await Note.destroy({
+      where: {
+        workspaceFolderId: id
+      }
+    })
+    await WorkspaceFolder.destroy({
+      where: {
+        id
+      }
+    })
+    return true
+  }
+
+  async deleteNote(id: number, userId: number) {
+    const note = await this.getNote(id, userId)
+    if (!note?.permissions?.configure) throw Errors.NOT_FOUND
+    await Note.destroy({
+      where: {
+        id
+      }
+    })
+    return true
+  }
+
+  async createFolder(name: string, id: number, userId: number) {
+    const workspace = await Workspace.findOne({
+      where: {
+        id,
+        userId
+      }
+    })
+    if (!workspace) throw Errors.NOT_FOUND
+    return await WorkspaceFolder.create({
+      name,
+      workspaceId: id
+    })
+  }
+
   async getWorkspaces(userId: number) {
     return await Workspace.findAll({
       where: {
@@ -180,7 +237,7 @@ export class NoteService {
     }
   }
 
-  async saveNote(id: number, data: NoteDataV2, userId: number) {
+  async saveNote(id: number, data: NoteDataV2, userId: number, name?: string) {
     const note = await Note.findOne({
       where: {
         id
@@ -194,7 +251,8 @@ export class NoteService {
     )
     if (!workspace) throw Errors.NOT_FOUND
     await note.update({
-      data
+      data,
+      name
     })
     return note
   }

@@ -8,6 +8,35 @@ import argon2 from "argon2"
 
 @Service()
 export class SecurityService {
+  async deleteAlternatePassword(id: number, name: string) {
+    const user = await User.findOne({
+      where: {
+        id
+      },
+      attributes: ["alternatePasswords", "id"]
+    })
+    if (!user) {
+      throw Errors.USER_NOT_FOUND
+    }
+    const passwords = user.alternatePasswords || []
+    const password = passwords.find((p) => p.name === name)
+    if (!password) {
+      throw Errors.INVALID_ALTERNATE_PASSWORD
+    }
+    const newPasswords = passwords.filter((p) => p.name !== name)
+    await User.update(
+      {
+        alternatePasswords: newPasswords
+      },
+      {
+        where: {
+          id
+        }
+      }
+    )
+    return true
+  }
+
   async createAlternatePassword(
     id: number,
     password: string,
@@ -28,28 +57,43 @@ export class SecurityService {
           "collections.view",
           "workspaces.view",
           "workspaces.create",
-          "workspaces.modify"
+          "workspaces.modify",
+          "platforms.colubrina"
         ]).includes(scope)
       ) {
         throw Errors.INVALID_SCOPES_PROVIDED
       }
     }
-    if (password?.length < 8 || !scopes || !name) {
-      throw Errors.INVALID_PARAMETERS
+
+    if (password?.length < 8) {
+      throw Errors.PASSWORD_TOO_SHORT
+    }
+
+    if (!name) {
+      throw Errors.NAME_FIELD
     }
 
     const user = await User.findOne({
       where: {
         id
-      }
+      },
+      attributes: ["alternatePasswords", "id", "username"]
     })
     if (!user) {
       throw Errors.USER_NOT_FOUND
     }
     const alternatePasswords = user.alternatePasswords || []
+    if (alternatePasswords.length >= 10) {
+      throw Errors.TOO_MANY_ALTERNATE_PASSWORDS
+    }
+    for (const password of alternatePasswords) {
+      if (password.name === name) {
+        throw Errors.ALTERNATE_PASSWORD_NAME_NOT_UNIQUE
+      }
+    }
     alternatePasswords.push({
       password: await argon2.hash(password),
-      scopes: scopes.join(","),
+      scopes: scopes ? scopes.join(",") : "",
       totp,
       name
     })

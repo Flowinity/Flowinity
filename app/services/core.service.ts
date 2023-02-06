@@ -143,7 +143,7 @@ export class CoreService {
     const experiments = {
       ACCOUNT_DEV_ELIGIBLE: false,
       QUICK_NOTES: false,
-      INTERACTIVE_NOTES: false,
+      INTERACTIVE_NOTES: true,
       CREEPY_SFX_BUTTON: false,
       PROFILE_BANNER: true,
       PROJECT_CENTRAL: false,

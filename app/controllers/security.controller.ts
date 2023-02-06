@@ -103,5 +103,17 @@ export class SecurityController {
         res.sendStatus(204)
       }
     )
+
+    this.router.patch(
+      "/passwords",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        await this.securityService.deleteAlternatePassword(
+          req.user.id,
+          req.body.name
+        )
+        res.sendStatus(204)
+      }
+    )
   }
 }

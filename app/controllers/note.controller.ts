@@ -66,11 +66,12 @@ export class NoteController {
       auth("workspaces.modify"),
       async (req: RequestAuth, res: Response) => {
         const { id } = req.params
-        const { data } = req.body
+        const { data, name } = req.body
         const note = await this.noteService.saveNote(
           parseInt(id),
           data,
-          req.user.id
+          req.user.id,
+          name
         )
         res.json(note)
       }
@@ -100,6 +101,55 @@ export class NoteController {
           req.user.id
         )
         res.json(note)
+      }
+    )
+
+    this.router.post(
+      "/folder",
+      auth("workspaces.create"),
+      async (req: RequestAuth, res: Response) => {
+        const { name, workspaceId } = req.body
+        const folder = await this.noteService.createFolder(
+          name,
+          workspaceId,
+          req.user.id
+        )
+        res.json(folder)
+      }
+    )
+
+    this.router.delete(
+      "/:id",
+      auth("workspaces.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const { id } = req.params
+        await this.noteService.deleteNote(parseInt(id), req.user.id)
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.delete(
+      "/folder/:id",
+      auth("workspaces.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const { id } = req.params
+        await this.noteService.deleteFolder(parseInt(id), req.user.id)
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.patch(
+      "/folder/:id",
+      auth("workspaces.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const { id } = req.params
+        const { name } = req.body
+        const folder = await this.noteService.renameFolder(
+          parseInt(id),
+          name,
+          req.user.id
+        )
+        res.json(folder)
       }
     )
   }

@@ -123,6 +123,23 @@ let Errors = {
   ATTACHMENT_NOT_FOUND_ROUTE: {
     message: "The requested attachment could not be found.",
     status: 400
+  },
+  TOO_MANY_ALTERNATE_PASSWORDS: {
+    message:
+      "You cannot have more than 10 alternate passwords associated with your account.",
+    status: 400
+  },
+  ALTERNATE_PASSWORD_NAME_NOT_UNIQUE: {
+    message: "The provided alternate password name is not unique.",
+    status: 400
+  },
+  INVALID_ALTERNATE_PASSWORD: {
+    message: "The provided alternate password is invalid.",
+    status: 400
+  },
+  NAME_FIELD: {
+    message: "The provided name is invalid.",
+    status: 400
   }
 }
 
