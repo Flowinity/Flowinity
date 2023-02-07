@@ -286,6 +286,8 @@ export class GalleryService {
           {
             model: Upload,
             as: "attachment",
+            where,
+            required: true,
             include: [
               {
                 model: Collection,
