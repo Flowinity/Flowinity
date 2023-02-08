@@ -117,7 +117,21 @@ export class NoteService {
     return await Workspace.findAll({
       where: {
         userId
-      }
+      },
+      include: [
+        {
+          model: WorkspaceFolder,
+          as: "folders",
+          required: true,
+          include: [
+            {
+              model: Note,
+              as: "children",
+              attributes: ["id", "name", "createdAt", "updatedAt"]
+            }
+          ]
+        }
+      ]
     })
   }
 

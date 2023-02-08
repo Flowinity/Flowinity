@@ -141,6 +141,8 @@ export class CoreService {
 
   getExperiments(dev: boolean = false): object {
     const experiments = {
+      WORKSPACES_SIDEBAR: false,
+      LEGACY_CUSTOMIZATION: false,
       ACCOUNT_DEV_ELIGIBLE: false,
       QUICK_NOTES: false,
       INTERACTIVE_NOTES: true,
@@ -172,10 +174,19 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        WORKSPACES_SIDEBAR: {
+          description: "Enable the new separate workspaces sidebar",
+          createdAt: "2023-02-08T00:00:00.000Z"
+        },
+        LEGACY_CUSTOMIZATION: {
+          description:
+            "Re-enable legacy meta tag customization for TPUv1. This is no longer in TPUv2.",
+          createdAt: "2023-02-07T00:00:00.000Z"
+        },
         ACCOUNT_DEV_ELIGIBLE: {
           description:
             "This toggle does nothing, it simply tells whether your account is eligible for development features based on inherit value.",
-          createdAt: "2022-02-04T00:00:00.000Z"
+          createdAt: "2023-02-04T00:00:00.000Z"
         },
         QUICK_NOTES: {
           description: "Allow the ability to create quick notes.",
@@ -316,6 +327,7 @@ export class CoreService {
       experiments.INTERACTIVE_NOTES = true
       experiments.QUICK_NOTES = true
       experiments.ACCOUNT_DEV_ELIGIBLE = true
+      experiments.WORKSPACES_SIDEBAR = true
       return experiments
     } else {
       return experiments

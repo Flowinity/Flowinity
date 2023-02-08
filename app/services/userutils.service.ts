@@ -12,10 +12,14 @@ import { Notification } from "@app/models/notification.model"
 
 @Service()
 export class UserUtilsService {
-  async updateBanner(userId: number, banner: string) {
+  async updateBanner(
+    userId: number,
+    banner: string | null,
+    type: "banner" | "avatar"
+  ) {
     return await User.update(
       {
-        banner
+        [type]: banner
       },
       {
         where: {

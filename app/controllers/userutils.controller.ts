@@ -316,8 +316,47 @@ export class UserUtilsController {
         )
         await this.userUtilsService.updateBanner(
           req.user.id,
-          banner.upload.attachment
+          banner.upload.attachment,
+          "banner"
         )
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.post(
+      "/avatar",
+      auth("user.modify"),
+      uploader.single("avatar"),
+      async (req: RequestAuth, res: Response) => {
+        const banner = await this.galleryService.createUpload(
+          req.user.id,
+          req.file,
+          false,
+          false
+        )
+        await this.userUtilsService.updateBanner(
+          req.user.id,
+          banner.upload.attachment,
+          "avatar"
+        )
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.delete(
+      "/avatar",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        await this.userUtilsService.updateBanner(req.user.id, null, "avatar")
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.delete(
+      "/banner",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        await this.userUtilsService.updateBanner(req.user.id, null, "banner")
         res.sendStatus(204)
       }
     )
