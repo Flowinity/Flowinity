@@ -14,6 +14,7 @@ import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import axios from "axios"
 import * as fs from "fs"
 import Errors from "@app/lib/errors"
+import { Plan } from "@app/models/plan.model"
 
 @Service()
 export class GalleryService {
@@ -371,5 +372,39 @@ export class GalleryService {
       })
       return true
     }
+  }
+
+  async getAttachment(attachment: string) {
+    const upload = await Upload.findOne({
+      where: {
+        attachment
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: [
+            "id",
+            "username",
+            "avatar",
+            "administrator",
+            "moderator",
+            "planId",
+            "createdAt",
+            "updatedAt"
+          ],
+          include: [
+            {
+              model: Plan,
+              as: "plan"
+            }
+          ]
+        }
+      ]
+    })
+    if (!upload) {
+      throw Errors.ATTACHMENT_NOT_FOUND_ROUTE
+    }
+    return upload
   }
 }

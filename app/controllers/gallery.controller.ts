@@ -1,4 +1,4 @@
-import { NextFunction, Response, Router } from "express"
+import { NextFunction, Response, Request, Router } from "express"
 import { Service } from "typedi"
 import { StatusCodes } from "http-status-codes"
 import { GalleryService } from "@app/services/gallery.service"
@@ -284,6 +284,20 @@ export class GalleryController {
               req.user.id
             )
           })
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.get(
+      "/:attachment",
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          const attachment = await this.galleryService.getAttachment(
+            req.params.attachment
+          )
+          res.json(attachment)
         } catch (e) {
           next(e)
         }
