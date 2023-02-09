@@ -1,5 +1,12 @@
 import { Table, Column, Model, DataType } from "sequelize-typescript"
 
+type VersionObject = {
+  createdAt: Date
+  data: object
+  userId: number
+  id: string
+}
+
 @Table
 export class Note extends Model {
   @Column
@@ -16,4 +23,7 @@ export class Note extends Model {
 
   @Column
   shareLink: string
+
+  @Column(DataType.JSON)
+  versions: VersionObject[]
 }

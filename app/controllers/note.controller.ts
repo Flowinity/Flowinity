@@ -71,6 +71,7 @@ export class NoteController {
           parseInt(id),
           data,
           req.user.id,
+          req.body.manualSave,
           name
         )
         res.json(note)
@@ -150,6 +151,20 @@ export class NoteController {
           req.user.id
         )
         res.json(folder)
+      }
+    )
+
+    this.router.patch(
+      "/:id/restore/:version",
+      auth("workspaces.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const { id, version } = req.params
+        await this.noteService.restoreVersion(
+          parseInt(id),
+          version,
+          req.user.id
+        )
+        res.sendStatus(204)
       }
     )
   }

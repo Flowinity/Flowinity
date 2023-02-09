@@ -4,6 +4,7 @@ import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
 import { Note } from "@app/models/note.model"
 import Errors from "@app/lib/errors"
 import cryptoRandomString from "crypto-random-string"
+import { v5 as uuidv5 } from "uuid"
 
 //create class of NoteData
 export class NoteField {
@@ -52,9 +53,31 @@ export class NoteData {
 export class NoteDataV2 {
   blocks: object[]
 }
+
 @Service()
 export class NoteService {
   constructor() {}
+
+  async restoreVersion(id: number, version: string, userId: number) {
+    const note = await this.getNote(id, userId)
+    if (!note?.permissions?.modify) throw Errors.NOT_FOUND
+
+    const versionData = note.versions.find((v: Note) => v.id === version)
+    if (!versionData) throw Errors.NOT_FOUND
+
+    await Note.update(
+      {
+        data: versionData.data
+      },
+      {
+        where: {
+          id
+        }
+      }
+    )
+
+    return true
+  }
 
   async renameFolder(id: number, name: string, userId: number) {
     const folder = await this.getWorkspace(id, userId, "folder")
@@ -223,6 +246,9 @@ export class NoteService {
       const note = await Note.findOne({
         where: {
           shareLink: id
+        },
+        attributes: {
+          exclude: ["versions"]
         }
       })
       if (!note) throw Errors.NOT_FOUND
@@ -243,6 +269,7 @@ export class NoteService {
     if (!workspace) throw Errors.NOT_FOUND
     return {
       ...note.toJSON(),
+      versions: note.versions?.splice(0, 50),
       permissions: {
         modify: true,
         configure: true,
@@ -251,8 +278,14 @@ export class NoteService {
     }
   }
 
-  async saveNote(id: number, data: NoteDataV2, userId: number, name?: string) {
-    const note = await Note.findOne({
+  async saveNote(
+    id: number,
+    data: NoteDataV2,
+    userId: number,
+    manualSave: boolean = false,
+    name?: string
+  ) {
+    let note = await Note.findOne({
       where: {
         id
       }
@@ -264,11 +297,41 @@ export class NoteService {
       "folder"
     )
     if (!workspace) throw Errors.NOT_FOUND
-    await note.update({
-      data,
-      name
-    })
-    return note
+    if (!note.versions) note.versions = []
+
+    const latestSave = note.versions[0]
+    let versions = note.versions
+    if (
+      !latestSave ||
+      new Date().getTime() - new Date(latestSave?.createdAt).getTime() >
+        5 * 60 * 1000 ||
+      (manualSave &&
+        new Date().getTime() - new Date(latestSave?.createdAt).getTime() >
+          30 * 1000)
+    ) {
+      versions.unshift({
+        data: note.data,
+        createdAt: new Date(),
+        userId,
+        id: uuidv5(new Date().toISOString() + note.name, uuidv5.URL)
+      })
+    }
+    await Note.update(
+      {
+        data,
+        name,
+        versions
+      },
+      {
+        where: {
+          id
+        }
+      }
+    )
+    return {
+      ...note.toJSON(),
+      versions: versions.slice(0, 50)
+    }
   }
 
   async createNote(name: string, workspaceFolderId: number, userId: number) {
