@@ -141,7 +141,7 @@ export class CoreService {
 
   getExperiments(dev: boolean = false): object {
     const experiments = {
-      WORKSPACES_SIDEBAR: false,
+      WORKSPACES_SIDEBAR: true,
       LEGACY_CUSTOMIZATION: false,
       ACCOUNT_DEV_ELIGIBLE: false,
       QUICK_NOTES: false,
