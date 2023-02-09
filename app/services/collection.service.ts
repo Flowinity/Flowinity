@@ -223,11 +223,7 @@ export class CollectionService {
     if (!userId) {
       const collection = await redis.json.get(`shareLinks:${collectionId}`)
       if (!collection) return false
-      return {
-        write: false,
-        configure: false,
-        read: true
-      }
+      return permission === "read"
     }
     const collections = await redis.json.get(`collections:${userId}`)
 

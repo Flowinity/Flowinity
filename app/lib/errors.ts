@@ -140,6 +140,22 @@ let Errors = {
   NAME_FIELD: {
     message: "The provided name is invalid.",
     status: 400
+  },
+  WORKSPACE_USER_NOT_FOUND: {
+    message: "The requested user could not be found in this workspace.",
+    status: 404
+  },
+  WORKSPACE_NO_PERMISSION: {
+    message: "You do not have permission to modify this workspace.",
+    status: 403
+  },
+  WORKSPACE_NOT_FOUND: {
+    message: "The requested workspace could not be found.",
+    status: 404
+  },
+  COMING_SOON: {
+    message: "This feature is coming soon!",
+    status: 400
   }
 }
 

@@ -1,6 +1,7 @@
-import { Table, Column, Model, DataType } from "sequelize-typescript"
+import { Table, Column, Model, DataType, HasMany } from "sequelize-typescript"
+import { NoteVersion } from "@app/models/noteVersion.model"
 
-type VersionObject = {
+export type VersionObject = {
   createdAt: Date
   data: object
   userId: number
@@ -24,6 +25,6 @@ export class Note extends Model {
   @Column
   shareLink: string
 
-  @Column(DataType.JSON)
-  versions: VersionObject[]
+  @HasMany(() => NoteVersion, "noteId")
+  versions: NoteVersion[]
 }

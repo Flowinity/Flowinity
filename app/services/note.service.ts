@@ -4,7 +4,10 @@ import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
 import { Note } from "@app/models/note.model"
 import Errors from "@app/lib/errors"
 import cryptoRandomString from "crypto-random-string"
-import { v5 as uuidv5 } from "uuid"
+import { NoteVersion } from "@app/models/noteVersion.model"
+import { WorkspaceUser } from "@app/models/workspaceUser.model"
+import { User } from "@app/models/user.model"
+import { Friend } from "@app/models/friend.model"
 
 //create class of NoteData
 export class NoteField {
@@ -137,15 +140,25 @@ export class NoteService {
   }
 
   async getWorkspaces(userId: number) {
-    return await Workspace.findAll({
+    const workspaces = await Workspace.findAll({
       where: {
         userId
       },
       include: [
         {
+          model: WorkspaceUser,
+          as: "users",
+          include: [
+            {
+              model: User,
+              as: "user",
+              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+            }
+          ]
+        },
+        {
           model: WorkspaceFolder,
           as: "folders",
-          required: true,
           include: [
             {
               model: Note,
@@ -153,17 +166,114 @@ export class NoteService {
               attributes: ["id", "name", "createdAt", "updatedAt"]
             }
           ]
+        },
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
         }
       ]
     })
+
+    const shared = await Workspace.findAll({
+      include: [
+        {
+          model: WorkspaceFolder,
+          as: "folders",
+          include: [
+            {
+              model: Note,
+              as: "children",
+              attributes: ["id", "name", "createdAt", "updatedAt"]
+            }
+          ]
+        },
+        {
+          model: WorkspaceUser,
+          as: "users",
+          include: [
+            {
+              model: User,
+              as: "user",
+              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+            }
+          ]
+        },
+        {
+          model: WorkspaceUser,
+          as: "recipient",
+          required: true,
+          where: {
+            recipientId: userId
+          },
+          include: [
+            {
+              model: User,
+              as: "user",
+              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+            }
+          ]
+        },
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+        }
+      ]
+    })
+
+    return {
+      ...workspaces.map((workspace) => workspace.toJSON()),
+      ...shared.map((workspace) => {
+        return {
+          ...workspace.toJSON(),
+          shared: true,
+          permissionsMetadata: {
+            write: workspace.dataValues.recipient.dataValues.write,
+            configure: workspace.dataValues.recipient.dataValues.configure,
+            read: workspace.dataValues.recipient.dataValues.read
+          }
+        }
+      })
+    }
   }
 
   async getWorkspace(id: number, userId: number, type: "workspace" | "folder") {
+    const include = [
+      {
+        model: WorkspaceUser,
+        as: "users",
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          }
+        ]
+      },
+      {
+        model: WorkspaceFolder,
+        as: "folders",
+        include: [
+          {
+            model: Note,
+            as: "children",
+            attributes: ["id", "name", "createdAt", "updatedAt"]
+          }
+        ]
+      },
+      {
+        model: User,
+        as: "user",
+        attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+      }
+    ]
     const workspace = await Workspace.findOne({
       where: {
         id,
         userId
-      }
+      },
+      include
     })
     if (type === "folder") {
       const workspace = await Workspace.findOne({
@@ -171,6 +281,7 @@ export class NoteService {
           userId
         },
         include: [
+          ...include,
           {
             model: WorkspaceFolder,
             as: "folder",
@@ -181,38 +292,85 @@ export class NoteService {
           }
         ]
       })
-      if (!workspace) throw Errors.NOT_FOUND
-      const folders = await WorkspaceFolder.findAll({
+      if (!workspace) {
+        const workspace = await Workspace.findOne({
+          include: [
+            ...include,
+            {
+              model: WorkspaceFolder,
+              as: "folder",
+              where: {
+                id
+              },
+              required: true
+            },
+            {
+              model: WorkspaceUser,
+              as: "recipient",
+              required: true,
+              where: {
+                recipientId: userId
+              }
+            }
+          ]
+        })
+        if (!workspace) throw Errors.NOT_FOUND
+        return {
+          ...workspace.toJSON(),
+          shared: true,
+          permissionsMetadata: {
+            write: workspace.dataValues.recipient.dataValues.write,
+            configure: workspace.dataValues.recipient.dataValues.configure,
+            read: workspace.dataValues.recipient.dataValues.read
+          }
+        }
+      }
+      return {
+        ...workspace.toJSON(),
+        shared: false,
+        permissionsMetadata: {
+          write: true,
+          configure: true,
+          read: true
+        }
+      }
+    }
+    if (!workspace) {
+      const workspace = await Workspace.findOne({
         where: {
-          workspaceId: workspace.id
+          id
         },
         include: [
+          ...include,
           {
-            model: Note,
-            as: "children"
+            model: WorkspaceUser,
+            as: "recipient",
+            required: true,
+            where: {
+              recipientId: userId
+            }
           }
         ]
       })
+      if (!workspace) throw Errors.NOT_FOUND
       return {
         ...workspace.toJSON(),
-        folders
+        shared: true,
+        permissionsMetadata: {
+          write: workspace.dataValues.recipient.dataValues.write,
+          configure: workspace.dataValues.recipient.dataValues.configure,
+          read: workspace.dataValues.recipient.dataValues.read
+        }
       }
     }
-    if (!workspace) throw Errors.NOT_FOUND
-    const folders = await WorkspaceFolder.findAll({
-      where: {
-        workspaceId: workspace.id
-      },
-      include: [
-        {
-          model: Note,
-          as: "children"
-        }
-      ]
-    })
     return {
       ...workspace.toJSON(),
-      folders
+      shared: false,
+      permissionsMetadata: {
+        write: true,
+        configure: true,
+        read: true
+      }
     }
   }
 
@@ -240,7 +398,15 @@ export class NoteService {
     const note = await Note.findOne({
       where: {
         id
-      }
+      },
+      include: [
+        {
+          model: NoteVersion,
+          as: "versions",
+          limit: 50,
+          order: [["createdAt", "DESC"]]
+        }
+      ]
     })
     if (!note || !userId || id.toString().length === 64) {
       const note = await Note.findOne({
@@ -269,7 +435,6 @@ export class NoteService {
     if (!workspace) throw Errors.NOT_FOUND
     return {
       ...note.toJSON(),
-      versions: note.versions?.splice(0, 50),
       permissions: {
         modify: true,
         configure: true,
@@ -288,7 +453,15 @@ export class NoteService {
     let note = await Note.findOne({
       where: {
         id
-      }
+      },
+      include: [
+        {
+          model: NoteVersion,
+          as: "versions",
+          limit: 50,
+          order: [["createdAt", "DESC"]]
+        }
+      ]
     })
     if (!note) throw Errors.NOT_FOUND
     const workspace = await this.getWorkspace(
@@ -296,7 +469,7 @@ export class NoteService {
       userId,
       "folder"
     )
-    if (!workspace) throw Errors.NOT_FOUND
+    if (!workspace?.permissionsMetadata?.write) throw Errors.NOT_FOUND
     if (!note.versions) note.versions = []
 
     const latestSave = note.versions[0]
@@ -309,18 +482,17 @@ export class NoteService {
         new Date().getTime() - new Date(latestSave?.createdAt).getTime() >
           30 * 1000)
     ) {
-      versions.unshift({
-        data: note.data,
-        createdAt: new Date(),
-        userId,
-        id: uuidv5(new Date().toISOString() + note.name, uuidv5.URL)
+      const version = await NoteVersion.create({
+        noteId: note.id,
+        data,
+        userId
       })
+      versions = [version, ...versions]
     }
     await Note.update(
       {
         data,
-        name,
-        versions
+        name
       },
       {
         where: {
@@ -370,5 +542,137 @@ export class NoteService {
     return {
       shareLink
     }
+  }
+
+  async removeUserFromWorkspace(workspaceId: number, recipientId: number) {
+    const result = await WorkspaceUser.destroy({
+      where: {
+        workspaceId,
+        recipientId
+      }
+    })
+
+    if (!result) throw Errors.WORKSPACE_USER_NOT_FOUND
+
+    return result
+  }
+
+  async addUserToWorkspace(
+    workspaceId: number,
+    senderId: number,
+    username: string,
+    write: boolean,
+    configure: boolean,
+    read: boolean
+  ) {
+    const workspace = await Workspace.findOne({
+      where: {
+        id: workspaceId
+      }
+    })
+
+    if (!workspace) {
+      throw Errors.WORKSPACE_NOT_FOUND
+    }
+
+    const user = await User.findOne({
+      where: {
+        username
+      },
+      attributes: ["id", "username", "avatar", "email"]
+    })
+
+    if (!user) {
+      throw Errors.USER_NOT_FOUND
+    }
+
+    if (workspace.userId === user.id) {
+      throw Errors.CANNOT_ADD_OWNER
+    }
+
+    const friend = await Friend.findOne({
+      where: {
+        userId: senderId,
+        friendId: user.id,
+        status: "accepted"
+      }
+    })
+
+    if (!friend) {
+      throw Errors.NOT_FRIENDS_WITH_USER_COLLECTION
+    }
+
+    return {
+      ...(
+        await WorkspaceUser.create({
+          workspaceId,
+          recipientId: user.id,
+          senderId: senderId,
+          write,
+          configure,
+          read,
+          identifier: workspaceId + "-" + user.id
+        })
+      ).dataValues,
+      user,
+      workspace: {
+        id: workspace.id,
+        name: workspace.name
+      }
+    }
+  }
+
+  async updateUser(
+    workspaceId: number,
+    recipientId: number,
+    write: boolean,
+    configure: boolean,
+    read: boolean
+  ) {
+    const result = await WorkspaceUser.update(
+      {
+        write,
+        configure,
+        read
+      },
+      {
+        where: {
+          workspaceId,
+          recipientId
+        }
+      }
+    )
+
+    if (!result) throw Errors.WORKSPACE_USER_NOT_FOUND
+
+    return result
+  }
+
+  async getWorkspacePermissions(
+    workspaceId: number,
+    userId: number,
+    permission: "read" | "write" | "configure"
+  ) {
+    const workspace = await WorkspaceUser.findOne({
+      where: {
+        workspaceId,
+        recipientId: userId
+      }
+    })
+
+    if (!workspace) {
+      const workspace = await Workspace.findOne({
+        where: {
+          id: workspaceId,
+          userId
+        }
+      })
+
+      if (!workspace) throw Errors.WORKSPACE_USER_NOT_FOUND
+
+      return true
+    }
+
+    return workspace[permission]
   }
 }

@@ -1,9 +1,10 @@
-import { Response } from "express"
+import { Response, NextFunction } from "express"
 import { Service } from "typedi"
 import Router from "express-promise-router"
 import { NoteService } from "@app/services/note.service"
 import { RequestAuth } from "@app/types/express"
 import auth from "@app/lib/auth"
+import Errors from "@app/lib/errors"
 @Service()
 export class NoteController {
   router: any
@@ -165,6 +166,84 @@ export class NoteController {
           req.user.id
         )
         res.sendStatus(204)
+      }
+    )
+
+    this.router.all(
+      "/workspace/:id/*",
+      auth("workspaces.modify"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          if (!req.user.administrator) throw Errors.COMING_SOON
+          const id = parseInt(req.params.id)
+          const check = await this.noteService.getWorkspacePermissions(
+            id,
+            req.user.id,
+            "configure"
+          )
+          if (!check) throw Errors.WORKSPACE_NO_PERMISSION
+          next()
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.post(
+      "/workspace/:id/user",
+      auth("workspaces.modify"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const id = parseInt(req.params.id)
+          const { username } = req.body
+          await this.noteService.addUserToWorkspace(
+            id,
+            req.user.id,
+            username,
+            req.body.write,
+            req.body.configure,
+            true
+          )
+          res.sendStatus(204)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.delete(
+      "/workspace/:id/user/:userId",
+      auth("workspaces.modify"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const id = parseInt(req.params.id)
+          const userId = parseInt(req.params.userId)
+          await this.noteService.removeUserFromWorkspace(id, userId)
+          res.sendStatus(204)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.patch(
+      "/workspace/:id/user",
+      auth("workspaces.modify"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const id = parseInt(req.params.id)
+          const userId = req.body.id
+          await this.noteService.updateUser(
+            id,
+            userId,
+            req.body.write,
+            req.body.configure,
+            true
+          )
+          res.sendStatus(204)
+        } catch (e) {
+          next(e)
+        }
       }
     )
   }

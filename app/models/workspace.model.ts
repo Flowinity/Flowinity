@@ -8,6 +8,7 @@ import {
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
+import { WorkspaceUser } from "@app/models/workspaceUser.model"
 
 @Table
 export class Workspace extends Model {
@@ -28,4 +29,13 @@ export class Workspace extends Model {
 
   @HasOne(() => WorkspaceFolder, "workspaceId")
   folder: WorkspaceFolder
+
+  @HasOne(() => WorkspaceUser, "workspaceId")
+  recipient: WorkspaceUser
+
+  @HasOne(() => WorkspaceUser, "workspaceId")
+  sender: WorkspaceUser
+
+  @HasMany(() => WorkspaceUser, "workspaceId")
+  users: WorkspaceUser[]
 }
