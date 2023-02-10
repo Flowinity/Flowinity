@@ -9,6 +9,7 @@ import config from "@app/config/tpu.json"
 import { CacheService } from "@app/services/cache.service"
 import dayjs from "dayjs"
 import socket from "./lib/socket"
+import { BillingService } from "@app/services/billing.service"
 
 @Service()
 export class Server {
@@ -20,7 +21,8 @@ export class Server {
 
   constructor(
     private readonly application: Application,
-    private readonly cacheService: CacheService
+    private readonly cacheService: CacheService,
+    private readonly billingService: BillingService
   ) {}
 
   private static normalizePort(
@@ -46,6 +48,7 @@ export class Server {
     global.redis = redis
     global.config = config
     global.dayjs = dayjs
+    this.billingService.billingInit()
     this.cacheService.cacheInit()
     this.server = http.createServer(this.application.app)
 

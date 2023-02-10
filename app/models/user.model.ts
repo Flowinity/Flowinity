@@ -10,12 +10,14 @@ import {
   DataType,
   Unique,
   IsEmail,
-  Length
+  Length,
+  HasOne
 } from "sequelize-typescript"
 import { Plan } from "@app/models/plan.model"
 import { Theme } from "@app/models/theme.model"
 import { Domain } from "@app/models/domain.model"
 import { CollectionCache } from "@app/types/collection"
+import { Subscription } from "@app/models/subscription.model"
 
 @DefaultScope(() => ({
   attributes: {
@@ -183,6 +185,9 @@ export class User extends Model {
 
   @BelongsTo(() => Domain, "domainId")
   domain: Domain
+
+  @HasOne(() => Subscription, "userId")
+  subscription: Subscription
 
   collections?: CollectionCache[]
   scopes: string

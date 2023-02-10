@@ -6,6 +6,7 @@ import { Theme } from "@app/models/theme.model"
 import { Domain } from "@app/models/domain.model"
 import { Op } from "sequelize"
 import maxmind, { AsnResponse, CityResponse, Reader } from "maxmind"
+import { Subscription } from "@app/models/subscription.model"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -102,6 +103,10 @@ const auth = (scope: string, passthrough: boolean = false) => {
               as: "user",
               required: true,
               include: [
+                {
+                  model: Subscription,
+                  as: "subscription"
+                },
                 {
                   model: Domain,
                   as: "domain"

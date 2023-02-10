@@ -7,6 +7,7 @@ declare interface TpuConfig {
   siteName: string
   release: string
   storage: string
+  jitsiToken: string
   redis: {
     username?: string | undefined
     password?: string | undefined
