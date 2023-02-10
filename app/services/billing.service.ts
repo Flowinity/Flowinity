@@ -60,7 +60,23 @@ export class BillingService {
           return (
             new Date(jitsi.createdAt).getTime() >
               new Date().getTime() - 1000 * 60 * 60 * 24 * 14 &&
-            jitsi.jid === "objective@muc.meet.jitsi"
+            jitsi.jid === "objective@muc.meet.jitsi" && // jitsi.speakerStats must contain Troplo with a dominant speaker time of 1h
+            jitsi.speakerStats.some(
+              (speaker: JitsiSpeakers) =>
+                speaker.username === "Troplo" &&
+                speaker.totalDominantSpeakerTime > 1000 * 60 * 60
+            ) &&
+            jitsi.speakerStats.some((speaker: JitsiSpeakers) =>
+              [
+                "Jolt",
+                "Dhease",
+                "Dhease Nheeights",
+                "Jolt707",
+                "Jensen",
+                "Nesy",
+                "JJS707"
+              ].includes(speaker.username)
+            )
           )
         })
         console.log(
@@ -94,52 +110,66 @@ export class BillingService {
         if (nesyLength < 14) {
           const subscription = await Subscription.findOne({
             where: {
-              userId: 6
+              userId: 1
             }
           })
           if (!subscription) {
             console.log("[BILLING] Creating subscription for Jolt707")
             await this.createSubscription(6)
           }
-          await Subscription.update(
-            {
-              cancelled: true,
-              // expire in 24h
-              cancelledAt: new Date(),
-              expiredAt: new Date(new Date().getTime() + 1000 * 60 * 60 * 24)
-            },
-            {
-              where: {
-                userId: 6,
-                cancelled: false
+          if (!subscription) return
+          const hasExpired =
+            new Date(subscription.expiredAt).getTime() < new Date().getTime() &&
+            subscription.expiredAt
+          if (!hasExpired) {
+            await Subscription.update(
+              {
+                cancelled: true,
+                // expire in 24h
+                cancelledAt: new Date(),
+                expiredAt: new Date(new Date().getTime() + 1000 * 60 * 60 * 24)
+              },
+              {
+                where: {
+                  userId: 1,
+                  cancelled: false
+                }
               }
-            }
-          )
+            )
+          }
           await Subscription.update(
             {
               metadata: {
                 message: `You don't have 14 hours of Speaker Stats in the past 14 days, your TPU Gold will expire in 1 day. You only have ${Math.round(
                   nesyLength
-                )} hours.`
+                )} hours.`,
+                hours: nesyLength,
+                active: !hasExpired
               }
             },
             {
               where: {
-                userId: 6
+                userId: 1
               }
             }
           )
           if (!subscription) return
-          if (
-            new Date(subscription.expiredAt).getTime() < new Date().getTime() &&
-            subscription.expiredAt
-          ) {
+          if (hasExpired) {
             console.log("[BILLING] Jolt707's subscription expired")
-            await Subscription.destroy({
-              where: {
-                userId: 6
+            await Subscription.update(
+              {
+                cancelled: true,
+                metadata: {
+                  active: false,
+                  hours: nesyLength
+                }
+              },
+              {
+                where: {
+                  userId: 1
+                }
               }
-            })
+            )
             await User.update(
               {
                 planId: 1
@@ -167,11 +197,15 @@ export class BillingService {
               cancelledAt: null,
               expiredAt: new Date(
                 new Date().getTime() + 1000 * 60 * 60 * 24 * 14
-              )
+              ),
+              metadata: {
+                hours: nesyLength,
+                active: true
+              }
             },
             {
               where: {
-                userId: 6
+                userId: 1
               }
             }
           )
@@ -184,8 +218,8 @@ export class BillingService {
   billingInit() {
     try {
       console.log("test")
-      // 4 hours
-      setInterval(this.checkJitsiGold, 14400000)
+      // 30 minutes
+      setInterval(this.checkJitsiGold, 1000 * 60 * 30)
 
       this.checkJitsiGold().then(() => {})
       return true
