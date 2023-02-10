@@ -1,10 +1,13 @@
-import { Service } from "typedi"
+import { Service, Container } from "typedi"
 import { CacheService } from "@app/services/cache.service"
 import { User } from "@app/models/user.model"
 import { Invite } from "@app/models/invite.model"
 import Mailgen from "mailgen"
 import nodemailer from "nodemailer"
 import { Announcement } from "@app/models/announcement.model"
+import { Experiment } from "@app/models/experiment.model"
+import { CoreService } from "@app/services/core.service"
+import { Feedback } from "@app/models/feedback.model"
 
 export enum CacheType {
   "everything",
@@ -41,6 +44,18 @@ const inviteParams = {
 @Service()
 export class AdminService {
   constructor(private readonly cacheService: CacheService) {}
+  async getFeedback() {
+    return await Feedback.findAll({
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+        }
+      ],
+      order: [["createdAt", "DESC"]]
+    })
+  }
   async createAnnouncement(
     content: string,
     userId: number
@@ -147,5 +162,57 @@ export class AdminService {
     console.log(socket)
     const clients = socket.socket.sockets
     return clients
+  }
+
+  async createExperimentOverrides(
+    currentExperiments: Experiment[],
+    overrides: { [key: string]: string | number | boolean },
+    userId: number,
+    dev: boolean = false
+  ) {
+    const experiments = Object.entries(overrides).reduce(
+      (acc, [name, value]) => {
+        try {
+          if (name === "meta") return acc
+          const val = JSON.parse(<string>value)
+          if (val !== currentExperiments[name] && value !== "destroy") {
+            acc[name] = val
+          }
+          return acc
+        } catch {
+          if (value !== currentExperiments[name] && value !== "destroy") {
+            acc[name] = value
+          }
+          return acc
+        }
+      },
+      {}
+    )
+    const experimentsToDelete = Object.entries(overrides).reduce(
+      (acc, [name, value]) => {
+        if (value === "destroy") {
+          acc.push(name)
+        }
+        return acc
+      }
+    )
+    for (const experiment of experimentsToDelete) {
+      await Experiment.destroy({
+        where: {
+          key: experiment,
+          userId
+        }
+      })
+    }
+
+    for (const [key, value] of Object.entries(experiments)) {
+      await Experiment.create({
+        key,
+        value: JSON.stringify(value),
+        userId
+      })
+    }
+    const coreService = Container.get(CoreService)
+    return await coreService.getUserExperiments(userId, dev)
   }
 }

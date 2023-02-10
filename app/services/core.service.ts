@@ -8,6 +8,7 @@ import { Op } from "sequelize"
 import { Pulse } from "@app/models/pulse.model"
 import { HoursOfDay } from "@app/services/pulse.service"
 import { Invite } from "@app/models/invite.model"
+import { Experiment } from "@app/models/experiment.model"
 
 @Service()
 export class CoreService {
@@ -139,8 +140,28 @@ export class CoreService {
     }
   }
 
+  async getUserExperiments(userId: number, dev: boolean = false) {
+    const overrides = await Experiment.findAll({
+      where: {
+        userId
+      }
+    })
+    return {
+      ...this.getExperiments(dev),
+      ...overrides.map((override) => ({
+        [override.dataValues.key]: JSON.parse(override.value)
+      }))[0]
+    }
+  }
+
   getExperiments(dev: boolean = false): object {
     const experiments = {
+      WEBMAIL: false,
+      GEOGUESS: false,
+      OBJECTIVE: false,
+      COMPASS_INTEGRATION: false,
+      SURVEYS: false,
+      PROJECT_MERGE: false,
       WORKSPACES_SIDEBAR: true,
       LEGACY_CUSTOMIZATION: false,
       ACCOUNT_DEV_ELIGIBLE: false,
@@ -174,6 +195,32 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        WEBMAIL: {
+          description: "Enable TPU webmail.",
+          createdAt: "2023-02-10T00:00:00.000Z"
+        },
+        GEOGUESS: {
+          description: "Enable embedded GeoGuess.",
+          createdAt: "2021-02-10T00:00:00.000Z"
+        },
+        OBJECTIVE: {
+          description: `Objective Jitsi room information, right inside TPU.`,
+          createdAt: "2023-02-10T00:00:00.000Z"
+        },
+        COMPASS_INTEGRATION: {
+          description:
+            "Submit Learning Tasks via TPUDocs to JDLF, view schedule & class information.\nLink Compass account.",
+          createdAt: "2023-02-10T00:00:00.000Z"
+        },
+        SURVEYS: {
+          description: "Allow the ability to create surveys.",
+          createdAt: "2023-02-10T00:00:00.000Z"
+        },
+        PROJECT_MERGE: {
+          description:
+            "TPU Central concept for bringing Colubrina, BetterCompass, Jitsi, and GeoGuess together in one centralized platform.",
+          createdAt: "2023-02-09T00:00:00.000Z"
+        },
         WORKSPACES_SIDEBAR: {
           description: "Enable the new separate workspaces sidebar",
           createdAt: "2023-02-08T00:00:00.000Z"
@@ -328,6 +375,10 @@ export class CoreService {
       experiments.QUICK_NOTES = true
       experiments.ACCOUNT_DEV_ELIGIBLE = true
       experiments.WORKSPACES_SIDEBAR = true
+      experiments.PROJECT_MERGE = true
+      experiments.SURVEYS = true
+      experiments.COMPASS_INTEGRATION = true
+      experiments.OBJECTIVE = true
       return experiments
     } else {
       return experiments

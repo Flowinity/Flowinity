@@ -42,11 +42,15 @@ export class CoreController {
           const dev = req.user
             ? req.user.administrator || req.user.moderator
             : false
-          const experiments = this.coreService.getExperiments(dev)
-          res.json(experiments)
+          if (!req.user) return res.json(this.coreService.getExperiments(dev))
+          const experiments = await this.coreService.getUserExperiments(
+            req.user.id,
+            dev
+          )
+          return res.json(experiments)
         } catch (e) {
           console.error(e)
-          res.sendStatus(StatusCodes.UNAUTHORIZED)
+          return res.sendStatus(StatusCodes.UNAUTHORIZED)
         }
       }
     )

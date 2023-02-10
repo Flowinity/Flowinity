@@ -8,6 +8,7 @@ import { AdminService } from "@app/services/admin.service"
 import { CacheService } from "@app/services/cache.service"
 import { User } from "@app/models/user.model"
 import { UserUtilsService } from "@app/services/userutils.service"
+import { CoreService } from "@app/services/core.service"
 
 export enum CacheType {
   "everything",
@@ -23,7 +24,8 @@ export class AdminController {
   constructor(
     private readonly adminService: AdminService,
     private readonly cacheService: CacheService,
-    private readonly userUtilsService: UserUtilsService
+    private readonly userUtilsService: UserUtilsService,
+    private readonly coreService: CoreService
   ) {
     this.configureRouter()
   }
@@ -243,6 +245,68 @@ export class AdminController {
         } catch (e) {
           next(e)
         }
+      }
+    )
+
+    this.router.get(
+      "/experiments/:id",
+      auth("*"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const user = await User.findOne({
+            where: {
+              id: req.params.id
+            }
+          })
+          if (!user) throw Errors.USER_NOT_FOUND
+          const dev = req.user ? user.administrator || user.moderator : false
+          const experiment = await this.coreService.getUserExperiments(
+            parseInt(req.params.id),
+            dev
+          )
+          res.json(experiment)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.post(
+      "/experiments/:id",
+      auth("*"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const user = await User.findOne({
+            where: {
+              id: req.params.id
+            }
+          })
+          if (!user) throw Errors.USER_NOT_FOUND
+          const dev = req.user ? user.administrator || user.moderator : false
+          const currentExperiments = await this.coreService.getUserExperiments(
+            parseInt(req.params.id),
+            dev
+          )
+          const experiments = await this.adminService.createExperimentOverrides(
+            // @ts-ignore
+            currentExperiments,
+            req.body,
+            user.id,
+            dev
+          )
+          res.json(experiments)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.get(
+      "/feedback",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const feedback = await this.adminService.getFeedback()
+        res.json(feedback)
       }
     )
 
