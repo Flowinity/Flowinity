@@ -110,7 +110,7 @@ export class BillingService {
         if (nesyLength < 14) {
           const subscription = await Subscription.findOne({
             where: {
-              userId: 1
+              userId: 6
             }
           })
           if (!subscription) {
@@ -131,7 +131,7 @@ export class BillingService {
               },
               {
                 where: {
-                  userId: 1,
+                  userId: 6,
                   cancelled: false
                 }
               }
@@ -149,7 +149,7 @@ export class BillingService {
             },
             {
               where: {
-                userId: 1
+                userId: 6
               }
             }
           )
@@ -166,7 +166,7 @@ export class BillingService {
               },
               {
                 where: {
-                  userId: 1
+                  userId: 6
                 }
               }
             )
@@ -184,7 +184,7 @@ export class BillingService {
         } else {
           const subscription = await Subscription.findOne({
             where: {
-              userId: 1
+              userId: 6
             }
           })
           if (!subscription) {
@@ -205,7 +205,7 @@ export class BillingService {
             },
             {
               where: {
-                userId: 1
+                userId: 6
               }
             }
           )
