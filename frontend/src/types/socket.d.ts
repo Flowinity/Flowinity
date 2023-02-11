@@ -1,6 +1,6 @@
-import { Socket } from "socket.io"
-import { User } from "@app/models/user.model"
+import { Socket } from "socket.io";
+import { User } from "@/models/user";
 
 export interface SocketAuth extends Socket {
-  user: User
+  user: User;
 }

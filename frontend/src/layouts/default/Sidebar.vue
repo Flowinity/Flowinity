@@ -17,7 +17,7 @@
         :exact="item.exact"
         :to="item.path"
         @click="handleClick(index)"
-        :disabled="!checkScope(item.scope, $user.user.scopes)"
+        :disabled="!checkScope(item.scope, $user.user?.scopes)"
         :prepend-icon="item.icon"
       >
         <v-list-item-title
@@ -38,7 +38,7 @@
             small
             style="float: right"
             color="grey lighten-1"
-            v-if="!checkScope(item.scope, $user.user.scopes)"
+            v-if="!checkScope(item.scope, $user.user?.scopes)"
           >
             mdi-lock
           </v-icon>
@@ -227,7 +227,7 @@ export default defineComponent({
     handleClick(index: number) {
       this.sidebar[index].click.call(this);
     },
-    checkScope(requiredScope: string, scope: string) {
+    checkScope(requiredScope: string | undefined, scope: string | undefined) {
       if (!scope || !requiredScope) {
         return true;
       }

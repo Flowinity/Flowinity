@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
-import { User } from "@/models/user.model";
+import { User } from "@/models/user";
 import axios from "@/plugins/axios";
 
 export interface UserState {

@@ -25,7 +25,9 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="modelValue = false">Cancel</v-btn>
+        <v-btn color="primary" @click="$emit('update:modelValue', false)"
+          >Cancel</v-btn
+        >
         <v-btn color="primary" @click="addToCollection">Add</v-btn>
       </v-card-actions>
     </v-card>
@@ -42,7 +44,7 @@ export default defineComponent({
   emits: ["update:modelValue", "collectionAdded"],
   data() {
     return {
-      selectedCollection: null
+      selectedCollection: null as number | null
     };
   },
   methods: {
@@ -85,9 +87,8 @@ export default defineComponent({
     }
   },
   watch: {
-    modelValue(val) {
+    modelValue() {
       this.selectedCollection = null;
-      this.$emit("update:modelValue", val);
     }
   }
 });

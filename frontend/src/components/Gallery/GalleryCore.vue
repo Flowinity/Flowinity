@@ -45,8 +45,8 @@
           :selected="selected"
           @select="select($event)"
           @collectivize="
-            this.addToCollectionDialog = true;
-            this.collectivize = $event;
+            addToCollectionDialog = true;
+            collectivize = $event;
           "
         ></GalleryItem>
       </v-col>
@@ -62,7 +62,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import GalleryItem from "@/components/Gallery/GalleryItem.vue";
-import { Upload } from "@/models/upload.model";
+import { Upload } from "@/models/upload";
 import AddToCollection from "@/components/Gallery/Dialogs/AddToCollection.vue";
 import { CollectionCache } from "@/types/collection";
 
@@ -101,7 +101,7 @@ export default defineComponent({
   data() {
     return {
       addToCollectionDialog: false,
-      collectivize: null as unknown as number | number[],
+      collectivize: null as number | number[] | null,
       selected: [] as number[]
     };
   },
@@ -128,6 +128,19 @@ export default defineComponent({
       } else {
         this.selected.push(item.id);
       }
+    },
+    bulkAddCollection() {
+      this.addToCollectionDialog = true;
+      this.collectivize = this.selected;
+    },
+    bulkDeleteConfirm() {
+      this.$emit("bulkDeleteConfirm", this.selected);
+    },
+    selectAll() {
+      this.selected = this.items.gallery.map((i: Upload) => i.id);
+    },
+    deselectAll() {
+      this.selected = [];
     }
   },
   computed: {

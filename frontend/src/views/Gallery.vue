@@ -9,11 +9,11 @@
           label="Search"
           @click:append="
             show.search = '';
-            show.page = 1;
+            page = 1;
             getGallery();
           "
           v-on:keyup.enter="
-            show.page = 1;
+            page = 1;
             getGallery();
           "
         ></v-text-field>
@@ -55,7 +55,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
-import { Upload } from "@/models/upload.model";
+import { Upload } from "@/models/upload";
 import { CollectionCache } from "@/types/collection";
 
 export default defineComponent({
@@ -135,7 +135,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.page = parseInt(this.$route.params.page) || 1;
+    this.page = parseInt(<string>this.$route.params.page) || 1;
     this.getGallery();
   },
   watch: {

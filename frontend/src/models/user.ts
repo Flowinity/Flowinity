@@ -1,9 +1,3 @@
-import { Plan } from "@app/models/plan.model";
-import { Theme } from "@app/models/theme.model";
-import { Domain } from "@app/models/domain.model";
-import { CollectionCache } from "@app/types/collection";
-import { Subscription } from "@app/models/subscription.model";
-
 export interface User {
   id: number;
   username: string;
@@ -34,11 +28,12 @@ export interface User {
   itemsPerPage: number;
   banner?: string;
   alternatePasswords?: AlternatePassword[];
-  plan: Plan;
-  theme: Theme;
-  domain: Domain;
-  subscription: Subscription;
-  collections?: CollectionCache[];
+  //TODO
+  plan: any;
+  theme: any;
+  domain: any;
+  subscription: any;
+  collections?: any[];
   scopes: string;
   pendingAutoCollects: number;
   experiments: object;

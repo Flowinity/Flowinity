@@ -3,9 +3,7 @@
     <v-toolbar
       style="z-index: 1"
       @click="
-        selected.length && supports.multiSelect
-          ? this.$emit('select', item)
-          : null
+        selected.length && supports.multiSelect ? $emit('select', item) : null
       "
       :class="{ unselectable: selected.length }"
     >
@@ -14,7 +12,7 @@
       <v-btn
         v-if="!$vuetify.display.mobile && supports.multiSelect"
         icon
-        @click.prevent.stop="this.$emit('select', item)"
+        @click.prevent.stop="$emit('select', item)"
       >
         <v-icon>{{
           selected.includes(item.id)
@@ -47,7 +45,7 @@
         <HoverChip
           text="Add to Collection"
           icon="mdi-plus"
-          @click="this.$emit('collectivize', item.id)"
+          @click="$emit('collectivize', item.id)"
           v-if="supports.permissions.write"
         >
         </HoverChip>
@@ -125,6 +123,7 @@
 import { defineComponent } from "vue";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
+import { Upload } from "@/models/upload";
 
 export default defineComponent({
   name: "GalleryItem",
@@ -133,6 +132,28 @@ export default defineComponent({
   computed: {
     fileSize() {
       this.$functions.fileSize(this.item.fileSize);
+    }
+  },
+  methods: {
+    star(item: Upload) {
+      console.log("Star item", item);
+    },
+    copyLink(item: Upload) {
+      navigator.clipboard.writeText(
+        `https://i.troplo.com/i/${item.attachment}`
+      );
+    },
+    copy(text: string) {
+      navigator.clipboard.writeText(text);
+    },
+    editItem(item: Upload) {
+      console.log("Edit item", item);
+    },
+    deleteItem(item: Upload) {
+      console.log("Delete item", item);
+    },
+    removeItem(item: Upload, collection: any) {
+      console.log("Remove item", item, collection);
     }
   }
 });

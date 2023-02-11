@@ -20,7 +20,7 @@
         >
           <v-icon
             v-if="!shortText"
-            :size="icon.includes('numeric') ? 20 : null"
+            :size="icon.includes('numeric') ? 20 : undefined"
             >{{ icon }}</v-icon
           >
           <span v-else>{{ shortText }}</span>

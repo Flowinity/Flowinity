@@ -97,34 +97,34 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "UserAvatar",
   props: ["user", "size", "noColor", "forceBadges", "noBadges", "edit"],
   data() {
     return {
-      avatar: null
-    }
+      avatar: undefined
+    };
   },
   computed: {
     textSize() {
-      let classes = ""
+      let classes = "";
       //@ts-ignore
       if (this.contrast === "black") {
-        classes += "black--text"
+        classes += "black--text";
       } else {
-        classes += "white--text"
+        classes += "white--text";
       }
       if (this.size > 80) {
-        classes += " text-h4"
+        classes += " text-h4";
       } else {
-        classes += " text-h5"
+        classes += " text-h5";
       }
-      return classes
+      return classes;
     },
     contrast() {
-      return "white"
+      return "white";
       /*return window.__TROPLO_INTERNALS_GLOBALS.contrastColor(
         this.$store.state.user?.plan?.color,
         this.$store.state.user?.plan?.internalName === "GOLD",
@@ -134,20 +134,20 @@ export default defineComponent({
   },
   methods: {
     handleClick() {
-      if (!this.edit) return
+      if (!this.edit) return;
       //@ts-ignore
-      this.$refs.fileInput.$refs.input.click()
+      this.$refs.fileInput.$refs.input.click();
     },
     removeAvatar() {
-      if (!this.edit) return
+      if (!this.edit) return;
       this.axios.delete("/api/v2/user/avatar").then(() => {
-        this.$emit("refresh")
-      })
+        this.$emit("refresh");
+      });
     },
     changeAvatar() {
-      if (!this.avatar || !this.edit) return
-      let formData = new FormData()
-      formData.append("avatar", this.avatar)
+      if (!this.avatar || !this.edit) return;
+      let formData = new FormData();
+      formData.append("avatar", this.avatar);
       this.axios
         .post("/api/v2/user/avatar", formData, {
           headers: {
@@ -155,8 +155,8 @@ export default defineComponent({
           }
         })
         .then(() => {
-          this.$emit("refresh")
-        })
+          this.$emit("refresh");
+        });
     }
     /*calcOffset() {
       if (this.user.administrator || this.user.admin || this.user.moderator) {
@@ -168,10 +168,10 @@ export default defineComponent({
   },
   watch: {
     avatar() {
-      this.changeAvatar()
+      this.changeAvatar();
     }
   }
-})
+});
 </script>
 
 <style scoped></style>
