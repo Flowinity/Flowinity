@@ -108,9 +108,9 @@
   </div>
 </template>
 
-<script>
-import HoverChip from "@/components/Core/HoverChip.vue"
-import { defineComponent } from "vue"
+<script lang="ts">
+import HoverChip from "@/components/Core/HoverChip.vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "UserBadges",
@@ -118,24 +118,24 @@ export default defineComponent({
   props: ["user"],
   computed: {
     age() {
-      if (!this.user?.createdAt) return 0
-      const years = this.$date().diff(this.user?.createdAt, "years")
+      if (!this.user?.createdAt) return 0;
+      const years = this.$date().diff(this.user?.createdAt, "years");
       if (years > 9) {
-        return 9
+        return 9;
       } else {
-        return years
+        return years;
       }
     },
     cakeWeek() {
-      if (!this.user?.createdAt) return false
+      if (!this.user?.createdAt) return false;
       let date =
         this.$date().year() +
         "-" +
-        this.$date(this.user.createdAt).format("MM-DD")
-      return this.$date().isSame(this.$date(date), "week")
+        this.$date(this.user.createdAt).format("MM-DD");
+      return this.$date().isSame(this.$date(date), "week");
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

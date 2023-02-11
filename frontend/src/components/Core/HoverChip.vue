@@ -36,8 +36,8 @@
   </span>
 </template>
 
-<script>
-import { defineComponent } from "vue"
+<script lang="ts">
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "HoverChip",
@@ -57,15 +57,15 @@ export default defineComponent({
   ],
   computed: {
     contrast() {
-      return "white"
+      return "white";
     }
   },
   methods: {
     click() {
-      this.$emit("click")
+      this.$emit("click");
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

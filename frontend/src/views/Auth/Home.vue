@@ -80,7 +80,7 @@
   </v-col>
 </template>
 
-<script>
+<script lang="ts">
 import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
 
