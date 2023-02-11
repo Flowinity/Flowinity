@@ -1,0 +1,45 @@
+import { Plan } from "@app/models/plan.model";
+import { Theme } from "@app/models/theme.model";
+import { Domain } from "@app/models/domain.model";
+import { CollectionCache } from "@app/types/collection";
+import { Subscription } from "@app/models/subscription.model";
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  password?: string;
+  passwordResetEnabled: boolean;
+  passwordResetCode: string;
+  passwordResetExpiry: Date;
+  description?: string;
+  administrator: boolean;
+  darkTheme: boolean;
+  banned: boolean;
+  inviteId?: number;
+  openGraph: OpenGraph;
+  discordPrecache: boolean;
+  avatar?: string;
+  subdomainId?: number;
+  domainId: number;
+  totpEnable: boolean;
+  totpSecret?: string;
+  quota: bigint;
+  uploadNameHidden: boolean;
+  invisibleURLs: boolean;
+  moderator: boolean;
+  subscriptionId: number;
+  fakePath?: string;
+  themeId: number;
+  itemsPerPage: number;
+  banner?: string;
+  alternatePasswords?: AlternatePassword[];
+  plan: Plan;
+  theme: Theme;
+  domain: Domain;
+  subscription: Subscription;
+  collections?: CollectionCache[];
+  scopes: string;
+  pendingAutoCollects: number;
+  experiments: object;
+}

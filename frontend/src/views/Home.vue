@@ -1,7 +1,24 @@
 <template>
-  <HelloWorld />
+  <v-container v-if="$user.user">
+    <v-row>
+      <v-col md="6">
+        <UserWidget></UserWidget>
+      </v-col>
+      <v-col md="6"><StatsWidget></StatsWidget> </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script lang="ts" setup>
-  import HelloWorld from '@/components/HelloWorld.vue'
+<script lang="ts">
+import { defineComponent } from "vue"
+import UserAvatar from "@/components/Users/UserAvatar.vue"
+import UserBadges from "@/components/Users/UserBadges.vue"
+import UserWidget from "@/components/Dashboard/UserWidget.vue"
+import StatsWidget from "@/components/Dashboard/StatsWidget.vue"
+
+export default defineComponent({
+  name: "Home",
+  components: { StatsWidget, UserWidget, UserBadges, UserAvatar },
+  mounted() {}
+})
 </script>
