@@ -2,6 +2,7 @@ import { Service } from "typedi"
 import axios from "axios"
 import { Subscription } from "@app/models/subscription.model"
 import { User } from "@app/models/user.model"
+import { AdminService } from "@app/services/admin.service"
 
 type Jitsi = {
   id: string
@@ -36,6 +37,7 @@ type JitsiSpeakers = {
 
 @Service()
 export class BillingService {
+  constructor(private readonly adminService: AdminService) {}
   async createSubscription(id: number) {
     return await Subscription.create({
       planId: 6,
@@ -118,6 +120,8 @@ export class BillingService {
             await this.createSubscription(6)
           }
           if (!subscription) return
+          // @ts-ignore
+          const meta = subscription.metadata?.active
           const hasExpired =
             new Date(subscription.expiredAt).getTime() < new Date().getTime() &&
             subscription.expiredAt
@@ -155,7 +159,37 @@ export class BillingService {
           )
           if (!subscription) return
           if (hasExpired) {
+            const user = await User.findOne({
+              where: {
+                id: 6
+              }
+            })
             console.log("[BILLING] Jolt707's subscription expired")
+            // @ts-ignore
+            if (meta && user) {
+              this.adminService.sendEmail(
+                {
+                  body: {
+                    intro: `Your TPU Gold has expired!`,
+                    title: `Hello ${user.username}.`,
+                    action: [
+                      {
+                        instructions: `Your TPU Gold has expired. You only have ${Math.round(
+                          nesyLength
+                        )} hours of Speaker Stats in the past 14 days. You need 14 hours to keep your TPU Gold.`,
+                        button: {
+                          color: "#0190ea", // Optional action button color
+                          text: "Go to TPU",
+                          link: config.hostnameWithProtocol + "/"
+                        }
+                      }
+                    ]
+                  }
+                },
+                user.email,
+                "Your TPU Gold has expired!"
+              )
+            }
             await Subscription.update(
               {
                 cancelled: true,
