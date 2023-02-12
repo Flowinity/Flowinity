@@ -17,6 +17,7 @@
           :x-large="xLarge"
           :large="large"
           :text-color="textColor || contrast"
+          :disabled="disabled"
         >
           <v-icon
             v-if="!shortText"
@@ -53,16 +54,13 @@ export default defineComponent({
     "xLarge",
     "large",
     "shortText",
-    "textColor"
+    "textColor",
+    "disabled",
+    "click"
   ],
   computed: {
     contrast() {
       return "white";
-    }
-  },
-  methods: {
-    click() {
-      this.$emit("click");
     }
   }
 });

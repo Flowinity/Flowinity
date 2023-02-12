@@ -10,10 +10,21 @@ import "vuetify/styles";
 
 // Composables
 import { createVuetify } from "vuetify";
+import { VDataTable } from "vuetify/labs/VDataTable";
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
+  components: {
+    VDataTable
+  },
   defaults: {
+    global: {
+      ripple: localStorage.getItem("disableRipple") !== "true"
+    },
+    VDataTable: {
+      fixedHeader: true,
+      noDataText: "No entries yet..."
+    },
     VCard: {
       elevation: 6,
       color: "card",
@@ -32,14 +43,26 @@ export default createVuetify({
     VBtn: {
       variant: "text"
     },
+    VTab: {
+      color: "primary"
+    },
     VOverlay: {
       backgroundColor: "dark"
     },
-    VTextField: {
+    VSlider: {
       color: "primary"
+    },
+    VTextField: {
+      //color: "primary"
     },
     VContainer: {
       width: 40
+    },
+    VExpansionPanel: {
+      bgColor: "toolbar"
+    },
+    VList: {
+      bgColor: "card"
     }
   },
   theme: {
@@ -50,7 +73,7 @@ export default createVuetify({
           primary: "#0190ea",
           secondary: "#757575",
           accent: "#000000",
-          error: "#ff1744",
+          error: "#F44336",
           info: "#2196F3",
           success: "#4CAF50",
           warning: "#ff9800",
@@ -68,7 +91,7 @@ export default createVuetify({
           primary: "#0190ea",
           secondary: "#757575",
           accent: "#000000",
-          error: "#ff1744",
+          error: "#F44336",
           info: "#2196F3",
           success: "#4CAF50",
           warning: "#ff9800",

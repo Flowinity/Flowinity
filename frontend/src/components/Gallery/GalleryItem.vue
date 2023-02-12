@@ -8,7 +8,6 @@
       :class="{ unselectable: selected.length }"
     >
       <v-toolbar-title>{{ item.name }}</v-toolbar-title>
-      <v-spacer></v-spacer>
       <v-btn
         v-if="!$vuetify.display.mobile && supports.multiSelect"
         icon
@@ -41,29 +40,31 @@
     <v-card-subtitle>Size: {{ fileSize }}</v-card-subtitle>
     <div class="ml-4">
       <slot :item="item" name="custom-properties" />
-      <v-chip-group>
-        <HoverChip
-          text="Add to Collection"
-          icon="mdi-plus"
-          @click="$emit('collectivize', item.id)"
-          v-if="supports.permissions.write"
-        >
-        </HoverChip>
-        <v-chip
-          :to="'/collections/' + collection.id"
-          :key="collection.id"
-          v-for="collection in item.collections"
-          :disabled="!$user.user"
-        >
-          {{ collection.name }}
-          <v-icon
-            @click.prevent="removeItem(item, collection)"
-            class="ml-1"
+      <v-slide-group>
+        <v-chip-group>
+          <HoverChip
+            text="Add to Collection"
+            icon="mdi-plus"
+            @click="$emit('collectivize', item.id)"
             v-if="supports.permissions.write"
-            >mdi-close</v-icon
           >
-        </v-chip>
-      </v-chip-group>
+          </HoverChip>
+          <v-chip
+            :to="'/collections/' + collection.id"
+            :key="collection.id"
+            v-for="collection in item.collections"
+            :disabled="!$user.user"
+          >
+            {{ collection.name }}
+            <v-icon
+              @click.prevent="removeItem(item, collection)"
+              class="ml-1"
+              v-if="supports.permissions.write"
+              >mdi-close</v-icon
+            >
+          </v-chip>
+        </v-chip-group>
+      </v-slide-group>
     </div>
     <v-divider></v-divider>
     <v-card-text class="text-center">

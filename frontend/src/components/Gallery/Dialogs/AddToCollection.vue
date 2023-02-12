@@ -4,9 +4,6 @@
     @update:model-value="$emit('update:modelValue', $event)"
     max-width="600px"
   >
-    <template v-slot:activator="{ on }">
-      <v-btn color="primary" dark v-on="on">Add to collection</v-btn>
-    </template>
     <v-card>
       <v-card-title class="headline">Add to collection</v-card-title>
       <v-card-text>

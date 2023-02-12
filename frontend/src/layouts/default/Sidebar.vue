@@ -6,7 +6,7 @@
     floating
     :class="$app.mainDrawer && !$vuetify.display.mobile ? 'sidebar-patch' : ''"
   >
-    <v-list dense nav class="mt-2">
+    <v-list density="comfortable" nav class="mt-2">
       <v-list-item
         class="ml-1"
         style="text-transform: unset !important"
@@ -26,16 +26,21 @@
             class="pb-n2 ml-1"
             v-if="item.new && !item.warning"
             color="green"
-            outlined
-            x-small
+            variant="tonal"
+            size="x-small"
           >
             NEW
           </v-chip>
-          <v-chip class="pb-n2 ml-1" v-if="item.warning" outlined x-small>
+          <v-chip
+            class="pb-n2 ml-1"
+            v-if="item.warning"
+            variant="tonal"
+            size="x-small"
+          >
             {{ item.warning }}
           </v-chip>
           <v-icon
-            small
+            size="small"
             style="float: right"
             color="grey lighten-1"
             v-if="!checkScope(item.scope, $user.user?.scopes)"
@@ -103,7 +108,7 @@ export default defineComponent({
           id: 28,
           click() {},
           externalPath: "",
-          name: "AutoCollect",
+          name: "AutoCollects",
           path: "/autoCollect",
           icon: "mdi-image-auto-adjust",
           new: false,
@@ -118,7 +123,7 @@ export default defineComponent({
           click() {},
           externalPath: "",
           name: "Workspaces",
-          path: "/notes",
+          path: "/workspaces",
           icon: "mdi-folder-account",
           new: true,
           scope: "workspaces.view",

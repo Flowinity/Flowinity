@@ -4,7 +4,11 @@
     app
     density="comfortable"
     floating
-    :class="$app.mainDrawer && !$vuetify.display.mobile ? 'header-patch' : ''"
+    :class="{
+      'header-patch': $app.mainDrawer && !$vuetify.display.mobile,
+      'header-patch-workspaces':
+        $app.workspaceDrawer && !$vuetify.display.mobile
+    }"
     flat
   >
     <v-app-bar-nav-icon
@@ -60,22 +64,30 @@
           </v-list-item>
         </v-list>
       </v-menu>
+      <v-btn
+        icon
+        class="ml-2"
+        @click="$app.workspaceDrawer = true"
+        v-if="!$app.workspaceDrawer"
+      >
+        <v-icon>mdi-menu-open</v-icon>
+      </v-btn>
     </template>
   </v-app-bar>
 </template>
 
 <script lang="ts">
-import { mapStores } from "pinia"
-import { useUserStore } from "@/store/user"
-import { defineComponent } from "vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
+import { mapStores } from "pinia";
+import { useUserStore } from "@/store/user";
+import { defineComponent } from "vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   components: { UserAvatar },
   computed: {
     ...mapStores(useUserStore),
     dropdown() {
-      if (!this.userStore.user) return []
+      if (!this.userStore.user) return [];
       return [
         {
           id: 12,
@@ -98,16 +110,16 @@ export default defineComponent({
           name: "Logout",
           disabled: false
         }
-      ]
+      ];
     }
   },
   methods: {
     handleClickDropdown(index: number) {
-      this.dropdown[index].click.call(this)
+      this.dropdown[index].click.call(this);
     }
   },
   mounted() {
-    console.log(this.userStore.user)
+    console.log(this.userStore.user);
   }
-})
+});
 </script>

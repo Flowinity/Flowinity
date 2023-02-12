@@ -4,10 +4,12 @@ import vuetify from "@/plugins/vuetify";
 import axios from "@/plugins/axios";
 
 export interface AppState {
+  domain: string;
   mainDrawer: boolean;
   workspaceDrawer: boolean;
   loading: boolean;
   componentLoading: boolean;
+  apiVersion: string;
   site: {
     name: string;
     release: string;
@@ -27,10 +29,12 @@ export interface AppState {
 export const useAppStore = defineStore("app", {
   state: () =>
     ({
+      domain: "https://i.troplo.com/i/",
       mainDrawer: true,
       workspaceDrawer: false,
       loading: true,
       componentLoading: false,
+      apiVersion: "v2",
       site: {
         name: "TPUvNEXT",
         release: "prod",

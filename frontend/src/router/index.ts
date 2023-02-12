@@ -32,21 +32,62 @@ const routes = [
       {
         path: "/collections",
         name: "Collections",
-        component: () => import("@/views/Collections/Home.vue"),
+        component: () => import("@/views/Collections/Home.vue")
+      },
+      {
+        path: "/collections/:id/:page?",
+        name: "Collection Item",
+        component: () => import("@/views/Collections/Item.vue")
+      },
+      {
+        path: "/settings",
+        name: "Settings",
+        component: () => import("@/views/Settings/Settings.vue"),
+        redirect: "/settings/dashboard",
         children: [
           {
-            path: ":id",
-            name: "Collection",
-            component: () => import("@/views/Collections/Item.vue")
+            path: "dashboard",
+            name: "Dashboard Settings",
+            component: () => import("@/views/Settings/Home.vue")
+          },
+          {
+            path: "security",
+            name: "Security",
+            component: () => import("@/views/Settings/Security.vue")
+          },
+          {
+            path: "clients",
+            name: "Setup",
+            component: () => import("@/views/Settings/Setup.vue")
+          },
+          {
+            path: "about",
+            name: "About",
+            component: () => import("@/views/Settings/About.vue")
           }
         ]
-      }
-    ]
-  },
-  {
-    path: "/",
-    component: () => import("@/layouts/unauth/Unauth.vue"),
-    children: [
+      },
+      {
+        path: "/autoCollect",
+        name: "AutoCollects",
+        component: () => import("@/views/AutoCollects/Home.vue")
+      },
+      {
+        path: "/autoCollect/:id",
+        name: "AutoCollect",
+        component: () => import("@/views/AutoCollects/Item.vue")
+      },
+      {
+        path: "/notes",
+        name: "Notes Workspaces Redirect",
+        redirect: "/workspaces"
+      },
+      {
+        path: "/workspaces",
+        name: "Workspaces",
+        component: () => import("@/views/Workspaces/Home.vue")
+      },
+      // Unauthenticated
       {
         path: "/login",
         name: "Login",
@@ -61,6 +102,11 @@ const routes = [
         path: "/home",
         name: "Home",
         component: () => import("@/views/Auth/Home.vue")
+      },
+      {
+        path: "/:pathMatch(.*)",
+        name: "404",
+        component: () => import("@/views/Errors/404.vue")
       }
     ]
   }
@@ -75,7 +121,9 @@ router.beforeEach(async (to, from) => {
   const user = useUserStore();
   if (
     !user.user &&
-    !["Login", "Home", "Register"].includes(to.name as string)
+    !["Login", "Home", "Register", "404", "Collection Item"].includes(
+      to.name as string
+    )
   ) {
     console.log("Redirecting to login");
     return { name: "Home" };

@@ -16,7 +16,12 @@
 
 .header-patch {
   left: 256px !important;
-  right: 256px !important;
+  width: calc(100% - 256px) !important;
+}
+
+.header-patch-workspaces {
+  right: -256px !important;
+  width: calc(100% - 512px) !important;
 }
 
 .sidebar-patch {
@@ -40,6 +45,25 @@
   background-color: rgba(142, 142, 142, 0.2) !important;
 }
 
-.v-btn--variant-outlined {
+.v-btn--variant-outlined, .v-chip--variant-outlined {
   border-color: hsla(0,0%,100%,.12) !important;
+}
+
+.v-list-item__prepend > .v-icon, .v-list-item__append > .v-icon {
+  opacity: 1 !important;
+}
+
+.v-tooltip .v-overlay__content {
+  background-color: #222222 !important;
+  color: #fff !important;
+}
+
+.v-table {
+  border-radius: 0  0 12px 12px !important;
+  background-color: #161616 !important;
+  elevation: 0 !important;
+}
+
+.v-table tbody, .v-table thead, .v-table tr, .v-table th, .v-table td, .v-table table {
+    background-color: #161616 !important;
 }

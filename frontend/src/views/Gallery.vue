@@ -1,38 +1,12 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col>
-        <v-text-field
-          class="rounded-xl"
-          v-model="show.search"
-          append-icon="mdi-close"
-          label="Search"
-          @click:append="
-            show.search = '';
-            page = 1;
-            getGallery();
-          "
-          v-on:keyup.enter="
-            page = 1;
-            getGallery();
-          "
-        ></v-text-field>
-      </v-col>
-      <v-col md="2">
-        <v-select
-          v-model="show.selected"
-          :items="show.types"
-          item-title="name"
-          item-value="internalName"
-          label="Filter"
-          v-on:change="getGallery()"
-        ></v-select>
-      </v-col>
-      <v-col md="2">
-        <v-checkbox label="Search in files (metadata)" v-model="show.metadata">
-        </v-checkbox>
-      </v-col>
-    </v-row>
+    <GalleryNavigation
+      @update:show="show = $event"
+      @update:search="
+        show.search = $event;
+        page = 1;
+      "
+    ></GalleryNavigation>
     <GalleryCore
       :page="page"
       :items="gallery"
@@ -57,10 +31,11 @@ import { defineComponent } from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import { Upload } from "@/models/upload";
 import { CollectionCache } from "@/types/collection";
+import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 
 export default defineComponent({
   name: "PersonalGallery",
-  components: { GalleryCore },
+  components: { GalleryNavigation, GalleryCore },
   data() {
     return {
       gallery: {

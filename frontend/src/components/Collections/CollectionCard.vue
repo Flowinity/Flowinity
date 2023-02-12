@@ -3,7 +3,11 @@
     class="rounded-xl d-flex flex-column"
     elevation="8"
     style="cursor: pointer"
-    :to="'/collections/' + item.id"
+    :to="
+      type === 'collection'
+        ? '/collections/' + item.id
+        : '/autoCollect/' + item.id
+    "
   >
     <v-img
       :src="collectionImage"
@@ -20,7 +24,12 @@
         </v-row>
       </template>
       <v-card-title>
-        {{ item.name }}<small class="float-end">{{ item.items }} items</small>
+        {{ item.name
+        }}<small class="float-end" v-if="type === 'collection'"
+          >{{ item.items }} items</small
+        ><small class="float-end" v-if="type === 'autoCollect'"
+          >{{ item.autoCollectApprovals.length }} pending approvals</small
+        >
       </v-card-title>
       <v-card-text v-if="!item.shared" class="mt-n2">
         <v-icon v-if="item.shareLink"> mdi-link-variant </v-icon>
@@ -36,18 +45,13 @@
         <v-icon v-if="item.shareLink"> mdi-link-variant </v-icon>
         <v-icon> mdi-swap-horizontal </v-icon>
         Shared with me by {{ item.user.username }}
-        <v-chip
-          style="padding: 5px"
-          x-small
-          color="dark"
-          v-if="item.recipient.write"
+        <v-chip size="x-small" variant="outlined" v-if="item.recipient.write"
           >WRITE</v-chip
         >
         <v-chip
-          style="padding: 5px"
-          x-small
-          color="dark"
+          size="x-small"
           class="ml-1"
+          variant="outlined"
           v-if="item.recipient.configure"
           >CONFIGURE</v-chip
         >
@@ -63,6 +67,11 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "CollectionCard",
   props: {
+    type: {
+      type: String as () => "collection" | "autoCollect",
+      required: false,
+      default: "collection"
+    },
     item: {
       type: Object as () => CollectionCache,
       required: true

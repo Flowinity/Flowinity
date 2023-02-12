@@ -38,7 +38,14 @@
     </div>
     <br /><br />
     <v-row>
-      <v-col v-for="item in items.gallery" :key="'item-' + item.id" md="3">
+      <v-col
+        v-for="item in items.gallery"
+        :key="'item-' + item.id"
+        md="6"
+        sm="1"
+        lg="3"
+        cols="12"
+      >
         <GalleryItem
           :item="item"
           :supports="supports"
@@ -48,7 +55,11 @@
             addToCollectionDialog = true;
             collectivize = $event;
           "
-        ></GalleryItem>
+        >
+          <template v-for="(_, name) in $slots" v-slot:[name]="slotData"
+            ><slot :name="name" v-bind="slotData"
+          /></template>
+        </GalleryItem>
       </v-col>
     </v-row>
     <v-pagination

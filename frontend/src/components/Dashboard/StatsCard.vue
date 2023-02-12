@@ -2,7 +2,7 @@
   <v-card class="text-center justify-center">
     <v-container>
       <strong style="font-size: 24px" class="text-gradient">{{ title }}</strong>
-      <p style="font-size: 48px">
+      <p style="font-size: 36px">
         {{ value }}
       </p>
     </v-container>
@@ -13,7 +13,7 @@
 export default {
   name: "StatsCard",
   props: ["title", "value"]
-}
+};
 </script>
 
 <style scoped></style>

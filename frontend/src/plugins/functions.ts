@@ -8,5 +8,8 @@ export default {
     } while (size > 1024);
 
     return Math.max(size, 0.1).toFixed(1) + byteUnits[i];
+  },
+  copy(text: string): void {
+    navigator.clipboard.writeText(text);
   }
 };
