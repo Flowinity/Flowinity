@@ -99,7 +99,7 @@
       <v-expansion-panel-text>
         <v-form v-model="valid.email">
           <p class="px-1">
-            Your email is currently set to <b>{{ $user.user.email }}</b
+            Your email is currently set to <b>{{ $user.user?.email }}</b
             >.
           </p>
           <v-text-field
@@ -133,7 +133,7 @@
       <v-expansion-panel-title>
         Two factor authentication (2FA)
         <v-chip
-          v-if="$user.user.totpEnable"
+          v-if="$user.user?.totpEnable"
           color="green"
           label
           size="small"

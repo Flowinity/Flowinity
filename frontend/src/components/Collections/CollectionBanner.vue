@@ -41,7 +41,7 @@
             text
             @click="
               $functions.copy(
-                $store.state.site.hostnameWithProtocol +
+                $app.site.hostnameWithProtocol +
                   '/collections/share/' +
                   collection.shareLink
               )
@@ -55,13 +55,13 @@
       <v-card-text class="mt-n3" v-if="collection.users.length">
         <v-icon> mdi-swap-horizontal </v-icon>
         {{ collection.user.username }},
-        {{ collection.users.map((user) => user.user.username).join(", ") }}
+        {{ collection.users.map((user: any) => user.user.username).join(", ") }}
       </v-card-text>
     </v-img>
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "CollectionBanner",
   props: ["collection", "permissions"],

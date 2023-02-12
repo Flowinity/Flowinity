@@ -71,7 +71,7 @@
           color="blue"
           @click="
             ipHistory = login.info?.accessedFrom;
-            ipHistoryDialog = true;
+            dialogs.ipHistory = true;
           "
           icon
           :disabled="!login.info?.accessedFrom?.length"
@@ -197,7 +197,7 @@ export default defineComponent({
         dialog: false,
         items: []
       },
-      sessions: []
+      sessions: [] as any[]
     };
   },
   methods: {

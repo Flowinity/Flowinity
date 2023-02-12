@@ -5,7 +5,7 @@ import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 // Utilities
 import { defineConfig } from "vite";
 import { fileURLToPath, URL } from "node:url";
-import { VitePWA } from "vite-plugin-pwa";
+//import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -14,7 +14,8 @@ export default defineConfig({
     sourcemap: false
   },
   plugins: [
-    VitePWA({
+    // TODO: FIX ME
+    /* VitePWA({
       registerType: "autoUpdate",
       workbox: {
         clientsClaim: true,
@@ -26,7 +27,7 @@ export default defineConfig({
         theme_color: "#121212",
         background_color: "#121212"
       }
-    }),
+    }),*/
     vue({
       template: { transformAssetUrls }
     }),

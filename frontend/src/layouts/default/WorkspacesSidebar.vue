@@ -25,10 +25,7 @@
       >
         {{ $workspaces.workspace?.name || "None selected" }}
         <template v-slot:append>
-          <v-list-item-action
-            @click.stop="folderCreate = true"
-            v-if="$workspaces.workspace"
-          >
+          <v-list-item-action v-if="$workspaces.workspace">
             <v-icon>mdi-plus</v-icon>
           </v-list-item-action>
           <v-list-item-action>

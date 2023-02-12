@@ -29,7 +29,7 @@ export default defineComponent({
   components: { PromoNoContent, CollectionCard },
   data() {
     return {
-      autoCollects: []
+      autoCollects: [] as any[]
     };
   },
   methods: {

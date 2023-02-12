@@ -161,6 +161,12 @@ export default defineComponent({
       );
       this.$app.componentLoading = false;
       this.collection = data;
+    },
+    selectAll(selected: any[]) {
+      //
+    },
+    deselectAll(selected: any[]) {
+      //
     }
   },
   mounted() {
