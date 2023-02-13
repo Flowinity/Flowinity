@@ -9,7 +9,7 @@
           v-bind="props"
           class="mr-2"
           :color="color"
-          @click="click"
+          @click="() => {}"
           :to="to"
           :href="href"
           :text-color="textColor || contrast"
