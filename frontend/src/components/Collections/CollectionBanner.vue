@@ -57,7 +57,7 @@
         {{ collection.user.username }},
         {{
           collection.users
-            .map((user: Collection) => user.user.username)
+            .map((user: CollectionCache) => user.user.username)
             .join(", ")
         }}
       </v-card-text>

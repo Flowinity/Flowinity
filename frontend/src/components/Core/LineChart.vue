@@ -1,11 +1,11 @@
 <script lang="ts">
-import { Line } from "vue-chartjs";
+//import { Line } from "vue-chartjs";
 
 export default {
-  extends: Line,
+  //extends: Line,
   props: ["chartData", "chartOptions"],
   mounted() {
-    this.renderChart(this.chartData, this.chartOptions);
+    //this.renderChart(this.chartData, this.chartOptions);
   }
 };
 </script>
