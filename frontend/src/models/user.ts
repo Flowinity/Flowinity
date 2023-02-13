@@ -45,7 +45,7 @@ export interface User {
     createdAt: Date;
     updatedAt: Date;
   }[];
-  stats?: {
+  stats: {
     uploads: number;
     collections: number;
     collectionItems: number;

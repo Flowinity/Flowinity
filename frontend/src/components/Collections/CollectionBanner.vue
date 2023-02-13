@@ -66,14 +66,14 @@
 </template>
 
 <script lang="ts">
-import { Collection } from "@/models/collection";
 import { defineComponent } from "vue";
+import { CollectionCache } from "@/types/collection";
 
 export default defineComponent({
   name: "CollectionBanner",
   props: {
     collection: {
-      type: Object as () => Collection,
+      type: Object as () => CollectionCache,
       required: true
     }
   },
