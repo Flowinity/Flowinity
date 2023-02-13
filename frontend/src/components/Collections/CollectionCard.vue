@@ -62,7 +62,6 @@
 </template>
 
 <script lang="ts">
-import { CollectionCache } from "@/types/collection";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -74,7 +73,7 @@ export default defineComponent({
       default: "collection"
     },
     item: {
-      type: Object as () => CollectionCache,
+      type: Object as () => any,
       required: true
     }
   },

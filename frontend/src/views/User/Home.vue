@@ -41,13 +41,14 @@
 import { defineComponent } from "vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { User } from "@/models/user";
 
 export default defineComponent({
   name: "UserHome",
   components: { UserAvatar, PromoNoContent },
   data() {
     return {
-      users: []
+      users: [] as User[]
     };
   },
   methods: {

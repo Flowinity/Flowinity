@@ -9,6 +9,9 @@ import { Pulse } from "@app/models/pulse.model"
 import { HoursOfDay } from "@app/services/pulse.service"
 import { Invite } from "@app/models/invite.model"
 import { Experiment } from "@app/models/experiment.model"
+import { Note } from "@app/models/note.model"
+import { Workspace } from "@app/models/workspace.model"
+import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
 
 @Service()
 export class CoreService {
@@ -102,7 +105,8 @@ export class CoreService {
             60 /
             60
         ),
-        pulses: await Pulse.count()
+        pulses: await Pulse.count(),
+        docs: await Note.count()
       }
     } else {
       const pulses = await Pulse.findAll({
@@ -135,7 +139,25 @@ export class CoreService {
         usage: user.quota,
         hours,
         collections: await Collection.count({ where }),
-        collectionItems: await CollectionItem.count({ where })
+        collectionItems: await CollectionItem.count({ where }),
+        docs: await Note.count({
+          include: [
+            {
+              model: WorkspaceFolder,
+              as: "folder",
+              required: true,
+              include: [
+                {
+                  model: Workspace,
+                  where: {
+                    userId: user.id
+                  },
+                  required: true
+                }
+              ]
+            }
+          ]
+        })
       }
     }
   }

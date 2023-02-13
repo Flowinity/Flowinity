@@ -28,7 +28,6 @@
                       class="rounded-xl"
                       v-if="hover"
                       style="position: absolute; top: 10px; right: 10px"
-                      @click="editAvatar.dialog = true"
                     >
                       <v-icon>mdi-pencil</v-icon>
                     </v-btn>
@@ -43,7 +42,7 @@
               </v-card-text>
             </v-col>
             <v-spacer></v-spacer>
-            <v-col sm="1">
+            <v-col sm="2">
               <v-card-text class="ml-n2 align-center">
                 <v-btn
                   text
@@ -127,56 +126,36 @@
           </template>
         </v-col>
         <v-col md="3" cols="12" sm="12">
-          <v-card elevation="0" color="toolbar" class="text-center mt-4">
-            <v-container>
-              <v-card-title class="text-center justify-center">
-                Creation date
-              </v-card-title>
-              <v-card-title class="text-h4 mt-n5 justify-center">
-                {{ $date(user.createdAt).format("DD/MM/YYYY") }}
-              </v-card-title>
-            </v-container>
-          </v-card>
-          <v-card elevation="0" color="toolbar" class="text-center mt-4">
-            <v-container>
-              <v-card-title class="text-center justify-center">
-                Uploads
-              </v-card-title>
-              <v-card-title class="text-h4 mt-n5 justify-center">
-                {{ user.stats.uploads.toLocaleString() }}
-              </v-card-title>
-            </v-container>
-          </v-card>
-          <v-card elevation="0" color="toolbar" class="text-center mt-4">
-            <v-container>
-              <v-card-title class="text-center justify-center">
-                Collections
-              </v-card-title>
-              <v-card-title class="text-h4 mt-n5 justify-center">
-                {{ user.stats.collections.toLocaleString() }}
-              </v-card-title>
-            </v-container>
-          </v-card>
-          <v-card elevation="0" color="toolbar" class="text-center mt-4">
-            <v-container>
-              <v-card-title class="text-center justify-center">
-                Collectivized items
-              </v-card-title>
-              <v-card-title class="text-h4 mt-n5 justify-center">
-                {{ user.stats.collectionItems.toLocaleString() }}
-              </v-card-title>
-            </v-container>
-          </v-card>
-          <v-card elevation="0" color="toolbar" class="text-center mt-4">
-            <v-container>
-              <v-card-title class="text-center justify-center">
-                TPU hours
-              </v-card-title>
-              <v-card-title class="text-h4 mt-n5 justify-center">
-                {{ user.stats.pulse.toLocaleString() }}
-              </v-card-title>
-            </v-container>
-          </v-card>
+          <StatsCard
+            title="Creation date"
+            :value="$date(user.createdAt).format('DD/MM/YYYY')"
+            class="my-3"
+          ></StatsCard>
+          <StatsCard
+            title="Uploads"
+            :value="user.stats.uploads.toLocaleString()"
+            class="my-3"
+          ></StatsCard>
+          <StatsCard
+            title="Collections"
+            :value="user.stats.collections.toLocaleString()"
+            class="my-3"
+          ></StatsCard>
+          <StatsCard
+            title="Collectivizations"
+            :value="user.stats.collectionItems.toLocaleString()"
+            class="my-3"
+          ></StatsCard>
+          <StatsCard
+            title="TPU Hours"
+            :value="user.stats.pulse.toLocaleString()"
+            class="my-3"
+          ></StatsCard>
+          <StatsCard
+            title="Workspace Docs"
+            :value="user.stats.docs"
+            class="my-3"
+          ></StatsCard>
         </v-col>
       </v-row>
     </v-container>
@@ -191,14 +170,12 @@ import UserBadges from "@/components/Users/UserBadges.vue";
 import { User } from "@/models/user";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
-import BarChart from "@/components/Core/BarChart.vue";
-import LineChart from "@/components/Core/LineChart.vue";
+import StatsCard from "@/components/Dashboard/StatsCard.vue";
 
 export default defineComponent({
   name: "User",
   components: {
-    LineChart,
-    BarChart,
+    StatsCard,
     CollectionCard,
     CollectionBanner,
     UserBadges,
@@ -218,72 +195,6 @@ export default defineComponent({
     };
   },
   computed: {
-    hoursMost() {
-      if (this.user?.stats?.hours) {
-        let hours = Object.entries(this.user.stats.hours);
-        hours.sort((a, b) => b[1] - a[1]);
-        return {
-          hour: hours[0][0],
-          count: hours[0][1]
-        };
-      } else {
-        return null;
-      }
-    },
-    hoursGraph() {
-      if (this.user?.stats?.hours) {
-        return {
-          labels: Object.keys(this.user.stats.hours),
-          datasets: [
-            {
-              label: "Uploads",
-              data: Object.values(this.user.stats.hours),
-              backgroundColor: "#3f51b5",
-              borderColor: "#3f51b5",
-              borderWidth: 1
-            }
-          ]
-        };
-      } else {
-        return null;
-      }
-    },
-    chartData() {
-      if (this.user?.stats?.uploadGraph) {
-        return {
-          labels: this.user.stats.uploadGraph.labels,
-          datasets: [
-            {
-              label: "Uploads",
-              data: this.user.stats.uploadGraph.data,
-              backgroundColor: "transparent",
-              borderColor: this.$vuetify.theme.themes.dark.primary,
-              pointBackgroundColor: "#181818"
-            }
-          ]
-        };
-      } else {
-        return [];
-      }
-    },
-    chartDataTotal() {
-      if (this.user?.stats?.uploadGraphAllTime) {
-        return {
-          labels: this.user.stats.uploadGraphAllTime.labels,
-          datasets: [
-            {
-              label: "Uploads",
-              data: this.user.stats.uploadGraphAllTime.data,
-              backgroundColor: "transparent",
-              borderColor: "#0179F3",
-              pointBackgroundColor: "#181818"
-            }
-          ]
-        };
-      } else {
-        return [];
-      }
-    },
     friends() {
       if (this.user?.friend === "accepted") {
         return {
@@ -332,6 +243,11 @@ export default defineComponent({
   },
   mounted() {
     this.getUser();
+  },
+  watch: {
+    "$route.params.username"() {
+      this.getUser();
+    }
   }
 });
 </script>

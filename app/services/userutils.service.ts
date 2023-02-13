@@ -263,7 +263,6 @@ export class UserUtilsService {
       attributes: [
         "id",
         "username",
-        "email",
         "description",
         "administrator",
         "darkTheme",

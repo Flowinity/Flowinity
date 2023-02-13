@@ -45,5 +45,13 @@ export interface User {
     createdAt: Date;
     updatedAt: Date;
   }[];
-  stats?: {};
+  stats?: {
+    uploads: number;
+    collections: number;
+    collectionItems: number;
+    pulse: number;
+    docs: number;
+  };
+  createdAt: Date;
+  updatedAt: Date;
 }
