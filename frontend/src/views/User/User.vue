@@ -245,7 +245,8 @@ export default defineComponent({
     this.getUser();
   },
   watch: {
-    "$route.params.username"() {
+    "$route.params.username"(val) {
+      if (!val) return;
       this.getUser();
     }
   }
