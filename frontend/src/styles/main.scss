@@ -67,3 +67,9 @@
 .v-table tbody, .v-table thead, .v-table tr, .v-table th, .v-table td, .v-table table {
     background-color: #161616 !important;
 }
+
+.limit {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

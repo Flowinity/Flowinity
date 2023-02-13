@@ -4,9 +4,9 @@
       <v-text-field
         class="rounded-xl"
         v-model="search"
-        append-icon="mdi-close"
+        append-inner-icon="mdi-close"
         label="Search"
-        @click:append="
+        @click:append-inner="
           $emit('update:search', search);
           $emit('refreshGallery');
         "

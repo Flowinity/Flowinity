@@ -12,12 +12,10 @@
           @click="click"
           :to="to"
           :href="href"
-          :small="small"
-          :x-small="xSmall"
-          :x-large="xLarge"
-          :large="large"
           :text-color="textColor || contrast"
           :disabled="disabled"
+          :size="sizeComputed"
+          style="cursor: pointer"
         >
           <v-icon
             v-if="!shortText"
@@ -25,12 +23,15 @@
             >{{ icon }}</v-icon
           >
           <span v-else>{{ shortText }}</span>
-          <v-expand-x-transition>
+          <v-tooltip activator="parent" location="top">
+            {{ text }}
+          </v-tooltip>
+          <!--  <v-expand-x-transition>
             <span
-              v-if="isHovering || !$experiments.experiments['HOVER_CHIP_HOVER']"
+              v-if="isHovering && $experiments.experiments['HOVER_CHIP_HOVER']"
               >&nbsp;{{ text }}</span
             >
-          </v-expand-x-transition>
+          </v-expand-x-transition>-->
         </v-chip>
       </template>
     </v-hover>
@@ -56,11 +57,20 @@ export default defineComponent({
     "shortText",
     "textColor",
     "disabled",
-    "click"
+    "click",
+    "size"
   ],
   computed: {
     contrast() {
       return "white";
+    },
+    // if other components still use the old Vuetify props
+    sizeComputed() {
+      if (this.small) return "small";
+      if (this.xSmall) return "x-small";
+      if (this.xLarge) return "x-large";
+      if (this.large) return "large";
+      return this.size;
     }
   }
 });

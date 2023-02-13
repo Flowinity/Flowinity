@@ -49,6 +49,10 @@
         </v-avatar>
       </span>
     </v-hover>
+    <template v-if="status">
+      <v-badge color="success" :offset-y="offset" offset-x="10" bordered>
+      </v-badge>
+    </template>
     <template v-if="(size > 60 || forceBadges) && !noBadges">
       <v-tooltip top v-if="user.administrator || user.admin">
         <template v-slot:activator="{ on }">
@@ -101,13 +105,24 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "UserAvatar",
-  props: ["user", "size", "noColor", "forceBadges", "noBadges", "edit"],
+  props: [
+    "user",
+    "size",
+    "noColor",
+    "forceBadges",
+    "noBadges",
+    "edit",
+    "status"
+  ],
   data() {
     return {
       avatar: undefined
     };
   },
   computed: {
+    offset() {
+      return this.size / 4;
+    },
     textSize() {
       let classes = "";
       //@ts-ignore

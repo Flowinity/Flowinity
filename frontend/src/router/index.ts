@@ -87,6 +87,16 @@ const routes = [
         name: "Workspaces",
         component: () => import("@/views/Workspaces/Home.vue")
       },
+      {
+        path: "/users",
+        name: "Users",
+        component: () => import("@/views/User/Home.vue")
+      },
+      {
+        path: "/u/:username",
+        name: "User",
+        component: () => import("@/views/User/User.vue")
+      },
       // Unauthenticated
       {
         path: "/login",
@@ -127,6 +137,12 @@ router.beforeEach(async (to, from) => {
   ) {
     console.log("Redirecting to login");
     return { name: "Home" };
+  } else if (
+    user.user &&
+    ["Home", "Login", "Register"].includes(to.name as string)
+  ) {
+    console.log("Redirecting to dashboard");
+    return { name: "Dashboard" };
   }
 });
 

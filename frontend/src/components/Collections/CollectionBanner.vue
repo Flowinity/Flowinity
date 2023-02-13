@@ -55,18 +55,30 @@
       <v-card-text class="mt-n3" v-if="collection.users.length">
         <v-icon> mdi-swap-horizontal </v-icon>
         {{ collection.user.username }},
-        {{ collection.users.map((user: any) => user.user.username).join(", ") }}
+        {{
+          collection.users
+            .map((user: Collection) => user.user.username)
+            .join(", ")
+        }}
       </v-card-text>
     </v-img>
   </v-card>
 </template>
 
 <script lang="ts">
-export default {
+import { Collection } from "@/models/collection";
+import { defineComponent } from "vue";
+
+export default defineComponent({
   name: "CollectionBanner",
-  props: ["collection", "permissions"],
+  props: {
+    collection: {
+      type: Object as () => Collection,
+      required: true
+    }
+  },
   computed: {
-    collectionImage() {
+    collectionImage(): string {
       if (this.collection?.image) {
         return this.$app.domain + this.collection.image;
       } else if (this.collection?.preview?.attachment?.attachment) {
@@ -76,7 +88,7 @@ export default {
       }
     }
   }
-};
+});
 </script>
 
 <style scoped></style>

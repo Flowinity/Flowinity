@@ -5,6 +5,7 @@
     color="dark"
     floating
     :class="$app.mainDrawer && !$vuetify.display.mobile ? 'sidebar-patch' : ''"
+    style="z-index: 2001"
   >
     <v-list density="comfortable" nav class="mt-2">
       <v-list-item

@@ -179,7 +179,7 @@ export class CoreService {
       SFX_KOLF: false,
       HOVER_CHIP_CLOSE_DELAY: 35,
       HOVER_CHIP_OPEN_DELAY: 35,
-      HOVER_CHIP_HOVER: true,
+      HOVER_CHIP_HOVER: false,
       PULSE_INTERVAL: 5000,
       PULSE_ENABLED: true,
       EXPERIENCE_FLUID: false,

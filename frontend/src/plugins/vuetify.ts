@@ -18,9 +18,6 @@ export default createVuetify({
     VDataTable
   },
   defaults: {
-    global: {
-      ripple: localStorage.getItem("disableRipple") !== "true"
-    },
     VDataTable: {
       fixedHeader: true,
       noDataText: "No entries yet..."
@@ -54,6 +51,16 @@ export default createVuetify({
     },
     VTextField: {
       //color: "primary"
+      variant: "underlined",
+      color: "primary"
+    },
+    VSelect: {
+      color: "primary",
+      variant: "underlined"
+    },
+    VAutoComplete: {
+      color: "primary",
+      variant: "underlined"
     },
     VContainer: {
       width: 40

@@ -37,4 +37,13 @@ export interface User {
   scopes: string;
   pendingAutoCollects: number;
   experiments: object;
+  friend?: "accepted" | "outgoing" | "incoming" | null;
+  friends?: {
+    id: number;
+    user: User;
+    sender: User;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+  stats?: {};
 }

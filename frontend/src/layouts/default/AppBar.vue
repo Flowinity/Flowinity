@@ -10,6 +10,7 @@
         $app.workspaceDrawer && !$vuetify.display.mobile
     }"
     flat
+    style="z-index: 2001"
   >
     <v-app-bar-nav-icon
       style="z-index: 1000"

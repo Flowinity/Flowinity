@@ -1,11 +1,18 @@
 <template>
   <v-app v-if="$user.user">
-    <v-overlay :model-value="$app.loading" class="align-center justify-center">
+    <v-overlay
+      persistent
+      absolute
+      :model-value="$app.loading"
+      class="align-center justify-center"
+    >
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <v-overlay
+      persistent
       :model-value="$app.componentLoading"
       class="align-center justify-center"
+      absolute
     >
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>

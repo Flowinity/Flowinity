@@ -135,6 +135,7 @@ export default defineComponent({
         }
       );
       if (!data.gallery.length) {
+        this.$app.componentLoading = false;
         this.$router.push(`/autoCollect`);
         return;
       }

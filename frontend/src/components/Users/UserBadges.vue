@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <span>
     <HoverChip
       text="TPU Administrator"
       v-if="user.admin || user.administrator"
@@ -105,7 +105,7 @@
       :title="`${user.username}'s account was created this week ${age} years ago.`"
       v-if="cakeWeek && age >= 1"
     ></HoverChip>
-  </div>
+  </span>
 </template>
 
 <script lang="ts">
