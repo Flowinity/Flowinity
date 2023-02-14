@@ -67,6 +67,7 @@ export class NoteService {
         {
           model: WorkspaceFolder,
           as: "folder",
+          required: true,
           include: [
             {
               model: Workspace,
