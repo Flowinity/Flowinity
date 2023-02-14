@@ -435,12 +435,14 @@ export default defineComponent({
     }
   },
   mounted() {
-    if (!this.$vuetify.display.mobile) this.$app.workspaceDrawer = "forced";
     this.onMounted();
+    if (!this.$app.workspaceDrawer && !this.$vuetify.display.mobile) {
+      this.$app.workspaceDrawer = "forced";
+    }
   },
   unmounted() {
     this.$app.workspaceDrawer =
-      localStorage.getItem("workspaceSidebar") === "true";
+      localStorage.getItem("workspaceDrawer") === "true";
   },
   watch: {
     $route(val) {
