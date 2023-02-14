@@ -82,11 +82,11 @@ export default defineComponent({
       fail: false,
       words: 0,
       characters: 0,
-      lastSave: null
+      lastSave: null as any
     };
   },
   methods: {
-    async upload(file) {
+    async upload(file: any) {
       try {
         let formData = new FormData();
         formData.append("attachment", file);
@@ -115,7 +115,7 @@ export default defineComponent({
         };
       }
     },
-    async save(data, manualSave = false) {
+    async save(data: object, manualSave = false) {
       try {
         if (this.lastSave && Date.now() - this.lastSave < 500) return;
         this.lastSave = Date.now();
@@ -132,10 +132,10 @@ export default defineComponent({
         this.$toast.error("The document could not be saved.");
       }
     },
-    getItemCount(item, type) {
+    getItemCount(item: any, type: any) {
       let count = 0;
       if (item.items?.length) {
-        count += item.items.reduce((acc, item) => {
+        count += item.items.reduce((acc: any, item: any) => {
           return acc + this.getItemCount(item, type);
         }, 0);
       }
@@ -148,7 +148,7 @@ export default defineComponent({
       }
       return count;
     },
-    count(blocks) {
+    count(blocks: any) {
       this.characters = blocks.reduce((acc, block) => {
         if (block.data.text) {
           return acc + block.data.text.length || 0;
