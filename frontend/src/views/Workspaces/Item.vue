@@ -28,7 +28,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 // @ts-nocheck
 //@ts-ignore
 import Header from "editorjs-header-with-anchor";

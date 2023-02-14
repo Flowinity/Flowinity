@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "baseUrl": ".",
     "target": "esnext",
     "useDefineForClassFields": true,
@@ -30,5 +31,5 @@
     "../models/**/*.ts",
     "vite.config.ts",
     "*.vue"
-  ]
+  ],
 }
