@@ -5,7 +5,9 @@
     max-width="600px"
   >
     <v-card elevation="7" class="rounded-xl">
-      <v-card-title class="headline">Add API Key</v-card-title>
+      <v-toolbar>
+        <v-toolbar-title> Add API Key </v-toolbar-title>
+      </v-toolbar>
       <v-card-text v-if="!key">
         <v-text-field
           v-model="name"

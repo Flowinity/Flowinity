@@ -5,7 +5,9 @@
     max-width="600px"
   >
     <v-card>
-      <v-card-title class="headline">Add to collection</v-card-title>
+      <v-toolbar>
+        <v-toolbar-title> Add to collection </v-toolbar-title>
+      </v-toolbar>
       <v-card-text>
         <v-form>
           <v-autocomplete

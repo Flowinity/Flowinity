@@ -39,7 +39,7 @@ export class InviteController {
 
     this.router.post(
       "/",
-      auth("*"),
+      auth("user.view"),
       limiter,
       async (req: RequestAuth, res: Response) => {
         await this.inviteService.createInvite(req.user.id, req.body.email)

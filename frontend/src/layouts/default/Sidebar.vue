@@ -1,4 +1,5 @@
 <template>
+  <InviteAFriend v-model="inviteAFriend"> </InviteAFriend>
   <v-navigation-drawer
     v-model="$app.mainDrawer"
     app
@@ -55,17 +56,22 @@
 </template>
 
 <script lang="ts">
-import { mapStores } from "pinia";
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 
 export default defineComponent({
   name: "Sidebar",
-  components: { UserAvatar },
+  components: { InviteAFriend, UserAvatar },
+  data() {
+    return {
+      inviteAFriend: false
+    };
+  },
   computed: {
     sidebar() {
       if (!this.$user.user) return [];
-      const items = [
+      return [
         {
           id: 1,
           click() {},
@@ -182,7 +188,10 @@ export default defineComponent({
         },
         {
           id: 32,
-          click() {},
+          click() {
+            //@ts-ignore
+            this.inviteAFriend = true;
+          },
           externalPath: "",
           path: "",
           name: "Invite a Friend",
@@ -230,7 +239,6 @@ export default defineComponent({
           icon: "mdi-star"
         }*/
       ];
-      return items;
     }
   },
   methods: {
