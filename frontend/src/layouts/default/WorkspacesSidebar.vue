@@ -338,7 +338,7 @@ export default defineComponent({
       e.initEvent("click", true, false);
       a.dispatchEvent(e);
     },
-    context(e, id: string, item: object) {
+    context(e, id: string, item: any) {
       e.preventDefault();
       this.contextMenu.item = item;
       this.contextMenu.id = id;

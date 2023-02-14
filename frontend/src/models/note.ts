@@ -1,4 +1,5 @@
 import { NoteVersion } from "@/models/noteVersion";
+import { WorkspaceFolder } from "@/models/workspaceFolder";
 
 export type VersionObject = {
   createdAt: Date;
@@ -15,4 +16,7 @@ export interface Note {
   workspaceFolderId: number;
   shareLink: string;
   versions: NoteVersion[];
+  folder: WorkspaceFolder;
+  createdAt: Date;
+  updatedAt: Date;
 }
