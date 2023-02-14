@@ -28,29 +28,51 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+// @ts-nocheck
+//@ts-ignore
 import Header from "editorjs-header-with-anchor";
+//@ts-ignore
 import NestedList from "@troplo/tpu-editorjs-nested-list";
+//@ts-ignore
 import CodeTool from "@editorjs/code";
+//@ts-ignore
 import Paragraph from "@editorjs/paragraph";
+//@ts-ignore
 import Embed from "@editorjs/embed";
+//@ts-ignore
 import Table from "@editorjs/table";
+//@ts-ignore
 import Checklist from "@editorjs/checklist";
+//@ts-ignore
 import Marker from "@editorjs/marker";
+//@ts-ignore
 import Warning from "@editorjs/warning";
+//@ts-ignore
 import RawTool from "@editorjs/raw";
+//@ts-ignore
 import Quote from "@editorjs/quote";
+//@ts-ignore
 import InlineCode from "@editorjs/inline-code";
+//@ts-ignore
 import Delimiter from "@editorjs/delimiter";
+//@ts-ignore
 import ImageTool from "@editorjs/image";
+//@ts-ignore
 import EditorJS from "@editorjs/editorjs";
+//@ts-ignore
 import Attaches from "@editorjs/attaches";
+//@ts-ignore
 import LinkTool from "@editorjs/link";
-import AlignmentTuneTool from "editorjs-text-alignment-blocktune";
+//@ts-ignore
+import AlignmentTuneTool from "editorjs-text-alignment-blocktune"
+//@ts-ignore;
 import WorkspaceHome from "@/views/Workspaces/Home";
+//@ts-ignore
 import Undo from "editorjs-undo";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "WorkspaceItem",
   components: { WorkspaceHome },
   props: ["id"],
@@ -60,11 +82,11 @@ export default {
       fail: false,
       words: 0,
       characters: 0,
-      lastSave: null
+      lastSave: null as any
     };
   },
   methods: {
-    async upload(file) {
+    async upload(file: any) {
       try {
         let formData = new FormData();
         formData.append("attachment", file);
@@ -93,7 +115,7 @@ export default {
         };
       }
     },
-    async save(data, manualSave = false) {
+    async save(data: object, manualSave = false) {
       try {
         if (this.lastSave && Date.now() - this.lastSave < 500) return;
         this.lastSave = Date.now();
@@ -110,10 +132,10 @@ export default {
         this.$toast.error("The document could not be saved.");
       }
     },
-    getItemCount(item, type) {
+    getItemCount(item: any, type: any) {
       let count = 0;
       if (item.items?.length) {
-        count += item.items.reduce((acc, item) => {
+        count += item.items.reduce((acc: any, item: any) => {
           return acc + this.getItemCount(item, type);
         }, 0);
       }
@@ -126,7 +148,7 @@ export default {
       }
       return count;
     },
-    count(blocks) {
+    count(blocks: any) {
       this.characters = blocks.reduce((acc, block) => {
         if (block.data.text) {
           return acc + block.data.text.length || 0;

@@ -112,11 +112,6 @@ const routes = [
         name: "Starred",
         component: () => import("@/views/Starred.vue")
       },
-      {
-        path: "/test",
-        name: "Test",
-        component: () => import("@/views/Test.vue")
-      },
       // Unauthenticated
       {
         path: "/login",
