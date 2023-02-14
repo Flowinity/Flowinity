@@ -65,7 +65,7 @@ import Attaches from "@editorjs/attaches";
 //@ts-ignore
 import LinkTool from "@editorjs/link";
 //@ts-ignore
-import AlignmentTuneTool from "editorjs-text-alignment-blocktune"
+import AlignmentTuneTool from "editorjs-text-alignment-blocktune";
 //@ts-ignore;
 import WorkspaceHome from "@/views/Workspaces/Home";
 //@ts-ignore
@@ -448,7 +448,7 @@ export default defineComponent({
       this.onMounted();
     }
   }
-};
+});
 </script>
 
 <style>
