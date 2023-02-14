@@ -6,7 +6,8 @@ import axios from "@/plugins/axios";
 export interface AppState {
   domain: string;
   mainDrawer: boolean;
-  workspaceDrawer: boolean | "forced";
+  workspaceDrawer: boolean;
+  forcedWorkspaceDrawer: boolean;
   loading: boolean;
   componentLoading: boolean;
   apiVersion: string;
@@ -36,6 +37,7 @@ export const useAppStore = defineStore("app", {
       domain: "https://i.troplo.com/i/",
       mainDrawer: true,
       workspaceDrawer: localStorage.getItem("workspaceDrawer") === "true",
+      forcedWorkspaceDrawer: false,
       loading: true,
       componentLoading: false,
       apiVersion: "v2",

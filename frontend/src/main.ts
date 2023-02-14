@@ -77,7 +77,7 @@ const app = createApp({
     },
     watch: {
       "$app.workspaceDrawer"(val) {
-        if (val === "forced") return;
+        if (this.$app.forcedWorkspaceDrawer) return;
         localStorage.setItem("workspaceDrawer", val.toString());
       },
       "$app.title"(val) {

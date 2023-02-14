@@ -363,6 +363,7 @@ export default defineComponent({
       this.fail = false;
       this.getNote(this.id || this.$route.params.id)
         .then((res) => {
+          this.$app.title = res.data.name;
           if (!this.id) {
             this.$app.lastNote = parseInt(this.$route.params.id);
             localStorage.setItem("lastNote", this.$route.params.id);
@@ -437,12 +438,15 @@ export default defineComponent({
   mounted() {
     this.onMounted();
     if (!this.$app.workspaceDrawer && !this.$vuetify.display.mobile) {
-      this.$app.workspaceDrawer = "forced";
+      this.$app.forcedWorkspaceDrawer = true;
+      this.$app.workspaceDrawer = true;
     }
+    this.$app.title = "Workspace Editor";
   },
   unmounted() {
     this.$app.workspaceDrawer =
       localStorage.getItem("workspaceDrawer") === "true";
+    this.$app.forcedWorkspaceDrawer = false;
   },
   watch: {
     $route(val) {

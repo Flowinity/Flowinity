@@ -103,9 +103,17 @@ export default defineComponent({
     }
   },
   mounted() {
-    if (!this.$vuetify.display.mobile) this.$app.workspaceDrawer = true;
+    if (!this.$app.workspaceDrawer && !this.$vuetify.display.mobile) {
+      this.$app.forcedWorkspaceDrawer = true;
+      this.$app.workspaceDrawer = true;
+    }
     this.$app.title = "Workspaces";
     this.getRecent();
+  },
+  unmounted() {
+    this.$app.workspaceDrawer =
+      localStorage.getItem("workspaceDrawer") === "true";
+    this.$app.forcedWorkspaceDrawer = false;
   }
 });
 </script>
