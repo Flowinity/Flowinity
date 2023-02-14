@@ -232,7 +232,7 @@ export default defineComponent({
       importDoc: {
         dialog: false,
         loading: false,
-        file: undefined as File | undefined,
+        file: undefined as File[] | undefined,
         name: ""
       },
       contextMenu: {
@@ -338,7 +338,7 @@ export default defineComponent({
       e.initEvent("click", true, false);
       a.dispatchEvent(e);
     },
-    context(e, id: string, item: any) {
+    context(e: any, id: string, item: any) {
       e.preventDefault();
       this.contextMenu.item = item;
       this.contextMenu.id = id;
