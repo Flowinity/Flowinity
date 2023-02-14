@@ -124,7 +124,11 @@ export default defineComponent({
           click() {},
           externalPath: "",
           name: "Workspaces",
-          path: "/workspaces",
+          path: this.$route.name?.toString()?.includes("Workspace")
+            ? "/workspaces"
+            : this.$app.lastNote
+            ? `/workspaces/notes/${this.$app.lastNote}`
+            : "/workspaces",
           icon: "mdi-folder-account",
           new: true,
           scope: "workspaces.view",

@@ -4,6 +4,7 @@
 
 import axios, { AxiosStatic } from "axios";
 import { useToast } from "vue-toastification";
+import { useAppStore } from "@/store/app";
 
 const ax = axios.create({
   baseURL: "/api/v2",
@@ -19,6 +20,9 @@ const ax = axios.create({
 ax.interceptors.response.use(
   (response) => response,
   (e) => {
+    const app = useAppStore();
+    app.componentLoading = false;
+    app.loading = false;
     const toast = useToast();
     if (e?.response?.data?.errors) {
       if (e.response.data.errors[0].name === "invalidToken") {

@@ -10,7 +10,11 @@ export interface AppState {
   loading: boolean;
   componentLoading: boolean;
   apiVersion: string;
+  title: string;
+  notesSaving: boolean;
+  lastNote: number | null;
   site: {
+    registrations: boolean;
     name: string;
     release: string;
     route: string | null;
@@ -35,7 +39,13 @@ export const useAppStore = defineStore("app", {
       loading: true,
       componentLoading: false,
       apiVersion: "v2",
+      title: "",
+      notesSaving: false,
+      lastNote: localStorage.getItem("lastNote")
+        ? parseInt(localStorage.getItem("lastNote") as string)
+        : null,
       site: {
+        registrations: false,
         name: "TPUvNEXT",
         release: "prod",
         route: null,

@@ -1,5 +1,5 @@
 // Composables
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, Router } from "vue-router";
 import { useUserStore } from "@/store/user";
 
 const routes = [
@@ -83,9 +83,19 @@ const routes = [
         redirect: "/workspaces"
       },
       {
+        path: "/notes/:id",
+        name: "Note",
+        redirect: (to: any) => `/workspaces/notes/${to.params.id}`
+      },
+      {
         path: "/workspaces",
         name: "Workspaces",
         component: () => import("@/views/Workspaces/Home.vue")
+      },
+      {
+        path: "/workspaces/notes/:id",
+        name: "Workspace Item",
+        component: () => import("@/views/Workspaces/Item.vue")
       },
       {
         path: "/users",
@@ -96,6 +106,16 @@ const routes = [
         path: "/u/:username",
         name: "User",
         component: () => import("@/views/User/User.vue")
+      },
+      {
+        path: "/starred",
+        name: "Starred",
+        component: () => import("@/views/Starred.vue")
+      },
+      {
+        path: "/test",
+        name: "Test",
+        component: () => import("@/views/Test.vue")
       },
       // Unauthenticated
       {
@@ -112,6 +132,11 @@ const routes = [
         path: "/home",
         name: "Home",
         component: () => import("@/views/Auth/Home.vue")
+      },
+      {
+        path: "/policies/content",
+        name: "Content Policy",
+        component: () => import("@/views/Policies/Content.vue")
       },
       {
         path: "/:pathMatch(.*)",
@@ -131,9 +156,14 @@ router.beforeEach(async (to, from) => {
   const user = useUserStore();
   if (
     !user.user &&
-    !["Login", "Home", "Register", "404", "Collection Item"].includes(
-      to.name as string
-    )
+    ![
+      "Login",
+      "Home",
+      "Register",
+      "404",
+      "Collection Item",
+      "Content Policy"
+    ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");
     return { name: "Home" };

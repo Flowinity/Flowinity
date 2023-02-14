@@ -45,6 +45,7 @@ export class InviteService {
   }
 
   async getInvite(inviteKey: string): Promise<Invite> {
+    if (!inviteKey) throw Errors.INVITE_NOT_FOUND
     const invite = await Invite.findOne({
       where: {
         inviteKey
@@ -88,7 +89,9 @@ export class InviteService {
       }
     })
     result.push(
-      `${invite.user.username} has uploaded ${userUploads} items to TPU.`
+      `${
+        invite.user.username
+      } has uploaded ${userUploads.toLocaleString()} items to TPU.`
     )
     // user-percentage
     const uploads = await Upload.count()
@@ -98,7 +101,7 @@ export class InviteService {
       } of the total uploads to TPU.`
     )
     // total-uploads
-    result.push(`TPU has a total of ${uploads} uploads.`)
+    result.push(`TPU has a total of ${uploads.toLocaleString()} uploads.`)
     // total-collectivized
     const collectionItems = await CollectionItem.findAll({
       attributes: ["userId"]
@@ -107,10 +110,12 @@ export class InviteService {
       (item) => item.userId === invite.userId
     ).length
     result.push(
-      `${invite.user.username} has put ${totalCollectivized} items in TPU collections.`
+      `${
+        invite.user.username
+      } has put ${totalCollectivized.toLocaleString()} items in TPU collections.`
     )
     result.push(
-      `${totalCollectivized} items have been collectivized out of ${collectionItems.length} total items.`
+      `${totalCollectivized.toLocaleString()} items have been collectivized out of ${collectionItems.length.toLocaleString()} total items.`
     )
     return result
   }

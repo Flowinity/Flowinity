@@ -97,7 +97,7 @@ export default defineComponent({
     },
     async getGallery() {
       this.$app.componentLoading = true;
-      const { data } = await this.axios.get("/gallery", {
+      const { data } = await this.axios.get("/gallery/starred", {
         params: {
           page: this.page,
           search: this.show.search,
@@ -110,7 +110,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.$app.title = "Gallery";
+    this.$app.title = "Starred";
     this.page = parseInt(<string>this.$route.params.page) || 1;
     this.getGallery();
   },

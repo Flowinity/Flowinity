@@ -53,6 +53,19 @@ export class NoteController {
     )
 
     this.router.get(
+      "/recent",
+      auth("workspaces.view"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const notes = await this.noteService.getRecent(req.user.id)
+          res.json(notes)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
+    this.router.get(
       "/:id",
       auth("workspaces.view", true),
       async (req: RequestAuth, res: Response) => {
@@ -68,6 +81,15 @@ export class NoteController {
       async (req: RequestAuth, res: Response) => {
         const { id } = req.params
         const { data, name } = req.body
+        if (!data && name) {
+          const note = await this.noteService.renameNote(
+            parseInt(id),
+            name,
+            req.user.id
+          )
+          res.json(note)
+          return
+        }
         const note = await this.noteService.saveNote(
           parseInt(id),
           data,
@@ -136,6 +158,16 @@ export class NoteController {
       async (req: RequestAuth, res: Response) => {
         const { id } = req.params
         await this.noteService.deleteFolder(parseInt(id), req.user.id)
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.delete(
+      "/workspace/:id",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const { id } = req.params
+        await this.noteService.deleteWorkspace(parseInt(id), req.user.id)
         res.sendStatus(204)
       }
     )

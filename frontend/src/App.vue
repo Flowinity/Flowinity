@@ -6,6 +6,11 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "TPUApp"
+  name: "TPUApp",
+  watch: {
+    "$app.title"(val) {
+      document.title = val + " - TPUvNEXT";
+    }
+  }
 });
 </script>

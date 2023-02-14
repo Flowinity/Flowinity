@@ -61,6 +61,32 @@ export class NoteDataV2 {
 export class NoteService {
   constructor() {}
 
+  async getRecent(userId: number) {
+    return await Note.findAll({
+      include: [
+        {
+          model: WorkspaceFolder,
+          as: "folder",
+          include: [
+            {
+              model: Workspace,
+              as: "workspace",
+              required: true,
+              where: {
+                userId
+              }
+            }
+          ]
+        }
+      ],
+      order: [["updatedAt", "DESC"]],
+      attributes: {
+        exclude: ["data"]
+      },
+      limit: 12
+    })
+  }
+
   async restoreVersion(id: number, version: string, userId: number) {
     const note = await this.getNote(id, userId)
     if (!note?.permissions?.modify) throw Errors.NOT_FOUND
@@ -122,6 +148,43 @@ export class NoteService {
         id
       }
     })
+    return true
+  }
+
+  async deleteWorkspace(id: number, userId: number) {
+    const workspace = await this.getWorkspace(id, userId, "workspace")
+    if (!workspace?.permissionsMetadata?.configure) throw Errors.NOT_FOUND
+    const notes = await Note.findAll({
+      include: [
+        {
+          model: WorkspaceFolder,
+          as: "folder",
+          required: true,
+          where: {
+            workspaceId: id
+          }
+        }
+      ]
+    })
+
+    await Note.destroy({
+      where: {
+        id: notes.map((n) => n.id)
+      }
+    })
+
+    await WorkspaceFolder.destroy({
+      where: {
+        workspaceId: id
+      }
+    })
+
+    await Workspace.destroy({
+      where: {
+        id
+      }
+    })
+
     return true
   }
 
@@ -222,7 +285,7 @@ export class NoteService {
       ]
     })
 
-    return {
+    return [
       ...workspaces.map((workspace) => workspace.toJSON()),
       ...shared.map((workspace) => {
         return {
@@ -235,7 +298,7 @@ export class NoteService {
           }
         }
       })
-    }
+    ]
   }
 
   async getWorkspace(id: number, userId: number, type: "workspace" | "folder") {
@@ -441,6 +504,32 @@ export class NoteService {
         read: true
       }
     }
+  }
+
+  async renameNote(id: number, name: string, userId: number) {
+    const note = await Note.findOne({
+      where: {
+        id
+      }
+    })
+    if (!note) throw Errors.NOT_FOUND
+    const workspace = await this.getWorkspace(
+      note.workspaceFolderId,
+      userId,
+      "folder"
+    )
+    if (!workspace?.permissionsMetadata?.write) throw Errors.NOT_FOUND
+    await Note.update(
+      {
+        name
+      },
+      {
+        where: {
+          id
+        }
+      }
+    )
+    return note
   }
 
   async saveNote(

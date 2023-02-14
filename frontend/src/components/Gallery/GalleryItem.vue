@@ -41,7 +41,7 @@
     <div class="ml-4">
       <slot :item="item" name="custom-properties" />
       <v-slide-group>
-        <v-chip-group>
+        <v-chip-group class="mb-1">
           <HoverChip
             text="Add to Collection"
             icon="mdi-plus"
@@ -75,6 +75,7 @@
           color="indigo"
           @click="editItem(item)"
           v-if="supports.permissions.write"
+          class="my-1"
         ></HoverChip>
         <HoverChip
           text="Delete"
@@ -82,25 +83,29 @@
           color="red"
           @click="deleteItem(item)"
           v-if="supports.permissions.write"
+          class="my-1"
         ></HoverChip>
         <HoverChip
           text="Link"
           icon="mdi-content-copy"
           color="teal"
           @click="copyLink(item)"
+          class="my-1"
         ></HoverChip>
         <HoverChip
           :text="item.type === 'paste' ? 'Raw' : 'Open'"
           icon="mdi-download"
           color="primary"
           :href="'https://i.troplo.com/i/' + item.attachment + '?force=true'"
+          class="my-1"
         ></HoverChip>
         <HoverChip
           text="OCR"
           icon="mdi-ocr"
           color="green"
-          @click="copy(item.textMetadata)"
+          @click="$functions.copy(item.textMetadata)"
           v-if="item.type === 'image'"
+          class="my-1"
         ></HoverChip>
         <HoverChip
           text="Star"
@@ -108,12 +113,14 @@
           color="amber darken-2"
           @click="star(item)"
           v-if="$user.user"
+          class="my-1"
         ></HoverChip>
         <HoverChip
           text="Editor"
           icon="mdi-pencil"
           color="indigo"
           v-if="$experiments.experiments['MEME_GEN']"
+          class="my-1"
         ></HoverChip>
       </slot>
     </v-card-text>
@@ -132,20 +139,18 @@ export default defineComponent({
   props: ["item", "supports", "selected"],
   computed: {
     fileSize() {
-      this.$functions.fileSize(this.item.fileSize);
+      return this.$functions.fileSize(this.item.fileSize);
     }
   },
   methods: {
-    star(item: Upload) {
-      console.log("Star item", item);
+    async star(item: Upload) {
+      await this.axios.post("/gallery/star/" + item.attachment);
+      item.starred = !item.starred;
     },
     copyLink(item: Upload) {
       navigator.clipboard.writeText(
         `https://i.troplo.com/i/${item.attachment}`
       );
-    },
-    copy(text: string) {
-      navigator.clipboard.writeText(text);
     },
     editItem(item: Upload) {
       console.log("Edit item", item);

@@ -174,6 +174,9 @@ export default defineComponent({
         }
       ]
     };
+  },
+  mounted() {
+    this.$app.title = "Settings";
   }
 });
 </script>

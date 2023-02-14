@@ -24,6 +24,7 @@ import "vue-toastification/dist/index.css";
 import functions from "@/plugins/functions";
 import { useCollectionsStore } from "@/store/collections";
 import validation from "@/plugins/validation";
+import "./styles/tpu-editorjs.css";
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
     $user: ReturnType<typeof useUserStore>;
@@ -85,5 +86,7 @@ app.use(VueAxios, axios);
 app.use(Toast, options);
 app.config.globalProperties.$toast = useToast();
 registerPlugins(app);
+
+app.config.performance = true;
 
 app.mount("#app");

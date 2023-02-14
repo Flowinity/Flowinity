@@ -60,6 +60,7 @@ export default defineComponent({
     }
   },
   mounted() {
+    this.$app.title = "Users";
     this.getUsers();
   }
 });

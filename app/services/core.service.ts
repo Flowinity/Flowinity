@@ -27,7 +27,8 @@ export class CoreService {
       announcements: await this.getAnnouncements(),
       flowinityId: config.flowinityId,
       stats: await this.getStats(),
-      maintenance: config.maintenance
+      maintenance: config.maintenance,
+      registrations: config.registrations
     }
   }
 

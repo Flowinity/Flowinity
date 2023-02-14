@@ -32,6 +32,12 @@ export default {
         if (value.length < 8) return "Password must be at least 8 characters";
         return true;
       }
+    ],
+    terms: [
+      (value: boolean) => {
+        if (!value) return "You must accept the terms of service";
+        return true;
+      }
     ]
   }
 };

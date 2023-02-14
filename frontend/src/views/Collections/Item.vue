@@ -97,9 +97,11 @@ export default defineComponent({
       );
       this.$app.componentLoading = false;
       this.collection = data;
+      this.$app.title = this.collection?.name as string;
     }
   },
   mounted() {
+    this.$app.title = "Collection";
     this.page = parseInt(<string>this.$route.params.page) || 1;
     this.getCollection();
     this.getGallery();

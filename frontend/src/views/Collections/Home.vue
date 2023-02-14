@@ -24,6 +24,7 @@ export default defineComponent({
     return {};
   },
   mounted() {
+    this.$app.title = "Collections";
     this.$collections.init();
   }
 });

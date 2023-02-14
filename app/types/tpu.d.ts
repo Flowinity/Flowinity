@@ -8,6 +8,7 @@ declare interface TpuConfig {
   release: string
   storage: string
   jitsiToken: string
+  registrations: boolean
   redis: {
     username?: string | undefined
     password?: string | undefined

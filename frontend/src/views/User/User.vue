@@ -238,10 +238,12 @@ export default defineComponent({
         `/user/profile/${this.$route.params.username}`
       );
       this.user = data;
+      this.$app.title = this.user?.username as string;
       this.$app.componentLoading = false;
     }
   },
   mounted() {
+    this.$app.title = "User";
     this.getUser();
   },
   watch: {

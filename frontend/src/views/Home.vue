@@ -10,15 +10,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
-import UserBadges from "@/components/Users/UserBadges.vue"
-import UserWidget from "@/components/Dashboard/UserWidget.vue"
-import StatsWidget from "@/components/Dashboard/StatsWidget.vue"
+import { defineComponent } from "vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import UserBadges from "@/components/Users/UserBadges.vue";
+import UserWidget from "@/components/Dashboard/UserWidget.vue";
+import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
 
 export default defineComponent({
   name: "Home",
   components: { StatsWidget, UserWidget, UserBadges, UserAvatar },
-  mounted() {}
-})
+  mounted() {
+    this.$app.title = "Dashboard";
+  }
+});
 </script>

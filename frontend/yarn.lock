@@ -1950,6 +1950,23 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
+editorjs-header-with-anchor@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/editorjs-header-with-anchor/-/editorjs-header-with-anchor-2.6.0.tgz#f00aea06ce238b2d80b04cfda72a8b8bf730d5ac"
+  integrity sha512-krI4GBxAJvgmS0R2RGnaN4QTDMuobu2Qcx1HZ5fJQohyIhEI4GD0uiOpVFZ7oFiDNRRvqn6e8lQin4W2rLOu9A==
+
+editorjs-text-alignment-blocktune@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/editorjs-text-alignment-blocktune/-/editorjs-text-alignment-blocktune-1.0.3.tgz#7942fe2d3fbdbd7fcfd10fbb9b341c97ec3eb84f"
+  integrity sha512-DAJ2LJP+WjETvU4lVOJCqZ1kZkKHp0GkujkqZgza9DRv7bO46m1M/s2d5Ba5hPFdmqk1vA/ci++MQXgWD7mWYw==
+
+editorjs-undo@^2.0.18:
+  version "2.0.18"
+  resolved "https://registry.yarnpkg.com/editorjs-undo/-/editorjs-undo-2.0.18.tgz#03e010f5bec32d044e329a8d1af1a75f728cb0e4"
+  integrity sha512-ItlEDXoSDvZY4hqfELeFo189rhxUN+GKJesh6TkO/wXfk8HMSMZEPuBmNGiIsB8lIwFcJ8baqU/wHRyllzi6VA==
+  dependencies:
+    vanilla-caret-js "^1.0.1"
+
 ejs@^3.1.6:
   version "3.1.8"
   resolved "https://registry.yarnpkg.com/ejs/-/ejs-3.1.8.tgz#758d32910c78047585c7ef1f92f9ee041c1c190b"
@@ -3725,6 +3742,11 @@ util-deprecate@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
+
+vanilla-caret-js@^1.0.1:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/vanilla-caret-js/-/vanilla-caret-js-1.1.0.tgz#851acd7be81998223ce69ae1b62e03f472fa4e90"
+  integrity sha512-vl3R4Xjqb+xnM0gYyg+wcqWGYwKKnkz58Yj29/FQB+w+yP7R8IR1DGoJnDIs05moEZiGlQUTabPMoEtnQNcrpQ==
 
 vite-plugin-pwa@^0.14.4:
   version "0.14.4"

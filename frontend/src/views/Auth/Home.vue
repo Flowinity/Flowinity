@@ -74,11 +74,15 @@
 <script lang="ts">
 import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "UnauthHome",
-  components: { PromoCard, StatsWidget }
-};
+  components: { PromoCard, StatsWidget },
+  mounted() {
+    this.$app.title = "Welcome";
+  }
+});
 </script>
 
 <style scoped></style>

@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="center-container">
     <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="7" xl="4">
+      <v-col cols="12" sm="8" md="7" xl="5">
         <v-card
           :flat="$vuetify.display.mobile"
           :elevation="$vuetify.display.mobile ? 0 : 8"
@@ -25,7 +25,7 @@
                 @keydown.enter="login"
               />
               <v-text-field
-                label="2FA Code"
+                label="2FA Code (if enabled)"
                 v-model="totp"
                 type="number"
                 @keydown.enter="login"
@@ -33,6 +33,7 @@
             </v-form>
           </v-container>
           <v-card-actions>
+            <v-btn to="/register">Register</v-btn>
             <v-spacer></v-spacer>
             <v-btn color="primary" @click="login" :loading="loading"
               >Login</v-btn
@@ -75,6 +76,9 @@ export default defineComponent({
         this.loading = false;
       }
     }
+  },
+  mounted() {
+    this.$app.title = "Login";
   }
 });
 </script>

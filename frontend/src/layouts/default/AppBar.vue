@@ -27,29 +27,12 @@
       TPU
     </h1>
     <v-spacer></v-spacer>
-    <template v-if="!userStore.user">
-      <v-btn
-        color="primary"
-        text
-        @click="$router.push('/login')"
-        :disabled="$route.path === '/login'"
-      >
-        Login
-      </v-btn>
-      <v-btn
-        color="primary"
-        text
-        @click="$router.push('/register')"
-        :disabled="$route.path === '/register'"
-      >
-        Register
-      </v-btn>
-    </template>
-    <template v-else>
+    <small v-if="$app.notesSaving" class="mr-3"> Saving... </small>
+    <template v-if="$user.user">
       <v-menu offset-y rounded class="rounded-xxl">
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn class="rounded-xl" icon v-bind="attrs" v-on="on">
-            <UserAvatar :user="userStore.user" size="38" />
+        <template v-slot:activator="{ props }">
+          <v-btn class="rounded-xl" icon v-bind="props">
+            <UserAvatar :user="$user.user" size="38" />
           </v-btn>
         </template>
 
@@ -78,23 +61,20 @@
 </template>
 
 <script lang="ts">
-import { mapStores } from "pinia";
-import { useUserStore } from "@/store/user";
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   components: { UserAvatar },
   computed: {
-    ...mapStores(useUserStore),
     dropdown() {
-      if (!this.userStore.user) return [];
+      if (!this.$user?.user) return [];
       return [
         {
           id: 12,
           click() {},
-          path: "/u/" + this.userStore.user.username,
-          name: this.userStore.user.username,
+          path: "/u/" + this.$user.user.username,
+          name: this.$user.user.username,
           disabled: false
         },
         {
@@ -120,7 +100,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    console.log(this.userStore.user);
+    console.log(this.$user.user);
   }
 });
 </script>

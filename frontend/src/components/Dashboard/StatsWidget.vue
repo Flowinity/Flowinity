@@ -8,7 +8,7 @@
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
-        title="Collectivizations"
+        title="Collectivized"
         :value="$app.site.stats.collectionItems"
       ></StatsCard>
     </v-col>
@@ -39,7 +39,7 @@
         :value="$app.site.stats.invites"
       ></StatsCard>
     </v-col>
-    <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
+    <v-col :cols="cols" sm="12" :xl="xl">
       <StatsCard
         title="Workspace Docs"
         :value="$app.site.stats.docs"

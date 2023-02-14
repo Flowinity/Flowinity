@@ -8,9 +8,14 @@
 </template>
 
 <script lang="ts">
-export default {
-  name: "404"
-};
+import { defineComponent } from "vue";
+
+export default defineComponent({
+  name: "404",
+  mounted() {
+    this.$app.title = "Not Found";
+  }
+});
 </script>
 
 <style scoped></style>
