@@ -90,7 +90,7 @@
       "
     ></HoverChip>
     <HoverChip
-      :text="'year old account'"
+      :text="age + ' year old account'"
       :icon="'mdi-numeric-' + age"
       color="teal"
       :small="true"

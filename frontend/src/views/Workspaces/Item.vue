@@ -435,10 +435,10 @@ export default defineComponent({
     }
   },
   mounted() {
-    if (!this.$vuetify.display.mobile) this.$app.workspaceDrawer = true;
+    if (!this.$vuetify.display.mobile) this.$app.workspaceDrawer = "forced";
     this.onMounted();
   },
-  destroyed() {
+  unmounted() {
     this.$app.workspaceDrawer =
       localStorage.getItem("workspaceSidebar") === "true";
   },

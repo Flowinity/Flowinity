@@ -7,9 +7,9 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "TPUApp",
-  watch: {
-    "$app.title"(val) {
-      document.title = val + " - TPUvNEXT";
+  mounted() {
+    if (this.$vuetify.display.mobile) {
+      this.$app.mainDrawer = false;
     }
   }
 });

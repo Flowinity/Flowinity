@@ -74,6 +74,15 @@ const app = createApp({
       workspace.init().then(() => {
         console.info("[TPU/WorkspacesStore] Workspaces initialized");
       });
+    },
+    watch: {
+      "$app.workspaceDrawer"(val) {
+        if (val === "forced") return;
+        localStorage.setItem("workspaceDrawer", val.toString());
+      },
+      "$app.title"(val) {
+        document.title = val + " - TPUvNEXT";
+      }
     }
   }
 });
