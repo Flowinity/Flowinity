@@ -7,7 +7,8 @@
         append-inner-icon="mdi-close"
         label="Search"
         @click:append-inner="
-          $emit('update:search', search);
+          search = '';
+          $emit('update:search', '');
           $emit('refreshGallery');
         "
         v-on:keyup.enter="
@@ -23,14 +24,20 @@
         item-value="internalName"
         label="Filter"
         v-model="filter"
-        v-on:change="$emit('update:filter', filter)"
+        v-on:update:model-value="
+          $emit('update:filter', filter);
+          $emit('refreshGallery');
+        "
       ></v-select>
     </v-col>
     <v-col md="2" cols="12">
       <v-checkbox
         label="Search in files (metadata)"
         v-model="metadata"
-        v-on:change="$emit('update:metadata', metadata)"
+        v-on:change="
+          $emit('update:metadata', metadata);
+          $emit('refreshGallery');
+        "
       >
       </v-checkbox>
     </v-col>

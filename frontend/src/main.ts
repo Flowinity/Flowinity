@@ -25,6 +25,9 @@ import functions from "@/plugins/functions";
 import { useCollectionsStore } from "@/store/collections";
 import validation from "@/plugins/validation";
 import "./styles/tpu-editorjs.css";
+import VueApexCharts from "vue3-apexcharts";
+import SocketIO from "socket.io-client";
+
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
     $user: ReturnType<typeof useUserStore>;
@@ -34,11 +37,13 @@ declare module "@vue/runtime-core" {
     $functions: {
       fileSize: (size: number) => string;
       copy: (text: string) => void;
+      doSinglePulse: (id: string, other: any, timeOnPage?: number) => void;
     };
     $collections: ReturnType<typeof useCollectionsStore>;
     $toast: any;
     $validation: any;
     $workspaces: ReturnType<typeof useWorkspacesStore>;
+    $socket: any;
   }
 }
 
@@ -55,10 +60,20 @@ const app = createApp({
       app.config.globalProperties.$app = core;
       app.config.globalProperties.$experiments = experiments;
       app.config.globalProperties.$date = dayjs;
-      app.config.globalProperties.$functions = functions;
       app.config.globalProperties.$collections = collections;
       app.config.globalProperties.$validation = validation;
       app.config.globalProperties.$workspaces = workspace;
+      app.config.globalProperties.$socket = SocketIO(
+        import.meta.env.DEV ? "http://localhost:34582" : "",
+        {
+          transports: ["websocket", "polling"],
+          auth: {
+            token: localStorage.getItem("token")
+          }
+        }
+      );
+      window.socket = app.config.globalProperties.$socket;
+      app.config.globalProperties.$functions = functions;
       user.init().then(() => {
         console.info("[TPU/UserStore] User initialized");
       });
@@ -94,6 +109,7 @@ import { useWorkspacesStore } from "@/store/workspaces";
 app.use(VueAxios, axios);
 app.use(Toast, options);
 app.config.globalProperties.$toast = useToast();
+app.use(VueApexCharts);
 registerPlugins(app);
 
 app.config.performance = true;

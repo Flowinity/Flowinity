@@ -6,6 +6,15 @@
         show.search = $event;
         page = 1;
       "
+      @refreshGallery="getGallery()"
+      @update:filter="
+        show.selected = $event;
+        page = 1;
+      "
+      @update:metadata="
+        show.metadata = $event;
+        page = 1;
+      "
     ></GalleryNavigation>
     <GalleryCore
       :page="page"

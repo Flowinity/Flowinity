@@ -122,7 +122,56 @@
             </v-card-text>
             <v-divider></v-divider>
             <v-card-text class="text-overline">Statistics</v-card-text>
-            <v-row> </v-row>
+            <v-row>
+              <v-col sm="12" md="6">
+                <v-card
+                  class="text-center mt-4"
+                  v-if="hoursMost"
+                  :height="$vuetify.display.mobile ? 400 : undefined"
+                >
+                  <p class="mt-3">
+                    <strong style="font-size: 24px" class="text-gradient"
+                      >Upload Distribution</strong
+                    >
+                  </p>
+                  <v-card-subtitle>
+                    {{ user.username }} uploads the most at
+                    {{ hoursMost.hour }} with {{ hoursMost.count }} uploads!
+                  </v-card-subtitle>
+                  <Chart
+                    id="userv2-hours"
+                    :data="hoursGraph"
+                    v-if="hoursGraph"
+                    :max-height="$vuetify.display.mobile ? 320 : undefined"
+                    :height="320"
+                    type="bar"
+                    name="Uploads"
+                  ></Chart>
+                </v-card>
+              </v-col>
+              <v-col md="6" sm="12">
+                <v-card
+                  class="text-center mt-4"
+                  v-if="user.stats.uploadGraph"
+                  :height="$vuetify.display.mobile ? 400 : undefined"
+                  max-height="400"
+                >
+                  <p class="mt-3">
+                    <strong style="font-size: 24px" class="text-gradient"
+                      >Upload Stats</strong
+                    >
+                  </p>
+                  <v-card-subtitle> Over the past 7 days </v-card-subtitle>
+                  <Chart
+                    id="userv2-uploads"
+                    :data="user.stats.uploadGraph"
+                    type="line"
+                    name="Uploads"
+                    :height="320"
+                  ></Chart>
+                </v-card>
+              </v-col>
+            </v-row>
           </template>
         </v-col>
         <v-col md="3" cols="12" sm="12">
@@ -152,7 +201,7 @@
             class="my-3"
           ></StatsCard>
           <StatsCard
-            title="Workspace Docs"
+            title="Documents"
             :value="user.stats.docs"
             class="my-3"
           ></StatsCard>
@@ -171,10 +220,16 @@ import { User } from "@/models/user";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import StatsCard from "@/components/Dashboard/StatsCard.vue";
+import BarChart from "@/components/Core/BarChart.vue";
+import LineChart from "@/components/Core/LineChart.vue";
+import Chart from "@/components/Core/Chart.vue";
 
 export default defineComponent({
   name: "User",
   components: {
+    Chart,
+    LineChart,
+    BarChart,
     StatsCard,
     CollectionCard,
     CollectionBanner,
@@ -195,6 +250,46 @@ export default defineComponent({
     };
   },
   computed: {
+    hoursMost() {
+      if (this.user?.stats?.hours) {
+        let hours = Object.entries(this.user.stats.hours);
+        hours.sort((a, b) => b[1] - a[1]);
+        return {
+          hour: hours[0][0],
+          count: hours[0][1]
+        };
+      } else {
+        return null;
+      }
+    },
+    hoursGraph() {
+      if (this.user?.stats?.hours) {
+        return {
+          labels: Object.keys(this.user.stats.hours),
+          data: Object.values(this.user.stats.hours)
+        };
+      } else {
+        return null;
+      }
+    },
+    chartData() {
+      if (this.user?.stats?.uploadGraph) {
+        return {
+          labels: this.user.stats.uploadGraph.labels,
+          datasets: [
+            {
+              label: "Uploads",
+              data: this.user.stats.uploadGraph.data,
+              backgroundColor: "transparent",
+              borderColor: "#0190ea",
+              pointBackgroundColor: "#181818"
+            }
+          ]
+        };
+      } else {
+        return [];
+      }
+    },
     friends() {
       if (this.user?.friend === "accepted") {
         return {
@@ -225,10 +320,14 @@ export default defineComponent({
   },
   methods: {
     async doFriendRequest() {
-      this.friendLoading = true;
-      await this.axios.post(`/user/friends/${this.user?.id}`);
-      this.friendLoading = false;
-      this.getUser(false);
+      try {
+        this.friendLoading = true;
+        await this.axios.post(`/user/friends/${this.user?.id}`);
+        this.friendLoading = false;
+        this.getUser(false);
+      } catch {
+        this.friendLoading = false;
+      }
     },
     async getUser(load = true) {
       if (load) {

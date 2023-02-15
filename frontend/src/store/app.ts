@@ -25,7 +25,12 @@ export interface AppState {
     hostnameWithProtocol: string;
     announcements: any[];
     flowinityId: string;
-    stats: Record<string, number>;
+    stats: {
+      uploadGraph: {
+        labels: string[];
+        data: number[];
+      } | null;
+    };
     maintenance: boolean;
     _redis: string;
   };
@@ -57,7 +62,9 @@ export const useAppStore = defineStore("app", {
         hostnameWithProtocol: "https://images.flowinity.com",
         announcements: [],
         flowinityId: "troplo-private-uploader",
-        stats: {},
+        stats: {
+          uploadGraph: null
+        },
         maintenance: false,
         _redis: new Date().toISOString()
       }

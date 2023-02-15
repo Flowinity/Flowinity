@@ -363,7 +363,11 @@ export default defineComponent({
       window.editor = new EditorJS(init);
     },
     async getNote(id) {
-      return await this.axios.get("/notes/" + id);
+      try {
+        return await this.axios.get("/notes/" + id);
+      } catch {
+        this.fail = true;
+      }
     },
     onMounted() {
       this.fail = false;

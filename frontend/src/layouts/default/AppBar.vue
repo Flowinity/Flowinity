@@ -98,9 +98,6 @@ export default defineComponent({
     handleClickDropdown(index: number) {
       this.dropdown[index].click.call(this);
     }
-  },
-  mounted() {
-    console.log(this.$user.user);
   }
 });
 </script>

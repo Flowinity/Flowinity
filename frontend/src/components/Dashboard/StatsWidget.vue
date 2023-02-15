@@ -14,7 +14,7 @@
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
-        title="TPU hours"
+        title="TPU Hours"
         :value="$app.site.stats.pulse + 'h'"
       ></StatsCard>
     </v-col>
@@ -40,10 +40,7 @@
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" sm="12" :xl="xl">
-      <StatsCard
-        title="Workspace Docs"
-        :value="$app.site.stats.docs"
-      ></StatsCard>
+      <StatsCard title="Documents" :value="$app.site.stats.docs"></StatsCard>
     </v-col>
   </v-row>
 </template>

@@ -84,14 +84,114 @@ import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 </script>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
   name: "TPUDefaultLayout",
   data() {
     return {
-      fab: false
+      fab: false,
+      pulse: {
+        timeOnPage: 0,
+        timeOnPageGlobal: 0,
+        interval: undefined as ReturnType<typeof setInterval> | undefined,
+        id: "",
+        lastCreated: undefined as number | undefined
+      }
     };
+  },
+  methods: {
+    getPulseSessionGlobal() {
+      const id = Math.random().toString(36).substring(7);
+      this.$socket.emit("startPulse", {
+        type: "global",
+        id,
+        action: "focus",
+        route: this.$route.path,
+        device: navigator.platform,
+        sysInfo: {
+          ua: navigator.userAgent
+        },
+        name: null,
+        other: {
+          type: "session"
+        }
+      });
+      this.$socket.on("pulseToken-" + id, (res: any) => {
+        setInterval(() => {
+          if (document.hasFocus()) {
+            this.pulse.timeOnPageGlobal += 5000;
+            this.$socket.emit("updatePulse", {
+              id: res.id,
+              timeOnPage: this.pulse.timeOnPageGlobal
+            });
+          }
+        }, 5000);
+      });
+    },
+    getPulseSession() {
+      this.pulse.timeOnPage = 0;
+      if (
+        this.pulse.lastCreated &&
+        this.pulse.lastCreated > Date.now() - 1000
+      ) {
+        return;
+      }
+      this.pulse.lastCreated = Date.now();
+      clearInterval(this.pulse.interval);
+      this.pulse.timeOnPage = 0;
+      const id = Math.random().toString(36).substring(7);
+      this.$socket.emit("startPulse", {
+        type: "global",
+        id,
+        action: "focus",
+        route: this.$route.path,
+        device: navigator.platform,
+        sysInfo: {
+          ua: navigator.userAgent
+        },
+        name: null,
+        other: {
+          type: "page"
+        }
+      });
+      this.$socket.on("pulseToken-" + id, (res: any) => {
+        this.pulse.id = res.id;
+        this.pulse.interval = setInterval(() => {
+          if (document.hasFocus()) {
+            this.pulse.timeOnPage += 5000;
+            this.$socket.emit("updatePulse", {
+              id: res.id,
+              timeOnPage: this.pulse.timeOnPage
+            });
+          }
+        }, 5000);
+      });
+    }
+  },
+  mounted() {
+    this.getPulseSession();
+    this.getPulseSessionGlobal();
+  },
+  watch: {
+    $route(to, from) {
+      this.getPulseSession();
+      this.$socket.emit("pulse", {
+        action: "page-change",
+        route: to.path,
+        timeSpent: 0,
+        device: navigator.platform,
+        sysInfo: {
+          ua: navigator.userAgent
+        },
+        name: null,
+        other: {
+          lastRoute: from.path
+        }
+      });
+    }
   }
-};
+});
 </script>
 
 <style scoped>

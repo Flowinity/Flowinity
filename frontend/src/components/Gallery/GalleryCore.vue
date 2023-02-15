@@ -66,6 +66,7 @@
       :length="items.pager?.totalPages"
       class="mt-3"
       v-model="pageComponent"
+      :total-visible="$vuetify.display.xlAndUp ? 15 : undefined"
     />
   </div>
 </template>

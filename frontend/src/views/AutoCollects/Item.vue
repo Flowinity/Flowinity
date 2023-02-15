@@ -104,6 +104,14 @@ export default defineComponent({
           action
         });
       }
+      const type =
+        action === "approve"
+          ? "auto-collect-accepted"
+          : "auto-collect-rejected";
+      this.$functions.doSinglePulse(type, {
+        collectionId: this.collection?.id,
+        count: 1
+      });
       this.$toast.success("Action performed");
       this.getGallery();
     },

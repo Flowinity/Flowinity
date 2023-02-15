@@ -18,7 +18,7 @@ export interface User {
   domainId: number;
   totpEnable: boolean;
   totpSecret?: string;
-  quota: bigint;
+  quota: number;
   uploadNameHidden: boolean;
   invisibleURLs: boolean;
   moderator: boolean;
@@ -51,6 +51,15 @@ export interface User {
     collectionItems: number;
     pulse: number;
     docs: number;
+    hours: object;
+    uploadGraph: {
+      labels: string[];
+      data: number[];
+    };
+    uploadGraphAllTime: {
+      labels: string[];
+      data: number[];
+    };
   };
   createdAt: Date;
   updatedAt: Date;

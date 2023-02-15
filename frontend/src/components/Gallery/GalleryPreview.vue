@@ -27,7 +27,12 @@
         </a>
       </v-img>
     </v-hover>
-    <video style="width: 100%" v-else-if="item.type === 'video'" controls>
+    <video
+      style="width: 100%"
+      v-else-if="item.type === 'video'"
+      controls
+      height="220"
+    >
       <source :src="domain + item.attachment" type="video/mp4" />
     </video>
     <audio controls v-else-if="item.type === 'audio'">

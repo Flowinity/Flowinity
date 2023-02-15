@@ -52,6 +52,39 @@
         </v-list-item-title>
       </v-list-item>
     </v-list>
+    <template v-slot:append>
+      <div
+        class="text-center justify-center"
+        v-if="$user.user.administrator || $user.user.moderator"
+      >
+        <small class="mb-2 text-grey">TPU Experimental Overrides (NEXT)</small>
+      </div>
+      <div class="pa-2" v-if="$user.user?.subscription?.metadata?.hours">
+        <v-progress-linear
+          color="gold"
+          :value="calculateJitsi"
+          height="25"
+          rounded
+          class="black--text"
+        >
+          {{ calculateJitsi }}% ({{
+            Math.round($user.user?.subscription?.metadata?.hours)
+          }}h/14h)
+        </v-progress-linear>
+      </div>
+      <div class="pa-2">
+        <v-progress-linear
+          :color="calculateColorQuota"
+          :value="calculateQuota"
+          height="25"
+          rounded
+        >
+          {{ Math.ceil(calculateQuota) }}% ({{
+            $functions.fileSize($user.user?.quota)
+          }}/{{ $functions.fileSize($user.user?.plan.quotaMax) }})
+        </v-progress-linear>
+      </div>
+    </template>
   </v-navigation-drawer>
 </template>
 
@@ -69,6 +102,19 @@ export default defineComponent({
     };
   },
   computed: {
+    calculateQuota() {
+      if (!this.$user.user) return 0;
+      return (this.$user.user?.quota / this.$user.user?.plan?.quotaMax) * 100;
+    },
+    calculateColorQuota() {
+      if (this.calculateQuota >= 80 && this.calculateQuota < 95) {
+        return "warning";
+      } else if (this.calculateQuota >= 95) {
+        return "error";
+      } else {
+        return "success";
+      }
+    },
     sidebar() {
       if (!this.$user.user) return [];
       return [
@@ -239,6 +285,13 @@ export default defineComponent({
           icon: "mdi-star"
         }*/
       ];
+    },
+    calculateJitsi() {
+      return (
+        Math.round(
+          (this.$user.user?.subscription?.metadata?.hours / 14) * 100
+        ) || 0
+      );
     }
   },
   methods: {
@@ -265,9 +318,6 @@ export default defineComponent({
       }
       return false;
     }
-  },
-  mounted() {
-    console.log(this.sidebar);
   }
 });
 </script>

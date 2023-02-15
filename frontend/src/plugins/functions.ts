@@ -11,5 +11,18 @@ export default {
   },
   copy(text: string): void {
     navigator.clipboard.writeText(text);
+  },
+  doSinglePulse(type: string, other: object, timeOnPage?: number) {
+    window.socket.emit("pulse", {
+      action: type,
+      timeSpent: timeOnPage || 0,
+      route: window.location.pathname,
+      device: navigator.platform,
+      sysInfo: {
+        ua: navigator.userAgent
+      },
+      name: null,
+      other
+    });
   }
 };
