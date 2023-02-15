@@ -55,7 +55,7 @@
     <template v-slot:append>
       <div
         class="text-center justify-center"
-        v-if="$user.user.administrator || $user.user.moderator"
+        v-if="$user.user?.administrator || $user.user?.moderator"
       >
         <small class="mb-2 text-grey">TPU Experimental Overrides (NEXT)</small>
       </div>
@@ -80,7 +80,7 @@
           rounded
         >
           {{ Math.ceil(calculateQuota) }}% ({{
-            $functions.fileSize($user.user?.quota)
+            $functions.fileSize($user.user?.quota || 0)
           }}/{{ $functions.fileSize($user.user?.plan.quotaMax) }})
         </v-progress-linear>
       </div>
