@@ -37,6 +37,7 @@
     "dayjs": "^1.11.7",
     "editorjs-header-with-anchor": "^2.6.0",
     "editorjs-text-alignment-blocktune": "^1.0.3",
+    "editorjs-text-color-plugin": "^2.0.2",
     "editorjs-undo": "^2.0.18",
     "pinia": "^2.0.23",
     "vue": "^3.2.13",

@@ -71,6 +71,8 @@ import WorkspaceHome from "@/views/Workspaces/Home";
 //@ts-ignore
 import Undo from "editorjs-undo";
 import { defineComponent } from "vue";
+//@ts-ignore
+import SimpleImage from "@editorjs/simple-image";
 
 export default defineComponent({
   name: "WorkspaceItem",
@@ -265,6 +267,10 @@ export default defineComponent({
               rows: 2,
               cols: 3
             }
+          },
+          simpleImage: {
+            class: SimpleImage,
+            inlineToolbar: true
           },
           checklist: {
             class: Checklist

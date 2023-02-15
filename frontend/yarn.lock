@@ -1960,6 +1960,11 @@ editorjs-text-alignment-blocktune@^1.0.3:
   resolved "https://registry.yarnpkg.com/editorjs-text-alignment-blocktune/-/editorjs-text-alignment-blocktune-1.0.3.tgz#7942fe2d3fbdbd7fcfd10fbb9b341c97ec3eb84f"
   integrity sha512-DAJ2LJP+WjETvU4lVOJCqZ1kZkKHp0GkujkqZgza9DRv7bO46m1M/s2d5Ba5hPFdmqk1vA/ci++MQXgWD7mWYw==
 
+editorjs-text-color-plugin@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/editorjs-text-color-plugin/-/editorjs-text-color-plugin-2.0.2.tgz#235630e460c843f01eb1131fcc789eb13971eb03"
+  integrity sha512-umiv8Yc4NjEg1O5dJFDjOQQ31mLKCdTSdVHVuPNmOKdbl+OIi5/DB9P1SRG+zr+sTV0QHWa8x0hZbyqY92DPhw==
+
 editorjs-undo@^2.0.18:
   version "2.0.18"
   resolved "https://registry.yarnpkg.com/editorjs-undo/-/editorjs-undo-2.0.18.tgz#03e010f5bec32d044e329a8d1af1a75f728cb0e4"
