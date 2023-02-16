@@ -62,12 +62,19 @@
         </GalleryItem>
       </v-col>
     </v-row>
+    <!--
     <v-pagination
       :length="items.pager?.totalPages"
       class="mt-3"
       v-model="pageComponent"
       :total-visible="$vuetify.display.xlAndUp ? 15 : undefined"
-    />
+    >
+    </v-pagination>-->
+    <Paginate
+      :total-pages="items.pager?.totalPages"
+      v-model="pageComponent"
+      class="mt-10"
+    ></Paginate>
   </div>
 </template>
 
@@ -77,10 +84,11 @@ import GalleryItem from "@/components/Gallery/GalleryItem.vue";
 import { Upload } from "@/models/upload";
 import AddToCollection from "@/components/Gallery/Dialogs/AddToCollection.vue";
 import { CollectionCache } from "@/types/collection";
+import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
   name: "GalleryCore",
-  components: { AddToCollection, GalleryItem },
+  components: { Paginate, AddToCollection, GalleryItem },
   props: {
     items: {
       type: Object,

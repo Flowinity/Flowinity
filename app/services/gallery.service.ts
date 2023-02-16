@@ -336,10 +336,26 @@ export class GalleryService {
             : [["createdAt", "DESC"]]*/
       })
     }
-    const uploadCount = await Upload.count({
-      where,
-      include
-    })
+    let uploadCount
+    if (type === "collection") {
+      uploadCount = await CollectionItem.count({
+        where: {
+          collectionId: id
+        },
+        include: [
+          {
+            model: Upload,
+            as: "attachment",
+            where,
+            required: true
+          }
+        ]
+      })
+    } else {
+      uploadCount = await Upload.count({
+        where
+      })
+    }
     const pager = paginate(uploadCount || uploads.length, page, itemsPerPage)
     return {
       gallery: uploads,

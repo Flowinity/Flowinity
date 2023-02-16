@@ -120,12 +120,14 @@
                 </v-card>
               </v-slide-group>
             </v-card-text>
-            <v-divider></v-divider>
-            <v-card-text class="text-overline">Statistics</v-card-text>
+          </template>
+          <v-divider></v-divider>
+          <v-card-text class="text-overline">Statistics</v-card-text>
+          <v-card-text>
             <v-row>
               <v-col sm="12" md="6">
                 <v-card
-                  class="text-center mt-4"
+                  class="text-center mt-n6"
                   v-if="hoursMost"
                   :height="$vuetify.display.mobile ? 400 : undefined"
                 >
@@ -151,7 +153,7 @@
               </v-col>
               <v-col md="6" sm="12">
                 <v-card
-                  class="text-center mt-4"
+                  class="text-center mt-n6"
                   v-if="user.stats.uploadGraph"
                   :height="$vuetify.display.mobile ? 400 : undefined"
                   max-height="400"
@@ -172,7 +174,7 @@
                 </v-card>
               </v-col>
             </v-row>
-          </template>
+          </v-card-text>
         </v-col>
         <v-col md="3" cols="12" sm="12">
           <StatsCard

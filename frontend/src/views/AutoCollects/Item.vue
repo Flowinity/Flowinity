@@ -2,11 +2,19 @@
   <v-container v-if="collection">
     <CollectionBanner :collection="collection"></CollectionBanner>
     <GalleryNavigation
-      @refreshGallery="getGallery"
       @update:show="show = $event"
       @update:search="
         show.search = $event;
-        $router.push(`/autoCollect/${$route.params.id}/1`);
+        page = 1;
+      "
+      @refreshGallery="getGallery()"
+      @update:filter="
+        show.selected = $event;
+        page = 1;
+      "
+      @update:metadata="
+        show.metadata = $event;
+        page = 1;
       "
     ></GalleryNavigation>
     <GalleryCore

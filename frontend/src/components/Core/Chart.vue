@@ -22,6 +22,9 @@ export default defineComponent({
         grid: {
           borderColor: "#474747"
         },
+        dataLabels: {
+          enabled: false
+        },
         bar: {
           plotOptions: {
             total: {
@@ -35,6 +38,12 @@ export default defineComponent({
           palette: "palette1"
         },
         chart: {
+          markers: {
+            colors: ["white"],
+            size: 4,
+            color: "white",
+            strokeColors: "#fff"
+          },
           animations: {
             enabled: false,
             easing: "easeinout",

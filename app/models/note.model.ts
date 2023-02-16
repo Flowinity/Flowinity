@@ -4,7 +4,7 @@ import {
   Model,
   DataType,
   HasMany,
-  HasOne
+  BelongsTo
 } from "sequelize-typescript"
 import { NoteVersion } from "@app/models/noteVersion.model"
 import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
@@ -36,6 +36,6 @@ export class Note extends Model {
   @HasMany(() => NoteVersion, "noteId")
   versions: NoteVersion[]
 
-  @HasOne(() => WorkspaceFolder, "id")
+  @BelongsTo(() => WorkspaceFolder, "workspaceFolderId")
   folder: WorkspaceFolder
 }
