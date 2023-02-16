@@ -28,16 +28,8 @@
         autofocus
         style="width: 50px; position: relative; top: -0.69em"
         class="v-btn ml-3 mr-3"
-        @keyup.enter="
-          customPage > totalPages ? (customPage = totalPages.toString()) : null;
-          $emit('update:modelValue', parseInt(customPage));
-          customLeft = false;
-        "
-        @blur="
-          customPage > totalPages ? (customPage = totalPages.toString()) : null;
-          $emit('update:modelValue', parseInt(customPage));
-          customLeft = false;
-        "
+        @keyup.enter="doCustomPage"
+        @blur="doCustomPage"
       ></v-text-field>
       <v-chip
         size="large"
@@ -69,16 +61,8 @@
         autofocus
         style="width: 50px; position: relative; top: -0.69em"
         class="v-btn ml-3 mr-3"
-        @keyup.enter="
-          customPage > totalPages ? (customPage = totalPages.toString()) : null;
-          $emit('update:modelValue', parseInt(customPage));
-          customRight = false;
-        "
-        @blur="
-          customPage > totalPages ? (customPage = totalPages.toString()) : null;
-          $emit('update:modelValue', parseInt(customPage));
-          customRight = false;
-        "
+        @keyup.enter="doCustomPage"
+        @blur="doCustomPage"
       ></v-text-field>
       <v-chip
         size="large"
@@ -135,6 +119,16 @@ export default defineComponent({
       customRight: false,
       customPage: undefined as string | undefined
     };
+  },
+  methods: {
+    doCustomPage() {
+      if (parseInt(this.customPage || "") > this.totalPages) {
+        this.customPage = this.totalPages.toString();
+      }
+      this.$emit("update:modelValue", parseInt(this.customPage || ""));
+      this.customLeft = false;
+      this.customRight = false;
+    }
   },
   computed: {
     maxVisibleResponsive() {
