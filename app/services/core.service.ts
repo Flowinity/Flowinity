@@ -28,7 +28,9 @@ export class CoreService {
       flowinityId: config.flowinityId,
       stats: await this.getStats(),
       maintenance: config.maintenance,
-      registrations: config.registrations
+      registrations: config.registrations,
+      // legacy clients
+      whitelabel: true
     }
   }
 
