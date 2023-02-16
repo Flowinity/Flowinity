@@ -265,6 +265,7 @@ export default defineComponent({
         {
           id: 33,
           click() {
+            //@ts-ignore
             this.migrateWizard = true;
           },
           externalPath: "",

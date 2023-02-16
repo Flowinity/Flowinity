@@ -220,7 +220,7 @@ export default defineComponent({
   data() {
     return {
       step: 1,
-      geoSave: null
+      geoSave: undefined as File[] | undefined
     };
   }
 });
