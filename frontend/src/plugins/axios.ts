@@ -25,9 +25,14 @@ ax.interceptors.response.use(
     app.loading = false;
     const toast = useToast();
     if (e?.response?.data?.errors) {
-      if (e.response.data.errors[0].name === "invalidToken") {
+      if (e.response.data.errors[0].name === "INVALID_TOKEN") {
         localStorage.removeItem("token");
         localStorage.removeItem("userStore");
+        return Promise.reject(e);
+      } else if (e.response.data.errors[0].name === "SCOPE_REQUIRED") {
+        console.warn(
+          `[TPU/HTTP] API key scope ${e.response.data.errors[0].requiredScope} is required to access /api/v2${e.response.config.url}.`
+        );
         return Promise.reject(e);
       }
       for (const error of e.response.data.errors) {

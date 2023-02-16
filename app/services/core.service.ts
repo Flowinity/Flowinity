@@ -181,6 +181,7 @@ export class CoreService {
 
   getExperiments(dev: boolean = false): object {
     const experiments = {
+      COMMUNICATIONS: false,
       WEBMAIL: false,
       GEOGUESS: false,
       OBJECTIVE: false,
@@ -404,6 +405,7 @@ export class CoreService {
       experiments.SURVEYS = true
       experiments.COMPASS_INTEGRATION = true
       experiments.OBJECTIVE = true
+      experiments.COMMUNICATIONS = true
       return experiments
     } else {
       return experiments

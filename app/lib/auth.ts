@@ -136,7 +136,6 @@ const auth = (scope: string, passthrough: boolean = false) => {
                   name: "SCOPE_REQUIRED",
                   message:
                     "You do not have permission to access this resource due to your current API key scopes.",
-                  currentScopes: session.scopes,
                   requiredScope: scope,
                   status: 401
                 }
@@ -169,7 +168,7 @@ const auth = (scope: string, passthrough: boolean = false) => {
           res.json({
             errors: [
               {
-                name: "invalidToken",
+                name: "INVALID_TOKEN",
                 message:
                   "The authorization token you provided is invalid or has expired.",
                 status: 401
@@ -186,7 +185,7 @@ const auth = (scope: string, passthrough: boolean = false) => {
         res.json({
           errors: [
             {
-              name: "invalidToken",
+              name: "INVALID_TOKEN",
               message:
                 "The authorization token you provided is invalid or has expired.",
               status: 401
@@ -204,7 +203,7 @@ const auth = (scope: string, passthrough: boolean = false) => {
       res.json({
         errors: [
           {
-            name: "invalidJWT",
+            name: "INVALID_TOKEN",
             message: "Your authorization token is invalid or has expired.",
             status: 401
           }

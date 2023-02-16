@@ -187,6 +187,17 @@ export default defineComponent({
           experimentsRequired: ["INTERACTIVE_NOTES"]
         },
         {
+          id: 35,
+          click() {},
+          externalPath: "",
+          name: "Communications",
+          path: "/communications",
+          icon: "mdi-message-processing",
+          new: true,
+          scope: "communications.view",
+          experimentsRequired: ["COMMUNICATIONS"]
+        },
+        {
           id: 27,
           click() {},
           externalPath: "",

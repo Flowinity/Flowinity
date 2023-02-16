@@ -27,6 +27,7 @@ import validation from "@/plugins/validation";
 import "./styles/tpu-editorjs.css";
 import VueApexCharts from "vue3-apexcharts";
 import SocketIO from "socket.io-client";
+import { useChatStore } from "@/store/chat";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -43,6 +44,7 @@ declare module "@vue/runtime-core" {
     $toast: any;
     $validation: any;
     $workspaces: ReturnType<typeof useWorkspacesStore>;
+    $chat: ReturnType<typeof useChatStore>;
     $socket: any;
   }
 }
@@ -56,6 +58,7 @@ const app = createApp({
       const experiments = useExperimentsStore();
       const collections = useCollectionsStore();
       const workspace = useWorkspacesStore();
+      const chat = useChatStore();
       app.config.globalProperties.$user = user;
       app.config.globalProperties.$app = core;
       app.config.globalProperties.$experiments = experiments;
@@ -88,6 +91,9 @@ const app = createApp({
       });
       workspace.init().then(() => {
         console.info("[TPU/WorkspacesStore] Workspaces initialized");
+      });
+      chat.init().then(() => {
+        console.info("[TPU/ChatStore] Chat initialized");
       });
     },
     watch: {
