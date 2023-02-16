@@ -1,5 +1,9 @@
 <template>
   <InviteAFriend v-model="inviteAFriend"> </InviteAFriend>
+  <MigrateWizard
+    v-model="migrateWizard"
+    v-if="$experiments.experiments['PROJECT_MERGE']"
+  ></MigrateWizard>
   <v-navigation-drawer
     v-model="$app.mainDrawer"
     app
@@ -92,13 +96,15 @@
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
+import MigrateWizard from "@/components/Dashboard/Dialogs/Migrate.vue";
 
 export default defineComponent({
   name: "Sidebar",
-  components: { InviteAFriend, UserAvatar },
+  components: { MigrateWizard, InviteAFriend, UserAvatar },
   data() {
     return {
-      inviteAFriend: false
+      inviteAFriend: false,
+      migrateWizard: false
     };
   },
   computed: {
@@ -258,7 +264,9 @@ export default defineComponent({
         },
         {
           id: 33,
-          click() {},
+          click() {
+            this.migrateWizard = true;
+          },
           externalPath: "",
           path: "",
           name: "Migration Wizard",

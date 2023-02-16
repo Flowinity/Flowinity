@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col>
+    <v-col v-if="supports.search">
       <v-text-field
         class="rounded-xl"
         v-model="search"
@@ -17,7 +17,7 @@
         "
       ></v-text-field>
     </v-col>
-    <v-col md="2" cols="12">
+    <v-col md="2" cols="12" v-if="supports.filter">
       <v-select
         :items="types"
         item-title="name"
@@ -30,7 +30,7 @@
         "
       ></v-select>
     </v-col>
-    <v-col md="2" cols="12">
+    <v-col md="2" cols="12" v-if="supports.metadata">
       <v-checkbox
         label="Search in files (metadata)"
         v-model="metadata"
@@ -53,12 +53,20 @@ export default {
     "update:metadata",
     "refreshGallery"
   ],
-  data() {
-    return {
-      metadata: true,
-      search: "",
-      filter: "all",
-      types: [
+  props: {
+    supports: {
+      type: Object,
+      required: false,
+      default: {
+        filter: true,
+        metadata: true,
+        search: true
+      }
+    },
+    types: {
+      type: Array,
+      required: false,
+      default: [
         {
           name: "All of them",
           internalName: "all"
@@ -88,6 +96,13 @@ export default {
           internalName: "binary"
         }
       ]
+    }
+  },
+  data() {
+    return {
+      metadata: true,
+      search: "",
+      filter: "all"
     };
   }
 };

@@ -310,6 +310,17 @@ export class AdminController {
       }
     )
 
+    this.router.get(
+      "/csv/uploads",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const csv = await this.adminService.exportCSVUploads()
+        res.setHeader("Content-Type", "text/csv")
+        res.setHeader("Content-Disposition", "attachment; filename=uploads.csv")
+        res.send(csv)
+      }
+    )
+
     /*    this.router.get(
       "/online",
       auth("*"),

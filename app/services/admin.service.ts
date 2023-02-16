@@ -1,4 +1,4 @@
-import { Service, Container } from "typedi"
+import { Container, Service } from "typedi"
 import { CacheService } from "@app/services/cache.service"
 import { User } from "@app/models/user.model"
 import { Invite } from "@app/models/invite.model"
@@ -8,6 +8,7 @@ import { Announcement } from "@app/models/announcement.model"
 import { Experiment } from "@app/models/experiment.model"
 import { CoreService } from "@app/services/core.service"
 import { Feedback } from "@app/models/feedback.model"
+import { Upload } from "@app/models/upload.model"
 
 export enum CacheType {
   "everything",
@@ -214,5 +215,28 @@ export class AdminService {
     }
     const coreService = Container.get(CoreService)
     return await coreService.getUserExperiments(userId, dev)
+  }
+
+  async exportCSVUploads() {
+    let uploads = await Upload.findAll({
+      attributes: ["createdAt", "id"],
+      order: [["createdAt", "DESC"]],
+      raw: true
+    })
+
+    let data = uploads.reduce((acc, upload) => {
+      const date = dayjs(upload.createdAt).format("YYYY-MM-DD")
+      if (date === "Invalid Date") return acc
+      if (!acc[date]) {
+        acc[date] = 1
+      } else {
+        acc[date]++
+      }
+      return acc
+    })
+
+    return Object.entries(data)
+      .map(([date, count]) => `${date},${count}`)
+      .join("\n")
   }
 }
