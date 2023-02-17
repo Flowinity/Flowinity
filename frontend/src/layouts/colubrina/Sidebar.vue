@@ -36,11 +36,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { Chat } from "@/models/chat";
 
 export default defineComponent({
   name: "ColubrinaSidebar",
   methods: {
-    chatName(chat) {
+    chatName(chat: Chat) {
       if (chat.type === "direct") {
         return chat.recipient?.username || "Deleted User";
       } else {

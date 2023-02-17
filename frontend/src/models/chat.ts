@@ -2,6 +2,10 @@ import { User } from "@/models/user";
 import { ChatAssociation } from "@/models/chatAssociation";
 import { Message } from "@/models/message";
 
+export interface Recipient extends User {
+  legacyUser: boolean;
+}
+
 export interface Chat {
   id: number;
   type: "direct" | "group" | "channel";
@@ -16,4 +20,5 @@ export interface Chat {
   association: ChatAssociation;
   users: ChatAssociation[];
   messages: Message[];
+  recipient: Recipient;
 }

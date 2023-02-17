@@ -39,7 +39,7 @@ declare module "@vue/runtime-core" {
       fileSize: (size: number) => string;
       copy: (text: string) => void;
       doSinglePulse: (id: string, other: any, timeOnPage?: number) => void;
-      avatar: (chat: any) => string | null;
+      avatar: (chat: any) => string | undefined;
     };
     $collections: ReturnType<typeof useCollectionsStore>;
     $toast: any;

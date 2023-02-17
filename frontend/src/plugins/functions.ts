@@ -43,7 +43,7 @@ export default {
     } else if (chat.type === "group" && chat.icon) {
       return "https://i.troplo.com/i/" + chat.icon;
     } else {
-      return null;
+      return undefined;
     }
   }
 };
