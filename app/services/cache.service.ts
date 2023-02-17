@@ -9,8 +9,25 @@ import { Container, Service } from "typedi"
 import { CoreService } from "@app/services/core.service"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import { PulseService } from "@app/services/pulse.service"
+import { ChatService } from "@app/services/chat.service"
 @Service()
 export class CacheService {
+  async generateChatsCache() {
+    try {
+      console.info("[REDIS] Generating chats cache...")
+      let start = new Date().getTime()
+      const users = await User.findAll()
+      const chatService = Container.get(ChatService)
+      for (const user of users) {
+        const chats = await chatService.getUserChats(user.id)
+        redis.json.set(`chats:${user.id}`, "$", chats)
+      }
+      let end = new Date().getTime()
+      console.info(`[REDIS] Chats cache generated in ${end - start}ms`)
+    } catch (e) {
+      console.error(e)
+    }
+  }
   async generateUserStatsCache() {
     try {
       console.info("[REDIS] Generating user stats cache...")
@@ -310,6 +327,7 @@ export class CacheService {
       this.generateShareLinkCache().then(() => {})
       this.generateInsightsCache().then(() => {})
       this.generateUserStatsCache().then(() => {})
+      this.generateChatsCache().then(() => {})
       return true
     } catch {
       return false

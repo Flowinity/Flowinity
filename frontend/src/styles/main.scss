@@ -1,6 +1,6 @@
 .text-gradient {
   font-weight: 500;
-  background: -webkit-radial-gradient(#096fea, #0166ea);
+  background: -webkit-radial-gradient(#096fea, #0166ea, #0190ea);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -106,4 +106,8 @@ input::-webkit-inner-spin-button {
 a {
   text-decoration: none;
   color: #0190ea;
+}
+
+.pointer {
+  cursor: pointer;
 }

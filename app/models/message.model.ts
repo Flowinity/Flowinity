@@ -1,4 +1,11 @@
-import { Table, Column, Model, BelongsTo, DataType } from "sequelize-typescript"
+import {
+  Table,
+  Column,
+  Model,
+  BelongsTo,
+  DataType,
+  Length
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 
@@ -10,6 +17,11 @@ export class Message extends Model {
   @Column
   userId: number
 
+  @Length({
+    min: 1,
+    max: 2000,
+    msg: "Your message must be below 2000 characters and contain content."
+  })
   @Column
   content: string
 
@@ -52,11 +64,19 @@ export class Message extends Model {
   legacyUserId: number
 
   @BelongsTo(() => User, "userId")
-  user: User
+  tpuUser: User
 
   @BelongsTo(() => Message, "replyId")
   reply: Message
 
   @BelongsTo(() => LegacyUser, "legacyUserId")
   legacyUser: LegacyUser
+
+  @Column({
+    type: DataType.VIRTUAL,
+    get(this: Message) {
+      return this.tpuUser || this.legacyUser
+    }
+  })
+  user: User | LegacyUser
 }

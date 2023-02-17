@@ -246,6 +246,7 @@ export class BillingService {
           console.log("[BILLING] Jolt707's subscription is valid")
         }
       })
+      .catch(() => {})
     return true
   }
 

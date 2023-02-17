@@ -24,5 +24,26 @@ export default {
       name: null,
       other
     });
+  },
+  avatar(chat: any) {
+    if (chat.type === "direct" && chat.recipient?.avatar?.length > 12) {
+      return (
+        "https://colubrina.troplo.com/usercontent/" + chat.recipient.avatar
+      );
+    } else if (chat.type === "direct" && chat.recipient?.avatar) {
+      return "https://i.troplo.com/i/" + chat.recipient.avatar;
+    } else if (
+      chat.type === "direct" &&
+      !chat.recipient?.avatar &&
+      chat.recipient?.legacyUser
+    ) {
+      return "https://i.troplo.com/i/055d077e27cf.png";
+    } else if (chat.type === "group" && chat.icon?.length > 12) {
+      return "https://colubrina.troplo.com/usercontent/" + chat.icon;
+    } else if (chat.type === "group" && chat.icon) {
+      return "https://i.troplo.com/i/" + chat.icon;
+    } else {
+      return null;
+    }
   }
 };

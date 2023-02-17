@@ -8,6 +8,24 @@ const routes = [
     component: () => import("@/layouts/default/Default.vue"),
     children: [
       {
+        path: "/communications",
+        name: "Communications",
+        component: () => import("@/layouts/colubrina/Colubrina.vue"),
+        redirect: "/communications/home",
+        children: [
+          {
+            path: "home",
+            name: "Communications Home",
+            component: () => import("@/views/Communications/Home.vue")
+          },
+          {
+            path: ":chatId",
+            name: "Communication",
+            component: () => import("@/views/Communications/Chat.vue")
+          }
+        ]
+      },
+      {
         path: "/",
         name: "Dashboard",
         component: () => import("@/views/Home.vue")

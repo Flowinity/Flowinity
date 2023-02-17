@@ -27,8 +27,16 @@ export class ChatAssociation extends Model {
   legacyUserId: number
 
   @BelongsTo(() => User, "userId")
-  user: User
+  tpuUser: User
 
   @BelongsTo(() => LegacyUser, "legacyUserId")
   legacyUser: LegacyUser
+
+  @Column({
+    type: DataType.VIRTUAL,
+    get(this: ChatAssociation) {
+      return this.tpuUser || this.legacyUser
+    }
+  })
+  user: User | LegacyUser
 }

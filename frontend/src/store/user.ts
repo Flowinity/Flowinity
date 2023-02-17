@@ -2,9 +2,14 @@
 import { defineStore } from "pinia";
 import { User } from "@/models/user";
 import axios from "@/plugins/axios";
+import { useChatStore } from "@/store/chat";
+import { useWorkspacesStore } from "@/store/workspaces";
+import { useCollectionsStore } from "@/store/collections";
+import { useExperimentsStore } from "@/store/experiments";
 
 export interface UserState {
   user: User | null;
+  _postInitRan: boolean;
   changes: {
     password?: string;
     email?: string;
@@ -18,10 +23,33 @@ export interface UserState {
 export const useUserStore = defineStore("user", {
   state: () =>
     ({
-      user: null
+      user: null,
+      _postInitRan: false
     } as UserState),
   getters: {},
   actions: {
+    async runPostTasks() {
+      if (this.user && !this._postInitRan) {
+        console.info("[TPU/UserStore] Running post-init auth tasks");
+        const chat = useChatStore();
+        const workspace = useWorkspacesStore();
+        const collections = useCollectionsStore();
+        const experiments = useExperimentsStore();
+        experiments.init().then(() => {
+          console.info("[TPU/ExperimentsStore] Experiments initialized");
+        });
+        collections.init().then(() => {
+          console.info("[TPU/CollectionsStore] Collections initialized");
+        });
+        workspace.init().then(() => {
+          console.info("[TPU/WorkspacesStore] Workspaces initialized");
+        });
+        chat.init().then(() => {
+          console.info("[TPU/ChatStore] Chat initialized");
+        });
+        this._postInitRan = true;
+      }
+    },
     async init() {
       const user = localStorage.getItem("userStore");
       if (user) {
@@ -36,6 +64,7 @@ export const useUserStore = defineStore("user", {
               itemsPerPage: this.user.itemsPerPage,
               currentPassword: ""
             };
+            this.runPostTasks();
           }
         } catch {
           //
@@ -44,6 +73,7 @@ export const useUserStore = defineStore("user", {
       const { data } = await axios.get("/user");
       this.user = data;
       localStorage.setItem("userStore", JSON.stringify(data));
+      this.runPostTasks();
     },
     async save() {
       if (!this.user) return;

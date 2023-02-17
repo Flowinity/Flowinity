@@ -39,6 +39,7 @@ declare module "@vue/runtime-core" {
       fileSize: (size: number) => string;
       copy: (text: string) => void;
       doSinglePulse: (id: string, other: any, timeOnPage?: number) => void;
+      avatar: (chat: any) => string | null;
     };
     $collections: ReturnType<typeof useCollectionsStore>;
     $toast: any;
@@ -66,6 +67,7 @@ const app = createApp({
       app.config.globalProperties.$collections = collections;
       app.config.globalProperties.$validation = validation;
       app.config.globalProperties.$workspaces = workspace;
+      app.config.globalProperties.$chat = chat;
       app.config.globalProperties.$socket = SocketIO(
         import.meta.env.DEV ? "http://localhost:34582" : "",
         {
@@ -86,17 +88,12 @@ const app = createApp({
       experiments.init().then(() => {
         console.info("[TPU/ExperimentsStore] Experiments initialized");
       });
-      collections.init().then(() => {
-        console.info("[TPU/CollectionsStore] Collections initialized");
-      });
-      workspace.init().then(() => {
-        console.info("[TPU/WorkspacesStore] Workspaces initialized");
-      });
-      chat.init().then(() => {
-        console.info("[TPU/ChatStore] Chat initialized");
-      });
     },
     watch: {
+      "$route.params.chatId"(val) {
+        if (!val) return;
+        this.$chat.setChat(parseInt(val));
+      },
       "$app.workspaceDrawer"(val) {
         if (this.$app.forcedWorkspaceDrawer) return;
         localStorage.setItem("workspaceDrawer", val.toString());

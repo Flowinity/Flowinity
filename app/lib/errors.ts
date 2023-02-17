@@ -156,6 +156,11 @@ let Errors = {
   COMING_SOON: {
     message: "This feature is coming soon!",
     status: 400
+  },
+  CHAT_NOT_FOUND: {
+    message:
+      "The requested chat could not be found or you are not a part of it.",
+    status: 400
   }
 }
 

@@ -65,23 +65,40 @@
           <v-text-field
             label="Username"
             outlined
+            @keyup.enter="checkColubrina"
             dense
             placeholder="Troplo"
             autofocus
+            v-model="colubrina.username"
           ></v-text-field>
-          <v-text-field label="Password" outlined dense></v-text-field>
+          <v-text-field
+            label="Password"
+            @keyup.enter="checkColubrina"
+            outlined
+            dense
+            type="password"
+            v-model="colubrina.password"
+          ></v-text-field>
           <v-text-field
             label="2FA (if enabled)"
+            @keyup.enter="checkColubrina"
             outlined
             dense
             type="number"
+            v-model="colubrina.totp"
           ></v-text-field>
         </v-container>
         <v-card-actions class="text-center justify-center">
           <v-btn color="red" text class="no-capital" @click="step++">
             <v-icon class="mr-1"> mdi-close </v-icon> Skip
           </v-btn>
-          <v-btn color="primary" text class="no-capital" @click="step++">
+          <v-btn
+            color="primary"
+            text
+            class="no-capital"
+            @click="checkColubrina"
+            :loading="colubrina.loading"
+          >
             <v-icon class="mr-1"> mdi-check </v-icon> Let's go
           </v-btn>
         </v-card-actions>
@@ -220,8 +237,30 @@ export default defineComponent({
   data() {
     return {
       step: 1,
-      geoSave: undefined as File[] | undefined
+      geoSave: undefined as File[] | undefined,
+      colubrina: {
+        username: "",
+        password: "",
+        totp: "",
+        loading: false
+      }
     };
+  },
+  methods: {
+    async checkColubrina() {
+      this.colubrina.loading = true;
+      try {
+        await this.axios.post("/migrate/colubrina", {
+          username: this.colubrina.username,
+          password: this.colubrina.password,
+          totp: this.colubrina.totp
+        });
+        this.step++;
+        this.colubrina.loading = false;
+      } catch {
+        this.colubrina.loading = false;
+      }
+    }
   }
 });
 </script>
