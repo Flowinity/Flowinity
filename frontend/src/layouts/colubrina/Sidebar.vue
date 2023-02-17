@@ -34,8 +34,10 @@
   </v-navigation-drawer>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
   name: "ColubrinaSidebar",
   methods: {
     chatName(chat) {
@@ -46,7 +48,7 @@ export default {
       }
     }
   }
-};
+});
 </script>
 
 <style scoped></style>
