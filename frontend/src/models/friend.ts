@@ -6,4 +6,6 @@ export interface Friend {
   friendId: number;
   user: User;
   otherUser: User;
+  createdAt: Date;
+  updatedAt: Date;
 }

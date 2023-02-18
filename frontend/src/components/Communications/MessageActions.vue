@@ -6,7 +6,7 @@
     :class="{ 'no-hide': avoid }"
     v-if="!$vuetify.display.mobile"
   >
-    <v-btn icon @click="deleteMessage(message)" rounded="0">
+    <v-btn icon @click="deleteMessage()" rounded="0">
       <v-tooltip location="top" activator="parent">
         Certified R* Moment
       </v-tooltip>
@@ -16,7 +16,7 @@
       <v-tooltip location="top" activator="parent"> Edit </v-tooltip>
       <v-icon> mdi-pencil </v-icon>
     </v-btn>
-    <v-btn icon @click="deleteMessage(message)" rounded="0">
+    <v-btn icon @click="deleteMessage()" rounded="0">
       <v-tooltip location="top" activator="parent"> Reply </v-tooltip>
       <v-icon> mdi-reply </v-icon>
     </v-btn>
@@ -28,13 +28,13 @@
         </v-btn>
       </template>
       <v-list class="mb-2 rounded-xl">
-        <v-list-item @click="deleteMessage(message)" color="red">
+        <v-list-item @click="deleteMessage()" color="red">
           <v-list-item-title
             ><v-icon class="mr-1">mdi-pin</v-icon>Pin</v-list-item-title
           >
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-item @click="deleteMessage(message)" color="red">
+        <v-list-item @click="deleteMessage()" color="red">
           <v-list-item-title
             ><v-icon class="mr-1">mdi-delete</v-icon>Delete</v-list-item-title
           >
@@ -54,6 +54,11 @@ export default defineComponent({
     return {
       avoid: false
     };
+  },
+  methods: {
+    deleteMessage() {
+      this.$toast.warning("Placeholder function.");
+    }
   }
 });
 </script>

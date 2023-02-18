@@ -49,11 +49,10 @@ import Message from "@/components/Communications/Message.vue";
 import { MessageSocket } from "@/types/messages";
 import { Message as MessageType } from "@/models/message";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
-import Lazy from "@/components/Core/Lazy.vue";
 import User from "@/views/User/User.vue";
 export default defineComponent({
   name: "Chat",
-  components: { User, Lazy, MessageSkeleton, Message, CommunicationsInput },
+  components: { User, MessageSkeleton, Message, CommunicationsInput },
   data() {
     return {
       message: "",

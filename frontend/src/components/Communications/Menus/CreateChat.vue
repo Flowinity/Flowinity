@@ -38,7 +38,6 @@
           <template v-slot:append>
             <v-list-item-action start>
               <v-checkbox-btn
-                v-model="selected"
                 :model-value="selected.includes(friend.otherUser.id)"
                 color="primary"
               ></v-checkbox-btn>
