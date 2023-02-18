@@ -1,9 +1,9 @@
 <template>
   <div v-if="user">
     <UserBanner :user="user"></UserBanner>
-    <v-container class="mt-2">
+    <v-container class="mt-2" :style="username ? 'max-width: 100%;' : ''">
       <v-row>
-        <v-col lg="9" cols="12" md="12">
+        <v-col :lg="!username ? 9 : 12" cols="12" md="12">
           <v-row no-gutters>
             <!-- only take up the size of the avatar -->
             <v-col sm="auto">
@@ -36,29 +36,46 @@
               </v-hover>
             </v-col>
             <v-col sm="auto">
-              <v-card-text class="ml-n2 align-center">
-                <h1 style="font-weight: 500">{{ user.username }}</h1>
+              <v-card-text class="ml-n2 center" style="position: relative">
+                <h1 style="font-weight: 500" :class="username ? 'mb-2' : ''">
+                  {{ user.username }}
+                </h1>
                 <UserBadges :user="user"></UserBadges>
               </v-card-text>
             </v-col>
             <v-spacer></v-spacer>
-            <v-col sm="2">
-              <v-card-text class="ml-n2 align-center">
-                <v-btn
-                  text
-                  :color="friends.color"
-                  shaped
-                  v-if="friends"
-                  @click="doFriendRequest"
-                  :loading="friendLoading"
-                >
-                  <v-icon class="mr-2">
-                    {{ friends.icon }}
-                  </v-icon>
-                  {{ friends.text }}</v-btn
-                >
-              </v-card-text>
-            </v-col>
+            <v-card-text class="ml-n2 align-center">
+              <v-btn
+                text
+                color="primary"
+                shaped
+                v-if="
+                  user?.friend === 'accepted' &&
+                  $experiments.experiments['COMMUNICATIONS']
+                "
+                @click="chat"
+                class="ml-2"
+                :loading="friendLoading"
+                style="float: right"
+              >
+                <v-icon class="mr-2"> mdi-message-processing </v-icon>
+                Message</v-btn
+              >
+              <v-btn
+                text
+                :color="friends.color"
+                shaped
+                v-if="friends"
+                @click="doFriendRequest"
+                :loading="friendLoading"
+                style="float: right"
+              >
+                <v-icon class="mr-2">
+                  {{ friends.icon }}
+                </v-icon>
+                {{ friends.text }}</v-btn
+              >
+            </v-card-text>
           </v-row>
           <v-divider class="mt-3"></v-divider>
           <v-card-text class="text-overline"
@@ -121,62 +138,64 @@
               </v-slide-group>
             </v-card-text>
           </template>
-          <v-divider></v-divider>
-          <v-card-text class="text-overline">Statistics</v-card-text>
-          <v-card-text>
-            <v-row>
-              <v-col sm="12" md="6">
-                <v-card
-                  class="text-center mt-n6"
-                  v-if="hoursMost"
-                  :height="$vuetify.display.mobile ? 400 : undefined"
-                >
-                  <p class="mt-3">
-                    <strong style="font-size: 24px" class="text-gradient"
-                      >Upload Distribution</strong
-                    >
-                  </p>
-                  <v-card-subtitle>
-                    {{ user.username }} uploads the most at
-                    {{ hoursMost.hour }} with {{ hoursMost.count }} uploads!
-                  </v-card-subtitle>
-                  <Chart
-                    id="userv2-hours"
-                    :data="hoursGraph"
-                    v-if="hoursGraph"
-                    :max-height="$vuetify.display.mobile ? 320 : undefined"
-                    :height="320"
-                    type="bar"
-                    name="Uploads"
-                  ></Chart>
-                </v-card>
-              </v-col>
-              <v-col md="6" sm="12">
-                <v-card
-                  class="text-center mt-n6"
-                  v-if="user.stats.uploadGraph"
-                  :height="$vuetify.display.mobile ? 400 : undefined"
-                  max-height="400"
-                >
-                  <p class="mt-3">
-                    <strong style="font-size: 24px" class="text-gradient"
-                      >Upload Stats</strong
-                    >
-                  </p>
-                  <v-card-subtitle> Over the past 7 days </v-card-subtitle>
-                  <Chart
-                    id="userv2-uploads"
-                    :data="user.stats.uploadGraph"
-                    type="line"
-                    name="Uploads"
-                    :height="320"
-                  ></Chart>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card-text>
+          <template v-if="!username">
+            <v-divider></v-divider>
+            <v-card-text class="text-overline">Statistics</v-card-text>
+            <v-card-text>
+              <v-row>
+                <v-col sm="12" :md="!username ? 6 : 12" cols="12">
+                  <v-card
+                    class="text-center mt-n6"
+                    v-if="hoursMost"
+                    :height="$vuetify.display.mobile ? 400 : undefined"
+                  >
+                    <p class="mt-3">
+                      <strong style="font-size: 24px" class="text-gradient"
+                        >Upload Distribution</strong
+                      >
+                    </p>
+                    <v-card-subtitle>
+                      {{ user.username }} uploads the most at
+                      {{ hoursMost.hour }} with {{ hoursMost.count }} uploads!
+                    </v-card-subtitle>
+                    <Chart
+                      id="userv2-hours"
+                      :data="hoursGraph"
+                      v-if="hoursGraph"
+                      :max-height="$vuetify.display.mobile ? 320 : undefined"
+                      :height="320"
+                      type="bar"
+                      name="Uploads"
+                    ></Chart>
+                  </v-card>
+                </v-col>
+                <v-col md="6" sm="12">
+                  <v-card
+                    class="text-center mt-n6"
+                    v-if="user.stats.uploadGraph"
+                    :height="$vuetify.display.mobile ? 400 : undefined"
+                    max-height="400"
+                  >
+                    <p class="mt-3">
+                      <strong style="font-size: 24px" class="text-gradient"
+                        >Upload Stats</strong
+                      >
+                    </p>
+                    <v-card-subtitle> Over the past 7 days </v-card-subtitle>
+                    <Chart
+                      id="userv2-uploads"
+                      :data="user.stats.uploadGraph"
+                      type="line"
+                      name="Uploads"
+                      :height="320"
+                    ></Chart>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </template>
         </v-col>
-        <v-col md="3" cols="12" sm="12">
+        <v-col md="3" cols="12" sm="12" v-if="!username">
           <StatsCard
             title="Creation date"
             :value="$date(user.createdAt).format('DD/MM/YYYY')"
@@ -228,6 +247,7 @@ import Chart from "@/components/Core/Chart.vue";
 
 export default defineComponent({
   name: "User",
+  props: ["username"],
   components: {
     Chart,
     LineChart,
@@ -321,6 +341,11 @@ export default defineComponent({
     }
   },
   methods: {
+    async chat() {
+      this.friendLoading = true;
+      const data = await this.$chat.createChat([this.user?.id as number]);
+      this.$router.push(`/communications/${data.association.id}`);
+    },
     async doFriendRequest() {
       try {
         this.friendLoading = true;
@@ -332,19 +357,18 @@ export default defineComponent({
       }
     },
     async getUser(load = true) {
-      if (load) {
+      if (load && !this.username) {
         this.$app.componentLoading = true;
       }
-      const { data } = await this.axios.get(
-        `/user/profile/${this.$route.params.username}`
-      );
+      const username = this.username || this.$route.params.username;
+      const { data } = await this.axios.get(`/user/profile/${username}`);
       this.user = data;
-      this.$app.title = this.user?.username as string;
+      if (!this.username) this.$app.title = this.user?.username as string;
       this.$app.componentLoading = false;
     }
   },
   mounted() {
-    this.$app.title = "User";
+    if (!this.username) this.$app.title = "User";
     this.getUser();
   },
   watch: {
@@ -361,5 +385,9 @@ export default defineComponent({
   .v-container {
     max-width: 80%;
   }
+}
+.center {
+  position: absolute;
+  top: 15%;
 }
 </style>

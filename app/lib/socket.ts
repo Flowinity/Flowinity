@@ -21,6 +21,37 @@ export default {
       })
       if (user && socket.user.id) {
         socket.join(user.id)
+        if (user.storedStatus !== "invisible") {
+          await User.update(
+            {
+              status: user.storedStatus
+            },
+            {
+              where: {
+                id: user.id
+              }
+            }
+          )
+        }
+        // on disconnect
+        socket.on("disconnect", async () => {
+          // ensure all sockets are disconnected
+          const sockets = await io.in(user.id).allSockets()
+          if (sockets.size === 0) {
+            if (user.storedStatus !== "invisible") {
+              await User.update(
+                {
+                  status: "offline"
+                },
+                {
+                  where: {
+                    id: user.id
+                  }
+                }
+              )
+            }
+          }
+        })
         socket.emit("pulseConfig", {
           interval: 10000
         })

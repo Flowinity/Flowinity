@@ -161,6 +161,14 @@ let Errors = {
     message:
       "The requested chat could not be found or you are not a part of it.",
     status: 400
+  },
+  INVALID_FRIEND_SELECTION: {
+    message: "You are attempting to add a user that is not your friend.",
+    status: 400
+  },
+  MESSAGE_NOT_FOUND: {
+    message: "The requested message could not be found.",
+    status: 400
   }
 }
 

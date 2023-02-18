@@ -6,6 +6,7 @@ import { useChatStore } from "@/store/chat";
 import { useWorkspacesStore } from "@/store/workspaces";
 import { useCollectionsStore } from "@/store/collections";
 import { useExperimentsStore } from "@/store/experiments";
+import { useFriendsStore } from "@/store/friends";
 
 export interface UserState {
   user: User | null;
@@ -35,6 +36,7 @@ export const useUserStore = defineStore("user", {
         const workspace = useWorkspacesStore();
         const collections = useCollectionsStore();
         const experiments = useExperimentsStore();
+        const friends = useFriendsStore();
         experiments.init().then(() => {
           console.info("[TPU/ExperimentsStore] Experiments initialized");
         });
@@ -46,6 +48,9 @@ export const useUserStore = defineStore("user", {
         });
         chat.init().then(() => {
           console.info("[TPU/ChatStore] Chat initialized");
+        });
+        friends.init().then(() => {
+          console.info("[TPU/FriendsStore] Friends initialized");
         });
         this._postInitRan = true;
       }

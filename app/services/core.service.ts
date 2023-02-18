@@ -181,6 +181,8 @@ export class CoreService {
 
   getExperiments(dev: boolean = false): object {
     const experiments = {
+      COMMUNICATIONS_INLINE_SIDEBAR_HIRES: false,
+      COMMUNICATIONS_QUAD_SIDEBAR_LOWRES: false,
       COMMUNICATIONS: false,
       WEBMAIL: false,
       GEOGUESS: false,
@@ -221,6 +223,20 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        COMMUNICATIONS_INLINE_SIDEBAR_HIRES: {
+          description:
+            "Enable inline sidebar for communications on high resolution devices.",
+          createdAt: "2023-02-18T00:00:00.000Z"
+        },
+        COMMUNICATIONS_QUAD_SIDEBAR_LOWRES: {
+          description:
+            "Enable quad sidebar for communications on low resolution devices (not inline).",
+          createdAt: "2023-02-18T00:00:00.000Z"
+        },
+        COMMUNICATIONS: {
+          description: "Enable TPU Communications.",
+          createdAt: "2023-02-10T00:00:00.000Z"
+        },
         WEBMAIL: {
           description: "Enable TPU webmail.",
           createdAt: "2023-02-10T00:00:00.000Z"

@@ -10,15 +10,59 @@ import { CoreService } from "@app/services/core.service"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import { PulseService } from "@app/services/pulse.service"
 import { ChatService } from "@app/services/chat.service"
+import { Chat } from "@app/models/chat.model"
+import { Message } from "@app/models/message.model"
 @Service()
 export class CacheService {
-  async generateChatsCache() {
+  async generateMissingChatDates() {
+    console.info("[REDIS] Generating missing chat date keys...")
+    const chats = await Chat.findAll()
+    let start = new Date().getTime()
+    for (const chat of chats) {
+      const sortDate = await redis.get(`chat:${chat.id}:sortDate`)
+      if (!sortDate) {
+        const lastMessage = await Message.findOne({
+          where: { chatId: chat.id },
+          order: [["createdAt", "DESC"]]
+        })
+        if (lastMessage) {
+          await redis.int.set(
+            `chat:${chat.id}:sortDate`,
+            dayjs(lastMessage.createdAt).valueOf()
+          )
+        }
+      }
+    }
+    let end = new Date().getTime()
+    console.info(`[REDIS] Missing chat date keys generated in ${end - start}ms`)
+  }
+  async patchChatsCacheForUser(userId: number, chat: Chat) {
+    let chats = await redis.json.get(`chats:${userId}`)
+    if (!chats?.length) {
+      return await this.generateChatsCache(userId)
+    }
+    const existingChat = chats.find((c: Chat) => c.id === chat.id)
+    if (existingChat) {
+      chats[chats.indexOf(existingChat)] = chat
+    } else {
+      chats.push(chat)
+    }
+    redis.json.set(`chats:${userId}`, "$", chats)
+  }
+
+  async generateChatsCache(userId?: number) {
     try {
       console.info("[REDIS] Generating chats cache...")
       let start = new Date().getTime()
-      const users = await User.findAll()
+      let users = []
+      if (!userId) {
+        users = await User.findAll()
+      } else {
+        users = [await User.findOne({ where: { id: userId } })]
+      }
       const chatService = Container.get(ChatService)
       for (const user of users) {
+        if (!user) continue
         const chats = await chatService.getUserChats(user.id)
         redis.json.set(`chats:${user.id}`, "$", chats)
       }
@@ -328,6 +372,7 @@ export class CacheService {
       this.generateInsightsCache().then(() => {})
       this.generateUserStatsCache().then(() => {})
       this.generateChatsCache().then(() => {})
+      this.generateMissingChatDates().then(() => {})
       return true
     } catch {
       return false

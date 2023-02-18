@@ -18,7 +18,13 @@
     </v-overlay>
     <default-bar />
     <sidebar></sidebar>
-    <workspaces-sidebar></workspaces-sidebar>
+    <workspaces-sidebar
+      v-if="
+        $chat.communicationsSidebar ||
+        $chat.selectedChat?.type !== 'group' ||
+        !$chat.isCommunications
+      "
+    ></workspaces-sidebar>
     <default-view />
     <template v-if="$experiments.experiments.FAB">
       <v-btn

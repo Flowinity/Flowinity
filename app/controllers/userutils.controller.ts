@@ -360,5 +360,13 @@ export class UserUtilsController {
         res.sendStatus(204)
       }
     )
+
+    this.router.get(
+      "/friends",
+      auth("user.view"),
+      async (req: RequestAuth, res: Response) => {
+        res.json(await this.userUtilsService.getFriends(req.user.id))
+      }
+    )
   }
 }

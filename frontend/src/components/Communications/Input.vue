@@ -6,7 +6,7 @@
   >
     <v-textarea
       ref="textarea"
-      class="mb-n5"
+      :class="!editing ? 'mb-n3 mt-2' : 'mt-2'"
       label="Type a message..."
       placeholder="Keep it civil."
       variant="outlined"
@@ -20,13 +20,13 @@
       color="primary"
       @keydown.enter.exact.prevent="$emit('sendMessage')"
       @click:append="$emit('sendMessage')"
-      :single-line="editing"
+      @keyup.esc="$emit('edit', null)"
     >
-      <template v-slot:prepend>
+      <template v-slot:prepend v-if="!editing">
         <v-icon>mdi-plus-circle</v-icon>
       </template>
       <template v-slot:append-inner>
-        <v-icon class="mr-2">mdi-star</v-icon>
+        <v-icon class="mr-2" v-if="!editing">mdi-star</v-icon>
         <v-icon>mdi-emoticon</v-icon>
       </template>
     </v-textarea>
@@ -39,7 +39,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "CommunicationsInput",
   props: ["modelValue", "editing"],
-  emits: ["update:modelValue", "sendMessage"]
+  emits: ["update:modelValue", "sendMessage", "edit"]
 });
 </script>
 

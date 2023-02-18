@@ -12,7 +12,29 @@
     :class="$app.mainDrawer && !$vuetify.display.mobile ? 'sidebar-patch' : ''"
     style="z-index: 2001"
   >
-    <v-list density="comfortable" nav class="mt-2">
+    <v-card-text
+      v-if="
+        !$chat.communicationsSidebar &&
+        $app.forcedMainDrawer &&
+        $chat.isCommunications
+      "
+      @click="$app.forcedMainDrawer = false"
+      style="color: #0190ea; cursor: pointer; font-size: 12px"
+      ><v-icon>mdi-arrow-right</v-icon> Back to Communications</v-card-text
+    >
+    <v-list
+      density="comfortable"
+      nav
+      :class="{
+        'mt-2': !$chat.isCommunications || $chat.communicationsSidebar,
+        'mt-n3': $chat.isCommunications && !$chat.communicationsSidebar
+      }"
+      v-if="
+        $chat.communicationsSidebar ||
+        $app.forcedMainDrawer ||
+        !$chat.isCommunications
+      "
+    >
       <v-list-item
         class="ml-1"
         style="text-transform: unset !important"
@@ -56,6 +78,9 @@
         </v-list-item-title>
       </v-list-item>
     </v-list>
+    <ColubrinaSidebarList
+      v-else-if="!$chat.communicationsSidebar"
+    ></ColubrinaSidebarList>
     <template v-slot:append>
       <div
         class="text-center justify-center"
@@ -97,10 +122,16 @@ import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import MigrateWizard from "@/components/Dashboard/Dialogs/Migrate.vue";
+import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue";
 
 export default defineComponent({
   name: "Sidebar",
-  components: { MigrateWizard, InviteAFriend, UserAvatar },
+  components: {
+    ColubrinaSidebarList,
+    MigrateWizard,
+    InviteAFriend,
+    UserAvatar
+  },
   data() {
     return {
       inviteAFriend: false,
@@ -123,7 +154,7 @@ export default defineComponent({
     },
     sidebar() {
       if (!this.$user.user) return [];
-      return [
+      const items = [
         {
           id: 1,
           click() {},
@@ -197,9 +228,12 @@ export default defineComponent({
           click() {},
           externalPath: "",
           name: "Communications",
-          path: "/communications",
+          path: this.$chat.selectedChatId
+            ? `/communications/${this.$chat.selectedChatId}`
+            : "/communications",
           icon: "mdi-message-processing",
           new: true,
+          warning: this.$chat.totalUnread,
           scope: "communications.view",
           experimentsRequired: ["COMMUNICATIONS"]
         },
@@ -305,6 +339,17 @@ export default defineComponent({
           icon: "mdi-star"
         }*/
       ];
+
+      return items.filter((item) => {
+        if (item.experimentsRequired) {
+          for (const experiment of item.experimentsRequired) {
+            if (!this.$experiments.experiments[experiment]) {
+              return false;
+            }
+          }
+        }
+        return true;
+      });
     },
     calculateJitsi() {
       return (

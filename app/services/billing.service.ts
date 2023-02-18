@@ -252,7 +252,6 @@ export class BillingService {
 
   billingInit() {
     try {
-      console.log("test")
       // 30 minutes
       setInterval(this.checkJitsiGold, 1000 * 60 * 30)
 

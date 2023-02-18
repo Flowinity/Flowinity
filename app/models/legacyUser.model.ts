@@ -37,6 +37,9 @@ export class LegacyUser extends Model {
   @Column
   admin: boolean
 
+  @Column
+  avatar: string
+
   @Column(DataType.ENUM("online", "busy", "away", "offline", "invisible"))
   status: "online" | "busy" | "away" | "offline" | "invisible"
 

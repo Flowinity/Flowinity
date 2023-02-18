@@ -14,6 +14,8 @@ export interface AppState {
   title: string;
   notesSaving: boolean;
   lastNote: number | null;
+  forcedMainDrawer: boolean;
+  shifting: boolean;
   site: {
     registrations: boolean;
     name: string;
@@ -57,9 +59,11 @@ export const useAppStore = defineStore("app", {
       apiVersion: "v2",
       title: "",
       notesSaving: false,
+      forcedMainDrawer: false,
       lastNote: localStorage.getItem("lastNote")
         ? parseInt(localStorage.getItem("lastNote") as string)
         : null,
+      shifting: false,
       site: {
         registrations: false,
         name: "TPUvNEXT",

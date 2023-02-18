@@ -4,10 +4,12 @@ import {
   Model,
   BelongsTo,
   DataType,
-  Length
+  Length,
+  HasMany
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
+import { ChatAssociation } from "@app/models/chatAssociation.model"
 
 @Table
 export class Message extends Model {
@@ -79,4 +81,7 @@ export class Message extends Model {
     }
   })
   user: User | LegacyUser
+
+  @HasMany(() => ChatAssociation, "lastRead")
+  readReceipts: ChatAssociation[]
 }

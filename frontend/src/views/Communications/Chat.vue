@@ -13,7 +13,13 @@
         :message="message"
         :id="'message-' + index"
         :editing="editing === message.id"
+        v-if="!$chat.loading"
+        @edit="handleEdit"
+        @editText="editingText = $event"
+        :editingText="editingText"
+        @editMessage="doEditMessage"
       ></Message>
+      <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
     </v-list>
     <v-fade-transition v-model="avoidAutoScroll">
       <v-toolbar
@@ -42,19 +48,22 @@ import CommunicationsInput from "@/components/Communications/Input.vue";
 import Message from "@/components/Communications/Message.vue";
 import { MessageSocket } from "@/types/messages";
 import { Message as MessageType } from "@/models/message";
+import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
+import Lazy from "@/components/Core/Lazy.vue";
+import User from "@/views/User/User.vue";
 export default defineComponent({
   name: "Chat",
-  components: { Message, CommunicationsInput },
+  components: { User, Lazy, MessageSkeleton, Message, CommunicationsInput },
   data() {
     return {
       message: "",
       avoidAutoScroll: false,
-      editing: null as number | null
+      editing: undefined as number | undefined,
+      editingText: undefined as string | undefined
     };
   },
   computed: {
     inputHeight() {
-      // count how many \n's there are
       const lines = this.message.split("\n").length;
       return (lines - 1) * 24 + 82;
     },
@@ -70,12 +79,39 @@ export default defineComponent({
         if (this.$app.mainDrawer) {
           widthOffset += 256;
         }
-        widthOffset += 256;
+        if (this.$chat.communicationsSidebar) {
+          widthOffset += 256;
+        }
+        if (this.$chat.memberSidebar) {
+          widthOffset += 256;
+        }
       }
       return `position: fixed; width: calc(100% - ${widthOffset}px); padding: 16px;`;
     }
   },
   methods: {
+    async doEditMessage() {
+      await this.axios.put(
+        `/chats/${this.$chat.selectedChat?.association?.id}/message`,
+        {
+          id: this.editing,
+          content: this.editingText
+        }
+      );
+      this.editing = undefined;
+      this.editingText = undefined;
+      this.focusInput();
+    },
+    handleEdit(event: { id: number | undefined; content: string }) {
+      if (!event.id) {
+        this.editing = undefined;
+        this.editingText = undefined;
+        this.focusInput();
+      } else {
+        this.editing = event.id;
+        this.editingText = event.content;
+      }
+    },
     forceBottomAmirite() {
       this.avoidAutoScroll = false;
       this.autoScroll();
@@ -98,6 +134,17 @@ export default defineComponent({
         edited: false
       });
       this.autoScroll();
+
+      // move chat to top
+      const chatIndex = this.$chat.chats.findIndex(
+        (c) => c.id === this.$chat.selectedChat?.id
+      );
+      if (chatIndex && chatIndex !== -1) {
+        const chatToMove = this.$chat.chats[chatIndex];
+        this.$chat.chats.splice(chatIndex, 1);
+        this.$chat.chats.unshift(chatToMove);
+      }
+
       try {
         const { data } = await this.axios.post(
           `/chats/${this.$route.params.chatId}/message`,
@@ -118,11 +165,10 @@ export default defineComponent({
     },
     autoScroll() {
       if (this.avoidAutoScroll) return;
-      if (!this.$chat.selectedChat) return;
+      if (!this.$chat.selectedChat?.messages) return;
       const message = document.getElementById(
-        `message-${this.$chat.selectedChat.messages.length - 1}`
+        `message-${this.$chat.selectedChat.messages?.length - 1}`
       );
-
       if (message) {
         message.scrollIntoView();
       }
@@ -143,10 +189,16 @@ export default defineComponent({
         .reverse()
         .find((message) => message.tpuUser?.id === this.$user.user?.id);
       if (!lastMessage) return;
+      this.editingText = lastMessage.content;
       this.editing = lastMessage.id;
     },
+    focusInput() {
+      //@ts-ignore
+      this.$refs.input?.$refs?.textarea?.focus();
+    },
     shortcutHandler(e: any) {
-      if (e.key === "ArrowUp" && !this.message.length) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      if (e.key === "ArrowUp") {
         this.editLastMessage();
       }
       if (
@@ -163,8 +215,7 @@ export default defineComponent({
         e.target.tagName !== "TEXTAREA" &&
         e.target.tagName !== "DIV"
       ) {
-        //@ts-ignore
-        this.$refs.input?.$refs?.textarea?.focus();
+        this.focusInput();
       }
     }
   },
@@ -184,14 +235,16 @@ export default defineComponent({
       await this.$chat.selectedChat?.messages.push(
         message.message as MessageType
       );
+      this.$chat.readChat();
       this.autoScroll();
     });
   },
   unmounted() {
     document.removeEventListener("scroll", this.scrollEvent);
+    document.removeEventListener("keydown", this.shortcutHandler);
   },
   watch: {
-    "$chat.selectedChat.id"() {
+    "$chat.isReady"() {
       this.avoidAutoScroll = false;
       this.$nextTick(() => {
         this.autoScroll();

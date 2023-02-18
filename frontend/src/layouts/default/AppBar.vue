@@ -23,8 +23,30 @@
       @click="$router.push('/')"
       id="tpu-brand-logo"
       title="TroploPrivateUploader"
+      v-if="!$chat.isCommunications || !$chat.selectedChat"
     >
       TPU
+    </h1>
+    <h1
+      style="z-index: 10; cursor: pointer; font-size: 24px"
+      class="unselectable ml-4 limit"
+      @click="$router.push('/')"
+      id="tpu-brand-logo"
+      title="TPU Communications"
+      v-else
+    >
+      <CommunicationsAvatar
+        :user="$chat.selectedChat?.recipient"
+        v-if="$chat.selectedChat?.recipient"
+        size="32"
+        class="mr-1"
+      />
+      <CommunicationsAvatar
+        :chat="$chat.selectedChat"
+        v-else-if="$chat.selectedChat"
+        size="32"
+      />
+      {{ $chat.chatName }}
     </h1>
     <v-spacer></v-spacer>
     <small v-if="$app.notesSaving" class="mr-3"> Saving... </small>
@@ -51,8 +73,11 @@
       <v-btn
         icon
         class="ml-2"
-        @click="$app.workspaceDrawer = true"
-        v-if="!$app.workspaceDrawer"
+        @click="
+          !$chat.memberSidebar && $chat.isCommunications
+            ? ($chat.memberSidebarShown = !$chat.memberSidebarShown)
+            : ($app.workspaceDrawer = !$app.workspaceDrawer)
+        "
       >
         <v-icon>mdi-menu-open</v-icon>
       </v-btn>
@@ -63,9 +88,10 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 
 export default defineComponent({
-  components: { UserAvatar },
+  components: { CommunicationsAvatar, UserAvatar },
   computed: {
     dropdown() {
       if (!this.$user?.user) return [];

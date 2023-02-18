@@ -16,11 +16,7 @@
           class="text-center"
           :size="size"
         >
-          <v-img
-            aspect-ratio="1/1"
-            v-if="user.avatar"
-            :src="'/i/' + user.avatar"
-          />
+          <v-img aspect-ratio="1/1" v-if="user.avatar" :src="avatarURL" />
           <v-fade-transition v-if="hover && edit">
             <div @click="removeAvatar" style="cursor: pointer">
               <v-overlay absolute>
@@ -50,7 +46,16 @@
       </span>
     </v-hover>
     <template v-if="status">
-      <v-badge color="success" :offset-y="offset" offset-x="10" bordered>
+      <v-badge
+        :color="$functions.userStatus(friendStatus).color"
+        :offset-y="offset"
+        offset-x="10"
+        bordered
+        v-if="friendStatus"
+      >
+        <v-tooltip activator="parent" location="top">
+          {{ $functions.userStatus(friendStatus).text }}
+        </v-tooltip>
       </v-badge>
     </template>
     <template v-if="(size > 60 || forceBadges) && !noBadges">
@@ -120,6 +125,13 @@ export default defineComponent({
     };
   },
   computed: {
+    avatarURL() {
+      if (this.user.avatar?.length > 16) {
+        return "https://colubrina.troplo.com/usercontent/" + this.user.avatar;
+      } else {
+        return "/i/" + this.user.avatar;
+      }
+    },
     offset() {
       return this.size / 4;
     },
@@ -145,6 +157,12 @@ export default defineComponent({
         this.$store.state.user?.plan?.internalName === "GOLD",
         this.$vuetify.theme.themes[this.$vuetify.theme.dark ? "dark" : "light"]
       )*/
+    },
+    friendStatus() {
+      if (this.user.id === this.$user.user?.id)
+        return this.$user.user?.storedStatus;
+      return this.$friends.friends.find((f) => f.friendId === this.user.id)
+        ?.otherUser?.status;
     }
   },
   methods: {

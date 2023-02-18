@@ -21,4 +21,5 @@ export interface Chat {
   users: ChatAssociation[];
   messages: Message[];
   recipient: Recipient;
+  unread: number;
 }

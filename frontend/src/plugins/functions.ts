@@ -1,3 +1,6 @@
+import md from "./rules";
+import rules from "@/plugins/rules";
+
 export default {
   fileSize(size: number): string {
     let i = -1;
@@ -26,6 +29,16 @@ export default {
     });
   },
   avatar(chat: any) {
+    if (!chat) return undefined;
+    if (chat.username) {
+      if (chat.avatar?.length > 12) {
+        return "https://colubrina.troplo.com/usercontent/" + chat.avatar;
+      } else if (chat.avatar) {
+        return "https://i.troplo.com/i/" + chat.avatar;
+      } else {
+        return undefined;
+      }
+    }
     if (chat.type === "direct" && chat.recipient?.avatar?.length > 12) {
       return (
         "https://colubrina.troplo.com/usercontent/" + chat.recipient.avatar
@@ -37,13 +50,45 @@ export default {
       !chat.recipient?.avatar &&
       chat.recipient?.legacyUser
     ) {
-      return "https://i.troplo.com/i/055d077e27cf.png";
+      return undefined;
     } else if (chat.type === "group" && chat.icon?.length > 12) {
       return "https://colubrina.troplo.com/usercontent/" + chat.icon;
     } else if (chat.type === "group" && chat.icon) {
       return "https://i.troplo.com/i/" + chat.icon;
     } else {
       return undefined;
+    }
+  },
+  markdown(text: string): any {
+    return md.render(text);
+  },
+  userStatus(status: "online" | "offline" | "idle" | "busy" | "invisible") {
+    switch (status) {
+      case "online":
+        return {
+          color: "success",
+          text: "Online"
+        };
+      case "idle":
+        return {
+          color: "warning",
+          text: "Idle"
+        };
+      case "busy":
+        return {
+          color: "error",
+          text: "Busy"
+        };
+      case "invisible":
+        return {
+          color: "grey",
+          text: "Invisible"
+        };
+      default:
+        return {
+          color: "grey",
+          text: "Offline"
+        };
     }
   }
 };

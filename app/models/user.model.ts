@@ -177,6 +177,16 @@ export class User extends Model {
   })
   alternatePasswords: AlternatePassword[]
 
+  @Column({
+    type: DataType.ENUM("online", "idle", "offline", "busy")
+  })
+  status: "online" | "idle" | "offline" | "busy"
+
+  @Column({
+    type: DataType.ENUM("online", "idle", "busy", "invisible")
+  })
+  storedStatus: "online" | "idle" | "busy" | "invisible"
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 

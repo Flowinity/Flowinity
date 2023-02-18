@@ -63,4 +63,6 @@ export interface User {
   };
   createdAt: Date;
   updatedAt: Date;
+  status: "online" | "offline" | "idle" | "busy";
+  storedStatus: "online" | "invisible" | "idle" | "busy";
 }

@@ -264,7 +264,10 @@ export class AdminController {
             parseInt(req.params.id),
             dev
           )
-          res.json(experiment)
+          res.json({
+            ...experiment,
+            defaults: this.coreService.getExperiments(dev)
+          })
         } catch (e) {
           next(e)
         }

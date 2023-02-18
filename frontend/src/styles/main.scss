@@ -111,3 +111,44 @@ a {
 .pointer {
   cursor: pointer;
 }
+
+.emoji {
+  width: 1.2em;
+  height: 1.2em;
+  position: relative;
+  top: 0.15em;
+}
+
+.emoji-large {
+  width: 3.5em;
+  height: 3.5em;
+  position: relative;
+  top: 0.15em;
+}
+
+.emoji-large-text {
+  font-size: 3.5em;
+}
+
+.message:hover {
+    background-color: #222222 !important;
+}
+
+.message-actions {
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  margin-top: -15px;
+  margin-right: 5px;
+  visibility: hidden;
+}
+
+.no-hide {
+  visibility: visible;
+  position: relative;
+}
+
+.message:hover .message-actions {
+  visibility: visible;
+  position: relative
+}

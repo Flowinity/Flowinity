@@ -12,6 +12,33 @@ import { Notification } from "@app/models/notification.model"
 
 @Service()
 export class UserUtilsService {
+  async validateFriends(userId: number, friendIds: number[]) {
+    const friends = await Friend.findAll({
+      where: {
+        userId,
+        friendId: friendIds,
+        status: "accepted"
+      }
+    })
+    if (friends.length !== friendIds.length)
+      throw Errors.INVALID_FRIEND_SELECTION
+    return friends
+  }
+  async getFriends(userId: number) {
+    return await Friend.findAll({
+      where: {
+        userId,
+        status: "accepted"
+      },
+      include: [
+        {
+          model: User,
+          as: "otherUser",
+          attributes: ["id", "username", "avatar", "status"]
+        }
+      ]
+    })
+  }
   async updateBanner(
     userId: number,
     banner: string | null,
@@ -363,6 +390,47 @@ export class UserUtilsService {
     })
     if (!friend) return false
     return friend.status
+  }
+
+  async getUserById(
+    userId: number,
+    full: boolean = false
+  ): Promise<User | null> {
+    let user = await User.findOne({
+      where: {
+        id: userId
+      },
+      attributes: [
+        "id",
+        "username",
+        "description",
+        "administrator",
+        "moderator",
+        "banned",
+        "inviteId",
+        "avatar",
+        "createdAt",
+        "updatedAt",
+        "banner"
+      ],
+      include: [
+        {
+          model: Plan,
+          as: "plan"
+        }
+      ]
+    })
+    if (!user) return null
+    if (full) {
+      user.dataValues.collections = await this.getMutualCollections(
+        userId,
+        user.id
+      )
+      user.dataValues.friend = await this.getFriendStatus(userId, user.id)
+      user.dataValues.friends = await this.getMutualFriends(user.id, userId)
+      user.dataValues.stats = await redis.json.get(`userStats:${user.id}`)
+    }
+    return user
   }
 
   async getUser(username: string, userId: number): Promise<User | null> {

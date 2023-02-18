@@ -105,6 +105,16 @@
       :title="`${user.username}'s account was created this week ${age} years ago.`"
       v-if="cakeWeek && age >= 1"
     ></HoverChip>
+    <HoverChip
+      text="Not friends with user, some information may be unavailable."
+      icon="mdi-account-off"
+      color="grey"
+      :small="true"
+      v-if="
+        !$friends.friends.find((f) => f.friendId === user.id) &&
+        user.id !== $user.user?.id
+      "
+    ></HoverChip>
   </span>
 </template>
 
