@@ -182,7 +182,7 @@ export class ChatService {
         return this.getChat(chat.chatId, userId)
       }
     }
-    return
+
     const chat = await Chat.create({
       name: type === "group" ? "Unnamed Group" : "Direct Message",
       type,
