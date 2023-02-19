@@ -3,6 +3,7 @@
     width="300"
     class="justify-center text-center"
     style="position: relative"
+    v-if="user"
   >
     <UserBanner :user="user" height="90"></UserBanner>
     <v-card-text class="ml-n2 center" style="position: relative">
