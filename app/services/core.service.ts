@@ -183,7 +183,7 @@ export class CoreService {
     const experiments = {
       COMMUNICATIONS_INLINE_SIDEBAR_HIRES: false,
       COMMUNICATIONS_QUAD_SIDEBAR_LOWRES: false,
-      COMMUNICATIONS: false,
+      COMMUNICATIONS: true,
       WEBMAIL: false,
       GEOGUESS: false,
       OBJECTIVE: false,
