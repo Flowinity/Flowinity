@@ -1,10 +1,11 @@
-import { Response } from "express"
-import { Service } from "typedi"
+import { Response, NextFunction } from "express"
+import { Service, Container } from "typedi"
 import Router from "express-promise-router"
 import { ChatService } from "@app/services/chat.service"
 import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
 import Errors from "@app/lib/errors"
+import { CoreService } from "@app/services/core.service"
 
 @Service()
 export class ChatController {
@@ -16,6 +17,25 @@ export class ChatController {
 
   private configureRouter(): void {
     this.router = Router()
+
+    this.router.all(
+      "*",
+      auth("chats.view"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        const coreService = Container.get(CoreService)
+        if (
+          !(await coreService.checkExperiment(
+            req.user.id,
+            "COMMUNICATIONS",
+            req.user.administrator || req.user.moderator
+          ))
+        ) {
+          throw Errors.EXPERIMENT_NOT_ALLOWED
+        } else {
+          return next()
+        }
+      }
+    )
 
     this.router.get(
       "/",

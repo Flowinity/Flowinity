@@ -11,13 +11,15 @@ import {
   Unique,
   IsEmail,
   Length,
-  HasOne
+  HasOne,
+  HasMany
 } from "sequelize-typescript"
 import { Plan } from "@app/models/plan.model"
 import { Theme } from "@app/models/theme.model"
 import { Domain } from "@app/models/domain.model"
 import { CollectionCache } from "@app/types/collection"
 import { Subscription } from "@app/models/subscription.model"
+import { Experiment } from "@app/models/experiment.model"
 
 @DefaultScope(() => ({
   attributes: {
@@ -198,6 +200,9 @@ export class User extends Model {
 
   @HasOne(() => Subscription, "userId")
   subscription: Subscription
+
+  @HasMany(() => Experiment, "userId")
+  experiments: Experiment[]
 
   collections?: CollectionCache[]
   scopes: string

@@ -28,6 +28,7 @@
           $chat.dialogs.userMenu.y = $event.y;
           $chat.dialogs.userMenu.value = true;
         "
+        @reply="replyId = $event.id"
       ></Message>
       <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
     </v-list>
@@ -69,13 +70,14 @@ export default defineComponent({
       message: "",
       avoidAutoScroll: false,
       editing: undefined as number | undefined,
-      editingText: undefined as string | undefined
+      editingText: undefined as string | undefined,
+      replyId: undefined as number | undefined
     };
   },
   computed: {
     inputHeight() {
       const lines = this.message.split("\n").length;
-      return (lines - 1) * 24 + 82;
+      return (lines - 1) * 24 + 92;
     },
     inputStyles() {
       const drawers = document.querySelectorAll(
@@ -261,7 +263,11 @@ export default defineComponent({
 
 <style scoped>
 .message-list-container {
-  height: 100vh;
+  height: 96vh;
   overflow-y: scroll;
+}
+
+.message-list-container::-webkit-scrollbar {
+  display: none;
 }
 </style>

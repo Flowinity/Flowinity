@@ -16,7 +16,7 @@
       <v-tooltip location="top" activator="parent">Edit</v-tooltip>
       <v-icon>mdi-pencil</v-icon>
     </v-btn>
-    <v-btn icon @click="deleteMessage()" rounded="0">
+    <v-btn icon @click="$emit('reply')" rounded="0">
       <v-tooltip location="top" activator="parent">Reply</v-tooltip>
       <v-icon>mdi-reply</v-icon>
     </v-btn>

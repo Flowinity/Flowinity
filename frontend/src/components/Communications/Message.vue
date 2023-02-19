@@ -73,6 +73,7 @@
       @edit="$emit('edit', { id: message.id, content: message.content })"
       :shifting="shifting"
       :message="message"
+      @reply="$emit('reply', message)"
     ></MessageActions>
   </v-list-item>
 </template>

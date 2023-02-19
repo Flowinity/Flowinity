@@ -13,7 +13,7 @@
         <v-avatar
           v-if="user.avatar"
           :src="'/i/' + user.avatar"
-          class="text-center"
+          class="text-center cover"
           :size="size"
           v-bind="props"
         >

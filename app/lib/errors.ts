@@ -169,6 +169,10 @@ let Errors = {
   MESSAGE_NOT_FOUND: {
     message: "The requested message could not be found.",
     status: 400
+  },
+  EXPERIMENT_NOT_ALLOWED: {
+    message: "You are not allowed to use this experimental feature.",
+    status: 400
   }
 }
 

@@ -427,4 +427,12 @@ export class CoreService {
       return experiments
     }
   }
+  async checkExperiment(
+    userId: number,
+    experiment: string,
+    dev: boolean = false
+  ) {
+    const experiments = await this.getExperiments(dev)
+    return experiments[experiment]
+  }
 }

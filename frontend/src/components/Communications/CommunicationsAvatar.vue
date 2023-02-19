@@ -6,6 +6,7 @@
     <v-img
       :src="$functions.avatar(chat)"
       v-if="$functions.avatar(chat)"
+      class="cover"
     ></v-img>
     <v-icon size="20" v-else-if="chat.type === 'group'">
       mdi-account-group
@@ -19,6 +20,7 @@
     <v-img
       :src="$functions.avatar(user)"
       v-if="$functions.avatar(user)"
+      class="cover"
     ></v-img>
     <span class="text-h5" v-else-if="user?.username">
       {{ user?.username?.charAt(0).toUpperCase() }}

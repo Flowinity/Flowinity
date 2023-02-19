@@ -2,7 +2,7 @@
   <v-toolbar
     ref="toolbar"
     height="auto"
-    :color="editing ? 'transparent' : undefined"
+    :color="editing ? 'transparent' : 'dark'"
   >
     <v-textarea
       ref="textarea"
