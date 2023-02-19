@@ -6,7 +6,7 @@
   >
     <v-card>
       <v-toolbar>
-        <v-toolbar-title> Invite a Friend </v-toolbar-title>
+        <v-toolbar-title>Invite a Friend</v-toolbar-title>
       </v-toolbar>
       <v-card-text>
         Enter your friends email, your invite will be sent to them after Troplo,
@@ -23,8 +23,9 @@
         ></v-text-field>
         <small>
           You will receive an email when your request is accepted or denied by a
-          TPU administrator.<br />Your friend will not use Flowinity SSO to
-          authenticate.
+          TPU administrator.
+          <br />
+          Your friend will not use Flowinity SSO to authenticate.
         </small>
       </v-card-text>
       <v-card-actions>
@@ -35,8 +36,9 @@
           class="rounded-xl"
           :disabled="!email.length"
           @click="inviteFriend"
-          >Invite</v-btn
         >
+          Invite
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

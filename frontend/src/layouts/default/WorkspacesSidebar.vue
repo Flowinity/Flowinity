@@ -37,8 +37,9 @@
             text
             @click="doImportDoc"
             :loading="importDoc.loading"
-            >Import</v-btn
           >
+            Import
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -201,9 +202,9 @@
             :id="`note-${item.id}`"
             @contextmenu.prevent="context($event, `note-${note.id}`, note)"
           >
-            <v-list-item-title style="text-overflow: ellipsis">{{
-              note.name
-            }}</v-list-item-title>
+            <v-list-item-title style="text-overflow: ellipsis">
+              {{ note.name }}
+            </v-list-item-title>
           </v-list-item>
           <v-list-item
             @click="

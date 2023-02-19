@@ -1,39 +1,39 @@
 type Login = {
   user: {
-    id: number
-    username: string
-    email: string
-  }
-  token: string
-}
+    id: number;
+    username: string;
+    email: string;
+  };
+  token: string;
+};
 
 type PatchUser = {
-  username?: string
-  email?: string
-  password?: string
-  currentPassword?: string
-  discordPrecache?: boolean
-  darkTheme?: boolean
-  description?: string
-  itemsPerPage?: number
-}
+  username?: string;
+  email?: string;
+  password?: string;
+  currentPassword?: string;
+  discordPrecache?: boolean;
+  darkTheme?: boolean;
+  description?: string;
+  itemsPerPage?: number;
+};
 
 type SessionInfo = {
-  accessedFrom: AccessedFrom[]
-}
+  accessedFrom: AccessedFrom[];
+};
 
 type AccessedFrom = {
-  ip: string
-  userAgent?: string
-  isp?: string
-  location?: string
-  date: string
-  asn: any
-}
+  ip: string;
+  userAgent?: string;
+  isp?: string;
+  location?: string;
+  date: string;
+  asn: any;
+};
 
 type AlternatePassword = {
-  password: string
-  scopes: string
-  totp: boolean
-  name: string
-}
+  password: string;
+  scopes: string;
+  totp: boolean;
+  name: string;
+};

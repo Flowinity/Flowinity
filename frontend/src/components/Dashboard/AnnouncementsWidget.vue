@@ -1,9 +1,9 @@
 <template>
   <v-card class="text-center justify-center">
     <v-container>
-      <strong style="font-size: 24px" class="text-gradient"
-        >Announcements</strong
-      >
+      <strong style="font-size: 24px" class="text-gradient">
+        Announcements
+      </strong>
       <v-card
         v-for="announcement in announcements"
         class="my-3 pt-3"

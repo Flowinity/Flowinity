@@ -8,8 +8,7 @@
     class="mx-3"
     placeholder="Select an API Key"
     label="Select an API Key"
-  >
-  </v-select>
+  ></v-select>
   <v-card-actions>
     <HoverChip
       class="mr-2"
@@ -18,8 +17,7 @@
       :disabled="!selected"
       icon="mdi-content-copy"
       text="Copy API Key"
-    >
-    </HoverChip>
+    ></HoverChip>
     <HoverChip
       class="mr-2"
       color="indigo"
@@ -27,8 +25,7 @@
       :disabled="!selected"
       icon="mdi-download"
       text="Download ShareX Config"
-    >
-    </HoverChip>
+    ></HoverChip>
     <HoverChip
       class="mr-2"
       color="deep-purple"
@@ -36,24 +33,22 @@
       :disabled="!selected"
       icon="mdi-download"
       text="Download ShareNix Config"
-    >
-    </HoverChip>
+    ></HoverChip>
     <HoverChip
       class="mr-2"
       color="#78C257"
       href="https://i.troplo.com/i/4b46dcfa13f1.flo"
       icon="mdi-android"
       text="Download Automate Config"
-    >
-    </HoverChip>
+    ></HoverChip>
   </v-card-actions>
-  <v-card-title>How to install the ShareX configuration: </v-card-title>
+  <v-card-title>How to install the ShareX configuration:</v-card-title>
   <v-container>
     <video controls height="430" muted>
       <source src="https://i.troplo.com/i/ddedf216ef3a.mp4" type="video/mp4" />
     </video>
   </v-container>
-  <v-card-title>How to install the ShareNix configuration: </v-card-title>
+  <v-card-title>How to install the ShareNix configuration:</v-card-title>
   <v-container>
     <ol>
       <li>Download and install ShareNix for your distribution.</li>
@@ -66,13 +61,16 @@
         <code>mv "{{ $user.user?.username }} - TPU.json" ~/.sharenix.json</code>
       </li>
       <li>
-        Run <code>sharenix {file}</code> or <code>sharenix-section</code> (for a
-        screenshot) to upload a file to TPU.
+        Run
+        <code>sharenix {file}</code>
+        or
+        <code>sharenix-section</code>
+        (for a screenshot) to upload a file to TPU.
       </li>
     </ol>
   </v-container>
-  <v-card-title
-    >How to install the Automate config for Android devices:
+  <v-card-title>
+    How to install the Automate config for Android devices:
   </v-card-title>
   <v-container>
     <ol>
@@ -80,8 +78,10 @@
         Download the Automate app from the Google Play Store
         <a
           href="https://play.google.com/store/apps/details?id=com.llamalab.automate"
-          >here</a
-        >.
+        >
+          here
+        </a>
+        .
       </li>
       <li>Download the Automate .flo config from TPU.</li>
       <li>
@@ -101,11 +101,11 @@
         Start the flow, and enable the option to start flows at system boot in
         the app settings if you'd like.
       </li>
-      <small
-        >Android 12 or lower is recommended. Android 13 may display a
+      <small>
+        Android 12 or lower is recommended. Android 13 may display a
         notification when an item has been newly copied to the clipboard, you
-        may want to disable the auto clipboard copy block in this case.</small
-      >
+        may want to disable the auto clipboard copy block in this case.
+      </small>
     </ol>
   </v-container>
 </template>

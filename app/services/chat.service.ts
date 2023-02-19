@@ -69,7 +69,6 @@ export class ChatService {
       `unread:${userId}`,
       `$.${chatId}`
     )
-    console.log(notifications)
     if (notifications) {
       await redis.json.set(`unread:${userId}`, "$", {
         ...notifications,

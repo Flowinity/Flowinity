@@ -201,4 +201,6 @@ export class User extends Model {
 
   collections?: CollectionCache[]
   scopes: string
+
+  stats: object
 }

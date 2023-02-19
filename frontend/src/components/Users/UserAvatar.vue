@@ -1,6 +1,6 @@
 <template>
   <span v-if="user">
-    <v-hover v-slot="{ hover }">
+    <v-hover v-slot="{ isHovering, props }">
       <span>
         <v-file-input
           hide-input
@@ -15,32 +15,41 @@
           :src="'/i/' + user.avatar"
           class="text-center"
           :size="size"
+          v-bind="props"
         >
           <v-img aspect-ratio="1/1" v-if="user.avatar" :src="avatarURL" />
-          <v-fade-transition v-if="hover && edit">
+          <v-fade-transition v-if="isHovering && edit">
             <div @click="removeAvatar" style="cursor: pointer">
               <v-overlay absolute>
                 <v-icon large>mdi-close</v-icon>
               </v-overlay>
             </div>
           </v-fade-transition>
+          <v-fade-transition v-else-if="isHovering">
+            <slot></slot>
+          </v-fade-transition>
         </v-avatar>
         <v-avatar
+          :class="{ outline: outline }"
           v-if="!user.avatar"
           class="text-center justify-center"
           justify="center"
           :size="size"
           :color="noColor ? '' : 'primary'"
+          v-bind="props"
         >
-          <span :class="textSize">
+          <span :class="textSize" class="unselectable">
             {{ user.username.charAt(0).toUpperCase() }}
           </span>
-          <v-fade-transition v-if="hover && edit">
+          <v-fade-transition v-if="isHovering && edit">
             <div @click="handleClick" style="cursor: pointer">
               <v-overlay absolute>
                 <v-icon large>mdi-upload</v-icon>
               </v-overlay>
             </div>
+          </v-fade-transition>
+          <v-fade-transition v-else-if="isHovering">
+            <slot></slot>
           </v-fade-transition>
         </v-avatar>
       </span>
@@ -117,7 +126,8 @@ export default defineComponent({
     "forceBadges",
     "noBadges",
     "edit",
-    "status"
+    "status",
+    "outline"
   ],
   data() {
     return {
@@ -126,7 +136,7 @@ export default defineComponent({
   },
   computed: {
     avatarURL() {
-      if (this.user.avatar?.length > 16) {
+      if (this.user.avatar?.length > 20) {
         return "https://colubrina.troplo.com/usercontent/" + this.user.avatar;
       } else {
         return "/i/" + this.user.avatar;
@@ -207,4 +217,9 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.outline {
+  border: 2px solid #151515;
+  border-radius: 50%;
+}
+</style>

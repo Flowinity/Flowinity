@@ -10,6 +10,7 @@
       <excludeFolder url="file://$MODULE_DIR$/coverage" />
       <excludeFolder url="file://$MODULE_DIR$/storage" />
       <excludeFolder url="file://$MODULE_DIR$/storagse" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

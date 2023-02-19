@@ -36,7 +36,7 @@
         style="color: #151515 !important"
         @click="fab = !fab"
       >
-        <v-icon> {{ fab ? "mdi-close" : "mdi-plus" }} </v-icon>
+        <v-icon>{{ fab ? "mdi-close" : "mdi-plus" }}</v-icon>
       </v-btn>
       <v-fab-transition>
         <v-btn
@@ -48,7 +48,7 @@
           color="indigo"
           @click="fab = !fab"
         >
-          <v-icon> mdi-upload </v-icon>
+          <v-icon>mdi-upload</v-icon>
         </v-btn>
       </v-fab-transition>
       <v-fab-transition>
@@ -61,7 +61,7 @@
           color="success"
           @click="fab = !fab"
         >
-          <v-icon> mdi-file-document-plus </v-icon>
+          <v-icon>mdi-file-document-plus</v-icon>
         </v-btn>
       </v-fab-transition>
     </template>

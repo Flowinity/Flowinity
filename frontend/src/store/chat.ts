@@ -25,6 +25,14 @@ export interface ChatState {
       value: boolean;
       username: string;
     };
+    userMenu: {
+      value: boolean;
+      username: string;
+      user: User | null;
+      bindingElement: string | null;
+      x: number;
+      y: number;
+    };
   };
 }
 
@@ -42,6 +50,14 @@ export const useChatStore = defineStore("chat", {
         user: {
           value: false,
           username: ""
+        },
+        userMenu: {
+          value: false,
+          username: "",
+          user: null as User | null,
+          bindingElement: null as string | null,
+          x: 0,
+          y: 0
         }
       }
     } as ChatState),

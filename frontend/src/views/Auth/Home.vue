@@ -53,9 +53,10 @@
       image="https://i.troplo.com/i/5d421e0914e0.png"
     >
       AutoCollect allows you to programmatically add files you upload to
-      collections based on rules you set.<br />For example, you may set a rule
-      that adds your upload to a "Games" collection if the filename contains
-      "Skyrim"
+      collections based on rules you set.
+      <br />
+      For example, you may set a rule that adds your upload to a "Games"
+      collection if the filename contains "Skyrim"
     </PromoCard>
     <PromoCard
       title="Workspaces"

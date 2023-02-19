@@ -6,7 +6,7 @@
   >
     <v-card>
       <v-toolbar>
-        <v-toolbar-title> Add to collection </v-toolbar-title>
+        <v-toolbar-title>Add to collection</v-toolbar-title>
       </v-toolbar>
       <v-card-text>
         <v-form>
@@ -24,9 +24,9 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="$emit('update:modelValue', false)"
-          >Cancel</v-btn
-        >
+        <v-btn color="primary" @click="$emit('update:modelValue', false)">
+          Cancel
+        </v-btn>
         <v-btn color="primary" @click="addToCollection">Add</v-btn>
       </v-card-actions>
     </v-card>

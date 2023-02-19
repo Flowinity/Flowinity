@@ -5,8 +5,8 @@
         <UserWidget></UserWidget>
         <AnnouncementsWidget class="mt-6"></AnnouncementsWidget>
       </v-col>
-      <v-col md="6"
-        ><StatsWidget></StatsWidget>
+      <v-col md="6">
+        <StatsWidget></StatsWidget>
         <GraphWidget class="mt-6"></GraphWidget>
       </v-col>
     </v-row>

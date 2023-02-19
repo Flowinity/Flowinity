@@ -7,9 +7,17 @@
       ></User>
     </v-card>
   </v-dialog>
-  <ColubrinaSidebar v-if="$chat.communicationsSidebar"></ColubrinaSidebar
-  ><router-view></router-view
-  ><ColubrinaMemberSidebar
+  <v-menu
+    v-model="$chat.dialogs.userMenu.value"
+    location="right"
+    :close-on-content-click="false"
+    :style="menuStyle"
+  >
+    <ColubrinaUserMenu></ColubrinaUserMenu>
+  </v-menu>
+  <ColubrinaSidebar v-if="$chat.communicationsSidebar"></ColubrinaSidebar>
+  <router-view></router-view>
+  <ColubrinaMemberSidebar
     v-if="$chat.selectedChat?.type === 'group'"
   ></ColubrinaMemberSidebar>
 </template>
@@ -19,10 +27,24 @@ import { defineComponent } from "vue";
 import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
 import ColubrinaMemberSidebar from "@/layouts/colubrina/MemberSidebar.vue";
 import User from "@/views/User/User.vue";
+import ColubrinaUserMenu from "@/components/Communications/Menus/User.vue";
 
 export default defineComponent({
   name: "Colubrina",
-  components: { User, ColubrinaMemberSidebar, ColubrinaSidebar }
+  components: {
+    ColubrinaUserMenu,
+    User,
+    ColubrinaMemberSidebar,
+    ColubrinaSidebar
+  },
+  computed: {
+    menuStyle() {
+      return `
+        position: absolute;
+        top: ${this.$chat.dialogs.userMenu.y}px;
+        left: ${this.$chat.dialogs.userMenu.x + 10}px;`;
+    }
+  }
 });
 </script>
 

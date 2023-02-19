@@ -38,8 +38,7 @@
           $emit('update:metadata', metadata);
           $emit('refreshGallery');
         "
-      >
-      </v-checkbox>
+      ></v-checkbox>
     </v-col>
   </v-row>
 </template>

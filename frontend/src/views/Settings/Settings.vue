@@ -2,20 +2,20 @@
   <v-container>
     <v-card>
       <v-tabs>
-        <v-tab to="/settings/dashboard" prepend-icon="mdi-account"
-          >Account</v-tab
-        >
+        <v-tab to="/settings/dashboard" prepend-icon="mdi-account">
+          Account
+        </v-tab>
         <v-tab to="/settings/security" prepend-icon="mdi-lock">Security</v-tab>
-        <v-tab to="/settings/clients" prepend-icon="mdi-cellphone-cog"
-          >Setup</v-tab
-        >
+        <v-tab to="/settings/clients" prepend-icon="mdi-cellphone-cog">
+          Setup
+        </v-tab>
         <v-tab to="/settings/domains" prepend-icon="mdi-web">Domains</v-tab>
-        <v-tab to="/settings/slideshows" prepend-icon="mdi-image-multiple"
-          >Slideshows</v-tab
-        >
-        <v-tab to="/settings/about" prepend-icon="mdi-information"
-          >About TPU</v-tab
-        >
+        <v-tab to="/settings/slideshows" prepend-icon="mdi-image-multiple">
+          Slideshows
+        </v-tab>
+        <v-tab to="/settings/about" prepend-icon="mdi-information">
+          About TPU
+        </v-tab>
         <v-spacer></v-spacer>
         <v-progress-circular
           v-if="loading"

@@ -25,7 +25,7 @@ export class UserUtilsService {
     return friends
   }
   async getFriends(userId: number) {
-    return await Friend.findAll({
+    let friends = await Friend.findAll({
       where: {
         userId,
         status: "accepted"
@@ -34,10 +34,23 @@ export class UserUtilsService {
         {
           model: User,
           as: "otherUser",
-          attributes: ["id", "username", "avatar", "status"]
+          attributes: ["id", "username", "avatar", "status"],
+          include: [
+            {
+              model: Plan,
+              as: "plan",
+              attributes: ["id", "name", "color", "icon", "internalName"]
+            }
+          ]
         }
       ]
     })
+    for (const friend of friends) {
+      friend.dataValues.otherUser.dataValues.stats = await redis.json.get(
+        `userStats:${friend.otherUser.id}`
+      )
+    }
+    return friends
   }
   async updateBanner(
     userId: number,

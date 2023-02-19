@@ -7,8 +7,7 @@
           'skeleton-loader-no-animate': !animate
         }"
         size="40"
-      >
-      </v-avatar>
+      ></v-avatar>
     </template>
     <p>
       <small
@@ -17,8 +16,7 @@
           'skeleton-loader': animate,
           'skeleton-loader-no-animate': !animate
         }"
-      >
-      </small>
+      ></small>
     </p>
 
     <span
@@ -27,8 +25,7 @@
         'skeleton-loader': animate,
         'skeleton-loader-no-animate': !animate
       }"
-    >
-    </span>
+    ></span>
   </v-list-item>
 </template>
 

@@ -4,8 +4,8 @@
       <div class id="tpu-editor" />
     </div>
     <v-app-bar color="dark" bottom dense fixed id="workspaces-word-count">
-      <v-card-subtitle :style="toolbarStyles"
-        >Words: {{ words }} • Characters: {{ characters }} • Speaking Time:
+      <v-card-subtitle :style="toolbarStyles">
+        Words: {{ words }} • Characters: {{ characters }} • Speaking Time:
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <span v-on="on">{{ speakingTime }}</span>

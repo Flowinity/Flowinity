@@ -1,10 +1,10 @@
 // Utilities
-import { defineStore } from "pinia"
-import axios from "@/plugins/axios"
+import { defineStore } from "pinia";
+import axios from "@/plugins/axios";
 
 export interface ExperimentsState {
-  experiments: Record<string, string>
-  experimentsInherit: Record<string, string>
+  experiments: Record<string, string>;
+  experimentsInherit: Record<string, string>;
 }
 
 export const useExperimentsStore = defineStore("experiments", {
@@ -16,21 +16,21 @@ export const useExperimentsStore = defineStore("experiments", {
   getters: {},
   actions: {
     async init() {
-      const experiments = localStorage.getItem("experimentsStore")
+      const experiments = localStorage.getItem("experimentsStore");
       if (experiments) {
         try {
-          this.experiments = JSON.parse(experiments)
+          this.experiments = JSON.parse(experiments);
         } catch {
           //
         }
       }
-      const { data } = await axios.get("/core/experiments")
+      const { data } = await axios.get("/core/experiments");
       this.experiments = {
         ...data,
         ...JSON.parse(localStorage.getItem("experiments") || "{}")
-      }
-      this.experimentsInherit = data
-      localStorage.setItem("experimentsStore", JSON.stringify(data))
+      };
+      this.experimentsInherit = data;
+      localStorage.setItem("experimentsStore", JSON.stringify(data));
     }
   }
-})
+});

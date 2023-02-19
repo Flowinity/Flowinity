@@ -6,6 +6,7 @@
       icon="mdi-shield"
       color="#0190ea"
       :small="true"
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       text="TPU Moderator"
@@ -13,6 +14,7 @@
       icon="mdi-shield"
       color="success"
       :small="true"
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       :text="'TPU ' + user.plan?.name"
@@ -21,6 +23,7 @@
       :color="user.plan?.color"
       text-color="black"
       :small="true"
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       text="Chronic Screenshot Addiction Condition Disorder (CSACD)"
@@ -29,6 +32,7 @@
       :small="true"
       v-if="user.stats?.uploads >= 50000"
       title="Upload 50K+ items."
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       text="Extreme Uploader"
@@ -37,6 +41,7 @@
       :small="true"
       v-else-if="user.stats?.uploads >= 10000"
       title="Upload 10K+ items."
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       text="Pro Uploader"
@@ -45,6 +50,7 @@
       :small="true"
       v-else-if="user.stats?.uploads >= 4154"
       title="Upload 4154+ items."
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       text="Getting Better™"
@@ -53,6 +59,7 @@
       :small="true"
       v-else-if="user.stats?.uploads >= 1000"
       title="Upload 1K+ items."
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       text="Getting Started"
@@ -61,6 +68,7 @@
       :small="true"
       v-else-if="user.stats?.uploads >= 500"
       title="Upload 500+ items."
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       text="TPU All Nighter"
@@ -69,6 +77,7 @@
       :small="true"
       v-if="user.stats?.pulse >= 24"
       title="Have 24h+ in TPU."
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       text="TPU Addict"
@@ -77,6 +86,7 @@
       :small="true"
       v-else-if="user.stats?.pulse >= 12"
       title="Have 12h+ in TPU."
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       text="True Collectivist"
@@ -88,6 +98,7 @@
         user.stats?.uploads >= 1000 &&
         user.stats?.collectionItems / user.stats?.uploads >= 0.8
       "
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       :text="age + ' year old account'"
@@ -96,6 +107,7 @@
       :small="true"
       :title="`${user.username}'s account is ${age} years old.`"
       v-if="age >= 1"
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       text="Cake Week"
@@ -104,6 +116,7 @@
       :small="true"
       :title="`${user.username}'s account was created this week ${age} years ago.`"
       v-if="cakeWeek && age >= 1"
+      class="user-badge"
     ></HoverChip>
     <HoverChip
       text="Not friends with user, some information may be unavailable."
@@ -114,6 +127,7 @@
         !$friends.friends.find((f) => f.friendId === user.id) &&
         user.id !== $user.user?.id
       "
+      class="user-badge"
     ></HoverChip>
   </span>
 </template>

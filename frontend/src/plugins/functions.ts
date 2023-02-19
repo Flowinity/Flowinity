@@ -31,7 +31,7 @@ export default {
   avatar(chat: any) {
     if (!chat) return undefined;
     if (chat.username) {
-      if (chat.avatar?.length > 12) {
+      if (chat.avatar?.length > 20) {
         return "https://colubrina.troplo.com/usercontent/" + chat.avatar;
       } else if (chat.avatar) {
         return "https://i.troplo.com/i/" + chat.avatar;
@@ -39,7 +39,7 @@ export default {
         return undefined;
       }
     }
-    if (chat.type === "direct" && chat.recipient?.avatar?.length > 12) {
+    if (chat.type === "direct" && chat.recipient?.avatar?.length > 20) {
       return (
         "https://colubrina.troplo.com/usercontent/" + chat.recipient.avatar
       );
@@ -51,7 +51,7 @@ export default {
       chat.recipient?.legacyUser
     ) {
       return undefined;
-    } else if (chat.type === "group" && chat.icon?.length > 12) {
+    } else if (chat.type === "group" && chat.icon?.length > 20) {
       return "https://colubrina.troplo.com/usercontent/" + chat.icon;
     } else if (chat.type === "group" && chat.icon) {
       return "https://i.troplo.com/i/" + chat.icon;

@@ -14,11 +14,12 @@
         small
         class="mr-2"
         @click="$functions.copy(item.props.title.token)"
-        >mdi-content-copy</v-icon
       >
-      <v-icon small class="mr-2" @click="deleteApiKey(item.props.title.id)"
-        >mdi-delete</v-icon
-      >
+        mdi-content-copy
+      </v-icon>
+      <v-icon small class="mr-2" @click="deleteApiKey(item.props.title.id)">
+        mdi-delete
+      </v-icon>
     </template>
   </v-data-table>
   <v-toolbar color="toolbar" class="rounded-xl mt-5">
@@ -31,9 +32,9 @@
   </v-toolbar>
   <v-data-table :headers="headers" :items="alternatePasswords.items">
     <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="deleteAlternatePassword(item.name)"
-        >mdi-delete</v-icon
-      >
+      <v-icon small class="mr-2" @click="deleteAlternatePassword(item.name)">
+        mdi-delete
+      </v-icon>
     </template>
   </v-data-table>
   <v-toolbar color="toolbar" class="rounded-xl mt-5">

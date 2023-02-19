@@ -35,25 +35,30 @@
     >
       <template v-slot:multi-select-actions-length="{ selected }">
         <v-btn class="rounded-xl ml-2" text @click="selectAll(selected)">
-          <v-icon>mdi-plus</v-icon>&nbsp;Select all
+          <v-icon>mdi-plus</v-icon>
+          &nbsp;Select all
         </v-btn>
         <v-btn class="rounded-xl ml-2" text @click="deselectAll(selected)">
-          <v-icon>mdi-close</v-icon>&nbsp;Unselect all
+          <v-icon>mdi-close</v-icon>
+          &nbsp;Unselect all
         </v-btn>
         <v-btn
           class="rounded-xl"
           color="red darken-1"
           text
           @click="act($event, 'deny')"
-          ><v-icon>mdi-close</v-icon> Reject all</v-btn
         >
+          <v-icon>mdi-close</v-icon>
+          Reject all
+        </v-btn>
         <v-btn
           class="rounded-xl ml-2"
           color="success"
           text
           @click="act($event, 'approve')"
         >
-          <v-icon>mdi-check</v-icon>&nbsp;Accept all
+          <v-icon>mdi-check</v-icon>
+          &nbsp;Accept all
         </v-btn>
       </template>
       <template v-slot:actions="{ item }">

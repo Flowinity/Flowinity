@@ -49,7 +49,7 @@
       {{ $chat.chatName }}
     </h1>
     <v-spacer></v-spacer>
-    <small v-if="$app.notesSaving" class="mr-3"> Saving... </small>
+    <small v-if="$app.notesSaving" class="mr-3">Saving...</small>
     <template v-if="$user.user">
       <v-menu offset-y rounded class="rounded-xxl">
         <template v-slot:activator="{ props }">

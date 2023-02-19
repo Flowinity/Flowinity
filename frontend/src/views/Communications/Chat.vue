@@ -6,6 +6,7 @@
       style="padding-bottom: 110px"
       id="chat-list"
       @scroll="scrollEvent"
+      class="message-list-container"
     >
       <Message
         v-for="(message, index) in $chat.selectedChat?.messages"
@@ -18,6 +19,15 @@
         @editText="editingText = $event"
         :editingText="editingText"
         @editMessage="doEditMessage"
+        @authorClick="
+          $chat.dialogs.userMenu.value = false;
+          $chat.dialogs.userMenu.user = $event.user;
+          $chat.dialogs.userMenu.username = $event.user.username;
+          $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
+          $chat.dialogs.userMenu.x = $event.x;
+          $chat.dialogs.userMenu.y = $event.y;
+          $chat.dialogs.userMenu.value = true;
+        "
       ></Message>
       <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
     </v-list>
@@ -30,7 +40,8 @@
         class="pointer"
         v-if="avoidAutoScroll"
       >
-        <v-icon class="mr-2">mdi-arrow-down</v-icon> Force bottom
+        <v-icon class="mr-2">mdi-arrow-down</v-icon>
+        Force bottom
       </v-toolbar>
     </v-fade-transition>
     <CommunicationsInput
@@ -67,25 +78,20 @@ export default defineComponent({
       return (lines - 1) * 24 + 82;
     },
     inputStyles() {
-      let widthOffset = 0;
-      if (this.$vuetify.display.mobile) {
-        widthOffset = 0;
-      }
-      if (!this.$vuetify.display.mobile) {
-        if (this.$app.workspaceDrawer) {
-          widthOffset += 256;
-        }
-        if (this.$app.mainDrawer) {
-          widthOffset += 256;
-        }
-        if (this.$chat.communicationsSidebar) {
-          widthOffset += 256;
-        }
-        if (this.$chat.memberSidebar) {
-          widthOffset += 256;
-        }
-      }
-      return `position: fixed; width: calc(100% - ${widthOffset}px); padding: 16px;`;
+      const drawers = document.querySelectorAll(
+        ".v-navigation-drawer:not(.v-navigation-drawer--temporary)"
+      );
+      let bind;
+      bind = [
+        this.$vuetify.display.mobile,
+        this.$app.workspaceDrawer,
+        this.$chat.communicationsSidebar,
+        this.$chat.memberSidebar,
+        this.$chat.isReady
+      ];
+      return `position: fixed; width: calc(100% - ${
+        256 * drawers.length
+      }px); padding: 16px;`;
     }
   },
   methods: {
@@ -252,3 +258,10 @@ export default defineComponent({
   }
 });
 </script>
+
+<style scoped>
+.message-list-container {
+  height: 100vh;
+  overflow-y: scroll;
+}
+</style>

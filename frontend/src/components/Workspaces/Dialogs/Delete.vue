@@ -10,18 +10,19 @@
       </v-toolbar>
       <v-container>
         <v-card-text>
-          This item, and any of its children, will be permanently deleted.<br />This
-          is irreversible.
+          This item, and any of its children, will be permanently deleted.
+          <br />
+          This is irreversible.
         </v-card-text>
       </v-container>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="$emit('update:modelValue', false)"
-          >Cancel</v-btn
-        >
-        <v-btn color="error" text @click="$emit('submit')" :loading="loading">{{
-          btnText ? btnText : "Delete"
-        }}</v-btn>
+        <v-btn color="primary" text @click="$emit('update:modelValue', false)">
+          Cancel
+        </v-btn>
+        <v-btn color="error" text @click="$emit('submit')" :loading="loading">
+          {{ btnText ? btnText : "Delete" }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

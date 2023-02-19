@@ -3,9 +3,11 @@
     v-if="!$chat.communicationsSidebar"
     @click="$app.forcedMainDrawer = true"
     style="color: #0190ea; cursor: pointer; font-size: 12px"
-    ><v-icon>mdi-arrow-left</v-icon> Back to Workspaces</v-card-text
   >
-  <v-card-text class="text-overline my-n3"> MEMBERS </v-card-text>
+    <v-icon>mdi-arrow-left</v-icon>
+    Back to Workspaces
+  </v-card-text>
+  <v-card-text class="text-overline my-n3">MEMBERS</v-card-text>
   <v-list nav v-if="$chat.selectedChat?.users">
     <v-list-item
       v-for="association in $chat.selectedChat.users"

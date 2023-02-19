@@ -13,11 +13,13 @@
         icon
         @click.prevent.stop="$emit('select', item)"
       >
-        <v-icon>{{
-          selected.includes(item.id)
-            ? "mdi-checkbox-marked-circle"
-            : "mdi-circle-outline"
-        }}</v-icon>
+        <v-icon>
+          {{
+            selected.includes(item.id)
+              ? "mdi-checkbox-marked-circle"
+              : "mdi-circle-outline"
+          }}
+        </v-icon>
       </v-btn>
     </v-toolbar>
     <GalleryPreview :item="item"></GalleryPreview>
@@ -31,7 +33,7 @@
       Original name: {{ item.originalFilename }}
     </v-card-subtitle>
 
-    <v-card-subtitle> Uploaded name: {{ item.attachment }} </v-card-subtitle>
+    <v-card-subtitle>Uploaded name: {{ item.attachment }}</v-card-subtitle>
 
     <v-card-subtitle>
       Created at:
@@ -47,8 +49,7 @@
             icon="mdi-plus"
             @click="$emit('collectivize', item.id)"
             v-if="supports.permissions.write"
-          >
-          </HoverChip>
+          ></HoverChip>
           <v-chip
             :to="'/collections/' + collection.id"
             :key="collection.id"
@@ -60,8 +61,9 @@
               @click.prevent="removeItem(item, collection)"
               class="ml-1"
               v-if="supports.permissions.write"
-              >mdi-close</v-icon
             >
+              mdi-close
+            </v-icon>
           </v-chip>
         </v-chip-group>
       </v-slide-group>

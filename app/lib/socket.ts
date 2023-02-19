@@ -22,6 +22,7 @@ export default {
       if (user && socket.user.id) {
         socket.join(user.id)
         if (user.storedStatus !== "invisible") {
+          console.log(`user ${user.username} going online`)
           await User.update(
             {
               status: user.storedStatus
@@ -38,6 +39,7 @@ export default {
           // ensure all sockets are disconnected
           const sockets = await io.in(user.id).allSockets()
           if (sockets.size === 0) {
+            console.log(`user ${user.username} going offline`)
             if (user.storedStatus !== "invisible") {
               await User.update(
                 {

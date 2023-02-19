@@ -36,7 +36,6 @@
   border-radius: 12px !important;
 }
 
-
 .v-btn {
   text-transform: none !important;
 }
@@ -45,11 +44,13 @@
   background-color: rgba(142, 142, 142, 0.2) !important;
 }
 
-.v-btn--variant-outlined, .v-chip--variant-outlined {
-  border-color: hsla(0,0%,100%,.12) !important;
+.v-btn--variant-outlined,
+.v-chip--variant-outlined {
+  border-color: hsla(0, 0%, 100%, 0.12) !important;
 }
 
-.v-list-item__prepend > .v-icon, .v-list-item__append > .v-icon {
+.v-list-item__prepend > .v-icon,
+.v-list-item__append > .v-icon {
   opacity: 1 !important;
 }
 
@@ -59,13 +60,18 @@
 }
 
 .v-table {
-  border-radius: 0  0 12px 12px !important;
+  border-radius: 0 0 12px 12px !important;
   background-color: #161616 !important;
   elevation: 0 !important;
 }
 
-.v-table tbody, .v-table thead, .v-table tr, .v-table th, .v-table td, .v-table table {
-    background-color: #161616 !important;
+.v-table tbody,
+.v-table thead,
+.v-table tr,
+.v-table th,
+.v-table td,
+.v-table table {
+  background-color: #161616 !important;
 }
 
 .limit {
@@ -131,7 +137,7 @@ a {
 }
 
 .message:hover {
-    background-color: #222222 !important;
+  background-color: #222222 !important;
 }
 
 .message-actions {
@@ -150,5 +156,9 @@ a {
 
 .message:hover .message-actions {
   visibility: visible;
-  position: relative
+  position: relative;
+}
+
+.underline-on-hover:hover {
+  text-decoration: underline;
 }

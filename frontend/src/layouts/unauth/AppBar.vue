@@ -10,8 +10,8 @@
       TPU
     </h1>
     <v-spacer></v-spacer>
-    <v-btn color="primary" to="/register"> Register </v-btn>
-    <v-btn color="primary" to="/login"> Login </v-btn>
+    <v-btn color="primary" to="/register">Register</v-btn>
+    <v-btn color="primary" to="/login">Login</v-btn>
   </v-app-bar>
 </template>
 

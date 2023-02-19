@@ -6,7 +6,7 @@
   >
     <v-card elevation="7" class="rounded-xl">
       <v-toolbar>
-        <v-toolbar-title> Add API Key </v-toolbar-title>
+        <v-toolbar-title>Add API Key</v-toolbar-title>
       </v-toolbar>
       <v-card-text v-if="!key">
         <v-text-field
@@ -45,16 +45,16 @@
       </v-card-text>
       <v-card-actions v-if="!key">
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="$emit('update:modelValue', false)"
-          >Cancel</v-btn
-        >
+        <v-btn color="primary" text @click="$emit('update:modelValue', false)">
+          Cancel
+        </v-btn>
         <v-btn color="primary" text @click="addAPIKey">Add</v-btn>
       </v-card-actions>
       <v-card-actions v-else>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="$emit('update:modelValue', false)"
-          >Close</v-btn
-        >
+        <v-btn color="primary" text @click="$emit('update:modelValue', false)">
+          Close
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

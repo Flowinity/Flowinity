@@ -36,8 +36,9 @@
         variant="text"
         @click="customLeft = true"
         v-if="!customLeft"
-        >...</v-chip
       >
+        ...
+      </v-chip>
     </template>
     <v-chip
       size="large"
@@ -69,8 +70,9 @@
         variant="text"
         @click="customRight = true"
         v-if="!customRight"
-        >...</v-chip
       >
+        ...
+      </v-chip>
       <v-chip
         variant="text"
         :disabled="modelValue === totalPages"

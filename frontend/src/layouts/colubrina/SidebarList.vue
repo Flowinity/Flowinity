@@ -3,8 +3,10 @@
     v-if="!$chat.communicationsSidebar"
     @click="$app.forcedMainDrawer = true"
     style="color: #0190ea; cursor: pointer; font-size: 12px"
-    ><v-icon>mdi-arrow-left</v-icon> Back to TPU</v-card-text
   >
+    <v-icon>mdi-arrow-left</v-icon>
+    Back to TPU
+  </v-card-text>
   <v-card-text class="text-overline my-n3">
     <CreateChat v-model="create" v-slot="{ props }">
       <v-btn
@@ -13,9 +15,10 @@
         class="mr-2"
         @click="create = true"
         v-bind="props"
-        ><v-icon>mdi-plus</v-icon></v-btn
-      ></CreateChat
-    >
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </CreateChat>
     CHATS
   </v-card-text>
   <v-list nav>

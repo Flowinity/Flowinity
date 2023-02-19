@@ -13,10 +13,10 @@
         :key="'item-' + item.id + '-' + (item.shared ? 'shared' : 'owned')"
         md="3"
       >
-        <CollectionCard :item="item"> </CollectionCard>
+        <CollectionCard :item="item"></CollectionCard>
       </v-col>
     </v-row>
-    <small> Total Items: {{ $collections.items.length }} </small>
+    <small>Total Items: {{ $collections.items.length }}</small>
   </v-container>
 </template>
 

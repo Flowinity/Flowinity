@@ -10,34 +10,36 @@
       <v-tooltip location="top" activator="parent">
         Certified R* Moment
       </v-tooltip>
-      <v-icon> mdi-emoticon-happy </v-icon>
+      <v-icon>mdi-emoticon-happy</v-icon>
     </v-btn>
     <v-btn icon @click="$emit('edit')" rounded="0">
-      <v-tooltip location="top" activator="parent"> Edit </v-tooltip>
-      <v-icon> mdi-pencil </v-icon>
+      <v-tooltip location="top" activator="parent">Edit</v-tooltip>
+      <v-icon>mdi-pencil</v-icon>
     </v-btn>
     <v-btn icon @click="deleteMessage()" rounded="0">
-      <v-tooltip location="top" activator="parent"> Reply </v-tooltip>
-      <v-icon> mdi-reply </v-icon>
+      <v-tooltip location="top" activator="parent">Reply</v-tooltip>
+      <v-icon>mdi-reply</v-icon>
     </v-btn>
     <v-menu location="top left" v-model="avoid" v-if="!shifting">
       <template v-slot:activator="{ props }">
         <v-btn icon rounded="0" v-bind="props">
           <v-tooltip location="top" activator="parent">More</v-tooltip>
-          <v-icon> mdi-dots-vertical </v-icon>
+          <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
       </template>
       <v-list class="mb-2 rounded-xl">
         <v-list-item @click="deleteMessage()" color="red">
-          <v-list-item-title
-            ><v-icon class="mr-1">mdi-pin</v-icon>Pin</v-list-item-title
-          >
+          <v-list-item-title>
+            <v-icon class="mr-1">mdi-pin</v-icon>
+            Pin
+          </v-list-item-title>
         </v-list-item>
         <v-divider></v-divider>
         <v-list-item @click="deleteMessage()" color="red">
-          <v-list-item-title
-            ><v-icon class="mr-1">mdi-delete</v-icon>Delete</v-list-item-title
-          >
+          <v-list-item-title>
+            <v-icon class="mr-1">mdi-delete</v-icon>
+            Delete
+          </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>

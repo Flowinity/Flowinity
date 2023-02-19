@@ -24,18 +24,20 @@
             v-if="
               !$route.params.type && collection.permissionsMetadata.configure
             "
-            ><v-icon style="font-size: 20px" class="mr-1">mdi-share</v-icon
-            >Collection Sharing</v-btn
           >
+            <v-icon style="font-size: 20px" class="mr-1">mdi-share</v-icon>
+            Collection Sharing
+          </v-btn>
           <v-btn
             @click="$emit('settingsDialog', true)"
             text
             v-if="
               !$route.params.type && collection.permissionsMetadata.configure
             "
-            ><v-icon style="font-size: 20px" class="mr-1">mdi-cog</v-icon
-            >Settings</v-btn
           >
+            <v-icon style="font-size: 20px" class="mr-1">mdi-cog</v-icon>
+            Settings
+          </v-btn>
           <v-btn
             v-else-if="collection.shareLink"
             text
@@ -53,7 +55,7 @@
         </span>
       </v-card-title>
       <v-card-text class="mt-n3" v-if="collection.users.length">
-        <v-icon> mdi-swap-horizontal </v-icon>
+        <v-icon>mdi-swap-horizontal</v-icon>
         {{ collection.user.username }},
         {{
           collection.users

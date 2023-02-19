@@ -1,9 +1,9 @@
 <template>
   <v-card class="text-center justify-center" height="485">
     <v-container>
-      <strong style="font-size: 24px" class="text-gradient"
-        >Upload Stats</strong
-      >
+      <strong style="font-size: 24px" class="text-gradient">
+        Upload Stats
+      </strong>
       <Chart
         id="global-uploads"
         :data="$app.site.stats.uploadGraph"

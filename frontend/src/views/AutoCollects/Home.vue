@@ -6,7 +6,7 @@
         :key="'item-' + item.id + '-' + (item.shared ? 'shared' : 'owned')"
         md="3"
       >
-        <CollectionCard :item="item" type="autoCollect"> </CollectionCard>
+        <CollectionCard :item="item" type="autoCollect"></CollectionCard>
       </v-col>
     </v-row>
     <PromoNoContent
@@ -15,7 +15,7 @@
       title="You have no pending approvals!"
       description="You may configure AutoCollects with the button in the top right corner."
     ></PromoNoContent>
-    <small> Total Items: {{ autoCollects.length }} </small>
+    <small>Total Items: {{ autoCollects.length }}</small>
   </v-container>
 </template>
 

@@ -11,10 +11,11 @@
     </template>
     <v-card>
       <v-card-title class="text-h6">Select Friends</v-card-title>
-      <v-card-subtitle
-        >You can friend people from their profile.<br />Adding 2 or more users
-        will create a group chat.</v-card-subtitle
-      >
+      <v-card-subtitle>
+        You can friend people from their profile.
+        <br />
+        Adding 2 or more users will create a group chat.
+      </v-card-subtitle>
       <v-list>
         <v-text-field
           v-model="search"
@@ -53,12 +54,9 @@
       </v-list>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          @click="createChat"
-          :disabled="!selected.length"
-          >{{ selected.length < 2 ? "Create DM" : "Create Group" }}</v-btn
-        >
+        <v-btn color="primary" @click="createChat" :disabled="!selected.length">
+          {{ selected.length < 2 ? "Create DM" : "Create Group" }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>

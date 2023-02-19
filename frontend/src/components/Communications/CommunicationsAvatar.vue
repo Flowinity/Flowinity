@@ -7,13 +7,13 @@
       :src="$functions.avatar(chat)"
       v-if="$functions.avatar(chat)"
     ></v-img>
-    <v-icon size="20" v-else-if="chat.type === 'group'"
-      >mdi-account-group</v-icon
-    >
+    <v-icon size="20" v-else-if="chat.type === 'group'">
+      mdi-account-group
+    </v-icon>
     <span class="text-h5" v-else-if="chat.recipient?.username">
       {{ chat.recipient?.username?.charAt(0).toUpperCase() }}
     </span>
-    <span class="text-h5" v-else> ? </span>
+    <span class="text-h5" v-else>?</span>
   </v-avatar>
   <v-avatar v-else :color="!$functions.avatar(user) ? '#0190ea' : undefined">
     <v-img
@@ -23,7 +23,7 @@
     <span class="text-h5" v-else-if="user?.username">
       {{ user?.username?.charAt(0).toUpperCase() }}
     </span>
-    <span class="text-h5" v-else> ? </span>
+    <span class="text-h5" v-else>?</span>
   </v-avatar>
   <v-badge
     :color="$functions.userStatus(friendStatus).color"

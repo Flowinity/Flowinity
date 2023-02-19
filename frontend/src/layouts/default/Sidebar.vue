@@ -1,5 +1,5 @@
 <template>
-  <InviteAFriend v-model="inviteAFriend"> </InviteAFriend>
+  <InviteAFriend v-model="inviteAFriend"></InviteAFriend>
   <MigrateWizard
     v-model="migrateWizard"
     v-if="$experiments.experiments['PROJECT_MERGE']"
@@ -20,8 +20,10 @@
       "
       @click="$app.forcedMainDrawer = false"
       style="color: #0190ea; cursor: pointer; font-size: 12px"
-      ><v-icon>mdi-arrow-right</v-icon> Back to Communications</v-card-text
     >
+      <v-icon>mdi-arrow-right</v-icon>
+      Back to Communications
+    </v-card-text>
     <v-list
       density="comfortable"
       nav
@@ -48,8 +50,8 @@
         :disabled="!checkScope(item.scope, $user.user?.scopes)"
         :prepend-icon="item.icon"
       >
-        <v-list-item-title
-          >{{ item.name }}
+        <v-list-item-title>
+          {{ item.name }}
           <v-chip
             class="pb-n2 ml-1"
             v-if="item.new && !item.warning"

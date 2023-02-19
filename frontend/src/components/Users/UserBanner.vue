@@ -6,9 +6,10 @@
       aspect-ratio="16/9"
       id="user-header"
       cover
-      min-height="200"
+      :min-height="!height ? 200 : undefined"
       lazy-src="https://i.troplo.com/i/a050d6f271c3.png"
       :max-height="user.banner ? 350 : 150"
+      :height="height"
     >
       <transition
         appear
@@ -35,7 +36,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "UserBanner",
-  props: ["user"],
+  props: ["user", "height"],
   data() {
     return {
       dialog: false

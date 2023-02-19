@@ -13,15 +13,15 @@
       v-if="!this.id"
       :class="{ patch: !$vuetify.display.mobile }"
     >
-      <v-card-subtitle
-        >Words: {{ words.toLocaleString() }} • Characters:
+      <v-card-subtitle>
+        Words: {{ words.toLocaleString() }} • Characters:
         {{ characters.toLocaleString() }} • Speaking Time:
-        <span
-          >{{ speakingTime }}
+        <span>
+          {{ speakingTime }}
           <v-tooltip activator="parent" location="top">
             <span>Average 150wpm estimate</span>
-          </v-tooltip></span
-        >
+          </v-tooltip>
+        </span>
       </v-card-subtitle>
     </v-toolbar>
     <WorkspaceHome v-if="fail" />

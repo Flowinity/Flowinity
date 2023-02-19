@@ -7,7 +7,7 @@
   >
     <v-card color="#151515">
       <template v-if="step === 1">
-        <v-img src="https://i.troplo.com/i/e180024e804e.png"> </v-img>
+        <v-img src="https://i.troplo.com/i/e180024e804e.png"></v-img>
         <v-card-subtitle class="text-center justify-center">
           This is a wizard designed to help you seamlessly migrate your existing
           TroploServices accounts.
@@ -19,10 +19,12 @@
             class="no-capital"
             @click="$emit('update:modelValue', false)"
           >
-            <v-icon class="mr-1"> mdi-arrow-left </v-icon> Do it later
+            <v-icon class="mr-1">mdi-arrow-left</v-icon>
+            Do it later
           </v-btn>
           <v-btn color="primary" text class="no-capital" @click="step++">
-            <v-icon class="mr-1"> mdi-arrow-right </v-icon> Get started
+            <v-icon class="mr-1">mdi-arrow-right</v-icon>
+            Get started
           </v-btn>
         </v-card-actions>
       </template>
@@ -41,10 +43,12 @@
         </v-card-subtitle>
         <v-card-actions class="text-center justify-center">
           <v-btn color="red" text class="no-capital" @click="step = 4">
-            <v-icon class="mr-1"> mdi-close </v-icon> No
+            <v-icon class="mr-1">mdi-close</v-icon>
+            No
           </v-btn>
           <v-btn color="primary" text class="no-capital" @click="step++">
-            <v-icon class="mr-1"> mdi-check </v-icon> Yes
+            <v-icon class="mr-1">mdi-check</v-icon>
+            Yes
           </v-btn>
         </v-card-actions>
       </template>
@@ -90,7 +94,8 @@
         </v-container>
         <v-card-actions class="text-center justify-center">
           <v-btn color="red" text class="no-capital" @click="step++">
-            <v-icon class="mr-1"> mdi-close </v-icon> Skip
+            <v-icon class="mr-1">mdi-close</v-icon>
+            Skip
           </v-btn>
           <v-btn
             color="primary"
@@ -99,7 +104,8 @@
             @click="checkColubrina"
             :loading="colubrina.loading"
           >
-            <v-icon class="mr-1"> mdi-check </v-icon> Let's go
+            <v-icon class="mr-1">mdi-check</v-icon>
+            Let's go
           </v-btn>
         </v-card-actions>
       </template>
@@ -128,10 +134,12 @@
         </v-container>
         <v-card-actions class="text-center justify-center">
           <v-btn color="red" text class="no-capital" @click="step++">
-            <v-icon class="mr-1"> mdi-close </v-icon> Skip
+            <v-icon class="mr-1">mdi-close</v-icon>
+            Skip
           </v-btn>
           <v-btn color="primary" text class="no-capital" @click="step++">
-            <v-icon class="mr-1"> mdi-check </v-icon> Let's go
+            <v-icon class="mr-1">mdi-check</v-icon>
+            Let's go
           </v-btn>
         </v-card-actions>
       </template>
@@ -149,13 +157,15 @@
           Have a Compass account? Link it to your TPU to view your calendar,
           submit learning tasks, all without leaving TPU.
         </v-card-subtitle>
-        <v-container> Currently unavailable </v-container>
+        <v-container>Currently unavailable</v-container>
         <v-card-actions class="text-center justify-center">
           <v-btn color="red" text class="no-capital" @click="step++">
-            <v-icon class="mr-1"> mdi-close </v-icon> Skip
+            <v-icon class="mr-1">mdi-close</v-icon>
+            Skip
           </v-btn>
           <v-btn color="primary" text class="no-capital" @click="step++">
-            <v-icon class="mr-1"> mdi-check </v-icon> Let's go
+            <v-icon class="mr-1">mdi-check</v-icon>
+            Let's go
           </v-btn>
         </v-card-actions>
       </template>
@@ -173,16 +183,20 @@
             :href="
               'mailto:' + $user.user?.username.toLowerCase() + '@troplo.com'
             "
-            >{{ $user.user?.username.toLowerCase() }}@troplo.com</a
-          >!
+          >
+            {{ $user.user?.username.toLowerCase() }}@troplo.com
+          </a>
+          !
         </p>
-        <v-container> Currently unavailable </v-container>
+        <v-container>Currently unavailable</v-container>
         <v-card-actions class="text-center justify-center">
           <v-btn color="red" text class="no-capital" @click="step++">
-            <v-icon class="mr-1"> mdi-close </v-icon> Skip
+            <v-icon class="mr-1">mdi-close</v-icon>
+            Skip
           </v-btn>
           <v-btn color="primary" text class="no-capital" @click="step++">
-            <v-icon class="mr-1"> mdi-check </v-icon> Let's go
+            <v-icon class="mr-1">mdi-check</v-icon>
+            Let's go
           </v-btn>
         </v-card-actions>
       </template>
@@ -198,7 +212,8 @@
         </v-card-subtitle>
         <v-card-actions class="text-center justify-center">
           <v-btn color="primary" text class="no-capital" @click="step++">
-            <v-icon class="mr-1"> mdi-check </v-icon> Next
+            <v-icon class="mr-1">mdi-check</v-icon>
+            Next
           </v-btn>
         </v-card-actions>
       </template>
@@ -219,7 +234,8 @@
             class="no-capital"
             @click="$emit('update:modelValue', false)"
           >
-            <v-icon class="mr-1"> mdi-check </v-icon> Complete
+            <v-icon class="mr-1">mdi-check</v-icon>
+            Complete
           </v-btn>
         </v-card-actions>
       </template>

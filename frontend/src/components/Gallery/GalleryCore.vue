@@ -8,35 +8,42 @@
     <div v-if="!selected.length && supports.multiSelect" class="float-right">
       <slot name="multi-select-actions">
         <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
-          <v-icon>mdi-plus</v-icon>&nbsp;Select all
+          <v-icon>mdi-plus</v-icon>
+          &nbsp;Select all
         </v-btn>
       </slot>
     </div>
     <div v-if="selected.length && supports.multiSelect" class="float-right">
       <slot name="multi-select-actions-length" :selected="selected">
         <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
-          <v-icon>mdi-plus</v-icon>&nbsp;Select all
+          <v-icon>mdi-plus</v-icon>
+          &nbsp;Select all
         </v-btn>
         <v-btn class="rounded-xl ml-2" variant="text" @click="deselectAll()">
-          <v-icon>mdi-close</v-icon>&nbsp;Unselect all
+          <v-icon>mdi-close</v-icon>
+          &nbsp;Unselect all
         </v-btn>
         <v-btn
           class="rounded-xl"
           color="red darken-1"
           variant="text"
           @click="bulkDeleteConfirm()"
-          ><v-icon>mdi-delete</v-icon> Delete Selected</v-btn
         >
+          <v-icon>mdi-delete</v-icon>
+          Delete Selected
+        </v-btn>
         <v-btn
           class="rounded-xl ml-2"
           variant="text"
           @click="bulkAddCollection()"
         >
-          <v-icon>mdi-folder-multiple-image</v-icon>&nbsp;Add to Collection
+          <v-icon>mdi-folder-multiple-image</v-icon>
+          &nbsp;Add to Collection
         </v-btn>
       </slot>
     </div>
-    <br /><br />
+    <br />
+    <br />
     <v-row>
       <v-col
         v-for="item in items.gallery"
@@ -56,9 +63,9 @@
             collectivize = $event;
           "
         >
-          <template v-for="(_, name) in $slots" v-slot:[name]="slotData"
-            ><slot :name="name" v-bind="slotData"
-          /></template>
+          <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+            <slot :name="name" v-bind="slotData" />
+          </template>
         </GalleryItem>
       </v-col>
     </v-row>

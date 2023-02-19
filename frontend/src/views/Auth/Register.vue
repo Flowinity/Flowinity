@@ -39,12 +39,13 @@
               />
               <v-checkbox v-model="terms" :rules="$validation.user.terms">
                 <template v-slot:label>
-                  <span>I agree to the </span>
+                  <span>I agree to the</span>
                   <router-link
                     to="/policies/content"
                     style="text-decoration: none; color: #0190ea"
-                    >&nbsp;TPU Content Policy</router-link
                   >
+                    &nbsp;TPU Content Policy
+                  </router-link>
                 </template>
               </v-checkbox>
             </v-form>
@@ -58,8 +59,9 @@
               @click="login"
               :loading="loading"
               :disabled="!form"
-              >Register</v-btn
             >
+              Register
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -81,9 +83,10 @@
           <p class="text-center text-gradient mb-n5" style="font-size: 64px">
             TPU
           </p>
-          <v-card-text
-            >TPU is currently not accepting registrations.<br />If you'd like to
-            join, you need to be invited by a current member.
+          <v-card-text>
+            TPU is currently not accepting registrations.
+            <br />
+            If you'd like to join, you need to be invited by a current member.
           </v-card-text>
         </v-card>
       </v-col>

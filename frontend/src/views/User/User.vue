@@ -1,6 +1,6 @@
 <template>
   <div v-if="user">
-    <UserBanner :user="user"></UserBanner>
+    <UserBanner :user="user" :height="username ? 250 : undefined"></UserBanner>
     <v-container class="mt-2" :style="username ? 'max-width: 100%;' : ''">
       <v-row>
         <v-col :lg="!username ? 9 : 12" cols="12" md="12">
@@ -35,54 +35,59 @@
                 </UserAvatar>
               </v-hover>
             </v-col>
-            <v-col sm="auto">
-              <v-card-text class="ml-n2 center" style="position: relative">
-                <h1 style="font-weight: 500" :class="username ? 'mb-2' : ''">
-                  {{ user.username }}
-                </h1>
-                <UserBadges :user="user"></UserBadges>
+            <v-col sm="100%" class="d-flex align-center">
+              <v-card-text class="ml-n2">
+                <div>
+                  <h1 style="font-weight: 500" :class="username ? 'mb-2' : ''">
+                    {{ user.username }}
+                  </h1>
+                  <UserBadges :user="user"></UserBadges>
+                </div>
               </v-card-text>
             </v-col>
-            <v-spacer></v-spacer>
-            <v-card-text class="ml-n2 align-center">
-              <v-btn
-                text
-                color="primary"
-                shaped
-                v-if="
-                  user?.friend === 'accepted' &&
-                  $experiments.experiments['COMMUNICATIONS']
-                "
-                @click="chat"
-                class="ml-2"
-                :loading="friendLoading"
-                style="float: right"
-              >
-                <v-icon class="mr-2"> mdi-message-processing </v-icon>
-                Message</v-btn
-              >
-              <v-btn
-                text
-                :color="friends.color"
-                shaped
-                v-if="friends"
-                @click="doFriendRequest"
-                :loading="friendLoading"
-                style="float: right"
-              >
-                <v-icon class="mr-2">
-                  {{ friends.icon }}
-                </v-icon>
-                {{ friends.text }}</v-btn
-              >
-            </v-card-text>
+            <v-col
+              class="d-flex align-center"
+              sm="auto"
+              style="justify-content: flex-end"
+            >
+              <v-card-text>
+                <v-btn
+                  text
+                  :color="friends.color"
+                  shaped
+                  v-if="friends"
+                  @click="doFriendRequest"
+                  :loading="friendLoading"
+                >
+                  <v-icon class="mr-2">
+                    {{ friends.icon }}
+                  </v-icon>
+                  {{ friends.text }}
+                </v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                  shaped
+                  v-if="
+                    user?.friend === 'accepted' &&
+                    $experiments.experiments['COMMUNICATIONS']
+                  "
+                  @click="chat"
+                  class="ml-2"
+                  :loading="friendLoading"
+                >
+                  <v-icon class="mr-2">mdi-message-processing</v-icon>
+                  Message
+                </v-btn>
+              </v-card-text>
+            </v-col>
           </v-row>
           <v-divider class="mt-3"></v-divider>
-          <v-card-text class="text-overline"
-            >About {{ user.username }}</v-card-text
-          >
+          <v-card-text class="text-overline">
+            About {{ user.username }}
+          </v-card-text>
           <v-card-text
-            class="mt-n8"
+            class="mt-n7"
             style="overflow-wrap: break-word; white-space: pre-line"
           >
             {{ user.description }}
@@ -99,7 +104,7 @@
           <template v-if="user.collections?.length">
             <v-divider></v-divider>
             <v-card-text class="text-overline">Mutual Collections</v-card-text>
-            <v-card-text class="subtitle-1 mt-n7">
+            <v-card-text class="subtitle-1 mt-n6">
               <v-slide-group>
                 <CollectionCard
                   style="width: 400px"
@@ -116,10 +121,15 @@
           <template v-if="user.friends?.length">
             <v-divider></v-divider>
             <v-card-text class="text-overline">Mutual Friends</v-card-text>
-            <v-card-text class="subtitle-1 mt-n7">
+            <v-card-text class="subtitle-1 mt-n6">
               <v-slide-group>
                 <v-card
-                  :to="`/u/${friend.user.username}`"
+                  :to="!username ? `/u/${friend.user.username}` : undefined"
+                  @click="
+                    username
+                      ? ($chat.dialogs.user.username = friend.user.username)
+                      : null
+                  "
                   class="rounded-xl pt-3 justify-center text-center px-2"
                   v-for="friend in user.friends"
                   :key="friend.id"
@@ -150,9 +160,9 @@
                     :height="$vuetify.display.mobile ? 400 : undefined"
                   >
                     <p class="mt-3">
-                      <strong style="font-size: 24px" class="text-gradient"
-                        >Upload Distribution</strong
-                      >
+                      <strong style="font-size: 24px" class="text-gradient">
+                        Upload Distribution
+                      </strong>
                     </p>
                     <v-card-subtitle>
                       {{ user.username }} uploads the most at
@@ -177,11 +187,11 @@
                     max-height="400"
                   >
                     <p class="mt-3">
-                      <strong style="font-size: 24px" class="text-gradient"
-                        >Upload Stats</strong
-                      >
+                      <strong style="font-size: 24px" class="text-gradient">
+                        Upload Stats
+                      </strong>
                     </p>
-                    <v-card-subtitle> Over the past 7 days </v-card-subtitle>
+                    <v-card-subtitle>Over the past 7 days</v-card-subtitle>
                     <Chart
                       id="userv2-uploads"
                       :data="user.stats.uploadGraph"
@@ -344,6 +354,7 @@ export default defineComponent({
     async chat() {
       this.friendLoading = true;
       const data = await this.$chat.createChat([this.user?.id as number]);
+      if (this.username) this.$chat.dialogs.user.value = false;
       this.$router.push(`/communications/${data.association.id}`);
     },
     async doFriendRequest() {
@@ -388,6 +399,22 @@ export default defineComponent({
 }
 .center {
   position: absolute;
-  top: 15%;
+  top: 50%;
+}
+
+.align-center {
+  align-items: center;
+}
+.justify-end {
+  justify-content: space-between;
+}
+.tpu-float-right {
+  margin-left: auto;
+}
+.cont {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
 }
 </style>

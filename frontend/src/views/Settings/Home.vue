@@ -1,5 +1,5 @@
 <template>
-  <v-card-title> Privacy </v-card-title>
+  <v-card-title>Privacy</v-card-title>
   <v-card-text>
     <v-switch
       v-model="$user.changes.discordPrecache"
@@ -7,14 +7,14 @@
       class="mb-n7"
       @update:modelValue="$emit('update')"
     ></v-switch>
-    <small
-      >* Discord precaching sends the TPU link of any media attachment to a
+    <small>
+      * Discord precaching sends the TPU link of any media attachment to a
       Discord channel that gets cleared every 10 minutes in order to have the
       image cached by Discord by the time it's sent by yourself. Do not enable
       this if you don't trust Discord.
     </small>
   </v-card-text>
-  <v-card-title> Preferences </v-card-title>
+  <v-card-title>Preferences</v-card-title>
   <v-slider
     v-model="$user.changes.itemsPerPage"
     max="72"
@@ -25,7 +25,7 @@
     class="px-4"
     @update:modelValue="$emit('update')"
   ></v-slider>
-  <v-card-title> My TPU </v-card-title>
+  <v-card-title>My TPU</v-card-title>
   <v-expansion-panels class="px-4">
     <v-expansion-panel title="Change username">
       <v-expansion-panel-text>
@@ -35,24 +35,23 @@
             label="Username"
             :rules="$validation.user.username"
             v-model="$user.changes.username"
-          >
-          </v-text-field>
+          ></v-text-field>
           <v-text-field
             class="mt-4"
             label="Current password"
             type="password"
             :rules="$validation.user.passwordSettings"
             v-model="$user.changes.currentPassword"
-          >
-          </v-text-field>
+          ></v-text-field>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
               :disabled="!valid.username"
               color="primary"
               @click="$user.save().then(() => $emit('update'))"
-              >Save</v-btn
             >
+              Save
+            </v-btn>
           </v-card-actions>
         </v-form>
       </v-expansion-panel-text>
@@ -66,31 +65,29 @@
             type="password"
             :rules="$validation.user.passwordSettings"
             v-model="$user.changes.currentPassword"
-          >
-          </v-text-field>
+          ></v-text-field>
           <v-text-field
             class="mt-4"
             label="New password"
             type="password"
             v-model="$user.changes.password"
-          >
-          </v-text-field>
+          ></v-text-field>
           <v-text-field
             class="mt-4"
             label="Confirm new password"
             type="password"
             :rules="[...$validation.user.passwordSettings, ...validation]"
             v-model="confirmPassword"
-          >
-          </v-text-field>
+          ></v-text-field>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
               color="primary"
               :disabled="!valid.password"
               @click="$user.save().then(() => $emit('update'))"
-              >Save</v-btn
             >
+              Save
+            </v-btn>
           </v-card-actions>
         </v-form>
       </v-expansion-panel-text>
@@ -99,32 +96,32 @@
       <v-expansion-panel-text>
         <v-form v-model="valid.email">
           <p class="px-1">
-            Your email is currently set to <b>{{ $user.user?.email }}</b
-            >.
+            Your email is currently set to
+            <b>{{ $user.user?.email }}</b>
+            .
           </p>
           <v-text-field
             class="mt-4"
             label="Email"
             :rules="$validation.user.email"
             v-model="$user.changes.email"
-          >
-          </v-text-field>
+          ></v-text-field>
           <v-text-field
             class="mt-4"
             label="Current password"
             type="password"
             :rules="$validation.user.passwordSettings"
             v-model="$user.changes.currentPassword"
-          >
-          </v-text-field>
+          ></v-text-field>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
               :disabled="!valid.email"
               color="primary"
               @click="$user.save().then(() => $emit('update'))"
-              >Save</v-btn
             >
+              Save
+            </v-btn>
           </v-card-actions>
         </v-form>
       </v-expansion-panel-text>
@@ -145,7 +142,7 @@
           Disabled
         </v-chip>
       </v-expansion-panel-title>
-      <v-expansion-panel-text> <TwoFactor></TwoFactor> </v-expansion-panel-text>
+      <v-expansion-panel-text><TwoFactor></TwoFactor></v-expansion-panel-text>
     </v-expansion-panel>
   </v-expansion-panels>
 </template>

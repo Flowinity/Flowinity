@@ -19,16 +19,17 @@
       </v-container>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="error" text @click="$emit('update:modelValue', false)"
-          >Cancel</v-btn
-        >
+        <v-btn color="error" text @click="$emit('update:modelValue', false)">
+          Cancel
+        </v-btn>
         <v-btn
           color="primary"
           text
           @click="$emit('submit', name)"
           :loading="loading"
-          >{{ btnText ? btnText : "Create" }}</v-btn
         >
+          {{ btnText ? btnText : "Create" }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
