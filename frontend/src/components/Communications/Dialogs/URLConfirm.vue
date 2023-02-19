@@ -11,8 +11,8 @@
       <v-card-text>
         <p>
           You are about to leave TPU and go to
-          <strong>{{ domain }}</strong>
-          .
+          <strong>{{ domain }}.</strong>
+
           <br />
           <br />
           This link is not part of TPU and might be unsafe. Do you want to

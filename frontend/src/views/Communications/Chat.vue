@@ -37,7 +37,7 @@
         height="10"
         style="border-radius: 20px 20px 0 0; opacity: 0.95"
         @click="forceBottomAmirite"
-        class="pointer"
+        class="pointer unselectable"
         v-if="avoidAutoScroll"
       >
         <v-icon class="mr-2">mdi-arrow-down</v-icon>
@@ -58,8 +58,8 @@
         v-if="replyId"
       >
         <v-icon class="mr-2">mdi-reply</v-icon>
-        <UserAvatar size="24" :user="replying.user" class="mr-2"></UserAvatar>
-        {{ replying.content }}
+        <UserAvatar size="24" :user="replying?.user" class="mr-2"></UserAvatar>
+        {{ replying?.content }}
       </v-toolbar>
     </v-fade-transition>
     <CommunicationsInput
@@ -155,7 +155,8 @@ export default defineComponent({
     },
     forceBottomAmirite() {
       this.avoidAutoScroll = false;
-      this.autoScroll();
+      const list = document.querySelector(".message-list-container");
+      if (list) list.scrollTop = 0;
     },
     async sendMessage() {
       if (!this.message) return;
@@ -175,7 +176,7 @@ export default defineComponent({
         edited: false,
         replyId: this.replyId
       });
-      this.autoScroll();
+      //this.autoScroll();
 
       // move chat to top
       const chatIndex = this.$chat.chats.findIndex(
@@ -222,7 +223,7 @@ export default defineComponent({
         this.$chat.selectedChat.messages[messageIndex].error = true;
       }
     },
-    autoScroll() {
+    /* autoScroll() {
       return;
       if (this.avoidAutoScroll) return;
       if (!this.$chat.selectedChat?.messages) return;
@@ -232,13 +233,9 @@ export default defineComponent({
       if (message) {
         message.scrollIntoView();
       }
-    },
+    },*/
     scrollEvent(e: any) {
-      const scrollHeight = e.target.scrollHeight;
-      const scrollTop = e.target.scrollTop;
-      const clientHeight = e.target.clientHeight;
-      this.avoidAutoScroll =
-        scrollTop + clientHeight <= scrollHeight - clientHeight / 8;
+      if (e.scrollTop !== 0) this.avoidAutoScroll = true;
     },
     editLastMessage() {
       // find last message made by user
@@ -282,6 +279,10 @@ export default defineComponent({
     //document.querySelector(".message-list-container")?.addEventListener("scroll", this.scrollEvent);
     // add event listener for shortcuts
     document.addEventListener("keydown", this.shortcutHandler);
+    // re-enable auto scroll for flex-direction: column-reverse;
+    document
+      .querySelector(".message-list-container")
+      ?.addEventListener("scroll", this.scrollEvent);
     this.$socket.on("message", async (message: MessageSocket) => {
       if (message.chat.id !== this.$chat.selectedChat?.id) return;
       if (
@@ -294,7 +295,7 @@ export default defineComponent({
         .find((c) => c.id === this.$chat.selectedChat?.id)
         ?.messages.unshift(message.message);
       this.$chat.readChat();
-      this.autoScroll();
+      //this.autoScroll();
     });
     this.$socket.on(
       "embedResolution",
@@ -309,20 +310,23 @@ export default defineComponent({
         );
         if (messageIndex === -1) return;
         this.$chat.chats[index].messages[messageIndex].embeds = data.embeds;
-        this.autoScroll();
+        //this.autoScroll();
       }
     );
   },
   unmounted() {
     document.removeEventListener("scroll", this.scrollEvent);
     document.removeEventListener("keydown", this.shortcutHandler);
+    document
+      .querySelector(".message-list-container")
+      ?.removeEventListener("scroll", this.scrollEvent);
   },
   watch: {
     "$chat.isReady"() {
       this.avoidAutoScroll = false;
-      this.$nextTick(() => {
-        this.autoScroll();
-      });
+      //this.$nextTick(() => {
+      //this.autoScroll();
+      //});
     }
   }
 });
