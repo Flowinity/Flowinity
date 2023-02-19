@@ -234,8 +234,7 @@ export default defineComponent({
             ? `/communications/${this.$chat.selectedChatId}`
             : "/communications",
           icon: "mdi-message-processing",
-          new: true,
-          warning: this.$chat.totalUnread,
+          warning: this.$chat.totalUnread || "BETA",
           scope: "communications.view",
           experimentsRequired: ["COMMUNICATIONS"]
         },
