@@ -432,7 +432,7 @@ export class CoreService {
     experiment: string,
     dev: boolean = false
   ) {
-    const experiments = await this.getExperiments(dev)
+    const experiments = await this.getUserExperiments(userId, dev)
     return experiments[experiment]
   }
 }
