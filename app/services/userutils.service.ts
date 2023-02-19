@@ -269,7 +269,8 @@ export class UserUtilsService {
       "discordPrecache",
       "darkTheme",
       "description",
-      "itemsPerPage"
+      "itemsPerPage",
+      "storedStatus"
     ]
 
     // from body, remove all empty values
@@ -294,8 +295,41 @@ export class UserUtilsService {
       delete body.currentPassword
       delete body.username
     }
-    console.log(body.itemsPerPage)
+    if (body.storedStatus && body.storedStatus !== user.storedStatus) {
+      const sockets = await socket.in(user.id).allSockets()
+      if (sockets.size !== 0) {
+        const status =
+          body.storedStatus === "invisible" ? "offline" : body.storedStatus
+        await User.update(
+          {
+            status
+          },
+          {
+            where: {
+              id: user.id
+            }
+          }
+        )
+        await this.emitToFriends(user.id, "userStatus", {
+          id: user.id,
+          status
+        })
+      }
+    }
+    socket.to(user.id).emit("userSettingsUpdate", body)
     return await user.update(body)
+  }
+
+  async emitToFriends(userId: number, key: string, value: any) {
+    const friends = await Friend.findAll({
+      where: {
+        userId,
+        status: "accepted"
+      }
+    })
+    for (const friend of friends) {
+      socket.to(friend.friendId).emit(key, value)
+    }
   }
 
   async getAllUsers(): Promise<User[]> {

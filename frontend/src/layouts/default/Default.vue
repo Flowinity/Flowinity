@@ -1,5 +1,8 @@
 <template>
   <v-app v-if="$user.user">
+    <URLConfirmDialog
+      v-model="$chat.dialogs.externalSite.value"
+    ></URLConfirmDialog>
     <v-overlay
       persistent
       absolute
@@ -87,6 +90,7 @@ import DefaultView from "./View.vue";
 import Sidebar from "@/layouts/default/Sidebar.vue";
 import UnauthBar from "@/layouts/unauth/AppBar.vue";
 import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
+import URLConfirmDialog from "@/components/Communications/Dialogs/URLConfirm.vue";
 </script>
 
 <script lang="ts">

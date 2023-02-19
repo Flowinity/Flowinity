@@ -23,6 +23,7 @@ import { PulseController } from "@app/controllers/pulse.controller"
 import { NoteController } from "@app/controllers/note.controller"
 import { MigrateController } from "@app/controllers/migrate.controller"
 import { ChatController } from "@app/controllers/chat.controller"
+import { MediaProxyController } from "@app/controllers/mediaProxy.controller"
 
 @Service()
 export class Application {
@@ -45,7 +46,8 @@ export class Application {
     private readonly pulseController: PulseController,
     private readonly noteController: NoteController,
     private readonly migrateController: MigrateController,
-    private readonly chatController: ChatController
+    private readonly chatController: ChatController,
+    private readonly mediaProxyController: MediaProxyController
   ) {
     this.app = express()
 
@@ -97,6 +99,7 @@ export class Application {
     this.app.use("/api/v2/notes", this.noteController.router)
     this.app.use("/api/v2/migrate", this.migrateController.router)
     this.app.use("/api/v2/chats", this.chatController.router)
+    this.app.use("/api/v2/mediaproxy", this.mediaProxyController.router)
     this.app.use("/i/", this.fileController.router)
     this.app.use("/api/v1/gallery", this.galleryController.router)
     this.app.use("/api/v1/site", this.coreController.router)

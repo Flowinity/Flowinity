@@ -8,6 +8,7 @@ type Login = {
 }
 
 type PatchUser = {
+  storedStatus: "online" | "invisible" | "idle" | "busy"
   username?: string
   email?: string
   password?: string

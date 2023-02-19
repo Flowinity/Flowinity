@@ -6,6 +6,22 @@ import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
 import Errors from "@app/lib/errors"
 import { CoreService } from "@app/services/core.service"
+import rateLimit from "express-rate-limit"
+
+const msgLimiter = rateLimit({
+  // Rate limiter configuration
+  windowMs: 8 * 1000, // 8 seconds
+  max: 8, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
+  keyGenerator: (req: RequestAuth) => req.user.id || req.ip, // Use the user ID if logged in, otherwise the IP address
+  handler: (req: RequestAuth, res: Response) => {
+    res.status(429).json({
+      errors: [Errors.RATE_LIMITED]
+    })
+  }
+})
 
 @Service()
 export class ChatController {
@@ -105,6 +121,7 @@ export class ChatController {
     this.router.post(
       "/:chatId/message",
       auth("chats.send"),
+      msgLimiter,
       async (req: RequestAuth, res: Response) => {
         const message = await this.chatService.sendMessage(
           req.body.content,

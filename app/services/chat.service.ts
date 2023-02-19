@@ -7,6 +7,7 @@ import { Message } from "@app/models/message.model"
 import Errors from "@app/lib/errors"
 import { UserUtilsService } from "@app/services/userutils.service"
 import { CacheService } from "@app/services/cache.service"
+import embedParser from "@app/lib/embedParser"
 
 interface ChatCache extends Chat {
   _redisSortDate: string
@@ -272,7 +273,15 @@ export class ChatService {
     replyId?: number
   ) {
     const chat = await this.getChatFromAssociation(chatId, userId)
-
+    if (replyId) {
+      const message = await Message.findOne({
+        where: {
+          id: replyId,
+          chatId: chat.id
+        }
+      })
+      if (!message) throw Errors.REPLY_MESSAGE_NOT_FOUND
+    }
     const message = await Message.create({
       content,
       chatId: chat.id,
@@ -282,6 +291,7 @@ export class ChatService {
     })
 
     redis.set(`chat:${chat.id}:sortDate`, dayjs(message.createdAt).valueOf())
+    embedParser(message, message.chatId, userId, chatId)
     return await this.sendMessageToUsers(message.id, chat)
   }
 
@@ -362,7 +372,7 @@ export class ChatService {
       ]
     })
 
-    return messages.sort((a, b) => a.id - b.id)
+    return messages
   }
 
   async getCachedUserChats(userId: number) {

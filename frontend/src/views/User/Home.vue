@@ -10,7 +10,13 @@
                 style="text-decoration: none"
                 class="align-center justify-center"
               >
-                <UserAvatar :user="user" :size="70" />
+                <UserAvatar
+                  :user="user"
+                  :size="80"
+                  :status="true"
+                  :status-y-offset="25"
+                  :status-x-offset="10"
+                />
               </router-link>
             </div>
             <v-card-title class="text-center">

@@ -5,7 +5,6 @@
       bg-color="transparent"
       style="padding-bottom: 110px"
       id="chat-list"
-      @scroll="scrollEvent"
       class="message-list-container"
     >
       <Message
@@ -34,7 +33,7 @@
     </v-list>
     <v-fade-transition v-model="avoidAutoScroll">
       <v-toolbar
-        :style="inputStyles + ` bottom: ${inputHeight}px`"
+        :style="inputStyles + ` bottom: ${inputHeight + replyingHeight}px`"
         height="10"
         style="border-radius: 20px 20px 0 0; opacity: 0.95"
         @click="forceBottomAmirite"
@@ -42,7 +41,25 @@
         v-if="avoidAutoScroll"
       >
         <v-icon class="mr-2">mdi-arrow-down</v-icon>
-        Force bottom
+        Jump to bottom
+      </v-toolbar>
+    </v-fade-transition>
+    <v-fade-transition v-model="replyId">
+      <v-toolbar
+        :style="
+          inputStyles +
+          ` bottom: ${inputHeight}px` +
+          (!avoidAutoScroll ? '; border-radius: 20px 20px 0 0;' : '')
+        "
+        height="10"
+        style="opacity: 0.95"
+        @click="forceBottomAmirite"
+        class="pointer"
+        v-if="replyId"
+      >
+        <v-icon class="mr-2">mdi-reply</v-icon>
+        <UserAvatar size="24" :user="replying.user" class="mr-2"></UserAvatar>
+        {{ replying.content }}
       </v-toolbar>
     </v-fade-transition>
     <CommunicationsInput
@@ -62,26 +79,43 @@ import { MessageSocket } from "@/types/messages";
 import { Message as MessageType } from "@/models/message";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import User from "@/views/User/User.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 export default defineComponent({
   name: "Chat",
-  components: { User, MessageSkeleton, Message, CommunicationsInput },
+  components: {
+    UserAvatar,
+    User,
+    MessageSkeleton,
+    Message,
+    CommunicationsInput
+  },
   data() {
     return {
       message: "",
       avoidAutoScroll: false,
       editing: undefined as number | undefined,
       editingText: undefined as string | undefined,
-      replyId: undefined as number | undefined
+      replyId: undefined as number | undefined,
+      observer: undefined as MutationObserver | undefined
     };
   },
   computed: {
+    replyingHeight() {
+      if (this.replyId) return 41.5;
+      return 0;
+    },
+    replying() {
+      return this.$chat.selectedChat?.messages.find(
+        (message) => message.id === this.replyId
+      );
+    },
     inputHeight() {
       const lines = this.message.split("\n").length;
-      return (lines - 1) * 24 + 92;
+      return (lines - 1) * 24 + 78;
     },
     inputStyles() {
       const drawers = document.querySelectorAll(
-        ".v-navigation-drawer:not(.v-navigation-drawer--temporary)"
+        ".v-navigation-drawer--active:not(.v-navigation-drawer--temporary)"
       );
       let bind;
       bind = [
@@ -128,7 +162,7 @@ export default defineComponent({
       const message = this.message;
       this.message = "";
       const tempId = new Date().getTime();
-      const index = await this.$chat.selectedChat?.messages.push({
+      const index = await this.$chat.selectedChat?.messages.unshift({
         content: message,
         createdAt: new Date().toISOString(),
         user: this.$user.user,
@@ -138,7 +172,8 @@ export default defineComponent({
         updatedAt: new Date().toISOString(),
         type: "message",
         embeds: [],
-        edited: false
+        edited: false,
+        replyId: this.replyId
       });
       this.autoScroll();
 
@@ -156,21 +191,39 @@ export default defineComponent({
         const { data } = await this.axios.post(
           `/chats/${this.$route.params.chatId}/message`,
           {
-            content: message
+            content: message,
+            replyId: this.replyId
           }
         );
-        if (!index) return;
-        this.$chat.selectedChat?.messages.splice(index - 1, 1, data);
+        const messageIndex = this.$chat.selectedChat?.messages.findIndex(
+          (message) => message.id === tempId
+        );
+        console.log(messageIndex);
+        if (
+          messageIndex === -1 ||
+          messageIndex === undefined ||
+          !this.$chat.selectedChat
+        )
+          return;
+        this.$chat.selectedChat.messages[messageIndex] = data;
       } catch (e) {
-        if (!index) return;
-        this.$chat.selectedChat?.messages.splice(index - 1, 1, {
-          ...this.$chat.selectedChat?.messages[index - 1],
-          pending: false,
-          error: true
-        });
+        console.log(e);
+        const messageIndex = this.$chat.selectedChat?.messages.findIndex(
+          (message) => message.id === tempId
+        );
+        console.log(messageIndex);
+        if (
+          messageIndex === -1 ||
+          messageIndex === undefined ||
+          !this.$chat.selectedChat
+        )
+          return;
+        this.$chat.selectedChat.messages[messageIndex].pending = false;
+        this.$chat.selectedChat.messages[messageIndex].error = true;
       }
     },
     autoScroll() {
+      return;
       if (this.avoidAutoScroll) return;
       if (!this.$chat.selectedChat?.messages) return;
       const message = document.getElementById(
@@ -181,11 +234,9 @@ export default defineComponent({
       }
     },
     scrollEvent(e: any) {
-      const scrollHeight = document.documentElement.scrollHeight;
-      const scrollTop =
-        document.documentElement.scrollTop || document.body.scrollTop;
-      const clientHeight = document.documentElement.clientHeight;
-
+      const scrollHeight = e.target.scrollHeight;
+      const scrollTop = e.target.scrollTop;
+      const clientHeight = e.target.clientHeight;
       this.avoidAutoScroll =
         scrollTop + clientHeight <= scrollHeight - clientHeight / 8;
     },
@@ -215,6 +266,7 @@ export default defineComponent({
       )
         return;
       if (e.key === "Escape") {
+        if (this.replyId) return (this.replyId = undefined);
         this.forceBottomAmirite();
       }
       if (
@@ -227,8 +279,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    // add event listener for scroll
-    document.addEventListener("scroll", this.scrollEvent);
+    //document.querySelector(".message-list-container")?.addEventListener("scroll", this.scrollEvent);
     // add event listener for shortcuts
     document.addEventListener("keydown", this.shortcutHandler);
     this.$socket.on("message", async (message: MessageSocket) => {
@@ -239,12 +290,28 @@ export default defineComponent({
         )
       )
         return;
-      await this.$chat.selectedChat?.messages.push(
-        message.message as MessageType
-      );
+      await this.$chat.chats
+        .find((c) => c.id === this.$chat.selectedChat?.id)
+        ?.messages.unshift(message.message);
       this.$chat.readChat();
       this.autoScroll();
     });
+    this.$socket.on(
+      "embedResolution",
+      (data: { chatId: number; id: number; embeds: any[] }) => {
+        const index = this.$chat.chats.findIndex(
+          (c: any) => c.id === data.chatId
+        );
+        if (index === -1) return;
+        if (!this.$chat.chats[index].messages) return;
+        const messageIndex = this.$chat.chats[index].messages.findIndex(
+          (m: any) => m.id === data.id
+        );
+        if (messageIndex === -1) return;
+        this.$chat.chats[index].messages[messageIndex].embeds = data.embeds;
+        this.autoScroll();
+      }
+    );
   },
   unmounted() {
     document.removeEventListener("scroll", this.scrollEvent);
@@ -265,6 +332,8 @@ export default defineComponent({
 .message-list-container {
   height: 96vh;
   overflow-y: scroll;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .message-list-container::-webkit-scrollbar {

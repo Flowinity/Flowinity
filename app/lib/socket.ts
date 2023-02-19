@@ -1,7 +1,8 @@
 import { SocketAuth } from "@app/types/socket"
 import { User } from "@app/models/user.model"
 import { Pulse } from "@app/models/pulse.model"
-
+import { Container } from "typedi"
+import { UserUtilsService } from "@app/services/userutils.service"
 import auth from "@app/lib/authSocket"
 
 export default {
@@ -21,7 +22,10 @@ export default {
       })
       if (user && socket.user.id) {
         socket.join(user.id)
-        if (user.storedStatus !== "invisible") {
+        if (
+          user.storedStatus !== "invisible" &&
+          user.status !== user.storedStatus
+        ) {
           console.log(`user ${user.username} going online`)
           await User.update(
             {
@@ -33,6 +37,11 @@ export default {
               }
             }
           )
+          const userService = Container.get(UserUtilsService)
+          await userService.emitToFriends(user.id, "userStatus", {
+            id: user.id,
+            status: user.storedStatus
+          })
         }
         // on disconnect
         socket.on("disconnect", async () => {

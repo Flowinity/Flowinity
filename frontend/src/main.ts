@@ -46,6 +46,14 @@ declare module "@vue/runtime-core" {
   }
 }
 
+declare global {
+  interface Window {
+    tpuInternals: {
+      processLink: (link: string) => void;
+    };
+  }
+}
+
 const app = createApp({
   ...App,
   ...{
@@ -102,7 +110,7 @@ const app = createApp({
         if (index === -1) return;
         chat.chats.splice(index, 1);
       });
-      socket.on("message", (newMessage: any) => {
+      socket.on("message", async (newMessage: any) => {
         if (newMessage.chat.id === chat.selectedChat?.id) return;
         const index = chat.chats.findIndex((c) => c.id === newMessage.chat.id);
         if (index === -1) return;
@@ -115,7 +123,10 @@ const app = createApp({
         );
         if (newMessage.message.userId !== user.user?.id)
           chat.chats[newIndex].unread++;
-        // only push to loaded chats
+        console.log("playing sound");
+        let sound = await import("@/assets/audio/notification.wav");
+        const audio = new Audio(sound.default);
+        audio.play();
         if (!chat.chats[newIndex].messages) return;
         if (
           chat.chats[newIndex].messages.find(
@@ -123,15 +134,20 @@ const app = createApp({
           )
         )
           return;
-        chat.chats[newIndex].messages.push(newMessage.message as MessageType);
+        chat.chats[newIndex].messages.unshift(
+          newMessage.message as MessageType
+        );
       });
-      socket.on("status", (data: User) => {
+      socket.on("userStatus", (data: User) => {
         const index = friends.friends.findIndex((f) => f.friendId === data.id);
         if (index === -1) return;
         friends.friends[index].otherUser.status = data.status;
       });
-      socket.on("friendRequestAccepted", (data: Friend) => {
+      socket.on("friendRequestAccepted", async (data: Friend) => {
         friends.friends.push(data);
+        let sound = await import("@/assets/audio/notification.wav");
+        const audio = new Audio(sound.default);
+        audio.play();
       });
       socket.on(
         "edit",
@@ -144,7 +160,6 @@ const app = createApp({
           userId: number;
         }) => {
           const index = chat.chats.findIndex((c) => c.id === data.chatId);
-          console.log(index);
           if (index === -1) return;
           if (!chat.chats[index].messages) return;
           const messageIndex = chat.chats[index].messages.findIndex(
@@ -157,6 +172,36 @@ const app = createApp({
           chat.chats[index].messages[messageIndex].editedAt = data.editedAt;
         }
       );
+      socket.on(
+        "embedResolution",
+        (data: { chatId: number; id: number; embeds: any[] }) => {
+          if (data.chatId === chat.selectedChat?.id) return;
+          const index = chat.chats.findIndex((c) => c.id === data.chatId);
+          if (index === -1) return;
+          if (!chat.chats[index].messages) return;
+          const messageIndex = chat.chats[index].messages.findIndex(
+            (m) => m.id === data.id
+          );
+          if (messageIndex === -1) return;
+          chat.chats[index].messages[messageIndex].embeds = data.embeds;
+        }
+      );
+      socket.on("notification", async (data: any) => {
+        user.user?.notifications.unshift(data);
+        let sound = await import("@/assets/audio/notification.wav");
+        const audio = new Audio(sound.default);
+        audio.play();
+      });
+      socket.on("userSettingsUpdate", (data: any) => {
+        user.user = {
+          ...user.user,
+          ...data
+        };
+        user.changes = {
+          ...user.changes,
+          ...data
+        };
+      });
     },
     watch: {
       "$route.params.chatId"(val) {

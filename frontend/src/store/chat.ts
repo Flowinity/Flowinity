@@ -33,7 +33,28 @@ export interface ChatState {
       x: number;
       y: number;
     };
+    image: {
+      value: boolean;
+      object: {
+        originalURL: string;
+        width: number;
+        height: number;
+        mimeType: string;
+        url: string;
+      } | null;
+    };
+    externalSite: {
+      value: boolean;
+      url: string;
+    };
+    statusMenu: {
+      value: boolean;
+      x: number;
+      y: number;
+    };
   };
+  trustedDomains: string[];
+  preTrustedDomains: string[];
 }
 
 export const useChatStore = defineStore("chat", {
@@ -46,7 +67,69 @@ export const useChatStore = defineStore("chat", {
       selectedChatId: null,
       memberSidebarShown: true,
       isReady: null,
+      trustedDomains: [] as string[],
+      preTrustedDomains: [
+        "troplo.com",
+        "images.flowinity.com",
+        "i.troplo.com",
+        "central.troplo.com",
+        "home.troplo.com",
+        "localhost",
+        "youtube.com",
+        "youtu.be",
+        "vimeo.com",
+        "twitch.tv",
+        "i.flowinity.com",
+        "scpe.eu.org",
+        "colubrina.troplo.com",
+        "compass.troplo.com",
+        "plex.troplo.com",
+        "meet.troplo.com",
+        "flowinity.com",
+        "synclounge.troplo.com",
+        "overseerr.troplo.com",
+        "jellyfin.troplo.com",
+        "radarr.troplo.com",
+        "sonarr.troplo.com",
+        "google.com",
+        "wikipedia.org",
+        "troplo.eu.org",
+        "flowinity.eu.org",
+        "kaverti.com",
+        "www.kaverti.com",
+        "www.troplo.com",
+        "www.flowinity.com",
+        "www.google.com",
+        "www.wikipedia.org",
+        "en.wikipedia.org",
+        "discordapp.com",
+        "discord.com",
+        "www.discordapp.com",
+        "www.discord.com",
+        "discord.gg",
+        "speedtest.net",
+        "www.speedtest.net",
+        "speedtest.troplo.com",
+        "office.com",
+        "www.office.com",
+        "drive.google.com",
+        "www.youtube.com",
+        "www.youtu.be",
+        "www.vimeo.com",
+        "www.twitch.tv",
+        "next.images.flowinity.com",
+        "legacy.images.flowinity.com",
+        "app.i.troplo.com"
+      ],
       dialogs: {
+        externalSite: {
+          value: false,
+          url: ""
+        },
+        image: {
+          value: false,
+          object: null
+        },
         user: {
           value: false,
           username: ""
@@ -58,10 +141,59 @@ export const useChatStore = defineStore("chat", {
           bindingElement: null as string | null,
           x: 0,
           y: 0
+        },
+        statusMenu: {
+          value: false,
+          x: 0,
+          y: 0
         }
       }
     } as ChatState),
   actions: {
+    confirmLink(trust: boolean = false) {
+      const url = new URL(this.$state.dialogs.externalSite.url);
+      const domain = url.hostname;
+      if (trust) {
+        try {
+          const trusted = localStorage.getItem("trustedDomainsStore");
+          if (trusted) {
+            const trustedDomains = JSON.parse(trusted);
+            if (!trustedDomains.includes(domain)) {
+              trustedDomains.push(domain);
+              this.trustedDomains = trustedDomains;
+              localStorage.setItem(
+                "trustedDomainsStore",
+                JSON.stringify(trustedDomains)
+              );
+            }
+          } else {
+            localStorage.setItem(
+              "trustedDomainsStore",
+              JSON.stringify([domain])
+            );
+            this.trustedDomains = [domain];
+          }
+        } catch {
+          localStorage.setItem("trustedDomainsStore", JSON.stringify([domain]));
+          this.trustedDomains = [domain];
+        }
+      }
+      window.open(this.dialogs.externalSite.url, "_blank");
+      this.dialogs.externalSite.value = false;
+    },
+    processLink(link: string) {
+      const url = new URL(link);
+      const domain = url.hostname;
+      if (
+        this.trustedDomains.includes(domain) ||
+        this.preTrustedDomains.includes(domain)
+      ) {
+        window.open(link, "_blank");
+      } else {
+        this.dialogs.externalSite.value = true;
+        this.dialogs.externalSite.url = link;
+      }
+    },
     async createChat(users: number[]) {
       const { data } = await axios.post("/chats", { users });
       return data;
@@ -113,6 +245,17 @@ export const useChatStore = defineStore("chat", {
       localStorage.setItem("chatStore", JSON.stringify(this.chats));
     },
     async init() {
+      try {
+        const trustedDomains = localStorage.getItem("trustedDomainsStore");
+        if (trustedDomains) {
+          this.trustedDomains = JSON.parse(trustedDomains);
+        }
+      } catch {}
+      if (!window.tpuInternals)
+        window.tpuInternals = {
+          processLink: this.processLink
+        };
+      window.tpuInternals.processLink = this.processLink;
       this.getChats();
     }
   },

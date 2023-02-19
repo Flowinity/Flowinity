@@ -57,9 +57,10 @@
     <template v-if="status">
       <v-badge
         :color="$functions.userStatus(friendStatus).color"
-        :offset-y="offset"
-        offset-x="10"
+        :offset-y="statusYOffset ?? offset"
+        :offset-x="statusXOffset ?? 10"
         bordered
+        :dot="dotStatus"
         v-if="friendStatus"
       >
         <v-tooltip activator="parent" location="top">
@@ -127,7 +128,11 @@ export default defineComponent({
     "noBadges",
     "edit",
     "status",
-    "outline"
+    "outline",
+    "statusXOffset",
+    "emulatedStatus",
+    "dotStatus",
+    "statusYOffset"
   ],
   data() {
     return {
@@ -155,8 +160,10 @@ export default defineComponent({
       }
       if (this.size > 80) {
         classes += " text-h4";
-      } else {
+      } else if (this.size > 24) {
         classes += " text-h5";
+      } else {
+        classes += " text-h6";
       }
       return classes;
     },
@@ -169,6 +176,8 @@ export default defineComponent({
       )*/
     },
     friendStatus() {
+      console.log(this.emulatedStatus);
+      if (this.emulatedStatus) return this.emulatedStatus;
       if (this.user.id === this.$user.user?.id)
         return this.$user.user?.storedStatus;
       return this.$friends.friends.find((f) => f.friendId === this.user.id)

@@ -1,3 +1,5 @@
+import { Notification } from "@/models/notification";
+
 export interface User {
   id: number;
   username: string;
@@ -65,4 +67,5 @@ export interface User {
   updatedAt: Date;
   status: "online" | "offline" | "idle" | "busy";
   storedStatus: "online" | "invisible" | "idle" | "busy";
+  notifications: Notification[];
 }

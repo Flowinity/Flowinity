@@ -6,14 +6,14 @@
   >
     <v-textarea
       ref="textarea"
-      :class="!editing ? 'mb-n3 mt-2' : 'mt-2'"
+      :class="!editing ? 'mb-n5 mt-1' : 'mt-2'"
       label="Type a message..."
       placeholder="Keep it civil."
       variant="outlined"
       append-icon="mdi-send"
       @update:model-value="$emit('update:modelValue', $event)"
       :value="modelValue"
-      density="comfortable"
+      density="compact"
       rows="1"
       auto-grow
       autofocus

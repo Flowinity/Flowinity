@@ -18,6 +18,7 @@ export interface UserState {
     username?: string;
     itemsPerPage?: number;
     currentPassword?: string;
+    storedStatus?: string;
   };
 }
 
@@ -25,10 +26,21 @@ export const useUserStore = defineStore("user", {
   state: () =>
     ({
       user: null,
-      _postInitRan: false
+      _postInitRan: false,
+      changes: {}
     } as UserState),
-  getters: {},
+  getters: {
+    unreadNotifications(state: UserState) {
+      if (!state.user) return 0;
+      return state.user.notifications.filter((n) => !n.dismissed).length;
+    }
+  },
   actions: {
+    async changeStatus(status: string) {
+      if (!this.user) return;
+      this.changes.storedStatus = status;
+      await this.save();
+    },
     async runPostTasks() {
       if (this.user && !this._postInitRan) {
         console.info("[TPU/UserStore] Running post-init auth tasks");
@@ -67,7 +79,8 @@ export const useUserStore = defineStore("user", {
               discordPrecache: this.user.discordPrecache,
               username: this.user.username,
               itemsPerPage: this.user.itemsPerPage,
-              currentPassword: ""
+              currentPassword: "",
+              storedStatus: this.user.storedStatus
             };
             this.runPostTasks();
           }
@@ -88,11 +101,12 @@ export const useUserStore = defineStore("user", {
         email: this.changes.email,
         discordPrecache: this.changes.discordPrecache,
         username: this.changes.username,
-        itemsPerPage: this.changes.itemsPerPage
+        itemsPerPage: this.changes.itemsPerPage,
+        storedStatus: this.changes.storedStatus
       });
       this.user = {
         ...this.user,
-        ...this.changes
+        ...(this.changes as any)
       };
     }
   }

@@ -22,9 +22,17 @@ md.renderer.rules = {
 
     if (aIndex < 0) {
       tokens[idx].attrPush(["target", "_blank"]); // add new attribute
+      tokens[idx].attrPush([
+        "onclick",
+        "window.tpuInternals.processLink(this.href); return false;"
+      ]); // add new attribute
     } else {
       // @ts-ignore
       tokens[idx].attrs[aIndex][1] = "_blank"; // replace value of existing attr
+      tokens[idx].attrPush([
+        "onclick",
+        "window.tpuInternals.processLink(this.href); return false;"
+      ]); // add new attribute
     }
 
     // pass token to default renderer.

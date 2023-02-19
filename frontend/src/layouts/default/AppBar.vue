@@ -50,6 +50,13 @@
     </h1>
     <v-spacer></v-spacer>
     <small v-if="$app.notesSaving" class="mr-3">Saving...</small>
+    <v-btn icon>
+      <v-badge dot color="red" :model-value="$user.unreadNotifications > 0">
+        <v-icon>
+          {{ $user.unreadNotifications > 0 ? "mdi-bell" : "mdi-bell-outline" }}
+        </v-icon>
+      </v-badge>
+    </v-btn>
     <template v-if="$user.user">
       <v-menu offset-y rounded class="rounded-xxl">
         <template v-slot:activator="{ props }">

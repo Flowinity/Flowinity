@@ -39,7 +39,7 @@
         {{ message.user?.username }}
       </a>
       <small class="text-grey">
-        {{ $date(message.createdAt).format("hh:mm A, DD/MM/YYYY") }}
+        {{ $date(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
       </small>
       <v-btn
         color="grey"
@@ -75,6 +75,11 @@
       :message="message"
       @reply="$emit('reply', message)"
     ></MessageActions>
+    <Embed
+      v-for="(embed, index) in message.embeds"
+      :embed="embed"
+      :key="index"
+    />
   </v-list-item>
 </template>
 
@@ -83,10 +88,16 @@ import { defineComponent } from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
 import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import MessageActions from "@/components/Communications/MessageActions.vue";
+import Embed from "@/components/Communications/Embed.vue";
 
 export default defineComponent({
   name: "Message",
-  components: { MessageActions, CommunicationsAvatar, CommunicationsInput },
+  components: {
+    Embed,
+    MessageActions,
+    CommunicationsAvatar,
+    CommunicationsInput
+  },
   props: ["message", "editing", "shifting", "editingText"]
 });
 </script>

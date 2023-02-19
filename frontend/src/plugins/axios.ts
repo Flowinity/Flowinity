@@ -34,6 +34,12 @@ ax.interceptors.response.use(
           `[TPU/HTTP] API key scope ${e.response.data.errors[0].requiredScope} is required to access /api/v2${e.response.config.url}.`
         );
         return Promise.reject(e);
+      } else if (
+        e.response.data.errors[0].message ===
+        "You are not allowed to use this experimental feature."
+      ) {
+        console.warn(`[TPU/HTTP] Experimental feature is not allowed.`);
+        return Promise.reject(e);
       }
       for (const error of e.response.data.errors) {
         toast.error(error.message);

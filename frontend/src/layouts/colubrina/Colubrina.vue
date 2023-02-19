@@ -9,12 +9,15 @@
   </v-dialog>
   <v-menu
     v-model="$chat.dialogs.userMenu.value"
-    location="right"
+    location="top"
     :close-on-content-click="false"
     :style="menuStyle"
   >
     <ColubrinaUserMenu></ColubrinaUserMenu>
   </v-menu>
+  <ColubrinaImageDialog
+    v-model="$chat.dialogs.image.value"
+  ></ColubrinaImageDialog>
   <ColubrinaSidebar v-if="$chat.communicationsSidebar"></ColubrinaSidebar>
   <router-view></router-view>
   <ColubrinaMemberSidebar
@@ -28,10 +31,12 @@ import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
 import ColubrinaMemberSidebar from "@/layouts/colubrina/MemberSidebar.vue";
 import User from "@/views/User/User.vue";
 import ColubrinaUserMenu from "@/components/Communications/Menus/User.vue";
+import ColubrinaImageDialog from "@/components/Communications/Dialogs/Image.vue";
 
 export default defineComponent({
   name: "Colubrina",
   components: {
+    ColubrinaImageDialog,
     ColubrinaUserMenu,
     User,
     ColubrinaMemberSidebar,
@@ -41,7 +46,7 @@ export default defineComponent({
     menuStyle() {
       return `
         position: absolute;
-        top: ${this.$chat.dialogs.userMenu.y}px;
+        top: ${this.$chat.dialogs.userMenu.y - 150}px;
         left: ${this.$chat.dialogs.userMenu.x + 10}px;`;
     }
   }

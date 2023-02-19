@@ -173,6 +173,18 @@ let Errors = {
   EXPERIMENT_NOT_ALLOWED: {
     message: "You are not allowed to use this experimental feature.",
     status: 400
+  },
+  REPLY_MESSAGE_NOT_FOUND: {
+    message: "The requested message to reply to could not be found.",
+    status: 400
+  },
+  MEDIAPROXY_INVALID_TOKEN: {
+    message: "The provided MediaProxy URL is invalid.",
+    status: 400
+  },
+  RATE_LIMITED: {
+    message: "You are being rate limited.",
+    status: 429
   }
 }
 
