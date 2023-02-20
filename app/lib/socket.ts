@@ -4,6 +4,7 @@ import { Pulse } from "@app/models/pulse.model"
 import { Container } from "typedi"
 import { UserUtilsService } from "@app/services/userutils.service"
 import auth from "@app/lib/authSocket"
+import { ChatService } from "@app/services/chat.service"
 
 export default {
   init(app: any, server: any) {
@@ -137,6 +138,24 @@ export default {
           } catch {
             console.log("error updating pulse")
           }
+        })
+
+        // Chat
+        let typeRateLimit = null as Date | null
+        socket.on("readChat", async (associationId: number) => {
+          const chatService = Container.get(ChatService)
+          await chatService.readChat(associationId, user.id)
+        })
+        socket.on("typing", async (associationId: number) => {
+          if (
+            typeRateLimit &&
+            dayjs().isBefore(dayjs(typeRateLimit).add(2, "second"))
+          ) {
+            return
+          }
+          const chatService = Container.get(ChatService)
+          await chatService.typing(associationId, user.id)
+          typeRateLimit = new Date()
         })
       } else {
         socket.join("-1")

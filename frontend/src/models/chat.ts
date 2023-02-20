@@ -6,6 +6,13 @@ export interface Recipient extends User {
   legacyUser: boolean;
 }
 
+export interface Typing {
+  chatId: number;
+  userId: number;
+  user: User;
+  expires: Date | string;
+}
+
 export interface Chat {
   id: number;
   type: "direct" | "group" | "channel";
@@ -22,4 +29,5 @@ export interface Chat {
   messages: Message[];
   recipient: Recipient;
   unread: number;
+  typers: Typing[];
 }

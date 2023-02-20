@@ -1,4 +1,5 @@
 import { User } from "@/models/user";
+import { ChatAssociation } from "@/models/chatAssociation";
 
 export interface Message {
   id: number;
@@ -26,4 +27,5 @@ export interface Message {
   error?: boolean;
   createdAt: string;
   updatedAt: string;
+  readReceipts: ChatAssociation[];
 }

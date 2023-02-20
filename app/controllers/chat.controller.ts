@@ -74,6 +74,20 @@ export class ChatController {
       }
     )
 
+    this.router.post(
+      "/:chatId/users",
+      auth("chats.create"),
+      msgLimiter,
+      async (req: RequestAuth, res: Response) => {
+        const chat = await this.chatService.addUsersToChat(
+          parseInt(req.params.chatId),
+          req.body.users,
+          req.user.id
+        )
+        res.json(chat)
+      }
+    )
+
     this.router.put(
       "/:chatId/message",
       auth("chats.edit"),

@@ -8,13 +8,96 @@ import Errors from "@app/lib/errors"
 import { UserUtilsService } from "@app/services/userutils.service"
 import { CacheService } from "@app/services/cache.service"
 import embedParser from "@app/lib/embedParser"
-
 interface ChatCache extends Chat {
   _redisSortDate: string
 }
 
 @Service()
 export class ChatService {
+  private messageIncludes = [
+    {
+      model: Message,
+      as: "reply",
+      include: [
+        {
+          model: User,
+          as: "tpuUser",
+          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+        },
+        {
+          model: LegacyUser,
+          as: "legacyUser",
+          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+        }
+      ]
+    },
+    {
+      model: ChatAssociation,
+      as: "readReceipts",
+      attributes: ["userId", "lastRead", "user"],
+      include: [
+        {
+          model: User,
+          as: "tpuUser",
+          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+        },
+        {
+          model: LegacyUser,
+          as: "legacyUser",
+          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+        }
+      ]
+    },
+    {
+      model: User,
+      as: "tpuUser",
+      attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+    },
+    {
+      model: LegacyUser,
+      as: "legacyUser",
+      attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+    }
+  ]
+
+  async addUsersToChat(chatId: number, userIds: number[], userId: number) {
+    /* const chat = await this.getChatFromAssociation(chatId, userId)
+    const friends = await Container.get(UserUtilsService).validateFriends(
+      userId,
+      userIds
+    )
+    for (const id of userIds) {
+      await ChatAssociation.create({
+        chatId,
+        userId: id
+      })
+    }
+
+    this.emitForAll(chatId, userId, "addUsers", {
+      chatId,
+      users
+    })
+    return true*/
+    throw Errors.COMING_SOON
+  }
+
+  async typing(associationId: number, userId: number) {
+    const chat = await this.getChatFromAssociation(associationId, userId)
+    await this.emitForAll(
+      associationId,
+      userId,
+      "typing",
+      {
+        chatId: chat.id,
+        userId,
+        user: await Container.get(UserUtilsService).getUserById(userId),
+        expires: Date.now() + 5000
+      },
+      true
+    )
+    return true
+  }
+
   async editMessage(
     messageId: number,
     userId: number,
@@ -56,9 +139,16 @@ export class ChatService {
     associationId: number,
     userId: number,
     key: string,
-    data: any
+    data: any,
+    excludeCreator = false
   ) {
-    const chat = await this.getChatFromAssociation(associationId, userId)
+    let chat = await this.getChatFromAssociation(associationId, userId)
+    if (excludeCreator) {
+      chat.users = chat.users.filter(
+        (u: ChatAssociation) => u.userId !== userId
+      )
+    }
+    console.log(chat.users.map((u: ChatAssociation) => u.userId))
     for (const user of chat.users) {
       socket.to(user.userId).emit(key, data)
     }
@@ -105,8 +195,9 @@ export class ChatService {
       )
       this.emitForAll(association.id, userId, "readReceipt", {
         chatId,
-        lastRead: message.id,
-        user: await Container.get(UserUtilsService).getUserById(userId)
+        id: message.id,
+        user: await Container.get(UserUtilsService).getUserById(userId),
+        lastRead: message.id
       })
     }
   }
@@ -222,34 +313,7 @@ export class ChatService {
   async sendMessageToUsers(messageId: number, chat: Chat) {
     const message = await Message.findOne({
       where: { id: messageId },
-      include: [
-        {
-          model: Message,
-          as: "reply",
-          include: [
-            {
-              model: User,
-              as: "tpuUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-            },
-            {
-              model: LegacyUser,
-              as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-            }
-          ]
-        },
-        {
-          model: User,
-          as: "tpuUser",
-          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-        },
-        {
-          model: LegacyUser,
-          as: "legacyUser",
-          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-        }
-      ]
+      include: this.messageIncludes
     })
 
     if (!message) throw Errors.UNKNOWN
@@ -344,67 +408,7 @@ export class ChatService {
       order: [["createdAt", "DESC"]],
       limit: 50,
       offset,
-      include: [
-        {
-          model: Message,
-          as: "reply",
-          include: [
-            {
-              model: User,
-              as: "tpuUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-            },
-            {
-              model: LegacyUser,
-              as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-            }
-          ]
-        },
-        {
-          model: ChatAssociation,
-          as: "readReceipts",
-          attributes: ["userId", "lastRead", "user"],
-          include: [
-            {
-              model: User,
-              as: "tpuUser",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
-            },
-            {
-              model: LegacyUser,
-              as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-            }
-          ]
-        },
-        {
-          model: User,
-          as: "tpuUser",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
-        },
-        {
-          model: LegacyUser,
-          as: "legacyUser",
-          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-        },
-        {
-          model: Message,
-          as: "reply",
-          include: [
-            {
-              model: User,
-              as: "tpuUser",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
-            },
-            {
-              model: LegacyUser,
-              as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-            }
-          ]
-        }
-      ]
+      include: this.messageIncludes
     })
   }
 

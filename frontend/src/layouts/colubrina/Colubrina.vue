@@ -18,6 +18,9 @@
   <ColubrinaImageDialog
     v-model="$chat.dialogs.image.value"
   ></ColubrinaImageDialog>
+  <ColubrinaGroupSettingsDialog
+    v-model="$chat.dialogs.groupSettings.value"
+  ></ColubrinaGroupSettingsDialog>
   <ColubrinaSidebar v-if="$chat.communicationsSidebar"></ColubrinaSidebar>
   <router-view></router-view>
   <ColubrinaMemberSidebar
@@ -32,10 +35,12 @@ import ColubrinaMemberSidebar from "@/layouts/colubrina/MemberSidebar.vue";
 import User from "@/views/User/User.vue";
 import ColubrinaUserMenu from "@/components/Communications/Menus/User.vue";
 import ColubrinaImageDialog from "@/components/Communications/Dialogs/Image.vue";
+import ColubrinaGroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettings.vue";
 
 export default defineComponent({
   name: "Colubrina",
   components: {
+    ColubrinaGroupSettingsDialog,
     ColubrinaImageDialog,
     ColubrinaUserMenu,
     User,

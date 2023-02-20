@@ -50,6 +50,7 @@ declare global {
   interface Window {
     tpuInternals: {
       processLink: (link: string) => void;
+      readChat: () => void;
     };
   }
 }

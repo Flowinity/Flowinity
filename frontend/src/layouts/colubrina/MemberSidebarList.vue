@@ -1,7 +1,7 @@
 <template>
   <v-card-text
     v-if="!$chat.communicationsSidebar"
-    @click="$app.forcedMainDrawer = true"
+    @click="$app.forcedWorkspaceDrawer = true"
     style="color: #0190ea; cursor: pointer; font-size: 12px"
   >
     <v-icon>mdi-arrow-left</v-icon>
@@ -17,6 +17,7 @@
         $chat.dialogs.user.username = association.user?.username;
         $chat.dialogs.user.value = true;
       "
+      @contextmenu.prevent="context($event, association)"
     >
       <template v-slot:prepend>
         <CommunicationsAvatar
@@ -43,10 +44,23 @@ export default defineComponent({
   components: { CommunicationsAvatar, CreateChat, MessageSkeleton },
   data() {
     return {
-      create: false
+      create: false,
+      contextMenu: {
+        dialog: false,
+        x: 0,
+        y: 0,
+        item: {}
+      }
     };
   },
   methods: {
+    context(e: any, item: any) {
+      e.preventDefault();
+      this.contextMenu.item = item;
+      this.contextMenu.x = e.clientX;
+      this.contextMenu.y = e.clientY;
+      this.contextMenu.dialog = true;
+    },
     chatName(chat: Chat) {
       if (chat.type === "direct") {
         return chat.recipient?.username || "Deleted User";

@@ -1,14 +1,14 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import { Chat } from "@/models/chat";
+import { Chat, Typing } from "@/models/chat";
 import { useExperimentsStore } from "@/store/experiments";
 import vuetify from "@/plugins/vuetify";
-import router from "@/router";
 import { useRouter } from "vue-router";
 import { useAppStore } from "@/store/app";
-import { computed } from "vue";
 import { User } from "@/models/user";
+import dayjs from "@/plugins/dayjs";
+import { useUserStore } from "@/store/user";
 
 export interface ChatState {
   notifications: number;
@@ -21,6 +21,10 @@ export interface ChatState {
   isReady: number | null;
   users: User[];
   dialogs: {
+    groupSettings: {
+      value: boolean;
+      item: Chat | null;
+    };
     user: {
       value: boolean;
       username: string;
@@ -32,6 +36,7 @@ export interface ChatState {
       bindingElement: string | null;
       x: number;
       y: number;
+      location: string;
     };
     image: {
       value: boolean;
@@ -122,6 +127,10 @@ export const useChatStore = defineStore("chat", {
         "app.i.troplo.com"
       ],
       dialogs: {
+        groupSettings: {
+          value: false,
+          item: null
+        },
         externalSite: {
           value: false,
           url: ""
@@ -140,7 +149,8 @@ export const useChatStore = defineStore("chat", {
           user: null as User | null,
           bindingElement: null as string | null,
           x: 0,
-          y: 0
+          y: 0,
+          location: "top"
         },
         statusMenu: {
           value: false,
@@ -199,7 +209,10 @@ export const useChatStore = defineStore("chat", {
       return data;
     },
     async readChat() {
-      await axios.put(`/chats/${this.selectedChatId}/read`);
+      await socket.emit("readChat", this.selectedChatId);
+    },
+    async typing() {
+      await socket.emit("typing", this.selectedChatId);
     },
     async setChat(id: number) {
       this.selectedChatId = id;
@@ -253,13 +266,36 @@ export const useChatStore = defineStore("chat", {
       } catch {}
       if (!window.tpuInternals)
         window.tpuInternals = {
-          processLink: this.processLink
+          processLink: this.processLink,
+          readChat: this.readChat
         };
       window.tpuInternals.processLink = this.processLink;
       this.getChats();
     }
   },
   getters: {
+    typers(state: ChatState) {
+      const user = useUserStore();
+      if (!state.selectedChat) return "";
+      if (!state.selectedChat.typers?.length) return "";
+      if (state.selectedChat?.typers?.length > 3) {
+        return `${state.selectedChat.typers.length} people are typing...`;
+      }
+
+      // filter out the current user and return the usernames
+      const typers = state.selectedChat.typers
+        .filter((typer: Typing) => typer.user.id !== user.user?.id)
+        .map((typer: Typing) => {
+          return typer.user.username;
+        });
+
+      const last = typers.pop();
+      if (typers.length) {
+        return `${typers.join(", ")} and ${last} are typing...`;
+      } else {
+        return `${last} is typing...`;
+      }
+    },
     totalUnread(state: ChatState) {
       return state.chats.reduce((total: number, chat: Chat) => {
         return total + chat.unread;

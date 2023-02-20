@@ -25,6 +25,7 @@
           $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
           $chat.dialogs.userMenu.x = $event.x;
           $chat.dialogs.userMenu.y = $event.y;
+          $chat.dialogs.userMenu.location = $event.location || 'top';
           $chat.dialogs.userMenu.value = true;
         "
         @reply="replyId = $event.id"
@@ -82,6 +83,8 @@ import { Message as MessageType } from "@/models/message";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import User from "@/views/User/User.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { ChatAssociation } from "@/models/chatAssociation";
+import { Chat, Typing } from "@/models/chat";
 export default defineComponent({
   name: "Chat",
   components: {
@@ -99,7 +102,10 @@ export default defineComponent({
       editingText: undefined as string | undefined,
       replyId: undefined as number | undefined,
       observer: undefined as MutationObserver | undefined,
-      renderKey: false
+      renderKey: false,
+      typingStatus: {
+        rateLimit: null as number | null
+      }
     };
   },
   computed: {
@@ -180,10 +186,11 @@ export default defineComponent({
         embeds: [],
         edited: false,
         replyId: replyId,
-        reply: this.replying
+        reply: this.replying,
+        readReceipts: []
       });
       this.replyId = undefined;
-      //this.autoScroll();
+      this.autoScroll();
 
       // move chat to top
       const chatIndex = this.$chat.chats.findIndex(
@@ -203,10 +210,10 @@ export default defineComponent({
             replyId: replyId
           }
         );
+        this.$chat.readChat();
         const messageIndex = this.$chat.selectedChat?.messages.findIndex(
           (message) => message.id === tempId
         );
-        console.log(messageIndex);
         if (
           messageIndex === -1 ||
           messageIndex === undefined ||
@@ -219,7 +226,6 @@ export default defineComponent({
         const messageIndex = this.$chat.selectedChat?.messages.findIndex(
           (message) => message.id === tempId
         );
-        console.log(messageIndex);
         if (
           messageIndex === -1 ||
           messageIndex === undefined ||
@@ -285,6 +291,11 @@ export default defineComponent({
     //document.querySelector(".message-list-container")?.addEventListener("scroll", this.scrollEvent);
     // add event listener for shortcuts
     document.addEventListener("keydown", this.shortcutHandler);
+    setInterval(() => {
+      if (document.hasFocus()) {
+        window.tpuInternals.readChat();
+      }
+    }, 2000);
     // re-enable auto scroll for flex-direction: column-reverse;
     document
       .querySelector(".message-list-container")
@@ -300,6 +311,7 @@ export default defineComponent({
       await this.$chat.chats
         .find((c) => c.id === this.$chat.selectedChat?.id)
         ?.messages.unshift(message.message);
+      console.log(document.hasFocus());
       if (document.hasFocus()) {
         this.$chat.readChat();
       }
@@ -321,6 +333,42 @@ export default defineComponent({
         this.autoScroll();
       }
     );
+    this.$socket.on("readReceipt", (data: any) => {
+      const index = this.$chat.chats.findIndex(
+        (c: any) => c.id === data.chatId
+      );
+      if (index === -1) return;
+      if (!this.$chat.chats[index].messages) return;
+      const messageIndex = this.$chat.chats[index].messages.findIndex(
+        (m: any) => m.id === data.id
+      );
+      if (messageIndex === -1) return;
+      this.$chat.chats[index].messages.forEach((message: any) => {
+        message.readReceipts = message.readReceipts.filter(
+          (r: any) => r.user.id !== data.user.id
+        );
+      });
+      this.$chat.selectedChat?.messages[messageIndex].readReceipts.push(data);
+    });
+    this.$socket.on("typing", (data: Typing) => {
+      const chat =
+        this.$chat.chats[
+          this.$chat.chats.findIndex((c: Chat) => c.id === data.chatId)
+        ];
+      if (!chat) return;
+      if (!chat.typers) chat.typers = [];
+      chat.typers = chat.typers.filter(
+        (t: Typing) => t.user.id !== data.user.id
+      );
+      chat.typers.push(data);
+      setTimeout(() => {
+        chat.typers = chat.typers.filter(
+          (t: Typing) =>
+            t.user.id !== data.user.id &&
+            this.$date(t.expires).isAfter(Date.now())
+        );
+      }, 5000);
+    });
   },
   unmounted() {
     document.removeEventListener("scroll", this.scrollEvent);
@@ -335,6 +383,17 @@ export default defineComponent({
       this.$nextTick(() => {
         this.autoScroll();
       });
+    },
+    message() {
+      if (this.message.length > 0) {
+        if (
+          !this.typingStatus.rateLimit ||
+          this.typingStatus.rateLimit < Date.now()
+        ) {
+          this.$socket.emit("typing", this.$chat.selectedChat?.association?.id);
+          this.typingStatus.rateLimit = Date.now() + 3000;
+        }
+      }
     }
   }
 });

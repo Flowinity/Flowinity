@@ -176,7 +176,6 @@ export default defineComponent({
       )*/
     },
     friendStatus() {
-      console.log(this.emulatedStatus);
       if (this.emulatedStatus) return this.emulatedStatus;
       if (this.user.id === this.$user.user?.id)
         return this.$user.user?.storedStatus;

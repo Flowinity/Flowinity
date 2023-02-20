@@ -3,7 +3,7 @@
     <v-toolbar
       height="auto"
       v-if="message.reply"
-      color="transparent"
+      color="transhttps://i.troplo.com/i/24406a40ef13.pngparent"
       floating
       class="ml-6 my-1 pointer"
       @click="$emit('jumpToMessage', message.reply.id)"
@@ -104,10 +104,25 @@
               :user="readReceipt.user"
               :key="readReceipt.userId + '-' + message.id"
               size="24"
-              class="ml-2"
+              class="pointer ml-2"
               v-if="readReceipt?.user"
               style="align-self: flex-end"
+              :id="
+                'message-read-receipt-' + message.id + '-' + readReceipt.userId
+              "
+              @click="
+                $chat.dialogs.user.username = readReceipt.user.username;
+                $chat.dialogs.user.value = true;
+              "
             ></UserAvatar>
+            <v-tooltip
+              :activator="
+                '#message-read-receipt-' + message.id + '-' + readReceipt.userId
+              "
+              location="top"
+            >
+              {{ readReceipt.user.username }}
+            </v-tooltip>
           </template>
         </div>
       </template>

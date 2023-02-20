@@ -1,9 +1,5 @@
 <template>
-  <v-toolbar
-    ref="toolbar"
-    height="auto"
-    :color="editing ? 'transparent' : 'dark'"
-  >
+  <v-toolbar ref="toolbar" height="auto" style="z-index: 1001" color="bg">
     <v-textarea
       ref="textarea"
       :class="!editing ? 'mb-n5 mt-1' : 'mt-2'"
@@ -30,6 +26,11 @@
         <v-icon class="mr-2" v-if="!editing">mdi-star</v-icon>
         <v-icon>mdi-emoticon</v-icon>
       </template>
+      <template v-slot:details v-if="!editing">
+        <span class="details-container">
+          {{ $chat.typers }}
+        </span>
+      </template>
     </v-textarea>
   </v-toolbar>
 </template>
@@ -44,4 +45,12 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style>
+.details-container {
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  display: flex;
+  width: 100%;
+  height: 25px;
+}
+</style>

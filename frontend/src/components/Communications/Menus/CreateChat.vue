@@ -54,7 +54,11 @@
       </v-list>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="createChat" :disabled="!selected.length">
+        <v-btn
+          color="primary"
+          @click="type === 'create' ? createChat : $emit('add', selected)"
+          :disabled="!selected.length"
+        >
           {{ selected.length < 2 ? "Create DM" : "Create Group" }}
         </v-btn>
       </v-card-actions>
@@ -70,8 +74,18 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 export default defineComponent({
   name: "CreateChat",
   components: { UserAvatar },
-  props: ["modelValue"],
-  emits: ["update:modelValue"],
+  props: {
+    modelValue: {
+      type: Boolean,
+      required: true
+    },
+    type: {
+      type: String,
+      required: false,
+      default: "create"
+    }
+  },
+  emits: ["update:modelValue", "add"],
   data() {
     return {
       search: "",

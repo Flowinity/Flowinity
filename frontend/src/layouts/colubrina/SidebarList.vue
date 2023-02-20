@@ -1,4 +1,18 @@
 <template>
+  <v-menu :style="menuStyle" location="top" v-model="contextMenu.dialog">
+    <v-list>
+      <v-list-item
+        v-if="contextMenu.item?.type === 'group'"
+        @click="
+          $chat.dialogs.groupSettings.item = contextMenu.item;
+          $chat.dialogs.groupSettings.value = true;
+        "
+      >
+        Group Settings
+      </v-list-item>
+      <v-list-item color="red">Leave</v-list-item>
+    </v-list>
+  </v-menu>
   <v-card-text
     v-if="!$chat.communicationsSidebar"
     @click="$app.forcedMainDrawer = true"
@@ -33,6 +47,7 @@
           : ''
       "
       :to="`/communications/${chat.association.id}`"
+      @contextmenu.prevent="context($event, chat)"
     >
       <template v-slot:prepend>
         <CommunicationsAvatar
@@ -69,10 +84,31 @@ export default defineComponent({
   components: { CommunicationsAvatar, CreateChat, MessageSkeleton },
   data() {
     return {
-      create: false
+      create: false,
+      contextMenu: {
+        dialog: false,
+        x: 0,
+        y: 0,
+        item: null as Chat | null
+      }
     };
   },
+  computed: {
+    menuStyle() {
+      return `
+        position: absolute;
+        top: ${this.contextMenu.y}px;
+        left: ${this.contextMenu.x}px;`;
+    }
+  },
   methods: {
+    context(e: any, item: any) {
+      e.preventDefault();
+      this.contextMenu.item = item;
+      this.contextMenu.x = e.clientX;
+      this.contextMenu.y = e.clientY;
+      this.contextMenu.dialog = true;
+    },
     chatName(chat: Chat) {
       if (chat.type === "direct") {
         return chat.recipient?.username || "Deleted User";
