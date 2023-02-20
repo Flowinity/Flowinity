@@ -35,7 +35,7 @@
           class="text-center justify-center"
           justify="center"
           :size="size"
-          :color="noColor ? '' : 'primary'"
+          :color="noColor ? undefined : '#0190ea'"
           v-bind="props"
         >
           <span :class="textSize" class="unselectable">

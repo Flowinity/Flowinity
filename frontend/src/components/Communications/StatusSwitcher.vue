@@ -1,5 +1,10 @@
 <template>
-  <v-menu v-model="$chat.dialogs.statusMenu.value" location="top" offset="8">
+  <v-menu
+    v-model="$chat.dialogs.statusMenu.value"
+    location="top"
+    offset="8"
+    style="z-index: 2001"
+  >
     <v-card>
       <v-list>
         <v-list-item @click="$user.changeStatus('online')">
@@ -73,7 +78,7 @@
         height="70"
         :rounded="false"
         flat
-        class="elevation-0 d-flex"
+        class="elevation-0 d-flex ml-3"
         id="status-switcher"
       >
         <v-row class="d-flex align-center">

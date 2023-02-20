@@ -5,11 +5,10 @@
     class="message-actions"
     :class="{ 'no-hide': avoid }"
     v-if="!$vuetify.display.mobile"
+    style="z-index: 50"
   >
     <v-btn icon @click="deleteMessage()" rounded="0">
-      <v-tooltip location="top" activator="parent">
-        Certified R* Moment
-      </v-tooltip>
+      <v-tooltip location="top" activator="parent">React</v-tooltip>
       <v-icon>mdi-emoticon-happy</v-icon>
     </v-btn>
     <v-btn icon @click="$emit('edit')" rounded="0">

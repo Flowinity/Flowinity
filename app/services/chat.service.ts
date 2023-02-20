@@ -224,6 +224,22 @@ export class ChatService {
       where: { id: messageId },
       include: [
         {
+          model: Message,
+          as: "reply",
+          include: [
+            {
+              model: User,
+              as: "tpuUser",
+              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+            },
+            {
+              model: LegacyUser,
+              as: "legacyUser",
+              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+            }
+          ]
+        },
+        {
           model: User,
           as: "tpuUser",
           attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
@@ -282,6 +298,9 @@ export class ChatService {
       })
       if (!message) throw Errors.REPLY_MESSAGE_NOT_FOUND
     }
+    // must contain at least one character excluding spaces and newlines and must not contain just #s (one or more)
+    if (!content.replace(/\s/g, "").length || !content.replace(/#/g, "").length)
+      throw Errors.NO_MESSAGE_CONTENT
     const message = await Message.create({
       content,
       chatId: chat.id,
@@ -320,16 +339,32 @@ export class ChatService {
 
   async getMessages(chatId: number, userId: number, offset?: number) {
     const chat = await this.getChatFromAssociation(chatId, userId)
-    const messages = await Message.findAll({
+    return await Message.findAll({
       where: { chatId: chat.id },
       order: [["createdAt", "DESC"]],
       limit: 50,
       offset,
       include: [
         {
+          model: Message,
+          as: "reply",
+          include: [
+            {
+              model: User,
+              as: "tpuUser",
+              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+            },
+            {
+              model: LegacyUser,
+              as: "legacyUser",
+              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+            }
+          ]
+        },
+        {
           model: ChatAssociation,
           as: "readReceipts",
-          attributes: ["userId", "lastRead"],
+          attributes: ["userId", "lastRead", "user"],
           include: [
             {
               model: User,
@@ -371,8 +406,6 @@ export class ChatService {
         }
       ]
     })
-
-    return messages
   }
 
   async getCachedUserChats(userId: number) {

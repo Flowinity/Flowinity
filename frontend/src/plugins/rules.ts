@@ -2,10 +2,13 @@ import MarkdownIt from "markdown-it";
 //@ts-ignore
 import MarkdownItEmoji from "markdown-it-emoji";
 let md = new MarkdownIt({
-  html: true,
+  html: false,
   linkify: true,
-  typographer: true,
-  breaks: true
+  typographer: false,
+  breaks: true,
+  quotes: "“”‘’",
+  langPrefix: "language-",
+  xhtmlOut: false
 });
 md.use(MarkdownItEmoji);
 const defaultRender =

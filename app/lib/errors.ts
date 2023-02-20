@@ -185,6 +185,10 @@ let Errors = {
   RATE_LIMITED: {
     message: "You are being rate limited.",
     status: 429
+  },
+  NO_MESSAGE_CONTENT: {
+    message: "You must provide message content.",
+    status: 400
   }
 }
 

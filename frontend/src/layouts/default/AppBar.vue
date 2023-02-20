@@ -46,7 +46,7 @@
         v-else-if="$chat.selectedChat"
         size="32"
       />
-      {{ $chat.chatName }}
+      <span class="ml-2">{{ $chat.chatName }}</span>
     </h1>
     <v-spacer></v-spacer>
     <small v-if="$app.notesSaving" class="mr-3">Saving...</small>

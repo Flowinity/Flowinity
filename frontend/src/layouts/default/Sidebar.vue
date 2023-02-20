@@ -83,7 +83,14 @@
     <ColubrinaSidebarList
       v-else-if="!$chat.communicationsSidebar"
     ></ColubrinaSidebarList>
-    <template v-slot:append>
+    <template
+      v-slot:append
+      v-if="
+        $chat.communicationsSidebar ||
+        !$chat.isCommunications ||
+        $app.forcedMainDrawer
+      "
+    >
       <div
         class="text-center justify-center"
         v-if="$user.user?.administrator || $user.user?.moderator"
@@ -116,6 +123,7 @@
         </v-progress-linear>
       </div>
     </template>
+    <template v-else v-slot:append><StatusSwitcher></StatusSwitcher></template>
   </v-navigation-drawer>
 </template>
 
@@ -125,10 +133,12 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import MigrateWizard from "@/components/Dashboard/Dialogs/Migrate.vue";
 import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue";
+import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 
 export default defineComponent({
   name: "Sidebar",
   components: {
+    StatusSwitcher,
     ColubrinaSidebarList,
     MigrateWizard,
     InviteAFriend,

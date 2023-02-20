@@ -28,13 +28,14 @@
           $chat.dialogs.userMenu.value = true;
         "
         @reply="replyId = $event.id"
+        :class="{ 'replying-message': message.id === replyId }"
       ></Message>
       <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
     </v-list>
     <v-fade-transition v-model="avoidAutoScroll">
       <v-toolbar
         :style="inputStyles + ` bottom: ${inputHeight + replyingHeight}px`"
-        height="10"
+        height="1"
         style="border-radius: 20px 20px 0 0; opacity: 0.95"
         @click="forceBottomAmirite"
         class="pointer unselectable"
@@ -51,7 +52,7 @@
           ` bottom: ${inputHeight}px` +
           (!avoidAutoScroll ? '; border-radius: 20px 20px 0 0;' : '')
         "
-        height="10"
+        height="1"
         style="opacity: 0.95"
         @click="forceBottomAmirite"
         class="pointer"
@@ -68,6 +69,7 @@
       @sendMessage="sendMessage"
       style="bottom: 0"
       ref="input"
+      :renderKey="renderKey"
     ></CommunicationsInput>
   </div>
 </template>
@@ -96,12 +98,13 @@ export default defineComponent({
       editing: undefined as number | undefined,
       editingText: undefined as string | undefined,
       replyId: undefined as number | undefined,
-      observer: undefined as MutationObserver | undefined
+      observer: undefined as MutationObserver | undefined,
+      renderKey: false
     };
   },
   computed: {
     replyingHeight() {
-      if (this.replyId) return 41.5;
+      if (this.replyId) return 33.5;
       return 0;
     },
     replying() {
@@ -161,7 +164,9 @@ export default defineComponent({
     async sendMessage() {
       if (!this.message) return;
       const message = this.message;
+      const replyId = this.replyId;
       this.message = "";
+      this.renderKey = !this.renderKey;
       const tempId = new Date().getTime();
       const index = await this.$chat.selectedChat?.messages.unshift({
         content: message,
@@ -174,8 +179,10 @@ export default defineComponent({
         type: "message",
         embeds: [],
         edited: false,
-        replyId: this.replyId
+        replyId: replyId,
+        reply: this.replying
       });
+      this.replyId = undefined;
       //this.autoScroll();
 
       // move chat to top
@@ -193,7 +200,7 @@ export default defineComponent({
           `/chats/${this.$route.params.chatId}/message`,
           {
             content: message,
-            replyId: this.replyId
+            replyId: replyId
           }
         );
         const messageIndex = this.$chat.selectedChat?.messages.findIndex(
@@ -223,25 +230,24 @@ export default defineComponent({
         this.$chat.selectedChat.messages[messageIndex].error = true;
       }
     },
-    /* autoScroll() {
-      return;
+    autoScroll() {
       if (this.avoidAutoScroll) return;
       if (!this.$chat.selectedChat?.messages) return;
-      const message = document.getElementById(
-        `message-${this.$chat.selectedChat.messages?.length - 1}`
-      );
-      if (message) {
-        message.scrollIntoView();
+      const chat = document.getElementById("chat-list");
+      if (chat) {
+        chat.scrollTop = 0;
       }
-    },*/
-    scrollEvent(e: any) {
-      if (e.scrollTop !== 0) this.avoidAutoScroll = true;
+    },
+    scrollEvent() {
+      const elem = document.getElementById("chat-list");
+      if (!elem) return;
+      const scrollPos = elem.scrollTop;
+      this.avoidAutoScroll = scrollPos < -300;
     },
     editLastMessage() {
-      // find last message made by user
+      // find first message made by user
       const lastMessage = this.$chat.selectedChat?.messages
         .slice()
-        .reverse()
         .find((message) => message.tpuUser?.id === this.$user.user?.id);
       if (!lastMessage) return;
       this.editingText = lastMessage.content;
@@ -294,8 +300,10 @@ export default defineComponent({
       await this.$chat.chats
         .find((c) => c.id === this.$chat.selectedChat?.id)
         ?.messages.unshift(message.message);
-      this.$chat.readChat();
-      //this.autoScroll();
+      if (document.hasFocus()) {
+        this.$chat.readChat();
+      }
+      this.autoScroll();
     });
     this.$socket.on(
       "embedResolution",
@@ -310,7 +318,7 @@ export default defineComponent({
         );
         if (messageIndex === -1) return;
         this.$chat.chats[index].messages[messageIndex].embeds = data.embeds;
-        //this.autoScroll();
+        this.autoScroll();
       }
     );
   },
@@ -324,9 +332,9 @@ export default defineComponent({
   watch: {
     "$chat.isReady"() {
       this.avoidAutoScroll = false;
-      //this.$nextTick(() => {
-      //this.autoScroll();
-      //});
+      this.$nextTick(() => {
+        this.autoScroll();
+      });
     }
   }
 });
@@ -334,7 +342,7 @@ export default defineComponent({
 
 <style scoped>
 .message-list-container {
-  height: 96vh;
+  height: calc(100vh - 60px);
   overflow-y: scroll;
   display: flex;
   flex-direction: column-reverse;
