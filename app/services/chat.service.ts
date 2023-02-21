@@ -477,7 +477,8 @@ export class ChatService {
       | "pin"
       | "administrator"
       | "rename"
-      | "system" = "message"
+      | "system" = "message",
+    attachments?: string[]
   ) {
     try {
       const chat = await this.getChatFromAssociation(chatId, userId)
@@ -505,7 +506,7 @@ export class ChatService {
       })
 
       redis.set(`chat:${chat.id}:sortDate`, dayjs(message.createdAt).valueOf())
-      embedParser(message, message.chatId, userId, chatId)
+      embedParser(message, message.chatId, userId, chatId, attachments)
       return await this.sendMessageToUsers(message.id, chat)
     } catch (e) {
       return console.log(e)

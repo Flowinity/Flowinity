@@ -50,7 +50,7 @@
         :key="'item-' + item.id"
         md="6"
         sm="1"
-        lg="3"
+        :lg="!inline ? 3 : 12"
         cols="12"
       >
         <GalleryItem
@@ -97,6 +97,10 @@ export default defineComponent({
   name: "GalleryCore",
   components: { Paginate, AddToCollection, GalleryItem },
   props: {
+    inline: {
+      type: Boolean,
+      default: false
+    },
     items: {
       type: Object,
       required: true,

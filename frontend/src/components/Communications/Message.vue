@@ -3,7 +3,7 @@
     <v-toolbar
       height="auto"
       v-if="message.reply"
-      color="transhttps://i.troplo.com/i/24406a40ef13.pngparent"
+      color="transparent"
       floating
       class="ml-6 my-1 pointer"
       @click="$emit('jumpToMessage', message.reply.id)"

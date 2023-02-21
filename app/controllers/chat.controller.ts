@@ -170,7 +170,9 @@ export class ChatController {
           req.body.content,
           req.user.id,
           parseInt(req.params.chatId),
-          req.body.replyId
+          req.body.replyId,
+          "message",
+          req.body.attachments
         )
         res.json(message)
       }

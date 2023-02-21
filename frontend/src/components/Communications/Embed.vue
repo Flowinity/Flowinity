@@ -29,6 +29,30 @@
       "
     ></v-img>
   </v-card>
+  <v-card
+    v-else-if="embed.type === 'file'"
+    elevation="0"
+    :max-width="width"
+    :max-height="500"
+  >
+    <v-card-text>
+      <v-icon class="mr-2" :size="48">mdi-file</v-icon>
+      <span>
+        {{ embed.data.upload.name }}
+      </span>
+    </v-card-text>
+    <v-card-actions class="text-grey">
+      {{ $functions.fileSize(embed.data.upload.fileSize) }}
+      <v-spacer />
+      <v-btn
+        :href="`https://i.troplo.com/i/${embed.data?.upload?.attachment}`"
+        target="_blank"
+        icon
+      >
+        <v-icon>mdi-download</v-icon>
+      </v-btn>
+    </v-card-actions>
+  </v-card>
   <v-card v-else elevation="0">
     You must upgrade your version of TPUvNEXT to see the embed type
     {{ embed.type }}!

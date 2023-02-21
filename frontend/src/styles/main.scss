@@ -84,12 +84,12 @@
   color: unset !important;
 }
 
-/** {
+* {
   scrollbar-width: thin;
   scrollbar-color: black #151515;
 }
 
-*::-webkit-scrollbar {
+div::-webkit-scrollbar {
   width: 12px;
 }
 
@@ -101,7 +101,7 @@
   background-color: #181818;
   border-radius: 20px;
   border: 3px solid #151515;
-}*/
+}
 
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;

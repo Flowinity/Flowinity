@@ -3,9 +3,11 @@
     <v-list
       color="transparent"
       bg-color="transparent"
-      style="padding-bottom: 110px"
       id="chat-list"
       class="message-list-container"
+      :style="`height: calc(100vh - ${143 + replyingHeight}px)`"
+      width="100%"
+      style="overflow-x: hidden !important"
     >
       <Message
         v-for="(message, index) in $chat.selectedChat?.messages"
@@ -35,31 +37,34 @@
     </v-list>
     <v-fade-transition v-model="avoidAutoScroll">
       <v-toolbar
-        :style="inputStyles + ` bottom: ${inputHeight + replyingHeight}px`"
-        height="1"
-        style="border-radius: 20px 20px 0 0; opacity: 0.95"
+        :style="`position: fixed; bottom: ${
+          inputHeight + replyingHeight + uploadFileHeight
+        }px`"
+        height="25"
+        style="border-radius: 20px 20px 0 0; font-size: 14px; z-index: 1"
         @click="forceBottomAmirite"
-        class="pointer unselectable"
+        class="pointer unselectable pl-2 pb-1"
         v-if="avoidAutoScroll"
+        color="card"
       >
-        <v-icon class="mr-2">mdi-arrow-down</v-icon>
+        <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
         Jump to bottom
       </v-toolbar>
     </v-fade-transition>
     <v-fade-transition v-model="replyId">
       <v-toolbar
         :style="
-          inputStyles +
-          ` bottom: ${inputHeight}px` +
+          `position: sticky; bottom: ${inputHeight + uploadFileHeight}px` +
           (!avoidAutoScroll ? '; border-radius: 20px 20px 0 0;' : '')
         "
-        height="1"
-        style="opacity: 0.95"
+        height="35"
+        style="opacity: 0.95; z-index: 1"
         @click="forceBottomAmirite"
         class="pointer"
         v-if="replyId"
+        color="card"
       >
-        <v-icon class="mr-2">mdi-reply</v-icon>
+        <v-icon class="mr-2 ml-3">mdi-reply</v-icon>
         <UserAvatar size="24" :user="replying?.user" class="mr-2"></UserAvatar>
         {{ replying?.content }}
       </v-toolbar>
@@ -67,31 +72,33 @@
     <v-fade-transition :model-value="files.length">
       <v-toolbar
         :style="
-          inputStyles +
-          ` bottom: ${inputHeight + replyingHeight}px` +
-          (!avoidAutoScroll ? '; border-radius: 20px 20px 0 0;' : '')
+          `position: sticky; bottom: ${inputHeight}px` +
+          (!avoidAutoScroll && !replyId
+            ? '; border-radius: 20px 20px 0 0;'
+            : '')
         "
-        @click="forceBottomAmirite"
-        class="pointer"
         v-if="files.length"
         height="auto"
+        color="card"
       >
-        <v-slide-group>
+        <v-slide-group class="my-2 mx-1">
           <v-slide-group-item
             v-for="(file, index) in files"
             :key="file.name + file.size + index"
           >
-            <v-card class="mr-2" show-arrows elevation="0" max-height="100">
+            <v-card class="mr-2" show-arrows elevation="0" max-width="400px">
               <v-progress-linear
-                :value="uploadProgress"
+                :model-value="file.uploadProgress"
                 :color="uploadProgress === 100 ? 'success' : 'primary'"
-                rounded
-                class="mr-2"
-              ></v-progress-linear>
+                height="20"
+              >
+                <small>{{ uploadProgress }}%</small>
+              </v-progress-linear>
               <v-toolbar>
-                <v-card-title class="text-center">
+                <v-icon class="ml-2">mdi-upload</v-icon>
+                <v-card-text class="text-center limit">
                   {{ file.name }}
-                </v-card-title>
+                </v-card-text>
                 <v-spacer></v-spacer>
                 <v-card-actions>
                   <v-btn
@@ -104,7 +111,6 @@
                   </v-btn>
                 </v-card-actions>
               </v-toolbar>
-              <GalleryPreview :item="file"></GalleryPreview>
             </v-card>
           </v-slide-group-item>
         </v-slide-group>
@@ -112,11 +118,14 @@
     </v-fade-transition>
     <CommunicationsInput
       v-model="message"
-      :style="inputStyles"
       @sendMessage="sendMessage"
       style="bottom: 0"
       ref="input"
       :renderKey="renderKey"
+      class="message-input"
+      @fileUpload="uploadHandle"
+      @paste="handlePaste"
+      @quickTPULink="handleQuickTPULink"
     ></CommunicationsInput>
   </div>
 </template>
@@ -159,16 +168,20 @@ export default defineComponent({
         name: string;
         size: number;
         type: string;
-        uploadProgress: number;
         tpuLink: string | undefined;
+        uploadProgress: number;
       }[],
       uploadProgress: 0,
       uploading: false
     };
   },
   computed: {
+    uploadFileHeight() {
+      if (this.files.length > 0) return 84;
+      return 0;
+    },
     replyingHeight() {
-      if (this.replyId) return 33.5;
+      if (this.replyId) return 35;
       return 0;
     },
     replying() {
@@ -178,40 +191,63 @@ export default defineComponent({
     },
     inputHeight() {
       const lines = this.message.split("\n").length;
-      return (lines - 1) * 24 + 78;
-    },
-    inputStyles() {
-      const drawers = document.querySelectorAll(
-        ".v-navigation-drawer--active:not(.v-navigation-drawer--temporary)"
-      );
-      let bind;
-      bind = [
-        this.$vuetify.display.mobile,
-        this.$app.workspaceDrawer,
-        this.$chat.communicationsSidebar,
-        this.$chat.memberSidebar,
-        this.$chat.isReady
-      ];
-      return `position: fixed; width: calc(100% - ${
-        256 * drawers.length
-      }px); padding: 16px;`;
+      return (lines - 1) * 24 + 86.5;
     }
   },
   methods: {
+    handleQuickTPULink(e) {
+      this.message = "https://i.troplo.com/i/" + e.attachment;
+      this.sendMessage();
+    },
+    async handlePaste(e: ClipboardEvent) {
+      const items = e.clipboardData?.items;
+      if (items) {
+        for (const item of items) {
+          if (item.kind === "file") {
+            const file = item.getAsFile();
+            if (file) {
+              this.files.push({
+                file,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                tpuLink: undefined,
+                uploadProgress: 0
+              });
+            }
+          }
+        }
+        this.uploadFiles();
+      }
+    },
+    async uploadHandle(e) {
+      if (e.length > 0) {
+        for (const file of e) {
+          this.files.push({
+            file,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            tpuLink: undefined,
+            uploadProgress: 0
+          });
+        }
+        this.uploadFiles();
+      }
+    },
     async dragDropHandler(e) {
       e.preventDefault();
       e.stopPropagation();
       const files = e.dataTransfer.files;
       if (files.length > 0) {
-        this.files = [];
         for (const file of files) {
           this.files.push({
             file,
             name: file.name,
             size: file.size,
             type: file.type,
-            uploadProgress: 0,
-            tpuLink: undefined
+            tpuLink: undefined,
+            uploadProgress: 0
           });
         }
         this.uploadFiles();
@@ -222,7 +258,7 @@ export default defineComponent({
         if (this.uploading) return;
         this.uploading = true;
         const formData = new FormData();
-        for (const file of this.files) {
+        for (const file of this.files.filter((file) => !file.tpuLink)) {
           formData.append("attachments", file.file);
         }
         const { data } = await this.axios.post(`/gallery/site`, formData, {
@@ -233,10 +269,15 @@ export default defineComponent({
             this.uploadProgress = Math.round(
               (progressEvent.loaded / (progressEvent.total || 0)) * 100
             );
+            this.files.forEach((file) => {
+              if (!file.tpuLink) {
+                file.uploadProgress = this.uploadProgress;
+              }
+            });
           }
         });
         this.files.forEach((file, index) => {
-          file.tpuLink = data[index];
+          file.tpuLink = data[index]?.upload?.attachment;
         });
         this.uploading = false;
       } else {
@@ -267,13 +308,15 @@ export default defineComponent({
     },
     forceBottomAmirite() {
       this.avoidAutoScroll = false;
-      const list = document.querySelector(".message-list-container");
-      if (list) list.scrollTop = 0;
+      this.autoScroll();
     },
     async sendMessage() {
-      if (!this.message) return;
+      if (!this.message && !this.files) return;
+      if (!this.message) this.message = "[File]";
+      if (this.uploading) return;
       const message = this.message;
       const replyId = this.replyId;
+      const attachments = this.files.map((file) => file.tpuLink);
       this.message = "";
       this.renderKey = !this.renderKey;
       const tempId = new Date().getTime();
@@ -293,6 +336,7 @@ export default defineComponent({
         readReceipts: []
       });
       this.replyId = undefined;
+      this.files = [];
       this.autoScroll();
 
       // move chat to top
@@ -308,7 +352,8 @@ export default defineComponent({
       try {
         await this.axios.post(`/chats/${this.$route.params.chatId}/message`, {
           content: message,
-          replyId: replyId
+          replyId: replyId,
+          attachments
         });
       } catch (e) {
         console.log(e);
@@ -487,6 +532,12 @@ export default defineComponent({
           this.typingStatus.rateLimit = Date.now() + 3000;
         }
       }
+    },
+    replyId() {
+      this.focusInput();
+      this.$nextTick(() => {
+        this.autoScroll();
+      });
     }
   }
 });
@@ -494,7 +545,6 @@ export default defineComponent({
 
 <style scoped>
 .message-list-container {
-  height: calc(100vh - 60px);
   overflow-y: scroll;
   display: flex;
   flex-direction: column-reverse;
@@ -502,5 +552,10 @@ export default defineComponent({
 
 .message-list-container::-webkit-scrollbar {
   display: none;
+}
+
+.message-input {
+  position: sticky;
+  padding: 16px;
 }
 </style>
