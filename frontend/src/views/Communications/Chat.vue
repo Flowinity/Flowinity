@@ -134,13 +134,14 @@ import { defineComponent } from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
 import Message from "@/components/Communications/Message.vue";
 import { MessageSocket } from "@/types/messages";
-import { Message as MessageType } from "@/models/message";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import User from "@/views/User/User.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import { ChatAssociation } from "@/models/chatAssociation";
 import { Chat, Typing } from "@/models/chat";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
+import { User as UserType } from "@/models/user";
+import { ChatAssociation } from "@/models/chatAssociation";
+
 export default defineComponent({
   name: "Chat",
   components: {
@@ -311,8 +312,8 @@ export default defineComponent({
       this.autoScroll();
     },
     async sendMessage() {
-      if (!this.message && !this.files) return;
-      if (!this.message) this.message = "[File]";
+      if (!this.message && !this.files.length) return;
+      if (!this.message && this.files.length) this.message = "[File]";
       if (this.uploading) return;
       const message = this.message;
       const replyId = this.replyId;
@@ -419,28 +420,15 @@ export default defineComponent({
       ) {
         this.focusInput();
       }
-    }
-  },
-  mounted() {
-    //document.querySelector(".message-list-container")?.addEventListener("scroll", this.scrollEvent);
-    // add event listener for shortcuts
-    document.addEventListener("keydown", this.shortcutHandler);
-    setInterval(() => {
-      if (document.hasFocus()) {
-        window.tpuInternals.readChat();
-      }
-    }, 2000);
-    // re-enable auto scroll for flex-direction: column-reverse;
-    document
-      .querySelector(".message-list-container")
-      ?.addEventListener("scroll", this.scrollEvent);
-    this.$socket.on("message", async (message: MessageSocket) => {
+    },
+    async onMessage(message: MessageSocket) {
       if (message.chat.id !== this.$chat.selectedChat?.id) return;
-      const findMessage = this.$chat.selectedChat.messages.findIndex(
+      const findMessage = this.$chat.selectedChat?.messages.findIndex(
         (m) => m.content === message.message.content && m.pending
       );
-      if (findMessage !== -1) {
-        this.$chat.selectedChat.messages[findMessage] = message.message;
+      if (findMessage !== -1 && findMessage !== undefined) {
+        if (this.$chat.selectedChat)
+          this.$chat.selectedChat.messages[findMessage] = message.message;
         this.autoScroll();
         this.$chat.readChat();
         return;
@@ -454,41 +442,8 @@ export default defineComponent({
         if (message.message.userId !== this.$user.user?.id) this.$chat.sound();
       }
       this.autoScroll();
-    });
-    this.$socket.on(
-      "embedResolution",
-      (data: { chatId: number; id: number; embeds: any[] }) => {
-        const index = this.$chat.chats.findIndex(
-          (c: any) => c.id === data.chatId
-        );
-        if (index === -1) return;
-        if (!this.$chat.chats[index].messages) return;
-        const messageIndex = this.$chat.chats[index].messages.findIndex(
-          (m: any) => m.id === data.id
-        );
-        if (messageIndex === -1) return;
-        this.$chat.chats[index].messages[messageIndex].embeds = data.embeds;
-        this.autoScroll();
-      }
-    );
-    this.$socket.on("readReceipt", (data: any) => {
-      const index = this.$chat.chats.findIndex(
-        (c: any) => c.id === data.chatId
-      );
-      if (index === -1) return;
-      if (!this.$chat.chats[index].messages) return;
-      const messageIndex = this.$chat.chats[index].messages.findIndex(
-        (m: any) => m.id === data.id
-      );
-      if (messageIndex === -1) return;
-      this.$chat.chats[index].messages.forEach((message: any) => {
-        message.readReceipts = message.readReceipts.filter(
-          (r: any) => r.user.id !== data.user.id
-        );
-      });
-      this.$chat.selectedChat?.messages[messageIndex].readReceipts.push(data);
-    });
-    this.$socket.on("typing", (data: Typing) => {
+    },
+    onTyping(data: Typing) {
       const chat =
         this.$chat.chats[
           this.$chat.chats.findIndex((c: Chat) => c.id === data.chatId)
@@ -506,7 +461,55 @@ export default defineComponent({
             this.$date(t.expires).isAfter(Date.now())
         );
       }, 5000);
-    });
+    },
+    onEmbedResolution(data: { chatId: any; id: any; embeds: any }) {
+      const index = this.$chat.chats.findIndex(
+        (c: any) => c.id === data.chatId
+      );
+      if (index === -1) return;
+      if (!this.$chat.chats[index].messages) return;
+      const messageIndex = this.$chat.chats[index].messages.findIndex(
+        (m: any) => m.id === data.id
+      );
+      if (messageIndex === -1) return;
+      this.$chat.chats[index].messages[messageIndex].embeds = data.embeds;
+      this.autoScroll();
+    },
+    onReadReceipt(data: ChatAssociation) {
+      const index = this.$chat.chats.findIndex(
+        (c: any) => c.id === data.chatId
+      );
+      if (index === -1) return;
+      if (!this.$chat.chats[index].messages) return;
+      const messageIndex = this.$chat.chats[index].messages.findIndex(
+        (m: any) => m.id === data.id
+      );
+      if (messageIndex === -1) return;
+      this.$chat.chats[index].messages.forEach((message: any) => {
+        message.readReceipts = message.readReceipts.filter(
+          (r: any) => r.user.id !== data.user.id
+        );
+      });
+      this.$chat.selectedChat?.messages[messageIndex].readReceipts.push(data);
+    }
+  },
+  mounted() {
+    //document.querySelector(".message-list-container")?.addEventListener("scroll", this.scrollEvent);
+    // add event listener for shortcuts
+    document.addEventListener("keydown", this.shortcutHandler);
+    setInterval(() => {
+      if (document.hasFocus()) {
+        window.tpuInternals.readChat();
+      }
+    }, 2000);
+    // re-enable auto scroll for flex-direction: column-reverse;
+    document
+      .querySelector(".message-list-container")
+      ?.addEventListener("scroll", this.scrollEvent);
+    this.$socket.on("message", this.onMessage);
+    this.$socket.on("embedResolution", this.onEmbedResolution);
+    this.$socket.on("readReceipt", this.onReadReceipt);
+    this.$socket.on("typing", this.onTyping);
   },
   unmounted() {
     document.removeEventListener("scroll", this.scrollEvent);
@@ -514,6 +517,11 @@ export default defineComponent({
     document
       .querySelector(".message-list-container")
       ?.removeEventListener("scroll", this.scrollEvent);
+
+    this.$socket.off("message", this.onMessage);
+    this.$socket.off("typing", this.onTyping);
+    this.$socket.off("embedResolution", this.onEmbedResolution);
+    this.$socket.off("readReceipt", this.onReadReceipt);
   },
   watch: {
     "$chat.isReady"() {
