@@ -195,7 +195,7 @@ export default defineComponent({
     }
   },
   methods: {
-    handleQuickTPULink(e) {
+    handleQuickTPULink(e: { attachment: string }) {
       this.message = "https://i.troplo.com/i/" + e.attachment;
       this.sendMessage();
     },
@@ -220,7 +220,7 @@ export default defineComponent({
         this.uploadFiles();
       }
     },
-    async uploadHandle(e) {
+    async uploadHandle(e: FileList) {
       if (e.length > 0) {
         for (const file of e) {
           this.files.push({
@@ -235,11 +235,11 @@ export default defineComponent({
         this.uploadFiles();
       }
     },
-    async dragDropHandler(e) {
+    async dragDropHandler(e: DragEvent) {
       e.preventDefault();
       e.stopPropagation();
-      const files = e.dataTransfer.files;
-      if (files.length > 0) {
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
         for (const file of files) {
           this.files.push({
             file,

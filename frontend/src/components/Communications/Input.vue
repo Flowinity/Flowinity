@@ -114,7 +114,13 @@ export default defineComponent({
   name: "CommunicationsInput",
   components: { InlineGallery, GalleryCore, PersonalGallery },
   props: ["modelValue", "editing", "renderKey"],
-  emits: ["update:modelValue", "sendMessage", "edit"],
+  emits: [
+    "update:modelValue",
+    "sendMessage",
+    "edit",
+    "fileUpload",
+    "quickTPULink"
+  ],
   data() {
     return {
       tab: null as string | null,
