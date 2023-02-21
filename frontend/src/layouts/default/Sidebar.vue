@@ -245,7 +245,7 @@ export default defineComponent({
             : "/communications",
           icon: "mdi-message-processing",
           warning: this.$chat.totalUnread || "BETA",
-          scope: "communications.view",
+          scope: "chats.view",
           experimentsRequired: ["COMMUNICATIONS"]
         },
         {
