@@ -189,6 +189,18 @@ let Errors = {
   NO_MESSAGE_CONTENT: {
     message: "You must provide message content.",
     status: 400
+  },
+  USER_ALREADY_IN_CHAT: {
+    message: "The user is already in the chat.",
+    status: 400
+  },
+  CHAT_INSUFFICIENT_PERMISSIONS: {
+    message: "You do not have permission to modify this chat.",
+    status: 403
+  },
+  CHAT_USER_NOT_FOUND: {
+    message: "The requested user could not be found in this chat.",
+    status: 400
   }
 }
 

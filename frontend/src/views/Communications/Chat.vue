@@ -1,5 +1,5 @@
 <template>
-  <div id="chat">
+  <div id="chat" @drop.prevent="dragDropHandler" @dragover.prevent>
     <v-list
       color="transparent"
       bg-color="transparent"
@@ -64,6 +64,52 @@
         {{ replying?.content }}
       </v-toolbar>
     </v-fade-transition>
+    <v-fade-transition :model-value="files.length">
+      <v-toolbar
+        :style="
+          inputStyles +
+          ` bottom: ${inputHeight + replyingHeight}px` +
+          (!avoidAutoScroll ? '; border-radius: 20px 20px 0 0;' : '')
+        "
+        @click="forceBottomAmirite"
+        class="pointer"
+        v-if="files.length"
+        height="auto"
+      >
+        <v-slide-group>
+          <v-slide-group-item
+            v-for="(file, index) in files"
+            :key="file.name + file.size + index"
+          >
+            <v-card class="mr-2" show-arrows elevation="0" max-height="100">
+              <v-progress-linear
+                :value="uploadProgress"
+                :color="uploadProgress === 100 ? 'success' : 'primary'"
+                rounded
+                class="mr-2"
+              ></v-progress-linear>
+              <v-toolbar>
+                <v-card-title class="text-center">
+                  {{ file.name }}
+                </v-card-title>
+                <v-spacer></v-spacer>
+                <v-card-actions>
+                  <v-btn
+                    color="error"
+                    @click="files.splice(index, 1)"
+                    class="mr-2"
+                    text
+                  >
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </v-toolbar>
+              <GalleryPreview :item="file"></GalleryPreview>
+            </v-card>
+          </v-slide-group-item>
+        </v-slide-group>
+      </v-toolbar>
+    </v-fade-transition>
     <CommunicationsInput
       v-model="message"
       :style="inputStyles"
@@ -85,9 +131,11 @@ import User from "@/views/User/User.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { ChatAssociation } from "@/models/chatAssociation";
 import { Chat, Typing } from "@/models/chat";
+import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 export default defineComponent({
   name: "Chat",
   components: {
+    GalleryPreview,
     UserAvatar,
     User,
     MessageSkeleton,
@@ -105,7 +153,17 @@ export default defineComponent({
       renderKey: false,
       typingStatus: {
         rateLimit: null as number | null
-      }
+      },
+      files: [] as {
+        file: File;
+        name: string;
+        size: number;
+        type: string;
+        uploadProgress: number;
+        tpuLink: string | undefined;
+      }[],
+      uploadProgress: 0,
+      uploading: false
     };
   },
   computed: {
@@ -140,6 +198,51 @@ export default defineComponent({
     }
   },
   methods: {
+    async dragDropHandler(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        this.files = [];
+        for (const file of files) {
+          this.files.push({
+            file,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            uploadProgress: 0,
+            tpuLink: undefined
+          });
+        }
+        this.uploadFiles();
+      }
+    },
+    async uploadFiles() {
+      if (this.files.length > 0) {
+        if (this.uploading) return;
+        this.uploading = true;
+        const formData = new FormData();
+        for (const file of this.files) {
+          formData.append("attachments", file.file);
+        }
+        const { data } = await this.axios.post(`/gallery/site`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          },
+          onUploadProgress: (progressEvent) => {
+            this.uploadProgress = Math.round(
+              (progressEvent.loaded / (progressEvent.total || 0)) * 100
+            );
+          }
+        });
+        this.files.forEach((file, index) => {
+          file.tpuLink = data[index];
+        });
+        this.uploading = false;
+      } else {
+        this.uploading = false;
+      }
+    },
     async doEditMessage() {
       await this.axios.put(
         `/chats/${this.$chat.selectedChat?.association?.id}/message`,
@@ -203,24 +306,10 @@ export default defineComponent({
       }
 
       try {
-        const { data } = await this.axios.post(
-          `/chats/${this.$route.params.chatId}/message`,
-          {
-            content: message,
-            replyId: replyId
-          }
-        );
-        this.$chat.readChat();
-        const messageIndex = this.$chat.selectedChat?.messages.findIndex(
-          (message) => message.id === tempId
-        );
-        if (
-          messageIndex === -1 ||
-          messageIndex === undefined ||
-          !this.$chat.selectedChat
-        )
-          return;
-        this.$chat.selectedChat.messages[messageIndex] = data;
+        await this.axios.post(`/chats/${this.$route.params.chatId}/message`, {
+          content: message,
+          replyId: replyId
+        });
       } catch (e) {
         console.log(e);
         const messageIndex = this.$chat.selectedChat?.messages.findIndex(
@@ -302,18 +391,22 @@ export default defineComponent({
       ?.addEventListener("scroll", this.scrollEvent);
     this.$socket.on("message", async (message: MessageSocket) => {
       if (message.chat.id !== this.$chat.selectedChat?.id) return;
-      if (
-        this.$chat.selectedChat.messages.find(
-          (m) => m.id === message.message.id
-        )
-      )
+      const findMessage = this.$chat.selectedChat.messages.findIndex(
+        (m) => m.content === message.message.content && m.pending
+      );
+      if (findMessage !== -1) {
+        this.$chat.selectedChat.messages[findMessage] = message.message;
+        this.autoScroll();
+        this.$chat.readChat();
         return;
+      }
       await this.$chat.chats
         .find((c) => c.id === this.$chat.selectedChat?.id)
         ?.messages.unshift(message.message);
-      console.log(document.hasFocus());
       if (document.hasFocus()) {
         this.$chat.readChat();
+      } else {
+        if (message.message.userId !== this.$user.user?.id) this.$chat.sound();
       }
       this.autoScroll();
     });

@@ -1,5 +1,10 @@
 <template>
-  <v-menu :style="menuStyle" location="top" v-model="contextMenu.dialog">
+  <v-menu
+    :style="menuStyle"
+    location="top"
+    v-model="contextMenu.dialog"
+    style="z-index: 2003"
+  >
     <v-list>
       <v-list-item
         v-if="contextMenu.item?.type === 'group'"

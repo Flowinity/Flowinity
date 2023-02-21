@@ -65,6 +65,7 @@ export class ChatController {
     this.router.post(
       "/",
       auth("chats.create"),
+      msgLimiter,
       async (req: RequestAuth, res: Response) => {
         const chat = await this.chatService.createChat(
           req.body.users,
@@ -79,12 +80,40 @@ export class ChatController {
       auth("chats.create"),
       msgLimiter,
       async (req: RequestAuth, res: Response) => {
+        await this.chatService.checkPermissions(
+          req.user.id,
+          parseInt(req.params.chatId),
+          "admin"
+        )
         const chat = await this.chatService.addUsersToChat(
           parseInt(req.params.chatId),
           req.body.users,
           req.user.id
         )
         res.json(chat)
+      }
+    )
+
+    this.router.delete(
+      "/:chatId/users/:userId",
+      auth("chats.create"),
+      async (req: RequestAuth, res: Response) => {
+        try {
+          const rank = await this.chatService.checkPermissions(
+            req.user.id,
+            parseInt(req.params.chatId),
+            "admin"
+          )
+          await this.chatService.removeUserFromChat(
+            parseInt(req.params.chatId),
+            parseInt(req.params.userId),
+            req.user.id,
+            rank
+          )
+          res.sendStatus(204)
+        } catch (e) {
+          console.log(e)
+        }
       }
     )
 

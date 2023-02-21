@@ -4,11 +4,13 @@ import axios from "@/plugins/axios";
 import { Chat, Typing } from "@/models/chat";
 import { useExperimentsStore } from "@/store/experiments";
 import vuetify from "@/plugins/vuetify";
-import { useRouter } from "vue-router";
+import { Router, useRouter } from "vue-router";
 import { useAppStore } from "@/store/app";
 import { User } from "@/models/user";
-import dayjs from "@/plugins/dayjs";
 import { useUserStore } from "@/store/user";
+import { ChatAssociation } from "@/models/chatAssociation";
+import { useCollectionsStore } from "@/store/collections";
+import { Collection } from "@/models/collection";
 
 export interface ChatState {
   notifications: number;
@@ -160,6 +162,11 @@ export const useChatStore = defineStore("chat", {
       }
     } as ChatState),
   actions: {
+    async sound() {
+      let sound = await import("@/assets/audio/notification.wav");
+      const audio = new Audio(sound.default);
+      await audio.play();
+    },
     confirmLink(trust: boolean = false) {
       const url = new URL(this.$state.dialogs.externalSite.url);
       const domain = url.hostname;
@@ -204,6 +211,29 @@ export const useChatStore = defineStore("chat", {
         this.dialogs.externalSite.url = link;
       }
     },
+    lookupChat(id: number) {
+      return (
+        (this.chats.find((chat) => chat.id === id) as Chat) ||
+        ({
+          name: "Unknown Chat"
+        } as Chat)
+      );
+    },
+    openUser(id: number) {
+      this.dialogs.user.username = this.lookupUser(id).username;
+      this.dialogs.user.value = true;
+    },
+    lookupUser(id: number) {
+      for (const chat of this.chats) {
+        const user = chat.users.find((user) => user?.user?.id === id);
+        if (user) {
+          return user.user as User;
+        }
+      }
+      return {
+        username: "Unknown User"
+      } as User;
+    },
     async createChat(users: number[]) {
       const { data } = await axios.post("/chats", { users });
       return data;
@@ -220,7 +250,7 @@ export const useChatStore = defineStore("chat", {
       const chat = this.chats.find(
         (chat: Chat) => chat.association.id === id
       ) as Chat;
-      if (chat.messages?.length) {
+      if (chat?.messages?.length) {
         appStore.title = this.chatName;
         this.loading = false;
         this.isReady = id;
@@ -264,11 +294,34 @@ export const useChatStore = defineStore("chat", {
           this.trustedDomains = JSON.parse(trustedDomains);
         }
       } catch {}
-      if (!window.tpuInternals)
+      if (!window.tpuInternals) {
+        const collection = useCollectionsStore();
+        const router = useRouter() as Router;
         window.tpuInternals = {
           processLink: this.processLink,
-          readChat: this.readChat
+          readChat: this.readChat,
+          lookupUser: this.lookupUser,
+          setChat: ((id) => router.push("/communications/" + id)) as (
+            id: number
+          ) => void,
+          lookupChat: this.lookupChat,
+          openUser: this.openUser,
+          router,
+          lookupCollection: (id) => {
+            return (
+              (collection.items.find(
+                (collection) => collection.id === id
+              ) as Collection) ||
+              ({
+                name: "Unknown Collection"
+              } as Collection)
+            );
+          },
+          openCollection: ((id) => router.push("/collections/" + id)) as (
+            id: number
+          ) => void
         };
+      }
       window.tpuInternals.processLink = this.processLink;
       this.getChats();
     }

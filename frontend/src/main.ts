@@ -28,6 +28,7 @@ import "./styles/tpu-editorjs.css";
 import VueApexCharts from "vue3-apexcharts";
 import SocketIO from "socket.io-client";
 import { useChatStore } from "@/store/chat";
+import { Router } from "vue-router";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -51,6 +52,13 @@ declare global {
     tpuInternals: {
       processLink: (link: string) => void;
       readChat: () => void;
+      lookupUser: (id: number) => User;
+      lookupChat: (id: number) => Chat;
+      openUser: (id: number) => void;
+      setChat: (id: number) => void;
+      lookupCollection: (id: number) => Collection;
+      openCollection: (id: number) => void;
+      router: Router;
     };
   }
 }
@@ -124,10 +132,7 @@ const app = createApp({
         );
         if (newMessage.message.userId !== user.user?.id)
           chat.chats[newIndex].unread++;
-        console.log("playing sound");
-        let sound = await import("@/assets/audio/notification.wav");
-        const audio = new Audio(sound.default);
-        audio.play();
+        chat.sound();
         if (!chat.chats[newIndex].messages) return;
         if (
           chat.chats[newIndex].messages.find(
@@ -228,6 +233,7 @@ import { Chat } from "@/models/chat";
 import { Message as MessageType } from "@/models/message";
 import { User } from "@/models/user";
 import { Friend } from "@/models/friend";
+import { Collection } from "@/models/collection";
 
 app.use(VueAxios, axios);
 app.use(Toast, options);

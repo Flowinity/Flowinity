@@ -19,6 +19,7 @@
     <v-list-item color="transparent" class="message">
       <template v-slot:prepend>
         <div
+          v-if="!message.type || message.type === 'message'"
           @click="
             $emit('authorClick', {
               user: message.user,
@@ -33,6 +34,15 @@
             :user="message.user"
             :id="'message-author-avatar-' + message.id"
           ></CommunicationsAvatar>
+        </div>
+        <div class="mr-3 text-grey" v-else>
+          <v-icon v-if="message.type === 'join'" class="mr-1" size="36">
+            mdi-account-plus
+          </v-icon>
+          <v-icon v-else-if="message.type === 'leave'" class="mr-1" size="36">
+            mdi-account-minus
+          </v-icon>
+          <v-icon v-else class="mr-1" size="36">mdi-information</v-icon>
         </div>
       </template>
       <p

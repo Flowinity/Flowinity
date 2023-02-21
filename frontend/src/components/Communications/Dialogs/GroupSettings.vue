@@ -3,6 +3,7 @@
     @update:modelValue="$emit('update:modelValue', $event)"
     :model-value="modelValue"
     max-width="800px"
+    max-height="1200px"
   >
     <v-card v-if="$chat.dialogs.groupSettings.item">
       <v-toolbar>
@@ -21,20 +22,24 @@
       <v-card-text>
         <v-card-title>
           Group Members
-          <CreateChat type="add" v-model="add" v-slot="{ props }">
+          <CreateChat
+            type="add"
+            v-model="add"
+            v-slot="{ props }"
+            @add="addUsers($event)"
+          >
             <v-btn
               size="xsmall"
               icon
               class="mr-2"
               @click="add = true"
               v-bind="props"
-              @add="addUsers($event)"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
           </CreateChat>
         </v-card-title>
-        <v-list>
+        <v-list max-height="500">
           <v-list-item
             v-for="member in $chat.dialogs.groupSettings.item?.users"
             :key="member.id"
@@ -43,17 +48,29 @@
               <UserAvatar :user="member.user" />
             </template>
             <v-list-item-title class="ml-3">
-              {{ member.user.username }}
+              {{ member.user?.username || "Deleted User" }}
             </v-list-item-title>
             <template v-slot:append>
+              <v-select
+                v-model="member.rank"
+                :items="ranks"
+                outlined
+                item-title="text"
+                item-value="value"
+              ></v-select>
               <v-list-item-action>
-                <v-btn icon>
+                <v-btn icon @click="removeUser(member.userId)">
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </v-list-item-action>
             </template>
           </v-list-item>
         </v-list>
+        <small>
+          * About roles: Admins have the same abilities as the owner except they
+          cannot delete the group, or modify users with the owner rank, if a
+          user is kicked or leaves, their rank will be reset to member.
+        </small>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -71,19 +88,45 @@ export default defineComponent({
   emits: ["update:modelValue"],
   data() {
     return {
-      add: false
+      add: false,
+      ranks: [
+        {
+          text: "Owner",
+          value: "owner"
+        },
+        {
+          text: "Admin",
+          value: "admin"
+        },
+        {
+          text: "Member",
+          value: "member"
+        }
+      ]
     };
   },
   methods: {
+    async removeUser(id: number) {
+      await this.axios.delete(
+        `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users/${id}`
+      );
+      if (this.$chat.dialogs.groupSettings.item)
+        this.$chat.dialogs.groupSettings.item.users.splice(
+          this.$chat.dialogs.groupSettings.item.users.findIndex(
+            (user) => user.id === id
+          ),
+          1
+        );
+    },
     async addUsers(users: number[]) {
       const { data } = await this.axios.post(
-        `/communications/${this.$chat.dialogs.groupSettings.item?.association?.id}/users`,
+        `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users`,
         {
           users
         }
       );
-      this.$chat.dialogs.groupSettings.item?.users.push(...data);
-      this.$chat.getChats();
+      if (this.$chat.dialogs.groupSettings.item)
+        this.$chat.dialogs.groupSettings.item.users = data;
     }
   }
 });

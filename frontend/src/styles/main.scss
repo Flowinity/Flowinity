@@ -173,3 +173,14 @@ a {
 :root::-webkit-scrollbar {
   display: none;  /* Safari and Chrome */
 }
+
+.mention {
+  background-color: rgb(1, 144, 234, 0.1);
+  border-radius: 4px;
+  padding: 2px 4px;
+  color: rgb(1, 144, 234);
+}
+
+.mention .v-icon {
+  margin-right: 0.1em;
+}

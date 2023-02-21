@@ -8,12 +8,26 @@ import Errors from "@app/lib/errors"
 import { UserUtilsService } from "@app/services/userutils.service"
 import { CacheService } from "@app/services/cache.service"
 import embedParser from "@app/lib/embedParser"
+import { Op } from "sequelize"
+
 interface ChatCache extends Chat {
   _redisSortDate: string
 }
 
 @Service()
 export class ChatService {
+  private userIncludes = [
+    {
+      model: User,
+      as: "tpuUser",
+      attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+    },
+    {
+      model: LegacyUser,
+      as: "legacyUser",
+      attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+    }
+  ]
   private messageIncludes = [
     {
       model: Message,
@@ -60,25 +74,129 @@ export class ChatService {
     }
   ]
 
+  async checkPermissions(
+    userId: number,
+    chatAssociationId: number,
+    permission: "member" | "admin" | "owner"
+  ) {
+    const chat = await ChatAssociation.findOne({
+      where: {
+        id: chatAssociationId,
+        userId
+      }
+    })
+    if (!chat) throw Errors.CHAT_NOT_FOUND
+    if (chat.rank === "owner") return chat.rank
+    if (chat.rank === "admin" && permission === "admin") return chat.rank
+    if (chat.rank === "member" && permission === "member") return chat.rank
+    if (chat.rank === "admin" && permission === "member") return chat.rank
+    throw Errors.CHAT_INSUFFICIENT_PERMISSIONS
+  }
+
+  async patchCacheForAll(chatId: number, removeUserId?: number) {
+    const cache = Container.get(CacheService)
+    const chat = await Chat.findOne({
+      where: {
+        id: chatId
+      },
+      include: [
+        {
+          model: ChatAssociation,
+          as: "users",
+          include: this.userIncludes
+        }
+      ]
+    })
+    if (!chat) throw Errors.CHAT_NOT_FOUND
+    if (removeUserId) {
+      await cache.generateChatsCache(removeUserId)
+    }
+    for (const user of chat.users) {
+      if (!user.userId) continue
+      await cache.patchChatsCacheForUser(user.userId, {
+        ...chat.toJSON(),
+        association: user.toJSON()
+      } as ChatCache)
+    }
+  }
+
+  async removeUserFromChat(
+    chatId: number,
+    removeUserId: number,
+    userId: number,
+    rank: "member" | "admin" | "owner"
+  ) {
+    const chat = await this.getChatFromAssociation(chatId, userId)
+    const association = await ChatAssociation.findOne({
+      where: {
+        chatId: chat.id,
+        userId: removeUserId,
+        rank:
+          rank === "owner"
+            ? {
+                [Op.or]: ["member", "admin", "owner"]
+              }
+            : "member"
+      }
+    })
+    if (!association) throw Errors.CHAT_USER_NOT_FOUND
+    await association.destroy()
+    this.sendMessage(
+      `<@${userId}> removed <@${removeUserId}> from the chat.`,
+      userId,
+      chatId,
+      undefined,
+      "leave"
+    )
+    this.patchCacheForAll(chat.id, removeUserId)
+    this.emitForAll(chatId, userId, "removeChatUser", {
+      chatId,
+      userId: removeUserId
+    })
+    return true
+  }
+
   async addUsersToChat(chatId: number, userIds: number[], userId: number) {
-    /* const chat = await this.getChatFromAssociation(chatId, userId)
+    let chat = await this.getChatFromAssociation(chatId, userId)
+    const existingAssociations = await ChatAssociation.findAll({
+      where: {
+        chatId: chat.id,
+        userId: userIds
+      }
+    })
+    if (existingAssociations.length > 0) {
+      throw Errors.USER_ALREADY_IN_CHAT
+    }
     const friends = await Container.get(UserUtilsService).validateFriends(
       userId,
       userIds
     )
-    for (const id of userIds) {
+    for (const friend of friends) {
       await ChatAssociation.create({
-        chatId,
-        userId: id
+        chatId: chat.id,
+        userId: friend.friendId,
+        rank: "member"
       })
+      this.sendMessage(
+        `<@${userId}> added <@${friend.friendId}> to the chat.`,
+        userId,
+        chatId,
+        undefined,
+        "join"
+      )
     }
-
-    this.emitForAll(chatId, userId, "addUsers", {
-      chatId,
-      users
+    const associations = await ChatAssociation.findAll({
+      where: {
+        chatId: chat.id
+      },
+      include: this.userIncludes
     })
-    return true*/
-    throw Errors.COMING_SOON
+    this.patchCacheForAll(chat.id)
+    this.emitForAll(chatId, userId, "addChatUsers", {
+      chatId,
+      users: associations
+    })
+    return associations
   }
 
   async typing(associationId: number, userId: number) {
@@ -148,7 +266,6 @@ export class ChatService {
         (u: ChatAssociation) => u.userId !== userId
       )
     }
-    console.log(chat.users.map((u: ChatAssociation) => u.userId))
     for (const user of chat.users) {
       socket.to(user.userId).emit(key, data)
     }
@@ -225,6 +342,10 @@ export class ChatService {
               as: "legacyUser",
               attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
             }
+          ],
+          order: [
+            ["rank", "DESC"],
+            ["createdAt", "ASC"]
           ]
         }
       ]
@@ -317,9 +438,7 @@ export class ChatService {
     })
 
     if (!message) throw Errors.UNKNOWN
-    for (const { user } of chat.users.filter(
-      (a: ChatAssociation) => a.userId !== message.userId && a.tpuUser
-    )) {
+    for (const { user } of chat.users) {
       if (user) {
         socket.to(user.id).emit("message", {
           message,
@@ -350,32 +469,47 @@ export class ChatService {
     content: string,
     userId: number,
     chatId: number,
-    replyId?: number
+    replyId?: number,
+    type:
+      | "message"
+      | "leave"
+      | "join"
+      | "pin"
+      | "administrator"
+      | "rename"
+      | "system" = "message"
   ) {
-    const chat = await this.getChatFromAssociation(chatId, userId)
-    if (replyId) {
-      const message = await Message.findOne({
-        where: {
-          id: replyId,
-          chatId: chat.id
-        }
+    try {
+      const chat = await this.getChatFromAssociation(chatId, userId)
+      if (replyId) {
+        const message = await Message.findOne({
+          where: {
+            id: replyId,
+            chatId: chat.id
+          }
+        })
+        if (!message) throw Errors.REPLY_MESSAGE_NOT_FOUND
+      }
+      // must contain at least one character excluding spaces and newlines and must not contain just #s (one or more)
+      if (
+        !content.replace(/\s/g, "").length ||
+        !content.replace(/#/g, "").length
+      )
+        throw Errors.NO_MESSAGE_CONTENT
+      const message = await Message.create({
+        content,
+        chatId: chat.id,
+        userId,
+        type,
+        replyId
       })
-      if (!message) throw Errors.REPLY_MESSAGE_NOT_FOUND
-    }
-    // must contain at least one character excluding spaces and newlines and must not contain just #s (one or more)
-    if (!content.replace(/\s/g, "").length || !content.replace(/#/g, "").length)
-      throw Errors.NO_MESSAGE_CONTENT
-    const message = await Message.create({
-      content,
-      chatId: chat.id,
-      userId,
-      type: "message",
-      replyId
-    })
 
-    redis.set(`chat:${chat.id}:sortDate`, dayjs(message.createdAt).valueOf())
-    embedParser(message, message.chatId, userId, chatId)
-    return await this.sendMessageToUsers(message.id, chat)
+      redis.set(`chat:${chat.id}:sortDate`, dayjs(message.createdAt).valueOf())
+      embedParser(message, message.chatId, userId, chatId)
+      return await this.sendMessageToUsers(message.id, chat)
+    } catch (e) {
+      return console.log(e)
+    }
   }
 
   getRecipient(chat: Chat, userId: number) {
@@ -395,7 +529,6 @@ export class ChatService {
 
   async getChatFromAssociation(associationId: number, userId: number) {
     const chats = await this.getCachedUserChats(userId)
-    console.log(associationId)
     const chat = chats.find((c: Chat) => c.association?.id === associationId)
     if (!chat) throw Errors.CHAT_NOT_FOUND
     return chat
@@ -446,6 +579,7 @@ export class ChatService {
   }
 
   async getUserChats(userId: number) {
+    console.log(userId)
     const chats = await Chat.findAll({
       include: [
         {

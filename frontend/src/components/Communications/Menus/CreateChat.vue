@@ -59,7 +59,10 @@
           @click="type === 'create' ? createChat : $emit('add', selected)"
           :disabled="!selected.length"
         >
-          {{ selected.length < 2 ? "Create DM" : "Create Group" }}
+          <template v-if="type === 'create'">
+            {{ selected.length < 2 ? "Create DM" : "Create Group" }}
+          </template>
+          <template v-else>Add</template>
         </v-btn>
       </v-card-actions>
     </v-card>
