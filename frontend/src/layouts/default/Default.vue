@@ -79,7 +79,7 @@
     >
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <unauth-bar></unauth-bar>
+    <unauth-bar v-if="$route.name !== 'Slideshow'"></unauth-bar>
     <default-view />
   </v-app>
 </template>
@@ -180,6 +180,11 @@ export default defineComponent({
     }
   },
   mounted() {
+    if (window.location.pathname.startsWith("/slideshow/")) {
+      this.$app.componentLoading = false;
+      this.$app.loading = false;
+      return;
+    }
     this.getPulseSession();
     this.getPulseSessionGlobal();
   },

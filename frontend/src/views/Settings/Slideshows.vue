@@ -1,0 +1,117 @@
+<template>
+  <v-toolbar color="toolbar">
+    <v-toolbar-title>Configure Slideshows</v-toolbar-title>
+  </v-toolbar>
+  <v-container>
+    <v-card-title>My Slideshows</v-card-title>
+    <v-expansion-panels>
+      <v-expansion-panel v-for="slideshow in slideshows" :key="slideshow.id">
+        <template v-slot:title>
+          {{ slideshow.name }}
+          <div style="float: right">
+            <v-btn icon @click="$toast.warning('Not implemented yet')">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </div>
+        </template>
+        <template v-slot:text>
+          <v-card-text>
+            <v-text-field
+              disabled
+              label="Share Link"
+              :model-value="
+                'https://images.flowinity.com/slideshow/' + slideshow.shareLink
+              "
+            />
+            <v-text-field label="Slideshow Name" v-model="slideshow.name" />
+            <v-text-field
+              label="Speed/Interval (in s, can do decimals)"
+              v-model="slideshow.speed"
+            />
+            <v-switch
+              inset
+              label="Include items from my gallery"
+              v-model="slideshow.includeGallery"
+            ></v-switch>
+            <v-select
+              v-model="slideshow.collectionIds"
+              :items="$collections.items"
+              label="Collections"
+              chips
+              deletable-chips
+              multiple
+              item-title="name"
+              item-value="id"
+            ></v-select>
+          </v-card-text>
+
+          <v-sheet outlined color="toolbar" class="rounded-xxl mt-3">
+            <v-card
+              max-width="100%"
+              height="50"
+              variant="outlined"
+              elevation="0"
+              color="white"
+              @click="saveSlideshow(slideshow)"
+            >
+              <v-icon style="width: 100%; height: 100%" size="30">
+                mdi-content-save
+              </v-icon>
+            </v-card>
+          </v-sheet>
+        </template>
+      </v-expansion-panel>
+    </v-expansion-panels>
+    <v-card-subtitle v-if="!slideshows.length">
+      No slideshows found
+    </v-card-subtitle>
+    <v-sheet outlined color="transparent" class="rounded-xxl mt-3">
+      <v-card
+        max-width="100%"
+        height="50"
+        variant="outlined"
+        elevation="0"
+        color="white"
+        @click="createSlideshow()"
+      >
+        <v-icon style="width: 100%; height: 100%" size="50">mdi-plus</v-icon>
+      </v-card>
+    </v-sheet>
+  </v-container>
+</template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import { Slideshow } from "@/models/slideshow";
+
+export default defineComponent({
+  name: "Slideshows",
+  data() {
+    return {
+      slideshows: [] as Slideshow[]
+    };
+  },
+  methods: {
+    async saveSlideshow(slideshow: Slideshow) {
+      await this.axios.put("/slideshows/" + slideshow.id, slideshow);
+    },
+    async getSlideshows() {
+      const { data } = await this.axios.get("/slideshows");
+      this.slideshows = data;
+    },
+    async createSlideshow() {
+      await this.axios.post("/slideshows", {
+        name: "New Slideshow",
+        includeGallery: true,
+        collectionIds: []
+      });
+      await this.getSlideshows();
+    }
+  },
+  mounted() {
+    this.getSlideshows();
+  }
+});
+</script>
+
+<style scoped></style>

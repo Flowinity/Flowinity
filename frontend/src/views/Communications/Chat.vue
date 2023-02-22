@@ -347,7 +347,7 @@ export default defineComponent({
       this.avoidAutoScroll = false;
       this.autoScroll();
     },
-    async deleteMessage(id: number) {
+    async deleteMessage(id: number | undefined) {
       await this.axios.delete(
         `/chats/${this.$chat.selectedChat?.association?.id}/messages/${id}`
       );

@@ -33,7 +33,12 @@ export interface User {
   //TODO
   plan: any;
   theme: any;
-  domain: any;
+  domain: {
+    id: number;
+    domain: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
   subscription: any;
   collections?: any[];
   scopes: string;

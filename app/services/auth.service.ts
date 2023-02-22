@@ -150,7 +150,8 @@ export class AuthService {
       username,
       password: await argon2.hash(password),
       email,
-      inviteId: inviteId || null
+      inviteId: inviteId || null,
+      planId: 7
     })
     const session = await utils.createSession(user.id, "*", "session")
     return {

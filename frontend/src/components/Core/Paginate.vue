@@ -107,7 +107,7 @@ export default defineComponent({
       required: true
     },
     totalPages: {
-      type: Number,
+      type: Number as () => number | null | undefined,
       required: false,
       default: 1
     },
@@ -125,8 +125,10 @@ export default defineComponent({
   },
   methods: {
     doCustomPage() {
-      if (parseInt(this.customPage || "") > this.totalPages) {
-        this.customPage = this.totalPages.toString();
+      if (this.totalPages) {
+        if (parseInt(this.customPage || "") > this.totalPages) {
+          this.customPage = this.totalPages.toString();
+        }
       }
       this.$emit("update:modelValue", parseInt(this.customPage || ""));
       this.customLeft = false;
@@ -135,6 +137,7 @@ export default defineComponent({
   },
   computed: {
     maxVisibleResponsive() {
+      if (!this.totalPages) return this.maxVisible;
       if (this.$vuetify.display.xl) {
         return this.maxVisible;
       } else if (this.$vuetify.display.mobile) {
@@ -158,13 +161,13 @@ export default defineComponent({
       );
       let endPage = Math.min(
         startPage + this.maxVisibleResponsive - 1,
-        this.totalPages
+        this.totalPages || 1
       );
 
       const visiblePagesCount = endPage - startPage + 1;
       if (visiblePagesCount < this.maxVisibleResponsive) {
         if (startPage === 1) {
-          endPage = Math.min(this.totalPages, this.maxVisibleResponsive);
+          endPage = Math.min(this.totalPages || 1, this.maxVisibleResponsive);
         } else {
           startPage = Math.max(1, endPage - this.maxVisibleResponsive + 1);
         }

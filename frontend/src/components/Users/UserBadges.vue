@@ -18,7 +18,7 @@
     ></HoverChip>
     <HoverChip
       :text="'TPU ' + user.plan?.name"
-      v-if="user.plan?.internalName !== 'FREE'"
+      v-if="!user.plan?.internalName.includes('FREE')"
       :icon="user.plan?.icon"
       :color="user.plan?.color"
       text-color="black"

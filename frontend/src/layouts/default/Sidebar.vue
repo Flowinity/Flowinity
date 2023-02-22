@@ -1,5 +1,6 @@
 <template>
   <InviteAFriend v-model="inviteAFriend"></InviteAFriend>
+  <Feedback v-model="feedback"></Feedback>
   <MigrateWizard
     v-model="migrateWizard"
     v-if="$experiments.experiments['PROJECT_MERGE']"
@@ -134,10 +135,12 @@ import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import MigrateWizard from "@/components/Dashboard/Dialogs/Migrate.vue";
 import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue";
 import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
+import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 
 export default defineComponent({
   name: "Sidebar",
   components: {
+    Feedback,
     StatusSwitcher,
     ColubrinaSidebarList,
     MigrateWizard,
@@ -147,7 +150,8 @@ export default defineComponent({
   data() {
     return {
       inviteAFriend: false,
-      migrateWizard: false
+      migrateWizard: false,
+      feedback: false
     };
   },
   computed: {
@@ -279,7 +283,10 @@ export default defineComponent({
         },
         {
           id: 29,
-          click() {},
+          click() {
+            //@ts-ignore
+            this.feedback = true;
+          },
           externalPath: "",
           path: "",
           name: "Provide Feedback",
@@ -321,6 +328,16 @@ export default defineComponent({
           warning: "EXP",
           scope: "*",
           experimentsRequired: ["PROJECT_MERGE"]
+        },
+        {
+          id: 36,
+          click() {},
+          externalPath: "https://legacy.images.flowinity.com",
+          path: "",
+          name: "Go back to old TPU",
+          icon: "mdi-arrow-down",
+          new: false,
+          scope: "user.view"
         }
         /*{
           id: 33,

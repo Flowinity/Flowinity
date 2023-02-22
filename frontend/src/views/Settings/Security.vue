@@ -1,6 +1,10 @@
 <template>
   <v-toolbar color="toolbar" class="rounded-xl">
-    <CreateAPIKey v-model="dialogs.key" @create="getAPIKeys"></CreateAPIKey>
+    <CreateAPIKey
+      type="api"
+      v-model="dialogs.key"
+      @create="getAPIKeys"
+    ></CreateAPIKey>
     <v-toolbar-title>API Keys</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn color="primary" @click="dialogs.key = true" text>
@@ -23,9 +27,14 @@
     </template>
   </v-data-table>
   <v-toolbar color="toolbar" class="rounded-xl mt-5">
+    <CreateAPIKey
+      v-model="dialogs.password"
+      @create="getAlternatePasswords"
+      type="password"
+    ></CreateAPIKey>
     <v-toolbar-title>Alternate Passwords</v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn color="primary" @click="alternatePasswords.dialog = true" text>
+    <v-btn color="primary" @click="dialogs.password = true" text>
       <v-icon left>mdi-plus</v-icon>
       Add Password
     </v-btn>
@@ -195,7 +204,6 @@ export default defineComponent({
         { title: "Actions", key: "actions", sortable: false }
       ],
       alternatePasswords: {
-        dialog: false,
         items: []
       },
       sessions: [] as any[]

@@ -82,6 +82,16 @@ const routes = [
             path: "about",
             name: "About",
             component: () => import("@/views/Settings/About.vue")
+          },
+          {
+            path: "domains",
+            name: "Domains",
+            component: () => import("@/views/Settings/Domains.vue")
+          },
+          {
+            path: "Slideshows",
+            name: "Slideshows",
+            component: () => import("@/views/Settings/Slideshows.vue")
           }
         ]
       },
@@ -89,6 +99,11 @@ const routes = [
         path: "/autoCollect",
         name: "AutoCollects",
         component: () => import("@/views/AutoCollects/Home.vue")
+      },
+      {
+        path: "/autoCollect/configure",
+        name: "AutoCollects Configure",
+        component: () => import("@/views/AutoCollects/Configure.vue")
       },
       {
         path: "/autoCollect/:id",
@@ -129,6 +144,11 @@ const routes = [
         path: "/starred",
         name: "Starred",
         component: () => import("@/views/Starred.vue")
+      },
+      {
+        path: "/slideshow/:code",
+        name: "Slideshow",
+        component: () => import("@/views/Slideshow.vue")
       },
       // Unauthenticated
       {
@@ -175,7 +195,8 @@ router.beforeEach(async (to, from) => {
       "Register",
       "404",
       "Collection Item",
-      "Content Policy"
+      "Content Policy",
+      "Slideshow"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");

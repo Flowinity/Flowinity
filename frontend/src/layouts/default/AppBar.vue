@@ -27,27 +27,27 @@
     >
       TPU
     </h1>
-    <h1
-      style="z-index: 10; cursor: pointer; font-size: 24px"
-      class="unselectable ml-4 limit"
-      @click="$router.push('/')"
-      id="tpu-brand-logo"
-      title="TPU Communications"
-      v-else
-    >
+    <template v-else>
       <CommunicationsAvatar
         :user="$chat.selectedChat?.recipient"
         v-if="$chat.selectedChat?.recipient"
         size="32"
-        class="mr-1"
+        class="ml-4"
       />
       <CommunicationsAvatar
         :chat="$chat.selectedChat"
         v-else-if="$chat.selectedChat"
         size="32"
+        class="ml-4"
       />
-      <span class="ml-2">{{ $chat.chatName }}</span>
-    </h1>
+      <h1
+        class="unselectable ml-2 limit"
+        id="tpu-brand-logo"
+        title="TPU Communications"
+      >
+        {{ $chat.chatName }}
+      </h1>
+    </template>
     <v-spacer></v-spacer>
     <small v-if="$app.notesSaving" class="mr-3">Saving...</small>
     <v-btn icon>

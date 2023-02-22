@@ -6,7 +6,9 @@
   >
     <v-card elevation="7" class="rounded-xl">
       <v-toolbar>
-        <v-toolbar-title>Add API Key</v-toolbar-title>
+        <v-toolbar-title>
+          {{ type === "api" ? "Add API Key" : "Add Alternate Password" }}
+        </v-toolbar-title>
       </v-toolbar>
       <v-card-text v-if="!key">
         <v-text-field
@@ -21,6 +23,13 @@
           label="Expiry"
           readonly
           disabled
+          v-if="type === 'api'"
+        ></v-text-field>
+        <v-text-field
+          v-model="password"
+          label="Password"
+          type="password"
+          v-if="type === 'password'"
         ></v-text-field>
         <v-select
           label="Select"
@@ -48,7 +57,13 @@
         <v-btn color="primary" text @click="$emit('update:modelValue', false)">
           Cancel
         </v-btn>
-        <v-btn color="primary" text @click="addAPIKey">Add</v-btn>
+        <v-btn
+          color="primary"
+          text
+          @click="type === 'api' ? addAPIKey() : addAlternatePassword()"
+        >
+          Add
+        </v-btn>
       </v-card-actions>
       <v-card-actions v-else>
         <v-spacer></v-spacer>
@@ -65,7 +80,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "CreateAPIKey",
-  props: ["modelValue"],
+  props: ["modelValue", "type"],
   emits: ["update:modelValue", "create"],
   data() {
     return {
@@ -83,7 +98,7 @@ export default defineComponent({
           id: "uploads.view"
         },
         {
-          name: "View UserInfo",
+          name: "View UserInfo (Required)",
           id: "user.view"
         },
         {
@@ -113,12 +128,29 @@ export default defineComponent({
         {
           name: "Workspaces (View)",
           id: "workspaces.view"
+        },
+        {
+          name: "Chats (View)",
+          id: "chats.view"
+        },
+        {
+          name: "Chats (Send)",
+          id: "chats.send"
+        },
+        {
+          name: "Chats (Edit)",
+          id: "chats.edit"
+        },
+        {
+          name: "Chats (Create)",
+          id: "chats.create"
         }
       ],
       name: "",
       key: "",
       expiry: "",
-      scopes: ["uploads.create", "user.view"]
+      scopes: ["uploads.create", "user.view"],
+      password: ""
     };
   },
   methods: {
@@ -130,6 +162,16 @@ export default defineComponent({
       });
       this.key = data.token;
       this.$emit("create", data);
+    },
+    async addAlternatePassword() {
+      const { data } = await this.axios.post("/security/passwords", {
+        name: this.name,
+        scopes: this.scopes,
+        password: this.password,
+        totp: false
+      });
+      this.$emit("create", data);
+      this.$emit("update:modelValue", false);
     }
   },
   watch: {

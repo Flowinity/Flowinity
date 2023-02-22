@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <CreateCollectionDialog v-model="create"></CreateCollectionDialog>
     <GalleryNavigation
       @update:search="search = $event"
       @refreshGallery="$collections.init()"
@@ -7,6 +8,12 @@
       :types="types"
       @update:filter="filter = $event"
     ></GalleryNavigation>
+    <v-btn style="float: right" @click="create = true" class="mt-1 ml-1">
+      Create Collection
+    </v-btn>
+    <br />
+    <br />
+    <br />
     <v-row>
       <v-col
         v-for="item in collections"
@@ -24,14 +31,17 @@
 import { defineComponent } from "vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
+import { Collection } from "@/models/collection";
+import CreateCollectionDialog from "@/components/Collections/Dialogs/Create.vue";
 
 export default defineComponent({
   name: "CollectionsHome",
-  components: { GalleryNavigation, CollectionCard },
+  components: { CreateCollectionDialog, GalleryNavigation, CollectionCard },
   data() {
     return {
       search: "",
       filter: "all",
+      create: false,
       types: [
         {
           name: "All",
@@ -58,20 +68,19 @@ export default defineComponent({
   },
   computed: {
     collections() {
+      const items = this.$collections.items.filter((item: Collection) =>
+        item.name.toLowerCase().includes(this.search.toLowerCase())
+      );
       if (this.filter === "all") {
-        return this.$collections.items;
+        return items;
       } else if (this.filter === "owned") {
-        return this.$collections.items.filter((item: any) => !item.shared);
+        return items.filter((item: any) => !item.shared);
       } else if (this.filter === "shared") {
-        return this.$collections.items.filter((item: any) => item.shared);
+        return items.filter((item: any) => item.shared);
       } else if (this.filter === "write") {
-        return this.$collections.items.filter(
-          (item: any) => item.permissionsMetadata.write
-        );
+        return items.filter((item: any) => item.permissionsMetadata.write);
       } else if (this.filter === "configure") {
-        return this.$collections.items.filter(
-          (item: any) => item.permissionsMetadata.configure
-        );
+        return items.filter((item: any) => item.permissionsMetadata.configure);
       }
     }
   },

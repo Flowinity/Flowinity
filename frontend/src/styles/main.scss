@@ -5,6 +5,13 @@
   -webkit-text-fill-color: transparent;
 }
 
+.gold .text-gradient {
+  font-weight: 500;
+  background: -webkit-radial-gradient(#ffdb1b, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .unselectable {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -45,7 +52,7 @@
 }
 
 .v-btn--variant-outlined,
-.v-chip--variant-outlined {
+.v-chip--variant-outlined, .v-card--variant-outlined {
   border-color: hsla(0, 0%, 100%, 0.12) !important;
 }
 

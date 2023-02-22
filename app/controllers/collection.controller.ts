@@ -376,8 +376,8 @@ export class CollectionController {
             req.user.id,
             req.body.name
           )
-          res.json(collection)
           await this.cacheService.generateCollectionCacheForUser(req.user.id)
+          res.json(collection)
         } catch (e) {
           next(e)
         }

@@ -37,6 +37,7 @@ import { User } from "@/models/user";
 import { Friend } from "@/models/friend";
 import { Collection } from "@/models/collection";
 import "floating-vue/dist/style.css";
+import vuetify from "./plugins/vuetify";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -85,7 +86,6 @@ const app = createApp({
           messageIndex: chat.chats[index].messages.findIndex((m) => m.id === id)
         };
       }
-
       const user = useUserStore();
       const core = useAppStore();
       const experiments = useExperimentsStore();
@@ -96,6 +96,7 @@ const app = createApp({
       app.config.globalProperties.$user = user;
       app.config.globalProperties.$app = core;
       app.config.globalProperties.$experiments = experiments;
+      if (window.location.pathname.startsWith("/slideshow/")) return;
       app.config.globalProperties.$date = dayjs;
       app.config.globalProperties.$collections = collections;
       app.config.globalProperties.$validation = validation;
@@ -115,6 +116,13 @@ const app = createApp({
       app.config.globalProperties.$functions = functions;
       user.init().then(() => {
         console.info("[TPU/UserStore] User initialized");
+        if (user.user?.plan?.internalName === "GOLD") {
+          vuetify.theme.themes.value.dark.colors.primary = "#FFD700";
+          vuetify.theme.themes.value.light.colors.primary = "#FFD700";
+          vuetify.theme.themes.value.dark.colors.info = "#FFD700";
+          vuetify.theme.themes.value.light.colors.info = "#FFD700";
+          document.body.classList.add("gold");
+        }
       });
       core.init().then(() => {
         console.info("[TPU/CoreStore] Core initialized");

@@ -1,6 +1,15 @@
 <template>
   <v-container v-if="collection">
-    <CollectionBanner :collection="collection"></CollectionBanner>
+    <Sharing
+      v-model="sharing"
+      :collection="collection"
+      @get-collection="getCollection"
+      @collection-users-push="collection?.users?.push($event)"
+    ></Sharing>
+    <CollectionBanner
+      :collection="collection"
+      @sharingDialog="sharing = true"
+    ></CollectionBanner>
     <GalleryNavigation
       @update:show="show = $event"
       @update:search="
@@ -44,10 +53,11 @@ import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
 import { Upload } from "@/models/upload";
 import { CollectionCache } from "@/types/collection";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
+import Sharing from "@/components/Collections/Dialogs/Sharing.vue";
 
 export default defineComponent({
   name: "CollectionsItem",
-  components: { GalleryCore, CollectionBanner, GalleryNavigation },
+  components: { Sharing, GalleryCore, CollectionBanner, GalleryNavigation },
   data() {
     return {
       collection: undefined as CollectionCache | undefined,
@@ -59,7 +69,8 @@ export default defineComponent({
         search: "",
         metadata: true,
         selected: "all"
-      }
+      },
+      sharing: false
     };
   },
   methods: {

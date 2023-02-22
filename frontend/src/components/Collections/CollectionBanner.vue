@@ -63,6 +63,9 @@
             .join(", ")
         }}
       </v-card-text>
+      <v-card-text class="mt-n3" v-else>
+        {{ collection.items }} items
+      </v-card-text>
     </v-img>
   </v-card>
 </template>

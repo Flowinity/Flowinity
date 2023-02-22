@@ -1,5 +1,10 @@
 <template>
-  <v-toolbar ref="toolbar" height="auto" style="z-index: 1001" color="bg">
+  <v-toolbar
+    ref="toolbar"
+    height="auto"
+    style="z-index: 1001"
+    color="transparent"
+  >
     <Mentionable
       :keys="['@']"
       :items="users"
@@ -16,7 +21,7 @@
         variant="outlined"
         append-icon="mdi-send"
         @update:model-value="$emit('update:modelValue', $event)"
-        :value="modelValue"
+        :model-value="modelValue"
         density="compact"
         rows="1"
         auto-grow

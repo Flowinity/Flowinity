@@ -97,7 +97,7 @@
         </template>
         <span>TPU Moderator</span>
       </v-tooltip>
-      <v-tooltip top v-else-if="user.plan?.internalName !== 'FREE'">
+      <v-tooltip top v-else-if="!user.plan?.internalName.includes('FREE')">
         <template v-slot:activator="{ on }">
           <span v-on="on">
             <v-badge :color="user.plan?.color" overlap>

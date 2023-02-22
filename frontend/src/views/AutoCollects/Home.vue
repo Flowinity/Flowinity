@@ -1,5 +1,13 @@
 <template>
   <v-container>
+    <div class="float-right">
+      <v-btn class="rounded-xl ml-2" to="/autoCollect/configure">
+        <v-icon>mdi-cog</v-icon>
+        &nbsp;Configure AutoCollect
+      </v-btn>
+    </div>
+    <br />
+    <br />
     <v-row v-if="autoCollects.length">
       <v-col
         v-for="item in autoCollects"

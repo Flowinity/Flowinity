@@ -95,7 +95,7 @@ export default defineComponent({
   emits: ["update:modelValue"],
   data() {
     return {
-      icon: null,
+      icon: undefined as File[] | undefined,
       add: false,
       ranks: [
         {

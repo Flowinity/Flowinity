@@ -58,7 +58,11 @@ export class SecurityService {
           "workspaces.view",
           "workspaces.create",
           "workspaces.modify",
-          "platforms.colubrina"
+          "platforms.colubrina",
+          "chats.view",
+          "chats.create",
+          "chats.send",
+          "chats.edit"
         ]).includes(scope)
       ) {
         throw Errors.INVALID_SCOPES_PROVIDED
@@ -211,7 +215,11 @@ export class SecurityService {
           "collections.view",
           "workspaces.view",
           "workspaces.create",
-          "workspaces.modify"
+          "workspaces.modify",
+          "chats.view",
+          "chats.create",
+          "chats.send",
+          "chats.edit"
         ]).includes(scope)
       ) {
         throw Errors.INVALID_SCOPES_PROVIDED

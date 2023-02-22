@@ -6,7 +6,7 @@
     height="500"
   >
     <div class="d-flex flex-column fill-height justify-center align-center">
-      <h1 class="">TPUvNEXT</h1>
+      <h1 class="">TPU</h1>
       <h4 class="text-center">
         TPU (or TroploPrivateUploader) is a private file hosting community
         platform.
