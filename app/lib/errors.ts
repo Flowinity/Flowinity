@@ -201,6 +201,10 @@ let Errors = {
   CHAT_USER_NOT_FOUND: {
     message: "The requested user could not be found in this chat.",
     status: 400
+  },
+  INVALID_SEARCH: {
+    message: "The provided search is invalid.",
+    status: 400
   }
 }
 

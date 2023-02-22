@@ -9,6 +9,9 @@ declare interface TpuConfig {
   storage: string
   jitsiToken: string
   registrations: boolean
+  providers: {
+    tenor: string
+  }
   redis: {
     username?: string | undefined
     password?: string | undefined

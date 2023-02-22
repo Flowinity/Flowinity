@@ -11,6 +11,7 @@ import { useUserStore } from "@/store/user";
 import { ChatAssociation } from "@/models/chatAssociation";
 import { useCollectionsStore } from "@/store/collections";
 import { Collection } from "@/models/collection";
+import { Message } from "@/models/message";
 
 export interface ChatState {
   notifications: number;
@@ -162,6 +163,15 @@ export const useChatStore = defineStore("chat", {
       }
     } as ChatState),
   actions: {
+    async saveSettings() {
+      const { data } = await axios.patch(
+        `/chats/${this.dialogs.groupSettings.item?.association?.id}`,
+        {
+          name: this.dialogs.groupSettings.item?.name
+        }
+      );
+      return data;
+    },
     async sound() {
       let sound = await import("@/assets/audio/notification.wav");
       const audio = new Audio(sound.default);
@@ -276,6 +286,17 @@ export const useChatStore = defineStore("chat", {
 
       this.readChat();
     },
+    async loadHistory(offset: number) {
+      this.loading = true;
+      const { data } = await axios.get(
+        `/chats/${this.selectedChatId}/messages?offset=${offset}`
+      );
+      const index = this.chats.findIndex(
+        (chat: Chat) => chat.association.id === this.selectedChatId
+      );
+      this.chats[index].messages.push(...data);
+      this.loading = false;
+    },
     async getChats() {
       try {
         const chats = localStorage.getItem("chatStore");
@@ -327,6 +348,15 @@ export const useChatStore = defineStore("chat", {
     }
   },
   getters: {
+    hasPermissions(state: ChatState) {
+      return {
+        owner: state.selectedChat?.association?.rank === "owner",
+        admin:
+          state.selectedChat?.association?.rank === "admin" ||
+          state.selectedChat?.association?.rank === "owner",
+        member: true
+      };
+    },
     typers(state: ChatState) {
       const user = useUserStore();
       if (!state.selectedChat) return "";

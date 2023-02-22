@@ -75,6 +75,32 @@ export class ChatController {
       }
     )
 
+    this.router.delete(
+      "/:chatId/messages/:messageId",
+      auth("chats.send"),
+      async (req: RequestAuth, res: Response) => {
+        await this.chatService.deleteMessage(
+          parseInt(req.params.messageId),
+          req.user.id,
+          parseInt(req.params.chatId)
+        )
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.patch(
+      "/:chatId",
+      auth("chats.edit"),
+      async (req: RequestAuth, res: Response) => {
+        await this.chatService.updateGroupSettings(
+          parseInt(req.params.chatId),
+          req.user.id,
+          req.body
+        )
+        res.sendStatus(204)
+      }
+    )
+
     this.router.post(
       "/:chatId/users",
       auth("chats.create"),

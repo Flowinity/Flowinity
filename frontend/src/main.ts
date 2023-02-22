@@ -19,7 +19,7 @@ import { useAppStore } from "@/store/app";
 import { useExperimentsStore } from "@/store/experiments";
 import "./styles/main.scss";
 import dayjs from "@/plugins/dayjs";
-import Toast, { PluginOptions } from "vue-toastification";
+import Toast, { PluginOptions, useToast } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import functions from "@/plugins/functions";
 import { useCollectionsStore } from "@/store/collections";
@@ -29,6 +29,14 @@ import VueApexCharts from "vue3-apexcharts";
 import SocketIO from "socket.io-client";
 import { useChatStore } from "@/store/chat";
 import { Router } from "vue-router";
+import { useWorkspacesStore } from "@/store/workspaces";
+import { useFriendsStore } from "@/store/friends";
+import { Chat } from "@/models/chat";
+import { Message as MessageType } from "@/models/message";
+import { User } from "@/models/user";
+import { Friend } from "@/models/friend";
+import { Collection } from "@/models/collection";
+import "floating-vue/dist/style.css";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -67,6 +75,17 @@ const app = createApp({
   ...App,
   ...{
     setup() {
+      function checkMessage(id: number, chatId: number) {
+        const chat = useChatStore();
+        const index = chat.chats.findIndex((c) => c.id === chatId);
+        if (index === -1) return false;
+        if (!chat.chats[index].messages) return false;
+        return {
+          index,
+          messageIndex: chat.chats[index].messages.findIndex((m) => m.id === id)
+        };
+      }
+
       const user = useUserStore();
       const core = useAppStore();
       const experiments = useExperimentsStore();
@@ -151,9 +170,7 @@ const app = createApp({
       });
       socket.on("friendRequestAccepted", async (data: Friend) => {
         friends.friends.push(data);
-        let sound = await import("@/assets/audio/notification.wav");
-        const audio = new Audio(sound.default);
-        audio.play();
+        chat.sound();
       });
       socket.on(
         "edit",
@@ -165,38 +182,34 @@ const app = createApp({
           editedAt: Date;
           userId: number;
         }) => {
-          const index = chat.chats.findIndex((c) => c.id === data.chatId);
-          if (index === -1) return;
-          if (!chat.chats[index].messages) return;
-          const messageIndex = chat.chats[index].messages.findIndex(
-            (m) => m.id === data.id
-          );
-          if (messageIndex === -1) return;
-          console.log(data);
-          chat.chats[index].messages[messageIndex].content = data.content;
-          chat.chats[index].messages[messageIndex].edited = data.edited;
-          chat.chats[index].messages[messageIndex].editedAt = data.editedAt;
+          const message = checkMessage(data.id, data.chatId);
+          if (!message) return;
+          chat.chats[message.index].messages[message.messageIndex].content =
+            data.content;
+          chat.chats[message.index].messages[message.messageIndex].edited =
+            data.edited;
+          chat.chats[message.index].messages[message.messageIndex].editedAt =
+            data.editedAt;
         }
       );
       socket.on(
         "embedResolution",
         (data: { chatId: number; id: number; embeds: any[] }) => {
           if (data.chatId === chat.selectedChat?.id) return;
-          const index = chat.chats.findIndex((c) => c.id === data.chatId);
-          if (index === -1) return;
-          if (!chat.chats[index].messages) return;
-          const messageIndex = chat.chats[index].messages.findIndex(
-            (m) => m.id === data.id
-          );
-          if (messageIndex === -1) return;
-          chat.chats[index].messages[messageIndex].embeds = data.embeds;
+          const message = checkMessage(data.id, data.chatId);
+          if (!message) return;
+          chat.chats[message.index].messages[message.messageIndex].embeds =
+            data.embeds;
         }
       );
       socket.on("notification", async (data: any) => {
         user.user?.notifications.unshift(data);
-        let sound = await import("@/assets/audio/notification.wav");
-        const audio = new Audio(sound.default);
-        audio.play();
+        chat.sound();
+      });
+      socket.on("messageDelete", (data: { chatId: number; id: number }) => {
+        const message = checkMessage(data.id, data.chatId);
+        if (!message) return;
+        chat.chats[message.index].messages.splice(message.messageIndex, 1);
       });
       socket.on("userSettingsUpdate", (data: any) => {
         user.user = {
@@ -205,6 +218,14 @@ const app = createApp({
         };
         user.changes = {
           ...user.changes,
+          ...data
+        };
+      });
+      socket.on("chatUpdate", (data: any) => {
+        const index = chat.chats.findIndex((c) => c.id === data.id);
+        if (index === -1) return;
+        chat.chats[index] = {
+          ...chat.chats[index],
           ...data
         };
       });
@@ -226,14 +247,6 @@ const app = createApp({
 });
 
 const options: PluginOptions = {};
-import { useToast } from "vue-toastification";
-import { useWorkspacesStore } from "@/store/workspaces";
-import { useFriendsStore } from "@/store/friends";
-import { Chat } from "@/models/chat";
-import { Message as MessageType } from "@/models/message";
-import { User } from "@/models/user";
-import { Friend } from "@/models/friend";
-import { Collection } from "@/models/collection";
 
 app.use(VueAxios, axios);
 app.use(Toast, options);

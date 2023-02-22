@@ -101,6 +101,8 @@
         :shifting="shifting"
         :message="message"
         @reply="$emit('reply', message)"
+        @delete="$emit('delete', { message, shifting: $event })"
+        @pin="$emit('pin', message)"
       ></MessageActions>
       <Embed
         v-for="(embed, index) in message.embeds"
@@ -131,7 +133,7 @@
               "
               location="top"
             >
-              {{ readReceipt.user.username }}
+              {{ readReceipt.user?.username }}
             </v-tooltip>
           </template>
         </div>

@@ -74,6 +74,45 @@ export class ChatService {
     }
   ]
 
+  async deleteMessage(
+    messageId: number,
+    userId: number,
+    associationId: number
+  ) {
+    const chat = await this.getChatFromAssociation(associationId, userId)
+    const message = await Message.findOne({
+      where: {
+        id: messageId,
+        userId,
+        chatId: chat.id
+      }
+    })
+    if (!message) {
+      await this.checkPermissions(userId, associationId, "admin")
+      const message = await Message.findOne({
+        where: {
+          id: messageId,
+          chatId: chat.id
+        }
+      })
+      if (!message || message.type !== "message") throw Errors.MESSAGE_NOT_FOUND
+      await message.destroy()
+      this.emitForAll(associationId, userId, "messageDelete", {
+        id: message.id,
+        chatId: chat.id
+      })
+      return message
+    } else {
+      if (message.type !== "message") throw Errors.MESSAGE_NOT_FOUND
+      await message.destroy()
+      this.emitForAll(associationId, userId, "messageDelete", {
+        id: message.id,
+        chatId: chat.id
+      })
+      return message
+    }
+  }
+
   async checkPermissions(
     userId: number,
     chatAssociationId: number,
@@ -91,6 +130,41 @@ export class ChatService {
     if (chat.rank === "member" && permission === "member") return chat.rank
     if (chat.rank === "admin" && permission === "member") return chat.rank
     throw Errors.CHAT_INSUFFICIENT_PERMISSIONS
+  }
+
+  async updateGroupSettings(
+    associationId: number,
+    userId: number,
+    settings: {
+      name?: string
+    }
+  ) {
+    const chat = await this.getChatFromAssociation(associationId, userId)
+    await this.checkPermissions(userId, associationId, "admin")
+    await Chat.update(
+      {
+        name: settings.name
+      },
+      {
+        where: {
+          id: chat.id
+        }
+      }
+    )
+    this.patchCacheForAll(chat.id)
+    this.sendMessage(
+      `<@${userId}> updated the chat name to ${settings.name}.`,
+      userId,
+      associationId,
+      undefined,
+      "rename",
+      []
+    )
+    this.emitForAll(associationId, userId, "chatUpdate", {
+      name: settings.name,
+      id: chat.id
+    })
+    return chat
   }
 
   async patchCacheForAll(chatId: number, removeUserId?: number) {
@@ -228,7 +302,7 @@ export class ChatService {
         userId
       }
     })
-    if (!message) throw Errors.MESSAGE_NOT_FOUND
+    if (!message || message.type !== "message") throw Errors.MESSAGE_NOT_FOUND
     const date = new Date()
     await Message.update(
       {
@@ -468,7 +542,7 @@ export class ChatService {
   async sendMessage(
     content: string,
     userId: number,
-    chatId: number,
+    associationId: number,
     replyId?: number,
     type:
       | "message"
@@ -481,7 +555,7 @@ export class ChatService {
     attachments?: string[]
   ) {
     try {
-      const chat = await this.getChatFromAssociation(chatId, userId)
+      const chat = await this.getChatFromAssociation(associationId, userId)
       if (replyId) {
         const message = await Message.findOne({
           where: {
@@ -506,7 +580,7 @@ export class ChatService {
       })
 
       redis.set(`chat:${chat.id}:sortDate`, dayjs(message.createdAt).valueOf())
-      embedParser(message, message.chatId, userId, chatId, attachments)
+      embedParser(message, message.chatId, userId, associationId, attachments)
       return await this.sendMessageToUsers(message.id, chat)
     } catch (e) {
       return console.log(e)
@@ -537,11 +611,25 @@ export class ChatService {
 
   async getMessages(chatId: number, userId: number, offset?: number) {
     const chat = await this.getChatFromAssociation(chatId, userId)
+    let or = {}
+    if (offset) {
+      or = {
+        [Op.or]: [
+          {
+            id: {
+              [Op.lt]: offset
+            }
+          }
+        ]
+      }
+    }
     return await Message.findAll({
-      where: { chatId: chat.id },
+      where: {
+        chatId: chat.id,
+        ...or
+      },
       order: [["createdAt", "DESC"]],
       limit: 50,
-      offset,
       include: this.messageIncludes
     })
   }

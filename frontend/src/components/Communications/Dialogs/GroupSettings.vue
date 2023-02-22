@@ -16,8 +16,15 @@
       <v-card-text>
         <v-card-title>Group Name</v-card-title>
         <v-text-field
+          class="mx-4"
           v-model="$chat.dialogs.groupSettings.item.name"
         ></v-text-field>
+        <v-card-title>Group Icon</v-card-title>
+        <v-file-input v-model="icon" label="Upload Group Icon"></v-file-input>
+        <v-card-actions class="mb-n5">
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="$chat.saveSettings">Save</v-btn>
+        </v-card-actions>
       </v-card-text>
       <v-card-text>
         <v-card-title>
@@ -88,6 +95,7 @@ export default defineComponent({
   emits: ["update:modelValue"],
   data() {
     return {
+      icon: null,
       add: false,
       ranks: [
         {

@@ -1,5 +1,13 @@
 <template>
   <div id="chat" @drop.prevent="dragDropHandler" @dragover.prevent>
+    <WorkspaceDeleteDialog
+      @submit="
+        deleteMessage(dialogs.delete.message?.id);
+        dialogs.delete.value = false;
+      "
+      v-model="dialogs.delete.value"
+      title="Delete Message?"
+    />
     <v-list
       color="transparent"
       bg-color="transparent"
@@ -15,7 +23,6 @@
         :message="message"
         :id="'message-' + index"
         :editing="editing === message.id"
-        v-if="!$chat.loading"
         @edit="handleEdit"
         @editText="editingText = $event"
         :editingText="editingText"
@@ -32,6 +39,11 @@
         "
         @reply="replyId = $event.id"
         :class="{ 'replying-message': message.id === replyId }"
+        @delete="
+          $event.shifting
+            ? deleteMessage($event.message.id)
+            : confirmDelete($event.message)
+        "
       ></Message>
       <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
     </v-list>
@@ -140,11 +152,14 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { Chat, Typing } from "@/models/chat";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 import { User as UserType } from "@/models/user";
+import { Message as MessageType } from "@/models/message";
 import { ChatAssociation } from "@/models/chatAssociation";
+import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 
 export default defineComponent({
   name: "Chat",
   components: {
+    WorkspaceDeleteDialog,
     GalleryPreview,
     UserAvatar,
     User,
@@ -173,7 +188,13 @@ export default defineComponent({
         uploadProgress: number;
       }[],
       uploadProgress: 0,
-      uploading: false
+      uploading: false,
+      dialogs: {
+        delete: {
+          value: false,
+          message: undefined as MessageType | undefined
+        }
+      }
     };
   },
   computed: {
@@ -196,7 +217,19 @@ export default defineComponent({
     }
   },
   methods: {
-    handleQuickTPULink(e: { attachment: string }) {
+    confirmDelete(message: MessageType) {
+      this.dialogs.delete.message = message;
+      this.dialogs.delete.value = true;
+    },
+    handleQuickTPULink(e: {
+      media_formats: { gif: { url: string } };
+      attachment: string;
+    }) {
+      if (!e.attachment) {
+        this.message = e.media_formats?.gif.url;
+        this.sendMessage();
+        return;
+      }
       this.message = "https://i.troplo.com/i/" + e.attachment;
       this.sendMessage();
     },
@@ -286,6 +319,9 @@ export default defineComponent({
       }
     },
     async doEditMessage() {
+      if (!this.editingText?.length) {
+        return this.deleteMessage(this.editing!);
+      }
       await this.axios.put(
         `/chats/${this.$chat.selectedChat?.association?.id}/message`,
         {
@@ -311,7 +347,13 @@ export default defineComponent({
       this.avoidAutoScroll = false;
       this.autoScroll();
     },
+    async deleteMessage(id: number) {
+      await this.axios.delete(
+        `/chats/${this.$chat.selectedChat?.association?.id}/messages/${id}`
+      );
+    },
     async sendMessage() {
+      this.focusInput();
       if (!this.message && !this.files.length) return;
       if (!this.message && this.files.length) this.message = "[File]";
       if (this.uploading) return;
@@ -379,11 +421,23 @@ export default defineComponent({
         chat.scrollTop = 0;
       }
     },
-    scrollEvent() {
+    async scrollEvent() {
       const elem = document.getElementById("chat-list");
       if (!elem) return;
       const scrollPos = elem.scrollTop;
       this.avoidAutoScroll = scrollPos < -300;
+      // get entire height of chat
+      const scrollHeight = elem.scrollHeight - elem.clientHeight;
+      const total = Math.abs(scrollPos);
+      if (total > scrollHeight - 100) {
+        const offset =
+          this.$chat.selectedChat?.messages[
+            this.$chat.selectedChat?.messages.length - 1
+          ].id || 0;
+        if (this.$chat.loading) return;
+        await this.$chat.loadHistory(offset);
+        elem.scrollTop = scrollPos;
+      }
     },
     editLastMessage() {
       // find first message made by user
