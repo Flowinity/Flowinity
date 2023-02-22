@@ -73,7 +73,7 @@ export default createVuetify({
     }
   },
   theme: {
-    defaultTheme: localStorage.getItem("theme") || "dark",
+    defaultTheme: localStorage.getItem("theme") === "light" ? "light" : "dark",
     themes: {
       dark: {
         colors: {
