@@ -5,7 +5,7 @@
       v-if="message.reply"
       color="transparent"
       floating
-      class="ml-6 my-1 pointer"
+      class="ml-6 my-1 pointer limit"
       @click="$emit('jumpToMessage', message.reply.id)"
     >
       <v-icon class="mr-2">mdi-reply</v-icon>
@@ -16,37 +16,53 @@
       ></UserAvatar>
       {{ message.reply?.content }}
     </v-toolbar>
-    <v-list-item color="transparent" class="message">
+    <v-list-item color="transparent" class="message" :class="{ merge }">
       <template v-slot:prepend>
-        <div
-          v-if="!message.type || message.type === 'message'"
-          @click="
-            $emit('authorClick', {
-              user: message.user,
-              bindingElement: 'message-author-avatar-' + message.id,
-              x: $event.x,
-              y: $event.y
-            })
-          "
-          class="pointer mr-3"
-        >
-          <CommunicationsAvatar
-            :user="message.user"
-            :id="'message-author-avatar-' + message.id"
-          ></CommunicationsAvatar>
-        </div>
-        <div class="mr-3 text-grey" v-else>
-          <v-icon v-if="message.type === 'join'" class="mr-1" size="36">
-            mdi-account-plus
-          </v-icon>
-          <v-icon v-else-if="message.type === 'leave'" class="mr-1" size="36">
-            mdi-account-minus
-          </v-icon>
-          <v-icon v-else class="mr-1" size="36">mdi-information</v-icon>
-        </div>
+        <template v-if="!merge">
+          <div
+            v-if="!message.type || message.type === 'message'"
+            @click="
+              $emit('authorClick', {
+                user: message.user,
+                bindingElement: 'message-author-avatar-' + message.id,
+                x: $event.x,
+                y: $event.y
+              })
+            "
+            class="pointer mr-3"
+          >
+            <CommunicationsAvatar
+              :user="message.user"
+              :id="'message-author-avatar-' + message.id"
+            ></CommunicationsAvatar>
+          </div>
+          <div class="mr-3 text-grey" v-else>
+            <v-icon v-if="message.type === 'join'" class="mr-1" size="36">
+              mdi-account-plus
+            </v-icon>
+            <v-icon v-else-if="message.type === 'leave'" class="mr-1" size="36">
+              mdi-account-minus
+            </v-icon>
+            <v-icon v-else class="mr-1" size="36">mdi-information</v-icon>
+          </div>
+        </template>
+        <template v-else>
+          <small
+            style="font-size: 9px; margin-right: 18px"
+            class="text-grey message-date"
+            v-if="merge"
+          >
+            <v-tooltip activator="parent" location="top">
+              {{ $date(message.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
+            </v-tooltip>
+            {{ $date(message.createdAt).format("hh:mm A") }}
+          </small>
+        </template>
       </template>
       <p
-        v-if="!message.type || message.type === 'message'"
+        v-if="
+          (!message.type && !merge) || (message.type === 'message' && !merge)
+        "
         class="unselectable"
         :class="{ 'text-red': message.error }"
       >
@@ -84,7 +100,7 @@
       </p>
       <span
         v-if="!editing"
-        class="message-contents"
+        class="overflow-content"
         :class="{ 'text-grey': message.pending, 'text-red': message.error }"
         v-html="$functions.markdown(message.content)"
       ></span>
@@ -158,7 +174,7 @@ export default defineComponent({
     CommunicationsAvatar,
     CommunicationsInput
   },
-  props: ["message", "editing", "shifting", "editingText"]
+  props: ["message", "editing", "shifting", "editingText", "merge"]
 });
 </script>
 

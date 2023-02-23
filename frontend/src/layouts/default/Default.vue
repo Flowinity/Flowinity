@@ -1,5 +1,6 @@
 <template>
   <v-app v-if="$user.user">
+    <UploadDialog v-model="$app.dialogs.upload"></UploadDialog>
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
     <URLConfirmDialog
       v-model="$chat.dialogs.externalSite.value"
@@ -93,6 +94,7 @@ import UnauthBar from "@/layouts/unauth/AppBar.vue";
 import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 import URLConfirmDialog from "@/components/Communications/Dialogs/URLConfirm.vue";
 import MemoryProfiler from "@/components/Dev/Dialogs/MemoryProfiler.vue";
+import UploadDialog from "@/components/Core/Dialogs/Upload.vue";
 </script>
 
 <script lang="ts">

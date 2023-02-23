@@ -47,6 +47,7 @@ export interface AppState {
   };
   dialogs: {
     memoryProfiler: boolean;
+    upload: boolean;
   };
 }
 
@@ -94,6 +95,7 @@ export const useAppStore = defineStore("app", {
         _redis: new Date().toISOString()
       },
       dialogs: {
+        upload: false,
         memoryProfiler: false
       }
     } as AppState),

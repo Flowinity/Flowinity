@@ -205,6 +205,11 @@ let Errors = {
   INVALID_SEARCH: {
     message: "The provided search is invalid.",
     status: 400
+  },
+  PERMISSION_DENIED_RANK: {
+    message:
+      "You do not have permission to perform this action based on your user rank.",
+    status: 400
   }
 }
 

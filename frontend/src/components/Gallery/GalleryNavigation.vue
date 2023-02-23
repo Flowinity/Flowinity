@@ -30,15 +30,21 @@
         "
       ></v-select>
     </v-col>
-    <v-col md="2" cols="12" v-if="supports.metadata">
+    <v-col md="1" cols="12" v-if="supports.metadata">
       <v-checkbox
-        label="Search in files (metadata)"
+        label="Search in files"
         v-model="metadata"
         v-on:change="
           $emit('update:metadata', metadata);
           $emit('refreshGallery');
         "
       ></v-checkbox>
+    </v-col>
+    <v-col sm="1">
+      <v-btn block class="mt-2" @click="$app.dialogs.upload = true">
+        <v-icon>mdi-upload</v-icon>
+        Upload
+      </v-btn>
     </v-col>
   </v-row>
 </template>

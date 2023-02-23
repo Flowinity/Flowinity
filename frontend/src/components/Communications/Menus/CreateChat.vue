@@ -56,7 +56,7 @@
         <v-spacer></v-spacer>
         <v-btn
           color="primary"
-          @click="type === 'create' ? createChat : $emit('add', selected)"
+          @click="type === 'create' ? createChat() : $emit('add', selected)"
           :disabled="!selected.length"
         >
           <template v-if="type === 'create'">

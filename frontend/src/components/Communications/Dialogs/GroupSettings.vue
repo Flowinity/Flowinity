@@ -64,9 +64,15 @@
                 outlined
                 item-title="text"
                 item-value="value"
+                :disabled="member.rank === 'owner'"
+                @update:model-value="changeRank(member.userId, member.rank)"
               ></v-select>
               <v-list-item-action>
-                <v-btn icon @click="removeUser(member.userId)">
+                <v-btn
+                  icon
+                  @click="removeUser(member.userId)"
+                  :disabled="member.rank === 'owner'"
+                >
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </v-list-item-action>
@@ -77,6 +83,8 @@
           * About roles: Admins have the same abilities as the owner except they
           cannot delete the group, or modify users with the owner rank, if a
           user is kicked or leaves, their rank will be reset to member.
+          <br />
+          THE OWNER RANK CANNOT BE REMOVED FROM THE USER!
         </small>
       </v-card-text>
     </v-card>
@@ -114,6 +122,14 @@ export default defineComponent({
     };
   },
   methods: {
+    async changeRank(id: number, rank: string) {
+      await this.axios.put(
+        `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users/${id}`,
+        {
+          rank
+        }
+      );
+    },
     async removeUser(id: number) {
       await this.axios.delete(
         `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users/${id}`

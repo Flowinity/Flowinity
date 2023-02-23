@@ -290,7 +290,7 @@ export const useChatStore = defineStore("chat", {
 
       this.readChat();
     },
-    async loadHistory(offset?: number, forceUnload?: boolean) {
+    async loadHistory(offset?: number, forceUnload: boolean = false) {
       if (!offset) {
         this.loadingNew = true;
         const { data } = await axios.get(
@@ -318,7 +318,7 @@ export const useChatStore = defineStore("chat", {
         this.loadNew = true;
       }
       if (this.chats[index].messages.length > 100) {
-        this.chats[index].messages = this.chats[index].messages.slice(0, 100);
+        this.chats[index].messages = this.chats[index].messages.slice(-100);
         this.loadNew = true;
       }
       this.loading = false;

@@ -167,7 +167,6 @@ export default defineComponent({
     },
     onOpen(key: string) {
       this.items = key === "@" ? this.$chat.selectedChat?.users : [];
-      console.log(this.items);
     }
   }
 });

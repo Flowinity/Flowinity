@@ -74,6 +74,41 @@ export class ChatService {
     }
   ]
 
+  async updateUserRank(
+    updatingUserId: number,
+    associationId: number,
+    rank: "owner" | "admin" | "member",
+    userId: number
+  ) {
+    const chat = await this.getChatFromAssociation(associationId, userId)
+    const user = await ChatAssociation.findOne({
+      where: {
+        chatId: chat.id,
+        userId: updatingUserId
+      }
+    })
+    if (!user) throw Errors.USER_NOT_FOUND
+    if (user.rank === "owner") throw Errors.PERMISSION_DENIED_RANK
+    await ChatAssociation.update(
+      {
+        rank
+      },
+      {
+        where: {
+          chatId: chat.id,
+          userId: updatingUserId
+        }
+      }
+    )
+    this.emitForAll(associationId, userId, "chatUserUpdate", {
+      id: user.id,
+      rank: user.rank,
+      chatId: chat.id
+    })
+    this.patchCacheForAll(chat.id)
+    return user
+  }
+
   async deleteMessage(
     messageId: number,
     userId: number,
@@ -124,6 +159,7 @@ export class ChatService {
         userId
       }
     })
+    console.log(chat?.rank)
     if (!chat) throw Errors.CHAT_NOT_FOUND
     if (chat.rank === "owner") return chat.rank
     if (chat.rank === "admin" && permission === "admin") return chat.rank
@@ -214,6 +250,7 @@ export class ChatService {
       }
     })
     if (!association) throw Errors.CHAT_USER_NOT_FOUND
+    if (association.rank === "owner") throw Errors.PERMISSION_DENIED_RANK
     await association.destroy()
     this.sendMessage(
       `<@${userId}> removed <@${removeUserId}> from the chat.`,

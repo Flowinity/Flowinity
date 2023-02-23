@@ -47,6 +47,7 @@
             : confirmDelete($event.message)
         "
         @jumpToMessage="jumpToMessage"
+        :merge="merge(message, index)"
       ></Message>
       <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
     </v-list>
@@ -209,7 +210,8 @@ export default defineComponent({
           message: undefined as MessageType | undefined
         }
       },
-      focusInterval: undefined as ReturnType<typeof setTimeout> | undefined
+      focusInterval: undefined as ReturnType<typeof setTimeout> | undefined,
+      limit: false
     };
   },
   computed: {
@@ -232,6 +234,13 @@ export default defineComponent({
     }
   },
   methods: {
+    merge(message: MessageType, index: number) {
+      const prev = this.$chat.selectedChat?.messages[index + 1];
+      if (!prev) return false;
+      if (this.$date(message.createdAt).diff(prev.createdAt, "minutes") > 5)
+        return false;
+      return prev.user?.id === message.user?.id;
+    },
     doJump(message: number) {
       const element = document.getElementById(
         "message-" +
@@ -470,14 +479,21 @@ export default defineComponent({
       // get entire height of chat
       const scrollHeight = elem.scrollHeight - elem.clientHeight;
       const total = Math.abs(scrollPos);
-      if (total > scrollHeight - 100) {
+      if (total > scrollHeight - 20) {
+        if (this.limit) return;
+        this.limit = true;
         const offset =
           this.$chat.selectedChat?.messages[
             this.$chat.selectedChat?.messages.length - 1
           ].id || 0;
         if (this.$chat.loading) return;
         await this.$chat.loadHistory(offset);
-        elem.scrollTop = scrollPos;
+        this.$nextTick(() => {
+          elem.scrollTop = scrollPos;
+        });
+        setTimeout(() => {
+          this.limit = false;
+        }, 500);
       }
 
       if (
@@ -504,9 +520,10 @@ export default defineComponent({
       this.$refs.input?.$refs?.textarea?.focus();
     },
     shortcutHandler(e: any) {
-      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      if (e.metaKey || e.ctrlKey) return;
       if (e.key === "ArrowUp") {
-        this.editLastMessage();
+        e.preventDefault();
+        return this.editLastMessage();
       }
       if (
         e.target.tagName === "INPUT" &&

@@ -124,25 +124,41 @@ export class ChatController {
       "/:chatId/users/:userId",
       auth("chats.create"),
       async (req: RequestAuth, res: Response) => {
-        try {
-          const rank = await this.chatService.checkPermissions(
-            req.user.id,
-            parseInt(req.params.chatId),
-            "admin"
-          )
-          await this.chatService.removeUserFromChat(
-            parseInt(req.params.chatId),
-            parseInt(req.params.userId),
-            req.user.id,
-            rank
-          )
-          res.sendStatus(204)
-        } catch (e) {
-          console.log(e)
-        }
+        const rank = await this.chatService.checkPermissions(
+          req.user.id,
+          parseInt(req.params.chatId),
+          "admin"
+        )
+        await this.chatService.removeUserFromChat(
+          parseInt(req.params.chatId),
+          parseInt(req.params.userId),
+          req.user.id,
+          rank
+        )
+        res.sendStatus(204)
       }
     )
 
+    this.router.put(
+      "/:chatId/users/:userId",
+      auth("chats.create"),
+      async (req: RequestAuth, res: Response) => {
+        const rank = await this.chatService.checkPermissions(
+          req.user.id,
+          parseInt(req.params.chatId),
+          "admin"
+        )
+        if (rank !== "owner" && req.body.rank === "owner")
+          throw Errors.PERMISSION_DENIED_RANK
+        await this.chatService.updateUserRank(
+          parseInt(req.params.userId),
+          parseInt(req.params.chatId),
+          req.body.rank,
+          req.user.id
+        )
+        res.sendStatus(204)
+      }
+    )
     this.router.put(
       "/:chatId/message",
       auth("chats.edit"),

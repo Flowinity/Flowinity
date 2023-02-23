@@ -195,3 +195,21 @@ a {
 .message-jumped {
     background-color: rgb(1, 144, 234, 0.2);
 }
+
+.message-date {
+  visibility: hidden;
+}
+.message:hover .message-date {
+  visibility: visible;
+}
+
+.merge .message-contents {
+}
+
+.merge {
+  min-height: 0 !important;
+}
+
+.overflow-content {
+  overflow-wrap: break-word;
+}

@@ -27,7 +27,7 @@
     Back to TPU
   </v-card-text>
   <v-card-text class="text-overline my-n3">
-    <CreateChat v-model="create" v-slot="{ props }">
+    <CreateChat v-model="create" v-slot="{ props }" type="create">
       <v-btn
         size="xsmall"
         icon
