@@ -1,5 +1,6 @@
 <template>
   <v-app v-if="$user.user">
+    <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
     <URLConfirmDialog
       v-model="$chat.dialogs.externalSite.value"
     ></URLConfirmDialog>
@@ -91,6 +92,7 @@ import Sidebar from "@/layouts/default/Sidebar.vue";
 import UnauthBar from "@/layouts/unauth/AppBar.vue";
 import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 import URLConfirmDialog from "@/components/Communications/Dialogs/URLConfirm.vue";
+import MemoryProfiler from "@/components/Dev/Dialogs/MemoryProfiler.vue";
 </script>
 
 <script lang="ts">
@@ -185,6 +187,12 @@ export default defineComponent({
       this.$app.loading = false;
       return;
     }
+    // watch for CTRL + ALT + M for Memory Profiler
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.altKey && e.key === "m") {
+        this.$app.dialogs.memoryProfiler = !this.$app.dialogs.memoryProfiler;
+      }
+    });
     this.getPulseSession();
     this.getPulseSessionGlobal();
   },

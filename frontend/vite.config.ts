@@ -5,29 +5,27 @@ import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 // Utilities
 import { defineConfig } from "vite";
 import { fileURLToPath, URL } from "node:url";
-//import { VitePWA } from "vite-plugin-pwa";
+import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
-    emptyOutDir: false,
     sourcemap: false
   },
   plugins: [
-    // TODO: FIX ME
-    /* VitePWA({
+    VitePWA({
       registerType: "autoUpdate",
       workbox: {
         clientsClaim: true,
         skipWaiting: true
       },
       manifest: {
-        name: "TPUvNEXT",
-        short_name: "TPUvNEXT",
+        name: "TPU",
+        short_name: "TPU",
         theme_color: "#121212",
         background_color: "#121212"
       }
-    }),*/
+    }),
     vue({
       template: { transformAssetUrls }
     }),

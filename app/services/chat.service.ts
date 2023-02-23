@@ -554,37 +554,30 @@ export class ChatService {
       | "system" = "message",
     attachments?: string[]
   ) {
-    try {
-      const chat = await this.getChatFromAssociation(associationId, userId)
-      if (replyId) {
-        const message = await Message.findOne({
-          where: {
-            id: replyId,
-            chatId: chat.id
-          }
-        })
-        if (!message) throw Errors.REPLY_MESSAGE_NOT_FOUND
-      }
-      // must contain at least one character excluding spaces and newlines and must not contain just #s (one or more)
-      if (
-        !content.replace(/\s/g, "").length ||
-        !content.replace(/#/g, "").length
-      )
-        throw Errors.NO_MESSAGE_CONTENT
-      const message = await Message.create({
-        content,
-        chatId: chat.id,
-        userId,
-        type,
-        replyId
+    const chat = await this.getChatFromAssociation(associationId, userId)
+    if (replyId) {
+      const message = await Message.findOne({
+        where: {
+          id: replyId,
+          chatId: chat.id
+        }
       })
-
-      redis.set(`chat:${chat.id}:sortDate`, dayjs(message.createdAt).valueOf())
-      embedParser(message, message.chatId, userId, associationId, attachments)
-      return await this.sendMessageToUsers(message.id, chat)
-    } catch (e) {
-      return console.log(e)
+      if (!message) throw Errors.REPLY_MESSAGE_NOT_FOUND
     }
+    // must contain at least one character excluding spaces and newlines and must not contain just #s (one or more)
+    if (!content.replace(/\s/g, "").length || !content.replace(/#/g, "").length)
+      throw Errors.NO_MESSAGE_CONTENT
+    const message = await Message.create({
+      content,
+      chatId: chat.id,
+      userId,
+      type,
+      replyId
+    })
+
+    redis.set(`chat:${chat.id}:sortDate`, dayjs(message.createdAt).valueOf())
+    embedParser(message, message.chatId, userId, associationId, attachments)
+    return await this.sendMessageToUsers(message.id, chat)
   }
 
   getRecipient(chat: Chat, userId: number) {

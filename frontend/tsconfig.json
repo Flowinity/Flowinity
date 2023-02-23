@@ -12,8 +12,9 @@
     "sourceMap": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["esnext", "dom", "dom.iterable"],
-    "types": ["node", "vuetify"],
+    "lib": ["esnext", "dom", "dom.iterable", "webworker"],
+    "skipLibCheck": true,
+    "types": ["node", "vuetify", "vite-plugin-pwa/client"],
     "paths": {
       "@/*": ["src/*"]
     }

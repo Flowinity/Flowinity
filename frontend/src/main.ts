@@ -32,12 +32,13 @@ import { Router } from "vue-router";
 import { useWorkspacesStore } from "@/store/workspaces";
 import { useFriendsStore } from "@/store/friends";
 import { Chat } from "@/models/chat";
-import { Message as MessageType } from "@/models/message";
+import { Message, Message as MessageType } from "@/models/message";
 import { User } from "@/models/user";
 import { Friend } from "@/models/friend";
 import { Collection } from "@/models/collection";
 import "floating-vue/dist/style.css";
 import vuetify from "./plugins/vuetify";
+import { ChatAssociation } from "@/models/chatAssociation";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -236,6 +237,21 @@ const app = createApp({
           ...chat.chats[index],
           ...data
         };
+      });
+      socket.on("readReceipt", (data: ChatAssociation) => {
+        const index = chat.chats.findIndex((c: Chat) => c.id === data.chatId);
+        if (index === -1) return;
+        if (!chat.chats[index].messages) return;
+        const messageIndex = chat.chats[index].messages.findIndex(
+          (m: MessageType) => m.id === data.id
+        );
+        if (messageIndex === -1) return;
+        chat.chats[index].messages.forEach((message: Message) => {
+          message.readReceipts = message.readReceipts.filter(
+            (r: ChatAssociation) => r.user.id !== data.user.id
+          );
+        });
+        chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
       });
     },
     watch: {

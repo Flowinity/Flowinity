@@ -45,6 +45,9 @@ export interface AppState {
     maintenance: boolean;
     _redis: string;
   };
+  dialogs: {
+    memoryProfiler: boolean;
+  };
 }
 
 export const useAppStore = defineStore("app", {
@@ -89,6 +92,9 @@ export const useAppStore = defineStore("app", {
         },
         maintenance: false,
         _redis: new Date().toISOString()
+      },
+      dialogs: {
+        memoryProfiler: false
       }
     } as AppState),
   getters: {},

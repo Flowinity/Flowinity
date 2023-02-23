@@ -13,7 +13,9 @@
       bg-color="transparent"
       id="chat-list"
       class="message-list-container"
-      :style="`height: calc(100vh - ${143 + replyingHeight}px)`"
+      :style="`height: calc(100vh - ${
+        143 + replyingHeight + inputHeight - 86.5
+      }px)`"
       width="100%"
       style="overflow-x: hidden !important"
     >
@@ -44,6 +46,7 @@
             ? deleteMessage($event.message.id)
             : confirmDelete($event.message)
         "
+        @jumpToMessage="jumpToMessage"
       ></Message>
       <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
     </v-list>
@@ -56,11 +59,22 @@
         style="border-radius: 20px 20px 0 0; font-size: 14px; z-index: 1"
         @click="forceBottomAmirite"
         class="pointer unselectable pl-2 pb-1"
-        v-if="avoidAutoScroll"
+        v-if="avoidAutoScroll || $chat.loadingNew"
         color="card"
       >
-        <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
-        Jump to bottom
+        <template v-if="!$chat.loadingNew">
+          <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
+          Jump to bottom
+        </template>
+        <template v-else>
+          <v-progress-circular
+            :size="17"
+            :width="2"
+            indeterminate
+            class="mr-2"
+          ></v-progress-circular>
+          Loading messages...
+        </template>
       </v-toolbar>
     </v-fade-transition>
     <v-fade-transition v-model="replyId">
@@ -194,7 +208,8 @@ export default defineComponent({
           value: false,
           message: undefined as MessageType | undefined
         }
-      }
+      },
+      focusInterval: undefined as ReturnType<typeof setTimeout> | undefined
     };
   },
   computed: {
@@ -217,6 +232,29 @@ export default defineComponent({
     }
   },
   methods: {
+    doJump(message: number) {
+      const element = document.getElementById(
+        "message-" +
+          this.$chat.selectedChat?.messages?.findIndex((m) => m.id === message)
+      );
+      if (!element) return false;
+      element.scrollIntoView({
+        block: "center",
+        inline: "center"
+      });
+      element.classList.add("message-jumped");
+      setTimeout(() => {
+        element.classList.remove("message-jumped");
+      }, 1000);
+    },
+    async jumpToMessage(message: number) {
+      if (!this.doJump(message)) {
+        this.$chat.loadingNew = true;
+        await this.$chat.loadHistory(message + 30, true);
+        this.$chat.loadingNew = false;
+        this.doJump(message);
+      }
+    },
     confirmDelete(message: MessageType) {
       this.dialogs.delete.message = message;
       this.dialogs.delete.value = true;
@@ -343,8 +381,11 @@ export default defineComponent({
         this.editingText = event.content;
       }
     },
-    forceBottomAmirite() {
+    async forceBottomAmirite() {
       this.avoidAutoScroll = false;
+      if (this.$chat.loadNew) {
+        await this.$chat.loadHistory();
+      }
       this.autoScroll();
     },
     async deleteMessage(id: number | undefined) {
@@ -438,6 +479,16 @@ export default defineComponent({
         await this.$chat.loadHistory(offset);
         elem.scrollTop = scrollPos;
       }
+
+      if (
+        total < 100 &&
+        this.$chat.loadNew &&
+        !this.$chat.loading &&
+        !this.$chat.loadingNew
+      ) {
+        await this.$chat.loadHistory();
+        elem.scrollTop = scrollPos;
+      }
     },
     editLastMessage() {
       // find first message made by user
@@ -480,7 +531,7 @@ export default defineComponent({
       const findMessage = this.$chat.selectedChat?.messages.findIndex(
         (m) => m.content === message.message.content && m.pending
       );
-      if (findMessage !== -1 && findMessage !== undefined) {
+      if (findMessage !== -1) {
         if (this.$chat.selectedChat)
           this.$chat.selectedChat.messages[findMessage] = message.message;
         this.autoScroll();
@@ -518,51 +569,34 @@ export default defineComponent({
     },
     onEmbedResolution(data: { chatId: any; id: any; embeds: any }) {
       const index = this.$chat.chats.findIndex(
-        (c: any) => c.id === data.chatId
+        (c: Chat) => c.id === data.chatId
       );
       if (index === -1) return;
       if (!this.$chat.chats[index].messages) return;
       const messageIndex = this.$chat.chats[index].messages.findIndex(
-        (m: any) => m.id === data.id
+        (m: MessageType) => m.id === data.id
       );
       if (messageIndex === -1) return;
       this.$chat.chats[index].messages[messageIndex].embeds = data.embeds;
       this.autoScroll();
     },
-    onReadReceipt(data: ChatAssociation) {
-      const index = this.$chat.chats.findIndex(
-        (c: any) => c.id === data.chatId
-      );
-      if (index === -1) return;
-      if (!this.$chat.chats[index].messages) return;
-      const messageIndex = this.$chat.chats[index].messages.findIndex(
-        (m: any) => m.id === data.id
-      );
-      if (messageIndex === -1) return;
-      this.$chat.chats[index].messages.forEach((message: any) => {
-        message.readReceipts = message.readReceipts.filter(
-          (r: any) => r.user.id !== data.user.id
-        );
-      });
-      this.$chat.selectedChat?.messages[messageIndex].readReceipts.push(data);
+    onFocus() {
+      if (document.hasFocus()) {
+        this.$chat.readChat();
+      }
     }
   },
   mounted() {
     //document.querySelector(".message-list-container")?.addEventListener("scroll", this.scrollEvent);
     // add event listener for shortcuts
     document.addEventListener("keydown", this.shortcutHandler);
-    setInterval(() => {
-      if (document.hasFocus()) {
-        window.tpuInternals.readChat();
-      }
-    }, 2000);
+    this.focusInterval = setInterval(this.onFocus, 2000);
     // re-enable auto scroll for flex-direction: column-reverse;
     document
       .querySelector(".message-list-container")
       ?.addEventListener("scroll", this.scrollEvent);
     this.$socket.on("message", this.onMessage);
     this.$socket.on("embedResolution", this.onEmbedResolution);
-    this.$socket.on("readReceipt", this.onReadReceipt);
     this.$socket.on("typing", this.onTyping);
   },
   unmounted() {
@@ -571,11 +605,10 @@ export default defineComponent({
     document
       .querySelector(".message-list-container")
       ?.removeEventListener("scroll", this.scrollEvent);
-
+    clearInterval(this.focusInterval);
     this.$socket.off("message", this.onMessage);
     this.$socket.off("typing", this.onTyping);
     this.$socket.off("embedResolution", this.onEmbedResolution);
-    this.$socket.off("readReceipt", this.onReadReceipt);
   },
   watch: {
     "$chat.isReady"() {

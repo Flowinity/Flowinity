@@ -63,11 +63,15 @@ export interface ChatState {
   };
   trustedDomains: string[];
   preTrustedDomains: string[];
+  loadNew: boolean;
+  loadingNew: boolean;
 }
 
 export const useChatStore = defineStore("chat", {
   state: () =>
     ({
+      loadNew: false,
+      loadingNew: false,
       notifications: 0,
       chats: [] as Chat[],
       loading: false,
@@ -286,7 +290,20 @@ export const useChatStore = defineStore("chat", {
 
       this.readChat();
     },
-    async loadHistory(offset: number) {
+    async loadHistory(offset?: number, forceUnload?: boolean) {
+      if (!offset) {
+        this.loadingNew = true;
+        const { data } = await axios.get(
+          `/chats/${this.selectedChatId}/messages`
+        );
+        const index = this.chats.findIndex(
+          (chat: Chat) => chat.association.id === this.selectedChatId
+        );
+        this.chats[index].messages = data;
+        this.loadingNew = false;
+        this.loadNew = false;
+        return;
+      }
       this.loading = true;
       const { data } = await axios.get(
         `/chats/${this.selectedChatId}/messages?offset=${offset}`
@@ -294,7 +311,16 @@ export const useChatStore = defineStore("chat", {
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === this.selectedChatId
       );
-      this.chats[index].messages.push(...data);
+      if (!forceUnload) {
+        this.chats[index].messages.push(...data);
+      } else {
+        this.chats[index].messages = data;
+        this.loadNew = true;
+      }
+      if (this.chats[index].messages.length > 100) {
+        this.chats[index].messages = this.chats[index].messages.slice(0, 100);
+        this.loadNew = true;
+      }
       this.loading = false;
     },
     async getChats() {
