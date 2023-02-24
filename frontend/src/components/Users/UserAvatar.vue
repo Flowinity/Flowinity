@@ -13,7 +13,7 @@
           class="text-center justify-center"
           justify="center"
           :size="size"
-          :color="noColor ? undefined : '#0190ea'"
+          :color="noColor || user.avatar ? undefined : '#0190ea'"
         >
           <v-img v-if="user.avatar" :src="avatarURL" cover />
           <span :class="textSize" v-else class="unselectable">
