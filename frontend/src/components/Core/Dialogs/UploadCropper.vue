@@ -34,7 +34,7 @@
           text
           @click="
             $emit('update:modelValue', false);
-            file = undefined;
+            file = [];
           "
         >
           Cancel
@@ -72,7 +72,7 @@ export default defineComponent({
       await reader.readAsDataURL(this.file[0] as File);
     },
     async save() {
-      if (!this.file) return;
+      if (!this.file.length) return;
       // get the img in the banner-editor id div
       const file = this.$functions.base64ToFile(
         //@ts-ignore
