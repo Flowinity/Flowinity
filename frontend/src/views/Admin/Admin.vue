@@ -1,12 +1,13 @@
 <template><AdminSidebar></AdminSidebar></template>
 
-<script>
+<script lang="ts">
 import AdminSidebar from "@/components/Admin/AdminSidebar.vue";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "Admin",
   components: { AdminSidebar }
-};
+});
 </script>
 
 <style scoped></style>
