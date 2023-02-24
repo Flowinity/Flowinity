@@ -72,12 +72,17 @@ export class CacheService {
       console.error(e)
     }
   }
-  async generateUserStatsCache() {
+  async generateUserStatsCache(userId?: number) {
     try {
       console.info("[REDIS] Generating user stats cache...")
       let start = new Date().getTime()
       const coreService = Container.get(CoreService)
-      const users = await User.findAll()
+      let users
+      if (!userId) {
+        users = await User.findAll()
+      } else {
+        users = [await User.findOne({ where: { id: userId } })] as User[]
+      }
       for (const user of users) {
         const result = await coreService.getStats(user)
         redis.json.set(`userStats:${user.id}`, "$", result)
@@ -87,7 +92,7 @@ export class CacheService {
     } catch {}
   }
 
-  async generateInsightsCache() {
+  async generateInsightsCache(userId?: number) {
     try {
       const pulseService = Container.get(PulseService)
       console.info("[REDIS] Generating insights cache...")
@@ -96,7 +101,12 @@ export class CacheService {
       redis.json.set(`insights:leaderboard`, "$", leaderboard)
       // Insights
       const start = new Date().getTime()
-      const users = await User.findAll()
+      let users
+      if (!userId) {
+        users = await User.findAll()
+      } else {
+        users = [await User.findOne({ where: { id: userId } })] as User[]
+      }
       const years = ["2021", "2022", "2023", "latest"]
       for (const user of users) {
         let result = {}
@@ -153,11 +163,16 @@ export class CacheService {
     }
   }
 
-  async generateAutoCollectCache() {
+  async generateAutoCollectCache(userId?: number) {
     try {
       console.info("[REDIS] Generating User AutoCollection cache...")
       let start = new Date().getTime()
-      const users = await User.findAll()
+      let users
+      if (!userId) {
+        users = await User.findAll()
+      } else {
+        users = [await User.findOne({ where: { id: userId } })] as User[]
+      }
       for (const user of users) {
         let result = []
         let autoCollects = await AutoCollectApproval.findAll({
@@ -268,12 +283,17 @@ export class CacheService {
     )
   }
 
-  async generateCollectionCache() {
+  async generateCollectionCache(userId?: number) {
     try {
       const collectionService = Container.get(CollectionService)
       console.info("[REDIS] Generating collections cache...")
       let start = new Date().getTime()
-      const users = await User.findAll()
+      let users
+      if (!userId) {
+        users = await User.findAll()
+      } else {
+        users = [await User.findOne({ where: { id: userId } })] as User[]
+      }
       for (const user of users) {
         const collections = await collectionService.getCollections(user.id)
         redis.json.set(`collections:${user.id}`, "$", collections)

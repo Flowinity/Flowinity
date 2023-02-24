@@ -48,7 +48,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/api/v2": "http://localhost:34582",
-      "/i/": "http://localhost:34581",
+      "/i/": "http://localhost:34582",
       "/socket.io": "http://localhost:34582",
       "/api/v1": "http://localhost:34581"
     }

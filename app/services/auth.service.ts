@@ -1,10 +1,11 @@
-import { Service } from "typedi"
+import { Service, Container } from "typedi"
 import { Op } from "sequelize"
 import { User } from "@app/models/user.model"
 import Errors from "@app/lib/errors"
 import argon2 from "argon2"
 import utils from "@app/lib/utils"
 import speakeasy from "@levminer/speakeasy"
+import { CacheService } from "@app/services/cache.service"
 
 @Service()
 export class AuthService {
@@ -154,6 +155,12 @@ export class AuthService {
       planId: 7
     })
     const session = await utils.createSession(user.id, "*", "session")
+    const cacheService = await Container.get(CacheService)
+    await cacheService.generateChatsCache(user.id)
+    cacheService.generateAutoCollectCache(user.id)
+    cacheService.generateUserStatsCache(user.id)
+    cacheService.generateInsightsCache(user.id)
+    await cacheService.generateCollectionCache(user.id)
     return {
       user: {
         id: user.id,

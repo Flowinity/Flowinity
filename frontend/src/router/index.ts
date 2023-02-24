@@ -141,7 +141,7 @@ const routes = [
         component: () => import("@/views/User/User.vue")
       },
       {
-        path: "/starred",
+        path: "/starred/:page?",
         name: "Starred",
         component: () => import("@/views/Starred.vue")
       },
@@ -149,6 +149,19 @@ const routes = [
         path: "/slideshow/:code",
         name: "Slideshow",
         component: () => import("@/views/Slideshow.vue")
+      },
+      {
+        path: "/admin",
+        name: "Admin",
+        redirect: "/admin/dashboard",
+        component: () => import("@/views/Admin/Admin.vue"),
+        children: [
+          {
+            path: "dashboard",
+            name: "Admin Dashboard",
+            component: () => import("@/views/Admin/Dashboard.vue")
+          }
+        ]
       },
       // Unauthenticated
       {
@@ -162,9 +175,19 @@ const routes = [
         component: () => import("@/views/Auth/Register.vue")
       },
       {
+        path: "/invite/:key?",
+        name: "Invite",
+        redirect: (to: any) => `/register/${to.params.key}`
+      },
+      {
         path: "/home",
         name: "Home",
         component: () => import("@/views/Auth/Home.vue")
+      },
+      {
+        path: "/passwordReset/:code",
+        name: "Password Reset",
+        component: () => import("@/views/Auth/PasswordReset.vue")
       },
       {
         path: "/policies/content",
@@ -196,7 +219,8 @@ router.beforeEach(async (to, from) => {
       "404",
       "Collection Item",
       "Content Policy",
-      "Slideshow"
+      "Slideshow",
+      "Password Reset"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");

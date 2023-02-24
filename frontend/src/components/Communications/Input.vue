@@ -152,7 +152,6 @@ export default defineComponent({
     users() {
       if (!this.$chat.selectedChat?.users) return [];
       return this.$chat.selectedChat?.users.map((user: any) => {
-        console.log(user);
         return {
           label: user.user?.username,
           value: user.user?.id

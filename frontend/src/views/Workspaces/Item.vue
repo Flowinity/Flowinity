@@ -72,7 +72,7 @@ import WorkspaceHome from "@/views/Workspaces/Home";
 import Undo from "editorjs-undo";
 import { defineComponent } from "vue";
 //@ts-ignore
-import SimpleImage from "@editorjs/simple-image";
+import SimpleImage from "@troplo/tpu-simple-image";
 
 export default defineComponent({
   name: "WorkspaceItem",

@@ -30,7 +30,7 @@
         "
       ></v-select>
     </v-col>
-    <v-col md="1" cols="12" v-if="supports.metadata">
+    <v-col xl="1" sm="2" cols="12" v-if="supports.metadata">
       <v-checkbox
         label="Search in files"
         v-model="metadata"
@@ -40,8 +40,8 @@
         "
       ></v-checkbox>
     </v-col>
-    <v-col sm="1">
-      <v-btn block class="mt-2" @click="$app.dialogs.upload = true">
+    <v-col sm="1" v-if="supports.upload">
+      <v-btn block class="mt-2" @click="$app.dialogs.upload.value = true">
         <v-icon>mdi-upload</v-icon>
         Upload
       </v-btn>
@@ -65,7 +65,8 @@ export default {
       default: {
         filter: true,
         metadata: true,
-        search: true
+        search: true,
+        upload: false
       }
     },
     types: {
@@ -87,6 +88,10 @@ export default {
         {
           name: "Videos",
           internalName: "video"
+        },
+        {
+          name: "GIFs",
+          internalName: "gif"
         },
         {
           name: "Audio",

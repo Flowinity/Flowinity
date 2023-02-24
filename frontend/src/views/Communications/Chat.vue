@@ -235,6 +235,8 @@ export default defineComponent({
   },
   methods: {
     merge(message: MessageType, index: number) {
+      if (message.replyId) return false;
+      if (message.type !== "message" && message.type) return false;
       const prev = this.$chat.selectedChat?.messages[index + 1];
       if (!prev) return false;
       if (this.$date(message.createdAt).diff(prev.createdAt, "minutes") > 5)
@@ -255,6 +257,7 @@ export default defineComponent({
       setTimeout(() => {
         element.classList.remove("message-jumped");
       }, 1000);
+      return true;
     },
     async jumpToMessage(message: number) {
       if (!this.doJump(message)) {
@@ -277,7 +280,7 @@ export default defineComponent({
         this.sendMessage();
         return;
       }
-      this.message = "https://i.troplo.com/i/" + e.attachment;
+      this.message = this.$app.domain + e.attachment;
       this.sendMessage();
     },
     async handlePaste(e: ClipboardEvent) {

@@ -32,6 +32,10 @@
               />
             </v-form>
           </v-container>
+          <v-card-actions class="mt-n9 mr-2">
+            <v-spacer></v-spacer>
+            <a @click="forgotPassword">I forgot my password</a>
+          </v-card-actions>
           <v-card-actions>
             <v-btn to="/register">Register</v-btn>
             <v-spacer></v-spacer>
@@ -59,6 +63,20 @@ export default defineComponent({
     };
   },
   methods: {
+    async forgotPassword() {
+      this.loading = true;
+      try {
+        await this.axios.post("/auth/recover", {
+          email: this.username
+        });
+        this.$toast.success(
+          "Password reset email sent successfully, check your emails!"
+        );
+        this.loading = false;
+      } catch {
+        this.loading = false;
+      }
+    },
     async login() {
       this.loading = true;
       try {

@@ -29,7 +29,7 @@
         }
       }"
       @refresh="getGallery()"
-      @page-change="$router.push(`/gallery/${$event}`)"
+      @page-change="$router.push(`/starred/${$event}`)"
       @updateItem="updateItem"
     ></GalleryCore>
   </v-container>

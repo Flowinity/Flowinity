@@ -72,7 +72,7 @@ export default defineComponent({
   },
   methods: {
     copy(text: string) {
-      navigator.clipboard.writeText("https://i.troplo.com/i/" + text);
+      navigator.clipboard.writeText(this.$app.domain + text);
     },
     async getSlideshow() {
       const { data } = await this.axios.get(

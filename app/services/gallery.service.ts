@@ -167,12 +167,17 @@ export class GalleryService {
     const offset = page * itemsPerPage - itemsPerPage || 0
     let base = {
       deletable: true
+    } as {
+      [key: string]: any
     }
-    if (filter !== "all") {
-      base["type"] = filter
+    if (filter !== "all" && filter !== "gif") {
+      base.type = filter
+    }
+    if (filter === "gif") {
+      base.attachment = { [Op.like]: "%.gif" }
     }
     if (type === "user") {
-      base["userId"] = id
+      base.userId = id
     }
     const metadata = {
       [Op.or]: [
@@ -218,6 +223,10 @@ export class GalleryService {
       ]
     } else if (type === "starred") {
       include = [
+        {
+          model: Collection,
+          as: "collections"
+        },
         {
           model: Star,
           as: "starred",
@@ -353,7 +362,8 @@ export class GalleryService {
       })
     } else {
       uploadCount = await Upload.count({
-        where
+        where,
+        include
       })
     }
     const pager = paginate(uploadCount || uploads.length, page, itemsPerPage)

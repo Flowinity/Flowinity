@@ -15,6 +15,7 @@
         show.metadata = $event;
         page = 1;
       "
+      :supports="{ filter: true, metadata: true, search: true, upload: true }"
     ></GalleryNavigation>
     <GalleryCore
       :page="page"

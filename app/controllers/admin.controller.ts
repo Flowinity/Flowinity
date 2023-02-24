@@ -324,6 +324,15 @@ export class AdminController {
       }
     )
 
+    this.router.get(
+      "/services",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const services = await this.adminService.getServices()
+        res.json(services)
+      }
+    )
+
     /*    this.router.get(
       "/online",
       auth("*"),

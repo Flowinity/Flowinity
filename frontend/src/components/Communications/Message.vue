@@ -16,6 +16,21 @@
       ></UserAvatar>
       {{ message.reply?.content }}
     </v-toolbar>
+    <v-toolbar
+      v-else-if="message.replyId"
+      height="auto"
+      color="transparent"
+      floating
+      class="ml-6 my-1 pointer limit"
+    >
+      <v-icon class="mr-2">mdi-reply</v-icon>
+      <UserAvatar
+        size="24"
+        :user="{ id: 0, username: '?' }"
+        class="mr-2"
+      ></UserAvatar>
+      Deleted Message
+    </v-toolbar>
     <v-list-item color="transparent" class="message" :class="{ merge }">
       <template v-slot:prepend>
         <template v-if="!merge">
@@ -48,7 +63,7 @@
         </template>
         <template v-else>
           <small
-            style="font-size: 9px; margin-right: 18px"
+            style="font-size: 9px; margin-right: 19px"
             class="text-grey message-date"
             v-if="merge"
           >

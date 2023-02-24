@@ -39,6 +39,7 @@ import { Collection } from "@/models/collection";
 import "floating-vue/dist/style.css";
 import vuetify from "./plugins/vuetify";
 import { ChatAssociation } from "@/models/chatAssociation";
+import router from "@/router";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -252,6 +253,27 @@ const app = createApp({
           );
         });
         chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
+      });
+
+      // For TPU quick uploads
+      document.addEventListener("paste", (e) => {
+        if (
+          [
+            "Communications",
+            "Communication",
+            "Note",
+            "Workspace Item"
+          ].includes(router.currentRoute.value.name as string)
+        )
+          return;
+        if (!e.clipboardData) return;
+        console.log("[TPU/InstantUpload] Paste detected");
+        if (core.dialogs.upload.loading) return;
+        if (e.clipboardData.files.length > 0) {
+          // Convert the legacy FileList object to an Array
+          core.dialogs.upload.files = [...e.clipboardData.files];
+          core.upload();
+        }
       });
     },
     watch: {

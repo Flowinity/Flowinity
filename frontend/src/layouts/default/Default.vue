@@ -1,6 +1,6 @@
 <template>
   <v-app v-if="$user.user">
-    <UploadDialog v-model="$app.dialogs.upload"></UploadDialog>
+    <UploadDialog v-model="$app.dialogs.upload.value"></UploadDialog>
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
     <URLConfirmDialog
       v-model="$chat.dialogs.externalSite.value"

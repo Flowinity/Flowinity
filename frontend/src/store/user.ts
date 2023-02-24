@@ -19,6 +19,7 @@ export interface UserState {
     itemsPerPage?: number;
     currentPassword?: string;
     storedStatus?: string;
+    description?: string;
   };
 }
 
@@ -80,7 +81,8 @@ export const useUserStore = defineStore("user", {
               username: this.user.username,
               itemsPerPage: this.user.itemsPerPage,
               currentPassword: "",
-              storedStatus: this.user.storedStatus
+              storedStatus: this.user.storedStatus,
+              description: this.user.description
             };
             this.runPostTasks();
           }
@@ -90,6 +92,16 @@ export const useUserStore = defineStore("user", {
       }
       const { data } = await axios.get("/user");
       this.user = data;
+      this.changes = {
+        password: "",
+        email: this.user?.email,
+        discordPrecache: this.user?.discordPrecache,
+        username: this.user?.username,
+        itemsPerPage: this.user?.itemsPerPage,
+        currentPassword: "",
+        storedStatus: this.user?.storedStatus,
+        description: this.user?.description
+      };
       localStorage.setItem("userStore", JSON.stringify(data));
       this.runPostTasks();
     },
@@ -102,7 +114,8 @@ export const useUserStore = defineStore("user", {
         discordPrecache: this.changes.discordPrecache,
         username: this.changes.username,
         itemsPerPage: this.changes.itemsPerPage,
-        storedStatus: this.changes.storedStatus
+        storedStatus: this.changes.storedStatus,
+        description: this.changes.description
       });
       this.user = {
         ...this.user,

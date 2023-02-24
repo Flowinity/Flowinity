@@ -239,4 +239,9 @@ export class AdminService {
       .map(([date, count]) => `${date},${count}`)
       .join("\n")
   }
+
+  async getServices() {
+    // get all typedi service functions
+    console.log(Container)
+  }
 }

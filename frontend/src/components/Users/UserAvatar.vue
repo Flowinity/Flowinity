@@ -1,49 +1,31 @@
 <template>
   <span v-if="user">
+    <UploadCropper
+      title="Upload Avatar"
+      v-model="dialog"
+      @finish="changeAvatar"
+      aspect-ratio="1"
+    />
     <v-hover v-slot="{ isHovering, props }">
-      <span>
-        <v-file-input
-          hide-input
-          ref="fileInput"
-          style="display: none"
-          truncate-length="15"
-          v-model="avatar"
-          v-if="edit"
-        ></v-file-input>
+      <span v-bind="props">
         <v-avatar
-          v-if="user.avatar"
-          :src="'/i/' + user.avatar"
-          class="text-center cover"
-          :size="size"
-          v-bind="props"
-        >
-          <v-img aspect-ratio="1/1" v-if="user.avatar" :src="avatarURL" />
-          <v-fade-transition v-if="isHovering && edit">
-            <div @click="removeAvatar" style="cursor: pointer">
-              <v-overlay absolute>
-                <v-icon large>mdi-close</v-icon>
-              </v-overlay>
-            </div>
-          </v-fade-transition>
-          <v-fade-transition v-else-if="isHovering">
-            <slot></slot>
-          </v-fade-transition>
-        </v-avatar>
-        <v-avatar
-          :class="{ outline: outline }"
-          v-if="!user.avatar"
+          :class="{ outline }"
           class="text-center justify-center"
           justify="center"
           :size="size"
           :color="noColor ? undefined : '#0190ea'"
-          v-bind="props"
         >
-          <span :class="textSize" class="unselectable">
+          <v-img v-if="user.avatar" :src="avatarURL" cover />
+          <span :class="textSize" v-else class="unselectable">
             {{ user.username.charAt(0).toUpperCase() }}
           </span>
           <v-fade-transition v-if="isHovering && edit">
-            <div @click="handleClick" style="cursor: pointer">
-              <v-overlay absolute>
+            <div @click="dialog = true" style="cursor: pointer">
+              <v-overlay
+                contained
+                :model-value="isHovering"
+                class="align-center justify-center"
+              >
                 <v-icon large>mdi-upload</v-icon>
               </v-overlay>
             </div>
@@ -117,9 +99,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { is } from "immutable";
+import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 
 export default defineComponent({
   name: "UserAvatar",
+  components: { UploadCropper },
   props: [
     "user",
     "size",
@@ -136,7 +121,7 @@ export default defineComponent({
   ],
   data() {
     return {
-      avatar: undefined
+      dialog: false
     };
   },
   computed: {
@@ -184,23 +169,18 @@ export default defineComponent({
     }
   },
   methods: {
-    handleClick() {
-      if (!this.edit) return;
-      //@ts-ignore
-      this.$refs.fileInput.$refs.input.click();
-    },
     removeAvatar() {
       if (!this.edit) return;
       this.axios.delete("/api/v2/user/avatar").then(() => {
         this.$emit("refresh");
       });
     },
-    changeAvatar() {
-      if (!this.avatar || !this.edit) return;
+    changeAvatar(file: File) {
+      if (!file || !this.edit) return;
       let formData = new FormData();
-      formData.append("avatar", this.avatar);
+      formData.append("avatar", file);
       this.axios
-        .post("/api/v2/user/avatar", formData, {
+        .post("/user/avatar", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -216,11 +196,6 @@ export default defineComponent({
         return 0
       }
     }*/
-  },
-  watch: {
-    avatar() {
-      this.changeAvatar();
-    }
   }
 });
 </script>

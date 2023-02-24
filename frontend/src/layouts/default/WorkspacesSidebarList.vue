@@ -172,6 +172,11 @@
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
         </v-list-item>
+        <v-list-item @click="createWorkspace.dialog = true">
+          <v-list-item-title>
+            <strong>Create workspace</strong>
+          </v-list-item-title>
+        </v-list-item>
       </v-list>
     </v-menu>
     <template v-if="$workspaces.workspace">
@@ -208,7 +213,9 @@
             createNote.dialog = true;
           "
         >
-          <v-list-item-title>Create a new note</v-list-item-title>
+          <v-list-item-title>
+            <strong>Create a new note</strong>
+          </v-list-item-title>
         </v-list-item>
       </v-list-group>
     </template>
@@ -386,7 +393,7 @@ export default defineComponent({
     },
     async doCreateWorkspace(name: string) {
       this.createWorkspace.loading = true;
-      const { data } = await this.axios.post("/workspaces", {
+      const { data } = await this.axios.post("/notes/workspaces", {
         name: name
       });
       await this.$workspaces.init();
@@ -397,7 +404,7 @@ export default defineComponent({
     async doRenameWorkspace(name: string) {
       this.renameWorkspace.loading = true;
       const id = this.contextMenu.item?.id || this.renameWorkspace.workspaceId;
-      await this.axios.patch(`/workspaces/${id}`, {
+      await this.axios.patch(`/notes/workspaces/${id}`, {
         name
       });
       await this.$workspaces.init();

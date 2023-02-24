@@ -1,7 +1,9 @@
 // Utilities
 import { defineStore } from "pinia";
-import vuetify from "@/plugins/vuetify";
 import axios from "@/plugins/axios";
+import { useToast } from "vue-toastification";
+import functions from "@/plugins/functions";
+import { AxiosProgressEvent } from "axios";
 
 export interface AppState {
   domain: string;
@@ -43,18 +45,24 @@ export interface AppState {
       } | null;
     };
     maintenance: boolean;
+    alert: string;
     _redis: string;
   };
   dialogs: {
     memoryProfiler: boolean;
-    upload: boolean;
+    upload: {
+      value: boolean;
+      percentage: number;
+      files: File[];
+      loading: boolean;
+    };
   };
 }
 
 export const useAppStore = defineStore("app", {
   state: () =>
     ({
-      domain: "https://i.troplo.com/i/",
+      domain: import.meta.env.DEV ? "/i/" : "https://i.troplo.com/i/",
       mainDrawer: true,
       workspaceDrawer: localStorage.getItem("workspaceDrawer") === "true",
       forcedWorkspaceDrawer: false,
@@ -69,6 +77,7 @@ export const useAppStore = defineStore("app", {
         : null,
       shifting: false,
       site: {
+        alert: "",
         registrations: false,
         name: "TPUvNEXT",
         release: "prod",
@@ -95,7 +104,12 @@ export const useAppStore = defineStore("app", {
         _redis: new Date().toISOString()
       },
       dialogs: {
-        upload: false,
+        upload: {
+          value: false,
+          files: [],
+          percentage: 0,
+          loading: false
+        },
         memoryProfiler: false
       }
     } as AppState),
@@ -116,6 +130,45 @@ export const useAppStore = defineStore("app", {
       this.site = data;
       localStorage.setItem("coreStore", JSON.stringify(data));
       this.loading = false;
+    },
+    async upload() {
+      try {
+        const toast = useToast();
+        if (!this.dialogs.upload.files.length)
+          toast.error("No files selected!");
+        const formData = new FormData();
+        for (const file of this.dialogs.upload.files) {
+          formData.append("attachments", file);
+        }
+        this.dialogs.upload.loading = true;
+        const { data } = await axios.post("/gallery/site", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          },
+          onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+            if (!progressEvent.total) return;
+            this.dialogs.upload.percentage = Math.round(
+              (progressEvent.loaded / progressEvent.total) * 100
+            );
+          }
+        });
+        if (this.dialogs.upload.files.length === 1) {
+          functions.copy(data[0].url);
+          toast.success(
+            "Successfully uploaded file and copied TPU link to clipboard!"
+          );
+        } else {
+          toast.success("Successfully uploaded files!");
+        }
+        this.dialogs.upload.value = false;
+        this.dialogs.upload.files = [];
+        this.dialogs.upload.percentage = 0;
+        this.dialogs.upload.loading = false;
+      } catch (e) {
+        this.dialogs.upload.percentage = 0;
+        this.dialogs.upload.loading = false;
+        return e;
+      }
     }
   }
 });

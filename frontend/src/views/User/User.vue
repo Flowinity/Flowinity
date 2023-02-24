@@ -1,11 +1,14 @@
 <template>
   <div v-if="user">
-    <UserBanner :user="user" :height="username ? 250 : undefined"></UserBanner>
+    <UserBanner
+      :user="user"
+      :height="username ? 250 : undefined"
+      @refreshUser="getUser(false)"
+    ></UserBanner>
     <v-container class="mt-2" :style="username ? 'max-width: 100%;' : ''">
       <v-row>
         <v-col :lg="!username ? 9 : 12" cols="12" md="12">
           <v-row no-gutters>
-            <!-- only take up the size of the avatar -->
             <v-col sm="auto">
               <v-hover v-slot="{ hover }">
                 <UserAvatar
@@ -89,17 +92,44 @@
           <v-card-text
             class="mt-n7"
             style="overflow-wrap: break-word; white-space: pre-line"
+            v-if="!settings.description.value"
           >
             {{ user.description }}
             <v-btn
               icon
-              x-small
+              size="x-small"
               class="grey--text"
               v-if="$user.user?.id === user.id"
               @click="settings.description.value = true"
             >
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
+          </v-card-text>
+          <v-card-text
+            class="mt-n7"
+            style="overflow-wrap: break-word; white-space: pre-line"
+            v-else
+          >
+            <v-textarea
+              v-model="$user.changes.description"
+              outlined
+              dense
+              auto-grow
+              :rows="1"
+              :counter="255"
+              @keydown.exact.ctrl.enter="save"
+            ></v-textarea>
+            <v-card-actions class="mt-n4">
+              <v-spacer></v-spacer>
+              <v-btn
+                text
+                @click="save"
+                color="primary"
+                :loading="settings.description.loading"
+              >
+                Save
+              </v-btn>
+            </v-card-actions>
           </v-card-text>
           <template v-if="user.collections?.length">
             <v-divider></v-divider>
@@ -351,6 +381,13 @@ export default defineComponent({
     }
   },
   methods: {
+    async save() {
+      this.settings.description.loading = true;
+      await this.$user.save();
+      if (this.user) this.user.description = this.$user.user?.description;
+      this.settings.description.value = false;
+      this.settings.description.loading = false;
+    },
     async chat() {
       this.friendLoading = true;
       const data = await this.$chat.createChat([this.user?.id as number]);

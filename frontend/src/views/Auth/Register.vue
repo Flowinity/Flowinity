@@ -49,7 +49,7 @@
                 </template>
               </v-checkbox>
             </v-form>
-            <small>Fun Fact: {{ fact }}</small>
+            <small>Fun fact: {{ fact }}</small>
           </v-container>
           <v-card-actions>
             <v-btn to="/login">Login</v-btn>

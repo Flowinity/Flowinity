@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express"
 import { Service } from "typedi"
 import Errors from "@app/lib/errors"
 import { Upload } from "@app/models/upload.model"
+import * as fs from "fs"
 
 @Service()
 export class FileController {
@@ -35,12 +36,24 @@ export class FileController {
             attachment: req.params.attachment
           }
         })
+        if (config.release === "dev") {
+          try {
+            await fs.accessSync(
+              config.storage + "/" + req.params.attachment,
+              fs.constants.F_OK
+            )
+          } catch {
+            return res.redirect(
+              "https://i.troplo.com/i/" + req.params.attachment
+            )
+          }
+        }
         if (!upload) {
           throw Errors.NOT_FOUND
         }
         if (req.query.force) {
-          res.download(
-            config.storage + "/" + upload.attachment,
+          return res.download(
+            config.storage + "/" + req.params.attachment,
             upload.originalFilename
           )
         }
@@ -49,19 +62,19 @@ export class FileController {
           upload.type === "video" ||
           upload.type === "audio"
         ) {
-          res.sendFile("/" + upload.attachment, {
+          return res.sendFile("/" + upload.attachment, {
             root: config.storage,
             name: upload.originalFilename
           })
         } else {
-          res.download(
+          return res.download(
             config.storage + "/" + upload.attachment,
             upload.originalFilename
           )
         }
       } catch (err) {
         res.status(404)
-        res.json({
+        return res.json({
           errors: [
             {
               name: "NOT_FOUND",

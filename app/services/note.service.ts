@@ -61,6 +61,22 @@ export class NoteDataV2 {
 export class NoteService {
   constructor() {}
 
+  async renameWorkspace(id: number, name: string, userId: number) {
+    const workspace = await this.getWorkspace(id, userId, "workspace")
+    if (!workspace) throw Errors.NOT_FOUND
+    await Workspace.update(
+      {
+        name
+      },
+      {
+        where: {
+          id
+        }
+      }
+    )
+    return true
+  }
+
   async getRecent(userId: number) {
     return await Note.findAll({
       include: [

@@ -40,7 +40,7 @@ import AlignmentTuneTool from "editorjs-text-alignment-blocktune";
 import ColorPlugin from "editorjs-text-color-plugin";
 // eslint-disable-next-line
 import Undo from "editorjs-undo";
-import SimpleImage from "@editorjs/simple-image";
+import SimpleImage from "@troplo/tpu-simple-image";
 
 export default {
   name: "TPUEditor",
@@ -68,7 +68,7 @@ export default {
           return {
             success: 1,
             file: {
-              url: "https://i.troplo.com/i/" + res.data.upload.attachment,
+              url: this.$app.domain + res.data.upload.attachment,
               name: res.data.upload.name,
               size: res.data.upload.fileSize,
               extension: res.data.upload.name.split(".").pop(),

@@ -1,9 +1,15 @@
 <template>
   <v-hover v-slot="{ isHovering, props }">
+    <UploadCropper
+      title="Upload Banner"
+      v-model="dialog"
+      @finish="uploadBanner"
+      aspect-ratio="5.4"
+    />
     <v-img
       v-bind="props"
       :src="banner"
-      aspect-ratio="16/9"
+      aspect-ratio="5"
       id="user-header"
       cover
       :min-height="!height ? 200 : undefined"
@@ -32,15 +38,27 @@
 </template>
 
 <script lang="ts">
+import "cropperjs/dist/cropper.css";
 import { defineComponent } from "vue";
+import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 
 export default defineComponent({
   name: "UserBanner",
+  components: { UploadCropper },
   props: ["user", "height"],
+  emits: ["refreshUser"],
   data() {
     return {
       dialog: false
     };
+  },
+  methods: {
+    async uploadBanner(file: File) {
+      const formData = new FormData();
+      formData.append("banner", file);
+      await this.axios.post("/user/banner", formData);
+      this.$emit("refreshUser");
+    }
   },
   computed: {
     banner() {
@@ -52,4 +70,9 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+img {
+  display: block;
+  max-width: 100%;
+}
+</style>

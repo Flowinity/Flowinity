@@ -11,6 +11,8 @@
     }"
     flat
     style="z-index: 2001"
+    class="navbar"
+    extension-height="0"
   >
     <v-app-bar-nav-icon
       style="z-index: 1000"
@@ -51,6 +53,7 @@
     <v-spacer></v-spacer>
     <small v-if="$app.notesSaving" class="mr-3">Saving...</small>
     <v-btn icon>
+      <Notifications />
       <v-badge dot color="red" :model-value="$user.unreadNotifications > 0">
         <v-icon>
           {{ $user.unreadNotifications > 0 ? "mdi-bell" : "mdi-bell-outline" }}
@@ -89,6 +92,26 @@
         <v-icon>mdi-menu-open</v-icon>
       </v-btn>
     </template>
+    <template v-slot:extension>
+      <v-progress-linear
+        :model-value="$app.dialogs.upload.percentage"
+        color="primary"
+        v-if="$app.dialogs.upload.loading"
+      >
+        <v-tooltip activator="parent" location="top">
+          <span>{{ $app.dialogs.upload.percentage }}%</span>
+        </v-tooltip>
+      </v-progress-linear>
+      <v-alert
+        class="rounded-0"
+        color="blue"
+        type="info"
+        variant="text"
+        v-if="$app.site.alert"
+      >
+        {{ $app.site.alert }}
+      </v-alert>
+    </template>
   </v-app-bar>
 </template>
 
@@ -96,9 +119,10 @@
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
+import Notifications from "@/components/Core/Notifications.vue";
 
 export default defineComponent({
-  components: { CommunicationsAvatar, UserAvatar },
+  components: { Notifications, CommunicationsAvatar, UserAvatar },
   computed: {
     dropdown() {
       if (!this.$user?.user) return [];
@@ -119,7 +143,9 @@ export default defineComponent({
         },
         {
           id: 15,
-          click() {},
+          click() {
+            throw new Error(":skull:");
+          },
           path: "",
           name: "Logout",
           disabled: false

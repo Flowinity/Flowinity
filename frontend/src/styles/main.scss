@@ -48,7 +48,8 @@
 }
 
 .v-overlay__scrim {
-  background-color: rgba(142, 142, 142, 0.2) !important;
+  background-color: rgb(33, 33, 33) !important;
+  border-color: rgb(33, 33, 33) !important;
 }
 
 .v-btn--variant-outlined,
@@ -212,4 +213,15 @@ a {
 
 .overflow-content {
   overflow-wrap: break-word;
+}
+
+.gold .v-progress-linear {
+  color: black
+}
+
+.highlighted {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.unhighlight:before {
+  opacity: 0 !important;
 }

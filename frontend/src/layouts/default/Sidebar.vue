@@ -48,7 +48,7 @@
         :exact="item.exact"
         :to="item.path"
         @click="handleClick(index)"
-        :disabled="!checkScope(item.scope, $user.user?.scopes)"
+        :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
         :prepend-icon="item.icon"
       >
         <v-list-item-title>
@@ -74,7 +74,7 @@
             size="small"
             style="float: right"
             color="grey lighten-1"
-            v-if="!checkScope(item.scope, $user.user?.scopes)"
+            v-if="!$functions.checkScope(item.scope, $user.user?.scopes)"
           >
             mdi-lock
           </v-icon>
@@ -334,10 +334,21 @@ export default defineComponent({
           click() {},
           externalPath: "https://legacy.images.flowinity.com",
           path: "",
-          name: "Go back to old TPU",
+          name: "Go back to TPU Classic",
           icon: "mdi-arrow-down",
           new: false,
           scope: "user.view"
+        },
+        {
+          id: 37,
+          click() {},
+          externalPath: "",
+          path: "/admin",
+          name: "Admin",
+          icon: "mdi-gavel",
+          new: false,
+          scope: "admin.view",
+          experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
         }
         /*{
           id: 33,
@@ -390,26 +401,6 @@ export default defineComponent({
   methods: {
     handleClick(index: number) {
       this.sidebar[index].click.call(this);
-    },
-    checkScope(requiredScope: string | undefined, scope: string | undefined) {
-      if (!scope || !requiredScope) {
-        return true;
-      }
-      if (scope === "*") {
-        return true;
-      }
-      // scope is the current session scope, and requiredScope is the scope required for the route, formatted like user.read or user.write
-      // check if the required scope is contained in the current scope, comma separated
-      const scopes = scope.split(",");
-      for (const scope of scopes) {
-        if (scope === requiredScope) {
-          return true;
-        }
-        if (scope?.split(".")[0] === requiredScope) {
-          return true;
-        }
-      }
-      return false;
     }
   }
 });

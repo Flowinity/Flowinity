@@ -101,6 +101,21 @@ export class NoteController {
       }
     )
 
+    this.router.patch(
+      "/workspaces/:id",
+      auth("workspaces.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const { id } = req.params
+        const { name } = req.body
+        const workspace = await this.noteService.renameWorkspace(
+          parseInt(id),
+          name,
+          req.user.id
+        )
+        res.json(workspace)
+      }
+    )
+
     this.router.post(
       "/",
       auth("workspaces.create"),
