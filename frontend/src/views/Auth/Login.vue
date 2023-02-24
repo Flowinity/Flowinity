@@ -34,7 +34,7 @@
           </v-container>
           <v-card-actions class="mt-n9 mr-2">
             <v-spacer></v-spacer>
-            <a @click="forgotPassword">I forgot my password</a>
+            <a @click="forgotPassword" class="pointer">I forgot my password</a>
           </v-card-actions>
           <v-card-actions>
             <v-btn to="/register">Register</v-btn>

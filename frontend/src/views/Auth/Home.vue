@@ -8,8 +8,8 @@
     <div class="d-flex flex-column fill-height justify-center align-center">
       <h1 class="">TPU</h1>
       <h4 class="text-center">
-        TPU (or TroploPrivateUploader) is a private file hosting community
-        platform.
+        TPU is a screenshot & file hosting suite with extra features such as
+        chatting, document editing, and more.
       </h4>
       <br />
       <div>

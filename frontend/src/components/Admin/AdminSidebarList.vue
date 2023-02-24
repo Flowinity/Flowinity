@@ -116,6 +116,22 @@ export default defineComponent({
           icon: "mdi-flask",
           exact: true,
           scope: "*"
+        },
+        {
+          id: 10,
+          name: "Service Explorer",
+          path: "/admin/services",
+          icon: "mdi-server",
+          exact: true,
+          scope: "*"
+        },
+        {
+          id: 11,
+          name: "Feedback",
+          path: "/admin/feedback",
+          icon: "mdi-comment-question-outline",
+          exact: true,
+          scope: "*"
         }
       ] as {
         id: number;

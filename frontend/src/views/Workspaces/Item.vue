@@ -8,20 +8,23 @@
       color="dark"
       bottom
       dense
-      fixed
+      class="position-fixed"
       id="workspaces-word-count"
-      v-if="!this.id"
+      v-if="!id"
       :class="{ patch: !$vuetify.display.mobile }"
+      style="z-index: 1000"
+      density="compact"
     >
       <v-card-subtitle>
-        Words: {{ words.toLocaleString() }} • Characters:
-        {{ characters.toLocaleString() }} • Speaking Time:
+        Words: {{ words.toLocaleString() }} &bullet; Characters:
+        {{ characters.toLocaleString() }} &bullet; Speaking Time:
         <span>
           {{ speakingTime }}
           <v-tooltip activator="parent" location="top">
             <span>Average 150wpm estimate</span>
           </v-tooltip>
         </span>
+        &bullet; Blocks: {{ blocks.toLocaleString() }}
       </v-card-subtitle>
     </v-toolbar>
     <WorkspaceHome v-if="fail" />
@@ -84,7 +87,9 @@ export default defineComponent({
       fail: false,
       words: 0,
       characters: 0,
-      lastSave: null as any
+      lastSave: null as any,
+      blocks: 0,
+      lines: 0
     };
   },
   methods: {
@@ -141,11 +146,21 @@ export default defineComponent({
           return acc + this.getItemCount(item, type);
         }, 0);
       }
+      if (type === "length") {
+        return item.items?.length || 0;
+      }
       if (item.content) {
         if (type === "char") {
           count += item.content.length;
         } else if (type === "word") {
           count += item.content.split(" ").length;
+        }
+      }
+      if (item.text) {
+        if (type === "char") {
+          count += item.text.length;
+        } else if (type === "word") {
+          count += item.text.split(" ").length;
         }
       }
       return count;
@@ -199,6 +214,7 @@ export default defineComponent({
           return acc;
         }
       }, 0);
+      this.blocks = blocks.length;
     },
     editor(data, readOnly) {
       window.__TROPLO_INTERNALS_EDITOR_SAVE = this.save;

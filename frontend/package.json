@@ -45,6 +45,7 @@
     "markdown-it": "^13.0.1",
     "markdown-it-emoji": "^2.0.2",
     "pinia": "^2.0.23",
+    "qrcode.vue": "^3.3.3",
     "socket.io-client": "^4.6.0",
     "textarea-caret": "^3.1.0",
     "vue": "^3.2.13",

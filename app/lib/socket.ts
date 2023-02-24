@@ -2,7 +2,7 @@ import { SocketAuth } from "@app/types/socket"
 import { User } from "@app/models/user.model"
 import { Pulse } from "@app/models/pulse.model"
 import { Container } from "typedi"
-import { UserUtilsService } from "@app/services/userutils.service"
+import { UserUtilsService } from "@app/services/userUtils.service"
 import auth from "@app/lib/authSocket"
 import { ChatService } from "@app/services/chat.service"
 

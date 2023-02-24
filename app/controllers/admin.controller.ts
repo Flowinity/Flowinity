@@ -7,7 +7,7 @@ import Router from "express-promise-router"
 import { AdminService } from "@app/services/admin.service"
 import { CacheService } from "@app/services/cache.service"
 import { User } from "@app/models/user.model"
-import { UserUtilsService } from "@app/services/userutils.service"
+import { UserUtilsService } from "@app/services/userUtils.service"
 import { CoreService } from "@app/services/core.service"
 
 export enum CacheType {

@@ -32,6 +32,7 @@
       @refresh="getGallery()"
       @page-change="$router.push(`/gallery/${$event}`)"
       @updateItem="updateItem"
+      @delete="deleteItem"
     ></GalleryCore>
   </v-container>
 </template>
@@ -90,6 +91,14 @@ export default defineComponent({
     };
   },
   methods: {
+    deleteItem(item: Upload) {
+      console.log(item.id);
+      const index = this.gallery.gallery.findIndex(
+        (i: any) => i.id === item.id
+      );
+      if (index === -1) return;
+      this.gallery.gallery.splice(index, 1);
+    },
     updateItem({
       item,
       collection

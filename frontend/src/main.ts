@@ -50,7 +50,7 @@ declare module "@vue/runtime-core" {
     $functions: typeof functions;
     $collections: ReturnType<typeof useCollectionsStore>;
     $toast: any;
-    $validation: any;
+    $validation: typeof validation;
     $workspaces: ReturnType<typeof useWorkspacesStore>;
     $chat: ReturnType<typeof useChatStore>;
     $socket: any;
@@ -253,6 +253,22 @@ const app = createApp({
           );
         });
         chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
+      });
+      socket.on("autoCollectApproval", (data: { type: string }) => {
+        if (!user.user) return;
+        if (
+          experiments.experiments["SFX_KFX"] ||
+          experiments.experiments["SFX_KOLF"]
+        ) {
+          chat.sound();
+        }
+        console.log(data);
+
+        if (data.type === "new") {
+          user.user.pendingAutoCollects += 1;
+        } else if (data.type === "approve" || data.type === "deny") {
+          user.user.pendingAutoCollects -= 1;
+        }
       });
 
       // For TPU quick uploads

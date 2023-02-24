@@ -9,6 +9,7 @@ declare interface TpuConfig {
   storage: string
   jitsiToken: string
   registrations: boolean
+  mediaProxySecret: string
   providers: {
     tenor: string
   }

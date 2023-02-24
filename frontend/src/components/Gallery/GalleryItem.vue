@@ -83,7 +83,7 @@
           text="Delete"
           icon="mdi-delete"
           color="red"
-          @click="deleteItem(item)"
+          @click="deleteItem(item, $event)"
           v-if="supports.permissions.write"
           class="my-1"
         ></HoverChip>
@@ -157,8 +157,10 @@ export default defineComponent({
     editItem(item: Upload) {
       console.log("Edit item", item);
     },
-    deleteItem(item: Upload) {
-      console.log("Delete item", item);
+    deleteItem(item: Upload, event: any) {
+      this.axios.delete("/gallery/" + item.id).then(() => {
+        this.$emit("delete", item);
+      });
     },
     removeItem(item: Upload, collection: any) {
       console.log("Remove item", item, collection);

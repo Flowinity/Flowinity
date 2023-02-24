@@ -1,4 +1,4 @@
-import { UserUtilsService } from "@app/services/userutils.service"
+import { UserUtilsService } from "@app/services/userUtils.service"
 import { Request, Response } from "express"
 import { Service } from "typedi"
 import auth from "@app/lib/auth"

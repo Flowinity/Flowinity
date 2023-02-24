@@ -22,7 +22,7 @@ function generateImagePayload(imageResult: probe.ProbeResult) {
     mimeType: imageResult.mime,
     url: ""
   }
-  const jwtImage = jwt.sign(imagePayload, "deez")
+  const jwtImage = jwt.sign(imagePayload, config.mediaProxySecret)
   imagePayload.url = `/api/v2/mediaproxy/embed/${jwtImage}`
   return imagePayload
 }

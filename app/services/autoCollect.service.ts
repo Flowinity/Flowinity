@@ -38,9 +38,17 @@ export class AutoCollectService {
           collectionId: autoCollect.collectionId,
           userId
         })
+        socket.to(userId).emit("autoCollectApproval", {
+          type: "approve",
+          id: autoCollect.id
+        })
         await autoCollect.destroy()
         return true
       case "deny":
+        socket.to(userId).emit("autoCollectApproval", {
+          type: "deny",
+          id: autoCollect.id
+        })
         await autoCollect.destroy()
         return true
       default:

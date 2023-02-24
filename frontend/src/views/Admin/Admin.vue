@@ -1,4 +1,7 @@
-<template><AdminSidebar></AdminSidebar></template>
+<template>
+  <AdminSidebar></AdminSidebar>
+  <router-view></router-view>
+</template>
 
 <script lang="ts">
 import AdminSidebar from "@/components/Admin/AdminSidebar.vue";

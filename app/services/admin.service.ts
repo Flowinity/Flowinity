@@ -9,6 +9,8 @@ import { Experiment } from "@app/models/experiment.model"
 import { CoreService } from "@app/services/core.service"
 import { Feedback } from "@app/models/feedback.model"
 import { Upload } from "@app/models/upload.model"
+import path from "path"
+import * as fs from "fs"
 
 export enum CacheType {
   "everything",
@@ -242,6 +244,65 @@ export class AdminService {
 
   async getServices() {
     // get all typedi service functions
-    console.log(Container)
+    const container = Container as any
+    const services = container?.globalInstance?.services
+    if (!services) return []
+    const serviceNames = Object.keys(services)
+    const serviceFunctions = serviceNames.map((name) => {
+      return services[name]
+    })
+    // get all typedi service names
+    let serviceNamesWithTypes = serviceFunctions.map((service) => {
+      return {
+        name: service.type.name,
+        functions: [] as (string[] | null)[]
+      }
+    })
+    for (const service of serviceNamesWithTypes) {
+      // contains controller, application or server
+      if (
+        service.name.toLowerCase().includes("controller") ||
+        service.name.toLowerCase().includes("application") ||
+        service.name.toLowerCase().includes("server")
+      )
+        continue
+      const name =
+        service.name.charAt(0).toLowerCase() +
+        service.name.slice(1).replace("Service", ".service")
+      const file = fs.readFileSync(
+        path.join(__dirname, `../../app/services/${name}.ts`),
+        "utf8"
+      )
+      // get the function names and also provide the parameters like {"name": "yes", "params": {"id": "number"}}]}
+      let functionNames
+      try {
+        functionNames = file
+          .split("\n")
+          .filter((line) => line.includes("async"))
+          .map((line) => {
+            const functionName = line.split("async ")[1].split("(")[0]
+            const params = line
+              .split("(")[1]
+              .split(")")[0]
+              .split(",")
+              .map((param) => {
+                const name = param.split(":")[0]?.trim()
+                const type = param.split(":")[1]?.trim()
+                return {
+                  name,
+                  type
+                }
+              })
+            return {
+              name: functionName,
+              params
+            }
+          })
+      } catch {}
+      if (!functionNames) continue
+      // @ts-ignore
+      service.functions = functionNames
+    }
+    return serviceNamesWithTypes
   }
 }

@@ -3,6 +3,7 @@
     :fall-back="skullCrash"
     @error-captured="submitFeedback"
     :params="{ e: error }"
+    stop-propagation
   >
     <router-view />
   </VErrorBoundary>

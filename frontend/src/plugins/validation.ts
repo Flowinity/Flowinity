@@ -38,6 +38,20 @@ export default {
         if (!value) return "You must accept the terms of service";
         return true;
       }
+    ],
+    totp: [
+      (value: string) => {
+        if (!value) return "2FA code is required";
+        if (value.length !== 6) return "2FA code must be 6 characters";
+        return true;
+      }
+    ],
+    optionalTotp: [
+      (value: string) => {
+        if (!value) return true;
+        if (value.length !== 6) return "2FA code must be 6 characters";
+        return true;
+      }
     ]
   }
 };

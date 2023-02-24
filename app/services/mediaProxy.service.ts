@@ -8,7 +8,7 @@ import Errors from "@app/lib/errors"
 export class MediaProxyService {
   async proxyEmbedJWT(token: string) {
     try {
-      const parsed = jwt.verify(token, "deez")
+      const parsed = jwt.verify(token, config.mediaProxySecret)
       if (parsed) {
         const { originalURL } = parsed as ImagePayload
         const { data } = await axios.get(originalURL, {

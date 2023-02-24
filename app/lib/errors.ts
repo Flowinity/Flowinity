@@ -4,7 +4,7 @@ let Errors = {
     status: 500
   },
   NOT_FOUND: {
-    message: "Route not implemented yet.",
+    message: "The item or route you requested could not be found.",
     status: 404
   },
   USER_NOT_FOUND: {

@@ -19,16 +19,17 @@
       v-if="$vuetify.display.mobile"
       @click.stop="$app.mainDrawer = !$app.mainDrawer"
     ></v-app-bar-nav-icon>
-    <h1
-      style="z-index: 10; cursor: pointer; font-size: 32px"
-      class="text-gradient unselectable ml-4"
-      @click="$router.push('/')"
-      id="tpu-brand-logo"
-      title="TroploPrivateUploader"
-      v-if="!$chat.isCommunications || !$chat.selectedChat"
-    >
-      TPU
-    </h1>
+    <template v-if="!$chat.isCommunications || !$chat.selectedChat">
+      <h1
+        style="z-index: 10; cursor: pointer; font-size: 32px"
+        class="text-gradient unselectable ml-4"
+        @click="$router.push('/')"
+        id="tpu-brand-logo"
+        title="TroploPrivateUploader"
+      >
+        TPU
+      </h1>
+    </template>
     <template v-else>
       <CommunicationsAvatar
         :user="$chat.selectedChat?.recipient"
@@ -42,13 +43,13 @@
         size="32"
         class="ml-4"
       />
-      <h1
+      <h2
         class="unselectable ml-2 limit"
         id="tpu-brand-logo"
         title="TPU Communications"
       >
         {{ $chat.chatName }}
-      </h1>
+      </h2>
     </template>
     <v-spacer></v-spacer>
     <small v-if="$app.notesSaving" class="mr-3">Saving...</small>
