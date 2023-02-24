@@ -30,7 +30,7 @@ export default defineComponent({
   name: "Services",
   data() {
     return {
-      services: []
+      services: [] as { name: string; functions: any[] }[]
     };
   },
   methods: {
