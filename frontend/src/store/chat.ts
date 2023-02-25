@@ -27,7 +27,7 @@ export interface ChatState {
   dialogs: {
     groupSettings: {
       value: boolean;
-      item: Chat | null;
+      item: Chat | undefined;
     };
     user: {
       value: boolean;
@@ -144,7 +144,7 @@ export const useChatStore = defineStore("chat", {
       dialogs: {
         groupSettings: {
           value: false,
-          item: null
+          item: undefined
         },
         externalSite: {
           value: false,

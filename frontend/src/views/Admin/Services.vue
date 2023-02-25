@@ -11,7 +11,7 @@
               {{ fun.name }}:
               {{
                 fun.params
-                  .map((param: string) => param.name)
+                  .map((param: any) => param.name)
                   .join(",")
                   .replace(/,/g, "," + "")
               }}

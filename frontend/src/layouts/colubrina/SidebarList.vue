@@ -106,13 +106,13 @@ export default defineComponent({
       create: false,
       leave: {
         dialog: false,
-        chat: null as Chat | null
+        chat: undefined as Chat | undefined
       },
       contextMenu: {
         dialog: false,
         x: 0,
         y: 0,
-        item: null as Chat | null
+        item: undefined as Chat | undefined
       }
     };
   },

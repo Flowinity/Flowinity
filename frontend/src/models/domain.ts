@@ -14,4 +14,5 @@ export interface Domain {
   restricted: "disabled" | "user" | "premium";
   user: User;
   users: User[];
+  activeUsersCount: number;
 }

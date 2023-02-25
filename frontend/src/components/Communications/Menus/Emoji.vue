@@ -55,7 +55,7 @@ import data from "../../../assets/compact.raw.json";
 export default defineComponent({
   name: "EmojiPicker",
   props: ["modelValue"],
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "emoji"],
   data() {
     return {
       tab: 0,

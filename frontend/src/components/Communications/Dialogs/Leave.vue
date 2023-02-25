@@ -4,7 +4,7 @@
     :model-value="modelValue"
     max-width="700px"
   >
-    <v-card>
+    <v-card v-if="chat">
       <v-toolbar>
         <v-toolbar-title>Leave Group</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -43,20 +43,34 @@
 </template>
 
 <script lang="ts">
+import { Chat } from "@/models/chat";
 import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Leave",
-  props: ["modelValue", "chat"],
+  props: {
+    modelValue: {
+      type: Boolean,
+      required: true
+    },
+    chat: {
+      type: Object as () => Chat | undefined,
+      required: true
+    }
+  },
   emits: ["update:modelValue"],
   methods: {
     async leave() {
+      if (!this.chat) return;
       await this.axios.delete(
         `/chats/${this.chat.association?.id}/association`
       );
       this.$emit("update:modelValue", false);
       this.$toast.success("You have left the group.");
-      if (this.$route.params.chatId === this.chat.association?.id) {
+      if (
+        parseInt(<string>this.$route.params.chatId) ===
+        this.chat.association?.id
+      ) {
         this.$router.push("/communications/home");
       }
     }

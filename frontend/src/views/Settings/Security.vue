@@ -23,7 +23,7 @@
         :disabled="!item.props.title.info?.accessedFrom.length"
       >
         <v-tooltip activator="parent" location="top">
-          <span v-if="login.info?.accessedFrom?.length">View IP History</span>
+          <span v-if="item.info?.accessedFrom?.length">View IP History</span>
           <span v-else>Session has no IP history.</span>
         </v-tooltip>
         mdi-web
