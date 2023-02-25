@@ -12,6 +12,8 @@ import { PulseService } from "@app/services/pulse.service"
 import { ChatService } from "@app/services/chat.service"
 import { Chat } from "@app/models/chat.model"
 import { Message } from "@app/models/message.model"
+import cron from "node-cron"
+
 @Service()
 export class CacheService {
   async generateMissingChatDates() {
@@ -301,7 +303,9 @@ export class CacheService {
       let end = new Date().getTime()
       console.info(`[REDIS] Collections cache generated in ${end - start}ms`)
       this.generateAutoCollectCache().then(() => {})
-    } catch {}
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   async generateCollectionCacheForUser(id: number) {
@@ -383,13 +387,16 @@ export class CacheService {
       setInterval(this.generateCollectionCache, 3600000)
       setInterval(this.generateShareLinkCache, 3600000)
 
-      // 4 hours
-      setInterval(this.generateInsightsCache, 14400000)
+      cron.schedule("0 5 * * *", () => {
+        this.generateInsightsCache()
+      })
+
+      cron.schedule("0 4 * * *", () => {
+        this.generateCollectionCache()
+      })
 
       this.refreshState().then(() => {})
-      this.generateCollectionCache().then(() => {})
       this.generateShareLinkCache().then(() => {})
-      this.generateInsightsCache().then(() => {})
       this.generateUserStatsCache().then(() => {})
       this.generateChatsCache().then(() => {})
       this.generateMissingChatDates().then(() => {})
