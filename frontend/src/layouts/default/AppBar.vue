@@ -7,7 +7,10 @@
     :class="{
       'header-patch': $app.mainDrawer && !$vuetify.display.mobile,
       'header-patch-workspaces':
-        $app.workspaceDrawer && !$vuetify.display.mobile
+        ($app.workspaceDrawer &&
+          !$vuetify.display.mobile &&
+          !$chat.isCommunications) ||
+        ($chat.isCommunications && $chat.memberSidebarShown)
     }"
     flat
     style="z-index: 2001"

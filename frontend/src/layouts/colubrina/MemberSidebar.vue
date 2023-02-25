@@ -5,7 +5,11 @@
     location="right"
     v-model="$chat.memberSidebarShown"
     :class="
-      !$chat.memberSidebar && !$vuetify.display.mobile ? 'sidebar-patch' : ''
+      $chat.memberSidebarShown &&
+      !$chat.memberSidebar &&
+      !$vuetify.display.mobile
+        ? 'sidebar-patch'
+        : ''
     "
   >
     <ColubrinaMemberSidebarList
