@@ -30,8 +30,10 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
   name: "IPHistory",
   props: ["modelValue", "history"],
   emits: ["update:modelValue"],
@@ -61,7 +63,7 @@ export default {
       ]
     };
   }
-};
+});
 </script>
 
 <style scoped></style>
