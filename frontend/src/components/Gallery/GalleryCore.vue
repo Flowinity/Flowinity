@@ -63,6 +63,7 @@
             collectivize = $event;
           "
           @delete="$emit('delete', $event)"
+          @remove="$emit('remove', $event)"
         >
           <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
             <slot :name="name" v-bind="slotData" />

@@ -144,7 +144,6 @@ export const useAppStore = defineStore("app", {
     weatherTemp(state: AppState) {
       const temp = state.weather.data.temp;
       const user = useUserStore().user;
-      console.log(user?.weatherUnit);
       if (user?.weatherUnit === "kelvin") {
         // round to 2 decimal places
         return Math.round((temp + 273.15) * 100) / 100;

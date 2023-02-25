@@ -42,31 +42,29 @@
     <v-card-subtitle>Size: {{ fileSize }}</v-card-subtitle>
     <div class="ml-4">
       <slot :item="item" name="custom-properties" />
-      <v-slide-group>
-        <v-chip-group class="mb-1">
-          <HoverChip
-            text="Add to Collection"
-            icon="mdi-plus"
-            @click="$emit('collectivize', item.id)"
+      <v-chip-group class="mb-1">
+        <HoverChip
+          text="Add to Collection"
+          icon="mdi-plus"
+          @click="$emit('collectivize', item.id)"
+          v-if="supports.permissions.write"
+        ></HoverChip>
+        <v-chip
+          :to="'/collections/' + collection.id"
+          :key="collection.id"
+          v-for="collection in item.collections"
+          :disabled="!$user.user"
+        >
+          {{ collection.name }}
+          <v-icon
+            @click.prevent="removeItem(item, collection)"
+            class="ml-1"
             v-if="supports.permissions.write"
-          ></HoverChip>
-          <v-chip
-            :to="'/collections/' + collection.id"
-            :key="collection.id"
-            v-for="collection in item.collections"
-            :disabled="!$user.user"
           >
-            {{ collection.name }}
-            <v-icon
-              @click.prevent="removeItem(item, collection)"
-              class="ml-1"
-              v-if="supports.permissions.write"
-            >
-              mdi-close
-            </v-icon>
-          </v-chip>
-        </v-chip-group>
-      </v-slide-group>
+            mdi-close
+          </v-icon>
+        </v-chip>
+      </v-chip-group>
     </div>
     <v-divider></v-divider>
     <v-card-text class="text-center">
@@ -134,6 +132,7 @@ import { defineComponent } from "vue";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 import { Upload } from "@/models/upload";
+import { Collection } from "@/models/collection";
 
 export default defineComponent({
   name: "GalleryItem",
@@ -157,13 +156,18 @@ export default defineComponent({
     editItem(item: Upload) {
       console.log("Edit item", item);
     },
-    deleteItem(item: Upload, event: any) {
-      this.axios.delete("/gallery/" + item.id).then(() => {
-        this.$emit("delete", item);
-      });
+    async deleteItem(item: Upload, event: any) {
+      await this.axios.delete("/gallery/" + item.id);
+      this.$emit("delete", item);
     },
-    removeItem(item: Upload, collection: any) {
-      console.log("Remove item", item, collection);
+    async removeItem(item: Upload, collection: Collection) {
+      await this.axios.delete(
+        `/collections/${collection.id}/remove/${item.id}`
+      );
+      this.$emit("remove", {
+        item,
+        collection
+      });
     }
   }
 });

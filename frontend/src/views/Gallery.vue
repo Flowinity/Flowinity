@@ -33,6 +33,7 @@
       @page-change="$router.push(`/gallery/${$event}`)"
       @updateItem="updateItem"
       @delete="deleteItem"
+      @remove="removeItemFromCollection($event.item, $event.collection)"
     ></GalleryCore>
   </v-container>
 </template>
@@ -91,6 +92,18 @@ export default defineComponent({
     };
   },
   methods: {
+    removeItemFromCollection(item: Upload, collection: CollectionCache) {
+      const index = this.gallery.gallery.findIndex(
+        (i: Upload) => i.id === item.id
+      );
+      if (index === -1) return;
+      this.gallery.gallery[index] = {
+        ...this.gallery.gallery[index],
+        collections: this.gallery.gallery[index]?.collections.filter(
+          (c: any) => c.id !== collection.id
+        )
+      };
+    },
     deleteItem(item: Upload) {
       console.log(item.id);
       const index = this.gallery.gallery.findIndex(
@@ -111,7 +124,7 @@ export default defineComponent({
       if (index === -1) return;
       this.gallery.gallery[index] = {
         ...this.gallery.gallery[index],
-        collections: [...this.gallery.gallery[index].collections, collection]
+        collections: [...this.gallery.gallery[index]?.collections, collection]
       };
     },
     async getGallery() {

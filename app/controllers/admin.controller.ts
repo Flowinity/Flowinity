@@ -353,6 +353,17 @@ export class AdminController {
       }
     )
 
+    this.router.post("/dev/email", async (req: RequestAuth, res: Response) => {
+      if (!req.body.email || !req.body.to || !req.body.subject)
+        throw Errors.INVALID_PARAMETERS
+      await this.adminService.sendEmail(
+        req.body.email,
+        req.body.to,
+        req.body.subject
+      )
+      res.sendStatus(204)
+    })
+
     /*    this.router.get(
       "/online",
       auth("*"),

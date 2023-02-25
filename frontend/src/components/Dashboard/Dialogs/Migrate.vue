@@ -6,11 +6,35 @@
     persistent
   >
     <v-card color="#151515">
-      <template v-if="step === 1">
+      <template
+        v-if="step === 1 && $experiments.experiments['CLASSIC_MIGRATE']"
+      >
         <v-img src="https://i.troplo.com/i/e180024e804e.png"></v-img>
         <v-card-subtitle class="text-center justify-center">
           This is a wizard designed to help you seamlessly migrate your existing
           TroploServices accounts.
+        </v-card-subtitle>
+        <v-card-actions class="text-center justify-center">
+          <v-btn
+            color="red"
+            text
+            class="no-capital"
+            @click="$emit('update:modelValue', false)"
+          >
+            <v-icon class="mr-1">mdi-arrow-left</v-icon>
+            Do it later
+          </v-btn>
+          <v-btn color="primary" text class="no-capital" @click="step++">
+            <v-icon class="mr-1">mdi-arrow-right</v-icon>
+            Get started
+          </v-btn>
+        </v-card-actions>
+      </template>
+      <template v-else-if="step === 1">
+        <v-img src="https://i.troplo.com/i/888e1eac2f56.png"></v-img>
+        <v-card-subtitle class="text-center justify-center">
+          This is a wizard designed to help you seamlessly migrate your
+          Colubrina account.
         </v-card-subtitle>
         <v-card-actions class="text-center justify-center">
           <v-btn
@@ -42,7 +66,16 @@
           Communications.
         </v-card-subtitle>
         <v-card-actions class="text-center justify-center">
-          <v-btn color="red" text class="no-capital" @click="step = 4">
+          <v-btn
+            color="red"
+            text
+            class="no-capital"
+            @click="
+              $experiments.experiments['CLASSIC_MIGRATE']
+                ? (step = 4)
+                : (step = 8)
+            "
+          >
             <v-icon class="mr-1">mdi-close</v-icon>
             No
           </v-btn>
@@ -93,7 +126,14 @@
           ></v-text-field>
         </v-container>
         <v-card-actions class="text-center justify-center">
-          <v-btn color="red" text class="no-capital" @click="step++">
+          <v-btn
+            color="red"
+            text
+            class="no-capital"
+            @click="
+              $experiments.experiments['CLASSIC_MIGRATE'] ? step++ : (step = 8)
+            "
+          >
             <v-icon class="mr-1">mdi-close</v-icon>
             Skip
           </v-btn>
@@ -271,10 +311,19 @@ export default defineComponent({
           password: this.colubrina.password,
           totp: this.colubrina.totp
         });
-        this.step++;
+        if (this.$experiments.experiments["CLASSIC_MIGRATE"]) this.step++;
+        else this.step = 8;
         this.colubrina.loading = false;
       } catch {
         this.colubrina.loading = false;
+      }
+    }
+  },
+  watch: {
+    modelValue: {
+      immediate: true,
+      handler(val) {
+        if (!val) this.step = 1;
       }
     }
   }

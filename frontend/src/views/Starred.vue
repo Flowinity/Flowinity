@@ -101,7 +101,7 @@ export default defineComponent({
       if (index === -1) return;
       this.gallery.gallery[index] = {
         ...this.gallery.gallery[index],
-        collections: [...this.gallery.gallery[index].collections, collection]
+        collections: [...this.gallery.gallery[index]?.collections, collection]
       };
     },
     async getGallery() {
