@@ -610,7 +610,7 @@ export class ChatService {
       await ChatAssociation.create({
         userId,
         chatId: chat.id,
-        rank: "owner"
+        rank: type === "direct" ? "member" : "owner"
       })
     )
 
