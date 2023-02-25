@@ -108,7 +108,7 @@ export default defineComponent({
     }) {
       console.log(item, collection);
       const index = this.gallery.gallery.findIndex((i: any) => i.id === item);
-      if (!index) return;
+      if (index === -1) return;
       this.gallery.gallery[index] = {
         ...this.gallery.gallery[index],
         collections: [...this.gallery.gallery[index].collections, collection]

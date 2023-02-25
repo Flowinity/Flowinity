@@ -115,12 +115,10 @@ export class CoreController {
         } else {
           // redis cache for 5 minutes
           if (!weather.cached)
-            redis.set(
-              `core:weather:${req.ip}`,
-              JSON.stringify(weather),
-              "EX",
-              300
-            )
+            redis.set(`core:weather:${req.ip}`, JSON.stringify(weather), {
+              EX: 300,
+              NX: true
+            })
           return res.json(weather)
         }
       }
