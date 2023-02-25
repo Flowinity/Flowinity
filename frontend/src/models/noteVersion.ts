@@ -12,4 +12,6 @@ export interface NoteVersion {
   data: NoteDataV2;
   note: Note;
   user: User;
+  createdAt: Date;
+  updatedAt: Date;
 }
