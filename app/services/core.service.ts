@@ -27,7 +27,7 @@ maxmind
 export class CoreService {
   async getWeather(ip: string): Promise<object> {
     try {
-      const cityResponse = await city?.get("124.169.202.0")
+      const cityResponse = await city?.get(ip)
       const location = cityResponse?.city?.names?.en
       if (!location) {
         throw Errors.WEATHER_NOT_RESPONDING
