@@ -10,6 +10,7 @@ declare interface TpuConfig {
   jitsiToken: string
   registrations: boolean
   mediaProxySecret: string
+  weatherApiKey: string
   providers: {
     tenor: string
   }

@@ -12,9 +12,42 @@ import { Experiment } from "@app/models/experiment.model"
 import { Note } from "@app/models/note.model"
 import { Workspace } from "@app/models/workspace.model"
 import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
+import axios from "axios"
+import maxmind, { CityResponse, Reader } from "maxmind"
+import Errors from "@app/lib/errors"
+let city: Reader<CityResponse> | undefined
+
+maxmind
+  .open<CityResponse>(process.cwd() + "/app/lib/GeoLite2-City.mmdb")
+  .then((reader) => {
+    city = reader
+  })
 
 @Service()
 export class CoreService {
+  async getWeather(ip: string): Promise<object> {
+    try {
+      const cityResponse = await city?.get("124.169.202.0")
+      const location = cityResponse?.city?.names?.en
+      if (!location) {
+        throw Errors.WEATHER_NOT_RESPONDING
+      }
+      const { data } = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${config.weatherApiKey}&units=metric`
+      )
+      return {
+        ...data.main,
+        ...data.weather[0],
+        location: data.name,
+        _redis: new Date().toISOString()
+      }
+    } catch {
+      return {
+        error: true,
+        errors: [Errors.WEATHER_NOT_RESPONDING]
+      }
+    }
+  }
   async getState(): Promise<object> {
     return {
       name: config.siteName,

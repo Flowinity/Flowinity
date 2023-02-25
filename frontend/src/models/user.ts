@@ -73,4 +73,5 @@ export interface User {
   status: "online" | "offline" | "idle" | "busy";
   storedStatus: "online" | "invisible" | "idle" | "busy";
   notifications: Notification[];
+  weatherUnit: "celsius" | "fahrenheit" | "kelvin";
 }

@@ -25,6 +25,16 @@
     class="px-4"
     @update:modelValue="$emit('update')"
   ></v-slider>
+  <!-- select between Farenheit, Celsius or Kelvin -->
+  <v-select
+    v-model="$user.changes.weatherUnit"
+    :items="temperatureUnits"
+    label="Temperature unit for weather widget"
+    class="px-6"
+    @update:modelValue="$emit('update')"
+    item-title="title"
+    item-value="value"
+  ></v-select>
   <v-card-title>My TPU</v-card-title>
   <v-expansion-panels class="px-4">
     <v-expansion-panel title="Change username">
@@ -156,6 +166,11 @@ export default defineComponent({
   emits: ["update", "laoding"],
   data() {
     return {
+      temperatureUnits: [
+        { title: "Celsius (Metric)", value: "celsius" },
+        { title: "Kelvin (Metric Standard)", value: "kelvin" },
+        { title: "Fahrenheit (Imperial)", value: "fahrenheit" }
+      ],
       confirmPassword: "",
       valid: {
         password: true,

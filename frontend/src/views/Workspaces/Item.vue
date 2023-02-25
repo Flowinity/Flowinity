@@ -1,5 +1,10 @@
 <template>
   <div id="workspaces-editor">
+    <WorkspaceShareDialog
+      v-model="$workspaces.share.dialog"
+      :key="$route.params.id"
+      v-if="$route.params.id"
+    />
     <div class="editorx_body" :key="$route.params.version || $route.params.id">
       <div class id="tpu-editor" />
     </div>
@@ -76,10 +81,11 @@ import Undo from "editorjs-undo";
 import { defineComponent } from "vue";
 //@ts-ignore
 import SimpleImage from "@troplo/tpu-simple-image";
+import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue";
 
 export default defineComponent({
   name: "WorkspaceItem",
-  components: { WorkspaceHome },
+  components: { WorkspaceShareDialog, WorkspaceHome },
   props: ["id"],
   data() {
     return {

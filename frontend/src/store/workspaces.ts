@@ -8,6 +8,11 @@ export interface WorkspacesState {
   items: Workspace[];
   workspace: Workspace | null;
   recent: Note[];
+  versionHistory: boolean;
+  share: {
+    dialog: boolean;
+    loading: boolean;
+  };
 }
 
 export const useWorkspacesStore = defineStore("workspaces", {
@@ -15,7 +20,12 @@ export const useWorkspacesStore = defineStore("workspaces", {
     ({
       items: [],
       workspace: null,
-      recent: []
+      recent: [],
+      versionHistory: false,
+      share: {
+        dialog: false,
+        loading: false
+      }
     } as WorkspacesState),
   actions: {
     async getRecent() {

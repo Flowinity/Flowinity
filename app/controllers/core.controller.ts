@@ -6,6 +6,20 @@ import { CacheService } from "@app/services/cache.service"
 import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
 
+interface WeatherResponse {
+  temp?: number
+  feels_like?: number
+  temp_min?: number
+  temp_max?: number
+  pressure?: number
+  humidity?: number
+  wind_speed?: number
+  wind_deg?: number
+  clouds?: number
+  visibility?: number
+  error?: boolean
+  cached?: boolean
+}
 @Service()
 export class CoreController {
   router: Router
@@ -80,5 +94,36 @@ export class CoreController {
         return res.sendStatus(500)
       }
     })
+
+    this.router.get(
+      "/weather",
+      auth("user.view"),
+      async (req: RequestAuth, res: Response) => {
+        const cached = await redis.get(`core:weather:${req.ip}`)
+        let weather: WeatherResponse = {}
+        try {
+          if (cached) {
+            weather = JSON.parse(cached)
+            weather.cached = true
+          }
+        } catch {}
+        if (!weather?.temp) {
+          weather = await this.coreService.getWeather(req.ip)
+        }
+        if (weather.error) {
+          return res.status(500).json(weather)
+        } else {
+          // redis cache for 5 minutes
+          if (!weather.cached)
+            redis.set(
+              `core:weather:${req.ip}`,
+              JSON.stringify(weather),
+              "EX",
+              300
+            )
+          return res.json(weather)
+        }
+      }
+    )
   }
 }

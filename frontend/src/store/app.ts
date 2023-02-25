@@ -4,6 +4,7 @@ import axios from "@/plugins/axios";
 import { useToast } from "vue-toastification";
 import functions from "@/plugins/functions";
 import { AxiosProgressEvent } from "axios";
+import { useUserStore } from "@/store/user";
 
 export interface AppState {
   domain: string;
@@ -57,6 +58,19 @@ export interface AppState {
       loading: boolean;
     };
   };
+  weather: {
+    loading: boolean;
+    data: {
+      description: string;
+      icon: string;
+      temp: number;
+      temp_max: number;
+      temp_min: number;
+      name: string;
+      id: number;
+      main: string;
+    };
+  };
 }
 
 export const useAppStore = defineStore("app", {
@@ -103,6 +117,19 @@ export const useAppStore = defineStore("app", {
         maintenance: false,
         _redis: new Date().toISOString()
       },
+      weather: {
+        loading: true,
+        data: {
+          description: "Clouds",
+          icon: "04d",
+          temp: 0,
+          temp_max: 0,
+          temp_min: 0,
+          name: "Australia",
+          id: 2643743,
+          main: "Clouds"
+        }
+      },
       dialogs: {
         upload: {
           value: false,
@@ -113,8 +140,29 @@ export const useAppStore = defineStore("app", {
         memoryProfiler: false
       }
     } as AppState),
-  getters: {},
+  getters: {
+    weatherTemp(state: AppState) {
+      const temp = state.weather.data.temp;
+      const user = useUserStore().user;
+      console.log(user?.weatherUnit);
+      if (user?.weatherUnit === "kelvin") {
+        // round to 2 decimal places
+        return Math.round((temp + 273.15) * 100) / 100;
+      } else if (user?.weatherUnit === "fahrenheit") {
+        return Math.round(((temp * 9) / 5 + 32) * 100) / 100;
+      } else {
+        return temp;
+      }
+    }
+  },
   actions: {
+    async getWeather() {
+      try {
+        const { data } = await axios.get("/core/weather");
+        this.weather.data = data;
+        this.weather.loading = false;
+      } catch {}
+    },
     async init() {
       this.loading = true;
       const core = localStorage.getItem("coreStore");

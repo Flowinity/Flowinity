@@ -270,7 +270,8 @@ export class UserUtilsService {
       "darkTheme",
       "description",
       "itemsPerPage",
-      "storedStatus"
+      "storedStatus",
+      "weatherUnit"
     ]
 
     // from body, remove all empty values

@@ -210,6 +210,10 @@ let Errors = {
     message:
       "You do not have permission to perform this action based on your user rank.",
     status: 400
+  },
+  WEATHER_NOT_RESPONDING: {
+    message: "The weather service is not responding.",
+    status: 500
   }
 }
 

@@ -53,6 +53,38 @@
     </template>
     <v-spacer></v-spacer>
     <small v-if="$app.notesSaving" class="mr-3">Saving...</small>
+    <template v-if="!$app.weather.loading">
+      <span>
+        <v-img
+          :src="`https://openweathermap.org/img/wn/${$app.weather.data?.icon}@2x.png`"
+          width="32"
+          height="32"
+        ></v-img>
+        <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
+          {{ $app.weather.data?.main }}
+        </v-tooltip>
+      </span>
+      <span class="mr-3">
+        {{ $app.weatherTemp }}°{{
+          $user.user?.weatherUnit.charAt(0).toUpperCase()
+        }}
+      </span>
+    </template>
+    <template v-else>
+      <v-icon class="mr-2">mdi-weather-cloudy</v-icon>
+      Loading...
+    </template>
+    <template v-if="$route.path.startsWith('/workspaces/notes/')">
+      <v-btn
+        icon
+        @click="$workspaces.versionHistory = !$workspaces.versionHistory"
+      >
+        <v-icon>mdi-history</v-icon>
+      </v-btn>
+      <v-btn icon @click="$workspaces.share.dialog = true">
+        <v-icon>mdi-share</v-icon>
+      </v-btn>
+    </template>
     <v-btn icon>
       <Notifications />
       <v-badge dot color="red" :model-value="$user.unreadNotifications > 0">

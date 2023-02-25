@@ -126,13 +126,16 @@
     style="color: #0190ea; cursor: pointer; font-size: 12px"
     class="mb-n4 unselectable"
     @click="$app.workspaceDrawer = false"
-    v-if="!$chat.isCommunications || $chat.communicationsSidebar"
+    v-if="
+      (!$chat.isCommunications || $chat.communicationsSidebar) &&
+      !$workspaces.versionHistory
+    "
   >
     <v-icon color="primary" size="20">mdi-close</v-icon>
     Close sidebar
   </v-card-text>
   <v-card-text
-    v-else
+    v-else-if="$chat.isCommunications || $chat.communicationsSidebar"
     @click="$app.forcedWorkspaceDrawer = false"
     style="color: #0190ea; cursor: pointer; font-size: 12px"
     class="mb-n4 unselectable"
@@ -140,7 +143,24 @@
     <v-icon>mdi-arrow-right</v-icon>
     Back to Members
   </v-card-text>
-  <v-list density="comfortable" nav class="mt-2">
+  <v-card-text
+    v-else
+    @click="
+      $workspaces.versionHistory = false;
+      $router.push(`/workspaces/notes/${$route.params.id}`);
+    "
+    style="color: #0190ea; cursor: pointer; font-size: 12px"
+    class="mb-n4 unselectable"
+  >
+    <v-icon>mdi-arrow-left</v-icon>
+    Leave version history
+  </v-card-text>
+  <v-list
+    density="comfortable"
+    nav
+    class="mt-2"
+    v-if="!$workspaces.versionHistory"
+  >
     <v-list-item
       class="px-2 unselectable"
       id="workspace-select"
@@ -220,18 +240,34 @@
       </v-list-group>
     </template>
   </v-list>
+  <template v-else>
+    <v-card-title>Version history</v-card-title>
+    <v-list>
+      <v-list-item
+        v-for="version in versions"
+        :key="version.createdAt"
+        :to="'/workspaces/notes/' + $route.params.id + '/' + version.id"
+      >
+        <v-list-item-title>
+          {{ $date(version.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
+        </v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </template>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import WorkspaceDialog from "@/components/Workspaces/Dialogs/Dialog.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
+import { NoteVersion } from "@/models/noteVersion";
 
 export default defineComponent({
   name: "WorkspacesSidebarList",
   components: { WorkspaceDeleteDialog, WorkspaceDialog },
   data() {
     return {
+      versions: [] as NoteVersion[],
       importDoc: {
         dialog: false,
         loading: false,
@@ -437,6 +473,23 @@ export default defineComponent({
         this.deleteWorkspace.dialog = false;
         this.deleteWorkspace.loading = false;
       });
+    },
+    async getVersions() {
+      const { data } = await this.axios.get("/notes/" + this.$route.params.id);
+      this.versions = data.versions;
+    }
+  },
+  mounted() {
+    if (this.$route.params.version) {
+      this.$workspaces.versionHistory = true;
+      this.getVersions();
+    }
+  },
+  watch: {
+    "$workspaces.versionHistory"(val) {
+      if (val && this.$route.name === "Workspace Item") {
+        this.getVersions();
+      }
     }
   }
 });

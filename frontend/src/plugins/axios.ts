@@ -36,7 +36,9 @@ ax.interceptors.response.use(
         return Promise.reject(e);
       } else if (
         e.response.data.errors[0].message ===
-        "You are not allowed to use this experimental feature."
+          "You are not allowed to use this experimental feature." ||
+        e.response.data.errors[0].message ===
+          "The weather service is not responding."
       ) {
         console.warn(`[TPU/HTTP] Experimental feature is not allowed.`);
         return Promise.reject(e);

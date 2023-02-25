@@ -126,7 +126,7 @@ const routes = [
         component: () => import("@/views/Workspaces/Home.vue")
       },
       {
-        path: "/workspaces/notes/:id",
+        path: "/workspaces/notes/:id/:version?",
         name: "Workspace Item",
         component: () => import("@/views/Workspaces/Item.vue")
       },

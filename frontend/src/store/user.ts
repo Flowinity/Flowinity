@@ -7,6 +7,7 @@ import { useWorkspacesStore } from "@/store/workspaces";
 import { useCollectionsStore } from "@/store/collections";
 import { useExperimentsStore } from "@/store/experiments";
 import { useFriendsStore } from "@/store/friends";
+import { useAppStore } from "@/store/app";
 
 export interface UserState {
   user: User | null;
@@ -20,6 +21,7 @@ export interface UserState {
     currentPassword?: string;
     storedStatus?: string;
     description?: string;
+    weatherUnit?: string;
   };
 }
 
@@ -45,6 +47,7 @@ export const useUserStore = defineStore("user", {
     async runPostTasks() {
       if (this.user && !this._postInitRan) {
         console.info("[TPU/UserStore] Running post-init auth tasks");
+        const app = useAppStore();
         const chat = useChatStore();
         const workspace = useWorkspacesStore();
         const collections = useCollectionsStore();
@@ -65,6 +68,13 @@ export const useUserStore = defineStore("user", {
         friends.init().then(() => {
           console.info("[TPU/FriendsStore] Friends initialized");
         });
+        app.getWeather().then(() => {
+          console.info("[TPU/AppStore] Weather initialized");
+        });
+        // every 15 minutes update the weather
+        setInterval(() => {
+          app.getWeather();
+        }, 1000 * 60 * 15);
         this._postInitRan = true;
       }
     },
@@ -100,7 +110,8 @@ export const useUserStore = defineStore("user", {
         itemsPerPage: this.user?.itemsPerPage,
         currentPassword: "",
         storedStatus: this.user?.storedStatus,
-        description: this.user?.description
+        description: this.user?.description,
+        weatherUnit: this.user?.weatherUnit
       };
       localStorage.setItem("userStore", JSON.stringify(data));
       this.runPostTasks();
@@ -115,7 +126,8 @@ export const useUserStore = defineStore("user", {
         username: this.changes.username,
         itemsPerPage: this.changes.itemsPerPage,
         storedStatus: this.changes.storedStatus,
-        description: this.changes.description
+        description: this.changes.description,
+        weatherUnit: this.changes.weatherUnit
       });
       this.user = {
         ...this.user,

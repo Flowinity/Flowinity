@@ -189,6 +189,12 @@ export class User extends Model {
   })
   storedStatus: "online" | "idle" | "busy" | "invisible"
 
+  @Column({
+    type: DataType.ENUM("celsius", "fahrenheit", "kelvin"),
+    defaultValue: "celsius"
+  })
+  weatherUnit: "celsius" | "fahrenheit" | "kelvin"
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 
