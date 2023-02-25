@@ -245,7 +245,7 @@
     <v-list>
       <v-list-item
         v-for="version in versions"
-        :key="version.createdAt"
+        :key="version.id"
         :to="'/workspaces/notes/' + $route.params.id + '/' + version.id"
       >
         <v-list-item-title>
