@@ -39,7 +39,7 @@
             :close-on-content-click="false"
             v-model="menu"
           >
-            <v-card height="500" width="700">
+            <v-card height="500" max-width="700">
               <v-tabs v-model="tab" align-tabs="center">
                 <v-tab value="upload">Upload</v-tab>
                 <v-tab value="gallery">Gallery</v-tab>
@@ -91,7 +91,10 @@
                   <v-window-item value="gif">
                     <InlineGallery
                       type="tenor"
-                      @clickItem="$emit('quickTPULink', $event)"
+                      @clickItem="
+                        $emit('quickTPULink', $event);
+                        menu = false;
+                      "
                     ></InlineGallery>
                   </v-window-item>
                 </v-window>
@@ -111,7 +114,16 @@
           >
             mdi-star
           </v-icon>
-          <v-icon>mdi-emoticon</v-icon>
+          <span>
+            <EmojiPicker
+              @emoji="
+                $emit('update:modelValue', modelValue + $event);
+                focus();
+              "
+              v-model="emojiPicker"
+            />
+            <v-icon class="pointer">mdi-emoticon</v-icon>
+          </span>
         </template>
         <template v-slot:details v-if="!editing">
           <span class="details-container">
@@ -129,10 +141,18 @@ import PersonalGallery from "@/views/Starred.vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import InlineGallery from "@/components/Communications/InlineGallery.vue";
 import Mentionable from "@/components/Core/Mentionable.vue";
+import EmojiPicker from "@/components/Communications/Menus/Emoji.vue";
+import emoji from "@/components/Communications/Menus/Emoji.vue";
 
 export default defineComponent({
   name: "CommunicationsInput",
-  components: { InlineGallery, GalleryCore, PersonalGallery, Mentionable },
+  components: {
+    EmojiPicker,
+    InlineGallery,
+    GalleryCore,
+    PersonalGallery,
+    Mentionable
+  },
   props: ["modelValue", "editing", "renderKey"],
   emits: [
     "update:modelValue",
@@ -145,10 +165,14 @@ export default defineComponent({
     return {
       tab: null as string | null,
       menu: false,
-      items: [] as any
+      items: [] as any,
+      emojiPicker: false
     };
   },
   computed: {
+    emoji() {
+      return emoji;
+    },
     users() {
       if (!this.$chat.selectedChat?.users) return [];
       return this.$chat.selectedChat?.users.map((user: any) => {
@@ -160,6 +184,10 @@ export default defineComponent({
     }
   },
   methods: {
+    focus() {
+      //@ts-ignore
+      this.$refs?.textarea?.focus();
+    },
     handleClick() {
       //@ts-ignore
       this.$refs?.uploadInput?.click();

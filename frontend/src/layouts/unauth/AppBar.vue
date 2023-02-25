@@ -5,7 +5,7 @@
       class="text-gradient unselectable ml-4"
       @click="$router.push('/')"
       id="tpu-brand-logo"
-      title="TroploPrivateUploader (TPUvNEXT Alpha)"
+      title="TroploPrivateUploader"
     >
       TPU
     </h1>

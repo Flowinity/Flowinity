@@ -333,6 +333,26 @@ export class AdminController {
       }
     )
 
+    this.router.all(
+      "*",
+      auth("*"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        if (config.release !== "dev") {
+          res.sendStatus(404)
+        } else {
+          next()
+        }
+      }
+    )
+
+    this.router.patch(
+      "/dev/friendAccept",
+      async (req: Request, res: Response) => {
+        await this.adminService.devAcceptFriends()
+        res.sendStatus(204)
+      }
+    )
+
     /*    this.router.get(
       "/online",
       auth("*"),

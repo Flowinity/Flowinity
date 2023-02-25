@@ -3,7 +3,6 @@
     @update:modelValue="$emit('update:modelValue', $event)"
     :model-value="modelValue"
     max-width="800px"
-    max-height="1200px"
   >
     <v-card v-if="$chat.dialogs.groupSettings.item">
       <v-toolbar>
@@ -104,22 +103,35 @@ export default defineComponent({
   data() {
     return {
       icon: undefined as File[] | undefined,
-      add: false,
-      ranks: [
+      add: false
+    };
+  },
+  computed: {
+    ranks() {
+      let ranks = [
         {
           text: "Owner",
-          value: "owner"
+          value: "owner",
+          props: { disabled: true }
         },
         {
           text: "Admin",
-          value: "admin"
+          value: "admin",
+          props: { disabled: false }
         },
         {
           text: "Member",
-          value: "member"
+          value: "member",
+          props: { disabled: false }
         }
-      ]
-    };
+      ];
+      if (
+        this.$chat.dialogs.groupSettings.item?.association?.rank === "owner"
+      ) {
+        ranks[0].props.disabled = false;
+      }
+      return ranks;
+    }
   },
   methods: {
     async changeRank(id: number, rank: string) {
@@ -143,14 +155,12 @@ export default defineComponent({
         );
     },
     async addUsers(users: number[]) {
-      const { data } = await this.axios.post(
+      await this.axios.post(
         `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users`,
         {
           users
         }
       );
-      if (this.$chat.dialogs.groupSettings.item)
-        this.$chat.dialogs.groupSettings.item.users = data;
     }
   }
 });

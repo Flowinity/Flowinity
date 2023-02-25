@@ -11,6 +11,7 @@ import { Feedback } from "@app/models/feedback.model"
 import { Upload } from "@app/models/upload.model"
 import path from "path"
 import * as fs from "fs"
+import { Friend } from "@app/models/friend.model"
 
 export enum CacheType {
   "everything",
@@ -161,12 +162,6 @@ export class AdminService {
     })
   }
 
-  async getConnectedUsers() {
-    console.log(socket)
-    const clients = socket.socket.sockets
-    return clients
-  }
-
   async createExperimentOverrides(
     currentExperiments: Experiment[],
     overrides: { [key: string]: string | number | boolean },
@@ -304,5 +299,17 @@ export class AdminService {
       service.functions = functionNames
     }
     return serviceNamesWithTypes
+  }
+
+  //dev
+  async devAcceptFriends() {
+    await Friend.update(
+      {
+        status: "accepted"
+      },
+      {
+        where: {}
+      }
+    )
   }
 }

@@ -79,7 +79,7 @@ export const useAppStore = defineStore("app", {
       site: {
         alert: "",
         registrations: false,
-        name: "TPUvNEXT",
+        name: "TPU",
         release: "prod",
         route: null,
         loading: false,

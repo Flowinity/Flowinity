@@ -99,6 +99,8 @@ import UploadDialog from "@/components/Core/Dialogs/Upload.vue";
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import MessageToast from "@/components/Communications/MessageToast.vue";
+import { Message as MessageType } from "@/models/message";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
@@ -111,7 +113,8 @@ export default defineComponent({
         interval: undefined as ReturnType<typeof setInterval> | undefined,
         id: "",
         lastCreated: undefined as number | undefined
-      }
+      },
+      msgToast: MessageToast
     };
   },
   methods: {

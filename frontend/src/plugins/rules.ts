@@ -9,7 +9,7 @@ let md = new MarkdownIt({
   quotes: "“”‘’",
   langPrefix: "language-",
   xhtmlOut: false
-});
+}).disable(["image", "autolink", "list"]);
 md.use(MarkdownItEmoji);
 const defaultRender =
   md.renderer.rules.link_open ||
@@ -23,7 +23,6 @@ md.renderer.rules = {
   link_open(tokens, idx, options, env, self) {
     // If you are sure other plugins can't add `target` - drop check below
     const aIndex = tokens[idx].attrIndex("target");
-
     if (aIndex < 0) {
       tokens[idx].attrPush(["target", "_blank"]); // add new attribute
       tokens[idx].attrPush([
@@ -37,6 +36,7 @@ md.renderer.rules = {
         "onclick",
         "window.tpuInternals.processLink(this.href); return false;"
       ]); // add new attribute
+      // set the content value of the a to the link like <a>https://example.com</a>
     }
 
     // pass token to default renderer.

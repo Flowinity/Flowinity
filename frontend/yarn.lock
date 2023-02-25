@@ -883,7 +883,7 @@
   resolved "https://registry.yarnpkg.com/@babel/regjsgen/-/regjsgen-0.8.0.tgz#f0ba69b075e1f05fb2825b7fad991e7adbb18310"
   integrity sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==
 
-"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.8.4":
   version "7.21.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.21.0.tgz#5b55c9d394e5fcf304909a8b00c07dc217b56673"
   integrity sha512-xwII0//EObnq89Ji5AKYQaRYiW/nZ3llSv29d49IuxPhKbtJoLP+9QUUZ4nVragQVtaVGeZrpB+ZtG/Pdy/POw==
@@ -1281,6 +1281,50 @@
     json5 "^2.2.0"
     magic-string "^0.25.0"
     string.prototype.matchall "^4.0.6"
+
+"@svgmoji/blob@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@svgmoji/blob/-/blob-3.2.0.tgz#62a0ab1ba22a0d27f23cb38aacf6d4fb13123dfb"
+  integrity sha512-N96WOrH9GxPSPZ/FuvZl6T9Rh54stAEuUcBppIRFh9/WwkU7Hczrjabw4uunwxFLX5TgR+rHlKJl3/jaTnXJrQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@svgmoji/core" "^3.2.0"
+
+"@svgmoji/core@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@svgmoji/core/-/core-3.2.0.tgz#792326078ded3446747691d633278010f322f460"
+  integrity sha512-QsD78Op3S/5kUVsa5ierr4Wu/xwAdYuMI3Zmc/Y2ekYBEMGEUY8QxilXQRSAQ4ku4PnNV4xlB9e7xhD5hy113A==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    emojibase "^5.1.0"
+    emojibase-regex "^5.1.1"
+    idb-keyval "^5.0.2"
+    match-sorter "^6.2.0"
+    type-fest "^1.2.0"
+
+"@svgmoji/noto@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@svgmoji/noto/-/noto-3.2.0.tgz#ff99dc95f2d098050d9d19696d019fe22677760b"
+  integrity sha512-JgtNciB06hMDI1Pb1N2IgLh44XRMZUUNwBANzjY5jXTPqOCu1A1VA35ENvUsRhEUZOm8I+hbdAEHkwMVqxLeIQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@svgmoji/core" "^3.2.0"
+
+"@svgmoji/openmoji@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@svgmoji/openmoji/-/openmoji-3.2.0.tgz#776fece19f8c253206182cb65685c864ba9bebd2"
+  integrity sha512-USHbG+O80HfmdoNAHbOnlO+2gppXJfHFWKSRFj53Th4aimWEx4/9MB3cFbC3KZ1NOqXaLBq9jDaw4vFuGDVTUQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@svgmoji/core" "^3.2.0"
+
+"@svgmoji/twemoji@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@svgmoji/twemoji/-/twemoji-3.2.0.tgz#0a12df9f5b30af457b4a1779051de470a15c1b00"
+  integrity sha512-6xqZgh9viFDKf5wvrxw56ImCR3Ni84IqwK45lxojOe1Gc1Mni1GpPfr4gb7WHDKjumfx+K7BHSvX0KXt3Nr3CQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@svgmoji/core" "^3.2.0"
 
 "@troplo/tpu-editorjs-nested-list@^1.3.0-troplo1":
   version "1.3.0-troplo1"
@@ -2068,6 +2112,21 @@ electron-to-chromium@^1.4.284:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.307.tgz#0301d9a87d95f47591550124a985a3eea6074a6f"
   integrity sha512-n54V0t4LyHM2oQiAOmD3qC2peB+orUktXORSnWxqtv3uEMSoUcsq+hoMpU08VEJCNbfgBtzy169P0TcrLuq53A==
 
+emojibase-regex@^5.1.1:
+  version "5.1.3"
+  resolved "https://registry.yarnpkg.com/emojibase-regex/-/emojibase-regex-5.1.3.tgz#f0ef621ed6ec624becd2326f999fd4ea01b94554"
+  integrity sha512-gT8T9LxLA8VJdI+8KQtyykB9qKzd7WuUL3M2yw6y9tplFeufOUANg3UKVaKUvkMcRNvZsSElWhxcJrx8WPE12g==
+
+emojibase@^5.1.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/emojibase/-/emojibase-5.2.0.tgz#3b53899f9a9f8aae1280db446c83ce28f1d286d5"
+  integrity sha512-5T02oTJaWpScAtYbukKVc8vQ1367MyfVtFHUMoOVZ9/r1kFcbYqjSktD56TICBAeyW9uc1t+7qQuXEtntM6p5A==
+
+emojione@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/emojione/-/emojione-2.1.0.tgz#d0100d67661baaba2258e7033e3b0c614c722f5b"
+  integrity sha512-tmp5JoKOpD3JEjkX0mU0tgKB+sbljE7zbXfDtOPSYTQEQppC1gYd/3zPiuU/626HFe1IUFd5RtLgU+iE39tDfQ==
+
 engine.io-client@~6.4.0:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-6.4.0.tgz#88cd3082609ca86d7d3c12f0e746d12db4f47c91"
@@ -2751,6 +2810,13 @@ html-janitor@^2.0.4:
   resolved "https://registry.yarnpkg.com/html-janitor/-/html-janitor-2.0.4.tgz#ae5a115cdf3331cd5501edd7b5471b18ea44cdbb"
   integrity sha512-92J5h9jNZRk30PMHapjHEJfkrBWKCOy0bq3oW2pBungky6lzYSoboBGPMvxl1XRKB2q+kniQmsLsPbdpY7RM2g==
 
+idb-keyval@^5.0.2:
+  version "5.1.5"
+  resolved "https://registry.yarnpkg.com/idb-keyval/-/idb-keyval-5.1.5.tgz#be11174bac0cb756dba4cc86fb36b6cd63f5ce6d"
+  integrity sha512-J1utxYWQokYjy01LvDQ7WmiAtZCGUSkVi9EIBfUSyLOr/BesnMIxNGASTh9A1LzeISSjSqEPsfFdTss7EE7ofQ==
+  dependencies:
+    safari-14-idb-fix "^1.0.6"
+
 idb@^7.0.1:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/idb/-/idb-7.1.1.tgz#d910ded866d32c7ced9befc5bfdf36f572ced72b"
@@ -3131,10 +3197,11 @@ make-dir@^3.0.2:
   dependencies:
     semver "^6.0.0"
 
-markdown-it-emoji@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/markdown-it-emoji/-/markdown-it-emoji-2.0.2.tgz#cd42421c2fda1537d9cc12b9923f5c8aeb9029c8"
-  integrity sha512-zLftSaNrKuYl0kR5zm4gxXjHaOI3FAOEaloKmRA5hijmJZvSjmxcokOLlzycb/HXlUFWzXqpIEoyEMCE4i9MvQ==
+"markdown-it-emoji@git+https://github.com/Troplo/markdown-it-unicode-emoji":
+  version "0.3.0"
+  resolved "git+https://github.com/Troplo/markdown-it-unicode-emoji#a96a634425d8fe1e434f1736d4bf9268a4b45bd3"
+  optionalDependencies:
+    emojione "2.1.0"
 
 markdown-it@^13.0.1:
   version "13.0.1"
@@ -3146,6 +3213,14 @@ markdown-it@^13.0.1:
     linkify-it "^4.0.1"
     mdurl "^1.0.1"
     uc.micro "^1.0.5"
+
+match-sorter@^6.2.0:
+  version "6.3.1"
+  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-6.3.1.tgz#98cc37fda756093424ddf3cbc62bfe9c75b92bda"
+  integrity sha512-mxybbo3pPNuA+ZuCUhm5bwNkXrJTbsk5VWbR5wiwz/GC6LIiegBGn2w3O08UG/jdbYLinw51fSQ5xNU1U3MgBw==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    remove-accents "0.4.2"
 
 mdurl@^1.0.1:
   version "1.0.1"
@@ -3497,6 +3572,11 @@ regjsparser@^0.9.1:
   dependencies:
     jsesc "~0.5.0"
 
+remove-accents@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/remove-accents/-/remove-accents-0.4.2.tgz#0a43d3aaae1e80db919e07ae254b285d9e1c7bb5"
+  integrity sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==
+
 require-from-string@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/require-from-string/-/require-from-string-2.0.2.tgz#89a7fdd938261267318eafe14f9c32e598c36909"
@@ -3558,6 +3638,11 @@ run-parallel@^1.1.9:
   integrity sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==
   dependencies:
     queue-microtask "^1.2.2"
+
+safari-14-idb-fix@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/safari-14-idb-fix/-/safari-14-idb-fix-1.0.6.tgz#cbaabc33a4500c44b5c432d6c525b0ed9b68bb65"
+  integrity sha512-oTEQOdMwRX+uCtWCKT1nx2gAeSdpr8elg/2gcaKUH00SJU2xWESfkx11nmXwTRHy7xfQoj1o4TTQvdmuBosTnA==
 
 safe-buffer@^5.1.0:
   version "5.2.1"
@@ -3807,6 +3892,18 @@ svg.select.js@^3.0.1:
   dependencies:
     svg.js "^2.6.5"
 
+svgmoji@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/svgmoji/-/svgmoji-3.2.0.tgz#2214f4930e76e82c33bae23139c85b3973610b32"
+  integrity sha512-tjmdQhIju2ZQ81FLBlPngg1aWMOhQjP9ErXb2ROikM0aBGA/hqI0/DN/5J0sDsXzJPHmODpSFhWfiSsUieU3bA==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@svgmoji/blob" "^3.2.0"
+    "@svgmoji/core" "^3.2.0"
+    "@svgmoji/noto" "^3.2.0"
+    "@svgmoji/openmoji" "^3.2.0"
+    "@svgmoji/twemoji" "^3.2.0"
+
 temp-dir@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/temp-dir/-/temp-dir-2.0.0.tgz#bde92b05bdfeb1516e804c9c00ad45177f31321e"
@@ -3889,6 +3986,11 @@ type-fest@^0.20.2:
   version "0.20.2"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.20.2.tgz#1bf207f4b28f91583666cb5fbd327887301cd5f4"
   integrity sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==
+
+type-fest@^1.2.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-1.4.0.tgz#e9fb813fe3bf1744ec359d55d1affefa76f14be1"
+  integrity sha512-yGSza74xk0UG8k+pLh5oeoYirvIiWo5t0/o3zHHAO2tRDiZcxWP7fywNlXhqb6/r6sWvwi+RsyQMWhVLe4BVuA==
 
 typed-array-length@^1.0.4:
   version "1.0.4"
@@ -4045,13 +4147,6 @@ vue-demi@*:
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.13.11.tgz#7d90369bdae8974d87b1973564ad390182410d99"
   integrity sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==
 
-vue-error-boundary@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/vue-error-boundary/-/vue-error-boundary-2.0.1.tgz#0a5ce6d891cf4e867062cb145ecf9356b4b31bbd"
-  integrity sha512-qjHFsu2atHhD5FDscbiVL3gxAR8YltZi+soIXxpC6iZp7dlXyaz5COCnaFPQSIEg9rORc4uXsh3E/fdOowcAmw==
-  dependencies:
-    vue "^3.2.16"
-
 vue-eslint-parser@^9.0.0, vue-eslint-parser@^9.0.1:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-9.1.0.tgz#0e121d1bb29bd10763c83e3cc583ee03434a9dd5"
@@ -4118,7 +4213,7 @@ vue@^2.0.0:
     "@vue/compiler-sfc" "2.7.14"
     csstype "^3.1.0"
 
-vue@^3.2.13, vue@^3.2.16:
+vue@^3.2.13:
   version "3.2.47"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.2.47.tgz#3eb736cbc606fc87038dbba6a154707c8a34cff0"
   integrity sha512-60188y/9Dc9WVrAZeUVSDxRQOZ+z+y5nO2ts9jWXSTkMvayiWxCWOWtBQoYjLeccfXkiiPZWAHcV+WTPhkqJHQ==

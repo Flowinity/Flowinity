@@ -15,6 +15,20 @@
   <v-data-table :headers="headers" :items="apiKeys">
     <template v-slot:item.actions="{ item }">
       <v-icon
+        @click="
+          ipHistory = item.props.title.info?.accessedFrom;
+          dialogs.ipHistory = true;
+        "
+        class="mr-3"
+        :disabled="!item.props.title.info?.accessedFrom.length"
+      >
+        <v-tooltip activator="parent" location="top">
+          <span v-if="login.info?.accessedFrom?.length">View IP History</span>
+          <span v-else>Session has no IP history.</span>
+        </v-tooltip>
+        mdi-web
+      </v-icon>
+      <v-icon
         small
         class="mr-2"
         @click="$functions.copy(item.props.title.token)"
@@ -50,6 +64,7 @@
     <v-toolbar-title>Recent Logins</v-toolbar-title>
   </v-toolbar>
   <v-list subheader three-line>
+    <IPHistory :history="ipHistory" v-model="dialogs.ipHistory" />
     <v-list-item v-for="login in sessions" :key="login.id">
       <v-list-item-title>
         {{ login.info?.accessedFrom?.at(-1)?.location || "Unknown Location" }}
@@ -100,10 +115,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CreateAPIKey from "@/components/Settings/Dialogs/CreateAPIKey.vue";
+import IPHistory from "@/components/Settings/Dialogs/IPHistory.vue";
 
 export default defineComponent({
   name: "Security",
-  components: { CreateAPIKey },
+  components: { IPHistory, CreateAPIKey },
   data() {
     return {
       apiKeys: [],

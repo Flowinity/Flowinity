@@ -76,6 +76,18 @@ export class ChatController {
     )
 
     this.router.delete(
+      "/:chatId/association",
+      auth("chats.edit"),
+      async (req: RequestAuth, res: Response) => {
+        await this.chatService.leaveGroupChat(
+          parseInt(req.params.chatId),
+          req.user.id
+        )
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.delete(
       "/:chatId/messages/:messageId",
       auth("chats.send"),
       async (req: RequestAuth, res: Response) => {

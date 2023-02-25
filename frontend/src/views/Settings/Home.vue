@@ -97,8 +97,7 @@
         <v-form v-model="valid.email">
           <p class="px-1">
             Your email is currently set to
-            <b>{{ $user.user?.email }}</b>
-            .
+            <b>{{ $user.user?.email }}.</b>
           </p>
           <v-text-field
             class="mt-4"

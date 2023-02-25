@@ -67,7 +67,7 @@
             class="text-grey message-date"
             v-if="merge"
           >
-            <v-tooltip activator="parent" location="top">
+            <v-tooltip activator="parent" location="top" style="z-index: 2001">
               {{ $date(message.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
             </v-tooltip>
             {{ $date(message.createdAt).format("hh:mm A") }}

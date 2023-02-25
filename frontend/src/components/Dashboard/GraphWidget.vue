@@ -1,5 +1,5 @@
 <template>
-  <v-card class="text-center justify-center" height="485">
+  <v-card class="text-center justify-center" height="500">
     <v-container>
       <strong style="font-size: 24px" class="text-gradient">
         Upload Stats
@@ -13,6 +13,9 @@
         :height="420"
       ></Chart>
     </v-container>
+    <v-card-subtitle class="text-left mt-n8">
+      <small>Cache: {{ $date($app.site._redis).fromNow() }}</small>
+    </v-card-subtitle>
   </v-card>
 </template>
 

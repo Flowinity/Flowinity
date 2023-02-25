@@ -74,6 +74,87 @@ export class ChatService {
     }
   ]
 
+  async leaveGroupChat(associationId: number, userId: number) {
+    const chat = await this.getChatFromAssociation(associationId, userId)
+    const user = await ChatAssociation.findOne({
+      where: {
+        chatId: chat.id,
+        userId,
+        id: associationId
+      }
+    })
+    if (!user) throw Errors.USER_NOT_FOUND
+    if (user.rank === "owner") {
+      const associations = await ChatAssociation.findAll({
+        where: {
+          chatId: chat.id,
+          rank: "owner"
+        }
+      })
+      await ChatAssociation.destroy({
+        where: {
+          chatId: chat.id,
+          userId
+        }
+      })
+      if (associations.length === 1) {
+        const association = await ChatAssociation.findOne({
+          where: {
+            chatId: chat.id,
+            [Op.not]: [
+              {
+                userId
+              }
+            ]
+          }
+        })
+        if (!association) {
+          await Message.destroy({
+            where: {
+              chatId: chat.id
+            }
+          })
+          await Chat.destroy({
+            where: {
+              id: chat.id
+            }
+          })
+          await ChatAssociation.destroy({
+            where: {
+              chatId: chat.id
+            }
+          })
+          await this.patchCacheForAll(chat.id, userId)
+          return true
+        }
+        await ChatAssociation.update(
+          {
+            rank: "owner"
+          },
+          {
+            where: {
+              id: association.id
+            }
+          }
+        )
+        this.emitForAll(associationId, userId, "chatUserUpdate", {
+          id: association.id,
+          rank: "owner",
+          chatId: chat.id
+        })
+      }
+    }
+    this.emitForAll(associationId, userId, "removeChatUser", {
+      id: user.id,
+      chatId: chat.id
+    })
+    socket.to(userId).emit("removeChat", {
+      id: chat.id
+    })
+    await this.patchCacheForAll(chat.id, userId)
+    return true
+  }
+
   async updateUserRank(
     updatingUserId: number,
     associationId: number,
@@ -89,6 +170,8 @@ export class ChatService {
     })
     if (!user) throw Errors.USER_NOT_FOUND
     if (user.rank === "owner") throw Errors.PERMISSION_DENIED_RANK
+    if (user.rank === chat.association?.rank)
+      throw Errors.PERMISSION_DENIED_RANK
     await ChatAssociation.update(
       {
         rank
@@ -102,7 +185,7 @@ export class ChatService {
     )
     this.emitForAll(associationId, userId, "chatUserUpdate", {
       id: user.id,
-      rank: user.rank,
+      rank: rank,
       chatId: chat.id
     })
     this.patchCacheForAll(chat.id)
@@ -261,8 +344,11 @@ export class ChatService {
     )
     this.patchCacheForAll(chat.id, removeUserId)
     this.emitForAll(chatId, userId, "removeChatUser", {
-      chatId,
-      userId: removeUserId
+      chatId: chat.id,
+      id: association.id
+    })
+    socket.to(removeUserId).emit("removeChat", {
+      id: chat.id
     })
     return true
   }
@@ -282,12 +368,14 @@ export class ChatService {
       userId,
       userIds
     )
+    let newAssociations = []
     for (const friend of friends) {
-      await ChatAssociation.create({
+      const association = await ChatAssociation.create({
         chatId: chat.id,
         userId: friend.friendId,
         rank: "member"
       })
+      newAssociations.push(association.id)
       this.sendMessage(
         `<@${userId}> added <@${friend.friendId}> to the chat.`,
         userId,
@@ -304,8 +392,13 @@ export class ChatService {
     })
     this.patchCacheForAll(chat.id)
     this.emitForAll(chatId, userId, "addChatUsers", {
-      chatId,
-      users: associations
+      chatId: chat.id,
+      users: await ChatAssociation.findAll({
+        where: {
+          id: newAssociations
+        },
+        include: this.userIncludes
+      })
     })
     return associations
   }
@@ -561,6 +654,8 @@ export class ChatService {
           }
         })
 
+        if (user.id === message.userId) continue
+
         let notifications = await redis.json.get(`unread:${user.id}`)
         if (notifications) {
           notifications[chat.id] += 1 || 1
@@ -591,6 +686,7 @@ export class ChatService {
       | "system" = "message",
     attachments?: string[]
   ) {
+    console.log(associationId, userId)
     const chat = await this.getChatFromAssociation(associationId, userId)
     if (replyId) {
       const message = await Message.findOne({

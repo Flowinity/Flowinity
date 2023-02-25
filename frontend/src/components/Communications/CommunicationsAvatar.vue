@@ -4,7 +4,7 @@
       <v-img
         :src="$functions.avatar(chat || user)"
         v-if="$functions.avatar(chat || user)"
-        class="cover"
+        cover
       ></v-img>
       <v-icon size="20" v-else-if="chat?.type === 'group'">
         mdi-account-group

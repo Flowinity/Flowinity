@@ -1,4 +1,5 @@
 <template>
+  <Leave v-model="leave.dialog" :chat="leave.chat" />
   <v-menu
     :style="menuStyle"
     location="top"
@@ -7,7 +8,11 @@
   >
     <v-list>
       <v-list-item
-        v-if="contextMenu.item?.type === 'group'"
+        v-if="
+          contextMenu.item?.type === 'group' &&
+          (contextMenu.item.association?.rank === 'admin' ||
+            contextMenu.item.association?.rank === 'owner')
+        "
         @click="
           $chat.dialogs.groupSettings.item = contextMenu.item;
           $chat.dialogs.groupSettings.value = true;
@@ -15,7 +20,15 @@
       >
         Group Settings
       </v-list-item>
-      <v-list-item color="red">Leave</v-list-item>
+      <v-list-item
+        color="red"
+        @click="
+          leave.chat = contextMenu.item;
+          leave.dialog = true;
+        "
+      >
+        Leave
+      </v-list-item>
     </v-list>
   </v-menu>
   <v-card-text
@@ -64,10 +77,10 @@
       <template v-slot:append>
         <v-badge
           v-if="chat.unread"
-          :content="chat.unread"
+          :content="chat.unread > 99 ? '99+' : chat.unread"
           color="red"
           overlap
-          class="mr-2"
+          :class="chat.unread > 99 ? 'mr-5' : 'mr-4'"
         ></v-badge>
       </template>
     </v-list-item>
@@ -83,13 +96,18 @@ import { Chat } from "@/models/chat";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
+import Leave from "@/components/Communications/Dialogs/Leave.vue";
 
 export default defineComponent({
   name: "ColubrinaSidebarList",
-  components: { CommunicationsAvatar, CreateChat, MessageSkeleton },
+  components: { Leave, CommunicationsAvatar, CreateChat, MessageSkeleton },
   data() {
     return {
       create: false,
+      leave: {
+        dialog: false,
+        chat: null as Chat | null
+      },
       contextMenu: {
         dialog: false,
         x: 0,

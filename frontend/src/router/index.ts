@@ -162,9 +162,14 @@ const routes = [
             component: () => import("@/views/Admin/Dashboard.vue")
           },
           {
-            path: "Services",
+            path: "services",
             name: "Services",
             component: () => import("@/views/Admin/Services.vue")
+          },
+          {
+            path: "dev",
+            name: "Developer Options",
+            component: () => import("@/views/Admin/Dev.vue")
           }
         ]
       },

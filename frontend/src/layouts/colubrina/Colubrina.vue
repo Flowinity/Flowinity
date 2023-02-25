@@ -11,7 +11,8 @@
     v-model="$chat.dialogs.userMenu.value"
     location="top"
     :close-on-content-click="false"
-    :style="menuStyle"
+    :activator="'#' + $chat.dialogs.userMenu.bindingElement"
+    style="z-index: 2001"
   >
     <ColubrinaUserMenu></ColubrinaUserMenu>
   </v-menu>

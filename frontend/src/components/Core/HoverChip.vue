@@ -25,37 +25,24 @@
             >
           </v-expand-x-transition>-->
   </v-chip>
-  <v-hover
-    v-slot="{ isHovering, props }"
-    v-else
-    :open-delay="$experiments.experiments['HOVER_CHIP_OPEN_DELAY']"
-    :close-delay="$experiments.experiments['HOVER_CHIP_CLOSE_DELAY']"
+  <v-chip
+    v-if="old"
+    class="mr-2"
+    :color="color"
+    @click="() => {}"
+    :to="to"
+    :href="href"
+    :text-color="textColor || contrast"
+    :disabled="disabled"
+    :size="sizeComputed"
+    style="cursor: pointer"
   >
-    <v-chip
-      v-if="old"
-      class="mr-2"
-      :color="color"
-      @click="() => {}"
-      v-bind="props"
-      :to="to"
-      :href="href"
-      :text-color="textColor || contrast"
-      :disabled="disabled"
-      :size="sizeComputed"
-      style="cursor: pointer"
-    >
-      <v-icon
-        v-if="!shortText"
-        :size="icon.includes('numeric') ? 20 : undefined"
-      >
-        {{ icon }}
-      </v-icon>
-      <span v-else>{{ shortText }}</span>
-      <v-expand-x-transition>
-        <span v-if="isHovering">&nbsp;{{ text }}</span>
-      </v-expand-x-transition>
-    </v-chip>
-  </v-hover>
+    <v-icon v-if="!shortText" :size="icon.includes('numeric') ? 20 : undefined">
+      {{ icon }}
+    </v-icon>
+    <span v-else>{{ shortText }}</span>
+    <span class="ml-1">{{ text }}</span>
+  </v-chip>
 </template>
 
 <script lang="ts">

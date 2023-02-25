@@ -224,7 +224,7 @@ export default defineComponent({
       return 0;
     },
     replying() {
-      return this.$chat.selectedChat?.messages.find(
+      return this.$chat.selectedChat?.messages?.find(
         (message) => message.id === this.replyId
       );
     },

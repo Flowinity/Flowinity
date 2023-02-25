@@ -16,7 +16,7 @@
         <br />
         Adding 2 or more users will create a group chat.
       </v-card-subtitle>
-      <v-list>
+      <v-list max-height="400">
         <v-text-field
           v-model="search"
           label="Search"

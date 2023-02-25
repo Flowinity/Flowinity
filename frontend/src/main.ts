@@ -40,6 +40,7 @@ import "floating-vue/dist/style.css";
 import vuetify from "./plugins/vuetify";
 import { ChatAssociation } from "@/models/chatAssociation";
 import router from "@/router";
+import MessageToast from "@/components/Communications/MessageToast.vue";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -95,6 +96,7 @@ const app = createApp({
       const workspace = useWorkspacesStore();
       const chat = useChatStore();
       const friends = useFriendsStore();
+      const toast = useToast();
       app.config.globalProperties.$user = user;
       app.config.globalProperties.$app = core;
       app.config.globalProperties.$experiments = experiments;
@@ -159,9 +161,27 @@ const app = createApp({
         const newIndex = chat.chats.findIndex(
           (c) => c.id === newMessage.chat.id
         );
-        if (newMessage.message.userId !== user.user?.id)
+        if (newMessage.message.userId !== user.user?.id) {
           chat.chats[newIndex].unread++;
-        chat.sound();
+        }
+        if (
+          user.user?.storedStatus !== "busy" &&
+          newMessage.message.userId !== user.user?.id
+        ) {
+          chat.sound();
+          toast.info(
+            {
+              component: MessageToast,
+              props: {
+                message: newMessage.message
+              }
+            },
+            {
+              toastClassName: "message-toast",
+              icon: false
+            }
+          );
+        }
         if (!chat.chats[newIndex].messages) return;
         if (
           chat.chats[newIndex].messages.find(
@@ -254,6 +274,43 @@ const app = createApp({
         });
         chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
       });
+      socket.on("chatUserUpdate", (data: any) => {
+        const index = chat.chats.findIndex((c) => c.id === data.chatId);
+        console.log(index);
+        if (index === -1) return;
+        const userIndex = chat.chats[index].users.findIndex(
+          (u) => u.id === data.id
+        );
+        console.log(userIndex);
+        if (userIndex === -1) return;
+        chat.chats[index].users[userIndex] = {
+          ...chat.chats[index].users[userIndex],
+          ...data
+        };
+      });
+      socket.on("addChatUsers", (data: any) => {
+        const index = chat.chats.findIndex((c) => c.id === data.chatId);
+        console.log(index);
+        if (index === -1) return;
+        chat.chats[index].users.push(...data.users);
+      });
+      socket.on("removeChatUser", (data: any) => {
+        const index = chat.chats.findIndex((c) => c.id === data.chatId);
+        if (index === -1) return;
+        const userIndex = chat.chats[index].users.findIndex(
+          (u) => u.id === data.id
+        );
+        if (userIndex === -1) return;
+        chat.chats[index].users.splice(userIndex, 1);
+      });
+      socket.on("removeChat", (data: any) => {
+        const index = chat.chats.findIndex((c) => c.id === data.id);
+        if (index === -1) return;
+        chat.chats.splice(index, 1);
+        if (chat.selectedChat?.id === data.id && chat.isCommunications) {
+          router.push("/communications/home");
+        }
+      });
       socket.on("autoCollectApproval", (data: { type: string }) => {
         if (!user.user) return;
         if (
@@ -302,13 +359,15 @@ const app = createApp({
         localStorage.setItem("workspaceDrawer", val.toString());
       },
       "$app.title"(val) {
-        document.title = val + " - TPUvNEXT";
+        document.title = val + " - TPU";
       }
     }
   }
 });
 
-const options: PluginOptions = {};
+const options: PluginOptions = {
+  shareAppContext: true
+};
 
 app.use(VueAxios, axios);
 app.use(Toast, options);

@@ -132,6 +132,14 @@ export default defineComponent({
           icon: "mdi-comment-question-outline",
           exact: true,
           scope: "*"
+        },
+        {
+          id: 12,
+          name: "Developer Options",
+          path: "/admin/dev",
+          icon: "mdi-code-tags",
+          exact: true,
+          scope: "*"
         }
       ] as {
         id: number;

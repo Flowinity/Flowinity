@@ -12,6 +12,7 @@ import { ChatAssociation } from "@/models/chatAssociation";
 import { useCollectionsStore } from "@/store/collections";
 import { Collection } from "@/models/collection";
 import { Message } from "@/models/message";
+import { useFriendsStore } from "@/store/friends";
 
 export interface ChatState {
   notifications: number;
@@ -131,7 +132,14 @@ export const useChatStore = defineStore("chat", {
         "www.twitch.tv",
         "next.images.flowinity.com",
         "legacy.images.flowinity.com",
-        "app.i.troplo.com"
+        "app.i.troplo.com",
+        "tenor.com",
+        "media.tenor.com",
+        "www.tenor.com",
+        "giphy.com",
+        "media.giphy.com",
+        "www.giphy.com",
+        "geo.troplo.com"
       ],
       dialogs: {
         groupSettings: {
@@ -238,10 +246,16 @@ export const useChatStore = defineStore("chat", {
       this.dialogs.user.value = true;
     },
     lookupUser(id: number) {
+      const friends = useFriendsStore();
       for (const chat of this.chats) {
-        const user = chat.users.find((user) => user?.user?.id === id);
+        const user = friends.friends.find((user) => user?.otherUser?.id === id);
         if (user) {
-          return user.user as User;
+          return user.otherUser as User;
+        } else {
+          const user = chat.users.find((user) => user?.tpuUser?.id === id);
+          if (user) {
+            return user.tpuUser as User;
+          }
         }
       }
       return {
@@ -252,8 +266,8 @@ export const useChatStore = defineStore("chat", {
       const { data } = await axios.post("/chats", { users });
       return data;
     },
-    async readChat() {
-      await socket.emit("readChat", this.selectedChatId);
+    async readChat(chatId?: number) {
+      await socket.emit("readChat", chatId || this.selectedChatId);
     },
     async typing() {
       await socket.emit("typing", this.selectedChatId);
