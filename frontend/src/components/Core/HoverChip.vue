@@ -1,6 +1,5 @@
 <template>
   <v-chip
-    v-if="!old"
     class="mr-2"
     :color="color"
     @click="() => {}"
@@ -18,30 +17,7 @@
     <v-tooltip activator="parent" location="top">
       {{ text }}
     </v-tooltip>
-    <!--<v-expand-x-transition>
-            <span
-              v-if="isHovering && $experiments.experiments['HOVER_CHIP_HOVER']"
-              >&nbsp;{{ text }}</span
-            >
-          </v-expand-x-transition>-->
-  </v-chip>
-  <v-chip
-    v-if="old"
-    class="mr-2"
-    :color="color"
-    @click="() => {}"
-    :to="to"
-    :href="href"
-    :text-color="textColor || contrast"
-    :disabled="disabled"
-    :size="sizeComputed"
-    style="cursor: pointer"
-  >
-    <v-icon v-if="!shortText" :size="icon.includes('numeric') ? 20 : undefined">
-      {{ icon }}
-    </v-icon>
-    <span v-else>{{ shortText }}</span>
-    <span class="ml-1">{{ text }}</span>
+    <span class="ml-1" v-if="old">{{ text }}</span>
   </v-chip>
 </template>
 
