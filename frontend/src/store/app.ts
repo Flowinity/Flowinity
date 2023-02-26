@@ -55,8 +55,10 @@ export interface AppState {
     _redis: string;
   };
   dialogs: {
+    migrateWizard: boolean;
     quickSwitcher: boolean;
     memoryProfiler: boolean;
+    colubrina: boolean;
     upload: {
       value: boolean;
       percentage: number;
@@ -154,6 +156,8 @@ export const useAppStore = defineStore("app", {
         }
       },
       dialogs: {
+        colubrina: false,
+        migrateWizard: false,
         quickSwitcher: false,
         upload: {
           value: false,

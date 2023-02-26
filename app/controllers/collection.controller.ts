@@ -10,7 +10,23 @@ import { GalleryService } from "@app/services/gallery.service"
 import { CacheService } from "@app/services/cache.service"
 import { AdminService } from "@app/services/admin.service"
 import uploader from "@app/lib/upload"
-
+import rateLimit from "express-rate-limit"
+const limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 4,
+  legacyHeaders: true,
+  skipFailedRequests: true,
+  message: {
+    errors: [
+      {
+        name: "RATE_LIMITED",
+        message: "Too many requests, please try again later.",
+        status: 429
+      }
+    ]
+  },
+  keyGenerator: (req: RequestAuth) => req.user.id || req.ip
+})
 @Service()
 export class CollectionController {
   router: any
@@ -440,6 +456,7 @@ export class CollectionController {
     this.router.post(
       "/:collectionId/banner",
       auth("collections.modify"),
+      limiter,
       uploader.single("banner"),
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {

@@ -8,6 +8,7 @@ import { Op } from "sequelize"
 import maxmind, { AsnResponse, CityResponse, Reader } from "maxmind"
 import { Subscription } from "@app/models/subscription.model"
 import { Experiment } from "@app/models/experiment.model"
+import Errors from "@app/lib/errors"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -154,12 +155,31 @@ const auth = (scope: string, passthrough: boolean = false) => {
               req.user = null
               return next()
             }
-            res.sendStatus(401)
+            res.status(401)
+            res.json({
+              errors: [Errors.BANNED]
+            })
             updateSession(session, req.ip).then(() => {})
             return
           } else {
-            session.user.dataValues.scopes = session.scopes
             req.user = session.user
+            if (!req.user.emailVerified) {
+              session.user.dataValues.scopes = "user.view,user.modify"
+            } else {
+              session.user.dataValues.scopes = session.scopes
+            }
+            if (!scope.includes("user") && !req.user.emailVerified) {
+              if (passthrough) {
+                req.user = null
+                return next()
+              }
+              res.status(401)
+              res.json({
+                errors: [Errors.EMAIL_NOT_VERIFIED]
+              })
+              updateSession(session, req.ip).then(() => {})
+              return
+            }
             next()
             updateSession(session, req.ip).then(() => {})
             return

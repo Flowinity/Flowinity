@@ -214,6 +214,22 @@ let Errors = {
   WEATHER_NOT_RESPONDING: {
     message: "The weather service is not responding.",
     status: 500
+  },
+  BANNED: {
+    message: "You have been banned from using TPU. Please contact support.",
+    status: 401
+  },
+  EMAIL_NOT_VERIFIED: {
+    message: "Your email address has not been verified.",
+    status: 401
+  },
+  INVALID_EMAIL_TOKEN: {
+    message: "The provided email verification token is invalid.",
+    status: 400
+  },
+  INVALID_USERNAME: {
+    message: "Your username contains content that may be deemed offensive.",
+    status: 400
   }
 }
 

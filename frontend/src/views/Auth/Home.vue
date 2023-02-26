@@ -1,4 +1,5 @@
 <template>
+  <ColubrinaTPU v-model="$app.dialogs.colubrina"></ColubrinaTPU>
   <v-parallax
     dark
     id="main-parallax"
@@ -68,7 +69,9 @@
   </v-col>
   <v-col class="text-center justify-center">
     <p class="text-h4 text-gradient mb-3">Statistics</p>
-    <StatsWidget></StatsWidget>
+    <v-container>
+      <StatsWidget :lg="3"></StatsWidget>
+    </v-container>
   </v-col>
 </template>
 
@@ -76,12 +79,16 @@
 import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
 import { defineComponent } from "vue";
+import ColubrinaTPU from "@/components/Home/Dialogs/ColubrinaTPU.vue";
 
 export default defineComponent({
   name: "UnauthHome",
-  components: { PromoCard, StatsWidget },
+  components: { ColubrinaTPU, PromoCard, StatsWidget },
   mounted() {
     this.$app.title = "Welcome";
+    if (this.$route.query.ref === "colubrina") {
+      this.$app.dialogs.colubrina = true;
+    }
   }
 });
 </script>

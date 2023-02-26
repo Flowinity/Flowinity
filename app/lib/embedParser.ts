@@ -5,6 +5,7 @@ import { Container } from "typedi"
 import probe from "probe-image-size"
 import jwt from "jsonwebtoken"
 import { Upload } from "@app/models/upload.model"
+import blacklist from "./blacklist.json"
 
 export interface ImagePayload {
   originalURL: string
@@ -43,7 +44,6 @@ export default async function (
   if (attachments && attachments.length > 5) {
     attachments.slice(0, 5)
   }
-  console.log(attachments)
   for (const attachment of attachments) {
     console.log(attachment)
     const upload = await Upload.findOne({
@@ -106,9 +106,20 @@ export default async function (
       })
     }
   }
-  for (let [i, link] of links.entries()) {
+  for (let [, link] of links.entries()) {
     try {
-      console.log(i, link)
+      const linkURL = new URL(link)
+      if (blacklist.includes(linkURL.hostname)) {
+        embeds.push({
+          link: link,
+          type: "openGraph",
+          data: {
+            title: "Blacklisted link",
+            description: "This link cannot be mediaproxied at this time."
+          }
+        })
+        continue
+      }
       const { result } = await ogs({
         url: link,
         headers: {

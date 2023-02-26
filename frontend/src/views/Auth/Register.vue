@@ -20,21 +20,20 @@
                 label="Username"
                 v-model="username"
                 autofocus
-                @keydown.enter="login"
+                @keydown.enter="register"
                 :rules="$validation.user.username"
               />
               <v-text-field
                 label="Email"
                 v-model="email"
-                autofocus
-                @keydown.enter="login"
+                @keydown.enter="register"
                 :rules="$validation.user.email"
               />
               <v-text-field
                 label="Password"
                 type="password"
                 v-model="password"
-                @keydown.enter="login"
+                @keydown.enter="register"
                 :rules="$validation.user.password"
               />
               <v-checkbox v-model="terms" :rules="$validation.user.terms">
@@ -49,14 +48,17 @@
                 </template>
               </v-checkbox>
             </v-form>
-            <small>Fun fact: {{ fact }}</small>
+            <small v-if="fact">Fun fact: {{ fact }}</small>
           </v-container>
-          <v-card-actions>
-            <v-btn to="/login">Login</v-btn>
+          <v-card-actions :class="!fact ? 'mt-n10' : ''">
+            <v-btn to="/login">
+              <v-icon class="mr-1">mdi-arrow-left</v-icon>
+              Login
+            </v-btn>
             <v-spacer></v-spacer>
             <v-btn
               color="primary"
-              @click="login"
+              @click="register"
               :loading="loading"
               :disabled="!form"
             >
@@ -138,7 +140,7 @@ export default defineComponent({
         this.$app.componentLoading = false;
       }
     },
-    async login() {
+    async register() {
       this.loading = true;
       try {
         const { data } = await this.axios.post("/auth/register", {
@@ -147,15 +149,21 @@ export default defineComponent({
           email: this.email,
           inviteKey: this.inviteKey
         });
-
         localStorage.setItem("token", data.token);
         this.axios.defaults.headers.common["Authorization"] = data.token;
         await this.$user.init();
+        this.$socket.auth = { token: data.token };
+        this.$socket.disconnect();
+        this.$socket.connect();
         this.$router.push("/");
         this.$toast.success("You have been registered, welcome to TPU!", {
           timeout: 3000,
           type: "success"
         });
+        if (this.$route.query.ref === "colubrina") {
+          this.$app.dialogs.migrateWizard = true;
+        }
+        this.$user.resendVerificationEmail();
       } catch {
         this.loading = false;
       }

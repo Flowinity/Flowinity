@@ -4,7 +4,6 @@ import Errors from "@app/lib/errors"
 import { Invite } from "@app/models/invite.model"
 import { Upload } from "@app/models/upload.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
-import { InviteFacts } from "@app/types/invite"
 
 @Service()
 export class InviteService {
@@ -29,23 +28,25 @@ export class InviteService {
     return true
   }
 
-  async getInviteCache(inviteKey: string): Promise<InviteFacts> {
+  async getInviteCache(inviteKey: string) {
+    console.log(69)
     const cache = await redis.json.get(`invites:${inviteKey}`)
     if (cache) {
       console.log(cache)
       return cache
     }
-
+    const inv = await this.getInvite(inviteKey)
+    if (!inv) return null
     const invite = {
-      ...(await this.getInvite(inviteKey)).toJSON(),
+      ...inv.toJSON(),
       facts: await this.getFacts(inviteKey)
     }
     redis.json.set(`invites:${inviteKey}`, "$", invite, "EX", 43200)
     return invite
   }
 
-  async getInvite(inviteKey: string): Promise<Invite> {
-    if (!inviteKey) throw Errors.INVITE_NOT_FOUND
+  async getInvite(inviteKey: string) {
+    if (!inviteKey) return null
     const invite = await Invite.findOne({
       where: {
         inviteKey
@@ -60,7 +61,7 @@ export class InviteService {
     })
 
     if (!invite) {
-      throw Errors.INVITE_NOT_FOUND
+      return null
     }
 
     return invite

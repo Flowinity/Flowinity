@@ -25,6 +25,23 @@ const msgLimiter = rateLimit({
   }
 })
 
+const limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 4,
+  legacyHeaders: true,
+  skipFailedRequests: true,
+  message: {
+    errors: [
+      {
+        name: "RATE_LIMITED",
+        message: "Too many requests, please try again later.",
+        status: 429
+      }
+    ]
+  },
+  keyGenerator: (req: RequestAuth) => req.user.id || req.ip
+})
+
 @Service()
 export class ChatController {
   router: any
@@ -70,7 +87,7 @@ export class ChatController {
     this.router.post(
       "/",
       auth("chats.create"),
-      msgLimiter,
+      limiter,
       async (req: RequestAuth, res: Response) => {
         const chat = await this.chatService.createChat(
           req.body.users,
@@ -83,6 +100,7 @@ export class ChatController {
     this.router.post(
       "/:chatId/icon",
       auth("chats.edit"),
+      limiter,
       uploader.single("icon"),
       async (req: any, res: Response) => {
         await this.chatService.getChatFromAssociation(

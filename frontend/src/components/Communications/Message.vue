@@ -118,8 +118,26 @@
         v-if="!editing"
         class="overflow-content"
         :class="{ 'text-grey': message.pending, 'text-red': message.error }"
-        v-html="$functions.markdown(message.content)"
-      ></span>
+      >
+        <p
+          style="display: inline-block"
+          v-html="$functions.markdown(message.content)"
+        ></p>
+        <v-btn
+          color="grey"
+          icon
+          size="x-small"
+          :ripple="false"
+          class="ml-1"
+          v-if="message.edited && merge"
+          style="display: inline-block"
+        >
+          <v-tooltip activator="parent" location="top">
+            {{ $date(message.editedAt).format("DD/MM/YYYY hh:mm:ss A") }}
+          </v-tooltip>
+          <v-icon>mdi-pencil</v-icon>
+        </v-btn>
+      </span>
       <CommunicationsInput
         @edit="$emit('edit', { id: null, content: null })"
         v-else

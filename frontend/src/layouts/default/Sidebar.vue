@@ -2,7 +2,7 @@
   <InviteAFriend v-model="inviteAFriend"></InviteAFriend>
   <Feedback v-model="feedback"></Feedback>
   <MigrateWizard
-    v-model="migrateWizard"
+    v-model="$app.dialogs.migrateWizard"
     v-if="$experiments.experiments['PROJECT_MERGE']"
   ></MigrateWizard>
   <v-navigation-drawer
@@ -150,7 +150,6 @@ export default defineComponent({
   data() {
     return {
       inviteAFriend: false,
-      migrateWizard: false,
       feedback: false
     };
   },
@@ -248,7 +247,12 @@ export default defineComponent({
             ? `/communications/${this.$chat.selectedChatId}`
             : "/communications",
           icon: "mdi-message-processing",
-          warning: this.$chat.totalUnread || "BETA",
+          warning: this.$functions.checkScope(
+            "chats.view",
+            this.$user.user?.scopes
+          )
+            ? this.$chat.totalUnread || "BETA"
+            : false,
           scope: "chats.view",
           experimentsRequired: ["COMMUNICATIONS"]
         },
@@ -318,15 +322,14 @@ export default defineComponent({
           id: 33,
           click() {
             //@ts-ignore
-            this.migrateWizard = true;
+            this.$app.dialogs.migrateWizard = true;
           },
           externalPath: "",
           path: "",
-          name: "Migration Wizard",
+          name: "Migrate from Colubrina",
           icon: "mdi-chart-gantt",
           new: false,
-          warning: "EXP",
-          scope: "*",
+          scope: "user.view",
           experimentsRequired: ["PROJECT_MERGE"]
         },
         {

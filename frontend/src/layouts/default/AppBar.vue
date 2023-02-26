@@ -12,11 +12,11 @@
     flat
     style="z-index: 2001"
     class="navbar"
-    extension-height="0"
+    :extension-height="$user.user?.emailVerified ? 0 : 42"
   >
     <v-app-bar-nav-icon
       style="z-index: 1000"
-      v-if="$vuetify.display.mobile"
+      v-if="$vuetify.display.mobile || !$app.mainDrawer"
       @click.stop="$app.mainDrawer = !$app.mainDrawer"
     ></v-app-bar-nav-icon>
     <template v-if="!$chat.isCommunications || !$chat.selectedChat">
@@ -140,6 +140,30 @@
       >
         {{ $app.site.alert }}
       </v-alert>
+      <v-alert
+        v-if="!$user.user?.emailVerified"
+        :type="!$user.actions.emailSent.value ? 'error' : 'success'"
+        density="compact"
+        :icon="false"
+        class="rounded-0"
+      >
+        <small class="mr-2 unselectable" v-if="!$user.actions.emailSent.value">
+          Please verify your email to access all of TPU.
+        </small>
+        <small class="mr-2 unselectable" v-else>
+          Verification email sent! Please check your email,
+          <strong>{{ $user.user?.email }}</strong>
+        </small>
+        <template v-slot:append>
+          <v-btn
+            size="x-small"
+            @click="$user.resendVerificationEmail"
+            :loading="$user.actions.emailSent.loading"
+          >
+            Resend Verification Email
+          </v-btn>
+        </template>
+      </v-alert>
     </template>
   </v-app-bar>
 </template>
@@ -172,8 +196,11 @@ export default defineComponent({
         },
         {
           id: 15,
-          click() {
-            throw new Error(":skull:");
+          async click() {
+            //@ts-ignore
+            await this.$user.logout();
+            //@ts-ignore
+            this.$router.push("/login");
           },
           path: "",
           name: "Logout",

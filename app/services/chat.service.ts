@@ -519,7 +519,18 @@ export class ChatService {
           userId
         }
       })
-      if (!association || association.lastRead === message.id) return
+      const user = await User.findOne({
+        where: {
+          id: userId
+        },
+        attributes: ["id", "status", "storedStatus"]
+      })
+      if (
+        !association ||
+        association.lastRead === message.id ||
+        user?.storedStatus === "invisible"
+      )
+        return
       await association.update(
         { lastRead: message.id },
         {
@@ -657,21 +668,27 @@ export class ChatService {
     })
 
     if (!message) throw Errors.UNKNOWN
-    for (const { user } of chat.users) {
-      if (user) {
-        socket.to(user.id).emit("message", {
+    for (const association of chat.users) {
+      if (association?.user) {
+        socket.to(association.user.id).emit("message", {
           message,
           chat: {
             name: chat.name,
             id: chat.id,
             type: chat.type,
-            recipient: this.getRecipient(chat, user.id)
+            recipient: this.getRecipient(chat, association.user.id)
+          },
+          association: {
+            id: association.id,
+            rank: association.rank
           }
         })
 
-        if (user.id === message.userId) continue
+        if (association.user.id === message.userId) continue
 
-        let notifications = await redis.json.get(`unread:${user.id}`)
+        let notifications = await redis.json.get(
+          `unread:${association.user.id}`
+        )
         if (notifications) {
           notifications[chat.id] += 1 || 1
         } else {
@@ -679,7 +696,7 @@ export class ChatService {
             [chat.id]: 1
           }
         }
-        redis.json.set(`unread:${user.id}`, "$", notifications)
+        redis.json.set(`unread:${association.user.id}`, "$", notifications)
       }
     }
 
@@ -815,7 +832,6 @@ export class ChatService {
   }
 
   async getUserChats(userId: number) {
-    console.log(userId)
     const chats = await Chat.findAll({
       include: [
         {

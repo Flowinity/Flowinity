@@ -63,14 +63,27 @@ import StatsCard from "@/components/Dashboard/StatsCard.vue";
 export default {
   name: "StatsWidget",
   components: { StatsCard },
-  data() {
-    return {
-      cols: 12,
-      xl: 4,
-      lg: 6,
-      md: 4,
-      sm: 4
-    };
+  props: {
+    cols: {
+      type: Number,
+      default: 12
+    },
+    xl: {
+      type: Number,
+      default: 4
+    },
+    lg: {
+      type: Number,
+      default: 6
+    },
+    md: {
+      type: Number,
+      default: 4
+    },
+    sm: {
+      type: Number,
+      default: 4
+    }
   }
 };
 </script>

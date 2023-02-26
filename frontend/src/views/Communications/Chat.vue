@@ -526,7 +526,7 @@ export default defineComponent({
     },
     shortcutHandler(e: any) {
       if (e.metaKey || e.ctrlKey) return;
-      if (e.key === "ArrowUp") {
+      if (e.key === "ArrowUp" && !this.message.length) {
         e.preventDefault();
         return this.editLastMessage();
       }

@@ -224,7 +224,7 @@ export class CoreService {
       OBJECTIVE: false,
       COMPASS_INTEGRATION: false,
       SURVEYS: false,
-      PROJECT_MERGE: false,
+      PROJECT_MERGE: true,
       WORKSPACES_SIDEBAR: true,
       LEGACY_CUSTOMIZATION: false,
       ACCOUNT_DEV_ELIGIBLE: false,

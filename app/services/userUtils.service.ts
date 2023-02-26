@@ -1,4 +1,4 @@
-import { Service } from "typedi"
+import { Service, Container } from "typedi"
 import { User } from "@app/models/user.model"
 import { Plan } from "@app/models/plan.model"
 import Errors from "@app/lib/errors"
@@ -9,9 +9,75 @@ import speakeasy from "@levminer/speakeasy"
 import { CollectionCache } from "@app/types/collection"
 import { Friend } from "@app/models/friend.model"
 import { Notification } from "@app/models/notification.model"
+import utils from "@app/lib/utils"
+import { AdminService } from "@app/services/admin.service"
 
 @Service()
 export class UserUtilsService {
+  async verifyEmail(token: string) {
+    const user = await User.findOne({
+      where: {
+        emailToken: token
+      }
+    })
+    if (!user) throw Errors.INVALID_EMAIL_TOKEN
+    await User.update(
+      {
+        emailVerified: true,
+        emailToken: null
+      },
+      {
+        where: {
+          id: user.id
+        }
+      }
+    )
+    return true
+  }
+
+  async sendVerificationEmail(userId: number) {
+    const user = await User.findOne({
+      where: {
+        id: userId
+      }
+    })
+    if (!user || user.emailVerified) throw Errors.USER_NOT_FOUND
+    const code = await utils.generateAPIKey("email")
+    await User.update(
+      {
+        emailToken: code
+      },
+      {
+        where: {
+          id: userId
+        }
+      }
+    )
+    const adminService = Container.get(AdminService)
+    adminService.sendEmail(
+      {
+        body: {
+          name: user.username,
+          intro:
+            "You recently requested to verify your email address for your TPU account. Please click the button below to verify your email address.",
+          action: [
+            {
+              instructions: `Click the button below to verify your account and start using TPU!`,
+              button: {
+                color: "#0190ea", // Optional action button color
+                text: "Verify",
+                link: config.hostnameWithProtocol + "/verify/" + code
+              }
+            }
+          ],
+          outro: "Thank you for using TPU!"
+        }
+      },
+      user.email,
+      "TPU Email Verification"
+    )
+    return true
+  }
   async validateFriends(userId: number, friendIds: number[]) {
     const friends = await Friend.findAll({
       where: {
@@ -489,7 +555,6 @@ export class UserUtilsService {
       attributes: [
         "id",
         "username",
-        "email",
         "description",
         "administrator",
         "moderator",
@@ -516,6 +581,10 @@ export class UserUtilsService {
     user.dataValues.friend = await this.getFriendStatus(userId, user.id)
     user.dataValues.friends = await this.getMutualFriends(user.id, userId)
     user.dataValues.stats = await redis.json.get(`userStats:${user.id}`)
+    if (user.dataValues.friend !== "accepted") {
+      user.dataValues.stats.hours = null
+      user.dataValues.stats.uploadGraph = null
+    }
     return user
   }
 

@@ -28,7 +28,7 @@ export class CacheService {
           order: [["createdAt", "DESC"]]
         })
         if (lastMessage) {
-          await redis.int.set(
+          await redis.set(
             `chat:${chat.id}:sortDate`,
             dayjs(lastMessage.createdAt).valueOf()
           )

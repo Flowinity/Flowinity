@@ -83,9 +83,9 @@ export class User extends Model {
   @Column
   darkTheme: boolean
 
-  /*@Default(false)
-    @Column
-    emailVerified: boolean*/
+  @Default(false)
+  @Column
+  emailVerified: boolean
 
   @Default(false)
   @Column
@@ -194,6 +194,9 @@ export class User extends Model {
     defaultValue: "celsius"
   })
   weatherUnit: "celsius" | "fahrenheit" | "kelvin"
+
+  @Column
+  emailToken?: string
 
   @BelongsTo(() => Plan, "planId")
   plan: Plan

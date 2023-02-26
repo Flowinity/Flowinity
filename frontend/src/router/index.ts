@@ -175,6 +175,11 @@ const routes = [
       },
       // Unauthenticated
       {
+        path: "/verify/:token",
+        name: "Email Verify",
+        component: () => import("@/views/Auth/EmailVerify.vue")
+      },
+      {
         path: "/login",
         name: "Login",
         component: () => import("@/views/Auth/Login.vue")
@@ -230,7 +235,8 @@ router.beforeEach(async (to, from) => {
       "Collection Item",
       "Content Policy",
       "Slideshow",
-      "Password Reset"
+      "Password Reset",
+      "Email Verify"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");

@@ -178,7 +178,10 @@ const app = createApp({
             },
             {
               toastClassName: "message-toast",
-              icon: false
+              icon: false,
+              onClick: () => {
+                router.push("/communications/" + newMessage.association.id);
+              }
             }
           );
         }

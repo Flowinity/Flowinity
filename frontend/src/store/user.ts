@@ -8,6 +8,8 @@ import { useCollectionsStore } from "@/store/collections";
 import { useExperimentsStore } from "@/store/experiments";
 import { useFriendsStore } from "@/store/friends";
 import { useAppStore } from "@/store/app";
+import { useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
 
 export interface UserState {
   user: User | null;
@@ -23,6 +25,12 @@ export interface UserState {
     description?: string;
     weatherUnit?: string;
   };
+  actions: {
+    emailSent: {
+      value: boolean;
+      loading: boolean;
+    };
+  };
 }
 
 export const useUserStore = defineStore("user", {
@@ -30,7 +38,13 @@ export const useUserStore = defineStore("user", {
     ({
       user: null,
       _postInitRan: false,
-      changes: {}
+      changes: {},
+      actions: {
+        emailSent: {
+          value: false,
+          loading: false
+        }
+      }
     } as UserState),
   getters: {
     unreadNotifications(state: UserState) {
@@ -39,6 +53,26 @@ export const useUserStore = defineStore("user", {
     }
   },
   actions: {
+    async resendVerificationEmail() {
+      try {
+        const toast = useToast();
+        this.actions.emailSent.loading = true;
+        await axios.post("/user/verification/send");
+        this.actions.emailSent.value = true;
+        this.actions.emailSent.loading = false;
+        toast.success("Verification email sent!");
+      } catch {
+        this.actions.emailSent.loading = false;
+      }
+    },
+    async logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userStore");
+      localStorage.removeItem("friendsStore");
+      this.user = null;
+      this.changes = {};
+      this._postInitRan = false;
+    },
     async changeStatus(status: string) {
       if (!this.user) return;
       this.changes.storedStatus = status;

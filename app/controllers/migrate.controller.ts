@@ -18,7 +18,7 @@ export class MigrateController {
 
     this.router.post(
       "/colubrina",
-      auth("*"),
+      auth("user.modify"),
       async (req: RequestAuth, res: Response) => {
         await this.migrateService.colubrina(
           req.body.username,

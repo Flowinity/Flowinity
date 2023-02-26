@@ -42,7 +42,9 @@ ax.interceptors.response.use(
         e.response.data.errors[0].message ===
           "You are not allowed to use this experimental feature." ||
         e.response.data.errors[0].message ===
-          "The weather service is not responding."
+          "The weather service is not responding." ||
+        e.response.data.errors[0].message ===
+          "Your email address has not been verified."
       ) {
         console.warn(`[TPU/HTTP] Experimental feature is not allowed.`);
         return Promise.reject(e);

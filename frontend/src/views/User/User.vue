@@ -131,7 +131,9 @@
               </v-btn>
             </v-card-actions>
           </v-card-text>
-          <template v-if="user.collections?.length">
+          <template
+            v-if="user.collections?.length && $collections.items.length"
+          >
             <v-divider></v-divider>
             <v-card-text class="text-overline">Mutual Collections</v-card-text>
             <v-card-text class="subtitle-1 mt-n6">
@@ -178,7 +180,7 @@
               </v-slide-group>
             </v-card-text>
           </template>
-          <template v-if="!username">
+          <template v-if="!username && user?.friend === 'accepted'">
             <v-divider></v-divider>
             <v-card-text class="text-overline">Statistics</v-card-text>
             <v-card-text>

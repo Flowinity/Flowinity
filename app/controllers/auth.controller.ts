@@ -5,6 +5,7 @@ import Errors from "@app/lib/errors"
 import Router from "express-promise-router"
 import { InviteService } from "@app/services/invite.service"
 import { AdminService } from "@app/services/admin.service"
+import blacklist from "@app/lib/word-blacklist.json"
 
 @Service()
 export class AuthController {
@@ -53,23 +54,29 @@ export class AuthController {
         )
       )
     })
-
     this.router.post("/register", async (req: Request, res: Response) => {
       const invite = await this.inviteService.getInviteCache(req.body.inviteKey)
+      if (!config.registrations) {
+        if (!invite) throw Errors.INVITE_NOT_FOUND
 
-      if (!invite) throw Errors.INVITE_NOT_FOUND
-
-      if (invite.registerUserId) throw Errors.INVITE_ALREADY_USED
-
+        if (invite.registerUserId) throw Errors.INVITE_ALREADY_USED
+      }
+      // check the username to the blacklist
+      if (blacklist.includes(req.body.username)) {
+        throw Errors.INVALID_USERNAME
+      }
       const register = await this.authService.register(
         req.body.username,
         req.body.password,
         req.body.email,
-        invite.id
+        invite?.id
       )
 
       // promo invite key
-      if (req.body.inviteKey !== "1bf9e09f-d813-4783-9aa0-050a756e68cb") {
+      if (
+        req.body.inviteKey !== "1bf9e09f-d813-4783-9aa0-050a756e68cb" &&
+        invite
+      ) {
         await this.inviteService.useInvite(req.body.inviteKey, register.user.id)
       }
       res.json(register)

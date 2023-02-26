@@ -85,10 +85,12 @@ export default defineComponent({
           password: this.password,
           code: this.totp
         });
-
         localStorage.setItem("token", data.token);
         this.axios.defaults.headers.common["Authorization"] = data.token;
         await this.$user.init();
+        this.$socket.auth = { token: data.token };
+        this.$socket.disconnect();
+        this.$socket.connect();
         this.$router.push("/");
       } catch {
         this.loading = false;

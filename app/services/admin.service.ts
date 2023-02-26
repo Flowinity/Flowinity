@@ -153,8 +153,6 @@ export class AdminService {
         pass: config.email.password
       }
     })
-    // output to html file
-    fs.writeFileSync(path.join(__dirname, `../../${subject}.html`), emailBody)
     return await transporter.sendMail({
       from: config.email.from,
       to: email,
