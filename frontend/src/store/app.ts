@@ -284,7 +284,8 @@ export const useAppStore = defineStore("app", {
       }
       this.quickSwitcher = value;
     },
-    async deleteItem(item: Upload) {
+    async deleteItem(item: Upload | undefined) {
+      if (!item) return;
       await axios.delete("/gallery/" + item.id);
     },
     async getWeather() {
