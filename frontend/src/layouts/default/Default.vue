@@ -194,6 +194,7 @@ export default defineComponent({
         return;
       e.preventDefault();
       e.stopPropagation();
+      if (!e.dataTransfer?.files?.length) return;
       const files = e.dataTransfer?.files;
       if (files) {
         this.$app.dialogs.upload.files = [...files];
