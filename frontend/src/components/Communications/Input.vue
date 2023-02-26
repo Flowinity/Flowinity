@@ -39,7 +39,11 @@
             :close-on-content-click="false"
             v-model="menu"
           >
-            <v-card height="500" max-width="700">
+            <v-card
+              height="500"
+              max-width="700"
+              :width="$vuetify.display.mobile ? undefined : 700"
+            >
               <v-tabs v-model="tab" align-tabs="center">
                 <v-tab value="upload">Upload</v-tab>
                 <v-tab value="gallery">Gallery</v-tab>
@@ -104,19 +108,8 @@
           <v-icon class="pointer">mdi-plus-circle</v-icon>
         </template>
         <template v-slot:append-inner>
-          <v-icon
-            class="mr-2"
-            v-if="!editing"
-            @click="
-              menu = true;
-              tab = 'starred';
-            "
-          >
-            mdi-star
-          </v-icon>
-          <template>
-            <v-icon class="pointer text-grey">mdi-emoticon</v-icon>
-          </template>
+          <EmojiPicker v-model="emojiPicker"></EmojiPicker>
+          <v-icon class="pointer">mdi-emoticon</v-icon>
         </template>
         <template v-slot:details v-if="!editing">
           <span class="details-container" style="margin-left: -25px !important">
