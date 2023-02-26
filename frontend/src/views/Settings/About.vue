@@ -9,8 +9,12 @@
     </p>
     <v-divider></v-divider>
     <p class="mt-5">Product name: TPUvNEXT</p>
-    <p>Version: N/A</p>
-    <p>Build date: N/A</p>
+    <p>Version: {{ $app.version.current }}</p>
+    <p>
+      Build date:
+      {{ $date($app.version.date).format("DD/MM/YYYY hh:mm:ss A") }}
+    </p>
+    <p>Build date relative: {{ $date($app.version.date).fromNow() }}</p>
     <p>Backend environment: {{ $app.site.release }}</p>
     <p class="mt-5 text-gradient">TroploPrivateUploader</p>
     <p>&copy; {{ $date().format("YYYY") }} Troplo Services</p>

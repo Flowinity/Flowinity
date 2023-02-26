@@ -58,7 +58,8 @@ md.renderer.rules = {
   //@ts-ignore
   text(tokens, idx, options, env, self) {
     let content = tokens[idx].content;
-    const mentions = tokens[idx].content.match(/(?<!\\)<@\d+>/g);
+    const regex = /\\?<(@\d+)>/g;
+    const mentions = content.match(regex);
     if (mentions) {
       for (const mention of mentions) {
         const userId = mention.match(/<@(\d+)>/)![1];

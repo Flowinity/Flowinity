@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.0.0",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -32,6 +32,7 @@
     "@svgmoji/noto": "^3.2.0",
     "@troplo/tpu-editorjs-nested-list": "^1.3.0-troplo1",
     "@troplo/tpu-simple-image": "^1.5.1-troplo1",
+    "@troplo/vite-version": "^1.0.3",
     "apexcharts": "^3.37.0",
     "axios": "^1.3.2",
     "chart.js": "^4.2.1",

@@ -1335,6 +1335,11 @@
   dependencies:
     "@codexteam/icons" "^0.0.6"
 
+"@troplo/vite-version@^1.0.3":
+  version "1.0.3"
+  resolved "https://npm.troplo.com/@troplo%2fvite-version/-/vite-version-1.0.3.tgz#354f1ef8d42d252d98c6d9813a9936d46bef343c"
+  integrity sha512-/6Ocju/FR3MAdYbwPm5tjhGvDddPPOakcbP47EdMW3PZrFfDczZ7/z45c7OjbAUIReFXKv63Z5aBSVY5xmAQ4w==
+
 "@types/estree@0.0.39":
   version "0.0.39"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"

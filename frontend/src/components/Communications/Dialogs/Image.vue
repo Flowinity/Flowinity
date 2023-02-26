@@ -16,7 +16,8 @@
       ></v-img>
     </v-card>
     <a
-      class="text-grey mt-2 pointer"
+      class="text-grey mt-2 pointer underline-on-hover"
+      style="width: 130px"
       @click="$chat.processLink($chat.dialogs.image.object?.originalURL || '')"
     >
       Open in new tab

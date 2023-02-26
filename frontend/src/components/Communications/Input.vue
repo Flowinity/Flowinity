@@ -114,16 +114,9 @@
           >
             mdi-star
           </v-icon>
-          <span>
-            <EmojiPicker
-              @emoji="
-                $emit('update:modelValue', modelValue + $event);
-                focus();
-              "
-              v-model="emojiPicker"
-            />
-            <v-icon class="pointer">mdi-emoticon</v-icon>
-          </span>
+          <template>
+            <v-icon class="pointer text-grey">mdi-emoticon</v-icon>
+          </template>
         </template>
         <template v-slot:details v-if="!editing">
           <span class="details-container">

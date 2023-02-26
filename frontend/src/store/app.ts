@@ -71,6 +71,10 @@ export interface AppState {
       main: string;
     };
   };
+  version: {
+    current: string;
+    date: string;
+  };
 }
 
 export const useAppStore = defineStore("app", {
@@ -90,6 +94,10 @@ export const useAppStore = defineStore("app", {
         ? parseInt(localStorage.getItem("lastNote") as string)
         : null,
       shifting: false,
+      version: {
+        current: import.meta.env.TPU_VERSION || "N/A",
+        date: import.meta.env.TPU_BUILD_DATE || "N/A"
+      },
       site: {
         alert: "",
         registrations: false,
@@ -142,8 +150,9 @@ export const useAppStore = defineStore("app", {
     } as AppState),
   getters: {
     weatherTemp(state: AppState) {
-      const temp = state.weather.data.temp;
-      const user = useUserStore().user;
+      const temp = state.weather.data?.temp;
+      const user = useUserStore()?.user;
+      if (!user?.weatherUnit) return 0;
       if (user?.weatherUnit === "kelvin") {
         // round to 2 decimal places
         return Math.round((temp + 273.15) * 100) / 100;

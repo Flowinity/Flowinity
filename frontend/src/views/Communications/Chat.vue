@@ -410,7 +410,7 @@ export default defineComponent({
       if (!this.message && !this.files.length) return;
       if (!this.message && this.files.length) this.message = "[File]";
       if (this.uploading) return;
-      const message = this.message;
+      const message = this.message.trim();
       const replyId = this.replyId;
       const attachments = this.files.map((file) => file.tpuLink);
       this.message = "";
@@ -444,6 +444,8 @@ export default defineComponent({
         this.$chat.chats.splice(chatIndex, 1);
         this.$chat.chats.unshift(chatToMove);
       }
+
+      this.$chat.setDraft(<string>this.$route.params.chatId, "");
 
       try {
         await this.axios.post(`/chats/${this.$route.params.chatId}/message`, {
@@ -618,8 +620,10 @@ export default defineComponent({
     this.$socket.on("message", this.onMessage);
     this.$socket.on("embedResolution", this.onEmbedResolution);
     this.$socket.on("typing", this.onTyping);
+    this.message = this.$chat.getDraft(<string>this.$route.params.chatId) || "";
   },
   unmounted() {
+    this.$chat.setDraft(<string>this.$route.params.chatId, this.message);
     document.removeEventListener("scroll", this.scrollEvent);
     document.removeEventListener("keydown", this.shortcutHandler);
     document
@@ -631,6 +635,13 @@ export default defineComponent({
     this.$socket.off("embedResolution", this.onEmbedResolution);
   },
   watch: {
+    "$route.params.chatId"(val, oldVal) {
+      this.$chat.setDraft(oldVal, this.message);
+      this.message = this.$chat.getDraft(val) || "";
+      this.files = [];
+      this.replyId = undefined;
+      this.focusInput();
+    },
     "$chat.isReady"() {
       this.avoidAutoScroll = false;
       this.$nextTick(() => {

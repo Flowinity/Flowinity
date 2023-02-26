@@ -19,7 +19,7 @@ export interface ChatState {
   chats: Chat[];
   selectedChatId: number | null;
   loading: boolean;
-  drafts: { [key: number]: string };
+  drafts: { [key: string]: string };
   selectedChat: Chat | null;
   memberSidebarShown: boolean;
   isReady: number | null;
@@ -175,6 +175,17 @@ export const useChatStore = defineStore("chat", {
       }
     } as ChatState),
   actions: {
+    getDraft(chatId: string) {
+      return this.drafts[chatId];
+    },
+    setDraft(chatId: string, draft: string) {
+      if (draft?.trim()?.length) {
+        this.drafts[chatId] = draft;
+      } else {
+        delete this.drafts[chatId];
+      }
+      localStorage.setItem("draftStore", JSON.stringify(this.drafts));
+    },
     async saveSettings() {
       const { data } = await axios.patch(
         `/chats/${this.dialogs.groupSettings.item?.association?.id}`,
@@ -353,6 +364,12 @@ export const useChatStore = defineStore("chat", {
         const trustedDomains = localStorage.getItem("trustedDomainsStore");
         if (trustedDomains) {
           this.trustedDomains = JSON.parse(trustedDomains);
+        }
+      } catch {}
+      try {
+        const drafts = localStorage.getItem("draftStore");
+        if (drafts) {
+          this.drafts = JSON.parse(drafts);
         }
       } catch {}
       if (!window.tpuInternals) {

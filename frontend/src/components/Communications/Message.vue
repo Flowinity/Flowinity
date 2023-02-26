@@ -35,6 +35,7 @@
       <template v-slot:prepend>
         <template v-if="!merge">
           <div
+            style="align-items: start !important; display: flex"
             v-if="!message.type || message.type === 'message'"
             @click="
               $emit('authorClick', {
@@ -63,7 +64,7 @@
         </template>
         <template v-else>
           <small
-            style="font-size: 9px; margin-right: 19px"
+            style="font-size: 9px; margin-right: 20px"
             class="text-grey message-date"
             v-if="merge"
           >
@@ -141,7 +142,7 @@
         :key="index"
       />
       <template v-slot:append>
-        <div style="align-items: end !important">
+        <div>
           <template v-for="readReceipt in message.readReceipts">
             <UserAvatar
               :user="readReceipt.user"
@@ -157,15 +158,13 @@
                 $chat.dialogs.user.username = readReceipt.user.username;
                 $chat.dialogs.user.value = true;
               "
-            ></UserAvatar>
-            <v-tooltip
-              :activator="
-                '#message-read-receipt-' + message.id + '-' + readReceipt.userId
-              "
-              location="top"
             >
-              {{ readReceipt.user?.username }}
-            </v-tooltip>
+              <template v-slot:inline>
+                <v-tooltip activator="parent" location="top">
+                  {{ readReceipt.user?.username }}
+                </v-tooltip>
+              </template>
+            </UserAvatar>
           </template>
         </div>
       </template>
@@ -193,4 +192,16 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style>
+.message .v-list-item__prepend {
+  align-items: start !important;
+  align-self: flex-start !important;
+  margin-top: 5px;
+}
+
+.message .v-list-item__append {
+  align-items: end !important;
+  align-self: flex-end !important;
+  margin-bottom: 5px;
+}
+</style>

@@ -6,6 +6,7 @@ import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 import { defineConfig } from "vite";
 import { fileURLToPath, URL } from "node:url";
 import { VitePWA } from "vite-plugin-pwa";
+import ViteVersion from "@troplo/vite-version";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,6 +14,7 @@ export default defineConfig({
     sourcemap: false
   },
   plugins: [
+    ViteVersion(),
     VitePWA({
       registerType: "autoUpdate",
       workbox: {

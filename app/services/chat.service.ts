@@ -697,6 +697,7 @@ export class ChatService {
       })
       if (!message) throw Errors.REPLY_MESSAGE_NOT_FOUND
     }
+    content = content.trim()
     // must contain at least one character excluding spaces and newlines and must not contain just #s (one or more)
     if (!content.replace(/\s/g, "").length || !content.replace(/#/g, "").length)
       throw Errors.NO_MESSAGE_CONTENT

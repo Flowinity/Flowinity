@@ -33,6 +33,7 @@
           <v-fade-transition v-else-if="isHovering">
             <slot></slot>
           </v-fade-transition>
+          <slot name="inline"></slot>
         </v-avatar>
       </span>
     </v-hover>
