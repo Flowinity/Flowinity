@@ -40,7 +40,7 @@
         }
       }"
       @refresh="getGallery()"
-      @pageChange="$router.psush(`/collections/${$route.params.id}/${$event}`)"
+      @pageChange="$router.push(`/collections/${$route.params.id}/${$event}`)"
       @updateItem="updateItem"
       @remove="removeItemFromCollection($event.item, $event.collection)"
     >
