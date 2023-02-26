@@ -1,5 +1,10 @@
 <template>
-  <v-app v-if="$user.user">
+  <v-app v-if="$user.user" @drop="dragDropHandler" @dragover="dragOver">
+    <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
+    <WorkspaceDeleteDialog
+      v-model="$app.dialogs.delete.value"
+      @submit="$app.deleteItem($app.dialogs.delete.item)"
+    ></WorkspaceDeleteDialog>
     <UploadDialog v-model="$app.dialogs.upload.value"></UploadDialog>
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
     <URLConfirmDialog
@@ -23,13 +28,7 @@
     </v-overlay>
     <default-bar />
     <sidebar></sidebar>
-    <workspaces-sidebar
-      v-if="
-        $chat.communicationsSidebar ||
-        $chat.selectedChat?.type !== 'group' ||
-        !$chat.isCommunications
-      "
-    ></workspaces-sidebar>
+    <workspaces-sidebar></workspaces-sidebar>
     <default-view />
     <template v-if="$experiments.experiments.FAB">
       <v-btn
@@ -91,10 +90,12 @@ import DefaultBar from "./AppBar.vue";
 import DefaultView from "./View.vue";
 import Sidebar from "@/layouts/default/Sidebar.vue";
 import UnauthBar from "@/layouts/unauth/AppBar.vue";
-import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 import URLConfirmDialog from "@/components/Communications/Dialogs/URLConfirm.vue";
 import MemoryProfiler from "@/components/Dev/Dialogs/MemoryProfiler.vue";
 import UploadDialog from "@/components/Core/Dialogs/Upload.vue";
+import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
+import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
+import QuickSwitcher from "@/components/Core/Dialogs/QuickSwitcher.vue";
 </script>
 
 <script lang="ts">
@@ -184,6 +185,29 @@ export default defineComponent({
           }
         }, 5000);
       });
+    },
+    dragDropHandler(e: DragEvent) {
+      if (
+        this.$route.path.startsWith("/communications/") ||
+        this.$route.path.startsWith("/workspaces/")
+      )
+        return;
+      e.preventDefault();
+      e.stopPropagation();
+      const files = e.dataTransfer?.files;
+      if (files) {
+        this.$app.dialogs.upload.files = [...files];
+        this.$app.upload();
+      }
+    },
+    dragOver(e: DragEvent) {
+      if (
+        this.$route.path.startsWith("/communications/") ||
+        this.$route.path.startsWith("/workspaces/")
+      )
+        return;
+      e.preventDefault();
+      e.stopPropagation();
     }
   },
   mounted() {
@@ -196,6 +220,10 @@ export default defineComponent({
     document.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.ctrlKey && e.altKey && e.key === "m") {
         this.$app.dialogs.memoryProfiler = !this.$app.dialogs.memoryProfiler;
+      }
+      if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
+        e.preventDefault();
+        this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
       }
     });
     this.getPulseSession();

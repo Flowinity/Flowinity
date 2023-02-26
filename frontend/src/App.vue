@@ -39,6 +39,11 @@ export default defineComponent({
       this.$app.mainDrawer = false;
       this.$chat.memberSidebarShown = false;
     }
+  },
+  watch: {
+    "$route.path"(val) {
+      this.$app.lastRoute = val;
+    }
   }
 });
 </script>

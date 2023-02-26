@@ -408,9 +408,9 @@ export default defineComponent({
     async sendMessage() {
       this.focusInput();
       if (!this.message && !this.files.length) return;
-      if (!this.message && this.files.length) this.message = "[File]";
       if (this.uploading) return;
-      const message = this.message.trim();
+      let message = this.message.trim();
+      if (!this.message && this.files.length) message = " ";
       const replyId = this.replyId;
       const attachments = this.files.map((file) => file.tpuLink);
       this.message = "";

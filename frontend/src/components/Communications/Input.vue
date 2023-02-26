@@ -119,7 +119,7 @@
           </template>
         </template>
         <template v-slot:details v-if="!editing">
-          <span class="details-container">
+          <span class="details-container" style="margin-left: -25px !important">
             {{ $chat.typers }}
           </span>
         </template>

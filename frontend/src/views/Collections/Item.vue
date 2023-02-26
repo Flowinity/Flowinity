@@ -40,10 +40,14 @@
         }
       }"
       @refresh="getGallery()"
-      @pageChange="$router.push(`/collections/${$route.params.id}/${$event}`)"
+      @pageChange="$router.psush(`/collections/${$route.params.id}/${$event}`)"
       @updateItem="updateItem"
       @remove="removeItemFromCollection($event.item, $event.collection)"
-    ></GalleryCore>
+    >
+      <template v-slot:custom-values="{ item }">
+        <v-card-subtitle>Creator: {{ item?.user?.username }}</v-card-subtitle>
+      </template>
+    </GalleryCore>
   </v-container>
 </template>
 

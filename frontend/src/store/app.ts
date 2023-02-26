@@ -5,6 +5,10 @@ import { useToast } from "vue-toastification";
 import functions from "@/plugins/functions";
 import { AxiosProgressEvent } from "axios";
 import { useUserStore } from "@/store/user";
+import { Upload } from "@/models/upload";
+import { useChatStore } from "@/store/chat";
+import { useCollectionsStore } from "@/store/collections";
+import { useWorkspacesStore } from "@/store/workspaces";
 
 export interface AppState {
   domain: string;
@@ -17,6 +21,7 @@ export interface AppState {
   title: string;
   notesSaving: boolean;
   lastNote: number | null;
+  lastRoute: string | null;
   forcedMainDrawer: boolean;
   shifting: boolean;
   site: {
@@ -50,12 +55,17 @@ export interface AppState {
     _redis: string;
   };
   dialogs: {
+    quickSwitcher: boolean;
     memoryProfiler: boolean;
     upload: {
       value: boolean;
       percentage: number;
       files: File[];
       loading: boolean;
+    };
+    delete: {
+      value: boolean;
+      item: Upload | undefined;
     };
   };
   weather: {
@@ -75,11 +85,16 @@ export interface AppState {
     current: string;
     date: string;
   };
+  quickSwitcher: {
+    route: string;
+    name: string;
+  }[];
 }
 
 export const useAppStore = defineStore("app", {
   state: () =>
     ({
+      lastRoute: null,
       domain: import.meta.env.DEV ? "/i/" : "https://i.troplo.com/i/",
       mainDrawer: true,
       workspaceDrawer: localStorage.getItem("workspaceDrawer") === "true",
@@ -139,14 +154,57 @@ export const useAppStore = defineStore("app", {
         }
       },
       dialogs: {
+        quickSwitcher: false,
         upload: {
           value: false,
           files: [],
           percentage: 0,
           loading: false
         },
+        delete: {
+          value: false,
+          item: undefined
+        },
         memoryProfiler: false
-      }
+      },
+      quickSwitcher: [
+        {
+          route: "/",
+          name: "Home"
+        },
+        {
+          route: "/gallery",
+          name: "Gallery"
+        },
+        {
+          route: "/collections",
+          name: "Collections"
+        },
+        {
+          route: "/insights",
+          name: "Insights"
+        },
+        {
+          route: "/settings",
+          name: "Settings"
+        },
+        {
+          route: "/autoCollects",
+          name: "AutoCollects"
+        },
+        {
+          route: "/starred",
+          name: "Starred"
+        },
+        {
+          route: "/users",
+          name: "Users"
+        },
+        {
+          route: "/workspaces",
+          name: "Workspaces"
+        }
+      ]
     } as AppState),
   getters: {
     weatherTemp(state: AppState) {
@@ -164,6 +222,71 @@ export const useAppStore = defineStore("app", {
     }
   },
   actions: {
+    populateQuickSwitcher() {
+      let value = [
+        {
+          route: "/",
+          name: "Home"
+        },
+        {
+          route: "/gallery",
+          name: "Gallery"
+        },
+        {
+          route: "/collections",
+          name: "Collections"
+        },
+        {
+          route: "/insights",
+          name: "Insights"
+        },
+        {
+          route: "/settings",
+          name: "Settings"
+        },
+        {
+          route: "/autoCollects",
+          name: "AutoCollects"
+        },
+        {
+          route: "/starred",
+          name: "Starred"
+        },
+        {
+          route: "/users",
+          name: "Users"
+        },
+        {
+          route: "/workspaces",
+          name: "Workspaces"
+        }
+      ];
+      const chats = useChatStore();
+      for (const chat of chats.chats) {
+        value.push({
+          route: `/communications/${chat.association?.id}`,
+          name: chats.getChatName(chat)
+        });
+      }
+      const collections = useCollectionsStore();
+      for (const collection of collections.items) {
+        value.push({
+          route: `/collections/${collection.id}`,
+          name: collection.name
+        });
+      }
+      const workspaces = useWorkspacesStore();
+      for (const workspace of workspaces.recentOverall) {
+        value.push({
+          route: `/workspaces/${workspace.id}`,
+          name: workspace.name
+        });
+      }
+      this.quickSwitcher = value;
+    },
+    async deleteItem(item: Upload) {
+      await axios.delete("/gallery/" + item.id);
+    },
     async getWeather() {
       try {
         const { data } = await axios.get("/core/weather");

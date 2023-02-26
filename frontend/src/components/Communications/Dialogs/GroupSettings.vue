@@ -4,6 +4,7 @@
     :model-value="modelValue"
     max-width="800px"
   >
+    <UploadCropper v-model="groupIcon" @finish="uploadIcon" />
     <v-card v-if="$chat.dialogs.groupSettings.item">
       <v-toolbar>
         <v-toolbar-title>Group Settings</v-toolbar-title>
@@ -18,12 +19,13 @@
           class="mx-4"
           v-model="$chat.dialogs.groupSettings.item.name"
         ></v-text-field>
-        <v-card-title>Group Icon</v-card-title>
-        <v-file-input v-model="icon" label="Upload Group Icon"></v-file-input>
         <v-card-actions class="mb-n5">
           <v-spacer></v-spacer>
           <v-btn color="primary" @click="$chat.saveSettings">Save</v-btn>
         </v-card-actions>
+        <v-card-title>Group Icon</v-card-title>
+        <v-btn @click="groupIcon = true">Set group icon</v-btn>
+        <v-btn @click="removeIcon">Remove group icon</v-btn>
       </v-card-text>
       <v-card-text>
         <v-card-title>
@@ -94,16 +96,19 @@
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
+import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 
 export default defineComponent({
   name: "ColubrinaGroupSettingsDialog",
-  components: { CreateChat, UserAvatar },
+  components: { UploadCropper, CreateChat, UserAvatar },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
     return {
       icon: undefined as File[] | undefined,
-      add: false
+      add: false,
+      groupIcon: false,
+      groupIconLoading: false
     };
   },
   computed: {
@@ -134,6 +139,26 @@ export default defineComponent({
     }
   },
   methods: {
+    async uploadIcon(file: File) {
+      if (this.$chat.dialogs.groupSettings.item) {
+        this.groupIconLoading = true;
+        const formData = new FormData();
+        formData.append("icon", file);
+        await this.axios.post(
+          `/chats/${this.$chat.dialogs.groupSettings.item.association?.id}/icon`,
+          formData
+        );
+        this.groupIcon = false;
+        this.groupIconLoading = false;
+      }
+    },
+    async removeIcon() {
+      if (this.$chat.dialogs.groupSettings.item) {
+        await this.axios.delete(
+          `/chats/${this.$chat.dialogs.groupSettings.item.association?.id}/icon`
+        );
+      }
+    },
     async changeRank(id: number, rank: string) {
       await this.axios.put(
         `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users/${id}`,

@@ -31,7 +31,11 @@
       @refresh="getGallery()"
       @page-change="$router.push(`/starred/${$event}`)"
       @updateItem="updateItem"
-    ></GalleryCore>
+    >
+      <template v-slot:custom-values="{ item }">
+        <v-card-subtitle>Creator: {{ item?.user?.username }}</v-card-subtitle>
+      </template>
+    </GalleryCore>
   </v-container>
 </template>
 

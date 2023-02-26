@@ -6,6 +6,10 @@ import axios, { AxiosStatic } from "axios";
 import { useToast } from "vue-toastification";
 import { useAppStore } from "@/store/app";
 
+export interface AxiosStaticWithAvoidance extends AxiosStatic {
+  _avoidToast: boolean;
+}
+
 const ax = axios.create({
   baseURL: "/api/v2",
   withCredentials: true,
@@ -14,7 +18,7 @@ const ax = axios.create({
     Accept: "application/json",
     "X-TPU-Client": "TPUvNEXT"
   }
-}) as AxiosStatic;
+}) as AxiosStaticWithAvoidance;
 
 // if error is thrown
 ax.interceptors.response.use(
@@ -43,8 +47,10 @@ ax.interceptors.response.use(
         console.warn(`[TPU/HTTP] Experimental feature is not allowed.`);
         return Promise.reject(e);
       }
-      for (const error of e.response.data.errors) {
-        toast.error(error.message);
+      if (!e.response.config.headers.noToast) {
+        for (const error of e.response.data.errors) {
+          toast.error(error.message);
+        }
       }
     } else {
       toast.error("An unknown error occurred.");

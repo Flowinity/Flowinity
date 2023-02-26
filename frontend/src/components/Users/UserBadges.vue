@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <v-card-title style="padding: 0 !important">
     <HoverChip
       text="TPU Administrator"
       v-if="user.admin || user.administrator"
@@ -119,6 +119,52 @@
       class="user-badge"
     ></HoverChip>
     <HoverChip
+      text="Sans Enjoyer"
+      color="grey"
+      :small="true"
+      :title="`uhuhuhuh sans`"
+      v-if="user.id === 10"
+      class="user-badge"
+      image="https://i.troplo.com/i/5516167987df.png"
+    ></HoverChip>
+    <HoverChip
+      text="Ramen Enjoyer"
+      color="#a60f00"
+      :small="true"
+      :title="`Genshin Enjoyer`"
+      v-if="user.id === 12"
+      class="user-badge"
+      image="https://i.troplo.com/i/984e5fff4c4e.png"
+    ></HoverChip>
+    <HoverChip
+      text="TPU Developer"
+      color="#ffd700"
+      :small="true"
+      :title="`Contributed to TPU`"
+      v-if="user.id === 6 || user.id === 1 || user.id === 2"
+      class="user-badge"
+      icon="mdi-code-tags"
+    ></HoverChip>
+    <HoverChip
+      text="😟kull:"
+      color="#ffd700"
+      :small="true"
+      :title="`:skull:`"
+      @click="crash"
+      v-if="user.id === 6"
+      class="user-badge"
+      icon="mdi-skull"
+    ></HoverChip>
+    <HoverChip
+      text="TPU Deezer"
+      color="#1AC62B"
+      :small="true"
+      :title="`Doin' deez`"
+      v-if="user.id === 7 || user.id === 6"
+      class="user-badge"
+      icon="mdi-hamburger"
+    ></HoverChip>
+    <HoverChip
       text="Not friends with user, some information may be unavailable."
       icon="mdi-account-off"
       color="grey"
@@ -129,7 +175,7 @@
       "
       class="user-badge"
     ></HoverChip>
-  </span>
+  </v-card-title>
 </template>
 
 <script lang="ts">
@@ -138,6 +184,11 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "UserBadges",
+  methods: {
+    crash() {
+      throw "deez";
+    }
+  },
   components: { HoverChip },
   props: ["user"],
   computed: {

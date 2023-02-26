@@ -9,7 +9,14 @@
       $app.workspaceDrawer && !$vuetify.display.mobile ? 'sidebar-patch' : ''
     "
   >
-    <WorkspacesSidebarList></WorkspacesSidebarList>
+    <WorkspacesSidebarList
+      v-if="
+        $chat.memberSidebar ||
+        !$chat.isCommunications ||
+        $app.forcedWorkspaceDrawer
+      "
+    ></WorkspacesSidebarList>
+    <ColubrinaMemberSidebarList v-else></ColubrinaMemberSidebarList>
     <template v-slot:append v-if="$workspaces.versionHistory">
       <v-btn
         width="228px"
@@ -27,10 +34,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
+import ColubrinaMemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
 
 export default defineComponent({
   name: "WorkspacesSidebar",
-  components: { WorkspacesSidebarList },
+  components: { ColubrinaMemberSidebarList, WorkspacesSidebarList },
   methods: {
     async restoreVersion() {
       await this.axios.patch(

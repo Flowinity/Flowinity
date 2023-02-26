@@ -10,9 +10,13 @@
     :size="sizeComputed"
     style="cursor: pointer"
   >
-    <v-icon v-if="!shortText" :size="icon.includes('numeric') ? 20 : undefined">
+    <v-icon
+      v-if="!shortText && icon"
+      :size="icon.includes('numeric') ? 20 : undefined"
+    >
       {{ icon }}
     </v-icon>
+    <v-img :src="image" :width="18" :height="18" v-if="image" />
     <span v-else>{{ shortText }}</span>
     <v-tooltip activator="parent" location="top">
       {{ text }}
@@ -42,7 +46,8 @@ export default defineComponent({
     "disabled",
     "click",
     "size",
-    "old"
+    "old",
+    "image"
   ],
   computed: {
     contrast() {

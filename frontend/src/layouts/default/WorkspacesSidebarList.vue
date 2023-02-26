@@ -135,7 +135,7 @@
     Close sidebar
   </v-card-text>
   <v-card-text
-    v-else-if="$chat.isCommunications || $chat.communicationsSidebar"
+    v-else-if="$chat.isCommunications || $chat.memberSidebar"
     @click="$app.forcedWorkspaceDrawer = false"
     style="color: #0190ea; cursor: pointer; font-size: 12px"
     class="mb-n4 unselectable"
@@ -389,7 +389,7 @@ export default defineComponent({
       this.createNote.loading = true;
       const { data } = await this.axios.post("/notes", {
         name,
-        workspaceFolderId: this.contextMenu.item?.id || this.createNote.folderId
+        workspaceFolderId: this.createNote.folderId || this.contextMenu.item?.id
       });
       await this.$workspaces.refreshWorkspace();
       this.createNote.dialog = false;
@@ -454,6 +454,7 @@ export default defineComponent({
         await this.$workspaces.refreshWorkspace();
         this.deleteNote.dialog = false;
         this.deleteNote.loading = false;
+        if (this.$route.params.id == id) this.$router.push("/workspaces");
       });
     },
     doDeleteFolder() {
@@ -469,6 +470,7 @@ export default defineComponent({
       this.deleteWorkspace.loading = true;
       const id = this.contextMenu.item?.id || this.deleteWorkspace.workspaceId;
       this.axios.delete(`/notes/workspace/${id}`).then(async () => {
+        this.$workspaces.workspace = null;
         await this.$workspaces.init();
         this.deleteWorkspace.dialog = false;
         this.deleteWorkspace.loading = false;

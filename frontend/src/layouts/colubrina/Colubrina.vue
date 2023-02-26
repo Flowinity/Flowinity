@@ -24,7 +24,9 @@
   ></ColubrinaGroupSettingsDialog>
   <ColubrinaSidebar v-if="$chat.communicationsSidebar"></ColubrinaSidebar>
   <router-view></router-view>
-  <ColubrinaMemberSidebar></ColubrinaMemberSidebar>
+  <ColubrinaMemberSidebar
+    v-if="$chat.communicationsSidebar"
+  ></ColubrinaMemberSidebar>
 </template>
 
 <script lang="ts">

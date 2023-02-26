@@ -7,10 +7,7 @@
     :class="{
       'header-patch': $app.mainDrawer && !$vuetify.display.mobile,
       'header-patch-workspaces':
-        ($app.workspaceDrawer &&
-          !$vuetify.display.mobile &&
-          !$chat.isCommunications) ||
-        ($chat.isCommunications && $chat.memberSidebarShown)
+        $app.workspaceDrawer && !$vuetify.display.mobile
     }"
     flat
     style="z-index: 2001"
@@ -119,11 +116,7 @@
       <v-btn
         icon
         class="ml-2"
-        @click="
-          !$chat.memberSidebar && $chat.isCommunications
-            ? ($chat.memberSidebarShown = !$chat.memberSidebarShown)
-            : ($app.workspaceDrawer = !$app.workspaceDrawer)
-        "
+        @click="$app.workspaceDrawer = !$app.workspaceDrawer"
       >
         <v-icon>mdi-menu-open</v-icon>
       </v-btn>

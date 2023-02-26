@@ -386,7 +386,11 @@ export default defineComponent({
     },
     async getNote(id) {
       try {
-        return await this.axios.get("/notes/" + id);
+        return await this.axios.get("/notes/" + id, {
+          headers: {
+            noToast: true
+          }
+        });
       } catch {
         this.fail = true;
       }

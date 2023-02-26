@@ -1,5 +1,11 @@
 <template>
   <v-card class="d-flex flex-column" elevation="8" :id="'item-' + item.id">
+    <WorkspaceDeleteDialog
+      title="Delete item?"
+      :item="item"
+      @submit="deleteItem(item)"
+      v-model="deleteItemDialog"
+    />
     <v-toolbar
       style="z-index: 1"
       @click="
@@ -40,6 +46,7 @@
       {{ $date(item.createdAt).format("Do of MMMM YYYY, h:mm A") }}
     </v-card-subtitle>
     <v-card-subtitle>Size: {{ fileSize }}</v-card-subtitle>
+    <slot name="custom-values" :item="item"></slot>
     <div class="ml-4">
       <slot :item="item" name="custom-properties" />
       <v-chip-group class="mb-1">
@@ -70,7 +77,7 @@
     <v-card-text class="text-center">
       <slot name="actions" :item="item">
         <HoverChip
-          text="Edit"
+          text="Edit & Caption"
           icon="mdi-pencil"
           color="indigo"
           @click="editItem(item)"
@@ -81,7 +88,9 @@
           text="Delete"
           icon="mdi-delete"
           color="red"
-          @click="deleteItem(item, $event)"
+          @click="
+            $event.shiftKey ? deleteItem(item) : (deleteItemDialog = true)
+          "
           v-if="supports.permissions.write"
           class="my-1"
         ></HoverChip>
@@ -133,11 +142,17 @@ import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 import { Upload } from "@/models/upload";
 import { Collection } from "@/models/collection";
+import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 
 export default defineComponent({
   name: "GalleryItem",
-  components: { HoverChip, GalleryPreview },
+  components: { WorkspaceDeleteDialog, HoverChip, GalleryPreview },
   props: ["item", "supports", "selected"],
+  data() {
+    return {
+      deleteItemDialog: false
+    };
+  },
   computed: {
     fileSize() {
       return this.$functions.fileSize(this.item.fileSize);
@@ -156,7 +171,7 @@ export default defineComponent({
     editItem(item: Upload) {
       console.log("Edit item", item);
     },
-    async deleteItem(item: Upload, event: any) {
+    async deleteItem(item: Upload) {
       await this.axios.delete("/gallery/" + item.id);
       this.$emit("delete", item);
     },

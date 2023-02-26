@@ -78,29 +78,35 @@ export class NoteService {
   }
 
   async getRecent(userId: number) {
-    return await Note.findAll({
+    return await Workspace.findAll({
       include: [
         {
           model: WorkspaceFolder,
-          as: "folder",
-          required: true,
+          as: "folders",
           include: [
             {
-              model: Workspace,
-              as: "workspace",
-              required: true,
-              where: {
-                userId
-              }
+              model: Note,
+              as: "notes",
+              attributes: {
+                exclude: ["data"]
+              },
+              include: [
+                {
+                  model: WorkspaceFolder,
+                  as: "folder",
+                  attributes: ["id", "name"]
+                }
+              ],
+              order: [["updatedAt", "DESC"]]
             }
-          ]
+          ],
+          limit: 12
         }
       ],
-      order: [["updatedAt", "DESC"]],
-      attributes: {
-        exclude: ["data"]
+      where: {
+        userId
       },
-      limit: 12
+      order: [["updatedAt", "DESC"]]
     })
   }
 
@@ -170,6 +176,7 @@ export class NoteService {
 
   async deleteWorkspace(id: number, userId: number) {
     const workspace = await this.getWorkspace(id, userId, "workspace")
+    console.log(workspace)
     if (!workspace?.permissionsMetadata?.configure) throw Errors.NOT_FOUND
     const notes = await Note.findAll({
       include: [
@@ -372,6 +379,7 @@ export class NoteService {
           }
         ]
       })
+      console.log(id)
       if (!workspace) {
         const workspace = await Workspace.findOne({
           include: [

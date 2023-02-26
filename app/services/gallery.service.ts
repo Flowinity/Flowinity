@@ -170,11 +170,19 @@ export class GalleryService {
     } as {
       [key: string]: any
     }
-    if (filter !== "all" && filter !== "gif") {
+    if (filter !== "all" && filter !== "gif" && filter !== "nonCollectivized") {
       base.type = filter
     }
     if (filter === "gif") {
       base.attachment = { [Op.like]: "%.gif" }
+    }
+    // if filter nonCollectivized it cannot belong in any collections
+    if (filter === "nonCollectivized") {
+      base.id = {
+        [Op.notIn]: sequelize.literal(
+          "(SELECT attachmentId FROM collectionItems)"
+        )
+      }
     }
     if (type === "user") {
       base.userId = id
@@ -234,6 +242,11 @@ export class GalleryService {
           where: {
             userId: id
           }
+        },
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username", "avatar"]
         }
       ]
     } else if (type === "autoCollect") {

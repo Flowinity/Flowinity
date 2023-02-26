@@ -12,21 +12,17 @@
         : ''
     "
   >
-    <ColubrinaMemberSidebarList
-      v-if="!$app.forcedWorkspaceDrawer"
-    ></ColubrinaMemberSidebarList>
-    <WorkspacesSidebarList v-else></WorkspacesSidebarList>
+    <ColubrinaMemberSidebarList></ColubrinaMemberSidebarList>
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import ColubrinaMemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
-import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
 
 export default defineComponent({
   name: "ColubrinaMemberSidebar",
-  components: { WorkspacesSidebarList, ColubrinaMemberSidebarList }
+  components: { ColubrinaMemberSidebarList }
 });
 </script>
 

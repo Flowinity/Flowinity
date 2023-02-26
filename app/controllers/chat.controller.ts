@@ -7,6 +7,8 @@ import { RequestAuth } from "@app/types/express"
 import Errors from "@app/lib/errors"
 import { CoreService } from "@app/services/core.service"
 import rateLimit from "express-rate-limit"
+import uploader from "@app/lib/upload"
+import { GalleryService } from "@app/services/gallery.service"
 
 const msgLimiter = rateLimit({
   // Rate limiter configuration
@@ -27,7 +29,10 @@ const msgLimiter = rateLimit({
 export class ChatController {
   router: any
 
-  constructor(private readonly chatService: ChatService) {
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly galleryService: GalleryService
+  ) {
     this.configureRouter()
   }
 
@@ -72,6 +77,53 @@ export class ChatController {
           req.user.id
         )
         res.json(chat)
+      }
+    )
+
+    this.router.post(
+      "/:chatId/icon",
+      auth("chats.edit"),
+      uploader.single("icon"),
+      async (req: any, res: Response) => {
+        await this.chatService.getChatFromAssociation(
+          parseInt(req.params.chatId),
+          req.user.id
+        )
+        const upload = await this.galleryService.createUpload(
+          req.user.id,
+          req.file,
+          false,
+          false
+        )
+        await this.chatService.updateGroupSettings(
+          parseInt(req.params.chatId),
+          req.user.id,
+          {
+            icon: upload.upload.attachment
+          }
+        )
+        res.json({
+          icon: upload.upload.attachment
+        })
+      }
+    )
+
+    this.router.delete(
+      "/:chatId/icon",
+      auth("chats.edit"),
+      async (req: RequestAuth, res: Response) => {
+        await this.chatService.getChatFromAssociation(
+          parseInt(req.params.chatId),
+          req.user.id
+        )
+        await this.chatService.updateGroupSettings(
+          parseInt(req.params.chatId),
+          req.user.id,
+          {
+            icon: null
+          }
+        )
+        res.sendStatus(204)
       }
     )
 

@@ -256,13 +256,15 @@ export class ChatService {
     userId: number,
     settings: {
       name?: string
+      icon?: string | null
     }
   ) {
     const chat = await this.getChatFromAssociation(associationId, userId)
     await this.checkPermissions(userId, associationId, "admin")
     await Chat.update(
       {
-        name: settings.name
+        name: settings.name,
+        icon: settings.icon
       },
       {
         where: {
@@ -271,17 +273,30 @@ export class ChatService {
       }
     )
     this.patchCacheForAll(chat.id)
-    this.sendMessage(
-      `<@${userId}> updated the chat name to ${settings.name}.`,
-      userId,
-      associationId,
-      undefined,
-      "rename",
-      []
-    )
+    if (settings.name !== chat.name) {
+      this.sendMessage(
+        `<@${userId}> updated the chat name to ${settings.name}.`,
+        userId,
+        associationId,
+        undefined,
+        "rename",
+        []
+      )
+    }
+    if (settings.icon !== undefined) {
+      this.sendMessage(
+        `<@${userId}> updated the chat icon.`,
+        userId,
+        associationId,
+        undefined,
+        "system",
+        []
+      )
+    }
     this.emitForAll(associationId, userId, "chatUpdate", {
       name: settings.name,
-      id: chat.id
+      id: chat.id,
+      icon: settings.icon
     })
     return chat
   }
@@ -697,10 +712,15 @@ export class ChatService {
       })
       if (!message) throw Errors.REPLY_MESSAGE_NOT_FOUND
     }
-    content = content.trim()
     // must contain at least one character excluding spaces and newlines and must not contain just #s (one or more)
-    if (!content.replace(/\s/g, "").length || !content.replace(/#/g, "").length)
-      throw Errors.NO_MESSAGE_CONTENT
+    if (!attachments?.length) {
+      content = content.trim()
+      if (
+        !content.replace(/\s/g, "").length ||
+        !content.replace(/#/g, "").length
+      )
+        throw Errors.NO_MESSAGE_CONTENT
+    }
     const message = await Message.create({
       content,
       chatId: chat.id,

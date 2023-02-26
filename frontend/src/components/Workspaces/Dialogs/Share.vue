@@ -54,7 +54,11 @@ export default defineComponent({
     }
   },
   async mounted() {
-    const { data } = await this.axios.get("/notes/" + this.$route.params.id);
+    const { data } = await this.axios.get("/notes/" + this.$route.params.id, {
+      headers: {
+        noToast: true
+      }
+    });
     this.shareLink = data.shareLink;
     this.share = data.shareLink !== null;
   }

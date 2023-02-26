@@ -74,6 +74,13 @@
           color="red"
           @click="act(item.id, 'deny')"
         ></HoverChip>
+        <HoverChip
+          text="Link"
+          icon="mdi-content-copy"
+          color="teal"
+          @click="$functions.copy($app.domain + item.attachment)"
+          class="my-1"
+        ></HoverChip>
       </template>
     </GalleryCore>
   </v-container>

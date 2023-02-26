@@ -55,7 +55,13 @@
       >
         <GalleryItem
           :item="item"
-          :supports="supports"
+          :supports="{
+            ...supports,
+            permissions: {
+              ...supports.permissions,
+              write: item.user ? item.user.id === $user.user?.id : true
+            }
+          }"
           :selected="selected"
           @select="select($event)"
           @collectivize="

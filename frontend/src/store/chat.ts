@@ -175,6 +175,14 @@ export const useChatStore = defineStore("chat", {
       }
     } as ChatState),
   actions: {
+    getChatName(chat: Chat) {
+      if (!chat) return "Communications";
+      if (chat.type === "direct") {
+        return chat.recipient?.username || "Deleted User";
+      } else {
+        return chat.name;
+      }
+    },
     getDraft(chatId: string) {
       return this.drafts[chatId];
     },
@@ -279,6 +287,7 @@ export const useChatStore = defineStore("chat", {
     },
     async readChat(chatId?: number) {
       await socket.emit("readChat", chatId || this.selectedChatId);
+      if (this.selectedChat) this.selectedChat.unread = 0;
     },
     async typing() {
       await socket.emit("typing", this.selectedChatId);
@@ -357,6 +366,7 @@ export const useChatStore = defineStore("chat", {
       } catch {}
       const { data } = await axios.get("/chats");
       this.chats = data;
+      const app = useAppStore();
       localStorage.setItem("chatStore", JSON.stringify(this.chats));
     },
     async init() {

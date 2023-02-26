@@ -62,12 +62,17 @@
     </v-row>
   </v-container>
   <v-container v-else>
-    <h3>Recent Notes</h3>
+    <h3>Recent</h3>
     <v-row class="mt-1">
-      <v-col cols="12" sm="3" v-for="note in $workspaces.recent" :key="note.id">
+      <v-col
+        cols="12"
+        sm="3"
+        v-for="note in $workspaces.recentOverall"
+        :key="note.id"
+      >
         <v-card :to="`/workspaces/notes/${note.id}`">
           <v-card-text class="text-overline">
-            {{ note.folder?.workspace?.name || "Unknown" }} &bullet; Document
+            {{ note.folder.name || "Unknown" }} &bullet; Document
           </v-card-text>
           <v-card-title class="mt-n6" style="font-size: 18px">
             {{ note.name }}
@@ -78,17 +83,44 @@
         </v-card>
       </v-col>
     </v-row>
+    <template v-for="item in $workspaces.recent">
+      <h3 class="mt-2">{{ item.name }}</h3>
+      <v-row class="mt-1">
+        <v-col
+          cols="12"
+          sm="3"
+          v-for="note in workspaceNotes(item)"
+          :key="note.id"
+        >
+          <v-card :to="`/workspaces/notes/${note.id}`">
+            <v-card-text class="text-overline">
+              {{ note.folder.name || "Unknown" }} &bullet; Document
+            </v-card-text>
+            <v-card-title class="mt-n6" style="font-size: 18px">
+              {{ note.name }}
+            </v-card-title>
+            <v-card-subtitle class="mb-4 mt-n1">
+              Last modified: {{ $date(note.updatedAt).fromNow() }}
+            </v-card-subtitle>
+          </v-card>
+        </v-col>
+      </v-row>
+    </template>
   </v-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
+import { Workspace } from "@/models/workspace";
 
 export default defineComponent({
   name: "Home",
   components: { PromoNoContent },
   methods: {
+    workspaceNotes(workspace: Workspace) {
+      return workspace.folders.map((folder) => folder.notes).flat();
+    },
     async getRecent() {
       if (!this.$workspaces.recent.length) {
         this.$app.componentLoading = true;

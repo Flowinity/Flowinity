@@ -58,12 +58,15 @@ export const useUserStore = defineStore("user", {
         });
         collections.init().then(() => {
           console.info("[TPU/CollectionsStore] Collections initialized");
+          app.populateQuickSwitcher();
         });
         workspace.init().then(() => {
           console.info("[TPU/WorkspacesStore] Workspaces initialized");
+          app.populateQuickSwitcher();
         });
         chat.init().then(() => {
           console.info("[TPU/ChatStore] Chat initialized");
+          app.populateQuickSwitcher();
         });
         friends.init().then(() => {
           console.info("[TPU/FriendsStore] Friends initialized");
@@ -76,6 +79,7 @@ export const useUserStore = defineStore("user", {
           app.getWeather();
         }, 1000 * 60 * 15);
         this._postInitRan = true;
+        app.populateQuickSwitcher();
       }
     },
     async init() {

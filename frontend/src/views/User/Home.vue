@@ -2,13 +2,12 @@
   <v-container>
     <v-row v-if="users.length">
       <v-col v-for="user in users" :key="user.id" cols="12" md="2" sm="6">
-        <v-card class="rounded-xl" elevation="7">
+        <v-card class="rounded-xl" elevation="7" height="215">
           <v-container class="justify-center align-center">
             <div class="justify-center align-center text-center">
               <router-link
                 :to="'/u/' + user.username"
                 style="text-decoration: none"
-                class="align-center justify-center"
               >
                 <UserAvatar
                   :user="user"
@@ -16,6 +15,7 @@
                   :status="true"
                   :status-y-offset="25"
                   :status-x-offset="10"
+                  :no-badges="true"
                 />
               </router-link>
             </div>
@@ -27,7 +27,8 @@
                 {{ user.username }}
               </router-link>
             </v-card-title>
-            <div class="text-subtitle-1 text-center justify-center limit">
+            <UserBadges :user="user" class="text-center mt-n1 mb-2" />
+            <div class="ml-n1 text-center justify-center limit">
               {{ user.description }}
             </div>
           </v-container>
@@ -48,10 +49,11 @@ import { defineComponent } from "vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { User } from "@/models/user";
+import UserBadges from "@/components/Users/UserBadges.vue";
 
 export default defineComponent({
   name: "UserHome",
-  components: { UserAvatar, PromoNoContent },
+  components: { UserBadges, UserAvatar, PromoNoContent },
   data() {
     return {
       users: [] as User[]

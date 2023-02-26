@@ -7,7 +7,7 @@ import { Note } from "@/models/note";
 export interface WorkspacesState {
   items: Workspace[];
   workspace: Workspace | null;
-  recent: Note[];
+  recent: Workspace[];
   versionHistory: boolean;
   share: {
     dialog: boolean;
@@ -30,7 +30,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
   actions: {
     async getRecent() {
       const { data } = await axios.get("/notes/recent");
-      this.recent = data as Note[];
+      this.recent = data;
       return data;
     },
     async getWorkspaces() {
@@ -38,7 +38,11 @@ export const useWorkspacesStore = defineStore("workspaces", {
       this.items = data;
     },
     async selectWorkspace(id: number) {
-      const { data } = await axios.get(`/notes/workspace/${id}`);
+      const { data } = await axios.get(`/notes/workspace/${id}`, {
+        headers: {
+          noToast: true
+        }
+      });
       this.workspace = data;
       localStorage.setItem(
         "selectedWorkspace",
@@ -57,6 +61,19 @@ export const useWorkspacesStore = defineStore("workspaces", {
         this.selectWorkspace(JSON.parse(selectedWorkspace).id);
       }
       this.getWorkspaces();
+    }
+  },
+  getters: {
+    recentOverall() {
+      const notes: Note[] = this.recent
+        .map((workspace) => workspace.folders.map((folder) => folder.notes))
+        .flat(2)
+        .sort((a, b) => {
+          if (a.updatedAt > b.updatedAt) return -1;
+          if (a.updatedAt < b.updatedAt) return 1;
+          return 0;
+        });
+      return notes.slice(0, 12);
     }
   }
 });
