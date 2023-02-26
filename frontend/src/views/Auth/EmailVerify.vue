@@ -12,7 +12,7 @@
           </p>
           <v-container class="text-center" v-if="!error">
             <v-progress-circular
-              v-model="loading"
+              v-if="loading"
               indeterminate
               size="48"
             ></v-progress-circular>
