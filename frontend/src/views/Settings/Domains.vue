@@ -27,7 +27,8 @@
   <small>
     If you'd like your domain added, email
     <a href="mailto:troplo@troplo.com">troplo@troplo.com</a>
-    , ensure your domain has already been registered and configured.
+    , ensure your domain has already been registered and configured with a DNS
+    provider.
   </small>
 </template>
 
