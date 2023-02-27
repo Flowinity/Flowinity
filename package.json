@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "start": "nodemon",
-    "serve": "tsc-watch --project tsconfig.app.json --onSuccess 'node ./out/index.js'",
+    "serve": "tsc-watch --project tsconfig.app.json --onSuccess 'node --inspect ./out/index.js'",
     "build": "rimraf out && tsc --project tsconfig.app.json",
     "format": "prettier --config ../.prettierrc.yaml --write \"app/**/*\"",
     "lint": "eslint -c .eslintrc.json \"./app/**/*.ts\" --format stylish",
