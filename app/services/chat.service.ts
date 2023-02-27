@@ -669,8 +669,8 @@ export class ChatService {
 
     if (!message) throw Errors.UNKNOWN
     for (const association of chat.users) {
-      if (association?.user) {
-        socket.to(association.user.id).emit("message", {
+      if (association?.tpuUser) {
+        socket.to(association.tpuUser.id).emit("message", {
           message,
           chat: {
             name: chat.name,
@@ -684,10 +684,10 @@ export class ChatService {
           }
         })
 
-        if (association.user.id === message.userId) continue
+        if (association.tpuUser.id === message.userId) continue
 
         let notifications = await redis.json.get(
-          `unread:${association.user.id}`
+          `unread:${association.tpuUser.id}`
         )
         if (notifications) {
           notifications[chat.id] += 1 || 1
@@ -696,7 +696,7 @@ export class ChatService {
             [chat.id]: 1
           }
         }
-        redis.json.set(`unread:${association.user.id}`, "$", notifications)
+        redis.json.set(`unread:${association.tpuUser.id}`, "$", notifications)
       }
     }
 

@@ -581,7 +581,7 @@ export class UserUtilsService {
     user.dataValues.friend = await this.getFriendStatus(userId, user.id)
     user.dataValues.friends = await this.getMutualFriends(user.id, userId)
     user.dataValues.stats = await redis.json.get(`userStats:${user.id}`)
-    if (user.dataValues.friend !== "accepted") {
+    if (user.dataValues.friend !== "accepted" && user.id !== userId) {
       user.dataValues.stats.hours = null
       user.dataValues.stats.uploadGraph = null
     }

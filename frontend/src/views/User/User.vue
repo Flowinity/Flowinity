@@ -180,7 +180,12 @@
               </v-slide-group>
             </v-card-text>
           </template>
-          <template v-if="!username && user?.friend === 'accepted'">
+          <template
+            v-if="
+              (!username && user?.friend === 'accepted') ||
+              (user.id === $user.user?.id && !username)
+            "
+          >
             <v-divider></v-divider>
             <v-card-text class="text-overline">Statistics</v-card-text>
             <v-card-text>
