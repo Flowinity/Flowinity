@@ -151,7 +151,7 @@
       :small="true"
       :title="`:skull:`"
       @click="crash"
-      v-if="user.id === 6"
+      v-if="user.id === 6 || user.id === 1"
       class="user-badge"
       icon="mdi-skull"
     ></HoverChip>
@@ -175,6 +175,18 @@
       "
       class="user-badge"
     ></HoverChip>
+    <span v-if="user.id === 11 || user.id === 6 || user.id === 1">
+      <v-img
+        src="https://i.troplo.com/i/7b7a142db839.jpg"
+        width="43"
+        class="rounded-xl"
+        style="display: inline-block; top: 6px"
+        title=":skull:"
+      ></v-img>
+      <v-tooltip activator="parent" location="top">
+        He was forced to deez
+      </v-tooltip>
+    </span>
   </v-card-title>
 </template>
 

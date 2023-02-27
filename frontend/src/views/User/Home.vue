@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row v-if="users.length">
-      <v-col v-for="user in users" :key="user.id" cols="12" md="2" sm="6">
+      <v-col v-for="user in users" :key="user.id" cols="12" md="3" sm="6">
         <v-card class="rounded-xl" elevation="7" height="215">
           <v-container class="justify-center align-center">
             <div class="justify-center align-center text-center">
