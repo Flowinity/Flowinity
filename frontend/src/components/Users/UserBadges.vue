@@ -180,8 +180,9 @@
         src="https://i.troplo.com/i/7b7a142db839.jpg"
         width="43"
         class="rounded-xl"
-        style="display: inline-block; top: 6px"
+        style="display: inline-block; top: 6px; cursor: pointer"
         title=":skull:"
+        v-ripple
       ></v-img>
       <v-tooltip activator="parent" location="top">
         He was forced to deez
