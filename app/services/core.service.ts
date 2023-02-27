@@ -92,8 +92,8 @@ export class CoreService {
     }
     let graphInterim = data.reduce(function (res, upload) {
       let day = dayjs(upload.createdAt).format("YYYY-MM-DD")
-      if (!result[day]) {
-        result[day] = 0
+      if (isNaN(result[day]) || result[day] === undefined) {
+        return result
       }
       if (type !== "pulse") {
         result[day]++
@@ -220,7 +220,7 @@ export class CoreService {
         }),
         uploadGraph: await this.convertToGraph(uploadStats),
         messageGraph: await this.convertToGraph(messageStats),
-        pulseGraph: await this.convertToGraph(pulseStats),
+        pulseGraph: await this.convertToGraph(pulseStats, "pulse"),
         pulse: Math.round(
           pulses.reduce((acc, pulse) => acc + pulse.timeSpent, 0) / 3600000
         ),

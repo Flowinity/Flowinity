@@ -770,7 +770,7 @@ export class ChatService {
   }
 
   async getChatFromAssociation(associationId: number, userId: number) {
-    const chats = await this.getCachedUserChats(userId)
+    const chats = await this.getCachedUserChats(userId, true)
     const chat = chats.find((c: Chat) => c.association?.id === associationId)
     if (!chat) throw Errors.CHAT_NOT_FOUND
     return chat
@@ -801,9 +801,10 @@ export class ChatService {
     })
   }
 
-  async getCachedUserChats(userId: number) {
+  async getCachedUserChats(userId: number, internal = false) {
     let chats = await redis.json.get(`chats:${userId}`)
     if (chats) {
+      if (internal) return chats
       const start = new Date().getTime()
       for (const chat of chats) {
         chat._redisSortDate = await redis.get(`chat:${chat.id}:sortDate`)

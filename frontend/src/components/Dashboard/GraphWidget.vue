@@ -1,7 +1,7 @@
 <template>
-  <v-card class="text-center justify-center" height="560">
+  <v-card class="text-center justify-center" :height="cardHeight">
     <v-container>
-      <v-tabs v-model="tab" align-tabs="center" class="mb-3">
+      <v-tabs v-model="tab" align-tabs="center" class="mb-3 mt-n3">
         <v-tab value="uploads">Uploads</v-tab>
         <v-tab value="messages">Messages</v-tab>
         <v-tab value="hours">Hours</v-tab>
@@ -13,11 +13,11 @@
           </strong>
           <Chart
             id="global-uploads"
-            :data="$app.site.stats.uploadGraph"
-            v-if="$app.site.stats.uploadGraph"
+            :data="uploadGraph || $app.site.stats.uploadGraph"
+            v-if="uploadGraph || $app.site.stats.uploadGraph"
             type="line"
             name="Uploads"
-            :height="420"
+            :height="height"
           ></Chart>
         </v-window-item>
         <v-window-item value="messages">
@@ -26,11 +26,11 @@
           </strong>
           <Chart
             id="global-messages"
-            :data="$app.site.stats.messageGraph"
-            v-if="$app.site.stats.messageGraph"
+            :data="messageGraph || $app.site.stats.messageGraph"
+            v-if="messageGraph || $app.site.stats.messageGraph"
             type="line"
-            name="Uploads"
-            :height="420"
+            name="Messages"
+            :height="height"
           ></Chart>
         </v-window-item>
         <v-window-item value="hours">
@@ -39,11 +39,11 @@
           </strong>
           <Chart
             id="global-hours"
-            :data="$app.site.stats.pulseGraph"
-            v-if="$app.site.stats.pulseGraph"
+            :data="pulseGraph || $app.site.stats.pulseGraph"
+            v-if="pulseGraph || $app.site.stats.pulseGraph"
             type="line"
-            name="Uploads"
-            :height="420"
+            name="Hours"
+            :height="height"
           ></Chart>
         </v-window-item>
       </v-window>
@@ -67,6 +67,25 @@ export default defineComponent({
     return {
       tab: "uploads"
     };
+  },
+  props: {
+    uploadGraph: {
+      type: Object
+    },
+    messageGraph: {
+      type: Object
+    },
+    pulseGraph: {
+      type: Object
+    },
+    height: {
+      type: Number,
+      default: 420
+    },
+    cardHeight: {
+      type: Number,
+      default: 555
+    }
   }
 });
 </script>

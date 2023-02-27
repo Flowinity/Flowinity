@@ -223,19 +223,13 @@
                     :height="$vuetify.display.mobile ? 400 : undefined"
                     max-height="400"
                   >
-                    <p class="mt-3">
-                      <strong style="font-size: 24px" class="text-gradient">
-                        Upload Stats
-                      </strong>
-                    </p>
-                    <v-card-subtitle>Over the past 7 days</v-card-subtitle>
-                    <Chart
-                      id="userv2-uploads"
-                      :data="user.stats.uploadGraph"
-                      type="line"
-                      name="Uploads"
+                    <GraphWidget
+                      :upload-graph="user.stats.uploadGraph"
+                      :message-graph="user.stats.messageGraph"
+                      :pulse-graph="user.stats.pulseGraph"
+                      :card-height="400"
                       :height="320"
-                    ></Chart>
+                    ></GraphWidget>
                   </v-card>
                 </v-col>
               </v-row>
@@ -291,11 +285,13 @@ import StatsCard from "@/components/Dashboard/StatsCard.vue";
 import BarChart from "@/components/Core/BarChart.vue";
 import LineChart from "@/components/Core/LineChart.vue";
 import Chart from "@/components/Core/Chart.vue";
+import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 
 export default defineComponent({
   name: "User",
   props: ["username"],
   components: {
+    GraphWidget,
     Chart,
     LineChart,
     BarChart,

@@ -67,6 +67,14 @@ export interface User {
       labels: string[];
       data: number[];
     };
+    messageGraph: {
+      labels: string[];
+      data: number[];
+    };
+    pulseGraph: {
+      labels: string[];
+      data: number[];
+    };
   };
   createdAt: Date;
   updatedAt: Date;
