@@ -4,6 +4,7 @@
     height="auto"
     style="z-index: 1001"
     color="transparent"
+    :id="editing ? '' : 'chat-input'"
   >
     <Mentionable
       :keys="['@']"

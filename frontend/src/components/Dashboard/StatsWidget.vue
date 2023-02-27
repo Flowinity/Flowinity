@@ -48,10 +48,28 @@
         :value="$app.site.stats.invites.toLocaleString()"
       ></StatsCard>
     </v-col>
-    <v-col :cols="cols" sm="12" :xl="xl">
+    <v-col :cols="cols" sm="12" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
         title="Documents"
         :value="$app.site.stats.docs.toLocaleString()"
+      ></StatsCard>
+    </v-col>
+    <v-col :cols="cols" sm="12" :lg="lg" :md="md" :sm="sm" :xl="xl">
+      <StatsCard
+        title="Messages"
+        :value="$app.site.stats.messages.toLocaleString()"
+      ></StatsCard>
+    </v-col>
+    <v-col :cols="cols" sm="12" :lg="lg" :md="md" :sm="sm" :xl="xl">
+      <StatsCard
+        title="Chats"
+        :value="$app.site.stats.chats.toLocaleString()"
+      ></StatsCard>
+    </v-col>
+    <v-col :cols="cols" sm="12" :lg="lg" :md="md" :sm="sm" :xl="xl">
+      <StatsCard
+        title="Crashes"
+        :value="$app.site.stats.crashes.toLocaleString()"
       ></StatsCard>
     </v-col>
   </v-row>

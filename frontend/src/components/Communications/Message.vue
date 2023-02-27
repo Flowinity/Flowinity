@@ -119,10 +119,11 @@
         class="overflow-content"
         :class="{ 'text-grey': message.pending, 'text-red': message.error }"
       >
-        <p
-          style="display: inline-block"
+        <span
+          class="overflow-content"
+          style="display: inline-block; width: 100%"
           v-html="$functions.markdown(message.content)"
-        ></p>
+        ></span>
         <v-btn
           color="grey"
           icon

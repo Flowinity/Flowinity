@@ -45,6 +45,17 @@ export interface AppState {
       pulses: number;
       docs: number;
       invites: number;
+      messages: number;
+      chats: number;
+      crashes: number;
+      messageGraph: {
+        labels: string[];
+        data: number[];
+      } | null;
+      pulseGraph: {
+        labels: string[];
+        data: number[];
+      } | null;
       uploadGraph: {
         labels: string[];
         data: number[];
@@ -129,6 +140,8 @@ export const useAppStore = defineStore("app", {
         flowinityId: "troplo-private-uploader",
         stats: {
           uploadGraph: null,
+          messageGraph: null,
+          pulseGraph: null,
           collections: 0,
           collectionItems: 0,
           pulse: 0,
@@ -137,7 +150,10 @@ export const useAppStore = defineStore("app", {
           usage: 0,
           pulses: 0,
           docs: 0,
-          invites: 0
+          invites: 0,
+          messages: 0,
+          chats: 0,
+          crashes: 0
         },
         maintenance: false,
         _redis: new Date().toISOString()

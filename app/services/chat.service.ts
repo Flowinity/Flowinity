@@ -388,7 +388,8 @@ export class ChatService {
       const association = await ChatAssociation.create({
         chatId: chat.id,
         userId: friend.friendId,
-        rank: "member"
+        rank: "member",
+        identifier: chat.id + "-" + friend.friendId
       })
       newAssociations.push(association.id)
       this.sendMessage(
@@ -636,7 +637,8 @@ export class ChatService {
       await ChatAssociation.create({
         userId,
         chatId: chat.id,
-        rank: type === "direct" ? "member" : "owner"
+        rank: type === "direct" ? "member" : "owner",
+        identifier: chat.id + "-" + userId
       })
     )
 
@@ -645,7 +647,8 @@ export class ChatService {
         await ChatAssociation.create({
           userId: user,
           chatId: chat.id,
-          rank: "member"
+          rank: "member",
+          identifier: chat.id + "-" + user
         })
       )
     }

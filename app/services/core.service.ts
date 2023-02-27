@@ -15,6 +15,9 @@ import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
 import axios from "axios"
 import maxmind, { CityResponse, Reader } from "maxmind"
 import Errors from "@app/lib/errors"
+import { Message } from "@app/models/message.model"
+import { Chat } from "@app/models/chat.model"
+import { Feedback } from "@app/models/feedback.model"
 let city: Reader<CityResponse> | undefined
 
 maxmind
@@ -81,42 +84,83 @@ export class CoreService {
     })
   }
 
+  async convertToGraph(data: any[], type?: "pulse") {
+    let result = {}
+    for (let i = 7; i >= 0; i--) {
+      let day = dayjs().subtract(i, "days").format("YYYY-MM-DD")
+      result[day] = 0
+    }
+    let graphInterim = data.reduce(function (res, upload) {
+      let day = dayjs(upload.createdAt).format("YYYY-MM-DD")
+      if (!result[day]) {
+        result[day] = 0
+      }
+      if (type !== "pulse") {
+        result[day]++
+      } else {
+        result[day] += upload.timeSpent / 1000 / 60 / 60
+      }
+      return result
+    }, {})
+    if (!data.length) {
+      graphInterim = result
+    }
+    // if pulse graph, round to 2 decimals
+    if (type === "pulse") {
+      for (let key in graphInterim) {
+        graphInterim[key] = Math.round(graphInterim[key] * 100) / 100
+      }
+    }
+    return {
+      data: Object.values(graphInterim),
+      labels: Object.keys(graphInterim)
+    }
+  }
+
   async getStats(user?: User): Promise<object> {
-    let resultUploads = {}
     const where = user ? { userId: user.id } : {}
     const uploadStats = await Upload.findAll({
       where: {
         ...where,
         createdAt: {
-          [Op.gte]: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
+          [Op.gte]: new Date(new Date().getTime() - 8 * 24 * 60 * 60 * 1000)
         }
       }
     })
 
-    for (let i = 7; i >= 0; i--) {
-      let day = dayjs().subtract(i, "days").format("YYYY-MM-DD")
-      resultUploads[day] = 0
-    }
-    let uploadGraphInterim = uploadStats.reduce(function (result, upload) {
-      let day = dayjs(upload.createdAt).format("YYYY-MM-DD")
-      if (!resultUploads[day]) {
-        resultUploads[day] = 0
+    const messageStats = await Message.findAll({
+      where: {
+        ...where,
+        createdAt: {
+          [Op.gte]: new Date(new Date().getTime() - 8 * 24 * 60 * 60 * 1000)
+        }
       }
-      resultUploads[day]++
-      return resultUploads
-    }, {})
-    if (!uploadStats.length) {
-      uploadGraphInterim = resultUploads
-    }
-    let uploadGraph = {
-      data: Object.values(uploadGraphInterim),
-      labels: Object.keys(uploadGraphInterim)
-    }
+    })
+
+    let pulseStats = await Pulse.findAll({
+      where: {
+        ...where,
+        other: {
+          type: "session"
+        },
+        createdAt: {
+          [Op.gte]: new Date(new Date().getTime() - 8 * 24 * 60 * 60 * 1000)
+        }
+      }
+    })
+
     if (!user) {
       const invites = await Invite.count({
         where: {
           registerUserId: {
             [Op.ne]: null
+          }
+        }
+      })
+      const crashes = await Feedback.count({
+        where: {
+          feedbackText: {
+            [Op.like]: "%SkullCrash%"
           }
         }
       })
@@ -127,7 +171,9 @@ export class CoreService {
         usagePercentage: (await User.sum("quota")) / 1000000000000,
         collections: await Collection.count(),
         collectionItems: await CollectionItem.count(),
-        uploadGraph,
+        uploadGraph: await this.convertToGraph(uploadStats),
+        messageGraph: await this.convertToGraph(messageStats),
+        pulseGraph: await this.convertToGraph(pulseStats, "pulse"),
         uploads: await Upload.count(),
         invites,
         inviteMilestone: Math.ceil(invites / 20) * 20,
@@ -144,7 +190,10 @@ export class CoreService {
             60
         ),
         pulses: await Pulse.count(),
-        docs: await Note.count()
+        docs: await Note.count(),
+        messages: await Message.count(),
+        chats: await Chat.count(),
+        crashes
       }
     } else {
       const pulses = await Pulse.findAll({
@@ -169,7 +218,9 @@ export class CoreService {
         uploads: await Upload.count({
           where
         }),
-        uploadGraph,
+        uploadGraph: await this.convertToGraph(uploadStats),
+        messageGraph: await this.convertToGraph(messageStats),
+        pulseGraph: await this.convertToGraph(pulseStats),
         pulse: Math.round(
           pulses.reduce((acc, pulse) => acc + pulse.timeSpent, 0) / 3600000
         ),

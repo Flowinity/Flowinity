@@ -25,17 +25,39 @@ export class MigrateService {
     if (!(await argon2.verify(user.password, password))) {
       throw Errors.INVALID_CREDENTIALS
     }
-    await ChatAssociation.update(
-      {
-        userId,
-        legacyUserId: null
-      },
-      {
-        where: {
-          legacyUserId: user.id
-        }
+    const associations = await ChatAssociation.findAll({
+      where: {
+        legacyUserId: user.id
       }
-    )
+    })
+    for (const association of associations) {
+      const userAssoc = await ChatAssociation.findOne({
+        where: {
+          chatId: association.chatId,
+          userId
+        }
+      })
+      if (!userAssoc) {
+        await ChatAssociation.update(
+          {
+            userId,
+            legacyUserId: null
+          },
+          {
+            where: {
+              id: association.id
+            }
+          }
+        )
+      } else {
+        await ChatAssociation.destroy({
+          where: {
+            id: association.id,
+            legacyUserId: user.id
+          }
+        })
+      }
+    }
     await Message.update(
       {
         userId,
@@ -69,6 +91,25 @@ export class MigrateService {
         }
       }
     )
+    const chats = await Chat.findAll({
+      where: {
+        userId,
+        type: "group"
+      }
+    })
+    for (const chat of chats) {
+      await ChatAssociation.update(
+        {
+          rank: "owner"
+        },
+        {
+          where: {
+            chatId: chat.id,
+            userId
+          }
+        }
+      )
+    }
     await LegacyUser.destroy({
       where: {
         id: user.id

@@ -1,4 +1,11 @@
-import { Table, Column, Model, BelongsTo, DataType } from "sequelize-typescript"
+import {
+  Table,
+  Column,
+  Model,
+  BelongsTo,
+  DataType,
+  Unique
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { Chat } from "@app/models/chat.model"
@@ -26,6 +33,10 @@ export class ChatAssociation extends Model {
 
   @Column
   legacyUserId: number
+
+  @Unique
+  @Column
+  identifier: string
 
   @BelongsTo(() => User, "userId")
   tpuUser: User

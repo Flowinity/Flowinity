@@ -166,9 +166,7 @@ import User from "@/views/User/User.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { Chat, Typing } from "@/models/chat";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
-import { User as UserType } from "@/models/user";
 import { Message as MessageType } from "@/models/message";
-import { ChatAssociation } from "@/models/chatAssociation";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 
 export default defineComponent({
@@ -211,7 +209,8 @@ export default defineComponent({
         }
       },
       focusInterval: undefined as ReturnType<typeof setTimeout> | undefined,
-      limit: false
+      limit: false,
+      inputHeight: 87
     };
   },
   computed: {
@@ -227,10 +226,6 @@ export default defineComponent({
       return this.$chat.selectedChat?.messages?.find(
         (message) => message.id === this.replyId
       );
-    },
-    inputHeight() {
-      const lines = this.message.split("\n").length;
-      return (lines - 1) * 24 + 86.5;
     }
   },
   methods: {
@@ -606,9 +601,16 @@ export default defineComponent({
       if (document.hasFocus()) {
         this.$chat.readChat();
       }
+    },
+    onResize(e: any) {
+      this.inputHeight = e[0].target.clientHeight;
     }
   },
   mounted() {
+    new ResizeObserver(this.onResize).observe(
+      //@ts-ignore
+      document.querySelector("#chat-input")
+    );
     //document.querySelector(".message-list-container")?.addEventListener("scroll", this.scrollEvent);
     // add event listener for shortcuts
     document.addEventListener("keydown", this.shortcutHandler);
@@ -629,6 +631,9 @@ export default defineComponent({
     document
       .querySelector(".message-list-container")
       ?.removeEventListener("scroll", this.scrollEvent);
+    document
+      .querySelector(".message-input")
+      ?.removeEventListener("resize", this.onResize);
     clearInterval(this.focusInterval);
     this.$socket.off("message", this.onMessage);
     this.$socket.off("typing", this.onTyping);

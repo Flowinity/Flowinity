@@ -25,6 +25,8 @@ import { MigrateController } from "@app/controllers/migrate.controller"
 import { ChatController } from "@app/controllers/chat.controller"
 import { MediaProxyController } from "@app/controllers/mediaProxy.controller"
 import { ProviderController } from "@app/controllers/provider.controller"
+import { User } from "@app/models/user.model"
+import { Op } from "sequelize"
 
 @Service()
 export class Application {
@@ -141,6 +143,7 @@ export class Application {
       }
     })
     this.errorHandling()
+    this.onServerStart()
   }
 
   private config(): void {
@@ -149,6 +152,21 @@ export class Application {
     this.app.use(express.urlencoded({ extended: true }))
     this.app.use(cookieParser())
     this.app.use(cors())
+  }
+
+  private async onServerStart() {
+    await User.update(
+      {
+        status: "offline"
+      },
+      {
+        where: {
+          status: {
+            [Op.not]: "offline"
+          }
+        }
+      }
+    )
   }
 
   private errorHandling(): void {
