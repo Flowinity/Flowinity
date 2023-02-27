@@ -164,6 +164,28 @@
       class="user-badge"
       icon="mdi-hamburger"
     ></HoverChip>
+    <span v-if="user.id === 11 || user.id === 6 || user.id === 1">
+      <v-img
+        src="https://i.troplo.com/i/7b7a142db839.jpg"
+        width="43"
+        class="rounded-xl mr-2"
+        style="display: inline-block; top: 6px; cursor: pointer"
+        title=":skull:"
+        v-ripple
+      ></v-img>
+      <v-tooltip activator="parent" location="top">
+        He was forced to deez
+      </v-tooltip>
+    </span>
+    <HoverChip
+      text="Gordon Freeloader"
+      color="#fb7e14"
+      :small="true"
+      title="Attends The Gordon"
+      v-if="user.id === 1 || user.id === 6 || user.id === 7 || user.id === 8"
+      class="user-badge"
+      icon="mdi-black-mesa"
+    ></HoverChip>
     <HoverChip
       text="Not friends with user, some information may be unavailable."
       icon="mdi-account-off"
@@ -175,19 +197,6 @@
       "
       class="user-badge"
     ></HoverChip>
-    <span v-if="user.id === 11 || user.id === 6 || user.id === 1">
-      <v-img
-        src="https://i.troplo.com/i/7b7a142db839.jpg"
-        width="43"
-        class="rounded-xl"
-        style="display: inline-block; top: 6px; cursor: pointer"
-        title=":skull:"
-        v-ripple
-      ></v-img>
-      <v-tooltip activator="parent" location="top">
-        He was forced to deez
-      </v-tooltip>
-    </span>
   </v-card-title>
 </template>
 
