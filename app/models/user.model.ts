@@ -29,7 +29,8 @@ import { Experiment } from "@app/models/experiment.model"
       "passwordResetEnabled",
       "passwordResetCode",
       "passwordResetExpiry",
-      "alternatePasswords"
+      "alternatePasswords",
+      "mailToken"
     ]
   }
 }))
@@ -197,6 +198,9 @@ export class User extends Model {
 
   @Column
   emailToken?: string
+
+  @Column
+  mailToken?: string
 
   @BelongsTo(() => Plan, "planId")
   plan: Plan

@@ -41,6 +41,7 @@ import vuetify from "./plugins/vuetify";
 import { ChatAssociation } from "@/models/chatAssociation";
 import router from "@/router";
 import MessageToast from "@/components/Communications/MessageToast.vue";
+import { useMailStore } from "@/store/mail";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -56,6 +57,7 @@ declare module "@vue/runtime-core" {
     $chat: ReturnType<typeof useChatStore>;
     $socket: any;
     $friends: ReturnType<typeof useFriendsStore>;
+    $mail: ReturnType<typeof useMailStore>;
   }
 }
 
@@ -96,6 +98,7 @@ const app = createApp({
       const workspace = useWorkspacesStore();
       const chat = useChatStore();
       const friends = useFriendsStore();
+      const mail = useMailStore();
       const toast = useToast();
       app.config.globalProperties.$user = user;
       app.config.globalProperties.$app = core;
@@ -107,6 +110,7 @@ const app = createApp({
       app.config.globalProperties.$workspaces = workspace;
       app.config.globalProperties.$chat = chat;
       app.config.globalProperties.$friends = friends;
+      app.config.globalProperties.$mail = mail;
       app.config.globalProperties.$socket = SocketIO(
         import.meta.env.DEV ? "http://localhost:34582" : "",
         {
@@ -356,6 +360,10 @@ const app = createApp({
       "$route.params.chatId"(val) {
         if (!val) return;
         this.$chat.setChat(parseInt(val));
+      },
+      "$route.params.mailbox"(val) {
+        if (!val) return;
+        this.$mail.setMailbox(val);
       },
       "$app.workspaceDrawer"(val) {
         if (this.$app.forcedWorkspaceDrawer) return;

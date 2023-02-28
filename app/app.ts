@@ -27,6 +27,7 @@ import { MediaProxyController } from "@app/controllers/mediaProxy.controller"
 import { ProviderController } from "@app/controllers/provider.controller"
 import { User } from "@app/models/user.model"
 import { Op } from "sequelize"
+import { MailController } from "@app/controllers/mail.controller"
 
 @Service()
 export class Application {
@@ -51,7 +52,8 @@ export class Application {
     private readonly migrateController: MigrateController,
     private readonly chatController: ChatController,
     private readonly mediaProxyController: MediaProxyController,
-    private readonly providerController: ProviderController
+    private readonly providerController: ProviderController,
+    private readonly mailController: MailController
   ) {
     this.app = express()
 
@@ -105,6 +107,7 @@ export class Application {
     this.app.use("/api/v2/chats", this.chatController.router)
     this.app.use("/api/v2/mediaproxy", this.mediaProxyController.router)
     this.app.use("/api/v2/providers", this.providerController.router)
+    this.app.use("/api/v2/mail", this.mailController.router)
     this.app.use("/i/", this.fileController.router)
     this.app.use("/api/v1/gallery", this.galleryController.router)
     this.app.use("/api/v1/site", this.coreController.router)

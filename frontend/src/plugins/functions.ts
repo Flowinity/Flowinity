@@ -1,4 +1,5 @@
 import md from "./rules";
+import mdEmail from "./rulesEmail";
 import rules from "@/plugins/rules";
 import { useAppStore } from "@/store/app";
 export default {
@@ -62,6 +63,9 @@ export default {
   },
   markdown(text: string): any {
     return md.render(text);
+  },
+  markdownEmail(text: string): any {
+    return mdEmail.render(text);
   },
   userStatus(status: "online" | "offline" | "idle" | "busy" | "invisible") {
     switch (status) {

@@ -26,6 +26,31 @@ const routes = [
         ]
       },
       {
+        path: "/mail",
+        name: "Mail",
+        component: () => import("@/layouts/mail/Mail.vue"),
+        redirect: "/mail/home",
+        children: [
+          {
+            path: ":mailbox",
+            name: "Mailbox",
+            component: () => import("@/views/Mail/Mailbox.vue"),
+            children: [
+              {
+                path: ":messageId",
+                name: "Message",
+                component: () => import("@/views/Mail/Message.vue")
+              }
+            ]
+          },
+          {
+            path: "home",
+            name: "Mail Home",
+            component: () => import("@/views/Mail/Home.vue")
+          }
+        ]
+      },
+      {
         path: "/",
         name: "Dashboard",
         component: () => import("@/views/Home.vue")

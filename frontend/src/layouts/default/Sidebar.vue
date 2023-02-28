@@ -257,6 +257,16 @@ export default defineComponent({
           experimentsRequired: ["COMMUNICATIONS"]
         },
         {
+          id: 36,
+          click() {},
+          externalPath: "",
+          name: "Mail",
+          path: "/mail",
+          icon: "mdi-email",
+          scope: "mail.view",
+          experimentsRequired: ["WEBMAIL"]
+        },
+        {
           id: 27,
           click() {},
           externalPath: "",

@@ -508,6 +508,7 @@ export class CoreService {
       experiments.COMPASS_INTEGRATION = true
       experiments.OBJECTIVE = true
       experiments.COMMUNICATIONS = true
+      experiments.WEBMAIL = true
       return experiments
     } else {
       return experiments

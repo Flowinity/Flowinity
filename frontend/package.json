@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -39,6 +39,7 @@
     "core-js": "^3.8.3",
     "cropperjs": "^1.5.13",
     "dayjs": "^1.11.7",
+    "dompurify": "^3.0.0",
     "editorjs-header-with-anchor": "^2.6.0",
     "editorjs-text-alignment-blocktune": "^1.0.3",
     "editorjs-text-color-plugin": "^2.0.2",
@@ -63,6 +64,7 @@
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
+    "@types/dompurify": "^2.4.0",
     "@types/markdown-it": "^12.2.3",
     "@types/node": "^18.11.9",
     "@types/textarea-caret": "^3.0.1",

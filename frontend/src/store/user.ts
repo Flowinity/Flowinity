@@ -10,6 +10,7 @@ import { useFriendsStore } from "@/store/friends";
 import { useAppStore } from "@/store/app";
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
+import { useMailStore } from "@/store/mail";
 
 export interface UserState {
   user: User | null;
@@ -87,6 +88,7 @@ export const useUserStore = defineStore("user", {
         const collections = useCollectionsStore();
         const experiments = useExperimentsStore();
         const friends = useFriendsStore();
+        const mail = useMailStore();
         experiments.init().then(() => {
           console.info("[TPU/ExperimentsStore] Experiments initialized");
         });
@@ -107,6 +109,9 @@ export const useUserStore = defineStore("user", {
         });
         app.getWeather().then(() => {
           console.info("[TPU/AppStore] Weather initialized");
+        });
+        mail.getMailboxes().then(() => {
+          console.info("[TPU/MailStore] Mailboxes initialized");
         });
         // every 15 minutes update the weather
         setInterval(() => {
