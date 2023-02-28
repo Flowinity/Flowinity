@@ -21,7 +21,7 @@ export default defineConfig({
       workbox: {
         clientsClaim: true,
         skipWaiting: true,
-        navigateFallbackDenylist: [/^\/i\//]
+        navigateFallbackDenylist: [/^\/i\/.*/]
       },
       manifest: {
         name: "TPU",
