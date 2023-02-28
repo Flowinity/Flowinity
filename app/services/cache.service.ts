@@ -380,7 +380,6 @@ export class CacheService {
   }
 
   cacheInit() {
-    return
     try {
       if (cluster.worker?.id === 1 || !cluster.isWorker) {
         // 10 minutes
