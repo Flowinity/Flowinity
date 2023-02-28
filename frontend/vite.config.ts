@@ -23,11 +23,40 @@ export default defineConfig({
         skipWaiting: true,
         navigateFallbackDenylist: [/^\/i\/.*/]
       },
+      includeAssets: [
+        "favicon.ico",
+        "apple-touch-icon.png",
+        "safari-pinned-tab.svg",
+        "site.webmanifest",
+        "mstile-310x310.png",
+        "mstile-310x150.png",
+        "mstile-150x150.png",
+        "favicon.png",
+        "favicon-gold.png",
+        "favicon-32x32.png",
+        "favicon-16x16.png",
+        "android-chrome-192x192.png",
+        "android-chrome-512x512.png",
+        "browserconfig.xml"
+      ],
       manifest: {
-        name: "TPU",
+        name: "TroploPrivateUploader",
         short_name: "TPU",
-        theme_color: "#121212",
-        background_color: "#121212"
+        icons: [
+          {
+            src: "/android-chrome-192x192.png",
+            sizes: "192x192",
+            type: "image/png"
+          },
+          {
+            src: "/android-chrome-512x512.png",
+            sizes: "512x512",
+            type: "image/png"
+          }
+        ],
+        theme_color: "#101010",
+        background_color: "#101010",
+        display: "standalone"
       }
     }),
     vue({
