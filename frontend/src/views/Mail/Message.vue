@@ -1,6 +1,6 @@
 <template>
   <span style="position: relative">
-    <iframe class="message-email" ref="iframe" sandbox v-if="false" />
+    <!--<iframe class="message-email" ref="iframe" sandbox v-if="false" />-->
     Coming soon.
   </span>
 </template>
