@@ -171,7 +171,9 @@
                   <UserAvatar
                     :user="friend.user"
                     size="100"
+                    :status="true"
                     class="ml-2 mr-2"
+                    :no-badges="true"
                   />
                   <v-card-title class="text-center justify-center">
                     {{ friend.user.username }}

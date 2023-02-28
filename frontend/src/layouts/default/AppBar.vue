@@ -33,15 +33,10 @@
     <template v-else>
       <CommunicationsAvatar
         :user="$chat.selectedChat?.recipient"
-        v-if="$chat.selectedChat?.recipient"
+        :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
         size="32"
         class="ml-4"
-      />
-      <CommunicationsAvatar
-        :chat="$chat.selectedChat"
-        v-else-if="$chat.selectedChat"
-        size="32"
-        class="ml-4"
+        :status="true"
       />
       <h2
         class="unselectable ml-2 limit"

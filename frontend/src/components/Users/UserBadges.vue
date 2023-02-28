@@ -164,6 +164,7 @@
       class="user-badge"
       icon="mdi-hamburger"
     ></HoverChip>
+    <!--
     <span v-if="user.id === 11 || user.id === 6 || user.id === 1">
       <v-img
         src="https://i.troplo.com/i/7b7a142db839.jpg"
@@ -176,7 +177,7 @@
       <v-tooltip activator="parent" location="top">
         He was forced to deez
       </v-tooltip>
-    </span>
+    </span>-->
     <HoverChip
       text="Gordon Freeloader"
       color="#fb7e14"
