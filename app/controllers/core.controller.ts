@@ -5,6 +5,8 @@ import { CoreService } from "@app/services/core.service"
 import { CacheService } from "@app/services/cache.service"
 import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
+import os from "os"
+import cluster from "cluster"
 
 interface WeatherResponse {
   temp?: number
@@ -85,10 +87,13 @@ export class CoreController {
      */
     this.router.get(["/", "/state"], async (req: Request, res: Response) => {
       try {
-        return res.json(
-          (await redis.json.get("core:state")) ||
-            (await this.cacheService.refreshState())
-        )
+        return res.json({
+          ...((await redis.json.get("core:state")) ||
+            (await this.cacheService.refreshState())),
+          server: cluster.worker?.id
+            ? `${os.hostname()?.toUpperCase()}#${cluster.worker?.id}`
+            : os.hostname()?.toUpperCase()
+        })
       } catch (e) {
         console.error(e)
         return res.sendStatus(500)

@@ -64,6 +64,7 @@ export interface AppState {
     maintenance: boolean;
     alert: string;
     _redis: string;
+    server: string;
   };
   dialogs: {
     migrateWizard: boolean;
@@ -156,7 +157,8 @@ export const useAppStore = defineStore("app", {
           crashes: 0
         },
         maintenance: false,
-        _redis: new Date().toISOString()
+        _redis: new Date().toISOString(),
+        server: "MAIN4"
       },
       weather: {
         loading: true,

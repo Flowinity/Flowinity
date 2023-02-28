@@ -16,6 +16,7 @@
     </p>
     <p>Build date relative: {{ $date($app.version.date).fromNow() }}</p>
     <p>Backend environment: {{ $app.site.release }}</p>
+    <p>Server: {{ $app.site.server }}</p>
     <p class="mt-5 text-gradient">TroploPrivateUploader</p>
     <p>&copy; {{ $date().format("YYYY") }} Troplo Services</p>
     <v-btn

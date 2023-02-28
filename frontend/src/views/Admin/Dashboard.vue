@@ -9,6 +9,10 @@
       <v-card-title>
         For management please use TPU Classic until the admin panel is added.
       </v-card-title>
+      <v-btn variant="outlined" @click="restart" class="mx-3 my-3">
+        <v-icon>mdi-restart</v-icon>
+        Restart TPU Cluster
+      </v-btn>
     </v-card>
   </v-container>
 </template>
@@ -24,6 +28,10 @@ export default defineComponent({
     };
   },
   methods: {
+    async restart() {
+      await this.axios.post("/admin/restart");
+      this.$toast.success("Service restart queued.");
+    },
     async getDashboard() {
       const { data } = await this.axios.get("/admin/dashboard");
       this.dashboard = data;
