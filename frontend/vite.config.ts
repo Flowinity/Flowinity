@@ -11,7 +11,8 @@ import ViteVersion from "@troplo/vite-version";
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
-    sourcemap: false
+    sourcemap: false,
+    emptyOutDir: false
   },
   plugins: [
     ViteVersion(),
