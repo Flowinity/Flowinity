@@ -39,8 +39,8 @@ export class Server {
     }
   }
 
-  async init(): Promise<void> {
-    this.application.app.set("port", Server.appPort)
+  async init(port?: number): Promise<void> {
+    this.application.app.set("port", port || Server.appPort)
     this.application.app.set("trust proxy", 1)
     const memoryCache = await caching("memory")
     this.application.app.set("cache", memoryCache)
@@ -52,7 +52,7 @@ export class Server {
     this.cacheService.cacheInit()
     this.server = http.createServer(this.application.app)
 
-    this.server.listen(Server.appPort)
+    this.server.listen(port || Server.appPort)
     socket.init(this.application.app, this.server)
     this.server.on("error", (error: NodeJS.ErrnoException) =>
       this.onError(error)
@@ -78,6 +78,11 @@ export class Server {
         process.exit(1)
         break
       case "EADDRINUSE":
+        if (process.env.PROD_DEBUG === "true") {
+          const port = 34583
+          this.init(port)
+          return
+        }
         // eslint-disable-next-line no-console
         console.error(`${bind} is already in use`)
         process.exit(1)
