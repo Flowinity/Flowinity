@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "@levminer/speakeasy": "^1.4.0",
+    "@socket.io/redis-adapter": "^8.1.0",
     "@troplo/sequelize": "^0.0.0-troplo-dev3",
     "@troplo/sequelize-typescript": "^2.1.5-troplo-dev3",
     "@troplo/tpu-ogs": "^5.1.0-troplo1",

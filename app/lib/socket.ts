@@ -5,15 +5,19 @@ import { Container } from "typedi"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import auth from "@app/lib/authSocket"
 import { ChatService } from "@app/services/chat.service"
+import { createAdapter } from "@socket.io/redis-adapter"
 
 export default {
-  init(app: any, server: any) {
+  async init(app: any, server: any) {
+    const subClient = redis.duplicate()
     const io = require("socket.io")(server, {
       cors: {
         origin: [config.hostnameWithProtocol],
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
       }
     })
+    await subClient.connect()
+    io.adapter(createAdapter(redis, subClient))
     io.use(auth)
     io.on("connection", async (socket: SocketAuth) => {
       const user = await User.findOne({
