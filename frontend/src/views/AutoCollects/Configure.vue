@@ -31,7 +31,7 @@
                 <v-text-field
                   label="Name"
                   v-model="rule.name"
-                  :rules="[(v) => !!v || 'Name is required']"
+                  :rules="[(v: any) => !!v || 'Name is required']"
                 ></v-text-field>
                 <v-card-subtitle class="grey--text ml-n4 mb-2">
                   ACTION
@@ -79,7 +79,7 @@
                       <v-text-field
                         label="Value"
                         v-model="subsubrule.value"
-                        :rules="[(v) => !!v || 'Value is required']"
+                        :rules="[(v: any) => !!v || 'Value is required']"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="1" style="max-width: 40px">

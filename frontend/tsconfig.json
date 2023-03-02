@@ -14,7 +14,7 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom", "dom.iterable", "webworker"],
     "skipLibCheck": true,
-    "types": ["node", "vuetify", "vite-plugin-pwa/client"],
+    "types": ["node", "@troplo/vuetify", "vite-plugin-pwa/client"],
     "paths": {
       "@/*": ["src/*"]
     }
