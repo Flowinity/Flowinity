@@ -195,6 +195,16 @@ const routes = [
             path: "dev",
             name: "Developer Options",
             component: () => import("@/views/Admin/Dev.vue")
+          },
+          {
+            path: "users",
+            name: "Users",
+            component: () => import("@/views/Admin/Users.vue")
+          },
+          {
+            path: "cache",
+            name: "Cache",
+            component: () => import("@/views/Admin/Cache.vue")
           }
         ]
       },
@@ -202,6 +212,11 @@ const routes = [
         path: "/insights",
         name: "Insights",
         component: () => import("@/views/Insights/Home.vue")
+      },
+      {
+        path: "/insights/dynamic",
+        name: "Dynamic Insights",
+        component: () => import("@/views/Insights/Dynamic.vue")
       },
       // Unauthenticated
       {

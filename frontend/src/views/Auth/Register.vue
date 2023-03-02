@@ -173,6 +173,9 @@ export default defineComponent({
     this.$app.title = "Register";
     this.inviteKey = this.$route.params.key as string;
     this.getInviteKey();
+    if (this.$route.query.email) {
+      this.email = this.$route.query.email as string;
+    }
   }
 });
 </script>

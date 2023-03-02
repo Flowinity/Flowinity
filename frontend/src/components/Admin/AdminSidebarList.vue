@@ -9,7 +9,10 @@
       :exact="item.exact"
       :to="item.path"
       @click="handleClick(index)"
-      :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
+      :disabled="
+        !$functions.checkScope(item.scope, $user.user?.scopes) ||
+        !access(item.level)
+      "
       :prepend-icon="item.icon"
     >
       <v-list-item-title>
@@ -58,7 +61,8 @@ export default defineComponent({
           path: "/admin/dashboard",
           icon: "mdi-view-dashboard",
           exact: true,
-          scope: "*"
+          scope: "*",
+          level: 1
         },
         {
           id: 2,
@@ -66,7 +70,8 @@ export default defineComponent({
           path: "/admin/users",
           icon: "mdi-account-group",
           exact: true,
-          scope: "*"
+          scope: "*",
+          level: 2
         },
         {
           id: 3,
@@ -74,7 +79,8 @@ export default defineComponent({
           path: "/admin/workspaces",
           icon: "mdi-domain",
           exact: true,
-          scope: "*"
+          scope: "*",
+          level: 2
         },
 
         {
@@ -83,7 +89,8 @@ export default defineComponent({
           path: "/admin/cache",
           icon: "mdi-cached",
           exact: true,
-          scope: "*"
+          scope: "*",
+          level: 1
         },
         {
           id: 5,
@@ -91,7 +98,8 @@ export default defineComponent({
           path: "/admin/collections",
           icon: "mdi-view-list",
           exact: true,
-          scope: "*"
+          scope: "*",
+          level: 2
         },
         {
           id: 7,
@@ -99,7 +107,8 @@ export default defineComponent({
           path: "/admin/communications",
           icon: "mdi-message",
           exact: true,
-          scope: "*"
+          scope: "*",
+          level: 2
         },
         {
           id: 8,
@@ -107,7 +116,8 @@ export default defineComponent({
           path: "/admin/invites",
           icon: "mdi-account-plus",
           exact: true,
-          scope: "*"
+          scope: "*",
+          level: 1
         },
         {
           id: 9,
@@ -115,7 +125,8 @@ export default defineComponent({
           path: "/admin/experiments",
           icon: "mdi-flask",
           exact: true,
-          scope: "*"
+          scope: "*",
+          level: 1
         },
         {
           id: 10,
@@ -123,7 +134,8 @@ export default defineComponent({
           path: "/admin/services",
           icon: "mdi-server",
           exact: true,
-          scope: "*"
+          scope: "*",
+          level: 2
         },
         {
           id: 11,
@@ -131,7 +143,8 @@ export default defineComponent({
           path: "/admin/feedback",
           icon: "mdi-comment-question-outline",
           exact: true,
-          scope: "*"
+          scope: "*",
+          level: 1
         },
         {
           id: 12,
@@ -139,7 +152,8 @@ export default defineComponent({
           path: "/admin/dev",
           icon: "mdi-code-tags",
           exact: true,
-          scope: "*"
+          scope: "*",
+          level: 1
         }
       ] as {
         id: number;
@@ -151,10 +165,20 @@ export default defineComponent({
         new?: boolean;
         warning?: string;
         click?: () => void;
+        level: number;
       }[];
     }
   },
   methods: {
+    access(level: number) {
+      if (level === 1) {
+        return this.$user.user?.administrator || this.$user.user?.moderator;
+      } else if (level === 2) {
+        return this.$user.user?.administrator;
+      } else {
+        return false;
+      }
+    },
     handleClick(index: number) {
       this.sidebar[index].click?.call(this);
     }

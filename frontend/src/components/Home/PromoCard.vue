@@ -1,14 +1,33 @@
 <template>
-  <v-card class="mx-auto mt-6" elevation="6" max-width="1000">
+  <v-card
+    class="mx-auto mt-6 align-center d-flex align-items-center position-relative"
+    elevation="6"
+    max-width="1000"
+    :width="width"
+    :height="height"
+    :class="{ hover: hover, 'elevation-0': hover }"
+  >
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" v-if="image">
         <v-img :src="image" contain></v-img>
       </v-col>
-      <v-col cols="12" md="5">
-        <v-card-title class="mb-2 display-1">{{ title }}</v-card-title>
-        <v-card-text class="">
-          <slot></slot>
-        </v-card-text>
+      <v-col
+        cols="12"
+        :md="image ? 6 : 12"
+        class="text-center justify-center"
+        :class="{ 'ml-n3': image }"
+      >
+        <div :class="{ fix: image }">
+          <v-icon v-if="icon" size="92" class="text-grey mt-3">
+            {{ icon }}
+          </v-icon>
+          <v-card-title class="display-1 font-weight-bold mt-n1 mb-n1">
+            {{ title }}
+          </v-card-title>
+          <v-card-text>
+            <slot></slot>
+          </v-card-text>
+        </div>
       </v-col>
     </v-row>
   </v-card>
@@ -17,8 +36,19 @@
 <script lang="ts">
 export default {
   name: "PromoCard",
-  props: ["title", "image"]
+  props: ["title", "image", "icon", "width", "height", "hover"]
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.hover {
+  background: transparent !important;
+}
+.hover:hover {
+  background-color: rgb(24, 24, 24) !important;
+}
+.fix {
+  position: relative;
+  top: 74.5px;
+}
+</style>

@@ -293,6 +293,10 @@ export const useChatStore = defineStore("chat", {
       await socket.emit("typing", this.selectedChatId);
     },
     async setChat(id: number) {
+      const experimentsStore = useExperimentsStore();
+      if (!experimentsStore.experiments.COMMUNICATIONS_KEEP_LOADED) {
+        if (this.selectedChat?.messages) this.selectedChat.messages = [];
+      }
       this.selectedChatId = id;
       const appStore = useAppStore();
       const chat = this.chats.find(
@@ -346,7 +350,7 @@ export const useChatStore = defineStore("chat", {
         (chat: Chat) => chat.association.id === this.selectedChatId
       );
       if (!forceUnload) {
-        this.chats[index].messages.push(...data);
+        this.chats[index].messages?.push(...data);
       } else {
         this.chats[index].messages = data;
         this.loadNew = true;

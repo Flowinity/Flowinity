@@ -12,12 +12,18 @@ import { Upload } from "@app/models/upload.model"
 import path from "path"
 import * as fs from "fs"
 import { Friend } from "@app/models/friend.model"
+import Errors from "@app/lib/errors"
 
 export enum CacheType {
   "everything",
   "state",
   "collections",
-  "sharelinks"
+  "sharelinks",
+  "autocollects",
+  "invites",
+  "chats",
+  "insights",
+  "userstats"
 }
 
 const inviteParams = {
@@ -122,6 +128,21 @@ export class AdminService {
         return true
       case CacheType.sharelinks:
         await this.cacheService.generateShareLinkCache()
+        return true
+      case CacheType.autocollects:
+        await this.cacheService.generateAutoCollectCache()
+        return true
+      case CacheType.invites:
+        await redis.del("invites")
+        return true
+      case CacheType.chats:
+        await this.cacheService.generateChatsCache()
+        return true
+      case CacheType.insights:
+        await this.cacheService.generateInsightsCache()
+        return true
+      case CacheType.userstats:
+        await this.cacheService.generateUserStatsCache()
         return true
       default:
         return false
@@ -311,5 +332,41 @@ export class AdminService {
         where: {}
       }
     )
+  }
+
+  async updatePlanId(userId: number, planId: number) {
+    const user = await User.findByPk(userId)
+    if (!user) throw Errors.USER_NOT_FOUND
+    if (userId === 6 && planId === 6) {
+      throw Errors.HANDLED_BY_PAYMENT_PROVIDER
+    }
+    await User.update(
+      {
+        planId
+      },
+      {
+        where: {
+          id: userId
+        }
+      }
+    )
+    return true
+  }
+
+  async updateBanned(userId: number, banned: boolean) {
+    const user = await User.findByPk(userId)
+    if (!user) throw Errors.USER_NOT_FOUND
+    if (user.administrator || user.moderator) throw Errors.MANUAL_BAN_REQUIRED
+    await User.update(
+      {
+        banned
+      },
+      {
+        where: {
+          id: userId
+        }
+      }
+    )
+    return true
   }
 }

@@ -623,6 +623,7 @@ export default defineComponent({
     this.$socket.on("embedResolution", this.onEmbedResolution);
     this.$socket.on("typing", this.onTyping);
     this.message = this.$chat.getDraft(<string>this.$route.params.chatId) || "";
+    this.$app.forcedMainDrawer = false;
   },
   unmounted() {
     this.$chat.setDraft(<string>this.$route.params.chatId, this.message);

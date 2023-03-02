@@ -344,6 +344,18 @@ export class AdminController {
       }
     )
 
+    this.router.patch("/gold", async (req: RequestAuth, res: Response) => {
+      if (!req.body.id || !req.body.planId) throw Errors.INVALID_PARAMETERS
+      await this.adminService.updatePlanId(req.body.id, req.body.planId)
+      res.sendStatus(204)
+    })
+
+    this.router.patch("/ban", async (req: RequestAuth, res: Response) => {
+      if (!req.body.id) throw Errors.INVALID_PARAMETERS
+      await this.adminService.updateBanned(req.body.id, req.body.banned)
+      res.sendStatus(204)
+    })
+
     this.router.all(
       "*",
       auth("*"),

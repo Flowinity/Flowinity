@@ -4,14 +4,17 @@
     elevation="8"
     style="cursor: pointer"
     :to="to"
+    :height="height"
   >
     <v-img
       :src="image"
       class="white--text align-end"
       :gradient="
-        title
+        rightText
+          ? 'to top, rgba(0,0,0,.0), rgba(0,0,0,0.2)'
+          : title
           ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)'
-          : 'to top, rgba(0,0,0,.0), rgba(0,0,0,0.2)'
+          : null
       "
       cover
     >
@@ -23,6 +26,7 @@
           ></v-progress-circular>
         </v-row>
       </template>
+      <slot></slot>
       <v-card-title v-if="title">
         {{ title }}
         <small class="float-end" v-if="subtitle">
@@ -68,6 +72,9 @@ export default defineComponent({
     blackText: {
       type: Boolean,
       default: false
+    },
+    height: {
+      type: String
     }
   }
 });

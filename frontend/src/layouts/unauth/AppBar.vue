@@ -1,5 +1,12 @@
 <template>
-  <v-app-bar color="dark" app density="comfortable" floating flat>
+  <v-app-bar
+    color="dark"
+    app
+    density="comfortable"
+    floating
+    flat
+    class="header"
+  >
     <h1
       style="z-index: 10; cursor: pointer; font-size: 32px"
       class="text-gradient unselectable ml-4"
@@ -22,3 +29,12 @@ export default defineComponent({
   name: "UnauthenticatedAppBar"
 });
 </script>
+
+<style lang="scss">
+.header {
+  background: rgba(51, 51, 51, 0.1) !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+</style>

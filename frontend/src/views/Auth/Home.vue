@@ -1,78 +1,139 @@
 <template>
   <ColubrinaTPU v-model="$app.dialogs.colubrina"></ColubrinaTPU>
-  <v-parallax
-    dark
-    id="main-parallax"
-    src="../../assets/images/background.png"
-    height="500"
-  >
-    <div class="d-flex flex-column fill-height justify-center align-center">
-      <h1 class="">TPU</h1>
-      <h4 class="text-center">
-        TPU is a screenshot & file hosting suite with extra features such as
-        chatting, document editing, and more.
-      </h4>
-      <br />
-      <div>
-        <v-btn
-          class="rounded-xl"
-          large
-          to="/login"
-          variant="outlined"
+  <div class="hero">
+    <div class="hero-body">
+      <div class="title">
+        Welcome to
+        <span class="text-gradient">TPU</span>.
+      </div>
+      <div class="subtitle">
+        The
+        <span class="text-gradient">versatile</span> image hosting service, now for <span class="text-gradient">everyone</span>.
+      </div>
+      <div class="mt-4">
+        <v-text-field
+          variant="filled"
+          v-model="email"
+          label="Email"
+          outlined
+          type="email"
           color="white"
+          class="sign-up-button"
+          @keydown.enter="getStarted"
+          placeholder="troplo@troplo.com"
         >
-          Login
-        </v-btn>
+          <template v-slot:append>
+            <v-btn
+              style="background-color: #121212; letter-spacing: 0.045em;"
+              color="white"
+              variant="outlined"
+              block
+              height="100%"
+              @click="getStarted"
+            >
+              Get Started...
+            </v-btn>
+          </template>
+        </v-text-field>
+      </div>
+      <!-- learn more down arrow positioned at the bottom of the hero -->
+      <div class="learn-more">
+        <HoverChip
+          @click="scrollDown()"
+          class="learn-more-button"
+          color="white"
+          icon="mdi-chevron-down"
+          text="Learn More"
+        >
+        </HoverChip>
       </div>
     </div>
-  </v-parallax>
-  <v-col>
-    <p class="text-h4 justify-center text-center text-gradient">What's new?</p>
-    <PromoCard
-      title="Feature Update 2.1"
-      image="https://i.troplo.com/i/aae2fb2c0cf8.png"
-    >
-      TPU 2.1 adds Workspaces, a new way to create and collaborate on documents
-      and notes.
+  </div>
+  <v-container id="content">
+    <PromoCard title="Feature Update: TPU v2.1" image="https://i.troplo.com/i/aae2fb2c0cf8.png" :height="260" :hover="true" class="mb-2">
+      <p>
+        TPU 2.1 adds Workspaces, a new way to create documents and quick notes.
+      </p>
     </PromoCard>
-    <br />
-    <p class="text-h4 justify-center text-center text-gradient">Features</p>
-    <PromoCard
-      title="Collections"
-      image="https://i.troplo.com/i/bbfccfe95019.png"
-    >
-      Collections are the way to organize and share your uploads, with advanced
-      permissions, you can collaborate with others on your collections, and even
-      create a public link that can be accessed by anyone without a TPU account.
-    </PromoCard>
-    <PromoCard title="Insights" image="https://i.troplo.com/i/1985c7cf1197.png">
-      Insights allow you to view detailed statistics about your upload habits,
-      such as when you upload.
-    </PromoCard>
-    <PromoCard
-      title="AutoCollects"
-      image="https://i.troplo.com/i/5d421e0914e0.png"
-    >
-      AutoCollect allows you to programmatically add files you upload to
-      collections based on rules you set.
-      <br />
-      For example, you may set a rule that adds your upload to a "Games"
-      collection if the filename contains "Skyrim"
-    </PromoCard>
-    <PromoCard
-      title="Workspaces"
-      image="https://i.troplo.com/i/8091e9037466.png"
-    >
-      Create documents and collaborate with others on them in real time using
-      TPU Workspaces.
-    </PromoCard>
-  </v-col>
-  <v-col class="text-center justify-center">
-    <p class="text-h4 text-gradient mb-3">Statistics</p>
-    <v-container>
-      <StatsWidget :lg="3"></StatsWidget>
-    </v-container>
-  </v-col>
+    <v-row>
+      <v-col md="4">
+        <PromoCard title="Scoped API Keys" icon="mdi-lock" :height="260" :hover="true">
+          <p>
+            TPU's API is designed to be simple, yet customizable, you can create
+            a different API key for each integration, each with their own sets
+            of rules on what they can access.
+          </p>
+        </PromoCard>
+      </v-col>
+      <v-col md="4">
+        <PromoCard title="Collections" icon="mdi-folder-multiple-image" :height="260" :hover="true">
+          <p>
+            Want to organize your screenshots or files? Collections are the way
+            to do so, add items to one or many collections of your choosing to
+            greater organize your files.
+          </p>
+        </PromoCard>
+      </v-col>
+      <v-col md="4">
+        <PromoCard title="AutoCollects" icon="mdi-image-auto-adjust" :height="260" :hover="true">
+          <p>
+            AutoCollects allow you to create rules that automatically add files
+            to a collection, for example, you can have a rule that triggers when
+            the scanned text of the image contains "Skyrim" and add it to a
+            "Games" collection.
+          </p>
+        </PromoCard>
+      </v-col>
+      <v-col md="4">
+        <PromoCard title="Insights" icon="mdi-chart-timeline-variant-shimmer" :height="260" :hover="true">
+          <p>
+            Insights allow you to see highly detailed statistics on how you use
+            TPU. Such as when you upload files, how many you've uploaded, how
+            much you use TPU, and more.
+          </p>
+        </PromoCard>
+      </v-col>
+      <v-col md="4">
+        <PromoCard title="Workspaces" icon="mdi-folder-account" :height="260" :hover="true">
+          <p>
+            TPU Workspaces allow you to create documents right inside of your
+            TPU account. You can create documents, edit them, and share them
+            with others.
+          </p>
+        </PromoCard>
+      </v-col>
+      <v-col md="4">
+        <PromoCard title="Communications" icon="mdi-message-processing" :height="260" :hover="true">
+          <p>
+            TPU Communications allow you to create direct messages, and groups
+            with other TPU members in a fully featured messaging system.
+          </p>
+        </PromoCard>
+      </v-col>
+      <v-col md="4">
+        <PromoCard title="ShareX Compatible" icon="mdi-upload" :height="260" :hover="true">
+          <p>
+            TPU is fully compatible with ShareX and Sharenix, you can additionally use TPU's API to create custom
+            integrations.
+          </p>
+        </PromoCard>
+      </v-col>
+      <v-col md="4">
+        <PromoCard title="Scoped Passwords" icon="mdi-form-textbox-password" :height="260" :hover="true">
+          <p>
+            Scoped Passwords allow you to create a different password with different API access permissions, if you need a way to access a part of your TPU without risking the rest of your account, Scoped Passwords are an option.
+          </p>
+        </PromoCard>
+      </v-col>
+      <v-col md="4">
+        <PromoCard title="Sharing & Collaboration" icon="mdi-share" :height="260" :hover="true">
+          <p>
+            TPU is built from the ground up to allow for collaboration and sharing, share collections, slideshows, workspace documents and more with other TPU users and non-TPU users via a unique share link.
+          </p>
+        </PromoCard>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -80,10 +141,36 @@ import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
 import { defineComponent } from "vue";
 import ColubrinaTPU from "@/components/Home/Dialogs/ColubrinaTPU.vue";
+import HoverChip from "@/components/Core/HoverChip.vue"
 
 export default defineComponent({
   name: "UnauthHome",
-  components: { ColubrinaTPU, PromoCard, StatsWidget },
+  components: { HoverChip, ColubrinaTPU, PromoCard, StatsWidget },
+  data() {
+    return {
+      email: ""
+    };
+  },
+  methods: {
+    getStarted() {
+      this.$router.push({
+        name: "Register",
+        query: {
+          email: this.email
+        }
+      });
+    },
+    scrollDown() {
+      const content = document.getElementById("content");
+      if (content) {
+        content.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest"
+        });
+      }
+    }
+  },
   mounted() {
     this.$app.title = "Welcome";
     if (this.$route.query.ref === "colubrina") {
@@ -93,4 +180,56 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+$bg-color: #101010;
+$dot-color: rgba(255, 255, 255, 0.3);
+$dot-size: 1px;
+$dot-space: 22px;
+.hero {
+  height: calc(100vh - 56px);
+  width: 100%;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+        90deg,
+        $bg-color ($dot-space - $dot-size),
+        transparent 1%
+      )
+      center,
+    linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center,
+    $dot-color;
+  background-size: $dot-space $dot-space;
+}
+.hero-body {
+  text-align: center;
+  color: white;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  background-image: radial-gradient(#dcd6d6 1px, transparent 0);
+}
+.hero-body .title {
+  font-size: 4rem;
+  font-weight: 700;
+}
+.subtitle {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.learn-more {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+</style>
+
+<style>
+.sign-up-button,
+.v-input__prepend,
+.v-input__append {
+  padding-top: 0 !important;
+}
+</style>

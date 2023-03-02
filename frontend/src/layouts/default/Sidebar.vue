@@ -357,7 +357,7 @@ export default defineComponent({
           click() {},
           externalPath: "",
           path: "/admin",
-          name: "Admin",
+          name: "Admin Panel",
           icon: "mdi-gavel",
           new: false,
           scope: "admin.view",

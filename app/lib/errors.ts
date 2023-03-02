@@ -230,6 +230,15 @@ let Errors = {
   INVALID_USERNAME: {
     message: "Your username contains content that may be deemed offensive.",
     status: 400
+  },
+  HANDLED_BY_PAYMENT_PROVIDER: {
+    message:
+      "The user's plan could not be updated because it's handled by a remote provider.",
+    status: 400
+  },
+  MANUAL_BAN_REQUIRED: {
+    message: "This is a high level user that needs to be banned manually.",
+    status: 400
   }
 }
 

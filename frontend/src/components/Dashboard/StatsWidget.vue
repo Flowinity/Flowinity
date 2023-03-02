@@ -54,22 +54,16 @@
         :value="$app.site.stats.docs?.toLocaleString()"
       ></StatsCard>
     </v-col>
-    <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
+    <v-col :cols="cols" :sm="6">
       <StatsCard
         title="Messages"
         :value="$app.site.stats.messages?.toLocaleString()"
       ></StatsCard>
     </v-col>
-    <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
+    <v-col :cols="cols" :sm="6" :lg="12" :xl="6">
       <StatsCard
         title="Chats"
         :value="$app.site.stats.chats?.toLocaleString()"
-      ></StatsCard>
-    </v-col>
-    <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
-      <StatsCard
-        title="Crashes"
-        :value="$app.site.stats.crashes?.toLocaleString()"
       ></StatsCard>
     </v-col>
   </v-row>

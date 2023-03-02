@@ -17,7 +17,6 @@ import maxmind, { CityResponse, Reader } from "maxmind"
 import Errors from "@app/lib/errors"
 import { Message } from "@app/models/message.model"
 import { Chat } from "@app/models/chat.model"
-import { Feedback } from "@app/models/feedback.model"
 let city: Reader<CityResponse> | undefined
 
 maxmind
@@ -157,13 +156,7 @@ export class CoreService {
           }
         }
       })
-      const crashes = await Feedback.count({
-        where: {
-          feedbackText: {
-            [Op.like]: "%SkullCrash%"
-          }
-        }
-      })
+
       return {
         users: await User.count(),
         announcements: await Announcement.count(),
@@ -192,8 +185,7 @@ export class CoreService {
         pulses: await Pulse.count(),
         docs: await Note.count(),
         messages: await Message.count(),
-        chats: await Chat.count(),
-        crashes
+        chats: await Chat.count()
       }
     } else {
       const pulses = await Pulse.findAll({
@@ -267,6 +259,7 @@ export class CoreService {
 
   getExperiments(dev: boolean = false): object {
     const experiments = {
+      COMMUNICATIONS_KEEP_LOADED: false,
       COMMUNICATIONS_INLINE_SIDEBAR_HIRES: false,
       COMMUNICATIONS_QUAD_SIDEBAR_LOWRES: false,
       COMMUNICATIONS: true,
@@ -309,6 +302,10 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        COMMUNICATIONS_KEEP_LOADED: {
+          description: "Keep communication messages loaded in the store.",
+          createdAt: "2023-03-02T00:00:00.000Z"
+        },
         COMMUNICATIONS_INLINE_SIDEBAR_HIRES: {
           description:
             "Enable inline sidebar for communications on high resolution devices.",

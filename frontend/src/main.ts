@@ -155,7 +155,11 @@ const app = createApp({
         chat.chats.splice(index, 1);
       });
       socket.on("message", async (newMessage: any) => {
-        if (newMessage.chat.id === chat.selectedChat?.id) return;
+        if (
+          newMessage.chat.id === chat.selectedChat?.id &&
+          chat.isCommunications
+        )
+          return;
         const index = chat.chats.findIndex((c) => c.id === newMessage.chat.id);
         if (index === -1) return;
         // move chat to top
@@ -189,6 +193,7 @@ const app = createApp({
             }
           );
         }
+        if (!experiments.experiments.COMMUNICATIONS_KEEP_LOADED) return;
         if (!chat.chats[newIndex].messages) return;
         if (
           chat.chats[newIndex].messages.find(
