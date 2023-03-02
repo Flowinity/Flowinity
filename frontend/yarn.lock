@@ -3215,9 +3215,14 @@ make-dir@^3.0.2:
   dependencies:
     semver "^6.0.0"
 
-"markdown-it-emoji@git+https://github.com/Troplo/markdown-it-unicode-emoji":
+markdown-it-emoji@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/markdown-it-emoji/-/markdown-it-emoji-2.0.2.tgz#cd42421c2fda1537d9cc12b9923f5c8aeb9029c8"
+  integrity sha512-zLftSaNrKuYl0kR5zm4gxXjHaOI3FAOEaloKmRA5hijmJZvSjmxcokOLlzycb/HXlUFWzXqpIEoyEMCE4i9MvQ==
+
+"markdown-it-unicode-emoji@https://github.com/Troplo/markdown-it-unicode-emoji":
   version "0.3.0"
-  resolved "git+https://github.com/Troplo/markdown-it-unicode-emoji#a96a634425d8fe1e434f1736d4bf9268a4b45bd3"
+  resolved "https://github.com/Troplo/markdown-it-unicode-emoji#a96a634425d8fe1e434f1736d4bf9268a4b45bd3"
   optionalDependencies:
     emojione "2.1.0"
 

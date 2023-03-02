@@ -54,10 +54,15 @@ md.renderer.rules = {
       return `<img class="emoji emoji-large" draggable="false" alt="${tokens[idx].content}" src="/emoji/emoji_u${codepoint}.svg">`;
     }
     return `<img class="emoji" draggable="false" alt="${tokens[idx].content}" src="/emoji/emoji_u${codepoint}.svg">`;
-  },
+  }
   //@ts-ignore
+  /*
   text(tokens, idx, options, env, self) {
-    let content = tokens[idx].content;
+    let content = DOMPurify.sanitize(tokens[idx].content, {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: []
+    });
+    console.log(content);
     const regex = /\\?<(@\d+)>/g;
     const mentions = content.match(regex);
     if (mentions) {
@@ -115,8 +120,9 @@ md.renderer.rules = {
         }
       }
     }
-    return content;
-  }
+    //parse content and reutrn
+    return md.render(content);
+  }*/
 };
 
 export default md;
