@@ -250,6 +250,11 @@
             class="my-3"
           ></StatsCard>
           <StatsCard
+            title="Storage Used"
+            :value="$functions.fileSize(user.quota || 0)"
+            class="my-3"
+          ></StatsCard>
+          <StatsCard
             title="Collections"
             :value="user.stats.collections.toLocaleString()"
             class="my-3"

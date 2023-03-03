@@ -551,7 +551,8 @@ export class UserUtilsService {
         "avatar",
         "createdAt",
         "updatedAt",
-        "banner"
+        "banner",
+        "quota"
       ],
       include: [
         {
@@ -590,7 +591,8 @@ export class UserUtilsService {
         "avatar",
         "createdAt",
         "updatedAt",
-        "banner"
+        "banner",
+        "quota"
       ],
       include: [
         {
