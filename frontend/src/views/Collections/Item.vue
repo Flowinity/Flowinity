@@ -41,13 +41,13 @@
           Settings
         </v-btn>
         <v-btn
-          v-else-if="collection.shareLink"
+          v-else-if="collection?.shareLink"
           text
           @click="
             $functions.copy(
               $app.site.hostnameWithProtocol +
                 '/collections/share/' +
-                collection.shareLink
+                collection?.shareLink
             )
           "
         >
