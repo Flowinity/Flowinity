@@ -10,41 +10,7 @@ import { GalleryService } from "@app/services/gallery.service"
 import uploader from "@app/lib/upload"
 import { Notification } from "@app/models/notification.model"
 import { CacheService } from "@app/services/cache.service"
-import rateLimit from "express-rate-limit"
-
-const mailLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 1,
-  legacyHeaders: true,
-  skipFailedRequests: true,
-  message: {
-    errors: [
-      {
-        name: "RATE_LIMITED",
-        message: "Too many requests, please try again later.",
-        status: 429
-      }
-    ]
-  },
-  keyGenerator: (req: RequestAuth) => req.user.id || req.ip
-})
-
-const limiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 4,
-  legacyHeaders: true,
-  skipFailedRequests: true,
-  message: {
-    errors: [
-      {
-        name: "RATE_LIMITED",
-        message: "Too many requests, please try again later.",
-        status: 429
-      }
-    ]
-  },
-  keyGenerator: (req: RequestAuth) => req.user.id || req.ip
-})
+import rateLimits from "@app/lib/rateLimits"
 
 @Service()
 export class UserUtilsController {
@@ -189,7 +155,14 @@ export class UserUtilsController {
       "/all",
       auth("user.view"),
       async (req: Request, res: Response) => {
-        res.json(await this.userUtilsService.getAllUsers())
+        res.json(
+          await this.userUtilsService.getAllUsers(
+            parseInt(<string>req.query.page),
+            <string>req.query.sort,
+            <string>req.query.order,
+            <string>req.query.search
+          )
+        )
       }
     )
 
@@ -343,7 +316,7 @@ export class UserUtilsController {
     this.router.post(
       "/banner",
       auth("user.modify"),
-      limiter,
+      rateLimits.uploadLimiterUser,
       uploader.single("banner"),
       async (req: RequestAuth, res: Response) => {
         const banner = await this.galleryService.createUpload(
@@ -364,7 +337,7 @@ export class UserUtilsController {
     this.router.post(
       "/avatar",
       auth("user.modify"),
-      limiter,
+      rateLimits.uploadLimiterUser,
       uploader.single("avatar"),
       async (req: RequestAuth, res: Response) => {
         const banner = await this.galleryService.createUpload(
@@ -413,7 +386,7 @@ export class UserUtilsController {
     this.router.post(
       "/verification/send",
       auth("user.modify"),
-      mailLimiter,
+      rateLimits.mailLimiter,
       async (req: RequestAuth, res: Response) => {
         await this.userUtilsService.sendVerificationEmail(req.user.id)
         res.sendStatus(204)

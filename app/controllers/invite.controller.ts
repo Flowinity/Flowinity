@@ -4,23 +4,7 @@ import Router from "express-promise-router"
 import { InviteService } from "@app/services/invite.service"
 import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
-import rateLimit from "express-rate-limit"
-
-const limiter = rateLimit({
-  windowMs: 5 * 60 * 1000,
-  max: 2,
-  legacyHeaders: true,
-  skipFailedRequests: true,
-  message: {
-    errors: [
-      {
-        name: "RATE_LIMITED",
-        message: "Too many requests, please try again later.",
-        status: 429
-      }
-    ]
-  }
-})
+import rateLimits from "@app/lib/rateLimits"
 
 @Service()
 export class InviteController {
@@ -40,7 +24,7 @@ export class InviteController {
     this.router.post(
       "/",
       auth("user.view"),
-      limiter,
+      rateLimits.inviteLimiter,
       async (req: RequestAuth, res: Response) => {
         await this.inviteService.createInvite(req.user.id, req.body.email)
         res.sendStatus(204)

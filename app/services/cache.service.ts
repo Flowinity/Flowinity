@@ -238,6 +238,11 @@ export class CacheService {
 
   async generateShareLinkCache() {
     console.info("[REDIS] Generating collections ShareLink cache...")
+    // delete all shareLinks
+    const keys = await redis.keys("shareLinks:*")
+    for (const key of keys) {
+      redis.del(key)
+    }
     const start = new Date().getTime()
     const collections = await Collection.findAll({
       where: {
@@ -279,12 +284,74 @@ export class CacheService {
       ]
     })
     for (const collection of collections) {
-      redis.json.set(`shareLinks:${collection.shareLink}`, "$", collection)
+      redis.json.set(`shareLinks:${collection.shareLink}`, "$", {
+        ...collection.toJSON(),
+        permissionsMetadata: {
+          configure: false,
+          write: false,
+          read: true
+        },
+        _redis: new Date().toISOString()
+      })
     }
     const end = new Date().getTime()
     console.info(
       `[REDIS] Collections ShareLink cache generated in ${end - start}ms`
     )
+  }
+
+  async patchShareLinkCache(shareLink: string, collectionId: number) {
+    console.info("[REDIS] Patching ShareLink cache...")
+    const start = new Date().getTime()
+    const collection = await Collection.findOne({
+      where: {
+        id: collectionId
+      },
+      include: [
+        {
+          model: CollectionUser,
+          as: "users",
+          include: [
+            {
+              model: User,
+              as: "user",
+              attributes: ["id", "username"]
+            }
+          ]
+        },
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username"]
+        },
+        {
+          model: CollectionItem,
+          as: "preview",
+          include: [
+            {
+              model: Upload,
+              as: "attachment",
+              attributes: ["id", "attachment"],
+              where: {
+                type: "image"
+              }
+            }
+          ]
+        }
+      ]
+    })
+    if (!collection) return
+    await redis.json.set(`shareLinks:${shareLink}`, "$", {
+      ...collection.toJSON(),
+      permissionsMetadata: {
+        configure: false,
+        write: false,
+        read: true
+      },
+      _redis: new Date().toISOString()
+    })
+    const end = new Date().getTime()
+    console.info(`[REDIS] ShareLink cache patched in ${end - start}ms`)
   }
 
   async generateCollectionCache(userId?: number) {

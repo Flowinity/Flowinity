@@ -102,7 +102,8 @@
     "swagger-jsdoc": "6.2.5",
     "swagger-ui-express": "4.5.0",
     "typedi": "0.10.0",
-    "ua-parser-js": "^1.0.32"
+    "ua-parser-js": "^1.0.32",
+    "zod": "^3.20.6"
   },
   "devDependencies": {
     "@types/body-parser": "1.19.1",

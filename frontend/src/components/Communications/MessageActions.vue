@@ -7,7 +7,7 @@
     v-if="!$vuetify.display.mobile"
     style="z-index: 50"
   >
-    <v-btn icon @click="$emit('emote')" rounded="0">
+    <v-btn icon @click="$emit('emote')" rounded="0" :size="size">
       <v-tooltip location="top" activator="parent">React</v-tooltip>
       <v-icon>mdi-emoticon-happy</v-icon>
     </v-btn>
@@ -16,6 +16,7 @@
       @click="$emit('edit')"
       rounded="0"
       v-if="message.userId === $user.user?.id && message.type === 'message'"
+      :size="size"
     >
       <v-tooltip location="top" activator="parent">Edit</v-tooltip>
       <v-icon>mdi-pencil</v-icon>
@@ -28,22 +29,23 @@
         (message.userId === $user.user?.id && message.type === 'message') ||
         ($chat.hasPermissions.admin && message.type === 'message')
       "
+      :size="size"
     >
       <v-tooltip location="top" activator="parent">Delete</v-tooltip>
       <v-icon>mdi-delete</v-icon>
     </v-btn>
-    <v-btn icon @click="$emit('reply')" rounded="0">
+    <v-btn icon @click="$emit('reply')" rounded="0" :size="size">
       <v-tooltip location="top" activator="parent">Reply</v-tooltip>
       <v-icon>mdi-reply</v-icon>
     </v-btn>
     <v-menu location="top left" v-model="avoid" v-if="!shifting">
       <template v-slot:activator="{ props }">
-        <v-btn icon rounded="0" v-bind="props">
+        <v-btn icon rounded="0" v-bind="props" :size="size">
           <v-tooltip location="top" activator="parent">More</v-tooltip>
           <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
       </template>
-      <v-list class="mb-2 rounded-xl">
+      <v-list class="mb-2 rounded-xl" :size="size">
         <v-list-item @click="$emit('pin')" color="red">
           <v-list-item-title>
             <v-icon class="mr-1">mdi-pin</v-icon>
@@ -74,7 +76,8 @@ export default defineComponent({
   props: ["message", "shifting"],
   data() {
     return {
-      avoid: false
+      avoid: false,
+      size: "small"
     };
   }
 });

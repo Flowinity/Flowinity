@@ -17,6 +17,8 @@ import maxmind, { CityResponse, Reader } from "maxmind"
 import Errors from "@app/lib/errors"
 import { Message } from "@app/models/message.model"
 import { Chat } from "@app/models/chat.model"
+import { ReportValidate } from "@app/validators/report"
+import { Report } from "@app/models/report.model"
 let city: Reader<CityResponse> | undefined
 
 maxmind
@@ -27,6 +29,47 @@ maxmind
 
 @Service()
 export class CoreService {
+  async report(
+    tpuLink: string,
+    content: string,
+    email: string,
+    ip: string,
+    userId?: number
+  ) {
+    ReportValidate.parse({
+      tpuLink,
+      content,
+      email
+    })
+    try {
+      const tpuLinkParts = tpuLink.split("/")
+      const attachment = tpuLinkParts[tpuLinkParts.length - 1]
+      const upload = await Upload.findOne({
+        where: {
+          attachment
+        }
+      })
+      if (!upload) {
+        throw Errors.ATTACHMENT_NOT_FOUND
+      }
+      if (await redis.get(`report:${ip}:${upload.id}`)) {
+        // return fake success to prevent spam
+        return true
+      }
+      await Report.create({
+        message: content,
+        email,
+        reportedByUserId: userId,
+        reportedUserId: upload.userId,
+        uploadId: upload.id
+      })
+      await redis.set(`report:${ip}:${upload.id}`, "true")
+      return true
+    } catch (e) {
+      console.log(e)
+      throw Errors.INVALID_TPU_LINK
+    }
+  }
   async getWeather(ip: string): Promise<object> {
     try {
       const cityResponse = await city?.get(

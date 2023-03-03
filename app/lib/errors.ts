@@ -239,6 +239,14 @@ let Errors = {
   MANUAL_BAN_REQUIRED: {
     message: "This is a high level user that needs to be banned manually.",
     status: 400
+  },
+  INVALID_TPU_LINK: {
+    message: "The provided TPU link is invalid.",
+    status: 400
+  },
+  REPORT_ALREADY_EXISTS_FOR_IP: {
+    message: "You have already reported this upload.",
+    status: 400
   }
 }
 

@@ -33,11 +33,12 @@ export class AdminController {
   private configureRouter(): void {
     this.router = Router()
 
+    // MODERATOR ROUTES ** LOW LEVEL
     this.router.all(
       "*",
       auth("*"),
       async (req: RequestAuth, res: Response, next: any) => {
-        if (!req.user.administrator) {
+        if (!req.user.administrator && !req.user.moderator) {
           throw Errors.ADMIN_ONLY
         }
         next()
@@ -65,10 +66,14 @@ export class AdminController {
      *             format: TPU-KEY
      *           required: true
      */
-    this.router.get("/", auth("*"), async (req: RequestAuth, res: Response) => {
-      const stats = await this.adminService.getStats()
-      res.json(stats)
-    })
+    this.router.get(
+      "/dashboard",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const stats = await this.adminService.getStats()
+        res.json(stats)
+      }
+    )
 
     /**
      * @swagger
@@ -196,6 +201,44 @@ export class AdminController {
       }
     )
 
+    this.router.get(
+      "/feedback",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const feedback = await this.adminService.getFeedback()
+        res.json(feedback)
+      }
+    )
+
+    this.router.get(
+      "/csv/uploads",
+      auth("*"),
+      async (req: RequestAuth, res: Response) => {
+        const csv = await this.adminService.exportCSVUploads()
+        res.setHeader("Content-Type", "text/csv")
+        res.setHeader("Content-Disposition", "attachment; filename=uploads.csv")
+        res.send(csv)
+      }
+    )
+
+    this.router.patch("/ban", async (req: RequestAuth, res: Response) => {
+      if (!req.body.id) throw Errors.INVALID_PARAMETERS
+      await this.adminService.updateBanned(req.body.id, req.body.banned)
+      res.sendStatus(204)
+    })
+
+    // ADMIN ROUTES ** HIGH LEVEL
+    this.router.all(
+      "*",
+      auth("*"),
+      async (req: RequestAuth, res: Response, next: any) => {
+        if (!req.user.administrator) {
+          throw Errors.ADMIN_ONLY
+        }
+        next()
+      }
+    )
+
     this.router.post(
       "/announcement",
       auth("*"),
@@ -305,26 +348,6 @@ export class AdminController {
     )
 
     this.router.get(
-      "/feedback",
-      auth("*"),
-      async (req: RequestAuth, res: Response) => {
-        const feedback = await this.adminService.getFeedback()
-        res.json(feedback)
-      }
-    )
-
-    this.router.get(
-      "/csv/uploads",
-      auth("*"),
-      async (req: RequestAuth, res: Response) => {
-        const csv = await this.adminService.exportCSVUploads()
-        res.setHeader("Content-Type", "text/csv")
-        res.setHeader("Content-Disposition", "attachment; filename=uploads.csv")
-        res.send(csv)
-      }
-    )
-
-    this.router.get(
       "/services",
       auth("*"),
       async (req: RequestAuth, res: Response) => {
@@ -347,12 +370,6 @@ export class AdminController {
     this.router.patch("/gold", async (req: RequestAuth, res: Response) => {
       if (!req.body.id || !req.body.planId) throw Errors.INVALID_PARAMETERS
       await this.adminService.updatePlanId(req.body.id, req.body.planId)
-      res.sendStatus(204)
-    })
-
-    this.router.patch("/ban", async (req: RequestAuth, res: Response) => {
-      if (!req.body.id) throw Errors.INVALID_PARAMETERS
-      await this.adminService.updateBanned(req.body.id, req.body.banned)
       res.sendStatus(204)
     })
 

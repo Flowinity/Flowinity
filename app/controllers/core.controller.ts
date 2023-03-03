@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express"
+import { Request, Response, Router, NextFunction } from "express"
 import { Service } from "typedi"
 import { StatusCodes } from "http-status-codes"
 import { CoreService } from "@app/services/core.service"
@@ -7,6 +7,7 @@ import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
 import os from "os"
 import cluster from "cluster"
+import rateLimits from "@app/lib/rateLimits"
 
 interface WeatherResponse {
   temp?: number
@@ -125,6 +126,26 @@ export class CoreController {
               NX: true
             })
           return res.json(weather)
+        }
+      }
+    )
+
+    this.router.post(
+      "/report",
+      auth("user.view", true),
+      rateLimits.standardLimiter,
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          await this.coreService.report(
+            req.body.tpuLink,
+            req.body.content,
+            req.body.email,
+            req.ip,
+            req.user?.id
+          )
+          return res.sendStatus(204)
+        } catch (e) {
+          return next(e)
         }
       }
     )

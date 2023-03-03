@@ -188,22 +188,22 @@ const routes = [
           },
           {
             path: "services",
-            name: "Services",
+            name: "Admin Services",
             component: () => import("@/views/Admin/Services.vue")
           },
           {
             path: "dev",
-            name: "Developer Options",
+            name: "Admin Developer Options",
             component: () => import("@/views/Admin/Dev.vue")
           },
           {
             path: "users",
-            name: "Users",
+            name: "Admin Users",
             component: () => import("@/views/Admin/Users.vue")
           },
           {
             path: "cache",
-            name: "Cache",
+            name: "Admin Cache",
             component: () => import("@/views/Admin/Cache.vue")
           }
         ]

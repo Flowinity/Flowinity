@@ -233,7 +233,8 @@ export class GalleryService {
       include = [
         {
           model: Collection,
-          as: "collections"
+          as: "collections",
+          attributes: ["id", "name"]
         },
         {
           model: Star,
@@ -270,7 +271,8 @@ export class GalleryService {
         },
         {
           model: Collection,
-          as: "collections"
+          as: "collections",
+          attributes: ["id", "name"]
         }
       ]
     } else {
@@ -285,7 +287,8 @@ export class GalleryService {
         },
         {
           model: Collection,
-          as: "collections"
+          as: "collections",
+          attributes: ["id", "name"]
         },
         {
           model: User,
@@ -314,7 +317,8 @@ export class GalleryService {
             include: [
               {
                 model: Collection,
-                as: "collections"
+                as: "collections",
+                attributes: ["id", "name"]
               }
             ]
           }

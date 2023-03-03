@@ -1,7 +1,7 @@
 <template>
   <ColubrinaTPU v-model="$app.dialogs.colubrina"></ColubrinaTPU>
   <div class="hero">
-    <div class="hero-body">
+    <div class="hero-body" :class="{'mx-5 mobile': $vuetify.display.mobile}">
       <div class="title">
         Welcome to
         <span class="text-gradient">TPU</span>.
@@ -31,7 +31,12 @@
               height="100%"
               @click="getStarted"
             >
-              Get Started...
+              <template v-if="!$vuetify.display.mobile">
+                Get Started...
+              </template>
+              <template v-else>
+                <v-icon>mdi-chevron-right</v-icon>
+              </template>
             </v-btn>
           </template>
         </v-text-field>
@@ -50,13 +55,13 @@
     </div>
   </div>
   <v-container id="content">
-    <PromoCard title="Feature Update: TPU v2.1" image="https://i.troplo.com/i/aae2fb2c0cf8.png" :height="260" :hover="true" class="mb-2">
+    <PromoCard title="Feature Update: TPU v2.1" image="https://i.troplo.com/i/aae2fb2c0cf8.png" :height="260" :hover="true" class="mb-6">
       <p>
         TPU 2.1 adds Workspaces, a new way to create documents and quick notes.
       </p>
     </PromoCard>
     <v-row>
-      <v-col md="4">
+      <v-col md="4" sm="12" cols="12">
         <PromoCard title="Scoped API Keys" icon="mdi-lock" :height="260" :hover="true">
           <p>
             TPU's API is designed to be simple, yet customizable, you can create
@@ -65,7 +70,7 @@
           </p>
         </PromoCard>
       </v-col>
-      <v-col md="4">
+      <v-col md="4" sm="12" cols="12">
         <PromoCard title="Collections" icon="mdi-folder-multiple-image" :height="260" :hover="true">
           <p>
             Want to organize your screenshots or files? Collections are the way
@@ -74,7 +79,7 @@
           </p>
         </PromoCard>
       </v-col>
-      <v-col md="4">
+      <v-col md="4" sm="12" cols="12">
         <PromoCard title="AutoCollects" icon="mdi-image-auto-adjust" :height="260" :hover="true">
           <p>
             AutoCollects allow you to create rules that automatically add files
@@ -84,7 +89,7 @@
           </p>
         </PromoCard>
       </v-col>
-      <v-col md="4">
+      <v-col md="4" sm="12" cols="12">
         <PromoCard title="Insights" icon="mdi-chart-timeline-variant-shimmer" :height="260" :hover="true">
           <p>
             Insights allow you to see highly detailed statistics on how you use
@@ -93,7 +98,7 @@
           </p>
         </PromoCard>
       </v-col>
-      <v-col md="4">
+      <v-col md="4" sm="12" cols="12">
         <PromoCard title="Workspaces" icon="mdi-folder-account" :height="260" :hover="true">
           <p>
             TPU Workspaces allow you to create documents right inside of your
@@ -102,7 +107,7 @@
           </p>
         </PromoCard>
       </v-col>
-      <v-col md="4">
+      <v-col md="4" sm="12" cols="12">
         <PromoCard title="Communications" icon="mdi-message-processing" :height="260" :hover="true">
           <p>
             TPU Communications allow you to create direct messages, and groups
@@ -110,7 +115,7 @@
           </p>
         </PromoCard>
       </v-col>
-      <v-col md="4">
+      <v-col md="4" sm="12" cols="12">
         <PromoCard title="ShareX Compatible" icon="mdi-upload" :height="260" :hover="true">
           <p>
             TPU is fully compatible with ShareX and Sharenix, you can additionally use TPU's API to create custom
@@ -118,14 +123,14 @@
           </p>
         </PromoCard>
       </v-col>
-      <v-col md="4">
+      <v-col md="4" sm="12" cols="12">
         <PromoCard title="Scoped Passwords" icon="mdi-form-textbox-password" :height="260" :hover="true">
           <p>
             Scoped Passwords allow you to create a different password with different API access permissions, if you need a way to access a part of your TPU without risking the rest of your account, Scoped Passwords are an option.
           </p>
         </PromoCard>
       </v-col>
-      <v-col md="4">
+      <v-col md="4" sm="12" cols="12">
         <PromoCard title="Sharing & Collaboration" icon="mdi-share" :height="260" :hover="true">
           <p>
             TPU is built from the ground up to allow for collaboration and sharing, share collections, slideshows, workspace documents and more with other TPU users and non-TPU users via a unique share link.
@@ -133,6 +138,19 @@
         </PromoCard>
       </v-col>
     </v-row>
+    <PromoCard title="Report an Upload" :height="300" :hover="true" class="mb-6" :left="true">
+      <p>
+        Is there a file hosted on TPU that you believe violates our <router-link to="/policies/content">Content Policy</router-link>? Please report it here.
+      </p>
+      <template v-slot:left>
+        <div class="mr-3">
+          <v-text-field @keyup.enter="reportUpload" v-model="report.tpuLink" label="URL to Report" placeholder="https://i.troplo.com/i/aae2fb2c0cf8.png" outlined variant="filled" color="white"></v-text-field>
+          <v-text-field @keyup.enter="reportUpload" auto-grow v-model="report.content" label="Reporting reason" placeholder="This upload violates the Content Policy because..." variant="filled" color="white"></v-text-field>
+          <v-text-field @keyup.enter="reportUpload" v-model="report.email" label="Email to get back to you (optional)" placeholder="troplo@troplo.com" outlined variant="filled" color="white"></v-text-field>
+          <v-btn color="primary" @click="reportUpload" :loading="report.loading">Report</v-btn>
+        </div>
+      </template>
+    </PromoCard>
   </v-container>
 </template>
 
@@ -148,10 +166,29 @@ export default defineComponent({
   components: { HoverChip, ColubrinaTPU, PromoCard, StatsWidget },
   data() {
     return {
-      email: ""
+      email: "",
+      report: {
+        tpuLink: "",
+        content: "",
+        email: "",
+        loading: false
+      }
     };
   },
   methods: {
+    async reportUpload() {
+      this.report.loading = true;
+      try {
+        await this.axios.post("/core/report", this.report);
+        this.report.loading = false;
+        this.$toast.success("Upload reported successfully! We will review it as soon as possible.")
+        this.report.tpuLink = "";
+        this.report.content = "";
+        this.report.email = "";
+      } catch {
+        this.report.loading = false;
+      }
+    },
     getStarted() {
       this.$router.push({
         name: "Register",
@@ -212,9 +249,15 @@ $dot-space: 22px;
   font-size: 4rem;
   font-weight: 700;
 }
+.mobile .title {
+  font-size: 2.5rem;
+}
 .subtitle {
   font-size: 1.5rem;
   font-weight: 500;
+}
+.mobile .subtitle {
+  font-size: 1.25rem;
 }
 .learn-more {
   position: absolute;

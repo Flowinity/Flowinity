@@ -343,16 +343,6 @@ export default defineComponent({
           experimentsRequired: ["PROJECT_MERGE"]
         },
         {
-          id: 36,
-          click() {},
-          externalPath: "https://legacy.images.flowinity.com",
-          path: "",
-          name: "Go back to TPU Classic",
-          icon: "mdi-arrow-down",
-          new: false,
-          scope: "user.view"
-        },
-        {
           id: 37,
           click() {},
           externalPath: "",

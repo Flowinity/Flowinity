@@ -5,6 +5,7 @@ import { NoteService } from "@app/services/note.service"
 import { RequestAuth } from "@app/types/express"
 import auth from "@app/lib/auth"
 import Errors from "@app/lib/errors"
+import rateLimits from "@app/lib/rateLimits"
 @Service()
 export class NoteController {
   router: any
@@ -28,6 +29,7 @@ export class NoteController {
     this.router.post(
       "/workspaces",
       auth("workspaces.create"),
+      rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
         const { name } = req.body
         const workspace = await this.noteService.createWorkspace(
@@ -119,6 +121,7 @@ export class NoteController {
     this.router.post(
       "/",
       auth("workspaces.create"),
+      rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
         const { name, workspaceFolderId } = req.body
         const note = await this.noteService.createNote(
@@ -146,6 +149,7 @@ export class NoteController {
     this.router.post(
       "/folder",
       auth("workspaces.create"),
+      rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
         const { name, workspaceId } = req.body
         const folder = await this.noteService.createFolder(
@@ -160,6 +164,7 @@ export class NoteController {
     this.router.delete(
       "/:id",
       auth("workspaces.modify"),
+      rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
         const { id } = req.params
         await this.noteService.deleteNote(parseInt(id), req.user.id)
@@ -170,6 +175,7 @@ export class NoteController {
     this.router.delete(
       "/folder/:id",
       auth("workspaces.modify"),
+      rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
         const { id } = req.params
         await this.noteService.deleteFolder(parseInt(id), req.user.id)
@@ -180,6 +186,7 @@ export class NoteController {
     this.router.delete(
       "/workspace/:id",
       auth("*"),
+      rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
         const { id } = req.params
         await this.noteService.deleteWorkspace(parseInt(id), req.user.id)

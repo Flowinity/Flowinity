@@ -57,7 +57,8 @@ export class Server {
     this.server.on("error", (error: NodeJS.ErrnoException) =>
       this.onError(error)
     )
-    process.on("uncaughtException", function (err) {
+    process.on("uncaughtException", function (err, origin) {
+      console.log(origin)
       console.warn(err)
     })
     this.server.on("listening", () => this.onListening())

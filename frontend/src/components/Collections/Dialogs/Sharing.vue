@@ -16,15 +16,12 @@
           :loading="sharing.loading"
           item-title="name"
           item-value="value"
-          @change="updateShare"
+          @update:model-value="updateShare"
         ></v-select>
         <template v-if="collection.shareLink">
           This collection can be viewed publicly from
-          <a
-            target="_blank"
-            :href="'/collections/share/' + collection.shareLink"
-          >
-            {{ $app.site.hostnameWithProtocol }}/collections/share/{{
+          <a target="_blank" :href="'/collections/' + collection.shareLink">
+            {{ $app.site.hostnameWithProtocol }}/collections/{{
               collection.shareLink
             }}
           </a>
@@ -121,23 +118,23 @@ export default defineComponent({
         dialog: false,
         headers: [
           {
-            text: "Username",
+            title: "Username",
             value: "username"
           },
           {
-            text: "Read",
+            title: "Read",
             value: "read"
           },
           {
-            text: "Write",
+            title: "Write",
             value: "write"
           },
           {
-            text: "Configure",
+            title: "Configure",
             value: "configure"
           },
           {
-            text: "Actions",
+            title: "Actions",
             value: "actions"
           }
         ],
@@ -215,6 +212,9 @@ export default defineComponent({
       this.$toast.success("User removed successfully.");
       this.$emit("getCollection");
     }
+  },
+  mounted() {
+    this.sharing.public = this.collection.shareLink ? "link" : "nobody";
   }
 });
 </script>

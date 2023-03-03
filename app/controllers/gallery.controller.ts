@@ -6,24 +6,7 @@ import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
 import uploader from "@app/lib/upload"
 import Errors from "@app/lib/errors"
-import rateLimit from "express-rate-limit"
-
-const limiter = rateLimit({
-  windowMs: 90 * 1000,
-  max: 7,
-  legacyHeaders: true,
-  skipFailedRequests: true,
-  message: {
-    errors: [
-      {
-        name: "RATE_LIMITED",
-        message: "Too many requests, please try again later.",
-        status: 429
-      }
-    ]
-  },
-  keyGenerator: (req: RequestAuth) => req.user.id || req.ip
-})
+import rateLimits from "@app/lib/rateLimits"
 
 @Service()
 export class GalleryController {
@@ -136,11 +119,10 @@ export class GalleryController {
     this.router.post(
       ["/", "/upload"],
       auth("uploads.create"),
-      limiter,
+      rateLimits.uploadLimiter,
       uploader.single("attachment"),
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {
-          console.log(req)
           if (!req.file) throw Errors.NO_FILE
           const upload = await this.galleryService.createUpload(
             req.user.id,
@@ -224,7 +206,7 @@ export class GalleryController {
     this.router.post(
       "/site",
       auth("uploads.create"),
-      limiter,
+      rateLimits.uploadLimiter,
       uploader.array("attachments"),
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {

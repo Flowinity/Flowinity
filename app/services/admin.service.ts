@@ -13,6 +13,10 @@ import path from "path"
 import * as fs from "fs"
 import { Friend } from "@app/models/friend.model"
 import Errors from "@app/lib/errors"
+import { Collection } from "@app/models/collection.model"
+import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
+import { Op } from "sequelize"
+import { Chat } from "@app/models/chat.model"
 
 export enum CacheType {
   "everything",
@@ -110,7 +114,33 @@ export class AdminService {
 
   async getStats() {
     //TODO
-    return {}
+    return {
+      tpu: {
+        users: await User.count(),
+        uploads: await Upload.count(),
+        friends: await Friend.count(),
+        invites: await Invite.count(),
+        feedback: await Feedback.count(),
+        announcements: await Announcement.count(),
+        experiments: await Experiment.count(),
+        collections: await Collection.count(),
+        shareLinks: await Collection.count({
+          where: {
+            shareLink: {
+              [Op.ne]: null
+            }
+          }
+        }),
+        autoCollects: await AutoCollectApproval.count(),
+        chats: await Chat.count(),
+        uploadsSize: await Upload.sum("fileSize")
+      },
+      system: {
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        cpu: process.cpuUsage()
+      }
+    }
   }
 
   async purgeCache(type: CacheType) {

@@ -10,23 +10,8 @@ import { GalleryService } from "@app/services/gallery.service"
 import { CacheService } from "@app/services/cache.service"
 import { AdminService } from "@app/services/admin.service"
 import uploader from "@app/lib/upload"
-import rateLimit from "express-rate-limit"
-const limiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 4,
-  legacyHeaders: true,
-  skipFailedRequests: true,
-  message: {
-    errors: [
-      {
-        name: "RATE_LIMITED",
-        message: "Too many requests, please try again later.",
-        status: 429
-      }
-    ]
-  },
-  keyGenerator: (req: RequestAuth) => req.user.id || req.ip
-})
+import rateLimits from "@app/lib/rateLimits"
+
 @Service()
 export class CollectionController {
   router: any
@@ -335,23 +320,32 @@ export class CollectionController {
       "/share",
       auth("collections.modify"),
       async (req: RequestAuth, res: Response) => {
-        const collection =
-          await this.collectionService.getCollectionPermissions(
+        if (
+          !(await this.collectionService.getCollectionPermissions(
             req.body.id,
             req.user.id,
             "configure"
-          )
-        if (!collection) {
-          throw Errors.COLLECTION_NO_PERMISSION
-        }
-        res.json(
-          await this.collectionService.updateShareLink(
-            req.body.id,
-            req.body.type
-          )
+          ))
         )
+          throw Errors.COLLECTION_NO_PERMISSION
+        const collection = await this.collectionService.getCollectionOrShare(
+          req.body.id,
+          req.user.id
+        )
+        console.log("shareLinks:" + collection.shareLink)
+        if (collection.shareLink)
+          await redis.json.del("shareLinks:" + collection.shareLink)
+        const update = await this.collectionService.updateShareLink(
+          req.body.id,
+          req.body.type
+        )
+        res.json(update)
         await this.cacheService.resetCollectionCache(req.body.id)
-        await this.cacheService.generateShareLinkCache()
+        if (update.shareLink)
+          await this.cacheService.patchShareLinkCache(
+            update.shareLink,
+            collection.id
+          )
       }
     )
 
@@ -386,6 +380,7 @@ export class CollectionController {
     this.router.post(
       "/",
       auth("collections.create"),
+      rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {
           const collection = await this.collectionService.createCollection(
@@ -456,7 +451,7 @@ export class CollectionController {
     this.router.post(
       "/:collectionId/banner",
       auth("collections.modify"),
-      limiter,
+      rateLimits.uploadLimiterUser,
       uploader.single("banner"),
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {

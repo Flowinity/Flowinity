@@ -26,6 +26,7 @@
         @click="$router.push('/')"
         id="tpu-brand-logo"
         title="TroploPrivateUploader"
+        v-if="!$vuetify.display.mobile"
       >
         TPU
       </h1>
@@ -48,7 +49,12 @@
     </template>
     <v-spacer></v-spacer>
     <small v-if="$app.notesSaving" class="mr-3">Saving...</small>
-    <template v-if="!$app.weather.loading">
+    <template
+      v-if="
+        (!$app.weather.loading && !$vuetify.display.mobile) ||
+        ($vuetify.display.mobile && !$chat.isCommunications)
+      "
+    >
       <span>
         <v-img
           :src="`https://openweathermap.org/img/wn/${$app.weather.data?.icon}@2x.png`"
@@ -64,10 +70,6 @@
           $user.user?.weatherUnit.charAt(0).toUpperCase()
         }}
       </span>
-    </template>
-    <template v-else>
-      <v-icon class="mr-2">mdi-weather-cloudy</v-icon>
-      Loading...
     </template>
     <template v-if="$route.path.startsWith('/workspaces/notes/')">
       <v-btn

@@ -138,6 +138,16 @@ export class Application {
             }
           })
         })
+      } else if (err?.issues) {
+        res.status(400).send({
+          errors: Object.keys(err.issues).map((e: any) => {
+            return {
+              status: 400,
+              message: err.issues[e].path[0] + ": " + err.issues[e].message,
+              name: "Troplo/ValidationError"
+            }
+          })
+        })
       } else {
         console.log(err)
         res.status(500).send({

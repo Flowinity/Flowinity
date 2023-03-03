@@ -11,7 +11,9 @@ import { Friend } from "@app/models/friend.model"
 import { Notification } from "@app/models/notification.model"
 import utils from "@app/lib/utils"
 import { AdminService } from "@app/services/admin.service"
-
+import { SortValidate } from "@app/validators/sort"
+import paginate from "jw-paginate"
+import { Op } from "sequelize"
 @Service()
 export class UserUtilsService {
   async verifyEmail(token: string) {
@@ -399,8 +401,23 @@ export class UserUtilsService {
     }
   }
 
-  async getAllUsers(): Promise<User[]> {
-    return User.findAll({
+  async getAllUsers(
+    page: number = 1,
+    sort: string = "id",
+    order: string = "desc",
+    search: string = ""
+  ) {
+    SortValidate.parse({
+      sort,
+      order
+    })
+    const where = {
+      banned: false,
+      username: {
+        [Op.like]: `%${search}%`
+      }
+    }
+    const users = await User.findAll({
       attributes: [
         "id",
         "username",
@@ -413,14 +430,23 @@ export class UserUtilsService {
         "moderator",
         "createdAt"
       ],
-      order: [["createdAt", "DESC"]],
+      where,
+      order: [[sort, order]],
       include: [
         {
           model: Plan,
           as: "plan"
         }
-      ]
+      ],
+      limit: 24,
+      offset: (page - 1) * 24
     })
+    const userCount = await User.count({ where })
+    const pager = paginate(userCount, page, 24)
+    return {
+      users,
+      pager
+    }
   }
 
   async getMutualFriends(userId: number, friendId: number): Promise<Friend[]> {
