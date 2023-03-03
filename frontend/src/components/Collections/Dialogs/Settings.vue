@@ -4,7 +4,7 @@
     @update:model-value="$emit('update:modelValue', $event)"
     max-width="600px"
   >
-    <v-card color="card">
+    <v-card color="card" v-if="collection">
       <v-toolbar>
         <v-toolbar-title>Settings</v-toolbar-title>
         <v-spacer></v-spacer>
