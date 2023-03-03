@@ -203,6 +203,23 @@ export class GalleryController {
       }
     )
 
+    this.router.get(
+      "/starred/random",
+      auth("uploads.view"),
+      async (req: RequestAuth, res: Response) => {
+        try {
+          const upload = await this.galleryService.getRandomAttachment(
+            req.user.id,
+            "starred"
+          )
+          res.json(upload)
+        } catch (e) {
+          console.error(e)
+          res.sendStatus(StatusCodes.UNAUTHORIZED)
+        }
+      }
+    )
+
     this.router.post(
       "/site",
       auth("uploads.create"),

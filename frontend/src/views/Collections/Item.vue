@@ -1,15 +1,69 @@
 <template>
+  <Sharing
+    v-model="sharing"
+    :collection="collection"
+    @get-collection="getCollection"
+    @collection-users-push="collection?.users?.push($event)"
+    v-if="collection"
+  ></Sharing>
+  <CollectionSettings
+    v-model="settings"
+    :collection="collection"
+    @refreshCollection="getCollection"
+  ></CollectionSettings>
+  <UserBanner
+    :collection="collection"
+    @sharing-dialog="sharing = true"
+    v-if="collection"
+    @refresh-user="getCollection"
+  >
+    <v-card-title>
+      {{ collection.name }}
+      <span class="float-end">
+        <v-btn
+          text
+          @click="sharing = true"
+          v-if="
+            !$route.params.type && collection.permissionsMetadata?.configure
+          "
+        >
+          <v-icon style="font-size: 20px" class="mr-1">mdi-share</v-icon>
+          Collection Sharing
+        </v-btn>
+        <v-btn
+          @click="settings = true"
+          text
+          v-if="
+            !$route.params.type && collection.permissionsMetadata?.configure
+          "
+        >
+          <v-icon style="font-size: 20px" class="mr-1">mdi-cog</v-icon>
+          Settings
+        </v-btn>
+        <v-btn
+          v-else-if="collection.shareLink"
+          text
+          @click="
+            $functions.copy(
+              $app.site.hostnameWithProtocol +
+                '/collections/share/' +
+                collection.shareLink
+            )
+          "
+        >
+          <v-icon style="font-size: 20px" class="mr-1">mdi-link</v-icon>
+          Copy Share Link
+        </v-btn>
+      </span>
+    </v-card-title>
+    <v-card-text class="mt-n3" v-if="collection.users.length">
+      <v-icon>mdi-swap-horizontal</v-icon>
+      {{ collection.user.username }},
+      {{ collection.users.map((user) => user.user.username).join(", ") }}
+    </v-card-text>
+    <v-card-text class="mt-n3" v-else>{{ collection.items }} items</v-card-text>
+  </UserBanner>
   <v-container v-if="collection">
-    <Sharing
-      v-model="sharing"
-      :collection="collection"
-      @get-collection="getCollection"
-      @collection-users-push="collection?.users?.push($event)"
-    ></Sharing>
-    <CollectionBanner
-      :collection="collection"
-      @sharingDialog="sharing = true"
-    ></CollectionBanner>
     <GalleryNavigation
       @update:show="show = $event"
       @update:search="
@@ -59,10 +113,19 @@ import { Upload } from "@/models/upload";
 import { CollectionCache } from "@/types/collection";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import Sharing from "@/components/Collections/Dialogs/Sharing.vue";
+import UserBanner from "@/components/Users/UserBanner.vue";
+import CollectionSettings from "@/components/Collections/Dialogs/Settings.vue";
 
 export default defineComponent({
   name: "CollectionsItem",
-  components: { Sharing, GalleryCore, CollectionBanner, GalleryNavigation },
+  components: {
+    CollectionSettings,
+    UserBanner,
+    Sharing,
+    GalleryCore,
+    CollectionBanner,
+    GalleryNavigation
+  },
   data() {
     return {
       collection: undefined as CollectionCache | undefined,
@@ -75,7 +138,8 @@ export default defineComponent({
         metadata: true,
         selected: "all"
       },
-      sharing: false
+      sharing: false,
+      settings: false
     };
   },
   methods: {

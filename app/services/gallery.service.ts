@@ -42,10 +42,10 @@ export class GalleryService {
         include = [
           {
             model: Star,
-            as: "star",
+            as: "starred",
             required: true,
             where: {
-              userId: userId
+              userId: id
             }
           }
         ]

@@ -228,6 +228,7 @@ export default defineComponent({
       window.__TROPLO_INTERNALS_UPDATE_COUNT = this.count;
       //window.__TROPLO_INTENRALS_SOCKET = this.$socket;
       window.__TROPLO_INTERNALS_NOTE_ID = this.$route.params.id;
+      window.__NOTE_DATA = data;
       //this.$socket.emit("notes/subscribe", this.$route.params.id);
       let init = {
         holder: "tpu-editor",
@@ -355,6 +356,9 @@ export default defineComponent({
           }
         },
         onReady() {
+          if (typeof window.__NOTE_DATA === "string") {
+            window.editor.blocks.renderFromHTML(window.__NOTE_DATA);
+          }
           const undo = new Undo({
             editor,
             config: {
@@ -604,10 +608,10 @@ export default defineComponent({
   }
 }
 
-@media (min-width: 1300px) and (max-width: 1650px) {
+@media (min-width: 0px) and (max-width: 1650px) {
   .ce-block__content,
   .ce-toolbar__content {
-    max-width: 650px !important;
+    max-width: 90% !important;
   }
 }
 

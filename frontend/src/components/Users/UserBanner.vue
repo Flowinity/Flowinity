@@ -13,13 +13,24 @@
       id="user-header"
       cover
       :min-height="!height ? 200 : undefined"
-      lazy-src="https://i.troplo.com/i/a050d6f271c3.png"
-      :max-height="user.banner ? 350 : 150"
+      :max-height="hasRealBanner ? 350 : 150"
       :height="height"
+      :gradient="
+        collection ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)' : undefined
+      "
+      :class="{ 'align-end': collection }"
     >
+      <template v-slot:placeholder>
+        <v-row class="fill-height ma-0" align="center" justify="center">
+          <v-progress-circular
+            indeterminate
+            color="grey lighten-5"
+          ></v-progress-circular>
+        </v-row>
+      </template>
       <transition
         appear
-        v-if="$user.user?.id === user.id"
+        v-if="canEdit"
         name="fade-transition"
         :duration="{ enter: 300, leave: 300 }"
       >
@@ -33,6 +44,7 @@
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
       </transition>
+      <slot></slot>
     </v-img>
   </v-hover>
 </template>
@@ -45,7 +57,7 @@ import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 export default defineComponent({
   name: "UserBanner",
   components: { UploadCropper },
-  props: ["user", "height"],
+  props: ["user", "height", "collection"],
   emits: ["refreshUser"],
   data() {
     return {
@@ -54,17 +66,55 @@ export default defineComponent({
   },
   methods: {
     async uploadBanner(file: File) {
-      const formData = new FormData();
-      formData.append("banner", file);
-      await this.axios.post("/user/banner", formData);
-      this.$emit("refreshUser");
+      if (this.user) {
+        const formData = new FormData();
+        formData.append("banner", file);
+        await this.axios.post("/user/banner", formData);
+        this.$emit("refreshUser");
+      } else {
+        const formData = new FormData();
+        formData.append("banner", file);
+        await this.axios.post(
+          `/collections/${this.collection?.id}/banner`,
+          formData
+        );
+        this.$emit("refreshUser");
+      }
     }
   },
   computed: {
     banner() {
-      return this.user.banner
-        ? this.$app.domain + this.user.banner
-        : "https://i.troplo.com/i/a050d6f271c3.png";
+      if (this.user) {
+        return this.user.banner
+          ? this.$app.domain + this.user.banner
+          : "https://i.troplo.com/i/a050d6f271c3.png";
+      } else if (this.collection) {
+        if (this.collection?.image) {
+          return this.$app.domain + this.collection.image;
+        } else if (this.collection?.preview?.attachment?.attachment) {
+          return (
+            this.$app.domain + this.collection.preview.attachment.attachment
+          );
+        } else {
+          return "https://i.troplo.com/i/a050d6f271c3.png";
+        }
+      } else {
+        return "https://i.troplo.com/i/a050d6f271c3.png";
+      }
+    },
+    hasRealBanner() {
+      if (this.user) {
+        return this.user.banner;
+      } else if (this.collection) {
+        return this.collection.image;
+      }
+    },
+    canEdit() {
+      if (this.user) {
+        return this.user.id === this.$user.user?.id;
+      } else if (this.collection) {
+        return this.collection.permissionsMetadata?.configure;
+      }
     }
   }
 });

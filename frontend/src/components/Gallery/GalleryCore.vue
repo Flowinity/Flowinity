@@ -90,6 +90,20 @@
       v-model="pageComponent"
       class="mt-10"
     ></Paginate>
+    <small>
+      Total Pages: {{ items.pager?.totalPages.toLocaleString() }}
+      <v-btn
+        text
+        style="float: right"
+        @click="$emit('randomAttachment')"
+        :loading="randomAttachmentLoading"
+        v-if="supports.randomAttachment"
+      >
+        Random Attachment
+      </v-btn>
+      <br />
+      Total Items: {{ items.pager?.totalItems.toLocaleString() }}
+    </small>
   </div>
 </template>
 
@@ -105,6 +119,10 @@ export default defineComponent({
   name: "GalleryCore",
   components: { Paginate, AddToCollection, GalleryItem },
   props: {
+    randomAttachmentLoading: {
+      type: Boolean,
+      default: false
+    },
     inline: {
       type: Boolean,
       default: false
@@ -114,7 +132,11 @@ export default defineComponent({
       required: true,
       default: () => {
         return {
-          gallery: []
+          gallery: [],
+          pager: {
+            totalItems: 0,
+            totalPages: 0
+          }
         };
       }
     },

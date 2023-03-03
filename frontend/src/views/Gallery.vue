@@ -34,6 +34,8 @@
       @updateItem="updateItem"
       @delete="deleteItem"
       @remove="removeItemFromCollection($event.item, $event.collection)"
+      @random-attachment="randomAttachment"
+      :random-attachment-loading="randomLoading"
     ></GalleryCore>
   </v-container>
 </template>
@@ -88,10 +90,19 @@ export default defineComponent({
         search: "",
         metadata: true,
         selected: "all"
-      }
+      },
+      randomLoading: false
     };
   },
   methods: {
+    async randomAttachment() {
+      this.randomLoading = true;
+      const { data } = await this.axios.get("/gallery/random");
+      this.$functions.copy(
+        this.$user.user?.domain.domain + "/i/" + data.attachment
+      );
+      this.randomLoading = false;
+    },
     removeItemFromCollection(item: Upload, collection: CollectionCache) {
       const index = this.gallery.gallery.findIndex(
         (i: Upload) => i.id === item.id

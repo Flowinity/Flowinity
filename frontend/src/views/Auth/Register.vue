@@ -43,7 +43,14 @@
                     to="/policies/content"
                     style="text-decoration: none; color: #0190ea"
                   >
-                    &nbsp;TPU Content Policy
+                    &nbsp;TPU Content Policy&nbsp;
+                  </router-link>
+                  and the
+                  <router-link
+                    to="/policies/privacy"
+                    style="text-decoration: none; color: #0190ea"
+                  >
+                    &nbsp;TPU Privacy Policy
                   </router-link>
                 </template>
               </v-checkbox>

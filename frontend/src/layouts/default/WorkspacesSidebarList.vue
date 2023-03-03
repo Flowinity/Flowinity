@@ -12,12 +12,12 @@
           v-model="importDoc.name"
         ></v-text-field>
         <v-file-input
-          label="TPU Document"
+          label="TPU Document (.TPUDOC or .HTML)"
           required
           autofocus
           v-model="importDoc.file"
           ref="importDocFile"
-          accept=".tpudoc"
+          accept=".tpudoc,.html"
         ></v-file-input>
       </v-container>
       <v-card-actions>
@@ -343,7 +343,12 @@ export default defineComponent({
         fileReader.readAsText(this.$refs.importDocFile.files[0]);
         fileReader.onload = async () => {
           const text = fileReader.result as string;
-          const json = JSON.parse(text);
+          let json;
+          try {
+            json = JSON.parse(text);
+          } catch {
+            json = text;
+          }
           const data = await this.doCreateNote(this.importDoc.name, true);
           await this.axios.patch(`/notes/${data?.id}`, {
             data: json

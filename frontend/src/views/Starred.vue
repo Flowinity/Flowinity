@@ -31,6 +31,8 @@
       @refresh="getGallery()"
       @page-change="$router.push(`/starred/${$event}`)"
       @updateItem="updateItem"
+      :random-attachment-loading="randomLoading"
+      @random-attachment="randomAttachment"
     >
       <template v-slot:custom-values="{ item }">
         <v-card-subtitle>Creator: {{ item?.user?.username }}</v-card-subtitle>
@@ -89,10 +91,19 @@ export default defineComponent({
         search: "",
         metadata: true,
         selected: "all"
-      }
+      },
+      randomLoading: false
     };
   },
   methods: {
+    async randomAttachment() {
+      this.randomLoading = true;
+      const { data } = await this.axios.get("/gallery/starred/random");
+      this.$functions.copy(
+        this.$user.user?.domain.domain + "/i/" + data.attachment
+      );
+      this.randomLoading = false;
+    },
     updateItem({
       item,
       collection
