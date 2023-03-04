@@ -8,7 +8,13 @@
       </v-tabs>
       <v-window v-model="tab">
         <v-window-item value="uploads">
-          <strong style="font-size: 24px" class="text-gradient">
+          <strong
+            style="font-size: 24px"
+            :class="{
+              'text-gradient': !gold,
+              'gold-text-gradient': gold
+            }"
+          >
             Upload Stats
           </strong>
           <Chart
@@ -21,7 +27,13 @@
           ></Chart>
         </v-window-item>
         <v-window-item value="messages">
-          <strong style="font-size: 24px" class="text-gradient">
+          <strong
+            style="font-size: 24px"
+            :class="{
+              'text-gradient': !gold,
+              'gold-text-gradient': gold
+            }"
+          >
             Message Stats
           </strong>
           <Chart
@@ -34,7 +46,13 @@
           ></Chart>
         </v-window-item>
         <v-window-item value="hours">
-          <strong style="font-size: 24px" class="text-gradient">
+          <strong
+            style="font-size: 24px"
+            :class="{
+              'text-gradient': !gold,
+              'gold-text-gradient': gold
+            }"
+          >
             Time spent on TPU
           </strong>
           <Chart
@@ -85,6 +103,10 @@ export default defineComponent({
     cardHeight: {
       type: Number,
       default: 555
+    },
+    gold: {
+      type: Boolean,
+      default: false
     }
   }
 });

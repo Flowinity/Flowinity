@@ -16,6 +16,7 @@
     @sharing-dialog="sharing = true"
     v-if="collection"
     @refresh-user="getCollection"
+    :gold="$user.gold"
   >
     <v-card-title>
       {{ collection.name }}

@@ -48,6 +48,10 @@ export const useUserStore = defineStore("user", {
       }
     } as UserState),
   getters: {
+    gold(state: UserState) {
+      if (!state.user) return false;
+      return state.user.plan.id === 6;
+    },
     unreadNotifications(state: UserState) {
       if (!state.user) return 0;
       return state.user.notifications.filter((n) => !n.dismissed).length;

@@ -199,7 +199,13 @@
                     :height="$vuetify.display.mobile ? 400 : undefined"
                   >
                     <p class="mt-3">
-                      <strong style="font-size: 24px" class="text-gradient">
+                      <strong
+                        style="font-size: 24px"
+                        :class="{
+                          'text-gradient': !gold,
+                          'gold-text-gradient': gold
+                        }"
+                      >
                         Upload Distribution
                       </strong>
                     </p>
@@ -231,6 +237,7 @@
                       :pulse-graph="user.stats.pulseGraph"
                       :card-height="400"
                       :height="320"
+                      :gold="gold"
                     ></GraphWidget>
                   </v-card>
                 </v-col>
@@ -249,36 +256,43 @@
             title="Creation date"
             :value="$date(user.createdAt).format('DD/MM/YYYY')"
             class="my-3"
+            :gold="gold"
           ></StatsCard>
           <StatsCard
             title="Uploads"
             :value="user.stats.uploads.toLocaleString()"
             class="my-3"
+            :gold="gold"
           ></StatsCard>
           <StatsCard
             title="Storage Used"
             :value="$functions.fileSize(user.quota || 0)"
             class="my-3"
+            :gold="gold"
           ></StatsCard>
           <StatsCard
             title="Collections"
             :value="user.stats.collections.toLocaleString()"
             class="my-3"
+            :gold="gold"
           ></StatsCard>
           <StatsCard
             title="Collectivizations"
             :value="user.stats.collectionItems.toLocaleString()"
             class="my-3"
+            :gold="gold"
           ></StatsCard>
           <StatsCard
             title="TPU Hours"
             :value="user.stats.pulse.toLocaleString()"
             class="my-3"
+            :gold="gold"
           ></StatsCard>
           <StatsCard
             title="Documents"
             :value="user.stats.docs"
             class="my-3"
+            :gold="gold"
           ></StatsCard>
         </v-col>
       </v-row>
@@ -330,6 +344,9 @@ export default defineComponent({
     };
   },
   computed: {
+    gold() {
+      return this.user?.plan.id === 6;
+    },
     hoursMost() {
       if (this.user?.stats?.hours) {
         let hours = Object.entries(this.user.stats.hours);

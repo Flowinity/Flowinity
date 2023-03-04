@@ -16,12 +16,23 @@
       :max-height="hasRealBanner ? 350 : 150"
       :height="height"
       :gradient="
-        collection ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)' : undefined
+        collection ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,0.8)' : undefined
       "
       :class="{ 'align-end': collection }"
     >
+      <PlaceholderCheckerboard
+        :start-color="user?.plan?.id === 6 || gold ? '#FBC02D' : undefined"
+        :end-color="user?.plan?.id === 6 || gold ? '#f5b217' : undefined"
+        v-if="banner === 'placeholder'"
+        style="position: absolute; top: 0; left: 0; z-index: -2"
+      ></PlaceholderCheckerboard>
       <template v-slot:placeholder>
-        <v-row class="fill-height ma-0" align="center" justify="center">
+        <v-row
+          class="fill-height ma-0"
+          align="center"
+          justify="center"
+          v-if="banner !== 'placeholder'"
+        >
           <v-progress-circular
             indeterminate
             color="grey lighten-5"
@@ -36,7 +47,6 @@
       >
         <v-btn
           icon
-          class="rounded-xl"
           v-if="isHovering"
           style="position: absolute; top: 10px; right: 10px"
           @click="dialog = true"
@@ -53,11 +63,12 @@
 import "cropperjs/dist/cropper.css";
 import { defineComponent } from "vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
+import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
 
 export default defineComponent({
   name: "UserBanner",
-  components: { UploadCropper },
-  props: ["user", "height", "collection"],
+  components: { PlaceholderCheckerboard, UploadCropper },
+  props: ["user", "height", "collection", "gold"],
   emits: ["refreshUser"],
   data() {
     return {
@@ -87,7 +98,7 @@ export default defineComponent({
       if (this.user) {
         return this.user.banner
           ? this.$app.domain + this.user.banner
-          : "https://i.troplo.com/i/a050d6f271c3.png";
+          : "placeholder";
       } else if (this.collection) {
         if (this.collection?.image) {
           return this.$app.domain + this.collection.image;
@@ -96,10 +107,10 @@ export default defineComponent({
             this.$app.domain + this.collection.preview.attachment.attachment
           );
         } else {
-          return "https://i.troplo.com/i/a050d6f271c3.png";
+          return "placeholder";
         }
       } else {
-        return "https://i.troplo.com/i/a050d6f271c3.png";
+        return "placeholder";
       }
     },
     hasRealBanner() {
