@@ -55,7 +55,11 @@
   </v-toolbar>
   <v-data-table :headers="headers" :items="alternatePasswords.items">
     <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="deleteAlternatePassword(item.name)">
+      <v-icon
+        small
+        class="mr-2"
+        @click="deleteAlternatePassword(item.props.title.name)"
+      >
         mdi-delete
       </v-icon>
     </template>

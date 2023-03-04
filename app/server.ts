@@ -10,6 +10,7 @@ import { CacheService } from "@app/services/cache.service"
 import dayjs from "dayjs"
 import socket from "./lib/socket"
 import { BillingService } from "@app/services/billing.service"
+import { PulseService } from "@app/services/pulse.service"
 
 @Service()
 export class Server {
@@ -22,7 +23,8 @@ export class Server {
   constructor(
     private readonly application: Application,
     private readonly cacheService: CacheService,
-    private readonly billingService: BillingService
+    private readonly billingService: BillingService,
+    private readonly pulseService: PulseService
   ) {}
 
   private static normalizePort(
@@ -48,8 +50,6 @@ export class Server {
     global.redis = redis
     global.config = config
     global.dayjs = dayjs
-    this.billingService.billingInit()
-    this.cacheService.cacheInit()
     this.server = http.createServer(this.application.app)
 
     this.server.listen(port || Server.appPort)
@@ -62,6 +62,9 @@ export class Server {
       console.warn(err)
     })
     this.server.on("listening", () => this.onListening())
+    this.billingService.billingInit()
+    this.cacheService.cacheInit()
+    this.pulseService.pulseInit()
   }
 
   private onError(error: NodeJS.ErrnoException): void {

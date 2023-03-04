@@ -18,11 +18,9 @@
       style="z-index: 1000"
       v-if="$vuetify.display.mobile || !$app.mainDrawer"
       @click.stop="$app.mainDrawer = !$app.mainDrawer"
+      aria-label="Toggle Main Sidebar"
     >
       <v-icon>mdi-menu</v-icon>
-      <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
-        Main Sidebar
-      </v-tooltip>
     </v-app-bar-nav-icon>
     <template v-if="!$chat.isCommunications || !$chat.selectedChat">
       <h1
@@ -94,9 +92,6 @@
           {{ $user.unreadNotifications > 0 ? "mdi-bell" : "mdi-bell-outline" }}
         </v-icon>
       </v-badge>
-      <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
-        Notifications
-      </v-tooltip>
     </v-btn>
     <template v-if="$user.user">
       <v-menu>
@@ -136,13 +131,6 @@
         "
       >
         <v-icon>mdi-menu-open</v-icon>
-        <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
-          {{
-            !$chat.communicationsSidebar && $chat.isCommunications
-              ? "Members Sidebar"
-              : "Workspaces Sidebar"
-          }}
-        </v-tooltip>
       </v-btn>
     </template>
     <template v-slot:extension>

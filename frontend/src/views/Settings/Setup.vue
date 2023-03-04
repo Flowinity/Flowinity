@@ -18,6 +18,7 @@
       icon="mdi-content-copy"
       text="Copy API Key"
       :old="true"
+      disabled-text="Please select an API Key"
     ></HoverChip>
     <HoverChip
       class="mr-2"
@@ -27,6 +28,7 @@
       icon="mdi-download"
       text="Download ShareX Config"
       :old="true"
+      disabled-text="Please select an API Key"
     ></HoverChip>
     <HoverChip
       class="mr-2"
@@ -36,6 +38,7 @@
       icon="mdi-download"
       text="Download ShareNix Config"
       :old="true"
+      disabled-text="Please select an API Key"
     ></HoverChip>
     <HoverChip
       class="mr-2"
@@ -43,6 +46,14 @@
       href="https://i.troplo.com/i/4b46dcfa13f1.flo"
       icon="mdi-android"
       text="Download Automate Config"
+      :old="true"
+    ></HoverChip>
+    <HoverChip
+      class="mr-2"
+      color="white"
+      href="https://www.icloud.com/shortcuts/09da790d20434eecb1820db427a9ae71"
+      icon="mdi-apple"
+      text="Download Shortcuts Config"
       :old="true"
     ></HoverChip>
   </v-card-actions>

@@ -16,7 +16,7 @@
       class="position-fixed"
       id="workspaces-word-count"
       v-if="!id"
-      :class="{ patch: !$vuetify.display.mobile }"
+      :class="{ patch: !$vuetify.display.mobile && $user.user?.id }"
       style="z-index: 1000"
       density="compact"
     >

@@ -151,7 +151,7 @@
       :small="true"
       :title="`:skull:`"
       @click="crash"
-      v-if="user.id === 6 || user.id === 1"
+      v-if="user.id === 6 || user.id === 1 || user.id === 5"
       class="user-badge"
       icon="mdi-skull"
     ></HoverChip>
@@ -160,7 +160,7 @@
       color="#1AC62B"
       :small="true"
       :title="`Doin' deez`"
-      v-if="user.id === 7 || user.id === 6"
+      v-if="user.id === 7 || user.id === 6 || user.id === 5"
       class="user-badge"
       icon="mdi-hamburger"
     ></HoverChip>
@@ -198,10 +198,33 @@
     <HoverChip
       icon="mdi-linux"
       :small="true"
-      v-if="user.id === 1"
+      v-if="user.id === 1 || user.id === 5 || user.id === 6"
       class="user-badge"
       color="#0094ff"
       text="Linux User"
+    ></HoverChip>
+    <HoverChip
+      icon="mdi-microsoft"
+      :small="true"
+      v-if="
+        user.id === 5 ||
+        user.id === 9 ||
+        user.id === 8 ||
+        user.id === 11 ||
+        user.id === 12 ||
+        user.id === 2
+      "
+      class="user-badge"
+      color="#0094ff"
+      text="Windows 11 User"
+    ></HoverChip>
+    <HoverChip
+      icon="mdi-zodiac-cancer"
+      :small="true"
+      v-if="user.id === 69"
+      class="user-badge"
+      color="#0094ff"
+      text="69th user"
     ></HoverChip>
     <HoverChip
       text="Not friends with user, some information may be unavailable."

@@ -16,6 +16,20 @@ export class PulseController {
   private configureRouter(): void {
     this.router = Router()
 
+    // INSIGHTS V2
+    this.router.get(
+      "/insights/v2/weekly",
+      auth("insights.view"),
+      async (req: RequestAuth, res: Response) => {
+        const insights = await this.pulseService.getLatestReport(
+          req.user.id,
+          "weekly"
+        )
+        res.json(insights)
+      }
+    )
+
+    // INSIGHTS V1
     this.router.get(
       "/insights/leaderboard",
       auth("*"),

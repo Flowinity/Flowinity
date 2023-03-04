@@ -1,5 +1,7 @@
 import rateLimit from "express-rate-limit"
 import { RequestAuth } from "@app/types/express"
+import RedisStore from "rate-limit-redis"
+import redis from "../redis"
 
 const message = {
   errors: [
@@ -16,6 +18,9 @@ const standardHeaders = {
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
   message,
+  store: new RedisStore({
+    sendCommand: (...args: string[]) => redis.sendCommand(args)
+  }),
   keyGenerator: (req: RequestAuth) => req.user?.id || req.ip // Use the user ID if logged in, otherwise the IP address
 }
 

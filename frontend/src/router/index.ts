@@ -218,6 +218,11 @@ const routes = [
         name: "Dynamic Insights",
         component: () => import("@/views/Insights/Dynamic.vue")
       },
+      {
+        path: "/insights/weekly",
+        name: "Weekly Insights",
+        component: () => import("@/views/Insights/Weekly.vue")
+      },
       // Unauthenticated
       {
         path: "/verify/:token",

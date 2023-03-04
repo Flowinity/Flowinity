@@ -4,6 +4,12 @@
       <v-toolbar>
         <v-toolbar-title>Dashboard</v-toolbar-title>
       </v-toolbar>
+      <v-container>
+        <v-btn variant="outlined" @click="restart" class="mx-3 my-3">
+          <v-icon>mdi-restart</v-icon>
+          Restart TPU Cluster
+        </v-btn>
+      </v-container>
     </v-card>
     <v-card v-else>
       <v-card-title>

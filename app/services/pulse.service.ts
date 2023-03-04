@@ -6,6 +6,11 @@ import { Op } from "sequelize"
 import { Pulse } from "@app/models/pulse.model"
 import uaParser from "ua-parser-js"
 import { CollectionItem } from "@app/models/collectionItem.model"
+import { Message } from "@app/models/message.model"
+import { Chat } from "@app/models/chat.model"
+import { ChatAssociation } from "@app/models/chatAssociation.model"
+import { LegacyUser } from "@app/models/legacyUser.model"
+import { Insight } from "@app/models/insight.model"
 
 export class HoursOfDay {
   hours: { [key: string]: number } = {
@@ -38,6 +43,237 @@ export class HoursOfDay {
 
 @Service()
 export class PulseService {
+  async getLatestReport(userId: number, type: "weekly" | "monthly" | "yearly") {
+    const latestReport = await Insight.findOne({
+      order: [["createdAt", "DESC"]],
+      where: {
+        userId,
+        type
+      }
+    })
+    if (latestReport) return latestReport
+    else return null
+  }
+  async pulseInit() {
+    //console.log(await this.generateWeeklyInsights(1))
+  }
+  calculatePulseDays(pulses: Pulse[]) {
+    let hoursLastWeek = {}
+    for (let i = 0; i < 7; i++) {
+      const date = dayjs().subtract(7, "days").startOf("isoWeek").add(i, "days")
+      hoursLastWeek[date.format("dddd (DD)")] = 0
+    }
+    for (const pulse of pulses) {
+      const day = dayjs(pulse.createdAt).format("dddd (DD)")
+      // convert from ms to hours
+      const timeSpent = pulse.timeSpent / 1000 / 60 / 60
+      hoursLastWeek[day] =
+        Math.round(
+          ((hoursLastWeek[day] || 0) + timeSpent) * 100 + Number.EPSILON
+        ) / 100
+    }
+    return hoursLastWeek
+  }
+  calculatePlatforms(pulses: Pulse[]) {
+    let platforms = {}
+    for (const pulse of pulses) {
+      const parser: any = uaParser(pulse.sysInfo.ua)
+      if (!platforms[parser.os.name]) platforms[parser.os.name] = 0
+      platforms[parser.os.name] += pulse.timeSpent / 1000 / 60 / 60
+    }
+    for (const [key, value] of Object.entries(platforms)) {
+      // @ts-ignore
+      platforms[key] = Math.round(value * 100) / 100
+    }
+    return platforms
+  }
+  calculateWords(uploads: Upload[]) {
+    const words = uploads.map((upload) => upload.textMetadata)
+    const wordsArray = words.join(" ").split(" ")
+    const wordsArrayFiltered = wordsArray.filter((word) => word.length > 2)
+    const wordsArrayFilteredCounted = wordsArrayFiltered.reduce((acc, word) => {
+      acc[word] = (acc[word] || 0) + 1
+      return acc
+    }, {})
+    return Object.keys(wordsArrayFilteredCounted).map((key) => ({
+      word: key,
+      count: wordsArrayFilteredCounted[key]
+    }))
+  }
+  getChatName(chat: Chat, userId: number) {
+    if (chat.name && chat.type === "group") return chat.name
+    if (chat.type === "direct") {
+      const chatAssociation = chat.users.find(
+        (chatAssociation) => chatAssociation.userId !== userId
+      )
+      if (!chatAssociation) return "Unknown"
+      return chatAssociation.user.username
+    }
+    return "Unknown"
+  }
+  getFeatures(pulses: Pulse[]) {
+    const definitions = {
+      "/autoCollect": "AutoCollects",
+      "/notes": "Workspaces",
+      "/workspaces": "Workspaces",
+      "/collections": "Collections",
+      "/communications": "Communications",
+      "/mail": "Mail",
+      "/u/": "Users",
+      "/gallery": "Gallery",
+      "/starred": "Starred",
+      "/insights": "Insights",
+      "/admin": "Admin/HLP"
+    }
+    // Pulses have a route property that is the url path, anything starting with the above keys is counted as a feature
+    const features = {}
+    for (const pulse of pulses) {
+      // check if it's in the above definitions, if not, add to "Other"
+      const feature = Object.keys(definitions).find((key) =>
+        pulse.route.startsWith(key)
+      )
+      if (!feature) {
+        features["Other"] =
+          (features["Other"] || 0) + pulse.timeSpent / 1000 / 60 / 60
+      } else {
+        features[definitions[feature]] =
+          (features[definitions[feature]] || 0) +
+          pulse.timeSpent / 1000 / 60 / 60
+      }
+    }
+    for (const [key, value] of Object.entries(features)) {
+      // @ts-ignore
+      features[key] = Math.round(value * 100) / 100
+    }
+    // from Object to Array like [{name: "AutoCollects", count: 10}, {name: "Workspaces", count: 5}]
+    return Object.keys(features)
+      .sort()
+      .map((key) => ({
+        name: key,
+        count: features[key]
+      }))
+  }
+  async generateWeeklyInsights(userId: number) {
+    const previous = await this.getLatestReport(userId, "weekly")
+    // UPLOADS
+    const uploads = await Upload.findAll({
+      where: {
+        userId: userId,
+        createdAt: {
+          [Op.gte]: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
+        }
+      }
+    })
+
+    let hours = new HoursOfDay().hours
+    for (const upload of uploads) {
+      const hour = dayjs(upload.createdAt).format("h A")
+      hours[hour] = (hours[hour] || 0) + 1
+    }
+
+    // PULSE
+    const pulses = await Pulse.findAll({
+      where: {
+        userId: userId,
+        createdAt: {
+          [Op.gte]: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
+        }
+      }
+    })
+
+    // CHATS
+    const messages = await Message.findAll({
+      where: {
+        userId: userId,
+        createdAt: {
+          [Op.gte]: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
+        }
+      },
+      include: [
+        {
+          model: Chat,
+          as: "chat",
+          include: [
+            {
+              model: ChatAssociation,
+              as: "users",
+              include: [
+                {
+                  model: User,
+                  as: "tpuUser",
+                  attributes: ["id", "username", "avatar"]
+                },
+                {
+                  model: LegacyUser,
+                  as: "legacyUser",
+                  attributes: ["id", "username", "avatar"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    })
+
+    let topChats = {}
+    for (const message of messages) {
+      const chatName = <string>this.getChatName(message.chat, userId)
+      if (!topChats[chatName]) topChats[chatName] = 0
+      topChats[chatName] += 1
+    }
+
+    topChats = Object.keys(topChats)
+      .sort((a, b) => topChats[b] - topChats[a])
+      .slice(0, 15)
+      .map((key) => ({ chatName: key, count: topChats[key] }))
+
+    // RESULT
+    const insights = {
+      uploads: {
+        total: {
+          now: uploads.length,
+          previous: previous ? previous.data?.uploads?.total?.previous : 0
+        },
+        average: {
+          now: Math.round((uploads.length / 7) * 100) / 100,
+          previous: previous ? previous.data?.uploads?.average : 0
+        },
+        hours: hours,
+        words: this.calculateWords(uploads)
+      },
+      pulses: {
+        total: {
+          now: pulses.length,
+          previous: previous ? previous.data?.pulses?.total?.previous : 0
+        },
+        average: Math.round((pulses.length / 7) * 100) / 100,
+        platforms: this.calculatePlatforms(pulses),
+        days: this.calculatePulseDays(pulses),
+        features: this.getFeatures(pulses)
+      },
+      messages: {
+        total: {
+          now: messages.length,
+          previous: previous ? previous.data?.messages?.total?.previous : 0
+        },
+        average: {
+          now: Math.round((messages.length / 7) * 100) / 100,
+          previous: previous ? previous.data?.messages?.average : 0
+        },
+        topChats
+      },
+      workspaces: {},
+      _version: 1
+    }
+    await Insight.create({
+      userId: userId,
+      data: insights,
+      type: "weekly",
+      startDate: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000),
+      endDate: new Date()
+    })
+    return insights
+  }
   async getCachedLeaderboard() {
     const leaderboard = await redis.json.get(`insights:leaderboard`)
     if (leaderboard) {

@@ -49,7 +49,8 @@ export default defineComponent({
     "size",
     "old",
     "image",
-    "ariaLabel"
+    "ariaLabel",
+    "disabledText"
   ],
   computed: {
     contrast() {
