@@ -82,6 +82,8 @@ export const useUserStore = defineStore("user", {
     async runPostTasks() {
       if (this.user && !this._postInitRan) {
         console.info("[TPU/UserStore] Running post-init auth tasks");
+        window._paq.push(["setUserId", this.user.id]);
+        window._paq.push(["trackPageView"]);
         const app = useAppStore();
         const chat = useChatStore();
         const workspace = useWorkspacesStore();

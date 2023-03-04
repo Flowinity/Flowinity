@@ -42,6 +42,8 @@ import { ChatAssociation } from "@/models/chatAssociation";
 import router from "@/router";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import { useMailStore } from "@/store/mail";
+//@ts-ignore
+import VueMatomo from "vue-matomo";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -73,6 +75,9 @@ declare global {
       lookupCollection: (id: number) => Collection;
       openCollection: (id: number) => void;
       router: Router;
+    };
+    _paq: {
+      push: (args: any[]) => void;
     };
   }
 }
@@ -384,6 +389,27 @@ const app = createApp({
 const options: PluginOptions = {
   shareAppContext: true
 };
+
+app.use(VueMatomo, {
+  host: "https://analytics.flowinity.com",
+  siteId: 3,
+  trackerFileName: "matomo",
+  router: router,
+  enableLinkTracking: true,
+  requireConsent: false,
+  trackInitialView: true,
+  disableCookies: false,
+  requireCookieConsent: false,
+  enableHeartBeatTimer: false,
+  heartBeatTimerInterval: 15,
+  debug: false,
+  userId: undefined,
+  cookieDomain: undefined,
+  domains: undefined,
+  preInitActions: [],
+  trackSiteSearch: false,
+  crossOrigin: undefined
+});
 
 app.use(VueAxios, axios);
 app.use(Toast, options);

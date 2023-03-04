@@ -70,6 +70,7 @@
           "
           @delete="$emit('delete', $event)"
           @remove="$emit('remove', $event)"
+          @refresh="$emit('refresh', $event)"
         >
           <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
             <slot :name="name" v-bind="slotData" />
@@ -150,6 +151,7 @@ export default defineComponent({
         return {
           multiSelect: false,
           randomAttachment: false,
+          pins: false,
           permissions: {
             read: true,
             write: true,

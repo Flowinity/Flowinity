@@ -79,10 +79,11 @@
         <HoverChip
           text="Edit & Caption"
           icon="mdi-pencil"
-          color="indigo"
+          color="indigo-lighten-1"
           @click="editItem(item)"
           v-if="supports.permissions.write"
           class="my-1"
+          aria-label="Edit item"
         ></HoverChip>
         <HoverChip
           text="Delete"
@@ -93,6 +94,7 @@
           "
           v-if="supports.permissions.write"
           class="my-1"
+          aria-label="Delete item (Shift + Click to delete without confirmation)"
         ></HoverChip>
         <HoverChip
           text="Link"
@@ -100,6 +102,7 @@
           color="teal"
           @click="copyLink(item)"
           class="my-1"
+          aria-label="Copy link to clipboard"
         ></HoverChip>
         <HoverChip
           :text="item.type === 'paste' ? 'Raw' : 'Open'"
@@ -107,29 +110,37 @@
           color="primary"
           :href="'https://i.troplo.com/i/' + item.attachment + '?force=true'"
           class="my-1"
+          aria-label="Open in new tab"
         ></HoverChip>
         <HoverChip
           text="OCR"
           icon="mdi-ocr"
           color="green"
-          @click="$functions.copy(item.textMetadata)"
+          @click="
+            $functions.copy(item.textMetadata);
+            $toast.success('Copied to clipboard!');
+          "
           v-if="item.type === 'image'"
           class="my-1"
+          aria-label="Copy scanned text to clipboard"
         ></HoverChip>
         <HoverChip
           text="Star"
           :icon="item.starred ? 'mdi-star' : 'mdi-star-outline'"
-          color="amber darken-2"
+          color="amber-darken-2"
           @click="star(item)"
           v-if="$user.user"
           class="my-1"
+          aria-label="Star item"
         ></HoverChip>
         <HoverChip
-          text="Editor"
-          icon="mdi-pencil"
-          color="indigo"
-          v-if="$experiments.experiments['MEME_GEN']"
+          text="Pin to collection"
+          :icon="item.item.pinned ? 'mdi-pin' : 'mdi-pin-outline'"
+          color="lime"
+          @click="pin(item)"
+          v-if="$user.user"
           class="my-1"
+          aria-label="Pin to collection"
         ></HoverChip>
       </slot>
     </v-card-text>
@@ -159,6 +170,13 @@ export default defineComponent({
     }
   },
   methods: {
+    async pin(item: Upload) {
+      await this.axios.patch(
+        `/collections/${this.item.item.collectionId}/pin/${item.item.id}`
+      );
+      item.item.pinned = !item.item.pinned;
+      this.$emit("refresh", true);
+    },
     async star(item: Upload) {
       await this.axios.post("/gallery/star/" + item.attachment);
       item.starred = !item.starred;

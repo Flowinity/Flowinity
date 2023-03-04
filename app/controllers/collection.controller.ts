@@ -130,6 +130,7 @@ export class CollectionController {
                 req.query?.textMetadata?.toString() === "true",
                 "collection",
                 12,
+                <"">req.query.sort || "newest",
                 0
               )
             )
@@ -157,6 +158,7 @@ export class CollectionController {
             req.query?.textMetadata?.toString() === "true",
             "collection",
             req.user.itemsPerPage,
+            <"">req.query.sort || "newest",
             req.user.id
           )
         )

@@ -28,6 +28,7 @@
     "../types/**/*.d.ts",
     "../models/**/*.ts",
     "vite.config.ts",
-    "*.vue"
+    "*.vue",
+    "node_modules/cypress/types/cypress-global-vars.d.ts"
   ]
 }

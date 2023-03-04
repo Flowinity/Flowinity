@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -58,6 +58,7 @@
     "vue-axios": "^3.5.2",
     "vue-chartjs": "^5.2.0",
     "vue-cropperjs": "^5.0.0",
+    "vue-matomo": "^4.2.0",
     "vue-mention": "^2.0.0-alpha.3",
     "vue-router": "^4.0.0",
     "vue-toastification": "^2.0.0-rc.5",
@@ -74,6 +75,7 @@
     "@types/webfontloader": "^1.6.35",
     "@vitejs/plugin-vue": "^3.0.3",
     "@vue/eslint-config-typescript": "^11.0.0",
+    "cypress": "^12.7.0",
     "eslint": "^8.22.0",
     "eslint-plugin-vue": "^9.3.0",
     "sass": "^1.55.0",

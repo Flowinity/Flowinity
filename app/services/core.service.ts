@@ -99,18 +99,12 @@ export class CoreService {
     return {
       name: config.siteName,
       release: config.release,
-      route: null,
-      loading: false,
-      matomoId: null,
       hostname: config.hostname,
       hostnameWithProtocol: config.hostnameWithProtocol,
       announcements: await this.getAnnouncements(),
-      flowinityId: config.flowinityId,
       stats: await this.getStats(),
       maintenance: config.maintenance,
-      registrations: config.registrations,
-      // legacy clients
-      whitelabel: true
+      registrations: config.registrations
     }
   }
 

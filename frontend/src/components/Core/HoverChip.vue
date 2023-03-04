@@ -9,6 +9,7 @@
     :disabled="disabled"
     :size="sizeComputed"
     style="cursor: pointer"
+    :aria-label="ariaLabel || text"
   >
     <v-icon
       v-if="!shortText && icon"
@@ -47,7 +48,8 @@ export default defineComponent({
     "click",
     "size",
     "old",
-    "image"
+    "image",
+    "ariaLabel"
   ],
   computed: {
     contrast() {

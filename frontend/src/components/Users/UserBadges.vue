@@ -37,7 +37,7 @@
     <HoverChip
       text="Extreme Uploader"
       icon="mdi-account-arrow-up"
-      color="indigo"
+      color="indigo-lighten-1"
       :small="true"
       v-else-if="user.stats?.uploads >= 10000"
       title="Upload 10K+ items."
@@ -186,6 +186,22 @@
       v-if="user.id === 1 || user.id === 6 || user.id === 7 || user.id === 8"
       class="user-badge"
       icon="mdi-black-mesa"
+    ></HoverChip>
+    <HoverChip
+      image="https://i.troplo.com/i/aa9ea4686f9b.gif"
+      :small="true"
+      v-if="user.id === 8"
+      class="user-badge"
+      color="amber"
+      text="Morrisy"
+    ></HoverChip>
+    <HoverChip
+      icon="mdi-linux"
+      :small="true"
+      v-if="user.id === 1"
+      class="user-badge"
+      color="#0094ff"
+      text="Linux User"
     ></HoverChip>
     <HoverChip
       text="Not friends with user, some information may be unavailable."

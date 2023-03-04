@@ -15,7 +15,17 @@
         show.metadata = $event;
         page = 1;
       "
-      :supports="{ filter: true, metadata: true, search: true, upload: true }"
+      :supports="{
+        filter: true,
+        metadata: true,
+        search: true,
+        upload: true,
+        sort: true
+      }"
+      @update:sort="
+        show.sort = $event;
+        page = 1;
+      "
     ></GalleryNavigation>
     <GalleryCore
       :page="page"
@@ -89,7 +99,8 @@ export default defineComponent({
         ],
         search: "",
         metadata: true,
-        selected: "all"
+        selected: "all",
+        sort: "newest"
       },
       randomLoading: false
     };
@@ -145,7 +156,8 @@ export default defineComponent({
           page: this.page,
           search: this.show.search,
           textMetadata: this.show.metadata,
-          filter: this.show.selected
+          filter: this.show.selected,
+          sort: this.show.sort
         }
       });
       this.gallery = data;

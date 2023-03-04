@@ -6,7 +6,7 @@
   >
     <v-card color="card">
       <v-toolbar color="toolbar">
-        <v-toolbar-title>BetterCompass QuickSwitcher</v-toolbar-title>
+        <v-toolbar-title>TPU QuickSwitcher</v-toolbar-title>
       </v-toolbar>
       <v-container v-if="modelValue">
         <v-autocomplete
@@ -22,9 +22,6 @@
           ref="input"
           @select="handleEnter($event.target.value)"
         ></v-autocomplete>
-        <small>
-          Want to change how the QuickSwitcher behaves? You can in Settings!
-        </small>
       </v-container>
     </v-card>
   </v-dialog>

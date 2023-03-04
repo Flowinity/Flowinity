@@ -30,6 +30,7 @@
               block
               height="100%"
               @click="getStarted"
+              title="Get Started"
             >
               <template v-if="!$vuetify.display.mobile">
                 Get Started...

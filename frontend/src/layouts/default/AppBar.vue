@@ -18,7 +18,12 @@
       style="z-index: 1000"
       v-if="$vuetify.display.mobile || !$app.mainDrawer"
       @click.stop="$app.mainDrawer = !$app.mainDrawer"
-    ></v-app-bar-nav-icon>
+    >
+      <v-icon>mdi-menu</v-icon>
+      <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
+        Main Sidebar
+      </v-tooltip>
+    </v-app-bar-nav-icon>
     <template v-if="!$chat.isCommunications || !$chat.selectedChat">
       <h1
         style="z-index: 10; cursor: pointer; font-size: 32px"
@@ -82,19 +87,29 @@
         <v-icon>mdi-share</v-icon>
       </v-btn>
     </template>
-    <v-btn icon>
+    <v-btn icon class="mr-2" aria-label="Notifications">
       <Notifications />
       <v-badge dot color="red" :model-value="$user.unreadNotifications > 0">
         <v-icon>
           {{ $user.unreadNotifications > 0 ? "mdi-bell" : "mdi-bell-outline" }}
         </v-icon>
       </v-badge>
+      <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
+        Notifications
+      </v-tooltip>
     </v-btn>
     <template v-if="$user.user">
-      <v-menu offset-y rounded class="rounded-xxl">
+      <v-menu>
         <template v-slot:activator="{ props }">
-          <v-btn class="rounded-xl" icon v-bind="props">
+          <v-btn icon v-bind="props">
             <UserAvatar :user="$user.user" size="38" />
+            <v-tooltip
+              activator="parent"
+              location="bottom"
+              style="z-index: 2001"
+            >
+              Personal Menu
+            </v-tooltip>
           </v-btn>
         </template>
 
@@ -114,8 +129,20 @@
         icon
         class="ml-2"
         @click="$app.workspaceDrawer = !$app.workspaceDrawer"
+        :aria-label="
+          !$chat.communicationsSidebar && $chat.isCommunications
+            ? 'Members Sidebar'
+            : 'Workspaces Sidebar'
+        "
       >
         <v-icon>mdi-menu-open</v-icon>
+        <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
+          {{
+            !$chat.communicationsSidebar && $chat.isCommunications
+              ? "Members Sidebar"
+              : "Workspaces Sidebar"
+          }}
+        </v-tooltip>
       </v-btn>
     </template>
     <template v-slot:extension>

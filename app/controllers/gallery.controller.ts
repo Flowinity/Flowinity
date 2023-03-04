@@ -76,7 +76,8 @@ export class GalleryController {
             req.query?.filter?.toString(),
             req.query?.textMetadata?.toString() === "true",
             "user",
-            req.user.itemsPerPage
+            req.user.itemsPerPage,
+            <"">req.query.sort || "newest"
           )
           res.json(gallery)
         } catch (e) {
@@ -193,7 +194,8 @@ export class GalleryController {
             req.query?.filter?.toString(),
             req.query?.textMetadata?.toString() === "true",
             "starred",
-            req.user.itemsPerPage
+            req.user.itemsPerPage,
+            <"">req.query.sort || "newest"
           )
           res.json(gallery)
         } catch (e) {

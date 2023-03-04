@@ -17,6 +17,19 @@
         "
       ></v-text-field>
     </v-col>
+    <v-col md="2" cols="12" v-if="supports.sort">
+      <v-select
+        :items="sortTypes"
+        item-title="name"
+        item-value="internalName"
+        label="Sort"
+        v-model="sort"
+        v-on:update:model-value="
+          $emit('update:sort', sort);
+          $emit('refreshGallery');
+        "
+      ></v-select>
+    </v-col>
     <v-col md="2" cols="12" v-if="supports.filter">
       <v-select
         :items="types"
@@ -66,8 +79,27 @@ export default {
         filter: true,
         metadata: true,
         search: true,
-        upload: false
+        upload: false,
+        sort: true
       }
+    },
+    sortTypes: {
+      type: Array,
+      required: false,
+      default: [
+        {
+          name: "Newest",
+          internalName: "newest"
+        },
+        {
+          name: "Oldest",
+          internalName: "oldest"
+        },
+        {
+          name: "Size",
+          internalName: "size"
+        }
+      ]
     },
     types: {
       type: Array,
@@ -112,7 +144,8 @@ export default {
     return {
       metadata: true,
       search: "",
-      filter: "all"
+      filter: "all",
+      sort: "newest"
     };
   }
 };

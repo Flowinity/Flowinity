@@ -15,6 +15,7 @@ import axios from "axios"
 import * as fs from "fs"
 import Errors from "@app/lib/errors"
 import { Plan } from "@app/models/plan.model"
+import Sequelize from "sequelize"
 
 @Service()
 export class GalleryService {
@@ -162,8 +163,15 @@ export class GalleryService {
     showMetadata: boolean = true,
     type: "user" | "collection" | "starred" | "autoCollect" = "user",
     itemsPerPage: number = 12,
+    sort: "newest" | "oldest" | "size" = "newest",
     userId?: number
   ): Promise<Object> {
+    let sortParams: Sequelize.OrderItem = ["createdAt", "DESC"]
+    if (sort === "oldest") {
+      sortParams = ["createdAt", "ASC"]
+    } else if (sort === "size") {
+      sortParams = ["fileSize", "DESC"]
+    }
     const offset = page * itemsPerPage - itemsPerPage || 0
     let base = {
       deletable: true
@@ -325,10 +333,7 @@ export class GalleryService {
         ],
         offset,
         limit: itemsPerPage,
-        order: [
-          ["pinned", "DESC"],
-          ["createdAt", "DESC"]
-        ]
+        order: [["pinned", "DESC"], sortParams]
       })
       uploads = uploads.map((upload: any) => {
         return {
@@ -346,7 +351,7 @@ export class GalleryService {
         include,
         limit: itemsPerPage,
         offset,
-        order: [["createdAt", "DESC"]]
+        order: [sortParams]
         /* type === "collection"
             ? [
                 [

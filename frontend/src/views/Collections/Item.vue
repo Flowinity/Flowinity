@@ -80,12 +80,24 @@
         page = 1;
       "
       class="mt-1 ml-1"
+      @update:sort="
+        show.sort = $event;
+        page = 1;
+      "
+      :supports="{
+        filter: true,
+        metadata: true,
+        search: true,
+        upload: false,
+        sort: false
+      }"
     ></GalleryNavigation>
     <GalleryCore
       :page="page"
       :items="gallery"
       :supports="{
         multiSelect: true,
+        pins: true,
         randomAttachment: true,
         permissions: {
           read: true,
@@ -93,10 +105,12 @@
           configure: true
         }
       }"
-      @refresh="getGallery()"
+      @refresh="getGallery($event)"
       @pageChange="$router.push(`/collections/${$route.params.id}/${$event}`)"
       @updateItem="updateItem"
       @remove="removeItemFromCollection($event.item, $event.collection)"
+      @random-attachment="randomAttachment"
+      :random-attachment-loading="randomLoading"
     >
       <template v-slot:custom-values="{ item }">
         <v-card-subtitle>Creator: {{ item?.user?.username }}</v-card-subtitle>
@@ -128,6 +142,7 @@ export default defineComponent({
   },
   data() {
     return {
+      randomLoading: false,
       collection: undefined as CollectionCache | undefined,
       gallery: {
         gallery: [] as Upload[]
@@ -139,10 +154,21 @@ export default defineComponent({
         selected: "all"
       },
       sharing: false,
-      settings: false
+      settings: false,
+      sort: "newest"
     };
   },
   methods: {
+    async randomAttachment() {
+      this.randomLoading = true;
+      const { data } = await this.axios.get(
+        `/collections/${this.$route.params.id}/random`
+      );
+      this.$functions.copy(
+        this.$user.user?.domain.domain + "/i/" + data.attachment
+      );
+      this.randomLoading = false;
+    },
     removeItemFromCollection(item: Upload, collection: CollectionCache) {
       const index = this.gallery.gallery.findIndex(
         (i: Upload) => i.id === item.id
@@ -170,8 +196,10 @@ export default defineComponent({
         collections: [...this.gallery.gallery[index]?.collections, collection]
       };
     },
-    async getGallery() {
-      this.$app.componentLoading = true;
+    async getGallery(noLoad = false) {
+      if (!noLoad) {
+        this.$app.componentLoading = true;
+      }
       const { data } = await this.axios.get(
         `/collections/${this.$route.params.id}/gallery`,
         {
@@ -179,7 +207,8 @@ export default defineComponent({
             page: this.page,
             search: this.show.search,
             textMetadata: this.show.metadata,
-            filter: this.show.selected
+            filter: this.show.selected,
+            sort: this.show.sort
           }
         }
       );

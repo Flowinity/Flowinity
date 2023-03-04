@@ -131,6 +131,7 @@ export class AutoCollectController {
           req.query?.textMetadata?.toString() === "true",
           "autoCollect",
           req.user.itemsPerPage,
+          <"">req.query.sort || "newest",
           req.user.id
         )
         res.json(gallery)
