@@ -151,11 +151,11 @@ export default defineComponent({
       show: {
         search: "",
         metadata: true,
-        selected: "all"
+        selected: "all",
+        sort: "newest"
       },
       sharing: false,
-      settings: false,
-      sort: "newest"
+      settings: false
     };
   },
   methods: {

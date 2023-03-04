@@ -69,7 +69,8 @@ export default {
     "update:filter",
     "update:search",
     "update:metadata",
-    "refreshGallery"
+    "refreshGallery",
+    "update:sort"
   ],
   props: {
     supports: {

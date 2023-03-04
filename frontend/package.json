@@ -67,6 +67,7 @@
   },
   "devDependencies": {
     "@troplo/vite-plugin-vuetify": "^1.0.3-troplo2",
+    "@types/cypress": "^1.1.3",
     "@types/dompurify": "^2.4.0",
     "@types/markdown-it": "^12.2.3",
     "@types/node": "^18.11.9",
