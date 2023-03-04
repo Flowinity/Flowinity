@@ -7,12 +7,12 @@ import { defineConfig } from "vite";
 import { fileURLToPath, URL } from "node:url";
 import { VitePWA } from "vite-plugin-pwa";
 import ViteVersion from "@troplo/vite-version";
-import obfuscator from "rollup-plugin-obfuscator";
+//import obfuscator from "rollup-plugin-obfuscator";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
-    rollupOptions: {
+    /* rollupOptions: {
       plugins: [
         obfuscator({
           options: {
@@ -44,7 +44,7 @@ export default defineConfig({
           }
         })
       ]
-    },
+    },*/
     sourcemap: false,
     emptyOutDir: false
   },
