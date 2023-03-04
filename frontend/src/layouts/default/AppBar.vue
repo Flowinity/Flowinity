@@ -96,15 +96,8 @@
     <template v-if="$user.user">
       <v-menu>
         <template v-slot:activator="{ props }">
-          <v-btn icon v-bind="props">
+          <v-btn icon v-bind="props" aria-label="Personal Menu">
             <UserAvatar :user="$user.user" size="38" />
-            <v-tooltip
-              activator="parent"
-              location="bottom"
-              style="z-index: 2001"
-            >
-              Personal Menu
-            </v-tooltip>
           </v-btn>
         </template>
 

@@ -239,6 +239,12 @@
           </template>
         </v-col>
         <v-col md="3" cols="12" sm="12" v-if="!username">
+          <InsightsPromoCard
+            :start-color="user.plan.id === 6 ? '#FBC02D' : '#6A1B9A'"
+            :end-color="user.plan.id === 6 ? '#F57F17' : '#4A148C'"
+            :username="user.username"
+            v-if="$experiments.experiments.ACCOUNT_DEV_ELIGIBLE"
+          ></InsightsPromoCard>
           <StatsCard
             title="Creation date"
             :value="$date(user.createdAt).format('DD/MM/YYYY')"
@@ -293,11 +299,13 @@ import BarChart from "@/components/Core/BarChart.vue";
 import LineChart from "@/components/Core/LineChart.vue";
 import Chart from "@/components/Core/Chart.vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
+import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
 
 export default defineComponent({
   name: "User",
   props: ["username"],
   components: {
+    InsightsPromoCard,
     GraphWidget,
     Chart,
     LineChart,
