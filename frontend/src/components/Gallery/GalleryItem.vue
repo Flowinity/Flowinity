@@ -138,7 +138,7 @@
           :icon="item.item.pinned ? 'mdi-pin' : 'mdi-pin-outline'"
           color="lime"
           @click="pin(item)"
-          v-if="$user.user"
+          v-if="$user.user && item.item && supports.pins"
           class="my-1"
           aria-label="Pin to collection"
         ></HoverChip>
