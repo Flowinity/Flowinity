@@ -38,13 +38,14 @@
 import { defineComponent } from "vue";
 import DynamicCard from "@/components/Core/DynamicCard.vue";
 import InsightsStatsCard from "@/components/Insights/StatsCard.vue";
+import { Insight } from "@/models/insight";
 
 export default defineComponent({
   name: "Dynamic",
   components: { InsightsStatsCard, DynamicCard },
   data() {
     return {
-      report: null
+      report: null as Insight | null
     };
   },
   methods: {
