@@ -100,7 +100,7 @@ export default defineComponent({
       this.randomLoading = true;
       const { data } = await this.axios.get("/gallery/starred/random");
       this.$functions.copy(
-        this.$user.user?.domain.domain + "/i/" + data.attachment
+        "https://" + this.$user.user?.domain.domain + "/i/" + data.attachment
       );
       this.randomLoading = false;
     },

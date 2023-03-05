@@ -71,7 +71,7 @@ export default defineComponent({
           icon: "mdi-account-group",
           exact: true,
           scope: "*",
-          level: 2
+          level: 1
         },
         {
           id: 3,
@@ -126,7 +126,7 @@ export default defineComponent({
           icon: "mdi-flask",
           exact: true,
           scope: "*",
-          level: 1
+          level: 2
         },
         {
           id: 10,
@@ -151,6 +151,15 @@ export default defineComponent({
           name: "Developer Options",
           path: "/admin/dev",
           icon: "mdi-code-tags",
+          exact: true,
+          scope: "*",
+          level: 1
+        },
+        {
+          id: 13,
+          name: "Badges",
+          path: "/admin/badges",
+          icon: "mdi-trophy",
           exact: true,
           scope: "*",
           level: 1

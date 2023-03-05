@@ -205,6 +205,11 @@ const routes = [
             path: "cache",
             name: "Admin Cache",
             component: () => import("@/views/Admin/Cache.vue")
+          },
+          {
+            path: "badges",
+            name: "Admin Badges",
+            component: () => import("@/views/Admin/Badges.vue")
           }
         ]
       },

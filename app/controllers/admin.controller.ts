@@ -227,6 +227,44 @@ export class AdminController {
       res.sendStatus(204)
     })
 
+    this.router.post("/badge", async (req: RequestAuth, res: Response) => {
+      await this.adminService.createBadge(
+        req.body.name,
+        req.body.description,
+        req.body.icon,
+        req.body.color,
+        req.body.tooltip,
+        req.body.image
+      )
+      res.sendStatus(204)
+    })
+
+    this.router.post(
+      "/badge/users",
+      async (req: RequestAuth, res: Response) => {
+        if (!req.body.id) throw Errors.INVALID_PARAMETERS
+        await this.adminService.addUsersToBadge(req.body.userIds, req.body.id)
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.put("/badge", async (req: RequestAuth, res: Response) => {
+      await this.adminService.updateBadge(req.body)
+      res.sendStatus(204)
+    })
+
+    this.router.delete(
+      "/badge/:id",
+      async (req: RequestAuth, res: Response) => {
+        await this.adminService.deleteBadge(parseInt(<string>req.params.id))
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.get("/badges", async (req: RequestAuth, res: Response) => {
+      res.json(await this.adminService.getBadges())
+    })
+
     // ADMIN ROUTES ** HIGH LEVEL
     this.router.all(
       "*",

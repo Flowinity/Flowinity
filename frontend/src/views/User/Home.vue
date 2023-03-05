@@ -49,7 +49,7 @@
                 {{ user.username }}
               </router-link>
             </v-card-title>
-            <UserBadges :user="user" class="text-center mt-n1 mb-2" />
+            <UserBadges :user="user" class="justify-center mt-n1 mb-2" />
             <div class="ml-n1 text-center justify-center limit">
               {{ user.description }}
             </div>

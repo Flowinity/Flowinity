@@ -13,7 +13,7 @@
       </v-card-text>
     </DynamicCard>
     <v-row class="mt-2">
-      <v-col cols="12" sm="12" md="4" lg="3">
+      <v-col cols="12" sm="12" md="4" lg="5" xl="3">
         <InsightsStatsCard
           title="Uploads last week"
           :count="report.data.uploads.total.now"
@@ -22,6 +22,38 @@
             report.data.uploads.total.now - report.data.uploads.total.previous
           "
         ></InsightsStatsCard>
+      </v-col>
+      <v-col cols="12" sm="12" md="5" lg="6" xl="4">
+        <InsightsStatsCard
+          title="Uploads per hour"
+          :subtitle="`Last week you uploaded the most at ${Object.keys(
+            report.data.uploads.hours
+          ).reduce((a, b) =>
+            report.data.uploads.hours[a] > report.data.uploads.hours[b] ? a : b
+          )}!`"
+        >
+          <Chart
+            title="Uploads last week"
+            :data="objectToGraphData(report.data.uploads.hours)"
+            type="bar"
+            :height="300"
+            class="mb-n12"
+          ></Chart>
+        </InsightsStatsCard>
+      </v-col>
+      <v-col cols="12" sm="12" md="3" lg="3" xl="3">
+        <InsightsStatsCard
+          title="Uploads per day"
+          :subtitle="`Last week you uploaded the most on ${report.data.uploads.std.stdDeezer}`"
+        >
+          <Chart
+            title="Uploads last week"
+            :data="objectToGraphData(report.data.uploads.days)"
+            type="bar"
+            :height="300"
+            class="mb-n12"
+          ></Chart>
+        </InsightsStatsCard>
       </v-col>
     </v-row>
   </v-container>
@@ -39,16 +71,26 @@ import { defineComponent } from "vue";
 import DynamicCard from "@/components/Core/DynamicCard.vue";
 import InsightsStatsCard from "@/components/Insights/StatsCard.vue";
 import { Insight } from "@/models/insight";
+import Chart from "@/components/Core/Chart.vue";
 
 export default defineComponent({
   name: "Dynamic",
-  components: { InsightsStatsCard, DynamicCard },
+  components: { Chart, InsightsStatsCard, DynamicCard },
   data() {
     return {
       report: null as Insight | null
     };
   },
   methods: {
+    objectToGraphData(object: any) {
+      const labels = [];
+      const data = [];
+      for (const [key, value] of Object.entries(object)) {
+        labels.push(key);
+        data.push(value);
+      }
+      return { labels, data };
+    },
     getReport() {
       this.$app.componentLoading = true;
       this.axios

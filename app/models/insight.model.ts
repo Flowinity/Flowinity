@@ -25,6 +25,21 @@ export interface InsightData {
       word: string
       count: number
     }[]
+    days: {
+      series: [
+        {
+          name: string
+          data: {
+            x: string
+            y: number
+            goals: {
+              name: string
+              value: number
+            }[]
+          }[]
+        }
+      ]
+    }
   }
   pulses: {
     total: {

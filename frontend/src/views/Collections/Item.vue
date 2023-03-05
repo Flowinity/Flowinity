@@ -166,7 +166,7 @@ export default defineComponent({
         `/collections/${this.$route.params.id}/random`
       );
       this.$functions.copy(
-        this.$user.user?.domain.domain + "/i/" + data.attachment
+        "https://" + this.$user.user?.domain.domain + "/i/" + data.attachment
       );
       this.randomLoading = false;
     },

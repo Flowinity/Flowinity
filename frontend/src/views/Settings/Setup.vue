@@ -51,16 +51,17 @@
     <HoverChip
       class="mr-2"
       color="white"
-      href="https://www.icloud.com/shortcuts/09da790d20434eecb1820db427a9ae71"
+      href="https://www.icloud.com/shortcuts/2d3bca05bfe94ee3ac57611b6b1e5764"
       icon="mdi-apple"
       text="Download Shortcuts Config"
       :old="true"
+      target="_blank"
     ></HoverChip>
   </v-card-actions>
   <v-card-title>How to install the ShareX configuration:</v-card-title>
   <v-container>
     <video controls height="430" muted>
-      <source src="https://i.troplo.com/i/ddedf216ef3a.mp4" type="video/mp4" />
+      <source src="https://i.troplo.com/i/e66cb847249e.mp4" type="video/mp4" />
     </video>
   </v-container>
   <v-card-title>How to install the ShareNix configuration:</v-card-title>
@@ -120,6 +121,20 @@
         notification when an item has been newly copied to the clipboard, you
         may want to disable the auto clipboard copy block in this case.
       </small>
+    </ol>
+  </v-container>
+  <v-card-title>
+    How to install the Shortcuts config for Apple iOS devices:
+  </v-card-title>
+  <v-container>
+    <ol>
+      <li>Install the configuration file via iCloud.</li>
+      <li>Follow setup screen and provide your TPU API key of choice.</li>
+      <li>
+        Enable the ability to use the accessibility button for quick screenshots
+        in Accessibility -> Touch -> Back Tap -> [Select either Double Tap or
+        Triple Tap] -> Scroll down to "SHORTCUTS" -> Select TPU.
+      </li>
     </ol>
   </v-container>
 </template>

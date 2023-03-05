@@ -2,10 +2,10 @@
   <v-card class="text-center justify-center">
     <v-container>
       <UserAvatar :user="$user.user" :size="92"></UserAvatar>
-      <v-card-title class="text-h4">
+      <v-card-title class="text-h4 mb-1">
         {{ $user.user?.username }}
       </v-card-title>
-      <UserBadges class="mt-1" :user="$user.user"></UserBadges>
+      <UserBadges class="justify-center" :user="$user.user"></UserBadges>
       <v-divider class="mt-3 mb-3"></v-divider>
       {{ $user.user?.description }}
     </v-container>

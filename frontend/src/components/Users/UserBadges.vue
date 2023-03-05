@@ -1,6 +1,8 @@
 <template>
-  <v-card-title style="padding: 0 !important">
+  <v-chip-group :model-value="selected" disabled class="mt-n2">
+    <!-- Permission badges -->
     <HoverChip
+      v-ripple
       text="TPU Administrator"
       v-if="user.admin || user.administrator"
       icon="mdi-shield"
@@ -9,6 +11,7 @@
       class="user-badge"
     ></HoverChip>
     <HoverChip
+      v-ripple
       text="TPU Moderator"
       v-if="user.moderator"
       icon="mdi-shield"
@@ -16,7 +19,9 @@
       :small="true"
       class="user-badge"
     ></HoverChip>
+    <!-- Plan/other badge -->
     <HoverChip
+      v-ripple
       :text="'TPU ' + user.plan?.name"
       v-if="!user.plan?.internalName.includes('FREE')"
       :icon="user.plan?.icon"
@@ -25,82 +30,327 @@
       :small="true"
       class="user-badge"
     ></HoverChip>
+    <!-- Rank tiers -->
     <HoverChip
+      v-ripple
+      text="TPU God"
+      icon="mdi-crown"
+      color="primary"
+      :small="true"
+      v-if="rank === 'god'"
+      title="You're Better than the rest™."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="TPU Champion"
+      icon="mdi-compass"
+      color="gold"
+      :small="true"
+      v-if="rank === 'champion'"
+      title="Champion deez nuts."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="TPU Legend"
+      icon="mdi-chess-knight"
+      color="purple"
+      :small="true"
+      v-if="rank === 'legend'"
+      title="You're a legend."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="TPU Mediumist"
+      icon="mdi-microsoft-xbox-controller-battery-medium"
+      color="#1ac62b"
+      :small="true"
+      v-if="rank === 'medium'"
+      title="You're medium."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="TPU Intermediate"
+      icon="mdi-target-account"
+      color="cyan"
+      :small="true"
+      v-if="rank === 'intermediate'"
+      title="You're getting Better™."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="TPU Noob"
+      icon="mdi-chess-pawn"
+      color="grey"
+      :small="true"
+      v-if="rank === 'noob'"
+      title="Noob. Get Better™."
+      class="user-badge"
+    ></HoverChip>
+    <!-- God, #0190ea/primary -->
+    <HoverChip
+      v-ripple
+      text="Chronic TPU Addiction Condition Disorder (CTPUACD)"
+      icon="mdi-clock"
+      color="#0190ea"
+      :small="true"
+      v-if="user.stats?.pulse >= 100"
+      title="Have 100h+ in TPU."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
       text="Chronic Screenshot Addiction Condition Disorder (CSACD)"
       icon="mdi-account-arrow-up"
       color="#0190ea"
       :small="true"
-      v-if="user.stats?.uploads >= 50000"
-      title="Upload 50K+ items."
+      v-if="user.stats?.uploads >= 100000"
+      title="Upload 100K+ items."
       class="user-badge"
     ></HoverChip>
     <HoverChip
-      text="Extreme Uploader"
-      icon="mdi-account-arrow-up"
-      color="indigo-lighten-1"
-      :small="true"
-      v-else-if="user.stats?.uploads >= 10000"
-      title="Upload 10K+ items."
-      class="user-badge"
-    ></HoverChip>
-    <HoverChip
-      text="Pro Uploader"
-      icon="mdi-upload"
-      color="deep-purple"
-      :small="true"
-      v-else-if="user.stats?.uploads >= 4154"
-      title="Upload 4154+ items."
-      class="user-badge"
-    ></HoverChip>
-    <HoverChip
-      text="Getting Better™"
-      icon="mdi-upload"
-      color="deep-orange"
-      :small="true"
-      v-else-if="user.stats?.uploads >= 1000"
-      title="Upload 1K+ items."
-      class="user-badge"
-    ></HoverChip>
-    <HoverChip
-      text="Getting Started"
-      icon="mdi-upload"
-      color="grey darken-3"
-      :small="true"
-      v-else-if="user.stats?.uploads >= 500"
-      title="Upload 500+ items."
-      class="user-badge"
-    ></HoverChip>
-    <HoverChip
-      text="TPU All Nighter"
-      icon="mdi-clock-fast"
-      color="cyan"
-      :small="true"
-      v-if="user.stats?.pulse >= 24"
-      title="Have 24h+ in TPU."
-      class="user-badge"
-    ></HoverChip>
-    <HoverChip
-      text="TPU Addict"
-      icon="mdi-clock"
-      color="cyan"
-      :small="true"
-      v-else-if="user.stats?.pulse >= 12"
-      title="Have 12h+ in TPU."
-      class="user-badge"
-    ></HoverChip>
-    <HoverChip
-      text="True Collectivist"
+      v-ripple
+      text="Chronic Kollectivization Addiction Condition Disorder (CKACD)"
       icon="mdi-rhombus-split"
-      color="cyan darken-3"
+      color="#0190ea"
       :small="true"
-      title="Have a collectivized to upload percentage of 80% or more."
+      title="Have a collectivized to upload percentage of 100% or more."
       v-if="
-        user.stats?.uploads >= 1000 &&
-        user.stats?.collectionItems / user.stats?.uploads >= 0.8
+        user.stats?.uploads >= 10000 &&
+        user.stats?.collectionItems / user.stats?.uploads >= 0.99
       "
       class="user-badge"
     ></HoverChip>
     <HoverChip
+      v-ripple
+      text="Chronic Collection Addiction Condition Disorder (CCACD)"
+      icon="mdi-folder-multiple-image"
+      color="#0190ea"
+      :small="true"
+      v-if="user.stats?.collections >= 100"
+      title="Have 100+ collections."
+      class="user-badge"
+    ></HoverChip>
+    <!-- Champion, #ffd700/gold -->
+    <HoverChip
+      v-ripple
+      text="Champion Uploader"
+      icon="mdi-account-arrow-up"
+      color="gold"
+      :small="true"
+      v-if="user.stats?.uploads >= 50000 && user.stats?.uploads < 100000"
+      title="Upload 50K+ items."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="TPU Addict"
+      icon="mdi-clock"
+      color="gold"
+      :small="true"
+      v-if="user.stats?.pulse >= 72 && user.stats?.pulse < 100"
+      title="Have 69h+ in TPU."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="Champion Collectivist"
+      icon="mdi-rhombus-split"
+      color="gold"
+      :small="true"
+      title="Have a collectivized to upload percentage of 90% or more."
+      v-if="
+        user.stats?.uploads >= 10000 &&
+        user.stats?.collectionItems / user.stats?.uploads >= 0.9 &&
+        user.stats?.collectionItems / user.stats?.uploads < 0.95
+      "
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="Extreme kollection kreator"
+      icon="mdi-folder-multiple-image"
+      color="purple"
+      :small="true"
+      v-if="user.stats?.collections >= 25 && user.stats?.collections < 30"
+      title="Have 25+ collections."
+      class="user-badge"
+    ></HoverChip>
+    <!-- Legend tier, #673ab7/purple -->
+    <HoverChip
+      v-ripple
+      text="Extreme Uploader"
+      icon="mdi-account-arrow-up"
+      color="purple"
+      :small="true"
+      v-if="user.stats?.uploads >= 10000 && user.stats?.uploads < 50000"
+      title="Upload 10K+ items."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="Nice Hours"
+      icon="mdi-clock"
+      color="purple"
+      :small="true"
+      v-if="user.stats?.pulse >= 69 && user.stats?.pulse < 72"
+      title="Have 69h+ in TPU."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="True Collectivist"
+      icon="mdi-rhombus-split"
+      color="purple"
+      :small="true"
+      title="Have a collectivized to upload percentage of 80% or more."
+      v-if="
+        user.stats?.uploads >= 1000 &&
+        user.stats?.collectionItems / user.stats?.uploads >= 0.8 &&
+        (user.stats?.collectionItems / user.stats?.uploads < 0.9 ||
+          user.stats?.uploads < 10000)
+      "
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="Extreme kollection kreator"
+      icon="mdi-folder-multiple-image"
+      color="purple"
+      :small="true"
+      v-if="user.stats?.collections >= 20 && user.stats?.collections < 25"
+      title="Have 20+ collections."
+      class="user-badge"
+    ></HoverChip>
+    <!-- Mediumist tier, #1ac62b/Thomas lime -->
+    <HoverChip
+      v-ripple
+      text="Pro Uploader"
+      icon="mdi-upload"
+      color="#1ac62b"
+      :small="true"
+      v-if="user.stats?.uploads >= 4154 && user.stats?.uploads < 10000"
+      title="Upload 4154+ items."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="TPU All Nighter"
+      icon="mdi-clock-fast"
+      color="#1ac62b"
+      :small="true"
+      v-if="user.stats?.pulse >= 24 && user.stats?.pulse < 69"
+      title="Have 24h+ in TPU."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="Nice Collectivist"
+      icon="mdi-rhombus-split"
+      color="#1ac62b"
+      :small="true"
+      title="Have a collectivized to upload percentage of 69% or more."
+      v-if="
+        user.stats?.uploads >= 1000 &&
+        user.stats?.collectionItems / user.stats?.uploads >= 0.69 &&
+        user.stats?.collectionItems / user.stats?.uploads < 0.8
+      "
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="Pro kollection kreator"
+      icon="mdi-folder-multiple-image"
+      color="#1ac62b"
+      :small="true"
+      v-if="user.stats?.collections >= 15 && user.stats?.collections < 20"
+      title="Have 15+ collections."
+      class="user-badge"
+    ></HoverChip>
+    <!-- Mediumist, #00bcd4/cyan -->
+    <HoverChip
+      v-ripple
+      text="Getting Better™"
+      icon="mdi-upload"
+      color="cyan"
+      :small="true"
+      v-if="user.stats?.uploads >= 1000 && user.stats?.uploads < 4154"
+      title="Upload 1K+ items."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="Better than Average"
+      icon="mdi-clock"
+      color="cyan"
+      :small="true"
+      v-if="user.stats?.pulse >= 12 && user.stats?.pulse < 24"
+      title="Have 12h+ in TPU."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="Noob Collectivist"
+      icon="mdi-rhombus-split"
+      color="cyan"
+      :small="true"
+      title="Have a collectivized to upload percentage of 4.154% or more."
+      v-if="
+        user.stats?.uploads >= 1000 &&
+        user.stats?.collectionItems / user.stats?.uploads >= 0.4154 &&
+        user.stats?.collectionItems / user.stats?.uploads < 0.69
+      "
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="Better™ kollection kreator"
+      icon="mdi-folder-multiple-image"
+      color="cyan"
+      :small="true"
+      v-if="user.stats?.collections >= 10 && user.stats?.collections < 15"
+      title="Have 10+ collections."
+      class="user-badge"
+    ></HoverChip>
+    <!-- Noob, grey -->
+    <HoverChip
+      v-ripple
+      text="Getting Started"
+      icon="mdi-upload"
+      color="grey"
+      :small="true"
+      v-if="user.stats?.uploads >= 500 && user.stats?.uploads < 1000"
+      title="Upload 500+ items."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="Average User"
+      icon="mdi-clock"
+      color="grey"
+      :small="true"
+      v-if="user.stats?.pulse >= 8 && user.stats?.pulse < 12"
+      title="Have 8h+ in TPU."
+      class="user-badge"
+    ></HoverChip>
+    <HoverChip
+      v-ripple
+      text="Average kollection kreator"
+      icon="mdi-folder-multiple-image"
+      color="grey"
+      :small="true"
+      v-if="user.stats?.collections >= 5 && user.stats?.collections < 10"
+      title="Have 5+ collections."
+      class="user-badge"
+    ></HoverChip>
+
+    <!-- Other -->
+    <HoverChip
+      v-ripple
       :text="age + ' year old account'"
       :icon="'mdi-numeric-' + age"
       color="teal"
@@ -110,6 +360,7 @@
       class="user-badge"
     ></HoverChip>
     <HoverChip
+      v-ripple
       text="Cake Week"
       icon="mdi-cake"
       color="pink lighten-2"
@@ -119,114 +370,29 @@
       class="user-badge"
     ></HoverChip>
     <HoverChip
-      text="Sans Enjoyer"
-      color="grey"
+      v-ripple
+      v-for="badge in user.badges"
+      :text="badge.name"
+      :icon="badge.icon"
+      :color="badge.color"
       :small="true"
-      title="uhuhuhuh sans"
-      v-if="user.id === 10"
+      :title="badge.tooltip"
+      :image="badge.image"
       class="user-badge"
-      image="https://i.troplo.com/i/5516167987df.png"
+      @click="handleClick(badge)"
     ></HoverChip>
     <HoverChip
-      text="Ramen Enjoyer"
-      color="#a60f00"
+      v-ripple
+      v-if="user.noFriends"
+      text="No friends :("
+      title="Get Better ™ 😟"
+      icon="mdi-account-multiple-remove"
+      color="silver"
       :small="true"
-      title="Genshin Enjoyer"
-      v-if="user.id === 12"
       class="user-badge"
-      image="https://i.troplo.com/i/984e5fff4c4e.png"
     ></HoverChip>
     <HoverChip
-      text="TPU Developer"
-      color="#ffd700"
-      :small="true"
-      title="Contributed to TPU."
-      v-if="user.id === 6 || user.id === 1 || user.id === 2"
-      class="user-badge"
-      icon="mdi-code-tags"
-    ></HoverChip>
-    <HoverChip
-      text="😟kull:"
-      color="#ffd700"
-      :small="true"
-      :title="`:skull:`"
-      @click="crash"
-      v-if="user.id === 6 || user.id === 1 || user.id === 5"
-      class="user-badge"
-      icon="mdi-skull"
-    ></HoverChip>
-    <HoverChip
-      text="TPU Deezer"
-      color="#1AC62B"
-      :small="true"
-      :title="`Doin' deez`"
-      v-if="user.id === 7 || user.id === 6 || user.id === 5"
-      class="user-badge"
-      icon="mdi-hamburger"
-    ></HoverChip>
-    <!--
-    <span v-if="user.id === 11 || user.id === 6 || user.id === 1">
-      <v-img
-        src="https://i.troplo.com/i/7b7a142db839.jpg"
-        width="43"
-        class="rounded-xl mr-2"
-        style="display: inline-block; top: 6px; cursor: pointer"
-        title=":skull:"
-        v-ripple
-      ></v-img>
-      <v-tooltip activator="parent" location="top">
-        He was forced to deez
-      </v-tooltip>
-    </span>-->
-    <HoverChip
-      text="Gordon Freeloader"
-      color="#fb7e14"
-      :small="true"
-      title="Attends The Gordon"
-      v-if="user.id === 1 || user.id === 6 || user.id === 7 || user.id === 8"
-      class="user-badge"
-      icon="mdi-black-mesa"
-    ></HoverChip>
-    <HoverChip
-      image="https://i.troplo.com/i/aa9ea4686f9b.gif"
-      :small="true"
-      v-if="user.id === 8"
-      class="user-badge"
-      color="amber"
-      text="Morrisy"
-    ></HoverChip>
-    <HoverChip
-      icon="mdi-linux"
-      :small="true"
-      v-if="user.id === 1 || user.id === 5 || user.id === 6"
-      class="user-badge"
-      color="#0094ff"
-      text="Linux User"
-    ></HoverChip>
-    <HoverChip
-      icon="mdi-microsoft"
-      :small="true"
-      v-if="
-        user.id === 5 ||
-        user.id === 9 ||
-        user.id === 8 ||
-        user.id === 11 ||
-        user.id === 12 ||
-        user.id === 2
-      "
-      class="user-badge"
-      color="#0094ff"
-      text="Windows 11 User"
-    ></HoverChip>
-    <HoverChip
-      icon="mdi-zodiac-cancer"
-      :small="true"
-      v-if="user.id === 69"
-      class="user-badge"
-      color="#0094ff"
-      text="69th user"
-    ></HoverChip>
-    <HoverChip
+      v-ripple
       text="Not friends with user, some information may be unavailable."
       icon="mdi-account-off"
       color="grey"
@@ -237,7 +403,7 @@
       "
       class="user-badge"
     ></HoverChip>
-  </v-card-title>
+  </v-chip-group>
 </template>
 
 <script lang="ts">
@@ -249,11 +415,69 @@ export default defineComponent({
   methods: {
     crash() {
       throw "deez";
+    },
+    async handleClick(badge: any) {
+      if (badge.name === ":skull:") {
+        this.crash();
+      } else if (badge.name === "Click me") {
+        await this.axios.head("/user/getRekt");
+        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
+      }
     }
   },
   components: { HoverChip },
   props: ["user"],
   computed: {
+    rank() {
+      if (
+        this.user.stats?.pulse >= 100 &&
+        this.user.stats?.uploads >= 100000 &&
+        this.user.stats?.collectionItems / this.user.stats?.uploads >= 0.99 &&
+        this.user.stats?.collections >= 100
+      ) {
+        return "god";
+      } else if (
+        this.user.stats?.uploads >= 50000 &&
+        this.user.stats?.pulse >= 72 &&
+        this.user.stats?.collectionItems / this.user.stats?.uploads >= 0.9 &&
+        this.user.stats?.collections >= 25
+      ) {
+        return "champion";
+      } else if (
+        this.user.stats?.uploads >= 10000 &&
+        this.user.stats?.pulse >= 69 &&
+        this.user.stats?.collectionItems / this.user.stats?.uploads >= 0.8 &&
+        this.user.stats?.collections >= 20
+      ) {
+        return "legend";
+      } else if (
+        this.user.stats?.uploads >= 4154 &&
+        this.user.stats?.pulse >= 24 &&
+        this.user.stats?.collectionItems / this.user.stats?.uploads >= 0.69 &&
+        this.user.stats?.collections >= 15
+      ) {
+        return "medium";
+      } else if (
+        this.user.stats?.uploads >= 1000 &&
+        this.user.stats?.pulse >= 12 &&
+        this.user.stats?.collectionItems / this.user.stats?.uploads >= 0.4154 &&
+        this.user.stats?.collections >= 10
+      ) {
+        return "intermediate";
+      } else if (
+        this.user.stats?.uploads >= 500 &&
+        this.user.stats?.pulse >= 8 &&
+        this.user.collections?.length >= 5
+      ) {
+        return "noob";
+      } else {
+        return null;
+      }
+    },
+    selected() {
+      // select all of them
+      return [...Array(100).keys()];
+    },
     age() {
       if (!this.user?.createdAt) return 0;
       const years = this.$date().diff(this.user?.createdAt, "years");
@@ -275,4 +499,10 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.v-chip--disabled {
+  opacity: 1 !important;
+  pointer-events: inherit !important;
+  user-select: inherit !important;
+}
+</style>

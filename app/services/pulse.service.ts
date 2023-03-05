@@ -153,6 +153,56 @@ export class PulseService {
         count: features[key]
       }))
   }
+  calculateUploadDays(uploads: Upload[], previous: Insight | null) {
+    let chart = {
+      series: [
+        {
+          name: "Uploads",
+          data: [] as {
+            x: string
+            y: number
+            goals: {
+              name: string
+              value: number
+            }[]
+          }[]
+        }
+      ]
+    }
+    for (let i = 0; i < 7; i++) {
+      const date = dayjs().subtract(7, "days").startOf("isoWeek").add(i, "days")
+      chart.series[0].data.push({
+        x: date.format("dddd"),
+        y: 0,
+        goals: [
+          {
+            name: "Previous Week",
+            // get same day last week
+            value: previous
+              ? previous.data.uploads.days.series[0].data.find(
+                  (day) => day.x === date.format("dddd")
+                )?.y || 0
+              : 0
+          }
+        ]
+      })
+    }
+    for (const upload of uploads) {
+      const day = dayjs(upload.createdAt).format("dddd")
+      const update = chart.series[0].data.find((dayData) => dayData.x === day)
+      if (update) update.y++
+    }
+    return chart
+  }
+  standardDeviation(arr: number[], usePopulation = false) {
+    const mean = arr.reduce((acc, val) => acc + val, 0) / arr.length
+    return Math.sqrt(
+      arr
+        .reduce((acc: any, val: number) => acc.concat((val - mean) ** 2), [])
+        .reduce((acc: any, val: number) => acc + val, 0) /
+        (arr.length - (usePopulation ? 0 : 1))
+    )
+  }
   async generateWeeklyInsights(userId: number) {
     const previous = await this.getLatestReport(userId, "weekly")
     // UPLOADS
@@ -239,7 +289,12 @@ export class PulseService {
           previous: previous ? previous.data?.uploads?.average : 0
         },
         hours: hours,
-        words: this.calculateWords(uploads)
+        words: this.calculateWords(uploads),
+        days: this.calculateUploadDays(uploads, previous),
+        // calculate standard deviation of uploads per day
+        stdDev: this.standardDeviation(
+          uploads.map((upload) => upload.createdAt.getDay())
+        )
       },
       pulses: {
         total: {

@@ -14,6 +14,7 @@ import { AdminService } from "@app/services/admin.service"
 import { SortValidate } from "@app/validators/sort"
 import paginate from "jw-paginate"
 import { Op } from "sequelize"
+import { Badge } from "@app/models/badge.model"
 @Service()
 export class UserUtilsService {
   async verifyEmail(token: string) {
@@ -431,11 +432,25 @@ export class UserUtilsService {
         "createdAt"
       ],
       where,
-      order: [[sort, order]],
+      order: [
+        [sort, order],
+        [{ model: Badge, as: "badges" }, "priority", "DESC"],
+        [{ model: Badge, as: "badges" }, "id", "ASC"]
+      ],
       include: [
         {
           model: Plan,
           as: "plan"
+        },
+        {
+          model: Badge,
+          as: "badges",
+          where: {
+            priority: {
+              [Op.gt]: 0
+            }
+          },
+          required: false
         }
       ],
       limit: 24,
@@ -598,10 +613,25 @@ export class UserUtilsService {
         {
           model: Plan,
           as: "plan"
+        },
+        {
+          model: Badge,
+          as: "badges"
         }
+      ],
+      order: [
+        [{ model: Badge, as: "badges" }, "priority", "DESC"],
+        [{ model: Badge, as: "badges" }, "id", "ASC"]
       ]
     })
+
     if (!user) return null
+    user.dataValues.noFriends = !(await Friend.count({
+      where: {
+        userId: user.id,
+        status: "accepted"
+      }
+    }))
     user.dataValues.collections = await this.getMutualCollections(
       userId,
       user.id

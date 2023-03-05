@@ -12,14 +12,16 @@ import {
   IsEmail,
   Length,
   HasOne,
-  HasMany
+  HasMany,
+  BelongsToMany
 } from "sequelize-typescript"
 import { Plan } from "@app/models/plan.model"
 import { Theme } from "@app/models/theme.model"
 import { Domain } from "@app/models/domain.model"
-import { CollectionCache } from "@app/types/collection"
 import { Subscription } from "@app/models/subscription.model"
 import { Experiment } from "@app/models/experiment.model"
+import { Badge } from "@app/models/badge.model"
+import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 
 @DefaultScope(() => ({
   attributes: {
@@ -217,7 +219,9 @@ export class User extends Model {
   @HasMany(() => Experiment, "userId")
   experiments: Experiment[]
 
-  collections?: CollectionCache[]
+  @BelongsToMany(() => Badge, () => BadgeAssociation, "userId", "badgeId")
+  badges: Badge[]
+
   scopes: string
 
   stats: object

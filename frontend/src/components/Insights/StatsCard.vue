@@ -2,7 +2,11 @@
   <v-card class="text-center">
     <v-container>
       <strong style="font-size: 24px" class="text-gradient">{{ title }}</strong>
-      <h1 style="font-size: 5em">{{ count }}</h1>
+      <p class="text-grey" style="font-size: 14px" v-if="subtitle">
+        {{ subtitle }}
+      </p>
+      <h1 style="font-size: 5em" v-if="count">{{ count }}</h1>
+      <slot v-else></slot>
       <v-card-subtitle style="margin-top: -35px" v-if="difference">
         <v-icon :color="differenceIcon(difference).color">
           {{ differenceIcon(difference).icon }}
@@ -22,13 +26,17 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "InsightsStatsCard",
   props: {
+    subtitle: {
+      type: String,
+      required: false
+    },
     title: {
       type: String,
       required: true
     },
     count: {
       type: Number,
-      required: true
+      required: false
     },
     difference: {
       type: Number,

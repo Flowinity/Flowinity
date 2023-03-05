@@ -17,6 +17,8 @@ import { Collection } from "@app/models/collection.model"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import { Op } from "sequelize"
 import { Chat } from "@app/models/chat.model"
+import { Badge } from "@app/models/badge.model"
+import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 
 export enum CacheType {
   "everything",
@@ -397,6 +399,74 @@ export class AdminService {
         }
       }
     )
+    return true
+  }
+
+  async createBadge(
+    name: string,
+    description: string,
+    icon: string,
+    color: string,
+    tooltip: string,
+    image: string
+  ) {
+    return await Badge.create({
+      name,
+      description,
+      icon,
+      color,
+      tooltip,
+      image
+    })
+  }
+
+  async addUsersToBadge(userIdeez: number[], badgeId: number) {
+    for (const userId of userIdeez) {
+      await BadgeAssociation.create({
+        userId,
+        badgeId
+      })
+    }
+    return true
+  }
+
+  async getBadges() {
+    return await Badge.findAll({
+      include: [
+        {
+          model: User,
+          as: "users",
+          attributes: ["id", "username", "avatar"]
+        }
+      ]
+    })
+  }
+
+  async updateBadge(badge: Badge) {
+    await Badge.update(
+      {
+        ...badge
+      },
+      {
+        where: {
+          id: badge.id
+        }
+      }
+    )
+    return true
+  }
+
+  async deleteBadge(badgeId: number) {
+    await Badge.destroy({
+      where: {
+        id: badgeId
+      }
+    })
+    await BadgeAssociation.destroy({
+      where: {
+        badgeId
+      }
+    })
     return true
   }
 }

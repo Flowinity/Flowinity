@@ -11,6 +11,7 @@ import dayjs from "dayjs"
 import socket from "./lib/socket"
 import { BillingService } from "@app/services/billing.service"
 import { PulseService } from "@app/services/pulse.service"
+import { BadgeService } from "@app/services/badge.service"
 
 @Service()
 export class Server {
@@ -24,7 +25,8 @@ export class Server {
     private readonly application: Application,
     private readonly cacheService: CacheService,
     private readonly billingService: BillingService,
-    private readonly pulseService: PulseService
+    private readonly pulseService: PulseService,
+    private readonly badgeService: BadgeService
   ) {}
 
   private static normalizePort(
@@ -65,6 +67,7 @@ export class Server {
     this.billingService.billingInit()
     this.cacheService.cacheInit()
     this.pulseService.pulseInit()
+    this.badgeService.badgeInit()
   }
 
   private onError(error: NodeJS.ErrnoException): void {

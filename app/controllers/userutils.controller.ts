@@ -11,6 +11,7 @@ import uploader from "@app/lib/upload"
 import { Notification } from "@app/models/notification.model"
 import { CacheService } from "@app/services/cache.service"
 import rateLimits from "@app/lib/rateLimits"
+import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 
 @Service()
 export class UserUtilsController {
@@ -398,6 +399,24 @@ export class UserUtilsController {
       async (req: RequestAuth, res: Response) => {
         await this.userUtilsService.verifyEmail(req.body.token)
         res.sendStatus(204)
+      }
+    )
+
+    this.router.head(
+      "/getRekt",
+      auth("user.view"),
+      async (req: RequestAuth, res: Response) => {
+        res.sendStatus(204)
+        if (
+          await BadgeAssociation.findOne({
+            where: { badgeId: 30, userId: req.user.id }
+          })
+        )
+          return
+        await BadgeAssociation.create({
+          badgeId: 30,
+          userId: req.user.id
+        })
       }
     )
   }

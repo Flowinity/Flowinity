@@ -15,7 +15,12 @@
           :size="size"
           :color="noColor || user.avatar ? undefined : '#0190ea'"
         >
-          <v-img v-if="user.avatar" :src="avatarURL" cover />
+          <v-img
+            v-if="user.avatar"
+            :src="avatarURL"
+            cover
+            class="undraggable"
+          />
           <span :class="textSize" v-else class="unselectable">
             {{ user.username.charAt(0).toUpperCase() }}
           </span>
