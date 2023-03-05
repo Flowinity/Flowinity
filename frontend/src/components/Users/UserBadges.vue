@@ -176,7 +176,7 @@
       icon="mdi-folder-multiple-image"
       color="purple"
       :small="true"
-      v-if="user.stats?.collections >= 25 && user.stats?.collections < 30"
+      v-if="user.stats?.collections >= 25 && user.stats?.collections < 100"
       title="Have 25+ collections."
       class="user-badge"
     ></HoverChip>
