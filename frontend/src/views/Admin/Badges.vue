@@ -239,7 +239,8 @@ export default defineComponent({
         icon: "",
         image: "",
         unlocked: false,
-        planId: null
+        planId: null,
+        priority: 0
       };
     }
   },

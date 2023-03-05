@@ -16,10 +16,10 @@
       <v-col cols="12" sm="12" md="4" lg="5" xl="3">
         <InsightsStatsCard
           title="Uploads last week"
-          :count="report.data.uploads.total.now"
-          :last="report.data.uploads.total.previous"
+          :count="report?.data.uploads.total.now"
+          :last="report?.data.uploads.total.previous"
           :difference="
-            report.data.uploads.total.now - report.data.uploads.total.previous
+            report?.data.uploads.total.now - report.data.uploads.total.previous
           "
         ></InsightsStatsCard>
       </v-col>
@@ -27,14 +27,20 @@
         <InsightsStatsCard
           title="Uploads per hour"
           :subtitle="`Last week you uploaded the most at ${Object.keys(
-            report.data.uploads.hours
+            report?.data.uploads.hours
           ).reduce((a, b) =>
-            report.data.uploads.hours[a] > report.data.uploads.hours[b] ? a : b
+            //@ts-ignore
+            report?.data?.uploads?.hours[a] ??
+            //@ts-ignore
+            0 > report?.data?.uploads?.hours[b] ??
+            0
+              ? a
+              : b
           )}!`"
         >
           <Chart
             title="Uploads last week"
-            :data="objectToGraphData(report.data.uploads.hours)"
+            :data="objectToGraphData(report?.data.uploads.hours)"
             type="bar"
             :height="300"
             class="mb-n12"
@@ -44,11 +50,10 @@
       <v-col cols="12" sm="12" md="3" lg="3" xl="3">
         <InsightsStatsCard
           title="Uploads per day"
-          :subtitle="`Last week you uploaded the most on ${report.data.uploads.std.stdDeezer}`"
+          :subtitle="`Last week you uploaded the most on`"
         >
           <Chart
             title="Uploads last week"
-            :data="objectToGraphData(report.data.uploads.days)"
             type="bar"
             :height="300"
             class="mb-n12"
