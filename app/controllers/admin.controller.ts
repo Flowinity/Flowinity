@@ -265,6 +265,17 @@ export class AdminController {
       res.json(await this.adminService.getBadges())
     })
 
+    this.router.post(
+      "/badge/users/delete",
+      async (req: RequestAuth, res: Response) => {
+        await this.adminService.removeUsersFromBadge(
+          req.body.userIds,
+          req.body.id
+        )
+        res.sendStatus(204)
+      }
+    )
+
     // ADMIN ROUTES ** HIGH LEVEL
     this.router.all(
       "*",

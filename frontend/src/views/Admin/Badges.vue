@@ -83,6 +83,7 @@
           </v-col>
         </v-row>
         <v-btn @click="addBadges">Add badges</v-btn>
+        <v-btn @click="removeBadges" class="ml-2">Remove badges</v-btn>
         <v-card-title>Create badge</v-card-title>
         <v-row>
           <v-col>
@@ -198,6 +199,13 @@ export default defineComponent({
     };
   },
   methods: {
+    async removeBadges() {
+      await this.axios.post("/admin/badge/users/delete", {
+        id: this.selectedBadge,
+        userIds: this.selectedUser
+      });
+      await this.getBadges();
+    },
     async deleteItem(id: number) {
       await this.axios.delete(`/admin/badge/${id}`);
       await this.getBadges();
