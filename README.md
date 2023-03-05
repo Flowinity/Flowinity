@@ -1,5 +1,5 @@
-# The Share(ni)X compatible Image Server
----
+![img](https://i.troplo.com/i/ee408d1b4760.png)
+# TPU/TroploPrivateUploader
+TPU is the next generation of image hosting servers written in Vue and TypeScript.
 
-Designed as a replacement for [TPU](https://git.troplo.com/Troplo/TPUFlowinityImages). By Troplo and The Loose Goose.
-DO NOT DISTRIBUTE UNDER ANY CIRCUMSTANCES.
+### Do not redistribute.
