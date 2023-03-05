@@ -24,6 +24,7 @@
             type="line"
             name="Uploads"
             :height="height"
+            :color="gold ? '#FFD700' : undefined"
           ></Chart>
         </v-window-item>
         <v-window-item value="messages">
@@ -43,6 +44,7 @@
             type="line"
             name="Messages"
             :height="height"
+            :color="gold ? '#FFD700' : undefined"
           ></Chart>
         </v-window-item>
         <v-window-item value="hours">
@@ -62,6 +64,7 @@
             type="line"
             name="Hours"
             :height="height"
+            :color="gold ? '#FFD700' : undefined"
           ></Chart>
         </v-window-item>
       </v-window>

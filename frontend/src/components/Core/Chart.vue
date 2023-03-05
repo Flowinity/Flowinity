@@ -12,13 +12,14 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Chart",
-  props: ["data", "height", "width", "type", "id", "name"],
+  props: ["data", "height", "width", "type", "id", "name", "color"],
   computed: {
     chartOptions() {
       return {
         stroke: {
-          colors: ["#0190ea"]
+          colors: [this.color || this.$user.gold ? "#ffd700" : "#0190ea"]
         },
+        colors: [this.color || this.$user.gold ? "#ffd700" : "#0190ea"],
         grid: {
           borderColor: "#474747"
         },

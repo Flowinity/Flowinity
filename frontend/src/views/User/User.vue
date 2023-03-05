@@ -220,6 +220,7 @@
                       :max-height="$vuetify.display.mobile ? 320 : undefined"
                       :height="320"
                       type="bar"
+                      :color="gold ? '#FFD700' : undefined"
                       name="Uploads"
                     ></Chart>
                   </v-card>

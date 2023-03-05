@@ -7,7 +7,7 @@
       </v-col>
       <v-col md="6">
         <StatsWidget></StatsWidget>
-        <GraphWidget class="mt-6"></GraphWidget>
+        <GraphWidget class="mt-6" :gold="$user.gold"></GraphWidget>
       </v-col>
     </v-row>
   </v-container>
