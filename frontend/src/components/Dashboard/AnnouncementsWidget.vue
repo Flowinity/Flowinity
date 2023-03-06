@@ -8,6 +8,7 @@
         v-for="announcement in announcements"
         class="my-3 pt-3"
         color="toolbar"
+        elevation="0"
       >
         <UserAvatar
           size="58"
