@@ -49,7 +49,14 @@ export default defineComponent({
   height: 1em;
   position: relative;
   overflow: hidden;
+}
+
+.v-theme--dark .skeleton-loader-no-animate {
   background-color: #202020;
+}
+
+.v-theme--light .skeleton-loader-no-animate {
+  background-color: #f5f5f5;
 }
 
 .skeleton-loader {
@@ -57,8 +64,10 @@ export default defineComponent({
   height: 1em;
   position: relative;
   overflow: hidden;
-  background-color: #181818;
+}
 
+.v-theme--dark .skeleton-loader {
+  background-color: #202020;
   &::after {
     position: absolute;
     top: 0;
@@ -76,7 +85,32 @@ export default defineComponent({
     animation: shimmer 2s infinite;
     content: "";
   }
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
 
+.v-theme--light .skeleton-loader {
+  background-color: #f5f5f5;
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(#cbcbcb, 0) 0,
+      rgba(#cbcbcb, 0.2) 20%,
+      rgba(#cbcbcb, 0.5) 60%,
+      rgba(#cbcbcb, 0)
+    );
+    animation: shimmer 2s infinite;
+    content: "";
+  }
   @keyframes shimmer {
     100% {
       transform: translateX(100%);

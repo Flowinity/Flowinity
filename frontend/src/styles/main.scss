@@ -150,8 +150,12 @@ a {
   font-size: 3.5em;
 }
 
-.message:hover {
+.v-theme--dark .message:hover {
   background-color: #222222 !important;
+}
+
+.v-theme--light .message:hover {
+  background-color: #e4e4e4 !important;
 }
 
 .message-actions {
@@ -240,4 +244,8 @@ a {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+}
+
+.v-img .v-responsive__content .v-card-title, .v-img .v-responsive__content .v-card-subtitle, .v-img .v-responsive__content .v-card-text {
+  color: white !important;
 }

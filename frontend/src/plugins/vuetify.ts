@@ -97,18 +97,18 @@ export default createVuetify({
       light: {
         colors: {
           primary: "#0190ea",
-          secondary: "#757575",
-          accent: "#000000",
-          error: "#F44336",
-          info: "#2196F3",
-          success: "#4CAF50",
+          secondary: "#555555",
+          accent: "#121212",
+          error: "#f44336",
+          info: "#2196f3",
+          success: "#4caf50",
           warning: "#ff9800",
-          card: "#dedede",
-          toolbar: "#dedede",
-          sheet: "#dedede",
-          text: "#000000",
-          dark: "#dedede",
-          bg: "#e7e7e7",
+          card: "#ffffff",
+          toolbar: "#f5f5f5",
+          sheet: "#fafafa",
+          text: "#333333",
+          dark: "#f7f7f7",
+          bg: "#f5f5f5",
           gold: "#ffd700"
         }
       }

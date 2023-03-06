@@ -5,7 +5,10 @@
       :key="$route.params.id"
       v-if="$route.params.id"
     />
-    <div class="editorx_body" :key="$route.params.version || $route.params.id">
+    <div
+      class="editorx_body mt-3"
+      :key="$route.params.version || $route.params.id"
+    >
       <div class id="tpu-editor" />
     </div>
     <v-toolbar
@@ -497,94 +500,107 @@ export default defineComponent({
 });
 </script>
 
-<style>
-.cdx-settings-input {
-  color: white !important;
-}
+<style lang="scss">
+.v-theme--dark {
+  .cdx-settings-input {
+    color: white !important;
+  }
 
-.cdx-settings-item svg {
-  fill: white !important;
-}
+  .cdx-settings-item svg {
+    fill: white !important;
+  }
 
-.cdx-settings-button svg {
-  fill: white !important;
-}
+  .cdx-settings-button svg {
+    fill: white !important;
+  }
 
-.cdx-settings-button--active svg {
-  fill: #0190ea !important;
-}
+  .cdx-settings-button--active svg {
+    fill: #0190ea !important;
+  }
 
-.ce-code__textarea {
-  color: white !important;
-  background-color: var(--v-bg-base) !important;
-  border: 1px solid var(--v-bg-lighten4) !important;
-}
+  .ce-code__textarea {
+    color: white !important;
+    background-color: var(--v-bg-base) !important;
+    border: 1px solid var(--v-bg-lighten4) !important;
+  }
 
-.tc-add-column svg {
-  text-align: center;
-}
-.tc-cell[heading] {
-  background-color: var(--v-toolbar-lighten1) !important;
-}
-.tc-table {
-  border-top: 1px solid var(--v-bg-lighten4) !important;
-}
-.tc-add-column {
-  border-right: 1px solid var(--v-bg-lighten4) !important;
-  border-top: 1px solid var(--v-bg-lighten4) !important;
-  border-bottom: 1px solid var(--v-bg-lighten4) !important;
-  background-color: var(--v-toolbar-base) !important;
-  z-index: 2;
-}
-.tc-add-column:hover {
-  transition: 0.1s;
-  background-color: var(--v-toolbar-lighten1) !important;
-}
-.tc-add-column svg {
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.tc-add-row {
-  margin-top: 0 !important;
-  border-bottom: 1px solid var(--v-bg-lighten4) !important;
-  border-left: 1px solid var(--v-bg-lighten4) !important;
-  border-right: 1px solid var(--v-bg-lighten4) !important;
-  background-color: var(--v-toolbar-base) !important;
-  z-index: 2;
-}
-.tc-add-row:hover {
-  transition: 0.1s;
-  background-color: var(--v-toolbar-lighten1) !important;
-}
-.tc-add-row:hover:before {
-  background-color: unset !important;
-}
-.tc-add-row svg {
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-}
-.tc-row {
-  border-bottom: 1px solid var(--v-bg-lighten4) !important;
-  border-left: 1px solid var(--v-bg-lighten4) !important;
-  border-right: 1px solid var(--v-bg-lighten4) !important;
-}
-.tc-wrap {
-  --color-border: var(--v-bg-lighten3) !important;
-}
+  .tc-add-column svg {
+    text-align: center;
+  }
 
-.tc-toolbox__toggler {
-  color: white !important;
-}
+  .tc-cell[heading] {
+    background-color: var(--v-toolbar-lighten1) !important;
+  }
 
-.tc-toolbox__toggler svg rect {
-  fill: #202020 !important;
-}
+  .tc-table {
+    border-top: 1px solid var(--v-bg-lighten4) !important;
+  }
 
-.ce-inline-tool-input,
-.cdx-search-field__input {
-  color: white;
+  .tc-add-column {
+    border-right: 1px solid var(--v-bg-lighten4) !important;
+    border-top: 1px solid var(--v-bg-lighten4) !important;
+    border-bottom: 1px solid var(--v-bg-lighten4) !important;
+    background-color: var(--v-toolbar-base) !important;
+    z-index: 2;
+  }
+
+  .tc-add-column:hover {
+    transition: 0.1s;
+    background-color: var(--v-toolbar-lighten1) !important;
+  }
+
+  .tc-add-column svg {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .tc-add-row {
+    margin-top: 0 !important;
+    border-bottom: 1px solid var(--v-bg-lighten4) !important;
+    border-left: 1px solid var(--v-bg-lighten4) !important;
+    border-right: 1px solid var(--v-bg-lighten4) !important;
+    background-color: var(--v-toolbar-base) !important;
+    z-index: 2;
+  }
+
+  .tc-add-row:hover {
+    transition: 0.1s;
+    background-color: var(--v-toolbar-lighten1) !important;
+  }
+
+  .tc-add-row:hover:before {
+    background-color: unset !important;
+  }
+
+  .tc-add-row svg {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .tc-row {
+    border-bottom: 1px solid var(--v-bg-lighten4) !important;
+    border-left: 1px solid var(--v-bg-lighten4) !important;
+    border-right: 1px solid var(--v-bg-lighten4) !important;
+  }
+
+  .tc-wrap {
+    --color-border: var(--v-bg-lighten3) !important;
+  }
+
+  .tc-toolbox__toggler {
+    color: white !important;
+  }
+
+  .tc-toolbox__toggler svg rect {
+    fill: #202020 !important;
+  }
+
+  .ce-inline-tool-input,
+  .cdx-search-field__input {
+    color: white;
+  }
 }
 
 @media (min-width: 1650px) and (max-width: 2000px) {

@@ -1,4 +1,4 @@
-:root {
+.v-theme--dark {
   --v-bg-base: #121212;
   --v-bg-lighten5: #858585;
   --v-bg-lighten4: #6c6c6c;
@@ -42,6 +42,52 @@
   --v-toolbar-darken2: #000000;
   --v-toolbar-darken3: #000000;
   --v-toolbar-darken4: #000000;
+}
+
+.v-theme--light {
+  --v-bg-base: #f5f5f5;
+  --v-bg-lighten5: #ffffff;
+  --v-bg-lighten4: #f5f5f5;
+  --v-bg-lighten3: #e0e0e0;
+  --v-bg-lighten2: #c7c7c7;
+  --v-bg-lighten1: #adadad;
+  --v-bg-darken1: #8c8c8c;
+  --v-bg-darken2: #717171;
+  --v-bg-darken3: #555555;
+  --v-bg-darken4: #383838;
+
+  --v-card-base: #ffffff;
+  --v-card-lighten5: #f5f5f5;
+  --v-card-lighten4: #e0e0e0;
+  --v-card-lighten3: #c7c7c7;
+  --v-card-lighten2: #adadad;
+  --v-card-lighten1: #929292;
+  --v-card-darken1: #717171;
+  --v-card-darken2: #555555;
+  --v-card-darken3: #383838;
+  --v-card-darken4: #1c1c1c;
+
+  --v-primary-base: #008cba;
+  --v-primary-lighten5: #e3f6f9;
+  --v-primary-lighten4: #c2eaf2;
+  --v-primary-lighten3: #a0dde9;
+  --v-primary-lighten2: #7ecfe1;
+  --v-primary-lighten1: #5db2c7;
+  --v-primary-darken1: #007ba1;
+  --v-primary-darken2: #006380;
+  --v-primary-darken3: #004c60;
+  --v-primary-darken4: #003a4a;
+
+  --v-toolbar-base: #f5f5f5;
+  --v-toolbar-lighten5: #ffffff;
+  --v-toolbar-lighten4: #f5f5f5;
+  --v-toolbar-lighten3: #e0e0e0;
+  --v-toolbar-lighten2: #c7c7c7;
+  --v-toolbar-lighten1: #adadad;
+  --v-toolbar-darken1: #8c8c8c;
+  --v-toolbar-darken2: #717171;
+  --v-toolbar-darken3: #555555;
+  --v-toolbar-darken4: #383838;
 }
 
 .codex-editor {
@@ -187,7 +233,6 @@
   position: relative;
 }
 .ce-toolbar__plus {
-  color: white;
   cursor: pointer;
   width: 26px;
   height: 26px;
@@ -205,6 +250,12 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+.v-theme--dark .ce-toolbar__plus {
+  color: white;
+}
+.v-theme--light .ce-toolbar__plus {
+  color: black;
 }
 @media (max-width: 650px) {
   .ce-toolbar__plus {
@@ -274,7 +325,6 @@
   }
 }
 .ce-toolbar__settings-btn {
-  color: white;
   width: 26px;
   height: 26px;
   border-radius: 7px;
@@ -287,6 +337,12 @@
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+}
+.v-theme--dark .ce-toolbar__settings-btn {
+  color: white;
+}
+.v-theme--light .ce-toolbar__settings-btn {
+  color: black;
 }
 @media (max-width: 650px) {
   .ce-toolbar__settings-btn {

@@ -178,9 +178,21 @@ import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import Notifications from "@/components/Core/Notifications.vue";
+import { useTheme } from "@troplo/vuetify";
 
 export default defineComponent({
   components: { Notifications, CommunicationsAvatar, UserAvatar },
+  setup() {
+    const theme = useTheme();
+
+    return {
+      toggleTheme: () => {
+        const toggled = theme.global.current.value.dark ? "light" : "dark";
+        theme.global.name.value = toggled;
+        localStorage.setItem("theme", toggled);
+      }
+    };
+  },
   computed: {
     dropdown() {
       if (!this.$user?.user) return [];
@@ -194,7 +206,10 @@ export default defineComponent({
         },
         {
           id: 13,
-          click() {},
+          click() {
+            //@ts-ignore
+            this.toggleTheme();
+          },
           path: "",
           name: "Toggle Theme",
           disabled: false
