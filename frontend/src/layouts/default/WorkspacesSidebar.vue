@@ -5,8 +5,13 @@
     color="dark"
     floating
     location="right"
-    :class="
-      $app.workspaceDrawer && !$vuetify.display.mobile ? 'sidebar-patch' : ''
+    :class="classSidebar"
+    :width="
+      $chat.search.value &&
+      $chat.isCommunications &&
+      !$chat.communicationsSidebar
+        ? 350
+        : undefined
     "
   >
     <WorkspacesSidebarList
@@ -46,6 +51,19 @@ export default defineComponent({
       );
       this.$router.push(`/workspaces/notes/${this.$route.params.id}`);
       this.$workspaces.versionHistory = false;
+    }
+  },
+  computed: {
+    classSidebar() {
+      if (
+        this.$chat.search.value &&
+        this.$chat.isCommunications &&
+        !this.$chat.communicationsSidebar
+      ) {
+        return "sidebar-patch-alt";
+      } else {
+        return "sidebar-patch";
+      }
     }
   }
 });

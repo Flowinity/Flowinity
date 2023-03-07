@@ -344,6 +344,11 @@ const app = createApp({
           user.user.pendingAutoCollects -= 1;
         }
       });
+      socket.on("readChat", (data: { id: number }) => {
+        const index = chat.chats.findIndex((c) => c.id === data.id);
+        if (index === -1) return;
+        chat.chats[index].unread = 0;
+      });
 
       // For TPU quick uploads
       document.addEventListener("paste", (e) => {

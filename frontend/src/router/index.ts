@@ -210,6 +210,11 @@ const routes = [
             path: "badges",
             name: "Admin Badges",
             component: () => import("@/views/Admin/Badges.vue")
+          },
+          {
+            path: "autoCollect",
+            name: "Admin AutoCollects",
+            component: () => import("@/views/Admin/AutoCollect.vue")
           }
         ]
       },

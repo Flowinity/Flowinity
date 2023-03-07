@@ -22,6 +22,7 @@ import { Subscription } from "@app/models/subscription.model"
 import { Experiment } from "@app/models/experiment.model"
 import { Badge } from "@app/models/badge.model"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
+import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 
 @DefaultScope(() => ({
   attributes: {
@@ -221,6 +222,9 @@ export class User extends Model {
 
   @BelongsToMany(() => Badge, () => BadgeAssociation, "userId", "badgeId")
   badges: Badge[]
+
+  @HasMany(() => AutoCollectRule, "userId")
+  autoCollectRules: AutoCollectRule[]
 
   scopes: string
 

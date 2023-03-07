@@ -143,6 +143,9 @@ function checkOperator(
     }
   }
   value = value?.toLowerCase() || value
+  if (!Number.isInteger(text)) {
+    text = text?.toLowerCase() || text
+  }
   if (operator === "contains") {
     return {
       value: !!text.includes(value),

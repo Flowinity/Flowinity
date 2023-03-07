@@ -7,43 +7,107 @@
     <v-icon>mdi-arrow-left</v-icon>
     Back to Workspaces
   </v-card-text>
-  <v-card-text class="text-overline my-n3">MEMBERS</v-card-text>
-  <v-list nav v-if="users">
-    <v-list-item
-      v-for="association in users"
-      :subtitle="association.legacyUser ? 'Legacy User' : undefined"
-      @click="
-        $chat.dialogs.user.username = association.user?.username;
-        $chat.dialogs.user.value = true;
-      "
-      @contextmenu.prevent="context($event, association)"
-    >
-      <template v-slot:title>
-        {{ association.user?.username || "Deleted User" }}
-        <span>
-          <v-icon color="gold" v-if="association.rank === 'owner'">
-            mdi-crown
-          </v-icon>
-          <v-tooltip location="top" activator="parent">Group Owner</v-tooltip>
-        </span>
-        <span>
-          <v-icon color="grey" v-if="association.rank === 'admin'">
-            mdi-crown
-          </v-icon>
-          <v-tooltip location="top" activator="parent">Group Admin</v-tooltip>
-        </span>
-      </template>
-      <template v-slot:prepend>
-        <CommunicationsAvatar
-          :status="!!association.tpuUser"
-          :user="association.user"
-        ></CommunicationsAvatar>
-      </template>
-    </v-list-item>
-    <v-list-item v-if="!$chat.chats.length" class="fade-skeleton">
-      <MessageSkeleton :animate="false" v-for="i in 5"></MessageSkeleton>
-    </v-list-item>
-  </v-list>
+  <template v-if="!$chat.search.value">
+    <v-card-text class="text-overline my-n3">MEMBERS</v-card-text>
+    <v-list nav v-if="users">
+      <v-list-item
+        v-for="association in users"
+        :subtitle="association.legacyUser ? 'Legacy User' : undefined"
+        @click="
+          $chat.dialogs.user.username = association.user?.username;
+          $chat.dialogs.user.value = true;
+        "
+        @contextmenu.prevent="context($event, association)"
+      >
+        <template v-slot:title>
+          {{ association.user?.username || "Deleted User" }}
+          <span>
+            <v-icon color="gold" v-if="association.rank === 'owner'">
+              mdi-crown
+            </v-icon>
+            <v-tooltip location="top" activator="parent">Group Owner</v-tooltip>
+          </span>
+          <span>
+            <v-icon color="grey" v-if="association.rank === 'admin'">
+              mdi-crown
+            </v-icon>
+            <v-tooltip location="top" activator="parent">Group Admin</v-tooltip>
+          </span>
+        </template>
+        <template v-slot:prepend>
+          <CommunicationsAvatar
+            :status="!!association.tpuUser"
+            :user="association.user"
+          ></CommunicationsAvatar>
+        </template>
+      </v-list-item>
+      <v-list-item v-if="!$chat.chats.length" class="fade-skeleton">
+        <MessageSkeleton :animate="false" v-for="i in 5"></MessageSkeleton>
+      </v-list-item>
+    </v-list>
+  </template>
+  <template v-else>
+    <v-card-text class="text-overline my-n3">
+      SEARCH
+      <v-progress-circular
+        v-if="$chat.search.loading"
+        indeterminate
+        size="16"
+        width="2"
+      ></v-progress-circular>
+      <template v-else>({{ $chat.search.results.pager.totalItems }})</template>
+    </v-card-text>
+    <v-container class="mt-n8">
+      <v-text-field
+        v-model="$chat.search.query"
+        autofocus
+        label="Search Query"
+        append-icon="mdi-magnify"
+        @click:append="$chat.doSearch"
+        @keyup.enter="$chat.doSearch"
+      ></v-text-field>
+    </v-container>
+    <v-list v-if="!$chat.search.loading">
+      <Message
+        class="pointer"
+        @click="
+          handleJump(
+            message.id,
+            $chat.chats.find((chat) => chat.id === message.chatId)?.association
+              .id
+          )
+        "
+        v-for="(message, index) in $chat.search.results.messages"
+        :key="message.id"
+        :message="message"
+        :id="'message-' + index"
+        @authorClick="
+          $chat.dialogs.userMenu.value = false;
+          $chat.dialogs.userMenu.user = $event.user;
+          $chat.dialogs.userMenu.username = $event.user.username;
+          $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
+          $chat.dialogs.userMenu.x = $event.x;
+          $chat.dialogs.userMenu.y = $event.y;
+          $chat.dialogs.userMenu.location = $event.location || 'top';
+          $chat.dialogs.userMenu.value = true;
+        "
+        @jumpToMessage="
+          handleJump(
+            $event,
+            $chat.chats.find((chat) => chat.id === message.chatId)?.association
+              .id
+          )
+        "
+        :search="true"
+      />
+    </v-list>
+    <Paginate
+      v-model="$chat.search.results.pager.currentPage"
+      @update:model-value="$chat.doSearch"
+      :total-pages="$chat.search.results.pager.totalPages"
+      :max-visible="5"
+    ></Paginate>
+  </template>
 </template>
 
 <script lang="ts">
@@ -53,10 +117,18 @@ import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import { ChatAssociation } from "@/models/chatAssociation";
+import Message from "@/components/Communications/Message.vue";
+import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
-  components: { CommunicationsAvatar, CreateChat, MessageSkeleton },
+  components: {
+    Paginate,
+    Message,
+    CommunicationsAvatar,
+    CreateChat,
+    MessageSkeleton
+  },
   data() {
     return {
       create: false,
@@ -100,6 +172,14 @@ export default defineComponent({
     }
   },
   methods: {
+    async handleJump(messageId: number, associationId: number) {
+      if (this.$chat.selectedChatId !== associationId) {
+        this.$chat.selectedChatId = associationId;
+        this.$router.push(`/communications/${associationId}`);
+        await this.$chat.setChat(associationId);
+      }
+      await this.$chat.jumpToMessage(messageId);
+    },
     context(e: any, item: any) {
       e.preventDefault();
       this.contextMenu.item = item;

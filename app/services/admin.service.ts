@@ -19,6 +19,7 @@ import { Op } from "sequelize"
 import { Chat } from "@app/models/chat.model"
 import { Badge } from "@app/models/badge.model"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
+import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 
 export enum CacheType {
   "everything",
@@ -481,5 +482,18 @@ export class AdminService {
       })
     }
     return true
+  }
+
+  // AutoCollect
+  async getAutoCollectRules() {
+    return await User.findAll({
+      attributes: ["id", "username", "avatar"],
+      include: [
+        {
+          model: AutoCollectRule,
+          as: "autoCollectRules"
+        }
+      ]
+    })
   }
 }

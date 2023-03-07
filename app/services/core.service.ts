@@ -296,6 +296,7 @@ export class CoreService {
 
   getExperiments(dev: boolean = false): object {
     const experiments = {
+      PINNED_MESSAGES: false,
       COMMUNICATIONS_KEEP_LOADED: false,
       COMMUNICATIONS_INLINE_SIDEBAR_HIRES: false,
       COMMUNICATIONS_QUAD_SIDEBAR_LOWRES: false,
@@ -339,6 +340,10 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        PINNED_MESSAGES: {
+          description: "Enable pinned messages in Communications.",
+          createdAt: "2023-03-07T00:00:00.000Z"
+        },
         COMMUNICATIONS_KEEP_LOADED: {
           description: "Keep communication messages loaded in the store.",
           createdAt: "2023-03-02T00:00:00.000Z"
@@ -543,6 +548,7 @@ export class CoreService {
       experiments.OBJECTIVE = true
       experiments.COMMUNICATIONS = true
       experiments.WEBMAIL = true
+      experiments.PINNED_MESSAGES = true
       return experiments
     } else {
       return experiments

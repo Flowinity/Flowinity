@@ -46,8 +46,8 @@
             ? deleteMessage($event.message.id)
             : confirmDelete($event.message)
         "
-        @jumpToMessage="jumpToMessage"
-        :merge="merge(message, index)"
+        @jumpToMessage="$chat.jumpToMessage($event)"
+        :merge="$chat.merge(message, index)"
       ></Message>
       <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
     </v-list>
@@ -229,39 +229,6 @@ export default defineComponent({
     }
   },
   methods: {
-    merge(message: MessageType, index: number) {
-      if (message.replyId) return false;
-      if (message.type !== "message" && message.type) return false;
-      const prev = this.$chat.selectedChat?.messages[index + 1];
-      if (!prev) return false;
-      if (this.$date(message.createdAt).diff(prev.createdAt, "minutes") > 5)
-        return false;
-      return prev.user?.id === message.user?.id;
-    },
-    doJump(message: number) {
-      const element = document.getElementById(
-        "message-" +
-          this.$chat.selectedChat?.messages?.findIndex((m) => m.id === message)
-      );
-      if (!element) return false;
-      element.scrollIntoView({
-        block: "center",
-        inline: "center"
-      });
-      element.classList.add("message-jumped");
-      setTimeout(() => {
-        element.classList.remove("message-jumped");
-      }, 1000);
-      return true;
-    },
-    async jumpToMessage(message: number) {
-      if (!this.doJump(message)) {
-        this.$chat.loadingNew = true;
-        await this.$chat.loadHistory(message + 30, true);
-        this.$chat.loadingNew = false;
-        this.doJump(message);
-      }
-    },
     confirmDelete(message: MessageType) {
       this.dialogs.delete.message = message;
       this.dialogs.delete.value = true;
@@ -496,7 +463,7 @@ export default defineComponent({
         }, 500);
       }
 
-      if (
+      /*   if (
         total < 100 &&
         this.$chat.loadNew &&
         !this.$chat.loading &&
@@ -504,7 +471,7 @@ export default defineComponent({
       ) {
         await this.$chat.loadHistory();
         elem.scrollTop = scrollPos;
-      }
+      }*/
     },
     editLastMessage() {
       // find first message made by user
@@ -520,7 +487,7 @@ export default defineComponent({
       this.$refs.input?.$refs?.textarea?.focus();
     },
     shortcutHandler(e: any) {
-      if (e.metaKey || e.ctrlKey) return;
+      if (e.metaKey) return;
       if (e.key === "ArrowUp" && !this.message.length) {
         e.preventDefault();
         return this.editLastMessage();
@@ -533,6 +500,10 @@ export default defineComponent({
         return;
       if (e.key === "Escape") {
         if (this.replyId) return (this.replyId = undefined);
+        if (this.$chat.search.value) {
+          this.$chat.search.value = false;
+          return;
+        }
         this.forceBottomAmirite();
       }
       if (
@@ -541,6 +512,10 @@ export default defineComponent({
         e.target.tagName !== "DIV"
       ) {
         this.focusInput();
+      }
+      if (e.ctrlKey && e.key === "f") {
+        e.preventDefault();
+        this.$chat.search.value = !this.$chat.search.value;
       }
     },
     async onMessage(message: MessageSocket) {

@@ -6,7 +6,7 @@
       color="transparent"
       floating
       class="ml-6 my-1 pointer limit"
-      @click="$emit('jumpToMessage', message.reply.id)"
+      @click.prevent="$emit('jumpToMessage', message.reply.id)"
     >
       <v-icon class="mr-2">mdi-reply</v-icon>
       <UserAvatar
@@ -37,7 +37,7 @@
           <div
             style="align-items: start !important; display: flex"
             v-if="!message.type || message.type === 'message'"
-            @click="
+            @click.prevent="
               $emit('authorClick', {
                 user: message.user,
                 bindingElement: 'message-author-avatar-' + message.id,
@@ -154,6 +154,7 @@
         @reply="$emit('reply', message)"
         @delete="$emit('delete', { message, shifting: $event })"
         @pin="$emit('pin', message)"
+        v-if="!search"
       ></MessageActions>
       <Embed
         v-for="(embed, index) in message.embeds"
@@ -173,7 +174,7 @@
               :id="
                 'message-read-receipt-' + message.id + '-' + readReceipt.userId
               "
-              @click="
+              @click.prevent="
                 $chat.dialogs.user.username = readReceipt.user.username;
                 $chat.dialogs.user.value = true;
               "
@@ -207,7 +208,7 @@ export default defineComponent({
     CommunicationsAvatar,
     CommunicationsInput
   },
-  props: ["message", "editing", "shifting", "editingText", "merge"]
+  props: ["message", "editing", "shifting", "editingText", "merge", "search"]
 });
 </script>
 

@@ -163,6 +163,15 @@ export default defineComponent({
           exact: true,
           scope: "*",
           level: 1
+        },
+        {
+          id: 14,
+          name: "AutoCollects",
+          path: "/admin/autoCollect",
+          icon: "mdi-robot",
+          exact: true,
+          scope: "*",
+          level: 2
         }
       ] as {
         id: number;

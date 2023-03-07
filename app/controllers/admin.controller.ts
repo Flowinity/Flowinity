@@ -288,6 +288,18 @@ export class AdminController {
       }
     )
 
+    this.router.get(
+      "/autoCollects",
+      async (req: RequestAuth, res: Response) => {
+        res.json(await this.adminService.getAutoCollectRules())
+      }
+    )
+
+    this.router.post(
+      "/autoCollects",
+      async (req: RequestAuth, res: Response) => {}
+    )
+
     this.router.post(
       "/announcement",
       auth("*"),

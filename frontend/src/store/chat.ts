@@ -8,13 +8,23 @@ import { Router, useRouter } from "vue-router";
 import { useAppStore } from "@/store/app";
 import { User } from "@/models/user";
 import { useUserStore } from "@/store/user";
-import { ChatAssociation } from "@/models/chatAssociation";
 import { useCollectionsStore } from "@/store/collections";
 import { Collection } from "@/models/collection";
-import { Message } from "@/models/message";
+import { Message as MessageType, Message } from "@/models/message";
 import { useFriendsStore } from "@/store/friends";
+import { Paginate } from "@/types/paginate";
+import dayjs from "../plugins/dayjs";
 
 export interface ChatState {
+  search: {
+    value: boolean;
+    results: {
+      messages: Message[];
+      pager: Paginate;
+    };
+    loading: boolean;
+    query: string;
+  };
   notifications: number;
   chats: Chat[];
   selectedChatId: number | null;
@@ -71,6 +81,25 @@ export interface ChatState {
 export const useChatStore = defineStore("chat", {
   state: () =>
     ({
+      search: {
+        value: false,
+        results: {
+          messages: [] as Message[],
+          pager: {
+            totalItems: 0,
+            currentPage: 1,
+            pageSize: 50,
+            totalPages: 1,
+            startPage: 1,
+            endPage: 1,
+            startIndex: 0,
+            endIndex: 1,
+            pages: [1]
+          }
+        },
+        loading: false,
+        query: ""
+      },
       loadNew: false,
       loadingNew: false,
       notifications: 0,
@@ -175,6 +204,50 @@ export const useChatStore = defineStore("chat", {
       }
     } as ChatState),
   actions: {
+    async doJump(message: number) {
+      const element = document.getElementById(
+        "message-" +
+          this.selectedChat?.messages?.findIndex((m) => m.id === message)
+      );
+      if (!element) return false;
+      element.scrollIntoView({
+        block: "center",
+        inline: "center"
+      });
+      element.classList.add("message-jumped");
+      setTimeout(() => {
+        element.classList.remove("message-jumped");
+      }, 1000);
+      return true;
+    },
+    async jumpToMessage(message: number) {
+      if (!(await this.doJump(message))) {
+        this.loadingNew = true;
+        await this.loadHistory(message + 30, true);
+        this.loadingNew = false;
+        await this.doJump(message);
+      }
+    },
+    merge(message: MessageType, index: number) {
+      if (message.replyId) return false;
+      if (message.type !== "message" && message.type) return false;
+      const prev = this.selectedChat?.messages[index + 1];
+      if (!prev) return false;
+      if (dayjs(message.createdAt).diff(prev.createdAt, "minutes") > 5)
+        return false;
+      return prev.user?.id === message.user?.id;
+    },
+    async doSearch() {
+      this.search.loading = true;
+      const { data } = await axios.get(`/chats/${this.selectedChatId}/search`, {
+        params: {
+          query: this.search.query,
+          page: this.search.results.pager.currentPage
+        }
+      });
+      this.search.results = data;
+      this.search.loading = false;
+    },
     getChatName(chat: Chat) {
       if (!chat) return "Communications";
       if (chat.type === "direct") {

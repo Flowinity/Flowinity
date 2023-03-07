@@ -9,6 +9,7 @@ import { UserUtilsService } from "@app/services/userUtils.service"
 import { CacheService } from "@app/services/cache.service"
 import embedParser from "@app/lib/embedParser"
 import { Op } from "sequelize"
+import paginate from "jw-paginate"
 
 interface ChatCache extends Chat {
   _redisSortDate: string
@@ -153,6 +154,46 @@ export class ChatService {
     })
     await this.patchCacheForAll(chat.id, userId)
     return true
+  }
+
+  async searchChat(chatId: number, query: string, page: number = 1) {
+    if (!page) page = 1
+    const chat = await Chat.findOne({
+      where: {
+        id: chatId
+      }
+    })
+    if (!chat) throw Errors.CHAT_NOT_FOUND
+    const where = {
+      chatId: chat.id,
+      [Op.or]: [
+        {
+          content: {
+            [Op.like]: `%${query}%`
+          }
+        },
+        {
+          embeds: {
+            [Op.like]: `%${query}%`
+          }
+        }
+      ]
+    }
+    const messages = await Message.findAll({
+      order: [["createdAt", "DESC"]],
+      where,
+      include: this.messageIncludes,
+      limit: 20,
+      offset: (page - 1) * 20
+    })
+    const count = await Message.count({
+      where
+    })
+    const pager = paginate(count, page, 20)
+    return {
+      messages,
+      pager
+    }
   }
 
   async updateUserRank(
@@ -507,6 +548,9 @@ export class ChatService {
         [chatId]: 0
       })
     }
+    socket.to(userId).emit("readChat", {
+      id: chatId
+    })
     const message = await Message.findOne({
       where: {
         chatId

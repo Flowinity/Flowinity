@@ -125,6 +125,28 @@ export class ChatController {
       }
     )
 
+    this.router.get(
+      "/:chatId/search",
+      auth("chats.view"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          const chat = await this.chatService.getChatFromAssociation(
+            parseInt(req.params.chatId),
+            req.user.id
+          )
+          if (!chat) throw Errors.CHAT_NOT_FOUND
+          const messages = await this.chatService.searchChat(
+            chat.id,
+            <string>req.query.query,
+            parseInt(<string>req.query.page || "0")
+          )
+          res.json(messages)
+        } catch (e) {
+          next(e)
+        }
+      }
+    )
+
     this.router.delete(
       "/:chatId/messages/:messageId",
       auth("chats.send"),

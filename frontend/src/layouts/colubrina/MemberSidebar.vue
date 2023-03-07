@@ -11,6 +11,7 @@
         ? 'sidebar-patch'
         : ''
     "
+    :width="$chat.search.value ? 400 : undefined"
   >
     <ColubrinaMemberSidebarList></ColubrinaMemberSidebarList>
   </v-navigation-drawer>

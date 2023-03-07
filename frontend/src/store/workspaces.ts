@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
 import { Workspace } from "@/models/workspace";
 import { Note } from "@/models/note";
+import { useRouter } from "vue-router";
 
 export interface WorkspacesState {
   items: Workspace[];
@@ -64,6 +65,13 @@ export const useWorkspacesStore = defineStore("workspaces", {
     }
   },
   getters: {
+    isWorkspaces() {
+      const router = useRouter();
+      return (
+        router.currentRoute.value.path.startsWith("/workspaces/") ||
+        router.currentRoute.value.path.startsWith("/notes/")
+      );
+    },
     recentOverall() {
       const notes: Note[] = this.recent
         .map((workspace) => workspace.folders.map((folder) => folder.notes))

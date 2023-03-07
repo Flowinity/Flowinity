@@ -7,7 +7,17 @@
     :class="{
       'header-patch': $app.mainDrawer && !$vuetify.display.mobile,
       'header-patch-workspaces':
-        $app.workspaceDrawer && !$vuetify.display.mobile
+        $app.workspaceDrawer &&
+        !$vuetify.display.mobile &&
+        (!$chat.search.value ||
+          !$chat.isCommunications ||
+          $chat.communicationsSidebar),
+      'header-patch-workspaces-search':
+        $app.workspaceDrawer &&
+        !$vuetify.display.mobile &&
+        $chat.search.value &&
+        $chat.isCommunications &&
+        !$chat.communicationsSidebar
     }"
     flat
     style="z-index: 2001"
@@ -55,7 +65,9 @@
     <template
       v-if="
         (!$app.weather.loading && !$vuetify.display.mobile) ||
-        ($vuetify.display.mobile && !$chat.isCommunications)
+        ($vuetify.display.mobile &&
+          !$chat.isCommunications &&
+          !$workspaces.isWorkspaces)
       "
     >
       <span>
@@ -74,21 +86,41 @@
         }}
       </span>
     </template>
+    <!-- Workspaces custom actions -->
     <template v-if="$route.path.startsWith('/workspaces/notes/')">
       <v-btn
         icon
+        class="mx-1"
         @click="$workspaces.versionHistory = !$workspaces.versionHistory"
       >
         <v-icon>mdi-history</v-icon>
       </v-btn>
-      <v-btn icon @click="$workspaces.share.dialog = true">
+      <v-btn icon @click="$workspaces.share.dialog = true" class="mx-1">
         <v-icon>mdi-share</v-icon>
+      </v-btn>
+    </template>
+    <!-- Communications custom actions -->
+    <template v-if="$chat.isCommunications">
+      <v-btn
+        icon
+        @click="$chat.search.value = !$chat.search.value"
+        class="mx-1"
+        v-if="$experiments.experiments.PINNED_MESSAGES"
+      >
+        <v-icon>mdi-pin-outline</v-icon>
+      </v-btn>
+      <v-btn
+        icon
+        @click="$chat.search.value = !$chat.search.value"
+        class="mx-1"
+      >
+        <v-icon>mdi-magnify</v-icon>
       </v-btn>
     </template>
     <v-btn icon class="mr-2" aria-label="Notifications">
       <Notifications />
       <v-badge dot color="red" :model-value="$user.unreadNotifications > 0">
-        <v-icon>
+        <v-icon class="mx-1">
           {{ $user.unreadNotifications > 0 ? "mdi-bell" : "mdi-bell-outline" }}
         </v-icon>
       </v-badge>
