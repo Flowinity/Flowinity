@@ -1,4 +1,5 @@
 import { Notification } from "@/models/notification";
+import { AutoCollectRule } from "@/models/autoCollectRule";
 
 export interface User {
   id: number;
@@ -83,4 +84,5 @@ export interface User {
   notifications: Notification[];
   weatherUnit: "celsius" | "fahrenheit" | "kelvin";
   emailVerified: boolean;
+  autoCollectRules: AutoCollectRule[];
 }

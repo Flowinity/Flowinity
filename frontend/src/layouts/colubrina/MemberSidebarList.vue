@@ -74,7 +74,7 @@
           handleJump(
             message.id,
             $chat.chats.find((chat) => chat.id === message.chatId)?.association
-              .id
+              .id || 0
           )
         "
         v-for="(message, index) in $chat.search.results.messages"
@@ -95,7 +95,7 @@
           handleJump(
             $event,
             $chat.chats.find((chat) => chat.id === message.chatId)?.association
-              .id
+              .id || 0
           )
         "
         :search="true"
