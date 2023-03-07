@@ -106,6 +106,7 @@
       @update:model-value="$chat.doSearch"
       :total-pages="$chat.search.results.pager.totalPages"
       :max-visible="5"
+      class="mb-2"
     ></Paginate>
   </template>
 </template>
