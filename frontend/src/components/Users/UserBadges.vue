@@ -403,6 +403,7 @@
       "
       class="user-badge"
     ></HoverChip>
+    <slot></slot>
   </v-chip-group>
 </template>
 

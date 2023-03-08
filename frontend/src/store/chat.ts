@@ -401,38 +401,43 @@ export const useChatStore = defineStore("chat", {
 
       this.readChat();
     },
-    async loadHistory(offset?: number, forceUnload: boolean = false) {
-      if (!offset) {
-        this.loadingNew = true;
-        const { data } = await axios.get(
-          `/chats/${this.selectedChatId}/messages`
-        );
-        const index = this.chats.findIndex(
-          (chat: Chat) => chat.association.id === this.selectedChatId
-        );
-        this.chats[index].messages = data;
-        this.loadingNew = false;
-        this.loadNew = false;
-        return;
-      }
-      this.loading = true;
+    async loadHistory(
+      offset?: number,
+      forceUnload: boolean = false,
+      up: boolean = true
+    ) {
+      this.loadingNew = true;
       const { data } = await axios.get(
-        `/chats/${this.selectedChatId}/messages?offset=${offset}`
+        `/chats/${this.selectedChatId}/messages?offset=${
+          offset || this.currentOffset[up ? "up" : "down"]
+        }&position=${up ? "top" : "bottom"}`
       );
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === this.selectedChatId
       );
-      if (!forceUnload) {
-        this.chats[index].messages?.push(...data);
+      if (!data.length) {
+        this.loadNew = false;
+      }
+      if (!up && !forceUnload && !offset) {
+        this.chats[index].messages.unshift(...data);
+        if (this.chats[index].messages.length > 150) {
+          this.chats[index].messages = this.chats[index].messages.slice(
+            0,
+            this.chats[index].messages.length - 100
+          );
+        }
+      } else if (up && !forceUnload && !offset) {
+        this.chats[index].messages.push(...data);
+        // if messages.length over 150, remove the first 50
+        if (this.chats[index].messages.length > 150) {
+          this.chats[index].messages = this.chats[index].messages.slice(100);
+          this.loadNew = true;
+        }
       } else {
         this.chats[index].messages = data;
         this.loadNew = true;
       }
-      if (this.chats[index].messages.length > 100) {
-        this.chats[index].messages = this.chats[index].messages.slice(-100);
-        this.loadNew = true;
-      }
-      this.loading = false;
+      this.loadingNew = false;
     },
     async getChats() {
       try {
@@ -492,6 +497,22 @@ export const useChatStore = defineStore("chat", {
     }
   },
   getters: {
+    currentOffset(state: ChatState) {
+      const down = state.selectedChat?.messages[0]?.id
+        ? state.selectedChat?.messages[0]?.id
+        : 0;
+      const up = state.selectedChat?.messages[
+        state.selectedChat?.messages.length - 1
+      ]?.id
+        ? state.selectedChat?.messages[state.selectedChat?.messages.length - 1]
+            ?.id
+        : 0;
+      console.log(down, up);
+      return {
+        up,
+        down
+      };
+    },
     hasPermissions(state: ChatState) {
       return {
         owner: state.selectedChat?.association?.rank === "owner",

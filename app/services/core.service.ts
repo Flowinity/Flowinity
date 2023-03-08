@@ -280,22 +280,27 @@ export class CoreService {
     }
   }
 
-  async getUserExperiments(userId: number, dev: boolean = false) {
+  async getUserExperiments(
+    userId: number,
+    dev: boolean = false,
+    gold: boolean = false
+  ) {
     const overrides = await Experiment.findAll({
       where: {
         userId
       }
     })
     return {
-      ...this.getExperiments(dev),
+      ...this.getExperiments(dev, gold),
       ...overrides.map((override) => ({
         [override.dataValues.key]: JSON.parse(override.value)
       }))[0]
     }
   }
 
-  getExperiments(dev: boolean = false): object {
+  getExperiments(dev: boolean = false, gold: boolean = false): object {
     const experiments = {
+      EARLY_ACCESS: false,
       PINNED_MESSAGES: false,
       COMMUNICATIONS_KEEP_LOADED: false,
       COMMUNICATIONS_INLINE_SIDEBAR_HIRES: false,
@@ -340,6 +345,11 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        EARLY_ACCESS: {
+          description:
+            "Enable generic early access features that don't have special experiment overrides.",
+          createdAt: "2023-03-08T00:00:00.000Z"
+        },
         PINNED_MESSAGES: {
           description: "Enable pinned messages in Communications.",
           createdAt: "2023-03-07T00:00:00.000Z"
@@ -549,17 +559,22 @@ export class CoreService {
       experiments.COMMUNICATIONS = true
       experiments.WEBMAIL = true
       experiments.PINNED_MESSAGES = true
+      experiments.EARLY_ACCESS = true
       return experiments
     } else {
+      if (gold) {
+        experiments.EARLY_ACCESS = true
+      }
       return experiments
     }
   }
   async checkExperiment(
     userId: number,
     experiment: string,
-    dev: boolean = false
+    dev: boolean = false,
+    gold: boolean = false
   ) {
-    const experiments = await this.getUserExperiments(userId, dev)
+    const experiments = await this.getUserExperiments(userId, dev, gold)
     return experiments[experiment]
   }
 }

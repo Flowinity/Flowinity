@@ -5,6 +5,7 @@
     v-model="$app.dialogs.migrateWizard"
     v-if="$experiments.experiments['PROJECT_MERGE']"
   ></MigrateWizard>
+  <GoldUpsell v-model="$app.dialogs.gold.value"></GoldUpsell>
   <v-navigation-drawer
     v-model="$app.mainDrawer"
     app
@@ -136,10 +137,12 @@ import MigrateWizard from "@/components/Dashboard/Dialogs/Migrate.vue";
 import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue";
 import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
+import GoldUpsell from "@/components/Dashboard/Dialogs/Gold.vue";
 
 export default defineComponent({
   name: "Sidebar",
   components: {
+    GoldUpsell,
     Feedback,
     StatusSwitcher,
     ColubrinaSidebarList,
@@ -327,6 +330,20 @@ export default defineComponent({
           icon: "mdi-gift-outline",
           new: true,
           scope: "*"
+        },
+        {
+          id: 33,
+          click() {
+            //@ts-ignore
+            this.$app.dialogs.gold.value = true;
+          },
+          externalPath: "",
+          path: "",
+          name: this.$user.gold ? "What's new with Gold?" : "Upgrade to Gold",
+          icon: "mdi-plus",
+          new: false,
+          scope: "user.view",
+          experimentsRequired: ["EARLY_ACCESS"]
         },
         {
           id: 33,

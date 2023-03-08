@@ -18,7 +18,10 @@
       }px)`"
       width="100%"
       style="overflow-x: hidden !important"
+      ref="messageList"
+      @scroll="scrollEvent"
     >
+      <div ref="sentinelBottom"></div>
       <Message
         v-for="(message, index) in $chat.selectedChat?.messages"
         :key="message.id"
@@ -49,7 +52,9 @@
         @jumpToMessage="$chat.jumpToMessage($event)"
         :merge="$chat.merge(message, index)"
       ></Message>
-      <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
+      <div ref="sentinel">
+        <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
+      </div>
     </v-list>
     <v-fade-transition v-model="avoidAutoScroll">
       <v-toolbar
@@ -60,7 +65,7 @@
         style="border-radius: 20px 20px 0 0; font-size: 14px; z-index: 1"
         @click="forceBottomAmirite"
         class="pointer unselectable pl-2 pb-1"
-        v-if="avoidAutoScroll || $chat.loadingNew"
+        v-if="avoidAutoScroll || $chat.loadingNew || $chat.loadNew"
         color="card"
       >
         <template v-if="!$chat.loadingNew">
@@ -182,6 +187,9 @@ export default defineComponent({
   },
   data() {
     return {
+      messageObserver: undefined as IntersectionObserver | undefined,
+      messageBottomObserver: undefined as IntersectionObserver | undefined,
+      previousScrollHeight: 0,
       message: "",
       avoidAutoScroll: false,
       editing: undefined as number | undefined,
@@ -358,7 +366,8 @@ export default defineComponent({
     async forceBottomAmirite() {
       this.avoidAutoScroll = false;
       if (this.$chat.loadNew) {
-        await this.$chat.loadHistory();
+        await this.$chat.loadHistory(Number.MAX_SAFE_INTEGER, true, false);
+        this.$chat.loadNew = false;
       }
       this.autoScroll();
     },
@@ -438,40 +447,86 @@ export default defineComponent({
         chat.scrollTop = 0;
       }
     },
+    recordScrollPosition(mode = "top") {
+      this.previousScrollHeight =
+        mode === "top" ? this.$chat.selectedChat?.messages.length || 0 : 1;
+    },
+    restoreScrollPosition() {
+      let node = this.$refs.messageList as {
+        $el: HTMLElement;
+      };
+      if (!node) return;
+      let message = document.getElementById(
+        `message-${this.previousScrollHeight}`
+      );
+      if (!message) {
+        message = document.getElementById(`message-1`);
+      }
+      if (!message) return;
+      node.$el.scrollTop = message.offsetTop;
+    },
+    setupIntersectionObserver() {
+      const element = document.getElementById("chat-list");
+      if (!element) return;
+      let options = {
+        root: element,
+        margin: "10px"
+      };
+
+      this.messageObserver = new IntersectionObserver(
+        this.handleIntersection,
+        options
+      );
+      this.messageBottomObserver = new IntersectionObserver(
+        this.handleBottomIntersection,
+        options
+      );
+
+      this.messageObserver.observe(this.$refs.sentinel as HTMLElement);
+      this.messageBottomObserver.observe(
+        this.$refs.sentinelBottom as HTMLElement
+      );
+    },
+    async handleIntersection(entries: IntersectionObserverEntry[]) {
+      const entry = entries[0];
+      if (
+        entry.isIntersecting &&
+        !this.$chat.loadingNew &&
+        !this.$chat.loading
+      ) {
+        console.info("[TPU/ChatSentinel/Top] Intersecting");
+        this.recordScrollPosition();
+        await this.$chat.loadHistory(undefined, undefined, true);
+        await this.$nextTick();
+        this.restoreScrollPosition();
+        return true;
+      } else {
+        return false;
+      }
+    },
+    async handleBottomIntersection(entries: IntersectionObserverEntry[]) {
+      if (!this.$chat.loadNew) return;
+      const entry = entries[0];
+      if (
+        entry.isIntersecting &&
+        !this.$chat.loadingNew &&
+        !this.$chat.loading
+      ) {
+        this.recordScrollPosition("bottom");
+        console.info("[TPU/ChatSentinel/Bottom] Intersecting");
+        await this.$chat.loadHistory(undefined, undefined, false);
+        await this.$nextTick();
+        this.restoreScrollPosition();
+        return true;
+      } else {
+        return false;
+      }
+    },
     async scrollEvent() {
       const elem = document.getElementById("chat-list");
       if (!elem) return;
       const scrollPos = elem.scrollTop;
       this.avoidAutoScroll = scrollPos < -300;
-      // get entire height of chat
-      const scrollHeight = elem.scrollHeight - elem.clientHeight;
-      const total = Math.abs(scrollPos);
-      if (total > scrollHeight - 20) {
-        if (this.limit) return;
-        this.limit = true;
-        const offset =
-          this.$chat.selectedChat?.messages[
-            this.$chat.selectedChat?.messages.length - 1
-          ].id || 0;
-        if (this.$chat.loading) return;
-        await this.$chat.loadHistory(offset);
-        this.$nextTick(() => {
-          elem.scrollTop = scrollPos;
-        });
-        setTimeout(() => {
-          this.limit = false;
-        }, 500);
-      }
-
-      /*   if (
-        total < 100 &&
-        this.$chat.loadNew &&
-        !this.$chat.loading &&
-        !this.$chat.loadingNew
-      ) {
-        await this.$chat.loadHistory();
-        elem.scrollTop = scrollPos;
-      }*/
     },
     editLastMessage() {
       // find first message made by user
@@ -487,7 +542,14 @@ export default defineComponent({
       this.$refs.input?.$refs?.textarea?.focus();
     },
     shortcutHandler(e: any) {
-      if (e.metaKey) return;
+      if (e.ctrlKey && e.key === "v") {
+        this.focusInput();
+      }
+      if (e.ctrlKey && e.key === "f") {
+        e.preventDefault();
+        this.$chat.search.value = !this.$chat.search.value;
+      }
+      if (e.metaKey || e.ctrlKey) return;
       if (e.key === "ArrowUp" && !this.message.length) {
         e.preventDefault();
         return this.editLastMessage();
@@ -512,10 +574,6 @@ export default defineComponent({
         e.target.tagName !== "DIV"
       ) {
         this.focusInput();
-      }
-      if (e.ctrlKey && e.key === "f") {
-        e.preventDefault();
-        this.$chat.search.value = !this.$chat.search.value;
       }
     },
     async onMessage(message: MessageSocket) {
@@ -591,22 +649,19 @@ export default defineComponent({
     document.addEventListener("keydown", this.shortcutHandler);
     this.focusInterval = setInterval(this.onFocus, 2000);
     // re-enable auto scroll for flex-direction: column-reverse;
-    document
-      .querySelector(".message-list-container")
-      ?.addEventListener("scroll", this.scrollEvent);
     this.$socket.on("message", this.onMessage);
     this.$socket.on("embedResolution", this.onEmbedResolution);
     this.$socket.on("typing", this.onTyping);
     this.message = this.$chat.getDraft(<string>this.$route.params.chatId) || "";
     this.$app.forcedMainDrawer = false;
+    this.$nextTick(() => {
+      this.setupIntersectionObserver();
+    });
   },
   unmounted() {
     this.$chat.setDraft(<string>this.$route.params.chatId, this.message);
     document.removeEventListener("scroll", this.scrollEvent);
     document.removeEventListener("keydown", this.shortcutHandler);
-    document
-      .querySelector(".message-list-container")
-      ?.removeEventListener("scroll", this.scrollEvent);
     document
       .querySelector(".message-input")
       ?.removeEventListener("resize", this.onResize);

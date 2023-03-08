@@ -232,6 +232,12 @@ export default defineComponent({
   },
   watch: {
     $route(to, from) {
+      if (!this.$user.gold) {
+        const goldElements = document.getElementsByClassName("gold");
+        while (goldElements.length > 0) {
+          goldElements[0].classList.remove("gold");
+        }
+      }
       this.getPulseSession();
       this.$socket.emit("pulse", {
         action: "page-change",

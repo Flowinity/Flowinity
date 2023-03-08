@@ -33,7 +33,8 @@ export class ChatController {
           !(await coreService.checkExperiment(
             req.user.id,
             "COMMUNICATIONS",
-            req.user.administrator || req.user.moderator
+            req.user.administrator || req.user.moderator,
+            req.user.plan.internalName === "GOLD"
           ))
         ) {
           throw Errors.EXPERIMENT_NOT_ALLOWED
@@ -269,6 +270,7 @@ export class ChatController {
         const messages = await this.chatService.getMessages(
           parseInt(req.params.chatId),
           req.user.id,
+          <"top" | "bottom">req.query.position || "top",
           parseInt(<string>req.query?.offset || "0")
         )
         res.json(messages)

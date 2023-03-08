@@ -820,29 +820,29 @@ export class ChatService {
     return chat
   }
 
-  async getMessages(chatId: number, userId: number, offset?: number) {
+  async getMessages(
+    chatId: number,
+    userId: number,
+    position: "top" | "bottom" = "top",
+    offset?: number
+  ) {
     const chat = await this.getChatFromAssociation(chatId, userId)
-    let or = {}
-    if (offset) {
-      or = {
-        [Op.or]: [
-          {
-            id: {
-              [Op.lt]: offset
-            }
-          }
-        ]
-      }
-    }
-    return await Message.findAll({
+    let where = offset
+      ? position === "top"
+        ? { id: { [Op.lt]: offset } }
+        : { id: { [Op.gt]: offset } }
+      : {}
+    let messages = await Message.findAll({
       where: {
         chatId: chat.id,
-        ...or
+        ...where
       },
-      order: [["createdAt", "DESC"]],
+      order: [["createdAt", position === "top" ? "DESC" : "ASC"]],
       limit: 50,
       include: this.messageIncludes
     })
+    if (position === "bottom") messages.reverse()
+    return messages
   }
 
   async getCachedUserChats(userId: number, internal = false) {

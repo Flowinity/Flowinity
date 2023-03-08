@@ -59,10 +59,13 @@ export class CoreController {
           const dev = req.user
             ? req.user.administrator || req.user.moderator
             : false
-          if (!req.user) return res.json(this.coreService.getExperiments(dev))
+          const gold = req.user ? req.user.plan.internalName === "GOLD" : false
+          if (!req.user)
+            return res.json(this.coreService.getExperiments(dev, gold))
           const experiments = await this.coreService.getUserExperiments(
             req.user.id,
-            dev
+            dev,
+            gold
           )
           return res.json(experiments)
         } catch (e) {

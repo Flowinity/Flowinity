@@ -81,6 +81,9 @@ export interface AppState {
       value: boolean;
       item: Upload | undefined;
     };
+    gold: {
+      value: boolean;
+    };
   };
   weather: {
     loading: boolean;
@@ -174,6 +177,9 @@ export const useAppStore = defineStore("app", {
         }
       },
       dialogs: {
+        gold: {
+          value: false
+        },
         colubrina: false,
         migrateWizard: false,
         quickSwitcher: false,

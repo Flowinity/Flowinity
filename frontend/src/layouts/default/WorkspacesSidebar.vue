@@ -58,10 +58,11 @@ export default defineComponent({
       if (
         this.$chat.search.value &&
         this.$chat.isCommunications &&
-        !this.$chat.communicationsSidebar
+        !this.$chat.communicationsSidebar &&
+        this.$app.workspaceDrawer
       ) {
         return "sidebar-patch-alt";
-      } else {
+      } else if (this.$app.workspaceDrawer) {
         return "sidebar-patch";
       }
     }
