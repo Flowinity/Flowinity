@@ -44,7 +44,7 @@
     </div>
     <br />
     <br />
-    <v-row>
+    <v-row v-if="!$app.componentLoading">
       <v-col
         v-for="item in items.gallery"
         :key="'item-' + item.id"

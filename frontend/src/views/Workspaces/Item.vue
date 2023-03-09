@@ -133,6 +133,7 @@ export default defineComponent({
     },
     async save(data: object, manualSave = false) {
       try {
+        if (!this.$route.params.id) return;
         if (this.lastSave && Date.now() - this.lastSave < 500) return;
         this.lastSave = Date.now();
         this.$app.notesSaving = true;

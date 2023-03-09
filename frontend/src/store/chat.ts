@@ -168,7 +168,11 @@ export const useChatStore = defineStore("chat", {
         "giphy.com",
         "media.giphy.com",
         "www.giphy.com",
-        "geo.troplo.com"
+        "geo.troplo.com",
+        "privateuploader.com",
+        "www.privateuploader.com",
+        "i.privateuploader.com",
+        "next.privateuploader.com"
       ],
       dialogs: {
         groupSettings: {

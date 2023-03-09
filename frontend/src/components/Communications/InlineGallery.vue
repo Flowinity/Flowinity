@@ -10,7 +10,7 @@
       @click:append="getGallery"
     ></v-text-field>
     <Paginate class="mb-2 mt-n2" :total-pages="null" v-model="page"></Paginate>
-    <v-row>
+    <v-row v-if="!loading">
       <v-col cols="12" sm="6" v-for="item in gallery.gallery" :item="item">
         <InlineGalleryItem
           :item="item"
@@ -82,7 +82,8 @@ export default defineComponent({
         search: "",
         metadata: true,
         selected: "all"
-      }
+      },
+      loading: false
     };
   },
   methods: {
@@ -102,6 +103,7 @@ export default defineComponent({
       };
     },
     async getGallery(infinite: boolean = false) {
+      this.loading = true;
       let url;
       if (!infinite) {
         this.page = 1;
@@ -126,6 +128,7 @@ export default defineComponent({
       this.next = data.next;
       if (this.type === "tenor") return (this.gallery.gallery = data.results);
       this.gallery = data;
+      this.loading = false;
     }
   },
   mounted() {

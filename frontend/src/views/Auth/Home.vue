@@ -210,6 +210,20 @@ export default defineComponent({
     }
   },
   mounted() {
+    // if accessing URL isn't images.flowinity.com, central.troplo.com or privateuploader.com, redirect to images.flowinity.com
+    if (
+      window.location.hostname !== "images.flowinity.com" &&
+      window.location.hostname !== "next.images.flowinity.com" &&
+      window.location.hostname !== "central.troplo.com" &&
+      window.location.hostname !== "privateuploader.com" &&
+      window.location.hostname !== "www.privateuploader.com" &&
+      window.location.hostname !== "next.privateuploader.com" &&
+      window.location.hostname !== "localhost" &&
+      window.location.hostname !== "127.0.0.1" &&
+      window.location.hostname !== this.$app.site.hostname
+    ) {
+      window.location.href = (this.$app.site.hostnameWithProtocol ?? "https://images.flowinity.com") + "/home?redirected=true";
+    }
     this.$app.title = "Welcome";
     if (this.$route.query.ref === "colubrina") {
       this.$app.dialogs.colubrina = true;

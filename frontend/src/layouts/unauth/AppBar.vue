@@ -6,6 +6,7 @@
     floating
     flat
     class="header"
+    :extension-height="0"
   >
     <h1
       style="z-index: 10; cursor: pointer; font-size: 32px"
@@ -19,6 +20,21 @@
     <v-spacer></v-spacer>
     <v-btn color="primary" to="/register">Register</v-btn>
     <v-btn color="primary" to="/login">Login</v-btn>
+    <template v-slot:extension v-if="redirected">
+      <v-alert
+        :value="redirected"
+        type="info"
+        elevation="0"
+        border="left"
+        color="primary"
+        class="ma-0 rounded-0"
+        variant="tonal"
+        density="comfortable"
+        closable
+      >
+        You have been redirected to TPU's primary domain.
+      </v-alert>
+    </template>
   </v-app-bar>
 </template>
 
@@ -26,7 +42,12 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "UnauthenticatedAppBar"
+  name: "UnauthenticatedAppBar",
+  computed: {
+    redirected() {
+      return this.$route.query.redirected && this.$route.path === "/home";
+    }
+  }
 });
 </script>
 
