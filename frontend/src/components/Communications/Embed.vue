@@ -11,28 +11,19 @@
         {{ embed?.data?.description }}
       </v-card-text>
     </v-card>
-    <v-card
+    <v-img
       v-else-if="embed.type === 'image'"
-      elevation="0"
-      :max-width="width"
-      :max-height="500"
-      :height="embed.data.height"
-      :width="embed.data.width"
-    >
-      <v-img
-        :src="embed.data.url"
-        :height="embed.data.height"
-        :width="embed.data.width"
-        :max-width="width"
-        :max-height="500"
-        :aspect-ratio="embed.data.width / embed.data.height"
-        class="pointer"
-        @click="
-          $chat.dialogs.image.object = embed.data;
-          $chat.dialogs.image.value = true;
-        "
-      ></v-img>
-    </v-card>
+      :src="embed.data.url"
+      :max-width="500"
+      width="auto"
+      :max-height="embed.data.height > 400 ? 400 : embed.data.height"
+      :aspect-ratio="embed.data.width / embed.data.height"
+      class="pointer rounded-xl mb-1"
+      @click="
+        $chat.dialogs.image.object = embed.data;
+        $chat.dialogs.image.value = true;
+      "
+    ></v-img>
     <v-card
       v-else-if="embed.type === 'file'"
       elevation="0"

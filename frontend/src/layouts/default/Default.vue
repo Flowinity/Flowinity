@@ -1,5 +1,11 @@
 <template>
-  <v-app v-if="$user.user" @drop="dragDropHandler" @dragover="dragOver">
+  <v-app
+    v-if="$user.user"
+    @drop="dragDropHandler"
+    @dragover="dragOver"
+    @touchstart="touchStart"
+    @touchend="touchEnd"
+  >
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
     <WorkspaceDeleteDialog
       v-model="$app.dialogs.delete.value"
@@ -115,10 +121,33 @@ export default defineComponent({
         id: "",
         lastCreated: undefined as number | undefined
       },
-      msgToast: MessageToast
+      msgToast: MessageToast,
+      touchStartX: null as number | null,
+      touchEndX: null as number | null
     };
   },
   methods: {
+    touchEnd(event: TouchEvent) {
+      if (this.$app.workspaceDrawer || this.$app.mainDrawer) return;
+      this.touchEndX = event.changedTouches[0].screenX;
+      if (!this.touchStartX || !this.touchEndX) return;
+      if (this.touchEndX > this.touchStartX) {
+        if (this.touchEndX - this.touchStartX > 100) {
+          this.touchStartX = null;
+          this.touchEndX = null;
+          this.$app.toggleMain();
+        }
+      } else if (this.touchEndX < this.touchStartX) {
+        if (this.touchStartX - this.touchEndX > 100) {
+          this.touchStartX = null;
+          this.touchEndX = null;
+          this.$app.toggleWorkspace();
+        }
+      }
+    },
+    touchStart(event: TouchEvent) {
+      this.touchStartX = event.changedTouches[0].screenX;
+    },
     getPulseSessionGlobal() {
       const id = Math.random().toString(36).substring(7);
       this.$socket.emit("startPulse", {

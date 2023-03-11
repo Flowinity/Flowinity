@@ -102,10 +102,10 @@
       <div class="pa-2" v-if="$user.user?.subscription?.metadata?.hours">
         <v-progress-linear
           color="gold"
-          :value="calculateJitsi"
+          :model-value="calculateJitsi"
           height="25"
           rounded
-          class="black--text"
+          class="text-black"
         >
           {{ calculateJitsi }}% ({{
             Math.round($user.user?.subscription?.metadata?.hours)

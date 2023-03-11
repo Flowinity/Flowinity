@@ -190,6 +190,8 @@ export default defineComponent({
       );
       this.$app.componentLoading = false;
       this.collection = data;
+      if (this.collection)
+        this.$app.title = this.collection.name + " - AutoCollects";
     },
     selectAll(selected: any[]) {
       //
@@ -201,6 +203,7 @@ export default defineComponent({
   mounted() {
     this.getCollection();
     this.getGallery();
+    this.$app.title = "AutoCollects";
   }
 });
 </script>

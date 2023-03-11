@@ -48,6 +48,7 @@ export default defineComponent({
   },
   mounted() {
     this.getAutoCollects();
+    this.$app.title = "AutoCollects";
   }
 });
 </script>

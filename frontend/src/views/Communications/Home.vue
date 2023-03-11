@@ -13,8 +13,11 @@ import { defineComponent } from "vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 
 export default defineComponent({
-  name: "Communications" + "Home",
-  components: { PromoNoContent }
+  name: "CommunicationsHome",
+  components: { PromoNoContent },
+  mounted() {
+    this.$app.title = "Communications";
+  }
 });
 </script>
 

@@ -32,6 +32,7 @@
         @click:append="$emit('sendMessage')"
         @keyup.esc="$emit('edit', null)"
         :key="renderKey"
+        :maxlength="2000"
       >
         <template v-slot:prepend v-if="!editing">
           <v-menu
@@ -113,11 +114,26 @@
           <v-icon class="pointer">mdi-emoticon</v-icon>
         </template>
         <template v-slot:details v-if="!editing">
-          <span class="details-container" style="margin-left: -25px !important">
-            {{ $chat.typers }}
-          </span>
+          <span
+            class="details-container"
+            style="margin-left: -25px !important"
+          ></span>
         </template>
       </v-textarea>
+      <div>
+        <span
+          class="float-start mt-n1 mb-n4 text-grey ml-10"
+          style="font-size: 12px"
+        >
+          {{ $chat.typers }}
+        </span>
+        <span
+          class="float-end mt-n1 mb-n4 text-grey mr-10"
+          style="font-size: 12px"
+        >
+          {{ modelValue.length }} / 2000
+        </span>
+      </div>
     </Mentionable>
   </v-toolbar>
 </template>
@@ -193,5 +209,9 @@ export default defineComponent({
   display: flex;
   width: 100%;
   height: 25px;
+}
+.v-counter {
+  margin-top: -50px !important;
+  width: 20em;
 }
 </style>

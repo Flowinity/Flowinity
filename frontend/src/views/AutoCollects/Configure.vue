@@ -285,6 +285,7 @@ export default defineComponent({
   },
   mounted() {
     this.getRules();
+    this.$app.title = "Configure AutoCollects";
   }
 });
 </script>

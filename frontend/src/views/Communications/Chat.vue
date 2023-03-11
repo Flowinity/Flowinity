@@ -33,14 +33,12 @@
         :editingText="editingText"
         @editMessage="doEditMessage"
         @authorClick="
-          $chat.dialogs.userMenu.value = false;
           $chat.dialogs.userMenu.user = $event.user;
           $chat.dialogs.userMenu.username = $event.user.username;
           $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
           $chat.dialogs.userMenu.x = $event.x;
           $chat.dialogs.userMenu.y = $event.y;
           $chat.dialogs.userMenu.location = $event.location || 'top';
-          $chat.dialogs.userMenu.value = true;
         "
         @reply="replyId = $event.id"
         :class="{ 'replying-message': message.id === replyId }"
@@ -459,9 +457,6 @@ export default defineComponent({
       let message = document.getElementById(
         `message-${this.previousScrollHeight}`
       );
-      if (!message) {
-        message = document.getElementById(`message-1`);
-      }
       if (!message) return;
       node.$el.scrollTop = message.offsetTop;
     },

@@ -59,10 +59,11 @@ export default defineComponent({
         this.$chat.search.value &&
         this.$chat.isCommunications &&
         !this.$chat.communicationsSidebar &&
-        this.$app.workspaceDrawer
+        this.$app.workspaceDrawer &&
+        !this.$vuetify.display.mobile
       ) {
         return "sidebar-patch-alt";
-      } else if (this.$app.workspaceDrawer) {
+      } else if (this.$app.workspaceDrawer && !this.$vuetify.display.mobile) {
         return "sidebar-patch";
       }
     }

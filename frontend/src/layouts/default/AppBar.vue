@@ -27,7 +27,7 @@
     <v-app-bar-nav-icon
       style="z-index: 1000"
       v-if="$vuetify.display.mobile || !$app.mainDrawer"
-      @click.stop="$app.mainDrawer = !$app.mainDrawer"
+      @click.stop="$app.toggleMain()"
       aria-label="Toggle Main Sidebar"
     >
       <v-icon>mdi-menu</v-icon>
@@ -56,6 +56,7 @@
         class="unselectable ml-2 limit"
         id="tpu-brand-logo"
         title="TPU Communications"
+        v-if="!$vuetify.display.mobile"
       >
         {{ $chat.chatName }}
       </h2>
@@ -100,7 +101,7 @@
       </v-btn>
     </template>
     <!-- Communications custom actions -->
-    <template v-if="$chat.isCommunications">
+    <template v-if="$chat.isCommunications && !$vuetify.display.mobile">
       <v-btn
         icon
         @click="$chat.search.value = !$chat.search.value"
@@ -148,7 +149,7 @@
       <v-btn
         icon
         class="ml-2"
-        @click="$app.workspaceDrawer = !$app.workspaceDrawer"
+        @click="$app.toggleWorkspace()"
         :aria-label="
           !$chat.communicationsSidebar && $chat.isCommunications
             ? 'Members Sidebar'

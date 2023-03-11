@@ -9,6 +9,7 @@ import { Upload } from "@/models/upload";
 import { useChatStore } from "@/store/chat";
 import { useCollectionsStore } from "@/store/collections";
 import { useWorkspacesStore } from "@/store/workspaces";
+import vuetify from "@/plugins/vuetify";
 
 export interface AppState {
   domain: string;
@@ -250,6 +251,18 @@ export const useAppStore = defineStore("app", {
     }
   },
   actions: {
+    toggleWorkspace() {
+      this.workspaceDrawer = !this.workspaceDrawer;
+      if (vuetify.display.mobile.value && this.workspaceDrawer) {
+        this.mainDrawer = false;
+      }
+    },
+    toggleMain() {
+      this.mainDrawer = !this.mainDrawer;
+      if (vuetify.display.mobile.value && this.mainDrawer) {
+        this.workspaceDrawer = false;
+      }
+    },
     populateQuickSwitcher() {
       let value = [
         {

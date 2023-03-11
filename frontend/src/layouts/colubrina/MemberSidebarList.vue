@@ -1,12 +1,61 @@
 <template>
   <v-card-text
-    v-if="!$chat.communicationsSidebar"
+    v-if="!$chat.communicationsSidebar && !$vuetify.display.mobile"
     @click="$app.forcedWorkspaceDrawer = true"
     style="color: #0190ea; cursor: pointer; font-size: 12px"
   >
     <v-icon>mdi-arrow-left</v-icon>
     Back to Workspaces
   </v-card-text>
+  <div class="mt-2" v-if="$vuetify.display.mobile">
+    <CommunicationsAvatar
+      :user="$chat.selectedChat?.recipient"
+      :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
+      size="32"
+      class="ml-4"
+      :status="true"
+      style="display: inline-block"
+    />
+    <h4
+      class="unselectable ml-2 limit"
+      id="tpu-brand-logo"
+      title="TPU Communications"
+      style="display: inline-block; align-self: center; text-align: center"
+    >
+      {{ $chat.chatName }}
+    </h4>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        v-if="$experiments.experiments.PINNED_MESSAGES"
+        icon
+        class="mr-2"
+        aria-label="Toggle Communications Sidebar"
+      >
+        <v-icon>mdi-pin</v-icon>
+      </v-btn>
+      <v-btn
+        icon
+        @click="$chat.search.value = !$chat.search.value"
+        class="mr-2"
+        aria-label="Toggle Communications Search"
+      >
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+      <v-btn
+        icon
+        @click="
+          $chat.dialogs.groupSettings.value = true;
+          $chat.dialogs.groupSettings.item = $chat.selectedChat;
+        "
+        class="mr-2"
+        aria-label="Toggle Communications Settings"
+      >
+        <v-icon>mdi-cog</v-icon>
+      </v-btn>
+      <v-spacer></v-spacer>
+    </v-card-actions>
+  </div>
   <template v-if="!$chat.search.value">
     <v-card-text class="text-overline my-n3">MEMBERS</v-card-text>
     <v-list nav v-if="users">

@@ -173,7 +173,7 @@
       <template v-slot:append>
         <v-list-item-action
           v-if="$workspaces.workspace"
-          @click="createFolder.dialog = true"
+          @click.stop="createFolder.dialog = true"
         >
           <v-icon>mdi-plus</v-icon>
         </v-list-item-action>

@@ -237,6 +237,7 @@ export const useChatStore = defineStore("chat", {
       if (message.type !== "message" && message.type) return false;
       const prev = this.selectedChat?.messages[index + 1];
       if (!prev) return false;
+      if (prev.type !== "message" && prev.type) return false;
       if (dayjs(message.createdAt).diff(prev.createdAt, "minutes") > 5)
         return false;
       return prev.user?.id === message.user?.id;
@@ -370,6 +371,7 @@ export const useChatStore = defineStore("chat", {
       await socket.emit("typing", this.selectedChatId);
     },
     async setChat(id: number) {
+      this.loading = true;
       const experimentsStore = useExperimentsStore();
       if (!experimentsStore.experiments.COMMUNICATIONS_KEEP_LOADED) {
         if (this.selectedChat?.messages) this.selectedChat.messages = [];
@@ -379,15 +381,7 @@ export const useChatStore = defineStore("chat", {
       const chat = this.chats.find(
         (chat: Chat) => chat.association.id === id
       ) as Chat;
-      if (chat?.messages?.length) {
-        appStore.title = this.chatName;
-        this.loading = false;
-        this.isReady = id;
-        this.readChat();
-        return;
-      } else {
-        this.loading = true;
-      }
+      appStore.title = this.chatName;
       const { data } = await axios.get(`/chats/${id}/messages`);
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === id
@@ -399,6 +393,10 @@ export const useChatStore = defineStore("chat", {
         messages: data,
         unread: 0
       };
+      if (chat?.messages?.length) {
+        this.readChat();
+        return;
+      }
       this.loading = false;
       this.isReady = id;
       appStore.title = this.chatName;

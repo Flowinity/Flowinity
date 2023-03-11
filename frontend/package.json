@@ -1,11 +1,11 @@
 {
   "name": "frontend",
-  "version": "3.0.15",
+  "version": "3.0.16",
   "private": true,
   "scripts": {
     "dev": "vite",
     "serve": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc --noEmit && vite build && rm -rf mobile/www && cp -r dist mobile/www",
     "preview": "vite preview",
     "lint": "eslint . --fix --ignore-path .gitignore"
   },

@@ -1,9 +1,21 @@
 <template>
   <div class="position-relative">
-    {{ message.content }}
+    <span
+      style="
+        display: block;
+        width: 200px;
+        height: 50px;
+        word-break: break-all;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      "
+      class="mb-n7"
+    >
+      {{ message.content }}
+    </span>
     <br />
     <small class="mr-1 text-grey-lighten-3">
-      - {{ message.user.username }} in
+      - {{ message.user.username }} &bullet;
       {{ $chat.lookupChat(message.chatId).name }}
     </small>
     <div class="position-absolute" style="right: 0; top: 0">
