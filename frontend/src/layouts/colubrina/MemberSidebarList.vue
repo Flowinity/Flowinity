@@ -24,7 +24,7 @@
     >
       {{ $chat.chatName }}
     </h4>
-    <v-card-actions>
+    <v-card-actions v-if="$chat.selectedChat">
       <v-spacer></v-spacer>
       <v-btn
         v-if="$experiments.experiments.PINNED_MESSAGES"
@@ -46,7 +46,9 @@
         icon
         @click="
           $chat.dialogs.groupSettings.value = true;
-          $chat.dialogs.groupSettings.item = $chat.selectedChat;
+          $chat.selectedChat
+            ? ($chat.dialogs.groupSettings.item = $chat.selectedChat)
+            : () => {};
         "
         class="mr-2"
         aria-label="Toggle Communications Settings"
