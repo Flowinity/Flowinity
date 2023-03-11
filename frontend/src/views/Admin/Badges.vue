@@ -1,60 +1,53 @@
 <template>
   <v-container>
-    <v-dialog max-width="600" v-model="dialog.value">
-      <v-card v-if="dialog.item">
-        <v-col>
-          <v-text-field label="Name" v-model="dialog.item.name"></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            label="Tooltip"
-            v-model="dialog.item.tooltip"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            label="Color"
-            v-model="dialog.item.color"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            label="Description"
-            v-model="dialog.item.description"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field label="Icon" v-model="dialog.item.icon"></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            label="Image"
-            v-model="dialog.item.image"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-checkbox
-            label="Unlocked"
-            v-model="dialog.item.unlocked"
-          ></v-checkbox>
-        </v-col>
-        <v-col>
-          <v-text-field
-            type="number"
-            label="Plan ID"
-            v-model="dialog.item.planId"
-          ></v-text-field>
-        </v-col>
-        <v-col>
-          <v-text-field
-            type="number"
-            label="Priority"
-            v-model="dialog.item.priority"
-          ></v-text-field>
-        </v-col>
-        <v-btn @click="updateItem">Update</v-btn>
-      </v-card>
-    </v-dialog>
+    <CoreDialog max-width="600" v-model="dialog.value">
+      <template v-slot:title>Edit badge</template>
+      <v-col>
+        <v-text-field label="Name" v-model="dialog.item.name"></v-text-field>
+      </v-col>
+      <v-col>
+        <v-text-field
+          label="Tooltip"
+          v-model="dialog.item.tooltip"
+        ></v-text-field>
+      </v-col>
+      <v-col>
+        <v-text-field label="Color" v-model="dialog.item.color"></v-text-field>
+      </v-col>
+      <v-col>
+        <v-text-field
+          label="Description"
+          v-model="dialog.item.description"
+        ></v-text-field>
+      </v-col>
+      <v-col>
+        <v-text-field label="Icon" v-model="dialog.item.icon"></v-text-field>
+      </v-col>
+      <v-col>
+        <v-text-field label="Image" v-model="dialog.item.image"></v-text-field>
+      </v-col>
+      <v-col>
+        <v-checkbox
+          label="Unlocked"
+          v-model="dialog.item.unlocked"
+        ></v-checkbox>
+      </v-col>
+      <v-col>
+        <v-text-field
+          type="number"
+          label="Plan ID"
+          v-model="dialog.item.planId"
+        ></v-text-field>
+      </v-col>
+      <v-col>
+        <v-text-field
+          type="number"
+          label="Priority"
+          v-model="dialog.item.priority"
+        ></v-text-field>
+      </v-col>
+      <v-btn @click="updateItem">Update</v-btn>
+    </CoreDialog>
     <v-card>
       <v-toolbar>
         <v-toolbar-title>Badges</v-toolbar-title>
@@ -152,9 +145,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "Badges",
+  components: { CoreDialog },
   data() {
     return {
       dialog: {

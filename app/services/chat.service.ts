@@ -75,6 +75,38 @@ export class ChatService {
     }
   ]
 
+  async updateAssociationSettings(
+    associationId: number,
+    userId: number,
+    settings: {
+      notifications: typeof ChatAssociation.prototype.notifications
+    }
+  ) {
+    const association = await ChatAssociation.findOne({
+      where: {
+        id: associationId,
+        userId
+      }
+    })
+    if (!association) throw Errors.USER_NOT_FOUND
+    await association.update({
+      notifications: settings.notifications
+    })
+    socket.to(userId).emit("chatUpdate", {
+      id: association.chatId,
+      association: {
+        ...association.toJSON(),
+        notifications: settings.notifications
+      }
+    })
+    const cache = Container.get(CacheService)
+    await cache.patchChatsCacheForUser(
+      userId,
+      await this.getChat(association.chatId, userId)
+    )
+    return association
+  }
+
   async leaveGroupChat(associationId: number, userId: number) {
     const chat = await this.getChatFromAssociation(associationId, userId)
     const user = await ChatAssociation.findOne({
@@ -481,7 +513,8 @@ export class ChatService {
     messageId: number,
     userId: number,
     content: string,
-    associationId: number
+    associationId: number,
+    pinned?: boolean
   ) {
     const message = await Message.findOne({
       where: {
@@ -490,6 +523,37 @@ export class ChatService {
       }
     })
     if (!message || message.type !== "message") throw Errors.MESSAGE_NOT_FOUND
+    if (pinned !== undefined) {
+      await this.checkPermissions(userId, associationId, "admin")
+      const chat = await this.getChatFromAssociation(associationId, userId)
+      await Message.update(
+        {
+          pinned: !message.pinned
+        },
+        {
+          where: {
+            id: messageId,
+            chatId: chat.id
+          }
+        }
+      )
+      this.sendMessage(
+        `<@${userId}> ${message.pinned ? "unpinned" : "pinned"} a message.`,
+        userId,
+        associationId,
+        messageId,
+        "pin",
+        []
+      )
+      this.emitForAll(associationId, userId, "edit", {
+        chatId: chat.id,
+        id: messageId,
+        user: await Container.get(UserUtilsService).getUserById(userId),
+        pinned: !message.pinned
+      })
+      return true
+    }
+    if (!content?.trim()?.length) throw Errors.NO_MESSAGE_CONTENT
     const date = new Date()
     await Message.update(
       {
@@ -618,6 +682,16 @@ export class ChatService {
               attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
             }
           ],
+          attributes: [
+            "id",
+            "userId",
+            "rank",
+            "legacyUserId",
+            "user",
+            "lastRead",
+            "createdAt",
+            "updatedAt"
+          ],
           order: [
             ["rank", "DESC"],
             ["createdAt", "ASC"]
@@ -717,6 +791,15 @@ export class ChatService {
     if (!message) throw Errors.UNKNOWN
     for (const association of chat.users) {
       if (association?.tpuUser) {
+        const assoc = await ChatAssociation.findOne({
+          where: {
+            id: association.id,
+            userId: association.tpuUser.id
+          },
+          attributes: ["id", "notifications"]
+        })
+        if (!assoc) continue
+        const mention = message.content.includes(`<@${association.tpuUser.id}>`)
         socket.to(association.tpuUser.id).emit("message", {
           message,
           chat: {
@@ -728,10 +811,16 @@ export class ChatService {
           association: {
             id: association.id,
             rank: association.rank
-          }
+          },
+          mention
         })
 
-        if (association.tpuUser.id === message.userId) continue
+        if (
+          association.tpuUser.id === message.userId ||
+          assoc.notifications === "none" ||
+          (assoc.notifications === "mentions" && !mention)
+        )
+          continue
 
         let notifications = await redis.json.get(
           `unread:${association.tpuUser.id}`
@@ -765,7 +854,6 @@ export class ChatService {
       | "system" = "message",
     attachments?: string[]
   ) {
-    console.log(associationId, userId)
     const chat = await this.getChatFromAssociation(associationId, userId)
     if (replyId) {
       const message = await Message.findOne({
@@ -845,6 +933,37 @@ export class ChatService {
     return messages
   }
 
+  async getMessagesPagination(
+    chatId: number,
+    userId: number,
+    position: "top" | "bottom" = "top",
+    type: "pins" | "messages" = "messages",
+    page: number = 1
+  ) {
+    const chat = await this.getChatFromAssociation(chatId, userId)
+    let messages = await Message.findAll({
+      where: {
+        chatId: chat.id,
+        ...(type === "pins" ? { pinned: true } : {})
+      },
+      order: [["createdAt", position === "top" ? "DESC" : "ASC"]],
+      limit: 50,
+      include: this.messageIncludes
+    })
+    if (position === "bottom") messages.reverse()
+    const count = await Message.count({
+      where: {
+        chatId: chat.id,
+        ...(type === "pins" ? { pinned: true } : {})
+      }
+    })
+    const pager = paginate(count, page, 50)
+    return {
+      messages,
+      pager
+    }
+  }
+
   async getCachedUserChats(userId: number, internal = false) {
     let chats = await redis.json.get(`chats:${userId}`)
     if (chats) {
@@ -891,6 +1010,16 @@ export class ChatService {
         {
           model: ChatAssociation,
           as: "users",
+          attributes: [
+            "id",
+            "userId",
+            "user",
+            "rank",
+            "legacyUserId",
+            "lastRead",
+            "createdAt",
+            "updatedAt"
+          ],
           include: [
             {
               model: User,

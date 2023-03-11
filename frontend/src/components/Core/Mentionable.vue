@@ -118,9 +118,9 @@ export default defineComponent({
     const el = ref<HTMLDivElement>(null);
     function getInput() {
       return (
-        el.value.querySelector("input") ??
-        el.value.querySelector("textarea") ??
-        el.value.querySelector('[contenteditable="true"]')
+        el?.value?.querySelector("input") ??
+        el.value?.querySelector("textarea") ??
+        el?.value?.querySelector('[contenteditable="true"]')
       );
     }
     onMounted(() => {
@@ -385,7 +385,7 @@ export default defineComponent({
       :triggers="[]"
       :auto-hide="false"
       :theme="theme"
-      class="popper"
+      class="popper ml-9"
       style="position: absolute"
       :style="
         caretPosition
@@ -450,7 +450,7 @@ export default defineComponent({
 
 .v-popper--theme-dropdown .v-popper__arrow-inner {
   visibility: visible;
-  border-color: #202020;
+  border-color: #181818;
 }
 
 .v-popper--theme-dropdown .v-popper__arrow-outer {

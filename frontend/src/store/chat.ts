@@ -14,6 +14,7 @@ import { Message as MessageType, Message } from "@/models/message";
 import { useFriendsStore } from "@/store/friends";
 import { Paginate } from "@/types/paginate";
 import dayjs from "../plugins/dayjs";
+import { useToast } from "vue-toastification";
 
 export interface ChatState {
   search: {
@@ -35,6 +36,14 @@ export interface ChatState {
   isReady: number | null;
   users: User[];
   dialogs: {
+    message: {
+      value: boolean;
+      message: MessageType | null;
+      bindingElement: string | null;
+      x: number;
+      y: number;
+      location: string;
+    };
     groupSettings: {
       value: boolean;
       item: Chat | undefined;
@@ -175,6 +184,14 @@ export const useChatStore = defineStore("chat", {
         "next.privateuploader.com"
       ],
       dialogs: {
+        message: {
+          value: false,
+          message: null as MessageType | null,
+          bindingElement: null as string | null,
+          x: 0,
+          y: 0,
+          location: "top"
+        },
         groupSettings: {
           value: false,
           item: undefined
@@ -208,6 +225,16 @@ export const useChatStore = defineStore("chat", {
       }
     } as ChatState),
   actions: {
+    async pinMessage(id: number | undefined, pinned: boolean | undefined) {
+      if (!id || pinned === undefined) return;
+      await axios.put(`/chats/${this.selectedChatId}/message`, {
+        pinned,
+        id
+      });
+      useToast().success(
+        "Message " + (pinned ? "pinned" : "unpinned") + " successfully."
+      );
+    },
     async doJump(message: number) {
       const element = document.getElementById(
         "message-" +

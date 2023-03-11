@@ -1,38 +1,34 @@
 <template>
-  <v-dialog v-model="importDoc.dialog" max-width="600px">
-    <v-card>
-      <v-toolbar>
-        <v-toolbar-title>Import document</v-toolbar-title>
-      </v-toolbar>
-      <v-container>
-        <v-text-field
-          label="Name"
-          required
-          autofocus
-          v-model="importDoc.name"
-        ></v-text-field>
-        <v-file-input
-          label="TPU Document (.TPUDOC or .HTML)"
-          required
-          autofocus
-          v-model="importDoc.file"
-          ref="importDocFile"
-          accept=".tpudoc,.html"
-        ></v-file-input>
-      </v-container>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          text
-          @click="doImportDoc"
-          :loading="importDoc.loading"
-        >
-          Import
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+  <CoreDialog v-model="importDoc.dialog" max-width="600px">
+    <template v-slot:title>Import document</template>
+    <v-container>
+      <v-text-field
+        label="Name"
+        required
+        autofocus
+        v-model="importDoc.name"
+      ></v-text-field>
+      <v-file-input
+        label="TPU Document (.TPUDOC or .HTML)"
+        required
+        autofocus
+        v-model="importDoc.file"
+        ref="importDocFile"
+        accept=".tpudoc,.html"
+      ></v-file-input>
+    </v-container>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="primary"
+        text
+        @click="doImportDoc"
+        :loading="importDoc.loading"
+      >
+        Import
+      </v-btn>
+    </v-card-actions>
+  </CoreDialog>
   <WorkspaceDeleteDialog
     @submit="doDeleteNote"
     v-model="deleteNote.dialog"
@@ -261,10 +257,11 @@ import { defineComponent } from "vue";
 import WorkspaceDialog from "@/components/Workspaces/Dialogs/Dialog.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import { NoteVersion } from "@/models/noteVersion";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "WorkspacesSidebarList",
-  components: { WorkspaceDeleteDialog, WorkspaceDialog },
+  components: { CoreDialog, WorkspaceDeleteDialog, WorkspaceDialog },
   data() {
     return {
       versions: [] as NoteVersion[],

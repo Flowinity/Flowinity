@@ -38,7 +38,7 @@
       </v-btn>
     </p>
     <span
-      v-if="!editing"
+      v-if="!editing && message.content"
       class="overflow-content"
       :class="{ 'text-grey': message.pending, 'text-red': message.error }"
       v-html="$functions.markdown(message.content)"
@@ -57,7 +57,6 @@
       :message="message"
       @reply="$emit('reply', message)"
       @delete="$emit('delete', { message, shifting: $event })"
-      @pin="$emit('pin', message)"
     ></MessageActions>
     <Embed
       v-for="(embed, index) in message.embeds"
@@ -75,7 +74,7 @@ import Embed from "@/components/Communications/Embed.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
-  name: "Message",
+  name: "MessagePerf",
   components: {
     UserAvatar,
     Embed,
@@ -87,4 +86,8 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+li {
+  list-style-type: none;
+}
+</style>

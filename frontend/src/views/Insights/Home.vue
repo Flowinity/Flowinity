@@ -1,26 +1,20 @@
 <template>
   <v-container>
-    <v-dialog v-model="comingSoon" max-width="500px">
-      <v-card>
-        <v-toolbar>
-          <v-spacer></v-spacer>
-          <v-card-title>Coming Soon</v-card-title>
-          <v-spacer></v-spacer>
-        </v-toolbar>
-        <v-container class="text-center justify-center">
-          <v-card-text>
-            This feature is coming soon! If you'd still like to access your
-            Insights, you can do so on the
-            <a
-              href="https://legacy.images.flowinity.com/insights"
-              target="_blank"
-            >
-              old TPU.
-            </a>
-          </v-card-text>
-        </v-container>
-      </v-card>
-    </v-dialog>
+    <CoreDialog v-model="comingSoon" max-width="500px">
+      <template v-slot:title>Coming Soon</template>
+      <v-container class="text-center justify-center">
+        <v-card-text>
+          This feature is coming soon! If you'd still like to access your
+          Insights, you can do so on the
+          <a
+            href="https://legacy.images.flowinity.com/insights"
+            target="_blank"
+          >
+            old TPU.
+          </a>
+        </v-card-text>
+      </v-container>
+    </CoreDialog>
     <v-card>
       <v-toolbar>
         <v-spacer></v-spacer>
@@ -81,10 +75,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import DynamicCard from "@/components/Core/DynamicCard.vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "Home",
-  components: { DynamicCard },
+  components: { CoreDialog, DynamicCard },
   data() {
     return {
       comingSoon: false

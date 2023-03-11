@@ -1,49 +1,47 @@
 <template>
-  <v-dialog
+  <CoreDialog
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     max-width="600"
   >
-    <v-card color="card">
-      <v-toolbar>
-        <v-toolbar-title>Create Collection</v-toolbar-title>
-      </v-toolbar>
-      <v-card-text>
-        <v-text-field
-          v-model="name"
-          label="Name"
-          required
-          autofocus
-          @keydown.enter="createCollection"
-        ></v-text-field>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="blue darken-1"
-          text
-          @click="$emit('update:modelValue', false)"
-        >
-          Cancel
-        </v-btn>
-        <v-btn
-          color="blue darken-1"
-          text
-          @click="createCollection"
-          :loading="loading"
-        >
-          Create
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    <template v-slot:title>Create Collection</template>
+    <v-card-text>
+      <v-text-field
+        v-model="name"
+        label="Name"
+        required
+        autofocus
+        @keydown.enter="createCollection"
+      ></v-text-field>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="blue darken-1"
+        text
+        @click="$emit('update:modelValue', false)"
+      >
+        Cancel
+      </v-btn>
+      <v-btn
+        color="blue darken-1"
+        text
+        @click="createCollection"
+        :loading="loading"
+      >
+        Create
+      </v-btn>
+    </v-card-actions>
+  </CoreDialog>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "CreateCollectionDialog",
+  components: { CoreDialog },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {

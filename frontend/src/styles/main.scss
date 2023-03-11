@@ -78,6 +78,11 @@
   border-color: hsla(0, 0%, 100%, 0.12) !important;
 }
 
+.mobile-actions {
+  margin: 4px !important;
+  border-radius: 5px !important;
+}
+
 .v-list-item__prepend > .v-icon,
 .v-list-item__append > .v-icon {
   opacity: 1 !important;
@@ -267,4 +272,24 @@ a {
 .v-theme--light .elevation-6, .v-theme--light .elevation-8 {
     box-shadow: 0 0 0 0 !important;
     border: 2px solid #e4e4e4 !important;
+}
+
+.v-dialog--fullscreen .v-card {
+  border-radius: 0 !important;
+}
+
+.message-mention {
+  border-radius: 4px;
+  padding: 2px 4px;
+  border-left: 4px solid rgb(1, 144, 234);
+}
+
+.mention-selected {
+    background-color: rgba(29, 29, 29, 0.9);
+}
+
+.mention-item {
+  padding-bottom: 0.2px;
+  padding-top: 0.2px;
+  cursor: pointer;
 }

@@ -20,7 +20,7 @@
         !$chat.communicationsSidebar
     }"
     flat
-    style="z-index: 2001"
+    style="z-index: 1001"
     class="navbar"
     :extension-height="$user.user?.emailVerified ? 0 : 42"
   >
@@ -102,12 +102,8 @@
     </template>
     <!-- Communications custom actions -->
     <template v-if="$chat.isCommunications && !$vuetify.display.mobile">
-      <v-btn
-        icon
-        @click="$chat.search.value = !$chat.search.value"
-        class="mx-1"
-        v-if="$experiments.experiments.PINNED_MESSAGES"
-      >
+      <v-btn icon class="mx-1" v-if="$experiments.experiments.PINNED_MESSAGES">
+        <Pins />
         <v-icon>mdi-pin-outline</v-icon>
       </v-btn>
       <v-btn
@@ -212,9 +208,10 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import Notifications from "@/components/Core/Notifications.vue";
 import { useTheme } from "@troplo/vuetify";
+import Pins from "@/components/Communications/Menus/Pins.vue";
 
 export default defineComponent({
-  components: { Notifications, CommunicationsAvatar, UserAvatar },
+  components: { Pins, Notifications, CommunicationsAvatar, UserAvatar },
   setup() {
     const theme = useTheme();
 

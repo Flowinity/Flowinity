@@ -1,18 +1,12 @@
 <template>
-  <v-dialog
+  <CoreDialog
     @update:modelValue="$emit('update:modelValue', $event)"
     :model-value="modelValue"
     max-width="800px"
   >
     <UploadCropper v-model="groupIcon" @finish="uploadIcon" />
-    <v-card v-if="$chat.dialogs.groupSettings.item">
-      <v-toolbar>
-        <v-toolbar-title>Group Settings</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn icon @click="$emit('update:modelValue', false)">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-toolbar>
+    <template v-slot:title>Group Settings</template>
+    <template v-if="$chat.dialogs.groupSettings.item">
       <v-card-text>
         <v-card-title>Group Name</v-card-title>
         <v-text-field
@@ -88,8 +82,8 @@
           THE OWNER RANK CANNOT BE REMOVED FROM THE USER!
         </small>
       </v-card-text>
-    </v-card>
-  </v-dialog>
+    </template>
+  </CoreDialog>
 </template>
 
 <script lang="ts">
@@ -97,10 +91,11 @@ import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "ColubrinaGroupSettingsDialog",
-  components: { UploadCropper, CreateChat, UserAvatar },
+  components: { CoreDialog, UploadCropper, CreateChat, UserAvatar },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {

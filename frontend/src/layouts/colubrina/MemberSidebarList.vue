@@ -133,14 +133,12 @@
         :message="message"
         :id="'message-' + index"
         @authorClick="
-          $chat.dialogs.userMenu.value = false;
           $chat.dialogs.userMenu.user = $event.user;
           $chat.dialogs.userMenu.username = $event.user.username;
           $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
           $chat.dialogs.userMenu.x = $event.x;
           $chat.dialogs.userMenu.y = $event.y;
           $chat.dialogs.userMenu.location = $event.location || 'top';
-          $chat.dialogs.userMenu.value = true;
         "
         @jumpToMessage="
           handleJump(

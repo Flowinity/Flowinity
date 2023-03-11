@@ -1,44 +1,42 @@
 <template>
-  <v-dialog
+  <CoreDialog
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     max-width="600px"
   >
-    <v-card>
-      <v-toolbar>
-        <v-toolbar-title>Add to collection</v-toolbar-title>
-      </v-toolbar>
-      <v-card-text>
-        <v-form>
-          <v-autocomplete
-            v-model="selectedCollection"
-            item-title="name"
-            item-value="id"
-            :items="$collections.write"
-            label="Select collection"
-            outlined
-            autofocus
-            @keydown.enter="select($event.target.value)"
-          ></v-autocomplete>
-        </v-form>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" @click="$emit('update:modelValue', false)">
-          Cancel
-        </v-btn>
-        <v-btn color="primary" @click="addToCollection">Add</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    <template v-slot:title>Add to collection</template>
+    <v-card-text>
+      <v-form>
+        <v-autocomplete
+          v-model="selectedCollection"
+          item-title="name"
+          item-value="id"
+          :items="$collections.write"
+          label="Select collection"
+          outlined
+          autofocus
+          @keydown.enter="select($event.target.value)"
+        ></v-autocomplete>
+      </v-form>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="primary" @click="$emit('update:modelValue', false)">
+        Cancel
+      </v-btn>
+      <v-btn color="primary" @click="addToCollection">Add</v-btn>
+    </v-card-actions>
+  </CoreDialog>
 </template>
 
 <script lang="ts">
 import { CollectionCache } from "@/types/collection";
 import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "AddToCollection",
+  components: { CoreDialog },
   props: ["modelValue", "items"],
   emits: ["update:modelValue", "collectionAdded"],
   data() {

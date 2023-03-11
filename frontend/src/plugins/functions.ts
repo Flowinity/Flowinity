@@ -61,8 +61,68 @@ export default {
       return undefined;
     }
   },
+  richMessage(content: string) {
+    const regex = /\\?&lt;(@\d+)&gt;/g;
+    const mentions = content.match(regex);
+    if (mentions) {
+      for (const mention of mentions) {
+        const userId = mention.match(/&lt;@(\d+)&gt;/)![1];
+        const user = window.tpuInternals.lookupUser(parseInt(userId));
+        if (user.id) {
+          content = content.replace(
+            mention,
+            `<span class="pointer unselectable mention" onclick="window.tpuInternals.openUser(${user.id})"><i class="mdi-at mdi v-icon notranslate v-icon--size-small" aria-hidden="true"></i>${user.username}</span>`
+          );
+        } else {
+          content = content.replace(
+            mention,
+            `<span class="unselectable mention"><i class="mdi-at mdi v-icon notranslate v-icon--size-small" aria-hidden="true"></i>${user.username}</span>`
+          );
+        }
+      }
+    }
+    const channels = content.match(/\\?&lt;#\d+&gt;/g);
+    if (channels) {
+      for (const channel of channels) {
+        const channelId = channel.match(/&lt;#(\d+)&gt;/)![1];
+        const channelData = window.tpuInternals.lookupChat(parseInt(channelId));
+        if (channelData.id) {
+          content = content.replace(
+            channel,
+            `<span class="pointer unselectable mention" onclick="window.tpuInternals.setChat(${channelData?.association?.id})"><i class="mdi-pound mdi v-icon notranslate v-icon--size-small" aria-hidden="true"></i>${channelData.name}</span>`
+          );
+        } else {
+          content = content.replace(
+            channel,
+            `<span class="unselectable mention"><i class="mdi-pound mdi v-icon notranslate v-icon--size-small" aria-hidden="true"></i>${channelData.name}</span>`
+          );
+        }
+      }
+    }
+    const collections = content.match(/\\?&lt;&amp;\d+&gt;/g);
+    if (collections) {
+      for (const collection of collections) {
+        const collectionId = collection.match(/&lt;&amp;(\d+)&gt;/)![1];
+        const collectionData = window.tpuInternals.lookupCollection(
+          parseInt(collectionId)
+        );
+        if (collectionData.id) {
+          content = content.replace(
+            collection,
+            `<span class="pointer unselectable mention" onclick="window.tpuInternals.openCollection(${collectionData.id})"><i class="mdi-folder-multiple-image mdi v-icon notranslate v-icon--size-small" aria-hidden="true"></i> ${collectionData.name}</span>`
+          );
+        } else {
+          content = content.replace(
+            collection,
+            `<span class="unselectable mention"><i class="mdi-folder-multiple-image mdi v-icon notranslate v-icon--size-small" aria-hidden="true"></i> No Permission</span>`
+          );
+        }
+      }
+    }
+    return content;
+  },
   markdown(text: string): any {
-    return md.render(text);
+    return this.richMessage(md.render(text));
   },
   markdownEmail(text: string): any {
     return mdEmail.render(text);

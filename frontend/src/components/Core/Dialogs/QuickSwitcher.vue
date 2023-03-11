@@ -1,37 +1,35 @@
 <template>
-  <v-dialog
+  <CoreDialog
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     max-width="600px"
   >
-    <v-card color="card">
-      <v-toolbar color="toolbar">
-        <v-toolbar-title>TPU QuickSwitcher</v-toolbar-title>
-      </v-toolbar>
-      <v-container v-if="modelValue">
-        <v-autocomplete
-          @keydown.enter="handleEnter($event.target.value)"
-          v-model="search"
-          auto-select-first
-          :items="$app.quickSwitcher"
-          item-title="name"
-          label="Search"
-          outlined
-          autofocus
-          return-object
-          ref="input"
-          @select="handleEnter($event.target.value)"
-        ></v-autocomplete>
-      </v-container>
-    </v-card>
-  </v-dialog>
+    <template v-slot:title>TPU QuickSwitcher</template>
+    <v-container v-if="modelValue">
+      <v-autocomplete
+        @keydown.enter="handleEnter($event.target.value)"
+        v-model="search"
+        auto-select-first
+        :items="$app.quickSwitcher"
+        item-title="name"
+        label="Search"
+        outlined
+        autofocus
+        return-object
+        ref="input"
+        @select="handleEnter($event.target.value)"
+      ></v-autocomplete>
+    </v-container>
+  </CoreDialog>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "QuickSwitcher",
+  components: { CoreDialog },
   props: {
     modelValue: {
       type: Boolean,

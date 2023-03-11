@@ -68,6 +68,11 @@ export class Message extends Model {
   @Column
   legacyUserId: number
 
+  @Column({
+    defaultValue: false
+  })
+  pinned: boolean
+
   @BelongsTo(() => User, "userId")
   tpuUser: User
 

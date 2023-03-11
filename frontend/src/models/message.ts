@@ -27,5 +27,6 @@ export interface Message {
   error?: boolean;
   createdAt: string;
   updatedAt: string;
+  pinned: boolean;
   readReceipts: ChatAssociation[];
 }

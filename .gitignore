@@ -10,13 +10,12 @@ out/
 # NPM Debug Log
 npm-debug.log
 
-##Typescrit compilation ##
+## TypeScript compilation ##
 
 *.js.map
 *.js
 
-
-# Garder les fichiers necessaires pour les tests
+# Keep necessary files
 !systemjs.config.js
 !karma.conf.js
 !karma-test-shim.js
@@ -25,7 +24,9 @@ npm-debug.log
 !tsconfig.spec.json
 !tsconfig.json
 !package-lock.json
-
+!app/migrations/*.js
+!react/**.js
+!frontend/**.js
 
 app/config/config.json
 app/config/tpu.json

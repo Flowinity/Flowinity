@@ -31,7 +31,30 @@
       ></UserAvatar>
       Deleted Message
     </v-toolbar>
-    <v-list-item color="transparent" class="message" :class="{ merge }">
+    <v-list-item
+      color="transparent"
+      class="message rounded-0"
+      :class="{ merge, 'message-mention': mentions }"
+      @contextmenu="context"
+    >
+      <v-btn
+        style="position: absolute; right: 0"
+        class="mr-2 mt-2 text-grey"
+        icon
+        size="x-small"
+        v-if="
+          $chat.selectedChat?.association.rank &&
+          ['admin', 'owner'].includes($chat.selectedChat?.association.rank) &&
+          pins
+        "
+        @click.stop="
+          $chat.pinMessage(message.id, !message.pinned).then(() => {
+            $emit('refresh');
+          })
+        "
+      >
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
       <template v-slot:prepend>
         <template v-if="!merge">
           <div
@@ -59,12 +82,16 @@
             <v-icon v-else-if="message.type === 'leave'" class="mr-1" size="36">
               mdi-account-minus
             </v-icon>
+            <v-icon v-else-if="message.type === 'pin'" class="mr-1" size="36">
+              mdi-pin
+            </v-icon>
             <v-icon v-else class="mr-1" size="36">mdi-information</v-icon>
           </div>
         </template>
         <template v-else>
           <small
-            style="font-size: 9px; margin-right: 20px"
+            style="font-size: 9px"
+            :style="mentions ? 'margin-right: 1.9em' : 'margin-right: 2.30em'"
             class="text-grey message-date"
             v-if="merge"
           >
@@ -115,21 +142,20 @@
         </v-btn>
       </p>
       <span
-        v-if="!editing"
+        v-if="!editing && message.content"
         class="overflow-content"
         :class="{ 'text-grey': message.pending, 'text-red': message.error }"
       >
         <span
           class="overflow-content"
-          style="display: inline-block; width: 100%"
+          style="display: inline-block"
           v-html="$functions.markdown(message.content)"
         ></span>
         <v-btn
           color="grey"
           icon
           size="x-small"
-          :ripple="false"
-          class="ml-1"
+          class="ml-2"
           v-if="message.edited && merge"
           style="display: inline-block"
         >
@@ -153,7 +179,6 @@
         :message="message"
         @reply="$emit('reply', message)"
         @delete="$emit('delete', { message, shifting: $event })"
-        @pin="$emit('pin', message)"
         v-if="!search"
       ></MessageActions>
       <Embed
@@ -208,7 +233,29 @@ export default defineComponent({
     CommunicationsAvatar,
     CommunicationsInput
   },
-  props: ["message", "editing", "shifting", "editingText", "merge", "search"]
+  props: [
+    "message",
+    "editing",
+    "shifting",
+    "editingText",
+    "merge",
+    "search",
+    "pins"
+  ],
+  methods: {
+    context(e: any) {
+      e.preventDefault();
+      this.$chat.dialogs.message.message = this.message;
+      this.$chat.dialogs.message.x = e.clientX;
+      this.$chat.dialogs.message.y = e.clientY;
+      this.$chat.dialogs.message.value = true;
+    }
+  },
+  computed: {
+    mentions() {
+      return !!this.message.content.includes(`<@${this.$user.user?.id}>`);
+    }
+  }
 });
 </script>
 

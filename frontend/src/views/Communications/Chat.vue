@@ -1,5 +1,55 @@
 <template>
   <div id="chat" @drop.prevent="dragDropHandler" @dragover.prevent>
+    <v-navigation-drawer
+      location="bottom"
+      temporary
+      color="card"
+      floating
+      v-model="$chat.dialogs.message.value"
+      v-if="$vuetify.display.mobile"
+    >
+      <MessageActionsList
+        v-if="$chat.dialogs.message.message"
+        @reply="
+          replyId = $chat.dialogs.message.message?.id;
+          $chat.dialogs.message.value = false;
+        "
+        @edit="
+          handleEdit({
+            id: $chat.dialogs.message.message?.id || 0,
+            content: $chat.dialogs.message.message?.content || ''
+          });
+          $chat.dialogs.message.value = false;
+        "
+        @delete="
+          $event
+            ? deleteMessage($chat.dialogs.message.message?.id)
+            : confirmDelete($chat.dialogs.message.message);
+          $chat.dialogs.message.value = false;
+        "
+      ></MessageActionsList>
+    </v-navigation-drawer>
+    <v-menu v-model="$chat.dialogs.message.value" v-else :style="menuStyle">
+      <MessageActionsList
+        @reply="
+          replyId = $chat.dialogs.message.message?.id;
+          $chat.dialogs.message.value = false;
+        "
+        @edit="
+          handleEdit({
+            id: $chat.dialogs.message.message?.id || 0,
+            content: $chat.dialogs.message.message?.content || ''
+          });
+          $chat.dialogs.message.value = false;
+        "
+        @delete="
+          $event
+            ? deleteMessage($chat.dialogs.message.message?.id)
+            : confirmDelete($chat.dialogs.message.message);
+          $chat.dialogs.message.value = false;
+        "
+      ></MessageActionsList>
+    </v-menu>
     <WorkspaceDeleteDialog
       @submit="
         deleteMessage(dialogs.delete.message?.id);
@@ -156,6 +206,10 @@
       @fileUpload="uploadHandle"
       @paste="handlePaste"
       @quickTPULink="handleQuickTPULink"
+      @emoji="
+        message += $event;
+        $nextTick(() => focusInput());
+      "
     ></CommunicationsInput>
   </div>
 </template>
@@ -171,10 +225,14 @@ import { Chat, Typing } from "@/models/chat";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 import { Message as MessageType } from "@/models/message";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
+import MobileMenu from "@/components/Core/Dialogs/MobileMenu.vue";
+import MessageActionsList from "@/components/Communications/MessageActionsList.vue";
 
 export default defineComponent({
   name: "Chat",
   components: {
+    MessageActionsList,
+    MobileMenu,
     WorkspaceDeleteDialog,
     GalleryPreview,
     UserAvatar,
@@ -220,6 +278,16 @@ export default defineComponent({
     };
   },
   computed: {
+    menuStyle() {
+      return `
+        position: absolute;
+        top: ${
+          this.$chat.dialogs.message.y + 190 < this.$vuetify.display.height
+            ? this.$chat.dialogs.message.y
+            : this.$vuetify.display.height - 230
+        }px;
+        left: ${this.$chat.dialogs.message.x}px;`;
+    },
     uploadFileHeight() {
       if (this.files.length > 0) return 84;
       return 0;
@@ -235,7 +303,8 @@ export default defineComponent({
     }
   },
   methods: {
-    confirmDelete(message: MessageType) {
+    confirmDelete(message: MessageType | undefined | null) {
+      if (!message) return;
       this.dialogs.delete.message = message;
       this.dialogs.delete.value = true;
     },
@@ -370,6 +439,7 @@ export default defineComponent({
       this.autoScroll();
     },
     async deleteMessage(id: number | undefined) {
+      if (!id) return;
       await this.axios.delete(
         `/chats/${this.$chat.selectedChat?.association?.id}/messages/${id}`
       );
@@ -398,7 +468,8 @@ export default defineComponent({
         edited: false,
         replyId: replyId,
         reply: this.replying,
-        readReceipts: []
+        readReceipts: [],
+        pinned: false
       });
       this.replyId = undefined;
       this.files = [];

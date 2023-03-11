@@ -1,0 +1,65 @@
+<template>
+  <v-list class="mobile-actions" v-if="$chat.dialogs.message.message">
+    <v-list-item @click="$emit('reply')">
+      <template v-slot:prepend>
+        <v-icon>mdi-reply</v-icon>
+      </template>
+      <v-list-item-title>Reply</v-list-item-title>
+    </v-list-item>
+    <v-list-item
+      v-if="$chat.dialogs.message.message.userId === $user.user?.id"
+      @click="$emit('edit')"
+    >
+      <template v-slot:prepend>
+        <v-icon>mdi-pencil</v-icon>
+      </template>
+      <v-list-item-title>Edit message</v-list-item-title>
+    </v-list-item>
+    <v-list-item
+      v-if="
+        $chat.dialogs.message.message.userId === $user.user?.id ||
+        ($chat.selectedChat?.association.rank &&
+          ['admin', 'owner'].includes($chat.selectedChat?.association.rank))
+      "
+      @click="$emit('delete', $event.shiftKey)"
+    >
+      <template v-slot:prepend>
+        <v-icon>mdi-delete</v-icon>
+      </template>
+      <v-list-item-title>Delete Message</v-list-item-title>
+    </v-list-item>
+    <v-list-item
+      v-if="
+        $chat.dialogs.message.message &&
+        $chat.selectedChat?.association.rank &&
+        ['admin', 'owner'].includes($chat.selectedChat?.association.rank)
+      "
+      @click="
+        $chat.pinMessage(
+          $chat.dialogs.message.message?.id,
+          !$chat.dialogs.message.message?.pinned
+        );
+        $chat.dialogs.message.value = false;
+      "
+    >
+      <template v-slot:prepend>
+        <v-icon>
+          {{ $chat.dialogs.message.message.pinned ? "mdi-pin-off" : "mdi-pin" }}
+        </v-icon>
+      </template>
+      <v-list-item-title>
+        {{ $chat.dialogs.message.message.pinned ? "Unpin" : "Pin" }}
+      </v-list-item-title>
+    </v-list-item>
+  </v-list>
+</template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
+  name: "MessageActionsList"
+});
+</script>
+
+<style scoped></style>

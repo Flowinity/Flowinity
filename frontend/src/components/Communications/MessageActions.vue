@@ -38,7 +38,7 @@
       <v-tooltip location="top" activator="parent">Reply</v-tooltip>
       <v-icon>mdi-reply</v-icon>
     </v-btn>
-    <v-menu location="top left" v-model="avoid" v-if="!shifting">
+    <v-menu location="top center" v-model="avoid">
       <template v-slot:activator="{ props }">
         <v-btn icon rounded="0" v-bind="props" :size="size">
           <v-tooltip location="top" activator="parent">More</v-tooltip>
@@ -46,21 +46,17 @@
         </v-btn>
       </template>
       <v-list class="mb-2 rounded-xl" :size="size">
-        <v-list-item @click="$emit('pin')" color="red">
-          <v-list-item-title>
-            <v-icon class="mr-1">mdi-pin</v-icon>
-            Pin
-          </v-list-item-title>
-        </v-list-item>
-        <v-divider></v-divider>
         <v-list-item
-          @click="$emit('delete', $event.shiftKey)"
+          @click="$chat.pinMessage(message.id, !message.pinned)"
           color="red"
-          v-if="message.userId === $user.user?.id"
+          :size="size"
+          style="min-height: 20px"
         >
           <v-list-item-title>
-            <v-icon class="mr-1">mdi-delete</v-icon>
-            Delete
+            <v-icon class="mr-1">
+              {{ message.pinned ? "mdi-pin-off" : "mdi-pin" }}
+            </v-icon>
+            {{ message.pinned ? "Unpin" : "Pin" }}
           </v-list-item-title>
         </v-list-item>
       </v-list>
@@ -73,7 +69,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "MessageActions",
-  props: ["message", "shifting"],
+  props: ["message"],
   data() {
     return {
       avoid: false,

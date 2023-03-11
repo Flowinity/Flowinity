@@ -174,9 +174,25 @@ const app = createApp({
         const newIndex = chat.chats.findIndex(
           (c) => c.id === newMessage.chat.id
         );
-        if (newMessage.message.userId !== user.user?.id) {
-          chat.chats[newIndex].unread++;
+        if (
+          experiments.experiments.COMMUNICATIONS_KEEP_LOADED &&
+          !chat.chats[newIndex].messages &&
+          !chat.chats[newIndex].messages.find(
+            (m) => m.id === newMessage.message.id
+          )
+        ) {
+          chat.chats[newIndex].messages.unshift(
+            newMessage.message as MessageType
+          );
         }
+        if (
+          newMessage.message.userId === user.user?.id ||
+          (chatToMove.association.notifications === "mentions" &&
+            !newMessage.mention) ||
+          chatToMove.association.notifications === "none"
+        )
+          return;
+        chat.chats[newIndex].unread++;
         if (
           user.user?.storedStatus !== "busy" &&
           newMessage.message.userId !== user.user?.id
@@ -198,17 +214,6 @@ const app = createApp({
             }
           );
         }
-        if (!experiments.experiments.COMMUNICATIONS_KEEP_LOADED) return;
-        if (!chat.chats[newIndex].messages) return;
-        if (
-          chat.chats[newIndex].messages.find(
-            (m) => m.id === newMessage.message.id
-          )
-        )
-          return;
-        chat.chats[newIndex].messages.unshift(
-          newMessage.message as MessageType
-        );
       });
       socket.on("userStatus", (data: User) => {
         const index = friends.friends.findIndex((f) => f.friendId === data.id);
@@ -228,15 +233,26 @@ const app = createApp({
           edited: boolean;
           editedAt: Date;
           userId: number;
+          pinned: boolean;
         }) => {
           const message = checkMessage(data.id, data.chatId);
           if (!message) return;
-          chat.chats[message.index].messages[message.messageIndex].content =
-            data.content;
-          chat.chats[message.index].messages[message.messageIndex].edited =
-            data.edited;
-          chat.chats[message.index].messages[message.messageIndex].editedAt =
-            data.editedAt;
+          if (data.content) {
+            chat.chats[message.index].messages[message.messageIndex].content =
+              data.content;
+          }
+          if (data.edited !== undefined) {
+            chat.chats[message.index].messages[message.messageIndex].edited =
+              data.edited;
+          }
+          if (data.editedAt !== undefined) {
+            chat.chats[message.index].messages[message.messageIndex].editedAt =
+              data.editedAt;
+          }
+          if (data.pinned !== undefined) {
+            chat.chats[message.index].messages[message.messageIndex].pinned =
+              data.pinned;
+          }
         }
       );
       socket.on(

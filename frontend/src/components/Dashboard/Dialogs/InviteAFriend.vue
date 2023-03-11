@@ -1,54 +1,52 @@
 <template>
-  <v-dialog
+  <CoreDialog
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     max-width="700px"
   >
-    <v-card>
-      <v-toolbar>
-        <v-toolbar-title>Invite a Friend</v-toolbar-title>
-      </v-toolbar>
-      <v-card-text>
-        Enter your friends email, your invite will be sent to them after Troplo,
-        or another TPU administrator approves it.
-        <v-text-field
-          v-model="email"
-          label="Email"
-          type="email"
-          required
-          placeholder="troplo@troplo.com"
-          autofocus
-          @keyup.enter="inviteFriend"
-          :rules="$validation.user.email"
-        ></v-text-field>
-        <small>
-          You will receive an email when your request is accepted or denied by a
-          TPU administrator.
-          <br />
-          Your friend will not use Flowinity SSO to authenticate.
-        </small>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          text
-          class="rounded-xl"
-          :disabled="!email.length"
-          @click="inviteFriend"
-        >
-          Invite
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    <template v-slot:title>Invite a Friend</template>
+    <v-card-text>
+      Enter your friends email, your invite will be sent to them after Troplo,
+      or another TPU administrator approves it.
+      <v-text-field
+        v-model="email"
+        label="Email"
+        type="email"
+        required
+        placeholder="troplo@troplo.com"
+        autofocus
+        @keyup.enter="inviteFriend"
+        :rules="$validation.user.email"
+      ></v-text-field>
+      <small>
+        You will receive an email when your request is accepted or denied by a
+        TPU administrator.
+        <br />
+        Your friend will not use Flowinity SSO to authenticate.
+      </small>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="primary"
+        text
+        class="rounded-xl"
+        :disabled="!email.length"
+        @click="inviteFriend"
+      >
+        Invite
+      </v-btn>
+    </v-card-actions>
+  </CoreDialog>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "InviteAFriend",
+  components: { CoreDialog },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {

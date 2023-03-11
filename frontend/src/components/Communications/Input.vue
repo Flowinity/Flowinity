@@ -14,6 +14,15 @@
       @open="onOpen"
       :omit-key="true"
     >
+      <template v-slot:item="{ item }">
+        <div class="my-2 mx-2">
+          <UserAvatar
+            :size="35"
+            :user="$chat.lookupUser(item.value)"
+          ></UserAvatar>
+          {{ $chat.lookupUser(item.value).username }}
+        </div>
+      </template>
       <v-textarea
         ref="textarea"
         :class="!editing ? 'mb-n5 mt-1' : 'mt-2'"
@@ -110,7 +119,10 @@
           <v-icon class="pointer">mdi-plus-circle</v-icon>
         </template>
         <template v-slot:append-inner>
-          <EmojiPicker v-model="emojiPicker"></EmojiPicker>
+          <EmojiPicker
+            v-model="emojiPicker"
+            @emoji="$emit('emoji', $event)"
+          ></EmojiPicker>
           <v-icon class="pointer">mdi-emoticon</v-icon>
         </template>
         <template v-slot:details v-if="!editing">
@@ -131,7 +143,7 @@
           class="float-end mt-n1 mb-n4 text-grey mr-10"
           style="font-size: 12px"
         >
-          {{ modelValue.length }} / 2000
+          {{ modelValue?.length }} / 2000
         </span>
       </div>
     </Mentionable>
@@ -146,10 +158,12 @@ import InlineGallery from "@/components/Communications/InlineGallery.vue";
 import Mentionable from "@/components/Core/Mentionable.vue";
 import EmojiPicker from "@/components/Communications/Menus/Emoji.vue";
 import emoji from "@/components/Communications/Menus/Emoji.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "CommunicationsInput",
   components: {
+    UserAvatar,
     EmojiPicker,
     InlineGallery,
     GalleryCore,
@@ -162,7 +176,8 @@ export default defineComponent({
     "sendMessage",
     "edit",
     "fileUpload",
-    "quickTPULink"
+    "quickTPULink",
+    "emoji"
   ],
   data() {
     return {

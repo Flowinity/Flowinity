@@ -7,6 +7,67 @@
     style="z-index: 2003"
   >
     <v-list>
+      <v-list-item @click="() => {}">
+        <v-menu
+          :nudge-right="10"
+          :close-delay="100"
+          :open-delay="0"
+          :close-on-content-click="false"
+          :close-on-click="false"
+          bottom
+          offset-x
+          open-on-hover
+          activator="parent"
+          location="right"
+          class="ml-2"
+        >
+          <v-list v-if="contextMenu.item">
+            <v-list-item @click="setNotifications('all')">
+              <v-list-item-title>All messages</v-list-item-title>
+              <template v-slot:append>
+                <v-icon
+                  style="float: right"
+                  v-if="contextMenu.item.association.notifications === 'all'"
+                >
+                  mdi-check
+                </v-icon>
+              </template>
+            </v-list-item>
+            <v-list-item @click="setNotifications('mentions')">
+              <v-list-item-title>Mentions only</v-list-item-title>
+              <template v-slot:append>
+                <v-icon
+                  style="float: right"
+                  v-if="
+                    contextMenu.item.association.notifications === 'mentions'
+                  "
+                >
+                  mdi-check
+                </v-icon>
+              </template>
+            </v-list-item>
+            <v-list-item two-line @click="setNotifications('none')">
+              <v-list-item-title>None</v-list-item-title>
+              <v-list-item-subtitle>
+                This chat will be completely muted.
+              </v-list-item-subtitle>
+              <template v-slot:append>
+                <v-icon
+                  style="float: right"
+                  v-if="contextMenu.item.association.notifications === 'none'"
+                >
+                  mdi-check
+                </v-icon>
+              </template>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <v-list-item-title>
+          <v-icon class="mr-1">mdi-bell-outline</v-icon>
+          Notifications
+          <v-icon class="ml-5">mdi-arrow-right</v-icon>
+        </v-list-item-title>
+      </v-list-item>
       <v-list-item
         v-if="
           contextMenu.item?.type === 'group' &&
@@ -18,6 +79,7 @@
           $chat.dialogs.groupSettings.value = true;
         "
       >
+        <v-icon class="mr-1">mdi-cog-outline</v-icon>
         Group Settings
       </v-list-item>
       <v-list-item
@@ -27,6 +89,7 @@
           leave.dialog = true;
         "
       >
+        <v-icon class="mr-1">mdi-exit-to-app</v-icon>
         Leave
       </v-list-item>
     </v-list>
@@ -125,6 +188,16 @@ export default defineComponent({
     }
   },
   methods: {
+    setNotifications(type: "all" | "mentions" | "none") {
+      if (!this.contextMenu.item?.association) return;
+      this.axios.patch(
+        `/chats/association/${this.contextMenu.item?.association.id}`,
+        {
+          notifications: type
+        }
+      );
+      this.contextMenu.item.association.notifications = type;
+    },
     context(e: any, item: any) {
       e.preventDefault();
       this.contextMenu.item = item;

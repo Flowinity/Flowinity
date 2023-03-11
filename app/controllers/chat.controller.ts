@@ -174,6 +174,19 @@ export class ChatController {
       }
     )
 
+    this.router.patch(
+      "/association/:chatId",
+      auth("chats.edit"),
+      async (req: RequestAuth, res: Response) => {
+        await this.chatService.updateAssociationSettings(
+          parseInt(req.params.chatId),
+          req.user.id,
+          req.body
+        )
+        res.sendStatus(204)
+      }
+    )
+
     this.router.post(
       "/:chatId/users",
       auth("chats.create"),
@@ -245,7 +258,8 @@ export class ChatController {
           req.body.id,
           req.user.id,
           req.body.content,
-          parseInt(req.params.chatId)
+          parseInt(req.params.chatId),
+          req.body.pinned
         )
         res.sendStatus(204)
       }
@@ -267,6 +281,17 @@ export class ChatController {
       "/:chatId/messages",
       auth("chats.view"),
       async (req: RequestAuth, res: Response) => {
+        if (req.query.mode === "paginate") {
+          const messages = await this.chatService.getMessagesPagination(
+            parseInt(req.params.chatId),
+            req.user.id,
+            <"top" | "bottom">req.query.position || "top",
+            <"pins" | "messages">req.query?.type || "messages",
+            parseInt(<string>req.query?.page || "1")
+          )
+          res.json(messages)
+          return
+        }
         const messages = await this.chatService.getMessages(
           parseInt(req.params.chatId),
           req.user.id,

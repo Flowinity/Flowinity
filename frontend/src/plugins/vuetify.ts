@@ -19,6 +19,7 @@ export default createVuetify({
     VDataTable
   },
   defaults: {
+    VDialog: {},
     VDataTable: {
       fixedHeader: true,
       noDataText: "No entries yet..."
