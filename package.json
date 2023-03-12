@@ -8,7 +8,7 @@
     "The Loose Goose"
   ],
   "scripts": {
-    "start": "nodemon",
+    "start": "tsc --project tsconfig.app.json && node out/cluster.js",
     "serve": "tsc-watch --project tsconfig.app.json --onSuccess 'node --inspect ./out/index.js'",
     "build": "tsc --project tsconfig.app.json",
     "format": "prettier --config ../.prettierrc.yaml --write \"app/**/*\"",

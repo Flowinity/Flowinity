@@ -13,8 +13,6 @@ import { ChatService } from "@app/services/chat.service"
 import { Chat } from "@app/models/chat.model"
 import { Message } from "@app/models/message.model"
 import cron from "node-cron"
-import cluster from "cluster"
-import os from "os"
 
 @Service()
 export class CacheService {
@@ -448,36 +446,28 @@ export class CacheService {
 
   cacheInit() {
     try {
-      if (cluster.worker?.id === 1 || !cluster.isWorker) {
-        // 10 minutes
-        setInterval(this.refreshState, 1000 * 60 * 10)
-        // 30 minutes
-        setInterval(this.generateUserStatsCache, 1000 * 60 * 30)
-        // 1 hour
-        setInterval(this.generateCollectionCache, 3600000)
-        setInterval(this.generateShareLinkCache, 3600000)
+      // 10 minutes
+      setInterval(this.refreshState, 1000 * 60 * 10)
+      // 30 minutes
+      setInterval(this.generateUserStatsCache, 1000 * 60 * 30)
+      // 1 hour
+      setInterval(this.generateCollectionCache, 3600000)
+      setInterval(this.generateShareLinkCache, 3600000)
 
-        cron.schedule("0 5 * * *", () => {
-          this.generateInsightsCache()
-        })
+      cron.schedule("0 5 * * *", () => {
+        this.generateInsightsCache()
+      })
 
-        cron.schedule("0 4 * * *", () => {
-          this.generateCollectionCache()
-        })
+      cron.schedule("0 4 * * *", () => {
+        this.generateCollectionCache()
+      })
 
-        this.refreshState().then(() => {})
-        this.generateShareLinkCache().then(() => {})
-        this.generateUserStatsCache().then(() => {})
-        this.generateChatsCache().then(() => {})
-        this.generateMissingChatDates().then(() => {})
-        return true
-      }
-      console.info(
-        `[REDIS] Skipping cache init... (${os.hostname()?.toUpperCase()}#${
-          cluster.worker?.id
-        })`
-      )
-      return false
+      this.refreshState().then(() => {})
+      this.generateShareLinkCache().then(() => {})
+      this.generateUserStatsCache().then(() => {})
+      this.generateChatsCache().then(() => {})
+      this.generateMissingChatDates().then(() => {})
+      return true
     } catch {
       return false
     }

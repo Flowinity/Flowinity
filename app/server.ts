@@ -12,6 +12,8 @@ import socket from "./lib/socket"
 import { BillingService } from "@app/services/billing.service"
 import { PulseService } from "@app/services/pulse.service"
 import { BadgeService } from "@app/services/badge.service"
+import cluster from "cluster"
+import os from "os"
 
 @Service()
 export class Server {
@@ -64,10 +66,15 @@ export class Server {
       console.warn(err)
     })
     this.server.on("listening", () => this.onListening())
-    this.billingService.billingInit()
-    this.cacheService.cacheInit()
-    this.pulseService.pulseInit()
-    this.badgeService.badgeInit()
+    const cpuCount = os.cpus().length
+    if (!cluster.worker || cluster.worker?.id % cpuCount === 1) {
+      this.cacheService.cacheInit()
+      this.billingService.billingInit()
+      this.pulseService.pulseInit()
+      this.badgeService.badgeInit()
+    } else {
+      console.log("Background tasks not started due to non-primary worker")
+    }
   }
 
   private onError(error: NodeJS.ErrnoException): void {

@@ -2,6 +2,7 @@ import cluster from "cluster"
 import os from "os"
 
 if (cluster.isMaster) {
+  cluster.schedulingPolicy = cluster.SCHED_RR
   const cpus = os.cpus().length
   console.log(`Clustering to ${cpus} CPUs`)
 
