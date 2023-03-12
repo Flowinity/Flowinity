@@ -125,10 +125,10 @@ export default defineComponent({
           next: this.next
         }
       });
+      this.loading = false;
       this.next = data.next;
       if (this.type === "tenor") return (this.gallery.gallery = data.results);
       this.gallery = data;
-      this.loading = false;
     }
   },
   mounted() {
