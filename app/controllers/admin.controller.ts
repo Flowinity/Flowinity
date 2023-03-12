@@ -36,7 +36,7 @@ export class AdminController {
     // MODERATOR ROUTES ** LOW LEVEL
     this.router.all(
       "*",
-      auth("*"),
+      auth("admin"),
       async (req: RequestAuth, res: Response, next: any) => {
         if (!req.user.administrator && !req.user.moderator) {
           throw Errors.ADMIN_ONLY
@@ -279,7 +279,7 @@ export class AdminController {
     // ADMIN ROUTES ** HIGH LEVEL
     this.router.all(
       "*",
-      auth("*"),
+      auth("admin"),
       async (req: RequestAuth, res: Response, next: any) => {
         if (!req.user.administrator) {
           throw Errors.ADMIN_ONLY
