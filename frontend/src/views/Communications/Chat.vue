@@ -606,7 +606,13 @@ export default defineComponent({
       this.$refs.input?.$refs?.textarea?.focus();
     },
     shortcutHandler(e: any) {
-      if (e.ctrlKey && e.key === "v") {
+      if (
+        e.ctrlKey &&
+        e.key === "v" &&
+        e.target.tagName !== "INPUT" &&
+        e.target.tagName !== "TEXTAREA" &&
+        e.target.tagName !== "DIV"
+      ) {
         this.focusInput();
       }
       if (e.ctrlKey && e.key === "f") {

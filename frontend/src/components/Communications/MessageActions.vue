@@ -38,7 +38,14 @@
       <v-tooltip location="top" activator="parent">Reply</v-tooltip>
       <v-icon>mdi-reply</v-icon>
     </v-btn>
-    <v-menu location="top center" v-model="avoid">
+    <v-menu
+      location="top center"
+      v-model="avoid"
+      v-if="
+        $chat.selectedChat?.association.rank &&
+        ['admin', 'owner'].includes($chat.selectedChat?.association.rank)
+      "
+    >
       <template v-slot:activator="{ props }">
         <v-btn icon rounded="0" v-bind="props" :size="size">
           <v-tooltip location="top" activator="parent">More</v-tooltip>

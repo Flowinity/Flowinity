@@ -241,8 +241,9 @@ a {
   min-height: 30px !important;
 }
 
-.overflow-content {
-  overflow-wrap: break-word;
+.overflow-content p {
+  white-space: pre-line !important;
+  overflow-wrap: anywhere !important;
 }
 
 .gold .v-progress-linear {

@@ -127,23 +127,23 @@
         <small class="text-grey">
           {{ $date(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
         </small>
-        <v-btn
-          color="grey"
-          icon
-          size="x-small"
-          :ripple="false"
-          v-if="message.edited"
-          style="margin-bottom: 2px; margin-left: 4px; position: absolute"
-        >
+        <span v-if="message.edited">
           <v-tooltip activator="parent" location="top">
             {{ $date(message.editedAt).format("DD/MM/YYYY hh:mm:ss A") }}
           </v-tooltip>
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
+          <v-icon
+            color="grey"
+            icon
+            size="x-small"
+            class="ml-3"
+            style="display: inline-block"
+          >
+            mdi-pencil
+          </v-icon>
+        </span>
       </p>
       <span
         v-if="!editing && message.content"
-        class="overflow-content"
         :class="{ 'text-grey': message.pending, 'text-red': message.error }"
       >
         <span
@@ -151,19 +151,20 @@
           style="display: inline-block"
           v-html="$functions.markdown(message.content)"
         ></span>
-        <v-btn
-          color="grey"
-          icon
-          size="x-small"
-          class="ml-2"
-          v-if="message.edited && merge"
-          style="display: inline-block"
-        >
+        <span v-if="message.edited && merge">
           <v-tooltip activator="parent" location="top">
             {{ $date(message.editedAt).format("DD/MM/YYYY hh:mm:ss A") }}
           </v-tooltip>
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
+          <v-icon
+            color="grey"
+            icon
+            size="x-small"
+            class="ml-3"
+            style="display: inline-block"
+          >
+            mdi-pencil
+          </v-icon>
+        </span>
       </span>
       <CommunicationsInput
         @edit="$emit('edit', { id: null, content: null })"

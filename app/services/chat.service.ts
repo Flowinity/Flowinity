@@ -516,24 +516,24 @@ export class ChatService {
     associationId: number,
     pinned?: boolean
   ) {
+    const chat = await this.getChatFromAssociation(associationId, userId)
+    if (!chat) throw Errors.CHAT_NOT_FOUND
     const message = await Message.findOne({
       where: {
         id: messageId,
-        userId
+        chatId: chat.id
       }
     })
     if (!message || message.type !== "message") throw Errors.MESSAGE_NOT_FOUND
     if (pinned !== undefined) {
       await this.checkPermissions(userId, associationId, "admin")
-      const chat = await this.getChatFromAssociation(associationId, userId)
       await Message.update(
         {
           pinned: !message.pinned
         },
         {
           where: {
-            id: messageId,
-            chatId: chat.id
+            id: messageId
           }
         }
       )
@@ -553,6 +553,7 @@ export class ChatService {
       })
       return true
     }
+    if (message.userId !== userId) throw Errors.MESSAGE_NOT_FOUND
     if (!content?.trim()?.length) throw Errors.NO_MESSAGE_CONTENT
     const date = new Date()
     await Message.update(
