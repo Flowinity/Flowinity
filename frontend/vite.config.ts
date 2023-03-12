@@ -4,12 +4,18 @@ import vuetify, { transformAssetUrls } from "@troplo/vite-plugin-vuetify";
 
 // Utilities
 import { defineConfig } from "vite";
-import { fileURLToPath, URL } from "node:url";
 import { VitePWA } from "vite-plugin-pwa";
 import ViteVersion from "@troplo/vite-version";
+import path from "path";
+import * as fs from "fs";
+const resolve = (file: string) => {
+  console.log(path.resolve(__dirname, file));
+  return path.resolve(__dirname, file);
+};
 //import obfuscator from "rollup-plugin-obfuscator";
 
 // https://vitejs.dev/config/
+
 export default defineConfig({
   build: {
     /* rollupOptions: {
@@ -46,7 +52,7 @@ export default defineConfig({
       ]
     },*/
     sourcemap: false,
-    emptyOutDir: false
+    emptyOutDir: true
   },
   plugins: [
     ViteVersion(),
@@ -55,7 +61,7 @@ export default defineConfig({
       workbox: {
         clientsClaim: true,
         skipWaiting: true,
-        navigateFallbackDenylist: [/^\/i\/.*/]
+        navigateFallbackDenylist: [/^\/i\/.*/, /^\/api\/.*/]
       },
       includeAssets: [
         "favicon.ico",
@@ -142,17 +148,22 @@ export default defineConfig({
   ],
   define: { "process.env": {} },
   resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url))
-    },
+    alias: [{ find: /^@\/(.*)/, replacement: resolve("./src/$1") }],
     extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"]
   },
   server: {
+    https: {
+      key: fs.readFileSync("./vite.key"),
+      cert: fs.readFileSync("./vite.crt")
+    },
     port: 3000,
     proxy: {
       "/api/v2": "http://localhost:34582",
       "/i/": "http://localhost:34582",
-      "/socket.io": "http://localhost:34582",
+      "/socket.io": {
+        target: "http://localhost:34582",
+        ws: true
+      },
       "/api/v1": "http://localhost:34581"
     }
   }

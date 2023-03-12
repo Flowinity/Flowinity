@@ -1,8 +1,8 @@
 {
-  "name": "io.cordova.hellocordova",
-  "displayName": "HelloCordova",
+  "name": "com.troplo.privateuploader",
+  "displayName": "TPU",
   "version": "1.0.0",
-  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "description": "TPU is a private file hosting suite with extra features such as chatting, document editing, and more.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,12 +14,18 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "cordova-android": "^10.1.2",
-    "cordova-electron": "^3.1.0"
+    "cordova-electron": "^3.1.0",
+    "cordova-plugin-file": "^7.0.0"
   },
   "cordova": {
     "platforms": [
-      "android",
-      "electron"
-    ]
+      "electron",
+      "android"
+    ],
+    "plugins": {
+      "cordova-plugin-file": {
+        "ANDROIDX_WEBKIT_VERSION": "1.4.0"
+      }
+    }
   }
 }

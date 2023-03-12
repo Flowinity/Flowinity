@@ -13,6 +13,7 @@
     floating
     :class="$app.mainDrawer && !$vuetify.display.mobile ? 'sidebar-patch' : ''"
     style="z-index: 2001"
+    id="main-drawer"
   >
     <v-card-text
       v-if="

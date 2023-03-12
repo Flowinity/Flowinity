@@ -71,7 +71,7 @@
       ref="messageList"
       @scroll="scrollEvent"
     >
-      <div ref="sentinelBottom"></div>
+      <div ref="sentinelBottom" id="sentinel-bottom"></div>
       <Message
         v-for="(message, index) in $chat.selectedChat?.messages"
         :key="message.id"
@@ -100,7 +100,7 @@
         @jumpToMessage="$chat.jumpToMessage($event)"
         :merge="$chat.merge(message, index)"
       ></Message>
-      <div ref="sentinel">
+      <div ref="sentinel" id="sentinel">
         <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
       </div>
     </v-list>
@@ -532,26 +532,22 @@ export default defineComponent({
       node.$el.scrollTop = message.offsetTop;
     },
     setupIntersectionObserver() {
-      const element = document.getElementById("chat-list");
-      if (!element) return;
-      let options = {
-        root: element,
-        margin: "10px"
+      const options = {
+        root: document.getElementById("chat-list"),
+        rootMargin: "10px"
       };
-
-      this.messageObserver = new IntersectionObserver(
-        this.handleIntersection,
-        options
-      );
-      this.messageBottomObserver = new IntersectionObserver(
+      const bottomObserver = new IntersectionObserver(
         this.handleBottomIntersection,
         options
       );
-
-      this.messageObserver.observe(this.$refs.sentinel as HTMLElement);
-      this.messageBottomObserver.observe(
-        this.$refs.sentinelBottom as HTMLElement
+      const topObserver = new IntersectionObserver(
+        this.handleIntersection,
+        options
       );
+      const bottomSentinel = document.getElementById("sentinel-bottom");
+      const topSentinel = document.getElementById("sentinel");
+      if (bottomSentinel) bottomObserver.observe(bottomSentinel);
+      if (topSentinel) topObserver.observe(topSentinel);
     },
     async handleIntersection(entries: IntersectionObserverEntry[]) {
       const entry = entries[0];
@@ -572,11 +568,13 @@ export default defineComponent({
     },
     async handleBottomIntersection(entries: IntersectionObserverEntry[]) {
       if (!this.$chat.loadNew) return;
+      console.log(this.$chat.loadNew);
       const entry = entries[0];
       if (
         entry.isIntersecting &&
         !this.$chat.loadingNew &&
-        !this.$chat.loading
+        !this.$chat.loading &&
+        this.$chat.loadNew
       ) {
         this.recordScrollPosition("bottom");
         console.info("[TPU/ChatSentinel/Bottom] Intersecting");

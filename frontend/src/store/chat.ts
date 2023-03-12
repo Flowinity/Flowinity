@@ -181,7 +181,8 @@ export const useChatStore = defineStore("chat", {
         "privateuploader.com",
         "www.privateuploader.com",
         "i.privateuploader.com",
-        "next.privateuploader.com"
+        "next.privateuploader.com",
+        "tpu-mobile.troplo.com"
       ],
       dialogs: {
         message: {

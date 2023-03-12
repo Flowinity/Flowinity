@@ -167,7 +167,7 @@
       </span>
       <CommunicationsInput
         @edit="$emit('edit', { id: null, content: null })"
-        v-else
+        v-else-if="editing"
         :modelValue="editingText"
         @update:modelValue="$emit('editText', $event)"
         :editing="true"

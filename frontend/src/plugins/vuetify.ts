@@ -7,6 +7,7 @@
 // Styles
 import "@mdi/font/css/materialdesignicons.css";
 import "@troplo/vuetify/styles";
+//import "/home/troplo/GitHub/vuetify/packages/vuetify/src/styles/main.sass";
 
 // Composables
 
@@ -65,7 +66,7 @@ export default createVuetify({
       variant: "underlined"
     },
     VContainer: {
-      width: 40
+      fluid: true
     },
     VExpansionPanel: {
       bgColor: "toolbar"

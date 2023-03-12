@@ -1,13 +1,14 @@
 {
   "name": "frontend",
-  "version": "3.0.17",
+  "version": "3.0.18",
   "private": true,
   "scripts": {
     "dev": "vite",
     "serve": "vite",
-    "build": "vue-tsc --noEmit && vite build && rm -rf mobile/www && cp -r dist mobile/www && cp -r dist/* /var/www/html/tpu",
+    "build": "vue-tsc --noEmit && vite build && cp -r dist/* /var/www/html/tpu",
     "preview": "vite preview",
-    "lint": "eslint . --fix --ignore-path .gitignore"
+    "lint": "eslint . --fix --ignore-path .gitignore",
+    "build-mobile": "CORDOVA=true vite build && rm -rf ./mobile/www && cp -r ./dist ./mobile/www"
   },
   "dependencies": {
     "@editorjs/attaches": "^1.3.0",

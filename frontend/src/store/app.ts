@@ -12,6 +12,7 @@ import { useWorkspacesStore } from "@/store/workspaces";
 import vuetify from "@/plugins/vuetify";
 
 export interface AppState {
+  cordova: boolean;
   domain: string;
   mainDrawer: boolean;
   workspaceDrawer: boolean;
@@ -112,6 +113,7 @@ export interface AppState {
 export const useAppStore = defineStore("app", {
   state: () =>
     ({
+      cordova: false,
       lastRoute: null,
       domain: import.meta.env.DEV ? "/i/" : "https://i.troplo.com/i/",
       mainDrawer: true,

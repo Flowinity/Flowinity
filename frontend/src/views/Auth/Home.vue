@@ -221,6 +221,7 @@ export default defineComponent({
         window.location.hostname !== "next.privateuploader.com" &&
         window.location.hostname !== "localhost" &&
         window.location.hostname !== "127.0.0.1" &&
+        window.location.hostname !== "tpu-mobile.troplo.com" &&
         window.location.hostname !== this.$app.site.hostname
       ) {
         window.location.href = (this.$app.site.hostnameWithProtocol ?? "https://images.flowinity.com") + "/home?redirected=true";

@@ -79,6 +79,7 @@ declare global {
     _paq: {
       push: (args: any[]) => void;
     };
+    _cordovaNative: any;
   }
 }
 
@@ -117,7 +118,11 @@ const app = createApp({
       app.config.globalProperties.$friends = friends;
       app.config.globalProperties.$mail = mail;
       app.config.globalProperties.$socket = SocketIO(
-        import.meta.env.DEV ? "http://localhost:34582" : "",
+        import.meta.env.DEV
+          ? ""
+          : import.meta.env.CORDOVA
+          ? "https://images.flowinity.com"
+          : "",
         {
           transports: ["websocket", "polling"],
           auth: {
@@ -440,4 +445,4 @@ registerPlugins(app);
 
 app.config.performance = true;
 
-app.mount("#app");
+app.mount("#tpu-app");

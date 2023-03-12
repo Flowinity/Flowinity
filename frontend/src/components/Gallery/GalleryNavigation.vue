@@ -43,7 +43,7 @@
         "
       ></v-select>
     </v-col>
-    <v-col xl="2" sm="2" cols="12" v-if="supports.metadata">
+    <v-col xl="auto" sm="2" cols="12" v-if="supports.metadata">
       <v-checkbox
         label="Search in files"
         v-model="metadata"

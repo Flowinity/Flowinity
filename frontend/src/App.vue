@@ -39,6 +39,22 @@ export default defineComponent({
       this.$app.mainDrawer = false;
       this.$chat.memberSidebarShown = false;
     }
+    if (window._cordovaNative) {
+      this.$app.cordova = true;
+    }
+    document.addEventListener(
+      "backbutton",
+      (e) => {
+        if (this.$app.mainDrawer) {
+          this.$app.mainDrawer = false;
+          window.history.back();
+          return;
+        }
+        e.preventDefault();
+        this.$app.mainDrawer = true;
+      },
+      false
+    );
   },
   watch: {
     "$route.path"(val) {

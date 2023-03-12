@@ -20,11 +20,45 @@
     <meta name="application-name" content="TPU">
     <meta name="msapplication-TileColor" content="#121212">
     <meta name="theme-color" content="#101010">
+    <style>:root { background-color: #121212 }</style>
+    <script src="cordova.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es2022%2Ces2021%2Ces2020%2Ces2019%2Ces2018%2Ces2017%2Ces2015%2Ces2016%2Ces6%2Ces7%2Ces5%2Cdom4%2CAbortController%2CArray.from%2CIntersectionObserver%2CIntersectionObserverEntry%2CResizeObserver%2CWebAnimations%2CObject.fromEntries%2CArray.prototype.at%2CArray.of%2CNumber.isNaN%2CNumber.isInteger%2CNumber.parseFloat%2CNumber.parseInt%2CObject.entries"></script>
+    <style>
+      #spinner-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 4px solid #303030;
+        border-top-color: white;
+        animation: spinner-rotate 0.8s linear infinite;
+      }
+
+      @keyframes spinner-rotate {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
   </head>
 
   <body>
-    <div id="app"></div>
+    <div id="tpu-app">
+      <div id="spinner-overlay">
+        <div class="spinner"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
