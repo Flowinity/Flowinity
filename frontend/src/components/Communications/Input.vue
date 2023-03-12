@@ -19,6 +19,7 @@
           <UserAvatar
             :size="35"
             :user="$chat.lookupUser(item.value)"
+            class="mr-1"
           ></UserAvatar>
           {{ $chat.lookupUser(item.value).username }}
         </div>

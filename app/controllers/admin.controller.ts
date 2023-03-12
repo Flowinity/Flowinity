@@ -419,7 +419,7 @@ export class AdminController {
 
     this.router.post(
       "/restart",
-      auth("*"),
+      auth("admin.ci"),
       async (req: RequestAuth, res: Response) => {
         if (!process.send) throw Errors.UNKNOWN
         console.log("Restarting TPU")
