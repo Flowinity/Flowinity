@@ -241,7 +241,7 @@ export default defineComponent({
           {
             id: 35,
             externalPath: "",
-            name: "Chat",
+            name: "Communications",
             path: this.$chat.selectedChatId
               ? `/communications/${this.$chat.selectedChatId}`
               : "/communications",
