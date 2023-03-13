@@ -5,7 +5,7 @@
     class="message-actions"
     :class="{ 'no-hide': avoid }"
     v-if="!$vuetify.display.mobile"
-    style="z-index: 50"
+    style="z-index: 2001"
   >
     <v-btn icon @click="$emit('emote')" rounded="0" :size="size">
       <v-tooltip location="top" activator="parent">React</v-tooltip>
@@ -40,7 +40,7 @@
     </v-btn>
     <v-menu
       location="top center"
-      v-model="avoid"
+      @update:modelValue="$emit('avoid', $event)"
       v-if="
         $chat.selectedChat?.association.rank &&
         ['admin', 'owner'].includes($chat.selectedChat?.association.rank)
@@ -76,10 +76,9 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "MessageActions",
-  props: ["message"],
+  props: ["message", "avoid"],
   data() {
     return {
-      avoid: false,
       size: "small"
     };
   }
