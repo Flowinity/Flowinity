@@ -103,7 +103,14 @@ export class UserUtilsService {
         {
           model: User,
           as: "otherUser",
-          attributes: ["id", "username", "avatar", "status", "description"],
+          attributes: [
+            "id",
+            "username",
+            "avatar",
+            "status",
+            "description",
+            "banner"
+          ],
           include: [
             {
               model: Plan,

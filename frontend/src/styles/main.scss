@@ -294,3 +294,16 @@ a {
   padding-top: 0.2px;
   cursor: pointer;
 }
+
+.show-on-hover {
+  display: none;
+}
+
+.show-on-hover:hover {
+  display: block;
+}
+
+.v-list-item:hover .show-on-hover {
+  display: block;
+}
+

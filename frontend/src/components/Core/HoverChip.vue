@@ -19,7 +19,7 @@
     </v-icon>
     <v-img :src="image" :width="18" :height="18" v-if="image" />
     <span v-else>{{ shortText }}</span>
-    <v-tooltip activator="parent" location="top">
+    <v-tooltip activator="parent" location="top" :eager="false">
       {{ text }}
     </v-tooltip>
     <span class="ml-1" v-if="old">{{ text }}</span>

@@ -41,7 +41,13 @@
             <v-col sm="100%" class="d-flex align-center">
               <v-card-text class="ml-n2">
                 <div>
-                  <h1 style="font-weight: 500" :class="username ? 'mb-2' : ''">
+                  <h1
+                    style="font-weight: 500"
+                    :class="username ? 'mb-2 pointer' : ''"
+                    @click="
+                      username ? $router.push(`/u/${username}`) : () => {}
+                    "
+                  >
                     {{ user.username }}
                   </h1>
                   <UserBadges :user="user"></UserBadges>

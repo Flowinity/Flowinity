@@ -233,6 +233,11 @@ const routes = [
         name: "Weekly Insights",
         component: () => import("@/views/Insights/Weekly.vue")
       },
+      {
+        path: "/changeLog",
+        name: "Changelog",
+        component: () => import("@/views/Changelog.vue")
+      },
       // Unauthenticated
       {
         path: "/verify/:token",

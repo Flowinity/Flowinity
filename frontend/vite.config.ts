@@ -18,6 +18,13 @@ const resolve = (file: string) => {
 
 export default defineConfig({
   build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: "assets/tpu-main.[hash].js",
+        chunkFileNames: "assets/tpu-chunk.[hash].js",
+        assetFileNames: "assets/tpu-asset.[hash].[ext]"
+      }
+    },
     /* rollupOptions: {
       plugins: [
         obfuscator({

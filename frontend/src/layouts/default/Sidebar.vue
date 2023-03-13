@@ -41,15 +41,15 @@
       "
     >
       <v-list-item
-        class="ml-1"
+        class="ml-1 my-1"
         style="text-transform: unset !important"
-        v-for="(item, index) in sidebar"
+        v-for="item in sidebar"
         :key="item.id"
         :href="item.externalPath"
         link
         :exact="item.exact"
         :to="item.path"
-        @click="handleClick(index)"
+        @click="handleClick(item.id)"
         :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
         :prepend-icon="item.icon"
       >
@@ -74,7 +74,7 @@
           </v-chip>
           <v-icon
             size="small"
-            style="float: right"
+            class="float-right"
             color="grey lighten-1"
             v-if="!$functions.checkScope(item.scope, $user.user?.scopes)"
           >
@@ -139,6 +139,7 @@ import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue";
 import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import GoldUpsell from "@/components/Dashboard/Dialogs/Gold.vue";
+import Draggable from "@/components/Draggable/components/DraggableContainer.vue";
 
 export default defineComponent({
   name: "Sidebar",
@@ -149,12 +150,14 @@ export default defineComponent({
     ColubrinaSidebarList,
     MigrateWizard,
     InviteAFriend,
-    UserAvatar
+    UserAvatar,
+    Draggable
   },
   data() {
     return {
       inviteAFriend: false,
-      feedback: false
+      feedback: false,
+      order: []
     };
   },
   computed: {
@@ -171,207 +174,192 @@ export default defineComponent({
         return "success";
       }
     },
-    sidebar() {
-      if (!this.$user.user) return [];
-      const items = [
-        {
-          id: 1,
-          click() {},
-          externalPath: "",
-          path: "/",
-          name: "Dashboard",
-          icon: "mdi-home",
-          scope: "user.view",
-          exact: true
-        },
-        {
-          id: 2,
-          click() {},
-          externalPath: "",
-          path: "/settings",
-          name: "Settings",
-          icon: "mdi-account-cog",
-          scope: "user.modify"
-        },
-        {
-          id: 6,
-          click() {},
-          externalPath: "",
-          path: "/gallery",
-          exact: false,
-          name: "Gallery",
-          icon: "mdi-image-multiple",
-          scope: "gallery.view"
-        },
-        {
-          id: 26,
-          click() {},
-          externalPath: "",
-          name: "Collections",
-          path: "/collections",
-          icon: "mdi-folder-multiple-image",
-          new: false,
-          scope: "collections.view"
-        },
-        {
-          id: 28,
-          click() {},
-          externalPath: "",
-          name: "AutoCollects",
-          path: "/autoCollect",
-          icon: "mdi-image-auto-adjust",
-          new: false,
-          scope: "collections.modify",
-          warning:
-            this.$user.user.pendingAutoCollects > 0
-              ? this.$user.user.pendingAutoCollects
-              : false
-        },
-        {
-          id: 34,
-          click() {},
-          externalPath: "",
-          name: "Workspaces",
-          path: this.$route.name?.toString()?.includes("Workspace")
-            ? "/workspaces"
-            : this.$app.lastNote
-            ? `/workspaces/notes/${this.$app.lastNote}`
-            : "/workspaces",
-          icon: "mdi-folder-account",
-          new: true,
-          scope: "workspaces.view",
-          experimentsRequired: ["INTERACTIVE_NOTES"]
-        },
-        {
-          id: 35,
-          click() {},
-          externalPath: "",
-          name: "Communications",
-          path: this.$chat.selectedChatId
-            ? `/communications/${this.$chat.selectedChatId}`
-            : "/communications",
-          icon: "mdi-message-processing",
-          warning: this.$functions.checkScope(
-            "chats.view",
-            this.$user.user?.scopes
-          )
-            ? this.$chat.totalUnread || "BETA"
-            : false,
-          scope: "chats.view",
-          experimentsRequired: ["COMMUNICATIONS"]
-        },
-        {
-          id: 36,
-          click() {},
-          externalPath: "",
-          name: "Mail",
-          path: "/mail",
-          icon: "mdi-email",
-          scope: "mail.view",
-          experimentsRequired: ["WEBMAIL"]
-        },
-        {
-          id: 27,
-          click() {},
-          externalPath: "",
-          name: "Insights",
-          path: "/insights",
-          scope: "*",
-          icon: "mdi-chart-timeline-variant-shimmer",
-          new: false
-        },
-        {
-          id: 31,
-          click() {},
-          externalPath: "",
-          name: "Starred",
-          path: "/starred",
-          icon: "mdi-star",
-          scope: "gallery.view",
-          new: false
-        },
-        {
-          id: 20,
-          click() {},
-          externalPath: "",
-          path: "/users",
-          name: "Users",
-          icon: "mdi-account-group",
-          scope: "user.view"
-        },
-        {
-          id: 29,
-          click() {
-            //@ts-ignore
-            this.feedback = true;
+    sidebar: {
+      get() {
+        if (!this.$user.user) return [];
+        const items = [
+          {
+            id: 1,
+            externalPath: "",
+            path: "/",
+            name: "Dashboard",
+            icon: "mdi-home",
+            scope: "user.view",
+            exact: true
           },
-          externalPath: "",
-          path: "",
-          name: "Provide Feedback",
-          icon: "mdi-comment-question-outline",
-          scope: "*"
-        },
-        {
-          id: 30,
-          click() {},
-          externalPath: "",
-          path: "/changelog",
-          name: "Changelog & Versions",
-          icon: "mdi-history"
-        },
-        {
-          id: 32,
-          click() {
-            //@ts-ignore
-            this.inviteAFriend = true;
+          {
+            id: 2,
+            externalPath: "",
+            path: "/settings",
+            name: "Settings",
+            icon: "mdi-account-cog",
+            scope: "user.modify"
           },
-          externalPath: "",
-          path: "",
-          name: "Invite a Friend",
-          icon: "mdi-gift-outline",
-          new: true,
-          scope: "*"
-        },
-        {
-          id: 33,
-          click() {
-            //@ts-ignore
-            this.$app.dialogs.gold.value = true;
+          {
+            id: 6,
+            externalPath: "",
+            path: "/gallery",
+            exact: false,
+            name: "Gallery",
+            icon: "mdi-image-multiple",
+            scope: "gallery.view"
           },
-          externalPath: "",
-          path: "",
-          name: this.$user.gold ? "What's new with Gold?" : "Upgrade to Gold",
-          icon: "mdi-plus",
-          new: false,
-          scope: "user.view",
-          experimentsRequired: ["EARLY_ACCESS"]
-        },
-        {
-          id: 33,
-          click() {
-            //@ts-ignore
-            this.$app.dialogs.migrateWizard = true;
+          {
+            id: 26,
+            externalPath: "",
+            name: "Collections",
+            path: "/collections",
+            icon: "mdi-folder-multiple-image",
+            new: false,
+            scope: "collections.view"
           },
-          externalPath: "",
-          path: "",
-          name: "Migrate from Colubrina",
-          icon: "mdi-chart-gantt",
-          new: false,
-          scope: "user.view",
-          experimentsRequired: ["PROJECT_MERGE"]
-        },
-        {
-          id: 37,
-          click() {},
-          externalPath: "",
-          path: "/admin",
-          name: "Admin Panel",
-          icon: "mdi-gavel",
-          new: false,
-          scope: "admin.view",
-          experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
-        }
-        /*{
+          {
+            id: 28,
+            externalPath: "",
+            name: "AutoCollects",
+            path: "/autoCollect",
+            icon: "mdi-image-auto-adjust",
+            new: false,
+            scope: "collections.modify",
+            warning:
+              this.$user.user.pendingAutoCollects > 0
+                ? this.$user.user.pendingAutoCollects
+                : false
+          },
+          {
+            id: 34,
+            externalPath: "",
+            name: "Workspaces",
+            path: this.$route.name?.toString()?.includes("Workspace")
+              ? "/workspaces"
+              : this.$app.lastNote
+              ? `/workspaces/notes/${this.$app.lastNote}`
+              : "/workspaces",
+            icon: "mdi-folder-account",
+            new: true,
+            scope: "workspaces.view",
+            experimentsRequired: ["INTERACTIVE_NOTES"]
+          },
+          {
+            id: 35,
+            externalPath: "",
+            name: "Chat",
+            path: this.$chat.selectedChatId
+              ? `/communications/${this.$chat.selectedChatId}`
+              : "/communications",
+            icon: "mdi-message-processing",
+            warning: this.$functions.checkScope(
+              "chats.view",
+              this.$user.user?.scopes
+            )
+              ? this.$chat.totalUnread || "BETA"
+              : false,
+            scope: "chats.view",
+            experimentsRequired: ["COMMUNICATIONS"]
+          },
+          {
+            id: 36,
+            externalPath: "",
+            name: "Mail",
+            path: "/mail",
+            icon: "mdi-email",
+            scope: "mail.view",
+            experimentsRequired: ["WEBMAIL"]
+          },
+          {
+            id: 27,
+            externalPath: "",
+            name: "Insights",
+            path: "/insights",
+            scope: "*",
+            icon: "mdi-chart-timeline-variant-shimmer",
+            new: false
+          },
+          {
+            id: 31,
+            externalPath: "",
+            name: "Starred",
+            path: "/starred",
+            icon: "mdi-star",
+            scope: "gallery.view",
+            new: false
+          },
+          {
+            id: 20,
+            externalPath: "",
+            path: "/users",
+            name: "Users",
+            icon: "mdi-account-group",
+            scope: "user.view"
+          },
+          {
+            id: 29,
+            click(instance: any) {
+              //@ts-ignore
+              instance.feedback = true;
+            },
+            externalPath: "",
+            path: "",
+            name: "Provide Feedback",
+            icon: "mdi-comment-question-outline",
+            scope: "*"
+          },
+          {
+            id: 30,
+            externalPath: "",
+            path: "/changelog",
+            name: "Changelog",
+            icon: "mdi-history"
+          },
+          {
+            id: 32,
+            click(instance: any) {
+              instance.inviteAFriend = true;
+            },
+            externalPath: "",
+            path: "",
+            name: "Invite a Friend",
+            icon: "mdi-gift-outline",
+            new: true,
+            scope: "*"
+          },
+          {
+            id: 33,
+            click(instance: any) {
+              instance.$app.dialogs.gold.value = true;
+            },
+            externalPath: "",
+            path: "",
+            name: this.$user.gold ? "What's new with Gold?" : "Upgrade to Gold",
+            icon: "mdi-plus",
+            new: false,
+            scope: "user.view",
+            experimentsRequired: ["EARLY_ACCESS"]
+          },
+          {
+            id: 38,
+            click(instance: any) {
+              instance.$app.dialogs.migrateWizard = true;
+            },
+            externalPath: "",
+            path: "",
+            name: "Migrate from Colubrina",
+            icon: "mdi-chart-gantt",
+            new: false,
+            scope: "user.view",
+            experimentsRequired: ["PROJECT_MERGE"]
+          },
+          {
+            id: 37,
+            externalPath: "",
+            path: "/admin",
+            name: "Admin Panel",
+            icon: "mdi-gavel",
+            new: false,
+            scope: "admin.view",
+            experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
+          }
+          /*{
           id: 33,
           click() {},
           externalPath: "",
@@ -380,7 +368,7 @@ export default defineComponent({
           icon: "mdi-chart-gantt",
           new: true
         }*/
-        /*{
+          /*{
           id: 9,
           click() {
             this.invite.modal = true
@@ -398,18 +386,43 @@ export default defineComponent({
           name: "Plans",
           icon: "mdi-star"
         }*/
-      ];
+        ];
 
-      return items.filter((item) => {
-        if (item.experimentsRequired) {
-          for (const experiment of item.experimentsRequired) {
-            if (!this.$experiments.experiments[experiment]) {
-              return false;
+        return items.filter((item) => {
+          if (item.experimentsRequired) {
+            for (const experiment of item.experimentsRequired) {
+              if (!this.$experiments.experiments[experiment]) {
+                return false;
+              }
             }
           }
-        }
-        return true;
-      });
+          return true;
+        });
+        /*
+     const storage = localStorage.getItem("sidebarOrder");
+     if (!storage) {
+       return filtered;
+     }
+   try {
+       const order = JSON.parse(storage);
+       if (order) {
+         filtered.sort((a, b) => {
+           return order.indexOf(a.id) - order.indexOf(b.id);
+         });
+       }
+       return filtered;
+     } catch {
+       return filtered;
+     }*/
+      },
+      set(val: any) {
+        if (!val) return;
+        localStorage.setItem(
+          "sidebarOrder",
+          JSON.stringify(val.map((item: any) => item.id))
+        );
+        this.order = val;
+      }
     },
     calculateJitsi() {
       return (
@@ -420,8 +433,11 @@ export default defineComponent({
     }
   },
   methods: {
-    handleClick(index: number) {
-      this.sidebar[index].click.call(this);
+    handleClick(id: number) {
+      const item = this.sidebar.find((item) => item.id === id);
+      if (item?.click) {
+        item.click(this);
+      }
     }
   }
 });

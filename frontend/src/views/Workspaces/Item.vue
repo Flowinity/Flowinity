@@ -32,7 +32,9 @@
             <span>Average 150wpm estimate</span>
           </v-tooltip>
         </span>
-        &bullet; Blocks: {{ blocks.toLocaleString() }}
+        <template v-if="!$vuetify.display.mobile">
+          &bullet; Blocks: {{ blocks.toLocaleString() }}
+        </template>
       </v-card-subtitle>
     </v-toolbar>
     <WorkspaceHome v-if="fail" />
@@ -628,7 +630,7 @@ export default defineComponent({
 @media (min-width: 0px) and (max-width: 1650px) {
   .ce-block__content,
   .ce-toolbar__content {
-    max-width: 90% !important;
+    max-width: 82% !important;
   }
 }
 

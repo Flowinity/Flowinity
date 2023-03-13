@@ -21,12 +21,12 @@
           </v-overlay>
         </div>
       </UserAvatar>
-      <h1 style="font-weight: 500" class="mt-12 mb-3">
+      <h1 style="font-weight: 500" class="mt-12 mb-4">
         {{ user.username }}
       </h1>
-      <UserBadges :user="user"></UserBadges>
+      <UserBadges :user="user" class="justify-center"></UserBadges>
       <template v-if="user.description">
-        <v-divider class="mt-4 mb-n1"></v-divider>
+        <v-divider class="mt-1 mb-n1"></v-divider>
         <v-card-text class="text-overline">
           About {{ user.username }}
         </v-card-text>
