@@ -139,7 +139,6 @@ import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue";
 import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import GoldUpsell from "@/components/Dashboard/Dialogs/Gold.vue";
-import Draggable from "@/components/Draggable/components/DraggableContainer.vue";
 
 export default defineComponent({
   name: "Sidebar",
@@ -150,8 +149,7 @@ export default defineComponent({
     ColubrinaSidebarList,
     MigrateWizard,
     InviteAFriend,
-    UserAvatar,
-    Draggable
+    UserAvatar
   },
   data() {
     return {
