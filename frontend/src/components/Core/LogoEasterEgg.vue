@@ -83,7 +83,6 @@ export default {
   computed: {
     event() {
       const date = this.$date().format("MMDD");
-      return "420";
       switch (date) {
         case "0314":
           return "pi";
