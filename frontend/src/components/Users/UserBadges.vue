@@ -153,7 +153,7 @@
       color="gold"
       :small="true"
       v-if="user.stats?.pulse >= 72 && user.stats?.pulse < 100"
-      title="Have 69h+ in TPU."
+      title="Have 72h+ in TPU."
       class="user-badge"
     ></HoverChip>
     <HoverChip
