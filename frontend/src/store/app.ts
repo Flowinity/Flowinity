@@ -86,6 +86,9 @@ export interface AppState {
     gold: {
       value: boolean;
     };
+    pi: {
+      value: boolean;
+    };
   };
   weather: {
     loading: boolean;
@@ -180,6 +183,9 @@ export const useAppStore = defineStore("app", {
         }
       },
       dialogs: {
+        pi: {
+          value: false
+        },
         gold: {
           value: false
         },

@@ -213,7 +213,7 @@ a {
 }
 
 *::-webkit-scrollbar {
-  display: none;  /* Safari and Chrome */
+  display: none; /* Safari and Chrome */
 }
 
 .mention {
@@ -228,12 +228,13 @@ a {
 }
 
 .message-jumped {
-    background-color: rgb(1, 144, 234, 0.2);
+  background-color: rgb(1, 144, 234, 0.2);
 }
 
 .message-date {
   visibility: hidden;
 }
+
 .message:hover .message-date {
   visibility: visible;
 }
@@ -257,6 +258,7 @@ a {
 .highlighted {
   background-color: rgba(255, 255, 255, 0.1);
 }
+
 .unhighlight:before {
   opacity: 0 !important;
 }
@@ -275,8 +277,8 @@ a {
 }
 
 .v-theme--light .elevation-6, .v-theme--light .elevation-8 {
-    box-shadow: 0 0 0 0 !important;
-    border: 2px solid #e4e4e4 !important;
+  box-shadow: 0 0 0 0 !important;
+  border: 2px solid #e4e4e4 !important;
 }
 
 .v-theme--amoled .v-card:not(.no-border) {
@@ -295,7 +297,7 @@ a {
 }
 
 .mention-selected {
-    background-color: rgba(29, 29, 29, 0.9);
+  background-color: rgba(29, 29, 29, 0.9);
 }
 
 .mention-item {
@@ -342,13 +344,21 @@ a {
 }
 
 .v-theme--amoled .v-table {
-    background-color: #000000 !important;
+  background-color: #000000 !important;
 }
 
 .v-theme--amoled .v-table__wrapper {
-    background-color: #000000 !important;
+  background-color: #000000 !important;
 }
 
 .v-theme--amoled .v-table th, .v-theme--amoled .v-table td {
-    background-color: #000000 !important;
+  background-color: #000000 !important;
+}
+
+.ph-box {
+  background-color: #ffa31a;
+  border-radius: 4px;
+  padding: 4px;
+  color: black;
+  margin-left: -11px;
 }

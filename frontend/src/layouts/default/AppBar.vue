@@ -33,28 +33,7 @@
       <v-icon>mdi-menu</v-icon>
     </v-app-bar-nav-icon>
     <template v-if="!$chat.isCommunications || !$chat.selectedChat">
-      <h1
-        style="z-index: 10; cursor: pointer; font-size: 32px"
-        class="text-gradient unselectable ml-4"
-        @click="$router.push('/')"
-        id="tpu-brand-logo"
-        title="TroploPrivateUploader"
-        v-if="!$vuetify.display.mobile"
-      >
-        TPU
-        <v-hover v-slot="{ isHovering, props }">
-          <span v-bind="props">
-            <template v-if="isHovering">
-              <span style="font-size: 1.15em">
-                {{ Math.PI }}
-              </span>
-            </template>
-            <template v-else>
-              <span style="font-size: 1.15em">π</span>
-            </template>
-          </span>
-        </v-hover>
-      </h1>
+      <LogoEasterEgg></LogoEasterEgg>
     </template>
     <template v-else>
       <CommunicationsAvatar
@@ -221,9 +200,16 @@ import CommunicationsAvatar from "@/components/Communications/CommunicationsAvat
 import Notifications from "@/components/Core/Notifications.vue";
 import { useTheme } from "@troplo/vuetify";
 import Pins from "@/components/Communications/Menus/Pins.vue";
+import LogoEasterEgg from "@/components/Core/LogoEasterEgg.vue";
 
 export default defineComponent({
-  components: { Pins, Notifications, CommunicationsAvatar, UserAvatar },
+  components: {
+    LogoEasterEgg,
+    Pins,
+    Notifications,
+    CommunicationsAvatar,
+    UserAvatar
+  },
   setup() {
     const theme = useTheme();
 

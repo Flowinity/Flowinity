@@ -78,10 +78,9 @@
         height="70"
         :rounded="false"
         flat
-        class="elevation-0 d-flex ml-3"
+        class="elevation-0 d-flex ml-3 no-outline"
         id="status-switcher"
         color="dark"
-        variant="default"
       >
         <v-row class="d-flex align-center">
           <v-col cols="1" class="d-flex align-center">
