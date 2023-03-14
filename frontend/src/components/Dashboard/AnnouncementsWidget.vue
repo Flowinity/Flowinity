@@ -7,7 +7,7 @@
       <v-card
         v-for="announcement in announcements"
         class="my-3 pt-3"
-        :color="$vuetify.theme.global.name === 'amoled' ? undefined : toolbar"
+        :color="$vuetify.theme.global.name === 'amoled' ? undefined : 'toolbar'"
         elevation="0"
         :variant="
           $vuetify.theme.global.name === 'amoled' ? 'outlined' : undefined
