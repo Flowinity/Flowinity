@@ -66,15 +66,6 @@
     </v-card-title>
     <v-btn disabled class="ml-n5">Dev</v-btn>
   </template>
-  <template v-if="event === 'ph'">
-    <v-card-title style="cursor: pointer" title="Happy 420!">
-      Troplo
-    </v-card-title>
-    <div class="ph-box">
-      PrivateUploader
-      <v-badge color="primary" :offset-y="-7" :offset-x="-6"></v-badge>
-    </div>
-  </template>
 </template>
 
 <script lang="ts">
@@ -96,8 +87,6 @@ export default defineComponent({
           return "j";
         case "0420":
           return "420";
-        case "0515":
-          return "ph";
         case "0101":
           return "ny";
         case "1225":
