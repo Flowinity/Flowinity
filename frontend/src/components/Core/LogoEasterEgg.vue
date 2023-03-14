@@ -5,7 +5,7 @@
     @click="$router.push('/')"
     id="tpu-brand-logo"
     :title="event === 'j' ? 'Jitsi Anniversary' : 'TroploPrivateUploader'"
-    v-if="!$vuetify.display.mobile && event !== 'bc' && event !== 'ph'"
+    v-if="!$vuetify.display.mobile && event !== 'bc'"
   >
     TPU
     <v-hover v-slot="{ isHovering, props }" v-if="event === 'pi'">
