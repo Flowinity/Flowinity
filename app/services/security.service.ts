@@ -229,7 +229,7 @@ export class SecurityService {
       userId: uid,
       name,
       scopes: scopes.join(","),
-      expiry,
+      expiredAt: expiry,
       type: "api",
       token: await utils.generateAPIKey("api")
     })

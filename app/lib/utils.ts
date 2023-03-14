@@ -28,14 +28,17 @@ async function generateAPIKey(type: "session" | "api" | "email") {
 async function createSession(
   userId: number,
   scopes: string,
-  type: "session" | "api"
+  type: "session" | "api",
+  expiredAt?: Date
 ) {
   const token = await generateAPIKey(type)
   await Session.create({
     token,
     userId,
     scopes,
-    type
+    type,
+
+    expiredAt: expiredAt || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
   })
   return token
 }
