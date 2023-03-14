@@ -50,6 +50,24 @@ export default defineComponent({
       } as Record<string, { color: string | undefined }>,
       versions: [
         {
+          version: "3.0.20",
+          date: "2021-03-14",
+          changes: [
+            {
+              tags: ["New", "TPU"],
+              text: "Added AMOLED theme"
+            },
+            {
+              tags: ["New", "TPU"],
+              text: "3.14"
+            },
+            {
+              tags: ["Fix", "TPU"],
+              text: "Fixed sessions not expiring, and not storing IP address history"
+            }
+          ]
+        },
+        {
           version: "3.0.19",
           date: "2023-03-13",
           changes: [

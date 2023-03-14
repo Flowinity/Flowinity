@@ -25,10 +25,25 @@ export default createVuetify({
       fixedHeader: true,
       noDataText: "No entries yet..."
     },
+    VTable: {
+      color: "card"
+    },
     VCard: {
       elevation: 6,
       color: "card",
       rounded: "xl"
+    },
+    VExpansionPanels: {
+      color: "card"
+    },
+    VExpansionPanel: {
+      color: "toolbar"
+    },
+    VExpansionPanelHeader: {
+      color: "card"
+    },
+    VExpansionPanelText: {
+      color: "card"
     },
     VCheckbox: {
       color: "primary"
@@ -68,15 +83,12 @@ export default createVuetify({
     VContainer: {
       fluid: true
     },
-    VExpansionPanel: {
-      bgColor: "toolbar"
-    },
     VList: {
       bgColor: "card"
     }
   },
   theme: {
-    defaultTheme: localStorage.getItem("theme") === "light" ? "light" : "dark",
+    defaultTheme: localStorage.getItem("theme") || "dark",
     themes: {
       dark: {
         colors: {
@@ -92,9 +104,28 @@ export default createVuetify({
           sheet: "#151515",
           text: "#000000",
           dark: "#151515",
-          bg: "#121212",
+          background: "#121212",
           gold: "#ffd700"
         }
+      },
+      amoled: {
+        colors: {
+          primary: "#0190ea",
+          secondary: "#757575",
+          accent: "#000000",
+          error: "#F44336",
+          info: "#2196F3",
+          success: "#4CAF50",
+          warning: "#ff9800",
+          card: "#000000",
+          toolbar: "#121212",
+          sheet: "#000000",
+          text: "#000000",
+          dark: "#000000",
+          gold: "#ffd700",
+          background: "#000000"
+        },
+        dark: true
       },
       light: {
         colors: {
@@ -110,7 +141,7 @@ export default createVuetify({
           sheet: "#fafafa",
           text: "#333333",
           dark: "#f7f7f7",
-          bg: "#f5f5f5",
+          background: "#f5f5f5",
           gold: "#ffd700"
         }
       }

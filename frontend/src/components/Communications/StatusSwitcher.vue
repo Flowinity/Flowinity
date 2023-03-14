@@ -81,6 +81,7 @@
         class="elevation-0 d-flex ml-3"
         id="status-switcher"
         color="dark"
+        variant="default"
       >
         <v-row class="d-flex align-center">
           <v-col cols="1" class="d-flex align-center">

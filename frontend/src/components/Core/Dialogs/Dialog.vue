@@ -5,7 +5,7 @@
     v-bind="$attrs"
     :fullscreen="$vuetify.display.mobile"
   >
-    <v-card>
+    <v-card class="no-border">
       <v-toolbar color="toolbar">
         <v-btn
           icon

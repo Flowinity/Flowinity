@@ -39,7 +39,7 @@
       <source :src="$app.domain + item.attachment" type="audio/mpeg" />
     </audio>
     <v-card
-      class="d-flex align-center justify-center"
+      class="d-flex no-border align-center justify-center"
       height="220"
       elevation="0"
       v-else

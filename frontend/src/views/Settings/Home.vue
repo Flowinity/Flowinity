@@ -35,6 +35,15 @@
     item-title="title"
     item-value="value"
   ></v-select>
+  <v-select
+    v-model="theme"
+    :items="themes"
+    label="Theme"
+    class="px-6"
+    @update:modelValue="$emit('update')"
+    item-title="title"
+    item-value="value"
+  ></v-select>
   <v-card-title>My TPU</v-card-title>
   <v-expansion-panels class="px-4">
     <v-expansion-panel title="Change username">
@@ -136,7 +145,7 @@
       </v-expansion-panel-text>
     </v-expansion-panel>
     <v-expansion-panel>
-      <v-expansion-panel-title>
+      <v-expansion-panel-title class="bg-card">
         Two factor authentication (2FA)
         <v-chip
           v-if="$user.user?.totpEnable"
@@ -159,13 +168,30 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import TwoFactor from "@/components/Settings/TwoFactor.vue";
+import { useTheme } from "@troplo/vuetify";
 
 export default defineComponent({
   name: "SettingsHome",
   components: { TwoFactor },
   emits: ["update", "laoding"],
+  setup() {
+    const theme = useTheme();
+
+    return {
+      toggleTheme: (themeName: string) => {
+        localStorage.setItem("theme", themeName);
+        theme.global.name.value = themeName;
+      }
+    };
+  },
   data() {
     return {
+      theme: useTheme().global.name,
+      themes: [
+        { title: "Light", value: "light" },
+        { title: "Dark", value: "dark" },
+        { title: "AMOLED", value: "amoled" }
+      ],
       temperatureUnits: [
         { title: "Celsius (Metric)", value: "celsius" },
         { title: "Kelvin (Metric Standard)", value: "kelvin" },
@@ -185,6 +211,11 @@ export default defineComponent({
         }
       ]
     };
+  },
+  watch: {
+    theme() {
+      this.toggleTheme(this.theme);
+    }
   },
   mounted() {
     this.$app.title = "Settings";

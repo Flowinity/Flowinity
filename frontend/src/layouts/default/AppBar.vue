@@ -42,6 +42,18 @@
         v-if="!$vuetify.display.mobile"
       >
         TPU
+        <v-hover v-slot="{ isHovering, props }">
+          <span v-bind="props">
+            <template v-if="isHovering">
+              <span style="font-size: 1.15em">
+                {{ Math.PI }}
+              </span>
+            </template>
+            <template v-else>
+              <span style="font-size: 1.15em">π</span>
+            </template>
+          </span>
+        </v-hover>
       </h1>
     </template>
     <template v-else>
@@ -217,9 +229,9 @@ export default defineComponent({
 
     return {
       toggleTheme: () => {
-        const toggled = theme.global.current.value.dark ? "light" : "dark";
-        theme.global.name.value = toggled;
-        localStorage.setItem("theme", toggled);
+        const themeName = "amoled";
+        localStorage.setItem("theme", themeName);
+        theme.global.name.value = themeName;
       }
     };
   },
@@ -236,12 +248,9 @@ export default defineComponent({
         },
         {
           id: 13,
-          click() {
-            //@ts-ignore
-            this.toggleTheme();
-          },
-          path: "",
-          name: "Toggle Theme",
+          click() {},
+          path: "/settings",
+          name: "Change Theme",
           disabled: false
         },
         {

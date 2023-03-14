@@ -504,7 +504,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.v-theme--dark {
+.v-theme--dark,
+.v-theme--amoled {
   .cdx-settings-input {
     color: white !important;
   }
@@ -564,7 +565,7 @@ export default defineComponent({
     border-left: 1px solid var(--v-bg-lighten4) !important;
     border-right: 1px solid var(--v-bg-lighten4) !important;
     background-color: var(--v-toolbar-base) !important;
-    z-index: 2;
+    z-index: 1;
   }
 
   .tc-add-row:hover {

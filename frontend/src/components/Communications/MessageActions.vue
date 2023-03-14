@@ -1,11 +1,11 @@
 <template>
   <v-card
     elevation="8"
-    color="card"
     class="message-actions"
     :class="{ 'no-hide': avoid }"
     v-if="!$vuetify.display.mobile"
     style="z-index: 2001"
+    :style="$vuetify.theme.global.name === 'amoled' ? 'background: black' : ''"
   >
     <v-btn icon @click="$emit('emote')" rounded="0" :size="size">
       <v-tooltip location="top" activator="parent">React</v-tooltip>

@@ -184,17 +184,15 @@
           :editing="true"
           @sendMessage="$emit('editMessage', $event)"
         />
-        <keep-alive>
-          <MessageActions
-            @edit="$emit('edit', { id: message.id, content: message.content })"
-            :message="message"
-            @reply="$emit('reply', message)"
-            @delete="$emit('delete', { message, shifting: $event })"
-            v-if="(!search && isHovering) || (!search && avoid)"
-            @avoid="avoid = $event"
-            :avoid="avoid"
-          ></MessageActions>
-        </keep-alive>
+        <MessageActions
+          @edit="$emit('edit', { id: message.id, content: message.content })"
+          :message="message"
+          @reply="$emit('reply', message)"
+          @delete="$emit('delete', { message, shifting: $event })"
+          v-if="(!search && isHovering) || (!search && avoid)"
+          @avoid="avoid = $event"
+          :avoid="avoid"
+        ></MessageActions>
         <Embed
           v-for="(embed, index) in message.embeds"
           :embed="embed"
@@ -203,30 +201,7 @@
         <template v-slot:append>
           <div>
             <template v-for="readReceipt in message.readReceipts">
-              <UserAvatar
-                :user="readReceipt.user"
-                :key="readReceipt.userId + '-' + message.id"
-                size="24"
-                class="pointer ml-2"
-                v-if="readReceipt?.user"
-                style="align-self: flex-end"
-                :id="
-                  'message-read-receipt-' +
-                  message.id +
-                  '-' +
-                  readReceipt.userId
-                "
-                @click.prevent="
-                  $chat.dialogs.user.username = readReceipt.user.username;
-                  $chat.dialogs.user.value = true;
-                "
-              >
-                <template v-slot:inline>
-                  <v-tooltip activator="parent" location="top">
-                    {{ readReceipt.user?.username }}
-                  </v-tooltip>
-                </template>
-              </UserAvatar>
+              <ReadReceipt :message="message" :read-receipt="readReceipt" />
             </template>
           </div>
         </template>
@@ -241,10 +216,12 @@ import CommunicationsAvatar from "@/components/Communications/CommunicationsAvat
 import MessageActions from "@/components/Communications/MessageActions.vue";
 import Embed from "@/components/Communications/Embed.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
 
 export default defineComponent({
   name: "Message",
   components: {
+    ReadReceipt,
     UserAvatar,
     Embed,
     MessageActions,

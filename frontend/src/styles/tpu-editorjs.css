@@ -1,4 +1,5 @@
-.v-theme--dark {
+.v-theme--dark,
+.v-theme--amoled {
   --v-bg-base: #121212;
   --v-bg-lighten5: #858585;
   --v-bg-lighten4: #6c6c6c;
@@ -251,7 +252,8 @@
   -ms-user-select: none;
   user-select: none;
 }
-.v-theme--dark .ce-toolbar__plus {
+.v-theme--dark .ce-toolbar__plus,
+.v-theme--amoled .ce-toolbar__plus {
   color: white;
 }
 .v-theme--light .ce-toolbar__plus {
@@ -338,7 +340,8 @@
   -ms-flex-align: center;
   align-items: center;
 }
-.v-theme--dark .ce-toolbar__settings-btn {
+.v-theme--dark .ce-toolbar__settings-btn,
+.v-theme--amoled .ce-toolbar__settings-btn {
   color: white;
 }
 .v-theme--light .ce-toolbar__settings-btn {
