@@ -168,7 +168,7 @@
                       ? ($chat.dialogs.user.username = friend.user.username)
                       : null
                   "
-                  class="rounded-xl pt-3 justify-center text-center px-2"
+                  class="rounded-xl pt-3 justify-center text-center px-2 no-border"
                   v-for="friend in user.friends"
                   :key="friend.id"
                   color="transparent"

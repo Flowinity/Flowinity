@@ -78,7 +78,7 @@
         height="70"
         :rounded="false"
         flat
-        class="elevation-0 d-flex ml-3 no-outline"
+        class="elevation-0 d-flex ml-3 no-border border-top"
         id="status-switcher"
         color="dark"
       >
