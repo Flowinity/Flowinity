@@ -88,7 +88,7 @@ export default createVuetify({
     }
   },
   theme: {
-    defaultTheme: ["dark", "amoled", "light"].includes(localStorage.getItem("theme")) ? localStorage.getItem("theme") : "dark",
+    defaultTheme: ["dark", "amoled", "light"].includes(localStorage.getItem("theme") || "dark") ? localStorage.getItem("theme") || "dark": "dark",
     themes: {
       dark: {
         colors: {
