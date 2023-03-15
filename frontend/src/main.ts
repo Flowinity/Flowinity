@@ -140,6 +140,8 @@ const app = createApp({
           vuetify.theme.themes.value.light.colors.primary = "#FFD700";
           vuetify.theme.themes.value.dark.colors.info = "#FFD700";
           vuetify.theme.themes.value.light.colors.info = "#FFD700";
+          vuetify.theme.themes.value.amoled.colors.primary = "#FFD700";
+          vuetify.theme.themes.value.amoled.colors.info = "#FFD700";
           document.body.classList.add("gold");
         }
       });
