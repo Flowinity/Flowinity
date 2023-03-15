@@ -274,7 +274,11 @@ export default defineComponent({
       },
       focusInterval: undefined as ReturnType<typeof setTimeout> | undefined,
       limit: false,
-      inputHeight: 87
+      inputHeight: 87,
+      embedFails: [] as {
+        data: { chatId: any; id: any; embeds: any };
+        retries: number;
+      }[]
     };
   },
   computed: {
@@ -696,7 +700,27 @@ export default defineComponent({
       const messageIndex = this.$chat.chats[index].messages.findIndex(
         (m: MessageType) => m.id === data.id
       );
-      if (messageIndex === -1) return;
+      if (messageIndex === -1) {
+        let embedFailIndex = this.embedFails.findIndex(
+          (e) => e.data.id === data.id
+        );
+        if (embedFailIndex === -1) {
+          this.embedFails.push({
+            data,
+            retries: 0
+          });
+          embedFailIndex = this.embedFails.length - 1;
+        }
+        if (this.embedFails[embedFailIndex]?.retries > 5) {
+          this.embedFails.splice(embedFailIndex, 1);
+          return;
+        }
+        setTimeout(() => {
+          this.onEmbedResolution(data);
+        }, 50);
+        this.embedFails[embedFailIndex].retries++;
+        return;
+      }
       this.$chat.chats[index].messages[messageIndex].embeds = data.embeds;
       this.autoScroll();
     },

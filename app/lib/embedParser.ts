@@ -45,7 +45,6 @@ export default async function (
     attachments.slice(0, 5)
   }
   for (const attachment of attachments) {
-    console.log(attachment)
     const upload = await Upload.findOne({
       where: {
         attachment: attachment

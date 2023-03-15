@@ -5,7 +5,7 @@ let md = new MarkdownIt({
   html: false,
   linkify: true,
   typographer: false,
-  breaks: true,
+  breaks: false,
   quotes: "“”‘’",
   langPrefix: "language-",
   xhtmlOut: false

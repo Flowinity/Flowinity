@@ -183,7 +183,9 @@ export default defineComponent({
     },
     copyLink(item: Upload) {
       navigator.clipboard.writeText(
-        `https://i.troplo.com/i/${item.attachment}`
+        `https://${this.$user.user?.domain.domain || "i.troplo.com"}/i/${
+          item.attachment
+        }`
       );
     },
     editItem(item: Upload) {

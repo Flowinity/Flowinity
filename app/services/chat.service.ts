@@ -593,6 +593,7 @@ export class ChatService {
       )
     }
     for (const user of chat.users) {
+      if (!user.userId) continue
       socket.to(user.userId).emit(key, data)
     }
   }

@@ -261,16 +261,6 @@ const app = createApp({
           }
         }
       );
-      socket.on(
-        "embedResolution",
-        (data: { chatId: number; id: number; embeds: any[] }) => {
-          if (data.chatId === chat.selectedChat?.id) return;
-          const message = checkMessage(data.id, data.chatId);
-          if (!message) return;
-          chat.chats[message.index].messages[message.messageIndex].embeds =
-            data.embeds;
-        }
-      );
       socket.on("notification", async (data: any) => {
         user.user?.notifications.unshift(data);
         chat.sound();
