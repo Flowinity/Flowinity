@@ -49,14 +49,7 @@ export default defineComponent({
   height: 1em;
   position: relative;
   overflow: hidden;
-}
-
-.v-theme--dark .skeleton-loader-no-animate {
-  background-color: #202020;
-}
-
-.v-theme--light .skeleton-loader-no-animate {
-  background-color: #f5f5f5;
+  background-color: var(--skeleton-loader-bg);
 }
 
 .skeleton-loader {
@@ -66,34 +59,23 @@ export default defineComponent({
   overflow: hidden;
 }
 
-.v-theme--dark .skeleton-loader {
-  background-color: #202020;
-  &::after {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    transform: translateX(-100%);
-    background-image: linear-gradient(
-      90deg,
-      rgba(#242424, 0) 0,
-      rgba(#242424, 0.2) 20%,
-      rgba(#242424, 0.5) 60%,
-      rgba(#242424, 0)
-    );
-    animation: shimmer 2s infinite;
-    content: "";
-  }
-  @keyframes shimmer {
-    100% {
-      transform: translateX(100%);
-    }
-  }
+.v-theme--dark {
+  --skeleton-loader-bg: #202020;
+  --skeleton-loader-bg-alt: #242424;
 }
 
-.v-theme--light .skeleton-loader {
-  background-color: #f5f5f5;
+.v-theme--light {
+  --skeleton-loader-bg: #d8d8d8;
+  --skeleton-loader-bg-alt: #cbcbcb;
+}
+
+.v-theme--amoled {
+  --skeleton-loader-bg: #101010;
+  --skeleton-loader-bg-alt: #1a1a1a;
+}
+
+.skeleton-loader {
+  background-color: var(--skeleton-loader-bg);
   &::after {
     position: absolute;
     top: 0;
@@ -103,10 +85,10 @@ export default defineComponent({
     transform: translateX(-100%);
     background-image: linear-gradient(
       90deg,
-      rgba(#cbcbcb, 0) 0,
-      rgba(#cbcbcb, 0.2) 20%,
-      rgba(#cbcbcb, 0.5) 60%,
-      rgba(#cbcbcb, 0)
+      rgba(var(--skeleton-loader-bg-alt), 0) 0,
+      rgba(var(--skeleton-loader-bg-alt), 0.2) 20%,
+      rgba(var(--skeleton-loader-bg-alt), 0.5) 60%,
+      rgba(var(--skeleton-loader-bg-alt), 0)
     );
     animation: shimmer 2s infinite;
     content: "";
