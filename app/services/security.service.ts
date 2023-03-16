@@ -197,7 +197,7 @@ export class SecurityService {
     uid: number,
     name: string,
     scopes: string[],
-    expiry: Date | null
+    expiry: Date | null = null
   ): Promise<Session> {
     if (!scopes.length) {
       throw Errors.NO_SCOPES_PROVIDED
@@ -229,7 +229,6 @@ export class SecurityService {
       userId: uid,
       name,
       scopes: scopes.join(","),
-      expiredAt: expiry,
       type: "api",
       token: await utils.generateAPIKey("api")
     })
