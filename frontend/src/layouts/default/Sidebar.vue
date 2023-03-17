@@ -110,7 +110,7 @@
         >
           {{ calculateJitsi }}% ({{
             Math.round($user.user?.subscription?.metadata?.hours)
-          }}h/14h)
+          }}h/8h)
         </v-progress-linear>
       </div>
       <div class="pa-2">
@@ -119,6 +119,7 @@
           :value="calculateQuota"
           height="25"
           rounded
+          class="text-white"
         >
           {{ Math.ceil(calculateQuota) }}% ({{
             $functions.fileSize($user.user?.quota || 0)
@@ -425,7 +426,7 @@ export default defineComponent({
     calculateJitsi() {
       return (
         Math.round(
-          (this.$user.user?.subscription?.metadata?.hours / 14) * 100
+          (this.$user.user?.subscription?.metadata?.hours / 8) * 100
         ) || 0
       );
     }

@@ -55,9 +55,10 @@
   <template v-if="event === 'bc'">
     <v-card-title
       id="bettercompass-title"
-      class="text-gradient"
+      class="text-gradient unselectable"
       style="cursor: pointer"
       title="BetterCompass is 1 year old today!"
+      @click="$router.push('/')"
     >
       BetterCompass
       <v-icon class="text-gradient" size="23" style="bottom: 0.05em">

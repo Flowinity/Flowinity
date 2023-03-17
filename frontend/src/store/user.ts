@@ -11,6 +11,7 @@ import { useAppStore } from "@/store/app";
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import { useMailStore } from "@/store/mail";
+import vuetify from "@/plugins/vuetify";
 
 export interface UserState {
   user: User | null;
@@ -125,6 +126,30 @@ export const useUserStore = defineStore("user", {
         }, 1000 * 60 * 15);
         this._postInitRan = true;
         app.populateQuickSwitcher();
+        if (this.user?.plan?.internalName === "GOLD") {
+          vuetify.theme.themes.value.dark.colors.primary = "#FFD700";
+          vuetify.theme.themes.value.light.colors.primary = "#FFD700";
+          vuetify.theme.themes.value.amoled.colors.primary = "#FFD700";
+          vuetify.theme.themes.value.dark.colors.info = "#FFD700";
+          vuetify.theme.themes.value.light.colors.info = "#FFD700";
+          vuetify.theme.themes.value.amoled.colors.info = "#FFD700";
+          document.body.classList.add("gold");
+          // remove other favicons
+          const links = document.getElementsByTagName("link");
+          for (const link of links) {
+            if (link.getAttribute("rel") !== "manifest") {
+              link.remove();
+            }
+          }
+          // set favicon to gold
+          const link =
+            (document.querySelector("link[rel*='icon']") as HTMLLinkElement) ||
+            (document.createElement("link") as HTMLLinkElement);
+          link.type = "image/x-icon";
+          link.rel = "shortcut icon";
+          link.href = "/favicon-gold.png";
+          document.head.appendChild(link);
+        }
       }
     },
     async init() {

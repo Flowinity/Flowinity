@@ -109,7 +109,7 @@ export class BillingService {
             nesyLength +
             "h of dominant speaker time in the last 14d (Jolt707)"
         )
-        if (nesyLength < 14) {
+        if (nesyLength < 8) {
           const subscription = await Subscription.findOne({
             where: {
               userId: 6

@@ -119,7 +119,7 @@
     </v-list>
   </v-menu>
   <v-card-text
-    style="color: #0190ea; cursor: pointer; font-size: 12px"
+    style="color: rgb(var(--v-theme-primary)); cursor: pointer; font-size: 12px"
     class="mb-n4 unselectable"
     @click="$app.workspaceDrawer = false"
     v-if="
@@ -127,7 +127,7 @@
       !$workspaces.versionHistory
     "
   >
-    <v-icon color="primary" size="20">mdi-close</v-icon>
+    <v-icon size="20">mdi-close</v-icon>
     Close sidebar
   </v-card-text>
   <v-card-text
