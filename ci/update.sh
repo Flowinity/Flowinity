@@ -1,6 +1,7 @@
 cd server
 git pull
 yarn --frozen-lockfile
+sequelize db:migrate
 yarn build
 cd frontend
 yarn --frozen-lockfile
