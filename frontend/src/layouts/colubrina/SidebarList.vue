@@ -74,7 +74,7 @@
       <v-list-item
         v-if="contextMenu.item?.recipient"
         @click="
-          $app.dialogs.nickname.userId = contextMenu.item.recipient.id;
+          $app.dialogs.nickname.userId = contextMenu.item?.recipient?.id || 0;
           $app.dialogs.nickname.value = true;
         "
       >
@@ -103,7 +103,12 @@
         "
       >
         <v-icon class="mr-1">mdi-exit-to-app</v-icon>
-        {{ contextMenu.item.users.length > 1 ? "Leave" : "Delete" }}
+        <template
+          v-if="contextMenu.item?.users && contextMenu.item?.users?.length > 1"
+        >
+          Leave
+        </template>
+        <template v-else>Delete</template>
       </v-list-item>
     </v-list>
   </v-menu>

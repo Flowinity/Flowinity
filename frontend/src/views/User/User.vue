@@ -60,7 +60,7 @@
                       icon
                       size="x-small"
                       @click.stop="
-                        $app.dialogs.nickname.userId = user.id;
+                        $app.dialogs.nickname.userId = user?.id || 0;
                         $app.dialogs.nickname.value = true;
                       "
                     >

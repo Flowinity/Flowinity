@@ -16,7 +16,7 @@
       <v-list style="background: #121212 !important">
         <v-list-item
           @click="
-            $app.dialogs.nickname.userId = contextMenu.item.userId;
+            $app.dialogs.nickname.userId = contextMenu.item?.userId || 0;
             $app.dialogs.nickname.value = true;
           "
         >
