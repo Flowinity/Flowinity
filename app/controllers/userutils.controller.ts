@@ -419,5 +419,18 @@ export class UserUtilsController {
         })
       }
     )
+
+    this.router.patch(
+      "/nickname/:userId",
+      auth("user.view"),
+      async (req: RequestAuth, res: Response) => {
+        await this.userUtilsService.setFriendNickname(
+          req.user.id,
+          parseInt(req.params.userId),
+          req.body.nickname
+        )
+        res.sendStatus(204)
+      }
+    )
   }
 }

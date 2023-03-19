@@ -6,7 +6,7 @@
     v-model="contextMenu.dialog"
     style="z-index: 2003"
   >
-    <v-list>
+    <v-list style="background: #151515 !important">
       <v-list-item @click="() => {}">
         <v-menu
           :nudge-right="10"
@@ -21,7 +21,10 @@
           location="right"
           class="ml-2"
         >
-          <v-list v-if="contextMenu.item">
+          <v-list
+            v-if="contextMenu.item"
+            style="background: #151515 !important"
+          >
             <v-list-item @click="setNotifications('all')">
               <v-list-item-title>All messages</v-list-item-title>
               <template v-slot:append>
@@ -69,6 +72,16 @@
         </v-list-item-title>
       </v-list-item>
       <v-list-item
+        v-if="contextMenu.item?.recipient"
+        @click="
+          $app.dialogs.nickname.userId = contextMenu.item.recipient.id;
+          $app.dialogs.nickname.value = true;
+        "
+      >
+        <v-icon class="mr-1">mdi-rename-outline</v-icon>
+        Change Nickname
+      </v-list-item>
+      <v-list-item
         v-if="
           contextMenu.item?.type === 'group' &&
           (contextMenu.item.association?.rank === 'admin' ||
@@ -90,7 +103,7 @@
         "
       >
         <v-icon class="mr-1">mdi-exit-to-app</v-icon>
-        Leave
+        {{ contextMenu.item.users.length > 1 ? "Leave" : "Delete" }}
       </v-list-item>
     </v-list>
   </v-menu>
@@ -207,7 +220,7 @@ export default defineComponent({
     },
     chatName(chat: Chat) {
       if (chat.type === "direct") {
-        return chat.recipient?.username || "Deleted User";
+        return this.$friends.getName(chat.recipient) || "Deleted User";
       } else {
         return chat.name;
       }

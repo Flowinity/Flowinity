@@ -587,7 +587,10 @@ export const useChatStore = defineStore("chat", {
     chatName(state: ChatState) {
       if (!state.selectedChat) return "Communications";
       if (state.selectedChat.type === "direct") {
-        return state.selectedChat.recipient?.username || "Deleted User";
+        return (
+          useFriendsStore().getName(state.selectedChat?.recipient) ||
+          "Deleted User"
+        );
       } else {
         return state.selectedChat.name;
       }

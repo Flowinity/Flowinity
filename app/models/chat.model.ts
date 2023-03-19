@@ -36,6 +36,12 @@ export class Chat extends Model {
   @Column
   legacyUserId: number
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  intent: null | string
+
   @BelongsTo(() => User, "userId")
   user: User
 
@@ -47,4 +53,5 @@ export class Chat extends Model {
 
   @HasMany(() => ChatAssociation, "chatId")
   users: ChatAssociation[]
+  recipient: any
 }

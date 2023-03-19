@@ -15,6 +15,14 @@
         <v-textarea v-model="body" label="Body" auto-grow />
         <v-btn @click="sendEmail">Send</v-btn>
       </v-card-text>
+      <v-card-text>
+        <v-text-field
+          v-model="script"
+          label="Script Name"
+          @keyup.enter="runScript"
+        />
+        <v-btn @click="runScript">Run script</v-btn>
+      </v-card-text>
     </v-card>
   </v-container>
 </template>
@@ -26,6 +34,7 @@ export default defineComponent({
   name: "Dev",
   data() {
     return {
+      script: "",
       email: "troplo@troplo.com",
       subject: "Colubrina is now TPU",
       body: JSON.stringify(
@@ -54,6 +63,10 @@ export default defineComponent({
     };
   },
   methods: {
+    async runScript() {
+      await this.axios.post(`/admin/scripts/${this.script}`);
+      this.$toast.success("Script executed");
+    },
     async sendEmail() {
       await this.axios.post("/admin/dev/email", {
         to: this.email,

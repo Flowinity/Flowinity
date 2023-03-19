@@ -23,6 +23,7 @@ import { Experiment } from "@app/models/experiment.model"
 import { Badge } from "@app/models/badge.model"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
+import { FriendNickname } from "@app/models/friendNickname"
 
 @DefaultScope(() => ({
   attributes: {
@@ -229,4 +230,7 @@ export class User extends Model {
   scopes: string
 
   stats: object
+
+  @HasOne(() => FriendNickname, "friendId")
+  nickname: FriendNickname
 }

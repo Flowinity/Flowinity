@@ -15,8 +15,57 @@ import { SortValidate } from "@app/validators/sort"
 import paginate from "jw-paginate"
 import { Op } from "sequelize"
 import { Badge } from "@app/models/badge.model"
+import { FriendNickname } from "@app/models/friendNickname"
+
 @Service()
 export class UserUtilsService {
+  async setFriendNickname(userId: number, friendId: number, name: string) {
+    const user = await User.findOne({
+      where: {
+        id: friendId
+      }
+    })
+    if (!user) throw Errors.USER_NOT_FOUND
+    const nickname = await FriendNickname.findOne({
+      where: {
+        userId,
+        friendId
+      }
+    })
+    if (!nickname && name) {
+      await FriendNickname.create({
+        userId,
+        friendId,
+        nickname: name
+      })
+    } else if (name) {
+      await FriendNickname.update(
+        {
+          nickname: name
+        },
+        {
+          where: {
+            userId,
+            friendId
+          }
+        }
+      )
+    } else if (nickname) {
+      await FriendNickname.destroy({
+        where: {
+          userId,
+          friendId
+        }
+      })
+    } else {
+      return null
+    }
+    socket.to(userId).emit("friendNickname", {
+      id: friendId,
+      nickname: name
+    })
+    return name
+  }
   async verifyEmail(token: string) {
     const user = await User.findOne({
       where: {
@@ -112,6 +161,14 @@ export class UserUtilsService {
             "banner"
           ],
           include: [
+            {
+              model: FriendNickname,
+              as: "nickname",
+              required: false,
+              where: {
+                userId
+              }
+            },
             {
               model: Plan,
               as: "plan",

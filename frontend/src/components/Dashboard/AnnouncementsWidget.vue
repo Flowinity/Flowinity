@@ -48,19 +48,39 @@ export default defineComponent({
   components: { UserAvatar },
   data() {
     return {
-      page: 1
+      page: 1,
+      demo: [
+        {
+          id: 1,
+          userId: 1,
+          content: "Welcome to TroploPrivateUploader.",
+          type: null,
+          createdAt: "2023-01-21T15:36:45.000Z",
+          updatedAt: "2023-01-21T15:36:45.000Z",
+          user: {
+            id: 1,
+            username: "Troplo",
+            avatar: "3c0926363bc9.png",
+            moderator: false,
+            administrator: true
+          }
+        }
+      ]
     };
   },
   computed: {
     announcements() {
       // limit 3 per page, get pages
-      return this.$app.site.announcements.slice(
-        (this.page - 1) * 3,
-        this.page * 3
-      );
+      const announcements = this.$app.demo
+        ? this.demo
+        : this.$app.site.announcements;
+      return announcements.slice((this.page - 1) * 3, this.page * 3);
     },
     pages() {
-      return Math.ceil(this.$app.site.announcements.length / 3);
+      const announcements = this.$app.demo
+        ? this.demo
+        : this.$app.site.announcements;
+      return Math.ceil(announcements.length / 3);
     }
   }
 });

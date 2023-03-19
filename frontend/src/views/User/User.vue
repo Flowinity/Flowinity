@@ -48,7 +48,33 @@
                       username ? $router.push(`/u/${username}`) : () => {}
                     "
                   >
-                    {{ user.username }}
+                    {{ $friends.getName(user) }}
+                    <span
+                      style="font-size: 18px"
+                      class="text-grey"
+                      v-if="$friends.getName(user) !== user.username"
+                    >
+                      ({{ user.username }})
+                    </span>
+                    <v-btn
+                      icon
+                      size="x-small"
+                      @click.stop="
+                        $app.dialogs.nickname.userId = user.id;
+                        $app.dialogs.nickname.value = true;
+                      "
+                    >
+                      <v-tooltip
+                        :eager="false"
+                        activator="parent"
+                        location="top"
+                      >
+                        Set friend nickname
+                      </v-tooltip>
+                      <v-icon v-if="user?.friend === 'accepted'">
+                        mdi-rename
+                      </v-icon>
+                    </v-btn>
                   </h1>
                   <UserBadges :user="user"></UserBadges>
                 </div>
@@ -453,7 +479,7 @@ export default defineComponent({
       const username = this.username || this.$route.params.username;
       const { data } = await this.axios.get(`/user/profile/${username}`);
       this.user = data;
-      if (!this.username) this.$app.title = this.user?.username as string;
+      if (!this.username) this.$app.title = this.user?.username + "'s Profile";
       this.$app.componentLoading = false;
     }
   },

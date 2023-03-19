@@ -85,4 +85,15 @@ export interface User {
   weatherUnit: "celsius" | "fahrenheit" | "kelvin";
   emailVerified: boolean;
   autoCollectRules: AutoCollectRule[];
+  nickname:
+    | {
+        nickname: string;
+        id: number;
+        userId: number;
+        friendId: number;
+        createdAt: Date;
+        updatedAt: Date;
+      }
+    | null
+    | undefined;
 }

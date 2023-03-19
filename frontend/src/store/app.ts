@@ -73,6 +73,10 @@ export interface AppState {
     quickSwitcher: boolean;
     memoryProfiler: boolean;
     colubrina: boolean;
+    nickname: {
+      value: boolean;
+      userId: number;
+    };
     upload: {
       value: boolean;
       percentage: number;
@@ -111,11 +115,13 @@ export interface AppState {
     route: string;
     name: string;
   }[];
+  demo: boolean;
 }
 
 export const useAppStore = defineStore("app", {
   state: () =>
     ({
+      demo: false,
       cordova: false,
       lastRoute: null,
       domain: import.meta.env.DEV ? "/i/" : "https://i.troplo.com/i/",
@@ -183,6 +189,10 @@ export const useAppStore = defineStore("app", {
         }
       },
       dialogs: {
+        nickname: {
+          value: false,
+          userId: 0
+        },
         pi: {
           value: false
         },

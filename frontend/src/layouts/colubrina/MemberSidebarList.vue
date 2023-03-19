@@ -7,6 +7,25 @@
     <v-icon>mdi-arrow-left</v-icon>
     Back to Workspaces
   </v-card-text>
+  <v-menu
+    v-model="contextMenu.dialog"
+    :style="menuStyle"
+    style="z-index: 6001 !important"
+  >
+    <v-card>
+      <v-list style="background: #121212 !important">
+        <v-list-item
+          @click="
+            $app.dialogs.nickname.userId = contextMenu.item.userId;
+            $app.dialogs.nickname.value = true;
+          "
+        >
+          <v-icon class="mr-1">mdi-rename-outline</v-icon>
+          Change Nickname
+        </v-list-item>
+      </v-list>
+    </v-card>
+  </v-menu>
   <div class="mt-2" v-if="$vuetify.display.mobile">
     <CommunicationsAvatar
       :user="$chat.selectedChat?.recipient"
@@ -71,7 +90,7 @@
         @contextmenu.prevent="context($event, association)"
       >
         <template v-slot:title>
-          {{ association.user?.username || "Deleted User" }}
+          {{ $friends.getName(association.user) || "Deleted User" }}
           <span>
             <v-icon color="gold" v-if="association.rank === 'owner'">
               mdi-crown
@@ -186,7 +205,7 @@ export default defineComponent({
         dialog: false,
         x: 0,
         y: 0,
-        item: {}
+        item: null as ChatAssociation | null
       }
     };
   },
@@ -219,6 +238,12 @@ export default defineComponent({
           }
         }
       );
+    },
+    menuStyle() {
+      return `
+        position: absolute;
+        top: ${this.contextMenu.y}px;
+        left: ${this.contextMenu.x + 10}px;`;
     }
   },
   methods: {

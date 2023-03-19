@@ -6,6 +6,7 @@
     @touchstart="touchStart"
     @touchend="touchEnd"
   >
+    <NicknameDialog v-model="$app.dialogs.nickname.value"></NicknameDialog>
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
     <WorkspaceDeleteDialog
       v-model="$app.dialogs.delete.value"
@@ -102,6 +103,7 @@ import UploadDialog from "@/components/Core/Dialogs/Upload.vue";
 import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import QuickSwitcher from "@/components/Core/Dialogs/QuickSwitcher.vue";
+import NicknameDialog from "@/components/Core/Dialogs/Nickname.vue";
 </script>
 
 <script lang="ts">

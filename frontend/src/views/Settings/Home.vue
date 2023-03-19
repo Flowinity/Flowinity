@@ -13,6 +13,12 @@
       image cached by Discord by the time it's sent by yourself. Do not enable
       this if you don't trust Discord.
     </small>
+    <v-switch
+      v-model="$app.demo"
+      label="Demo mode"
+      class="mb-n7"
+      v-if="$app.site.release === 'dev'"
+    ></v-switch>
   </v-card-text>
   <v-card-title>Preferences</v-card-title>
   <v-slider

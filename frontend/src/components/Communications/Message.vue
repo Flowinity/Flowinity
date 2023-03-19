@@ -132,7 +132,7 @@
               })
             "
           >
-            {{ message.user?.username }}
+            {{ $friends.getName(message.user) }}
           </a>
           <small class="text-grey">
             {{ $date(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}

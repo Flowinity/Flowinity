@@ -74,6 +74,38 @@ export class ChatService {
       attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
     }
   ]
+  private chatIncludes = [
+    {
+      model: ChatAssociation,
+      as: "users",
+      include: [
+        {
+          model: User,
+          as: "tpuUser",
+          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+        },
+        {
+          model: LegacyUser,
+          as: "legacyUser",
+          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+        }
+      ],
+      attributes: [
+        "id",
+        "userId",
+        "rank",
+        "legacyUserId",
+        "user",
+        "lastRead",
+        "createdAt",
+        "updatedAt"
+      ],
+      order: [
+        ["rank", "DESC"],
+        ["createdAt", "ASC"]
+      ]
+    }
+  ]
 
   async updateAssociationSettings(
     associationId: number,
@@ -117,17 +149,25 @@ export class ChatService {
       }
     })
     if (!user) throw Errors.USER_NOT_FOUND
+    await this.sendMessage(
+      `<@${userId}> left the chat`,
+      userId,
+      associationId,
+      undefined,
+      "leave",
+      []
+    )
+    await ChatAssociation.destroy({
+      where: {
+        chatId: chat.id,
+        userId
+      }
+    })
     if (user.rank === "owner") {
       const associations = await ChatAssociation.findAll({
         where: {
           chatId: chat.id,
           rank: "owner"
-        }
-      })
-      await ChatAssociation.destroy({
-        where: {
-          chatId: chat.id,
-          userId
         }
       })
       if (associations.length === 1) {
@@ -160,21 +200,23 @@ export class ChatService {
           await this.patchCacheForAll(chat.id, userId)
           return true
         }
-        await ChatAssociation.update(
-          {
-            rank: "owner"
-          },
-          {
-            where: {
-              id: association.id
+        if (chat.type === "group") {
+          await ChatAssociation.update(
+            {
+              rank: "owner"
+            },
+            {
+              where: {
+                id: association.id
+              }
             }
-          }
-        )
-        this.emitForAll(associationId, userId, "chatUserUpdate", {
-          id: association.id,
-          rank: "owner",
-          chatId: chat.id
-        })
+          )
+          this.emitForAll(associationId, userId, "chatUserUpdate", {
+            id: association.id,
+            rank: "owner",
+            chatId: chat.id
+          })
+        }
       }
     }
     this.emitForAll(associationId, userId, "removeChatUser", {
@@ -704,7 +746,7 @@ export class ChatService {
     if (!chat) throw Errors.CHAT_NOT_FOUND
     return {
       ...chat.toJSON(),
-      recipient: this.getRecipient(chat, userId)
+      recipient: await this.getRecipient(chat, userId)
     }
   }
 
@@ -715,41 +757,39 @@ export class ChatService {
       throw Errors.INVALID_FRIEND_SELECTION
     const friends = await userUtilsService.validateFriends(userId, users)
     const type = friends.length === 1 ? "direct" : "group"
+    const intent = [userId, ...users].sort((a, b) => a - b).join("-")
+    console.log(intent)
     if (type === "direct") {
-      const chats = await ChatAssociation.findAll({
+      const chat = await Chat.findOne({
         where: {
-          userId
+          type: "direct",
+          intent
         },
-        include: [
-          {
-            model: Chat,
-            as: "chat",
-            where: {
-              type: "direct"
-            },
-            include: [
-              {
-                model: ChatAssociation,
-                as: "users"
-              }
-            ]
-          }
-        ]
+        // @ts-ignore
+        include: this.chatIncludes
       })
-      const chat = chats.find(
-        (a: ChatAssociation) =>
-          a.chat.users.length === 2 &&
-          a.chat.users.find((u: ChatAssociation) => u.userId === users[0])
-      )
-      if (chat) {
-        return this.getChat(chat.chatId, userId)
+      console.log(chat?.users)
+      if (chat?.users.find((u: ChatAssociation) => u.userId === userId)) {
+        return await this.getChat(chat.id, userId)
+      } else if (chat) {
+        const association = await ChatAssociation.create({
+          userId,
+          chatId: chat.id,
+          rank: "member",
+          identifier: chat.id + "-" + userId
+        })
+        const chatWithUsers = await this.getChat(chat.id, association.userId)
+        cacheService.patchChatsCacheForUser(association.userId, chatWithUsers)
+        socket.to(association.userId).emit("chatCreated", chatWithUsers)
+        return chatWithUsers
       }
     }
 
     const chat = await Chat.create({
       name: type === "group" ? "Unnamed Group" : "Direct Message",
       type,
-      userId
+      userId,
+      intent: type === "direct" ? intent : null
     })
     let associations = []
 
@@ -808,7 +848,7 @@ export class ChatService {
             name: chat.name,
             id: chat.id,
             type: chat.type,
-            recipient: this.getRecipient(chat, association.user.id)
+            recipient: await this.getRecipient(chat, association.user.id)
           },
           association: {
             id: association.id,
@@ -888,18 +928,42 @@ export class ChatService {
     return await this.sendMessageToUsers(message.id, chat)
   }
 
-  getRecipient(chat: Chat, userId: number) {
-    const recipient =
-      chat.type === "direct"
-        ? chat.users.find((a: ChatAssociation) => a.userId !== userId)
-        : null
+  async getRecipient(chat: Chat, userId: number) {
+    if (chat.type !== "direct") return null
+    const recipient = chat.users.find(
+      (a: ChatAssociation) => a.userId !== userId
+    )
     if (recipient) {
       return {
-        ...recipient.user?.dataValues,
+        ...recipient.user,
         legacyUser: !!recipient.legacyUser
       }
     } else {
-      return null
+      const intent = chat.intent
+        ?.split("-")
+        .map((i: string) => parseInt(i))
+        .filter((i: number) => i !== userId)
+      if (intent?.length) {
+        const user = await User.findOne({
+          where: { id: intent[0] },
+          attributes: [
+            "id",
+            "username",
+            "avatar",
+            "createdAt",
+            "description",
+            "administrator",
+            "moderator"
+          ]
+        })
+        if (!user) return null
+        return {
+          ...user.toJSON(),
+          legacyUser: false
+        }
+      } else {
+        return null
+      }
     }
   }
 
@@ -973,6 +1037,7 @@ export class ChatService {
       const start = new Date().getTime()
       for (const chat of chats) {
         chat._redisSortDate = await redis.get(`chat:${chat.id}:sortDate`)
+        chat.recipient = await this.getRecipient(chat, userId)
       }
 
       const sorted = chats.sort((a: ChatCache, b: ChatCache) => {
@@ -1037,12 +1102,7 @@ export class ChatService {
         }
       ]
     })
-    return chats.map((chat: Chat) => {
-      return {
-        ...chat.toJSON(),
-        recipient: this.getRecipient(chat.toJSON(), userId)
-      }
-    })
+    return chats
     /* return chats.map((chat: Chat) => {
       const recipient =
         chat.type === "direct"

@@ -1,9 +1,9 @@
 {
-  "compilerOptions" : {
-    "baseUrl" : "./",
-    "target" : "es2021",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "target": "es2021",
     "incremental": true,
-    "types" : [
+    "types": [
       "reflect-metadata",
       "@types/mocha",
       "mocha",
@@ -11,29 +11,25 @@
       "webpack-env",
       "@types/sequelize"
     ],
-    "typeRoots" : [
-      "./app/types"
-    ],
-    "module" : "commonjs",
-    "moduleResolution" : "node",
-    "sourceMap" : true,
-    "outDir" : "out",
-    "emitDecoratorMetadata" : true,
-    "experimentalDecorators" : true,
-    "noImplicitAny" : true,
-    "noImplicitThis" : true,
-    "noFallthroughCasesInSwitch" : true,
-    "noUnusedLocals" : true,
-    "esModuleInterop" : true,
-    "noImplicitReturns" : true,
-    "suppressImplicitAnyIndexErrors" : true,
-    "strictNullChecks" : true,
+    "typeRoots": ["./app/types"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "out",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": false,
+    "esModuleInterop": true,
+    "noImplicitReturns": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "strictNullChecks": true,
     "strict": false,
-    "resolveJsonModule" : true,  // DO NOT CHANGE (I changed it :))
-    "paths" : {
-      "@app/*" : [
-        "./app/*"
-      ]
+    "resolveJsonModule": true, // DO NOT CHANGE (I changed it :))
+    "paths": {
+      "@app/*": ["./app/*"]
     }
   }
 }

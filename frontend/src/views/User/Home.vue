@@ -46,7 +46,15 @@
                 style="text-decoration: none; color: unset"
                 :to="'/u/' + user.username"
               >
-                {{ user.username }}
+                <v-tooltip
+                  :eager="false"
+                  v-if="$friends.getName(user.id, true)"
+                  activator="parent"
+                  location="top"
+                >
+                  {{ user.username }}
+                </v-tooltip>
+                {{ $friends.getName(user) }}
               </router-link>
             </v-card-title>
             <UserBadges :user="user" class="justify-center mt-n1 mb-2" />

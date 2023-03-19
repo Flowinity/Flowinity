@@ -50,6 +50,28 @@ export default defineComponent({
       } as Record<string, { color: string | undefined }>,
       versions: [
         {
+          version: "3.0.21 / 3.0.22",
+          date: "2023-03-19",
+          changes: [
+            {
+              tags: ["New", "TPU"],
+              text: "Friend nicknames are back!"
+            },
+            {
+              tags: ["New", "Communications"],
+              text: "You can now close DMs"
+            },
+            {
+              tags: ["Fix", "Communications"],
+              text: "Fixed duplicate direct messages on legacy Colubrina users"
+            },
+            {
+              tags: ["Fix", "Communications"],
+              text: "Legacy groups now have owners"
+            }
+          ]
+        },
+        {
           version: "3.0.20",
           date: "2023-03-14",
           changes: [

@@ -435,11 +435,56 @@ export class AdminController {
     })
 
     this.router.all(
+      "/scripts/*",
+      auth("*"),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        if (req.user.id !== 1) {
+          throw Errors.ADMIN_ONLY
+        } else {
+          next()
+        }
+      }
+    )
+
+    // --SCRIPTS--
+    this.router.post(
+      "/scripts/groupOwners",
+      async (req: RequestAuth, res: Response) => {
+        await this.adminService.scriptColubrinaGroupOwner()
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.post(
+      "/scripts/dmOwners",
+      async (req: RequestAuth, res: Response) => {
+        await this.adminService.scriptColubrinaDMOwners()
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.post(
+      "/scripts/dmMerge",
+      async (req: RequestAuth, res: Response) => {
+        await this.adminService.scriptColubrinaDMMerge()
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.post(
+      "/scripts/dmIntents",
+      async (req: RequestAuth, res: Response) => {
+        await this.adminService.scriptColubrinaDMIntents()
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.all(
       "*",
       auth("*"),
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         if (config.release !== "dev") {
-          res.sendStatus(404)
+          throw Errors.ADMIN_ONLY
         } else {
           next()
         }

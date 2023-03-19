@@ -20,7 +20,9 @@ import { Chat } from "@app/models/chat.model"
 import { Badge } from "@app/models/badge.model"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
-
+import { ChatAssociation } from "@app/models/chatAssociation.model"
+import { LegacyUser } from "@app/models/legacyUser.model"
+import { Message } from "@app/models/message.model"
 export enum CacheType {
   "everything",
   "state",
@@ -495,5 +497,195 @@ export class AdminService {
         }
       ]
     })
+  }
+
+  // --SCRIPTS--
+  async scriptFindChats(
+    type: undefined | "group" | "direct" | "channel" = undefined
+  ) {
+    return await Chat.findAll({
+      where: {
+        type
+      },
+      include: [
+        {
+          model: ChatAssociation,
+          as: "users",
+          attributes: [
+            "id",
+            "userId",
+            "user",
+            "rank",
+            "legacyUserId",
+            "lastRead",
+            "createdAt",
+            "updatedAt"
+          ],
+          include: [
+            {
+              model: User,
+              as: "tpuUser",
+              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+            },
+            {
+              model: LegacyUser,
+              as: "legacyUser",
+              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+            }
+          ]
+        }
+      ]
+    })
+  }
+  async scriptColubrinaGroupOwner() {
+    const chats = await this.scriptFindChats("group")
+    for (const chat of chats) {
+      // if the chat has no owners
+      if (!chat.users.find((user) => user.rank === "owner")) {
+        // get the owner
+        const owner = chat.users.find(
+          (user) => user.tpuUser?.id === chat.userId
+        )
+        if (owner?.tpuUser) {
+          await ChatAssociation.update(
+            {
+              rank: "owner"
+            },
+            {
+              where: {
+                id: owner.id
+              }
+            }
+          )
+        } else {
+          // make a random admin the owner
+          const admin = chat.users.find((user) => user.rank === "admin")
+          if (admin?.tpuUser) {
+            await ChatAssociation.update(
+              {
+                rank: "owner"
+              },
+              {
+                where: {
+                  id: admin.id
+                }
+              }
+            )
+          } else {
+            const user = chat.users.find((user) => user.rank === "member")
+            if (user?.tpuUser) {
+              await ChatAssociation.update(
+                {
+                  rank: "owner"
+                },
+                {
+                  where: {
+                    id: user.id
+                  }
+                }
+              )
+            } else {
+              console.log("no users in chat", chat.id)
+            }
+          }
+        }
+      }
+    }
+    console.log("OK, clearing cache")
+    this.purgeCache(6)
+  }
+  async scriptColubrinaDMOwners() {
+    const chats = await this.scriptFindChats("direct")
+    for (const chat of chats) {
+      // if any of the chats have users of rank admin or owner, set them to member
+      for (const user of chat.users) {
+        if (user.rank === "admin" || user.rank === "owner") {
+          console.log(`changing ${user.user?.username} to member`)
+          await ChatAssociation.update(
+            {
+              rank: "member"
+            },
+            {
+              where: {
+                id: user.id
+              }
+            }
+          )
+        }
+      }
+    }
+    console.log("OK, clearing cache")
+    this.purgeCache(6)
+  }
+  async scriptColubrinaDMMerge() {
+    const chats = await this.scriptFindChats("direct")
+    // if any of the chats have the same users, merge them
+    for (const chat of chats) {
+      for (const chat2 of chats) {
+        if (chat.id === chat2.id) continue
+        const users = chat.users.map((user) => user.tpuUser?.id)
+        const users2 = chat2.users.map((user) => user.tpuUser?.id)
+        if (users.length === users2.length) {
+          if (users.every((user) => users2.includes(user))) {
+            // if the users or users2 contains undefined, skip
+            if (users.includes(undefined) || users2.includes(undefined))
+              continue
+            if (users.length !== 2 || users2.length !== 2) continue
+            // delete the other chat from array
+            chats.splice(chats.indexOf(chat2), 1)
+            // merge the chats
+            console.log(
+              `merging ${chat.id} and ${chat2.id}, Users: ${users}, Users2: ${users2}`
+            )
+            await ChatAssociation.destroy({
+              where: {
+                chatId: chat2.id
+              }
+            })
+            await Message.update(
+              {
+                chatId: chat.id
+              },
+              {
+                where: {
+                  chatId: chat2.id
+                }
+              }
+            )
+            await Chat.destroy({
+              where: {
+                id: chat2.id
+              }
+            })
+          }
+        }
+      }
+    }
+    console.log("OK, clearing cache")
+    this.purgeCache(6)
+  }
+
+  async scriptColubrinaDMIntents() {
+    const chats = await this.scriptFindChats("direct")
+    for (const chat of chats) {
+      if (chat.intent?.length) continue
+      const users = chat.users.map((user) => user.tpuUser?.id)
+      if (users.length !== 2 || users.includes(undefined)) continue
+      users.sort((a, b) => a - b)
+      console.log(`setting intent for ${chat.id} to ${users}`)
+      // set the intent
+      await Chat.update(
+        {
+          intent: users.join("-")
+        },
+        {
+          where: {
+            id: chat.id
+          }
+        }
+      )
+    }
+    console.log("OK, clearing cache")
+    this.purgeCache(6)
   }
 }
