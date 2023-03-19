@@ -393,8 +393,11 @@ export class UserUtilsService {
         })
       }
     }
+    await user.update(body)
+    delete body.currentPassword
+    delete body.password
     socket.to(user.id).emit("userSettingsUpdate", body)
-    return await user.update(body)
+    return true
   }
 
   async emitToFriends(userId: number, key: string, value: any) {
