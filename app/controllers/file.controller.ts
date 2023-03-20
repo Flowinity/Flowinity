@@ -64,7 +64,7 @@ export class FileController {
           ) {
             return res.sendFile("/AuthRequired.png", {
               name: upload.originalFilename,
-              root: config.storage + "/../app/assets"
+              root: config.storage + "/../../server/app/assets"
             })
           }
           if (req.query.force) {
