@@ -18,17 +18,17 @@ import { VDataTable } from "@troplo/vuetify/labs/VDataTable";
 export class DefaultThemes {
   themes: any;
 
-  constructor() {
+  constructor(gold: boolean = false) {
     this.themes = {
       dark: {
         colors: {
-          primary: "#0190ea",
-          logo1: "#096fea",
-          logo2: "#0166ea",
+          primary: gold ? "#FFD700" : "#0190ea",
+          logo1: gold ? "#FFDB1B" : "#096fea",
+          logo2: gold ? "#FFD700" : "#0166ea",
           secondary: "#757575",
           accent: "#000000",
           error: "#F44336",
-          info: "#2196F3",
+          info: gold ? "#FFD700" : "#2196F3",
           success: "#4CAF50",
           warning: "#ff9800",
           card: "#161616",
@@ -43,13 +43,13 @@ export class DefaultThemes {
       },
       amoled: {
         colors: {
-          primary: "#0190ea",
-          logo1: "#096fea",
-          logo2: "#0166ea",
+          primary: gold ? "#FFD700" : "#0190ea",
+          logo1: gold ? "#FFDB1B" : "#096fea",
+          logo2: gold ? "#FFD700" : "#0166ea",
           secondary: "#757575",
           accent: "#000000",
           error: "#F44336",
-          info: "#2196F3",
+          info: gold ? "#FFD700" : "#2196F3",
           success: "#4CAF50",
           warning: "#ff9800",
           card: "#000000",
@@ -65,13 +65,13 @@ export class DefaultThemes {
       },
       light: {
         colors: {
-          primary: "#0190ea",
-          logo1: "#096fea",
-          logo2: "#0166ea",
-          secondary: "#555555",
+          primary: gold ? "#FFD700" : "#0190ea",
+          logo1: gold ? "#FFDB1B" : "#096fea",
+          logo2: gold ? "#FFD700" : "#0166ea",
+          secondary: "#757575",
           accent: "#121212",
-          error: "#f44336",
-          info: "#2196f3",
+          error: "#F44336",
+          info: gold ? "#FFD700" : "#2196F3",
           success: "#4caf50",
           warning: "#ff9800",
           card: "#ffffff",

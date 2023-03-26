@@ -479,7 +479,8 @@ export default defineComponent({
         return false;
       }
       const theme = reset
-        ? this.$user.changes.themeEngine?.theme
+        ? this.$user.changes.themeEngine?.theme ||
+          new DefaultThemes(this.$user.gold).themes
         : this.user?.themeEngine?.theme;
       if (!theme) return false;
       this.$vuetify.theme.themes.dark = {
@@ -507,9 +508,10 @@ export default defineComponent({
       } else {
         document.body.style.setProperty(
           "--gradient-offset",
-          `${this.$user.changes.themeEngine.gradientOffset}%`
+          `${this.$user.changes?.themeEngine?.gradientOffset || 100}%`
         );
-        this.$app.fluidGradient = this.$user.changes.themeEngine.fluidGradient;
+        this.$app.fluidGradient =
+          this.$user.changes?.themeEngine?.fluidGradient || false;
       }
       return true;
     },
