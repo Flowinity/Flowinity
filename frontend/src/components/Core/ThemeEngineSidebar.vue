@@ -8,6 +8,7 @@
       <v-color-picker
         @update:model-value="setThemeColor($event, menu.selected)"
         :model-value="$vuetify.theme.themes.dark.colors[menu.selected]"
+        v-if="menu.selected"
       ></v-color-picker>
     </v-card>
   </v-menu>
@@ -213,7 +214,7 @@ export default defineComponent({
         value: false,
         x: 0,
         y: 0,
-        selected: undefined as string | undefined,
+        selected: "" as string,
         attach: ""
       }
     };

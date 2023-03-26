@@ -14,7 +14,7 @@
           justify="center"
           :size="size"
           :color="
-            noColor || user.avatar ? undefined : this.$user.theme.colors.primary
+            noColor || user.avatar ? undefined : $user.theme.colors.primary
           "
         >
           <v-img
