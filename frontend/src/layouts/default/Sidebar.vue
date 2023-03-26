@@ -22,7 +22,12 @@
         $chat.isCommunications
       "
       @click="$app.forcedMainDrawer = false"
-      style="color: #0190ea; cursor: pointer; font-size: 12px"
+      style="
+        color: rgb(var(--v-theme-primary));
+        cursor: pointer;
+        font-size: 12px;
+      "
+      class="unselectable"
     >
       <v-icon>mdi-arrow-right</v-icon>
       Back to Communications

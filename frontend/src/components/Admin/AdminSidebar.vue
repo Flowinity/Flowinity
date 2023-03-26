@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer permanent color="dark" floating>
-    <div class="rounded-0 gold pb-1 pt-2 pl-2" height="20">
+    <div class="rounded-0 access-level pb-1 pt-2 pl-2" height="20">
       Your access:
       {{
         $user.user?.administrator
@@ -25,7 +25,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.gold {
+.access-level {
   background-image: -webkit-radial-gradient(
     rgba(1, 144, 234, 0.5),
     rgba(1, 121, 243, 0.5)

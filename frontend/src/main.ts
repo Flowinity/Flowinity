@@ -107,6 +107,8 @@ const app = createApp({
       const friends = useFriendsStore();
       const mail = useMailStore();
       const toast = useToast();
+      core.themeProviderDefaults.theme = vuetify.theme.themes.value;
+      core.themeProviderDefaults.global = vuetify.defaults.value;
       app.config.globalProperties.$user = user;
       app.config.globalProperties.$app = core;
       app.config.globalProperties.$experiments = experiments;
@@ -298,12 +300,10 @@ const app = createApp({
       });
       socket.on("chatUserUpdate", (data: any) => {
         const index = chat.chats.findIndex((c) => c.id === data.chatId);
-        console.log(index);
         if (index === -1) return;
         const userIndex = chat.chats[index].users.findIndex(
           (u) => u.id === data.id
         );
-        console.log(userIndex);
         if (userIndex === -1) return;
         chat.chats[index].users[userIndex] = {
           ...chat.chats[index].users[userIndex],
@@ -312,7 +312,6 @@ const app = createApp({
       });
       socket.on("addChatUsers", (data: any) => {
         const index = chat.chats.findIndex((c) => c.id === data.chatId);
-        console.log(index);
         if (index === -1) return;
         chat.chats[index].users.push(...data.users);
       });
@@ -341,7 +340,6 @@ const app = createApp({
         ) {
           chat.sound();
         }
-        console.log(data);
 
         if (data.type === "new") {
           user.user.pendingAutoCollects += 1;
@@ -384,7 +382,7 @@ const app = createApp({
         )
           return;
         if (!e.clipboardData) return;
-        console.log("[TPU/InstantUpload] Paste detected");
+        console.info("[TPU/InstantUpload] Paste detected");
         if (core.dialogs.upload.loading) return;
         if (e.clipboardData.files.length > 0) {
           // Convert the legacy FileList object to an Array
@@ -408,6 +406,13 @@ const app = createApp({
       },
       "$app.title"(val) {
         document.title = val + " - TPU";
+      },
+      "$app.fluidGradient"(val) {
+        if (val) {
+          document.body.classList.add("fluid-gradient");
+        } else {
+          document.body.classList.remove("fluid-gradient");
+        }
       }
     }
   }

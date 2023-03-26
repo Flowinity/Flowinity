@@ -115,7 +115,8 @@
   <v-card-text
     v-if="!$chat.communicationsSidebar"
     @click="$app.forcedMainDrawer = true"
-    style="color: #0190ea; cursor: pointer; font-size: 12px"
+    style="color: rgb(var(--v-theme-primary)); cursor: pointer; font-size: 12px"
+    class="unselectable"
   >
     <v-icon>mdi-arrow-left</v-icon>
     Back to TPU

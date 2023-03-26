@@ -21,8 +21,6 @@
       <small>
         You will receive an email when your request is accepted or denied by a
         TPU administrator.
-        <br />
-        Your friend will not use Flowinity SSO to authenticate.
       </small>
     </v-card-text>
     <v-card-actions>

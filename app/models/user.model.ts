@@ -24,6 +24,23 @@ import { Badge } from "@app/models/badge.model"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { FriendNickname } from "@app/models/friendNickname"
+import { AlternatePassword } from "@app/types/auth"
+
+export interface ThemeEngine {
+  theme: {
+    dark: any
+    light: any
+    amoled: any
+  }
+  fluidGradient: boolean
+  gradientOffset: number
+  defaults: any
+  version: number
+  deviceSync: boolean
+  showOnProfile: boolean
+  baseTheme: "dark" | "light" | "amoled"
+  customCSS: string
+}
 
 @DefaultScope(() => ({
   attributes: {
@@ -205,6 +222,11 @@ export class User extends Model {
 
   @Column
   mailToken?: string
+
+  @Column({
+    type: DataType.JSON
+  })
+  themeEngine: ThemeEngine | null
 
   @BelongsTo(() => Plan, "planId")
   plan: Plan

@@ -1,6 +1,6 @@
 <template>
   <div class="text-center justify-center">
-    <v-icon size="120" color="#606060">{{ icon }}</v-icon>
+    <v-icon size="120" class="text-grey">{{ icon }}</v-icon>
     <h1 style="opacity: 0.7">{{ title }}</h1>
     <p style="opacity: 0.7">
       {{ description }}

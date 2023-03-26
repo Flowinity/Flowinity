@@ -1,18 +1,11 @@
 .text-gradient {
   font-weight: 500;
-  background: -webkit-radial-gradient(#096fea, #0166ea, #0190ea);
+  background: -webkit-radial-gradient(rgb(var(--v-theme-logo1)), rgb(var(--v-theme-logo2)));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gold-text-gradient {
-  font-weight: 500;
-  background: -webkit-radial-gradient(#ffdb1b, #ffd700);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.gold .text-gradient {
   font-weight: 500;
   background: -webkit-radial-gradient(#ffdb1b, #ffd700);
   -webkit-background-clip: text;
@@ -74,7 +67,7 @@
 }
 
 .v-btn--variant-outlined,
-.v-chip--variant-outlined, .v-card--variant-outlined {
+.v-chip--variant-outlined, .v-card--variant-outlined, .v-avatar--variant-outlined {
   border-color: hsla(0, 0%, 100%, 0.12) !important;
 }
 
@@ -170,15 +163,7 @@ a {
 }
 
 .v-theme--dark .message:hover {
-  background-color: #222222 !important;
-}
-
-.v-theme--amoled .message:hover {
-  background-color: #101010 !important;
-}
-
-.v-theme--light .message:hover {
-  background-color: #e4e4e4 !important;
+  backdrop-filter: brightness(1.5);
 }
 
 .message-actions {
@@ -357,4 +342,53 @@ a {
 
 .v-theme--amoled .v-table th, .v-theme--amoled .v-table td {
   background-color: #000000 !important;
+}
+
+.fluid-gradient .v-card, .fluid-gradient .v-toolbar, .fluid-gradient .v-expansion-panel-text, .fluid-gradient .v-expansion-panel, .fluid-gradient .v-expansion-panel-title {
+  background: transparent !important;
+  backdrop-filter: blur(70px);
+}
+
+.fluid-gradient .bg-dark {
+  background: transparent !important;
+  backdrop-filter: blur(70px);
+}
+
+.fluid-gradient .bg-light {
+  background: transparent !important;
+  backdrop-filter: blur(35px);
+}
+
+.bg {
+  background: -webkit-linear-gradient(0deg, rgb(var(--v-theme-background)) 0%, rgb(var(--v-theme-background2)) var(--gradient-offset)) !important;
+}
+
+.v-badge--bordered .v-badge__badge::after {
+  color: transparent !important;
+}
+
+.v-img__img {
+  user-drag: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.white-text, .white--text {
+  color: white !important;
+}
+
+.black-text, .black--text {
+  color: black !important;
+}
+
+.v-slider-thumb__label {
+  background-color: #121212 !important;
+  color: white !important;
+}
+
+.v-slider-thumb__label:before {
+  color: #121212 !important;
 }

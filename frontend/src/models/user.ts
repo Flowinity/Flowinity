@@ -1,5 +1,21 @@
 import { Notification } from "@/models/notification";
 import { AutoCollectRule } from "@/models/autoCollectRule";
+import { AlternatePassword } from "@/types/auth";
+export interface ThemeEngine {
+  theme: {
+    dark: any;
+    light: any;
+    amoled: any;
+  };
+  fluidGradient: boolean;
+  gradientOffset: number;
+  defaults: any;
+  version: number;
+  deviceSync: boolean;
+  showOnProfile: boolean;
+  baseTheme: "dark" | "light" | "amoled";
+  customCSS: string;
+}
 
 export interface User {
   id: number;
@@ -96,4 +112,5 @@ export interface User {
       }
     | null
     | undefined;
+  themeEngine: ThemeEngine | null;
 }

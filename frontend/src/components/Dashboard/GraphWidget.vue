@@ -11,8 +11,8 @@
           <strong
             style="font-size: 24px"
             :class="{
-              'text-gradient': !gold,
-              'gold-text-gradient': gold
+              'text-gradient-custom text-gradient': !user,
+              'text-gradient': user
             }"
           >
             Upload Stats
@@ -24,15 +24,15 @@
             type="line"
             name="Uploads"
             :height="height"
-            :color="gold ? '#FFD700' : undefined"
+            :color="primaryColorResult.primary"
           ></Chart>
         </v-window-item>
         <v-window-item value="messages">
           <strong
             style="font-size: 24px"
             :class="{
-              'text-gradient': !gold,
-              'gold-text-gradient': gold
+              'text-gradient-custom text-gradient': !user,
+              'text-gradient': user
             }"
           >
             Message Stats
@@ -44,15 +44,15 @@
             type="line"
             name="Messages"
             :height="height"
-            :color="gold ? '#FFD700' : undefined"
+            :color="primaryColorResult.primary"
           ></Chart>
         </v-window-item>
         <v-window-item value="hours">
           <strong
             style="font-size: 24px"
             :class="{
-              'text-gradient': !gold,
-              'gold-text-gradient': gold
+              'text-gradient-custom text-gradient': !user,
+              'text-gradient': user
             }"
           >
             Time spent on TPU
@@ -64,7 +64,7 @@
             type="line"
             name="Hours"
             :height="height"
-            :color="gold ? '#FFD700' : undefined"
+            :color="primaryColorResult.primary"
           ></Chart>
         </v-window-item>
       </v-window>
@@ -110,9 +110,33 @@ export default defineComponent({
     gold: {
       type: Boolean,
       default: false
+    },
+    primaryColor: {
+      type: String
+    },
+    user: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    primaryColorResult() {
+      return this.$user.primaryColorResult(
+        this.primaryColor || this.$user.theme.colors.primary,
+        this.gold
+      );
     }
   }
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.text-gradient-custom {
+  background: -webkit-linear-gradient(
+    v-bind("primaryColorResult.gradient1"),
+    v-bind("primaryColorResult.gradient2")
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+</style>

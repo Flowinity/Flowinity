@@ -25,7 +25,7 @@
       :text="'TPU ' + user.plan?.name"
       v-if="!user.plan?.internalName.includes('FREE')"
       :icon="user.plan?.icon"
-      :color="user.plan?.color"
+      :color="primaryColor || user.plan?.color"
       text-color="black"
       :small="true"
       class="user-badge"
@@ -427,7 +427,7 @@ export default defineComponent({
     }
   },
   components: { HoverChip },
-  props: ["user"],
+  props: ["user", "primaryColor"],
   computed: {
     rank() {
       if (

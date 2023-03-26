@@ -50,6 +50,18 @@
     item-title="title"
     item-value="value"
   ></v-select>
+  <v-btn class="px-6" @click="$app.themeEditor = !$app.themeEditor">
+    <v-icon class="mr-2">mdi-palette</v-icon>
+    <span>
+      Open Theme Editor
+      <v-chip size="x-small">NEW</v-chip>
+    </span>
+  </v-btn>
+  <v-switch
+    v-model="disableProfileColors"
+    label="Disable profile colors"
+    class="px-4"
+  ></v-switch>
   <v-card-title>My TPU</v-card-title>
   <v-expansion-panels class="px-4">
     <v-expansion-panel title="Change username">
@@ -192,6 +204,9 @@ export default defineComponent({
   },
   data() {
     return {
+      bindings: {
+        disableProfileColors: undefined as boolean | undefined
+      },
       theme: useTheme().global.name,
       themes: [
         { title: "Light", value: "light" },
@@ -217,6 +232,22 @@ export default defineComponent({
         }
       ]
     };
+  },
+  computed: {
+    disableProfileColors: {
+      get() {
+        try {
+          this.bindings.disableProfileColors;
+          return JSON.parse(localStorage.getItem("disableProfileColors")!);
+        } catch {
+          return false;
+        }
+      },
+      set(val: boolean) {
+        this.bindings.disableProfileColors = val;
+        localStorage.setItem("disableProfileColors", JSON.stringify(val));
+      }
+    }
   },
   watch: {
     theme() {

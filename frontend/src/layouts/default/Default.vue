@@ -5,6 +5,7 @@
     @dragover="dragOver"
     @touchstart="touchStart"
     @touchend="touchEnd"
+    class="bg"
   >
     <NicknameDialog v-model="$app.dialogs.nickname.value"></NicknameDialog>
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
@@ -36,6 +37,7 @@
     <default-bar />
     <sidebar></sidebar>
     <workspaces-sidebar></workspaces-sidebar>
+    <theme-engine-wrapper></theme-engine-wrapper>
     <default-view />
     <template v-if="$experiments.experiments.FAB">
       <v-btn
@@ -104,6 +106,7 @@ import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import QuickSwitcher from "@/components/Core/Dialogs/QuickSwitcher.vue";
 import NicknameDialog from "@/components/Core/Dialogs/Nickname.vue";
+import ThemeEngineWrapper from "@/components/Core/ThemeEngineWrapper.vue";
 </script>
 
 <script lang="ts">
@@ -256,6 +259,14 @@ export default defineComponent({
       if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
         e.preventDefault();
         this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
+      }
+      if (
+        (e.ctrlKey && e.altKey && e.key === "d") ||
+        (e.metaKey && e.altKey && e.key === "d")
+      ) {
+        e.preventDefault();
+        console.log("Revert CSS");
+        this.$user.applyCSS(true);
       }
     });
     this.getPulseSession();

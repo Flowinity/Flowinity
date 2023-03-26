@@ -6,6 +6,7 @@ import argon2 from "argon2"
 import utils from "@app/lib/utils"
 import speakeasy from "@levminer/speakeasy"
 import { CacheService } from "@app/services/cache.service"
+import { Login } from "@app/types/auth"
 
 @Service()
 export class AuthService {

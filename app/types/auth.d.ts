@@ -1,3 +1,5 @@
+import { ThemeEngine } from "@app/models/user.model"
+
 type Login = {
   user: {
     id: number
@@ -17,6 +19,7 @@ type PatchUser = {
   darkTheme?: boolean
   description?: string
   itemsPerPage?: number
+  themeEngine?: ThemeEngine | null
 }
 
 type SessionInfo = {

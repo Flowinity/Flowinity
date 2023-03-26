@@ -16,6 +16,8 @@ import paginate from "jw-paginate"
 import { Op } from "sequelize"
 import { Badge } from "@app/models/badge.model"
 import { FriendNickname } from "@app/models/friendNickname"
+import { ThemeEngineValidate } from "@app/validators/themeEngine"
+import { PatchUser } from "@app/types/auth"
 
 @Service()
 export class UserUtilsService {
@@ -390,7 +392,14 @@ export class UserUtilsService {
       where: {
         id
       },
-      attributes: ["id", "username", "email", "password"]
+      attributes: ["id", "username", "email", "password"],
+      include: [
+        {
+          model: Plan,
+          as: "plan",
+          attributes: ["internalName"]
+        }
+      ]
     })
     if (!user) throw Errors.USER_NOT_FOUND
 
@@ -404,7 +413,8 @@ export class UserUtilsService {
       "description",
       "itemsPerPage",
       "storedStatus",
-      "weatherUnit"
+      "weatherUnit",
+      "themeEngine"
     ]
 
     // from body, remove all empty values
@@ -415,6 +425,14 @@ export class UserUtilsService {
       if (body[key] === "") {
         delete body[key]
       }
+    }
+
+    if (body.themeEngine !== undefined) {
+      ThemeEngineValidate.parse(body.themeEngine)
+    }
+
+    if (body.themeEngine && user.plan.internalName !== "GOLD") {
+      body.themeEngine = null
     }
 
     if (body.currentPassword) {
@@ -674,7 +692,8 @@ export class UserUtilsService {
         "createdAt",
         "updatedAt",
         "banner",
-        "quota"
+        "quota",
+        "themeEngine"
       ],
       include: [
         {
@@ -710,6 +729,7 @@ export class UserUtilsService {
       user.dataValues.stats.hours = null
       user.dataValues.stats.uploadGraph = null
     }
+    if (!user.themeEngine?.showOnProfile) user.themeEngine = null
     return user
   }
 

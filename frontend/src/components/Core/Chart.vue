@@ -17,9 +17,9 @@ export default defineComponent({
     chartOptions() {
       return {
         stroke: {
-          colors: [this.color || this.$user.gold ? "#ffd700" : "#0190ea"]
+          colors: [this.color || this.$user.theme.colors.primary]
         },
-        colors: [this.color || this.$user.gold ? "#ffd700" : "#0190ea"],
+        colors: [this.color || this.$user.theme.colors.primary],
         grid: {
           borderColor: "#474747"
         },

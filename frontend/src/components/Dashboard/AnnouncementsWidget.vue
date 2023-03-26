@@ -6,7 +6,7 @@
       </strong>
       <v-card
         v-for="announcement in announcements"
-        class="my-3 pt-3"
+        class="my-3 pt-3 hover"
         :color="$vuetify.theme.global.name === 'amoled' ? undefined : 'toolbar'"
         elevation="0"
         :variant="
@@ -86,4 +86,11 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.hover {
+  background: transparent !important;
+}
+.hover:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+</style>

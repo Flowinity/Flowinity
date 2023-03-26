@@ -76,7 +76,10 @@
                       </v-icon>
                     </v-btn>
                   </h1>
-                  <UserBadges :user="user"></UserBadges>
+                  <UserBadges
+                    :user="user"
+                    :primaryColor="primaryColorResult"
+                  ></UserBadges>
                 </div>
               </v-card-text>
             </v-col>
@@ -231,13 +234,7 @@
                     :height="$vuetify.display.mobile ? 400 : undefined"
                   >
                     <p class="mt-3">
-                      <strong
-                        style="font-size: 24px"
-                        :class="{
-                          'text-gradient': !gold,
-                          'gold-text-gradient': gold
-                        }"
-                      >
+                      <strong style="font-size: 24px" class="text-gradient">
                         Upload Distribution
                       </strong>
                     </p>
@@ -252,7 +249,7 @@
                       :max-height="$vuetify.display.mobile ? 320 : undefined"
                       :height="320"
                       type="bar"
-                      :color="gold ? '#FFD700' : undefined"
+                      :color="primaryColorResult"
                       name="Uploads"
                     ></Chart>
                   </v-card>
@@ -270,6 +267,7 @@
                       :pulse-graph="user.stats.pulseGraph"
                       :card-height="400"
                       :height="320"
+                      :primary-color="primaryColorResult"
                       :gold="gold"
                     ></GraphWidget>
                   </v-card>
@@ -284,47 +282,55 @@
             :end-color="user.plan.id === 6 ? '#F57F17' : '#4A148C'"
             :username="user.username"
             v-if="$experiments.experiments.ACCOUNT_DEV_ELIGIBLE"
+            :gold="gold"
           ></InsightsPromoCard>
           <StatsCard
             title="Creation date"
             :value="$date(user.createdAt).format('DD/MM/YYYY')"
             class="my-3"
+            :primary-color="primaryColorResult"
             :gold="gold"
           ></StatsCard>
           <StatsCard
             title="Uploads"
             :value="user.stats.uploads.toLocaleString()"
             class="my-3"
+            :primary-color="primaryColorResult"
             :gold="gold"
           ></StatsCard>
           <StatsCard
             title="Storage Used"
             :value="$functions.fileSize(user.quota || 0)"
             class="my-3"
+            :primary-color="primaryColorResult"
             :gold="gold"
           ></StatsCard>
           <StatsCard
             title="Collections"
             :value="user.stats.collections.toLocaleString()"
             class="my-3"
+            :primary-color="primaryColorResult"
             :gold="gold"
           ></StatsCard>
           <StatsCard
             title="Collectivizations"
             :value="user.stats.collectionItems.toLocaleString()"
             class="my-3"
+            :primary-color="primaryColorResult"
             :gold="gold"
           ></StatsCard>
           <StatsCard
             title="TPU Hours"
             :value="user.stats.pulse.toLocaleString()"
             class="my-3"
+            :primary-color="primaryColorResult"
             :gold="gold"
           ></StatsCard>
           <StatsCard
             title="Documents"
             :value="user.stats.docs"
             class="my-3"
+            :primary-color="primaryColorResult"
             :gold="gold"
           ></StatsCard>
         </v-col>
@@ -347,6 +353,7 @@ import LineChart from "@/components/Core/LineChart.vue";
 import Chart from "@/components/Core/Chart.vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
+import { DefaultThemes } from "@/plugins/vuetify";
 
 export default defineComponent({
   name: "User",
@@ -377,8 +384,16 @@ export default defineComponent({
     };
   },
   computed: {
+    primaryColorResult() {
+      return this.$user.primaryColorResult(this.primary, this.gold).primary;
+    },
+    primary() {
+      return this.user?.themeEngine?.theme[
+        this.$vuetify.theme.name as "dark" | "light" | "amoled"
+      ].colors.primary;
+    },
     gold() {
-      return this.user?.plan.id === 6;
+      return this.user?.plan.internalName === "GOLD";
     },
     hoursMost() {
       if (this.user?.stats?.hours) {
@@ -446,9 +461,58 @@ export default defineComponent({
           icon: "mdi-account-plus"
         };
       }
+    },
+    disableProfileColors() {
+      try {
+        return JSON.parse(localStorage.getItem("disableProfileColors")!);
+      } catch {
+        return false;
+      }
     }
   },
   methods: {
+    setTheme(reset: boolean = false) {
+      if (this.disableProfileColors) return false;
+      if (this.username) return false;
+      if (this.user?.themeEngine?.version !== 1 && !reset) {
+        this.setTheme(true);
+        return false;
+      }
+      const theme = reset
+        ? this.$user.changes.themeEngine?.theme
+        : this.user?.themeEngine?.theme;
+      if (!theme) return false;
+      this.$vuetify.theme.themes.dark = {
+        ...this.$vuetify.theme.themes.dark,
+        ...theme.dark
+      };
+      this.$vuetify.theme.themes.light = {
+        ...this.$vuetify.theme.themes.light,
+        ...theme.light
+      };
+      this.$vuetify.theme.themes.amoled = {
+        ...this.$vuetify.theme.themes.amoled,
+        ...theme.amoled
+      };
+      if (!reset) {
+        document.body.style.setProperty(
+          "--gradient-offset",
+          `${
+            this.user?.themeEngine?.gradientOffset ||
+            this.$user.changes.themeEngine.gradientOffset
+          }%`
+        );
+        this.$app.fluidGradient =
+          this.user?.themeEngine?.fluidGradient || this.$app.fluidGradient;
+      } else {
+        document.body.style.setProperty(
+          "--gradient-offset",
+          `${this.$user.changes.themeEngine.gradientOffset}%`
+        );
+        this.$app.fluidGradient = this.$user.changes.themeEngine.fluidGradient;
+      }
+      return true;
+    },
     async save() {
       this.settings.description.loading = true;
       await this.$user.save();
@@ -480,12 +544,16 @@ export default defineComponent({
       const { data } = await this.axios.get(`/user/profile/${username}`);
       this.user = data;
       if (!this.username) this.$app.title = this.user?.username + "'s Profile";
+      this.setTheme();
       this.$app.componentLoading = false;
     }
   },
   mounted() {
     if (!this.username) this.$app.title = "User";
     this.getUser();
+  },
+  unmounted() {
+    this.setTheme(true);
   },
   watch: {
     "$route.params.username"(val) {
@@ -521,5 +589,13 @@ export default defineComponent({
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
+}
+.text-gradient {
+  background: -webkit-linear-gradient(
+    v-bind("$user.primaryColorResult(primary, gold).gradient1"),
+    v-bind("$user.primaryColorResult(primary, gold).gradient2")
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 </style>

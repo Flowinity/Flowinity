@@ -12,6 +12,7 @@ import { useWorkspacesStore } from "@/store/workspaces";
 import vuetify from "@/plugins/vuetify";
 
 export interface AppState {
+  fluidGradient: boolean;
   cordova: boolean;
   domain: string;
   mainDrawer: boolean;
@@ -26,6 +27,7 @@ export interface AppState {
   lastRoute: string | null;
   forcedMainDrawer: boolean;
   shifting: boolean;
+  themeEditor: boolean;
   site: {
     registrations: boolean;
     name: string;
@@ -116,11 +118,17 @@ export interface AppState {
     name: string;
   }[];
   demo: boolean;
+  themeProviderDefaults: any;
 }
 
 export const useAppStore = defineStore("app", {
   state: () =>
     ({
+      themeProviderDefaults: {
+        theme: {},
+        global: {}
+      },
+      fluidGradient: false,
       demo: false,
       cordova: false,
       lastRoute: null,
@@ -133,6 +141,7 @@ export const useAppStore = defineStore("app", {
       apiVersion: "v2",
       title: "",
       notesSaving: false,
+      themeEditor: false,
       forcedMainDrawer: false,
       lastNote: localStorage.getItem("lastNote")
         ? parseInt(localStorage.getItem("lastNote") as string)

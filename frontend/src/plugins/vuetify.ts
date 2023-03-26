@@ -14,6 +14,80 @@ import "@troplo/vuetify/styles";
 import { createVuetify } from "@troplo/vuetify";
 import { VDataTable } from "@troplo/vuetify/labs/VDataTable";
 
+// export new Class of themes
+export class DefaultThemes {
+  themes: any;
+
+  constructor() {
+    this.themes = {
+      dark: {
+        colors: {
+          primary: "#0190ea",
+          logo1: "#096fea",
+          logo2: "#0166ea",
+          secondary: "#757575",
+          accent: "#000000",
+          error: "#F44336",
+          info: "#2196F3",
+          success: "#4CAF50",
+          warning: "#ff9800",
+          card: "#161616",
+          toolbar: "#191919",
+          sheet: "#151515",
+          text: "#000000",
+          dark: "#151515",
+          background: "#121212",
+          background2: "#121212",
+          gold: "#ffd700"
+        }
+      },
+      amoled: {
+        colors: {
+          primary: "#0190ea",
+          logo1: "#096fea",
+          logo2: "#0166ea",
+          secondary: "#757575",
+          accent: "#000000",
+          error: "#F44336",
+          info: "#2196F3",
+          success: "#4CAF50",
+          warning: "#ff9800",
+          card: "#000000",
+          toolbar: "#121212",
+          sheet: "#000000",
+          text: "#000000",
+          dark: "#000000",
+          gold: "#ffd700",
+          background: "#000000",
+          background2: "#000000"
+        },
+        dark: true
+      },
+      light: {
+        colors: {
+          primary: "#0190ea",
+          logo1: "#096fea",
+          logo2: "#0166ea",
+          secondary: "#555555",
+          accent: "#121212",
+          error: "#f44336",
+          info: "#2196f3",
+          success: "#4caf50",
+          warning: "#ff9800",
+          card: "#ffffff",
+          toolbar: "#f5f5f5",
+          sheet: "#fafafa",
+          text: "#333333",
+          dark: "#f7f7f7",
+          background: "#f5f5f5",
+          background2: "#f5f5f5",
+          gold: "#ffd700"
+        }
+      }
+    };
+  }
+}
+
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   components: {
@@ -88,63 +162,11 @@ export default createVuetify({
     }
   },
   theme: {
-    defaultTheme: ["dark", "amoled", "light"].includes(localStorage.getItem("theme") || "dark") ? localStorage.getItem("theme") || "dark": "dark",
-    themes: {
-      dark: {
-        colors: {
-          primary: "#0190ea",
-          secondary: "#757575",
-          accent: "#000000",
-          error: "#F44336",
-          info: "#2196F3",
-          success: "#4CAF50",
-          warning: "#ff9800",
-          card: "#161616",
-          toolbar: "#191919",
-          sheet: "#151515",
-          text: "#000000",
-          dark: "#151515",
-          background: "#121212",
-          gold: "#ffd700"
-        }
-      },
-      amoled: {
-        colors: {
-          primary: "#0190ea",
-          secondary: "#757575",
-          accent: "#000000",
-          error: "#F44336",
-          info: "#2196F3",
-          success: "#4CAF50",
-          warning: "#ff9800",
-          card: "#000000",
-          toolbar: "#121212",
-          sheet: "#000000",
-          text: "#000000",
-          dark: "#000000",
-          gold: "#ffd700",
-          background: "#000000"
-        },
-        dark: true
-      },
-      light: {
-        colors: {
-          primary: "#0190ea",
-          secondary: "#555555",
-          accent: "#121212",
-          error: "#f44336",
-          info: "#2196f3",
-          success: "#4caf50",
-          warning: "#ff9800",
-          card: "#ffffff",
-          toolbar: "#f5f5f5",
-          sheet: "#fafafa",
-          text: "#333333",
-          dark: "#f7f7f7",
-          background: "#f5f5f5",
-          gold: "#ffd700"
-        }
-      }
-    }
+    defaultTheme: ["dark", "amoled", "light"].includes(
+      localStorage.getItem("theme") || "dark"
+    )
+      ? localStorage.getItem("theme") || "dark"
+      : "dark",
+    themes: new DefaultThemes().themes
   }
 });

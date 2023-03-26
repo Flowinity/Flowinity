@@ -688,4 +688,15 @@ export class AdminService {
     console.log("OK, clearing cache")
     this.purgeCache(6)
   }
+
+  async scriptScanVulnerableMarkupGoogle() {
+    const uploads = await Upload.findAll({
+      where: {
+        type: "image",
+        userId: 1
+      }
+    })
+    for (const upload of uploads) {
+    }
+  }
 }

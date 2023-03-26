@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
-import { User } from "@/models/user";
+import { ThemeEngine, User } from "@/models/user";
 import axios from "@/plugins/axios";
 import { useChatStore } from "@/store/chat";
 import { useWorkspacesStore } from "@/store/workspaces";
@@ -8,10 +8,10 @@ import { useCollectionsStore } from "@/store/collections";
 import { useExperimentsStore } from "@/store/experiments";
 import { useFriendsStore } from "@/store/friends";
 import { useAppStore } from "@/store/app";
-import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import { useMailStore } from "@/store/mail";
 import vuetify from "@/plugins/vuetify";
+import { useTheme } from "@troplo/vuetify";
 
 export interface UserState {
   user: User | null;
@@ -26,6 +26,7 @@ export interface UserState {
     storedStatus?: string;
     description?: string;
     weatherUnit?: string;
+    themeEngine: ThemeEngine;
   };
   actions: {
     emailSent: {
@@ -40,7 +41,11 @@ export const useUserStore = defineStore("user", {
     ({
       user: null,
       _postInitRan: false,
-      changes: {},
+      changes: {
+        themeEngine: {
+          customCSS: ""
+        }
+      },
       actions: {
         emailSent: {
           value: false,
@@ -49,6 +54,9 @@ export const useUserStore = defineStore("user", {
       }
     } as UserState),
   getters: {
+    theme() {
+      return vuetify.theme.current.value;
+    },
     gold(state: UserState) {
       if (!state.user) return false;
       return state.user.plan.id === 6;
@@ -59,6 +67,25 @@ export const useUserStore = defineStore("user", {
     }
   },
   actions: {
+    primaryColorResult(primaryColor?: string | null, gold?: boolean) {
+      if (primaryColor && gold)
+        return {
+          gradient1: primaryColor,
+          gradient2: primaryColor,
+          primary: primaryColor
+        };
+      return gold || this.gold
+        ? {
+            gradient1: "#ffdb1b",
+            gradient2: "#ffd700",
+            primary: "#ffd700"
+          }
+        : {
+            gradient1: "#096fea",
+            gradient2: "#0166ea",
+            primary: "#0190ea"
+          };
+    },
     async resendVerificationEmail() {
       try {
         const toast = useToast();
@@ -76,7 +103,9 @@ export const useUserStore = defineStore("user", {
       localStorage.removeItem("userStore");
       localStorage.removeItem("friendsStore");
       this.user = null;
-      this.changes = {};
+      this.changes = {
+        themeEngine: this.changes.themeEngine
+      };
       this._postInitRan = false;
     },
     async changeStatus(status: string) {
@@ -127,13 +156,54 @@ export const useUserStore = defineStore("user", {
         this._postInitRan = true;
         app.populateQuickSwitcher();
         if (this.user?.plan?.internalName === "GOLD") {
-          vuetify.theme.themes.value.dark.colors.primary = "#FFD700";
-          vuetify.theme.themes.value.light.colors.primary = "#FFD700";
-          vuetify.theme.themes.value.amoled.colors.primary = "#FFD700";
-          vuetify.theme.themes.value.dark.colors.info = "#FFD700";
-          vuetify.theme.themes.value.light.colors.info = "#FFD700";
-          vuetify.theme.themes.value.amoled.colors.info = "#FFD700";
+          vuetify.theme.themes.value.dark.colors = {
+            ...vuetify.theme.themes.value.dark.colors,
+            primary: "#FFD700",
+            info: "#FFD700",
+            logo1: "#FFDB1B",
+            logo2: "#FFD700"
+          };
+          vuetify.theme.themes.value.light.colors = {
+            ...vuetify.theme.themes.value.light.colors,
+            primary: "#FFD700",
+            info: "#FFD700",
+            logo1: "#FFDB1B",
+            logo2: "#FFD700"
+          };
+          vuetify.theme.themes.value.amoled.colors = {
+            ...vuetify.theme.themes.value.amoled.colors,
+            primary: "#FFD700",
+            info: "#FFD700",
+            logo1: "#FFDB1B",
+            logo2: "#FFD700"
+          };
           document.body.classList.add("gold");
+          try {
+            const themeData = this.user?.themeEngine?.deviceSync
+              ? this?.user?.themeEngine
+              : JSON.parse(localStorage.getItem("themeEngine") || "{}");
+            if (themeData.version === 1) {
+              this.applyCSS();
+              document.body.style.setProperty(
+                "--gradient-offset",
+                `${themeData.gradientOffset}%`
+              );
+              vuetify.theme.themes.value.dark = themeData.theme.dark;
+              vuetify.theme.themes.value.light = themeData.theme.light;
+              vuetify.theme.themes.value.amoled = themeData.theme.amoled;
+              vuetify.defaults.value = themeData.defaults;
+              app.fluidGradient = themeData.fluidGradient;
+              if (themeData.fluidGradient) {
+                document.body.classList.add("fluid-gradient");
+              } else {
+                document.body.classList.remove("fluid-gradient");
+              }
+            } else {
+              throw new Error("Invalid theme version");
+            }
+          } catch {
+            document.body.style.setProperty("--gradient-offset", "100%");
+          }
           // remove other favicons
           const links = document.getElementsByTagName("link");
           for (const link of links) {
@@ -147,7 +217,9 @@ export const useUserStore = defineStore("user", {
             (document.createElement("link") as HTMLLinkElement);
           link.type = "image/x-icon";
           link.rel = "shortcut icon";
-          link.href = "/favicon-gold.png";
+          link.href = `/api/v2/user/favicon.png?cache=${Date.now()}&username=${
+            this.user.username
+          }`;
           document.head.appendChild(link);
         }
       }
@@ -166,7 +238,8 @@ export const useUserStore = defineStore("user", {
               itemsPerPage: this.user.itemsPerPage,
               currentPassword: "",
               storedStatus: this.user.storedStatus,
-              description: this.user.description
+              description: this.user.description,
+              themeEngine: this.user.themeEngine as ThemeEngine
             };
             this.runPostTasks();
           }
@@ -185,13 +258,32 @@ export const useUserStore = defineStore("user", {
         currentPassword: "",
         storedStatus: this.user?.storedStatus,
         description: this.user?.description,
-        weatherUnit: this.user?.weatherUnit
+        weatherUnit: this.user?.weatherUnit,
+        themeEngine: this.user?.themeEngine as ThemeEngine
       };
+      this.applyCSS();
       localStorage.setItem("userStore", JSON.stringify(data));
       this.runPostTasks();
     },
+    applyCSS(emergency: boolean = false) {
+      //if (this.user?.plan.internalName !== "GOLD") return;
+      if (this.changes.themeEngine?.customCSS !== undefined) {
+        let style = document.getElementById("user-css");
+        if (style?.innerHTML === "") {
+          emergency = false;
+        }
+        if (style) {
+          style.remove();
+        }
+        style = document.createElement("style");
+        style.id = "user-css";
+        style.innerHTML = emergency ? "" : this.changes.themeEngine.customCSS;
+        document.head.appendChild(style);
+      }
+    },
     async save() {
       if (!this.user) return;
+      this.applyCSS();
       await axios.patch("/user", {
         password: this.changes.password,
         currentPassword: this.changes.currentPassword,
@@ -201,7 +293,8 @@ export const useUserStore = defineStore("user", {
         itemsPerPage: this.changes.itemsPerPage,
         storedStatus: this.changes.storedStatus,
         description: this.changes.description,
-        weatherUnit: this.changes.weatherUnit
+        weatherUnit: this.changes.weatherUnit,
+        themeEngine: this.changes.themeEngine
       });
       this.user = {
         ...this.user,

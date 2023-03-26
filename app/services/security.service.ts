@@ -5,6 +5,7 @@ import utils from "@app/lib/utils"
 import { Op } from "sequelize"
 import { User } from "@app/models/user.model"
 import argon2 from "argon2"
+import { AlternatePassword } from "@app/types/auth"
 
 @Service()
 export class SecurityService {

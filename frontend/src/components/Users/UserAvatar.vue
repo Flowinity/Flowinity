@@ -10,10 +10,12 @@
       <span v-bind="props">
         <v-avatar
           :class="{ outline }"
-          class="text-center justify-center"
+          class="text-center justify-center undraggable"
           justify="center"
           :size="size"
-          :color="noColor || user.avatar ? undefined : '#0190ea'"
+          :color="
+            noColor || user.avatar ? undefined : this.$user.theme.colors.primary
+          "
         >
           <v-img
             v-if="user.avatar"
@@ -56,50 +58,6 @@
         </v-tooltip>
       </v-badge>
     </template>
-    <template v-if="(size > 60 || forceBadges) && !noBadges">
-      <v-tooltip top v-if="user.administrator || user.admin">
-        <template v-slot:activator="{ on }">
-          <span v-on="on">
-            <v-badge color="primary" overlap>
-              <template v-slot:badge>
-                <div class="d-flex align-center justify-center">
-                  <v-icon>mdi-shield</v-icon>
-                </div>
-              </template>
-            </v-badge>
-          </span>
-        </template>
-        <span>TPU Administrator</span>
-      </v-tooltip>
-      <v-tooltip top v-else-if="user.moderator">
-        <template v-slot:activator="{ on }">
-          <span v-on="on">
-            <v-badge color="success" overlap>
-              <template v-slot:badge>
-                <div class="d-flex align-center justify-center">
-                  <v-icon>mdi-shield</v-icon>
-                </div>
-              </template>
-            </v-badge>
-          </span>
-        </template>
-        <span>TPU Moderator</span>
-      </v-tooltip>
-      <v-tooltip top v-else-if="!user.plan?.internalName.includes('FREE')">
-        <template v-slot:activator="{ on }">
-          <span v-on="on">
-            <v-badge :color="user.plan?.color" overlap>
-              <template v-slot:badge>
-                <div class="d-flex align-center justify-center">
-                  <v-icon>{{ user.plan?.icon }}</v-icon>
-                </div>
-              </template>
-            </v-badge>
-          </span>
-        </template>
-        <span>TPU {{ user.plan?.name }}</span>
-      </v-tooltip>
-    </template>
   </span>
 </template>
 
@@ -115,7 +73,6 @@ export default defineComponent({
     "user",
     "size",
     "noColor",
-    "forceBadges",
     "noBadges",
     "edit",
     "status",
@@ -145,9 +102,9 @@ export default defineComponent({
       let classes = "";
       //@ts-ignore
       if (this.contrast === "black") {
-        classes += "black--text";
+        classes += "black-text";
       } else {
-        classes += "white--text";
+        classes += "white-text";
       }
       if (this.size > 80) {
         classes += " text-h4";

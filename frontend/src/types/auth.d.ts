@@ -1,4 +1,4 @@
-type Login = {
+export type Login = {
   user: {
     id: number;
     username: string;
@@ -7,7 +7,7 @@ type Login = {
   token: string;
 };
 
-type PatchUser = {
+export type PatchUser = {
   username?: string;
   email?: string;
   password?: string;
@@ -16,13 +16,14 @@ type PatchUser = {
   darkTheme?: boolean;
   description?: string;
   itemsPerPage?: number;
+  themeEngine?: any;
 };
 
-type SessionInfo = {
+export type SessionInfo = {
   accessedFrom: AccessedFrom[];
 };
 
-type AccessedFrom = {
+export type AccessedFrom = {
   ip: string;
   userAgent?: string;
   isp?: string;
@@ -31,7 +32,7 @@ type AccessedFrom = {
   asn: any;
 };
 
-type AlternatePassword = {
+export type AlternatePassword = {
   password: string;
   scopes: string;
   totp: boolean;

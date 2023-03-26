@@ -1,5 +1,5 @@
 <template>
-  <v-card class="d-flex flex-column" elevation="8" :id="'item-' + item.id">
+  <v-card class="d-flex flex-column" :id="'item-' + item.id">
     <WorkspaceDeleteDialog
       title="Delete item?"
       :item="item"

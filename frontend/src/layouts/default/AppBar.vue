@@ -22,7 +22,8 @@
     flat
     style="z-index: 1001"
     class="navbar"
-    :extension-height="$user.user?.emailVerified ? 0 : 42"
+    :extension-height="$user.user?.emailVerified ? 5 : 42"
+    :key="$user.user?.emailVerified ? 1 : 2"
   >
     <v-app-bar-nav-icon
       style="z-index: 1000"

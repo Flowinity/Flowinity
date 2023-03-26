@@ -3,7 +3,10 @@
     <v-container>
       <strong
         style="font-size: 24px"
-        :class="{ 'text-gradient': !gold, 'gold-text-gradient': gold }"
+        :class="{
+          'text-gradient-custom text-gradient': !user,
+          'text-gradient': user
+        }"
       >
         {{ title }}
       </strong>
@@ -15,10 +18,21 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
   name: "StatsCard",
-  props: ["title", "value", "gold"]
-};
+  props: ["title", "value", "gold", "primaryColor", "user"]
+});
 </script>
 
-<style scoped></style>
+<style scoped>
+.text-gradient-custom {
+  background: -webkit-linear-gradient(
+    v-bind("$user.primaryColorResult(primaryColor, gold).gradient1"),
+    v-bind("$user.primaryColorResult(primaryColor, gold).gradient2")
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+</style>

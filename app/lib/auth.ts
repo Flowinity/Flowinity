@@ -9,6 +9,7 @@ import maxmind, { AsnResponse, CityResponse, Reader } from "maxmind"
 import { Subscription } from "@app/models/subscription.model"
 import { Experiment } from "@app/models/experiment.model"
 import Errors from "@app/lib/errors"
+import { AccessedFrom } from "@app/types/auth"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>

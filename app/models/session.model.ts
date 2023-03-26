@@ -8,6 +8,7 @@ import {
   DataType
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
+import { SessionInfo } from "@app/types/auth"
 
 @Table
 export class Session extends Model {

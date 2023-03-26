@@ -1,5 +1,5 @@
 import { UserUtilsService } from "@app/services/userUtils.service"
-import { Request, Response } from "express"
+import { Request, Response, NextFunction } from "express"
 import { Service } from "typedi"
 import auth from "@app/lib/auth"
 import { RequestAuth } from "@app/types/express"
@@ -12,6 +12,11 @@ import { Notification } from "@app/models/notification.model"
 import { CacheService } from "@app/services/cache.service"
 import rateLimits from "@app/lib/rateLimits"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
+import path from "path"
+import * as fs from "fs"
+import sharp from "sharp"
+import { Plan } from "@app/models/plan.model"
+import { User } from "@app/models/user.model"
 
 @Service()
 export class UserUtilsController {
@@ -430,6 +435,50 @@ export class UserUtilsController {
           req.body.nickname
         )
         res.sendStatus(204)
+      }
+    )
+
+    this.router.get(
+      "/favicon.png",
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          const user = await User.findOne({
+            where: { username: req.query.username },
+            include: [
+              {
+                model: Plan,
+                as: "plan"
+              }
+            ]
+          })
+          if (
+            !user ||
+            !user?.themeEngine ||
+            user.plan.internalName !== "GOLD"
+          ) {
+            return res.sendFile("/favicon.png", {
+              name: "favicon.png",
+              root: "./frontend/public"
+            })
+          }
+          const gradient1 = user?.themeEngine?.theme.dark.colors.logo1
+          const gradient2 = user?.themeEngine?.theme.dark.colors.logo2
+          // get SVG file
+          const svg = await fs.readFileSync("./frontend/public/favicon.svg")
+          // replace colors
+          const svgString = svg.toString().replace(/#008FE9/g, gradient1)
+          const svgString2 = svgString.replace(/#006AEE/g, gradient2)
+          // convert to PNG
+          const png = await sharp(Buffer.from(svgString2))
+            .png()
+            .resize(128, 128)
+            .toBuffer()
+
+          res.set("Content-Type", "image/png")
+          res.send(png)
+        } catch (e) {
+          next(e)
+        }
       }
     )
   }
