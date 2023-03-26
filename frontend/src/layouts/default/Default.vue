@@ -268,6 +268,9 @@ export default defineComponent({
         console.log("Revert CSS");
         this.$user.applyCSS(true);
       }
+      if (e.ctrlKey && e.altKey && e.key === "e") {
+        this.$app.themeEditor = !this.$app.themeEditor;
+      }
     });
     this.getPulseSession();
     this.getPulseSessionGlobal();
