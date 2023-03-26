@@ -45,130 +45,155 @@
         item-value="value"
       ></v-select>
     </v-card-title>
-    <v-card-title>
-      <v-avatar
-        color="primary"
-        class="v-avatar--variant-outlined pointer"
-        size="22"
-        @click="openMenu($event, 'primary')"
-      ></v-avatar>
-      Accent Color
-    </v-card-title>
-    <v-card-title>
-      <v-avatar
-        color="logo1"
-        class="v-avatar--variant-outlined pointer"
-        size="22"
-        @click="openMenu($event, 'logo1')"
-      ></v-avatar>
-      Logo Gradient 1
-    </v-card-title>
-    <v-card-title>
-      <v-avatar
-        color="logo2"
-        class="v-avatar--variant-outlined pointer"
-        size="22"
-        @click="openMenu($event, 'logo2')"
-      ></v-avatar>
-      Logo Gradient 2
-    </v-card-title>
-    <v-card-title>
-      <v-avatar
-        color="background"
-        class="v-avatar--variant-outlined pointer"
-        size="22"
-        @click="openMenu($event, 'background')"
-      ></v-avatar>
-      Background 1
-    </v-card-title>
-    <v-card-title>
-      <v-avatar
-        color="background2"
-        class="v-avatar--variant-outlined pointer"
-        size="22"
-        @click="openMenu($event, 'background2')"
-      ></v-avatar>
-      Background 2
-    </v-card-title>
-    <v-card-title>
-      <v-avatar
-        color="card"
-        class="v-avatar--variant-outlined pointer"
-        :class="{ 'v-btn--disabled': $app.fluidGradient }"
-        size="22"
-        @click="openMenu($event, 'card')"
-      ></v-avatar>
-      Card
-    </v-card-title>
-    <v-card-title>
-      <v-avatar
-        color="toolbar"
-        class="v-avatar--variant-outlined pointer"
-        :class="{ 'v-btn--disabled': $app.fluidGradient }"
-        size="22"
-        @click="openMenu($event, 'toolbar')"
-      ></v-avatar>
-      Toolbar
-    </v-card-title>
-    <v-card-title>
-      <v-switch
-        label="Transparent cards (for gradient)"
-        v-model="$app.fluidGradient"
-        @update:model-value="triggerSave"
-      ></v-switch>
-      Elevation:
-      <v-slider
-        v-model="elevation"
-        :max="24"
-        :min="0"
-        :step="1"
-        thumb-label
-      ></v-slider>
-      Gradient Offset:
-      <v-slider
-        v-model="gradientOffset"
-        :max="2160"
-        :min="0"
-        :step="1"
-        thumb-label
-        @update:model-value="triggerSave"
-      ></v-slider>
-      <v-switch
-        @update:model-value="triggerSave"
-        label="Show on profile"
-        v-model="showOnProfile"
-      ></v-switch>
-      <v-switch
-        label="Sync across devices"
-        class="mt-n6"
-        v-model="deviceSync"
-        @update:model-value="triggerSave"
-      ></v-switch>
-    </v-card-title>
-    <v-btn class="mt-n8" @click="editor = !editor">
-      {{ editor ? "Hide" : "Show" }} CSS Editor
-    </v-btn>
-    <p v-show="editor" class="mb-1">
-      Save with
-      <v-kbd>CTRL</v-kbd>
-      +
-      <v-kbd>S</v-kbd>
-    </p>
-    <p v-show="editor" class="mb-1">
-      Toggle CSS with
-      <v-kbd>CTRL</v-kbd>
-      +
-      <v-kbd>ALT</v-kbd>
-      +
-      <v-kbd>D</v-kbd>
-    </p>
-    <vue-monaco-editor
-      v-if="editor"
-      v-model:value="$user.changes.themeEngine.customCSS"
-      theme="vs-dark"
-      language="css"
-      :options="options"
-    />
+    <v-card
+      color="transparent"
+      elevation="0"
+      class="no-border"
+      :class="{ 'v-card--disabled': !$user.gold }"
+    >
+      <v-overlay
+        :model-value="!$user.gold"
+        contained
+        class="align-center justify-center"
+        persistent
+        style="opacity: 1"
+      >
+        <v-card
+          color="#121212"
+          class="text-center no-border py-4"
+          width="300"
+          elevation="0"
+        >
+          <v-icon size="120">mdi-lock</v-icon>
+          <br />
+          <p class="ml-2">You need gold.</p>
+        </v-card>
+      </v-overlay>
+      <v-card-title>
+        <v-avatar
+          color="primary"
+          class="v-avatar--variant-outlined pointer"
+          size="22"
+          @click="openMenu($event, 'primary')"
+        ></v-avatar>
+        Accent Color
+      </v-card-title>
+      <v-card-title>
+        <v-avatar
+          color="logo1"
+          class="v-avatar--variant-outlined pointer"
+          size="22"
+          @click="openMenu($event, 'logo1')"
+        ></v-avatar>
+        Logo Gradient 1
+      </v-card-title>
+      <v-card-title>
+        <v-avatar
+          color="logo2"
+          class="v-avatar--variant-outlined pointer"
+          size="22"
+          @click="openMenu($event, 'logo2')"
+        ></v-avatar>
+        Logo Gradient 2
+      </v-card-title>
+      <v-card-title>
+        <v-avatar
+          color="background"
+          class="v-avatar--variant-outlined pointer"
+          size="22"
+          @click="openMenu($event, 'background')"
+        ></v-avatar>
+        Background 1
+      </v-card-title>
+      <v-card-title>
+        <v-avatar
+          color="background2"
+          class="v-avatar--variant-outlined pointer"
+          size="22"
+          @click="openMenu($event, 'background2')"
+        ></v-avatar>
+        Background 2
+      </v-card-title>
+      <v-card-title>
+        <v-avatar
+          color="card"
+          class="v-avatar--variant-outlined pointer"
+          :class="{ 'v-btn--disabled': $app.fluidGradient }"
+          size="22"
+          @click="openMenu($event, 'card')"
+        ></v-avatar>
+        Card
+      </v-card-title>
+      <v-card-title>
+        <v-avatar
+          color="toolbar"
+          class="v-avatar--variant-outlined pointer"
+          :class="{ 'v-btn--disabled': $app.fluidGradient }"
+          size="22"
+          @click="openMenu($event, 'toolbar')"
+        ></v-avatar>
+        Toolbar
+      </v-card-title>
+      <v-card-title>
+        <v-switch
+          label="Transparent cards (for gradient)"
+          v-model="$app.fluidGradient"
+          @update:model-value="triggerSave"
+        ></v-switch>
+        Elevation:
+        <v-slider
+          v-model="elevation"
+          :max="24"
+          :min="0"
+          :step="1"
+          thumb-label
+        ></v-slider>
+        Gradient Offset:
+        <v-slider
+          v-model="gradientOffset"
+          :max="2160"
+          :min="0"
+          :step="1"
+          thumb-label
+          @update:model-value="triggerSave"
+        ></v-slider>
+        <v-switch
+          @update:model-value="triggerSave"
+          label="Show on profile"
+          v-model="showOnProfile"
+        ></v-switch>
+        <v-switch
+          label="Sync across devices"
+          class="mt-n6"
+          v-model="deviceSync"
+          @update:model-value="triggerSave"
+        ></v-switch>
+      </v-card-title>
+      <v-btn class="mt-n8" @click="editor = !editor">
+        {{ editor ? "Hide" : "Show" }} CSS Editor
+      </v-btn>
+      <p v-show="editor" class="mb-1">
+        Save with
+        <v-kbd>CTRL</v-kbd>
+        +
+        <v-kbd>S</v-kbd>
+      </p>
+      <p v-show="editor" class="mb-1">
+        Toggle CSS with
+        <v-kbd>CTRL</v-kbd>
+        +
+        <v-kbd>ALT</v-kbd>
+        +
+        <v-kbd>D</v-kbd>
+      </p>
+      <vue-monaco-editor
+        v-if="editor"
+        v-model:value="$user.changes.themeEngine.customCSS"
+        theme="vs-dark"
+        language="css"
+        :options="options"
+      />
+    </v-card>
   </template>
 </template>
 
