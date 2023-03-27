@@ -64,6 +64,10 @@ export default defineComponent({
             {
               tags: ["Fix", "TPU"],
               text: "Improved dialog styling"
+            },
+            {
+              tags: ["Fix", "TPU"],
+              text: "Fixed CSS editor"
             }
           ]
         },

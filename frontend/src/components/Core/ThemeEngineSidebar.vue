@@ -169,11 +169,17 @@
           @update:model-value="triggerSave"
         ></v-switch>
       </v-card-title>
-      <v-btn class="mt-n8" @click="editor = !editor">
+      <v-btn
+        class="mt-n8"
+        @click="
+          editor = !editor;
+          $emit('editor', editor);
+        "
+      >
         {{ editor ? "Hide" : "Show" }} CSS Editor
       </v-btn>
       <p v-show="editor" class="mb-1">
-        Save with
+        Save & Apply with
         <v-kbd>CTRL</v-kbd>
         +
         <v-kbd>S</v-kbd>
@@ -192,6 +198,8 @@
         theme="vs-dark"
         language="css"
         :options="options"
+        style="height: 400px"
+        class="mb-4"
       />
     </v-card>
   </template>
