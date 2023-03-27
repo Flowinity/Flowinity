@@ -49,7 +49,7 @@ export default defineComponent({
   height: 1em;
   position: relative;
   overflow: hidden;
-  background-color: var(--skeleton-loader-bg);
+  backdrop-filter: brightness(1.5);
 }
 
 .skeleton-loader {
@@ -59,23 +59,13 @@ export default defineComponent({
   overflow: hidden;
 }
 
-.v-theme--dark {
-  --skeleton-loader-bg: #202020;
-  --skeleton-loader-bg-alt: #242424;
-}
-
-.v-theme--light {
-  --skeleton-loader-bg: #d8d8d8;
-  --skeleton-loader-bg-alt: #cbcbcb;
-}
-
-.v-theme--amoled {
-  --skeleton-loader-bg: #101010;
-  --skeleton-loader-bg-alt: #1a1a1a;
+.v-theme--amoled .skeleton-loader,
+.v-theme--amoled .skeleton-loader-no-animate {
+  background: #121212;
 }
 
 .skeleton-loader {
-  background-color: var(--skeleton-loader-bg);
+  backdrop-filter: brightness(1.5);
   &::after {
     position: absolute;
     top: 0;

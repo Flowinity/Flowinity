@@ -162,7 +162,7 @@ a {
   font-size: 3.5em;
 }
 
-.v-theme--dark .message:hover {
+.message:hover {
   backdrop-filter: brightness(1.5);
 }
 
@@ -194,7 +194,7 @@ a {
 }
 
 .replying-message {
-  background-color: #181818;
+  backdrop-filter: brightness(2);
 }
 
 *::-webkit-scrollbar {
@@ -202,10 +202,10 @@ a {
 }
 
 .mention {
-  background-color: rgb(1, 144, 234, 0.1);
+  background-color: rgb(var(--v-theme-primary), 0.1);
   border-radius: 4px;
   padding: 2px 4px;
-  color: rgb(1, 144, 234);
+  color: rgb(var(--v-theme-primary))
 }
 
 .mention .v-icon {
@@ -344,21 +344,31 @@ a {
   background-color: #000000 !important;
 }
 
-.fluid-gradient .v-card, .fluid-gradient .v-toolbar, .fluid-gradient .v-expansion-panel-text, .fluid-gradient .v-expansion-panel, .fluid-gradient .v-expansion-panel-title, .v-sheet {
+.fluid-gradient .v-card, .fluid-gradient .v-toolbar,
+.fluid-gradient .v-expansion-panel-text,
+.fluid-gradient .v-expansion-panel,
+.fluid-gradient .v-expansion-panel-title,
+.v-sheet {
   background: transparent !important;
 }
 
-.fluid-gradient .bg-dark, .fluid-gradient .bg-light, .fluid-gradient .v-overlay__content {
+.fluid-gradient .bg-dark,
+.fluid-gradient .bg-light,
+.fluid-gradient .v-overlay__content:not(.v-progress-circular):has(.v-card) {
   background: transparent !important;
   backdrop-filter: blur(70px);
 }
 
+.fluid-gradient .v-overlay__content .v-progress-circular {
+  background: transparent !important;
+}
 .fluid-gradient .v-dialog:not(.v-dialog--fullscreen) .v-overlay__content {
   border-radius: 11px;
 }
 
 .bg {
-  background: -webkit-linear-gradient(0deg, rgb(var(--v-theme-background)) 0%, rgb(var(--v-theme-background2)) var(--gradient-offset)) !important;
+  background: -webkit-linear-gradient(0deg, rgb(var(--v-theme-background)) 0%,
+          rgb(var(--v-theme-background2)) var(--gradient-offset)) !important;
 }
 
 .v-badge--bordered .v-badge__badge::after {

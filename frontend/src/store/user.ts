@@ -67,6 +67,36 @@ export const useUserStore = defineStore("user", {
     }
   },
   actions: {
+    applyTheme() {
+      try {
+        if (this.user?.plan?.internalName !== "GOLD") return;
+        const app = useAppStore();
+        const themeData = this.user?.themeEngine?.deviceSync
+          ? this?.user?.themeEngine
+          : JSON.parse(localStorage.getItem("themeEngine") || "{}");
+        if (themeData.version === 1) {
+          this.applyCSS();
+          document.body.style.setProperty(
+            "--gradient-offset",
+            `${themeData.gradientOffset}%`
+          );
+          vuetify.theme.themes.value.dark = themeData.theme.dark;
+          vuetify.theme.themes.value.light = themeData.theme.light;
+          vuetify.theme.themes.value.amoled = themeData.theme.amoled;
+          vuetify.defaults.value = themeData.defaults;
+          app.fluidGradient = themeData.fluidGradient;
+          if (themeData.fluidGradient) {
+            document.body.classList.add("fluid-gradient");
+          } else {
+            document.body.classList.remove("fluid-gradient");
+          }
+        } else {
+          throw new Error("Invalid theme version");
+        }
+      } catch {
+        document.body.style.setProperty("--gradient-offset", "100%");
+      }
+    },
     primaryColorResult(primaryColor?: string | null, gold?: boolean) {
       if (primaryColor && gold)
         return {
@@ -178,32 +208,7 @@ export const useUserStore = defineStore("user", {
             logo2: "#FFD700"
           };
           document.body.classList.add("gold");
-          try {
-            const themeData = this.user?.themeEngine?.deviceSync
-              ? this?.user?.themeEngine
-              : JSON.parse(localStorage.getItem("themeEngine") || "{}");
-            if (themeData.version === 1) {
-              this.applyCSS();
-              document.body.style.setProperty(
-                "--gradient-offset",
-                `${themeData.gradientOffset}%`
-              );
-              vuetify.theme.themes.value.dark = themeData.theme.dark;
-              vuetify.theme.themes.value.light = themeData.theme.light;
-              vuetify.theme.themes.value.amoled = themeData.theme.amoled;
-              vuetify.defaults.value = themeData.defaults;
-              app.fluidGradient = themeData.fluidGradient;
-              if (themeData.fluidGradient) {
-                document.body.classList.add("fluid-gradient");
-              } else {
-                document.body.classList.remove("fluid-gradient");
-              }
-            } else {
-              throw new Error("Invalid theme version");
-            }
-          } catch {
-            document.body.style.setProperty("--gradient-offset", "100%");
-          }
+          this.applyTheme();
           // remove other favicons
           const links = document.getElementsByTagName("link");
           for (const link of links) {
@@ -261,7 +266,7 @@ export const useUserStore = defineStore("user", {
         weatherUnit: this.user?.weatherUnit,
         themeEngine: this.user?.themeEngine as ThemeEngine
       };
-      this.applyCSS();
+      this.applyTheme();
       localStorage.setItem("userStore", JSON.stringify(data));
       this.runPostTasks();
     },

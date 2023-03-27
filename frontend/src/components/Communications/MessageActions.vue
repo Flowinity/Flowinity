@@ -3,6 +3,7 @@
     elevation="8"
     class="message-actions"
     :class="{ 'no-hide': avoid }"
+    variant="outlined"
     v-if="!$vuetify.display.mobile"
     style="z-index: 2001"
     :style="$vuetify.theme.global.name === 'amoled' ? 'background: black' : ''"

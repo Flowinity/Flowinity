@@ -9,6 +9,7 @@
         @update:model-value="setThemeColor($event, menu.selected)"
         :model-value="$vuetify.theme.themes.dark.colors[menu.selected]"
         v-if="menu.selected"
+        mode="hex"
       ></v-color-picker>
     </v-card>
   </v-menu>
@@ -35,6 +36,15 @@
       +
       <v-kbd>E</v-kbd>
     </small>
+    <v-alert
+      v-if="theme === 'amoled' && $user.gold"
+      type="warning"
+      class="mb-4 mt-4"
+      variant="tonal"
+    >
+      The AMOLED theme is not recommended for use on themes that do not have a
+      black background.
+    </v-alert>
     <v-card-title>
       <v-select
         v-model="theme"
