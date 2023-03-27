@@ -50,6 +50,38 @@ export default defineComponent({
       } as Record<string, { color: string | undefined }>,
       versions: [
         {
+          version: "3.0.24",
+          date: "2023-03-27",
+          changes: [
+            {
+              tags: ["Performance", "TPU"],
+              text: "Fixed performance issues with glass option in the theme editor"
+            },
+            {
+              tags: ["Fix", "TPU"],
+              text: "Styled the buttons in Slideshows/AutoCollect Configure and tables across TPU"
+            },
+            {
+              tags: ["Fix", "TPU"],
+              text: "Improved dialog styling"
+            }
+          ]
+        },
+        {
+          version: "3.0.23",
+          date: "2023-03-26",
+          changes: [
+            {
+              tags: ["New", "TPU"],
+              text: "Introducing the theme editor allowing you to customize TPU (beta)"
+            },
+            {
+              tags: ["New", "TPU"],
+              text: "Your profile now adapts to your chosen theme for other users (disable in Settings)"
+            }
+          ]
+        },
+        {
           version: "3.0.21 / 3.0.22",
           date: "2023-03-19",
           changes: [

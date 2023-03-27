@@ -47,7 +47,7 @@
               ></v-select>
             </v-card-text>
 
-            <v-sheet outlined color="toolbar" class="rounded-xxl mt-3">
+            <v-sheet outlined class="rounded-xxl mt-3">
               <v-card
                 max-width="100%"
                 height="50"
@@ -67,7 +67,7 @@
       <v-card-subtitle v-if="!slideshows.length">
         No slideshows found
       </v-card-subtitle>
-      <v-sheet outlined color="transparent" class="rounded-xxl mt-3">
+      <v-sheet outlined class="rounded-xxl mt-3">
         <v-card
           max-width="100%"
           height="50"

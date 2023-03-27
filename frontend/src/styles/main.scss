@@ -88,7 +88,7 @@
 
 .v-table {
   border-radius: 0 0 12px 12px !important;
-  background-color: #161616 !important;
+  background-color: transparent !important;
   elevation: 0 !important;
 }
 
@@ -98,7 +98,7 @@
 .v-table th,
 .v-table td,
 .v-table table {
-  background-color: #161616 !important;
+  background-color: transparent !important;
 }
 
 .limit {
@@ -137,7 +137,7 @@ input::-webkit-inner-spin-button {
 
 a {
   text-decoration: none;
-  color: #0190ea;
+  color: rgb(var(--v-theme-primary));
 }
 
 .pointer {
@@ -344,19 +344,17 @@ a {
   background-color: #000000 !important;
 }
 
-.fluid-gradient .v-card, .fluid-gradient .v-toolbar, .fluid-gradient .v-expansion-panel-text, .fluid-gradient .v-expansion-panel, .fluid-gradient .v-expansion-panel-title {
+.fluid-gradient .v-card, .fluid-gradient .v-toolbar, .fluid-gradient .v-expansion-panel-text, .fluid-gradient .v-expansion-panel, .fluid-gradient .v-expansion-panel-title, .v-sheet {
+  background: transparent !important;
+}
+
+.fluid-gradient .bg-dark, .fluid-gradient .bg-light, .fluid-gradient .v-overlay__content {
   background: transparent !important;
   backdrop-filter: blur(70px);
 }
 
-.fluid-gradient .bg-dark {
-  background: transparent !important;
-  backdrop-filter: blur(70px);
-}
-
-.fluid-gradient .bg-light {
-  background: transparent !important;
-  backdrop-filter: blur(35px);
+.fluid-gradient .v-dialog:not(.v-dialog--fullscreen) .v-overlay__content {
+  border-radius: 11px;
 }
 
 .bg {

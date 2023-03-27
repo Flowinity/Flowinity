@@ -107,7 +107,7 @@
                     expected.
                   </v-alert>
                 </v-card-text>
-                <v-sheet outlined color="toolbar" class="rounded-xxl mt-n3">
+                <v-sheet outlined class="rounded-xxl mt-n3">
                   <v-card
                     max-width="100%"
                     height="30"
@@ -122,7 +122,7 @@
                   </v-card>
                 </v-sheet>
               </div>
-              <v-sheet outlined color="toolbar" class="rounded-xxl mt-2">
+              <v-sheet outlined class="rounded-xxl mt-2">
                 <v-card
                   max-width="100%"
                   height="50"
@@ -141,7 +141,7 @@
                   Create sub-rule
                 </v-card>
               </v-sheet>
-              <v-sheet outlined color="toolbar" class="rounded-xxl mt-3">
+              <v-sheet outlined class="rounded-xxl mt-3">
                 <v-card
                   max-width="100%"
                   height="50"
@@ -160,13 +160,12 @@
           </v-expansion-panel>
         </v-expansion-panels>
         <v-card-subtitle v-if="!rules.length">No rules found</v-card-subtitle>
-        <v-sheet outlined color="card" class="rounded-xxl mt-3">
+        <v-sheet outlined class="rounded-xxl mt-3">
           <v-card
             max-width="100%"
             height="50"
             variant="outlined"
             elevation="0"
-            color="white"
             class="rounded-xxl"
             @click="createRule()"
           >
