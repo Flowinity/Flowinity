@@ -50,7 +50,7 @@ export class BillingService {
   }
   async checkJitsiGold() {
     console.log("[BILLING] Checking Gold")
-    if (new Date().getTime() < 1683336201) {
+    if (new Date().getTime() < 1683336201000) {
       return
     }
     axios
