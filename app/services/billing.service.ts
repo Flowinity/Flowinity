@@ -50,6 +50,9 @@ export class BillingService {
   }
   async checkJitsiGold() {
     console.log("[BILLING] Checking Gold")
+    if (new Date().getTime() < 1683336201) {
+      return
+    }
     axios
       .get("http://localhost:24004/api/v1/jitsi", {
         headers: {
