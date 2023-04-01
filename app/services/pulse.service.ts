@@ -43,9 +43,20 @@ export class HoursOfDay {
 
 @Service()
 export class PulseService {
+  async getReports(userId: number) {
+    return await Insight.findAll({
+      where: {
+        userId
+      },
+      order: [["endDate", "DESC"]],
+      attributes: {
+        exclude: ["userId", "data"]
+      }
+    })
+  }
   async getLatestReport(userId: number, type: "weekly" | "monthly" | "yearly") {
     const latestReport = await Insight.findOne({
-      order: [["createdAt", "DESC"]],
+      order: [["endDate", "DESC"]],
       where: {
         userId,
         type
@@ -55,16 +66,49 @@ export class PulseService {
     else return null
   }
   async pulseInit() {
-    //console.log(await this.generateWeeklyInsights(1))
+    // console.log(await this.generateInsights(1, "monthly"))
   }
-  calculatePulseDays(pulses: Pulse[]) {
-    let hoursLastWeek = new HoursOfDay().hours
-    for (let i = 0; i < 7; i++) {
-      const date = dayjs().subtract(7, "days").startOf("isoWeek").add(i, "days")
-      hoursLastWeek[date.format("dddd (DD)")] = 0
+  calculatePulseDays(
+    pulses: Pulse[],
+    type: "weekly" | "monthly" | "yearly" | "dynamic",
+    gte?: Date,
+    lte?: Date
+  ) {
+    let hoursLastWeek = {} as Record<string, number>
+    if (type === "yearly") {
+      // do monthly instead of daily
+      for (let i = 0; i < 12; i++) {
+        const date = dayjs(lte)
+          .subtract(12, "months")
+          .startOf("month")
+          .add(i, "months")
+        hoursLastWeek[date.format("MMMM 'YY")] = 0
+      }
+    } else {
+      for (let i = 0; i < 7; i++) {
+        const date = dayjs(lte)
+          .subtract(7, "days")
+          .startOf("isoWeek")
+          .add(i, "days")
+        hoursLastWeek[date.format("dddd (DD)")] = 0
+      }
     }
     for (const pulse of pulses) {
-      const day = dayjs(pulse.createdAt).format("dddd (DD)")
+      let day
+      switch (type) {
+        case "weekly":
+          day = dayjs(pulse.createdAt).format("dddd (DD)")
+          break
+        case "yearly":
+          day = dayjs(pulse.createdAt).format("MMMM 'YY")
+          break
+        case "dynamic":
+          day = dayjs(pulse.createdAt).format("YYYY")
+          break
+        default:
+          day = dayjs(pulse.createdAt).format("dddd (DD)")
+          break
+      }
       // convert from ms to hours
       const timeSpent = pulse.timeSpent / 1000 / 60 / 60
       hoursLastWeek[day] =
@@ -77,7 +121,8 @@ export class PulseService {
   calculatePlatforms(pulses: Pulse[]) {
     let platforms = {} as Record<string, number>
     for (const pulse of pulses) {
-      const parser: any = uaParser(pulse.sysInfo.ua)
+      const parser: any = uaParser(pulse?.sysInfo?.ua)
+      if (!parser) continue
       if (!platforms[parser.os.name]) platforms[parser.os.name] = 0
       platforms[parser.os.name] += pulse.timeSpent / 1000 / 60 / 60
     }
@@ -98,10 +143,12 @@ export class PulseService {
       },
       {}
     )
-    return Object.keys(wordsArrayFilteredCounted).map((key) => ({
-      word: key,
-      count: wordsArrayFilteredCounted[key]
-    }))
+    return Object.keys(wordsArrayFilteredCounted)
+      .map((key) => ({
+        word: key,
+        count: wordsArrayFilteredCounted[key]
+      }))
+      .sort((a, b) => b.count - a.count)
   }
   getChatName(chat: Chat, userId: number) {
     if (chat.name && chat.type === "group") return chat.name
@@ -126,16 +173,21 @@ export class PulseService {
       "/gallery": "Gallery",
       "/starred": "Starred",
       "/insights": "Insights",
-      "/admin": "Admin/HLP"
+      "/admin": "Admin/HLP",
+      "/users": "Users",
+      "/settings": "Settings",
+      "/dashboard": "Dashboard"
     } as Record<string, string>
     // Pulses have a route property that is the url path, anything starting with the above keys is counted as a feature
     const features = {} as Record<string, number>
     for (const pulse of pulses) {
       // check if it's in the above definitions, if not, add to "Other"
-      const feature = Object.keys(definitions).find((key) =>
+      if (pulse.route === "/") pulse.route = "/dashboard"
+      let feature = Object.keys(definitions).find((key) =>
         pulse.route.startsWith(key)
       )
       if (!feature) {
+        console.log("Unknown feature", pulse.route)
         features["Other"] =
           (features["Other"] || 0) + pulse.timeSpent / 1000 / 60 / 60
       } else {
@@ -150,7 +202,7 @@ export class PulseService {
     }
     // from Object to Array like [{name: "AutoCollects", count: 10}, {name: "Workspaces", count: 5}]
     return Object.keys(features)
-      .sort()
+      .sort((a, b) => features[b] - features[a])
       .map((key) => ({
         name: key,
         count: features[key]
@@ -206,14 +258,73 @@ export class PulseService {
         (arr.length - (usePopulation ? 0 : 1))
     )
   }
-  async generateWeeklyInsights(userId: number) {
-    const previous = await this.getLatestReport(userId, "weekly")
+  async generateInsights(
+    userId: number,
+    type: "weekly" | "monthly" | "yearly" | "dynamic",
+    customGte?: Date
+  ) {
+    // depending on the type
+    let gte
+    let lte = new Date()
+    let avgModifier = 7
+    if (type === "weekly") {
+      gte = dayjs(customGte || undefined)
+        .subtract(1, "week")
+        .startOf("isoWeek")
+        .toDate()
+      lte = dayjs(customGte || undefined)
+        .subtract(1, "week")
+        .endOf("isoWeek")
+        .toDate()
+    } else if (type === "monthly") {
+      gte = dayjs(customGte || undefined)
+        .subtract(1, "month")
+        .startOf("month")
+        .toDate()
+      lte = dayjs(customGte || undefined)
+        .subtract(1, "month")
+        .endOf("month")
+        .toDate()
+      avgModifier = 30.5
+    } else if (type === "yearly") {
+      gte = dayjs(customGte || undefined)
+        .subtract(1, "year")
+        .startOf("year")
+        .toDate()
+      lte = dayjs(customGte || undefined)
+        .subtract(1, "year")
+        .endOf("year")
+        .toDate()
+      avgModifier = 365
+    } else {
+      gte = new Date(0)
+      const user = await User.findOne({
+        where: {
+          id: userId
+        }
+      })
+      if (user) {
+        avgModifier = dayjs(lte).diff(dayjs(user.createdAt), "day")
+      }
+    }
+    let previous = null as Insight | null
+    if (type !== "dynamic") {
+      previous = await this.getLatestReport(userId, type)
+    }
+    if (previous) {
+      if (dayjs(gte).isBefore(dayjs(previous.createdAt))) {
+        previous = null
+      } else {
+        gte = new Date(previous.createdAt)
+      }
+    }
     // UPLOADS
     const uploads = await Upload.findAll({
       where: {
         userId: userId,
         createdAt: {
-          [Op.gte]: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
+          [Op.gte]: gte,
+          [Op.lte]: lte
         }
       }
     })
@@ -229,7 +340,8 @@ export class PulseService {
       where: {
         userId: userId,
         createdAt: {
-          [Op.gte]: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
+          [Op.gte]: gte,
+          [Op.lte]: lte
         }
       }
     })
@@ -239,7 +351,8 @@ export class PulseService {
       where: {
         userId: userId,
         createdAt: {
-          [Op.gte]: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)
+          [Op.gte]: gte,
+          [Op.lte]: lte
         }
       },
       include: [
@@ -285,14 +398,19 @@ export class PulseService {
       uploads: {
         total: {
           now: uploads.length,
-          previous: previous ? previous.data?.uploads?.total?.previous : 0
+          previous: previous ? previous.data?.uploads?.total?.now : 0
         },
         average: {
-          now: Math.round((uploads.length / 7) * 100) / 100,
-          previous: previous ? previous.data?.uploads?.average : 0
+          // round to 0 decimal places
+          now: Math.round(uploads.length / avgModifier),
+          previous: previous ? previous.data?.uploads?.average?.now : 0
         },
-        hours: hours,
-        words: this.calculateWords(uploads),
+        hours: {
+          now: hours,
+          previous: previous ? previous.data?.uploads?.hours?.now : null
+        },
+        // limit 500
+        words: this.calculateWords(uploads).slice(0, 500),
         days: this.calculateUploadDays(uploads, previous),
         // calculate standard deviation of uploads per day
         stdDev: this.standardDeviation(
@@ -304,9 +422,9 @@ export class PulseService {
           now: pulses.length,
           previous: previous ? previous.data?.pulses?.total?.previous : 0
         },
-        average: Math.round((pulses.length / 7) * 100) / 100,
+        average: Math.round((pulses.length / avgModifier) * 100) / 100,
         platforms: this.calculatePlatforms(pulses),
-        days: this.calculatePulseDays(pulses),
+        days: this.calculatePulseDays(pulses, type, gte, lte),
         features: this.getFeatures(pulses)
       },
       messages: {
@@ -315,21 +433,23 @@ export class PulseService {
           previous: previous ? previous.data?.messages?.total?.previous : 0
         },
         average: {
-          now: Math.round((messages.length / 7) * 100) / 100,
-          previous: previous ? previous.data?.messages?.average : 0
+          now: Math.round(messages.length / avgModifier),
+          previous: previous ? previous.data?.messages?.average?.now : 0
         },
         topChats: topChatsSorted
       },
       workspaces: {},
       _version: 1
     }
-    await Insight.create({
-      userId: userId,
-      data: insights,
-      type: "weekly",
-      startDate: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000),
-      endDate: new Date()
-    })
+    if (type !== "dynamic") {
+      await Insight.create({
+        userId: userId,
+        data: insights,
+        type,
+        startDate: gte.toISOString(),
+        endDate: lte.toISOString()
+      })
+    }
     return insights
   }
   async getCachedLeaderboard() {

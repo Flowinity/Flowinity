@@ -1,19 +1,21 @@
 <template>
-  <v-card class="text-center">
-    <v-container>
-      <strong style="font-size: 24px" class="text-gradient">{{ title }}</strong>
+  <v-card>
+    <v-container class="text-center">
+      <strong style="font-size: 24px" class="text-gradient text-center">
+        {{ title }}
+      </strong>
       <p class="text-grey" style="font-size: 14px" v-if="subtitle">
         {{ subtitle }}
       </p>
-      <h1 style="font-size: 5em" v-if="count">{{ count }}</h1>
+      <h1 style="font-size: 5em" v-if="count !== undefined">{{ count }}</h1>
       <slot v-else></slot>
-      <v-card-subtitle style="margin-top: -35px" v-if="difference">
+      <v-card-subtitle v-if="difference !== undefined">
         <v-icon :color="differenceIcon(difference).color">
           {{ differenceIcon(difference).icon }}
         </v-icon>
         {{ difference?.toString().replace("-", "") }}
       </v-card-subtitle>
-      <v-card-subtitle style="margin-top: -25px" v-if="last">
+      <v-card-subtitle v-if="last !== undefined">
         {{ last }} previously
       </v-card-subtitle>
     </v-container>

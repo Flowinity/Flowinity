@@ -224,12 +224,7 @@ const routes = [
         component: () => import("@/views/Insights/Home.vue")
       },
       {
-        path: "/insights/dynamic",
-        name: "Dynamic Insights",
-        component: () => import("@/views/Insights/Dynamic.vue")
-      },
-      {
-        path: "/insights/weekly",
+        path: "/insights/:type",
         name: "Weekly Insights",
         component: () => import("@/views/Insights/Weekly.vue")
       },

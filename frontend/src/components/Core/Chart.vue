@@ -3,9 +3,10 @@
     <apexchart
       :type="type"
       :options="chartOptions"
-      :series="series"
+      :series="seriesRes"
       :height="height"
       :width="getWidth()"
+      title=""
     ></apexchart>
   </div>
 </template>
@@ -15,10 +16,26 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Chart",
-  props: ["data", "height", "width", "type", "id", "name", "color"],
+  props: [
+    "data",
+    "height",
+    "width",
+    "type",
+    "id",
+    "name",
+    "color",
+    "series",
+    "horizontal"
+  ],
   computed: {
     chartOptions() {
-      return {
+      const result = {
+        plotOptions: {
+          bar: {
+            horizontal: this.horizontal || false
+          }
+        },
+        c: this.series,
         stroke: {
           colors: [this.color || this.$user.theme.colors.primary]
         },
@@ -72,18 +89,24 @@ export default defineComponent({
           background: "transparent",
           id: "chartnext-" + this.id
         },
-        xaxis: {
-          categories: this.data.labels
-        }
+        xaxis: undefined as any
       };
+      if (!this.series) {
+        result.xaxis = {
+          categories: this.data.labels
+        };
+      }
+      return result;
     },
-    series() {
-      return [
-        {
-          name: this.name || "TPUvNEXT-Default",
-          data: this.data.data
-        }
-      ];
+    seriesRes() {
+      return !this.series
+        ? [
+            {
+              name: this.name || "TPUvNEXT-Default",
+              data: this.data.data
+            }
+          ]
+        : this.series;
     }
   },
   methods: {

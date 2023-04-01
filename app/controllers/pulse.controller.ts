@@ -18,12 +18,21 @@ export class PulseController {
 
     // INSIGHTS V2
     this.router.get(
-      "/insights/v2/weekly",
+      "/insights/v2/reports",
+      auth("insights.view"),
+      async (req: RequestAuth, res: Response) => {
+        const reports = await this.pulseService.getReports(req.user.id)
+        res.json(reports)
+      }
+    )
+
+    this.router.get(
+      "/insights/v2/:type",
       auth("insights.view"),
       async (req: RequestAuth, res: Response) => {
         const insights = await this.pulseService.getLatestReport(
           req.user.id,
-          "weekly"
+          <"weekly" | "monthly" | "yearly">req.params.type
         )
         res.json(insights)
       }

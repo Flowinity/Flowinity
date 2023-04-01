@@ -29,7 +29,7 @@
         <v-row>
           <v-col cols="12" sm="1" xl="3" md="6">
             <DynamicCard
-              @click="comingSoon = true"
+              to="/insights/dynamic"
               image="https://i.troplo.com/i/7c28a218cb93.png"
               :right-text="`Since ${$date($user.user?.createdAt).format(
                 'YYYY'
@@ -38,7 +38,7 @@
           </v-col>
           <v-col sm="1" cols="12" xl="3" md="6">
             <DynamicCard
-              @click="comingSoon = true"
+              to="/insights/weekly"
               image="https://i.troplo.com/i/96837edd30ab.png"
               :right-text="`${$date()
                 .subtract(7, 'days')
@@ -48,7 +48,7 @@
           </v-col>
           <v-col cols="12" sm="1" xl="3" md="6">
             <DynamicCard
-              @click="comingSoon = true"
+              to="/insights/monthly"
               image="https://i.troplo.com/i/12c3b4f1a171.png"
               :right-text="`${$date()
                 .subtract(30, 'days')
@@ -58,7 +58,7 @@
           </v-col>
           <v-col cols="12" sm="1" xl="3" md="6">
             <DynamicCard
-              @click="comingSoon = true"
+              to="/insights/yearly"
               image="https://i.troplo.com/i/aee5a39b685b.png"
               :right-text="`${$date()
                 .subtract(1, 'years')
