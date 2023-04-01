@@ -24,7 +24,6 @@
     "noUnusedLocals": false,
     "esModuleInterop": true,
     "noImplicitReturns": true,
-    "suppressImplicitAnyIndexErrors": true,
     "strictNullChecks": true,
     "strict": false,
     "resolveJsonModule": true, // DO NOT CHANGE (I changed it :))

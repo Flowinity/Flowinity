@@ -1,10 +1,13 @@
 <template>
-  <apexchart
-    :type="type"
-    :options="chartOptions"
-    :series="series"
-    :height="height"
-  ></apexchart>
+  <div :id="'chartnext-' + id">
+    <apexchart
+      :type="type"
+      :options="chartOptions"
+      :series="series"
+      :height="height"
+      :width="getWidth()"
+    ></apexchart>
+  </div>
 </template>
 
 <script lang="ts">
@@ -81,6 +84,12 @@ export default defineComponent({
           data: this.data.data
         }
       ];
+    }
+  },
+  methods: {
+    getWidth() {
+      if (this.width) return this.width;
+      return "100%";
     }
   }
 });

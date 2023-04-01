@@ -10,16 +10,7 @@ type Login = {
 }
 
 type PatchUser = {
-  storedStatus: "online" | "invisible" | "idle" | "busy"
-  username?: string
-  email?: string
-  password?: string
-  currentPassword?: string
-  discordPrecache?: boolean
-  darkTheme?: boolean
-  description?: string
-  itemsPerPage?: number
-  themeEngine?: ThemeEngine | null
+  [key: string]: any
 }
 
 type SessionInfo = {

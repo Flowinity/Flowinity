@@ -121,7 +121,7 @@ export class CoreService {
   }
 
   async convertToGraph(data: any[], type?: "pulse") {
-    let result = {}
+    let result = {} as Record<string, number>
     for (let i = 7; i >= 0; i--) {
       let day = dayjs().subtract(i, "days").format("YYYY-MM-DD")
       result[day] = 0
@@ -295,7 +295,7 @@ export class CoreService {
       ...overrides.map((override) => ({
         [override.dataValues.key]: JSON.parse(override.value)
       }))[0]
-    }
+    } as Record<string, boolean>
   }
 
   getExperiments(dev: boolean = false, gold: boolean = false): object {

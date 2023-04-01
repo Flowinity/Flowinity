@@ -129,7 +129,7 @@ async function getCollection(id: number, userId: number) {
       ]
     })
     if (!collection) throw Errors.NOT_FOUND
-    collection["shared"] = true
+    collection.shared = true
   }
   return collection
 }
@@ -874,7 +874,7 @@ function getTypeByExt(ext: string) {
     exe: "binary",
     dll: "binary",
     so: "binary"
-  }
+  } as Record<string, string>
   return types[ext] || "binary"
 }
 

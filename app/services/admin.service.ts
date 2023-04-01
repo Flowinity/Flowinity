@@ -225,7 +225,7 @@ export class AdminService {
     dev: boolean = false
   ) {
     const experiments = Object.entries(overrides).reduce(
-      (acc, [name, value]) => {
+      (acc: Record<string, any>, [name, value]: any) => {
         try {
           if (name === "meta") return acc
           const val = JSON.parse(<string>value)
@@ -277,7 +277,7 @@ export class AdminService {
       raw: true
     })
 
-    let data = uploads.reduce((acc, upload) => {
+    let data = uploads.reduce((acc: any, upload) => {
       const date = dayjs(upload.createdAt).format("YYYY-MM-DD")
       if (date === "Invalid Date") return acc
       if (!acc[date]) {

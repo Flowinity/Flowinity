@@ -368,7 +368,11 @@ export default defineComponent({
   },
   mounted() {
     document.addEventListener("keydown", (event) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === "s") {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key === "s" &&
+        this.$app.themeEditor
+      ) {
         event.preventDefault();
         this.save();
       }
@@ -376,7 +380,11 @@ export default defineComponent({
   },
   unmounted() {
     document.removeEventListener("keydown", (event) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === "s") {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key === "s" &&
+        this.$app.themeEditor
+      ) {
         event.preventDefault();
         this.save();
       }

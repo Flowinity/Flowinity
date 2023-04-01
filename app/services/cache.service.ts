@@ -111,7 +111,7 @@ export class CacheService {
       }
       const years = ["2021", "2022", "2023", "latest"]
       for (const user of users) {
-        let result = {}
+        let result = {} as Record<string, number>
         for (const year of years) {
           result[year] = {
             ...(await pulseService.getInsights(user.id, year, false)),
@@ -120,7 +120,7 @@ export class CacheService {
         }
         redis.json.set(`insights:${user.id}`, "$", result)
       }
-      let result = {}
+      let result = {} as Record<string, number>
       for (const year of years) {
         result[year] = {
           ...(await pulseService.getInsights(null, year, true)),

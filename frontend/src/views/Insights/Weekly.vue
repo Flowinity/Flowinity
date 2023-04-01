@@ -38,6 +38,7 @@
               : b
           )}!`"
         >
+          {{ objectToGraphData(report?.data.uploads.hours) }}}
           <Chart
             title="Uploads last week"
             :data="objectToGraphData(report?.data.uploads.hours)"
@@ -57,6 +58,7 @@
             type="bar"
             :height="300"
             class="mb-n12"
+            :data="report?.data.uploads.days.series[0]"
           ></Chart>
         </InsightsStatsCard>
       </v-col>

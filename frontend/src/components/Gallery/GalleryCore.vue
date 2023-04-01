@@ -184,6 +184,7 @@ export default defineComponent({
       } else {
         this.$emit("updateItem", { item: items, collection });
       }
+      this.selected = [];
     },
     select(item: Upload) {
       if (this.selected.includes(item.id)) {

@@ -17,15 +17,17 @@
           >
             Upload Stats
           </strong>
-          <Chart
-            id="global-uploads"
-            :data="uploadGraph || $app.site.stats.uploadGraph"
-            v-if="uploadGraph || $app.site.stats.uploadGraph"
-            type="line"
-            name="Uploads"
-            :height="height"
-            :color="primaryColorResult.primary"
-          ></Chart>
+          <div class="mx-1">
+            <Chart
+              id="global-uploads"
+              :data="uploadGraph || $app.site.stats.uploadGraph"
+              v-if="uploadGraph || $app.site.stats.uploadGraph"
+              type="line"
+              name="Uploads"
+              :height="height"
+              :color="primaryColorResult.primary"
+            ></Chart>
+          </div>
         </v-window-item>
         <v-window-item value="messages">
           <strong
@@ -37,15 +39,17 @@
           >
             Message Stats
           </strong>
-          <Chart
-            id="global-messages"
-            :data="messageGraph || $app.site.stats.messageGraph"
-            v-if="messageGraph || $app.site.stats.messageGraph"
-            type="line"
-            name="Messages"
-            :height="height"
-            :color="primaryColorResult.primary"
-          ></Chart>
+          <div class="mx-1">
+            <Chart
+              id="global-messages"
+              :data="messageGraph || $app.site.stats.messageGraph"
+              v-if="messageGraph || $app.site.stats.messageGraph"
+              type="line"
+              name="Messages"
+              :height="height"
+              :color="primaryColorResult.primary"
+            ></Chart>
+          </div>
         </v-window-item>
         <v-window-item value="hours">
           <strong
@@ -57,15 +61,17 @@
           >
             Time spent on TPU
           </strong>
-          <Chart
-            id="global-hours"
-            :data="pulseGraph || $app.site.stats.pulseGraph"
-            v-if="pulseGraph || $app.site.stats.pulseGraph"
-            type="line"
-            name="Hours"
-            :height="height"
-            :color="primaryColorResult.primary"
-          ></Chart>
+          <div class="mx-1">
+            <Chart
+              id="global-hours"
+              :data="pulseGraph || $app.site.stats.pulseGraph"
+              v-if="pulseGraph || $app.site.stats.pulseGraph"
+              type="line"
+              name="Hours"
+              :height="height"
+              :color="primaryColorResult.primary"
+            ></Chart>
+          </div>
         </v-window-item>
       </v-window>
     </v-container>

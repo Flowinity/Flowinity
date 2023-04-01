@@ -401,6 +401,7 @@ export class UserUtilsService {
         }
       ]
     })
+
     if (!user) throw Errors.USER_NOT_FOUND
 
     const allowedFields = [
@@ -416,7 +417,6 @@ export class UserUtilsService {
       "weatherUnit",
       "themeEngine"
     ]
-
     // from body, remove all empty values
     for (const key in body) {
       if (!allowedFields.includes(key)) {

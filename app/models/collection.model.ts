@@ -45,4 +45,6 @@ export class Collection extends Model {
 
   @HasMany(() => AutoCollectApproval, "collectionId")
   autoCollectApprovals: AutoCollectApproval[]
+
+  shared?: boolean
 }

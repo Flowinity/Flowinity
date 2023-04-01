@@ -17,6 +17,7 @@ export interface InsightData {
       word: string;
       count: number;
     }[];
+    days: any;
   };
   pulses: {
     total: {

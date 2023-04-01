@@ -58,7 +58,7 @@ export class PulseService {
     //console.log(await this.generateWeeklyInsights(1))
   }
   calculatePulseDays(pulses: Pulse[]) {
-    let hoursLastWeek = {}
+    let hoursLastWeek = new HoursOfDay().hours
     for (let i = 0; i < 7; i++) {
       const date = dayjs().subtract(7, "days").startOf("isoWeek").add(i, "days")
       hoursLastWeek[date.format("dddd (DD)")] = 0
@@ -75,7 +75,7 @@ export class PulseService {
     return hoursLastWeek
   }
   calculatePlatforms(pulses: Pulse[]) {
-    let platforms = {}
+    let platforms = {} as Record<string, number>
     for (const pulse of pulses) {
       const parser: any = uaParser(pulse.sysInfo.ua)
       if (!platforms[parser.os.name]) platforms[parser.os.name] = 0
@@ -88,13 +88,16 @@ export class PulseService {
     return platforms
   }
   calculateWords(uploads: Upload[]) {
-    const words = uploads.map((upload) => upload.textMetadata)
+    const words = uploads.map((upload) => upload.textMetadata) as string[]
     const wordsArray = words.join(" ").split(" ")
     const wordsArrayFiltered = wordsArray.filter((word) => word.length > 2)
-    const wordsArrayFilteredCounted = wordsArrayFiltered.reduce((acc, word) => {
-      acc[word] = (acc[word] || 0) + 1
-      return acc
-    }, {})
+    const wordsArrayFilteredCounted = wordsArrayFiltered.reduce(
+      (acc: Record<string, number>, word) => {
+        acc[word] = (acc[word] || 0) + 1
+        return acc
+      },
+      {}
+    )
     return Object.keys(wordsArrayFilteredCounted).map((key) => ({
       word: key,
       count: wordsArrayFilteredCounted[key]
@@ -124,9 +127,9 @@ export class PulseService {
       "/starred": "Starred",
       "/insights": "Insights",
       "/admin": "Admin/HLP"
-    }
+    } as Record<string, string>
     // Pulses have a route property that is the url path, anything starting with the above keys is counted as a feature
-    const features = {}
+    const features = {} as Record<string, number>
     for (const pulse of pulses) {
       // check if it's in the above definitions, if not, add to "Other"
       const feature = Object.keys(definitions).find((key) =>
@@ -265,14 +268,14 @@ export class PulseService {
       ]
     })
 
-    let topChats = {}
+    const topChats = {} as Record<string, number>
     for (const message of messages) {
       const chatName = <string>this.getChatName(message.chat, userId)
       if (!topChats[chatName]) topChats[chatName] = 0
       topChats[chatName] += 1
     }
 
-    topChats = Object.keys(topChats)
+    const topChatsSorted = Object.keys(topChats)
       .sort((a, b) => topChats[b] - topChats[a])
       .slice(0, 15)
       .map((key) => ({ chatName: key, count: topChats[key] }))
@@ -315,7 +318,7 @@ export class PulseService {
           now: Math.round((messages.length / 7) * 100) / 100,
           previous: previous ? previous.data?.messages?.average : 0
         },
-        topChats
+        topChats: topChatsSorted
       },
       workspaces: {},
       _version: 1
@@ -439,13 +442,16 @@ export class PulseService {
       }
     })
 
-    const words = uploads.map((upload) => upload.textMetadata)
+    const words = uploads.map((upload) => upload.textMetadata) as string[]
     const wordsArray = words.join(" ").split(" ")
     const wordsArrayFiltered = wordsArray.filter((word) => word.length > 2)
-    const wordsArrayFilteredCounted = wordsArrayFiltered.reduce((acc, word) => {
-      acc[word] = (acc[word] || 0) + 1
-      return acc
-    }, {})
+    const wordsArrayFilteredCounted = wordsArrayFiltered.reduce(
+      (acc: Record<string, number>, word) => {
+        acc[word] = (acc[word] || 0) + 1
+        return acc
+      },
+      {}
+    )
     const wordsObject = global
       ? [
           {
@@ -483,8 +489,12 @@ export class PulseService {
       December: 0
     }
     for (const upload of uploads) {
-      const monthName = dayjs(upload.createdAt).format("MMMM")
-      const weekdayName = dayjs(upload.createdAt).format("dddd")
+      const monthName = dayjs(upload.createdAt).format(
+        "MMMM"
+      ) as keyof typeof months
+      const weekdayName = dayjs(upload.createdAt).format(
+        "dddd"
+      ) as keyof typeof weekdays
       weekdays[weekdayName] = (weekdays[weekdayName] || 0) + 1
       months[monthName] = (months[monthName] || 0) + 1
     }
@@ -494,7 +504,7 @@ export class PulseService {
       const hour = dayjs(upload.createdAt).format("h A")
       hours[hour] = (hours[hour] || 0) + 1
     }
-    let years = {}
+    let years = {} as Record<string, number>
     for (const upload of uploads) {
       const year = dayjs(upload.createdAt).format("YYYY")
       years[year] = (years[year] || 0) + 1
@@ -515,7 +525,7 @@ export class PulseService {
         }
       }
     })
-    let hoursLastWeek = {}
+    let hoursLastWeek = {} as Record<string, number>
     for (let i = 0; i < 7; i++) {
       const date = dayjs().subtract(7, "days").startOf("isoWeek").add(i, "days")
       hoursLastWeek[date.format("dddd (DD)")] = 0
@@ -540,7 +550,7 @@ export class PulseService {
         }
       }
     })
-    let totalPulseHours = {}
+    let totalPulseHours = {} as Record<string, number>
     for (const pulse of allPulses) {
       const day = dayjs(pulse.createdAt).format("DD/MM/YYYY")
       // convert from ms to hours
@@ -553,9 +563,7 @@ export class PulseService {
     // convert to array
     let totalPulseHoursArray = [0]
     for (const [, value] of Object.entries(totalPulseHours)) {
-      if (typeof value === "number") {
-        totalPulseHoursArray.push(value)
-      }
+      totalPulseHoursArray.push(value)
     }
     if (!totalPulseHoursArray.length) {
       totalPulseHoursArray = [0]
@@ -564,7 +572,7 @@ export class PulseService {
       array.reduce((a, b) => a + b) / array.length
 
     // hours on platforms based on Pulse UA
-    let platforms = {}
+    let platforms = {} as Record<string, number>
     for (const pulse of allPulses) {
       const parser: any = uaParser(pulse.sysInfo.ua)
       if (!platforms[parser.os.name]) platforms[parser.os.name] = 0

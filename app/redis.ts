@@ -6,8 +6,10 @@ const client = createClient({
     host: config.redis.host,
     port: config.redis.port
   },
-  username: config.redis["username"] || undefined,
-  password: config.redis["password"] || undefined,
+  //@ts-ignore
+  username: config.redis.username || undefined,
+  //@ts-ignore
+  password: config.redis.password || undefined,
   database: config.redis.db
 })
 
