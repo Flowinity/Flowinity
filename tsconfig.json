@@ -29,6 +29,7 @@
     "resolveJsonModule": true, // DO NOT CHANGE (I changed it :))
     "paths": {
       "@app/*": ["./app/*"]
-    }
+    },
+    "strictPropertyInitialization": false
   }
 }
