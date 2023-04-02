@@ -196,6 +196,7 @@ export class PulseService {
       }
       // remove the first date as it is the user's creation date
       startYearDates.shift()
+      console.log(startYearDates)
       for (const date of startYearDates) {
         await this.generateInsights(user.id, "yearly", date)
       }
@@ -435,7 +436,8 @@ export class PulseService {
   calculateUploadDays(
     uploads: Upload[],
     previous: Insight | null,
-    type: "weekly" | "monthly" | "yearly" | "dynamic"
+    type: "weekly" | "monthly" | "yearly" | "dynamic",
+    gte: Date
   ) {
     let weekdays = new SeriesGraph("Uploads")
     let months = null
@@ -466,10 +468,7 @@ export class PulseService {
     }
     if (type === "dynamic" || type === "yearly") {
       for (let i = 0; i < 12; i++) {
-        const date = dayjs()
-          .subtract(12, "months")
-          .startOf("year")
-          .add(i, "months")
+        const date = dayjs(gte).startOf("year").add(i, "months")
         months?.series[0].data.push({
           x: date.format("MMMM 'YY"),
           y: 0,
@@ -495,6 +494,7 @@ export class PulseService {
       if (update) update.y++
       if (type === "dynamic" || type === "yearly") {
         const month = dayjs(upload.createdAt).format("MMMM 'YY")
+        console.log(month)
         const update = months?.series[0].data.find(
           (monthData) => monthData.x === month
         )
@@ -812,7 +812,7 @@ export class PulseService {
         stdDev: this.standardDeviation(
           uploads.map((upload) => upload.createdAt.getDay())
         ),
-        ...this.calculateUploadDays(uploads, previous, type),
+        ...this.calculateUploadDays(uploads, previous, type, gte),
         streak: {
           ...this.getUploadStreak(uploads),
           previous: previous

@@ -466,7 +466,7 @@ export class CacheService {
       this.generateUserStatsCache().then(() => {})
       this.generateChatsCache().then(() => {})
       this.generateMissingChatDates().then(() => {})
-      this.generateInsightsCache().then(() => {})
+      //this.generateInsightsCache().then(() => {})
       return true
     } catch {
       return false
