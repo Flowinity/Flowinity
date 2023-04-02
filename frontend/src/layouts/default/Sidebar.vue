@@ -277,7 +277,7 @@ export default defineComponent({
             path: "/insights",
             scope: "*",
             icon: "mdi-chart-timeline-variant-shimmer",
-            new: false
+            new: true
           },
           {
             id: 31,
