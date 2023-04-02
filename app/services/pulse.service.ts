@@ -343,6 +343,7 @@ export class PulseService {
   calculatePlatforms(pulses: Pulse[]) {
     let platforms = {} as Record<string, number>
     for (const pulse of pulses) {
+      if (pulse.other?.type !== "session") continue
       const parser: any = uaParser(pulse?.sysInfo?.ua)
       if (!parser) continue
       if (!platforms[parser.os.name]) platforms[parser.os.name] = 0

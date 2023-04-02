@@ -60,7 +60,9 @@ export class Pulse extends Model {
   @Column({
     type: DataType.JSON
   })
-  other: object
+  other: {
+    type: string
+  }
 
   @BelongsTo(() => User, "userId")
   user: User

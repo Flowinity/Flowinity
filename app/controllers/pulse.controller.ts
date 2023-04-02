@@ -54,6 +54,7 @@ export class PulseController {
   }
 
   private stripSensitiveData(data: InsightData) {
+    if (!data) return data
     data.uploads.words = null
     data.messages.topChats = null
     return data
@@ -79,7 +80,7 @@ export class PulseController {
       async (req: RequestAuth, res: Response) => {
         const user = await this.checkUser(req.user.id, req.params.username)
         let insights = await redis.json.get(`insightsV2:${user.id}`)
-        if (insights)
+        if (insights && config.release !== "dev")
           return res.json({
             ...insights,
             data: user.public
@@ -88,7 +89,7 @@ export class PulseController {
           })
         insights = await this.pulseService.generateInsights(user.id, "dynamic")
         return res.json({
-          data: user.public ? this.stripSensitiveData(insights.data) : insights,
+          data: user.public ? this.stripSensitiveData(insights) : insights,
           startDate: user.createdAt || req.user.createdAt,
           endDate: new Date().toISOString(),
           _redis: new Date().toISOString()

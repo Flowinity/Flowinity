@@ -163,6 +163,19 @@
             class="mb-n6"
           ></Chart>
         </InsightsStatsCard>
+        <InsightsStatsCard
+          title="Website usage"
+          subtitle="See when you used TPU!"
+          class="mt-6"
+        >
+          <Chart
+            type="bar"
+            :height="300"
+            class="mb-n6"
+            :data="objectToGraphData(report?.data.pulses.days)"
+            name="Hours"
+          ></Chart>
+        </InsightsStatsCard>
       </v-col>
       <v-col cols="12" sm="12" md="3" lg="5" xl="4">
         <InsightsStatsCard
@@ -180,6 +193,34 @@
             class="mb-n6"
             :series="report?.data.uploads.days.series"
             name="uploads-last-week"
+          ></Chart>
+        </InsightsStatsCard>
+        <InsightsStatsCard
+          title="Platform usage"
+          subtitle="See what platforms you use TPU on."
+          class="mt-6"
+        >
+          <Chart
+            type="bar"
+            :horizontal="true"
+            :height="300"
+            class="mb-n6"
+            :data="objectToGraphData(report?.data.pulses.platforms)"
+            name="Hours"
+          ></Chart>
+        </InsightsStatsCard>
+      </v-col>
+      <v-col cols="12" sm="12" md="3" lg="5" xl="4">
+        <InsightsStatsCard
+          title="Website usage"
+          subtitle="See when you used TPU!"
+        >
+          <Chart
+            type="bar"
+            :height="300"
+            class="mb-n6"
+            :data="objectToGraphData(report?.data.pulses.days)"
+            name="Hours"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -262,35 +303,6 @@
             :height="300"
             class="mb-n6"
             :data="arrayToGraphData(report?.data.pulses.features)"
-            name="Hours"
-          ></Chart>
-        </InsightsStatsCard>
-      </v-col>
-      <v-col cols="12" sm="12" md="3" lg="5" xl="4">
-        <InsightsStatsCard
-          title="Platform usage"
-          subtitle="See what platforms you use TPU on."
-        >
-          <Chart
-            type="bar"
-            :horizontal="true"
-            :height="300"
-            class="mb-n6"
-            :data="objectToGraphData(report?.data.pulses.platforms)"
-            name="Hours"
-          ></Chart>
-        </InsightsStatsCard>
-      </v-col>
-      <v-col cols="12" sm="12" md="3" lg="5" xl="4">
-        <InsightsStatsCard
-          title="Website usage"
-          subtitle="See when you used TPU!"
-        >
-          <Chart
-            type="bar"
-            :height="300"
-            class="mb-n6"
-            :data="objectToGraphData(report?.data.pulses.days)"
             name="Hours"
           ></Chart>
         </InsightsStatsCard>
@@ -489,6 +501,17 @@ export default defineComponent({
       if (!object2) {
         const labels = [];
         const data = [];
+        // sort by key by getting in between (X), like key = Monday (1)
+        object = Object.keys(object)
+          .sort((a, b) => {
+            const aKey = a.split("(")[1]?.split(")")[0];
+            const bKey = b.split("(")[1]?.split(")")[0];
+            return parseInt(aKey || "1") - parseInt(bKey || "1");
+          })
+          .reduce((obj, key) => {
+            obj[key] = object[key];
+            return obj;
+          }, {});
         for (const [key, value] of Object.entries(object)) {
           labels.push(key);
           data.push(value);
