@@ -508,7 +508,7 @@ export default defineComponent({
             const bKey = b.split("(")[1]?.split(")")[0];
             return parseInt(aKey || "1") - parseInt(bKey || "1");
           })
-          .reduce((obj, key) => {
+          .reduce((obj: any, key: string) => {
             obj[key] = object[key];
             return obj;
           }, {});
