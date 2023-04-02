@@ -3,6 +3,9 @@
     <h1>TPU Changelogs</h1>
     <template v-for="version in versions">
       <h2 class="mt-4">{{ version.version }}</h2>
+      <v-card-subtitle v-if="version.subheading">
+        {{ version.subheading }}
+      </v-card-subtitle>
       <v-card-subtitle>{{ version.date }}</v-card-subtitle>
       <div v-for="change in version.changes" :key="change.text">
         <v-chip
@@ -49,6 +52,17 @@ export default defineComponent({
         }
       } as Record<string, { color: string | undefined }>,
       versions: [
+        {
+          version: "3.1.0",
+          date: "2023-04-02",
+          subheading: "3.1.0 - The Insights Update",
+          changes: [
+            {
+              tags: ["New", "TPU"],
+              text: "Introducing the new Insights, get historical and relevant reports by week, month, year and an all-time dynamic report."
+            }
+          ]
+        },
         {
           version: "3.0.24",
           date: "2023-03-27",
@@ -254,6 +268,7 @@ export default defineComponent({
       ] as {
         version: string;
         date: string;
+        subheading?: string;
         changes: {
           type: "new" | "fix" | "update";
           text: string;

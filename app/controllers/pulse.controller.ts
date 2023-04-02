@@ -81,12 +81,10 @@ export class PulseController {
         let insights = await redis.json.get(`insightsV2:${user.id}`)
         if (insights)
           return res.json({
+            ...insights,
             data: user.public
               ? this.stripSensitiveData(insights.data)
-              : insights,
-            startDate: user.createdAt || req.user.createdAt,
-            endDate: new Date().toISOString(),
-            _redis: new Date().toISOString()
+              : insights.data
           })
         insights = await this.pulseService.generateInsights(user.id, "dynamic")
         return res.json({
