@@ -135,7 +135,8 @@ export class PulseService {
     const users = await User.findAll({
       attributes: ["id", "createdAt"]
     })
-    /* WEEK-GEN for (const user of users) {
+    // WEEK-GEN
+    /* for (const user of users) {
       const startDate = dayjs(user.createdAt)
 
       // array to store all the start dates
@@ -494,7 +495,6 @@ export class PulseService {
       if (update) update.y++
       if (type === "dynamic" || type === "yearly") {
         const month = dayjs(upload.createdAt).format("MMMM 'YY")
-        console.log(month)
         const update = months?.series[0].data.find(
           (monthData) => monthData.x === month
         )
@@ -838,7 +838,7 @@ export class PulseService {
       messages: {
         total: {
           now: messages.length,
-          previous: previous ? previous.data?.messages?.total?.previous : 0
+          previous: previous ? previous.data?.messages?.total?.now : 0
         },
         average: {
           now: Math.round(messages.length / avgModifier),
