@@ -11,6 +11,8 @@ import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { Insight } from "@app/models/insight.model"
+import dayjsInt from "dayjs"
+import cron from "node-cron"
 
 export class HoursOfDay {
   hours: { [key: string]: number } = {
@@ -41,6 +43,60 @@ export class HoursOfDay {
   }
 }
 
+export class Months {
+  months: { [key: string]: number } = {
+    January: 0,
+    February: 0,
+    March: 0,
+    April: 0,
+    May: 0,
+    June: 0,
+    July: 0,
+    August: 0,
+    September: 0,
+    October: 0,
+    November: 0,
+    December: 0
+  }
+}
+export class Weekdays {
+  days: { [key: string]: number } = {
+    Monday: 0,
+    Tuesday: 0,
+    Wednesday: 0,
+    Thursday: 0,
+    Friday: 0,
+    Saturday: 0,
+    Sunday: 0
+  }
+}
+
+export interface Streak {
+  startDate?: string | null
+  endDate?: string | null
+  length: number
+}
+
+export class SeriesGraph {
+  series: {
+    name: string
+    data: {
+      x: string
+      y: number
+      goals: {
+        name: string
+        value: number
+      }[]
+    }[]
+  }[] = []
+  constructor(name: string) {
+    this.series[0] = {
+      name: name,
+      data: []
+    }
+  }
+}
+
 @Service()
 export class PulseService {
   async getReports(userId: number) {
@@ -54,6 +110,16 @@ export class PulseService {
       }
     })
   }
+  async getReport(userId: number, id: number) {
+    const report = await Insight.findOne({
+      where: {
+        userId,
+        id
+      }
+    })
+    if (report) return report
+    else return null
+  }
   async getLatestReport(userId: number, type: "weekly" | "monthly" | "yearly") {
     const latestReport = await Insight.findOne({
       order: [["endDate", "DESC"]],
@@ -66,7 +132,162 @@ export class PulseService {
     else return null
   }
   async pulseInit() {
-    // console.log(await this.generateInsights(1, "monthly"))
+    const users = await User.findAll({
+      attributes: ["id", "createdAt"]
+    })
+    /* WEEK-GEN for (const user of users) {
+      const startDate = dayjs(user.createdAt)
+
+      // array to store all the start dates
+      const startWeekDates = []
+
+      // loop through each week and get the start date
+      for (
+        let i = 0;
+        startDate.add(i * 7, "day").isSameOrBefore(dayjs(), "day");
+        i++
+      ) {
+        const startOfWeek = startDate.startOf("isoWeek").add(i * 7, "day")
+        startWeekDates.push(startOfWeek.format("YYYY-MM-DD"))
+      }
+      console.log(startWeekDates)
+      for (const date of startWeekDates) {
+        await this.generateInsights(user.id, "weekly", date)
+      }
+    }*/
+    // MONTH-GEN
+    /*
+    for (const user of users) {
+      const startDate = dayjs(user.createdAt)
+
+      // array to store all the start dates
+      const startMonthDates = []
+
+      // loop through each week and get the start date
+      for (
+        let i = 0;
+        startDate.add(i, "month").isSameOrBefore(dayjs(), "month");
+        i++
+      ) {
+        const startOfMonth = startDate.startOf("month").add(i, "month")
+        startMonthDates.push(startOfMonth.format("YYYY-MM-DD"))
+      }
+      console.log(startMonthDates)
+      for (const date of startMonthDates) {
+        await this.generateInsights(user.id, "monthly", date)
+      }
+    }*/
+    // YEAR-GEN
+    /*
+    for (const user of users) {
+      const startDate = dayjs(user.createdAt)
+
+      // array to store all the start dates
+      const startYearDates = []
+
+      // loop through each week and get the start date
+      for (
+        let i = 0;
+        startDate.add(i, "year").isSameOrBefore(dayjs(), "year");
+        i++
+      ) {
+        const startOfYear = startDate.startOf("year").add(i, "year")
+        startYearDates.push(startOfYear.format("YYYY-MM-DD"))
+      }
+      // remove the first date as it is the user's creation date
+      startYearDates.shift()
+      for (const date of startYearDates) {
+        await this.generateInsights(user.id, "yearly", date)
+      }
+    }*/
+    // schedule cron for Monday at 12:00 AM
+    cron.schedule("0 0 0 * * 1", async () => {
+      for (const user of users) {
+        await this.generateInsights(user.id, "weekly")
+      }
+    })
+    // schedule cron for 1st of every month at 12:00 AM
+    cron.schedule("0 0 0 1 * *", async () => {
+      for (const user of users) {
+        await this.generateInsights(user.id, "monthly")
+      }
+    })
+    // schedule cron for 1st of January every year at 12:00 AM
+    cron.schedule("0 0 0 1 1 *", async () => {
+      for (const user of users) {
+        await this.generateInsights(user.id, "yearly")
+      }
+    })
+  }
+  getUploadStreak(objects: Upload[]) {
+    let currentStreak: Streak = { startDate: "", endDate: "", length: 0 }
+    let longestStreak: Streak = { startDate: "", endDate: "", length: 0 }
+    let prevDate: dayjsInt.Dayjs | null = null
+    let currentStartDate: any | null = null
+    let currentEndDate: any | null = null
+    const dateSet = new Set<string>()
+
+    objects.forEach((object) => {
+      const date = dayjs(object.createdAt).startOf("day")
+      const dateStr = date.format("YYYY-MM-DD")
+
+      if (!dateSet.has(dateStr)) {
+        // The current object's date is not a duplicate
+        dateSet.add(dateStr)
+
+        if (
+          prevDate !== null &&
+          !prevDate.isSame(date.subtract(1, "day"), "day")
+        ) {
+          // There is a gap between two consecutive days, so the streak has been broken
+          if (currentEndDate !== null && currentStartDate !== null) {
+            // Update the current streak's end date and length
+            const length = currentEndDate.diff(currentStartDate, "day") + 1
+            if (length > currentStreak.length) {
+              currentStreak = {
+                startDate: currentStartDate.format("YYYY-MM-DD"),
+                endDate: currentEndDate.format("YYYY-MM-DD"),
+                length
+              }
+            }
+          }
+          currentStartDate = date
+          currentStreak = { startDate: dateStr, endDate: dateStr, length: 1 }
+        } else {
+          if (currentStartDate === null) {
+            currentStartDate = date
+          }
+          currentEndDate = date
+          currentStreak = {
+            startDate: currentStartDate?.format("YYYY-MM-DD"),
+            endDate: currentEndDate?.format("YYYY-MM-DD"),
+            length: currentEndDate
+              ? currentEndDate.diff(currentStartDate, "day") + 1
+              : 0
+          }
+          if (currentStreak.length > longestStreak.length) {
+            longestStreak = currentStreak
+          }
+        }
+      }
+
+      prevDate = date
+    })
+
+    // Check if the current streak is longer than the longest streak
+    if (currentEndDate !== null && currentStartDate !== null) {
+      const length = currentEndDate.diff(currentStartDate, "day") + 1
+      if (length >= currentStreak.length && length > longestStreak.length) {
+        currentStreak = {
+          startDate: currentStartDate.format("YYYY-MM-DD"),
+          endDate: currentEndDate.format("YYYY-MM-DD"),
+          length
+        }
+        longestStreak = currentStreak
+      }
+    }
+
+    return { currentStreak, longestStreak }
   }
   calculatePulseDays(
     pulses: Pulse[],
@@ -84,11 +305,12 @@ export class PulseService {
           .add(i, "months")
         hoursLastWeek[date.format("MMMM 'YY")] = 0
       }
-    } else {
+    } else if (type === "weekly") {
+      // add all the dates in order from the last week
       for (let i = 0; i < 7; i++) {
         const date = dayjs(lte)
-          .subtract(7, "days")
-          .startOf("isoWeek")
+          .endOf("isoWeek")
+          .subtract(6, "days")
           .add(i, "days")
         hoursLastWeek[date.format("dddd (DD)")] = 0
       }
@@ -145,12 +367,13 @@ export class PulseService {
     )
     return Object.keys(wordsArrayFilteredCounted)
       .map((key) => ({
-        word: key,
+        word: key.substring(0, 200),
         count: wordsArrayFilteredCounted[key]
       }))
       .sort((a, b) => b.count - a.count)
   }
   getChatName(chat: Chat, userId: number) {
+    if (!chat?.name) return "Unknown"
     if (chat.name && chat.type === "group") return chat.name
     if (chat.type === "direct") {
       const chatAssociation = chat.users.find(
@@ -173,7 +396,8 @@ export class PulseService {
       "/gallery": "Gallery",
       "/starred": "Starred",
       "/insights": "Insights",
-      "/admin": "Admin/HLP",
+      "/admin": "Administration",
+      "/moderation": "Administration",
       "/users": "Users",
       "/settings": "Settings",
       "/dashboard": "Dashboard"
@@ -187,7 +411,6 @@ export class PulseService {
         pulse.route.startsWith(key)
       )
       if (!feature) {
-        console.log("Unknown feature", pulse.route)
         features["Other"] =
           (features["Other"] || 0) + pulse.timeSpent / 1000 / 60 / 60
       } else {
@@ -208,30 +431,28 @@ export class PulseService {
         count: features[key]
       }))
   }
-  calculateUploadDays(uploads: Upload[], previous: Insight | null) {
-    let chart = {
-      series: [
-        {
-          name: "Uploads",
-          data: [] as {
-            x: string
-            y: number
-            goals: {
-              name: string
-              value: number
-            }[]
-          }[]
-        }
-      ]
+  calculateUploadDays(
+    uploads: Upload[],
+    previous: Insight | null,
+    type: "weekly" | "monthly" | "yearly" | "dynamic"
+  ) {
+    let weekdays = new SeriesGraph("Uploads")
+    let months = null
+    let years = null
+    if (type === "dynamic" || type === "yearly") {
+      months = new SeriesGraph("Uploads")
+    }
+    if (type === "dynamic") {
+      years = new SeriesGraph("Uploads")
     }
     for (let i = 0; i < 7; i++) {
       const date = dayjs().subtract(7, "days").startOf("isoWeek").add(i, "days")
-      chart.series[0].data.push({
+      weekdays.series[0].data.push({
         x: date.format("dddd"),
         y: 0,
         goals: [
           {
-            name: "Previous Week",
+            name: "Previous",
             // get same day last week
             value: previous
               ? previous.data.uploads.days.series[0].data.find(
@@ -242,12 +463,62 @@ export class PulseService {
         ]
       })
     }
+    if (type === "dynamic" || type === "yearly") {
+      for (let i = 0; i < 12; i++) {
+        const date = dayjs()
+          .subtract(12, "months")
+          .startOf("year")
+          .add(i, "months")
+        months?.series[0].data.push({
+          x: date.format("MMMM 'YY"),
+          y: 0,
+          goals: [
+            {
+              name: "Previous Year",
+              // get same day last week
+              value: previous
+                ? previous.data.uploads.months?.series[0].data.find(
+                    (month) => month.x === date.format("MMMM 'YY")
+                  )?.y || 0
+                : 0
+            }
+          ]
+        })
+      }
+    }
     for (const upload of uploads) {
       const day = dayjs(upload.createdAt).format("dddd")
-      const update = chart.series[0].data.find((dayData) => dayData.x === day)
+      const update = weekdays.series[0].data.find(
+        (dayData) => dayData.x === day
+      )
       if (update) update.y++
+      if (type === "dynamic" || type === "yearly") {
+        const month = dayjs(upload.createdAt).format("MMMM 'YY")
+        const update = months?.series[0].data.find(
+          (monthData) => monthData.x === month
+        )
+        if (update) update.y++
+      }
+      if (type === "dynamic") {
+        const year = dayjs(upload.createdAt).format("YYYY")
+        const update = years?.series[0].data.find(
+          (yearData) => yearData.x === year
+        )
+        if (update) update.y++
+        if (!update) {
+          years?.series[0].data.push({
+            x: year,
+            y: 1,
+            goals: []
+          })
+        }
+      }
     }
-    return chart
+    return {
+      days: weekdays,
+      months,
+      years
+    }
   }
   standardDeviation(arr: number[], usePopulation = false) {
     const mean = arr.reduce((acc, val) => acc + val, 0) / arr.length
@@ -257,6 +528,120 @@ export class PulseService {
         .reduce((acc: any, val: number) => acc + val, 0) /
         (arr.length - (usePopulation ? 0 : 1))
     )
+  }
+  async getAverageHours(pulses: Pulse[]) {
+    let totalPulseHours = {} as Record<string, number>
+    for (const pulse of pulses) {
+      const day = dayjs(pulse.createdAt).format("DD/MM/YYYY")
+      // convert from ms to hours
+      const timeSpent = pulse.timeSpent / 1000 / 60 / 60
+      totalPulseHours[day] =
+        Math.round(
+          ((totalPulseHours[day] || 0) + timeSpent) * 100 + Number.EPSILON
+        ) / 100
+    }
+    let totalPulseHoursArray = []
+    for (const [, value] of Object.entries(totalPulseHours)) {
+      totalPulseHoursArray.push(value)
+    }
+    if (!totalPulseHoursArray.length) {
+      totalPulseHoursArray = [0]
+    }
+    return (
+      Math.round(this.average(totalPulseHoursArray) * 100 + Number.EPSILON) /
+      100
+    )
+  }
+  average(array: any[]) {
+    return array.reduce((a, b) => a + b) / array.length
+  }
+  async collectionInsights(
+    userId: number,
+    type: "weekly" | "monthly" | "yearly" | "dynamic",
+    gte: Date,
+    lte: Date,
+    previous: Insight | null
+  ) {
+    const collectionGraph = new SeriesGraph("Collections")
+    const autoCollectGraph = new SeriesGraph("AutoCollect Actions")
+    const autoCollectPulses = await Pulse.findAll({
+      where: {
+        userId,
+        createdAt: {
+          [Op.gte]: gte,
+          [Op.lte]: lte
+        },
+        [Op.or]: [
+          {
+            action: "auto-collect-rejected"
+          },
+          {
+            action: "auto-collect-accepted"
+          }
+        ]
+      }
+    })
+    const collectionItems = await CollectionItem.findAll({
+      where: {
+        userId,
+        createdAt: {
+          [Op.gte]: gte,
+          [Op.lte]: lte
+        }
+      }
+    })
+    // generate the graph, it's hours, like 1 AM
+    const hours = new HoursOfDay().hours
+    for (const hour of Object.keys(hours)) {
+      collectionGraph.series[0].data.push({
+        x: hour,
+        y: 0,
+        goals: [
+          {
+            name: "Previous",
+            // get same day last week
+            value: previous
+              ? previous.data.pulses.collections?.series[0].data.find(
+                  (day) => day.x === hour
+                )?.y || 0
+              : 0
+          }
+        ]
+      })
+      autoCollectGraph.series[0].data.push({
+        x: hour,
+        y: 0,
+        goals: [
+          {
+            name: "Previous",
+            // get same day last week
+            value: previous
+              ? previous.data.pulses.autoCollects?.series[0].data.find(
+                  (day) => day.x === hour
+                )?.y || 0
+              : 0
+          }
+        ]
+      })
+    }
+    for (const pulse of autoCollectPulses) {
+      const hour = dayjs(pulse.createdAt).format("h A")
+      const update = autoCollectGraph.series[0].data.find(
+        (hourData) => hourData.x === hour
+      )
+      if (update) update.y++
+    }
+    for (const collectionItem of collectionItems) {
+      const hour = dayjs(collectionItem.createdAt).format("h A")
+      const update = collectionGraph.series[0].data.find(
+        (hourData) => hourData.x === hour
+      )
+      if (update) update.y++
+    }
+    return {
+      collections: collectionGraph,
+      autoCollects: autoCollectGraph
+    }
   }
   async generateInsights(
     userId: number,
@@ -276,6 +661,7 @@ export class PulseService {
         .subtract(1, "week")
         .endOf("isoWeek")
         .toDate()
+      console.log(gte, lte)
     } else if (type === "monthly") {
       gte = dayjs(customGte || undefined)
         .subtract(1, "month")
@@ -285,6 +671,7 @@ export class PulseService {
         .subtract(1, "month")
         .endOf("month")
         .toDate()
+      console.log(gte, lte)
       avgModifier = 30.5
     } else if (type === "yearly") {
       gte = dayjs(customGte || undefined)
@@ -311,13 +698,6 @@ export class PulseService {
     if (type !== "dynamic") {
       previous = await this.getLatestReport(userId, type)
     }
-    if (previous) {
-      if (dayjs(gte).isBefore(dayjs(previous.createdAt))) {
-        previous = null
-      } else {
-        gte = new Date(previous.createdAt)
-      }
-    }
     // UPLOADS
     const uploads = await Upload.findAll({
       where: {
@@ -329,12 +709,31 @@ export class PulseService {
       }
     })
 
-    let hours = new HoursOfDay().hours
+    let hoursGraph = new SeriesGraph("Uploads")
+    for (let i = 0; i < 24; i++) {
+      const hour = dayjs(0).hour(i).format("h A")
+      hoursGraph.series[0].data.push({
+        x: hour,
+        y: 0,
+        goals: [
+          {
+            name: "Previous",
+            value: previous
+              ? previous.data.uploads.hours?.series[0].data.find(
+                  (val) => val.x === hour
+                )?.y || 0
+              : 0
+          }
+        ]
+      })
+    }
     for (const upload of uploads) {
       const hour = dayjs(upload.createdAt).format("h A")
-      hours[hour] = (hours[hour] || 0) + 1
+      const update = hoursGraph.series[0].data.find(
+        (hourData) => hourData.x === hour
+      )
+      if (update) update.y++
     }
-
     // PULSE
     const pulses = await Pulse.findAll({
       where: {
@@ -405,17 +804,23 @@ export class PulseService {
           now: Math.round(uploads.length / avgModifier),
           previous: previous ? previous.data?.uploads?.average?.now : 0
         },
-        hours: {
-          now: hours,
-          previous: previous ? previous.data?.uploads?.hours?.now : null
-        },
+        hours: hoursGraph,
         // limit 500
         words: this.calculateWords(uploads).slice(0, 500),
-        days: this.calculateUploadDays(uploads, previous),
         // calculate standard deviation of uploads per day
         stdDev: this.standardDeviation(
           uploads.map((upload) => upload.createdAt.getDay())
-        )
+        ),
+        ...this.calculateUploadDays(uploads, previous, type),
+        streak: {
+          ...this.getUploadStreak(uploads),
+          previous: previous
+            ? {
+                currentStreak: previous.data?.uploads?.streak?.currentStreak,
+                longestStreak: previous.data?.uploads?.streak?.longestStreak
+              }
+            : null
+        }
       },
       pulses: {
         total: {
@@ -425,7 +830,9 @@ export class PulseService {
         average: Math.round((pulses.length / avgModifier) * 100) / 100,
         platforms: this.calculatePlatforms(pulses),
         days: this.calculatePulseDays(pulses, type, gte, lte),
-        features: this.getFeatures(pulses)
+        features: this.getFeatures(pulses),
+        avgHours: await this.getAverageHours(pulses),
+        ...(await this.collectionInsights(userId, type, gte, lte, previous))
       },
       messages: {
         total: {
@@ -442,13 +849,20 @@ export class PulseService {
       _version: 1
     }
     if (type !== "dynamic") {
-      await Insight.create({
-        userId: userId,
-        data: insights,
-        type,
-        startDate: gte.toISOString(),
-        endDate: lte.toISOString()
-      })
+      try {
+        await Insight.create({
+          userId: userId,
+          data: insights,
+          type,
+          startDate: gte.toISOString(),
+          endDate: lte.toISOString()
+        })
+      } catch (e) {
+        console.log(e)
+        console.log(JSON.stringify(insights, null, 2))
+        console.log("FAIL")
+        throw e
+      }
     }
     return insights
   }
@@ -585,29 +999,8 @@ export class PulseService {
         }))
 
     // uploads per weekday and month
-    let weekdays = {
-      Monday: 0,
-      Tuesday: 0,
-      Wednesday: 0,
-      Thursday: 0,
-      Friday: 0,
-      Saturday: 0,
-      Sunday: 0
-    }
-    let months = {
-      January: 0,
-      February: 0,
-      March: 0,
-      April: 0,
-      May: 0,
-      June: 0,
-      July: 0,
-      August: 0,
-      September: 0,
-      October: 0,
-      November: 0,
-      December: 0
-    }
+    let weekdays = new Weekdays().days
+    let months = new Months().months
     for (const upload of uploads) {
       const monthName = dayjs(upload.createdAt).format(
         "MMMM"

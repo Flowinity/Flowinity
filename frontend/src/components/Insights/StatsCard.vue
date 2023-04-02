@@ -7,16 +7,18 @@
       <p class="text-grey" style="font-size: 14px" v-if="subtitle">
         {{ subtitle }}
       </p>
-      <h1 style="font-size: 5em" v-if="count !== undefined">{{ count }}</h1>
+      <h1 style="font-size: 4em" v-if="count !== undefined">
+        {{ count.toLocaleString() }}
+      </h1>
       <slot v-else></slot>
       <v-card-subtitle v-if="difference !== undefined">
         <v-icon :color="differenceIcon(difference).color">
           {{ differenceIcon(difference).icon }}
         </v-icon>
-        {{ difference?.toString().replace("-", "") }}
+        {{ difference.toLocaleString() }}
       </v-card-subtitle>
       <v-card-subtitle v-if="last !== undefined">
-        {{ last }} previously
+        {{ last.toLocaleString() }} previously
       </v-card-subtitle>
     </v-container>
   </v-card>

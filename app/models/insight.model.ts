@@ -7,9 +7,30 @@ import {
   DataType
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
+import { Streak } from "@app/services/pulse.service"
+
+export interface SeriesGraph {
+  series: [
+    {
+      name: string
+      data: {
+        x: string
+        y: number
+        goals: {
+          name: string
+          value: number
+        }[]
+      }[]
+    }
+  ]
+}
 
 export interface InsightData {
   uploads: {
+    streak: {
+      currentStreak: Streak
+      longestStreak: Streak
+    }
     total: {
       now: number
       previous: number
@@ -18,28 +39,16 @@ export interface InsightData {
       now: number
       previous: number
     }
-    hours: {
-      [key: string]: number
-    }
-    words: {
-      word: string
-      count: number
-    }[]
-    days: {
-      series: [
-        {
-          name: string
-          data: {
-            x: string
-            y: number
-            goals: {
-              name: string
-              value: number
-            }[]
-          }[]
-        }
-      ]
-    }
+    hours: SeriesGraph
+    words:
+      | {
+          word: string
+          count: number
+        }[]
+      | null
+    months: SeriesGraph | null
+    days: SeriesGraph
+    years: SeriesGraph | null
   }
   pulses: {
     total: {
@@ -60,6 +69,36 @@ export interface InsightData {
       name: string
       count: number
     }[]
+    autoCollects: {
+      series: [
+        {
+          name: string
+          data: {
+            x: string
+            y: number
+            goals: {
+              name: string
+              value: number
+            }[]
+          }[]
+        }
+      ]
+    } | null
+    collections: {
+      series: [
+        {
+          name: string
+          data: {
+            x: string
+            y: number
+            goals: {
+              name: string
+              value: number
+            }[]
+          }[]
+        }
+      ]
+    } | null
   }
   messages: {
     total: {
@@ -72,7 +111,7 @@ export interface InsightData {
     }
     topChats: {
       [key: string]: number
-    }
+    } | null
   }
   workspaces: {}
   _version: number

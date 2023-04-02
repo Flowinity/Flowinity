@@ -281,7 +281,10 @@
             :start-color="user.plan.id === 6 ? '#FBC02D' : '#6A1B9A'"
             :end-color="user.plan.id === 6 ? '#F57F17' : '#4A148C'"
             :username="user.username"
-            v-if="$experiments.experiments.ACCOUNT_DEV_ELIGIBLE"
+            v-if="
+              user.insights === 'everyone' ||
+              (user.insights === 'friends' && user.friend === 'accepted')
+            "
             :gold="gold"
           ></InsightsPromoCard>
           <StatsCard

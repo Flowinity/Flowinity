@@ -247,6 +247,10 @@ let Errors = {
   REPORT_ALREADY_EXISTS_FOR_IP: {
     message: "You have already reported this upload.",
     status: 400
+  },
+  INSIGHTS_DISABLED: {
+    message: "You do not have permission to view this user's insights.",
+    status: 401
   }
 }
 

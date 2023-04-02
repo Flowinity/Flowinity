@@ -1,7 +1,21 @@
 import { User } from "./user";
 
+export interface Streak {
+  startDate: string;
+  endDate: string;
+  length: number;
+}
+
 export interface InsightData {
   uploads: {
+    streak: {
+      currentStreak: Streak;
+      longestStreak: Streak;
+      previous?: {
+        currentStreak: Streak;
+        longestStreak: Streak;
+      };
+    };
     total: {
       now: number;
       previous: number;
@@ -17,7 +31,51 @@ export interface InsightData {
       word: string;
       count: number;
     }[];
-    days: any;
+    months: {
+      series: [
+        {
+          name: string;
+          data: {
+            x: string;
+            y: number;
+            goals: {
+              name: string;
+              value: number;
+            }[];
+          }[];
+        }
+      ];
+    } | null;
+    days: {
+      series: [
+        {
+          name: string;
+          data: {
+            x: string;
+            y: number;
+            goals: {
+              name: string;
+              value: number;
+            }[];
+          }[];
+        }
+      ];
+    };
+    years: {
+      series: [
+        {
+          name: string;
+          data: {
+            x: string;
+            y: number;
+            goals: {
+              name: string;
+              value: number;
+            }[];
+          }[];
+        }
+      ];
+    };
   };
   pulses: {
     total: {
@@ -63,4 +121,5 @@ export interface Insight {
   data: InsightData;
   userId: number;
   user: User;
+  id: number;
 }

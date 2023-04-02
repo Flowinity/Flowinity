@@ -8,6 +8,8 @@ import { caching } from "cache-manager"
 import config from "@app/config/tpu.json"
 import { CacheService } from "@app/services/cache.service"
 import dayjs from "dayjs"
+import isoWeek from "dayjs/plugin/isoWeek"
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
 import socket from "./lib/socket"
 import { BillingService } from "@app/services/billing.service"
 import { PulseService } from "@app/services/pulse.service"
@@ -50,6 +52,12 @@ export class Server {
     this.application.app.set("trust proxy", 1)
     const memoryCache = await caching("memory")
     this.application.app.set("cache", memoryCache)
+    // Dayjs extensions
+    dayjs.extend(isoWeek)
+    dayjs().isoWeek()
+    dayjs().isoWeekday()
+    dayjs().isoWeekYear()
+    dayjs.extend(isSameOrBefore)
     global.db = sequelize
     global.redis = redis
     global.config = config

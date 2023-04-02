@@ -113,4 +113,5 @@ export interface User {
     | null
     | undefined;
   themeEngine: ThemeEngine | null;
+  insights: "everyone" | "friends" | "nobody";
 }

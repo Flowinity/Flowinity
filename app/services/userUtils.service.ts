@@ -415,7 +415,8 @@ export class UserUtilsService {
       "itemsPerPage",
       "storedStatus",
       "weatherUnit",
-      "themeEngine"
+      "themeEngine",
+      "insights"
     ]
     // from body, remove all empty values
     for (const key in body) {
@@ -652,7 +653,8 @@ export class UserUtilsService {
         "createdAt",
         "updatedAt",
         "banner",
-        "quota"
+        "quota",
+        "insights"
       ],
       include: [
         {
@@ -693,7 +695,8 @@ export class UserUtilsService {
         "updatedAt",
         "banner",
         "quota",
-        "themeEngine"
+        "themeEngine",
+        "insights"
       ],
       include: [
         {

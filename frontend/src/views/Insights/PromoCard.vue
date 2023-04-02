@@ -1,5 +1,5 @@
 <template>
-  <v-card :to="`/u/${username}/insights/weekly`" class="pb-n4">
+  <v-card :to="`/insights/weekly/${username}`" class="pb-n4">
     <svg
       width="100%"
       height="100%"

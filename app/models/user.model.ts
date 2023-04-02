@@ -228,6 +228,12 @@ export class User extends Model {
   })
   themeEngine: ThemeEngine | null
 
+  @Column({
+    type: DataType.ENUM("everyone", "friends", "nobody"),
+    defaultValue: "nobody"
+  })
+  insights: "everyone" | "friends" | "nobody"
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 

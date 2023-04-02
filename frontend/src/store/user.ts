@@ -27,6 +27,7 @@ export interface UserState {
     description?: string;
     weatherUnit?: string;
     themeEngine: ThemeEngine;
+    insights?: "everyone" | "friends" | "nobody";
   };
   actions: {
     emailSent: {
@@ -244,7 +245,8 @@ export const useUserStore = defineStore("user", {
               currentPassword: "",
               storedStatus: this.user.storedStatus,
               description: this.user.description,
-              themeEngine: this.user.themeEngine as ThemeEngine
+              themeEngine: this.user.themeEngine as ThemeEngine,
+              insights: this.user.insights
             };
             this.runPostTasks();
           }
@@ -264,7 +266,8 @@ export const useUserStore = defineStore("user", {
         storedStatus: this.user?.storedStatus,
         description: this.user?.description,
         weatherUnit: this.user?.weatherUnit,
-        themeEngine: this.user?.themeEngine as ThemeEngine
+        themeEngine: this.user?.themeEngine as ThemeEngine,
+        insights: this.user?.insights
       };
       this.applyTheme();
       localStorage.setItem("userStore", JSON.stringify(data));
@@ -299,7 +302,8 @@ export const useUserStore = defineStore("user", {
         storedStatus: this.changes.storedStatus,
         description: this.changes.description,
         weatherUnit: this.changes.weatherUnit,
-        themeEngine: this.changes.themeEngine
+        themeEngine: this.changes.themeEngine,
+        insights: this.changes.insights
       });
       this.user = {
         ...this.user,

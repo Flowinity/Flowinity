@@ -119,6 +119,13 @@ export class CacheService {
           }
         }
         redis.json.set(`insights:${user.id}`, "$", result)
+        const dynamic = {
+          data: await pulseService.generateInsights(user.id, "dynamic"),
+          startDate: user.createdAt.toISOString(),
+          _redis: new Date().toISOString(),
+          endDate: new Date().toISOString()
+        }
+        redis.json.set(`insightsV2:${user.id}`, "$", dynamic)
       }
       let result = {} as Record<string, number>
       for (const year of years) {
@@ -467,6 +474,7 @@ export class CacheService {
       this.generateUserStatsCache().then(() => {})
       this.generateChatsCache().then(() => {})
       this.generateMissingChatDates().then(() => {})
+      this.generateInsightsCache().then(() => {})
       return true
     } catch {
       return false

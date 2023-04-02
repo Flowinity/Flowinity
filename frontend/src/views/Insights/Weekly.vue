@@ -1,50 +1,105 @@
 <template>
-  <v-container v-if="report">
-    <DynamicCard style="cursor: default" height="250px" :image="strings.banner">
+  <v-container v-if="report" :key="report.id">
+    <DynamicCard
+      style="cursor: default"
+      :height="$vuetify.display.mobile ? '150px' : '250px'"
+      :image="strings.banner"
+    >
       <v-card-text
         style="position: absolute; bottom: 0; left: 0; font-size: 18px"
         class="unselectable"
       >
         <span :class="{ 'text-black': type === 'weekly' }" style="z-index: 2">
-          {{ $date(report.startDate).format("Do MMM") }} -
-          {{ $date(report.endDate).format("Do MMM") }}
+          <v-select
+            :items="items"
+            item-title="name"
+            item-value="id"
+            v-model="id"
+            v-if="type !== 'dynamic'"
+            class="mb-n6"
+            :color="type === 'weekly' ? 'black' : 'white'"
+            @update:model-value="getReport"
+          ></v-select>
         </span>
       </v-card-text>
+      <div class="float-right mb-3 mr-4" v-if="!$vuetify.display.mobile">
+        <v-btn
+          :to="'/insights/weekly' + requiredString"
+          class="mr-2"
+          :color="type === 'weekly' ? 'black' : 'white'"
+        >
+          Weekly
+        </v-btn>
+        <v-btn
+          :to="'/insights/monthly' + requiredString"
+          class="mr-2"
+          :color="type === 'weekly' ? 'black' : 'white'"
+        >
+          Monthly
+        </v-btn>
+        <v-btn
+          :to="'/insights/yearly' + requiredString"
+          class="mr-2"
+          :color="type === 'weekly' ? 'black' : 'white'"
+        >
+          Annually
+        </v-btn>
+        <v-btn
+          :to="'/insights/dynamic' + requiredString"
+          :color="type === 'weekly' ? 'black' : 'white'"
+        >
+          Dynamic
+        </v-btn>
+      </div>
     </DynamicCard>
     <div class="d-flex justify-center">
-      <v-btn class="mb-n3 mt-1">
-        <v-icon class="mr-1">mdi-arrow-left</v-icon>
-        Last {{ strings.singular }}
-      </v-btn>
       <div class="text-center mb-n3 mt-3" style="flex: 1">
         <p>
           {{ $date(report.startDate).format("Do MMMM YYYY") }} -
           {{ $date(report.endDate).format("Do MMMM YYYY") }}
         </p>
       </div>
-      <v-btn class="mb-n3 mt-1 float-right">
-        Next {{ strings.singular }}
-        <v-icon class="ml-1">mdi-arrow-right</v-icon>
-      </v-btn>
     </div>
     <v-row class="mt-2">
       <v-col cols="12" sm="12" md="4" lg="5" xl="2">
         <InsightsStatsCard
-          :title="`Uploads last ${strings.singular}`"
-          :count="report?.data.uploads.total.now"
-          :last="report?.data.uploads.total.previous"
+          :title="`Uploads`"
+          :count="report?.data.uploads.total?.now"
+          :last="report?.data.uploads.total?.previous"
           :difference="
             report?.data.uploads.total.now - report.data.uploads.total.previous
           "
         ></InsightsStatsCard>
         <InsightsStatsCard
           class="mt-4"
-          :title="`Messages last ${strings.singular}`"
-          :count="report?.data.messages.total.now"
-          :last="report?.data.messages.total.previous"
+          :title="`Messages`"
+          :count="report?.data.messages.total?.now"
+          :last="report?.data.messages.total?.previous"
           :difference="
             report?.data.messages.total.now -
             report.data.messages.total.previous
+          "
+        ></InsightsStatsCard>
+        <InsightsStatsCard
+          class="mt-4"
+          title="Current UploadStreak"
+          v-if="report?.data.uploads.streak.currentStreak"
+          :count="report?.data.uploads.streak.currentStreak.length"
+          :subtitle="`${$date(
+            report.data.uploads.streak.currentStreak.startDate
+          ).format('DD/MM/YYYY')} - ${$date(
+            report.data.uploads.streak.currentStreak.endDate
+          ).format('DD/MM/YYYY')}`"
+          :difference="
+            report.data.uploads.streak.previous
+              ? report.data.uploads.streak.currentStreak.length -
+                report.data.uploads.streak.previous.currentStreak.length
+              : undefined
+          "
+          :last="
+            report.data.uploads.streak.previous
+              ? report.data.uploads.streak.previous.currentStreak.length
+              : undefined
           "
         ></InsightsStatsCard>
       </v-col>
@@ -68,25 +123,41 @@
               report.data.messages.average.previous ?? 0
           "
         ></InsightsStatsCard>
+        <InsightsStatsCard
+          class="mt-4"
+          title="Longest UploadStreak"
+          v-if="report?.data.uploads.streak.longestStreak"
+          :count="report?.data.uploads.streak.longestStreak.length"
+          :subtitle="`${$date(
+            report.data.uploads.streak.longestStreak.startDate
+          ).format('DD/MM/YYYY')} - ${$date(
+            report.data.uploads.streak.longestStreak.endDate
+          ).format('DD/MM/YYYY')}`"
+          :difference="
+            report.data.uploads.streak.previous
+              ? report.data.uploads.streak.longestStreak.length -
+                report.data.uploads.streak.previous.longestStreak.length
+              : undefined
+          "
+          :last="
+            report.data.uploads.streak.previous?.longestStreak
+              ? report.data.uploads.streak.previous.longestStreak.length
+              : undefined
+          "
+        ></InsightsStatsCard>
       </v-col>
       <v-col cols="12" sm="12" md="5" lg="6" xl="4">
         <InsightsStatsCard
           title="Uploads per hour"
-          :subtitle="`Last week you uploaded the most at ${Object.keys(
-            report?.data.uploads.hours
-          ).reduce((a, b) =>
-            //@ts-ignore
-            report?.data?.uploads?.hours[a] ??
-            //@ts-ignore
-            0 > report?.data?.uploads?.hours[b] ??
-            0
-              ? a
-              : b
-          )}!`"
+          :subtitle="`Last reporting period you uploaded the most at ${
+            report?.data.uploads.hours.series[0].data.reduce((a, b) =>
+              a.y > b.y ? a : b
+            ).x
+          }!`"
         >
           <Chart
             title="Uploads last week"
-            :data="objectToGraphData(report?.data.uploads.hours.now)"
+            :series="report?.data.uploads.hours.series"
             type="bar"
             :height="300"
             class="mb-n6"
@@ -96,9 +167,9 @@
       <v-col cols="12" sm="12" md="3" lg="5" xl="4">
         <InsightsStatsCard
           title="Uploads per day"
-          :subtitle="`Last week you uploaded the most on ${
-            report?.data.uploads.days.series[0].data.reduce((a: number, b: number) =>
-              a > b ? a : b
+          :subtitle="`Last reporting period you uploaded the most on ${
+            report?.data.uploads.days.series[0].data.reduce((a, b) =>
+              a.y > b.y ? a : b
             ).x
           }!`"
         >
@@ -112,7 +183,50 @@
           ></Chart>
         </InsightsStatsCard>
       </v-col>
-      <v-col cols="12" sm="12" md="3" lg="5" xl="4">
+      <v-col
+        cols="12"
+        sm="12"
+        md="3"
+        lg="5"
+        xl="4"
+        v-if="report.data.uploads.months"
+      >
+        <InsightsStatsCard title="Uploads per month">
+          <Chart
+            type="bar"
+            :height="300"
+            class="mb-n6"
+            :series="report?.data.uploads.months.series"
+            name="uploads-last-month"
+          ></Chart>
+        </InsightsStatsCard>
+      </v-col>
+      <v-col
+        cols="12"
+        sm="12"
+        md="3"
+        lg="5"
+        xl="4"
+        v-if="report.data.uploads.years"
+      >
+        <InsightsStatsCard title="Uploads per year">
+          <Chart
+            type="bar"
+            :height="300"
+            class="mb-n6"
+            :series="report?.data.uploads.years.series"
+            name="uploads-last-month"
+          ></Chart>
+        </InsightsStatsCard>
+      </v-col>
+      <v-col
+        cols="12"
+        sm="12"
+        md="3"
+        lg="5"
+        xl="4"
+        v-if="report?.data.uploads.words"
+      >
         <InsightsStatsCard
           title="Top 500 words"
           subtitle="See the top words in your screenshots!"
@@ -170,7 +284,7 @@
       <v-col cols="12" sm="12" md="3" lg="5" xl="4">
         <InsightsStatsCard
           title="Website usage"
-          subtitle="See what days you used TPU!"
+          subtitle="See when you used TPU!"
         >
           <Chart
             type="bar"
@@ -181,7 +295,14 @@
           ></Chart>
         </InsightsStatsCard>
       </v-col>
-      <v-col cols="12" sm="12" md="3" lg="5" xl="4">
+      <v-col
+        cols="12"
+        sm="12"
+        md="3"
+        lg="5"
+        xl="4"
+        v-if="report?.data.messages.topChats"
+      >
         <InsightsStatsCard
           title="Top chats"
           subtitle="See who you talk to in TPU Communications!"
@@ -206,12 +327,49 @@
           </v-data-table>
         </InsightsStatsCard>
       </v-col>
+      <v-col
+        cols="12"
+        sm="12"
+        md="3"
+        lg="5"
+        xl="4"
+        v-if="report?.data.pulses.autoCollects"
+      >
+        <InsightsStatsCard title="AutoCollects per hour">
+          <Chart
+            type="bar"
+            :height="300"
+            class="mb-n6"
+            :series="report?.data.pulses.autoCollects.series"
+            name="autocollects-per-hour"
+          ></Chart>
+        </InsightsStatsCard>
+      </v-col>
+      <v-col
+        cols="12"
+        sm="12"
+        md="3"
+        lg="5"
+        xl="4"
+        v-if="report?.data.pulses.collections"
+      >
+        <InsightsStatsCard title="Collectivizations per hour">
+          <Chart
+            type="bar"
+            :height="300"
+            class="mb-n6"
+            :series="report?.data.pulses.collections.series"
+            name="autocollects-per-hour"
+          ></Chart>
+        </InsightsStatsCard>
+      </v-col>
     </v-row>
   </v-container>
   <v-container v-else>
     <v-card>
       <v-card-text>
-        You have no data for this week. Please check back later.
+        You have no data for this {{ strings.singular }}. Please check back
+        later.
       </v-card-text>
     </v-card>
   </v-container>
@@ -248,10 +406,27 @@ export default defineComponent({
         ]
       },
       report: null as Insight | null,
-      reports: [] as Insight[]
+      reports: [] as Insight[],
+      id: null as number | null
     };
   },
   computed: {
+    requiredString() {
+      if (this.$route.params.username) return `/${this.$route.params.username}`;
+      return "";
+    },
+    items() {
+      return this.reports
+        .filter((r) => r.type === this.type)
+        .map((report) => {
+          return {
+            ...report,
+            name: `${this.$date(report.startDate).format(
+              "DD/MM/YYYY"
+            )} - ${this.$date(report.endDate).format("DD/MM/YYYY")}`
+          };
+        });
+    },
     type() {
       return this.$route.params.type;
     },
@@ -355,21 +530,27 @@ export default defineComponent({
     },
     getReports() {
       this.axios
-        .get(`/pulse/insights/v2/reports`)
+        .get(
+          this.$route.params.username
+            ? `/pulse/insights/v2/reports/${this.$route.params.username}`
+            : `/pulse/insights/v2/reports`
+        )
         .then((res) => {
           this.reports = res.data;
-          this.$app.componentLoading = false;
-        })
-        .catch(() => {
-          this.$app.componentLoading = false;
         });
     },
     getReport() {
       this.$app.componentLoading = true;
+      const id = this.id || this.$route.params.type;
       this.axios
-        .get(`/pulse/insights/v2/${this.$route.params.type}`)
+        .get(
+          this.$route.params.username
+            ? `/pulse/insights/v2/${id}/${this.$route.params.username}`
+            : `/pulse/insights/v2/${id}`
+        )
         .then((res) => {
           this.report = res.data;
+          this.id = res.data.id;
           this.$app.componentLoading = false;
         })
         .catch(() => {
@@ -378,8 +559,23 @@ export default defineComponent({
     }
   },
   mounted() {
+    this.id = parseInt(this.$route.params.id);
     this.getReport();
     this.getReports();
+    this.$app.title = `${
+      this.type.charAt(0).toUpperCase() + this.type.slice(1)
+    } Insights`;
+  },
+  watch: {
+    type(val) {
+      if (!val) return;
+      // find the latest in this.reports
+      this.id = null;
+      this.getReport();
+      this.$app.title = `${
+        this.type.charAt(0).toUpperCase() + this.type.slice(1)
+      } Insights`;
+    }
   }
 });
 </script>

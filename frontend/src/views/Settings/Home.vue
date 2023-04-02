@@ -50,7 +50,18 @@
     item-title="title"
     item-value="value"
   ></v-select>
-  <v-btn class="px-6" @click="$app.themeEditor = !$app.themeEditor">
+  <v-select
+    class="px-6 mb-n4"
+    v-model="$user.changes.insights"
+    :items="insights"
+    label="Who can see your insights*"
+    @update:modelValue="$emit('update')"
+  ></v-select>
+  <small class="px-6 text-grey">
+    * Words in screenshots and top chats are always hidden.
+  </small>
+  <br />
+  <v-btn class="px-6 mt-3" @click="$app.themeEditor = !$app.themeEditor">
     <v-icon class="mr-2">mdi-palette</v-icon>
     <span>
       Open Theme Editor
@@ -217,6 +228,11 @@ export default defineComponent({
         { title: "Celsius (Metric)", value: "celsius" },
         { title: "Kelvin (Metric Standard)", value: "kelvin" },
         { title: "Fahrenheit (Imperial)", value: "fahrenheit" }
+      ],
+      insights: [
+        { title: "Everyone", value: "everyone" },
+        { title: "Friends", value: "friends" },
+        { title: "Nobody", value: "nobody" }
       ],
       confirmPassword: "",
       valid: {

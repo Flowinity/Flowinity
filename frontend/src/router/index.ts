@@ -224,7 +224,7 @@ const routes = [
         component: () => import("@/views/Insights/Home.vue")
       },
       {
-        path: "/insights/:type",
+        path: "/insights/:type/:username?",
         name: "Weekly Insights",
         component: () => import("@/views/Insights/Weekly.vue")
       },
