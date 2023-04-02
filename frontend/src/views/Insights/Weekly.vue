@@ -428,7 +428,7 @@ export default defineComponent({
         });
     },
     type() {
-      return this.$route.params.type;
+      return this.$route.params.type as string;
     },
     strings() {
       switch (this.type) {
@@ -559,7 +559,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.id = parseInt(this.$route.params.id);
+    this.id = parseInt(<string>this.$route.params.id);
     this.getReport();
     this.getReports();
     this.$app.title = `${

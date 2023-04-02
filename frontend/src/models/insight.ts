@@ -6,6 +6,22 @@ export interface Streak {
   length: number;
 }
 
+export interface SeriesGraph {
+  series: [
+    {
+      name: string;
+      data: {
+        x: string;
+        y: number;
+        goals: {
+          name: string;
+          value: number;
+        }[];
+      }[];
+    }
+  ];
+}
+
 export interface InsightData {
   uploads: {
     streak: {
@@ -24,94 +40,52 @@ export interface InsightData {
       now: number;
       previous: number;
     };
-    hours: {
-      [key: string]: number;
-    };
+    hours: SeriesGraph;
     words: {
       word: string;
       count: number;
     }[];
-    months: {
-      series: [
-        {
-          name: string;
-          data: {
-            x: string;
-            y: number;
-            goals: {
-              name: string;
-              value: number;
-            }[];
-          }[];
-        }
-      ];
-    } | null;
-    days: {
-      series: [
-        {
-          name: string;
-          data: {
-            x: string;
-            y: number;
-            goals: {
-              name: string;
-              value: number;
-            }[];
-          }[];
-        }
-      ];
+    months: SeriesGraph | null;
+    days: SeriesGraph;
+    years: SeriesGraph;
+    pulses: {
+      total: {
+        now: number;
+        previous: number;
+      };
+      average: {
+        now: number;
+        previous: number;
+      };
+      platforms: {
+        [key: string]: number;
+      };
+      days: {
+        [key: string]: number;
+      };
+      features: {
+        name: string;
+        count: number;
+      }[];
+      autoCollects: SeriesGraph;
+      collections: SeriesGraph;
     };
-    years: {
-      series: [
-        {
-          name: string;
-          data: {
-            x: string;
-            y: number;
-            goals: {
-              name: string;
-              value: number;
-            }[];
-          }[];
-        }
-      ];
+    messages: {
+      total: {
+        now: number;
+        previous: number;
+      };
+      average: {
+        now: number;
+        previous: number;
+      };
+      topChats: {
+        [key: string]: number;
+      };
     };
+    workspaces: {};
+    _version: number;
   };
-  pulses: {
-    total: {
-      now: number;
-      previous: number;
-    };
-    average: {
-      now: number;
-      previous: number;
-    };
-    platforms: {
-      [key: string]: number;
-    };
-    days: {
-      [key: string]: number;
-    };
-    features: {
-      name: string;
-      count: number;
-    }[];
-  };
-  messages: {
-    total: {
-      now: number;
-      previous: number;
-    };
-    average: {
-      now: number;
-      previous: number;
-    };
-    topChats: {
-      [key: string]: number;
-    };
-  };
-  workspaces: {};
-  _version: number;
 }
 
 export interface Insight {
