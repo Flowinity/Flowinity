@@ -900,7 +900,7 @@ export class PulseService {
   }
 
   async getCachedInsights(
-    userId: number,
+    userId: number | string,
     year: string | number,
     global: boolean,
     reqUserId: number
@@ -911,6 +911,7 @@ export class PulseService {
         insights[year].words = [{ word: "[Redacted]", count: 4154 }]
       return insights[year]
     } else {
+      if (typeof userId === "string") return null
       insights = await this.getInsights(userId, year, global)
       if (reqUserId !== userId)
         insights.words = [{ word: "[Redacted]", count: 4154 }]

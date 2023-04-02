@@ -111,14 +111,6 @@ export class CacheService {
       }
       const years = ["2021", "2022", "2023", "latest"]
       for (const user of users) {
-        let result = {} as Record<string, number>
-        for (const year of years) {
-          result[year] = {
-            ...(await pulseService.getInsights(user.id, year, false)),
-            _redis: new Date().toISOString()
-          }
-        }
-        redis.json.set(`insights:${user.id}`, "$", result)
         const dynamic = {
           data: await pulseService.generateInsights(user.id, "dynamic"),
           startDate: user.createdAt.toISOString(),

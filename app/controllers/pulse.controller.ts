@@ -139,14 +139,19 @@ export class PulseController {
     this.router.get(
       ["/insights/:year/:id", "/insights/:year", "/insights"],
       auth("*"),
-      async (req: RequestAuth, res: Response) => {
-        const insights = await this.pulseService.getCachedInsights(
-          req.params.id || req.user.id,
-          req.params.year,
-          req.params.id === "global",
-          req.user.id
-        )
-        res.json(insights)
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
+        try {
+          if (req.params.id !== "global") throw Errors.API_REMOVED_V2
+          const insights = await this.pulseService.getCachedInsights(
+            req.params.id || req.user.id,
+            req.params.year,
+            req.params.id === "global",
+            req.user.id
+          )
+          res.json(insights)
+        } catch (e) {
+          next(e)
+        }
       }
     )
   }

@@ -85,6 +85,10 @@ let Errors = {
       "TroploPrivateUploader API version 1 is no longer available from 2023-01-26, please check the relevant API documentation for v2 at /api/docs.",
     status: 410
   },
+  API_REMOVED_V2: {
+    message: "This API endpoint is no longer available.",
+    status: 410
+  },
   INVALID_EMAIL: {
     message:
       "The provided email address is invalid (Please use your email, not username!).",
