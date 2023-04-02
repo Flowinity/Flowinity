@@ -210,20 +210,6 @@
           ></Chart>
         </InsightsStatsCard>
       </v-col>
-      <v-col cols="12" sm="12" md="3" lg="5" xl="4">
-        <InsightsStatsCard
-          title="Website usage"
-          subtitle="See when you used TPU!"
-        >
-          <Chart
-            type="bar"
-            :height="300"
-            class="mb-n6"
-            :data="objectToGraphData(report?.data.pulses.days)"
-            name="Hours"
-          ></Chart>
-        </InsightsStatsCard>
-      </v-col>
       <v-col
         cols="12"
         sm="12"
