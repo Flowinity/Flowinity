@@ -63,6 +63,7 @@
                         $app.dialogs.nickname.userId = user?.id || 0;
                         $app.dialogs.nickname.value = true;
                       "
+                      v-if="user?.friend === 'accepted'"
                     >
                       <v-tooltip
                         :eager="false"
@@ -71,9 +72,7 @@
                       >
                         Set friend nickname
                       </v-tooltip>
-                      <v-icon v-if="user?.friend === 'accepted'">
-                        mdi-rename
-                      </v-icon>
+                      <v-icon>mdi-rename</v-icon>
                     </v-btn>
                   </h1>
                   <UserBadges
