@@ -3,11 +3,13 @@ import vue from "@vitejs/plugin-vue";
 import vuetify, { transformAssetUrls } from "@troplo/vite-plugin-vuetify";
 
 // Utilities
-import { defineConfig } from "vite";
+import { defineConfig, PluginOption } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import ViteVersion from "@troplo/vite-version";
 import path from "path";
 import * as fs from "fs";
+import { visualizer } from "rollup-plugin-visualizer";
+
 const resolve = (file: string) => {
   console.log(path.resolve(__dirname, file));
   return path.resolve(__dirname, file);
@@ -62,6 +64,13 @@ export default defineConfig({
     emptyOutDir: true
   },
   plugins: [
+    visualizer({
+      template: "treemap", // or sunburst
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+      filename: "analyze-tpu-bundle.html"
+    }) as PluginOption,
     ViteVersion(),
     VitePWA({
       registerType: "autoUpdate",

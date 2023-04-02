@@ -92,6 +92,7 @@
     "eslint-plugin-vue": "^9.3.0",
     "javascript-obfuscator": "^4.0.2",
     "rollup-plugin-obfuscator": "^1.0.2",
+    "rollup-plugin-visualizer": "^5.9.0",
     "sass": "^1.55.0",
     "typescript": "^5.0.3",
     "vite": "^4.2.0",
