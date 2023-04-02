@@ -48,44 +48,44 @@ export interface InsightData {
     months: SeriesGraph | null;
     days: SeriesGraph;
     years: SeriesGraph;
-    pulses: {
-      total: {
-        now: number;
-        previous: number;
-      };
-      average: {
-        now: number;
-        previous: number;
-      };
-      platforms: {
-        [key: string]: number;
-      };
-      days: {
-        [key: string]: number;
-      };
-      features: {
-        name: string;
-        count: number;
-      }[];
-      autoCollects: SeriesGraph;
-      collections: SeriesGraph;
-    };
-    messages: {
-      total: {
-        now: number;
-        previous: number;
-      };
-      average: {
-        now: number;
-        previous: number;
-      };
-      topChats: {
-        [key: string]: number;
-      };
-    };
-    workspaces: {};
-    _version: number;
   };
+  pulses: {
+    total: {
+      now: number;
+      previous: number;
+    };
+    average: {
+      now: number;
+      previous: number;
+    };
+    platforms: {
+      [key: string]: number;
+    };
+    days: {
+      [key: string]: number;
+    };
+    features: {
+      name: string;
+      count: number;
+    }[];
+    autoCollects: SeriesGraph;
+    collections: SeriesGraph;
+  };
+  messages: {
+    total: {
+      now: number;
+      previous: number;
+    };
+    average: {
+      now: number;
+      previous: number;
+    };
+    topChats: {
+      [key: string]: number;
+    };
+  };
+  workspaces: {};
+  _version: number;
 }
 
 export interface Insight {
