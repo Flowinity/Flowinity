@@ -97,7 +97,7 @@
         <InsightsStatsCard
           title="Uploads per day"
           :subtitle="`Last week you uploaded the most on ${
-            report?.data.uploads.days.series[0].data.reduce((a, b) =>
+            report?.data.uploads.days.series[0].data.reduce((a: number, b: number) =>
               a > b ? a : b
             ).x
           }!`"
