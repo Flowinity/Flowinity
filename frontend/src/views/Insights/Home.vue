@@ -30,7 +30,7 @@
           <v-col cols="12" sm="1" xl="3" md="6">
             <DynamicCard
               to="/insights/dynamic"
-              image="https://i.troplo.com/i/7c28a218cb93.png"
+              image="https://i.troplo.com/i/3707e7de31bf.svg"
               :right-text="`Since ${$date($user.user?.createdAt).format(
                 'YYYY'
               )}`"
@@ -39,7 +39,7 @@
           <v-col sm="1" cols="12" xl="3" md="6">
             <DynamicCard
               to="/insights/weekly"
-              image="https://i.troplo.com/i/96837edd30ab.png"
+              image="https://i.troplo.com/i/b95680817c90.svg"
               :right-text="`${$date()
                 .subtract(7, 'days')
                 .format('Do of MMMM YYYY')}`"
@@ -49,7 +49,7 @@
           <v-col cols="12" sm="1" xl="3" md="6">
             <DynamicCard
               to="/insights/monthly"
-              image="https://i.troplo.com/i/12c3b4f1a171.png"
+              image="https://i.troplo.com/i/5804cb16c03e.svg"
               :right-text="`${$date()
                 .subtract(30, 'days')
                 .startOf('month')
@@ -59,7 +59,7 @@
           <v-col cols="12" sm="1" xl="3" md="6">
             <DynamicCard
               to="/insights/yearly"
-              image="https://i.troplo.com/i/aee5a39b685b.png"
+              image="https://i.troplo.com/i/283fd2159008.svg"
               :right-text="`${$date()
                 .subtract(1, 'years')
                 .startOf('year')

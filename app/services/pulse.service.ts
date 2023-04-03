@@ -132,9 +132,6 @@ export class PulseService {
     else return null
   }
   async pulseInit() {
-    const users = await User.findAll({
-      attributes: ["id", "createdAt"]
-    })
     // WEEK-GEN
     /* for (const user of users) {
       const startDate = dayjs(user.createdAt)
@@ -204,18 +201,27 @@ export class PulseService {
     }*/
     // schedule cron for Monday at 12:00 AM
     cron.schedule("0 0 0 * * 1", async () => {
+      const users = await User.findAll({
+        attributes: ["id", "createdAt"]
+      })
       for (const user of users) {
         await this.generateInsights(user.id, "weekly")
       }
     })
     // schedule cron for 1st of every month at 12:00 AM
     cron.schedule("0 0 0 1 * *", async () => {
+      const users = await User.findAll({
+        attributes: ["id", "createdAt"]
+      })
       for (const user of users) {
         await this.generateInsights(user.id, "monthly")
       }
     })
     // schedule cron for 1st of January every year at 12:00 AM
     cron.schedule("0 0 0 1 1 *", async () => {
+      const users = await User.findAll({
+        attributes: ["id", "createdAt"]
+      })
       for (const user of users) {
         await this.generateInsights(user.id, "yearly")
       }

@@ -36,6 +36,7 @@
       <v-card-text
         style="position: absolute; top: 0; right: 0; font-size: 18px"
         v-if="rightText"
+        :style="blackText ? 'color: black !important;' : 'color: white'"
       >
         {{ rightText }}
       </v-card-text>

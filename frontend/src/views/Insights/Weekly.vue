@@ -61,7 +61,7 @@
       </div>
     </div>
     <v-row class="mt-2">
-      <v-col cols="12" sm="12" md="4" lg="5" xl="2">
+      <v-col cols="12" sm="12" md="4" lg="3" xl="2">
         <InsightsStatsCard
           :title="`Uploads`"
           :count="report?.data.uploads.total?.now"
@@ -103,9 +103,9 @@
           "
         ></InsightsStatsCard>
       </v-col>
-      <v-col cols="12" sm="12" md="4" lg="5" xl="2">
+      <v-col cols="12" sm="12" md="4" lg="3" xl="2">
         <InsightsStatsCard
-          title="Uploads/day (avg)"
+          title="Uploads/avg"
           :count="report?.data.uploads.average.now ?? 0"
           :last="report?.data.uploads.average.previous ?? 0"
           :difference="
@@ -115,7 +115,7 @@
         ></InsightsStatsCard>
         <InsightsStatsCard
           class="mt-4"
-          title="Messages/day (avg)"
+          title="Messages/avg"
           :count="report?.data.messages.average.now ?? 0"
           :last="report?.data.messages.average.previous ?? 0"
           :difference="
@@ -177,7 +177,7 @@
           ></Chart>
         </InsightsStatsCard>
       </v-col>
-      <v-col cols="12" sm="12" md="3" lg="5" xl="4">
+      <v-col cols="12" sm="12" md="3" lg="6" xl="4">
         <InsightsStatsCard
           title="Uploads per day"
           :subtitle="`Last reporting period you uploaded the most on ${
@@ -214,9 +214,9 @@
         cols="12"
         sm="12"
         md="3"
-        lg="5"
+        lg="6"
         xl="4"
-        v-if="report.data.uploads.months"
+        v-if="report.data.uploads.months && type !== 'dynamic'"
       >
         <InsightsStatsCard title="Uploads per month">
           <Chart
@@ -250,7 +250,7 @@
         cols="12"
         sm="12"
         md="3"
-        lg="5"
+        lg="6"
         xl="4"
         v-if="report?.data.uploads.words"
       >
@@ -278,26 +278,11 @@
           </v-data-table>
         </InsightsStatsCard>
       </v-col>
-      <v-col cols="12" sm="12" md="3" lg="5" xl="4">
-        <InsightsStatsCard
-          title="Feature usage"
-          subtitle="Explore what TPU features you use the most!"
-        >
-          <Chart
-            type="bar"
-            :horizontal="true"
-            :height="300"
-            class="mb-n6"
-            :data="arrayToGraphData(report?.data.pulses.features)"
-            name="Hours"
-          ></Chart>
-        </InsightsStatsCard>
-      </v-col>
       <v-col
         cols="12"
         sm="12"
         md="3"
-        lg="5"
+        lg="6"
         xl="4"
         v-if="report?.data.messages.topChats"
       >
@@ -329,7 +314,7 @@
         cols="12"
         sm="12"
         md="3"
-        lg="5"
+        lg="6"
         xl="4"
         v-if="report?.data.pulses.autoCollects"
       >
@@ -347,17 +332,35 @@
         cols="12"
         sm="12"
         md="3"
-        lg="5"
+        lg="6"
         xl="4"
         v-if="report?.data.pulses.collections"
       >
-        <InsightsStatsCard title="Collectivizations per hour">
+        <InsightsStatsCard
+          title="Collectivizations per hour"
+          subtitle="See when you collectivize your items!"
+        >
           <Chart
             type="bar"
             :height="300"
             class="mb-n6"
             :series="report?.data.pulses.collections.series"
             name="autocollects-per-hour"
+          ></Chart>
+        </InsightsStatsCard>
+      </v-col>
+      <v-col cols="12" sm="12" md="3" lg="6" xl="4">
+        <InsightsStatsCard
+          title="Feature usage"
+          subtitle="Explore what TPU features you use the most!"
+        >
+          <Chart
+            type="bar"
+            :horizontal="true"
+            :height="300"
+            class="mb-n6"
+            :data="arrayToGraphData(report?.data.pulses.features)"
+            name="Hours"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
