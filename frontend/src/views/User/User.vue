@@ -86,6 +86,7 @@
               class="d-flex align-center"
               sm="auto"
               style="justify-content: flex-end"
+              v-if="user.id !== $user.user?.id"
             >
               <v-card-text>
                 <v-btn

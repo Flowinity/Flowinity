@@ -32,7 +32,10 @@
     <v-card-subtitle class="mt-3">
       Type:
       {{
-        String(item.type).charAt(0).toUpperCase() + String(item.type).slice(1)
+        item.type === "paste"
+          ? "Legacy Paste"
+          : String(item.type).charAt(0).toUpperCase() +
+            String(item.type).slice(1)
       }}
     </v-card-subtitle>
     <v-card-subtitle>
