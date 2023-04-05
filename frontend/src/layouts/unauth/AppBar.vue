@@ -57,6 +57,5 @@ export default defineComponent({
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  transform: translate3d(0, 0, 0);
 }
 </style>
