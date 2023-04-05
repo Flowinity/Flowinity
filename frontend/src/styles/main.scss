@@ -357,6 +357,7 @@ a {
 .fluid-gradient .v-overlay__content:not(.v-progress-circular):has(.v-card) {
   background: transparent !important;
   backdrop-filter: blur(70px);
+  transform: translate3d(0, 0, 0);
 }
 
 .fluid-gradient .v-overlay__content .v-progress-circular {
