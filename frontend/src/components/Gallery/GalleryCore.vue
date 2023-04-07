@@ -14,7 +14,12 @@
       </slot>
     </div>
     <div v-if="selected.length && supports.multiSelect" class="float-right">
-      <slot name="multi-select-actions-length" :selected="selected">
+      <slot
+        name="multi-select-actions-length"
+        :selected="selected"
+        :deselectAll="deselectAll"
+        :selectAll="selectAll"
+      >
         <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
           <v-icon>mdi-plus</v-icon>
           &nbsp;Select all

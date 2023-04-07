@@ -33,12 +33,13 @@
       @pageChange="$router.push(`/autoCollect/${$route.params.id}/${$event}`)"
       @updateItem="updateItem"
     >
-      <template v-slot:multi-select-actions-length="{ selected }">
-        <v-btn class="rounded-xl ml-2" text @click="selectAll(selected)">
+      <template v-slot:multi-select-actions-length="slotProps: any">
+        {{ slotProps }}
+        <v-btn class="rounded-xl ml-2" text @click="slotProps.selectAll()">
           <v-icon>mdi-plus</v-icon>
           &nbsp;Select all
         </v-btn>
-        <v-btn class="rounded-xl ml-2" text @click="deselectAll(selected)">
+        <v-btn class="rounded-xl ml-2" text @click="slotProps.deselectAll()">
           <v-icon>mdi-close</v-icon>
           &nbsp;Unselect all
         </v-btn>
@@ -46,7 +47,10 @@
           class="rounded-xl"
           color="red darken-1"
           text
-          @click="act($event, 'deny')"
+          @click="
+            act(slotProps.selected, 'deny');
+            slotProps.deselectAll();
+          "
         >
           <v-icon>mdi-close</v-icon>
           Reject all
@@ -55,7 +59,10 @@
           class="rounded-xl ml-2"
           color="success"
           text
-          @click="act($event, 'approve')"
+          @click="
+            act(slotProps.selected, 'approve');
+            slotProps.deselectAll();
+          "
         >
           <v-icon>mdi-check</v-icon>
           &nbsp;Accept all
