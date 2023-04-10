@@ -34,7 +34,6 @@
       @updateItem="updateItem"
     >
       <template v-slot:multi-select-actions-length="slotProps: any">
-        {{ slotProps }}
         <v-btn class="rounded-xl ml-2" text @click="slotProps.selectAll()">
           <v-icon>mdi-plus</v-icon>
           &nbsp;Select all

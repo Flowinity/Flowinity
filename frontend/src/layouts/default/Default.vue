@@ -133,17 +133,30 @@ export default defineComponent({
   },
   methods: {
     touchEnd(event: TouchEvent) {
+      if (event.target instanceof Element) {
+        if (
+          event.target.classList.contains("v-btn") ||
+          event.target.classList.contains("v-icon") ||
+          event.target.classList.contains("v-slide") ||
+          event.target.classList.contains("v-navigation-drawer") ||
+          event.target.classList.contains("v-btn__content") ||
+          event.target.classList.contains("v-slider-thumb__ripple") ||
+          event.target.classList.contains("v-slider-thumb") ||
+          event.target.classList.contains("apexcharts-svg")
+        )
+          return;
+      }
       if (this.$app.workspaceDrawer || this.$app.mainDrawer) return;
       this.touchEndX = event.changedTouches[0].screenX;
       if (!this.touchStartX || !this.touchEndX) return;
       if (this.touchEndX > this.touchStartX) {
-        if (this.touchEndX - this.touchStartX > 100) {
+        if (this.touchEndX - this.touchStartX > 130) {
           this.touchStartX = null;
           this.touchEndX = null;
           this.$app.toggleMain();
         }
       } else if (this.touchEndX < this.touchStartX) {
-        if (this.touchStartX - this.touchEndX > 100) {
+        if (this.touchStartX - this.touchEndX > 130) {
           this.touchStartX = null;
           this.touchEndX = null;
           this.$app.toggleWorkspace();

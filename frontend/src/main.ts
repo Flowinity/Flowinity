@@ -81,6 +81,7 @@ declare global {
       push: (args: any[]) => void;
     };
     _cordovaNative: any;
+    cordova?: any;
   }
 }
 

@@ -7,7 +7,7 @@
         </v-tab>
         <v-tab to="/settings/security" prepend-icon="mdi-lock">Security</v-tab>
         <v-tab to="/settings/clients" prepend-icon="mdi-cellphone-cog">
-          Setup
+          {{ $app.cordova ? "Mobile Setup" : "Setup" }}
         </v-tab>
         <v-tab to="/settings/domains" prepend-icon="mdi-web">Domains</v-tab>
         <v-tab to="/settings/slideshows" prepend-icon="mdi-image-multiple">

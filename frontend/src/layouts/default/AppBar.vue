@@ -54,6 +54,7 @@
       </h2>
     </template>
     <v-spacer></v-spacer>
+    <div class="mr-2" v-if="$app.site.release === 'dev' && $app.cordova">M</div>
     <small v-if="$app.notesSaving" class="mr-3">Saving...</small>
     <template
       v-if="
