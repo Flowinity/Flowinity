@@ -186,7 +186,7 @@ export default defineComponent({
   methods: {
     async getAPIKeys() {
       const { data } = await this.axios.get("/security/keys");
-      this.items = data as any[];
+      this.items = data;
     },
     saveFile(type: "sharex" | "sharenix" = "sharex") {
       console.log(2);
