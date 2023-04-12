@@ -79,6 +79,10 @@ export default defineComponent({
             {
               tags: ["Fix", "TPU"],
               text: "Fix blur/glass effect on Safari and other WebKit browsers"
+            },
+            {
+              tags: ["Fix", "Communications"],
+              text: "Improved read receipts for lower resolution devices"
             }
           ]
         },
