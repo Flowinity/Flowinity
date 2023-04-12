@@ -163,7 +163,6 @@ export default defineComponent({
       this.gallery = data as typeof this.gallery;
       this.$app.componentLoading = false;
     },
-    //@ts-ignore
     socketRegister(uploads: { upload: Upload; url: string }[]) {
       // for each upload
       for (const upload of uploads) {
