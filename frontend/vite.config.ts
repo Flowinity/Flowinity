@@ -64,13 +64,6 @@ export default defineConfig({
     emptyOutDir: true
   },
   plugins: [
-    visualizer({
-      template: "treemap", // or sunburst
-      open: true,
-      gzipSize: true,
-      brotliSize: true,
-      filename: "analyze-tpu-bundle.html"
-    }) as PluginOption,
     ViteVersion(),
     VitePWA({
       registerType: "autoUpdate",
