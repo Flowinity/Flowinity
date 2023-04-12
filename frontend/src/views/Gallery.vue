@@ -164,7 +164,7 @@ export default defineComponent({
       this.$app.componentLoading = false;
     },
     //@ts-ignore
-    socketRegister(uploads: { upload: Upload[]; url: string }) {
+    socketRegister(uploads: { upload: Upload; url: string }[]) {
       // for each upload
       for (const upload of uploads) {
         this.gallery.gallery.unshift(upload.upload);
