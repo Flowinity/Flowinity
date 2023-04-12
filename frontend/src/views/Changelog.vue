@@ -62,7 +62,7 @@ export default defineComponent({
             },
             {
               tags: ["New", "Gallery"],
-              text: "The gallery now automatically refreshes on all clients when you upload an item from different devices"
+              text: "The gallery now automatically refreshes on all clients when you upload an item from a different device"
             },
             {
               tags: ["Fix", "TPU"],
