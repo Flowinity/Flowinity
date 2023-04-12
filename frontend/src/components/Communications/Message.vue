@@ -1,5 +1,37 @@
 <template>
-  <span>
+  <div class="position-relative">
+    <div
+      v-if="dateSeparator"
+      style="
+        text-align: center;
+        position: relative;
+        height: 27.5px;
+        display: flex;
+        justify-content: center;
+      "
+    >
+      <div
+        style="
+          border-bottom: 1px solid rgb(33, 36, 37);
+          position: absolute;
+          top: 0;
+          width: 100%;
+          height: calc(50% - 3px);
+        "
+      ></div>
+      <p
+        class="text-grey"
+        style="
+          background-color: rgb(var(--v-theme-background));
+          position: absolute;
+          height: 20px;
+          padding-left: 10px;
+          padding-right: 10px;
+        "
+      >
+        {{ $date(message.createdAt).format("ddd, Do of MMMM YYYY") }}
+      </p>
+    </div>
     <v-toolbar
       height="auto"
       v-if="message.reply"
@@ -199,15 +231,41 @@
           :key="index"
         />
         <template v-slot:append>
-          <div>
-            <template v-for="readReceipt in message.readReceipts">
-              <ReadReceipt :message="message" :read-receipt="readReceipt" />
+          <div style="position: absolute; right: 10px; bottom: 0">
+            <template
+              v-for="(readReceipt, index) in message.readReceipts"
+              :key="readReceipt.id"
+            >
+              <ReadReceipt
+                :message="message"
+                :read-receipt="readReceipt"
+                v-if="index < renderableReadReceipts"
+              />
             </template>
+            <span
+              class="text-grey ml-1 mr-2"
+              v-if="message.readReceipts.length > renderableReadReceipts"
+              @click.stop
+            >
+              <v-menu activator="parent" location="top">
+                <v-card>
+                  <v-container>
+                    <span v-for="readReceipt in message.readReceipts">
+                      <ReadReceipt
+                        :message="message"
+                        :read-receipt="readReceipt"
+                      />
+                    </span>
+                  </v-container>
+                </v-card>
+              </v-menu>
+              +{{ message.readReceipts.length - renderableReadReceipts }}
+            </span>
           </div>
         </template>
       </v-list-item>
     </v-hover>
-  </span>
+  </div>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -228,7 +286,15 @@ export default defineComponent({
     CommunicationsAvatar,
     CommunicationsInput
   },
-  props: ["message", "editing", "editingText", "merge", "search", "pins"],
+  props: [
+    "message",
+    "editing",
+    "editingText",
+    "merge",
+    "search",
+    "pins",
+    "dateSeparator"
+  ],
   data() {
     return {
       avoid: false
@@ -244,6 +310,14 @@ export default defineComponent({
     }
   },
   computed: {
+    renderableReadReceipts() {
+      if (this.$vuetify.display.mobile) return 2;
+      if (this.$vuetify.display.sm) return 10;
+      if (this.$vuetify.display.md) return 10;
+      if (this.$vuetify.display.xl) return 15;
+      if (this.$vuetify.display.xxl) return 20;
+      return 10;
+    },
     mentions() {
       return !!this.message.content.includes(`<@${this.$user.user?.id}>`);
     }

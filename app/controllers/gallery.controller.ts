@@ -130,6 +130,7 @@ export class GalleryController {
             req.file,
             req.user.discordPrecache
           )
+          socket.to(req.user.id).emit("gallery/create", upload)
           res.json(upload)
         } catch (e) {
           next(e)
@@ -237,6 +238,7 @@ export class GalleryController {
               await this.galleryService.createUpload(req.user.id, upload, false)
             )
           }
+          socket.to(req.user.id).emit("gallery/create", files)
           res.json(files)
         } catch (e) {
           next(e)

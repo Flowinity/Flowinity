@@ -16,7 +16,7 @@
     <access origin="https://privateuploader.com/*" />
     <access origin="https://api.privateuploader.com" />
     <access origin="https://api.privateuploader.com/*" />
-    <preference name="hostname" value="192.168.0.12:3000" />
+    <preference name="hostname" value="images.flowinity.com" />
     <resource-file src="res/values/colors.xml" target="/app/src/main/res/values/colors.xml" />
     <icon density="mdpi" background="@color/background" foreground="res/drawable/tpu_foreground.xml" src="res/mipmap-mdpi/tpu.png" />
     <icon density="hdpi" background="@color/background" foreground="res/drawable/tpu_foreground.xml" src="res/mipmap-hdpi/tpu.png" />

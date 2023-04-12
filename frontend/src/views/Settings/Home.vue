@@ -197,7 +197,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import TwoFactor from "@/components/Settings/TwoFactor.vue";
-import { useTheme } from "@troplo/vuetify";
+import { useTheme } from "vuetify";
 
 export default defineComponent({
   name: "SettingsHome",

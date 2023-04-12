@@ -119,7 +119,7 @@ export default defineComponent({
         (i: Upload) => i.id === item.id
       );
       if (index === -1) return;
-      this.gallery.gallery[index] = {
+      this.gallery.gallery[index] = <Upload>{
         ...this.gallery.gallery[index],
         collections: this.gallery.gallery[index]?.collections.filter(
           (c: any) => c.id !== collection.id
@@ -160,14 +160,24 @@ export default defineComponent({
           sort: this.show.sort
         }
       });
-      this.gallery = data;
+      this.gallery = data as typeof this.gallery;
       this.$app.componentLoading = false;
+    },
+    socketRegister(uploads: { upload: Upload[]; url: string }) {
+      // for each upload
+      for (const upload of uploads) {
+        this.gallery.gallery.unshift(upload.upload);
+      }
     }
   },
   mounted() {
     this.$app.title = "Gallery";
     this.page = parseInt(<string>this.$route.params.page) || 1;
     this.getGallery();
+    this.$socket.on("gallery/create", this.socketRegister);
+  },
+  unmounted() {
+    this.$socket.off("gallery/create", this.socketRegister);
   },
   watch: {
     "$route.params.page"(page) {

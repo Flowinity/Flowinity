@@ -77,6 +77,7 @@
         :key="message.id"
         :message="message"
         :id="'message-' + index"
+        :date-separator="dateSeparator(index)"
         :editing="editing === message.id"
         @edit="handleEdit"
         @editText="editingText = $event"
@@ -307,6 +308,14 @@ export default defineComponent({
     }
   },
   methods: {
+    dateSeparator(index: number) {
+      const message = this.$chat.selectedChat?.messages[index];
+      const previousMessage = this.$chat.selectedChat?.messages[index + 1];
+      return !this.$date(message?.createdAt).isSame(
+        previousMessage?.createdAt,
+        "day"
+      );
+    },
     confirmDelete(message: MessageType | undefined | null) {
       if (!message) return;
       this.dialogs.delete.message = message;

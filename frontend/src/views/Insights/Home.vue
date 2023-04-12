@@ -66,6 +66,17 @@
                 .format('YYYY')}`"
             />
           </v-col>
+          <v-col cols="12" sm="1" xl="6" md="6">
+            <DynamicCard
+              max-height="200px"
+              to="/insights/yearly"
+              image="https://i.troplo.com/i/283fd2159008.svg"
+              :right-text="`${$date()
+                .subtract(1, 'years')
+                .startOf('year')
+                .format('YYYY')}`"
+            />
+          </v-col>
         </v-row>
       </v-container>
     </v-card>

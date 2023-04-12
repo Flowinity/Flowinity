@@ -11,7 +11,7 @@ import "@troplo/vuetify/styles";
 
 // Composables
 
-import { createVuetify } from "@troplo/vuetify";
+import { createVuetify } from "vuetify";
 import { VDataTable } from "@troplo/vuetify/labs/VDataTable";
 
 // export new Class of themes

@@ -42,7 +42,7 @@ import { ChatAssociation } from "@/models/chatAssociation";
 import router from "@/router";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import { useMailStore } from "@/store/mail";
-import { useTheme } from "@troplo/vuetify";
+import { useTheme } from "vuetify";
 //@ts-ignore
 import VueMatomo from "vue-matomo";
 

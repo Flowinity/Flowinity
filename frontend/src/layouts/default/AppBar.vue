@@ -200,7 +200,7 @@ import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import Notifications from "@/components/Core/Notifications.vue";
-import { useTheme } from "@troplo/vuetify";
+import { useTheme } from "vuetify";
 import Pins from "@/components/Communications/Menus/Pins.vue";
 import LogoEasterEgg from "@/components/Core/LogoEasterEgg.vue";
 

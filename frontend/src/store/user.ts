@@ -11,7 +11,7 @@ import { useAppStore } from "@/store/app";
 import { useToast } from "vue-toastification";
 import { useMailStore } from "@/store/mail";
 import vuetify from "@/plugins/vuetify";
-import { useTheme } from "@troplo/vuetify";
+import { useTheme } from "vuetify";
 
 export interface UserState {
   user: User | null;
