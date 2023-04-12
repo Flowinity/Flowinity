@@ -289,7 +289,7 @@ export default defineComponent({
     },
     elevation: {
       get() {
-        return this.$vuetify.defaults?.VCard?.elevation;
+        return <number>this.$vuetify.defaults?.VCard?.elevation;
       },
       set(value: number) {
         // TPU not initialized yet
@@ -297,7 +297,7 @@ export default defineComponent({
         this.$vuetify.defaults.VCard.elevation = value;
         this.triggerSave();
       }
-    } as any,
+    },
     gradientOffset: {
       get() {
         this.bindOffset;

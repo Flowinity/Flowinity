@@ -401,7 +401,7 @@ export default defineComponent({
     hoursMost() {
       if (this.user?.stats?.hours) {
         let hours = Object.entries(this.user.stats.hours);
-        hours.sort((a, b) => b[1] - a[1]);
+        hours.sort((a: any, b: any) => b[1] - a[1]);
         return {
           hour: hours[0][0],
           count: hours[0][1]

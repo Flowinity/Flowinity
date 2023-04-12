@@ -175,7 +175,6 @@
             </v-tooltip>
             <v-icon
               color="grey"
-              icon
               size="x-small"
               class="ml-3"
               style="display: inline-block"
@@ -199,7 +198,6 @@
             </v-tooltip>
             <v-icon
               color="grey"
-              icon
               size="x-small"
               class="ml-3"
               style="display: inline-block"
