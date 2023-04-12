@@ -163,10 +163,18 @@ export default defineComponent({
       this.gallery = data as typeof this.gallery;
       this.$app.componentLoading = false;
     },
-    socketRegister(uploads: { upload: Upload; url: string }[]) {
-      // for each upload
-      for (const upload of uploads) {
-        this.gallery.gallery.unshift(upload.upload);
+    socketRegister(
+      uploads:
+        | { upload: Upload; url: string }
+        | { upload: Upload; url: string }[]
+    ) {
+      if (this.page !== 1) return;
+      if (Array.isArray(uploads)) {
+        for (const upload of uploads) {
+          this.gallery.gallery.unshift(upload.upload);
+        }
+      } else {
+        this.gallery.gallery.unshift(uploads.upload);
       }
     }
   },

@@ -44,7 +44,7 @@
       <HoverChip
         class="mr-2 mt-2"
         color="#78C257"
-        href="https://i.troplo.com/i/4b46dcfa13f1.flo"
+        href="https://i.troplo.com/i/c9069cbd9284.flo"
         icon="mdi-android"
         text="Download Automate Config"
         :old="true"
