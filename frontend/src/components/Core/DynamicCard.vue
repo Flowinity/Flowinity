@@ -4,17 +4,17 @@
     elevation="8"
     style="cursor: pointer"
     :to="to"
-    :height="height"
+    :height="<string>height"
   >
     <v-img
-      :src="image"
+      :src="<string>image"
       class="white--text align-end"
       :gradient="
         rightText
           ? 'to top, rgba(0,0,0,.0), rgba(0,0,0,0.2)'
           : title
           ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)'
-          : null
+          : undefined
       "
       cover
     >
