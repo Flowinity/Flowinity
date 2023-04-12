@@ -20,7 +20,7 @@
         indeterminate
         size="64"
         v-if="loading"
-        :model-value="true"
+        :model-value="'true'"
       ></v-progress-linear>
       <v-container>
         <v-list v-if="data.messages.length">

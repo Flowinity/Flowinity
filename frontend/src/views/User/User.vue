@@ -10,7 +10,7 @@
         <v-col :lg="!username ? 9 : 12" cols="12" md="12">
           <v-row no-gutters>
             <v-col sm="auto">
-              <v-hover v-slot="{ hover }">
+              <v-hover v-slot="{ isHovering }">
                 <UserAvatar
                   :user="user"
                   :status="true"
@@ -29,7 +29,7 @@
                     <v-btn
                       icon
                       class="rounded-xl"
-                      v-if="hover"
+                      v-if="isHovering"
                       style="position: absolute; top: 10px; right: 10px"
                     >
                       <v-icon>mdi-pencil</v-icon>

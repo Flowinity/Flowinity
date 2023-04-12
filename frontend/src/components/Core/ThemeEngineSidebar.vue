@@ -297,7 +297,7 @@ export default defineComponent({
         this.$vuetify.defaults.VCard.elevation = value;
         this.triggerSave();
       }
-    },
+    } as any,
     gradientOffset: {
       get() {
         this.bindOffset;

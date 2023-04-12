@@ -25,7 +25,7 @@
         :value="redirected"
         type="info"
         elevation="0"
-        border="left"
+        border="start"
         color="primary"
         class="ma-0 rounded-0"
         variant="tonal"

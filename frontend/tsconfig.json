@@ -7,7 +7,7 @@
     "composite": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "strict": true,
+    "strict": false,
     "jsx": "preserve",
     "sourceMap": false,
     "resolveJsonModule": true,
