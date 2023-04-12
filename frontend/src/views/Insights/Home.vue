@@ -66,7 +66,7 @@
                 .format('YYYY')}`"
             />
           </v-col>
-          <v-col cols="12" sm="1" xl="6" md="6">
+          <!--          <v-col cols="12" sm="1" xl="6" md="6">
             <DynamicCard
               max-height="200px"
               to="/insights/yearly"
@@ -76,7 +76,7 @@
                 .startOf('year')
                 .format('YYYY')}`"
             />
-          </v-col>
+          </v-col>-->
         </v-row>
       </v-container>
     </v-card>
