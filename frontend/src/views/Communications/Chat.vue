@@ -606,11 +606,12 @@ export default defineComponent({
       this.avoidAutoScroll = scrollPos < -300;
     },
     editLastMessage() {
+      console.log("edit last message");
       // find first message made by user
       const lastMessage = this.$chat.selectedChat?.messages
         .slice()
         .find((message) => message.tpuUser?.id === this.$user.user?.id);
-      if (!lastMessage) return;
+      if (!lastMessage || lastMessage.id === this.editing) return;
       this.editingText = lastMessage.content;
       this.editing = lastMessage.id;
     },
@@ -619,6 +620,48 @@ export default defineComponent({
       this.$refs.input?.$refs?.textarea?.focus();
     },
     shortcutHandler(e: any) {
+      // if ctrl + up
+      if (e.ctrlKey && e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!this.editing) return this.editLastMessage();
+        // edit next messsge
+        const message = this.$chat.selectedChat?.messages
+          .slice()
+          .find(
+            (message) =>
+              message.id !== this.editing &&
+              message.tpuUser?.id === this.$user.user?.id &&
+              message.id < this.editing
+          );
+        if (!message) {
+          this.editing = undefined;
+          return;
+        }
+        this.editing = message.id;
+        this.editingText = message.content;
+        return;
+      }
+      if (e.ctrlKey && e.key === "ArrowDown") {
+        e.preventDefault();
+        if (!this.editing) return;
+        // edit last messsge
+        const message = this.$chat.selectedChat?.messages
+          .slice()
+          .reverse()
+          .find(
+            (message) =>
+              message.id !== this.editing &&
+              message.tpuUser?.id === this.$user.user?.id &&
+              message.id > this.editing
+          );
+        if (!message) {
+          this.editing = undefined;
+          return;
+        }
+        this.editing = message.id;
+        this.editingText = message.content;
+        return;
+      }
       if (
         e.ctrlKey &&
         e.key === "v" &&
