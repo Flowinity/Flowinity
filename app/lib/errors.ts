@@ -82,8 +82,13 @@ let Errors = {
   },
   API_REMOVED: {
     message:
-      "TroploPrivateUploader API version 1 is no longer available from 2023-01-26, please check the relevant API documentation for v2 at /api/docs.",
-    status: 410
+      "TroploPrivateUploader API version 1 is no longer available, please check the relevant API documentation for v2 at /api/docs.",
+    status: 410,
+    deprecationDate: "2023-01-26",
+    removalDate: "2023-04-13",
+    removed: true,
+    deprecated: true,
+    version: 1
   },
   API_REMOVED_V2: {
     message: "This API endpoint is no longer available.",
