@@ -606,7 +606,6 @@ export default defineComponent({
       this.avoidAutoScroll = scrollPos < -300;
     },
     editLastMessage() {
-      console.log("edit last message");
       // find first message made by user
       const lastMessage = this.$chat.selectedChat?.messages
         .slice()
