@@ -746,7 +746,7 @@ export class UserUtilsService {
         active: true
       }
     })
-    if (!domain) throw Errors.PLACEHOLDER
+    if (!domain) throw Errors.DOMAIN_NOT_FOUND
     return await User.update(
       {
         domainId: domain.id

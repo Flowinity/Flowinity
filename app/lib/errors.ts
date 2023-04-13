@@ -86,6 +86,7 @@ let Errors = {
     status: 410,
     deprecationDate: "2023-01-26",
     removalDate: "2023-04-13",
+    startDate: "2021-08-10",
     removed: true,
     deprecated: true,
     version: 1
@@ -260,6 +261,10 @@ let Errors = {
   INSIGHTS_DISABLED: {
     message: "You do not have permission to view this user's insights.",
     status: 401
+  },
+  DOMAIN_NOT_FOUND: {
+    message: "The requested domain could not be found.",
+    status: 404
   }
 }
 
