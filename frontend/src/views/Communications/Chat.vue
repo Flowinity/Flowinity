@@ -620,7 +620,7 @@ export default defineComponent({
     },
     shortcutHandler(e: any) {
       // if ctrl + up
-      if (e.ctrlKey && e.key === "ArrowUp") {
+      if (e.ctrlKey && e.key === "ArrowUp" && e.shiftKey) {
         e.preventDefault();
         if (!this.editing) return this.editLastMessage();
         // edit next messsge
@@ -640,7 +640,7 @@ export default defineComponent({
         this.editingText = message.content;
         return;
       }
-      if (e.ctrlKey && e.key === "ArrowDown") {
+      if (e.ctrlKey && e.key === "ArrowDown" && e.shiftKey) {
         e.preventDefault();
         if (!this.editing) return;
         // edit last messsge
@@ -659,6 +659,34 @@ export default defineComponent({
         }
         this.editing = message.id;
         this.editingText = message.content;
+        return;
+      }
+      if (e.ctrlKey && e.key === "ArrowUp" && !e.shiftKey) {
+        e.preventDefault();
+        // edit next messsge
+        const message = this.$chat.selectedChat?.messages
+          .slice()
+          .find((message) => (this.replyId ? message.id < this.replyId : true));
+        if (!message) {
+          this.replyId = undefined;
+          return;
+        }
+        this.replyId = message.id;
+        return;
+      }
+      if (e.ctrlKey && e.key === "ArrowDown" && !e.shiftKey) {
+        e.preventDefault();
+        if (!this.replyId) return;
+        // edit last messsge
+        const message = this.$chat.selectedChat?.messages
+          .slice()
+          .reverse()
+          .find((message) => (this.replyId ? message.id > this.replyId : true));
+        if (!message) {
+          this.replyId = undefined;
+          return;
+        }
+        this.replyId = message.id;
         return;
       }
       if (
