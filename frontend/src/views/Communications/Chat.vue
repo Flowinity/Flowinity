@@ -675,7 +675,7 @@ export default defineComponent({
         this.$chat.search.value = !this.$chat.search.value;
       }
       if (e.metaKey || e.ctrlKey) return;
-      if (e.key === "ArrowUp" && !this.message.length) {
+      if (e.key === "ArrowUp" && !this.message.length && !this.editing) {
         e.preventDefault();
         return this.editLastMessage();
       }
