@@ -11,6 +11,7 @@ import { CacheService } from "@app/services/cache.service"
 import { AdminService } from "@app/services/admin.service"
 import uploader from "@app/lib/upload"
 import rateLimits from "@app/lib/rateLimits"
+import { CollectionItem } from "@app/models/collectionItem.model"
 
 @Service()
 export class CollectionController {
@@ -199,7 +200,16 @@ export class CollectionController {
             "configure"
           )
         if (!collection) {
-          throw Errors.COLLECTION_NO_PERMISSION
+          const collectionItem = await CollectionItem.findOne({
+            where: {
+              collectionId: id,
+              attachmentId: parseInt(req.params.attachmentId),
+              userId: req.user.id
+            }
+          })
+          if (!collectionItem) {
+            throw Errors.COLLECTION_NO_PERMISSION
+          }
         }
         await this.collectionService.removeFromCollection(
           id,
