@@ -1,5 +1,10 @@
 <template>
-  <div id="chat" @drop.prevent="dragDropHandler" @dragover.prevent>
+  <div
+    id="chat"
+    @drop.prevent="dragDropHandler"
+    @dragover.prevent
+    class="communications"
+  >
     <v-navigation-drawer
       location="bottom"
       temporary
@@ -108,14 +113,19 @@
     <v-fade-transition v-model="avoidAutoScroll">
       <v-toolbar
         :style="`position: fixed; bottom: ${
-          inputHeight + replyingHeight + uploadFileHeight
+          inputHeight + replyingHeight + uploadFileHeight - 2
         }px`"
         height="25"
-        style="border-radius: 20px 20px 0 0; font-size: 14px; z-index: 1"
+        style="
+          border-radius: 20px 20px 0 0;
+          font-size: 14px;
+          z-index: 1;
+          backdrop-filter: blur(10px);
+        "
         @click="forceBottomAmirite"
-        class="pointer unselectable pl-2 pb-1"
+        class="pointer unselectable pl-2 pb-1 force-bg dynamic-background"
         v-if="avoidAutoScroll || $chat.loadingNew || $chat.loadNew"
-        color="card"
+        color="transparent"
       >
         <template v-if="!$chat.loadingNew">
           <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>

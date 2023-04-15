@@ -269,6 +269,9 @@ export const useUserStore = defineStore("user", {
         themeEngine: this.user?.themeEngine as ThemeEngine,
         insights: this.user?.insights
       };
+      if (this.user?.themeEngine?.defaults.prev) {
+        delete this.user.themeEngine.defaults.prev;
+      }
       this.applyTheme();
       localStorage.setItem("userStore", JSON.stringify(data));
       this.runPostTasks();
@@ -292,6 +295,9 @@ export const useUserStore = defineStore("user", {
     async save() {
       if (!this.user) return;
       this.applyCSS();
+      if (this.changes.themeEngine.prev) {
+        delete this.changes.themeEngine.prev;
+      }
       await axios.patch("/user", {
         password: this.changes.password,
         currentPassword: this.changes.currentPassword,
