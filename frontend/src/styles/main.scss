@@ -408,3 +408,7 @@ a {
   display: flex;
   justify-content: center;
 }
+
+.v-select__content .bg-transparent {
+  background: rgb(var(--v-theme-background)) !important;
+}

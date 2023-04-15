@@ -148,7 +148,8 @@ export default createVuetify({
     },
     VSelect: {
       color: "primary",
-      variant: "underlined"
+      variant: "underlined",
+      bgColor: "card"
     },
     VAutoComplete: {
       color: "primary",
