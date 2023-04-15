@@ -259,6 +259,7 @@ export class CoreService {
         collections: await Collection.count({ where }),
         collectionItems: await CollectionItem.count({ where }),
         docs: await Note.count({
+          distinct: true,
           include: [
             {
               model: WorkspaceFolder,

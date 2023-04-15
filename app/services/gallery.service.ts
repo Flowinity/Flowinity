@@ -373,6 +373,7 @@ export class GalleryService {
         where: {
           collectionId: id
         },
+        distinct: true,
         include: [
           {
             model: Upload,
@@ -385,7 +386,8 @@ export class GalleryService {
     } else {
       uploadCount = await Upload.count({
         where,
-        include
+        include,
+        distinct: true
       })
     }
     const pager = paginate(uploadCount || uploads.length, page, itemsPerPage)
