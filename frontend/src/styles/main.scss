@@ -409,6 +409,6 @@ a {
   justify-content: center;
 }
 
-.v-select__content .bg-transparent {
+.v-select__content .bg-transparent, .v-autocomplete__content .bg-transparent {
   background: rgb(var(--v-theme-background)) !important;
 }
