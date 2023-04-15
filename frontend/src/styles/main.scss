@@ -344,7 +344,7 @@ a {
   background-color: #000000 !important;
 }
 
-.fluid-gradient .v-card, .fluid-gradient .v-toolbar,
+.fluid-gradient .v-card, .fluid-gradient .v-toolbar:not(.force-bg),
 .fluid-gradient .v-expansion-panel-text,
 .fluid-gradient .v-expansion-panel,
 .fluid-gradient .v-expansion-panel-title,
@@ -354,7 +354,7 @@ a {
 
 .fluid-gradient .bg-dark,
 .fluid-gradient .bg-light,
-.fluid-gradient .v-overlay__content:not(.v-progress-circular):has(.v-card) {
+.fluid-gradient .v-overlay__content:not(.v-progress-circular):has(.v-card):not(.v-menu) {
   background: transparent !important;
   backdrop-filter: blur(70px);
   -webkit-backdrop-filter: blur(70px);
@@ -400,4 +400,11 @@ a {
 
 .v-slider-thumb__label:before {
   color: #121212 !important;
+}
+
+.communications .date-separator {
+  margin-bottom: 5px;
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
 }

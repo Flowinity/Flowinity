@@ -1,34 +1,7 @@
 <template>
   <div class="position-relative">
-    <div
-      v-if="dateSeparator"
-      style="
-        text-align: center;
-        position: relative;
-        height: 27.5px;
-        display: flex;
-        justify-content: center;
-      "
-    >
-      <div
-        style="
-          border-bottom: 1px solid rgb(33, 36, 37);
-          position: absolute;
-          top: 0;
-          width: 100%;
-          height: calc(50% - 3px);
-        "
-      ></div>
-      <p
-        class="text-grey"
-        style="
-          background-color: rgb(var(--v-theme-background));
-          position: absolute;
-          height: 20px;
-          padding-left: 10px;
-          padding-right: 10px;
-        "
-      >
+    <div v-if="dateSeparator" class="date-separator">
+      <p class="text-grey date-separator-block unselectable">
         {{ $date(message.createdAt).format("ddd, Do of MMMM YYYY") }}
       </p>
     </div>

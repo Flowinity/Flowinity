@@ -3,10 +3,8 @@
     elevation="8"
     class="message-actions"
     :class="{ 'no-hide': avoid }"
-    variant="outlined"
     v-if="!$vuetify.display.mobile"
-    style="z-index: 2001"
-    :style="$vuetify.theme.global.name === 'amoled' ? 'background: black' : ''"
+    style="z-index: 6001"
   >
     <v-btn icon @click="$emit('emote')" rounded="0" :size="size">
       <v-tooltip location="top" activator="parent">React</v-tooltip>
