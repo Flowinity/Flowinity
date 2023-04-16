@@ -748,6 +748,9 @@ export class PulseService {
         createdAt: {
           [Op.gte]: gte,
           [Op.lte]: lte
+        },
+        other: {
+          type: "page"
         }
       }
     })
