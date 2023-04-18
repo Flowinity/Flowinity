@@ -5,9 +5,9 @@
       label="Search"
       class="mt-5"
       autofocus
-      @keydown.enter="getGallery"
+      @keydown.enter="getGallery()"
       append-icon="mdi-magnify"
-      @click:append="getGallery"
+      @click:append="getGallery()"
     ></v-text-field>
     <Paginate class="mb-2 mt-n2" :total-pages="null" v-model="page"></Paginate>
     <v-row v-if="!loading">
