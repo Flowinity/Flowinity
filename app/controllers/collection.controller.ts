@@ -132,6 +132,7 @@ export class CollectionController {
                 "collection",
                 12,
                 <"">req.query.sort || "newest",
+                !!req.query.array,
                 0
               )
             )
@@ -160,6 +161,7 @@ export class CollectionController {
             "collection",
             req.user.itemsPerPage,
             <"">req.query.sort || "newest",
+            !!req.query.array,
             req.user.id
           )
         )

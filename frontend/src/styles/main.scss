@@ -113,21 +113,28 @@
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: black #151515;
+  scrollbar-color: rgb(var(--v-theme-background));
 }
 
-div::-webkit-scrollbar {
-  width: 12px;
+*::-webkit-scrollbar {
+  width: 8px;
 }
 
 *::-webkit-scrollbar-track {
-  background: #151515;
+  background: var(--v-theme-background);
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #181818;
   border-radius: 20px;
-  border: 3px solid #151515;
+  border: 3px solid transparent;
+}
+
+.v-theme--light *::-webkit-scrollbar-thumb {
+  background-color: #a1a1a1;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #202020;
 }
 
 input::-webkit-inner-spin-button {
@@ -195,10 +202,6 @@ a {
 
 .replying-message {
   backdrop-filter: brightness(2);
-}
-
-*::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
 }
 
 .mention {
@@ -409,6 +412,12 @@ a {
   justify-content: center;
 }
 
-.v-select__content .bg-transparent, .v-autocomplete__content .bg-transparent {
+.fluid-gradient .v-menu .v-overlay__content {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: transparent !important;
+}
+
+.v-menu .v-overlay__content {
   background: rgb(var(--v-theme-background)) !important;
 }

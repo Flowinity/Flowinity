@@ -73,6 +73,12 @@
     label="Disable profile colors"
     class="px-4"
   ></v-switch>
+  <v-switch
+    v-model="disableBatterySave"
+    label="Disable battery preservation"
+    class="px-4 mt-n6"
+    v-if="disableBatterySave"
+  ></v-switch>
   <v-card-title>My TPU</v-card-title>
   <v-expansion-panels class="px-4">
     <v-expansion-panel title="Change username">
@@ -262,6 +268,18 @@ export default defineComponent({
       set(val: boolean) {
         this.bindings.disableProfileColors = val;
         localStorage.setItem("disableProfileColors", JSON.stringify(val));
+      }
+    },
+    disableBatterySave: {
+      get() {
+        try {
+          return JSON.parse(localStorage.getItem("disableBatterySave")!);
+        } catch {
+          return false;
+        }
+      },
+      set(val: boolean) {
+        localStorage.setItem("disableBatterySave", JSON.stringify(val));
       }
     }
   },

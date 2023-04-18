@@ -31,6 +31,11 @@ export class MailService {
     await client.connect()
     return client
   }
+  async idle(userId: number) {
+    const client = await this.connect(userId)
+    await client.idle()
+    return client
+  }
   async getMailboxes(userId: number) {
     const client = await this.connect(userId)
     const mailboxes = await client.list()
@@ -84,13 +89,16 @@ export class MailService {
     })
     client.logout()
     // Buffer to HTML
-
-    console.log(message)
+    const parser = await simpleParser(message.source)
     return {
       ...message,
       modseq: message.modseq.toString(),
       source: message.source.toString(),
-      parsed: await simpleParser(message.source)
+      parsed: {
+        ...parser,
+        html:
+          parser.html || parser.textAsHtml || "No message content to display"
+      }
     }
   }
 }

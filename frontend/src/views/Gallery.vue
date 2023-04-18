@@ -46,6 +46,8 @@
       @remove="removeItemFromCollection($event.item, $event.collection)"
       @random-attachment="randomAttachment"
       :random-attachment-loading="randomLoading"
+      path="/gallery"
+      :show="show"
     ></GalleryCore>
   </v-container>
 </template>
@@ -63,7 +65,11 @@ export default defineComponent({
   data() {
     return {
       gallery: {
-        gallery: [] as Upload[]
+        gallery: [] as Upload[],
+        pager: {
+          totalItems: 0,
+          totalPages: 0
+        }
       },
       page: 1,
       show: {

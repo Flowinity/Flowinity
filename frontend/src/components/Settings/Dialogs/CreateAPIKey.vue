@@ -91,7 +91,7 @@ export default defineComponent({
           id: "uploads.view"
         },
         {
-          name: "View UserInfo (Required)",
+          name: "User (View, Required)",
           id: "user.view"
         },
         {
@@ -137,6 +137,10 @@ export default defineComponent({
         {
           name: "Chats (Create)",
           id: "chats.create"
+        },
+        {
+          name: "Insights (View)",
+          id: "insights.view"
         }
       ],
       name: "",

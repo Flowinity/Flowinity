@@ -119,11 +119,13 @@ export interface AppState {
   }[];
   demo: boolean;
   themeProviderDefaults: any;
+  batterySave: boolean;
 }
 
 export const useAppStore = defineStore("app", {
   state: () =>
     ({
+      batterySave: false,
       themeProviderDefaults: {
         theme: {},
         global: {}

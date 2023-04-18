@@ -164,6 +164,7 @@ export class GalleryService {
     type: "user" | "collection" | "starred" | "autoCollect" = "user",
     itemsPerPage: number = 12,
     sort: "newest" | "oldest" | "size" = "newest",
+    array: boolean = false,
     userId?: number
   ): Promise<Object> {
     let sortParams: Sequelize.OrderItem = ["createdAt", "DESC"]
@@ -367,6 +368,7 @@ export class GalleryService {
             : [["createdAt", "DESC"]]*/
       })
     }
+    if (array) return uploads
     let uploadCount
     if (type === "collection") {
       uploadCount = await CollectionItem.count({

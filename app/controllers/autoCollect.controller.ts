@@ -132,6 +132,7 @@ export class AutoCollectController {
           "autoCollect",
           req.user.itemsPerPage,
           <"">req.query.sort || "newest",
+          !!req.query.array,
           req.user.id
         )
         res.json(gallery)

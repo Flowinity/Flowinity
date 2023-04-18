@@ -9,6 +9,27 @@ import { AlternatePassword } from "@app/types/auth"
 
 @Service()
 export class SecurityService {
+  scopes: string[]
+  constructor() {
+    this.scopes = [
+      "uploads.create",
+      "uploads.modify",
+      "uploads.view",
+      "user.view",
+      "user.modify",
+      "collections.modify",
+      "collections.create",
+      "collections.view",
+      "workspaces.view",
+      "workspaces.create",
+      "workspaces.modify",
+      "chats.view",
+      "chats.create",
+      "chats.send",
+      "chats.edit",
+      "insights.view"
+    ]
+  }
   async deleteAlternatePassword(id: number, name: string) {
     const user = await User.findOne({
       where: {
@@ -46,26 +67,7 @@ export class SecurityService {
     totp: boolean = false
   ) {
     for (const scope of scopes) {
-      if (
-        !Object.values([
-          "uploads.create",
-          "uploads.modify",
-          "uploads.view",
-          "user.view",
-          "user.modify",
-          "collections.modify",
-          "collections.create",
-          "collections.view",
-          "workspaces.view",
-          "workspaces.create",
-          "workspaces.modify",
-          "platforms.colubrina",
-          "chats.view",
-          "chats.create",
-          "chats.send",
-          "chats.edit"
-        ]).includes(scope)
-      ) {
+      if (!Object.values(this.scopes).includes(scope)) {
         throw Errors.INVALID_SCOPES_PROVIDED
       }
     }
@@ -204,25 +206,7 @@ export class SecurityService {
       throw Errors.NO_SCOPES_PROVIDED
     }
     for (const scope of scopes) {
-      if (
-        !Object.values([
-          "uploads.create",
-          "uploads.modify",
-          "uploads.view",
-          "user.view",
-          "user.modify",
-          "collections.modify",
-          "collections.create",
-          "collections.view",
-          "workspaces.view",
-          "workspaces.create",
-          "workspaces.modify",
-          "chats.view",
-          "chats.create",
-          "chats.send",
-          "chats.edit"
-        ]).includes(scope)
-      ) {
+      if (!Object.values(this.scopes).includes(scope)) {
         throw Errors.INVALID_SCOPES_PROVIDED
       }
     }

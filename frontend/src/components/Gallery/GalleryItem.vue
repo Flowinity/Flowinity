@@ -103,7 +103,14 @@
           text="Link"
           icon="mdi-content-copy"
           color="teal"
-          @click="copyLink(item)"
+          @click="
+            $functions.copy(
+              `https://${$user.user?.domain.domain || 'i.troplo.com'}/i/${
+                item.attachment
+              }`
+            );
+            $toast.success('Copied to clipboard!');
+          "
           class="my-1"
           aria-label="Copy link to clipboard"
         ></HoverChip>
@@ -183,13 +190,6 @@ export default defineComponent({
     async star(item: Upload) {
       await this.axios.post("/gallery/star/" + item.attachment);
       item.starred = !item.starred;
-    },
-    copyLink(item: Upload) {
-      navigator.clipboard.writeText(
-        `https://${this.$user.user?.domain.domain || "i.troplo.com"}/i/${
-          item.attachment
-        }`
-      );
     },
     editItem(item: Upload) {
       console.log("Edit item", item);

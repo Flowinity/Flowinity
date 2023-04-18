@@ -1,6 +1,6 @@
 <template>
   <v-list-item color="transparent" class="skeleton">
-    <template v-slot:prepend>
+    <template v-slot:prepend v-if="pfp">
       <v-avatar
         :class="{
           'skeleton-loader': animate,
@@ -36,6 +36,10 @@ export default defineComponent({
   name: "MessageSkeleton",
   props: {
     animate: {
+      type: Boolean,
+      default: true
+    },
+    pfp: {
       type: Boolean,
       default: true
     }

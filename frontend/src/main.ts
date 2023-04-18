@@ -83,6 +83,10 @@ declare global {
     _cordovaNative: any;
     cordova?: any;
   }
+
+  interface navigator extends Navigator {
+    getBattery: () => Promise<any>;
+  }
 }
 
 const app = createApp({
@@ -99,6 +103,7 @@ const app = createApp({
           messageIndex: chat.chats[index].messages.findIndex((m) => m.id === id)
         };
       }
+
       const user = useUserStore();
       const core = useAppStore();
       const experiments = useExperimentsStore();
@@ -391,6 +396,34 @@ const app = createApp({
           core.upload();
         }
       });
+      let hadFluidGradient = false;
+      try {
+        //@ts-ignore
+        navigator.getBattery().then((battery) => {
+          /* if (
+            battery &&
+            localStorage.getItem("disableBatterySave") !== "true"
+          ) {
+            battery.addEventListener("chargingchange", () => {
+              core.batterySave = !battery.charging;
+              if (core.batterySave && core.fluidGradient) {
+                hadFluidGradient = true;
+                core.fluidGradient = false;
+                document.body.classList.remove("fluid-gradient");
+              } else if (!core.batterySave) {
+                if (hadFluidGradient) {
+                  core.fluidGradient = true;
+                  document.body.classList.add("fluid-gradient");
+                }
+              }
+            });
+          }*/
+        });
+      } catch {
+        console.warn(
+          "[TPU/Core] Battery API is not supported on this browser, cannot enable battery optimizations. Is this Safari?"
+        );
+      }
     },
     watch: {
       "$route.params.chatId"(val) {

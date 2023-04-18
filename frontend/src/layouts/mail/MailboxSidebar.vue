@@ -15,15 +15,20 @@
           {{ $mail.getSender(email) }}
         </v-list-item-subtitle>
       </v-list-item>
+      <template v-if="!$mail.selected?.emails?.length">
+        <MessageSkeleton :pfp="false" v-for="i in 50" :key="i" />
+      </template>
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 
 export default defineComponent({
-  name: "MailboxSidebar"
+  name: "MailboxSidebar",
+  components: { MessageSkeleton }
 });
 </script>
 
