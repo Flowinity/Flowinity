@@ -298,7 +298,7 @@
       icon="mdi-rhombus-split"
       color="cyan"
       :small="true"
-      title="Have a collectivized to upload percentage of 4.154% or more."
+      title="Have a collectivized to upload percentage of 41.54% or more."
       v-if="
         user.stats?.uploads >= 1000 &&
         user.stats?.collectionItems / user.stats?.uploads >= 0.4154 &&
