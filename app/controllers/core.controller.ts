@@ -96,7 +96,11 @@ export class CoreController {
             (await this.cacheService.refreshState())),
           server: cluster.worker?.id
             ? `${os.hostname()?.toUpperCase()}#${cluster.worker?.id}`
-            : os.hostname()?.toUpperCase()
+            : os.hostname()?.toUpperCase(),
+          connection: {
+            ip: req.ip,
+            whitelist: whitelist.find((w) => w.ip === req.ip) || false
+          }
         })
       } catch (e) {
         console.error(e)

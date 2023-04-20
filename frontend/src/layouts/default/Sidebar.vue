@@ -103,6 +103,13 @@
         class="text-center justify-center"
         v-if="$user.user?.administrator || $user.user?.moderator"
       >
+        <small class="mb-2 text-grey" v-if="$app.site.connection?.whitelist">
+          Member of
+          {{
+            $app.site.connection?.whitelist?.groups?.join(", ").toUpperCase()
+          }}
+        </small>
+        <br />
         <small class="mb-2 text-grey">TPU Experimental Overrides (NEXT)</small>
       </div>
       <div class="pa-2" v-if="$user.user?.subscription?.metadata?.hours">

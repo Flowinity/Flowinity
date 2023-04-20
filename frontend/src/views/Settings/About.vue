@@ -16,6 +16,12 @@
     </p>
     <p>Build date relative: {{ $date($app.version.date).fromNow() }}</p>
     <p>Backend environment: {{ $app.site.release }}</p>
+    <template v-if="$app.site.connection">
+      <p>Backend connecting IP: {{ $app.site.connection.ip }}</p>
+      <p v-if="$app.site.connection.whitelist">
+        IP whitelist groups: {{ $app.site.connection.whitelist.groups }}
+      </p>
+    </template>
     <p>Server: {{ $app.site.server }}</p>
     <p class="mt-5 text-gradient">TroploPrivateUploader</p>
     <p>&copy; {{ $date().format("YYYY") }} Troplo Services</p>

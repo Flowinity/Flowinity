@@ -39,6 +39,16 @@ export interface AppState {
     hostnameWithProtocol: string;
     announcements: any[];
     flowinityId: string;
+    connection: {
+      ip: string;
+      whitelist:
+        | {
+            ip: string;
+            name: string;
+            groups: string[];
+          }
+        | false;
+    };
     stats: {
       collections: number;
       collectionItems: number;

@@ -172,6 +172,15 @@ export default defineComponent({
           exact: true,
           scope: "*",
           level: 2
+        },
+        {
+          id: 15,
+          name: "IP Whitelist Check",
+          path: "/admin/ip",
+          icon: "mdi-shield-check",
+          exact: true,
+          scope: "user.view",
+          level: 0
         }
       ] as {
         id: number;
@@ -189,7 +198,9 @@ export default defineComponent({
   },
   methods: {
     access(level: number) {
-      if (level === 1) {
+      if (level === 0) {
+        return true;
+      } else if (level === 1) {
         return this.$user.user?.administrator || this.$user.user?.moderator;
       } else if (level === 2) {
         return this.$user.user?.administrator;

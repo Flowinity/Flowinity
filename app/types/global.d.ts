@@ -6,7 +6,12 @@ export interface SocketWithUser extends Socket {
 }
 
 declare global {
-  var redis: any, db: any, config: TpuConfig, dayjs: any, socket: SocketWithUser
+  var redis: any,
+    db: any,
+    config: TpuConfig,
+    dayjs: any,
+    socket: SocketWithUser,
+    whitelist: { ip: string; name: string; groups: string[] }[]
 }
 
 export {}

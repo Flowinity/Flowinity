@@ -16,6 +16,7 @@ import { PulseService } from "@app/services/pulse.service"
 import { BadgeService } from "@app/services/badge.service"
 import cluster from "cluster"
 import os from "os"
+import ipPrimary from "@app/lib/whitelist/primary.json"
 
 @Service()
 export class Server {
@@ -62,8 +63,8 @@ export class Server {
     global.redis = redis
     global.config = config
     global.dayjs = dayjs
+    global.whitelist = ipPrimary
     this.server = http.createServer(this.application.app)
-
     this.server.listen(port || Server.appPort)
     socket.init(this.application.app, this.server)
     this.server.on("error", (error: NodeJS.ErrnoException) =>

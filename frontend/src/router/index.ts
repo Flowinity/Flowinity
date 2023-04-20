@@ -220,6 +220,11 @@ const routes = [
             path: "autoCollect",
             name: "Admin AutoCollects",
             component: () => import("@/views/Admin/AutoCollect.vue")
+          },
+          {
+            path: "ip",
+            name: "Admin Whitelist",
+            component: () => import("@/views/Admin/Whitelist.vue")
           }
         ]
       },
