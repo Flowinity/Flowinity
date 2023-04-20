@@ -755,6 +755,19 @@ export class PulseService {
       }
     })
 
+    const allPulses = await Pulse.findAll({
+      where: {
+        userId: userId,
+        createdAt: {
+          [Op.gte]: gte,
+          [Op.lte]: lte
+        },
+        other: {
+          type: "page"
+        }
+      }
+    })
+
     // CHATS
     const messages = await Message.findAll({
       where: {
@@ -838,7 +851,7 @@ export class PulseService {
           previous: previous ? previous.data?.pulses?.total?.previous : 0
         },
         average: Math.round((pulses.length / avgModifier) * 100) / 100,
-        platforms: this.calculatePlatforms(pulses),
+        platforms: this.calculatePlatforms(allPulses),
         days: this.calculatePulseDays(pulses, type, gte, lte),
         features: this.getFeatures(pulses),
         avgHours: await this.getAverageHours(pulses),
