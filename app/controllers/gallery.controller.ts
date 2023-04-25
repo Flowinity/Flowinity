@@ -317,10 +317,12 @@ export class GalleryController {
 
     this.router.get(
       "/:attachment",
-      async (req: Request, res: Response, next: NextFunction) => {
+      auth("user.view", true),
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {
           const attachment = await this.galleryService.getAttachment(
-            req.params.attachment
+            req.params.attachment,
+            req.user?.id
           )
           res.json(attachment)
         } catch (e) {

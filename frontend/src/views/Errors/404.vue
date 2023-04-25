@@ -11,7 +11,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "404",
+  name: "NotFound",
   mounted() {
     this.$app.title = "Not Found";
   }

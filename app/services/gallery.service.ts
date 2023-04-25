@@ -426,12 +426,20 @@ export class GalleryService {
     }
   }
 
-  async getAttachment(attachment: string) {
+  async getAttachment(attachment: string, userId?: number) {
     const upload = await Upload.findOne({
       where: {
         attachment
       },
       include: [
+        {
+          model: Star,
+          as: "starred",
+          required: false,
+          where: {
+            userId: userId || 0
+          }
+        },
         {
           model: User,
           as: "user",

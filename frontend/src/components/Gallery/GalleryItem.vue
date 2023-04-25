@@ -57,7 +57,7 @@
           text="Add to Collection"
           icon="mdi-plus"
           @click="$emit('collectivize', item.id)"
-          v-if="supports.permissions.write"
+          v-if="supports.permissions.write && supports.collections"
         ></HoverChip>
         <v-chip
           :to="'/collections/' + collection.id"
@@ -79,7 +79,7 @@
     <v-divider></v-divider>
     <v-card-text class="text-center">
       <slot name="actions" :item="item">
-        <HoverChip
+        <!--<HoverChip
           text="Edit & Caption"
           icon="mdi-pencil"
           color="indigo-lighten-1"
@@ -87,7 +87,7 @@
           v-if="supports.permissions.write"
           class="my-1"
           aria-label="Edit item"
-        ></HoverChip>
+        ></HoverChip>-->
         <HoverChip
           text="Delete"
           icon="mdi-delete"

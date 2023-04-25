@@ -285,6 +285,11 @@ const routes = [
         component: () => import("@/views/Policies/Privacy.vue")
       },
       {
+        path: "/:id",
+        name: "Collection Item",
+        component: () => import("@/views/Item.vue")
+      },
+      {
         path: "/:pathMatch(.*)",
         name: "404",
         component: () => import("@/views/Errors/404.vue")

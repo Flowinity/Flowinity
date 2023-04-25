@@ -421,3 +421,9 @@ a {
 .v-menu .v-overlay__content {
   background: rgb(var(--v-theme-background)) !important;
 }
+
+.center-container {
+  height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+}

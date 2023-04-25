@@ -69,36 +69,8 @@ export interface InsightData {
       name: string
       count: number
     }[]
-    autoCollects: {
-      series: [
-        {
-          name: string
-          data: {
-            x: string
-            y: number
-            goals: {
-              name: string
-              value: number
-            }[]
-          }[]
-        }
-      ]
-    } | null
-    collections: {
-      series: [
-        {
-          name: string
-          data: {
-            x: string
-            y: number
-            goals: {
-              name: string
-              value: number
-            }[]
-          }[]
-        }
-      ]
-    } | null
+    autoCollects: SeriesGraph | null
+    collections: SeriesGraph | null
   }
   messages: {
     total: {

@@ -62,6 +62,7 @@
           :item="item"
           :supports="{
             ...supports,
+            collections: true,
             permissions: {
               ...supports.permissions,
               write: item.user ? item.user.id === $user.user?.id : true

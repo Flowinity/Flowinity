@@ -361,6 +361,10 @@ export class PulseService {
       // @ts-ignore
       platforms[key] = Math.round(value * 100) / 100
     }
+    // sort by value
+    platforms = Object.fromEntries(
+      Object.entries(platforms).sort(([, a], [, b]) => b - a)
+    )
     return platforms
   }
   calculateWords(uploads: Upload[]) {
@@ -755,7 +759,7 @@ export class PulseService {
       }
     })
 
-    const allPulses = await Pulse.findAll({
+    const sessionPulses = await Pulse.findAll({
       where: {
         userId: userId,
         createdAt: {
@@ -763,7 +767,7 @@ export class PulseService {
           [Op.lte]: lte
         },
         other: {
-          type: "page"
+          type: "session"
         }
       }
     })
@@ -851,7 +855,7 @@ export class PulseService {
           previous: previous ? previous.data?.pulses?.total?.previous : 0
         },
         average: Math.round((pulses.length / avgModifier) * 100) / 100,
-        platforms: this.calculatePlatforms(allPulses),
+        platforms: this.calculatePlatforms(sessionPulses),
         days: this.calculatePulseDays(pulses, type, gte, lte),
         features: this.getFeatures(pulses),
         avgHours: await this.getAverageHours(pulses),
