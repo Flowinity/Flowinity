@@ -16,12 +16,16 @@
           }"
         >
           <template v-slot:custom-values="{ item }">
-            <v-card-subtitle style="opacity: 0.8">
-              <span style="opacity: 0.6">Creator:&nbsp;</span>
-              <router-link :to="`/u/${item?.user?.username}`">
-                {{ item?.user?.username || "Unknown" }}
-              </router-link>
-            </v-card-subtitle>
+            <div style="display: flex; align-items: baseline">
+              <v-card-subtitle style="opacity: 0.6; margin-right: -28px">
+                Creator:
+              </v-card-subtitle>
+              <v-card-subtitle style="opacity: 0.8">
+                <router-link :to="`/u/${item?.user?.username}`">
+                  {{ item?.user?.username || "Unknown" }}
+                </router-link>
+              </v-card-subtitle>
+            </div>
           </template>
         </GalleryItem>
       </v-col>
