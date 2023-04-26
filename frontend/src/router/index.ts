@@ -286,7 +286,7 @@ const routes = [
       },
       {
         path: "/:id",
-        name: "Collection Item",
+        name: "Attachment Item",
         component: () => import("@/views/Item.vue")
       },
       {
