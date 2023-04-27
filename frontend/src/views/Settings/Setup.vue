@@ -162,13 +162,12 @@ export default defineComponent({
       items: []
     };
   },
-  computed: {
-    config() {
-      return {
+  methods: {
+    config(type: "sharex" | "sharenix" = "sharex") {
+      let data = {
         Version: "13.5.0",
         Name: this.$app.site.name,
         DestinationType: "ImageUploader, TextUploader, FileUploader",
-        RequestMethod: "POST",
         RequestURL:
           this.$app.site.hostnameWithProtocol +
           "/api/" +
@@ -180,10 +179,27 @@ export default defineComponent({
         },
         FileFormName: "attachment",
         URL: "$json:url$"
+      } as {
+        Version: string;
+        Name: string;
+        DestinationType: string;
+        RequestURL: string;
+        Body: string;
+        Headers: {
+          Authorization: string;
+        };
+        FileFormName: string;
+        URL: string;
+        RequestMethod?: string;
+        RequestType?: string;
       };
-    }
-  },
-  methods: {
+      if (type === "sharenix") {
+        data.RequestType = "POST";
+      } else {
+        data.RequestMethod = "POST";
+      }
+      return data;
+    },
     async getAPIKeys() {
       const { data } = await this.axios.get("/security/keys");
       this.items = data;
@@ -192,13 +208,13 @@ export default defineComponent({
       console.log(2);
       let data = null;
       if (type === "sharex") {
-        data = JSON.stringify(this.config);
+        data = JSON.stringify(this.config(type));
       } else {
         data = JSON.stringify({
           DefaultFileUploader: this.$app.site.name,
           DefaultImageUploader: this.$app.site.name,
 
-          Services: [this.config]
+          Services: [this.config(type)]
         });
       }
       const blob = new Blob([data], { type: "text/plain" });
