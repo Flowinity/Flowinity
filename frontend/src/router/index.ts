@@ -320,7 +320,8 @@ router.beforeEach(async (to, from) => {
       "Workspace Item",
       "Note",
       "Notes Workspaces Redirect",
-      "Privacy Policy"
+      "Privacy Policy",
+      "Attachment Item"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");
