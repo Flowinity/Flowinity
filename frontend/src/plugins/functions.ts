@@ -193,5 +193,8 @@ export default {
       }
     }
     return false;
+  },
+  uuid() {
+    return self.crypto.randomUUID();
   }
 };

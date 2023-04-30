@@ -3,8 +3,8 @@ import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
 
 export interface ExperimentsState {
-  experiments: Record<string, string>;
-  experimentsInherit: Record<string, string>;
+  experiments: Record<string, string | boolean | null | undefined>;
+  experimentsInherit: Record<string, string | boolean | null | undefined>;
 }
 
 export const useExperimentsStore = defineStore("experiments", {
