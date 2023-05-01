@@ -69,7 +69,7 @@
       id="chat-list"
       class="message-list-container"
       :style="`height: calc(100vh - ${
-        143 + replyingHeight + inputHeight - 86.5
+        145 + replyingHeight + inputHeight - 86.5
       }px)`"
       width="100%"
       style="overflow-x: hidden !important"

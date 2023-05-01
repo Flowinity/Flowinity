@@ -25,6 +25,26 @@ import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { FriendNickname } from "@app/models/friendNickname"
 import { AlternatePassword } from "@app/types/auth"
+import { DefaultProfileLayout } from "@app/classes/UserV3ProfileLayout"
+
+export interface ProfileLayout {
+  layout: {
+    columns: [
+      {
+        rows: {
+          name: string
+          id: string
+          props?: any
+        }[]
+      }
+    ]
+  }
+  config: {
+    containerMargin?: number
+    showStatsSidebar: boolean
+  }
+  version: number
+}
 
 export interface ThemeEngine {
   theme: {
@@ -233,6 +253,12 @@ export class User extends Model {
     defaultValue: "nobody"
   })
   insights: "everyone" | "friends" | "nobody"
+
+  @Column({
+    type: DataType.JSON,
+    defaultValue: new DefaultProfileLayout()
+  })
+  profileLayout: ProfileLayout
 
   @BelongsTo(() => Plan, "planId")
   plan: Plan

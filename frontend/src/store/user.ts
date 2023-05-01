@@ -94,7 +94,8 @@ export const useUserStore = defineStore("user", {
         } else {
           throw new Error("Invalid theme version");
         }
-      } catch {
+      } catch (e) {
+        console.log(e);
         document.body.style.setProperty("--gradient-offset", "100%");
       }
     },
@@ -133,6 +134,7 @@ export const useUserStore = defineStore("user", {
       localStorage.removeItem("token");
       localStorage.removeItem("userStore");
       localStorage.removeItem("friendsStore");
+      localStorage.removeItem("themeEngine");
       this.user = null;
       this.changes = {
         themeEngine: this.changes.themeEngine
@@ -213,7 +215,12 @@ export const useUserStore = defineStore("user", {
           // remove other favicons
           const links = document.getElementsByTagName("link");
           for (const link of links) {
-            if (link.getAttribute("rel") !== "manifest") {
+            if (
+              link.getAttribute("rel") !== "manifest" &&
+              link.getAttribute("rel") !== "stylesheet" &&
+              link.getAttribute("rel") !== "preload" &&
+              link.getAttribute("rel") !== "modulepreload"
+            ) {
               link.remove();
             }
           }
@@ -278,7 +285,10 @@ export const useUserStore = defineStore("user", {
     },
     applyCSS(emergency: boolean = false) {
       //if (this.user?.plan.internalName !== "GOLD") return;
-      if (this.changes.themeEngine?.customCSS !== undefined) {
+      if (
+        this.changes.themeEngine?.customCSS !== undefined &&
+        this.changes.themeEngine?.customCSS !== null
+      ) {
         let style = document.getElementById("user-css");
         if (style?.innerHTML === "") {
           emergency = false;

@@ -5,6 +5,8 @@
 import axios, { AxiosStatic } from "axios";
 import { useToast } from "vue-toastification";
 import { useAppStore } from "@/store/app";
+import { useUserStore } from "@/store/user";
+import router from "@/router";
 
 export interface AxiosStaticWithAvoidance extends AxiosStatic {
   _avoidToast: boolean;
@@ -32,8 +34,9 @@ ax.interceptors.response.use(
     const toast = useToast();
     if (e?.response?.data?.errors) {
       if (e.response.data.errors[0].name === "INVALID_TOKEN") {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userStore");
+        const user = useUserStore();
+        user.logout();
+        router.push("/login");
         return Promise.reject(e);
       } else if (e.response.data.errors[0].name === "SCOPE_REQUIRED") {
         console.warn(
