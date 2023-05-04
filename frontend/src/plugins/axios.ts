@@ -35,8 +35,10 @@ ax.interceptors.response.use(
     if (e?.response?.data?.errors) {
       if (e.response.data.errors[0].name === "INVALID_TOKEN") {
         const user = useUserStore();
-        user.logout();
-        router.push("/login");
+        if(user.user) {
+          user.logout();
+          router.push("/login");
+        }
         return Promise.reject(e);
       } else if (e.response.data.errors[0].name === "SCOPE_REQUIRED") {
         console.warn(
