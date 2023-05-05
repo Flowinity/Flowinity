@@ -73,7 +73,7 @@
     "vue-router": "^4.0.0",
     "vue-toastification": "^2.0.0-rc.5",
     "vue3-apexcharts": "^1.4.1",
-    "vuetify": "^3.2.2",
+    "vuetify": "^3.1.13",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
