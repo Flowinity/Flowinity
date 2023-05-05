@@ -611,6 +611,7 @@ export default defineComponent({
     },
     layout: {
       handler(val) {
+        if (this.user?.id !== this.$user.user?.id) return;
         this.$user.changes.profileLayout = val;
         this.$user.save();
       },
