@@ -8,7 +8,7 @@
     <v-container class="mt-2" :style="username ? 'max-width: 100%;' : ''">
       <v-row>
         <v-col :lg="!username ? 9 : 12" cols="12" md="12">
-          <v-row no-gutters>
+          <v-row no-gutters class="mb-2">
             <v-col sm="auto">
               <v-hover v-slot="{ isHovering }">
                 <UserAvatar
