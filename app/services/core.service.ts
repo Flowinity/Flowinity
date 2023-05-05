@@ -302,7 +302,7 @@ export class CoreService {
   getExperiments(dev: boolean = false, gold: boolean = false): object {
     const experiments = {
       USER_V3_MODIFY: false,
-      USER_V3: false,
+      USER_V3: true,
       EARLY_ACCESS: false,
       PINNED_MESSAGES: true,
       COMMUNICATIONS_KEEP_LOADED: false,

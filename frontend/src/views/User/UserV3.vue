@@ -158,8 +158,9 @@
               :user="user"
               :username="username"
               :gold="gold"
+              :primary="primary"
             ></core-statistics>
-            <last-f-m :user="user" v-else-if="willShow(component, 'last-fm')" />
+            <LastFM :user="user" v-else-if="willShow(component, 'last-fm')" />
             <v-card v-else-if="component.name === 'v-card'">
               <v-card-title>
                 <h3>{{ component.props.title }}</h3>

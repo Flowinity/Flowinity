@@ -59,7 +59,7 @@ import Chart from "@/components/Core/Chart.vue";
 export default defineComponent({
   name: "CoreStatistics",
   components: { Chart, GraphWidget },
-  props: ["user", "username", "gold"],
+  props: ["user", "username", "gold", "primary"],
   computed: {
     primaryColorResult() {
       return this.$user.primaryColorResult(this.primary, this.gold).primary;
