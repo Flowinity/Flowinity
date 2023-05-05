@@ -27,7 +27,9 @@ export class SecurityService {
       "chats.create",
       "chats.send",
       "chats.edit",
-      "insights.view"
+      "insights.view",
+      "starred.view",
+      "starred.modify"
     ]
   }
   async deleteAlternatePassword(id: number, name: string) {

@@ -26,7 +26,7 @@ maxmind
     city = reader
   })
 
-function checkScope(requiredScope: string, scope: string) {
+function checkScope(requiredScope: string | string[], scope: string) {
   if (scope === "*") {
     return true
   }
@@ -34,11 +34,18 @@ function checkScope(requiredScope: string, scope: string) {
   // check if the required scope is contained in the current scope, comma separated
   const scopes = scope.split(",")
   for (const scope of scopes) {
-    if (scope === requiredScope) {
-      return true
-    }
-    if (scope?.split(".")[0] === requiredScope) {
-      return true
+    if (typeof requiredScope === "string") {
+      if (scope === requiredScope) {
+        return true
+      } else if (scope?.split(".")[0] === requiredScope) {
+        return true
+      }
+    } else {
+      if (requiredScope.includes(scope)) {
+        return true
+      } else if (requiredScope.includes(scope?.split(".")[0])) {
+        return true
+      }
     }
   }
   return false
@@ -85,7 +92,7 @@ async function updateSession(session: Session, ip: string) {
   )
 }
 
-const auth = (scope: string, passthrough: boolean = false) => {
+const auth = (scope: string | string[], passthrough: boolean = false) => {
   return async function (req: any, res: Response, next: NextFunction) {
     try {
       const token = req.header("Authorization")

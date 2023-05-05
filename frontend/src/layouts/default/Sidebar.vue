@@ -292,7 +292,7 @@ export default defineComponent({
             name: "Starred",
             path: "/starred",
             icon: "mdi-star",
-            scope: "gallery.view",
+            scope: ["gallery.view", "starred.view"],
             new: false
           },
           {

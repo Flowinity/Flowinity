@@ -174,7 +174,10 @@ export default {
     // Create a File object from the Blob and file name
     return new File([blob], fileName, { type: blob.type });
   },
-  checkScope(requiredScope: string | undefined, scope: string | undefined) {
+  checkScope(
+    requiredScope: string | undefined | string[],
+    scope: string | undefined
+  ) {
     if (!scope || !requiredScope) {
       return true;
     }
@@ -185,11 +188,18 @@ export default {
     // check if the required scope is contained in the current scope, comma separated
     const scopes = scope.split(",");
     for (const scope of scopes) {
-      if (scope === requiredScope) {
-        return true;
-      }
-      if (scope?.split(".")[0] === requiredScope) {
-        return true;
+      if (typeof requiredScope === "string") {
+        if (scope === requiredScope) {
+          return true;
+        } else if (scope?.split(".")[0] === requiredScope) {
+          return true;
+        }
+      } else {
+        if (requiredScope.includes(scope)) {
+          return true;
+        } else if (requiredScope.includes(scope?.split(".")[0])) {
+          return true;
+        }
       }
     }
     return false;

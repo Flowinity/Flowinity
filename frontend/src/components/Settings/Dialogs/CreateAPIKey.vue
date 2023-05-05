@@ -111,6 +111,14 @@ export default defineComponent({
           id: "collections.view"
         },
         {
+          name: "Starred Gallery (View)",
+          id: "starred.view"
+        },
+        {
+          name: "Starred Gallery (Modify)",
+          id: "starred.modify"
+        },
+        {
           name: "Workspaces (Modify)",
           id: "workspaces.modify"
         },

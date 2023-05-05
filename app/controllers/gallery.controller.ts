@@ -185,7 +185,7 @@ export class GalleryController {
      */
     this.router.get(
       "/starred",
-      auth("uploads.view"),
+      auth(["starred.view", "uploads.view"]),
       async (req: RequestAuth, res: Response) => {
         // Send the request to the service and send the response
         try {
@@ -210,7 +210,7 @@ export class GalleryController {
 
     this.router.get(
       "/starred/random",
-      auth("uploads.view"),
+      auth(["starred.view", "uploads.view"]),
       async (req: RequestAuth, res: Response) => {
         try {
           const upload = await this.galleryService.getRandomAttachment(
@@ -300,7 +300,7 @@ export class GalleryController {
 
     this.router.post(
       "/star/:attachment",
-      auth("uploads.modify"),
+      auth(["starred.modify", "uploads.modify"]),
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {
           res.json({

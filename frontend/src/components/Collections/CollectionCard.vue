@@ -8,6 +8,7 @@
         ? '/collections/' + item.id
         : '/autoCollect/' + item.id
     "
+    v-if="item"
   >
     <v-img
       :src="collectionImage"
