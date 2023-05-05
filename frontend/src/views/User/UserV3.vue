@@ -507,7 +507,7 @@ export default defineComponent({
       if (component.name !== name) return false;
       if (
         component.props?.friendsOnly &&
-        this.friends !== "accepted" &&
+        this.user?.friend !== "accepted" &&
         this.user?.id !== this.$user.user?.id
       )
         return false;
