@@ -1,5 +1,8 @@
 <template>
-  <UserV3 :username="username" v-if="$experiments.experiments.USER_V3"></UserV3>
+  <UserV3
+    :username="username"
+    v-if="$experiments.experiments.USER_V3 && !$route.query.forceV2"
+  ></UserV3>
   <UserV2 :username="username" v-else></UserV2>
 </template>
 
