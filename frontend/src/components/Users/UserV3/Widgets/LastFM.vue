@@ -13,7 +13,10 @@
       <v-btn icon @click="getLastFM">
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
-      <v-btn icon @click="page < attributes.totalPages ? page++ : page">
+      <v-btn
+        icon
+        @click="page < parseInt(attributes.totalPages) ? page++ : page"
+      >
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
     </v-toolbar>
