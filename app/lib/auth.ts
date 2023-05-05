@@ -10,6 +10,7 @@ import { Subscription } from "@app/models/subscription.model"
 import { Experiment } from "@app/models/experiment.model"
 import Errors from "@app/lib/errors"
 import { AccessedFrom } from "@app/types/auth"
+import { Integration } from "@app/models/integration.model"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -129,6 +130,19 @@ const auth = (scope: string, passthrough: boolean = false) => {
                 {
                   model: Theme,
                   as: "theme"
+                },
+                {
+                  model: Integration,
+                  as: "integrations",
+                  attributes: [
+                    "id",
+                    "type",
+                    "providerUserId",
+                    "providerUsername",
+                    "providerUserCache",
+                    "createdAt",
+                    "updatedAt"
+                  ]
                 }
               ]
             }

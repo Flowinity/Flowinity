@@ -457,7 +457,6 @@ export class UserUtilsController {
             user.plan.internalName !== "GOLD"
           ) {
             return res.sendFile("/favicon.png", {
-              name: "favicon.png",
               root: "./frontend/public"
             })
           }

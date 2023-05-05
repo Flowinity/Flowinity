@@ -63,7 +63,6 @@ export class FileController {
             req.user?.id !== 1
           ) {
             return res.sendFile("/AuthRequired.png", {
-              name: upload.originalFilename,
               root: config.storage + "/../../server/app/assets"
             })
           }
@@ -79,8 +78,7 @@ export class FileController {
             upload.type === "audio"
           ) {
             return res.sendFile("/" + upload.attachment, {
-              root: config.storage,
-              name: upload.originalFilename
+              root: config.storage
             })
           } else {
             return res.download(

@@ -10,6 +10,13 @@
           {{ $app.cordova ? "Mobile Setup" : "Setup" }}
         </v-tab>
         <v-tab to="/settings/domains" prepend-icon="mdi-web">Domains</v-tab>
+        <v-tab
+          to="/settings/integrations"
+          prepend-icon="mdi-link-variant"
+          v-if="$experiments.experiments.USER_V3_MODIFY"
+        >
+          Integrations
+        </v-tab>
         <v-tab to="/settings/slideshows" prepend-icon="mdi-image-multiple">
           Slideshows
         </v-tab>

@@ -56,23 +56,23 @@
         <v-card-title>Add badges to user</v-card-title>
         <v-row>
           <v-col>
-            <v-select
+            <v-autocomplete
               v-model="selectedBadge"
               :items="badges"
               label="Badges"
               item-title="name"
               item-value="id"
-            ></v-select>
+            ></v-autocomplete>
           </v-col>
           <v-col>
-            <v-select
+            <v-autocomplete
               v-model="selectedUser"
               :items="users"
-              label="Badges"
+              label="Users"
               item-title="username"
               item-value="id"
               multiple
-            ></v-select>
+            ></v-autocomplete>
           </v-col>
         </v-row>
         <v-btn @click="addBadges">Add badges</v-btn>

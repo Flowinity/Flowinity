@@ -12,7 +12,8 @@ import "@troplo/vuetify/styles";
 // Composables
 
 import { createVuetify } from "vuetify";
-import { VDataTable } from "@troplo/vuetify/labs/VDataTable";
+import { VDataTable } from "vuetify/labs/VDataTable";
+import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 
 // export new Class of themes
 export class DefaultThemes {
@@ -91,7 +92,8 @@ export class DefaultThemes {
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   components: {
-    VDataTable
+    VDataTable,
+    VSkeletonLoader
   },
   defaults: {
     VDialog: {},

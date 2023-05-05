@@ -26,6 +26,7 @@ import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { FriendNickname } from "@app/models/friendNickname"
 import { AlternatePassword } from "@app/types/auth"
 import { DefaultProfileLayout } from "@app/classes/UserV3ProfileLayout"
+import { Integration } from "@app/models/integration.model"
 
 export interface ProfileLayout {
   layout: {
@@ -287,4 +288,7 @@ export class User extends Model {
 
   @HasOne(() => FriendNickname, "friendId")
   nickname: FriendNickname
+
+  @HasMany(() => Integration, "userId")
+  integrations: Integration[]
 }

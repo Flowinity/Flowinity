@@ -18,7 +18,7 @@
       {{ icon }}
     </v-icon>
     <v-img :src="image" :width="18" :height="18" v-if="image" />
-    <span v-else>{{ shortText }}</span>
+    <span v-else class="unselectable">{{ shortText }}</span>
     <v-tooltip activator="parent" location="top" :eager="false">
       {{ text }}
     </v-tooltip>

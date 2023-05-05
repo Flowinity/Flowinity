@@ -17,6 +17,25 @@ export interface ThemeEngine {
   customCSS: string;
 }
 
+export interface ProfileLayout {
+  layout: {
+    columns: [
+      {
+        rows: {
+          name: string;
+          id: string;
+          props?: any;
+        }[];
+      }
+    ];
+  };
+  config: {
+    containerMargin?: number;
+    showStatsSidebar: boolean;
+  };
+  version: number;
+}
+
 export interface User {
   id: number;
   username: string;
@@ -114,4 +133,7 @@ export interface User {
     | undefined;
   themeEngine: ThemeEngine | null;
   insights: "everyone" | "friends" | "nobody";
+  profileLayout?: ProfileLayout | null;
+  //TODO
+  integrations: any[];
 }

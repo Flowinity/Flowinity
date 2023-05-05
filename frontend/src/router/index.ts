@@ -119,9 +119,19 @@ const routes = [
             component: () => import("@/views/Settings/Domains.vue")
           },
           {
-            path: "Slideshows",
+            path: "slideshows",
             name: "Slideshows",
             component: () => import("@/views/Settings/Slideshows.vue")
+          },
+          {
+            path: "integrations",
+            name: "Integrations",
+            component: () => import("@/views/Settings/Integrations.vue")
+          },
+          {
+            path: "integrations/link/:provider",
+            name: "Link Integration",
+            component: () => import("@/views/Settings/IntegrationsLink.vue")
           }
         ]
       },

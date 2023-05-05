@@ -13,6 +13,10 @@ declare interface TpuConfig {
   weatherApiKey: string
   providers: {
     tenor: string
+    lastfm: {
+      key: string
+      secret: string
+    }
   }
   redis: {
     username?: string | undefined

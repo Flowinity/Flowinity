@@ -1,10 +1,4 @@
 <template>
-  <p>
-    TPU ADMINS ONLY - NOT DONE - UserV3 "Profiles update" component rendered.
-    <a @click="$experiments.experiments.USER_V3 = false" class="pointer">
-      Switch back
-    </a>
-  </p>
   <div v-if="user">
     <UserBanner
       :user="user"
@@ -126,40 +120,44 @@
               </v-card-text>
             </v-col>
           </v-row>
+          <v-card-subtitle class="mt-2">Dev UserV3 actions:</v-card-subtitle>
           <v-btn @click="addItemDebug(comp.id)" v-for="comp in components">
             Add {{ comp.name }}
           </v-btn>
+          <v-btn @click="layout = defaultLayout" color="red">Reset</v-btn>
+          <v-btn
+            @click="$experiments.experiments.USER_V3 = false"
+            color="primary"
+          >
+            UserV2
+          </v-btn>
           <template
-            v-for="component in defaultLayout.columns[0].rows"
+            v-for="component in layout.layout.columns[0].rows"
             :key="component.id"
           >
-            <v-divider v-if="component.name === 'divider'"></v-divider>
+            <v-divider v-if="willShow(component, 'divider')"></v-divider>
             <profile-info
               v-else-if="component.name === 'profile-info'"
               :user="user"
               :username="username"
             ></profile-info>
             <mutual-collections
-              v-else-if="component.name === 'mutual-collections'"
+              v-else-if="willShow(component, 'mutual-collections')"
               :user="user"
               :username="username"
             ></mutual-collections>
             <mutual-friends
-              v-else-if="component.name === 'mutual-friends'"
+              v-else-if="willShow(component, 'mutual-friends')"
               :user="user"
               :username="username"
             ></mutual-friends>
             <core-statistics
-              v-else-if="
-                component.name === 'core-statistics' &&
-                (user?.friend === 'accepted' ||
-                  !component.props?.friendsOnly ||
-                  user.id === $user.user?.id)
-              "
+              v-else-if="willShow(component, 'core-statistics')"
               :user="user"
               :username="username"
               :gold="gold"
             ></core-statistics>
+            <last-f-m :user="user" v-else-if="willShow(component, 'last-fm')" />
             <v-card v-else-if="component.name === 'v-card'">
               <v-card-title>
                 <h3>{{ component.props.title }}</h3>
@@ -178,10 +176,6 @@
                 </v-btn>
               </v-card-actions>
             </v-card>
-            <div v-else>
-              Please update your TPU version to see this widget.
-              {{ component.name }}
-            </div>
           </template>
         </v-col>
         <v-col md="3" cols="12" sm="12" v-if="!username">
@@ -265,15 +259,23 @@ import Chart from "@/components/Core/Chart.vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
 import { DefaultThemes } from "@/plugins/vuetify";
-import ProfileInfo from "@/components/Users/UsersV3/Widgets/ProfileInfo.vue";
-import MutualCollections from "@/components/Users/UsersV3/Widgets/MutualCollections.vue";
-import MutualFriends from "@/components/Users/UsersV3/Widgets/MutualFriends.vue";
-import CoreStatistics from "@/components/Users/UsersV3/Widgets/CoreStatistics.vue";
+import ProfileInfo from "@/components/Users/UserV3/Widgets/ProfileInfo.vue";
+import MutualCollections from "@/components/Users/UserV3/Widgets/MutualCollections.vue";
+import MutualFriends from "@/components/Users/UserV3/Widgets/MutualFriends.vue";
+import CoreStatistics from "@/components/Users/UserV3/Widgets/CoreStatistics.vue";
+import LastFM from "@/components/Users/UserV3/Widgets/LastFM.vue";
+
+interface Component {
+  id: string;
+  name: string;
+  props?: Record<string, any>;
+}
 
 export default defineComponent({
   name: "UserV3",
   props: ["username"],
   components: {
+    LastFM,
     CoreStatistics,
     MutualFriends,
     MutualCollections,
@@ -388,44 +390,64 @@ export default defineComponent({
         }
       ] as any[],
       defaultLayout: {
-        columns: [
-          {
-            rows: [
-              {
-                name: "profile-info",
-                id: this.$functions.uuid()
-              },
-              {
-                name: "divider",
-                id: this.$functions.uuid()
-              },
-              {
-                name: "mutual-collections",
-                id: this.$functions.uuid()
-              },
-              {
-                name: "divider",
-                id: this.$functions.uuid()
-              },
-              {
-                name: "mutual-friends",
-                id: this.$functions.uuid()
-              },
-              {
-                name: "divider",
-                id: this.$functions.uuid()
-              },
-              {
-                name: "core-statistics",
-                id: this.$functions.uuid(),
-                props: {
-                  friendsOnly: true
+        layout: {
+          columns: [
+            {
+              rows: [
+                {
+                  name: "profile-info",
+                  id: this.$functions.uuid()
+                },
+                {
+                  name: "divider",
+                  id: this.$functions.uuid(),
+                  props: {
+                    mutualCollections: true
+                  }
+                },
+                {
+                  name: "mutual-collections",
+                  id: this.$functions.uuid()
+                },
+                {
+                  name: "divider",
+                  id: this.$functions.uuid(),
+                  props: {
+                    mutualFriends: true
+                  }
+                },
+                {
+                  name: "mutual-friends",
+                  id: this.$functions.uuid(),
+                  props: {
+                    mutualFriends: true
+                  }
+                },
+                {
+                  name: "divider",
+                  id: this.$functions.uuid(),
+                  props: {
+                    friendsOnly: true
+                  }
+                },
+                {
+                  name: "core-statistics",
+                  id: this.$functions.uuid(),
+                  props: {
+                    friendsOnly: true
+                  }
                 }
-              }
-            ]
-          }
-        ]
+              ]
+            }
+          ]
+        },
+        config: {
+          containerMargin: undefined,
+          showStatusSidebar: true
+        },
+        version: 1
       } as any,
+      layout: null,
       user: undefined as User | undefined,
       friendLoading: false
     };
@@ -478,8 +500,22 @@ export default defineComponent({
     }
   },
   methods: {
+    willShow(component: Component, name: string) {
+      if (component.name !== name) return false;
+      if (
+        component.props?.friendsOnly &&
+        this.friends !== "accepted" &&
+        this.user?.id !== this.$user.user?.id
+      )
+        return false;
+      if (component.props?.mutualFriends && !this.user?.friends?.length)
+        return false;
+      if (component.props?.mutualCollections && !this.user?.collections?.length)
+        return false;
+      return true;
+    },
     addItemDebug(name: string) {
-      this.defaultLayout.columns[0].rows.unshift({
+      this.layout.layout.columns[0].rows.unshift({
         name,
         id: this.$functions.uuid(),
         props: this.components.find((c) => c.id === name)?.props
@@ -552,6 +588,7 @@ export default defineComponent({
       const username = this.username || this.$route.params.username;
       const { data } = await this.axios.get(`/user/profile/${username}`);
       this.user = data;
+      this.layout = this.user?.profileLayout || this.defaultLayout;
       if (!this.username) this.$app.title = this.user?.username + "'s Profile";
       this.setTheme();
       this.$app.componentLoading = false;
@@ -568,6 +605,13 @@ export default defineComponent({
     "$route.params.username"(val) {
       if (!val) return;
       this.getUser();
+    },
+    layout: {
+      handler(val) {
+        this.$user.changes.profileLayout = val;
+        this.$user.save();
+      },
+      deep: true
     }
   }
 });

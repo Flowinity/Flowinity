@@ -265,6 +265,14 @@ let Errors = {
   DOMAIN_NOT_FOUND: {
     message: "The requested domain could not be found.",
     status: 404
+  },
+  INTEGRATION_ERROR: {
+    message: "An error occurred while communicating with the integration.",
+    status: 500
+  },
+  INTEGRATION_EXISTS: {
+    message: "This integration only supports linking one account.",
+    status: 400
   }
 }
 

@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
-import { ThemeEngine, User } from "@/models/user";
+import { ProfileLayout, ThemeEngine, User } from "@/models/user";
 import axios from "@/plugins/axios";
 import { useChatStore } from "@/store/chat";
 import { useWorkspacesStore } from "@/store/workspaces";
@@ -11,7 +11,6 @@ import { useAppStore } from "@/store/app";
 import { useToast } from "vue-toastification";
 import { useMailStore } from "@/store/mail";
 import vuetify from "@/plugins/vuetify";
-import { useTheme } from "vuetify";
 
 export interface UserState {
   user: User | null;
@@ -28,6 +27,7 @@ export interface UserState {
     weatherUnit?: string;
     themeEngine: ThemeEngine;
     insights?: "everyone" | "friends" | "nobody";
+    profileLayout?: ProfileLayout | null;
   };
   actions: {
     emailSent: {
@@ -253,7 +253,8 @@ export const useUserStore = defineStore("user", {
               storedStatus: this.user.storedStatus,
               description: this.user.description,
               themeEngine: this.user.themeEngine as ThemeEngine,
-              insights: this.user.insights
+              insights: this.user.insights,
+              profileLayout: this.user.profileLayout
             };
             this.runPostTasks();
           }
@@ -274,7 +275,8 @@ export const useUserStore = defineStore("user", {
         description: this.user?.description,
         weatherUnit: this.user?.weatherUnit,
         themeEngine: this.user?.themeEngine as ThemeEngine,
-        insights: this.user?.insights
+        insights: this.user?.insights,
+        profileLayout: this.user?.profileLayout
       };
       if (this.user?.themeEngine?.defaults?.prev) {
         delete this.user.themeEngine.defaults?.prev;
@@ -319,7 +321,8 @@ export const useUserStore = defineStore("user", {
         description: this.changes.description,
         weatherUnit: this.changes.weatherUnit,
         themeEngine: this.changes.themeEngine,
-        insights: this.changes.insights
+        insights: this.changes.insights,
+        profileLayout: this.changes.profileLayout
       });
       this.user = {
         ...this.user,

@@ -3,6 +3,7 @@
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Node",
+    "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "lib": ["esnext", "dom", "dom.iterable", "webworker"]
   },

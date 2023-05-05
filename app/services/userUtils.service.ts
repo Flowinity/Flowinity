@@ -18,6 +18,7 @@ import { Badge } from "@app/models/badge.model"
 import { FriendNickname } from "@app/models/friendNickname"
 import { ThemeEngineValidate } from "@app/validators/themeEngine"
 import { PatchUser } from "@app/types/auth"
+import { CoreService } from "@app/services/core.service"
 
 @Service()
 export class UserUtilsService {
@@ -392,7 +393,14 @@ export class UserUtilsService {
       where: {
         id
       },
-      attributes: ["id", "username", "email", "password"],
+      attributes: [
+        "id",
+        "username",
+        "email",
+        "password",
+        "administrator",
+        "moderator"
+      ],
       include: [
         {
           model: Plan,
@@ -416,7 +424,8 @@ export class UserUtilsService {
       "storedStatus",
       "weatherUnit",
       "themeEngine",
-      "insights"
+      "insights",
+      "profileLayout"
     ]
     // from body, remove all empty values
     for (const key in body) {
@@ -467,6 +476,17 @@ export class UserUtilsService {
           id: user.id,
           status
         })
+      }
+    }
+    if (body.profileLayout !== undefined && body.profileLayout !== null) {
+      if (
+        !(await Container.get(CoreService).checkExperiment(
+          user.id,
+          "USER_V3_MODIFY",
+          user.administrator || user.moderator
+        ))
+      ) {
+        body.profileLayout = null
       }
     }
     await user.update(body)
@@ -654,7 +674,8 @@ export class UserUtilsService {
         "updatedAt",
         "banner",
         "quota",
-        "insights"
+        "insights",
+        "profileLayout"
       ],
       include: [
         {
@@ -696,7 +717,8 @@ export class UserUtilsService {
         "banner",
         "quota",
         "themeEngine",
-        "insights"
+        "insights",
+        "profileLayout"
       ],
       include: [
         {
