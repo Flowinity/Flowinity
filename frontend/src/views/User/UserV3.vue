@@ -120,17 +120,19 @@
               </v-card-text>
             </v-col>
           </v-row>
-          <v-card-subtitle class="mt-2">Dev UserV3 actions:</v-card-subtitle>
-          <v-btn @click="addItemDebug(comp.id)" v-for="comp in components">
-            Add {{ comp.name }}
-          </v-btn>
-          <v-btn @click="layout = defaultLayout" color="red">Reset</v-btn>
-          <v-btn
-            @click="$experiments.experiments.USER_V3 = false"
-            color="primary"
-          >
-            UserV2
-          </v-btn>
+          <template v-if="$experiments.experiments.USER_V3_MODIFY">
+            <v-card-subtitle class="mt-2">Dev UserV3 actions:</v-card-subtitle>
+            <v-btn @click="addItemDebug(comp.id)" v-for="comp in components">
+              Add {{ comp.name }}
+            </v-btn>
+            <v-btn @click="layout = defaultLayout" color="red">Reset</v-btn>
+            <v-btn
+              @click="$experiments.experiments.USER_V3 = false"
+              color="primary"
+            >
+              UserV2
+            </v-btn>
+          </template>
           <template
             v-for="component in layout.layout.columns[0].rows"
             :key="component.id"

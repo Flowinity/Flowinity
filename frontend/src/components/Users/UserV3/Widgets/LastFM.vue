@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-2 my-1">
+  <v-card class="mx-2 my-2 mb-5">
     <v-toolbar>
       <v-toolbar-title>
         Last.fm
