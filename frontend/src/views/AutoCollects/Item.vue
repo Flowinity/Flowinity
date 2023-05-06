@@ -34,18 +34,17 @@
       @updateItem="updateItem"
     >
       <template v-slot:multi-select-actions-length="slotProps: any">
-        <v-btn class="rounded-xl ml-2" text @click="slotProps.selectAll()">
+        <v-btn class="rounded-xl ml-2" @click="slotProps.selectAll()">
           <v-icon>mdi-plus</v-icon>
           &nbsp;Select all
         </v-btn>
-        <v-btn class="rounded-xl ml-2" text @click="slotProps.deselectAll()">
+        <v-btn class="rounded-xl ml-2" @click="slotProps.deselectAll()">
           <v-icon>mdi-close</v-icon>
           &nbsp;Unselect all
         </v-btn>
         <v-btn
           class="rounded-xl"
           color="red darken-1"
-          text
           @click="
             act(slotProps.selected, 'deny');
             slotProps.deselectAll();
@@ -57,7 +56,6 @@
         <v-btn
           class="rounded-xl ml-2"
           color="success"
-          text
           @click="
             act(slotProps.selected, 'approve');
             slotProps.deselectAll();

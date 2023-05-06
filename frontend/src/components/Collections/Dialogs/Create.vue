@@ -16,19 +16,10 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn
-        color="blue darken-1"
-        text
-        @click="$emit('update:modelValue', false)"
-      >
+      <v-btn color="blue darken-1" @click="$emit('update:modelValue', false)">
         Cancel
       </v-btn>
-      <v-btn
-        color="blue darken-1"
-        text
-        @click="createCollection"
-        :loading="loading"
-      >
+      <v-btn color="blue darken-1" @click="createCollection" :loading="loading">
         Create
       </v-btn>
     </v-card-actions>

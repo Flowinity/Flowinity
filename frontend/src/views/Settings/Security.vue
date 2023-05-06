@@ -7,7 +7,7 @@
     ></CreateAPIKey>
     <v-toolbar-title>API Keys</v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn color="primary" @click="dialogs.key = true" text>
+    <v-btn color="primary" @click="dialogs.key = true">
       <v-icon left>mdi-plus</v-icon>
       Add API Key
     </v-btn>
@@ -48,7 +48,7 @@
     ></CreateAPIKey>
     <v-toolbar-title>Alternate Passwords</v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn color="primary" @click="dialogs.password = true" text>
+    <v-btn color="primary" @click="dialogs.password = true">
       <v-icon left>mdi-plus</v-icon>
       Add Password
     </v-btn>

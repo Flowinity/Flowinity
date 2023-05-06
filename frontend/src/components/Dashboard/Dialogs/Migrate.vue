@@ -17,14 +17,13 @@
         <v-card-actions class="text-center justify-center">
           <v-btn
             color="red"
-            text
             class="no-capital"
             @click="$emit('update:modelValue', false)"
           >
             <v-icon class="mr-1">mdi-arrow-left</v-icon>
             Do it later
           </v-btn>
-          <v-btn color="primary" text class="no-capital" @click="step++">
+          <v-btn color="primary" class="no-capital" @click="step++">
             <v-icon class="mr-1">mdi-arrow-right</v-icon>
             Get started
           </v-btn>
@@ -39,14 +38,13 @@
         <v-card-actions class="text-center justify-center">
           <v-btn
             color="red"
-            text
             class="no-capital"
             @click="$emit('update:modelValue', false)"
           >
             <v-icon class="mr-1">mdi-arrow-left</v-icon>
             Do it later
           </v-btn>
-          <v-btn color="primary" text class="no-capital" @click="step++">
+          <v-btn color="primary" class="no-capital" @click="step++">
             <v-icon class="mr-1">mdi-arrow-right</v-icon>
             Get started
           </v-btn>
@@ -68,7 +66,6 @@
         <v-card-actions class="text-center justify-center">
           <v-btn
             color="red"
-            text
             class="no-capital"
             @click="
               $experiments.experiments['CLASSIC_MIGRATE']
@@ -79,7 +76,7 @@
             <v-icon class="mr-1">mdi-close</v-icon>
             No
           </v-btn>
-          <v-btn color="primary" text class="no-capital" @click="step++">
+          <v-btn color="primary" class="no-capital" @click="step++">
             <v-icon class="mr-1">mdi-check</v-icon>
             Yes
           </v-btn>
@@ -128,7 +125,6 @@
         <v-card-actions class="text-center justify-center">
           <v-btn
             color="red"
-            text
             class="no-capital"
             @click="
               $experiments.experiments['CLASSIC_MIGRATE'] ? step++ : (step = 8)
@@ -139,7 +135,6 @@
           </v-btn>
           <v-btn
             color="primary"
-            text
             class="no-capital"
             @click="checkColubrina"
             :loading="colubrina.loading"
@@ -173,11 +168,11 @@
           ></v-file-input>
         </v-container>
         <v-card-actions class="text-center justify-center">
-          <v-btn color="red" text class="no-capital" @click="step++">
+          <v-btn color="red" class="no-capital" @click="step++">
             <v-icon class="mr-1">mdi-close</v-icon>
             Skip
           </v-btn>
-          <v-btn color="primary" text class="no-capital" @click="step++">
+          <v-btn color="primary" class="no-capital" @click="step++">
             <v-icon class="mr-1">mdi-check</v-icon>
             Let's go
           </v-btn>
@@ -199,11 +194,11 @@
         </v-card-subtitle>
         <v-container>Currently unavailable</v-container>
         <v-card-actions class="text-center justify-center">
-          <v-btn color="red" text class="no-capital" @click="step++">
+          <v-btn color="red" class="no-capital" @click="step++">
             <v-icon class="mr-1">mdi-close</v-icon>
             Skip
           </v-btn>
-          <v-btn color="primary" text class="no-capital" @click="step++">
+          <v-btn color="primary" class="no-capital" @click="step++">
             <v-icon class="mr-1">mdi-check</v-icon>
             Let's go
           </v-btn>
@@ -230,11 +225,11 @@
         </p>
         <v-container>Currently unavailable</v-container>
         <v-card-actions class="text-center justify-center">
-          <v-btn color="red" text class="no-capital" @click="step++">
+          <v-btn color="red" class="no-capital" @click="step++">
             <v-icon class="mr-1">mdi-close</v-icon>
             Skip
           </v-btn>
-          <v-btn color="primary" text class="no-capital" @click="step++">
+          <v-btn color="primary" class="no-capital" @click="step++">
             <v-icon class="mr-1">mdi-check</v-icon>
             Let's go
           </v-btn>
@@ -251,7 +246,7 @@
           Remember the new address!
         </v-card-subtitle>
         <v-card-actions class="text-center justify-center">
-          <v-btn color="primary" text class="no-capital" @click="step++">
+          <v-btn color="primary" class="no-capital" @click="step++">
             <v-icon class="mr-1">mdi-check</v-icon>
             Next
           </v-btn>
@@ -270,7 +265,6 @@
         <v-card-actions class="text-center justify-center">
           <v-btn
             color="primary"
-            text
             class="no-capital"
             @click="$emit('update:modelValue', false)"
           >

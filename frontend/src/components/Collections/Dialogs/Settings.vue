@@ -12,28 +12,23 @@
         required
         autofocus
       ></v-text-field>
-      <v-btn class="ml-n4" @click="removeBanner" text color="red">
+      <v-btn class="ml-n4" @click="removeBanner" color="red">
         Remove Banner
       </v-btn>
     </v-card-text>
     <v-card-actions class="mt-2" v-if="collection">
       <v-btn
         color="red"
-        text
         @click="deleteCollection"
         v-if="collection.userId === $user.user?.id"
       >
         Delete Collection
       </v-btn>
       <v-spacer></v-spacer>
-      <v-btn
-        color="blue darken-1"
-        text
-        @click="$emit('update:modelValue', false)"
-      >
+      <v-btn color="blue darken-1" @click="$emit('update:modelValue', false)">
         Cancel
       </v-btn>
-      <v-btn color="blue darken-1" text @click="updateSettings">Update</v-btn>
+      <v-btn color="blue darken-1" @click="updateSettings">Update</v-btn>
     </v-card-actions>
   </CoreDialog>
 </template>

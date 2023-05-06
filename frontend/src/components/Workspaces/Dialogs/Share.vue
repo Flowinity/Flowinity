@@ -35,7 +35,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn text @click="$emit('update:modelValue', false)">Close</v-btn>
+      <v-btn @click="$emit('update:modelValue', false)">Close</v-btn>
     </v-card-actions>
   </CoreDialog>
 </template>

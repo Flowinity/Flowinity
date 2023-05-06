@@ -26,7 +26,6 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
-        text
         @click="
           $emit('update:modelValue', false);
           file = [];
@@ -34,7 +33,7 @@
       >
         Cancel
       </v-btn>
-      <v-btn color="primary" text @click="save">Save</v-btn>
+      <v-btn color="primary" @click="save">Save</v-btn>
     </v-card-actions>
   </CoreDialog>
 </template>

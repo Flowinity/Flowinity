@@ -17,10 +17,10 @@
     </v-container>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="primary" text @click="$emit('update:modelValue', false)">
+      <v-btn color="primary" @click="$emit('update:modelValue', false)">
         Cancel
       </v-btn>
-      <v-btn color="error" text @click="$emit('submit')" :loading="loading">
+      <v-btn color="error" @click="$emit('submit')" :loading="loading">
         {{ btnText ? btnText : "Delete" }}
       </v-btn>
     </v-card-actions>

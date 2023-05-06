@@ -103,7 +103,6 @@
         <v-spacer></v-spacer>
         <v-btn
           color="red"
-          text
           class="no-capital"
           @click="$emit('update:modelValue', false)"
         >
@@ -111,13 +110,7 @@
           Close
         </v-btn>
         <span>
-          <v-btn
-            color="primary"
-            text
-            class="no-capital"
-            @click="step++"
-            disabled
-          >
+          <v-btn color="primary" class="no-capital" @click="step++" disabled>
             Get started
             <v-icon class="ml-1">mdi-arrow-right</v-icon>
           </v-btn>

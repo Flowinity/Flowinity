@@ -42,7 +42,7 @@
             item-value="value"
           ></v-select>
         </v-col>
-        <v-col sm="2"><v-btn @click="addUser" text>Add</v-btn></v-col>
+        <v-col sm="2"><v-btn @click="addUser">Add</v-btn></v-col>
       </v-row>
       <v-data-table :headers="sharing.headers" :items="collection.users">
         <template v-slot:item="row">
@@ -75,7 +75,6 @@
               <v-btn
                 icon
                 @click="deleteUser(row.item.props.title)"
-                text
                 :disabled="row.item.props.title.userId === $user.user?.id"
               >
                 <v-icon>mdi-close</v-icon>
@@ -88,11 +87,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn
-        color="blue darken-1"
-        text
-        @click="$emit('update:modelValue', false)"
-      >
+      <v-btn color="blue darken-1" @click="$emit('update:modelValue', false)">
         OK
       </v-btn>
     </v-card-actions>

@@ -15,7 +15,6 @@
       <v-card-actions class="text-center justify-center">
         <v-btn
           color="primary"
-          text
           class="no-capital mr-8"
           @click="$emit('update:modelValue', false)"
         >

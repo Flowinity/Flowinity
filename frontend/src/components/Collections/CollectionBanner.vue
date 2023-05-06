@@ -19,7 +19,6 @@
         {{ collection.name }}
         <span class="float-end">
           <v-btn
-            text
             @click="$emit('sharingDialog', true)"
             v-if="
               !$route.params.type && collection.permissionsMetadata.configure
@@ -30,7 +29,6 @@
           </v-btn>
           <v-btn
             @click="$emit('settingsDialog', true)"
-            text
             v-if="
               !$route.params.type && collection.permissionsMetadata.configure
             "
@@ -40,7 +38,6 @@
           </v-btn>
           <v-btn
             v-else-if="collection.shareLink"
-            text
             @click="
               $functions.copy(
                 $app.site.hostnameWithProtocol +
@@ -57,11 +54,7 @@
       <v-card-text class="mt-n3" v-if="collection.users.length">
         <v-icon>mdi-swap-horizontal</v-icon>
         {{ collection.user.username }},
-        {{
-          collection.users
-            .map((user: CollectionCache) => user.user.username)
-            .join(", ")
-        }}
+        {{ collection.users.map((user) => user.user.username).join(", ") }}
       </v-card-text>
       <v-card-text class="mt-n3" v-else>
         {{ collection.items }} items

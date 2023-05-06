@@ -48,7 +48,7 @@
               <div v-for="(subrule, i) in rule.rules" :key="subrule.id">
                 <v-card-subtitle class="grey--text" v-if="i !== 0">
                   OR
-                  <v-btn text icon @click="removeSubRule(rule, subrule.id)">
+                  <v-btn icon @click="removeSubRule(rule, subrule.id)">
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
                 </v-card-subtitle>
@@ -84,7 +84,6 @@
                     </v-col>
                     <v-col cols="1" style="max-width: 40px">
                       <v-btn
-                        text
                         icon
                         @click="removeSubSubRule(subrule, subsubrule.id)"
                       >

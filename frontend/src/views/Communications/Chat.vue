@@ -196,7 +196,6 @@
                     color="error"
                     @click="files.splice(index, 1)"
                     class="mr-2"
-                    text
                   >
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
