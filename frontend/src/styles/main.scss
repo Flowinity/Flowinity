@@ -26,9 +26,19 @@
   width: calc(100% - 256px) !important;
 }
 
+.header-patch-rail {
+  left: 312px !important;
+  width: calc(100% - 312px) !important;
+}
+
 .header-patch-workspaces {
   right: -256px !important;
   width: calc(100% - 512px) !important;
+}
+
+.header-patch-workspaces-rail {
+  right: -256px !important;
+  width: calc(100% - 512px - 56px) !important;
 }
 
 .header-patch-workspaces-search {
@@ -36,12 +46,17 @@
   width: calc(100% - 606px) !important;
 }
 
+.header-patch-workspaces-search-rail {
+  right: -256px !important;
+  width: calc(100% - 718px) !important;
+}
+
 .sidebar-patch {
   height: 100vh !important;
-  top: 0px !important;
+  top: 0 !important;
   max-height: calc(100% - 0px) !important;
   transform: translateX(0%) !important;
-  width: 256px !important;
+  width: 256px;
 }
 
 .sidebar-patch-alt {

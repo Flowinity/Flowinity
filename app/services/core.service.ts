@@ -301,6 +301,7 @@ export class CoreService {
 
   getExperiments(dev: boolean = false, gold: boolean = false): object {
     const experiments = {
+      RAIL_SIDEBAR: false,
       USER_V3_MODIFY: false,
       USER_V3: true,
       EARLY_ACCESS: false,
@@ -348,6 +349,10 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        RAIL_SIDEBAR: {
+          description: "Enable the new sidebar.",
+          createdAt: "2023-05-07T00:00:00.000Z"
+        },
         USER_V3_MODIFY: {
           description: "Edit your own UserV3 profile.",
           createdAt: "2023-05-05T00:00:00.000Z"
@@ -559,6 +564,7 @@ export class CoreService {
     if (dev) {
       //experiments.FORCE_DEV_MODE = false
       //experiments.FORCE_STABLE_MODE = false
+      experiments.RAIL_SIDEBAR = true
       experiments.USER_V3_MODIFY = true
       experiments.USER_V3 = true
       experiments.USER_V2 = true

@@ -1,12 +1,13 @@
 <template>
   <v-navigation-drawer
-    v-model="$app.workspaceDrawer"
+    v-model="drawer"
     app
     color="dark"
     floating
-    location="right"
+    :location="$app.rail ? 'left' : 'right'"
     :class="classSidebar"
     :width="
+      !$app.rail &&
       $chat.search.value &&
       $chat.isCommunications &&
       !$chat.communicationsSidebar
@@ -16,6 +17,7 @@
   >
     <WorkspacesSidebarList
       v-if="
+        $app.rail ||
         $chat.memberSidebar ||
         !$chat.isCommunications ||
         $app.forcedWorkspaceDrawer
@@ -54,6 +56,16 @@ export default defineComponent({
     }
   },
   computed: {
+    drawer: {
+      get() {
+        if (this.$app.rail && this.$chat.memberSidebar) return true;
+        return this.$app.rail ? true : this.$app.workspaceDrawer;
+      },
+      set(value) {
+        if (this.$app.rail) return;
+        this.$app.workspaceDrawer = value;
+      }
+    },
     classSidebar() {
       if (
         this.$chat.search.value &&
@@ -63,7 +75,10 @@ export default defineComponent({
         !this.$vuetify.display.mobile
       ) {
         return "sidebar-patch-alt";
-      } else if (this.$app.workspaceDrawer && !this.$vuetify.display.mobile) {
+      } else if (
+        (this.$app.workspaceDrawer && !this.$vuetify.display.mobile) ||
+        this.$app.rail
+      ) {
         return "sidebar-patch";
       }
     }

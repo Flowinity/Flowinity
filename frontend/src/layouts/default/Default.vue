@@ -35,8 +35,21 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <default-bar />
-    <sidebar></sidebar>
-    <workspaces-sidebar></workspaces-sidebar>
+    <rail-bar
+      v-if="$experiments.experiments.RAIL_SIDEBAR && $app.rail"
+    ></rail-bar>
+    <sidebar
+      v-if="$app.railMode === 'tpu' || (!$app.rail && !$vuetify.display.mobile)"
+    ></sidebar>
+    <colubrina-sidebar
+      v-if="
+        $app.railMode === 'communications' &&
+        ($app.rail || $vuetify.display.mobile)
+      "
+    ></colubrina-sidebar>
+    <workspaces-sidebar
+      v-if="!$app.rail || $app.railMode === 'workspaces'"
+    ></workspaces-sidebar>
     <theme-engine-wrapper></theme-engine-wrapper>
     <default-view />
     <template v-if="$experiments.experiments.FAB">
@@ -107,6 +120,8 @@ import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import QuickSwitcher from "@/components/Core/Dialogs/QuickSwitcher.vue";
 import NicknameDialog from "@/components/Core/Dialogs/Nickname.vue";
 import ThemeEngineWrapper from "@/components/Core/ThemeEngineWrapper.vue";
+import RailBar from "@/layouts/default/RailBar.vue";
+import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
 </script>
 
 <script lang="ts">

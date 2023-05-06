@@ -15,36 +15,7 @@
     style="z-index: 2001"
     id="main-drawer"
   >
-    <v-card-text
-      v-if="
-        !$chat.communicationsSidebar &&
-        $app.forcedMainDrawer &&
-        $chat.isCommunications
-      "
-      @click="$app.forcedMainDrawer = false"
-      style="
-        color: rgb(var(--v-theme-primary));
-        cursor: pointer;
-        font-size: 12px;
-      "
-      class="unselectable"
-    >
-      <v-icon>mdi-arrow-right</v-icon>
-      Back to Communications
-    </v-card-text>
-    <v-list
-      density="comfortable"
-      nav
-      :class="{
-        'mt-2': !$chat.isCommunications || $chat.communicationsSidebar,
-        'mt-n3': $chat.isCommunications && !$chat.communicationsSidebar
-      }"
-      v-if="
-        $chat.communicationsSidebar ||
-        $app.forcedMainDrawer ||
-        !$chat.isCommunications
-      "
-    >
+    <v-list density="comfortable" nav class="mt-1">
       <v-list-item
         class="ml-1 my-1"
         style="text-transform: unset !important"
@@ -88,17 +59,7 @@
         </v-list-item-title>
       </v-list-item>
     </v-list>
-    <ColubrinaSidebarList
-      v-else-if="!$chat.communicationsSidebar"
-    ></ColubrinaSidebarList>
-    <template
-      v-slot:append
-      v-if="
-        $chat.communicationsSidebar ||
-        !$chat.isCommunications ||
-        $app.forcedMainDrawer
-      "
-    >
+    <template v-slot:append>
       <div
         class="text-center justify-center"
         v-if="$user.user?.administrator || $user.user?.moderator"
@@ -139,7 +100,6 @@
         </v-progress-linear>
       </div>
     </template>
-    <template v-else v-slot:append><StatusSwitcher></StatusSwitcher></template>
   </v-navigation-drawer>
 </template>
 
@@ -148,18 +108,18 @@ import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import MigrateWizard from "@/components/Dashboard/Dialogs/Migrate.vue";
-import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue";
 import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import GoldUpsell from "@/components/Dashboard/Dialogs/Gold.vue";
+import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
 
 export default defineComponent({
   name: "Sidebar",
   components: {
+    WorkspacesSidebarList,
     GoldUpsell,
     Feedback,
     StatusSwitcher,
-    ColubrinaSidebarList,
     MigrateWizard,
     InviteAFriend,
     UserAvatar

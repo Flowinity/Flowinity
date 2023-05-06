@@ -595,15 +595,7 @@ export const useChatStore = defineStore("chat", {
       }
     },
     communicationsSidebar() {
-      const experimentsStore = useExperimentsStore();
-      if (experimentsStore.experiments["COMMUNICATIONS_QUAD_SIDEBAR_LOWRES"])
-        return true;
-      if (
-        experimentsStore.experiments["COMMUNICATIONS_INLINE_SIDEBAR_HIRES"] &&
-        vuetify.display.lgAndUp.value
-      )
-        return false;
-      return !vuetify.display.lgAndDown.value;
+      return !vuetify.display.mobile.value && !useAppStore().rail;
     },
     memberSidebar(state: ChatState) {
       if (!state.memberSidebarShown) return false;

@@ -4,21 +4,7 @@
     app
     density="comfortable"
     floating
-    :class="{
-      'header-patch': $app.mainDrawer && !$vuetify.display.mobile,
-      'header-patch-workspaces':
-        $app.workspaceDrawer &&
-        !$vuetify.display.mobile &&
-        (!$chat.search.value ||
-          !$chat.isCommunications ||
-          $chat.communicationsSidebar),
-      'header-patch-workspaces-search':
-        $app.workspaceDrawer &&
-        !$vuetify.display.mobile &&
-        $chat.search.value &&
-        $chat.isCommunications &&
-        !$chat.communicationsSidebar
-    }"
+    :class="classString"
     flat
     style="z-index: 1001"
     class="navbar"
@@ -55,7 +41,9 @@
     </template>
     <v-spacer></v-spacer>
     <div class="mr-2" v-if="$app.site.release === 'dev' && $app.cordova">M</div>
-    <small v-if="$app.notesSaving" class="mr-3">Saving...</small>
+    <small v-if="$app.notesSaving && !$vuetify.display.mobile" class="mr-3">
+      Saving...
+    </small>
     <template
       v-if="
         (!$app.weather.loading && !$vuetify.display.mobile) ||
@@ -138,6 +126,7 @@
       <v-btn
         icon
         class="ml-2"
+        v-if="!$app.rail"
         @click="$app.toggleWorkspace()"
         :aria-label="
           !$chat.communicationsSidebar && $chat.isCommunications
@@ -224,6 +213,48 @@ export default defineComponent({
     };
   },
   computed: {
+    classString() {
+      /* 'header-patch': $app.mainDrawer && !$vuetify.display.mobile,
+      'header-patch-workspaces':
+        $app.workspaceDrawer &&
+        !$vuetify.display.mobile &&
+        (!$chat.search.value ||
+          !$chat.isCommunications ||
+          $chat.communicationsSidebar),
+      'header-patch-workspaces-search':
+        $app.workspaceDrawer &&
+        !$vuetify.display.mobile &&
+        $chat.search.value &&
+        $chat.isCommunications &&
+        !$chat.communicationsSidebar*/
+      const data = {
+        "header-patch": this.$app.mainDrawer && !this.$vuetify.display.mobile,
+        "header-patch-workspaces":
+          (this.$app.workspaceDrawer &&
+            !this.$vuetify.display.mobile &&
+            !this.$app.rail) ||
+          (!this.$chat.search.value &&
+            this.$app.rail &&
+            this.$chat.isCommunications),
+        "header-patch-workspaces-search":
+          (this.$app.workspaceDrawer &&
+            !this.$vuetify.display.mobile &&
+            !this.$app.rail &&
+            this.$chat.search.value &&
+            this.$chat.isCommunications &&
+            !this.$chat.communicationsSidebar) ||
+          (this.$chat.search.value &&
+            this.$app.rail &&
+            this.$chat.isCommunications)
+      };
+      if (this.$app.rail) {
+        for (const key in data) {
+          data[key + "-rail"] = data[key];
+          delete data[key];
+        }
+      }
+      return data;
+    },
     dropdown() {
       if (!this.$user?.user) return [];
       return [

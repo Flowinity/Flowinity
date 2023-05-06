@@ -117,25 +117,13 @@
     style="color: rgb(var(--v-theme-primary)); cursor: pointer; font-size: 12px"
     class="mb-n4 unselectable"
     @click="$app.workspaceDrawer = false"
-    v-if="
-      (!$chat.isCommunications || $chat.communicationsSidebar) &&
-      !$workspaces.versionHistory
-    "
+    v-if="!$workspaces.versionHistory && !$app.rail"
   >
     <v-icon size="20">mdi-close</v-icon>
     Close sidebar
   </v-card-text>
   <v-card-text
-    v-else-if="$chat.isCommunications || $chat.memberSidebar"
-    @click="$app.forcedWorkspaceDrawer = false"
-    style="color: #0190ea; cursor: pointer; font-size: 12px"
-    class="mb-n4 unselectable"
-  >
-    <v-icon>mdi-arrow-right</v-icon>
-    Back to Members
-  </v-card-text>
-  <v-card-text
-    v-else
+    v-else-if="!$app.rail"
     @click="
       $workspaces.versionHistory = false;
       $router.push(`/workspaces/notes/${$route.params.id}`);

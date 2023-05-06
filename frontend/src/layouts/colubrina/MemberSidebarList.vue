@@ -1,12 +1,4 @@
 <template>
-  <v-card-text
-    v-if="!$chat.communicationsSidebar && !$vuetify.display.mobile"
-    @click="$app.forcedWorkspaceDrawer = true"
-    style="color: #0190ea; cursor: pointer; font-size: 12px"
-  >
-    <v-icon>mdi-arrow-left</v-icon>
-    Back to Workspaces
-  </v-card-text>
   <v-menu
     v-model="contextMenu.dialog"
     :style="menuStyle"

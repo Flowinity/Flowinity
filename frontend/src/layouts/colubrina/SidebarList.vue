@@ -112,16 +112,7 @@
       </v-list-item>
     </v-list>
   </v-menu>
-  <v-card-text
-    v-if="!$chat.communicationsSidebar"
-    @click="$app.forcedMainDrawer = true"
-    style="color: rgb(var(--v-theme-primary)); cursor: pointer; font-size: 12px"
-    class="unselectable"
-  >
-    <v-icon>mdi-arrow-left</v-icon>
-    Back to TPU
-  </v-card-text>
-  <v-card-text class="text-overline my-n3">
+  <v-card-text class="text-overline mb-n4">
     <CreateChat v-model="create" v-slot="{ props }" type="create">
       <v-btn
         size="xsmall"

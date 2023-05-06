@@ -10,8 +10,10 @@ import { useChatStore } from "@/store/chat";
 import { useCollectionsStore } from "@/store/collections";
 import { useWorkspacesStore } from "@/store/workspaces";
 import vuetify from "@/plugins/vuetify";
+import { useExperimentsStore } from "@/store/experiments";
 
 export interface AppState {
+  railMode: "tpu" | "workspaces" | "communications";
   fluidGradient: boolean;
   cordova: boolean;
   domain: string;
@@ -25,7 +27,6 @@ export interface AppState {
   notesSaving: boolean;
   lastNote: number | null;
   lastRoute: string | null;
-  forcedMainDrawer: boolean;
   shifting: boolean;
   themeEditor: boolean;
   site: {
@@ -135,6 +136,7 @@ export interface AppState {
 export const useAppStore = defineStore("app", {
   state: () =>
     ({
+      railMode: "tpu",
       batterySave: false,
       themeProviderDefaults: {
         theme: {},
@@ -154,7 +156,6 @@ export const useAppStore = defineStore("app", {
       title: "",
       notesSaving: false,
       themeEditor: false,
-      forcedMainDrawer: false,
       lastNote: localStorage.getItem("lastNote")
         ? parseInt(localStorage.getItem("lastNote") as string)
         : null,
@@ -275,6 +276,14 @@ export const useAppStore = defineStore("app", {
       ]
     } as AppState),
   getters: {
+    rail() {
+      const experiments = useExperimentsStore();
+      return (
+        experiments.experiments.RAIL_SIDEBAR &&
+        !vuetify.display.xlAndUp.value &&
+        !vuetify.display.mobile.value
+      );
+    },
     weatherTemp(state: AppState) {
       const temp = state.weather.data?.temp;
       const user = useUserStore()?.user;
