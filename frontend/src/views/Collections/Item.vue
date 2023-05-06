@@ -22,7 +22,6 @@
       {{ collection.name }}
       <span class="float-end">
         <v-btn
-          text
           @click="sharing = true"
           v-if="
             !$route.params.type && collection.permissionsMetadata?.configure
@@ -33,7 +32,6 @@
         </v-btn>
         <v-btn
           @click="settings = true"
-          text
           v-if="
             !$route.params.type && collection.permissionsMetadata?.configure
           "
@@ -43,7 +41,6 @@
         </v-btn>
         <v-btn
           v-else-if="collection?.shareLink"
-          text
           @click="
             $functions.copy(
               $app.site.hostnameWithProtocol +

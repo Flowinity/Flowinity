@@ -100,7 +100,6 @@
     <small>
       Total Pages: {{ items.pager?.totalPages.toLocaleString() }}
       <v-btn
-        text
         style="float: right"
         @click="$emit('randomAttachment')"
         :loading="randomAttachmentLoading"

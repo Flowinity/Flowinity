@@ -35,7 +35,6 @@
     <v-card-actions class="mt-n4">
       <v-spacer></v-spacer>
       <v-btn
-        text
         @click="save"
         color="primary"
         :loading="settings.description.loading"

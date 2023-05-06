@@ -27,7 +27,6 @@
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
-        text
         class="rounded-xl"
         :disabled="!email.length"
         @click="inviteFriend"

@@ -90,7 +90,6 @@
             >
               <v-card-text>
                 <v-btn
-                  text
                   :color="friends.color"
                   shaped
                   v-if="friends"
@@ -103,7 +102,6 @@
                   {{ friends.text }}
                 </v-btn>
                 <v-btn
-                  text
                   color="primary"
                   shaped
                   v-if="

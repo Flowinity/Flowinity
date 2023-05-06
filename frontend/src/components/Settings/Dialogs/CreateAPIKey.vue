@@ -51,7 +51,6 @@
       </v-btn>
       <v-btn
         color="primary"
-        text
         @click="type === 'api' ? addAPIKey() : addAlternatePassword()"
       >
         Add

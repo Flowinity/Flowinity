@@ -19,12 +19,7 @@
     </v-container>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        text
-        @click="doImportDoc"
-        :loading="importDoc.loading"
-      >
+      <v-btn color="primary" @click="doImportDoc" :loading="importDoc.loading">
         Import
       </v-btn>
     </v-card-actions>

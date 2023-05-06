@@ -37,17 +37,11 @@
       <v-btn
         class="rounded-xl"
         color="blue darken-1"
-        text
         @click="$emit('update:modelValue', false)"
       >
         Close
       </v-btn>
-      <v-btn
-        class="rounded-xl"
-        color="blue darken-1"
-        text
-        @click="submitFeedback()"
-      >
+      <v-btn class="rounded-xl" color="blue darken-1" @click="submitFeedback()">
         Submit
       </v-btn>
     </v-card-actions>
