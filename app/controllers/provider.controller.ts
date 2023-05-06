@@ -19,6 +19,41 @@ export class ProviderController {
   private configureRouter(): void {
     this.router = Router()
 
+    /**
+     * @swagger
+     * /api/v2/providers/tenor:
+     *   get:
+     *     summary: Retrieve Tenor data.
+     *     description: Retrieves Tenor data based on the provided search query.
+     *     tags:
+     *       - ProvidersService
+     *     security:
+     *       - auth: [chats.view]
+     *     parameters:
+     *       - in: query
+     *         name: search
+     *         description: The search query to retrieve Tenor data.
+     *         required: true
+     *         schema:
+     *           type: string
+     *       - in: query
+     *         name: next
+     *         description: The token for paginating through Tenor results.
+     *         required: false
+     *         schema:
+     *           type: string
+     *     responses:
+     *       '200':
+     *         description: Successful response with Tenor data.
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *       '401':
+     *         description: Unauthorized. User authentication required.
+     *       '400':
+     *         description: Invalid search query.
+     */
     this.router.get(
       "/tenor",
       auth("chats.view"),
@@ -32,6 +67,42 @@ export class ProviderController {
       }
     )
 
+    /**
+     * @swagger
+     * /api/v2/providers/linkable:
+     *   get:
+     *     summary: Retrieve linkable provider data.
+     *     description: Retrieves a list of linkable providers with their details.
+     *     tags:
+     *       - ProvidersService
+     *     security:
+     *       - auth: [user.view]
+     *     responses:
+     *       '200':
+     *         description: Successful response with linkable provider data.
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 type: object
+     *                 properties:
+     *                   name:
+     *                     type: string
+     *                   id:
+     *                     type: string
+     *                   key:
+     *                     type: string
+     *                   url:
+     *                     type: string
+     *                     nullable: true
+     *                   shortText:
+     *                     type: string
+     *                   color:
+     *                     type: string
+     *                   available:
+     *                     type: boolean
+     */
     this.router.get(
       "/linkable",
       auth("user.view", true),
@@ -92,6 +163,38 @@ export class ProviderController {
     )
 
     // LAST.FM
+    /**
+     * @swagger
+     * /api/v2/providers/link/lastfm:
+     *   get:
+     *     summary: Link Last.fm integration.
+     *     description: Links the Last.fm integration for the authenticated user.
+     *     tags:
+     *       - ProvidersService
+     *     security:
+     *       - auth: [user.modify]
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         description: The authorization token for the user.
+     *         required: true
+     *         schema:
+     *           type: string
+     *           format: {token}
+     *       - in: query
+     *         name: token
+     *         description: The token required for linking Last.fm integration.
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       '204':
+     *         description: No content. Integration linked successfully.
+     *       '401':
+     *         description: Unauthorized. User authentication required.
+     *       '409':
+     *         description: Conflict. Integration already exists for the user.
+     */
     this.router.get(
       ["/link/lastfm", "/link/last-fm"],
       auth("user.modify"),
@@ -111,6 +214,31 @@ export class ProviderController {
       }
     )
 
+    /**
+     * @swagger
+     * /api/v2/providers/userv3/lastfm/{username}:
+     *   get:
+     *     summary: Retrieve Last.fm user information.
+     *     description: Retrieves Last.fm user information for the specified username.
+     *     tags:
+     *       - ProvidersService
+     *     security:
+     *       - auth: ["user.view"]
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         description: The authorization token for the user.
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       '200':
+     *         description: Successful response with Last.fm user information.
+     *       '401':
+     *         description: Unauthorized. User authentication required.
+     *       '400':
+     *         description: See request body for more information.
+     */
     this.router.get(
       "/userv3/lastfm/:username",
       auth("user.view"),
@@ -130,6 +258,38 @@ export class ProviderController {
     )
 
     // MAL
+    /**
+     * @swagger
+     * /api/v2/providers/link/mal:
+     *   get:
+     *     summary: Link MAL integration.
+     *     description: Links the Last.fm integration for the authenticated user.
+     *     tags:
+     *       - ProvidersService
+     *     security:
+     *       - auth: [user.modify]
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         description: The authorization token for the user.
+     *         required: true
+     *         schema:
+     *           type: string
+     *           format: {token}
+     *       - in: query
+     *         name: token
+     *         description: The token required for linking MAL integration.
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       '204':
+     *         description: No content. Integration linked successfully.
+     *       '401':
+     *         description: Unauthorized. User authentication required.
+     *       '409':
+     *         description: Conflict. Integration already exists for the user.
+     */
     this.router.get(
       "/link/mal",
       auth("user.modify"),
@@ -146,6 +306,31 @@ export class ProviderController {
       }
     )
 
+    /**
+     * @swagger
+     * /api/v2/providers/userv3/mal/{username}:
+     *   get:
+     *     summary: Retrieve MAL user information.
+     *     description: Retrieves MAL user information for the specified username.
+     *     tags:
+     *       - ProvidersService
+     *     security:
+     *       - auth: ["user.view"]
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         description: The authorization token for the user.
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       '200':
+     *         description: Successful response with Last.fm user information.
+     *       '401':
+     *         description: Unauthorized. User authentication required.
+     *       '400':
+     *         description: See request body for more information.
+     */
     this.router.get(
       "/userv3/mal/:username",
       auth("user.view"),
@@ -163,6 +348,74 @@ export class ProviderController {
         )
       }
     )
+
+    /**
+     * @swagger
+     * /api/v2/providers/userv3/mal/{username}/anime:
+     *   patch:
+     *     summary: Update MAL anime information for a user.
+     *     description: Updates MyAnimeList (MAL) anime information for the specified user.
+     *     tags:
+     *       - ProvidersService
+     *     security:
+     *       - auth: [user.modify]
+     *     parameters:
+     *       - in: header
+     *         name: Authorization
+     *         description: The authorization token for the user.
+     *         required: true
+     *         schema:
+     *           type: string
+     *       - in: path
+     *         name: username
+     *         description: The username of the MAL user.
+     *         required: true
+     *         schema:
+     *           type: string
+     *       - in: body
+     *         name: animeData
+     *         description: The updated anime information for MAL.
+     *         required: true
+     *         schema:
+     *           type: object
+     *           properties:
+     *            id:
+     *              type: number
+     *              description: The ID of the anime.
+     *              required: true
+     *              example: 1
+     *           num_episodes_watched:
+     *              type: number
+     *              description: The number of episodes watched.
+     *              example: 1
+     *           score:
+     *              type: number
+     *              description: The score given to the anime.
+     *              example: 10
+     *              minimum: 0
+     *              maximum: 10
+     *           status:
+     *              type: string
+     *              description: The status of the anime.
+     *              example: "completed"
+     *              enum:
+     *                - "watching"
+     *                - "completed"
+     *                - "on_hold"
+     *                - "dropped"
+     *                - "plan_to_watch"
+     *     responses:
+     *       '204':
+     *         description: No content. MAL anime information updated successfully.
+     *       '401':
+     *         description: Unauthorized. User authentication required.
+     *       '403':
+     *         description: Forbidden. No permission to update anime information for the user.
+     *       '400':
+     *         description: Bad Request. Invalid anime ID provided.
+     *       '404':
+     *         description: Not Found. MAL user not found.
+     */
 
     this.router.patch(
       "/userv3/mal/:username/anime",
