@@ -486,7 +486,7 @@ export class UserUtilsService {
           user.administrator || user.moderator
         ))
       ) {
-        body.profileLayout = null
+        delete body.profileLayout
       }
     }
     await user.update(body)
