@@ -273,6 +273,14 @@ let Errors = {
   INTEGRATION_EXISTS: {
     message: "This integration only supports linking one account.",
     status: 400
+  },
+  NO_PERMISSION: {
+    message: "You do not have permission to perform this action.",
+    status: 403
+  },
+  INVALID_ID: {
+    message: "The provided ID is invalid.",
+    status: 400
   }
 }
 

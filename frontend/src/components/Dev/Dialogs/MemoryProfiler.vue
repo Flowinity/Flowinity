@@ -31,6 +31,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { useAppStore } from "@/store/app";
+import { useUserStore } from "@/store/user";
+import { useChatStore } from "@/store/chat";
+import { useExperimentsStore } from "@/store/experiments";
+import { useFriendsStore } from "@/store/friends";
+import { useCollectionsStore } from "@/store/collections";
+import { useWorkspacesStore } from "@/store/workspaces";
 
 export default defineComponent({
   name: "MemoryProfiler",
@@ -39,46 +46,35 @@ export default defineComponent({
       return [
         {
           name: "ChatStore",
-          size: JSON.stringify(this.$chat).length
+          size: JSON.stringify(useChatStore()).length
         },
         {
           name: "UserStore",
-          size: JSON.stringify(this.$user).length
+          size: JSON.stringify(useUserStore()).length
         },
         {
           name: "ExperimentsStore",
-          size: JSON.stringify(this.$experiments).length
+          size: JSON.stringify(useExperimentsStore()).length
         },
         {
           name: "AppStore",
-          size: JSON.stringify(this.$app).length
+          size: JSON.stringify(useAppStore()).length
         },
         {
           name: "FriendsStore",
-          size: JSON.stringify(this.$friends).length
+          size: JSON.stringify(useFriendsStore()).length
         },
         {
           name: "CollectionsStore",
-          size: JSON.stringify(this.$collections).length
+          size: JSON.stringify(useCollectionsStore()).length
         },
         {
           name: "WorkspacesStore",
-          size: JSON.stringify(this.$workspaces).length
+          size: JSON.stringify(useWorkspacesStore()).length
         },
         {
           name: "VueRouter",
           size: JSON.stringify(this.$router).length
-        },
-        {
-          name: "Total",
-          size:
-            JSON.stringify(this.$chat).length +
-            JSON.stringify(this.$user).length +
-            JSON.stringify(this.$experiments).length +
-            JSON.stringify(this.$app).length +
-            JSON.stringify(this.$friends).length +
-            JSON.stringify(this.$collections).length +
-            JSON.stringify(this.$workspaces).length
         }
       ];
     }
@@ -152,5 +148,6 @@ export default defineComponent({
   cursor: move;
   z-index: 2001;
   background-color: #0190ea;
+  color: black;
 }
 </style>

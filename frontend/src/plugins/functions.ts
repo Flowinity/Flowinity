@@ -206,5 +206,8 @@ export default {
   },
   uuid() {
     return self.crypto.randomUUID();
+  },
+  charUp(str: string) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 };

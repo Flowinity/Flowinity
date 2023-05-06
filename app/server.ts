@@ -17,6 +17,7 @@ import { BadgeService } from "@app/services/badge.service"
 import cluster from "cluster"
 import os from "os"
 import ipPrimary from "@app/lib/whitelist/primary.json"
+import { ProviderService } from "@app/services/provider.service"
 
 @Service()
 export class Server {
@@ -31,7 +32,8 @@ export class Server {
     private readonly cacheService: CacheService,
     private readonly billingService: BillingService,
     private readonly pulseService: PulseService,
-    private readonly badgeService: BadgeService
+    private readonly badgeService: BadgeService,
+    private readonly providerService: ProviderService
   ) {}
 
   private static normalizePort(
@@ -81,6 +83,7 @@ export class Server {
       this.billingService.billingInit()
       this.pulseService.pulseInit()
       this.badgeService.badgeInit()
+      this.providerService.providerInit()
     } else {
       console.log("Background tasks not started due to non-primary worker")
     }

@@ -1,13 +1,21 @@
 <template>
   <div v-if="user">
+    <UserV3Settings
+      v-model="config.dialog"
+      :user="user"
+      @trigger="layout = $user.changes.profileLayout"
+    ></UserV3Settings>
     <UserBanner
       :user="user"
       :height="username ? 250 : undefined"
       @refreshUser="getUser(false)"
     ></UserBanner>
-    <v-container class="mt-2" :style="username ? 'max-width: 100%;' : ''">
+    <v-container class="mt-2" style="max-width: 100%">
       <v-row>
-        <v-col :lg="!username ? 9 : 12" cols="12" md="12">
+        <v-col
+          cols="12"
+          :lg="layout.config.showStatsSidebar === false ? 12 : 10"
+        >
           <v-row no-gutters class="mb-2">
             <v-col sm="auto">
               <v-hover v-slot="{ isHovering }">
@@ -56,6 +64,43 @@
                     >
                       ({{ user.username }})
                     </span>
+                    <v-btn
+                      v-if="
+                        $experiments.experiments.USER_V3_MODIFY &&
+                        user?.id === $user.user?.id
+                      "
+                      icon
+                      size="small"
+                      @click="config.dialog = true"
+                    >
+                      <v-tooltip
+                        :eager="false"
+                        activator="parent"
+                        location="top"
+                      >
+                        Settings
+                      </v-tooltip>
+                      <v-icon>mdi-cog</v-icon>
+                    </v-btn>
+                    <v-btn
+                      v-if="
+                        $experiments.experiments.USER_V3_MODIFY &&
+                        user?.id === $user.user?.id
+                      "
+                      icon
+                      size="small"
+                      @click="config.editMode = !config.editMode"
+                    >
+                      <v-tooltip
+                        :eager="false"
+                        activator="parent"
+                        location="top"
+                      >
+                        Edit Mode
+                      </v-tooltip>
+                      <v-icon v-if="!config.editMode">mdi-pencil</v-icon>
+                      <v-icon v-else>mdi-check</v-icon>
+                    </v-btn>
                     <v-btn
                       icon
                       size="x-small"
@@ -118,7 +163,13 @@
               </v-card-text>
             </v-col>
           </v-row>
-          <template v-if="$experiments.experiments.USER_V3_MODIFY">
+          <template
+            v-if="
+              $experiments.experiments.USER_V3_MODIFY &&
+              user?.id === $user.user?.id &&
+              config.editMode
+            "
+          >
             <v-card-subtitle class="mt-2">Dev UserV3 actions:</v-card-subtitle>
             <v-btn @click="addItemDebug(comp.id)" v-for="comp in components">
               Add {{ comp.name }}
@@ -130,56 +181,52 @@
             >
               UserV2
             </v-btn>
+            <v-alert
+              type="warning"
+              variant="tonal"
+              style="
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+              "
+            >
+              Warning: do not CTRL + S unless you are sure the syntax is
+              correct.
+            </v-alert>
+            <vue-monaco-editor
+              v-model:value="layoutEditor"
+              language="json"
+              theme="vs-dark"
+              style="max-height: 300px"
+            ></vue-monaco-editor>
           </template>
-          <template
-            v-for="component in layout.layout.columns[0].rows"
-            :key="component.id"
+          <VueDraggable
+            v-model="layout.layout.columns[0].rows"
+            item-key="id"
+            :disabled="!config.editMode"
+            handle=".drag-handle"
+            @update="setLayout"
           >
-            <v-divider v-if="willShow(component, 'divider')"></v-divider>
-            <profile-info
-              v-else-if="component.name === 'profile-info'"
-              :user="user"
-              :username="username"
-            ></profile-info>
-            <mutual-collections
-              v-else-if="willShow(component, 'mutual-collections')"
-              :user="user"
-              :username="username"
-            ></mutual-collections>
-            <mutual-friends
-              v-else-if="willShow(component, 'mutual-friends')"
-              :user="user"
-              :username="username"
-            ></mutual-friends>
-            <core-statistics
-              v-else-if="willShow(component, 'core-statistics')"
-              :user="user"
+            <UserV3ComponentHandler
+              :editMode="config.editMode"
+              :components="components"
+              :component="component"
+              v-for="component in layout.layout.columns[0].rows"
+              :key="component.id"
               :username="username"
               :gold="gold"
+              :user="user"
               :primary="primary"
-            ></core-statistics>
-            <LastFM :user="user" v-else-if="willShow(component, 'last-fm')" />
-            <v-card v-else-if="component.name === 'v-card'">
-              <v-card-title>
-                <h3>{{ component.props.title }}</h3>
-              </v-card-title>
-              <v-card-text>
-                <p>{{ component.props.text }}</p>
-              </v-card-text>
-              <v-card-actions v-if="component.props.actions?.length">
-                <v-btn
-                  v-for="action in component.props.actions"
-                  :key="action"
-                  :v-bind="action"
-                  :to="action"
-                >
-                  {{ action.text }}
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
+              @addToParent="component.props.children.push($event)"
+            ></UserV3ComponentHandler>
+          </VueDraggable>
         </v-col>
-        <v-col md="3" cols="12" sm="12" v-if="!username">
+        <v-col
+          md="3"
+          xl="2"
+          cols="12"
+          sm="12"
+          v-if="!username && layout.config?.showStatsSidebar !== false"
+        >
           <InsightsPromoCard
             :start-color="user.plan.id === 6 ? '#FBC02D' : '#6A1B9A'"
             :end-color="user.plan.id === 6 ? '#F57F17' : '#4A148C'"
@@ -250,7 +297,7 @@ import { defineComponent } from "vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
-import { User } from "@/models/user";
+import { ProfileLayout, User } from "@/models/user";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import StatsCard from "@/components/Dashboard/StatsCard.vue";
@@ -265,7 +312,11 @@ import MutualCollections from "@/components/Users/UserV3/Widgets/MutualCollectio
 import MutualFriends from "@/components/Users/UserV3/Widgets/MutualFriends.vue";
 import CoreStatistics from "@/components/Users/UserV3/Widgets/CoreStatistics.vue";
 import LastFM from "@/components/Users/UserV3/Widgets/LastFM.vue";
-
+import MyAnimeList from "@/components/Users/UserV3/Widgets/MyAnimeList.vue";
+import UserV3Settings from "@/components/Users/UserV3/Dialogs/Settings.vue";
+import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/ComponentHandler.vue";
+import { VueDraggable } from "vue-draggable-plus";
+import VueMonacoEditor from "@guolao/vue-monaco-editor";
 interface Component {
   id: string;
   name: string;
@@ -276,6 +327,9 @@ export default defineComponent({
   name: "UserV3",
   props: ["username"],
   components: {
+    UserV3ComponentHandler,
+    UserV3Settings,
+    MyAnimeList,
     LastFM,
     CoreStatistics,
     MutualFriends,
@@ -291,10 +345,16 @@ export default defineComponent({
     CollectionBanner,
     UserBadges,
     UserAvatar,
-    UserBanner
+    UserBanner,
+    VueDraggable,
+    VueMonacoEditor
   },
   data() {
     return {
+      config: {
+        dialog: false,
+        editMode: false
+      },
       components: [
         {
           id: "v-card",
@@ -308,6 +368,20 @@ export default defineComponent({
                 to: "/"
               }
             ]
+          }
+        },
+        {
+          id: "spacer",
+          name: "Spacer",
+          props: {
+            height: 1
+          }
+        },
+        {
+          id: "parent",
+          name: "Parent",
+          props: {
+            children: [] as Component[]
           }
         },
         {
@@ -444,16 +518,25 @@ export default defineComponent({
         },
         config: {
           containerMargin: undefined,
-          showStatusSidebar: true
+          showStatsSidebar: true
         },
         version: 1
       } as any,
-      layout: null,
+      layout: null as ProfileLayout | null,
       user: undefined as User | undefined,
-      friendLoading: false
+      friendLoading: false,
+      editorTmp: ""
     };
   },
   computed: {
+    layoutEditor: {
+      get() {
+        return JSON.stringify(this.layout, null, 2);
+      },
+      set(val) {
+        this.editorTmp = val;
+      }
+    },
     primaryColorResult() {
       return this.$user.primaryColorResult(this.primary, this.gold).primary;
     },
@@ -501,19 +584,8 @@ export default defineComponent({
     }
   },
   methods: {
-    willShow(component: Component, name: string) {
-      if (component.name !== name) return false;
-      if (
-        component.props?.friendsOnly &&
-        this.user?.friend !== "accepted" &&
-        this.user?.id !== this.$user.user?.id
-      )
-        return false;
-      if (component.props?.mutualFriends && !this.user?.friends?.length)
-        return false;
-      if (component.props?.mutualCollections && !this.user?.collections?.length)
-        return false;
-      return true;
+    setLayout(layout: ProfileLayout) {
+      console.log(layout);
     },
     addItemDebug(name: string) {
       this.layout.layout.columns[0].rows.unshift({
@@ -593,13 +665,26 @@ export default defineComponent({
       if (!this.username) this.$app.title = this.user?.username + "'s Profile";
       this.setTheme();
       this.$app.componentLoading = false;
+    },
+    eventListener(e: KeyboardEvent) {
+      if (e.ctrlKey && e.key === "s") {
+        e.preventDefault();
+        console.log(this.editorTmp);
+        try {
+          this.layout = JSON.parse(this.editorTmp);
+        } catch {
+          this.$toast.error("Invalid JSON");
+        }
+      }
     }
   },
   mounted() {
+    document.addEventListener("keydown", (e) => this.eventListener(e));
     if (!this.username) this.$app.title = "User";
     this.getUser();
   },
   unmounted() {
+    document.removeEventListener("keydown", (e) => this.eventListener(e));
     this.setTheme(true);
   },
   watch: {

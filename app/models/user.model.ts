@@ -32,11 +32,7 @@ export interface ProfileLayout {
   layout: {
     columns: [
       {
-        rows: {
-          name: string
-          id: string
-          props?: any
-        }[]
+        rows: ProfileLayoutComponent[]
       }
     ]
   }
@@ -45,6 +41,12 @@ export interface ProfileLayout {
     showStatsSidebar: boolean
   }
   version: number
+}
+
+export interface ProfileLayoutComponent {
+  name: string
+  id: string
+  props?: any
 }
 
 export interface ThemeEngine {

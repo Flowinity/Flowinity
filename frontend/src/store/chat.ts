@@ -537,7 +537,6 @@ export const useChatStore = defineStore("chat", {
         ? state.selectedChat?.messages[state.selectedChat?.messages.length - 1]
             ?.id
         : 0;
-      console.log(down, up);
       return {
         up,
         down

@@ -1,8 +1,9 @@
 <template>
-  <v-card class="mx-2 my-2 mb-5">
+  <v-card class="mx-2 my-5">
     <v-toolbar>
       <v-toolbar-title>
         Last.fm
+        <v-chip size="small">BETA</v-chip>
         <template v-if="!loading">
           &bullet; {{ parseInt(attributes.total).toLocaleString() }} scrobbles
         </template>

@@ -5,7 +5,7 @@
     </v-toolbar>
     <v-container>
       <HoverChip
-        v-for="integration in availableIntegrations"
+        v-for="integration in integrations"
         :color="integration.color"
         :short-text="integration.shortText"
         :text="integration.name"
@@ -50,62 +50,26 @@ export default defineComponent({
         id: string;
         key: string;
         name: string;
+        color: string;
+        shortText: string;
+        url: string;
+        available: boolean;
       }[]
     };
   },
-  computed: {
-    availableIntegrations() {
-      return [
-        {
-          id: "lastfm",
-          name: "Last.fm",
-          shortText: "Last.fm",
-          color: "red",
-          url: `https://www.last.fm/api/auth/?api_key=${this.getIntegrationKey(
-            "lastfm"
-          )}`,
-          available: !!this.getIntegrationKey("lastfm")
-        },
-        {
-          id: "mal",
-          name: "MyAnimeList",
-          shortText: "MAL",
-          color: "#2e51a2",
-          url: null,
-          available: !!this.getIntegrationKey("mal")
-        },
-        {
-          id: "discord",
-          name: "Discord",
-          shortText: "Discord",
-          color: "#7289DA",
-          url: null,
-          available: !!this.getIntegrationKey("discord")
-        },
-        {
-          id: "spotify",
-          name: "Spotify",
-          shortText: "Spotify",
-          color: "#1DB954",
-          url: null,
-          available: !!this.getIntegrationKey("spotify")
-        }
-      ] as {
-        id: string;
-        name: string;
-        shortText: string;
-        color: string;
-        url: string | null;
-        available: boolean;
-      }[];
-    }
-  },
   methods: {
     getIntegrationMeta(id: string) {
-      return this.availableIntegrations.find((i) => i.id === id);
-    },
-    getIntegrationKey(provider: string) {
-      return this.integrations.find((i) => i.id === provider)?.key;
+      const integration = this.integrations.find((i) => i.id === id);
+      if (!integration) {
+        return {
+          name: "Unknown",
+          color: "grey",
+          shortText: "Unknown",
+          url: null,
+          available: false
+        };
+      }
+      return integration;
     },
     async getIntegrations() {
       const { data } = await this.axios.get("/providers/linkable");

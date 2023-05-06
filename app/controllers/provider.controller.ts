@@ -8,7 +8,7 @@ import Errors from "@app/lib/errors"
 import { AxiosStatic } from "axios"
 import { Integration } from "@app/models/integration.model"
 import { User } from "@app/models/user.model"
-
+import cryptoRandomString from "crypto-random-string"
 @Service()
 export class ProviderController {
   router: any
@@ -32,16 +32,66 @@ export class ProviderController {
       }
     )
 
-    this.router.get("/linkable", async (req: RequestAuth, res: Response) => {
-      res.json([
-        {
-          name: "Last.fm",
-          id: "lastfm",
-          key: config.providers.lastfm.key
+    this.router.get(
+      "/linkable",
+      auth("user.view", true),
+      async (req: RequestAuth, res: Response) => {
+        const malCodeChallenge = cryptoRandomString({ length: 128 })
+        if (req.user) {
+          await redis.set(
+            `providers:mal:${req.user.id}:code_challenge`,
+            malCodeChallenge,
+            { EX: 3600 }
+          )
         }
-      ])
-    })
+        res.json([
+          {
+            name: "Last.fm",
+            id: "lastfm",
+            key: config.providers.lastfm.key,
+            url: `https://www.last.fm/api/auth/?api_key=${config.providers.lastfm.key}`,
+            shortText: "Last.fm",
+            color: "red",
+            available: true
+          },
+          {
+            name: "MyAnimeList",
+            id: "mal",
+            key: config.providers.mal.key,
+            url: `https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${config.providers.mal.key}&code_challenge=${malCodeChallenge}&grant_type=authorization_code`,
+            shortText: "MAL",
+            color: "#2e51a2",
+            available: true
+          },
+          {
+            id: "discord",
+            name: "Discord",
+            shortText: "Discord",
+            color: "#7289DA",
+            url: null,
+            available: false
+          },
+          {
+            id: "anilist",
+            name: "AniList",
+            shortText: "AniList",
+            color: "#2e51a2",
+            url: null,
+            available: false
+          },
+          {
+            id: "spotify",
+            name: "Spotify",
+            shortText: "Spotify",
+            color: "#1DB954",
+            url: null,
+            available: false
+          }
+        ])
+      }
+    )
 
+    // LAST.FM
     this.router.get(
       ["/link/lastfm", "/link/last-fm"],
       auth("user.modify"),
@@ -65,26 +115,10 @@ export class ProviderController {
       "/userv3/lastfm/:username",
       auth("user.view"),
       async (req: RequestAuth, res: Response) => {
-        const user = await User.findOne({
-          where: {
-            username: req.params.username
-          },
-          include: [
-            {
-              model: Integration,
-              required: true,
-              where: {
-                type: "lastfm"
-              }
-            }
-          ]
-        })
-        if (
-          !user?.profileLayout?.layout.columns[0].rows.find(
-            (row) => row.name === "last-fm"
-          )
+        const user = await this.providerService.verifyUser(
+          req.params.username,
+          "lastfm"
         )
-          throw Errors.USER_NOT_FOUND
         res.json(
           await this.providerService.getLastFMOverview(
             user.id,
@@ -92,6 +126,62 @@ export class ProviderController {
             user.integrations[0].accessToken
           )
         )
+      }
+    )
+
+    // MAL
+    this.router.get(
+      "/link/mal",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const existing = await Integration.findOne({
+          where: {
+            userId: req.user.id,
+            type: "mal"
+          }
+        })
+        if (existing) throw Errors.INTEGRATION_EXISTS
+        await this.providerService.linkMAL(req.user.id, <string>req.query.token)
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.get(
+      "/userv3/mal/:username",
+      auth("user.view"),
+      async (req: RequestAuth, res: Response) => {
+        const user = await this.providerService.verifyUser(
+          req.params.username,
+          "mal"
+        )
+        res.json(
+          await this.providerService.getMALOverview(
+            user.id,
+            user.integrations[0].providerUsername,
+            user.integrations[0].accessToken
+          )
+        )
+      }
+    )
+
+    this.router.patch(
+      "/userv3/mal/:username/anime",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const user = await this.providerService.verifyUser(
+          req.params.username,
+          "mal"
+        )
+        if (user.id !== req.user.id) throw Errors.NO_PERMISSION
+        if (!req.body.id || typeof req.body.id !== "number")
+          throw Errors.INVALID_ID
+        await this.providerService.updateMALAnime(
+          user.id,
+          user.integrations[0].providerUsername,
+          user.integrations[0].accessToken,
+          req.body
+        )
+        res.sendStatus(204)
       }
     )
   }

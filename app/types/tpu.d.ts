@@ -17,6 +17,14 @@ declare interface TpuConfig {
       key: string
       secret: string
     }
+    mal: {
+      key: string
+      secret: string
+    }
+    anilist: {
+      key: string
+      secret: string
+    }
   }
   redis: {
     username?: string | undefined
