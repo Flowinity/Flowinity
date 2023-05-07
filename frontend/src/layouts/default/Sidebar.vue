@@ -151,7 +151,6 @@ export default defineComponent({
     sidebar: {
       get() {
         if (!this.$user.user) return [];
-        if (this.list.length) return this.list;
         const items = [
           {
             id: 1,
