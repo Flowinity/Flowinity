@@ -3,10 +3,7 @@
     color="dark"
     floating
     :class="{
-      'sidebar-patch':
-        $experiments.experiments.RAIL_SIDEBAR &&
-        !$vuetify.display.xxl &&
-        !$vuetify.display.mobile
+      'sidebar-patch': $experiments.experiments.RAIL_SIDEBAR && $app.rail
     }"
     v-model="val"
   >

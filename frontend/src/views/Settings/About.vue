@@ -32,6 +32,20 @@
     >
       Crash TPU (dev)
     </v-btn>
+    <v-btn
+      @click="expTrue"
+      class="mt-2"
+      v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
+    >
+      Enable all experiments
+    </v-btn>
+    <v-btn
+      @click="expFalse"
+      class="mt-2"
+      v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
+    >
+      Disable all experiments
+    </v-btn>
   </v-container>
 </template>
 
@@ -46,6 +60,18 @@ export default defineComponent({
   methods: {
     crash() {
       throw new Error("Intentional error thrown");
+    },
+    expTrue() {
+      for (const key in this.$experiments.experiments) {
+        if (key === "meta") return;
+        this.$experiments.experiments[key] = true;
+      }
+    },
+    expFalse() {
+      for (const key in this.$experiments.experiments) {
+        if (key === "meta") return;
+        this.$experiments.experiments[key] = false;
+      }
     }
   }
 });

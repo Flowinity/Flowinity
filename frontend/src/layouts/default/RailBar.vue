@@ -5,6 +5,7 @@
     permanent
     rail
     style="top: 0 !important"
+    color="dark"
   >
     <v-list
       density="compact"
