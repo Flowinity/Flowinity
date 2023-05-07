@@ -70,6 +70,16 @@
             item-title="text"
             item-value="value"
             class="mt-n3"
+            @update:model-value="
+              updateAnime(
+                anime.node.id,
+                anime.node.my_list_status.num_episodes_watched,
+                anime.node.my_list_status.score,
+                $event
+              )
+            "
+            bg-color="transparent"
+            :disabled="user.id !== $user.user?.id"
           >
             <template v-slot:append>
               <div style="display: flex; align-items: center">
@@ -84,7 +94,7 @@
                     icon
                     size="x-small"
                     @click="
-                      updateEpisodes(
+                      updateAnime(
                         anime.node.id,
                         anime.node.my_list_status.num_episodes_watched - 1,
                         anime.node.my_list_status.score,
@@ -102,7 +112,7 @@
                     icon
                     size="x-small"
                     @click="
-                      updateEpisodes(
+                      updateAnime(
                         anime.node.id,
                         anime.node.my_list_status.num_episodes_watched + 1,
                         anime.node.my_list_status.score,
@@ -138,7 +148,7 @@ import { MalAnime } from "@/types/mal/anime";
 export default defineComponent({
   name: "MyAnimeList",
   components: { MessageSkeleton },
-  props: ["user"],
+  props: ["user", "component"],
   data() {
     return {
       recent: [] as MalAnime[],
@@ -171,15 +181,21 @@ export default defineComponent({
     };
   },
   computed: {
+    perPage() {
+      return this.component?.props?.display || 3;
+    },
     computedRecent() {
-      return this.recent.slice((this.page - 1) * 3, this.page * 3);
+      return this.recent.slice(
+        (this.page - 1) * this.perPage,
+        this.page * this.perPage
+      );
     },
     pages() {
-      return Math.ceil(this.recent.length / 3);
+      return Math.ceil(this.recent.length / this.perPage);
     }
   },
   methods: {
-    async updateEpisodes(
+    async updateAnime(
       id: number,
       episodes: number,
       score: number,
@@ -205,7 +221,7 @@ export default defineComponent({
         case "on_hold":
           return "warning";
         case "plan_to_watch":
-          return "info";
+          return "indigo";
         case "watching":
           return "primary";
         default:

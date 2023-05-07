@@ -2,10 +2,12 @@
   <div class="crash-parent">
     <div class="crashed">
       <v-icon class="margin" size="96">mdi-skull</v-icon>
-      <div class="margin title">TPU has crashed.</div>
+      <div class="margin title">
+        {{ name || "TPU child component" }} has crashed.
+      </div>
       <div class="margin crashed subtitle">Please refresh the page.</div>
       <div class="margin crashed debug" v-if="e?.error?.message">
-        {{ e?.error?.message }}
+        {{ e.error.message }}
       </div>
       <div class="margin crashed debug" v-else>
         Please check the JavaScript console for more information.
@@ -18,8 +20,8 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Crash",
-  props: ["e"]
+  name: "CrashComponent",
+  props: ["e", "name"]
 });
 </script>
 
@@ -30,9 +32,6 @@ export default defineComponent({
 .crashed {
   background: var(--v-theme-background);
   color: #fff;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   text-align: center;
   position: relative;
   z-index: 696969;
@@ -41,17 +40,16 @@ export default defineComponent({
 .title {
   font-size: 2rem;
   font-weight: 700;
-  margin-top: -0.25rem;
-  margin-bottom: 1rem;
 }
 
 .crash-parent {
-  width: 100%;
-  height: 100%;
   background: var(--v-theme-background);
-  position: absolute;
+  position: relative;
   z-index: 696969;
   overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (max-width: 600px) {

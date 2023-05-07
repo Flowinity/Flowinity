@@ -17,6 +17,7 @@ export default defineComponent({
   components: { PromoNoContent },
   mounted() {
     this.$app.title = "Communications";
+    this.$app.railMode = "communications";
   }
 });
 </script>

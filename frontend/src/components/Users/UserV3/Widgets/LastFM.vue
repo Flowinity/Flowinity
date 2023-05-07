@@ -66,7 +66,7 @@ import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 export default defineComponent({
   name: "LastFM",
   components: { MessageSkeleton },
-  props: ["user"],
+  props: ["user", "component"],
   data() {
     return {
       tracks: [],
@@ -79,8 +79,14 @@ export default defineComponent({
     };
   },
   computed: {
+    perPage() {
+      return this.component?.props?.display || 7;
+    },
     computedTracks() {
-      return this.tracks.slice((this.page - 1) * 7, this.page * 7);
+      return this.tracks.slice(
+        (this.page - 1) * this.perPage,
+        this.page * this.perPage
+      );
     }
   },
   methods: {

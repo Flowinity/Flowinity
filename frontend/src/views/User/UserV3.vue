@@ -1,9 +1,13 @@
 <template>
   <div v-if="user">
+    {{ selectedComponent }}
     <UserV3Settings
       v-model="config.dialog"
       :user="user"
+      :components="components"
+      :component="selectedComponent"
       @trigger="layout = $user.changes.profileLayout"
+      @update="updateProp"
     ></UserV3Settings>
     <UserBanner
       :user="user"
@@ -71,7 +75,10 @@
                       "
                       icon
                       size="small"
-                      @click="config.dialog = true"
+                      @click="
+                        config.component = undefined;
+                        config.dialog = true;
+                      "
                     >
                       <v-tooltip
                         :eager="false"
@@ -206,18 +213,28 @@
             handle=".drag-handle"
             @update="setLayout"
           >
-            <UserV3ComponentHandler
-              :editMode="config.editMode"
-              :components="components"
-              :component="component"
+            <div
               v-for="component in layout.layout.columns[0].rows"
               :key="component.id"
-              :username="username"
-              :gold="gold"
-              :user="user"
-              :primary="primary"
-              @addToParent="component.props.children.push($event)"
-            ></UserV3ComponentHandler>
+            >
+              <UserV3ComponentHandler
+                :editMode="config.editMode"
+                :components="components"
+                :component="component"
+                :username="username"
+                :gold="gold"
+                :user="user"
+                :primary="primary"
+                @addToParent="component.props.children.push($event)"
+                @moveUp="move(component, -1)"
+                @moveDown="move(component, 1)"
+                @delete="deleteComponent(component)"
+                @settings="
+                  config.component = $event || component;
+                  config.dialog = true;
+                "
+              ></UserV3ComponentHandler>
+            </div>
           </VueDraggable>
         </v-col>
         <v-col
@@ -317,11 +334,7 @@ import UserV3Settings from "@/components/Users/UserV3/Dialogs/Settings.vue";
 import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/ComponentHandler.vue";
 import { VueDraggable } from "vue-draggable-plus";
 import VueMonacoEditor from "@guolao/vue-monaco-editor";
-interface Component {
-  id: string;
-  name: string;
-  props?: Record<string, any>;
-}
+import { Component } from "@/types/userv3";
 
 export default defineComponent({
   name: "UserV3",
@@ -353,12 +366,13 @@ export default defineComponent({
     return {
       config: {
         dialog: false,
-        editMode: false
+        editMode: false,
+        component: undefined as string | undefined
       },
       components: [
         {
           id: "v-card",
-          name: "VCard",
+          name: "Card",
           props: {
             title: "Card Title",
             text: "Card Text",
@@ -375,6 +389,11 @@ export default defineComponent({
           name: "Spacer",
           props: {
             height: 1
+          },
+          meta: {
+            height: {
+              name: "Height"
+            }
           }
         },
         {
@@ -390,7 +409,7 @@ export default defineComponent({
         },
         {
           id: "divider",
-          name: "VDivider"
+          name: "Divider"
         },
         {
           id: "mutual-collections",
@@ -405,20 +424,75 @@ export default defineComponent({
           name: "Core Statistics",
           props: {
             friendsOnly: true
+          },
+          meta: {
+            friendsOnly: {
+              name: "Friends only",
+              description: "Only show when the user is friends with you."
+            }
           }
         },
         {
           id: "last-fm",
           name: "Last.fm",
           props: {
-            friendsOnly: false
+            friendsOnly: false,
+            display: 7,
+            type: "recent"
+          },
+          meta: {
+            friendsOnly: {
+              name: "Friends only",
+              description: "Only show when the user is friends with you."
+            },
+            display: {
+              name: "Display count",
+              description: "How many items to display.",
+              type: "range",
+              min: 1,
+              max: 12,
+              step: 1
+            },
+            type: {
+              name: "Type",
+              type: "select",
+              options: [
+                { text: "Recent", value: "recent" },
+                { text: "Top", value: "top" }
+              ]
+            }
           }
         },
         {
           id: "mal",
           name: "MyAnimeList",
           props: {
-            friendsOnly: false
+            friendsOnly: false,
+            type: "anime",
+            display: 3
+          },
+          meta: {
+            friendsOnly: {
+              name: "Friends only",
+              description: "Only show when the user is friends with you."
+            },
+            type: {
+              name: "Type",
+              type: "select",
+              options: [
+                { text: "Anime", value: "anime" },
+                { text: "Manga", value: "manga" },
+                { text: "Profile stats", value: "profile" }
+              ]
+            },
+            display: {
+              name: "Display count",
+              description: "How many items to display if type is anime/manga.",
+              type: "range",
+              min: 1,
+              max: 10,
+              step: 1
+            }
           }
         },
         {
@@ -529,6 +603,26 @@ export default defineComponent({
     };
   },
   computed: {
+    selectedComponent() {
+      let component = this.layout.layout.columns[0].rows.find(
+        (x) => x.id === this.config.component
+      );
+      if (!component) {
+        component = this.layout.layout.columns[0].rows
+          .find(
+            (x) =>
+              x?.props?.children &&
+              x?.props?.children?.find(
+                (y: Component) => y.id === this.config.component
+              )
+          )
+          ?.props?.children?.find(
+            (y: Component) => y.id === this.config.component
+          );
+      }
+      if (!component) return null;
+      return component;
+    },
     layoutEditor: {
       get() {
         return JSON.stringify(this.layout, null, 2);
@@ -584,6 +678,24 @@ export default defineComponent({
     }
   },
   methods: {
+    updateProp(data: { key: string; value: any }) {
+      if (!this.selectedComponent) return;
+      this.selectedComponent.props[data.key] = data.value;
+    },
+    deleteComponent(component: Component) {
+      const index = this.layout.layout.columns[0].rows.indexOf(component);
+      if (index === -1) return;
+      this.layout.layout.columns[0].rows.splice(index, 1);
+    },
+    move(component: Component, count: number) {
+      const index = this.layout.layout.columns[0].rows.indexOf(component);
+      if (index === -1) return;
+      const newIndex = index + count;
+      if (newIndex < 0 || newIndex >= this.layout.layout.columns[0].rows.length)
+        return;
+      this.layout.layout.columns[0].rows.splice(index, 1);
+      this.layout.layout.columns[0].rows.splice(newIndex, 0, component);
+    },
     setLayout(layout: ProfileLayout) {
       console.log(layout);
     },

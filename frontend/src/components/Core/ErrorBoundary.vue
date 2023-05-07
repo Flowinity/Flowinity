@@ -34,6 +34,12 @@ onErrorCaptured((error: Error, vm, info: string) => {
 });
 </script>
 
+<script lang="ts">
+export default {
+  name: "VErrorBoundary"
+};
+</script>
+
 <template>
   <template v-if="!slots.boundary">
     <slot v-if="!hasError$"></slot>
