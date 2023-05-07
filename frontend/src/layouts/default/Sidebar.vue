@@ -17,10 +17,10 @@
   >
     <v-list density="comfortable" nav class="mt-1">
       <v-list-item
-        class="ml-1 my-1"
-        style="text-transform: unset !important"
         v-for="item in sidebar"
         :key="item.id"
+        class="ml-1 my-1"
+        style="text-transform: unset !important"
         :href="item.externalPath"
         link
         :exact="item.exact"
@@ -56,6 +56,7 @@
           >
             mdi-lock
           </v-icon>
+          <v-icon class="float-right text-grey drag-handle">mdi-drag</v-icon>
         </v-list-item-title>
       </v-list-item>
     </v-list>
@@ -112,6 +113,7 @@ import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import GoldUpsell from "@/components/Dashboard/Dialogs/Gold.vue";
 import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
+import { VueDraggable } from "vue-draggable-plus";
 
 export default defineComponent({
   name: "Sidebar",
@@ -122,7 +124,8 @@ export default defineComponent({
     StatusSwitcher,
     MigrateWizard,
     InviteAFriend,
-    UserAvatar
+    UserAvatar,
+    VueDraggable
   },
   data() {
     return {
@@ -148,6 +151,7 @@ export default defineComponent({
     sidebar: {
       get() {
         if (!this.$user.user) return [];
+        if (this.list.length) return this.list;
         const items = [
           {
             id: 1,
@@ -223,7 +227,7 @@ export default defineComponent({
               "chats.view",
               this.$user.user?.scopes
             )
-              ? this.$chat.totalUnread || "BETA"
+              ? this.$chat.totalUnread
               : false,
             scope: "chats.view",
             experimentsRequired: ["COMMUNICATIONS"]
@@ -357,7 +361,18 @@ export default defineComponent({
           name: "Plans",
           icon: "mdi-star"
         }*/
-        ];
+        ] as {
+          id: number;
+          externalPath: string;
+          path: string;
+          name: string;
+          icon: string;
+          new?: boolean;
+          scope?: string | string[];
+          warning?: boolean | string;
+          experimentsRequired?: string[];
+          click?: (instance: any) => void;
+        }[];
 
         return items.filter((item) => {
           if (item.experimentsRequired) {
@@ -370,21 +385,23 @@ export default defineComponent({
           return true;
         });
         /*
-     const storage = localStorage.getItem("sidebarOrder");
-     if (!storage) {
-       return filtered;
-     }
-   try {
-       const order = JSON.parse(storage);
-       if (order) {
-         filtered.sort((a, b) => {
-           return order.indexOf(a.id) - order.indexOf(b.id);
-         });
-       }
-       return filtered;
-     } catch {
-       return filtered;
-     }*/
+        const storage = localStorage.getItem("sidebarOrder");
+        if (!storage) {
+          return filtered;
+        }
+        try {
+          const order = JSON.parse(storage);
+          if (order) {
+            filtered.sort((a, b) => {
+              return order.indexOf(a.id) - order.indexOf(b.id);
+            });
+          }
+          return filtered;
+        } catch {
+          return filtered;
+        } finally {
+          if (!this.list) this.list = filtered;
+        }*/
       },
       set(val: any) {
         if (!val) return;

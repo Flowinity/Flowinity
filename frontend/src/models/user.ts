@@ -66,8 +66,17 @@ export interface User {
   itemsPerPage: number;
   banner?: string;
   alternatePasswords?: AlternatePassword[];
-  //TODO
-  plan: any;
+  plan: {
+    id: number;
+    name: string;
+    quotaMax: number;
+    features: string[];
+    price: number;
+    internalName: string;
+    purchasable: boolean;
+    internalFeatures: Record<string, any>;
+    icon: string;
+  };
   theme: any;
   domain: {
     id: number;
