@@ -1,6 +1,5 @@
 <template>
   <div v-if="user">
-    {{ selectedComponent }}
     <UserV3Settings
       v-model="config.dialog"
       :user="user"
