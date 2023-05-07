@@ -441,6 +441,9 @@ const app = createApp({
       "$app.title"(val) {
         document.title = val + " - TPU";
       },
+      "$vuetify.display.mobile"(val) {
+        this.$app.mainDrawer = !val;
+      },
       "$app.fluidGradient"(val) {
         if (val) {
           document.body.classList.add("fluid-gradient");

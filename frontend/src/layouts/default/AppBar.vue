@@ -228,7 +228,7 @@ export default defineComponent({
         $chat.isCommunications &&
         !$chat.communicationsSidebar*/
       const data = {
-        "header-patch": this.$app.mainDrawer && !this.$vuetify.display.mobile,
+        "header-patch": !this.$vuetify.display.mobile,
         "header-patch-workspaces":
           (this.$app.workspaceDrawer &&
             !this.$vuetify.display.mobile &&

@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer
-    v-model="$app.mainDrawer"
+    v-model="val"
     floating
     permanent
     rail
@@ -46,7 +46,19 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "RailBar"
+  name: "RailBar",
+  computed: {
+    val: {
+      get() {
+        if (!this.$vuetify.display.mobile) return true;
+        return this.$app.mainDrawer;
+      },
+      set(value) {
+        if (!this.$vuetify.display.mobile) return;
+        this.$app.mainDrawer = value;
+      }
+    }
+  }
 });
 </script>
 
