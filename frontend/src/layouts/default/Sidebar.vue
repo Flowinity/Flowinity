@@ -370,6 +370,7 @@ export default defineComponent({
           warning?: boolean | string;
           experimentsRequired?: string[];
           click?: (instance: any) => void;
+          exact?: boolean;
         }[];
 
         return items.filter((item) => {
