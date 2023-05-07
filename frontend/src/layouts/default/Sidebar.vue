@@ -56,7 +56,6 @@
           >
             mdi-lock
           </v-icon>
-          <v-icon class="float-right text-grey drag-handle">mdi-drag</v-icon>
         </v-list-item-title>
       </v-list-item>
     </v-list>
@@ -226,7 +225,7 @@ export default defineComponent({
               "chats.view",
               this.$user.user?.scopes
             )
-              ? this.$chat.totalUnread
+              ? this.$chat.totalUnread || "BETA"
               : false,
             scope: "chats.view",
             experimentsRequired: ["COMMUNICATIONS"]
