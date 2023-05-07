@@ -128,7 +128,7 @@ export class ProviderService {
       )
       if (!data?.access_token) throw Errors.INTEGRATION_ERROR
       const { data: user } = await axios.get(
-        "https://api.myanimelist.net/v2/users/@me",
+        "https://api.myanimelist.net/v2/users/@me?fields=anime_statistics,manga_statistics",
         {
           headers: {
             Authorization: `${data.token_type} ${data.access_token}`
