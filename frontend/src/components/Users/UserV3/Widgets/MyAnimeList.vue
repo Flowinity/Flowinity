@@ -215,7 +215,7 @@ export default defineComponent({
     getStatusColor(status: string) {
       switch (status) {
         case "completed":
-          return "success";
+          return "info";
         case "dropped":
           return "error";
         case "on_hold":
@@ -223,7 +223,7 @@ export default defineComponent({
         case "plan_to_watch":
           return "indigo";
         case "watching":
-          return "primary";
+          return "success";
         default:
           return "grey";
       }
