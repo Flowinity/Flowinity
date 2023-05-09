@@ -1,4 +1,4 @@
-import { Response, NextFunction } from "express"
+import { Response, NextFunction, Request } from "express"
 import { Session } from "@app/models/session.model"
 import { User } from "@app/models/user.model"
 import { Plan } from "@app/models/plan.model"
@@ -11,6 +11,8 @@ import { Experiment } from "@app/models/experiment.model"
 import Errors from "@app/lib/errors"
 import { AccessedFrom } from "@app/types/auth"
 import { Integration } from "@app/models/integration.model"
+import { createParamDecorator } from "routing-controllers"
+import { RequestAuth } from "@app/types/express"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -25,6 +27,35 @@ maxmind
   .then((reader) => {
     city = reader
   })
+
+export type Scope =
+  | "uploads.create"
+  | "uploads.modify"
+  | "uploads.view"
+  | "user.view"
+  | "user.modify"
+  | "collections.modify"
+  | "collections.create"
+  | "collections.view"
+  | "workspaces.view"
+  | "workspaces.create"
+  | "workspaces.modify"
+  | "chats.view"
+  | "chats.create"
+  | "chats.send"
+  | "chats.edit"
+  | "insights.view"
+  | "starred.view"
+  | "starred.modify"
+  | "admin.ci"
+  | "user"
+  | "collections"
+  | "workspaces"
+  | "chats"
+  | "insights"
+  | "starred"
+  | "admin"
+  | "*"
 
 function checkScope(requiredScope: string | string[], scope: string) {
   if (scope === "*") {
@@ -92,10 +123,193 @@ async function updateSession(session: Session, ip: string) {
   )
 }
 
+async function authSystem(
+  scope: string | string[],
+  passthrough: boolean = false,
+  req: any,
+  res: Response,
+  next: NextFunction
+) {
+  const token = req.header("Authorization")
+  if (!scope) scope = "*"
+  if (token) {
+    const session = await Session.findOne({
+      where: {
+        token: token,
+        expiredAt: {
+          [Op.or]: [
+            {
+              [Op.gt]: new Date()
+            },
+            {
+              [Op.is]: null
+            }
+          ]
+        }
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          required: true,
+          include: [
+            {
+              model: Experiment,
+              as: "experiments"
+            },
+            {
+              model: Subscription,
+              as: "subscription"
+            },
+            {
+              model: Domain,
+              as: "domain"
+            },
+            {
+              model: Plan,
+              as: "plan"
+            },
+            {
+              model: Theme,
+              as: "theme"
+            },
+            {
+              model: Integration,
+              as: "integrations",
+              attributes: [
+                "id",
+                "type",
+                "providerUserId",
+                "providerUsername",
+                "providerUserCache",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          ]
+        }
+      ]
+    })
+    if (session) {
+      if (!checkScope(scope, session.scopes)) {
+        if (passthrough) {
+          req.user = null
+          return next()
+        }
+        res.status(401)
+        res.json({
+          errors: [
+            {
+              name: "SCOPE_REQUIRED",
+              message:
+                "You do not have permission to access this resource due to your current API key scopes.",
+              requiredScope: scope,
+              status: 401
+            }
+          ]
+        })
+        updateSession(session, req.ip).then(() => {})
+        return
+      }
+      if (session.user?.banned) {
+        if (passthrough) {
+          req.user = null
+          return next()
+        }
+        res.status(401)
+        res.json({
+          errors: [Errors.BANNED]
+        })
+        updateSession(session, req.ip).then(() => {})
+        return
+      } else {
+        req.user = session.user
+        if (!req.user.emailVerified) {
+          session.user.dataValues.scopes = "user.view,user.modify"
+        } else {
+          session.user.dataValues.scopes = session.scopes
+        }
+        if (!scope.includes("user") && !req.user.emailVerified) {
+          if (passthrough) {
+            req.user = null
+            return next()
+          }
+          res.status(401)
+          res.json({
+            errors: [Errors.EMAIL_NOT_VERIFIED]
+          })
+          updateSession(session, req.ip).then(() => {})
+          return
+        }
+        next()
+        updateSession(session, req.ip).then(() => {})
+        return session
+      }
+    } else {
+      if (passthrough) {
+        req.user = null
+        return next()
+      }
+      res.status(401)
+      res.json({
+        errors: [
+          {
+            name: "INVALID_TOKEN",
+            message:
+              "The authorization token you provided is invalid or has expired.",
+            status: 401
+          }
+        ]
+      })
+    }
+  } else {
+    if (passthrough) {
+      req.user = null
+      return next()
+    }
+    res.status(401)
+    res.json({
+      errors: [
+        {
+          name: "INVALID_TOKEN",
+          message:
+            "The authorization token you provided is invalid or has expired.",
+          status: 401
+        }
+      ]
+    })
+  }
+}
+
 const auth = (scope: string | string[], passthrough: boolean = false) => {
   return async function (req: any, res: Response, next: NextFunction) {
     try {
-      const token = req.header("Authorization")
+      return await authSystem(scope, passthrough, req, res, next)
+    } catch (err) {
+      console.log(err)
+      if (passthrough) {
+        req.user = null
+        return next()
+      }
+      res.status(401)
+      res.json({
+        errors: [
+          {
+            name: "INVALID_TOKEN",
+            message: "Your authorization token is invalid or has expired.",
+            status: 401
+          }
+        ]
+      })
+    }
+  }
+}
+
+export function Auth(scope: Scope | Scope[], required: boolean = true) {
+  return createParamDecorator({
+    required,
+    value: async (action) => {
+      const token = action.request.header("Authorization")
       if (!scope) scope = "*"
       if (token) {
         const session = await Session.findOne({
@@ -157,111 +371,33 @@ const auth = (scope: string | string[], passthrough: boolean = false) => {
         })
         if (session) {
           if (!checkScope(scope, session.scopes)) {
-            if (passthrough) {
-              req.user = null
-              return next()
-            }
-            res.status(401)
-            res.json({
-              errors: [
-                {
-                  name: "SCOPE_REQUIRED",
-                  message:
-                    "You do not have permission to access this resource due to your current API key scopes.",
-                  requiredScope: scope,
-                  status: 401
-                }
-              ]
-            })
-            updateSession(session, req.ip).then(() => {})
-            return
+            updateSession(session, action.request.ip).then(() => {})
+            throw Errors.SCOPE_REQUIRED
           }
           if (session.user?.banned) {
-            if (passthrough) {
-              req.user = null
-              return next()
-            }
-            res.status(401)
-            res.json({
-              errors: [Errors.BANNED]
-            })
-            updateSession(session, req.ip).then(() => {})
-            return
+            updateSession(session, action.request.ip).then(() => {})
+            throw Errors.BANNED
           } else {
-            req.user = session.user
-            if (!req.user.emailVerified) {
+            if (!session.user.emailVerified) {
               session.user.dataValues.scopes = "user.view,user.modify"
             } else {
               session.user.dataValues.scopes = session.scopes
             }
-            if (!scope.includes("user") && !req.user.emailVerified) {
-              if (passthrough) {
-                req.user = null
-                return next()
-              }
-              res.status(401)
-              res.json({
-                errors: [Errors.EMAIL_NOT_VERIFIED]
-              })
-              updateSession(session, req.ip).then(() => {})
-              return
+            if (!scope.includes("user") && !session.user.emailVerified) {
+              updateSession(session, action.request.ip).then(() => {})
+              throw Errors.EMAIL_NOT_VERIFIED
             }
-            next()
-            updateSession(session, req.ip).then(() => {})
-            return
+            updateSession(session, action.request.ip).then(() => {})
+            return session.toJSON().user
           }
         } else {
-          if (passthrough) {
-            req.user = null
-            return next()
-          }
-          res.status(401)
-          res.json({
-            errors: [
-              {
-                name: "INVALID_TOKEN",
-                message:
-                  "The authorization token you provided is invalid or has expired.",
-                status: 401
-              }
-            ]
-          })
+          throw Errors.INVALID_TOKEN
         }
       } else {
-        if (passthrough) {
-          req.user = null
-          return next()
-        }
-        res.status(401)
-        res.json({
-          errors: [
-            {
-              name: "INVALID_TOKEN",
-              message:
-                "The authorization token you provided is invalid or has expired.",
-              status: 401
-            }
-          ]
-        })
+        throw Errors.INVALID_TOKEN
       }
-    } catch (err) {
-      console.log(err)
-      if (passthrough) {
-        req.user = null
-        return next()
-      }
-      res.status(401)
-      res.json({
-        errors: [
-          {
-            name: "INVALID_TOKEN",
-            message: "Your authorization token is invalid or has expired.",
-            status: 401
-          }
-        ]
-      })
     }
-  }
+  })
 }
 
 export default auth

@@ -28,7 +28,68 @@ import { ProviderController } from "@app/controllers/provider.controller"
 import { User } from "@app/models/user.model"
 import { Op } from "sequelize"
 import { MailController } from "@app/controllers/mail.controller"
+import { Request, Response, NextFunction } from "express"
+import {
+  useExpressServer,
+  getMetadataArgsStorage,
+  Middleware,
+  ExpressErrorMiddlewareInterface,
+  HttpError,
+  useContainer
+} from "routing-controllers"
+import { Container } from "typedi"
+//v3 controllers
+import { UserController as UserControllerV3 } from "@app/controllers/v3/user.controller"
+import { routingControllersToSpec } from "routing-controllers-openapi"
 
+@Service()
+@Middleware({ type: "after" })
+export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
+  error(err: any, req: any, res: any, next: (err: any) => any) {
+    if (err?.status && !err?.errno) {
+      console.log(err)
+      res.status(err?.status || 500).send({
+        errors: [
+          {
+            name: Object.entries(Errors).find(
+              ([key, value]) => value.message === err.message
+            )?.[0],
+            ...err
+          }
+        ]
+      })
+    } else if (err instanceof sequelize.ValidationError) {
+      res.status(400).send({
+        errors: err.errors.map((e: any) => {
+          return {
+            status: 400,
+            message: e.message
+              ?.replace(/Validation (.*?) on (.*?) failed/, "$2 is invalid.")
+              .replace("notNull Violation: ", "")
+              .replace("cannot be null", "is required."),
+            name: "Troplo/ValidationError"
+          }
+        })
+      })
+    } else if (err?.issues) {
+      console.log(err)
+      res.status(400).send({
+        errors: Object.keys(err.issues).map((e: any) => {
+          return {
+            status: 400,
+            message: err.issues[e].path[0] + ": " + err.issues[e].message,
+            name: "Troplo/ValidationError"
+          }
+        })
+      })
+    } else {
+      console.log(err)
+      res.status(500).send({
+        errors: [Errors.UNKNOWN]
+      })
+    }
+  }
+}
 @Service()
 export class Application {
   app: express.Application
@@ -80,6 +141,16 @@ export class Application {
       res.setHeader("X-Powered-By", "TroploPrivateUploader/2.0.0")
       next()
     })
+    useContainer(Container)
+    useExpressServer(this.app, {
+      controllers: [UserControllerV3],
+      routePrefix: "/api/v3",
+      middlewares: [HttpErrorHandler],
+      defaultErrorHandler: false
+    })
+    const storage = getMetadataArgsStorage()
+    const spec = routingControllersToSpec(storage)
+    console.log(spec)
     this.app.use(
       "/api/docs",
       swaggerUi.serve,
@@ -90,6 +161,7 @@ export class Application {
       swaggerUi.serve,
       swaggerUi.setup(swaggerJSDoc(this.swaggerOptions))
     )
+    this.app.use("/api/v3/docs", swaggerUi.serve, swaggerUi.setup(spec))
     this.app.use("/api/v2/user", this.userutilsController.router)
     this.app.use("/api/v2/core", this.coreController.router)
     this.app.use("/api/v2/gallery", this.galleryController.router)
@@ -116,46 +188,51 @@ export class Application {
         errors: [Errors.API_REMOVED]
       })
     })
-    this.app.use("*", (req, res) => {
+    this.app.use("/api/v2", (req, res) => {
       throw Errors.NOT_FOUND
     })
-    this.app.use((err: any, req: any, res: any, next: any) => {
-      if (err?.status && !err?.errno) {
-        console.log(err)
-        res.status(err?.status || 500).send({
-          errors: [err]
-        })
-      } else if (err instanceof sequelize.ValidationError) {
-        res.status(400).send({
-          errors: err.errors.map((e: any) => {
-            return {
-              status: 400,
-              message: e.message
-                ?.replace(/Validation (.*?) on (.*?) failed/, "$2 is invalid.")
-                .replace("notNull Violation: ", "")
-                .replace("cannot be null", "is required."),
-              name: "Troplo/ValidationError"
-            }
+    this.app.use(
+      (err: any, req: Request, res: Response, next: NextFunction) => {
+        if (err?.status && !err?.errno) {
+          console.log(err)
+          res.status(err?.status || 500).send({
+            errors: [err]
           })
-        })
-      } else if (err?.issues) {
-        console.log(err)
-        res.status(400).send({
-          errors: Object.keys(err.issues).map((e: any) => {
-            return {
-              status: 400,
-              message: err.issues[e].path[0] + ": " + err.issues[e].message,
-              name: "Troplo/ValidationError"
-            }
+        } else if (err instanceof sequelize.ValidationError) {
+          res.status(400).send({
+            errors: err.errors.map((e: any) => {
+              return {
+                status: 400,
+                message: e.message
+                  ?.replace(
+                    /Validation (.*?) on (.*?) failed/,
+                    "$2 is invalid."
+                  )
+                  .replace("notNull Violation: ", "")
+                  .replace("cannot be null", "is required."),
+                name: "Troplo/ValidationError"
+              }
+            })
           })
-        })
-      } else {
-        console.log(err)
-        res.status(500).send({
-          errors: [Errors.UNKNOWN]
-        })
+        } else if (err?.issues) {
+          console.log(err)
+          res.status(400).send({
+            errors: Object.keys(err.issues).map((e: any) => {
+              return {
+                status: 400,
+                message: err.issues[e].path[0] + ": " + err.issues[e].message,
+                name: "Troplo/ValidationError"
+              }
+            })
+          })
+        } else {
+          console.log(err)
+          res.status(500).send({
+            errors: [Errors.UNKNOWN]
+          })
+        }
       }
-    })
+    )
     this.errorHandling()
     this.onServerStart()
   }
@@ -186,14 +263,14 @@ export class Application {
 
   private errorHandling(): void {
     // When previous handlers have not served a request: path wasn't found
+
     this.app.use(
       (
         req: express.Request,
         res: express.Response,
         next: express.NextFunction
       ) => {
-        const err: HttpException = new HttpException("Not Found")
-        next(err)
+        return
       }
     )
 

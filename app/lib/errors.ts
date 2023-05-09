@@ -290,6 +290,14 @@ let Errors = {
   INTEGRATION_NOT_FOUND: {
     message: "The requested integration could not be found.",
     status: 400
+  },
+  SCOPE_REQUIRED: {
+    message: "You do not have the scope that the API requires.",
+    status: 400
+  },
+  INVALID_TOKEN: {
+    message: "The provided token in the Authorization header is invalid.",
+    status: 400
   }
 }
 
