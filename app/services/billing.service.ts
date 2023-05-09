@@ -50,9 +50,6 @@ export class BillingService {
   }
   async checkJitsiGold() {
     console.log("[BILLING] Checking Gold")
-    if (new Date().getTime() < 1683336201000) {
-      return
-    }
     axios
       .get("http://localhost:24004/api/v1/jitsi", {
         headers: {
@@ -256,9 +253,9 @@ export class BillingService {
   billingInit() {
     try {
       // 30 minutes
-      //setInterval(this.checkJitsiGold, 1000 * 60 * 30)
+      setInterval(this.checkJitsiGold, 1000 * 60 * 30)
 
-      //this.checkJitsiGold().then(() => {})
+      this.checkJitsiGold().then(() => {})
       return true
     } catch {
       return false
