@@ -17,16 +17,22 @@
       <v-row>
         <v-col
           cols="12"
-          :lg="layout.config.showStatsSidebar === false ? 12 : 10"
+          :lg="layout.config.showStatsSidebar === false ? 12 : 9"
+          :xl="layout.config.showStatsSidebar === false ? 12 : 10"
+          md="8"
         >
-          <v-row no-gutters class="mb-2">
-            <v-col sm="auto">
+          <v-row
+            no-gutters
+            class="mb-2"
+            :class="{ 'text-center': $vuetify.display.mobile }"
+          >
+            <v-col sm="auto" :cols="$vuetify.display.mobile ? 12 : undefined">
               <v-hover v-slot="{ isHovering }">
                 <UserAvatar
                   :user="user"
                   :status="true"
-                  :size="$vuetify.display.mobile ? 55 : 110"
-                  class="mr-4"
+                  size="110"
+                  :class="{ 'mr-4': !$vuetify.display.mobile }"
                   :no-badges="true"
                   @refresh="getUser(false)"
                   :edit="user.id === $user.user?.id"
@@ -129,6 +135,7 @@
                   <UserBadges
                     :user="user"
                     :primaryColor="primaryColorResult"
+                    :class="{ 'justify-center': $vuetify.display.mobile }"
                   ></UserBadges>
                 </div>
               </v-card-text>
@@ -171,7 +178,7 @@
           </v-row>
           <template
             v-if="
-              $experiments.experiments.USER_V3_MODIFY &&
+              $experiments.experiments.USER_V3_EDITOR &&
               user?.id === $user.user?.id &&
               config.editMode
             "
@@ -205,6 +212,11 @@
               style="max-height: 300px"
             ></vue-monaco-editor>
           </template>
+          <UserV3AddMenu
+            :components="visibleComponents"
+            v-if="config.editMode"
+            @add="addItemDebug"
+          />
           <VueDraggable
             v-model="layout.layout.columns[0].rows"
             item-key="id"
@@ -218,16 +230,16 @@
             >
               <UserV3ComponentHandler
                 :editMode="config.editMode"
-                :components="components"
+                :components="visibleComponents"
                 :component="component"
                 :username="username"
                 :gold="gold"
                 :user="user"
                 :primary="primary"
                 @addToParent="component.props.children.push($event)"
-                @moveUp="move(component, -1)"
-                @moveDown="move(component, 1)"
-                @delete="deleteComponent(component)"
+                @moveUp="move($event || component, -1)"
+                @moveDown="move($event || component, 1)"
+                @delete="deleteComponent($event || component)"
                 @settings="
                   config.component = $event || component;
                   config.dialog = true;
@@ -334,11 +346,13 @@ import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/ComponentH
 import { VueDraggable } from "vue-draggable-plus";
 import VueMonacoEditor from "@guolao/vue-monaco-editor";
 import { Component } from "@/types/userv3";
+import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 
 export default defineComponent({
   name: "UserV3",
   props: ["username"],
   components: {
+    UserV3AddMenu,
     UserV3ComponentHandler,
     UserV3Settings,
     MyAnimeList,
@@ -368,175 +382,6 @@ export default defineComponent({
         editMode: false,
         component: undefined as string | undefined
       },
-      components: [
-        {
-          id: "v-card",
-          name: "Card",
-          props: {
-            title: "Card Title",
-            text: "Card Text",
-            actions: [
-              {
-                text: "Click me",
-                to: "/"
-              }
-            ]
-          }
-        },
-        {
-          id: "spacer",
-          name: "Spacer",
-          props: {
-            height: 1
-          },
-          meta: {
-            height: {
-              name: "Height"
-            }
-          }
-        },
-        {
-          id: "parent",
-          name: "Parent",
-          props: {
-            children: [] as Component[]
-          }
-        },
-        {
-          id: "profile-info",
-          name: "Profile Info"
-        },
-        {
-          id: "divider",
-          name: "Divider"
-        },
-        {
-          id: "mutual-collections",
-          name: "Mutual Collections"
-        },
-        {
-          id: "mutual-friends",
-          name: "Mutual Friends"
-        },
-        {
-          id: "core-statistics",
-          name: "Core Statistics",
-          props: {
-            friendsOnly: true
-          },
-          meta: {
-            friendsOnly: {
-              name: "Friends only",
-              description: "Only show when the user is friends with you."
-            }
-          }
-        },
-        {
-          id: "last-fm",
-          name: "Last.fm",
-          props: {
-            friendsOnly: false,
-            display: 7,
-            type: "recent"
-          },
-          meta: {
-            friendsOnly: {
-              name: "Friends only",
-              description: "Only show when the user is friends with you."
-            },
-            display: {
-              name: "Display count",
-              description: "How many items to display.",
-              type: "range",
-              min: 1,
-              max: 12,
-              step: 1
-            },
-            type: {
-              name: "Type",
-              type: "select",
-              options: [
-                { text: "Recent", value: "recent" },
-                { text: "Top", value: "top" }
-              ]
-            }
-          }
-        },
-        {
-          id: "mal",
-          name: "MyAnimeList",
-          props: {
-            friendsOnly: false,
-            type: "anime",
-            display: 3
-          },
-          meta: {
-            friendsOnly: {
-              name: "Friends only",
-              description: "Only show when the user is friends with you."
-            },
-            type: {
-              name: "Type",
-              type: "select",
-              options: [
-                { text: "Anime", value: "anime" },
-                { text: "Manga", value: "manga" },
-                { text: "Profile stats", value: "profile" }
-              ]
-            },
-            display: {
-              name: "Display count",
-              description: "How many items to display if type is anime/manga.",
-              type: "range",
-              min: 1,
-              max: 10,
-              step: 1
-            }
-          }
-        },
-        {
-          id: "anilist",
-          name: "AniList",
-          props: {
-            friendsOnly: false
-          }
-        },
-        {
-          id: "spotify",
-          name: "Spotify",
-          props: {
-            friendsOnly: false
-          }
-        },
-        {
-          id: "steam",
-          name: "Steam",
-          props: {
-            friendsOnly: false
-          }
-        },
-        {
-          id: "github",
-          name: "GitHub",
-          props: {
-            friendsOnly: false
-          }
-        },
-        {
-          id: "jitsi",
-          name: "Jitsi Stats",
-          props: {
-            friendsOnly: false
-          }
-        },
-        {
-          id: "geoguess",
-          name: "GeoGuess",
-          props: {
-            friendsOnly: false
-          }
-        }
-      ] as any[],
       defaultLayout: {
         layout: {
           columns: [
@@ -602,6 +447,168 @@ export default defineComponent({
     };
   },
   computed: {
+    components() {
+      return [
+        {
+          id: "spacer",
+          name: "Spacer",
+          props: {
+            height: 1
+          },
+          meta: {
+            height: {
+              name: "Height"
+            }
+          }
+        },
+        {
+          id: "parent",
+          name: "Parent",
+          props: {
+            children: [] as Component[]
+          }
+        },
+        {
+          id: "profile-info",
+          name: "Profile Info"
+        },
+        {
+          id: "divider",
+          name: "Divider"
+        },
+        {
+          id: "mutual-collections",
+          name: "Mutual Collections"
+        },
+        {
+          id: "mutual-friends",
+          name: "Mutual Friends"
+        },
+        {
+          id: "core-statistics",
+          name: "Core Statistics",
+          props: {
+            friendsOnly: true
+          },
+          meta: {
+            friendsOnly: {
+              name: "Friends only",
+              description: "Only show when the user is friends with you."
+            }
+          }
+        },
+        {
+          id: "last-fm",
+          name: "Last.fm",
+          disabled: !this.$user.user.integrations.find(
+            (x) => x.type === "lastfm"
+          ),
+          props: {
+            friendsOnly: false,
+            display: 7,
+            type: "recent"
+          },
+          meta: {
+            friendsOnly: {
+              name: "Friends only",
+              description: "Only show when the user is friends with you."
+            },
+            display: {
+              name: "Display count",
+              description: "How many items to display.",
+              type: "range",
+              min: 1,
+              max: 12,
+              step: 1
+            },
+            type: {
+              name: "Type",
+              type: "select",
+              options: [
+                { text: "Recent", value: "recent" },
+                { text: "Top", value: "top" }
+              ]
+            }
+          }
+        },
+        {
+          id: "mal",
+          name: "MyAnimeList",
+          disabled: !this.$user.user.integrations.find((x) => x.type === "mal"),
+          props: {
+            friendsOnly: false,
+            type: "anime",
+            display: 3
+          },
+          meta: {
+            friendsOnly: {
+              name: "Friends only",
+              description: "Only show when the user is friends with you."
+            },
+            type: {
+              name: "Type",
+              type: "select",
+              options: [
+                { text: "Anime", value: "anime" },
+                { text: "Manga", value: "manga" },
+                { text: "Profile stats", value: "profile" }
+              ]
+            },
+            display: {
+              name: "Display count",
+              description: "How many items to display if type is anime/manga.",
+              type: "range",
+              min: 1,
+              max: 10,
+              step: 1
+            }
+          }
+        },
+        {
+          id: "spotify",
+          name: "Spotify",
+          visible: false,
+          props: {
+            friendsOnly: false
+          }
+        },
+        {
+          id: "steam",
+          name: "Steam",
+          visible: false,
+          props: {
+            friendsOnly: false
+          }
+        },
+        {
+          id: "github",
+          name: "GitHub",
+          visible: false,
+          props: {
+            friendsOnly: false
+          }
+        },
+        {
+          id: "jitsi",
+          name: "Jitsi Stats",
+          visible: false,
+          props: {
+            friendsOnly: false
+          }
+        },
+        {
+          id: "geoguess",
+          name: "GeoGuess",
+          visible: false,
+          props: {
+            friendsOnly: false
+          }
+        }
+      ] as Component[];
+    },
+    visibleComponents() {
+      return this.components.filter((x) => x.visible !== false);
+    },
     selectedComponent() {
       let component = this.layout.layout.columns[0].rows.find(
         (x) => x.id === this.config.component
@@ -677,23 +684,61 @@ export default defineComponent({
     }
   },
   methods: {
+    findComponent(id: string) {
+      let component = this.layout.layout.columns[0].rows.find(
+        (x) => x.id === id
+      );
+      if (component)
+        return {
+          component,
+          parent: this.layout.layout.columns[0]
+        };
+      component = this.layout.layout.columns[0].rows
+        .find(
+          (x) =>
+            x?.props?.children &&
+            x?.props?.children?.find((y: Component) => y.id === id)
+        )
+        ?.props?.children?.find((y: Component) => y.id === id);
+      return {
+        component,
+        parent: this.layout.layout.columns[0].rows.find(
+          (x) =>
+            x?.props?.children &&
+            x?.props?.children?.find((y: Component) => y.id === id)
+        )
+      };
+    },
     updateProp(data: { key: string; value: any }) {
       if (!this.selectedComponent) return;
       this.selectedComponent.props[data.key] = data.value;
     },
     deleteComponent(component: Component) {
-      const index = this.layout.layout.columns[0].rows.indexOf(component);
-      if (index === -1) return;
-      this.layout.layout.columns[0].rows.splice(index, 1);
+      const comp = this.findComponent(component.id);
+      console.log(comp, component);
+      if (!comp?.component) return;
+      if (comp.parent.rows) {
+        comp.parent.rows.splice(comp.parent.rows.indexOf(comp.component), 1);
+      } else {
+        comp.parent.props.children.splice(
+          comp.parent.props.children.indexOf(comp.component),
+          1
+        );
+      }
     },
     move(component: Component, count: number) {
-      const index = this.layout.layout.columns[0].rows.indexOf(component);
-      if (index === -1) return;
-      const newIndex = index + count;
-      if (newIndex < 0 || newIndex >= this.layout.layout.columns[0].rows.length)
-        return;
-      this.layout.layout.columns[0].rows.splice(index, 1);
-      this.layout.layout.columns[0].rows.splice(newIndex, 0, component);
+      const comp = this.findComponent(component.id);
+      console.log(comp, component);
+      if (!comp?.component) return;
+      if (comp.parent.rows) {
+        const index = comp.parent.rows.indexOf(comp.component);
+        comp.parent.rows.splice(index, 1);
+        comp.parent.rows.splice(index + count, 0, comp.component);
+      } else {
+        const index = comp.parent.props.children.indexOf(comp.component);
+        comp.parent.props.children.splice(index, 1);
+        comp.parent.props.children.splice(index + count, 0, comp.component);
+      }
     },
     setLayout(layout: ProfileLayout) {
       console.log(layout);

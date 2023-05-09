@@ -245,7 +245,8 @@ export class ProviderController {
       async (req: RequestAuth, res: Response) => {
         const user = await this.providerService.verifyUser(
           req.params.username,
-          "lastfm"
+          "lastfm",
+          req.user?.id
         )
         res.json(
           await this.providerService.getLastFMOverview(
@@ -337,7 +338,8 @@ export class ProviderController {
       async (req: RequestAuth, res: Response) => {
         const user = await this.providerService.verifyUser(
           req.params.username,
-          "mal"
+          "mal",
+          req.user?.id
         )
         res.json(
           await this.providerService.getMALOverview(
@@ -423,7 +425,8 @@ export class ProviderController {
       async (req: RequestAuth, res: Response) => {
         const user = await this.providerService.verifyUser(
           req.params.username,
-          "mal"
+          "mal",
+          req.user?.id
         )
         if (user.id !== req.user.id) throw Errors.NO_PERMISSION
         if (!req.body.id || typeof req.body.id !== "number")
@@ -434,6 +437,22 @@ export class ProviderController {
           user.integrations[0].accessToken,
           req.body
         )
+        res.sendStatus(204)
+      }
+    )
+
+    this.router.delete(
+      "/:id",
+      auth("user.modify"),
+      async (req: RequestAuth, res: Response) => {
+        const integration = await Integration.findOne({
+          where: {
+            id: req.params.id,
+            userId: req.user.id
+          }
+        })
+        if (!integration) throw Errors.INTEGRATION_NOT_FOUND
+        await integration.destroy()
         res.sendStatus(204)
       }
     )

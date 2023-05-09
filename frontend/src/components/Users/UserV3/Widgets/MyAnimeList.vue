@@ -235,7 +235,12 @@ export default defineComponent({
         this.partialLoading = true;
       }
       const { data } = await this.axios.get(
-        `/providers/userv3/mal/${this.user?.username}`
+        `/providers/userv3/mal/${this.user?.username}`,
+        {
+          headers: {
+            noToast: true
+          }
+        }
       );
       if (!data.data) return;
       this.recent = data.data;

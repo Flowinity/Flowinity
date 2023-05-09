@@ -82,6 +82,7 @@ export interface AppState {
     server: string;
   };
   dialogs: {
+    experiments: boolean;
     migrateWizard: boolean;
     quickSwitcher: boolean;
     memoryProfiler: boolean;
@@ -211,6 +212,7 @@ export const useAppStore = defineStore("app", {
         }
       },
       dialogs: {
+        experiments: false,
         nickname: {
           value: false,
           userId: 0

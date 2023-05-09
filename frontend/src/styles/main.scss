@@ -82,7 +82,7 @@
 }
 
 .v-btn--variant-outlined,
-.v-chip--variant-outlined, .v-card--variant-outlined, .v-avatar--variant-outlined {
+.v-chip--variant-outlined, .v-card--variant-outlined, .v-avatar--variant-outlined, .v-list-item--variant-outlined {
   border-color: hsla(0, 0%, 100%, 0.12) !important;
 }
 
@@ -441,4 +441,33 @@ a {
   height: calc(100vh - 64px);
   display: flex;
   align-items: center;
+}
+
+.dev-overlay {
+  position: absolute;
+  z-index: 9000;
+  background-color: rgba(0, 0, 0, 0.37);
+  text-align: center;
+  width: 500px;
+  right: 25px;
+  top: 25px;
+  overflow: visible;
+}
+
+.dev-header {
+  padding: 10px;
+  cursor: move;
+  z-index: 2001;
+  background-color: #0190ea;
+  color: black;
+}
+
+
+// Align v-icon with text
+.v-icon {
+  margin-top: 2px;
+}
+
+.c-both {
+  clear: both;
 }

@@ -139,6 +139,7 @@ export class Application {
           })
         })
       } else if (err?.issues) {
+        console.log(err)
         res.status(400).send({
           errors: Object.keys(err.issues).map((e: any) => {
             return {

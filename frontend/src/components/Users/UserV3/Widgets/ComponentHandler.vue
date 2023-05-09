@@ -11,7 +11,14 @@
       <v-btn @click="$emit('delete', component)" icon>
         <v-icon>mdi-delete</v-icon>
       </v-btn>
-      <v-btn @click="$emit('settings', component.id)" icon>
+      <v-btn
+        @click="$emit('settings', component.id)"
+        icon
+        v-if="
+          component.name !== 'parent' &&
+          components.find((c) => c.id === component.name).props
+        "
+      >
         <v-icon>mdi-cog</v-icon>
       </v-btn>
       <v-btn @click="$emit('moveUp', component)" icon>
@@ -22,14 +29,20 @@
       </v-btn>
       <v-icon class="drag-handle mr-3 ml-1">mdi-drag</v-icon>
     </v-toolbar>
-    <template v-if="willShow(component, 'parent')">
-      <template v-if="editMode">
+    <div
+      :class="{ 'v-container': editMode }"
+      v-if="willShow(component, 'parent')"
+    >
+      <template v-if="editMode && $experiments.experiments.USER_V3_EDITOR">
         <v-card-subtitle class="mt-2">Dev UserV3 actions:</v-card-subtitle>
         <v-btn @click="addItemDebug(comp.id)" v-for="comp in components">
           Add {{ comp.name }}
         </v-btn>
       </template>
-      <v-row>
+      <template v-else-if="editMode">
+        <UserV3AddMenu :components="components" @add="addItemDebug" />
+      </template>
+      <v-row class="c-both">
         <v-col
           v-for="child in component.props.children"
           md="12"
@@ -44,10 +57,13 @@
             :primary="primary"
             :editMode="editMode"
             @settings="$emit('settings', $event)"
+            @delete="$emit('delete', $event)"
+            @moveUp="$emit('moveUp', $event)"
+            @moveDown="$emit('moveDown', $event)"
           ></UserV3ComponentHandler>
         </v-col>
       </v-row>
-    </template>
+    </div>
     <div
       :style="{ height: component.props?.height + 'px' }"
       v-else-if="willShow(component, 'spacer')"
@@ -117,10 +133,12 @@ import MyAnimeList from "@/components/Users/UserV3/Widgets/MyAnimeList.vue";
 import VErrorBoundary from "@/components/Core/ErrorBoundary.vue";
 import Crash from "@/components/Core/CrashAlt.vue";
 import { Component } from "@/types/userv3";
+import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 
 export default defineComponent({
   name: "UserV3ComponentHandler",
   components: {
+    UserV3AddMenu,
     MyAnimeList,
     LastFM,
     CoreStatistics,

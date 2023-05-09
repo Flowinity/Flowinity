@@ -1,8 +1,6 @@
 <template>
-  <div class="dev-overlay" id="dev-overlay">
-    <div class="dev-header" id="dev-header">
-      TPU Memory Profiler (CTRL + ALT + M)
-    </div>
+  <DevDialog>
+    <template v-slot:header>Memory Profiler (CTRL + ALT + M)</template>
     <v-container>
       <v-row>
         <v-col>
@@ -16,6 +14,7 @@
                 ]"
                 :items="memoryUsageByStore"
                 :hide-default-footer="true"
+                :sort-by="[{ key: 'size', direction: 'desc' }]"
               >
                 <template v-slot:item.size="{ item }">
                   {{ $functions.fileSize(item.props.title.size) }}
@@ -26,7 +25,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </div>
+  </DevDialog>
 </template>
 
 <script lang="ts">
@@ -38,9 +37,16 @@ import { useExperimentsStore } from "@/store/experiments";
 import { useFriendsStore } from "@/store/friends";
 import { useCollectionsStore } from "@/store/collections";
 import { useWorkspacesStore } from "@/store/workspaces";
+import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
 
 export default defineComponent({
   name: "MemoryProfiler",
+  components: { DevDialog },
+  data() {
+    return {
+      usage: []
+    };
+  },
   computed: {
     memoryUsageByStore() {
       return [
@@ -71,83 +77,9 @@ export default defineComponent({
         {
           name: "WorkspacesStore",
           size: JSON.stringify(useWorkspacesStore()).length
-        },
-        {
-          name: "VueRouter",
-          size: JSON.stringify(this.$router).length
         }
       ];
     }
-  },
-  methods: {
-    drag(element: any) {
-      try {
-        let pos1 = 0,
-          pos2 = 0,
-          pos3 = 0,
-          pos4 = 0;
-        if (document.getElementById("dev-header")) {
-          //@ts-ignore
-          document.getElementById("dev-header").onmousedown = dragMouseDown;
-        } else {
-          // otherwise, move the DIV from anywhere inside the DIV:
-          element.onmousedown = dragMouseDown;
-        }
-
-        function dragMouseDown(e: any) {
-          e = e || window.event;
-          e.preventDefault();
-          // get the mouse cursor position at startup:
-          pos3 = e.clientX;
-          pos4 = e.clientY;
-          document.onmouseup = closeDragElement;
-          // call a function whenever the cursor moves:
-          document.onmousemove = elementDrag;
-        }
-
-        function elementDrag(e: any) {
-          e = e || window.event;
-          e.preventDefault();
-          pos1 = pos3 - e.clientX;
-          pos2 = pos4 - e.clientY;
-          pos3 = e.clientX;
-          pos4 = e.clientY;
-          element.style.top = element.offsetTop - pos2 + "px";
-          element.style.left = element.offsetLeft - pos1 + "px";
-        }
-
-        function closeDragElement() {
-          document.onmouseup = null;
-          document.onmousemove = null;
-        }
-      } catch (e) {
-        console.log(e);
-        this.$toast.error("Error while initializing memory profiler");
-      }
-    }
-  },
-  mounted() {
-    this.drag(document.getElementById("dev-overlay"));
   }
 });
 </script>
-
-<style scoped>
-.dev-overlay {
-  position: absolute;
-  z-index: 9000;
-  background-color: rgba(0, 0, 0, 0.37);
-  text-align: center;
-  width: 500px;
-  right: 25px;
-  top: 25px;
-}
-
-.dev-header {
-  padding: 10px;
-  cursor: move;
-  z-index: 2001;
-  background-color: #0190ea;
-  color: black;
-}
-</style>

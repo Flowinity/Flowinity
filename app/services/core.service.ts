@@ -301,8 +301,9 @@ export class CoreService {
 
   getExperiments(dev: boolean = false, gold: boolean = false): object {
     const experiments = {
+      USER_V3_EDITOR: false,
       RAIL_SIDEBAR: true,
-      USER_V3_MODIFY: false,
+      USER_V3_MODIFY: true,
       USER_V3: true,
       EARLY_ACCESS: false,
       PINNED_MESSAGES: true,
@@ -349,6 +350,10 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        USER_V3_EDITOR: {
+          description: "Development JSON editor and buttons for UserV3.",
+          createdAt: "2023-05-09T00:00:00.000Z"
+        },
         RAIL_SIDEBAR: {
           description: "Enable the new sidebar.",
           createdAt: "2023-05-07T00:00:00.000Z"
@@ -564,6 +569,7 @@ export class CoreService {
     if (dev) {
       //experiments.FORCE_DEV_MODE = false
       //experiments.FORCE_STABLE_MODE = false
+      //experiments.USER_V3_EDITOR = true
       experiments.RAIL_SIDEBAR = true
       experiments.USER_V3_MODIFY = true
       experiments.USER_V3 = true

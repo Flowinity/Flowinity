@@ -18,7 +18,7 @@ export class ProviderService {
     return data
   }
 
-  async verifyUser(username: string, provider: string) {
+  async verifyUser(username: string, provider: string, currentUserId: number) {
     const user = await User.findOne({
       where: {
         username: username
@@ -33,6 +33,8 @@ export class ProviderService {
         }
       ]
     })
+    if (!user) throw Errors.USER_NOT_FOUND
+
     if (
       !user?.profileLayout?.layout.columns[0].rows.find(
         (row) => row.name === (provider === "lastfm" ? "last-fm" : provider)
@@ -42,9 +44,10 @@ export class ProviderService {
         ?.props.children.find(
           (child: ProfileLayoutComponent) =>
             child.name === (provider === "lastfm" ? "last-fm" : provider)
-        )
+        ) &&
+      user.id !== currentUserId
     )
-      throw Errors.USER_NOT_FOUND
+      throw Errors.PROVIDER_WIDGET_DISABLED
     return user
   }
 

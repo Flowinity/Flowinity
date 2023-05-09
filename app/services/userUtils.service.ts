@@ -19,6 +19,7 @@ import { FriendNickname } from "@app/models/friendNickname"
 import { ThemeEngineValidate } from "@app/validators/themeEngine"
 import { PatchUser } from "@app/types/auth"
 import { CoreService } from "@app/services/core.service"
+import { LayoutValidate } from "@app/validators/userv3"
 
 @Service()
 export class UserUtilsService {
@@ -489,6 +490,7 @@ export class UserUtilsService {
         delete body.profileLayout
       }
     }
+    if (body.profileLayout) await LayoutValidate.parse(body.profileLayout)
     await user.update(body)
     delete body.currentPassword
     delete body.password

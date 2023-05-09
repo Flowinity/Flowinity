@@ -14,7 +14,7 @@
       ></HoverChip>
     </v-container>
   </v-card>
-  <v-card class="mt-4">
+  <v-card class="mt-4" v-if="$user.user.integrations.length">
     <v-toolbar>
       <v-toolbar-title>Manage linked accounts</v-toolbar-title>
     </v-toolbar>
@@ -31,6 +31,14 @@
           <v-list-item-subtitle>
             {{ integration.providerUsername }}
           </v-list-item-subtitle>
+          <v-list-item-subtitle>
+            Added on: {{ $date(integration.createdAt).format("MMMM Do YYYY") }}
+          </v-list-item-subtitle>
+          <template v-slot:append>
+            <v-btn icon @click="removeIntegration(integration.id)">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </template>
         </v-list-item>
       </v-list>
     </v-container>
@@ -46,6 +54,7 @@ export default defineComponent({
   components: { HoverChip },
   data() {
     return {
+      loading: false,
       integrations: [] as {
         id: string;
         key: string;
@@ -58,6 +67,13 @@ export default defineComponent({
     };
   },
   methods: {
+    async removeIntegration(id: number) {
+      this.loading = true;
+      await this.axios.delete(`/providers/${id}`);
+      await this.$user.init();
+      this.loading = false;
+      this.$toast.success("Account unlinked from TPU.");
+    },
     getIntegrationMeta(id: string) {
       const integration = this.integrations.find((i) => i.id === id);
       if (!integration) {

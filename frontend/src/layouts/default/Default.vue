@@ -15,6 +15,9 @@
     ></WorkspaceDeleteDialog>
     <UploadDialog v-model="$app.dialogs.upload.value"></UploadDialog>
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
+    <ExperimentsManagerDialog
+      v-if="$app.dialogs.experiments"
+    ></ExperimentsManagerDialog>
     <URLConfirmDialog
       v-model="$chat.dialogs.externalSite.value"
     ></URLConfirmDialog>
@@ -122,6 +125,8 @@ import NicknameDialog from "@/components/Core/Dialogs/Nickname.vue";
 import ThemeEngineWrapper from "@/components/Core/ThemeEngineWrapper.vue";
 import RailBar from "@/layouts/default/RailBar.vue";
 import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
+import ExperimentsManager from "@/components/Dev/Dialogs/Experiments.vue";
+import ExperimentsManagerDialog from "@/components/Dev/Dialogs/Experiments.vue";
 </script>
 
 <script lang="ts">
@@ -282,11 +287,14 @@ export default defineComponent({
     // watch for CTRL + ALT + M for Memory Profiler
     document.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.ctrlKey && e.altKey && e.key === "m") {
+        e.preventDefault();
         this.$app.dialogs.memoryProfiler = !this.$app.dialogs.memoryProfiler;
-      }
-      if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
+      } else if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
         e.preventDefault();
         this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
+      } else if (e.ctrlKey && e.key === "t") {
+        e.preventDefault();
+        this.$app.dialogs.experiments = !this.$app.dialogs.experiments;
       }
       if (
         (e.ctrlKey && e.altKey && e.key === "d") ||

@@ -21,6 +21,7 @@ export default defineComponent({
         }
       });
       this.$toast.success("Account linked!");
+      await this.$user.init();
       this.$router.push("/settings/integrations");
     }
   },

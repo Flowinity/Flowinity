@@ -93,7 +93,12 @@ export default defineComponent({
     async getLastFM() {
       this.loading = true;
       const { data } = await this.axios.get(
-        `/providers/userv3/lastfm/${this.user?.username}`
+        `/providers/userv3/lastfm/${this.user?.username}`,
+        {
+          headers: {
+            noToast: true
+          }
+        }
       );
       if (!data.recenttracks) return;
       this.tracks = data.recenttracks.track;

@@ -1,6 +1,7 @@
 import { Notification } from "@/models/notification";
 import { AutoCollectRule } from "@/models/autoCollectRule";
 import { AlternatePassword } from "@/types/auth";
+import { Integration } from "@/models/integration";
 export interface ThemeEngine {
   theme: {
     dark: any;
@@ -143,6 +144,5 @@ export interface User {
   themeEngine: ThemeEngine | null;
   insights: "everyone" | "friends" | "nobody";
   profileLayout?: ProfileLayout | null;
-  //TODO
-  integrations: any[];
+  integrations: Integration[];
 }

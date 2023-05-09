@@ -281,6 +281,15 @@ let Errors = {
   INVALID_ID: {
     message: "The provided ID is invalid.",
     status: 400
+  },
+  PROVIDER_WIDGET_DISABLED: {
+    message:
+      "This user does not have the widget, so you do not have permission to view this information.",
+    status: 403
+  },
+  INTEGRATION_NOT_FOUND: {
+    message: "The requested integration could not be found.",
+    status: 400
   }
 }
 
