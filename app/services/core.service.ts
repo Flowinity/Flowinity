@@ -576,12 +576,14 @@ export class CoreService {
         }
       }
     }
+    if (config.release === "dev") {
+      experiments.API_FALLBACK_ON_ERROR = true
+      experiments.API_VERSION = 3
+    }
     if (dev || config.release === "dev") {
       //experiments.FORCE_DEV_MODE = false
       //experiments.FORCE_STABLE_MODE = false
       //experiments.USER_V3_EDITOR = true
-      experiments.API_FALLBACK_ON_ERROR = true
-      experiments.API_VERSION = 3
       experiments.RAIL_SIDEBAR = true
       experiments.USER_V3_MODIFY = true
       experiments.USER_V3 = true
