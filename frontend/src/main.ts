@@ -480,10 +480,10 @@ app.use(VueMatomo, {
   crossOrigin: undefined
 });
 
-app.use(VueAxios, axios);
 app.use(Toast, options);
 app.config.globalProperties.$toast = useToast();
 app.use(VueApexCharts);
+app.use(VueAxios, axios);
 registerPlugins(app);
 
 app.config.performance = true;

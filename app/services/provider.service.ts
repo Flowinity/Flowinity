@@ -301,6 +301,7 @@ export class ProviderService {
   }
 
   async providerInit() {
+    if (config.release === "dev") return
     cron.schedule("0 * * * *", () => {
       this.renewService()
     })

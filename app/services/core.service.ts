@@ -301,6 +301,8 @@ export class CoreService {
 
   getExperiments(dev: boolean = false, gold: boolean = false): object {
     const experiments = {
+      API_FALLBACK_ON_ERROR: false,
+      API_VERSION: 2,
       USER_V3_EDITOR: false,
       RAIL_SIDEBAR: true,
       USER_V3_MODIFY: true,
@@ -350,6 +352,14 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        API_FALLBACK_ON_ERROR: {
+          description: "If the API request fails, fallback to the old API.",
+          createdAt: "2023-05-10T00:00:00.000Z"
+        },
+        API_VERSION: {
+          description: "Specify custom API version.",
+          createdAt: "2023-05-10T00:00:00.000Z"
+        },
         USER_V3_EDITOR: {
           description: "Development JSON editor and buttons for UserV3.",
           createdAt: "2023-05-09T00:00:00.000Z"
@@ -566,10 +576,12 @@ export class CoreService {
         }
       }
     }
-    if (dev) {
+    if (dev || config.release === "dev") {
       //experiments.FORCE_DEV_MODE = false
       //experiments.FORCE_STABLE_MODE = false
       //experiments.USER_V3_EDITOR = true
+      experiments.API_FALLBACK_ON_ERROR = true
+      experiments.API_VERSION = 3
       experiments.RAIL_SIDEBAR = true
       experiments.USER_V3_MODIFY = true
       experiments.USER_V3 = true

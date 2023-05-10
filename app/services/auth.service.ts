@@ -65,7 +65,7 @@ export class AuthService {
   async login(
     username: string,
     password: string,
-    totp: string
+    totp?: string
   ): Promise<Login> {
     const user = await User.findOne({
       where: {
@@ -113,7 +113,7 @@ export class AuthService {
       try {
         let tokenValidation = speakeasy.totp.verify({
           secret: user.totpSecret,
-          token: totp,
+          token: totp || "",
           encoding: "base32"
         })
         if (!tokenValidation) {

@@ -219,8 +219,11 @@ export class AdminService {
   }
 
   async createExperimentOverrides(
-    currentExperiments: Experiment[],
-    overrides: { [key: string]: string | number | boolean },
+    currentExperiments: Record<
+      string,
+      string | number | boolean | undefined | null
+    >,
+    overrides: { [key: string]: string | number | boolean | undefined | null },
     userId: number,
     dev: boolean = false
   ) {

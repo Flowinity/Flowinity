@@ -134,16 +134,16 @@ export default defineComponent({
   methods: {
     removeAvatar() {
       if (!this.edit) return;
-      this.axios.delete("/api/v2/user/avatar").then(() => {
+      this.axios.delete("/api/v2/user/upload/avatar").then(() => {
         this.$emit("refresh");
       });
     },
     changeAvatar(file: File) {
       if (!file || !this.edit) return;
       let formData = new FormData();
-      formData.append("avatar", file);
+      formData.append("banner", file);
       this.axios
-        .post("/user/avatar", formData, {
+        .post("/user/upload/avatar", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }

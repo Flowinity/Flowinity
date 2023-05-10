@@ -14,8 +14,8 @@ export interface AxiosStaticWithAvoidance extends AxiosStatic {
 
 const ax = axios.create({
   baseURL: import.meta.env.CORDOVA
-    ? "https://images.flowinity.com/api/v2"
-    : "/api/v2",
+    ? `https://images.flowinity.com/api/v2`
+    : `/api/v2`,
   withCredentials: true,
   headers: {
     Authorization: localStorage.getItem("token"),
@@ -35,7 +35,7 @@ ax.interceptors.response.use(
     if (e?.response?.data?.errors) {
       if (e.response.data.errors[0].name === "INVALID_TOKEN") {
         const user = useUserStore();
-        if(user.user) {
+        if (user.user) {
           user.logout();
           router.push("/login");
         }
@@ -62,6 +62,17 @@ ax.interceptors.response.use(
         }
       }
     } else {
+      if (
+        e.response?.config?.baseURL?.includes("/api/v3") &&
+        e.response.status === 404
+      ) {
+        console.warn(
+          `[TPU/HTTP] APIv3 feature is not implemented. Falling back to APIv2.`
+        );
+        const config = e.response.config;
+        config.baseURL = config.baseURL.replace("/api/v3", "/api/v2");
+        return axios.request(config);
+      }
       toast.error("An unknown error occurred.");
     }
     return Promise.reject(e);

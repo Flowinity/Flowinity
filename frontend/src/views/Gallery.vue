@@ -163,7 +163,7 @@ export default defineComponent({
           search: this.show.search,
           textMetadata: this.show.metadata,
           filter: this.show.selected,
-          sort: this.show.sort
+          sort: `"${this.show.sort}"`
         }
       });
       this.gallery = data as typeof this.gallery;

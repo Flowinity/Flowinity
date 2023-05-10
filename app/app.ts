@@ -8,7 +8,6 @@ import { UserUtilsController } from "@app/controllers/userutils.controller"
 import { CoreController } from "@app/controllers/core.controller"
 import { GalleryController } from "@app/controllers/gallery.controller"
 import Errors from "@app/lib/errors"
-import { HttpException } from "@app/classes/http.exception"
 import { AuthController } from "@app/controllers/auth.controller"
 import { FileController } from "@app/controllers/file.controller"
 import { CollectionController } from "@app/controllers/collection.controller"
@@ -39,16 +38,24 @@ import {
 } from "routing-controllers"
 import { Container } from "typedi"
 //v3 controllers
-import { UserController as UserControllerV3 } from "@app/controllers/v3/user.controller"
+import { UserControllerV3 } from "@app/controllers/v3/user.controller"
+import { AuthControllerV3 } from "@app/controllers/v3/auth.controller"
 import { routingControllersToSpec } from "routing-controllers-openapi"
+import { CoreControllerV3 } from "@app/controllers/v3/core.controller"
+import { ChatControllerV3 } from "@app/controllers/v3/chat.controller"
+import { AdminControllerV3 } from "@app/controllers/v3/admin.controller"
+import { AutoCollectControllerV3 } from "@app/controllers/v3/autoCollect.controller"
+import { GalleryControllerV3 } from "@app/controllers/v3/gallery.controller"
+import { CollectionControllerV3 } from "@app/controllers/v3/collection.controller"
+import { FileControllerV3 } from "@app/controllers/v3/file.controller"
 
 @Service()
 @Middleware({ type: "after" })
 export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
   error(err: any, req: any, res: any, next: (err: any) => any) {
+    console.log(err)
     if (err?.status && !err?.errno) {
-      console.log(err)
-      res.status(err?.status || 500).send({
+      return res.status(err?.status || 500).json({
         errors: [
           {
             name: Object.entries(Errors).find(
@@ -59,7 +66,7 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
         ]
       })
     } else if (err instanceof sequelize.ValidationError) {
-      res.status(400).send({
+      return res.status(400).json({
         errors: err.errors.map((e: any) => {
           return {
             status: 400,
@@ -72,8 +79,7 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
         })
       })
     } else if (err?.issues) {
-      console.log(err)
-      res.status(400).send({
+      return res.status(400).json({
         errors: Object.keys(err.issues).map((e: any) => {
           return {
             status: 400,
@@ -82,10 +88,24 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
           }
         })
       })
+    } else if (err?.message) {
+      return res.status(400).json({
+        errors: [
+          {
+            status: 400,
+            message: err.message,
+            name: "Troplo/ValidationError"
+          }
+        ]
+      })
     } else {
-      console.log(err)
-      res.status(500).send({
-        errors: [Errors.UNKNOWN]
+      return res.status(500).json({
+        errors: [
+          {
+            ...Errors.UNKNOWN,
+            name: "UNKNOWN"
+          }
+        ]
       })
     }
   }
@@ -138,15 +158,30 @@ export class Application {
 
   bindRoutes(): void {
     this.app.use((req, res, next) => {
-      res.setHeader("X-Powered-By", "TroploPrivateUploader/2.0.0")
+      res.setHeader("X-Powered-By", "TroploPrivateUploader/3.0.0")
       next()
     })
     useContainer(Container)
     useExpressServer(this.app, {
-      controllers: [UserControllerV3],
+      controllers: [
+        UserControllerV3,
+        AuthControllerV3,
+        CoreControllerV3,
+        ChatControllerV3,
+        AutoCollectControllerV3,
+        GalleryControllerV3,
+        CollectionControllerV3,
+        AdminControllerV3,
+        FileControllerV3
+      ],
       routePrefix: "/api/v3",
       middlewares: [HttpErrorHandler],
-      defaultErrorHandler: false
+      defaultErrorHandler: false,
+      classTransformer: false,
+      defaults: {
+        undefinedResultCode: 204,
+        nullResultCode: 404
+      }
     })
     const storage = getMetadataArgsStorage()
     const spec = routingControllersToSpec(storage)
@@ -188,7 +223,7 @@ export class Application {
         errors: [Errors.API_REMOVED]
       })
     })
-    this.app.use("/api/v2", (req, res) => {
+    this.app.use("/api", (req, res) => {
       throw Errors.NOT_FOUND
     })
     this.app.use(
@@ -233,7 +268,6 @@ export class Application {
         }
       }
     )
-    this.errorHandling()
     this.onServerStart()
   }
 
@@ -257,46 +291,6 @@ export class Application {
             [Op.not]: "offline"
           }
         }
-      }
-    )
-  }
-
-  private errorHandling(): void {
-    // When previous handlers have not served a request: path wasn't found
-
-    this.app.use(
-      (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
-      ) => {
-        return
-      }
-    )
-
-    // development error handler
-    // will print stacktrace
-    if (this.app.get("env") === "development") {
-      this.app.use(
-        (err: HttpException, req: express.Request, res: express.Response) => {
-          res.status(err.status || 500)
-          res.send({
-            message: err.message,
-            error: err
-          })
-        }
-      )
-    }
-
-    // production error handler
-    // no stacktraces  leaked to user (in production env only)
-    this.app.use(
-      (err: HttpException, req: express.Request, res: express.Response) => {
-        res.status(err.status || 500)
-        res.send({
-          message: err.message,
-          error: {}
-        })
       }
     )
   }

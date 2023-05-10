@@ -4,7 +4,7 @@
     floating
     permanent
     rail
-    style="top: 0 !important"
+    style="top: 0; height: 100%"
     color="dark"
   >
     <v-list

@@ -8,7 +8,10 @@ import {
   Post,
   QueryParam,
   UseBefore,
-  UploadedFile
+  UploadedFile,
+  Delete,
+  Head,
+  Res
 } from "routing-controllers"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { Service } from "typedi"
@@ -20,10 +23,15 @@ import { User } from "@app/models/user.model"
 import rateLimits from "@app/lib/rateLimits"
 import uploader from "@app/lib/upload"
 import { GalleryService } from "@app/services/gallery.service"
+import { BadgeAssociation } from "@app/models/badgeAssociation.model"
+import { Plan } from "@app/models/plan.model"
+import { Response, Request } from "express"
+import fs from "fs"
+import sharp from "sharp"
 
 @Service()
 @JsonController("/user")
-export class UserController {
+export class UserControllerV3 {
   constructor(
     private userUtilsService: UserUtilsService,
     private galleryService: GalleryService
@@ -163,12 +171,15 @@ export class UserController {
   @OnUndefined(204)
   @Post("/upload/:type")
   @UseBefore(rateLimits.uploadLimiterUser)
-  @UseBefore(uploader.single("banner"))
   async updateBanner(
     @Auth("user.modify") user: User,
-    @UploadedFile("banner") banner: Express.Multer.File,
+    @UploadedFile("banner", {
+      options: uploader
+    })
+    banner: Express.Multer.File,
     @Param("type") type: "banner" | "avatar"
   ) {
+    if (type !== "banner" && type !== "avatar") throw Errors.INVALID_PARAMETERS
     const ban = await this.galleryService.createUpload(
       user.id,
       banner,
@@ -180,5 +191,102 @@ export class UserController {
       ban.upload.attachment,
       type
     )
+  }
+
+  @OnUndefined(204)
+  @Delete("/upload/:type")
+  async deleteBanner(
+    @Auth("user.modify") user: User,
+    @Param("type") type: "banner" | "avatar"
+  ) {
+    if (type !== "banner" && type !== "avatar") throw Errors.INVALID_PARAMETERS
+    await this.userUtilsService.updateBanner(user.id, null, type)
+  }
+
+  @Get("/friends")
+  async getFriends(@Auth("user.view") user: User) {
+    return await this.userUtilsService.getFriends(user.id)
+  }
+
+  @OnUndefined(204)
+  @Post("/verification/send")
+  async sendVerification(@Auth("user.modify") user: User) {
+    await this.userUtilsService.sendVerificationEmail(user.id)
+  }
+
+  @OnUndefined(204)
+  @Patch("/verification")
+  async verifyUser(
+    @Auth("user.modify") user: User,
+    @Body() body: { token: string }
+  ) {
+    await this.userUtilsService.verifyEmail(body.token)
+  }
+
+  @OnUndefined(204)
+  @Head("/getRekt")
+  async getRekt(@Auth("user.modify") user: User) {
+    if (
+      await BadgeAssociation.findOne({
+        where: { badgeId: 30, userId: user.id }
+      })
+    )
+      return
+    await BadgeAssociation.create({
+      badgeId: 30,
+      userId: user.id
+    })
+  }
+
+  @OnUndefined(204)
+  @Patch("/nickname/:userId")
+  async updateNickname(
+    @Auth("user.view") user: User,
+    @Param("userId") userId: number,
+    @Body() body: { nickname: string }
+  ) {
+    await this.userUtilsService.setFriendNickname(
+      user.id,
+      userId,
+      body.nickname
+    )
+  }
+
+  @Get("/favicon.png")
+  async getFavicon(
+    @QueryParam("username") username: string,
+    @Res() res: Response
+  ) {
+    const user = await User.findOne({
+      where: { username: username },
+      include: [
+        {
+          model: Plan,
+          as: "plan"
+        }
+      ]
+    })
+    if (!user || !user?.themeEngine || user.plan.internalName !== "GOLD") {
+      res.sendFile("/favicon.png", {
+        root: "./frontend/public"
+      })
+      return res
+    }
+    const gradient1 = user?.themeEngine?.theme.dark.colors.logo1
+    const gradient2 = user?.themeEngine?.theme.dark.colors.logo2
+    // get SVG file
+    const svg = await fs.readFileSync("./frontend/public/favicon.svg")
+    // replace colors
+    const svgString = svg.toString().replace(/#008FE9/g, gradient1)
+    const svgString2 = svgString.replace(/#006AEE/g, gradient2)
+    // convert to PNG
+    const png = await sharp(Buffer.from(svgString2))
+      .png()
+      .resize(128, 128)
+      .toBuffer()
+
+    res.set("Content-Type", "image/png")
+    res.send(png)
+    return res
   }
 }
