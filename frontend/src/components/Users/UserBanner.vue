@@ -80,7 +80,7 @@ export default defineComponent({
       if (this.user) {
         const formData = new FormData();
         formData.append("banner", file);
-        await this.axios.post("/user/banner", formData);
+        await this.axios.post("/user/upload/banner", formData);
         this.$emit("refreshUser");
       } else {
         const formData = new FormData();

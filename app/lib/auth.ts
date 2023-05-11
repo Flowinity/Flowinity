@@ -56,6 +56,9 @@ export type Scope =
   | "starred"
   | "admin"
   | "*"
+  | "mail.view"
+  | "mail.create"
+  | "mail"
 
 function checkScope(requiredScope: string | string[], scope: string) {
   if (scope === "*") {
@@ -372,10 +375,12 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
         if (session) {
           if (!checkScope(scope, session.scopes)) {
             updateSession(session, action.request.ip).then(() => {})
+            if (!required) return null
             throw Errors.SCOPE_REQUIRED
           }
           if (session.user?.banned) {
             updateSession(session, action.request.ip).then(() => {})
+            if (!required) return null
             throw Errors.BANNED
           } else {
             if (!session.user.emailVerified) {
@@ -391,9 +396,11 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
             return session.toJSON().user
           }
         } else {
+          if (!required) return null
           throw Errors.INVALID_TOKEN
         }
       } else {
+        if (!required) return null
         throw Errors.INVALID_TOKEN
       }
     }

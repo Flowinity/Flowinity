@@ -230,7 +230,7 @@ export const useUserStore = defineStore("user", {
             (document.createElement("link") as HTMLLinkElement);
           link.type = "image/x-icon";
           link.rel = "shortcut icon";
-          link.href = `/api/v2/user/favicon.png?cache=${Date.now()}&username=${
+          link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
             this.user.username
           }`;
           document.head.appendChild(link);

@@ -24,7 +24,7 @@ function generateImagePayload(imageResult: probe.ProbeResult) {
     url: ""
   }
   const jwtImage = jwt.sign(imagePayload, config.mediaProxySecret)
-  imagePayload.url = `/api/v2/mediaproxy/embed/${jwtImage}`
+  imagePayload.url = `/api/v3/mediaproxy/embed/${jwtImage}`
   return imagePayload
 }
 

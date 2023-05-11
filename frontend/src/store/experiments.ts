@@ -14,7 +14,7 @@ export const useExperimentsStore = defineStore("experiments", {
   state: () =>
     ({
       experiments: {
-        API_VERSION: 2
+        API_VERSION: 3
       },
       experimentsInherit: {}
     } as ExperimentsState),
@@ -25,11 +25,11 @@ export const useExperimentsStore = defineStore("experiments", {
       if (experiments) {
         try {
           this.experiments = JSON.parse(experiments);
-          if (this.experiments.API_VERSION) {
+          /*if (this.experiments.API_VERSION) {
             axios.defaults.baseURL = import.meta.env.CORDOVA
               ? `https://images.flowinity.com/api/${this.experiments.API_VERSION}`
               : `/api/v${this.experiments.API_VERSION}`;
-          }
+          }*/
         } catch {
           //
         }
@@ -39,11 +39,11 @@ export const useExperimentsStore = defineStore("experiments", {
         ...data,
         ...JSON.parse(localStorage.getItem("experiments") || "{}")
       };
-      if (this.experiments.API_VERSION) {
+      /*if (this.experiments.API_VERSION) {
         axios.defaults.baseURL = import.meta.env.CORDOVA
           ? `https://images.flowinity.com/api/${this.experiments.API_VERSION}`
           : `/api/v${this.experiments.API_VERSION}`;
-      }
+      }*/
       this.experimentsInherit = data;
       localStorage.setItem("experimentsStore", JSON.stringify(data));
     }

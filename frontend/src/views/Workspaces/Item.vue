@@ -284,7 +284,7 @@ export default defineComponent({
                 }
               },
               endpoints: {
-                byFile: "/api/v2/gallery"
+                byFile: "/api/v3/gallery"
               },
               field: "attachment"
             }
@@ -345,7 +345,7 @@ export default defineComponent({
                 }
               },
               endpoints: {
-                byFile: "/api/v2/gallery"
+                byFile: "/api/v3/gallery"
               },
               field: "attachment"
             }

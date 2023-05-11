@@ -9,10 +9,16 @@ import { AxiosStatic } from "axios"
 import { Integration } from "@app/models/integration.model"
 import { User } from "@app/models/user.model"
 import cryptoRandomString from "crypto-random-string"
+import { LastfmService } from "@app/services/providers/lastfm.service"
+import { MyAnimeListService } from "@app/services/providers/mal.service"
 @Service()
 export class ProviderController {
   router: any
-  constructor(private readonly providerService: ProviderService) {
+  constructor(
+    private readonly providerService: ProviderService,
+    private readonly lfmService: LastfmService,
+    private readonly malService: MyAnimeListService
+  ) {
     this.configureRouter()
   }
 
@@ -206,10 +212,7 @@ export class ProviderController {
           }
         })
         if (existing) throw Errors.INTEGRATION_EXISTS
-        await this.providerService.linkLastFM(
-          req.user.id,
-          <string>req.query.token
-        )
+        await this.lfmService.linkLastFM(req.user.id, <string>req.query.token)
         res.sendStatus(204)
       }
     )
@@ -249,7 +252,7 @@ export class ProviderController {
           req.user?.id
         )
         res.json(
-          await this.providerService.getLastFMOverview(
+          await this.lfmService.getLastFMOverview(
             user.id,
             user.integrations[0].providerUsername,
             user.integrations[0].accessToken
@@ -302,7 +305,7 @@ export class ProviderController {
           }
         })
         if (existing) throw Errors.INTEGRATION_EXISTS
-        await this.providerService.linkMAL(req.user.id, <string>req.query.token)
+        await this.malService.linkMAL(req.user.id, <string>req.query.token)
         res.sendStatus(204)
       }
     )
@@ -342,7 +345,7 @@ export class ProviderController {
           req.user?.id
         )
         res.json(
-          await this.providerService.getMALOverview(
+          await this.malService.getMALOverview(
             user.id,
             user.integrations[0].providerUsername,
             user.integrations[0].accessToken
@@ -431,7 +434,7 @@ export class ProviderController {
         if (user.id !== req.user.id) throw Errors.NO_PERMISSION
         if (!req.body.id || typeof req.body.id !== "number")
           throw Errors.INVALID_ID
-        await this.providerService.updateMALAnime(
+        await this.malService.updateMALAnime(
           user.id,
           user.integrations[0].providerUsername,
           user.integrations[0].accessToken,

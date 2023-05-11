@@ -28,6 +28,7 @@ import { Plan } from "@app/models/plan.model"
 import { Response, Request } from "express"
 import fs from "fs"
 import sharp from "sharp"
+import { PatchUser } from "@app/types/auth"
 
 @Service()
 @JsonController("/user")
@@ -129,7 +130,11 @@ export class UserControllerV3 {
 
   @OnUndefined(204)
   @Patch("")
-  async updateUser(@Auth("user.modify") user: User, @Body() body: User) {
+  async updateUser(
+    @Auth("user.modify") user: User,
+    @Body()
+    body: PatchUser
+  ) {
     await this.userUtilsService.updateUser(user.id, body)
   }
 

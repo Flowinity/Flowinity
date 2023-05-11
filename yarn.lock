@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@alt3/sequelize-to-json-schemas@^0.3.56":
+  version "0.3.56"
+  resolved "https://registry.yarnpkg.com/@alt3/sequelize-to-json-schemas/-/sequelize-to-json-schemas-0.3.56.tgz#3ea221aea9f89b834e8dceae277c078e35f12ffa"
+  integrity sha512-uCPKtZEn6+svkwrT2UaiJKZ+XAJR5+KpRTqM+l7+mXbUSCad4ySvM5Ng5NUTtht7QtaxERfVCa0V++LOSYmUXQ==
+
 "@ampproject/remapping@^2.2.0":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@ampproject/remapping/-/remapping-2.2.1.tgz#99e8e11851128b8702cd57c33684f1d0f260b630"

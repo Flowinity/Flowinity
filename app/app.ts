@@ -30,7 +30,6 @@ import { MailController } from "@app/controllers/mail.controller"
 import { Request, Response, NextFunction } from "express"
 import {
   useExpressServer,
-  getMetadataArgsStorage,
   Middleware,
   ExpressErrorMiddlewareInterface,
   HttpError,
@@ -40,7 +39,6 @@ import { Container } from "typedi"
 //v3 controllers
 import { UserControllerV3 } from "@app/controllers/v3/user.controller"
 import { AuthControllerV3 } from "@app/controllers/v3/auth.controller"
-import { routingControllersToSpec } from "routing-controllers-openapi"
 import { CoreControllerV3 } from "@app/controllers/v3/core.controller"
 import { ChatControllerV3 } from "@app/controllers/v3/chat.controller"
 import { AdminControllerV3 } from "@app/controllers/v3/admin.controller"
@@ -48,6 +46,16 @@ import { AutoCollectControllerV3 } from "@app/controllers/v3/autoCollect.control
 import { GalleryControllerV3 } from "@app/controllers/v3/gallery.controller"
 import { CollectionControllerV3 } from "@app/controllers/v3/collection.controller"
 import { FileControllerV3 } from "@app/controllers/v3/file.controller"
+import { WorkspaceControllerV3 } from "@app/controllers/v3/workspace.controller"
+import { ApiSchema } from "@app/schema"
+import { DomainControllerV3 } from "@app/controllers/v3/domain.controller"
+import { SecurityControllerV3 } from "@app/controllers/v3/security.controller"
+import { InviteControllerV3 } from "@app/controllers/v3/invite.controller"
+import { PulseControllerV3 } from "@app/controllers/v3/pulse.controller"
+import { MediaProxyControllerV3 } from "@app/controllers/v3/mediaProxy.controller"
+import { ProviderControllerV3 } from "@app/controllers/v3/provider.controller"
+import { MailControllerV3 } from "@app/controllers/v3/mail.controller"
+import { FallbackControllerV3 } from "@app/controllers/v3/fallback.controller"
 
 @Service()
 @Middleware({ type: "after" })
@@ -88,11 +96,24 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
           }
         })
       })
-    } else if (err?.message) {
-      return res.status(400).json({
+    } else if (
+      (err?.message && err?.expose !== undefined) ||
+      err instanceof HttpError
+    ) {
+      if (err.expose === false) {
+        return res.status(500).json({
+          errors: [
+            {
+              ...Errors.UNKNOWN,
+              name: "UNKNOWN"
+            }
+          ]
+        })
+      }
+      return res.status(err?.httpStatus || 400).json({
         errors: [
           {
-            status: 400,
+            status: err?.httpStatus || 400,
             message: err.message,
             name: "Troplo/ValidationError"
           }
@@ -172,7 +193,15 @@ export class Application {
         GalleryControllerV3,
         CollectionControllerV3,
         AdminControllerV3,
-        FileControllerV3
+        FileControllerV3,
+        WorkspaceControllerV3,
+        DomainControllerV3,
+        SecurityControllerV3,
+        InviteControllerV3,
+        PulseControllerV3,
+        MediaProxyControllerV3,
+        ProviderControllerV3,
+        MailControllerV3
       ],
       routePrefix: "/api/v3",
       middlewares: [HttpErrorHandler],
@@ -181,16 +210,13 @@ export class Application {
       defaults: {
         undefinedResultCode: 204,
         nullResultCode: 404
-      }
+      },
+      validation: true
     })
-    const storage = getMetadataArgsStorage()
-    const spec = routingControllersToSpec(storage)
-    console.log(spec)
-    this.app.use(
-      "/api/docs",
-      swaggerUi.serve,
-      swaggerUi.setup(swaggerJSDoc(this.swaggerOptions))
-    )
+    const spec = ApiSchema.generateSchema()
+    this.app.use("/api/docs", async (req, res, next) => {
+      res.redirect("/api/v3/docs")
+    })
     this.app.use(
       "/api/v2/docs",
       swaggerUi.serve,
@@ -215,17 +241,9 @@ export class Application {
     this.app.use("/api/v2/mediaproxy", this.mediaProxyController.router)
     this.app.use("/api/v2/providers", this.providerController.router)
     this.app.use("/api/v2/mail", this.mailController.router)
-    this.app.use("/i/", this.fileController.router)
+    //this.app.use("/i/", this.fileController.router)
     this.app.use("/api/v1/gallery", this.galleryController.router)
     this.app.use("/api/v1/site", this.coreController.router)
-    this.app.use("/api/v1", async (req, res) => {
-      res.status(410).json({
-        errors: [Errors.API_REMOVED]
-      })
-    })
-    this.app.use("/api", (req, res) => {
-      throw Errors.NOT_FOUND
-    })
     this.app.use(
       (err: any, req: Request, res: Response, next: NextFunction) => {
         if (err?.status && !err?.errno) {
@@ -268,6 +286,18 @@ export class Application {
         }
       }
     )
+    useExpressServer(this.app, {
+      controllers: [FileControllerV3, FallbackControllerV3],
+      routePrefix: "",
+      middlewares: [HttpErrorHandler],
+      defaultErrorHandler: false,
+      classTransformer: false,
+      defaults: {
+        undefinedResultCode: 204,
+        nullResultCode: 404
+      },
+      validation: true
+    })
     this.onServerStart()
   }
 

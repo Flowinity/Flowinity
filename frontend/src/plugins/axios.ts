@@ -14,8 +14,8 @@ export interface AxiosStaticWithAvoidance extends AxiosStatic {
 
 const ax = axios.create({
   baseURL: import.meta.env.CORDOVA
-    ? `https://images.flowinity.com/api/v2`
-    : `/api/v2`,
+    ? `https://images.flowinity.com/api/v3`
+    : `/api/v3`,
   withCredentials: true,
   headers: {
     Authorization: localStorage.getItem("token"),

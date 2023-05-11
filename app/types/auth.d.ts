@@ -1,6 +1,6 @@
-import { ThemeEngine } from "@app/models/user.model"
+import { ThemeEngine, User } from "@app/models/user.model"
 
-type Login = {
+interface Login {
   user: {
     id: number
     username: string
@@ -9,11 +9,23 @@ type Login = {
   token: string
 }
 
-type PatchUser = {
-  [key: string]: any
+interface PatchUser {
+  username?: string
+  email?: string
+  password?: string
+  currentPassword?: string
+  discordPrecache?: boolean
+  darkTheme?: boolean
+  description?: string
+  itemsPerPage?: number
+  storedStatus?: typeof User.prototype.storedStatus
+  weatherUnit?: typeof User.prototype.weatherUnit
+  themeEngine?: typeof User.prototype.themeEngine
+  insights?: typeof User.prototype.insights
+  profileLayout?: typeof User.prototype.profileLayout
 }
 
-type SessionInfo = {
+interface SessionInfo {
   accessedFrom: AccessedFrom[]
 }
 

@@ -26,7 +26,7 @@ import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import queue from "@app/lib/queue"
 import uploader from "@app/lib/upload"
 import { RequestAuth } from "@app/types/express"
-
+import { OpenAPI } from "routing-controllers-openapi"
 @Service()
 @JsonController("/gallery")
 export class GalleryControllerV3 {
@@ -47,7 +47,6 @@ export class GalleryControllerV3 {
     @QueryParam("filter") filter: string = "",
     @Req() req: RequestAuth
   ) {
-    console.log(req.path)
     return await this.galleryService.getGallery(
       user.id,
       page,
@@ -61,9 +60,7 @@ export class GalleryControllerV3 {
     )
   }
 
-  @Post("/")
-  // legacy client support
-  @Post("/upload")
+  @Post("")
   @UseBefore(rateLimits.uploadLimiter)
   async upload(
     @Auth("uploads.create") user: User,
@@ -80,6 +77,19 @@ export class GalleryControllerV3 {
     )
     socket.to(user.id).emit("gallery/create", upload)
     return upload
+  }
+
+  @Post("/upload")
+  @OpenAPI({ deprecated: true, description: "Upload API for legacy clients" })
+  @UseBefore(rateLimits.uploadLimiter)
+  async uploadLegacy(
+    @Auth("uploads.create") user: User,
+    @UploadedFile("attachment", {
+      options: uploader
+    })
+    attachment: Express.Multer.File
+  ) {
+    return await this.upload(user, attachment)
   }
 
   @Get("/starred/random")
