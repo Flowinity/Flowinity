@@ -218,7 +218,7 @@ export class CollectionService {
   async getCollectionPermissions(
     collectionId: number | string,
     userId: number | null,
-    permission: "write" | "configure" | "read"
+    permission: "write" | "configure" | "read" | "owner"
   ) {
     if (!userId) {
       const collection = await redis.json.get(`shareLinks:${collectionId}`)
@@ -232,7 +232,7 @@ export class CollectionService {
     )
 
     if (!collection) return false
-
+    if (permission === "owner") return collection.userId === userId
     return collection.permissionsMetadata[permission]
   }
 

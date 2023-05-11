@@ -56,6 +56,7 @@ import { MediaProxyControllerV3 } from "@app/controllers/v3/mediaProxy.controlle
 import { ProviderControllerV3 } from "@app/controllers/v3/provider.controller"
 import { MailControllerV3 } from "@app/controllers/v3/mail.controller"
 import { FallbackControllerV3 } from "@app/controllers/v3/fallback.controller"
+import { MigrateControllerV3 } from "@app/controllers/v3/migrate.controller"
 
 @Service()
 @Middleware({ type: "after" })
@@ -201,7 +202,8 @@ export class Application {
         PulseControllerV3,
         MediaProxyControllerV3,
         ProviderControllerV3,
-        MailControllerV3
+        MailControllerV3,
+        MigrateControllerV3
       ],
       routePrefix: "/api/v3",
       middlewares: [HttpErrorHandler],

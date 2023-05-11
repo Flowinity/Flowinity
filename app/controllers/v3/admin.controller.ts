@@ -12,7 +12,8 @@ import {
   Patch,
   Res,
   Put,
-  Middleware
+  Middleware,
+  Params
 } from "routing-controllers"
 import { Service } from "typedi"
 import { Auth } from "@app/lib/auth"
@@ -45,6 +46,7 @@ class HighLevel implements ExpressMiddlewareInterface {
 @Middleware({ type: "before" })
 class LowLevel implements ExpressMiddlewareInterface {
   use(request: RequestAuth, response: Response, next: (err?: any) => any): any {
+    console.log(request.user)
     if (
       !request.user ||
       (!request.user?.administrator && !request.user?.moderator)
@@ -72,11 +74,11 @@ export class AdminControllerV3 {
 
   @UseBefore(LowLevel)
   @Delete("/cache/:key")
-  @Delete("/cache/:key/:uid")
+  @Delete("/cache/:key/:uid?")
   async deleteCache(
     @Auth("*") user: User,
     @Param("key") key: CacheType,
-    @Param("uid") uid?: number
+    @Params() { uid }: { uid?: number }
   ) {
     if (uid) {
       this.adminService.purgeUserCache(uid)

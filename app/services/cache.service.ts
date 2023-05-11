@@ -393,7 +393,7 @@ export class CacheService {
       let start = new Date().getTime()
       const collection = await collectionService.getCollection(id)
 
-      async function updateCache(user: CollectionUser) {
+      const updateCache = async (user: CollectionUser) => {
         const id = user.recipientId
 
         console.info("[REDIS] Patching cache for user", id)

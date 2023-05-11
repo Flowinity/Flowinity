@@ -10,7 +10,7 @@
           <template v-slot:title>
             {{ slideshow.name }}
             <div style="float: right">
-              <v-btn icon @click="$toast.warning('Not implemented yet')">
+              <v-btn icon @click="deleteSlideshow(slideshow)">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </div>
@@ -108,6 +108,11 @@ export default defineComponent({
         includeGallery: true,
         collectionIds: []
       });
+      await this.getSlideshows();
+    },
+    async deleteSlideshow(slideshow: Slideshow) {
+      await this.axios.delete("/slideshows/" + slideshow.id);
+      this.$toast.success("Slideshow deleted!");
       await this.getSlideshows();
     }
   },

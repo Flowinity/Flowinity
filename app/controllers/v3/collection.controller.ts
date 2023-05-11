@@ -20,6 +20,8 @@ import { CollectionService } from "@app/services/collection.service"
 import { CollectionCache } from "@app/types/collection"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import uploader from "@app/lib/upload"
+import { Collection } from "@app/models/collection.model"
+import { CollectionUser } from "@app/models/collectionUser.model"
 
 @Service()
 @JsonController("/collections")
@@ -367,5 +369,40 @@ export class CollectionControllerV3 {
     }
     await this.collectionService.updateBanner(collectionId, null)
     await this.cacheService.resetCollectionCache(collectionId)
+  }
+
+  @Delete("/:collectionId")
+  async deleteCollection(
+    @Auth("*") user: User,
+    @Param("collectionId") collectionId: number
+  ) {
+    const permission = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "owner"
+    )
+    if (!permission) {
+      throw Errors.COLLECTION_NO_PERMISSION
+    }
+    const collection = await this.collectionService.getCollection(collectionId)
+    await Collection.destroy({
+      where: {
+        id: collectionId,
+        userId: user.id
+      }
+    })
+    await CollectionItem.destroy({
+      where: {
+        collectionId
+      }
+    })
+    await CollectionUser.destroy({
+      where: {
+        collectionId
+      }
+    })
+    for (const user of collection.users) {
+      this.cacheService.generateCollectionCache(user.id)
+    }
   }
 }
