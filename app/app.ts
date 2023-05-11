@@ -241,7 +241,7 @@ export class Application {
     this.app.use("/api/v2/mediaproxy", this.mediaProxyController.router)
     this.app.use("/api/v2/providers", this.providerController.router)
     this.app.use("/api/v2/mail", this.mailController.router)
-    //this.app.use("/i/", this.fileController.router)
+    this.app.use("/i/", this.fileController.router)
     this.app.use("/api/v1/gallery", this.galleryController.router)
     this.app.use("/api/v1/site", this.coreController.router)
     this.app.use(
