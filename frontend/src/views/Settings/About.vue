@@ -23,6 +23,9 @@
       </p>
     </template>
     <p>Server: {{ $app.site.server }}</p>
+    <a class="text-gradient" href="/api/v3/docs">
+      TPU API Documentation (WIP, v3)
+    </a>
     <p class="mt-5 text-gradient">TroploPrivateUploader</p>
     <p>&copy; {{ $date().format("YYYY") }} Troplo Services</p>
     <v-btn

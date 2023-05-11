@@ -153,7 +153,7 @@ export const useAppStore = defineStore("app", {
       forcedWorkspaceDrawer: false,
       loading: true,
       componentLoading: false,
-      apiVersion: "v2",
+      apiVersion: "v3",
       title: "",
       notesSaving: false,
       themeEditor: false,
