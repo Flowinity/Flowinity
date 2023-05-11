@@ -47,8 +47,7 @@ class LowLevel implements ExpressMiddlewareInterface {
   use(request: RequestAuth, response: Response, next: (err?: any) => any): any {
     if (
       !request.user ||
-      !request.user?.administrator ||
-      !request.user?.moderator
+      (!request.user?.administrator && !request.user?.moderator)
     )
       throw Errors.ADMIN_ONLY
     next()
