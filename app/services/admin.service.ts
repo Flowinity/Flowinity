@@ -32,7 +32,9 @@ export enum CacheType {
   "invites",
   "chats",
   "insights",
-  "userstats"
+  "userstats",
+  "lastfm",
+  "mal"
 }
 
 const inviteParams = {
@@ -178,6 +180,14 @@ export class AdminService {
         return true
       case CacheType.userstats:
         await this.cacheService.generateUserStatsCache()
+        return true
+      case CacheType.lastfm:
+        console.log("[AdminService] Purging lastfm cache")
+        await redis.del("providers:lastfm:*")
+        return true
+      case CacheType.mal:
+        console.log("[AdminService] Purging mal cache")
+        await redis.del("providers:mal:*")
         return true
       default:
         return false

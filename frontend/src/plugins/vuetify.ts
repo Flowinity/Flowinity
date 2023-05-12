@@ -6,16 +6,15 @@
 
 // Styles
 import "@mdi/font/css/materialdesignicons.css";
-import "@troplo/vuetify/styles";
+//import "@troplo/vuetify/styles";
 //import "/home/troplo/GitHub/vuetify/packages/vuetify/src/styles/main.sass";
-
+import "@vuetify/nightly/styles/main.sass";
 // Composables
 
-import { createVuetify } from "vuetify";
-import { VDataTable } from "vuetify/labs/VDataTable";
-import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
+import { createVuetify } from "@vuetify/nightly";
+import { VDataTable } from "@vuetify/nightly/labs/VDataTable";
+import { VSkeletonLoader } from "@vuetify/nightly/labs/VSkeletonLoader";
 
-// export new Class of themes
 export class DefaultThemes {
   themes: any;
 
@@ -166,10 +165,10 @@ export default createVuetify({
   },
   theme: {
     defaultTheme: ["dark", "amoled", "light"].includes(
-      localStorage.getItem("theme") || "dark"
+      localStorage.getItem("theme") || "amoled"
     )
       ? localStorage.getItem("theme") || "dark"
-      : "dark",
+      : "amoled",
     themes: new DefaultThemes().themes
   }
 });

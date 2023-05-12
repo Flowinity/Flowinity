@@ -649,4 +649,13 @@ export default defineComponent({
 .tc-toolbox {
   z-index: 3 !important;
 }
+
+.cdx-checklist__item-checkbox-check,
+.cdx-checklist__item-checkbox {
+  border: none;
+}
+
+.cdx-checklist__item-checkbox-check {
+  display: none;
+}
 </style>

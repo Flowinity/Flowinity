@@ -16,7 +16,10 @@
     <UploadDialog v-model="$app.dialogs.upload.value"></UploadDialog>
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
     <ExperimentsManagerDialog
-      v-if="$app.dialogs.experiments"
+      v-if="
+        $app.dialogs.experiments &&
+        ($user.user?.administrator || $user.user?.moderator)
+      "
     ></ExperimentsManagerDialog>
     <URLConfirmDialog
       v-model="$chat.dialogs.externalSite.value"
@@ -292,7 +295,7 @@ export default defineComponent({
       } else if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
         e.preventDefault();
         this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
-      } else if (e.ctrlKey && e.key === "t") {
+      } else if (e.ctrlKey && e.key === "x") {
         e.preventDefault();
         this.$app.dialogs.experiments = !this.$app.dialogs.experiments;
       }

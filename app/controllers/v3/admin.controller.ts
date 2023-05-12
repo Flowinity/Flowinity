@@ -4,7 +4,6 @@ import {
   Req,
   Post,
   Body,
-  All,
   UseBefore,
   ExpressMiddlewareInterface,
   Delete,
@@ -16,27 +15,29 @@ import {
   Params
 } from "routing-controllers"
 import { Service } from "typedi"
-import { Auth } from "@app/lib/auth"
+import { Auth, authSystem } from "@app/lib/auth"
 import { User } from "@app/models/user.model"
 import { CoreService } from "@app/services/core.service"
 import { CacheService } from "@app/services/cache.service"
-import cluster from "cluster"
-import os from "os"
 import { Request } from "express"
-import { WeatherResponse } from "@app/interfaces/weather"
 import Errors from "@app/lib/errors"
 import { CacheType } from "@app/controllers/admin.controller"
 import { AdminService } from "@app/services/admin.service"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { Response } from "express"
 import { Badge } from "@app/models/badge.model"
-import { Experiment } from "@app/models/experiment.model"
 import { RequestAuth } from "@app/types/express"
 
 @Service()
 @Middleware({ type: "before" })
+@UseBefore(Auth("*"))
 class HighLevel implements ExpressMiddlewareInterface {
-  use(request: RequestAuth, response: Response, next: (err?: any) => any): any {
+  async use(
+    request: RequestAuth,
+    response: Response,
+    next: (err?: any) => any
+  ) {
+    await authSystem("*", false, request, response, next)
     if (!request.user || !request.user.administrator) throw Errors.ADMIN_ONLY
     next()
   }
@@ -45,8 +46,12 @@ class HighLevel implements ExpressMiddlewareInterface {
 @Service()
 @Middleware({ type: "before" })
 class LowLevel implements ExpressMiddlewareInterface {
-  use(request: RequestAuth, response: Response, next: (err?: any) => any): any {
-    console.log(request.user)
+  async use(
+    request: RequestAuth,
+    response: Response,
+    next: (err?: any) => any
+  ) {
+    await authSystem("*", false, request, response, next)
     if (
       !request.user ||
       (!request.user?.administrator && !request.user?.moderator)
@@ -66,15 +71,15 @@ export class AdminControllerV3 {
     private readonly coreService: CoreService
   ) {}
 
-  @UseBefore(LowLevel)
   @Get("/dashboard")
+  @UseBefore(LowLevel)
   async getDashboard(@Auth("*") user: User, @Req() req: Request) {
     return {}
   }
 
-  @UseBefore(LowLevel)
   @Delete("/cache/:key")
   @Delete("/cache/:key/:uid?")
+  @UseBefore(LowLevel)
   async deleteCache(
     @Auth("*") user: User,
     @Param("key") key: CacheType,
@@ -89,14 +94,14 @@ export class AdminControllerV3 {
     }
   }
 
-  @UseBefore(LowLevel)
   @Get("/users")
+  @UseBefore(LowLevel)
   async getUsers(@Auth("*") user: User) {
     return await this.adminService.getUsers()
   }
 
-  @UseBefore(LowLevel)
   @Get("/invites")
+  @UseBefore(LowLevel)
   async getInvites(@Auth("*") user: User) {
     return await this.adminService.getInvites()
   }

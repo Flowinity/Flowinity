@@ -126,7 +126,7 @@ async function updateSession(session: Session, ip: string) {
   )
 }
 
-async function authSystem(
+export async function authSystem(
   scope: string | string[],
   passthrough: boolean = false,
   req: any,

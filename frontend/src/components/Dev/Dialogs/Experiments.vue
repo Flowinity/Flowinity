@@ -1,6 +1,6 @@
 <template>
   <DevDialog>
-    <template v-slot:header>Experiment Manager (CTRL + ALT + T)</template>
+    <template v-slot:header>Experiments Manager (CTRL + X)</template>
     <v-container style="background: black">
       <v-card>
         <v-card-title>Modify experiment values</v-card-title>

@@ -244,7 +244,7 @@ export class ChatControllerV3 {
   @Post("/:associationId/message")
   @UseBefore(rateLimits.msgLimiter)
   async sendMessage(
-    @Auth("chats.edit") user: User,
+    @Auth("chats.send") user: User,
     @Param("associationId") associationId: number,
     @Body() body: { content: string; attachments: string[]; replyId?: number }
   ) {

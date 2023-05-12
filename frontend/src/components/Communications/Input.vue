@@ -30,7 +30,6 @@
         label="Type a message..."
         placeholder="Keep it civil"
         variant="outlined"
-        append-icon="mdi-send"
         @update:model-value="$emit('update:modelValue', $event)"
         :model-value="modelValue"
         density="compact"
@@ -44,6 +43,9 @@
         :key="renderKey"
         :maxlength="2000"
       >
+        <template v-slot:append>
+          <v-icon class="pointer raw-icon">mdi-send</v-icon>
+        </template>
         <template v-slot:prepend v-if="!editing">
           <v-menu
             location="top"
@@ -117,14 +119,14 @@
               </v-card-text>
             </v-card>
           </v-menu>
-          <v-icon class="pointer">mdi-plus-circle</v-icon>
+          <v-icon class="pointer raw-icon">mdi-plus-circle</v-icon>
         </template>
         <template v-slot:append-inner>
           <EmojiPicker
             v-model="emojiPicker"
             @emoji="$emit('emoji', $event)"
           ></EmojiPicker>
-          <v-icon class="pointer">mdi-emoticon</v-icon>
+          <v-icon class="pointer raw-icon">mdi-emoticon</v-icon>
         </template>
         <template v-slot:details v-if="!editing">
           <span

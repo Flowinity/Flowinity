@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -40,6 +40,7 @@
     "@troplo/tpu-simple-image": "^1.5.1-troplo1",
     "@troplo/vite-version": "^1.0.3",
     "@troplo/vuetify": "^3.1.11",
+    "@vuetify/nightly": "npm:@vuetify/nightly@4.0.0-dev-20230512.0",
     "apexcharts": "^3.37.0",
     "axios": "^1.3.2",
     "chart.js": "^4.2.1",

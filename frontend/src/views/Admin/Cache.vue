@@ -76,6 +76,14 @@ export default defineComponent({
         {
           id: 8,
           name: "UserStats*"
+        },
+        {
+          id: 9,
+          name: "Provider-LastFM"
+        },
+        {
+          id: 10,
+          name: "Provider-MyAnimeList"
         }
       ]
     };

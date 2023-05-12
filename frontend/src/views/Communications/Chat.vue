@@ -468,6 +468,7 @@ export default defineComponent({
     },
     async sendMessage() {
       this.focusInput();
+      if (!this.$chat.selectedChat?.messages) return;
       if (!this.message && !this.files.length) return;
       if (this.uploading) return;
       let message = this.message.trim();

@@ -464,7 +464,7 @@ a {
 
 
 // Align v-icon with text
-.v-icon {
+.v-icon:not(.raw-icon) {
   margin-top: 2px;
 }
 
