@@ -176,8 +176,7 @@ export default defineComponent({
         },
         {
           title: "Actions",
-          key: "actions",
-          sortable: false
+          key: "actions"
         }
       ],
       create: {

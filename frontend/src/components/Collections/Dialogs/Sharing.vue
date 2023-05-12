@@ -110,23 +110,23 @@ export default defineComponent({
         headers: [
           {
             title: "Username",
-            value: "username"
+            key: "username"
           },
           {
             title: "Read",
-            value: "read"
+            key: "read"
           },
           {
             title: "Write",
-            value: "write"
+            key: "write"
           },
           {
             title: "Configure",
-            value: "configure"
+            key: "configure"
           },
           {
             title: "Actions",
-            value: "actions"
+            key: "actions"
           }
         ],
         roles: [

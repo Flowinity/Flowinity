@@ -150,7 +150,7 @@ export default defineComponent({
           title: "Created At",
           key: "createdAt"
         },
-        { title: "Actions", key: "actions", sortable: false }
+        { title: "Actions", key: "actions" }
       ],
       alternatePasswords: {
         items: []

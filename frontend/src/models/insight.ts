@@ -81,8 +81,9 @@ export interface InsightData {
       previous: number;
     };
     topChats: {
-      [key: string]: number;
-    };
+      chatName: string;
+      count: number;
+    }[];
   };
   workspaces: {};
   _version: number;

@@ -28,7 +28,7 @@ import "./styles/tpu-editorjs.css";
 import VueApexCharts from "vue3-apexcharts";
 import SocketIO from "socket.io-client";
 import { useChatStore } from "@/store/chat";
-import { Router } from "vue-router";
+import { RouteLocationNormalized, Router } from "vue-router";
 import { useWorkspacesStore } from "@/store/workspaces";
 import { useFriendsStore } from "@/store/friends";
 import { Chat } from "@/models/chat";
@@ -61,6 +61,8 @@ declare module "@vue/runtime-core" {
     $socket: any;
     $friends: ReturnType<typeof useFriendsStore>;
     $mail: ReturnType<typeof useMailStore>;
+    $router: Router;
+    $route: RouteLocationNormalized;
   }
 }
 
