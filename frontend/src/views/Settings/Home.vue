@@ -225,7 +225,7 @@
           {{ item.title }}
         </v-list-item-title>
       </v-list-item>
-      <v-list-item :href="item.raw.link" v-if="item.value === 'help'">
+      <v-list-item :href="<string>item.raw.link" v-if="item.value === 'help'">
         <v-list-item-title>
           {{ item.title }}
         </v-list-item-title>
