@@ -28,6 +28,8 @@ export interface UserState {
     themeEngine: ThemeEngine;
     insights?: "everyone" | "friends" | "nobody";
     profileLayout?: ProfileLayout | null;
+    excludedCollections?: number[] | null;
+    language?: string;
   };
   actions: {
     emailSent: {
@@ -84,7 +86,13 @@ export const useUserStore = defineStore("user", {
           vuetify.theme.themes.value.dark = themeData.theme.dark;
           vuetify.theme.themes.value.light = themeData.theme.light;
           vuetify.theme.themes.value.amoled = themeData.theme.amoled;
-          vuetify.defaults.value = themeData.defaults;
+          vuetify.defaults.value = {
+            VAutoComplete: {
+              variant: "underlined",
+              color: "primary"
+            },
+            ...themeData.defaults
+          };
           app.fluidGradient = themeData.fluidGradient;
           if (themeData.fluidGradient) {
             document.body.classList.add("fluid-gradient");
@@ -254,7 +262,9 @@ export const useUserStore = defineStore("user", {
               description: this.user.description,
               themeEngine: this.user.themeEngine as ThemeEngine,
               insights: this.user.insights,
-              profileLayout: this.user.profileLayout
+              profileLayout: this.user.profileLayout,
+              excludedCollections: this.user?.excludedCollections,
+              language: this.user?.language
             };
             this.runPostTasks();
           }
@@ -276,7 +286,9 @@ export const useUserStore = defineStore("user", {
         weatherUnit: this.user?.weatherUnit,
         themeEngine: this.user?.themeEngine as ThemeEngine,
         insights: this.user?.insights,
-        profileLayout: this.user?.profileLayout
+        profileLayout: this.user?.profileLayout,
+        excludedCollections: this.user?.excludedCollections,
+        language: this.user?.language
       };
       if (this.user?.themeEngine?.defaults?.prev) {
         delete this.user.themeEngine.defaults?.prev;
@@ -322,7 +334,9 @@ export const useUserStore = defineStore("user", {
         weatherUnit: this.changes.weatherUnit,
         themeEngine: this.changes.themeEngine,
         insights: this.changes.insights,
-        profileLayout: this.changes.profileLayout
+        profileLayout: this.changes.profileLayout,
+        excludedCollections: this.changes.excludedCollections,
+        language: this.changes.language
       });
       this.user = {
         ...this.user,

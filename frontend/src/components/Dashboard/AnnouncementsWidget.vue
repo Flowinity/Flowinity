@@ -2,7 +2,7 @@
   <v-card class="text-center justify-center">
     <v-container>
       <strong style="font-size: 24px" class="text-gradient">
-        Announcements
+        {{ $t("dashboard.announcements") }}
       </strong>
       <v-card
         v-for="announcement in announcements"

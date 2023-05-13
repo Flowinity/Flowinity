@@ -165,8 +165,9 @@ export class GalleryService {
     itemsPerPage: number = 12,
     sort: "newest" | "oldest" | "size" = "newest",
     array: boolean = false,
-    userId?: number
-  ): Promise<Object> {
+    userId?: number,
+    excludedCollections?: number[] | null
+  ) {
     let sortParams: Sequelize.OrderItem = ["createdAt", "DESC"]
     if (sort === "oldest") {
       sortParams = ["createdAt", "ASC"]
@@ -187,10 +188,20 @@ export class GalleryService {
     }
     // if filter nonCollectivized it cannot belong in any collections
     if (filter === "nonCollectivized") {
-      base.id = {
-        [Op.notIn]: sequelize.literal(
-          "(SELECT attachmentId FROM collectionItems)"
-        )
+      if (excludedCollections?.length) {
+        base.id = {
+          [Op.notIn]: sequelize.literal(
+            `(SELECT attachmentId FROM collectionItems WHERE collectionId NOT IN (${excludedCollections.join(
+              ","
+            )}))`
+          )
+        }
+      } else {
+        base.id = {
+          [Op.notIn]: sequelize.literal(
+            "(SELECT attachmentId FROM collectionItems)"
+          )
+        }
       }
     }
     if (type === "user") {

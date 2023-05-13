@@ -65,13 +65,18 @@
         v-if="$user.user?.administrator || $user.user?.moderator"
       >
         <small class="mb-2 text-grey" v-if="$app.site.connection?.whitelist">
-          Member of
           {{
-            $app.site.connection?.whitelist?.groups?.join(", ").toUpperCase()
+            $t("core.sidebar.member", {
+              names: $app.site.connection?.whitelist?.groups
+                ?.join(", ")
+                .toUpperCase()
+            })
           }}
         </small>
         <br />
-        <small class="mb-2 text-grey">TPU Experimental Overrides (NEXT)</small>
+        <small class="mb-2 text-grey">
+          {{ $t("core.sidebar.experiments") }}
+        </small>
       </div>
       <div class="pa-2" v-if="$user.user?.subscription?.metadata?.hours">
         <v-progress-linear
@@ -155,7 +160,7 @@ export default defineComponent({
             id: 1,
             externalPath: "",
             path: "/",
-            name: "Dashboard",
+            name: this.$t("core.sidebar.home"),
             icon: "mdi-home",
             scope: "user.view",
             exact: true
@@ -164,7 +169,7 @@ export default defineComponent({
             id: 2,
             externalPath: "",
             path: "/settings",
-            name: "Settings",
+            name: this.$t("core.sidebar.settings"),
             icon: "mdi-account-cog",
             scope: "user.modify"
           },
@@ -173,14 +178,14 @@ export default defineComponent({
             externalPath: "",
             path: "/gallery",
             exact: false,
-            name: "Gallery",
+            name: this.$t("core.sidebar.gallery"),
             icon: "mdi-image-multiple",
             scope: "gallery.view"
           },
           {
             id: 26,
             externalPath: "",
-            name: "Collections",
+            name: this.$t("core.sidebar.collections"),
             path: "/collections",
             icon: "mdi-folder-multiple-image",
             new: false,
@@ -189,7 +194,7 @@ export default defineComponent({
           {
             id: 28,
             externalPath: "",
-            name: "AutoCollects",
+            name: this.$t("core.sidebar.autoCollects"),
             path: "/autoCollect",
             icon: "mdi-image-auto-adjust",
             new: false,
@@ -202,7 +207,7 @@ export default defineComponent({
           {
             id: 34,
             externalPath: "",
-            name: "Workspaces",
+            name: this.$t("core.sidebar.workspaces"),
             path: this.$route.name?.toString()?.includes("Workspace")
               ? "/workspaces"
               : this.$app.lastNote
@@ -216,7 +221,7 @@ export default defineComponent({
           {
             id: 35,
             externalPath: "",
-            name: "Communications",
+            name: this.$t("core.sidebar.communications"),
             path: this.$chat.selectedChatId
               ? `/communications/${this.$chat.selectedChatId}`
               : "/communications",
@@ -233,7 +238,7 @@ export default defineComponent({
           {
             id: 36,
             externalPath: "",
-            name: "Mail",
+            name: this.$t("core.sidebar.mail"),
             path: "/mail",
             icon: "mdi-email",
             scope: "mail.view",
@@ -242,7 +247,7 @@ export default defineComponent({
           {
             id: 27,
             externalPath: "",
-            name: "Insights",
+            name: this.$t("core.sidebar.insights"),
             path: "/insights",
             scope: "*",
             icon: "mdi-chart-timeline-variant-shimmer",
@@ -251,7 +256,7 @@ export default defineComponent({
           {
             id: 31,
             externalPath: "",
-            name: "Starred",
+            name: this.$t("core.sidebar.starred"),
             path: "/starred",
             icon: "mdi-star",
             scope: ["gallery.view", "starred.view"],
@@ -261,7 +266,7 @@ export default defineComponent({
             id: 20,
             externalPath: "",
             path: "/users",
-            name: "Users",
+            name: this.$t("core.sidebar.users"),
             icon: "mdi-account-group",
             scope: "user.view"
           },
@@ -273,7 +278,7 @@ export default defineComponent({
             },
             externalPath: "",
             path: "",
-            name: "Provide Feedback",
+            name: this.$t("core.sidebar.feedback"),
             icon: "mdi-comment-question-outline",
             scope: "*"
           },
@@ -281,7 +286,7 @@ export default defineComponent({
             id: 30,
             externalPath: "",
             path: "/changelog",
-            name: "Changelog",
+            name: this.$t("core.sidebar.changelog"),
             icon: "mdi-history"
           },
           {
@@ -291,7 +296,7 @@ export default defineComponent({
             },
             externalPath: "",
             path: "",
-            name: "Invite a Friend",
+            name: this.$t("core.sidebar.inviteAFriend"),
             icon: "mdi-gift-outline",
             new: true,
             scope: "*"
@@ -303,7 +308,9 @@ export default defineComponent({
             },
             externalPath: "",
             path: "",
-            name: this.$user.gold ? "What's new with Gold?" : "Upgrade to Gold",
+            name: this.$user.gold
+              ? this.$t("core.sidebar.newWithGold")
+              : this.$t("core.sidebar.upgradeToGold"),
             icon: "mdi-plus",
             new: false,
             scope: "user.view",
@@ -316,7 +323,7 @@ export default defineComponent({
             },
             externalPath: "",
             path: "",
-            name: "Migrate from Colubrina",
+            name: this.$t("core.sidebar.colubrinaMigrate"),
             icon: "mdi-chart-gantt",
             new: false,
             scope: "user.view",
@@ -326,39 +333,12 @@ export default defineComponent({
             id: 37,
             externalPath: "",
             path: "/admin",
-            name: "Admin Panel",
+            name: this.$t("core.sidebar.admin"),
             icon: "mdi-gavel",
             new: false,
             scope: "admin.view",
             experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
           }
-          /*{
-          id: 33,
-          click() {},
-          externalPath: "",
-          path: "/progress",
-          name: "V2 Progress",
-          icon: "mdi-chart-gantt",
-          new: true
-        }*/
-          /*{
-          id: 9,
-          click() {
-            this.invite.modal = true
-          },
-          externalPath: "",
-          path: "",
-          name: "Invites (" + this.invite.activeCount + ")",
-          icon: "mdi-plus"
-        },
-        {
-          id: 22,
-          click() {},
-          externalPath: "",
-          path: "/plans",
-          name: "Plans",
-          icon: "mdi-star"
-        }*/
         ] as {
           id: number;
           externalPath: string;

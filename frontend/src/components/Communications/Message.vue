@@ -1,9 +1,11 @@
 <template>
   <div class="position-relative">
     <div v-if="dateSeparator" class="date-separator">
-      <p class="text-grey date-separator-block unselectable">
+      <div class="date-separator-line"></div>
+      <p class="date-separator-block unselectable">
         {{ $date(message.createdAt).format("ddd, Do of MMMM YYYY") }}
       </p>
+      <div class="date-separator-line"></div>
     </div>
     <v-toolbar
       height="auto"

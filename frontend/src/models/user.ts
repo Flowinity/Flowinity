@@ -145,4 +145,6 @@ export interface User {
   insights: "everyone" | "friends" | "nobody";
   profileLayout?: ProfileLayout | null;
   integrations: Integration[];
+  excludedCollections: number[] | null;
+  language: string;
 }

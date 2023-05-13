@@ -285,8 +285,8 @@ a {
 }
 
 .v-theme--amoled .v-card:not(.no-border) {
-  box-shadow: 0 0 0 0 !important;
-  border: 1px solid #191919 !important;
+  box-shadow: 0 0 0 0;
+  border: 1px solid #191919;
 }
 
 .v-theme--amoled .border-top {
@@ -421,10 +421,24 @@ a {
 }
 
 .communications .date-separator {
-  margin-bottom: 5px;
-  margin-top: 5px;
+  margin: 5px 8px 5px 8px;
   display: flex;
   justify-content: center;
+}
+
+.communications .date-separator-line {
+  height: 12px;
+  border-bottom: 1px solid #575757;
+  mix-blend-mode: difference;
+  width: 100%;
+}
+
+.communications .date-separator-block {
+  padding: 0 8px;
+  white-space: nowrap;
+  color: #575757;
+  mix-blend-mode: difference;
+  filter: brightness(150%);
 }
 
 .fluid-gradient .v-menu .v-overlay__content {

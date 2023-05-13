@@ -298,6 +298,11 @@ const routes = [
         component: () => import("@/views/Policies/Privacy.vue")
       },
       {
+        path: "/credits",
+        name: "Credits",
+        component: () => import("@/views/Credits.vue")
+      },
+      {
         path: "/:id",
         name: "Attachment Item",
         component: () => import("@/views/Item.vue")
@@ -334,7 +339,8 @@ router.beforeEach(async (to, from) => {
       "Note",
       "Notes Workspaces Redirect",
       "Privacy Policy",
-      "Attachment Item"
+      "Attachment Item",
+      "Credits"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");

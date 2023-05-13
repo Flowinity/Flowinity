@@ -5,11 +5,13 @@
       v-model="dialogs.key"
       @create="getAPIKeys"
     ></CreateAPIKey>
-    <v-toolbar-title>API Keys</v-toolbar-title>
+    <v-toolbar-title>
+      {{ $t("settings.security.apiKeys") }}
+    </v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn color="primary" @click="dialogs.key = true">
       <v-icon left>mdi-plus</v-icon>
-      Add API Key
+      {{ $t("settings.security.addAPIKey") }}
     </v-btn>
   </v-toolbar>
   <v-data-table :headers="headers" :items="apiKeys">
@@ -23,8 +25,12 @@
         :disabled="!item.props.title.info?.accessedFrom.length"
       >
         <v-tooltip activator="parent" location="top">
-          <span v-if="item.info?.accessedFrom?.length">View IP History</span>
-          <span v-else>Session has no IP history.</span>
+          <span v-if="item.info?.accessedFrom?.length">
+            {{ $t("settings.security.ipHistory") }}
+          </span>
+          <span v-else>
+            {{ $t("settings.security.noIPHistory") }}
+          </span>
         </v-tooltip>
         mdi-web
       </v-icon>
@@ -46,11 +52,13 @@
       @create="getAlternatePasswords"
       type="password"
     ></CreateAPIKey>
-    <v-toolbar-title>Alternate Passwords</v-toolbar-title>
+    <v-toolbar-title>
+      {{ $t("settings.security.alternatePasswords") }}
+    </v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn color="primary" @click="dialogs.password = true">
       <v-icon left>mdi-plus</v-icon>
-      Add Password
+      {{ $t("settings.security.addAlternatePassword") }}
     </v-btn>
   </v-toolbar>
   <v-data-table :headers="headers" :items="alternatePasswords.items">
@@ -65,34 +73,61 @@
     </template>
   </v-data-table>
   <v-toolbar color="toolbar" class="rounded-xl mt-5">
-    <v-toolbar-title>Recent Logins</v-toolbar-title>
+    <v-toolbar-title>
+      {{ $t("settings.security.recentLogins") }}
+    </v-toolbar-title>
   </v-toolbar>
   <v-list subheader three-line>
     <IPHistory :history="ipHistory" v-model="dialogs.ipHistory" />
     <v-list-item v-for="login in sessions" :key="login.id">
       <v-list-item-title>
-        {{ login.info?.accessedFrom?.at(-1)?.location || "Unknown Location" }}
+        {{
+          login.info?.accessedFrom?.at(-1)?.location ||
+          $t("settings.security.unknownLocation")
+        }}
       </v-list-item-title>
       <v-list-item-subtitle class="mt-1">
-        {{ login.info?.accessedFrom?.at(-1)?.isp || "Unknown ISP" }}
-        {{ login.info?.accessedFrom?.at(-1)?.asn || "Unknown ASN" }}
+        {{
+          login.info?.accessedFrom?.at(-1)?.isp ||
+          $t("settings.security.unknownISP")
+        }}
+        {{
+          login.info?.accessedFrom?.at(-1)?.asn ||
+          $t("settings.security.unknownASN")
+        }}
         -
-        {{ login.info?.accessedFrom?.at(-1)?.ip || "Unknown IP" }}
+        {{
+          login.info?.accessedFrom?.at(-1)?.ip ||
+          $t("settings.security.unknownIP")
+        }}
       </v-list-item-subtitle>
       <v-list-item-subtitle class="mt-1">
-        Last session usage: {{ $date().to(login.updatedAt) }}
+        {{
+          $t("settings.security.lastSessionUsage", {
+            date: $date().to(login.createdAt)
+          })
+        }}
       </v-list-item-subtitle>
       <v-list-item-subtitle class="mt-1">
-        Session created: {{ $date().to(login.createdAt) }}
+        {{
+          $t("settings.security.sessionCreated", {
+            date: $date().to(login.createdAt)
+          })
+        }}
       </v-list-item-subtitle>
       <v-list-item-subtitle class="mt-1">
-        Session expiry:
-        {{ login.expiredAt ? $date().to(login.expiredAt) : "Never" }}
+        {{
+          $t("settings.security.sessionExpiry", {
+            date: login.expiredAt
+              ? $date().to(login.expiredAt)
+              : $t("generic.never")
+          })
+        }}
       </v-list-item-subtitle>
       <template v-slot:append>
         <v-btn color="red" @click="deleteApiKey(login.id)" icon>
           <v-tooltip activator="parent" location="top">
-            Delete Session
+            {{ $t("settings.security.deleteSession") }}
           </v-tooltip>
           <v-icon>mdi-delete</v-icon>
         </v-btn>
@@ -106,8 +141,12 @@
           :disabled="!login.info?.accessedFrom?.length"
         >
           <v-tooltip activator="parent" location="top">
-            <span v-if="login.info?.accessedFrom?.length">View IP History</span>
-            <span v-else>Session has no IP history.</span>
+            <span v-if="login.info?.accessedFrom?.length">
+              {{ $t("settings.security.ipHistory") }}
+            </span>
+            <span v-else>
+              {{ $t("settings.security.noIPHistory") }}
+            </span>
           </v-tooltip>
           <v-icon>mdi-web</v-icon>
         </v-btn>

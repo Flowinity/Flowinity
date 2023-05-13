@@ -49,9 +49,39 @@ export default defineComponent({
         },
         Performance: {
           color: "orange"
+        },
+        Profile: {
+          color: "pink"
         }
       } as Record<string, { color: string | undefined }>,
       versions: [
+        {
+          version: "3.2.0",
+          subheading: "Improved User Profiles!",
+          date: "2023-05-09",
+          changes: [
+            {
+              tags: ["New", "Profile"],
+              text: "You can now add widgets, and customize the layout of your profile."
+            },
+            {
+              tags: ["New", "TPU"],
+              text: "You can now link external platform accounts to TPU. More integrations will be added soon."
+            },
+            {
+              tags: ["New", "Gallery"],
+              text: "You can now exclude collections from the non-collectivized filter in the Gallery, this is useful if you add items into generic collections."
+            },
+            {
+              tags: ["New", "TPU"],
+              text: "With lower resolutions, there is now a new sidebar called the Railbar, which allows you to switch between TPU, Workspaces and Communications."
+            },
+            {
+              tags: ["New", "TPU"],
+              text: "There is a new API version, documentation is at /api/v3/docs. This will replace APIv2 completely in the future."
+            }
+          ]
+        },
         {
           version: "3.1.1 - 3.1.5",
           date: "2023-04-13",

@@ -26,6 +26,8 @@
     <a class="text-gradient" href="/api/v3/docs">
       TPU API Documentation (WIP, v3)
     </a>
+    <br />
+    <router-link to="/credits" class="text-gradient mt-5">Credits</router-link>
     <p class="mt-5 text-gradient">TroploPrivateUploader</p>
     <p>&copy; {{ $date().format("YYYY") }} Troplo Services</p>
     <v-btn

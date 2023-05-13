@@ -36,7 +36,6 @@ export class BadgeService {
             badgeId: 12
           }
         })
-        console.log(badge ? "Badge already exists" : "Badge does not exist")
         if (!badge) {
           await BadgeAssociation.create({
             userId: user.id,
@@ -56,7 +55,6 @@ export class BadgeService {
             badgeId: 29
           }
         })
-        console.log(badge ? "Badge already exists" : "Badge does not exist")
         if (!badge) {
           await BadgeAssociation.create({
             userId: user.id,

@@ -20,6 +20,7 @@ import { ThemeEngineValidate } from "@app/validators/themeEngine"
 import { PatchUser } from "@app/types/auth"
 import { CoreService } from "@app/services/core.service"
 import { LayoutValidate } from "@app/validators/userv3"
+import { ExcludedCollectionsValidate } from "@app/validators/excludedCollections"
 
 @Service()
 export class UserUtilsService {
@@ -389,7 +390,7 @@ export class UserUtilsService {
     return await argon2.verify(user.password, password)
   }
 
-  async updateUser(id: number, body: PatchUser): Promise<any> {
+  async updateUser(id: number, body: any) {
     const user = await User.findOne({
       where: {
         id
@@ -412,6 +413,33 @@ export class UserUtilsService {
     })
 
     if (!user) throw Errors.USER_NOT_FOUND
+
+    const allowedFields = [
+      "username",
+      "email",
+      "password",
+      "currentPassword",
+      "discordPrecache",
+      "darkTheme",
+      "description",
+      "itemsPerPage",
+      "storedStatus",
+      "weatherUnit",
+      "themeEngine",
+      "insights",
+      "profileLayout",
+      "language",
+      "excludedCollections"
+    ]
+    // from body, remove all empty values
+    for (const key in body) {
+      if (!allowedFields.includes(key)) {
+        delete body[key]
+      }
+      if (body[key] === "" && key !== "description") {
+        delete body[key]
+      }
+    }
 
     if (body.themeEngine !== undefined) {
       ThemeEngineValidate.parse(body.themeEngine)
@@ -466,6 +494,8 @@ export class UserUtilsService {
       }
     }
     if (body.profileLayout) await LayoutValidate.parse(body.profileLayout)
+    if (body.excludedCollections)
+      await ExcludedCollectionsValidate.parse(body.excludedCollections)
     await user.update(body)
     delete body.currentPassword
     delete body.password

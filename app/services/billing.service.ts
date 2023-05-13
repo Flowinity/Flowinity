@@ -251,6 +251,7 @@ export class BillingService {
   }
 
   billingInit() {
+    if (!config.jitsiToken || !config.officialInstance) return
     try {
       // 30 minutes
       setInterval(this.checkJitsiGold, 1000 * 60 * 30)

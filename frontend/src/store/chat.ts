@@ -392,11 +392,11 @@ export const useChatStore = defineStore("chat", {
       return data;
     },
     async readChat(chatId?: number) {
-      await socket.emit("readChat", chatId || this.selectedChatId);
+      await window.socket.emit("readChat", chatId || this.selectedChatId);
       if (this.selectedChat) this.selectedChat.unread = 0;
     },
     async typing() {
-      await socket.emit("typing", this.selectedChatId);
+      await window.socket.emit("typing", this.selectedChatId);
     },
     async setChat(id: number) {
       this.loading = true;

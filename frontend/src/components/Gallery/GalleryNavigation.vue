@@ -5,7 +5,7 @@
         class="rounded-xl"
         v-model="search"
         append-inner-icon="mdi-close"
-        label="Search"
+        :label="$t('generic.search')"
         @click:append-inner="
           search = '';
           $emit('update:search', '');
@@ -22,7 +22,7 @@
         :items="sortTypes"
         item-title="name"
         item-value="internalName"
-        label="Sort"
+        :label="$t('generic.sort')"
         v-model="sort"
         v-on:update:model-value="
           $emit('update:sort', sort);
@@ -35,7 +35,7 @@
         :items="types"
         item-title="name"
         item-value="internalName"
-        label="Filter"
+        :label="$t('generic.filter')"
         v-model="filter"
         v-on:update:model-value="
           $emit('update:filter', filter);
@@ -45,7 +45,7 @@
     </v-col>
     <v-col xl="auto" sm="2" cols="12" v-if="supports.metadata">
       <v-checkbox
-        label="Search in files"
+        :label="$t('generic.metadata')"
         v-model="metadata"
         v-on:change="
           $emit('update:metadata', metadata);
@@ -56,7 +56,7 @@
     <v-col sm="1" v-if="supports.upload">
       <v-btn block class="mt-2" @click="$app.dialogs.upload.value = true">
         <v-icon>mdi-upload</v-icon>
-        Upload
+        {{ $t("generic.upload") }}
       </v-btn>
     </v-col>
   </v-row>

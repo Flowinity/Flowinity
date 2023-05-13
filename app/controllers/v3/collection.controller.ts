@@ -109,7 +109,8 @@ export class CollectionControllerV3 {
       user.itemsPerPage,
       sort,
       array,
-      user.id
+      user.id,
+      user.excludedCollections
     )
   }
 

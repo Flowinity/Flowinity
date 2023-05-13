@@ -263,6 +263,18 @@ export class User extends Model {
   })
   profileLayout: ProfileLayout
 
+  @Column({
+    type: DataType.JSON,
+    defaultValue: []
+  })
+  excludedCollections: number[] | null
+
+  @Column({
+    type: DataType.STRING,
+    defaultValue: "en"
+  })
+  language: string
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 

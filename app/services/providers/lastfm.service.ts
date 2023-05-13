@@ -8,6 +8,7 @@ import md5 from "md5"
 export class LastfmService {
   constructor() {}
   async linkLastFM(userId: string, token: string) {
+    if (!config.providers.lastfm.key) throw Errors.INTEGRATION_ERROR
     const params = {
       method: "auth.getSession",
       token,
@@ -56,6 +57,7 @@ export class LastfmService {
   }
 
   generateLastFMSig(params: Record<string, string>) {
+    if (!config.providers.lastfm.secret) throw Errors.INTEGRATION_ERROR
     delete params.api_sig
     delete params.format
     const keys = Object.keys(params).sort()

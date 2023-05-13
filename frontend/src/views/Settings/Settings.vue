@@ -3,25 +3,33 @@
     <v-card>
       <v-tabs>
         <v-tab to="/settings/dashboard" prepend-icon="mdi-account">
-          Account
+          {{ $t("settings.tabs.account") }}
         </v-tab>
-        <v-tab to="/settings/security" prepend-icon="mdi-lock">Security</v-tab>
+        <v-tab to="/settings/security" prepend-icon="mdi-lock">
+          {{ $t("settings.tabs.security") }}
+        </v-tab>
         <v-tab to="/settings/clients" prepend-icon="mdi-cellphone-cog">
-          {{ $app.cordova ? "Mobile Setup" : "Setup" }}
+          {{
+            $app.cordova
+              ? $t("settings.tabs.mobileSetup")
+              : $t("settings.tabs.setup")
+          }}
         </v-tab>
-        <v-tab to="/settings/domains" prepend-icon="mdi-web">Domains</v-tab>
+        <v-tab to="/settings/domains" prepend-icon="mdi-web">
+          {{ $t("settings.tabs.domains") }}
+        </v-tab>
         <v-tab
           to="/settings/integrations"
           prepend-icon="mdi-link-variant"
           v-if="$experiments.experiments.USER_V3_MODIFY"
         >
-          Integrations
+          {{ $t("settings.tabs.integrations") }}
         </v-tab>
         <v-tab to="/settings/slideshows" prepend-icon="mdi-image-multiple">
-          Slideshows
+          {{ $t("settings.tabs.slideshows") }}
         </v-tab>
         <v-tab to="/settings/about" prepend-icon="mdi-information">
-          About TPU
+          {{ $t("settings.tabs.about") }}
         </v-tab>
         <v-spacer></v-spacer>
         <v-progress-circular

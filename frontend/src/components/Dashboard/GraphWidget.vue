@@ -2,9 +2,9 @@
   <v-card class="text-center justify-center" :height="cardHeight">
     <v-container>
       <v-tabs v-model="tab" align-tabs="center" class="mb-3 mt-n3">
-        <v-tab value="uploads">Uploads</v-tab>
-        <v-tab value="messages">Messages</v-tab>
-        <v-tab value="hours">Hours</v-tab>
+        <v-tab value="uploads">{{ $t("stats.uploads") }}</v-tab>
+        <v-tab value="messages">{{ $t("stats.messages") }}</v-tab>
+        <v-tab value="hours">{{ $t("stats.hours") }}</v-tab>
       </v-tabs>
       <v-window v-model="tab">
         <v-window-item value="uploads">
@@ -15,7 +15,7 @@
               'text-gradient': user
             }"
           >
-            Upload Stats
+            {{ $t("stats.uploadStats") }}
           </strong>
           <div class="mx-1">
             <Chart
@@ -37,7 +37,7 @@
               'text-gradient': user
             }"
           >
-            Message Stats
+            {{ $t("stats.messageStats") }}
           </strong>
           <div class="mx-1">
             <Chart
@@ -59,7 +59,7 @@
               'text-gradient': user
             }"
           >
-            Time spent on TPU
+            {{ $t("stats.hournStats") }}
           </strong>
           <div class="mx-1">
             <Chart
@@ -76,7 +76,9 @@
       </v-window>
     </v-container>
     <v-card-subtitle class="text-left mt-n8">
-      <small>Cache: {{ $date($app.site._redis).fromNow() }}</small>
+      <small>
+        {{ $t("generic.cache") }}: {{ $date($app.site._redis).fromNow() }}
+      </small>
     </v-card-subtitle>
   </v-card>
 </template>

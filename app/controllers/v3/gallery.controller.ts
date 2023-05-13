@@ -56,7 +56,9 @@ export class GalleryControllerV3 {
       req.path.includes("/starred") ? "starred" : "user",
       user.itemsPerPage,
       sort,
-      array
+      array,
+      undefined,
+      user.excludedCollections
     )
   }
 

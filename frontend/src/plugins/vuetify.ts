@@ -95,6 +95,10 @@ export default createVuetify({
     VSkeletonLoader
   },
   defaults: {
+    VAutoComplete: {
+      variant: "underlined",
+      color: "primary"
+    },
     VDialog: {},
     VDataTable: {
       fixedHeader: true,
@@ -151,10 +155,6 @@ export default createVuetify({
       color: "primary",
       variant: "underlined",
       bgColor: "card"
-    },
-    VAutoComplete: {
-      color: "primary",
-      variant: "underlined"
     },
     VContainer: {
       fluid: true

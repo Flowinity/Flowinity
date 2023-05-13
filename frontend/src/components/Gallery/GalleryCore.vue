@@ -9,7 +9,7 @@
       <slot name="multi-select-actions">
         <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
           <v-icon>mdi-plus</v-icon>
-          &nbsp;Select all
+          &nbsp;{{ $t("gallery.selectAll") }}
         </v-btn>
       </slot>
     </div>
@@ -21,12 +21,12 @@
         :selectAll="selectAll"
       >
         <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
-          <v-icon>mdi-plus</v-icon>
-          &nbsp;Select all
+          <v-icon class="mr-1">mdi-plus</v-icon>
+          {{ $t("gallery.selectAll") }}
         </v-btn>
         <v-btn class="rounded-xl ml-2" variant="text" @click="deselectAll()">
-          <v-icon>mdi-close</v-icon>
-          &nbsp;Unselect all
+          <v-icon class="mr-1">mdi-close</v-icon>
+          {{ $t("gallery.deselectAll") }}
         </v-btn>
         <v-btn
           class="rounded-xl"
@@ -34,16 +34,16 @@
           variant="text"
           @click="bulkDeleteConfirm()"
         >
-          <v-icon>mdi-delete</v-icon>
-          Delete Selected
+          <v-icon class="mr-1">mdi-delete</v-icon>
+          {{ $t("gallery.deleteSelected") }}
         </v-btn>
         <v-btn
           class="rounded-xl ml-2"
           variant="text"
           @click="bulkAddCollection()"
         >
-          <v-icon>mdi-folder-multiple-image</v-icon>
-          &nbsp;Add to Collection
+          <v-icon class="mr-1">mdi-folder-multiple-image</v-icon>
+          {{ $t("gallery.collectSelected") }}
         </v-btn>
       </slot>
     </div>

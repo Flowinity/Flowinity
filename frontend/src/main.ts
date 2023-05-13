@@ -47,9 +47,13 @@ import router from "@/router";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import { useMailStore } from "@/store/mail";
 import { useTheme } from "vuetify";
+import { createI18n } from "vue-i18n";
 //@ts-ignore
 import VueMatomo from "vue-matomo";
 import { useAdminStore } from "@/store/admin";
+
+// LANGUAGES/LOCALES
+import en from "@/locales/en.json";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -74,6 +78,7 @@ declare module "@vue/runtime-core" {
 
 declare global {
   interface Window {
+    socket: Socket;
     tpuInternals: {
       processLink: (link: string) => void;
       readChat: () => void;
@@ -468,6 +473,14 @@ const options: PluginOptions = {
   shareAppContext: true
 };
 
+const i18n = createI18n({
+  locale: "en",
+  fallbackLocale: "en",
+  messages: {
+    en
+  }
+});
+
 app.use(VueMatomo, {
   host: "https://analytics.flowinity.com",
   siteId: 3,
@@ -493,6 +506,7 @@ app.use(Toast, options);
 app.config.globalProperties.$toast = useToast();
 app.use(VueApexCharts);
 app.use(VueAxios, axios);
+app.use(i18n);
 registerPlugins(app);
 
 app.config.performance = true;

@@ -2,77 +2,77 @@
   <v-row>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
-        title="Collections"
+        :title="$t('stats.collections')"
         :value="$app.site.stats.collections?.toLocaleString()"
         :user="true"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
-        title="Collectivized"
+        :title="$t('stats.collectivized')"
         :value="$app.site.stats.collectionItems?.toLocaleString()"
         :user="true"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
-        title="TPU Hours"
+        :title="$t('stats.hours')"
         :value="$app.site.stats.pulse?.toLocaleString() + 'h'"
         :user="true"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
-        title="Users"
+        :title="$t('stats.users')"
         :value="$app.site.stats.users?.toLocaleString()"
         :user="true"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
-        title="Uploads"
+        :title="$t('stats.uploads')"
         :value="$app.site.stats.uploads?.toLocaleString()"
         :user="true"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
-        title="Usage"
+        :title="$t('stats.usage')"
         :value="$functions.fileSize($app.site.stats.usage)"
         :user="true"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
-        title="Pulses"
+        :title="$t('stats.pulses')"
         :value="$app.site.stats.pulses?.toLocaleString()"
         :user="true"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
-        title="Invited Users"
+        :title="$t('stats.invited')"
         :value="$app.site.stats.invites?.toLocaleString()"
         :user="true"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
-        title="Documents"
+        :title="$t('stats.documents')"
         :value="$app.site.stats.docs?.toLocaleString()"
         :user="true"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :sm="6">
       <StatsCard
-        title="Messages"
+        :title="$t('stats.messages')"
         :value="$app.site.stats.messages?.toLocaleString()"
         :user="true"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :sm="6" :lg="12" :xl="6">
       <StatsCard
-        title="Chats"
+        :title="$t('stats.chats')"
         :value="$app.site.stats.chats?.toLocaleString()"
         :user="true"
       ></StatsCard>

@@ -1,5 +1,5 @@
 import { Socket } from "socket.io"
-
+import djs from "dayjs"
 // @ts-ignore
 export interface SocketWithUser extends Socket {
   to(room: string | number | string[] | number[]): SocketWithUser
@@ -9,7 +9,7 @@ declare global {
   var redis: any,
     db: any,
     config: TpuConfig,
-    dayjs: any,
+    dayjs: typeof djs,
     socket: SocketWithUser,
     whitelist: { ip: string; name: string; groups: string[] }[]
 }

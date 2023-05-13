@@ -7,6 +7,7 @@
       aspect-ratio="5.4"
     />
     <v-img
+      class="banner-image"
       v-bind="props"
       :src="banner"
       aspect-ratio="5"
@@ -68,7 +69,7 @@ import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.v
 export default defineComponent({
   name: "UserBanner",
   components: { PlaceholderCheckerboard, UploadCropper },
-  props: ["user", "height", "collection", "gold"],
+  props: ["user", "height", "collection", "gold", "darken"],
   emits: ["refreshUser"],
   data() {
     return {

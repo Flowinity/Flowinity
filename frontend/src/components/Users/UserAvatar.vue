@@ -21,8 +21,8 @@
             v-if="user.avatar"
             :src="avatarURL"
             cover
-            class="undraggable"
-          />
+            class="undraggable user-avatar"
+          ></v-img>
           <span :class="textSize" v-else class="unselectable">
             {{ user.username.charAt(0).toUpperCase() }}
           </span>

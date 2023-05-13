@@ -30,7 +30,7 @@
     </v-toolbar>
     <GalleryPreview :item="item"></GalleryPreview>
     <v-card-subtitle class="mt-3">
-      Type:
+      {{ $t("generic.type") }}:
       {{
         item.type === "paste"
           ? "Legacy Paste"
@@ -39,22 +39,24 @@
       }}
     </v-card-subtitle>
     <v-card-subtitle>
-      Original name: {{ item.originalFilename }}
+      {{ $t("generic.originalName") }}: {{ item.originalFilename }}
     </v-card-subtitle>
-
-    <v-card-subtitle>Uploaded name: {{ item.attachment }}</v-card-subtitle>
 
     <v-card-subtitle>
-      Created at:
+      {{ $t("generic.uploadedName") }}: {{ item.attachment }}
+    </v-card-subtitle>
+
+    <v-card-subtitle>
+      {{ $t("generic.createdAt") }}:
       {{ $date(item.createdAt).format("Do of MMMM YYYY, h:mm A") }}
     </v-card-subtitle>
-    <v-card-subtitle>Size: {{ fileSize }}</v-card-subtitle>
+    <v-card-subtitle>{{ $t("generic.size") }}: {{ fileSize }}</v-card-subtitle>
     <slot name="custom-values" :item="item"></slot>
     <div class="ml-4">
       <slot :item="item" name="custom-properties" />
       <v-chip-group class="mb-1">
         <HoverChip
-          text="Add to Collection"
+          :text="$t('gallery.collectSelected')"
           icon="mdi-plus"
           @click="$emit('collectivize', item.id)"
           v-if="supports.permissions.write && supports.collections"
@@ -89,7 +91,7 @@
           aria-label="Edit item"
         ></HoverChip>-->
         <HoverChip
-          text="Delete"
+          :text="$t('gallery.actions.delete.text')"
           icon="mdi-delete"
           color="red"
           @click="
@@ -97,10 +99,10 @@
           "
           v-if="supports.permissions.write"
           class="my-1"
-          aria-label="Delete item (Shift + Click to delete without confirmation)"
+          :aria-label="$t('gallery.actions.delete.aria')"
         ></HoverChip>
         <HoverChip
-          text="Link"
+          :text="$t('gallery.actions.link.text')"
           icon="mdi-content-copy"
           color="teal"
           @click="
@@ -112,18 +114,18 @@
             $toast.success('Copied to clipboard!');
           "
           class="my-1"
-          aria-label="Copy link to clipboard"
+          :aria-label="$t('gallery.actions.link.aria')"
         ></HoverChip>
         <HoverChip
-          :text="item.type === 'paste' ? 'Raw' : 'Open'"
+          :text="$t('gallery.actions.download.text')"
           icon="mdi-download"
           color="primary"
           :href="'https://i.troplo.com/i/' + item.attachment + '?force=true'"
           class="my-1"
-          aria-label="Open in new tab"
+          :aria-label="$t('gallery.actions.download.aria')"
         ></HoverChip>
         <HoverChip
-          text="OCR"
+          :text="$t('gallery.actions.ocr.text')"
           icon="mdi-ocr"
           color="green"
           @click="
@@ -132,25 +134,25 @@
           "
           v-if="item.type === 'image'"
           class="my-1"
-          aria-label="Copy scanned text to clipboard"
+          :aria-label="$t('gallery.actions.ocr.aria')"
         ></HoverChip>
         <HoverChip
-          text="Star"
+          :text="$t('gallery.actions.star.text')"
           :icon="item.starred ? 'mdi-star' : 'mdi-star-outline'"
           color="amber-darken-2"
           @click="star(item)"
           v-if="$user.user"
           class="my-1"
-          aria-label="Star item"
+          :aria-label="$t('gallery.actions.star.aria')"
         ></HoverChip>
         <HoverChip
-          text="Pin to collection"
+          :text="$t('gallery.actions.pin.text')"
           :icon="item.item.pinned ? 'mdi-pin' : 'mdi-pin-outline'"
           color="lime"
           @click="pin(item)"
           v-if="$user.user && item.item && supports.pins"
           class="my-1"
-          aria-label="Pin to collection"
+          :aria-label="$t('gallery.actions.pin.aria')"
         ></HoverChip>
       </slot>
     </v-card-text>

@@ -7,23 +7,23 @@ declare interface TpuConfig {
   siteName: string
   release: string
   storage: string
-  jitsiToken: string
+  jitsiToken: string | undefined | null
   registrations: boolean
   mediaProxySecret: string
-  weatherApiKey: string
+  weatherApiKey: string | undefined | null
   providers: {
-    tenor: string
+    tenor: string | undefined | null
     lastfm: {
-      key: string
-      secret: string
+      key: string | undefined | null
+      secret: string | undefined | null
     }
     mal: {
-      key: string
-      secret: string
+      key: string | undefined | null
+      secret: string | undefined | null
     }
     anilist: {
-      key: string
-      secret: string
+      key: string | undefined | null
+      secret: string | undefined | null
     }
   }
   redis: {
@@ -45,4 +45,5 @@ declare interface TpuConfig {
     webhook: string
     token: string
   }
+  officialInstance: boolean
 }
