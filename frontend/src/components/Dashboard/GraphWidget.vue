@@ -59,7 +59,7 @@
               'text-gradient': user
             }"
           >
-            {{ $t("stats.hournStats") }}
+            {{ $t("stats.hourStats") }}
           </strong>
           <div class="mx-1">
             <Chart
