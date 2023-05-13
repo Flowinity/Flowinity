@@ -301,6 +301,7 @@ export class CoreService {
 
   getExperiments(dev: boolean = false, gold: boolean = false): object {
     const experiments = {
+      FLOWINITY_REBRAND: false,
       API_FALLBACK_ON_ERROR: false,
       API_VERSION: 2,
       USER_V3_EDITOR: false,
@@ -352,6 +353,10 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        FLOWINITY_REBRAND: {
+          description: "Flowinity rebrand.",
+          createdAt: "2023-05-13T00:00:00.000Z"
+        },
         API_FALLBACK_ON_ERROR: {
           description: "If the API request fails, fallback to the old API.",
           createdAt: "2023-05-10T00:00:00.000Z"

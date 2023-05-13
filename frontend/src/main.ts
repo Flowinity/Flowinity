@@ -19,14 +19,18 @@ import { useAppStore } from "@/store/app";
 import { useExperimentsStore } from "@/store/experiments";
 import "./styles/main.scss";
 import dayjs from "@/plugins/dayjs";
-import Toast, { PluginOptions, useToast } from "vue-toastification";
+import Toast, {
+  PluginOptions,
+  useToast,
+  ToastInterface
+} from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import functions from "@/plugins/functions";
 import { useCollectionsStore } from "@/store/collections";
 import validation from "@/plugins/validation";
 import "./styles/tpu-editorjs.css";
 import VueApexCharts from "vue3-apexcharts";
-import SocketIO from "socket.io-client";
+import SocketIO, { Socket } from "socket.io-client";
 import { useChatStore } from "@/store/chat";
 import { RouteLocationNormalized, Router } from "vue-router";
 import { useWorkspacesStore } from "@/store/workspaces";
@@ -45,6 +49,7 @@ import { useMailStore } from "@/store/mail";
 import { useTheme } from "vuetify";
 //@ts-ignore
 import VueMatomo from "vue-matomo";
+import { useAdminStore } from "@/store/admin";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -54,15 +59,16 @@ declare module "@vue/runtime-core" {
     $date: typeof dayjs;
     $functions: typeof functions;
     $collections: ReturnType<typeof useCollectionsStore>;
-    $toast: any;
+    $toast: ToastInterface;
     $validation: typeof validation;
     $workspaces: ReturnType<typeof useWorkspacesStore>;
     $chat: ReturnType<typeof useChatStore>;
-    $socket: any;
+    $socket: Socket;
     $friends: ReturnType<typeof useFriendsStore>;
     $mail: ReturnType<typeof useMailStore>;
     $router: Router;
     $route: RouteLocationNormalized;
+    $admin: ReturnType<typeof useAdminStore>;
   }
 }
 
@@ -120,6 +126,7 @@ const app = createApp({
       app.config.globalProperties.$user = user;
       app.config.globalProperties.$app = core;
       app.config.globalProperties.$experiments = experiments;
+      app.config.globalProperties.$admin = useAdminStore();
       if (window.location.pathname.startsWith("/slideshow/")) return;
       app.config.globalProperties.$date = dayjs;
       app.config.globalProperties.$collections = collections;

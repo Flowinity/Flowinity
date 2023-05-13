@@ -30,25 +30,31 @@
     <GalleryCore
       :page="page"
       :items="gallery"
-      :supports="{
-        multiSelect: true,
-        randomAttachment: true,
-        permissions: {
-          read: true,
-          write: true,
-          configure: true
+      :supports="
+        supports || {
+          multiSelect: true,
+          randomAttachment: true,
+          permissions: {
+            read: true,
+            write: true,
+            configure: true
+          }
         }
-      }"
+      "
       @refresh="getGallery()"
-      @page-change="$router.push(`/gallery/${$event}`)"
+      @page-change="$router.push(`${path}/${$event}`)"
       @updateItem="updateItem"
       @delete="deleteItem"
       @remove="removeItemFromCollection($event.item, $event.collection)"
       @random-attachment="randomAttachment"
       :random-attachment-loading="randomLoading"
-      path="/gallery"
+      :path="path"
       :show="show"
-    ></GalleryCore>
+    >
+      <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+        <slot :name="name" v-bind="slotData" />
+      </template>
+    </GalleryCore>
   </v-container>
 </template>
 
@@ -62,6 +68,7 @@ import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 export default defineComponent({
   name: "PersonalGallery",
   components: { GalleryNavigation, GalleryCore },
+  props: ["path", "endpoint", "name", "random", "supports"],
   data() {
     return {
       gallery: {
@@ -114,7 +121,9 @@ export default defineComponent({
   methods: {
     async randomAttachment() {
       this.randomLoading = true;
-      const { data } = await this.axios.get("/gallery/random");
+      const { data } = await this.axios.get(
+        this.random || `${this.endpoint}/random`
+      );
       this.$functions.copy(
         "https://" + this.$user.user?.domain.domain + "/i/" + data.attachment
       );
@@ -133,7 +142,6 @@ export default defineComponent({
       };
     },
     deleteItem(item: Upload) {
-      console.log(item.id);
       const index = this.gallery.gallery.findIndex(
         (i: any) => i.id === item.id
       );
@@ -157,7 +165,7 @@ export default defineComponent({
     },
     async getGallery() {
       this.$app.componentLoading = true;
-      const { data } = await this.axios.get("/gallery", {
+      const { data } = await this.axios.get(this.endpoint, {
         params: {
           page: this.page,
           search: this.show.search,
@@ -182,22 +190,33 @@ export default defineComponent({
       } else {
         this.gallery.gallery.unshift(uploads.upload);
       }
+    },
+    init() {
+      this.$socket.off("gallery/create", this.socketRegister);
+      this.$app.title = this.name || "Gallery";
+      this.page = parseInt(<string>this.$route.params.page) || 1;
+      this.getGallery();
+      if (this.endpoint === "/gallery") {
+        this.$socket.on("gallery/create", this.socketRegister);
+      }
     }
   },
   mounted() {
-    this.$app.title = "Gallery";
-    this.page = parseInt(<string>this.$route.params.page) || 1;
-    this.getGallery();
-    this.$socket.on("gallery/create", this.socketRegister);
+    this.init();
   },
   unmounted() {
-    this.$socket.off("gallery/create", this.socketRegister);
+    if (this.endpoint === "/gallery") {
+      this.$socket.off("gallery/create", this.socketRegister);
+    }
   },
   watch: {
     "$route.params.page"(page) {
       if (!page) return;
       this.page = parseInt(page) || 1;
       this.getGallery();
+    },
+    endpoint() {
+      this.init();
     }
   }
 });

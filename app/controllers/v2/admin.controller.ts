@@ -9,13 +9,7 @@ import { CacheService } from "@app/services/cache.service"
 import { User } from "@app/models/user.model"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { CoreService } from "@app/services/core.service"
-
-export enum CacheType {
-  "everything",
-  "state",
-  "collections",
-  "sharelinks"
-}
+import { CacheType } from "@app/enums/admin/CacheType"
 
 @Service()
 export class AdminController {
@@ -37,7 +31,7 @@ export class AdminController {
     this.router.all(
       "*",
       auth("admin"),
-      async (req: RequestAuth, res: Response, next: any) => {
+      async (req: RequestAuth, res: Response, next: NextFunction) => {
         if (!req.user.administrator && !req.user.moderator) {
           throw Errors.ADMIN_ONLY
         }

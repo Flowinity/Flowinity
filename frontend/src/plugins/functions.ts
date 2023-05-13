@@ -2,6 +2,8 @@ import md from "./rules";
 import mdEmail from "./rulesEmail";
 import rules from "@/plugins/rules";
 import { useAppStore } from "@/store/app";
+import { Chat } from "@/models/chat";
+import { User } from "@/models/user";
 export default {
   fileSize(size: number): string {
     let i = -1;
@@ -29,10 +31,10 @@ export default {
       other
     });
   },
-  avatar(chat: any) {
+  avatar(chat?: Chat | User) {
     const app = useAppStore();
     if (!chat) return undefined;
-    if (chat.username) {
+    if ("username" in chat) {
       if (chat.avatar?.length > 20) {
         return "https://colubrina.troplo.com/usercontent/" + chat.avatar;
       } else if (chat.avatar) {

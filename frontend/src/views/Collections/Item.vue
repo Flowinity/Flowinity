@@ -62,58 +62,26 @@
     <v-card-text class="mt-n3" v-else>{{ collection.items }} items</v-card-text>
   </UserBanner>
   <v-container v-if="collection">
-    <GalleryNavigation
-      @update:show="show = $event"
-      @update:search="
-        show.search = $event;
-        page = 1;
-      "
-      @refreshGallery="getGallery()"
-      @update:filter="
-        show.selected = $event;
-        page = 1;
-      "
-      @update:metadata="
-        show.metadata = $event;
-        page = 1;
-      "
-      class="mt-1 ml-1"
-      @update:sort="
-        show.sort = $event;
-        page = 1;
-      "
-      :supports="{
-        filter: true,
-        metadata: true,
-        search: true,
-        upload: false,
-        sort: false
-      }"
-    ></GalleryNavigation>
-    <GalleryCore
-      :page="page"
-      :items="gallery"
+    <PersonalGallery
+      :endpoint="`/collections/${collection.id}/gallery`"
+      :name="`${collection.name} Collection`"
+      :path="`/collections/${collection.id}`"
+      :random="`/collections/${collection.id}/random`"
       :supports="{
         multiSelect: true,
         pins: true,
         randomAttachment: true,
         permissions: {
           read: true,
-          write: true,
-          configure: true
+          write: collection.permissionsMetadata?.write,
+          configure: collection.permissionsMetadata?.configure
         }
       }"
-      @refresh="getGallery($event)"
-      @pageChange="$router.push(`/collections/${$route.params.id}/${$event}`)"
-      @updateItem="updateItem"
-      @remove="removeItemFromCollection($event.item, $event.collection)"
-      @random-attachment="randomAttachment"
-      :random-attachment-loading="randomLoading"
     >
       <template v-slot:custom-values="{ item }">
         <v-card-subtitle>Creator: {{ item?.user?.username }}</v-card-subtitle>
       </template>
-    </GalleryCore>
+    </PersonalGallery>
   </v-container>
 </template>
 
@@ -127,10 +95,12 @@ import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import Sharing from "@/components/Collections/Dialogs/Sharing.vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import CollectionSettings from "@/components/Collections/Dialogs/Settings.vue";
+import PersonalGallery from "@/views/Gallery.vue";
 
 export default defineComponent({
   name: "CollectionsItem",
   components: {
+    PersonalGallery,
     CollectionSettings,
     UserBanner,
     Sharing,
@@ -140,79 +110,12 @@ export default defineComponent({
   },
   data() {
     return {
-      randomLoading: false,
       collection: undefined as CollectionCache | undefined,
-      gallery: {
-        gallery: [] as Upload[]
-      },
-      page: 1,
-      show: {
-        search: "",
-        metadata: true,
-        selected: "all",
-        sort: "newest"
-      },
       sharing: false,
       settings: false
     };
   },
   methods: {
-    async randomAttachment() {
-      this.randomLoading = true;
-      const { data } = await this.axios.get(
-        `/collections/${this.$route.params.id}/random`
-      );
-      this.$functions.copy(
-        "https://" + this.$user.user?.domain.domain + "/i/" + data.attachment
-      );
-      this.randomLoading = false;
-    },
-    removeItemFromCollection(item: Upload, collection: CollectionCache) {
-      const index = this.gallery.gallery.findIndex(
-        (i: Upload) => i.id === item.id
-      );
-      if (index === -1) return;
-      this.gallery.gallery[index] = {
-        ...this.gallery.gallery[index],
-        collections: this.gallery.gallery[index]?.collections.filter(
-          (c: any) => c.id !== collection.id
-        )
-      };
-    },
-    updateItem({
-      item,
-      collection
-    }: {
-      item: number;
-      collection: CollectionCache;
-    }) {
-      console.log(item, collection);
-      const index = this.gallery.gallery.findIndex((i: any) => i.id === item);
-      if (index === -1) return;
-      this.gallery.gallery[index] = {
-        ...this.gallery.gallery[index],
-        collections: [...this.gallery.gallery[index]?.collections, collection]
-      };
-    },
-    async getGallery(noLoad = false) {
-      if (!noLoad) {
-        this.$app.componentLoading = true;
-      }
-      const { data } = await this.axios.get(
-        `/collections/${this.$route.params.id}/gallery`,
-        {
-          params: {
-            page: this.page,
-            search: this.show.search,
-            textMetadata: this.show.metadata,
-            filter: this.show.selected,
-            sort: `"${this.show.sort}"`
-          }
-        }
-      );
-      this.gallery = data;
-      this.$app.componentLoading = false;
-    },
     async getCollection() {
       if (!this.collection && this.$collections.items.length) {
         this.collection = this.$collections.items.find(
@@ -229,21 +132,12 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.$app.title = "Collection";
-    this.page = parseInt(<string>this.$route.params.page) || 1;
     this.getCollection();
-    this.getGallery();
   },
   watch: {
-    "$route.params.page"(val) {
-      if (!val) return;
-      this.page = parseInt(<string>val) || 1;
-      this.getGallery();
-    },
     "$route.params.id"(val) {
       if (!val) return;
       this.getCollection();
-      this.getGallery();
     }
   }
 });

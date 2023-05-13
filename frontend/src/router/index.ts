@@ -66,16 +66,14 @@ const routes = [
         redirect: "/"
       },
       {
-        path: "/gallery",
+        path: "/gallery/:page?",
         name: "Personal Gallery",
         component: () => import("@/views/Gallery.vue"),
-        children: [
-          {
-            path: ":page",
-            name: "Personal Gallery Page",
-            component: () => import("@/views/Gallery.vue")
-          }
-        ]
+        props: {
+          endpoint: "/gallery",
+          path: "/gallery",
+          name: "Gallery"
+        }
       },
       {
         path: "/collections",
@@ -183,7 +181,12 @@ const routes = [
       {
         path: "/starred/:page?",
         name: "Starred",
-        component: () => import("@/views/Starred.vue")
+        component: () => import("@/views/Gallery.vue"),
+        props: {
+          endpoint: "/gallery/starred",
+          path: "/starred",
+          name: "Starred"
+        }
       },
       {
         path: "/slideshow/:code",

@@ -1,5 +1,12 @@
 <template>
-  <v-card v-for="experiment in experiments" class="my-2">
+  <v-autocomplete
+    v-model="selected"
+    :items="users"
+    label="User"
+    item-title="username"
+    item-value="id"
+  ></v-autocomplete>
+  <v-card v-for="experiment in relevantExperiments" class="my-2">
     <v-card-title>{{ experiment.name }}</v-card-title>
     <v-card-subtitle>{{ experiment.meta?.description }}</v-card-subtitle>
     <v-card-subtitle>
@@ -31,12 +38,23 @@ export default defineComponent({
   props: ["username"],
   data() {
     return {
-      retain: false
+      retain: false,
+      selected: 0,
+      experiments: [],
+      users: [
+        {
+          id: 0,
+          username: "LocalState"
+        }
+      ]
     };
   },
   computed: {
-    experiments() {
-      return Object.entries(this.$experiments.experiments)
+    relevantExperiments() {
+      const experiments = this.experiments.length
+        ? this.experiments
+        : this.$experiments.experiments;
+      return Object.entries(experiments)
         .map(([name, value]) => ({
           name,
           value,
@@ -46,8 +64,14 @@ export default defineComponent({
         }))
         .filter((experiment) => experiment.name !== "meta");
     }
+  },
+  async mounted() {
+    this.users.push(...(await this.$admin.getUsers()));
+  },
+  watch: {
+    async selected() {
+      this.experiments = await this.$admin.getExperimentValues(this.selected);
+    }
   }
 });
 </script>
-
-<style scoped></style>

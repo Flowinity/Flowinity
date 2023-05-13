@@ -23,19 +23,7 @@ import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { Message } from "@app/models/message.model"
-export enum CacheType {
-  "everything",
-  "state",
-  "collections",
-  "sharelinks",
-  "autocollects",
-  "invites",
-  "chats",
-  "insights",
-  "userstats",
-  "lastfm",
-  "mal"
-}
+import { CacheType } from "@app/enums/admin/CacheType"
 
 const inviteParams = {
   include: [

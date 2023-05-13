@@ -1,25 +1,10 @@
 <template>
   <v-container v-if="collection">
     <CollectionBanner :collection="collection"></CollectionBanner>
-    <GalleryNavigation
-      @update:show="show = $event"
-      @update:search="
-        show.search = $event;
-        page = 1;
-      "
-      @refreshGallery="getGallery()"
-      @update:filter="
-        show.selected = $event;
-        page = 1;
-      "
-      @update:metadata="
-        show.metadata = $event;
-        page = 1;
-      "
-    ></GalleryNavigation>
-    <GalleryCore
-      :page="page"
-      :items="gallery"
+    <PersonalGallery
+      :endpoint="`/autoCollects/${collection.id}`"
+      :path="`/autoCollects/${collection.id}`"
+      :name="`${collection.name} AutoCollects`"
       :supports="{
         multiSelect: true,
         randomAttachment: false,
@@ -29,9 +14,6 @@
           configure: true
         }
       }"
-      @refresh="getGallery()"
-      @pageChange="$router.push(`/autoCollect/${$route.params.id}/${$event}`)"
-      @updateItem="updateItem"
     >
       <template v-slot:multi-select-actions-length="slotProps: any">
         <v-btn class="rounded-xl ml-2" @click="slotProps.selectAll()">
@@ -70,13 +52,13 @@
           text="Approve"
           icon="mdi-check"
           color="green"
-          @click="act(item.id, 'approve')"
+          @click="act(item.autoCollectApproval.id, 'approve')"
         ></HoverChip>
         <HoverChip
           text="Reject"
           icon="mdi-close"
           color="red"
-          @click="act(item.id, 'deny')"
+          @click="act(item.autoCollectApproval.id, 'deny')"
         ></HoverChip>
         <HoverChip
           text="Link"
@@ -86,7 +68,7 @@
           class="my-1"
         ></HoverChip>
       </template>
-    </GalleryCore>
+    </PersonalGallery>
   </v-container>
 </template>
 
@@ -98,10 +80,17 @@ import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
 import { Upload } from "@/models/upload";
 import HoverChip from "@/components/Core/HoverChip.vue";
+import PersonalGallery from "@/views/Gallery.vue";
 
 export default defineComponent({
   name: "AutoCollectsItem",
-  components: { HoverChip, CollectionBanner, GalleryNavigation, GalleryCore },
+  components: {
+    PersonalGallery,
+    HoverChip,
+    CollectionBanner,
+    GalleryNavigation,
+    GalleryCore
+  },
   data() {
     return {
       collection: undefined as CollectionCache | undefined,

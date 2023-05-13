@@ -7,7 +7,8 @@
     :title="event === 'j' ? 'Jitsi Anniversary' : 'TroploPrivateUploader'"
     v-if="!$vuetify.display.mobile && event !== 'bc'"
   >
-    TPU
+    <template v-if="!$experiments.experiments.FLOWINITY_REBRAND">TPU</template>
+    <template v-else>Flowinity</template>
     <v-hover v-slot="{ isHovering, props }" v-if="event === 'pi'">
       <span v-bind="props" class="ml-1">
         <template v-if="isHovering">
