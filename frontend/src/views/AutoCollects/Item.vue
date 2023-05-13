@@ -3,7 +3,7 @@
     <CollectionBanner :collection="collection"></CollectionBanner>
     <PersonalGallery
       :endpoint="`/autoCollects/${collection.id}`"
-      :path="`/autoCollects/${collection.id}`"
+      :path="`/autoCollect/${collection.id}`"
       :name="`${collection.name} AutoCollects`"
       :supports="{
         multiSelect: true,
@@ -127,7 +127,8 @@ export default defineComponent({
         count: 1
       });
       this.$toast.success("Action performed");
-      this.$refs.gallery?.getGallery();
+      const { gallery } = this.$refs.gallery?.getGallery();
+      if (!gallery.length) await this.$router.push(`/autoCollect`);
     },
     updateItem({
       item,

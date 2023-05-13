@@ -176,6 +176,7 @@ export default defineComponent({
       });
       this.gallery = data as typeof this.gallery;
       this.$app.componentLoading = false;
+      return data;
     },
     socketRegister(
       uploads:
