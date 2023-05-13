@@ -116,7 +116,11 @@ export class AdminService {
   }
 
   async getUsers() {
-    return User.findAll()
+    return User.findAll({
+      attributes: {
+        exclude: ["emailToken", "storedStatus"]
+      }
+    })
   }
 
   async getStats() {
