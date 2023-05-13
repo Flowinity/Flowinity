@@ -127,7 +127,7 @@ export default defineComponent({
         count: 1
       });
       this.$toast.success("Action performed");
-      const { gallery } = this.$refs.gallery?.getGallery();
+      const { gallery } = await this.$refs.gallery?.getGallery();
       if (!gallery.length) await this.$router.push(`/autoCollect`);
     },
     updateItem({
