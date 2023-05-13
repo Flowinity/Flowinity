@@ -14,6 +14,7 @@
           configure: true
         }
       }"
+      ref="gallery"
     >
       <template v-slot:multi-select-actions-length="slotProps: any">
         <v-btn class="rounded-xl ml-2" @click="slotProps.selectAll()">
@@ -126,7 +127,7 @@ export default defineComponent({
         count: 1
       });
       this.$toast.success("Action performed");
-      this.getGallery();
+      this.$refs.gallery?.getGallery();
     },
     updateItem({
       item,
@@ -141,34 +142,6 @@ export default defineComponent({
         ...this.gallery.gallery[index],
         collections: [...this.gallery.gallery[index]?.collections, collection]
       };
-    },
-    async getGallery() {
-      this.$app.componentLoading = true;
-      const { data } = await this.axios.get(
-        `/autoCollects/${this.$route.params.id}`,
-        {
-          params: {
-            page: this.page,
-            search: this.show.search,
-            textMetadata: this.show.metadata,
-            filter: this.show.selected
-          }
-        }
-      );
-      if (!data.gallery.length) {
-        this.$app.componentLoading = false;
-        this.$router.push(`/autoCollect`);
-        return;
-      }
-      // TODO: AutoCollect type
-      this.gallery = data;
-      this.gallery.gallery = data.gallery.map((autoCollect: any) => {
-        return {
-          ...autoCollect,
-          id: autoCollect.autoCollectApproval.id
-        };
-      });
-      this.$app.componentLoading = false;
     },
     async getCollection() {
       if (!this.collection && this.$collections.items.length) {
@@ -195,7 +168,6 @@ export default defineComponent({
   },
   mounted() {
     this.getCollection();
-    this.getGallery();
     this.$app.title = "AutoCollects";
   }
 });
