@@ -113,7 +113,7 @@ export class AuthService {
       try {
         let tokenValidation = speakeasy.totp.verify({
           secret: user.totpSecret,
-          token: totp || "",
+          token: totp?.replaceAll(" ", "") || "",
           encoding: "base32"
         })
         if (!tokenValidation) {
