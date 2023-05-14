@@ -29,7 +29,6 @@
         :text="$t('settings.setup.actions.sharex')"
         :disabled="!selected"
         icon="mdi-download"
-        text="Download ShareX Config"
         :old="true"
         :disabled-text="$t('settings.setup.label')"
       ></HoverChip>
