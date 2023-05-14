@@ -306,7 +306,7 @@ export class Application {
   }
 
   private config(): void {
-    // Middlewares configuration
+    // Middleware configuration
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }))
     this.app.use(cookieParser())

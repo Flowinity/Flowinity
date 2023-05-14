@@ -1,0 +1,49 @@
+{
+  "port": 34582,
+  "flowinityId": null,
+  "flowinitySecret": null,
+  "maintenance": false,
+  "siteName": "TPU",
+  "hostname": null,
+  "hostnameWithProtocol": null,
+  "release": "prod",
+  "storage": "storage",
+  "jitsiToken": null,
+  "registrations": true,
+  "modules": ["colubrina", "mail"],
+  "mediaProxySecret": null,
+  "weatherApiKey": null,
+  "redis": {
+    "host": null,
+    "db": null,
+    "port": null
+  },
+  "providers": {
+    "tenor": null,
+    "lastfm": {
+      "key": null,
+      "secret": null
+    },
+    "mal": {
+      "key": null,
+      "secret": null
+    },
+    "anilist": {
+      "key": null,
+      "secret": null
+    }
+  },
+  "email": {
+    "host": null,
+    "port": null,
+    "from": null,
+    "secure": null,
+    "username": null,
+    "password": null
+  },
+  "discord": {
+    "webhook": null,
+    "token": null
+  },
+  "officialInstance": false
+}

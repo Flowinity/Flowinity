@@ -5,7 +5,6 @@ import {
   JsonController,
   Param,
   Post,
-  Put,
   QueryParam,
   UseBefore,
   UploadedFile,
@@ -17,23 +16,16 @@ import { Auth } from "@app/lib/auth"
 import { User } from "@app/models/user.model"
 import Errors from "@app/lib/errors"
 import { GalleryService } from "@app/services/gallery.service"
-import rateLimits, { standardLimiter } from "@app/lib/rateLimits"
-import { AutoCollectService } from "@app/services/autoCollect.service"
-import { CacheService } from "@app/services/cache.service"
-import { AutoCollectRule } from "@app/models/autoCollectRule.model"
+import rateLimits from "@app/lib/rateLimits"
 import { SortOptions } from "@app/types/sort"
-import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
-import queue from "@app/lib/queue"
 import uploader from "@app/lib/upload"
 import { RequestAuth } from "@app/types/express"
 import { OpenAPI } from "routing-controllers-openapi"
+
 @Service()
 @JsonController("/gallery")
 export class GalleryControllerV3 {
-  constructor(
-    private readonly galleryService: GalleryService,
-    private readonly cacheService: CacheService
-  ) {}
+  constructor(private readonly galleryService: GalleryService) {}
 
   @Get("")
   @Get("/starred")

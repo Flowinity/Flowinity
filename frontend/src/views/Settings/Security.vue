@@ -104,7 +104,7 @@
       <v-list-item-subtitle class="mt-1">
         {{
           $t("settings.security.lastSessionUsage", {
-            date: $date().to(login.createdAt)
+            date: $date().to(login.updatedAt)
           })
         }}
       </v-list-item-subtitle>

@@ -22,8 +22,7 @@ import { MyAnimeListService } from "@app/services/providers/mal.service"
 @Service()
 export class Server {
   private static readonly appPort: string | number | boolean =
-    Server.normalizePort(process.env.PORT || "34582")
-  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    Server.normalizePort(config.port || "34582")
   private static readonly baseDix: number = 10
   private server: http.Server
 
@@ -99,17 +98,15 @@ export class Server {
         : "Port " + Server.appPort
     switch (error.code) {
       case "EACCES":
-        // eslint-disable-next-line no-console
         console.error(`${bind} requires elevated privileges`)
         process.exit(1)
         break
       case "EADDRINUSE":
-        if (process.env.PROD_DEBUG === "true") {
-          const port = 34583
+        if (config.release === "dev") {
+          const port = parseInt(process.env.PORT || "34582", 10) + 1
           this.init(port)
           return
         }
-        // eslint-disable-next-line no-console
         console.error(`${bind} is already in use`)
         process.exit(1)
         break
@@ -118,9 +115,7 @@ export class Server {
     }
   }
 
-  /**
-   * Se produit lorsque le serveur se met à écouter sur le port.
-   */
+  // When the Express server starts listening on the port
   private onListening(): void {
     const addr = this.server.address() as AddressInfo
     const bind: string = `port ${addr.port}`

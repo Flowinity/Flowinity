@@ -1,14 +1,16 @@
 <template>
   <template v-if="!$app.cordova">
-    <v-card-title>API Key Options</v-card-title>
+    <v-card-title>
+      {{ $t("settings.setup.title") }}
+    </v-card-title>
     <v-select
       v-model="selected"
       :items="items"
       item-value="token"
       item-title="name"
       class="mx-3"
-      placeholder="Select an API Key"
-      label="Select an API Key"
+      :placeholder="$t('settings.setup.label')"
+      :label="$t('settings.setup.label')"
     ></v-select>
     <div class="mt-n3 mx-3">
       <HoverChip
@@ -17,19 +19,19 @@
         @click="$functions.copy(selected)"
         :disabled="!selected"
         icon="mdi-content-copy"
-        text="Copy API Key"
+        :text="$t('settings.setup.actions.apiKey')"
         :old="true"
-        disabled-text="Please select an API Key"
+        :disabled-text="$t('settings.setup.label')"
       ></HoverChip>
       <HoverChip
         class="mr-2 mt-2"
         color="indigo"
-        @click="saveFile('sharex')"
+        :text="$t('settings.setup.actions.sharex')"
         :disabled="!selected"
         icon="mdi-download"
         text="Download ShareX Config"
         :old="true"
-        disabled-text="Please select an API Key"
+        :disabled-text="$t('settings.setup.label')"
       ></HoverChip>
       <HoverChip
         class="mr-2 mt-2"
@@ -37,16 +39,16 @@
         @click="saveFile('sharenix')"
         :disabled="!selected"
         icon="mdi-download"
-        text="Download ShareNix Config"
+        :text="$t('settings.setup.actions.sharenix')"
         :old="true"
-        disabled-text="Please select an API Key"
+        :disabled-text="$t('settings.setup.label')"
       ></HoverChip>
       <HoverChip
         class="mr-2 mt-2"
         color="#78C257"
         href="https://i.troplo.com/i/c9069cbd9284.flo"
         icon="mdi-android"
-        text="Download Automate Config"
+        :text="$t('settings.setup.actions.automate')"
         :old="true"
       ></HoverChip>
       <HoverChip
@@ -54,12 +56,14 @@
         color="white"
         href="https://www.icloud.com/shortcuts/2d3bca05bfe94ee3ac57611b6b1e5764"
         icon="mdi-apple"
-        text="Download Shortcuts Config"
+        :text="$t('settings.setup.actions.shortcuts')"
         :old="true"
         target="_blank"
       ></HoverChip>
     </div>
-    <v-card-title>How to install the ShareX configuration:</v-card-title>
+    <v-card-title>
+      {{ $t("settings.setup.sharex") }}
+    </v-card-title>
     <v-container>
       <video controls height="430" muted>
         <source
@@ -68,84 +72,74 @@
         />
       </video>
     </v-container>
-    <v-card-title>How to install the ShareNix configuration:</v-card-title>
+    <v-card-title>
+      {{ $t("settings.setup.sharenix") }}
+    </v-card-title>
     <v-container>
       <ol>
-        <li>Download and install ShareNix for your distribution.</li>
         <li>
-          Download and install Flameshot or another supported screenshot tool.
+          {{ $t("settings.setup.sharenixSteps.1") }}
         </li>
-        <li>Download the ShareNix config.</li>
         <li>
-          Move the downloaded config to ~/.sharenix.json, example:
+          {{ $t("settings.setup.sharenixSteps.2") }}
+        </li>
+        <li>{{ $t("settings.setup.sharenixSteps.3") }}</li>
+        <li>
+          {{ $t("settings.setup.sharenixSteps.4") }}
           <code>
             mv "{{ $user.user?.username }} - TPU.json" ~/.sharenix.json
           </code>
         </li>
-        <li>
-          Run
-          <code>sharenix {file}</code>
-          or
-          <code>sharenix-section</code>
-          (for a screenshot) to upload a file to TPU.
-        </li>
+        <li v-html="$t('settings.setup.sharenixSteps.5')"></li>
       </ol>
     </v-container>
     <v-card-title>
-      How to install the Automate config for Android devices:
+      {{ $t("settings.setup.automate") }}
     </v-card-title>
     <v-container>
       <ol>
+        <li v-html="$t('settings.setup.automateSteps.1')"></li>
         <li>
-          Download the Automate app from the Google Play Store
-          <a
-            href="https://play.google.com/store/apps/details?id=com.llamalab.automate"
-          >
-            here.
-          </a>
-        </li>
-        <li>Download the Automate .flo config from TPU.</li>
-        <li>
-          From the 3 dots on the top right hand corner, press the "Import"
-          button and import the .flo file using the file manager.
+          {{ $t("settings.setup.automateSteps.2") }}
         </li>
         <li>
-          Select the imported TPU flow, and hit the "Edit" icon floating action
-          button, and then the graph icon.
+          {{ $t("settings.setup.automateSteps.3") }}
         </li>
         <li>
-          Modify the 3 top block variables collectionId, apiKey, path to your
-          liking, collectionId may be null, this will send an additional network
-          request to add any uploads to a collection from your device.
+          {{ $t("settings.setup.automateSteps.4") }}
         </li>
         <li>
-          Start the flow, and enable the option to start flows at system boot in
-          the app settings if you'd like.
+          {{ $t("settings.setup.automateSteps.5") }}
+        </li>
+        <li>
+          {{ $t("settings.setup.automateSteps.6") }}
         </li>
         <small>
-          Android 12 or lower is recommended. Android 13 may display a
-          notification when an item has been newly copied to the clipboard, you
-          may want to disable the auto clipboard copy block in this case.
+          {{ $t("settings.setup.automateSteps.7") }}
         </small>
       </ol>
     </v-container>
     <v-card-title>
-      How to install the Shortcuts config for Apple iOS devices:
+      {{ $t("settings.setup.shortcuts") }}
     </v-card-title>
     <v-container>
       <ol>
-        <li>Install the configuration file via iCloud.</li>
-        <li>Follow setup screen and provide your TPU API key of choice.</li>
         <li>
-          Enable the ability to use the accessibility button for quick
-          screenshots in Accessibility -> Touch -> Back Tap -> [Select either
-          Double Tap or Triple Tap] -> Scroll down to "SHORTCUTS" -> Select TPU.
+          {{ $t("settings.setup.shortcutsSteps.1") }}
+        </li>
+        <li>
+          {{ $t("settings.setup.shortcutsSteps.2") }}
+        </li>
+        <li>
+          {{ $t("settings.setup.shortcutsSteps.3") }}
         </li>
       </ol>
     </v-container>
   </template>
   <template v-else>
-    <v-card-title>TPU Mobile Options</v-card-title>
+    <v-card-title>
+      {{ $t("settings.setup.title") }}
+    </v-card-title>
   </template>
 </template>
 

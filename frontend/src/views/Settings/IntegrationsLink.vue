@@ -1,7 +1,9 @@
 <template>
   <v-card class="mt-4">
     <v-toolbar>
-      <v-toolbar-title>Linking account... please wait...</v-toolbar-title>
+      <v-toolbar-title>
+        {{ $t("settings.integrations.linking") }}
+      </v-toolbar-title>
     </v-toolbar>
   </v-card>
 </template>

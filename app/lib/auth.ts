@@ -12,7 +12,7 @@ import Errors from "@app/lib/errors"
 import { AccessedFrom } from "@app/types/auth"
 import { Integration } from "@app/models/integration.model"
 import { createParamDecorator } from "routing-controllers"
-import { RequestAuth } from "@app/types/express"
+import { RequestAuthSystem } from "@app/types/express"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -129,7 +129,7 @@ async function updateSession(session: Session, ip: string) {
 export async function authSystem(
   scope: string | string[],
   passthrough: boolean = false,
-  req: any,
+  req: RequestAuthSystem,
   res: Response,
   next: NextFunction
 ) {

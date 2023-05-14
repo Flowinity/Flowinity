@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/frontend/mobile/config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/mobile/config.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/layouts/default/AppBar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/layouts/default/AppBar.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/layouts/default/Default.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/layouts/default/Default.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/AutoCollects/Item.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/AutoCollects/Item.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Insights/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Insights/Home.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Settings/Settings.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Settings/Settings.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Settings/Setup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Settings/Setup.vue" afterDir="false" />
-    </list>
+    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -35,7 +27,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/troplo/GitHub/server",
+    "last_opened_file_path": "/mnt/1TB/home/troplo/GitHub/TPUFlowinityImages",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -55,6 +47,7 @@
       <option name="presentableId" value="Default" />
       <updated>1681109154730</updated>
       <workItem from="1681109155704" duration="540000" />
+      <workItem from="1684038569458" duration="23000" />
     </task>
     <servers />
   </component>

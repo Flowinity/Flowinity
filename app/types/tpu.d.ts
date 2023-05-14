@@ -46,4 +46,5 @@ declare interface TpuConfig {
     token: string
   }
   officialInstance: boolean
+  port: number | string | undefined | null
 }

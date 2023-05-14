@@ -1,12 +1,18 @@
 <template>
-  <v-card-text class="text-overline mb-n4">Available Domains</v-card-text>
+  <v-card-text class="text-overline mb-n4">
+    {{ $t("settings.domains.title") }}
+  </v-card-text>
   <v-list>
     <v-list-item v-for="domain in domains" :key="domain.id">
       <v-list-item-title>
         {{ domain.domain }}
       </v-list-item-title>
       <v-list-item-subtitle>
-        Users: {{ domain.activeUsersCount }}
+        {{
+          $t("settings.domains.users", {
+            count: domain.activeUsersCount
+          })
+        }}
       </v-list-item-subtitle>
       <template v-slot:append>
         <v-list-item-action>
@@ -24,12 +30,7 @@
       </template>
     </v-list-item>
   </v-list>
-  <small>
-    If you'd like your domain added, email
-    <a href="mailto:troplo@troplo.com">troplo@troplo.com</a>
-    , ensure your domain has already been registered and configured with a DNS
-    provider.
-  </small>
+  <small v-html="$t('settings.domains.disclaimer')"></small>
 </template>
 
 <script lang="ts">

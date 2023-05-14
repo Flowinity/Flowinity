@@ -8,26 +8,67 @@
       TPU
     </p>
     <v-divider></v-divider>
-    <p class="mt-5">Product name: TPUvNEXT</p>
-    <p>Version: {{ $app.version.current }}</p>
-    <p>
-      Build date:
-      {{ $date($app.version.date).format("DD/MM/YYYY hh:mm:ss A") }}
+    <p class="mt-5">
+      {{ $t("settings.about.productName") }}
     </p>
-    <p>Build date relative: {{ $date($app.version.date).fromNow() }}</p>
-    <p>Backend environment: {{ $app.site.release }}</p>
+    <p>
+      {{
+        $t("settings.about.version", {
+          version: $app.version.current
+        })
+      }}
+    </p>
+    <p>
+      {{
+        $t("settings.about.buildDate", {
+          date: $date($app.version.date).format("DD/MM/YYYY hh:mm:ss A")
+        })
+      }}
+    </p>
+    <p>
+      {{
+        $t("settings.about.relative", {
+          date: $date($app.version.date).fromNow()
+        })
+      }}
+    </p>
+    <p>
+      {{
+        $t("settings.about.backend", {
+          release: $app.site.release
+        })
+      }}
+    </p>
     <template v-if="$app.site.connection">
-      <p>Backend connecting IP: {{ $app.site.connection.ip }}</p>
+      <p>
+        {{
+          $t("settings.about.ip", {
+            ip: $app.site.connection.ip
+          })
+        }}
+      </p>
       <p v-if="$app.site.connection.whitelist">
-        IP whitelist groups: {{ $app.site.connection.whitelist.groups }}
+        {{
+          $t("settings.about.ipWhitelist", {
+            groups: $app.site.connection.whitelist.groups
+          })
+        }}
       </p>
     </template>
-    <p>Server: {{ $app.site.server }}</p>
+    <p>
+      {{
+        $t("settings.about.server", {
+          server: $app.site.server
+        })
+      }}
+    </p>
     <a class="text-gradient" href="/api/v3/docs">
-      TPU API Documentation (WIP, v3)
+      {{ $t("settings.about.docs") }}
     </a>
     <br />
-    <router-link to="/credits" class="text-gradient mt-5">Credits</router-link>
+    <router-link to="/credits" class="text-gradient mt-5">
+      {{ $t("settings.about.credits") }}
+    </router-link>
     <p class="mt-5 text-gradient">TroploPrivateUploader</p>
     <p>&copy; {{ $date().format("YYYY") }} Troplo Services</p>
     <v-btn
@@ -35,21 +76,21 @@
       class="mt-2"
       v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
     >
-      Crash TPU (dev)
+      {{ $t("settings.about.crash") }}
     </v-btn>
     <v-btn
       @click="expTrue"
       class="mt-2"
       v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
     >
-      Enable all experiments
+      {{ $t("settings.about.expEnable") }}
     </v-btn>
     <v-btn
       @click="expFalse"
       class="mt-2"
       v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
     >
-      Disable all experiments
+      {{ $t("settings.about.expDisable") }}
     </v-btn>
   </v-container>
 </template>

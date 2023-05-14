@@ -1,10 +1,14 @@
 <template>
   <v-card>
     <v-toolbar color="toolbar">
-      <v-toolbar-title>Configure Slideshows</v-toolbar-title>
+      <v-toolbar-title>
+        {{ $t("settings.slideshows.title") }}
+      </v-toolbar-title>
     </v-toolbar>
     <v-container>
-      <v-card-title>My Slideshows</v-card-title>
+      <v-card-title>
+        {{ $t("settings.slideshows.my") }}
+      </v-card-title>
       <v-expansion-panels>
         <v-expansion-panel v-for="slideshow in slideshows" :key="slideshow.id">
           <template v-slot:title>
@@ -19,26 +23,29 @@
             <v-card-text>
               <v-text-field
                 disabled
-                label="Share Link"
+                :label="$t('settings.slideshows.shareLink')"
                 :model-value="
                   'https://images.flowinity.com/slideshow/' +
                   slideshow.shareLink
                 "
               />
-              <v-text-field label="Slideshow Name" v-model="slideshow.name" />
               <v-text-field
-                label="Speed/Interval (in s, can do decimals)"
+                :label="$t('settings.slideshows.name')"
+                v-model="slideshow.name"
+              />
+              <v-text-field
+                :label="$t('settings.slideshows.speed')"
                 v-model="slideshow.speed"
               />
               <v-switch
                 inset
-                label="Include items from my gallery"
+                :label="$t('settings.slideshows.includeGallery')"
                 v-model="slideshow.includeGallery"
               ></v-switch>
               <v-select
                 v-model="slideshow.collectionIds"
                 :items="$collections.items"
-                label="Collections"
+                :label="$t('settings.slideshows.collections')"
                 chips
                 deletable-chips
                 multiple
@@ -65,7 +72,7 @@
         </v-expansion-panel>
       </v-expansion-panels>
       <v-card-subtitle v-if="!slideshows.length">
-        No slideshows found
+        {{ $t("settings.slideshows.none") }}
       </v-card-subtitle>
       <v-sheet outlined class="rounded-xxl mt-3">
         <v-card
