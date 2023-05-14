@@ -8,22 +8,67 @@
         <v-card-title>
           TPU was made possible by the following people:
         </v-card-title>
-        <UserCard username="Troplo" subtitle="Lead Developer"></UserCard>
-        <UserCard username="remy" subtitle="Infrastructure Manager"></UserCard>
-        <UserCard username="electrics01" subtitle="Code Contributor"></UserCard>
-        <UserCard
-          username="bytedefined"
-          subtitle="Code Contributor / Ideas"
-        ></UserCard>
-        <UserCard
-          username="Jolt707"
-          subtitle="Code Contributor / Moral Support, sometimes"
-        ></UserCard>
-        <UserCard
-          username="Avinera"
-          subtitle="Buys me my favorite beverage, Pepsi Max"
-        ></UserCard>
-        <UserCard username="Spy" subtitle="Buys me lunch"></UserCard>
+        <template v-if="$app.site.officialInstance">
+          <UserCard username="Troplo" subtitle="Lead Developer"></UserCard>
+          <UserCard
+            username="remy"
+            subtitle="Infrastructure Manager / Code Contributor"
+          ></UserCard>
+          <UserCard
+            username="electrics01"
+            subtitle="Code Contributor"
+          ></UserCard>
+          <UserCard
+            username="bytedefined"
+            subtitle="Code Contributor / Ideas"
+          ></UserCard>
+          <UserCard
+            username="Jolt707"
+            subtitle="Code Contributor / Moral Support, sometimes"
+          ></UserCard>
+          <UserCard
+            username="Avinera"
+            subtitle="Buys me my favorite beverage, Pepsi Max"
+          ></UserCard>
+          <UserCard username="Spy" subtitle="Buys me lunch"></UserCard>
+        </template>
+        <template v-else>
+          <ul class="ml-8">
+            <li>
+              <a href="https://github.com/Troplo">Troplo - Lead Developer</a>
+            </li>
+            <li>
+              <a href="https://github.com/theloosegoose">
+                The Loose Goose - Infrastructure Manager / Code Contributor
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/electrics01">
+                ElectricS01 - Code Contributor
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/Bytedefined">
+                Bytedefined - Code Contributor / Ideas
+              </a>
+            </li>
+            <li>
+              <a href="https://images.flowinity.com/u/Jolt707">
+                Jolt707 - Code Contributor / Moral Support, sometimes
+              </a>
+            </li>
+            <li>
+              <a href="https://images.flowinity.com/u/Avinera">
+                Avinera - Buys me my favorite beverage, Pepsi Max
+              </a>
+            </li>
+            <li>
+              <a href="https://images.flowinity.com/u/Spy">
+                Spy - Buys me lunch
+              </a>
+            </li>
+          </ul>
+        </template>
         <v-card-subtitle>... and everyone else!</v-card-subtitle>
         <v-card-title class="mt-3">
           TPU was made possible by the following open source projects:

@@ -40,6 +40,7 @@ export interface AppState {
     hostnameWithProtocol: string;
     announcements: any[];
     flowinityId: string;
+    officialInstance: boolean;
     connection: {
       ip: string;
       whitelist:
@@ -196,7 +197,8 @@ export const useAppStore = defineStore("app", {
         },
         maintenance: false,
         _redis: new Date().toISOString(),
-        server: "MAIN4"
+        server: "MAIN4",
+        officialInstance: true
       },
       weather: {
         loading: true,

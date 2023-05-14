@@ -280,6 +280,10 @@ export default defineComponent({
           key: "en"
         },
         {
+          title: "Russian",
+          key: "ru"
+        },
+        {
           title: "Help localize TPU",
           key: "help",
           link: "https://github.com/PrivateUploader/PrivateUploader/tree/main/frontend/src/locales"

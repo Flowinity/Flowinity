@@ -104,7 +104,8 @@ export class CoreService {
       announcements: await this.getAnnouncements(),
       stats: await this.getStats(),
       maintenance: config.maintenance,
-      registrations: config.registrations
+      registrations: config.registrations,
+      officialInstance: config.officialInstance
     }
   }
 

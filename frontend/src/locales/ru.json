@@ -20,7 +20,7 @@
       "colubrinaMigrate": "Migrate from Colubrina",
       "admin": "Admin Panel",
       "member": "Member of {names}",
-      "experiments": "TPU Experimental Overrides (NEXT)",
+      "experiments": "Экспериментальные переопределения «TPU» (NEXT)",
       "close": "Close sidebar"
     }
   },

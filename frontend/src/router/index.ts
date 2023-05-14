@@ -303,6 +303,11 @@ const routes = [
         component: () => import("@/views/Credits.vue")
       },
       {
+        path: "/setup",
+        name: "TPU Setup Wizard",
+        component: () => import("@/views/Setup.vue")
+      },
+      {
         path: "/:id",
         name: "Attachment Item",
         component: () => import("@/views/Item.vue")
@@ -340,7 +345,8 @@ router.beforeEach(async (to, from) => {
       "Notes Workspaces Redirect",
       "Privacy Policy",
       "Attachment Item",
-      "Credits"
+      "Credits",
+      "TPU Setup Wizard"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");
