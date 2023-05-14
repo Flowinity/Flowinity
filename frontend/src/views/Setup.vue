@@ -203,7 +203,11 @@
                 :title="$t('setup.step4.autoCollects.title')"
               >
                 {{ $t("setup.step4.autoCollects.description") }}
-                <v-switch v-model="features.autoCollects"></v-switch>
+                <v-switch
+                  style="display: flex; justify-content: center"
+                  hide-details
+                  v-model="features.autoCollects"
+                ></v-switch>
               </PromoCard>
               <v-card-actions>
                 <v-spacer></v-spacer>
