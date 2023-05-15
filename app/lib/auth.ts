@@ -314,7 +314,7 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
       const token = action.request.header("Authorization")
       if (!scope) scope = "*"
       if (token) {
-        const session = await Session.findOne({
+        let session = await Session.findOne({
           where: {
             token: token,
             expiredAt: {
@@ -371,6 +371,7 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
             }
           ]
         })
+
         if (session) {
           if (!checkScope(scope, session.scopes)) {
             updateSession(session, action.request.ip).then(() => {})
@@ -392,6 +393,9 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
               throw Errors.EMAIL_NOT_VERIFIED
             }
             updateSession(session, action.request.ip).then(() => {})
+
+            session.user.dataValues.stats = await redis.json.get(`userStats:${session?.user.id}`)
+
             return session.toJSON().user
           }
         } else {

@@ -2,12 +2,12 @@
   <v-container v-if="$user.user">
     <v-row>
       <v-col md="6">
-        <UserWidget></UserWidget>
-        <AnnouncementsWidget class="mt-6"></AnnouncementsWidget>
+        <UserWidget />
+        <AnnouncementsWidget class="mt-6" />
       </v-col>
       <v-col md="6">
-        <StatsWidget></StatsWidget>
-        <GraphWidget :gold="$user.gold" :user="true" class="mt-6"></GraphWidget>
+        <StatsWidget />
+        <GraphWidget :gold="$user.gold" :user="true" class="mt-6" />
       </v-col>
     </v-row>
   </v-container>
