@@ -280,7 +280,7 @@ export default defineComponent({
           key: "en"
         },
         {
-          title: "Russian",
+          title: "Русский (Россия)",
           key: "ru"
         },
         {
