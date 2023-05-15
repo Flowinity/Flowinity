@@ -482,6 +482,7 @@ enum Step {
   DatabaseConfig,
   Plan,
   AdminUser,
+  InstanceSetup,
   Features,
   Mail,
   Finish,
