@@ -111,7 +111,7 @@ export class AuthService {
     }
     if (user.totpEnable && user.totpSecret && !alternatePassword) {
       try {
-        let tokenValidation = speakeasy.totp.verify({
+        let tokenValidation = await speakeasy.totp.verify({
           secret: user.totpSecret,
           token: totp?.replaceAll(" ", "") || "",
           encoding: "base32"

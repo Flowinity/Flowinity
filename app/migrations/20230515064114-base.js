@@ -1,6 +1,6 @@
 "use strict"
-
-/** @type {import("sequelize-cli").Migration} */
+const fs = require("fs")
+const sequelize = require("sequelize")
 module.exports = {
   async up(queryInterface, Sequelize) {
     /**
@@ -9,10 +9,13 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.removeColumn("Users", "inviteEntitlements")
-    await queryInterface.removeColumn("Users", "inviteEntitlementBan")
-    await queryInterface.removeColumn("Users", "premium")
-    await queryInterface.removeColumn("Users", "beta")
+    const sql = await fs.readFileSync(__dirname + "/initial.sql")
+    var promises = []
+    var statements = sql.toString().split(";")
+    for (var statement of statements)
+      if (statement.trim() != "")
+        promises.push(queryInterface.sequelize.query(statement))
+    return Promise.all(promises)
   },
 
   async down(queryInterface, Sequelize) {

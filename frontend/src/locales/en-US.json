@@ -306,6 +306,10 @@
       "autoCollects": {
         "title": "AutoCollects",
         "description": "Automatically add uploaded items by rules into TPU Collections."
+      },
+      "collections": {
+        "title": "Collections",
+        "description": "Allow users to create collections of uploaded files."
       }
     }
   }
