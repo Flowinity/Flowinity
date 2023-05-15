@@ -3,7 +3,8 @@ import cryptoRandomString from "crypto-random-string"
 import path from "path"
 
 const storage = multer.diskStorage({
-  destination: global.config?.storage,
+  destination:
+    require(global.appRoot + "/config/tpu.json")?.storage || "storage",
   filename: (req, file, cb) => {
     cb(
       null,
