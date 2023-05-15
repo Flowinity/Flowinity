@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="Fix badges on users page">
+    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="add a title">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Admin/Communications.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Admin/Communications.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/userUtils.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/userUtils.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +66,7 @@
       <workItem from="1681109155704" duration="540000" />
       <workItem from="1684038569458" duration="23000" />
       <workItem from="1684069734381" duration="2483000" />
-      <workItem from="1684114874192" duration="24528000" />
+      <workItem from="1684114874192" duration="24965000" />
     </task>
     <task id="LOCAL-00001" summary="Capitalise some Russian strings">
       <created>1684150087122</created>
@@ -89,7 +89,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684153813009</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="add a title">
+      <created>1684154126995</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1684154126995</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -100,6 +107,7 @@
     <MESSAGE value="Capitalise some Russian strings" />
     <MESSAGE value="Ability for admins to delete communications messages and also the ability to copy the message ID within communications chats" />
     <MESSAGE value="Fix badges on users page" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix badges on users page" />
+    <MESSAGE value="add a title" />
+    <option name="LAST_COMMIT_MESSAGE" value="add a title" />
   </component>
 </project>

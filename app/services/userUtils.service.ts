@@ -569,10 +569,11 @@ export class UserUtilsService {
       limit: 24,
       offset: (page - 1) * 24
     })
-    users = users.map((user: User) => {
-      user.dataValues.stats = redis.json.get(`userStats:${user.id}`)
-      return user
-    })
+
+    for (const user of users) {
+      if(user.insights) user.setDataValue("stats", await redis.json.get(`userStats:${user.id}`))
+    }
+
     const userCount = await User.count({ where })
     const pager = paginate(userCount, page, 24)
     return {
