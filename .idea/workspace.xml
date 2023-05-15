@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="add a title">
+    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="fix badges x2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/userUtils.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/userUtils.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +65,7 @@
       <workItem from="1681109155704" duration="540000" />
       <workItem from="1684038569458" duration="23000" />
       <workItem from="1684069734381" duration="2483000" />
-      <workItem from="1684114874192" duration="24965000" />
+      <workItem from="1684114874192" duration="25163000" />
     </task>
     <task id="LOCAL-00001" summary="Capitalise some Russian strings">
       <created>1684150087122</created>
@@ -96,7 +95,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684154126995</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="fix badges x2">
+      <created>1684154565464</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1684154565465</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -108,6 +114,7 @@
     <MESSAGE value="Ability for admins to delete communications messages and also the ability to copy the message ID within communications chats" />
     <MESSAGE value="Fix badges on users page" />
     <MESSAGE value="add a title" />
-    <option name="LAST_COMMIT_MESSAGE" value="add a title" />
+    <MESSAGE value="fix badges x2" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix badges x2" />
   </component>
 </project>

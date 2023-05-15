@@ -571,7 +571,7 @@ export class UserUtilsService {
     })
 
     for (const user of users) {
-      if(user.insights) user.setDataValue("stats", await redis.json.get(`userStats:${user.id}`))
+      user.setDataValue("stats", await redis.json.get(`userStats:${user.id}`))
     }
 
     const userCount = await User.count({ where })
