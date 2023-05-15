@@ -3,8 +3,8 @@
   <v-card-text>
     <v-switch
       v-model="$user.changes.discordPrecache"
-      label="Discord precaching"
       class="mb-n7"
+      label="Discord precaching"
       @update:modelValue="$emit('update')"
     ></v-switch>
     <small>
@@ -14,10 +14,10 @@
       this if you don't trust Discord.
     </small>
     <v-switch
-      v-model="$app.demo"
-      label="Demo mode"
-      class="mb-n7"
       v-if="$app.site.release === 'dev'"
+      v-model="$app.demo"
+      class="mb-n7"
+      label="Demo mode"
     ></v-switch>
   </v-card-text>
   <v-card-title>{{ $t("settings.home.myAccount.title") }}</v-card-title>
@@ -26,17 +26,17 @@
       <v-expansion-panel-text>
         <v-form v-model="valid.username">
           <v-text-field
-            class="mt-4"
+            v-model="$user.changes.username"
             :label="$t('settings.home.myAccount.username')"
             :rules="$validation.user.username"
-            v-model="$user.changes.username"
+            class="mt-4"
           ></v-text-field>
           <v-text-field
-            class="mt-4"
-            :label="$t('settings.home.myAccount.currentPassword')"
-            type="password"
-            :rules="$validation.user.passwordSettings"
             v-model="$user.changes.currentPassword"
+            :label="$t('settings.home.myAccount.currentPassword')"
+            :rules="$validation.user.passwordSettings"
+            class="mt-4"
+            type="password"
           ></v-text-field>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -58,30 +58,30 @@
       <v-expansion-panel-text>
         <v-form v-model="valid.password">
           <v-text-field
-            class="mt-4"
-            :label="$t('settings.home.myAccount.currentPassword')"
-            type="password"
-            :rules="$validation.user.passwordSettings"
             v-model="$user.changes.currentPassword"
+            :label="$t('settings.home.myAccount.currentPassword')"
+            :rules="$validation.user.passwordSettings"
+            class="mt-4"
+            type="password"
           ></v-text-field>
           <v-text-field
-            class="mt-4"
-            :label="$t('settings.home.myAccount.newPassword')"
-            type="password"
             v-model="$user.changes.password"
+            :label="$t('settings.home.myAccount.newPassword')"
+            class="mt-4"
+            type="password"
           ></v-text-field>
           <v-text-field
-            class="mt-4"
-            :label="$t('settings.home.myAccount.confirmPassword')"
-            type="password"
-            :rules="[...$validation.user.passwordSettings, ...validation]"
             v-model="confirmPassword"
+            :label="$t('settings.home.myAccount.confirmPassword')"
+            :rules="[...$validation.user.passwordSettings, ...validation]"
+            class="mt-4"
+            type="password"
           ></v-text-field>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-              color="primary"
               :disabled="!valid.password"
+              color="primary"
               @click="
                 $user.save().then(() => $emit('update'));
                 $toast.success($t('generic.actionCompleted'));
@@ -105,17 +105,17 @@
             "
           ></p>
           <v-text-field
-            class="mt-4"
+            v-model="$user.changes.email"
             :label="$t('settings.home.myAccount.email')"
             :rules="$validation.user.email"
-            v-model="$user.changes.email"
+            class="mt-4"
           ></v-text-field>
           <v-text-field
-            class="mt-4"
-            :label="$t('settings.home.myAccount.currentPassword')"
-            type="password"
-            :rules="$validation.user.passwordSettings"
             v-model="$user.changes.currentPassword"
+            :label="$t('settings.home.myAccount.currentPassword')"
+            :rules="$validation.user.passwordSettings"
+            class="mt-4"
+            type="password"
           ></v-text-field>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -138,29 +138,31 @@
         {{ $t("settings.home.myAccount.2fa") }}
         <v-chip
           v-if="$user.user?.totpEnable"
+          class="ml-2"
           color="green"
           label
           size="small"
-          class="ml-2"
         >
           {{ $t("generic.enabled") }}
         </v-chip>
-        <v-chip v-else color="error" label size="small" class="ml-2">
+        <v-chip v-else class="ml-2" color="error" label size="small">
           {{ $t("generic.disabled") }}
         </v-chip>
       </v-expansion-panel-title>
-      <v-expansion-panel-text><TwoFactor></TwoFactor></v-expansion-panel-text>
+      <v-expansion-panel-text>
+        <TwoFactor></TwoFactor>
+      </v-expansion-panel-text>
     </v-expansion-panel>
   </v-expansion-panels>
   <v-card-title>{{ $t("settings.home.preferences.title") }}</v-card-title>
   <v-slider
     v-model="$user.changes.itemsPerPage"
+    :label="$t('settings.home.preferences.itemsPerPage')"
+    class="px-4"
     max="72"
     min="12"
     step="12"
     thumb-label
-    :label="$t('settings.home.preferences.itemsPerPage')"
-    class="px-4"
     @update:modelValue="$emit('update')"
   ></v-slider>
   <!-- select between Farenheit, Celsius or Kelvin -->
@@ -169,70 +171,53 @@
     :items="temperatureUnits"
     :label="$t('settings.home.preferences.tempUnit')"
     class="px-6"
-    @update:modelValue="$emit('update')"
     item-title="title"
     item-value="value"
+    @update:modelValue="$emit('update')"
   ></v-select>
   <v-select
     v-model="theme"
     :items="themes"
     :label="$t('settings.home.preferences.theme')"
     class="px-6"
-    @update:modelValue="$emit('update')"
     item-title="title"
     item-value="value"
+    @update:modelValue="$emit('update')"
   ></v-select>
   <v-select
-    class="px-6 mb-n4"
     v-model="$user.changes.insights"
     :items="insights"
     :label="$t('settings.home.preferences.insights')"
+    class="px-6 mb-n4"
     @update:modelValue="$emit('update')"
   ></v-select>
   <small class="px-6 text-grey">
     {{ $t("settings.home.preferences.insightsDesc") }}
   </small>
   <v-autocomplete
-    class="px-6 mt-4"
     v-model="$user.changes.excludedCollections"
     :items="$collections.items"
-    multiple
+    :label="$t('settings.home.preferences.baseCollections')"
+    chips
+    class="px-6 mt-4"
+    closable-chips
+    color="primary"
     item-title="name"
     item-value="id"
-    :label="$t('settings.home.preferences.baseCollections')"
-    @update:modelValue="$emit('update')"
+    multiple
     variant="underlined"
-    color="primary"
-    closable-chips
-    chips
+    @update:modelValue="$emit('update')"
   ></v-autocomplete>
   <v-select
-    class="px-6"
     v-model="$user.changes.language"
     :items="languages"
     :label="$t('settings.home.preferences.language')"
-    @update:modelValue="$emit('update')"
+    class="px-6"
     item-title="title"
     item-value="key"
-  >
-    <template v-slot:item="{ item }">
-      <v-list-item
-        :active="$user.changes.language === item.value"
-        @click="$user.changes.language = item.value"
-        v-if="item.value !== 'help'"
-      >
-        <v-list-item-title>
-          {{ item.title }}
-        </v-list-item-title>
-      </v-list-item>
-      <v-list-item :href="<string>item.raw.link" v-if="item.value === 'help'">
-        <v-list-item-title>
-          {{ item.title }}
-        </v-list-item-title>
-      </v-list-item>
-    </template>
-  </v-select>
-  <br />
+    @update:modelValue="$emit('update')"
+  />
+  <br/>
   <v-btn class="px-6" @click="$app.themeEditor = !$app.themeEditor">
     <v-icon class="mr-2">mdi-palette</v-icon>
     <span>
@@ -246,51 +231,46 @@
     class="px-4"
   ></v-switch>
   <v-switch
+    v-if="disableBatterySave"
     v-model="disableBatterySave"
     :label="$t('settings.home.preferences.disableBatteryPreservation')"
     class="px-4 mt-n6"
-    v-if="disableBatterySave"
   ></v-switch>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import TwoFactor from "@/components/Settings/TwoFactor.vue";
-import { useTheme } from "vuetify";
+import {defineComponent} from "vue"
+import TwoFactor from "@/components/Settings/TwoFactor.vue"
+import {useTheme} from "vuetify"
 
 export default defineComponent({
   name: "SettingsHome",
-  components: { TwoFactor },
+  components: {TwoFactor},
   emits: ["update", "laoding"],
   setup() {
-    const theme = useTheme();
+    const theme = useTheme()
 
     return {
       toggleTheme: (themeName: string) => {
-        localStorage.setItem("theme", themeName);
-        theme.global.name.value = themeName;
+        localStorage.setItem("theme", themeName)
+        theme.global.name.value = themeName
       }
-    };
+    }
   },
   data() {
     return {
       languages: [
         {
           title: "English (United States)",
-          key: "en"
+          key: "enUS"
         },
         {
           title: "English (Traditional)",
-          key: "en-GB"
+          key: "enGB"
         },
         {
           title: "Русский (Россия)",
           key: "ru"
-        },
-        {
-          title: "Help localize TPU",
-          key: "help",
-          link: "https://github.com/PrivateUploader/PrivateUploader/tree/main/frontend/src/locales"
         }
       ],
       bindings: {
@@ -298,19 +278,19 @@ export default defineComponent({
       },
       theme: useTheme().global.name,
       themes: [
-        { title: "Light", value: "light" },
-        { title: "Dark", value: "dark" },
-        { title: "AMOLED", value: "amoled" }
+        {title: "Light", value: "light"},
+        {title: "Dark", value: "dark"},
+        {title: "AMOLED", value: "amoled"}
       ],
       temperatureUnits: [
-        { title: "Celsius (Metric)", value: "celsius" },
-        { title: "Kelvin (Metric Standard)", value: "kelvin" },
-        { title: "Fahrenheit (Imperial)", value: "fahrenheit" }
+        {title: "Celsius (Metric)", value: "celsius"},
+        {title: "Kelvin (Metric Standard)", value: "kelvin"},
+        {title: "Fahrenheit (Imperial)", value: "fahrenheit"}
       ],
       insights: [
-        { title: "Everyone", value: "everyone" },
-        { title: "Friends", value: "friends" },
-        { title: "Nobody", value: "nobody" }
+        {title: "Everyone", value: "everyone"},
+        {title: "Friends", value: "friends"},
+        {title: "Nobody", value: "nobody"}
       ],
       confirmPassword: "",
       valid: {
@@ -321,49 +301,49 @@ export default defineComponent({
       validation: [
         (value: string) => {
           if (value !== this.$user.changes.password)
-            return "Passwords do not match";
-          return true;
+            return "Passwords do not match"
+          return true
         }
       ]
-    };
+    }
   },
   computed: {
     disableProfileColors: {
       get() {
         try {
-          this.bindings.disableProfileColors;
-          return JSON.parse(localStorage.getItem("disableProfileColors")!);
+          this.bindings.disableProfileColors
+          return JSON.parse(localStorage.getItem("disableProfileColors")!)
         } catch {
-          return false;
+          return false
         }
       },
       set(val: boolean) {
-        this.bindings.disableProfileColors = val;
-        localStorage.setItem("disableProfileColors", JSON.stringify(val));
+        this.bindings.disableProfileColors = val
+        localStorage.setItem("disableProfileColors", JSON.stringify(val))
       }
     },
     disableBatterySave: {
       get() {
         try {
-          return JSON.parse(localStorage.getItem("disableBatterySave")!);
+          return JSON.parse(localStorage.getItem("disableBatterySave")!)
         } catch {
-          return false;
+          return false
         }
       },
       set(val: boolean) {
-        localStorage.setItem("disableBatterySave", JSON.stringify(val));
+        localStorage.setItem("disableBatterySave", JSON.stringify(val))
       }
     }
   },
   watch: {
     theme() {
-      this.toggleTheme(this.theme);
+      this.toggleTheme(this.theme)
     }
   },
   mounted() {
-    this.$app.title = "Settings";
+    this.$app.title = "Settings"
   }
-});
+})
 </script>
 
 <style scoped></style>

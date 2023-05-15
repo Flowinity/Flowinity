@@ -1,72 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8"/>
+    <link href="/favicon.ico" rel="icon"/>
+    <meta content="width=device-width, height=device-height, initial-scale=1" name="viewport"/>
     <title>TPU</title>
-    <link rel="manifest" href="/manifest.webmanifest">
-    <meta name="description" content="TPU, or PrivateUploader is a private file hosting suite with extra features such as chatting, document editing, and more.">
-    <meta property="og:site_name" content="TroploPrivateUploader">
-    <meta name="theme-color" content="#121212">
-    <meta property="og:title" content="TroploPrivateUploader">
-    <meta property="og:description" content="TPU, or PrivateUploader is a private file hosting suite with extra features such as chatting, document editing, and more.">
-    <meta name="keywords" content="TPU, PrivateUploader, TroploPrivateUploader, Flowinity, Troplo">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0190ea">
-    <meta name="apple-mobile-web-app-title" content="TPU">
-    <meta name="application-name" content="TPU">
-    <meta name="msapplication-TileColor" content="#121212">
-    <meta name="theme-color" content="#101010">
+    <meta content="TPU, or PrivateUploader is a private file hosting suite with extra features such as chatting, document editing, and more."
+          name="description">
+    <meta content="TroploPrivateUploader" property="og:site_name">
+    <meta content="#121212" name="theme-color">
+    <meta content="TroploPrivateUploader" property="og:title">
+    <meta content="TPU, or PrivateUploader is a private file hosting suite with extra features such as chatting, document editing, and more."
+          property="og:description">
+    <meta content="TPU, PrivateUploader, TroploPrivateUploader, Flowinity, Troplo" name="keywords">
+    <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
+    <link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+    <link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+    <link href="/site.webmanifest" rel="manifest">
+    <link color="#0190ea" href="/safari-pinned-tab.svg" rel="mask-icon">
+    <meta content="TPU" name="apple-mobile-web-app-title">
+    <meta content="TPU" name="application-name">
+    <meta content="#121212" name="msapplication-TileColor">
+    <meta content="#101010" name="theme-color">
     <meta name="darkreader-lock">
-    <script src="/cordova.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es2022%2Ces2021%2Ces2020%2Ces2019%2Ces2018%2Ces2017%2Ces2015%2Ces2016%2Ces6%2Ces7%2Ces5%2Cdom4%2CAbortController%2CArray.from%2CIntersectionObserver%2CIntersectionObserverEntry%2CResizeObserver%2CWebAnimations%2CObject.fromEntries%2CArray.prototype.at%2CArray.of%2CNumber.isNaN%2CNumber.isInteger%2CNumber.parseFloat%2CNumber.parseInt%2CObject.entries"></script>
     <style>
-      :root {
-        --v-theme-background: 0, 0, 0;
-        background-color: rgb(var(--v-theme-background))
-      }
-      #spinner-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-      }
-
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 4px solid #303030;
-        border-top-color: white;
-        animation: spinner-rotate 0.8s linear infinite;
-      }
-
-      @keyframes spinner-rotate {
-        to {
-          transform: rotate(360deg);
+        :root {
+            --v-theme-background: 0, 0, 0;
+            background-color: rgb(var(--v-theme-background))
         }
-      }
-    </style>
-  </head>
 
-  <body style="--gradient-offset: 100%">
-    <noscript style="color: white;">
-      <h2>We're sorry but TroploPrivateUploader doesn't work without JavaScript enabled. Please enable it to continue.</h2>
-    </noscript>
-    <div id="tpu-app">
-      <div id="spinner-overlay">
+        #spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 4px solid #303030;
+            border-top-color: white;
+            animation: spinner-rotate 0.8s linear infinite;
+        }
+
+        @keyframes spinner-rotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body style="--gradient-offset: 100%">
+<noscript style="color: white;">
+    <h2>
+      We're sorry but TroploPrivateUploader doesn't work without JavaScript enabled. Please enable it to continue.
+    </h2>
+</noscript>
+<div id="tpu-app">
+    <div id="spinner-overlay">
         <div class="spinner"></div>
-      </div>
     </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+</div>
+<script src="/src/main.ts" type="module"></script>
+</body>
 </html>

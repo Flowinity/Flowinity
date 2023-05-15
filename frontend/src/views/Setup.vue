@@ -1,13 +1,13 @@
 <template>
-  <v-container fluid class="center-container">
+  <v-container class="center-container" fluid>
     <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="7" xl="5">
+      <v-col cols="12" md="7" sm="8" xl="5">
         <transition-group name="slide-fade">
           <template v-if="step === 0">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
               variant="outlined"
             >
@@ -29,7 +29,7 @@
               </div>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="step++" class="pulse-button">
+                <v-btn class="pulse-button" color="primary" @click="step++">
                   {{ $t("generic.next") }}
                   <v-icon>mdi-arrow-right</v-icon>
                 </v-btn>
@@ -38,9 +38,9 @@
           </template>
           <template v-if="step === 1">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
               variant="outlined"
             >
@@ -53,31 +53,31 @@
               <v-form @submit="testMariaDBConnection">
                 <v-card-text>
                   <v-text-field
-                    :label="$t('setup.step1.host')"
                     v-model="database.host"
+                    :label="$t('setup.step1.host')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step1.port')"
                     v-model="database.port"
+                    :label="$t('setup.step1.port')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step1.database')"
                     v-model="database.database"
+                    :label="$t('setup.step1.database')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step1.username')"
                     v-model="database.username"
+                    :label="$t('setup.step1.username')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step1.password')"
                     v-model="database.password"
+                    :label="$t('setup.step1.password')"
                     type="password"
                   ></v-text-field>
                 </v-card-text>
               </v-form>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="step++" class="pulse-button">
+                <v-btn class="pulse-button" color="primary" @click="step++">
                   {{ $t("generic.next") }}
                   <v-icon>mdi-arrow-right</v-icon>
                 </v-btn>
@@ -86,9 +86,9 @@
           </template>
           <template v-if="step === 2">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
               variant="outlined"
             >
@@ -101,32 +101,32 @@
               <v-form @submit="createAdminAccount">
                 <v-card-text>
                   <v-text-field
-                    :label="$t('setup.step2.username')"
                     v-model="admin.username"
+                    :label="$t('setup.step2.username')"
                     :rules="$validation.user.username"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step2.email')"
                     v-model="admin.email"
+                    :label="$t('setup.step2.email')"
                     :rules="$validation.user.email"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step2.password')"
                     v-model="admin.password"
-                    type="password"
+                    :label="$t('setup.step2.password')"
                     :rules="$validation.user.password"
+                    type="password"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step2.passwordConfirm')"
                     v-model="admin.passwordConfirm"
-                    type="password"
+                    :label="$t('setup.step2.passwordConfirm')"
                     :rules="$validation.user.password"
+                    type="password"
                   ></v-text-field>
                 </v-card-text>
               </v-form>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="step++" class="pulse-button">
+                <v-btn class="pulse-button" color="primary" @click="step++">
                   {{ $t("generic.next") }}
                   <v-icon>mdi-arrow-right</v-icon>
                 </v-btn>
@@ -135,9 +135,9 @@
           </template>
           <template v-if="step === 3">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
               variant="outlined"
             >
@@ -150,34 +150,34 @@
               <v-form @submit="configureInstance">
                 <v-card-text>
                   <v-text-field
-                    :label="$t('setup.step3.name')"
                     v-model="instance.name"
+                    :label="$t('setup.step3.name')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step3.hostname')"
                     v-model="instance.hostname"
+                    :label="$t('setup.step3.hostname')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step3.hostnameWithProtocol')"
                     v-model="instance.hostnameWithProtocol"
+                    :label="$t('setup.step3.hostnameWithProtocol')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step3.port')"
                     v-model="instance.port"
+                    :label="$t('setup.step3.port')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step3.multiThreaded')"
                     v-model="instance.multiThreaded"
+                    :label="$t('setup.step3.multiThreaded')"
                   ></v-text-field>
                   <v-switch
-                    :label="$t('setup.step3.allowRegistration')"
                     v-model="instance.allowRegistrations"
+                    :label="$t('setup.step3.allowRegistration')"
                   ></v-switch>
                 </v-card-text>
               </v-form>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="step++" class="pulse-button">
+                <v-btn class="pulse-button" color="primary" @click="step++">
                   {{ $t("generic.next") }}
                   <v-icon>mdi-arrow-right</v-icon>
                 </v-btn>
@@ -186,9 +186,9 @@
           </template>
           <template v-if="step === 4">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
               variant="outlined"
             >
@@ -199,19 +199,19 @@
                 {{ $t("setup.step4.subtitle") }}
               </v-card-subtitle>
               <PromoCard
-                image="https://i.troplo.com/i/f8e3d77d3128.png"
                 :title="$t('setup.step4.autoCollects.title')"
+                image="https://i.troplo.com/i/f8e3d77d3128.png"
               >
                 {{ $t("setup.step4.autoCollects.description") }}
                 <v-switch
-                  style="display: flex; justify-content: center"
-                  hide-details
                   v-model="features.autoCollects"
+                  hide-details
+                  style="display: flex; justify-content: center"
                 ></v-switch>
               </PromoCard>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="step++" class="pulse-button">
+                <v-btn class="pulse-button" color="primary" @click="step++">
                   {{ $t("generic.next") }}
                   <v-icon>mdi-arrow-right</v-icon>
                 </v-btn>
@@ -225,8 +225,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import PromoCard from "@/components/Home/PromoCard.vue";
+import {defineComponent} from "vue"
+import PromoCard from "@/components/Home/PromoCard.vue"
+
 enum Step {
   Welcome = 0,
   DatabaseConfig,
@@ -235,9 +236,10 @@ enum Step {
   Mail,
   Finish
 }
+
 export default defineComponent({
   name: "InstanceSetupWizard",
-  components: { PromoCard },
+  components: {PromoCard},
   data() {
     return {
       step: 0 as Step,
@@ -265,20 +267,20 @@ export default defineComponent({
       features: {
         autoCollects: true
       }
-    };
+    }
   },
   methods: {
     configureInstance() {
-      console.log("configure");
+      console.log("configure")
     },
     testMariaDBConnection() {
-      console.log("test");
+      console.log("test")
     },
     createAdminAccount() {
-      console.log("create");
+      console.log("create")
     }
   }
-});
+})
 </script>
 
 <style scoped>

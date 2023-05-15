@@ -17,8 +17,8 @@
       <template v-slot:append>
         <v-list-item-action>
           <v-btn
-            @click="setDefault(domain.domain)"
             :disabled="$user.user?.domain.domain === domain.domain"
+            @click="setDefault(domain.domain)"
           >
             {{
               $user.user?.domain.domain === domain.domain
@@ -34,31 +34,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Domain } from "@/models/domain";
+import {defineComponent} from "vue"
+import {Domain} from "@/models/domain"
 
 export default defineComponent({
   name: "Domains",
   data() {
     return {
       domains: [] as Domain[]
-    };
+    }
   },
   methods: {
     async setDefault(domain: string) {
-      if (!this.$user.user) return;
-      await this.axios.patch("/user/domain", { domain });
-      this.$user.user.domain.domain = domain;
+      if (!this.$user.user) return
+      await this.axios.patch("/user/domain", {domain})
+      this.$user.user.domain.domain = domain
     },
     async getDomains() {
-      const { data } = await this.axios.get("/domains");
-      this.domains = data;
+      const {data} = await this.axios.get("/domains")
+      this.domains = data
     }
   },
   mounted() {
-    this.getDomains();
+    this.getDomains()
   }
-});
+})
 </script>
 
 <style scoped></style>

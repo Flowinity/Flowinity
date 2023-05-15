@@ -1,14 +1,6 @@
-import {
-  Table,
-  Column,
-  Model,
-  BelongsTo,
-  Default,
-  AllowNull,
-  DataType
-} from "sequelize-typescript"
-import { User } from "@app/models/user.model"
-import { SessionInfo } from "@app/types/auth"
+import {AllowNull, BelongsTo, Column, DataType, Default, Model, Table} from "sequelize-typescript"
+import {User} from "@app/models/user.model"
+import {SessionInfo} from "@app/types/auth"
 
 @Table
 export class Session extends Model {

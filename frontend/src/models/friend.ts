@@ -1,4 +1,4 @@
-import { User } from "@/models/user";
+import {User} from "@/models/user"
 
 export interface Friend {
   status: "incoming" | "outgoing" | "accepted";

@@ -1,49 +1,49 @@
 <template>
   <v-container>
-    <CoreDialog max-width="600" v-model="dialog.value">
+    <CoreDialog v-model="dialog.value" max-width="600">
       <template v-slot:title>Edit badge</template>
       <v-col>
-        <v-text-field label="Name" v-model="dialog.item.name"></v-text-field>
+        <v-text-field v-model="dialog.item.name" label="Name"></v-text-field>
       </v-col>
       <v-col>
         <v-text-field
-          label="Tooltip"
           v-model="dialog.item.tooltip"
+          label="Tooltip"
         ></v-text-field>
       </v-col>
       <v-col>
-        <v-text-field label="Color" v-model="dialog.item.color"></v-text-field>
+        <v-text-field v-model="dialog.item.color" label="Color"></v-text-field>
       </v-col>
       <v-col>
         <v-text-field
-          label="Description"
           v-model="dialog.item.description"
+          label="Description"
         ></v-text-field>
       </v-col>
       <v-col>
-        <v-text-field label="Icon" v-model="dialog.item.icon"></v-text-field>
+        <v-text-field v-model="dialog.item.icon" label="Icon"></v-text-field>
       </v-col>
       <v-col>
-        <v-text-field label="Image" v-model="dialog.item.image"></v-text-field>
+        <v-text-field v-model="dialog.item.image" label="Image"></v-text-field>
       </v-col>
       <v-col>
         <v-checkbox
-          label="Unlocked"
           v-model="dialog.item.unlocked"
+          label="Unlocked"
         ></v-checkbox>
       </v-col>
       <v-col>
         <v-text-field
-          type="number"
-          label="Plan ID"
           v-model="dialog.item.planId"
+          label="Plan ID"
+          type="number"
         ></v-text-field>
       </v-col>
       <v-col>
         <v-text-field
-          type="number"
-          label="Priority"
           v-model="dialog.item.priority"
+          label="Priority"
+          type="number"
         ></v-text-field>
       </v-col>
       <v-btn @click="updateItem">Update</v-btn>
@@ -59,65 +59,65 @@
             <v-autocomplete
               v-model="selectedBadge"
               :items="badges"
-              label="Badges"
               item-title="name"
               item-value="id"
+              label="Badges"
             ></v-autocomplete>
           </v-col>
           <v-col>
             <v-autocomplete
               v-model="selectedUser"
               :items="users"
-              label="Users"
               item-title="username"
               item-value="id"
+              label="Users"
               multiple
             ></v-autocomplete>
           </v-col>
         </v-row>
         <v-btn @click="addBadges">Add badges</v-btn>
-        <v-btn @click="removeBadges" class="ml-2">Remove badges</v-btn>
+        <v-btn class="ml-2" @click="removeBadges">Remove badges</v-btn>
         <v-card-title>Create badge</v-card-title>
         <v-row>
           <v-col>
-            <v-text-field label="Name" v-model="create.name"></v-text-field>
+            <v-text-field v-model="create.name" label="Name"></v-text-field>
           </v-col>
           <v-col>
             <v-text-field
-              label="Tooltip"
               v-model="create.tooltip"
+              label="Tooltip"
             ></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Color" v-model="create.color"></v-text-field>
+            <v-text-field v-model="create.color" label="Color"></v-text-field>
           </v-col>
           <v-col>
             <v-text-field
-              label="Description"
               v-model="create.description"
+              label="Description"
             ></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Icon" v-model="create.icon"></v-text-field>
+            <v-text-field v-model="create.icon" label="Icon"></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field label="Image" v-model="create.image"></v-text-field>
+            <v-text-field v-model="create.image" label="Image"></v-text-field>
           </v-col>
           <v-col>
-            <v-checkbox label="Unlocked" v-model="create.unlocked"></v-checkbox>
+            <v-checkbox v-model="create.unlocked" label="Unlocked"></v-checkbox>
           </v-col>
           <v-col>
             <v-text-field
-              type="number"
-              label="Plan ID"
               v-model="create.planId"
+              label="Plan ID"
+              type="number"
             ></v-text-field>
           </v-col>
           <v-col>
             <v-text-field
-              type="number"
-              label="Prority"
               v-model="create.priority"
+              label="Prority"
+              type="number"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -144,12 +144,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import {defineComponent} from "vue"
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
 
 export default defineComponent({
   name: "Badges",
-  components: { CoreDialog },
+  components: {CoreDialog},
   data() {
     return {
       dialog: {
@@ -161,15 +161,15 @@ export default defineComponent({
       selectedBadge: undefined as number | undefined,
       selectedUser: [] as number[],
       headers: [
-        { title: "ID", key: "id" },
-        { title: "Name", key: "name" },
-        { title: "Tooltip", key: "tooltip" },
-        { title: "Color", key: "color" },
-        { title: "Description", key: "description" },
-        { title: "Icon", key: "icon" },
-        { title: "Image", key: "image" },
-        { title: "Unlocked", key: "unlocked" },
-        { title: "Plan ID", key: "planId" },
+        {title: "ID", key: "id"},
+        {title: "Name", key: "name"},
+        {title: "Tooltip", key: "tooltip"},
+        {title: "Color", key: "color"},
+        {title: "Description", key: "description"},
+        {title: "Icon", key: "icon"},
+        {title: "Image", key: "image"},
+        {title: "Unlocked", key: "unlocked"},
+        {title: "Plan ID", key: "planId"},
         {
           title: "Users count",
           key: "users.length"
@@ -190,49 +190,49 @@ export default defineComponent({
         planId: null,
         priority: 0
       }
-    };
+    }
   },
   methods: {
     async removeBadges() {
       await this.axios.post("/admin/badge/users/delete", {
         id: this.selectedBadge,
         userIds: this.selectedUser
-      });
-      await this.getBadges();
+      })
+      await this.getBadges()
     },
     async deleteItem(id: number) {
-      await this.axios.delete(`/admin/badge/${id}`);
-      await this.getBadges();
-      this.$toast.success("yes");
+      await this.axios.delete(`/admin/badge/${id}`)
+      await this.getBadges()
+      this.$toast.success("yes")
     },
     async updateItem() {
-      await this.axios.put("/admin/badge", this.dialog.item);
-      await this.getBadges();
-      this.dialog.value = false;
-      this.$toast.success("yes");
+      await this.axios.put("/admin/badge", this.dialog.item)
+      await this.getBadges()
+      this.dialog.value = false
+      this.$toast.success("yes")
     },
     async getBadges() {
-      const { data } = await this.axios.get("/admin/badges");
-      this.badges = data;
+      const {data} = await this.axios.get("/admin/badges")
+      this.badges = data
     },
     async getUsers() {
-      const { data } = await this.axios.get("/admin/users");
-      this.users = data;
+      const {data} = await this.axios.get("/admin/users")
+      this.users = data
     },
     async addBadges() {
       await this.axios.post("/admin/badge/users", {
         id: this.selectedBadge,
         userIds: this.selectedUser
-      });
-      await this.getBadges();
-      this.$toast.success("yes");
-      this.selectedBadge = undefined;
-      this.selectedUser = [];
+      })
+      await this.getBadges()
+      this.$toast.success("yes")
+      this.selectedBadge = undefined
+      this.selectedUser = []
     },
     async createBadge() {
-      await this.axios.post("/admin/badge", this.create);
-      await this.getBadges();
-      this.$toast.success("yes");
+      await this.axios.post("/admin/badge", this.create)
+      await this.getBadges()
+      this.$toast.success("yes")
       this.create = {
         name: "",
         tooltip: "",
@@ -243,14 +243,14 @@ export default defineComponent({
         unlocked: false,
         planId: null,
         priority: 0
-      };
+      }
     }
   },
   mounted() {
-    this.getUsers();
-    this.getBadges();
+    this.getUsers()
+    this.getBadges()
   }
-});
+})
 </script>
 
 <style scoped></style>

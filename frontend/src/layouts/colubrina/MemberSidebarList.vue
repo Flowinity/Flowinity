@@ -18,20 +18,20 @@
       </v-list>
     </v-card>
   </v-menu>
-  <div class="mt-2" v-if="$vuetify.display.mobile">
+  <div v-if="$vuetify.display.mobile" class="mt-2">
     <CommunicationsAvatar
-      :user="$chat.selectedChat?.recipient"
       :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
-      size="32"
-      class="ml-4"
       :status="true"
+      :user="$chat.selectedChat?.recipient"
+      class="ml-4"
+      size="32"
       style="display: inline-block"
     />
     <h4
-      class="unselectable ml-2 limit"
       id="tpu-brand-logo"
-      title="TPU Communications"
+      class="unselectable ml-2 limit"
       style="display: inline-block; align-self: center; text-align: center"
+      title="TPU Communications"
     >
       {{ $chat.chatName }}
     </h4>
@@ -39,21 +39,23 @@
       <v-spacer></v-spacer>
       <v-btn
         v-if="$experiments.experiments.PINNED_MESSAGES"
-        icon
-        class="mr-2"
         aria-label="Toggle Communications Sidebar"
+        class="mr-2"
+        icon
       >
         <v-icon>mdi-pin</v-icon>
       </v-btn>
       <v-btn
+        aria-label="Toggle Communications Search"
+        class="mr-2"
         icon
         @click="$chat.search.value = !$chat.search.value"
-        class="mr-2"
-        aria-label="Toggle Communications Search"
       >
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
       <v-btn
+        aria-label="Toggle Communications Settings"
+        class="mr-2"
         icon
         @click="
           $chat.dialogs.groupSettings.value = true;
@@ -61,8 +63,6 @@
             ? ($chat.dialogs.groupSettings.item = $chat.selectedChat)
             : () => {};
         "
-        class="mr-2"
-        aria-label="Toggle Communications Settings"
       >
         <v-icon>mdi-cog</v-icon>
       </v-btn>
@@ -71,7 +71,7 @@
   </div>
   <template v-if="!$chat.search.value">
     <v-card-text class="text-overline my-n3">MEMBERS</v-card-text>
-    <v-list nav v-if="users">
+    <v-list v-if="users" nav>
       <v-list-item
         v-for="association in users"
         :subtitle="association.legacyUser ? 'Legacy User' : undefined"
@@ -84,16 +84,16 @@
         <template v-slot:title>
           {{ $friends.getName(association.user) || "Deleted User" }}
           <span>
-            <v-icon color="gold" v-if="association.rank === 'owner'">
+            <v-icon v-if="association.rank === 'owner'" color="gold">
               mdi-crown
             </v-icon>
-            <v-tooltip location="top" activator="parent">Group Owner</v-tooltip>
+            <v-tooltip activator="parent" location="top">Group Owner</v-tooltip>
           </span>
           <span>
-            <v-icon color="grey" v-if="association.rank === 'admin'">
+            <v-icon v-if="association.rank === 'admin'" color="grey">
               mdi-crown
             </v-icon>
-            <v-tooltip location="top" activator="parent">Group Admin</v-tooltip>
+            <v-tooltip activator="parent" location="top">Group Admin</v-tooltip>
           </span>
         </template>
         <template v-slot:prepend>
@@ -104,7 +104,7 @@
         </template>
       </v-list-item>
       <v-list-item v-if="!$chat.chats.length" class="fade-skeleton">
-        <MessageSkeleton :animate="false" v-for="i in 5"></MessageSkeleton>
+        <MessageSkeleton v-for="i in 5" :animate="false"></MessageSkeleton>
       </v-list-item>
     </v-list>
   </template>
@@ -122,27 +122,21 @@
     <v-container class="mt-n8">
       <v-text-field
         v-model="$chat.search.query"
+        append-icon="mdi-magnify"
         autofocus
         label="Search Query"
-        append-icon="mdi-magnify"
         @click:append="$chat.doSearch"
         @keyup.enter="$chat.doSearch"
       ></v-text-field>
     </v-container>
     <v-list v-if="!$chat.search.loading">
       <Message
-        class="pointer"
-        @click="
-          handleJump(
-            message.id,
-            $chat.chats.find((chat) => chat.id === message.chatId)?.association
-              .id || 0
-          )
-        "
         v-for="(message, index) in $chat.search.results.messages"
+        :id="'message-' + index"
         :key="message.id"
         :message="message"
-        :id="'message-' + index"
+        :search="true"
+        class="pointer"
         @authorClick="
           $chat.dialogs.userMenu.user = $event.user;
           $chat.dialogs.userMenu.username = $event.user.username;
@@ -151,6 +145,13 @@
           $chat.dialogs.userMenu.y = $event.y;
           $chat.dialogs.userMenu.location = $event.location || 'top';
         "
+        @click="
+          handleJump(
+            message.id,
+            $chat.chats.find((chat) => chat.id === message.chatId)?.association
+              .id || 0
+          )
+        "
         @jumpToMessage="
           handleJump(
             $event,
@@ -158,28 +159,27 @@
               .id || 0
           )
         "
-        :search="true"
       />
     </v-list>
     <Paginate
       v-model="$chat.search.results.pager.currentPage"
-      @update:model-value="$chat.doSearch"
-      :total-pages="$chat.search.results.pager.totalPages"
       :max-visible="5"
+      :total-pages="$chat.search.results.pager.totalPages"
       class="mb-2"
+      @update:model-value="$chat.doSearch"
     ></Paginate>
   </template>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Chat } from "@/models/chat";
-import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
-import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
-import { ChatAssociation } from "@/models/chatAssociation";
-import Message from "@/components/Communications/Message.vue";
-import Paginate from "@/components/Core/Paginate.vue";
+import {defineComponent} from "vue"
+import {Chat} from "@/models/chat"
+import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue"
+import CreateChat from "@/components/Communications/Menus/CreateChat.vue"
+import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue"
+import {ChatAssociation} from "@/models/chatAssociation"
+import Message from "@/components/Communications/Message.vue"
+import Paginate from "@/components/Core/Paginate.vue"
 
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
@@ -199,7 +199,7 @@ export default defineComponent({
         y: 0,
         item: null as ChatAssociation | null
       }
-    };
+    }
   },
   computed: {
     users() {
@@ -207,60 +207,60 @@ export default defineComponent({
         (a: ChatAssociation, b: ChatAssociation) => {
           const aFriend = this.$friends.friends.find(
             (f) => f.otherUser.id === a.tpuUser?.id
-          );
+          )
           const bFriend = this.$friends.friends.find(
             (f) => f.otherUser.id === b.tpuUser?.id
-          );
-          if (b.tpuUser?.id === this.$user.user?.id) return 2;
-          if (a.tpuUser?.id === this.$user.user?.id) return -2;
+          )
+          if (b.tpuUser?.id === this.$user.user?.id) return 2
+          if (a.tpuUser?.id === this.$user.user?.id) return -2
           if (aFriend && bFriend) {
             if (aFriend.otherUser.status === "online") {
-              return -1;
+              return -1
             } else if (bFriend.otherUser.status === "online") {
-              return 1;
+              return 1
             } else {
-              return 0;
+              return 0
             }
           } else if (aFriend) {
-            return -1;
+            return -1
           } else if (bFriend) {
-            return 1;
+            return 1
           } else {
-            return 0;
+            return 0
           }
         }
-      );
+      )
     },
     menuStyle() {
       return `
         position: absolute;
         top: ${this.contextMenu.y}px;
-        left: ${this.contextMenu.x + 10}px;`;
+        left: ${this.contextMenu.x + 10}px;`
     }
   },
   methods: {
     async handleJump(messageId: number, associationId: number) {
       if (this.$chat.selectedChatId !== associationId) {
-        this.$chat.selectedChatId = associationId;
-        this.$router.push(`/communications/${associationId}`);
-        await this.$chat.setChat(associationId);
+        this.$chat.selectedChatId = associationId
+        this.$router.push(`/communications/${associationId}`)
+        await this.$chat.setChat(associationId)
       }
-      await this.$chat.jumpToMessage(messageId);
+      await this.$chat.jumpToMessage(messageId)
     },
     context(e: any, item: any) {
-      e.preventDefault();
-      this.contextMenu.item = item;
-      this.contextMenu.x = e.clientX;
-      this.contextMenu.y = e.clientY;
-      this.contextMenu.dialog = true;
+      e.preventDefault()
+      this.contextMenu.item = item
+      this.contextMenu.x = e.clientX
+      this.contextMenu.y = e.clientY
+      this.contextMenu.dialog = true
     },
     chatName(chat: Chat) {
       if (chat.type === "direct") {
-        return chat.recipient?.username || "Deleted User";
+        return chat.recipient?.username || "Deleted User"
       } else {
-        return chat.name;
+        return chat.name
       }
     }
   }
-});
+})
 </script>

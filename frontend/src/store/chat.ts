@@ -1,20 +1,20 @@
 // Utilities
-import { defineStore } from "pinia";
-import axios from "@/plugins/axios";
-import { Chat, Typing } from "@/models/chat";
-import { useExperimentsStore } from "@/store/experiments";
-import vuetify from "@/plugins/vuetify";
-import { Router, useRouter } from "vue-router";
-import { useAppStore } from "@/store/app";
-import { User } from "@/models/user";
-import { useUserStore } from "@/store/user";
-import { useCollectionsStore } from "@/store/collections";
-import { Collection } from "@/models/collection";
-import { Message as MessageType, Message } from "@/models/message";
-import { useFriendsStore } from "@/store/friends";
-import { Paginate } from "@/types/paginate";
-import dayjs from "../plugins/dayjs";
-import { useToast } from "vue-toastification";
+import {defineStore} from "pinia"
+import axios from "@/plugins/axios"
+import {Chat, Typing} from "@/models/chat"
+import {useExperimentsStore} from "@/store/experiments"
+import vuetify from "@/plugins/vuetify"
+import {Router, useRouter} from "vue-router"
+import {useAppStore} from "@/store/app"
+import {User} from "@/models/user"
+import {useUserStore} from "@/store/user"
+import {useCollectionsStore} from "@/store/collections"
+import {Collection} from "@/models/collection"
+import {Message as MessageType, Message} from "@/models/message"
+import {useFriendsStore} from "@/store/friends"
+import {Paginate} from "@/types/paginate"
+import dayjs from "../plugins/dayjs"
+import {useToast} from "vue-toastification"
 
 export interface ChatState {
   search: {
@@ -227,135 +227,135 @@ export const useChatStore = defineStore("chat", {
     } as ChatState),
   actions: {
     async pinMessage(id: number | undefined, pinned: boolean | undefined) {
-      if (!id || pinned === undefined) return;
+      if (!id || pinned === undefined) return
       await axios.put(`/chats/${this.selectedChatId}/message`, {
         pinned,
         id
-      });
+      })
       useToast().success(
         "Message " + (pinned ? "pinned" : "unpinned") + " successfully."
-      );
+      )
     },
     async doJump(message: number) {
       const element = document.getElementById(
         "message-" +
-          this.selectedChat?.messages?.findIndex((m) => m.id === message)
-      );
-      if (!element) return false;
+        this.selectedChat?.messages?.findIndex((m) => m.id === message)
+      )
+      if (!element) return false
       element.scrollIntoView({
         block: "center",
         inline: "center"
-      });
-      element.classList.add("message-jumped");
+      })
+      element.classList.add("message-jumped")
       setTimeout(() => {
-        element.classList.remove("message-jumped");
-      }, 1000);
-      return true;
+        element.classList.remove("message-jumped")
+      }, 1000)
+      return true
     },
     async jumpToMessage(message: number) {
       if (!(await this.doJump(message))) {
-        this.loadingNew = true;
-        await this.loadHistory(message + 30, true);
-        this.loadingNew = false;
-        await this.doJump(message);
+        this.loadingNew = true
+        await this.loadHistory(message + 30, true)
+        this.loadingNew = false
+        await this.doJump(message)
       }
     },
     merge(message: MessageType, index: number) {
-      if (message.replyId) return false;
-      if (message.type !== "message" && message.type) return false;
-      const prev = this.selectedChat?.messages[index + 1];
-      if (!prev) return false;
-      if (prev.type !== "message" && prev.type) return false;
+      if (message.replyId) return false
+      if (message.type !== "message" && message.type) return false
+      const prev = this.selectedChat?.messages[index + 1]
+      if (!prev) return false
+      if (prev.type !== "message" && prev.type) return false
       if (dayjs(message.createdAt).diff(prev.createdAt, "minutes") > 5)
-        return false;
-      return prev.user?.id === message.user?.id;
+        return false
+      return prev.user?.id === message.user?.id
     },
     async doSearch() {
-      this.search.loading = true;
-      const { data } = await axios.get(`/chats/${this.selectedChatId}/search`, {
+      this.search.loading = true
+      const {data} = await axios.get(`/chats/${this.selectedChatId}/search`, {
         params: {
           query: this.search.query,
           page: this.search.results.pager.currentPage
         }
-      });
-      this.search.results = data;
-      this.search.loading = false;
+      })
+      this.search.results = data
+      this.search.loading = false
     },
     getChatName(chat: Chat) {
-      if (!chat) return "Communications";
+      if (!chat) return "Communications"
       if (chat.type === "direct") {
-        return chat.recipient?.username || "Deleted User";
+        return chat.recipient?.username || "Deleted User"
       } else {
-        return chat.name;
+        return chat.name
       }
     },
     getDraft(chatId: string) {
-      return this.drafts[chatId];
+      return this.drafts[chatId]
     },
     setDraft(chatId: string, draft: string) {
       if (draft?.trim()?.length) {
-        this.drafts[chatId] = draft;
+        this.drafts[chatId] = draft
       } else {
-        delete this.drafts[chatId];
+        delete this.drafts[chatId]
       }
-      localStorage.setItem("draftStore", JSON.stringify(this.drafts));
+      localStorage.setItem("draftStore", JSON.stringify(this.drafts))
     },
     async saveSettings() {
-      const { data } = await axios.patch(
+      const {data} = await axios.patch(
         `/chats/${this.dialogs.groupSettings.item?.association?.id}`,
         {
           name: this.dialogs.groupSettings.item?.name
         }
-      );
-      return data;
+      )
+      return data
     },
     async sound() {
-      let sound = await import("@/assets/audio/notification.wav");
-      const audio = new Audio(sound.default);
-      await audio.play();
+      let sound = await import("@/assets/audio/notification.wav")
+      const audio = new Audio(sound.default)
+      await audio.play()
     },
     confirmLink(trust: boolean = false) {
-      const url = new URL(this.$state.dialogs.externalSite.url);
-      const domain = url.hostname;
+      const url = new URL(this.$state.dialogs.externalSite.url)
+      const domain = url.hostname
       if (trust) {
         try {
-          const trusted = localStorage.getItem("trustedDomainsStore");
+          const trusted = localStorage.getItem("trustedDomainsStore")
           if (trusted) {
-            const trustedDomains = JSON.parse(trusted);
+            const trustedDomains = JSON.parse(trusted)
             if (!trustedDomains.includes(domain)) {
-              trustedDomains.push(domain);
-              this.trustedDomains = trustedDomains;
+              trustedDomains.push(domain)
+              this.trustedDomains = trustedDomains
               localStorage.setItem(
                 "trustedDomainsStore",
                 JSON.stringify(trustedDomains)
-              );
+              )
             }
           } else {
             localStorage.setItem(
               "trustedDomainsStore",
               JSON.stringify([domain])
-            );
-            this.trustedDomains = [domain];
+            )
+            this.trustedDomains = [domain]
           }
         } catch {
-          localStorage.setItem("trustedDomainsStore", JSON.stringify([domain]));
-          this.trustedDomains = [domain];
+          localStorage.setItem("trustedDomainsStore", JSON.stringify([domain]))
+          this.trustedDomains = [domain]
         }
       }
-      window.open(this.dialogs.externalSite.url, "_blank");
-      this.dialogs.externalSite.value = false;
+      window.open(this.dialogs.externalSite.url, "_blank")
+      this.dialogs.externalSite.value = false
     },
     processLink(link: string) {
-      const url = new URL(link);
-      const domain = url.hostname;
+      const url = new URL(link)
+      const domain = url.hostname
       if (
         this.trustedDomains.includes(domain) ||
         this.preTrustedDomains.includes(domain)
       ) {
-        window.open(link, "_blank");
+        window.open(link, "_blank")
       } else {
-        this.dialogs.externalSite.value = true;
-        this.dialogs.externalSite.url = link;
+        this.dialogs.externalSite.value = true
+        this.dialogs.externalSite.url = link
       }
     },
     lookupChat(id: number) {
@@ -364,139 +364,142 @@ export const useChatStore = defineStore("chat", {
         ({
           name: "Unknown Chat"
         } as Chat)
-      );
+      )
     },
     openUser(id: number) {
-      this.dialogs.user.username = this.lookupUser(id).username;
-      this.dialogs.user.value = true;
+      this.dialogs.user.username = this.lookupUser(id).username
+      this.dialogs.user.value = true
     },
     lookupUser(id: number) {
-      const friends = useFriendsStore();
+      const friends = useFriendsStore()
       for (const chat of this.chats) {
-        const user = friends.friends.find((user) => user?.otherUser?.id === id);
+        const user = friends.friends.find((user) => user?.otherUser?.id === id)
         if (user) {
-          return user.otherUser as User;
+          return user.otherUser as User
         } else {
-          const user = chat.users.find((user) => user?.tpuUser?.id === id);
+          const user = chat.users.find((user) => user?.tpuUser?.id === id)
           if (user) {
-            return user.tpuUser as User;
+            return user.tpuUser as User
           }
         }
       }
       return {
         username: "Unknown User"
-      } as User;
+      } as User
     },
     async createChat(users: number[]) {
-      const { data } = await axios.post("/chats", { users });
-      return data;
+      const {data} = await axios.post("/chats", {users})
+      return data
     },
     async readChat(chatId?: number) {
-      await window.socket.emit("readChat", chatId || this.selectedChatId);
-      if (this.selectedChat) this.selectedChat.unread = 0;
+      await window.socket.emit("readChat", chatId || this.selectedChatId)
+      if (this.selectedChat) this.selectedChat.unread = 0
     },
     async typing() {
-      await window.socket.emit("typing", this.selectedChatId);
+      await window.socket.emit("typing", this.selectedChatId)
     },
     async setChat(id: number) {
-      this.loading = true;
-      const experimentsStore = useExperimentsStore();
+      this.loading = true
+      const experimentsStore = useExperimentsStore()
       if (!experimentsStore.experiments.COMMUNICATIONS_KEEP_LOADED) {
-        if (this.selectedChat?.messages) this.selectedChat.messages = [];
+        if (this.selectedChat?.messages) this.selectedChat.messages = []
       }
-      this.selectedChatId = id;
-      const appStore = useAppStore();
+      this.selectedChatId = id
+      const appStore = useAppStore()
       const chat = this.chats.find(
         (chat: Chat) => chat.association.id === id
-      ) as Chat;
-      appStore.title = this.chatName;
-      const { data } = await axios.get(`/chats/${id}/messages`);
+      ) as Chat
+      appStore.title = this.chatName
+      const {data} = await axios.get(`/chats/${id}/messages`)
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === id
-      );
+      )
       this.chats[index] = {
         ...(this.chats.find(
           (chat: Chat) => chat.association.id === id
         ) as Chat),
         messages: data,
         unread: 0
-      };
-      if (chat?.messages?.length) {
-        this.readChat();
-        return;
       }
-      this.loading = false;
-      this.isReady = id;
-      appStore.title = this.chatName;
+      if (chat?.messages?.length) {
+        this.readChat()
+        return
+      }
+      this.loading = false
+      this.isReady = id
+      appStore.title = this.chatName
 
-      this.readChat();
+      this.readChat()
     },
     async loadHistory(
       offset?: number,
       forceUnload: boolean = false,
       up: boolean = true
     ) {
-      this.loadingNew = true;
-      const { data } = await axios.get(
+      this.loadingNew = true
+      const {data} = await axios.get(
         `/chats/${this.selectedChatId}/messages?offset=${
           offset || this.currentOffset[up ? "up" : "down"]
         }&position=${up ? "top" : "bottom"}`
-      );
+      )
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === this.selectedChatId
-      );
+      )
       if (!data.length) {
-        this.loadNew = false;
+        this.loadNew = false
       }
       if (!up && !forceUnload && !offset) {
-        this.chats[index].messages.unshift(...data);
+        this.chats[index].messages.unshift(...data)
         if (this.chats[index].messages.length > 150) {
           this.chats[index].messages = this.chats[index].messages.slice(
             0,
             this.chats[index].messages.length - 100
-          );
+          )
         }
       } else if (up && !forceUnload && !offset) {
-        this.chats[index].messages.push(...data);
+        this.chats[index].messages.push(...data)
         // if messages.length over 150, remove the first 50
         if (this.chats[index].messages.length > 150) {
-          this.chats[index].messages = this.chats[index].messages.slice(100);
-          this.loadNew = true;
+          this.chats[index].messages = this.chats[index].messages.slice(100)
+          this.loadNew = true
         }
       } else {
-        this.chats[index].messages = data;
-        this.loadNew = true;
+        this.chats[index].messages = data
+        this.loadNew = true
       }
-      this.loadingNew = false;
+      this.loadingNew = false
     },
     async getChats() {
       try {
-        const chats = localStorage.getItem("chatStore");
+        const chats = localStorage.getItem("chatStore")
         if (chats) {
-          this.chats = JSON.parse(chats);
+          this.chats = JSON.parse(chats)
         }
-      } catch {}
-      const { data } = await axios.get("/chats");
-      this.chats = data;
-      const app = useAppStore();
-      localStorage.setItem("chatStore", JSON.stringify(this.chats));
+      } catch {
+      }
+      const {data} = await axios.get("/chats")
+      this.chats = data
+      const app = useAppStore()
+      localStorage.setItem("chatStore", JSON.stringify(this.chats))
     },
     async init() {
       try {
-        const trustedDomains = localStorage.getItem("trustedDomainsStore");
+        const trustedDomains = localStorage.getItem("trustedDomainsStore")
         if (trustedDomains) {
-          this.trustedDomains = JSON.parse(trustedDomains);
+          this.trustedDomains = JSON.parse(trustedDomains)
         }
-      } catch {}
+      } catch {
+      }
       try {
-        const drafts = localStorage.getItem("draftStore");
+        const drafts = localStorage.getItem("draftStore")
         if (drafts) {
-          this.drafts = JSON.parse(drafts);
+          this.drafts = JSON.parse(drafts)
         }
-      } catch {}
+      } catch {
+      }
       if (!window.tpuInternals) {
-        const collection = useCollectionsStore();
-        const router = useRouter() as Router;
+        const collection = useCollectionsStore()
+        const router = useRouter() as Router
         window.tpuInternals = {
           processLink: this.processLink,
           readChat: this.readChat,
@@ -515,32 +518,32 @@ export const useChatStore = defineStore("chat", {
               ({
                 name: "Unknown Collection"
               } as Collection)
-            );
+            )
           },
           openCollection: ((id) => router.push("/collections/" + id)) as (
             id: number
           ) => void
-        };
+        }
       }
-      window.tpuInternals.processLink = this.processLink;
-      this.getChats();
+      window.tpuInternals.processLink = this.processLink
+      this.getChats()
     }
   },
   getters: {
     currentOffset(state: ChatState) {
       const down = state.selectedChat?.messages[0]?.id
         ? state.selectedChat?.messages[0]?.id
-        : 0;
+        : 0
       const up = state.selectedChat?.messages[
-        state.selectedChat?.messages.length - 1
-      ]?.id
+      state.selectedChat?.messages.length - 1
+        ]?.id
         ? state.selectedChat?.messages[state.selectedChat?.messages.length - 1]
-            ?.id
-        : 0;
+          ?.id
+        : 0
       return {
         up,
         down
-      };
+      }
     },
     hasPermissions(state: ChatState) {
       return {
@@ -549,69 +552,69 @@ export const useChatStore = defineStore("chat", {
           state.selectedChat?.association?.rank === "admin" ||
           state.selectedChat?.association?.rank === "owner",
         member: true
-      };
+      }
     },
     typers(state: ChatState) {
-      const user = useUserStore();
-      if (!state.selectedChat) return "";
-      if (!state.selectedChat.typers?.length) return "";
+      const user = useUserStore()
+      if (!state.selectedChat) return ""
+      if (!state.selectedChat.typers?.length) return ""
       if (state.selectedChat?.typers?.length > 3) {
-        return `${state.selectedChat.typers.length} people are typing...`;
+        return `${state.selectedChat.typers.length} people are typing...`
       }
 
       // filter out the current user and return the usernames
       const typers = state.selectedChat.typers
         .filter((typer: Typing) => typer.user.id !== user.user?.id)
         .map((typer: Typing) => {
-          return typer.user.username;
-        });
+          return typer.user.username
+        })
 
-      const last = typers.pop();
+      const last = typers.pop()
       if (typers.length) {
-        return `${typers.join(", ")} and ${last} are typing...`;
+        return `${typers.join(", ")} and ${last} are typing...`
       } else {
-        return `${last} is typing...`;
+        return `${last} is typing...`
       }
     },
     totalUnread(state: ChatState) {
       return state.chats.reduce((total: number, chat: Chat) => {
-        return total + chat.unread;
-      }, 0);
+        return total + chat.unread
+      }, 0)
     },
     selectedChat(state: ChatState) {
       return state.chats.find(
         (chat: Chat) => chat.association.id === state.selectedChatId
-      ) as Chat | null;
+      ) as Chat | null
     },
     chatName(state: ChatState) {
-      if (!state.selectedChat) return "Communications";
+      if (!state.selectedChat) return "Communications"
       if (state.selectedChat.type === "direct") {
         return (
           useFriendsStore().getName(state.selectedChat?.recipient) ||
           "Deleted User"
-        );
+        )
       } else {
-        return state.selectedChat.name;
+        return state.selectedChat.name
       }
     },
     communicationsSidebar() {
-      return !vuetify.display.mobile.value && !useAppStore().rail;
+      return !vuetify.display.mobile.value && !useAppStore().rail
     },
     memberSidebar(state: ChatState) {
-      if (!state.memberSidebarShown) return false;
-      const experimentsStore = useExperimentsStore();
+      if (!state.memberSidebarShown) return false
+      const experimentsStore = useExperimentsStore()
       if (experimentsStore.experiments["COMMUNICATIONS_QUAD_SIDEBAR_LOWRES"])
-        return true;
+        return true
       if (
         experimentsStore.experiments["COMMUNICATIONS_INLINE_SIDEBAR_HIRES"] &&
         vuetify.display.lgAndUp.value
       )
-        return false;
-      return !vuetify.display.lgAndDown.value;
+        return false
+      return !vuetify.display.lgAndDown.value
     },
     isCommunications() {
-      const router = useRouter();
-      return router.currentRoute.value.path.startsWith("/communications/");
+      const router = useRouter()
+      return router.currentRoute.value.path.startsWith("/communications/")
     }
   }
-});
+})

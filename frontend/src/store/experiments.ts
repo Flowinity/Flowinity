@@ -1,6 +1,6 @@
 // Utilities
-import { defineStore } from "pinia";
-import axios from "@/plugins/axios";
+import {defineStore} from "pinia"
+import axios from "@/plugins/axios"
 
 export interface ExperimentsState {
   experiments: Record<string, string | boolean | null | undefined | number>;
@@ -21,10 +21,10 @@ export const useExperimentsStore = defineStore("experiments", {
   getters: {},
   actions: {
     async init() {
-      const experiments = localStorage.getItem("experimentsStore");
+      const experiments = localStorage.getItem("experimentsStore")
       if (experiments) {
         try {
-          this.experiments = JSON.parse(experiments);
+          this.experiments = JSON.parse(experiments)
           /*if (this.experiments.API_VERSION) {
             axios.defaults.baseURL = import.meta.env.CORDOVA
               ? `https://images.flowinity.com/api/${this.experiments.API_VERSION}`
@@ -34,18 +34,18 @@ export const useExperimentsStore = defineStore("experiments", {
           //
         }
       }
-      const { data } = await axios.get("/core/experiments");
+      const {data} = await axios.get("/core/experiments")
       this.experiments = {
         ...data,
         ...JSON.parse(localStorage.getItem("experiments") || "{}")
-      };
+      }
       /*if (this.experiments.API_VERSION) {
         axios.defaults.baseURL = import.meta.env.CORDOVA
           ? `https://images.flowinity.com/api/${this.experiments.API_VERSION}`
           : `/api/v${this.experiments.API_VERSION}`;
       }*/
-      this.experimentsInherit = data;
-      localStorage.setItem("experimentsStore", JSON.stringify(data));
+      this.experimentsInherit = data
+      localStorage.setItem("experimentsStore", JSON.stringify(data))
     }
   }
-});
+})

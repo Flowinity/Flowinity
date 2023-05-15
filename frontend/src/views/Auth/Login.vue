@@ -1,11 +1,11 @@
 <template>
-  <v-container fluid class="center-container">
+  <v-container class="center-container" fluid>
     <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="7" xl="5">
+      <v-col cols="12" md="7" sm="8" xl="5">
         <v-card
-          :flat="$vuetify.display.mobile"
-          :elevation="$vuetify.display.mobile ? 0 : 8"
           :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
         >
           <p class="text-center text-gradient mb-n5" style="font-size: 64px">
             TPU
@@ -13,20 +13,20 @@
           <v-container>
             <v-form>
               <v-text-field
-                label="Username or Email"
                 v-model="username"
                 autofocus
+                label="Username or Email"
                 @keydown.enter="login"
               />
               <v-text-field
+                v-model="password"
                 label="Password"
                 type="password"
-                v-model="password"
                 @keydown.enter="login"
               />
               <v-text-field
-                label="2FA Code (if enabled)"
                 v-model="totp"
+                label="2FA Code (if enabled)"
                 type="number"
                 @keydown.enter="login"
               />
@@ -34,12 +34,12 @@
           </v-container>
           <v-card-actions class="mt-n9 mr-2">
             <v-spacer></v-spacer>
-            <a @click="forgotPassword" class="pointer">I forgot my password</a>
+            <a class="pointer" @click="forgotPassword">I forgot my password</a>
           </v-card-actions>
           <v-card-actions>
             <v-btn to="/register">Register</v-btn>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="login" :loading="loading">
+            <v-btn :loading="loading" color="primary" @click="login">
               Login
             </v-btn>
           </v-card-actions>
@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "Login",
@@ -60,45 +60,45 @@ export default defineComponent({
       password: "",
       totp: "",
       loading: false
-    };
+    }
   },
   methods: {
     async forgotPassword() {
-      this.loading = true;
+      this.loading = true
       try {
         await this.axios.post("/auth/recover", {
           email: this.username
-        });
+        })
         this.$toast.success(
           "Password reset email sent successfully, check your emails!"
-        );
-        this.loading = false;
+        )
+        this.loading = false
       } catch {
-        this.loading = false;
+        this.loading = false
       }
     },
     async login() {
-      this.loading = true;
+      this.loading = true
       try {
-        const { data } = await this.axios.post("/auth/login", {
+        const {data} = await this.axios.post("/auth/login", {
           email: this.username,
           password: this.password,
           code: this.totp
-        });
-        localStorage.setItem("token", data.token);
-        this.axios.defaults.headers.common["Authorization"] = data.token;
-        await this.$user.init();
-        this.$socket.auth = { token: data.token };
-        this.$socket.disconnect();
-        this.$socket.connect();
-        this.$router.push("/");
+        })
+        localStorage.setItem("token", data.token)
+        this.axios.defaults.headers.common["Authorization"] = data.token
+        await this.$user.init()
+        this.$socket.auth = {token: data.token}
+        this.$socket.disconnect()
+        this.$socket.connect()
+        this.$router.push("/")
       } catch {
-        this.loading = false;
+        this.loading = false
       }
     }
   },
   mounted() {
-    this.$app.title = "Login";
+    this.$app.title = "Login"
   }
-});
+})
 </script>

@@ -3,15 +3,15 @@
     <h1>TPU Changelogs</h1>
     <template v-for="version in versions">
       <h2 class="mt-4">{{ version.version }}</h2>
-      <v-card-title style="font-size: 17px" v-if="version.subheading">
+      <v-card-title v-if="version.subheading" style="font-size: 17px">
         {{ version.subheading }}
       </v-card-title>
       <v-card-subtitle>{{ version.date }}</v-card-subtitle>
       <div v-for="change in version.changes" :key="change.text">
         <v-chip
-          class="my-2 mr-2"
           v-for="tag in change.tags"
           :color="tags[tag]?.color"
+          class="my-2 mr-2"
         >
           {{ tag }}
         </v-chip>
@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "Changelog",
@@ -287,7 +287,7 @@ export default defineComponent({
             },
             {
               tags: ["Fix", "Gallery"],
-              text: 'Adjusted size of "Search in files" checkbox'
+              text: "Adjusted size of \"Search in files\" checkbox"
             },
             {
               tags: ["Fix", "TPU"],
@@ -339,9 +339,9 @@ export default defineComponent({
           tags?: string[];
         }[];
       }[]
-    };
+    }
   }
-});
+})
 </script>
 
 <style scoped></style>

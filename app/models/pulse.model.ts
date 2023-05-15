@@ -1,13 +1,5 @@
-import {
-  Table,
-  Column,
-  Model,
-  BelongsTo,
-  Default,
-  AllowNull,
-  DataType
-} from "sequelize-typescript"
-import { User } from "@app/models/user.model"
+import {AllowNull, BelongsTo, Column, DataType, Default, Model, Table} from "sequelize-typescript"
+import {User} from "@app/models/user.model"
 
 @Table
 export class Pulse extends Model {

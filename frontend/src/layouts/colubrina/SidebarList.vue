@@ -1,25 +1,25 @@
 <template>
-  <Leave v-model="leave.dialog" :chat="leave.chat" />
+  <Leave v-model="leave.dialog" :chat="leave.chat"/>
   <v-menu
+    v-model="contextMenu.dialog"
     :style="menuStyle"
     location="top"
-    v-model="contextMenu.dialog"
     style="z-index: 2003"
   >
     <v-list style="background: #151515 !important">
       <v-list-item @click="() => {}">
         <v-menu
-          :nudge-right="10"
           :close-delay="100"
-          :open-delay="0"
-          :close-on-content-click="false"
           :close-on-click="false"
+          :close-on-content-click="false"
+          :nudge-right="10"
+          :open-delay="0"
+          activator="parent"
           bottom
+          class="ml-2"
+          location="right"
           offset-x
           open-on-hover
-          activator="parent"
-          location="right"
-          class="ml-2"
         >
           <v-list
             v-if="contextMenu.item"
@@ -29,8 +29,8 @@
               <v-list-item-title>All messages</v-list-item-title>
               <template v-slot:append>
                 <v-icon
-                  style="float: right"
                   v-if="contextMenu.item.association.notifications === 'all'"
+                  style="float: right"
                 >
                   mdi-check
                 </v-icon>
@@ -40,10 +40,10 @@
               <v-list-item-title>Mentions only</v-list-item-title>
               <template v-slot:append>
                 <v-icon
-                  style="float: right"
                   v-if="
                     contextMenu.item.association.notifications === 'mentions'
                   "
+                  style="float: right"
                 >
                   mdi-check
                 </v-icon>
@@ -56,8 +56,8 @@
               </v-list-item-subtitle>
               <template v-slot:append>
                 <v-icon
-                  style="float: right"
                   v-if="contextMenu.item.association.notifications === 'none'"
+                  style="float: right"
                 >
                   mdi-check
                 </v-icon>
@@ -113,13 +113,13 @@
     </v-list>
   </v-menu>
   <v-card-text class="text-overline mb-n4">
-    <CreateChat v-model="create" v-slot="{ props }" type="create">
+    <CreateChat v-slot="{ props }" v-model="create" type="create">
       <v-btn
-        size="xsmall"
-        icon
         class="mr-2"
-        @click="create = true"
+        icon
+        size="xsmall"
         v-bind="props"
+        @click="create = true"
       >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
@@ -129,7 +129,6 @@
   <v-list nav>
     <v-list-item
       v-for="chat in $chat.chats"
-      :title="chatName(chat)"
       :subtitle="
         chat.type === 'group'
           ? `${chat.users?.length} members`
@@ -137,43 +136,44 @@
           ? 'Legacy User'
           : ''
       "
+      :title="chatName(chat)"
       :to="`/communications/${chat.association.id}`"
       @contextmenu.prevent="context($event, chat)"
     >
       <template v-slot:prepend>
         <CommunicationsAvatar
-          :status="true"
           :chat="chat.type === 'group' ? chat : undefined"
+          :status="true"
           :user="chat.type === 'direct' ? chat.recipient : undefined"
         ></CommunicationsAvatar>
       </template>
       <template v-slot:append>
         <v-badge
           v-if="chat.unread"
+          :class="chat.unread > 99 ? 'mr-5' : 'mr-4'"
           :content="chat.unread > 99 ? '99+' : chat.unread"
           color="red"
           overlap
-          :class="chat.unread > 99 ? 'mr-5' : 'mr-4'"
         ></v-badge>
       </template>
     </v-list-item>
     <v-list-item v-if="!$chat.chats.length" class="fade-skeleton">
-      <MessageSkeleton :animate="false" v-for="i in 5"></MessageSkeleton>
+      <MessageSkeleton v-for="i in 5" :animate="false"></MessageSkeleton>
     </v-list-item>
   </v-list>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Chat } from "@/models/chat";
-import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
-import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
-import Leave from "@/components/Communications/Dialogs/Leave.vue";
+import {defineComponent} from "vue"
+import {Chat} from "@/models/chat"
+import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue"
+import CreateChat from "@/components/Communications/Menus/CreateChat.vue"
+import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue"
+import Leave from "@/components/Communications/Dialogs/Leave.vue"
 
 export default defineComponent({
   name: "ColubrinaSidebarList",
-  components: { Leave, CommunicationsAvatar, CreateChat, MessageSkeleton },
+  components: {Leave, CommunicationsAvatar, CreateChat, MessageSkeleton},
   data() {
     return {
       create: false,
@@ -187,41 +187,41 @@ export default defineComponent({
         y: 0,
         item: undefined as Chat | undefined
       }
-    };
+    }
   },
   computed: {
     menuStyle() {
       return `
         position: absolute;
         top: ${this.contextMenu.y}px;
-        left: ${this.contextMenu.x}px;`;
+        left: ${this.contextMenu.x}px;`
     }
   },
   methods: {
     setNotifications(type: "all" | "mentions" | "none") {
-      if (!this.contextMenu.item?.association) return;
+      if (!this.contextMenu.item?.association) return
       this.axios.patch(
         `/chats/association/${this.contextMenu.item?.association.id}`,
         {
           notifications: type
         }
-      );
-      this.contextMenu.item.association.notifications = type;
+      )
+      this.contextMenu.item.association.notifications = type
     },
     context(e: any, item: any) {
-      e.preventDefault();
-      this.contextMenu.item = item;
-      this.contextMenu.x = e.clientX;
-      this.contextMenu.y = e.clientY;
-      this.contextMenu.dialog = true;
+      e.preventDefault()
+      this.contextMenu.item = item
+      this.contextMenu.x = e.clientX
+      this.contextMenu.y = e.clientY
+      this.contextMenu.dialog = true
     },
     chatName(chat: Chat) {
       if (chat.type === "direct") {
-        return this.$friends.getName(chat.recipient) || "Deleted User";
+        return this.$friends.getName(chat.recipient) || "Deleted User"
       } else {
-        return chat.name;
+        return chat.name
       }
     }
   }
-});
+})
 </script>

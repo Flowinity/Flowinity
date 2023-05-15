@@ -77,6 +77,15 @@ export class AdminControllerV3 {
     return {}
   }
 
+  @Delete("/communications/message/:messageId")
+  async deleteCommunicationsMessage(
+    @Auth("*") user: User,
+    @Param("messageId") messageId: number
+  ) {
+      await this.adminService.deleteCommunicationsMessage(messageId)
+      return
+  }
+
   @Delete("/cache/:key")
   @Delete("/cache/:key/:uid?")
   @UseBefore(LowLevel)

@@ -1,8 +1,5 @@
 <template>
   <v-navigation-drawer
-    color="dark"
-    floating
-    location="right"
     v-model="$chat.memberSidebarShown"
     :class="
       $chat.memberSidebarShown &&
@@ -12,19 +9,22 @@
         : ''
     "
     :width="$chat.search.value ? 400 : undefined"
+    color="dark"
+    floating
+    location="right"
   >
     <ColubrinaMemberSidebarList></ColubrinaMemberSidebarList>
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import ColubrinaMemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
+import {defineComponent} from "vue"
+import ColubrinaMemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue"
 
 export default defineComponent({
   name: "ColubrinaMemberSidebar",
-  components: { ColubrinaMemberSidebarList }
-});
+  components: {ColubrinaMemberSidebarList}
+})
 </script>
 
 <style scoped></style>

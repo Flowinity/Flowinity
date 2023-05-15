@@ -1,10 +1,10 @@
 <template>
   <Sharing
+    v-if="collection"
     v-model="sharing"
     :collection="collection"
     @get-collection="getCollection"
     @collection-users-push="collection?.users?.push($event)"
-    v-if="collection"
   ></Sharing>
   <CollectionSettings
     v-model="settings"
@@ -12,31 +12,31 @@
     @refreshCollection="getCollection"
   ></CollectionSettings>
   <UserBanner
-    :collection="collection"
-    @sharing-dialog="sharing = true"
     v-if="collection"
-    @refresh-user="getCollection"
+    :collection="collection"
     :gold="$user.gold"
+    @sharing-dialog="sharing = true"
+    @refresh-user="getCollection"
   >
     <v-card-title>
       {{ collection.name }}
       <span class="float-end">
         <v-btn
-          @click="sharing = true"
           v-if="
             !$route.params.type && collection.permissionsMetadata?.configure
           "
+          @click="sharing = true"
         >
-          <v-icon style="font-size: 20px" class="mr-1">mdi-share</v-icon>
+          <v-icon class="mr-1" style="font-size: 20px">mdi-share</v-icon>
           Collection Sharing
         </v-btn>
         <v-btn
-          @click="settings = true"
           v-if="
             !$route.params.type && collection.permissionsMetadata?.configure
           "
+          @click="settings = true"
         >
-          <v-icon style="font-size: 20px" class="mr-1">mdi-cog</v-icon>
+          <v-icon class="mr-1" style="font-size: 20px">mdi-cog</v-icon>
           Settings
         </v-btn>
         <v-btn
@@ -49,17 +49,17 @@
             )
           "
         >
-          <v-icon style="font-size: 20px" class="mr-1">mdi-link</v-icon>
+          <v-icon class="mr-1" style="font-size: 20px">mdi-link</v-icon>
           Copy Share Link
         </v-btn>
       </span>
     </v-card-title>
-    <v-card-text class="mt-n3" v-if="collection.users.length">
+    <v-card-text v-if="collection.users.length" class="mt-n3">
       <v-icon>mdi-swap-horizontal</v-icon>
       {{ collection.user.username }},
       {{ collection.users.map((user) => user.user.username).join(", ") }}
     </v-card-text>
-    <v-card-text class="mt-n3" v-else>{{ collection.items }} items</v-card-text>
+    <v-card-text v-else class="mt-n3">{{ collection.items }} items</v-card-text>
   </UserBanner>
   <v-container v-if="collection">
     <PersonalGallery
@@ -86,16 +86,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
-import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
-import { Upload } from "@/models/upload";
-import { CollectionCache } from "@/types/collection";
-import GalleryCore from "@/components/Gallery/GalleryCore.vue";
-import Sharing from "@/components/Collections/Dialogs/Sharing.vue";
-import UserBanner from "@/components/Users/UserBanner.vue";
-import CollectionSettings from "@/components/Collections/Dialogs/Settings.vue";
-import PersonalGallery from "@/views/Gallery.vue";
+import {defineComponent} from "vue"
+import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue"
+import CollectionBanner from "@/components/Collections/CollectionBanner.vue"
+import {CollectionCache} from "@/types/collection"
+import GalleryCore from "@/components/Gallery/GalleryCore.vue"
+import Sharing from "@/components/Collections/Dialogs/Sharing.vue"
+import UserBanner from "@/components/Users/UserBanner.vue"
+import CollectionSettings from "@/components/Collections/Dialogs/Settings.vue"
+import PersonalGallery from "@/views/Gallery.vue"
 
 export default defineComponent({
   name: "CollectionsItem",
@@ -113,34 +112,34 @@ export default defineComponent({
       collection: undefined as CollectionCache | undefined,
       sharing: false,
       settings: false
-    };
+    }
   },
   methods: {
     async getCollection() {
       if (!this.collection && this.$collections.items.length) {
         this.collection = this.$collections.items.find(
           (c: any) => c.id === parseInt(<string>this.$route.params.id)
-        );
+        )
       }
-      this.$app.componentLoading = true;
-      const { data } = await this.axios.get(
+      this.$app.componentLoading = true
+      const {data} = await this.axios.get(
         `/collections/${this.$route.params.id}`
-      );
-      this.$app.componentLoading = false;
-      this.collection = data;
-      this.$app.title = this.collection?.name as string;
+      )
+      this.$app.componentLoading = false
+      this.collection = data
+      this.$app.title = this.collection?.name as string
     }
   },
   mounted() {
-    this.getCollection();
+    this.getCollection()
   },
   watch: {
     "$route.params.id"(val) {
-      if (!val) return;
-      this.getCollection();
+      if (!val) return
+      this.getCollection()
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

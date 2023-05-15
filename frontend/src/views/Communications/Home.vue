@@ -1,25 +1,25 @@
 <template>
   <v-container class="text-center justify-center">
     <PromoNoContent
-      title="TPU Communications"
-      icon="mdi-message-processing-outline"
       description="Chat with other TPU & Colubrina users."
+      icon="mdi-message-processing-outline"
+      title="TPU Communications"
     ></PromoNoContent>
   </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import PromoNoContent from "@/components/Core/PromoNoContent.vue";
+import {defineComponent} from "vue"
+import PromoNoContent from "@/components/Core/PromoNoContent.vue"
 
 export default defineComponent({
   name: "CommunicationsHome",
-  components: { PromoNoContent },
+  components: {PromoNoContent},
   mounted() {
-    this.$app.title = "Communications";
-    this.$app.railMode = "communications";
+    this.$app.title = "Communications"
+    this.$app.railMode = "communications"
   }
-});
+})
 </script>
 
 <style scoped></style>

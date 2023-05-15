@@ -9,14 +9,14 @@
       <HoverChip
         v-for="integration in integrations"
         :color="integration.color"
+        :disabled="!integration.available"
+        :href="integration.url"
         :short-text="integration.shortText"
         :text="integration.name"
-        :href="integration.url"
-        :disabled="!integration.available"
       ></HoverChip>
     </v-container>
   </v-card>
-  <v-card class="mt-4" v-if="$user.user.integrations.length">
+  <v-card v-if="$user.user.integrations.length" class="mt-4">
     <v-toolbar>
       <v-toolbar-title>
         {{ $t("settings.integrations.manage") }}
@@ -54,12 +54,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import HoverChip from "@/components/Core/HoverChip.vue";
+import {defineComponent} from "vue"
+import HoverChip from "@/components/Core/HoverChip.vue"
 
 export default defineComponent({
   name: "Integrations",
-  components: { HoverChip },
+  components: {HoverChip},
   data() {
     return {
       loading: false,
@@ -72,18 +72,18 @@ export default defineComponent({
         url: string;
         available: boolean;
       }[]
-    };
+    }
   },
   methods: {
     async removeIntegration(id: number) {
-      this.loading = true;
-      await this.axios.delete(`/providers/${id}`);
-      await this.$user.init();
-      this.loading = false;
-      this.$toast.success("Account unlinked from TPU.");
+      this.loading = true
+      await this.axios.delete(`/providers/${id}`)
+      await this.$user.init()
+      this.loading = false
+      this.$toast.success("Account unlinked from TPU.")
     },
     getIntegrationMeta(id: string) {
-      const integration = this.integrations.find((i) => i.id === id);
+      const integration = this.integrations.find((i) => i.id === id)
       if (!integration) {
         return {
           name: "Unknown",
@@ -91,19 +91,19 @@ export default defineComponent({
           shortText: "Unknown",
           url: null,
           available: false
-        };
+        }
       }
-      return integration;
+      return integration
     },
     async getIntegrations() {
-      const { data } = await this.axios.get("/providers/linkable");
-      this.integrations = data;
+      const {data} = await this.axios.get("/providers/linkable")
+      this.integrations = data
     }
   },
   mounted() {
-    this.getIntegrations();
+    this.getIntegrations()
   }
-});
+})
 </script>
 
 <style scoped></style>

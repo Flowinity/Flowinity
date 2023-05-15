@@ -1,20 +1,19 @@
 // Plugins
-import vue from "@vitejs/plugin-vue";
-import vuetify, { transformAssetUrls } from "@troplo/vite-plugin-vuetify";
+import vue from "@vitejs/plugin-vue"
+import vuetify, {transformAssetUrls} from "@troplo/vite-plugin-vuetify"
 
 // Utilities
-import { defineConfig, PluginOption } from "vite";
-import { VitePWA } from "vite-plugin-pwa";
-import ViteVersion from "@troplo/vite-version";
-import path from "path";
-import * as fs from "fs";
-import { visualizer } from "rollup-plugin-visualizer";
+import {defineConfig} from "vite"
+import {VitePWA} from "vite-plugin-pwa"
+import ViteVersion from "@troplo/vite-version"
+import path from "path"
+import * as fs from "fs"
 
 const resolve = (file: string) => {
-  console.log(path.resolve(__dirname, file));
-  return path.resolve(__dirname, file);
-};
-//import obfuscator from "rollup-plugin-obfuscator";
+  console.log(path.resolve(__dirname, file))
+  return path.resolve(__dirname, file)
+}
+//import obfuscator from "rollup-plugin-obfuscator"
 
 // https://vitejs.dev/config/
 
@@ -145,7 +144,7 @@ export default defineConfig({
       }
     }),
     vue({
-      template: { transformAssetUrls }
+      template: {transformAssetUrls}
     }),
     // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
     vuetify({
@@ -155,9 +154,9 @@ export default defineConfig({
       }
     })
   ],
-  define: { "process.env": {} },
+  define: {"process.env": {}},
   resolve: {
-    alias: [{ find: /^@\/(.*)/, replacement: resolve("./src/$1") }],
+    alias: [{find: /^@\/(.*)/, replacement: resolve("./src/$1")}],
     extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"]
   },
   server: {
@@ -177,4 +176,4 @@ export default defineConfig({
       "/api/v1": "http://localhost:34581"
     }
   }
-});
+})

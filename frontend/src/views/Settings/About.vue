@@ -65,30 +65,30 @@
     <a class="text-gradient" href="/api/v3/docs">
       {{ $t("settings.about.docs") }}
     </a>
-    <br />
-    <router-link to="/credits" class="text-gradient mt-5">
+    <br/>
+    <router-link class="text-gradient mt-5" to="/credits">
       {{ $t("settings.about.credits") }}
     </router-link>
     <p class="mt-5 text-gradient">TroploPrivateUploader</p>
     <p>&copy; {{ $date().format("YYYY") }} Troplo Services</p>
     <v-btn
-      @click="crash"
-      class="mt-2"
       v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
+      class="mt-2"
+      @click="crash"
     >
       {{ $t("settings.about.crash") }}
     </v-btn>
     <v-btn
-      @click="expTrue"
-      class="mt-2"
       v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
+      class="mt-2"
+      @click="expTrue"
     >
       {{ $t("settings.about.expEnable") }}
     </v-btn>
     <v-btn
-      @click="expFalse"
-      class="mt-2"
       v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
+      class="mt-2"
+      @click="expFalse"
     >
       {{ $t("settings.about.expDisable") }}
     </v-btn>
@@ -96,31 +96,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "About",
   data() {
-    return {};
+    return {}
   },
   methods: {
     crash() {
-      throw new Error("Intentional error thrown");
+      throw new Error("Intentional error thrown")
     },
     expTrue() {
       for (const key in this.$experiments.experiments) {
-        if (key === "meta") return;
-        this.$experiments.experiments[key] = true;
+        if (key === "meta") return
+        this.$experiments.experiments[key] = true
       }
     },
     expFalse() {
       for (const key in this.$experiments.experiments) {
-        if (key === "meta") return;
-        this.$experiments.experiments[key] = false;
+        if (key === "meta") return
+        this.$experiments.experiments[key] = false
       }
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

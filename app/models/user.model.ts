@@ -1,32 +1,31 @@
 import {
-  Table,
-  Column,
-  Model,
-  //BelongsTo,
-  Default,
   AllowNull,
-  DefaultScope,
   BelongsTo,
+  BelongsToMany,
+  Column,
   DataType,
-  Unique,
+  Default,
+  DefaultScope,
+  HasMany,
+  HasOne,
   IsEmail,
   Length,
-  HasOne,
-  HasMany,
-  BelongsToMany
+  Model,
+  Table,
+  Unique
 } from "sequelize-typescript"
-import { Plan } from "@app/models/plan.model"
-import { Theme } from "@app/models/theme.model"
-import { Domain } from "@app/models/domain.model"
-import { Subscription } from "@app/models/subscription.model"
-import { Experiment } from "@app/models/experiment.model"
-import { Badge } from "@app/models/badge.model"
-import { BadgeAssociation } from "@app/models/badgeAssociation.model"
-import { AutoCollectRule } from "@app/models/autoCollectRule.model"
-import { FriendNickname } from "@app/models/friendNickname"
-import { AlternatePassword } from "@app/types/auth"
-import { DefaultProfileLayout } from "@app/classes/UserV3ProfileLayout"
-import { Integration } from "@app/models/integration.model"
+import {Plan} from "@app/models/plan.model"
+import {Theme} from "@app/models/theme.model"
+import {Domain} from "@app/models/domain.model"
+import {Subscription} from "@app/models/subscription.model"
+import {Experiment} from "@app/models/experiment.model"
+import {Badge} from "@app/models/badge.model"
+import {BadgeAssociation} from "@app/models/badgeAssociation.model"
+import {AutoCollectRule} from "@app/models/autoCollectRule.model"
+import {FriendNickname} from "@app/models/friendNickname"
+import {AlternatePassword} from "@app/types/auth"
+import {DefaultProfileLayout} from "@app/classes/UserV3ProfileLayout"
+import {Integration} from "@app/models/integration.model"
 
 export interface ProfileLayout {
   layout: {

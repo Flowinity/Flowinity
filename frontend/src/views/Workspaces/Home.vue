@@ -1,13 +1,13 @@
 <template>
   <v-container v-if="!$workspaces.items.length">
     <PromoNoContent
-      title="Workspaces"
       icon="mdi-folder-account-outline"
+      title="Workspaces"
     ></PromoNoContent>
     <v-row class="mt-2">
       <v-col cols="12" sm="4">
         <v-card class="text-center">
-          <v-icon size="120" color="#606060" class="mt-2 mb-n3">
+          <v-icon class="mt-2 mb-n3" color="#606060" size="120">
             mdi-note-outline
           </v-icon>
           <v-card-title class="justify-center text-center">
@@ -24,13 +24,13 @@
       </v-col>
       <v-col cols="12" sm="4">
         <v-card class="text-center">
-          <v-icon size="120" color="#606060" class="mt-2 mb-n3">
+          <v-icon class="mt-2 mb-n3" color="#606060" size="120">
             mdi-account-group-outline
           </v-icon>
           <v-card-title class="justify-center text-center">
             <h3 style="opacity: 0.7">
               Collaboration
-              <v-chip small class="ml-2" style="opacity: 0.7">Soon™</v-chip>
+              <v-chip class="ml-2" small style="opacity: 0.7">Soon™</v-chip>
             </h3>
           </v-card-title>
           <v-card-text>
@@ -43,7 +43,7 @@
       </v-col>
       <v-col cols="12" sm="4">
         <v-card class="text-center">
-          <v-icon size="120" color="#606060" class="mt-2 mb-n3">
+          <v-icon class="mt-2 mb-n3" color="#606060" size="120">
             mdi-lock-outline
           </v-icon>
           <v-card-title class="justify-center text-center">
@@ -65,10 +65,10 @@
     <h3>Recent</h3>
     <v-row class="mt-1">
       <v-col
-        cols="12"
-        sm="3"
         v-for="note in $workspaces.recentOverall"
         :key="note.id"
+        cols="12"
+        sm="3"
       >
         <v-card :to="`/workspaces/notes/${note.id}`">
           <v-card-text class="text-overline">
@@ -87,10 +87,10 @@
       <h3 class="mt-2">{{ item.name }}</h3>
       <v-row class="mt-1">
         <v-col
-          cols="12"
-          sm="3"
           v-for="note in workspaceNotes(item)"
           :key="note.id"
+          cols="12"
+          sm="3"
         >
           <v-card :to="`/workspaces/notes/${note.id}`">
             <v-card-text class="text-overline">
@@ -110,44 +110,44 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import PromoNoContent from "@/components/Core/PromoNoContent.vue";
-import { Workspace } from "@/models/workspace";
+import {defineComponent} from "vue"
+import PromoNoContent from "@/components/Core/PromoNoContent.vue"
+import {Workspace} from "@/models/workspace"
 
 export default defineComponent({
   name: "Home",
-  components: { PromoNoContent },
+  components: {PromoNoContent},
   methods: {
     workspaceNotes(workspace: Workspace) {
-      return workspace.folders.map((folder) => folder.notes).flat();
+      return workspace.folders.map((folder) => folder.notes).flat()
     },
     async getRecent() {
       if (!this.$workspaces.recent.length) {
-        this.$app.componentLoading = true;
+        this.$app.componentLoading = true
       }
-      await this.$workspaces.getRecent();
-      this.$app.componentLoading = false;
+      await this.$workspaces.getRecent()
+      this.$app.componentLoading = false
     }
   },
   computed: {
     items() {
-      return this.$workspaces.items;
+      return this.$workspaces.items
     }
   },
   mounted() {
     if (!this.$app.workspaceDrawer && !this.$vuetify.display.mobile) {
-      this.$app.forcedWorkspaceDrawer = true;
-      this.$app.workspaceDrawer = true;
+      this.$app.forcedWorkspaceDrawer = true
+      this.$app.workspaceDrawer = true
     }
-    this.$app.title = "Workspaces";
-    this.getRecent();
+    this.$app.title = "Workspaces"
+    this.getRecent()
   },
   unmounted() {
     this.$app.workspaceDrawer =
-      localStorage.getItem("workspaceDrawer") === "true";
-    this.$app.forcedWorkspaceDrawer = false;
+      localStorage.getItem("workspaceDrawer") === "true"
+    this.$app.forcedWorkspaceDrawer = false
   }
-});
+})
 </script>
 
 <style scoped></style>

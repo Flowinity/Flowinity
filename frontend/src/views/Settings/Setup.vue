@@ -6,57 +6,57 @@
     <v-select
       v-model="selected"
       :items="items"
-      item-value="token"
-      item-title="name"
-      class="mx-3"
-      :placeholder="$t('settings.setup.label')"
       :label="$t('settings.setup.label')"
+      :placeholder="$t('settings.setup.label')"
+      class="mx-3"
+      item-title="name"
+      item-value="token"
     ></v-select>
     <div class="mt-n3 mx-3">
       <HoverChip
+        :disabled="!selected"
+        :disabled-text="$t('settings.setup.label')"
+        :old="true"
+        :text="$t('settings.setup.actions.apiKey')"
         class="mr-2 mt-2"
         color="teal"
-        @click="$functions.copy(selected)"
-        :disabled="!selected"
         icon="mdi-content-copy"
-        :text="$t('settings.setup.actions.apiKey')"
-        :old="true"
-        :disabled-text="$t('settings.setup.label')"
+        @click="$functions.copy(selected)"
       ></HoverChip>
       <HoverChip
+        :disabled="!selected"
+        :disabled-text="$t('settings.setup.label')"
+        :old="true"
+        :text="$t('settings.setup.actions.sharex')"
         class="mr-2 mt-2"
         color="indigo"
-        :text="$t('settings.setup.actions.sharex')"
-        :disabled="!selected"
         icon="mdi-download"
-        :old="true"
-        :disabled-text="$t('settings.setup.label')"
       ></HoverChip>
       <HoverChip
+        :disabled="!selected"
+        :disabled-text="$t('settings.setup.label')"
+        :old="true"
+        :text="$t('settings.setup.actions.sharenix')"
         class="mr-2 mt-2"
         color="deep-purple"
-        @click="saveFile('sharenix')"
-        :disabled="!selected"
         icon="mdi-download"
-        :text="$t('settings.setup.actions.sharenix')"
-        :old="true"
-        :disabled-text="$t('settings.setup.label')"
+        @click="saveFile('sharenix')"
       ></HoverChip>
       <HoverChip
+        :old="true"
+        :text="$t('settings.setup.actions.automate')"
         class="mr-2 mt-2"
         color="#78C257"
         href="https://i.troplo.com/i/c9069cbd9284.flo"
         icon="mdi-android"
-        :text="$t('settings.setup.actions.automate')"
-        :old="true"
       ></HoverChip>
       <HoverChip
+        :old="true"
+        :text="$t('settings.setup.actions.shortcuts')"
         class="mr-2 mt-2"
         color="white"
         href="https://www.icloud.com/shortcuts/2d3bca05bfe94ee3ac57611b6b1e5764"
         icon="mdi-apple"
-        :text="$t('settings.setup.actions.shortcuts')"
-        :old="true"
         target="_blank"
       ></HoverChip>
     </div>
@@ -143,17 +143,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import HoverChip from "@/components/Core/HoverChip.vue";
+import {defineComponent} from "vue"
+import HoverChip from "@/components/Core/HoverChip.vue"
 
 export default defineComponent({
   name: "Setup",
-  components: { HoverChip },
+  components: {HoverChip},
   data() {
     return {
       selected: "",
       items: []
-    };
+    }
   },
   methods: {
     config(type: "sharex" | "sharenix" = "sharex") {
@@ -185,50 +185,50 @@ export default defineComponent({
         URL: string;
         RequestMethod?: string;
         RequestType?: string;
-      };
-      if (type === "sharenix") {
-        data.RequestType = "POST";
-      } else {
-        data.RequestMethod = "POST";
       }
-      return data;
+      if (type === "sharenix") {
+        data.RequestType = "POST"
+      } else {
+        data.RequestMethod = "POST"
+      }
+      return data
     },
     async getAPIKeys() {
-      const { data } = await this.axios.get("/security/keys");
-      this.items = data;
+      const {data} = await this.axios.get("/security/keys")
+      this.items = data
     },
     saveFile(type: "sharex" | "sharenix" = "sharex") {
-      console.log(2);
-      let data = null;
+      console.log(2)
+      let data = null
       if (type === "sharex") {
-        data = JSON.stringify(this.config(type));
+        data = JSON.stringify(this.config(type))
       } else {
         data = JSON.stringify({
           DefaultFileUploader: this.$app.site.name,
           DefaultImageUploader: this.$app.site.name,
 
           Services: [this.config(type)]
-        });
+        })
       }
-      const blob = new Blob([data], { type: "text/plain" });
+      const blob = new Blob([data], {type: "text/plain"})
       const e = document.createEvent("MouseEvents"),
-        a = document.createElement("a");
-      const ext = type === "sharex" ? ".sxcu" : ".json";
+        a = document.createElement("a")
+      const ext = type === "sharex" ? ".sxcu" : ".json"
       a.download =
-        this.$user.user?.username + " - " + this.$app.site.name + ext;
-      a.href = window.URL.createObjectURL(blob);
-      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
-      e.initEvent("click", true, false);
-      a.dispatchEvent(e);
+        this.$user.user?.username + " - " + this.$app.site.name + ext
+      a.href = window.URL.createObjectURL(blob)
+      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":")
+      e.initEvent("click", true, false)
+      a.dispatchEvent(e)
     }
   },
   mounted() {
-    this.getAPIKeys();
+    this.getAPIKeys()
     if (this.$app.cordova) {
-      console.log(window.cordova.file);
+      console.log(window.cordova.file)
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

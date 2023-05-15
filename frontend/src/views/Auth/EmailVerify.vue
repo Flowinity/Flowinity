@@ -1,16 +1,16 @@
 <template>
-  <v-container fluid class="center-container">
+  <v-container class="center-container" fluid>
     <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="7" xl="5">
+      <v-col cols="12" md="7" sm="8" xl="5">
         <v-card
-          :flat="$vuetify.display.mobile"
-          :elevation="$vuetify.display.mobile ? 0 : 8"
           :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
         >
           <p class="text-center text-gradient mb-n5" style="font-size: 64px">
             TPU
           </p>
-          <v-container class="text-center" v-if="!error">
+          <v-container v-if="!error" class="text-center">
             <v-progress-circular
               v-if="loading"
               indeterminate
@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "EmailVerify",
@@ -39,28 +39,28 @@ export default defineComponent({
     return {
       loading: false,
       error: false
-    };
+    }
   },
   methods: {
     async verify() {
-      this.loading = true;
-      this.error = false;
+      this.loading = true
+      this.error = false
       try {
         await this.axios.patch("/user/verification", {
           token: this.$route.params.token
-        });
-        this.$toast.success("Email verified successfully!");
-        this.$router.push("/login");
-        this.$user.init();
+        })
+        this.$toast.success("Email verified successfully!")
+        this.$router.push("/login")
+        this.$user.init()
       } catch {
-        this.loading = false;
-        this.error = true;
+        this.loading = false
+        this.error = true
       }
     }
   },
   mounted() {
-    this.$app.title = "Email Verify";
-    this.verify();
+    this.$app.title = "Email Verify"
+    this.verify()
   }
-});
+})
 </script>

@@ -27,43 +27,43 @@
           Select a report to gain detailed information on how you use TPU.
         </v-card-subtitle>
         <v-row>
-          <v-col cols="12" sm="1" xl="3" md="6">
+          <v-col cols="12" md="6" sm="1" xl="3">
             <DynamicCard
-              to="/insights/dynamic"
-              image="https://i.troplo.com/i/3707e7de31bf.svg"
               :right-text="`Since ${$date($user.user?.createdAt).format(
                 'YYYY'
               )}`"
+              image="https://i.troplo.com/i/3707e7de31bf.svg"
+              to="/insights/dynamic"
             />
           </v-col>
-          <v-col sm="1" cols="12" xl="3" md="6">
+          <v-col cols="12" md="6" sm="1" xl="3">
             <DynamicCard
-              to="/insights/weekly"
-              image="https://i.troplo.com/i/b95680817c90.svg"
+              :black-text="true"
               :right-text="`${$date()
                 .subtract(7, 'days')
                 .format('Do of MMMM YYYY')}`"
-              :black-text="true"
+              image="https://i.troplo.com/i/b95680817c90.svg"
+              to="/insights/weekly"
             />
           </v-col>
-          <v-col cols="12" sm="1" xl="3" md="6">
+          <v-col cols="12" md="6" sm="1" xl="3">
             <DynamicCard
-              to="/insights/monthly"
-              image="https://i.troplo.com/i/5804cb16c03e.svg"
               :right-text="`${$date()
                 .subtract(30, 'days')
                 .startOf('month')
                 .format('MMMM YYYY')}`"
+              image="https://i.troplo.com/i/5804cb16c03e.svg"
+              to="/insights/monthly"
             />
           </v-col>
-          <v-col cols="12" sm="1" xl="3" md="6">
+          <v-col cols="12" md="6" sm="1" xl="3">
             <DynamicCard
-              to="/insights/yearly"
-              image="https://i.troplo.com/i/283fd2159008.svg"
               :right-text="`${$date()
                 .subtract(1, 'years')
                 .startOf('year')
                 .format('YYYY')}`"
+              image="https://i.troplo.com/i/283fd2159008.svg"
+              to="/insights/yearly"
             />
           </v-col>
           <!--          <v-col cols="12" sm="1" xl="6" md="6">
@@ -84,22 +84,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import DynamicCard from "@/components/Core/DynamicCard.vue";
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import {defineComponent} from "vue"
+import DynamicCard from "@/components/Core/DynamicCard.vue"
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
 
 export default defineComponent({
   name: "Home",
-  components: { CoreDialog, DynamicCard },
+  components: {CoreDialog, DynamicCard},
   data() {
     return {
       comingSoon: false
-    };
+    }
   },
   mounted() {
-    this.$app.title = "Insights";
+    this.$app.title = "Insights"
   }
-});
+})
 </script>
 
 <style scoped></style>

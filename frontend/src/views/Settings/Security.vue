@@ -1,8 +1,8 @@
 <template>
-  <v-toolbar color="toolbar" class="rounded-xl">
+  <v-toolbar class="rounded-xl" color="toolbar">
     <CreateAPIKey
-      type="api"
       v-model="dialogs.key"
+      type="api"
       @create="getAPIKeys"
     ></CreateAPIKey>
     <v-toolbar-title>
@@ -17,12 +17,12 @@
   <v-data-table :headers="headers" :items="apiKeys">
     <template v-slot:item.actions="{ item }">
       <v-icon
+        :disabled="!item.props.title.info?.accessedFrom.length"
+        class="mr-3"
         @click="
           ipHistory = item.props.title.info?.accessedFrom;
           dialogs.ipHistory = true;
         "
-        class="mr-3"
-        :disabled="!item.props.title.info?.accessedFrom.length"
       >
         <v-tooltip activator="parent" location="top">
           <span v-if="item.info?.accessedFrom?.length">
@@ -35,22 +35,22 @@
         mdi-web
       </v-icon>
       <v-icon
-        small
         class="mr-2"
+        small
         @click="$functions.copy(item.props.title.token)"
       >
         mdi-content-copy
       </v-icon>
-      <v-icon small class="mr-2" @click="deleteApiKey(item.props.title.id)">
+      <v-icon class="mr-2" small @click="deleteApiKey(item.props.title.id)">
         mdi-delete
       </v-icon>
     </template>
   </v-data-table>
-  <v-toolbar color="toolbar" class="rounded-xl mt-5">
+  <v-toolbar class="rounded-xl mt-5" color="toolbar">
     <CreateAPIKey
       v-model="dialogs.password"
-      @create="getAlternatePasswords"
       type="password"
+      @create="getAlternatePasswords"
     ></CreateAPIKey>
     <v-toolbar-title>
       {{ $t("settings.security.alternatePasswords") }}
@@ -64,21 +64,21 @@
   <v-data-table :headers="headers" :items="alternatePasswords.items">
     <template v-slot:item.actions="{ item }">
       <v-icon
-        small
         class="mr-2"
+        small
         @click="deleteAlternatePassword(item.props.title.name)"
       >
         mdi-delete
       </v-icon>
     </template>
   </v-data-table>
-  <v-toolbar color="toolbar" class="rounded-xl mt-5">
+  <v-toolbar class="rounded-xl mt-5" color="toolbar">
     <v-toolbar-title>
       {{ $t("settings.security.recentLogins") }}
     </v-toolbar-title>
   </v-toolbar>
   <v-list subheader three-line>
-    <IPHistory :history="ipHistory" v-model="dialogs.ipHistory" />
+    <IPHistory v-model="dialogs.ipHistory" :history="ipHistory"/>
     <v-list-item v-for="login in sessions" :key="login.id">
       <v-list-item-title>
         {{
@@ -125,20 +125,20 @@
         }}
       </v-list-item-subtitle>
       <template v-slot:append>
-        <v-btn color="red" @click="deleteApiKey(login.id)" icon>
+        <v-btn color="red" icon @click="deleteApiKey(login.id)">
           <v-tooltip activator="parent" location="top">
             {{ $t("settings.security.deleteSession") }}
           </v-tooltip>
           <v-icon>mdi-delete</v-icon>
         </v-btn>
         <v-btn
+          :disabled="!login.info?.accessedFrom?.length"
           color="blue"
+          icon
           @click="
             ipHistory = login.info?.accessedFrom;
             dialogs.ipHistory = true;
           "
-          icon
-          :disabled="!login.info?.accessedFrom?.length"
         >
           <v-tooltip activator="parent" location="top">
             <span v-if="login.info?.accessedFrom?.length">
@@ -156,13 +156,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import CreateAPIKey from "@/components/Settings/Dialogs/CreateAPIKey.vue";
-import IPHistory from "@/components/Settings/Dialogs/IPHistory.vue";
+import {defineComponent} from "vue"
+import CreateAPIKey from "@/components/Settings/Dialogs/CreateAPIKey.vue"
+import IPHistory from "@/components/Settings/Dialogs/IPHistory.vue"
 
 export default defineComponent({
   name: "Security",
-  components: { IPHistory, CreateAPIKey },
+  components: {IPHistory, CreateAPIKey},
   data() {
     return {
       apiKeys: [],
@@ -189,45 +189,45 @@ export default defineComponent({
           title: "Created At",
           key: "createdAt"
         },
-        { title: "Actions", key: "actions" }
+        {title: "Actions", key: "actions"}
       ],
       alternatePasswords: {
         items: []
       },
       sessions: [] as any[]
-    };
+    }
   },
   methods: {
     async getAPIKeys() {
-      const { data } = await this.axios.get("/security/keys");
-      this.apiKeys = data;
+      const {data} = await this.axios.get("/security/keys")
+      this.apiKeys = data
     },
     async getAlternatePasswords() {
-      const { data } = await this.axios.get("/security/passwords");
-      this.alternatePasswords.items = data;
+      const {data} = await this.axios.get("/security/passwords")
+      this.alternatePasswords.items = data
     },
     async deleteApiKey(id: number) {
-      await this.axios.delete(`/security/keys/${id}`);
-      this.getAPIKeys();
-      this.getSessions();
+      await this.axios.delete(`/security/keys/${id}`)
+      this.getAPIKeys()
+      this.getSessions()
     },
     async deleteAlternatePassword(name: string) {
       await this.axios.patch(`/security/passwords`, {
         name
-      });
-      this.getAlternatePasswords();
+      })
+      this.getAlternatePasswords()
     },
     async getSessions() {
-      const { data } = await this.axios.get("/security/logins");
-      this.sessions = data;
+      const {data} = await this.axios.get("/security/logins")
+      this.sessions = data
     }
   },
   mounted() {
-    this.getAPIKeys();
-    this.getAlternatePasswords();
-    this.getSessions();
+    this.getAPIKeys()
+    this.getAlternatePasswords()
+    this.getSessions()
   }
-});
+})
 </script>
 
 <style scoped></style>

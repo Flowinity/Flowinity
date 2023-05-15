@@ -1,15 +1,8 @@
-import {
-  Table,
-  Column,
-  Model,
-  BelongsTo,
-  Default,
-  DataType
-} from "sequelize-typescript"
-import { User } from "@app/models/user.model"
-import { Collection } from "@app/models/collection.model"
-import { Upload } from "@app/models/upload.model"
-import { AutoCollectRule } from "@app/models/autoCollectRule.model"
+import {BelongsTo, Column, DataType, Default, Model, Table} from "sequelize-typescript"
+import {User} from "@app/models/user.model"
+import {Collection} from "@app/models/collection.model"
+import {Upload} from "@app/models/upload.model"
+import {AutoCollectRule} from "@app/models/autoCollectRule.model"
 
 @Table
 export class AutoCollectApproval extends Model {

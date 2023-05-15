@@ -1,7 +1,8 @@
-import { Notification } from "@/models/notification";
-import { AutoCollectRule } from "@/models/autoCollectRule";
-import { AlternatePassword } from "@/types/auth";
-import { Integration } from "@/models/integration";
+import {Notification} from "@/models/notification"
+import {AutoCollectRule} from "@/models/autoCollectRule"
+import {AlternatePassword} from "@/types/auth"
+import {Integration} from "@/models/integration"
+
 export interface ThemeEngine {
   theme: {
     dark: any;
@@ -132,13 +133,13 @@ export interface User {
   autoCollectRules: AutoCollectRule[];
   nickname:
     | {
-        nickname: string;
-        id: number;
-        userId: number;
-        friendId: number;
-        createdAt: Date;
-        updatedAt: Date;
-      }
+    nickname: string;
+    id: number;
+    userId: number;
+    friendId: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }
     | null
     | undefined;
   themeEngine: ThemeEngine | null;

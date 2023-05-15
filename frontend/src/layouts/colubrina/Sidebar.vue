@@ -1,51 +1,53 @@
 <template>
   <v-navigation-drawer
-    color="dark"
-    floating
+    v-model="val"
     :class="{
       'sidebar-patch': $experiments.experiments.RAIL_SIDEBAR && $app.rail
     }"
-    v-model="val"
+    color="dark"
+    floating
   >
     <v-card-text
       v-if="$vuetify.display.mobile"
-      @click="$app.railMode = 'tpu'"
+      class="unselectable"
       style="
         color: rgb(var(--v-theme-primary));
         cursor: pointer;
         font-size: 12px;
       "
-      class="unselectable"
+      @click="$app.railMode = 'tpu'"
     >
       <v-icon>mdi-arrow-left</v-icon>
       Back to TPU
     </v-card-text>
     <ColubrinaSidebarList></ColubrinaSidebarList>
-    <template v-slot:append><StatusSwitcher></StatusSwitcher></template>
+    <template v-slot:append>
+      <StatusSwitcher></StatusSwitcher>
+    </template>
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue";
-import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
+import {defineComponent} from "vue"
+import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue"
+import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue"
 
 export default defineComponent({
   name: "ColubrinaSidebar",
-  components: { StatusSwitcher, ColubrinaSidebarList },
+  components: {StatusSwitcher, ColubrinaSidebarList},
   computed: {
     val: {
       get() {
-        if (!this.$vuetify.display.mobile) return true;
-        return this.$app.mainDrawer;
+        if (!this.$vuetify.display.mobile) return true
+        return this.$app.mainDrawer
       },
       set(value) {
-        if (!this.$vuetify.display.mobile) return;
-        this.$app.mainDrawer = value;
+        if (!this.$vuetify.display.mobile) return
+        this.$app.mainDrawer = value
       }
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

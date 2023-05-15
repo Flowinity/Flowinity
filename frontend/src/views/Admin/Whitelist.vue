@@ -5,17 +5,17 @@
         <v-toolbar-title>IP Whitelist</v-toolbar-title>
       </v-toolbar>
       <v-card-title v-if="!$app.site.connection?.whitelist">
-        <v-alert type="warning" outlined variant="tonal">
+        <v-alert outlined type="warning" variant="tonal">
           IP is not whitelisted.
         </v-alert>
       </v-card-title>
       <v-card-text v-else>
-        <v-alert type="info" outlined variant="tonal">
+        <v-alert outlined type="info" variant="tonal">
           IP whitelist groups:
           <v-chip-group column>
             <v-chip
-              v-if="$app.site.connection?.whitelist?.groups"
               v-for="group in $app.site.connection.whitelist.groups"
+              v-if="$app.site.connection?.whitelist?.groups"
               :key="group"
             >
               {{ group }}
@@ -28,11 +28,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "AdminWhitelist"
-});
+})
 </script>
 
 <style scoped></style>

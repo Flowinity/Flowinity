@@ -18,7 +18,7 @@ module.exports = {
       },
       pageData: {
         type: Sequelize.JSON,
-        defaultValue: { page: {}, stats: {}, options: { public: true } }
+        defaultValue: {page: {}, stats: {}, options: {public: true}}
       },
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE

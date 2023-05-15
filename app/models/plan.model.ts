@@ -1,11 +1,4 @@
-import {
-  Table,
-  Column,
-  Model,
-  //BelongsTo,
-  Default,
-  DataType
-} from "sequelize-typescript"
+import {Column, DataType, Default, Model, Table} from "sequelize-typescript"
 
 @Table
 export class Plan extends Model {

@@ -1,5 +1,5 @@
-import { Table, Column, Model, BelongsTo, Default } from "sequelize-typescript"
-import { User } from "@app/models/user.model"
+import {BelongsTo, Column, Default, Model, Table} from "sequelize-typescript"
+import {User} from "@app/models/user.model"
 
 @Table
 export class Notification extends Model {

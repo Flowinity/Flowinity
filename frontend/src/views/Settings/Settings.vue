@@ -2,41 +2,41 @@
   <v-container>
     <v-card>
       <v-tabs>
-        <v-tab to="/settings/dashboard" prepend-icon="mdi-account">
+        <v-tab prepend-icon="mdi-account" to="/settings/dashboard">
           {{ $t("settings.tabs.account") }}
         </v-tab>
-        <v-tab to="/settings/security" prepend-icon="mdi-lock">
+        <v-tab prepend-icon="mdi-lock" to="/settings/security">
           {{ $t("settings.tabs.security") }}
         </v-tab>
-        <v-tab to="/settings/clients" prepend-icon="mdi-cellphone-cog">
+        <v-tab prepend-icon="mdi-cellphone-cog" to="/settings/clients">
           {{
             $app.cordova
               ? $t("settings.tabs.mobileSetup")
               : $t("settings.tabs.setup")
           }}
         </v-tab>
-        <v-tab to="/settings/domains" prepend-icon="mdi-web">
+        <v-tab prepend-icon="mdi-web" to="/settings/domains">
           {{ $t("settings.tabs.domains") }}
         </v-tab>
         <v-tab
-          to="/settings/integrations"
-          prepend-icon="mdi-link-variant"
           v-if="$experiments.experiments.USER_V3_MODIFY"
+          prepend-icon="mdi-link-variant"
+          to="/settings/integrations"
         >
           {{ $t("settings.tabs.integrations") }}
         </v-tab>
-        <v-tab to="/settings/slideshows" prepend-icon="mdi-image-multiple">
+        <v-tab prepend-icon="mdi-image-multiple" to="/settings/slideshows">
           {{ $t("settings.tabs.slideshows") }}
         </v-tab>
-        <v-tab to="/settings/about" prepend-icon="mdi-information">
+        <v-tab prepend-icon="mdi-information" to="/settings/about">
           {{ $t("settings.tabs.about") }}
         </v-tab>
         <v-spacer></v-spacer>
         <v-progress-circular
           v-if="loading"
+          class="mt-2 mr-2"
           indeterminate
           size="24"
-          class="mt-2 mr-2"
           width="3"
         ></v-progress-circular>
       </v-tabs>
@@ -48,24 +48,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "SettingsCore",
   data() {
     return {
       loading: false
-    };
+    }
   },
   methods: {
     async update() {
-      this.loading = true;
-      await this.$user.save();
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      this.loading = false;
+      this.loading = true
+      await this.$user.save()
+      await new Promise((resolve) => setTimeout(resolve, 300))
+      this.loading = false
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

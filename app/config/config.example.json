@@ -4,20 +4,23 @@
     "password" : "password",
     "database" : "database",
     "host" : "host",
-    "dialect" : "mysql"
+    "dialect" : "mariadb",
+    "logging": false
   },
   "test" : {
     "username" : "username",
     "password" : "password",
     "database" : "database",
     "host" : "host",
-    "dialect" : "mysql"
+    "dialect" : "mariadb",
+    "logging": true
   },
   "production" : {
     "username" : "username",
     "password" : "password",
     "database" : "database",
     "host" : "host",
-    "dialect" : "mysql"
+    "dialect" : "mariadb",
+    "logging": false
   }
 }

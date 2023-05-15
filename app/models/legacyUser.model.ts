@@ -1,10 +1,4 @@
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  DefaultScope
-} from "sequelize-typescript"
+import {Column, DataType, DefaultScope, Model, Table} from "sequelize-typescript"
 
 @DefaultScope(() => ({
   attributes: {

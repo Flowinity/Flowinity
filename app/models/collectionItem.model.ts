@@ -1,17 +1,7 @@
-import {
-  Table,
-  Column,
-  Model,
-  BelongsTo,
-  Unique,
-  AllowNull,
-  DataType
-  //HasOne
-  //HasMany
-} from "sequelize-typescript"
-import { User } from "@app/models/user.model"
-import { Collection } from "@app/models/collection.model"
-import { Upload } from "@app/models/upload.model"
+import {AllowNull, BelongsTo, Column, DataType, Model, Table, Unique} from "sequelize-typescript"
+import {User} from "@app/models/user.model"
+import {Collection} from "@app/models/collection.model"
+import {Upload} from "@app/models/upload.model"
 
 @Table
 export class CollectionItem extends Model {

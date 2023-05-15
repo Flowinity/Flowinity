@@ -22,25 +22,25 @@
           <template v-slot:text>
             <v-card-text>
               <v-text-field
-                disabled
                 :label="$t('settings.slideshows.shareLink')"
                 :model-value="
                   'https://images.flowinity.com/slideshow/' +
                   slideshow.shareLink
                 "
+                disabled
               />
               <v-text-field
-                :label="$t('settings.slideshows.name')"
                 v-model="slideshow.name"
+                :label="$t('settings.slideshows.name')"
               />
               <v-text-field
-                :label="$t('settings.slideshows.speed')"
                 v-model="slideshow.speed"
+                :label="$t('settings.slideshows.speed')"
               />
               <v-switch
-                inset
-                :label="$t('settings.slideshows.includeGallery')"
                 v-model="slideshow.includeGallery"
+                :label="$t('settings.slideshows.includeGallery')"
+                inset
               ></v-switch>
               <v-select
                 v-model="slideshow.collectionIds"
@@ -48,22 +48,22 @@
                 :label="$t('settings.slideshows.collections')"
                 chips
                 deletable-chips
-                multiple
                 item-title="name"
                 item-value="id"
+                multiple
               ></v-select>
             </v-card-text>
 
-            <v-sheet outlined class="rounded-xxl mt-3">
+            <v-sheet class="rounded-xxl mt-3" outlined>
               <v-card
-                max-width="100%"
-                height="50"
-                variant="outlined"
-                elevation="0"
                 color="white"
+                elevation="0"
+                height="50"
+                max-width="100%"
+                variant="outlined"
                 @click="saveSlideshow(slideshow)"
               >
-                <v-icon style="width: 100%; height: 100%" size="30">
+                <v-icon size="30" style="width: 100%; height: 100%">
                   mdi-content-save
                 </v-icon>
               </v-card>
@@ -74,16 +74,16 @@
       <v-card-subtitle v-if="!slideshows.length">
         {{ $t("settings.slideshows.none") }}
       </v-card-subtitle>
-      <v-sheet outlined class="rounded-xxl mt-3">
+      <v-sheet class="rounded-xxl mt-3" outlined>
         <v-card
-          max-width="100%"
-          height="50"
-          variant="outlined"
-          elevation="0"
           color="white"
+          elevation="0"
+          height="50"
+          max-width="100%"
+          variant="outlined"
           @click="createSlideshow()"
         >
-          <v-icon style="width: 100%; height: 100%" size="50">mdi-plus</v-icon>
+          <v-icon size="50" style="width: 100%; height: 100%">mdi-plus</v-icon>
         </v-card>
       </v-sheet>
     </v-container>
@@ -91,42 +91,42 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Slideshow } from "@/models/slideshow";
+import {defineComponent} from "vue"
+import {Slideshow} from "@/models/slideshow"
 
 export default defineComponent({
   name: "Slideshows",
   data() {
     return {
       slideshows: [] as Slideshow[]
-    };
+    }
   },
   methods: {
     async saveSlideshow(slideshow: Slideshow) {
-      await this.axios.put("/slideshows/" + slideshow.id, slideshow);
+      await this.axios.put("/slideshows/" + slideshow.id, slideshow)
     },
     async getSlideshows() {
-      const { data } = await this.axios.get("/slideshows");
-      this.slideshows = data;
+      const {data} = await this.axios.get("/slideshows")
+      this.slideshows = data
     },
     async createSlideshow() {
       await this.axios.post("/slideshows", {
         name: "New Slideshow",
         includeGallery: true,
         collectionIds: []
-      });
-      await this.getSlideshows();
+      })
+      await this.getSlideshows()
     },
     async deleteSlideshow(slideshow: Slideshow) {
-      await this.axios.delete("/slideshows/" + slideshow.id);
-      this.$toast.success("Slideshow deleted!");
-      await this.getSlideshows();
+      await this.axios.delete("/slideshows/" + slideshow.id)
+      this.$toast.success("Slideshow deleted!")
+      await this.getSlideshows()
     }
   },
   mounted() {
-    this.getSlideshows();
+    this.getSlideshows()
   }
-});
+})
 </script>
 
 <style scoped></style>

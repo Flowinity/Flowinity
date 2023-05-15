@@ -1,13 +1,6 @@
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  HasMany,
-  BelongsTo
-} from "sequelize-typescript"
-import { NoteVersion } from "@app/models/noteVersion.model"
-import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
+import {BelongsTo, Column, DataType, HasMany, Model, Table} from "sequelize-typescript"
+import {NoteVersion} from "@app/models/noteVersion.model"
+import {WorkspaceFolder} from "@app/models/workspaceFolder.model"
 
 export type VersionObject = {
   createdAt: Date

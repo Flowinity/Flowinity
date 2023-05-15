@@ -1,14 +1,6 @@
-import {
-  Table,
-  Column,
-  Model,
-  BelongsTo,
-  Default,
-  Unique,
-  AllowNull
-} from "sequelize-typescript"
-import { User } from "@app/models/user.model"
-import { Collection } from "@app/models/collection.model"
+import {AllowNull, BelongsTo, Column, Default, Model, Table, Unique} from "sequelize-typescript"
+import {User} from "@app/models/user.model"
+import {Collection} from "@app/models/collection.model"
 
 @Table
 export class CollectionUser extends Model {

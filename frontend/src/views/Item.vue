@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid class="center-container" v-if="item">
+  <v-container v-if="item" class="center-container" fluid>
     <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="7" xl="5">
+      <v-col cols="12" md="7" sm="8" xl="5">
         <GalleryItem
           :item="item"
           :selected="[]"
@@ -37,49 +37,49 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
-import NotFound from "@/views/Errors/404.vue";
-import { Upload } from "@/models/upload";
-import GalleryItem from "@/components/Gallery/GalleryItem.vue";
+import {defineComponent} from "vue"
+import GalleryPreview from "@/components/Gallery/GalleryPreview.vue"
+import NotFound from "@/views/Errors/404.vue"
+import {Upload} from "@/models/upload"
+import GalleryItem from "@/components/Gallery/GalleryItem.vue"
 
 export default defineComponent({
   name: "Item",
-  components: { GalleryItem, NotFound, GalleryPreview },
+  components: {GalleryItem, NotFound, GalleryPreview},
   data() {
     return {
       item: null as Upload | null
-    };
+    }
   },
   methods: {
     async fetchItem() {
       try {
-        this.$app.componentLoading = true;
+        this.$app.componentLoading = true
         // Vite dev-server causes a 404 error when the path contains a dot, so we assume a png
         if (
           this.$app.site.release === "dev" &&
           !this.$route.params.id.includes(".")
         ) {
-          this.$route.params.id += ".png";
+          this.$route.params.id += ".png"
         }
-        const { data } = await this.axios.get(
+        const {data} = await this.axios.get(
           `/gallery/${this.$route.params.id}`,
           {
             headers: {
               noToast: true
             }
           }
-        );
-        this.item = data;
+        )
+        this.item = data
       } finally {
-        this.$app.componentLoading = false;
+        this.$app.componentLoading = false
       }
     }
   },
   mounted() {
-    this.fetchItem();
+    this.fetchItem()
   }
-});
+})
 </script>
 
 <style scoped>

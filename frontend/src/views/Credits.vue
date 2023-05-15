@@ -9,28 +9,28 @@
           TPU was made possible by the following people:
         </v-card-title>
         <template v-if="$app.site.officialInstance">
-          <UserCard username="Troplo" subtitle="Lead Developer"></UserCard>
+          <UserCard subtitle="Lead Developer" username="Troplo"></UserCard>
           <UserCard
-            username="remy"
             subtitle="Infrastructure Manager / Code Contributor"
+            username="remy"
           ></UserCard>
           <UserCard
-            username="electrics01"
             subtitle="Code Contributor"
+            username="electrics01"
           ></UserCard>
           <UserCard
-            username="bytedefined"
             subtitle="Code Contributor / Ideas"
+            username="bytedefined"
           ></UserCard>
           <UserCard
-            username="Jolt707"
             subtitle="Code Contributor / Moral Support, sometimes"
+            username="Jolt707"
           ></UserCard>
           <UserCard
-            username="Avinera"
             subtitle="Buys me my favorite beverage, Pepsi Max"
+            username="Avinera"
           ></UserCard>
-          <UserCard username="Spy" subtitle="Buys me lunch"></UserCard>
+          <UserCard subtitle="Buys me lunch" username="Spy"></UserCard>
         </template>
         <template v-else>
           <ul class="ml-8">
@@ -84,12 +84,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import UserCard from "@/components/Users/UserCard.vue";
+import {defineComponent} from "vue"
+import UserCard from "@/components/Users/UserCard.vue"
 
 export default defineComponent({
   name: "Credits",
-  components: { UserCard },
+  components: {UserCard},
   data() {
     return {
       frontend: [
@@ -250,17 +250,17 @@ export default defineComponent({
         "tsconfig-paths",
         "typescript"
       ]
-    };
+    }
   },
   computed: {
     items() {
       // include frontend and backend packages and order them alphabetically and remove duplicates
       return [...this.frontend.sort(), ...this.backend.sort()]
         .sort()
-        .filter((item, index, array) => array.indexOf(item) === index);
+        .filter((item, index, array) => array.indexOf(item) === index)
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

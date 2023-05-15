@@ -10,6 +10,7 @@
   "scripts": {
     "start": "tsc --project tsconfig.app.json && node out/cluster.js",
     "serve": "tsc-watch --project tsconfig.app.json --onSuccess 'node --inspect ./out/index.js'",
+    "serve2": "nodemon ./app",
     "build": "tsc --project tsconfig.app.json",
     "format": "prettier --config ../.prettierrc.yaml --write \"app/**/*\"",
     "lint": "eslint -c .eslintrc.json \"./app/**/*.ts\" --format stylish",
@@ -88,11 +89,12 @@
     "jw-paginate": "^1.0.4",
     "mailgen": "^2.0.27",
     "mailparser": "^3.6.3",
-    "mariadb": "^3.0.2",
+    "mariadb": "^3.1.2",
     "maxmind": "^4.3.8",
     "md5": "^2.3.0",
     "module-alias": "^2.2.2",
     "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.3.1",
     "node-cron": "^3.0.2",
     "node-tesseract-ocr": "^2.2.1",
     "nodemailer": "^6.9.0",
@@ -152,7 +154,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-unicorn": "43.0.2",
     "mocha": "^10.2.0",
-    "nodemon": "2.0.19",
+    "nodemon": "^2.0.22",
     "nyc": "15.1.0",
     "rimraf": "3.0.2",
     "sinon": "14.0.0",
@@ -162,6 +164,6 @@
     "ts-node": "10.9.1",
     "tsc-watch": "^6.0.0",
     "tsconfig-paths": "4.1.2",
-    "typescript": "^5.0.3"
+    "typescript": "^5.0.4"
   }
 }

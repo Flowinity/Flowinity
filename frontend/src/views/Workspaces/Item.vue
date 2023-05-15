@@ -1,27 +1,27 @@
 <template>
   <div id="workspaces-editor">
     <WorkspaceShareDialog
-      v-model="$workspaces.share.dialog"
-      :key="$route.params.id"
       v-if="$route.params.id"
+      :key="$route.params.id"
+      v-model="$workspaces.share.dialog"
     />
     <div
-      class="editorx_body mt-3"
       :key="$route.params.version || $route.params.id"
+      class="editorx_body mt-3"
     >
-      <div class id="tpu-editor" />
+      <div id="tpu-editor" class/>
     </div>
     <v-toolbar
-      flat
-      color="dark"
-      bottom
-      dense
-      class="position-fixed"
-      id="workspaces-word-count"
       v-if="!id"
+      id="workspaces-word-count"
       :class="{ patch: !$vuetify.display.mobile && $user.user?.id }"
-      style="z-index: 1000"
+      bottom
+      class="position-fixed"
+      color="dark"
+      dense
       density="compact"
+      flat
+      style="z-index: 1000"
     >
       <v-card-subtitle>
         Words: {{ words.toLocaleString() }} &bullet; Characters:
@@ -37,60 +37,60 @@
         </template>
       </v-card-subtitle>
     </v-toolbar>
-    <WorkspaceHome v-if="fail" />
+    <WorkspaceHome v-if="fail"/>
   </div>
 </template>
 
 <script lang="ts">
 // @ts-nocheck
 //@ts-ignore
-import Header from "editorjs-header-with-anchor";
+import Header from "editorjs-header-with-anchor"
 //@ts-ignore
-import NestedList from "@troplo/tpu-editorjs-nested-list";
+import NestedList from "@troplo/tpu-editorjs-nested-list"
 //@ts-ignore
-import CodeTool from "@editorjs/code";
+import CodeTool from "@editorjs/code"
 //@ts-ignore
-import Paragraph from "@editorjs/paragraph";
+import Paragraph from "@editorjs/paragraph"
 //@ts-ignore
-import Embed from "@editorjs/embed";
+import Embed from "@editorjs/embed"
 //@ts-ignore
-import Table from "@editorjs/table";
+import Table from "@editorjs/table"
 //@ts-ignore
-import Checklist from "@editorjs/checklist";
+import Checklist from "@editorjs/checklist"
 //@ts-ignore
-import Marker from "@editorjs/marker";
+import Marker from "@editorjs/marker"
 //@ts-ignore
-import Warning from "@editorjs/warning";
+import Warning from "@editorjs/warning"
 //@ts-ignore
-import RawTool from "@editorjs/raw";
+import RawTool from "@editorjs/raw"
 //@ts-ignore
-import Quote from "@editorjs/quote";
+import Quote from "@editorjs/quote"
 //@ts-ignore
-import InlineCode from "@editorjs/inline-code";
+import InlineCode from "@editorjs/inline-code"
 //@ts-ignore
-import Delimiter from "@editorjs/delimiter";
+import Delimiter from "@editorjs/delimiter"
 //@ts-ignore
-import ImageTool from "@editorjs/image";
+import ImageTool from "@editorjs/image"
 //@ts-ignore
-import EditorJS from "@editorjs/editorjs";
+import EditorJS from "@editorjs/editorjs"
 //@ts-ignore
-import Attaches from "@editorjs/attaches";
+import Attaches from "@editorjs/attaches"
 //@ts-ignore
-import LinkTool from "@editorjs/link";
+import LinkTool from "@editorjs/link"
 //@ts-ignore
-import AlignmentTuneTool from "editorjs-text-alignment-blocktune";
+import AlignmentTuneTool from "editorjs-text-alignment-blocktune"
 //@ts-ignore;
-import WorkspaceHome from "@/views/Workspaces/Home";
+import WorkspaceHome from "@/views/Workspaces/Home"
 //@ts-ignore
-import Undo from "editorjs-undo";
-import { defineComponent } from "vue";
+import Undo from "editorjs-undo"
+import {defineComponent} from "vue"
 //@ts-ignore
-import SimpleImage from "@troplo/tpu-simple-image";
-import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue";
+import SimpleImage from "@troplo/tpu-simple-image"
+import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue"
 
 export default defineComponent({
   name: "WorkspaceItem",
-  components: { WorkspaceShareDialog, WorkspaceHome },
+  components: {WorkspaceShareDialog, WorkspaceHome},
   props: ["id"],
   data() {
     return {
@@ -101,19 +101,19 @@ export default defineComponent({
       lastSave: null as any,
       blocks: 0,
       lines: 0
-    };
+    }
   },
   methods: {
     async upload(file: any) {
       try {
-        let formData = new FormData();
-        formData.append("attachment", file);
+        let formData = new FormData()
+        formData.append("attachment", file)
 
-        const { data } = await this.axios.post("/gallery", formData, {
+        const {data} = await this.axios.post("/gallery", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
-        });
+        })
 
         return {
           success: 1,
@@ -125,116 +125,116 @@ export default defineComponent({
             title: data.upload.name
           },
           title: data.upload.name
-        };
+        }
       } catch {
-        this.$toast.error("The file could not be uploaded.");
+        this.$toast.error("The file could not be uploaded.")
         return {
           success: 0
-        };
+        }
       }
     },
     async save(data: object, manualSave = false) {
       try {
-        if (!this.$route.params.id) return;
-        if (this.lastSave && Date.now() - this.lastSave < 500) return;
-        this.lastSave = Date.now();
-        this.$app.notesSaving = true;
+        if (!this.$route.params.id) return
+        if (this.lastSave && Date.now() - this.lastSave < 500) return
+        this.lastSave = Date.now()
+        this.$app.notesSaving = true
         await this.axios.patch("/notes/" + this.$route.params.id, {
           data,
           manualSave
-        });
-        this.$app.notesSaving = false;
-        console.log("[TPU/Editor] Saved!");
+        })
+        this.$app.notesSaving = false
+        console.log("[TPU/Editor] Saved!")
       } catch (e) {
-        console.log(e);
-        this.$app.notesSaving = false;
-        this.$toast.error("The document could not be saved.");
+        console.log(e)
+        this.$app.notesSaving = false
+        this.$toast.error("The document could not be saved.")
       }
     },
     getItemCount(item: any, type: any) {
-      let count = 0;
+      let count = 0
       if (item.items?.length) {
         count += item.items.reduce((acc: any, item: any) => {
-          return acc + this.getItemCount(item, type);
-        }, 0);
+          return acc + this.getItemCount(item, type)
+        }, 0)
       }
       if (type === "length") {
-        return item.items?.length || 0;
+        return item.items?.length || 0
       }
       if (item.content) {
         if (type === "char") {
-          count += item.content.length;
+          count += item.content.length
         } else if (type === "word") {
-          count += item.content.split(" ").length;
+          count += item.content.split(" ").length
         }
       }
       if (item.text) {
         if (type === "char") {
-          count += item.text.length;
+          count += item.text.length
         } else if (type === "word") {
-          count += item.text.split(" ").length;
+          count += item.text.split(" ").length
         }
       }
-      return count;
+      return count
     },
     count(blocks: any) {
       this.characters = blocks.reduce((acc, block) => {
         if (block.data.text) {
-          return acc + block.data.text.length || 0;
+          return acc + block.data.text.length || 0
         } else if (block.data.content?.length) {
           return (
             acc +
             block.data.content.reduce((acc, row) => {
               row.forEach((cell) => {
-                acc += cell.length || 0;
-              });
-              return acc;
+                acc += cell.length || 0
+              })
+              return acc
             }, 0)
-          );
+          )
         } else if (block.data.items?.length) {
           return (
             acc +
             block.data.items.reduce((acc, item) => {
-              return acc + this.getItemCount(item, "char") || 0;
+              return acc + this.getItemCount(item, "char") || 0
             }, 0)
-          );
+          )
         } else {
-          return acc;
+          return acc
         }
-      }, 0);
+      }, 0)
       this.words = blocks.reduce((acc, block) => {
         if (block.data.text) {
-          return acc + block.data.text?.split(" ").length || 0;
+          return acc + block.data.text?.split(" ").length || 0
         } else if (block.data.content?.length) {
           return (
             acc +
             block.data.content.reduce((acc, row) => {
               row.forEach((cell) => {
-                acc += cell?.split(" ").length || 0;
-              });
-              return acc;
+                acc += cell?.split(" ").length || 0
+              })
+              return acc
             }, 0)
-          );
+          )
         } else if (block.data.items?.length) {
           return (
             acc +
             block.data.items.reduce((acc, item) => {
-              return acc + this.getItemCount(item, "word") || 0;
+              return acc + this.getItemCount(item, "word") || 0
             }, 0)
-          );
+          )
         } else {
-          return acc;
+          return acc
         }
-      }, 0);
-      this.blocks = blocks.length;
+      }, 0)
+      this.blocks = blocks.length
     },
     editor(data, readOnly) {
-      window.__TROPLO_INTERNALS_EDITOR_SAVE = this.save;
-      window.__TROPLO_INTERNALS_EDITOR_UPLOAD = this.upload;
-      window.__TROPLO_INTERNALS_UPDATE_COUNT = this.count;
+      window.__TROPLO_INTERNALS_EDITOR_SAVE = this.save
+      window.__TROPLO_INTERNALS_EDITOR_UPLOAD = this.upload
+      window.__TROPLO_INTERNALS_UPDATE_COUNT = this.count
       //window.__TROPLO_INTENRALS_SOCKET = this.$socket;
-      window.__TROPLO_INTERNALS_NOTE_ID = this.$route.params.id;
-      window.__NOTE_DATA = data;
+      window.__TROPLO_INTERNALS_NOTE_ID = this.$route.params.id
+      window.__NOTE_DATA = data
       //this.$socket.emit("notes/subscribe", this.$route.params.id);
       let init = {
         holder: "tpu-editor",
@@ -280,7 +280,7 @@ export default defineComponent({
                  * @param {File} file - file selected from the device or pasted by drag-n-drop
                  * @return {Promise.<{success, file: {url}}>}
                  */ async uploadByFile(file) {
-                  return await window.__TROPLO_INTERNALS_EDITOR_UPLOAD(file);
+                  return await window.__TROPLO_INTERNALS_EDITOR_UPLOAD(file)
                 }
               },
               endpoints: {
@@ -341,7 +341,7 @@ export default defineComponent({
                  * @param {File} file - file selected from the device or pasted by drag-n-drop
                  * @return {Promise.<{success, file: {url}}>}
                  */ async uploadByFile(file) {
-                  return await window.__TROPLO_INTERNALS_EDITOR_UPLOAD(file);
+                  return await window.__TROPLO_INTERNALS_EDITOR_UPLOAD(file)
                 }
               },
               endpoints: {
@@ -363,7 +363,7 @@ export default defineComponent({
         },
         onReady() {
           if (typeof window.__NOTE_DATA === "string") {
-            window.editor.blocks.renderFromHTML(window.__NOTE_DATA);
+            window.editor.blocks.renderFromHTML(window.__NOTE_DATA)
           }
           const undo = new Undo({
             editor,
@@ -374,25 +374,25 @@ export default defineComponent({
                 redo: "CMD+SHIFT+Z"
               }
             }
-          });
-          undo.initialize(init.data);
-          console.log("[TPU/Editor] Ready.");
+          })
+          undo.initialize(init.data)
+          console.log("[TPU/Editor] Ready.")
           window.__TROPLO_INTERNALS_UPDATE_COUNT(
             editor.configuration.data.blocks
-          );
+          )
         },
         onChange() {
-          console.log("[TPU/Editor] Saving...");
+          console.log("[TPU/Editor] Saving...")
           editor.save().then(async (outputData) => {
-            await window.__TROPLO_INTERNALS_EDITOR_SAVE(outputData);
-            await window.__TROPLO_INTERNALS_UPDATE_COUNT(outputData.blocks);
-          });
+            await window.__TROPLO_INTERNALS_EDITOR_SAVE(outputData)
+            await window.__TROPLO_INTERNALS_UPDATE_COUNT(outputData.blocks)
+          })
         }
-      };
-      if (Object.keys(data).length) {
-        init.data = data;
       }
-      window.editor = new EditorJS(init);
+      if (Object.keys(data).length) {
+        init.data = data
+      }
+      window.editor = new EditorJS(init)
     },
     async getNote(id) {
       try {
@@ -400,39 +400,39 @@ export default defineComponent({
           headers: {
             noToast: true
           }
-        });
+        })
       } catch {
-        this.fail = true;
+        this.fail = true
       }
     },
     onMounted() {
-      this.fail = false;
+      this.fail = false
       this.getNote(this.id || this.$route.params.id)
         .then((res) => {
-          this.$app.title = res.data.name;
+          this.$app.title = res.data.name
           if (!this.id) {
-            this.$app.lastNote = parseInt(this.$route.params.id);
-            localStorage.setItem("lastNote", this.$route.params.id);
+            this.$app.lastNote = parseInt(this.$route.params.id)
+            localStorage.setItem("lastNote", this.$route.params.id)
           }
           const note = this.$route.params.version
             ? res.data.versions?.find(
-                (v) => v.id === this.$route.params.version
-              ).data
-            : res.data.data;
+              (v) => v.id === this.$route.params.version
+            ).data
+            : res.data.data
           try {
             this.editor(
               note,
               this.$route.params.version || !res.data.permissions.modify
-            );
+            )
           } catch (e) {
-            console.log(e);
-            this.editor(null);
+            console.log(e)
+            this.editor(null)
           }
         })
         .catch((e) => {
-          console.log(e);
-          this.fail = true;
-        });
+          console.log(e)
+          this.fail = true
+        })
 
       document.addEventListener(
         "keydown",
@@ -441,66 +441,66 @@ export default defineComponent({
             (window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) &&
             e.keyCode === 83
           ) {
-            e.preventDefault();
+            e.preventDefault()
             editor.save().then((outputData) => {
-              window.__TROPLO_INTERNALS_EDITOR_SAVE(outputData, true);
-            });
+              window.__TROPLO_INTERNALS_EDITOR_SAVE(outputData, true)
+            })
           }
         },
         false
-      );
+      )
     }
   },
   computed: {
     speakingTime() {
-      const avgWordsPerMinute = 150;
-      const minutes = Math.floor(this.words / avgWordsPerMinute);
+      const avgWordsPerMinute = 150
+      const minutes = Math.floor(this.words / avgWordsPerMinute)
       const seconds = Math.floor(
         (this.words / avgWordsPerMinute - minutes) * 60
-      );
+      )
 
-      let result = "";
+      let result = ""
       if (minutes > 60) {
-        const hours = Math.floor(minutes / 60);
-        result += `${hours}h`;
+        const hours = Math.floor(minutes / 60)
+        result += `${hours}h`
       }
       if (minutes > 0) {
-        result += `${minutes % 60}m`;
+        result += `${minutes % 60}m`
       }
       if (seconds > 0) {
-        result += `${seconds}s`;
+        result += `${seconds}s`
       }
 
-      if (!result) result = "0s";
+      if (!result) result = "0s"
 
-      return result;
+      return result
     },
     toolbarStyles() {
       if (this.$app.mainDrawer && !this.$vuetify.display.mobile)
-        return "margin-left: 256px";
-      else return {};
+        return "margin-left: 256px"
+      else return {}
     }
   },
   mounted() {
-    this.onMounted();
+    this.onMounted()
     if (!this.$app.workspaceDrawer && !this.$vuetify.display.mobile) {
-      this.$app.forcedWorkspaceDrawer = true;
-      this.$app.workspaceDrawer = true;
+      this.$app.forcedWorkspaceDrawer = true
+      this.$app.workspaceDrawer = true
     }
-    this.$app.title = "Workspace Editor";
+    this.$app.title = "Workspace Editor"
   },
   unmounted() {
     this.$app.workspaceDrawer =
-      localStorage.getItem("workspaceDrawer") === "true";
-    this.$app.forcedWorkspaceDrawer = false;
+      localStorage.getItem("workspaceDrawer") === "true"
+    this.$app.forcedWorkspaceDrawer = false
   },
   watch: {
     $route(val) {
-      if (!val.params.id) return;
-      this.onMounted();
+      if (!val.params.id) return
+      this.onMounted()
     }
   }
-});
+})
 </script>
 
 <style lang="scss">

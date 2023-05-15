@@ -1,5 +1,5 @@
-import { Table, Column, Model, DataType, BelongsTo } from "sequelize-typescript"
-import { User } from "@app/models/user.model"
+import {BelongsTo, Column, DataType, Model, Table} from "sequelize-typescript"
+import {User} from "@app/models/user.model"
 
 @Table
 export class Integration extends Model {

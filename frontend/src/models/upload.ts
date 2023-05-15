@@ -1,4 +1,5 @@
-import { User } from "@/models/user";
+import {User} from "@/models/user"
+
 export interface Upload {
   id: number;
   attachment: string;

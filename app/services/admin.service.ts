@@ -704,4 +704,12 @@ export class AdminService {
     for (const upload of uploads) {
     }
   }
+
+  async deleteCommunicationsMessage(messageId: number) {
+    await Message.destroy({
+      where: {
+        id: messageId
+      }
+    })
+  }
 }

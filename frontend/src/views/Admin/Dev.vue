@@ -10,9 +10,9 @@
       </v-card-text>
       <v-card-text>
         <v-card-title>Send email</v-card-title>
-        <v-text-field v-model="email" label="Email" />
-        <v-text-field v-model="subject" label="Subject" />
-        <v-textarea v-model="body" label="Body" auto-grow />
+        <v-text-field v-model="email" label="Email"/>
+        <v-text-field v-model="subject" label="Subject"/>
+        <v-textarea v-model="body" auto-grow label="Body"/>
         <v-btn @click="sendEmail">Send</v-btn>
       </v-card-text>
       <v-card-text>
@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "Dev",
@@ -60,30 +60,30 @@ export default defineComponent({
         null,
         2
       )
-    };
+    }
   },
   methods: {
     async runScript() {
-      await this.axios.post(`/admin/scripts/${this.script}`);
-      this.$toast.success("Script executed");
+      await this.axios.post(`/admin/scripts/${this.script}`)
+      this.$toast.success("Script executed")
     },
     async sendEmail() {
       await this.axios.post("/admin/dev/email", {
         to: this.email,
         subject: this.subject,
         email: JSON.parse(this.body)
-      });
-      this.$toast.success("OK");
+      })
+      this.$toast.success("OK")
     },
     crash() {
-      throw new Error("Crash");
+      throw new Error("Crash")
     },
     async acceptFriends() {
-      await this.axios.patch("/admin/dev/friendAccept");
-      this.$toast.success("OK");
+      await this.axios.patch("/admin/dev/friendAccept")
+      this.$toast.success("OK")
     }
   }
-});
+})
 </script>
 
 <style scoped></style>
