@@ -13,6 +13,7 @@ import { AccessedFrom } from "@app/types/auth"
 import { Integration } from "@app/models/integration.model"
 import { createParamDecorator } from "routing-controllers"
 import { RequestAuthSystem } from "@app/types/express"
+import {Badge} from "@app/models/badge.model"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -314,7 +315,7 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
       const token = action.request.header("Authorization")
       if (!scope) scope = "*"
       if (token) {
-        const session = await Session.findOne({
+        let session = await Session.findOne({
           where: {
             token: token,
             expiredAt: {
@@ -351,6 +352,10 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
                   as: "plan"
                 },
                 {
+                  model: Badge,
+                  as: "badges"
+                },
+                {
                   model: Theme,
                   as: "theme"
                 },
@@ -367,10 +372,15 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
                     "updatedAt"
                   ]
                 }
+              ],
+              order: [
+                [{ model: Badge, as: "badges" }, "priority", "DESC"],
+                [{ model: Badge, as: "badges" }, "id", "ASC"]
               ]
             }
           ]
         })
+
         if (session) {
           if (!checkScope(scope, session.scopes)) {
             updateSession(session, action.request.ip).then(() => {})
@@ -392,6 +402,9 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
               throw Errors.EMAIL_NOT_VERIFIED
             }
             updateSession(session, action.request.ip).then(() => {})
+
+            session.user.dataValues.stats = await redis.json.get(`userStats:${session?.user.id}`)
+
             return session.toJSON().user
           }
         } else {
