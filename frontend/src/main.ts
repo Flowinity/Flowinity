@@ -54,7 +54,8 @@ import { useAdminStore } from "@/store/admin";
 
 // LANGUAGES/LOCALES
 import en from "@/locales/en.json";
-import ru from "@/locales/ru.json"
+import ru from "@/locales/ru.json";
+import enGB from "@/locales/en-GB.json";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
