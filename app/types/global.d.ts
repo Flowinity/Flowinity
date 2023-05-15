@@ -11,7 +11,9 @@ declare global {
     config: TpuConfig,
     dayjs: typeof djs,
     socket: SocketWithUser,
-    whitelist: { ip: string; name: string; groups: string[] }[]
+    whitelist: { ip: string; name: string; groups: string[] }[],
+    appRoot: string,
+    rawAppRoot: string
 }
 
 export {}

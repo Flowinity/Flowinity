@@ -444,6 +444,7 @@ export class CacheService {
   }
 
   cacheInit() {
+    if (!config.finishedSetup) return
     try {
       // 10 minutes
       setInterval(this.refreshState, 1000 * 60 * 10)

@@ -1,9 +1,16 @@
 import cluster from "cluster"
 import os from "os"
+import path from "path"
+import fs from "fs"
 
 if (cluster.isMaster) {
+  global.appRoot = path.resolve(__dirname).includes("out")
+    ? path.join(__dirname, "..", "app")
+    : path.join(__dirname)
+
   cluster.schedulingPolicy = cluster.SCHED_RR
-  const cpus = os.cpus().length
+  const cpus =
+    require(global.appRoot + "/config/tpu.json")?.threads || os.cpus().length
   console.log(`Clustering to ${cpus} CPUs`)
 
   for (let i = 0; i < cpus; i++) {

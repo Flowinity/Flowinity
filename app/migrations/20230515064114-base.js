@@ -1,6 +1,6 @@
 "use strict"
 const fs = require("fs")
-const sequelize = require("sequelize")
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     /**
@@ -10,10 +10,10 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
     const sql = await fs.readFileSync(__dirname + "/initial.sql")
-    var promises = []
-    var statements = sql.toString().split(";")
-    for (var statement of statements)
-      if (statement.trim() != "")
+    let promises = []
+    const statements = sql.toString().split(";")
+    for (const statement of statements)
+      if (statement.trim() !== "")
         promises.push(queryInterface.sequelize.query(statement))
     return Promise.all(promises)
   },

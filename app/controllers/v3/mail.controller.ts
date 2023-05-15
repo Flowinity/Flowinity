@@ -21,7 +21,8 @@ export class MailControllerV3 {
         user.id,
         experiment,
         user.administrator || user.moderator
-      ))
+      )) ||
+      !config.officialInstance
     ) {
       throw Errors.EXPERIMENT_NOT_ALLOWED
     }

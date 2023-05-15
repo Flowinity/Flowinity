@@ -1,8 +1,6 @@
-declare interface TpuConfig {
+declare type TpuConfig = {
   hostnameWithProtocol: string
   hostname: string
-  flowinityId: string | undefined | null
-  flowinitySecret: string | undefined | null
   maintenance: boolean
   siteName: string
   release: string
@@ -42,9 +40,18 @@ declare interface TpuConfig {
     port: number
   }
   discord: {
-    webhook: string
-    token: string
+    webhook: string | undefined | null
+    token: string | undefined | null
   }
   officialInstance: boolean
   port: number | string | undefined | null
+  finishedSetup: boolean
+  threads: number
+  features: {
+    communications: boolean
+    collections: boolean
+    autoCollects: boolean
+    workspaces: boolean
+    insights: boolean
+  }
 }

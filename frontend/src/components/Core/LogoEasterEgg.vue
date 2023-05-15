@@ -7,8 +7,7 @@
     style="z-index: 10; cursor: pointer; font-size: 32px"
     @click="$router.push('/')"
   >
-    <template v-if="!$experiments.experiments.FLOWINITY_REBRAND">TPU</template>
-    <template v-else>Flowinity</template>
+    {{ $app.site.name || "TPU" }}
     <v-hover v-if="event === 'pi'" v-slot="{ isHovering, props }">
       <span class="ml-1" v-bind="props">
         <template v-if="isHovering">
@@ -71,44 +70,44 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "LogoEasterEgg",
   computed: {
     event() {
-      const date = this.$date().format("MMDD")
+      const date = this.$date().format("MMDD");
       switch (date) {
         case "0314":
-          return "pi"
+          return "pi";
         case "0317":
-          return "bc"
+          return "bc";
         case "0331":
-          return "bd"
+          return "bd";
         case "0401":
-          return "j"
+          return "j";
         case "0420":
-          return "420"
+          return "420";
         case "0101":
-          return "ny"
+          return "ny";
         case "1225":
-          return "xmas"
+          return "xmas";
         case "1001":
-          return "halloween"
+          return "halloween";
         case "0704":
-          return "independence"
+          return "independence";
         case "0505":
-          return "cincodemayo"
+          return "cincodemayo";
         case "0908":
-          return "labor"
+          return "labor";
         case "1101":
-          return "veterans"
+          return "veterans";
         default:
-          return null
+          return null;
       }
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

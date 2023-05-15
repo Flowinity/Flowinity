@@ -156,6 +156,9 @@ const app = createApp({
         console.info("[TPU/UserStore] User initialized");
       });
       core.init().then(() => {
+        if (!core.site.finishedSetup) {
+          router.push("/setup");
+        }
         console.info("[TPU/CoreStore] Core initialized");
       });
       experiments.init().then(() => {

@@ -39,7 +39,7 @@
           <GraphWidget
             :card-height="400"
             :gold="gold"
-            :height="320"
+            :height="300"
             :message-graph="user.stats.messageGraph"
             :primary-color="primaryColorResult"
             :pulse-graph="user.stats.pulseGraph"
@@ -52,28 +52,28 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue"
-import Chart from "@/components/Core/Chart.vue"
+import { defineComponent } from "vue";
+import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
+import Chart from "@/components/Core/Chart.vue";
 
 export default defineComponent({
   name: "CoreStatistics",
-  components: {Chart, GraphWidget},
+  components: { Chart, GraphWidget },
   props: ["user", "username", "gold", "primary"],
   computed: {
     primaryColorResult() {
-      return this.$user.primaryColorResult(this.primary, this.gold).primary
+      return this.$user.primaryColorResult(this.primary, this.gold).primary;
     },
     hoursMost() {
       if (this.user?.stats?.hours) {
-        let hours = Object.entries(this.user.stats.hours)
-        hours.sort((a: any, b: any) => b[1] - a[1])
+        let hours = Object.entries(this.user.stats.hours);
+        hours.sort((a: any, b: any) => b[1] - a[1]);
         return {
           hour: hours[0][0],
           count: hours[0][1]
-        }
+        };
       } else {
-        return null
+        return null;
       }
     },
     hoursGraph() {
@@ -81,9 +81,9 @@ export default defineComponent({
         return {
           labels: Object.keys(this.user.stats.hours),
           data: Object.values(this.user.stats.hours)
-        }
+        };
       } else {
-        return null
+        return null;
       }
     },
     chartData() {
@@ -99,13 +99,13 @@ export default defineComponent({
               pointBackgroundColor: "#181818"
             }
           ]
-        }
+        };
       } else {
-        return []
+        return [];
       }
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

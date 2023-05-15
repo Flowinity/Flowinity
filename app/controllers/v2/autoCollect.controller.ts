@@ -169,7 +169,7 @@ export class AutoCollectController {
           new Set(autoCollects.map((autoCollect) => autoCollect.collectionId))
         )
         for (const collectionId of collectionIds) {
-          await queue.cacheQueue.add(String(collectionId), collectionId, {
+          await queue.cacheQueue?.add(String(collectionId), collectionId, {
             delay: 30000,
             jobId: collectionId + "-autoCollect"
           })
@@ -203,7 +203,7 @@ export class AutoCollectController {
           autoCollect.id
         )
         res.sendStatus(204)
-        await queue.cacheQueue.add(
+        await queue.cacheQueue?.add(
           String(autoCollect.collectionId),
           autoCollect.collectionId,
           {

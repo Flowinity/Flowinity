@@ -217,7 +217,7 @@
     item-value="key"
     @update:modelValue="$emit('update')"
   />
-  <br/>
+  <br />
   <v-btn class="px-6" @click="$app.themeEditor = !$app.themeEditor">
     <v-icon class="mr-2">mdi-palette</v-icon>
     <span>
@@ -239,34 +239,34 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import TwoFactor from "@/components/Settings/TwoFactor.vue"
-import {useTheme} from "vuetify"
+import { defineComponent } from "vue";
+import TwoFactor from "@/components/Settings/TwoFactor.vue";
+import { useTheme } from "vuetify";
 
 export default defineComponent({
   name: "SettingsHome",
-  components: {TwoFactor},
-  emits: ["update", "laoding"],
+  components: { TwoFactor },
+  emits: ["update"],
   setup() {
-    const theme = useTheme()
+    const theme = useTheme();
 
     return {
       toggleTheme: (themeName: string) => {
-        localStorage.setItem("theme", themeName)
-        theme.global.name.value = themeName
+        localStorage.setItem("theme", themeName);
+        theme.global.name.value = themeName;
       }
-    }
+    };
   },
   data() {
     return {
       languages: [
         {
           title: "English (United States)",
-          key: "enUS"
+          key: "en"
         },
         {
-          title: "English (Traditional)",
-          key: "enGB"
+          title: "English (United Kingdom)",
+          key: "en-GB"
         },
         {
           title: "Русский (Россия)",
@@ -278,19 +278,19 @@ export default defineComponent({
       },
       theme: useTheme().global.name,
       themes: [
-        {title: "Light", value: "light"},
-        {title: "Dark", value: "dark"},
-        {title: "AMOLED", value: "amoled"}
+        { title: "Light", value: "light" },
+        { title: "Dark", value: "dark" },
+        { title: "AMOLED", value: "amoled" }
       ],
       temperatureUnits: [
-        {title: "Celsius (Metric)", value: "celsius"},
-        {title: "Kelvin (Metric Standard)", value: "kelvin"},
-        {title: "Fahrenheit (Imperial)", value: "fahrenheit"}
+        { title: "Celsius (Metric)", value: "celsius" },
+        { title: "Kelvin (Metric Standard)", value: "kelvin" },
+        { title: "Fahrenheit (Imperial)", value: "fahrenheit" }
       ],
       insights: [
-        {title: "Everyone", value: "everyone"},
-        {title: "Friends", value: "friends"},
-        {title: "Nobody", value: "nobody"}
+        { title: "Everyone", value: "everyone" },
+        { title: "Friends", value: "friends" },
+        { title: "Nobody", value: "nobody" }
       ],
       confirmPassword: "",
       valid: {
@@ -301,49 +301,49 @@ export default defineComponent({
       validation: [
         (value: string) => {
           if (value !== this.$user.changes.password)
-            return "Passwords do not match"
-          return true
+            return "Passwords do not match";
+          return true;
         }
       ]
-    }
+    };
   },
   computed: {
     disableProfileColors: {
       get() {
         try {
-          this.bindings.disableProfileColors
-          return JSON.parse(localStorage.getItem("disableProfileColors")!)
+          this.bindings.disableProfileColors;
+          return JSON.parse(localStorage.getItem("disableProfileColors")!);
         } catch {
-          return false
+          return false;
         }
       },
       set(val: boolean) {
-        this.bindings.disableProfileColors = val
-        localStorage.setItem("disableProfileColors", JSON.stringify(val))
+        this.bindings.disableProfileColors = val;
+        localStorage.setItem("disableProfileColors", JSON.stringify(val));
       }
     },
     disableBatterySave: {
       get() {
         try {
-          return JSON.parse(localStorage.getItem("disableBatterySave")!)
+          return JSON.parse(localStorage.getItem("disableBatterySave")!);
         } catch {
-          return false
+          return false;
         }
       },
       set(val: boolean) {
-        localStorage.setItem("disableBatterySave", JSON.stringify(val))
+        localStorage.setItem("disableBatterySave", JSON.stringify(val));
       }
     }
   },
   watch: {
     theme() {
-      this.toggleTheme(this.theme)
+      this.toggleTheme(this.theme);
     }
   },
   mounted() {
-    this.$app.title = "Settings"
+    this.$app.title = "Settings";
   }
-})
+});
 </script>
 
 <style scoped></style>

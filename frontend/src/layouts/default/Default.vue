@@ -40,12 +40,19 @@
     >
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <default-bar />
+    <default-bar v-if="$app.site.finishedSetup" />
     <rail-bar
-      v-if="$experiments.experiments.RAIL_SIDEBAR && $app.rail"
+      v-if="
+        $experiments.experiments.RAIL_SIDEBAR &&
+        $app.rail &&
+        $app.site.finishedSetup
+      "
     ></rail-bar>
     <sidebar
-      v-if="$app.railMode === 'tpu' || (!$app.rail && !$vuetify.display.mobile)"
+      v-if="
+        ($app.railMode === 'tpu' || (!$app.rail && !$vuetify.display.mobile)) &&
+        $app.site.finishedSetup
+      "
     ></sidebar>
     <colubrina-sidebar
       v-if="
@@ -108,7 +115,9 @@
     >
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <unauth-bar v-if="$route.name !== 'Slideshow'"></unauth-bar>
+    <unauth-bar
+      v-if="$route.name !== 'Slideshow' && $app.site.finishedSetup"
+    ></unauth-bar>
     <default-view />
   </v-app>
 </template>

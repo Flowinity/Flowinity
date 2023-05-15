@@ -65,6 +65,7 @@ export class BadgeService {
     }
   }
   async badgeInit() {
+    if (!config.finishedSetup) return
     await this.checkCriteria()
     setInterval(async () => {
       await this.checkCriteria()

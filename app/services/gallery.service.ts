@@ -138,9 +138,9 @@ export class GalleryService {
     )
     const url =
       "https://" + (await utils.getUserDomain(userId)) + upload.attachment
-    await queue.queue.add(upload.id, upload)
+    await queue.queue?.add(upload.id, upload)
     try {
-      if (precache && config.discord?.token) {
+      if (precache && config.discord?.token && config.discord.webhook) {
         if (upload.type === "image" || upload.type === "video") {
           axios.post(config.discord.webhook, {
             content: url + " precache."

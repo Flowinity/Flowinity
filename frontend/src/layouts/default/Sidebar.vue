@@ -242,7 +242,7 @@ export default defineComponent({
             path: "/mail",
             icon: "mdi-email",
             scope: "mail.view",
-            experimentsRequired: ["WEBMAIL"]
+            experimentsRequired: ["WEBMAIL", "OFFICIAL_INSTANCE"]
           },
           {
             id: 27,

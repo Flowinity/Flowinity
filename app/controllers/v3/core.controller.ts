@@ -9,6 +9,10 @@ import os from "os"
 import { Request } from "express"
 import { WeatherResponse } from "@app/interfaces/weather"
 import Errors from "@app/lib/errors"
+import fs from "fs"
+import path from "path"
+import { Plan } from "@app/models/plan.model"
+
 @Service()
 @JsonController("/core")
 export class CoreControllerV3 {
@@ -28,6 +32,41 @@ export class CoreControllerV3 {
   @Get("")
   @Get("/state")
   async getCore(@Req() req: Request) {
+    if (!config.finishedSetup) {
+      let step = 0
+      if (await fs.existsSync(path.join(appRoot, "config", "config.json"))) {
+        step = 2
+      }
+      if (
+        await Plan.findOne({
+          where: {
+            id: 1
+          }
+        })
+      ) {
+        step = 3
+      }
+      if (
+        await User.findOne({
+          where: {
+            id: 1
+          }
+        })
+      ) {
+        step = 4
+      }
+      if (await fs.existsSync(path.join(appRoot, "config", "tpu.json"))) {
+        step = 6
+      }
+      if (config.email.from !== "default@privateuploader.local") {
+        step = 7
+      }
+      return {
+        finishedSetup: false,
+        name: config.siteName,
+        step
+      }
+    }
     return {
       ...((await redis.json.get("core:state")) ||
         (await this.cacheService.refreshState())),
@@ -37,7 +76,8 @@ export class CoreControllerV3 {
       connection: {
         ip: req.ip,
         whitelist: whitelist.find((w) => w.ip === req.ip) || false
-      }
+      },
+      finishedSetup: true
     }
   }
 

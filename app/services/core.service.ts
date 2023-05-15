@@ -302,6 +302,7 @@ export class CoreService {
 
   getExperiments(dev: boolean = false, gold: boolean = false): object {
     const experiments = {
+      OFFICIAL_INSTANCE: config?.officialInstance || false,
       FLOWINITY_REBRAND: false,
       API_FALLBACK_ON_ERROR: false,
       API_VERSION: 2,
@@ -354,6 +355,10 @@ export class CoreService {
       NON_TPU_BRANDING: false,
       AUG_2021_UI: false,
       meta: {
+        OFFICIAL_INSTANCE: {
+          description: "Official PrivateUploader instance.",
+          createdAt: "2023-05-15T00:00:00.000Z"
+        },
         FLOWINITY_REBRAND: {
           description: "Flowinity rebrand.",
           createdAt: "2023-05-13T00:00:00.000Z"

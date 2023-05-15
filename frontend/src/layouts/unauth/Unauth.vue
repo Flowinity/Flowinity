@@ -9,7 +9,7 @@
     >
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <default-bar />
+    <default-bar v-if="$app.site.finishedSetup" />
     <default-view />
   </v-app>
 </template>

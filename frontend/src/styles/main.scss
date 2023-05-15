@@ -254,6 +254,11 @@ a {
   overflow-wrap: anywhere !important;
 }
 
+.overflow {
+  white-space: pre-line !important;
+  overflow-wrap: anywhere !important;
+}
+
 .gold .v-progress-linear {
   color: black
 }
@@ -479,9 +484,9 @@ a {
 
 
 // Align v-icon with text
-.v-icon:not(.raw-icon) {
-  margin-top: 2px;
-}
+//.v-icon:not(.raw-icon) {
+//  margin-top: 2px;
+//}
 
 .c-both {
   clear: both;

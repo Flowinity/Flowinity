@@ -2,10 +2,8 @@ import { Application } from "@app/app"
 import * as http from "http"
 import { AddressInfo } from "net"
 import { Service } from "typedi"
-import sequelize from "@app/db"
 import redis from "@app/redis"
 import { caching } from "cache-manager"
-import config from "@app/config/tpu.json"
 import { CacheService } from "@app/services/cache.service"
 import dayjs from "dayjs"
 import isoWeek from "dayjs/plugin/isoWeek"
@@ -18,11 +16,15 @@ import cluster from "cluster"
 import os from "os"
 import ipPrimary from "@app/lib/whitelist/primary.json"
 import { MyAnimeListService } from "@app/services/providers/mal.service"
+import fs from "fs"
+import path from "path"
+import cryptoRandomString from "crypto-random-string"
+import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
 
 @Service()
 export class Server {
-  private static readonly appPort: string | number | boolean =
-    Server.normalizePort(config.port || "34582")
+  // This config will be replaced if it exists, if not, this will be used and will guide you through the setup process
+  private config: TpuConfig = new DefaultTpuConfig().config
   private static readonly baseDix: number = 10
   private server: http.Server
 
@@ -50,7 +52,16 @@ export class Server {
   }
 
   async init(port?: number): Promise<void> {
-    this.application.app.set("port", port || Server.appPort)
+    try {
+      this.config = require(global.appRoot + "/config/tpu.json")
+    } catch {}
+    const cpuCount = os.cpus().length
+    const mainWorker = !cluster.worker || cluster.worker?.id % cpuCount === 1
+
+    this.application.app.set(
+      "port",
+      port || Server.normalizePort(this.config?.port || "34582")
+    )
     this.application.app.set("trust proxy", 1)
     const memoryCache = await caching("memory")
     this.application.app.set("cache", memoryCache)
@@ -60,13 +71,15 @@ export class Server {
     dayjs().isoWeekday()
     dayjs().isoWeekYear()
     dayjs.extend(isSameOrBefore)
-    global.db = sequelize
+    global.db = require("@app/db")
     global.redis = redis
-    global.config = config
+    global.config = this.config
     global.dayjs = dayjs
     global.whitelist = ipPrimary
     this.server = http.createServer(this.application.app)
-    this.server.listen(port || Server.appPort)
+    this.server.listen(
+      port || Server.normalizePort(this.config?.port || "34582")
+    )
     socket.init(this.application.app, this.server)
     this.server.on("error", (error: NodeJS.ErrnoException) =>
       this.onError(error)
@@ -76,8 +89,7 @@ export class Server {
       console.warn(err)
     })
     this.server.on("listening", () => this.onListening())
-    const cpuCount = os.cpus().length
-    if (!cluster.worker || cluster.worker?.id % cpuCount === 1) {
+    if (mainWorker) {
       this.cacheService.cacheInit()
       this.billingService.billingInit()
       this.pulseService.pulseInit()
@@ -92,23 +104,24 @@ export class Server {
     if (error.syscall !== "listen") {
       throw error
     }
+    const port = Server.normalizePort(this.config?.port || "34582")
     const bind: string =
-      typeof Server.appPort === "string"
-        ? "Pipe " + Server.appPort
-        : "Port " + Server.appPort
+      typeof port === "string" ? "Pipe " + port : "Port " + port
     switch (error.code) {
       case "EACCES":
         console.error(`${bind} requires elevated privileges`)
         process.exit(1)
         break
       case "EADDRINUSE":
-        if (config.release === "dev") {
+        if (this.config?.release === "dev") {
           const port = parseInt(process.env.PORT || "34582", 10) + 1
           this.init(port)
           return
         }
         console.error(`${bind} is already in use`)
         process.exit(1)
+        break
+      case "ENOENT":
         break
       default:
         throw error

@@ -58,6 +58,10 @@ import { MailControllerV3 } from "@app/controllers/v3/mail.controller"
 import { FallbackControllerV3 } from "@app/controllers/v3/fallback.controller"
 import { MigrateControllerV3 } from "@app/controllers/v3/migrate.controller"
 import { SlideshowControllerV3 } from "@app/controllers/v3/slideshow.controller"
+import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
+import fs from "fs"
+import path from "path"
+import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
 
 @Service()
 @Middleware({ type: "after" })
@@ -184,29 +188,37 @@ export class Application {
       res.setHeader("X-Powered-By", "TroploPrivateUploader/3.0.0")
       next()
     })
+    // read config from config/tpu.json
     useContainer(Container)
+    let config = new DefaultTpuConfig().config
+    try {
+      config = require(path.join(global.appRoot, "config/tpu.json"))
+    } catch {}
+
     useExpressServer(this.app, {
-      controllers: [
-        UserControllerV3,
-        AuthControllerV3,
-        CoreControllerV3,
-        ChatControllerV3,
-        AutoCollectControllerV3,
-        GalleryControllerV3,
-        CollectionControllerV3,
-        AdminControllerV3,
-        FileControllerV3,
-        WorkspaceControllerV3,
-        DomainControllerV3,
-        SecurityControllerV3,
-        InviteControllerV3,
-        PulseControllerV3,
-        MediaProxyControllerV3,
-        ProviderControllerV3,
-        MailControllerV3,
-        MigrateControllerV3,
-        SlideshowControllerV3
-      ],
+      controllers: config.finishedSetup
+        ? [
+            UserControllerV3,
+            AuthControllerV3,
+            CoreControllerV3,
+            ChatControllerV3,
+            AutoCollectControllerV3,
+            GalleryControllerV3,
+            CollectionControllerV3,
+            AdminControllerV3,
+            FileControllerV3,
+            WorkspaceControllerV3,
+            DomainControllerV3,
+            SecurityControllerV3,
+            InviteControllerV3,
+            PulseControllerV3,
+            MediaProxyControllerV3,
+            ProviderControllerV3,
+            MailControllerV3,
+            MigrateControllerV3,
+            SlideshowControllerV3
+          ]
+        : [SetupControllerV3, CoreControllerV3, FallbackControllerV3],
       routePrefix: "/api/v3",
       middlewares: [HttpErrorHandler],
       defaultErrorHandler: false,
@@ -226,70 +238,72 @@ export class Application {
       swaggerUi.serve,
       swaggerUi.setup(swaggerJSDoc(this.swaggerOptions))
     )
-    this.app.use("/api/v3/docs", swaggerUi.serve, swaggerUi.setup(spec))
-    this.app.use("/api/v2/user", this.userutilsController.router)
-    this.app.use("/api/v2/core", this.coreController.router)
-    this.app.use("/api/v2/gallery", this.galleryController.router)
-    this.app.use("/api/v2/auth", this.authController.router)
-    this.app.use("/api/v2/collections", this.collectionController.router)
-    this.app.use("/api/v2/domains", this.domainController.router)
-    this.app.use("/api/v2/admin", this.adminController.router)
-    this.app.use("/api/v2/security", this.securityController.router)
-    this.app.use("/api/v2/autoCollects", this.autoCollectController.router)
-    this.app.use("/api/v2/slideshows", this.slideshowController.router)
-    this.app.use("/api/v2/invites", this.inviteController.router)
-    this.app.use("/api/v2/pulse", this.pulseController.router)
-    this.app.use("/api/v2/notes", this.noteController.router)
-    this.app.use("/api/v2/migrate", this.migrateController.router)
-    this.app.use("/api/v2/chats", this.chatController.router)
-    this.app.use("/api/v2/mediaproxy", this.mediaProxyController.router)
-    this.app.use("/api/v2/providers", this.providerController.router)
-    this.app.use("/api/v2/mail", this.mailController.router)
-    this.app.use("/i/", this.fileController.router)
-    this.app.use("/api/v1/gallery", this.galleryController.router)
-    this.app.use("/api/v1/site", this.coreController.router)
-    this.app.use(
-      (err: any, req: Request, res: Response, next: NextFunction) => {
-        if (err?.status && !err?.errno) {
-          console.log(err)
-          res.status(err?.status || 500).send({
-            errors: [err]
-          })
-        } else if (err instanceof sequelize.ValidationError) {
-          res.status(400).send({
-            errors: err.errors.map((e: any) => {
-              return {
-                status: 400,
-                message: e.message
-                  ?.replace(
-                    /Validation (.*?) on (.*?) failed/,
-                    "$2 is invalid."
-                  )
-                  .replace("notNull Violation: ", "")
-                  .replace("cannot be null", "is required."),
-                name: "Troplo/ValidationError"
-              }
+    if (config.finishedSetup) {
+      this.app.use("/api/v3/docs", swaggerUi.serve, swaggerUi.setup(spec))
+      this.app.use("/api/v2/user", this.userutilsController.router)
+      this.app.use("/api/v2/core", this.coreController.router)
+      this.app.use("/api/v2/gallery", this.galleryController.router)
+      this.app.use("/api/v2/auth", this.authController.router)
+      this.app.use("/api/v2/collections", this.collectionController.router)
+      this.app.use("/api/v2/domains", this.domainController.router)
+      this.app.use("/api/v2/admin", this.adminController.router)
+      this.app.use("/api/v2/security", this.securityController.router)
+      this.app.use("/api/v2/autoCollects", this.autoCollectController.router)
+      this.app.use("/api/v2/slideshows", this.slideshowController.router)
+      this.app.use("/api/v2/invites", this.inviteController.router)
+      this.app.use("/api/v2/pulse", this.pulseController.router)
+      this.app.use("/api/v2/notes", this.noteController.router)
+      this.app.use("/api/v2/migrate", this.migrateController.router)
+      this.app.use("/api/v2/chats", this.chatController.router)
+      this.app.use("/api/v2/mediaproxy", this.mediaProxyController.router)
+      this.app.use("/api/v2/providers", this.providerController.router)
+      this.app.use("/api/v2/mail", this.mailController.router)
+      this.app.use("/i/", this.fileController.router)
+      this.app.use("/api/v1/gallery", this.galleryController.router)
+      this.app.use("/api/v1/site", this.coreController.router)
+      this.app.use(
+        (err: any, req: Request, res: Response, next: NextFunction) => {
+          if (err?.status && !err?.errno) {
+            console.log(err)
+            res.status(err?.status || 500).send({
+              errors: [err]
             })
-          })
-        } else if (err?.issues) {
-          console.log(err)
-          res.status(400).send({
-            errors: Object.keys(err.issues).map((e: any) => {
-              return {
-                status: 400,
-                message: err.issues[e].path[0] + ": " + err.issues[e].message,
-                name: "Troplo/ValidationError"
-              }
+          } else if (err instanceof sequelize.ValidationError) {
+            res.status(400).send({
+              errors: err.errors.map((e: any) => {
+                return {
+                  status: 400,
+                  message: e.message
+                    ?.replace(
+                      /Validation (.*?) on (.*?) failed/,
+                      "$2 is invalid."
+                    )
+                    .replace("notNull Violation: ", "")
+                    .replace("cannot be null", "is required."),
+                  name: "Troplo/ValidationError"
+                }
+              })
             })
-          })
-        } else {
-          console.log(err)
-          res.status(500).send({
-            errors: [Errors.UNKNOWN]
-          })
+          } else if (err?.issues) {
+            console.log(err)
+            res.status(400).send({
+              errors: Object.keys(err.issues).map((e: any) => {
+                return {
+                  status: 400,
+                  message: err.issues[e].path[0] + ": " + err.issues[e].message,
+                  name: "Troplo/ValidationError"
+                }
+              })
+            })
+          } else {
+            console.log(err)
+            res.status(500).send({
+              errors: [Errors.UNKNOWN]
+            })
+          }
         }
-      }
-    )
+      )
+    }
     useExpressServer(this.app, {
       controllers: [FileControllerV3, FallbackControllerV3],
       routePrefix: "",
@@ -315,17 +329,24 @@ export class Application {
   }
 
   private async onServerStart() {
-    await User.update(
-      {
-        status: "offline"
-      },
-      {
-        where: {
-          status: {
-            [Op.not]: "offline"
+    let config = new DefaultTpuConfig().config
+    try {
+      config = require("@app/config/tpu.json")
+    } catch {}
+
+    if (config.finishedSetup) {
+      await User.update(
+        {
+          status: "offline"
+        },
+        {
+          where: {
+            status: {
+              [Op.not]: "offline"
+            }
           }
         }
-      }
-    )
+      )
+    }
   }
 }

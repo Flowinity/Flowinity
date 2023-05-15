@@ -3,7 +3,7 @@
     :class="{ hover: hover, 'elevation-0': hover }"
     :height="!$vuetify.display.mobile ? height : undefined"
     :width="width"
-    class="mx-auto mt-6"
+    class="mx-auto promo-card"
     elevation="6"
     max-width="1000"
   >
@@ -42,7 +42,7 @@
 export default {
   name: "PromoCard",
   props: ["title", "image", "icon", "width", "height", "hover", "left"]
-}
+};
 </script>
 
 <style scoped>
@@ -60,5 +60,6 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
+  width: 100%;
 }
 </style>

@@ -30,6 +30,8 @@ export interface AppState {
   shifting: boolean;
   themeEditor: boolean;
   site: {
+    step?: number;
+    finishedSetup: boolean;
     registrations: boolean;
     name: string;
     release: string;
@@ -167,6 +169,7 @@ export const useAppStore = defineStore("app", {
         date: import.meta.env.TPU_BUILD_DATE || "N/A"
       },
       site: {
+        finishedSetup: true,
         alert: "",
         registrations: false,
         name: "TPU",

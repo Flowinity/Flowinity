@@ -187,6 +187,7 @@ export class MyAnimeListService {
   }
 
   async renewService() {
+    if (!config.providers.mal.key) return
     console.log("[PROVIDERS/MYANIMELIST] Renewing access tokens")
     const users = await User.findAll({
       include: [

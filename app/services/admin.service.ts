@@ -191,7 +191,19 @@ export class AdminService {
     return true
   }
 
-  async sendEmail(mail: Mailgen.Content, email: string, subject: string) {
+  async sendEmail(
+    mail: Mailgen.Content,
+    email: string,
+    subject: string,
+    customConfig?: {
+      host: string
+      port: number
+      secure: boolean
+      username: string
+      password: string
+      from: string
+    }
+  ) {
     console.log("[AdminService] Sending email to", email)
     let mailGenerator = new Mailgen({
       theme: "cerberus",
@@ -203,16 +215,16 @@ export class AdminService {
     let emailBody = mailGenerator.generate(mail)
     let emailText = mailGenerator.generatePlaintext(mail)
     let transporter = nodemailer.createTransport({
-      host: config.email.host,
-      port: config.email.port,
-      secure: config.email.secure,
+      host: customConfig?.host || config.email.host,
+      port: customConfig?.port || config.email.port,
+      secure: customConfig?.secure || config.email.secure,
       auth: {
-        user: config.email.username,
-        pass: config.email.password
+        user: customConfig?.username || config.email.username,
+        pass: customConfig?.password || config.email.password
       }
     })
     return await transporter.sendMail({
-      from: config.email.from,
+      from: customConfig?.from || config.email.from,
       to: email,
       subject: subject,
       text: emailText,

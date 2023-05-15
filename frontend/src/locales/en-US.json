@@ -298,11 +298,15 @@
       "hostnameWithProtocol": "Instance Hostname (with protocol)",
       "allowRegistration": "Allow Registrations",
       "port": "Instance Port (default: 34582)",
-      "multiThreaded": "Max thread utilization (0 for all threads, recommended)"
+      "multiThreaded": "Max thread utilization (0 for all threads, recommended)",
+      "redisHostname": "Redis Hostname",
+      "redisPort": "Redis Port",
+      "redisDatabase": "Redis Database",
+      "redisHint": "Redis is used for caching, this is an integral part of TPU, and it will not function without it."
     },
     "step4": {
       "title": "Features",
-      "subtitle": "Please select the features you'd like to enable on your TPU.",
+      "subtitle": "Please select the features you'd like to enable on your TPU instance.\nThe core features like Gallery are always enabled.",
       "autoCollects": {
         "title": "AutoCollects",
         "description": "Automatically add uploaded items by rules into TPU Collections."
@@ -310,7 +314,45 @@
       "collections": {
         "title": "Collections",
         "description": "Allow users to create collections of uploaded files."
+      },
+      "communications": {
+        "title": "Communications",
+        "description": "A chatting platform built right into TPU."
+      },
+      "insights": {
+        "title": "Insights",
+        "description": "Get weekly, monthly, yearly, and an evolving report about how each user uses their TPU account."
+      },
+      "workspaces": {
+        "title": "Workspaces",
+        "description": "Allow users to create documents inside of TPU."
       }
+    },
+    "step5": {
+      "title": "Plan Configuration",
+      "subtitle": "Please select attributes of the default plan, such as storage per user.",
+      "storage": "Storage per user (in B)",
+      "maxUploadSize": "Max upload size (in B)"
+    },
+    "step6": {
+      "title": "Mail Configuration",
+      "subtitle": "Please enter your SMTP credentials below.",
+      "host": "SMTP Host",
+      "port": "SMTP Port",
+      "username": "SMTP Username",
+      "password": "SMTP Password",
+      "secure": "SMTP Secure",
+      "test": "Test Connection",
+      "from": "From Address",
+      "testEmail": "Email address to send test email to"
+    },
+    "step7": {
+      "title": "Welcome to TPU!",
+      "subtitle": "Your TPU instance has been successfully configured, you can now login with the account you created in step 2.\nBut first, the TPU server needs to be restarted.",
+      "restart": "Restart TPU Server"
+    },
+    "step8": {
+      "title": "TPU Server is restarting... You will be redirected to the login page automatically."
     }
   }
 }
