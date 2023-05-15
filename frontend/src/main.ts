@@ -54,6 +54,7 @@ import { useAdminStore } from "@/store/admin";
 
 // LANGUAGES/LOCALES
 import en from "@/locales/en.json";
+import ru from "@/locales/ru.json"
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -477,7 +478,8 @@ const i18n = createI18n({
   locale: "en",
   fallbackLocale: "en",
   messages: {
-    en
+    en,
+    ru
   }
 });
 
