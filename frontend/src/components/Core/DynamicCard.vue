@@ -1,14 +1,12 @@
 <template>
   <v-card
+    :height="<string>height"
+    :to="to"
     class="rounded-xl d-flex flex-column"
     elevation="8"
     style="cursor: pointer"
-    :to="to"
-    :height="<string>height"
   >
     <v-img
-      :src="<string>image"
-      class="white--text align-end"
       :gradient="
         rightText
           ? 'to top, rgba(0,0,0,.0), rgba(0,0,0,0.2)'
@@ -16,27 +14,29 @@
           ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)'
           : undefined
       "
+      :src="<string>image"
+      class="white--text align-end"
       cover
     >
       <template v-slot:placeholder>
-        <v-row class="fill-height ma-0" align="center" justify="center">
+        <v-row align="center" class="fill-height ma-0" justify="center">
           <v-progress-circular
-            indeterminate
             color="grey lighten-5"
+            indeterminate
           ></v-progress-circular>
         </v-row>
       </template>
       <slot></slot>
       <v-card-title v-if="title">
         {{ title }}
-        <small class="float-end" v-if="subtitle">
+        <small v-if="subtitle" class="float-end">
           {{ subtitle }}
         </small>
       </v-card-title>
       <v-card-text
-        style="position: absolute; top: 0; right: 0; font-size: 18px"
         v-if="rightText"
         :style="blackText ? 'color: black !important;' : 'color: white'"
+        style="position: absolute; top: 0; right: 0; font-size: 18px"
       >
         {{ rightText }}
       </v-card-text>
@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "DynamicCard",
@@ -78,7 +78,7 @@ export default defineComponent({
       type: String
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

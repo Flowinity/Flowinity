@@ -4,9 +4,104 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="">
+    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="Capitalise some Russian strings">
+      <change afterPath="$PROJECT_DIR$/frontend/src/views/Admin/Communications.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/locales/ru.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/locales/ru.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/admin.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/admin.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Admin/AdminSidebar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Admin/AdminSidebar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Admin/AdminSidebarList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Admin/AdminSidebarList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Collections/CollectionBanner.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Collections/CollectionBanner.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Collections/CollectionCard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Collections/CollectionCard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Collections/Dialogs/Create.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Collections/Dialogs/Create.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Collections/Dialogs/Settings.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Collections/Dialogs/Settings.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Collections/Dialogs/Sharing.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Collections/Dialogs/Sharing.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/CommunicationsAvatar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/CommunicationsAvatar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/Dialogs/GroupSettings.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/Dialogs/GroupSettings.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/Dialogs/Image.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/Dialogs/Image.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/Dialogs/Leave.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/Dialogs/Leave.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/Dialogs/URLConfirm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/Dialogs/URLConfirm.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/Embed.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/Embed.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/InlineGallery.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/InlineGallery.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/InlineGalleryItem.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/InlineGalleryItem.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/Input.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/Input.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/Menus/CreateChat.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/Menus/CreateChat.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/Menus/Emoji.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/Menus/Emoji.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/Menus/Pins.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/Menus/Pins.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/Menus/User.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/Menus/User.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/Message.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/Message.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/MessageActions.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/MessageActions.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/MessageActionsList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/MessageActionsList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/MessagePerf.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/MessagePerf.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/MessageSkeleton.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/MessageSkeleton.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/MessageToast.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/MessageToast.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/NesyInput.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/NesyInput.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/ReadReceipt.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/ReadReceipt.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Communications/StatusSwitcher.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Communications/StatusSwitcher.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/BarChart.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/BarChart.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/Chart.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/Chart.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/Crash.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/Crash.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/CrashAlt.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/CrashAlt.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/Dialog.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/Dialog.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/MobileMenu.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/MobileMenu.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/Nickname.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/Nickname.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/QuickSwitcher.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/QuickSwitcher.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/Upload.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/Upload.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/UploadCropper.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/Dialogs/UploadCropper.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/DynamicCard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/DynamicCard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/ErrorBoundary.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/ErrorBoundary.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/HoverChip.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/HoverChip.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/LineChart.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/LineChart.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/LogoEasterEgg.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/LogoEasterEgg.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/Mentionable.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/Mentionable.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/Notifications.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/Notifications.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/Paginate.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/Paginate.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/PlaceholderCheckerboard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/PlaceholderCheckerboard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/PromoNoContent.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/PromoNoContent.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/ThemeEngineSidebar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/ThemeEngineSidebar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Core/ThemeEngineWrapper.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Core/ThemeEngineWrapper.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/AnnouncementsWidget.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/AnnouncementsWidget.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/Feedback.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/Feedback.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/Gold.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/Gold.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/InviteAFriend.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/InviteAFriend.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/Migrate.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/Migrate.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/GraphWidget.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/GraphWidget.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/StatsCard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/StatsCard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/StatsWidget.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/StatsWidget.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/UserWidget.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/UserWidget.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dev/Dialogs/DevDialog.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dev/Dialogs/DevDialog.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dev/Dialogs/Experiments.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dev/Dialogs/Experiments.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dev/Dialogs/MemoryProfiler.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dev/Dialogs/MemoryProfiler.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dev/ExperimentsManager.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dev/ExperimentsManager.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Gallery/Dialogs/AddToCollection.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Gallery/Dialogs/AddToCollection.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Gallery/GalleryCore.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Gallery/GalleryCore.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Gallery/GalleryItem.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Gallery/GalleryItem.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Gallery/GalleryNavigation.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Gallery/GalleryNavigation.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Gallery/GalleryPreview.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Gallery/GalleryPreview.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Home/Dialogs/ColubrinaTPU.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Home/Dialogs/ColubrinaTPU.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Home/PromoCard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Home/PromoCard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Insights/Banners/Dynamic.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Insights/Banners/Dynamic.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Insights/Banners/Page.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Insights/Banners/Page.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Insights/StatsCard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Insights/StatsCard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Settings/Dialogs/CreateAPIKey.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Settings/Dialogs/CreateAPIKey.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Settings/Dialogs/IPHistory.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Settings/Dialogs/IPHistory.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Settings/TwoFactor.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Settings/TwoFactor.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserAvatar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserAvatar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserBadges.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserBadges.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserBanner.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserBanner.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserCard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserCard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/AddMenu.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/AddMenu.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Dialogs/Settings.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Dialogs/Settings.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/ComponentHandler.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/ComponentHandler.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/CoreStatistics.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/CoreStatistics.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/LastFM.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/LastFM.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/MutualCollections.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/MutualCollections.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/MutualFriends.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/MutualFriends.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/MyAnimeList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/MyAnimeList.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/ProfileInfo.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserV3/Widgets/ProfileInfo.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Workspaces/Dialogs/Delete.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Workspaces/Dialogs/Delete.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Workspaces/Dialogs/Dialog.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Workspaces/Dialogs/Dialog.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Workspaces/Dialogs/Share.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Workspaces/Dialogs/Share.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/router/index.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,8 +161,16 @@
       <workItem from="1681109155704" duration="540000" />
       <workItem from="1684038569458" duration="23000" />
       <workItem from="1684069734381" duration="2483000" />
-      <workItem from="1684114874192" duration="20551000" />
+      <workItem from="1684114874192" duration="22610000" />
     </task>
+    <task id="LOCAL-00001" summary="Capitalise some Russian strings">
+      <created>1684150087122</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1684150087122</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -75,5 +178,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Capitalise some Russian strings" />
+    <option name="LAST_COMMIT_MESSAGE" value="Capitalise some Russian strings" />
   </component>
 </project>

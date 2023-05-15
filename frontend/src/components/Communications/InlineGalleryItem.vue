@@ -6,20 +6,20 @@
     @click="$emit('clickItem', item)"
   >
     <v-img
+      :gradient="item.name ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)' : ''"
       :src="
         !item?.media_formats?.gif
           ? 'https://i.troplo.com/i/' + item.attachment
           : item.media_formats.gif.url
       "
       class="white--text align-end"
-      :gradient="item.name ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)' : ''"
       height="200px"
     >
       <template v-slot:placeholder>
-        <v-row class="fill-height ma-0" align="center" justify="center">
+        <v-row align="center" class="fill-height ma-0" justify="center">
           <v-progress-circular
-            indeterminate
             color="grey lighten-5"
+            indeterminate
           ></v-progress-circular>
         </v-row>
       </template>
@@ -31,12 +31,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "InlineGalleryItem",
   props: ["item"]
-});
+})
 </script>
 
 <style scoped></style>

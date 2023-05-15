@@ -1,23 +1,23 @@
 <template>
   <CoreDialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     max-width="700px"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>Share Collection</template>
     <v-card-text>
       <v-select
-        label="Public Accessibility"
         v-model="sharing.public"
         :items="sharing.publicOptions"
         :loading="sharing.loading"
         item-title="name"
         item-value="value"
+        label="Public Accessibility"
         @update:model-value="updateShare"
       ></v-select>
       <template v-if="collection.shareLink">
         This collection can be viewed publicly from
-        <a target="_blank" :href="'/collections/' + collection.shareLink">
+        <a :href="'/collections/' + collection.shareLink" target="_blank">
           {{ $app.site.hostnameWithProtocol }}/collections/{{
             collection.shareLink
           }}
@@ -37,12 +37,14 @@
           <v-select
             v-model="sharing.role"
             :items="sharing.roles"
-            label="Role"
             item-title="name"
             item-value="value"
+            label="Role"
           ></v-select>
         </v-col>
-        <v-col sm="2"><v-btn @click="addUser">Add</v-btn></v-col>
+        <v-col sm="2">
+          <v-btn @click="addUser">Add</v-btn>
+        </v-col>
       </v-row>
       <v-data-table :headers="sharing.headers" :items="collection.users">
         <template v-slot:item="row">
@@ -50,32 +52,32 @@
             <td>{{ row.item.props.title.user.username }}</td>
             <td>
               <v-checkbox
-                label="Read"
                 v-model="row.item.props.title.read"
                 disabled
+                label="Read"
               ></v-checkbox>
             </td>
             <td>
               <v-checkbox
-                label="Write"
-                @change="updateUser(row.item.props.title)"
                 v-model="row.item.props.title.write"
                 :disabled="row.item.props.title.configure"
+                label="Write"
+                @change="updateUser(row.item.props.title)"
               ></v-checkbox>
             </td>
             <td>
               <v-checkbox
-                label="Conf."
-                @change="updateUser(row.item.props.title)"
                 v-model="row.item.props.title.configure"
                 :disabled="row.item.props.title.recipientId === $user.user?.id"
+                label="Conf."
+                @change="updateUser(row.item.props.title)"
               ></v-checkbox>
             </td>
             <td>
               <v-btn
+                :disabled="row.item.props.title.userId === $user.user?.id"
                 icon
                 @click="deleteUser(row.item.props.title)"
-                :disabled="row.item.props.title.userId === $user.user?.id"
               >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -95,12 +97,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import {defineComponent} from "vue"
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
 
 export default defineComponent({
   name: "Sharing",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue", "collection"],
   emits: ["update:modelValue", "collectionUsersPush", "getCollection"],
   data() {
@@ -159,11 +161,11 @@ export default defineComponent({
         ],
         loading: false
       }
-    };
+    }
   },
   methods: {
     async addUser() {
-      const { data } = await this.axios.post(
+      const {data} = await this.axios.post(
         `/collections/${this.collection.id}/user`,
         {
           username: this.sharing.username,
@@ -171,43 +173,43 @@ export default defineComponent({
           write: this.sharing.role === "rw" || this.sharing.role === "rwc",
           configure: this.sharing.role === "rwc"
         }
-      );
-      this.$emit("collectionUsersPush", data);
-      this.sharing.username = "";
-      this.sharing.role = "ro";
+      )
+      this.$emit("collectionUsersPush", data)
+      this.sharing.username = ""
+      this.sharing.role = "ro"
     },
     async updateShare() {
-      this.sharing.loading = true;
-      const { data } = await this.axios.patch(`/collections/share`, {
+      this.sharing.loading = true
+      const {data} = await this.axios.patch(`/collections/share`, {
         id: this.collection.id,
         type: this.sharing.public
-      });
-      this.sharing.loading = false;
-      this.collection.shareLink = data.shareLink;
+      })
+      this.sharing.loading = false
+      this.collection.shareLink = data.shareLink
     },
     async updateUser(item: any) {
       if (item.configure && !item.write) {
-        item.write = true;
+        item.write = true
       }
       await this.axios.patch(`/collections/${this.collection.id}/user`, {
         id: item.recipientId,
         read: item.read,
         write: item.write,
         configure: item.configure
-      });
+      })
     },
     async deleteUser(item: any) {
       await this.axios.delete(
         `/collections/${this.collection.id}/user/${item.recipientId}`
-      );
-      this.$toast.success("User removed successfully.");
-      this.$emit("getCollection");
+      )
+      this.$toast.success("User removed successfully.")
+      this.$emit("getCollection")
     }
   },
   mounted() {
-    this.sharing.public = this.collection.shareLink ? "link" : "nobody";
+    this.sharing.public = this.collection.shareLink ? "link" : "nobody"
   }
-});
+})
 </script>
 
 <style scoped></style>

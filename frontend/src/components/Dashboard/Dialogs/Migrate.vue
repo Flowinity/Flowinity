@@ -1,9 +1,9 @@
 <template>
   <v-dialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     max-width="700px"
     persistent
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-card color="#151515">
       <template
@@ -16,14 +16,14 @@
         </v-card-subtitle>
         <v-card-actions class="text-center justify-center">
           <v-btn
-            color="red"
             class="no-capital"
+            color="red"
             @click="$emit('update:modelValue', false)"
           >
             <v-icon class="mr-1">mdi-arrow-left</v-icon>
             Do it later
           </v-btn>
-          <v-btn color="primary" class="no-capital" @click="step++">
+          <v-btn class="no-capital" color="primary" @click="step++">
             <v-icon class="mr-1">mdi-arrow-right</v-icon>
             Get started
           </v-btn>
@@ -37,14 +37,14 @@
         </v-card-subtitle>
         <v-card-actions class="text-center justify-center">
           <v-btn
-            color="red"
             class="no-capital"
+            color="red"
             @click="$emit('update:modelValue', false)"
           >
             <v-icon class="mr-1">mdi-arrow-left</v-icon>
             Do it later
           </v-btn>
-          <v-btn color="primary" class="no-capital" @click="step++">
+          <v-btn class="no-capital" color="primary" @click="step++">
             <v-icon class="mr-1">mdi-arrow-right</v-icon>
             Get started
           </v-btn>
@@ -53,8 +53,8 @@
       <template v-if="step === 2">
         <v-img
           class="wizard-banner"
-          width="1920"
           src="https://i.troplo.com/i/a99a0e3bfbed.png"
+          width="1920"
         ></v-img>
         <v-card-title class="text-center justify-center">
           Do you have a Colubrina account?
@@ -65,8 +65,8 @@
         </v-card-subtitle>
         <v-card-actions class="text-center justify-center">
           <v-btn
-            color="red"
             class="no-capital"
+            color="red"
             @click="
               $experiments.experiments['CLASSIC_MIGRATE']
                 ? (step = 4)
@@ -76,7 +76,7 @@
             <v-icon class="mr-1">mdi-close</v-icon>
             No
           </v-btn>
-          <v-btn color="primary" class="no-capital" @click="step++">
+          <v-btn class="no-capital" color="primary" @click="step++">
             <v-icon class="mr-1">mdi-check</v-icon>
             Yes
           </v-btn>
@@ -85,9 +85,9 @@
       <template v-if="step === 3">
         <v-img
           class="wizard-banner"
-          width="1920"
           max-height="400"
           src="https://i.troplo.com/i/a99a0e3bfbed.png"
+          width="1920"
         ></v-img>
         <v-card-title class="text-center justify-center">
           Now for your credentials...
@@ -97,35 +97,35 @@
         </v-card-subtitle>
         <v-container>
           <v-text-field
+            v-model="colubrina.username"
+            autofocus
+            dense
             label="Username"
             outlined
-            @keyup.enter="checkColubrina"
-            dense
             placeholder="Troplo"
-            autofocus
-            v-model="colubrina.username"
+            @keyup.enter="checkColubrina"
           ></v-text-field>
           <v-text-field
-            label="Password"
-            @keyup.enter="checkColubrina"
-            outlined
-            dense
-            type="password"
             v-model="colubrina.password"
+            dense
+            label="Password"
+            outlined
+            type="password"
+            @keyup.enter="checkColubrina"
           ></v-text-field>
           <v-text-field
-            label="2FA (if enabled)"
-            @keyup.enter="checkColubrina"
-            outlined
-            dense
-            type="number"
             v-model="colubrina.totp"
+            dense
+            label="2FA (if enabled)"
+            outlined
+            type="number"
+            @keyup.enter="checkColubrina"
           ></v-text-field>
         </v-container>
         <v-card-actions class="text-center justify-center">
           <v-btn
-            color="red"
             class="no-capital"
+            color="red"
             @click="
               $experiments.experiments['CLASSIC_MIGRATE'] ? step++ : (step = 8)
             "
@@ -134,10 +134,10 @@
             Skip
           </v-btn>
           <v-btn
-            color="primary"
-            class="no-capital"
-            @click="checkColubrina"
             :loading="colubrina.loading"
+            class="no-capital"
+            color="primary"
+            @click="checkColubrina"
           >
             <v-icon class="mr-1">mdi-check</v-icon>
             Let's go
@@ -147,9 +147,9 @@
       <template v-if="step === 4">
         <v-img
           class="wizard-banner"
-          width="1920"
           max-height="400"
           src="https://i.troplo.com/i/af3346db35a8.png"
+          width="1920"
         ></v-img>
         <v-card-title class="text-center justify-center">
           Import your GeoSave
@@ -160,19 +160,19 @@
         </v-card-subtitle>
         <v-container>
           <v-file-input
+            v-model="geoSave"
+            autofocus
+            dense
             label="GeoSave"
             outlined
-            dense
-            autofocus
-            v-model="geoSave"
           ></v-file-input>
         </v-container>
         <v-card-actions class="text-center justify-center">
-          <v-btn color="red" class="no-capital" @click="step++">
+          <v-btn class="no-capital" color="red" @click="step++">
             <v-icon class="mr-1">mdi-close</v-icon>
             Skip
           </v-btn>
-          <v-btn color="primary" class="no-capital" @click="step++">
+          <v-btn class="no-capital" color="primary" @click="step++">
             <v-icon class="mr-1">mdi-check</v-icon>
             Let's go
           </v-btn>
@@ -181,9 +181,9 @@
       <template v-if="step === 5">
         <v-img
           class="wizard-banner"
-          width="1920"
           max-height="400"
           src="https://i.troplo.com/i/f654e23bdd22.png"
+          width="1920"
         ></v-img>
         <v-card-title class="text-center justify-center">
           Migrate Compass account
@@ -194,11 +194,11 @@
         </v-card-subtitle>
         <v-container>Currently unavailable</v-container>
         <v-card-actions class="text-center justify-center">
-          <v-btn color="red" class="no-capital" @click="step++">
+          <v-btn class="no-capital" color="red" @click="step++">
             <v-icon class="mr-1">mdi-close</v-icon>
             Skip
           </v-btn>
-          <v-btn color="primary" class="no-capital" @click="step++">
+          <v-btn class="no-capital" color="primary" @click="step++">
             <v-icon class="mr-1">mdi-check</v-icon>
             Let's go
           </v-btn>
@@ -207,9 +207,9 @@
       <template v-if="step === 6">
         <v-img
           class="wizard-banner"
-          width="1920"
           max-height="400"
           src="https://i.troplo.com/i/b365c2da135c.png"
+          width="1920"
         ></v-img>
         <p class="text-grey text-center justify-center">
           Receive emails right inside of TPU with TPU Mail with your own unique
@@ -225,11 +225,11 @@
         </p>
         <v-container>Currently unavailable</v-container>
         <v-card-actions class="text-center justify-center">
-          <v-btn color="red" class="no-capital" @click="step++">
+          <v-btn class="no-capital" color="red" @click="step++">
             <v-icon class="mr-1">mdi-close</v-icon>
             Skip
           </v-btn>
-          <v-btn color="primary" class="no-capital" @click="step++">
+          <v-btn class="no-capital" color="primary" @click="step++">
             <v-icon class="mr-1">mdi-check</v-icon>
             Let's go
           </v-btn>
@@ -238,15 +238,15 @@
       <template v-if="step === 7">
         <v-img
           class="wizard-banner"
-          width="1920"
           max-height="400"
           src="https://i.troplo.com/i/e2442d036b4f.png"
+          width="1920"
         ></v-img>
         <v-card-subtitle class="text-center justify-center">
           Remember the new address!
         </v-card-subtitle>
         <v-card-actions class="text-center justify-center">
-          <v-btn color="primary" class="no-capital" @click="step++">
+          <v-btn class="no-capital" color="primary" @click="step++">
             <v-icon class="mr-1">mdi-check</v-icon>
             Next
           </v-btn>
@@ -255,17 +255,17 @@
       <template v-if="step === 8">
         <v-img
           class="wizard-banner"
-          width="1920"
           max-height="400"
           src="https://i.troplo.com/i/2b0f90b34cad.png"
+          width="1920"
         ></v-img>
         <v-card-subtitle class="text-center justify-center">
           You're done!
         </v-card-subtitle>
         <v-card-actions class="text-center justify-center">
           <v-btn
-            color="primary"
             class="no-capital"
+            color="primary"
             @click="$emit('update:modelValue', false)"
           >
             <v-icon class="mr-1">mdi-check</v-icon>
@@ -278,7 +278,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "MigrateWizard",
@@ -294,22 +294,22 @@ export default defineComponent({
         totp: "",
         loading: false
       }
-    };
+    }
   },
   methods: {
     async checkColubrina() {
-      this.colubrina.loading = true;
+      this.colubrina.loading = true
       try {
         await this.axios.post("/migrate/colubrina", {
           username: this.colubrina.username,
           password: this.colubrina.password,
           totp: this.colubrina.totp
-        });
-        if (this.$experiments.experiments["CLASSIC_MIGRATE"]) this.step++;
-        else this.step = 8;
-        this.colubrina.loading = false;
+        })
+        if (this.$experiments.experiments["CLASSIC_MIGRATE"]) this.step++
+        else this.step = 8
+        this.colubrina.loading = false
       } catch {
-        this.colubrina.loading = false;
+        this.colubrina.loading = false
       }
     }
   },
@@ -317,11 +317,11 @@ export default defineComponent({
     modelValue: {
       immediate: true,
       handler(val) {
-        if (!val) this.step = 1;
+        if (!val) this.step = 1
       }
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

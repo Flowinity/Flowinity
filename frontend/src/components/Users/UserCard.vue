@@ -1,6 +1,6 @@
 <template>
   <v-card :to="`/u/${username}`" class="my-2 user-card">
-    <UserBanner :user="user" :height="120">
+    <UserBanner :height="120" :user="user">
       <div class="d-flex" style="align-items: center; height: 120px">
         <UserAvatar :size="80" :user="user" class="ml-4"></UserAvatar>
         <v-card-title>
@@ -15,30 +15,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { User } from "@/models/user";
-import UserBanner from "@/components/Users/UserBanner.vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
+import {defineComponent} from "vue"
+import {User} from "@/models/user"
+import UserBanner from "@/components/Users/UserBanner.vue"
+import UserAvatar from "@/components/Users/UserAvatar.vue"
 
 export default defineComponent({
   name: "UserCard",
-  components: { UserAvatar, UserBanner },
+  components: {UserAvatar, UserBanner},
   props: ["username", "subtitle"],
   data() {
     return {
       user: null as User | null
-    };
+    }
   },
   methods: {
     async getUser() {
-      const { data } = await this.axios.get(`/user/profile/${this.username}`);
-      this.user = data;
+      const {data} = await this.axios.get(`/user/profile/${this.username}`)
+      this.user = data
     }
   },
   mounted() {
-    this.getUser();
+    this.getUser()
   }
-});
+})
 </script>
 
 <style>

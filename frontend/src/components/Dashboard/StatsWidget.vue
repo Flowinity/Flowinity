@@ -3,89 +3,89 @@
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
         :title="$t('stats.collections')"
-        :value="$app.site.stats.collections?.toLocaleString()"
         :user="true"
+        :value="$app.site.stats.collections?.toLocaleString()"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
         :title="$t('stats.collectivized')"
-        :value="$app.site.stats.collectionItems?.toLocaleString()"
         :user="true"
+        :value="$app.site.stats.collectionItems?.toLocaleString()"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
         :title="$t('stats.hours')"
-        :value="$app.site.stats.pulse?.toLocaleString() + 'h'"
         :user="true"
+        :value="$app.site.stats.pulse?.toLocaleString() + 'h'"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
         :title="$t('stats.users')"
-        :value="$app.site.stats.users?.toLocaleString()"
         :user="true"
+        :value="$app.site.stats.users?.toLocaleString()"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
         :title="$t('stats.uploads')"
-        :value="$app.site.stats.uploads?.toLocaleString()"
         :user="true"
+        :value="$app.site.stats.uploads?.toLocaleString()"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
         :title="$t('stats.usage')"
-        :value="$functions.fileSize($app.site.stats.usage)"
         :user="true"
+        :value="$functions.fileSize($app.site.stats.usage)"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
         :title="$t('stats.pulses')"
-        :value="$app.site.stats.pulses?.toLocaleString()"
         :user="true"
+        :value="$app.site.stats.pulses?.toLocaleString()"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
         :title="$t('stats.invited')"
-        :value="$app.site.stats.invites?.toLocaleString()"
         :user="true"
+        :value="$app.site.stats.invites?.toLocaleString()"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="xl">
       <StatsCard
         :title="$t('stats.documents')"
-        :value="$app.site.stats.docs?.toLocaleString()"
         :user="true"
+        :value="$app.site.stats.docs?.toLocaleString()"
       ></StatsCard>
     </v-col>
     <v-col :cols="cols" :sm="6">
       <StatsCard
         :title="$t('stats.messages')"
-        :value="$app.site.stats.messages?.toLocaleString()"
         :user="true"
+        :value="$app.site.stats.messages?.toLocaleString()"
       ></StatsCard>
     </v-col>
-    <v-col :cols="cols" :sm="6" :lg="12" :xl="6">
+    <v-col :cols="cols" :lg="12" :sm="6" :xl="6">
       <StatsCard
         :title="$t('stats.chats')"
-        :value="$app.site.stats.chats?.toLocaleString()"
         :user="true"
+        :value="$app.site.stats.chats?.toLocaleString()"
       ></StatsCard>
     </v-col>
   </v-row>
 </template>
 
 <script lang="ts">
-import StatsCard from "@/components/Dashboard/StatsCard.vue";
+import StatsCard from "@/components/Dashboard/StatsCard.vue"
 
 export default {
   name: "StatsWidget",
-  components: { StatsCard },
+  components: {StatsCard},
   props: {
     cols: {
       type: Number,
@@ -108,7 +108,7 @@ export default {
       default: 4
     }
   }
-};
+}
 </script>
 
 <style scoped></style>

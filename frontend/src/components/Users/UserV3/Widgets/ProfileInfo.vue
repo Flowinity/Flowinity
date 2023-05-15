@@ -1,43 +1,43 @@
 <template>
   <v-card-text class="text-overline">About {{ user.username }}</v-card-text>
   <v-card-text
+    v-if="!settings.description.value"
     class="mt-n7"
     style="overflow-wrap: break-word; white-space: pre-line"
-    v-if="!settings.description.value"
   >
     {{ user.description }}
     <v-btn
+      v-if="$user.user?.id === user.id"
+      class="grey--text"
       icon
       size="x-small"
-      class="grey--text"
-      v-if="$user.user?.id === user.id"
       @click="settings.description.value = true"
     >
       <v-icon>mdi-pencil</v-icon>
     </v-btn>
   </v-card-text>
   <v-card-text
+    v-else
     class="mt-n7"
     style="overflow-wrap: break-word; white-space: pre-line"
-    v-else
   >
     <v-textarea
       v-model="$user.changes.description"
-      outlined
-      autofocus
-      @keydown.esc="settings.description.value = false"
-      dense
-      auto-grow
-      :rows="1"
       :counter="255"
+      :rows="1"
+      auto-grow
+      autofocus
+      dense
+      outlined
+      @keydown.esc="settings.description.value = false"
       @keydown.exact.ctrl.enter="save"
     ></v-textarea>
     <v-card-actions class="mt-n4">
       <v-spacer></v-spacer>
       <v-btn
-        @click="save"
-        color="primary"
         :loading="settings.description.loading"
+        color="primary"
+        @click="save"
       >
         Save
       </v-btn>
@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "ProfileInfo",
@@ -61,14 +61,14 @@ export default defineComponent({
   }),
   methods: {
     async save() {
-      this.settings.description.loading = true;
-      await this.$user.save();
-      if (this.user) this.user.description = this.$user.user?.description;
-      this.settings.description.value = false;
-      this.settings.description.loading = false;
+      this.settings.description.loading = true
+      await this.$user.save()
+      if (this.user) this.user.description = this.$user.user?.description
+      this.settings.description.value = false
+      this.settings.description.loading = false
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

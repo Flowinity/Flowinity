@@ -1,13 +1,13 @@
 <template>
   <v-card>
     <v-container class="text-center">
-      <strong style="font-size: 24px" class="text-gradient text-center">
+      <strong class="text-gradient text-center" style="font-size: 24px">
         {{ title }}
       </strong>
-      <p class="text-grey" style="font-size: 14px" v-if="subtitle">
+      <p v-if="subtitle" class="text-grey" style="font-size: 14px">
         {{ subtitle }}
       </p>
-      <h1 style="font-size: 4em" v-if="count !== undefined">
+      <h1 v-if="count !== undefined" style="font-size: 4em">
         {{ count.toLocaleString() }}
       </h1>
       <slot v-else></slot>
@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "InsightsStatsCard",
@@ -58,39 +58,39 @@ export default defineComponent({
           return {
             icon: "mdi-arrow-up-circle",
             color: "success"
-          };
+          }
         } else if (diff < 0) {
           return {
             icon: "mdi-arrow-down-circle",
             color: "red"
-          };
+          }
         } else {
           return {
             icon: "mdi-minus-circle",
             color: "warning"
-          };
+          }
         }
       } else {
         if (diff > 0) {
           return {
             icon: "mdi-arrow-up-circle",
             color: "red"
-          };
+          }
         } else if (diff < 0) {
           return {
             icon: "mdi-arrow-down-circle",
             color: "success"
-          };
+          }
         } else {
           return {
             icon: "mdi-minus-circle",
             color: "warning"
-          };
+          }
         }
       }
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

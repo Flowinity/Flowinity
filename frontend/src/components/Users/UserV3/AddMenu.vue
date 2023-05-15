@@ -1,6 +1,6 @@
 <template>
   <v-btn class="float-right mb-2">
-    <v-menu location="bottom" activator="parent">
+    <v-menu activator="parent" location="bottom">
       <template v-slot:activator>
         <v-icon class="mr-1">mdi-plus</v-icon>
         Add widget
@@ -8,16 +8,16 @@
       <v-list max-height="300">
         <div v-for="comp in components">
           <v-tooltip
+            v-if="comp.disabled"
             :eager="false"
             activator="parent"
             location="top"
-            v-if="comp.disabled"
           >
             Link your account in Settings > Integrations.
           </v-tooltip>
           <v-list-item
-            :disabled="comp.disabled"
             :key="comp.id"
+            :disabled="comp.disabled"
             @click="$emit('add', comp.id)"
           >
             <v-list-item-title>{{ comp.name }}</v-list-item-title>
@@ -29,13 +29,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "UserV3AddMenu",
   props: ["components"],
   emits: ["add"]
-});
+})
 </script>
 
 <style scoped></style>

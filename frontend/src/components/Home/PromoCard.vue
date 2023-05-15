@@ -1,26 +1,26 @@
 <template>
   <v-card
+    :class="{ hover: hover, 'elevation-0': hover }"
+    :height="!$vuetify.display.mobile ? height : undefined"
+    :width="width"
     class="mx-auto mt-6"
     elevation="6"
     max-width="1000"
-    :width="width"
-    :height="!$vuetify.display.mobile ? height : undefined"
-    :class="{ hover: hover, 'elevation-0': hover }"
   >
     <v-row style="margin: 0">
-      <v-col cols="12" md="6" v-if="image" style="padding: 0">
+      <v-col v-if="image" cols="12" md="6" style="padding: 0">
         <v-img :src="image" contain></v-img>
       </v-col>
       <v-col
-        cols="12"
         :md="image ? 6 : 12"
+        cols="12"
         style="display: flex; padding: 0; align-items: center"
       >
         <div
           :class="{ fix: image && !$vuetify.display.mobile }"
           style="align-items: center"
         >
-          <v-icon v-if="icon" size="92" class="text-grey mt-3">
+          <v-icon v-if="icon" class="text-grey mt-3" size="92">
             {{ icon }}
           </v-icon>
           <v-card-title class="display-1 font-weight-bold mt-n1 mb-n1">
@@ -42,16 +42,18 @@
 export default {
   name: "PromoCard",
   props: ["title", "image", "icon", "width", "height", "hover", "left"]
-};
+}
 </script>
 
 <style scoped>
 .hover {
   background: transparent !important;
 }
+
 .hover:hover {
   background-color: rgb(24, 24, 24) !important;
 }
+
 .fix {
   display: flex;
   flex-direction: column;

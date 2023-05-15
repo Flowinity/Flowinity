@@ -8,54 +8,54 @@
       <div class="date-separator-line"></div>
     </div>
     <v-toolbar
-      height="auto"
       v-if="message.reply"
+      class="ml-6 my-1 pointer limit"
       color="transparent"
       floating
-      class="ml-6 my-1 pointer limit"
+      height="auto"
       @click.prevent="$emit('jumpToMessage', message.reply.id)"
     >
       <v-icon class="mr-2">mdi-reply</v-icon>
       <UserAvatar
-        size="24"
         :user="message.reply?.user"
         class="mr-2"
+        size="24"
       ></UserAvatar>
       {{ message.reply?.content }}
     </v-toolbar>
     <v-toolbar
       v-else-if="message.replyId"
-      height="auto"
+      class="ml-6 my-1 pointer limit"
       color="transparent"
       floating
-      class="ml-6 my-1 pointer limit"
+      height="auto"
     >
       <v-icon class="mr-2">mdi-reply</v-icon>
       <UserAvatar
-        size="24"
         :user="{ id: 0, username: '?' }"
         class="mr-2"
+        size="24"
       ></UserAvatar>
       Deleted Message
     </v-toolbar>
     <v-hover v-slot="{ isHovering, props }">
       <v-list-item
-        color="transparent"
-        class="message rounded-0"
         :class="{ merge, 'message-mention': mentions }"
-        @contextmenu="context"
+        class="message rounded-0"
+        color="transparent"
         v-bind="props"
+        @contextmenu="context"
       >
         <v-btn
-          style="position: absolute; right: 0"
-          class="mr-2 mt-2 text-grey"
-          icon
-          size="x-small"
           v-if="
             $chat.selectedChat?.association.rank &&
             ['admin', 'owner'].includes($chat.selectedChat?.association.rank) &&
             pins
           "
+          class="mr-2 mt-2 text-grey"
+          icon
+          size="x-small"
+          style="position: absolute; right: 0"
           @click.stop="
             $chat.pinMessage(message.id, !message.pinned).then(() => {
               $emit('refresh');
@@ -67,8 +67,9 @@
         <template v-slot:prepend>
           <template v-if="!merge">
             <div
-              style="align-items: start !important; display: flex"
               v-if="!message.type || message.type === 'message'"
+              class="pointer mr-3"
+              style="align-items: start !important; display: flex"
               @click.prevent="
                 $emit('authorClick', {
                   user: message.user,
@@ -77,14 +78,13 @@
                   y: $event.y
                 })
               "
-              class="pointer mr-3"
             >
               <CommunicationsAvatar
-                :user="message.user"
                 :id="'message-author-avatar-' + message.id"
+                :user="message.user"
               ></CommunicationsAvatar>
             </div>
-            <div class="mr-3 text-grey" v-else>
+            <div v-else class="mr-3 text-grey">
               <v-icon v-if="message.type === 'join'" class="mr-1" size="36">
                 mdi-account-plus
               </v-icon>
@@ -103,10 +103,10 @@
           </template>
           <template v-else>
             <small
-              style="font-size: 9px"
+              v-if="merge"
               :style="mentions ? 'margin-right: 1.9em' : 'margin-right: 2.30em'"
               class="text-grey message-date"
-              v-if="merge"
+              style="font-size: 9px"
             >
               <v-tooltip
                 activator="parent"
@@ -123,13 +123,13 @@
           v-if="
             (!message.type && !merge) || (message.type === 'message' && !merge)
           "
-          class="unselectable"
           :class="{ 'text-red': message.error }"
+          class="unselectable"
         >
           <a
+            :id="'message-author-' + message.id"
             class="mr-1 pointer underline-on-hover"
             style="color: unset"
-            :id="'message-author-' + message.id"
             @click.prevent="
               $emit('authorClick', {
                 user: message.user,
@@ -149,9 +149,9 @@
               {{ $date(message.editedAt).format("DD/MM/YYYY hh:mm:ss A") }}
             </v-tooltip>
             <v-icon
+              class="ml-3"
               color="grey"
               size="x-small"
-              class="ml-3"
               style="display: inline-block"
             >
               mdi-pencil
@@ -172,9 +172,9 @@
               {{ $date(message.editedAt).format("DD/MM/YYYY hh:mm:ss A") }}
             </v-tooltip>
             <v-icon
+              class="ml-3"
               color="grey"
               size="x-small"
-              class="ml-3"
               style="display: inline-block"
             >
               mdi-pencil
@@ -182,26 +182,26 @@
           </span>
         </span>
         <CommunicationsInput
-          @edit="$emit('edit', { id: null, content: null })"
           v-else-if="editing"
-          :modelValue="editingText"
-          @update:modelValue="$emit('editText', $event)"
           :editing="true"
+          :modelValue="editingText"
+          @edit="$emit('edit', { id: null, content: null })"
           @sendMessage="$emit('editMessage', $event)"
+          @update:modelValue="$emit('editText', $event)"
         />
         <MessageActions
-          @edit="$emit('edit', { id: message.id, content: message.content })"
-          :message="message"
-          @reply="$emit('reply', message)"
-          @delete="$emit('delete', { message, shifting: $event })"
           v-if="(!search && isHovering) || (!search && avoid)"
-          @avoid="avoid = $event"
           :avoid="avoid"
+          :message="message"
+          @avoid="avoid = $event"
+          @delete="$emit('delete', { message, shifting: $event })"
+          @edit="$emit('edit', { id: message.id, content: message.content })"
+          @reply="$emit('reply', message)"
         ></MessageActions>
         <Embed
           v-for="(embed, index) in message.embeds"
-          :embed="embed"
           :key="index"
+          :embed="embed"
         />
         <template v-slot:append>
           <div style="position: absolute; right: 10px; bottom: 0">
@@ -210,14 +210,14 @@
               :key="readReceipt.id"
             >
               <ReadReceipt
+                v-if="index < renderableReadReceipts"
                 :message="message"
                 :read-receipt="readReceipt"
-                v-if="index < renderableReadReceipts"
               />
             </template>
             <span
-              class="text-grey ml-1 mr-2"
               v-if="message.readReceipts.length > renderableReadReceipts"
+              class="text-grey ml-1 mr-2"
               @click.stop
             >
               <v-menu activator="parent" location="top">
@@ -241,13 +241,13 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
-import CommunicationsInput from "@/components/Communications/Input.vue";
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
-import MessageActions from "@/components/Communications/MessageActions.vue";
-import Embed from "@/components/Communications/Embed.vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
-import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
+import {defineComponent} from "vue"
+import CommunicationsInput from "@/components/Communications/Input.vue"
+import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue"
+import MessageActions from "@/components/Communications/MessageActions.vue"
+import Embed from "@/components/Communications/Embed.vue"
+import UserAvatar from "@/components/Users/UserAvatar.vue"
+import ReadReceipt from "@/components/Communications/ReadReceipt.vue"
 
 export default defineComponent({
   name: "Message",
@@ -271,31 +271,31 @@ export default defineComponent({
   data() {
     return {
       avoid: false
-    };
+    }
   },
   methods: {
     context(e: any) {
-      e.preventDefault();
-      this.$chat.dialogs.message.message = this.message;
-      this.$chat.dialogs.message.x = e.clientX;
-      this.$chat.dialogs.message.y = e.clientY;
-      this.$chat.dialogs.message.value = true;
+      e.preventDefault()
+      this.$chat.dialogs.message.message = this.message
+      this.$chat.dialogs.message.x = e.clientX
+      this.$chat.dialogs.message.y = e.clientY
+      this.$chat.dialogs.message.value = true
     }
   },
   computed: {
     renderableReadReceipts() {
-      if (this.$vuetify.display.mobile) return 2;
-      if (this.$vuetify.display.sm) return 10;
-      if (this.$vuetify.display.md) return 10;
-      if (this.$vuetify.display.xl) return 15;
-      if (this.$vuetify.display.xxl) return 20;
-      return 10;
+      if (this.$vuetify.display.mobile) return 2
+      if (this.$vuetify.display.sm) return 10
+      if (this.$vuetify.display.md) return 10
+      if (this.$vuetify.display.xl) return 15
+      if (this.$vuetify.display.xxl) return 20
+      return 10
     },
     mentions() {
-      return !!this.message.content.includes(`<@${this.$user.user?.id}>`);
+      return !!this.message.content.includes(`<@${this.$user.user?.id}>`)
     }
   }
-});
+})
 </script>
 
 <style>

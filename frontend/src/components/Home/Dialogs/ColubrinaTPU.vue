@@ -1,11 +1,11 @@
 <template>
   <v-dialog
-    @update:model-value="$emit('update:modelValue', $event)"
     :model-value="modelValue"
     max-width="600px"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-card color="#151515">
-      <v-img src="https://i.troplo.com/i/69d36e5ebdea.png" class="mx-4"></v-img>
+      <v-img class="mx-4" src="https://i.troplo.com/i/69d36e5ebdea.png"></v-img>
       <v-card-title class="text-center justify-center">
         Colubrina is now TPU.
       </v-card-title>
@@ -14,14 +14,14 @@
       </v-card-subtitle>
       <v-card-actions class="text-center justify-center">
         <v-btn
-          color="primary"
           class="no-capital mr-8"
+          color="primary"
           @click="$emit('update:modelValue', false)"
         >
           <v-icon class="mr-1">mdi-arrow-left</v-icon>
           Learn More
         </v-btn>
-        <v-btn color="primary" class="no-capital" to="/register">
+        <v-btn class="no-capital" color="primary" to="/register">
           <v-icon class="mr-1">mdi-arrow-right</v-icon>
           Register now
         </v-btn>
@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "ColubrinaTPU",
@@ -42,7 +42,7 @@ export default defineComponent({
     }
   },
   emits: ["update:modelValue"]
-});
+})
 </script>
 
 <style scoped></style>

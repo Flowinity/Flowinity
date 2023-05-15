@@ -1,27 +1,27 @@
 <template>
   <v-card
-    width="300"
+    v-if="user"
     class="justify-center text-center"
     style="position: relative"
-    v-if="user"
+    width="300"
   >
     <UserBanner :user="user" height="90"></UserBanner>
     <v-card-text class="ml-n2 center" style="position: relative">
       <UserAvatar
-        :user="user"
-        size="100"
-        class="avatar"
+        :no-badges="true"
         :outline="true"
         :status="true"
-        :no-badges="true"
+        :user="user"
+        class="avatar"
+        size="100"
       >
         <div style="cursor: pointer" @click="expand">
-          <v-overlay contained persistent :model-value="true" @click="expand">
+          <v-overlay :model-value="true" contained persistent @click="expand">
             <v-icon large>mdi-expand</v-icon>
           </v-overlay>
         </div>
       </UserAvatar>
-      <h1 style="font-weight: 500" class="mt-12 mb-4">
+      <h1 class="mt-12 mb-4" style="font-weight: 500">
         {{ user.username }}
       </h1>
       <UserBadges :user="user" class="justify-center"></UserBadges>
@@ -42,34 +42,34 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import UserBanner from "@/components/Users/UserBanner.vue";
-import UserBadges from "@/components/Users/UserBadges.vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
+import {defineComponent} from "vue"
+import UserBanner from "@/components/Users/UserBanner.vue"
+import UserBadges from "@/components/Users/UserBadges.vue"
+import UserAvatar from "@/components/Users/UserAvatar.vue"
 
 export default defineComponent({
   name: "ColubrinaUserMenu",
-  components: { UserAvatar, UserBadges, UserBanner },
+  components: {UserAvatar, UserBadges, UserBanner},
   computed: {
     user() {
       if (this.$chat.dialogs.userMenu.user?.id === this.$user.user?.id)
-        return this.$user.user;
+        return this.$user.user
       return (
         this.$friends.friends.find(
           (friend) =>
             friend.otherUser.username === this.$chat.dialogs.userMenu.username
         )?.otherUser || this.$chat.dialogs.userMenu.user
-      );
+      )
     }
   },
   methods: {
     expand() {
-      this.$chat.dialogs.user.username = this.$chat.dialogs.userMenu.username;
-      this.$chat.dialogs.user.value = true;
-      this.$chat.dialogs.userMenu.value = false;
+      this.$chat.dialogs.user.username = this.$chat.dialogs.userMenu.username
+      this.$chat.dialogs.user.value = true
+      this.$chat.dialogs.userMenu.value = false
     }
   }
-});
+})
 </script>
 
 <style scoped>

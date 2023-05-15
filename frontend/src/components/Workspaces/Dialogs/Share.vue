@@ -1,16 +1,16 @@
 <template>
   <CoreDialog
-    max-width="600px"
     :model-value="modelValue"
+    max-width="600px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>Document Sharing</template>
     <v-card-text>
       <v-checkbox
-        @change="update"
         v-model="share"
-        label="Share this document"
         class="mt-n2 mb-n5 ml-n3"
+        label="Share this document"
+        @change="update"
       />
       Anyone can view this note if they have the link, but cannot edit it.
       <template v-if="share">
@@ -41,11 +41,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import {defineComponent} from "vue"
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+
 export default defineComponent({
   name: "WorkspaceShareDialog",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
@@ -53,27 +54,27 @@ export default defineComponent({
       share: false,
       shareLink: "",
       loading: false
-    };
+    }
   },
   methods: {
     async update() {
-      const { data } = await this.axios.patch(
+      const {data} = await this.axios.patch(
         "/notes/" + this.$route.params.id + "/share"
-      );
-      this.shareLink = data.shareLink;
-      this.share = data.shareLink !== null;
+      )
+      this.shareLink = data.shareLink
+      this.share = data.shareLink !== null
     }
   },
   async mounted() {
-    const { data } = await this.axios.get("/notes/" + this.$route.params.id, {
+    const {data} = await this.axios.get("/notes/" + this.$route.params.id, {
       headers: {
         noToast: true
       }
-    });
-    this.shareLink = data.shareLink;
-    this.share = data.shareLink !== null;
+    })
+    this.shareLink = data.shareLink
+    this.share = data.shareLink !== null
   }
-});
+})
 </script>
 
 <style scoped></style>

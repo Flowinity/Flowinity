@@ -1,8 +1,8 @@
 <template>
   <CoreDialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     max-width="600px"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>
       {{ type === "api" ? "Add API Key" : "Add Alternate Password" }}
@@ -10,35 +10,35 @@
     <v-card-text v-if="!key">
       <v-text-field
         v-model="name"
+        autofocus
         label="Name"
         required
         @keydown.enter="addAPIKey"
-        autofocus
       ></v-text-field>
       <v-text-field
+        v-if="type === 'api'"
         v-model="expiry"
+        disabled
         label="Expiry"
         readonly
-        disabled
-        v-if="type === 'api'"
       ></v-text-field>
       <v-text-field
+        v-if="type === 'password'"
         v-model="password"
         label="Password"
         type="password"
-        v-if="type === 'password'"
       ></v-text-field>
       <v-select
-        label="Select"
-        :items="availableScopes"
         v-model="scopes"
+        :items="availableScopes"
         item-title="name"
         item-value="id"
+        label="Select"
         multiple
       ></v-select>
     </v-card-text>
     <v-card-text v-else>
-      <v-text-field v-model="key" label="Key" disabled readonly></v-text-field>
+      <v-text-field v-model="key" disabled label="Key" readonly></v-text-field>
       <p>
         Use this key with any TPU integrations. This is a secret, do not share
         it with anyone.
@@ -66,12 +66,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import {defineComponent} from "vue"
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
 
 export default defineComponent({
   name: "CreateAPIKey",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue", "type"],
   emits: ["update:modelValue", "create"],
   data() {
@@ -155,38 +155,38 @@ export default defineComponent({
       expiry: "",
       scopes: ["uploads.create", "user.view"],
       password: ""
-    };
+    }
   },
   methods: {
     async addAPIKey() {
-      const { data } = await this.axios.post("/security/keys", {
+      const {data} = await this.axios.post("/security/keys", {
         name: this.name,
         scopes: this.scopes,
         expiry: this.expiry
-      });
-      this.key = data.token;
-      this.$emit("create", data);
+      })
+      this.key = data.token
+      this.$emit("create", data)
     },
     async addAlternatePassword() {
-      const { data } = await this.axios.post("/security/passwords", {
+      const {data} = await this.axios.post("/security/passwords", {
         name: this.name,
         scopes: this.scopes,
         password: this.password,
         totp: false
-      });
-      this.$emit("create", data);
-      this.$emit("update:modelValue", false);
+      })
+      this.$emit("create", data)
+      this.$emit("update:modelValue", false)
     }
   },
   watch: {
     modelValue() {
-      this.key = "";
-      this.name = "";
-      this.expiry = "";
-      this.scopes = ["uploads.create", "user.view"];
+      this.key = ""
+      this.name = ""
+      this.expiry = ""
+      this.scopes = ["uploads.create", "user.view"]
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

@@ -1,16 +1,16 @@
 <template>
   <h1
-    style="z-index: 10; cursor: pointer; font-size: 32px"
-    class="text-gradient unselectable ml-4"
-    @click="$router.push('/')"
+    v-if="!$vuetify.display.mobile && event !== 'bc'"
     id="tpu-brand-logo"
     :title="event === 'j' ? 'Jitsi Anniversary' : 'TroploPrivateUploader'"
-    v-if="!$vuetify.display.mobile && event !== 'bc'"
+    class="text-gradient unselectable ml-4"
+    style="z-index: 10; cursor: pointer; font-size: 32px"
+    @click="$router.push('/')"
   >
     <template v-if="!$experiments.experiments.FLOWINITY_REBRAND">TPU</template>
     <template v-else>Flowinity</template>
-    <v-hover v-slot="{ isHovering, props }" v-if="event === 'pi'">
-      <span v-bind="props" class="ml-1">
+    <v-hover v-if="event === 'pi'" v-slot="{ isHovering, props }">
+      <span class="ml-1" v-bind="props">
         <template v-if="isHovering">
           <span style="font-size: 1.15em">
             {{ Math.PI }}
@@ -22,33 +22,33 @@
       </span>
     </v-hover>
     <v-icon
+      v-if="event === 'bd'"
       class="text-gradient"
       size="23"
       style="bottom: 0.05em"
-      v-if="event === 'bd'"
     >
       mdi-numeric-1-box
     </v-icon>
     <v-icon
+      v-if="event === 'bd'"
       class="text-gradient"
       size="23"
       style="bottom: 0.05em"
-      v-if="event === 'bd'"
     >
       mdi-numeric-7-box
     </v-icon>
     <v-img
-      src="https://i.troplo.com/i/1bcf4db450ba.svg"
-      width="32"
-      height="32"
-      style="position: relative; top: 0.15em; display: inline-block"
       v-if="event === 'j'"
+      height="32"
+      src="https://i.troplo.com/i/1bcf4db450ba.svg"
+      style="position: relative; top: 0.15em; display: inline-block"
+      width="32"
     ></v-img>
     <v-icon
+      v-if="event === '420'"
       class="text-gradient ml-n1"
       size="34"
       style="bottom: 0.05em"
-      v-if="event === '420'"
     >
       mdi-cannabis
     </v-icon>
@@ -66,49 +66,49 @@
         mdi-numeric-1-box
       </v-icon>
     </v-card-title>
-    <v-btn disabled class="ml-n5">Dev</v-btn>
+    <v-btn class="ml-n5" disabled>Dev</v-btn>
   </template>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "LogoEasterEgg",
   computed: {
     event() {
-      const date = this.$date().format("MMDD");
+      const date = this.$date().format("MMDD")
       switch (date) {
         case "0314":
-          return "pi";
+          return "pi"
         case "0317":
-          return "bc";
+          return "bc"
         case "0331":
-          return "bd";
+          return "bd"
         case "0401":
-          return "j";
+          return "j"
         case "0420":
-          return "420";
+          return "420"
         case "0101":
-          return "ny";
+          return "ny"
         case "1225":
-          return "xmas";
+          return "xmas"
         case "1001":
-          return "halloween";
+          return "halloween"
         case "0704":
-          return "independence";
+          return "independence"
         case "0505":
-          return "cincodemayo";
+          return "cincodemayo"
         case "0908":
-          return "labor";
+          return "labor"
         case "1101":
-          return "veterans";
+          return "veterans"
         default:
-          return null;
+          return null
       }
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

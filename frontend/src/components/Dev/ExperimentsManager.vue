@@ -2,9 +2,9 @@
   <v-autocomplete
     v-model="selected"
     :items="users"
-    label="User"
     item-title="username"
     item-value="id"
+    label="User"
   ></v-autocomplete>
   <v-card v-for="experiment in relevantExperiments" class="my-2">
     <v-card-title>{{ experiment.name }}</v-card-title>
@@ -14,24 +14,24 @@
     </v-card-subtitle>
     <v-card-text v-if="experiment.type === 'boolean'">
       <v-radio-group v-model="$experiments.experiments[experiment.name]">
-        <v-radio label="Inherit" :value="experiment.inheritValue"></v-radio>
-        <v-radio label="Enabled" :value="true"></v-radio>
-        <v-radio label="Disabled" :value="false"></v-radio>
+        <v-radio :value="experiment.inheritValue" label="Inherit"></v-radio>
+        <v-radio :value="true" label="Enabled"></v-radio>
+        <v-radio :value="false" label="Disabled"></v-radio>
       </v-radio-group>
     </v-card-text>
     <v-card-text v-else-if="experiment.type === 'number'">
       <v-text-field
         :model-value="$experiments.experiments[experiment.name]"
+        type="number"
         @update:model-value="
           $experiments.experiments[experiment.name] = parseInt($event || '0')
         "
-        type="number"
       ></v-text-field>
     </v-card-text>
   </v-card>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "ExperimentsManager",
@@ -47,13 +47,13 @@ export default defineComponent({
           username: "LocalState"
         }
       ]
-    };
+    }
   },
   computed: {
     relevantExperiments() {
       const experiments = this.experiments.length
         ? this.experiments
-        : this.$experiments.experiments;
+        : this.$experiments.experiments
       return Object.entries(experiments)
         .map(([name, value]) => ({
           name,
@@ -62,16 +62,16 @@ export default defineComponent({
           type: typeof value,
           meta: this.$experiments.experimentsInherit.meta[name]
         }))
-        .filter((experiment) => experiment.name !== "meta");
+        .filter((experiment) => experiment.name !== "meta")
     }
   },
   async mounted() {
-    this.users.push(...(await this.$admin.getUsers()));
+    this.users.push(...(await this.$admin.getUsers()))
   },
   watch: {
     async selected() {
-      this.experiments = await this.$admin.getExperimentValues(this.selected);
+      this.experiments = await this.$admin.getExperimentValues(this.selected)
     }
   }
-});
+})
 </script>

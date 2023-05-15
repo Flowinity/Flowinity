@@ -1,8 +1,8 @@
 <template>
   <Bar
-    :options="chartOptions"
-    :data="data"
     v-if="data"
+    :data="data"
+    :options="chartOptions"
     :style="
       maxHeight ? `max-height: ${maxHeight}px; height: ${maxHeight}px` : ''
     "
@@ -10,19 +10,19 @@
 </template>
 
 <script lang="ts">
-import { Bar } from "vue-chartjs";
+import {Bar} from "vue-chartjs"
 import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
+  BarElement,
   CategoryScale,
+  Chart as ChartJS,
+  Legend,
   LinearScale,
   LineElement,
   PointElement,
-  BarElement
-} from "chart.js";
-import { defineComponent } from "vue";
+  Title,
+  Tooltip
+} from "chart.js"
+import {defineComponent} from "vue"
 
 ChartJS.register(
   Title,
@@ -33,11 +33,11 @@ ChartJS.register(
   LineElement,
   PointElement,
   BarElement
-);
+)
 
 export default defineComponent({
   name: "BarChart",
-  components: { Bar },
+  components: {Bar},
   props: ["data", "maxHeight"],
   computed: {
     chartOptions() {
@@ -47,11 +47,11 @@ export default defineComponent({
         title: {
           display: false
         }
-      };
+      }
     }
   },
   mounted() {
-    console.log(this.data);
+    console.log(this.data)
   }
-});
+})
 </script>

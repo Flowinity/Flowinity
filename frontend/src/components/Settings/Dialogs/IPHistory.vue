@@ -1,8 +1,8 @@
 <template>
   <CoreDialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     max-width="700px"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>IP History</template>
     <v-card-text>
@@ -27,12 +27,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import {defineComponent} from "vue"
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
 
 export default defineComponent({
   name: "IPHistory",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue", "history"],
   emits: ["update:modelValue"],
   data() {
@@ -59,9 +59,9 @@ export default defineComponent({
           key: "date"
         }
       ]
-    };
+    }
   }
-});
+})
 </script>
 
 <style scoped></style>

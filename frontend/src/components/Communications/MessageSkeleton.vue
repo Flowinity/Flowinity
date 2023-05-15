@@ -1,6 +1,6 @@
 <template>
-  <v-list-item color="transparent" class="skeleton">
-    <template v-slot:prepend v-if="pfp">
+  <v-list-item class="skeleton" color="transparent">
+    <template v-if="pfp" v-slot:prepend>
       <v-avatar
         :class="{
           'skeleton-loader': animate,
@@ -11,26 +11,26 @@
     </template>
     <p>
       <small
-        class="text-grey small-text"
         :class="{
           'skeleton-loader': animate,
           'skeleton-loader-no-animate': !animate
         }"
+        class="text-grey small-text"
       ></small>
     </p>
 
     <span
-      class="message-contents"
       :class="{
         'skeleton-loader': animate,
         'skeleton-loader-no-animate': !animate
       }"
+      class="message-contents"
     ></span>
   </v-list-item>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "MessageSkeleton",
@@ -44,10 +44,10 @@ export default defineComponent({
       default: true
     }
   }
-});
+})
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .skeleton-loader-no-animate {
   display: inline-block;
   height: 1em;
@@ -70,6 +70,7 @@ export default defineComponent({
 
 .skeleton-loader {
   backdrop-filter: brightness(1.5);
+
   &::after {
     position: absolute;
     top: 0;
@@ -78,15 +79,16 @@ export default defineComponent({
     left: 0;
     transform: translateX(-100%);
     background-image: linear-gradient(
-      90deg,
-      rgba(var(--skeleton-loader-bg-alt), 0) 0,
-      rgba(var(--skeleton-loader-bg-alt), 0.2) 20%,
-      rgba(var(--skeleton-loader-bg-alt), 0.5) 60%,
-      rgba(var(--skeleton-loader-bg-alt), 0)
+        90deg,
+        rgba(var(--skeleton-loader-bg-alt), 0) 0,
+        rgba(var(--skeleton-loader-bg-alt), 0.2) 20%,
+        rgba(var(--skeleton-loader-bg-alt), 0.5) 60%,
+        rgba(var(--skeleton-loader-bg-alt), 0)
     );
     animation: shimmer 2s infinite;
     content: "";
   }
+
   @keyframes shimmer {
     100% {
       transform: translateX(100%);

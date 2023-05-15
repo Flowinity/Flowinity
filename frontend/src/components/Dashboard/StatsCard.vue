@@ -2,11 +2,11 @@
   <v-card class="text-center justify-center">
     <v-container>
       <strong
-        style="font-size: 24px"
         :class="{
           'text-gradient-custom text-gradient': !user,
           'text-gradient': user
         }"
+        style="font-size: 24px"
       >
         {{ title }}
       </strong>
@@ -18,12 +18,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "StatsCard",
   props: ["title", "value", "gold", "primaryColor", "user"]
-});
+})
 </script>
 
 <style scoped>

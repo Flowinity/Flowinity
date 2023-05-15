@@ -1,29 +1,29 @@
 <template>
   <CoreDialog
+    :model-value="modelValue"
     max-width="500px"
     @update:model-value="$emit('update:modelValue', $event)"
-    :model-value="modelValue"
   >
     <template v-slot:title>Upload to TPU</template>
     <v-progress-linear
-      :model-value="$app.dialogs.upload.percentage"
-      height="20"
-      color="primary"
       v-if="$app.dialogs.upload.loading"
+      :model-value="$app.dialogs.upload.percentage"
+      color="primary"
+      height="20"
     >
       <strong>{{ Math.ceil($app.dialogs.upload.percentage) }}%</strong>
     </v-progress-linear>
     <v-card-text>
       <v-file-input
         v-model="files"
-        multiple
         label="Upload File(s)"
+        multiple
       ></v-file-input>
       <small>
         Tip: {{ tip }}
         <router-link
-          to="/settings/clients"
           v-if="tip === 'Want to automate your file uploading?'"
+          to="/settings/clients"
           @click="$emit('update:modelValue', false)"
         >
           Learn how
@@ -33,9 +33,9 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
+        :loading="$app.dialogs.upload.loading"
         color="primary"
         @click="upload"
-        :loading="$app.dialogs.upload.loading"
       >
         Upload
       </v-btn>
@@ -44,12 +44,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import {defineComponent} from "vue"
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
 
 export default defineComponent({
   name: "UploadDialog",
-  components: { CoreDialog },
+  components: {CoreDialog},
   emits: ["update:modelValue", "upload"],
   props: ["modelValue"],
   data() {
@@ -60,18 +60,18 @@ export default defineComponent({
         "Want to automate your file uploading?"
       ],
       tip: ""
-    };
+    }
   },
   methods: {
     async upload() {
-      this.$app.dialogs.upload.files = this.files;
-      await this.$app.upload();
+      this.$app.dialogs.upload.files = this.files
+      await this.$app.upload()
     }
   },
   mounted() {
-    this.tip = this.tips[Math.floor(Math.random() * this.tips.length)];
+    this.tip = this.tips[Math.floor(Math.random() * this.tips.length)]
   }
-});
+})
 </script>
 
 <style scoped></style>

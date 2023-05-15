@@ -6,10 +6,10 @@
         {{ name || "TPU child component" }} has crashed.
       </div>
       <div class="margin crashed subtitle">Please refresh the page.</div>
-      <div class="margin crashed debug" v-if="e?.error?.message">
+      <div v-if="e?.error?.message" class="margin crashed debug">
         {{ e.error.message }}
       </div>
-      <div class="margin crashed debug" v-else>
+      <div v-else class="margin crashed debug">
         Please check the JavaScript console for more information.
       </div>
     </div>
@@ -17,18 +17,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "CrashComponent",
   props: ["e", "name"]
-});
+})
 </script>
 
 <style scoped>
 .margin {
   margin-top: 0.25rem;
 }
+
 .crashed {
   background: var(--v-theme-background);
   color: #fff;

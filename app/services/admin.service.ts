@@ -706,10 +706,14 @@ export class AdminService {
   }
 
   async deleteCommunicationsMessage(messageId: number) {
-    await Message.destroy({
+    const message = await Message.findOne({
       where: {
         id: messageId
       }
     })
+
+    if (!message) throw Errors.MESSAGE_NOT_FOUND
+
+    await message.destroy()
   }
 }

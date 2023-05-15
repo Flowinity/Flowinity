@@ -1,37 +1,37 @@
 <template>
   <v-menu
+    :close-on-content-click="false"
     :model-value="modelValue"
     activator="parent"
     location="top right"
-    :close-on-content-click="false"
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-card height="500" width="500">
       <div class="d-flex flex-row">
-        <v-tabs direction="vertical" v-model="tab">
-          <v-tab :value="category.key" v-for="category in categories">
+        <v-tabs v-model="tab" direction="vertical">
+          <v-tab v-for="category in categories" :value="category.key">
             {{ category.title }}
           </v-tab>
         </v-tabs>
         <v-card-text v-if="modelValue">
           <v-window v-model="tab">
-            <v-window-item :value="category.key" v-for="category in categories">
-              <v-card max-width="300" color="transparent" class="elevation-0">
-                <v-text-field v-model="search" label="Search" />
+            <v-window-item v-for="category in categories" :value="category.key">
+              <v-card class="elevation-0" color="transparent" max-width="300">
+                <v-text-field v-model="search" label="Search"/>
                 <v-row>
                   <v-col v-for="emoji in emojis" :key="emoji.hexcode">
                     <v-btn
-                      icon
                       class="d-flex justify-center"
+                      icon
                       @click="
                         $emit('emoji', emoji.unicode);
                         $emit('update:modelValue', false);
                       "
                     >
                       <img
-                        height="32"
-                        :src="`/all.svg#${emoji.hexcode}`"
                         :alt="emoji.label"
+                        :src="`/all.svg#${emoji.hexcode}`"
+                        height="32"
                       />
                     </v-btn>
                   </v-col>
@@ -46,11 +46,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 //@ts-ignore
-import { Notomoji } from "@svgmoji/noto";
+import {Notomoji} from "@svgmoji/noto"
 //@ts-ignore
-import data from "../../../assets/compact.raw.json";
+import data from "../../../assets/compact.raw.json"
 
 export default defineComponent({
   name: "EmojiPicker",
@@ -112,20 +112,20 @@ export default defineComponent({
           u: "1f1e6-1f1e8"
         }
       ]
-    };
+    }
   },
   computed: {
     emojis() {
-      const filtered = data.filter((emoji: any) => emoji.group === this.tab);
+      const filtered = data.filter((emoji: any) => emoji.group === this.tab)
       if (this.search) {
         return filtered.filter((emoji: any) =>
           emoji.label.includes(this.search)
-        );
+        )
       }
-      return filtered;
+      return filtered
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

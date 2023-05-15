@@ -1,10 +1,10 @@
 <template>
   <v-dialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     max-width="700px"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
-    <v-card color="#151515" class="text-center">
+    <v-card class="text-center" color="#151515">
       <h1 class="mt-2">
         Introducing
         <span class="gold-text-gradient">TPU Gold</span>
@@ -14,15 +14,13 @@
         <v-list-item color="transparent">
           <v-list-item-title>
             <v-icon
+              class="mr-2"
               color="green"
               style="display: inline-block; position: relative; top: -0.75em"
-              class="mr-2"
             >
               mdi-check
             </v-icon>
             <UserBadges
-              class="justify-center"
-              style="display: inline-block"
               :user="{
                 id: $user.user?.id,
                 username: 'Demo',
@@ -34,6 +32,8 @@
                   name: 'Gold'
                 }
               }"
+              class="justify-center"
+              style="display: inline-block"
             ></UserBadges>
             <span style="display: inline-block; position: relative; top: -1em">
               Swagger badge
@@ -92,25 +92,25 @@
       <small>
         <sup>1</sup>
         Perks can be altered at any time without prior notice.
-        <br />
+        <br/>
         <sup>2</sup>
         Only includes historical insights for Weekly, Monthly and Annual
         reports, excludes the Dynamic report.
-        <br />
+        <br/>
         You can still view your current reports.
       </small>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
-          color="red"
           class="no-capital"
+          color="red"
           @click="$emit('update:modelValue', false)"
         >
           <v-icon class="mr-1">mdi-arrow-left</v-icon>
           Close
         </v-btn>
         <span>
-          <v-btn color="primary" class="no-capital" @click="step++" disabled>
+          <v-btn class="no-capital" color="primary" disabled @click="step++">
             Get started
             <v-icon class="ml-1">mdi-arrow-right</v-icon>
           </v-btn>
@@ -124,12 +124,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import UserBadges from "@/components/Users/UserBadges.vue";
+import {defineComponent} from "vue"
+import UserBadges from "@/components/Users/UserBadges.vue"
 
 export default defineComponent({
   name: "GoldUpsell",
-  components: { UserBadges },
+  components: {UserBadges},
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
@@ -142,22 +142,22 @@ export default defineComponent({
         totp: "",
         loading: false
       }
-    };
+    }
   },
   methods: {
     async checkColubrina() {
-      this.colubrina.loading = true;
+      this.colubrina.loading = true
       try {
         await this.axios.post("/migrate/colubrina", {
           username: this.colubrina.username,
           password: this.colubrina.password,
           totp: this.colubrina.totp
-        });
-        if (this.$experiments.experiments["CLASSIC_MIGRATE"]) this.step++;
-        else this.step = 8;
-        this.colubrina.loading = false;
+        })
+        if (this.$experiments.experiments["CLASSIC_MIGRATE"]) this.step++
+        else this.step = 8
+        this.colubrina.loading = false
       } catch {
-        this.colubrina.loading = false;
+        this.colubrina.loading = false
       }
     }
   },
@@ -165,11 +165,11 @@ export default defineComponent({
     modelValue: {
       immediate: true,
       handler(val) {
-        if (!val) this.step = 1;
+        if (!val) this.step = 1
       }
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

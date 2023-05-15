@@ -1,9 +1,9 @@
 <template>
   <CoreDialog
-    :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
-    max-width="600px"
     v-if="$user.changes.profileLayout"
+    :model-value="modelValue"
+    max-width="600px"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>
       {{ component ? `${metaComponent.name} Settings` : "Settings" }}
@@ -62,33 +62,33 @@
           </template>
           <template v-else-if="prop.type === 'select'">
             <v-select
-              :label="prop.meta.name"
               :items="prop.meta.options"
+              :label="prop.meta.name"
               :model-value="component.props[prop.key]"
+              item-key="value"
+              item-title="text"
               @update:model-value="
                 $emit('update', {
                   key: prop.key,
                   value: $event
                 })
               "
-              item-title="text"
-              item-key="value"
             />
           </template>
           <template v-else-if="prop.type === 'range'">
             <v-slider
               :label="prop.key"
-              :min="prop.meta.min"
               :max="prop.meta.max"
-              :step="prop.meta.step"
+              :min="prop.meta.min"
               :model-value="component.props[prop.key]"
+              :step="prop.meta.step"
+              thumb-label
               @update:model-value="
                 $emit('update', {
                   key: prop.key,
                   value: $event
                 })
               "
-              thumb-label
             />
           </template>
         </div>
@@ -105,21 +105,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
-import { Component } from "@/types/userv3";
+import {defineComponent} from "vue"
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import {Component} from "@/types/userv3"
 
 export default defineComponent({
   name: "UserV3Settings",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue", "user", "component", "components"],
   computed: {
     metaComponent() {
       return (
         this.components.find(
           (component: Component) => component.id === this.component.name
-        ) || { name: "Unknown" }
-      );
+        ) || {name: "Unknown"}
+      )
     },
     props() {
       return Object.entries(this.metaComponent?.props || {}).map(
@@ -134,10 +134,10 @@ export default defineComponent({
               (component: Component) => component.id === this.component.name
             )?.meta[key]?.type || typeof value
         })
-      );
+      )
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

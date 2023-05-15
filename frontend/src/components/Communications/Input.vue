@@ -1,18 +1,18 @@
 <template>
   <v-toolbar
+    :id="editing ? '' : 'chat-input'"
     ref="toolbar"
+    color="transparent"
     height="auto"
     style="z-index: 1001"
-    color="transparent"
-    :id="editing ? '' : 'chat-input'"
   >
     <Mentionable
-      :keys="['@']"
       :items="users"
-      offset="6"
-      insert-space
-      @open="onOpen"
+      :keys="['@']"
       :omit-key="true"
+      insert-space
+      offset="6"
+      @open="onOpen"
     >
       <template v-slot:item="{ item }">
         <div class="my-2 mx-2">
@@ -25,38 +25,38 @@
         </div>
       </template>
       <v-textarea
+        :key="renderKey"
         ref="textarea"
         :class="!editing ? 'mb-n5 mt-1' : 'mt-2'"
-        label="Type a message..."
-        placeholder="Keep it civil"
-        variant="outlined"
-        @update:model-value="$emit('update:modelValue', $event)"
+        :maxlength="2000"
         :model-value="modelValue"
-        density="compact"
-        rows="1"
         auto-grow
         autofocus
         color="primary"
+        density="compact"
+        label="Type a message..."
+        placeholder="Keep it civil"
+        rows="1"
+        variant="outlined"
+        @update:model-value="$emit('update:modelValue', $event)"
         @keydown.enter.exact.prevent="$emit('sendMessage')"
         @click:append="$emit('sendMessage')"
         @keyup.esc="$emit('edit', null)"
-        :key="renderKey"
-        :maxlength="2000"
       >
         <template v-slot:append>
           <v-icon class="pointer raw-icon">mdi-send</v-icon>
         </template>
-        <template v-slot:prepend v-if="!editing">
+        <template v-if="!editing" v-slot:prepend>
           <v-menu
-            location="top"
-            activator="parent"
-            :close-on-content-click="false"
             v-model="menu"
+            :close-on-content-click="false"
+            activator="parent"
+            location="top"
           >
             <v-card
+              :width="$vuetify.display.mobile ? undefined : 700"
               height="500"
               max-width="700"
-              :width="$vuetify.display.mobile ? undefined : 700"
             >
               <v-tabs v-model="tab" align-tabs="center">
                 <v-tab value="upload">Upload</v-tab>
@@ -68,20 +68,20 @@
                 <v-window v-model="tab">
                   <v-window-item value="upload">
                     <v-file-input
-                      hide-input
                       ref="uploadInput"
+                      hide-input
+                      multiple
                       style="display: none"
                       truncate-length="15"
-                      multiple
                       @update:model-value="$emit('fileUpload', $event)"
                     ></v-file-input>
                     <v-row
-                      @click="handleClick"
-                      style="cursor: pointer"
+                      align="center"
                       class="d-flex flex-column"
                       dense
-                      align="center"
                       justify="center"
+                      style="cursor: pointer"
+                      @click="handleClick"
                     >
                       <v-icon size="60">mdi-cloud-upload</v-icon>
                       <p>Drop your file(s) here, or click to select them.</p>
@@ -128,7 +128,7 @@
           ></EmojiPicker>
           <v-icon class="pointer raw-icon">mdi-emoticon</v-icon>
         </template>
-        <template v-slot:details v-if="!editing">
+        <template v-if="!editing" v-slot:details>
           <span
             class="details-container"
             style="margin-left: -25px !important"
@@ -154,13 +154,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import GalleryCore from "@/components/Gallery/GalleryCore.vue";
-import InlineGallery from "@/components/Communications/InlineGallery.vue";
-import Mentionable from "@/components/Core/Mentionable.vue";
-import EmojiPicker from "@/components/Communications/Menus/Emoji.vue";
-import emoji from "@/components/Communications/Menus/Emoji.vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
+import {defineComponent} from "vue"
+import GalleryCore from "@/components/Gallery/GalleryCore.vue"
+import InlineGallery from "@/components/Communications/InlineGallery.vue"
+import Mentionable from "@/components/Core/Mentionable.vue"
+import EmojiPicker from "@/components/Communications/Menus/Emoji.vue"
+import emoji from "@/components/Communications/Menus/Emoji.vue"
+import UserAvatar from "@/components/Users/UserAvatar.vue"
 
 export default defineComponent({
   name: "CommunicationsInput",
@@ -186,36 +186,36 @@ export default defineComponent({
       menu: false,
       items: [] as any,
       emojiPicker: false
-    };
+    }
   },
   computed: {
     emoji() {
-      return emoji;
+      return emoji
     },
     users() {
-      if (!this.$chat.selectedChat?.users) return [];
+      if (!this.$chat.selectedChat?.users) return []
       return this.$chat.selectedChat?.users.map((user: any) => {
         return {
           label: user.user?.username,
           value: user.user?.id
-        };
-      });
+        }
+      })
     }
   },
   methods: {
     focus() {
       //@ts-ignore
-      this.$refs?.textarea?.focus();
+      this.$refs?.textarea?.focus()
     },
     handleClick() {
       //@ts-ignore
-      this.$refs?.uploadInput?.click();
+      this.$refs?.uploadInput?.click()
     },
     onOpen(key: string) {
-      this.items = key === "@" ? this.$chat.selectedChat?.users : [];
+      this.items = key === "@" ? this.$chat.selectedChat?.users : []
     }
   }
-});
+})
 </script>
 
 <style>
@@ -226,6 +226,7 @@ export default defineComponent({
   width: 100%;
   height: 25px;
 }
+
 .v-counter {
   margin-top: -50px !important;
   width: 20em;

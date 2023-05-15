@@ -3,15 +3,15 @@
     <v-img
       :src="collectionImage"
       class="white--text align-end"
+      cover
       gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)"
       height="200px"
-      cover
     >
       <template v-slot:placeholder>
-        <v-row class="fill-height ma-0" align="center" justify="center">
+        <v-row align="center" class="fill-height ma-0" justify="center">
           <v-progress-circular
-            indeterminate
             color="grey lighten-5"
+            indeterminate
           ></v-progress-circular>
         </v-row>
       </template>
@@ -19,21 +19,21 @@
         {{ collection.name }}
         <span class="float-end">
           <v-btn
-            @click="$emit('sharingDialog', true)"
             v-if="
               !$route.params.type && collection.permissionsMetadata.configure
             "
+            @click="$emit('sharingDialog', true)"
           >
-            <v-icon style="font-size: 20px" class="mr-1">mdi-share</v-icon>
+            <v-icon class="mr-1" style="font-size: 20px">mdi-share</v-icon>
             Collection Sharing
           </v-btn>
           <v-btn
-            @click="$emit('settingsDialog', true)"
             v-if="
               !$route.params.type && collection.permissionsMetadata.configure
             "
+            @click="$emit('settingsDialog', true)"
           >
-            <v-icon style="font-size: 20px" class="mr-1">mdi-cog</v-icon>
+            <v-icon class="mr-1" style="font-size: 20px">mdi-cog</v-icon>
             Settings
           </v-btn>
           <v-btn
@@ -46,17 +46,17 @@
               )
             "
           >
-            <v-icon style="font-size: 20px" class="mr-1">mdi-link</v-icon>
+            <v-icon class="mr-1" style="font-size: 20px">mdi-link</v-icon>
             Copy Share Link
           </v-btn>
         </span>
       </v-card-title>
-      <v-card-text class="mt-n3" v-if="collection.users.length">
+      <v-card-text v-if="collection.users.length" class="mt-n3">
         <v-icon>mdi-swap-horizontal</v-icon>
         {{ collection.user.username }},
         {{ collection.users.map((user) => user.user.username).join(", ") }}
       </v-card-text>
-      <v-card-text class="mt-n3" v-else>
+      <v-card-text v-else class="mt-n3">
         {{ collection.items }} items
       </v-card-text>
     </v-img>
@@ -64,8 +64,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { CollectionCache } from "@/types/collection";
+import {defineComponent} from "vue"
+import {CollectionCache} from "@/types/collection"
 
 export default defineComponent({
   name: "CollectionBanner",
@@ -78,15 +78,15 @@ export default defineComponent({
   computed: {
     collectionImage(): string {
       if (this.collection?.image) {
-        return this.$app.domain + this.collection.image;
+        return this.$app.domain + this.collection.image
       } else if (this.collection?.preview?.attachment?.attachment) {
-        return this.$app.domain + this.collection.preview.attachment.attachment;
+        return this.$app.domain + this.collection.preview.attachment.attachment
       } else {
-        return "https://i.troplo.com/i/a050d6f271c3.png";
+        return "https://i.troplo.com/i/a050d6f271c3.png"
       }
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

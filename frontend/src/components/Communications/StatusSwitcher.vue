@@ -10,13 +10,13 @@
         <v-list-item @click="$user.changeStatus('online')">
           <template v-slot:prepend>
             <UserAvatar
-              class="mr-3"
-              size="36"
-              :status="true"
-              :user="$user.user"
-              emulated-status="online"
               :dot-status="true"
+              :status="true"
               :status-x-offset="1"
+              :user="$user.user"
+              class="mr-3"
+              emulated-status="online"
+              size="36"
             />
           </template>
           <v-list-item-title>Online</v-list-item-title>
@@ -24,13 +24,13 @@
         <v-list-item @click="$user.changeStatus('busy')">
           <template v-slot:prepend>
             <UserAvatar
-              class="mr-3"
-              size="36"
-              :status="true"
-              :user="$user.user"
-              emulated-status="busy"
               :dot-status="true"
+              :status="true"
               :status-x-offset="1"
+              :user="$user.user"
+              class="mr-3"
+              emulated-status="busy"
+              size="36"
             />
           </template>
           <v-list-item-title>Do not disturb</v-list-item-title>
@@ -41,13 +41,13 @@
         <v-list-item @click="$user.changeStatus('idle')">
           <template v-slot:prepend>
             <UserAvatar
-              class="mr-3"
-              size="36"
-              :status="true"
-              :user="$user.user"
-              emulated-status="idle"
               :dot-status="true"
+              :status="true"
               :status-x-offset="1"
+              :user="$user.user"
+              class="mr-3"
+              emulated-status="idle"
+              size="36"
             />
           </template>
           <v-list-item-title>Idle</v-list-item-title>
@@ -56,13 +56,13 @@
         <v-list-item @click="$user.changeStatus('invisible')">
           <template v-slot:prepend>
             <UserAvatar
-              class="mr-3"
-              size="36"
-              :status="true"
-              :user="$user.user"
-              emulated-status="offline"
               :dot-status="true"
+              :status="true"
               :status-x-offset="1"
+              :user="$user.user"
+              class="mr-3"
+              emulated-status="offline"
+              size="36"
             />
           </template>
           <v-list-item-title>Invisible</v-list-item-title>
@@ -75,23 +75,23 @@
     </v-card>
     <template v-slot:activator="{ props }">
       <v-card
-        height="70"
-        :rounded="false"
-        flat
-        class="elevation-0 d-flex ml-3 no-border border-top"
         id="status-switcher"
+        :rounded="false"
+        class="elevation-0 d-flex ml-3 no-border border-top"
         color="dark"
+        flat
+        height="70"
       >
         <v-row class="d-flex align-center">
-          <v-col cols="1" class="d-flex align-center">
+          <v-col class="d-flex align-center" cols="1">
             <UserAvatar
-              :user="$user.user"
-              size="40"
+              :dot-status="true"
               :status="true"
               :status-x-offset="1"
-              v-bind="props"
+              :user="$user.user"
               class="ml-1 pointer"
-              :dot-status="true"
+              size="40"
+              v-bind="props"
             />
             <v-card-text style="font-size: 16px">
               {{ $user.user?.username }}
@@ -104,21 +104,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
+import {defineComponent} from "vue"
+import UserAvatar from "@/components/Users/UserAvatar.vue"
 
 export default defineComponent({
   name: "StatusSwitcher",
-  components: { UserAvatar },
+  components: {UserAvatar},
   computed: {
     menuStyle() {
       return `
         position: absolute;
         top: ${this.$chat.dialogs.statusMenu.y}px;
-        left: ${this.$chat.dialogs.statusMenu.x}px;`;
+        left: ${this.$chat.dialogs.statusMenu.x}px;`
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="text-center justify-center" :height="cardHeight">
+  <v-card :height="cardHeight" class="text-center justify-center">
     <v-container>
       <v-tabs v-model="tab" align-tabs="center" class="mb-3 mt-n3">
         <v-tab value="uploads">{{ $t("stats.uploads") }}</v-tab>
@@ -9,67 +9,67 @@
       <v-window v-model="tab">
         <v-window-item value="uploads">
           <strong
-            style="font-size: 24px"
             :class="{
               'text-gradient-custom text-gradient': !user,
               'text-gradient': user
             }"
+            style="font-size: 24px"
           >
             {{ $t("stats.uploadStats") }}
           </strong>
           <div class="mx-1">
             <Chart
-              id="global-uploads"
-              :data="uploadGraph || $app.site.stats.uploadGraph"
               v-if="uploadGraph || $app.site.stats.uploadGraph"
-              type="line"
-              name="Uploads"
-              :height="height"
+              id="global-uploads"
               :color="primaryColorResult.primary"
+              :data="uploadGraph || $app.site.stats.uploadGraph"
+              :height="height"
+              name="Uploads"
+              type="line"
             ></Chart>
           </div>
         </v-window-item>
         <v-window-item value="messages">
           <strong
-            style="font-size: 24px"
             :class="{
               'text-gradient-custom text-gradient': !user,
               'text-gradient': user
             }"
+            style="font-size: 24px"
           >
             {{ $t("stats.messageStats") }}
           </strong>
           <div class="mx-1">
             <Chart
-              id="global-messages"
-              :data="messageGraph || $app.site.stats.messageGraph"
               v-if="messageGraph || $app.site.stats.messageGraph"
-              type="line"
-              name="Messages"
-              :height="height"
+              id="global-messages"
               :color="primaryColorResult.primary"
+              :data="messageGraph || $app.site.stats.messageGraph"
+              :height="height"
+              name="Messages"
+              type="line"
             ></Chart>
           </div>
         </v-window-item>
         <v-window-item value="hours">
           <strong
-            style="font-size: 24px"
             :class="{
               'text-gradient-custom text-gradient': !user,
               'text-gradient': user
             }"
+            style="font-size: 24px"
           >
             {{ $t("stats.hourStats") }}
           </strong>
           <div class="mx-1">
             <Chart
-              id="global-hours"
-              :data="pulseGraph || $app.site.stats.pulseGraph"
               v-if="pulseGraph || $app.site.stats.pulseGraph"
-              type="line"
-              name="Hours"
-              :height="height"
+              id="global-hours"
               :color="primaryColorResult.primary"
+              :data="pulseGraph || $app.site.stats.pulseGraph"
+              :height="height"
+              name="Hours"
+              type="line"
             ></Chart>
           </div>
         </v-window-item>
@@ -84,18 +84,18 @@
 </template>
 
 <script lang="ts">
-import UserAvatar from "@/components/Users/UserAvatar.vue";
-import UserBadges from "@/components/Users/UserBadges.vue";
-import { defineComponent } from "vue";
-import Chart from "@/components/Core/Chart.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue"
+import UserBadges from "@/components/Users/UserBadges.vue"
+import {defineComponent} from "vue"
+import Chart from "@/components/Core/Chart.vue"
 
 export default defineComponent({
   name: "GraphWidget",
-  components: { Chart, UserBadges, UserAvatar },
+  components: {Chart, UserBadges, UserAvatar},
   data() {
     return {
       tab: "uploads"
-    };
+    }
   },
   props: {
     uploadGraph: {
@@ -132,10 +132,10 @@ export default defineComponent({
       return this.$user.primaryColorResult(
         this.primaryColor || this.$user.theme.colors.primary,
         this.gold
-      );
+      )
     }
   }
-});
+})
 </script>
 
 <style scoped>

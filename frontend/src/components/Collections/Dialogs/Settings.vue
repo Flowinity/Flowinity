@@ -1,26 +1,26 @@
 <template>
   <CoreDialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     max-width="600px"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>Settings</template>
     <v-card-text v-if="collection">
       <v-text-field
         v-model="collection.name"
+        autofocus
         label="Name"
         required
-        autofocus
       ></v-text-field>
-      <v-btn class="ml-n4" @click="removeBanner" color="red">
+      <v-btn class="ml-n4" color="red" @click="removeBanner">
         Remove Banner
       </v-btn>
     </v-card-text>
-    <v-card-actions class="mt-2" v-if="collection">
+    <v-card-actions v-if="collection" class="mt-2">
       <v-btn
+        v-if="collection.userId === $user.user?.id"
         color="red"
         @click="deleteCollection"
-        v-if="collection.userId === $user.user?.id"
       >
         Delete Collection
       </v-btn>
@@ -34,13 +34,13 @@
 </template>
 
 <script lang="ts">
-import { Collection } from "@/models/collection";
-import { defineComponent } from "vue";
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import {Collection} from "@/models/collection"
+import {defineComponent} from "vue"
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
 
 export default defineComponent({
   name: "CollectionSettings",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: {
     modelValue: {
       type: Boolean,
@@ -55,21 +55,21 @@ export default defineComponent({
     async updateSettings() {
       await this.axios.patch(`/collections/${this.collection?.id}`, {
         name: this.collection?.name
-      });
-      this.$toast.success("Collection settings updated.");
-      this.$emit("update:modelValue", false);
+      })
+      this.$toast.success("Collection settings updated.")
+      this.$emit("update:modelValue", false)
     },
     async deleteCollection() {
-      await this.axios.delete(`/collections/${this.collection?.id}`);
-      this.$router.push("/collections");
-      this.$collections.init();
+      await this.axios.delete(`/collections/${this.collection?.id}`)
+      this.$router.push("/collections")
+      this.$collections.init()
     },
     async removeBanner() {
-      await this.axios.delete(`/collections/${this.collection?.id}/banner`);
-      this.$emit("refreshCollection");
+      await this.axios.delete(`/collections/${this.collection?.id}/banner`)
+      this.$emit("refreshCollection")
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

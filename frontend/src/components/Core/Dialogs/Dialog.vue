@@ -1,17 +1,17 @@
 <template>
   <v-dialog
-    :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
-    v-bind="$attrs"
     :fullscreen="$vuetify.display.mobile"
+    :model-value="modelValue"
+    v-bind="$attrs"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-card class="no-border">
       <slot name="toolbar">
         <v-toolbar color="toolbar">
           <v-btn
+            v-if="$vuetify.display.mobile"
             icon
             @click="$emit('update:modelValue', false)"
-            v-if="$vuetify.display.mobile"
           >
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
@@ -19,10 +19,10 @@
             <slot name="title">Default title</slot>
           </v-toolbar-title>
           <v-btn
-            icon
-            @click="$emit('update:modelValue', false)"
             v-if="!$vuetify.display.mobile"
             class="float-end"
+            icon
+            @click="$emit('update:modelValue', false)"
           >
             <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -34,13 +34,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "CoreDialog",
   props: ["modelValue"],
   emits: ["update:modelValue"]
-});
+})
 </script>
 
 <style scoped></style>

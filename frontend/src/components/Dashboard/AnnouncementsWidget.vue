@@ -1,21 +1,21 @@
 <template>
   <v-card class="text-center justify-center">
     <v-container>
-      <strong style="font-size: 24px" class="text-gradient">
+      <strong class="text-gradient" style="font-size: 24px">
         {{ $t("dashboard.announcements") }}
       </strong>
       <v-card
         v-for="announcement in announcements"
-        class="my-3 pt-3 hover"
         :color="$vuetify.theme.global.name === 'amoled' ? undefined : 'toolbar'"
-        elevation="0"
         :variant="
           $vuetify.theme.global.name === 'amoled' ? 'outlined' : undefined
         "
+        class="my-3 pt-3 hover"
+        elevation="0"
       >
         <UserAvatar
-          size="58"
           :user="announcement.user"
+          size="58"
           style="cursor: pointer"
           @click="$router.push(`/u/${announcement.user.username}`)"
         ></UserAvatar>
@@ -40,12 +40,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
+import {defineComponent} from "vue"
+import UserAvatar from "@/components/Users/UserAvatar.vue"
 
 export default defineComponent({
   name: "AnnouncementsWidget",
-  components: { UserAvatar },
+  components: {UserAvatar},
   data() {
     return {
       page: 1,
@@ -66,30 +66,31 @@ export default defineComponent({
           }
         }
       ]
-    };
+    }
   },
   computed: {
     announcements() {
       // limit 3 per page, get pages
       const announcements = this.$app.demo
         ? this.demo
-        : this.$app.site.announcements;
-      return announcements.slice((this.page - 1) * 3, this.page * 3);
+        : this.$app.site.announcements
+      return announcements.slice((this.page - 1) * 3, this.page * 3)
     },
     pages() {
       const announcements = this.$app.demo
         ? this.demo
-        : this.$app.site.announcements;
-      return Math.ceil(announcements.length / 3);
+        : this.$app.site.announcements
+      return Math.ceil(announcements.length / 3)
     }
   }
-});
+})
 </script>
 
 <style scoped>
 .hover {
   background: transparent !important;
 }
+
 .hover:hover {
   background: rgba(0, 0, 0, 0.1) !important;
 }

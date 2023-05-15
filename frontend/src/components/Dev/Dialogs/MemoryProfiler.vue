@@ -12,8 +12,8 @@
                   { title: 'Store', key: 'name' },
                   { title: 'Size', key: 'size' }
                 ]"
-                :items="memoryUsageByStore"
                 :hide-default-footer="true"
+                :items="memoryUsageByStore"
                 :sort-by="[{ key: 'size', order: 'desc' }]"
               >
                 <template v-slot:item.size="{ item }">
@@ -29,23 +29,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { useAppStore } from "@/store/app";
-import { useUserStore } from "@/store/user";
-import { useChatStore } from "@/store/chat";
-import { useExperimentsStore } from "@/store/experiments";
-import { useFriendsStore } from "@/store/friends";
-import { useCollectionsStore } from "@/store/collections";
-import { useWorkspacesStore } from "@/store/workspaces";
-import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
+import {defineComponent} from "vue"
+import {useAppStore} from "@/store/app"
+import {useUserStore} from "@/store/user"
+import {useChatStore} from "@/store/chat"
+import {useExperimentsStore} from "@/store/experiments"
+import {useFriendsStore} from "@/store/friends"
+import {useCollectionsStore} from "@/store/collections"
+import {useWorkspacesStore} from "@/store/workspaces"
+import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue"
 
 export default defineComponent({
   name: "MemoryProfiler",
-  components: { DevDialog },
+  components: {DevDialog},
   data() {
     return {
       usage: []
-    };
+    }
   },
   computed: {
     memoryUsageByStore() {
@@ -78,8 +78,8 @@ export default defineComponent({
           name: "WorkspacesStore",
           size: JSON.stringify(useWorkspacesStore()).length
         }
-      ];
+      ]
     }
   }
-});
+})
 </script>

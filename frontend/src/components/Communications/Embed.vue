@@ -1,6 +1,6 @@
 <template>
   <template v-if="embed.data">
-    <v-card v-if="embed.type === 'openGraph'" elevation="0" :width="width">
+    <v-card v-if="embed.type === 'openGraph'" :width="width" elevation="0">
       <v-card-text class="text-overline">
         {{ embed?.data?.siteName }}
       </v-card-text>
@@ -13,11 +13,11 @@
     </v-card>
     <v-img
       v-else-if="embed.type === 'image'"
-      :src="embed.data.url"
-      :max-width="500"
-      :width="width"
-      :max-height="embed.data.height > 400 ? 700 : embed.data.height * 2"
       :aspect-ratio="embed.data.width / embed.data.height"
+      :max-height="embed.data.height > 400 ? 700 : embed.data.height * 2"
+      :max-width="500"
+      :src="embed.data.url"
+      :width="width"
       class="pointer rounded-xl mb-1"
       @click="
         $chat.dialogs.image.object = embed.data;
@@ -26,33 +26,33 @@
     ></v-img>
     <v-card
       v-else-if="embed.type === 'file'"
-      elevation="0"
-      :max-width="width"
       :max-height="500"
+      :max-width="width"
+      elevation="0"
     >
       <v-card-text>
-        <v-icon class="mr-2" :size="48">mdi-file</v-icon>
+        <v-icon :size="48" class="mr-2">mdi-file</v-icon>
         <span>
           {{ embed.data.upload.name }}
         </span>
       </v-card-text>
       <v-card-actions class="text-grey">
         {{ $functions.fileSize(embed.data.upload.fileSize) }}
-        <v-spacer />
+        <v-spacer/>
         <v-btn
           :href="`https://i.troplo.com/i/${embed.data?.upload?.attachment}`"
-          target="_blank"
           icon
+          target="_blank"
         >
           <v-icon>mdi-download</v-icon>
         </v-btn>
       </v-card-actions>
     </v-card>
-    <v-card v-else-if="embed.type === 'video'" elevation="0" :max-width="width">
+    <v-card v-else-if="embed.type === 'video'" :max-width="width" elevation="0">
       <video
         :src="$app.domain + embed.data.upload.attachment"
-        controls
         :style="'max-width:' + width + 'px;'"
+        controls
       ></video>
     </v-card>
     <v-card v-else elevation="0">
@@ -61,26 +61,26 @@
     </v-card>
   </template>
   <template v-else>
-    <v-card class="elevation-0" width="300" color="toolbar">
+    <v-card class="elevation-0" color="toolbar" width="300">
       <v-container>This embed cannot be loaded.</v-container>
     </v-card>
   </template>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "Embed",
   props: ["embed"],
   computed: {
     width() {
-      if (this.$vuetify.display.width < 600) return undefined;
-      if (this.$vuetify.display.width <= 1366) return 350;
-      return 700;
+      if (this.$vuetify.display.width < 600) return undefined
+      if (this.$vuetify.display.width <= 1366) return 350
+      return 700
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

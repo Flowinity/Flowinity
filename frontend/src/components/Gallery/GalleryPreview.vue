@@ -8,43 +8,43 @@
         v-bind="props"
       >
         <template v-slot:placeholder>
-          <v-row class="fill-height ma-0" align="center" justify="center">
+          <v-row align="center" class="fill-height ma-0" justify="center">
             <v-progress-circular
-              indeterminate
               color="grey lighten-5"
+              indeterminate
             ></v-progress-circular>
           </v-row>
         </template>
         <a :href="$app.domain + item.attachment" target="_blank">
           <v-overlay
-            contained
             v-if="isHovering"
             :model-value="true"
             class="align-center justify-center"
+            contained
           >
-            <v-icon large color="white" size="40">mdi-open-in-new</v-icon>
+            <v-icon color="white" large size="40">mdi-open-in-new</v-icon>
           </v-overlay>
         </a>
       </v-img>
     </v-hover>
     <video
-      style="width: 100%"
       v-else-if="item.type === 'video'"
       controls
       height="220"
+      style="width: 100%"
     >
-      <source :src="$app.domain + item.attachment" type="video/mp4" />
+      <source :src="$app.domain + item.attachment" type="video/mp4"/>
     </video>
-    <audio controls v-else-if="item.type === 'audio'">
-      <source :src="$app.domain + item.attachment" type="audio/mpeg" />
+    <audio v-else-if="item.type === 'audio'" controls>
+      <source :src="$app.domain + item.attachment" type="audio/mpeg"/>
     </audio>
     <v-card
-      class="d-flex no-border align-center justify-center"
-      height="220"
-      elevation="0"
       v-else
+      class="d-flex no-border align-center justify-center"
+      elevation="0"
+      height="220"
     >
-      <v-icon size="100" color="grey">mdi-file</v-icon>
+      <v-icon color="grey" size="100">mdi-file</v-icon>
     </v-card>
   </div>
 </template>
@@ -58,7 +58,7 @@ export default {
       required: true
     }
   }
-};
+}
 </script>
 
 <style scoped></style>

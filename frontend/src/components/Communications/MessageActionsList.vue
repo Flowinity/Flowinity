@@ -1,5 +1,5 @@
 <template>
-  <v-list class="mobile-actions" v-if="$chat.dialogs.message.message">
+  <v-list v-if="$chat.dialogs.message.message" class="mobile-actions">
     <v-list-item @click="$emit('reply')">
       <template v-slot:prepend>
         <v-icon>mdi-reply</v-icon>
@@ -55,11 +55,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "MessageActionsList"
-});
+})
 </script>
 
 <style scoped></style>

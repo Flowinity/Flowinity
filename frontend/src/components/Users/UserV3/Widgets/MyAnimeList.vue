@@ -33,20 +33,20 @@
           <template v-slot:prepend>
             <v-img
               :src="anime.node.main_picture.medium"
-              width="40"
               class="mr-3"
+              width="40"
             ></v-img>
           </template>
           <v-list-item-title>{{ anime.node.title }}</v-list-item-title>
           <v-progress-linear
+            :color="getStatusColor(anime.node.my_list_status.status)"
             :model-value="
               (anime.node.my_list_status.num_episodes_watched /
                 anime.node.num_episodes) *
               100
             "
-            :color="getStatusColor(anime.node.my_list_status.status)"
-            height="20"
             class="mt-1"
+            height="20"
           >
             <strong
               :class="{
@@ -66,10 +66,12 @@
           </v-progress-linear>
           <v-select
             v-model="anime.node.my_list_status.status"
+            :disabled="user.id !== $user.user?.id"
             :items="statuses"
+            bg-color="transparent"
+            class="mt-n3"
             item-title="text"
             item-value="value"
-            class="mt-n3"
             @update:model-value="
               updateAnime(
                 anime.node.id,
@@ -78,8 +80,6 @@
                 $event
               )
             "
-            bg-color="transparent"
-            :disabled="user.id !== $user.user?.id"
           >
             <template v-slot:append>
               <div style="display: flex; align-items: center">
@@ -91,6 +91,7 @@
                   "
                 >
                   <v-btn
+                    :loading="partialLoading"
                     icon
                     size="x-small"
                     @click="
@@ -101,14 +102,14 @@
                         anime.node.my_list_status.status
                       )
                     "
-                    :loading="partialLoading"
                   >
                     <v-icon>mdi-minus</v-icon>
-                    <v-tooltip location="top" activator="parent" :eager="false">
+                    <v-tooltip :eager="false" activator="parent" location="top">
                       Decrease watched episode count
                     </v-tooltip>
                   </v-btn>
                   <v-btn
+                    :loading="partialLoading"
                     icon
                     size="x-small"
                     @click="
@@ -119,10 +120,9 @@
                         anime.node.my_list_status.status
                       )
                     "
-                    :loading="partialLoading"
                   >
                     <v-icon>mdi-plus</v-icon>
-                    <v-tooltip location="top" activator="parent" :eager="false">
+                    <v-tooltip :eager="false" activator="parent" location="top">
                       Increase watched episode count
                     </v-tooltip>
                   </v-btn>
@@ -134,20 +134,20 @@
       </v-list>
     </template>
     <template v-else>
-      <MessageSkeleton />
+      <MessageSkeleton/>
     </template>
   </v-card>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
-import { MalUser } from "@/types/mal/user";
-import { MalAnime } from "@/types/mal/anime";
+import {defineComponent} from "vue"
+import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue"
+import {MalUser} from "@/types/mal/user"
+import {MalAnime} from "@/types/mal/anime"
 
 export default defineComponent({
   name: "MyAnimeList",
-  components: { MessageSkeleton },
+  components: {MessageSkeleton},
   props: ["user", "component"],
   data() {
     return {
@@ -178,20 +178,20 @@ export default defineComponent({
           value: "plan_to_watch"
         }
       ]
-    };
+    }
   },
   computed: {
     perPage() {
-      return this.component?.props?.display || 3;
+      return this.component?.props?.display || 3
     },
     computedRecent() {
       return this.recent.slice(
         (this.page - 1) * this.perPage,
         this.page * this.perPage
-      );
+      )
     },
     pages() {
-      return Math.ceil(this.recent.length / this.perPage);
+      return Math.ceil(this.recent.length / this.perPage)
     }
   },
   methods: {
@@ -209,50 +209,50 @@ export default defineComponent({
           score,
           status
         }
-      );
-      this.getMAL(false);
+      )
+      this.getMAL(false)
     },
     getStatusColor(status: string) {
       switch (status) {
         case "completed":
-          return "info";
+          return "info"
         case "dropped":
-          return "error";
+          return "error"
         case "on_hold":
-          return "warning";
+          return "warning"
         case "plan_to_watch":
-          return "indigo";
+          return "indigo"
         case "watching":
-          return "success";
+          return "success"
         default:
-          return "grey";
+          return "grey"
       }
     },
     async getMAL(load = true) {
       if (load) {
-        this.loading = true;
+        this.loading = true
       } else {
-        this.partialLoading = true;
+        this.partialLoading = true
       }
-      const { data } = await this.axios.get(
+      const {data} = await this.axios.get(
         `/providers/userv3/mal/${this.user?.username}`,
         {
           headers: {
             noToast: true
           }
         }
-      );
-      if (!data.data) return;
-      this.recent = data.data;
-      this.malUser = data.user;
-      this.loading = false;
-      this.partialLoading = false;
+      )
+      if (!data.data) return
+      this.recent = data.data
+      this.malUser = data.user
+      this.loading = false
+      this.partialLoading = false
     }
   },
   mounted() {
-    this.getMAL();
+    this.getMAL()
   }
-});
+})
 </script>
 
 <style scoped></style>

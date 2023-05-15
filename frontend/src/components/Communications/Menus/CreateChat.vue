@@ -1,10 +1,10 @@
 <template>
   <v-menu
-    @update:model-value="$emit('update:modelValue', $event)"
     :close-on-content-click="false"
-    location="end"
     :model-value="modelValue"
+    location="end"
     style="z-index: 4001"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:activator="{ props }">
       <slot :props="props"></slot>
@@ -13,21 +13,21 @@
       <v-card-title class="text-h6">Select Friends</v-card-title>
       <v-card-subtitle>
         You can friend people from their profile.
-        <br />
+        <br/>
         Adding 2 or more users will create a group chat.
       </v-card-subtitle>
       <v-list max-height="400">
         <v-text-field
           v-model="search"
-          label="Search"
-          class="mx-5 my-n1"
           autofocus
+          class="mx-5 my-n1"
+          label="Search"
         ></v-text-field>
         <v-list-item
           v-for="friend in friends"
+          :active="selected.includes(friend.otherUser.id)"
           :value="friend.otherUser.id"
           @click="add(friend.otherUser.id)"
-          :active="selected.includes(friend.otherUser.id)"
         >
           <template v-slot:prepend>
             <UserAvatar
@@ -55,9 +55,9 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
+          :disabled="!selected.length"
           color="primary"
           @click="type === 'create' ? createChat() : $emit('add', selected)"
-          :disabled="!selected.length"
         >
           <template v-if="type === 'create'">
             {{ selected.length < 2 ? "Create DM" : "Create Group" }}
@@ -70,13 +70,13 @@
 </template>
 
 <script lang="ts">
-import { Friend } from "@/models/friend";
-import { defineComponent } from "vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
+import {Friend} from "@/models/friend"
+import {defineComponent} from "vue"
+import UserAvatar from "@/components/Users/UserAvatar.vue"
 
 export default defineComponent({
   name: "CreateChat",
-  components: { UserAvatar },
+  components: {UserAvatar},
   props: {
     modelValue: {
       type: Boolean,
@@ -93,20 +93,20 @@ export default defineComponent({
     return {
       search: "",
       selected: [] as number[]
-    };
+    }
   },
   methods: {
     add(id: number) {
       if (this.selected.includes(id)) {
-        this.selected = this.selected.filter((i) => i !== id);
+        this.selected = this.selected.filter((i) => i !== id)
       } else {
-        this.selected.push(id);
+        this.selected.push(id)
       }
     },
     async createChat() {
-      const data = await this.$chat.createChat(this.selected);
-      this.$router.push(`/communications/${data.association.id}`);
-      this.$emit("update:modelValue", false);
+      const data = await this.$chat.createChat(this.selected)
+      this.$router.push(`/communications/${data.association.id}`)
+      this.$emit("update:modelValue", false)
     }
   },
   computed: {
@@ -115,10 +115,10 @@ export default defineComponent({
         friend.otherUser.username
           .toLowerCase()
           .includes(this.search.toLowerCase())
-      ) as Friend[];
+      ) as Friend[]
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

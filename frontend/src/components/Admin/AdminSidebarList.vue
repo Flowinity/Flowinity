@@ -1,44 +1,44 @@
 <template>
   <v-list nav>
     <v-list-item
-      class="ml-1"
-      style="text-transform: unset !important"
       v-for="(item, index) in sidebar"
       :key="item.id"
-      link
-      :exact="item.exact"
-      :to="item.path"
-      @click="handleClick(index)"
       :disabled="
         !$functions.checkScope(item.scope, $user.user?.scopes) ||
         !access(item.level)
       "
+      :exact="item.exact"
       :prepend-icon="item.icon"
+      :to="item.path"
+      class="ml-1"
+      link
+      style="text-transform: unset !important"
+      @click="handleClick(index)"
     >
       <v-list-item-title>
         {{ item.name }}
         <v-chip
-          class="pb-n2 ml-1"
           v-if="item.new && !item.warning"
+          class="pb-n2 ml-1"
           color="green"
-          variant="tonal"
           size="x-small"
+          variant="tonal"
         >
           NEW
         </v-chip>
         <v-chip
-          class="pb-n2 ml-1"
           v-if="item.warning"
-          variant="tonal"
+          class="pb-n2 ml-1"
           size="x-small"
+          variant="tonal"
         >
           {{ item.warning }}
         </v-chip>
         <v-icon
+          v-if="!$functions.checkScope(item.scope, $user.user?.scopes)"
+          color="grey lighten-1"
           size="small"
           style="float: right"
-          color="grey lighten-1"
-          v-if="!$functions.checkScope(item.scope, $user.user?.scopes)"
         >
           mdi-lock
         </v-icon>
@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "AdminSidebarList",
@@ -193,26 +193,26 @@ export default defineComponent({
         warning?: string;
         click?: () => void;
         level: number;
-      }[];
+      }[]
     }
   },
   methods: {
     access(level: number) {
       if (level === 0) {
-        return true;
+        return true
       } else if (level === 1) {
-        return this.$user.user?.administrator || this.$user.user?.moderator;
+        return this.$user.user?.administrator || this.$user.user?.moderator
       } else if (level === 2) {
-        return this.$user.user?.administrator;
+        return this.$user.user?.administrator
       } else {
-        return false;
+        return false
       }
     },
     handleClick(index: number) {
-      this.sidebar[index].click?.call(this);
+      this.sidebar[index].click?.call(this)
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

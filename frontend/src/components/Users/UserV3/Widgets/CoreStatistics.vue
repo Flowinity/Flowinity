@@ -2,14 +2,14 @@
   <v-card-text class="text-overline">Statistics</v-card-text>
   <v-card-text>
     <v-row>
-      <v-col sm="12" :md="!username ? 6 : 12" cols="12">
+      <v-col :md="!username ? 6 : 12" cols="12" sm="12">
         <v-card
-          class="text-center mt-n6"
           v-if="hoursMost"
           :height="$vuetify.display.mobile ? 400 : undefined"
+          class="text-center mt-n6"
         >
           <p class="mt-3">
-            <strong style="font-size: 24px" class="text-gradient">
+            <strong class="text-gradient" style="font-size: 24px">
               Upload Distribution
             </strong>
           </p>
@@ -18,32 +18,32 @@
             {{ hoursMost.count }} uploads!
           </v-card-subtitle>
           <Chart
-            id="userv2-hours"
-            :data="hoursGraph"
             v-if="hoursGraph"
-            :max-height="$vuetify.display.mobile ? 320 : undefined"
-            :height="320"
-            type="bar"
+            id="userv2-hours"
             :color="primaryColorResult"
+            :data="hoursGraph"
+            :height="320"
+            :max-height="$vuetify.display.mobile ? 320 : undefined"
             name="Uploads"
+            type="bar"
           ></Chart>
         </v-card>
       </v-col>
       <v-col md="6" sm="12">
         <v-card
-          class="text-center mt-n6"
           v-if="user.stats.uploadGraph"
           :height="$vuetify.display.mobile ? 400 : undefined"
+          class="text-center mt-n6"
           max-height="400"
         >
           <GraphWidget
-            :upload-graph="user.stats.uploadGraph"
-            :message-graph="user.stats.messageGraph"
-            :pulse-graph="user.stats.pulseGraph"
             :card-height="400"
-            :height="320"
-            :primary-color="primaryColorResult"
             :gold="gold"
+            :height="320"
+            :message-graph="user.stats.messageGraph"
+            :primary-color="primaryColorResult"
+            :pulse-graph="user.stats.pulseGraph"
+            :upload-graph="user.stats.uploadGraph"
           ></GraphWidget>
         </v-card>
       </v-col>
@@ -52,28 +52,28 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
-import Chart from "@/components/Core/Chart.vue";
+import {defineComponent} from "vue"
+import GraphWidget from "@/components/Dashboard/GraphWidget.vue"
+import Chart from "@/components/Core/Chart.vue"
 
 export default defineComponent({
   name: "CoreStatistics",
-  components: { Chart, GraphWidget },
+  components: {Chart, GraphWidget},
   props: ["user", "username", "gold", "primary"],
   computed: {
     primaryColorResult() {
-      return this.$user.primaryColorResult(this.primary, this.gold).primary;
+      return this.$user.primaryColorResult(this.primary, this.gold).primary
     },
     hoursMost() {
       if (this.user?.stats?.hours) {
-        let hours = Object.entries(this.user.stats.hours);
-        hours.sort((a: any, b: any) => b[1] - a[1]);
+        let hours = Object.entries(this.user.stats.hours)
+        hours.sort((a: any, b: any) => b[1] - a[1])
         return {
           hour: hours[0][0],
           count: hours[0][1]
-        };
+        }
       } else {
-        return null;
+        return null
       }
     },
     hoursGraph() {
@@ -81,9 +81,9 @@ export default defineComponent({
         return {
           labels: Object.keys(this.user.stats.hours),
           data: Object.values(this.user.stats.hours)
-        };
+        }
       } else {
-        return null;
+        return null
       }
     },
     chartData() {
@@ -99,13 +99,13 @@ export default defineComponent({
               pointBackgroundColor: "#181818"
             }
           ]
-        };
+        }
       } else {
-        return [];
+        return []
       }
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

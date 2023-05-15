@@ -2,10 +2,10 @@
   <v-row>
     <v-col v-if="supports.search">
       <v-text-field
-        class="rounded-xl"
         v-model="search"
-        append-inner-icon="mdi-close"
         :label="$t('generic.search')"
+        append-inner-icon="mdi-close"
+        class="rounded-xl"
         @click:append-inner="
           search = '';
           $emit('update:search', '');
@@ -17,43 +17,43 @@
         "
       ></v-text-field>
     </v-col>
-    <v-col md="2" cols="12" v-if="supports.sort">
+    <v-col v-if="supports.sort" cols="12" md="2">
       <v-select
+        v-model="sort"
         :items="sortTypes"
+        :label="$t('generic.sort')"
         item-title="name"
         item-value="internalName"
-        :label="$t('generic.sort')"
-        v-model="sort"
         v-on:update:model-value="
           $emit('update:sort', sort);
           $emit('refreshGallery');
         "
       ></v-select>
     </v-col>
-    <v-col md="2" cols="12" v-if="supports.filter">
+    <v-col v-if="supports.filter" cols="12" md="2">
       <v-select
+        v-model="filter"
         :items="types"
+        :label="$t('generic.filter')"
         item-title="name"
         item-value="internalName"
-        :label="$t('generic.filter')"
-        v-model="filter"
         v-on:update:model-value="
           $emit('update:filter', filter);
           $emit('refreshGallery');
         "
       ></v-select>
     </v-col>
-    <v-col xl="auto" sm="2" cols="12" v-if="supports.metadata">
+    <v-col v-if="supports.metadata" cols="12" sm="2" xl="auto">
       <v-checkbox
-        :label="$t('generic.metadata')"
         v-model="metadata"
+        :label="$t('generic.metadata')"
         v-on:change="
           $emit('update:metadata', metadata);
           $emit('refreshGallery');
         "
       ></v-checkbox>
     </v-col>
-    <v-col sm="1" v-if="supports.upload">
+    <v-col v-if="supports.upload" sm="1">
       <v-btn block class="mt-2" @click="$app.dialogs.upload.value = true">
         <v-icon>mdi-upload</v-icon>
         {{ $t("generic.upload") }}
@@ -147,9 +147,9 @@ export default {
       search: "",
       filter: "all",
       sort: "newest"
-    };
+    }
   }
-};
+}
 </script>
 
 <style scoped></style>

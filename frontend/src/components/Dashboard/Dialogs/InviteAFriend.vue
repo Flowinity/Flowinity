@@ -1,8 +1,8 @@
 <template>
   <CoreDialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     max-width="700px"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>Invite a Friend</template>
     <v-card-text>
@@ -10,13 +10,13 @@
       or another TPU administrator approves it.
       <v-text-field
         v-model="email"
-        label="Email"
-        type="email"
-        required
-        placeholder="troplo@troplo.com"
-        autofocus
-        @keyup.enter="inviteFriend"
         :rules="$validation.user.email"
+        autofocus
+        label="Email"
+        placeholder="troplo@troplo.com"
+        required
+        type="email"
+        @keyup.enter="inviteFriend"
       ></v-text-field>
       <small>
         You will receive an email when your request is accepted or denied by a
@@ -26,9 +26,9 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
-        color="primary"
-        class="rounded-xl"
         :disabled="!email.length"
+        class="rounded-xl"
+        color="primary"
         @click="inviteFriend"
       >
         Invite
@@ -38,34 +38,34 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import {defineComponent} from "vue"
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
 
 export default defineComponent({
   name: "InviteAFriend",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
     return {
       email: ""
-    };
+    }
   },
   methods: {
     async inviteFriend() {
       await this.axios.post("/invites", {
         email: this.email
-      });
-      this.$emit("update:modelValue", false);
-      this.$toast.success("Request received!");
+      })
+      this.$emit("update:modelValue", false)
+      this.$toast.success("Request received!")
     }
   },
   watch: {
     modelValue() {
-      this.email = "";
+      this.email = ""
     }
   }
-});
+})
 </script>
 
 <style scoped></style>

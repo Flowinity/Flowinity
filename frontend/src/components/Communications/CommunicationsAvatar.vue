@@ -2,28 +2,28 @@
   <div class="mr-2">
     <v-avatar :color="!$functions.avatar(chat || user) ? '#0190ea' : undefined">
       <v-img
-        :src="$functions.avatar(chat || user)"
         v-if="$functions.avatar(chat || user)"
+        :src="$functions.avatar(chat || user)"
         cover
       ></v-img>
-      <v-icon size="20" v-else-if="chat?.type === 'group'">
+      <v-icon v-else-if="chat?.type === 'group'" size="20">
         mdi-account-group
       </v-icon>
-      <span class="text-h5" v-else-if="user?.username">
+      <span v-else-if="user?.username" class="text-h5">
         {{ user?.username?.charAt(0).toUpperCase() }}
       </span>
-      <span class="text-h5" v-else-if="chat?.recipient?.username">
+      <span v-else-if="chat?.recipient?.username" class="text-h5">
         {{ chat.recipient?.username?.charAt(0).toUpperCase() }}
       </span>
-      <span class="text-h5" v-else>?</span>
+      <span v-else class="text-h5">?</span>
     </v-avatar>
     <v-badge
+      v-if="friendStatus && user && status"
       :color="$functions.userStatus(friendStatus).color"
-      offset-x="2"
       bordered
       dot
+      offset-x="2"
       offset-y="8"
-      v-if="friendStatus && user && status"
     >
       <v-tooltip activator="parent" location="top">
         {{ $functions.userStatus(friendStatus).text }}
@@ -33,21 +33,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue"
 
 export default defineComponent({
   name: "CommunicationsAvatar",
   props: ["user", "chat", "status"],
   computed: {
     friendStatus() {
-      if (!this.user) return;
+      if (!this.user) return
       if (this.user.id === this.$user.user?.id)
-        return this.$user.user?.storedStatus;
+        return this.$user.user?.storedStatus
       return this.$friends.friends.find((f) => f.friendId === this.user.id)
-        ?.otherUser?.status;
+        ?.otherUser?.status
     }
   }
-});
+})
 </script>
 
 <style></style>
