@@ -1,177 +1,177 @@
 {
   "core": {
     "sidebar": {
-      "home": "Dashboard",
-      "settings": "Settings",
-      "gallery": "Gallery",
-      "collections": "Collections",
-      "autoCollects": "AutoCollects",
-      "workspaces": "Workspaces",
-      "communications": "Communications",
-      "mail": "Mail",
-      "insights": "Insights",
-      "starred": "Starred",
-      "users": "Users",
-      "feedback": "Provide Feedback",
-      "changelog": "Changelog",
-      "inviteAFriend": "Invite a Friend",
-      "newWithGold": "What's new with Gold?",
-      "upgradeToGold": "Upgrade to Gold",
-      "colubrinaMigrate": "Migrate from Colubrina",
-      "admin": "Admin Panel",
+      "home": "Главная",
+      "settings": "Настройки",
+      "gallery": "Галерея",
+      "collections": "Коллекции",
+      "autoCollects": "Авто Сбор",
+      "workspaces": "Рабочие пространства",
+      "communications": "Сообщения",
+      "mail": "Почта",
+      "insights": "Инсайты",
+      "starred": "Избранное",
+      "users": "Пользователи",
+      "feedback": "Оставить отзыв",
+      "changelog": "Изменения",
+      "inviteAFriend": "Пригласить друга",
+      "newWithGold": "Что нового в «Gold»?",
+      "upgradeToGold": "Перейти на «Gold»",
+      "colubrinaMigrate": "Миграция из «Colubrina»",
+      "admin": "Панель администратора",
       "member": "Member of {names}",
       "experiments": "Экспериментальные переопределения «TPU» (NEXT)",
-      "close": "Close sidebar"
+      "close": "Закрыть боковую панель"
     }
   },
   "dashboard": {
-    "announcements": "Announcements"
+    "announcements": "Объявления"
   },
   "stats": {
-    "collections": "Collections",
-    "collectivized": "Collectivized",
-    "hours": "Hours",
-    "users": "Users",
-    "uploads": "Uploads",
-    "usage": "Usage",
-    "pulses": "Pulses",
-    "invited": "Invited Users",
-    "documents": "Documents",
-    "messages": "Messages",
-    "chats": "Chats",
-    "stats": "Stats",
-    "uploadStats": "Upload Stats",
-    "messageStats": "Messages Stats",
-    "hourStats": "Time spent on TPU"
+    "collections": "Коллекции",
+    "collectivized": "Коллективизированные",
+    "hours": "Часов",
+    "users": "Пользователей",
+    "uploads": "Загрузок",
+    "usage": "Использование",
+    "pulses": "«Pulse»'ов",
+    "invited": "Приглашенных пользователей",
+    "documents": "документов",
+    "messages": "Сообщений",
+    "chats": "Чатов",
+    "stats": "Статистических данных",
+    "uploadStats": "статистических данных по загрузкам",
+    "messageStats": "статистических данных по сообщениям",
+    "hourStats": "Время, потраченное на «TPU»"
   },
   "errors": {
-    "notFound": "The page you are looking for does not exist."
+    "notFound": "Страница, которую вы ищете, не существует."
   },
   "gallery": {
-    "totalPages": "Total Pages: {count}",
-    "totalItems": "Total Items: {count}",
-    "randomAttachment": "Random Attachment",
-    "selectAll": "Select all",
-    "deselectAll": "Deselect all",
-    "deleteSelected": "Delete selected",
-    "collectSelected": "Add to Collection",
+    "totalPages": "Всего страниц: {count}",
+    "totalItems": "Всего элементов: {count}",
+    "randomAttachment": "Рандомное Вложение",
+    "selectAll": "Выбрать все",
+    "deselectAll": "Отменить выбор всех",
+    "deleteSelected": "Удалить выбранные",
+    "collectSelected": "Добавить в коллекцию",
     "actions": {
       "delete": {
-        "text": "Delete",
-        "aria": "Delete item (Shift + Click to delete without confirmation)"
+        "text": "Удалить",
+        "aria": "Удалить элемент (Shift + Щелчок для удаления без подтверждения)"
       },
       "link": {
-        "text": "Copy Link",
-        "aria": "Copy link to clipboard"
+        "text": "Скопировать ссылку",
+        "aria": "Скопировать ссылку в буфер обмена"
       },
       "download": {
-        "text": "Open",
-        "aria": "Open item in new tab"
+        "text": "Открыть",
+        "aria": "Открыть элемент на новой вкладке"
       },
       "ocr": {
-        "text": "OCR",
-        "aria": "Copy scanned text to clipboard"
+        "text": "«OCR»",
+        "aria": "Скопируйте отсканированный текст в буфер обмена"
       },
       "star": {
-        "text": "Star",
-        "aria": "Star item"
+        "text": "Добавить в избранное",
+        "aria": "Добавить элемент в избранное"
       },
       "pin": {
-        "text": "Pin to collection",
-        "aria": "Pin to collection"
+        "text": "Прикрепить к коллекции",
+        "aria": "Прикрепить к коллекции"
       }
     }
   },
   "settings": {
     "tabs": {
-      "account": "Account",
-      "security": "Security",
-      "setup": "Setup",
-      "mobileSetup": "Mobile Setup",
-      "domains": "Domains",
-      "integrations": "Integrations",
-      "slideshows": "Slideshows",
-      "about": "About TPU"
+      "account": "Учетная запись",
+      "security": "Безопасность",
+      "setup": "Установка",
+      "mobileSetup": "Мобильная установка",
+      "domains": "Домены",
+      "integrations": "Интеграции",
+      "slideshows": "Слайд-шоу",
+      "about": "О «TPU»"
     },
     "home": {
       "privacy": {
-        "title": "Privacy",
-        "discordPrecaching": "Discord Precaching*",
-        "discordPrecachingDesc": "* Discord precaching sends the TPU link of any media attachment to a Discord channel that gets cleared every 10 minutes in order to have the image cached by Discord by the time it's sent by yourself. Do not enable this if you don't trust Discord.",
-        "demoMode": "Demo Mode"
+        "title": "Конфиденциальность",
+        "discordPrecaching": "Предварительное кэширование «Discord»*",
+        "discordPrecachingDesc": "* Предварительное кэширование «Discord» отправляет ссылку «TPU» любого медиа-вложения на канал «Discord», который очищается каждые 10 минут, чтобы изображение было кэшировано «Discord» к моменту его отправки вами. Не включайте это, если вы не доверяете «Discord.»",
+        "demoMode": "Демонстрационный режим"
       },
       "myAccount": {
         "title": "My TPU",
-        "changeUsername": "Change Username",
-        "changeEmail": "Change Email",
-        "changePassword": "Change Password",
-        "emailSet": "Your email is currently set to <b>{email}</b>.",
-        "email": "New Email",
-        "password": "Password",
-        "currentPassword": "Current Password",
-        "newPassword": "New Password",
-        "confirmPassword": "Confirm Password",
-        "username": "New Username",
-        "2fa": "Two-factor authentication (2FA)"
+        "changeUsername": "Изменить имя пользователя",
+        "changeEmail": "Изменить адрес электронной почты",
+        "changePassword": "Поменять пароль",
+        "emailSet": "В данный момент ваш адрес электронной почты настроен на <b>{email}</b>.",
+        "email": "Новый адрес электронной почты",
+        "password": "Пароль",
+        "currentPassword": "Текущий пароль",
+        "newPassword": "Новый пароль",
+        "confirmPassword": "Подтверждение нового пароля",
+        "username": "Новое имя пользователя",
+        "2fa": "Двухфакторная аутентификация"
       },
       "totp": {
-        "enabled": "You have 2FA enabled.",
-        "disabled": "Give your account an extra layer of security by enabling 2FA.",
-        "enable": "Enable 2FA",
-        "disable": "Disable 2FA?",
+        "enabled": "У вас включена двухфакторная аутентификация.",
+        "disabled": "Обеспечьте вашей учетной записи дополнительный уровень безопасности, включив двухфакторную аутентификацию.",
+        "enable": "Отключить двухфакторную аутентификацию",
+        "disable": "Отключить двухфакторную аутентификацию?",
         "enableText": "If you'd like to enable it, you may do so here. You will need to scan the QR code or enter the secret in your desired 2FA application such as Authy or Bitwarden (recommended) and enter the code generated by the application.<br />2FA is a great way to add additional security to your TPU account, please note that if you lose access to the 2FA application, you won't be able to login.",
         "disableText": "If you'd like to disable 2FA, you may do so here, your account will be more unsafe if you keep 2FA disabled, please ensure your password is secure.",
-        "code": "2FA code",
-        "scan": "Please scan the QR code or enter the secret into your desired 2FA application.",
-        "cantScan": "Can't scan the QR code? Enter the code.",
-        "confirm": "Confirm & Enable",
-        "secret": "Secret"
+        "code": "Код двухфакторной аутентификации",
+        "scan": "Пожалуйста, отсканируйте QR-код или введите секрет в нужное вам приложение для двухфакторной аутентификации.",
+        "cantScan": "Не удается отсканировать QR-код? Введите код.",
+        "confirm": "подтверждения и включения",
+        "secret": "Секрет"
       },
       "preferences": {
-        "title": "Preferences",
-        "itemsPerPage": "Items per page",
-        "tempUnit": "Temperature unit for weather widget",
-        "theme": "Theme",
-        "insights": "Who can see your insights*",
-        "insightsDesc": "* Words in screenshots and top chats are always hidden.",
-        "baseCollections": "Exclude collections from non-collectivized filter",
-        "language": "Language",
-        "themeEditor": "Open Theme Editor",
-        "disableProfileColors": "Disable profile colors",
-        "disableBatteryPreservation": "Disable battery preservation"
+        "title": "Предпочтения",
+        "itemsPerPage": "Количество элементов на странице",
+        "tempUnit": "Единица измерения температуры для виджета погоды",
+        "theme": "Тема",
+        "insights": "Кто может увидеть ваши инсайты*",
+        "insightsDesc": "* Слова на скриншотах и в топовых чатах всегда скрыты.",
+        "baseCollections": "Исключить коллекции из неколлективизированного фильтра",
+        "language": "Язык",
+        "themeEditor": "Открыть редактор тем",
+        "disableProfileColors": "Отключить цвета профиля",
+        "disableBatteryPreservation": "Отключить сохранение заряда батареи"
       }
     },
     "security": {
-      "apiKeys": "API Keys",
-      "recentLogins": "Recent Logins",
-      "addPassword": "Add Password",
-      "alternatePasswords": "Alternate Passwords",
-      "addAPIKey": "Add API Key",
-      "addAlternatePassword": "Add Password",
-      "ipHistory": "View IP History",
-      "noIPHistory": "Session has no IP history.",
-      "unknownLocation": "Unknown Location",
-      "unknownISP": "Unknown ISP",
-      "unknownASN": "Unknown ASN",
+      "apiKeys": "Ключи «API»",
+      "recentLogins": "Последние входы в систему",
+      "addPassword": "Добавить пароль",
+      "alternatePasswords": "Альтернативные пароли",
+      "addAPIKey": "Добавить ключ «API»",
+      "addAlternatePassword": "Добавить пароль",
+      "ipHistory": "Просмотр истории IP-адресов",
+      "noIPHistory": "Сессия не имеет истории IP-адресов.",
+      "unknownLocation": "Неизвестное местоположение",
+      "unknownISP": "Неизвестный интернет-провайдер",
+      "unknownASN": "Неизвестный «ASN»",
       "lastSessionUsage": "Last session usage: {date}",
       "sessionCreated": "Session created: {date}",
       "sessionExpiry": "Session expiry: {date}",
-      "deleteSession": "Delete Session",
-      "unknownIP": "Unknown IP"
+      "deleteSession": "Удалить сеанс",
+      "unknownIP": "Неизвестный IP-адрес"
     },
     "setup": {
-      "title": "API Key Options",
-      "label": "Select an API Key",
-      "sharex": "How to install the ShareX configuration:",
-      "sharenix": "How to install the ShareNix configuration:",
+      "title": "Параметры ключа «API»",
+      "label": "Выбрать ключ «API»",
+      "sharex": "Как установить конфигурацию «ShareX»:",
+      "sharenix": "Как установить конфигурацию «ShareNix»:",
       "sharenixSteps": {
-        "1": "Download and install ShareNix for your distribution.",
-        "2": "Download and install Flameshot or another supported screenshot tool.",
-        "3": "Download the ShareNix configuration file.",
+        "1": "Скачайте и установите «ShareNix» для вашей операционной системы.",
+        "2": "Скачайте и установите «Flameshot» или другой поддерживаемый инструмент для создания скриншотов.",
+        "3": "Загрузите конфигурационный файл «ShareNix».",
         "4": "Move the downloaded config to ~/.sharenix.json, example:",
         "5": "Run <code>sharenix {file}</code> or <code>sharenix-section</code> (for a screenshot) to upload a file to TPU."
       },
-      "automate": "How to install the Automate config for Android:",
+      "automate": "Как установить конфигурационный файл «Automate» для «Android»:",
       "automateSteps": {
         "1": "Download the Automate app from the Google Play Store <a href=\"https://play.google.com/store/apps/details?id=com.llamalab.automate\">here.</a>",
         "2": "Download the Automate .flo config from TPU.",
@@ -188,10 +188,10 @@
         "3": "Enable the ability to use the accessibility button for quick screenshots in Accessibility -> Touch -> Back Tap -> [Select either Double Tap or Triple Tap] -> Scroll down to \"SHORTCUTS\" -> Select TPU."
       },
       "mobile": {
-        "title": "TPU Mobile Options"
+        "title": "Мобильные опции «TPU»"
       },
       "actions": {
-        "apiKey": "Copy API Key",
+        "apiKey": "Скопировать ключ «API»",
         "sharex": "Download ShareX Config",
         "sharenix": "Download ShareNix Config",
         "automate": "Download Automate Config",
@@ -199,23 +199,23 @@
       }
     },
     "integrations": {
-      "link": "Link new accounts",
-      "manage": "Manage linked accounts",
-      "addedOn": "Added on {date}",
-      "linking": "Linking account... please wait..."
+      "link": "Привязывать новые учетные записи",
+      "manage": "Управление связанными учетными записями",
+      "addedOn": "Добавлено на {date}",
+      "linking": "Привязка учетной записи... пожалуйста, подождите..."
     },
     "slideshows": {
-      "title": "Configure Slideshows",
-      "my": "My Slideshows",
+      "title": "Настройка слайд-шоу",
+      "my": "Мои слайд-шоу",
       "shareLink": "Share Link",
-      "name": "Slideshow Name",
-      "speed": "Speed/Interval (can do decimals, in seconds)",
-      "includeGallery": "Include items from my gallery",
-      "collections": "Collections",
-      "none": "No slideshows found."
+      "name": "Название слайд-шоу",
+      "speed": "Скорость/ интервал (можно использовать десятичные дроби в секундах)",
+      "includeGallery": "Включить элементы из моей галереи",
+      "collections": "Коллекции",
+      "none": "Слайд-шоу не найдено."
     },
     "about": {
-      "productName": "Product name: TPUvNEXT",
+      "productName": "Наименование сервиса: TPUvNEXT",
       "version": "Version: {version}",
       "buildDate": "Build date: {date}",
       "relative": "Build date relative: {date}",
@@ -224,88 +224,88 @@
       "ipWhitelist": "IP whitelist groups: {groups}",
       "server": "Server: {server}",
       "docs": "TPU API Documentation (WIP, v3)",
-      "credits": "Credits",
+      "credits": "Kредиты",
       "crash": "Crash TPU (dev)",
       "expEnable": "Enable all experiments",
       "expDisable": "Disable all experiments"
     },
     "domains": {
-      "title": "Available Domains",
-      "users": "Users: {count}",
+      "title": "Доступные домены",
+      "users": "Пользователей: {count}",
       "disclaimer": "If you'd like your domain added, email <a href=\"mailto:troplo@troplo.com\">troplo@troplo.com</a>, ensure your domain has already been registered and configured with a DNS provider."
     }
   },
   "generic": {
-    "cache": "Cache",
-    "cancel": "Cancel",
-    "close": "Close",
-    "ok": "OK",
-    "save": "Save",
-    "search": "Search",
-    "sort": "Sort",
-    "metadata": "Search in files",
-    "upload": "Upload",
-    "filter": "Filter",
-    "send": "Send",
-    "yes": "Yes",
-    "no": "No",
-    "loading": "Loading...",
-    "type": "Type",
-    "originalName": "Original name",
-    "uploadedName": "Uploaded name",
+    "cache": "Кэш",
+    "cancel": "Отменить",
+    "close": "Закрыть",
+    "ok": "ОК",
+    "save": "Сохранить",
+    "search": "Поиск",
+    "sort": "Сортировать",
+    "metadata": "Поиск в файлах",
+    "upload": "Загрузить",
+    "filter": "Фильтр",
+    "send": "Отправить",
+    "yes": "Да",
+    "no": "Нет",
+    "loading": "Загрузка...",
+    "type": "Тип",
+    "originalName": "Оригинальное название",
+    "uploadedName": "Загруженное имя",
     "createdAt": "Created at",
-    "size": "Size",
-    "new": "NEW",
-    "actionCompleted": "Action completed successfully.",
-    "enabled": "Enabled",
-    "disabled": "Disabled",
-    "enable": "Enable",
-    "disable": "Disable",
-    "never": "Never",
-    "next": "Next",
-    "previous": "Previous"
+    "size": "Размер",
+    "new": "НОВИНКА",
+    "actionCompleted": "Действие завершено успешно.",
+    "enabled": "Включенный",
+    "disabled": "Отключенный",
+    "enable": "Включить",
+    "disable": "Отключить",
+    "never": "Никогда",
+    "next": "Следующий",
+    "previous": "Предыдущий"
   },
   "setup": {
     "step0": {
-      "description": "Welcome to your new TPU instance! The open file sharing and social suite.",
-      "subtitle": "This wizard will guide you through the initial setup process such as setting up the database, and registering an account."
+      "description": "Добро пожаловать в ваш новый инстанс «TPU»! Открытый набор для обмена файлами и социальных сетей.",
+      "subtitle": "Щас провидём вас через начальный процесс настройки, такой как настройка базы данных и регистрация учетной записи."
     },
     "step1": {
-      "title": "Database Setup",
-      "subtitle": "Please enter your MariaDB database credentials below.",
+      "title": "Настройка базы данных",
+      "subtitle": "Пожалуйста, введите ниже свои учетные данные для базы данных «MariaDB».",
       "host": "Database Host",
-      "port": "Database Port",
-      "username": "Database Username",
-      "password": "Database Password",
-      "database": "Database Name",
-      "test": "Test Connection",
-      "testSuccess": "Connection successful!",
-      "testError": "Connection failed, please check your credentials and try again."
+      "port": "Порт базы данных",
+      "username": "Имя пользователя базы данных",
+      "password": "Пароль к базе данных",
+      "database": "Имя базы данных",
+      "test": "Тестовое соединение",
+      "testSuccess": "Соединение выполнено успешно!",
+      "testError": "Не удалось установить соединение, пожалуйста, проверьте свои учетные данные и повторите попытку."
     },
     "step2": {
-      "title": "Admin Account",
-      "subtitle": "Please enter your admin account details below.",
-      "username": "Username",
-      "password": "Password",
-      "passwordConfirm": "Confirm Password",
-      "email": "Email"
+      "title": "Учетная запись администратора",
+      "subtitle": "Пожалуйста, введите данные вашей учетной записи администратора ниже.",
+      "username": "Имя пользователя",
+      "password": "Пароль",
+      "passwordConfirm": "Подтвердите пароль",
+      "email": "Электронная почта"
     },
     "step3": {
-      "title": "Instance Configuration",
-      "subtitle": "Please enter your instance configuration below.",
-      "name": "Instance Name",
-      "hostname": "Instance Hostname (without protocol)",
-      "hostnameWithProtocol": "Instance Hostname (with protocol)",
-      "allowRegistration": "Allow Registrations",
-      "port": "Instance Port (default: 34582)",
-      "multiThreaded": "Max thread utilization (0 for all threads, recommended)"
+      "title": "Конфигурация инстанса",
+      "subtitle": "Пожалуйста, введите конфигурацию вашего инстанса ниже.",
+      "name": "Имя инстанса",
+      "hostname": "Имя хоста инстанса (без протокола)",
+      "hostnameWithProtocol": "Имя хоста инстанса (с протоколом)",
+      "allowRegistration": "Разрешить регистрацию",
+      "port": "Порт инстанса (по умолчанию: 34582)",
+      "multiThreaded": "Максимальное использование потока (рекомендуется 0 для всех потоков)"
     },
     "step4": {
-      "title": "Features",
-      "subtitle": "Please select the features you'd like to enable on your TPU.",
+      "title": "Функции",
+      "subtitle": "Пожалуйста, выберите функции, которые вы хотели бы включить на своем инстансе «TPU».",
       "autoCollects": {
-        "title": "AutoCollects",
-        "description": "Automatically add uploaded items by rules into TPU Collections."
+        "title": "Авто Сбор",
+        "description": "Автоматически добавлять загруженные элементы по всяким правилам в коллекции «TPU»."
       }
     }
   }
