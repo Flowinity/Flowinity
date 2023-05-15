@@ -5,7 +5,8 @@
         <v-toolbar-title>Communications</v-toolbar-title>
       </v-toolbar>
       <v-container>
-        <v-form>
+        <v-card-title>Delete Communications Message</v-card-title>
+        <v-form class="ml-4">
           <v-text-field
             v-model="actions.deleteCommunicationsMessage.messageId"
             autofocus
