@@ -1,47 +1,29 @@
-const async = require("async"),
-  fs = require("fs")
-
+"use strict"
+const fs = require("fs")
+const sequelize = require("sequelize")
 module.exports = {
-  up: function (migration, DataTypes, done) {
-    var db = migration.migrator.sequelize
-
-    async.waterfall(
-      [
-        function (cb) {
-          fs.readFile(__dirname + "/initial.sql", function (err, data) {
-            if (err) throw err
-            cb(null, data.toString())
-          })
-        },
-
-        function (initialSchema, cb) {
-          // need to split on ';' to get the individual CREATE TABLE sql
-          // as db.query can execute on query at a time
-          const tables = initialSchema.split(";")
-
-          function createTable(tableSql, doneInsert) {
-            db.query(tableSql)
-          }
-
-          async.each(tables, createTable, cb)
-        }
-      ],
-      done
-    )
+  async up(queryInterface, Sequelize) {
+    /**
+     * Add altering commands here.
+     *
+     * Example:
+     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
+     */
+    const sql = await fs.readFileSync(__dirname + "/initial.sql")
+    var promises = []
+    var statements = sql.toString().split(";")
+    for (var statement of statements)
+      if (statement.trim() != "")
+        promises.push(queryInterface.sequelize.query(statement))
+    return Promise.all(promises)
   },
 
-  down: function (migration, DataTypes, done) {
-    migration.showAllTables().success(function (tableNames) {
-      const tables = tableNames.filter(function (name) {
-        return name.toLowerCase() !== "sequelizemeta"
-      })
-
-      function dropTable(tableName, cb) {
-        migration.dropTable(tableName)
-        cb()
-      }
-
-      async.each(tables, dropTable, done)
-    })
+  async down(queryInterface, Sequelize) {
+    /**
+     * Add reverting commands here.
+     *
+     * Example:
+     * await queryInterface.dropTable('users');
+     */
   }
 }
