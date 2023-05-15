@@ -110,7 +110,6 @@ async function updateSession(session: Session, ip: string) {
       asn: asnResponse?.autonomous_system_number
     })
   }
-
   await Session.update(
     {
       info: {

@@ -200,6 +200,13 @@
               </v-card-subtitle>
               <PromoCard
                 image="https://i.troplo.com/i/f8e3d77d3128.png"
+                :title="$t('setup.step4.collections.title')"
+              >
+                {{ $t("setup.step4.collections.description") }}
+                <v-switch v-model="features.autoCollects"></v-switch>
+              </PromoCard>
+              <PromoCard
+                image="https://i.troplo.com/i/f8e3d77d3128.png"
                 :title="$t('setup.step4.autoCollects.title')"
               >
                 {{ $t("setup.step4.autoCollects.description") }}
