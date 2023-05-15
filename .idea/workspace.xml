@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="undo users badges">
+    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="fix dashboard badges">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/lib/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/lib/auth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/UserWidget.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/UserWidget.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Home.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Users/UserBadges.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Users/UserBadges.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +67,7 @@
       <workItem from="1681109155704" duration="540000" />
       <workItem from="1684038569458" duration="23000" />
       <workItem from="1684069734381" duration="2483000" />
-      <workItem from="1684114874192" duration="26070000" />
+      <workItem from="1684114874192" duration="26765000" />
     </task>
     <task id="LOCAL-00001" summary="Capitalise some Russian strings">
       <created>1684150087122</created>
@@ -119,7 +118,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684155016811</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="fix dashboard badges">
+      <created>1684155722391</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1684155722391</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -134,6 +140,8 @@
     <MESSAGE value="fix badges x2" />
     <MESSAGE value="fix badges x3" />
     <MESSAGE value="undo users badges" />
-    <option name="LAST_COMMIT_MESSAGE" value="undo users badges" />
+    <MESSAGE value="fix dashboard stats" />
+    <MESSAGE value="fix dashboard badges" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix dashboard badges" />
   </component>
 </project>
