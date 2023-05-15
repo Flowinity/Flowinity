@@ -531,7 +531,7 @@ export class UserUtilsService {
         [Op.like]: `%${search}%`
       }
     }
-    const users = await User.findAll({
+    let users: User[] = await User.findAll({
       attributes: [
         "id",
         "username",
@@ -568,6 +568,10 @@ export class UserUtilsService {
       ],
       limit: 24,
       offset: (page - 1) * 24
+    })
+    users = users.map((user: User) => {
+      user.dataValues.stats = redis.json.get(`userStats:${user.id}`)
+      return user
     })
     const userCount = await User.count({ where })
     const pager = paginate(userCount, page, 24)
