@@ -106,23 +106,7 @@ export class CollectionControllerV3 {
     @QueryParam("textMetadata") textMetadata: boolean = false,
     @QueryParam("filter") filter: string = "",
     @Param("id") id: string
-  ): Promise<
-    | any[]
-    | {
-        gallery: any[]
-        pager: {
-          totalItems: number
-          currentPage: number
-          pageSize: number
-          totalPages: number
-          startPage: number
-          endPage: number
-          startIndex: number
-          endIndex: number
-          pages: number[]
-        }
-      }
-  > {
+  ) {
     const collection = await this.getCollection(user, id)
 
     if (!collection) throw Errors.COLLECTION_NOT_FOUND

@@ -63,10 +63,10 @@
   </UserBanner>
   <v-container v-if="collection">
     <PersonalGallery
-      :endpoint="`/collections/${collection.id}/gallery`"
+      :endpoint="`/collections/${$route.params.id || collection.id}/gallery`"
       :name="`${collection.name} Collection`"
-      :path="`/collections/${collection.id}`"
-      :random="`/collections/${collection.id}/random`"
+      :path="`/collections/${$route.params.id || collection.id}`"
+      :random="`/collections/${$route.params.id || collection.id}/random`"
       :supports="{
         multiSelect: true,
         pins: true,
