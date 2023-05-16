@@ -54,7 +54,7 @@ export class WorkspaceControllerV3 {
   @Get("/:noteId")
   async getNote(
     @Auth("workspaces.view") user: User,
-    @Param("noteId") noteId: number
+    @Param("noteId") noteId: number | string
   ) {
     return await this.noteService.getNote(noteId, user.id)
   }
