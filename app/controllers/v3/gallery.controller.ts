@@ -6,26 +6,27 @@ import {
   Param,
   Post,
   QueryParam,
-  UseBefore,
-  UploadedFile,
   Req,
-  UploadedFiles
+  UploadedFile,
+  UploadedFiles,
+  UseBefore
 } from "routing-controllers"
-import { Service } from "typedi"
-import { Auth } from "@app/lib/auth"
-import { User } from "@app/models/user.model"
+import {Service} from "typedi"
+import {Auth} from "@app/lib/auth"
+import {User} from "@app/models/user.model"
 import Errors from "@app/lib/errors"
-import { GalleryService } from "@app/services/gallery.service"
+import {GalleryService} from "@app/services/gallery.service"
 import rateLimits from "@app/lib/rateLimits"
-import { SortOptions } from "@app/types/sort"
+import {SortOptions} from "@app/types/sort"
 import uploader from "@app/lib/upload"
-import { RequestAuth } from "@app/types/express"
-import { OpenAPI } from "routing-controllers-openapi"
+import {RequestAuth} from "@app/types/express"
+import {OpenAPI} from "routing-controllers-openapi"
 
 @Service()
 @JsonController("/gallery")
 export class GalleryControllerV3 {
-  constructor(private readonly galleryService: GalleryService) {}
+  constructor(private readonly galleryService: GalleryService) {
+  }
 
   @Get("")
   @Get("/starred")
@@ -61,7 +62,7 @@ export class GalleryControllerV3 {
     @UploadedFile("attachment", {
       options: uploader
     })
-    attachment: Express.Multer.File
+      attachment: Express.Multer.File
   ) {
     if (!attachment) throw Errors.NO_FILE
     const upload = await this.galleryService.createUpload(
@@ -74,14 +75,14 @@ export class GalleryControllerV3 {
   }
 
   @Post("/upload")
-  @OpenAPI({ deprecated: true, description: "Upload API for legacy clients" })
+  @OpenAPI({deprecated: true, description: "Upload API for legacy clients"})
   @UseBefore(rateLimits.uploadLimiter)
   async uploadLegacy(
     @Auth("uploads.create") user: User,
     @UploadedFile("attachment", {
       options: uploader
     })
-    attachment: Express.Multer.File
+      attachment: Express.Multer.File
   ) {
     return await this.upload(user, attachment)
   }
@@ -103,7 +104,7 @@ export class GalleryControllerV3 {
     @UploadedFiles("attachments", {
       options: uploader
     })
-    attachments: Express.Multer.File[]
+      attachments: Express.Multer.File[]
   ) {
     let files = []
     for (const attachment of attachments) {

@@ -1,10 +1,10 @@
-import { Request, Response, Router } from "express"
-import { Service } from "typedi"
+import {Response, Router} from "express"
+import {Service} from "typedi"
 import Errors from "@app/lib/errors"
-import { Upload } from "@app/models/upload.model"
+import {Upload} from "@app/models/upload.model"
 import * as fs from "fs"
 import auth from "@app/lib/auth"
-import { RequestAuth } from "@app/types/express"
+import {RequestAuth} from "@app/types/express"
 
 @Service()
 export class FileController {

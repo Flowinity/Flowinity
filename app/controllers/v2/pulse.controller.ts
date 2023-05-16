@@ -1,13 +1,14 @@
-import { Response, NextFunction } from "express"
-import { Service } from "typedi"
+import {NextFunction, Response} from "express"
+import {Service} from "typedi"
 import auth from "@app/lib/auth"
-import { RequestAuth } from "@app/types/express"
+import {RequestAuth} from "@app/types/express"
 import Router from "express-promise-router"
-import { PulseService } from "@app/services/pulse.service"
-import { User } from "@app/models/user.model"
+import {PulseService} from "@app/services/pulse.service"
+import {User} from "@app/models/user.model"
 import Errors from "@app/lib/errors"
-import { UserUtilsService } from "@app/services/userUtils.service"
-import { InsightData } from "@app/models/insight.model"
+import {UserUtilsService} from "@app/services/userUtils.service"
+import {InsightData} from "@app/models/insight.model"
+
 @Service()
 export class PulseController {
   router: any

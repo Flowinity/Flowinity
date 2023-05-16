@@ -4,9 +4,49 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="naming fix for duplicates">
+    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="Download Collection button loading/disabled state">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Collections/Item.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Collections/Item.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/admin.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/admin.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/auth.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/auth.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/autoCollect.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/autoCollect.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/chat.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/chat.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/collection.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/collection.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/core.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/core.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/domain.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/domain.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/file.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/file.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/gallery.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/gallery.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/invite.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/invite.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/mail.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/mail.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/mediaProxy.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/mediaProxy.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/migrate.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/migrate.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/note.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/note.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/provider.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/provider.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/pulse.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/pulse.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/security.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/security.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/slideshow.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/slideshow.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/templating.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/templating.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v2/userutils.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v2/userutils.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/admin.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/admin.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/auth.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/auth.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/autoCollect.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/autoCollect.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/chat.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/chat.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/collection.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/collection.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/core.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/core.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/domain.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/domain.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/fallback.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/fallback.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/file.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/file.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/gallery.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/gallery.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/invite.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/invite.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/mail.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/mail.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/mediaProxy.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/mediaProxy.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/migrate.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/migrate.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/provider.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/provider.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/pulse.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/pulse.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/security.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/security.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/setup.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/setup.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/slideshow.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/slideshow.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/user.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/user.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/workspace.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/workspace.controller.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +109,7 @@
       <workItem from="1684069734381" duration="2483000" />
       <workItem from="1684114874192" duration="27656000" />
       <workItem from="1684207004205" duration="21000" />
-      <workItem from="1684207032649" duration="7656000" />
+      <workItem from="1684207032649" duration="9825000" />
     </task>
     <task id="LOCAL-00001" summary="Capitalise some Russian strings">
       <created>1684150087122</created>
@@ -155,7 +195,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684217568206</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Download Collection button loading/disabled state">
+      <created>1684217687216</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1684217687216</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -176,6 +223,7 @@
     <MESSAGE value="Finish Collection download" />
     <MESSAGE value="fix" />
     <MESSAGE value="naming fix for duplicates" />
-    <option name="LAST_COMMIT_MESSAGE" value="naming fix for duplicates" />
+    <MESSAGE value="Download Collection button loading/disabled state" />
+    <option name="LAST_COMMIT_MESSAGE" value="Download Collection button loading/disabled state" />
   </component>
 </project>

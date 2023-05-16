@@ -1,22 +1,21 @@
-import { UserUtilsService } from "@app/services/userUtils.service"
-import { Request, Response, NextFunction } from "express"
-import { Service } from "typedi"
+import {UserUtilsService} from "@app/services/userUtils.service"
+import {NextFunction, Request, Response} from "express"
+import {Service} from "typedi"
 import auth from "@app/lib/auth"
-import { RequestAuth } from "@app/types/express"
+import {RequestAuth} from "@app/types/express"
 import Errors from "@app/lib/errors"
 import Router from "express-promise-router"
-import { AutoCollectCache } from "@app/types/collection"
-import { GalleryService } from "@app/services/gallery.service"
+import {AutoCollectCache} from "@app/types/collection"
+import {GalleryService} from "@app/services/gallery.service"
 import uploader from "@app/lib/upload"
-import { Notification } from "@app/models/notification.model"
-import { CacheService } from "@app/services/cache.service"
+import {Notification} from "@app/models/notification.model"
+import {CacheService} from "@app/services/cache.service"
 import rateLimits from "@app/lib/rateLimits"
-import { BadgeAssociation } from "@app/models/badgeAssociation.model"
-import path from "path"
+import {BadgeAssociation} from "@app/models/badgeAssociation.model"
 import * as fs from "fs"
 import sharp from "sharp"
-import { Plan } from "@app/models/plan.model"
-import { User } from "@app/models/user.model"
+import {Plan} from "@app/models/plan.model"
+import {User} from "@app/models/user.model"
 
 @Service()
 export class UserUtilsController {
@@ -414,7 +413,7 @@ export class UserUtilsController {
         res.sendStatus(204)
         if (
           await BadgeAssociation.findOne({
-            where: { badgeId: 30, userId: req.user.id }
+            where: {badgeId: 30, userId: req.user.id}
           })
         )
           return
@@ -443,7 +442,7 @@ export class UserUtilsController {
       async (req: Request, res: Response, next: NextFunction) => {
         try {
           const user = await User.findOne({
-            where: { username: req.query.username },
+            where: {username: req.query.username},
             include: [
               {
                 model: Plan,

@@ -1,9 +1,9 @@
-import { Request, Response } from "express"
-import { Service } from "typedi"
+import {Request, Response} from "express"
+import {Service} from "typedi"
 import Router from "express-promise-router"
-import { InviteService } from "@app/services/invite.service"
+import {InviteService} from "@app/services/invite.service"
 import auth from "@app/lib/auth"
-import { RequestAuth } from "@app/types/express"
+import {RequestAuth} from "@app/types/express"
 import rateLimits from "@app/lib/rateLimits"
 
 @Service()

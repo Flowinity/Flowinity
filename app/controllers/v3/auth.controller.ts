@@ -1,28 +1,10 @@
-import {
-  Body,
-  Get,
-  JsonController,
-  OnUndefined,
-  Param,
-  Patch,
-  Post,
-  QueryParam,
-  UseBefore,
-  UploadedFile
-} from "routing-controllers"
-import { UserUtilsService } from "@app/services/userUtils.service"
-import { Service } from "typedi"
-import { Auth } from "@app/lib/auth"
+import {Body, JsonController, OnUndefined, Patch, Post, UseBefore} from "routing-controllers"
+import {Service} from "typedi"
 import Errors from "@app/lib/errors"
-import { AutoCollectCache } from "@app/types/collection"
-import { Notification } from "@app/models/notification.model"
-import { User } from "@app/models/user.model"
 import rateLimits from "@app/lib/rateLimits"
-import uploader from "@app/lib/upload"
-import { GalleryService } from "@app/services/gallery.service"
-import { AuthService } from "@app/services/auth.service"
-import { InviteService } from "@app/services/invite.service"
-import { AdminService } from "@app/services/admin.service"
+import {AuthService} from "@app/services/auth.service"
+import {InviteService} from "@app/services/invite.service"
+import {AdminService} from "@app/services/admin.service"
 import blacklist from "@app/lib/word-blacklist.json"
 
 @Service()
@@ -32,7 +14,8 @@ export class AuthControllerV3 {
     private readonly authService: AuthService,
     private readonly inviteService: InviteService,
     private readonly adminService: AdminService
-  ) {}
+  ) {
+  }
 
   @Post("/login")
   @UseBefore(rateLimits.standardLimiter)
@@ -47,7 +30,7 @@ export class AuthControllerV3 {
   @UseBefore(rateLimits.mailLimiter)
   async register(
     @Body()
-    body: {
+      body: {
       email: string
       username: string
       password: string
