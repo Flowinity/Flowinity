@@ -8,17 +8,15 @@ try {
   config = require("@app/config/tpu.json")
 } catch {}
 const cacheService = Container.get(CacheService)
-
+const connection = {
+  port: config.redis.port,
+  host: config.redis.host,
+  password: config.redis.password,
+  db: config.redis.db,
+  username: config.redis.username
+}
 const queue = new Queue("queue:uploads", {
-  connection: config.finishedSetup
-    ? {
-        port: config.redis.port,
-        host: config.redis.host,
-        password: config.redis.password,
-        db: config.redis.db,
-        username: config.redis.username
-      }
-    : {},
+  connection,
   defaultJobOptions: {
     attempts: 3,
     backoff: {
@@ -29,15 +27,7 @@ const queue = new Queue("queue:uploads", {
 })
 
 const cacheQueue = new Queue("queue:cache", {
-  connection: config.finishedSetup
-    ? {
-        port: config.redis.port,
-        host: config.redis.host,
-        password: config.redis.password,
-        db: config.redis.db,
-        username: config.redis.username
-      }
-    : {},
+  connection,
   defaultJobOptions: {
     attempts: 1,
     removeOnComplete: true,
@@ -58,15 +48,7 @@ const worker = new Worker(
     // max number of jobs that can run concurrently
     // another way is removing this option and making multiple workers like worker1, worker2, etx
     concurrency: 3,
-    connection: config.finishedSetup
-      ? {
-          port: config.redis.port,
-          host: config.redis.host,
-          password: config.redis.password,
-          db: config.redis.db,
-          username: config.redis.username
-        }
-      : {}
+    connection
   }
 )
 
@@ -79,15 +61,7 @@ const cacheWorker = new Worker(
     // max number of jobs that can run concurrently
     // another way is removing this option and making multiple workers like worker1, worker2, etx
     concurrency: 3,
-    connection: config.finishedSetup
-      ? {
-          port: config.redis.port,
-          host: config.redis.host,
-          password: config.redis.password,
-          db: config.redis.db,
-          username: config.redis.username
-        }
-      : {}
+    connection
   }
 )
 
