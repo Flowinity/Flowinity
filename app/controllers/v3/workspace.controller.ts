@@ -1,15 +1,22 @@
-import {Body, Delete, Get, JsonController, Param, Patch, Post} from "routing-controllers"
-import {Service} from "typedi"
-import {Auth} from "@app/lib/auth"
+import {
+  Body,
+  Delete,
+  Get,
+  JsonController,
+  Param,
+  Patch,
+  Post
+} from "routing-controllers"
+import { Service } from "typedi"
+import { Auth } from "@app/lib/auth"
 import Errors from "@app/lib/errors"
-import {User} from "@app/models/user.model"
-import {NoteDataV2, NoteService} from "@app/services/note.service"
+import { User } from "@app/models/user.model"
+import { NoteDataV2, NoteService } from "@app/services/note.service"
 
 @Service()
 @JsonController("/notes")
 export class WorkspaceControllerV3 {
-  constructor(private readonly noteService: NoteService) {
-  }
+  constructor(private readonly noteService: NoteService) {}
 
   @Get("/workspaces")
   async getWorkspaces(@Auth("workspaces.view") user: User) {
@@ -20,7 +27,7 @@ export class WorkspaceControllerV3 {
   async createWorkspace(
     @Auth("workspaces.create") user: User,
     @Body()
-      body: {
+    body: {
       name: string
     }
   ) {
@@ -49,15 +56,15 @@ export class WorkspaceControllerV3 {
     @Auth("workspaces.view") user: User,
     @Param("noteId") noteId: number | string
   ) {
-    return await this.noteService.getNote(noteId, user.id)
+    return await this.noteService.getNote(noteId, user?.id)
   }
 
   @Patch("/:noteId")
   async updateNote(
-    @Auth("workspaces.modify") user: User,
+    @Auth("workspaces.modify", false) user: User,
     @Param("noteId") noteId: number,
     @Body()
-      body: {
+    body: {
       name?: string
       data?: NoteDataV2
       manualSave?: boolean
@@ -85,7 +92,7 @@ export class WorkspaceControllerV3 {
     @Auth("workspaces.modify") user: User,
     @Param("workspaceId") workspaceId: number,
     @Body()
-      body: {
+    body: {
       name: string
     }
   ) {
@@ -100,7 +107,7 @@ export class WorkspaceControllerV3 {
   async createNote(
     @Auth("workspaces.create") user: User,
     @Body()
-      body: {
+    body: {
       name: string
       workspaceFolderId: number
     }
@@ -124,7 +131,7 @@ export class WorkspaceControllerV3 {
   async createFolder(
     @Auth("workspaces.create") user: User,
     @Body()
-      body: {
+    body: {
       name: string
       workspaceId: number
     }
@@ -165,7 +172,7 @@ export class WorkspaceControllerV3 {
     @Auth("workspaces.modify") user: User,
     @Param("id") id: number,
     @Body()
-      body: {
+    body: {
       name: string
     }
   ) {

@@ -482,7 +482,7 @@ export class NoteService {
     return workspace
   }
 
-  async getNote(id: number | string, userId: number) {
+  async getNote(id: number | string, userId: number | undefined) {
     const note = await Note.findOne({
       where: {
         id
