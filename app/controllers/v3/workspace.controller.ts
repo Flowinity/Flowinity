@@ -53,7 +53,7 @@ export class WorkspaceControllerV3 {
 
   @Get("/:noteId")
   async getNote(
-    @Auth("workspaces.view") user: User,
+    @Auth("workspaces.view", false) user: User,
     @Param("noteId") noteId: number | string
   ) {
     return await this.noteService.getNote(noteId, user?.id)
@@ -61,7 +61,7 @@ export class WorkspaceControllerV3 {
 
   @Patch("/:noteId")
   async updateNote(
-    @Auth("workspaces.modify", false) user: User,
+    @Auth("workspaces.modify") user: User,
     @Param("noteId") noteId: number,
     @Body()
     body: {
