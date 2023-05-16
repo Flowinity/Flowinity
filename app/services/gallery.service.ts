@@ -478,4 +478,22 @@ export class GalleryService {
     }
     return upload
   }
+
+  async getAttachmentsByCollectionId(collectionId: number): Promise<Upload[]> {
+    const uploads = await Upload.findAll({
+      include: [
+        {
+          model: Collection,
+          as: "collections",
+          where: {
+            id: collectionId
+          }
+        }
+      ]
+    })
+
+    if (!uploads) throw Errors.ATTACHMENT_NOT_FOUND_ROUTE
+
+    return uploads
+  }
 }

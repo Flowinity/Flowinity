@@ -40,6 +40,13 @@
           Settings
         </v-btn>
         <v-btn
+          v-if="!$route.params.type && collection.permissionsMetadata?.read"
+          @click="downloadCollectionAsZIPFile"
+        >
+          <v-icon class="mr-1" style="font-size: 20px">mdi-download</v-icon>
+          Download Collection
+        </v-btn>
+        <v-btn
           v-else-if="collection?.shareLink"
           @click="
             $functions.copy(
@@ -128,6 +135,14 @@ export default defineComponent({
       this.$app.componentLoading = false
       this.collection = data
       this.$app.title = this.collection?.name as string
+    },
+    async downloadCollectionAsZIPFile() {
+      await this.axios.get(`/collections/${this.collection?.id}/download`).then((res) => {
+        const blob = new Blob([res.data], {type: "application/zip"})
+        const link = document.createElement("a")
+        link.href = window.URL.createObjectURL(blob)
+        link.click()
+      })
     }
   },
   mounted() {

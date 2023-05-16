@@ -1,27 +1,21 @@
-import {
-  Body,
-  Get,
-  JsonController,
-  Param,
-  Post,
-  QueryParam,
-  Delete,
-  Patch,
-  UploadedFile
-} from "routing-controllers"
-import { Service } from "typedi"
-import { Auth } from "@app/lib/auth"
-import { User } from "@app/models/user.model"
+import {Body, Delete, Get, JsonController, Param, Patch, Post, QueryParam, UploadedFile, Res} from "routing-controllers"
+import {Service} from "typedi"
+import {Auth} from "@app/lib/auth"
+import {User} from "@app/models/user.model"
 import Errors from "@app/lib/errors"
-import { GalleryService } from "@app/services/gallery.service"
-import { CacheService } from "@app/services/cache.service"
-import { SortOptions } from "@app/types/sort"
-import { CollectionService } from "@app/services/collection.service"
-import { CollectionCache } from "@app/types/collection"
-import { CollectionItem } from "@app/models/collectionItem.model"
+import {GalleryService} from "@app/services/gallery.service"
+import {CacheService} from "@app/services/cache.service"
+import {SortOptions} from "@app/types/sort"
+import {CollectionService} from "@app/services/collection.service"
+import {CollectionCache} from "@app/types/collection"
+import {CollectionItem} from "@app/models/collectionItem.model"
 import uploader from "@app/lib/upload"
-import { Collection } from "@app/models/collection.model"
-import { CollectionUser } from "@app/models/collectionUser.model"
+import {Collection} from "@app/models/collection.model"
+import {CollectionUser} from "@app/models/collectionUser.model"
+import JSZip from "jszip"
+import fs from "fs"
+import {Response} from "express"
+import {CollectionController} from "@app/controllers/v2/collection.controller"
 
 @Service()
 @JsonController("/collections")
@@ -404,6 +398,40 @@ export class CollectionControllerV3 {
     })
     for (const user of collection.users) {
       this.cacheService.generateCollectionCache(user.id)
+    }
+  }
+
+  @Get("/:collectionId/download")
+  async downloadCollection(
+    @Auth("collections.view", false) user: User,
+    @Param("collectionId") collectionId: number,
+    @Res() res: Response
+  ): Promise<void> {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "read"
+    )
+
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    const attachments = await this.galleryService.getAttachmentsByCollectionId(collectionId)
+
+    if (attachments.length > 0) {
+      const zip: JSZip = new JSZip()
+
+      for (let attachment of attachments) {
+        attachment = await this.galleryService.getAttachment(attachment.attachment, attachment.userId)
+        const file: Buffer = fs.readFileSync(`${config.storage }/${attachment.attachment}`)
+
+        if(!file) return
+
+        zip.file(attachment.originalFilename, file)
+      }
+
+      const buffer: Buffer = await zip.generateAsync({type: 'nodebuffer'})
+
+      res.send(buffer)
     }
   }
 }
