@@ -91,7 +91,8 @@
       "domains": "Domains",
       "integrations": "Integrations",
       "slideshows": "Slideshows",
-      "about": "About TPU"
+      "about": "About TPU",
+      "integrationError": "Some integrations need attention."
     },
     "home": {
       "privacy": {

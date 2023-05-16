@@ -13,7 +13,7 @@ import { AccessedFrom } from "@app/types/auth"
 import { Integration } from "@app/models/integration.model"
 import { createParamDecorator } from "routing-controllers"
 import { RequestAuthSystem } from "@app/types/express"
-import {Badge} from "@app/models/badge.model"
+import { Badge } from "@app/models/badge.model"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -185,6 +185,7 @@ export async function authSystem(
                 "providerUserId",
                 "providerUsername",
                 "providerUserCache",
+                "error",
                 "createdAt",
                 "updatedAt"
               ]
@@ -368,6 +369,7 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
                     "providerUserId",
                     "providerUsername",
                     "providerUserCache",
+                    "error",
                     "createdAt",
                     "updatedAt"
                   ]
@@ -403,7 +405,9 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
             }
             updateSession(session, action.request.ip).then(() => {})
 
-            session.user.dataValues.stats = await redis.json.get(`userStats:${session?.user.id}`)
+            session.user.dataValues.stats = await redis.json.get(
+              `userStats:${session?.user.id}`
+            )
 
             return session.toJSON().user
           }

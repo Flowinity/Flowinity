@@ -63,7 +63,8 @@ export class MyAnimeListService {
     const integration = await Integration.findOne({
       where: {
         userId,
-        type: "mal"
+        type: "mal",
+        error: null
       }
     })
     if (!integration) return
@@ -108,6 +109,11 @@ export class MyAnimeListService {
       }
     } catch (e) {
       console.log(e)
+      if (e?.response?.data?.hint) {
+        integration.update({
+          error: e.response.data.hint
+        })
+      }
       return
     }
   }

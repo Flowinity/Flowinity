@@ -24,6 +24,18 @@
           to="/settings/integrations"
         >
           {{ $t("settings.tabs.integrations") }}
+          <v-btn
+            icon
+            size="x-small"
+            class="mr-n2"
+            color="red"
+            v-if="$user.user?.integrations?.some((i) => i.error)"
+          >
+            <v-icon left>mdi-alert</v-icon>
+            <v-tooltip activator="parent" location="top">
+              {{ $t("settings.tabs.integrationError") }}
+            </v-tooltip>
+          </v-btn>
         </v-tab>
         <v-tab prepend-icon="mdi-image-multiple" to="/settings/slideshows">
           {{ $t("settings.tabs.slideshows") }}
@@ -48,24 +60,24 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "SettingsCore",
   data() {
     return {
       loading: false
-    }
+    };
   },
   methods: {
     async update() {
-      this.loading = true
-      await this.$user.save()
-      await new Promise((resolve) => setTimeout(resolve, 300))
-      this.loading = false
+      this.loading = true;
+      await this.$user.save();
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      this.loading = false;
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

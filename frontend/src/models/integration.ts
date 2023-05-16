@@ -1,4 +1,4 @@
-import {User} from "@/models/user"
+import { User } from "@/models/user";
 
 export interface Integration {
   id: number;
@@ -13,4 +13,5 @@ export interface Integration {
   providerUsername?: string;
   providerUserCache?: any;
   user?: User;
+  error: string;
 }

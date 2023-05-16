@@ -1,5 +1,5 @@
-import {BelongsTo, Column, DataType, Model, Table} from "sequelize-typescript"
-import {User} from "@app/models/user.model"
+import { BelongsTo, Column, DataType, Model, Table } from "sequelize-typescript"
+import { User } from "@app/models/user.model"
 
 @Table
 export class Integration extends Model {
@@ -31,6 +31,9 @@ export class Integration extends Model {
     type: DataType.JSON
   })
   providerUserCache: any
+
+  @Column
+  error: string
 
   @BelongsTo(() => User, "userId")
   user: User
