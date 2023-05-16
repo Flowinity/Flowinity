@@ -3,8 +3,22 @@
 # TPU/TroploPrivateUploader
 TPU is the next generation image hosting server written in Vue and TypeScript.
 
+TPU is intended to be an out of the way image hosting server for everyone else, thus it doesn't have features you'd regularly find in other ShareX servers, such as rich OpenGraph embeds. But instead has unique features like Insights, and Collections.
+
+Additionally, TPU has only recently become an open source project, so documentation and resources are lacking initially, but will improve over time.
 ## Don't want to host your own server?
 You can use the official public instance of TPU at [https://privateuploader.com](https://privateuploader.com) (also known as [https://images.flowinity.com](https://images.flowinity.com)).
+
+<details>
+  <summary><h2>Screenshots (Click to expand)</h2></summary>
+
+View the full collection on [TPU](https://privateuploader.com/collections/2736179e19078284d9a5a4c1241289db7f777b180fed932b88162bbb2ec00ef1).
+
+![Gallery](https://i.troplo.com/i/d68241bda319.png)
+![Collection Page](https://i.troplo.com/i/a1fb3e1af098.png)
+![User Profile](https://i.troplo.com/i/4d0adcf1c4a4.png)
+![Insights](https://i.troplo.com/i/ab6170f5d976.png)
+</details>
 
 ## Features
 - **Gallery**, where all your uploaded files live.
