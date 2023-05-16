@@ -40,15 +40,6 @@
           Settings
         </v-btn>
         <v-btn
-          v-if="!$route.params.type && collection.permissionsMetadata?.read"
-          @click="downloadCollectionAsZIPFile"
-          :disabled="downloadCollection.processing"
-          :loading="downloadCollection.processing"
-        >
-          <v-icon class="mr-1" style="font-size: 20px">mdi-download</v-icon>
-          Download Collection
-        </v-btn>
-        <v-btn
           v-else-if="collection?.shareLink"
           @click="
             $functions.copy(
@@ -95,15 +86,15 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue"
-import CollectionBanner from "@/components/Collections/CollectionBanner.vue"
-import {CollectionCache} from "@/types/collection"
-import GalleryCore from "@/components/Gallery/GalleryCore.vue"
-import Sharing from "@/components/Collections/Dialogs/Sharing.vue"
-import UserBanner from "@/components/Users/UserBanner.vue"
-import CollectionSettings from "@/components/Collections/Dialogs/Settings.vue"
-import PersonalGallery from "@/views/Gallery.vue"
+import { defineComponent } from "vue";
+import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
+import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
+import { CollectionCache } from "@/types/collection";
+import GalleryCore from "@/components/Gallery/GalleryCore.vue";
+import Sharing from "@/components/Collections/Dialogs/Sharing.vue";
+import UserBanner from "@/components/Users/UserBanner.vue";
+import CollectionSettings from "@/components/Collections/Dialogs/Settings.vue";
+import PersonalGallery from "@/views/Gallery.vue";
 
 export default defineComponent({
   name: "CollectionsItem",
@@ -120,53 +111,35 @@ export default defineComponent({
     return {
       collection: undefined as CollectionCache | undefined,
       sharing: false,
-      settings: false,
-      downloadCollection: {
-        processing: false
-      }
-    }
+      settings: false
+    };
   },
   methods: {
     async getCollection() {
       if (!this.collection && this.$collections.items.length) {
         this.collection = this.$collections.items.find(
           (c: any) => c.id === parseInt(<string>this.$route.params.id)
-        )
+        );
       }
-      this.$app.componentLoading = true
-      const {data} = await this.axios.get(
+      this.$app.componentLoading = true;
+      const { data } = await this.axios.get(
         `/collections/${this.$route.params.id}`
-      )
-      this.$app.componentLoading = false
-      this.collection = data
-      this.$app.title = this.collection?.name as string
-    },
-    async downloadCollectionAsZIPFile() {
-      this.downloadCollection.processing = true
-
-      await this.axios.get(`/collections/${this.collection?.id}/download`, {
-        responseType: "blob"
-      }).then((res) => {
-        const blob = new Blob([res.data], {type: "application/zip"})
-        const link = document.createElement("a")
-        link.href = window.URL.createObjectURL(blob)
-        link.download = `${this.collection?.name}.zip`
-        link.click()
-      })
-
-      this.downloadCollection.processing = false
+      );
+      this.$app.componentLoading = false;
+      this.collection = data;
+      this.$app.title = this.collection?.name as string;
     }
   },
   mounted() {
-    this.getCollection()
+    this.getCollection();
   },
   watch: {
     "$route.params.id"(val) {
-      if (!val) return
-      this.getCollection()
+      if (!val) return;
+      this.getCollection();
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

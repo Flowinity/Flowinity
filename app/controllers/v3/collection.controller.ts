@@ -1,21 +1,31 @@
-import {Body, Delete, Get, JsonController, Param, Patch, Post, QueryParam, UploadedFile, Res} from "routing-controllers"
-import {Service} from "typedi"
-import {Auth} from "@app/lib/auth"
-import {User} from "@app/models/user.model"
+import {
+  Body,
+  Delete,
+  Get,
+  JsonController,
+  Param,
+  Patch,
+  Post,
+  QueryParam,
+  UploadedFile,
+  Res
+} from "routing-controllers"
+import { Service } from "typedi"
+import { Auth } from "@app/lib/auth"
+import { User } from "@app/models/user.model"
 import Errors from "@app/lib/errors"
-import {GalleryService} from "@app/services/gallery.service"
-import {CacheService} from "@app/services/cache.service"
-import {SortOptions} from "@app/types/sort"
-import {CollectionService} from "@app/services/collection.service"
-import {CollectionCache} from "@app/types/collection"
-import {CollectionItem} from "@app/models/collectionItem.model"
+import { GalleryService } from "@app/services/gallery.service"
+import { CacheService } from "@app/services/cache.service"
+import { SortOptions } from "@app/types/sort"
+import { CollectionService } from "@app/services/collection.service"
+import { CollectionCache } from "@app/types/collection"
+import { CollectionItem } from "@app/models/collectionItem.model"
 import uploader from "@app/lib/upload"
-import {Collection} from "@app/models/collection.model"
-import {CollectionUser} from "@app/models/collectionUser.model"
+import { Collection } from "@app/models/collection.model"
+import { CollectionUser } from "@app/models/collectionUser.model"
 import JSZip from "jszip"
 import fs from "fs"
-import {Response} from "express"
-import {CollectionController} from "@app/controllers/v2/collection.controller"
+import { Response } from "express"
 
 @Service()
 @JsonController("/collections")
@@ -403,33 +413,49 @@ export class CollectionControllerV3 {
 
   @Get("/:collectionId/download")
   async downloadCollection(
-    @Auth("collections.view", false) user: User,
+    @Auth("collections.view") user: User,
     @Param("collectionId") collectionId: number,
     @Res() res: Response
   ) {
     const collection = await this.collectionService.getCollectionPermissions(
       collectionId,
       user.id,
-      "read"
+      "configure"
     )
 
     if (!collection) throw Errors.COLLECTION_NO_PERMISSION
 
-    const attachments = await this.galleryService.getAttachmentsByCollectionId(collectionId)
+    const attachments = await this.galleryService.getAttachmentsByCollectionId(
+      collectionId
+    )
 
     if (attachments.length > 0) {
+      const size = attachments.reduce((acc, file) => acc + file.fileSize, 0)
+      if (size > 10737418240) throw Errors.COLLECTION_TOO_BIG_TO_DOWNLOAD
+      console.log(size)
       const zip: JSZip = new JSZip()
 
       for (let attachment of attachments) {
-        attachment = await this.galleryService.getAttachment(attachment.attachment, attachment.userId)
-        const file: Buffer = fs.readFileSync(`${config.storage }/${attachment.attachment}`)
+        attachment = await this.galleryService.getAttachment(
+          attachment.attachment,
+          attachment.userId
+        )
 
-        if(!file) return
+        const file: Buffer = fs.readFileSync(
+          `${config.storage}/${attachment.attachment}`
+        )
 
-        zip.file(attachment.originalFilename + attachment.attachment, file)
+        if (!file) throw new Error("Couldn't archive collection.")
+
+        zip.file(
+          `${attachment.originalFilename.split(".")[0]}.${
+            attachment.attachment
+          }`,
+          file
+        )
       }
 
-      const buffer: Buffer = await zip.generateAsync({type: 'nodebuffer'})
+      const buffer: Buffer = await zip.generateAsync({ type: "nodebuffer" })
 
       return res.send(buffer)
     } else {

@@ -302,6 +302,11 @@ let Errors = {
   COLLECTION_EMPTY_TO_DOWNLOAD: {
     message: "The collection is empty, so there is nothing to download.",
     status: 400
+  },
+  COLLECTION_TOO_BIG_TO_DOWNLOAD: {
+    message:
+      "The maximum export size for collections is currently 10GB, and this collection exceeds the limit.",
+    status: 400
   }
 }
 

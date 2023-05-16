@@ -1,4 +1,4 @@
-import {User} from "@/models/user"
+import { User } from "@/models/user";
 
 export interface Collection {
   id: number;
@@ -13,4 +13,9 @@ export interface Collection {
   users: any[];
   recipient: any;
   autoCollectApprovals: any[];
+  permissionsMetadata: {
+    configure: boolean;
+    write: boolean;
+    read: boolean;
+  };
 }

@@ -263,7 +263,8 @@
     "disable": "Disable",
     "never": "Never",
     "next": "Next",
-    "previous": "Previous"
+    "previous": "Previous",
+    "update": "Update"
   },
   "setup": {
     "step0": {
@@ -353,6 +354,14 @@
     },
     "step8": {
       "title": "TPU Server is restarting... You will be redirected to the login page automatically."
+    }
+  },
+  "collections": {
+    "settings": {
+      "title": "Collection Settings",
+      "removeBanner": "Remove Banner",
+      "export": "Export Collection",
+      "delete": "Delete Collection"
     }
   }
 }
