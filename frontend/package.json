@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "serve": "vite",
-    "build": "vue-tsc --noEmit && vite build && cp -r dist/* /var/www/html/tpu",
+    "build-prod": "vue-tsc --noEmit && vite build && cp -r dist/* /var/www/html/tpu",
+    "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix --ignore-path .gitignore",
     "build-mobile": "CORDOVA=true vite build && rm -rf ./mobile/www && cp -r ./dist ./mobile/www"
