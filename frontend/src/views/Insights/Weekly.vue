@@ -377,13 +377,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import DynamicCard from "@/components/Core/DynamicCard.vue"
-import InsightsStatsCard from "@/components/Insights/StatsCard.vue"
-import {Insight} from "@/models/insight"
-import Chart from "@/components/Core/Chart.vue"
-import InsightsPageBanner from "@/components/Insights/Banners/Page.vue"
-import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue"
+import { defineComponent } from "vue";
+import DynamicCard from "@/components/Core/DynamicCard.vue";
+import InsightsStatsCard from "@/components/Insights/StatsCard.vue";
+import { Insight } from "@/models/insight";
+import Chart from "@/components/Core/Chart.vue";
+import InsightsPageBanner from "@/components/Insights/Banners/Page.vue";
+import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
 
 export default defineComponent({
   name: "Dynamic",
@@ -398,23 +398,23 @@ export default defineComponent({
     return {
       headers: {
         topChats: [
-          {title: "Chat", key: "chatName"},
-          {title: "Count", key: "count", order: "desc"}
+          { title: "Chat", key: "chatName" },
+          { title: "Count", key: "count", order: "desc" }
         ],
         words: [
-          {title: "Word", key: "word"},
-          {title: "Count", key: "count", order: "desc"}
+          { title: "Word", key: "word" },
+          { title: "Count", key: "count", order: "desc" }
         ]
       },
       report: null as Insight | null,
       reports: [] as Insight[],
       id: null as number | null
-    }
+    };
   },
   computed: {
     requiredString() {
-      if (this.$route.params.username) return `/${this.$route.params.username}`
-      return ""
+      if (this.$route.params.username) return `/${this.$route.params.username}`;
+      return "";
     },
     items() {
       return this.reports
@@ -425,11 +425,11 @@ export default defineComponent({
             name: `${this.$date(report.startDate).format(
               "DD/MM/YYYY"
             )} - ${this.$date(report.endDate).format("DD/MM/YYYY")}`
-          }
-        })
+          };
+        });
     },
     type() {
-      return this.$route.params.type as string
+      return this.$route.params.type as string;
     },
     strings() {
       switch (this.type) {
@@ -438,74 +438,74 @@ export default defineComponent({
             banner: "https://i.troplo.com/i/4edb6d006e06.png",
             plural: "weeks",
             singular: "week"
-          }
+          };
         case "monthly":
           return {
             banner: "https://i.troplo.com/i/1f91557f0dc4.png",
             plural: "months",
             singular: "month"
-          }
+          };
         case "yearly":
           return {
             banner: "https://i.troplo.com/i/34b61673eac5.png",
             plural: "years",
             singular: "year"
-          }
+          };
         case "dynamic":
           return {
             banner: "https://i.troplo.com/i/c0bc710f80cf.png",
             plural: "all time",
             singular: "all time"
-          }
+          };
         default:
           return {
             banner: "https://i.troplo.com/i/4edb6d006e06.png",
             plural: "weeks",
             singular: "week"
-          }
+          };
       }
     }
   },
   methods: {
     arrayToGraphData(array: { name: string; count: number }[] | undefined) {
-      if (!array) return {labels: [], data: []}
+      if (!array) return { labels: [], data: [] };
       // sort by count
-      const labels = []
-      const data = []
+      const labels = [];
+      const data = [];
       for (const item of array) {
-        labels.push(item.name)
-        data.push(item.count)
+        labels.push(item.name);
+        data.push(item.count);
       }
-      const otherIndex = labels.indexOf("Other")
+      const otherIndex = labels.indexOf("Other");
       if (otherIndex !== -1) {
-        labels.push(labels.splice(otherIndex, 1)[0])
-        data.push(data.splice(otherIndex, 1)[0])
+        labels.push(labels.splice(otherIndex, 1)[0]);
+        data.push(data.splice(otherIndex, 1)[0]);
       }
       return {
         labels,
         data
-      }
+      };
     },
     objectToGraphData(object: any, object2?: any) {
       if (!object2) {
-        const labels = []
-        const data = []
+        const labels = [];
+        const data = [];
         // sort by key by getting in between (X), like key = Monday (1)
         object = Object.keys(object)
           .sort((a, b) => {
-            const aKey = a.split("(")[1]?.split(")")[0]
-            const bKey = b.split("(")[1]?.split(")")[0]
-            return parseInt(aKey || "1") - parseInt(bKey || "1")
+            const aKey = a.split("(")[1]?.split(")")[0];
+            const bKey = b.split("(")[1]?.split(")")[0];
+            return parseInt(aKey || "1") - parseInt(bKey || "1");
           })
           .reduce((obj: any, key: string) => {
-            obj[key] = object[key]
-            return obj
-          }, {})
+            obj[key] = object[key];
+            return obj;
+          }, {});
         for (const [key, value] of Object.entries(object)) {
-          labels.push(key)
-          data.push(value)
+          labels.push(key);
+          data.push(value);
         }
-        return {labels, data}
+        return { labels, data };
       } else {
         /* do this, with the goals being the object2  series: [
         {
@@ -521,7 +521,7 @@ export default defineComponent({
         }
       ]
          */
-        const data = []
+        const data = [];
         for (const [key, value] of Object.entries(object)) {
           data.push({
             name: key,
@@ -532,12 +532,12 @@ export default defineComponent({
                 value: object2[key]
               }
             ]
-          })
+          });
         }
         return {
           data,
           name: "Uploads"
-        }
+        };
       }
     },
     getReports() {
@@ -548,12 +548,12 @@ export default defineComponent({
             : `/pulse/insights/v2/reports`
         )
         .then((res) => {
-          this.reports = res.data
-        })
+          this.reports = res.data;
+        });
     },
     getReport() {
-      this.$app.componentLoading = true
-      const id = this.id || this.$route.params.type
+      this.$app.componentLoading = true;
+      const id = this.id || this.$route.params.type;
       this.axios
         .get(
           this.$route.params.username
@@ -561,35 +561,35 @@ export default defineComponent({
             : `/pulse/insights/v2/${id}`
         )
         .then((res) => {
-          this.report = res.data
-          this.id = res.data.id
-          this.$app.componentLoading = false
+          this.report = res.data;
+          this.id = res.data.id;
+          this.$app.componentLoading = false;
         })
         .catch(() => {
-          this.$app.componentLoading = false
-        })
+          this.$app.componentLoading = false;
+        });
     }
   },
   mounted() {
-    this.id = parseInt(<string>this.$route.params.id)
-    this.getReport()
-    this.getReports()
+    this.id = parseInt(<string>this.$route.params.id);
+    this.getReport();
+    this.getReports();
     this.$app.title = `${
       this.type.charAt(0).toUpperCase() + this.type.slice(1)
-    } Insights`
+    } Insights`;
   },
   watch: {
     type(val) {
-      if (!val) return
+      if (!val) return;
       // find the latest in this.reports
-      this.id = null
-      this.getReport()
+      this.id = null;
+      this.getReport();
       this.$app.title = `${
         this.type.charAt(0).toUpperCase() + this.type.slice(1)
-      } Insights`
+      } Insights`;
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

@@ -1,6 +1,6 @@
-import {BelongsTo, Column, Model, Table, Unique} from "sequelize-typescript"
-import {Workspace} from "@app/models/workspace.model"
-import {User} from "@app/models/user.model"
+import { BelongsTo, Column, Model, Table, Unique } from "sequelize-typescript"
+import { Workspace } from "@app/models/workspace.model"
+import { User } from "@app/models/user.model"
 
 @Table
 export class WorkspaceUser extends Model {

@@ -32,12 +32,12 @@
           <v-list-item-title>
             {{ getIntegrationMeta(integration.type).name }}
             <v-btn
-              icon
-              variant="tonal"
-              size="x-small"
+              v-if="integration.error"
               class="ml-1"
               color="red"
-              v-if="integration.error"
+              icon
+              size="x-small"
+              variant="tonal"
             >
               <v-icon left>mdi-alert</v-icon>
               <v-tooltip activator="parent" location="top">

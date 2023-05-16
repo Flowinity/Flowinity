@@ -14,7 +14,12 @@
             @keydown.enter="deleteCommunicationsMessage"
           />
         </v-form>
-        <v-btn :disabled="actions.deleteCommunicationsMessage.processing" class="mx-3 my-3" variant="outlined" @click="deleteCommunicationsMessage">
+        <v-btn
+          :disabled="actions.deleteCommunicationsMessage.processing"
+          class="mx-3 my-3"
+          variant="outlined"
+          @click="deleteCommunicationsMessage"
+        >
           <v-icon>mdi-delete</v-icon>
           Delete Communications Message
         </v-btn>
@@ -24,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Communications",
@@ -36,18 +41,24 @@ export default defineComponent({
           processing: false
         }
       }
-    }
+    };
   },
   methods: {
     async deleteCommunicationsMessage() {
-      this.actions.deleteCommunicationsMessage.processing = true
-      await this.axios.delete("/admin/communications/message/" + this.actions.deleteCommunicationsMessage.messageId).then(() => {
-        this.$toast.success("Deleted communications message.")
-        this.actions.deleteCommunicationsMessage.processing = false
-      }).catch(() => {
-        this.actions.deleteCommunicationsMessage.processing = false
-      })
+      this.actions.deleteCommunicationsMessage.processing = true;
+      await this.axios
+        .delete(
+          "/admin/communications/message/" +
+            this.actions.deleteCommunicationsMessage.messageId
+        )
+        .then(() => {
+          this.$toast.success("Deleted communications message.");
+          this.actions.deleteCommunicationsMessage.processing = false;
+        })
+        .catch(() => {
+          this.actions.deleteCommunicationsMessage.processing = false;
+        });
     }
   }
-})
+});
 </script>

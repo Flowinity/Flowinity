@@ -321,32 +321,32 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import UserBanner from "@/components/Users/UserBanner.vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
-import UserBadges from "@/components/Users/UserBadges.vue"
-import {ProfileLayout, User} from "@/models/user"
-import CollectionBanner from "@/components/Collections/CollectionBanner.vue"
-import CollectionCard from "@/components/Collections/CollectionCard.vue"
-import StatsCard from "@/components/Dashboard/StatsCard.vue"
-import BarChart from "@/components/Core/BarChart.vue"
-import LineChart from "@/components/Core/LineChart.vue"
-import Chart from "@/components/Core/Chart.vue"
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue"
-import InsightsPromoCard from "@/views/Insights/PromoCard.vue"
-import {DefaultThemes} from "@/plugins/vuetify"
-import ProfileInfo from "@/components/Users/UserV3/Widgets/ProfileInfo.vue"
-import MutualCollections from "@/components/Users/UserV3/Widgets/MutualCollections.vue"
-import MutualFriends from "@/components/Users/UserV3/Widgets/MutualFriends.vue"
-import CoreStatistics from "@/components/Users/UserV3/Widgets/CoreStatistics.vue"
-import LastFM from "@/components/Users/UserV3/Widgets/LastFM.vue"
-import MyAnimeList from "@/components/Users/UserV3/Widgets/MyAnimeList.vue"
-import UserV3Settings from "@/components/Users/UserV3/Dialogs/Settings.vue"
-import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/ComponentHandler.vue"
-import {VueDraggable} from "vue-draggable-plus"
-import VueMonacoEditor from "@guolao/vue-monaco-editor"
-import {Component} from "@/types/userv3"
-import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue"
+import { defineComponent } from "vue";
+import UserBanner from "@/components/Users/UserBanner.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import UserBadges from "@/components/Users/UserBadges.vue";
+import { ProfileLayout, User } from "@/models/user";
+import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
+import CollectionCard from "@/components/Collections/CollectionCard.vue";
+import StatsCard from "@/components/Dashboard/StatsCard.vue";
+import BarChart from "@/components/Core/BarChart.vue";
+import LineChart from "@/components/Core/LineChart.vue";
+import Chart from "@/components/Core/Chart.vue";
+import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
+import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
+import { DefaultThemes } from "@/plugins/vuetify";
+import ProfileInfo from "@/components/Users/UserV3/Widgets/ProfileInfo.vue";
+import MutualCollections from "@/components/Users/UserV3/Widgets/MutualCollections.vue";
+import MutualFriends from "@/components/Users/UserV3/Widgets/MutualFriends.vue";
+import CoreStatistics from "@/components/Users/UserV3/Widgets/CoreStatistics.vue";
+import LastFM from "@/components/Users/UserV3/Widgets/LastFM.vue";
+import MyAnimeList from "@/components/Users/UserV3/Widgets/MyAnimeList.vue";
+import UserV3Settings from "@/components/Users/UserV3/Dialogs/Settings.vue";
+import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/ComponentHandler.vue";
+import { VueDraggable } from "vue-draggable-plus";
+import VueMonacoEditor from "@guolao/vue-monaco-editor";
+import { Component } from "@/types/userv3";
+import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 
 export default defineComponent({
   name: "UserV3",
@@ -444,7 +444,7 @@ export default defineComponent({
       user: undefined as User | undefined,
       friendLoading: false,
       editorTmp: ""
-    }
+    };
   },
   computed: {
     components() {
@@ -525,8 +525,8 @@ export default defineComponent({
               name: "Type",
               type: "select",
               options: [
-                {text: "Recent", value: "recent"},
-                {text: "Top", value: "top"}
+                { text: "Recent", value: "recent" },
+                { text: "Top", value: "top" }
               ]
             }
           }
@@ -549,9 +549,9 @@ export default defineComponent({
               name: "Type",
               type: "select",
               options: [
-                {text: "Anime", value: "anime"},
-                {text: "Manga", value: "manga"},
-                {text: "Profile stats", value: "profile"}
+                { text: "Anime", value: "anime" },
+                { text: "Manga", value: "manga" },
+                { text: "Profile stats", value: "profile" }
               ]
             },
             display: {
@@ -604,15 +604,15 @@ export default defineComponent({
             friendsOnly: false
           }
         }
-      ] as Component[]
+      ] as Component[];
     },
     visibleComponents() {
-      return this.components.filter((x) => x.visible !== false)
+      return this.components.filter((x) => x.visible !== false);
     },
     selectedComponent() {
       let component = this.layout.layout.columns[0].rows.find(
         (x) => x.id === this.config.component
-      )
+      );
       if (!component) {
         component = this.layout.layout.columns[0].rows
           .find(
@@ -624,29 +624,29 @@ export default defineComponent({
           )
           ?.props?.children?.find(
             (y: Component) => y.id === this.config.component
-          )
+          );
       }
-      if (!component) return null
-      return component
+      if (!component) return null;
+      return component;
     },
     layoutEditor: {
       get() {
-        return JSON.stringify(this.layout, null, 2)
+        return JSON.stringify(this.layout, null, 2);
       },
       set(val) {
-        this.editorTmp = val
+        this.editorTmp = val;
       }
     },
     primaryColorResult() {
-      return this.$user.primaryColorResult(this.primary, this.gold).primary
+      return this.$user.primaryColorResult(this.primary, this.gold).primary;
     },
     primary() {
       return this.user?.themeEngine?.theme[
         this.$vuetify.theme.name as "dark" | "light" | "amoled"
-        ].colors.primary
+      ].colors.primary;
     },
     gold() {
-      return this.user?.plan.internalName === "GOLD"
+      return this.user?.plan.internalName === "GOLD";
     },
     friends() {
       if (this.user?.friend === "accepted") {
@@ -654,32 +654,32 @@ export default defineComponent({
           text: "Remove Friend",
           color: "red",
           icon: "mdi-account-minus"
-        }
+        };
       } else if (this.user?.friend === "outgoing") {
         return {
           text: "Cancel Request",
           color: "grey",
           icon: "mdi-account-minus"
-        }
+        };
       } else if (this.user?.friend === "incoming") {
         return {
           text: "Accept Request",
           color: "green",
           icon: "mdi-account-plus"
-        }
+        };
       } else {
         return {
           text: "Add Friend",
           color: "green",
           icon: "mdi-account-plus"
-        }
+        };
       }
     },
     disableProfileColors() {
       try {
-        return JSON.parse(localStorage.getItem("disableProfileColors")!)
+        return JSON.parse(localStorage.getItem("disableProfileColors")!);
       } catch {
-        return false
+        return false;
       }
     }
   },
@@ -687,19 +687,19 @@ export default defineComponent({
     findComponent(id: string) {
       let component = this.layout.layout.columns[0].rows.find(
         (x) => x.id === id
-      )
+      );
       if (component)
         return {
           component,
           parent: this.layout.layout.columns[0]
-        }
+        };
       component = this.layout.layout.columns[0].rows
         .find(
           (x) =>
             x?.props?.children &&
             x?.props?.children?.find((y: Component) => y.id === id)
         )
-        ?.props?.children?.find((y: Component) => y.id === id)
+        ?.props?.children?.find((y: Component) => y.id === id);
       return {
         component,
         parent: this.layout.layout.columns[0].rows.find(
@@ -707,73 +707,73 @@ export default defineComponent({
             x?.props?.children &&
             x?.props?.children?.find((y: Component) => y.id === id)
         )
-      }
+      };
     },
     updateProp(data: { key: string; value: any }) {
-      if (!this.selectedComponent) return
-      this.selectedComponent.props[data.key] = data.value
+      if (!this.selectedComponent) return;
+      this.selectedComponent.props[data.key] = data.value;
     },
     deleteComponent(component: Component) {
-      const comp = this.findComponent(component.id)
-      console.log(comp, component)
-      if (!comp?.component) return
+      const comp = this.findComponent(component.id);
+      console.log(comp, component);
+      if (!comp?.component) return;
       if (comp.parent.rows) {
-        comp.parent.rows.splice(comp.parent.rows.indexOf(comp.component), 1)
+        comp.parent.rows.splice(comp.parent.rows.indexOf(comp.component), 1);
       } else {
         comp.parent.props.children.splice(
           comp.parent.props.children.indexOf(comp.component),
           1
-        )
+        );
       }
     },
     move(component: Component, count: number) {
-      const comp = this.findComponent(component.id)
-      console.log(comp, component)
-      if (!comp?.component) return
+      const comp = this.findComponent(component.id);
+      console.log(comp, component);
+      if (!comp?.component) return;
       if (comp.parent.rows) {
-        const index = comp.parent.rows.indexOf(comp.component)
-        comp.parent.rows.splice(index, 1)
-        comp.parent.rows.splice(index + count, 0, comp.component)
+        const index = comp.parent.rows.indexOf(comp.component);
+        comp.parent.rows.splice(index, 1);
+        comp.parent.rows.splice(index + count, 0, comp.component);
       } else {
-        const index = comp.parent.props.children.indexOf(comp.component)
-        comp.parent.props.children.splice(index, 1)
-        comp.parent.props.children.splice(index + count, 0, comp.component)
+        const index = comp.parent.props.children.indexOf(comp.component);
+        comp.parent.props.children.splice(index, 1);
+        comp.parent.props.children.splice(index + count, 0, comp.component);
       }
     },
     setLayout(layout: ProfileLayout) {
-      console.log(layout)
+      console.log(layout);
     },
     addItemDebug(name: string) {
       this.layout.layout.columns[0].rows.unshift({
         name,
         id: this.$functions.uuid(),
         props: this.components.find((c) => c.id === name)?.props
-      })
+      });
     },
     setTheme(reset: boolean = false) {
-      if (this.disableProfileColors) return false
-      if (this.username) return false
+      if (this.disableProfileColors) return false;
+      if (this.username) return false;
       if (this.user?.themeEngine?.version !== 1 && !reset) {
-        this.setTheme(true)
-        return false
+        this.setTheme(true);
+        return false;
       }
       const theme = reset
         ? this.$user.changes.themeEngine?.theme ||
-        new DefaultThemes(this.$user.gold).themes
-        : this.user?.themeEngine?.theme
-      if (!theme) return false
+          new DefaultThemes(this.$user.gold).themes
+        : this.user?.themeEngine?.theme;
+      if (!theme) return false;
       this.$vuetify.theme.themes.dark = {
         ...this.$vuetify.theme.themes.dark,
         ...theme.dark
-      }
+      };
       this.$vuetify.theme.themes.light = {
         ...this.$vuetify.theme.themes.light,
         ...theme.light
-      }
+      };
       this.$vuetify.theme.themes.amoled = {
         ...this.$vuetify.theme.themes.amoled,
         ...theme.amoled
-      }
+      };
       if (!reset) {
         document.body.style.setProperty(
           "--gradient-offset",
@@ -781,83 +781,83 @@ export default defineComponent({
             this.user?.themeEngine?.gradientOffset ||
             this.$user.changes.themeEngine.gradientOffset
           }%`
-        )
+        );
         this.$app.fluidGradient =
-          this.user?.themeEngine?.fluidGradient || this.$app.fluidGradient
+          this.user?.themeEngine?.fluidGradient || this.$app.fluidGradient;
       } else {
         document.body.style.setProperty(
           "--gradient-offset",
           `${this.$user.changes?.themeEngine?.gradientOffset || 100}%`
-        )
+        );
         this.$app.fluidGradient =
-          this.$user.changes?.themeEngine?.fluidGradient || false
+          this.$user.changes?.themeEngine?.fluidGradient || false;
       }
-      return true
+      return true;
     },
     async chat() {
-      this.friendLoading = true
-      const data = await this.$chat.createChat([this.user?.id as number])
-      if (this.username) this.$chat.dialogs.user.value = false
-      this.$router.push(`/communications/${data.association.id}`)
+      this.friendLoading = true;
+      const data = await this.$chat.createChat([this.user?.id as number]);
+      if (this.username) this.$chat.dialogs.user.value = false;
+      this.$router.push(`/communications/${data.association.id}`);
     },
     async doFriendRequest() {
       try {
-        this.friendLoading = true
-        await this.axios.post(`/user/friends/${this.user?.id}`)
-        this.friendLoading = false
-        this.getUser(false)
+        this.friendLoading = true;
+        await this.axios.post(`/user/friends/${this.user?.id}`);
+        this.friendLoading = false;
+        this.getUser(false);
       } catch {
-        this.friendLoading = false
+        this.friendLoading = false;
       }
     },
     async getUser(load = true) {
       if (load && !this.username) {
-        this.$app.componentLoading = true
+        this.$app.componentLoading = true;
       }
-      const username = this.username || this.$route.params.username
-      const {data} = await this.axios.get(`/user/profile/${username}`)
-      this.user = data
-      this.layout = this.user?.profileLayout || this.defaultLayout
-      if (!this.username) this.$app.title = this.user?.username + "'s Profile"
-      this.setTheme()
-      this.$app.componentLoading = false
+      const username = this.username || this.$route.params.username;
+      const { data } = await this.axios.get(`/user/profile/${username}`);
+      this.user = data;
+      this.layout = this.user?.profileLayout || this.defaultLayout;
+      if (!this.username) this.$app.title = this.user?.username + "'s Profile";
+      this.setTheme();
+      this.$app.componentLoading = false;
     },
     eventListener(e: KeyboardEvent) {
       if (e.ctrlKey && e.key === "s") {
-        e.preventDefault()
-        console.log(this.editorTmp)
+        e.preventDefault();
+        console.log(this.editorTmp);
         try {
-          this.layout = JSON.parse(this.editorTmp)
+          this.layout = JSON.parse(this.editorTmp);
         } catch {
-          this.$toast.error("Invalid JSON")
+          this.$toast.error("Invalid JSON");
         }
       }
     }
   },
   mounted() {
-    document.addEventListener("keydown", (e) => this.eventListener(e))
-    if (!this.username) this.$app.title = "User"
-    this.getUser()
+    document.addEventListener("keydown", (e) => this.eventListener(e));
+    if (!this.username) this.$app.title = "User";
+    this.getUser();
   },
   unmounted() {
-    document.removeEventListener("keydown", (e) => this.eventListener(e))
-    this.setTheme(true)
+    document.removeEventListener("keydown", (e) => this.eventListener(e));
+    this.setTheme(true);
   },
   watch: {
     "$route.params.username"(val) {
-      if (!val) return
-      this.getUser()
+      if (!val) return;
+      this.getUser();
     },
     layout: {
       handler(val) {
-        if (this.user?.id !== this.$user.user?.id) return
-        this.$user.changes.profileLayout = val
-        this.$user.save()
+        if (this.user?.id !== this.$user.user?.id) return;
+        this.$user.changes.profileLayout = val;
+        this.$user.save();
       },
       deep: true
     }
   }
-})
+});
 </script>
 
 <style scoped>

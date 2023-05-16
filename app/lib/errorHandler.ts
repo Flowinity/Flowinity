@@ -1,15 +1,23 @@
-import { Request, Response, NextFunction } from "express"
+import { NextFunction, Request, Response } from "express"
 
 const sequelize = require("../models")
 const Errors = require("./errors")
 
-export default function (err: any, req: Request, res: Response, next: NextFunction) {
+export default function (
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   if (err instanceof sequelize.Sequelize.ValidationError) {
     res.status(400).json({
       name: "Troplo/ErrorHandler/ValidationError",
-      errors: err.errors.map((error: any) => {
+      errors: err.errors.map((error: any): { field: any; message: any } => {
         return {
-          message: error.message?.replace(/Validation (.*?) on (.*?) failed/, "$2 is invalid."),
+          message: error.message?.replace(
+            /Validation (.*?) on (.*?) failed/,
+            "$2 is invalid."
+          ),
           field: error.path
         }
       })

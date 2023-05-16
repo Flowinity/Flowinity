@@ -1,22 +1,22 @@
 {
-  "root" : true,
-  "parser" : "@typescript-eslint/parser",
-  "plugins" : [
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
     "@typescript-eslint"
   ],
-  "ignorePatterns" : [
+  "ignorePatterns": [
     "projects/**/*"
   ],
-  "extends" : [
+  "extends": [
     "../.eslintrc.json"
   ],
-  "rules" : {
-    "jsdoc/check-indentation" : "off"
+  "rules": {
+    "jsdoc/check-indentation": "off"
   },
-  "globals" : {
-    "NodeJS" : true,
-    "Express" : true,
-    "Mocha" : true
+  "globals": {
+    "NodeJS": true,
+    "Express": true,
+    "Mocha": true
   },
-  "overrides" : []
+  "overrides": []
 }

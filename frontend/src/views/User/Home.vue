@@ -57,7 +57,7 @@
                 {{ $friends.getName(user) }}
               </router-link>
             </v-card-title>
-            <UserBadges :user="user" class="justify-center mt-n1 mb-2"/>
+            <UserBadges :user="user" class="justify-center mt-n1 mb-2" />
             <div class="ml-n1 text-center justify-center limit">
               {{ user.description }}
             </div>
@@ -82,16 +82,16 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import PromoNoContent from "@/components/Core/PromoNoContent.vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
-import {User} from "@/models/user"
-import UserBadges from "@/components/Users/UserBadges.vue"
-import Paginate from "@/components/Core/Paginate.vue"
+import { defineComponent } from "vue";
+import PromoNoContent from "@/components/Core/PromoNoContent.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { User } from "@/models/user";
+import UserBadges from "@/components/Users/UserBadges.vue";
+import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
   name: "UserHome",
-  components: {Paginate, UserBadges, UserAvatar, PromoNoContent},
+  components: { Paginate, UserBadges, UserAvatar, PromoNoContent },
   data() {
     return {
       users: [] as User[],
@@ -123,47 +123,47 @@ export default defineComponent({
           value: "username desc"
         }
       ]
-    }
+    };
   },
   computed: {
     sortVal: {
       get() {
-        return this.sort + " " + this.order
+        return this.sort + " " + this.order;
       },
       set(val: string) {
-        const [sort, order] = val.split(" ")
-        this.sort = sort
-        this.order = order
-        this.getUsers()
+        const [sort, order] = val.split(" ");
+        this.sort = sort;
+        this.order = order;
+        this.getUsers();
       }
     }
   },
   methods: {
     async getUsers() {
-      this.$app.componentLoading = true
-      const {data} = await this.axios.get("/user/all", {
+      this.$app.componentLoading = true;
+      const { data } = await this.axios.get("/user/all", {
         params: {
           sort: this.sort,
           order: this.order,
           search: this.search,
           page: this.page
         }
-      })
-      this.users = data.users
-      this.pagination = data.pager
-      this.$app.componentLoading = false
+      });
+      this.users = data.users;
+      this.pagination = data.pager;
+      this.$app.componentLoading = false;
     }
   },
   mounted() {
-    this.$app.title = "Users"
-    this.getUsers()
+    this.$app.title = "Users";
+    this.getUsers();
   },
   watch: {
     page() {
-      this.getUsers()
+      this.getUsers();
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

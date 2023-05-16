@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "EmailVerify",
@@ -39,28 +39,28 @@ export default defineComponent({
     return {
       loading: false,
       error: false
-    }
+    };
   },
   methods: {
     async verify() {
-      this.loading = true
-      this.error = false
+      this.loading = true;
+      this.error = false;
       try {
         await this.axios.patch("/user/verification", {
           token: this.$route.params.token
-        })
-        this.$toast.success("Email verified successfully!")
-        this.$router.push("/login")
-        this.$user.init()
+        });
+        this.$toast.success("Email verified successfully!");
+        this.$router.push("/login");
+        this.$user.init();
       } catch {
-        this.loading = false
-        this.error = true
+        this.loading = false;
+        this.error = true;
       }
     }
   },
   mounted() {
-    this.$app.title = "Email Verify"
-    this.verify()
+    this.$app.title = "Email Verify";
+    this.verify();
   }
-})
+});
 </script>

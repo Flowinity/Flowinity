@@ -1,13 +1,36 @@
+import express, { NextFunction, Request, Response } from "express"
+import {
+  ExpressErrorMiddlewareInterface,
+  HttpError,
+  Middleware,
+  useContainer,
+  useExpressServer
+} from "routing-controllers"
 import cookieParser from "cookie-parser"
 import cors from "cors"
-import express from "express"
 import swaggerJSDoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
+import sequelize, { Op } from "sequelize"
+import path from "path"
+
+// Import Libs
+import Errors from "@app/lib/errors"
+
+// Import Classes
+import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
+
+// Import Schemas
+import { ApiSchema } from "@app/schema"
+
+// Import Models
+import { User } from "@app/models/user.model"
+
+// Import Controllers (v2)
+import { MailController } from "@app/controllers/v2/mail.controller"
 import { UserUtilsController } from "@app/controllers/v2/userutils.controller"
 import { CoreController } from "@app/controllers/v2/core.controller"
 import { GalleryController } from "@app/controllers/v2/gallery.controller"
-import Errors from "@app/lib/errors"
 import { AuthController } from "@app/controllers/v2/auth.controller"
 import { FileController } from "@app/controllers/v2/file.controller"
 import { CollectionController } from "@app/controllers/v2/collection.controller"
@@ -17,26 +40,14 @@ import { SecurityController } from "@app/controllers/v2/security.controller"
 import { AutoCollectController } from "@app/controllers/v2/autoCollect.controller"
 import { SlideshowController } from "@app/controllers/v2/slideshow.controller"
 import { InviteController } from "@app/controllers/v2/invite.controller"
-import sequelize from "sequelize"
 import { PulseController } from "@app/controllers/v2/pulse.controller"
 import { NoteController } from "@app/controllers/v2/note.controller"
 import { MigrateController } from "@app/controllers/v2/migrate.controller"
 import { ChatController } from "@app/controllers/v2/chat.controller"
 import { MediaProxyController } from "@app/controllers/v2/mediaProxy.controller"
 import { ProviderController } from "@app/controllers/v2/provider.controller"
-import { User } from "@app/models/user.model"
-import { Op } from "sequelize"
-import { MailController } from "@app/controllers/v2/mail.controller"
-import { Request, Response, NextFunction } from "express"
-import {
-  useExpressServer,
-  Middleware,
-  ExpressErrorMiddlewareInterface,
-  HttpError,
-  useContainer
-} from "routing-controllers"
-import { Container } from "typedi"
-//v3 controllers
+
+// Import Controllers (v3)
 import { UserControllerV3 } from "@app/controllers/v3/user.controller"
 import { AuthControllerV3 } from "@app/controllers/v3/auth.controller"
 import { CoreControllerV3 } from "@app/controllers/v3/core.controller"
@@ -47,7 +58,6 @@ import { GalleryControllerV3 } from "@app/controllers/v3/gallery.controller"
 import { CollectionControllerV3 } from "@app/controllers/v3/collection.controller"
 import { FileControllerV3 } from "@app/controllers/v3/file.controller"
 import { WorkspaceControllerV3 } from "@app/controllers/v3/workspace.controller"
-import { ApiSchema } from "@app/schema"
 import { DomainControllerV3 } from "@app/controllers/v3/domain.controller"
 import { SecurityControllerV3 } from "@app/controllers/v3/security.controller"
 import { InviteControllerV3 } from "@app/controllers/v3/invite.controller"
@@ -59,21 +69,19 @@ import { FallbackControllerV3 } from "@app/controllers/v3/fallback.controller"
 import { MigrateControllerV3 } from "@app/controllers/v3/migrate.controller"
 import { SlideshowControllerV3 } from "@app/controllers/v3/slideshow.controller"
 import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
-import fs from "fs"
-import path from "path"
-import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
 
 @Service()
 @Middleware({ type: "after" })
 export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
   error(err: any, req: any, res: any, next: (err: any) => any) {
-    console.log(err)
+    console.error(err)
+
     if (err?.status && !err?.errno) {
       return res.status(err?.status || 500).json({
         errors: [
           {
             name: Object.entries(Errors).find(
-              ([key, value]) => value.message === err.message
+              ([, value]): boolean => value.message === err.message
             )?.[0],
             ...err
           }
@@ -81,26 +89,30 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
       })
     } else if (err instanceof sequelize.ValidationError) {
       return res.status(400).json({
-        errors: err.errors.map((e: any) => {
-          return {
-            status: 400,
-            message: e.message
-              ?.replace(/Validation (.*?) on (.*?) failed/, "$2 is invalid.")
-              .replace("notNull Violation: ", "")
-              .replace("cannot be null", "is required."),
-            name: "Troplo/ValidationError"
+        errors: err.errors.map(
+          (e: any): { message: any; name: string; status: number } => {
+            return {
+              status: 400,
+              message: e.message
+                ?.replace(/Validation (.*?) on (.*?) failed/, "$2 is invalid.")
+                .replace("notNull Violation: ", "")
+                .replace("cannot be null", "is required."),
+              name: "Troplo/ValidationError"
+            }
           }
-        })
+        )
       })
     } else if (err?.issues) {
       return res.status(400).json({
-        errors: Object.keys(err.issues).map((e: any) => {
-          return {
-            status: 400,
-            message: err.issues[e].path[0] + ": " + err.issues[e].message,
-            name: "Troplo/ValidationError"
+        errors: Object.keys(err.issues).map(
+          (e: any): { message: any; name: string; status: number } => {
+            return {
+              status: 400,
+              message: err.issues[e].path[0] + ": " + err.issues[e].message,
+              name: "Troplo/ValidationError"
+            }
           }
-        })
+        )
       })
     } else if (
       (err?.message && err?.expose !== undefined) ||
@@ -137,9 +149,11 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
     }
   }
 }
+
 @Service()
 export class Application {
   app: express.Application
+
   private readonly swaggerOptions: swaggerJSDoc.Options
 
   constructor(
@@ -179,18 +193,20 @@ export class Application {
     }
 
     this.config()
-
     this.bindRoutes()
   }
 
   bindRoutes(): void {
-    this.app.use((req, res, next) => {
+    this.app.use((req, res, next: NextFunction): void => {
       res.setHeader("X-Powered-By", "TroploPrivateUploader/3.0.0")
       next()
     })
-    // read config from config/tpu.json
+
     useContainer(Container)
-    let config = new DefaultTpuConfig().config
+
+    // Read configuration from config/tpu.json.
+    let config: TpuConfig = new DefaultTpuConfig().config
+
     try {
       config = require(path.join(global.appRoot, "config/tpu.json"))
     } catch {}
@@ -229,8 +245,10 @@ export class Application {
       },
       validation: true
     })
+
     const spec = ApiSchema.generateSchema()
-    this.app.use("/api/docs", async (req, res, next) => {
+
+    this.app.use("/api/docs", async (req, res): Promise<void> => {
       res.redirect("/api/v3/docs")
     })
     this.app.use(
@@ -238,6 +256,7 @@ export class Application {
       swaggerUi.serve,
       swaggerUi.setup(swaggerJSDoc(this.swaggerOptions))
     )
+
     if (config.finishedSetup) {
       this.app.use("/api/v3/docs", swaggerUi.serve, swaggerUi.setup(spec))
       this.app.use("/api/v2/user", this.userutilsController.router)
@@ -261,16 +280,17 @@ export class Application {
       this.app.use("/i/", this.fileController.router)
       this.app.use("/api/v1/gallery", this.galleryController.router)
       this.app.use("/api/v1/site", this.coreController.router)
-      this.app.use(
-        (err: any, req: Request, res: Response, next: NextFunction) => {
-          if (err?.status && !err?.errno) {
-            console.log(err)
-            res.status(err?.status || 500).send({
-              errors: [err]
-            })
-          } else if (err instanceof sequelize.ValidationError) {
-            res.status(400).send({
-              errors: err.errors.map((e: any) => {
+      this.app.use((err: any, req: Request, res: Response): void => {
+        if (err?.status && !err?.errno) {
+          console.error(err)
+
+          res.status(err?.status || 500).send({
+            errors: [err]
+          })
+        } else if (err instanceof sequelize.ValidationError) {
+          res.status(400).send({
+            errors: err.errors.map(
+              (e: any): { message: any; name: string; status: number } => {
                 return {
                   status: 400,
                   message: e.message
@@ -282,28 +302,33 @@ export class Application {
                     .replace("cannot be null", "is required."),
                   name: "Troplo/ValidationError"
                 }
-              })
-            })
-          } else if (err?.issues) {
-            console.log(err)
-            res.status(400).send({
-              errors: Object.keys(err.issues).map((e: any) => {
+              }
+            )
+          })
+        } else if (err?.issues) {
+          console.error(err)
+
+          res.status(400).send({
+            errors: Object.keys(err.issues).map(
+              (e: any): { message: any; name: string; status: number } => {
                 return {
                   status: 400,
                   message: err.issues[e].path[0] + ": " + err.issues[e].message,
                   name: "Troplo/ValidationError"
                 }
-              })
-            })
-          } else {
-            console.log(err)
-            res.status(500).send({
-              errors: [Errors.UNKNOWN]
-            })
-          }
+              }
+            )
+          })
+        } else {
+          console.error(err)
+
+          res.status(500).send({
+            errors: [Errors.UNKNOWN]
+          })
         }
-      )
+      })
     }
+
     useExpressServer(this.app, {
       controllers: [FileControllerV3, FallbackControllerV3],
       routePrefix: "",
@@ -316,13 +341,14 @@ export class Application {
       },
       validation: true
     })
+
     this.app.use(express.static(path.join(global.appRoot, "../frontend/dist")))
-    this.app.get("*", function (request, response) {
+    this.app.get("*", function (request, response): void {
       response.sendFile(
         path.resolve(global.appRoot, "../frontend/dist/index.html")
       )
     })
-    this.onServerStart()
+    this.onServerStart() // TODO: Fix "Promise returned from onServerStart is ignored".
   }
 
   private config(): void {
@@ -334,8 +360,9 @@ export class Application {
     this.app.set("view engine", "ejs")
   }
 
-  private async onServerStart() {
-    let config = new DefaultTpuConfig().config
+  private async onServerStart(): Promise<void> {
+    let config: TpuConfig = new DefaultTpuConfig().config
+
     try {
       config = require("@app/config/tpu.json")
     } catch {}

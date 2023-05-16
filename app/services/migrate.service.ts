@@ -1,4 +1,4 @@
-import { Service, Container } from "typedi"
+import { Container, Service } from "typedi"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import Errors from "@app/lib/errors"
 import argon2 from "argon2"
@@ -8,6 +8,7 @@ import { MessageAttachment } from "@app/models/messageAttachment.model"
 import { Chat } from "@app/models/chat.model"
 import { CacheService } from "@app/services/cache.service"
 import { User } from "@app/models/user.model"
+
 @Service()
 export class MigrateService {
   constructor() {}

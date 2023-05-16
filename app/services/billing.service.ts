@@ -38,6 +38,7 @@ type JitsiSpeakers = {
 @Service()
 export class BillingService {
   constructor(private readonly adminService: AdminService) {}
+
   async createSubscription(id: number) {
     return await Subscription.create({
       planId: 6,
@@ -48,6 +49,7 @@ export class BillingService {
       expiredAt: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 14)
     })
   }
+
   async checkJitsiGold() {
     console.log("[BILLING] Checking Gold")
     axios

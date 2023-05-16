@@ -1,16 +1,16 @@
 <template>
   <v-container class="center-container">
     <v-row align="center" justify="center">
-      <v-col cols="12" sm="12" md="7" xl="5">
+      <v-col cols="12" md="7" sm="12" xl="5">
         <transition-group name="slide-fade">
           <template v-if="step === 0">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
-              variant="outlined"
               max-width="90vw"
+              variant="outlined"
             >
               <div>
                 <p
@@ -30,7 +30,7 @@
               </div>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="step++" :loading="loading">
+                <v-btn :loading="loading" color="primary" @click="step++">
                   {{ $t("generic.next") }}
                   <v-icon class="ml-1">mdi-arrow-right</v-icon>
                 </v-btn>
@@ -39,12 +39,12 @@
           </template>
           <template v-if="step === 1">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
-              variant="outlined"
               max-width="90vw"
+              variant="outlined"
             >
               <v-card-title>
                 {{ $t("setup.step1.title") }}
@@ -55,28 +55,28 @@
               <v-form @submit="testMariaDBConnection">
                 <v-card-text>
                   <v-text-field
-                    :label="$t('setup.step1.host')"
                     v-model="database.host"
+                    :label="$t('setup.step1.host')"
                     @keyup.enter="testMariaDBConnection"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step1.port')"
                     v-model="database.port"
+                    :label="$t('setup.step1.port')"
                     @keyup.enter="testMariaDBConnection"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step1.database')"
                     v-model="database.database"
+                    :label="$t('setup.step1.database')"
                     @keyup.enter="testMariaDBConnection"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step1.username')"
                     v-model="database.username"
+                    :label="$t('setup.step1.username')"
                     @keyup.enter="testMariaDBConnection"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step1.password')"
                     v-model="database.password"
+                    :label="$t('setup.step1.password')"
                     type="password"
                     @keyup.enter="testMariaDBConnection"
                   ></v-text-field>
@@ -85,9 +85,9 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
+                  :loading="loading"
                   color="primary"
                   @click="testMariaDBConnection"
-                  :loading="loading"
                 >
                   {{ $t("generic.next") }}
                   <v-icon class="ml-1">mdi-arrow-right</v-icon>
@@ -97,12 +97,12 @@
           </template>
           <template v-if="step === 2">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
-              variant="outlined"
               max-width="90vw"
+              variant="outlined"
             >
               <v-card-title>
                 {{ $t("setup.step5.title") }}
@@ -113,13 +113,13 @@
               <v-form @submit="createDefaultPlan">
                 <v-card-text>
                   <v-text-field
-                    :label="$t('setup.step5.storage')"
                     v-model="plan.quotaMax"
+                    :label="$t('setup.step5.storage')"
                     type="number"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step5.maxUploadSize')"
                     v-model="plan.maxFileSize"
+                    :label="$t('setup.step5.maxUploadSize')"
                     type="number"
                   ></v-text-field>
                 </v-card-text>
@@ -127,9 +127,9 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
+                  :loading="loading"
                   color="primary"
                   @click="createDefaultPlan"
-                  :loading="loading"
                 >
                   {{ $t("generic.next") }}
                   <v-icon class="ml-1">mdi-arrow-right</v-icon>
@@ -139,12 +139,12 @@
           </template>
           <template v-if="step === 3">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
-              variant="outlined"
               max-width="90vw"
+              variant="outlined"
             >
               <v-card-title>
                 {{ $t("setup.step2.title") }}
@@ -155,35 +155,35 @@
               <v-form @submit="createAdminAccount">
                 <v-card-text>
                   <v-text-field
-                    :label="$t('setup.step2.username')"
                     v-model="admin.username"
+                    :label="$t('setup.step2.username')"
                     :rules="$validation.user.username"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step2.email')"
                     v-model="admin.email"
+                    :label="$t('setup.step2.email')"
                     :rules="$validation.user.email"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step2.password')"
                     v-model="admin.password"
-                    type="password"
+                    :label="$t('setup.step2.password')"
                     :rules="$validation.user.password"
+                    type="password"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step2.passwordConfirm')"
                     v-model="admin.passwordConfirm"
-                    type="password"
+                    :label="$t('setup.step2.passwordConfirm')"
                     :rules="$validation.user.password"
+                    type="password"
                   ></v-text-field>
                 </v-card-text>
               </v-form>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
+                  :loading="loading"
                   color="primary"
                   @click="createAdminAccount"
-                  :loading="loading"
                 >
                   {{ $t("generic.next") }}
                   <v-icon class="ml-1">mdi-arrow-right</v-icon>
@@ -193,12 +193,12 @@
           </template>
           <template v-if="step === 4">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
-              variant="outlined"
               max-width="90vw"
+              variant="outlined"
             >
               <v-card-title>
                 {{ $t("setup.step3.title") }}
@@ -209,40 +209,40 @@
               <v-form @submit="step++">
                 <v-card-text>
                   <v-text-field
-                    :label="$t('setup.step3.name')"
                     v-model="instance.name"
+                    :label="$t('setup.step3.name')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step3.hostname')"
                     v-model="instance.hostname"
+                    :label="$t('setup.step3.hostname')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step3.hostnameWithProtocol')"
                     v-model="instance.hostnameWithProtocol"
+                    :label="$t('setup.step3.hostnameWithProtocol')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step3.port')"
                     v-model="instance.port"
+                    :label="$t('setup.step3.port')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step3.multiThreaded')"
                     v-model="instance.multiThreaded"
+                    :label="$t('setup.step3.multiThreaded')"
                   ></v-text-field>
                   <v-switch
-                    :label="$t('setup.step3.allowRegistration')"
                     v-model="instance.allowRegistrations"
+                    :label="$t('setup.step3.allowRegistration')"
                   ></v-switch>
                   <v-text-field
-                    :label="$t('setup.step3.redisHostname')"
                     v-model="instance.redisHostname"
+                    :label="$t('setup.step3.redisHostname')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step3.redisDatabase')"
                     v-model="instance.redisDatabase"
+                    :label="$t('setup.step3.redisDatabase')"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step3.redisPort')"
                     v-model="instance.redisPort"
+                    :label="$t('setup.step3.redisPort')"
                   ></v-text-field>
                   <small>
                     {{ $t("setup.step3.redisHint") }}
@@ -251,7 +251,7 @@
               </v-form>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="step++" :loading="loading">
+                <v-btn :loading="loading" color="primary" @click="step++">
                   {{ $t("generic.next") }}
                   <v-icon class="ml-1">mdi-arrow-right</v-icon>
                 </v-btn>
@@ -260,12 +260,12 @@
           </template>
           <template v-if="step === 5">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
-              variant="outlined"
               max-width="90vw"
+              variant="outlined"
             >
               <v-card-title>
                 {{ $t("setup.step4.title") }}
@@ -274,71 +274,71 @@
                 {{ $t("setup.step4.subtitle") }}
               </v-card-text>
               <PromoCard
+                :title="$t('setup.step4.collections.title')"
                 class="my-3"
                 image="https://i.troplo.com/i/3276e55f5ce4.png"
-                :title="$t('setup.step4.collections.title')"
               >
                 {{ $t("setup.step4.collections.description") }}
                 <v-switch
-                  style="display: flex; justify-content: center"
-                  hide-details
                   v-model="features.collections"
+                  hide-details
+                  style="display: flex; justify-content: center"
                 ></v-switch>
               </PromoCard>
               <PromoCard
+                :title="$t('setup.step4.autoCollects.title')"
                 class="my-3"
                 image="https://i.troplo.com/i/f8e3d77d3128.png"
-                :title="$t('setup.step4.autoCollects.title')"
               >
                 {{ $t("setup.step4.autoCollects.description") }}
                 <v-switch
-                  style="display: flex; justify-content: center"
-                  hide-details
                   v-model="features.autoCollects"
+                  hide-details
+                  style="display: flex; justify-content: center"
                 ></v-switch>
               </PromoCard>
               <PromoCard
+                :title="$t('setup.step4.communications.title')"
                 class="my-3"
                 image="https://i.troplo.com/i/356a95ba22ff.png"
-                :title="$t('setup.step4.communications.title')"
               >
                 {{ $t("setup.step4.communications.description") }}
                 <v-switch
-                  style="display: flex; justify-content: center"
-                  hide-details
                   v-model="features.communications"
+                  hide-details
+                  style="display: flex; justify-content: center"
                 ></v-switch>
               </PromoCard>
               <PromoCard
+                :title="$t('setup.step4.insights.title')"
                 class="my-3"
                 image="https://i.troplo.com/i/ff3eda567a8e.png"
-                :title="$t('setup.step4.insights.title')"
               >
                 {{ $t("setup.step4.insights.description") }}
                 <v-switch
-                  style="display: flex; justify-content: center"
-                  hide-details
                   v-model="features.insights"
+                  hide-details
+                  style="display: flex; justify-content: center"
                 ></v-switch>
               </PromoCard>
               <PromoCard
+                :title="$t('setup.step4.workspaces.title')"
                 class="my-3"
                 image="https://i.troplo.com/i/d251cd7d08af.png"
-                :title="$t('setup.step4.workspaces.title')"
               >
                 {{ $t("setup.step4.workspaces.description") }}
                 <v-switch
-                  style="display: flex; justify-content: center"
-                  hide-details
                   v-model="features.workspaces"
+                  hide-details
+                  style="display: flex; justify-content: center"
                 ></v-switch>
               </PromoCard>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
+                  :loading="loading"
                   color="primary"
                   @click="configureInstance"
-                  :loading="loading"
                 >
                   {{ $t("generic.next") }}
                   <v-icon class="ml-1">mdi-arrow-right</v-icon>
@@ -348,12 +348,12 @@
           </template>
           <template v-if="step === 6">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
-              variant="outlined"
               max-width="90vw"
+              variant="outlined"
             >
               <v-card-title>
                 {{ $t("setup.step6.title") }}
@@ -365,51 +365,51 @@
               <v-form>
                 <v-card-text>
                   <v-text-field
-                    :label="$t('setup.step6.host')"
                     v-model="mail.host"
+                    :label="$t('setup.step6.host')"
                     required
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step6.port')"
                     v-model="mail.port"
+                    :label="$t('setup.step6.port')"
                     required
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step6.username')"
                     v-model="mail.username"
+                    :label="$t('setup.step6.username')"
                     required
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step6.password')"
                     v-model="mail.password"
+                    :label="$t('setup.step6.password')"
                     required
                     type="password"
                   ></v-text-field>
                   <v-text-field
-                    :label="$t('setup.step6.from')"
                     v-model="mail.from"
+                    :label="$t('setup.step6.from')"
                     required
                   ></v-text-field>
                   <v-switch
-                    :label="$t('setup.step6.secure')"
                     v-model="mail.secure"
+                    :label="$t('setup.step6.secure')"
                   ></v-switch>
                   <v-text-field
-                    :label="$t('setup.step6.testEmail')"
                     v-model="mail.testEmail"
+                    :label="$t('setup.step6.testEmail')"
                   ></v-text-field>
                 </v-card-text>
               </v-form>
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn @click="testMail" :loading="loading">
+                <v-btn :loading="loading" @click="testMail">
                   {{ $t("setup.step6.test") }}
                 </v-btn>
                 <v-btn
+                  :loading="loading"
                   color="primary"
                   @click="configureMail"
-                  :loading="loading"
                 >
                   {{ $t("generic.next") }}
                   <v-icon class="ml-1">mdi-arrow-right</v-icon>
@@ -419,12 +419,12 @@
           </template>
           <template v-if="step === 7">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
-              variant="outlined"
               max-width="90vw"
+              variant="outlined"
             >
               <p
                 class="text-center text-gradient mb-n5"
@@ -439,10 +439,10 @@
                 {{ $t("setup.step7.subtitle") }}
               </v-card-text>
               <v-btn
-                color="primary"
-                @click="restartTPU"
                 :loading="loading"
                 class="mb-4"
+                color="primary"
+                @click="restartTPU"
               >
                 {{ $t("setup.step7.restart") }}
               </v-btn>
@@ -450,12 +450,12 @@
           </template>
           <template v-if="step === 8">
             <v-card
-              :flat="$vuetify.display.mobile"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
               class="text-center"
-              variant="outlined"
               max-width="90vw"
+              variant="outlined"
             >
               <p
                 class="text-center text-gradient mb-n5"
@@ -477,6 +477,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
+
 enum Step {
   Welcome = 0,
   DatabaseConfig,
@@ -488,6 +489,7 @@ enum Step {
   Finish,
   Restarting
 }
+
 export default defineComponent({
   name: "InstanceSetupWizard",
   components: { PromoCard },

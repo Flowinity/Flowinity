@@ -1,8 +1,16 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["app/**/*.ts", "../common/**/*.ts"],
-  "filesGlob": ["app/lib/*.mmdb"],
-  "exclude": ["**/*.spec.ts", "test/*"],
+  "include": [
+    "app/**/*.ts",
+    "../common/**/*.ts"
+  ],
+  "filesGlob": [
+    "app/lib/*.mmdb"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "test/*"
+  ],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true
   }

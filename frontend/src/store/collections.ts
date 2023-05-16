@@ -1,7 +1,7 @@
 // Utilities
-import {defineStore} from "pinia"
-import axios from "@/plugins/axios"
-import {CollectionCache} from "@/types/collection"
+import { defineStore } from "pinia";
+import axios from "@/plugins/axios";
+import { CollectionCache } from "@/types/collection";
 
 export interface CollectionsState {
   items: CollectionCache[];

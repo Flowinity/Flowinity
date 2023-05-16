@@ -110,44 +110,44 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import PromoNoContent from "@/components/Core/PromoNoContent.vue"
-import {Workspace} from "@/models/workspace"
+import { defineComponent } from "vue";
+import PromoNoContent from "@/components/Core/PromoNoContent.vue";
+import { Workspace } from "@/models/workspace";
 
 export default defineComponent({
   name: "Home",
-  components: {PromoNoContent},
+  components: { PromoNoContent },
   methods: {
     workspaceNotes(workspace: Workspace) {
-      return workspace.folders.map((folder) => folder.notes).flat()
+      return workspace.folders.map((folder) => folder.notes).flat();
     },
     async getRecent() {
       if (!this.$workspaces.recent.length) {
-        this.$app.componentLoading = true
+        this.$app.componentLoading = true;
       }
-      await this.$workspaces.getRecent()
-      this.$app.componentLoading = false
+      await this.$workspaces.getRecent();
+      this.$app.componentLoading = false;
     }
   },
   computed: {
     items() {
-      return this.$workspaces.items
+      return this.$workspaces.items;
     }
   },
   mounted() {
     if (!this.$app.workspaceDrawer && !this.$vuetify.display.mobile) {
-      this.$app.forcedWorkspaceDrawer = true
-      this.$app.workspaceDrawer = true
+      this.$app.forcedWorkspaceDrawer = true;
+      this.$app.workspaceDrawer = true;
     }
-    this.$app.title = "Workspaces"
-    this.getRecent()
+    this.$app.title = "Workspaces";
+    this.getRecent();
   },
   unmounted() {
     this.$app.workspaceDrawer =
-      localStorage.getItem("workspaceDrawer") === "true"
-    this.$app.forcedWorkspaceDrawer = false
+      localStorage.getItem("workspaceDrawer") === "true";
+    this.$app.forcedWorkspaceDrawer = false;
   }
-})
+});
 </script>
 
 <style scoped></style>

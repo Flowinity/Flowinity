@@ -6,7 +6,7 @@ export const SortValidate = z.object({
       value
     )
   }),
-  order: z.string().refine((value) => {
+  order: z.string().refine((value: string) => {
     return ["asc", "desc", "ASC", "DESC"].includes(value)
   })
 })

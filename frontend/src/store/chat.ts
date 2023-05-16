@@ -1,20 +1,20 @@
 // Utilities
-import {defineStore} from "pinia"
-import axios from "@/plugins/axios"
-import {Chat, Typing} from "@/models/chat"
-import {useExperimentsStore} from "@/store/experiments"
-import vuetify from "@/plugins/vuetify"
-import {Router, useRouter} from "vue-router"
-import {useAppStore} from "@/store/app"
-import {User} from "@/models/user"
-import {useUserStore} from "@/store/user"
-import {useCollectionsStore} from "@/store/collections"
-import {Collection} from "@/models/collection"
-import {Message as MessageType, Message} from "@/models/message"
-import {useFriendsStore} from "@/store/friends"
-import {Paginate} from "@/types/paginate"
-import dayjs from "../plugins/dayjs"
-import {useToast} from "vue-toastification"
+import { defineStore } from "pinia";
+import axios from "@/plugins/axios";
+import { Chat, Typing } from "@/models/chat";
+import { useExperimentsStore } from "@/store/experiments";
+import vuetify from "@/plugins/vuetify";
+import { Router, useRouter } from "vue-router";
+import { useAppStore } from "@/store/app";
+import { User } from "@/models/user";
+import { useUserStore } from "@/store/user";
+import { useCollectionsStore } from "@/store/collections";
+import { Collection } from "@/models/collection";
+import { Message as MessageType, Message } from "@/models/message";
+import { useFriendsStore } from "@/store/friends";
+import { Paginate } from "@/types/paginate";
+import dayjs from "../plugins/dayjs";
+import { useToast } from "vue-toastification";
 
 export interface ChatState {
   search: {

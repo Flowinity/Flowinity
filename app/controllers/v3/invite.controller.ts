@@ -1,14 +1,13 @@
-import {Body, Get, JsonController, Param, Post} from "routing-controllers"
-import {Service} from "typedi"
-import {Auth} from "@app/lib/auth"
-import {User} from "@app/models/user.model"
-import {InviteService} from "@app/services/invite.service"
+import { Body, Get, JsonController, Param, Post } from "routing-controllers"
+import { Service } from "typedi"
+import { Auth } from "@app/lib/auth"
+import { User } from "@app/models/user.model"
+import { InviteService } from "@app/services/invite.service"
 
 @Service()
 @JsonController("/invites")
 export class InviteControllerV3 {
-  constructor(private readonly inviteService: InviteService) {
-  }
+  constructor(private readonly inviteService: InviteService) {}
 
   @Get("/:inviteKey")
   async getInvite(@Param("inviteKey") inviteKey: string) {
@@ -19,7 +18,7 @@ export class InviteControllerV3 {
   async createInvite(
     @Auth("user.view") user: User,
     @Body()
-      body: {
+    body: {
       email: string
     }
   ) {

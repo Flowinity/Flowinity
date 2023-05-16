@@ -24,28 +24,28 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Services",
   data() {
     return {
       services: [] as { name: string; functions: any[] }[]
-    }
+    };
   },
   methods: {
     async getServices() {
-      const {data} = await this.axios.get("/admin/services")
+      const { data } = await this.axios.get("/admin/services");
       // sort by ones that contain Service in the name
       this.services = data.filter((service: any) =>
         service.name.includes("Service")
-      )
+      );
     }
   },
   mounted() {
-    this.getServices()
+    this.getServices();
   }
-})
+});
 </script>
 
 <style scoped></style>

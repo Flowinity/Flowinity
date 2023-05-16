@@ -13,13 +13,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import DynamicCard from "@/components/Core/DynamicCard.vue"
+import { defineComponent } from "vue";
+import DynamicCard from "@/components/Core/DynamicCard.vue";
 
 export default defineComponent({
   name: "Dynamic",
-  components: {DynamicCard}
-})
+  components: { DynamicCard }
+});
 </script>
 
 <style scoped></style>

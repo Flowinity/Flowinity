@@ -59,6 +59,7 @@ export class Months {
     December: 0
   }
 }
+
 export class Weekdays {
   days: { [key: string]: number } = {
     Monday: 0,
@@ -89,6 +90,7 @@ export class SeriesGraph {
       }[]
     }[]
   }[] = []
+
   constructor(name: string) {
     this.series[0] = {
       name: name,
@@ -110,6 +112,7 @@ export class PulseService {
       }
     })
   }
+
   async getReport(userId: number, id: number) {
     const report = await Insight.findOne({
       where: {
@@ -120,6 +123,7 @@ export class PulseService {
     if (report) return report
     else return null
   }
+
   async getLatestReport(userId: number, type: "weekly" | "monthly" | "yearly") {
     const latestReport = await Insight.findOne({
       order: [["endDate", "DESC"]],
@@ -131,6 +135,7 @@ export class PulseService {
     if (latestReport) return latestReport
     else return null
   }
+
   async pulseInit() {
     // WEEK-GEN
     /* for (const user of users) {
@@ -227,6 +232,7 @@ export class PulseService {
       }
     })
   }
+
   getUploadStreak(objects: Upload[]) {
     let currentStreak: Streak = { startDate: "", endDate: "", length: 0 }
     let longestStreak: Streak = { startDate: "", endDate: "", length: 0 }
@@ -297,6 +303,7 @@ export class PulseService {
 
     return { currentStreak, longestStreak }
   }
+
   calculatePulseDays(
     pulses: Pulse[],
     type: "weekly" | "monthly" | "yearly" | "dynamic",
@@ -348,6 +355,7 @@ export class PulseService {
     }
     return hoursLastWeek
   }
+
   calculatePlatforms(pulses: Pulse[]) {
     let platforms = {} as Record<string, number>
     for (const pulse of pulses) {
@@ -367,6 +375,7 @@ export class PulseService {
     )
     return platforms
   }
+
   calculateWords(uploads: Upload[]) {
     const words = uploads.map((upload) => upload.textMetadata) as string[]
     const wordsArray = words.join(" ").split(" ")
@@ -385,6 +394,7 @@ export class PulseService {
       }))
       .sort((a, b) => b.count - a.count)
   }
+
   getChatName(chat: Chat, userId: number) {
     if (!chat?.name) return "Unknown"
     if (chat.name && chat.type === "group") return chat.name
@@ -397,6 +407,7 @@ export class PulseService {
     }
     return "Unknown"
   }
+
   getFeatures(pulses: Pulse[]) {
     const definitions = {
       "/autoCollect": "AutoCollects",
@@ -444,6 +455,7 @@ export class PulseService {
         count: features[key]
       }))
   }
+
   calculateUploadDays(
     uploads: Upload[],
     previous: Insight | null,
@@ -531,6 +543,7 @@ export class PulseService {
       years
     }
   }
+
   standardDeviation(arr: number[], usePopulation = false) {
     const mean = arr.reduce((acc, val) => acc + val, 0) / arr.length
     return Math.sqrt(
@@ -540,6 +553,7 @@ export class PulseService {
         (arr.length - (usePopulation ? 0 : 1))
     )
   }
+
   async getAverageHours(pulses: Pulse[]) {
     let totalPulseHours = {} as Record<string, number>
     for (const pulse of pulses) {
@@ -563,9 +577,11 @@ export class PulseService {
       100
     )
   }
+
   average(array: any[]) {
     return array.reduce((a, b) => a + b) / array.length
   }
+
   async collectionInsights(
     userId: number,
     type: "weekly" | "monthly" | "yearly" | "dynamic",
@@ -654,6 +670,7 @@ export class PulseService {
       autoCollects: autoCollectGraph
     }
   }
+
   async generateInsights(
     userId: number,
     type: "weekly" | "monthly" | "yearly" | "dynamic",
@@ -893,6 +910,7 @@ export class PulseService {
     }
     return insights
   }
+
   async getCachedLeaderboard() {
     const leaderboard = await redis.json.get(`insights:leaderboard`)
     if (leaderboard) {

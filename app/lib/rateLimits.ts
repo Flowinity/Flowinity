@@ -1,31 +1,24 @@
-import rateLimit from "express-rate-limit"
-import { RequestAuth } from "@app/types/express"
+import rateLimit, { RateLimitRequestHandler } from "express-rate-limit"
 import RedisStore from "rate-limit-redis"
+
+// Import Miscellaneous
 import redis from "../redis"
 
-const message = {
-  errors: [
-    {
-      name: "RATE_LIMITED",
-      message: "Too many requests, please try again later.",
-      status: 429
-    }
-  ]
-}
+// Import Types
+import { RequestAuth } from "@app/types/express"
 
-/*const standardHeaders = {
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
-  message,
-  store: new RedisStore({
-    //@ts-ignore
-    sendCommand: (...args: string[]) => redis.sendCommand(args)
-  }),
-  keyGenerator: (req: RequestAuth) => req.user?.id || req.ip // Use the user ID if logged in, otherwise the IP address
-}
-*/
-export const mailLimiter = rateLimit({
+const message: { errors: { name: string; message: string; status: number }[] } =
+  {
+    errors: [
+      {
+        name: "RATE_LIMITED",
+        message: "Too many requests, please try again later.",
+        status: 429
+      }
+    ]
+  }
+
+export const mailLimiter: RateLimitRequestHandler = rateLimit({
   windowMs: 60 * 1000,
   max: 1,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -40,7 +33,7 @@ export const mailLimiter = rateLimit({
   })
 })
 
-export const uploadLimiterUser = rateLimit({
+export const uploadLimiterUser: RateLimitRequestHandler = rateLimit({
   windowMs: 60 * 1000,
   max: 4,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -55,7 +48,7 @@ export const uploadLimiterUser = rateLimit({
   })
 })
 
-export const msgLimiter = rateLimit({
+export const msgLimiter: RateLimitRequestHandler = rateLimit({
   windowMs: 8 * 1000,
   max: 8,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -70,7 +63,7 @@ export const msgLimiter = rateLimit({
   })
 })
 
-export const inviteLimiter = rateLimit({
+export const inviteLimiter: RateLimitRequestHandler = rateLimit({
   windowMs: 5 * 60 * 1000,
   max: 2,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -85,7 +78,7 @@ export const inviteLimiter = rateLimit({
   })
 })
 
-export const standardLimiter = rateLimit({
+export const standardLimiter: RateLimitRequestHandler = rateLimit({
   windowMs: 60 * 1000,
   max: 10,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -100,7 +93,7 @@ export const standardLimiter = rateLimit({
   })
 })
 
-export const uploadLimiter = rateLimit({
+export const uploadLimiter: RateLimitRequestHandler = rateLimit({
   windowMs: 90 * 1000,
   max: 7,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers

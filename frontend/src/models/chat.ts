@@ -1,6 +1,6 @@
-import {User} from "@/models/user"
-import {ChatAssociation} from "@/models/chatAssociation"
-import {Message} from "@/models/message"
+import { User } from "@/models/user";
+import { ChatAssociation } from "@/models/chatAssociation";
+import { Message } from "@/models/message";
 
 export interface Recipient extends User {
   legacyUser: boolean;

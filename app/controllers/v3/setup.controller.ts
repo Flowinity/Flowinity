@@ -1,25 +1,29 @@
-import {BadRequestError, Body, JsonController, Post} from "routing-controllers"
-import {Service} from "typedi"
-import {AdminService} from "@app/services/admin.service"
-import {Sequelize} from "sequelize"
+import {
+  BadRequestError,
+  Body,
+  JsonController,
+  Post
+} from "routing-controllers"
+import { Service } from "typedi"
+import { AdminService } from "@app/services/admin.service"
+import { Sequelize } from "sequelize"
 import fs from "fs"
 import path from "path"
-import {exec} from "child_process"
-import {Plan} from "@app/models/plan.model"
-import {User} from "@app/models/user.model"
+import { exec } from "child_process"
+import { Plan } from "@app/models/plan.model"
+import { User } from "@app/models/user.model"
 import argon2 from "argon2"
-import {DefaultTpuConfig} from "@app/classes/DefaultTpuConfig"
+import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
 
 @Service()
 @JsonController("/setup")
 export class SetupControllerV3 {
-  constructor(private readonly adminService: AdminService) {
-  }
+  constructor(private readonly adminService: AdminService) {}
 
   @Post("/database")
   async setupDatabase(
     @Body()
-      body: {
+    body: {
       host: string
       port: number
       database: string
@@ -90,7 +94,7 @@ export class SetupControllerV3 {
       await new Promise((resolve, reject) => {
         const migrate = exec(
           "sequelize db:migrate",
-          {env: process.env},
+          { env: process.env },
           (err) => (err ? reject(err) : resolve("Database migrated."))
         )
 
@@ -106,7 +110,7 @@ export class SetupControllerV3 {
   @Post("/plan")
   async setupPlan(
     @Body()
-      body: {
+    body: {
       name: string
       maxFileSize: number
       quotaMax: number
@@ -128,7 +132,7 @@ export class SetupControllerV3 {
   @Post("/admin")
   async setupAdmin(
     @Body()
-      body: {
+    body: {
       username: string
       password: string
       email: string
@@ -148,7 +152,7 @@ export class SetupControllerV3 {
   @Post("/instance")
   async setupInstance(
     @Body()
-      body: TpuConfig
+    body: TpuConfig
   ) {
     let config = new DefaultTpuConfig().config
     config.siteName = body.siteName || "TPU"
@@ -181,7 +185,7 @@ export class SetupControllerV3 {
   @Post("/mail/test")
   async testMail(
     @Body()
-      body: {
+    body: {
       host: string
       port: number
       username: string
@@ -214,7 +218,7 @@ export class SetupControllerV3 {
   @Post("/mail")
   async setupMail(
     @Body()
-      body: {
+    body: {
       host: string
       port: number
       username: string

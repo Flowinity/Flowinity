@@ -15,6 +15,7 @@ export class SlideshowService {
       }
     })
   }
+
   async renderSlideshow(shareLink: string): Promise<CollectionItem[]> {
     const slideshow = await Slideshow.findOne({
       where: {

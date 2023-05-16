@@ -179,8 +179,8 @@
 </template>
 
 <script lang="ts">
-import {AutoCollectRule, SubRule, SubSubRule} from "@/models/autoCollectRule"
-import {defineComponent} from "vue"
+import { AutoCollectRule, SubRule, SubSubRule } from "@/models/autoCollectRule";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "AutoCollectSettings",
@@ -188,14 +188,14 @@ export default defineComponent({
     return {
       rules: [] as AutoCollectRule[],
       operators: [
-        {text: "Contains", value: "contains"},
-        {text: "Equals", value: "equals"},
-        {text: "Does not Equal", value: "doesNotEq"},
-        {text: "Does not Contain", value: "doesNotCo"},
-        {text: "Greater Than", value: "gt"},
-        {text: "Less Than", value: "lt"},
-        {text: "Greater Than or Equal", value: "gte"},
-        {text: "Less Than or Equal", value: "lte"}
+        { text: "Contains", value: "contains" },
+        { text: "Equals", value: "equals" },
+        { text: "Does not Equal", value: "doesNotEq" },
+        { text: "Does not Contain", value: "doesNotCo" },
+        { text: "Greater Than", value: "gt" },
+        { text: "Less Than", value: "lt" },
+        { text: "Greater Than or Equal", value: "gte" },
+        { text: "Less Than or Equal", value: "lte" }
       ],
       types: [
         {
@@ -229,21 +229,21 @@ export default defineComponent({
           notRecommendedOperators: ["contains", "doesNotCo"]
         }
       ]
-    }
+    };
   },
   methods: {
     isUnrecommendedOperator(type: string, operator: string) {
-      const typeObj = this?.types?.find((t) => t?.value === type)
+      const typeObj = this?.types?.find((t) => t?.value === type);
       if (typeObj) {
-        return typeObj.notRecommendedOperators.includes(operator)
+        return typeObj.notRecommendedOperators.includes(operator);
       }
     },
     async deleteRule(id: number) {
-      await this.axios.delete(`/autoCollects/rules/${id}`)
-      this.rules = this.rules.filter((rule: AutoCollectRule) => rule.id !== id)
+      await this.axios.delete(`/autoCollects/rules/${id}`);
+      this.rules = this.rules.filter((rule: AutoCollectRule) => rule.id !== id);
     },
     currentEpoch() {
-      return new Date().getTime()
+      return new Date().getTime();
     },
     defaultSubRule() {
       return {
@@ -251,23 +251,23 @@ export default defineComponent({
         type: "metadata",
         value: "Speaker Stats",
         operator: "contains"
-      }
+      };
     },
     removeSubSubRule(rule: SubRule, id: number) {
       rule.rules = rule.rules.filter(
         (subsubrule: SubSubRule) => subsubrule.id !== id
-      )
+      );
     },
     removeSubRule(rule: AutoCollectRule, id: number) {
-      rule.rules = rule.rules.filter((subrule: SubRule) => subrule.id !== id)
+      rule.rules = rule.rules.filter((subrule: SubRule) => subrule.id !== id);
     },
     async getRules() {
-      const {data} = await this.axios.get("/autoCollects/rules")
-      this.rules = data
+      const { data } = await this.axios.get("/autoCollects/rules");
+      this.rules = data;
     },
     async saveRule(rule: AutoCollectRule) {
-      await this.axios.put(`/autoCollects/rules/${rule.id}`, rule)
-      this.$toast.success("Rule saved.")
+      await this.axios.put(`/autoCollects/rules/${rule.id}`, rule);
+      this.$toast.success("Rule saved.");
     },
     async createRule() {
       await this.axios.post("/autoCollects/rules", {
@@ -276,16 +276,16 @@ export default defineComponent({
         collectionId: null,
         requireApproval: true,
         rules: [this.defaultSubRule()]
-      })
-      await this.getRules()
-      this.$toast.success("Rule created.")
+      });
+      await this.getRules();
+      this.$toast.success("Rule created.");
     }
   },
   mounted() {
-    this.getRules()
-    this.$app.title = "Configure AutoCollects"
+    this.getRules();
+    this.$app.title = "Configure AutoCollects";
   }
-})
+});
 </script>
 
 <style scoped></style>

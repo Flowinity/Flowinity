@@ -1,4 +1,4 @@
-import { Response, NextFunction, Request } from "express"
+import { NextFunction, Response } from "express"
 import { Session } from "@app/models/session.model"
 import { User } from "@app/models/user.model"
 import { Plan } from "@app/models/plan.model"

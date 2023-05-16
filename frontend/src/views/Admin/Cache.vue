@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Cache",
@@ -86,23 +86,23 @@ export default defineComponent({
           name: "Provider-MyAnimeList"
         }
       ]
-    }
+    };
   },
   methods: {
     async purgeKeys(id: number) {
-      this.loading = true
-      await this.axios.delete("/admin/cache/" + id)
-      this.loading = false
-      this.$toast.success("Cache purge has been queued.")
+      this.loading = true;
+      await this.axios.delete("/admin/cache/" + id);
+      this.loading = false;
+      this.$toast.success("Cache purge has been queued.");
     },
     async purgeKeyUser(id: number) {
-      this.loading = true
-      await this.axios.delete("/admin/cache/" + id + "/" + this.user)
-      this.loading = false
-      this.$toast.success("Cache purge has been queued.")
+      this.loading = true;
+      await this.axios.delete("/admin/cache/" + id + "/" + this.user);
+      this.loading = false;
+      this.$toast.success("Cache purge has been queued.");
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

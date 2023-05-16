@@ -1,6 +1,6 @@
-import {BelongsTo, Column, HasMany, Model, Table} from "sequelize-typescript"
-import {Workspace} from "@app/models/workspace.model"
-import {Note} from "@app/models/note.model"
+import { BelongsTo, Column, HasMany, Model, Table } from "sequelize-typescript"
+import { Workspace } from "@app/models/workspace.model"
+import { Note } from "@app/models/note.model"
 
 @Table
 export class WorkspaceFolder extends Model {

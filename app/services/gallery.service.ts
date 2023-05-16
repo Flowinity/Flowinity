@@ -2,7 +2,7 @@ import { Service } from "typedi"
 import { Upload } from "@app/models/upload.model"
 import paginate from "jw-paginate"
 import { Collection } from "@app/models/collection.model"
-import { Op } from "sequelize"
+import Sequelize, { Op } from "sequelize"
 import utils from "@app/lib/utils"
 import { User } from "@app/models/user.model"
 import sequelize from "@app/db"
@@ -15,7 +15,6 @@ import axios from "axios"
 import * as fs from "fs"
 import Errors from "@app/lib/errors"
 import { Plan } from "@app/models/plan.model"
-import Sequelize from "sequelize"
 
 @Service()
 export class GalleryService {
@@ -155,6 +154,7 @@ export class GalleryService {
       url
     }
   }
+
   async getGallery(
     id: number,
     page: number = 1,

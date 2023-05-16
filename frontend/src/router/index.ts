@@ -1,6 +1,6 @@
 // Composables
-import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router"
-import {useUserStore} from "@/store/user"
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { useUserStore } from "@/store/user";
 
 const routes = [
   {
@@ -319,7 +319,7 @@ const routes = [
       }
     ]
   }
-] as RouteRecordRaw[]
+] as RouteRecordRaw[];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),

@@ -1,14 +1,22 @@
-import { SocketAuth } from "@app/types/socket"
-import { User } from "@app/models/user.model"
-import { Pulse } from "@app/models/pulse.model"
 import { Container } from "typedi"
-import { UserUtilsService } from "@app/services/userUtils.service"
-import auth from "@app/lib/authSocket"
-import { ChatService } from "@app/services/chat.service"
 import { createAdapter } from "@socket.io/redis-adapter"
 
+// Import Libs
+import auth from "@app/lib/authSocket"
+
+// Import Services
+import { UserUtilsService } from "@app/services/userUtils.service"
+import { ChatService } from "@app/services/chat.service"
+
+// Import Models
+import { User } from "@app/models/user.model"
+import { Pulse } from "@app/models/pulse.model"
+
+// Import Types
+import { SocketAuth } from "@app/types/socket"
+
 export default {
-  async init(app: any, server: any) {
+  async init(app: any, server: any): Promise<void> {
     const subClient = redis.duplicate()
     const io = require("socket.io")(server, {
       cors: {
@@ -16,22 +24,27 @@ export default {
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
       }
     })
+
     await subClient.connect()
+
     io.adapter(createAdapter(redis, subClient))
     io.use(auth)
-    io.on("connection", async (socket: SocketAuth) => {
-      const user = await User.findOne({
+    io.on("connection", async (socket: SocketAuth): Promise<void> => {
+      const user: User | null = await User.findOne({
         where: {
           id: socket.user.id
         }
       })
+
       if (user && socket.user.id) {
         socket.join(user.id)
+
         if (
           user.storedStatus !== "invisible" &&
           user.status !== user.storedStatus
         ) {
-          console.log(`user ${user.username} going online`)
+          console.info(`user ${user.username} going online`)
+
           await User.update(
             {
               status: user.storedStatus
@@ -42,18 +55,22 @@ export default {
               }
             }
           )
-          const userService = Container.get(UserUtilsService)
+
+          const userService: UserUtilsService = Container.get(UserUtilsService)
+
           await userService.emitToFriends(user.id, "userStatus", {
             id: user.id,
             status: user.storedStatus
           })
         }
-        // on disconnect
-        socket.on("disconnect", async () => {
-          // ensure all sockets are disconnected
+
+        socket.on("disconnect", async (): Promise<void> => {
+          // Ensure that all sockets are disconnected.
           const sockets = await io.in(user.id).allSockets()
+
           if (sockets.size === 0) {
-            console.log(`user ${user.username} going offline`)
+            console.info(`user ${user.username} going offline`)
+
             if (user.storedStatus !== "invisible") {
               await User.update(
                 {
@@ -71,7 +88,7 @@ export default {
         socket.emit("pulseConfig", {
           interval: 10000
         })
-        socket.on("pulse", async (data) => {
+        socket.on("pulse", async (data): Promise<void> => {
           try {
             if (data.timeSpent > 3600000) return
             await Pulse.create({
@@ -88,10 +105,10 @@ export default {
             console.log("error creating pulse")
           }
         })
-        socket.on("startPulse", async (data) => {
+        socket.on("startPulse", async (data): Promise<void> => {
           try {
             if (data.type === "gallery") {
-              const pulse = await Pulse.create({
+              const pulse: Pulse = await Pulse.create({
                 userId: user.id,
                 action: "focus",
                 route: "/gallery",
@@ -101,11 +118,12 @@ export default {
                 name: data.name,
                 other: data.other
               })
+
               socket.emit("pulseToken-" + data.id, {
                 id: pulse.id
               })
             } else if (data.type === "global") {
-              const pulse = await Pulse.create({
+              const pulse: Pulse = await Pulse.create({
                 userId: user.id,
                 action: "focus",
                 route: data.route,
@@ -115,50 +133,56 @@ export default {
                 name: data.name,
                 other: data.other
               })
+
               socket.emit("pulseToken-" + data.id, {
                 id: pulse.id
               })
             }
-          } catch (e) {
-            console.log(e)
-            console.log("error creating pulse")
+          } catch (err) {
+            console.error(err)
+            console.error("Error creating pulse.")
           }
         })
-        socket.on("updatePulse", async (data) => {
+        socket.on("updatePulse", async (data): Promise<void> => {
           try {
-            const pulse = await Pulse.findOne({
+            const pulse: Pulse | null = await Pulse.findOne({
               where: {
                 id: data.id,
                 userId: user.id
               }
             })
+
             if (pulse) {
               if (data.timeSpent < pulse.timeSpent) return
               if (data.timeSpent - pulse.timeSpent > 600000) return
+
               await pulse.update({
                 timeSpent: data.timeOnPage
               })
             }
           } catch {
-            console.log("error updating pulse")
+            console.error("Error updating pulse.")
           }
         })
 
         // Chat
-        let typeRateLimit = null as Date | null
-        socket.on("readChat", async (associationId: number) => {
-          const chatService = Container.get(ChatService)
+        let typeRateLimit: Date | null = null as Date | null
+
+        socket.on("readChat", async (associationId: number): Promise<void> => {
+          const chatService: ChatService = Container.get(ChatService)
           await chatService.readChat(associationId, user.id)
         })
-        socket.on("typing", async (associationId: number) => {
+        socket.on("typing", async (associationId: number): Promise<void> => {
           if (
             typeRateLimit &&
             dayjs().isBefore(dayjs(typeRateLimit).add(2, "second"))
-          ) {
+          )
             return
-          }
-          const chatService = Container.get(ChatService)
+
+          const chatService: ChatService = Container.get(ChatService)
+
           await chatService.typing(associationId, user.id)
+
           typeRateLimit = new Date()
         })
       } else {
@@ -166,19 +190,24 @@ export default {
         socket.emit("unauthorized", {
           message: "Please reauth."
         })
-        socket.on("token", async () => {
+        socket.on("token", async (): Promise<void> => {
           socket.emit("unsupported", {
             message: "This authentication method is unsupported."
           })
         })
-        console.log("Unauthenticated user")
-        socket.on("reAuth", async () => {
+
+        console.info("Unauthenticated user")
+
+        socket.on("reAuth", async (): Promise<void> => {
           socket.disconnect()
         })
       }
     })
+
     app.set("io", io)
+
     global.socket = io
-    console.log("WS OK")
+
+    console.info("WS OK")
   }
 }

@@ -1,5 +1,14 @@
-import {BelongsTo, Column, DataType, Default, HasMany, Model, Table, Unique} from "sequelize-typescript"
-import {User} from "@app/models/user.model"
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  Default,
+  HasMany,
+  Model,
+  Table,
+  Unique
+} from "sequelize-typescript"
+import { User } from "@app/models/user.model"
 
 @Table
 export class Domain extends Model {

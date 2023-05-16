@@ -1,6 +1,13 @@
-import {AllowNull, BelongsTo, Column, DataType, Model, Table} from "sequelize-typescript"
-import {User} from "@app/models/user.model"
-import {Streak} from "@app/services/pulse.service"
+import {
+  AllowNull,
+  BelongsTo,
+  Column,
+  DataType,
+  Model,
+  Table
+} from "sequelize-typescript"
+import { User } from "@app/models/user.model"
+import { Streak } from "@app/services/pulse.service"
 
 export interface SeriesGraph {
   series: [
@@ -35,9 +42,9 @@ export interface InsightData {
     hours: SeriesGraph
     words:
       | {
-      word: string
-      count: number
-    }[]
+          word: string
+          count: number
+        }[]
       | null
     months: SeriesGraph | null
     days: SeriesGraph

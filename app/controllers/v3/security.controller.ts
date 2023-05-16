@@ -1,14 +1,21 @@
-import {Body, Delete, Get, JsonController, Param, Patch, Post} from "routing-controllers"
-import {Service} from "typedi"
-import {Auth} from "@app/lib/auth"
-import {User} from "@app/models/user.model"
-import {SecurityService} from "@app/services/security.service"
+import {
+  Body,
+  Delete,
+  Get,
+  JsonController,
+  Param,
+  Patch,
+  Post
+} from "routing-controllers"
+import { Service } from "typedi"
+import { Auth } from "@app/lib/auth"
+import { User } from "@app/models/user.model"
+import { SecurityService } from "@app/services/security.service"
 
 @Service()
 @JsonController("/security")
 export class SecurityControllerV3 {
-  constructor(private readonly securityService: SecurityService) {
-  }
+  constructor(private readonly securityService: SecurityService) {}
 
   @Get("/keys")
   async getAPIKeys(@Auth("*") user: User) {
@@ -24,7 +31,7 @@ export class SecurityControllerV3 {
   async createAPIKey(
     @Auth("*") user: User,
     @Body()
-      body: {
+    body: {
       name: string
       scopes: string[]
       expiry?: Date
@@ -52,7 +59,7 @@ export class SecurityControllerV3 {
   async createScopedPassword(
     @Auth("*") user: User,
     @Body()
-      body: {
+    body: {
       password: string
       scopes: string[]
       name: string
@@ -72,7 +79,7 @@ export class SecurityControllerV3 {
   async deleteScopedPassword(
     @Auth("*") user: User,
     @Body()
-      body: {
+    body: {
       name: string
     }
   ) {

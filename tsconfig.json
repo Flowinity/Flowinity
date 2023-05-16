@@ -25,9 +25,12 @@
     "noImplicitReturns": true,
     "strictNullChecks": true,
     "strict": false,
-    "resolveJsonModule": true, // DO NOT CHANGE (I changed it :))
+    "resolveJsonModule": true,
+    // DO NOT CHANGE (I changed it :))
     "paths": {
-      "@app/*": ["./app/*"]
+      "@app/*": [
+        "./app/*"
+      ]
     },
     "strictPropertyInitialization": false
   }

@@ -84,12 +84,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import UserCard from "@/components/Users/UserCard.vue"
+import { defineComponent } from "vue";
+import UserCard from "@/components/Users/UserCard.vue";
 
 export default defineComponent({
   name: "Credits",
-  components: {UserCard},
+  components: { UserCard },
   data() {
     return {
       frontend: [
@@ -250,17 +250,17 @@ export default defineComponent({
         "tsconfig-paths",
         "typescript"
       ]
-    }
+    };
   },
   computed: {
     items() {
       // include frontend and backend packages and order them alphabetically and remove duplicates
       return [...this.frontend.sort(), ...this.backend.sort()]
         .sort()
-        .filter((item, index, array) => array.indexOf(item) === index)
+        .filter((item, index, array) => array.indexOf(item) === index);
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

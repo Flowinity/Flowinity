@@ -1,5 +1,6 @@
-import { Socket } from "socket.io"
+import {Socket} from "socket.io"
 import djs from "dayjs"
+
 // @ts-ignore
 export interface SocketWithUser extends Socket {
   to(room: string | number | string[] | number[]): SocketWithUser

@@ -1,11 +1,8 @@
 import { Service } from "typedi"
 import axios from "axios"
 import Errors from "@app/lib/errors"
-import md5 from "md5"
 import { Integration } from "@app/models/integration.model"
-import qs from "qs"
 import { ProfileLayoutComponent, User } from "@app/models/user.model"
-import cron from "node-cron"
 
 @Service()
 export class ProviderService {

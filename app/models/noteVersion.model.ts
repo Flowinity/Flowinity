@@ -1,7 +1,7 @@
-import {BelongsTo, Column, DataType, Model, Table} from "sequelize-typescript"
-import {User} from "@app/models/user.model"
-import {NoteDataV2} from "@app/services/note.service"
-import {Note} from "@app/models/note.model"
+import { BelongsTo, Column, DataType, Model, Table } from "sequelize-typescript"
+import { User } from "@app/models/user.model"
+import { NoteDataV2 } from "@app/services/note.service"
+import { Note } from "@app/models/note.model"
 
 @Table
 export class NoteVersion extends Model {

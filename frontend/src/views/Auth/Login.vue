@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Login",
@@ -60,45 +60,45 @@ export default defineComponent({
       password: "",
       totp: "",
       loading: false
-    }
+    };
   },
   methods: {
     async forgotPassword() {
-      this.loading = true
+      this.loading = true;
       try {
         await this.axios.post("/auth/recover", {
           email: this.username
-        })
+        });
         this.$toast.success(
           "Password reset email sent successfully, check your emails!"
-        )
-        this.loading = false
+        );
+        this.loading = false;
       } catch {
-        this.loading = false
+        this.loading = false;
       }
     },
     async login() {
-      this.loading = true
+      this.loading = true;
       try {
-        const {data} = await this.axios.post("/auth/login", {
+        const { data } = await this.axios.post("/auth/login", {
           email: this.username,
           password: this.password,
           code: this.totp
-        })
-        localStorage.setItem("token", data.token)
-        this.axios.defaults.headers.common["Authorization"] = data.token
-        await this.$user.init()
-        this.$socket.auth = {token: data.token}
-        this.$socket.disconnect()
-        this.$socket.connect()
-        this.$router.push("/")
+        });
+        localStorage.setItem("token", data.token);
+        this.axios.defaults.headers.common["Authorization"] = data.token;
+        await this.$user.init();
+        this.$socket.auth = { token: data.token };
+        this.$socket.disconnect();
+        this.$socket.connect();
+        this.$router.push("/");
       } catch {
-        this.loading = false
+        this.loading = false;
       }
     }
   },
   mounted() {
-    this.$app.title = "Login"
+    this.$app.title = "Login";
   }
-})
+});
 </script>

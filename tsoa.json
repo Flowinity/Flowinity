@@ -1,7 +1,9 @@
 {
   "entryFile": "app/app.ts",
   "noImplicitAdditionalProperties": "throw-on-extras",
-  "controllerPathGlobs": ["app/controllers/*controller.ts"],
+  "controllerPathGlobs": [
+    "app/controllers/*controller.ts"
+  ],
   "spec": {
     "outputDirectory": "build",
     "specVersion": 3

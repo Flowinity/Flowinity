@@ -1,21 +1,21 @@
 <template>
   <v-app-bar
-    color="dark"
-    app
-    density="comfortable"
-    floating
-    :class="classString"
-    flat
-    style="z-index: 1001"
-    class="navbar"
-    :extension-height="$user.user?.emailVerified ? 5 : 42"
     :key="$user.user?.emailVerified ? 1 : 2"
+    :class="classString"
+    :extension-height="$user.user?.emailVerified ? 5 : 42"
+    app
+    class="navbar"
+    color="dark"
+    density="comfortable"
+    flat
+    floating
+    style="z-index: 1001"
   >
     <v-app-bar-nav-icon
-      style="z-index: 1000"
       v-if="$vuetify.display.mobile || !$app.mainDrawer"
-      @click.stop="$app.toggleMain()"
       aria-label="Toggle Main Sidebar"
+      style="z-index: 1000"
+      @click.stop="$app.toggleMain()"
     >
       <v-icon>mdi-menu</v-icon>
     </v-app-bar-nav-icon>
@@ -24,23 +24,23 @@
     </template>
     <template v-else>
       <CommunicationsAvatar
-        :user="$chat.selectedChat?.recipient"
         :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
-        size="32"
-        class="ml-4"
         :status="true"
+        :user="$chat.selectedChat?.recipient"
+        class="ml-4"
+        size="32"
       />
       <h2
-        class="unselectable ml-2 limit"
-        id="tpu-brand-logo"
-        title="TPU Communications"
         v-if="!$vuetify.display.mobile"
+        id="tpu-brand-logo"
+        class="unselectable ml-2 limit"
+        title="TPU Communications"
       >
         {{ $chat.chatName }}
       </h2>
     </template>
     <v-spacer></v-spacer>
-    <div class="mr-2" v-if="$app.site.release === 'dev' && $app.cordova">M</div>
+    <div v-if="$app.site.release === 'dev' && $app.cordova" class="mr-2">M</div>
     <small v-if="$app.notesSaving && !$vuetify.display.mobile" class="mr-3">
       Saving...
     </small>
@@ -55,8 +55,8 @@
       <span>
         <v-img
           :src="`https://openweathermap.org/img/wn/${$app.weather.data?.icon}@2x.png`"
-          width="32"
           height="32"
+          width="32"
         ></v-img>
         <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
           {{ $app.weather.data?.main }}
@@ -71,33 +71,33 @@
     <!-- Workspaces custom actions -->
     <template v-if="$route.path.startsWith('/workspaces/notes/')">
       <v-btn
-        icon
         class="mx-1"
+        icon
         @click="$workspaces.versionHistory = !$workspaces.versionHistory"
       >
         <v-icon>mdi-history</v-icon>
       </v-btn>
-      <v-btn icon @click="$workspaces.share.dialog = true" class="mx-1">
+      <v-btn class="mx-1" icon @click="$workspaces.share.dialog = true">
         <v-icon>mdi-share</v-icon>
       </v-btn>
     </template>
     <!-- Communications custom actions -->
     <template v-if="$chat.isCommunications && !$vuetify.display.mobile">
-      <v-btn icon class="mx-1" v-if="$experiments.experiments.PINNED_MESSAGES">
+      <v-btn v-if="$experiments.experiments.PINNED_MESSAGES" class="mx-1" icon>
         <Pins />
         <v-icon>mdi-pin-outline</v-icon>
       </v-btn>
       <v-btn
+        class="mx-1"
         icon
         @click="$chat.search.value = !$chat.search.value"
-        class="mx-1"
       >
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
     </template>
-    <v-btn icon class="mr-2" aria-label="Notifications">
+    <v-btn aria-label="Notifications" class="mr-2" icon>
       <Notifications />
-      <v-badge dot color="red" :model-value="$user.unreadNotifications > 0">
+      <v-badge :model-value="$user.unreadNotifications > 0" color="red" dot>
         <v-icon class="mx-1">
           {{ $user.unreadNotifications > 0 ? "mdi-bell" : "mdi-bell-outline" }}
         </v-icon>
@@ -106,7 +106,7 @@
     <template v-if="$user.user">
       <v-menu>
         <template v-slot:activator="{ props }">
-          <v-btn icon v-bind="props" aria-label="Personal Menu">
+          <v-btn aria-label="Personal Menu" icon v-bind="props">
             <UserAvatar :user="$user.user" size="38" />
           </v-btn>
         </template>
@@ -124,57 +124,57 @@
         </v-list>
       </v-menu>
       <v-btn
-        icon
-        class="ml-2"
         v-if="!$app.rail"
-        @click="$app.toggleWorkspace()"
         :aria-label="
           !$chat.communicationsSidebar && $chat.isCommunications
             ? 'Members Sidebar'
             : 'Workspaces Sidebar'
         "
+        class="ml-2"
+        icon
+        @click="$app.toggleWorkspace()"
       >
         <v-icon>mdi-menu-open</v-icon>
       </v-btn>
     </template>
     <template v-slot:extension>
       <v-progress-linear
+        v-if="$app.dialogs.upload.loading"
         :model-value="$app.dialogs.upload.percentage"
         color="primary"
-        v-if="$app.dialogs.upload.loading"
       >
         <v-tooltip activator="parent" location="top">
           <span>{{ $app.dialogs.upload.percentage }}%</span>
         </v-tooltip>
       </v-progress-linear>
       <v-alert
+        v-if="$app.site.alert"
         class="rounded-0"
         color="blue"
         type="info"
         variant="text"
-        v-if="$app.site.alert"
       >
         {{ $app.site.alert }}
       </v-alert>
       <v-alert
         v-if="!$user.user?.emailVerified"
-        :type="!$user.actions.emailSent.value ? 'error' : 'success'"
-        density="compact"
         :icon="false"
+        :type="!$user.actions.emailSent.value ? 'error' : 'success'"
         class="rounded-0"
+        density="compact"
       >
-        <small class="mr-2 unselectable" v-if="!$user.actions.emailSent.value">
+        <small v-if="!$user.actions.emailSent.value" class="mr-2 unselectable">
           Please verify your email to access all of TPU.
         </small>
-        <small class="mr-2 unselectable" v-else>
+        <small v-else class="mr-2 unselectable">
           Verification email sent! Please check your email,
           <strong>{{ $user.user?.email }}</strong>
         </small>
         <template v-slot:append>
           <v-btn
+            :loading="$user.actions.emailSent.loading"
             size="x-small"
             @click="$user.resendVerificationEmail"
-            :loading="$user.actions.emailSent.loading"
           >
             Resend Verification Email
           </v-btn>

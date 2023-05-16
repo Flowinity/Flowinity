@@ -342,20 +342,20 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import UserBanner from "@/components/Users/UserBanner.vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
-import UserBadges from "@/components/Users/UserBadges.vue"
-import {User} from "@/models/user"
-import CollectionBanner from "@/components/Collections/CollectionBanner.vue"
-import CollectionCard from "@/components/Collections/CollectionCard.vue"
-import StatsCard from "@/components/Dashboard/StatsCard.vue"
-import BarChart from "@/components/Core/BarChart.vue"
-import LineChart from "@/components/Core/LineChart.vue"
-import Chart from "@/components/Core/Chart.vue"
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue"
-import InsightsPromoCard from "@/views/Insights/PromoCard.vue"
-import {DefaultThemes} from "@/plugins/vuetify"
+import { defineComponent } from "vue";
+import UserBanner from "@/components/Users/UserBanner.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import UserBadges from "@/components/Users/UserBadges.vue";
+import { User } from "@/models/user";
+import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
+import CollectionCard from "@/components/Collections/CollectionCard.vue";
+import StatsCard from "@/components/Dashboard/StatsCard.vue";
+import BarChart from "@/components/Core/BarChart.vue";
+import LineChart from "@/components/Core/LineChart.vue";
+import Chart from "@/components/Core/Chart.vue";
+import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
+import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
+import { DefaultThemes } from "@/plugins/vuetify";
 
 export default defineComponent({
   name: "UserV2",
@@ -383,30 +383,30 @@ export default defineComponent({
           loading: false
         }
       }
-    }
+    };
   },
   computed: {
     primaryColorResult() {
-      return this.$user.primaryColorResult(this.primary, this.gold).primary
+      return this.$user.primaryColorResult(this.primary, this.gold).primary;
     },
     primary() {
       return this.user?.themeEngine?.theme[
         this.$vuetify.theme.name as "dark" | "light" | "amoled"
-        ].colors.primary
+      ].colors.primary;
     },
     gold() {
-      return this.user?.plan.internalName === "GOLD"
+      return this.user?.plan.internalName === "GOLD";
     },
     hoursMost() {
       if (this.user?.stats?.hours) {
-        let hours = Object.entries(this.user.stats.hours)
-        hours.sort((a: any, b: any) => b[1] - a[1])
+        let hours = Object.entries(this.user.stats.hours);
+        hours.sort((a: any, b: any) => b[1] - a[1]);
         return {
           hour: hours[0][0],
           count: hours[0][1]
-        }
+        };
       } else {
-        return null
+        return null;
       }
     },
     hoursGraph() {
@@ -414,9 +414,9 @@ export default defineComponent({
         return {
           labels: Object.keys(this.user.stats.hours),
           data: Object.values(this.user.stats.hours)
-        }
+        };
       } else {
-        return null
+        return null;
       }
     },
     chartData() {
@@ -432,9 +432,9 @@ export default defineComponent({
               pointBackgroundColor: "#181818"
             }
           ]
-        }
+        };
       } else {
-        return []
+        return [];
       }
     },
     friends() {
@@ -443,60 +443,60 @@ export default defineComponent({
           text: "Remove Friend",
           color: "red",
           icon: "mdi-account-minus"
-        }
+        };
       } else if (this.user?.friend === "outgoing") {
         return {
           text: "Cancel Request",
           color: "grey",
           icon: "mdi-account-minus"
-        }
+        };
       } else if (this.user?.friend === "incoming") {
         return {
           text: "Accept Request",
           color: "green",
           icon: "mdi-account-plus"
-        }
+        };
       } else {
         return {
           text: "Add Friend",
           color: "green",
           icon: "mdi-account-plus"
-        }
+        };
       }
     },
     disableProfileColors() {
       try {
-        return JSON.parse(localStorage.getItem("disableProfileColors")!)
+        return JSON.parse(localStorage.getItem("disableProfileColors")!);
       } catch {
-        return false
+        return false;
       }
     }
   },
   methods: {
     setTheme(reset: boolean = false) {
-      if (this.disableProfileColors) return false
-      if (this.username) return false
+      if (this.disableProfileColors) return false;
+      if (this.username) return false;
       if (this.user?.themeEngine?.version !== 1 && !reset) {
-        this.setTheme(true)
-        return false
+        this.setTheme(true);
+        return false;
       }
       const theme = reset
         ? this.$user.changes.themeEngine?.theme ||
-        new DefaultThemes(this.$user.gold).themes
-        : this.user?.themeEngine?.theme
-      if (!theme) return false
+          new DefaultThemes(this.$user.gold).themes
+        : this.user?.themeEngine?.theme;
+      if (!theme) return false;
       this.$vuetify.theme.themes.dark = {
         ...this.$vuetify.theme.themes.dark,
         ...theme.dark
-      }
+      };
       this.$vuetify.theme.themes.light = {
         ...this.$vuetify.theme.themes.light,
         ...theme.light
-      }
+      };
       this.$vuetify.theme.themes.amoled = {
         ...this.$vuetify.theme.themes.amoled,
         ...theme.amoled
-      }
+      };
       if (!reset) {
         document.body.style.setProperty(
           "--gradient-offset",
@@ -504,68 +504,68 @@ export default defineComponent({
             this.user?.themeEngine?.gradientOffset ||
             this.$user.changes.themeEngine.gradientOffset
           }%`
-        )
+        );
         this.$app.fluidGradient =
-          this.user?.themeEngine?.fluidGradient || this.$app.fluidGradient
+          this.user?.themeEngine?.fluidGradient || this.$app.fluidGradient;
       } else {
         document.body.style.setProperty(
           "--gradient-offset",
           `${this.$user.changes?.themeEngine?.gradientOffset || 100}%`
-        )
+        );
         this.$app.fluidGradient =
-          this.$user.changes?.themeEngine?.fluidGradient || false
+          this.$user.changes?.themeEngine?.fluidGradient || false;
       }
-      return true
+      return true;
     },
     async save() {
-      this.settings.description.loading = true
-      await this.$user.save()
-      if (this.user) this.user.description = this.$user.user?.description
-      this.settings.description.value = false
-      this.settings.description.loading = false
+      this.settings.description.loading = true;
+      await this.$user.save();
+      if (this.user) this.user.description = this.$user.user?.description;
+      this.settings.description.value = false;
+      this.settings.description.loading = false;
     },
     async chat() {
-      this.friendLoading = true
-      const data = await this.$chat.createChat([this.user?.id as number])
-      if (this.username) this.$chat.dialogs.user.value = false
-      this.$router.push(`/communications/${data.association.id}`)
+      this.friendLoading = true;
+      const data = await this.$chat.createChat([this.user?.id as number]);
+      if (this.username) this.$chat.dialogs.user.value = false;
+      this.$router.push(`/communications/${data.association.id}`);
     },
     async doFriendRequest() {
       try {
-        this.friendLoading = true
-        await this.axios.post(`/user/friends/${this.user?.id}`)
-        this.friendLoading = false
-        this.getUser(false)
+        this.friendLoading = true;
+        await this.axios.post(`/user/friends/${this.user?.id}`);
+        this.friendLoading = false;
+        this.getUser(false);
       } catch {
-        this.friendLoading = false
+        this.friendLoading = false;
       }
     },
     async getUser(load = true) {
       if (load && !this.username) {
-        this.$app.componentLoading = true
+        this.$app.componentLoading = true;
       }
-      const username = this.username || this.$route.params.username
-      const {data} = await this.axios.get(`/user/profile/${username}`)
-      this.user = data
-      if (!this.username) this.$app.title = this.user?.username + "'s Profile"
-      this.setTheme()
-      this.$app.componentLoading = false
+      const username = this.username || this.$route.params.username;
+      const { data } = await this.axios.get(`/user/profile/${username}`);
+      this.user = data;
+      if (!this.username) this.$app.title = this.user?.username + "'s Profile";
+      this.setTheme();
+      this.$app.componentLoading = false;
     }
   },
   mounted() {
-    if (!this.username) this.$app.title = "User"
-    this.getUser()
+    if (!this.username) this.$app.title = "User";
+    this.getUser();
   },
   unmounted() {
-    this.setTheme(true)
+    this.setTheme(true);
   },
   watch: {
     "$route.params.username"(val) {
-      if (!val) return
-      this.getUser()
+      if (!val) return;
+      this.getUser();
     }
   }
-})
+});
 </script>
 
 <style scoped>

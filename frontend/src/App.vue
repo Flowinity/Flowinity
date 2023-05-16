@@ -1,9 +1,9 @@
 <template>
   <VErrorBoundary
     :fall-back="skullCrash"
-    @error-captured="submitFeedback"
     :params="{ e: error }"
     stop-propagation
+    @error-captured="submitFeedback"
   >
     <router-view />
   </VErrorBoundary>
@@ -13,6 +13,7 @@
 import { defineComponent } from "vue";
 import Crash from "@/components/Core/Crash.vue";
 import VErrorBoundary from "./components/Core/ErrorBoundary.vue";
+
 export default defineComponent({
   name: "TPUApp",
   components: { Crash, VErrorBoundary },

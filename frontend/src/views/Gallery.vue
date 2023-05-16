@@ -52,22 +52,22 @@
       @random-attachment="randomAttachment"
     >
       <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
-        <slot :name="name" v-bind="slotData"/>
+        <slot :name="name" v-bind="slotData" />
       </template>
     </GalleryCore>
   </v-container>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import GalleryCore from "@/components/Gallery/GalleryCore.vue"
-import {Upload} from "@/models/upload"
-import {CollectionCache} from "@/types/collection"
-import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue"
+import { defineComponent } from "vue";
+import GalleryCore from "@/components/Gallery/GalleryCore.vue";
+import { Upload } from "@/models/upload";
+import { CollectionCache } from "@/types/collection";
+import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 
 export default defineComponent({
   name: "PersonalGallery",
-  components: {GalleryNavigation, GalleryCore},
+  components: { GalleryNavigation, GalleryCore },
   props: ["path", "endpoint", "name", "random", "supports"],
   data() {
     return {
@@ -116,56 +116,56 @@ export default defineComponent({
         sort: "newest"
       },
       randomLoading: false
-    }
+    };
   },
   methods: {
     async randomAttachment() {
-      this.randomLoading = true
-      const {data} = await this.axios.get(
+      this.randomLoading = true;
+      const { data } = await this.axios.get(
         this.random || `${this.endpoint}/random`
-      )
+      );
       this.$functions.copy(
         "https://" + this.$user.user?.domain.domain + "/i/" + data.attachment
-      )
-      this.randomLoading = false
+      );
+      this.randomLoading = false;
     },
     removeItemFromCollection(item: Upload, collection: CollectionCache) {
       const index = this.gallery.gallery.findIndex(
         (i: Upload) => i.id === item.id
-      )
-      if (index === -1) return
+      );
+      if (index === -1) return;
       this.gallery.gallery[index] = <Upload>{
         ...this.gallery.gallery[index],
         collections: this.gallery.gallery[index]?.collections.filter(
           (c: any) => c.id !== collection.id
         )
-      }
+      };
     },
     deleteItem(item: Upload) {
       const index = this.gallery.gallery.findIndex(
         (i: any) => i.id === item.id
-      )
-      if (index === -1) return
-      this.gallery.gallery.splice(index, 1)
+      );
+      if (index === -1) return;
+      this.gallery.gallery.splice(index, 1);
     },
     updateItem({
-                 item,
-                 collection
-               }: {
+      item,
+      collection
+    }: {
       item: number;
       collection: CollectionCache;
     }) {
-      console.log(item, collection)
-      const index = this.gallery.gallery.findIndex((i: any) => i.id === item)
-      if (index === -1) return
+      console.log(item, collection);
+      const index = this.gallery.gallery.findIndex((i: any) => i.id === item);
+      if (index === -1) return;
       this.gallery.gallery[index] = {
         ...this.gallery.gallery[index],
         collections: [...this.gallery.gallery[index]?.collections, collection]
-      }
+      };
     },
     async getGallery() {
-      this.$app.componentLoading = true
-      const {data} = await this.axios.get(this.endpoint, {
+      this.$app.componentLoading = true;
+      const { data } = await this.axios.get(this.endpoint, {
         params: {
           page: this.page,
           search: this.show.search,
@@ -173,54 +173,54 @@ export default defineComponent({
           filter: this.show.selected,
           sort: `"${this.show.sort}"`
         }
-      })
-      this.gallery = data as typeof this.gallery
-      this.$app.componentLoading = false
-      return data
+      });
+      this.gallery = data as typeof this.gallery;
+      this.$app.componentLoading = false;
+      return data;
     },
     socketRegister(
       uploads:
         | { upload: Upload; url: string }
         | { upload: Upload; url: string }[]
     ) {
-      if (this.page !== 1) return
+      if (this.page !== 1) return;
       if (Array.isArray(uploads)) {
         for (const upload of uploads) {
-          this.gallery.gallery.unshift(upload.upload)
+          this.gallery.gallery.unshift(upload.upload);
         }
       } else {
-        this.gallery.gallery.unshift(uploads.upload)
+        this.gallery.gallery.unshift(uploads.upload);
       }
     },
     init() {
-      this.$socket.off("gallery/create", this.socketRegister)
-      this.$app.title = this.name || "Gallery"
-      this.page = parseInt(<string>this.$route.params.page) || 1
-      this.getGallery()
+      this.$socket.off("gallery/create", this.socketRegister);
+      this.$app.title = this.name || "Gallery";
+      this.page = parseInt(<string>this.$route.params.page) || 1;
+      this.getGallery();
       if (this.endpoint === "/gallery") {
-        this.$socket.on("gallery/create", this.socketRegister)
+        this.$socket.on("gallery/create", this.socketRegister);
       }
     }
   },
   mounted() {
-    this.init()
+    this.init();
   },
   unmounted() {
     if (this.endpoint === "/gallery") {
-      this.$socket.off("gallery/create", this.socketRegister)
+      this.$socket.off("gallery/create", this.socketRegister);
     }
   },
   watch: {
     "$route.params.page"(page) {
-      if (!page) return
-      this.page = parseInt(page) || 1
-      this.getGallery()
+      if (!page) return;
+      this.page = parseInt(page) || 1;
+      this.getGallery();
     },
     endpoint() {
-      this.init()
+      this.init();
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

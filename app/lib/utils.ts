@@ -1,20 +1,27 @@
-//import { User } from "@app/models/user.model"
-import { Upload } from "@app/models/upload.model"
 import tesseract from "node-tesseract-ocr"
+import cryptoRandomString from "crypto-random-string"
+import { Container } from "typedi"
+
+// Import Libs
+import Errors from "@app/lib/errors"
+
+// Import Models
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Collection } from "@app/models/collection.model"
 import { User } from "@app/models/user.model"
+import { Upload } from "@app/models/upload.model"
 import { CollectionUser } from "@app/models/collectionUser.model"
-import Errors from "@app/lib/errors"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
-import cryptoRandomString from "crypto-random-string"
 import { Session } from "@app/models/session.model"
 import { Domain } from "@app/models/domain.model"
-import { Container } from "typedi"
+
+// Import Services
 import { CacheService } from "@app/services/cache.service"
 
-async function generateAPIKey(type: "session" | "api" | "email") {
+async function generateAPIKey(
+  type: "session" | "api" | "email"
+): Promise<string> {
   switch (type) {
     case "session":
       return "TPU-WEB-" + cryptoRandomString({ length: 128 })
@@ -30,21 +37,22 @@ async function createSession(
   scopes: string,
   type: "session" | "api",
   expiredAt?: Date
-) {
-  const token = await generateAPIKey(type)
+): Promise<string> {
+  const token: string = await generateAPIKey(type)
+
   await Session.create({
     token,
     userId,
     scopes,
     type,
-
     expiredAt: expiredAt || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
   })
+
   return token
 }
 
-async function getCollection(id: number, userId: number) {
-  let collection = await Collection.findOne({
+async function getCollection(id: number, userId: number): Promise<Collection> {
+  let collection: Collection | null = await Collection.findOne({
     where: { id, userId },
     include: [
       {
@@ -80,6 +88,7 @@ async function getCollection(id: number, userId: number) {
       }
     ]
   })
+
   if (!collection) {
     collection = await Collection.findOne({
       where: {
@@ -128,9 +137,12 @@ async function getCollection(id: number, userId: number) {
         }
       ]
     })
+
     if (!collection) throw Errors.NOT_FOUND
+
     collection.shared = true
   }
+
   return collection
 }
 
@@ -145,7 +157,9 @@ function checkOperator(
       text = text?.length || 0
     }
   }
+
   value = value?.toLowerCase() || value
+
   if (!Number.isInteger(text)) {
     text = text?.toLowerCase() || text
   }
@@ -194,73 +208,85 @@ function checkOperator(
   }
 }
 
-async function processFile(upload: Upload, textMetadata: string) {
+async function processFile(
+  upload: Upload,
+  textMetadata: string
+): Promise<void> {
   try {
-    const rules = await AutoCollectRule.findAll({
+    const rules: AutoCollectRule[] = await AutoCollectRule.findAll({
       where: {
         userId: upload.userId
       }
     })
     textMetadata = textMetadata?.toLowerCase() || textMetadata
+
     for (const rule of rules) {
-      let results = []
+      let results: any[] = []
+
       if (!rule.collectionId) continue
       if (!rule.enabled) continue
       if (!(await getCollection(rule.collectionId, upload.userId))) continue
+
       // @ts-ignore
-      for (const subrule of rule.rules) {
-        let resultsOfSubrule = []
-        for (const subsubrule of subrule.rules) {
-          if (subsubrule.type === "metadata") {
-            resultsOfSubrule.push(
+      for (const subRule of rule.rules) {
+        let resultsOfSubRule: any[] = []
+
+        for (const subSubRule of subRule.rules) {
+          if (subSubRule.type === "metadata") {
+            resultsOfSubRule.push(
               checkOperator(
                 textMetadata,
-                subsubrule.operator,
-                subsubrule.value,
+                subSubRule.operator,
+                subSubRule.value,
                 rule.id
               )
             )
-          } else if (subsubrule.type === "name") {
-            resultsOfSubrule.push(
+          } else if (subSubRule.type === "name") {
+            resultsOfSubRule.push(
               checkOperator(
                 upload.originalFilename,
-                subsubrule.operator,
-                subsubrule.value,
+                subSubRule.operator,
+                subSubRule.value,
                 rule.id
               )
             )
-          } else if (subsubrule.type === "extension") {
-            const extension = upload.originalFilename?.split(".")?.pop()
-            resultsOfSubrule.push(
+          } else if (subSubRule.type === "extension") {
+            const extension: string | undefined = upload.originalFilename
+              ?.split(".")
+              ?.pop()
+
+            resultsOfSubRule.push(
               checkOperator(
                 extension,
-                subsubrule.operator,
-                subsubrule.value,
+                subSubRule.operator,
+                subSubRule.value,
                 rule.id
               )
             )
-          } else if (subsubrule.type === "metadata-word-length") {
-            const wordCount = textMetadata?.split(" ")?.length || 0
-            resultsOfSubrule.push(
+          } else if (subSubRule.type === "metadata-word-length") {
+            const wordCount: number = textMetadata?.split(" ")?.length || 0
+
+            resultsOfSubRule.push(
               checkOperator(
                 wordCount,
-                subsubrule.operator,
-                subsubrule.value,
+                subSubRule.operator,
+                subSubRule.value,
                 rule.id
               )
             )
-          } else if (subsubrule.type === "metadata-char-length") {
-            resultsOfSubrule.push(
+          } else if (subSubRule.type === "metadata-char-length") {
+            resultsOfSubRule.push(
               checkOperator(
                 textMetadata.length,
-                subsubrule.operator,
-                subsubrule.value,
+                subSubRule.operator,
+                subSubRule.value,
                 rule.id
               )
             )
           }
         }
-        if (!resultsOfSubrule.some((result) => !result?.value)) {
+
+        if (!resultsOfSubRule.some((result) => !result?.value)) {
           results.push({
             value: true
           })
@@ -271,26 +297,30 @@ async function processFile(upload: Upload, textMetadata: string) {
         }
       }
       if (results.some((result) => result.value) && rule.requireApproval) {
-        const cache = Container.get(CacheService)
+        const cache: CacheService = Container.get(CacheService)
         const collection = await cache.getCachedCollection(
           rule.userId,
           rule.collectionId
         )
-        const autoCollect = await AutoCollectApproval.create({
-          userId: upload.userId,
-          uploadId: upload.id,
-          autoCollectRuleId: rule.id,
-          collectionId: rule.collectionId,
-          info: results
-        })
+        const autoCollect: AutoCollectApproval =
+          await AutoCollectApproval.create({
+            userId: upload.userId,
+            uploadId: upload.id,
+            autoCollectRuleId: rule.id,
+            collectionId: rule.collectionId,
+            info: results
+          })
         let autoCollects = await redis.json.get(`autoCollects:${upload.userId}`)
+
         if (autoCollects?.length) {
           try {
             autoCollects
               .find(
-                (collection: Collection) => collection.id === rule.collectionId
+                (collection: Collection): boolean =>
+                  collection.id === rule.collectionId
               )
               .autoCollectApprovals.push(autoCollect)
+
             await redis.json.set(
               `autoCollects:${upload.userId}`,
               "$",
@@ -302,6 +332,7 @@ async function processFile(upload: Upload, textMetadata: string) {
               ...collection,
               autoCollectApprovals: [autoCollect]
             })
+
             await redis.json.set(
               `autoCollects:${upload.userId}`,
               "$",
@@ -316,6 +347,7 @@ async function processFile(upload: Upload, textMetadata: string) {
             }
           ])
         }
+
         socket.to(upload.userId).emit("autoCollectApproval", {
           type: "new"
         })
@@ -331,17 +363,17 @@ async function processFile(upload: Upload, textMetadata: string) {
         })
       }
     }
-  } catch (e) {
-    console.log("Error processing file", e)
+  } catch (err) {
+    console.log("Error processing file", err)
   }
 }
 
-async function postUpload(upload: Upload) {
+async function postUpload(upload: Upload): Promise<void> {
   await tesseract
     .recognize(config.storage + "/" + upload.attachment, {
       lang: "eng"
     })
-    .then(async (text) => {
+    .then(async (text: string): Promise<void> => {
       await Upload.update(
         {
           textMetadata: text
@@ -354,14 +386,15 @@ async function postUpload(upload: Upload) {
       )
       await processFile(upload, text)
     })
-    .catch(async (error) => {
-      console.log(error.message)
+    .catch(async (error): Promise<void> => {
+      console.error(error.message)
+
       await processFile(upload, "")
     })
 }
 
 async function getUserDomain(userId: number): Promise<string> {
-  const user = await User.findOne({
+  const user: User | null = await User.findOne({
     where: {
       id: userId
     },
@@ -376,8 +409,8 @@ async function getUserDomain(userId: number): Promise<string> {
   return user?.domain?.domain + "/i/" || "https://i.troplo.com/i/"
 }
 
-function getTypeByExt(ext: string) {
-  const types = {
+function getTypeByExt(ext: string): string {
+  const types: Record<string, string> = {
     ase: "text",
     art: "image",
     bmp: "image",

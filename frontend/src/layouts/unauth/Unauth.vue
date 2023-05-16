@@ -17,5 +17,4 @@
 <script lang="ts" setup>
 import DefaultBar from "./AppBar.vue";
 import DefaultView from "./View.vue";
-import Sidebar from "@/layouts/default/Sidebar.vue";
 </script>

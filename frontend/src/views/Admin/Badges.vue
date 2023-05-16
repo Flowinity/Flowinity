@@ -144,12 +144,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "Badges",
-  components: {CoreDialog},
+  components: { CoreDialog },
   data() {
     return {
       dialog: {
@@ -161,15 +161,15 @@ export default defineComponent({
       selectedBadge: undefined as number | undefined,
       selectedUser: [] as number[],
       headers: [
-        {title: "ID", key: "id"},
-        {title: "Name", key: "name"},
-        {title: "Tooltip", key: "tooltip"},
-        {title: "Color", key: "color"},
-        {title: "Description", key: "description"},
-        {title: "Icon", key: "icon"},
-        {title: "Image", key: "image"},
-        {title: "Unlocked", key: "unlocked"},
-        {title: "Plan ID", key: "planId"},
+        { title: "ID", key: "id" },
+        { title: "Name", key: "name" },
+        { title: "Tooltip", key: "tooltip" },
+        { title: "Color", key: "color" },
+        { title: "Description", key: "description" },
+        { title: "Icon", key: "icon" },
+        { title: "Image", key: "image" },
+        { title: "Unlocked", key: "unlocked" },
+        { title: "Plan ID", key: "planId" },
         {
           title: "Users count",
           key: "users.length"
@@ -190,49 +190,49 @@ export default defineComponent({
         planId: null,
         priority: 0
       }
-    }
+    };
   },
   methods: {
     async removeBadges() {
       await this.axios.post("/admin/badge/users/delete", {
         id: this.selectedBadge,
         userIds: this.selectedUser
-      })
-      await this.getBadges()
+      });
+      await this.getBadges();
     },
     async deleteItem(id: number) {
-      await this.axios.delete(`/admin/badge/${id}`)
-      await this.getBadges()
-      this.$toast.success("yes")
+      await this.axios.delete(`/admin/badge/${id}`);
+      await this.getBadges();
+      this.$toast.success("yes");
     },
     async updateItem() {
-      await this.axios.put("/admin/badge", this.dialog.item)
-      await this.getBadges()
-      this.dialog.value = false
-      this.$toast.success("yes")
+      await this.axios.put("/admin/badge", this.dialog.item);
+      await this.getBadges();
+      this.dialog.value = false;
+      this.$toast.success("yes");
     },
     async getBadges() {
-      const {data} = await this.axios.get("/admin/badges")
-      this.badges = data
+      const { data } = await this.axios.get("/admin/badges");
+      this.badges = data;
     },
     async getUsers() {
-      const {data} = await this.axios.get("/admin/users")
-      this.users = data
+      const { data } = await this.axios.get("/admin/users");
+      this.users = data;
     },
     async addBadges() {
       await this.axios.post("/admin/badge/users", {
         id: this.selectedBadge,
         userIds: this.selectedUser
-      })
-      await this.getBadges()
-      this.$toast.success("yes")
-      this.selectedBadge = undefined
-      this.selectedUser = []
+      });
+      await this.getBadges();
+      this.$toast.success("yes");
+      this.selectedBadge = undefined;
+      this.selectedUser = [];
     },
     async createBadge() {
-      await this.axios.post("/admin/badge", this.create)
-      await this.getBadges()
-      this.$toast.success("yes")
+      await this.axios.post("/admin/badge", this.create);
+      await this.getBadges();
+      this.$toast.success("yes");
       this.create = {
         name: "",
         tooltip: "",
@@ -243,14 +243,14 @@ export default defineComponent({
         unlocked: false,
         planId: null,
         priority: 0
-      }
+      };
     }
   },
   mounted() {
-    this.getUsers()
-    this.getBadges()
+    this.getUsers();
+    this.getBadges();
   }
-})
+});
 </script>
 
 <style scoped></style>

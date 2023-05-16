@@ -1,16 +1,24 @@
 import { NextFunction } from "express"
-import { SocketAuth } from "@app/types/socket"
+// Import Models
 import { Session } from "@app/models/session.model"
 import { User } from "@app/models/user.model"
 
-const Errors = require("./errors.js")
+// Import Types
+import { SocketAuth } from "@app/types/socket"
+
 const { Op } = require("sequelize")
 
-export default async function (socket: SocketAuth, next: NextFunction) {
+// Import Libs
+const Errors = require("./errors.js")
+
+export default async function (
+  socket: SocketAuth,
+  next: NextFunction
+): Promise<void> {
   try {
     const token = socket.handshake.auth.token
     if (token) {
-      const session = await Session.findOne({
+      const session: Session | null = await Session.findOne({
         where: {
           token: token,
           type: "session",
@@ -33,17 +41,19 @@ export default async function (socket: SocketAuth, next: NextFunction) {
           }
         ]
       })
+
       if (session) {
-        if (session.user.banned) {
-          socket.emit("error", Errors.unauthorized)
-        } else {
+        if (session.user.banned) socket.emit("error", Errors.unauthorized)
+        else {
           socket.user = session.user
+
           next()
         }
       }
     }
   } catch (err) {
-    console.log(err)
+    console.error(err)
+
     socket.emit("error", Errors.unauthorized)
   }
 }

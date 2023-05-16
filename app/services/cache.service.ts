@@ -38,6 +38,7 @@ export class CacheService {
     let end = new Date().getTime()
     console.info(`[REDIS] Missing chat date keys generated in ${end - start}ms`)
   }
+
   async patchChatsCacheForUser(userId: number, chat: Chat) {
     let chats = await redis.json.get(`chats:${userId}`)
     if (!chats?.length) {
@@ -74,6 +75,7 @@ export class CacheService {
       console.error(e)
     }
   }
+
   async generateUserStatsCache(userId?: number) {
     try {
       console.info("[REDIS] Generating user stats cache...")
@@ -131,6 +133,7 @@ export class CacheService {
       console.info(`[REDIS] Insights cache generated in ${end - start}ms`)
     } catch {}
   }
+
   async purgeInvite(inviteKey: string) {
     console.info("[REDIS] Purging invite from cache...")
     redis.json.del(`invites:${inviteKey}`)

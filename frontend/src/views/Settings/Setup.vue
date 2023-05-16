@@ -143,17 +143,17 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import HoverChip from "@/components/Core/HoverChip.vue"
+import { defineComponent } from "vue";
+import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
   name: "Setup",
-  components: {HoverChip},
+  components: { HoverChip },
   data() {
     return {
       selected: "",
       items: []
-    }
+    };
   },
   methods: {
     config(type: "sharex" | "sharenix" = "sharex") {
@@ -185,50 +185,50 @@ export default defineComponent({
         URL: string;
         RequestMethod?: string;
         RequestType?: string;
-      }
+      };
       if (type === "sharenix") {
-        data.RequestType = "POST"
+        data.RequestType = "POST";
       } else {
-        data.RequestMethod = "POST"
+        data.RequestMethod = "POST";
       }
-      return data
+      return data;
     },
     async getAPIKeys() {
-      const {data} = await this.axios.get("/security/keys")
-      this.items = data
+      const { data } = await this.axios.get("/security/keys");
+      this.items = data;
     },
     saveFile(type: "sharex" | "sharenix" = "sharex") {
-      console.log(2)
-      let data = null
+      console.log(2);
+      let data = null;
       if (type === "sharex") {
-        data = JSON.stringify(this.config(type))
+        data = JSON.stringify(this.config(type));
       } else {
         data = JSON.stringify({
           DefaultFileUploader: this.$app.site.name,
           DefaultImageUploader: this.$app.site.name,
 
           Services: [this.config(type)]
-        })
+        });
       }
-      const blob = new Blob([data], {type: "text/plain"})
+      const blob = new Blob([data], { type: "text/plain" });
       const e = document.createEvent("MouseEvents"),
-        a = document.createElement("a")
-      const ext = type === "sharex" ? ".sxcu" : ".json"
+        a = document.createElement("a");
+      const ext = type === "sharex" ? ".sxcu" : ".json";
       a.download =
-        this.$user.user?.username + " - " + this.$app.site.name + ext
-      a.href = window.URL.createObjectURL(blob)
-      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":")
-      e.initEvent("click", true, false)
-      a.dispatchEvent(e)
+        this.$user.user?.username + " - " + this.$app.site.name + ext;
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
+      e.initEvent("click", true, false);
+      a.dispatchEvent(e);
     }
   },
   mounted() {
-    this.getAPIKeys()
+    this.getAPIKeys();
     if (this.$app.cordova) {
-      console.log(window.cordova.file)
+      console.log(window.cordova.file);
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

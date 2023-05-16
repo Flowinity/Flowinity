@@ -1,8 +1,8 @@
 // Utilities
-import {defineStore} from "pinia"
-import axios from "@/plugins/axios"
-import {Friend} from "@/models/friend"
-import {User} from "@/models/user"
+import { defineStore } from "pinia";
+import axios from "@/plugins/axios";
+import { Friend } from "@/models/friend";
+import { User } from "@/models/user";
 
 export interface FriendsState {
   friends: Friend[];

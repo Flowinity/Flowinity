@@ -9,7 +9,7 @@
       xmlns="http://www.w3.org/2000/svg"
     >
       <g clip-path="url(#clip0_40_2)">
-        <rect fill="url(#paint0_linear_40_2)" height="122" width="241"/>
+        <rect fill="url(#paint0_linear_40_2)" height="122" width="241" />
         <path
           :fill="fillColor"
           d="M90.975 183.813L-41 135.778L2.23145 17L15.429 21.8035L-22.999 127.384L-9.80154 132.187L11.8142 72.7983L38.2092 82.4053L16.5935 141.794L29.791 146.598L61.0137 60.8138L87.4087 70.4208L56.186 156.205L69.3835 161.008L81.3922 128.014L107.787 137.621L90.975 183.813Z"
@@ -33,11 +33,11 @@
           y1="0"
           y2="122"
         >
-          <stop :stop-color="startColor"/>
-          <stop :stop-color="endColor" offset="1"/>
+          <stop :stop-color="startColor" />
+          <stop :stop-color="endColor" offset="1" />
         </linearGradient>
         <clipPath id="clip0_40_2">
-          <rect fill="white" height="122" width="241"/>
+          <rect fill="white" height="122" width="241" />
         </clipPath>
       </defs>
     </svg>
@@ -45,17 +45,17 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "InsightsPromoCard",
   props: ["startColor", "endColor", "username"],
   computed: {
     fillColor() {
-      return this.startColor === "#FBC02D" ? "#0b0b0b" : "white"
+      return this.startColor === "#FBC02D" ? "#0b0b0b" : "white";
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

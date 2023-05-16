@@ -42,7 +42,9 @@ describe("Example service", () => {
   })
 
   it("should handle an error from DateService", async () => {
-    dateService.currentTime.returns(Promise.reject(new Error("error in the service")))
+    dateService.currentTime.returns(
+      Promise.reject(new Error("error in the service"))
+    )
     const message = await exampleService.helloWorld()
     expect(message.title).to.equals("Error")
   })

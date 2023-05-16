@@ -1,9 +1,9 @@
-import {Response} from "express"
-import {Service} from "typedi"
+import { Response } from "express"
+import { Service } from "typedi"
 import auth from "@app/lib/auth"
-import {RequestAuth} from "@app/types/express"
+import { RequestAuth } from "@app/types/express"
 import Router from "express-promise-router"
-import {SecurityService} from "@app/services/security.service"
+import { SecurityService } from "@app/services/security.service"
 
 @Service()
 export class SecurityController {

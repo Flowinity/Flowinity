@@ -1,17 +1,24 @@
-import {Body, Delete, Get, JsonController, Param, Post, Put} from "routing-controllers"
-import {Service} from "typedi"
-import {SlideshowService} from "@app/services/slideshow.service"
-import {Auth} from "@app/lib/auth"
-import {User} from "@app/models/user.model"
-import {Slideshow} from "@app/models/slideshow.model"
+import {
+  Body,
+  Delete,
+  Get,
+  JsonController,
+  Param,
+  Post,
+  Put
+} from "routing-controllers"
+import { Service } from "typedi"
+import { SlideshowService } from "@app/services/slideshow.service"
+import { Auth } from "@app/lib/auth"
+import { User } from "@app/models/user.model"
+import { Slideshow } from "@app/models/slideshow.model"
 import cryptoRandomString from "crypto-random-string"
 import Errors from "@app/lib/errors"
 
 @Service()
 @JsonController("/slideshows")
 export class SlideshowControllerV3 {
-  constructor(private readonly slideshowService: SlideshowService) {
-  }
+  constructor(private readonly slideshowService: SlideshowService) {}
 
   @Get("")
   async getSlideshows(@Auth("uploads.view") user: User) {
@@ -23,7 +30,7 @@ export class SlideshowControllerV3 {
     return await Slideshow.create({
       name: "New Slideshow",
       userId: user.id,
-      shareLink: cryptoRandomString({length: 128}),
+      shareLink: cryptoRandomString({ length: 128 }),
       collectionIds: [],
       includeGallery: false,
       speed: 5

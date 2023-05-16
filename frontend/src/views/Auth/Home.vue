@@ -158,7 +158,8 @@
                         placeholder="This upload violates the Content Policy because..." variant="filled"
                         @keyup.enter="reportUpload"></v-text-field>
           <v-text-field v-model="report.email" color="white" label="Email to get back to you (optional)"
-                        outlined placeholder="troplo@troplo.com" variant="filled" @keyup.enter="reportUpload"></v-text-field>
+                        outlined placeholder="troplo@troplo.com" variant="filled"
+                        @keyup.enter="reportUpload"></v-text-field>
           <v-btn :loading="report.loading" color="primary" @click="reportUpload">Report</v-btn>
         </div>
       </template>

@@ -1,10 +1,10 @@
-import {NextFunction, Response} from "express"
-import {Container, Service} from "typedi"
+import { NextFunction, Response } from "express"
+import { Container, Service } from "typedi"
 import Router from "express-promise-router"
-import {MailService} from "@app/services/mail.service"
+import { MailService } from "@app/services/mail.service"
 import auth from "@app/lib/auth"
-import {RequestAuth} from "@app/types/express"
-import {CoreService} from "@app/services/core.service"
+import { RequestAuth } from "@app/types/express"
+import { CoreService } from "@app/services/core.service"
 import Errors from "@app/lib/errors"
 
 @Service()

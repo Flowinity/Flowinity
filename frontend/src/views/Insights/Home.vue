@@ -84,22 +84,22 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import DynamicCard from "@/components/Core/DynamicCard.vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import DynamicCard from "@/components/Core/DynamicCard.vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "Home",
-  components: {CoreDialog, DynamicCard},
+  components: { CoreDialog, DynamicCard },
   data() {
     return {
       comingSoon: false
-    }
+    };
   },
   mounted() {
-    this.$app.title = "Insights"
+    this.$app.title = "Insights";
   }
-})
+});
 </script>
 
 <style scoped></style>

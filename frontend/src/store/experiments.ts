@@ -1,6 +1,6 @@
 // Utilities
-import {defineStore} from "pinia"
-import axios from "@/plugins/axios"
+import { defineStore } from "pinia";
+import axios from "@/plugins/axios";
 
 export interface ExperimentsState {
   experiments: Record<string, string | boolean | null | undefined | number>;

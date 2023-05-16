@@ -1,9 +1,9 @@
 // Utilities
-import {defineStore} from "pinia"
-import axios from "@/plugins/axios"
-import {Workspace} from "@/models/workspace"
-import {Note} from "@/models/note"
-import {useRouter} from "vue-router"
+import { defineStore } from "pinia";
+import axios from "@/plugins/axios";
+import { Workspace } from "@/models/workspace";
+import { Note } from "@/models/note";
+import { useRouter } from "vue-router";
 
 export interface WorkspacesState {
   items: Workspace[];

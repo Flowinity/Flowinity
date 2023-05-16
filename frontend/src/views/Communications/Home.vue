@@ -9,17 +9,17 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import PromoNoContent from "@/components/Core/PromoNoContent.vue"
+import { defineComponent } from "vue";
+import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 
 export default defineComponent({
   name: "CommunicationsHome",
-  components: {PromoNoContent},
+  components: { PromoNoContent },
   mounted() {
-    this.$app.title = "Communications"
-    this.$app.railMode = "communications"
+    this.$app.title = "Communications";
+    this.$app.railMode = "communications";
   }
-})
+});
 </script>
 
 <style scoped></style>

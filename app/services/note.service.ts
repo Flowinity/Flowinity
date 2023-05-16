@@ -1,13 +1,13 @@
-import { Service } from "typedi"
-import { Workspace } from "@app/models/workspace.model"
-import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
-import { Note } from "@app/models/note.model"
+import {Service} from "typedi"
+import {Workspace} from "@app/models/workspace.model"
+import {WorkspaceFolder} from "@app/models/workspaceFolder.model"
+import {Note} from "@app/models/note.model"
 import Errors from "@app/lib/errors"
 import cryptoRandomString from "crypto-random-string"
-import { NoteVersion } from "@app/models/noteVersion.model"
-import { WorkspaceUser } from "@app/models/workspaceUser.model"
-import { User } from "@app/models/user.model"
-import { Friend } from "@app/models/friend.model"
+import {NoteVersion} from "@app/models/noteVersion.model"
+import {WorkspaceUser} from "@app/models/workspaceUser.model"
+import {User} from "@app/models/user.model"
+import {Friend} from "@app/models/friend.model"
 
 //create class of NoteData
 export class NoteField {
@@ -31,11 +31,13 @@ export class NoteField {
   lastEditorId: number
   locked: boolean
 }
+
 export class NoteData {
   fields: NoteField[]
   styles: string
   creatorId: number
   lastEditorId: number
+
   constructor(userId: number) {
     this.fields = [
       {

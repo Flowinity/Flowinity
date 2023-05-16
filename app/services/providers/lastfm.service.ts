@@ -7,6 +7,7 @@ import md5 from "md5"
 @Service()
 export class LastfmService {
   constructor() {}
+
   async linkLastFM(userId: string, token: string) {
     if (!config.providers.lastfm.key) throw Errors.INTEGRATION_ERROR
     const params = {

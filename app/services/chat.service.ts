@@ -621,6 +621,7 @@ export class ChatService {
     })
     return true
   }
+
   async emitForAll(
     associationId: number,
     userId: number,
@@ -639,6 +640,7 @@ export class ChatService {
       socket.to(user.userId).emit(key, data)
     }
   }
+
   async readChat(associationId: number, userId: number) {
     const chat = await this.getChatFromAssociation(associationId, userId)
     const chatId = chat.id
@@ -701,6 +703,7 @@ export class ChatService {
       })
     }
   }
+
   async getChat(chatId: number, userId: number) {
     const chat = await Chat.findOne({
       where: { id: chatId },
@@ -824,6 +827,7 @@ export class ChatService {
     }
     return chatWithUsers
   }
+
   async sendMessageToUsers(messageId: number, chat: Chat) {
     const message = await Message.findOne({
       where: { id: messageId },

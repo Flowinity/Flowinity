@@ -1,10 +1,10 @@
-import {Response} from "express"
-import {Service} from "typedi"
+import { Response } from "express"
+import { Service } from "typedi"
 import auth from "@app/lib/auth"
-import {RequestAuth} from "@app/types/express"
+import { RequestAuth } from "@app/types/express"
 import Router from "express-promise-router"
-import {SlideshowService} from "@app/services/slideshow.service"
-import {Slideshow} from "@app/models/slideshow.model"
+import { SlideshowService } from "@app/services/slideshow.service"
+import { Slideshow } from "@app/models/slideshow.model"
 import cryptoRandomString from "crypto-random-string"
 import Errors from "@app/lib/errors"
 
@@ -37,7 +37,7 @@ export class SlideshowController {
         const slideshow = await Slideshow.create({
           name: "New Slideshow",
           userId: req.user.id,
-          shareLink: cryptoRandomString({length: 128}),
+          shareLink: cryptoRandomString({ length: 128 }),
           collectionIds: [],
           includeGallery: false,
           speed: 5

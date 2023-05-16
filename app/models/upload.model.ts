@@ -1,9 +1,19 @@
-import {BelongsTo, BelongsToMany, Column, DataType, HasMany, HasOne, Model, Table, Unique} from "sequelize-typescript"
-import {User} from "@app/models/user.model"
-import {Collection} from "@app/models/collection.model"
-import {CollectionItem} from "@app/models/collectionItem.model"
-import {Star} from "@app/models/star.model"
-import {AutoCollectApproval} from "@app/models/autoCollectApproval.model"
+import {
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  HasMany,
+  HasOne,
+  Model,
+  Table,
+  Unique
+} from "sequelize-typescript"
+import { User } from "@app/models/user.model"
+import { Collection } from "@app/models/collection.model"
+import { CollectionItem } from "@app/models/collectionItem.model"
+import { Star } from "@app/models/star.model"
+import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 
 @Table
 export class Upload extends Model {

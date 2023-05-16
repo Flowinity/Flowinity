@@ -1,6 +1,6 @@
 // Utilities
-import {defineStore} from "pinia"
-import axios from "@/plugins/axios"
+import { defineStore } from "pinia";
+import axios from "@/plugins/axios";
 
 export interface MailState {
   // temp

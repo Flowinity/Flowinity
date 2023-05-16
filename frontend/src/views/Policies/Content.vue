@@ -5,16 +5,16 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import WorkspaceItem from "@/views/Workspaces/Item.vue"
+import { defineComponent } from "vue";
+import WorkspaceItem from "@/views/Workspaces/Item.vue";
 
 export default defineComponent({
   name: "ContentPolicies",
-  components: {WorkspaceItem},
+  components: { WorkspaceItem },
   mounted() {
-    this.$app.title = "Content Policies"
+    this.$app.title = "Content Policies";
   }
-})
+});
 </script>
 
 <style scoped></style>

@@ -9,12 +9,15 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
+
     const sql = await fs.readFileSync(__dirname + "/initial.sql")
     let promises = []
     const statements = sql.toString().split(";")
+
     for (const statement of statements)
       if (statement.trim() !== "")
         promises.push(queryInterface.sequelize.query(statement))
+
     return Promise.all(promises)
   },
 

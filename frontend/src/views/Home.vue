@@ -14,13 +14,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
-import UserBadges from "@/components/Users/UserBadges.vue"
-import UserWidget from "@/components/Dashboard/UserWidget.vue"
-import StatsWidget from "@/components/Dashboard/StatsWidget.vue"
-import AnnouncementsWidget from "@/components/Dashboard/AnnouncementsWidget.vue"
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue"
+import { defineComponent } from "vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import UserBadges from "@/components/Users/UserBadges.vue";
+import UserWidget from "@/components/Dashboard/UserWidget.vue";
+import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
+import AnnouncementsWidget from "@/components/Dashboard/AnnouncementsWidget.vue";
+import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 
 export default defineComponent({
   name: "Home",
@@ -33,7 +33,7 @@ export default defineComponent({
     UserAvatar
   },
   mounted() {
-    this.$app.title = "Dashboard"
+    this.$app.title = "Dashboard";
   }
-})
+});
 </script>

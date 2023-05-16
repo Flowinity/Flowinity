@@ -1,6 +1,13 @@
-import {BelongsTo, Column, DataType, Default, Model, Table} from "sequelize-typescript"
-import {User} from "@app/models/user.model"
-import {Collection} from "@app/models/collection.model"
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  Default,
+  Model,
+  Table
+} from "sequelize-typescript"
+import { User } from "@app/models/user.model"
+import { Collection } from "@app/models/collection.model"
 
 @Table
 export class AutoCollectRule extends Model {

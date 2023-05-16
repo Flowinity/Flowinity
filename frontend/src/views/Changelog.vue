@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Changelog",
@@ -287,7 +287,7 @@ export default defineComponent({
             },
             {
               tags: ["Fix", "Gallery"],
-              text: "Adjusted size of \"Search in files\" checkbox"
+              text: 'Adjusted size of "Search in files" checkbox'
             },
             {
               tags: ["Fix", "TPU"],
@@ -339,9 +339,9 @@ export default defineComponent({
           tags?: string[];
         }[];
       }[]
-    }
+    };
   }
-})
+});
 </script>
 
 <style scoped></style>

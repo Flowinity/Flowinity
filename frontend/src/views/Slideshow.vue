@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Slideshow",
@@ -53,45 +53,45 @@ export default defineComponent({
         speed: 5
       },
       model: 0
-    }
+    };
   },
   watch: {
     model() {
       if (this.model === this.slideshow.length - 3) {
-        this.getSlideshow()
+        this.getSlideshow();
       }
     }
   },
   computed: {
     interval() {
-      return this.config.speed * 1000
+      return this.config.speed * 1000;
     },
     height() {
-      return this.$vuetify.display.height
+      return this.$vuetify.display.height;
     }
   },
   methods: {
     copy(text: string) {
-      navigator.clipboard.writeText(this.$app.domain + text)
+      navigator.clipboard.writeText(this.$app.domain + text);
     },
     async getSlideshow() {
-      const {data} = await this.axios.get(
+      const { data } = await this.axios.get(
         `/slideshows/${this.$route.params.code}`
-      )
-      this.slideshow = data
+      );
+      this.slideshow = data;
     },
     async getSlideshowConfig() {
-      const {data} = await this.axios.get(
+      const { data } = await this.axios.get(
         `/slideshows/${this.$route.params.code}/config`
-      )
-      this.config = data
+      );
+      this.config = data;
     }
   },
   mounted() {
-    this.getSlideshow()
-    this.getSlideshowConfig()
+    this.getSlideshow();
+    this.getSlideshowConfig();
   }
-})
+});
 </script>
 
 <style>

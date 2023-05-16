@@ -106,7 +106,23 @@ export class CollectionControllerV3 {
     @QueryParam("textMetadata") textMetadata: boolean = false,
     @QueryParam("filter") filter: string = "",
     @Param("id") id: string
-  ) {
+  ): Promise<
+    | any[]
+    | {
+        gallery: any[]
+        pager: {
+          totalItems: number
+          currentPage: number
+          pageSize: number
+          totalPages: number
+          startPage: number
+          endPage: number
+          startIndex: number
+          endIndex: number
+          pages: number[]
+        }
+      }
+  > {
     const collection = await this.getCollection(user, id)
 
     if (!collection) throw Errors.COLLECTION_NOT_FOUND
@@ -118,11 +134,11 @@ export class CollectionControllerV3 {
       filter,
       textMetadata,
       "collection",
-      user?.itemsPerPage || 12,
+      user.itemsPerPage,
       sort,
       array,
-      user?.id,
-      user?.excludedCollections
+      user.id,
+      user.excludedCollections
     )
   }
 
@@ -259,18 +275,13 @@ export class CollectionControllerV3 {
       type: "link" | "nobody"
     }
   ): Promise<{ shareLink: string } | { shareLink: null }> {
-    if (
-      !(await this.collectionService.getCollectionPermissions(
-        body.id,
-        user.id,
-        "configure"
-      ))
-    )
-      throw Errors.COLLECTION_NO_PERMISSION
-    const collection = await this.collectionService.getCollectionOrShare(
+    const collection = await this.collectionService.getCollectionPermissions(
       body.id,
-      user.id
+      user.id,
+      "configure"
     )
+
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
     if (collection.shareLink)
       await redis.json.del("shareLinks:" + collection.shareLink)
 

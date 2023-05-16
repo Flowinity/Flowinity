@@ -1,14 +1,14 @@
-import {Response} from "express"
-import {Service} from "typedi"
+import { Response } from "express"
+import { Service } from "typedi"
 import auth from "@app/lib/auth"
-import {RequestAuth} from "@app/types/express"
+import { RequestAuth } from "@app/types/express"
 import Router from "express-promise-router"
-import {ProviderService} from "@app/services/provider.service"
+import { ProviderService } from "@app/services/provider.service"
 import Errors from "@app/lib/errors"
-import {Integration} from "@app/models/integration.model"
+import { Integration } from "@app/models/integration.model"
 import cryptoRandomString from "crypto-random-string"
-import {LastfmService} from "@app/services/providers/lastfm.service"
-import {MyAnimeListService} from "@app/services/providers/mal.service"
+import { LastfmService } from "@app/services/providers/lastfm.service"
+import { MyAnimeListService } from "@app/services/providers/mal.service"
 
 @Service()
 export class ProviderController {
@@ -113,12 +113,12 @@ export class ProviderController {
       "/linkable",
       auth("user.view", true),
       async (req: RequestAuth, res: Response) => {
-        const malCodeChallenge = cryptoRandomString({length: 128})
+        const malCodeChallenge = cryptoRandomString({ length: 128 })
         if (req.user) {
           await redis.set(
             `providers:mal:${req.user.id}:code_challenge`,
             malCodeChallenge,
-            {EX: 3600}
+            { EX: 3600 }
           )
         }
         res.json([

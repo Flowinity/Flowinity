@@ -31,17 +31,20 @@ export class MailService {
     await client.connect()
     return client
   }
+
   async idle(userId: number) {
     const client = await this.connect(userId)
     await client.idle()
     return client
   }
+
   async getMailboxes(userId: number) {
     const client = await this.connect(userId)
     const mailboxes = await client.list()
     client.logout()
     return mailboxes
   }
+
   async getMessages(userId: number, mailbox: string, page: number = 1) {
     const client = await this.connect(userId)
     await client.mailboxOpen(mailbox)
@@ -76,6 +79,7 @@ export class MailService {
       })
       .reverse()
   }
+
   async getMessage(userId: number, mailbox: string, uid: string) {
     const client = await this.connect(userId)
     await client.mailboxOpen(mailbox)

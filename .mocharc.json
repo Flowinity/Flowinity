@@ -1,18 +1,18 @@
 {
-  "diff" : true,
-  "extension" : [
+  "diff": true,
+  "extension": [
     "js"
   ],
-  "package" : "../package.json",
-  "require" : [
+  "package": "../package.json",
+  "require": [
     "ts-node/register",
     "tsconfig-paths/register",
     "source-map-support/register"
   ],
-  "reporter" : "spec",
-  "timeout" : 10000,
-  "recursive" : true,
-  "exit" : true,
-  "spec" : "app/**/*.spec.ts",
-  "file" : "mocha-helper.ts"
+  "reporter": "spec",
+  "timeout": 10000,
+  "recursive": true,
+  "exit": true,
+  "spec": "app/**/*.spec.ts",
+  "file": "mocha-helper.ts"
 }

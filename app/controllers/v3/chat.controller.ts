@@ -11,15 +11,15 @@ import {
   UploadedFile,
   UseBefore
 } from "routing-controllers"
-import {Service} from "typedi"
-import {Auth} from "@app/lib/auth"
-import {User} from "@app/models/user.model"
+import { Service } from "typedi"
+import { Auth } from "@app/lib/auth"
+import { User } from "@app/models/user.model"
 import Errors from "@app/lib/errors"
-import {ChatService} from "@app/services/chat.service"
-import {GalleryService} from "@app/services/gallery.service"
+import { ChatService } from "@app/services/chat.service"
+import { GalleryService } from "@app/services/gallery.service"
 import rateLimits from "@app/lib/rateLimits"
 import uploader from "@app/lib/upload"
-import {ChatAssociation} from "@app/models/chatAssociation.model"
+import { ChatAssociation } from "@app/models/chatAssociation.model"
 
 @Service()
 @JsonController("/chats")
@@ -27,8 +27,7 @@ export class ChatControllerV3 {
   constructor(
     private readonly chatService: ChatService,
     private readonly galleryService: GalleryService
-  ) {
-  }
+  ) {}
 
   @Get("")
   async getChats(@Auth("chats.view") user: User) {
@@ -51,7 +50,7 @@ export class ChatControllerV3 {
     @UploadedFile("icon", {
       options: uploader
     })
-      icon: Express.Multer.File,
+    icon: Express.Multer.File,
     @Param("chatId") chatId: number
   ) {
     await this.chatService.getChatFromAssociation(chatId, user.id)
@@ -123,7 +122,7 @@ export class ChatControllerV3 {
     @Auth("chats.edit") user: User,
     @Param("associationId") associationId: number,
     @Body()
-      body: { notifications: typeof ChatAssociation.prototype.notifications }
+    body: { notifications: typeof ChatAssociation.prototype.notifications }
   ) {
     await this.chatService.updateAssociationSettings(
       associationId,

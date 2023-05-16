@@ -1,4 +1,4 @@
-import { ThemeEngine, User } from "@app/models/user.model"
+import { User } from "@app/models/user.model"
 
 interface Login {
   user: {

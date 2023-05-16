@@ -1,36 +1,36 @@
 <template>
   <v-app-bar
-    color="dark"
-    app
-    density="comfortable"
-    floating
-    flat
-    class="header"
     :extension-height="0"
+    app
+    class="header"
+    color="dark"
+    density="comfortable"
+    flat
+    floating
   >
     <h1
-      style="z-index: 10; cursor: pointer; font-size: 32px"
-      class="text-gradient unselectable ml-4"
-      @click="$router.push('/')"
       id="tpu-brand-logo"
+      class="text-gradient unselectable ml-4"
+      style="z-index: 10; cursor: pointer; font-size: 32px"
       title="TroploPrivateUploader"
+      @click="$router.push('/')"
     >
       TPU
     </h1>
     <v-spacer></v-spacer>
     <v-btn color="primary" to="/register">Register</v-btn>
     <v-btn color="primary" to="/login">Login</v-btn>
-    <template v-slot:extension v-if="redirected">
+    <template v-if="redirected" v-slot:extension>
       <v-alert
         :value="redirected"
-        type="info"
-        elevation="0"
         border="start"
-        color="primary"
         class="ma-0 rounded-0"
-        variant="tonal"
-        density="comfortable"
         closable
+        color="primary"
+        density="comfortable"
+        elevation="0"
+        type="info"
+        variant="tonal"
       >
         You have been redirected to TPU's primary domain.
       </v-alert>

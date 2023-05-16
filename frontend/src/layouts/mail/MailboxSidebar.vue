@@ -1,9 +1,9 @@
 <template>
   <v-navigation-drawer
-    permanent
+    v-model="$mail.mailboxDrawer"
     color="dark"
     floating
-    v-model="$mail.mailboxDrawer"
+    permanent
   >
     <v-list nav>
       <v-list-item
@@ -16,7 +16,7 @@
         </v-list-item-subtitle>
       </v-list-item>
       <template v-if="!$mail.selected?.emails?.length">
-        <MessageSkeleton :pfp="false" v-for="i in 50" :key="i" />
+        <MessageSkeleton v-for="i in 50" :key="i" :pfp="false" />
       </template>
     </v-list>
   </v-navigation-drawer>

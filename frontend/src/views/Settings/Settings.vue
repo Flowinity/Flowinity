@@ -25,11 +25,11 @@
         >
           {{ $t("settings.tabs.integrations") }}
           <v-btn
-            icon
-            size="x-small"
+            v-if="$user.user?.integrations?.some((i) => i.error)"
             class="mr-n2"
             color="red"
-            v-if="$user.user?.integrations?.some((i) => i.error)"
+            icon
+            size="x-small"
           >
             <v-icon left>mdi-alert</v-icon>
             <v-tooltip activator="parent" location="top">

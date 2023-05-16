@@ -1,16 +1,16 @@
 // Utilities
-import {defineStore} from "pinia"
-import axios from "@/plugins/axios"
-import {useToast} from "vue-toastification"
-import functions from "@/plugins/functions"
-import {AxiosProgressEvent} from "axios"
-import {useUserStore} from "@/store/user"
-import {Upload} from "@/models/upload"
-import {useChatStore} from "@/store/chat"
-import {useCollectionsStore} from "@/store/collections"
-import {useWorkspacesStore} from "@/store/workspaces"
-import vuetify from "@/plugins/vuetify"
-import {useExperimentsStore} from "@/store/experiments"
+import { defineStore } from "pinia";
+import axios from "@/plugins/axios";
+import { useToast } from "vue-toastification";
+import functions from "@/plugins/functions";
+import { AxiosProgressEvent } from "axios";
+import { useUserStore } from "@/store/user";
+import { Upload } from "@/models/upload";
+import { useChatStore } from "@/store/chat";
+import { useCollectionsStore } from "@/store/collections";
+import { useWorkspacesStore } from "@/store/workspaces";
+import vuetify from "@/plugins/vuetify";
+import { useExperimentsStore } from "@/store/experiments";
 
 export interface AppState {
   railMode: "tpu" | "workspaces" | "communications";
@@ -47,10 +47,10 @@ export interface AppState {
       ip: string;
       whitelist:
         | {
-        ip: string;
-        name: string;
-        groups: string[];
-      }
+            ip: string;
+            name: string;
+            groups: string[];
+          }
         | false;
     };
     stats: {

@@ -1,4 +1,4 @@
-import { Service, Container } from "typedi"
+import { Container, Service } from "typedi"
 import { User } from "@app/models/user.model"
 import { Plan } from "@app/models/plan.model"
 import Errors from "@app/lib/errors"
@@ -17,7 +17,6 @@ import { Op } from "sequelize"
 import { Badge } from "@app/models/badge.model"
 import { FriendNickname } from "@app/models/friendNickname"
 import { ThemeEngineValidate } from "@app/validators/themeEngine"
-import { PatchUser } from "@app/types/auth"
 import { CoreService } from "@app/services/core.service"
 import { LayoutValidate } from "@app/validators/userv3"
 import { ExcludedCollectionsValidate } from "@app/validators/excludedCollections"
@@ -71,6 +70,7 @@ export class UserUtilsService {
     })
     return name
   }
+
   async verifyEmail(token: string) {
     const user = await User.findOne({
       where: {
@@ -135,6 +135,7 @@ export class UserUtilsService {
     )
     return true
   }
+
   async validateFriends(userId: number, friendIds: number[]) {
     const friends = await Friend.findAll({
       where: {
@@ -147,6 +148,7 @@ export class UserUtilsService {
       throw Errors.INVALID_FRIEND_SELECTION
     return friends
   }
+
   async getFriends(userId: number) {
     let friends = await Friend.findAll({
       where: {
@@ -190,6 +192,7 @@ export class UserUtilsService {
     }
     return friends
   }
+
   async updateBanner(
     userId: number,
     banner: string | null,

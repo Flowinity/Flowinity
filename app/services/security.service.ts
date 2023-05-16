@@ -10,6 +10,7 @@ import { AlternatePassword } from "@app/types/auth"
 @Service()
 export class SecurityService {
   scopes: string[]
+
   constructor() {
     this.scopes = [
       "uploads.create",
@@ -32,6 +33,7 @@ export class SecurityService {
       "starred.modify"
     ]
   }
+
   async deleteAlternatePassword(id: number, name: string) {
     const user = await User.findOne({
       where: {
@@ -180,6 +182,7 @@ export class SecurityService {
       order: [["updatedAt", "DESC"]]
     })
   }
+
   async getKeys(id: number): Promise<Session[]> {
     return await Session.findAll({
       where: {

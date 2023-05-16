@@ -1,4 +1,4 @@
-import { Service, Container } from "typedi"
+import { Container, Service } from "typedi"
 import { Op } from "sequelize"
 import { User } from "@app/models/user.model"
 import Errors from "@app/lib/errors"

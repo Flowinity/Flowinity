@@ -1,15 +1,15 @@
-import {NextFunction, Response} from "express"
-import {Service} from "typedi"
+import { NextFunction, Response } from "express"
+import { Service } from "typedi"
 import auth from "@app/lib/auth"
-import {RequestAuth} from "@app/types/express"
+import { RequestAuth } from "@app/types/express"
 import Errors from "@app/lib/errors"
 import Router from "express-promise-router"
-import {AdminService} from "@app/services/admin.service"
-import {CacheService} from "@app/services/cache.service"
-import {User} from "@app/models/user.model"
-import {UserUtilsService} from "@app/services/userUtils.service"
-import {CoreService} from "@app/services/core.service"
-import {CacheType} from "@app/enums/admin/CacheType"
+import { AdminService } from "@app/services/admin.service"
+import { CacheService } from "@app/services/cache.service"
+import { User } from "@app/models/user.model"
+import { UserUtilsService } from "@app/services/userUtils.service"
+import { CoreService } from "@app/services/core.service"
+import { CacheType } from "@app/enums/admin/CacheType"
 
 @Service()
 export class AdminController {
@@ -291,8 +291,7 @@ export class AdminController {
 
     this.router.post(
       "/autoCollects",
-      async (req: RequestAuth, res: Response) => {
-      }
+      async (req: RequestAuth, res: Response) => {}
     )
 
     this.router.post(

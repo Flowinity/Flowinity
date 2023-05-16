@@ -1,21 +1,36 @@
 import { Queue, Worker } from "bullmq"
-import utils from "@app/lib/utils"
-import { CacheService } from "@app/services/cache.service"
 import { Container } from "typedi"
+
+// Import Libs
+import utils from "@app/lib/utils"
+
+// Import Services
+import { CacheService } from "@app/services/cache.service"
+
+// Import Classes
 import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
-let config = new DefaultTpuConfig().config
+
+let config: TpuConfig = new DefaultTpuConfig().config
+
 try {
   config = require("@app/config/tpu.json")
 } catch {}
-const cacheService = Container.get(CacheService)
-const connection = {
+
+const cacheService: CacheService = Container.get(CacheService)
+const connection: {
+  port: number
+  host: string
+  password?: string
+  db?: number
+  username?: string
+} = {
   port: config.redis.port,
   host: config.redis.host,
   password: config.redis.password,
   db: config.redis.db,
   username: config.redis.username
 }
-const queue = new Queue("queue:uploads", {
+const queue: Queue = new Queue("queue:uploads", {
   connection,
   defaultJobOptions: {
     attempts: 3,
@@ -26,7 +41,7 @@ const queue = new Queue("queue:uploads", {
   }
 })
 
-const cacheQueue = new Queue("queue:cache", {
+const cacheQueue: Queue = new Queue("queue:cache", {
   connection,
   defaultJobOptions: {
     attempts: 1,
@@ -41,12 +56,12 @@ const cacheQueue = new Queue("queue:cache", {
 
 const worker = new Worker(
   "queue:uploads",
-  async (job) => {
+  async (job): Promise<void> => {
     await utils.postUpload(job.data)
   },
   {
-    // max number of jobs that can run concurrently
-    // another way is removing this option and making multiple workers like worker1, worker2, etx
+    // Maximum number of jobs that can run concurrently.
+    // Another way is removing this option and making multiple workers like worker1, worker2, etc
     concurrency: 3,
     connection
   }
@@ -54,30 +69,27 @@ const worker = new Worker(
 
 const cacheWorker = new Worker(
   "queue:cache",
-  async (job) => {
+  async (job): Promise<void> => {
     await cacheService.resetCollectionCache(job.data)
   },
   {
-    // max number of jobs that can run concurrently
-    // another way is removing this option and making multiple workers like worker1, worker2, etx
+    // Maximum number of jobs that can run concurrently.
+    // Another way is removing this option and making multiple workers like worker1, worker2, etc.
     concurrency: 3,
     connection
   }
 )
 
-worker.on("completed", (job) => {
+worker.on("completed", (job): void => {
   console.log(`Job ${job.id} completed!`)
 })
-
-worker.on("failed", (job, err) => {
+worker.on("failed", (job, err: Error): void => {
   console.log(`Job ${job?.id} failed with error ${err}`)
 })
-
-cacheWorker.on("completed", (job) => {
+cacheWorker.on("completed", (job): void => {
   console.log(`Job ${job.id} completed!`)
 })
-
-cacheWorker.on("failed", (job, err) => {
+cacheWorker.on("failed", (job, err: Error): void => {
   console.log(`Job ${job?.id} failed with error ${err}`)
 })
 

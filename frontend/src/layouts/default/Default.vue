@@ -356,16 +356,19 @@ export default defineComponent({
   right: 16px;
   z-index: 6969;
 }
+
 .fab-2 {
   bottom: 76px;
   right: 16px;
   z-index: 6969;
 }
+
 .fab-3 {
   bottom: 136px;
   right: 16px;
   z-index: 6969;
 }
+
 .fab-4 {
   bottom: 196px;
   right: 16px;

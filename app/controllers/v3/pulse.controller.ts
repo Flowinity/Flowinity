@@ -1,12 +1,12 @@
-import {Get, JsonController, Params} from "routing-controllers"
-import {Service} from "typedi"
-import {Auth} from "@app/lib/auth"
-import {User} from "@app/models/user.model"
-import {PulseService} from "@app/services/pulse.service"
-import {UserUtilsService} from "@app/services/userUtils.service"
+import { Get, JsonController, Params } from "routing-controllers"
+import { Service } from "typedi"
+import { Auth } from "@app/lib/auth"
+import { User } from "@app/models/user.model"
+import { PulseService } from "@app/services/pulse.service"
+import { UserUtilsService } from "@app/services/userUtils.service"
 import Errors from "@app/lib/errors"
-import {InsightData} from "@app/models/insight.model"
-import {OpenAPI} from "routing-controllers-openapi"
+import { InsightData } from "@app/models/insight.model"
+import { OpenAPI } from "routing-controllers-openapi"
 
 @Service()
 @JsonController("/pulse")
@@ -14,13 +14,12 @@ export class PulseControllerV3 {
   constructor(
     private readonly pulseService: PulseService,
     private readonly userService: UserUtilsService
-  ) {
-  }
+  ) {}
 
   @Get("/insights/v2/reports/:username?")
   async getInsightReports(
     @Auth("insights.view") authUser: User,
-    @Params() {username}: { username?: string }
+    @Params() { username }: { username?: string }
   ) {
     const user = await this.checkUser(authUser.id, username)
     return await this.pulseService.getReports(user.id)
@@ -30,7 +29,7 @@ export class PulseControllerV3 {
   async getInsightsDynamic(
     @Auth("insights.view") authUser: User,
     @Params()
-      {username}: { username?: string }
+    { username }: { username?: string }
   ) {
     const user = await this.checkUser(authUser.id, username)
     let insights = await redis.json.get(`insightsV2:${user.id}`)
@@ -54,10 +53,10 @@ export class PulseControllerV3 {
   async getInsights(
     @Auth("insights.view") authUser: User,
     @Params()
-      {
-        type,
-        username
-      }: { type: "weekly" | "monthly" | "yearly" | number; username?: string }
+    {
+      type,
+      username
+    }: { type: "weekly" | "monthly" | "yearly" | number; username?: string }
   ) {
     const user = await this.checkUser(authUser.id, username)
     if (
@@ -83,20 +82,20 @@ export class PulseControllerV3 {
     }
   }
 
-  @OpenAPI({deprecated: true})
+  @OpenAPI({ deprecated: true })
   @Get("/insights/leaderboard")
   async getLegacyInsightsLeaderboard(@Auth("insights.view") authUser: User) {
     return await this.pulseService.getCachedLeaderboard()
   }
 
-  @OpenAPI({deprecated: true})
+  @OpenAPI({ deprecated: true })
   @Get("/insights/:year/:id")
   @Get("/insights/:year")
   @Get("/insights")
   async getLegacyInsights(
     @Auth("insights.view") authUser: User,
     @Params()
-      {id, year}: { id: string | "global"; year: string | number }
+    { id, year }: { id: string | "global"; year: string | number }
   ) {
     if (id !== "global") throw Errors.API_REMOVED_V2
     return await this.pulseService.getCachedInsights(

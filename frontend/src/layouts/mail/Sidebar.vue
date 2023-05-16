@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer v-model="$mail.drawer" permanent color="dark" floating>
+  <v-navigation-drawer v-model="$mail.drawer" color="dark" floating permanent>
     <MailSidebarList></MailSidebarList>
     <template v-slot:append>
       <v-btn block>

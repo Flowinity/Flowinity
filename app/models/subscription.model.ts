@@ -1,5 +1,12 @@
-import {BelongsTo, Column, DataType, Default, Model, Table} from "sequelize-typescript"
-import {User} from "@app/models/user.model"
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  Default,
+  Model,
+  Table
+} from "sequelize-typescript"
+import { User } from "@app/models/user.model"
 
 @Table
 export class Subscription extends Model {

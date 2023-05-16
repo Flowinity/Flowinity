@@ -91,42 +91,42 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import {Slideshow} from "@/models/slideshow"
+import { defineComponent } from "vue";
+import { Slideshow } from "@/models/slideshow";
 
 export default defineComponent({
   name: "Slideshows",
   data() {
     return {
       slideshows: [] as Slideshow[]
-    }
+    };
   },
   methods: {
     async saveSlideshow(slideshow: Slideshow) {
-      await this.axios.put("/slideshows/" + slideshow.id, slideshow)
+      await this.axios.put("/slideshows/" + slideshow.id, slideshow);
     },
     async getSlideshows() {
-      const {data} = await this.axios.get("/slideshows")
-      this.slideshows = data
+      const { data } = await this.axios.get("/slideshows");
+      this.slideshows = data;
     },
     async createSlideshow() {
       await this.axios.post("/slideshows", {
         name: "New Slideshow",
         includeGallery: true,
         collectionIds: []
-      })
-      await this.getSlideshows()
+      });
+      await this.getSlideshows();
     },
     async deleteSlideshow(slideshow: Slideshow) {
-      await this.axios.delete("/slideshows/" + slideshow.id)
-      this.$toast.success("Slideshow deleted!")
-      await this.getSlideshows()
+      await this.axios.delete("/slideshows/" + slideshow.id);
+      this.$toast.success("Slideshow deleted!");
+      await this.getSlideshows();
     }
   },
   mounted() {
-    this.getSlideshows()
+    this.getSlideshows();
   }
-})
+});
 </script>
 
 <style scoped></style>

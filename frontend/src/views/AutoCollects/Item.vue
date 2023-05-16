@@ -74,14 +74,14 @@
 </template>
 
 <script lang="ts">
-import {CollectionCache} from "@/types/collection"
-import {defineComponent} from "vue"
-import GalleryCore from "@/components/Gallery/GalleryCore.vue"
-import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue"
-import CollectionBanner from "@/components/Collections/CollectionBanner.vue"
-import {Upload} from "@/models/upload"
-import HoverChip from "@/components/Core/HoverChip.vue"
-import PersonalGallery from "@/views/Gallery.vue"
+import { CollectionCache } from "@/types/collection";
+import { defineComponent } from "vue";
+import GalleryCore from "@/components/Gallery/GalleryCore.vue";
+import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
+import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
+import { Upload } from "@/models/upload";
+import HoverChip from "@/components/Core/HoverChip.vue";
+import PersonalGallery from "@/views/Gallery.vue";
 
 export default defineComponent({
   name: "AutoCollectsItem",
@@ -104,7 +104,7 @@ export default defineComponent({
         metadata: "",
         selected: "all"
       }
-    }
+    };
   },
   methods: {
     async act(id: number | object, action: "approve" | "deny") {
@@ -112,53 +112,53 @@ export default defineComponent({
         await this.axios.post(`/autoCollects/bulk`, {
           action,
           ids: id
-        })
+        });
       } else {
         await this.axios.post(`/autoCollects/${id}`, {
           action
-        })
+        });
       }
       const type =
         action === "approve"
           ? "auto-collect-accepted"
-          : "auto-collect-rejected"
+          : "auto-collect-rejected";
       this.$functions.doSinglePulse(type, {
         collectionId: this.collection?.id,
         count: 1
-      })
-      this.$toast.success("Action performed")
-      const {gallery} = await this.$refs.gallery?.getGallery()
-      if (!gallery.length) await this.$router.push(`/autoCollect`)
+      });
+      this.$toast.success("Action performed");
+      const { gallery } = await this.$refs.gallery?.getGallery();
+      if (!gallery.length) await this.$router.push(`/autoCollect`);
     },
     updateItem({
-                 item,
-                 collection
-               }: {
+      item,
+      collection
+    }: {
       item: number;
       collection: CollectionCache;
     }) {
-      const index = this.gallery.gallery.findIndex((i: any) => i.id === item)
-      if (index === -1) return
+      const index = this.gallery.gallery.findIndex((i: any) => i.id === item);
+      if (index === -1) return;
       this.gallery.gallery[index] = {
         ...this.gallery.gallery[index],
         collections: [...this.gallery.gallery[index]?.collections, collection]
-      }
+      };
     },
     async getCollection() {
       if (!this.collection && this.$collections.items.length) {
         this.collection = this.$collections.items.find(
           (c: CollectionCache) =>
             c.id === parseInt(<string>this.$route.params.id)
-        )
+        );
       }
-      this.$app.componentLoading = true
-      const {data} = await this.axios.get(
+      this.$app.componentLoading = true;
+      const { data } = await this.axios.get(
         `/collections/${this.$route.params.id}`
-      )
-      this.$app.componentLoading = false
-      this.collection = data
+      );
+      this.$app.componentLoading = false;
+      this.collection = data;
       if (this.collection)
-        this.$app.title = this.collection.name + " - AutoCollects"
+        this.$app.title = this.collection.name + " - AutoCollects";
     },
     selectAll(selected: any[]) {
       //
@@ -168,10 +168,10 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.getCollection()
-    this.$app.title = "AutoCollects"
+    this.getCollection();
+    this.$app.title = "AutoCollects";
   }
-})
+});
 </script>
 
 <style scoped></style>

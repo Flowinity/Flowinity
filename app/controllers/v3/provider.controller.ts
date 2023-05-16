@@ -1,14 +1,23 @@
-import {Body, BodyParam, Delete, Get, JsonController, Param, Patch, QueryParam} from "routing-controllers"
-import {Service} from "typedi"
-import {ProviderService} from "@app/services/provider.service"
-import {Auth} from "@app/lib/auth"
-import {User} from "@app/models/user.model"
+import {
+  Body,
+  BodyParam,
+  Delete,
+  Get,
+  JsonController,
+  Param,
+  Patch,
+  QueryParam
+} from "routing-controllers"
+import { Service } from "typedi"
+import { ProviderService } from "@app/services/provider.service"
+import { Auth } from "@app/lib/auth"
+import { User } from "@app/models/user.model"
 import cryptoRandomString from "crypto-random-string"
-import {Integration} from "@app/models/integration.model"
+import { Integration } from "@app/models/integration.model"
 import Errors from "@app/lib/errors"
-import {LastfmService} from "@app/services/providers/lastfm.service"
-import {MyAnimeListService} from "@app/services/providers/mal.service"
-import {MalBody} from "@app/interfaces/mal"
+import { LastfmService } from "@app/services/providers/lastfm.service"
+import { MyAnimeListService } from "@app/services/providers/mal.service"
+import { MalBody } from "@app/interfaces/mal"
 
 @Service()
 @JsonController("/providers")
@@ -17,8 +26,7 @@ export class ProviderControllerV3 {
     private readonly providerService: ProviderService,
     private readonly lfmService: LastfmService,
     private readonly malService: MyAnimeListService
-  ) {
-  }
+  ) {}
 
   @Get("/tenor")
   async searchTenor(
@@ -31,12 +39,12 @@ export class ProviderControllerV3 {
 
   @Get("/linkable")
   async getLinkableProviders(@Auth("user.view", false) user: User) {
-    const malCodeChallenge = cryptoRandomString({length: 128})
+    const malCodeChallenge = cryptoRandomString({ length: 128 })
     if (user) {
       await redis.set(
         `providers:mal:${user.id}:code_challenge`,
         malCodeChallenge,
-        {EX: 3600}
+        { EX: 3600 }
       )
     }
     return [

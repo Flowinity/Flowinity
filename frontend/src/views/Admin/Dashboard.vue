@@ -24,29 +24,29 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Dashboard",
   data() {
     return {
       dashboard: null
-    }
+    };
   },
   methods: {
     async restart() {
-      await this.axios.post("/admin/restart")
-      this.$toast.success("Service restart queued.")
+      await this.axios.post("/admin/restart");
+      this.$toast.success("Service restart queued.");
     },
     async getDashboard() {
-      const {data} = await this.axios.get("/admin/dashboard")
-      this.dashboard = data
+      const { data } = await this.axios.get("/admin/dashboard");
+      this.dashboard = data;
     }
   },
   mounted() {
-    this.getDashboard()
+    this.getDashboard();
   }
-})
+});
 </script>
 
 <style scoped></style>

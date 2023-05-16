@@ -1,13 +1,13 @@
-import {Controller, Get, Param, QueryParam, Res} from "routing-controllers"
-import {Service} from "typedi"
-import {Auth} from "@app/lib/auth"
-import {User} from "@app/models/user.model"
+import { Controller, Get, Param, QueryParam, Res } from "routing-controllers"
+import { Service } from "typedi"
+import { Auth } from "@app/lib/auth"
+import { User } from "@app/models/user.model"
 import Errors from "@app/lib/errors"
-import {GalleryService} from "@app/services/gallery.service"
-import {CacheService} from "@app/services/cache.service"
-import {Upload} from "@app/models/upload.model"
+import { GalleryService } from "@app/services/gallery.service"
+import { CacheService } from "@app/services/cache.service"
+import { Upload } from "@app/models/upload.model"
 import fs from "fs"
-import {Response} from "express"
+import { Response } from "express"
 
 @Service()
 @Controller("/i/")
@@ -15,8 +15,7 @@ export class FileControllerV3 {
   constructor(
     private readonly galleryService: GalleryService,
     private readonly cacheService: CacheService
-  ) {
-  }
+  ) {}
 
   @Get(":attachment")
   async getFile(

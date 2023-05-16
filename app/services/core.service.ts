@@ -19,6 +19,7 @@ import { Message } from "@app/models/message.model"
 import { Chat } from "@app/models/chat.model"
 import { ReportValidate } from "@app/validators/report"
 import { Report } from "@app/models/report.model"
+
 let city: Reader<CityResponse> | undefined
 
 maxmind
@@ -70,6 +71,7 @@ export class CoreService {
       throw Errors.INVALID_TPU_LINK
     }
   }
+
   async getWeather(ip: string): Promise<object> {
     try {
       const cityResponse = await city?.get(
@@ -95,6 +97,7 @@ export class CoreService {
       }
     }
   }
+
   async getState(): Promise<object> {
     return {
       name: config.siteName,
@@ -619,6 +622,7 @@ export class CoreService {
       return experiments
     }
   }
+
   async checkExperiment(
     userId: number,
     experiment: string,

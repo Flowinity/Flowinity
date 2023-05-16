@@ -53,6 +53,7 @@ const inviteParams = {
 @Service()
 export class AdminService {
   constructor(private readonly cacheService: CacheService) {}
+
   async getFeedback() {
     return await Feedback.findAll({
       include: [
@@ -65,6 +66,7 @@ export class AdminService {
       order: [["createdAt", "DESC"]]
     })
   }
+
   async createAnnouncement(
     content: string,
     userId: number
@@ -75,6 +77,7 @@ export class AdminService {
     })
     return announcement
   }
+
   async getInvites() {
     return Invite.findAll({
       ...inviteParams
@@ -554,6 +557,7 @@ export class AdminService {
       ]
     })
   }
+
   async scriptColubrinaGroupOwner() {
     const chats = await this.scriptFindChats("group")
     for (const chat of chats) {
@@ -611,6 +615,7 @@ export class AdminService {
     console.log("OK, clearing cache")
     this.purgeCache(6)
   }
+
   async scriptColubrinaDMOwners() {
     const chats = await this.scriptFindChats("direct")
     for (const chat of chats) {
@@ -634,6 +639,7 @@ export class AdminService {
     console.log("OK, clearing cache")
     this.purgeCache(6)
   }
+
   async scriptColubrinaDMMerge() {
     const chats = await this.scriptFindChats("direct")
     // if any of the chats have the same users, merge them

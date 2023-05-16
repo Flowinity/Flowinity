@@ -1,8 +1,8 @@
-import {DomainService} from "@app/services/domain.service"
-import {Response} from "express"
-import {Service} from "typedi"
+import { DomainService } from "@app/services/domain.service"
+import { Response } from "express"
+import { Service } from "typedi"
 import auth from "@app/lib/auth"
-import {RequestAuth} from "@app/types/express"
+import { RequestAuth } from "@app/types/express"
 import Router from "express-promise-router"
 
 @Service()
@@ -37,8 +37,12 @@ export class DomainController {
      *             format: TPU-KEY
      *           required: true
      */
-    this.router.get("/", auth("user.view"), async (req: RequestAuth, res: Response) => {
-      res.json(await this.domainService.getDomains())
-    })
+    this.router.get(
+      "/",
+      auth("user.view"),
+      async (req: RequestAuth, res: Response) => {
+        res.json(await this.domainService.getDomains())
+      }
+    )
   }
 }

@@ -1,5 +1,5 @@
-import {Request, Response} from "express"
-import {Service} from "typedi"
+import { Request, Response } from "express"
+import { Service } from "typedi"
 import Router from "express-promise-router"
 import auth from "@app/lib/auth"
 
