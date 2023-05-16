@@ -1,11 +1,12 @@
-import { Response, NextFunction } from "express"
-import { Service } from "typedi"
+import {NextFunction, Response} from "express"
+import {Service} from "typedi"
 import Router from "express-promise-router"
-import { NoteService } from "@app/services/note.service"
-import { RequestAuth } from "@app/types/express"
+import {NoteService} from "@app/services/note.service"
+import {RequestAuth} from "@app/types/express"
 import auth from "@app/lib/auth"
 import Errors from "@app/lib/errors"
 import rateLimits from "@app/lib/rateLimits"
+
 @Service()
 export class NoteController {
   router: any
@@ -31,7 +32,7 @@ export class NoteController {
       auth("workspaces.create"),
       rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
-        const { name } = req.body
+        const {name} = req.body
         const workspace = await this.noteService.createWorkspace(
           name,
           req.user.id
@@ -44,7 +45,7 @@ export class NoteController {
       "/workspace/:id",
       auth("workspaces.view"),
       async (req: RequestAuth, res: Response) => {
-        const { id } = req.params
+        const {id} = req.params
         const workspace = await this.noteService.getWorkspace(
           parseInt(id),
           req.user.id,
@@ -71,7 +72,7 @@ export class NoteController {
       "/:id",
       auth("workspaces.view", true),
       async (req: RequestAuth, res: Response) => {
-        const { id } = req.params
+        const {id} = req.params
         const note = await this.noteService.getNote(id, req.user?.id)
         res.json(note)
       }
@@ -81,8 +82,8 @@ export class NoteController {
       "/:id",
       auth("workspaces.modify"),
       async (req: RequestAuth, res: Response) => {
-        const { id } = req.params
-        const { data, name } = req.body
+        const {id} = req.params
+        const {data, name} = req.body
         if (!data && name) {
           const note = await this.noteService.renameNote(
             parseInt(id),
@@ -107,8 +108,8 @@ export class NoteController {
       "/workspaces/:id",
       auth("workspaces.modify"),
       async (req: RequestAuth, res: Response) => {
-        const { id } = req.params
-        const { name } = req.body
+        const {id} = req.params
+        const {name} = req.body
         const workspace = await this.noteService.renameWorkspace(
           parseInt(id),
           name,
@@ -123,7 +124,7 @@ export class NoteController {
       auth("workspaces.create"),
       rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
-        const { name, workspaceFolderId } = req.body
+        const {name, workspaceFolderId} = req.body
         const note = await this.noteService.createNote(
           name,
           workspaceFolderId,
@@ -137,7 +138,7 @@ export class NoteController {
       "/:id/share",
       auth("workspaces.modify"),
       async (req: RequestAuth, res: Response) => {
-        const { id } = req.params
+        const {id} = req.params
         const note = await this.noteService.toggleShareLink(
           parseInt(id),
           req.user.id
@@ -151,7 +152,7 @@ export class NoteController {
       auth("workspaces.create"),
       rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
-        const { name, workspaceId } = req.body
+        const {name, workspaceId} = req.body
         const folder = await this.noteService.createFolder(
           name,
           workspaceId,
@@ -166,7 +167,7 @@ export class NoteController {
       auth("workspaces.modify"),
       rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
-        const { id } = req.params
+        const {id} = req.params
         await this.noteService.deleteNote(parseInt(id), req.user.id)
         res.sendStatus(204)
       }
@@ -177,7 +178,7 @@ export class NoteController {
       auth("workspaces.modify"),
       rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
-        const { id } = req.params
+        const {id} = req.params
         await this.noteService.deleteFolder(parseInt(id), req.user.id)
         res.sendStatus(204)
       }
@@ -188,7 +189,7 @@ export class NoteController {
       auth("*"),
       rateLimits.standardLimiter,
       async (req: RequestAuth, res: Response) => {
-        const { id } = req.params
+        const {id} = req.params
         await this.noteService.deleteWorkspace(parseInt(id), req.user.id)
         res.sendStatus(204)
       }
@@ -198,8 +199,8 @@ export class NoteController {
       "/folder/:id",
       auth("workspaces.modify"),
       async (req: RequestAuth, res: Response) => {
-        const { id } = req.params
-        const { name } = req.body
+        const {id} = req.params
+        const {name} = req.body
         const folder = await this.noteService.renameFolder(
           parseInt(id),
           name,
@@ -213,7 +214,7 @@ export class NoteController {
       "/:id/restore/:version",
       auth("workspaces.modify"),
       async (req: RequestAuth, res: Response) => {
-        const { id, version } = req.params
+        const {id, version} = req.params
         await this.noteService.restoreVersion(
           parseInt(id),
           version,
@@ -249,7 +250,7 @@ export class NoteController {
       async (req: RequestAuth, res: Response, next: NextFunction) => {
         try {
           const id = parseInt(req.params.id)
-          const { username } = req.body
+          const {username} = req.body
           await this.noteService.addUserToWorkspace(
             id,
             req.user.id,

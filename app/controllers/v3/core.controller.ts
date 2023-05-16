@@ -1,17 +1,17 @@
-import { Get, JsonController, Req, Post, Body } from "routing-controllers"
-import { Service } from "typedi"
-import { Auth } from "@app/lib/auth"
-import { User } from "@app/models/user.model"
-import { CoreService } from "@app/services/core.service"
-import { CacheService } from "@app/services/cache.service"
+import {Body, Get, JsonController, Post, Req} from "routing-controllers"
+import {Service} from "typedi"
+import {Auth} from "@app/lib/auth"
+import {User} from "@app/models/user.model"
+import {CoreService} from "@app/services/core.service"
+import {CacheService} from "@app/services/cache.service"
 import cluster from "cluster"
 import os from "os"
-import { Request } from "express"
-import { WeatherResponse } from "@app/interfaces/weather"
+import {Request} from "express"
+import {WeatherResponse} from "@app/interfaces/weather"
 import Errors from "@app/lib/errors"
 import fs from "fs"
 import path from "path"
-import { Plan } from "@app/models/plan.model"
+import {Plan} from "@app/models/plan.model"
 
 @Service()
 @JsonController("/core")
@@ -19,7 +19,8 @@ export class CoreControllerV3 {
   constructor(
     private readonly coreService: CoreService,
     private readonly cacheService: CacheService
-  ) {}
+  ) {
+  }
 
   @Get("/experiments")
   async getExperiments(@Auth("user.view", false) user: User) {
@@ -90,7 +91,8 @@ export class CoreControllerV3 {
         weather = JSON.parse(cached)
         weather.cached = true
       }
-    } catch {}
+    } catch {
+    }
     if (!weather?.temp) {
       weather = await this.coreService.getWeather(req.ip)
     }
@@ -112,7 +114,7 @@ export class CoreControllerV3 {
     @Auth("user.view", false) user: User,
     @Req() req: Request,
     @Body()
-    body: {
+      body: {
       tpuLink: string
       content: string
       email: string

@@ -1,14 +1,14 @@
-import { Request, Response, Router, NextFunction } from "express"
-import { Service } from "typedi"
-import { StatusCodes } from "http-status-codes"
-import { CoreService } from "@app/services/core.service"
-import { CacheService } from "@app/services/cache.service"
+import {NextFunction, Request, Response, Router} from "express"
+import {Service} from "typedi"
+import {StatusCodes} from "http-status-codes"
+import {CoreService} from "@app/services/core.service"
+import {CacheService} from "@app/services/cache.service"
 import auth from "@app/lib/auth"
-import { RequestAuth } from "@app/types/express"
+import {RequestAuth} from "@app/types/express"
 import os from "os"
 import cluster from "cluster"
 import rateLimits from "@app/lib/rateLimits"
-import { WeatherResponse } from "@app/interfaces/weather"
+import {WeatherResponse} from "@app/interfaces/weather"
 
 @Service()
 export class CoreController {
@@ -106,7 +106,8 @@ export class CoreController {
             weather = JSON.parse(cached)
             weather.cached = true
           }
-        } catch {}
+        } catch {
+        }
         if (!weather?.temp) {
           weather = await this.coreService.getWeather(req.ip)
         }

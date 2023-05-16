@@ -1,38 +1,30 @@
-import {
-  Body,
-  Delete,
-  Get,
-  JsonController,
-  Param,
-  Post,
-  Put,
-  QueryParam,
-  UseBefore
-} from "routing-controllers"
-import { Service } from "typedi"
-import { Auth } from "@app/lib/auth"
-import { User } from "@app/models/user.model"
+import {Body, Delete, Get, JsonController, Param, Post, Put, QueryParam, UseBefore} from "routing-controllers"
+import {Service} from "typedi"
+import {Auth} from "@app/lib/auth"
+import {User} from "@app/models/user.model"
 import Errors from "@app/lib/errors"
-import { GalleryService } from "@app/services/gallery.service"
-import rateLimits, { standardLimiter } from "@app/lib/rateLimits"
-import { AutoCollectService } from "@app/services/autoCollect.service"
-import { CacheService } from "@app/services/cache.service"
-import { AutoCollectRule } from "@app/models/autoCollectRule.model"
-import { SortOptions } from "@app/types/sort"
-import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
+import {GalleryService} from "@app/services/gallery.service"
+import rateLimits from "@app/lib/rateLimits"
+import {AutoCollectService} from "@app/services/autoCollect.service"
+import {CacheService} from "@app/services/cache.service"
+import {AutoCollectRule} from "@app/models/autoCollectRule.model"
+import {SortOptions} from "@app/types/sort"
+import {AutoCollectApproval} from "@app/models/autoCollectApproval.model"
 import queue from "@app/lib/queue"
 
 @Service()
 @JsonController("/autoCollects")
 export class AutoCollectControllerV3 {
-  currentEpoch() {
-    return new Date().getTime()
-  }
   constructor(
     private readonly autoCollectService: AutoCollectService,
     private readonly galleryService: GalleryService,
     private readonly cacheService: CacheService
-  ) {}
+  ) {
+  }
+
+  currentEpoch() {
+    return new Date().getTime()
+  }
 
   @Get("")
   async getAutoCollects(@Auth("collections.view") user: User) {

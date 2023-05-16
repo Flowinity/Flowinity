@@ -1,16 +1,16 @@
-import { Service } from "typedi"
+import {Service} from "typedi"
 
 import Router from "express-promise-router"
-import { AutoCollectService } from "@app/services/autoCollect.service"
+import {AutoCollectService} from "@app/services/autoCollect.service"
 import auth from "@app/lib/auth"
-import { RequestAuth } from "@app/types/express"
-import { Response } from "express"
-import { GalleryService } from "@app/services/gallery.service"
-import { CacheService } from "@app/services/cache.service"
-import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
+import {RequestAuth} from "@app/types/express"
+import {Response} from "express"
+import {GalleryService} from "@app/services/gallery.service"
+import {CacheService} from "@app/services/cache.service"
+import {AutoCollectApproval} from "@app/models/autoCollectApproval.model"
 import Errors from "@app/lib/errors"
 import queue from "@app/lib/queue"
-import { AutoCollectRule } from "@app/models/autoCollectRule.model"
+import {AutoCollectRule} from "@app/models/autoCollectRule.model"
 
 function currentEpoch() {
   return new Date().getTime()

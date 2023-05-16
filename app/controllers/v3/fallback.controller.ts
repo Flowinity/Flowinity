@@ -1,12 +1,13 @@
-import { All, JsonController, Res, Get } from "routing-controllers"
-import { Service } from "typedi"
-import { Response } from "express"
+import {All, Get, JsonController, Res} from "routing-controllers"
+import {Service} from "typedi"
+import {Response} from "express"
 import Errors from "@app/lib/errors"
 
 @Service()
 @JsonController("")
 export class FallbackControllerV3 {
-  constructor() {}
+  constructor() {
+  }
 
   @All("/api/v3")
   @All("")
@@ -41,6 +42,7 @@ export class FallbackControllerV3 {
       current: false
     }
   }
+
   @All("/api/v1")
   @All("/api/v1/:path*")
   async v1Home(@Res() res: Response) {
@@ -59,6 +61,7 @@ export class FallbackControllerV3 {
       current: false
     }
   }
+
   @Get("/:path*")
   async notFound(@Res() res: Response) {
     throw Errors.NOT_FOUND

@@ -1,34 +1,34 @@
 import {
   Body,
+  Delete,
   Get,
+  Head,
   JsonController,
   OnUndefined,
   Param,
   Patch,
   Post,
   QueryParam,
-  UseBefore,
+  Res,
   UploadedFile,
-  Delete,
-  Head,
-  Res
+  UseBefore
 } from "routing-controllers"
-import { UserUtilsService } from "@app/services/userUtils.service"
-import { Service } from "typedi"
-import { Auth } from "@app/lib/auth"
+import {UserUtilsService} from "@app/services/userUtils.service"
+import {Service} from "typedi"
+import {Auth} from "@app/lib/auth"
 import Errors from "@app/lib/errors"
-import { AutoCollectCache } from "@app/types/collection"
-import { Notification } from "@app/models/notification.model"
-import { User } from "@app/models/user.model"
+import {AutoCollectCache} from "@app/types/collection"
+import {Notification} from "@app/models/notification.model"
+import {User} from "@app/models/user.model"
 import rateLimits from "@app/lib/rateLimits"
 import uploader from "@app/lib/upload"
-import { GalleryService } from "@app/services/gallery.service"
-import { BadgeAssociation } from "@app/models/badgeAssociation.model"
-import { Plan } from "@app/models/plan.model"
-import { Response, Request } from "express"
+import {GalleryService} from "@app/services/gallery.service"
+import {BadgeAssociation} from "@app/models/badgeAssociation.model"
+import {Plan} from "@app/models/plan.model"
+import {Response} from "express"
 import fs from "fs"
 import sharp from "sharp"
-import { PatchUser } from "@app/types/auth"
+import {PatchUser} from "@app/types/auth"
 
 @Service()
 @JsonController("/user")
@@ -36,7 +36,9 @@ export class UserControllerV3 {
   constructor(
     private userUtilsService: UserUtilsService,
     private galleryService: GalleryService
-  ) {}
+  ) {
+  }
+
   @Get("")
   async getUser(@Auth("user.view") user: User) {
     const pendingAutoCollects = await redis.json
@@ -133,7 +135,7 @@ export class UserControllerV3 {
   async updateUser(
     @Auth("user.modify") user: User,
     @Body()
-    body: PatchUser
+      body: PatchUser
   ) {
     await this.userUtilsService.updateUser(user.id, body)
   }
@@ -143,7 +145,7 @@ export class UserControllerV3 {
   async updateTotp(
     @Auth("user.modify") user: User,
     @Body()
-    body: {
+      body: {
       action: "enable" | "disable" | "validate"
       code: string
       password: string
@@ -181,7 +183,7 @@ export class UserControllerV3 {
     @UploadedFile("banner", {
       options: uploader
     })
-    banner: Express.Multer.File,
+      banner: Express.Multer.File,
     @Param("type") type: "banner" | "avatar"
   ) {
     if (type !== "banner" && type !== "avatar") throw Errors.INVALID_PARAMETERS
@@ -233,7 +235,7 @@ export class UserControllerV3 {
   async getRekt(@Auth("user.modify") user: User) {
     if (
       await BadgeAssociation.findOne({
-        where: { badgeId: 30, userId: user.id }
+        where: {badgeId: 30, userId: user.id}
       })
     )
       return
@@ -263,7 +265,7 @@ export class UserControllerV3 {
     @Res() res: Response
   ) {
     const user = await User.findOne({
-      where: { username: username },
+      where: {username: username},
       include: [
         {
           model: Plan,

@@ -1,35 +1,34 @@
 import {
+  Body,
+  Delete,
+  ExpressMiddlewareInterface,
   Get,
   JsonController,
-  Req,
-  Post,
-  Body,
-  UseBefore,
-  ExpressMiddlewareInterface,
-  Delete,
-  Param,
-  Patch,
-  Res,
-  Put,
   Middleware,
-  Params
+  Param,
+  Params,
+  Patch,
+  Post,
+  Put,
+  Req,
+  Res,
+  UseBefore
 } from "routing-controllers"
-import { Service } from "typedi"
-import { Auth, authSystem } from "@app/lib/auth"
-import { User } from "@app/models/user.model"
-import { CoreService } from "@app/services/core.service"
-import { CacheService } from "@app/services/cache.service"
-import { Request } from "express"
+import {Service} from "typedi"
+import {Auth, authSystem} from "@app/lib/auth"
+import {User} from "@app/models/user.model"
+import {CoreService} from "@app/services/core.service"
+import {CacheService} from "@app/services/cache.service"
+import {Request, Response} from "express"
 import Errors from "@app/lib/errors"
-import { CacheType } from "@app/enums/admin/CacheType"
-import { AdminService } from "@app/services/admin.service"
-import { UserUtilsService } from "@app/services/userUtils.service"
-import { Response } from "express"
-import { Badge } from "@app/models/badge.model"
-import { RequestAuth } from "@app/types/express"
+import {CacheType} from "@app/enums/admin/CacheType"
+import {AdminService} from "@app/services/admin.service"
+import {UserUtilsService} from "@app/services/userUtils.service"
+import {Badge} from "@app/models/badge.model"
+import {RequestAuth} from "@app/types/express"
 
 @Service()
-@Middleware({ type: "before" })
+@Middleware({type: "before"})
 @UseBefore(Auth("*"))
 class HighLevel implements ExpressMiddlewareInterface {
   async use(
@@ -44,7 +43,7 @@ class HighLevel implements ExpressMiddlewareInterface {
 }
 
 @Service()
-@Middleware({ type: "before" })
+@Middleware({type: "before"})
 class LowLevel implements ExpressMiddlewareInterface {
   async use(
     request: RequestAuth,
@@ -69,7 +68,8 @@ export class AdminControllerV3 {
     private readonly cacheService: CacheService,
     private readonly userUtilsService: UserUtilsService,
     private readonly coreService: CoreService
-  ) {}
+  ) {
+  }
 
   @Get("/dashboard")
   @UseBefore(LowLevel)
@@ -82,8 +82,8 @@ export class AdminControllerV3 {
     @Auth("*") user: User,
     @Param("messageId") messageId: number
   ) {
-      await this.adminService.deleteCommunicationsMessage(messageId)
-      return
+    await this.adminService.deleteCommunicationsMessage(messageId)
+    return
   }
 
   @Delete("/cache/:key")
@@ -92,7 +92,7 @@ export class AdminControllerV3 {
   async deleteCache(
     @Auth("*") user: User,
     @Param("key") key: CacheType,
-    @Params() { uid }: { uid?: number }
+    @Params() {uid}: { uid?: number }
   ) {
     if (uid) {
       this.adminService.purgeUserCache(uid)
@@ -121,7 +121,7 @@ export class AdminControllerV3 {
     @Auth("*") user: User,
     @Param("inviteKey") inviteKey: string,
     @Body()
-    body: {
+      body: {
       type: "accepted" | "rejected"
     }
   ) {
@@ -202,7 +202,7 @@ export class AdminControllerV3 {
   async banUser(
     @Auth("*") user: User,
     @Body()
-    body: {
+      body: {
       id: number
       banned: boolean
     }
@@ -216,7 +216,7 @@ export class AdminControllerV3 {
   async createBadge(
     @Auth("*") user: User,
     @Body()
-    body: Badge
+      body: Badge
   ) {
     await this.adminService.createBadge(
       body.name,
@@ -233,7 +233,7 @@ export class AdminControllerV3 {
   async createBadgeUser(
     @Auth("*") user: User,
     @Body()
-    body: {
+      body: {
       id: number
       userIds: number[]
     }
@@ -246,7 +246,7 @@ export class AdminControllerV3 {
   async updateBadge(
     @Auth("*") user: User,
     @Body()
-    body: Badge
+      body: Badge
   ) {
     await this.adminService.updateBadge(body)
   }
@@ -268,7 +268,7 @@ export class AdminControllerV3 {
   async deleteBadgeUser(
     @Auth("*") user: User,
     @Body()
-    body: {
+      body: {
       id: number
       userIds: number[]
     }
@@ -281,7 +281,7 @@ export class AdminControllerV3 {
   async createAnnouncement(
     @Auth("*") user: User,
     @Body()
-    body: {
+      body: {
       content: string
     }
   ) {
@@ -298,7 +298,7 @@ export class AdminControllerV3 {
   async createNotification(
     @Auth("*") user: User,
     @Body()
-    body: {
+      body: {
       username: string
       content: string
       link: string
@@ -356,7 +356,7 @@ export class AdminControllerV3 {
     @Auth("*") user: User,
     @Param("userId") userId: number,
     @Body()
-    body: Record<string, boolean | number | undefined | null>
+      body: Record<string, boolean | number | undefined | null>
   ) {
     const rUser = await User.findOne({
       where: {
@@ -390,7 +390,7 @@ export class AdminControllerV3 {
   async updateUserGold(
     @Auth("*") user: User,
     @Body()
-    body: {
+      body: {
       id: number
       planId: number
     }

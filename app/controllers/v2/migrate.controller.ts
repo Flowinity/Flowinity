@@ -1,9 +1,9 @@
-import { Response } from "express"
-import { Service } from "typedi"
+import {Response} from "express"
+import {Service} from "typedi"
 import auth from "@app/lib/auth"
-import { RequestAuth } from "@app/types/express"
+import {RequestAuth} from "@app/types/express"
 import Router from "express-promise-router"
-import { MigrateService } from "@app/services/migrate.service"
+import {MigrateService} from "@app/services/migrate.service"
 
 @Service()
 export class MigrateController {
