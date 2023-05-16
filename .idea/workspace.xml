@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="Finish Collection download">
+    <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="fix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/v3/collection.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/collection.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/lib/errors.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/lib/errors.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +69,7 @@
       <workItem from="1684069734381" duration="2483000" />
       <workItem from="1684114874192" duration="27656000" />
       <workItem from="1684207004205" duration="21000" />
-      <workItem from="1684207032649" duration="7237000" />
+      <workItem from="1684207032649" duration="7547000" />
     </task>
     <task id="LOCAL-00001" summary="Capitalise some Russian strings">
       <created>1684150087122</created>
@@ -142,7 +141,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684216572693</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="fix">
+      <created>1684217246279</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1684217246279</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -161,6 +167,7 @@
     <MESSAGE value="fix dashboard badges" />
     <MESSAGE value="fix user badges fully" />
     <MESSAGE value="Finish Collection download" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finish Collection download" />
+    <MESSAGE value="fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix" />
   </component>
 </project>

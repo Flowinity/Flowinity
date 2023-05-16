@@ -426,7 +426,7 @@ export class CollectionControllerV3 {
 
         if(!file) return
 
-        zip.file(attachment.originalFilename, file)
+        zip.file(attachment.originalFilename + attachment.attachment, file)
       }
 
       const buffer: Buffer = await zip.generateAsync({type: 'nodebuffer'})
