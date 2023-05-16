@@ -42,6 +42,8 @@
         <v-btn
           v-if="!$route.params.type && collection.permissionsMetadata?.read"
           @click="downloadCollectionAsZIPFile"
+          :disabled="downloadCollection.processing"
+          :loading="downloadCollection.processing"
         >
           <v-icon class="mr-1" style="font-size: 20px">mdi-download</v-icon>
           Download Collection
@@ -118,7 +120,10 @@ export default defineComponent({
     return {
       collection: undefined as CollectionCache | undefined,
       sharing: false,
-      settings: false
+      settings: false,
+      downloadCollection: {
+        processing: false
+      }
     }
   },
   methods: {
@@ -137,6 +142,8 @@ export default defineComponent({
       this.$app.title = this.collection?.name as string
     },
     async downloadCollectionAsZIPFile() {
+      this.downloadCollection.processing = true
+
       await this.axios.get(`/collections/${this.collection?.id}/download`, {
         responseType: "blob"
       }).then((res) => {
@@ -146,6 +153,8 @@ export default defineComponent({
         link.download = `${this.collection?.name}.zip`
         link.click()
       })
+
+      this.downloadCollection.processing = false
     }
   },
   mounted() {
