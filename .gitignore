@@ -1,10 +1,6 @@
-# Exclusion des dépendences du projet. Elles peuvent être regénérées
-# automatiquement.
 .nyc_output/
 node_modules/
 false/
-
-# Exclusion des fichiers Javascripts
 out/
 
 # NPM Debug Log
@@ -32,3 +28,5 @@ app/config/config.json
 app/config/tpu.json
 storage/*
 yarn-error.log
+
+.idea
