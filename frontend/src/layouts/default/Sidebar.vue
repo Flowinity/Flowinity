@@ -327,7 +327,7 @@ export default defineComponent({
             icon: "mdi-chart-gantt",
             new: false,
             scope: "user.view",
-            experimentsRequired: ["PROJECT_MERGE"]
+            experimentsRequired: ["PROJECT_MERGE", "OFFICIAL_INSTANCE"]
           },
           {
             id: 37,
