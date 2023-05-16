@@ -121,7 +121,7 @@ export class CollectionControllerV3 {
       user?.itemsPerPage || 12,
       sort,
       array,
-      user.id,
+      user?.id,
       user?.excludedCollections
     )
   }

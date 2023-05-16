@@ -5,17 +5,17 @@
  */
 
 // Styles
-import "@mdi/font/css/materialdesignicons.css"
+import "@mdi/font/css/materialdesignicons.css";
 //import "@troplo/vuetify/styles";
 //import "/home/troplo/GitHub/vuetify/packages/vuetify/src/styles/main.sass";
-import "@vuetify/nightly/styles/main.sass"
+import "@vuetify/nightly/styles/main.sass";
 // Composables
-import {createVuetify} from "@vuetify/nightly"
-import {VDataTable} from "@vuetify/nightly/labs/VDataTable"
-import {VSkeletonLoader} from "@vuetify/nightly/labs/VSkeletonLoader"
+import { createVuetify } from "@vuetify/nightly";
+import { VDataTable } from "@vuetify/nightly/labs/VDataTable";
+import { VSkeletonLoader } from "@vuetify/nightly/labs/VSkeletonLoader";
 
 export class DefaultThemes {
-  themes: any
+  themes: any;
 
   constructor(gold: boolean = false) {
     this.themes = {
@@ -83,7 +83,7 @@ export class DefaultThemes {
           gold: "#ffd700"
         }
       }
-    }
+    };
   }
 }
 
@@ -152,8 +152,7 @@ export default createVuetify({
     },
     VSelect: {
       color: "primary",
-      variant: "underlined",
-      bgColor: "card"
+      variant: "underlined"
     },
     VContainer: {
       fluid: true
@@ -170,4 +169,4 @@ export default createVuetify({
       : "amoled",
     themes: new DefaultThemes().themes
   }
-})
+});
