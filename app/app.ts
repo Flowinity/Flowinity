@@ -218,7 +218,7 @@ export class Application {
             MigrateControllerV3,
             SlideshowControllerV3
           ]
-        : [SetupControllerV3, CoreControllerV3, FallbackControllerV3],
+        : [SetupControllerV3, CoreControllerV3],
       routePrefix: "/api/v3",
       middlewares: [HttpErrorHandler],
       defaultErrorHandler: false,
@@ -315,6 +315,12 @@ export class Application {
         nullResultCode: 404
       },
       validation: true
+    })
+    this.app.use(express.static(path.join(global.appRoot, "../frontend/dist")))
+    this.app.get("*", function (request, response) {
+      response.sendFile(
+        path.resolve(global.appRoot, "../frontend/dist/index.html")
+      )
     })
     this.onServerStart()
   }
