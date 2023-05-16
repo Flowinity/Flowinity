@@ -54,6 +54,7 @@ export class DefaultTpuConfig {
       autoCollects: true,
       workspaces: true,
       insights: true
-    }
+    },
+    defaultPlanId: 1
   }
 }

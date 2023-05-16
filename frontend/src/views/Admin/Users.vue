@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Users",
@@ -79,31 +79,38 @@ export default defineComponent({
           key: "createdAt"
         }
       ]
-    }
+    };
   },
   methods: {
     async gold(id: number, gold: boolean, createdAt: string) {
       const legacyUser =
-        new Date(createdAt).getTime() < new Date("2023-02-20").getTime()
+        new Date(createdAt).getTime() < new Date("2023-02-20").getTime();
       await this.axios.patch("/admin/gold", {
         id,
-        planId: gold ? 6 : legacyUser ? 1 : 7
-      })
-      this.$toast.success("User gold status updated.")
+        // todo: rewrite for TPU open source
+        planId: this.$app.site.officialInstance
+          ? gold
+            ? 6
+            : legacyUser
+            ? 1
+            : 7
+          : 1
+      });
+      this.$toast.success("User gold status updated.");
     },
     async ban(id: number, banned: boolean) {
-      await this.axios.patch("/admin/ban", {id, banned})
-      this.$toast.success("User banned.")
+      await this.axios.patch("/admin/ban", { id, banned });
+      this.$toast.success("User banned.");
     },
     async getUsers() {
-      const {data} = await this.axios.get("/admin/users")
-      this.users = data
+      const { data } = await this.axios.get("/admin/users");
+      this.users = data;
     }
   },
   mounted() {
-    this.getUsers()
+    this.getUsers();
   }
-})
+});
 </script>
 
 <style scoped></style>

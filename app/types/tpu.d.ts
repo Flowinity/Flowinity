@@ -54,4 +54,5 @@ declare type TpuConfig = {
     workspaces: boolean
     insights: boolean
   }
+  defaultPlanId?: number
 }
