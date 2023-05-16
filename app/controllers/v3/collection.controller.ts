@@ -1,27 +1,38 @@
-import {Body, Delete, Get, JsonController, Param, Patch, Post, QueryParam, Res, UploadedFile} from "routing-controllers"
-import {Response} from "express"
-import {Service} from "typedi"
+import {
+  Body,
+  Delete,
+  Get,
+  JsonController,
+  Param,
+  Patch,
+  Post,
+  QueryParam,
+  Res,
+  UploadedFile
+} from "routing-controllers"
+import { Response } from "express"
+import { Service } from "typedi"
 import JSZip from "jszip"
 import fs from "fs"
 
 // Import Libs
-import {Auth} from "@app/lib/auth"
+import { Auth } from "@app/lib/auth"
 import Errors from "@app/lib/errors"
 import uploader from "@app/lib/upload"
 
 // Import Services
-import {GalleryService} from "@app/services/gallery.service"
-import {CacheService} from "@app/services/cache.service"
-import {SortOptions} from "@app/types/sort"
-import {CollectionService} from "@app/services/collection.service"
-import {CollectionCache} from "@app/types/collection"
+import { GalleryService } from "@app/services/gallery.service"
+import { CacheService } from "@app/services/cache.service"
+import { SortOptions } from "@app/types/sort"
+import { CollectionService } from "@app/services/collection.service"
+import { CollectionCache } from "@app/types/collection"
 
 // Import Models
-import {User} from "@app/models/user.model"
-import {Collection} from "@app/models/collection.model"
-import {CollectionUser} from "@app/models/collectionUser.model"
-import {CollectionItem} from "@app/models/collectionItem.model"
-import {Upload} from "@app/models/upload.model"
+import { User } from "@app/models/user.model"
+import { Collection } from "@app/models/collection.model"
+import { CollectionUser } from "@app/models/collectionUser.model"
+import { CollectionItem } from "@app/models/collectionItem.model"
+import { Upload } from "@app/models/upload.model"
 
 @Service()
 @JsonController("/collections")
@@ -30,21 +41,18 @@ export class CollectionControllerV3 {
     private readonly collectionService: CollectionService,
     private readonly cacheService: CacheService,
     private readonly galleryService: GalleryService
-  ) {
-  }
+  ) {}
 
   @Post("")
   async createCollection(
     @Auth("collections.create") user: User,
     @Body()
-      body: {
+    body: {
       name: string
     }
   ): Promise<Collection> {
-    const collection: Collection = await this.collectionService.createCollection(
-      user.id,
-      body.name
-    )
+    const collection: Collection =
+      await this.collectionService.createCollection(user.id, body.name)
 
     await this.cacheService.generateCollectionCacheForUser(user.id)
 
@@ -55,7 +63,7 @@ export class CollectionControllerV3 {
   async getCollections(
     @Auth("collections.view") user: User,
     @QueryParam("type")
-      type: "owned" | "shared" | "write" | "configure" | "all" = "all",
+    type: "owned" | "shared" | "write" | "configure" | "all" = "all",
     @QueryParam("search") search: string = ""
   ): Promise<CollectionCache[]> {
     return await this.collectionService.getCollectionsFilter(
@@ -98,20 +106,23 @@ export class CollectionControllerV3 {
     @QueryParam("textMetadata") textMetadata: boolean = false,
     @QueryParam("filter") filter: string = "",
     @Param("id") id: string
-  ): Promise<any[] | {
-    gallery: any[];
-    pager: {
-      totalItems: number;
-      currentPage: number;
-      pageSize: number;
-      totalPages: number;
-      startPage: number;
-      endPage: number;
-      startIndex: number;
-      endIndex: number;
-      pages: number[]
-    }
-  }> {
+  ): Promise<
+    | any[]
+    | {
+        gallery: any[]
+        pager: {
+          totalItems: number
+          currentPage: number
+          pageSize: number
+          totalPages: number
+          startPage: number
+          endPage: number
+          startIndex: number
+          endIndex: number
+          pages: number[]
+        }
+      }
+  > {
     const collection = await this.getCollection(user, id)
 
     if (!collection) throw Errors.COLLECTION_NOT_FOUND
@@ -135,7 +146,7 @@ export class CollectionControllerV3 {
   async addAttachmentToCollection(
     @Auth("collections.modify") user: User,
     @Body()
-      body: { collectionId: number; attachmentId?: number; items: number[] }
+    body: { collectionId: number; attachmentId?: number; items: number[] }
   ): Promise<CollectionItem | CollectionItem[]> {
     const collection = await this.collectionService.getCollectionPermissions(
       body.collectionId,
@@ -165,13 +176,14 @@ export class CollectionControllerV3 {
     )
 
     if (!collection) {
-      const collectionItem: CollectionItem | null = await CollectionItem.findOne({
-        where: {
-          collectionId: collectionId,
-          attachmentId: attachmentId,
-          userId: user.id
-        }
-      })
+      const collectionItem: CollectionItem | null =
+        await CollectionItem.findOne({
+          where: {
+            collectionId: collectionId,
+            attachmentId: attachmentId,
+            userId: user.id
+          }
+        })
 
       if (!collectionItem) throw Errors.COLLECTION_NO_PERMISSION
     }
@@ -187,13 +199,13 @@ export class CollectionControllerV3 {
     @Auth("collections.modify") user: User,
     @Param("collectionId") collectionId: number,
     @Body()
-      body: {
+    body: {
       username: string
       write: boolean
       configure: boolean
       read: boolean
     }
-  ): Promise<{ user: { id: number, username: string } }> {
+  ): Promise<{ user: { id: number; username: string } }> {
     const collection = await this.collectionService.getCollectionPermissions(
       collectionId,
       user.id,
@@ -226,7 +238,7 @@ export class CollectionControllerV3 {
     @Auth("collections.modify") user: User,
     @Param("collectionId") collectionId: number,
     @Body()
-      body: {
+    body: {
       id: number
       write: boolean
       configure: boolean
@@ -240,13 +252,14 @@ export class CollectionControllerV3 {
     )
     if (!collection) throw Errors.COLLECTION_NO_PERMISSION
 
-    const collectionUser: [affectedCount: number] = await this.collectionService.updateUser(
-      collectionId,
-      user.id,
-      body.write,
-      body.configure,
-      body.read
-    )
+    const collectionUser: [affectedCount: number] =
+      await this.collectionService.updateUser(
+        collectionId,
+        user.id,
+        body.write,
+        body.configure,
+        body.read
+      )
 
     await this.cacheService.resetCollectionCache(collectionId)
 
@@ -257,28 +270,36 @@ export class CollectionControllerV3 {
   async updateShareLink(
     @Auth("collections.modify") user: User,
     @Body()
-      body: {
+    body: {
       id: number
       type: "link" | "nobody"
     }
   ): Promise<{ shareLink: string } | { shareLink: null }> {
-    const collection = await this.collectionService.getCollectionPermissions(
-      body.id,
-      user.id,
-      "configure"
+    if (
+      !(await this.collectionService.getCollectionPermissions(
+        body.id,
+        user.id,
+        "configure"
+      ))
     )
-
-    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-    if (collection.shareLink) await redis.json.del("shareLinks:" + collection.shareLink)
-
-    const result: { shareLink: string } | { shareLink: null } = await this.collectionService.updateShareLink(
+      throw Errors.COLLECTION_NO_PERMISSION
+    const collection = await this.collectionService.getCollectionOrShare(
       body.id,
-      body.type
+      user.id
     )
+    if (collection.shareLink)
+      await redis.json.del("shareLinks:" + collection.shareLink)
+
+    const result: { shareLink: string } | { shareLink: null } =
+      await this.collectionService.updateShareLink(body.id, body.type)
 
     await this.cacheService.resetCollectionCache(body.id)
 
-    if (result.shareLink) await this.cacheService.patchShareLinkCache(result.shareLink, collection.id)
+    if (result.shareLink)
+      await this.cacheService.patchShareLinkCache(
+        result.shareLink,
+        collection.id
+      )
 
     return result
   }
@@ -323,7 +344,7 @@ export class CollectionControllerV3 {
     @Auth("collections.modify") user: User,
     @Param("collectionId") collectionId: number,
     @Body()
-      body: {
+    body: {
       name: string
     }
   ): Promise<{ name: string }> {
@@ -350,8 +371,8 @@ export class CollectionControllerV3 {
     @UploadedFile("banner", {
       options: uploader
     })
-      banner: Express.Multer.File
-  ): Promise<{ upload: Upload, url: string }> {
+    banner: Express.Multer.File
+  ): Promise<{ upload: Upload; url: string }> {
     const collection = await this.collectionService.getCollectionPermissions(
       collectionId,
       user.id,
@@ -360,12 +381,8 @@ export class CollectionControllerV3 {
 
     if (!collection) throw Errors.COLLECTION_NO_PERMISSION
 
-    const ban: { upload: Upload, url: string } = await this.galleryService.createUpload(
-      user.id,
-      banner,
-      false,
-      false
-    )
+    const ban: { upload: Upload; url: string } =
+      await this.galleryService.createUpload(user.id, banner, false, false)
 
     await this.collectionService.updateBanner(
       collectionId,
@@ -406,7 +423,9 @@ export class CollectionControllerV3 {
 
     if (!permission) throw Errors.COLLECTION_NO_PERMISSION
 
-    const collection: Collection = await this.collectionService.getCollection(collectionId)
+    const collection: Collection = await this.collectionService.getCollection(
+      collectionId
+    )
 
     await Collection.destroy({
       where: {
@@ -444,13 +463,15 @@ export class CollectionControllerV3 {
 
     if (!collection) throw Errors.COLLECTION_NO_PERMISSION
 
-    const attachments: Upload[] = await this.galleryService.getAttachmentsByCollectionId(
-      collectionId
-    )
+    const attachments: Upload[] =
+      await this.galleryService.getAttachmentsByCollectionId(collectionId)
 
     if (attachments.length > 0) {
       const zip: JSZip = new JSZip()
-      const size: number = attachments.reduce((acc: number, file: Upload) => acc + file.fileSize, 0)
+      const size: number = attachments.reduce(
+        (acc: number, file: Upload) => acc + file.fileSize,
+        0
+      )
 
       if (size > 10737418240) throw Errors.COLLECTION_TOO_BIG_TO_DOWNLOAD
 
@@ -474,7 +495,7 @@ export class CollectionControllerV3 {
         )
       }
 
-      const buffer: Buffer = await zip.generateAsync({type: "nodebuffer"})
+      const buffer: Buffer = await zip.generateAsync({ type: "nodebuffer" })
 
       return res.send(buffer)
     } else {
