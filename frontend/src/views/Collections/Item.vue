@@ -137,10 +137,13 @@ export default defineComponent({
       this.$app.title = this.collection?.name as string
     },
     async downloadCollectionAsZIPFile() {
-      await this.axios.get(`/collections/${this.collection?.id}/download`).then((res) => {
+      await this.axios.get(`/collections/${this.collection?.id}/download`, {
+        responseType: "blob"
+      }).then((res) => {
         const blob = new Blob([res.data], {type: "application/zip"})
         const link = document.createElement("a")
         link.href = window.URL.createObjectURL(blob)
+        link.download = `${this.collection?.name}.zip`
         link.click()
       })
     }
