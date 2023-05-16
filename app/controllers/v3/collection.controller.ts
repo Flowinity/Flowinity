@@ -406,7 +406,7 @@ export class CollectionControllerV3 {
     @Auth("collections.view", false) user: User,
     @Param("collectionId") collectionId: number,
     @Res() res: Response
-  ): Promise<void> {
+  ) {
     const collection = await this.collectionService.getCollectionPermissions(
       collectionId,
       user.id,
@@ -431,7 +431,9 @@ export class CollectionControllerV3 {
 
       const buffer: Buffer = await zip.generateAsync({type: 'nodebuffer'})
 
-      res.send(buffer)
+      return res.send(buffer)
+    } else {
+      throw Errors.COLLECTION_EMPTY_TO_DOWNLOAD
     }
   }
 }

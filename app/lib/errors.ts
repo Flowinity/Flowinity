@@ -298,6 +298,10 @@ let Errors = {
   INVALID_TOKEN: {
     message: "The provided token in the Authorization header is invalid.",
     status: 400
+  },
+  COLLECTION_EMPTY_TO_DOWNLOAD: {
+    message: "The collection is empty, so there is nothing to download.",
+    status: 400
   }
 }
 
