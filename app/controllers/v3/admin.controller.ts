@@ -37,7 +37,7 @@ class HighLevel implements ExpressMiddlewareInterface {
     response: Response,
     next: (err?: any) => any
   ) {
-    await authSystem("*", false, request, response, next)
+    await authSystem("admin", false, request, response, next)
     if (!request.user || !request.user.administrator) throw Errors.ADMIN_ONLY
   }
 }
@@ -50,7 +50,7 @@ class LowLevel implements ExpressMiddlewareInterface {
     response: Response,
     next: (err?: any) => any
   ) {
-    await authSystem("*", false, request, response, next)
+    await authSystem("admin", false, request, response, next)
     if (
       !request.user ||
       (!request.user?.administrator && !request.user?.moderator)
