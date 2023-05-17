@@ -26,6 +26,8 @@ npm-debug.log
 
 app/config/config.json
 app/config/tpu.json
+app/config/tpu.old.json
+app/config/config.old.json
 storage/*
 yarn-error.log
 
