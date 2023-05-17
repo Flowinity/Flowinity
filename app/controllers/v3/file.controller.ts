@@ -55,24 +55,24 @@ export class FileControllerV3 {
       return res
     }
     if (force) {
-      return res.download(
-        config.storage + "/" + attachment,
-        upload.originalFilename
-      )
+      res.download(config.storage + "/" + attachment, upload.originalFilename)
+      return res
     }
     if (
       upload.type === "image" ||
       upload.type === "video" ||
       upload.type === "audio"
     ) {
-      return res.sendFile("/" + upload.attachment, {
+      res.sendFile("/" + upload.attachment, {
         root: config.storage
       })
+      return res
     } else {
-      return res.download(
+      res.download(
         config.storage + "/" + upload.attachment,
         upload.originalFilename
       )
+      return res
     }
   }
 }
