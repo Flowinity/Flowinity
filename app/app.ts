@@ -245,10 +245,10 @@ export class Application {
     })
 
     this.app.use(express.static(path.join(global.appRoot, "../frontend/dist")))
-    this.app.get("*", function (request, response): void {
-      response.sendFile(
-        path.resolve(global.appRoot, "../frontend/dist/index.html")
-      )
+    this.app.get("*", function (req, res, next): void {
+      if (req.url.startsWith("/api/")) return next()
+      if (req.url.startsWith("/i/")) return next()
+      res.sendFile(path.resolve(global.appRoot, "../frontend/dist/index.html"))
     })
     this.onServerStart() // TODO: Fix "Promise returned from onServerStart is ignored".
   }

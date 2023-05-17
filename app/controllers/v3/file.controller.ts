@@ -47,7 +47,8 @@ export class FileControllerV3 {
     if (
       upload.userId === 1 &&
       upload.name.startsWith("Screenshot_2022") &&
-      user?.id !== 1
+      user?.id !== 1 &&
+      config.officialInstance
     ) {
       res.sendFile("/AuthRequired.png", {
         root: config.storage + "/../../server/app/assets"
