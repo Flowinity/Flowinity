@@ -201,6 +201,22 @@ export class Application {
     this.createExpressServer("/api/v3")
     this.createExpressServer("/api/v2")
 
+    // For clients that still use /api/v1, the schema is still the same for upload API, so we'll use v3
+    useExpressServer(this.app, {
+      controllers: config.finishedSetup
+        ? [CoreControllerV3, GalleryControllerV3]
+        : [],
+      routePrefix: "/api/v1",
+      middlewares: [HttpErrorHandler],
+      defaultErrorHandler: false,
+      classTransformer: false,
+      defaults: {
+        undefinedResultCode: 204,
+        nullResultCode: 404
+      },
+      validation: true
+    })
+
     const spec = ApiSchema.generateSchema()
 
     this.app.use("/api/docs", async (req, res): Promise<void> => {
