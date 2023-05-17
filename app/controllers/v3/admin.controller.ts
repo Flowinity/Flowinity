@@ -78,6 +78,7 @@ export class AdminControllerV3 {
   }
 
   @Delete("/communications/message/:messageId")
+  @UseBefore(HighLevel)
   async deleteCommunicationsMessage(
     @Auth("*") user: User,
     @Param("messageId") messageId: number
