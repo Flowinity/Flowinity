@@ -311,6 +311,10 @@ let Errors = {
   NOT_SETUP: {
     message: "The TPU instance is still being configured.",
     status: 500
+  },
+  CANNOT_DELETE_DEFAULT: {
+    message: "You cannot delete the default item.",
+    status: 400
   }
 }
 

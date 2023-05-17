@@ -3,7 +3,7 @@
     :type="edit.type"
     v-model="edit.dialog"
     @update="
-      getDomains;
+      getDomains();
       $user.init();
     "
     :domain="edit.domain"
@@ -41,6 +41,7 @@
             size="x-small"
             v-if="$user.user?.administrator"
             :disabled="domain.id === 1"
+            @click="deleteDomain(domain.id)"
           >
             <v-icon>mdi-delete</v-icon>
           </v-btn>
@@ -101,6 +102,10 @@ export default defineComponent({
     async getDomains() {
       const { data } = await this.axios.get("/domains");
       this.domains = data;
+    },
+    async deleteDomain(id: number) {
+      await this.axios.delete(`/admin/domain/${id}`);
+      this.getDomains();
     }
   },
   mounted() {

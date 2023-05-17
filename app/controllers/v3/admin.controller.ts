@@ -39,7 +39,6 @@ class HighLevel implements ExpressMiddlewareInterface {
   ) {
     await authSystem("*", false, request, response, next)
     if (!request.user || !request.user.administrator) throw Errors.ADMIN_ONLY
-    next()
   }
 }
 
@@ -57,7 +56,6 @@ class LowLevel implements ExpressMiddlewareInterface {
       (!request.user?.administrator && !request.user?.moderator)
     )
       throw Errors.ADMIN_ONLY
-    next()
   }
 }
 
@@ -417,6 +415,12 @@ export class AdminControllerV3 {
     @Body()
     body: Domain
   ) {
-    await this.adminService.createDomain(body.domain)
+    await this.adminService.createDomain(body.domain, user.id)
+  }
+
+  @UseBefore(HighLevel)
+  @Delete("/domain/:id")
+  async deleteDomain(@Auth("*") user: User, @Param("id") id: number) {
+    await this.adminService.deleteDomain(id)
   }
 }

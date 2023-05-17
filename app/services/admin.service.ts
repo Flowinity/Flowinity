@@ -739,11 +739,21 @@ export class AdminService {
     })
   }
 
-  async createDomain(name: string) {
+  async createDomain(name: string, userId: number) {
     return await Domain.create({
       domain: name,
       active: true,
-      DNSProvisioned: true
+      DNSProvisioned: true,
+      userId
+    })
+  }
+
+  async deleteDomain(domainId: number) {
+    if (domainId === 1) throw Errors.CANNOT_DELETE_DEFAULT
+    return await Domain.destroy({
+      where: {
+        id: domainId
+      }
     })
   }
 }
