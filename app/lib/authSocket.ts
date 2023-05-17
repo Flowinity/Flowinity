@@ -1,12 +1,12 @@
 import { NextFunction } from "express"
+const { Op } = require("sequelize")
+
 // Import Models
 import { Session } from "@app/models/session.model"
 import { User } from "@app/models/user.model"
 
 // Import Types
 import { SocketAuth } from "@app/types/socket"
-
-const { Op } = require("sequelize")
 
 // Import Libs
 const Errors = require("./errors.js")
@@ -17,6 +17,7 @@ export default async function (
 ): Promise<void> {
   try {
     const token = socket.handshake.auth.token
+
     if (token) {
       const session: Session | null = await Session.findOne({
         where: {
