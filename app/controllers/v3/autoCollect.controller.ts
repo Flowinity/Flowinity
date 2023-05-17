@@ -20,7 +20,6 @@ import { CacheService } from "@app/services/cache.service"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { SortOptions } from "@app/types/sort"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
-import queue from "@app/lib/queue"
 
 @Service()
 @JsonController("/autoCollects")

@@ -233,7 +233,12 @@
     "domains": {
       "title": "Available Domains",
       "users": "Users: {count}",
-      "disclaimer": "If you'd like your domain added, email <a href=\"mailto:troplo{'@'}troplo.com\">troplo{'@'}troplo.com</a>, ensure your domain has already been registered and configured with a DNS provider."
+      "disclaimer": "If you'd like your domain added, email <a href=\"mailto:troplo{'@'}troplo.com\">troplo{'@'}troplo.com</a>, ensure your domain has already been registered and configured with a DNS provider.",
+      "dialog": {
+        "create": "Create Domain",
+        "domain": "Domain",
+        "update": "Update Domain"
+      }
     }
   },
   "generic": {
@@ -274,7 +279,7 @@
     },
     "step1": {
       "title": "Database Setup",
-      "subtitle": "Please enter your MariaDB database credentials below.",
+      "subtitle": "Please enter your MariaDB database credentials below.\nWARNING: THIS WILL ATTEMPT TO MODIFY THE DATABASE SCHEMA, PLEASE ENSURE YOU HAVE A BACKUP BEFORE CONTINUING.",
       "host": "Database Host",
       "port": "Database Port",
       "username": "Database Username",
@@ -350,11 +355,17 @@
     },
     "step7": {
       "title": "Welcome to TPU!",
-      "subtitle": "Your TPU instance has been successfully configured, you can now login with the account you created in step 2.\nBut first, the TPU server needs to be restarted.",
+      "subtitle": "Before continuing, TPU Server needs to be restarted, only 2 restarts should be necessary for the entire setup process.",
       "restart": "Restart TPU Server"
     },
     "step8": {
-      "title": "TPU Server is restarting... You will be redirected to the login page automatically."
+      "title": "TPU Server is restarting... You will be redirected to the next step automatically."
+    },
+    "step9": {
+      "title": "Setup Default Domain",
+      "subtitle": "TPU is designed to have an origin domain, this is used to manage TPU itself, and secondary domains which can be configured by the user, which is returned by the APIs for file uploads, this would usually be behind CloudFront, Cloudflare, or another CDN proxy.",
+      "domain": "Domain (please only base domain, no HTTPS)",
+      "example": "i.troplo.com"
     }
   },
   "collections": {

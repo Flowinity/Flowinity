@@ -1,16 +1,31 @@
 import cluster from "cluster"
 import os from "os"
 import path from "path"
+import { DefaultTpuConfig } from "./classes/DefaultTpuConfig"
 
-if (cluster.isMaster) {
+function setEnvVariables() {
   global.appRoot = path.resolve(__dirname).includes("out")
     ? path.join(__dirname, "..", "app")
     : path.join(__dirname)
+  global.rawAppRoot = path.resolve(__dirname)
+  try {
+    global.config = require(global.appRoot + "/config/tpu.json")
+  } catch {
+    global.config = new DefaultTpuConfig().config
+  }
 
+  process.env.APP_ROOT = global.appRoot
+  process.env.RAW_APP_ROOT = global.rawAppRoot
+  process.env.CONFIG = JSON.stringify(global.config)
+}
+
+if (cluster.isMaster) {
+  setEnvVariables()
   cluster.schedulingPolicy = cluster.SCHED_RR
-
   const cpus =
-    require(global.appRoot + "/config/tpu.json")?.threads || os.cpus().length
+    process.env.THREADS ||
+    require(global.appRoot + "/config/tpu.json")?.threads ||
+    os.cpus().length
 
   console.info(`Clustering to ${cpus} CPUs`)
 
@@ -27,6 +42,7 @@ if (cluster.isMaster) {
     }
   })
   const restartWorker = (worker: any, workers: any): void => {
+    setEnvVariables()
     console.info(`Restarting worker ${worker.id}`)
 
     worker.kill("SIGUSR2")

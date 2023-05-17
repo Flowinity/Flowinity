@@ -14,6 +14,7 @@ import { Integration } from "@app/models/integration.model"
 import { createParamDecorator } from "routing-controllers"
 import { RequestAuthSystem } from "@app/types/express"
 import { Badge } from "@app/models/badge.model"
+import { BadRequestError } from "routing-controllers"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -313,6 +314,8 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
   return createParamDecorator({
     required,
     value: async (action) => {
+      if (!config.finishedSetup && !required) return null
+      if (!config.finishedSetup) throw Errors.NOT_SETUP
       const token = action.request.header("Authorization")
       if (!scope) scope = "*"
       if (token) {

@@ -9,7 +9,6 @@ import { GalleryService } from "@app/services/gallery.service"
 import { CacheService } from "@app/services/cache.service"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import Errors from "@app/lib/errors"
-import queue from "@app/lib/queue"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 
 function currentEpoch() {

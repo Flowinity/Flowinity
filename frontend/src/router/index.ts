@@ -238,6 +238,11 @@ const routes = [
             path: "communications",
             name: "Admin Communications",
             component: () => import("@/views/Admin/Communications.vue")
+          },
+          {
+            path: "domains",
+            name: "Admin Domains",
+            component: () => import("@/views/Admin/Domains.vue")
           }
         ]
       },
@@ -324,10 +329,10 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
-})
+});
 
 router.beforeEach(async (to, from) => {
-  const user = useUserStore()
+  const user = useUserStore();
   if (
     !user.user &&
     ![
@@ -349,15 +354,15 @@ router.beforeEach(async (to, from) => {
       "TPU Setup Wizard"
     ].includes(to.name as string)
   ) {
-    console.log("Redirecting to login")
-    return {name: "Home"}
+    console.log("Redirecting to login");
+    return { name: "Home" };
   } else if (
     user.user &&
     ["Home", "Login", "Register"].includes(to.name as string)
   ) {
-    console.log("Redirecting to dashboard")
-    return {name: "Dashboard"}
+    console.log("Redirecting to dashboard");
+    return { name: "Dashboard" };
   }
-})
+});
 
-export default router
+export default router;

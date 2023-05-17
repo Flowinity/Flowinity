@@ -272,7 +272,7 @@
     },
     "step1": {
       "title": "Database Setup",
-      "subtitle": "Please enter your MariaDB database credentials below.",
+      "subtitle": "Please enter your MariaDB database credentials below.\nWARNING: THIS WILL ATTEMPT TO MODIFY THE DATABASE SCHEMA, PLEASE ENSURE YOU HAVE A BACKUP BEFORE CONTINUING.",
       "host": "Database Host",
       "port": "Database Port",
       "username": "Database Username",

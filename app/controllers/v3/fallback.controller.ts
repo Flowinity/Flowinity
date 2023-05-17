@@ -62,6 +62,7 @@ export class FallbackControllerV3 {
 
   @Get("/api/:path*")
   async notFound(@Res() res: Response) {
+    if (!config.finishedSetup) throw Errors.NOT_SETUP
     throw Errors.NOT_FOUND
   }
 }

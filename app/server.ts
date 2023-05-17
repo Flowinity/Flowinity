@@ -11,6 +11,7 @@ import os from "os"
 // Import Miscellaneous
 import { Application } from "@app/app"
 import redis from "@app/redis"
+import path from "path"
 
 // Import Libs
 import socket from "@app/lib/socket"
@@ -26,13 +27,15 @@ import { PulseService } from "@app/services/pulse.service"
 import { BadgeService } from "@app/services/badge.service"
 import { MyAnimeListService } from "@app/services/providers/mal.service"
 
-@Service()
+@Service({ eager: false })
 export class Server {
   private static readonly baseDix: number = 10
   // This config will be replaced if it exists, if not, this will be used and will guide you through the setup process
-  private config: TpuConfig = new DefaultTpuConfig().config
+  private config: TpuConfig = process.env.CONFIG
+    ? JSON.parse(process.env.CONFIG || "{}")
+    : new DefaultTpuConfig().config
   private server: http.Server
-
+  public readonly ready: any
   constructor(
     private readonly application: Application,
     private readonly cacheService: CacheService,
@@ -54,10 +57,6 @@ export class Server {
   }
 
   async init(port?: number): Promise<void> {
-    try {
-      this.config = require(global.appRoot + "/config/tpu.json")
-    } catch {}
-
     const cpuCount: number = os.cpus().length
     const mainWorker: boolean =
       !cluster.worker || cluster.worker?.id % cpuCount === 1
@@ -80,8 +79,13 @@ export class Server {
     dayjs.extend(isSameOrBefore)
 
     global.db = require("@app/db")
-    global.redis = redis
+    if (config.finishedSetup) {
+      global.redis = redis
+      global.queue = require("@app/lib/queue")
+    }
     global.config = this.config
+    global.appRoot = process.env.APP_ROOT || ""
+    global.rawAppRoot = process.env.RAW_APP_ROOT || ""
     global.dayjs = dayjs
     global.whitelist = ipPrimary
 

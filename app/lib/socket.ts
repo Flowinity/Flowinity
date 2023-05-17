@@ -17,6 +17,7 @@ import { SocketAuth } from "@app/types/socket"
 
 export default {
   async init(app: any, server: any): Promise<void> {
+    if (!config.finishedSetup) return
     const subClient = redis.duplicate()
     const io = require("socket.io")(server, {
       cors: {

@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "AdminSidebarList",
@@ -74,15 +74,14 @@ export default defineComponent({
           level: 1
         },
         {
-          id: 3,
-          name: "Workspaces",
-          path: "/admin/workspaces",
-          icon: "mdi-domain",
+          id: 16,
+          name: "Domains",
+          path: "/admin/domains",
+          icon: "mdi-web",
           exact: true,
-          scope: "*",
+          scope: "user.view",
           level: 2
         },
-
         {
           id: 4,
           name: "Caching",
@@ -93,15 +92,6 @@ export default defineComponent({
           level: 1
         },
         {
-          id: 5,
-          name: "Collections",
-          path: "/admin/collections",
-          icon: "mdi-view-list",
-          exact: true,
-          scope: "*",
-          level: 2
-        },
-        {
           id: 7,
           name: "Communications",
           path: "/admin/communications",
@@ -109,51 +99,6 @@ export default defineComponent({
           exact: true,
           scope: "*",
           level: 2
-        },
-        {
-          id: 8,
-          name: "Invites",
-          path: "/admin/invites",
-          icon: "mdi-account-plus",
-          exact: true,
-          scope: "*",
-          level: 1
-        },
-        {
-          id: 9,
-          name: "User Experiments",
-          path: "/admin/experiments",
-          icon: "mdi-flask",
-          exact: true,
-          scope: "*",
-          level: 2
-        },
-        {
-          id: 10,
-          name: "Service Explorer",
-          path: "/admin/services",
-          icon: "mdi-server",
-          exact: true,
-          scope: "*",
-          level: 2
-        },
-        {
-          id: 11,
-          name: "Feedback",
-          path: "/admin/feedback",
-          icon: "mdi-comment-question-outline",
-          exact: true,
-          scope: "*",
-          level: 1
-        },
-        {
-          id: 12,
-          name: "Developer Options",
-          path: "/admin/dev",
-          icon: "mdi-code-tags",
-          exact: true,
-          scope: "*",
-          level: 1
         },
         {
           id: 13,
@@ -172,15 +117,6 @@ export default defineComponent({
           exact: true,
           scope: "*",
           level: 2
-        },
-        {
-          id: 15,
-          name: "IP Whitelist Check",
-          path: "/admin/ip",
-          icon: "mdi-shield-check",
-          exact: true,
-          scope: "user.view",
-          level: 0
         }
       ] as {
         id: number;
@@ -193,26 +129,26 @@ export default defineComponent({
         warning?: string;
         click?: () => void;
         level: number;
-      }[]
+      }[];
     }
   },
   methods: {
     access(level: number) {
       if (level === 0) {
-        return true
+        return true;
       } else if (level === 1) {
-        return this.$user.user?.administrator || this.$user.user?.moderator
+        return this.$user.user?.administrator || this.$user.user?.moderator;
       } else if (level === 2) {
-        return this.$user.user?.administrator
+        return this.$user.user?.administrator;
       } else {
-        return false
+        return false;
       }
     },
     handleClick(index: number) {
-      this.sidebar[index].click?.call(this)
+      this.sidebar[index].click?.call(this);
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

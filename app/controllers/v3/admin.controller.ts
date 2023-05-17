@@ -26,6 +26,7 @@ import { AdminService } from "@app/services/admin.service"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { Badge } from "@app/models/badge.model"
 import { RequestAuth } from "@app/types/express"
+import { Domain } from "@app/models/domain.model"
 
 @Service()
 @Middleware({ type: "before" })
@@ -396,5 +397,25 @@ export class AdminControllerV3 {
   ) {
     if (!body.id || !body.planId) throw Errors.INVALID_PARAMETERS
     await this.adminService.updatePlanId(body.id, body.planId)
+  }
+
+  @UseBefore(HighLevel)
+  @Put("/domain")
+  async updateDomain(
+    @Auth("*") user: User,
+    @Body()
+    body: Domain
+  ) {
+    await this.adminService.updateDomain(body)
+  }
+
+  @UseBefore(HighLevel)
+  @Post("/domain")
+  async createDomain(
+    @Auth("*") user: User,
+    @Body()
+    body: Domain
+  ) {
+    await this.adminService.createDomain(body.domain)
   }
 }

@@ -24,6 +24,7 @@ import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { Message } from "@app/models/message.model"
 import { CacheType } from "@app/enums/admin/CacheType"
+import { Domain } from "@app/models/domain.model"
 
 const inviteParams = {
   include: [
@@ -712,17 +713,6 @@ export class AdminService {
     this.purgeCache(6)
   }
 
-  async scriptScanVulnerableMarkupGoogle() {
-    const uploads = await Upload.findAll({
-      where: {
-        type: "image",
-        userId: 1
-      }
-    })
-    for (const upload of uploads) {
-    }
-  }
-
   async deleteCommunicationsMessage(messageId: number) {
     const message = await Message.findOne({
       where: {
@@ -733,5 +723,27 @@ export class AdminService {
     if (!message) throw Errors.MESSAGE_NOT_FOUND
 
     await message.destroy()
+  }
+
+  async updateDomain(domain: Partial<Domain>) {
+    const domainInstance = await Domain.findOne({
+      where: {
+        id: domain.id
+      }
+    })
+
+    if (!domainInstance) throw Errors.DOMAIN_NOT_FOUND
+
+    await domainInstance.update({
+      domain: domain.domain
+    })
+  }
+
+  async createDomain(name: string) {
+    return await Domain.create({
+      domain: name,
+      active: true,
+      DNSProvisioned: true
+    })
   }
 }

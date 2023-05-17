@@ -7,14 +7,7 @@ import utils from "@app/lib/utils"
 // Import Services
 import { CacheService } from "@app/services/cache.service"
 
-// Import Classes
-import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
-
-let config: TpuConfig = new DefaultTpuConfig().config
-
-try {
-  config = require("@app/config/tpu.json")
-} catch {}
+const config = JSON.parse(process.env.CONFIG || "{}")
 
 const cacheService: CacheService = Container.get(CacheService)
 const connection: {

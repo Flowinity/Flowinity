@@ -307,6 +307,10 @@ let Errors = {
     message:
       "The maximum export size for collections is currently 10GB, and this collection exceeds the limit.",
     status: 400
+  },
+  NOT_SETUP: {
+    message: "The TPU instance is still being configured.",
+    status: 500
   }
 }
 

@@ -14,6 +14,7 @@ import { Plan } from "@app/models/plan.model"
 import { User } from "@app/models/user.model"
 import argon2 from "argon2"
 import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
+import { Domain } from "@app/models/domain.model"
 
 @Service()
 @JsonController("/setup")
@@ -74,22 +75,13 @@ export class SetupControllerV3 {
           logging: false
         }
       }
-      if (!fs.existsSync(path.join(rawAppRoot, "config"))) {
-        fs.mkdirSync(path.join(rawAppRoot, "config"))
-      }
       if (!fs.existsSync(path.join(appRoot, "config"))) {
         fs.mkdirSync(path.join(appRoot, "config"))
       }
       await fs.writeFileSync(
-        path.join(rawAppRoot, "config", "config.json"),
+        path.join(appRoot, "config", "config.json"),
         JSON.stringify(config, null, 2)
       )
-      if (rawAppRoot !== appRoot) {
-        await fs.writeFileSync(
-          path.join(appRoot, "config", "config.json"),
-          JSON.stringify(config, null, 2)
-        )
-      }
       // migrate the database
       await new Promise((resolve, reject) => {
         const migrate = exec(
@@ -163,22 +155,13 @@ export class SetupControllerV3 {
     config.registrations = body.registrations
     config.features = body.features
     config.redis = body.redis
-    if (!fs.existsSync(path.join(rawAppRoot, "config"))) {
-      fs.mkdirSync(path.join(rawAppRoot, "config"))
-    }
     if (!fs.existsSync(path.join(appRoot, "config"))) {
       fs.mkdirSync(path.join(appRoot, "config"))
     }
     await fs.writeFileSync(
-      path.join(rawAppRoot, "config", "tpu.json"),
+      path.join(appRoot, "config", "tpu.json"),
       JSON.stringify(config, null, 2)
     )
-    if (rawAppRoot !== appRoot) {
-      await fs.writeFileSync(
-        path.join(appRoot, "config", "tpu.json"),
-        JSON.stringify(config, null, 2)
-      )
-    }
     global.config = config
   }
 
@@ -236,22 +219,13 @@ export class SetupControllerV3 {
       from: body.from,
       secure: body.secure
     }
-    if (!fs.existsSync(path.join(rawAppRoot, "config"))) {
-      fs.mkdirSync(path.join(rawAppRoot, "config"))
-    }
     if (!fs.existsSync(path.join(appRoot, "config"))) {
       fs.mkdirSync(path.join(appRoot, "config"))
     }
     await fs.writeFileSync(
-      path.join(rawAppRoot, "config", "tpu.json"),
+      path.join(appRoot, "config", "tpu.json"),
       JSON.stringify(config, null, 2)
     )
-    if (rawAppRoot !== appRoot) {
-      await fs.writeFileSync(
-        path.join(appRoot, "config", "tpu.json"),
-        JSON.stringify(config, null, 2)
-      )
-    }
     global.config = config
   }
 
@@ -259,22 +233,42 @@ export class SetupControllerV3 {
   async restartTPU() {
     let config = global.config
     config.finishedSetup = true
-    await fs.writeFileSync(
-      path.join(rawAppRoot, "config", "tpu.json"),
-      JSON.stringify(config, null, 2)
-    )
-    if (rawAppRoot !== appRoot) {
-      await fs.writeFileSync(
-        path.join(appRoot, "config", "tpu.json"),
-        JSON.stringify(config, null, 2)
-      )
-    }
-
+    try {
+      if (
+        await User.findOne({
+          where: {
+            id: 1
+          }
+        })
+      ) {
+        await fs.writeFileSync(
+          path.join(appRoot, "config", "tpu.json"),
+          JSON.stringify(config, null, 2)
+        )
+      }
+    } catch {}
     if (!process.send) {
       throw new BadRequestError(
         "Please restart TPU manually.\nCluster mode is recommended for optimal performance."
       )
     }
     process.send("TPU_RESTART")
+  }
+
+  @Post("/domain")
+  async setupDomain(
+    @Body()
+    body: {
+      domain: string
+    }
+  ) {
+    if (body?.domain?.length < 3) throw new BadRequestError("Invalid domain.")
+    return await Domain.create({
+      domain: body.domain,
+      userId: 1,
+      active: true,
+      DNSProvisioned: true,
+      id: 1
+    })
   }
 }

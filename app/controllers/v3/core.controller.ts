@@ -12,6 +12,7 @@ import Errors from "@app/lib/errors"
 import fs from "fs"
 import path from "path"
 import { Plan } from "@app/models/plan.model"
+import { Domain } from "@app/models/domain.model"
 
 @Service()
 @JsonController("/core")
@@ -20,6 +21,53 @@ export class CoreControllerV3 {
     private readonly coreService: CoreService,
     private readonly cacheService: CacheService
   ) {}
+
+  async getStep() {
+    try {
+      if (
+        await Domain.findOne({
+          where: {
+            id: 1
+          }
+        })
+      ) {
+        return 8
+      }
+      if (config.email.from !== "default@privateuploader.local") {
+        return 6
+      }
+      if (await fs.existsSync(path.join(appRoot, "config", "tpu.json"))) {
+        return 5
+      }
+      if (
+        await User.findOne({
+          where: {
+            id: 1
+          }
+        })
+      ) {
+        return 4
+      }
+      if (
+        await Plan.findOne({
+          where: {
+            id: 1
+          }
+        })
+      ) {
+        return 3
+      }
+      if (
+        (await fs.existsSync(path.join(appRoot, "config", "config.json"))) &&
+        (await User.findAll())
+      ) {
+        return 2
+      }
+      return 0
+    } catch {
+      return 0
+    }
+  }
 
   @Get("/experiments")
   async getExperiments(@Auth("user.view", false) user: User) {
@@ -33,34 +81,7 @@ export class CoreControllerV3 {
   @Get("/state")
   async getCore(@Req() req: Request) {
     if (!config.finishedSetup) {
-      let step = 0
-      if (await fs.existsSync(path.join(appRoot, "config", "config.json"))) {
-        step = 2
-      }
-      if (
-        await Plan.findOne({
-          where: {
-            id: 1
-          }
-        })
-      ) {
-        step = 3
-      }
-      if (
-        await User.findOne({
-          where: {
-            id: 1
-          }
-        })
-      ) {
-        step = 4
-      }
-      if (await fs.existsSync(path.join(appRoot, "config", "tpu.json"))) {
-        step = 6
-      }
-      if (config.email.from !== "default@privateuploader.local") {
-        step = 7
-      }
+      let step = await this.getStep()
       return {
         finishedSetup: false,
         name: config.siteName,

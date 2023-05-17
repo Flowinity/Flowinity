@@ -1,21 +1,6 @@
 import { createClient } from "redis"
 
-// Import Classes
-import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
-
-let config: TpuConfig = new DefaultTpuConfig().config
-
-try {
-  config = require("@app/config/tpu.json")
-} catch {}
-
-if (!config) {
-  console.warn(
-    "[REDIS] Cannot initialize Redis as the TPU config could not be found!"
-  )
-
-  throw new Error("TPU config not found.")
-}
+const config = JSON.parse(process.env.CONFIG || "{}")
 
 const client = createClient({
   socket: {

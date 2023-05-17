@@ -9,14 +9,13 @@
   ],
   "scripts": {
     "start": "tsc --project tsconfig.app.json && node out/cluster.js",
-    "serve": "tsc-watch --project tsconfig.app.json --onSuccess 'node --inspect ./out/index.js'",
+    "serve": "THREADS=1 tsc-watch --project tsconfig.app.json --onSuccess 'node --inspect ./out/cluster.js'",
     "serve2": "nodemon ./app",
     "build": "tsc --project tsconfig.app.json",
     "format": "prettier --config ../.prettierrc.yaml --write \"app/**/*\"",
     "lint": "eslint -c .eslintrc.json \"./app/**/*.ts\" --format stylish",
     "test": "cross-env TS_NODE_PROJECT='./tsconfig.spec.json' mocha --config=.mocharc.json --node-env=test",
-    "coverage": "cross-env TS_NODE_PROJECT='./tsconfig.spec.json' nyc mocha --config=.mocharc.json --node-env=test --exit",
-    "serve-cluster": "tsc-watch --project tsconfig.app.json --onSuccess 'node --inspect ./out/cluster.js'"
+    "coverage": "cross-env TS_NODE_PROJECT='./tsconfig.spec.json' nyc mocha --config=.mocharc.json --node-env=test --exit"
   },
   "nyc": {
     "check-coverage": true,

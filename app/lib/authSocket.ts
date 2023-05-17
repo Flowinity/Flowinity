@@ -8,8 +8,13 @@ const { Op } = require("sequelize")
 
 export default async function (socket: SocketAuth, next: NextFunction) {
   try {
+    if (!config.finishedSetup)
+      socket.emit("error", {
+        code: 500,
+        message: "TPU instance is misconfigured."
+      })
     const token = socket.handshake.auth.token
-    if (token) {
+    if (token && config.finishedSetup) {
       const session = await Session.findOne({
         where: {
           token: token,

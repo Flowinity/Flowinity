@@ -1,6 +1,26 @@
 <template>
+  <ModifyDomainDialog
+    :type="edit.type"
+    v-model="edit.dialog"
+    @update="
+      getDomains;
+      $user.init();
+    "
+    :domain="edit.domain"
+  />
   <v-card-text class="text-overline mb-n4">
     {{ $t("settings.domains.title") }}
+    <v-btn
+      icon
+      size="x-small"
+      v-if="$user.user?.administrator"
+      @click="
+        edit.dialog = true;
+        edit.type === 'update';
+      "
+    >
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
   </v-card-text>
   <v-list>
     <v-list-item v-for="domain in domains" :key="domain.id">
@@ -16,6 +36,26 @@
       </v-list-item-subtitle>
       <template v-slot:append>
         <v-list-item-action>
+          <v-btn
+            icon
+            size="x-small"
+            v-if="$user.user?.administrator"
+            :disabled="domain.id === 1"
+          >
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+          <v-btn
+            icon
+            size="x-small"
+            v-if="$user.user?.administrator"
+            @click="
+              edit.type = 'update';
+              edit.domain = domain;
+              edit.dialog = true;
+            "
+          >
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
           <v-btn
             :disabled="$user.user?.domain?.domain === domain.domain"
             @click="setDefault(domain.domain)"
@@ -36,12 +76,20 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Domain } from "@/models/domain";
+import ModifyDomainDialog from "@/components/Admin/Domains/ModifyDomain.vue";
 
 export default defineComponent({
   name: "Domains",
+  components: { ModifyDomainDialog },
   data() {
     return {
-      domains: [] as Domain[]
+      domains: [] as Domain[],
+      edit: {
+        domain: undefined as Domain | undefined,
+        id: 0,
+        type: "create",
+        dialog: false
+      }
     };
   },
   methods: {

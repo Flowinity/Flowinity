@@ -49,7 +49,7 @@
               <v-card-title>
                 {{ $t("setup.step1.title") }}
               </v-card-title>
-              <v-card-text class="text-grey">
+              <v-card-text class="overflow text-grey">
                 {{ $t("setup.step1.subtitle") }}
               </v-card-text>
               <v-form @submit="testMariaDBConnection">
@@ -426,6 +426,39 @@
               max-width="90vw"
               variant="outlined"
             >
+              <v-card-title>
+                {{ $t("setup.step9.title") }}
+              </v-card-title>
+              <v-card-text class="text-grey overflow">
+                {{ $t("setup.step9.subtitle") }}
+              </v-card-text>
+              <v-form @submit="setupDomain">
+                <v-card-text>
+                  <v-text-field
+                    v-model="domain.domain"
+                    :label="$t('setup.step9.domain')"
+                    :placeholder="$t('setup.step9.example')"
+                    required
+                  ></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn :loading="loading" @click="setupDomain">
+                    {{ $t("generic.next") }}
+                  </v-btn>
+                </v-card-actions>
+              </v-form>
+            </v-card>
+          </template>
+          <template v-if="step === 8">
+            <v-card
+              :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+              :elevation="$vuetify.display.mobile ? 0 : 8"
+              :flat="$vuetify.display.mobile"
+              class="text-center"
+              max-width="90vw"
+              variant="outlined"
+            >
               <p
                 class="text-center text-gradient mb-n5"
                 style="font-size: 64px"
@@ -448,7 +481,7 @@
               </v-btn>
             </v-card>
           </template>
-          <template v-if="step === 8">
+          <template v-if="step === 9">
             <v-card
               :color="$vuetify.display.mobile ? 'transparent' : 'card'"
               :elevation="$vuetify.display.mobile ? 0 : 8"
@@ -486,6 +519,7 @@ enum Step {
   InstanceSetup,
   Features,
   Mail,
+  Domain,
   Finish,
   Restarting
 }
@@ -540,20 +574,43 @@ export default defineComponent({
         from: '"TroploPrivateUploader" <noreply@privateuploader.com>',
         secure: true,
         testEmail: ""
+      },
+      domain: {
+        domain: ""
       }
     };
   },
   methods: {
-    async pollTPU() {
+    async setupDomain() {
+      this.loading = true;
       try {
-        const { data } = (await this.axios.get("/core")) as {
+        await this.axios.post("/setup/domain", {
+          domain: this.domain.domain
+        });
+        this.step++;
+        this.loading = false;
+      } catch {
+        this.loading = false;
+      }
+    },
+    async pollTPU() {
+      this.loading = false;
+      try {
+        const { data } = (await this.axios.get("/core", {
+          headers: {
+            noToast: true
+          }
+        })) as {
           data: {
             finishedSetup: boolean;
+            step?: number;
           };
         };
         if (data.finishedSetup) {
           await this.$app.init();
           this.$router.push("/");
+        } else if (data.step !== 0 && data.step !== 8) {
+          this.step = data.step;
         } else {
           setTimeout(this.pollTPU, 1000);
         }
@@ -567,6 +624,7 @@ export default defineComponent({
         await this.axios.post("/setup/restart");
         this.step++;
         this.pollTPU();
+        this.loading = false;
       } catch {
         this.loading = false;
       }
@@ -590,73 +648,93 @@ export default defineComponent({
       }
     },
     async configureMail() {
-      this.loading = true;
-      await this.axios.post("/setup/mail", {
-        host: this.mail.host,
-        port: parseInt(this.mail.port),
-        username: this.mail.username,
-        password: this.mail.password,
-        from: this.mail.from,
-        secure: this.mail.secure
-      });
-      this.step++;
-      this.$toast("Successfully configured mail");
-      this.loading = false;
+      try {
+        this.loading = true;
+        await this.axios.post("/setup/mail", {
+          host: this.mail.host,
+          port: parseInt(this.mail.port),
+          username: this.mail.username,
+          password: this.mail.password,
+          from: this.mail.from,
+          secure: this.mail.secure
+        });
+        this.step++;
+        this.$toast("Successfully configured mail");
+        this.loading = false;
+      } catch {
+        this.loading = false;
+      }
     },
     async configureInstance() {
-      this.loading = true;
-      await this.axios.post("/setup/instance", {
-        siteName: this.instance.name,
-        hostname: this.instance.hostname,
-        hostnameWithProtocol: this.instance.hostnameWithProtocol,
-        port: this.instance.port,
-        registrations: this.instance.allowRegistrations,
-        threads: this.instance.multiThreaded,
-        features: this.features,
-        redis: {
-          db: parseInt(this.instance.redisDatabase),
-          host: this.instance.redisHostname,
-          port: parseInt(this.instance.redisPort)
-        }
-      });
-      this.step++;
-      this.$toast("Successfully configured instance");
-      this.loading = false;
+      try {
+        this.loading = true;
+        await this.axios.post("/setup/instance", {
+          siteName: this.instance.name,
+          hostname: this.instance.hostname,
+          hostnameWithProtocol: this.instance.hostnameWithProtocol,
+          port: this.instance.port,
+          registrations: this.instance.allowRegistrations,
+          threads: this.instance.multiThreaded,
+          features: this.features,
+          redis: {
+            db: parseInt(this.instance.redisDatabase),
+            host: this.instance.redisHostname,
+            port: parseInt(this.instance.redisPort)
+          }
+        });
+        this.step++;
+        this.$toast("Successfully configured instance");
+        this.loading = false;
+      } catch {
+        this.loading = false;
+      }
     },
     async testMariaDBConnection() {
-      this.loading = true;
-      await this.axios.post("/setup/database", {
-        host: this.database.host,
-        port: this.database.port,
-        database: this.database.database,
-        username: this.database.username,
-        password: this.database.password
-      });
-      this.step++;
-      this.$toast("Successfully connected to MariaDB server");
-      this.loading = false;
+      try {
+        this.loading = true;
+        await this.axios.post("/setup/database", {
+          host: this.database.host,
+          port: this.database.port,
+          database: this.database.database,
+          username: this.database.username,
+          password: this.database.password
+        });
+        this.step = Step.Finish;
+        this.$toast("Successfully connected to MariaDB server");
+        this.loading = false;
+      } catch {
+        this.loading = false;
+      }
     },
     async createAdminAccount() {
-      this.loading = true;
-      await this.axios.post("/setup/admin", {
-        username: this.admin.username,
-        password: this.admin.password,
-        email: this.admin.email
-      });
-      this.step++;
-      this.$toast("Successfully created admin account");
-      this.loading = false;
+      try {
+        this.loading = true;
+        await this.axios.post("/setup/admin", {
+          username: this.admin.username,
+          password: this.admin.password,
+          email: this.admin.email
+        });
+        this.step++;
+        this.$toast("Successfully created admin account");
+        this.loading = false;
+      } catch {
+        this.loading = false;
+      }
     },
     async createDefaultPlan() {
-      this.loading = true;
-      await this.axios.post("/setup/plan", {
-        name: "Free",
-        quotaMax: parseInt(this.plan.quotaMax),
-        maxFileSize: parseInt(this.plan.maxFileSize)
-      });
-      this.step++;
-      this.$toast("Successfully created default plan");
-      this.loading = false;
+      try {
+        this.loading = true;
+        await this.axios.post("/setup/plan", {
+          name: "Free",
+          quotaMax: parseInt(this.plan.quotaMax),
+          maxFileSize: parseInt(this.plan.maxFileSize)
+        });
+        this.step++;
+        this.$toast("Successfully created default plan");
+        this.loading = false;
+      } catch {
+        this.loading = false;
+      }
     }
   },
   mounted() {
