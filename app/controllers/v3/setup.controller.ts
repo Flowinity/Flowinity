@@ -9,7 +9,7 @@ import { AdminService } from "@app/services/admin.service"
 import { Sequelize } from "sequelize"
 import fs from "fs"
 import path from "path"
-import { exec } from "child_process"
+import { execSync } from "child_process"
 import { Plan } from "@app/models/plan.model"
 import { User } from "@app/models/user.model"
 import argon2 from "argon2"
@@ -82,18 +82,18 @@ export class SetupControllerV3 {
         path.join(appRoot, "config", "config.json"),
         JSON.stringify(config, null, 2)
       )
-      // migrate the database
-      await new Promise((resolve, reject) => {
-        const migrate = exec(
-          global.appRoot + "/../node_modules/.bin/sequelize db:migrate",
-          { env: process.env },
-          (err) => (err ? reject(err) : resolve("Database migrated."))
-        )
-
-        // Forward stdout+stderr to this process
-        migrate.stdout?.pipe(process.stdout)
-        migrate.stderr?.pipe(process.stderr)
-      })
+      try {
+        // try using system sequelize-cli first, only thing that works in Docker too
+        execSync("sequelize db:migrate", {
+          env: process.env,
+          stdio: "inherit"
+        })
+      } catch {
+        execSync(global.appRoot + "../node_modules/.bin/sequelize db:migrate", {
+          env: process.env,
+          stdio: "inherit"
+        })
+      }
     } catch (e) {
       throw new BadRequestError(e.message)
     }

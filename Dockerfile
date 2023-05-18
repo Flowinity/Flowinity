@@ -6,7 +6,6 @@ WORKDIR /app
 COPY . .
 RUN yarn install --frozen-lockfile --production
 RUN yarn build
-# package doesn't install from package.json for some reason
-RUN yarn add wrap-ansi@7
+RUN yarn global add sequelize-cli mariadb
 CMD ["node", "out/cluster.js"]
 EXPOSE 34582
