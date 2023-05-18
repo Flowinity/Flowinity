@@ -51,7 +51,7 @@ async function checkFrontend() {
       "../frontend/package.json"
     ))
     console.info(
-      `[FRONTEND] Compiled frontend version: ${version}, latest frontend version downloaded: ${pkg.version}`
+      `[FRONTEND] Compiled frontend version: ${version}, latest frontend revision from local disk: ${pkg.version}`
     )
     if (version !== pkg.version) return buildFrontend()
   } else {

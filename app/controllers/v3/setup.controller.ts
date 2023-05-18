@@ -146,23 +146,23 @@ export class SetupControllerV3 {
     @Body()
     body: TpuConfig
   ) {
-    let config = new DefaultTpuConfig().config
-    config.siteName = body.siteName || "TPU"
-    config.hostname = body.hostname
-    config.hostnameWithProtocol = body.hostnameWithProtocol
-    config.port = body.port || 34582
-    config.threads = body.threads || 0
-    config.registrations = body.registrations
-    config.features = body.features
-    config.redis = body.redis
+    let tpuConfig = global.config
+    tpuConfig.siteName = body.siteName || "TPU"
+    tpuConfig.hostname = body.hostname
+    tpuConfig.hostnameWithProtocol = body.hostnameWithProtocol
+    tpuConfig.port = body.port || 34582
+    tpuConfig.threads = body.threads || 0
+    tpuConfig.registrations = body.registrations
+    tpuConfig.features = body.features
+    tpuConfig.redis = body.redis
     if (!fs.existsSync(path.join(appRoot, "config"))) {
       fs.mkdirSync(path.join(appRoot, "config"))
     }
     await fs.writeFileSync(
       path.join(appRoot, "config", "tpu.json"),
-      JSON.stringify(config, null, 2)
+      JSON.stringify(tpuConfig, null, 2)
     )
-    global.config = config
+    global.config = tpuConfig
   }
 
   @Post("/mail/test")
@@ -210,8 +210,12 @@ export class SetupControllerV3 {
       secure: boolean
     }
   ) {
-    let config = global.config
-    config.email = {
+    // read from config/tpu.json
+    let tpuConfig = global.config
+    try {
+      tpuConfig = require(path.join(appRoot, "config", "tpu.json"))
+    } catch {}
+    tpuConfig.email = {
       host: body.host,
       port: body.port,
       username: body.username,
@@ -224,15 +228,18 @@ export class SetupControllerV3 {
     }
     await fs.writeFileSync(
       path.join(appRoot, "config", "tpu.json"),
-      JSON.stringify(config, null, 2)
+      JSON.stringify(tpuConfig, null, 2)
     )
-    global.config = config
+    global.config = tpuConfig
   }
 
   @Post("/restart")
   async restartTPU() {
-    let config = global.config
-    config.finishedSetup = true
+    let tpuConfig = global.config
+    try {
+      tpuConfig = require(path.join(appRoot, "config", "tpu.json"))
+    } catch {}
+    tpuConfig.finishedSetup = true
     try {
       if (
         await User.findOne({
@@ -243,7 +250,7 @@ export class SetupControllerV3 {
       ) {
         await fs.writeFileSync(
           path.join(appRoot, "config", "tpu.json"),
-          JSON.stringify(config, null, 2)
+          JSON.stringify(tpuConfig, null, 2)
         )
       }
     } catch {}
@@ -252,6 +259,7 @@ export class SetupControllerV3 {
         "Please restart TPU manually.\nCluster mode is recommended for optimal performance."
       )
     }
+    global.config = tpuConfig
     process.send("TPU_RESTART")
   }
 
