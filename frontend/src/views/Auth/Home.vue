@@ -4,20 +4,18 @@
     <div :class="{ 'mx-5 mobile': $vuetify.display.mobile }" class="hero-body">
       <div class="title">
         Welcome to
-        <span class="text-gradient">TPU</span>
-        .
+        <span class="text-gradient">{{$app.site.name || "TPU"}}.</span>
       </div>
       <div class="subtitle">
         The
         <span class="text-gradient">versatile</span>
         image hosting service, now for
-        <span class="text-gradient">everyone</span>
-        .
+        <span class="text-gradient">everyone.</span>
       </div>
       <div class="mt-4">
         <v-text-field
           v-model="email"
-          class="sign-up-button"
+          class="sign-up-button "
           color="white"
           label="Email"
           outlined
@@ -45,6 +43,7 @@
             </v-btn>
           </template>
         </v-text-field>
+        <p class="mb-n2" v-if="!$app.site.officialInstance">This is a <a class="text-gradient" target="_blank" href="https://github.com/Troplo/PrivateUploader">TPU</a> instance.</p>
       </div>
       <!-- learn more down arrow positioned at the bottom of the hero -->
       <div class="learn-more">
@@ -202,7 +201,7 @@
       :height="300"
       :hover="true"
       :left="true"
-      class="mb-6"
+      class="mb-6 mt-4"
       title="Report an Upload"
     >
       <p>

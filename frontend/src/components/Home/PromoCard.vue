@@ -16,14 +16,11 @@
         cols="12"
         style="display: flex; padding: 0; align-items: center"
       >
-        <div
-          :class="{ fix: image && !$vuetify.display.mobile }"
-          style="align-items: center"
-        >
+        <div style="align-items: center" class="text-center fix">
           <v-icon v-if="icon" class="text-grey mt-3" size="92">
             {{ icon }}
           </v-icon>
-          <v-card-title class="display-1 font-weight-bold mt-n1 mb-n1">
+          <v-card-title class="display-1 font-weight-bold">
             {{ title }}
           </v-card-title>
           <div style="padding: 0 16px">
