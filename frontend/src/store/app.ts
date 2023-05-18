@@ -398,7 +398,7 @@ export const useAppStore = defineStore("app", {
       if (core) {
         try {
           this.site = JSON.parse(core);
-          this.domain = "https://" + this.site.domain + "/";
+          this.domain = "https://" + this.site.domain + "/i/";
           this.loading = false;
         } catch {
           //
@@ -406,7 +406,7 @@ export const useAppStore = defineStore("app", {
       }
       const { data } = await axios.get("/core");
       this.site = data;
-      this.domain = "https://" + this.site.domain + "/";
+      this.domain = "https://" + this.site.domain + "/i/";
       localStorage.setItem("coreStore", JSON.stringify(data));
       this.loading = false;
     },
