@@ -7,8 +7,10 @@ import path from "path"
 // Import Miscellaneous
 import init from "@app/entrypoint"
 import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
+import fs from "fs"
+import { exec } from "child_process"
 
-async function initTPU(): Promise<void> {
+async function initTPU() {
   global.appRoot = path.resolve(__dirname).includes("out")
     ? path.join(__dirname, "..", "app")
     : path.join(__dirname)
@@ -19,8 +21,67 @@ async function initTPU(): Promise<void> {
     global.config = new DefaultTpuConfig().config
   }
   console.log("Entrypoint initialized")
-  await new Promise((resolve) => setTimeout(resolve, 100))
   init()
+  checkFrontend()
+}
+
+async function checkFrontend() {
+  // check rawAppRoot for frontend
+  if (await fs.existsSync(path.join(global.rawAppRoot, "../frontend/dist"))) {
+    let version = ""
+    try {
+      version = await fs.readFileSync(
+        path.join(global.rawAppRoot, "../frontend/dist/version.txt"),
+        "utf-8"
+      )
+    } catch {
+      console.log(
+        "version.txt could not be found, it's likely it was built outside of the build script."
+      )
+      return buildFrontend()
+    }
+    const pkg = require(path.join(
+      global.rawAppRoot,
+      "../frontend/package.json"
+    ))
+    console.log(
+      `Compiled frontend version: ${version}, latest frontend version downloaded: ${pkg.version}`
+    )
+    if (version !== pkg.version) {
+      return buildFrontend()
+    }
+  } else {
+    return buildFrontend()
+  }
+}
+
+async function buildFrontend() {
+  console.log("Frontend version is outdated, rebuilding.")
+  const pkg = require(path.join(global.rawAppRoot, "../frontend/package.json"))
+  // run yarn and yarn build
+  // stdout to console
+  const upgrade = exec("yarn --frozen-lockfile", {
+    cwd: path.join(global.rawAppRoot, "../frontend")
+  })
+  upgrade.stdout?.on("data", (data) => {
+    console.log(data)
+  })
+  const build = exec("yarn build", {
+    cwd: path.join(global.rawAppRoot, "../frontend")
+  })
+  build.stdout?.on("data", (data) => {
+    console.log(data)
+  })
+  // write version.txt
+  await fs.writeFile(
+    path.join(global.rawAppRoot, "../frontend/dist/version.txt"),
+    pkg.version,
+    (err) => {
+      if (err) {
+        console.error(err)
+      }
+    }
+  )
 }
 
 initTPU().then((): void => {})
