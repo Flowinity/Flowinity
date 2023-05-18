@@ -870,7 +870,7 @@ ALTER TABLE `CollectionPins`
 --
 -- Indexes for table `collections`
 --
-ALTER TABLE `collections`
+ALTER TABLE `Collections`
   ADD PRIMARY KEY (`id`),
   ADD KEY `userId` (`userId`),
   ADD KEY `shareLink` (`shareLink`),
