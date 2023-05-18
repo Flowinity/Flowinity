@@ -1356,35 +1356,35 @@ ALTER TABLE `WorkspaceUsers`
 -- Constraints for table `autocollectrules`
 --
 ALTER TABLE `AutoCollectRules`
-  ADD CONSTRAINT `autocollectrules_ibfk_1` FOREIGN KEY (`collectionId`) REFERENCES `collections` (`id`),
-  ADD CONSTRAINT `autocollectrules_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `autocollectrules_ibfk_1` FOREIGN KEY (`collectionId`) REFERENCES `Collections` (`id`),
+  ADD CONSTRAINT `autocollectrules_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `Users` (`id`);
 
 --
 -- Constraints for table `collectionpins`
 --
 ALTER TABLE `CollectionPins`
-  ADD CONSTRAINT `collectionpins_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `collectionpins_ibfk_2` FOREIGN KEY (`collectionItemId`) REFERENCES `collectionitems` (`id`),
-  ADD CONSTRAINT `collectionpins_ibfk_3` FOREIGN KEY (`collectionId`) REFERENCES `collections` (`id`);
+  ADD CONSTRAINT `collectionpins_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `Users` (`id`),
+  ADD CONSTRAINT `collectionpins_ibfk_2` FOREIGN KEY (`collectionItemId`) REFERENCES `CollectionItems` (`id`),
+  ADD CONSTRAINT `collectionpins_ibfk_3` FOREIGN KEY (`collectionId`) REFERENCES `Collections` (`id`);
 
 --
 -- Constraints for table `invites`
 --
 ALTER TABLE `Invites`
-  ADD CONSTRAINT `invites_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `invites_ibfk_2` FOREIGN KEY (`registerUserId`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `invites_ibfk_3` FOREIGN KEY (`adminId`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `invites_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `Users` (`id`),
+  ADD CONSTRAINT `invites_ibfk_2` FOREIGN KEY (`registerUserId`) REFERENCES `Users` (`id`),
+  ADD CONSTRAINT `invites_ibfk_3` FOREIGN KEY (`adminId`) REFERENCES `Users` (`id`);
 
 --
 -- Constraints for table `pulses`
 --
 ALTER TABLE `Pulses`
-  ADD CONSTRAINT `pulses_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `pulses_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `Users` (`id`);
 
 --
 -- Constraints for table `stars`
 --
 ALTER TABLE `Stars`
-  ADD CONSTRAINT `stars_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `stars_ibfk_2` FOREIGN KEY (`attachmentId`) REFERENCES `uploads` (`id`);
+  ADD CONSTRAINT `stars_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `Users` (`id`),
+  ADD CONSTRAINT `stars_ibfk_2` FOREIGN KEY (`attachmentId`) REFERENCES `Uploads` (`id`);
 COMMIT;

@@ -1,13 +1,16 @@
 version: "3"
 services:
   tpu:
-    build: .
+    image: "@troplo/privateuploader:latest"
     ports:
       - "34582:34582"
     volumes:
       - /var/lib/tpu_server/config:/app/app/config
       - /var/lib/tpu_server/storage:/app/storage
       - /var/lib/tpu_server/frontend_build:/app/frontend_build
+    depends_on:
+      - redis
+      - mariadb
   redis:
     image: "redis:alpine"
   mariadb:
