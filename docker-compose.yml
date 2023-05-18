@@ -1,0 +1,17 @@
+version: "3"
+services:
+  web:
+    build: .
+    ports:
+      - "34582:34582"
+  redis:
+    image: "redis:alpine"
+  mariadb:
+    image: "mariadb:10.6.13"
+    volumes:
+      - /var/lib/tpu_server/mariadb:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
