@@ -29,6 +29,7 @@ app/config/tpu.json
 app/config/tpu.old.json
 app/config/config.old.json
 storage/*
+frontend_build/
 yarn-error.log
 
 .idea

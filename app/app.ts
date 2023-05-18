@@ -13,6 +13,7 @@ import swaggerUi from "swagger-ui-express"
 import { Container, Service } from "typedi"
 import sequelize, { Op } from "sequelize"
 import path from "path"
+import fs from "fs"
 
 // Import Libs
 import Errors from "@app/lib/errors"
@@ -244,11 +245,23 @@ export class Application {
       validation: true
     })
 
-    this.app.use(express.static(path.join(global.appRoot, "../frontend/dist")))
+    this.app.use(express.static(path.join(global.appRoot, "../frontend_build")))
     this.app.get("*", function (req, res, next): void {
       if (req.url.startsWith("/api/")) return next()
       if (req.url.startsWith("/i/")) return next()
-      res.sendFile(path.resolve(global.appRoot, "../frontend/dist/index.html"))
+      try {
+        const file = path.resolve(
+          global.appRoot,
+          "../frontend_build/index.html"
+        )
+        fs.statSync(file)
+        res.sendFile(file)
+      } catch (e) {
+        res.status(500)
+        res.render("frontend-compile", {
+          path: e?.path || "unknown"
+        })
+      }
     })
     this.onServerStart() // TODO: Fix "Promise returned from onServerStart is ignored".
   }
@@ -260,6 +273,7 @@ export class Application {
     this.app.use(cookieParser())
     this.app.use(cors())
     this.app.set("view engine", "ejs")
+    this.app.set("views", path.join(global.appRoot, "/views"))
   }
 
   private async onServerStart() {

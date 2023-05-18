@@ -17,7 +17,7 @@
                 :sort-by="[{ key: 'size', order: 'desc' }]"
               >
                 <template v-slot:item.size="{ item }">
-                  {{ $functions.fileSize(item.props.title.size) }}
+                  {{ $functions.fileSize(item.props.value.size) }}
                 </template>
               </v-data-table>
             </v-card-text>

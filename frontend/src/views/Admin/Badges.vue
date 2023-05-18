@@ -129,12 +129,12 @@
             icon
             @click="
               dialog.value = true;
-              dialog.item = item.props.title;
+              dialog.item = item.props.value;
             "
           >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <v-btn icon @click="deleteItem(item.props.title.id)">
+          <v-btn icon @click="deleteItem(item.props.value.id)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
         </template>

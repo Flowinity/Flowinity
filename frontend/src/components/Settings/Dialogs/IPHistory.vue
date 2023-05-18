@@ -13,7 +13,7 @@
         class="elevation-0"
       >
         <template v-slot:item.date="{ item }">
-          <span>{{ $date(item.date).format("DD/MM/YYYY hh:mm A") }}</span>
+          <span>{{ $date(item.value.date).format("DD/MM/YYYY hh:mm A") }}</span>
         </template>
       </v-data-table>
     </v-card-text>

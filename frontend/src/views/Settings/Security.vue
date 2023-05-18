@@ -15,7 +15,17 @@
     </v-btn>
   </v-toolbar>
   <v-data-table :headers="headers" :items="apiKeys">
-    <template v-slot:item.actions="{ item }">
+    <template
+      v-slot:item.actions="{
+        item
+      }: {
+        item: {
+          props: {
+            title: any
+          }
+        }
+      }"
+    >
       <v-icon
         :disabled="!item.props.title.info?.accessedFrom.length"
         class="mr-3"
@@ -25,7 +35,7 @@
         "
       >
         <v-tooltip activator="parent" location="top">
-          <span v-if="item.info?.accessedFrom?.length">
+          <span v-if="item.props.title.info?.accessedFrom?.length">
             {{ $t("settings.security.ipHistory") }}
           </span>
           <span v-else>
@@ -66,7 +76,7 @@
       <v-icon
         class="mr-2"
         small
-        @click="deleteAlternatePassword(item.props.title.name)"
+        @click="deleteAlternatePassword(item.props.value.name)"
       >
         mdi-delete
       </v-icon>

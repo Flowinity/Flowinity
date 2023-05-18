@@ -5,12 +5,12 @@ import { Container } from "typedi"
 import path from "path"
 
 // Import Miscellaneous
-import init from "@app/entrypoint"
 import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
 import fs from "fs"
-import { exec } from "child_process"
+import { execSync } from "child_process"
 import cluster from "cluster"
 import os from "os"
+import { Server } from "@app/server"
 
 async function initTPU() {
   global.appRoot = path.resolve(__dirname).includes("out")
@@ -23,25 +23,26 @@ async function initTPU() {
     global.config = new DefaultTpuConfig().config
   }
   console.log("Entrypoint initialized")
-  init()
+  Container.get(Server).init()
+
   const cpuCount: number = os.cpus().length
   const mainWorker: boolean =
     !cluster.worker || cluster.worker?.id % cpuCount === 1
-  if (mainWorker && config.release !== "dev") checkFrontend()
+  if (mainWorker) checkFrontend()
 }
 
 async function checkFrontend() {
   // check rawAppRoot for frontend
-  if (await fs.existsSync(path.join(global.rawAppRoot, "../frontend/dist"))) {
+  if (await fs.existsSync(path.join(global.rawAppRoot, "../frontend_build"))) {
     let version = ""
     try {
       version = await fs.readFileSync(
-        path.join(global.rawAppRoot, "../frontend/dist/version.txt"),
+        path.join(global.rawAppRoot, "../frontend_build/version.txt"),
         "utf-8"
       )
     } catch {
-      console.log(
-        "version.txt could not be found, it's likely it was built outside of the build script."
+      console.info(
+        "[FRONTEND] version.txt could not be found, it's likely it was built outside of the build script."
       )
       return buildFrontend()
     }
@@ -49,47 +50,48 @@ async function checkFrontend() {
       global.rawAppRoot,
       "../frontend/package.json"
     ))
-    console.log(
-      `Compiled frontend version: ${version}, latest frontend version downloaded: ${pkg.version}`
+    console.info(
+      `[FRONTEND] Compiled frontend version: ${version}, latest frontend version downloaded: ${pkg.version}`
     )
-    if (version !== pkg.version) {
-      return buildFrontend()
-    }
+    if (version !== pkg.version) return buildFrontend()
   } else {
     return buildFrontend()
   }
 }
 
 async function buildFrontend() {
-  console.log("Frontend version is outdated, rebuilding.")
+  console.log("[FRONTEND] Version is outdated, rebuilding.")
   const pkg = require(path.join(global.rawAppRoot, "../frontend/package.json"))
-  // run yarn and yarn build
-  // stdout to console
-  const upgrade = exec("yarn --frozen-lockfile", {
-    cwd: path.join(global.rawAppRoot, "../frontend")
-  })
-  upgrade.stdout?.on("data", (data) => {
-    console.log(data)
-  })
-  const build = exec(
-    config.officialInstance ? "yarn build-prod" : "yarn build",
-    {
-      cwd: path.join(global.rawAppRoot, "../frontend")
+  // run yarn and yarn build to compile frontend
+  try {
+    console.log(pkg.version)
+    await execSync("yarn --frozen-lockfile", {
+      cwd: path.join(global.rawAppRoot, "../frontend"),
+      stdio: "inherit"
+    })
+    await execSync(config.officialInstance ? "yarn build-prod" : "yarn build", {
+      cwd: path.join(global.rawAppRoot, "../frontend"),
+      stdio: "inherit"
+    })
+    // write version.txt
+    console.log(pkg.version)
+    await fs.writeFileSync(
+      path.join(global.rawAppRoot, "../frontend/dist/version.txt"),
+      pkg.version
+    )
+    if (
+      !(await fs.existsSync(path.join(global.rawAppRoot, "../frontend_build")))
+    ) {
+      await fs.mkdirSync(path.join(global.rawAppRoot, "../frontend_build"))
     }
-  )
-  build.stdout?.on("data", (data) => {
-    console.log(data)
-  })
-  // write version.txt
-  await fs.writeFile(
-    path.join(global.rawAppRoot, "../frontend/dist/version.txt"),
-    pkg.version,
-    (err) => {
-      if (err) {
-        console.error(err)
-      }
-    }
-  )
+    await execSync("cp -r ../frontend/dist/* ../frontend_build", {
+      cwd: global.rawAppRoot,
+      stdio: "inherit"
+    })
+  } catch (e) {
+    console.error(e)
+    console.error("[FRONTEND] Failed to build.")
+  }
 }
 
-initTPU().then((): void => {})
+initTPU().then(() => {})

@@ -10,7 +10,7 @@
   "scripts": {
     "start": "tsc --project tsconfig.app.json && node out/cluster.js",
     "serve": "THREADS=1 tsc-watch --project tsconfig.app.json --onSuccess 'node --inspect ./out/cluster.js'",
-    "serve2": "nodemon ./app",
+    "serve-cluster": "tsc-watch --project tsconfig.app.json --onSuccess 'node --inspect ./out/cluster.js'",
     "build": "tsc --project tsconfig.app.json",
     "format": "prettier --config ../.prettierrc.yaml --write \"app/**/*\"",
     "lint": "eslint -c .eslintrc.json \"./app/**/*.ts\" --format stylish",
