@@ -71,9 +71,12 @@ async function buildFrontend() {
   upgrade.stdout?.on("data", (data) => {
     console.log(data)
   })
-  const build = exec("yarn build", {
-    cwd: path.join(global.rawAppRoot, "../frontend")
-  })
+  const build = exec(
+    config.officialInstance ? "yarn build-prod" : "yarn build",
+    {
+      cwd: path.join(global.rawAppRoot, "../frontend")
+    }
+  )
   build.stdout?.on("data", (data) => {
     console.log(data)
   })
