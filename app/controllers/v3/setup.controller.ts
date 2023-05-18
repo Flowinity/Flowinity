@@ -85,7 +85,7 @@ export class SetupControllerV3 {
       // migrate the database
       await new Promise((resolve, reject) => {
         const migrate = exec(
-          "sequelize db:migrate",
+          global.appRoot + "/../node_modules/.bin/sequelize db:migrate",
           { env: process.env },
           (err) => (err ? reject(err) : resolve("Database migrated."))
         )

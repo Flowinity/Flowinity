@@ -130,6 +130,7 @@
     "routing-controllers": "^0.10.4",
     "routing-controllers-openapi": "^4.0.0",
     "sequelize": "^6.28.0",
+    "sequelize-cli": "^6.6.0",
     "sequelize-pool": "8.0.0",
     "sequelize-typescript": "^2.1.5",
     "serve-favicon": "2.5.0",
