@@ -9,6 +9,8 @@ import init from "@app/entrypoint"
 import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
 import fs from "fs"
 import { exec } from "child_process"
+import cluster from "cluster"
+import os from "os"
 
 async function initTPU() {
   global.appRoot = path.resolve(__dirname).includes("out")
@@ -22,7 +24,10 @@ async function initTPU() {
   }
   console.log("Entrypoint initialized")
   init()
-  checkFrontend()
+  const cpuCount: number = os.cpus().length
+  const mainWorker: boolean =
+    !cluster.worker || cluster.worker?.id % cpuCount === 1
+  if (mainWorker) checkFrontend()
 }
 
 async function checkFrontend() {
