@@ -22,10 +22,12 @@ function setEnvVariables() {
 if (cluster.isMaster) {
   setEnvVariables()
   cluster.schedulingPolicy = cluster.SCHED_RR
-  const cpus =
-    parseInt(process.env.THREADS || "0") ||
-    global.config?.threads ||
-    os.cpus().length
+  // Restrict to 2 processes if the setup is not finished to avoid slow restarts
+  const cpus = !global.config?.finishedSetup
+    ? 2
+    : parseInt(process.env.THREADS || "0") ||
+      global.config?.threads ||
+      os.cpus().length
 
   console.info(`Clustering to ${cpus} CPUs`)
 
