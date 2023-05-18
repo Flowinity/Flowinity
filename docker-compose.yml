@@ -1,7 +1,7 @@
 version: "3"
 services:
   tpu:
-    image: "@troplo/privateuploader:latest"
+    image: "troplo/privateuploader:latest"
     ports:
       - "34582:34582"
     volumes:
