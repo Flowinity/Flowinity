@@ -26,6 +26,8 @@ import { BillingService } from "@app/services/billing.service"
 import { PulseService } from "@app/services/pulse.service"
 import { BadgeService } from "@app/services/badge.service"
 import { MyAnimeListService } from "@app/services/providers/mal.service"
+
+// Import Models
 import { Domain } from "@app/models/domain.model"
 
 @Service({ eager: false })

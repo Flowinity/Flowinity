@@ -212,8 +212,8 @@ export class AdminService {
     let mailGenerator = new Mailgen({
       theme: "cerberus",
       product: {
-        name: "TroploPrivateUploader",
-        link: "https://images.flowinity.com"
+        name: config.siteName,
+        link: config.hostnameWithProtocol
       }
     })
     let emailBody = mailGenerator.generate(mail)

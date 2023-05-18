@@ -27,7 +27,7 @@ async function initTPU() {
   const cpuCount: number = os.cpus().length
   const mainWorker: boolean =
     !cluster.worker || cluster.worker?.id % cpuCount === 1
-  if (mainWorker) checkFrontend()
+  if (mainWorker && config.release !== "dev") checkFrontend()
 }
 
 async function checkFrontend() {
