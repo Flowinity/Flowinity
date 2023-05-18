@@ -100,7 +100,8 @@ export class CoreControllerV3 {
         ip: req.ip,
         whitelist: whitelist.find((w) => w.ip === req.ip) || false
       },
-      finishedSetup: true
+      finishedSetup: true,
+      domain: global.domain
     }
   }
 

@@ -13,7 +13,7 @@
         <v-carousel-item
           v-for="image in slideshow"
           :key="image.id"
-          :src="'https://i.troplo.com/i/' + image.attachment.attachment"
+          :src="`https://${$app.domain}/i/${image.attachment.attachment}`"
           contain
         >
           <v-sheet tile>
