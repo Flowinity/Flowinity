@@ -8,6 +8,8 @@ import { CacheService } from "@app/services/cache.service"
 import { Upload } from "@app/models/upload.model"
 import fs from "fs"
 import { Response } from "express"
+import { promisify } from "util"
+import path from "path"
 
 @Service()
 @Controller("/i/")
@@ -50,9 +52,8 @@ export class FileControllerV3 {
       user?.id !== 1 &&
       config.officialInstance
     ) {
-      res.sendFile("/AuthRequired.png", {
-        root: config.storage + "/../../server/app/assets"
-      })
+      const file = path.resolve(appRoot + "/assets/AuthRequired.png")
+      await promisify<string, void>(res.sendFile.bind(res))(file)
       return res
     }
     if (force) {
@@ -64,9 +65,8 @@ export class FileControllerV3 {
       upload.type === "video" ||
       upload.type === "audio"
     ) {
-      res.sendFile("/" + upload.attachment, {
-        root: config.storage
-      })
+      const file = path.resolve(config.storage + "/" + upload.attachment)
+      await promisify<string, void>(res.sendFile.bind(res))(file)
       return res
     } else {
       res.download(

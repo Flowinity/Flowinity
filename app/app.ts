@@ -190,7 +190,7 @@ export class Application {
       validation: true
     })
   }
-  bindRoutes(): void {
+  bindRoutes() {
     this.app.use((req, res, next: NextFunction): void => {
       res.setHeader("X-Powered-By", "TroploPrivateUploader/3.0.0")
       next()
@@ -253,7 +253,7 @@ export class Application {
     this.onServerStart() // TODO: Fix "Promise returned from onServerStart is ignored".
   }
 
-  private config(): void {
+  private config() {
     // Middleware configuration
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }))
@@ -262,7 +262,7 @@ export class Application {
     this.app.set("view engine", "ejs")
   }
 
-  private async onServerStart(): Promise<void> {
+  private async onServerStart() {
     if (config.finishedSetup) {
       await User.update(
         {
