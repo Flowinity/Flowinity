@@ -145,7 +145,7 @@
     "typedi": "0.10.0",
     "ua-parser-js": "^1.0.32",
     "uuid": "^9.0.0",
-    "wrap-ansi": "7.0.0",
+    "wrap-ansi": "7",
     "zod": "^3.21.4"
   },
   "devDependencies": {
@@ -171,5 +171,8 @@
     "tsc-watch": "^6.0.0",
     "tsconfig-paths": "4.1.2",
     "typescript": "^5.0.4"
+  },
+  "resolutions": {
+    "wrap-ansi": "7"
   }
 }
