@@ -1,9 +1,13 @@
 version: "3"
 services:
-  web:
+  tpu:
     build: .
     ports:
       - "34582:34582"
+    volumes:
+      - /var/lib/tpu_server/config:/app/app/config
+      - /var/lib/tpu_server/storage:/app/storage
+      - /var/lib/tpu_server/frontend_build:/app/frontend_build
   redis:
     image: "redis:alpine"
   mariadb:
