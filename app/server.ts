@@ -26,6 +26,7 @@ import { BillingService } from "@app/services/billing.service"
 import { PulseService } from "@app/services/pulse.service"
 import { BadgeService } from "@app/services/badge.service"
 import { MyAnimeListService } from "@app/services/providers/mal.service"
+import { Domain } from "@app/models/domain.model"
 
 @Service({ eager: false })
 export class Server {
@@ -82,13 +83,18 @@ export class Server {
     if (config.finishedSetup) {
       global.redis = redis
       global.queue = require("@app/lib/queue")
+      global.domain = await Domain.findOne({
+        where: { id: 1 }
+      }).then((domain: Domain | null) => {
+        if (domain) return domain.domain
+        else return undefined
+      })
     }
     global.config = this.config
     global.appRoot = process.env.APP_ROOT || ""
     global.rawAppRoot = process.env.RAW_APP_ROOT || ""
     global.dayjs = dayjs
     global.whitelist = ipPrimary
-
     this.server = http.createServer(this.application.app)
     this.server.listen(
       port || Server.normalizePort(this.config?.port || "34582")

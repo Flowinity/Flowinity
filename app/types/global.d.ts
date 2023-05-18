@@ -15,7 +15,8 @@ declare global {
     whitelist: { ip: string; name: string; groups: string[] }[],
     appRoot: string,
     rawAppRoot: string,
-    queue: typeof import("@app/lib/queue").default
+    queue: typeof import("@app/lib/queue").default,
+    domain: string | undefined
 }
 
 export {}

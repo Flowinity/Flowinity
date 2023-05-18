@@ -81,8 +81,8 @@ export default async function (
 
         embeds.push({
           data: {
-            url: "https://i.troplo.com/i/" + upload.attachment,
-            originalURL: "https://i.troplo.com/i/" + upload.attachment,
+            url: `https://${domain}/i/` + upload.attachment,
+            originalURL: `https://${domain}/i/` + upload.attachment,
             width: result.width,
             height: result.height,
             mimeType: result.mime,
@@ -90,41 +90,41 @@ export default async function (
             upload
           },
           type: "image",
-          url: "https://i.troplo.com/i/" + upload.attachment
+          url: `https://${domain}/i/` + upload.attachment
         })
       } else if (upload.type === "video" || upload.type === "audio") {
         embeds.push({
           data: {
-            url: "https://i.troplo.com/i/" + upload.attachment,
-            originalURL: "https://i.troplo.com/i/" + upload.attachment,
+            url: `https://${domain}/i/` + upload.attachment,
+            originalURL: `https://${domain}/i/` + upload.attachment,
             type: "TPU_DIRECT",
             upload
           },
           type: upload.type,
-          url: "https://i.troplo.com/i/" + upload.attachment
+          url: `https://${domain}/i/` + upload.attachment
         })
       } else {
         embeds.push({
           data: {
-            url: "https://i.troplo.com/i/" + upload.attachment,
-            originalURL: "https://i.troplo.com/i/" + upload.attachment,
+            url: `https://${domain}/i/` + upload.attachment,
+            originalURL: `https://${domain}/i/` + upload.attachment,
             type: "TPU_DIRECT",
             upload
           },
           type: "file",
-          url: "https://i.troplo.com/i/" + upload.attachment
+          url: `https://${domain}/i/` + upload.attachment
         })
       }
     } catch {
       embeds.push({
         data: {
-          url: "https://i.troplo.com/i/" + upload.attachment,
-          originalURL: "https://i.troplo.com/i/" + upload.attachment,
+          url: `https://${domain}/i/` + upload.attachment,
+          originalURL: `https://${domain}/i/` + upload.attachment,
           type: "TPU_DIRECT",
           upload
         },
         type: "file",
-        url: "https://i.troplo.com/i/" + upload.attachment
+        url: `https://${domain}/i/` + upload.attachment
       })
     }
   }

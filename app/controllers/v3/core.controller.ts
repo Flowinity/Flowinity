@@ -16,6 +16,8 @@ import { Domain } from "@app/models/domain.model"
 
 @Service()
 @JsonController("/core")
+// For legacy /api/v1/site/state
+@JsonController("/site")
 export class CoreControllerV3 {
   constructor(
     private readonly coreService: CoreService,
