@@ -23,8 +23,8 @@ if (cluster.isMaster) {
   setEnvVariables()
   cluster.schedulingPolicy = cluster.SCHED_RR
   const cpus =
-    process.env.THREADS ||
-    require(global.appRoot + "/config/tpu.json")?.threads ||
+    parseInt(process.env.THREADS || "0") ||
+    global.config?.threads ||
     os.cpus().length
 
   console.info(`Clustering to ${cpus} CPUs`)
