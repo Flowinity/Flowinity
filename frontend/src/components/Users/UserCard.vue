@@ -15,30 +15,30 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import {User} from "@/models/user"
-import UserBanner from "@/components/Users/UserBanner.vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
+import { defineComponent } from "vue";
+import { User } from "@/models/user";
+import UserBanner from "@/components/Users/UserBanner.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "UserCard",
-  components: {UserAvatar, UserBanner},
+  components: { UserAvatar, UserBanner },
   props: ["username", "subtitle"],
   data() {
     return {
       user: null as User | null
-    }
+    };
   },
   methods: {
     async getUser() {
-      const {data} = await this.axios.get(`/user/profile/${this.username}`)
-      this.user = data
+      const { data } = await this.axios.get(`/user/profile/${this.username}`);
+      this.user = data;
     }
   },
   mounted() {
-    this.getUser()
+    this.getUser();
   }
-})
+});
 </script>
 
 <style>

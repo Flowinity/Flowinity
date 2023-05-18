@@ -38,34 +38,34 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "InviteAFriend",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
     return {
       email: ""
-    }
+    };
   },
   methods: {
     async inviteFriend() {
       await this.axios.post("/invites", {
         email: this.email
-      })
-      this.$emit("update:modelValue", false)
-      this.$toast.success("Request received!")
+      });
+      this.$emit("update:modelValue", false);
+      this.$toast.success("Request received!");
     }
   },
   watch: {
     modelValue() {
-      this.email = ""
+      this.email = "";
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

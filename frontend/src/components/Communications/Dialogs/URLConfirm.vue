@@ -10,8 +10,8 @@
         You are about to leave TPU and go to
         <strong>{{ domain }}.</strong>
 
-        <br/>
-        <br/>
+        <br />
+        <br />
         This link is not part of TPU and might be unsafe. Do you want to
         continue?
       </p>
@@ -31,21 +31,21 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "URLConfirmDialog",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   computed: {
     domain() {
-      const url = new URL(this.$chat.dialogs.externalSite.url)
-      return url.hostname
+      const url = new URL(this.$chat.dialogs.externalSite.url);
+      return url.hostname;
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

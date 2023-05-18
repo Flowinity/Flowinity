@@ -172,14 +172,14 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import {Chat} from "@/models/chat"
-import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue"
-import CreateChat from "@/components/Communications/Menus/CreateChat.vue"
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue"
-import {ChatAssociation} from "@/models/chatAssociation"
-import Message from "@/components/Communications/Message.vue"
-import Paginate from "@/components/Core/Paginate.vue"
+import { defineComponent } from "vue";
+import { Chat } from "@/models/chat";
+import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
+import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
+import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
+import { ChatAssociation } from "@/models/chatAssociation";
+import Message from "@/components/Communications/Message.vue";
+import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
@@ -199,7 +199,7 @@ export default defineComponent({
         y: 0,
         item: null as ChatAssociation | null
       }
-    }
+    };
   },
   computed: {
     users() {
@@ -207,60 +207,60 @@ export default defineComponent({
         (a: ChatAssociation, b: ChatAssociation) => {
           const aFriend = this.$friends.friends.find(
             (f) => f.otherUser.id === a.tpuUser?.id
-          )
+          );
           const bFriend = this.$friends.friends.find(
             (f) => f.otherUser.id === b.tpuUser?.id
-          )
-          if (b.tpuUser?.id === this.$user.user?.id) return 2
-          if (a.tpuUser?.id === this.$user.user?.id) return -2
+          );
+          if (b.tpuUser?.id === this.$user.user?.id) return 2;
+          if (a.tpuUser?.id === this.$user.user?.id) return -2;
           if (aFriend && bFriend) {
             if (aFriend.otherUser.status === "online") {
-              return -1
+              return -1;
             } else if (bFriend.otherUser.status === "online") {
-              return 1
+              return 1;
             } else {
-              return 0
+              return 0;
             }
           } else if (aFriend) {
-            return -1
+            return -1;
           } else if (bFriend) {
-            return 1
+            return 1;
           } else {
-            return 0
+            return 0;
           }
         }
-      )
+      );
     },
     menuStyle() {
       return `
         position: absolute;
         top: ${this.contextMenu.y}px;
-        left: ${this.contextMenu.x + 10}px;`
+        left: ${this.contextMenu.x + 10}px;`;
     }
   },
   methods: {
     async handleJump(messageId: number, associationId: number) {
       if (this.$chat.selectedChatId !== associationId) {
-        this.$chat.selectedChatId = associationId
-        this.$router.push(`/communications/${associationId}`)
-        await this.$chat.setChat(associationId)
+        this.$chat.selectedChatId = associationId;
+        this.$router.push(`/communications/${associationId}`);
+        await this.$chat.setChat(associationId);
       }
-      await this.$chat.jumpToMessage(messageId)
+      await this.$chat.jumpToMessage(messageId);
     },
     context(e: any, item: any) {
-      e.preventDefault()
-      this.contextMenu.item = item
-      this.contextMenu.x = e.clientX
-      this.contextMenu.y = e.clientY
-      this.contextMenu.dialog = true
+      e.preventDefault();
+      this.contextMenu.item = item;
+      this.contextMenu.x = e.clientX;
+      this.contextMenu.y = e.clientY;
+      this.contextMenu.dialog = true;
     },
     chatName(chat: Chat) {
       if (chat.type === "direct") {
-        return chat.recipient?.username || "Deleted User"
+        return chat.recipient?.username || "Deleted User";
       } else {
-        return chat.name
+        return chat.name;
       }
     }
   }
-})
+});
 </script>

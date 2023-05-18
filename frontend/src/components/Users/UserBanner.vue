@@ -61,36 +61,36 @@
 </template>
 
 <script lang="ts">
-import "cropperjs/dist/cropper.css"
-import {defineComponent} from "vue"
-import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue"
-import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue"
+import "cropperjs/dist/cropper.css";
+import { defineComponent } from "vue";
+import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
+import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
 
 export default defineComponent({
   name: "UserBanner",
-  components: {PlaceholderCheckerboard, UploadCropper},
+  components: { PlaceholderCheckerboard, UploadCropper },
   props: ["user", "height", "collection", "gold", "darken"],
   emits: ["refreshUser"],
   data() {
     return {
       dialog: false
-    }
+    };
   },
   methods: {
     async uploadBanner(file: File) {
       if (this.user) {
-        const formData = new FormData()
-        formData.append("banner", file)
-        await this.axios.post("/user/upload/banner", formData)
-        this.$emit("refreshUser")
+        const formData = new FormData();
+        formData.append("banner", file);
+        await this.axios.post("/user/upload/banner", formData);
+        this.$emit("refreshUser");
       } else {
-        const formData = new FormData()
-        formData.append("banner", file)
+        const formData = new FormData();
+        formData.append("banner", file);
         await this.axios.post(
           `/collections/${this.collection?.id}/banner`,
           formData
-        )
-        this.$emit("refreshUser")
+        );
+        this.$emit("refreshUser");
       }
     }
   },
@@ -99,37 +99,37 @@ export default defineComponent({
       if (this.user) {
         return this.user.banner
           ? this.$app.domain + this.user.banner
-          : "placeholder"
+          : "placeholder";
       } else if (this.collection) {
         if (this.collection?.image) {
-          return this.$app.domain + this.collection.image
+          return this.$app.domain + this.collection.image;
         } else if (this.collection?.preview?.attachment?.attachment) {
           return (
             this.$app.domain + this.collection.preview.attachment.attachment
-          )
+          );
         } else {
-          return "placeholder"
+          return "placeholder";
         }
       } else {
-        return "placeholder"
+        return "placeholder";
       }
     },
     hasRealBanner() {
       if (this.user) {
-        return this.user.banner
+        return this.user.banner;
       } else if (this.collection) {
-        return this.collection.image
+        return this.collection.image;
       }
     },
     canEdit() {
       if (this.user) {
-        return this.user.id === this.$user.user?.id
+        return this.user.id === this.$user.user?.id;
       } else if (this.collection) {
-        return this.collection.permissionsMetadata?.configure
+        return this.collection.permissionsMetadata?.configure;
       }
     }
   }
-})
+});
 </script>
 
 <style scoped>

@@ -10,10 +10,7 @@
   "storage": "storage",
   "jitsiToken": null,
   "registrations": true,
-  "modules": [
-    "colubrina",
-    "mail"
-  ],
+  "modules": ["colubrina", "mail"],
   "mediaProxySecret": null,
   "weatherApiKey": null,
   "redis": {

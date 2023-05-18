@@ -10,9 +10,18 @@
 </template>
 
 <script lang="ts">
-import {Line} from "vue-chartjs"
-import {CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip} from "chart.js"
-import {defineComponent} from "vue"
+import { Line } from "vue-chartjs";
+import {
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip
+} from "chart.js";
+import { defineComponent } from "vue";
 
 ChartJS.register(
   Title,
@@ -22,11 +31,11 @@ ChartJS.register(
   LinearScale,
   LineElement,
   PointElement
-)
+);
 
 export default defineComponent({
   name: "LineChart",
-  components: {Line},
+  components: { Line },
   props: ["data", "maxHeight"],
   computed: {
     chartOptions() {
@@ -36,11 +45,11 @@ export default defineComponent({
         title: {
           display: false
         }
-      }
+      };
     }
   },
   mounted() {
-    console.log(this.data)
+    console.log(this.data);
   }
-})
+});
 </script>

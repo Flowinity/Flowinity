@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "ProfileInfo",
@@ -61,14 +61,14 @@ export default defineComponent({
   }),
   methods: {
     async save() {
-      this.settings.description.loading = true
-      await this.$user.save()
-      if (this.user) this.user.description = this.$user.user?.description
-      this.settings.description.value = false
-      this.settings.description.loading = false
+      this.settings.description.loading = true;
+      await this.$user.save();
+      if (this.user) this.user.description = this.$user.user?.description;
+      this.settings.description.value = false;
+      this.settings.description.loading = false;
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

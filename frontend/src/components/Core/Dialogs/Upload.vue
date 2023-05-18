@@ -44,12 +44,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "UploadDialog",
-  components: {CoreDialog},
+  components: { CoreDialog },
   emits: ["update:modelValue", "upload"],
   props: ["modelValue"],
   data() {
@@ -60,18 +60,18 @@ export default defineComponent({
         "Want to automate your file uploading?"
       ],
       tip: ""
-    }
+    };
   },
   methods: {
     async upload() {
-      this.$app.dialogs.upload.files = this.files
-      await this.$app.upload()
+      this.$app.dialogs.upload.files = this.files;
+      await this.$app.upload();
     }
   },
   mounted() {
-    this.tip = this.tips[Math.floor(Math.random() * this.tips.length)]
+    this.tip = this.tips[Math.floor(Math.random() * this.tips.length)];
   }
-})
+});
 </script>
 
 <style scoped></style>

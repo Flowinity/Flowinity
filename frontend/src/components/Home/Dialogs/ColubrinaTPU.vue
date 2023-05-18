@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "ColubrinaTPU",
@@ -42,7 +42,7 @@ export default defineComponent({
     }
   },
   emits: ["update:modelValue"]
-})
+});
 </script>
 
 <style scoped></style>

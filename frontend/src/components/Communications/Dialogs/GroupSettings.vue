@@ -4,7 +4,7 @@
     max-width="800px"
     @update:modelValue="$emit('update:modelValue', $event)"
   >
-    <UploadCropper v-model="groupIcon" @finish="uploadIcon"/>
+    <UploadCropper v-model="groupIcon" @finish="uploadIcon" />
     <template v-slot:title>Group Settings</template>
     <template v-if="$chat.dialogs.groupSettings.item">
       <v-card-text>
@@ -47,7 +47,7 @@
             :key="member.id"
           >
             <template v-slot:prepend>
-              <UserAvatar :user="member.user"/>
+              <UserAvatar :user="member.user" />
             </template>
             <v-list-item-title class="ml-3">
               {{ member.user?.username || "Deleted User" }}
@@ -78,7 +78,7 @@
           * About roles: Admins have the same abilities as the owner except they
           cannot delete the group, or modify users with the owner rank, if a
           user is kicked or leaves, their rank will be reset to member.
-          <br/>
+          <br />
           THE OWNER RANK CANNOT BE REMOVED FROM THE USER!
         </small>
       </v-card-text>
@@ -87,15 +87,15 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
-import CreateChat from "@/components/Communications/Menus/CreateChat.vue"
-import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
+import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "ColubrinaGroupSettingsDialog",
-  components: {CoreDialog, UploadCropper, CreateChat, UserAvatar},
+  components: { CoreDialog, UploadCropper, CreateChat, UserAvatar },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
@@ -104,7 +104,7 @@ export default defineComponent({
       add: false,
       groupIcon: false,
       groupIconLoading: false
-    }
+    };
   },
   computed: {
     ranks() {
@@ -112,46 +112,46 @@ export default defineComponent({
         {
           text: "Owner",
           value: "owner",
-          props: {disabled: true}
+          props: { disabled: true }
         },
         {
           text: "Admin",
           value: "admin",
-          props: {disabled: false}
+          props: { disabled: false }
         },
         {
           text: "Member",
           value: "member",
-          props: {disabled: false}
+          props: { disabled: false }
         }
-      ]
+      ];
       if (
         this.$chat.dialogs.groupSettings.item?.association?.rank === "owner"
       ) {
-        ranks[0].props.disabled = false
+        ranks[0].props.disabled = false;
       }
-      return ranks
+      return ranks;
     }
   },
   methods: {
     async uploadIcon(file: File) {
       if (this.$chat.dialogs.groupSettings.item) {
-        this.groupIconLoading = true
-        const formData = new FormData()
-        formData.append("icon", file)
+        this.groupIconLoading = true;
+        const formData = new FormData();
+        formData.append("icon", file);
         await this.axios.post(
           `/chats/${this.$chat.dialogs.groupSettings.item.association?.id}/icon`,
           formData
-        )
-        this.groupIcon = false
-        this.groupIconLoading = false
+        );
+        this.groupIcon = false;
+        this.groupIconLoading = false;
       }
     },
     async removeIcon() {
       if (this.$chat.dialogs.groupSettings.item) {
         await this.axios.delete(
           `/chats/${this.$chat.dialogs.groupSettings.item.association?.id}/icon`
-        )
+        );
       }
     },
     async changeRank(id: number, rank: string) {
@@ -160,19 +160,19 @@ export default defineComponent({
         {
           rank
         }
-      )
+      );
     },
     async removeUser(id: number) {
       await this.axios.delete(
         `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users/${id}`
-      )
+      );
       if (this.$chat.dialogs.groupSettings.item)
         this.$chat.dialogs.groupSettings.item.users.splice(
           this.$chat.dialogs.groupSettings.item.users.findIndex(
             (user) => user.id === id
           ),
           1
-        )
+        );
     },
     async addUsers(users: number[]) {
       await this.axios.post(
@@ -180,10 +180,10 @@ export default defineComponent({
         {
           users
         }
-      )
+      );
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

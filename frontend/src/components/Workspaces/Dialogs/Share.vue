@@ -41,12 +41,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "WorkspaceShareDialog",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
@@ -54,27 +54,27 @@ export default defineComponent({
       share: false,
       shareLink: "",
       loading: false
-    }
+    };
   },
   methods: {
     async update() {
-      const {data} = await this.axios.patch(
+      const { data } = await this.axios.patch(
         "/notes/" + this.$route.params.id + "/share"
-      )
-      this.shareLink = data.shareLink
-      this.share = data.shareLink !== null
+      );
+      this.shareLink = data.shareLink;
+      this.share = data.shareLink !== null;
     }
   },
   async mounted() {
-    const {data} = await this.axios.get("/notes/" + this.$route.params.id, {
+    const { data } = await this.axios.get("/notes/" + this.$route.params.id, {
       headers: {
         noToast: true
       }
-    })
-    this.shareLink = data.shareLink
-    this.share = data.shareLink !== null
+    });
+    this.shareLink = data.shareLink;
+    this.share = data.shareLink !== null;
   }
-})
+});
 </script>
 
 <style scoped></style>

@@ -66,12 +66,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "CreateAPIKey",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["modelValue", "type"],
   emits: ["update:modelValue", "create"],
   data() {
@@ -155,38 +155,38 @@ export default defineComponent({
       expiry: "",
       scopes: ["uploads.create", "user.view"],
       password: ""
-    }
+    };
   },
   methods: {
     async addAPIKey() {
-      const {data} = await this.axios.post("/security/keys", {
+      const { data } = await this.axios.post("/security/keys", {
         name: this.name,
         scopes: this.scopes,
         expiry: this.expiry
-      })
-      this.key = data.token
-      this.$emit("create", data)
+      });
+      this.key = data.token;
+      this.$emit("create", data);
     },
     async addAlternatePassword() {
-      const {data} = await this.axios.post("/security/passwords", {
+      const { data } = await this.axios.post("/security/passwords", {
         name: this.name,
         scopes: this.scopes,
         password: this.password,
         totp: false
-      })
-      this.$emit("create", data)
-      this.$emit("update:modelValue", false)
+      });
+      this.$emit("create", data);
+      this.$emit("update:modelValue", false);
     }
   },
   watch: {
     modelValue() {
-      this.key = ""
-      this.name = ""
-      this.expiry = ""
-      this.scopes = ["uploads.create", "user.view"]
+      this.key = "";
+      this.name = "";
+      this.expiry = "";
+      this.scopes = ["uploads.create", "user.view"];
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

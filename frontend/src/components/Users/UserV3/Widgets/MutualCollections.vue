@@ -14,14 +14,14 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CollectionCard from "@/components/Collections/CollectionCard.vue"
+import { defineComponent } from "vue";
+import CollectionCard from "@/components/Collections/CollectionCard.vue";
 
 export default defineComponent({
   name: "MutualCollections",
-  components: {CollectionCard},
+  components: { CollectionCard },
   props: ["user", "username"]
-})
+});
 </script>
 
 <style scoped></style>

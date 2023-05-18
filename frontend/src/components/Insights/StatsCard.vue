@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "InsightsStatsCard",
@@ -58,39 +58,39 @@ export default defineComponent({
           return {
             icon: "mdi-arrow-up-circle",
             color: "success"
-          }
+          };
         } else if (diff < 0) {
           return {
             icon: "mdi-arrow-down-circle",
             color: "red"
-          }
+          };
         } else {
           return {
             icon: "mdi-minus-circle",
             color: "warning"
-          }
+          };
         }
       } else {
         if (diff > 0) {
           return {
             icon: "mdi-arrow-up-circle",
             color: "red"
-          }
+          };
         } else if (diff < 0) {
           return {
             icon: "mdi-arrow-down-circle",
             color: "success"
-          }
+          };
         } else {
           return {
             icon: "mdi-minus-circle",
             color: "warning"
-          }
+          };
         }
       }
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

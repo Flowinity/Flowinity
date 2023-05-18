@@ -67,7 +67,7 @@
     <v-card-text>
       {{ $t("settings.home.totp.scan") }}
     </v-card-text>
-    <QrcodeVue :size="250" :value="url" class="ml-4"/>
+    <QrcodeVue :size="250" :value="url" class="ml-4" />
     <v-card-text>
       {{ $t("settings.home.totp.cantScan") }}
       <code>
@@ -97,7 +97,7 @@
       </v-btn>
     </v-card-actions>
     <v-card-text>
-      <v-img :src="url"/>
+      <v-img :src="url" />
     </v-card-text>
     <v-card-text>
       <v-text-field
@@ -112,8 +112,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import QrcodeVue from "qrcode.vue"
+import { defineComponent } from "vue";
+import QrcodeVue from "qrcode.vue";
 
 export default defineComponent({
   name: "TwoFactor",
@@ -129,58 +129,58 @@ export default defineComponent({
       password: "",
       valid: false,
       url: ""
-    }
+    };
   },
   methods: {
     async disable() {
       try {
-        this.loading = true
+        this.loading = true;
         await this.axios.patch("/user/totp", {
           code: this.code,
           password: this.password,
           action: "disable"
-        })
-        this.$toast.success("2FA has been disabled.")
-        if (this.$user.user) this.$user.user.totpEnable = false
-        this.loading = false
+        });
+        this.$toast.success("2FA has been disabled.");
+        if (this.$user.user) this.$user.user.totpEnable = false;
+        this.loading = false;
       } catch {
-        this.loading = false
+        this.loading = false;
       }
     },
     async enable() {
       try {
-        this.loading = true
-        const {data} = await this.axios.patch("/user/totp", {
+        this.loading = true;
+        const { data } = await this.axios.patch("/user/totp", {
           password: this.password,
           action: "enable"
-        })
-        this.secret = data.secret
-        this.url = data.url
-        this.stage = 1
-        this.loading = false
+        });
+        this.secret = data.secret;
+        this.url = data.url;
+        this.stage = 1;
+        this.loading = false;
       } catch {
-        this.loading = false
+        this.loading = false;
       }
     },
     async validate() {
       try {
-        this.loading = true
+        this.loading = true;
         await this.axios.patch("/user/totp", {
           code: this.code,
           action: "validate"
-        })
-        this.$toast.success("2FA has been enabled.")
-        if (this.$user.user) this.$user.user.totpEnable = true
-        this.loading = false
-        this.stage = 0
-        this.code = ""
-        this.password = ""
+        });
+        this.$toast.success("2FA has been enabled.");
+        if (this.$user.user) this.$user.user.totpEnable = true;
+        this.loading = false;
+        this.stage = 0;
+        this.code = "";
+        this.password = "";
       } catch {
-        this.loading = false
+        this.loading = false;
       }
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

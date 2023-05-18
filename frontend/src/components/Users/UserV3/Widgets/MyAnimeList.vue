@@ -134,20 +134,20 @@
       </v-list>
     </template>
     <template v-else>
-      <MessageSkeleton/>
+      <MessageSkeleton />
     </template>
   </v-card>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue"
-import {MalUser} from "@/types/mal/user"
-import {MalAnime} from "@/types/mal/anime"
+import { defineComponent } from "vue";
+import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
+import { MalUser } from "@/types/mal/user";
+import { MalAnime } from "@/types/mal/anime";
 
 export default defineComponent({
   name: "MyAnimeList",
-  components: {MessageSkeleton},
+  components: { MessageSkeleton },
   props: ["user", "component"],
   data() {
     return {
@@ -178,20 +178,20 @@ export default defineComponent({
           value: "plan_to_watch"
         }
       ]
-    }
+    };
   },
   computed: {
     perPage() {
-      return this.component?.props?.display || 3
+      return this.component?.props?.display || 3;
     },
     computedRecent() {
       return this.recent.slice(
         (this.page - 1) * this.perPage,
         this.page * this.perPage
-      )
+      );
     },
     pages() {
-      return Math.ceil(this.recent.length / this.perPage)
+      return Math.ceil(this.recent.length / this.perPage);
     }
   },
   methods: {
@@ -209,50 +209,50 @@ export default defineComponent({
           score,
           status
         }
-      )
-      this.getMAL(false)
+      );
+      this.getMAL(false);
     },
     getStatusColor(status: string) {
       switch (status) {
         case "completed":
-          return "info"
+          return "info";
         case "dropped":
-          return "error"
+          return "error";
         case "on_hold":
-          return "warning"
+          return "warning";
         case "plan_to_watch":
-          return "indigo"
+          return "indigo";
         case "watching":
-          return "success"
+          return "success";
         default:
-          return "grey"
+          return "grey";
       }
     },
     async getMAL(load = true) {
       if (load) {
-        this.loading = true
+        this.loading = true;
       } else {
-        this.partialLoading = true
+        this.partialLoading = true;
       }
-      const {data} = await this.axios.get(
+      const { data } = await this.axios.get(
         `/providers/userv3/mal/${this.user?.username}`,
         {
           headers: {
             noToast: true
           }
         }
-      )
-      if (!data.data) return
-      this.recent = data.data
-      this.malUser = data.user
-      this.loading = false
-      this.partialLoading = false
+      );
+      if (!data.data) return;
+      this.recent = data.data;
+      this.malUser = data.user;
+      this.loading = false;
+      this.partialLoading = false;
     }
   },
   mounted() {
-    this.getMAL()
+    this.getMAL();
   }
-})
+});
 </script>
 
 <style scoped></style>

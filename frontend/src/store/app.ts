@@ -284,38 +284,38 @@ export const useAppStore = defineStore("app", {
     } as AppState),
   getters: {
     rail() {
-      const experiments = useExperimentsStore()
+      const experiments = useExperimentsStore();
       return (
         experiments.experiments.RAIL_SIDEBAR &&
         !vuetify.display.xlAndUp.value &&
         !vuetify.display.mobile.value
-      )
+      );
     },
     weatherTemp(state: AppState) {
-      const temp = state.weather.data?.temp
-      const user = useUserStore()?.user
-      if (!user?.weatherUnit) return 0
+      const temp = state.weather.data?.temp;
+      const user = useUserStore()?.user;
+      if (!user?.weatherUnit) return 0;
       if (user?.weatherUnit === "kelvin") {
         // round to 2 decimal places
-        return Math.round((temp + 273.15) * 100) / 100
+        return Math.round((temp + 273.15) * 100) / 100;
       } else if (user?.weatherUnit === "fahrenheit") {
-        return Math.round(((temp * 9) / 5 + 32) * 100) / 100
+        return Math.round(((temp * 9) / 5 + 32) * 100) / 100;
       } else {
-        return temp
+        return temp;
       }
     }
   },
   actions: {
     toggleWorkspace() {
-      this.workspaceDrawer = !this.workspaceDrawer
+      this.workspaceDrawer = !this.workspaceDrawer;
       if (vuetify.display.mobile.value && this.workspaceDrawer) {
-        this.mainDrawer = false
+        this.mainDrawer = false;
       }
     },
     toggleMain() {
-      this.mainDrawer = !this.mainDrawer
+      this.mainDrawer = !this.mainDrawer;
       if (vuetify.display.mobile.value && this.mainDrawer) {
-        this.workspaceDrawer = false
+        this.workspaceDrawer = false;
       }
     },
     populateQuickSwitcher() {
@@ -356,96 +356,95 @@ export const useAppStore = defineStore("app", {
           route: "/workspaces",
           name: "Workspaces"
         }
-      ]
-      const chats = useChatStore()
+      ];
+      const chats = useChatStore();
       for (const chat of chats.chats) {
         value.push({
           route: `/communications/${chat.association?.id}`,
           name: chats.getChatName(chat)
-        })
+        });
       }
-      const collections = useCollectionsStore()
+      const collections = useCollectionsStore();
       for (const collection of collections.items) {
         value.push({
           route: `/collections/${collection.id}`,
           name: collection.name
-        })
+        });
       }
-      const workspaces = useWorkspacesStore()
+      const workspaces = useWorkspacesStore();
       for (const workspace of workspaces.recentOverall) {
         value.push({
           route: `/workspaces/${workspace.id}`,
           name: workspace.name
-        })
+        });
       }
-      this.quickSwitcher = value
+      this.quickSwitcher = value;
     },
     async deleteItem(item: Upload | undefined) {
-      if (!item) return
-      await axios.delete("/gallery/" + item.id)
+      if (!item) return;
+      await axios.delete("/gallery/" + item.id);
     },
     async getWeather() {
       try {
-        const {data} = await axios.get("/core/weather")
-        this.weather.data = data
-        this.weather.loading = false
-      } catch {
-      }
+        const { data } = await axios.get("/core/weather");
+        this.weather.data = data;
+        this.weather.loading = false;
+      } catch {}
     },
     async init() {
-      this.loading = true
-      const core = localStorage.getItem("coreStore")
+      this.loading = true;
+      const core = localStorage.getItem("coreStore");
       if (core) {
         try {
-          this.site = JSON.parse(core)
-          this.loading = false
+          this.site = JSON.parse(core);
+          this.loading = false;
         } catch {
           //
         }
       }
-      const {data} = await axios.get("/core")
-      this.site = data
-      localStorage.setItem("coreStore", JSON.stringify(data))
-      this.loading = false
+      const { data } = await axios.get("/core");
+      this.site = data;
+      localStorage.setItem("coreStore", JSON.stringify(data));
+      this.loading = false;
     },
     async upload() {
       try {
-        const toast = useToast()
+        const toast = useToast();
         if (!this.dialogs.upload.files.length)
-          toast.error("No files selected!")
-        const formData = new FormData()
+          toast.error("No files selected!");
+        const formData = new FormData();
         for (const file of this.dialogs.upload.files) {
-          formData.append("attachments", file)
+          formData.append("attachments", file);
         }
-        this.dialogs.upload.loading = true
-        const {data} = await axios.post("/gallery/site", formData, {
+        this.dialogs.upload.loading = true;
+        const { data } = await axios.post("/gallery/site", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           },
           onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-            if (!progressEvent.total) return
+            if (!progressEvent.total) return;
             this.dialogs.upload.percentage = Math.round(
               (progressEvent.loaded / progressEvent.total) * 100
-            )
+            );
           }
-        })
+        });
         if (this.dialogs.upload.files.length === 1) {
-          functions.copy(data[0].url)
+          functions.copy(data[0].url);
           toast.success(
             "Successfully uploaded file and copied TPU link to clipboard!"
-          )
+          );
         } else {
-          toast.success("Successfully uploaded files!")
+          toast.success("Successfully uploaded files!");
         }
-        this.dialogs.upload.value = false
-        this.dialogs.upload.files = []
-        this.dialogs.upload.percentage = 0
-        this.dialogs.upload.loading = false
+        this.dialogs.upload.value = false;
+        this.dialogs.upload.files = [];
+        this.dialogs.upload.percentage = 0;
+        this.dialogs.upload.loading = false;
       } catch (e) {
-        this.dialogs.upload.percentage = 0
-        this.dialogs.upload.loading = false
-        return e
+        this.dialogs.upload.percentage = 0;
+        this.dialogs.upload.loading = false;
+        return e;
       }
     }
   }
-})
+});

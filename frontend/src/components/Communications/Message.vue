@@ -241,13 +241,13 @@
   </div>
 </template>
 <script lang="ts">
-import {defineComponent} from "vue"
-import CommunicationsInput from "@/components/Communications/Input.vue"
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue"
-import MessageActions from "@/components/Communications/MessageActions.vue"
-import Embed from "@/components/Communications/Embed.vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
-import ReadReceipt from "@/components/Communications/ReadReceipt.vue"
+import { defineComponent } from "vue";
+import CommunicationsInput from "@/components/Communications/Input.vue";
+import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
+import MessageActions from "@/components/Communications/MessageActions.vue";
+import Embed from "@/components/Communications/Embed.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
 
 export default defineComponent({
   name: "Message",
@@ -271,31 +271,31 @@ export default defineComponent({
   data() {
     return {
       avoid: false
-    }
+    };
   },
   methods: {
     context(e: any) {
-      e.preventDefault()
-      this.$chat.dialogs.message.message = this.message
-      this.$chat.dialogs.message.x = e.clientX
-      this.$chat.dialogs.message.y = e.clientY
-      this.$chat.dialogs.message.value = true
+      e.preventDefault();
+      this.$chat.dialogs.message.message = this.message;
+      this.$chat.dialogs.message.x = e.clientX;
+      this.$chat.dialogs.message.y = e.clientY;
+      this.$chat.dialogs.message.value = true;
     }
   },
   computed: {
     renderableReadReceipts() {
-      if (this.$vuetify.display.mobile) return 2
-      if (this.$vuetify.display.sm) return 10
-      if (this.$vuetify.display.md) return 10
-      if (this.$vuetify.display.xl) return 15
-      if (this.$vuetify.display.xxl) return 20
-      return 10
+      if (this.$vuetify.display.mobile) return 2;
+      if (this.$vuetify.display.sm) return 10;
+      if (this.$vuetify.display.md) return 10;
+      if (this.$vuetify.display.xl) return 15;
+      if (this.$vuetify.display.xxl) return 20;
+      return 10;
     },
     mentions() {
-      return !!this.message.content.includes(`<@${this.$user.user?.id}>`)
+      return !!this.message.content.includes(`<@${this.$user.user?.id}>`);
     }
   }
-})
+});
 </script>
 
 <style>

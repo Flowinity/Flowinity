@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Notifications",
@@ -52,14 +52,14 @@ export default defineComponent({
   emits: ["update:modelValue"],
   methods: {
     async dismissNotifications(e: boolean) {
-      if (e) return
-      await this.axios.patch("/user/notifications")
+      if (e) return;
+      await this.axios.patch("/user/notifications");
       this.$user.user?.notifications.forEach((notification) => {
-        notification.dismissed = true
-      })
+        notification.dismissed = true;
+      });
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

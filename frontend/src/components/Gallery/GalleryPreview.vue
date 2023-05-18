@@ -33,10 +33,10 @@
       height="220"
       style="width: 100%"
     >
-      <source :src="$app.domain + item.attachment" type="video/mp4"/>
+      <source :src="$app.domain + item.attachment" type="video/mp4" />
     </video>
     <audio v-else-if="item.type === 'audio'" controls>
-      <source :src="$app.domain + item.attachment" type="audio/mpeg"/>
+      <source :src="$app.domain + item.attachment" type="audio/mpeg" />
     </audio>
     <v-card
       v-else
@@ -58,7 +58,7 @@ export default {
       required: true
     }
   }
-}
+};
 </script>
 
 <style scoped></style>

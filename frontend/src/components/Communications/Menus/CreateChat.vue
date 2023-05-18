@@ -13,7 +13,7 @@
       <v-card-title class="text-h6">Select Friends</v-card-title>
       <v-card-subtitle>
         You can friend people from their profile.
-        <br/>
+        <br />
         Adding 2 or more users will create a group chat.
       </v-card-subtitle>
       <v-list max-height="400">
@@ -70,13 +70,13 @@
 </template>
 
 <script lang="ts">
-import {Friend} from "@/models/friend"
-import {defineComponent} from "vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
+import { Friend } from "@/models/friend";
+import { defineComponent } from "vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "CreateChat",
-  components: {UserAvatar},
+  components: { UserAvatar },
   props: {
     modelValue: {
       type: Boolean,
@@ -93,20 +93,20 @@ export default defineComponent({
     return {
       search: "",
       selected: [] as number[]
-    }
+    };
   },
   methods: {
     add(id: number) {
       if (this.selected.includes(id)) {
-        this.selected = this.selected.filter((i) => i !== id)
+        this.selected = this.selected.filter((i) => i !== id);
       } else {
-        this.selected.push(id)
+        this.selected.push(id);
       }
     },
     async createChat() {
-      const data = await this.$chat.createChat(this.selected)
-      this.$router.push(`/communications/${data.association.id}`)
-      this.$emit("update:modelValue", false)
+      const data = await this.$chat.createChat(this.selected);
+      this.$router.push(`/communications/${data.association.id}`);
+      this.$emit("update:modelValue", false);
     }
   },
   computed: {
@@ -115,10 +115,10 @@ export default defineComponent({
         friend.otherUser.username
           .toLowerCase()
           .includes(this.search.toLowerCase())
-      ) as Friend[]
+      ) as Friend[];
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

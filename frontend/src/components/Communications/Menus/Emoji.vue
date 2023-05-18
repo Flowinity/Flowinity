@@ -17,7 +17,7 @@
           <v-window v-model="tab">
             <v-window-item v-for="category in categories" :value="category.key">
               <v-card class="elevation-0" color="transparent" max-width="300">
-                <v-text-field v-model="search" label="Search"/>
+                <v-text-field v-model="search" label="Search" />
                 <v-row>
                   <v-col v-for="emoji in emojis" :key="emoji.hexcode">
                     <v-btn
@@ -46,11 +46,11 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 //@ts-ignore
-import {Notomoji} from "@svgmoji/noto"
+import { Notomoji } from "@svgmoji/noto";
 //@ts-ignore
-import data from "../../../assets/compact.raw.json"
+import data from "../../../assets/compact.raw.json";
 
 export default defineComponent({
   name: "EmojiPicker",
@@ -112,20 +112,20 @@ export default defineComponent({
           u: "1f1e6-1f1e8"
         }
       ]
-    }
+    };
   },
   computed: {
     emojis() {
-      const filtered = data.filter((emoji: any) => emoji.group === this.tab)
+      const filtered = data.filter((emoji: any) => emoji.group === this.tab);
       if (this.search) {
         return filtered.filter((emoji: any) =>
           emoji.label.includes(this.search)
-        )
+        );
       }
-      return filtered
+      return filtered;
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

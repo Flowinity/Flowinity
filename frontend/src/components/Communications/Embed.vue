@@ -38,7 +38,7 @@
       </v-card-text>
       <v-card-actions class="text-grey">
         {{ $functions.fileSize(embed.data.upload.fileSize) }}
-        <v-spacer/>
+        <v-spacer />
         <v-btn
           :href="`https://i.troplo.com/i/${embed.data?.upload?.attachment}`"
           icon
@@ -68,19 +68,19 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Embed",
   props: ["embed"],
   computed: {
     width() {
-      if (this.$vuetify.display.width < 600) return undefined
-      if (this.$vuetify.display.width <= 1366) return 350
-      return 700
+      if (this.$vuetify.display.width < 600) return undefined;
+      if (this.$vuetify.display.width <= 1366) return 350;
+      return 700;
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

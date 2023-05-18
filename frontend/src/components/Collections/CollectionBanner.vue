@@ -64,8 +64,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import {CollectionCache} from "@/types/collection"
+import { defineComponent } from "vue";
+import { CollectionCache } from "@/types/collection";
 
 export default defineComponent({
   name: "CollectionBanner",
@@ -78,15 +78,15 @@ export default defineComponent({
   computed: {
     collectionImage(): string {
       if (this.collection?.image) {
-        return this.$app.domain + this.collection.image
+        return this.$app.domain + this.collection.image;
       } else if (this.collection?.preview?.attachment?.attachment) {
-        return this.$app.domain + this.collection.preview.attachment.attachment
+        return this.$app.domain + this.collection.preview.attachment.attachment;
       } else {
-        return "https://i.troplo.com/i/a050d6f271c3.png"
+        return "https://i.troplo.com/i/a050d6f271c3.png";
       }
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

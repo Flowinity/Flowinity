@@ -40,15 +40,15 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import HoverChip from "@/components/Core/HoverChip.vue"
+import { defineComponent } from "vue";
+import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
   name: "CommunicationsInput",
-  components: {HoverChip},
+  components: { HoverChip },
   props: ["modelValue", "editing"],
   emits: ["update:modelValue", "sendMessage", "edit"]
-})
+});
 </script>
 
 <style scoped></style>

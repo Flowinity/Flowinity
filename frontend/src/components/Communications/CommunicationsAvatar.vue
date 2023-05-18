@@ -33,21 +33,21 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "CommunicationsAvatar",
   props: ["user", "chat", "status"],
   computed: {
     friendStatus() {
-      if (!this.user) return
+      if (!this.user) return;
       if (this.user.id === this.$user.user?.id)
-        return this.$user.user?.storedStatus
+        return this.$user.user?.storedStatus;
       return this.$friends.friends.find((f) => f.friendId === this.user.id)
-        ?.otherUser?.status
+        ?.otherUser?.status;
     }
   }
-})
+});
 </script>
 
 <style></style>

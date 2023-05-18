@@ -42,34 +42,34 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import UserBanner from "@/components/Users/UserBanner.vue"
-import UserBadges from "@/components/Users/UserBadges.vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
+import { defineComponent } from "vue";
+import UserBanner from "@/components/Users/UserBanner.vue";
+import UserBadges from "@/components/Users/UserBadges.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "ColubrinaUserMenu",
-  components: {UserAvatar, UserBadges, UserBanner},
+  components: { UserAvatar, UserBadges, UserBanner },
   computed: {
     user() {
       if (this.$chat.dialogs.userMenu.user?.id === this.$user.user?.id)
-        return this.$user.user
+        return this.$user.user;
       return (
         this.$friends.friends.find(
           (friend) =>
             friend.otherUser.username === this.$chat.dialogs.userMenu.username
         )?.otherUser || this.$chat.dialogs.userMenu.user
-      )
+      );
     }
   },
   methods: {
     expand() {
-      this.$chat.dialogs.user.username = this.$chat.dialogs.userMenu.username
-      this.$chat.dialogs.user.value = true
-      this.$chat.dialogs.userMenu.value = false
+      this.$chat.dialogs.user.username = this.$chat.dialogs.userMenu.username;
+      this.$chat.dialogs.user.value = true;
+      this.$chat.dialogs.userMenu.value = false;
     }
   }
-})
+});
 </script>
 
 <style scoped>

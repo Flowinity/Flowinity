@@ -81,11 +81,11 @@
 </template>
 
 <script lang="ts">
-import StatsCard from "@/components/Dashboard/StatsCard.vue"
+import StatsCard from "@/components/Dashboard/StatsCard.vue";
 
 export default {
   name: "StatsWidget",
-  components: {StatsCard},
+  components: { StatsCard },
   props: {
     cols: {
       type: Number,
@@ -108,7 +108,7 @@ export default {
       default: 4
     }
   }
-}
+};
 </script>
 
 <style scoped></style>

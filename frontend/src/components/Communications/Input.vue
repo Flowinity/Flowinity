@@ -154,13 +154,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import GalleryCore from "@/components/Gallery/GalleryCore.vue"
-import InlineGallery from "@/components/Communications/InlineGallery.vue"
-import Mentionable from "@/components/Core/Mentionable.vue"
-import EmojiPicker from "@/components/Communications/Menus/Emoji.vue"
-import emoji from "@/components/Communications/Menus/Emoji.vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
+import { defineComponent } from "vue";
+import GalleryCore from "@/components/Gallery/GalleryCore.vue";
+import InlineGallery from "@/components/Communications/InlineGallery.vue";
+import Mentionable from "@/components/Core/Mentionable.vue";
+import EmojiPicker from "@/components/Communications/Menus/Emoji.vue";
+import emoji from "@/components/Communications/Menus/Emoji.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "CommunicationsInput",
@@ -186,36 +186,36 @@ export default defineComponent({
       menu: false,
       items: [] as any,
       emojiPicker: false
-    }
+    };
   },
   computed: {
     emoji() {
-      return emoji
+      return emoji;
     },
     users() {
-      if (!this.$chat.selectedChat?.users) return []
+      if (!this.$chat.selectedChat?.users) return [];
       return this.$chat.selectedChat?.users.map((user: any) => {
         return {
           label: user.user?.username,
           value: user.user?.id
-        }
-      })
+        };
+      });
     }
   },
   methods: {
     focus() {
       //@ts-ignore
-      this.$refs?.textarea?.focus()
+      this.$refs?.textarea?.focus();
     },
     handleClick() {
       //@ts-ignore
-      this.$refs?.uploadInput?.click()
+      this.$refs?.uploadInput?.click();
     },
     onOpen(key: string) {
-      this.items = key === "@" ? this.$chat.selectedChat?.users : []
+      this.items = key === "@" ? this.$chat.selectedChat?.users : [];
     }
   }
-})
+});
 </script>
 
 <style>

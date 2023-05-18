@@ -410,25 +410,25 @@
 </template>
 
 <script lang="ts">
-import HoverChip from "@/components/Core/HoverChip.vue"
-import {defineComponent} from "vue"
+import HoverChip from "@/components/Core/HoverChip.vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "UserBadges",
   methods: {
     crash() {
-      throw "deez"
+      throw "deez";
     },
     async handleClick(badge: any) {
       if (badge.name === ":skull:") {
-        this.crash()
+        this.crash();
       } else if (badge.name === "Click me") {
-        await this.axios.head("/user/getRekt")
-        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank")
+        await this.axios.head("/user/getRekt");
+        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
       }
     }
   },
-  components: {HoverChip},
+  components: { HoverChip },
   props: ["user", "primaryColor"],
   computed: {
     rank() {
@@ -438,68 +438,68 @@ export default defineComponent({
         this.user.stats?.collectionItems / this.user.stats?.uploads >= 0.99 &&
         this.user.stats?.collections >= 100
       ) {
-        return "god"
+        return "god";
       } else if (
         this.user.stats?.uploads >= 50000 &&
         this.user.stats?.pulse >= 72 &&
         this.user.stats?.collectionItems / this.user.stats?.uploads >= 0.9 &&
         this.user.stats?.collections >= 25
       ) {
-        return "champion"
+        return "champion";
       } else if (
         this.user.stats?.uploads >= 10000 &&
         this.user.stats?.pulse >= 69 &&
         this.user.stats?.collectionItems / this.user.stats?.uploads >= 0.8 &&
         this.user.stats?.collections >= 20
       ) {
-        return "legend"
+        return "legend";
       } else if (
         this.user.stats?.uploads >= 4154 &&
         this.user.stats?.pulse >= 24 &&
         this.user.stats?.collectionItems / this.user.stats?.uploads >= 0.69 &&
         this.user.stats?.collections >= 15
       ) {
-        return "medium"
+        return "medium";
       } else if (
         this.user.stats?.uploads >= 1000 &&
         this.user.stats?.pulse >= 12 &&
         this.user.stats?.collectionItems / this.user.stats?.uploads >= 0.4154 &&
         this.user.stats?.collections >= 10
       ) {
-        return "intermediate"
+        return "intermediate";
       } else if (
         this.user.stats?.uploads >= 500 &&
         this.user.stats?.pulse >= 8 &&
         this.user.collections?.length >= 5
       ) {
-        return "noob"
+        return "noob";
       } else {
-        return null
+        return null;
       }
     },
     selected() {
       // select all of them
-      return [...Array(100).keys()]
+      return [...Array(100).keys()];
     },
     age() {
-      if (!this.user?.createdAt) return 0
-      const years = this.$date().diff(this.user?.createdAt, "years")
+      if (!this.user?.createdAt) return 0;
+      const years = this.$date().diff(this.user?.createdAt, "years");
       if (years > 9) {
-        return 9
+        return 9;
       } else {
-        return years
+        return years;
       }
     },
     cakeWeek() {
-      if (!this.user?.createdAt) return false
+      if (!this.user?.createdAt) return false;
       let date =
         this.$date().year() +
         "-" +
-        this.$date(this.user.createdAt).format("MM-DD")
-      return this.$date().isSame(this.$date(date), "week")
+        this.$date(this.user.createdAt).format("MM-DD");
+      return this.$date().isSame(this.$date(date), "week");
     }
   }
-})
+});
 </script>
 
 <style scoped>

@@ -28,26 +28,26 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue"
-import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue"
+import { defineComponent } from "vue";
+import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue";
+import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 
 export default defineComponent({
   name: "ColubrinaSidebar",
-  components: {StatusSwitcher, ColubrinaSidebarList},
+  components: { StatusSwitcher, ColubrinaSidebarList },
   computed: {
     val: {
       get() {
-        if (!this.$vuetify.display.mobile) return true
-        return this.$app.mainDrawer
+        if (!this.$vuetify.display.mobile) return true;
+        return this.$app.mainDrawer;
       },
       set(value) {
-        if (!this.$vuetify.display.mobile) return
-        this.$app.mainDrawer = value
+        if (!this.$vuetify.display.mobile) return;
+        this.$app.mainDrawer = value;
       }
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

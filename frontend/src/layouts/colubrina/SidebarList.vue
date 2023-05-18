@@ -1,5 +1,5 @@
 <template>
-  <Leave v-model="leave.dialog" :chat="leave.chat"/>
+  <Leave v-model="leave.dialog" :chat="leave.chat" />
   <v-menu
     v-model="contextMenu.dialog"
     :style="menuStyle"
@@ -164,16 +164,16 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import {Chat} from "@/models/chat"
-import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue"
-import CreateChat from "@/components/Communications/Menus/CreateChat.vue"
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue"
-import Leave from "@/components/Communications/Dialogs/Leave.vue"
+import { defineComponent } from "vue";
+import { Chat } from "@/models/chat";
+import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
+import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
+import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
+import Leave from "@/components/Communications/Dialogs/Leave.vue";
 
 export default defineComponent({
   name: "ColubrinaSidebarList",
-  components: {Leave, CommunicationsAvatar, CreateChat, MessageSkeleton},
+  components: { Leave, CommunicationsAvatar, CreateChat, MessageSkeleton },
   data() {
     return {
       create: false,
@@ -187,41 +187,41 @@ export default defineComponent({
         y: 0,
         item: undefined as Chat | undefined
       }
-    }
+    };
   },
   computed: {
     menuStyle() {
       return `
         position: absolute;
         top: ${this.contextMenu.y}px;
-        left: ${this.contextMenu.x}px;`
+        left: ${this.contextMenu.x}px;`;
     }
   },
   methods: {
     setNotifications(type: "all" | "mentions" | "none") {
-      if (!this.contextMenu.item?.association) return
+      if (!this.contextMenu.item?.association) return;
       this.axios.patch(
         `/chats/association/${this.contextMenu.item?.association.id}`,
         {
           notifications: type
         }
-      )
-      this.contextMenu.item.association.notifications = type
+      );
+      this.contextMenu.item.association.notifications = type;
     },
     context(e: any, item: any) {
-      e.preventDefault()
-      this.contextMenu.item = item
-      this.contextMenu.x = e.clientX
-      this.contextMenu.y = e.clientY
-      this.contextMenu.dialog = true
+      e.preventDefault();
+      this.contextMenu.item = item;
+      this.contextMenu.x = e.clientX;
+      this.contextMenu.y = e.clientY;
+      this.contextMenu.dialog = true;
     },
     chatName(chat: Chat) {
       if (chat.type === "direct") {
-        return this.$friends.getName(chat.recipient) || "Deleted User"
+        return this.$friends.getName(chat.recipient) || "Deleted User";
       } else {
-        return chat.name
+        return chat.name;
       }
     }
   }
-})
+});
 </script>

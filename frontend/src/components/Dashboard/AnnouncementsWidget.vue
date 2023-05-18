@@ -40,12 +40,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
+import { defineComponent } from "vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "AnnouncementsWidget",
-  components: {UserAvatar},
+  components: { UserAvatar },
   data() {
     return {
       page: 1,
@@ -66,24 +66,24 @@ export default defineComponent({
           }
         }
       ]
-    }
+    };
   },
   computed: {
     announcements() {
       // limit 3 per page, get pages
       const announcements = this.$app.demo
         ? this.demo
-        : this.$app.site.announcements
-      return announcements.slice((this.page - 1) * 3, this.page * 3)
+        : this.$app.site.announcements;
+      return announcements.slice((this.page - 1) * 3, this.page * 3);
     },
     pages() {
       const announcements = this.$app.demo
         ? this.demo
-        : this.$app.site.announcements
-      return Math.ceil(announcements.length / 3)
+        : this.$app.site.announcements;
+      return Math.ceil(announcements.length / 3);
     }
   }
-})
+});
 </script>
 
 <style scoped>

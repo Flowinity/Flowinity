@@ -28,13 +28,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue"
-import ColubrinaMemberSidebar from "@/layouts/colubrina/MemberSidebar.vue"
-import User from "@/views/User/User.vue"
-import ColubrinaUserMenu from "@/components/Communications/Menus/User.vue"
-import ColubrinaImageDialog from "@/components/Communications/Dialogs/Image.vue"
-import ColubrinaGroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettings.vue"
+import { defineComponent } from "vue";
+import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
+import ColubrinaMemberSidebar from "@/layouts/colubrina/MemberSidebar.vue";
+import User from "@/views/User/User.vue";
+import ColubrinaUserMenu from "@/components/Communications/Menus/User.vue";
+import ColubrinaImageDialog from "@/components/Communications/Dialogs/Image.vue";
+import ColubrinaGroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettings.vue";
 
 export default defineComponent({
   name: "Colubrina",
@@ -51,10 +51,10 @@ export default defineComponent({
       return `
         position: absolute;
         top: ${this.$chat.dialogs.userMenu.y - 150}px;
-        left: ${this.$chat.dialogs.userMenu.x + 10}px;`
+        left: ${this.$chat.dialogs.userMenu.x + 10}px;`;
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

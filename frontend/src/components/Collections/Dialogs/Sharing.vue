@@ -97,12 +97,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "Sharing",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["modelValue", "collection"],
   emits: ["update:modelValue", "collectionUsersPush", "getCollection"],
   data() {
@@ -161,11 +161,11 @@ export default defineComponent({
         ],
         loading: false
       }
-    }
+    };
   },
   methods: {
     async addUser() {
-      const {data} = await this.axios.post(
+      const { data } = await this.axios.post(
         `/collections/${this.collection.id}/user`,
         {
           username: this.sharing.username,
@@ -173,43 +173,43 @@ export default defineComponent({
           write: this.sharing.role === "rw" || this.sharing.role === "rwc",
           configure: this.sharing.role === "rwc"
         }
-      )
-      this.$emit("collectionUsersPush", data)
-      this.sharing.username = ""
-      this.sharing.role = "ro"
+      );
+      this.$emit("collectionUsersPush", data);
+      this.sharing.username = "";
+      this.sharing.role = "ro";
     },
     async updateShare() {
-      this.sharing.loading = true
-      const {data} = await this.axios.patch(`/collections/share`, {
+      this.sharing.loading = true;
+      const { data } = await this.axios.patch(`/collections/share`, {
         id: this.collection.id,
         type: this.sharing.public
-      })
-      this.sharing.loading = false
-      this.collection.shareLink = data.shareLink
+      });
+      this.sharing.loading = false;
+      this.collection.shareLink = data.shareLink;
     },
     async updateUser(item: any) {
       if (item.configure && !item.write) {
-        item.write = true
+        item.write = true;
       }
       await this.axios.patch(`/collections/${this.collection.id}/user`, {
         id: item.recipientId,
         read: item.read,
         write: item.write,
         configure: item.configure
-      })
+      });
     },
     async deleteUser(item: any) {
       await this.axios.delete(
         `/collections/${this.collection.id}/user/${item.recipientId}`
-      )
-      this.$toast.success("User removed successfully.")
-      this.$emit("getCollection")
+      );
+      this.$toast.success("User removed successfully.");
+      this.$emit("getCollection");
     }
   },
   mounted() {
-    this.sharing.public = this.collection.shareLink ? "link" : "nobody"
+    this.sharing.public = this.collection.shareLink ? "link" : "nobody";
   }
-})
+});
 </script>
 
 <style scoped></style>

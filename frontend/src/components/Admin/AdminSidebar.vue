@@ -6,8 +6,8 @@
         $user.user?.administrator
           ? "High level"
           : $user.user?.moderator
-            ? "Low level"
-            : "Get out!1111"
+          ? "Low level"
+          : "Get out!1111"
       }}
     </div>
     <AdminSidebarList></AdminSidebarList>
@@ -15,13 +15,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import AdminSidebarList from "@/components/Admin/AdminSidebarList.vue"
+import { defineComponent } from "vue";
+import AdminSidebarList from "@/components/Admin/AdminSidebarList.vue";
 
 export default defineComponent({
   name: "AdminSidebar",
-  components: {AdminSidebarList}
-})
+  components: { AdminSidebarList }
+});
 </script>
 
 <style scoped>

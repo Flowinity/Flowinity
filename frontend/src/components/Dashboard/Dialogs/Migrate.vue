@@ -278,7 +278,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "MigrateWizard",
@@ -294,22 +294,22 @@ export default defineComponent({
         totp: "",
         loading: false
       }
-    }
+    };
   },
   methods: {
     async checkColubrina() {
-      this.colubrina.loading = true
+      this.colubrina.loading = true;
       try {
         await this.axios.post("/migrate/colubrina", {
           username: this.colubrina.username,
           password: this.colubrina.password,
           totp: this.colubrina.totp
-        })
-        if (this.$experiments.experiments["CLASSIC_MIGRATE"]) this.step++
-        else this.step = 8
-        this.colubrina.loading = false
+        });
+        if (this.$experiments.experiments["CLASSIC_MIGRATE"]) this.step++;
+        else this.step = 8;
+        this.colubrina.loading = false;
       } catch {
-        this.colubrina.loading = false
+        this.colubrina.loading = false;
       }
     }
   },
@@ -317,11 +317,11 @@ export default defineComponent({
     modelValue: {
       immediate: true,
       handler(val) {
-        if (!val) this.step = 1
+        if (!val) this.step = 1;
       }
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

@@ -1,15 +1,18 @@
 <template>
   <ColubrinaTPU v-model="$app.dialogs.colubrina"></ColubrinaTPU>
   <div class="hero">
-    <div :class="{'mx-5 mobile': $vuetify.display.mobile}" class="hero-body">
+    <div :class="{ 'mx-5 mobile': $vuetify.display.mobile }" class="hero-body">
       <div class="title">
         Welcome to
-        <span class="text-gradient">TPU</span>.
+        <span class="text-gradient">TPU</span>
+        .
       </div>
       <div class="subtitle">
         The
-        <span class="text-gradient">versatile</span> image hosting service, now for <span
-        class="text-gradient">everyone</span>.
+        <span class="text-gradient">versatile</span>
+        image hosting service, now for
+        <span class="text-gradient">everyone</span>
+        .
       </div>
       <div class="mt-4">
         <v-text-field
@@ -28,7 +31,7 @@
               block
               color="white"
               height="100%"
-              style="background-color: #121212; letter-spacing: 0.045em;"
+              style="background-color: #121212; letter-spacing: 0.045em"
               title="Get Started"
               variant="outlined"
               @click="getStarted"
@@ -51,21 +54,30 @@
           icon="mdi-chevron-down"
           text="Learn More"
           @click="scrollDown()"
-        >
-        </HoverChip>
+        ></HoverChip>
       </div>
     </div>
   </div>
   <v-container id="content">
-    <PromoCard :height="260" :hover="true" class="mb-6"
-               image="https://i.troplo.com/i/aae2fb2c0cf8.png" title="Feature Update: TPU v2.1">
+    <PromoCard
+      :height="260"
+      :hover="true"
+      class="mb-6"
+      image="https://i.troplo.com/i/aae2fb2c0cf8.png"
+      title="Feature Update: TPU v2.1"
+    >
       <p>
         TPU 2.1 adds Workspaces, a new way to create documents and quick notes.
       </p>
     </PromoCard>
     <v-row>
       <v-col cols="12" md="4" sm="12">
-        <PromoCard :height="260" :hover="true" icon="mdi-lock" title="Scoped API Keys">
+        <PromoCard
+          :height="260"
+          :hover="true"
+          icon="mdi-lock"
+          title="Scoped API Keys"
+        >
           <p>
             TPU's API is designed to be simple, yet customizable, you can create
             a different API key for each integration, each with their own sets
@@ -74,7 +86,12 @@
         </PromoCard>
       </v-col>
       <v-col cols="12" md="4" sm="12">
-        <PromoCard :height="260" :hover="true" icon="mdi-folder-multiple-image" title="Collections">
+        <PromoCard
+          :height="260"
+          :hover="true"
+          icon="mdi-folder-multiple-image"
+          title="Collections"
+        >
           <p>
             Want to organize your screenshots or files? Collections are the way
             to do so, add items to one or many collections of your choosing to
@@ -83,7 +100,12 @@
         </PromoCard>
       </v-col>
       <v-col cols="12" md="4" sm="12">
-        <PromoCard :height="260" :hover="true" icon="mdi-image-auto-adjust" title="AutoCollects">
+        <PromoCard
+          :height="260"
+          :hover="true"
+          icon="mdi-image-auto-adjust"
+          title="AutoCollects"
+        >
           <p>
             AutoCollects allow you to create rules that automatically add files
             to a collection, for example, you can have a rule that triggers when
@@ -93,7 +115,12 @@
         </PromoCard>
       </v-col>
       <v-col cols="12" md="4" sm="12">
-        <PromoCard :height="260" :hover="true" icon="mdi-chart-timeline-variant-shimmer" title="Insights">
+        <PromoCard
+          :height="260"
+          :hover="true"
+          icon="mdi-chart-timeline-variant-shimmer"
+          title="Insights"
+        >
           <p>
             Insights allow you to see highly detailed statistics on how you use
             TPU. Such as when you upload files, how many you've uploaded, how
@@ -102,7 +129,12 @@
         </PromoCard>
       </v-col>
       <v-col cols="12" md="4" sm="12">
-        <PromoCard :height="260" :hover="true" icon="mdi-folder-account" title="Workspaces">
+        <PromoCard
+          :height="260"
+          :hover="true"
+          icon="mdi-folder-account"
+          title="Workspaces"
+        >
           <p>
             TPU Workspaces allow you to create documents right inside of your
             TPU account. You can create documents, edit them, and share them
@@ -111,7 +143,12 @@
         </PromoCard>
       </v-col>
       <v-col cols="12" md="4" sm="12">
-        <PromoCard :height="260" :hover="true" icon="mdi-message-processing" title="Communications">
+        <PromoCard
+          :height="260"
+          :hover="true"
+          icon="mdi-message-processing"
+          title="Communications"
+        >
           <p>
             TPU Communications allow you to create direct messages, and groups
             with other TPU members in a fully featured messaging system.
@@ -119,31 +156,55 @@
         </PromoCard>
       </v-col>
       <v-col cols="12" md="4" sm="12">
-        <PromoCard :height="260" :hover="true" icon="mdi-upload" title="ShareX Compatible">
+        <PromoCard
+          :height="260"
+          :hover="true"
+          icon="mdi-upload"
+          title="ShareX Compatible"
+        >
           <p>
-            TPU is fully compatible with ShareX and Sharenix, you can additionally use TPU's API to create custom
-            integrations.
+            TPU is fully compatible with ShareX and Sharenix, you can
+            additionally use TPU's API to create custom integrations.
           </p>
         </PromoCard>
       </v-col>
       <v-col cols="12" md="4" sm="12">
-        <PromoCard :height="260" :hover="true" icon="mdi-form-textbox-password" title="Scoped Passwords">
+        <PromoCard
+          :height="260"
+          :hover="true"
+          icon="mdi-form-textbox-password"
+          title="Scoped Passwords"
+        >
           <p>
-            Scoped Passwords allow you to create a different password with different API access permissions, if you need
-            a way to access a part of your TPU without risking the rest of your account, Scoped Passwords are an option.
+            Scoped Passwords allow you to create a different password with
+            different API access permissions, if you need a way to access a part
+            of your TPU without risking the rest of your account, Scoped
+            Passwords are an option.
           </p>
         </PromoCard>
       </v-col>
       <v-col cols="12" md="4" sm="12">
-        <PromoCard :height="260" :hover="true" icon="mdi-share" title="Sharing & Collaboration">
+        <PromoCard
+          :height="260"
+          :hover="true"
+          icon="mdi-share"
+          title="Sharing & Collaboration"
+        >
           <p>
-            TPU is built from the ground up to allow for collaboration and sharing, share collections, slideshows,
-            workspace documents and more with other TPU users and non-TPU users via a unique share link.
+            TPU is built from the ground up to allow for collaboration and
+            sharing, share collections, slideshows, workspace documents and more
+            with other TPU users and non-TPU users via a unique share link.
           </p>
         </PromoCard>
       </v-col>
     </v-row>
-    <PromoCard :height="300" :hover="true" :left="true" class="mb-6" title="Report an Upload">
+    <PromoCard
+      :height="300"
+      :hover="true"
+      :left="true"
+      class="mb-6"
+      title="Report an Upload"
+    >
       <p>
         Is there a file hosted on TPU that you believe violates our
         <router-link to="/policies/content">Content Policy</router-link>
@@ -151,16 +212,40 @@
       </p>
       <template v-slot:left>
         <div class="mr-3">
-          <v-text-field v-model="report.tpuLink" color="white" label="URL to Report"
-                        outlined placeholder="https://i.troplo.com/i/aae2fb2c0cf8.png" variant="filled"
-                        @keyup.enter="reportUpload"></v-text-field>
-          <v-text-field v-model="report.content" auto-grow color="white" label="Reporting reason"
-                        placeholder="This upload violates the Content Policy because..." variant="filled"
-                        @keyup.enter="reportUpload"></v-text-field>
-          <v-text-field v-model="report.email" color="white" label="Email to get back to you (optional)"
-                        outlined placeholder="troplo@troplo.com" variant="filled"
-                        @keyup.enter="reportUpload"></v-text-field>
-          <v-btn :loading="report.loading" color="primary" @click="reportUpload">Report</v-btn>
+          <v-text-field
+            v-model="report.tpuLink"
+            color="white"
+            label="URL to Report"
+            outlined
+            placeholder="https://i.troplo.com/i/aae2fb2c0cf8.png"
+            variant="filled"
+            @keyup.enter="reportUpload"
+          ></v-text-field>
+          <v-text-field
+            v-model="report.content"
+            auto-grow
+            color="white"
+            label="Reporting reason"
+            placeholder="This upload violates the Content Policy because..."
+            variant="filled"
+            @keyup.enter="reportUpload"
+          ></v-text-field>
+          <v-text-field
+            v-model="report.email"
+            color="white"
+            label="Email to get back to you (optional)"
+            outlined
+            placeholder="troplo@troplo.com"
+            variant="filled"
+            @keyup.enter="reportUpload"
+          ></v-text-field>
+          <v-btn
+            :loading="report.loading"
+            color="primary"
+            @click="reportUpload"
+          >
+            Report
+          </v-btn>
         </div>
       </template>
     </PromoCard>
@@ -168,15 +253,15 @@
 </template>
 
 <script lang="ts">
-import StatsWidget from "@/components/Dashboard/StatsWidget.vue"
-import PromoCard from "@/components/Home/PromoCard.vue"
-import {defineComponent} from "vue"
-import ColubrinaTPU from "@/components/Home/Dialogs/ColubrinaTPU.vue"
-import HoverChip from "@/components/Core/HoverChip.vue"
+import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
+import PromoCard from "@/components/Home/PromoCard.vue";
+import { defineComponent } from "vue";
+import ColubrinaTPU from "@/components/Home/Dialogs/ColubrinaTPU.vue";
+import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
   name: "UnauthHome",
-  components: {HoverChip, ColubrinaTPU, PromoCard, StatsWidget},
+  components: { HoverChip, ColubrinaTPU, PromoCard, StatsWidget },
   data() {
     return {
       email: "",
@@ -186,20 +271,22 @@ export default defineComponent({
         email: "",
         loading: false
       }
-    }
+    };
   },
   methods: {
     async reportUpload() {
-      this.report.loading = true
+      this.report.loading = true;
       try {
-        await this.axios.post("/core/report", this.report)
-        this.report.loading = false
-        this.$toast.success("Upload reported successfully! We will review it as soon as possible.")
-        this.report.tpuLink = ""
-        this.report.content = ""
-        this.report.email = ""
+        await this.axios.post("/core/report", this.report);
+        this.report.loading = false;
+        this.$toast.success(
+          "Upload reported successfully! We will review it as soon as possible."
+        );
+        this.report.tpuLink = "";
+        this.report.content = "";
+        this.report.email = "";
       } catch {
-        this.report.loading = false
+        this.report.loading = false;
       }
     },
     getStarted() {
@@ -208,16 +295,16 @@ export default defineComponent({
         query: {
           email: this.email
         }
-      })
+      });
     },
     scrollDown() {
-      const content = document.getElementById("content")
+      const content = document.getElementById("content");
       if (content) {
         content.scrollIntoView({
           behavior: "smooth",
           block: "center",
           inline: "nearest"
-        })
+        });
       }
     }
   },
@@ -236,15 +323,17 @@ export default defineComponent({
         window.location.hostname !== "tpu-mobile.troplo.com" &&
         window.location.hostname !== this.$app.site.hostname
       ) {
-        window.location.href = (this.$app.site.hostnameWithProtocol ?? "https://images.flowinity.com") + "/home?redirected=true"
+        window.location.href =
+          (this.$app.site.hostnameWithProtocol ??
+            "https://images.flowinity.com") + "/home?redirected=true";
       }
     }
-    this.$app.title = "Welcome"
+    this.$app.title = "Welcome";
     if (this.$route.query.ref === "colubrina") {
-      this.$app.dialogs.colubrina = true
+      this.$app.dialogs.colubrina = true;
     }
   }
-})
+});
 </script>
 
 <style lang="scss" scoped>
@@ -260,12 +349,13 @@ $dot-space: 22px;
   align-items: center;
   justify-content: center;
   background: linear-gradient(
-      90deg,
-      $bg-color ($dot-space - $dot-size),
-      transparent 1%
-  ) center,
-  linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center,
-  $dot-color;
+        90deg,
+        $bg-color ($dot-space - $dot-size),
+        transparent 1%
+      )
+      center,
+    linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center,
+    $dot-color;
   background-size: $dot-space $dot-space;
 }
 

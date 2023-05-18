@@ -35,7 +35,7 @@
         item.type === "paste"
           ? "Legacy Paste"
           : String(item.type).charAt(0).toUpperCase() +
-          String(item.type).slice(1)
+            String(item.type).slice(1)
       }}
     </v-card-subtitle>
     <v-card-subtitle>
@@ -53,7 +53,7 @@
     <v-card-subtitle>{{ $t("generic.size") }}: {{ fileSize }}</v-card-subtitle>
     <slot :item="item" name="custom-values"></slot>
     <div class="ml-4">
-      <slot :item="item" name="custom-properties"/>
+      <slot :item="item" name="custom-properties" />
       <v-chip-group class="mb-1">
         <HoverChip
           v-if="supports.permissions.write && supports.collections"
@@ -160,57 +160,57 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import GalleryPreview from "@/components/Gallery/GalleryPreview.vue"
-import HoverChip from "@/components/Core/HoverChip.vue"
-import {Upload} from "@/models/upload"
-import {Collection} from "@/models/collection"
-import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue"
+import { defineComponent } from "vue";
+import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
+import HoverChip from "@/components/Core/HoverChip.vue";
+import { Upload } from "@/models/upload";
+import { Collection } from "@/models/collection";
+import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 
 export default defineComponent({
   name: "GalleryItem",
-  components: {WorkspaceDeleteDialog, HoverChip, GalleryPreview},
+  components: { WorkspaceDeleteDialog, HoverChip, GalleryPreview },
   props: ["item", "supports", "selected"],
   data() {
     return {
       deleteItemDialog: false
-    }
+    };
   },
   computed: {
     fileSize() {
-      return this.$functions.fileSize(this.item.fileSize)
+      return this.$functions.fileSize(this.item.fileSize);
     }
   },
   methods: {
     async pin(item: Upload) {
       await this.axios.patch(
         `/collections/${this.item.item.collectionId}/pin/${item.item.id}`
-      )
-      item.item.pinned = !item.item.pinned
-      this.$emit("refresh", true)
+      );
+      item.item.pinned = !item.item.pinned;
+      this.$emit("refresh", true);
     },
     async star(item: Upload) {
-      await this.axios.post("/gallery/star/" + item.attachment)
-      item.starred = !item.starred
+      await this.axios.post("/gallery/star/" + item.attachment);
+      item.starred = !item.starred;
     },
     editItem(item: Upload) {
-      console.log("Edit item", item)
+      console.log("Edit item", item);
     },
     async deleteItem(item: Upload) {
-      await this.axios.delete("/gallery/" + item.id)
-      this.$emit("delete", item)
+      await this.axios.delete("/gallery/" + item.id);
+      this.$emit("delete", item);
     },
     async removeItem(item: Upload, collection: Collection) {
       await this.axios.delete(
         `/collections/${collection.id}/remove/${item.id}`
-      )
+      );
       this.$emit("remove", {
         item,
         collection
-      })
+      });
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

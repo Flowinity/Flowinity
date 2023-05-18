@@ -147,9 +147,9 @@ export default {
       search: "",
       filter: "all",
       sort: "newest"
-    }
+    };
   }
-}
+};
 </script>
 
 <style scoped></style>

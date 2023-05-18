@@ -92,11 +92,11 @@
       <small>
         <sup>1</sup>
         Perks can be altered at any time without prior notice.
-        <br/>
+        <br />
         <sup>2</sup>
         Only includes historical insights for Weekly, Monthly and Annual
         reports, excludes the Dynamic report.
-        <br/>
+        <br />
         You can still view your current reports.
       </small>
       <v-card-actions>
@@ -124,12 +124,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import UserBadges from "@/components/Users/UserBadges.vue"
+import { defineComponent } from "vue";
+import UserBadges from "@/components/Users/UserBadges.vue";
 
 export default defineComponent({
   name: "GoldUpsell",
-  components: {UserBadges},
+  components: { UserBadges },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
@@ -142,22 +142,22 @@ export default defineComponent({
         totp: "",
         loading: false
       }
-    }
+    };
   },
   methods: {
     async checkColubrina() {
-      this.colubrina.loading = true
+      this.colubrina.loading = true;
       try {
         await this.axios.post("/migrate/colubrina", {
           username: this.colubrina.username,
           password: this.colubrina.password,
           totp: this.colubrina.totp
-        })
-        if (this.$experiments.experiments["CLASSIC_MIGRATE"]) this.step++
-        else this.step = 8
-        this.colubrina.loading = false
+        });
+        if (this.$experiments.experiments["CLASSIC_MIGRATE"]) this.step++;
+        else this.step = 8;
+        this.colubrina.loading = false;
       } catch {
-        this.colubrina.loading = false
+        this.colubrina.loading = false;
       }
     }
   },
@@ -165,11 +165,11 @@ export default defineComponent({
     modelValue: {
       immediate: true,
       handler(val) {
-        if (!val) this.step = 1
+        if (!val) this.step = 1;
       }
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

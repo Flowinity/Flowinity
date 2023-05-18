@@ -39,55 +39,55 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import VueCropper from "vue-cropperjs"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import VueCropper from "vue-cropperjs";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "UploadCropper",
   props: ["modelValue", "title", "aspectRatio"],
   emits: ["update:modelValue", "finish"],
-  components: {CoreDialog, VueCropper},
+  components: { CoreDialog, VueCropper },
   data() {
     return {
       file: [] as File[],
       result: undefined as string | undefined,
       loading: false,
       key: 0
-    }
+    };
   },
   methods: {
     async fileReader() {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = () => {
-        this.result = reader.result as string
-        return this.result
-      }
-      await reader.readAsDataURL(this.file[0] as File)
+        this.result = reader.result as string;
+        return this.result;
+      };
+      await reader.readAsDataURL(this.file[0] as File);
     },
     async save() {
-      if (!this.file.length) return
+      if (!this.file.length) return;
       // get the img in the banner-editor id div
       const file = this.$functions.base64ToFile(
         //@ts-ignore
         this.$refs.cropper.getCroppedCanvas().toDataURL("image/png"),
         "tpu-cropped.png"
-      )
-      this.loading = true
-      await this.$emit("finish", file)
-      this.$emit("update:modelValue", false)
-      this.loading = false
+      );
+      this.loading = true;
+      await this.$emit("finish", file);
+      this.$emit("update:modelValue", false);
+      this.loading = false;
     }
   },
   watch: {
     async file() {
-      if (!this.file.length) return
-      this.result = undefined
-      await this.fileReader()
-      this.key++
+      if (!this.file.length) return;
+      this.result = undefined;
+      await this.fileReader();
+      this.key++;
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

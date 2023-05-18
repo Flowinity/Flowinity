@@ -21,12 +21,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
+import { defineComponent } from "vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "ReadReceipt",
-  components: {UserAvatar},
+  components: { UserAvatar },
   props: {
     readReceipt: {
       type: Object,
@@ -37,7 +37,7 @@ export default defineComponent({
       required: true
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

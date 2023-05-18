@@ -49,19 +49,19 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "Feedback",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
     return {
       rating: 0,
       text: ""
-    }
+    };
   },
   methods: {
     async submitFeedback() {
@@ -69,12 +69,12 @@ export default defineComponent({
         route: this.$route.path,
         starRating: this.rating,
         text: this.text
-      })
-      this.$emit("update:modelValue", false)
-      this.$toast.success("Feedback submitted, thanks for making TPU better!")
+      });
+      this.$emit("update:modelValue", false);
+      this.$toast.success("Feedback submitted, thanks for making TPU better!");
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

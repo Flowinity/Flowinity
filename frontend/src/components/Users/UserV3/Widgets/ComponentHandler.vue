@@ -40,7 +40,7 @@
         </v-btn>
       </template>
       <template v-else-if="editMode">
-        <UserV3AddMenu :components="components" @add="addItemDebug"/>
+        <UserV3AddMenu :components="components" @add="addItemDebug" />
       </template>
       <v-row class="c-both">
         <v-col
@@ -123,17 +123,17 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import MutualCollections from "@/components/Users/UserV3/Widgets/MutualCollections.vue"
-import ProfileInfo from "@/components/Users/UserV3/Widgets/ProfileInfo.vue"
-import MutualFriends from "@/components/Users/UserV3/Widgets/MutualFriends.vue"
-import CoreStatistics from "@/components/Users/UserV3/Widgets/CoreStatistics.vue"
-import LastFM from "@/components/Users/UserV3/Widgets/LastFM.vue"
-import MyAnimeList from "@/components/Users/UserV3/Widgets/MyAnimeList.vue"
-import VErrorBoundary from "@/components/Core/ErrorBoundary.vue"
-import Crash from "@/components/Core/CrashAlt.vue"
-import {Component} from "@/types/userv3"
-import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue"
+import { defineComponent } from "vue";
+import MutualCollections from "@/components/Users/UserV3/Widgets/MutualCollections.vue";
+import ProfileInfo from "@/components/Users/UserV3/Widgets/ProfileInfo.vue";
+import MutualFriends from "@/components/Users/UserV3/Widgets/MutualFriends.vue";
+import CoreStatistics from "@/components/Users/UserV3/Widgets/CoreStatistics.vue";
+import LastFM from "@/components/Users/UserV3/Widgets/LastFM.vue";
+import MyAnimeList from "@/components/Users/UserV3/Widgets/MyAnimeList.vue";
+import VErrorBoundary from "@/components/Core/ErrorBoundary.vue";
+import Crash from "@/components/Core/CrashAlt.vue";
+import { Component } from "@/types/userv3";
+import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 
 export default defineComponent({
   name: "UserV3ComponentHandler",
@@ -161,7 +161,7 @@ export default defineComponent({
     return {
       skullCrash: Crash,
       error: null
-    }
+    };
   },
   methods: {
     addItemDebug(name: string) {
@@ -169,24 +169,24 @@ export default defineComponent({
         name,
         id: this.$functions.uuid(),
         props: this.components.find((c) => c.id === name)?.props
-      })
+      });
     },
     willShow(component: Component, name: string) {
-      if (component.name !== name) return false
+      if (component.name !== name) return false;
       if (
         component.props?.friendsOnly &&
         this.user?.friend !== "accepted" &&
         this.user?.id !== this.$user.user?.id
       )
-        return false
+        return false;
       if (component.props?.mutualFriends && !this.user?.friends?.length)
-        return false
+        return false;
       if (component.props?.mutualCollections && !this.user?.collections?.length)
-        return false
-      return true
+        return false;
+      return true;
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

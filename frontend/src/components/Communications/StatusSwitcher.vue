@@ -104,21 +104,21 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
+import { defineComponent } from "vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "StatusSwitcher",
-  components: {UserAvatar},
+  components: { UserAvatar },
   computed: {
     menuStyle() {
       return `
         position: absolute;
         top: ${this.$chat.dialogs.statusMenu.y}px;
-        left: ${this.$chat.dialogs.statusMenu.x}px;`
+        left: ${this.$chat.dialogs.statusMenu.x}px;`;
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

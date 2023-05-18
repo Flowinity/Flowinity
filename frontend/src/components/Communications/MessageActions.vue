@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "MessageActions",
@@ -83,15 +83,17 @@ export default defineComponent({
   data() {
     return {
       size: "small"
-    }
+    };
   },
   methods: {
     async copyCommunicationsMessageID() {
-      await navigator.clipboard.writeText(this.message.id)
-      this.$toast.success("Copied the ID of the communications message to your clipboard.")
+      await navigator.clipboard.writeText(this.message.id);
+      this.$toast.success(
+        "Copied the ID of the communications message to your clipboard."
+      );
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

@@ -20,9 +20,9 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import ThemeEngineSidebar from "@/components/Core/ThemeEngineSidebar.vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import ThemeEngineSidebar from "@/components/Core/ThemeEngineSidebar.vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "ThemeEngineWrapper",
@@ -33,9 +33,9 @@ export default defineComponent({
   data() {
     return {
       editor: false
-    }
+    };
   }
-})
+});
 </script>
 
 <style scoped></style>

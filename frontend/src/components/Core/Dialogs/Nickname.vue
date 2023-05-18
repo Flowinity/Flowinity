@@ -22,40 +22,40 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "NicknameDialog",
-  components: {CoreDialog},
+  components: { CoreDialog },
   emits: ["update:modelValue", "upload"],
   props: ["modelValue"],
   data() {
     return {
       nickname: "",
       loading: false
-    }
+    };
   },
   methods: {
     async update() {
-      this.loading = true
+      this.loading = true;
       await this.axios.patch(
         `/user/nickname/${this.$app.dialogs.nickname.userId}`,
         {
           nickname: this.nickname
         }
-      )
-      this.loading = false
-      this.$emit("update:modelValue", false)
+      );
+      this.loading = false;
+      this.$emit("update:modelValue", false);
     }
   },
   watch: {
     modelValue() {
       this.nickname =
-        this.$friends.getName(this.$app.dialogs.nickname.userId, true) || ""
+        this.$friends.getName(this.$app.dialogs.nickname.userId, true) || "";
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

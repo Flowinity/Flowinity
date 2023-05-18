@@ -13,13 +13,13 @@
 </template>
 
 <script lang="ts">
-import UserAvatar from "@/components/Users/UserAvatar.vue"
-import UserBadges from "@/components/Users/UserBadges.vue"
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import UserBadges from "@/components/Users/UserBadges.vue";
 
 export default {
   name: "UserWidget",
-  components: {UserBadges, UserAvatar}
-}
+  components: { UserBadges, UserAvatar }
+};
 </script>
 
 <style scoped></style>

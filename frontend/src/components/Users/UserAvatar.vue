@@ -62,12 +62,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue"
+import { defineComponent } from "vue";
+import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 
 export default defineComponent({
   name: "UserAvatar",
-  components: {UploadCropper},
+  components: { UploadCropper },
   props: [
     "user",
     "size",
@@ -84,38 +84,38 @@ export default defineComponent({
   data() {
     return {
       dialog: false
-    }
+    };
   },
   computed: {
     avatarURL() {
       if (this.user.avatar?.length > 20) {
-        return "https://colubrina.troplo.com/usercontent/" + this.user.avatar
+        return "https://colubrina.troplo.com/usercontent/" + this.user.avatar;
       } else {
-        return "/i/" + this.user.avatar
+        return "/i/" + this.user.avatar;
       }
     },
     offset() {
-      return this.size / 4
+      return this.size / 4;
     },
     textSize() {
-      let classes = ""
+      let classes = "";
       //@ts-ignore
       if (this.contrast === "black") {
-        classes += "black-text"
+        classes += "black-text";
       } else {
-        classes += "white-text"
+        classes += "white-text";
       }
       if (this.size > 80) {
-        classes += " text-h4"
+        classes += " text-h4";
       } else if (this.size > 24) {
-        classes += " text-h5"
+        classes += " text-h5";
       } else {
-        classes += " text-h6"
+        classes += " text-h6";
       }
-      return classes
+      return classes;
     },
     contrast() {
-      return "white"
+      return "white";
       /*return window.__TROPLO_INTERNALS_GLOBALS.contrastColor(
         this.$store.state.user?.plan?.color,
         this.$store.state.user?.plan?.internalName === "GOLD",
@@ -123,24 +123,24 @@ export default defineComponent({
       )*/
     },
     friendStatus() {
-      if (this.emulatedStatus) return this.emulatedStatus
+      if (this.emulatedStatus) return this.emulatedStatus;
       if (this.user.id === this.$user.user?.id)
-        return this.$user.user?.storedStatus
+        return this.$user.user?.storedStatus;
       return this.$friends.friends.find((f) => f.friendId === this.user.id)
-        ?.otherUser?.status
+        ?.otherUser?.status;
     }
   },
   methods: {
     removeAvatar() {
-      if (!this.edit) return
+      if (!this.edit) return;
       this.axios.delete("/user/upload/avatar").then(() => {
-        this.$emit("refresh")
-      })
+        this.$emit("refresh");
+      });
     },
     changeAvatar(file: File) {
-      if (!file || !this.edit) return
-      let formData = new FormData()
-      formData.append("banner", file)
+      if (!file || !this.edit) return;
+      let formData = new FormData();
+      formData.append("banner", file);
       this.axios
         .post("/user/upload/avatar", formData, {
           headers: {
@@ -148,8 +148,8 @@ export default defineComponent({
           }
         })
         .then(() => {
-          this.$emit("refresh")
-        })
+          this.$emit("refresh");
+        });
     }
     /*calcOffset() {
       if (this.user.administrator || this.user.admin || this.user.moderator) {
@@ -159,7 +159,7 @@ export default defineComponent({
       }
     }*/
   }
-})
+});
 </script>
 
 <style scoped>

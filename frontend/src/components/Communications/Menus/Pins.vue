@@ -63,16 +63,16 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import {Message as MessageType} from "@/models/message"
-import {Paginate as PaginateType} from "@/types/paginate"
-import Message from "@/components/Communications/Message.vue"
-import PromoNoContent from "@/components/Core/PromoNoContent.vue"
-import Paginate from "@/components/Core/Paginate.vue"
+import { defineComponent } from "vue";
+import { Message as MessageType } from "@/models/message";
+import { Paginate as PaginateType } from "@/types/paginate";
+import Message from "@/components/Communications/Message.vue";
+import PromoNoContent from "@/components/Core/PromoNoContent.vue";
+import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
   name: "Pins",
-  components: {Paginate, PromoNoContent, Message},
+  components: { Paginate, PromoNoContent, Message },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
@@ -83,13 +83,13 @@ export default defineComponent({
         messages: [] as MessageType[],
         pager: {} as PaginateType
       }
-    }
+    };
   },
   methods: {
     async getPins(e: boolean) {
-      if (!e) return
-      this.loading = true
-      const {data} = await this.axios.get(
+      if (!e) return;
+      this.loading = true;
+      const { data } = await this.axios.get(
         `/chats/${this.$chat.selectedChatId}/messages`,
         {
           params: {
@@ -98,17 +98,17 @@ export default defineComponent({
             type: "pins"
           }
         }
-      )
-      this.data = data
-      this.loading = false
+      );
+      this.data = data;
+      this.loading = false;
     }
   },
   watch: {
     page() {
-      this.getPins(true)
+      this.getPins(true);
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

@@ -11,7 +11,7 @@
     <v-container>
       <v-card-text>
         This item, and any of its children, will be permanently deleted.
-        <br/>
+        <br />
         This is irreversible.
       </v-card-text>
     </v-container>
@@ -28,15 +28,15 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "WorkspaceDeleteDialog",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["submit", "loading", "title", "btnText", "modelValue"],
   emits: ["update:modelValue", "submit"]
-})
+});
 </script>
 
 <style scoped></style>

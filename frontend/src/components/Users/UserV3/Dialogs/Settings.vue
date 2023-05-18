@@ -105,21 +105,21 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
-import {Component} from "@/types/userv3"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import { Component } from "@/types/userv3";
 
 export default defineComponent({
   name: "UserV3Settings",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["modelValue", "user", "component", "components"],
   computed: {
     metaComponent() {
       return (
         this.components.find(
           (component: Component) => component.id === this.component.name
-        ) || {name: "Unknown"}
-      )
+        ) || { name: "Unknown" }
+      );
     },
     props() {
       return Object.entries(this.metaComponent?.props || {}).map(
@@ -134,10 +134,10 @@ export default defineComponent({
               (component: Component) => component.id === this.component.name
             )?.meta[key]?.type || typeof value
         })
-      )
+      );
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

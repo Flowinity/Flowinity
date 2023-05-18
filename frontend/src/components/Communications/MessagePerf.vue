@@ -66,12 +66,12 @@
   </li>
 </template>
 <script lang="ts">
-import {defineComponent} from "vue"
-import CommunicationsInput from "@/components/Communications/Input.vue"
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue"
-import MessageActions from "@/components/Communications/MessageActions.vue"
-import Embed from "@/components/Communications/Embed.vue"
-import UserAvatar from "@/components/Users/UserAvatar.vue"
+import { defineComponent } from "vue";
+import CommunicationsInput from "@/components/Communications/Input.vue";
+import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
+import MessageActions from "@/components/Communications/MessageActions.vue";
+import Embed from "@/components/Communications/Embed.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "MessagePerf",
@@ -83,7 +83,7 @@ export default defineComponent({
     CommunicationsInput
   },
   props: ["message", "editing", "shifting", "editingText", "merge"]
-})
+});
 </script>
 
 <style scoped>

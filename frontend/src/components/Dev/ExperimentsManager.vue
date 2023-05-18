@@ -31,7 +31,7 @@
   </v-card>
 </template>
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "ExperimentsManager",
@@ -47,13 +47,13 @@ export default defineComponent({
           username: "LocalState"
         }
       ]
-    }
+    };
   },
   computed: {
     relevantExperiments() {
       const experiments = this.experiments.length
         ? this.experiments
-        : this.$experiments.experiments
+        : this.$experiments.experiments;
       return Object.entries(experiments)
         .map(([name, value]) => ({
           name,
@@ -62,16 +62,16 @@ export default defineComponent({
           type: typeof value,
           meta: this.$experiments.experimentsInherit.meta[name]
         }))
-        .filter((experiment) => experiment.name !== "meta")
+        .filter((experiment) => experiment.name !== "meta");
     }
   },
   async mounted() {
-    this.users.push(...(await this.$admin.getUsers()))
+    this.users.push(...(await this.$admin.getUsers()));
   },
   watch: {
     async selected() {
-      this.experiments = await this.$admin.getExperimentValues(this.selected)
+      this.experiments = await this.$admin.getExperimentValues(this.selected);
     }
   }
-})
+});
 </script>

@@ -27,12 +27,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "IPHistory",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["modelValue", "history"],
   emits: ["update:modelValue"],
   data() {
@@ -59,9 +59,9 @@ export default defineComponent({
           key: "date"
         }
       ]
-    }
+    };
   }
-})
+});
 </script>
 
 <style scoped></style>

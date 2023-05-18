@@ -1,15 +1,25 @@
 <script lang="ts">
 //@ts-nocheck
-import getCaretPosition from "textarea-caret"
-import {Dropdown, options} from "floating-vue"
-import {computed, defineComponent, nextTick, onMounted, onUnmounted, onUpdated, PropType, ref, watch} from "vue"
+import getCaretPosition from "textarea-caret";
+import { Dropdown, options } from "floating-vue";
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  onUpdated,
+  PropType,
+  ref,
+  watch
+} from "vue";
 
 options.themes.mentionable = {
   $extend: "dropdown",
   placement: "top-start",
   arrowPadding: 6,
   arrowOverflow: false
-}
+};
 
 export interface MentionItem {
   searchText?: string;
@@ -61,202 +71,202 @@ export default defineComponent({
     }
   },
   emits: ["search", "open", "close", "apply"],
-  setup(props, {emit}) {
-    const currentKey = ref<string>(null)
-    let currentKeyIndex: number
-    const oldKey = ref<string>(null)
+  setup(props, { emit }) {
+    const currentKey = ref<string>(null);
+    let currentKeyIndex: number;
+    const oldKey = ref<string>(null);
     // Items
-    const searchText = ref<string>(null)
+    const searchText = ref<string>(null);
     watch(searchText, (value, oldValue) => {
       if (value) {
-        emit("search", value, oldValue)
+        emit("search", value, oldValue);
       }
-    })
+    });
     const filteredItems = computed(() => {
       if (!searchText.value || props.filteringDisabled) {
-        return props.items
+        return props.items;
       }
-      const finalSearchText = searchText.value.toLowerCase()
+      const finalSearchText = searchText.value.toLowerCase();
       return props.items.filter((item) => {
-        let text: string
+        let text: string;
         if (item.searchText) {
-          text = item.searchText
+          text = item.searchText;
         } else if (item.label) {
-          text = item.label
+          text = item.label;
         } else {
-          text = ""
+          text = "";
           for (const key in item) {
-            text += item[key]
+            text += item[key];
           }
         }
-        return text.toLowerCase().includes(finalSearchText)
-      })
-    })
+        return text.toLowerCase().includes(finalSearchText);
+      });
+    });
     const displayedItems = computed(() =>
       filteredItems.value.slice(0, props.limit)
-    )
+    );
     // Selection
-    const selectedIndex = ref(0)
+    const selectedIndex = ref(0);
     watch(
       displayedItems,
       () => {
-        selectedIndex.value = 0
+        selectedIndex.value = 0;
       },
       {
         deep: true
       }
-    )
+    );
     // Input element management
-    let input: HTMLElement
-    const el = ref<HTMLDivElement>(null)
+    let input: HTMLElement;
+    const el = ref<HTMLDivElement>(null);
 
     function getInput() {
       return (
         el?.value?.querySelector("input") ??
         el.value?.querySelector("textarea") ??
-        el?.value?.querySelector("[contenteditable=\"true\"]")
-      )
+        el?.value?.querySelector('[contenteditable="true"]')
+      );
     }
 
     onMounted(() => {
-      input = getInput()
-      attach()
-    })
+      input = getInput();
+      attach();
+    });
     onUpdated(() => {
-      const newInput = getInput()
+      const newInput = getInput();
       if (newInput !== input) {
-        detach()
-        input = newInput
-        attach()
+        detach();
+        input = newInput;
+        attach();
       }
-    })
+    });
     onUnmounted(() => {
-      detach()
-    })
+      detach();
+    });
 
     // Events
     function attach() {
       if (input) {
-        input.addEventListener("input", onInput)
-        input.addEventListener("keydown", onKeyDown)
-        input.addEventListener("keyup", onKeyUp)
-        input.addEventListener("scroll", onScroll)
-        input.addEventListener("blur", onBlur)
+        input.addEventListener("input", onInput);
+        input.addEventListener("keydown", onKeyDown);
+        input.addEventListener("keyup", onKeyUp);
+        input.addEventListener("scroll", onScroll);
+        input.addEventListener("blur", onBlur);
       }
     }
 
     function detach() {
       if (input) {
-        input.removeEventListener("input", onInput)
-        input.removeEventListener("keydown", onKeyDown)
-        input.removeEventListener("keyup", onKeyUp)
-        input.removeEventListener("scroll", onScroll)
-        input.removeEventListener("blur", onBlur)
+        input.removeEventListener("input", onInput);
+        input.removeEventListener("keydown", onKeyDown);
+        input.removeEventListener("keyup", onKeyUp);
+        input.removeEventListener("scroll", onScroll);
+        input.removeEventListener("blur", onBlur);
       }
     }
 
     function onInput() {
-      checkKey()
+      checkKey();
     }
 
     function onBlur() {
-      closeMenu()
+      closeMenu();
     }
 
     function onKeyDown(e: KeyboardEvent) {
       if (currentKey.value) {
         if (e.key === "ArrowDown") {
-          selectedIndex.value++
+          selectedIndex.value++;
           if (selectedIndex.value >= displayedItems.value.length) {
-            selectedIndex.value = 0
+            selectedIndex.value = 0;
           }
-          cancelEvent(e)
+          cancelEvent(e);
         }
         if (e.key === "ArrowUp") {
-          selectedIndex.value--
+          selectedIndex.value--;
           if (selectedIndex.value < 0) {
-            selectedIndex.value = displayedItems.value.length - 1
+            selectedIndex.value = displayedItems.value.length - 1;
           }
-          cancelEvent(e)
+          cancelEvent(e);
         }
         if (
           (e.key === "Enter" || e.key === "Tab") &&
           displayedItems.value.length > 0
         ) {
-          applyMention(selectedIndex.value)
-          cancelEvent(e)
+          applyMention(selectedIndex.value);
+          cancelEvent(e);
         }
         if (e.key === "Escape") {
-          closeMenu()
-          cancelEvent(e)
+          closeMenu();
+          cancelEvent(e);
         }
       }
     }
 
-    let cancelKeyUp = null
+    let cancelKeyUp = null;
 
     function onKeyUp(e: KeyboardEvent) {
       if (cancelKeyUp && e.key === cancelKeyUp) {
-        cancelEvent(e)
+        cancelEvent(e);
       }
-      cancelKeyUp = null
+      cancelKeyUp = null;
     }
 
     function cancelEvent(e: KeyboardEvent) {
-      e.preventDefault()
-      e.stopPropagation()
-      cancelKeyUp = e.key
+      e.preventDefault();
+      e.stopPropagation();
+      cancelKeyUp = e.key;
     }
 
     function onScroll() {
-      updateCaretPosition()
+      updateCaretPosition();
     }
 
     function getSelectionStart() {
       return input.isContentEditable
         ? window.getSelection().anchorOffset
-        : (input as HTMLInputElement).selectionStart
+        : (input as HTMLInputElement).selectionStart;
     }
 
     function setCaretPosition(index: number) {
       nextTick(() => {
-        (input as HTMLInputElement).selectionEnd = index
-      })
+        (input as HTMLInputElement).selectionEnd = index;
+      });
     }
 
     function getValue() {
       return input.isContentEditable
         ? window.getSelection().anchorNode.textContent
-        : (input as HTMLInputElement).value
+        : (input as HTMLInputElement).value;
     }
 
     function setValue(value) {
-      (input as HTMLInputElement).value = value
-      emitInputEvent("input")
+      (input as HTMLInputElement).value = value;
+      emitInputEvent("input");
     }
 
     function emitInputEvent(type: string) {
-      input.dispatchEvent(new Event(type))
+      input.dispatchEvent(new Event(type));
     }
 
-    let lastSearchText: string = null
+    let lastSearchText: string = null;
 
     function checkKey() {
-      const index = getSelectionStart()
+      const index = getSelectionStart();
       if (index >= 0) {
-        const {key, keyIndex} = getLastKeyBeforeCaret(index)
-        const text = (lastSearchText = getLastSearchText(index, keyIndex))
+        const { key, keyIndex } = getLastKeyBeforeCaret(index);
+        const text = (lastSearchText = getLastSearchText(index, keyIndex));
         if (!(keyIndex < 1 || /\s/.test(getValue()[keyIndex - 1]))) {
-          return false
+          return false;
         }
         if (text != null) {
-          openMenu(key, keyIndex)
-          searchText.value = text
-          return true
+          openMenu(key, keyIndex);
+          searchText.value = text;
+          return true;
         }
       }
-      closeMenu()
-      return false
+      closeMenu();
+      return false;
     }
 
     function getLastKeyBeforeCaret(caretIndex: number) {
@@ -265,25 +275,25 @@ export default defineComponent({
           key,
           keyIndex: getValue().lastIndexOf(key, caretIndex - 1)
         }))
-        .sort((a, b) => b.keyIndex - a.keyIndex)
-      return keyData
+        .sort((a, b) => b.keyIndex - a.keyIndex);
+      return keyData;
     }
 
     function getLastSearchText(caretIndex: number, keyIndex: number) {
       if (keyIndex !== -1) {
-        const text = getValue().substring(keyIndex + 1, caretIndex)
+        const text = getValue().substring(keyIndex + 1, caretIndex);
         // If there is a space we close the menu
         if (!/\s/.test(text)) {
-          return text
+          return text;
         }
       }
-      return null
+      return null;
     }
 
     // Position of the popper
     const caretPosition = ref<{ top: number; left: number; height: number }>(
       null
-    )
+    );
 
     function updateCaretPosition() {
       if (currentKey.value) {
@@ -291,21 +301,21 @@ export default defineComponent({
           const rect = window
             .getSelection()
             .getRangeAt(0)
-            .getBoundingClientRect()
-          const inputRect = input.getBoundingClientRect()
+            .getBoundingClientRect();
+          const inputRect = input.getBoundingClientRect();
           caretPosition.value = {
             left: rect.left - inputRect.left,
             top: rect.top - inputRect.top,
             height: rect.height
-          }
+          };
         } else {
-          caretPosition.value = getCaretPosition(input, currentKeyIndex)
+          caretPosition.value = getCaretPosition(input, currentKeyIndex);
         }
-        caretPosition.value.top -= input.scrollTop
+        caretPosition.value.top -= input.scrollTop;
         if (props.caretHeight) {
-          caretPosition.value.height = props.caretHeight
+          caretPosition.value.height = props.caretHeight;
         } else if (isNaN(caretPosition.value.height)) {
-          caretPosition.value.height = 16
+          caretPosition.value.height = 16;
         }
       }
     }
@@ -313,25 +323,25 @@ export default defineComponent({
     // Open/close
     function openMenu(key: string, keyIndex: number) {
       if (currentKey.value !== key) {
-        currentKey.value = key
-        currentKeyIndex = keyIndex
-        updateCaretPosition()
-        selectedIndex.value = 0
-        emit("open", currentKey.value)
+        currentKey.value = key;
+        currentKeyIndex = keyIndex;
+        updateCaretPosition();
+        selectedIndex.value = 0;
+        emit("open", currentKey.value);
       }
     }
 
     function closeMenu() {
       if (currentKey.value != null) {
-        oldKey.value = currentKey.value
-        currentKey.value = null
-        emit("close", oldKey.value)
+        oldKey.value = currentKey.value;
+        currentKey.value = null;
+        emit("close", oldKey.value);
       }
     }
 
     // Apply
     function applyMention(itemIndex: number) {
-      const item = displayedItems.value[itemIndex]
+      const item = displayedItems.value[itemIndex];
       const value =
         (props.omitKey ? "" : currentKey.value) +
         String(
@@ -339,28 +349,28 @@ export default defineComponent({
             ? "<@" + props.mapInsert(item, currentKey.value) + ">"
             : "<@" + item.value + ">"
         ) +
-        (props.insertSpace ? " " : "")
-      console.log(value)
+        (props.insertSpace ? " " : "");
+      console.log(value);
       if (input.isContentEditable) {
-        const range = window.getSelection().getRangeAt(0)
+        const range = window.getSelection().getRangeAt(0);
         range.setStart(
           range.startContainer,
           range.startOffset -
-          currentKey.value.length -
-          (lastSearchText ? lastSearchText.length : 0)
-        )
-        range.deleteContents()
-        range.insertNode(document.createTextNode(value))
-        range.setStart(range.endContainer, range.endOffset)
-        emitInputEvent("input")
+            currentKey.value.length -
+            (lastSearchText ? lastSearchText.length : 0)
+        );
+        range.deleteContents();
+        range.insertNode(document.createTextNode(value));
+        range.setStart(range.endContainer, range.endOffset);
+        emitInputEvent("input");
       } else {
         setValue(
           replaceText(getValue(), searchText.value, value, currentKeyIndex)
-        )
-        setCaretPosition(currentKeyIndex + value.length)
+        );
+        setCaretPosition(currentKeyIndex + value.length);
       }
-      emit("apply", item, currentKey.value, value)
-      closeMenu()
+      emit("apply", item, currentKey.value, value);
+      closeMenu();
     }
 
     function replaceText(
@@ -373,7 +383,7 @@ export default defineComponent({
         text.slice(0, index) +
         newText +
         text.slice(index + searchString.length + 1, text.length)
-      )
+      );
     }
 
     return {
@@ -384,9 +394,9 @@ export default defineComponent({
       displayedItems,
       selectedIndex,
       applyMention
-    }
+    };
   }
-})
+});
 </script>
 
 <template>
@@ -396,7 +406,7 @@ export default defineComponent({
     class="mentionable"
     style="position: relative; width: 100%"
   >
-    <slot/>
+    <slot />
 
     <VDropdown
       ref="popper"

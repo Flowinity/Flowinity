@@ -65,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "CollectionCard",
@@ -83,15 +83,15 @@ export default defineComponent({
   computed: {
     collectionImage(): string {
       if (this.item?.image) {
-        return this.$app.domain + this.item.image
+        return this.$app.domain + this.item.image;
       } else if (this.item?.preview?.attachment) {
-        return this.$app.domain + this.item.preview.attachment.attachment
+        return this.$app.domain + this.item.preview.attachment.attachment;
       } else {
-        return "https://i.troplo.com/i/a050d6f271c3.png"
+        return "https://i.troplo.com/i/a050d6f271c3.png";
       }
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

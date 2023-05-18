@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Chart",
@@ -90,30 +90,30 @@ export default defineComponent({
           id: "chartnext-" + this.id
         },
         xaxis: undefined as any
-      }
+      };
       if (!this.series) {
         result.xaxis = {
           categories: this.data.labels
-        }
+        };
       }
-      return result
+      return result;
     },
     seriesRes() {
       return !this.series
         ? [
-          {
-            name: this.name || "TPUvNEXT-Default",
-            data: this.data.data
-          }
-        ]
-        : this.series
+            {
+              name: this.name || "TPUvNEXT-Default",
+              data: this.data.data
+            }
+          ]
+        : this.series;
     }
   },
   methods: {
     getWidth() {
-      if (this.width) return this.width
-      return "100%"
+      if (this.width) return this.width;
+      return "100%";
     }
   }
-})
+});
 </script>

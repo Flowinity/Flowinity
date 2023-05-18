@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import {Bar} from "vue-chartjs"
+import { Bar } from "vue-chartjs";
 import {
   BarElement,
   CategoryScale,
@@ -21,8 +21,8 @@ import {
   PointElement,
   Title,
   Tooltip
-} from "chart.js"
-import {defineComponent} from "vue"
+} from "chart.js";
+import { defineComponent } from "vue";
 
 ChartJS.register(
   Title,
@@ -33,11 +33,11 @@ ChartJS.register(
   LineElement,
   PointElement,
   BarElement
-)
+);
 
 export default defineComponent({
   name: "BarChart",
-  components: {Bar},
+  components: { Bar },
   props: ["data", "maxHeight"],
   computed: {
     chartOptions() {
@@ -47,11 +47,11 @@ export default defineComponent({
         title: {
           display: false
         }
-      }
+      };
     }
   },
   mounted() {
-    console.log(this.data)
+    console.log(this.data);
   }
-})
+});
 </script>

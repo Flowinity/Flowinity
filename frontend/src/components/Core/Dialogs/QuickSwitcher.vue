@@ -24,12 +24,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "QuickSwitcher",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: {
     modelValue: {
       type: Boolean,
@@ -41,28 +41,28 @@ export default defineComponent({
     return {
       search: null as { route: string; name: string } | null,
       searchInput: ""
-    }
+    };
   },
   methods: {
     handleEnter(content: string) {
       if (!content && this.$app.lastRoute) {
-        this.$router.push(this.$app.lastRoute)
-        return
+        this.$router.push(this.$app.lastRoute);
+        return;
       }
       if (this.search) {
-        this.$router.push(this.search.route)
+        this.$router.push(this.search.route);
       }
       const filter = this.$app.quickSwitcher.filter(
         (qs: { route: string; name: string }) =>
           qs.name.toLowerCase().startsWith(content.toLowerCase())
-      )
+      );
       if (filter?.length) {
-        this.$router.push(filter[0].route)
-        this.$emit("update:modelValue", false)
+        this.$router.push(filter[0].route);
+        this.$emit("update:modelValue", false);
       }
     }
   }
-})
+});
 </script>
 
 <style scoped></style>

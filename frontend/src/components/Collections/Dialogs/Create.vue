@@ -27,33 +27,33 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue"
-import CoreDialog from "@/components/Core/Dialogs/Dialog.vue"
+import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "CreateCollectionDialog",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
     return {
       name: "",
       loading: false
-    }
+    };
   },
   methods: {
     async createCollection() {
-      this.loading = true
-      const {data} = await this.axios.post("/collections", {
+      this.loading = true;
+      const { data } = await this.axios.post("/collections", {
         name: this.name
-      })
-      await this.$collections.init()
-      this.$emit("update:modelValue", false)
-      this.loading = false
-      this.$router.push(`/collections/${data.id}`)
+      });
+      await this.$collections.init();
+      this.$emit("update:modelValue", false);
+      this.loading = false;
+      this.$router.push(`/collections/${data.id}`);
     }
   }
-})
+});
 </script>
 
 <style scoped></style>
