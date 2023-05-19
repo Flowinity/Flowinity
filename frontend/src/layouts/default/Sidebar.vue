@@ -295,7 +295,7 @@ export default defineComponent({
           });
         }
 
-        if (this.$app.site.features.insights) {
+        if (this.$app.site.features?.insights) {
           items.push({
             id: 13,
             externalPath: "",
@@ -307,7 +307,7 @@ export default defineComponent({
           });
         }
 
-        if (this.$app.site.features.communications) {
+        if (this.$app.site.features?.communications) {
           items.push({
             id: 11,
             externalPath: "",
@@ -327,7 +327,7 @@ export default defineComponent({
           });
         }
 
-        if (this.$app.site.features.workspaces) {
+        if (this.$app.site.features?.workspaces) {
           items.push({
             id: 10,
             externalPath: "",
@@ -344,7 +344,7 @@ export default defineComponent({
           });
         }
 
-        if (this.$app.site.features.collections) {
+        if (this.$app.site.features?.collections) {
           items.push({
             id: 7,
             externalPath: "",
@@ -356,7 +356,7 @@ export default defineComponent({
           });
         }
 
-        if (this.$app.site.features.autoCollects) {
+        if (this.$app.site.features?.autoCollects) {
           items.push({
             id: 9,
             externalPath: "",
