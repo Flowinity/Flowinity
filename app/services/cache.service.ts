@@ -182,7 +182,14 @@ export class CacheService {
         let autoCollects = await AutoCollectApproval.findAll({
           where: {
             userId: user.id
-          }
+          },
+          include: [
+            {
+              model: Upload,
+              as: "attachment",
+              required: true
+            }
+          ]
         })
         const collectionIds = [
           ...new Set(autoCollects.map((a) => a.collectionId))

@@ -6,18 +6,16 @@
   >
     <template v-slot:title>Add to collection</template>
     <v-card-text>
-      <v-form>
-        <v-autocomplete
-          v-model="selectedCollection"
-          :items="$collections.write"
-          autofocus
-          item-title="name"
-          item-value="id"
-          label="Select collection"
-          outlined
-          @keydown.enter="select($event.target.value)"
-        ></v-autocomplete>
-      </v-form>
+      <v-autocomplete
+        v-model="selectedCollection"
+        :items="$collections.write"
+        autofocus
+        item-title="name"
+        item-value="id"
+        label="Select collection"
+        outlined
+        @keydown.enter="select($event.target.value)"
+      ></v-autocomplete>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>

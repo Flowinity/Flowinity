@@ -31,6 +31,7 @@
         class="mr-2 mt-2"
         color="indigo"
         icon="mdi-download"
+        @click="saveFile('sharex')"
       ></HoverChip>
       <HoverChip
         :disabled="!selected"

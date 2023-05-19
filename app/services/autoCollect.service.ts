@@ -4,6 +4,7 @@ import { Collection } from "@app/models/collection.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import Errors from "@app/lib/errors"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
+import { Upload } from "@app/models/upload.model"
 
 @Service()
 export class AutoCollectService {
@@ -20,6 +21,11 @@ export class AutoCollectService {
           {
             model: Collection,
             as: "collection"
+          },
+          {
+            model: Upload,
+            as: "attachment",
+            required: true
           }
         ]
       })

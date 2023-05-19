@@ -14,9 +14,11 @@ import axios from "axios"
 import * as fs from "fs"
 import Errors from "@app/lib/errors"
 import { Plan } from "@app/models/plan.model"
+import { CacheService } from "@app/services/cache.service"
 
 @Service()
 export class GalleryService {
+  constructor(private readonly cacheService: CacheService) {}
   async getRandomAttachment(
     id: number,
     type: "user" | "collection" | "starred" = "user",
@@ -101,6 +103,7 @@ export class GalleryService {
         }
       })
       await upload.destroy()
+
       return true
     } else {
       return false
