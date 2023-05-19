@@ -1,8 +1,20 @@
 <template>
   <v-container>
     <v-data-table :items="invites" :headers="headers">
-      <template v-slot:item.createdAt="{ item }">
-        {{ $date(item.createdAt).format("MMMM Do YYYY, h:mm:ss A") }}
+      <template
+        v-slot:item.createdAt="{
+          item
+        }: {
+          item: {
+            props: {
+              title: any
+            }
+          }
+        }"
+      >
+        {{
+          $date(item.props.title.createdAt).format("MMMM Do YYYY, h:mm:ss A")
+        }}
       </template>
       <template
         v-slot:item.actions="{
