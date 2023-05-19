@@ -55,6 +55,9 @@ export class DefaultTpuConfig {
       workspaces: true,
       insights: true
     },
-    defaultPlanId: 1
+    defaultPlanId: 1,
+    privacyNoteId: null,
+    termsNoteId: null,
+    inviteAFriend: true
   }
 }

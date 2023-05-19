@@ -26,6 +26,15 @@
         <small>
           * Purging the cache will regenerate and override the existing keys.
         </small>
+        <p class="mt-2 mb-2">
+          Regenerating insights will delete all Insights reports for every user
+          and regenerate them, this should only be used in case of generation
+          faults, or updates to the Insights specification. This will take a
+          while.
+        </p>
+        <v-btn variant="outlined" @click="regenerateInsights">
+          Regenerate Insights
+        </v-btn>
       </v-container>
     </v-card>
   </v-container>
@@ -89,6 +98,12 @@ export default defineComponent({
     };
   },
   methods: {
+    async regenerateInsights() {
+      this.loading = true;
+      await this.axios.post("/admin/insights/regenerate");
+      this.loading = false;
+      this.$toast.success("Insights regeneration has been queued.");
+    },
     async purgeKeys(id: number) {
       this.loading = true;
       await this.axios.delete("/admin/cache/" + id);

@@ -5,6 +5,11 @@
         <v-toolbar-title>Dashboard</v-toolbar-title>
       </v-toolbar>
       <v-container>
+        More options here are coming soon. You can modify tpu.json in
+        app/config/tpu.json or /var/lib/tpu_server/config/tpu.json (Docker
+        environments) to make manual changes to the TPU environment, and press
+        the Restart button below to restart the TPU cluster.
+        <br />
         <v-btn class="mx-3 my-3" variant="outlined" @click="restart">
           <v-icon>mdi-restart</v-icon>
           Restart TPU Cluster

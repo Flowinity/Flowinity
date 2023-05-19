@@ -55,4 +55,7 @@ declare type TpuConfig = {
     insights: boolean
   }
   defaultPlanId?: number
+  privacyNoteId?: string | undefined | null
+  termsNoteId?: string | undefined | null
+  inviteAFriend: boolean
 }

@@ -37,7 +37,7 @@
       <v-tooltip activator="parent" location="top">Reply</v-tooltip>
       <v-icon>mdi-reply</v-icon>
     </v-btn>
-    <v-btn :size="size" icon rounded="0" @click="copyCommunicationsMessageID">
+    <v-btn :size="size" icon rounded="0" @click="$functions.copy(message.id)">
       <v-tooltip activator="parent" location="top">Copy ID</v-tooltip>
       <v-icon>mdi-identifier</v-icon>
     </v-btn>
@@ -84,14 +84,6 @@ export default defineComponent({
     return {
       size: "small"
     };
-  },
-  methods: {
-    async copyCommunicationsMessageID() {
-      await navigator.clipboard.writeText(this.message.id);
-      this.$toast.success(
-        "Copied the ID of the communications message to your clipboard."
-      );
-    }
   }
 });
 </script>

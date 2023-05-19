@@ -155,7 +155,7 @@ export default defineComponent({
     sidebar: {
       get() {
         if (!this.$user.user) return [];
-        const items = [
+        let items = [
           {
             id: 1,
             externalPath: "",
@@ -183,60 +183,7 @@ export default defineComponent({
             scope: "gallery.view"
           },
           {
-            id: 26,
-            externalPath: "",
-            name: this.$t("core.sidebar.collections"),
-            path: "/collections",
-            icon: "mdi-folder-multiple-image",
-            new: false,
-            scope: "collections.view"
-          },
-          {
-            id: 28,
-            externalPath: "",
-            name: this.$t("core.sidebar.autoCollects"),
-            path: "/autoCollect",
-            icon: "mdi-image-auto-adjust",
-            new: false,
-            scope: "collections.modify",
-            warning:
-              this.$user.user.pendingAutoCollects > 0
-                ? this.$user.user.pendingAutoCollects
-                : false
-          },
-          {
-            id: 34,
-            externalPath: "",
-            name: this.$t("core.sidebar.workspaces"),
-            path: this.$route.name?.toString()?.includes("Workspace")
-              ? "/workspaces"
-              : this.$app.lastNote
-              ? `/workspaces/notes/${this.$app.lastNote}`
-              : "/workspaces",
-            icon: "mdi-folder-account",
-            new: true,
-            scope: "workspaces.view",
-            experimentsRequired: ["INTERACTIVE_NOTES"]
-          },
-          {
-            id: 35,
-            externalPath: "",
-            name: this.$t("core.sidebar.communications"),
-            path: this.$chat.selectedChatId
-              ? `/communications/${this.$chat.selectedChatId}`
-              : "/communications",
-            icon: "mdi-message-processing",
-            warning: this.$functions.checkScope(
-              "chats.view",
-              this.$user.user?.scopes
-            )
-              ? this.$chat.totalUnread || "BETA"
-              : false,
-            scope: "chats.view",
-            experimentsRequired: ["COMMUNICATIONS"]
-          },
-          {
-            id: 36,
+            id: 12,
             externalPath: "",
             name: this.$t("core.sidebar.mail"),
             path: "/mail",
@@ -245,16 +192,7 @@ export default defineComponent({
             experimentsRequired: ["WEBMAIL", "OFFICIAL_INSTANCE"]
           },
           {
-            id: 27,
-            externalPath: "",
-            name: this.$t("core.sidebar.insights"),
-            path: "/insights",
-            scope: "*",
-            icon: "mdi-chart-timeline-variant-shimmer",
-            new: true
-          },
-          {
-            id: 31,
+            id: 14,
             externalPath: "",
             name: this.$t("core.sidebar.starred"),
             path: "/starred",
@@ -288,18 +226,6 @@ export default defineComponent({
             path: "/changelog",
             name: this.$t("core.sidebar.changelog"),
             icon: "mdi-history"
-          },
-          {
-            id: 32,
-            click(instance: any) {
-              instance.inviteAFriend = true;
-            },
-            externalPath: "",
-            path: "",
-            name: this.$t("core.sidebar.inviteAFriend"),
-            icon: "mdi-gift-outline",
-            new: true,
-            scope: "*"
           },
           {
             id: 33,
@@ -347,11 +273,106 @@ export default defineComponent({
           icon: string;
           new?: boolean;
           scope?: string | string[];
-          warning?: boolean | string;
+          warning?: boolean | string | number;
           experimentsRequired?: string[];
           click?: (instance: any) => void;
           exact?: boolean;
         }[];
+
+        // Server feature options
+        if (this.$app.site.inviteAFriend) {
+          items.push({
+            id: 32,
+            click(instance: any) {
+              instance.inviteAFriend = true;
+            },
+            externalPath: "",
+            path: "",
+            name: this.$t("core.sidebar.inviteAFriend"),
+            icon: "mdi-gift-outline",
+            new: true,
+            scope: "*"
+          });
+        }
+
+        if (this.$app.site.features.insights) {
+          items.push({
+            id: 13,
+            externalPath: "",
+            name: this.$t("core.sidebar.insights"),
+            path: "/insights",
+            scope: "*",
+            icon: "mdi-chart-timeline-variant-shimmer",
+            new: true
+          });
+        }
+
+        if (this.$app.site.features.communications) {
+          items.push({
+            id: 11,
+            externalPath: "",
+            name: this.$t("core.sidebar.communications"),
+            path: this.$chat.selectedChatId
+              ? `/communications/${this.$chat.selectedChatId}`
+              : "/communications",
+            icon: "mdi-message-processing",
+            warning: this.$functions.checkScope(
+              "chats.view",
+              this.$user.user?.scopes
+            )
+              ? this.$chat.totalUnread || "BETA"
+              : false,
+            scope: "chats.view",
+            experimentsRequired: ["COMMUNICATIONS"]
+          });
+        }
+
+        if (this.$app.site.features.workspaces) {
+          items.push({
+            id: 10,
+            externalPath: "",
+            name: this.$t("core.sidebar.workspaces"),
+            path: this.$route.name?.toString()?.includes("Workspace")
+              ? "/workspaces"
+              : this.$app.lastNote
+              ? `/workspaces/notes/${this.$app.lastNote}`
+              : "/workspaces",
+            icon: "mdi-folder-account",
+            new: true,
+            scope: "workspaces.view",
+            experimentsRequired: ["INTERACTIVE_NOTES"]
+          });
+        }
+
+        if (this.$app.site.features.collections) {
+          items.push({
+            id: 7,
+            externalPath: "",
+            name: this.$t("core.sidebar.collections"),
+            path: "/collections",
+            icon: "mdi-folder-multiple-image",
+            new: false,
+            scope: "collections.view"
+          });
+        }
+
+        if (this.$app.site.features.autoCollects) {
+          items.push({
+            id: 9,
+            externalPath: "",
+            name: this.$t("core.sidebar.autoCollects"),
+            path: "/autoCollect",
+            icon: "mdi-image-auto-adjust",
+            new: false,
+            scope: "collections.modify",
+            warning:
+              this.$user.user.pendingAutoCollects > 0
+                ? this.$user.user.pendingAutoCollects
+                : false
+          });
+        }
+
+        items.sort((a, b) => a.id - b.id);
 
         return items.filter((item) => {
           if (item.experimentsRequired) {

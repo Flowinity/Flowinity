@@ -40,6 +40,7 @@ const inviteParams = {
     }
   ],
   attributes: [
+    "id",
     "email",
     "adminId",
     "inviteKey",

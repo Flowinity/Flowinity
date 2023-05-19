@@ -74,6 +74,15 @@ export default defineComponent({
           level: 1
         },
         {
+          id: 17,
+          name: "Invite a Friend",
+          path: "/admin/invites",
+          icon: "mdi-gift-outline",
+          exact: true,
+          scope: "*",
+          level: 1
+        },
+        {
           id: 16,
           name: "Domains",
           path: "/admin/domains",

@@ -101,6 +101,92 @@ export class SeriesGraph {
 
 @Service()
 export class PulseService {
+  async regenerateAll() {
+    const users = await User.findAll()
+    // WEEK-GEN
+    for (const user of users) {
+      await Insight.destroy({
+        where: {
+          userId: user.id,
+          type: "weekly"
+        }
+      })
+      const startDate = dayjs(user.createdAt)
+
+      // array to store all the start dates
+      const startWeekDates = []
+
+      // loop through each week and get the start date
+      for (
+        let i = 0;
+        startDate.add(i * 7, "day").isSameOrBefore(dayjs(), "day");
+        i++
+      ) {
+        const startOfWeek = startDate.startOf("isoWeek").add(i * 7, "day")
+        startWeekDates.push(startOfWeek.format("YYYY-MM-DD"))
+      }
+      console.log(startWeekDates)
+      for (const date of startWeekDates) {
+        await this.generateInsights(user.id, "weekly", date)
+      }
+    }
+    // MONTH-GEN
+    for (const user of users) {
+      await Insight.destroy({
+        where: {
+          userId: user.id,
+          type: "monthly"
+        }
+      })
+      const startDate = dayjs(user.createdAt)
+
+      // array to store all the start dates
+      const startMonthDates = []
+
+      // loop through each week and get the start date
+      for (
+        let i = 0;
+        startDate.add(i, "month").isSameOrBefore(dayjs(), "month");
+        i++
+      ) {
+        const startOfMonth = startDate.startOf("month").add(i, "month")
+        startMonthDates.push(startOfMonth.format("YYYY-MM-DD"))
+      }
+      console.log(startMonthDates)
+      for (const date of startMonthDates) {
+        await this.generateInsights(user.id, "monthly", date)
+      }
+    }
+    // YEAR-GEN
+    for (const user of users) {
+      await Insight.destroy({
+        where: {
+          userId: user.id,
+          type: "yearly"
+        }
+      })
+      const startDate = dayjs(user.createdAt)
+
+      // array to store all the start dates
+      const startYearDates = []
+
+      // loop through each week and get the start date
+      for (
+        let i = 0;
+        startDate.add(i, "year").isSameOrBefore(dayjs(), "year");
+        i++
+      ) {
+        const startOfYear = startDate.startOf("year").add(i, "year")
+        startYearDates.push(startOfYear.format("YYYY-MM-DD"))
+      }
+      // remove the first date as it is the user's creation date
+      startYearDates.shift()
+      console.log(startYearDates)
+      for (const date of startYearDates) {
+        await this.generateInsights(user.id, "yearly", date)
+      }
+    }
+  }
   async getReports(userId: number) {
     return await Insight.findAll({
       where: {
@@ -137,73 +223,6 @@ export class PulseService {
   }
 
   async pulseInit() {
-    // WEEK-GEN
-    /* for (const user of users) {
-      const startDate = dayjs(user.createdAt)
-
-      // array to store all the start dates
-      const startWeekDates = []
-
-      // loop through each week and get the start date
-      for (
-        let i = 0;
-        startDate.add(i * 7, "day").isSameOrBefore(dayjs(), "day");
-        i++
-      ) {
-        const startOfWeek = startDate.startOf("isoWeek").add(i * 7, "day")
-        startWeekDates.push(startOfWeek.format("YYYY-MM-DD"))
-      }
-      console.log(startWeekDates)
-      for (const date of startWeekDates) {
-        await this.generateInsights(user.id, "weekly", date)
-      }
-    }*/
-    // MONTH-GEN
-    /*
-    for (const user of users) {
-      const startDate = dayjs(user.createdAt)
-
-      // array to store all the start dates
-      const startMonthDates = []
-
-      // loop through each week and get the start date
-      for (
-        let i = 0;
-        startDate.add(i, "month").isSameOrBefore(dayjs(), "month");
-        i++
-      ) {
-        const startOfMonth = startDate.startOf("month").add(i, "month")
-        startMonthDates.push(startOfMonth.format("YYYY-MM-DD"))
-      }
-      console.log(startMonthDates)
-      for (const date of startMonthDates) {
-        await this.generateInsights(user.id, "monthly", date)
-      }
-    }*/
-    // YEAR-GEN
-    /*
-    for (const user of users) {
-      const startDate = dayjs(user.createdAt)
-
-      // array to store all the start dates
-      const startYearDates = []
-
-      // loop through each week and get the start date
-      for (
-        let i = 0;
-        startDate.add(i, "year").isSameOrBefore(dayjs(), "year");
-        i++
-      ) {
-        const startOfYear = startDate.startOf("year").add(i, "year")
-        startYearDates.push(startOfYear.format("YYYY-MM-DD"))
-      }
-      // remove the first date as it is the user's creation date
-      startYearDates.shift()
-      console.log(startYearDates)
-      for (const date of startYearDates) {
-        await this.generateInsights(user.id, "yearly", date)
-      }
-    }*/
     // schedule cron for Monday at 12:00 AM
     cron.schedule("0 0 0 * * 1", async () => {
       const users = await User.findAll({
@@ -674,7 +693,7 @@ export class PulseService {
   async generateInsights(
     userId: number,
     type: "weekly" | "monthly" | "yearly" | "dynamic",
-    customGte?: Date
+    customGte?: Date | string
   ) {
     // depending on the type
     let gte

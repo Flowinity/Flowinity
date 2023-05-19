@@ -98,7 +98,7 @@ export class CoreService {
     }
   }
 
-  async getState(): Promise<object> {
+  async getState() {
     return {
       name: config.siteName,
       release: config.release,
@@ -108,11 +108,20 @@ export class CoreService {
       stats: await this.getStats(),
       maintenance: config.maintenance,
       registrations: config.registrations,
-      officialInstance: config.officialInstance
+      officialInstance: config.officialInstance,
+      providers: {
+        anilist: !!config.providers.anilist.key,
+        lastfm: !!config.providers.lastfm.key,
+        mal: !!config.providers.mal.key
+      },
+      termsNoteId: config.termsNoteId,
+      privacyNoteId: config.privacyNoteId,
+      features: config.features,
+      inviteAFriend: config.inviteAFriend
     }
   }
 
-  async getAnnouncements(): Promise<Announcement[]> {
+  async getAnnouncements() {
     return await Announcement.findAll({
       order: [["createdAt", "DESC"]],
       include: [

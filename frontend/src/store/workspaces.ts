@@ -35,7 +35,11 @@ export const useWorkspacesStore = defineStore("workspaces", {
       return data;
     },
     async getWorkspaces() {
-      const { data } = await axios.get("/notes/workspaces");
+      const { data } = await axios.get("/notes/workspaces", {
+        headers: {
+          noToast: true
+        }
+      });
       this.items = data;
     },
     async selectWorkspace(id: number) {

@@ -476,7 +476,11 @@ export const useChatStore = defineStore("chat", {
           this.chats = JSON.parse(chats);
         }
       } catch {}
-      const { data } = await axios.get("/chats");
+      const { data } = await axios.get("/chats", {
+        headers: {
+          noToast: true
+        }
+      });
       this.chats = data;
       const app = useAppStore();
       localStorage.setItem("chatStore", JSON.stringify(this.chats));

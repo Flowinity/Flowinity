@@ -315,6 +315,10 @@ let Errors = {
   CANNOT_DELETE_DEFAULT: {
     message: "You cannot delete the default item.",
     status: 400
+  },
+  INVITE_A_FRIEND_DISABLED: {
+    message: "Invite a friend is currently unavailable.",
+    status: 400
   }
 }
 

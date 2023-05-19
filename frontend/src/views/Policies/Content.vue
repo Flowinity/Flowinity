@@ -1,7 +1,5 @@
 <template>
-  <WorkspaceItem
-    id="d8c4711bf14338338dd331e0b2a4823f2c6ca3bbb4e02a76b9d30f591e2b8635"
-  ></WorkspaceItem>
+  <WorkspaceItem :id="$app.site.termsNoteId"></WorkspaceItem>
 </template>
 
 <script lang="ts">

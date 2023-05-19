@@ -84,6 +84,16 @@ export interface AppState {
     alert: string;
     _redis: string;
     server: string;
+    inviteAFriend: boolean;
+    features: {
+      communications: boolean;
+      collections: boolean;
+      autoCollects: boolean;
+      workspaces: boolean;
+      insights: boolean;
+    };
+    termsNoteId?: string;
+    privacyNoteId?: string;
   };
   dialogs: {
     experiments: boolean;
@@ -387,7 +397,11 @@ export const useAppStore = defineStore("app", {
     },
     async getWeather() {
       try {
-        const { data } = await axios.get("/core/weather");
+        const { data } = await axios.get("/core/weather", {
+          headers: {
+            noToast: true
+          }
+        });
         this.weather.data = data;
         this.weather.loading = false;
       } catch {}

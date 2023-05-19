@@ -27,6 +27,7 @@ import { UserUtilsService } from "@app/services/userUtils.service"
 import { Badge } from "@app/models/badge.model"
 import { RequestAuth } from "@app/types/express"
 import { Domain } from "@app/models/domain.model"
+import { PulseService } from "@app/services/pulse.service"
 
 @Service()
 @Middleware({ type: "before" })
@@ -66,7 +67,8 @@ export class AdminControllerV3 {
     private readonly adminService: AdminService,
     private readonly cacheService: CacheService,
     private readonly userUtilsService: UserUtilsService,
-    private readonly coreService: CoreService
+    private readonly coreService: CoreService,
+    private readonly pulseService: PulseService
   ) {}
 
   @Get("/dashboard")
@@ -422,5 +424,11 @@ export class AdminControllerV3 {
   @Delete("/domain/:id")
   async deleteDomain(@Auth("*") user: User, @Param("id") id: number) {
     await this.adminService.deleteDomain(id)
+  }
+
+  @UseBefore(HighLevel)
+  @Post("/insights/regenerate")
+  async regenerateInsights(@Auth("*") user: User) {
+    this.pulseService.regenerateAll()
   }
 }

@@ -22,7 +22,11 @@ export const useCollectionsStore = defineStore("collections", {
   },
   actions: {
     async init() {
-      const { data } = await axios.get("/collections");
+      const { data } = await axios.get("/collections", {
+        headers: {
+          noToast: true
+        }
+      });
       this.items = data;
     }
   }

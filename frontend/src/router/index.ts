@@ -243,6 +243,11 @@ const routes = [
             path: "domains",
             name: "Admin Domains",
             component: () => import("@/views/Admin/Domains.vue")
+          },
+          {
+            path: "invites",
+            name: "Admin Invite a Friend",
+            component: () => import("@/views/Admin/IAF.vue")
           }
         ]
       },
