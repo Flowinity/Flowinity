@@ -84,7 +84,7 @@ export class Server {
     global.db = require("@app/db")
     if (config.finishedSetup) {
       global.redis = redis
-      global.queue = require("@app/lib/queue")
+      global.queue = require("@app/lib/queue").default
       global.domain = await Domain.findOne({
         where: { id: 1 }
       }).then((domain: Domain | null) => {

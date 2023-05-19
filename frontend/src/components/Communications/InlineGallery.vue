@@ -8,6 +8,7 @@
       label="Search"
       @keydown.enter="getGallery()"
       @click:append="getGallery()"
+      ref="search"
     ></v-text-field>
     <Paginate v-model="page" :total-pages="null" class="mb-2 mt-n2"></Paginate>
     <v-row v-if="!loading">
@@ -131,12 +132,11 @@ export default defineComponent({
       this.gallery = data;
     }
   },
-  mounted() {
+  async mounted() {
     // infinite scroll for div with id="inline-gallery"
     const el = document.getElementById("inline-gallery");
     if (!el) return;
     el.addEventListener("scroll", () => {
-      console.log(el.scrollTop, el.scrollHeight, el.clientHeight);
       if (
         el.scrollTop + el.clientHeight >=
         el.scrollHeight - el.clientHeight / 2
