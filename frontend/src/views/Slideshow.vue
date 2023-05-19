@@ -13,28 +13,26 @@
         <v-carousel-item
           v-for="image in slideshow"
           :key="image.id"
-          :src="`https://${$app.domain}/${image.attachment.attachment}`"
+          :src="`${$app.domain}/${image.attachment.attachment}`"
           contain
         >
-          <v-sheet tile>
-            <template v-slot:placeholder>
-              <v-row align="center" class="fill-height ma-0" justify="center">
-                <v-progress-circular
-                  color="grey lighten-5"
-                  indeterminate
-                ></v-progress-circular>
-              </v-row>
-            </template>
-            <v-chip
-              v-if="isHovering"
-              class="elevation-10 slide-fab"
-              elevation="2"
-              style="float: bottom; position: absolute; bottom: 20px; left: 50%"
-              @click="copy(image.attachment.attachment)"
-            >
-              <v-icon>mdi-content-copy</v-icon>
-            </v-chip>
-          </v-sheet>
+          <template v-slot:placeholder>
+            <v-row align="center" class="fill-height ma-0" justify="center">
+              <v-progress-circular
+                color="grey lighten-5"
+                indeterminate
+              ></v-progress-circular>
+            </v-row>
+          </template>
+          <v-chip
+            v-if="isHovering"
+            class="elevation-10 slide-fab"
+            elevation="2"
+            style="position: absolute; bottom: 20px; left: 50%"
+            @click="copy(image.attachment.attachment)"
+          >
+            <v-icon>mdi-content-copy</v-icon>
+          </v-chip>
         </v-carousel-item>
       </v-carousel>
     </v-hover>

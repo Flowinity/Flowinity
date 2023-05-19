@@ -49,35 +49,35 @@
       <v-data-table :headers="sharing.headers" :items="collection.users">
         <template v-slot:item="row">
           <tr>
-            <td>{{ row.item.props.value.user.username }}</td>
+            <td>{{ row.item.raw.user.username }}</td>
             <td>
               <v-checkbox
-                v-model="row.item.props.value.read"
+                v-model="row.item.raw.read"
                 disabled
                 label="Read"
               ></v-checkbox>
             </td>
             <td>
               <v-checkbox
-                v-model="row.item.props.value.write"
-                :disabled="row.item.props.value.configure"
+                v-model="row.item.raw.write"
+                :disabled="row.item.raw.configure"
                 label="Write"
-                @change="updateUser(row.item.props.value)"
+                @change="updateUser(row.item.raw)"
               ></v-checkbox>
             </td>
             <td>
               <v-checkbox
-                v-model="row.item.props.value.configure"
-                :disabled="row.item.props.value.recipientId === $user.user?.id"
+                v-model="row.item.raw.configure"
+                :disabled="row.item.raw.recipientId === $user.user?.id"
                 label="Conf."
-                @change="updateUser(row.item.props.value)"
+                @change="updateUser(row.item.raw)"
               ></v-checkbox>
             </td>
             <td>
               <v-btn
-                :disabled="row.item.props.value.userId === $user.user?.id"
+                :disabled="row.item.raw.userId === $user.user?.id"
                 icon
-                @click="deleteUser(row.item.props.value)"
+                @click="deleteUser(row.item.raw)"
               >
                 <v-icon>mdi-close</v-icon>
               </v-btn>

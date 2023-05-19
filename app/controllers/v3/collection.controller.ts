@@ -252,18 +252,15 @@ export class CollectionControllerV3 {
     )
     if (!collection) throw Errors.COLLECTION_NO_PERMISSION
 
-    const collectionUser: [affectedCount: number] =
-      await this.collectionService.updateUser(
-        collectionId,
-        user.id,
-        body.write,
-        body.configure,
-        body.read
-      )
+    await this.collectionService.updateUser(
+      collectionId,
+      body.id,
+      body.write,
+      body.configure,
+      body.read
+    )
 
     await this.cacheService.resetCollectionCache(collectionId)
-
-    // Should this return something?
   }
 
   @Patch("/share")

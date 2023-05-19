@@ -6,74 +6,32 @@
       </v-toolbar>
       <v-container>
         <v-data-table :headers="headers" :items="users">
-          <template
-            v-slot:item.banned="{
-              item
-            }: {
-              item: {
-                props: {
-                  title: any
-                }
-              }
-            }"
-          >
+          <template v-slot:item.banned="{ item }">
             <v-checkbox
-              :model-value="<boolean>item.props.title.banned"
-              @change="ban(<number>item.props.title.id, $event.target.checked)"
+              :model-value="<boolean>item.raw.banned"
+              @change="ban(<number>item.raw.id, $event.target.checked)"
             ></v-checkbox>
           </template>
-          <template
-            v-slot:item.administrator="{
-              item
-            }: {
-              item: {
-                props: {
-                  title: any
-                }
-              }
-            }"
-          >
+          <template v-slot:item.administrator="{ item }">
             <v-checkbox
-              :model-value="item.props.title.administrator"
+              :model-value="item.raw.administrator"
               disabled
             ></v-checkbox>
           </template>
-          <template
-            v-slot:item.planId="{
-              item
-            }: {
-              item: {
-                props: {
-                  title: any
-                }
-              }
-            }"
-          >
+          <template v-slot:item.planId="{ item }">
             <v-checkbox
-              :model-value="<number>item.props.title.planId === 6"
+              :model-value="<number>item.raw.planId === 6"
               @change="
                 gold(
-                  <number>item.props.title.id,
+                  <number>item.raw.id,
                   $event.target.checked,
-                  <string>item.props.title.createdAt
+                  <string>item.raw.createdAt
                 )
               "
             ></v-checkbox>
           </template>
-          <template
-            v-slot:item.createdAt="{
-              item
-            }: {
-              item: {
-                props: {
-                  title: any
-                }
-              }
-            }"
-          >
-            {{
-              $date(item.props.title.createdAt).format("YYYY/MM/DD hh:mm:ss A")
-            }}
+          <template v-slot:item.createdAt="{ item }">
+            {{ $date(item.raw.createdAt).format("YYYY/MM/DD hh:mm:ss A") }}
           </template>
         </v-data-table>
       </v-container>

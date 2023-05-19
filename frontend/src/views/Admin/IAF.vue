@@ -1,37 +1,15 @@
 <template>
   <v-container>
     <v-data-table :items="invites" :headers="headers">
-      <template
-        v-slot:item.createdAt="{
-          item
-        }: {
-          item: {
-            props: {
-              title: any
-            }
-          }
-        }"
-      >
-        {{
-          $date(item.props.title.createdAt).format("MMMM Do YYYY, h:mm:ss A")
-        }}
+      <template v-slot:item.createdAt="{ item }">
+        {{ $date(item.raw.createdAt).format("MMMM Do YYYY, h:mm:ss A") }}
       </template>
-      <template
-        v-slot:item.actions="{
-          item
-        }: {
-          item: {
-            props: {
-              title: any
-            }
-          }
-        }"
-      >
+      <template v-slot:item.actions="{ item }">
         <v-btn
           icon
           small
-          v-if="item.props.title.status === 'pending'"
-          @click="actInvite('accepted', item.props.title)"
+          v-if="item.raw.status === 'pending'"
+          @click="actInvite('accepted', item.raw)"
         >
           <v-icon>mdi-check</v-icon>
         </v-btn>
@@ -39,8 +17,8 @@
           icon
           small
           class="ml-5"
-          v-if="item.props.title.status === 'pending'"
-          @click="actInvite('rejected', item.props.title)"
+          v-if="item.raw.status === 'pending'"
+          @click="actInvite('rejected', item.raw)"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>

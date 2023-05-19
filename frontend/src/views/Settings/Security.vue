@@ -15,27 +15,17 @@
     </v-btn>
   </v-toolbar>
   <v-data-table :headers="headers" :items="apiKeys">
-    <template
-      v-slot:item.actions="{
-        item
-      }: {
-        item: {
-          props: {
-            title: any
-          }
-        }
-      }"
-    >
+    <template v-slot:item.actions="{ item }">
       <v-icon
-        :disabled="!item.props.title.info?.accessedFrom.length"
+        :disabled="!item.raw.info?.accessedFrom.length"
         class="mr-3"
         @click="
-          ipHistory = item.props.title.info?.accessedFrom;
+          ipHistory = item.raw.info?.accessedFrom;
           dialogs.ipHistory = true;
         "
       >
         <v-tooltip activator="parent" location="top">
-          <span v-if="item.props.title.info?.accessedFrom?.length">
+          <span v-if="item.raw.info?.accessedFrom?.length">
             {{ $t("settings.security.ipHistory") }}
           </span>
           <span v-else>
@@ -44,14 +34,10 @@
         </v-tooltip>
         mdi-web
       </v-icon>
-      <v-icon
-        class="mr-2"
-        small
-        @click="$functions.copy(item.props.title.token)"
-      >
+      <v-icon class="mr-2" small @click="$functions.copy(item.raw.token)">
         mdi-content-copy
       </v-icon>
-      <v-icon class="mr-2" small @click="deleteApiKey(item.props.title.id)">
+      <v-icon class="mr-2" small @click="deleteApiKey(item.raw.id)">
         mdi-delete
       </v-icon>
     </template>
@@ -76,7 +62,7 @@
       <v-icon
         class="mr-2"
         small
-        @click="deleteAlternatePassword(item.props.value.name)"
+        @click="deleteAlternatePassword(item.raw.name)"
       >
         mdi-delete
       </v-icon>

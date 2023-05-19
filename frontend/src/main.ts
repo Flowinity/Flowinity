@@ -32,7 +32,11 @@ import "./styles/tpu-editorjs.css";
 import VueApexCharts from "vue3-apexcharts";
 import SocketIO, { Socket } from "socket.io-client";
 import { useChatStore } from "@/store/chat";
-import { RouteLocationNormalized, Router } from "vue-router";
+import {
+  RouteLocationNormalized,
+  RouteLocationNormalizedLoaded,
+  Router
+} from "vue-router";
 import { useWorkspacesStore } from "@/store/workspaces";
 import { useFriendsStore } from "@/store/friends";
 import { Chat } from "@/models/chat";
@@ -68,7 +72,7 @@ declare module "@vue/runtime-core" {
     $friends: ReturnType<typeof useFriendsStore>;
     $mail: ReturnType<typeof useMailStore>;
     $router: Router;
-    $route: RouteLocationNormalized;
+    $route: RouteLocationNormalizedLoaded;
     $admin: ReturnType<typeof useAdminStore>;
   }
 }

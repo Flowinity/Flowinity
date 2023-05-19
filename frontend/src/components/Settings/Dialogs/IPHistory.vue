@@ -1,7 +1,7 @@
 <template>
   <CoreDialog
     :model-value="modelValue"
-    max-width="700px"
+    max-width="900px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>IP History</template>
@@ -13,7 +13,9 @@
         class="elevation-0"
       >
         <template v-slot:item.date="{ item }">
-          <span>{{ $date(item.value.date).format("DD/MM/YYYY hh:mm A") }}</span>
+          <span>
+            {{ $date(item.columns.date).format("DD/MM/YYYY hh:mm A") }}
+          </span>
         </template>
       </v-data-table>
     </v-card-text>
