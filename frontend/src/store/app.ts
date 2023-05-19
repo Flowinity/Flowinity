@@ -212,7 +212,15 @@ export const useAppStore = defineStore("app", {
         maintenance: false,
         _redis: new Date().toISOString(),
         server: "MAIN4",
-        officialInstance: true
+        officialInstance: true,
+        features: {
+          communications: true,
+          collections: true,
+          autoCollects: true,
+          workspaces: true,
+          insights: true
+        },
+        inviteAFriend: true
       },
       weather: {
         loading: true,
