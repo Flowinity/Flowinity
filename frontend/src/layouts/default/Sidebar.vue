@@ -280,7 +280,11 @@ export default defineComponent({
         }[];
 
         // Server feature options
-        if (this.$app.site.inviteAFriend) {
+        if (
+          this.$app.site.inviteAFriend ||
+          this.$user.user?.moderator ||
+          this.$user.user?.administrator
+        ) {
           items.push({
             id: 32,
             click(instance: any) {

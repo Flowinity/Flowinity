@@ -32,7 +32,8 @@ export class InviteControllerV3 {
       email: string
     }
   ) {
-    if (!config.inviteAFriend) throw Errors.INVITE_A_FRIEND_DISABLED
+    if (!config.inviteAFriend && !user.administrator && !user.moderator)
+      throw Errors.INVITE_A_FRIEND_DISABLED
     await this.inviteService.createInvite(user.id, body.email)
   }
 }
