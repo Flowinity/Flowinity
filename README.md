@@ -84,7 +84,8 @@ These instructions assume you're using a standard Linux system with systemd, the
 2. Copy it to your NGINX configuration directory: `cp nginx.conf /etc/nginx/conf.d/tpu.conf` (this folder can differ between distributions, it could be `/etc/nginx/sites-available`, if so, symlink it to `/etc/nginx/sites-enabled`).
 3. Modify the NGINX configuration file (use nano, vim, etc), replace all instances of `CHANGE_ME` with your own values.
 4. Test the NGINX configuration: `nginx -t`
-5. If the test is successful, reload NGINX: `systemctl reload nginx`
+5. If the test is successful, reload NGINX: `systemctl restart nginx`
+</details>
 ## Scripts
 
 - `yarn build` - Build TPU.
