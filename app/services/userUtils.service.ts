@@ -806,17 +806,18 @@ export class UserUtilsService {
   }
 
   async sendFeedback(
-    id: number,
+    id: number | undefined,
     feedbackText: string,
     starRating: number,
-    route: string
+    route: string,
+    debugInfo?: string
   ): Promise<void> {
     await Feedback.create({
       userId: id,
       feedbackText,
       starRating,
       route,
-      debugInfo: "isTPUV2"
+      debugInfo: debugInfo ?? "isTPUV2"
     })
   }
 }

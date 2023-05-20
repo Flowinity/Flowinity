@@ -5,12 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="Prettier automatic reformat config webstorm">
-      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/controllers/v3/instance.controller.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Home/PromoCard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Home/PromoCard.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/layouts/unauth/AppBar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/layouts/unauth/AppBar.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/plugins/vuetify.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/plugins/vuetify.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Auth/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Auth/Home.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/cluster.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/cluster.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/v3/user.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/user.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/userUtils.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/userUtils.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/Feedback.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/Feedback.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/layouts/default/Sidebar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/layouts/default/Sidebar.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,7 +80,7 @@
       <workItem from="1684207032649" duration="17579000" />
       <workItem from="1684583393370" duration="162000" />
       <workItem from="1684583567906" duration="3621000" />
-      <workItem from="1684587812713" duration="1247000" />
+      <workItem from="1684587812713" duration="2436000" />
     </task>
     <task id="LOCAL-00001" summary="Capitalise some Russian strings">
       <created>1684150087122</created>

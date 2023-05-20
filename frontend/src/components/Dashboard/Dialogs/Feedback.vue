@@ -28,6 +28,14 @@
           <small>
             Your feedback will be used to make
             {{ $app.site.name }} better.
+            <br />
+            <br />
+            <template v-if="!$app.site.officialInstance">
+              This is a third-party instance of TPU. Feedback will be submitted
+              to the instance administrators, and to the official TPU instance,
+              some information may be recorded such as current instance and user
+              ID to improve your experience.
+            </template>
           </small>
         </v-row>
       </v-container>

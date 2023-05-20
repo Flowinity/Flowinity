@@ -49,6 +49,7 @@ import { FallbackControllerV3 } from "@app/controllers/v3/fallback.controller"
 import { MigrateControllerV3 } from "@app/controllers/v3/migrate.controller"
 import { SlideshowControllerV3 } from "@app/controllers/v3/slideshow.controller"
 import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
+import { InstanceControllerV3 } from "@app/controllers/v3/instance.controller"
 
 @Service()
 @Middleware({ type: "after" })
@@ -179,7 +180,8 @@ export class Application {
             ProviderControllerV3,
             MailControllerV3,
             MigrateControllerV3,
-            SlideshowControllerV3
+            SlideshowControllerV3,
+            ...(config?.officialInstance ? [InstanceControllerV3] : [])
           ]
         : [SetupControllerV3, CoreControllerV3],
       routePrefix: endpoint,

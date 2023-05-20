@@ -240,7 +240,7 @@ export default defineComponent({
             icon: "mdi-plus",
             new: false,
             scope: "user.view",
-            experimentsRequired: ["EARLY_ACCESS"]
+            experimentsRequired: ["EARLY_ACCESS", "OFFICIAL_INSTANCE"]
           },
           {
             id: 38,

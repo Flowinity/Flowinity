@@ -29,6 +29,7 @@ import { Response } from "express"
 import fs from "fs"
 import sharp from "sharp"
 import { PatchUser } from "@app/types/auth"
+import axios from "axios"
 
 @Service()
 @JsonController("/user")
@@ -120,10 +121,22 @@ export class UserControllerV3 {
 
   @OnUndefined(204)
   @Post("/feedback")
+  @UseBefore(rateLimits.standardLimiter)
   async sendFeedback(
     @Auth("user.modify") user: User,
     @Body() body: { text: string; starRating: number; route: string }
   ) {
+    try {
+      axios.post("http://localhost:34582/api/v3/instances/feedback", {
+        text: body.text,
+        starRating: body.starRating,
+        route: body.route,
+        userId: user.id,
+        instance: config.hostname
+      })
+    } catch (e) {
+      console.error(e)
+    }
     await this.userUtilsService.sendFeedback(
       user.id,
       body.text,

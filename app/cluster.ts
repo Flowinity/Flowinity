@@ -66,6 +66,7 @@ if (cluster.isMaster) {
     console.info("message: ", message)
 
     if (message === "TPU_RESTART") {
+      setEnvVariables()
       console.info("Restarting workers")
       const workers = Object.values(cluster.workers || {})
 
