@@ -126,16 +126,18 @@ export class UserControllerV3 {
     @Auth("user.modify") user: User,
     @Body() body: { text: string; starRating: number; route: string }
   ) {
-    try {
-      axios.post("http://localhost:34582/api/v3/instances/feedback", {
-        text: body.text,
-        starRating: body.starRating,
-        route: body.route,
-        userId: user.id,
-        instance: config.hostname
-      })
-    } catch (e) {
-      console.error(e)
+    if (!config.officialInstance) {
+      try {
+        axios.post("https://images.flowinity.com/api/v3/instances/feedback", {
+          text: body.text,
+          starRating: body.starRating,
+          route: body.route,
+          userId: user.id,
+          instance: config.hostname
+        })
+      } catch (e) {
+        console.error("Could not send feedback to official instance")
+      }
     }
     await this.userUtilsService.sendFeedback(
       user.id,
