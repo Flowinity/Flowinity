@@ -86,6 +86,7 @@ These instructions assume you're using a standard Linux system with systemd, the
 4. Test the NGINX configuration: `nginx -t`
 5. If the test is successful, reload NGINX: `systemctl restart nginx`
 </details>
+
 ## Scripts
 
 - `yarn build` - Build TPU.
