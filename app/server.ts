@@ -11,7 +11,6 @@ import os from "os"
 // Import Miscellaneous
 import { Application } from "@app/app"
 import redis from "@app/redis"
-import path from "path"
 
 // Import Libs
 import socket from "@app/lib/socket"
