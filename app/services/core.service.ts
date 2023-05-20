@@ -316,7 +316,6 @@ export class CoreService {
   getExperiments(dev: boolean = false, gold: boolean = false): object {
     const experiments = {
       OFFICIAL_INSTANCE: config?.officialInstance || false,
-      FLOWINITY_REBRAND: false,
       API_FALLBACK_ON_ERROR: false,
       API_VERSION: 2,
       USER_V3_EDITOR: false,
@@ -330,9 +329,6 @@ export class CoreService {
       COMMUNICATIONS_QUAD_SIDEBAR_LOWRES: false,
       COMMUNICATIONS: true,
       WEBMAIL: false,
-      GEOGUESS: false,
-      OBJECTIVE: false,
-      COMPASS_INTEGRATION: false,
       SURVEYS: false,
       PROJECT_MERGE: true,
       WORKSPACES_SIDEBAR: true,
@@ -371,10 +367,6 @@ export class CoreService {
         OFFICIAL_INSTANCE: {
           description: "Official PrivateUploader instance.",
           createdAt: "2023-05-15T00:00:00.000Z"
-        },
-        FLOWINITY_REBRAND: {
-          description: "Flowinity rebrand.",
-          createdAt: "2023-05-13T00:00:00.000Z"
         },
         API_FALLBACK_ON_ERROR: {
           description: "If the API request fails, fallback to the old API.",
@@ -430,19 +422,6 @@ export class CoreService {
         },
         WEBMAIL: {
           description: "Enable TPU webmail.",
-          createdAt: "2023-02-10T00:00:00.000Z"
-        },
-        GEOGUESS: {
-          description: "Enable embedded GeoGuess.",
-          createdAt: "2021-02-10T00:00:00.000Z"
-        },
-        OBJECTIVE: {
-          description: `Objective Jitsi room information, right inside TPU.`,
-          createdAt: "2023-02-10T00:00:00.000Z"
-        },
-        COMPASS_INTEGRATION: {
-          description:
-            "Submit Learning Tasks via TPUDocs to JDLF, view schedule & class information.\nLink Compass account.",
           createdAt: "2023-02-10T00:00:00.000Z"
         },
         SURVEYS: {
@@ -617,8 +596,6 @@ export class CoreService {
       experiments.WORKSPACES_SIDEBAR = true
       experiments.PROJECT_MERGE = true
       experiments.SURVEYS = true
-      experiments.COMPASS_INTEGRATION = true
-      experiments.OBJECTIVE = true
       experiments.COMMUNICATIONS = true
       experiments.WEBMAIL = true
       experiments.PINNED_MESSAGES = true

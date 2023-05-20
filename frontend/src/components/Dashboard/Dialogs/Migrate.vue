@@ -127,7 +127,9 @@
             class="no-capital"
             color="red"
             @click="
-              $experiments.experiments['CLASSIC_MIGRATE'] ? step++ : (step = 8)
+              $experiments.experiments['CLASSIC_MIGRATE']
+                ? (step = 7)
+                : (step = 8)
             "
           >
             <v-icon class="mr-1">mdi-close</v-icon>
@@ -139,97 +141,6 @@
             color="primary"
             @click="checkColubrina"
           >
-            <v-icon class="mr-1">mdi-check</v-icon>
-            Let's go
-          </v-btn>
-        </v-card-actions>
-      </template>
-      <template v-if="step === 4">
-        <v-img
-          class="wizard-banner"
-          max-height="400"
-          src="https://i.troplo.com/i/af3346db35a8.png"
-          width="1920"
-        ></v-img>
-        <v-card-title class="text-center justify-center">
-          Import your GeoSave
-        </v-card-title>
-        <v-card-subtitle class="text-center justify-center">
-          From any compatible GeoGuess instance you may export your GeoSave and
-          import it here.
-        </v-card-subtitle>
-        <v-container>
-          <v-file-input
-            v-model="geoSave"
-            autofocus
-            dense
-            label="GeoSave"
-            outlined
-          ></v-file-input>
-        </v-container>
-        <v-card-actions class="text-center justify-center">
-          <v-btn class="no-capital" color="red" @click="step++">
-            <v-icon class="mr-1">mdi-close</v-icon>
-            Skip
-          </v-btn>
-          <v-btn class="no-capital" color="primary" @click="step++">
-            <v-icon class="mr-1">mdi-check</v-icon>
-            Let's go
-          </v-btn>
-        </v-card-actions>
-      </template>
-      <template v-if="step === 5">
-        <v-img
-          class="wizard-banner"
-          max-height="400"
-          src="https://i.troplo.com/i/f654e23bdd22.png"
-          width="1920"
-        ></v-img>
-        <v-card-title class="text-center justify-center">
-          Migrate Compass account
-        </v-card-title>
-        <v-card-subtitle class="text-center justify-center">
-          Have a Compass account? Link it to your TPU to view your calendar,
-          submit learning tasks, all without leaving TPU.
-        </v-card-subtitle>
-        <v-container>Currently unavailable</v-container>
-        <v-card-actions class="text-center justify-center">
-          <v-btn class="no-capital" color="red" @click="step++">
-            <v-icon class="mr-1">mdi-close</v-icon>
-            Skip
-          </v-btn>
-          <v-btn class="no-capital" color="primary" @click="step++">
-            <v-icon class="mr-1">mdi-check</v-icon>
-            Let's go
-          </v-btn>
-        </v-card-actions>
-      </template>
-      <template v-if="step === 6">
-        <v-img
-          class="wizard-banner"
-          max-height="400"
-          src="https://i.troplo.com/i/b365c2da135c.png"
-          width="1920"
-        ></v-img>
-        <p class="text-grey text-center justify-center">
-          Receive emails right inside of TPU with TPU Mail with your own unique
-          troplo.com address that represents your TPU username. Hello
-          <a
-            :href="
-              'mailto:' + $user.user?.username.toLowerCase() + '@troplo.com'
-            "
-          >
-            {{ $user.user?.username.toLowerCase() }}@troplo.com
-          </a>
-          !
-        </p>
-        <v-container>Currently unavailable</v-container>
-        <v-card-actions class="text-center justify-center">
-          <v-btn class="no-capital" color="red" @click="step++">
-            <v-icon class="mr-1">mdi-close</v-icon>
-            Skip
-          </v-btn>
-          <v-btn class="no-capital" color="primary" @click="step++">
             <v-icon class="mr-1">mdi-check</v-icon>
             Let's go
           </v-btn>
