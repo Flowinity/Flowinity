@@ -40,15 +40,15 @@
       "
     />
     <div
-      v-for="(value, name2, i) in value"
+      v-for="(value2, name2, i) in value"
       v-else-if="typeof value === 'object' && !Array.isArray(value)"
     >
       <v-card-text style="padding: 0" v-if="i === 0">{{ name }}:</v-card-text>
       <ConfigObject
         :style="deepStyle"
-        :value="value"
+        :value="value2"
         :name="name2"
-        :config="value"
+        :config="value2"
         :deep="deep + 1"
         @update:object="$emit('update:object', $event)"
         :persistentKey="persistentKey + '.' + name2"
