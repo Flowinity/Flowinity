@@ -48,7 +48,11 @@ export default {
 }
 
 .hover:hover {
-  background-color: rgb(24, 24, 24) !important;
+  background: rgba(0, 0, 0, 0.15) !important;
+}
+
+.v-theme--amoled .hover:hover {
+  background: #121212 !important;
 }
 
 .fix {

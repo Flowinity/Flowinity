@@ -198,16 +198,15 @@
       </v-col>
     </v-row>
     <PromoCard
-      :height="300"
+      :height="365"
       :hover="true"
       :left="true"
       class="mb-6 mt-4"
       title="Report an Upload"
     >
       <p>
-        Is there a file hosted on TPU that you believe violates our
-        <router-link to="/policies/content">Content Policy</router-link>
-        ? Please report it here.
+        Is there a file hosted on {{ $app.site.name }} that you believe violates our
+        <router-link to="/policies/content">Content Policy?</router-link> Please report it here.
       </p>
       <template v-slot:left>
         <div class="mr-3">

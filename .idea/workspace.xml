@@ -5,12 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="Prettier automatic reformat config webstorm">
+      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/v3/collection.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/collection.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/locales/en-US.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/locales/en-US.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/store/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/store/user.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/views/Insights/Weekly.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Insights/Weekly.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Home/PromoCard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Home/PromoCard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/layouts/unauth/AppBar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/layouts/unauth/AppBar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/plugins/vuetify.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/plugins/vuetify.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/views/Auth/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/views/Auth/Home.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +57,7 @@
     "nodejs_package_manager_path": "yarn",
     "prettier.import.notification.dismissed": "true",
     "prettierjs.PrettierConfiguration.Package": "/home/troplo/GitHub/server/node_modules/prettier",
-    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors",
+    "settings.editor.selected.configurable": "settings.javascript.prettier",
     "ts.external.directory.path": "/home/troplo/GitHub/server/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
@@ -77,7 +77,8 @@
       <workItem from="1684207004205" duration="21000" />
       <workItem from="1684207032649" duration="17579000" />
       <workItem from="1684583393370" duration="162000" />
-      <workItem from="1684583567906" duration="2624000" />
+      <workItem from="1684583567906" duration="3621000" />
+      <workItem from="1684587812713" duration="1247000" />
     </task>
     <task id="LOCAL-00001" summary="Capitalise some Russian strings">
       <created>1684150087122</created>
