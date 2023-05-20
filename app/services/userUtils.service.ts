@@ -449,7 +449,11 @@ export class UserUtilsService {
       ThemeEngineValidate.parse(body.themeEngine)
     }
 
-    if (body.themeEngine && user.plan.internalName !== "GOLD") {
+    if (
+      body.themeEngine &&
+      user.plan.internalName !== "GOLD" &&
+      config.officialInstance
+    ) {
       body.themeEngine = null
     }
 

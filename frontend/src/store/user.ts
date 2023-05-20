@@ -74,8 +74,12 @@ export const useUserStore = defineStore("user", {
   actions: {
     applyTheme() {
       try {
-        if (this.user?.plan?.internalName !== "GOLD") return;
         const app = useAppStore();
+        if (
+          this.user?.plan?.internalName !== "GOLD" &&
+          app.site.officialInstance
+        )
+          return;
         const themeData = this.user?.themeEngine?.deviceSync
           ? this?.user?.themeEngine
           : JSON.parse(localStorage.getItem("themeEngine") || "{}");
@@ -198,7 +202,10 @@ export const useUserStore = defineStore("user", {
         }, 1000 * 60 * 15);
         this._postInitRan = true;
         app.populateQuickSwitcher();
-        if (this.user?.plan?.internalName === "GOLD") {
+        if (
+          this.user?.plan?.internalName === "GOLD" ||
+          !this.$app.site.officialInstance
+        ) {
           vuetify.theme.themes.value.dark.colors = {
             ...vuetify.theme.themes.value.dark.colors,
             primary: "#FFD700",

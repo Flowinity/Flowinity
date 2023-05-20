@@ -290,7 +290,11 @@ export class UserControllerV3 {
         }
       ]
     })
-    if (!user || !user?.themeEngine || user.plan.internalName !== "GOLD") {
+    if (
+      !user ||
+      !user?.themeEngine ||
+      (user.plan.internalName !== "GOLD" && config.officialInstance)
+    ) {
       res.sendFile("/favicon.png", {
         root: "./frontend/public"
       })
