@@ -317,7 +317,7 @@ export class CoreService {
     const experiments = {
       OFFICIAL_INSTANCE: config?.officialInstance || false,
       API_FALLBACK_ON_ERROR: false,
-      API_VERSION: 2,
+      API_VERSION: 3,
       USER_V3_EDITOR: false,
       RAIL_SIDEBAR: true,
       USER_V3_MODIFY: true,
