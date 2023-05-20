@@ -37,7 +37,7 @@
       <v-kbd>E</v-kbd>
     </small>
     <v-alert
-      v-if="theme === 'amoled' && $user.gold"
+      v-if="(theme === 'amoled' && $user.gold) || !$app.site.officialInstance"
       class="mb-4 mt-4"
       type="warning"
       variant="tonal"
@@ -56,13 +56,13 @@
       ></v-select>
     </v-card-title>
     <v-card
-      :class="{ 'v-card--disabled': !$user.gold }"
+      :class="{ 'v-card--disabled': !$user.gold && $app.site.officialInstance }"
       class="no-border"
       color="transparent"
       elevation="0"
     >
       <v-overlay
-        :model-value="!$user.gold"
+        :model-value="!$user.gold && $app.site.officialInstance"
         class="align-center justify-center"
         contained
         persistent
@@ -330,7 +330,7 @@ export default defineComponent({
       this.triggerSave();
     },
     setThemeColor(color: string, type: string) {
-      if (!this.$user.gold) return;
+      if (!this.$user.gold && this.$app.site.officialInstance) return;
       this.$vuetify.theme.themes.dark.colors[type] = color;
       this.$vuetify.theme.themes.light.colors[type] = color;
       this.$vuetify.theme.themes.amoled.colors[type] = color;
