@@ -15,7 +15,11 @@ export class ProviderService {
     return data
   }
 
-  async verifyUser(username: string, provider: string, currentUserId: number) {
+  async verifyUser(
+    username: string,
+    provider: string,
+    currentUserId: number | undefined
+  ) {
     const user = await User.findOne({
       where: {
         username: username
@@ -31,6 +35,7 @@ export class ProviderService {
       ]
     })
     if (!user) throw Errors.USER_NOT_FOUND
+    if (!currentUserId && !user.publicProfile) throw Errors.USER_NOT_FOUND
 
     if (
       !user?.profileLayout?.layout.columns[0].rows.find(

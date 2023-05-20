@@ -64,17 +64,6 @@ ax.interceptors.response.use(
         }
       }
     } else {
-      if (
-        e.response?.config?.baseURL?.includes("/api/v3") &&
-        e.response.status === 404
-      ) {
-        console.warn(
-          `[TPU/HTTP] APIv3 feature is not implemented. Falling back to APIv2.`
-        );
-        const config = e.response.config;
-        config.baseURL = config.baseURL.replace("/api/v3", "/api/v2");
-        return axios.request(config);
-      }
       if (!e?.response?.config?.headers?.noToast) {
         toast.error("An unknown error occurred.");
       }

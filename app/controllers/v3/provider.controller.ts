@@ -111,13 +111,13 @@ export class ProviderControllerV3 {
 
   @Get("/userv3/lastfm/:username")
   async getUserV3LastfmWidget(
-    @Auth("user.view") authUser: User,
+    @Auth("user.view", false) authUser: User,
     @Param("username") username: string
   ) {
     const user = await this.providerService.verifyUser(
       username,
       "lastfm",
-      authUser.id
+      authUser?.id
     )
     return await this.lfmService.getLastFMOverview(
       user.id,
@@ -144,13 +144,13 @@ export class ProviderControllerV3 {
 
   @Get("/userv3/mal/:username")
   async getUserV3MalWidget(
-    @Auth("user.view") authUser: User,
+    @Auth("user.view", false) authUser: User,
     @Param("username") username: string
   ) {
     const user = await this.providerService.verifyUser(
       username,
       "mal",
-      authUser.id
+      authUser?.id
     )
     return await this.malService.getMALOverview(
       user.id,

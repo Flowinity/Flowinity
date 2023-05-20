@@ -1,23 +1,41 @@
 <template>
-  <v-card-title>Privacy</v-card-title>
+  <v-card-title>
+    {{ $t("settings.home.privacy.title") }}
+  </v-card-title>
   <v-card-text>
     <v-switch
       v-model="$user.changes.discordPrecache"
       class="mb-n7"
-      label="Discord precaching"
+      :label="$t('settings.home.privacy.discordPrecaching')"
       @update:modelValue="$emit('update')"
     ></v-switch>
     <small>
-      * Discord precaching sends the TPU link of any media attachment to a
-      Discord channel that gets cleared every 10 minutes in order to have the
-      image cached by Discord by the time it's sent by yourself. Do not enable
-      this if you don't trust Discord.
+      {{ $t("settings.home.privacy.discordPrecachingDesc") }}
+    </small>
+    <v-switch
+      v-model="$user.changes.publicProfile"
+      class="mb-n7"
+      :label="$t('settings.home.privacy.publicProfile')"
+      @update:modelValue="$emit('update')"
+    ></v-switch>
+    <small>
+      {{ $t("settings.home.privacy.publicProfileDesc") }}
+    </small>
+    <v-select
+      v-model="$user.changes.insights"
+      :items="insights"
+      :label="$t('settings.home.preferences.insights')"
+      class="mb-n2 mt-4"
+      @update:modelValue="$emit('update')"
+    ></v-select>
+    <small>
+      {{ $t("settings.home.preferences.insightsDesc") }}
     </small>
     <v-switch
       v-if="$app.site.release === 'dev'"
       v-model="$app.demo"
       class="mb-n7"
-      label="Demo mode"
+      :label="$t('settings.home.privacy.demoMode')"
     ></v-switch>
   </v-card-text>
   <v-card-title>{{ $t("settings.home.myAccount.title") }}</v-card-title>
@@ -184,16 +202,6 @@
     item-value="value"
     @update:modelValue="$emit('update')"
   ></v-select>
-  <v-select
-    v-model="$user.changes.insights"
-    :items="insights"
-    :label="$t('settings.home.preferences.insights')"
-    class="px-6 mb-n4"
-    @update:modelValue="$emit('update')"
-  ></v-select>
-  <small class="px-6 text-grey">
-    {{ $t("settings.home.preferences.insightsDesc") }}
-  </small>
   <v-autocomplete
     v-model="$user.changes.excludedCollections"
     :items="$collections.items"

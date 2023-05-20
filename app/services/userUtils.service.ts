@@ -432,7 +432,8 @@ export class UserUtilsService {
       "insights",
       "profileLayout",
       "language",
-      "excludedCollections"
+      "excludedCollections",
+      "publicProfile"
     ]
     // from body, remove all empty values
     for (const key in body) {
@@ -707,7 +708,10 @@ export class UserUtilsService {
     return user
   }
 
-  async getUser(username: string, userId: number): Promise<User | null> {
+  async getUser(
+    username: string,
+    userId: number | undefined
+  ): Promise<User | null> {
     let user = await User.findOne({
       where: {
         username
@@ -728,7 +732,8 @@ export class UserUtilsService {
         "quota",
         "themeEngine",
         "insights",
-        "profileLayout"
+        "profileLayout",
+        "publicProfile"
       ],
       include: [
         {
@@ -753,14 +758,23 @@ export class UserUtilsService {
         status: "accepted"
       }
     }))
-    user.dataValues.collections = await this.getMutualCollections(
-      userId,
-      user.id
-    )
-    user.dataValues.friend = await this.getFriendStatus(userId, user.id)
-    user.dataValues.friends = await this.getMutualFriends(user.id, userId)
     user.dataValues.stats = await redis.json.get(`userStats:${user.id}`)
-    if (user.dataValues.friend !== "accepted" && user.id !== userId) {
+    if (userId) {
+      user.dataValues.collections = await this.getMutualCollections(
+        userId,
+        user.id
+      )
+      user.dataValues.friend = await this.getFriendStatus(userId, user.id)
+      user.dataValues.friends = await this.getMutualFriends(user.id, userId)
+      if (user.dataValues.friend !== "accepted" && user.id !== userId) {
+        user.dataValues.stats.hours = null
+        user.dataValues.stats.uploadGraph = null
+      }
+    } else if (
+      user?.profileLayout?.layout.columns[0].rows.find(
+        (row) => row.name === "core-statistics"
+      )?.props?.friendsOnly
+    ) {
       user.dataValues.stats.hours = null
       user.dataValues.stats.uploadGraph = null
     }

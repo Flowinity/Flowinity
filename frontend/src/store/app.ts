@@ -30,6 +30,8 @@ export interface AppState {
   shifting: boolean;
   themeEditor: boolean;
   site: {
+    preTrustedDomains: string[];
+    hostnames?: string[];
     domain?: string;
     step?: number;
     finishedSetup: boolean;

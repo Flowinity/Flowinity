@@ -148,4 +148,5 @@ export interface User {
   integrations: Integration[];
   excludedCollections: number[] | null;
   language: string;
+  publicProfile: boolean;
 }

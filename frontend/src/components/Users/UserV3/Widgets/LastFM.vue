@@ -8,6 +8,13 @@
           &bullet; {{ parseInt(attributes.total).toLocaleString() }} scrobbles
         </template>
       </v-toolbar-title>
+      <v-btn
+        icon
+        :href="`https://last.fm/user/${attributes.user}`"
+        target="_blank"
+      >
+        <v-icon>mdi-open-in-new</v-icon>
+      </v-btn>
       <v-btn icon @click="page > 1 ? page-- : (page = 1)">
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
@@ -72,7 +79,8 @@ export default defineComponent({
       tracks: [],
       attributes: {
         total: "0",
-        totalPages: "0"
+        totalPages: "0",
+        user: ""
       },
       page: 1,
       loading: true

@@ -308,19 +308,11 @@ export default defineComponent({
     }
   },
   mounted() {
-    // if accessing URL isn't images.flowinity.com, central.troplo.com or privateuploader.com, redirect to images.flowinity.com
+    // Check $app.site.hostnames and window.location.hostname to see if we should redirect
     if (this.$app.site.release !== "dev") {
       if (
-        window.location.hostname !== "images.flowinity.com" &&
-        window.location.hostname !== "next.images.flowinity.com" &&
-        window.location.hostname !== "central.troplo.com" &&
-        window.location.hostname !== "privateuploader.com" &&
-        window.location.hostname !== "www.privateuploader.com" &&
-        window.location.hostname !== "next.privateuploader.com" &&
-        window.location.hostname !== "localhost" &&
-        window.location.hostname !== "127.0.0.1" &&
-        window.location.hostname !== "tpu-mobile.troplo.com" &&
-        window.location.hostname !== this.$app.site.hostname
+        this.$app.site.hostnames &&
+        !this.$app.site.hostnames.includes(window.location.hostname)
       ) {
         window.location.href =
           (this.$app.site.hostnameWithProtocol ??

@@ -60,3 +60,17 @@ process command and will automatically scale if you add more CPU cores/threads.
 #### Do not restart TPU via `pm2` or `systemd` if you are using the `serve-cluster` script in production.<br><br>This can be done in the admin panel or via a POST request to /api/v3/admin/restart (administrator account required, can be automated with "admin.ci" API scope).
 
 #### Having a single CPU core will cause TPU to be temporarily unavailable when restarting.
+
+
+## Contributors
+[![All Contributors](https://img.shields.io/github/all-contributors/Troplo/PrivateUploader?color=ee8449&style=flat-square)](#contributors)
+
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->

@@ -356,7 +356,8 @@ router.beforeEach(async (to, from) => {
       "Privacy Policy",
       "Attachment Item",
       "Credits",
-      "TPU Setup Wizard"
+      "TPU Setup Wizard",
+      "User"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");

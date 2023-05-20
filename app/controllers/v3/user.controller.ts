@@ -100,10 +100,13 @@ export class UserControllerV3 {
 
   @Get("/profile/:username")
   async getUserProfile(
-    @Auth("user.view") user: User,
+    @Auth("user.view", false) authUser: User,
     @Param("username") username: string
   ) {
-    return await this.userUtilsService.getUser(username, user.id)
+    const user = await this.userUtilsService.getUser(username, authUser?.id)
+    if (!user || (!user?.publicProfile && !authUser))
+      throw Errors.USER_NOT_FOUND
+    return user
   }
 
   @OnUndefined(204)

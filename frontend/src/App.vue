@@ -28,6 +28,7 @@ export default defineComponent({
       this.error = e;
       console.log("[TPU/SkullCrash] Error captured:", e);
       console.error(e.error);
+      return;
       await this.axios.post("/user/feedback", {
         route: this.$route.path,
         starRating: 0,

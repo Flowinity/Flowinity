@@ -7,11 +7,14 @@
     <template v-slot:title>You are leaving TPU</template>
     <v-card-text>
       <p>
-        You are about to leave TPU and go to
-        <strong>{{ domain }}.</strong>
-
-        <br />
-        <br />
+        You are about to leave TPU and go to:
+        <v-textarea
+          auto-grow
+          rows="1"
+          variant="plain"
+          disabled
+          :model-value="this.$chat.dialogs.externalSite.url"
+        />
         This link is not part of TPU and might be unsafe. Do you want to
         continue?
       </p>
@@ -38,13 +41,7 @@ export default defineComponent({
   name: "URLConfirmDialog",
   components: { CoreDialog },
   props: ["modelValue"],
-  emits: ["update:modelValue"],
-  computed: {
-    domain() {
-      const url = new URL(this.$chat.dialogs.externalSite.url);
-      return url.hostname;
-    }
-  }
+  emits: ["update:modelValue"]
 });
 </script>
 

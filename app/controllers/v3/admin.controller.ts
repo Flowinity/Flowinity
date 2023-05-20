@@ -28,6 +28,9 @@ import { Badge } from "@app/models/badge.model"
 import { RequestAuth } from "@app/types/express"
 import { Domain } from "@app/models/domain.model"
 import { PulseService } from "@app/services/pulse.service"
+import { TpuConfigValidator } from "@app/validators/setup"
+import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
+import { mergeDeep } from "@app/lib/deepMerge"
 
 @Service()
 @Middleware({ type: "before" })
@@ -68,7 +71,8 @@ export class AdminControllerV3 {
     private readonly cacheService: CacheService,
     private readonly userUtilsService: UserUtilsService,
     private readonly coreService: CoreService,
-    private readonly pulseService: PulseService
+    private readonly pulseService: PulseService,
+    private readonly setupController: SetupControllerV3
   ) {}
 
   @Get("/dashboard")
@@ -430,5 +434,58 @@ export class AdminControllerV3 {
   @Post("/insights/regenerate")
   async regenerateInsights(@Auth("*") user: User) {
     this.pulseService.regenerateAll()
+  }
+
+  redactConfig(tpuConfig: any, deleteRedacted = false) {
+    const loop = Object.entries(tpuConfig)
+    for (let [key, value] of loop) {
+      if (
+        typeof tpuConfig[key] === "object" &&
+        !Array.isArray(tpuConfig[key])
+      ) {
+        value = this.redactConfig(tpuConfig[key], deleteRedacted)
+      }
+      if (
+        ["password", "token", "secret", "key", "tenor", "webhook"].some((s) =>
+          key.toLowerCase().includes(s)
+        ) &&
+        !deleteRedacted
+      ) {
+        if (typeof tpuConfig[key] === "string" && !deleteRedacted) {
+          tpuConfig[key] = "[REDACTED]"
+        }
+      } else if (deleteRedacted && tpuConfig[key] === "[REDACTED]") {
+        console.log("deleting", key)
+        delete tpuConfig[key]
+      }
+    }
+    return tpuConfig
+  }
+
+  @UseBefore(HighLevel)
+  @Get("/config")
+  async getConfig(@Auth("*") user: User) {
+    let tpuConfig: Partial<TpuConfig> = structuredClone(global.config)
+    delete tpuConfig.mediaProxySecret
+    delete tpuConfig.jitsiToken
+    tpuConfig = this.redactConfig(tpuConfig)
+    return tpuConfig
+  }
+
+  @UseBefore(HighLevel)
+  @Put("/config")
+  async updateConfig(
+    @Auth("*") user: User,
+    @Body()
+    body: TpuConfig
+  ) {
+    const tpuConfig = mergeDeep(
+      structuredClone(global.config),
+      this.redactConfig(body, true)
+    )
+    console.log(tpuConfig)
+    await TpuConfigValidator.parse(tpuConfig)
+    await this.setupController.writeTPUConfig(tpuConfig)
+    this.cacheService.refreshState()
   }
 }

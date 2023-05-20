@@ -117,7 +117,8 @@ export class CoreService {
       termsNoteId: config.termsNoteId,
       privacyNoteId: config.privacyNoteId,
       features: config.features,
-      inviteAFriend: config.inviteAFriend
+      inviteAFriend: config.inviteAFriend,
+      preTrustedDomains: config.preTrustedDomains
     }
   }
 
@@ -600,7 +601,6 @@ export class CoreService {
       }
     }
     if (config.release === "dev") {
-      experiments.API_FALLBACK_ON_ERROR = true
       experiments.API_VERSION = 3
     }
     if (dev || config.release === "dev") {

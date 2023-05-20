@@ -58,4 +58,6 @@ declare type TpuConfig = {
   privacyNoteId?: string | undefined | null
   termsNoteId?: string | undefined | null
   inviteAFriend: boolean
+  hostnames?: string[]
+  preTrustedDomains: string[]
 }

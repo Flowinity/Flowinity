@@ -12,6 +12,13 @@
           days
         </template>
       </v-toolbar-title>
+      <v-btn
+        icon
+        :href="`https://myanimelist.net/profile/${malUser?.name}`"
+        target="_blank"
+      >
+        <v-icon>mdi-open-in-new</v-icon>
+      </v-btn>
       <v-btn icon @click="page > 1 ? page-- : (page = 1)">
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>

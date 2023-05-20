@@ -274,6 +274,9 @@ export class User extends Model {
   })
   language: string
 
+  @Column
+  publicProfile: boolean
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 

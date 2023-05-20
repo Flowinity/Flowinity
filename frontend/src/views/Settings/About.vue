@@ -69,8 +69,13 @@
     <router-link class="text-gradient mt-5" to="/credits">
       {{ $t("settings.about.credits") }}
     </router-link>
-    <p class="mt-5 text-gradient">TroploPrivateUploader</p>
-    <p>&copy; {{ $date().format("YYYY") }} Troplo Services</p>
+    <p class="mt-5">
+      <a class="text-gradient" href="https://github.com/Troplo/PrivateUploader">
+        TroploPrivateUploader
+      </a>
+      is licensed under AGPLv3, created by
+      <a class="text-gradient" href="https://troplo.com">Troplo.</a>
+    </p>
     <v-btn
       v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"
       class="mt-2"

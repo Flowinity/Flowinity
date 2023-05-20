@@ -244,6 +244,7 @@
                   config.component = $event || component;
                   config.dialog = true;
                 "
+                @modifyProp="component.props[$event.prop] = $event.value"
               ></UserV3ComponentHandler>
             </div>
           </VueDraggable>
@@ -400,7 +401,10 @@ export default defineComponent({
                 },
                 {
                   name: "mutual-collections",
-                  id: this.$functions.uuid()
+                  id: this.$functions.uuid(),
+                  props: {
+                    mutualCollections: true
+                  }
                 },
                 {
                   name: "divider",
@@ -477,8 +481,29 @@ export default defineComponent({
           name: "Divider"
         },
         {
+          id: "social-links",
+          name: "Social Links",
+          props: {
+            friendsOnly: false,
+            links: []
+          },
+          meta: {
+            friendsOnly: {
+              name: "Friends only",
+              description: "Only show when the user is friends with you."
+            },
+            links: {
+              name: "Links",
+              description: "A list of social links to display."
+            }
+          }
+        },
+        {
           id: "mutual-collections",
-          name: "Mutual Collections"
+          name: "Mutual Collections",
+          props: {
+            mutualCollections: true
+          }
         },
         {
           id: "mutual-friends",
@@ -500,7 +525,7 @@ export default defineComponent({
         {
           id: "last-fm",
           name: "Last.fm",
-          disabled: !this.$user.user.integrations.find(
+          disabled: !this.$user.user?.integrations.find(
             (x) => x.type === "lastfm"
           ),
           props: {
@@ -534,7 +559,9 @@ export default defineComponent({
         {
           id: "mal",
           name: "MyAnimeList",
-          disabled: !this.$user.user.integrations.find((x) => x.type === "mal"),
+          disabled: !this.$user.user?.integrations.find(
+            (x) => x.type === "mal"
+          ),
           props: {
             friendsOnly: false,
             type: "anime",
@@ -802,6 +829,7 @@ export default defineComponent({
     },
     async doFriendRequest() {
       try {
+        if (!this.$user?.user) await this.$router.push("/login");
         this.friendLoading = true;
         await this.axios.post(`/user/friends/${this.user?.id}`);
         this.friendLoading = false;

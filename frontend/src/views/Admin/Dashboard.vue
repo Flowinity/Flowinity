@@ -14,6 +14,44 @@
           <v-icon>mdi-restart</v-icon>
           Restart TPU Cluster
         </v-btn>
+        <br />
+        <v-card-title style="padding: 0">Raw Config Options:</v-card-title>
+        <p class="text-grey mb-4">
+          Values that are [REDACTED] will remain unchanged when saved unless
+          modified manually. Some changes may require a restart & client refresh
+          to take effect.
+        </p>
+        <div v-if="config">
+          <v-btn
+            @click="saveConfig"
+            :loading="loading"
+            class="mx-3 my-3 ml-n1"
+            variant="outlined"
+          >
+            <v-icon class="mr-2">mdi-content-save</v-icon>
+            Save Config
+          </v-btn>
+          <div v-for="(value, key, i) in config">
+            <v-card-text style="padding: 0" v-if="i === 0">root:</v-card-text>
+            <ConfigObject
+              :value="value"
+              :fullConfig="config"
+              :persistentKey="key"
+              :name="key"
+              :deep="0"
+              @update:object="update"
+            />
+          </div>
+          <v-btn
+            @click="saveConfig"
+            :loading="loading"
+            class="mx-3 my-3 ml-n1"
+            variant="outlined"
+          >
+            <v-icon class="mr-2">mdi-content-save</v-icon>
+            Save Config
+          </v-btn>
+        </div>
       </v-container>
     </v-card>
     <v-card v-else>
@@ -30,15 +68,39 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import ConfigObject from "@/components/Admin/ConfigObject.vue";
 
 export default defineComponent({
   name: "Dashboard",
+  components: { ConfigObject },
   data() {
     return {
-      dashboard: null
+      dashboard: null,
+      config: null,
+      loading: false
     };
   },
   methods: {
+    update(object: { key: string; value: any }) {
+      if (object.value === null) return;
+      const keys = object.key.split(".");
+      let currentObject = this.config;
+
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+
+        if (i === keys.length - 1) {
+          // Last key, update the value
+          currentObject[key] = object.value;
+        } else {
+          // Not the last key, update the nested object or create it if it doesn't exist
+          if (!currentObject[key] || typeof currentObject[key] !== "object") {
+            currentObject[key] = {};
+          }
+          currentObject = currentObject[key];
+        }
+      }
+    },
     async restart() {
       await this.axios.post("/admin/restart");
       this.$toast.success("Service restart queued.");
@@ -46,10 +108,26 @@ export default defineComponent({
     async getDashboard() {
       const { data } = await this.axios.get("/admin/dashboard");
       this.dashboard = data;
+    },
+    async getConfig() {
+      const { data } = await this.axios.get("/admin/config");
+      this.config = data;
+    },
+    async saveConfig() {
+      try {
+        this.loading = true;
+        await this.axios.put("/admin/config", this.config);
+        this.loading = false;
+        this.$toast.success("Config saved.");
+        this.getConfig();
+      } catch {
+        this.loading = false;
+      }
     }
   },
   mounted() {
     this.getDashboard();
+    this.getConfig();
   }
 });
 </script>

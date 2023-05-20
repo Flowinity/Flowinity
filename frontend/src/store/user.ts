@@ -31,6 +31,7 @@ export interface UserState {
     profileLayout?: ProfileLayout | null;
     excludedCollections?: number[] | null;
     language?: string;
+    publicProfile?: boolean;
   };
   actions: {
     emailSent: {
@@ -247,27 +248,32 @@ export const useUserStore = defineStore("user", {
       }
       i18n.global.locale = this.user.language;
     },
+    setChanges(user: User) {
+      if (!user) return;
+      this.changes = {
+        password: "",
+        email: user.email,
+        discordPrecache: user.discordPrecache,
+        username: user.username,
+        itemsPerPage: user.itemsPerPage,
+        currentPassword: "",
+        storedStatus: user.storedStatus,
+        description: user.description,
+        themeEngine: user.themeEngine as ThemeEngine,
+        insights: user.insights,
+        profileLayout: user.profileLayout,
+        excludedCollections: user.excludedCollections,
+        language: user.language,
+        publicProfile: user.publicProfile
+      };
+    },
     async init() {
       const user = localStorage.getItem("userStore");
       if (user) {
         try {
           this.user = JSON.parse(user);
           if (this.user) {
-            this.changes = {
-              password: "",
-              email: this.user.email,
-              discordPrecache: this.user.discordPrecache,
-              username: this.user.username,
-              itemsPerPage: this.user.itemsPerPage,
-              currentPassword: "",
-              storedStatus: this.user.storedStatus,
-              description: this.user.description,
-              themeEngine: this.user.themeEngine as ThemeEngine,
-              insights: this.user.insights,
-              profileLayout: this.user.profileLayout,
-              excludedCollections: this.user?.excludedCollections,
-              language: this.user?.language
-            };
+            this.setChanges(this.user);
             this.runPostTasks();
           }
         } catch {
@@ -280,22 +286,7 @@ export const useUserStore = defineStore("user", {
         }
       });
       this.user = data;
-      this.changes = {
-        password: "",
-        email: this.user?.email,
-        discordPrecache: this.user?.discordPrecache,
-        username: this.user?.username,
-        itemsPerPage: this.user?.itemsPerPage,
-        currentPassword: "",
-        storedStatus: this.user?.storedStatus,
-        description: this.user?.description,
-        weatherUnit: this.user?.weatherUnit,
-        themeEngine: this.user?.themeEngine as ThemeEngine,
-        insights: this.user?.insights,
-        profileLayout: this.user?.profileLayout,
-        excludedCollections: this.user?.excludedCollections,
-        language: this.user?.language
-      };
+      this.setChanges(this.user);
       if (this.user?.themeEngine?.defaults?.prev) {
         delete this.user.themeEngine.defaults?.prev;
       }
@@ -328,22 +319,7 @@ export const useUserStore = defineStore("user", {
       if (this.changes.themeEngine?.prev) {
         delete this.changes.themeEngine?.prev;
       }
-      await axios.patch("/user", {
-        password: this.changes.password,
-        currentPassword: this.changes.currentPassword,
-        email: this.changes.email,
-        discordPrecache: this.changes.discordPrecache,
-        username: this.changes.username,
-        itemsPerPage: this.changes.itemsPerPage,
-        storedStatus: this.changes.storedStatus,
-        description: this.changes.description,
-        weatherUnit: this.changes.weatherUnit,
-        themeEngine: this.changes.themeEngine,
-        insights: this.changes.insights,
-        profileLayout: this.changes.profileLayout,
-        excludedCollections: this.changes.excludedCollections,
-        language: this.changes.language
-      });
+      await axios.patch("/user", this.changes);
       this.user = {
         ...this.user,
         ...(this.changes as any)

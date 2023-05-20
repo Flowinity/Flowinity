@@ -13,8 +13,8 @@ import { execSync } from "child_process"
 import { Plan } from "@app/models/plan.model"
 import { User } from "@app/models/user.model"
 import argon2 from "argon2"
-import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
 import { Domain } from "@app/models/domain.model"
+import { TpuConfigValidatorPartial } from "@app/validators/setup"
 
 @Service()
 @JsonController("/setup")
@@ -146,6 +146,7 @@ export class SetupControllerV3 {
     @Body()
     body: TpuConfig
   ) {
+    await TpuConfigValidatorPartial.parse(body)
     let tpuConfig = global.config
     tpuConfig.siteName = body.siteName || "TPU"
     tpuConfig.hostname = body.hostname
@@ -155,6 +156,14 @@ export class SetupControllerV3 {
     tpuConfig.registrations = body.registrations
     tpuConfig.features = body.features
     tpuConfig.redis = body.redis
+    tpuConfig.hostnames = [body.hostname, `www.${body.hostname}`]
+    tpuConfig.preTrustedDomains.push(...tpuConfig.hostnames)
+    await this.writeTPUConfig(tpuConfig)
+  }
+
+  async writeTPUConfig(tpuConfig: TpuConfig) {
+    global.config = tpuConfig
+    process.env.CONFIG = JSON.stringify(tpuConfig)
     if (!fs.existsSync(path.join(appRoot, "config"))) {
       fs.mkdirSync(path.join(appRoot, "config"))
     }
@@ -162,7 +171,6 @@ export class SetupControllerV3 {
       path.join(appRoot, "config", "tpu.json"),
       JSON.stringify(tpuConfig, null, 2)
     )
-    global.config = tpuConfig
   }
 
   @Post("/mail/test")
@@ -223,14 +231,7 @@ export class SetupControllerV3 {
       from: body.from,
       secure: body.secure
     }
-    if (!fs.existsSync(path.join(appRoot, "config"))) {
-      fs.mkdirSync(path.join(appRoot, "config"))
-    }
-    await fs.writeFileSync(
-      path.join(appRoot, "config", "tpu.json"),
-      JSON.stringify(tpuConfig, null, 2)
-    )
-    global.config = tpuConfig
+    await this.writeTPUConfig(tpuConfig)
   }
 
   @Post("/restart")
@@ -239,7 +240,6 @@ export class SetupControllerV3 {
     try {
       tpuConfig = require(path.join(appRoot, "config", "tpu.json"))
     } catch {}
-    tpuConfig.finishedSetup = true
     try {
       if (
         await User.findOne({
@@ -248,10 +248,8 @@ export class SetupControllerV3 {
           }
         })
       ) {
-        await fs.writeFileSync(
-          path.join(appRoot, "config", "tpu.json"),
-          JSON.stringify(tpuConfig, null, 2)
-        )
+        tpuConfig.finishedSetup = true
+        await this.writeTPUConfig(tpuConfig)
       }
     } catch {}
     if (!process.send) {

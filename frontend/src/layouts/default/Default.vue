@@ -1,4 +1,7 @@
 <template>
+  <URLConfirmDialog
+    v-model="$chat.dialogs.externalSite.value"
+  ></URLConfirmDialog>
   <v-app
     v-if="$user.user"
     @drop="dragDropHandler"
@@ -21,9 +24,6 @@
         ($user.user?.administrator || $user.user?.moderator)
       "
     ></ExperimentsManagerDialog>
-    <URLConfirmDialog
-      v-model="$chat.dialogs.externalSite.value"
-    ></URLConfirmDialog>
     <v-overlay
       persistent
       absolute

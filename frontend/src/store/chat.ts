@@ -82,7 +82,6 @@ export interface ChatState {
     };
   };
   trustedDomains: string[];
-  preTrustedDomains: string[];
   loadNew: boolean;
   loadingNew: boolean;
 }
@@ -119,71 +118,6 @@ export const useChatStore = defineStore("chat", {
       memberSidebarShown: true,
       isReady: null,
       trustedDomains: [] as string[],
-      preTrustedDomains: [
-        "troplo.com",
-        "images.flowinity.com",
-        "i.troplo.com",
-        "central.troplo.com",
-        "home.troplo.com",
-        "localhost",
-        "youtube.com",
-        "youtu.be",
-        "vimeo.com",
-        "twitch.tv",
-        "i.flowinity.com",
-        "scpe.eu.org",
-        "colubrina.troplo.com",
-        "compass.troplo.com",
-        "plex.troplo.com",
-        "meet.troplo.com",
-        "flowinity.com",
-        "synclounge.troplo.com",
-        "overseerr.troplo.com",
-        "jellyfin.troplo.com",
-        "radarr.troplo.com",
-        "sonarr.troplo.com",
-        "google.com",
-        "wikipedia.org",
-        "troplo.eu.org",
-        "flowinity.eu.org",
-        "kaverti.com",
-        "www.kaverti.com",
-        "www.troplo.com",
-        "www.flowinity.com",
-        "www.google.com",
-        "www.wikipedia.org",
-        "en.wikipedia.org",
-        "discordapp.com",
-        "discord.com",
-        "www.discordapp.com",
-        "www.discord.com",
-        "discord.gg",
-        "speedtest.net",
-        "www.speedtest.net",
-        "speedtest.troplo.com",
-        "office.com",
-        "www.office.com",
-        "drive.google.com",
-        "www.youtube.com",
-        "www.youtu.be",
-        "www.vimeo.com",
-        "www.twitch.tv",
-        "next.images.flowinity.com",
-        "legacy.images.flowinity.com",
-        "app.i.troplo.com",
-        "tenor.com",
-        "media.tenor.com",
-        "www.tenor.com",
-        "giphy.com",
-        "media.giphy.com",
-        "www.giphy.com",
-        "geo.troplo.com",
-        "privateuploader.com",
-        "www.privateuploader.com",
-        "i.privateuploader.com",
-        "next.privateuploader.com",
-        "tpu-mobile.troplo.com"
-      ],
       dialogs: {
         message: {
           value: false,
@@ -348,9 +282,10 @@ export const useChatStore = defineStore("chat", {
     processLink(link: string) {
       const url = new URL(link);
       const domain = url.hostname;
+      const core = useAppStore();
       if (
         this.trustedDomains.includes(domain) ||
-        this.preTrustedDomains.includes(domain)
+        core.site.preTrustedDomains.includes(domain)
       ) {
         window.open(link, "_blank");
       } else {

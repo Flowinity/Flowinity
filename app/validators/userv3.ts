@@ -5,7 +5,7 @@ const Component: any = z.discriminatedUnion("name", [
     id: z.string().uuid(),
     name: z.literal("spacer"),
     props: z.object({
-      height: z.number()
+      height: z.number().max(40).min(0)
     })
   }),
   z.object({
@@ -54,6 +54,22 @@ const Component: any = z.discriminatedUnion("name", [
       friendsOnly: z.boolean(),
       display: z.number(),
       type: z.string().optional()
+    })
+  }),
+  z.object({
+    id: z.string().uuid(),
+    name: z.literal("social-links"),
+    props: z.object({
+      friendsOnly: z.boolean(),
+      links: z
+        .array(
+          z.object({
+            name: z.string().max(20).min(1),
+            url: z.string().url(),
+            color: z.string().length(7).regex(/^#/)
+          })
+        )
+        .max(10)
     })
   })
 ])

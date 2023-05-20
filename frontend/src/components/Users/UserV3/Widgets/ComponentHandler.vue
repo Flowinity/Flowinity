@@ -3,6 +3,7 @@
     :fall-back="skullCrash"
     :params="{ e: error, name: 'UserV3 widget' }"
     stop-propagation
+    @error-captured="err"
   >
     <v-toolbar v-if="editMode" border class="rounded-xl">
       <v-toolbar-title>
@@ -60,6 +61,7 @@
             @moveDown="$emit('moveDown', $event)"
             @moveUp="$emit('moveUp', $event)"
             @settings="$emit('settings', $event)"
+            @modifyProp="$emit('modifyProp', $event)"
           ></UserV3ComponentHandler>
         </v-col>
       </v-row>
@@ -119,6 +121,18 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+    <social-links
+      v-else-if="component.name === 'social-links'"
+      :user="user"
+      :component="component"
+      @addLink="
+        $emit('modifyProp', {
+          component: component,
+          prop: 'links',
+          value: $event
+        })
+      "
+    ></social-links>
   </VErrorBoundary>
 </template>
 
@@ -134,10 +148,12 @@ import VErrorBoundary from "@/components/Core/ErrorBoundary.vue";
 import Crash from "@/components/Core/CrashAlt.vue";
 import { Component } from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
+import SocialLinks from "@/components/Users/UserV3/Widgets/SocialLinks.vue";
 
 export default defineComponent({
   name: "UserV3ComponentHandler",
   components: {
+    SocialLinks,
     UserV3AddMenu,
     MyAnimeList,
     LastFM,
@@ -156,7 +172,14 @@ export default defineComponent({
     "components",
     "editMode"
   ],
-  emits: ["addToParent", "delete", "moveUp", "moveDown", "settings"],
+  emits: [
+    "addToParent",
+    "delete",
+    "moveUp",
+    "moveDown",
+    "settings",
+    "modifyProp"
+  ],
   data() {
     return {
       skullCrash: Crash,
@@ -164,6 +187,10 @@ export default defineComponent({
     };
   },
   methods: {
+    err(error: { error: Error }) {
+      this.error = error;
+      console.error(error.error.stack);
+    },
     addItemDebug(name: string) {
       this.$emit("addToParent", {
         name,
@@ -179,9 +206,17 @@ export default defineComponent({
         this.user?.id !== this.$user.user?.id
       )
         return false;
-      if (component.props?.mutualFriends && !this.user?.friends?.length)
+      if (
+        (component.props?.mutualFriends ||
+          component.name === "mutual-friends") &&
+        !this.user?.friends?.length
+      )
         return false;
-      if (component.props?.mutualCollections && !this.user?.collections?.length)
+      if (
+        (component.props?.mutualCollections ||
+          component.name === "mutual-collections") &&
+        !this.user?.collections?.length
+      )
         return false;
       return true;
     }
