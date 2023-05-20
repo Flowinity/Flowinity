@@ -1,0 +1,21 @@
+[Unit]
+Description=TroploPrivateUploader (TPU)
+After=syslog.target
+After=network.target
+Requires=mariadb.service
+Requires=redis.service
+
+[Service]
+RestartSec=2s
+Type=simple
+# User that TPU will run under. Do not use root, it's not good security practice.
+User=tpu
+Group=tpu
+# Change this if you're running in a different location
+WorkingDirectory=/home/tpu/private-uploader
+# This will rebuild TPU, and then run it. If you don't want to build it every time use: node out/cluster.js
+ExecStart=yarn start
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

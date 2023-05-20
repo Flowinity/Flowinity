@@ -38,8 +38,8 @@ View the full collection on [TPU](https://privateuploader.com/collections/273617
 
 ## System Requirements
 
-- Node.js 16.0.0 or newer
-- 2GB of RAM or more (768MB-1GB per core recommended)
+- Node.js 18.0.0 or newer (NodeJS 18 is necessary for structuredClone, no polyfills are built-in)
+- 2GB of RAM or more (RAM usage is dependent on the number of threads TPU uses)
 - 4GB of disk space or more (for core server, database, and frontend files)
 - 64-bit x86 or ARM processor, 1 CPU core or more (4 recommended)
 - MariaDB server (MySQL won't work, Sequelize dialect "mysql" does not support JSON)
@@ -47,6 +47,44 @@ View the full collection on [TPU](https://privateuploader.com/collections/273617
 - Linux, other UNIX-based like macOS (Microsoft Windows is not officially supported)
 - Tesseract OCR (with English language support) for OCR features
 
+# Setting Up
+These instructions assume you're using a standard Linux system with systemd, these instructions will differ depending on what init system you use.
+<details>
+  <summary><h2>Docker w/ docker-compose (Quickest method)</h2></summary>
+
+1. Clone the Docker-specific repo: `git clone https://github.com/PrivateUploader/docker-compose privateuploader`
+2. Change directory into repo: `cd privateuploader`
+3. Create the container (change the environment variables to your liking): `MYSQL_DATABASE=privateuploader MYSQL_USER=privateuploader MYSQL_PASSWORD=CHANGE_ME MYSQL_ROOT_PASSWORD=CHANGE_ME docker-compose up -d`
+4. Follow the setup wizard on http://localhost:34582
+5. You must change the MariaDB server hostname to `mariadb` and the redis hostname to `redis` in the setup wizard. (seen below):
+      ![Setup Wizard](https://i.troplo.com/i/87987421cfa1.png)
+      ![Setup Wizard](https://i.troplo.com/i/582d2fd8d1a7.png)
+</details>
+
+<details>
+  <summary><h2>Manual Setup</h2></summary>
+
+1. Create TPU user and group: `useradd -m tpu`
+2. Install MariaDB and Redis (with the RedisJSON plugin) on your server.
+3. Login as the TPU user: `su tpu`
+4. Change directory into TPU home directory: `cd`
+5. Clone the repository: `git clone https://github.com/Troplo/PrivateUploader private-uploader`
+6. Change directory into the repository: `cd private-uploader`
+7. Install dependencies: `yarn install`
+8. Create systemd service files for TPU with `cp tpu.service /etc/systemd/system/tpu.service`
+9. Modify the systemd service file (use nano, vim, etc), replace all instances of `CHANGE_ME` with your own values. Do not run TPU as root user and use the user created earlier.
+10. Start TPU and start on boot with `systemctl enable tpu --now`
+11. Follow the setup wizard on http://localhost:34582 and configure NGINX web server.
+</details>
+
+<details>
+  <summary><h2>NGINX Configuration</h2></summary>
+
+1. TPU includes an example NGINX configuration file, you can find it at `nginx.conf` in either of the Docker or primary TPU repositories.
+2. Copy it to your NGINX configuration directory: `cp nginx.conf /etc/nginx/conf.d/tpu.conf` (this folder can differ between distributions, it could be `/etc/nginx/sites-available`, if so, symlink it to `/etc/nginx/sites-enabled`).
+3. Modify the NGINX configuration file (use nano, vim, etc), replace all instances of `CHANGE_ME` with your own values.
+4. Test the NGINX configuration: `nginx -t`
+5. If the test is successful, reload NGINX: `systemctl reload nginx`
 ## Scripts
 
 - `yarn build` - Build TPU.
