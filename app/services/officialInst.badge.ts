@@ -6,7 +6,7 @@ import { Message } from "@app/models/message.model"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 
 @Service()
-export class BadgeService {
+export class OfficialInstBadge {
   async checkCriteria() {
     const users = await User.findAll()
     for (const user of users) {

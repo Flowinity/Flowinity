@@ -22,9 +22,9 @@ import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
 
 // Import Services
 import { CacheService } from "@app/services/cache.service"
-import { BillingService } from "@app/services/billing.service"
+import { OfficialInstJolt707 } from "@app/services/officialInst.jolt707"
 import { PulseService } from "@app/services/pulse.service"
-import { BadgeService } from "@app/services/badge.service"
+import { OfficialInstBadge } from "@app/services/officialInst.badge"
 import { MyAnimeListService } from "@app/services/providers/mal.service"
 
 // Import Models
@@ -42,9 +42,9 @@ export class Server {
   constructor(
     private readonly application: Application,
     private readonly cacheService: CacheService,
-    private readonly billingService: BillingService,
+    private readonly billingService: OfficialInstJolt707,
     private readonly pulseService: PulseService,
-    private readonly badgeService: BadgeService,
+    private readonly badgeService: OfficialInstBadge,
     private readonly malService: MyAnimeListService
   ) {}
 

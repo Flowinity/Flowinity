@@ -36,7 +36,7 @@ type JitsiSpeakers = {
 }
 
 @Service()
-export class BillingService {
+export class OfficialInstJolt707 {
   constructor(private readonly adminService: AdminService) {}
 
   async createSubscription(id: number) {

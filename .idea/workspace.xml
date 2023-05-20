@@ -5,14 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0be8d02b-b052-4484-9676-42973bcac86b" name="Changes" comment="Prettier automatic reformat config webstorm">
-      <change afterPath="$PROJECT_DIR$/app/controllers/v3/instance.controller.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/cluster.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/cluster.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/v3/user.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/v3/user.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/userUtils.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/userUtils.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/Feedback.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard/Dialogs/Feedback.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/layouts/default/Sidebar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/layouts/default/Sidebar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/badge.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/officialInst.badge.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/billing.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/officialInst.jolt707.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +76,7 @@
       <workItem from="1684207032649" duration="17579000" />
       <workItem from="1684583393370" duration="162000" />
       <workItem from="1684583567906" duration="3621000" />
-      <workItem from="1684587812713" duration="2436000" />
+      <workItem from="1684587812713" duration="2580000" />
     </task>
     <task id="LOCAL-00001" summary="Capitalise some Russian strings">
       <created>1684150087122</created>
