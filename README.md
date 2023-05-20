@@ -54,7 +54,7 @@ These instructions assume you're using a standard Linux system with systemd, the
 
 1. Clone the Docker-specific repo: `git clone https://github.com/PrivateUploader/docker-compose privateuploader`
 2. Change directory into repo: `cd privateuploader`
-3. Create the container (change the environment variables to your liking): `MYSQL_DATABASE=privateuploader MYSQL_USER=privateuploader MYSQL_PASSWORD=CHANGE_ME MYSQL_ROOT_PASSWORD=CHANGE_ME docker-compose up -d`
+3. Create the container (change the environment variables to your liking): `DB_DATABASE=privateuploader DB_USER=privateuploader DB_PASSWORD=CHANGE_ME DB_ROOT_PASSWORD=CHANGE_ME docker-compose up -d`
 4. Follow the setup wizard on http://localhost:34582
 5. You must change the MariaDB server hostname to `mariadb` and the redis hostname to `redis` in the setup wizard. (seen below):
       ![Setup Wizard](https://i.troplo.com/i/87987421cfa1.png)
