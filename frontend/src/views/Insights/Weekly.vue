@@ -267,12 +267,12 @@
           >
             <template v-slot:item.word="{ item }">
               <div class="limit" style="max-width: 200px">
-                {{ item.value.word }}
+                {{ item.columns.word }}
               </div>
             </template>
             <template v-slot:item.count="{ item }">
               <div class="limit">
-                {{ item.value.count }}
+                {{ item.columns.count }}
               </div>
             </template>
           </v-data-table>
@@ -299,12 +299,12 @@
           >
             <template v-slot:item.word="{ item }">
               <div class="limit" style="max-width: 200px">
-                {{ item.value.word }}
+                {{ item.columns.chatName }}
               </div>
             </template>
             <template v-slot:item.count="{ item }">
               <div class="limit">
-                {{ item.value.count }}
+                {{ item.columns.count }}
               </div>
             </template>
           </v-data-table>
@@ -368,9 +368,12 @@
   </v-container>
   <v-container v-else>
     <v-card>
-      <v-card-text>
-        You have no data for this {{ strings.singular }}. Please check back
+      <v-card-text v-if="type !== 'dynamic'">
+        There is no data for last {{ strings.singular }}. Please check back
         later.
+      </v-card-text>
+      <v-card-text v-else>
+        The dynamic report is being generated. Please check back in a few hours.
       </v-card-text>
     </v-card>
   </v-container>

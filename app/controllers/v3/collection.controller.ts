@@ -134,11 +134,11 @@ export class CollectionControllerV3 {
       filter,
       textMetadata,
       "collection",
-      user.itemsPerPage,
+      user?.itemsPerPage,
       sort,
       array,
-      user.id,
-      user.excludedCollections
+      user?.id,
+      user?.excludedCollections
     )
   }
 

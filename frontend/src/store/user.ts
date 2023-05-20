@@ -264,7 +264,8 @@ export const useUserStore = defineStore("user", {
         profileLayout: user.profileLayout,
         excludedCollections: user.excludedCollections,
         language: user.language,
-        publicProfile: user.publicProfile
+        publicProfile: user.publicProfile,
+        weatherUnit: user.weatherUnit
       };
     },
     async init() {
