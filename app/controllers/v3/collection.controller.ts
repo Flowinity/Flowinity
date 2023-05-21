@@ -54,7 +54,7 @@ export class CollectionControllerV3 {
     const collection: Collection =
       await this.collectionService.createCollection(user.id, body.name)
 
-    await this.cacheService.generateCollectionCacheForUser(user.id)
+    await this.cacheService.resetCollectionCache(collection.id)
 
     return collection
   }
@@ -75,9 +75,9 @@ export class CollectionControllerV3 {
 
   @Get("/:id")
   async getCollection(
-    @Auth("collections.view", false) user: User,
+    @Auth("collections.view", false) user: User | null,
     @Param("id") id: string
-  ): Promise<any> {
+  ) {
     if (!user) {
       const collection = await redis.json.get(`shareLinks:${id}`)
 
@@ -98,7 +98,7 @@ export class CollectionControllerV3 {
 
   @Get("/:id/gallery")
   async getCollectionGallery(
-    @Auth("uploads.view", false) user: User,
+    @Auth("uploads.view", false) user: User | null,
     @QueryParam("page") page: number = 1,
     @QueryParam("sort") sort: SortOptions = "newest",
     @QueryParam("search") search: string = "",
@@ -146,7 +146,7 @@ export class CollectionControllerV3 {
   async addAttachmentToCollection(
     @Auth("collections.modify") user: User,
     @Body()
-    body: { collectionId: number; attachmentId?: number; items: number[] }
+    body: { collectionId: number; attachmentId?: number; items?: number[] }
   ): Promise<CollectionItem | CollectionItem[]> {
     const collection = await this.collectionService.getCollectionPermissions(
       body.collectionId,
@@ -155,7 +155,7 @@ export class CollectionControllerV3 {
     )
 
     if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-
+    if (!body.attachmentId || !body.items) throw Errors.ATTACHMENT_NOT_FOUND
     return await this.collectionService.addToCollection(
       body.collectionId,
       body.attachmentId || body.items,
@@ -225,7 +225,7 @@ export class CollectionControllerV3 {
     await this.cacheService.resetCollectionCache(collectionId)
 
     return {
-      ...user,
+      ...collectionUser,
       user: {
         id: collectionUser.user.id,
         username: collectionUser.user.username
@@ -263,6 +263,22 @@ export class CollectionControllerV3 {
     await this.cacheService.resetCollectionCache(collectionId)
   }
 
+  @Delete("/:collectionId/user/:userId")
+  async removeUserFromCollection(
+    @Auth("collections.modify") user: User,
+    @Param("collectionId") collectionId: number,
+    @Param("userId") userId: number
+  ): Promise<void> {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+    await this.collectionService.removeUserFromCollection(collectionId, userId)
+    await this.cacheService.resetCollectionCache(collectionId)
+  }
+
   @Patch("/share")
   async updateShareLink(
     @Auth("collections.modify") user: User,
@@ -288,10 +304,7 @@ export class CollectionControllerV3 {
     await this.cacheService.resetCollectionCache(body.id)
 
     if (result.shareLink)
-      await this.cacheService.patchShareLinkCache(
-        result.shareLink,
-        collection.id
-      )
+      await this.cacheService.patchShareLinkCache(result.shareLink, body.id)
 
     return result
   }
@@ -315,12 +328,12 @@ export class CollectionControllerV3 {
 
   @Get("/:collectionId/random")
   async getRandomAttachment(
-    @Auth("collections.view", false) user: User,
+    @Auth("collections.view", false) user: User | null,
     @Param("collectionId") collectionId: string
   ): Promise<Upload> {
     const collection = await this.collectionService.getCollectionOrShare(
-      parseInt(collectionId) || collectionId,
-      user.id
+      collectionId,
+      user?.id
     )
 
     if (!collection) throw Errors.COLLECTION_NOT_FOUND
@@ -348,12 +361,12 @@ export class CollectionControllerV3 {
 
     if (!collection) throw Errors.COLLECTION_NO_PERMISSION
 
-    await this.cacheService.resetCollectionCache(collectionId)
-
-    return await this.collectionService.updateCollection(
+    const data = await this.collectionService.updateCollection(
       collectionId,
       body.name
     )
+    await this.cacheService.resetCollectionCache(collectionId)
+    return data
   }
 
   @Post("/:collectionId/banner")
@@ -436,8 +449,12 @@ export class CollectionControllerV3 {
       }
     })
 
-    for (const user of collection.users) {
-      await this.cacheService.generateCollectionCache(user.id)
+    for (const u of [...collection.users, user]) {
+      if ("username" in u) {
+        await this.cacheService.generateCollectionCache(u.id)
+      } else if ("recipientId" in u) {
+        await this.cacheService.generateCollectionCache(u.recipientId)
+      }
     }
   }
 

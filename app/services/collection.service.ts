@@ -8,6 +8,7 @@ import Errors from "@app/lib/errors"
 import { CollectionCache } from "@app/types/collection"
 import cryptoRandomString from "crypto-random-string"
 import { Friend } from "@app/models/friend.model"
+import { isNumeric } from "@app/lib/isNumeric"
 
 @Service()
 export class CollectionService {
@@ -220,6 +221,7 @@ export class CollectionService {
     userId: number | null,
     permission: "write" | "configure" | "read" | "owner"
   ) {
+    if (isNumeric(collectionId)) collectionId = parseInt(<string>collectionId)
     if (!userId) {
       const collection = await redis.json.get(`shareLinks:${collectionId}`)
       if (!collection) return false
@@ -230,7 +232,6 @@ export class CollectionService {
     const collection = collections.find(
       (collection: CollectionCache) => collection.id === collectionId
     )
-
     if (!collection) return false
     if (permission === "owner") return collection.userId === userId
     return collection.permissionsMetadata[permission]
@@ -240,6 +241,7 @@ export class CollectionService {
     collectionId: number | string,
     userId: number | null
   ) {
+    if (isNumeric(collectionId)) collectionId = parseInt(<string>collectionId)
     if (!userId) {
       const collection = await redis.json.get(`shareLinks:${collectionId}`)
       if (!collection) return false
@@ -469,7 +471,7 @@ export class CollectionService {
 
     if (!collection) throw Errors.COLLECTION_NOT_FOUND
 
-    await collection.update({
+    await collection?.update({
       name
     })
 

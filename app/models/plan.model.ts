@@ -5,10 +5,14 @@ export class Plan extends Model {
   @Column
   name: string
 
-  @Column
+  @Column({
+    type: DataType.BIGINT
+  })
   quotaMax: bigint
 
-  @Column
+  @Column({
+    type: DataType.BIGINT
+  })
   price: bigint
 
   @Column({

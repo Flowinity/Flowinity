@@ -125,7 +125,7 @@
           z-index: 1;
           backdrop-filter: blur(10px);
         "
-        @click="forceBottomAmirite"
+        @click="jumpToBottom"
       >
         <template v-if="!$chat.loadingNew">
           <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
@@ -153,7 +153,7 @@
         color="card"
         height="35"
         style="opacity: 0.95; z-index: 1"
-        @click="forceBottomAmirite"
+        @click="jumpToBottom"
       >
         <v-icon class="mr-2 ml-3">mdi-reply</v-icon>
         <UserAvatar :user="replying?.user" class="mr-2" size="24"></UserAvatar>
@@ -452,7 +452,7 @@ export default defineComponent({
         this.editingText = event.content;
       }
     },
-    async forceBottomAmirite() {
+    async jumpToBottom() {
       this.avoidAutoScroll = false;
       if (this.$chat.loadNew) {
         await this.$chat.loadHistory(Number.MAX_SAFE_INTEGER, true, false);
@@ -729,7 +729,7 @@ export default defineComponent({
           this.$chat.search.value = false;
           return;
         }
-        this.forceBottomAmirite();
+        this.jumpToBottom();
       }
       if (
         e.target.tagName !== "INPUT" &&

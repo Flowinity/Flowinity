@@ -72,7 +72,7 @@ export class CoreControllerV3 {
   }
 
   @Get("/experiments")
-  async getExperiments(@Auth("user.view", false) user: User) {
+  async getExperiments(@Auth("user.view", false) user: User | null) {
     const dev = user ? user.administrator || user.moderator : false
     const gold = user ? user.plan.internalName === "GOLD" : false
     if (!user) return this.coreService.getExperiments(dev, gold)

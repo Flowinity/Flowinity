@@ -319,6 +319,10 @@ let Errors = {
   INVITE_A_FRIEND_DISABLED: {
     message: "Invite a friend is currently unavailable.",
     status: 400
+  },
+  UNAUTHORIZED: {
+    message: "You are not authorized to perform this action.",
+    status: 401
   }
 }
 
