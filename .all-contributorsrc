@@ -20,6 +20,16 @@
       ]
     },
     {
+      "login": "theloosegoose",
+      "name": "The Loose Goose",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32515234?v=4",
+      "profile": "https://github.com/theloosegoose",
+      "contributions": [
+        "code",
+        "infra"
+      ]
+    },
+    {
       "login": "Bytedefined",
       "name": "bytedefined",
       "avatar_url": "https://avatars.githubusercontent.com/u/56295147?v=4",
@@ -29,6 +39,29 @@
         "translation",
         "ideas",
         "bug"
+      ]
+    },
+    {
+      "login": "ElectricS01",
+      "name": "ElectricS01",
+      "avatar_url": "https://avatars.githubusercontent.com/u/103579308?v=4",
+      "profile": "http://electrics01.com",
+      "contributions": [
+        "code",
+        "ideas",
+        "bug"
+      ]
+    },
+    {
+      "login": "Jolt707",
+      "name": "Jolt707",
+      "avatar_url": "https://avatars.githubusercontent.com/u/106564193?v=4",
+      "profile": "https://github.com/Jolt707",
+      "contributions": [
+        "code",
+        "ideas",
+        "bug",
+        "a11y"
       ]
     }
   ],
