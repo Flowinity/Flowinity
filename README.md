@@ -109,6 +109,13 @@ process command and will automatically scale if you add more CPU cores/threads.
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://troplo.com"><img src="https://avatars.githubusercontent.com/u/45160807?v=4?s=100" width="100px;" alt="Troplo"/><br /><sub><b>Troplo</b></sub></a><br /><a href="#code-Troplo" title="Code">💻</a> <a href="#doc-Troplo" title="Documentation">📖</a> <a href="#data-Troplo" title="Data">🔣</a> <a href="#infra-Troplo" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#security-Troplo" title="Security">🛡️</a></td>
+    </tr>
+  </tbody>
+</table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
