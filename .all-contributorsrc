@@ -28,6 +28,18 @@
         "infra",
         "security"
       ]
+    },
+    {
+      "login": "Jolt707",
+      "name": "Jolt707",
+      "avatar_url": "https://avatars.githubusercontent.com/u/106564193?v=4",
+      "profile": "https://github.com/Jolt707",
+      "contributions": [
+        "code",
+        "ideas",
+        "bug",
+        "a11y"
+      ]
     }
   ],
   "commitConvention": "angular",

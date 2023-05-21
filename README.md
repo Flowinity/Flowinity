@@ -114,6 +114,7 @@ process command and will automatically scale if you add more CPU cores/threads.
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/theloosegoose"><img src="https://avatars.githubusercontent.com/u/32515234?v=4?s=100" width="100px;" alt="The Loose Goose"/><br /><sub><b>The Loose Goose</b></sub></a><br /><a href="#code-theloosegoose" title="Code">💻</a> <a href="#infra-theloosegoose" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://troplo.com"><img src="https://avatars.githubusercontent.com/u/45160807?v=4?s=100" width="100px;" alt="Troplo"/><br /><sub><b>Troplo</b></sub></a><br /><a href="#code-Troplo" title="Code">💻</a> <a href="#doc-Troplo" title="Documentation">📖</a> <a href="#data-Troplo" title="Data">🔣</a> <a href="#infra-Troplo" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#security-Troplo" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Jolt707"><img src="https://avatars.githubusercontent.com/u/106564193?v=4?s=100" width="100px;" alt="Jolt707"/><br /><sub><b>Jolt707</b></sub></a><br /><a href="#code-Jolt707" title="Code">💻</a> <a href="#ideas-Jolt707" title="Ideas, Planning, & Feedback">🤔</a> <a href="#bug-Jolt707" title="Bug reports">🐛</a> <a href="#a11y-Jolt707" title="Accessibility">️️️️♿️</a></td>
     </tr>
   </tbody>
 </table>
