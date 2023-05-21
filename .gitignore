@@ -33,3 +33,4 @@ frontend_build/
 yarn-error.log
 
 .idea
+coverage/
