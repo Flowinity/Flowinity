@@ -30,6 +30,8 @@ export interface AppState {
   shifting: boolean;
   themeEditor: boolean;
   site: {
+    redisHost?: string;
+    dbHost?: string;
     preTrustedDomains: string[];
     hostnames?: string[];
     domain?: string;

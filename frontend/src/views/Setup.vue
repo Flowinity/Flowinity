@@ -746,6 +746,14 @@ export default defineComponent({
       handler(step: Step) {
         this.step = step;
       }
+    },
+    "$app.site.dbHost": {
+      immediate: true,
+      handler() {
+        // Interpret recommended database settings for Docker
+        this.instance.redisHostname = this.$app.site.redisHost || "localhost";
+        this.database.host = this.$app.site.dbHost || "localhost";
+      }
     }
   }
 });

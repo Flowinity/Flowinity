@@ -2,8 +2,9 @@ import cluster from "cluster"
 import os from "os"
 import path from "path"
 import { DefaultTpuConfig } from "./classes/DefaultTpuConfig"
+import { execSync } from "child_process"
 
-function setEnvVariables() {
+async function setEnvVariables() {
   global.appRoot = path.resolve(__dirname).includes("out")
     ? path.join(__dirname, "..", "app")
     : path.join(__dirname)
@@ -43,8 +44,8 @@ if (cluster.isMaster) {
       cluster.fork()
     }
   })
-  const restartWorker = (worker: any, workers: any): void => {
-    setEnvVariables()
+  const restartWorker = async (worker: any, workers: any) => {
+    await setEnvVariables()
     console.info(`Restarting worker ${worker.id}`)
 
     worker.kill("SIGUSR2")
@@ -66,7 +67,7 @@ if (cluster.isMaster) {
     console.info("message: ", message)
 
     if (message === "TPU_RESTART") {
-      setEnvVariables()
+      await setEnvVariables()
       console.info("Restarting workers")
       const workers = Object.values(cluster.workers || {})
 

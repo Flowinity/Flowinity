@@ -87,7 +87,10 @@ export class CoreControllerV3 {
       return {
         finishedSetup: false,
         name: config.siteName,
-        step
+        step,
+        // Test if running inside default Docker environment
+        dbHost: process.env.DB_DATABASE ? "mariadb" : "localhost",
+        redisHost: process.env.DB_DATABASE ? "redis" : "localhost"
       }
     }
     return {
