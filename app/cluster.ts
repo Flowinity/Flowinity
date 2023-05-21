@@ -3,8 +3,18 @@ import os from "os"
 import path from "path"
 import { DefaultTpuConfig } from "./classes/DefaultTpuConfig"
 import { execSync } from "child_process"
+import fs from "fs"
 
-async function setEnvVariables() {
+function isRunningInDocker() {
+  try {
+    const cgroup = fs.readFileSync("/proc/1/cgroup", "utf8")
+    return cgroup.includes("docker")
+  } catch (err) {
+    return false
+  }
+}
+
+function setEnvVariables() {
   global.appRoot = path.resolve(__dirname).includes("out")
     ? path.join(__dirname, "..", "app")
     : path.join(__dirname)
@@ -18,6 +28,7 @@ async function setEnvVariables() {
   process.env.APP_ROOT = global.appRoot
   process.env.RAW_APP_ROOT = global.rawAppRoot
   process.env.CONFIG = JSON.stringify(global.config)
+  process.env.IS_DOCKER = isRunningInDocker() ? "true" : "false"
 }
 
 if (cluster.isMaster) {
