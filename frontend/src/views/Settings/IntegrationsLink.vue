@@ -17,14 +17,19 @@ export default defineComponent({
   components: { HoverChip },
   methods: {
     async link() {
-      await this.axios.get(`/providers/link/${this.$route.params.provider}`, {
-        params: {
+      await this.axios
+        .post(`/providers/link/${this.$route.params.provider}`, {
           token: this.$route.query.token || this.$route.query.code
-        }
-      });
-      this.$toast.success("Account linked!");
-      await this.$user.init();
-      this.$router.push("/settings/integrations");
+        })
+        .then(async () => {
+          this.$toast.success("Third-party account integrated!");
+          await this.$user.init();
+          await this.$router.push("/settings/integrations");
+        })
+        .catch(async () => {
+          await this.$user.init();
+          await this.$router.push("/settings/integrations");
+        });
     }
   },
   mounted() {
@@ -32,5 +37,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped></style>

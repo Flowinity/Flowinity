@@ -1,17 +1,34 @@
 import { Service } from "typedi"
-import Errors from "@app/lib/errors"
-import { Integration } from "@app/models/integration.model"
 import axios from "axios"
-import { User } from "@app/models/user.model"
 import qs from "qs"
 import cron from "node-cron"
+
+// Import Libs
+import Errors from "@app/lib/errors"
+
+// Import Models
+import { Integration } from "@app/models/integration.model"
+import { User } from "@app/models/user.model"
+
+// Import Interfaces
 import { MalBody } from "@app/interfaces/mal"
 
 @Service()
 export class MyAnimeListService {
   constructor() {}
 
-  async linkMAL(userId: number, token: string) {
+  async link(userId: number, token: string) {
+    if (!config.providers.mal.key) throw Errors.INTEGRATION_ERROR
+
+    const existing = await Integration.findOne({
+      where: {
+        userId,
+        type: "mal"
+      }
+    })
+
+    if (existing) throw Errors.INTEGRATION_ERROR
+
     try {
       const { data } = await axios.post(
         `https://myanimelist.net/v1/oauth2/token`,
@@ -30,7 +47,6 @@ export class MyAnimeListService {
           }
         }
       )
-      if (!data?.access_token) throw Errors.INTEGRATION_ERROR
       const { data: user } = await axios.get(
         "https://api.myanimelist.net/v2/users/@me?fields=anime_statistics,manga_statistics",
         {
@@ -39,6 +55,7 @@ export class MyAnimeListService {
           }
         }
       )
+
       await Integration.create({
         userId,
         type: "mal",
@@ -50,13 +67,22 @@ export class MyAnimeListService {
         tokenType: data.token_type,
         expiresAt: data.expires_in
       })
-      return {
-        success: true
-      }
-    } catch (e) {
-      console.log(e)
+    } catch {
       throw Errors.INTEGRATION_ERROR
     }
+  }
+
+  async unlink(userId: string) {
+    const existing = await Integration.findOne({
+      where: {
+        userId,
+        type: "lastfm"
+      }
+    })
+
+    if (!existing) throw Errors.INTEGRATION_ERROR
+
+    await existing.destroy()
   }
 
   async renewMAL(userId: number) {
@@ -67,7 +93,9 @@ export class MyAnimeListService {
         error: null
       }
     })
+
     if (!integration) return
+
     try {
       const { data } = await axios.post(
         `https://myanimelist.net/v1/oauth2/token`,
@@ -83,10 +111,9 @@ export class MyAnimeListService {
           }
         }
       )
-      if (!data?.access_token) {
-        await integration.destroy()
-        return
-      }
+
+      if (!data?.access_token) return await integration.destroy()
+
       const { data: user } = await axios.get(
         "https://api.myanimelist.net/v2/users/@me?fields=anime_statistics,manga_statistics",
         {
@@ -95,6 +122,7 @@ export class MyAnimeListService {
           }
         }
       )
+
       await integration.update({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
@@ -104,23 +132,22 @@ export class MyAnimeListService {
         tokenType: data.token_type,
         expiresAt: data.expires_in
       })
-      return {
-        success: true
-      }
-    } catch (e) {
-      console.log(e)
-      if (e?.response?.data?.hint) {
-        integration.update({
-          error: e.response.data.hint
+    } catch (err) {
+      if (err?.response?.data?.hint) {
+        await integration.update({
+          error: err.response.data.hint
         })
       }
+
       return
     }
   }
 
-  async getMALOverview(userId: number, username: string, accessToken: string) {
+  async getOverview(userId: number, username: string, accessToken: string) {
     const cache = await redis.get(`providers:mal:${userId}:overview`)
+
     if (cache) return JSON.parse(cache)
+
     const { data } = await axios
       .get(
         `https://api.myanimelist.net/v2/users/@me/animelist?sort=list_updated_at&fields=updated_at,my_list_status,synopsis,comments,num_episodes,average_episode_duration&limit=10`,
@@ -134,18 +161,21 @@ export class MyAnimeListService {
         console.log(e)
         throw Errors.INTEGRATION_ERROR
       })
+
     const d = {
       ...data,
       user: await this.getMALUserCache(userId, username, accessToken)
     }
+
     redis.set(`providers:mal:${userId}:overview`, JSON.stringify(d), {
       EX: 60 * 15,
       NX: true
     })
+
     return d
   }
 
-  async updateMALAnime(
+  async updateAnime(
     userId: number,
     username: string,
     accessToken: string,
@@ -166,15 +196,11 @@ export class MyAnimeListService {
           }
         }
       )
-      .catch((e) => {
-        console.log(e)
+      .catch(() => {
         throw Errors.INTEGRATION_ERROR
       })
-    console.log(data)
+
     await redis.del(`providers:mal:${userId}:overview`)
-    return {
-      success: true
-    }
   }
 
   async getMALUserCache(userId: number, username: string, accessToken: string) {
@@ -184,17 +210,22 @@ export class MyAnimeListService {
         type: "mal"
       }
     })
+
     if (!integration) return null
-    // delete potentially sensitive fields, MAL sends them even if you opt out of the privacy setting
+
+    // Delete potentially sensitive fields, MAL sends them even if you opt out of the privacy setting/
     delete integration.providerUserCache?.birthday
     delete integration.providerUserCache?.location
     delete integration.providerUserCache?.gender
+
     return integration.providerUserCache
   }
 
   async renewService() {
     if (!config.providers.mal.key) return
+
     console.log("[PROVIDERS/MYANIMELIST] Renewing access tokens")
+
     const users = await User.findAll({
       include: [
         {
@@ -206,17 +237,21 @@ export class MyAnimeListService {
         }
       ]
     })
+
     for (const user of users) {
       await this.renewMAL(user.id)
     }
+
     console.log("[PROVIDERS/MYANIMELIST] Renewed access tokens")
   }
 
   async providerInit() {
     if (config.release === "dev") return
+
     cron.schedule("0 * * * *", () => {
       this.renewService()
     })
-    this.renewService()
+
+    await this.renewService()
   }
 }

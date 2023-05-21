@@ -25,6 +25,13 @@ export class DefaultTpuConfig {
         key: null,
         secret: null
       },
+      discord: {
+        applicationId: null,
+        publicKey: null,
+        oAuthClientId: null,
+        oAuthClientSecret: null,
+        oAuthRedirectUri: null
+      },
       mal: {
         key: null,
         secret: null

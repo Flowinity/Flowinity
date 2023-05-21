@@ -6,14 +6,32 @@
       </v-toolbar-title>
     </v-toolbar>
     <v-container>
-      <HoverChip
-        v-for="integration in integrations"
-        :color="integration.color"
-        :disabled="!integration.available"
-        :href="integration.url"
-        :short-text="integration.shortText"
-        :text="integration.name"
-      ></HoverChip>
+      <div>
+        <span v-for="integration in integrations">
+          <v-tooltip
+            :text="`${
+              ($user.user.integrations.find((i) => i.type === integration.id)
+                ? 'Linked'
+                : null) ||
+              (!integration.available ? 'Unavailable' : 'Available')
+            }`"
+            location="bottom"
+            activator="parent"
+          />
+          <v-chip
+            :color="integration.color"
+            :disabled="
+              !!(
+                !integration.available ||
+                $user.user.integrations.find((i) => i.type === integration.id)
+              )
+            "
+            :href="integration.url"
+            :short-text="integration.shortText"
+            :text="integration.name"
+          />
+        </span>
+      </div>
     </v-container>
   </v-card>
   <v-card v-if="$user.user.integrations.length" class="mt-4">
@@ -23,7 +41,6 @@
       </v-toolbar-title>
     </v-toolbar>
     <v-container>
-      <!-- vuetify list of integrations from $user.user.integrations -->
       <v-list>
         <v-list-item
           v-for="integration in $user.user.integrations"
@@ -46,7 +63,12 @@
             </v-btn>
           </v-list-item-title>
           <v-list-item-subtitle>
-            {{ integration.providerUsername }}
+            {{ integration.providerUsername
+            }}{{
+              integration.providerUserCache?.discriminator
+                ? "#" + integration.providerUserCache?.discriminator
+                : ""
+            }}
           </v-list-item-subtitle>
           <v-list-item-subtitle>
             {{
@@ -56,7 +78,7 @@
             }}
           </v-list-item-subtitle>
           <template v-slot:append>
-            <v-btn icon @click="removeIntegration(integration.id)">
+            <v-btn icon @click="removeIntegration(integration.type)">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </template>
@@ -88,12 +110,12 @@ export default defineComponent({
     };
   },
   methods: {
-    async removeIntegration(id: number) {
+    async removeIntegration(type: string) {
       this.loading = true;
-      await this.axios.delete(`/providers/${id}`);
+      await this.axios.delete(`/providers/unlink/${type}`);
       await this.$user.init();
       this.loading = false;
-      this.$toast.success("Account unlinked from TPU.");
+      this.$toast.success("Third-party account integration removed!");
     },
     getIntegrationMeta(id: string) {
       const integration = this.integrations.find((i) => i.id === id);
