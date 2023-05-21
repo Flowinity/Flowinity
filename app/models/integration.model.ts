@@ -22,7 +22,7 @@ export class Integration extends Model {
   tokenType: string
 
   @Column
-  providerUserId: number
+  providerUserId: bigint
 
   @Column
   providerUsername: string

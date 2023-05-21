@@ -69,7 +69,8 @@ export class DiscordService {
         providerUserId: data.id,
         providerUserCache: data
       })
-    } catch {
+    } catch (e) {
+      console.log(e)
       throw Errors.INTEGRATION_ERROR
     }
   }
