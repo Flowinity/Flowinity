@@ -13,7 +13,8 @@ export class LastfmService {
   constructor() {}
 
   async link(userId: string, token: string) {
-    if (!config.providers.lastfm.key) throw Errors.INTEGRATION_ERROR
+    if (!config.providers.lastfm.key || !config.providers.lastfm.secret)
+      throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
     const existing = await Integration.findOne({
       where: {
@@ -22,7 +23,7 @@ export class LastfmService {
       }
     })
 
-    if (existing) throw Errors.INTEGRATION_ERROR
+    if (existing) throw Errors.INTEGRATION_EXISTS
 
     try {
       const params = {

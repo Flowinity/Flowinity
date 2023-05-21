@@ -12,7 +12,14 @@ export class DiscordService {
   constructor() {}
 
   async link(userId: string, token: string) {
-    if (!config.providers.discord.publicKey) throw Errors.INTEGRATION_ERROR
+    if (
+      !config.providers.discord.publicKey ||
+      !config.providers.discord.applicationId ||
+      !config.providers.discord.oAuthClientId ||
+      !config.providers.discord.oAuthClientSecret ||
+      !config.providers.discord.oAuthRedirectUri
+    )
+      throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
     const existing = await Integration.findOne({
       where: {
@@ -21,7 +28,7 @@ export class DiscordService {
       }
     })
 
-    if (existing) throw Errors.INTEGRATION_ERROR
+    if (existing) throw Errors.INTEGRATION_EXISTS
 
     try {
       const authData = await axios

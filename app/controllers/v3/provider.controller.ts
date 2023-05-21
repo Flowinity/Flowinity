@@ -1,22 +1,31 @@
-import {Body, BodyParam, Delete, Get, JsonController, Param, Patch, Post, QueryParam} from "routing-controllers"
-import {Service} from "typedi"
-import cryptoRandomString from "crypto-random-string"
+import {
+  Body,
+  BodyParam,
+  Delete,
+  Get,
+  JsonController,
+  Param,
+  Patch,
+  Post,
+  QueryParam
+} from "routing-controllers"
+import { Service } from "typedi"
 
 // Import Libs
-import {Auth} from "@app/lib/auth"
+import { Auth } from "@app/lib/auth"
 import Errors from "@app/lib/errors"
 
 // Import Services
-import {ProviderService} from "@app/services/provider.service"
-import {DiscordService} from "@app/services/providers/discord.service"
-import {LastfmService} from "@app/services/providers/lastfm.service"
-import {MyAnimeListService} from "@app/services/providers/mal.service"
+import { ProviderService } from "@app/services/provider.service"
+import { DiscordService } from "@app/services/providers/discord.service"
+import { LastfmService } from "@app/services/providers/lastfm.service"
+import { MyAnimeListService } from "@app/services/providers/mal.service"
 
 // Import Models
-import {User} from "@app/models/user.model"
+import { User } from "@app/models/user.model"
 
 // Import Interfaces
-import {MalBody} from "@app/interfaces/mal"
+import { MalBody } from "@app/interfaces/mal"
 
 @Service()
 @JsonController("/providers")
@@ -26,8 +35,7 @@ export class ProviderControllerV3 {
     private readonly discordService: DiscordService,
     private readonly lfmService: LastfmService,
     private readonly malService: MyAnimeListService
-  ) {
-  }
+  ) {}
 
   @Get("/tenor")
   async searchTenor(
@@ -54,9 +62,7 @@ export class ProviderControllerV3 {
 
   @Delete("/unlink/lastfm")
   @Delete("/unlink/last-fm")
-  async unlinkLastfm(
-    @Auth("user.view") user: User
-  ) {
+  async unlinkLastfm(@Auth("user.view") user: User) {
     return await this.lfmService.unlink(user.id)
   }
 
@@ -88,9 +94,7 @@ export class ProviderControllerV3 {
   }
 
   @Delete("/unlink/discord")
-  async unlinkDiscord(
-    @Auth("user.view") user: User
-  ) {
+  async unlinkDiscord(@Auth("user.view") user: User) {
     return await this.discordService.unlink(user.id)
   }
 
@@ -104,9 +108,7 @@ export class ProviderControllerV3 {
   }
 
   @Delete("/unlink/mal")
-  async unlinkMal(
-    @Auth("user.view") user: User
-  ) {
+  async unlinkMal(@Auth("user.view") user: User) {
     return await this.malService.unlink(user.id)
   }
 

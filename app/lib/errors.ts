@@ -323,6 +323,11 @@ let Errors = {
   UNAUTHORIZED: {
     message: "You are not authorized to perform this action.",
     status: 401
+  },
+  INTEGRATION_PROVIDER_NOT_CONFIGURED: {
+    message:
+      "The integration provider is not yet configured or is not configured properly.",
+    status: 400
   }
 }
 

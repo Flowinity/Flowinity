@@ -18,7 +18,8 @@ export class MyAnimeListService {
   constructor() {}
 
   async link(userId: number, token: string) {
-    if (!config.providers.mal.key) throw Errors.INTEGRATION_ERROR
+    if (!config.providers.mal.key || !config.providers.mal.secret)
+      throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
     const existing = await Integration.findOne({
       where: {
@@ -27,7 +28,7 @@ export class MyAnimeListService {
       }
     })
 
-    if (existing) throw Errors.INTEGRATION_ERROR
+    if (existing) throw Errors.INTEGRATION_EXISTS
 
     try {
       const { data } = await axios.post(
