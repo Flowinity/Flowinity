@@ -7,16 +7,6 @@
   "imageSize": 100,
   "contributors": [
     {
-      "login": "theloosegoose",
-      "name": "The Loose Goose",
-      "avatar_url": "https://avatars.githubusercontent.com/u/32515234?v=4",
-      "profile": "https://github.com/theloosegoose",
-      "contributions": [
-        "code",
-        "infra"
-      ]
-    },
-    {
       "login": "Troplo",
       "name": "Troplo",
       "avatar_url": "https://avatars.githubusercontent.com/u/45160807?v=4",
@@ -27,6 +17,27 @@
         "data",
         "infra",
         "security"
+      ]
+    },
+    {
+      "login": "theloosegoose",
+      "name": "The Loose Goose",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32515234?v=4",
+      "profile": "https://github.com/theloosegoose",
+      "contributions": [
+        "code",
+        "infra"
+      ]
+    },
+    {
+      "login": "ElectricS01",
+      "name": "ElectricS01",
+      "avatar_url": "https://avatars.githubusercontent.com/u/103579308?v=4",
+      "profile": "http://electrics01.com",
+      "contributions": [
+        "code",
+        "ideas",
+        "bug"
       ]
     },
     {
