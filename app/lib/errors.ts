@@ -328,6 +328,10 @@ let Errors = {
     message:
       "The integration provider is not yet configured or is not configured properly.",
     status: 400
+  },
+  INTEGRATION_IS_NOT_LINKED: {
+    message: "The integration is not linked.",
+    status: 400
   }
 }
 

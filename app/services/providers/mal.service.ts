@@ -225,7 +225,7 @@ export class MyAnimeListService {
   async renewService() {
     if (!config.providers.mal.key) return
 
-    console.log("[PROVIDERS/MYANIMELIST] Renewing access tokens")
+    console.log("[PROVIDERS/MYANIMELIST] renewing access tokens...")
 
     const users = await User.findAll({
       include: [
@@ -243,12 +243,10 @@ export class MyAnimeListService {
       await this.renewMAL(user.id)
     }
 
-    console.log("[PROVIDERS/MYANIMELIST] Renewed access tokens")
+    console.log("[PROVIDERS/MYANIMELIST] renewed access tokens.")
   }
 
   async providerInit() {
-    if (config.release === "dev") return
-
     cron.schedule("0 * * * *", () => {
       this.renewService()
     })

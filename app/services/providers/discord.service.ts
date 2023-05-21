@@ -6,6 +6,8 @@ import Errors from "@app/lib/errors"
 
 // Import Models
 import { Integration } from "@app/models/integration.model"
+import { User } from "@app/models/user.model"
+import cron from "node-cron"
 
 @Service()
 export class DiscordService {
@@ -85,5 +87,83 @@ export class DiscordService {
     if (!existing) throw Errors.INTEGRATION_ERROR
 
     await existing.destroy()
+  }
+
+  async renewTokens() {
+    if (
+      !config.providers.discord.publicKey ||
+      !config.providers.discord.applicationId ||
+      !config.providers.discord.oAuthClientId ||
+      !config.providers.discord.oAuthClientSecret ||
+      !config.providers.discord.oAuthRedirectUri
+    )
+      throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
+
+    console.log("[PROVIDERS/DISCORD] renewing access tokens...")
+
+    const users = await User.findAll({
+      include: [
+        {
+          model: Integration,
+          as: "integrations",
+          where: {
+            type: "discord"
+          }
+        }
+      ]
+    })
+
+    for (const user of users) {
+      await Integration.findOne({
+        where: {
+          userId: user.id,
+          type: "discord"
+        }
+      })
+        .then(async (integration) => {
+          if (!integration) throw Errors.INTEGRATION_IS_NOT_LINKED
+
+          await axios
+            .post(
+              `https://discord.com/api/v10/oauth2/token`,
+              {
+                client_id: config.providers.discord.oAuthClientId,
+                client_secret: config.providers.discord.oAuthClientSecret,
+                grant_type: "refresh_token",
+                refresh_token: integration.refreshToken,
+                redirect_uri: config.providers.discord.oAuthRedirectUri
+              },
+              {
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                }
+              }
+            )
+            .then((res) => res.data)
+            .then(async (data) => {
+              integration.accessToken = data.access_token
+              integration.refreshToken = data.refresh_token
+              integration.expiresAt = new Date(
+                Date.now() + data.expires_in * 1000
+              )
+              integration.tokenType = data.token_type
+
+              await integration.save()
+            })
+        })
+        .catch(() => {
+          throw Errors.INTEGRATION_ERROR
+        })
+    }
+
+    console.log("[PROVIDERS/DISCORD] renewed access tokens.")
+  }
+
+  async providerInit() {
+    cron.schedule("0 * * * *", () => {
+      this.renewTokens()
+    })
+
+    await this.renewTokens()
   }
 }

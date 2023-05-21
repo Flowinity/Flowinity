@@ -25,6 +25,7 @@ import { OfficialInstJolt707 } from "@app/services/officialInst.jolt707"
 import { PulseService } from "@app/services/pulse.service"
 import { OfficialInstBadge } from "@app/services/officialInst.badge"
 import { MyAnimeListService } from "@app/services/providers/mal.service"
+import { DiscordService } from "@app/services/providers/discord.service"
 
 // Import Models
 import { Domain } from "@app/models/domain.model"
@@ -44,7 +45,8 @@ export class Server {
     private readonly billingService: OfficialInstJolt707,
     private readonly pulseService: PulseService,
     private readonly badgeService: OfficialInstBadge,
-    private readonly malService: MyAnimeListService
+    private readonly malService: MyAnimeListService,
+    private readonly discordService: DiscordService
   ) {}
 
   private static normalizePort(
@@ -123,6 +125,7 @@ export class Server {
       await this.pulseService.pulseInit()
       await this.badgeService.badgeInit()
       await this.malService.providerInit()
+      await this.discordService.providerInit()
     } else {
       console.log("Background tasks not started due to non-primary worker.")
     }
