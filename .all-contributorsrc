@@ -1,9 +1,22 @@
 {
   "projectName": "PrivateUploader",
-  "projectOwner": "Troplo",
+  "projectOwner": "PrivateUploader",
   "files": [
     "README.md"
   ],
   "imageSize": 100,
-  "contributors": []
+  "contributors": [
+    {
+      "login": "theloosegoose",
+      "name": "The Loose Goose",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32515234?v=4",
+      "profile": "https://github.com/theloosegoose",
+      "contributions": [
+        "code",
+        "infra"
+      ]
+    }
+  ],
+  "commitConvention": "angular",
+  "contributorsPerLine": 7
 }
