@@ -15,7 +15,7 @@ const resolve = (file: string) => {
 
 // https://vitejs.dev/config/
 
-export default defineConfig({
+let config = {
   build: {
     rollupOptions: {
       output: {
@@ -125,10 +125,6 @@ export default defineConfig({
     extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"]
   },
   server: {
-    https: {
-      key: fs.readFileSync("./vite.key"),
-      cert: fs.readFileSync("./vite.crt")
-    },
     port: 3000,
     proxy: {
       "/api/v2": "http://localhost:34582",
@@ -139,6 +135,16 @@ export default defineConfig({
         ws: true
       },
       "/api/v1": "http://localhost:34581"
-    }
+    },
+    https: undefined
   }
-});
+};
+
+if (process.env.USE_SSL_INTERNAL === "true") {
+  config.server.https = {
+    key: fs.readFileSync("./vite.key"),
+    cert: fs.readFileSync("./vite.crt")
+  };
+}
+
+export default defineConfig(config);

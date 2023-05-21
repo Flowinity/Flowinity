@@ -21,3 +21,5 @@ pnpm-debug.log*
 *.sln
 *.sw?
 analyze-tpu-bundle.html
+vite.crt
+vite.key
