@@ -155,10 +155,17 @@ export class CollectionControllerV3 {
     )
 
     if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-    if (!body.attachmentId || !body.items) throw Errors.ATTACHMENT_NOT_FOUND
+    const attachments = await Upload.findAll({
+      where: {
+        id: body.attachmentId || body.items,
+        userId: user.id
+      }
+    })
+    if(attachments.length === 0) throw Errors.ATTACHMENT_NOT_FOUND
+    if(attachments.length !== (body.attachmentId ? 1 : body.items?.length)) throw Errors.ATTACHMENT_NOT_FOUND
     return await this.collectionService.addToCollection(
       body.collectionId,
-      body.attachmentId || body.items,
+      attachments.map((attachment) => attachment.id),
       user.id
     )
   }

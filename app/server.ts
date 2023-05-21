@@ -120,12 +120,12 @@ export class Server {
     this.server.on("listening", () => this.onListening())
 
     if (mainWorker) {
+      await this.discordService.providerInit()
       await this.cacheService.cacheInit()
       await this.billingService.billingInit()
       await this.pulseService.pulseInit()
       await this.badgeService.badgeInit()
       await this.malService.providerInit()
-      await this.discordService.providerInit()
     } else {
       console.log("Background tasks not started due to non-primary worker.")
     }

@@ -33,23 +33,21 @@ export class DiscordService {
     if (existing) throw Errors.INTEGRATION_EXISTS
 
     try {
-      const authData = await axios
-        .post(
-          `https://discord.com/api/v10/oauth2/token`,
-          {
-            client_id: config.providers.discord.oAuthClientId,
-            client_secret: config.providers.discord.oAuthClientSecret,
-            grant_type: "authorization_code",
-            code: token,
-            redirect_uri: config.providers.discord.oAuthRedirectUri
-          },
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            }
+      const { data: authData } = await axios.post(
+        `https://discord.com/api/v10/oauth2/token`,
+        {
+          client_id: config.providers.discord.oAuthClientId,
+          client_secret: config.providers.discord.oAuthClientSecret,
+          grant_type: "authorization_code",
+          code: token,
+          redirect_uri: config.providers.discord.oAuthRedirectUri
+        },
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
           }
-        )
-        .then((res) => res.data)
+        }
+      )
 
       const { data } = await axios.get(
         `https://discord.com/api/v10/users/@me`,
@@ -90,73 +88,71 @@ export class DiscordService {
   }
 
   async renewTokens() {
-    if (
-      !config.providers.discord.publicKey ||
-      !config.providers.discord.applicationId ||
-      !config.providers.discord.oAuthClientId ||
-      !config.providers.discord.oAuthClientSecret ||
-      !config.providers.discord.oAuthRedirectUri
-    )
-      throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
+    try {
+      if (
+        !config.providers.discord.publicKey ||
+        !config.providers.discord.applicationId ||
+        !config.providers.discord.oAuthClientId ||
+        !config.providers.discord.oAuthClientSecret ||
+        !config.providers.discord.oAuthRedirectUri
+      )
+        return Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
-    console.log("[PROVIDERS/DISCORD] renewing access tokens...")
+      console.log("[PROVIDERS/DISCORD] renewing access tokens...")
 
-    const users = await User.findAll({
-      include: [
-        {
-          model: Integration,
-          as: "integrations",
+      const users = await User.findAll({
+        include: [
+          {
+            model: Integration,
+            as: "integrations",
+            where: {
+              type: "discord"
+            }
+          }
+        ]
+      })
+
+      for (const user of users) {
+        const integration = await Integration.findOne({
           where: {
+            userId: user.id,
             type: "discord"
           }
-        }
-      ]
-    })
-
-    for (const user of users) {
-      await Integration.findOne({
-        where: {
-          userId: user.id,
-          type: "discord"
-        }
-      })
-        .then(async (integration) => {
-          if (!integration) throw Errors.INTEGRATION_IS_NOT_LINKED
-
-          await axios
-            .post(
-              `https://discord.com/api/v10/oauth2/token`,
-              {
-                client_id: config.providers.discord.oAuthClientId,
-                client_secret: config.providers.discord.oAuthClientSecret,
-                grant_type: "refresh_token",
-                refresh_token: integration.refreshToken,
-                redirect_uri: config.providers.discord.oAuthRedirectUri
-              },
-              {
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded"
-                }
-              }
-            )
-            .then((res) => res.data)
-            .then(async (data) => {
-              integration.accessToken = data.access_token
-              integration.refreshToken = data.refresh_token
-              integration.expiresAt = new Date(
-                Date.now() + data.expires_in * 1000
-              )
-              integration.tokenType = data.token_type
-
-              await integration.save()
-            })
         })
-        .catch(() => {
-          throw Errors.INTEGRATION_ERROR
+
+        if (!integration) continue
+
+        const { data } = await axios.post(
+          `https://discord.com/api/v10/oauth2/token`,
+          {
+            client_id: config.providers.discord.oAuthClientId,
+            client_secret: config.providers.discord.oAuthClientSecret,
+            grant_type: "refresh_token",
+            refresh_token: integration.refreshToken,
+            redirect_uri: config.providers.discord.oAuthRedirectUri
+          },
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          }
+        )
+
+        await integration.update({
+          accessToken: data.access_token,
+          refreshToken: data.refresh_token,
+          expiresAt: new Date(Date.now() + data.expires_in * 1000),
+          tokenType: data.token_type
         })
+      }
+
+      console.log("[PROVIDERS/DISCORD] renewed access tokens.")
+      return true
+    } catch (err) {
+      console.log("[PROVIDERS/DISCORD] failed to renew access tokens.")
+      console.log(err)
+      return false
     }
-
-    console.log("[PROVIDERS/DISCORD] renewed access tokens.")
   }
 
   async providerInit() {
