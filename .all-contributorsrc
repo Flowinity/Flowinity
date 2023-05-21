@@ -18,6 +18,18 @@
         "infra",
         "security"
       ]
+    },
+    {
+      "login": "Bytedefined",
+      "name": "bytedefined",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56295147?v=4",
+      "profile": "https://bytedefined.com",
+      "contributions": [
+        "code",
+        "translation",
+        "ideas",
+        "bug"
+      ]
     }
   ],
   "commitConvention": "angular",
