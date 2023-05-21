@@ -18,6 +18,17 @@
         "infra",
         "security"
       ]
+    },
+    {
+      "login": "ElectricS01",
+      "name": "ElectricS01",
+      "avatar_url": "https://avatars.githubusercontent.com/u/103579308?v=4",
+      "profile": "http://electrics01.com",
+      "contributions": [
+        "code",
+        "ideas",
+        "bug"
+      ]
     }
   ],
   "commitConvention": "angular",
