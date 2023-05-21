@@ -11,7 +11,7 @@
           <v-tooltip
             :text="`${
               ($user.user.integrations.find((i) => i.type === integration.id)
-                ? 'Linked'
+                ? 'Already Linked'
                 : null) ||
               (!integration.available ? 'Unavailable' : 'Available')
             }`"
