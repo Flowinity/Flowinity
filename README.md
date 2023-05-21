@@ -113,6 +113,7 @@ process command and will automatically scale if you add more CPU cores/threads.
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://troplo.com"><img src="https://avatars.githubusercontent.com/u/45160807?v=4?s=100" width="100px;" alt="Troplo"/><br /><sub><b>Troplo</b></sub></a><br /><a href="#code-Troplo" title="Code">💻</a> <a href="#doc-Troplo" title="Documentation">📖</a> <a href="#data-Troplo" title="Data">🔣</a> <a href="#infra-Troplo" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#security-Troplo" title="Security">🛡️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://bytedefined.com"><img src="https://avatars.githubusercontent.com/u/56295147?v=4?s=100" width="100px;" alt="bytedefined"/><br /><sub><b>bytedefined</b></sub></a><br /><a href="#code-Bytedefined" title="Code">💻</a> <a href="#translation-Bytedefined" title="Translation">🌍</a> <a href="#ideas-Bytedefined" title="Ideas, Planning, & Feedback">🤔</a> <a href="#bug-Bytedefined" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
