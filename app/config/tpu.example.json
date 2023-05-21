@@ -1,22 +1,20 @@
 {
   "port": 34582,
-  "flowinityId": null,
-  "flowinitySecret": null,
-  "maintenance": false,
   "siteName": "TPU",
-  "hostname": null,
-  "hostnameWithProtocol": null,
-  "release": "prod",
+  "hostname": "localhost:3000",
+  "hostnameWithProtocol": "https://localhost:3000",
   "storage": "storage",
-  "jitsiToken": null,
   "registrations": true,
-  "modules": ["colubrina", "mail"],
-  "mediaProxySecret": null,
+  "mediaProxySecret": "",
+  "maintenance": false,
+  "release": "dev",
+  "jitsiToken": null,
+  "officialInstance": false,
+  "finishedSetup": true,
   "weatherApiKey": null,
-  "redis": {
-    "host": null,
-    "db": null,
-    "port": null
+  "discord": {
+    "webhook": null,
+    "token": null
   },
   "providers": {
     "tenor": null,
@@ -34,16 +32,28 @@
     }
   },
   "email": {
-    "host": null,
-    "port": null,
-    "from": null,
-    "secure": null,
-    "username": null,
-    "password": null
+    "host": "",
+    "port": 587,
+    "username": "",
+    "password": "",
+    "from": "\"TroploPrivateUploader\" <noreply@privateuploader.com>",
+    "secure": false
   },
-  "discord": {
-    "webhook": null,
-    "token": null
+  "redis": {
+    "db": 0,
+    "host": "localhost",
+    "port": 6379
   },
-  "officialInstance": false
+  "threads": 0,
+  "features": {
+    "autoCollects": true,
+    "collections": true,
+    "workspaces": true,
+    "insights": true,
+    "communications": true
+  },
+  "defaultPlanId": 1,
+  "privacyNoteId": null,
+  "termsNoteId": null,
+  "inviteAFriend": true
 }

@@ -60,7 +60,7 @@ export class MyAnimeListService {
   }
 
   async renewMAL(userId: number) {
-    const integration = await Integration.findOne({
+    const integration: Integration | null = await Integration.findOne({
       where: {
         userId,
         type: "mal",
