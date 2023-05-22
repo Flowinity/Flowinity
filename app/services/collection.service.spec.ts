@@ -1,23 +1,19 @@
 import { expect, test, afterAll } from "@jest/globals"
-
-process.env.NODE_ENV = "test"
+import "../lib/init-tests"
 import { CollectionService } from "@app/services/collection.service"
 import { CollectionControllerV3 } from "@app/controllers/v3/collection.controller"
 import { Container } from "typedi"
-process.env.CONFIG = JSON.stringify(require("../config/tpu.json"))
-import db from "@app/db"
-global.config = JSON.parse(process.env.CONFIG)
-import redis from "@app/redis"
-import { authMock } from "@app/lib/auth-mock"
-global.redis = redis
+import { CacheService } from "@app/services/cache.service"
 const collectionService = Container.get(CollectionService)
 const collectionController = Container.get(CollectionControllerV3)
+const cacheService = Container.get(CacheService)
 const collectionShareId =
   "1d198996d324f7219ae0e2b4d78eecec4ef8a72c673526276b1481699775d997"
 
 const collectionConfigureId = "292"
 
 test("ShareLink Collection", async () => {
+  await cacheService.generateShareLinkCache()
   const collection = await collectionController.getCollection(
     null,
     collectionShareId
@@ -91,6 +87,7 @@ test("Random Collection Item", async () => {
 })
 
 test("Random Collection Item Unauth", async () => {
+  await cacheService.generateShareLinkCache()
   const collection = await collectionController.getRandomAttachment(
     null,
     collectionShareId
@@ -233,5 +230,4 @@ it("Add and Remove User from Collection", async () => {
 afterAll(async () => {
   await new Promise((r) => setTimeout(r, 3000))
   await redis.disconnect()
-  await db.close()
 })

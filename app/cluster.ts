@@ -29,6 +29,20 @@ function setEnvVariables() {
   process.env.RAW_APP_ROOT = global.rawAppRoot
   process.env.CONFIG = JSON.stringify(global.config)
   process.env.IS_DOCKER = isRunningInDocker() ? "true" : "false"
+  if (global.config.finishedSetup) {
+    try {
+      // try using system sequelize-cli first, only thing that works in Docker too
+      execSync("sequelize db:migrate", {
+        env: process.env,
+        stdio: "inherit"
+      })
+    } catch {
+      execSync(global.appRoot + "../node_modules/.bin/sequelize db:migrate", {
+        env: process.env,
+        stdio: "inherit"
+      })
+    }
+  }
 }
 
 if (cluster.isMaster) {

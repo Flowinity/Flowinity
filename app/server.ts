@@ -60,7 +60,7 @@ export class Server {
     else return false
   }
 
-  async init(port?: number): Promise<void> {
+  async init(port?: number, noBackgroundTasks = false): Promise<void> {
     const cpuCount: number = os.cpus().length
     const mainWorker: boolean =
       !cluster.worker || cluster.worker?.id % cpuCount === 1
@@ -99,9 +99,11 @@ export class Server {
     global.dayjs = dayjs
     global.whitelist = ipPrimary
     this.server = http.createServer(this.application.app)
-    this.server.listen(
-      port || Server.normalizePort(this.config?.port || "34582")
-    )
+    if (!noBackgroundTasks) {
+      this.server.listen(
+        port || Server.normalizePort(this.config?.port || "34582")
+      )
+    }
 
     await socket.init(this.application.app, this.server)
 
@@ -119,7 +121,7 @@ export class Server {
 
     this.server.on("listening", () => this.onListening())
 
-    if (mainWorker) {
+    if (mainWorker && !noBackgroundTasks) {
       await this.cacheService.cacheInit()
       await this.billingService.billingInit()
       await this.pulseService.pulseInit()

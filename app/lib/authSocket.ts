@@ -3,7 +3,7 @@ import { SocketAuth } from "@app/types/socket"
 import { Session } from "@app/models/session.model"
 import { User } from "@app/models/user.model"
 
-const Errors = require("./errors.js")
+const Errors = require("./errors")
 const { Op } = require("sequelize")
 
 export default async function (socket: SocketAuth, next: NextFunction) {

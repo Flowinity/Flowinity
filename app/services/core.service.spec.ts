@@ -1,19 +1,9 @@
 import { expect, test, afterAll } from "@jest/globals"
-
-process.env.NODE_ENV = "test"
+import "../lib/init-tests"
 import { CoreService } from "@app/services/core.service"
-import { CoreControllerV3 } from "@app/controllers/v3/core.controller"
 import { Container } from "typedi"
-process.env.CONFIG = JSON.stringify(require("../config/tpu.json"))
-import db from "@app/db"
-import redis from "@app/redis"
-import { authMock } from "@app/lib/auth-mock"
+import { CoreControllerV3 } from "@app/controllers/v3/core.controller"
 import { RequestAuth } from "@app/types/express"
-
-global.redis = redis
-global.db = db
-global.config = JSON.parse(process.env.CONFIG)
-global.whitelist = []
 const coreService = Container.get(CoreService)
 const coreController = Container.get(CoreControllerV3)
 
