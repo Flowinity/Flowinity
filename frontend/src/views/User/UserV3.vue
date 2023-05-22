@@ -15,18 +15,17 @@
     ></UserBanner>
     <v-container class="mt-2" style="max-width: 100%">
       <v-row>
-        <v-col
-          :lg="layout.config.showStatsSidebar === false ? 12 : 9"
-          :xl="layout.config.showStatsSidebar === false ? 12 : 10"
-          cols="12"
-          md="8"
-        >
+        <v-col cols="12" style="flex: 1 1 auto; width: 200px">
           <v-row
             :class="{ 'text-center': $vuetify.display.mobile }"
             class="mb-2"
             no-gutters
           >
-            <v-col :cols="$vuetify.display.mobile ? 12 : undefined" sm="auto">
+            <v-col
+              :cols="$vuetify.display.mobile ? 12 : undefined"
+              sm="auto"
+              class="fix-profile-v3"
+            >
               <v-hover v-slot="{ isHovering }">
                 <UserAvatar
                   :class="{ 'mr-4': !$vuetify.display.mobile }"
@@ -55,8 +54,8 @@
                 </UserAvatar>
               </v-hover>
             </v-col>
-            <v-col class="d-flex align-center" sm="100%">
-              <v-card-text class="ml-n2">
+            <v-col class="d-flex align-center fix-profile-v3" sm="100%">
+              <v-card-text class="ml-n2 fix-profile-v3">
                 <div>
                   <h1
                     :class="username ? 'mb-2 pointer' : ''"
@@ -142,11 +141,11 @@
             </v-col>
             <v-col
               v-if="user.id !== $user.user?.id"
-              class="d-flex align-center"
+              class="d-flex align-center fix-profile-v3"
               sm="auto"
               style="justify-content: flex-end"
             >
-              <v-card-text>
+              <v-card-text class="fix-profile-v3">
                 <v-btn
                   v-if="friends"
                   :color="friends.color"
@@ -255,6 +254,7 @@
           md="3"
           sm="12"
           xl="2"
+          style="flex: 0 1 auto; white-space: nowrap"
         >
           <InsightsPromoCard
             v-if="
