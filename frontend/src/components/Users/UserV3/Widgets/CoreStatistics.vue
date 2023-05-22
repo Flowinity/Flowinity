@@ -29,7 +29,7 @@
           ></Chart>
         </v-card>
       </v-col>
-      <v-col md="6" sm="12">
+      <v-col :md="!username ? 6 : 12" cols="12" sm="12">
         <v-card
           v-if="user.stats.uploadGraph"
           :height="$vuetify.display.mobile ? 400 : undefined"
