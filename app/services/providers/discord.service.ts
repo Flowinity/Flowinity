@@ -49,13 +49,10 @@ export class DiscordService {
         }
       )
 
-      const { data } = await axios.get(
-        `https://discord.com/api/v10/users/@me`,
-        {
-          headers: {
-            Authorization: `${authData.token_type} ${authData.access_token}`
-          }
-        }
+      const userCache = await this.getUserCache(
+        userId,
+        authData.token_type,
+        authData.access_token
       )
 
       await Integration.create({
@@ -65,12 +62,11 @@ export class DiscordService {
         accessToken: authData.access_token,
         refreshToken: authData.refresh_token,
         expiresAt: new Date(Date.now() + authData.expires_in * 1000),
-        providerUsername: data.username,
-        providerUserId: data.id,
-        providerUserCache: data
+        providerUsername: userCache.username,
+        providerUserId: userCache.id,
+        providerUserCache: userCache
       })
-    } catch (e) {
-      console.log(e)
+    } catch {
       throw Errors.INTEGRATION_ERROR
     }
   }
@@ -88,17 +84,43 @@ export class DiscordService {
     await existing.destroy()
   }
 
-  async renewTokens() {
-    try {
-      if (
-        !config.providers.discord.publicKey ||
-        !config.providers.discord.applicationId ||
-        !config.providers.discord.oAuthClientId ||
-        !config.providers.discord.oAuthClientSecret ||
-        !config.providers.discord.oAuthRedirectUri
-      )
-        return Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
+  async getUserCache(userId: string, tokenType: string, accessToken: string) {
+    const integration = await Integration.findOne({
+      where: {
+        userId,
+        type: "discord"
+      }
+    })
 
+    if (!integration) throw Errors.INTEGRATION_IS_NOT_LINKED
+
+    try {
+      const { data } = await axios.get(
+        `https://discord.com/api/v10/users/@me`,
+        {
+          headers: {
+            Authorization: `${tokenType} ${accessToken}`
+          }
+        }
+      )
+
+      return data
+    } catch {
+      throw Errors.INTEGRATION_ERROR
+    }
+  }
+
+  async renewTokens() {
+    if (
+      !config.providers.discord.publicKey ||
+      !config.providers.discord.applicationId ||
+      !config.providers.discord.oAuthClientId ||
+      !config.providers.discord.oAuthClientSecret ||
+      !config.providers.discord.oAuthRedirectUri
+    )
+      return Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
+
+    try {
       console.log("[PROVIDERS/DISCORD] renewing access tokens...")
 
       const users = await User.findAll({
@@ -149,9 +171,8 @@ export class DiscordService {
 
       console.log("[PROVIDERS/DISCORD] renewed access tokens.")
       return true
-    } catch (err) {
+    } catch {
       console.log("[PROVIDERS/DISCORD] failed to renew access tokens.")
-      console.log(err)
       return false
     }
   }

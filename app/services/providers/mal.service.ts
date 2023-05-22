@@ -86,7 +86,7 @@ export class MyAnimeListService {
     await existing.destroy()
   }
 
-  async renewMAL(userId: number) {
+  async renew(userId: number) {
     const integration: Integration | null = await Integration.findOne({
       where: {
         userId,
@@ -165,7 +165,7 @@ export class MyAnimeListService {
 
     const d = {
       ...data,
-      user: await this.getMALUserCache(userId, username, accessToken)
+      user: await this.getUserCache(userId, username, accessToken)
     }
 
     redis.set(`providers:mal:${userId}:overview`, JSON.stringify(d), {
@@ -182,8 +182,8 @@ export class MyAnimeListService {
     accessToken: string,
     body: MalBody
   ) {
-    const { data } = await axios
-      .put(
+    try {
+      const { data } = await axios.put(
         `https://api.myanimelist.net/v2/anime/${body.id}/my_list_status`,
         qs.stringify({
           num_watched_episodes: body.num_episodes_watched,
@@ -197,53 +197,65 @@ export class MyAnimeListService {
           }
         }
       )
-      .catch(() => {
-        throw Errors.INTEGRATION_ERROR
-      })
 
-    await redis.del(`providers:mal:${userId}:overview`)
+      await redis.del(`providers:mal:${userId}:overview`)
+
+      // I assume this is supposed to do something? - Bytedefined.
+    } catch {
+      throw Errors.INTEGRATION_ERROR
+    }
   }
 
-  async getMALUserCache(userId: number, username: string, accessToken: string) {
-    const integration = await Integration.findOne({
-      where: {
-        userId,
-        type: "mal"
-      }
-    })
+  async getUserCache(userId: number, username: string, accessToken: string) {
+    try {
+      const integration = await Integration.findOne({
+        where: {
+          userId,
+          type: "mal"
+        }
+      })
 
-    if (!integration) return null
+      if (!integration) return null
 
-    // Delete potentially sensitive fields, MAL sends them even if you opt out of the privacy setting/
-    delete integration.providerUserCache?.birthday
-    delete integration.providerUserCache?.location
-    delete integration.providerUserCache?.gender
+      // Delete potentially sensitive fields, MAL sends them even if you opt out of the privacy setting/
+      delete integration.providerUserCache?.birthday
+      delete integration.providerUserCache?.location
+      delete integration.providerUserCache?.gender
 
-    return integration.providerUserCache
+      return integration.providerUserCache
+    } catch {
+      throw Errors.INTEGRATION_ERROR
+    }
   }
 
   async renewService() {
     if (!config.providers.mal.key) return
 
-    console.log("[PROVIDERS/MYANIMELIST] renewing access tokens...")
+    try {
+      console.log("[PROVIDERS/MYANIMELIST] renewing access tokens...")
 
-    const users = await User.findAll({
-      include: [
-        {
-          model: Integration,
-          as: "integrations",
-          where: {
-            type: "mal"
+      const users = await User.findAll({
+        include: [
+          {
+            model: Integration,
+            as: "integrations",
+            where: {
+              type: "mal"
+            }
           }
-        }
-      ]
-    })
+        ]
+      })
 
-    for (const user of users) {
-      await this.renewMAL(user.id)
+      for (const user of users) {
+        await this.renew(user.id)
+      }
+
+      console.log("[PROVIDERS/MYANIMELIST] renewed access tokens.")
+      return true
+    } catch {
+      console.log("[PROVIDERS/MYANIMELIST] failed to renew access tokens.")
+      return false
     }
-
-    console.log("[PROVIDERS/MYANIMELIST] renewed access tokens.")
   }
 
   async providerInit() {

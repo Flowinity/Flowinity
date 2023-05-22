@@ -64,25 +64,29 @@ export class LastfmService {
   }
 
   async getOverview(userId: number, username: string, accessToken: string) {
-    const cache = await redis.get(`providers:lastfm:${userId}:overview`)
+    try {
+      const cache = await redis.get(`providers:lastfm:${userId}:overview`)
 
-    if (cache) return JSON.parse(cache)
+      if (cache) return JSON.parse(cache)
 
-    const { data } = await axios.get(`https://ws.audioscrobbler.com/2.0/`, {
-      params: {
-        method: "user.getrecenttracks",
-        user: username,
-        api_key: config.providers.lastfm.key,
-        format: "json"
-      }
-    })
+      const { data } = await axios.get(`https://ws.audioscrobbler.com/2.0/`, {
+        params: {
+          method: "user.getrecenttracks",
+          user: username,
+          api_key: config.providers.lastfm.key,
+          format: "json"
+        }
+      })
 
-    redis.set(`providers:lastfm:${userId}:overview`, JSON.stringify(data), {
-      EX: 10,
-      NX: true
-    })
+      redis.set(`providers:lastfm:${userId}:overview`, JSON.stringify(data), {
+        EX: 10,
+        NX: true
+      })
 
-    return data
+      return data
+    } catch {
+      throw Errors.INTEGRATION_ERROR
+    }
   }
 
   generateSig(params: Record<string, string>) {
