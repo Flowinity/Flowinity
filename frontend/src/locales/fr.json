@@ -9,7 +9,7 @@
       "workspaces": "Espaces de travail",
       "communications": "Communications",
       "mail": "Messagerie",
-      "insights": "Insights",
+      "insights": "Aperçu",
       "starred": "Favori",
       "users": "Utilisateurs",
       "feedback": "Envoyer des commentaires",
@@ -29,7 +29,7 @@
   },
   "stats": {
     "collections": "Collections",
-    "collectivized": "Collectivized",
+    "collectivized": "Collectivisé",
     "hours": "Heures",
     "users": "Utilisateurs",
     "uploads": "Téléversements",
@@ -140,27 +140,27 @@
         "baseCollections": "Exclude collections from non-collectivized filter",
         "language": "Language",
         "themeEditor": "Open Theme Editor",
-        "disableProfileColors": "Disable profile colors",
-        "disableBatteryPreservation": "Disable battery preservation"
+        "disableProfileColors": "Désactiver les profils couleur",
+        "disableBatteryPreservation": "Désactiver la préservation de la batterie"
       }
     },
     "security": {
-      "apiKeys": "API Keys",
-      "recentLogins": "Recent Logins",
-      "addPassword": "Add Password",
+      "apiKeys": "Clés API",
+      "recentLogins": "Connexions récentes",
+      "addPassword": "Ajouter mot de passe",
       "alternatePasswords": "Alternate Passwords",
       "addAPIKey": "Add API Key",
       "addAlternatePassword": "Add Password",
       "ipHistory": "View IP History",
       "noIPHistory": "Session has no IP history.",
-      "unknownLocation": "Unknown Location",
-      "unknownISP": "Unknown ISP",
-      "unknownASN": "Unknown ASN",
+      "unknownLocation": "Location inconnue",
+      "unknownISP": "FAI Inconnu",
+      "unknownASN": "ASN Inconnu",
       "lastSessionUsage": "Last session usage: {date}",
       "sessionCreated": "Session created: {date}",
       "sessionExpiry": "Session expiry: {date}",
       "deleteSession": "Delete Session",
-      "unknownIP": "Unknown IP"
+      "unknownIP": "IP inconnue"
     },
     "setup": {
       "title": "API Key Options",
