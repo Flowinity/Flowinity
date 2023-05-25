@@ -131,10 +131,12 @@
           class="my-1"
           color="green"
           icon="mdi-ocr"
-          @click="
+          @click.right.prevent.stop="
             $functions.copy(item.textMetadata);
             $toast.success('Copied to clipboard!');
           "
+          @click="$app.dialogs.ocr.text = item.textMetadata; $app.dialogs.ocr.value = true"
+          :disabled="!item.textMetadata"
         ></HoverChip>
         <HoverChip
           v-if="$user.user"

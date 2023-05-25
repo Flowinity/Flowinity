@@ -125,6 +125,10 @@ export interface AppState {
     pi: {
       value: boolean;
     };
+    ocr: {
+      value: boolean;
+      text: string;
+    }
   };
   weather: {
     loading: boolean;
@@ -263,6 +267,10 @@ export const useAppStore = defineStore("app", {
         delete: {
           value: false,
           item: undefined
+        },
+        ocr: {
+          value: false,
+          text: ""
         },
         memoryProfiler: false
       },

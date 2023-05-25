@@ -70,7 +70,9 @@
       },
       "ocr": {
         "text": "OCR",
-        "aria": "Copy scanned text to clipboard"
+        "aria": "Copy scanned text to clipboard",
+        "title": "Scanned text from image",
+        "tip": "Tip: You can quickly copy the entire scanned text by right clicking the green OCR button."
       },
       "star": {
         "text": "Star",
