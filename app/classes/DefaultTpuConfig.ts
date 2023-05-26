@@ -39,7 +39,8 @@ export class DefaultTpuConfig {
       anilist: {
         key: null,
         secret: null
-      }
+      },
+      steam: null
     },
     email: {
       secure: false,

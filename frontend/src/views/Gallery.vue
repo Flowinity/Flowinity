@@ -1,13 +1,7 @@
 <template>
   <v-container>
     <GalleryNavigation
-      :supports="{
-        filter: true,
-        metadata: true,
-        search: true,
-        upload: true,
-        sort: true
-      }"
+      :supports="supports || { filter: true, metadata: true, search: true, upload: true, sort: true }"
       @refreshGallery="getGallery()"
       @update:show="show = $event"
       @update:search="

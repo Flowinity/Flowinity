@@ -100,6 +100,8 @@ export interface AppState {
     privacyNoteId?: string;
   };
   dialogs: {
+    inviteAFriend: boolean;
+    feedback: boolean;
     experiments: boolean;
     migrateWizard: boolean;
     quickSwitcher: boolean;
@@ -128,7 +130,7 @@ export interface AppState {
     ocr: {
       value: boolean;
       text: string;
-    }
+    };
   };
   weather: {
     loading: boolean;
@@ -244,6 +246,8 @@ export const useAppStore = defineStore("app", {
         }
       },
       dialogs: {
+        feedback: false,
+        inviteAFriend: false,
         experiments: false,
         nickname: {
           value: false,

@@ -77,7 +77,7 @@ export class MyAnimeListService {
     const existing = await Integration.findOne({
       where: {
         userId,
-        type: "lastfm"
+        type: "mal"
       }
     })
 

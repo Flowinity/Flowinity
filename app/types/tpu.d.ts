@@ -16,10 +16,10 @@ declare type TpuConfig = {
       secret: string | undefined | null
     }
     discord: {
-      applicationId: string | undefined | null,
-      publicKey: string | undefined | null,
-      oAuthClientId: string | undefined | null,
-      oAuthClientSecret: string | undefined | null,
+      applicationId: string | undefined | null
+      publicKey: string | undefined | null
+      oAuthClientId: string | undefined | null
+      oAuthClientSecret: string | undefined | null
       oAuthRedirectUri: string | undefined | null
     }
     mal: {
@@ -30,6 +30,7 @@ declare type TpuConfig = {
       key: string | undefined | null
       secret: string | undefined | null
     }
+    steam: string | undefined | null
   }
   redis: {
     username?: string | undefined

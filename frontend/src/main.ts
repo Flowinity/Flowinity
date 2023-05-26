@@ -8,7 +8,7 @@
 import App from "./App.vue";
 
 // Composables
-import { createApp } from "vue";
+import { createApp, defineComponent } from "vue";
 
 // Plugins
 import { registerPlugins } from "@/plugins";
@@ -497,6 +497,21 @@ app.use(VueMatomo, {
   trackSiteSearch: false,
   crossOrigin: undefined
 });
+
+if (process.env.NODE_ENV === "development") {
+  const loggingMixin = {
+    beforeMount() {
+      if (
+        this.$options?.name?.startsWith("V") ||
+        this.$options?.name === "BaseTransition"
+      )
+        return;
+      // find where the component is defined
+      console.log(`[TPU/Dev] ${this.$options.name} mounted`);
+    }
+  };
+  app.mixin(loggingMixin);
+}
 
 app.use(Toast, options);
 app.config.globalProperties.$toast = useToast();

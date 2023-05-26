@@ -2,6 +2,13 @@
   <URLConfirmDialog
     v-model="$chat.dialogs.externalSite.value"
   ></URLConfirmDialog>
+  <InviteAFriend v-model="$app.dialogs.inviteAFriend"></InviteAFriend>
+  <Feedback v-model="$app.dialogs.feedback"></Feedback>
+  <Migrate
+    v-model="$app.dialogs.migrateWizard"
+    v-if="$experiments.experiments.PROJECT_MERGE"
+  ></Migrate>
+  <Gold v-model="$app.dialogs.gold.value"></Gold>
   <v-app
     v-if="$user.user"
     @drop="dragDropHandler"
@@ -56,8 +63,8 @@
     ></sidebar>
     <colubrina-sidebar
       v-if="
-        $app.railMode === 'communications' &&
-        ($app.rail || $vuetify.display.mobile)
+        ($app.railMode === 'communications' &&
+        ($app.rail || $vuetify.display.mobile)) || (!$app.rail && $chat.isCommunications)
       "
     ></colubrina-sidebar>
     <workspaces-sidebar
@@ -139,6 +146,10 @@ import RailBar from "@/layouts/default/RailBar.vue";
 import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
 import ExperimentsManager from "@/components/Dev/Dialogs/Experiments.vue";
 import ExperimentsManagerDialog from "@/components/Dev/Dialogs/Experiments.vue";
+import Gold from "@/components/Dashboard/Dialogs/Gold.vue";
+import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
+import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
+import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 </script>
 
 <script lang="ts">

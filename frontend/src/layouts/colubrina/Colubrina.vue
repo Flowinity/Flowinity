@@ -22,7 +22,6 @@
   <ColubrinaGroupSettingsDialog
     v-model="$chat.dialogs.groupSettings.value"
   ></ColubrinaGroupSettingsDialog>
-  <ColubrinaSidebar v-if="$chat.communicationsSidebar"></ColubrinaSidebar>
   <router-view></router-view>
   <ColubrinaMemberSidebar></ColubrinaMemberSidebar>
 </template>
