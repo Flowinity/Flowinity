@@ -274,7 +274,9 @@
     "never": "Never",
     "next": "Next",
     "previous": "Previous",
-    "update": "Update"
+    "update": "Update",
+    "leave": "Leave",
+    "delete": "Delete"
   },
   "setup": {
     "step0": {
@@ -379,5 +381,89 @@
       "export": "Export Collection",
       "delete": "Delete Collection"
     }
+  },
+  "chats": {
+    "start": {
+      "dm": "You have sent no messages to {username} yet.",
+      "group": "You have sent no messages in {name} yet."
+    },
+    "jumpToBottom": "Jump to bottom",
+    "loading": "Loading messages...",
+    "chats": "Chats",
+    "notifications": "Notifications",
+    "changeNickname": "Change Nickname",
+    "notificationOptions": {
+      "all": "All messages",
+      "mentions": "Mentions only",
+      "none": "None",
+      "noneDesc": "This chat will be completely muted."
+    }
+  },
+  "insights": {
+    "types": {
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "annually": "Annually",
+      "dynamic": "Dynamic"
+    },
+    "statsCards": {
+      "uploads": "Uploads",
+      "messages": "Messages",
+      "currentStreak": "Current UploadStreak",
+      "uploadsAvg": "Uploads/avg",
+      "messagesAvg": "Messages/avg",
+      "longestStreak": "Longest UploadStreak",
+      "upload": {
+        "title": "Uploads per hour",
+        "subtitle": "This reporting period you uploaded the most at {hour}!"
+      },
+      "usage": {
+        "subtitle": "See when you used TPU!",
+        "title": "Website usage",
+        "chartTitle": "Hours"
+      },
+      "uploadsPerDay": {
+        "title": "Uploads per day",
+        "subtitle": "This reporting period you uploaded the most on {day}!",
+        "chartTitle": "Uploads"
+      },
+      "platform": {
+        "title": "Platform usage",
+        "subtitle": "See what platforms you used TPU on!",
+        "chartTitle": "Hours"
+      },
+      "uploadsPerMonth": {
+        "title": "Uploads per month",
+        "subtitle": "This reporting period you uploaded the most in {month}!",
+        "chartTitle": "Uploads"
+      },
+      "uploadsPerYear": {
+        "title": "Uploads per year",
+        "subtitle": "This reporting period you uploaded the most in {year}!",
+        "chartTitle": "Uploads"
+      },
+      "topWords": {
+        "title": "Top 500 words",
+        "subtitle": "See the top words in your screenshots!"
+      },
+      "topChats": {
+        "title": "Top chats",
+        "subtitle": "See who you talk to in TPU Communications!"
+      },
+      "autoCollects": {
+        "title": "AutoCollects per hour",
+        "subtitle": "See when you AutoCollect the most!"
+      },
+      "collections": {
+        "title": "Collectivizations per hour",
+        "subtitle": "See when you collectivize your items!"
+      },
+      "features": {
+        "title": "Feature usage",
+        "subtitle": "Explore what TPU features you use the most!"
+      }
+    },
+    "noData": "There is no data for last {type}. Please check back later.",
+    "noDataDynamic": "The dynamic report is being generated. Please check back in a few hours."
   }
 }

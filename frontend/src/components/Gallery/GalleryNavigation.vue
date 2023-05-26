@@ -63,7 +63,9 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   name: "GalleryNavigation",
   emits: [
     "update:filter",
@@ -149,7 +151,7 @@ export default {
       sort: "newest"
     };
   }
-};
+});
 </script>
 
 <style scoped></style>

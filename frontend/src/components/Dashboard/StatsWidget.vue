@@ -82,8 +82,9 @@
 
 <script lang="ts">
 import StatsCard from "@/components/Dashboard/StatsCard.vue";
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: "StatsWidget",
   components: { StatsCard },
   props: {
@@ -108,7 +109,7 @@ export default {
       default: 4
     }
   }
-};
+});
 </script>
 
 <style scoped></style>

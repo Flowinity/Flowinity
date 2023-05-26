@@ -15,11 +15,12 @@
 <script lang="ts">
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: "UserWidget",
   components: { UserBadges, UserAvatar }
-};
+});
 </script>
 
 <style scoped></style>
