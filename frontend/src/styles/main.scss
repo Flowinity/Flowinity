@@ -6,6 +6,7 @@
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .gold-text-gradient {
@@ -13,6 +14,7 @@
   background: -webkit-radial-gradient(#ffdb1b, #ffd700);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .unselectable {
