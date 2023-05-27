@@ -5,6 +5,7 @@
       aspect-ratio="1"
       title="Upload Avatar"
       @finish="changeAvatar"
+      v-if="user.id === $user.user?.id"
     />
     <v-hover v-slot="{ isHovering, props }">
       <span v-bind="props">
