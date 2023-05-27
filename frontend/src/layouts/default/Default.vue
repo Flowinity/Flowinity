@@ -1,4 +1,10 @@
 <template>
+  <WorkspaceDeleteDialog
+    v-model="$app.dialogs.deleteItem.value"
+    :item="$app.dialogs.deleteItem.item"
+    title="Delete item?"
+    @submit="$app.deleteItem($app.dialogs.deleteItem.item)"
+  />
   <URLConfirmDialog
     v-model="$chat.dialogs.externalSite.value"
   ></URLConfirmDialog>
@@ -19,10 +25,6 @@
   >
     <NicknameDialog v-model="$app.dialogs.nickname.value"></NicknameDialog>
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
-    <WorkspaceDeleteDialog
-      v-model="$app.dialogs.delete.value"
-      @submit="$app.deleteItem($app.dialogs.delete.item)"
-    ></WorkspaceDeleteDialog>
     <UploadDialog v-model="$app.dialogs.upload.value"></UploadDialog>
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
     <ExperimentsManagerDialog
@@ -64,7 +66,8 @@
     <colubrina-sidebar
       v-if="
         ($app.railMode === 'communications' &&
-        ($app.rail || $vuetify.display.mobile)) || (!$app.rail && $chat.isCommunications)
+          ($app.rail || $vuetify.display.mobile)) ||
+        (!$app.rail && $chat.isCommunications)
       "
     ></colubrina-sidebar>
     <workspaces-sidebar
@@ -156,6 +159,7 @@ import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 import { defineComponent } from "vue";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import { Message as MessageType } from "@/models/message";
+import { Upload } from "@/models/upload";
 
 export default defineComponent({
   name: "TPUDefaultLayout",

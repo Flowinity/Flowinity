@@ -100,6 +100,11 @@ export interface AppState {
     privacyNoteId?: string;
   };
   dialogs: {
+    deleteItem: {
+      value: boolean;
+      item: Upload | undefined;
+      emit: boolean;
+    };
     inviteAFriend: boolean;
     feedback: boolean;
     experiments: boolean;
@@ -116,10 +121,6 @@ export interface AppState {
       percentage: number;
       files: File[];
       loading: boolean;
-    };
-    delete: {
-      value: boolean;
-      item: Upload | undefined;
     };
     gold: {
       value: boolean;
@@ -246,6 +247,11 @@ export const useAppStore = defineStore("app", {
         }
       },
       dialogs: {
+        deleteItem: {
+          value: false,
+          item: undefined,
+          emit: false
+        },
         feedback: false,
         inviteAFriend: false,
         experiments: false,
@@ -267,10 +273,6 @@ export const useAppStore = defineStore("app", {
           files: [],
           percentage: 0,
           loading: false
-        },
-        delete: {
-          value: false,
-          item: undefined
         },
         ocr: {
           value: false,
@@ -417,7 +419,10 @@ export const useAppStore = defineStore("app", {
     },
     async deleteItem(item: Upload | undefined) {
       if (!item) return;
+      this.dialogs.deleteItem.item = item;
       await axios.delete("/gallery/" + item.id);
+      this.dialogs.deleteItem.value = false;
+      this.dialogs.deleteItem.emit = true;
     },
     async getWeather() {
       try {

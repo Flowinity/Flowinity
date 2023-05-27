@@ -16,6 +16,7 @@
         icon
         :href="`https://myanimelist.net/profile/${malUser?.name}`"
         target="_blank"
+        :disabled="!malUser?.name"
       >
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
