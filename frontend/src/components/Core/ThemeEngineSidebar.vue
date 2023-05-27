@@ -219,7 +219,7 @@
 import { DefaultThemes } from "@/plugins/vuetify";
 import { defineComponent } from "vue";
 import VueMonacoEditor from "@guolao/vue-monaco-editor";
-import { useTheme } from "@troplo/vuetify/lib/framework.mjs";
+import { useTheme } from "vuetify/lib/framework.mjs";
 
 export default defineComponent({
   name: "ThemeEngineSidebar",
