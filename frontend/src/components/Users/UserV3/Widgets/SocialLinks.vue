@@ -58,7 +58,11 @@
           mdi-close
         </v-icon>
       </v-chip>
-      <v-chip @click="dialog = true" v-if="user.id === $user.user?.id">
+      <v-chip
+        @click="dialog = true"
+        v-if="user.id === $user.user?.id"
+        class="unselectable"
+      >
         <v-icon class="mr-1">mdi-plus</v-icon>
         Add Link
       </v-chip>

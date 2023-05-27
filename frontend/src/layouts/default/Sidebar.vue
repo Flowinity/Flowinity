@@ -12,7 +12,7 @@
       <v-list-item
         v-for="item in sidebar"
         :key="item.id"
-        class="ml-1 my-1"
+        class="ml-1 my-1 unselectable"
         style="text-transform: unset !important"
         :href="item.externalPath"
         link
