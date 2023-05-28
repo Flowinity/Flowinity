@@ -118,7 +118,8 @@ export class CoreService {
       privacyNoteId: config.privacyNoteId,
       features: config.features,
       inviteAFriend: config.inviteAFriend,
-      preTrustedDomains: config.preTrustedDomains
+      preTrustedDomains: config.preTrustedDomains,
+      hostnames: config.hostnames
     }
   }
 

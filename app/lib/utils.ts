@@ -409,6 +409,51 @@ async function getUserDomain(userId: number): Promise<string> {
   return user?.domain?.domain + "/i/" || "https://i.troplo.com/i/"
 }
 
+async function processXP(
+  userId: number,
+  type:
+    | "upload"
+    | "autoCollect"
+    | "addFriend"
+    | "iaf"
+    | "hour"
+    | "messages"
+    | "gold"
+) {
+  const user = await User.findOne({
+    where: {
+      id: userId
+    }
+  })
+  if (!user) return
+  let xp = user.xp
+  switch (type) {
+    case "upload":
+      xp += 1n
+      break
+    case "autoCollect":
+      xp += 2n
+      break
+    case "addFriend":
+      xp += 50n
+      break
+    case "iaf":
+      xp += 200n
+      break
+    case "hour":
+      xp += 70n
+      break
+    // per 500 messages
+    case "messages":
+      xp += 350n
+      break
+    case "gold":
+      xp += 500n
+      break
+  }
+  console.log("XP", xp)
+}
+
 function getTypeByExt(ext: string): string {
   const types: Record<string, string> = {
     ase: "text",
@@ -916,5 +961,6 @@ export default {
   getUserDomain,
   postUpload,
   generateAPIKey,
-  createSession
+  createSession,
+  processXP
 }

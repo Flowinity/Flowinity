@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "target": "es6",
+    "target": "ES2021",
     "incremental": true,
     "types": [
       "reflect-metadata",
@@ -28,9 +28,7 @@
     "resolveJsonModule": true,
     // DO NOT CHANGE (I changed it :))
     "paths": {
-      "@app/*": [
-        "./app/*"
-      ]
+      "@app/*": ["./app/*"]
     },
     "strictPropertyInitialization": false
   }

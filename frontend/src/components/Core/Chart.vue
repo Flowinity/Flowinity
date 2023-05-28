@@ -96,14 +96,22 @@ export default defineComponent({
         plugins: {
           legend: {
             display: false
+          },
+          tooltip: {
+            mode: "index",
+            intersect: false
+          },
+          hover: {
+            mode: "index",
+            intersect: false
           }
         },
         animation: {
           duration: 1
         }
       } as chartJS.ChartOptions;
-    },
-    chartOptions() {
+    }
+    /*chartOptions() {
       const result = {
         plotOptions: {
           bar: {
@@ -182,7 +190,7 @@ export default defineComponent({
             }
           ]
         : this.series;
-    }
+    }*/
   },
   methods: {
     getWidth() {
