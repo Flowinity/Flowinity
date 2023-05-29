@@ -162,6 +162,7 @@
             :series="report?.data.uploads.hours.series"
             class="mb-n6"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
         <InsightsStatsCard
@@ -175,6 +176,7 @@
             class="mb-n6"
             :name="$t('insights.statsCards.usage.chartTitle')"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -196,6 +198,7 @@
             name="uploads-last-week"
             :title="$t('insights.statsCards.uploadsPerDay.chartTitle')"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
         <InsightsStatsCard
@@ -210,6 +213,7 @@
             class="mb-n6"
             :name="$t('insights.statsCards.platform.chartTitle')"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -237,6 +241,7 @@
             class="mb-n6"
             name="uploads-last-month"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -264,6 +269,7 @@
             class="mb-n6"
             name="uploads-last-month"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -349,6 +355,7 @@
             class="mb-n6"
             name="autocollects-per-hour"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -370,6 +377,7 @@
             class="mb-n6"
             name="autocollects-per-hour"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -385,6 +393,7 @@
             class="mb-n6"
             name="Hours"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -410,13 +419,14 @@
 import { defineComponent } from "vue";
 import DynamicCard from "@/components/Core/DynamicCard.vue";
 import InsightsStatsCard from "@/components/Insights/StatsCard.vue";
-import { Insight } from "@/models/insight";
+import { Insight, SeriesGraph, SeriesGraphObject } from "@/models/insight";
 import Chart from "@/components/Core/Chart.vue";
 import InsightsPageBanner from "@/components/Insights/Banners/Page.vue";
 import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
+import { type } from "os";
 
 export default defineComponent({
-  name: "Dynamic",
+  name: "InsightsReport",
   components: {
     PlaceholderCheckerboard,
     InsightsPageBanner,
@@ -497,6 +507,40 @@ export default defineComponent({
     }
   },
   methods: {
+    // todo: replace ApexCharts
+    /*  chartJSSeries(data: SeriesGraph) {
+      const d = data.series[0];
+      let val;
+      try {
+        val = {
+          labels: d.data.map((d) => d.x),
+          datasets: [
+            {
+              data: d.data.map((d) => d.y),
+              label: d.name
+            },
+            {
+              data: d.data.map((v) => v.goals.map((g) => g.value)[0]),
+              label: `Last ${this.strings.singular}`
+            }
+          ],
+          label: d.name
+        };
+      } catch (e) {
+        val = {
+          labels: d.data.map((d) => d.x),
+          datasets: [
+            {
+              data: d.data.map((d) => d.y),
+              label: d.name
+            }
+          ],
+          label: d.name
+        };
+      }
+      console.log(val);
+      return val;
+    },*/
     arrayToGraphData(array: { name: string; count: number }[] | undefined) {
       if (!array) return { labels: [], data: [] };
       // sort by count

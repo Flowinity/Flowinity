@@ -1,14 +1,15 @@
 <template>
   <div :id="'chartnext-' + id">
-    <!--<apexchart
+    <apexchart
       :height="height"
       :options="chartOptions"
       :series="seriesRes"
       :type="type"
       :width="getWidth()"
       title=""
-    ></apexchart>-->
-    <template v-if="type === 'line'">
+      v-if="apex"
+    ></apexchart>
+    <template v-else-if="type === 'line'">
       <Line
         v-if="chartJSData"
         :data="chartJSData"
@@ -29,7 +30,7 @@
 
 <script lang="ts">
 import { Line, Bar } from "vue-chartjs";
-
+import apexchart from "vue3-apexcharts";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -66,9 +67,10 @@ export default defineComponent({
     "name",
     "color",
     "series",
-    "horizontal"
+    "horizontal",
+    "apex"
   ],
-  components: { Line, Bar },
+  components: { Line, Bar, apexchart },
   computed: {
     chartJSData() {
       return {
@@ -110,8 +112,8 @@ export default defineComponent({
           duration: 1
         }
       } as chartJS.ChartOptions;
-    }
-    /*chartOptions() {
+    },
+    chartOptions() {
       const result = {
         plotOptions: {
           bar: {
@@ -190,7 +192,7 @@ export default defineComponent({
             }
           ]
         : this.series;
-    }*/
+    }
   },
   methods: {
     getWidth() {

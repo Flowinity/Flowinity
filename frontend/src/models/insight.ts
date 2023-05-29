@@ -22,6 +22,19 @@ export interface SeriesGraph {
   ];
 }
 
+export interface SeriesGraphObject {
+  name: string;
+  data: {
+    x: string;
+    y: number;
+    goals: {
+      name: string;
+      value: number;
+    }[];
+  }[];
+}
+[];
+
 export interface InsightData {
   uploads: {
     streak: {
