@@ -54,7 +54,7 @@ export class GalleryControllerV3 {
   }
   
   @Get("/starred")
-  async getUserGallery(
+  async getStarredGallery(
     @Auth("starred.view") user: User,
     @QueryParam("page") page: number = 1,
     @QueryParam("sort") sort: SortOptions = "newest",
