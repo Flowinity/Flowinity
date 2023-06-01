@@ -151,7 +151,7 @@ export class MyAnimeListService {
 
     const { data } = await axios
       .get(
-        `https://api.myanimelist.net/v2/users/@me/animelist?sort=list_updated_at&fields=updated_at,my_list_status,synopsis,comments,num_episodes,average_episode_duration&limit=10`,
+        `https://api.myanimelist.net/v2/users/@me/animelist?sort=list_updated_at&fields=updated_at,my_list_status,synopsis,comments,num_episodes,average_episode_duration&limit=10&nsfw=true`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`
