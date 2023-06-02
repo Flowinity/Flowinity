@@ -20,6 +20,7 @@ import { ThemeEngineValidate } from "@app/validators/themeEngine"
 import { CoreService } from "@app/services/core.service"
 import { LayoutValidate } from "@app/validators/userv3"
 import { ExcludedCollectionsValidate } from "@app/validators/excludedCollections"
+import { Integration } from "@app/models/integration.model"
 
 @Service()
 export class UserUtilsService {
@@ -747,6 +748,19 @@ export class UserUtilsService {
         {
           model: Badge,
           as: "badges"
+        },
+        {
+          model: Integration,
+          as: "integrations",
+          attributes: [
+            "id",
+            "type",
+            "providerUserCache",
+            "providerUserId",
+            "providerUsername",
+            "createdAt",
+            "updatedAt"
+          ]
         }
       ],
       order: [

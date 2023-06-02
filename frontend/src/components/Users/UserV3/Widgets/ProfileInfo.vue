@@ -43,6 +43,38 @@
       </v-btn>
     </v-card-actions>
   </v-card-text>
+  <div class="mb-4 ml-3 mt-n4">
+    <div
+      style="background-color: #5865f2"
+      class="badge"
+      v-if="user.integrations.find((i) => i.type === 'discord')"
+    >
+      <i class="fab fa-discord"></i>
+      {{
+        user.integrations.find((i) => i.type === "discord").providerUsername +
+        "#" +
+        user.integrations.find((i) => i.type === "discord")?.providerUserCache
+          ?.discriminator
+      }}
+    </div>
+    <div
+      style="background-color: #d92323"
+      class="badge"
+      v-if="user.integrations.find((i) => i.type === 'lastfm')"
+    >
+      <i class="fab fa-lastfm"></i>
+      {{ user.integrations.find((i) => i.type === "lastfm")?.providerUsername }}
+    </div>
+    <div
+      style="background-color: #2d4e9d"
+      class="badge"
+      v-if="user.integrations.find((i) => i.type === 'mal')"
+    >
+      <!-- TODO: Replace with MAL icon -->
+      <i class="fa-regular fa-square-question"></i>
+      {{ user.integrations.find((i) => i.type === "mal")?.providerUsername }}
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
