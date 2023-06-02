@@ -28,7 +28,14 @@
                 ? '#2d4e9d'
                 : '#000000'
             }`"
-            :href="integration.url"
+            :href="
+              !!(
+                !integration.available ||
+                $user.user.integrations.find((i) => i.type === integration.id)
+              )
+                ? null
+                : integration.url
+            "
             target="_blank"
             class="badge badge-button"
             :disabled="
