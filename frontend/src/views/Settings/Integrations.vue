@@ -44,7 +44,21 @@
               )
             "
           >
-            <i :class="`fab fa-${integration.id}`"></i>
+            <div
+              v-if="integration.id === 'discord'"
+              class="badge-icon v-icon"
+              v-html="$simpleIcons.icons.siDiscord.svg"
+            />
+            <div
+              v-if="integration.id === 'lastfm'"
+              class="badge-icon v-icon"
+              v-html="$simpleIcons.icons.siLastdotfm.svg"
+            />
+            <div
+              v-if="integration.id === 'mal'"
+              class="badge-icon v-icon"
+              v-html="$simpleIcons.icons.siMyanimelist.svg"
+            />
             {{ integration.name }}
           </a>
         </span>

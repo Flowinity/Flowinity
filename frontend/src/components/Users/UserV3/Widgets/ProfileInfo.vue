@@ -53,7 +53,10 @@
       }`"
       target="_blank"
     >
-      <i class="fab fa-discord"></i>
+      <div
+        class="badge-icon v-icon"
+        v-html="$simpleIcons.icons.siDiscord.svg"
+      />
       {{
         user.integrations.find((i) => i.type === "discord").providerUsername +
         "#" +
@@ -70,7 +73,10 @@
       }`"
       target="_blank"
     >
-      <i class="fab fa-lastfm"></i>
+      <div
+        class="badge-icon v-icon"
+        v-html="$simpleIcons.icons.siLastdotfm.svg"
+      />
       {{ user.integrations.find((i) => i.type === "lastfm")?.providerUsername }}
     </a>
     <a
@@ -82,8 +88,10 @@
       }`"
       target="_blank"
     >
-      <!-- TODO: Replace with MAL icon -->
-      <i class="fab fa-mal"></i>
+      <div
+        class="badge-icon v-icon"
+        v-html="$simpleIcons.icons.siMyanimelist.svg"
+      />
       {{ user.integrations.find((i) => i.type === "mal")?.providerUsername }}
     </a>
   </div>

@@ -55,7 +55,7 @@ import i18n from "@/plugins/i18n";
 //@ts-ignore
 import VueMatomo from "vue-matomo";
 import { useAdminStore } from "@/store/admin";
-import simpleIcons from "@/plugins/simpleIcons";
+import * as icons from "simple-icons";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -142,6 +142,7 @@ const app = createApp({
       app.config.globalProperties.$chat = chat;
       app.config.globalProperties.$friends = friends;
       app.config.globalProperties.$mail = mail;
+      app.config.globalProperties.$simpleIcons = { icons };
       app.config.globalProperties.$socket = SocketIO(
         import.meta.env.DEV
           ? ""

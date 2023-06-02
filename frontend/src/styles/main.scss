@@ -518,9 +518,9 @@ a {
 
 .badge {
   border-radius: 0.375rem;
-  color: #FFFFFF;
+  color: #FFFFFF!important;
   display: inline-block;
-  font-size: 0.80em;
+  font-size: 0.90em;
   font-weight: 500;
   line-height: 1.1;
   padding: 0.35em 0.65em;
@@ -528,6 +528,13 @@ a {
   vertical-align: baseline;
   white-space: nowrap;
   margin-right: 0.45rem;
+}
+
+.badge-icon {
+  fill: #FFFFFF;
+  height: 1em;
+  width: 1.25em;
+  font-size: 1em;
 }
 
 .badge-button {
