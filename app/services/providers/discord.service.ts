@@ -3,6 +3,7 @@ import axios from "axios"
 
 // Import Lib
 import Errors from "@app/lib/errors"
+import sanitize from "@app/lib/sanitize"
 
 // Import Models
 import { Integration } from "@app/models/integration.model"
@@ -64,10 +65,12 @@ export class DiscordService {
         expiresAt: new Date(Date.now() + authData.expires_in * 1000),
         providerUsername: userCache.username,
         providerUserId: userCache.id,
-        providerUserCache: userCache
+        providerUserCache: sanitize.sanitizeIntegrationProviderUserCache(
+          "discord",
+          userCache
+        )
       })
-    } catch (e) {
-      console.log(e)
+    } catch {
       throw Errors.INTEGRATION_ERROR
     }
   }

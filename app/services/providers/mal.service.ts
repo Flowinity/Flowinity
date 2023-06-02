@@ -12,6 +12,7 @@ import { User } from "@app/models/user.model"
 
 // Import Interfaces
 import { MalBody } from "@app/interfaces/mal"
+import sanitize from "@app/lib/sanitize"
 
 @Service()
 export class MyAnimeListService {
@@ -129,7 +130,10 @@ export class MyAnimeListService {
         refreshToken: data.refresh_token,
         providerUsername: user.name,
         providerUserId: user.id,
-        providerUserCache: user,
+        providerUserCache: sanitize.sanitizeIntegrationProviderUserCache(
+          "mal",
+          user
+        ),
         tokenType: data.token_type,
         expiresAt: data.expires_in
       })

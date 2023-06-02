@@ -55,6 +55,7 @@ import i18n from "@/plugins/i18n";
 //@ts-ignore
 import VueMatomo from "vue-matomo";
 import { useAdminStore } from "@/store/admin";
+import simpleIcons from "@/plugins/simpleIcons";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {

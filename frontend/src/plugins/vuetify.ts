@@ -89,7 +89,7 @@ export class DefaultThemes {
 }
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
-export default createVuetify({
+const vuetify = createVuetify({
   components: {
     VDataTable,
     VSkeletonLoader,
@@ -178,3 +178,5 @@ export default createVuetify({
     themes: new DefaultThemes().themes
   }
 });
+
+export default vuetify;

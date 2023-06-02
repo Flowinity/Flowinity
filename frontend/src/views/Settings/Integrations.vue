@@ -36,7 +36,6 @@
                 ? null
                 : integration.url
             "
-            target="_blank"
             class="badge badge-button"
             :disabled="
               !!(
