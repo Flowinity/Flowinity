@@ -44,10 +44,14 @@
     </v-card-actions>
   </v-card-text>
   <div class="mb-4 ml-3 mt-n4">
-    <div
+    <a
       style="background-color: #5865f2"
       class="badge"
       v-if="user.integrations.find((i) => i.type === 'discord')"
+      :href="`https://discord.com/users/${
+        user.integrations.find((i) => i.type === 'discord')?.providerUserId
+      }`"
+      target="_blank"
     >
       <i class="fab fa-discord"></i>
       {{
@@ -56,24 +60,32 @@
         user.integrations.find((i) => i.type === "discord")?.providerUserCache
           ?.discriminator
       }}
-    </div>
-    <div
+    </a>
+    <a
       style="background-color: #d92323"
       class="badge"
       v-if="user.integrations.find((i) => i.type === 'lastfm')"
+      :href="`https://www.last.fm/user/${
+        user.integrations.find((i) => i.type === 'lastfm')?.providerUsername
+      }`"
+      target="_blank"
     >
       <i class="fab fa-lastfm"></i>
       {{ user.integrations.find((i) => i.type === "lastfm")?.providerUsername }}
-    </div>
-    <div
+    </a>
+    <a
       style="background-color: #2d4e9d"
       class="badge"
       v-if="user.integrations.find((i) => i.type === 'mal')"
+      :href="`https://myanimelist.net/profile/${
+        user.integrations.find((i) => i.type === 'mal')?.providerUsername
+      }`"
+      target="_blank"
     >
       <!-- TODO: Replace with MAL icon -->
       <i class="fab fa-mal"></i>
       {{ user.integrations.find((i) => i.type === "mal")?.providerUsername }}
-    </div>
+    </a>
   </div>
 </template>
 
