@@ -130,10 +130,7 @@ export class MyAnimeListService {
         refreshToken: data.refresh_token,
         providerUsername: user.name,
         providerUserId: user.id,
-        providerUserCache: sanitize.sanitizeIntegrationProviderUserCache(
-          "mal",
-          user
-        ),
+        providerUserCache: user,
         tokenType: data.token_type,
         expiresAt: data.expires_in
       })

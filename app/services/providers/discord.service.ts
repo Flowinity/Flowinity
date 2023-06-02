@@ -65,10 +65,7 @@ export class DiscordService {
         expiresAt: new Date(Date.now() + authData.expires_in * 1000),
         providerUsername: userCache.username,
         providerUserId: userCache.id,
-        providerUserCache: sanitize.sanitizeIntegrationProviderUserCache(
-          "discord",
-          userCache
-        )
+        providerUserCache: userCache
       })
     } catch {
       throw Errors.INTEGRATION_ERROR

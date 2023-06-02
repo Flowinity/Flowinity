@@ -21,6 +21,7 @@ import { CoreService } from "@app/services/core.service"
 import { LayoutValidate } from "@app/validators/userv3"
 import { ExcludedCollectionsValidate } from "@app/validators/excludedCollections"
 import { Integration } from "@app/models/integration.model"
+import sanitize from "@app/lib/sanitize"
 
 @Service()
 export class UserUtilsService {
@@ -797,6 +798,16 @@ export class UserUtilsService {
       user.dataValues.stats.uploadGraph = null
     }
     if (!user.themeEngine?.showOnProfile) user.themeEngine = null
+
+    user.integrations.forEach((integration) => {
+      if (integration.providerUserCache)
+        integration.providerUserCache =
+          sanitize.sanitizeIntegrationProviderUserCache(
+            integration.providerUserCache.id,
+            integration.providerUserCache
+          )
+    })
+
     return user
   }
 
