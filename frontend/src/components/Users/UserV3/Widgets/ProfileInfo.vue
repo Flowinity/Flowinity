@@ -71,7 +71,7 @@
       v-if="user.integrations.find((i) => i.type === 'mal')"
     >
       <!-- TODO: Replace with MAL icon -->
-      <i class="fa-regular fa-square-question"></i>
+      <i class="fab fa-mal"></i>
       {{ user.integrations.find((i) => i.type === "mal")?.providerUsername }}
     </div>
   </div>

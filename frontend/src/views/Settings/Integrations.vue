@@ -6,7 +6,7 @@
       </v-toolbar-title>
     </v-toolbar>
     <v-container>
-      <div>
+      <div class="ml-4">
         <span v-for="integration in integrations">
           <v-tooltip
             :text="`${
@@ -18,18 +18,29 @@
             location="top"
             activator="parent"
           />
-          <v-chip
-            :color="integration.color"
+          <a
+            :style="`background-color: ${
+              integration.id === 'discord'
+                ? '#5865f2'
+                : integration.id === 'lastfm'
+                ? '#d92323'
+                : integration.id === 'mal'
+                ? '#2d4e9d'
+                : '#000000'
+            }`"
+            :href="integration.url"
+            target="_blank"
+            class="badge badge-button"
             :disabled="
               !!(
                 !integration.available ||
                 $user.user.integrations.find((i) => i.type === integration.id)
               )
             "
-            :href="integration.url"
-            :short-text="integration.shortText"
-            :text="integration.name"
-          />
+          >
+            <i :class="`fab fa-${integration.id}`"></i>
+            {{ integration.name }}
+          </a>
         </span>
       </div>
     </v-container>

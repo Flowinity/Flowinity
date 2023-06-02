@@ -529,3 +529,17 @@ a {
   white-space: nowrap;
   margin-right: 0.45rem;
 }
+
+.badge-button {
+  padding: 0.45em 0.85em;
+}
+
+.badge-button:hover[disabled = "false"] {
+  cursor: pointer;
+  opacity: 80%;
+}
+
+.badge-button[disabled = "true"] {
+  opacity: 50%;
+  cursor: not-allowed;
+}
