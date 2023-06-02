@@ -1,5 +1,5 @@
 function sanitizeIntegrationProviderUserCache(
-  type: "discord" | "lastFM" | "mal",
+  type: string,
   providerUserCache: any
 ) {
   switch (type) {

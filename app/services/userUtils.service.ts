@@ -800,10 +800,12 @@ export class UserUtilsService {
     if (!user.themeEngine?.showOnProfile) user.themeEngine = null
 
     user.integrations.forEach((integration) => {
+      console.log(integration)
+
       if (integration.providerUserCache)
         integration.providerUserCache =
           sanitize.sanitizeIntegrationProviderUserCache(
-            integration.providerUserCache.id,
+            integration.type,
             integration.providerUserCache
           )
     })
