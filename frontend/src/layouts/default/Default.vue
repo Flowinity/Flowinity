@@ -189,7 +189,11 @@ export default defineComponent({
           event.target.classList.contains("v-btn__content") ||
           event.target.classList.contains("v-slider-thumb__ripple") ||
           event.target.classList.contains("v-slider-thumb") ||
-          event.target.classList.contains("apexcharts-svg")
+          event.target.classList.contains("apexcharts-svg") ||
+          event.target.classList.contains("v-img__gradient") ||
+          event.target.classList.contains("v-img__image") ||
+          event.target.classList.contains("v-card-text") ||
+          event.target.classList.contains("v-card-title")
         )
           return;
       }
