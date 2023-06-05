@@ -1,4 +1,4 @@
-  /**
+/**
  * plugins/vuetify.ts
  *
  * Framework documentation: https://vuetifyjs.com`
@@ -128,7 +128,7 @@ const vuetify = createVuetify({
     VDataTable,
     VSkeletonLoader,
     VVirtualScroll,
-    VNavigationDrawer
+    VNavigationDrawer,
     VInfiniteScroll
   },
   display: {
