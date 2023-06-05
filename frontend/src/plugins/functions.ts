@@ -133,17 +133,17 @@ export default {
     switch (status) {
       case "online":
         return {
-          color: "success",
+          color: "#4caf50",
           text: "Online"
         };
       case "idle":
         return {
-          color: "warning",
+          color: "#ff9800",
           text: "Idle"
         };
       case "busy":
         return {
-          color: "error",
+          color: "#f44336",
           text: "Busy"
         };
       case "invisible":

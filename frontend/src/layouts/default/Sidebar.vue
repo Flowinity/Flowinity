@@ -108,7 +108,6 @@ import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
 import { VueDraggable } from "vue-draggable-plus";
-
 export default defineComponent({
   name: "Sidebar",
   components: {

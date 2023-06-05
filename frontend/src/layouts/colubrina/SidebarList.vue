@@ -27,7 +27,7 @@
           >
             <v-list-item @click="setNotifications('all')">
               <v-list-item-title>
-                {{ $t("chat.notificationOptions.all") }}
+                {{ $t("chats.notificationOptions.all") }}
               </v-list-item-title>
               <template v-slot:append>
                 <v-icon
@@ -40,7 +40,7 @@
             </v-list-item>
             <v-list-item @click="setNotifications('mentions')">
               <v-list-item-title>
-                {{ $t("chat.notificationOptions.mentions") }}
+                {{ $t("chats.notificationOptions.mentions") }}
               </v-list-item-title>
               <template v-slot:append>
                 <v-icon
@@ -55,10 +55,10 @@
             </v-list-item>
             <v-list-item two-line @click="setNotifications('none')">
               <v-list-item-title>
-                {{ $t("chat.notificationOptions.none") }}
+                {{ $t("chats.notificationOptions.none") }}
               </v-list-item-title>
               <v-list-item-subtitle>
-                {{ $t("chat.notificationOptions.noneDesc") }}
+                {{ $t("chats.notificationOptions.noneDesc") }}
               </v-list-item-subtitle>
               <template v-slot:append>
                 <v-icon

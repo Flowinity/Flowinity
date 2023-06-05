@@ -1,5 +1,5 @@
 <template>
-  <span v-if="user">
+  <span v-if="user && !light">
     <UploadCropper
       v-model="dialog"
       aspect-ratio="1"
@@ -60,6 +60,32 @@
       </v-badge>
     </template>
   </span>
+
+  <span v-else-if="user && light" style="position: relative">
+    <v-avatar
+      :size="size"
+      class="text-center justify-center undraggable"
+      justify="center"
+    >
+      <v-img
+        v-if="user.avatar"
+        :src="avatarURL"
+        class="undraggable user-avatar"
+        cover
+      ></v-img>
+      <span v-else :class="textSize" class="unselectable">
+        {{ user.username.charAt(0).toUpperCase() }}
+      </span>
+    </v-avatar>
+    <template v-if="status">
+      <div
+        class="status"
+        :style="{
+          backgroundColor: $functions.userStatus(friendStatus).color
+        }"
+      ></div>
+    </template>
+  </span>
 </template>
 
 <script lang="ts">
@@ -80,7 +106,8 @@ export default defineComponent({
     "statusXOffset",
     "emulatedStatus",
     "dotStatus",
-    "statusYOffset"
+    "statusYOffset",
+    "light"
   ],
   data() {
     return {
@@ -164,6 +191,16 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgb(var(--v-theme-background));
+}
+
 .outline {
   border: 2px solid #151515;
   border-radius: 50%;
