@@ -71,6 +71,11 @@
         multiSelect: true,
         pins: true,
         randomAttachment: true,
+        upload: false,
+        search: true,
+        metadata: true,
+        filter: true,
+        sort: true,
         permissions: {
           read: true,
           write: collection.permissionsMetadata?.write,

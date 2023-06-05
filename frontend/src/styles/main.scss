@@ -6,6 +6,7 @@
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .gold-text-gradient {
@@ -13,6 +14,7 @@
   background: -webkit-radial-gradient(#ffdb1b, #ffd700);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .unselectable {
@@ -506,4 +508,12 @@ a {
 
 .c-both {
   clear: both;
+}
+
+@media (max-width: 768px) {
+  .fix-profile-v3 {
+    flex-basis: auto !important;
+    width: 100% !important;
+    padding: 0 !important;
+  }
 }

@@ -281,6 +281,20 @@ export class AdminControllerV3 {
     await this.adminService.removeUsersFromBadge(body.userIds, body.id)
   }
 
+  @UseBefore(LowLevel)
+  @Patch("/verify")
+  async verifyUser(
+    @Auth("*") user: User,
+    @Body()
+    body: {
+      id: number
+      emailVerified: boolean
+    }
+  ) {
+    if (!body.id) throw Errors.INVALID_PARAMETERS
+    await this.adminService.verify(body.id, body.emailVerified)
+  }
+
   @UseBefore(HighLevel)
   @Post("/announcement")
   async createAnnouncement(

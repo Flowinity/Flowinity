@@ -8,7 +8,7 @@
 import App from "./App.vue";
 
 // Composables
-import { createApp } from "vue";
+import { createApp, defineComponent } from "vue";
 
 // Plugins
 import { registerPlugins } from "@/plugins";
@@ -29,7 +29,7 @@ import functions from "@/plugins/functions";
 import { useCollectionsStore } from "@/store/collections";
 import validation from "@/plugins/validation";
 import "./styles/tpu-editorjs.css";
-import VueApexCharts from "vue3-apexcharts";
+//import VueApexCharts from "vue3-apexcharts";
 import SocketIO, { Socket } from "socket.io-client";
 import { useChatStore } from "@/store/chat";
 import {
@@ -518,7 +518,7 @@ if (process.env.NODE_ENV === "development") {
 app.use(VueVirtualScroller);
 app.use(Toast, options);
 app.config.globalProperties.$toast = useToast();
-app.use(VueApexCharts);
+//app.use(VueApexCharts);
 app.use(VueAxios, axios);
 app.use(i18n);
 registerPlugins(app);

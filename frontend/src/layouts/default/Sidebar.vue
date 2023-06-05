@@ -1,11 +1,4 @@
 <template>
-  <InviteAFriend v-model="inviteAFriend"></InviteAFriend>
-  <Feedback v-model="feedback"></Feedback>
-  <MigrateWizard
-    v-model="$app.dialogs.migrateWizard"
-    v-if="$experiments.experiments['PROJECT_MERGE']"
-  ></MigrateWizard>
-  <GoldUpsell v-model="$app.dialogs.gold.value"></GoldUpsell>
   <v-navigation-drawer
     v-model="$app.mainDrawer"
     app
@@ -19,7 +12,7 @@
       <v-list-item
         v-for="item in sidebar"
         :key="item.id"
-        class="ml-1 my-1"
+        class="ml-1 my-1 unselectable"
         style="text-transform: unset !important"
         :href="item.externalPath"
         link
@@ -112,29 +105,20 @@
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
-import MigrateWizard from "@/components/Dashboard/Dialogs/Migrate.vue";
 import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
-import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
-import GoldUpsell from "@/components/Dashboard/Dialogs/Gold.vue";
 import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
 import { VueDraggable } from "vue-draggable-plus";
-
 export default defineComponent({
   name: "Sidebar",
   components: {
     WorkspacesSidebarList,
-    GoldUpsell,
-    Feedback,
     StatusSwitcher,
-    MigrateWizard,
     InviteAFriend,
     UserAvatar,
     VueDraggable
   },
   data() {
     return {
-      inviteAFriend: false,
-      feedback: false,
       order: []
     };
   },
@@ -210,9 +194,8 @@ export default defineComponent({
           },
           {
             id: 29,
-            click(instance: any) {
-              //@ts-ignore
-              instance.feedback = true;
+            click(instance: typeof this) {
+              instance.$app.dialogs.feedback = true;
             },
             externalPath: "",
             path: "",
@@ -287,8 +270,8 @@ export default defineComponent({
         ) {
           items.push({
             id: 32,
-            click(instance: any) {
-              instance.inviteAFriend = true;
+            click(instance: typeof this) {
+              instance.$app.dialogs.inviteAFriend = true;
             },
             externalPath: "",
             path: "",

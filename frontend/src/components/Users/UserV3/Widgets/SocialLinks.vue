@@ -36,10 +36,12 @@
     <v-container>
       <v-chip
         v-for="link in component?.props?.links"
-        @click="$chat.processLink(link.url)"
+        @click.prevent="$chat.processLink(link.url)"
         target="_blank"
-        class="mr-2 unselectable"
+        class="mr-2 social-link unselectable"
         :color="link.color"
+        @click.middle.prevent.stop="$chat.processLink(link.url)"
+        :href="link.url"
       >
         {{ link.name }}
         <v-icon
@@ -56,7 +58,11 @@
           mdi-close
         </v-icon>
       </v-chip>
-      <v-chip @click="dialog = true" v-if="user.id === $user.user?.id">
+      <v-chip
+        @click="dialog = true"
+        v-if="user.id === $user.user?.id"
+        class="unselectable"
+      >
         <v-icon class="mr-1">mdi-plus</v-icon>
         Add Link
       </v-chip>
@@ -82,6 +88,43 @@ export default defineComponent({
         color: ""
       }
     };
+  },
+  methods: {
+    // While maybe hacky, this prevents the user from opening a new tab when middle clicking a link
+    // while retaining the ability to preview the link using the native browser
+    aTag() {
+      const aTags = document.getElementsByClassName("social-link");
+      for (const a of aTags) {
+        a.addEventListener(
+          "auxclick",
+          function (e) {
+            e.preventDefault();
+          },
+          false
+        );
+      }
+    }
+  },
+  unmounted() {
+    const aTags = document.getElementsByClassName("social-link");
+    for (const a of aTags) {
+      a.removeEventListener(
+        "auxclick",
+        function (e) {
+          e.preventDefault();
+        },
+        false
+      );
+    }
+  },
+  watch: {
+    "component.props.links": {
+      immediate: true,
+      async handler() {
+        await this.$nextTick();
+        this.aTag();
+      }
+    }
   }
 });
 </script>

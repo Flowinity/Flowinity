@@ -606,5 +606,6 @@ export default defineComponent({
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 </style>

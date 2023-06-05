@@ -1,7 +1,20 @@
 <template>
+  <WorkspaceDeleteDialog
+    v-model="$app.dialogs.deleteItem.value"
+    :item="$app.dialogs.deleteItem.item"
+    title="Delete item?"
+    @submit="$app.deleteItem($app.dialogs.deleteItem.item)"
+  />
   <URLConfirmDialog
     v-model="$chat.dialogs.externalSite.value"
   ></URLConfirmDialog>
+  <InviteAFriend v-model="$app.dialogs.inviteAFriend"></InviteAFriend>
+  <Feedback v-model="$app.dialogs.feedback"></Feedback>
+  <Migrate
+    v-model="$app.dialogs.migrateWizard"
+    v-if="$experiments.experiments.PROJECT_MERGE"
+  ></Migrate>
+  <Gold v-model="$app.dialogs.gold.value"></Gold>
   <v-app
     v-if="$user.user"
     @drop="dragDropHandler"
@@ -12,10 +25,6 @@
   >
     <NicknameDialog v-model="$app.dialogs.nickname.value"></NicknameDialog>
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
-    <WorkspaceDeleteDialog
-      v-model="$app.dialogs.delete.value"
-      @submit="$app.deleteItem($app.dialogs.delete.item)"
-    ></WorkspaceDeleteDialog>
     <UploadDialog v-model="$app.dialogs.upload.value"></UploadDialog>
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
     <ExperimentsManagerDialog
@@ -56,8 +65,9 @@
     ></sidebar>
     <colubrina-sidebar
       v-if="
-        $app.railMode === 'communications' &&
-        ($app.rail || $vuetify.display.mobile)
+        ($app.railMode === 'communications' &&
+          ($app.rail || $vuetify.display.mobile)) ||
+        (!$app.rail && $chat.isCommunications)
       "
     ></colubrina-sidebar>
     <workspaces-sidebar
@@ -139,12 +149,17 @@ import RailBar from "@/layouts/default/RailBar.vue";
 import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
 import ExperimentsManager from "@/components/Dev/Dialogs/Experiments.vue";
 import ExperimentsManagerDialog from "@/components/Dev/Dialogs/Experiments.vue";
+import Gold from "@/components/Dashboard/Dialogs/Gold.vue";
+import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
+import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
+import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 </script>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import { Message as MessageType } from "@/models/message";
+import { Upload } from "@/models/upload";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
@@ -174,7 +189,11 @@ export default defineComponent({
           event.target.classList.contains("v-btn__content") ||
           event.target.classList.contains("v-slider-thumb__ripple") ||
           event.target.classList.contains("v-slider-thumb") ||
-          event.target.classList.contains("apexcharts-svg")
+          event.target.classList.contains("apexcharts-svg") ||
+          event.target.classList.contains("v-img__gradient") ||
+          event.target.classList.contains("v-img__image") ||
+          event.target.classList.contains("v-card-text") ||
+          event.target.classList.contains("v-card-title")
         )
           return;
       }

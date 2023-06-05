@@ -16,12 +16,14 @@ import {
   IconProps
 } from "/home/troplo/GitHub/vuetify/packages/vuetify/dist/vuetify.esm";
 import { VDataTable } from "vuetify/labs/VDataTable";
+import { VInfiniteScroll } from "vuetify/lib/labs/components.mjs";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 import { VVirtualScroll } from "vuetify/lib/components/index.mjs";
 import { VNavigationDrawer } from "/home/troplo/GitHub/vuetify/packages/vuetify/lib/components/index.mjs";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import * as simpleIcons from "simple-icons";
 import { h } from "vue";
+
 export class DefaultThemes {
   themes: any;
 
@@ -126,8 +128,8 @@ const vuetify = createVuetify({
     VDataTable,
     VSkeletonLoader,
     VVirtualScroll,
-    VInfiniteScroll,
     VNavigationDrawer
+    VInfiniteScroll
   },
   display: {
     thresholds: {

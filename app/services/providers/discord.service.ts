@@ -8,12 +8,13 @@ import Errors from "@app/lib/errors"
 import { Integration } from "@app/models/integration.model"
 import { User } from "@app/models/user.model"
 import cron from "node-cron"
+import qs from "qs"
 
 @Service()
 export class DiscordService {
   constructor() {}
 
-  async link(userId: string, token: string) {
+  async link(userId: number, token: string) {
     if (
       !config.providers.discord.publicKey ||
       !config.providers.discord.applicationId ||
@@ -35,13 +36,13 @@ export class DiscordService {
     try {
       const { data: authData } = await axios.post(
         `https://discord.com/api/v10/oauth2/token`,
-        {
+        qs.stringify({
           client_id: config.providers.discord.oAuthClientId,
           client_secret: config.providers.discord.oAuthClientSecret,
           grant_type: "authorization_code",
           code: token,
           redirect_uri: config.providers.discord.oAuthRedirectUri
-        },
+        }),
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -50,7 +51,6 @@ export class DiscordService {
       )
 
       const userCache = await this.getUserCache(
-        userId,
         authData.token_type,
         authData.access_token
       )
@@ -66,7 +66,8 @@ export class DiscordService {
         providerUserId: userCache.id,
         providerUserCache: userCache
       })
-    } catch {
+    } catch (e) {
+      console.log(e)
       throw Errors.INTEGRATION_ERROR
     }
   }
@@ -84,16 +85,7 @@ export class DiscordService {
     await existing.destroy()
   }
 
-  async getUserCache(userId: string, tokenType: string, accessToken: string) {
-    const integration = await Integration.findOne({
-      where: {
-        userId,
-        type: "discord"
-      }
-    })
-
-    if (!integration) throw Errors.INTEGRATION_IS_NOT_LINKED
-
+  async getUserCache(tokenType: string, accessToken: string) {
     try {
       const { data } = await axios.get(
         `https://discord.com/api/v10/users/@me`,
@@ -147,13 +139,12 @@ export class DiscordService {
 
         const { data } = await axios.post(
           `https://discord.com/api/v10/oauth2/token`,
-          {
+          qs.stringify({
             client_id: config.providers.discord.oAuthClientId,
             client_secret: config.providers.discord.oAuthClientSecret,
             grant_type: "refresh_token",
-            refresh_token: integration.refreshToken,
-            redirect_uri: config.providers.discord.oAuthRedirectUri
-          },
+            refresh_token: integration.refreshToken
+          }),
           {
             headers: {
               "Content-Type": "application/x-www-form-urlencoded"
@@ -171,7 +162,8 @@ export class DiscordService {
 
       console.log("[PROVIDERS/DISCORD] renewed access tokens.")
       return true
-    } catch {
+    } catch (e) {
+      console.log(e)
       console.log("[PROVIDERS/DISCORD] failed to renew access tokens.")
       return false
     }

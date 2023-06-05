@@ -55,7 +55,7 @@
     </v-col>
     <v-col v-if="supports.upload" sm="1">
       <v-btn block class="mt-2" @click="$app.dialogs.upload.value = true">
-        <v-icon>mdi-upload</v-icon>
+        <v-icon class="mr-1">mdi-upload</v-icon>
         {{ $t("generic.upload") }}
       </v-btn>
     </v-col>
@@ -63,7 +63,9 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   name: "GalleryNavigation",
   emits: [
     "update:filter",
@@ -149,7 +151,7 @@ export default {
       sort: "newest"
     };
   }
-};
+});
 </script>
 
 <style scoped></style>

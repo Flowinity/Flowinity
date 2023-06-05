@@ -15,7 +15,7 @@
                 : null) ||
               (!integration.available ? 'Unavailable' : 'Available')
             }`"
-            location="bottom"
+            location="top"
             activator="parent"
           />
           <v-chip

@@ -467,6 +467,7 @@ export const useChatStore = defineStore("chat", {
   },
   getters: {
     currentOffset(state: ChatState) {
+      if (!state.selectedChat?.messages?.length) return { up: 0, down: 0 };
       const down = state.selectedChat?.messages[0]?.id
         ? state.selectedChat?.messages[0]?.id
         : 0;

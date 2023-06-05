@@ -22,9 +22,10 @@
   <ColubrinaGroupSettingsDialog
     v-model="$chat.dialogs.groupSettings.value"
   ></ColubrinaGroupSettingsDialog>
-  <ColubrinaSidebar v-if="$chat.communicationsSidebar"></ColubrinaSidebar>
   <router-view></router-view>
-  <ColubrinaMemberSidebar></ColubrinaMemberSidebar>
+  <ColubrinaMemberSidebar
+    v-if="!$vuetify.display.mobile"
+  ></ColubrinaMemberSidebar>
 </template>
 
 <script lang="ts">

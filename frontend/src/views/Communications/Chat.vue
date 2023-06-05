@@ -77,6 +77,37 @@
       @scroll="scrollEvent"
     >
       <div id="sentinel-bottom" ref="sentinelBottom"></div>
+      <template v-if="!$chat.selectedChat?.messages?.length && !$chat.loading">
+        <v-row align="center" justify="center">
+          <v-col cols="12" md="6" class="text-center">
+            <UserAvatar
+              :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
+              :status="true"
+              :user="$chat.selectedChat?.recipient"
+              class="ml-4"
+              size="64"
+            />
+            <v-card-title
+              class="grey--text unselectable"
+              v-if="$chat.selectedChat?.recipient?.username"
+              style="text-overflow: inherit; white-space: normal"
+            >
+              {{
+                $t("chats.start.dm", {
+                  username: $chat.selectedChat?.recipient?.username
+                })
+              }}
+            </v-card-title>
+            <v-card-title
+              class="grey--text unselectable"
+              v-else-if="$chat.selectedChat?.name"
+              style="text-overflow: inherit; white-space: normal"
+            >
+              {{ $t("chats.start.group", { name: $chat.selectedChat?.name }) }}
+            </v-card-title>
+          </v-col>
+        </v-row>
+      </template>
       <Message
         v-for="(message, index) in $chat.selectedChat?.messages"
         :id="'message-' + index"
@@ -105,7 +136,7 @@
         @editText="editingText = $event"
         @jumpToMessage="$chat.jumpToMessage($event)"
         @reply="replyId = $event.id"
-      ></Message>
+      />
       <div id="sentinel" ref="sentinel">
         <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
       </div>
@@ -129,7 +160,7 @@
       >
         <template v-if="!$chat.loadingNew">
           <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
-          Jump to bottom
+          {{ $t("chats.jumpToBottom") }}
         </template>
         <template v-else>
           <v-progress-circular
@@ -138,7 +169,7 @@
             class="mr-2"
             indeterminate
           ></v-progress-circular>
-          Loading messages...
+          {{ $t("chats.loading") }}
         </template>
       </v-toolbar>
     </v-fade-transition>
@@ -239,6 +270,8 @@ import { Message as MessageType } from "@/models/message";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import MobileMenu from "@/components/Core/Dialogs/MobileMenu.vue";
 import MessageActionsList from "@/components/Communications/MessageActionsList.vue";
+import MessagePerf from "@/components/Communications/MessagePerf.vue";
+import UserCard from "@/components/Users/UserCard.vue";
 
 export default defineComponent({
   name: "Chat",
@@ -251,7 +284,9 @@ export default defineComponent({
     User,
     MessageSkeleton,
     Message,
-    CommunicationsInput
+    CommunicationsInput,
+    MessagePerf,
+    UserCard
   },
   data() {
     return {

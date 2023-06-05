@@ -5,11 +5,14 @@
       <v-col :md="!username ? 6 : 12" cols="12" sm="12">
         <v-card
           v-if="hoursMost"
-          :height="$vuetify.display.mobile ? 400 : undefined"
-          class="text-center mt-n6"
+          :height="$vuetify.display.mobile ? 415 : undefined"
+          class="text-center mt-n4"
         >
           <p class="mt-3">
-            <strong class="text-gradient" style="font-size: 24px">
+            <strong
+              class="text-gradient-custom text-gradient"
+              style="font-size: 24px"
+            >
               Upload Distribution
             </strong>
           </p>
@@ -22,30 +25,32 @@
             id="userv2-hours"
             :color="primaryColorResult"
             :data="hoursGraph"
-            :height="320"
-            :max-height="$vuetify.display.mobile ? 320 : undefined"
+            :height="346.5"
+            :max-height="$vuetify.display.mobile ? 346 : undefined"
             name="Uploads"
             type="bar"
+            class="ml-3 mr-3"
           ></Chart>
         </v-card>
       </v-col>
-      <v-col md="6" sm="12">
-        <v-card
+      <v-col :md="!username ? 6 : 12" cols="12" sm="12">
+        <div
           v-if="user.stats.uploadGraph"
-          :height="$vuetify.display.mobile ? 400 : undefined"
-          class="text-center mt-n6"
-          max-height="400"
+          :height="$vuetify.display.mobile ? 415 : undefined"
+          max-height="415"
+          class="mt-n4"
         >
           <GraphWidget
-            :card-height="400"
+            :card-height="415"
             :gold="gold"
             :height="300"
             :message-graph="user.stats.messageGraph"
             :primary-color="primaryColorResult"
             :pulse-graph="user.stats.pulseGraph"
             :upload-graph="user.stats.uploadGraph"
+            :cache="false"
           ></GraphWidget>
-        </v-card>
+        </div>
       </v-col>
     </v-row>
   </v-card-text>

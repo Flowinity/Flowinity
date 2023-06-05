@@ -64,6 +64,7 @@ export class Server {
     const cpuCount: number = os.cpus().length
     const mainWorker: boolean =
       !cluster.worker || cluster.worker?.id % cpuCount === 1
+    global.mainWorker = mainWorker
 
     this.application.app.set(
       "port",

@@ -44,7 +44,9 @@
         @keyup.esc="$emit('edit', null)"
       >
         <template v-slot:append>
-          <v-icon class="pointer raw-icon">mdi-send</v-icon>
+          <v-icon class="pointer raw-icon" @click="$emit('sendMessage')">
+            mdi-send
+          </v-icon>
         </template>
         <template v-if="!editing" v-slot:prepend>
           <v-menu

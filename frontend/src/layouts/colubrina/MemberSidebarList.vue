@@ -97,14 +97,13 @@
           </span>
         </template>
         <template v-slot:prepend>
-          <CommunicationsAvatar
+          <UserAvatar
+            class="mr-2"
+            :light="true"
             :status="!!association.tpuUser"
             :user="association.user"
-          ></CommunicationsAvatar>
+          ></UserAvatar>
         </template>
-      </v-list-item>
-      <v-list-item v-if="!$chat.chats.length" class="fade-skeleton">
-        <MessageSkeleton v-for="i in 5" :animate="false"></MessageSkeleton>
       </v-list-item>
     </v-list>
   </template>
@@ -180,7 +179,7 @@ import CommunicationsAvatar from "@/components/Communications/CommunicationsAvat
 import { ChatAssociation } from "@/models/chatAssociation";
 import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
-
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
   components: {
@@ -188,7 +187,8 @@ export default defineComponent({
     Message,
     CommunicationsAvatar,
     CreateChat,
-    MessageSkeleton
+    MessageSkeleton,
+    UserAvatar
   },
   data() {
     return {

@@ -277,6 +277,11 @@ export class User extends Model {
   @Column
   publicProfile: boolean
 
+  @Column({
+    type: DataType.BIGINT
+  })
+  xp: bigint
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 

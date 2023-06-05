@@ -15,18 +15,17 @@
     ></UserBanner>
     <v-container class="mt-2" style="max-width: 100%">
       <v-row>
-        <v-col
-          :lg="layout.config.showStatsSidebar === false ? 12 : 9"
-          :xl="layout.config.showStatsSidebar === false ? 12 : 10"
-          cols="12"
-          md="8"
-        >
+        <v-col cols="12" style="flex: 1 1 auto; width: 200px">
           <v-row
             :class="{ 'text-center': $vuetify.display.mobile }"
             class="mb-2"
             no-gutters
           >
-            <v-col :cols="$vuetify.display.mobile ? 12 : undefined" sm="auto">
+            <v-col
+              :cols="$vuetify.display.mobile ? 12 : undefined"
+              sm="auto"
+              class="fix-profile-v3"
+            >
               <v-hover v-slot="{ isHovering }">
                 <UserAvatar
                   :class="{ 'mr-4': !$vuetify.display.mobile }"
@@ -55,8 +54,8 @@
                 </UserAvatar>
               </v-hover>
             </v-col>
-            <v-col class="d-flex align-center" sm="100%">
-              <v-card-text class="ml-n2">
+            <v-col class="d-flex align-center fix-profile-v3" sm="100%">
+              <v-card-text class="ml-n2 fix-profile-v3">
                 <div>
                   <h1
                     :class="username ? 'mb-2 pointer' : ''"
@@ -134,7 +133,7 @@
                   </h1>
                   <UserBadges
                     :class="{ 'justify-center': $vuetify.display.mobile }"
-                    :primaryColor="primaryColorResult"
+                    :primaryColor="primaryColorResult.primary"
                     :user="user"
                   ></UserBadges>
                 </div>
@@ -142,11 +141,11 @@
             </v-col>
             <v-col
               v-if="user.id !== $user.user?.id"
-              class="d-flex align-center"
+              class="d-flex align-center fix-profile-v3"
               sm="auto"
               style="justify-content: flex-end"
             >
-              <v-card-text>
+              <v-card-text class="fix-profile-v3">
                 <v-btn
                   v-if="friends"
                   :color="friends.color"
@@ -255,6 +254,7 @@
           md="3"
           sm="12"
           xl="2"
+          style="flex: 0 1 auto; white-space: nowrap"
         >
           <InsightsPromoCard
             v-if="
@@ -268,49 +268,49 @@
           ></InsightsPromoCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="$date(user.createdAt).format('DD/MM/YYYY')"
             class="my-3"
             title="Creation date"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="user.stats.uploads.toLocaleString()"
             class="my-3"
             title="Uploads"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="$functions.fileSize(user.quota || 0)"
             class="my-3"
             title="Storage Used"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="user.stats.collections.toLocaleString()"
             class="my-3"
             title="Collections"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="user.stats.collectionItems.toLocaleString()"
             class="my-3"
             title="Collectivizations"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="user.stats.pulse.toLocaleString()"
             class="my-3"
             title="TPU Hours"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="user.stats.docs"
             class="my-3"
             title="Documents"
@@ -327,21 +327,9 @@ import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
 import { ProfileLayout, User } from "@/models/user";
-import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
-import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import StatsCard from "@/components/Dashboard/StatsCard.vue";
-import BarChart from "@/components/Core/BarChart.vue";
-import LineChart from "@/components/Core/LineChart.vue";
-import Chart from "@/components/Core/Chart.vue";
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
 import { DefaultThemes } from "@/plugins/vuetify";
-import ProfileInfo from "@/components/Users/UserV3/Widgets/ProfileInfo.vue";
-import MutualCollections from "@/components/Users/UserV3/Widgets/MutualCollections.vue";
-import MutualFriends from "@/components/Users/UserV3/Widgets/MutualFriends.vue";
-import CoreStatistics from "@/components/Users/UserV3/Widgets/CoreStatistics.vue";
-import LastFM from "@/components/Users/UserV3/Widgets/LastFM.vue";
-import MyAnimeList from "@/components/Users/UserV3/Widgets/MyAnimeList.vue";
 import UserV3Settings from "@/components/Users/UserV3/Dialogs/Settings.vue";
 import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/ComponentHandler.vue";
 import { VueDraggable } from "vue-draggable-plus";
@@ -356,20 +344,8 @@ export default defineComponent({
     UserV3AddMenu,
     UserV3ComponentHandler,
     UserV3Settings,
-    MyAnimeList,
-    LastFM,
-    CoreStatistics,
-    MutualFriends,
-    MutualCollections,
-    ProfileInfo,
     InsightsPromoCard,
-    GraphWidget,
-    Chart,
-    LineChart,
-    BarChart,
     StatsCard,
-    CollectionCard,
-    CollectionBanner,
     UserBadges,
     UserAvatar,
     UserBanner,
@@ -665,7 +641,10 @@ export default defineComponent({
       }
     },
     primaryColorResult() {
-      return this.$user.primaryColorResult(this.primary, this.gold).primary;
+      return this.$user.primaryColorResult(
+        this.primaryColor || this.$user.theme.colors.primary,
+        this.gold
+      );
     },
     primary() {
       return this.user?.themeEngine?.theme[
@@ -918,13 +897,16 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
 }
+</style>
 
-.text-gradient {
+<style>
+.text-gradient-custom {
   background: -webkit-linear-gradient(
-    v-bind("$user.primaryColorResult(primary, gold).gradient1"),
-    v-bind("$user.primaryColorResult(primary, gold).gradient2")
+    v-bind("primaryColorResult.gradient1"),
+    v-bind("primaryColorResult.gradient2")
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 </style>

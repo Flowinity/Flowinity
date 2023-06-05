@@ -26,7 +26,9 @@
             style="background: #151515 !important"
           >
             <v-list-item @click="setNotifications('all')">
-              <v-list-item-title>All messages</v-list-item-title>
+              <v-list-item-title>
+                {{ $t("chats.notificationOptions.all") }}
+              </v-list-item-title>
               <template v-slot:append>
                 <v-icon
                   v-if="contextMenu.item.association.notifications === 'all'"
@@ -37,7 +39,9 @@
               </template>
             </v-list-item>
             <v-list-item @click="setNotifications('mentions')">
-              <v-list-item-title>Mentions only</v-list-item-title>
+              <v-list-item-title>
+                {{ $t("chats.notificationOptions.mentions") }}
+              </v-list-item-title>
               <template v-slot:append>
                 <v-icon
                   v-if="
@@ -50,9 +54,11 @@
               </template>
             </v-list-item>
             <v-list-item two-line @click="setNotifications('none')">
-              <v-list-item-title>None</v-list-item-title>
+              <v-list-item-title>
+                {{ $t("chats.notificationOptions.none") }}
+              </v-list-item-title>
               <v-list-item-subtitle>
-                This chat will be completely muted.
+                {{ $t("chats.notificationOptions.noneDesc") }}
               </v-list-item-subtitle>
               <template v-slot:append>
                 <v-icon
@@ -67,7 +73,7 @@
         </v-menu>
         <v-list-item-title>
           <v-icon class="mr-1">mdi-bell-outline</v-icon>
-          Notifications
+          {{ $t("chats.notifications") }}
           <v-icon class="ml-5">mdi-arrow-right</v-icon>
         </v-list-item-title>
       </v-list-item>
@@ -79,7 +85,7 @@
         "
       >
         <v-icon class="mr-1">mdi-rename-outline</v-icon>
-        Change Nickname
+        {{ $t("chats.changeNickname") }}
       </v-list-item>
       <v-list-item
         v-if="
@@ -106,13 +112,19 @@
         <template
           v-if="contextMenu.item?.users && contextMenu.item?.users?.length > 1"
         >
-          Leave
+          {{ $t("generic.leave") }}
         </template>
-        <template v-else>Delete</template>
+        <template v-else>
+          {{ $t("generic.delete") }}
+        </template>
       </v-list-item>
     </v-list>
   </v-menu>
-  <v-card-text class="text-overline mb-n4">
+  <!-- convert to uppercase -->
+  <v-card-text
+    class="text-overline mb-n4 unselectable"
+    style="text-transform: uppercase"
+  >
     <CreateChat v-slot="{ props }" v-model="create" type="create">
       <v-btn
         class="mr-2"
@@ -124,7 +136,7 @@
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </CreateChat>
-    CHATS
+    {{ $t("chats.chats") }}
   </v-card-text>
   <v-list nav>
     <v-list-item

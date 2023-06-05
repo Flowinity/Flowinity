@@ -757,4 +757,19 @@ export class AdminService {
       }
     })
   }
+
+  async verify(userId: number, emailVerified: boolean) {
+    const user = await User.findOne({
+      where: {
+        id: userId
+      }
+    })
+
+    if (!user || user.administrator || user.moderator)
+      throw Errors.USER_NOT_FOUND
+
+    await user.update({
+      emailVerified
+    })
+  }
 }

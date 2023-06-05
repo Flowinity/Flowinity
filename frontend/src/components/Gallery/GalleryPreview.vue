@@ -50,7 +50,9 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: "GalleryPreview",
   props: {
     item: {
@@ -58,7 +60,7 @@ export default {
       required: true
     }
   }
-};
+});
 </script>
 
 <style scoped></style>

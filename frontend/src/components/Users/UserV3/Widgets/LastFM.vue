@@ -12,6 +12,7 @@
         icon
         :href="`https://last.fm/user/${attributes.user}`"
         target="_blank"
+        :disabled="!attributes.user"
       >
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
