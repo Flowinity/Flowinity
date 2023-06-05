@@ -50,11 +50,12 @@ import { ChatAssociation } from "@/models/chatAssociation";
 import router from "@/router";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import { useMailStore } from "@/store/mail";
-import { useTheme } from "vuetify";
 import i18n from "@/plugins/i18n";
 //@ts-ignore
 import VueMatomo from "vue-matomo";
 import { useAdminStore } from "@/store/admin";
+import { before } from "node:test";
+import VueVirtualScroller from "vue-virtual-scroller";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -74,6 +75,7 @@ declare module "@vue/runtime-core" {
     $router: Router;
     $route: RouteLocationNormalizedLoaded;
     $admin: ReturnType<typeof useAdminStore>;
+    $vuetify: Vuetify;
   }
 }
 
@@ -498,6 +500,22 @@ app.use(VueMatomo, {
   crossOrigin: undefined
 });
 
+if (process.env.NODE_ENV === "development") {
+  const loggingMixin = {
+    beforeMount() {
+      if (
+        this.$options?.name?.startsWith("V") ||
+        this.$options?.name === "BaseTransition"
+      )
+        return;
+      // find where the component is defined
+      console.log(`[TPU/Dev] ${this.$options.name} mounted`);
+    }
+  };
+  app.mixin(loggingMixin);
+}
+
+app.use(VueVirtualScroller);
 app.use(Toast, options);
 app.config.globalProperties.$toast = useToast();
 app.use(VueApexCharts);

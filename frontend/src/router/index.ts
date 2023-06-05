@@ -22,6 +22,11 @@ const routes = [
             path: ":chatId",
             name: "Communication",
             component: () => import("@/views/Communications/Chat.vue")
+          },
+          {
+            path: ":chatId/v2",
+            name: "Communication V2",
+            component: () => import("@/views/Communications/ChatV2.vue")
           }
         ]
       },

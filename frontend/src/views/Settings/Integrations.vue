@@ -28,7 +28,7 @@
             "
             :href="integration.url"
             :short-text="integration.shortText"
-            :text="integration.name"
+            :icon="`si:${integration.icon}`"
           />
         </span>
       </div>
@@ -47,6 +47,7 @@
           :key="integration.id"
         >
           <v-list-item-title>
+            <v-icon>si:{{ getIntegrationMeta(integration.type).icon }}</v-icon>
             {{ getIntegrationMeta(integration.type).name }}
             <v-btn
               v-if="integration.error"
@@ -106,6 +107,7 @@ export default defineComponent({
         shortText: string;
         url: string;
         available: boolean;
+        icon: string;
       }[]
     };
   },

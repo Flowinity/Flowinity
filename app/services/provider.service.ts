@@ -10,43 +10,56 @@ export class ProviderService {
   constructor() {}
 
   async getLinkableProviders(user: User) {
-    const malCodeChallenge: string = cryptoRandomString({length: 128})
+    const malCodeChallenge: string = cryptoRandomString({ length: 128 })
 
-    if (user) await redis.set(
-      `providers:mal:${user.id}:code_challenge`,
-      malCodeChallenge,
-      {EX: 3600}
-    )
+    if (user)
+      await redis.set(
+        `providers:mal:${user.id}:code_challenge`,
+        malCodeChallenge,
+        { EX: 3600 }
+      )
 
     let availableProviders: object[] = []
 
-    if (config.providers.lastfm.key && config.providers.lastfm.secret) availableProviders.push({
-      name: "Last.fm",
-      id: "lastfm",
-      key: config.providers.lastfm.key,
-      url: `https://www.last.fm/api/auth/?api_key=${config.providers.lastfm.key}`,
-      shortText: "Last.fm",
-      color: "red",
-      available: true
-    })
-    if (config.providers.discord.oAuthClientId && config.providers.discord.oAuthClientSecret && config.providers.discord.applicationId && config.providers.discord.oAuthRedirectUri && config.providers.discord.publicKey) availableProviders.push({
-      id: "discord",
-      key: config.providers.discord.oAuthClientId,
-      url: `https://discord.com/api/oauth2/authorize?client_id=${config.providers.discord.oAuthClientId}&redirect_uri=${config.providers.discord.oAuthRedirectUri}&response_type=code&scope=identify%20guilds%20email%20guilds.join%20connections`,
-      name: "Discord",
-      shortText: "Discord",
-      color: "#7289DA",
-      available: true
-    })
-    if (config.providers.mal.key && config.providers.mal.secret) availableProviders.push({
-      name: "MyAnimeList",
-      id: "mal",
-      key: config.providers.mal.key,
-      url: `https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${config.providers.mal.key}&code_challenge=${malCodeChallenge}&grant_type=authorization_code`,
-      shortText: "MAL",
-      color: "#2e51a2",
-      available: true
-    })
+    if (config.providers.lastfm.key && config.providers.lastfm.secret)
+      availableProviders.push({
+        name: "Last.fm",
+        id: "lastfm",
+        key: config.providers.lastfm.key,
+        url: `https://www.last.fm/api/auth/?api_key=${config.providers.lastfm.key}`,
+        shortText: "Last.fm",
+        color: "red",
+        available: true,
+        icon: "siLastdotfm"
+      })
+    if (
+      config.providers.discord.oAuthClientId &&
+      config.providers.discord.oAuthClientSecret &&
+      config.providers.discord.applicationId &&
+      config.providers.discord.oAuthRedirectUri &&
+      config.providers.discord.publicKey
+    )
+      availableProviders.push({
+        id: "discord",
+        key: config.providers.discord.oAuthClientId,
+        url: `https://discord.com/api/oauth2/authorize?client_id=${config.providers.discord.oAuthClientId}&redirect_uri=${config.providers.discord.oAuthRedirectUri}&response_type=code&scope=identify%20guilds%20email%20guilds.join%20connections`,
+        name: "Discord",
+        shortText: "Discord",
+        color: "#7289DA",
+        available: true,
+        icon: "siDiscord"
+      })
+    if (config.providers.mal.key && config.providers.mal.secret)
+      availableProviders.push({
+        name: "MyAnimeList",
+        id: "mal",
+        key: config.providers.mal.key,
+        url: `https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${config.providers.mal.key}&code_challenge=${malCodeChallenge}&grant_type=authorization_code`,
+        shortText: "MAL",
+        color: "#2e51a2",
+        available: true,
+        icon: "siMyanimelist"
+      })
 
     return availableProviders
   }

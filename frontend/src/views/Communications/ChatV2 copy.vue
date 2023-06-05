@@ -1,228 +1,79 @@
 <template>
-  <div
-    id="chat"
-    class="communications"
-    @drop.prevent="dragDropHandler"
-    @dragover.prevent
-  >
-    <v-navigation-drawer
-      v-if="$vuetify.display.mobile"
-      v-model="$chat.dialogs.message.value"
-      color="card"
-      floating
-      location="bottom"
-      temporary
-    >
-      <MessageActionsList
-        v-if="$chat.dialogs.message.message"
-        @delete="
-          $event
-            ? deleteMessage($chat.dialogs.message.message?.id)
-            : confirmDelete($chat.dialogs.message.message);
-          $chat.dialogs.message.value = false;
-        "
-        @edit="
-          handleEdit({
-            id: $chat.dialogs.message.message?.id || 0,
-            content: $chat.dialogs.message.message?.content || ''
-          });
-          $chat.dialogs.message.value = false;
-        "
-        @reply="
-          replyId = $chat.dialogs.message.message?.id;
-          $chat.dialogs.message.value = false;
-        "
-      ></MessageActionsList>
-    </v-navigation-drawer>
-    <v-menu v-else v-model="$chat.dialogs.message.value" :style="menuStyle">
-      <MessageActionsList
-        @delete="
-          $event
-            ? deleteMessage($chat.dialogs.message.message?.id)
-            : confirmDelete($chat.dialogs.message.message);
-          $chat.dialogs.message.value = false;
-        "
-        @edit="
-          handleEdit({
-            id: $chat.dialogs.message.message?.id || 0,
-            content: $chat.dialogs.message.message?.content || ''
-          });
-          $chat.dialogs.message.value = false;
-        "
-        @reply="
-          replyId = $chat.dialogs.message.message?.id;
-          $chat.dialogs.message.value = false;
-        "
-      ></MessageActionsList>
-    </v-menu>
-    <WorkspaceDeleteDialog
-      v-model="dialogs.delete.value"
-      title="Delete Message?"
-      @submit="
-        deleteMessage(dialogs.delete.message?.id);
-        dialogs.delete.value = false;
-      "
-    />
-    <v-list
-      id="chat-list"
-      ref="messageList"
-      :style="`height: calc(100vh - ${
-        145 + replyingHeight + inputHeight - 86.5
-      }px)`"
-      bg-color="transparent"
-      class="message-list-container"
-      color="transparent"
-      style="overflow-x: hidden !important"
-      width="100%"
-      @scroll="scrollEvent"
-    >
-      <div id="sentinel-bottom" ref="sentinelBottom"></div>
-      <Message
-        v-for="(message, index) in $chat.selectedChat?.messages"
-        :id="'message-' + index"
-        :key="message.id"
-        :class="{ 'replying-message': message.id === replyId }"
-        :date-separator="dateSeparator(index)"
-        :editing="editing === message.id"
-        :editingText="editingText"
-        :merge="$chat.merge(message, index)"
-        :message="message"
-        @authorClick="
-          $chat.dialogs.userMenu.user = $event.user;
-          $chat.dialogs.userMenu.username = $event.user.username;
-          $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
-          $chat.dialogs.userMenu.x = $event.x;
-          $chat.dialogs.userMenu.y = $event.y;
-          $chat.dialogs.userMenu.location = $event.location || 'top';
-        "
-        @delete="
-          $event.shifting
-            ? deleteMessage($event.message.id)
-            : confirmDelete($event.message)
-        "
-        @edit="handleEdit"
-        @editMessage="doEditMessage"
-        @editText="editingText = $event"
-        @jumpToMessage="$chat.jumpToMessage($event)"
-        @reply="replyId = $event.id"
-      ></Message>
-      <div id="sentinel" ref="sentinel">
-        <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
+  <div>
+    <div class="c-v2-scroller-chat">
+      <v-list id="chat-messages">
+        <DynamicScroller
+          ref="scroller"
+          :items="$chat.selectedChat?.messages"
+          :min-item-size="54"
+          v-if="$chat.selectedChat?.messages?.length"
+          class="c-v2-scroller"
+        >
+          <template #default="{ item, index, active }">
+            <DynamicScrollerItem
+              :item="item"
+              :active="active"
+              :size-dependencies="[item.content]"
+              :data-index="index"
+              :data-active="active"
+            >
+              <Message
+                :id="'message-' + index"
+                :key="item.id"
+                :class="{ 'replying-message': item.id === replyId }"
+                :date-separator="dateSeparator(index)"
+                :editing="editing === item.id"
+                :editingText="editingText"
+                :merge="$chat.merge(item, index)"
+                :message="item"
+                @authorClick="
+                  $chat.dialogs.userMenu.user = $event.user;
+                  $chat.dialogs.userMenu.username = $event.user.username;
+                  $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
+                  $chat.dialogs.userMenu.x = $event.x;
+                  $chat.dialogs.userMenu.y = $event.y;
+                  $chat.dialogs.userMenu.location = $event.location || 'top';
+                "
+                @delete="
+                  $event.shifting
+                    ? deleteMessage($event.message.id)
+                    : confirmDelete($event.message)
+                "
+                @edit="handleEdit"
+                @editMessage="doEditMessage"
+                @editText="editingText = $event"
+                @jumpToMessage="$chat.jumpToMessage($event)"
+                @reply="replyId = $event.id"
+              />
+            </DynamicScrollerItem>
+          </template>
+        </DynamicScroller>
+        <div id="sentinel" ref="sentinel">
+          <MessageSkeleton
+            v-for="i in 30"
+            v-if="$chat.loading"
+          ></MessageSkeleton>
+        </div>
+      </v-list>
+      <div class="c-v2-input-container">
+        <CommunicationsInput
+          ref="input"
+          v-model="message"
+          :renderKey="renderKey"
+          id="chat-input"
+          class="message-input"
+          style="bottom: 0"
+          @emoji="
+            message += $event;
+            $nextTick(() => focusInput());
+          "
+          @fileUpload="uploadHandle"
+          @paste="handlePaste"
+          @quickTPULink="handleQuickTPULink"
+          @sendMessage="sendMessage"
+        ></CommunicationsInput>
       </div>
-    </v-list>
-    <v-fade-transition v-model="avoidAutoScroll">
-      <v-toolbar
-        v-if="avoidAutoScroll || $chat.loadingNew || $chat.loadNew"
-        :style="`position: fixed; bottom: ${
-          inputHeight + replyingHeight + uploadFileHeight - 2
-        }px`"
-        class="pointer unselectable pl-2 pb-1 force-bg dynamic-background"
-        color="transparent"
-        height="25"
-        style="
-          border-radius: 20px 20px 0 0;
-          font-size: 14px;
-          z-index: 1;
-          backdrop-filter: blur(10px);
-        "
-        @click="jumpToBottom"
-      >
-        <template v-if="!$chat.loadingNew">
-          <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
-          Jump to bottom
-        </template>
-        <template v-else>
-          <v-progress-circular
-            :size="17"
-            :width="2"
-            class="mr-2"
-            indeterminate
-          ></v-progress-circular>
-          Loading messages...
-        </template>
-      </v-toolbar>
-    </v-fade-transition>
-    <v-fade-transition v-model="replyId">
-      <v-toolbar
-        v-if="replyId"
-        :style="
-          `position: sticky; bottom: ${inputHeight + uploadFileHeight}px` +
-          (!avoidAutoScroll ? '; border-radius: 20px 20px 0 0;' : '')
-        "
-        class="pointer"
-        color="card"
-        height="35"
-        style="opacity: 0.95; z-index: 1"
-        @click="jumpToBottom"
-      >
-        <v-icon class="mr-2 ml-3">mdi-reply</v-icon>
-        <UserAvatar :user="replying?.user" class="mr-2" size="24"></UserAvatar>
-        {{ replying?.content }}
-      </v-toolbar>
-    </v-fade-transition>
-    <v-fade-transition :model-value="files.length">
-      <v-toolbar
-        v-if="files.length"
-        :style="
-          `position: sticky; bottom: ${inputHeight}px` +
-          (!avoidAutoScroll && !replyId
-            ? '; border-radius: 20px 20px 0 0;'
-            : '')
-        "
-        color="card"
-        height="auto"
-      >
-        <v-slide-group class="my-2 mx-1">
-          <v-slide-group-item
-            v-for="(file, index) in files"
-            :key="file.name + file.size + index"
-          >
-            <v-card class="mr-2" elevation="0" max-width="400px" show-arrows>
-              <v-progress-linear
-                :color="uploadProgress === 100 ? 'success' : 'primary'"
-                :model-value="file.uploadProgress"
-                height="20"
-              >
-                <small>{{ uploadProgress }}%</small>
-              </v-progress-linear>
-              <v-toolbar>
-                <v-icon class="ml-2">mdi-upload</v-icon>
-                <v-card-text class="text-center limit">
-                  {{ file.name }}
-                </v-card-text>
-                <v-spacer></v-spacer>
-                <v-card-actions>
-                  <v-btn
-                    class="mr-2"
-                    color="error"
-                    @click="files.splice(index, 1)"
-                  >
-                    <v-icon>mdi-close</v-icon>
-                  </v-btn>
-                </v-card-actions>
-              </v-toolbar>
-            </v-card>
-          </v-slide-group-item>
-        </v-slide-group>
-      </v-toolbar>
-    </v-fade-transition>
-    {{ calculateOnScreen }}
-
-    <CommunicationsInput
-      ref="input"
-      v-model="message"
-      :renderKey="renderKey"
-      class="message-input"
-      style="bottom: 0"
-      @emoji="
-        message += $event;
-        $nextTick(() => focusInput());
-      "
-      @fileUpload="uploadHandle"
-      @paste="handlePaste"
-      @quickTPULink="handleQuickTPULink"
-      @sendMessage="sendMessage"
-    ></CommunicationsInput>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -239,7 +90,9 @@ import { Message as MessageType } from "@/models/message";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import MobileMenu from "@/components/Core/Dialogs/MobileMenu.vue";
 import MessageActionsList from "@/components/Communications/MessageActionsList.vue";
-
+import MessagePerf from "@/components/Communications/MessagePerf.vue";
+import UserCard from "@/components/Users/UserCard.vue";
+import "@/styles/comms.scss";
 export default defineComponent({
   name: "Chat",
   components: {
@@ -251,7 +104,9 @@ export default defineComponent({
     User,
     MessageSkeleton,
     Message,
-    CommunicationsInput
+    CommunicationsInput,
+    MessagePerf,
+    UserCard
   },
   data() {
     return {
@@ -556,7 +411,7 @@ export default defineComponent({
       if (!message) return;
       node.$el.scrollTop = message.offsetTop;
     },
-    setupIntersectionObserver() {
+    /*setupIntersectionObserver() {
       const options = {
         root: document.getElementById("chat-list"),
         rootMargin: "10px"
@@ -569,11 +424,11 @@ export default defineComponent({
         this.handleIntersection,
         options
       );
-      const bottomSentinel = document.getElementById("sentinel-bottom");
+     const bottomSentinel = document.getElementById("sentinel-bottom");
       const topSentinel = document.getElementById("sentinel");
       if (bottomSentinel) bottomObserver.observe(bottomSentinel);
       if (topSentinel) topObserver.observe(topSentinel);
-    },
+    },*/
     async handleIntersection(entries: IntersectionObserverEntry[]) {
       const entry = entries[0];
       if (
@@ -825,10 +680,6 @@ export default defineComponent({
     }
   },
   mounted() {
-    new ResizeObserver(this.onResize).observe(
-      //@ts-ignore
-      document.querySelector("#chat-input")
-    );
     //document.querySelector(".message-list-container")?.addEventListener("scroll", this.scrollEvent);
     // add event listener for shortcuts
     document.addEventListener("keydown", this.shortcutHandler);
@@ -840,9 +691,9 @@ export default defineComponent({
     this.message = this.$chat.getDraft(<string>this.$route.params.chatId) || "";
     this.$app.railMode = "communications";
 
-    this.$nextTick(() => {
+    /*this.$nextTick(() => {
       this.setupIntersectionObserver();
-    });
+    });*/
   },
   unmounted() {
     this.$chat.setDraft(<string>this.$route.params.chatId, this.message);
@@ -890,20 +741,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped>
-.message-list-container {
-  overflow-y: scroll;
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.message-list-container::-webkit-scrollbar {
-  display: none;
-}
-
-.message-input {
-  position: sticky;
-  padding: 16px;
-}
-</style>

@@ -200,6 +200,7 @@ a {
   margin-top: -22px;
   margin-right: 5px;
   visibility: hidden;
+  z-index: 99999;
 }
 
 .no-hide {
@@ -207,7 +208,8 @@ a {
   position: relative;
 }
 
-.message:hover .message-actions {
+.message:hover .message-actions,
+.message-actions:hover {
   visibility: visible;
   position: relative;
 }

@@ -1,4 +1,4 @@
-/**
+  /**
  * plugins/vuetify.ts
  *
  * Framework documentation: https://vuetifyjs.com`
@@ -10,10 +10,18 @@ import "@mdi/font/css/materialdesignicons.css";
 //import "/home/troplo/GitHub/vuetify/packages/vuetify/src/styles/main.sass";
 import "vuetify/lib/styles/main.sass";
 // Composables
-import { createVuetify } from "vuetify";
+import {
+  createVuetify,
+  IconSet,
+  IconProps
+} from "/home/troplo/GitHub/vuetify/packages/vuetify/dist/vuetify.esm";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
-
+import { VVirtualScroll } from "vuetify/lib/components/index.mjs";
+import { VNavigationDrawer } from "/home/troplo/GitHub/vuetify/packages/vuetify/lib/components/index.mjs";
+import { aliases, mdi } from "vuetify/iconsets/mdi";
+import * as simpleIcons from "simple-icons";
+import { h } from "vue";
 export class DefaultThemes {
   themes: any;
 
@@ -33,7 +41,7 @@ export class DefaultThemes {
           card: "#161616",
           toolbar: "#191919",
           sheet: "#151515",
-          text: "#000000",
+          text: "#FFFFFF",
           dark: "#151515",
           background: "#121212",
           background2: "#121212",
@@ -54,7 +62,7 @@ export class DefaultThemes {
           card: "#000000",
           toolbar: "#121212",
           sheet: "#000000",
-          text: "#000000",
+          text: "#FFFFFF",
           dark: "#000000",
           gold: "#ffd700",
           background: "#000000",
@@ -76,7 +84,7 @@ export class DefaultThemes {
           card: "#ffffff",
           toolbar: "#f5f5f5",
           sheet: "#fafafa",
-          text: "#333333",
+          text: "#000000",
           dark: "#f7f7f7",
           background: "#f5f5f5",
           background2: "#f5f5f5",
@@ -87,11 +95,44 @@ export class DefaultThemes {
   }
 }
 
+const si: IconSet = {
+  component: (props: IconProps) =>
+    h(
+      "svg",
+      {
+        fill: vuetify.theme.current.value.dark ? "#ffffff" : "#000000"
+      },
+      [
+        h("path", {
+          //@ts-ignore
+          d: simpleIcons[props.icon]?.path || "",
+          "shape-rendering": "optimizeQuality"
+        })
+      ]
+    )
+};
+
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
-export default createVuetify({
+const vuetify = createVuetify({
+  icons: {
+    defaultSet: "mdi",
+    aliases,
+    sets: {
+      mdi,
+      si
+    }
+  },
   components: {
     VDataTable,
-    VSkeletonLoader
+    VSkeletonLoader,
+    VVirtualScroll,
+    VInfiniteScroll,
+    VNavigationDrawer
+  },
+  display: {
+    thresholds: {
+      xl: 1600
+    }
   },
   defaults: {
     VAutoComplete: {
@@ -170,3 +211,7 @@ export default createVuetify({
     themes: new DefaultThemes().themes
   }
 });
+
+console.log(vuetify.icons);
+
+export default vuetify;

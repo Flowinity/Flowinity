@@ -79,10 +79,11 @@
                 })
               "
             >
-              <CommunicationsAvatar
+              <UserAvatar
+                :light="true"
                 :id="'message-author-avatar-' + message.id"
                 :user="message.user"
-              ></CommunicationsAvatar>
+              ></UserAvatar>
             </div>
             <div v-else class="mr-3 text-grey">
               <v-icon v-if="message.type === 'join'" class="mr-1" size="36">
@@ -190,10 +191,14 @@
           @update:modelValue="$emit('editText', $event)"
         />
         <MessageActions
-          v-if="(!search && isHovering) || (!search && avoid)"
           :avoid="avoid"
           :message="message"
           @avoid="avoid = $event"
+          @retain="
+            $event
+              ? retainIds.push(message.id)
+              : retainIds.splice(retainIds.indexOf(message.id), 1)
+          "
           @delete="$emit('delete', { message, shifting: $event })"
           @edit="$emit('edit', { id: message.id, content: message.content })"
           @reply="$emit('reply', message)"
@@ -203,8 +208,8 @@
           :key="index"
           :embed="embed"
         />
-        <template v-slot:append>
-          <div style="position: absolute; right: 10px; bottom: 0">
+        <template v-slot:append v-if="false">
+          <div>
             <template
               v-for="(readReceipt, index) in message.readReceipts"
               :key="readReceipt.id"
@@ -243,7 +248,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import MessageActions from "@/components/Communications/MessageActions.vue";
 import Embed from "@/components/Communications/Embed.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
@@ -256,9 +260,17 @@ export default defineComponent({
     UserAvatar,
     Embed,
     MessageActions,
-    CommunicationsAvatar,
     CommunicationsInput
   },
+  emits: [
+    "edit",
+    "editMessage",
+    "editText",
+    "delete",
+    "reply",
+    "jumpToMessage",
+    "authorClick"
+  ],
   props: [
     "message",
     "editing",
@@ -270,7 +282,8 @@ export default defineComponent({
   ],
   data() {
     return {
-      avoid: false
+      avoid: false,
+      retainIds: [] as number[]
     };
   },
   methods: {
