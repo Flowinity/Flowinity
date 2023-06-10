@@ -222,8 +222,10 @@ export class Application {
       validation: true
     })
 
-    const spec = ApiSchema.generateSchema()
-
+    if (config.finishedSetup) {
+      const spec = ApiSchema.generateSchema()
+      this.app.use("/api/v3/docs", swaggerUi.serve, swaggerUi.setup(spec))
+    }
     this.app.use("/api/docs", async (req, res): Promise<void> => {
       res.redirect("/api/v3/docs")
     })
@@ -232,7 +234,6 @@ export class Application {
       swaggerUi.serve,
       swaggerUi.setup(swaggerJSDoc(this.swaggerOptions))
     )
-    this.app.use("/api/v3/docs", swaggerUi.serve, swaggerUi.setup(spec))
 
     useExpressServer(this.app, {
       controllers: config.finishedSetup
