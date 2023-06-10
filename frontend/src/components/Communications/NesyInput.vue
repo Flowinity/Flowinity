@@ -9,7 +9,7 @@
       :class="!editing ? 'mb-n5 mt-1' : 'mt-2'"
       :value="modelValue"
       auto-grow
-      autofocus
+      :autofocus="true"
       color="primary"
       density="compact"
       label="Type a message..."

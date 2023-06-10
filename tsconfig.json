@@ -24,7 +24,7 @@
     "esModuleInterop": true,
     "noImplicitReturns": true,
     "strictNullChecks": true,
-    "strict": false,
+    "strict": true,
     "resolveJsonModule": true,
     // DO NOT CHANGE (I changed it :))
     "paths": {

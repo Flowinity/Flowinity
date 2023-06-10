@@ -11,7 +11,7 @@
       v-if="message.reply"
       class="ml-6 my-1 pointer limit"
       color="transparent"
-      floating
+      :floating="true"
       height="auto"
       @click.prevent="$emit('jumpToMessage', message.reply.id)"
     >
@@ -27,7 +27,7 @@
       v-else-if="message.replyId"
       class="ml-6 my-1 pointer limit"
       color="transparent"
-      floating
+      :floating="true"
       height="auto"
     >
       <v-icon class="mr-2">mdi-reply</v-icon>
@@ -79,10 +79,10 @@
                 })
               "
             >
-              <CommunicationsAvatar
+              <UserAvatar
                 :id="'message-author-avatar-' + message.id"
                 :user="message.user"
-              ></CommunicationsAvatar>
+              ></UserAvatar>
             </div>
             <div v-else class="mr-3 text-grey">
               <v-icon v-if="message.type === 'join'" class="mr-1" size="36">
@@ -243,7 +243,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import MessageActions from "@/components/Communications/MessageActions.vue";
 import Embed from "@/components/Communications/Embed.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
@@ -256,7 +255,6 @@ export default defineComponent({
     UserAvatar,
     Embed,
     MessageActions,
-    CommunicationsAvatar,
     CommunicationsInput
   },
   props: [

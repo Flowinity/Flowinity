@@ -5,13 +5,13 @@
       <v-text-field
         label="Name"
         required
-        autofocus
+        :autofocus="true"
         v-model="importDoc.name"
       ></v-text-field>
       <v-file-input
         label="TPU Document (.TPUDOC or .HTML)"
         required
-        autofocus
+        :autofocus="true"
         v-model="importDoc.file"
         ref="importDocFile"
         accept=".tpudoc,.html"

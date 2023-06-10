@@ -66,7 +66,7 @@ export class MyAnimeListService {
         providerUserId: user.id,
         providerUserCache: user,
         tokenType: data.token_type,
-        expiresAt: data.expires_in
+        expiresAt: new Date(Date.now() + data.expires_in * 1000)
       })
     } catch {
       throw Errors.INTEGRATION_ERROR
@@ -112,9 +112,29 @@ export class MyAnimeListService {
           }
         }
       )
+      await Integration.update(
+        {
+          accessToken: data.access_token,
+          refreshToken: data.refresh_token,
+          tokenType: data.token_type,
+          expiresAt: new Date(Date.now() + data.expires_in * 1000)
+        },
+        {
+          where: {
+            userId,
+            type: "mal"
+          }
+        }
+      )
 
-      if (!data?.access_token) return await integration.destroy()
-
+      if (!data?.access_token)
+        return await Integration.destroy({
+          where: {
+            userId,
+            type: "mal"
+          }
+        })
+      await new Promise((resolve) => setTimeout(resolve, 2000))
       const { data: user } = await axios.get(
         "https://api.myanimelist.net/v2/users/@me?fields=anime_statistics,manga_statistics",
         {
@@ -124,18 +144,30 @@ export class MyAnimeListService {
         }
       )
 
-      await integration.update({
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
-        providerUsername: user.name,
-        providerUserId: user.id,
-        providerUserCache: user,
-        tokenType: data.token_type,
-        expiresAt: data.expires_in
-      })
+      await Integration.update(
+        {
+          accessToken: data.access_token,
+          refreshToken: data.refresh_token,
+          providerUsername: user.name,
+          providerUserId: user.id,
+          providerUserCache: user,
+          tokenType: data.token_type,
+          expiresAt: new Date(Date.now() + data.expires_in * 1000)
+        },
+        {
+          where: {
+            userId,
+            type: "mal"
+          }
+        }
+      )
+      return
     } catch (err) {
+      console.log(err)
+      //@ts-ignore
       if (err?.response?.data?.hint) {
         await integration.update({
+          //@ts-ignore
           error: err.response.data.hint
         })
       }
@@ -247,7 +279,13 @@ export class MyAnimeListService {
       })
 
       for (const user of users) {
-        await this.renew(user.id)
+        try {
+          await this.renew(user.id)
+        } catch {
+          console.log(
+            `[PROVIDERS/MYANIMELIST] failed to renew access tokens for ${user.username}`
+          )
+        }
       }
 
       console.log("[PROVIDERS/MYANIMELIST] renewed access tokens.")

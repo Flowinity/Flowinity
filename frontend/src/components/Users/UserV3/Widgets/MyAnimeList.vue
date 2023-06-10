@@ -4,7 +4,7 @@
       <v-toolbar-title>
         MyAnimeList
         <v-chip size="small">BETA</v-chip>
-        <template v-if="!loading">
+        <template v-if="!loading && malUser">
           &bullet;
           {{ malUser.anime_statistics.num_episodes.toLocaleString() }}
           episodes &bullet;
@@ -20,13 +20,21 @@
       >
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
-      <v-btn icon @click="page > 1 ? page-- : (page = 1)">
+      <v-btn
+        icon
+        @click="page > 1 ? page-- : (page = 1)"
+        :disabled="page === 1"
+      >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
       <v-btn icon @click="getMAL">
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
-      <v-btn icon @click="page < pages ? page++ : page">
+      <v-btn
+        icon
+        @click="page < pages ? page++ : page"
+        :disabled="page >= pages"
+      >
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
     </v-toolbar>
@@ -35,7 +43,6 @@
         <v-list-item
           v-for="anime in computedRecent"
           :key="anime.node.id"
-          :href="anime.url"
           target="_blank"
         >
           <template v-slot:prepend>
@@ -43,6 +50,8 @@
               :src="anime.node.main_picture.medium"
               class="mr-3"
               width="40"
+              :href="`https://myanimelist.net/anime/${anime.node.id}`"
+              target="_blank"
             ></v-img>
           </template>
           <v-list-item-title>{{ anime.node.title }}</v-list-item-title>
@@ -248,7 +257,7 @@ export default defineComponent({
           headers: {
             noToast: true
           }
-        }
+        } as any
       );
       if (!data.data) return;
       this.recent = data.data;

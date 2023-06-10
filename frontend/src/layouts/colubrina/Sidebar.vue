@@ -5,7 +5,7 @@
       'sidebar-patch': $experiments.experiments.RAIL_SIDEBAR && $app.rail
     }"
     color="dark"
-    floating
+    :floating="true"
   >
     <v-card-text
       v-if="$vuetify.display.mobile"
@@ -37,11 +37,11 @@ export default defineComponent({
   components: { StatusSwitcher, ColubrinaSidebarList },
   computed: {
     val: {
-      get() {
+      get: function () {
         if (!this.$vuetify.display.mobile) return true;
         return this.$app.mainDrawer;
       },
-      set(value) {
+      set: function (value: boolean) {
         if (!this.$vuetify.display.mobile) return;
         this.$app.mainDrawer = value;
       }

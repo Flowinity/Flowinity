@@ -151,13 +151,16 @@
       :title="chatName(chat)"
       :to="`/communications/${chat.association.id}`"
       @contextmenu.prevent="context($event, chat)"
+      :key="chat.id"
     >
       <template v-slot:prepend>
-        <CommunicationsAvatar
+        <UserAvatar
           :chat="chat.type === 'group' ? chat : undefined"
           :status="true"
           :user="chat.type === 'direct' ? chat.recipient : undefined"
-        ></CommunicationsAvatar>
+          :dot-status="true"
+          class="mr-2"
+        ></UserAvatar>
       </template>
       <template v-slot:append>
         <v-badge
@@ -170,7 +173,11 @@
       </template>
     </v-list-item>
     <v-list-item v-if="!$chat.chats.length" class="fade-skeleton">
-      <MessageSkeleton v-for="i in 5" :animate="false"></MessageSkeleton>
+      <MessageSkeleton
+        v-for="i in 5"
+        :animate="false"
+        :key="i"
+      ></MessageSkeleton>
     </v-list-item>
   </v-list>
 </template>
@@ -180,12 +187,17 @@ import { defineComponent } from "vue";
 import { Chat } from "@/models/chat";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import Leave from "@/components/Communications/Dialogs/Leave.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "ColubrinaSidebarList",
-  components: { Leave, CommunicationsAvatar, CreateChat, MessageSkeleton },
+  components: {
+    UserAvatar,
+    Leave,
+    CreateChat,
+    MessageSkeleton
+  },
   data() {
     return {
       create: false,

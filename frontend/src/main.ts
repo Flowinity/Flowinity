@@ -12,7 +12,6 @@ import { createApp, defineComponent } from "vue";
 
 // Plugins
 import { registerPlugins } from "@/plugins";
-import VueAxios from "vue-axios";
 import axios from "@/plugins/axios";
 import { useUserStore } from "@/store/user";
 import { useAppStore } from "@/store/app";
@@ -55,6 +54,7 @@ import i18n from "@/plugins/i18n";
 //@ts-ignore
 import VueMatomo from "vue-matomo";
 import { useAdminStore } from "@/store/admin";
+import { Axios } from "axios";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -74,6 +74,7 @@ declare module "@vue/runtime-core" {
     $router: Router;
     $route: RouteLocationNormalizedLoaded;
     $admin: ReturnType<typeof useAdminStore>;
+    axios: Axios;
   }
 }
 
@@ -127,6 +128,7 @@ const app = createApp({
       const friends = useFriendsStore();
       const mail = useMailStore();
       const toast = useToast();
+      app.config.globalProperties.axios = axios;
       core.themeProviderDefaults.theme = vuetify.theme.themes.value;
       core.themeProviderDefaults.global = vuetify.defaults.value;
       app.config.globalProperties.$user = user;
@@ -414,7 +416,6 @@ const app = createApp({
           core.upload();
         }
       });
-      let hadFluidGradient = false;
       try {
         //@ts-ignore
         navigator.getBattery().then((battery) => {
@@ -502,11 +503,14 @@ if (process.env.NODE_ENV === "development") {
   const loggingMixin = {
     beforeMount() {
       if (
+        //@ts-ignore
         this.$options?.name?.startsWith("V") ||
+        //@ts-ignore
         this.$options?.name === "BaseTransition"
       )
         return;
       // find where the component is defined
+      //@ts-ignore
       console.log(`[TPU/Dev] ${this.$options.name} mounted`);
     }
   };
@@ -516,7 +520,6 @@ if (process.env.NODE_ENV === "development") {
 app.use(Toast, options);
 app.config.globalProperties.$toast = useToast();
 //app.use(VueApexCharts);
-app.use(VueAxios, axios);
 app.use(i18n);
 registerPlugins(app);
 

@@ -10,7 +10,7 @@
     <v-card-text v-if="!key">
       <v-text-field
         v-model="name"
-        autofocus
+        :autofocus="true"
         label="Name"
         required
         @keydown.enter="addAPIKey"
@@ -38,7 +38,12 @@
       ></v-select>
     </v-card-text>
     <v-card-text v-else>
-      <v-text-field v-model="key" disabled label="Key" readonly></v-text-field>
+      <v-text-field
+        v-model="key"
+        :disabled="true"
+        label="Key"
+        readonly
+      ></v-text-field>
       <p>
         Use this key with any TPU integrations. This is a secret, do not share
         it with anyone.

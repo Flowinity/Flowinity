@@ -141,6 +141,7 @@ let config = {
 };
 
 if (process.env.USE_SSL_INTERNAL === "true") {
+  //@ts-ignore
   config.server.https = {
     key: fs.readFileSync("./vite.key"),
     cert: fs.readFileSync("./vite.crt")

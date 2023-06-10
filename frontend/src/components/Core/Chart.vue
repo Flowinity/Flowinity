@@ -43,7 +43,6 @@ import {
   BarElement
 } from "chart.js";
 import { defineComponent } from "vue";
-import vuetify from "@/plugins/vuetify";
 import chartJS from "chart.js";
 
 ChartJS.register(

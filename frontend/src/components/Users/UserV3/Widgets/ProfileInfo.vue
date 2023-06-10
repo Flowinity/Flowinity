@@ -26,7 +26,7 @@
       :counter="255"
       :rows="1"
       auto-grow
-      autofocus
+      :autofocus="true"
       dense
       outlined
       @keydown.esc="settings.description.value = false"

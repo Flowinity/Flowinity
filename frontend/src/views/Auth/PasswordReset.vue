@@ -1,5 +1,5 @@
 <template>
-  <v-container class="center-container" fluid>
+  <v-container class="center-container" :fluid="true">
     <v-row align="center" justify="center">
       <v-col cols="12" md="7" sm="8" xl="5">
         <v-card
@@ -15,7 +15,7 @@
               <v-text-field
                 v-model="password"
                 :rules="$validation.user.password"
-                autofocus
+                :autofocus="true"
                 label="New Password"
                 type="password"
                 @keydown.enter="recover"

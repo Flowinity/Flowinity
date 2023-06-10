@@ -2,6 +2,7 @@ import { Notification } from "@/models/notification";
 import { AutoCollectRule } from "@/models/autoCollectRule";
 import { AlternatePassword } from "@/types/auth";
 import { Integration } from "@/models/integration";
+import { Component } from "@/types/userv3";
 
 export interface ThemeEngine {
   theme: {
@@ -23,11 +24,7 @@ export interface ProfileLayout {
   layout: {
     columns: [
       {
-        rows: {
-          name: string;
-          id: string;
-          props?: any;
-        }[];
+        rows: Component[];
       }
     ];
   };
@@ -147,6 +144,6 @@ export interface User {
   profileLayout?: ProfileLayout | null;
   integrations: Integration[];
   excludedCollections: number[] | null;
-  language: string;
+  language: any;
   publicProfile: boolean;
 }

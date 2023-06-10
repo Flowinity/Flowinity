@@ -498,7 +498,7 @@ export class AdminControllerV3 {
       this.redactConfig(body, true)
     )
     console.log(tpuConfig)
-    await TpuConfigValidator.parse(tpuConfig)
+    TpuConfigValidator.parse(tpuConfig)
     await this.setupController.writeTPUConfig(tpuConfig)
     this.cacheService.refreshState()
   }

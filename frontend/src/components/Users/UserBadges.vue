@@ -417,7 +417,7 @@ export default defineComponent({
   name: "UserBadges",
   methods: {
     crash() {
-      throw "deez";
+      throw "Error";
     },
     async handleClick(badge: any) {
       if (badge.name === ":skull:") {

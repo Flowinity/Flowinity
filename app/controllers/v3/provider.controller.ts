@@ -71,7 +71,7 @@ export class ProviderControllerV3 {
     @Auth("user.view", false) authUser: User,
     @Param("username") username: string
   ) {
-    const user: User = await this.providerService.verifyUser(
+    const user = await this.providerService.verifyUser(
       username,
       "lastfm",
       authUser?.id
@@ -117,7 +117,7 @@ export class ProviderControllerV3 {
     @Auth("user.view", false) authUser: User,
     @Param("username") username: string
   ) {
-    const user: User = await this.providerService.verifyUser(
+    const user = await this.providerService.verifyUser(
       username,
       "mal",
       authUser?.id
@@ -137,7 +137,7 @@ export class ProviderControllerV3 {
     @BodyParam("id") id: number,
     @Body() body: MalBody
   ) {
-    const user: User = await this.providerService.verifyUser(
+    const user = await this.providerService.verifyUser(
       username,
       "mal",
       authUser.id

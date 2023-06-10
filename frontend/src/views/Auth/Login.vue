@@ -14,7 +14,7 @@
             <v-form>
               <v-text-field
                 v-model="username"
-                autofocus
+                :autofocus="true"
                 label="Username or Email"
                 @keydown.enter="login"
               />

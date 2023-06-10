@@ -495,9 +495,8 @@ export class AdminService {
     return true
   }
 
-  async removeUsersFromBadge(userIdeez: number[], badgeId: number) {
-    console.log(userIdeez, badgeId)
-    for (const userId of userIdeez) {
+  async removeUsersFromBadge(userIds: number[], badgeId: number) {
+    for (const userId of userIds) {
       await BadgeAssociation.destroy({
         where: {
           userId,

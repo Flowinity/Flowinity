@@ -12,7 +12,7 @@ export interface Domain {
   subdomainsCreate: boolean;
   customUserEligibility: string[];
   restricted: "disabled" | "user" | "premium";
-  user: User;
+  user: User | null;
   users: User[];
   activeUsersCount: number;
 }

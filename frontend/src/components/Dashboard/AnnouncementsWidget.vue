@@ -12,6 +12,7 @@
         "
         class="my-3 pt-3 hover"
         elevation="0"
+        :key="announcement.id"
       >
         <UserAvatar
           :user="announcement.user"

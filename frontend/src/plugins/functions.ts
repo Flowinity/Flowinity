@@ -7,7 +7,7 @@ import { User } from "@/models/user";
 export default {
   fileSize(size: number): string {
     let i = -1;
-    let byteUnits = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    const byteUnits = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     do {
       size = size / 1024;
       i++;
@@ -35,7 +35,7 @@ export default {
     const app = useAppStore();
     if (!chat) return undefined;
     if ("username" in chat) {
-      if (chat.avatar?.length > 20) {
+      if (chat.avatar && chat.avatar.length > 20) {
         return "https://colubrina.troplo.com/usercontent/" + chat.avatar;
       } else if (chat.avatar) {
         return app.domain + chat.avatar;
@@ -43,7 +43,11 @@ export default {
         return undefined;
       }
     }
-    if (chat.type === "direct" && chat.recipient?.avatar?.length > 20) {
+    if (
+      chat.type === "direct" &&
+      chat.recipient?.avatar &&
+      chat.recipient.avatar.length > 20
+    ) {
       return (
         "https://colubrina.troplo.com/usercontent/" + chat.recipient.avatar
       );
@@ -211,5 +215,12 @@ export default {
   },
   charUp(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
+  },
+  contrast(hex: string) {
+    const r = parseInt(hex.substr(1, 2), 16);
+    const g = parseInt(hex.substr(3, 2), 16);
+    const b = parseInt(hex.substr(5, 2), 16);
+    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    return yiq >= 100;
   }
 };

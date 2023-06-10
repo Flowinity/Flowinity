@@ -11,7 +11,7 @@
       <v-text-field
         v-model="email"
         :rules="$validation.user.email"
-        autofocus
+        :autofocus="true"
         label="Email"
         placeholder="troplo@troplo.com"
         required

@@ -2,7 +2,7 @@
   <v-dialog
     :model-value="modelValue"
     max-width="700px"
-    persistent
+    :persistent="true"
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-card color="#151515">
@@ -98,7 +98,7 @@
         <v-container>
           <v-text-field
             v-model="colubrina.username"
-            autofocus
+            :autofocus="true"
             dense
             label="Username"
             outlined

@@ -1,90 +1,62 @@
 <template>
-  <span v-if="user && !light">
-    <UploadCropper
-      v-model="dialog"
-      aspect-ratio="1"
-      title="Upload Avatar"
-      @finish="changeAvatar"
-      v-if="user.id === $user.user?.id"
-    />
+  <span style="position: relative">
     <v-hover v-slot="{ isHovering, props }">
-      <span v-bind="props">
-        <v-avatar
-          :class="{ outline }"
-          :color="
-            noColor || user.avatar ? undefined : $user.theme.colors.primary
-          "
-          :size="size"
-          class="text-center justify-center undraggable"
-          justify="center"
-        >
-          <v-img
-            v-if="user.avatar"
-            :src="avatarURL"
-            class="undraggable user-avatar"
-            cover
-          ></v-img>
-          <span v-else :class="textSize" class="unselectable">
-            {{ user.username.charAt(0).toUpperCase() }}
-          </span>
-          <v-fade-transition v-if="isHovering && edit">
-            <div style="cursor: pointer" @click="dialog = true">
-              <v-overlay
-                :model-value="isHovering"
-                class="align-center justify-center"
-                contained
-              >
-                <v-icon large>mdi-upload</v-icon>
-              </v-overlay>
-            </div>
-          </v-fade-transition>
-          <v-fade-transition v-else-if="isHovering">
-            <slot></slot>
-          </v-fade-transition>
-          <slot name="inline"></slot>
-        </v-avatar>
-      </span>
-    </v-hover>
-    <template v-if="status">
-      <v-badge
-        v-if="friendStatus"
-        :color="$functions.userStatus(friendStatus).color"
-        :dot="dotStatus"
-        :offset-x="statusXOffset ?? 10"
-        :offset-y="statusYOffset ?? offset"
-        bordered
+      <UploadCropper
+        v-model="dialog"
+        aspect-ratio="1"
+        title="Upload Avatar"
+        @finish="changeAvatar"
+        v-if="user?.id === $user.user?.id"
+      />
+      <v-avatar
+        :size="size"
+        v-bind="props"
+        class="text-center justify-center undraggable position-relative"
+        justify="center"
+        :color="
+          noColor || $functions.avatar(chat || user) ? undefined : 'primary'
+        "
       >
-        <v-tooltip activator="parent" location="top">
-          {{ $functions.userStatus(friendStatus).text }}
-        </v-tooltip>
-      </v-badge>
-    </template>
-  </span>
-
-  <span v-else-if="user && light" style="position: relative">
-    <v-avatar
-      :size="size"
-      class="text-center justify-center undraggable"
-      justify="center"
-    >
-      <v-img
-        v-if="user.avatar"
-        :src="avatarURL"
-        class="undraggable user-avatar"
-        cover
-      ></v-img>
-      <span v-else :class="textSize" class="unselectable">
-        {{ user.username.charAt(0).toUpperCase() }}
-      </span>
-    </v-avatar>
-    <template v-if="status">
-      <div
-        class="status"
-        :style="{
-          backgroundColor: $functions.userStatus(friendStatus).color
-        }"
-      ></div>
-    </template>
+        <v-img
+          v-if="chat?.icon || user?.avatar"
+          :src="$functions.avatar(chat || user)"
+          class="undraggable user-avatar"
+          :cover="true"
+        ></v-img>
+        <span v-else :class="textSize" class="unselectable">
+          {{
+            chat?.name.charAt(0).toUpperCase() ??
+            user?.username.charAt(0).toUpperCase() ??
+            "?"
+          }}
+        </span>
+        <v-fade-transition v-if="isHovering && edit">
+          <div style="cursor: pointer" @click="dialog = true">
+            <v-overlay
+              :model-value="isHovering"
+              class="align-center justify-center"
+              :contained="true"
+            >
+              <v-icon large>mdi-upload</v-icon>
+            </v-overlay>
+          </div>
+        </v-fade-transition>
+        <slot :hovering="isHovering as boolean"></slot>
+      </v-avatar>
+      <template v-if="status && friendStatus">
+        <div
+          class="status"
+          :class="{ 'dot-status': dotStatus }"
+          :style="{
+            backgroundColor: $functions.userStatus(friendStatus).color
+          }"
+        >
+          <v-tooltip :eager="false" location="top" activator="parent">
+            {{ $functions.userStatus(friendStatus).text }}
+          </v-tooltip>
+        </div>
+      </template>
+    </v-hover>
   </span>
 </template>
 
@@ -107,7 +79,8 @@ export default defineComponent({
     "emulatedStatus",
     "dotStatus",
     "statusYOffset",
-    "light"
+    "light",
+    "chat"
   ],
   data() {
     return {
@@ -115,20 +88,22 @@ export default defineComponent({
     };
   },
   computed: {
-    avatarURL() {
-      if (this.user.avatar?.length > 20) {
-        return "https://colubrina.troplo.com/usercontent/" + this.user.avatar;
-      } else {
-        return "/i/" + this.user.avatar;
-      }
+    x() {
+      return this.statusXOffset || 0 + "px";
+    },
+    y() {
+      return this.statusYOffset || 69420 + "px";
     },
     offset() {
       return this.size / 4;
     },
+    statusSize() {
+      if (this.dotStatus) return 10 + "px";
+      return 15 + "px";
+    },
     textSize() {
       let classes = "";
-      //@ts-ignore
-      if (this.contrast === "black") {
+      if (this.$user.contrast) {
         classes += "black-text";
       } else {
         classes += "white-text";
@@ -142,15 +117,8 @@ export default defineComponent({
       }
       return classes;
     },
-    contrast() {
-      return "white";
-      /*return window.__TROPLO_INTERNALS_GLOBALS.contrastColor(
-        this.$store.state.user?.plan?.color,
-        this.$store.state.user?.plan?.internalName === "GOLD",
-        this.$vuetify.theme.themes[this.$vuetify.theme.dark ? "dark" : "light"]
-      )*/
-    },
     friendStatus() {
+      if (!this.user) return;
       if (this.emulatedStatus) return this.emulatedStatus;
       if (this.user.id === this.$user.user?.id)
         return this.$user.user?.storedStatus;
@@ -193,12 +161,18 @@ export default defineComponent({
 <style scoped>
 .status {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 10px;
-  height: 10px;
+  right: 5px;
+  bottom: -170%;
+  width: v-bind(statusSize);
+  height: v-bind(statusSize);
   border-radius: 50%;
   border: 2px solid rgb(var(--v-theme-background));
+  z-index: 3001;
+}
+
+.dot-status {
+  bottom: -130%;
+  right: 0;
 }
 
 .outline {

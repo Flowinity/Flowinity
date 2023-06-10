@@ -49,11 +49,11 @@ export default defineComponent({
   name: "RailBar",
   computed: {
     val: {
-      get() {
+      get: function () {
         if (!this.$vuetify.display.mobile) return true;
         return this.$app.mainDrawer;
       },
-      set(value) {
+      set: function (value: boolean) {
         if (!this.$vuetify.display.mobile) return;
         this.$app.mainDrawer = value;
       }

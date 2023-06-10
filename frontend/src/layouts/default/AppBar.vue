@@ -7,8 +7,8 @@
     class="navbar"
     color="dark"
     density="comfortable"
-    flat
-    floating
+    :flat="true"
+    :floating="true"
     style="z-index: 1001"
   >
     <v-app-bar-nav-icon
@@ -23,12 +23,13 @@
       <LogoEasterEgg></LogoEasterEgg>
     </template>
     <template v-else>
-      <CommunicationsAvatar
+      <UserAvatar
         :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
         :status="true"
         :user="$chat.selectedChat?.recipient"
         class="ml-4"
         size="32"
+        :dot-status="true"
       />
       <h2
         v-if="!$vuetify.display.mobile"
@@ -97,7 +98,11 @@
     </template>
     <v-btn aria-label="Notifications" class="mr-2" icon>
       <Notifications />
-      <v-badge :model-value="$user.unreadNotifications > 0" color="red" dot>
+      <v-badge
+        :model-value="$user.unreadNotifications > 0"
+        color="red"
+        :dot="true"
+      >
         <v-icon class="mx-1">
           {{ $user.unreadNotifications > 0 ? "mdi-bell" : "mdi-bell-outline" }}
         </v-icon>
@@ -187,7 +192,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import Notifications from "@/components/Core/Notifications.vue";
 import { useTheme } from "vuetify";
 import Pins from "@/components/Communications/Menus/Pins.vue";
@@ -198,7 +202,6 @@ export default defineComponent({
     LogoEasterEgg,
     Pins,
     Notifications,
-    CommunicationsAvatar,
     UserAvatar
   },
   setup() {
@@ -246,7 +249,7 @@ export default defineComponent({
           (this.$chat.search.value &&
             this.$app.rail &&
             this.$chat.isCommunications)
-      };
+      } as { [key: string]: boolean };
       if (this.$app.rail) {
         for (const key in data) {
           data[key + "-rail"] = data[key];

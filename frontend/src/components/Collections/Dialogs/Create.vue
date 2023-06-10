@@ -8,7 +8,7 @@
     <v-card-text>
       <v-text-field
         v-model="name"
-        autofocus
+        :autofocus="true"
         label="Name"
         required
         @keydown.enter="createCollection"

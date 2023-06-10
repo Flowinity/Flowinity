@@ -2,7 +2,11 @@
  * plugins/axios.ts
  */
 
-import axios, { AxiosStatic } from "axios";
+import axios, {
+  AxiosRequestConfig,
+  AxiosStatic,
+  InternalAxiosRequestConfig
+} from "axios";
 import { useToast } from "vue-toastification";
 import { useAppStore } from "@/store/app";
 import { useUserStore } from "@/store/user";
@@ -10,6 +14,10 @@ import router from "@/router";
 
 export interface AxiosStaticWithAvoidance extends AxiosStatic {
   _avoidToast: boolean;
+}
+
+export interface AxiosRequestConfigWithAvoidance extends AxiosRequestConfig {
+  avoidToast?: boolean;
 }
 
 const ax = axios.create({

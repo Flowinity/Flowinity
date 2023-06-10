@@ -12,8 +12,8 @@
           auto-grow
           rows="1"
           variant="plain"
-          disabled
-          :model-value="this.$chat.dialogs.externalSite.url"
+          :disabled="true"
+          :model-value="$chat.dialogs.externalSite.url"
         />
         This link is not part of TPU and might be unsafe. Do you want to
         continue?

@@ -11,7 +11,7 @@
         v-model="search"
         :items="$app.quickSwitcher"
         auto-select-first
-        autofocus
+        :autofocus="true"
         item-title="name"
         label="Search"
         outlined

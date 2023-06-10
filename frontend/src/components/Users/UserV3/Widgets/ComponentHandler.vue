@@ -7,7 +7,7 @@
   >
     <v-toolbar v-if="editMode" border class="rounded-xl">
       <v-toolbar-title>
-        {{ components.find((c) => c.id === component.name).name }}
+        {{ components.find((c) => c.id === component.name)?.name }}
       </v-toolbar-title>
       <v-btn icon @click="$emit('delete', component)">
         <v-icon>mdi-delete</v-icon>
@@ -15,7 +15,7 @@
       <v-btn
         v-if="
           component.name !== 'parent' &&
-          components.find((c) => c.id === component.name).props
+          components.find((c) => c.id === component.name)?.props
         "
         icon
         @click="$emit('settings', component.id)"
@@ -36,7 +36,11 @@
     >
       <template v-if="editMode && $experiments.experiments.USER_V3_EDITOR">
         <v-card-subtitle class="mt-2">Dev UserV3 actions:</v-card-subtitle>
-        <v-btn v-for="comp in components" @click="addItemDebug(comp.id)">
+        <v-btn
+          :key="comp.id"
+          v-for="comp in components"
+          @click="addItemDebug(comp.id)"
+        >
           Add {{ comp.name }}
         </v-btn>
       </template>
@@ -48,6 +52,7 @@
           v-for="child in component.props.children"
           :xl="12 / component.props.children.length"
           md="12"
+          :key="child.id"
         >
           <UserV3ComponentHandler
             :component="child"
@@ -103,24 +108,6 @@
       :component="component"
       :user="user"
     />
-    <v-card v-else-if="component.name === 'v-card'">
-      <v-card-title>
-        <h3>{{ component.props.title }}</h3>
-      </v-card-title>
-      <v-card-text>
-        <p>{{ component.props.text }}</p>
-      </v-card-text>
-      <v-card-actions v-if="component.props.actions?.length">
-        <v-btn
-          v-for="action in component.props.actions"
-          :key="action"
-          :to="action"
-          :v-bind="action"
-        >
-          {{ action.text }}
-        </v-btn>
-      </v-card-actions>
-    </v-card>
     <social-links
       v-else-if="component.name === 'social-links'"
       :user="user"
@@ -149,6 +136,7 @@ import Crash from "@/components/Core/CrashAlt.vue";
 import { Component } from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 import SocialLinks from "@/components/Users/UserV3/Widgets/SocialLinks.vue";
+import { User } from "@/models/user";
 
 export default defineComponent({
   name: "UserV3ComponentHandler",
@@ -163,15 +151,36 @@ export default defineComponent({
     MutualCollections,
     VErrorBoundary
   },
-  props: [
-    "component",
-    "user",
-    "username",
-    "gold",
-    "primary",
-    "components",
-    "editMode"
-  ],
+  props: {
+    component: {
+      type: Object as () => Component,
+      required: true
+    },
+    user: {
+      type: Object as () => User,
+      required: true
+    },
+    username: {
+      type: String,
+      required: false
+    },
+    gold: {
+      type: Boolean,
+      required: true
+    },
+    primary: {
+      type: String,
+      required: false
+    },
+    components: {
+      type: Array as () => Component[],
+      required: true
+    },
+    editMode: {
+      type: Boolean,
+      required: true
+    }
+  },
   emits: [
     "addToParent",
     "delete",
@@ -183,7 +192,7 @@ export default defineComponent({
   data() {
     return {
       skullCrash: Crash,
-      error: null
+      error: null as { error: Error } | null
     };
   },
   methods: {
@@ -195,7 +204,7 @@ export default defineComponent({
       this.$emit("addToParent", {
         name,
         id: this.$functions.uuid(),
-        props: this.components.find((c) => c.id === name)?.props
+        props: this.components.find((c) => c.id === name)?.props || {}
       });
     },
     willShow(component: Component, name: string) {

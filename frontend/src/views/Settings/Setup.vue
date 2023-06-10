@@ -217,6 +217,7 @@ export default defineComponent({
       const ext = type === "sharex" ? ".sxcu" : ".json";
       a.download =
         this.$user.user?.username + " - " + this.$app.site.name + ext;
+      //@ts-ignore
       a.href = window.URL.createObjectURL(blob);
       a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
       e.initEvent("click", true, false);

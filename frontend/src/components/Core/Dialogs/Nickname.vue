@@ -8,7 +8,7 @@
     <v-card-text>
       <v-text-field
         v-model="nickname"
-        autofocus
+        :autofocus="true"
         label="Nickname"
         outlined
         @keydown.enter="update"

@@ -19,13 +19,14 @@
     </v-card>
   </v-menu>
   <div v-if="$vuetify.display.mobile" class="mt-2">
-    <CommunicationsAvatar
+    <UserAvatar
       :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
       :status="true"
       :user="$chat.selectedChat?.recipient"
       class="ml-4"
       size="32"
       style="display: inline-block"
+      :dot-status="true"
     />
     <h4
       id="tpu-brand-logo"
@@ -73,6 +74,7 @@
     <v-card-text class="text-overline my-n3">MEMBERS</v-card-text>
     <v-list v-if="users" nav>
       <v-list-item
+        :key="association.id"
         v-for="association in users"
         :subtitle="association.legacyUser ? 'Legacy User' : undefined"
         @click="
@@ -102,6 +104,7 @@
             :light="true"
             :status="!!association.tpuUser"
             :user="association.user"
+            :dot-status="true"
           ></UserAvatar>
         </template>
       </v-list-item>
@@ -122,7 +125,7 @@
       <v-text-field
         v-model="$chat.search.query"
         append-icon="mdi-magnify"
-        autofocus
+        :autofocus="true"
         label="Search Query"
         @click:append="$chat.doSearch"
         @keyup.enter="$chat.doSearch"
@@ -173,9 +176,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Chat } from "@/models/chat";
-import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
-import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import { ChatAssociation } from "@/models/chatAssociation";
 import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
@@ -185,9 +185,6 @@ export default defineComponent({
   components: {
     Paginate,
     Message,
-    CommunicationsAvatar,
-    CreateChat,
-    MessageSkeleton,
     UserAvatar
   },
   data() {
@@ -203,7 +200,8 @@ export default defineComponent({
   },
   computed: {
     users() {
-      return this.$chat.selectedChat?.users?.sort(
+      if (!this.$chat.selectedChat) return [];
+      return [...this.$chat.selectedChat.users].sort(
         (a: ChatAssociation, b: ChatAssociation) => {
           const aFriend = this.$friends.friends.find(
             (f) => f.otherUser.id === a.tpuUser?.id

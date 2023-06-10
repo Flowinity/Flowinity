@@ -13,6 +13,7 @@
     "resolveJsonModule": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "strictPropertyInitialization": false,
     "lib": [
       "esnext",
       "dom",

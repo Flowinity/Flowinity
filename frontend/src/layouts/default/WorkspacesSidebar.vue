@@ -57,11 +57,11 @@ export default defineComponent({
   },
   computed: {
     drawer: {
-      get() {
+      get: function () {
         if (this.$app.rail && this.$chat.memberSidebar) return true;
         return this.$app.rail ? true : this.$app.workspaceDrawer;
       },
-      set(value) {
+      set: function (value: boolean) {
         if (this.$app.rail) return;
         this.$app.workspaceDrawer = value;
       }

@@ -95,6 +95,7 @@ export class SetupControllerV3 {
         })
       }
     } catch (e) {
+      //@ts-ignore
       throw new BadRequestError(e.message)
     }
   }

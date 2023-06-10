@@ -1,5 +1,5 @@
 <template>
-  <li :class="{ merge }" class="message" color="transparent">
+  <li :class="{ merge }" class="message">
     <p
       v-if="(!message.type && !merge) || (message.type === 'message' && !merge)"
       :class="{ 'text-red': message.error }"
@@ -68,18 +68,14 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import MessageActions from "@/components/Communications/MessageActions.vue";
 import Embed from "@/components/Communications/Embed.vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "MessagePerf",
   components: {
-    UserAvatar,
     Embed,
     MessageActions,
-    CommunicationsAvatar,
     CommunicationsInput
   },
   props: ["message", "editing", "shifting", "editingText", "merge"]

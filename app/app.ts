@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express"
+import express, { NextFunction } from "express"
 import {
   ExpressErrorMiddlewareInterface,
   HttpError,
@@ -17,9 +17,6 @@ import fs from "fs"
 
 // Import Libs
 import Errors from "@app/lib/errors"
-
-// Import Classes
-import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
 
 // Import Schemas
 import { ApiSchema } from "@app/schema"
@@ -264,6 +261,7 @@ export class Application {
       } catch (e) {
         res.status(500)
         res.render("frontend-compile", {
+          //@ts-ignore
           path: e?.path || "unknown"
         })
       }

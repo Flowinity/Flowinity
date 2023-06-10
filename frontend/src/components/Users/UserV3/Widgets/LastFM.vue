@@ -16,7 +16,11 @@
       >
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
-      <v-btn icon @click="page > 1 ? page-- : (page = 1)">
+      <v-btn
+        icon
+        @click="page > 1 ? page-- : (page = 1)"
+        :disabled="page === 1"
+      >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
       <v-btn icon @click="getLastFM">
@@ -24,7 +28,8 @@
       </v-btn>
       <v-btn
         icon
-        @click="page < parseInt(attributes.totalPages) ? page++ : page"
+        @click="page < pages ? page++ : page"
+        :disabled="page >= pages"
       >
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
@@ -77,7 +82,14 @@ export default defineComponent({
   props: ["user", "component"],
   data() {
     return {
-      tracks: [],
+      tracks: [] as {
+        artist: { "#text": string };
+        name: string;
+        url: string;
+        image: { "#text": string }[];
+        date: { uts: number };
+        "@attr": { nowplaying: string };
+      }[],
       attributes: {
         total: "0",
         totalPages: "0",
@@ -90,6 +102,9 @@ export default defineComponent({
   computed: {
     perPage() {
       return this.component?.props?.display || 7;
+    },
+    pages() {
+      return Math.ceil(this.tracks.length / this.perPage);
     },
     computedTracks() {
       return this.tracks.slice(
@@ -107,7 +122,7 @@ export default defineComponent({
           headers: {
             noToast: true
           }
-        }
+        } as any
       );
       if (!data.recenttracks) return;
       this.tracks = data.recenttracks.track;

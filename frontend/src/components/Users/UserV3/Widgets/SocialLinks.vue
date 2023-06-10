@@ -42,6 +42,7 @@
         :color="link.color"
         @click.middle.prevent.stop="$chat.processLink(link.url)"
         :href="link.url"
+        :key="link.url"
       >
         {{ link.name }}
         <v-icon
@@ -73,11 +74,22 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import { User } from "@/models/user";
+import { Component } from "@/types/userv3";
 
 export default defineComponent({
   name: "SocialLinks",
   components: { CoreDialog },
-  props: ["user", "component"],
+  props: {
+    user: {
+      type: Object as () => User,
+      required: true
+    },
+    component: {
+      type: Object as () => Component,
+      required: true
+    }
+  },
   emits: ["addLink"],
   data() {
     return {
@@ -120,7 +132,7 @@ export default defineComponent({
   watch: {
     "component.props.links": {
       immediate: true,
-      async handler() {
+      handler: async function () {
         await this.$nextTick();
         this.aTag();
       }

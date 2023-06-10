@@ -91,12 +91,10 @@
           class="my-1"
           color="red"
           icon="mdi-delete"
-          @click.shift.prevent.stop="this.$app.deleteItem(item)"
+          @click.shift.prevent.stop="$app.deleteItem(item)"
           @click.prevent.stop="
-            $event.shiftKey ? null : (this.$app.dialogs.deleteItem.item = item);
-            $event.shiftKey
-              ? null
-              : (this.$app.dialogs.deleteItem.value = true);
+            $event.shiftKey ? null : ($app.dialogs.deleteItem.item = item);
+            $event.shiftKey ? null : ($app.dialogs.deleteItem.value = true);
           "
         ></HoverChip>
         <HoverChip

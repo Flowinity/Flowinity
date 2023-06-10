@@ -9,7 +9,7 @@
         <v-form class="ml-4">
           <v-text-field
             v-model="actions.deleteCommunicationsMessage.messageId"
-            autofocus
+            :autofocus="true"
             label="ID of Communications Message"
             @keydown.enter="deleteCommunicationsMessage"
           />

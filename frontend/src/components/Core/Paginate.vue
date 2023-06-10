@@ -25,7 +25,7 @@
           v-model="customPage"
           :max="totalPages"
           :min="1"
-          autofocus
+          :autofocus="true"
           class="v-btn ml-3 mr-3"
           style="width: 50px; position: relative; top: -0.69em"
           type="number"
@@ -59,7 +59,7 @@
           v-model="customPage"
           :max="totalPages"
           :min="1"
-          autofocus
+          :autofocus="true"
           class="v-btn ml-3 mr-3"
           style="width: 50px; position: relative; top: -0.69em"
           type="number"

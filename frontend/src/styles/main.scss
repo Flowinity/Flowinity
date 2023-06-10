@@ -266,7 +266,7 @@ a {
   overflow-wrap: anywhere !important;
 }
 
-.gold .v-progress-linear {
+.v-theme--light .v-progress-linear {
   color: black;
 }
 
@@ -470,7 +470,7 @@ a {
   background: transparent !important;
 }
 
-.v-menu .v-overlay__content {
+.v-menu .v-overlay__content:not(.force-bg) {
   background: rgb(var(--v-theme-background)) !important;
 }
 
@@ -515,3 +515,4 @@ a {
     padding: 0 !important;
   }
 }
+

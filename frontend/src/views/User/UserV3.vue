@@ -175,53 +175,17 @@
               </v-card-text>
             </v-col>
           </v-row>
-          <template
-            v-if="
-              $experiments.experiments.USER_V3_EDITOR &&
-              user?.id === $user.user?.id &&
-              config.editMode
-            "
-          >
-            <v-card-subtitle class="mt-2">Dev UserV3 actions:</v-card-subtitle>
-            <v-btn v-for="comp in components" @click="addItemDebug(comp.id)">
-              Add {{ comp.name }}
-            </v-btn>
-            <v-btn color="red" @click="layout = defaultLayout">Reset</v-btn>
-            <v-btn
-              color="primary"
-              @click="$experiments.experiments.USER_V3 = false"
-            >
-              UserV2
-            </v-btn>
-            <v-alert
-              style="
-                border-bottom-left-radius: 0;
-                border-bottom-right-radius: 0;
-              "
-              type="warning"
-              variant="tonal"
-            >
-              Warning: do not CTRL + S unless you are sure the syntax is
-              correct.
-            </v-alert>
-            <vue-monaco-editor
-              v-model:value="layoutEditor"
-              language="json"
-              style="max-height: 300px"
-              theme="vs-dark"
-            ></vue-monaco-editor>
-          </template>
           <UserV3AddMenu
             v-if="config.editMode"
             :components="visibleComponents"
             @add="addItemDebug"
           />
           <VueDraggable
+            v-if="layout"
             v-model="layout.layout.columns[0].rows"
             :disabled="!config.editMode"
             handle=".drag-handle"
             item-key="id"
-            @update="setLayout"
           >
             <div
               v-for="component in layout.layout.columns[0].rows"
@@ -235,7 +199,11 @@
                 :primary="primary"
                 :user="user"
                 :username="username"
-                @addToParent="component.props.children.push($event)"
+                @addToParent="
+                  component.props
+                    ? component.props.children.push($event)
+                    : () => {}
+                "
                 @delete="deleteComponent($event || component)"
                 @moveDown="move($event || component, 1)"
                 @moveUp="move($event || component, -1)"
@@ -243,13 +211,17 @@
                   config.component = $event || component;
                   config.dialog = true;
                 "
-                @modifyProp="component.props[$event.prop] = $event.value"
+                @modifyProp="
+                  component.props
+                    ? (component.props[$event.prop] = $event.value)
+                    : () => {}
+                "
               ></UserV3ComponentHandler>
             </div>
           </VueDraggable>
         </v-col>
         <v-col
-          v-if="!username && layout.config?.showStatsSidebar !== false"
+          v-if="!username && layout?.config?.showStatsSidebar !== false"
           cols="12"
           md="3"
           sm="12"
@@ -333,8 +305,7 @@ import { DefaultThemes } from "@/plugins/vuetify";
 import UserV3Settings from "@/components/Users/UserV3/Dialogs/Settings.vue";
 import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/ComponentHandler.vue";
 import { VueDraggable } from "vue-draggable-plus";
-import VueMonacoEditor from "@guolao/vue-monaco-editor";
-import { Component } from "@/types/userv3";
+import { Component, Rows } from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 
 export default defineComponent({
@@ -349,8 +320,7 @@ export default defineComponent({
     UserBadges,
     UserAvatar,
     UserBanner,
-    VueDraggable,
-    VueMonacoEditor
+    VueDraggable
   },
   data() {
     return {
@@ -420,10 +390,9 @@ export default defineComponent({
         },
         version: 1
       } as any,
-      layout: null as ProfileLayout | null,
+      layout: null as ProfileLayout | undefined | null,
       user: undefined as User | undefined,
-      friendLoading: false,
-      editorTmp: ""
+      friendLoading: false
     };
   },
   computed: {
@@ -613,6 +582,7 @@ export default defineComponent({
       return this.components.filter((x) => x.visible !== false);
     },
     selectedComponent() {
+      if (!this.layout) return null;
       let component = this.layout.layout.columns[0].rows.find(
         (x) => x.id === this.config.component
       );
@@ -632,17 +602,9 @@ export default defineComponent({
       if (!component) return null;
       return component;
     },
-    layoutEditor: {
-      get() {
-        return JSON.stringify(this.layout, null, 2);
-      },
-      set(val) {
-        this.editorTmp = val;
-      }
-    },
     primaryColorResult() {
       return this.$user.primaryColorResult(
-        this.primaryColor || this.$user.theme.colors.primary,
+        this.$user.theme.colors.primary,
         this.gold
       );
     },
@@ -690,42 +652,48 @@ export default defineComponent({
     }
   },
   methods: {
-    findComponent(id: string) {
-      let component = this.layout.layout.columns[0].rows.find(
+    findComponent(
+      id: string
+    ): { component: Component | null; parent: Rows | Component | null } | null {
+      if (!this.layout) return null;
+
+      let component: Component | undefined;
+      let parent: Rows | Component | null | undefined;
+
+      const foundRow = this.layout.layout.columns[0].rows.find(
         (x) => x.id === id
       );
-      if (component)
-        return {
-          component,
-          parent: this.layout.layout.columns[0]
-        };
-      component = this.layout.layout.columns[0].rows
-        .find(
-          (x) =>
-            x?.props?.children &&
-            x?.props?.children?.find((y: Component) => y.id === id)
-        )
-        ?.props?.children?.find((y: Component) => y.id === id);
-      return {
-        component,
-        parent: this.layout.layout.columns[0].rows.find(
-          (x) =>
-            x?.props?.children &&
-            x?.props?.children?.find((y: Component) => y.id === id)
-        )
-      };
+      if (foundRow) {
+        component = foundRow;
+        parent = this.layout.layout.columns[0];
+      } else {
+        const foundChildRow = this.layout.layout.columns[0].rows.find((x) =>
+          x?.props?.children?.find((y: Component) => y.id === id)
+        );
+        if (foundChildRow && "children" in foundChildRow.props) {
+          component = foundChildRow.props.children?.find(
+            (y: Component) => y.id === id
+          );
+          parent = foundChildRow;
+        }
+      }
+
+      if (component && parent) {
+        return { component, parent };
+      }
+
+      return null;
     },
     updateProp(data: { key: string; value: any }) {
-      if (!this.selectedComponent) return;
+      if (!this.selectedComponent?.props) return;
       this.selectedComponent.props[data.key] = data.value;
     },
     deleteComponent(component: Component) {
       const comp = this.findComponent(component.id);
-      console.log(comp, component);
       if (!comp?.component) return;
-      if (comp.parent.rows) {
+      if ("rows" in comp.parent) {
         comp.parent.rows.splice(comp.parent.rows.indexOf(comp.component), 1);
-      } else {
+      } else if ("props" in comp.parent && "children" in comp.parent.props) {
         comp.parent.props.children.splice(
           comp.parent.props.children.indexOf(comp.component),
           1
@@ -734,26 +702,22 @@ export default defineComponent({
     },
     move(component: Component, count: number) {
       const comp = this.findComponent(component.id);
-      console.log(comp, component);
-      if (!comp?.component) return;
-      if (comp.parent.rows) {
+      if (!comp?.component || !comp.parent) return;
+      if ("rows" in comp.parent) {
         const index = comp.parent.rows.indexOf(comp.component);
         comp.parent.rows.splice(index, 1);
         comp.parent.rows.splice(index + count, 0, comp.component);
-      } else {
+      } else if ("props" in comp.parent && "children" in comp.parent.props) {
         const index = comp.parent.props.children.indexOf(comp.component);
         comp.parent.props.children.splice(index, 1);
         comp.parent.props.children.splice(index + count, 0, comp.component);
       }
     },
-    setLayout(layout: ProfileLayout) {
-      console.log(layout);
-    },
     addItemDebug(name: string) {
-      this.layout.layout.columns[0].rows.unshift({
+      this.layout?.layout.columns[0].rows.unshift({
         name,
         id: this.$functions.uuid(),
-        props: this.components.find((c) => c.id === name)?.props
+        props: this.components.find((c) => c.id === name)?.props || {}
       });
     },
     setTheme(reset: boolean = false) {
@@ -823,31 +787,18 @@ export default defineComponent({
       }
       const username = this.username || this.$route.params.username;
       const { data } = await this.axios.get(`/user/profile/${username}`);
-      this.user = data;
+      this.user = data as User;
       this.layout = this.user?.profileLayout || this.defaultLayout;
       if (!this.username) this.$app.title = this.user?.username + "'s Profile";
       this.setTheme();
       this.$app.componentLoading = false;
-    },
-    eventListener(e: KeyboardEvent) {
-      if (e.ctrlKey && e.key === "s") {
-        e.preventDefault();
-        console.log(this.editorTmp);
-        try {
-          this.layout = JSON.parse(this.editorTmp);
-        } catch {
-          this.$toast.error("Invalid JSON");
-        }
-      }
     }
   },
   mounted() {
-    document.addEventListener("keydown", (e) => this.eventListener(e));
     if (!this.username) this.$app.title = "User";
     this.getUser();
   },
   unmounted() {
-    document.removeEventListener("keydown", (e) => this.eventListener(e));
     this.setTheme(true);
   },
   watch: {
@@ -856,7 +807,7 @@ export default defineComponent({
       this.getUser();
     },
     layout: {
-      handler(val) {
+      handler: function (val) {
         if (this.user?.id !== this.$user.user?.id) return;
         this.$user.changes.profileLayout = val;
         this.$user.save();

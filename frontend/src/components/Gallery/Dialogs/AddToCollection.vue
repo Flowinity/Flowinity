@@ -9,7 +9,7 @@
       <v-autocomplete
         v-model="selectedCollection"
         :items="$collections.write"
-        autofocus
+        :autofocus="true"
         item-title="name"
         item-value="id"
         label="Select collection"

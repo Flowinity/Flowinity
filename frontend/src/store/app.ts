@@ -191,6 +191,10 @@ export const useAppStore = defineStore("app", {
         date: import.meta.env.TPU_BUILD_DATE || "N/A"
       },
       site: {
+        preTrustedDomains: [],
+        hostnames: [],
+        termsNoteId: "",
+        privacyNoteId: "",
         finishedSetup: true,
         alert: "",
         registrations: false,
@@ -231,7 +235,11 @@ export const useAppStore = defineStore("app", {
           workspaces: true,
           insights: true
         },
-        inviteAFriend: true
+        inviteAFriend: true,
+        connection: {
+          ip: "",
+          whitelist: false
+        }
       },
       weather: {
         loading: true,
@@ -356,7 +364,7 @@ export const useAppStore = defineStore("app", {
       }
     },
     populateQuickSwitcher() {
-      let value = [
+      const value = [
         {
           route: "/",
           name: "Home"

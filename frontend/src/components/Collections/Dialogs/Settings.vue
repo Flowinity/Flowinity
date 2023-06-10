@@ -10,7 +10,7 @@
     <v-card-text v-if="collection">
       <v-text-field
         v-model="collection.name"
-        autofocus
+        :autofocus="true"
         label="Name"
         required
       ></v-text-field>

@@ -12,6 +12,7 @@ import { useToast } from "vue-toastification";
 import { useMailStore } from "@/store/mail";
 import vuetify from "@/plugins/vuetify";
 import i18n from "@/plugins/i18n";
+import functions from "@/plugins/functions";
 
 export interface UserState {
   user: User | null;
@@ -59,6 +60,9 @@ export const useUserStore = defineStore("user", {
       }
     } as UserState),
   getters: {
+    contrast() {
+      return functions.contrast(vuetify.theme.current.value.colors.primary);
+    },
     theme() {
       return vuetify.theme.current.value;
     },
@@ -204,7 +208,7 @@ export const useUserStore = defineStore("user", {
         app.populateQuickSwitcher();
         if (
           this.user?.plan?.internalName === "GOLD" ||
-          !this.$app.site.officialInstance
+          !app.site.officialInstance
         ) {
           vuetify.theme.themes.value.dark.colors = {
             ...vuetify.theme.themes.value.dark.colors,
@@ -253,7 +257,7 @@ export const useUserStore = defineStore("user", {
           document.head.appendChild(link);
         }
       }
-      i18n.global.locale = this.user.language;
+      i18n.global.locale = this.user?.language || "en";
     },
     setChanges(user: User) {
       if (!user) return;
@@ -294,7 +298,7 @@ export const useUserStore = defineStore("user", {
         }
       });
       this.user = data;
-      this.setChanges(this.user);
+      this.setChanges(<User>this.user);
       if (this.user?.themeEngine?.defaults?.prev) {
         delete this.user.themeEngine.defaults?.prev;
       }
@@ -324,7 +328,10 @@ export const useUserStore = defineStore("user", {
     async save() {
       if (!this.user) return;
       this.applyCSS();
+      // prev is undocumented and contains previous Vuetify values causing a memory leak
+      //@ts-ignore
       if (this.changes.themeEngine?.prev) {
+        //@ts-ignore
         delete this.changes.themeEngine?.prev;
       }
       await axios.patch("/user", this.changes);
@@ -332,7 +339,7 @@ export const useUserStore = defineStore("user", {
         ...this.user,
         ...(this.changes as any)
       };
-      i18n.global.locale = this.user.language;
+      i18n.global.locale = this.user?.language || "en";
     }
   }
 });

@@ -31,7 +31,7 @@
         :maxlength="2000"
         :model-value="modelValue"
         auto-grow
-        autofocus
+        :autofocus="true"
         color="primary"
         density="compact"
         label="Type a message..."
