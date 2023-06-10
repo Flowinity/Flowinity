@@ -72,7 +72,7 @@ export default defineComponent({
   },
   methods: {
     changeTheme(theme: string) {
-      this.$vuetify.theme.name = theme;
+      this.$vuetify.theme.global.name = theme;
       localStorage.setItem("theme", theme);
     }
   }
