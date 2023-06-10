@@ -52,7 +52,7 @@ export class GalleryControllerV3 {
       user.excludedCollections
     )
   }
-  
+
   @Get("/starred")
   async getStarredGallery(
     @Auth("starred.view") user: User,
@@ -174,7 +174,7 @@ export class GalleryControllerV3 {
 
   @Get("/:attachment")
   async getUpload(
-    @Auth("uploads.view") user: User,
+    @Auth("uploads.view", false) user: User,
     @Param("attachment") attachment: string
   ) {
     return await this.galleryService.getAttachment(attachment, user.id)
