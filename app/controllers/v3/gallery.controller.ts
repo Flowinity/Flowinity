@@ -177,6 +177,6 @@ export class GalleryControllerV3 {
     @Auth("uploads.view", false) user: User,
     @Param("attachment") attachment: string
   ) {
-    return await this.galleryService.getAttachment(attachment, user.id)
+    return await this.galleryService.getAttachment(attachment, user?.id)
   }
 }
