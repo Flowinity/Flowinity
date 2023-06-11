@@ -1,6 +1,6 @@
 // Plugins
 import vue from "@vitejs/plugin-vue";
-import vuetify, { transformAssetUrls } from "@troplo/vite-plugin-vuetify";
+import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 
 // Utilities
 import { defineConfig } from "vite";

@@ -46,15 +46,25 @@
           target="_blank"
         >
           <template v-slot:prepend>
-            <v-img
-              :src="anime.node.main_picture.medium"
-              class="mr-3"
-              width="40"
-              :href="`https://myanimelist.net/anime/${anime.node.id}`"
+            <a
               target="_blank"
-            ></v-img>
+              :href="`https://myanimelist.net/anime/${anime.node.id}`"
+            >
+              <v-img
+                :src="anime.node.main_picture.medium"
+                class="mr-3"
+                width="40"
+              ></v-img>
+            </a>
           </template>
-          <v-list-item-title>{{ anime.node.title }}</v-list-item-title>
+          <v-list-item-title
+            tag="a"
+            style="color: unset"
+            target="_blank"
+            :href="`https://myanimelist.net/anime/${anime.node.id}`"
+          >
+            {{ anime.node.title }}
+          </v-list-item-title>
           <v-progress-linear
             :color="getStatusColor(anime.node.my_list_status.status)"
             :model-value="

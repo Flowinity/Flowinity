@@ -1773,33 +1773,10 @@
   dependencies:
     "@codexteam/icons" "^0.0.6"
 
-"@troplo/vite-plugin-vuetify@^1.0.3-troplo2":
-  version "1.0.3-troplo2"
-  resolved "https://npm.troplo.com/@troplo/vite-plugin-vuetify/-/vite-plugin-vuetify-1.0.3-troplo2.tgz#124327ec5731d1d971b7c44d8d0ca7d504aad36e"
-  integrity sha512-KP3PcRyV3sh3QoE8Pj9axn99KI/5ZckdU2q+b8eEDc0OMnnWmsCeWe+bMSPNqvtKbMlzUgRu71OtteQN4llW7Q==
-  dependencies:
-    "@troplo/vuetify-loader-shared" "^1.7.2-troplo1"
-    debug "^4.3.3"
-    upath "^2.0.1"
-
 "@troplo/vite-version@^1.0.3":
   version "1.0.3"
   resolved "https://npm.troplo.com/@troplo/vite-version/-/vite-version-1.0.3.tgz#354f1ef8d42d252d98c6d9813a9936d46bef343c"
   integrity sha512-/6Ocju/FR3MAdYbwPm5tjhGvDddPPOakcbP47EdMW3PZrFfDczZ7/z45c7OjbAUIReFXKv63Z5aBSVY5xmAQ4w==
-
-"@troplo/vuetify-loader-shared@^1.7.2-troplo1":
-  version "1.7.2-troplo1"
-  resolved "https://npm.troplo.com/@troplo/vuetify-loader-shared/-/vuetify-loader-shared-1.7.2-troplo1.tgz#233abf0679a248a11afbd53f2e0d3e53244cd500"
-  integrity sha512-fetNk8CpKJC6HH/4yVxc6p2qnyKwXH3BKdAN1HiBn/TmKbsePMRW+eFcaUMJmj5c95tnxnQ83Jxq6E3VmJTaUg==
-  dependencies:
-    "@troplo/vuetify" "^3.1.7"
-    find-cache-dir "^3.3.2"
-    upath "^2.0.1"
-
-"@troplo/vuetify@^3.1.11", "@troplo/vuetify@^3.1.7":
-  version "3.1.11"
-  resolved "https://npm.troplo.com/@troplo/vuetify/-/vuetify-3.1.11.tgz#0a3d657de088e75a167d3966ee7ffaa429972fbe"
-  integrity sha512-C/j2oYDBgMryzzYPLXUL5TdFcWlsmN0YSbvU3Dd9keW0YWc0XB8I72qZGFlrDEF4aL7cotAVA+ifmF0NhGFCFg==
 
 "@types/codeflask@^1.4.3":
   version "1.4.3"
@@ -2171,6 +2148,14 @@
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.3.4.tgz#06e83c5027f464eef861c329be81454bc8b70780"
   integrity sha512-7OjdcV8vQ74eiz1TZLzZP4JwqM5fA94K6yntPS5Z25r9HDuGNzaGdgvwKYq6S+MxwF0TFRwe50fIR/MYnakdkQ==
+
+"@vuetify/loader-shared@^1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@vuetify/loader-shared/-/loader-shared-1.7.1.tgz#0f63a3d41b6df29a2db1ff438aa1819b237c37a3"
+  integrity sha512-kLUvuAed6RCvkeeTNJzuy14pqnkur8lTuner7v7pNE/kVhPR97TuyXwBSBMR1cJeiLiOfu6SF5XlCYbXByEx1g==
+  dependencies:
+    find-cache-dir "^3.3.2"
+    upath "^2.0.1"
 
 "@vuetify/nightly@npm:@vuetify/nightly@4.0.0-dev-20230512.0":
   version "4.0.0-dev-20230512.0"
@@ -5332,6 +5317,15 @@ vite-plugin-pwa@^0.14.4:
     rollup "^3.7.2"
     workbox-build "^6.5.4"
     workbox-window "^6.5.4"
+
+vite-plugin-vuetify@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/vite-plugin-vuetify/-/vite-plugin-vuetify-1.0.2.tgz#d1777c63aa1b3a308756461b3d0299fd101ee8f4"
+  integrity sha512-MubIcKD33O8wtgQXlbEXE7ccTEpHZ8nPpe77y9Wy3my2MWw/PgehP9VqTp92BLqr0R1dSL970Lynvisx3UxBFw==
+  dependencies:
+    "@vuetify/loader-shared" "^1.7.1"
+    debug "^4.3.3"
+    upath "^2.0.1"
 
 vite@^4.2.0:
   version "4.3.9"
