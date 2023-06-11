@@ -15,7 +15,7 @@ const resolve = (file: string) => {
 
 // https://vitejs.dev/config/
 
-let config = {
+const config = {
   build: {
     rollupOptions: {
       output: {

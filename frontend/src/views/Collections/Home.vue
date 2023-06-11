@@ -18,7 +18,9 @@
       <v-col
         v-for="item in collections"
         :key="'item-' + item.id + '-' + (item.shared ? 'shared' : 'owned')"
-        md="3"
+        md="4"
+        xl="2"
+        cols="12"
       >
         <CollectionCard :item="item"></CollectionCard>
       </v-col>

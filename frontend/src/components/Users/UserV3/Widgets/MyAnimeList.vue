@@ -76,13 +76,14 @@
             height="20"
           >
             <strong
-              :class="{
-                'text-white':
-                  (anime.node.my_list_status.num_episodes_watched /
-                    anime.node.num_episodes) *
-                    100 <
-                  70
-              }"
+              :class="
+                (anime.node.my_list_status.num_episodes_watched /
+                  anime.node.num_episodes) *
+                  100 <=
+                60
+                  ? 'white-text'
+                  : 'text-black'
+              "
               style="font-size: 14px"
             >
               {{ anime.node.my_list_status.num_episodes_watched }}/{{

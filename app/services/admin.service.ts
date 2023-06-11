@@ -445,8 +445,8 @@ export class AdminService {
     })
   }
 
-  async addUsersToBadge(userIdeez: number[], badgeId: number) {
-    for (const userId of userIdeez) {
+  async addUsersToBadge(userIds: number[], badgeId: number) {
+    for (const userId of userIds) {
       await BadgeAssociation.create({
         userId,
         badgeId
