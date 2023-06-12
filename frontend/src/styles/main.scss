@@ -518,3 +518,6 @@ a {
   }
 }
 
+.chip-never-active .v-chip__overlay {
+  opacity: 0 !important;
+}

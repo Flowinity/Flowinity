@@ -167,7 +167,7 @@ export default defineComponent({
   height: v-bind(statusSize);
   border-radius: 50%;
   border: 2px solid rgb(var(--v-theme-background));
-  z-index: 3001;
+  z-index: 100;
 }
 
 .dot-status {

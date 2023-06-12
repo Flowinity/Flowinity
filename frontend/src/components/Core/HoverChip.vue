@@ -5,9 +5,8 @@
     :disabled="disabled"
     :href="href"
     :size="sizeComputed"
-    :text-color="textColor || contrast"
     :to="to"
-    class="mr-2"
+    class="mr-2 chip-never-active"
     style="cursor: pointer"
     @click="() => {}"
   >
@@ -19,7 +18,12 @@
     </v-icon>
     <v-img v-if="image" :height="18" :src="image" :width="18" />
     <span v-else class="unselectable">{{ shortText }}</span>
-    <v-tooltip :eager="false" activator="parent" location="top">
+    <v-tooltip
+      :eager="false"
+      activator="parent"
+      location="top"
+      style="z-index: 5001"
+    >
       {{ text }}
     </v-tooltip>
     <span v-if="old" class="ml-1">{{ text }}</span>
@@ -67,5 +71,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped></style>
