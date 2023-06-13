@@ -664,7 +664,6 @@ export default defineComponent({
       this.$refs.input?.$refs?.textarea?.focus();
     },
     shortcutHandler(e: any) {
-      // if ctrl + up
       if (e.ctrlKey && e.key === "ArrowUp" && e.shiftKey) {
         e.preventDefault();
         if (!this.editing) return this.editLastMessage();

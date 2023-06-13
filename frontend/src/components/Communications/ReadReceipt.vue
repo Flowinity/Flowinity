@@ -6,7 +6,7 @@
     :user="readReceipt.user"
     class="pointer ml-2"
     size="24"
-    style="align-self: flex-end"
+    style="align-self: flex-end; z-index: 1"
     @click.prevent="
       $chat.dialogs.user.username = readReceipt.user.username;
       $chat.dialogs.user.value = true;

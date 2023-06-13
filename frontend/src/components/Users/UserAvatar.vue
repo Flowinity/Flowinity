@@ -36,6 +36,7 @@
               :model-value="isHovering"
               class="align-center justify-center"
               :contained="true"
+              style="z-index: 20"
             >
               <v-icon large>mdi-upload</v-icon>
             </v-overlay>
@@ -161,8 +162,8 @@ export default defineComponent({
 <style scoped>
 .status {
   position: absolute;
-  right: 5px;
-  bottom: -170%;
+  right: 0.4rem;
+  bottom: -190%;
   width: v-bind(statusSize);
   height: v-bind(statusSize);
   border-radius: 50%;
@@ -171,7 +172,7 @@ export default defineComponent({
 }
 
 .dot-status {
-  bottom: -130%;
+  bottom: 0;
   right: 0;
 }
 

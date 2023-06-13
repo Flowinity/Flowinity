@@ -4,7 +4,7 @@
     :class="{ 'no-hide': avoid }"
     class="message-actions"
     elevation="8"
-    style="z-index: 6001"
+    style="z-index: 4001"
   >
     <v-btn :size="size" icon rounded="0" @click="$emit('emote')">
       <v-tooltip activator="parent" location="top">React</v-tooltip>

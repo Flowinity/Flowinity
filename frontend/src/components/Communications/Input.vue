@@ -42,6 +42,9 @@
         @keydown.enter.exact.prevent="$emit('sendMessage')"
         @click:append="$emit('sendMessage')"
         @keyup.esc="$emit('edit', null)"
+        @keydown.up="editing ? cursor($event, true) : null"
+        @keydown.down="editing ? cursor($event, false) : null"
+        :id="editing ? 'input-editing' : undefined"
       >
         <template v-slot:append>
           <v-icon class="pointer raw-icon" @click="$emit('sendMessage')">
@@ -137,7 +140,7 @@
           ></span>
         </template>
       </v-textarea>
-      <div>
+      <div v-if="!editing">
         <span
           class="float-start mt-n1 mb-n4 text-grey ml-10"
           style="font-size: 12px"
@@ -215,6 +218,20 @@ export default defineComponent({
     },
     onOpen(key: string) {
       this.items = key === "@" ? this.$chat.selectedChat?.users : [];
+    },
+    cursor(e, up: boolean) {
+      e.preventDefault();
+      e.stopPropagation();
+      //@ts-ignore
+      const textarea: HTMLInputElement =
+        document.getElementById("input-editing");
+      if (!textarea) return;
+      if (up) textarea.setSelectionRange(0, 0);
+      else
+        textarea.setSelectionRange(
+          textarea.value.length,
+          textarea.value.length
+        );
     }
   }
 });

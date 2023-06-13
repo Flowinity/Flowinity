@@ -82,6 +82,7 @@
               <UserAvatar
                 :id="'message-author-avatar-' + message.id"
                 :user="message.user"
+                class="mr-2"
               ></UserAvatar>
             </div>
             <div v-else class="mr-3 text-grey">

@@ -323,7 +323,7 @@ export default defineComponent({
       } else if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
         e.preventDefault();
         this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
-      } else if (e.ctrlKey && e.shiftKey && e.key === "x") {
+      } else if (e.ctrlKey && e.key === "q") {
         e.preventDefault();
         this.$app.dialogs.experiments = !this.$app.dialogs.experiments;
       }

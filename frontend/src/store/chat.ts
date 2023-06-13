@@ -346,6 +346,7 @@ export const useChatStore = defineStore("chat", {
       ) as Chat;
       appStore.title = this.chatName;
       const { data } = await axios.get(`/chats/${id}/messages`);
+      if (id !== this.selectedChatId) return;
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === id
       );
@@ -410,14 +411,15 @@ export const useChatStore = defineStore("chat", {
         if (chats) {
           this.chats = JSON.parse(chats);
         }
-      } catch {}
+      } catch {
+        //
+      }
       const { data } = await axios.get("/chats", {
         headers: {
           noToast: true
         }
       });
       this.chats = data;
-      const app = useAppStore();
       localStorage.setItem("chatStore", JSON.stringify(this.chats));
     },
     async init() {
@@ -426,13 +428,17 @@ export const useChatStore = defineStore("chat", {
         if (trustedDomains) {
           this.trustedDomains = JSON.parse(trustedDomains);
         }
-      } catch {}
+      } catch {
+        //
+      }
       try {
         const drafts = localStorage.getItem("draftStore");
         if (drafts) {
           this.drafts = JSON.parse(drafts);
         }
-      } catch {}
+      } catch {
+        //
+      }
       if (!window.tpuInternals) {
         const collection = useCollectionsStore();
         const router = useRouter() as Router;
