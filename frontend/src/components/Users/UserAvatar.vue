@@ -25,8 +25,8 @@
         ></v-img>
         <span v-else :class="textSize" class="unselectable">
           {{
-            chat?.name.charAt(0).toUpperCase() ??
-            user?.username.charAt(0).toUpperCase() ??
+            chat?.name?.charAt(0)?.toUpperCase() ??
+            user?.username?.charAt(0)?.toUpperCase() ??
             "?"
           }}
         </span>
