@@ -41,7 +41,7 @@
         style="background-color: rgb(1, 144, 234)"
       >
         <span class="text-h5">
-          {{ message.user.username.charAt(0).toUpperCase() }}
+          {{ message?.user?.username?.charAt(0)?.toUpperCase() }}
         </span>
         <span class="v-avatar__underlay"></span>
       </div>
