@@ -24,11 +24,18 @@
     </v-app-bar-nav-icon>
     <v-app-bar-nav-icon
       v-else-if="$vuetify.display.mobile"
-      aria-label="Go Home"
+      :aria-label="$app.quickActionItem.name"
       style="z-index: 1000"
-      @click="$router.push('/')"
+      @click="
+        $app.quickActionItem.path
+          ? $router.push($app.quickActionItem.path)
+          : handleClick($app.quickActionItem.id)
+      "
+      @contextmenu.prevent.stop="$app.dialogs.selectDefaultMobile = true"
     >
-      <v-icon>mdi-home</v-icon>
+      <v-icon>
+        {{ $app.quickActionItem.icon }}
+      </v-icon>
     </v-app-bar-nav-icon>
     <template v-if="!$chat.isCommunications || !$chat.selectedChat">
       <LogoEasterEgg></LogoEasterEgg>
@@ -304,6 +311,13 @@ export default defineComponent({
   methods: {
     handleClickDropdown(index: number) {
       this.dropdown[index].click.call(this);
+    },
+    handleClick(id: number) {
+      //@ts-ignore
+      const item = this.$app.sidebar.find((item) => item.id === id);
+      if (item?.click) {
+        item.click(this);
+      }
     }
   }
 });

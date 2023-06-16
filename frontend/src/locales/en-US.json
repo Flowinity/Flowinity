@@ -22,7 +22,8 @@
       "member": "Member of {names}",
       "experiments": "TPU Experimental Overrides (NEXT)",
       "close": "Close sidebar",
-      "communicationsShort": "Comms"
+      "communicationsShort": "Comms",
+      "quickAction": "Select a new quick action."
     }
   },
   "dashboard": {

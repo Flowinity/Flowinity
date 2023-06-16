@@ -1,5 +1,5 @@
 <template>
-  <span class="avatar-container">
+  <span style="position: relative">
     <v-hover v-slot="{ isHovering, props }">
       <UploadCropper
         v-model="dialog"
@@ -162,8 +162,8 @@ export default defineComponent({
 <style scoped>
 .status {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  right: 0.4rem;
+  bottom: -190%;
   width: v-bind(statusSize);
   height: v-bind(statusSize);
   border-radius: 50%;
@@ -179,10 +179,5 @@ export default defineComponent({
 .outline {
   border: 2px solid #151515;
   border-radius: 50%;
-}
-
-.avatar-container {
-  position: relative;
-  display: inline-block; /* or any other appropriate display value */
 }
 </style>

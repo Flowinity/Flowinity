@@ -471,7 +471,7 @@ export class CacheService {
       cron.schedule("0 4 * * *", () => {
         this.generateCollectionCache()
       })
-
+      this.generateAutoCollectCache().then(() => {})
       this.refreshState().then(() => {})
       this.generateShareLinkCache().then(() => {})
       this.generateUserStatsCache().then(() => {})

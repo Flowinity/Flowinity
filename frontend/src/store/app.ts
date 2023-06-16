@@ -13,8 +13,10 @@ import vuetify from "@/plugins/vuetify";
 import { useExperimentsStore } from "@/store/experiments";
 import { i18n } from "@/plugins/i18n";
 import { useRoute } from "vue-router";
+import { SidebarItem } from "@/types/sidebar";
 
 export interface AppState {
+  quickAction: number;
   railMode: "tpu" | "workspaces" | "communications";
   fluidGradient: boolean;
   cordova: boolean;
@@ -107,6 +109,7 @@ export interface AppState {
       item: Upload | undefined;
       emit: boolean;
     };
+    selectDefaultMobile: boolean;
     inviteAFriend: boolean;
     feedback: boolean;
     experiments: boolean;
@@ -164,6 +167,7 @@ export interface AppState {
 export const useAppStore = defineStore("app", {
   state: () =>
     ({
+      quickAction: parseInt(localStorage.getItem("quickAction") || "1"),
       railMode: "tpu",
       batterySave: false,
       themeProviderDefaults: {
@@ -262,6 +266,7 @@ export const useAppStore = defineStore("app", {
           item: undefined,
           emit: false
         },
+        selectDefaultMobile: false,
         feedback: false,
         inviteAFriend: false,
         experiments: false,
@@ -330,7 +335,12 @@ export const useAppStore = defineStore("app", {
       ]
     } as AppState),
   getters: {
-    sidebar(state: AppState) {
+    quickActionItem(state: AppState): SidebarItem {
+      const item = this.sidebar.find((item) => item.id === state.quickAction);
+      if (!item) return this.sidebar.find((item) => item.id === 1);
+      return item;
+    },
+    sidebar(state: AppState): SidebarItem[] {
       const user = useUserStore();
       const chat = useChatStore();
       const route = useRoute();
@@ -446,19 +456,7 @@ export const useAppStore = defineStore("app", {
           scope: "admin.view",
           experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
         }
-      ] as {
-        id: number;
-        externalPath: string;
-        path: string;
-        name: string;
-        icon: string;
-        new?: boolean;
-        scope?: string | string[];
-        warning?: boolean | string | number;
-        experimentsRequired?: string[];
-        click?: (instance: any) => void;
-        exact?: boolean;
-      }[];
+      ] as SidebarItem[];
 
       // Server feature options
       if (
@@ -496,9 +494,7 @@ export const useAppStore = defineStore("app", {
         items.push({
           id: 11,
           externalPath: "",
-          name: vuetify.display.mobile
-            ? i18n.t("core.sidebar.communicationsShort")
-            : i18n.t("core.sidebar.communications"),
+          name: i18n.t("core.sidebar.communications"),
           path: chat.selectedChatId
             ? `/communications/${chat.selectedChatId}`
             : "/communications",

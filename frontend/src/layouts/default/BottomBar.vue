@@ -1,7 +1,8 @@
 <template>
   <v-bottom-navigation
     :grow="true"
-    style="background: rgb(var(--v-theme-dark))"
+    style="background: rgb(var(--v-theme-dark)); z-index: 5000"
+    height="69"
   >
     <v-btn
       :to="item.path"
@@ -24,11 +25,9 @@
       <v-icon v-else>
         {{ item.icon }}
       </v-icon>
-      {{ item.name }}
     </v-btn>
     <v-btn @click="drawer = !drawer" :active="drawer">
       <v-icon>mdi-dots-horizontal</v-icon>
-      More
     </v-btn>
   </v-bottom-navigation>
   <v-navigation-drawer
@@ -37,7 +36,14 @@
     :temporary="true"
     color="dark"
     :touchless="true"
+    style="height: 55vh"
   >
+    <p
+      class="text-center mt-2 v-card-subtitle"
+      v-if="$app.dialogs.selectDefaultMobile"
+    >
+      {{ $t("core.sidebar.quickAction") }}
+    </p>
     <v-list>
       <v-list-item
         v-for="item in $app.sidebar"
@@ -46,7 +52,11 @@
         :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
         :to="item.path"
         :exact="item.exact"
-        @click="handleClick(item.id)"
+        @click="
+          $app.dialogs.selectDefaultMobile
+            ? selectDefault(item.id, $event)
+            : handleClick(item.id)
+        "
       >
         {{ item.name }}
         <template v-slot:append>
@@ -54,7 +64,7 @@
             icon
             size="small"
             @click.prevent.stop="pin(item.id)"
-            :disabled="displayed.length >= 4 && !displayed.includes(item)"
+            :disabled="displayed.length >= visible && !displayed.includes(item)"
           >
             <v-icon>
               {{ displayed.includes(item) ? "mdi-pin-off" : "mdi-pin" }}
@@ -82,11 +92,13 @@ export default defineComponent({
   data() {
     return {
       drawer: false,
-      bind: false
+      bind: false,
+      visible: 4
     };
   },
   computed: {
     displayed() {
+      // bind to force reactivity
       [this.bind];
       try {
         const pins = localStorage.getItem("sidebarPins");
@@ -94,12 +106,12 @@ export default defineComponent({
           const parsed = JSON.parse(pins);
           return this.$app.sidebar
             .filter((item) => parsed.includes(item.id))
-            .slice(0, 4);
+            .slice(0, this.visible);
         } else {
-          return this.$app.sidebar.slice(0, 4);
+          return this.$app.sidebar.slice(0, this.visible);
         }
       } catch {
-        return this.$app.sidebar.slice(0, 4);
+        return this.$app.sidebar.slice(0, this.visible);
       }
     }
   },
@@ -116,7 +128,7 @@ export default defineComponent({
           }
           localStorage.setItem(
             "sidebarPins",
-            JSON.stringify(parsed.slice(0, 4))
+            JSON.stringify(parsed.slice(0, this.visible))
           );
           this.bind = true;
           this.bind = false;
@@ -133,6 +145,15 @@ export default defineComponent({
       if (item?.click) {
         item.click(this);
       }
+    },
+    selectDefault(id: number, event: MouseEvent | KeyboardEvent) {
+      event.preventDefault();
+      localStorage.setItem("quickAction", JSON.stringify(id));
+      this.$app.quickAction = id;
+      this.drawer = false;
+      this.$nextTick(() => {
+        this.drawer = false;
+      });
     }
   },
   mounted() {
@@ -143,6 +164,16 @@ export default defineComponent({
       );
       this.bind = true;
       this.bind = false;
+    }
+  },
+  watch: {
+    "$app.dialogs.selectDefaultMobile"() {
+      this.drawer = true;
+    },
+    drawer(val) {
+      if (this.$app.dialogs.selectDefaultMobile && !val) {
+        this.$app.dialogs.selectDefaultMobile = false;
+      }
     }
   }
 });
