@@ -76,7 +76,11 @@ export class GalleryService {
       }
     })
     if (upload) {
-      await fs.unlinkSync(path.join(config.storage, upload.attachment))
+      try {
+        await fs.unlinkSync(global.storageRoot + upload.attachment)
+      } catch (e) {
+        console.log(e)
+      }
       await User.update(
         {
           quota: sequelize.literal("quota -" + upload.fileSize)
