@@ -3,7 +3,6 @@
     <v-toolbar>
       <v-toolbar-title>
         Last.fm
-        <v-chip size="small">BETA</v-chip>
         <template v-if="!loading">
           &bullet; {{ parseInt(attributes.total).toLocaleString() }} scrobbles
         </template>

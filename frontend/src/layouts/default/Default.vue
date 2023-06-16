@@ -19,8 +19,12 @@
     v-if="$user.user"
     @drop="dragDropHandler"
     @dragover="dragOver"
-    @touchstart="touchStart"
-    @touchend="touchEnd"
+    @touchstart="
+      $experiments.experiments.LEGACY_MOBILE_NAV ? touchStart($event) : null
+    "
+    @touchend="
+      $experiments.experiments.LEGACY_MOBILE_NAV ? touchEnd($event) : null
+    "
     class="bg"
   >
     <NicknameDialog v-model="$app.dialogs.nickname.value"></NicknameDialog>
@@ -60,9 +64,17 @@
     <sidebar
       v-if="
         ($app.railMode === 'tpu' || (!$app.rail && !$vuetify.display.mobile)) &&
-        $app.site.finishedSetup
+        $app.site.finishedSetup &&
+        (!$vuetify.display.mobile || $experiments.experiments.LEGACY_MOBILE_NAV)
       "
     ></sidebar>
+    <bottom-bar
+      v-if="
+        $app.site.finishedSetup &&
+        $vuetify.display.mobile &&
+        !$experiments.experiments.LEGACY_MOBILE_NAV
+      "
+    />
     <colubrina-sidebar
       v-if="
         ($app.railMode === 'communications' &&
@@ -153,6 +165,7 @@ import Gold from "@/components/Dashboard/Dialogs/Gold.vue";
 import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
+import BottomBar from "@/layouts/default/BottomBar.vue";
 </script>
 
 <script lang="ts">

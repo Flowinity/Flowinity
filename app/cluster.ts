@@ -25,10 +25,15 @@ function setEnvVariables() {
     global.config = new DefaultTpuConfig().config
   }
 
+  global.storageRoot = global.config.storage.startsWith("/")
+    ? global.config.storage + "/"
+    : path.join(global.appRoot, global.config.storage) + "/"
+
   process.env.APP_ROOT = global.appRoot
   process.env.RAW_APP_ROOT = global.rawAppRoot
   process.env.CONFIG = JSON.stringify(global.config)
   process.env.IS_DOCKER = isRunningInDocker() ? "true" : "false"
+  process.env.STORAGE_ROOT = global.storageRoot
   if (global.config.finishedSetup) {
     try {
       // try using system sequelize-cli first, only thing that works in Docker too

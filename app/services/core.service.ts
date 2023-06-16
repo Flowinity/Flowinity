@@ -316,6 +316,7 @@ export class CoreService {
 
   getExperiments(dev: boolean = false, gold: boolean = false): object {
     const experiments = {
+      LEGACY_MOBILE_NAV: false,
       OFFICIAL_INSTANCE: config?.officialInstance || false,
       API_FALLBACK_ON_ERROR: false,
       API_VERSION: 3,
@@ -356,6 +357,10 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        LEGACY_MOBILE_NAV: {
+          description: "Legacy mobile navigation.",
+          createdAt: "2023-06-16T00:00:00.000Z"
+        },
         OFFICIAL_INSTANCE: {
           description: "Official PrivateUploader instance.",
           createdAt: "2023-05-15T00:00:00.000Z"

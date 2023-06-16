@@ -18,6 +18,7 @@ import { Domain } from "@app/models/domain.model"
 
 // Import Services
 import { CacheService } from "@app/services/cache.service"
+import path from "path"
 
 async function generateAPIKey(
   type: "session" | "api" | "email"
@@ -370,7 +371,7 @@ async function processFile(
 
 async function postUpload(upload: Upload): Promise<void> {
   await tesseract
-    .recognize(config.storage + "/" + upload.attachment, {
+    .recognize(global.storageRoot + upload.attachment, {
       lang: "eng"
     })
     .then(async (text: string): Promise<void> => {

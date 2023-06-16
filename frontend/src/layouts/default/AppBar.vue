@@ -12,12 +12,20 @@
     style="z-index: 1001"
   >
     <v-app-bar-nav-icon
-      v-if="$vuetify.display.mobile || !$app.mainDrawer"
+      v-if="!$app.mainDrawer && !$vuetify.display.mobile"
       aria-label="Toggle Main Sidebar"
       style="z-index: 1000"
       @click.stop="$app.toggleMain()"
     >
       <v-icon>mdi-menu</v-icon>
+    </v-app-bar-nav-icon>
+    <v-app-bar-nav-icon
+      v-else
+      aria-label="Go Home"
+      style="z-index: 1000"
+      @click="$router.push('/')"
+    >
+      <v-icon>mdi-home</v-icon>
     </v-app-bar-nav-icon>
     <template v-if="!$chat.isCommunications || !$chat.selectedChat">
       <LogoEasterEgg></LogoEasterEgg>

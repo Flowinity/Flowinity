@@ -9,9 +9,10 @@
       v-if="$vuetify.display.mobile"
       v-model="$chat.dialogs.message.value"
       color="card"
-      floating
+      :floating="true"
       location="bottom"
-      temporary
+      :temporary="true"
+      :touchless="true"
     >
       <MessageActionsList
         v-if="$chat.dialogs.message.message"

@@ -804,6 +804,7 @@ export default defineComponent({
   watch: {
     "$route.params.username"(val) {
       if (!val) return;
+      this.config.editMode = false;
       this.getUser();
     },
     layout: {

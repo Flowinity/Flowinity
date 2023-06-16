@@ -11,6 +11,8 @@ import { useCollectionsStore } from "@/store/collections";
 import { useWorkspacesStore } from "@/store/workspaces";
 import vuetify from "@/plugins/vuetify";
 import { useExperimentsStore } from "@/store/experiments";
+import { i18n } from "@/plugins/i18n";
+import { useRoute } from "vue-router";
 
 export interface AppState {
   railMode: "tpu" | "workspaces" | "communications";
@@ -328,6 +330,245 @@ export const useAppStore = defineStore("app", {
       ]
     } as AppState),
   getters: {
+    sidebar(state: AppState) {
+      const user = useUserStore();
+      const chat = useChatStore();
+      const route = useRoute();
+      const experiments = useExperimentsStore();
+
+      if (!user.user) return [];
+      const items = [
+        {
+          id: 1,
+          externalPath: "",
+          path: "/",
+          name: i18n.t("core.sidebar.home"),
+          icon: "mdi-home",
+          scope: "user.view",
+          exact: true
+        },
+        {
+          id: 2,
+          externalPath: "",
+          path: "/settings",
+          name: i18n.t("core.sidebar.settings"),
+          icon: "mdi-account-cog",
+          scope: "user.modify"
+        },
+        {
+          id: 6,
+          externalPath: "",
+          path: "/gallery",
+          exact: false,
+          name: i18n.t("core.sidebar.gallery"),
+          icon: "mdi-image-multiple",
+          scope: "gallery.view"
+        },
+        {
+          id: 12,
+          externalPath: "",
+          name: i18n.t("core.sidebar.mail"),
+          path: "/mail",
+          icon: "mdi-email",
+          scope: "mail.view",
+          experimentsRequired: ["WEBMAIL", "OFFICIAL_INSTANCE"]
+        },
+        {
+          id: 14,
+          externalPath: "",
+          name: i18n.t("core.sidebar.starred"),
+          path: "/starred",
+          icon: "mdi-star",
+          scope: ["gallery.view", "starred.view"],
+          new: false
+        },
+        {
+          id: 20,
+          externalPath: "",
+          path: "/users",
+          name: i18n.t("core.sidebar.users"),
+          icon: "mdi-account-group",
+          scope: "user.view"
+        },
+        {
+          id: 29,
+          click() {
+            state.dialogs.feedback = true;
+          },
+          externalPath: "",
+          path: "",
+          name: i18n.t("core.sidebar.feedback"),
+          icon: "mdi-comment-question-outline",
+          scope: "*"
+        },
+        {
+          id: 30,
+          externalPath: "",
+          path: "/changelog",
+          name: i18n.t("core.sidebar.changelog"),
+          icon: "mdi-history"
+        },
+        {
+          id: 33,
+          click() {
+            state.dialogs.gold.value = true;
+          },
+          externalPath: "",
+          path: "",
+          name: user.gold
+            ? i18n.t("core.sidebar.newWithGold")
+            : i18n.t("core.sidebar.upgradeToGold"),
+          icon: "mdi-plus",
+          new: false,
+          scope: "user.view",
+          experimentsRequired: ["EARLY_ACCESS", "OFFICIAL_INSTANCE"]
+        },
+        {
+          id: 38,
+          click() {
+            state.dialogs.migrateWizard = true;
+          },
+          externalPath: "",
+          path: "",
+          name: i18n.t("core.sidebar.colubrinaMigrate"),
+          icon: "mdi-chart-gantt",
+          new: false,
+          scope: "user.view",
+          experimentsRequired: ["PROJECT_MERGE", "OFFICIAL_INSTANCE"]
+        },
+        {
+          id: 37,
+          externalPath: "",
+          path: "/admin",
+          name: i18n.t("core.sidebar.admin"),
+          icon: "mdi-gavel",
+          new: false,
+          scope: "admin.view",
+          experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
+        }
+      ] as {
+        id: number;
+        externalPath: string;
+        path: string;
+        name: string;
+        icon: string;
+        new?: boolean;
+        scope?: string | string[];
+        warning?: boolean | string | number;
+        experimentsRequired?: string[];
+        click?: (instance: any) => void;
+        exact?: boolean;
+      }[];
+
+      // Server feature options
+      if (
+        state.site.inviteAFriend ||
+        user.user?.moderator ||
+        user.user?.administrator
+      ) {
+        items.push({
+          id: 32,
+          click() {
+            state.dialogs.inviteAFriend = true;
+          },
+          externalPath: "",
+          path: "",
+          name: i18n.t("core.sidebar.inviteAFriend"),
+          icon: "mdi-gift-outline",
+          new: true,
+          scope: "*"
+        });
+      }
+
+      if (state.site.features?.insights) {
+        items.push({
+          id: 13,
+          externalPath: "",
+          name: i18n.t("core.sidebar.insights"),
+          path: "/insights",
+          scope: "*",
+          icon: "mdi-chart-timeline-variant-shimmer",
+          new: true
+        });
+      }
+
+      if (state.site.features?.communications) {
+        items.push({
+          id: 11,
+          externalPath: "",
+          name: vuetify.display.mobile
+            ? i18n.t("core.sidebar.communicationsShort")
+            : i18n.t("core.sidebar.communications"),
+          path: chat.selectedChatId
+            ? `/communications/${chat.selectedChatId}`
+            : "/communications",
+          icon: "mdi-message-processing",
+          warning: functions.checkScope("chats.view", user.user?.scopes)
+            ? chat.totalUnread || "BETA"
+            : false,
+          scope: "chats.view",
+          experimentsRequired: ["COMMUNICATIONS"]
+        });
+      }
+
+      if (state.site.features?.workspaces) {
+        items.push({
+          id: 10,
+          externalPath: "",
+          name: i18n.t("core.sidebar.workspaces"),
+          path: route.name?.toString()?.includes("Workspace")
+            ? "/workspaces"
+            : state.lastNote
+            ? `/workspaces/notes/${state.lastNote}`
+            : "/workspaces",
+          icon: "mdi-folder-account",
+          new: true,
+          scope: "workspaces.view",
+          experimentsRequired: ["INTERACTIVE_NOTES"]
+        });
+      }
+
+      if (state.site.features?.collections) {
+        items.push({
+          id: 7,
+          externalPath: "",
+          name: i18n.t("core.sidebar.collections"),
+          path: "/collections",
+          icon: "mdi-folder-multiple-image",
+          new: false,
+          scope: "collections.view"
+        });
+      }
+
+      if (state.site.features?.autoCollects) {
+        items.push({
+          id: 9,
+          externalPath: "",
+          name: i18n.t("core.sidebar.autoCollects"),
+          path: "/autoCollect",
+          icon: "mdi-image-auto-adjust",
+          new: false,
+          scope: "collections.modify",
+          warning:
+            user.user.pendingAutoCollects > 0
+              ? user.user.pendingAutoCollects
+              : false
+        });
+      }
+
+      items.sort((a, b) => a.id - b.id);
+
+      return items.filter((item) => {
+        if (item.experimentsRequired) {
+          for (const experiment of item.experimentsRequired) {
+            if (!experiments.experiments[experiment]) {
+              return false;
+            }
+          }
+        }
+        return true;
+      });
+    },
     rail() {
       const experiments = useExperimentsStore();
       return (
@@ -441,7 +682,9 @@ export const useAppStore = defineStore("app", {
         });
         this.weather.data = data;
         this.weather.loading = false;
-      } catch {}
+      } catch {
+        //
+      }
     },
     async init() {
       this.loading = true;

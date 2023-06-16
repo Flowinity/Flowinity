@@ -18,7 +18,8 @@ declare global {
     queue: typeof import("@app/lib/queue").default,
     domain: string | undefined,
     authMock: any,
-    mainWorker: boolean
+    mainWorker: boolean,
+    storageRoot: string
 }
 
 export {}

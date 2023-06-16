@@ -22,6 +22,8 @@ async function initTPU() {
   } catch {
     global.config = new DefaultTpuConfig().config
   }
+
+  global.storageRoot = <string>process.env.STORAGE_ROOT
   console.log("Entrypoint initialized")
   Container.get(Server).init()
 

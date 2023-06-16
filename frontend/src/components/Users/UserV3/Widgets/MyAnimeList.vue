@@ -2,8 +2,12 @@
   <v-card class="mx-2 my-5">
     <v-toolbar>
       <v-toolbar-title>
-        MyAnimeList
-        <v-chip size="small">BETA</v-chip>
+        <span>
+          MAL
+          <v-tooltip :eager="false" location="top" activator="parent">
+            MyAnimeList
+          </v-tooltip>
+        </span>
         <template v-if="!loading && malUser">
           &bullet;
           {{ malUser.anime_statistics.num_episodes.toLocaleString() }}
@@ -184,6 +188,52 @@ export default defineComponent({
       malUser: null as MalUser | null,
       loading: true,
       partialLoading: false,
+      ratings: [
+        {
+          text: "Masterpiece",
+          value: 10
+        },
+        {
+          text: "Great",
+          value: 9
+        },
+        {
+          text: "Very Good",
+          value: 8
+        },
+        {
+          text: "Good",
+          value: 7
+        },
+        {
+          text: "Fine",
+          value: 6
+        },
+        {
+          text: "Average",
+          value: 5
+        },
+        {
+          text: "Bad",
+          value: 4
+        },
+        {
+          text: "Very Bad",
+          value: 3
+        },
+        {
+          text: "Horrible",
+          value: 2
+        },
+        {
+          text: "Appalling",
+          value: 1
+        },
+        {
+          text: "Not rated",
+          value: 0
+        }
+      ],
       statuses: [
         {
           text: "Watching",

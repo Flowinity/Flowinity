@@ -1,7 +1,7 @@
 {
   "core": {
     "sidebar": {
-      "home": "Dashboard",
+      "home": "Home",
       "settings": "Settings",
       "gallery": "Gallery",
       "collections": "Collections",
@@ -21,7 +21,8 @@
       "admin": "Admin Panel",
       "member": "Member of {names}",
       "experiments": "TPU Experimental Overrides (NEXT)",
-      "close": "Close sidebar"
+      "close": "Close sidebar",
+      "communicationsShort": "Comms"
     }
   },
   "dashboard": {
