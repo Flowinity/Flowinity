@@ -23,7 +23,7 @@
       <v-icon>mdi-menu</v-icon>
     </v-app-bar-nav-icon>
     <v-app-bar-nav-icon
-      v-else
+      v-else-if="$vuetify.display.mobile"
       aria-label="Go Home"
       style="z-index: 1000"
       @click="$router.push('/')"
