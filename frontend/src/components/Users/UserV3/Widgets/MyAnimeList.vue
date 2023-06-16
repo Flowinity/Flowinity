@@ -52,6 +52,7 @@
           <template v-slot:prepend>
             <a
               target="_blank"
+              rel="noopener"
               :href="`https://myanimelist.net/anime/${anime.node.id}`"
             >
               <v-img
@@ -65,6 +66,7 @@
             tag="a"
             style="color: unset"
             target="_blank"
+            rel="noopener"
             :href="`https://myanimelist.net/anime/${anime.node.id}`"
           >
             {{ anime.node.title }}

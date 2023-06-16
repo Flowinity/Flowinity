@@ -143,7 +143,7 @@ export class ProviderControllerV3 {
       authUser.id
     )
 
-    if (user.id !== user.id) throw Errors.NO_PERMISSION
+    if (authUser.id !== user.id) throw Errors.NO_PERMISSION
 
     return await this.malService.updateAnime(
       user.id,

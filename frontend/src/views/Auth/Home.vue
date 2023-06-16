@@ -43,7 +43,7 @@
             </v-btn>
           </template>
         </v-text-field>
-        <p class="mb-n2" v-if="!$app.site.officialInstance">This is a <a class="text-gradient" target="_blank" href="https://github.com/Troplo/PrivateUploader">TPU</a> instance.</p>
+        <p class="mb-n2" v-if="!$app.site.officialInstance">This is a <a rel="noopener" class="text-gradient" target="_blank" href="https://github.com/Troplo/PrivateUploader">TPU</a> instance.</p>
       </div>
       <!-- learn more down arrow positioned at the bottom of the hero -->
       <div class="learn-more">
