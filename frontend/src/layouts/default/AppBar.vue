@@ -12,7 +12,10 @@
     style="z-index: 1001"
   >
     <v-app-bar-nav-icon
-      v-if="!$app.mainDrawer && !$vuetify.display.mobile"
+      v-if="
+        (!$app.mainDrawer && !$vuetify.display.mobile) ||
+        ($vuetify.display.mobile && $chat.isCommunications)
+      "
       aria-label="Toggle Main Sidebar"
       style="z-index: 1000"
       @click.stop="$app.toggleMain()"

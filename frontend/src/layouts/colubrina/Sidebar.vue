@@ -7,19 +7,6 @@
     color="dark"
     :floating="true"
   >
-    <v-card-text
-      v-if="$vuetify.display.mobile"
-      class="unselectable"
-      style="
-        color: rgb(var(--v-theme-primary));
-        cursor: pointer;
-        font-size: 12px;
-      "
-      @click="$app.railMode = 'tpu'"
-    >
-      <v-icon>mdi-arrow-left</v-icon>
-      Back to TPU
-    </v-card-text>
     <ColubrinaSidebarList></ColubrinaSidebarList>
     <template v-slot:append>
       <StatusSwitcher></StatusSwitcher>
