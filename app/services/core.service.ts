@@ -19,6 +19,7 @@ import { Message } from "@app/models/message.model"
 import { Chat } from "@app/models/chat.model"
 import { ReportValidate } from "@app/validators/report"
 import { Report } from "@app/models/report.model"
+import { WeatherResponse } from "@app/interfaces/weather"
 
 let city: Reader<CityResponse> | undefined
 
@@ -72,10 +73,10 @@ export class CoreService {
     }
   }
 
-  async getWeather(ip: string): Promise<object> {
+  async getWeather(ip: string): Promise<WeatherResponse> {
     try {
       const cityResponse = await city?.get(
-        config.release === "dev" ? "124.169.202.0" : ip
+        config.release === "dev" ? "124.169.200.0" : ip
       )
       const location = cityResponse?.city?.names?.en
       if (!location) {

@@ -11,4 +11,8 @@ export interface WeatherResponse {
   visibility?: number
   error?: boolean
   cached?: boolean
+  errors?: {
+    status: number
+    message: string
+  }[]
 }

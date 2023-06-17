@@ -6,6 +6,7 @@
         contain
         height="220"
         v-bind="props"
+        v-if="show || item.fileSize <= 12582912"
       >
         <template v-slot:placeholder>
           <v-row align="center" class="fill-height ma-0" justify="center">
@@ -20,12 +21,22 @@
             v-if="isHovering"
             :model-value="true"
             class="align-center justify-center"
-            contained
+            :contained="true"
           >
             <v-icon color="white" large size="40">mdi-open-in-new</v-icon>
           </v-overlay>
         </a>
       </v-img>
+      <v-card
+        v-else
+        class="d-flex no-border align-center justify-center"
+        elevation="0"
+        height="220"
+      >
+        <v-btn @click="show = true">
+          {{ $t("gallery.displayLargeFile") }}
+        </v-btn>
+      </v-card>
     </v-hover>
     <video
       v-else-if="item.type === 'video'"
@@ -50,15 +61,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
+import { Upload } from "@/models/upload";
 
 export default defineComponent({
   name: "GalleryPreview",
   props: {
     item: {
-      type: Object,
+      type: Object as () => Upload,
       required: true
     }
+  },
+  data() {
+    return {
+      show: false
+    };
   }
 });
 </script>

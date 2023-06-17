@@ -84,7 +84,8 @@
         "text": "Pin to collection",
         "aria": "Pin to collection"
       }
-    }
+    },
+    "displayLargeFile": "Preview large file"
   },
   "settings": {
     "tabs": {
