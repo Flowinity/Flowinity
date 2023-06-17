@@ -249,11 +249,10 @@ a {
   visibility: visible;
 }
 
-.merge .message-contents {
-}
-
 .merge {
-  min-height: 30px !important;
+  margin-left: 55px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .overflow-content p {
@@ -520,4 +519,24 @@ a {
 
 .chip-never-active .v-chip__overlay {
   opacity: 0 !important;
+}
+
+.member-sidebar-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  height: 40px;
+}
+
+.member-sidebar-item:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.message {
+  display: flex;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.message-content {
 }

@@ -5327,6 +5327,13 @@ vite-plugin-vuetify@^1.0.2:
     debug "^4.3.3"
     upath "^2.0.1"
 
+vite-plugin-warmup@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-warmup/-/vite-plugin-warmup-0.1.0.tgz#3e411a49c7109fd757e6f6747ceedca09d9198ae"
+  integrity sha512-ep4gvoVsWYwWR/YP3BYg534cbgYy5VDxD8YEL9AcgiXUu3zXQQujVVIX+TpnkJHCHPeY6Fxn0ePrN8tQ43UfAg==
+  dependencies:
+    fast-glob "^3.2.12"
+
 vite@^4.2.0:
   version "4.3.9"
   resolved "https://registry.yarnpkg.com/vite/-/vite-4.3.9.tgz#db896200c0b1aa13b37cdc35c9e99ee2fdd5f96d"

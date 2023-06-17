@@ -70,46 +70,55 @@
       <v-spacer></v-spacer>
     </v-card-actions>
   </div>
-  <template v-if="!$chat.search.value">
+  <div class="position-relative" v-if="!$chat.search.value">
     <v-card-text class="text-overline my-n3">MEMBERS</v-card-text>
-    <v-list v-if="users" nav>
-      <v-list-item
-        :key="association.id"
-        v-for="association in users"
-        :subtitle="association.legacyUser ? 'Legacy User' : undefined"
-        @click="
-          $chat.dialogs.user.username = association.user?.username;
-          $chat.dialogs.user.value = true;
-        "
-        @contextmenu.prevent="context($event, association)"
-      >
-        <template v-slot:title>
-          {{ $friends.getName(association.user) || "Deleted User" }}
-          <span>
-            <v-icon v-if="association.rank === 'owner'" color="gold">
-              mdi-crown
-            </v-icon>
-            <v-tooltip activator="parent" location="top">Group Owner</v-tooltip>
-          </span>
-          <span>
-            <v-icon v-if="association.rank === 'admin'" color="grey">
-              mdi-crown
-            </v-icon>
-            <v-tooltip activator="parent" location="top">Group Admin</v-tooltip>
-          </span>
-        </template>
-        <template v-slot:prepend>
+    <v-virtual-scroll
+      item-height="40"
+      :items="users"
+      v-if="$chat.selectedChat"
+      style="overflow-x: hidden"
+      :height="height"
+    >
+      <template v-slot:default="{ item: { user, legacyUser, rank } }">
+        <div
+          :key="user.id"
+          class="member-sidebar-item unselectable"
+          @click="
+            legacyUser ? null : ($chat.dialogs.user.username = user.username);
+            legacyUser ? null : ($chat.dialogs.user.value = true);
+          "
+          :class="{ pointer: !legacyUser }"
+        >
           <UserAvatar
-            class="mr-2"
-            :light="true"
-            :status="!!association.tpuUser"
-            :user="association.user"
+            :user="user"
+            :status="true"
             :dot-status="true"
           ></UserAvatar>
-        </template>
-      </v-list-item>
-    </v-list>
-  </template>
+          <div class="ml-2">
+            <span class="limit">
+              {{ user.username }}
+              <span v-if="rank === 'owner'">
+                <v-icon color="gold">mdi-crown</v-icon>
+                <v-tooltip :eager="false" activator="parent" location="top">
+                  Owner
+                </v-tooltip>
+              </span>
+
+              <span v-else-if="rank === 'admin'">
+                <v-icon color="grey">mdi-crown</v-icon>
+                <v-tooltip :eager="false" activator="parent" location="top">
+                  Administrator
+                </v-tooltip>
+              </span>
+            </span>
+            <p class="text-subtitle-2 mt-n1 text-grey" v-if="legacyUser">
+              Legacy user
+            </p>
+          </div>
+        </div>
+      </template>
+    </v-virtual-scroll>
+  </div>
   <template v-else>
     <v-card-text class="text-overline my-n3">
       SEARCH
@@ -199,6 +208,10 @@ export default defineComponent({
     };
   },
   computed: {
+    height() {
+      if (this.$vuetify.display.mobile) return "calc(100vh - 300px)";
+      return "calc(100vh - 64px)";
+    },
     users() {
       if (!this.$chat.selectedChat) return [];
       return [...this.$chat.selectedChat.users].sort(

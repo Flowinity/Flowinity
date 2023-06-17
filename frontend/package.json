@@ -3,6 +3,7 @@
   "version": "3.2.34",
   "private": true,
   "author": "Troplo <troplo@troplo.com>",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "serve": "vite",
@@ -80,6 +81,7 @@
     "vite": "^4.2.0",
     "vite-plugin-pwa": "^0.14.4",
     "vite-plugin-vuetify": "^1.0.2",
+    "vite-plugin-warmup": "^0.1.0",
     "vue": "^3.2.13",
     "vue-axios": "^3.5.2",
     "vue-chartjs": "^5.2.0",

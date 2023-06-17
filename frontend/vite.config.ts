@@ -1,6 +1,7 @@
 // Plugins
 import vue from "@vitejs/plugin-vue";
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
+import { warmup } from "vite-plugin-warmup";
 
 // Utilities
 import { defineConfig } from "vite";
@@ -28,7 +29,12 @@ const config = {
     emptyOutDir: true
   },
   plugins: [
-    ViteVersion(),
+    warmup({
+      // warm up the files and its imported JS modules recursively
+      clientFiles: ["./src/**/*.ts", "./src/**/*.vue"]
+    }),
+    //@ts-ignore
+    ViteVersion.default(),
     VitePWA({
       registerType: "autoUpdate",
       workbox: {
