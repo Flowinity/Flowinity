@@ -999,7 +999,17 @@ export class ChatService {
       limit: 50,
       include: this.messageIncludes
     })
+
+    // messages = messages.sort((a, b) => {
+    //   if (position === "top") {
+    //     return a.id - b.id // Sort by oldest ID first
+    //   } else {
+    //     return b.id - a.id // Sort by newest ID first
+    //   }
+    // })
+
     if (position === "bottom") messages.reverse()
+
     return messages
   }
 

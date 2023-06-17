@@ -11,7 +11,7 @@
       v-if="message.reply"
       class="ml-6 my-1 pointer limit"
       color="transparent"
-      floating
+      :floating="true"
       height="auto"
       @click.prevent="$emit('jumpToMessage', message.reply.id)"
     >
@@ -21,13 +21,13 @@
         class="mr-2"
         size="24"
       ></UserAvatar>
-      {{ message.reply?.content }}
+      <p>{{ message.reply?.content }}</p>
     </v-toolbar>
     <v-toolbar
       v-else-if="message.replyId"
       class="ml-6 my-1 pointer limit"
       color="transparent"
-      floating
+      :floating="true"
       height="auto"
     >
       <v-icon class="mr-2">mdi-reply</v-icon>
@@ -36,7 +36,7 @@
         class="mr-2"
         size="24"
       ></UserAvatar>
-      Deleted Message
+      <p>Deleted Message</p>
     </v-toolbar>
     <v-hover v-slot="{ isHovering, props }">
       <v-list-item
@@ -139,7 +139,7 @@
               })
             "
           >
-            {{ $friends.getName(message.user) }}
+            <p>{{ $friends.getName(message.user) }}</p>
           </a>
           <small class="text-grey">
             {{ $date(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
@@ -164,7 +164,7 @@
         >
           <span
             class="overflow-content"
-            style="display: inline-block"
+            style="display: inline-block; color: white !important"
             v-html="$functions.markdown(message.content)"
           ></span>
           <span v-if="message.edited && merge">

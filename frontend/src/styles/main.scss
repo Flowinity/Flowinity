@@ -515,3 +515,8 @@ a {
     padding: 0 !important;
   }
 }
+
+#virtual-scroll .v-virtual-scroll__container {
+  display: flex;
+  flex-direction: column-reverse;
+}
