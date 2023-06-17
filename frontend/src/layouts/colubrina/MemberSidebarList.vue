@@ -71,13 +71,14 @@
     </v-card-actions>
   </div>
   <div class="position-relative" v-if="!$chat.search.value">
-    <v-card-text class="text-overline my-n3">MEMBERS</v-card-text>
+    <v-card-text class="text-overline my-n3">
+      {{ $t("chats.members") }}
+    </v-card-text>
     <v-virtual-scroll
       item-height="40"
       :items="users"
       v-if="$chat.selectedChat"
       style="overflow-x: hidden"
-      :height="height"
     >
       <template v-slot:default="{ item: { user, legacyUser, rank } }">
         <div
@@ -96,7 +97,11 @@
           ></UserAvatar>
           <div class="ml-2">
             <span class="limit">
-              {{ user.username }}
+              {{
+                legacyUser
+                  ? user.username
+                  : $friends.getName(user.id) || user.username
+              }}
               <span v-if="rank === 'owner'">
                 <v-icon color="gold">mdi-crown</v-icon>
                 <v-tooltip :eager="false" activator="parent" location="top">

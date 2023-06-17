@@ -1,7 +1,7 @@
 <template>
   <div
     id="chat"
-    class="communications"
+    class="communications position-relative"
     @drop.prevent="dragDropHandler"
     @dragover.prevent
   >
@@ -64,17 +64,11 @@
         dialogs.delete.value = false;
       "
     />
-    <v-list
+    <ol
       id="chat-list"
       ref="messageList"
-      :style="`height: calc(100vh - ${
-        145 + replyingHeight + inputHeight - 86.5
-      }px)`"
-      bg-color="transparent"
       class="message-list-container"
-      color="transparent"
-      style="overflow-x: hidden !important"
-      width="100%"
+      :style="{ height }"
       @scroll="scrollEvent"
     >
       <div id="sentinel-bottom" ref="sentinelBottom"></div>
@@ -109,7 +103,8 @@
           </v-col>
         </v-row>
       </template>
-      <Message
+      <MessagePerf
+        class="mr-2 ml-2"
         v-for="(message, index) in $chat.selectedChat?.messages"
         :id="'message-' + index"
         :key="message.id"
@@ -138,15 +133,13 @@
         @jumpToMessage="$chat.jumpToMessage($event)"
         @reply="replyId = $event.id"
       />
-      <div id="sentinel" ref="sentinel">
-        <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
-      </div>
-    </v-list>
+      <div id="sentinel" ref="sentinel"></div>
+    </ol>
     <v-fade-transition v-model="avoidAutoScroll">
       <v-toolbar
         v-if="avoidAutoScroll || $chat.loadingNew || $chat.loadNew"
         :style="`position: fixed; bottom: ${
-          inputHeight + replyingHeight + uploadFileHeight - 2
+          inputHeight + replyingHeight + uploadFileHeight
         }px`"
         class="pointer unselectable pl-2 pb-1 force-bg dynamic-background"
         color="transparent"
@@ -241,9 +234,8 @@
     <CommunicationsInput
       ref="input"
       v-model="message"
-      :renderKey="renderKey"
       class="message-input"
-      style="bottom: 0"
+      style="margin-top: auto"
       @emoji="
         message += $event;
         $nextTick(() => focusInput());
@@ -252,6 +244,7 @@
       @paste="handlePaste"
       @quickTPULink="handleQuickTPULink"
       @sendMessage="sendMessage"
+      @focusInput="focusInput"
     ></CommunicationsInput>
   </div>
 </template>
@@ -328,6 +321,14 @@ export default defineComponent({
     };
   },
   computed: {
+    height() {
+      let string = "calc(100vh - 56px - 103px";
+      if (this.$vuetify.display.mobile) string += " - 43px";
+      if (this.replyId) string += " - 35px";
+      if (this.files.length) string += " - 104.46px";
+      string += ")";
+      return string;
+    },
     menuStyle() {
       return `
         position: absolute;
@@ -491,7 +492,7 @@ export default defineComponent({
     async jumpToBottom() {
       this.avoidAutoScroll = false;
       if (this.$chat.loadNew) {
-        await this.$chat.loadHistory(Number.MAX_SAFE_INTEGER, true, false);
+        await this.$chat.loadHistory(null, true, true);
         this.$chat.loadNew = false;
       }
       this.autoScroll();
@@ -512,7 +513,6 @@ export default defineComponent({
       const replyId = this.replyId;
       const attachments = this.files.map((file) => file.tpuLink);
       this.message = "";
-      this.renderKey = !this.renderKey;
       const tempId = new Date().getTime();
       const index = await this.$chat.selectedChat?.messages.unshift({
         content: message,
@@ -570,25 +570,16 @@ export default defineComponent({
     autoScroll() {
       if (this.avoidAutoScroll) return;
       if (!this.$chat.selectedChat?.messages) return;
-      const chat = document.getElementById("chat-list");
-      if (chat) {
-        chat.scrollTop = 0;
-      }
+      const sentinel = document.getElementById("sentinel-bottom");
+      if (!sentinel) return;
+      sentinel.scrollIntoView();
     },
     recordScrollPosition(mode = "top") {
       this.previousScrollHeight =
         mode === "top" ? this.$chat.selectedChat?.messages.length || 0 : 1;
     },
     restoreScrollPosition() {
-      let node = this.$refs.messageList as {
-        $el: HTMLElement;
-      };
-      if (!node) return;
-      let message = document.getElementById(
-        `message-${this.previousScrollHeight}`
-      );
-      if (!message) return;
-      node.$el.scrollTop = message.offsetTop;
+      // TODO
     },
     setupIntersectionObserver() {
       const options = {
@@ -610,6 +601,7 @@ export default defineComponent({
     },
     async handleIntersection(entries: IntersectionObserverEntry[]) {
       const entry = entries[0];
+      console.log(entry);
       if (
         entry.isIntersecting &&
         !this.$chat.loadingNew &&
@@ -661,7 +653,6 @@ export default defineComponent({
       this.editing = lastMessage.id;
     },
     focusInput() {
-      //@ts-ignore
       this.$refs.input?.$refs?.textarea?.focus();
     },
     shortcutHandler(e: any) {
@@ -854,13 +845,15 @@ export default defineComponent({
       }
     },
     onResize(e: any) {
-      this.inputHeight = e[0].target.clientHeight;
+      console.info("[TPU/ChatObserver] Resized");
+      this.$nextTick(() => {
+        if (!this.avoidAutoScroll) this.autoScroll();
+      });
     }
   },
   mounted() {
     new ResizeObserver(this.onResize).observe(
-      //@ts-ignore
-      document.querySelector("#chat-input")
+      document.querySelector("#chat-list")
     );
     //document.querySelector(".message-list-container")?.addEventListener("scroll", this.scrollEvent);
     // add event listener for shortcuts
@@ -878,6 +871,7 @@ export default defineComponent({
     });
   },
   unmounted() {
+    this.$chat.isReady = 0;
     this.$chat.setDraft(<string>this.$route.params.chatId, this.message);
     document.removeEventListener("scroll", this.scrollEvent);
     document.removeEventListener("keydown", this.shortcutHandler);
@@ -923,20 +917,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped>
-.message-list-container {
-  overflow-y: scroll;
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.message-list-container::-webkit-scrollbar {
-  display: none;
-}
-
-.message-input {
-  position: sticky;
-  padding: 16px;
-}
-</style>

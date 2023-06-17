@@ -388,11 +388,12 @@
   "chats": {
     "start": {
       "dm": "You have sent no messages to {username} yet.",
-      "group": "You have sent no messages in {name} yet."
+      "group": "There are no messages  in {name} yet."
     },
     "jumpToBottom": "Jump to bottom",
     "loading": "Loading messages...",
     "chats": "Chats",
+    "members": "Members",
     "notifications": "Notifications",
     "changeNickname": "Change Nickname",
     "notificationOptions": {

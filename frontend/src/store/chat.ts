@@ -359,12 +359,12 @@ export const useChatStore = defineStore("chat", {
       };
       if (chat?.messages?.length) {
         this.readChat();
+        this.isReady = id;
         return;
       }
       this.loading = false;
       this.isReady = id;
       appStore.title = this.chatName;
-
       this.readChat();
     },
     async loadHistory(
@@ -374,9 +374,16 @@ export const useChatStore = defineStore("chat", {
     ) {
       this.loadingNew = true;
       const { data } = await axios.get(
-        `/chats/${this.selectedChatId}/messages?offset=${
-          offset || this.currentOffset[up ? "up" : "down"]
-        }&position=${up ? "top" : "bottom"}`
+        `/chats/${this.selectedChatId}/messages`,
+        {
+          params: {
+            offset:
+              offset === null
+                ? undefined
+                : offset || this.currentOffset[up ? "up" : "down"],
+            position: up ? "top" : "bottom"
+          }
+        }
       );
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === this.selectedChatId
@@ -472,6 +479,14 @@ export const useChatStore = defineStore("chat", {
     }
   },
   getters: {
+    renderableReadReceipts() {
+      if (vuetify.display.mobile) return 2;
+      if (vuetify.display.sm) return 10;
+      if (vuetify.display.md) return 10;
+      if (vuetify.display.xl) return 15;
+      if (vuetify.display.xxl) return 20;
+      return 10;
+    },
     currentOffset(state: ChatState) {
       if (!state.selectedChat?.messages?.length) return { up: 0, down: 0 };
       const down = state.selectedChat?.messages[0]?.id

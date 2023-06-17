@@ -327,7 +327,7 @@ export class CoreService {
       USER_V3: true,
       EARLY_ACCESS: false,
       PINNED_MESSAGES: true,
-      COMMUNICATIONS_KEEP_LOADED: false,
+      COMMUNICATIONS_KEEP_LOADED: true,
       COMMUNICATIONS_INLINE_SIDEBAR_HIRES: false,
       COMMUNICATIONS_QUAD_SIDEBAR_LOWRES: false,
       COMMUNICATIONS: config?.features?.communications ?? true,

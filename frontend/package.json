@@ -1,6 +1,6 @@
 {
   "name": "tpu-frontend",
-  "version": "3.2.34",
+  "version": "3.2.35",
   "private": true,
   "author": "Troplo <troplo@troplo.com>",
   "type": "module",
@@ -100,7 +100,7 @@
   },
   "devDependencies": {
     "cypress": "^12.7.0",
-    "eslint": "^8.22.0",
+    "eslint": "^8.43.0",
     "eslint-plugin-vue": "^9.3.0",
     "rollup-plugin-visualizer": "^5.9.0"
   }

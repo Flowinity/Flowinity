@@ -1,35 +1,58 @@
 <template>
-  <v-bottom-navigation
-    :grow="true"
-    style="background: rgb(var(--v-theme-dark)); z-index: 5000"
-    height="69"
+  <teleport
+    :to="
+      $chat.isCommunications && $chat.selectedChat
+        ? '#communications-bottom-navigation'
+        : 'body'
+    "
+    v-if="!$chat.isCommunications || $chat.isReady"
   >
-    <v-btn
-      :to="item.path"
-      :exact="item.exact"
-      v-for="item in displayed"
-      :key="item.id"
-      @click="handleClick(item.id)"
+    <div
+      class="mt-3 v-bottom-navigation v-bottom-navigation--active v-bottom-navigation--grow v-theme--amoled v-bottom-navigation--density-default justify-center"
+      style="background: rgb(var(--v-theme-dark)); z-index: 5000"
+      :style="{
+        position: $chat.isCommunications ? 'relative' : 'sticky',
+        height,
+        bottom: !$chat.isCommunications ? '0' : undefined
+      }"
     >
-      <v-badge
-        :content="item.warning"
-        variant="tonal"
-        color="grey-darken-4"
-        size="x-small"
-        v-if="typeof item.warning === 'number' && item.warning > 0"
-      >
-        <v-icon>
-          {{ item.icon }}
-        </v-icon>
-      </v-badge>
-      <v-icon v-else>
-        {{ item.icon }}
-      </v-icon>
-    </v-btn>
-    <v-btn @click="drawer = !drawer" :active="drawer">
-      <v-icon>mdi-dots-horizontal</v-icon>
-    </v-btn>
-  </v-bottom-navigation>
+      <div class="v-bottom-navigation__content">
+        <v-btn
+          :to="item.path"
+          :exact="item.exact"
+          v-for="item in displayed"
+          :key="item.id"
+          @click="handleClick(item.id)"
+          class="rounded-0"
+          :height="height"
+          width="auto"
+        >
+          <v-badge
+            :content="item.warning"
+            variant="tonal"
+            color="grey-darken-4"
+            size="x-small"
+            v-if="typeof item.warning === 'number' && item.warning > 0"
+          >
+            <v-icon size="22">
+              {{ item.icon }}
+            </v-icon>
+          </v-badge>
+          <v-icon v-else size="22">
+            {{ item.icon }}
+          </v-icon>
+        </v-btn>
+        <v-btn
+          class="rounded-0"
+          @click="drawer = !drawer"
+          :active="drawer"
+          :height="height"
+        >
+          <v-icon size="22">mdi-dots-horizontal</v-icon>
+        </v-btn>
+      </div>
+    </div>
+  </teleport>
   <v-navigation-drawer
     v-model="drawer"
     location="bottom"
@@ -97,6 +120,10 @@ export default defineComponent({
     };
   },
   computed: {
+    height() {
+      if (this.$chat.isCommunications) return 42;
+      return 69;
+    },
     displayed() {
       // bind to force reactivity
       [this.bind];

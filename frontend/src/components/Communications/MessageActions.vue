@@ -1,77 +1,69 @@
 <template>
-  <v-card
+  <div
     v-if="!$vuetify.display.mobile"
     :class="{ 'no-hide': avoid }"
-    class="message-actions"
-    elevation="8"
-    style="z-index: 4001"
+    class="message-actions mr-2 rounded-xl v-card"
+    style="z-index: 5001; background-color: rgb(var(--v-theme-dark))"
   >
-    <v-btn :size="size" icon rounded="0" @click="$emit('emote')">
-      <v-tooltip activator="parent" location="top">React</v-tooltip>
-      <v-icon>mdi-emoticon-happy</v-icon>
-    </v-btn>
-    <v-btn
+    <button
+      type="button"
+      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+      @click="$chat.pinMessage(message.id, !message.pinned)"
+      v-if="$chat.hasPermissions.admin && message.type === 'message'"
+    >
+      <v-tooltip activator="parent" location="top" :eager="false">
+        {{ message.pinned ? "Unpin" : "Pin" }}
+      </v-tooltip>
+      <v-icon>
+        {{ message.pinned ? "mdi-pin-off" : "mdi-pin" }}
+      </v-icon>
+    </button>
+    <button
+      type="button"
+      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
       v-if="message.userId === $user.user?.id && message.type === 'message'"
-      :size="size"
-      icon
-      rounded="0"
       @click="$emit('edit')"
     >
-      <v-tooltip activator="parent" location="top">Edit</v-tooltip>
+      <v-tooltip activator="parent" location="top" :eager="false">
+        Edit
+      </v-tooltip>
       <v-icon>mdi-pencil</v-icon>
-    </v-btn>
-    <v-btn
+    </button>
+    <button
+      type="button"
+      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
       v-if="
         (message.userId === $user.user?.id && message.type === 'message') ||
         ($chat.hasPermissions.admin && message.type === 'message')
       "
-      :size="size"
-      icon
-      rounded="0"
       @click="$emit('delete', $event.shiftKey)"
     >
-      <v-tooltip activator="parent" location="top">Delete</v-tooltip>
+      <v-tooltip activator="parent" location="top" :eager="false">
+        Delete
+      </v-tooltip>
       <v-icon>mdi-delete</v-icon>
-    </v-btn>
-    <v-btn :size="size" icon rounded="0" @click="$emit('reply')">
-      <v-tooltip activator="parent" location="top">Reply</v-tooltip>
-      <v-icon>mdi-reply</v-icon>
-    </v-btn>
-    <v-btn :size="size" icon rounded="0" @click="$functions.copy(message.id)">
-      <v-tooltip activator="parent" location="top">Copy ID</v-tooltip>
-      <v-icon>mdi-identifier</v-icon>
-    </v-btn>
-    <v-menu
-      v-if="
-        $chat.selectedChat?.association.rank &&
-        ['admin', 'owner'].includes($chat.selectedChat?.association.rank)
-      "
-      location="top center"
-      @update:modelValue="$emit('avoid', $event)"
+    </button>
+    <button
+      type="button"
+      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+      @click="$emit('reply')"
     >
-      <template v-slot:activator="{ props }">
-        <v-btn :size="size" icon rounded="0" v-bind="props">
-          <v-tooltip activator="parent" location="top">More</v-tooltip>
-          <v-icon>mdi-dots-vertical</v-icon>
-        </v-btn>
-      </template>
-      <v-list :size="size" class="mb-2 rounded-xl">
-        <v-list-item
-          :size="size"
-          color="red"
-          style="min-height: 20px"
-          @click="$chat.pinMessage(message.id, !message.pinned)"
-        >
-          <v-list-item-title>
-            <v-icon class="mr-1">
-              {{ message.pinned ? "mdi-pin-off" : "mdi-pin" }}
-            </v-icon>
-            {{ message.pinned ? "Unpin" : "Pin" }}
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
-  </v-card>
+      <v-tooltip activator="parent" location="top" :eager="false">
+        Reply
+      </v-tooltip>
+      <v-icon>mdi-reply</v-icon>
+    </button>
+    <button
+      type="button"
+      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+      @click="$functions.copy(message.id)"
+    >
+      <v-tooltip activator="parent" location="top" :eager="false">
+        Copy ID
+      </v-tooltip>
+      <v-icon>mdi-identifier</v-icon>
+    </button>
+  </div>
 </template>
 
 <script lang="ts">

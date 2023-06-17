@@ -195,6 +195,10 @@ a {
   backdrop-filter: brightness(1.5);
 }
 
+.v-theme--amoled .message:hover {
+  background: #101010;
+}
+
 .message-actions {
   position: absolute !important;
   top: 0;
@@ -250,10 +254,15 @@ a {
 }
 
 .merge {
-  margin-left: 55px !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
+
+.message-date {
+  align-self: center;
+  width: 52px;
+}
+
 
 .overflow-content p {
   white-space: pre-line !important;
@@ -532,11 +541,34 @@ a {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.message {
+.communications .message {
   display: flex;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-top: 12px;
 }
 
 .message-content {
+}
+
+.communications .message-list-container {
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.communications .message-list-container::-webkit-scrollbar {
+  display: none;
+}
+
+.communications .message-input {
+  bottom: 0;
+  position: sticky;
+  align-self: flex-end;
+}
+
+.communications {
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  height: 100%;
 }

@@ -42,6 +42,7 @@
     "../models/**/*.ts",
     "vite.config.ts",
     "*.vue",
-    "node_modules/cypress/types/cypress-global-vars.d.ts"
+    "node_modules/cypress/types/cypress-global-vars.d.ts",
+    "../../../../../../opt/webstorm/plugins/javascript-impl/jsLanguageServicesImpl/external/lib.dom.d.ts"
   ]
 }
