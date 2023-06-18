@@ -61,13 +61,21 @@
         $app.site.finishedSetup
       "
     ></rail-bar>
+    <keep-alive v-if="$app.rail">
+      <component :is="currentRailComponent"></component>
+    </keep-alive>
     <sidebar
       v-if="
-        ($app.railMode === 'tpu' || (!$app.rail && !$vuetify.display.mobile)) &&
+        !$app.rail &&
+        !$vuetify.display.mobile &&
         $app.site.finishedSetup &&
         (!$vuetify.display.mobile || $experiments.experiments.LEGACY_MOBILE_NAV)
       "
     ></sidebar>
+    <colubrina-sidebar
+      v-if="!$app.rail && $chat.isCommunications"
+    ></colubrina-sidebar>
+    <workspaces-sidebar v-if="!$app.rail"></workspaces-sidebar>
     <bottom-bar
       v-if="
         $app.site.finishedSetup &&
@@ -75,16 +83,6 @@
         !$experiments.experiments.LEGACY_MOBILE_NAV
       "
     />
-    <colubrina-sidebar
-      v-if="
-        ($app.railMode === 'communications' &&
-          ($app.rail || $vuetify.display.mobile)) ||
-        (!$app.rail && $chat.isCommunications)
-      "
-    ></colubrina-sidebar>
-    <workspaces-sidebar
-      v-if="!$app.rail || $app.railMode === 'workspaces'"
-    ></workspaces-sidebar>
     <theme-engine-wrapper></theme-engine-wrapper>
     <default-view />
     <template v-if="$experiments.experiments.FAB">
@@ -147,19 +145,15 @@
 <script lang="ts" setup>
 import DefaultBar from "./AppBar.vue";
 import DefaultView from "./View.vue";
-import Sidebar from "@/layouts/default/Sidebar.vue";
 import UnauthBar from "@/layouts/unauth/AppBar.vue";
 import URLConfirmDialog from "@/components/Communications/Dialogs/URLConfirm.vue";
 import MemoryProfiler from "@/components/Dev/Dialogs/MemoryProfiler.vue";
 import UploadDialog from "@/components/Core/Dialogs/Upload.vue";
-import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import QuickSwitcher from "@/components/Core/Dialogs/QuickSwitcher.vue";
 import NicknameDialog from "@/components/Core/Dialogs/Nickname.vue";
 import ThemeEngineWrapper from "@/components/Core/ThemeEngineWrapper.vue";
 import RailBar from "@/layouts/default/RailBar.vue";
-import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
-import ExperimentsManager from "@/components/Dev/Dialogs/Experiments.vue";
 import ExperimentsManagerDialog from "@/components/Dev/Dialogs/Experiments.vue";
 import Gold from "@/components/Dashboard/Dialogs/Gold.vue";
 import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
@@ -173,9 +167,17 @@ import { defineComponent } from "vue";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import { Message as MessageType } from "@/models/message";
 import { Upload } from "@/models/upload";
+import Sidebar from "@/layouts/default/Sidebar.vue";
+import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
+import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
+  components: {
+    Sidebar,
+    WorkspacesSidebar,
+    ColubrinaSidebar
+  },
   data() {
     return {
       fab: false,
@@ -190,6 +192,17 @@ export default defineComponent({
       touchStartX: null as number | null,
       touchEndX: null as number | null
     };
+  },
+  computed: {
+    currentRailComponent() {
+      if (this.$app.railMode === "communications") {
+        return "ColubrinaSidebar";
+      } else if (this.$app.railMode === "workspaces") {
+        return "WorkspacesSidebar";
+      } else {
+        return "Sidebar";
+      }
+    }
   },
   methods: {
     touchEnd(event: TouchEvent) {

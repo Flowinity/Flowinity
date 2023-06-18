@@ -47,6 +47,7 @@
           @click="drawer = !drawer"
           :active="drawer"
           :height="height"
+          width="auto"
         >
           <v-icon size="22">mdi-dots-horizontal</v-icon>
         </v-btn>

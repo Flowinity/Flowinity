@@ -40,7 +40,7 @@
         {{ $date(message.createdAt).format("hh:mm A") }}
       </small>
       <UserAvatar class="ml-2 mr-3 mt-1" v-if="!merge" :user="message.user" />
-      <div>
+      <div style="width: 100%">
         <p
           v-if="
             (!message.type && !merge) || (message.type === 'message' && !merge)
@@ -93,6 +93,7 @@
           @edit="$emit('edit', { id: null, content: null })"
           @sendMessage="$emit('editMessage', $event)"
           @update:modelValue="$emit('editText', $event)"
+          style="width: 100%"
         />
         <MessageActions
           :message="message"

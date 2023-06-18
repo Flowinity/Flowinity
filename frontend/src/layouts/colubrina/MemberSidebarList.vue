@@ -75,52 +75,13 @@
       {{ $t("chats.members") }}
     </v-card-text>
     <v-virtual-scroll
-      item-height="40"
+      item-height="48"
       :items="users"
       v-if="$chat.selectedChat"
       style="overflow-x: hidden"
     >
       <template v-slot:default="{ item: { user, legacyUser, rank } }">
-        <div
-          :key="user.id"
-          class="member-sidebar-item unselectable"
-          @click="
-            legacyUser ? null : ($chat.dialogs.user.username = user.username);
-            legacyUser ? null : ($chat.dialogs.user.value = true);
-          "
-          :class="{ pointer: !legacyUser }"
-        >
-          <UserAvatar
-            :user="user"
-            :status="true"
-            :dot-status="true"
-          ></UserAvatar>
-          <div class="ml-2">
-            <span class="limit">
-              {{
-                legacyUser
-                  ? user.username
-                  : $friends.getName(user.id) || user.username
-              }}
-              <span v-if="rank === 'owner'">
-                <v-icon color="gold">mdi-crown</v-icon>
-                <v-tooltip :eager="false" activator="parent" location="top">
-                  Owner
-                </v-tooltip>
-              </span>
-
-              <span v-else-if="rank === 'admin'">
-                <v-icon color="grey">mdi-crown</v-icon>
-                <v-tooltip :eager="false" activator="parent" location="top">
-                  Administrator
-                </v-tooltip>
-              </span>
-            </span>
-            <p class="text-subtitle-2 mt-n1 text-grey" v-if="legacyUser">
-              Legacy user
-            </p>
-          </div>
-        </div>
+        <SidebarItem :legacy-user="!!legacyUser" :rank="rank" :user="user" />
       </template>
     </v-virtual-scroll>
   </div>
@@ -194,9 +155,11 @@ import { ChatAssociation } from "@/models/chatAssociation";
 import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import SidebarItem from "@/components/Communications/SidebarItem.vue";
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
   components: {
+    SidebarItem,
     Paginate,
     Message,
     UserAvatar

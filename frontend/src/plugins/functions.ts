@@ -211,7 +211,19 @@ export default {
     return false;
   },
   uuid() {
-    return self.crypto.randomUUID();
+    try {
+      return self.crypto.randomUUID();
+    } catch {
+      // If self.crypto.randomUUID() is not supported
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+        /[xy]/g,
+        function (c) {
+          const r = (Math.random() * 16) | 0,
+            v = c == "x" ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        }
+      );
+    }
   },
   charUp(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);

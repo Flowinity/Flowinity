@@ -360,6 +360,7 @@ export const useChatStore = defineStore("chat", {
       if (chat?.messages?.length) {
         this.readChat();
         this.isReady = id;
+        this.loading = false;
         return;
       }
       this.loading = false;

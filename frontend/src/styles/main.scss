@@ -534,11 +534,23 @@ a {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  height: 40px;
+  padding: 4px;
 }
 
 .member-sidebar-item:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.selected {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.v-theme--amoled .selected {
+  background-color: #101010;
+}
+
+.v-theme--amoled .member-sidebar-item:hover {
+  background-color: #101010;
 }
 
 .communications .message {
@@ -553,10 +565,7 @@ a {
   overflow-y: scroll;
   display: flex;
   flex-direction: column-reverse;
-}
-
-.communications .message-list-container::-webkit-scrollbar {
-  display: none;
+  overflow-x: hidden;
 }
 
 .communications .message-input {
@@ -571,4 +580,8 @@ a {
   flex-direction: column;
   position: sticky;
   height: 100%;
+}
+
+:root:has(.disable-overscroll) {
+  overscroll-behavior: none;
 }

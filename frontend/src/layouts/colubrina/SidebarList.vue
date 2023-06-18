@@ -138,7 +138,28 @@
     </CreateChat>
     {{ $t("chats.chats") }}
   </v-card-text>
-  <v-list nav>
+  <v-virtual-scroll
+    item-height="48"
+    :items="$chat.chats"
+    v-if="$chat.chats.length"
+    style="overflow-x: hidden"
+  >
+    <template v-slot:default="{ item: chat }">
+      <SidebarItem
+        :legacy-user="chat.recipient?.legacyUser"
+        :user="chat.recipient"
+        :chat="chat"
+        :subtitle="
+          chat.type === 'group'
+            ? `${chat.users?.length} members`
+            : chat.recipient?.legacyUser
+            ? 'Legacy User'
+            : ''
+        "
+      />
+    </template>
+  </v-virtual-scroll>
+  <v-list nav v-if="false">
     <v-list-item
       v-for="chat in $chat.chats"
       :subtitle="
@@ -189,10 +210,12 @@ import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import Leave from "@/components/Communications/Dialogs/Leave.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import SidebarItem from "@/components/Communications/SidebarItem.vue";
 
 export default defineComponent({
   name: "ColubrinaSidebarList",
   components: {
+    SidebarItem,
     UserAvatar,
     Leave,
     CreateChat,

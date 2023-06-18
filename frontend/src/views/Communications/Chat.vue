@@ -71,7 +71,7 @@
       :style="{ height }"
       @scroll="scrollEvent"
     >
-      <div id="sentinel-bottom" ref="sentinelBottom"></div>
+      <div id="sentinel-bottom" ref="sentinelBottom" v-if="$chat.isReady"></div>
       <template v-if="!$chat.selectedChat?.messages?.length && !$chat.loading">
         <v-row align="center" justify="center">
           <v-col cols="12" md="6" class="text-center">
@@ -133,13 +133,16 @@
         @jumpToMessage="$chat.jumpToMessage($event)"
         @reply="replyId = $event.id"
       />
-      <div id="sentinel" ref="sentinel"></div>
+      <div id="sentinel" ref="sentinel" v-if="$chat.isReady"></div>
     </ol>
     <v-fade-transition v-model="avoidAutoScroll">
       <v-toolbar
         v-if="avoidAutoScroll || $chat.loadingNew || $chat.loadNew"
         :style="`position: fixed; bottom: ${
-          inputHeight + replyingHeight + uploadFileHeight
+          inputHeight +
+          replyingHeight +
+          uploadFileHeight +
+          ($vuetify.display.mobile ? 43 : 0)
         }px`"
         class="pointer unselectable pl-2 pb-1 force-bg dynamic-background"
         color="transparent"
@@ -171,8 +174,9 @@
       <v-toolbar
         v-if="replyId"
         :style="
-          `position: sticky; bottom: ${inputHeight + uploadFileHeight}px` +
-          (!avoidAutoScroll ? '; border-radius: 20px 20px 0 0;' : '')
+          `position: absolute; bottom: ${
+            inputHeight + uploadFileHeight + ($vuetify.display.mobile ? 43 : 0)
+          }px` + (!avoidAutoScroll ? '; border-radius: 20px 20px 0 0;' : '')
         "
         class="pointer"
         color="card"
@@ -183,6 +187,10 @@
         <v-icon class="mr-2 ml-3">mdi-reply</v-icon>
         <UserAvatar :user="replying?.user" class="mr-2" size="24"></UserAvatar>
         {{ replying?.content }}
+        <v-spacer></v-spacer>
+        <v-btn @click="replyId = null">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-toolbar>
     </v-fade-transition>
     <v-fade-transition :model-value="files.length">
@@ -282,6 +290,7 @@ export default defineComponent({
   },
   data() {
     return {
+      setup: false,
       messageObserver: undefined as IntersectionObserver | undefined,
       messageBottomObserver: undefined as IntersectionObserver | undefined,
       previousScrollHeight: 0,
@@ -322,7 +331,7 @@ export default defineComponent({
   },
   computed: {
     height() {
-      let string = "calc(100vh - 56px - 103px";
+      let string = `calc(100dvh - 56px - 103px`;
       if (this.$vuetify.display.mobile) string += " - 43px";
       if (this.replyId) string += " - 35px";
       if (this.files.length) string += " - 104.46px";
@@ -582,6 +591,7 @@ export default defineComponent({
       // TODO
     },
     setupIntersectionObserver() {
+      this.setup = true;
       const options = {
         root: document.getElementById("chat-list"),
         rootMargin: "10px"
@@ -852,6 +862,7 @@ export default defineComponent({
     }
   },
   mounted() {
+    document.body.classList.add("disable-overscroll");
     new ResizeObserver(this.onResize).observe(
       document.querySelector("#chat-list")
     );
@@ -865,12 +876,9 @@ export default defineComponent({
     this.$socket.on("typing", this.onTyping);
     this.message = this.$chat.getDraft(<string>this.$route.params.chatId) || "";
     this.$app.railMode = "communications";
-
-    this.$nextTick(() => {
-      this.setupIntersectionObserver();
-    });
   },
   unmounted() {
+    document.body.classList.remove("disable-overscroll");
     this.$chat.isReady = 0;
     this.$chat.setDraft(<string>this.$route.params.chatId, this.message);
     document.removeEventListener("scroll", this.scrollEvent);
@@ -895,6 +903,7 @@ export default defineComponent({
       this.avoidAutoScroll = false;
       this.$nextTick(() => {
         this.autoScroll();
+        if (!this.setup) this.setupIntersectionObserver();
       });
     },
     message() {

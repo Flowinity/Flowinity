@@ -1,10 +1,10 @@
 <template>
   <div style="width: 100%">
-    <div id="communications-bottom-navigation"></div>
+    <div id="communications-bottom-navigation" v-if="!editing"></div>
     <v-toolbar
       :id="editing ? '' : 'chat-input'"
       ref="toolbar"
-      color="dark"
+      :color="editing ? 'transparent' : 'dark'"
       height="auto"
       style="z-index: 1001"
     >
