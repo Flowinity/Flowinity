@@ -151,7 +151,7 @@
         style="
           border-radius: 20px 20px 0 0;
           font-size: 14px;
-          z-index: 1;
+          z-index: 1001;
           backdrop-filter: blur(10px);
         "
         @click="jumpToBottom"
@@ -182,7 +182,7 @@
         class="pointer"
         color="card"
         height="35"
-        style="opacity: 0.95; z-index: 1"
+        style="opacity: 0.95; z-index: 1001"
         @click="jumpToBottom"
       >
         <v-icon class="mr-2 ml-3">mdi-reply</v-icon>

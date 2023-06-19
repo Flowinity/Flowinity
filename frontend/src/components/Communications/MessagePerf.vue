@@ -42,7 +42,20 @@
         </v-tooltip>
         {{ $date(message.createdAt).format("hh:mm A") }}
       </small>
-      <UserAvatar class="ml-2 mr-3 mt-1" v-if="!merge" :user="message.user" />
+      <UserAvatar
+        @click="
+          $emit('authorClick', {
+            user: message.user,
+            bindingElement: 'message-author-avatar-' + message.id,
+            x: $event.x,
+            y: $event.y
+          })
+        "
+        class="ml-2 mr-3 mt-1 pointer"
+        v-if="!merge"
+        :user="message.user"
+        :id="'message-author-avatar-' + message.id"
+      />
       <div style="width: 100%">
         <p
           v-if="
