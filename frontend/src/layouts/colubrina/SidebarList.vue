@@ -146,6 +146,7 @@
   >
     <template v-slot:default="{ item: chat }">
       <SidebarItem
+        @contextmenu.prevent="context($event, chat)"
         :legacy-user="chat.recipient?.legacyUser"
         :user="chat.recipient"
         :chat="chat"
@@ -156,7 +157,16 @@
             ? 'Legacy User'
             : ''
         "
-      />
+      >
+        <v-spacer></v-spacer>
+        <v-badge
+          :class="chat.unread > 99 ? 'mr-5' : 'mr-4'"
+          :content="chat.unread > 99 ? '99+' : chat.unread"
+          color="red"
+          overlap
+          v-if="chat.unread"
+        ></v-badge>
+      </SidebarItem>
     </template>
   </v-virtual-scroll>
   <v-list nav v-if="false">

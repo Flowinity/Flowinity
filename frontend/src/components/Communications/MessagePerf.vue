@@ -28,6 +28,9 @@
       :class="{ merge, unselectable: $vuetify.display.mobile }"
       class="message position-relative"
       @mouseover="hovered = true"
+      :style="{
+        zIndex: 1000 - index
+      }"
     >
       <small
         v-if="merge"
@@ -101,13 +104,21 @@
           @delete="$emit('delete', { message, shifting: $event })"
           @edit="$emit('edit', { id: message.id, content: message.content })"
           @reply="$emit('reply', message)"
+          :merge="merge"
         />
         <Embed
           v-for="(embed, index) in message.embeds"
           :key="index"
           :embed="embed"
         />
-        <div style="position: absolute; right: 10px; bottom: 0">
+        <div
+          style="
+            position: absolute;
+            right: 10px;
+            bottom: 0;
+            padding-bottom: 5px;
+          "
+        >
           <template
             v-for="(readReceipt, index) in message.readReceipts"
             :key="readReceipt.id"
@@ -166,7 +177,8 @@ export default defineComponent({
     "editingText",
     "merge",
     "dateSeparator",
-    "mentions"
+    "mentions",
+    "index"
   ],
   data() {
     return {

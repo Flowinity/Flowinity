@@ -114,6 +114,7 @@
         :editingText="editingText"
         :merge="$chat.merge(message, index)"
         :message="message"
+        :index="index"
         @authorClick="
           $chat.dialogs.userMenu.user = $event.user;
           $chat.dialogs.userMenu.username = $event.user.username;

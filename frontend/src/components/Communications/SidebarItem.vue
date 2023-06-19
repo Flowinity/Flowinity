@@ -41,6 +41,7 @@
         {{ subtitle }}
       </p>
     </div>
+    <slot></slot>
   </div>
 </template>
 

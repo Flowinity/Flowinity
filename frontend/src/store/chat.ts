@@ -481,11 +481,11 @@ export const useChatStore = defineStore("chat", {
   },
   getters: {
     renderableReadReceipts() {
-      if (vuetify.display.mobile) return 2;
-      if (vuetify.display.sm) return 10;
-      if (vuetify.display.md) return 10;
-      if (vuetify.display.xl) return 15;
       if (vuetify.display.xxl) return 20;
+      if (vuetify.display.xl) return 15;
+      if (vuetify.display.md) return 10;
+      if (vuetify.display.sm) return 10;
+      if (vuetify.display.mobile) return 2;
       return 10;
     },
     currentOffset(state: ChatState) {
