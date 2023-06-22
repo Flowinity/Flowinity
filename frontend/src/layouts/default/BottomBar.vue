@@ -9,7 +9,7 @@
   >
     <div
       class="mt-3 v-bottom-navigation v-bottom-navigation--active v-bottom-navigation--grow v-theme--amoled v-bottom-navigation--density-default justify-center"
-      style="background: rgb(var(--v-theme-dark)); z-index: 5000"
+      style="background: rgb(var(--v-theme-dark)); z-index: 2001"
       :style="{
         position: $chat.isCommunications ? 'relative' : 'sticky',
         height,
