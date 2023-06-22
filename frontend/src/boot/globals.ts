@@ -69,4 +69,12 @@ export default function setup(app) {
   experiments.init().then(() => {
     console.info("[TPU/ExperimentsStore] Experiments initialized");
   });
+  window.central = {
+    user: user.user,
+    emit: (platform: string, event: string, data: any) => {
+      if (platform === "geo" && event === "history") {
+        console.log(data);
+      }
+    }
+  };
 }

@@ -59,6 +59,10 @@ declare global {
     };
     _cordovaNative: any;
     cordova?: any;
+    central: {
+      user: any;
+      emit: (platform: string, event: string, data: any) => void;
+    };
   }
 
   interface navigator extends Navigator {

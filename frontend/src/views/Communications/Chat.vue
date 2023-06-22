@@ -244,7 +244,7 @@
       ref="input"
       v-model="message"
       class="message-input"
-      style="margin-top: auto"
+      style="margin-top: auto; z-index: 2002"
       @emoji="
         message += $event;
         $nextTick(() => focusInput());
@@ -336,6 +336,8 @@ export default defineComponent({
       if (this.$vuetify.display.mobile) string += " - 43px";
       if (this.replyId) string += " - 35px";
       if (this.files.length) string += " - 104.46px";
+      const lines = this.message.split("\n").length;
+      string += ` - ${(lines - 1) * 26}px`;
       string += ")";
       return string;
     },
@@ -583,6 +585,9 @@ export default defineComponent({
       const sentinel = document.getElementById("sentinel-bottom");
       if (!sentinel) return;
       sentinel.scrollIntoView();
+      this.$nextTick(() => {
+        sentinel.scrollIntoView();
+      });
     },
     recordScrollPosition(mode = "top") {
       this.previousScrollHeight =
@@ -612,7 +617,6 @@ export default defineComponent({
     },
     async handleIntersection(entries: IntersectionObserverEntry[]) {
       const entry = entries[0];
-      console.log(entry);
       if (
         entry.isIntersecting &&
         !this.$chat.loadingNew &&
@@ -630,7 +634,6 @@ export default defineComponent({
     },
     async handleBottomIntersection(entries: IntersectionObserverEntry[]) {
       if (!this.$chat.loadNew) return;
-      console.log(this.$chat.loadNew);
       const entry = entries[0];
       if (
         entry.isIntersecting &&
