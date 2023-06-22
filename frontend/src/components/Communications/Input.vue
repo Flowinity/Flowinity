@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%">
+  <div style="width: 100%; z-index: 10001">
     <div id="communications-bottom-navigation" v-if="!editing"></div>
     <v-toolbar
       :id="editing ? '' : 'chat-input'"
