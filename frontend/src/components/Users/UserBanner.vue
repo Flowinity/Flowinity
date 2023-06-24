@@ -18,8 +18,9 @@
       :src="banner"
       aspect-ratio="5"
       class="banner-image"
-      cover
+      :cover="true"
       v-bind="props"
+      transition="none"
     >
       <PlaceholderCheckerboard
         v-if="banner === 'placeholder'"

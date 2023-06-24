@@ -14,6 +14,7 @@
       "
       class="white--text align-end"
       height="200px"
+      transition="none"
     >
       <template v-slot:placeholder>
         <v-row align="center" class="fill-height ma-0" justify="center">
