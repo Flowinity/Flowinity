@@ -92,7 +92,19 @@ export default async function setup(app) {
   });
   socket.on("userStatus", (data: User) => {
     const index = friends.friends.findIndex((f) => f.friendId === data.id);
-    if (index === -1) return;
+    if (index === -1) {
+      if (data.id === user.user?.id) {
+        user.user = {
+          ...user.user,
+          status: data.status,
+          platforms: data.platforms
+        };
+        return;
+      } else {
+        return;
+      }
+    }
+    console.log(index);
     friends.friends[index].otherUser.status = data.status;
   });
   socket.on("friendRequestAccepted", async (data: Friend) => {

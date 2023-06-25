@@ -433,13 +433,19 @@ export class GalleryService {
     })
     if (star) {
       await star.destroy()
-      return false
+      return {
+        status: false,
+        star: null
+      }
     } else {
-      await Star.create({
+      const star = await Star.create({
         userId,
         attachmentId: upload.id
       })
-      return true
+      return {
+        status: true,
+        star
+      }
     }
   }
 

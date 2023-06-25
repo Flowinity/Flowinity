@@ -912,7 +912,7 @@ export class ChatService {
     }
     // must contain at least one character excluding spaces and newlines and must not contain just #s (one or more)
     if (!attachments?.length) {
-      content = content.trim()
+      content = content?.trim()
       if (
         !content.replace(/\s/g, "").length ||
         !content.replace(/#/g, "").length

@@ -146,4 +146,9 @@ export interface User {
   excludedCollections: number[] | null;
   language: any;
   publicProfile: boolean;
+  platforms?: {
+    id: number;
+    platform: string;
+    lastSeen: string;
+  }[];
 }

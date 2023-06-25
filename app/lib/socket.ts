@@ -14,6 +14,33 @@ import { Pulse } from "@app/models/pulse.model"
 
 // Import Types
 import { SocketAuth } from "@app/types/socket"
+import cryptoRandomString from "crypto-random-string"
+
+interface Platform {
+  platform: string
+  id: string
+  lastSeen: String
+  status: string
+}
+
+async function setDominateDevice(
+  userId: number,
+  platform: Platform,
+  storedStatus: string
+) {
+  let status = await redis.json.get(`user:${userId}:platforms`)
+  // move the dominate device to the top of the list
+  if (!status?.length || status[0].id === platform.id) return
+  status = status.filter((p: Platform) => p.platform !== platform.platform)
+  status.unshift(platform)
+  redis.json.set(`user:${userId}:platforms`, "$", status)
+  const userService: UserUtilsService = Container.get(UserUtilsService)
+  await userService.emitToFriends(userId, "userStatus", {
+    id: userId,
+    storedStatus,
+    platforms: status
+  })
+}
 
 export default {
   async init(app: any, server: any): Promise<void> {
@@ -39,39 +66,57 @@ export default {
 
       if (user && socket.user.id) {
         socket.join(user.id)
-
-        if (
-          user.storedStatus !== "invisible" &&
-          user.status !== user.storedStatus
-        ) {
+        const platform = socket.handshake.query.platform || "web"
+        const device = {
+          platform: platform,
+          lastSeen: new Date().toISOString(),
+          status: user?.storedStatus,
+          id: cryptoRandomString({ length: 16 })
+        }
+        if (user.storedStatus !== "invisible") {
           console.info(`user ${user.username} going online`)
-
-          await User.update(
-            {
-              status: user.storedStatus
-            },
-            {
-              where: {
-                id: user.id
-              }
+          let status = await redis.json.get(`user:${user.id}:platforms`)
+          if (["android_kotlin", "web", "desktop"].includes(<string>platform)) {
+            console.log(status)
+            const sockets = await io.in(user.id).allSockets()
+            if (sockets.size < status?.length || !status) {
+              status = []
             }
-          )
-
+            status.unshift(device)
+            redis.json.set(`user:${user.id}:platforms`, "$", status)
+          }
           const userService: UserUtilsService = Container.get(UserUtilsService)
-
           await userService.emitToFriends(user.id, "userStatus", {
             id: user.id,
-            status: user.storedStatus
+            status: user.storedStatus,
+            platforms: status
           })
+
+          if (user.status !== user.storedStatus) {
+            await User.update(
+              {
+                status: user.storedStatus
+              },
+              {
+                where: {
+                  id: user.id
+                }
+              }
+            )
+          }
         }
 
         socket.on("disconnect", async (): Promise<void> => {
+          let status = redis.json.get(`user:${user.id}:platforms`)
+          if (status?.length) {
+            status = status.filter((p: any) => p.id !== device.id)
+            redis.json.set(`user:${user.id}:platforms`, "$", status)
+          }
           // Ensure that all sockets are disconnected.
           const sockets = await io.in(user.id).allSockets()
-
+          const userService: UserUtilsService = Container.get(UserUtilsService)
           if (sockets.size === 0) {
             console.info(`user ${user.username} going offline`)
-
             if (user.storedStatus !== "invisible") {
               await User.update(
                 {
@@ -84,6 +129,17 @@ export default {
                 }
               )
             }
+            await userService.emitToFriends(user.id, "userStatus", {
+              id: user.id,
+              status: "offline",
+              platforms: status
+            })
+          } else {
+            await userService.emitToFriends(user.id, "userStatus", {
+              id: user.id,
+              status: user.storedStatus,
+              platforms: status
+            })
           }
         })
         socket.emit("pulseConfig", {
@@ -91,6 +147,7 @@ export default {
         })
         socket.on("pulse", async (data): Promise<void> => {
           try {
+            setDominateDevice(user.id, data.device, user.storedStatus)
             if (data.timeSpent > 3600000) return
             await Pulse.create({
               userId: user.id,
@@ -203,6 +260,11 @@ export default {
           socket.disconnect()
         })
       }
+
+      socket.on("echo", async (data) => {
+        console.log(data)
+        socket.emit("echo", data)
+      })
     })
 
     app.set("io", io)

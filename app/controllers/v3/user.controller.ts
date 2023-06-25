@@ -63,7 +63,8 @@ export class UserControllerV3 {
     return {
       ...user,
       pendingAutoCollects,
-      notifications
+      notifications,
+      platforms: await redis.json.get(`user:${user.id}:platforms`)
     }
   }
 

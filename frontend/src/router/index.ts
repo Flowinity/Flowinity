@@ -97,6 +97,11 @@ const routes = [
             component: () => import("@/views/Settings/Security.vue")
           },
           {
+            path: "security/audit",
+            name: "Audit Log",
+            component: () => import("@/views/Settings/SecurityAudit.vue")
+          },
+          {
             path: "clients",
             name: "Setup",
             component: () => import("@/views/Settings/Setup.vue")

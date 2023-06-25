@@ -189,6 +189,10 @@ export class UserUtilsService {
       friend.dataValues.otherUser.dataValues.stats = await redis.json.get(
         `userStats:${friend.otherUser.id}`
       )
+
+      friend.dataValues.otherUser.dataValues.platforms = await redis.json.get(
+        `user:${friend.otherUser.id}:platforms`
+      )
     }
     return friends
   }
@@ -521,6 +525,7 @@ export class UserUtilsService {
     for (const friend of friends) {
       socket.to(friend.friendId).emit(key, value)
     }
+    socket.to(userId).emit(key, value)
   }
 
   async getAllUsers(
@@ -773,6 +778,10 @@ export class UserUtilsService {
       if (user.dataValues.friend !== "accepted" && user.id !== userId) {
         user.dataValues.stats.hours = null
         user.dataValues.stats.uploadGraph = null
+      } else {
+        user.dataValues.platforms = await redis.json.get(
+          `user:${user.id}:platforms`
+        )
       }
     } else if (
       user?.profileLayout?.layout.columns[0].rows.find(

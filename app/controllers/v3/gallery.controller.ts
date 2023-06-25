@@ -167,9 +167,7 @@ export class GalleryControllerV3 {
     @Auth("uploads.modify") user: User,
     @Param("attachment") attachment: string
   ) {
-    return {
-      status: await this.galleryService.starUpload(attachment, user.id)
-    }
+    return await this.galleryService.starUpload(attachment, user.id)
   }
 
   @Get("/:attachment")

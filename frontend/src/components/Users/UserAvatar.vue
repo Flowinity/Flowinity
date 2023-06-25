@@ -51,11 +51,25 @@
           :style="{
             backgroundColor: $functions.userStatus(friendStatus).color
           }"
+          v-if="friendDevice === 'web'"
         >
           <v-tooltip :eager="false" location="top" activator="parent">
             {{ $functions.userStatus(friendStatus).text }}
           </v-tooltip>
         </div>
+        <span v-else>
+          <v-tooltip :eager="false" location="top" activator="parent">
+            {{ $functions.userStatus(friendStatus).text }}
+          </v-tooltip>
+          <v-icon
+            class="status"
+            :class="{ 'dot-status': dotStatus }"
+            :size="dotStatus ? 'x-small' : undefined"
+            :color="$functions.userStatus(friendStatus).color"
+          >
+            mdi-cellphone
+          </v-icon>
+        </span>
       </template>
     </v-hover>
   </span>
@@ -125,6 +139,16 @@ export default defineComponent({
         return this.$user.user?.storedStatus;
       return this.$friends.friends.find((f) => f.friendId === this.user.id)
         ?.otherUser?.status;
+    },
+    friendDevice() {
+      if (!this.user) return "web";
+      if (this.emulatedStatus) return "web";
+      if (this.user.id === this.$user.user?.id)
+        return this.$user.user?.platforms?.[0]?.platform ?? "web";
+      const friend = this.$friends.friends.find(
+        (f) => f.friendId === this.user.id
+      );
+      return friend.otherUser?.platforms?.[0]?.platform ?? "web";
     }
   },
   methods: {
