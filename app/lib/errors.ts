@@ -332,6 +332,10 @@ let Errors = {
   INTEGRATION_IS_NOT_LINKED: {
     message: "The integration is not linked.",
     status: 400
+  },
+  MESSAGE_TOO_LONG: {
+    message: "The message is over 4000 characters.",
+    status: 400
   }
 }
 

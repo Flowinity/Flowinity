@@ -919,6 +919,7 @@ export class ChatService {
       )
         throw Errors.NO_MESSAGE_CONTENT
     }
+    if (content.length >= 4000) throw Errors.MESSAGE_TOO_LONG
     const message = await Message.create({
       content,
       chatId: chat.id,
