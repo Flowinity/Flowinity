@@ -35,6 +35,7 @@ async function setDominateDevice(
   status.unshift(platform)
   redis.json.set(`user:${userId}:platforms`, "$", status)
   const userService: UserUtilsService = Container.get(UserUtilsService)
+  if (storedStatus === "invisible") return
   await userService.emitToFriends(userId, "userStatus", {
     id: userId,
     storedStatus,
@@ -72,16 +73,16 @@ export default {
           lastSeen: new Date().toISOString(),
           status: user?.storedStatus,
           id: cryptoRandomString({ length: 16 })
-        }
+        } as Platform
         if (user.storedStatus !== "invisible") {
           console.info(`user ${user.username} going online`)
           let status = await redis.json.get(`user:${user.id}:platforms`)
           if (["android_kotlin", "web", "desktop"].includes(<string>platform)) {
-            console.log(status)
             const sockets = await io.in(user.id).allSockets()
             if (sockets.size < status?.length || !status) {
               status = []
             }
+            console.log(device, status)
             status.unshift(device)
             redis.json.set(`user:${user.id}:platforms`, "$", status)
           }
@@ -128,13 +129,13 @@ export default {
                   }
                 }
               )
+              await userService.emitToFriends(user.id, "userStatus", {
+                id: user.id,
+                status: "offline",
+                platforms: status
+              })
             }
-            await userService.emitToFriends(user.id, "userStatus", {
-              id: user.id,
-              status: "offline",
-              platforms: status
-            })
-          } else {
+          } else if (user.storedStatus !== "invisible") {
             await userService.emitToFriends(user.id, "userStatus", {
               id: user.id,
               status: user.storedStatus,
@@ -147,7 +148,7 @@ export default {
         })
         socket.on("pulse", async (data): Promise<void> => {
           try {
-            setDominateDevice(user.id, data.device, user.storedStatus)
+            setDominateDevice(user.id, device, user.storedStatus)
             if (data.timeSpent > 3600000) return
             await Pulse.create({
               userId: user.id,

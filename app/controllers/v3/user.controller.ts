@@ -108,6 +108,7 @@ export class UserControllerV3 {
     const user = await this.userUtilsService.getUser(username, authUser?.id)
     if (!user || (!user?.publicProfile && !authUser))
       throw Errors.USER_NOT_FOUND
+
     return user
   }
 
