@@ -108,7 +108,7 @@ export default {
         }
 
         socket.on("disconnect", async (): Promise<void> => {
-          let status = redis.json.get(`user:${user.id}:platforms`)
+          let status = await redis.json.get(`user:${user.id}:platforms`)
           if (status?.length) {
             status = status.filter((p: any) => p.id !== device.id)
             redis.json.set(`user:${user.id}:platforms`, "$", status)

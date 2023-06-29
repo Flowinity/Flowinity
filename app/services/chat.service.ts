@@ -749,6 +749,7 @@ export class ChatService {
     if (!chat) throw Errors.CHAT_NOT_FOUND
     return {
       ...chat.toJSON(),
+      unread: 0,
       recipient: await this.getRecipient(chat, userId)
     }
   }
@@ -974,8 +975,12 @@ export class ChatService {
 
   async getChatFromAssociation(associationId: number, userId: number) {
     const chats = await this.getCachedUserChats(userId, true)
-    const chat = chats.find((c: Chat) => c.association?.id === associationId)
-    if (!chat) throw Errors.CHAT_NOT_FOUND
+    let chat = chats.find((c: Chat) => c.association?.id === associationId)
+    if (!chat) {
+      // For TPU Kotlin
+      chat = chats.find((c: Chat) => c.id === associationId)
+      if (!chat) throw Errors.CHAT_NOT_FOUND
+    }
     return chat
   }
 

@@ -408,7 +408,8 @@ export class UserUtilsService {
         "email",
         "password",
         "administrator",
-        "moderator"
+        "moderator",
+        "status"
       ],
       include: [
         {
@@ -488,10 +489,13 @@ export class UserUtilsService {
             }
           }
         )
-        await this.emitToFriends(user.id, "userStatus", {
-          id: user.id,
-          status
-        })
+        if (body.storedStatus !== "invisible" || user.status !== "offline") {
+          await this.emitToFriends(user.id, "userStatus", {
+            id: user.id,
+            status,
+            platforms: await redis.json.get(`user:${user.id}:platforms`)
+          })
+        }
       }
     }
     if (body.profileLayout !== undefined && body.profileLayout !== null) {
@@ -525,6 +529,7 @@ export class UserUtilsService {
     for (const friend of friends) {
       socket.to(friend.friendId).emit(key, value)
     }
+    console.log(value)
     socket.to(userId).emit(key, value)
   }
 
