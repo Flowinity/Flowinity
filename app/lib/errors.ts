@@ -336,6 +336,10 @@ let Errors = {
   MESSAGE_TOO_LONG: {
     message: "The message is over 4000 characters.",
     status: 400
+  },
+  FRIEND_REQUEST_ALREADY_SENT: {
+    message: "A friend request has already been sent to this user.",
+    status: 400
   }
 }
 

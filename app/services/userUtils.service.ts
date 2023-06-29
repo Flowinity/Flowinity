@@ -20,9 +20,108 @@ import { ThemeEngineValidate } from "@app/validators/themeEngine"
 import { CoreService } from "@app/services/core.service"
 import { LayoutValidate } from "@app/validators/userv3"
 import { ExcludedCollectionsValidate } from "@app/validators/excludedCollections"
+import { FCMDevice } from "@app/models/fcmDevices.model"
+import axios from "axios"
+import { GoogleService } from "@app/services/providers/google.service"
 
 @Service()
 export class UserUtilsService {
+  async registerFCMToken(userId: number, token: string) {
+    if (!config.providers.google) return
+    const device = await FCMDevice.findOne({
+      where: {
+        registrationKey: token
+      }
+    })
+    if (device) return undefined
+    const user = await User.findOne({
+      where: {
+        id: userId
+      },
+      attributes: ["id", "username", "fcmNotificationKey"]
+    })
+    if (!user) throw Errors.USER_NOT_FOUND
+    if (user.fcmNotificationKey) {
+      await axios.post(
+        "https://fcm.googleapis.com/fcm/notification",
+        {
+          operation: "add",
+          notification_key_name: `user-${user.id}`,
+          notification_key: user.fcmNotificationKey,
+          registration_ids: [token]
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `key=${config.providers.google.access_token}`,
+            project_id: config.providers.google.project_info.project_number
+          }
+        }
+      )
+    } else {
+      const { data } = await axios.post(
+        "https://fcm.googleapis.com/fcm/notification",
+        {
+          operation: "create",
+          notification_key_name: `user-${user.id}`,
+          registration_ids: [token]
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `key=${config.providers.google.access_token}`,
+            project_id: config.providers.google.project_info.project_number
+          }
+        }
+      )
+      await User.update(
+        {
+          fcmNotificationKey: data.notification_key
+        },
+        {
+          where: {
+            id: user.id
+          }
+        }
+      )
+    }
+    const devices = await FCMDevice.findAll({
+      where: {
+        userId,
+        invalid: false
+      }
+    })
+    if (devices.length >= 20) {
+      await FCMDevice.update(
+        {
+          invalid: true
+        },
+        {
+          where: {
+            userId
+          },
+          limit: 1
+        }
+      )
+    }
+
+    await FCMDevice.create({
+      userId,
+      registrationKey: token
+    })
+
+    const fcmUser = await User.findOne({
+      where: {
+        id: userId
+      },
+      attributes: ["fcmNotificationKey"]
+    })
+    await redis.set(
+      `user:${userId}:notificationKey`,
+      fcmUser?.fcmNotificationKey
+    )
+  }
+
   async setFriendNickname(userId: number, friendId: number, name: string) {
     const user = await User.findOne({
       where: {
@@ -149,11 +248,41 @@ export class UserUtilsService {
     return friends
   }
 
+  async getFriend(userId: number, friendId: number) {
+    return await Friend.findOne({
+      where: {
+        userId,
+        friendId
+      },
+      include: [
+        {
+          model: User,
+          as: "otherUser",
+          attributes: ["id", "username", "avatar", "description", "banner"],
+          include: [
+            {
+              model: FriendNickname,
+              as: "nickname",
+              required: false,
+              where: {
+                userId
+              }
+            },
+            {
+              model: Plan,
+              as: "plan",
+              attributes: ["id", "name", "color", "icon", "internalName"]
+            }
+          ]
+        }
+      ]
+    })
+  }
+
   async getFriends(userId: number) {
     let friends = await Friend.findAll({
       where: {
-        userId,
-        status: "accepted"
+        userId
       },
       include: [
         {
@@ -186,6 +315,10 @@ export class UserUtilsService {
       ]
     })
     for (const friend of friends) {
+      if (friend.status !== "accepted") {
+        friend.dataValues.otherUser.status = null
+        continue
+      }
       friend.dataValues.otherUser.dataValues.stats = await redis.json.get(
         `userStats:${friend.otherUser.id}`
       )
@@ -240,58 +373,89 @@ export class UserUtilsService {
         friendId: userId
       }
     })
+
+    socket.to(friendId).emit("friendRequest", {
+      id: userId,
+      status: "removed",
+      friend: null
+    })
+    socket.to(userId).emit("friendRequest", {
+      id: friendId,
+      status: "removed",
+      friend: null
+    })
   }
 
-  async friend(userId: number, friendId: number): Promise<boolean> {
-    if (userId === friendId) throw Errors.CANNOT_FRIEND_SELF
+  async friend(
+    userId: number,
+    friendId: number | string,
+    type: "id" | "username",
+    // Used for TPU Kotlin
+    action?: "accept" | "decline" | "send"
+  ): Promise<boolean> {
     const user = await User.findOne({
       where: {
-        id: userId
+        [type]: friendId
       },
-      attributes: ["username"]
+      attributes: ["username", "id"]
     })
 
     if (!user) throw Errors.USER_NOT_FOUND
+    if (user.id === userId) throw Errors.CANNOT_FRIEND_SELF
 
     const friend = await Friend.findOne({
       where: {
         userId,
-        friendId
+        friendId: user.id
       }
     })
     if (!friend) {
       // Prevent user spam by avoiding to send the notification if the request is made <30minutes
-      if (!(await redis.get(`friendNotification:${friendId}:${userId}`))) {
+      if (!(await redis.get(`friendNotification:${user.id}:${userId}`))) {
         await redis.set(
-          `friendNotification:${friendId}:${userId}`,
+          `friendNotification:${user.id}:${userId}`,
           "true",
           "EX",
           1800
         )
         await this.createNotification(
-          friendId,
+          user.id,
           `${user.username} has sent you a friend request!`,
           `/u/${user.username}`
         )
       }
       await Friend.create({
         userId,
-        friendId,
+        friendId: user.id,
         status: "outgoing"
       })
       await Friend.create({
-        userId: friendId,
+        userId: user.id,
         friendId: userId,
         status: "incoming"
+      })
+      socket.to(user.id).emit("friendRequest", {
+        id: userId,
+        status: "incoming",
+        friend: await this.getFriend(user.id, userId)
+      })
+      socket.to(userId).emit("friendRequest", {
+        id: user.id,
+        status: "outgoing",
+        friend: await this.getFriend(userId, user.id)
       })
       return true
     }
 
     switch (friend.status) {
       case "outgoing":
-        await this.removeFriend(userId, friendId)
+        if (action === "send" || action == "accept")
+          throw Errors.FRIEND_REQUEST_ALREADY_SENT
+        await this.removeFriend(userId, user.id)
         return true
       case "incoming":
+        if (action === "send" || action == "decline")
+          throw Errors.FRIEND_REQUEST_ALREADY_SENT
         await Friend.update(
           {
             status: "accepted"
@@ -299,7 +463,7 @@ export class UserUtilsService {
           {
             where: {
               userId,
-              friendId
+              friendId: user.id
             }
           }
         )
@@ -309,19 +473,31 @@ export class UserUtilsService {
           },
           {
             where: {
-              userId: friendId,
+              userId: user.id,
               friendId: userId
             }
           }
         )
         await this.createNotification(
-          friendId,
+          user.id,
           `${user.username} has accepted your friend request!`,
           `/u/${user.username}`
         )
+        socket.to(user.id).emit("friendRequest", {
+          id: userId,
+          status: "accepted",
+          friend: await this.getFriend(user.id, userId)
+        })
+        socket.to(userId).emit("friendRequest", {
+          id: user.id,
+          status: "accepted",
+          friend: await this.getFriend(userId, user.id)
+        })
         return true
       case "accepted":
-        await this.removeFriend(userId, friendId)
+        if (action === "send" || action == "accept")
+          throw Errors.FRIEND_REQUEST_ALREADY_SENT
+        await this.removeFriend(userId, user.id)
         return true
     }
   }
@@ -445,12 +621,16 @@ export class UserUtilsService {
       if (!allowedFields.includes(key)) {
         delete body[key]
       }
-      if (body[key] === "" && key !== "description") {
+      if (
+        (body[key] === "" && key !== "description") ||
+        body[key] === null ||
+        body[key] === undefined
+      ) {
         delete body[key]
       }
     }
 
-    if (body.themeEngine !== undefined) {
+    if (body.themeEngine) {
       ThemeEngineValidate.parse(body.themeEngine)
     }
 

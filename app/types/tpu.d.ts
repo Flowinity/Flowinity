@@ -31,6 +31,62 @@ declare type TpuConfig = {
       secret: string | undefined | null
     }
     steam: string | undefined | null
+    google:
+      | {
+          service: {
+            type: string
+            project_id: string
+            private_key_id: string
+            private_key: string
+            client_email: string
+            client_id: string
+            auth_uri: string
+            token_uri: string
+            auth_provider_x509_cert_url: string
+            client_x509_cert_url: string
+            universe_domain: string
+          }
+          access_token: string
+          project_info: {
+            project_number: string
+            project_id: string
+            storage_bucket: string
+          }
+          client: [
+            {
+              client_info: {
+                mobilesdk_app_id: string
+                android_client_info: {
+                  package_name: string
+                }
+              }
+              oauth_client: [
+                {
+                  client_id: string
+                  client_type: number
+                }
+              ]
+              api_key: [
+                {
+                  current_key: string
+                }
+              ]
+              services: {
+                appinvite_service: {
+                  other_platform_oauth_client: [
+                    {
+                      client_id: string
+                      client_type: number
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+          configuration_version: string
+        }
+      | undefined
+      | null
   }
   redis: {
     username?: string | undefined

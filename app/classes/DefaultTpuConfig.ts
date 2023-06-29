@@ -40,7 +40,8 @@ export class DefaultTpuConfig {
         key: null,
         secret: null
       },
-      steam: null
+      steam: null,
+      google: null
     },
     email: {
       secure: false,

@@ -10,6 +10,8 @@ import { CacheService } from "@app/services/cache.service"
 import embedParser from "@app/lib/embedParser"
 import { Op } from "sequelize"
 import paginate from "jw-paginate"
+import axios from "axios"
+import { GoogleService } from "@app/services/providers/google.service"
 
 interface ChatCache extends Chat {
   _redisSortDate: string
@@ -106,6 +108,38 @@ export class ChatService {
       ]
     }
   ]
+
+  async emitToFCMs(message: Message, chat: Chat, userId: number) {
+    if (!config.providers.google) return
+    for (const user of chat.users) {
+      const key = await redis.get(`user:${user.userId}:notificationKey`)
+      if (!key) continue
+      await axios
+        .post(
+          `https://fcm.googleapis.com/fcm/send`,
+          {
+            to: key,
+            data: {
+              content: message.content,
+              id: message.id,
+              associationId: user.id,
+              userId: message.userId,
+              username: message.user?.username,
+              avatar: message.user?.avatar,
+              chatName: chat.name,
+              createdAt: message.createdAt
+            }
+          },
+          {
+            headers: {
+              Authorization: `key=${config.providers.google.access_token}`,
+              "Content-Type": "application/json"
+            }
+          }
+        )
+        .catch((e) => console.log(e?.response?.data))
+    }
+  }
 
   async updateAssociationSettings(
     associationId: number,
@@ -836,6 +870,7 @@ export class ChatService {
     })
 
     if (!message) throw Errors.UNKNOWN
+    this.emitToFCMs(message, chat, message.userId)
     for (const association of chat.users) {
       if (association?.tpuUser) {
         const assoc = await ChatAssociation.findOne({
