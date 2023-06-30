@@ -160,7 +160,7 @@
           </span>
         </p>
         <span
-          v-if="!editing && message.content"
+          v-if="!editing"
           :class="{ 'text-grey': message.pending, 'text-red': message.error }"
         >
           <span

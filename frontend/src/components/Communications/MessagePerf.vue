@@ -97,7 +97,7 @@
           </v-btn>
         </p>
         <span
-          v-if="!editing && message.content"
+          v-if="!editing"
           :class="{ 'text-grey': message.pending, 'text-red': message.error }"
           class="overflow-content message-content"
           v-html="$functions.markdown(message.content)"

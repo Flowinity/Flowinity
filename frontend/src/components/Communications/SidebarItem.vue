@@ -2,7 +2,7 @@
   <div
     class="member-sidebar-item unselectable"
     @click="handleClick"
-    :class="{ pointer: !legacyUser, selected: isSelected }"
+    :class="{ pointer: chat || !legacyUser, selected: isSelected }"
   >
     <UserAvatar
       :user="user"
@@ -78,10 +78,9 @@ export default defineComponent({
   },
   methods: {
     handleClick() {
-      if (this.legacyUser) return;
       if (this.chat) {
         this.$router.push(`/communications/${this.chat.association.id}`);
-      } else {
+      } else if (!this.legacyUser) {
         this.$chat.dialogs.user.username = this.user.username;
         this.$chat.dialogs.user.value = true;
       }
