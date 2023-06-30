@@ -33,6 +33,7 @@ export interface UserState {
     excludedCollections?: number[] | null;
     language?: string;
     publicProfile?: boolean;
+    privacyPolicyAccepted?: boolean;
   };
   actions: {
     emailSent: {
@@ -276,7 +277,8 @@ export const useUserStore = defineStore("user", {
         excludedCollections: user.excludedCollections,
         language: user.language,
         publicProfile: user.publicProfile,
-        weatherUnit: user.weatherUnit
+        weatherUnit: user.weatherUnit,
+        privacyPolicyAccepted: user.privacyPolicyAccepted
       };
     },
     async init() {

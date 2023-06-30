@@ -151,4 +151,5 @@ export interface User {
     platform: string;
     lastSeen: string;
   }[];
+  privacyPolicyAccepted: boolean;
 }

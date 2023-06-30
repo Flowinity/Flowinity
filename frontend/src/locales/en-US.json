@@ -23,7 +23,13 @@
       "experiments": "TPU Experimental Overrides (NEXT)",
       "close": "Close sidebar",
       "communicationsShort": "Comms",
-      "quickAction": "Select a new quick action."
+      "quickAction": "Select a new quick action.",
+      "android": "Get the app"
+    },
+    "privacy": {
+      "title": "The Privacy Policy has been updated.",
+      "desc": "Please review the updated Privacy Policy. By continuing to use TPU, you agree to the new Privacy Policy.",
+      "close": "I agree"
     }
   },
   "dashboard": {

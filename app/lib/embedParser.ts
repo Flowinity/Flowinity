@@ -49,7 +49,7 @@ function generateImagePayload(imageResult: probe.ProbeResult): {
   return imagePayload
 }
 
-export default async function (
+export default async function embedParser(
   message: Message,
   chatId: number,
   userId: number,
@@ -71,8 +71,25 @@ export default async function (
       }
     })
 
+    // TPU Kotlin
+    if (!upload) {
+      try {
+        const url = new URL(attachment)
+        if (url.hostname === "media.tenor.com") {
+          const test = await ogsMetadataParser(attachment, blacklist)
+          if (test) {
+            embeds.push(test)
+          } else {
+            continue
+          }
+        } else {
+          continue
+        }
+      } catch {
+        continue
+      }
+    }
     if (!upload) continue
-
     try {
       if (upload.type === "image") {
         const result: ProbeResult = await probe(
@@ -130,63 +147,8 @@ export default async function (
   }
 
   for (let [, link] of links.entries()) {
-    try {
-      const linkURL: URL = new URL(link)
-
-      if (blacklist.includes(linkURL.hostname)) {
-        embeds.push({
-          link: link,
-          type: "openGraph",
-          data: {
-            title: "Blacklisted link",
-            description: "This link cannot be mediaproxied at this time."
-          }
-        })
-
-        continue
-      }
-
-      const { result } = await ogs({
-        url: link,
-        headers: {
-          "user-agent": "TroploPrivateUploader-MediaProxyBot/2.0.0"
-        }
-      })
-
-      if (result) {
-        let imagePayload: ImagePayload | null = null
-
-        if (result.ogImage) {
-          //@ts-ignore
-          const imgResult = await probe(result.ogImage.url)
-          imagePayload = generateImagePayload(imgResult)
-        }
-
-        embeds.push({
-          data: {
-            title: result.ogTitle,
-            description: result.ogDescription,
-            url: result.requestUrl,
-            image: imagePayload,
-            siteName: result.ogSiteName,
-            type: result.ogType
-          },
-          type: "openGraph",
-          url: link
-        })
-      }
-    } catch {
-      try {
-        const result = await probe(link)
-        const imagePayload = generateImagePayload(result)
-
-        embeds.push({
-          data: imagePayload,
-          type: "image",
-          url: imagePayload.originalURL
-        })
-      } catch {}
-    }
+    const test = await ogsMetadataParser(link, blacklist)
+    if (test) embeds.push(test)
   }
 
   if (embeds.length) {
@@ -202,5 +164,67 @@ export default async function (
       embeds,
       userId
     })
+  }
+}
+
+async function ogsMetadataParser(link: string, blacklist: any) {
+  try {
+    const linkURL: URL = new URL(link)
+
+    if (blacklist.includes(linkURL.hostname)) {
+      return {
+        link: link,
+        type: "openGraph",
+        data: {
+          title: "Blacklisted link",
+          description: "This link cannot be mediaproxied at this time."
+        }
+      }
+    }
+
+    const { result } = await ogs({
+      url: link,
+      headers: {
+        "user-agent": "TroploPrivateUploader-MediaProxyBot/2.0.0"
+      }
+    })
+
+    if (result) {
+      let imagePayload: ImagePayload | null = null
+
+      if (result.ogImage) {
+        //@ts-ignore
+        const imgResult = await probe(result.ogImage.url)
+        imagePayload = generateImagePayload(imgResult)
+      }
+
+      return {
+        data: {
+          title: result.ogTitle,
+          description: result.ogDescription,
+          url: result.requestUrl,
+          image: imagePayload,
+          siteName: result.ogSiteName,
+          type: result.ogType
+        },
+        type: "openGraph",
+        url: link
+      }
+    } else {
+      return null
+    }
+  } catch {
+    try {
+      const result = await probe(link)
+      const imagePayload = generateImagePayload(result)
+
+      return {
+        data: imagePayload,
+        type: "image",
+        url: imagePayload.originalURL
+      }
+    } catch {
+      return null
+    }
   }
 }

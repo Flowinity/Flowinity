@@ -434,7 +434,7 @@ export const useAppStore = defineStore("app", {
           experimentsRequired: ["EARLY_ACCESS", "OFFICIAL_INSTANCE"]
         },
         {
-          id: 38,
+          id: 39,
           click() {
             state.dialogs.migrateWizard = true;
           },
@@ -455,6 +455,16 @@ export const useAppStore = defineStore("app", {
           new: false,
           scope: "admin.view",
           experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
+        },
+        {
+          id: 38,
+          externalPath: "https://github.com/PrivateUploader/Android/tags",
+          path: "",
+          name: i18n.t("core.sidebar.android"),
+          icon: "mdi-android",
+          new: false,
+          warning: "BETA",
+          scope: "*"
         }
       ] as SidebarItem[];
 

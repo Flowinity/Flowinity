@@ -289,6 +289,12 @@ export class User extends Model {
   })
   fcmNotificationKey: string
 
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true
+  })
+  privacyPolicyAccepted: boolean
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 

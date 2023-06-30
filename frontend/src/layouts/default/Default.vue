@@ -1,4 +1,7 @@
 <template>
+  <PrivacyPolicyDialog
+    v-if="!$user.user.privacyPolicyAccepted"
+  ></PrivacyPolicyDialog>
   <WorkspaceDeleteDialog
     v-model="$app.dialogs.deleteItem.value"
     :item="$app.dialogs.deleteItem.item"
@@ -160,6 +163,7 @@ import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 import BottomBar from "@/layouts/default/BottomBar.vue";
+import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
 </script>
 
 <script lang="ts">

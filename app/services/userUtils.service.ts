@@ -614,8 +614,10 @@ export class UserUtilsService {
       "profileLayout",
       "language",
       "excludedCollections",
-      "publicProfile"
+      "publicProfile",
+      "privacyPolicyAccepted"
     ]
+
     // from body, remove all empty values
     for (const key in body) {
       if (!allowedFields.includes(key)) {
@@ -709,7 +711,6 @@ export class UserUtilsService {
     for (const friend of friends) {
       socket.to(friend.friendId).emit(key, value)
     }
-    console.log(value)
     socket.to(userId).emit(key, value)
   }
 

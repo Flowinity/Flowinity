@@ -6,7 +6,6 @@ export class GoogleService {
   async generateToken() {
     try {
       const key = config.providers.google
-      console.log(process.env.APP_ROOT + "/config/google.json")
       if (!key) return ""
       const auth = new GoogleAuth({
         keyFile: process.env.APP_ROOT + "/config/google.json",

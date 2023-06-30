@@ -56,7 +56,9 @@ export default async function setup(app) {
     if (
       experiments.experiments.COMMUNICATIONS_KEEP_LOADED &&
       !chat.chats[newIndex].messages &&
-      !chat.chats[newIndex].messages.find((m) => m.id === newMessage.message.id)
+      !chat.chats[newIndex].messages?.find(
+        (m) => m.id === newMessage.message.id
+      )
     ) {
       chat.chats[newIndex].messages.unshift(newMessage.message as MessageType);
     }
@@ -104,7 +106,6 @@ export default async function setup(app) {
         return;
       }
     }
-    console.log(index);
     friends.friends[index].otherUser.status = data.status;
   });
   socket.on("friendRequestAccepted", async (data: Friend) => {
