@@ -1,6 +1,6 @@
 <template>
   <PrivacyPolicyDialog
-    v-if="!$user.user.privacyPolicyAccepted"
+    v-if="$user.user?.privacyPolicyAccepted == false"
   ></PrivacyPolicyDialog>
   <WorkspaceDeleteDialog
     v-model="$app.dialogs.deleteItem.value"
