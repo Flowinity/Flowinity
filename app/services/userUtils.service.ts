@@ -400,7 +400,14 @@ export class UserUtilsService {
       attributes: ["username", "id"]
     })
 
-    if (!user) throw Errors.USER_NOT_FOUND
+    const otherUser = await User.findOne({
+      where: {
+        id: userId
+      },
+      attributes: ["username", "id"]
+    })
+
+    if (!user || !otherUser) throw Errors.USER_NOT_FOUND
     if (user.id === userId) throw Errors.CANNOT_FRIEND_SELF
 
     const friend = await Friend.findOne({
@@ -420,8 +427,8 @@ export class UserUtilsService {
         )
         await this.createNotification(
           user.id,
-          `${user.username} has sent you a friend request!`,
-          `/u/${user.username}`
+          `${otherUser.username} has sent you a friend request!`,
+          `/u/${otherUser.username}`
         )
       }
       await Friend.create({
@@ -480,8 +487,8 @@ export class UserUtilsService {
         )
         await this.createNotification(
           user.id,
-          `${user.username} has accepted your friend request!`,
-          `/u/${user.username}`
+          `${otherUser.username} has accepted your friend request!`,
+          `/u/${otherUser.username}`
         )
         socket.to(user.id).emit("friendRequest", {
           id: userId,
