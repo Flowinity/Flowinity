@@ -156,7 +156,7 @@ export class GalleryService {
       //
     }
     return {
-      upload,
+      upload: await this.getAttachment(upload.attachment, userId),
       url
     }
   }
@@ -488,6 +488,7 @@ export class GalleryService {
     if (!upload) {
       throw Errors.ATTACHMENT_NOT_FOUND_ROUTE
     }
+    upload.dataValues.collections = []
     return upload
   }
 

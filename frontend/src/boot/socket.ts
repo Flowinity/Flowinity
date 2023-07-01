@@ -60,6 +60,7 @@ export default async function setup(app) {
         (m) => m.id === newMessage.message.id
       )
     ) {
+      if (!chat.chats[newIndex]?.messages) chat.chats[newIndex].messages = [];
       chat.chats[newIndex].messages.unshift(newMessage.message as MessageType);
     }
     if (

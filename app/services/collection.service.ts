@@ -9,6 +9,8 @@ import { CollectionCache } from "@app/types/collection"
 import cryptoRandomString from "crypto-random-string"
 import { Friend } from "@app/models/friend.model"
 import { isNumeric } from "@app/lib/isNumeric"
+import upload from "@app/lib/upload"
+import { Star } from "@app/models/star.model"
 
 @Service()
 export class CollectionService {
@@ -264,12 +266,14 @@ export class CollectionService {
       throw Errors.INVALID_PARAMETERS
     }
     if (typeof uploadId === "number") {
-      return await CollectionItem.create({
+      const item = await CollectionItem.create({
         collectionId,
         attachmentId: uploadId,
         userId,
         identifier: uploadId + "-" + collectionId
       })
+      this.emitUpdate(uploadId, userId)
+      return item
     } else {
       let items = []
       for (const upload of uploadId) {
@@ -284,13 +288,47 @@ export class CollectionService {
           )
         } catch {}
       }
+      this.emitUpdate(uploadId, userId)
       return items
     }
   }
 
+  async emitUpdate(uploadId: number | number[], userId: number) {
+    socket.to(userId).emit(
+      "gallery/update",
+      await Upload.findAll({
+        where: {
+          id: uploadId,
+          userId
+        },
+        include: [
+          {
+            model: Star,
+            as: "starred",
+            required: false,
+            where: {
+              userId: userId
+            }
+          },
+          {
+            model: Collection,
+            as: "collections",
+            attributes: ["id", "name"]
+          },
+          {
+            model: User,
+            as: "user",
+            attributes: ["id", "username"]
+          }
+        ]
+      })
+    )
+  }
+
   async removeFromCollection(
     collectionId: number,
-    uploadId: number | Array<number>
+    uploadId: number | Array<number>,
+    userId: number
   ) {
     const result = await CollectionItem.destroy({
       where: {
@@ -300,7 +338,7 @@ export class CollectionService {
     })
 
     if (!result) throw Errors.COLLECTION_ITEM_NOT_FOUND
-
+    this.emitUpdate(uploadId, userId)
     return result
   }
 

@@ -781,10 +781,11 @@ export class ChatService {
       ]
     })
     if (!chat) throw Errors.CHAT_NOT_FOUND
+    const recipient = await this.getRecipient(chat, userId)
     return {
       ...chat.toJSON(),
       unread: 0,
-      recipient: await this.getRecipient(chat, userId)
+      recipient: recipient.dataValues
     }
   }
 
