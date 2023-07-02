@@ -556,15 +556,21 @@ export class ChatService {
       include: this.userIncludes
     })
     this.patchCacheForAll(chat.id)
+    const newUsers = await ChatAssociation.findAll({
+      where: {
+        id: newAssociations
+      },
+      include: this.userIncludes
+    })
     this.emitForAll(chatId, userId, "addChatUsers", {
       chatId: chat.id,
-      users: await ChatAssociation.findAll({
-        where: {
-          id: newAssociations
-        },
-        include: this.userIncludes
-      })
+      users: newUsers
     })
+    for (const association of newUsers) {
+      socket
+        .to(association.userId)
+        .emit("chatCreated", await this.getChat(chat.id, association.userId))
+    }
     return associations
   }
 
@@ -785,7 +791,7 @@ export class ChatService {
     return {
       ...chat.toJSON(),
       unread: 0,
-      recipient: recipient.dataValues
+      recipient: recipient?.dataValues ?? null
     }
   }
 
