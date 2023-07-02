@@ -391,7 +391,7 @@ export class UserUtilsService {
     friendId: number | string,
     type: "id" | "username",
     // Used for TPU Kotlin
-    action?: "accept" | "decline" | "send"
+    action?: "accept" | "remove" | "send"
   ): Promise<boolean> {
     const user = await User.findOne({
       where: {
@@ -458,11 +458,18 @@ export class UserUtilsService {
       case "outgoing":
         if (action === "send" || action == "accept")
           throw Errors.FRIEND_REQUEST_ALREADY_SENT
+        if (action === "remove") {
+          await this.removeFriend(userId, user.id)
+          return true
+        }
         await this.removeFriend(userId, user.id)
         return true
       case "incoming":
-        if (action === "send" || action == "decline")
-          throw Errors.FRIEND_REQUEST_ALREADY_SENT
+        if (action === "send") throw Errors.FRIEND_REQUEST_ALREADY_SENT
+        if (action === "remove") {
+          await this.removeFriend(userId, user.id)
+          return true
+        }
         await Friend.update(
           {
             status: "accepted"

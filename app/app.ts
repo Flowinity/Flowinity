@@ -294,6 +294,11 @@ export class Application {
           }
         }
       )
+      // delete all Redis keys containing user:*:platforms to reset statuses
+      const keys = await redis.keys("user:*:platforms")
+      for (const key of keys) {
+        await redis.del(key)
+      }
     }
   }
 }

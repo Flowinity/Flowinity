@@ -57,8 +57,7 @@ export class UserControllerV3 {
         userId: user.id
       },
       order: [["createdAt", "DESC"]],
-      limit: 15,
-      raw: true
+      limit: 15
     })
 
     return {
@@ -91,7 +90,7 @@ export class UserControllerV3 {
   async addFriendByUsername(
     @Auth("user.modify") user: User,
     @Param("username") username: string,
-    @Param("action") action: "accept" | "decline" | "send"
+    @Param("action") action: "accept" | "remove" | "send"
   ) {
     await this.userUtilsService.friend(user.id, username, "username", action)
   }
