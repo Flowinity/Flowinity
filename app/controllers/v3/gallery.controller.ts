@@ -94,7 +94,7 @@ export class GalleryControllerV3 {
       attachment,
       user.discordPrecache
     )
-    socket.to(user.id).emit("gallery/create", upload)
+    socket.to(user.id).emit("gallery/create", [upload])
     return upload
   }
 
