@@ -631,7 +631,10 @@ export class ChatService {
         chatId: chat.id,
         id: messageId,
         user: await Container.get(UserUtilsService).getUserById(userId),
-        pinned: !message.pinned
+        pinned: !message.pinned,
+        content: message.content,
+        edited: message.edited,
+        editedAt: message.editedAt
       })
       return true
     }
@@ -657,7 +660,8 @@ export class ChatService {
       content,
       edited: true,
       editedAt: date,
-      user: await Container.get(UserUtilsService).getUserById(userId)
+      user: await Container.get(UserUtilsService).getUserById(userId),
+      pinned: message.pinned
     })
     return true
   }
