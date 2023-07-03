@@ -394,6 +394,7 @@ export default defineComponent({
     async handlePaste(e: ClipboardEvent) {
       const items = e.clipboardData?.items;
       if (items) {
+        //@ts-ignore
         for (const item of items) {
           if (item.kind === "file") {
             const file = item.getAsFile();
@@ -414,6 +415,7 @@ export default defineComponent({
     },
     async uploadHandle(e: FileList) {
       if (e.length > 0) {
+        //@ts-ignore
         for (const file of e) {
           this.files.push({
             file,
@@ -432,6 +434,7 @@ export default defineComponent({
       e.stopPropagation();
       const files = e.dataTransfer?.files;
       if (files && files.length > 0) {
+        //@ts-ignore
         for (const file of files) {
           this.files.push({
             file,

@@ -106,6 +106,7 @@ export default defineComponent({
     // while retaining the ability to preview the link using the native browser
     aTag() {
       const aTags = document.getElementsByClassName("social-link");
+      //@ts-ignore
       for (const a of aTags) {
         a.addEventListener(
           "auxclick",
@@ -119,6 +120,7 @@ export default defineComponent({
   },
   unmounted() {
     const aTags = document.getElementsByClassName("social-link");
+    //@ts-ignore
     for (const a of aTags) {
       a.removeEventListener(
         "auxclick",

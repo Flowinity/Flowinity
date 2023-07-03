@@ -236,6 +236,7 @@ export const useUserStore = defineStore("user", {
           this.applyTheme();
           // remove other favicons
           const links = document.getElementsByTagName("link");
+          //@ts-ignore
           for (const link of links) {
             if (
               link.getAttribute("rel") !== "manifest" &&

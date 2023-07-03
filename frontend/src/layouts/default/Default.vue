@@ -325,6 +325,7 @@ export default defineComponent({
       if (!e.dataTransfer?.files?.length) return;
       const files = e.dataTransfer?.files;
       if (files) {
+        //@ts-ignore
         this.$app.dialogs.upload.files = [...files];
         this.$app.upload();
       }

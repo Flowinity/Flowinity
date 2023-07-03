@@ -16,8 +16,8 @@
     "strictPropertyInitialization": false,
     "lib": [
       "esnext",
-      "dom",
-      "dom.iterable",
+      "DOM",
+      "DOM.Iterable",
       "webworker"
     ],
     "skipLibCheck": true,
