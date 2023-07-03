@@ -34,7 +34,7 @@ export class FileControllerV3 {
     if (config.release === "dev") {
       try {
         await fs.accessSync(
-          config.storage + "/" + attachment,
+          global.storageRoot + "/" + attachment,
           fs.constants.F_OK
         )
       } catch {
@@ -57,7 +57,10 @@ export class FileControllerV3 {
       return res
     }
     if (force) {
-      res.download(config.storage + "/" + attachment, upload.originalFilename)
+      res.download(
+        global.storageRoot + "/" + attachment,
+        upload.originalFilename
+      )
       return res
     }
     if (
@@ -65,14 +68,13 @@ export class FileControllerV3 {
       upload.type === "video" ||
       upload.type === "audio"
     ) {
-      const file = path.resolve(config.storage + "/" + upload.attachment)
+      const file = path.resolve(global.storageRoot + "/" + upload.attachment)
       await promisify<string, void>(res.sendFile.bind(res))(file)
       return res
     } else {
-      res.download(
-        config.storage + "/" + upload.attachment,
-        upload.originalFilename
-      )
+      //https://github.com/Microsoft/TypeScript/issues/26048
+      //@ts-ignore
+      await promisify(res.download.bind(res))(global.storageRoot + "/" + upload.attachment, upload.originalFilename)
       return res
     }
   }

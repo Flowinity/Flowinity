@@ -674,7 +674,7 @@ export default defineComponent({
           hostnameWithProtocol: this.instance.hostnameWithProtocol,
           port: this.instance.port,
           registrations: this.instance.allowRegistrations,
-          threads: this.instance.multiThreaded,
+          threads: parseInt(this.instance.multiThreaded),
           features: this.features,
           redis: {
             db: parseInt(this.instance.redisDatabase),
