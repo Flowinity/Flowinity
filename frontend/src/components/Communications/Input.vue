@@ -159,7 +159,7 @@
             class="float-end mt-n1 mt-n6 text-grey mr-14"
             style="font-size: 12px"
           >
-            {{ modelValue?.length }} / 2000
+            {{ modelValue?.length }} / 4000
           </span>
         </div>
       </Mentionable>
