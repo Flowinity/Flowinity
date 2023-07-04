@@ -18,6 +18,7 @@
     >
       <div class="v-bottom-navigation__content">
         <v-btn
+          :href="item.externalPath"
           :to="item.path"
           :exact="item.exact"
           v-for="item in displayed"
@@ -68,7 +69,7 @@
     >
       {{ $t("core.sidebar.quickAction") }}
     </p>
-    <v-list>
+    <v-list class="mb-3">
       <v-list-item
         v-for="item in $app.sidebar"
         :key="item.id"
@@ -76,6 +77,7 @@
         :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
         :to="item.path"
         :exact="item.exact"
+        :href="item.externalPath"
         @click="
           $app.dialogs.selectDefaultMobile
             ? selectDefault(item.id, $event)

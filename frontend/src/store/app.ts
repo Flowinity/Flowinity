@@ -458,7 +458,8 @@ export const useAppStore = defineStore("app", {
         },
         {
           id: 38,
-          externalPath: "https://github.com/PrivateUploader/Android/tags",
+          externalPath:
+            "https://play.google.com/store/apps/details?id=com.troplo.privateuploader",
           path: "",
           name: i18n.t("core.sidebar.android"),
           icon: "mdi-android",
