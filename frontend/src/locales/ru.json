@@ -167,7 +167,7 @@
       "sharenixSteps": {
         "1": "Скачайте и установите «ShareNix» для вашей операционной системы.",
         "2": "Скачайте и установите «Flameshot» или другой поддерживаемый инструмент для создания скриншотов.",
-        "3": "Загрузите конфигурационный файл «ShareNix».",
+        "3": "Скачайте конфигурационный файл «ShareNix».",
         "4": "Move the downloaded config to ~/.sharenix.json, example:",
         "5": "Run <code>sharenix {file}</code> or <code>sharenix-section</code> (for a screenshot) to upload a file to TPU."
       },
