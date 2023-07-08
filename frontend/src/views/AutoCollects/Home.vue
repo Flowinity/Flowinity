@@ -16,7 +16,7 @@
         xl="3"
         cols="12"
       >
-        <CollectionCard :item="item"></CollectionCard>
+        <CollectionCard :item="item" type="autoCollect"></CollectionCard>
       </v-col>
     </v-row>
     <PromoNoContent
