@@ -6,13 +6,13 @@
       </strong>
       <v-card
         v-for="announcement in announcements"
+        :key="announcement.id"
         :color="$vuetify.theme.global.name === 'amoled' ? undefined : 'toolbar'"
         :variant="
           $vuetify.theme.global.name === 'amoled' ? 'outlined' : undefined
         "
         class="my-3 pt-3 hover"
         elevation="0"
-        :key="announcement.id"
       >
         <UserAvatar
           :user="announcement.user"
@@ -41,12 +41,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "AnnouncementsWidget",
-  components: { UserAvatar },
+  components: {UserAvatar},
   data() {
     return {
       page: 1,

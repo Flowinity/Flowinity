@@ -1,4 +1,5 @@
-import { User } from "./user";
+// Import Models
+import {User} from "@/models/user";
 
 export class Invite {
   id: number;

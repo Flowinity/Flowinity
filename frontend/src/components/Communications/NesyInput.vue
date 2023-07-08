@@ -6,10 +6,10 @@
   >
     <v-textarea
       ref="textarea"
+      :autofocus="true"
       :class="!editing ? 'mb-n5 mt-1' : 'mt-2'"
       :value="modelValue"
       auto-grow
-      :autofocus="true"
       color="primary"
       density="compact"
       label="Type a message..."
@@ -40,12 +40,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
   name: "CommunicationsInput",
-  components: { HoverChip },
+  components: {HoverChip},
   props: ["modelValue", "editing"],
   emits: ["update:modelValue", "sendMessage", "edit"]
 });

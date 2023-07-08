@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "Message",
@@ -41,7 +41,7 @@ export default defineComponent({
           ? `<style>* { color: black !important; font-family: "Inter", sans-serif !important; background-color: rgb(${bg}) !important; }</style>`
           : `<style>* { color: white !important; font-family: "Inter", sans-serif !important; background-color: rgb(${bg}) !important; }</style>`
       );
-      const { data } = await this.axios.get(
+      const {data} = await this.axios.get(
         `/mail/message/${this.$mail.selectedMailbox}/${this.$route.params.messageId}`
       );
       this.message = data;

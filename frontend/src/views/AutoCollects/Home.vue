@@ -6,8 +6,8 @@
         &nbsp;Configure AutoCollect
       </v-btn>
     </div>
-    <br />
-    <br />
+    <br/>
+    <br/>
     <v-row v-if="autoCollects.length">
       <v-col
         v-for="item in autoCollects"
@@ -28,13 +28,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 
 export default defineComponent({
   name: "AutoCollectsHome",
-  components: { PromoNoContent, CollectionCard },
+  components: {PromoNoContent, CollectionCard},
   data() {
     return {
       autoCollects: [] as any[]
@@ -42,7 +42,7 @@ export default defineComponent({
   },
   methods: {
     async getAutoCollects() {
-      const { data } = await this.axios.get("/autoCollects");
+      const {data} = await this.axios.get("/autoCollects");
       this.autoCollects = data;
     }
   },

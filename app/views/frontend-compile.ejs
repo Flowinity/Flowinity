@@ -3,15 +3,31 @@
 <head>
     <title>Preparing Frontend - TroploPrivateUploader</title>
     <style>
-      :root {
-        --v-theme-background: 0, 0, 0;
-        background-color: rgb(var(--v-theme-background));
-        color: white;
-      }
-      h1 { font-size: 50px; }
-      body { font: 20px Helvetica, sans-serif; }
-      .container { display: block; text-align: left; width: 650px; margin: 0 auto; }
-      a:hover { color: #333; text-decoration: none; }
+        :root {
+            --v-theme-background: 0, 0, 0;
+            background-color: rgb(var(--v-theme-background));
+            color: white;
+        }
+
+        h1 {
+            font-size: 50px;
+        }
+
+        body {
+            font: 20px Helvetica, sans-serif;
+        }
+
+        .container {
+            display: block;
+            text-align: left;
+            width: 650px;
+            margin: 0 auto;
+        }
+
+        a:hover {
+            color: #333;
+            text-decoration: none;
+        }
     </style>
 </head>
 
@@ -28,12 +44,12 @@
             <code>
                 docker logs {container name}
             </code>
-            <p>or</p>
-            <code>
-                journalctl -u {service name} -f -n 200
-            </code>
+        <p>or</p>
+        <code>
+            journalctl -u {service name} -f -n 200
+        </code>
         <br>
-        <p>The file was expected to be at: <code><%=path%></code></p>
+        <p>The file was expected to be at: <code><%= path %></code></p>
         </p>
     </div>
 </article>

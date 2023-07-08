@@ -9,11 +9,11 @@
       <p>
         You are about to leave TPU and go to:
         <v-textarea
+          :disabled="true"
+          :model-value="$chat.dialogs.externalSite.url"
           auto-grow
           rows="1"
           variant="plain"
-          :disabled="true"
-          :model-value="$chat.dialogs.externalSite.url"
         />
         This link is not part of TPU and might be unsafe. Do you want to
         continue?
@@ -34,12 +34,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "URLConfirmDialog",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue"],
   emits: ["update:modelValue"]
 });

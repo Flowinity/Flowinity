@@ -1,11 +1,8 @@
 <template>
   <v-navigation-drawer
     v-model="drawer"
-    app
-    color="dark"
-    floating
-    :location="$app.rail ? 'left' : 'right'"
     :class="classSidebar"
+    :location="$app.rail ? 'left' : 'right'"
     :width="
       !$app.rail &&
       $chat.search.value &&
@@ -14,6 +11,9 @@
         ? 350
         : undefined
     "
+    app
+    color="dark"
+    floating
   >
     <WorkspacesSidebarList
       v-if="
@@ -24,12 +24,12 @@
       "
     ></WorkspacesSidebarList>
     <ColubrinaMemberSidebarList v-else></ColubrinaMemberSidebarList>
-    <template v-slot:append v-if="$workspaces.versionHistory">
+    <template v-if="$workspaces.versionHistory" v-slot:append>
       <v-btn
-        width="228px"
         class="my-4 mx-4"
-        variant="outlined"
         color="green"
+        variant="outlined"
+        width="228px"
         @click="restoreVersion"
       >
         Restore Version
@@ -39,13 +39,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
 import ColubrinaMemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
 
 export default defineComponent({
   name: "WorkspacesSidebar",
-  components: { ColubrinaMemberSidebarList, WorkspacesSidebarList },
+  components: {ColubrinaMemberSidebarList, WorkspacesSidebarList},
   methods: {
     async restoreVersion() {
       await this.axios.patch(

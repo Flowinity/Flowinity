@@ -29,13 +29,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
-import { Domain } from "@/models/domain";
+import {Domain} from "@/models/domain";
 
 export default defineComponent({
   name: "ModifyDomainDialog",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue", "domain", "type"],
   emits: ["update:modelValue", "update"],
   data() {

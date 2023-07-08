@@ -1,4 +1,5 @@
-import { User } from "./user";
+// Import Models
+import {User} from "@/models/user";
 
 export interface Streak {
   startDate: string;
@@ -33,6 +34,7 @@ export interface SeriesGraphObject {
     }[];
   }[];
 }
+
 [];
 
 export interface InsightData {

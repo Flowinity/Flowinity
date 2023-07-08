@@ -10,9 +10,9 @@
       </v-card-text>
       <v-card-text>
         <v-card-title>Send email</v-card-title>
-        <v-text-field v-model="email" label="Email" />
-        <v-text-field v-model="subject" label="Subject" />
-        <v-textarea v-model="body" auto-grow label="Body" />
+        <v-text-field v-model="email" label="Email"/>
+        <v-text-field v-model="subject" label="Subject"/>
+        <v-textarea v-model="body" auto-grow label="Body"/>
         <v-btn @click="sendEmail">Send</v-btn>
       </v-card-text>
       <v-card-text>
@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "Dev",

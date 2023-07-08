@@ -8,8 +8,8 @@
     <v-card-text>
       <v-autocomplete
         v-model="selectedCollection"
-        :items="$collections.write"
         :autofocus="true"
+        :items="$collections.write"
         item-title="name"
         item-value="id"
         label="Select collection"
@@ -28,13 +28,13 @@
 </template>
 
 <script lang="ts">
-import { CollectionCache } from "@/types/collection";
-import { defineComponent } from "vue";
+import {CollectionCache} from "@/types/collection";
+import {defineComponent} from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "AddToCollection",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue", "items"],
   emits: ["update:modelValue", "collectionAdded"],
   data() {
@@ -49,13 +49,13 @@ export default defineComponent({
         `/collections/attachment`,
         typeof this.items === "object"
           ? {
-              items: this.items,
-              collectionId: this.selectedCollection
-            }
+            items: this.items,
+            collectionId: this.selectedCollection
+          }
           : {
-              attachmentId: this.items,
-              collectionId: this.selectedCollection
-            }
+            attachmentId: this.items,
+            collectionId: this.selectedCollection
+          }
       );
       this.$toast.success("Added to collection");
       this.$emit("collectionAdded", {

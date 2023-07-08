@@ -92,11 +92,11 @@
       <small>
         <sup>1</sup>
         Perks can be altered at any time without prior notice.
-        <br />
+        <br/>
         <sup>2</sup>
         Only includes historical insights for Weekly, Monthly and Annual
         reports, excludes the Dynamic report.
-        <br />
+        <br/>
         You can still view your current reports.
       </small>
       <v-card-actions>
@@ -111,9 +111,9 @@
         </v-btn>
         <span>
           <v-btn
+            :disabled="true"
             class="no-capital"
             color="primary"
-            :disabled="true"
             @click="step++"
           >
             Get started
@@ -129,12 +129,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
 
 export default defineComponent({
   name: "GoldUpsell",
-  components: { UserBadges },
+  components: {UserBadges},
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {

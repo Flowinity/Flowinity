@@ -1,15 +1,15 @@
-import { Chat } from "@/models/chat";
-import { Message, Message as MessageType } from "@/models/message";
+import {Chat} from "@/models/chat";
+import {Message, Message as MessageType} from "@/models/message";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import router from "@/router";
-import { User } from "@/models/user";
-import { Friend } from "@/models/friend";
-import { ChatAssociation } from "@/models/chatAssociation";
-import { useChatStore } from "@/store/chat";
-import { useFriendsStore } from "@/store/friends";
-import { useUserStore } from "@/store/user";
-import { useExperimentsStore } from "@/store/experiments";
-import { useToast } from "vue-toastification";
+import {User} from "@/models/user";
+import {Friend} from "@/models/friend";
+import {ChatAssociation} from "@/models/chatAssociation";
+import {useChatStore} from "@/store/chat";
+import {useFriendsStore} from "@/store/friends";
+import {useUserStore} from "@/store/user";
+import {useExperimentsStore} from "@/store/experiments";
+import {useToast} from "vue-toastification";
 
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();

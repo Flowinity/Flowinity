@@ -46,22 +46,22 @@
       @random-attachment="randomAttachment"
     >
       <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
-        <slot :name="name" v-bind="slotData" />
+        <slot :name="name" v-bind="slotData"/>
       </template>
     </GalleryCore>
   </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
-import { Upload } from "@/models/upload";
-import { CollectionCache } from "@/types/collection";
+import {Upload} from "@/models/upload";
+import {CollectionCache} from "@/types/collection";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 
 export default defineComponent({
   name: "PersonalGallery",
-  components: { GalleryNavigation, GalleryCore },
+  components: {GalleryNavigation, GalleryCore},
   props: ["path", "endpoint", "name", "random", "supports"],
   data() {
     return {
@@ -115,7 +115,7 @@ export default defineComponent({
   methods: {
     async randomAttachment() {
       this.randomLoading = true;
-      const { data } = await this.axios.get(
+      const {data} = await this.axios.get(
         this.random || `${this.endpoint}/random`
       );
       this.$functions.copy(
@@ -143,9 +143,9 @@ export default defineComponent({
       this.gallery.gallery.splice(index, 1);
     },
     updateItem({
-      item,
-      collection
-    }: {
+                 item,
+                 collection
+               }: {
       item: number;
       collection: CollectionCache;
     }) {
@@ -159,7 +159,7 @@ export default defineComponent({
     },
     async getGallery() {
       this.$app.componentLoading = true;
-      const { data } = await this.axios.get(this.endpoint, {
+      const {data} = await this.axios.get(this.endpoint, {
         params: {
           page: this.page,
           search: this.show.search,

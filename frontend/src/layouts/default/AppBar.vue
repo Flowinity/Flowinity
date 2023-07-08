@@ -3,12 +3,12 @@
     :key="$user.user?.emailVerified ? 1 : 2"
     :class="classString"
     :extension-height="$user.user?.emailVerified ? 5 : 42"
+    :flat="true"
+    :floating="true"
     app
     class="navbar"
     color="dark"
     density="comfortable"
-    :flat="true"
-    :floating="true"
     style="z-index: 1001"
   >
     <v-app-bar-nav-icon
@@ -43,11 +43,11 @@
     <template v-else>
       <UserAvatar
         :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
+        :dot-status="true"
         :status="true"
         :user="$chat.selectedChat?.recipient"
         class="ml-4"
         size="32"
-        :dot-status="true"
       />
       <h2
         v-if="!$vuetify.display.mobile"
@@ -103,7 +103,7 @@
     <!-- Communications custom actions -->
     <template v-if="$chat.isCommunications && !$vuetify.display.mobile">
       <v-btn v-if="$experiments.experiments.PINNED_MESSAGES" class="mx-1" icon>
-        <Pins />
+        <Pins/>
         <v-icon>mdi-pin-outline</v-icon>
       </v-btn>
       <v-btn
@@ -115,11 +115,11 @@
       </v-btn>
     </template>
     <v-btn aria-label="Notifications" class="mr-2" icon>
-      <Notifications />
+      <Notifications/>
       <v-badge
+        :dot="true"
         :model-value="$user.unreadNotifications > 0"
         color="red"
-        :dot="true"
       >
         <v-icon class="mx-1">
           {{ $user.unreadNotifications > 0 ? "mdi-bell" : "mdi-bell-outline" }}
@@ -130,7 +130,7 @@
       <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn aria-label="Personal Menu" icon v-bind="props">
-            <UserAvatar :user="$user.user" size="38" />
+            <UserAvatar :user="$user.user" size="38"/>
           </v-btn>
         </template>
 
@@ -208,10 +208,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import Notifications from "@/components/Core/Notifications.vue";
-import { useTheme } from "vuetify";
+import {useTheme} from "vuetify";
 import Pins from "@/components/Communications/Menus/Pins.vue";
 import LogoEasterEgg from "@/components/Core/LogoEasterEgg.vue";
 
@@ -281,14 +281,16 @@ export default defineComponent({
       return [
         {
           id: 12,
-          click() {},
+          click() {
+          },
           path: "/u/" + this.$user.user.username,
           name: this.$user.user.username,
           disabled: false
         },
         {
           id: 13,
-          click() {},
+          click() {
+          },
           path: "/settings",
           name: "Change Theme",
           disabled: false

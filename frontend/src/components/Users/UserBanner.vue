@@ -9,6 +9,7 @@
     <v-img
       id="user-header"
       :class="{ 'align-end': collection }"
+      :cover="true"
       :gradient="
         collection ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,0.8)' : undefined
       "
@@ -18,9 +19,8 @@
       :src="banner"
       aspect-ratio="5"
       class="banner-image"
-      :cover="true"
-      v-bind="props"
       transition="none"
+      v-bind="props"
     >
       <PlaceholderCheckerboard
         v-if="banner === 'placeholder'"
@@ -63,13 +63,13 @@
 
 <script lang="ts">
 import "cropperjs/dist/cropper.css";
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
 
 export default defineComponent({
   name: "UserBanner",
-  components: { PlaceholderCheckerboard, UploadCropper },
+  components: {PlaceholderCheckerboard, UploadCropper},
   props: ["user", "height", "collection", "gold", "darken"],
   emits: ["refreshUser"],
   data() {

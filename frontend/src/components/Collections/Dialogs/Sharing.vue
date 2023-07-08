@@ -97,12 +97,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "Sharing",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue", "collection"],
   emits: ["update:modelValue", "collectionUsersPush", "getCollection"],
   data() {
@@ -165,7 +165,7 @@ export default defineComponent({
   },
   methods: {
     async addUser() {
-      const { data } = await this.axios.post(
+      const {data} = await this.axios.post(
         `/collections/${this.collection.id}/user`,
         {
           username: this.sharing.username,
@@ -180,7 +180,7 @@ export default defineComponent({
     },
     async updateShare() {
       this.sharing.loading = true;
-      const { data } = await this.axios.patch(`/collections/share`, {
+      const {data} = await this.axios.patch(`/collections/share`, {
         id: this.collection.id,
         type: this.sharing.public
       });

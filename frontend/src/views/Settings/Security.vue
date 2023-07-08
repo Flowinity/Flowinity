@@ -78,7 +78,7 @@
     </v-toolbar-title>
   </v-toolbar>
   <v-list subheader three-line>
-    <IPHistory v-model="dialogs.ipHistory" :history="ipHistory" />
+    <IPHistory v-model="dialogs.ipHistory" :history="ipHistory"/>
     <v-list-item v-for="login in sessions" :key="login.id">
       <v-list-item-title>
         {{
@@ -156,13 +156,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CreateAPIKey from "@/components/Settings/Dialogs/CreateAPIKey.vue";
 import IPHistory from "@/components/Settings/Dialogs/IPHistory.vue";
 
 export default defineComponent({
   name: "Security",
-  components: { IPHistory, CreateAPIKey },
+  components: {IPHistory, CreateAPIKey},
   data() {
     return {
       apiKeys: [],
@@ -189,7 +189,7 @@ export default defineComponent({
           title: "Created At",
           key: "createdAt"
         },
-        { title: "Actions", key: "actions" }
+        {title: "Actions", key: "actions"}
       ],
       alternatePasswords: {
         items: []
@@ -199,11 +199,11 @@ export default defineComponent({
   },
   methods: {
     async getAPIKeys() {
-      const { data } = await this.axios.get("/security/keys");
+      const {data} = await this.axios.get("/security/keys");
       this.apiKeys = data;
     },
     async getAlternatePasswords() {
-      const { data } = await this.axios.get("/security/passwords");
+      const {data} = await this.axios.get("/security/passwords");
       this.alternatePasswords.items = data;
     },
     async deleteApiKey(id: number) {
@@ -218,7 +218,7 @@ export default defineComponent({
       this.getAlternatePasswords();
     },
     async getSessions() {
-      const { data } = await this.axios.get("/security/logins");
+      const {data} = await this.axios.get("/security/logins");
       this.sessions = data;
     }
   },

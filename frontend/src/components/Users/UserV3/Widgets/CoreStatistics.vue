@@ -27,9 +27,9 @@
             :data="hoursGraph"
             :height="346.5"
             :max-height="$vuetify.display.mobile ? 346 : undefined"
+            class="ml-3 mr-3"
             name="Uploads"
             type="bar"
-            class="ml-3 mr-3"
           ></Chart>
         </v-card>
       </v-col>
@@ -37,10 +37,11 @@
         <div
           v-if="user.stats.uploadGraph"
           :height="$vuetify.display.mobile ? 415 : undefined"
-          max-height="415"
           class="mt-n4"
+          max-height="415"
         >
           <GraphWidget
+            :cache="false"
             :card-height="415"
             :gold="gold"
             :height="300"
@@ -48,7 +49,6 @@
             :primary-color="primaryColorResult"
             :pulse-graph="user.stats.pulseGraph"
             :upload-graph="user.stats.uploadGraph"
-            :cache="false"
           ></GraphWidget>
         </div>
       </v-col>
@@ -57,13 +57,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import Chart from "@/components/Core/Chart.vue";
 
 export default defineComponent({
   name: "CoreStatistics",
-  components: { Chart, GraphWidget },
+  components: {Chart, GraphWidget},
   props: ["user", "username", "gold", "primary"],
   computed: {
     primaryColorResult() {

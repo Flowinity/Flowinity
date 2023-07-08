@@ -10,8 +10,8 @@
       or another TPU administrator approves it.
       <v-text-field
         v-model="email"
-        :rules="$validation.user.email"
         :autofocus="true"
+        :rules="$validation.user.email"
         label="Email"
         placeholder="troplo@troplo.com"
         required
@@ -38,12 +38,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "InviteAFriend",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {

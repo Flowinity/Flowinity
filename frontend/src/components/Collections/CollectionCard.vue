@@ -12,10 +12,10 @@
   >
     <div class="image-container">
       <v-row
+        v-if="loading"
         align="center"
         class="fill-height ma-0"
         justify="center"
-        v-if="loading"
       >
         <v-progress-circular
           color="grey lighten-5"
@@ -23,10 +23,10 @@
         ></v-progress-circular>
       </v-row>
       <img
-        :src="collectionImage"
-        @load="loading = false"
         :alt="item.name"
+        :src="collectionImage"
         class="cover-image"
+        @load="loading = false"
       />
       <div>
         <div class="overlay">
@@ -79,8 +79,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { CollectionCache } from "@/types/collection";
+import {defineComponent} from "vue";
+import {CollectionCache} from "@/types/collection";
 
 export default defineComponent({
   name: "CollectionCard",

@@ -99,8 +99,8 @@
           ).format('DD/MM/YYYY')} - ${$date(
             report.data.uploads.streak.currentStreak.endDate
           ).format('DD/MM/YYYY')}`"
-          class="mt-4"
           :title="$t('insights.statsCards.currentStreak')"
+          class="mt-4"
         ></InsightsStatsCard>
       </v-col>
       <v-col cols="12" lg="3" md="4" sm="12" xl="2">
@@ -120,8 +120,8 @@
               report.data.messages.average.previous ?? 0
           "
           :last="report?.data.messages.average.previous ?? 0"
-          class="mt-4"
           :title="$t('insights.statsCards.messagesAvg')"
+          class="mt-4"
         ></InsightsStatsCard>
         <InsightsStatsCard
           v-if="report?.data.uploads.streak.longestStreak"
@@ -142,8 +142,8 @@
           ).format('DD/MM/YYYY')} - ${$date(
             report.data.uploads.streak.longestStreak.endDate
           ).format('DD/MM/YYYY')}`"
-          class="mt-4"
           :title="$t('insights.statsCards.longestStreak')"
+          class="mt-4"
         ></InsightsStatsCard>
       </v-col>
       <v-col cols="12" lg="6" md="5" sm="12" xl="4">
@@ -158,25 +158,25 @@
           :title="$t('insights.statsCards.upload.title')"
         >
           <Chart
+            :apex="true"
             :height="300"
             :series="report?.data.uploads.hours.series"
             class="mb-n6"
             type="bar"
-            :apex="true"
           ></Chart>
         </InsightsStatsCard>
         <InsightsStatsCard
-          class="mt-6"
           :subtitle="$t('insights.statsCards.usage.subtitle')"
           :title="$t('insights.statsCards.usage.title')"
+          class="mt-6"
         >
           <Chart
+            :apex="true"
             :data="objectToGraphData(report?.data.pulses.days)"
             :height="300"
-            class="mb-n6"
             :name="$t('insights.statsCards.usage.chartTitle')"
+            class="mb-n6"
             type="bar"
-            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -192,28 +192,28 @@
           :title="$t('insights.statsCards.uploadsPerDay.title')"
         >
           <Chart
+            :apex="true"
             :height="300"
             :series="report?.data.uploads.days.series"
+            :title="$t('insights.statsCards.uploadsPerDay.chartTitle')"
             class="mb-n6"
             name="uploads-last-week"
-            :title="$t('insights.statsCards.uploadsPerDay.chartTitle')"
             type="bar"
-            :apex="true"
           ></Chart>
         </InsightsStatsCard>
         <InsightsStatsCard
-          class="mt-6"
           :subtitle="$t('insights.statsCards.platform.subtitle')"
           :title="$t('insights.statsCards.platform.title')"
+          class="mt-6"
         >
           <Chart
+            :apex="true"
             :data="objectToGraphData(report?.data.pulses.platforms)"
             :height="300"
             :horizontal="true"
-            class="mb-n6"
             :name="$t('insights.statsCards.platform.chartTitle')"
+            class="mb-n6"
             type="bar"
-            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -226,7 +226,6 @@
         xl="4"
       >
         <InsightsStatsCard
-          :title="$t('insights.statsCards.uploadsPerMonth.title')"
           :subtitle="
             $t('insights.statsCards.uploadsPerMonth.subtitle', {
               month: report?.data.uploads.months.series[0].data.reduce((a, b) =>
@@ -234,14 +233,15 @@
               ).x
             })
           "
+          :title="$t('insights.statsCards.uploadsPerMonth.title')"
         >
           <Chart
+            :apex="true"
             :height="300"
             :series="report?.data.uploads.months.series"
             class="mb-n6"
             name="uploads-last-month"
             type="bar"
-            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -254,7 +254,6 @@
         xl="4"
       >
         <InsightsStatsCard
-          :title="$t('insights.statsCards.uploadsPerYear.title')"
           :subtitle="
             $t('insights.statsCards.uploadsPerYear.subtitle', {
               year: report?.data.uploads.years.series[0].data.reduce((a, b) =>
@@ -262,14 +261,15 @@
               ).x
             })
           "
+          :title="$t('insights.statsCards.uploadsPerYear.title')"
         >
           <Chart
+            :apex="true"
             :height="300"
             :series="report?.data.uploads.years.series"
             class="mb-n6"
             name="uploads-last-month"
             type="bar"
-            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -282,8 +282,8 @@
         xl="4"
       >
         <InsightsStatsCard
-          :title="$t('insights.statsCards.topWords.title')"
           :subtitle="$t('insights.statsCards.topWords.subtitle')"
+          :title="$t('insights.statsCards.topWords.title')"
         >
           <v-data-table
             :headers="headers.words"
@@ -314,8 +314,8 @@
         xl="4"
       >
         <InsightsStatsCard
-          :title="$t('insights.statsCards.topChats.title')"
           :subtitle="$t('insights.statsCards.topChats.subtitle')"
+          :title="$t('insights.statsCards.topChats.title')"
         >
           <v-data-table
             :headers="headers.topChats"
@@ -346,16 +346,16 @@
         xl="4"
       >
         <InsightsStatsCard
-          :title="$t('insights.statsCards.autoCollects.title')"
           :subtitle="$t('insights.statsCards.autoCollects.subtitle')"
+          :title="$t('insights.statsCards.autoCollects.title')"
         >
           <Chart
+            :apex="true"
             :height="300"
             :series="report?.data.pulses.autoCollects.series"
             class="mb-n6"
             name="autocollects-per-hour"
             type="bar"
-            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -368,32 +368,32 @@
         xl="4"
       >
         <InsightsStatsCard
-          :title="$t('insights.statsCards.collections.title')"
           :subtitle="$t('insights.statsCards.collections.subtitle')"
+          :title="$t('insights.statsCards.collections.title')"
         >
           <Chart
+            :apex="true"
             :height="300"
             :series="report?.data.pulses.collections.series"
             class="mb-n6"
             name="autocollects-per-hour"
             type="bar"
-            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
       <v-col cols="12" lg="6" md="3" sm="12" xl="4">
         <InsightsStatsCard
-          :title="$t('insights.statsCards.features.title')"
           :subtitle="$t('insights.statsCards.features.subtitle')"
+          :title="$t('insights.statsCards.features.title')"
         >
           <Chart
+            :apex="true"
             :data="arrayToGraphData(report?.data.pulses.features)"
             :height="300"
             :horizontal="true"
             class="mb-n6"
             name="Hours"
             type="bar"
-            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -416,14 +416,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import DynamicCard from "@/components/Core/DynamicCard.vue";
 import InsightsStatsCard from "@/components/Insights/StatsCard.vue";
-import { Insight, SeriesGraph, SeriesGraphObject } from "@/models/insight";
+import {Insight} from "@/models/insight";
 import Chart from "@/components/Core/Chart.vue";
 import InsightsPageBanner from "@/components/Insights/Banners/Page.vue";
 import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
-import { type } from "os";
 
 export default defineComponent({
   name: "InsightsReport",
@@ -438,12 +437,12 @@ export default defineComponent({
     return {
       headers: {
         topChats: [
-          { title: "Chat", key: "chatName" },
-          { title: "Count", key: "count", order: "desc" }
+          {title: "Chat", key: "chatName"},
+          {title: "Count", key: "count", order: "desc"}
         ],
         words: [
-          { title: "Word", key: "word" },
-          { title: "Count", key: "count", order: "desc" }
+          {title: "Word", key: "word"},
+          {title: "Count", key: "count", order: "desc"}
         ]
       },
       report: null as Insight | null,
@@ -542,7 +541,7 @@ export default defineComponent({
       return val;
     },*/
     arrayToGraphData(array: { name: string; count: number }[] | undefined) {
-      if (!array) return { labels: [], data: [] };
+      if (!array) return {labels: [], data: []};
       // sort by count
       const labels = [];
       const data = [];
@@ -579,7 +578,7 @@ export default defineComponent({
           labels.push(key);
           data.push(value);
         }
-        return { labels, data };
+        return {labels, data};
       } else {
         /* do this, with the goals being the object2  series: [
         {

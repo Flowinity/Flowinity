@@ -2,8 +2,8 @@
   <CoreDialog v-model="dialog" max-width="600">
     <template v-slot:title>Add Social Link</template>
     <v-container>
-      <v-text-field v-model="link.name" label="Text" maxlength="20" />
-      <v-text-field v-model="link.url" label="URL" />
+      <v-text-field v-model="link.name" label="Text" maxlength="20"/>
+      <v-text-field v-model="link.url" label="URL"/>
       <v-color-picker
         v-model="link.color"
         label="Color"
@@ -36,19 +36,19 @@
     <v-container>
       <v-chip
         v-for="link in component?.props?.links"
-        @click.prevent="$chat.processLink(link.url)"
-        target="_blank"
-        class="mr-2 social-link unselectable"
-        :color="link.color"
-        @click.middle.prevent.stop="$chat.processLink(link.url)"
-        :href="link.url"
         :key="link.url"
+        :color="link.color"
+        :href="link.url"
+        class="mr-2 social-link unselectable"
+        target="_blank"
+        @click.prevent="$chat.processLink(link.url)"
+        @click.middle.prevent.stop="$chat.processLink(link.url)"
       >
         {{ link.name }}
         <v-icon
-          small
           v-if="user.id === $user.user?.id"
           class="ml-1"
+          small
           @click.prevent="
             $emit(
               'addLink',
@@ -60,9 +60,9 @@
         </v-icon>
       </v-chip>
       <v-chip
-        @click="dialog = true"
         v-if="user.id === $user.user?.id"
         class="unselectable"
+        @click="dialog = true"
       >
         <v-icon class="mr-1">mdi-plus</v-icon>
         Add Link
@@ -72,14 +72,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
-import { User } from "@/models/user";
-import { Component } from "@/types/userv3";
+import {User} from "@/models/user";
+import {Component} from "@/types/userv3";
 
 export default defineComponent({
   name: "SocialLinks",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: {
     user: {
       type: Object as () => User,

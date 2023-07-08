@@ -1,22 +1,22 @@
-import { useUserStore } from "@/store/user";
-import { useAppStore } from "@/store/app";
-import { useExperimentsStore } from "@/store/experiments";
+import {useUserStore} from "@/store/user";
+import {useAppStore} from "@/store/app";
+import {useExperimentsStore} from "@/store/experiments";
 import dayjs from "@/plugins/dayjs";
 import functions from "@/plugins/functions";
-import { useCollectionsStore } from "@/store/collections";
-import { ToastInterface } from "vue-toastification";
+import {useCollectionsStore} from "@/store/collections";
+import {ToastInterface} from "vue-toastification";
 import validation from "@/plugins/validation";
-import { useWorkspacesStore } from "@/store/workspaces";
-import { useChatStore } from "@/store/chat";
-import { Socket } from "socket.io-client";
-import { useFriendsStore } from "@/store/friends";
-import { useMailStore } from "@/store/mail";
-import { RouteLocationNormalizedLoaded, Router } from "vue-router";
-import { useAdminStore } from "@/store/admin";
-import { Axios } from "axios";
-import { User } from "@/models/user";
-import { Chat } from "@/models/chat";
-import { Collection } from "@/models/collection";
+import {useWorkspacesStore} from "@/store/workspaces";
+import {useChatStore} from "@/store/chat";
+import {Socket} from "socket.io-client";
+import {useFriendsStore} from "@/store/friends";
+import {useMailStore} from "@/store/mail";
+import {RouteLocationNormalizedLoaded, Router} from "vue-router";
+import {useAdminStore} from "@/store/admin";
+import {Axios} from "axios";
+import {User} from "@/models/user";
+import {Chat} from "@/models/chat";
+import {Collection} from "@/models/collection";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {

@@ -1,23 +1,23 @@
 <template>
   <v-container>
-    <v-data-table :items="invites" :headers="headers">
+    <v-data-table :headers="headers" :items="invites">
       <template v-slot:item.createdAt="{ item }">
         {{ $date(item.raw.createdAt).format("MMMM Do YYYY, h:mm:ss A") }}
       </template>
       <template v-slot:item.actions="{ item }">
         <v-btn
+          v-if="item.raw.status === 'pending'"
           icon
           small
-          v-if="item.raw.status === 'pending'"
           @click="actInvite('accepted', item.raw)"
         >
           <v-icon>mdi-check</v-icon>
         </v-btn>
         <v-btn
+          v-if="item.raw.status === 'pending'"
+          class="ml-5"
           icon
           small
-          class="ml-5"
-          v-if="item.raw.status === 'pending'"
           @click="actInvite('rejected', item.raw)"
         >
           <v-icon>mdi-close</v-icon>
@@ -28,8 +28,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Invite } from "@/models/invite";
+import {defineComponent} from "vue";
+import {Invite} from "@/models/invite";
 
 export default defineComponent({
   name: "IAF",
@@ -75,7 +75,7 @@ export default defineComponent({
     },
     async getInvites() {
       this.loading = true;
-      const { data } = await this.axios.get("/admin/invites");
+      const {data} = await this.axios.get("/admin/invites");
       this.invites = data.sort((a: Invite, b: Invite) => {
         return b.id - a.id;
       });

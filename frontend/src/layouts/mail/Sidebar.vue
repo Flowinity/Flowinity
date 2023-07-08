@@ -11,12 +11,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import MailSidebarList from "@/layouts/mail/SidebarList.vue";
 
 export default defineComponent({
   name: "MailSidebar",
-  components: { MailSidebarList }
+  components: {MailSidebarList}
 });
 </script>
 

@@ -1,6 +1,8 @@
-// Utilities
-import { defineStore } from "pinia";
+import {defineStore} from "pinia";
+
+// Import Plugins
 import axios from "@/plugins/axios";
+import {AxiosResponse} from "axios";
 
 export interface MailState {
   // temp
@@ -37,28 +39,30 @@ export const useMailStore = defineStore("mail", {
     getSender(email: Email) {
       return email.from[0]?.name || email.from[0]?.address || "Unknown";
     },
-    async getMessages(mailbox: string, page: number) {
-      const { data } = await axios.get(`/mail/mailbox/${mailbox}/${page}`);
+    async getMessages(mailbox: string, page: number): Promise<void> {
+      const {data} = await axios.get(`/mail/mailbox/${mailbox}/${page}`);
+
       this.selected.emails = data;
       this.loading = false;
     },
-    async setMailbox(mailbox: string) {
+    async setMailbox(mailbox: string): Promise<void> {
       this.loading = true;
       this.selectedMailbox = mailbox;
+
       await this.getMessages(mailbox, 1);
     },
-    async getMailboxes() {
-      const response = await axios.get("/mail/mailboxes");
+    async getMailboxes(): Promise<void> {
+      const response: AxiosResponse<any> = await axios.get("/mail/mailboxes");
       this.mailboxes = response.data;
     },
-    async init() {
-      this.getMailboxes();
+    async init(): Promise<void> {
+      await this.getMailboxes();
     }
   },
   getters: {
     selected(state: MailState) {
       return state.mailboxes.find(
-        (mailbox) => mailbox.name === state.selectedMailbox
+        (mailbox): boolean => mailbox.name === state.selectedMailbox
       );
     }
   }

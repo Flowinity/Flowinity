@@ -21,12 +21,12 @@
   <div v-if="$vuetify.display.mobile" class="mt-2">
     <UserAvatar
       :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
+      :dot-status="true"
       :status="true"
       :user="$chat.selectedChat?.recipient"
       class="ml-4"
       size="32"
       style="display: inline-block"
-      :dot-status="true"
     />
     <h4
       id="tpu-brand-logo"
@@ -70,18 +70,18 @@
       <v-spacer></v-spacer>
     </v-card-actions>
   </div>
-  <div class="position-relative" v-if="!$chat.search.value">
+  <div v-if="!$chat.search.value" class="position-relative">
     <v-card-text class="text-overline my-n3">
       {{ $t("chats.members") }}
     </v-card-text>
     <v-virtual-scroll
-      item-height="48"
-      :items="users"
       v-if="$chat.selectedChat"
+      :items="users"
+      item-height="48"
       style="overflow-x: hidden"
     >
       <template v-slot:default="{ item: { user, legacyUser, rank } }">
-        <SidebarItem :legacy-user="!!legacyUser" :rank="rank" :user="user" />
+        <SidebarItem :legacy-user="!!legacyUser" :rank="rank" :user="user"/>
       </template>
     </v-virtual-scroll>
   </div>
@@ -99,8 +99,8 @@
     <v-container class="mt-n8">
       <v-text-field
         v-model="$chat.search.query"
-        append-icon="mdi-magnify"
         :autofocus="true"
+        append-icon="mdi-magnify"
         label="Search Query"
         @click:append="$chat.doSearch"
         @keyup.enter="$chat.doSearch"
@@ -149,13 +149,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Chat } from "@/models/chat";
-import { ChatAssociation } from "@/models/chatAssociation";
+import {defineComponent} from "vue";
+import {Chat} from "@/models/chat";
+import {ChatAssociation} from "@/models/chatAssociation";
 import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import SidebarItem from "@/components/Communications/SidebarItem.vue";
+
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
   components: {

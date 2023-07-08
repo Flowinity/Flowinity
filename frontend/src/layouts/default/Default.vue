@@ -14,21 +14,21 @@
   <InviteAFriend v-model="$app.dialogs.inviteAFriend"></InviteAFriend>
   <Feedback v-model="$app.dialogs.feedback"></Feedback>
   <Migrate
-    v-model="$app.dialogs.migrateWizard"
     v-if="$experiments.experiments.PROJECT_MERGE"
+    v-model="$app.dialogs.migrateWizard"
   ></Migrate>
   <Gold v-model="$app.dialogs.gold.value"></Gold>
   <v-app
     v-if="$user.user"
-    @drop="dragDropHandler"
+    class="bg"
     @dragover="dragOver"
-    @touchstart="
-      $experiments.experiments.LEGACY_MOBILE_NAV ? touchStart($event) : null
-    "
+    @drop="dragDropHandler"
     @touchend="
       $experiments.experiments.LEGACY_MOBILE_NAV ? touchEnd($event) : null
     "
-    class="bg"
+    @touchstart="
+      $experiments.experiments.LEGACY_MOBILE_NAV ? touchStart($event) : null
+    "
   >
     <NicknameDialog v-model="$app.dialogs.nickname.value"></NicknameDialog>
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
@@ -41,22 +41,22 @@
       "
     ></ExperimentsManagerDialog>
     <v-overlay
-      persistent
-      absolute
       :model-value="$app.loading"
+      absolute
       class="align-center justify-center"
+      persistent
     >
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <v-overlay
-      persistent
       :model-value="$app.componentLoading"
-      class="align-center justify-center"
       absolute
+      class="align-center justify-center"
+      persistent
     >
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <default-bar v-if="$app.site.finishedSetup" />
+    <default-bar v-if="$app.site.finishedSetup"/>
     <rail-bar
       v-if="
         $experiments.experiments.RAIL_SIDEBAR &&
@@ -87,15 +87,15 @@
       "
     />
     <theme-engine-wrapper></theme-engine-wrapper>
-    <default-view />
+    <default-view/>
     <template v-if="$experiments.experiments.FAB">
       <v-btn
-        variant="flat"
-        icon
-        position="sticky"
         class="fab"
         color="primary"
+        icon
+        position="sticky"
         style="color: #151515 !important"
+        variant="flat"
         @click="fab = !fab"
       >
         <v-icon>{{ fab ? "mdi-close" : "mdi-plus" }}</v-icon>
@@ -103,11 +103,11 @@
       <v-fab-transition>
         <v-btn
           v-if="fab"
-          variant="flat"
-          icon
-          position="sticky"
           class="fab-2"
           color="indigo"
+          icon
+          position="sticky"
+          variant="flat"
           @click="fab = !fab"
         >
           <v-icon>mdi-upload</v-icon>
@@ -116,11 +116,11 @@
       <v-fab-transition>
         <v-btn
           v-if="fab"
-          variant="flat"
-          icon
-          position="absolute"
           class="fab-3"
           color="success"
+          icon
+          position="absolute"
+          variant="flat"
           @click="fab = !fab"
         >
           <v-icon>mdi-file-document-plus</v-icon>
@@ -141,7 +141,7 @@
     <unauth-bar
       v-if="$route.name !== 'Slideshow' && $app.site.finishedSetup"
     ></unauth-bar>
-    <default-view />
+    <default-view/>
   </v-app>
 </template>
 
@@ -167,10 +167,10 @@ import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
 </script>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import MessageToast from "@/components/Communications/MessageToast.vue";
-import { Message as MessageType } from "@/models/message";
-import { Upload } from "@/models/upload";
+import {Message as MessageType} from "@/models/message";
+import {Upload} from "@/models/upload";
 import Sidebar from "@/layouts/default/Sidebar.vue";
 import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";

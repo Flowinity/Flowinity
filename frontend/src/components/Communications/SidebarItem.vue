@@ -1,17 +1,17 @@
 <template>
   <div
+    :class="{ pointer: chat || !legacyUser, selected: isSelected }"
     class="member-sidebar-item unselectable"
     @click="handleClick"
-    :class="{ pointer: chat || !legacyUser, selected: isSelected }"
   >
     <UserAvatar
-      :user="user"
-      :status="!!user"
-      :dot-status="!!user"
       :chat="chat"
+      :dot-status="!!user"
+      :status="!!user"
+      :user="user"
     ></UserAvatar>
     <div class="ml-2">
-      <span class="limit" v-if="user">
+      <span v-if="user" class="limit">
         {{
           legacyUser
             ? user.username
@@ -31,13 +31,13 @@
           </v-tooltip>
         </span>
       </span>
-      <span class="limit" v-else-if="chat">
+      <span v-else-if="chat" class="limit">
         {{ chat.name }}
       </span>
-      <p class="text-subtitle-2 mt-n1 text-grey" v-if="legacyUser">
+      <p v-if="legacyUser" class="text-subtitle-2 mt-n1 text-grey">
         Legacy user
       </p>
-      <p class="text-subtitle-2 mt-n1 text-grey" v-else-if="subtitle">
+      <p v-else-if="subtitle" class="text-subtitle-2 mt-n1 text-grey">
         {{ subtitle }}
       </p>
     </div>
@@ -46,14 +46,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import { User } from "@/models/user";
-import { Chat } from "@/models/chat";
+import {User} from "@/models/user";
+import {Chat} from "@/models/chat";
 
 export default defineComponent({
   name: "SidebarItem",
-  components: { UserAvatar },
+  components: {UserAvatar},
   props: {
     user: {
       type: Object as () => User,

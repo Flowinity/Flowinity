@@ -8,11 +8,11 @@
     <v-navigation-drawer
       v-if="$vuetify.display.mobile"
       v-model="$chat.dialogs.message.value"
-      color="card"
       :floating="true"
-      location="bottom"
       :temporary="true"
       :touchless="true"
+      color="card"
+      location="bottom"
     >
       <MessageActionsList
         v-if="$chat.dialogs.message.message"
@@ -67,14 +67,14 @@
     <ol
       id="chat-list"
       ref="messageList"
-      class="message-list-container"
       :style="{ height }"
+      class="message-list-container"
       @scroll="scrollEvent"
     >
-      <div id="sentinel-bottom" ref="sentinelBottom" v-if="$chat.isReady"></div>
+      <div v-if="$chat.isReady" id="sentinel-bottom" ref="sentinelBottom"></div>
       <template v-if="!$chat.selectedChat?.messages?.length && !$chat.loading">
         <v-row align="center" justify="center">
-          <v-col cols="12" md="6" class="text-center">
+          <v-col class="text-center" cols="12" md="6">
             <UserAvatar
               :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
               :status="true"
@@ -83,8 +83,8 @@
               size="64"
             />
             <v-card-title
-              class="grey--text unselectable"
               v-if="$chat.selectedChat?.recipient?.username"
+              class="grey--text unselectable"
               style="text-overflow: inherit; white-space: normal"
             >
               {{
@@ -94,17 +94,16 @@
               }}
             </v-card-title>
             <v-card-title
-              class="grey--text unselectable"
               v-else-if="$chat.selectedChat?.name"
+              class="grey--text unselectable"
               style="text-overflow: inherit; white-space: normal"
             >
-              {{ $t("chats.start.group", { name: $chat.selectedChat?.name }) }}
+              {{ $t("chats.start.group", {name: $chat.selectedChat?.name}) }}
             </v-card-title>
           </v-col>
         </v-row>
       </template>
       <MessagePerf
-        class="mr-2 ml-2"
         v-for="(message, index) in $chat.selectedChat?.messages"
         :id="'message-' + index"
         :key="message.id"
@@ -112,9 +111,10 @@
         :date-separator="dateSeparator(index)"
         :editing="editing === message.id"
         :editingText="editingText"
+        :index="index"
         :merge="$chat.merge(message, index)"
         :message="message"
-        :index="index"
+        class="mr-2 ml-2"
         @authorClick="
           $chat.dialogs.userMenu.user = $event.user;
           $chat.dialogs.userMenu.username = $event.user.username;
@@ -134,7 +134,7 @@
         @jumpToMessage="$chat.jumpToMessage($event)"
         @reply="replyId = $event.id"
       />
-      <div id="sentinel" ref="sentinel" v-if="$chat.isReady"></div>
+      <div v-if="$chat.isReady" id="sentinel" ref="sentinel"></div>
     </ol>
     <v-fade-transition v-model="avoidAutoScroll">
       <v-toolbar
@@ -250,24 +250,24 @@
         $nextTick(() => focusInput());
       "
       @fileUpload="uploadHandle"
+      @focusInput="focusInput"
       @paste="handlePaste"
       @quickTPULink="handleQuickTPULink"
       @sendMessage="sendMessage"
-      @focusInput="focusInput"
     ></CommunicationsInput>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
 import Message from "@/components/Communications/Message.vue";
-import { MessageSocket } from "@/types/messages";
+import {MessageSocket} from "@/types/messages";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import User from "@/views/User/User.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import { Chat, Typing } from "@/models/chat";
+import {Chat, Typing} from "@/models/chat";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
-import { Message as MessageType } from "@/models/message";
+import {Message as MessageType} from "@/models/message";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import MobileMenu from "@/components/Core/Dialogs/MobileMenu.vue";
 import MessageActionsList from "@/components/Communications/MessageActionsList.vue";
@@ -345,10 +345,10 @@ export default defineComponent({
       return `
         position: absolute;
         top: ${
-          this.$chat.dialogs.message.y + 190 < this.$vuetify.display.height
-            ? this.$chat.dialogs.message.y
-            : this.$vuetify.display.height - 230
-        }px;
+        this.$chat.dialogs.message.y + 190 < this.$vuetify.display.height
+          ? this.$chat.dialogs.message.y
+          : this.$vuetify.display.height - 230
+      }px;
         left: ${this.$chat.dialogs.message.x}px;`;
     },
     uploadFileHeight() {
@@ -456,7 +456,7 @@ export default defineComponent({
         for (const file of this.files.filter((file) => !file.tpuLink)) {
           formData.append("attachments", file.file);
         }
-        const { data } = await this.axios.post(`/gallery/site`, formData, {
+        const {data} = await this.axios.post(`/gallery/site`, formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           },
@@ -808,7 +808,7 @@ export default defineComponent({
       const chat =
         this.$chat.chats[
           this.$chat.chats.findIndex((c: Chat) => c.id === data.chatId)
-        ];
+          ];
       if (!chat) return;
       if (!chat.typers) chat.typers = [];
       chat.typers = chat.typers.filter(

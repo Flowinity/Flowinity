@@ -1,14 +1,14 @@
 <template>
   <div id="inline-gallery">
     <v-text-field
+      ref="search"
       v-model="show.search"
-      append-icon="mdi-magnify"
       :autofocus="true"
+      append-icon="mdi-magnify"
       class="mt-5"
       label="Search"
       @keydown.enter="getGallery()"
       @click:append="getGallery()"
-      ref="search"
     ></v-text-field>
     <Paginate v-model="page" :total-pages="null" class="mb-2 mt-n2"></Paginate>
     <v-row v-if="!loading">
@@ -27,17 +27,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
-import { Upload } from "@/models/upload";
-import { CollectionCache } from "@/types/collection";
+import {Upload} from "@/models/upload";
+import {CollectionCache} from "@/types/collection";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import InlineGalleryItem from "@/components/Communications/InlineGalleryItem.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
   name: "InlineStarred",
-  components: { Paginate, InlineGalleryItem, GalleryNavigation, GalleryCore },
+  components: {Paginate, InlineGalleryItem, GalleryNavigation, GalleryCore},
   props: ["type"],
   data() {
     return {
@@ -89,9 +89,9 @@ export default defineComponent({
   },
   methods: {
     updateItem({
-      item,
-      collection
-    }: {
+                 item,
+                 collection
+               }: {
       item: number;
       collection: CollectionCache;
     }) {
@@ -117,7 +117,7 @@ export default defineComponent({
         url = "/gallery";
       }
       if (this.type === "tenor" && !this.show.search) return;
-      const { data } = await this.axios.get(url, {
+      const {data} = await this.axios.get(url, {
         params: {
           page: this.page,
           search: this.show.search,

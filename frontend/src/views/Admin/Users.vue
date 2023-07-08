@@ -35,8 +35,8 @@
           </template>
           <template v-slot:item.emailVerified="{ item }">
             <v-checkbox
-              @change="verify(item.raw.id, $event.target.checked)"
               v-model="item.raw.emailVerified"
+              @change="verify(item.raw.id, $event.target.checked)"
             ></v-checkbox>
           </template>
         </v-data-table>
@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "Users",
@@ -100,22 +100,22 @@ export default defineComponent({
           ? gold
             ? 6
             : legacyUser
-            ? 1
-            : 7
+              ? 1
+              : 7
           : 1
       });
       this.$toast.success("User gold status updated.");
     },
     async ban(id: number, banned: boolean) {
-      await this.axios.patch("/admin/ban", { id, banned });
+      await this.axios.patch("/admin/ban", {id, banned});
       this.$toast.success("User banned.");
     },
     async getUsers() {
-      const { data } = await this.axios.get("/admin/users");
+      const {data} = await this.axios.get("/admin/users");
       this.users = data;
     },
     async verify(id: number, emailVerified: boolean) {
-      await this.axios.patch("/admin/verify", { id, emailVerified });
+      await this.axios.patch("/admin/verify", {id, emailVerified});
       this.$toast.success("User email verified status updated.");
     }
   },

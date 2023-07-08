@@ -1,41 +1,41 @@
 <template>
   <v-navigation-drawer
     v-model="val"
+    color="dark"
     floating
     permanent
     rail
     style="top: 0; height: 100%; z-index: 2001"
-    color="dark"
   >
     <v-list
-      density="compact"
-      nav
-      class="mt-2"
       v-model="$app.railMode"
       aria-label="TPU app selection sidebar"
+      class="mt-2"
+      density="compact"
+      nav
     >
       <v-list-item
+        :active="$app.railMode === 'tpu'"
         aria-label="TPU (Main)"
+        prepend-icon="mdi-home"
         title="TPU"
         value="tpu"
-        :active="$app.railMode === 'tpu'"
         @click="$app.railMode = 'tpu'"
-        prepend-icon="mdi-home"
       ></v-list-item>
       <v-list-item
+        :active="$app.railMode === 'workspaces'"
         aria-label="Workspaces"
         prepend-icon="mdi-folder-account"
         title="Workspaces"
         value="workspaces"
-        :active="$app.railMode === 'workspaces'"
         @click="$app.railMode = 'workspaces'"
       ></v-list-item>
       <v-list-item
+        :active="$app.railMode === 'communications'"
         aria-label="Communications"
         prepend-icon="mdi-message-processing"
         title="Communications"
         value="communications"
-        :active="$app.railMode === 'communications'"
         @click="$app.railMode = 'communications'"
       ></v-list-item>
     </v-list>
@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "RailBar",

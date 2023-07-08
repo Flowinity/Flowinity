@@ -9,12 +9,12 @@
         app/config/tpu.json or /var/lib/tpu_server/config/tpu.json (Docker
         environments) to make manual changes to the TPU environment, and press
         the Restart button below to restart the TPU cluster.
-        <br />
+        <br/>
         <v-btn class="mx-3 my-3" variant="outlined" @click="restart">
           <v-icon>mdi-restart</v-icon>
           Restart TPU Cluster
         </v-btn>
-        <br />
+        <br/>
         <v-card-title style="padding: 0">Raw Config Options:</v-card-title>
         <p class="text-grey mb-4">
           Values that are [REDACTED] will remain unchanged when saved unless
@@ -23,30 +23,30 @@
         </p>
         <div v-if="config">
           <v-btn
-            @click="saveConfig"
             :loading="loading"
             class="mx-3 my-3 ml-n1"
             variant="outlined"
+            @click="saveConfig"
           >
             <v-icon class="mr-2">mdi-content-save</v-icon>
             Save Config
           </v-btn>
           <div v-for="(value, key, i) in config">
-            <v-card-text style="padding: 0" v-if="i === 0">root:</v-card-text>
+            <v-card-text v-if="i === 0" style="padding: 0">root:</v-card-text>
             <ConfigObject
-              :value="value"
-              :fullConfig="config"
-              :persistentKey="key"
-              :name="key"
               :deep="0"
+              :fullConfig="config"
+              :name="key"
+              :persistentKey="key"
+              :value="value"
               @update:object="update"
             />
           </div>
           <v-btn
-            @click="saveConfig"
             :loading="loading"
             class="mx-3 my-3 ml-n1"
             variant="outlined"
+            @click="saveConfig"
           >
             <v-icon class="mr-2">mdi-content-save</v-icon>
             Save Config
@@ -67,12 +67,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import ConfigObject from "@/components/Admin/ConfigObject.vue";
 
 export default defineComponent({
   name: "Dashboard",
-  components: { ConfigObject },
+  components: {ConfigObject},
   data() {
     return {
       dashboard: null,
@@ -106,11 +106,11 @@ export default defineComponent({
       this.$toast.success("Service restart queued.");
     },
     async getDashboard() {
-      const { data } = await this.axios.get("/admin/dashboard");
+      const {data} = await this.axios.get("/admin/dashboard");
       this.dashboard = data;
     },
     async getConfig() {
-      const { data } = await this.axios.get("/admin/config");
+      const {data} = await this.axios.get("/admin/config");
       this.config = data;
     },
     async saveConfig() {

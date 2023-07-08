@@ -15,8 +15,8 @@
                 : null) ||
               (!integration.available ? 'Unavailable' : 'Available')
             }`"
-            location="top"
             activator="parent"
+            location="top"
           />
           <v-chip
             :color="integration.color"
@@ -63,7 +63,8 @@
             </v-btn>
           </v-list-item-title>
           <v-list-item-subtitle>
-            {{ integration.providerUsername
+            {{
+              integration.providerUsername
             }}{{
               integration.providerUserCache?.discriminator
                 ? "#" + integration.providerUserCache?.discriminator
@@ -89,12 +90,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
   name: "Integrations",
-  components: { HoverChip },
+  components: {HoverChip},
   data() {
     return {
       loading: false,
@@ -131,7 +132,7 @@ export default defineComponent({
       return integration;
     },
     async getIntegrations() {
-      const { data } = await this.axios.get("/providers/linkable");
+      const {data} = await this.axios.get("/providers/linkable");
       this.integrations = data;
     }
   },

@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "Slideshow",
@@ -73,13 +73,13 @@ export default defineComponent({
       navigator.clipboard.writeText(this.$app.domain + text);
     },
     async getSlideshow() {
-      const { data } = await this.axios.get(
+      const {data} = await this.axios.get(
         `/slideshows/${this.$route.params.code}`
       );
       this.slideshow = data;
     },
     async getSlideshowConfig() {
-      const { data } = await this.axios.get(
+      const {data} = await this.axios.get(
         `/slideshows/${this.$route.params.code}/config`
       );
       this.config = data;

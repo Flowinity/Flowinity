@@ -16,7 +16,7 @@
         cols="12"
         style="display: flex; padding: 0; align-items: center"
       >
-        <div style="align-items: center" class="text-center fix">
+        <div class="text-center fix" style="align-items: center">
           <v-icon v-if="icon" class="text-grey mt-3" size="92">
             {{ icon }}
           </v-icon>
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import {defineComponent} from 'vue';
 
 export default defineComponent({
   name: "PromoCard",

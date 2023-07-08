@@ -3,19 +3,13 @@
  *
  * Framework documentation: https://vuetifyjs.com`
  */
-
-// Styles
 import "@mdi/font/css/materialdesignicons.css";
-//import "@troplo/vuetify/styles";
-//import "/home/troplo/GitHub/vuetify/packages/vuetify/src/styles/main.sass";
 import "vuetify/lib/styles/main.sass";
-// Composables
-import { createVuetify } from "vuetify";
-import { VDataTable } from "vuetify/labs/VDataTable";
-import { VInfiniteScroll } from "vuetify/lib/labs/components.mjs";
-import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
-import { VVirtualScroll } from "vuetify/lib/components/index.mjs";
-import { VBottomNavigation } from "vuetify/lib/components/index.mjs";
+import {createVuetify} from "vuetify";
+import {VDataTable} from "vuetify/labs/VDataTable";
+import {VInfiniteScroll} from "vuetify/lib/labs/components.mjs";
+import {VSkeletonLoader} from "vuetify/labs/VSkeletonLoader";
+import {VBottomNavigation, VVirtualScroll} from "vuetify/lib/components/index.mjs";
 
 export class DefaultThemes {
   themes: any;

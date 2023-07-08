@@ -1,20 +1,19 @@
 // TODO: Implement Steam Provider
 
-import { Service } from "typedi"
-import axios from "axios"
+import {Service} from "typedi"
 
 // Import Lib
 import Errors from "@app/lib/errors"
 
 // Import Models
-import { Integration } from "@app/models/integration.model"
 
 @Service()
 export class SteamService {
-  constructor() {}
+    constructor() {
+    }
 
-  async link(userId: string, token: string) {
-    if (!config.providers.steam)
-      throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
-  }
+    async link(userId: string, token: string) {
+        if (!config.providers.steam)
+            throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
+    }
 }

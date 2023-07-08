@@ -8,8 +8,8 @@
   ></v-autocomplete>
   <v-card
     v-for="experiment in relevantExperiments"
-    class="my-2"
     :key="experiment.name"
+    class="my-2"
   >
     <v-card-title>{{ experiment.name }}</v-card-title>
     <v-card-subtitle>{{ experiment.meta?.description }}</v-card-subtitle>
@@ -35,7 +35,7 @@
   </v-card>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "ExperimentsManager",

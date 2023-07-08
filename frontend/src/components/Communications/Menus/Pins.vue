@@ -63,16 +63,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Message as MessageType } from "@/models/message";
-import { Paginate as PaginateType } from "@/types/paginate";
+import {defineComponent} from "vue";
+import {Message as MessageType} from "@/models/message";
+import {Paginate as PaginateType} from "@/types/paginate";
 import Message from "@/components/Communications/Message.vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
   name: "Pins",
-  components: { Paginate, PromoNoContent, Message },
+  components: {Paginate, PromoNoContent, Message},
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
@@ -89,7 +89,7 @@ export default defineComponent({
     async getPins(e: boolean) {
       if (!e) return;
       this.loading = true;
-      const { data } = await this.axios.get(
+      const {data} = await this.axios.get(
         `/chats/${this.$chat.selectedChatId}/messages`,
         {
           params: {

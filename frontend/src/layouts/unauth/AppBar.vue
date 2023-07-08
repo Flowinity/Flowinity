@@ -21,14 +21,14 @@
     <!-- theme v-menu -->
     <v-menu
       :close-on-content-click="false"
-      :nudge-width="200"
       :nudge-height="200"
+      :nudge-width="200"
       offset-x
       origin="top right"
       transition="scale-transition"
     >
       <template v-slot:activator="{ props }">
-        <v-btn icon v-bind="props" class="mr-2">
+        <v-btn class="mr-2" icon v-bind="props">
           <v-icon>mdi-theme-light-dark</v-icon>
         </v-btn>
       </template>
@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "UnauthenticatedAppBar",

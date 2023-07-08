@@ -71,12 +71,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "CreateAPIKey",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue", "type"],
   emits: ["update:modelValue", "create"],
   data() {
@@ -164,7 +164,7 @@ export default defineComponent({
   },
   methods: {
     async addAPIKey() {
-      const { data } = await this.axios.post("/security/keys", {
+      const {data} = await this.axios.post("/security/keys", {
         name: this.name,
         scopes: this.scopes,
         expiry: this.expiry
@@ -173,7 +173,7 @@ export default defineComponent({
       this.$emit("create", data);
     },
     async addAlternatePassword() {
-      const { data } = await this.axios.post("/security/passwords", {
+      const {data} = await this.axios.post("/security/passwords", {
         name: this.name,
         scopes: this.scopes,
         password: this.password,

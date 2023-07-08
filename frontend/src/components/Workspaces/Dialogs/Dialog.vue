@@ -30,12 +30,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "WorkspaceDialog",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["submit", "loading", "title", "btnText", "modelValue"],
   emits: ["update:modelValue", "submit"],
   data() {

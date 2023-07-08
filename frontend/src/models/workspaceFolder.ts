@@ -1,5 +1,6 @@
-import { Workspace } from "@/models/workspace";
-import { Note } from "@/models/note";
+// Import Models
+import {Workspace} from "@/models/workspace";
+import {Note} from "@/models/note";
 
 export interface WorkspaceFolder {
   id: number;

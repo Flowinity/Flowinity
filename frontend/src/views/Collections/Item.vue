@@ -91,10 +91,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
-import { CollectionCache } from "@/types/collection";
+import {CollectionCache} from "@/types/collection";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import Sharing from "@/components/Collections/Dialogs/Sharing.vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
@@ -127,7 +127,7 @@ export default defineComponent({
         );
       }
       this.$app.componentLoading = true;
-      const { data } = await this.axios.get(
+      const {data} = await this.axios.get(
         `/collections/${this.$route.params.id}`
       );
       this.$app.componentLoading = false;

@@ -5,7 +5,7 @@
     class="message-actions mr-2 rounded-xl v-card"
     style="z-index: 5001; background-color: rgb(var(--v-theme-dark))"
   >
-    <span class="mr-2" v-if="message.readReceipts?.length && merge">
+    <span v-if="message.readReceipts?.length && merge" class="mr-2">
       <template
         v-for="(readReceipt, index) in message.readReceipts"
         :key="readReceipt.id"
@@ -25,7 +25,7 @@
           <v-card>
             <v-container>
               <span v-for="readReceipt in message.readReceipts">
-                <ReadReceipt :message="message" :read-receipt="readReceipt" />
+                <ReadReceipt :message="message" :read-receipt="readReceipt"/>
               </span>
             </v-container>
           </v-card>
@@ -34,12 +34,12 @@
       </span>
     </span>
     <button
-      type="button"
-      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
-      @click="$chat.pinMessage(message.id, !message.pinned)"
       v-if="$chat.hasPermissions.admin && message.type === 'message'"
+      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+      type="button"
+      @click="$chat.pinMessage(message.id, !message.pinned)"
     >
-      <v-tooltip activator="parent" location="top" :eager="false">
+      <v-tooltip :eager="false" activator="parent" location="top">
         {{ message.pinned ? "Unpin" : "Pin" }}
       </v-tooltip>
       <v-icon>
@@ -47,46 +47,46 @@
       </v-icon>
     </button>
     <button
-      type="button"
-      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
       v-if="message.userId === $user.user?.id && message.type === 'message'"
+      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+      type="button"
       @click="$emit('edit')"
     >
-      <v-tooltip activator="parent" location="top" :eager="false">
+      <v-tooltip :eager="false" activator="parent" location="top">
         Edit
       </v-tooltip>
       <v-icon>mdi-pencil</v-icon>
     </button>
     <button
-      type="button"
-      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
       v-if="
         (message.userId === $user.user?.id && message.type === 'message') ||
         ($chat.hasPermissions.admin && message.type === 'message')
       "
+      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+      type="button"
       @click="$emit('delete', $event.shiftKey)"
     >
-      <v-tooltip activator="parent" location="top" :eager="false">
+      <v-tooltip :eager="false" activator="parent" location="top">
         Delete
       </v-tooltip>
       <v-icon>mdi-delete</v-icon>
     </button>
     <button
-      type="button"
       class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+      type="button"
       @click="$emit('reply')"
     >
-      <v-tooltip activator="parent" location="top" :eager="false">
+      <v-tooltip :eager="false" activator="parent" location="top">
         Reply
       </v-tooltip>
       <v-icon>mdi-reply</v-icon>
     </button>
     <button
-      type="button"
       class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+      type="button"
       @click="$functions.copy(message.id)"
     >
-      <v-tooltip activator="parent" location="top" :eager="false">
+      <v-tooltip :eager="false" activator="parent" location="top">
         Copy ID
       </v-tooltip>
       <v-icon>mdi-identifier</v-icon>
@@ -95,12 +95,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
 
 export default defineComponent({
   name: "MessageActions",
-  components: { ReadReceipt },
+  components: {ReadReceipt},
   props: ["message", "avoid", "merge"],
   data() {
     return {

@@ -9,9 +9,9 @@
       <v-autocomplete
         ref="input"
         v-model="search"
+        :autofocus="true"
         :items="$app.quickSwitcher"
         auto-select-first
-        :autofocus="true"
         item-title="name"
         label="Search"
         outlined
@@ -24,12 +24,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "QuickSwitcher",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: {
     modelValue: {
       type: Boolean,

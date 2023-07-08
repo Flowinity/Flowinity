@@ -9,9 +9,9 @@
     </div>
     <v-toolbar
       v-if="message.replyId"
+      :floating="true"
       class="ml-6 my-1 pointer limit"
       color="transparent"
-      :floating="true"
       height="auto"
       @click.prevent="$emit('jumpToMessage', message.reply?.id)"
     >
@@ -24,13 +24,13 @@
       {{ message.reply?.content ?? "Deleted Message" }}
     </v-toolbar>
     <div
-      @contextmenu="context"
       :class="{ merge, unselectable: $vuetify.display.mobile }"
-      class="message position-relative"
-      @mouseover="hovered = true"
       :style="{
         zIndex: 1000 - index
       }"
+      class="message position-relative"
+      @contextmenu="context"
+      @mouseover="hovered = true"
     >
       <small
         v-if="merge"
@@ -43,6 +43,10 @@
         {{ $date(message.createdAt).format("hh:mm A") }}
       </small>
       <UserAvatar
+        v-if="!merge"
+        :id="'message-author-avatar-' + message.id"
+        :user="message.user"
+        class="ml-2 mr-3 mt-1 pointer"
         @click="
           $emit('authorClick', {
             user: message.user,
@@ -51,10 +55,6 @@
             y: $event.y
           })
         "
-        class="ml-2 mr-3 mt-1 pointer"
-        v-if="!merge"
-        :user="message.user"
-        :id="'message-author-avatar-' + message.id"
       />
       <div style="width: 100%">
         <p
@@ -106,18 +106,18 @@
           v-else
           :editing="true"
           :modelValue="editingText"
+          style="width: 100%"
           @edit="$emit('edit', { id: null, content: null })"
           @sendMessage="$emit('editMessage', $event)"
           @update:modelValue="$emit('editText', $event)"
-          style="width: 100%"
         />
         <MessageActions
-          :message="message"
           v-if="hovered && !$vuetify.display.mobile"
+          :merge="merge"
+          :message="message"
           @delete="$emit('delete', { message, shifting: $event })"
           @edit="$emit('edit', { id: message.id, content: message.content })"
           @reply="$emit('reply', message)"
-          :merge="merge"
         />
         <Embed
           v-for="(embed, index) in message.embeds"
@@ -167,7 +167,7 @@
   </li>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
 import MessageActions from "@/components/Communications/MessageActions.vue";
 import Embed from "@/components/Communications/Embed.vue";

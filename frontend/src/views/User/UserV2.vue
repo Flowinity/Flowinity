@@ -145,10 +145,10 @@
           >
             <v-textarea
               v-model="$user.changes.description"
+              :autofocus="true"
               :counter="255"
               :rows="1"
               auto-grow
-              :autofocus="true"
               dense
               outlined
               @keydown.esc="settings.description.value = false"
@@ -342,11 +342,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
-import { User } from "@/models/user";
+import {User} from "@/models/user";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import StatsCard from "@/components/Dashboard/StatsCard.vue";
@@ -355,7 +355,7 @@ import LineChart from "@/components/Core/LineChart.vue";
 import Chart from "@/components/Core/Chart.vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
-import { DefaultThemes } from "@/plugins/vuetify";
+import {DefaultThemes} from "@/plugins/vuetify";
 
 export default defineComponent({
   name: "UserV2",
@@ -392,7 +392,7 @@ export default defineComponent({
     primary() {
       return this.user?.themeEngine?.theme[
         this.$vuetify.theme.name as "dark" | "light" | "amoled"
-      ].colors.primary;
+        ].colors.primary;
     },
     gold() {
       return this.user?.plan.internalName === "GOLD";
@@ -482,7 +482,7 @@ export default defineComponent({
       }
       const theme = reset
         ? this.$user.changes.themeEngine?.theme ||
-          new DefaultThemes(this.$user.gold).themes
+        new DefaultThemes(this.$user.gold).themes
         : this.user?.themeEngine?.theme;
       if (!theme) return false;
       this.$vuetify.theme.themes.dark = {
@@ -545,7 +545,7 @@ export default defineComponent({
         this.$app.componentLoading = true;
       }
       const username = this.username || this.$route.params.username;
-      const { data } = await this.axios.get(`/user/profile/${username}`);
+      const {data} = await this.axios.get(`/user/profile/${username}`);
       this.user = data;
       if (!this.username) this.$app.title = this.user?.username + "'s Profile";
       this.setTheme();

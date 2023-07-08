@@ -31,8 +31,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { AutoCollectRule } from "@/models/autoCollectRule";
+import {defineComponent} from "vue";
+import {AutoCollectRule} from "@/models/autoCollectRule";
 
 export default defineComponent({
   name: "Users",
@@ -45,7 +45,7 @@ export default defineComponent({
   },
   methods: {
     async getRules() {
-      const { data } = await this.axios.get("/admin/autoCollects");
+      const {data} = await this.axios.get("/admin/autoCollects");
       this.users = data;
     },
     async runGallery() {

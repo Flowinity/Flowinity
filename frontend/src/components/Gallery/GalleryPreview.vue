@@ -2,11 +2,11 @@
   <div>
     <v-hover v-if="item.type === 'image'" v-slot="{ isHovering, props }">
       <v-img
+        v-if="show || item.fileSize <= 12582912"
         :src="$app.domain + item.attachment"
         contain
         height="220"
         v-bind="props"
-        v-if="show || item.fileSize <= 12582912"
       >
         <template v-slot:placeholder>
           <v-row align="center" class="fill-height ma-0" justify="center">
@@ -19,9 +19,9 @@
         <a :href="$app.domain + item.attachment" target="_blank">
           <v-overlay
             v-if="isHovering"
+            :contained="true"
             :model-value="true"
             class="align-center justify-center"
-            :contained="true"
           >
             <v-icon color="white" large size="40">mdi-open-in-new</v-icon>
           </v-overlay>
@@ -44,10 +44,10 @@
       height="220"
       style="width: 100%"
     >
-      <source :src="$app.domain + item.attachment" type="video/mp4" />
+      <source :src="$app.domain + item.attachment" type="video/mp4"/>
     </video>
     <audio v-else-if="item.type === 'audio'" controls>
-      <source :src="$app.domain + item.attachment" type="audio/mpeg" />
+      <source :src="$app.domain + item.attachment" type="audio/mpeg"/>
     </audio>
     <v-card
       v-else
@@ -61,8 +61,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Upload } from "@/models/upload";
+import {defineComponent} from "vue";
+import {Upload} from "@/models/upload";
 
 export default defineComponent({
   name: "GalleryPreview",

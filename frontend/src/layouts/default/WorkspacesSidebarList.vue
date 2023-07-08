@@ -3,85 +3,85 @@
     <template v-slot:title>Import document</template>
     <v-container>
       <v-text-field
+        v-model="importDoc.name"
+        :autofocus="true"
         label="Name"
         required
-        :autofocus="true"
-        v-model="importDoc.name"
       ></v-text-field>
       <v-file-input
+        ref="importDocFile"
+        v-model="importDoc.file"
+        :autofocus="true"
+        accept=".tpudoc,.html"
         label="TPU Document (.TPUDOC or .HTML)"
         required
-        :autofocus="true"
-        v-model="importDoc.file"
-        ref="importDocFile"
-        accept=".tpudoc,.html"
       ></v-file-input>
     </v-container>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="primary" @click="doImportDoc" :loading="importDoc.loading">
+      <v-btn :loading="importDoc.loading" color="primary" @click="doImportDoc">
         Import
       </v-btn>
     </v-card-actions>
   </CoreDialog>
   <WorkspaceDeleteDialog
-    @submit="doDeleteNote"
     v-model="deleteNote.dialog"
-    title="Delete note"
     :loading="deleteNote.loading"
+    title="Delete note"
+    @submit="doDeleteNote"
   />
   <WorkspaceDeleteDialog
-    @submit="doDeleteWorkspace"
     v-model="deleteWorkspace.dialog"
-    title="Delete workspace"
     :loading="deleteWorkspace.loading"
+    title="Delete workspace"
+    @submit="doDeleteWorkspace"
   />
   <WorkspaceDeleteDialog
-    @submit="doDeleteFolder"
     v-model="deleteFolder.dialog"
-    title="Delete folder"
     :loading="deleteFolder.loading"
+    title="Delete folder"
+    @submit="doDeleteFolder"
   />
   <WorkspaceDialog
-    @submit="doCreateNote"
     v-model="createNote.dialog"
-    title="Create note"
     :loading="createNote.loading"
+    title="Create note"
+    @submit="doCreateNote"
   />
   <WorkspaceDialog
-    @submit="doCreateWorkspace"
     v-model="createWorkspace.dialog"
-    title="Create workspace"
     :loading="createWorkspace.loading"
+    title="Create workspace"
+    @submit="doCreateWorkspace"
   />
   <WorkspaceDialog
-    @submit="doCreateFolder"
     v-model="createFolder.dialog"
-    title="Create folder"
     :loading="createFolder.loading"
+    title="Create folder"
+    @submit="doCreateFolder"
   />
   <WorkspaceDialog
-    @submit="doRenameNote"
     v-model="renameNote.dialog"
-    title="Rename note"
-    btn-text="Rename"
     :loading="renameNote.loading"
+    btn-text="Rename"
+    title="Rename note"
+    @submit="doRenameNote"
   />
   <WorkspaceDialog
-    @submit="doRenameWorkspace"
     v-model="renameWorkspace.dialog"
-    title="Rename workspace"
-    btn-text="Rename"
     :loading="renameWorkspace.loading"
+    btn-text="Rename"
+    title="Rename workspace"
+    @submit="doRenameWorkspace"
   />
   <WorkspaceDialog
-    @submit="doRenameFolder"
     v-model="renameFolder.dialog"
-    title="Rename folder"
-    btn-text="Rename"
     :loading="renameFolder.loading"
+    btn-text="Rename"
+    title="Rename folder"
+    @submit="doRenameFolder"
   />
-  <v-menu v-model="contextMenu.dialog" :key="contextMenu.id" :style="menuStyle">
+  <v-menu :key="contextMenu.id" v-model="contextMenu.dialog" :style="menuStyle">
     <v-list v-if="!contextMenu.item?.children && !contextMenu.item?.folders">
       <v-list-item @click="renameNote.dialog = true">
         <v-list-item-title>Rename note</v-list-item-title>
@@ -114,35 +114,35 @@
     </v-list>
   </v-menu>
   <v-card-text
-    style="color: rgb(var(--v-theme-primary)); cursor: pointer; font-size: 12px"
-    class="mb-n4 unselectable"
-    @click="$app.workspaceDrawer = false"
     v-if="!$workspaces.versionHistory && !$app.rail"
+    class="mb-n4 unselectable"
+    style="color: rgb(var(--v-theme-primary)); cursor: pointer; font-size: 12px"
+    @click="$app.workspaceDrawer = false"
   >
     <v-icon size="20">mdi-close</v-icon>
     Close sidebar
   </v-card-text>
   <v-card-text
     v-else-if="!$app.rail"
+    class="mb-n4 unselectable"
+    style="color: #0190ea; cursor: pointer; font-size: 12px"
     @click="
       $workspaces.versionHistory = false;
       $router.push(`/workspaces/notes/${$route.params.id}`);
     "
-    style="color: #0190ea; cursor: pointer; font-size: 12px"
-    class="mb-n4 unselectable"
   >
     <v-icon>mdi-arrow-left</v-icon>
     Leave version history
   </v-card-text>
   <v-list
+    v-if="!$workspaces.versionHistory"
+    class="mt-2"
     density="comfortable"
     nav
-    class="mt-2"
-    v-if="!$workspaces.versionHistory"
   >
     <v-list-item
-      class="px-2 unselectable"
       id="workspace-select"
+      class="px-2 unselectable"
       style="cursor: pointer"
       @contextmenu.prevent="
         context($event, 'workspace-select', $workspaces.workspace)
@@ -181,10 +181,10 @@
     <template v-if="$workspaces.workspace">
       <v-list-group
         v-for="item in $workspaces.workspace.folders"
-        :key="item.id"
-        :value="item.id"
-        :title="item.name"
         :id="`folder-${item.id}`"
+        :key="item.id"
+        :title="item.name"
+        :value="item.id"
       >
         <template v-slot:activator="{ props }">
           <v-list-item
@@ -196,10 +196,10 @@
         </template>
         <v-list-item
           v-for="note in item.children"
+          :id="`note-${item.id}`"
           :key="note.id"
           :to="'/workspaces/notes/' + note.id"
           :value="note.workspaceFolderId"
-          :id="`note-${item.id}`"
           @contextmenu.prevent="context($event, `note-${note.id}`, note)"
         >
           <v-list-item-title style="text-overflow: ellipsis">
@@ -236,15 +236,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import WorkspaceDialog from "@/components/Workspaces/Dialogs/Dialog.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
-import { NoteVersion } from "@/models/noteVersion";
+import {NoteVersion} from "@/models/noteVersion";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "WorkspacesSidebarList",
-  components: { CoreDialog, WorkspaceDeleteDialog, WorkspaceDialog },
+  components: {CoreDialog, WorkspaceDeleteDialog, WorkspaceDialog},
   data() {
     return {
       versions: [] as NoteVersion[],
@@ -347,7 +347,7 @@ export default defineComponent({
       }
     },
     async downloadItem() {
-      const { data } = await this.axios.get(
+      const {data} = await this.axios.get(
         "/notes/" + this.contextMenu.item?.id
       );
 
@@ -372,7 +372,7 @@ export default defineComponent({
     },
     async doCreateNote(name: string, internal: boolean = false) {
       this.createNote.loading = true;
-      const { data } = await this.axios.post("/notes", {
+      const {data} = await this.axios.post("/notes", {
         name,
         workspaceFolderId: this.createNote.folderId || this.contextMenu.item?.id
       });
@@ -414,7 +414,7 @@ export default defineComponent({
     },
     async doCreateWorkspace(name: string) {
       this.createWorkspace.loading = true;
-      const { data } = await this.axios.post("/notes/workspaces", {
+      const {data} = await this.axios.post("/notes/workspaces", {
         name: name
       });
       await this.$workspaces.init();
@@ -462,7 +462,7 @@ export default defineComponent({
       });
     },
     async getVersions() {
-      const { data } = await this.axios.get("/notes/" + this.$route.params.id);
+      const {data} = await this.axios.get("/notes/" + this.$route.params.id);
       this.versions = data.versions;
     }
   },

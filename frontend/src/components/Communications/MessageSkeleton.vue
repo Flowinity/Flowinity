@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "MessageSkeleton",
@@ -79,11 +79,11 @@ export default defineComponent({
     left: 0;
     transform: translateX(-100%);
     background-image: linear-gradient(
-      90deg,
-      rgba(var(--skeleton-loader-bg-alt), 0) 0,
-      rgba(var(--skeleton-loader-bg-alt), 0.2) 20%,
-      rgba(var(--skeleton-loader-bg-alt), 0.5) 60%,
-      rgba(var(--skeleton-loader-bg-alt), 0)
+        90deg,
+        rgba(var(--skeleton-loader-bg-alt), 0) 0,
+        rgba(var(--skeleton-loader-bg-alt), 0.2) 20%,
+        rgba(var(--skeleton-loader-bg-alt), 0.5) 60%,
+        rgba(var(--skeleton-loader-bg-alt), 0)
     );
     animation: shimmer 2s infinite;
     content: "";

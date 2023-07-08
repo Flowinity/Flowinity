@@ -1,19 +1,26 @@
-// Utilities
-import { defineStore } from "pinia";
-import axios from "@/plugins/axios";
-import { useToast } from "vue-toastification";
+import {defineStore} from "pinia";
+import {useToast} from "vue-toastification";
+import {AxiosProgressEvent} from "axios";
+import {RouteLocationNormalizedLoaded, useRoute} from "vue-router";
+
+// Import Stores
+import {useChatStore} from "@/store/chat";
+import {useCollectionsStore} from "@/store/collections";
+import {useUserStore} from "@/store/user";
+import {useWorkspacesStore} from "@/store/workspaces";
+import {useExperimentsStore} from "@/store/experiments";
+
+// Import Models
+import {Upload} from "@/models/upload";
+
+// Import Types
+import {SidebarItem} from "@/types/sidebar";
+
+// Import Plugins
 import functions from "@/plugins/functions";
-import { AxiosProgressEvent } from "axios";
-import { useUserStore } from "@/store/user";
-import { Upload } from "@/models/upload";
-import { useChatStore } from "@/store/chat";
-import { useCollectionsStore } from "@/store/collections";
-import { useWorkspacesStore } from "@/store/workspaces";
 import vuetify from "@/plugins/vuetify";
-import { useExperimentsStore } from "@/store/experiments";
-import { i18n } from "@/plugins/i18n";
-import { useRoute } from "vue-router";
-import { SidebarItem } from "@/types/sidebar";
+import {i18n} from "@/plugins/i18n";
+import axios from "@/plugins/axios";
 
 export interface AppState {
   quickAction: number;
@@ -56,10 +63,10 @@ export interface AppState {
       ip: string;
       whitelist:
         | {
-            ip: string;
-            name: string;
-            groups: string[];
-          }
+        ip: string;
+        name: string;
+        groups: string[];
+      }
         | false;
     };
     stats: {
@@ -336,18 +343,21 @@ export const useAppStore = defineStore("app", {
     } as AppState),
   getters: {
     quickActionItem(state: AppState): SidebarItem {
-      const item = this.sidebar.find((item) => item.id === state.quickAction);
-      if (!item) return this.sidebar.find((item) => item.id === 1);
+      const item = this.sidebar.find((item): boolean => item.id === state.quickAction);
+
+      if (!item) return this.sidebar.find((item): boolean => item.id === 1);
+
       return item;
     },
     sidebar(state: AppState): SidebarItem[] {
       const user = useUserStore();
       const chat = useChatStore();
-      const route = useRoute();
+      const route: RouteLocationNormalizedLoaded = useRoute();
       const experiments = useExperimentsStore();
 
       if (!user.user) return [];
-      const items = [
+
+      const items: SidebarItem[] = [
         {
           id: 1,
           externalPath: "",
@@ -402,7 +412,7 @@ export const useAppStore = defineStore("app", {
         },
         {
           id: 29,
-          click() {
+          click(): void {
             state.dialogs.feedback = true;
           },
           externalPath: "",
@@ -420,7 +430,7 @@ export const useAppStore = defineStore("app", {
         },
         {
           id: 33,
-          click() {
+          click(): void {
             state.dialogs.gold.value = true;
           },
           externalPath: "",
@@ -435,7 +445,7 @@ export const useAppStore = defineStore("app", {
         },
         {
           id: 39,
-          click() {
+          click(): void {
             state.dialogs.migrateWizard = true;
           },
           externalPath: "",
@@ -469,103 +479,86 @@ export const useAppStore = defineStore("app", {
         }
       ] as SidebarItem[];
 
-      // Server feature options
+      // Server feature options.
       if (
         state.site.inviteAFriend ||
         user.user?.moderator ||
         user.user?.administrator
-      ) {
-        items.push({
-          id: 32,
-          click() {
-            state.dialogs.inviteAFriend = true;
-          },
-          externalPath: "",
-          path: "",
-          name: i18n.t("core.sidebar.inviteAFriend"),
-          icon: "mdi-gift-outline",
-          new: true,
-          scope: "*"
-        });
-      }
-
-      if (state.site.features?.insights) {
-        items.push({
-          id: 13,
-          externalPath: "",
-          name: i18n.t("core.sidebar.insights"),
-          path: "/insights",
-          scope: "*",
-          icon: "mdi-chart-timeline-variant-shimmer",
-          new: true
-        });
-      }
-
-      if (state.site.features?.communications) {
-        items.push({
-          id: 11,
-          externalPath: "",
-          name: i18n.t("core.sidebar.communications"),
-          path: chat.selectedChatId
-            ? `/communications/${chat.selectedChatId}`
-            : "/communications",
-          icon: "mdi-message-processing",
-          warning: functions.checkScope("chats.view", user.user?.scopes)
-            ? chat.totalUnread || "BETA"
-            : false,
-          scope: "chats.view",
-          experimentsRequired: ["COMMUNICATIONS"]
-        });
-      }
-
-      if (state.site.features?.workspaces) {
-        items.push({
-          id: 10,
-          externalPath: "",
-          name: i18n.t("core.sidebar.workspaces"),
-          path: route.name?.toString()?.includes("Workspace")
-            ? "/workspaces"
-            : state.lastNote
+      ) items.push({
+        id: 32,
+        click(): void {
+          state.dialogs.inviteAFriend = true;
+        },
+        externalPath: "",
+        path: "",
+        name: i18n.t("core.sidebar.inviteAFriend"),
+        icon: "mdi-gift-outline",
+        new: true,
+        scope: "*"
+      });
+      if (state.site.features?.insights) items.push({
+        id: 13,
+        externalPath: "",
+        name: i18n.t("core.sidebar.insights"),
+        path: "/insights",
+        scope: "*",
+        icon: "mdi-chart-timeline-variant-shimmer",
+        new: true
+      });
+      if (state.site.features?.communications) items.push({
+        id: 11,
+        externalPath: "",
+        name: i18n.t("core.sidebar.communications"),
+        path: chat.selectedChatId
+          ? `/communications/${chat.selectedChatId}`
+          : "/communications",
+        icon: "mdi-message-processing",
+        warning: functions.checkScope("chats.view", user.user?.scopes)
+          ? chat.totalUnread || "BETA"
+          : false,
+        scope: "chats.view",
+        experimentsRequired: ["COMMUNICATIONS"]
+      });
+      if (state.site.features?.workspaces) items.push({
+        id: 10,
+        externalPath: "",
+        name: i18n.t("core.sidebar.workspaces"),
+        path: route.name?.toString()?.includes("Workspace")
+          ? "/workspaces"
+          : state.lastNote
             ? `/workspaces/notes/${state.lastNote}`
             : "/workspaces",
-          icon: "mdi-folder-account",
-          new: true,
-          scope: "workspaces.view",
-          experimentsRequired: ["INTERACTIVE_NOTES"]
-        });
-      }
+        icon: "mdi-folder-account",
+        new: true,
+        scope: "workspaces.view",
+        experimentsRequired: ["INTERACTIVE_NOTES"]
+      });
+      if (state.site.features?.collections) items.push({
+        id: 7,
+        externalPath: "",
+        name: i18n.t("core.sidebar.collections"),
+        path: "/collections",
+        icon: "mdi-folder-multiple-image",
+        new: false,
+        scope: "collections.view"
+      });
+      if (state.site.features?.autoCollects) items.push({
+        id: 9,
+        externalPath: "",
+        name: i18n.t("core.sidebar.autoCollects"),
+        path: "/autoCollect",
+        icon: "mdi-image-auto-adjust",
+        new: false,
+        scope: "collections.modify",
+        warning:
+          user.user.pendingAutoCollects > 0
+            ? user.user.pendingAutoCollects
+            : false
+      });
 
-      if (state.site.features?.collections) {
-        items.push({
-          id: 7,
-          externalPath: "",
-          name: i18n.t("core.sidebar.collections"),
-          path: "/collections",
-          icon: "mdi-folder-multiple-image",
-          new: false,
-          scope: "collections.view"
-        });
-      }
+      items.sort((a: SidebarItem, b: SidebarItem) => a.id - b.id);
 
-      if (state.site.features?.autoCollects) {
-        items.push({
-          id: 9,
-          externalPath: "",
-          name: i18n.t("core.sidebar.autoCollects"),
-          path: "/autoCollect",
-          icon: "mdi-image-auto-adjust",
-          new: false,
-          scope: "collections.modify",
-          warning:
-            user.user.pendingAutoCollects > 0
-              ? user.user.pendingAutoCollects
-              : false
-        });
-      }
-
-      items.sort((a, b) => a.id - b.id);
-
-      return items.filter((item) => {
+      return items.filter((item: SidebarItem): boolean => {
         if (item.experimentsRequired) {
           for (const experiment of item.experimentsRequired) {
             if (!experiments.experiments[experiment]) {
@@ -573,46 +566,45 @@ export const useAppStore = defineStore("app", {
             }
           }
         }
+
         return true;
       });
     },
     rail() {
       const experiments = useExperimentsStore();
+
       return (
         experiments.experiments.RAIL_SIDEBAR &&
         !vuetify.display.xlAndUp.value &&
         !vuetify.display.mobile.value
       );
     },
-    weatherTemp(state: AppState) {
-      const temp = state.weather.data?.temp;
+    weatherTemp(state: AppState): number {
+      const temp: number = state.weather.data?.temp;
       const user = useUserStore()?.user;
+
       if (!user?.weatherUnit) return 0;
-      if (user?.weatherUnit === "kelvin") {
-        // round to 2 decimal places
-        return Math.round((temp + 273.15) * 100) / 100;
-      } else if (user?.weatherUnit === "fahrenheit") {
-        return Math.round(((temp * 9) / 5 + 32) * 100) / 100;
-      } else {
-        return temp;
-      }
+      if (user?.weatherUnit === "kelvin") return Math.round((temp + 273.15) * 100) / 100; // Round to 2 decimal places.
+      else if (user?.weatherUnit === "fahrenheit") return Math.round(((temp * 9) / 5 + 32) * 100) / 100;
+      else return temp;
     }
   },
   actions: {
-    toggleWorkspace() {
+    toggleWorkspace(): void {
       this.workspaceDrawer = !this.workspaceDrawer;
-      if (vuetify.display.mobile.value && this.workspaceDrawer) {
-        this.mainDrawer = false;
-      }
+
+      if (vuetify.display.mobile.value && this.workspaceDrawer) this.mainDrawer = false;
     },
-    toggleMain() {
+    toggleMain(): void {
       this.mainDrawer = !this.mainDrawer;
-      if (vuetify.display.mobile.value && this.mainDrawer) {
-        this.workspaceDrawer = false;
-      }
+
+      if (vuetify.display.mobile.value && this.mainDrawer) this.workspaceDrawer = false;
     },
-    populateQuickSwitcher() {
-      const value = [
+    populateQuickSwitcher(): void {
+      const value: ({
+        name: string,
+        route: string
+      })[] = [
         {
           route: "/",
           name: "Home"
@@ -651,103 +643,122 @@ export const useAppStore = defineStore("app", {
         }
       ];
       const chats = useChatStore();
+
       for (const chat of chats.chats) {
         value.push({
           route: `/communications/${chat.association?.id}`,
           name: chats.getChatName(chat)
         });
       }
+
       const collections = useCollectionsStore();
+
       for (const collection of collections.items) {
         value.push({
           route: `/collections/${collection.id}`,
           name: collection.name
         });
       }
+
       const workspaces = useWorkspacesStore();
+
       for (const workspace of workspaces.recentOverall) {
         value.push({
           route: `/workspaces/${workspace.id}`,
           name: workspace.name
         });
       }
+
       this.quickSwitcher = value;
     },
-    async deleteItem(item: Upload | undefined) {
+    async deleteItem(item: Upload | undefined): Promise<void> {
       if (!item) return;
-      this.dialogs.deleteItem.item = item;
+
       await axios.delete("/gallery/" + item.id);
+
+      this.dialogs.deleteItem.item = item;
       this.dialogs.deleteItem.value = false;
       this.dialogs.deleteItem.emit = true;
     },
-    async getWeather() {
+    async getWeather(): Promise<void> {
       try {
-        const { data } = await axios.get("/core/weather", {
+        const {data} = await axios.get("/core/weather", {
           headers: {
             noToast: true
           }
         });
+
         this.weather.data = data;
         this.weather.loading = false;
       } catch {
         //
       }
     },
-    async init() {
+    async init(): Promise<void> {
       this.loading = true;
-      const core = localStorage.getItem("coreStore");
-      if (core) {
-        try {
-          this.site = JSON.parse(core);
-          this.domain = "https://" + this.site.domain + "/i/";
-          this.loading = false;
-        } catch {
-          //
-        }
+
+      const core: string = localStorage.getItem("coreStore");
+
+      if (core) try {
+        this.site = JSON.parse(core);
+        this.domain = "https://" + this.site.domain + "/i/";
+        this.loading = false;
+      } catch {
+        //
       }
-      const { data } = await axios.get("/core");
+
+      const {data} = await axios.get("/core");
+
       this.site = data;
       this.domain = "https://" + this.site.domain + "/i/";
+
       localStorage.setItem("coreStore", JSON.stringify(data));
+
       this.loading = false;
     },
-    async upload() {
+    async upload(): Promise<any> {
       try {
         const toast = useToast();
-        if (!this.dialogs.upload.files.length)
-          toast.error("No files selected!");
-        const formData = new FormData();
+
+        if (!this.dialogs.upload.files.length) toast.error("No files selected!");
+
+        const formData: FormData = new FormData();
+
         for (const file of this.dialogs.upload.files) {
           formData.append("attachments", file);
         }
+
         this.dialogs.upload.loading = true;
-        const { data } = await axios.post("/gallery/site", formData, {
+
+        const {data} = await axios.post("/gallery/site", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           },
-          onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+          onUploadProgress: (progressEvent: AxiosProgressEvent): void => {
             if (!progressEvent.total) return;
+
             this.dialogs.upload.percentage = Math.round(
               (progressEvent.loaded / progressEvent.total) * 100
             );
           }
         });
+
         if (this.dialogs.upload.files.length === 1) {
           functions.copy(data[0].url);
           toast.success(
             "Successfully uploaded file and copied TPU link to clipboard!"
           );
-        } else {
-          toast.success("Successfully uploaded files!");
-        }
+        } else toast.success("Successfully uploaded files!");
+
         this.dialogs.upload.value = false;
         this.dialogs.upload.files = [];
         this.dialogs.upload.percentage = 0;
         this.dialogs.upload.loading = false;
-      } catch (e) {
+      } catch (err) {
         this.dialogs.upload.percentage = 0;
         this.dialogs.upload.loading = false;
-        return e;
+
+        return err;
       }
     }
   }

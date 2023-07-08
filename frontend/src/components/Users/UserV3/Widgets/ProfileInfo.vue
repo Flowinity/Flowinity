@@ -23,10 +23,10 @@
   >
     <v-textarea
       v-model="$user.changes.description"
+      :autofocus="true"
       :counter="255"
       :rows="1"
       auto-grow
-      :autofocus="true"
       dense
       outlined
       @keydown.esc="settings.description.value = false"
@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "ProfileInfo",

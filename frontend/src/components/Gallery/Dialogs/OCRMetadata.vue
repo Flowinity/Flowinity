@@ -1,8 +1,8 @@
 <template>
   <CoreDialog
     :model-value="modelValue"
-    max-width="600px"
     max-height="600px"
+    max-width="600px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>
@@ -10,12 +10,12 @@
     </template>
     <v-card-text>
       <v-textarea
-        class="mb-n4"
         :disabled="true"
-        auto-grow
-        variant="outlined"
-        rows="1"
         :model-value="$app.dialogs.ocr.text"
+        auto-grow
+        class="mb-n4"
+        rows="1"
+        variant="outlined"
       ></v-textarea>
       <small>
         {{ $t("gallery.actions.ocr.tip") }}
@@ -31,12 +31,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "OCRMetadata",
-  components: { CoreDialog },
+  components: {CoreDialog},
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {

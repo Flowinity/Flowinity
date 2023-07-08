@@ -13,7 +13,7 @@
       <v-card-title class="text-h6">Select Friends</v-card-title>
       <v-card-subtitle>
         You can friend people from their profile.
-        <br />
+        <br/>
         Adding 2 or more users will create a group chat.
       </v-card-subtitle>
       <v-list max-height="400">
@@ -25,10 +25,10 @@
         ></v-text-field>
         <v-list-item
           v-for="friend in friends"
+          :key="friend.otherUser.id"
           :active="selected.includes(friend.otherUser.id)"
           :value="friend.otherUser.id"
           @click="add(friend.otherUser.id)"
-          :key="friend.otherUser.id"
         >
           <template v-slot:prepend>
             <UserAvatar
@@ -71,13 +71,13 @@
 </template>
 
 <script lang="ts">
-import { Friend } from "@/models/friend";
-import { defineComponent } from "vue";
+import {Friend} from "@/models/friend";
+import {defineComponent} from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "CreateChat",
-  components: { UserAvatar },
+  components: {UserAvatar},
   props: {
     modelValue: {
       type: Boolean,

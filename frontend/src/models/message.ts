@@ -1,5 +1,6 @@
-import { User } from "@/models/user";
-import { ChatAssociation } from "@/models/chatAssociation";
+// Import Models
+import {User} from "@/models/user";
+import {ChatAssociation} from "@/models/chatAssociation";
 
 export interface Message {
   id: number;

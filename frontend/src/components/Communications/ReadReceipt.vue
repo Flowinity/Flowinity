@@ -12,17 +12,17 @@
       $chat.dialogs.user.value = true;
     "
   >
-    <v-tooltip activator="parent" location="top" :eager="false" offset="18">
+    <v-tooltip :eager="false" activator="parent" location="top" offset="18">
       {{ readReceipt.user?.username }}
     </v-tooltip>
   </UserAvatar>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import { User } from "@/models/user";
-import { Message } from "@/models/message";
+import {User} from "@/models/user";
+import {Message} from "@/models/message";
 
 interface ReadReceipt {
   id: number;
@@ -32,7 +32,7 @@ interface ReadReceipt {
 
 export default defineComponent({
   name: "ReadReceipt",
-  components: { UserAvatar },
+  components: {UserAvatar},
   props: {
     readReceipt: {
       type: Object as () => ReadReceipt,

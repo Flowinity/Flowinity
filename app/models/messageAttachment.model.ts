@@ -1,28 +1,28 @@
-import { BelongsTo, Column, Model, Table } from "sequelize-typescript"
-import { User } from "@app/models/user.model"
-import { Message } from "@app/models/message.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
+import {BelongsTo, Column, Model, Table} from "sequelize-typescript"
+import {User} from "@app/models/user.model"
+import {Message} from "@app/models/message.model"
+import {LegacyUser} from "@app/models/legacyUser.model"
 
 @Table
 export class MessageAttachment extends Model {
-  @Column
-  messageId: number
+    @Column
+    messageId: number
 
-  @Column
-  attachmentId: number
+    @Column
+    attachmentId: number
 
-  @Column
-  userId: number
+    @Column
+    userId: number
 
-  @Column
-  legacyUserId: number
+    @Column
+    legacyUserId: number
 
-  @BelongsTo(() => User, "userId")
-  user: User
+    @BelongsTo(() => User, "userId")
+    user: User
 
-  @BelongsTo(() => LegacyUser, "legacyUserId")
-  legacyUser: LegacyUser
+    @BelongsTo(() => LegacyUser, "legacyUserId")
+    legacyUser: LegacyUser
 
-  @BelongsTo(() => Message, "messageId")
-  message: Message
+    @BelongsTo(() => Message, "messageId")
+    message: Message
 }

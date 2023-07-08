@@ -16,7 +16,7 @@
     >
       {{ icon }}
     </v-icon>
-    <v-img v-if="image" :height="18" :src="image" :width="18" />
+    <v-img v-if="image" :height="18" :src="image" :width="18"/>
     <span v-else class="unselectable">{{ shortText }}</span>
     <v-tooltip
       :eager="false"
@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "HoverChip",

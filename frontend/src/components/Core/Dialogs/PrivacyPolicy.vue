@@ -1,5 +1,5 @@
 <template>
-  <CoreDialog max-width="900px" :model-value="true" :eager="true">
+  <CoreDialog :eager="true" :model-value="true" max-width="900px">
     <template v-slot:title>
       {{ $t("core.privacy.title") }}
     </template>
@@ -21,13 +21,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import PrivacyPolicy from "@/views/Policies/Privacy.vue";
 
 export default defineComponent({
   name: "PrivacyPolicyDialog",
-  components: { PrivacyPolicy, CoreDialog }
+  components: {PrivacyPolicy, CoreDialog}
 });
 </script>
 

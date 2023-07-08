@@ -1,4 +1,5 @@
-import { User } from "@/models/user";
+// Import Models
+import {User} from "@/models/user";
 
 export interface SubSubRule {
   id: number;

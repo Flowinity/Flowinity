@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { Line } from "vue-chartjs";
+import {Line} from "vue-chartjs";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -21,7 +21,7 @@ import {
   Title,
   Tooltip
 } from "chart.js";
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 ChartJS.register(
   Title,
@@ -35,7 +35,7 @@ ChartJS.register(
 
 export default defineComponent({
   name: "LineChart",
-  components: { Line },
+  components: {Line},
   props: ["data", "maxHeight"],
   computed: {
     chartOptions() {

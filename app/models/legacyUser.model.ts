@@ -1,48 +1,42 @@
-import {
-  Column,
-  DataType,
-  DefaultScope,
-  Model,
-  Table
-} from "sequelize-typescript"
+import {Column, DataType, DefaultScope, Model, Table} from "sequelize-typescript"
 
 @DefaultScope(() => ({
-  attributes: {
-    exclude: ["password"]
-  }
+    attributes: {
+        exclude: ["password"]
+    }
 }))
 @Table
 export class LegacyUser extends Model {
-  @Column
-  username: string
+    @Column
+    username: string
 
-  @Column
-  name: string
+    @Column
+    name: string
 
-  @Column
-  email: string
+    @Column
+    email: string
 
-  @Column
-  password: string
+    @Column
+    password: string
 
-  @Column
-  createdAt: Date
+    @Column
+    createdAt: Date
 
-  @Column
-  updatedAt: Date
+    @Column
+    updatedAt: Date
 
-  @Column
-  emailVerified: boolean
+    @Column
+    emailVerified: boolean
 
-  @Column
-  admin: boolean
+    @Column
+    admin: boolean
 
-  @Column
-  avatar: string
+    @Column
+    avatar: string
 
-  @Column(DataType.ENUM("online", "busy", "away", "offline", "invisible"))
-  status: "online" | "busy" | "away" | "offline" | "invisible"
+    @Column(DataType.ENUM("online", "busy", "away", "offline", "invisible"))
+    status: "online" | "busy" | "away" | "offline" | "invisible"
 
-  @Column(DataType.ENUM("online", "busy", "away", "invisible"))
-  storedStatus: "online" | "busy" | "away" | "invisible"
+    @Column(DataType.ENUM("online", "busy", "away", "invisible"))
+    storedStatus: "online" | "busy" | "away" | "invisible"
 }

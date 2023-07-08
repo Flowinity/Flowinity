@@ -1,7 +1,10 @@
-// Utilities
-import { defineStore } from "pinia";
+import {defineStore} from "pinia";
+
+// Import Plugins
 import axios from "@/plugins/axios";
-import { CollectionCache } from "@/types/collection";
+
+// Import Types
+import {CollectionCache} from "@/types/collection";
 
 export interface CollectionsState {
   items: CollectionCache[];
@@ -21,12 +24,13 @@ export const useCollectionsStore = defineStore("collections", {
     }
   },
   actions: {
-    async init() {
-      const { data } = await axios.get("/collections", {
+    async init(): Promise<void> {
+      const {data} = await axios.get("/collections", {
         headers: {
           noToast: true
         }
       });
+
       this.items = data;
     }
   }

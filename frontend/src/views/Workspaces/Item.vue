@@ -9,7 +9,7 @@
       :key="$route.params.version || $route.params.id"
       class="editorx_body mt-3"
     >
-      <div id="tpu-editor" class />
+      <div id="tpu-editor" class/>
     </div>
     <v-toolbar
       v-if="!id"
@@ -37,7 +37,7 @@
         </template>
       </v-card-subtitle>
     </v-toolbar>
-    <WorkspaceHome v-if="fail" />
+    <WorkspaceHome v-if="fail"/>
   </div>
 </template>
 
@@ -83,14 +83,14 @@ import AlignmentTuneTool from "editorjs-text-alignment-blocktune";
 import WorkspaceHome from "@/views/Workspaces/Home";
 //@ts-ignore
 import Undo from "editorjs-undo";
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 //@ts-ignore
 import SimpleImage from "@troplo/tpu-simple-image";
 import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue";
 
 export default defineComponent({
   name: "WorkspaceItem",
-  components: { WorkspaceShareDialog, WorkspaceHome },
+  components: {WorkspaceShareDialog, WorkspaceHome},
   props: ["id"],
   data() {
     return {
@@ -109,7 +109,7 @@ export default defineComponent({
         let formData = new FormData();
         formData.append("attachment", file);
 
-        const { data } = await this.axios.post("/gallery", formData, {
+        const {data} = await this.axios.post("/gallery", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -416,8 +416,8 @@ export default defineComponent({
           }
           const note = this.$route.params.version
             ? res.data.versions?.find(
-                (v) => v.id === this.$route.params.version
-              ).data
+              (v) => v.id === this.$route.params.version
+            ).data
             : res.data.data;
           try {
             this.editor(

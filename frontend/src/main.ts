@@ -3,28 +3,30 @@
  *
  * Bootstraps Vuetify and other plugins then mounts the App`
  */
-
-// Components
-import App from "./App.vue";
-
-// Composables
-import { createApp } from "vue";
-
-// Plugins
-import { registerPlugins } from "@/plugins";
-import "./styles/main.scss";
-import Toast, { useToast } from "vue-toastification";
+import Toast, {useToast} from "vue-toastification";
 import "vue-toastification/dist/index.css";
-import "./styles/tpu-editorjs.css";
 import "floating-vue/dist/style.css";
-import router from "@/router";
-import i18n from "@/plugins/i18n";
 //@ts-ignore
 import VueMatomo from "vue-matomo";
-import { useAdminStore } from "@/store/admin";
-import { Axios } from "axios";
 
-// Boot functions
+// Import Router
+import router from "@/router";
+
+// Import Components
+import App from "./App.vue";
+
+// Import Composables
+import {createApp} from "vue";
+
+// Import Plugins
+import {registerPlugins} from "@/plugins";
+import i18n from "@/plugins/i18n";
+
+// Import Styles
+import "./styles/main.scss";
+import "./styles/tpu-editorjs.css";
+
+// Import Boot functions
 import "./boot/declarations";
 import globals from "./boot/globals";
 import events from "./boot/events";
@@ -34,30 +36,30 @@ const app = createApp({
   ...App,
   ...{
     watch: {
-      "$route.params.chatId"(val) {
+      "$route.params.chatId"(val): void {
         if (!val) return;
+
         this.$chat.setChat(parseInt(val));
       },
-      "$route.params.mailbox"(val) {
+      "$route.params.mailbox"(val): void {
         if (!val) return;
+
         this.$mail.setMailbox(val);
       },
-      "$app.workspaceDrawer"(val) {
+      "$app.workspaceDrawer"(val): void {
         if (this.$app.forcedWorkspaceDrawer) return;
+
         localStorage.setItem("workspaceDrawer", val.toString());
       },
-      "$app.title"(val) {
-        document.title = val + " - TPU";
+      "$app.title"(val): void {
+        document.title = val + " - PrivateUploader";
       },
-      "$vuetify.display.mobile"(val) {
+      "$vuetify.display.mobile"(val): void {
         this.$app.mainDrawer = !val;
       },
-      "$app.fluidGradient"(val) {
-        if (val) {
-          document.body.classList.add("fluid-gradient");
-        } else {
-          document.body.classList.remove("fluid-gradient");
-        }
+      "$app.fluidGradient"(val): void {
+        if (val) document.body.classList.add("fluid-gradient");
+        else document.body.classList.remove("fluid-gradient");
       }
     }
   }
@@ -85,35 +87,42 @@ app.use(VueMatomo, {
 });
 
 if (process.env.NODE_ENV === "development") {
-  const loggingMixin = {
-    beforeMount() {
+  const loggingMixin: {
+    beforeMount: () => void
+  } = {
+    beforeMount(): void {
       if (
         //@ts-ignore
         this.$options?.name?.startsWith("V") ||
         //@ts-ignore
         this.$options?.name === "BaseTransition"
-      )
-        return;
-      // find where the component is defined
+      ) return;
+
+      // Find where the component is defined.
       //@ts-ignore
-      console.log(`[TPU/Dev] ${this.$options.name} mounted`);
+      console.log(`[PRIVATEUPLOADER/DEV] ${this.$options.name} mounted.`);
     }
   };
+
   app.mixin(loggingMixin);
 }
+
+app.config.globalProperties.$toast = useToast();
 
 app.use(Toast, {
   shareAppContext: true
 });
-app.config.globalProperties.$toast = useToast();
 app.use(i18n);
+
 registerPlugins(app);
 
 if (import.meta.env.DEV) app.config.performance = true;
 
-// Register boot plugins
+// Register boot plugins.
 globals(app);
 events();
-socket(app).then(() => {});
+socket(app).then((): void => {
+  //
+});
 
 app.mount("#tpu-app");

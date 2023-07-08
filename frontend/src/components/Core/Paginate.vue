@@ -23,9 +23,9 @@
           v-if="customLeft"
           key="custom"
           v-model="customPage"
+          :autofocus="true"
           :max="totalPages"
           :min="1"
-          :autofocus="true"
           class="v-btn ml-3 mr-3"
           style="width: 50px; position: relative; top: -0.69em"
           type="number"
@@ -57,9 +57,9 @@
           v-if="customRight"
           key="custom"
           v-model="customPage"
+          :autofocus="true"
           :max="totalPages"
           :min="1"
-          :autofocus="true"
           class="v-btn ml-3 mr-3"
           style="width: 50px; position: relative; top: -0.69em"
           type="number"
@@ -97,7 +97,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "Paginate",

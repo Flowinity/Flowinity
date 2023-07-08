@@ -7,6 +7,7 @@
     style="cursor: pointer"
   >
     <v-img
+      :cover="true"
       :gradient="
         rightText
           ? 'to top, rgba(0,0,0,.0), rgba(0,0,0,0.2)'
@@ -16,7 +17,6 @@
       "
       :src="<string>image"
       class="white--text align-end"
-      :cover="true"
       transition="none"
     >
       <template v-slot:placeholder>
@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "DynamicCard",

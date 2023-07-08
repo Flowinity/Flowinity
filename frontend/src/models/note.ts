@@ -1,5 +1,6 @@
-import { NoteVersion } from "@/models/noteVersion";
-import { WorkspaceFolder } from "@/models/workspaceFolder";
+// Import Models
+import {NoteVersion} from "@/models/noteVersion";
+import {WorkspaceFolder} from "@/models/workspaceFolder";
 
 export type VersionObject = {
   createdAt: Date;

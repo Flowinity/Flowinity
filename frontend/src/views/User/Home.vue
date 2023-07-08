@@ -57,7 +57,7 @@
                 {{ $friends.getName(user) }}
               </router-link>
             </v-card-title>
-            <UserBadges :user="user" class="justify-center mt-n1 mb-2" />
+            <UserBadges :user="user" class="justify-center mt-n1 mb-2"/>
             <div class="ml-n1 text-center justify-center limit">
               {{ user.description }}
             </div>
@@ -82,16 +82,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import { User } from "@/models/user";
+import {User} from "@/models/user";
 import UserBadges from "@/components/Users/UserBadges.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
   name: "UserHome",
-  components: { Paginate, UserBadges, UserAvatar, PromoNoContent },
+  components: {Paginate, UserBadges, UserAvatar, PromoNoContent},
   data() {
     return {
       users: [] as User[],
@@ -141,7 +141,7 @@ export default defineComponent({
   methods: {
     async getUsers() {
       this.$app.componentLoading = true;
-      const { data } = await this.axios.get("/user/all", {
+      const {data} = await this.axios.get("/user/all", {
         params: {
           sort: this.sort,
           order: this.order,

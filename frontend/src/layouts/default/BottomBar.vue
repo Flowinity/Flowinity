@@ -1,39 +1,39 @@
 <template>
   <teleport
+    v-if="!$chat.isCommunications || $chat.isReady"
     :to="
       $chat.isCommunications && $chat.selectedChat
         ? '#communications-bottom-navigation'
         : 'body'
     "
-    v-if="!$chat.isCommunications || $chat.isReady"
   >
     <div
-      class="mt-3 v-bottom-navigation v-bottom-navigation--active v-bottom-navigation--grow v-theme--amoled v-bottom-navigation--density-default justify-center"
-      style="background: rgb(var(--v-theme-dark)); z-index: 2001"
       :style="{
         position: $chat.isCommunications ? 'relative' : 'sticky',
         height,
         bottom: !$chat.isCommunications ? '0' : undefined
       }"
+      class="mt-3 v-bottom-navigation v-bottom-navigation--active v-bottom-navigation--grow v-theme--amoled v-bottom-navigation--density-default justify-center"
+      style="background: rgb(var(--v-theme-dark)); z-index: 2001"
     >
       <div class="v-bottom-navigation__content">
         <v-btn
-          :href="item.externalPath"
-          :to="item.path"
-          :exact="item.exact"
           v-for="item in displayed"
           :key="item.id"
-          @click="handleClick(item.id)"
-          class="rounded-0"
+          :exact="item.exact"
           :height="height"
+          :href="item.externalPath"
+          :to="item.path"
+          class="rounded-0"
           width="auto"
+          @click="handleClick(item.id)"
         >
           <v-badge
+            v-if="typeof item.warning === 'number' && item.warning > 0"
             :content="item.warning"
-            variant="tonal"
             color="grey-darken-4"
             size="x-small"
-            v-if="typeof item.warning === 'number' && item.warning > 0"
+            variant="tonal"
           >
             <v-icon size="22">
               {{ item.icon }}
@@ -44,11 +44,11 @@
           </v-icon>
         </v-btn>
         <v-btn
-          class="rounded-0"
-          @click="drawer = !drawer"
           :active="drawer"
           :height="height"
+          class="rounded-0"
           width="auto"
+          @click="drawer = !drawer"
         >
           <v-icon size="22">mdi-dots-horizontal</v-icon>
         </v-btn>
@@ -57,15 +57,15 @@
   </teleport>
   <v-navigation-drawer
     v-model="drawer"
-    location="bottom"
     :temporary="true"
-    color="dark"
     :touchless="true"
+    color="dark"
+    location="bottom"
     style="height: 55vh"
   >
     <p
-      class="text-center mt-2 v-card-subtitle"
       v-if="$app.dialogs.selectDefaultMobile"
+      class="text-center mt-2 v-card-subtitle"
     >
       {{ $t("core.sidebar.quickAction") }}
     </p>
@@ -73,11 +73,11 @@
       <v-list-item
         v-for="item in $app.sidebar"
         :key="item.id"
-        :prepend-icon="item.icon"
         :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
-        :to="item.path"
         :exact="item.exact"
         :href="item.externalPath"
+        :prepend-icon="item.icon"
+        :to="item.path"
         @click="
           $app.dialogs.selectDefaultMobile
             ? selectDefault(item.id, $event)
@@ -87,10 +87,10 @@
         {{ item.name }}
         <template v-slot:append>
           <v-btn
+            :disabled="displayed.length >= visible && !displayed.includes(item)"
             icon
             size="small"
             @click.prevent.stop="pin(item.id)"
-            :disabled="displayed.length >= visible && !displayed.includes(item)"
           >
             <v-icon>
               {{ displayed.includes(item) ? "mdi-pin-off" : "mdi-pin" }}
@@ -98,10 +98,10 @@
           </v-btn>
         </template>
         <v-chip
-          class="pb-n2 ml-1"
           v-if="item.warning"
-          variant="tonal"
+          class="pb-n2 ml-1"
           size="x-small"
+          variant="tonal"
         >
           {{ item.warning }}
         </v-chip>
@@ -111,7 +111,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "BottomBar",

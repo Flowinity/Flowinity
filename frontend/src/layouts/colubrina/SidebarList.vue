@@ -1,5 +1,5 @@
 <template>
-  <Leave v-model="leave.dialog" :chat="leave.chat" />
+  <Leave v-model="leave.dialog" :chat="leave.chat"/>
   <v-menu
     v-model="contextMenu.dialog"
     :style="menuStyle"
@@ -139,17 +139,15 @@
     {{ $t("chats.chats") }}
   </v-card-text>
   <v-virtual-scroll
-    item-height="48"
-    :items="$chat.chats"
     v-if="$chat.chats.length"
+    :items="$chat.chats"
+    item-height="48"
     style="overflow-x: hidden"
   >
     <template v-slot:default="{ item: chat }">
       <SidebarItem
-        @contextmenu.prevent="context($event, chat)"
-        :legacy-user="chat.recipient?.legacyUser"
-        :user="chat.recipient"
         :chat="chat"
+        :legacy-user="chat.recipient?.legacyUser"
         :subtitle="
           chat.type === 'group'
             ? `${chat.users?.length} members`
@@ -157,21 +155,24 @@
             ? 'Legacy User'
             : ''
         "
+        :user="chat.recipient"
+        @contextmenu.prevent="context($event, chat)"
       >
         <v-spacer></v-spacer>
         <v-badge
+          v-if="chat.unread"
           :class="chat.unread > 99 ? 'mr-5' : 'mr-4'"
           :content="chat.unread > 99 ? '99+' : chat.unread"
           color="red"
           overlap
-          v-if="chat.unread"
         ></v-badge>
       </SidebarItem>
     </template>
   </v-virtual-scroll>
-  <v-list nav v-if="false">
+  <v-list v-if="false" nav>
     <v-list-item
       v-for="chat in $chat.chats"
+      :key="chat.id"
       :subtitle="
         chat.type === 'group'
           ? `${chat.users?.length} members`
@@ -182,14 +183,13 @@
       :title="chatName(chat)"
       :to="`/communications/${chat.association.id}`"
       @contextmenu.prevent="context($event, chat)"
-      :key="chat.id"
     >
       <template v-slot:prepend>
         <UserAvatar
           :chat="chat.type === 'group' ? chat : undefined"
+          :dot-status="true"
           :status="true"
           :user="chat.type === 'direct' ? chat.recipient : undefined"
-          :dot-status="true"
           class="mr-2"
         ></UserAvatar>
       </template>
@@ -206,16 +206,16 @@
     <v-list-item v-if="!$chat.chats.length" class="fade-skeleton">
       <MessageSkeleton
         v-for="i in 5"
-        :animate="false"
         :key="i"
+        :animate="false"
       ></MessageSkeleton>
     </v-list-item>
   </v-list>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Chat } from "@/models/chat";
+import {defineComponent} from "vue";
+import {Chat} from "@/models/chat";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import Leave from "@/components/Communications/Dialogs/Leave.vue";

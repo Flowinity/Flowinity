@@ -1,6 +1,6 @@
 export enum AccessLevel {
-  "USER",
-  "ADMIN",
-  "MODERATOR",
-  "NO_ACCESS"
+    "USER",
+    "ADMIN",
+    "MODERATOR",
+    "NO_ACCESS"
 }

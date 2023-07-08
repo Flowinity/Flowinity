@@ -4,8 +4,8 @@
     :class="{
       'sidebar-patch': $experiments.experiments.RAIL_SIDEBAR && $app.rail
     }"
-    color="dark"
     :floating="true"
+    color="dark"
   >
     <ColubrinaSidebarList></ColubrinaSidebarList>
     <template v-slot:append>
@@ -15,13 +15,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue";
 import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 
 export default defineComponent({
   name: "ColubrinaSidebar",
-  components: { StatusSwitcher, ColubrinaSidebarList },
+  components: {StatusSwitcher, ColubrinaSidebarList},
   computed: {
     val: {
       get: function () {

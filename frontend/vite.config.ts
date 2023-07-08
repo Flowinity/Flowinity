@@ -1,11 +1,11 @@
 // Plugins
 import vue from "@vitejs/plugin-vue";
-import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
-import { warmup } from "vite-plugin-warmup";
+import vuetify, {transformAssetUrls} from "vite-plugin-vuetify";
+import {warmup} from "vite-plugin-warmup";
 
 // Utilities
-import { defineConfig } from "vite";
-import { VitePWA } from "vite-plugin-pwa";
+import {defineConfig} from "vite";
+import {VitePWA} from "vite-plugin-pwa";
 import ViteVersion from "@troplo/vite-version";
 import path from "path";
 import * as fs from "fs";
@@ -115,7 +115,7 @@ const config = {
       }
     }),
     vue({
-      template: { transformAssetUrls }
+      template: {transformAssetUrls}
     }),
     // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
     vuetify({
@@ -125,9 +125,9 @@ const config = {
       }
     })
   ],
-  define: { "process.env": {} },
+  define: {"process.env": {}},
   resolve: {
-    alias: [{ find: /^@\/(.*)/, replacement: resolve("./src/$1") }],
+    alias: [{find: /^@\/(.*)/, replacement: resolve("./src/$1")}],
     extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"]
   },
   server: {

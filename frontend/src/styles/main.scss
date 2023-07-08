@@ -1,8 +1,8 @@
 .text-gradient {
   font-weight: 500;
   background: -webkit-radial-gradient(
-    rgb(var(--v-theme-logo1)),
-    rgb(var(--v-theme-logo2))
+                  rgb(var(--v-theme-logo1)),
+                  rgb(var(--v-theme-logo2))
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -397,7 +397,7 @@ a {
 .fluid-gradient .bg-dark,
 .fluid-gradient .bg-light,
 .fluid-gradient
-  .v-overlay__content:not(.v-progress-circular):has(.v-card):not(.v-menu) {
+.v-overlay__content:not(.v-progress-circular):has(.v-card):not(.v-menu) {
   background: transparent !important;
   backdrop-filter: blur(70px);
   -webkit-backdrop-filter: blur(70px);
@@ -413,9 +413,9 @@ a {
 
 .bg {
   background: -webkit-linear-gradient(
-    0deg,
-    rgb(var(--v-theme-background)) 0%,
-    rgb(var(--v-theme-background2)) var(--gradient-offset)
+                  0deg,
+                  rgb(var(--v-theme-background)) 0%,
+                  rgb(var(--v-theme-background2)) var(--gradient-offset)
   ) !important;
 }
 

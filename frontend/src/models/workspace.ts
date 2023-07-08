@@ -1,6 +1,7 @@
-import { User } from "@/models/user";
-import { WorkspaceFolder } from "@/models/workspaceFolder";
-import { WorkspaceUser } from "@/models/workspaceUser";
+// Import Models
+import {User} from "@/models/user";
+import {WorkspaceFolder} from "@/models/workspaceFolder";
+import {WorkspaceUser} from "@/models/workspaceUser";
 
 export interface Workspace {
   id: number;

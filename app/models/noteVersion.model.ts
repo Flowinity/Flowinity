@@ -1,33 +1,37 @@
-import { BelongsTo, Column, DataType, Model, Table } from "sequelize-typescript"
-import { User } from "@app/models/user.model"
-import { NoteDataV2 } from "@app/services/note.service"
-import { Note } from "@app/models/note.model"
+import {BelongsTo, Column, DataType, Model, Table} from "sequelize-typescript"
+
+// Import Models
+import {User} from "@app/models/user.model"
+import {Note} from "@app/models/note.model"
+
+// Import Services
+import {NoteDataV2} from "@app/services/note.service"
 
 @Table
 export class NoteVersion extends Model {
-  @Column({
-    allowNull: false,
-    primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4
-  })
-  id: string
+    @Column({
+        allowNull: false,
+        primaryKey: true,
+        type: DataType.UUID,
+        defaultValue: DataType.UUIDV4
+    })
+    id: string
 
-  @Column
-  noteId: number
+    @Column
+    noteId: number
 
-  @Column
-  userId: number
+    @Column
+    userId: number
 
-  @Column({
-    type: DataType.JSON,
-    allowNull: false
-  })
-  data: NoteDataV2
+    @Column({
+        type: DataType.JSON,
+        allowNull: false
+    })
+    data: NoteDataV2
 
-  @BelongsTo(() => Note, "noteId")
-  note: Note
+    @BelongsTo(() => Note, "noteId")
+    note: Note
 
-  @BelongsTo(() => User, "userId")
-  user: User
+    @BelongsTo(() => User, "userId")
+    user: User
 }

@@ -2,26 +2,26 @@
   <span style="position: relative">
     <v-hover v-slot="{ isHovering, props }">
       <UploadCropper
+        v-if="user?.id === $user.user?.id"
         v-model="dialog"
         aspect-ratio="1"
         title="Upload Avatar"
         @finish="changeAvatar"
-        v-if="user?.id === $user.user?.id"
       />
       <v-avatar
-        :size="size"
-        v-bind="props"
-        class="text-center justify-center undraggable position-relative"
-        justify="center"
         :color="
           noColor || $functions.avatar(chat || user) ? undefined : 'primary'
         "
+        :size="size"
+        class="text-center justify-center undraggable position-relative"
+        justify="center"
+        v-bind="props"
       >
         <v-img
           v-if="chat?.icon || user?.avatar"
+          :cover="true"
           :src="$functions.avatar(chat || user)"
           class="undraggable user-avatar"
-          :cover="true"
         ></v-img>
         <span v-else :class="textSize" class="unselectable">
           {{
@@ -33,9 +33,9 @@
         <v-fade-transition v-if="isHovering && edit">
           <div style="cursor: pointer" @click="dialog = true">
             <v-overlay
+              :contained="true"
               :model-value="isHovering"
               class="align-center justify-center"
-              :contained="true"
               style="z-index: 20"
             >
               <v-icon large>mdi-upload</v-icon>
@@ -46,26 +46,26 @@
       </v-avatar>
       <template v-if="status && friendStatus">
         <div
-          class="status"
+          v-if="friendDevice === 'web'"
           :class="{ 'dot-status': dotStatus }"
           :style="{
             backgroundColor: $functions.userStatus(friendStatus).color
           }"
-          v-if="friendDevice === 'web'"
+          class="status"
         >
-          <v-tooltip :eager="false" location="top" activator="parent">
+          <v-tooltip :eager="false" activator="parent" location="top">
             {{ $functions.userStatus(friendStatus).text }}
           </v-tooltip>
         </div>
         <span v-else>
-          <v-tooltip :eager="false" location="top" activator="parent">
+          <v-tooltip :eager="false" activator="parent" location="top">
             {{ $functions.userStatus(friendStatus).text }}
           </v-tooltip>
           <v-icon
-            class="status"
             :class="{ 'dot-status': dotStatus }"
-            :size="dotStatus ? 'x-small' : undefined"
             :color="$functions.userStatus(friendStatus).color"
+            :size="dotStatus ? 'x-small' : undefined"
+            class="status"
           >
             mdi-cellphone
           </v-icon>
@@ -76,12 +76,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 
 export default defineComponent({
   name: "UserAvatar",
-  components: { UploadCropper },
+  components: {UploadCropper},
   props: [
     "user",
     "size",

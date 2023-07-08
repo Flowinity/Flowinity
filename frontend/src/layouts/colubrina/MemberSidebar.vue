@@ -18,12 +18,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import ColubrinaMemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
 
 export default defineComponent({
   name: "ColubrinaMemberSidebar",
-  components: { ColubrinaMemberSidebarList }
+  components: {ColubrinaMemberSidebarList}
 });
 </script>
 

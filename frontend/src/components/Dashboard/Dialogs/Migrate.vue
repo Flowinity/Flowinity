@@ -1,8 +1,8 @@
 <template>
   <v-dialog
     :model-value="modelValue"
-    max-width="700px"
     :persistent="true"
+    max-width="700px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-card color="#151515">
@@ -189,7 +189,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "MigrateWizard",

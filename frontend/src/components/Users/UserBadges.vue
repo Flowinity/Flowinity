@@ -411,7 +411,7 @@
 
 <script lang="ts">
 import HoverChip from "@/components/Core/HoverChip.vue";
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "UserBadges",
@@ -428,7 +428,7 @@ export default defineComponent({
       }
     }
   },
-  components: { HoverChip },
+  components: {HoverChip},
   props: ["user", "primaryColor"],
   computed: {
     rank() {

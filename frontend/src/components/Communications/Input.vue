@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%; z-index: 10001">
-    <div id="communications-bottom-navigation" v-if="!editing"></div>
+    <div v-if="!editing" id="communications-bottom-navigation"></div>
     <v-toolbar
       :id="editing ? '' : 'chat-input'"
       ref="toolbar"
@@ -27,17 +27,19 @@
           </div>
         </template>
         <v-textarea
+          :id="editing ? 'input-editing' : undefined"
           ref="textarea"
+          :autofocus="true"
           :class="!editing ? 'mb-n4 mt-1' : 'mt-2'"
           :maxlength="2000"
           :model-value="modelValue"
           auto-grow
-          :autofocus="true"
           color="primary"
           density="compact"
           label="Type a message..."
           placeholder="Keep it civil"
           rows="1"
+          style="padding: 16px"
           variant="outlined"
           @update:model-value="$emit('update:modelValue', $event)"
           @keydown.enter.exact="
@@ -48,8 +50,6 @@
           @keyup.esc="$emit('edit', null)"
           @keydown.up="editing ? cursor($event, true) : null"
           @keydown.down="editing ? cursor($event, false) : null"
-          :id="editing ? 'input-editing' : undefined"
-          style="padding: 16px"
         >
           <template v-slot:append>
             <v-icon
@@ -168,7 +168,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import InlineGallery from "@/components/Communications/InlineGallery.vue";
 import Mentionable from "@/components/Core/Mentionable.vue";

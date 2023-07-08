@@ -4,7 +4,7 @@
       <v-toolbar-title>
         <span>
           MAL
-          <v-tooltip :eager="false" location="top" activator="parent">
+          <v-tooltip :eager="false" activator="parent" location="top">
             MyAnimeList
           </v-tooltip>
         </span>
@@ -17,17 +17,17 @@
         </template>
       </v-toolbar-title>
       <v-btn
-        icon
-        :href="`https://myanimelist.net/profile/${malUser?.name}`"
-        target="_blank"
         :disabled="!malUser?.name"
+        :href="`https://myanimelist.net/profile/${malUser?.name}`"
+        icon
+        target="_blank"
       >
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
       <v-btn
+        :disabled="page === 1"
         icon
         @click="page > 1 ? page-- : (page = 1)"
-        :disabled="page === 1"
       >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
@@ -35,9 +35,9 @@
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
       <v-btn
+        :disabled="page >= pages"
         icon
         @click="page < pages ? page++ : page"
-        :disabled="page >= pages"
       >
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
@@ -51,9 +51,9 @@
         >
           <template v-slot:prepend>
             <a
-              target="_blank"
-              rel="noopener"
               :href="`https://myanimelist.net/anime/${anime.node.id}`"
+              rel="noopener"
+              target="_blank"
             >
               <v-img
                 :src="anime.node.main_picture.medium"
@@ -63,11 +63,11 @@
             </a>
           </template>
           <v-list-item-title
-            tag="a"
-            style="color: unset"
-            target="_blank"
-            rel="noopener"
             :href="`https://myanimelist.net/anime/${anime.node.id}`"
+            rel="noopener"
+            style="color: unset"
+            tag="a"
+            target="_blank"
           >
             {{ anime.node.title }}
           </v-list-item-title>
@@ -168,20 +168,20 @@
       </v-list>
     </template>
     <template v-else>
-      <MessageSkeleton />
+      <MessageSkeleton/>
     </template>
   </v-card>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
-import { MalUser } from "@/types/mal/user";
-import { MalAnime } from "@/types/mal/anime";
+import {MalUser} from "@/types/mal/user";
+import {MalAnime} from "@/types/mal/anime";
 
 export default defineComponent({
   name: "MyAnimeList",
-  components: { MessageSkeleton },
+  components: {MessageSkeleton},
   props: ["user", "component"],
   data() {
     return {
@@ -314,7 +314,7 @@ export default defineComponent({
       } else {
         this.partialLoading = true;
       }
-      const { data } = await this.axios.get(
+      const {data} = await this.axios.get(
         `/providers/userv3/mal/${this.user?.username}`,
         {
           headers: {

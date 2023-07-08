@@ -5,8 +5,8 @@
   <v-card-text>
     <v-switch
       v-model="$user.changes.discordPrecache"
-      class="mb-n7"
       :label="$t('settings.home.privacy.discordPrecaching')"
+      class="mb-n7"
       @update:modelValue="$emit('update')"
     ></v-switch>
     <small>
@@ -14,8 +14,8 @@
     </small>
     <v-switch
       v-model="$user.changes.publicProfile"
-      class="mb-n7"
       :label="$t('settings.home.privacy.publicProfile')"
+      class="mb-n7"
       @update:modelValue="$emit('update')"
     ></v-switch>
     <small>
@@ -34,8 +34,8 @@
     <v-switch
       v-if="$app.site.release === 'dev'"
       v-model="$app.demo"
-      class="mb-n7"
       :label="$t('settings.home.privacy.demoMode')"
+      class="mb-n7"
     ></v-switch>
   </v-card-text>
   <v-card-title>{{ $t("settings.home.myAccount.title") }}</v-card-title>
@@ -226,9 +226,9 @@
     @update:modelValue="$emit('update')"
   />
   <v-btn
+    v-if="$user.gold || !$app.site.officialInstance"
     class="mb-2 ml-5"
     @click="$app.themeEditor = !$app.themeEditor"
-    v-if="$user.gold || !$app.site.officialInstance"
   >
     <v-icon class="mr-2">mdi-palette</v-icon>
     <span>
@@ -250,13 +250,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import TwoFactor from "@/components/Settings/TwoFactor.vue";
-import { useTheme } from "vuetify";
+import {useTheme} from "vuetify";
 
 export default defineComponent({
   name: "SettingsHome",
-  components: { TwoFactor },
+  components: {TwoFactor},
   emits: ["update"],
   setup() {
     const theme = useTheme();
@@ -289,19 +289,19 @@ export default defineComponent({
       },
       theme: useTheme().global.name,
       themes: [
-        { title: "Light", value: "light" },
-        { title: "Dark", value: "dark" },
-        { title: "AMOLED", value: "amoled" }
+        {title: "Light", value: "light"},
+        {title: "Dark", value: "dark"},
+        {title: "AMOLED", value: "amoled"}
       ],
       temperatureUnits: [
-        { title: "Celsius (Metric)", value: "celsius" },
-        { title: "Kelvin (Metric Standard)", value: "kelvin" },
-        { title: "Fahrenheit (Imperial)", value: "fahrenheit" }
+        {title: "Celsius (Metric)", value: "celsius"},
+        {title: "Kelvin (Metric Standard)", value: "kelvin"},
+        {title: "Fahrenheit (Imperial)", value: "fahrenheit"}
       ],
       insights: [
-        { title: "Everyone", value: "everyone" },
-        { title: "Friends", value: "friends" },
-        { title: "Nobody", value: "nobody" }
+        {title: "Everyone", value: "everyone"},
+        {title: "Friends", value: "friends"},
+        {title: "Nobody", value: "nobody"}
       ],
       confirmPassword: "",
       valid: {

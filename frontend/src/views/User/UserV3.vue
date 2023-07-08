@@ -23,8 +23,8 @@
           >
             <v-col
               :cols="$vuetify.display.mobile ? 12 : undefined"
-              sm="auto"
               class="fix-profile-v3"
+              sm="auto"
             >
               <v-hover v-slot="{ isHovering }">
                 <UserAvatar
@@ -205,16 +205,16 @@
                     : () => {}
                 "
                 @delete="deleteComponent($event || component)"
+                @modifyProp="
+                  component.props
+                    ? (component.props[$event.prop] = $event.value)
+                    : () => {}
+                "
                 @moveDown="move($event || component, 1)"
                 @moveUp="move($event || component, -1)"
                 @settings="
                   config.component = $event || component;
                   config.dialog = true;
-                "
-                @modifyProp="
-                  component.props
-                    ? (component.props[$event.prop] = $event.value)
-                    : () => {}
                 "
               ></UserV3ComponentHandler>
             </div>
@@ -225,8 +225,8 @@
           cols="12"
           md="3"
           sm="12"
-          xl="2"
           style="flex: 0 1 auto; white-space: nowrap"
+          xl="2"
         >
           <InsightsPromoCard
             v-if="
@@ -294,18 +294,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
-import { ProfileLayout, User } from "@/models/user";
+import {ProfileLayout, User} from "@/models/user";
 import StatsCard from "@/components/Dashboard/StatsCard.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
-import { DefaultThemes } from "@/plugins/vuetify";
+import {DefaultThemes} from "@/plugins/vuetify";
 import UserV3Settings from "@/components/Users/UserV3/Dialogs/Settings.vue";
 import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/ComponentHandler.vue";
-import { VueDraggable } from "vue-draggable-plus";
-import { Component, Rows } from "@/types/userv3";
+import {VueDraggable} from "vue-draggable-plus";
+import {Component, Rows} from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 
 export default defineComponent({
@@ -495,8 +495,8 @@ export default defineComponent({
               name: "Type",
               type: "select",
               options: [
-                { text: "Recent", value: "recent" },
-                { text: "Top", value: "top" }
+                {text: "Recent", value: "recent"},
+                {text: "Top", value: "top"}
               ]
             }
           }
@@ -521,9 +521,9 @@ export default defineComponent({
               name: "Type",
               type: "select",
               options: [
-                { text: "Anime", value: "anime" },
-                { text: "Manga", value: "manga" },
-                { text: "Profile stats", value: "profile" }
+                {text: "Anime", value: "anime"},
+                {text: "Manga", value: "manga"},
+                {text: "Profile stats", value: "profile"}
               ]
             },
             display: {
@@ -611,7 +611,7 @@ export default defineComponent({
     primary() {
       return this.user?.themeEngine?.theme[
         this.$vuetify.theme.name as "dark" | "light" | "amoled"
-      ].colors.primary;
+        ].colors.primary;
     },
     gold() {
       return this.user?.plan.internalName === "GOLD";
@@ -679,7 +679,7 @@ export default defineComponent({
       }
 
       if (component && parent) {
-        return { component, parent };
+        return {component, parent};
       }
 
       return null;
@@ -729,7 +729,7 @@ export default defineComponent({
       }
       const theme = reset
         ? this.$user.changes.themeEngine?.theme ||
-          new DefaultThemes(this.$user.gold).themes
+        new DefaultThemes(this.$user.gold).themes
         : this.user?.themeEngine?.theme;
       if (!theme) return false;
       this.$vuetify.theme.themes.dark = {
@@ -786,7 +786,7 @@ export default defineComponent({
         this.$app.componentLoading = true;
       }
       const username = this.username || this.$route.params.username;
-      const { data } = await this.axios.get(`/user/profile/${username}`);
+      const {data} = await this.axios.get(`/user/profile/${username}`);
       this.user = data as User;
       this.layout = this.user?.profileLayout || this.defaultLayout;
       if (!this.username) this.$app.title = this.user?.username + "'s Profile";

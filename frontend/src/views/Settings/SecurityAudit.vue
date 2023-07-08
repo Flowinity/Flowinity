@@ -23,14 +23,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CreateAPIKey from "@/components/Settings/Dialogs/CreateAPIKey.vue";
 import IPHistory from "@/components/Settings/Dialogs/IPHistory.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
   name: "Security",
-  components: { Paginate, IPHistory, CreateAPIKey },
+  components: {Paginate, IPHistory, CreateAPIKey},
   data() {
     return {
       audit: [] as any[],
@@ -58,14 +58,14 @@ export default defineComponent({
           title: "Created At",
           key: "createdAt"
         },
-        { title: "Device", key: "device" }
+        {title: "Device", key: "device"}
       ]
     };
   },
   methods: {
     async getEntries() {
       this.loading = true;
-      const { data } = await this.axios.get("/security/audit", {
+      const {data} = await this.axios.get("/security/audit", {
         params: {
           page: this.pager.currentPage
         }

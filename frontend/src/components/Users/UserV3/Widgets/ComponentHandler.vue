@@ -37,22 +37,22 @@
       <template v-if="editMode && $experiments.experiments.USER_V3_EDITOR">
         <v-card-subtitle class="mt-2">Dev UserV3 actions:</v-card-subtitle>
         <v-btn
-          :key="comp.id"
           v-for="comp in components"
+          :key="comp.id"
           @click="addItemDebug(comp.id)"
         >
           Add {{ comp.name }}
         </v-btn>
       </template>
       <template v-else-if="editMode">
-        <UserV3AddMenu :components="components" @add="addItemDebug" />
+        <UserV3AddMenu :components="components" @add="addItemDebug"/>
       </template>
       <v-row class="c-both">
         <v-col
           v-for="child in component.props.children"
+          :key="child.id"
           :xl="12 / component.props.children.length"
           md="12"
-          :key="child.id"
         >
           <UserV3ComponentHandler
             :component="child"
@@ -63,10 +63,10 @@
             :user="user"
             :username="username"
             @delete="$emit('delete', $event)"
+            @modifyProp="$emit('modifyProp', $event)"
             @moveDown="$emit('moveDown', $event)"
             @moveUp="$emit('moveUp', $event)"
             @settings="$emit('settings', $event)"
-            @modifyProp="$emit('modifyProp', $event)"
           ></UserV3ComponentHandler>
         </v-col>
       </v-row>
@@ -110,8 +110,8 @@
     />
     <social-links
       v-else-if="component.name === 'social-links'"
-      :user="user"
       :component="component"
+      :user="user"
       @addLink="
         $emit('modifyProp', {
           component: component,
@@ -124,7 +124,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import MutualCollections from "@/components/Users/UserV3/Widgets/MutualCollections.vue";
 import ProfileInfo from "@/components/Users/UserV3/Widgets/ProfileInfo.vue";
 import MutualFriends from "@/components/Users/UserV3/Widgets/MutualFriends.vue";
@@ -133,10 +133,10 @@ import LastFM from "@/components/Users/UserV3/Widgets/LastFM.vue";
 import MyAnimeList from "@/components/Users/UserV3/Widgets/MyAnimeList.vue";
 import VErrorBoundary from "@/components/Core/ErrorBoundary.vue";
 import Crash from "@/components/Core/CrashAlt.vue";
-import { Component } from "@/types/userv3";
+import {Component} from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 import SocialLinks from "@/components/Users/UserV3/Widgets/SocialLinks.vue";
-import { User } from "@/models/user";
+import {User} from "@/models/user";
 
 export default defineComponent({
   name: "UserV3ComponentHandler",

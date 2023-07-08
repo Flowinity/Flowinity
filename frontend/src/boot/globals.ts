@@ -1,22 +1,26 @@
+import router from "@/router";
+import {useToast} from "vue-toastification";
+import SocketIO from "socket.io-client";
+
+// Import Plugins
+import functions from "@/plugins/functions";
 import axios from "@/plugins/axios";
 import vuetify from "@/plugins/vuetify";
-import { useAdminStore } from "@/store/admin";
-import { useUserStore } from "@/store/user";
-import { useAppStore } from "@/store/app";
-import { useExperimentsStore } from "@/store/experiments";
-import { useCollectionsStore } from "@/store/collections";
-import { useWorkspacesStore } from "@/store/workspaces";
-import { useChatStore } from "@/store/chat";
-import { useFriendsStore } from "@/store/friends";
-import { useMailStore } from "@/store/mail";
-import { useToast } from "vue-toastification";
 import dayjs from "@/plugins/dayjs";
 import validation from "@/plugins/validation";
-import SocketIO from "socket.io-client";
-import functions from "@/plugins/functions";
-import router from "@/router";
 
-export default function setup(app) {
+// Import Stores
+import {useAdminStore} from "@/store/admin";
+import {useUserStore} from "@/store/user";
+import {useAppStore} from "@/store/app";
+import {useExperimentsStore} from "@/store/experiments";
+import {useCollectionsStore} from "@/store/collections";
+import {useWorkspacesStore} from "@/store/workspaces";
+import {useChatStore} from "@/store/chat";
+import {useFriendsStore} from "@/store/friends";
+import {useMailStore} from "@/store/mail";
+
+export default function setup(app: any): void {
   const user = useUserStore();
   const core = useAppStore();
   const experiments = useExperimentsStore();
@@ -26,6 +30,7 @@ export default function setup(app) {
   const friends = useFriendsStore();
   const mail = useMailStore();
   const toast = useToast();
+
   app.config.globalProperties.axios = axios;
   core.themeProviderDefaults.theme = vuetify.theme.themes.value;
   core.themeProviderDefaults.global = vuetify.defaults.value;
@@ -33,7 +38,9 @@ export default function setup(app) {
   app.config.globalProperties.$app = core;
   app.config.globalProperties.$experiments = experiments;
   app.config.globalProperties.$admin = useAdminStore();
+
   if (window.location.pathname.startsWith("/slideshow/")) return;
+
   app.config.globalProperties.$date = dayjs;
   app.config.globalProperties.$collections = collections;
   app.config.globalProperties.$validation = validation;
@@ -41,12 +48,13 @@ export default function setup(app) {
   app.config.globalProperties.$chat = chat;
   app.config.globalProperties.$friends = friends;
   app.config.globalProperties.$mail = mail;
+
   app.config.globalProperties.$socket = SocketIO(
     import.meta.env.DEV
       ? ""
       : import.meta.env.CORDOVA
-      ? "https://images.flowinity.com"
-      : "",
+        ? "https://images.flowinity.com"
+        : "",
     {
       transports: ["websocket", "polling"],
       auth: {
@@ -54,24 +62,27 @@ export default function setup(app) {
       }
     }
   );
+
   window.socket = app.config.globalProperties.$socket;
   app.config.globalProperties.$functions = functions;
 
-  user.init().then(() => {
+  user.init().then((): void => {
     console.info("[TPU/UserStore] User initialized");
   });
-  core.init().then(() => {
-    if (!core.site.finishedSetup) {
-      router.push("/setup");
-    }
+
+  core.init().then((): void => {
+    if (!core.site.finishedSetup) router.push("/setup");
+
     console.info("[TPU/CoreStore] Core initialized");
   });
-  experiments.init().then(() => {
+
+  experiments.init().then((): void => {
     console.info("[TPU/ExperimentsStore] Experiments initialized");
   });
+
   window.central = {
     user: user.user,
-    emit: (platform: string, event: string, data: any) => {
+    emit: (platform: string, event: string, data: any): void => {
       if (platform === "geo" && event === "history") {
         console.log(data);
       }

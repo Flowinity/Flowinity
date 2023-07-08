@@ -4,7 +4,7 @@
     <div :class="{ 'mx-5 mobile': $vuetify.display.mobile }" class="hero-body">
       <div class="title">
         Welcome to
-        <span class="text-gradient">{{$app.site.name || "TPU"}}.</span>
+        <span class="text-gradient">{{ $app.site.name || "TPU" }}.</span>
       </div>
       <div class="subtitle">
         The
@@ -43,7 +43,11 @@
             </v-btn>
           </template>
         </v-text-field>
-        <p class="mb-n2" v-if="!$app.site.officialInstance">This is a <a rel="noopener" class="text-gradient" target="_blank" href="https://github.com/Troplo/PrivateUploader">TPU</a> instance.</p>
+        <p v-if="!$app.site.officialInstance" class="mb-n2">This is a <a class="text-gradient"
+                                                                         href="https://github.com/Troplo/PrivateUploader"
+                                                                         rel="noopener"
+                                                                         target="_blank">TPU</a>
+          instance.</p>
       </div>
       <!-- learn more down arrow positioned at the bottom of the hero -->
       <div class="learn-more">
@@ -206,7 +210,8 @@
     >
       <p>
         Is there a file hosted on {{ $app.site.name }} that you believe violates our
-        <router-link to="/policies/content">Content Policy?</router-link> Please report it here.
+        <router-link to="/policies/content">Content Policy?</router-link>
+        Please report it here.
       </p>
       <template v-slot:left>
         <div class="mr-3">
@@ -253,13 +258,13 @@
 <script lang="ts">
 import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import ColubrinaTPU from "@/components/Home/Dialogs/ColubrinaTPU.vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
   name: "UnauthHome",
-  components: { HoverChip, ColubrinaTPU, PromoCard, StatsWidget },
+  components: {HoverChip, ColubrinaTPU, PromoCard, StatsWidget},
   data() {
     return {
       email: "",
@@ -339,13 +344,12 @@ $dot-space: 22px;
   align-items: center;
   justify-content: center;
   background: linear-gradient(
-        90deg,
-        $bg-color ($dot-space - $dot-size),
-        transparent 1%
-      )
-      center,
-    linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center,
-    $dot-color;
+      90deg,
+      $bg-color ($dot-space - $dot-size),
+      transparent 1%
+  ) center,
+  linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center,
+  $dot-color;
   background-size: $dot-space $dot-space;
 }
 

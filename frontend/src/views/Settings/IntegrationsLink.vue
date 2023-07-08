@@ -9,12 +9,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
   name: "IntegrationsLink",
-  components: { HoverChip },
+  components: {HoverChip},
   methods: {
     async link() {
       await this.axios

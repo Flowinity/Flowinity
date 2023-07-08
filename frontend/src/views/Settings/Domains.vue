@@ -1,19 +1,19 @@
 <template>
   <ModifyDomainDialog
-    :type="edit.type"
     v-model="edit.dialog"
+    :domain="edit.domain"
+    :type="edit.type"
     @update="
       getDomains();
       $user.init();
     "
-    :domain="edit.domain"
   />
   <v-card-text class="text-overline mb-n4">
     {{ $t("settings.domains.title") }}
     <v-btn
+      v-if="$user.user?.administrator"
       icon
       size="x-small"
-      v-if="$user.user?.administrator"
       @click="
         edit.dialog = true;
         edit.type === 'update';
@@ -37,18 +37,18 @@
       <template v-slot:append>
         <v-list-item-action>
           <v-btn
-            icon
-            size="x-small"
             v-if="$user.user?.administrator"
             :disabled="domain.id === 1"
+            icon
+            size="x-small"
             @click="deleteDomain(domain.id)"
           >
             <v-icon>mdi-delete</v-icon>
           </v-btn>
           <v-btn
+            v-if="$user.user?.administrator"
             icon
             size="x-small"
-            v-if="$user.user?.administrator"
             @click="
               edit.type = 'update';
               edit.domain = domain;
@@ -75,13 +75,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { Domain } from "@/models/domain";
+import {defineComponent} from "vue";
+import {Domain} from "@/models/domain";
 import ModifyDomainDialog from "@/components/Admin/Domains/ModifyDomain.vue";
 
 export default defineComponent({
   name: "Domains",
-  components: { ModifyDomainDialog },
+  components: {ModifyDomainDialog},
   data() {
     return {
       domains: [] as Domain[],
@@ -96,11 +96,11 @@ export default defineComponent({
   methods: {
     async setDefault(domain: string) {
       if (!this.$user.user) return;
-      await this.axios.patch("/user/domain", { domain });
+      await this.axios.patch("/user/domain", {domain});
       this.$user.user.domain.domain = domain;
     },
     async getDomains() {
-      const { data } = await this.axios.get("/domains");
+      const {data} = await this.axios.get("/domains");
       this.domains = data;
     },
     async deleteDomain(id: number) {

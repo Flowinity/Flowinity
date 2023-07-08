@@ -75,7 +75,7 @@
         </v-window-item>
       </v-window>
     </v-container>
-    <v-card-subtitle class="text-left mt-n4" v-if="cache">
+    <v-card-subtitle v-if="cache" class="text-left mt-n4">
       <small>
         {{ $t("generic.cache") }}: {{ $date($app.site._redis).fromNow() }}
       </small>
@@ -86,12 +86,12 @@
 <script lang="ts">
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import Chart from "@/components/Core/Chart.vue";
 
 export default defineComponent({
   name: "GraphWidget",
-  components: { Chart, UserBadges, UserAvatar },
+  components: {Chart, UserBadges, UserAvatar},
   data() {
     return {
       tab: "uploads"

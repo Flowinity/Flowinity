@@ -1,9 +1,9 @@
 <template>
   <v-card class="rounded-xl d-flex flex-column mb-2" elevation="8">
     <v-img
+      :cover="true"
       :src="collectionImage"
       class="white--text align-end"
-      :cover="true"
       gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)"
       height="200px"
       transition="none"
@@ -65,8 +65,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { CollectionCache } from "@/types/collection";
+import {defineComponent} from "vue";
+import {CollectionCache} from "@/types/collection";
 
 export default defineComponent({
   name: "CollectionBanner",

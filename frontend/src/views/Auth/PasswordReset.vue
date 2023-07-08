@@ -1,5 +1,5 @@
 <template>
-  <v-container class="center-container" :fluid="true">
+  <v-container :fluid="true" class="center-container">
     <v-row align="center" justify="center">
       <v-col cols="12" md="7" sm="8" xl="5">
         <v-card
@@ -14,8 +14,8 @@
             <v-form v-model="valid">
               <v-text-field
                 v-model="password"
-                :rules="$validation.user.password"
                 :autofocus="true"
+                :rules="$validation.user.password"
                 label="New Password"
                 type="password"
                 @keydown.enter="recover"
@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "Login",

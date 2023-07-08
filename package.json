@@ -8,6 +8,7 @@
     "The Loose Goose"
   ],
   "scripts": {
+    "migrate": "npx sequelize-cli db:migrate",
     "start": "tsc --project tsconfig.app.json && node out/cluster.js",
     "serve": "THREADS=1 tsc-watch --project tsconfig.app.json --onSuccess 'node ./out/cluster.js'",
     "serve-cluster": "tsc-watch --project tsconfig.app.json --onSuccess 'node ./out/cluster.js'",

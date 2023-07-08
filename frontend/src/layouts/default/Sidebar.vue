@@ -1,51 +1,51 @@
 <template>
   <v-navigation-drawer
+    id="main-drawer"
     v-model="$app.mainDrawer"
+    :class="$app.mainDrawer && !$vuetify.display.mobile ? 'sidebar-patch' : ''"
+    :floating="true"
     app
     color="dark"
-    :floating="true"
-    :class="$app.mainDrawer && !$vuetify.display.mobile ? 'sidebar-patch' : ''"
     style="z-index: 2001"
-    id="main-drawer"
   >
-    <v-list density="comfortable" :nav="true" class="mt-1">
+    <v-list :nav="true" class="mt-1" density="comfortable">
       <v-list-item
         v-for="item in $app.sidebar"
         :key="item.id"
-        class="ml-1 my-1 unselectable"
-        style="text-transform: unset !important"
+        :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
+        :exact="item.exact"
         :href="item.externalPath"
         :link="true"
-        :exact="item.exact"
-        :to="item.path"
-        @click="handleClick(item.id)"
-        :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
         :prepend-icon="item.icon"
+        :to="item.path"
+        class="ml-1 my-1 unselectable"
+        style="text-transform: unset !important"
+        @click="handleClick(item.id)"
       >
         <v-list-item-title>
           {{ item.name }}
           <v-chip
-            class="pb-n2 ml-1"
             v-if="item.new && !item.warning"
+            class="pb-n2 ml-1"
             color="green"
-            variant="tonal"
             size="x-small"
+            variant="tonal"
           >
             NEW
           </v-chip>
           <v-chip
-            class="pb-n2 ml-1"
             v-if="item.warning"
-            variant="tonal"
+            class="pb-n2 ml-1"
             size="x-small"
+            variant="tonal"
           >
             {{ item.warning }}
           </v-chip>
           <v-icon
-            size="small"
+            v-if="!$functions.checkScope(item.scope, $user.user?.scopes)"
             class="float-right"
             color="grey lighten-1"
-            v-if="!$functions.checkScope(item.scope, $user.user?.scopes)"
+            size="small"
           >
             mdi-lock
           </v-icon>
@@ -54,20 +54,20 @@
     </v-list>
     <template v-slot:append>
       <div
-        class="text-center justify-center"
         v-if="$user.user?.administrator || $user.user?.moderator"
+        class="text-center justify-center"
       >
         <small class="mb-2 text-grey">
           {{ $t("core.sidebar.experiments") }}
         </small>
       </div>
-      <div class="pa-2" v-if="$user.user?.subscription?.metadata?.hours">
+      <div v-if="$user.user?.subscription?.metadata?.hours" class="pa-2">
         <v-progress-linear
-          color="gold"
           :model-value="calculateJitsi"
+          class="text-black"
+          color="gold"
           height="25"
           rounded
-          class="text-black"
         >
           {{ calculateJitsi }}% ({{
             Math.round($user.user?.subscription?.metadata?.hours)
@@ -78,9 +78,9 @@
         <v-progress-linear
           :color="calculateColorQuota"
           :value="calculateQuota"
+          class="text-white"
           height="25"
           rounded
-          class="text-white"
         >
           {{ Math.ceil(calculateQuota) }}% ({{
             $functions.fileSize($user.user?.quota || 0)
@@ -92,7 +92,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "Sidebar",

@@ -9,9 +9,9 @@
     </div>
     <v-toolbar
       v-if="message.reply"
+      :floating="true"
       class="ml-6 my-1 pointer limit"
       color="transparent"
-      :floating="true"
       height="auto"
       @click.prevent="$emit('jumpToMessage', message.reply.id)"
     >
@@ -25,9 +25,9 @@
     </v-toolbar>
     <v-toolbar
       v-else-if="message.replyId"
+      :floating="true"
       class="ml-6 my-1 pointer limit"
       color="transparent"
-      :floating="true"
       height="auto"
     >
       <v-icon class="mr-2">mdi-reply</v-icon>
@@ -242,7 +242,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
 import MessageActions from "@/components/Communications/MessageActions.vue";
 import Embed from "@/components/Communications/Embed.vue";

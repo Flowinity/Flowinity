@@ -5,18 +5,18 @@
     stop-propagation
     @error-captured="submitFeedback"
   >
-    <router-view />
+    <router-view/>
   </VErrorBoundary>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import Crash from "@/components/Core/Crash.vue";
 import VErrorBoundary from "./components/Core/ErrorBoundary.vue";
 
 export default defineComponent({
   name: "TPUApp",
-  components: { Crash, VErrorBoundary },
+  components: {Crash, VErrorBoundary},
   data() {
     return {
       skullCrash: Crash,
