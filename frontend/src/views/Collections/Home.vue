@@ -19,7 +19,7 @@
         v-for="item in collections"
         :key="'item-' + item.id + '-' + (item.shared ? 'shared' : 'owned')"
         md="4"
-        xl="2"
+        xl="3"
         cols="12"
       >
         <CollectionCard :item="item"></CollectionCard>

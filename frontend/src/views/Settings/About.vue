@@ -1,12 +1,10 @@
 <template>
   <v-container class="text-center">
-    <p
-      class="text-gradient"
-      style="font-size: 69px"
-      title="TroploPrivateUploader"
-    >
-      TPU
-    </p>
+    <v-img
+      src="@/assets/images/tpu-logo-banner.svg"
+      max-height="120"
+      class="mb-3"
+    />
     <v-divider></v-divider>
     <p class="mt-5">
       {{ $t("settings.about.productName") }}

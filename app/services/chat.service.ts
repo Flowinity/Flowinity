@@ -1047,7 +1047,7 @@ export class ChatService {
         chatId: chat.id,
         ...where
       },
-      order: [["createdAt", position === "top" ? "DESC" : "ASC"]],
+      order: [["id", position === "top" ? "DESC" : "ASC"]],
       limit: 50,
       include: this.messageIncludes
     })
