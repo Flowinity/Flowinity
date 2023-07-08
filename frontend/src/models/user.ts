@@ -152,4 +152,5 @@ export interface User {
     lastSeen: string;
   }[];
   privacyPolicyAccepted: boolean;
+  xp?: number;
 }

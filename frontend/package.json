@@ -1,6 +1,6 @@
 {
   "name": "tpu-frontend",
-  "version": "3.2.39",
+  "version": "3.2.40",
   "private": true,
   "author": "Troplo <troplo@troplo.com>",
   "type": "module",

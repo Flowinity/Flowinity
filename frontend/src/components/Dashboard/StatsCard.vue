@@ -1,5 +1,6 @@
 <template>
   <v-card class="text-center justify-center">
+    <slot name="header"></slot>
     <v-container>
       <strong
         :class="{
@@ -10,6 +11,7 @@
       >
         {{ title }}
       </strong>
+      <slot></slot>
       <p style="font-size: 36px">
         {{ value }}
       </p>

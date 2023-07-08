@@ -755,7 +755,8 @@ export class UserUtilsService {
         "inviteId",
         "avatar",
         "moderator",
-        "createdAt"
+        "createdAt",
+        "xp"
       ],
       where,
       order: [
@@ -942,7 +943,8 @@ export class UserUtilsService {
         "themeEngine",
         "insights",
         "profileLayout",
-        "publicProfile"
+        "publicProfile",
+        "xp"
       ],
       include: [
         {
