@@ -19,7 +19,9 @@ export default function setup(): void {
     if (e.clipboardData.files.length > 0) {
       //@ts-ignore
       core.dialogs.upload.files = [...e.clipboardData.files];
-      core.upload();
+      core.upload().then(r => {
+        //
+      });
     }
   });
 }

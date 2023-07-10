@@ -13,7 +13,7 @@ export class LastfmService {
     constructor() {
     }
 
-    async link(userId: string, token: string): Promise<void> {
+    async link(userId: string, token: string) {
         if (!config.providers.lastfm.key || !config.providers.lastfm.secret)
             throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
@@ -55,7 +55,7 @@ export class LastfmService {
         }
     }
 
-    async unlink(userId: string): Promise<void> {
+    async unlink(userId: string) {
         const existing: Integration | null = await Integration.findOne({
             where: {
                 userId,
@@ -68,7 +68,7 @@ export class LastfmService {
         await existing.destroy()
     }
 
-    async getOverview(userId: number, username: string, accessToken: string): Promise<any> {
+    async getOverview(userId: number, username: string, accessToken: string) {
         try {
             const cache = await redis.get(`providers:lastfm:${userId}:overview`)
 

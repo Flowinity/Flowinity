@@ -18,7 +18,7 @@ export const useExperimentsStore = defineStore("experiments", {
     } as ExperimentsState),
   getters: {},
   actions: {
-    async init(): Promise<void> {
+    async init() {
       const experiments: string = localStorage.getItem("experimentsStore");
 
       if (experiments) try {

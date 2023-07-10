@@ -350,7 +350,7 @@ export class UserUtilsService {
         userId: number,
         message: string,
         route?: string
-    ): Promise<void> {
+    ) {
         const notification = await Notification.create({
             userId,
             message,
@@ -359,7 +359,7 @@ export class UserUtilsService {
         socket.to(userId).emit("notification", notification)
     }
 
-    async removeFriend(userId: number, friendId: number): Promise<void> {
+    async removeFriend(userId: number, friendId: number) {
         await Friend.destroy({
             where: {
                 userId,
@@ -540,7 +540,7 @@ export class UserUtilsService {
         id: number,
         code: string,
         type: "validate" | "disable"
-    ): Promise<any> {
+    ) {
         const user = await User.findOne({
             where: {
                 id
@@ -1023,7 +1023,7 @@ export class UserUtilsService {
         starRating: number,
         route: string,
         debugInfo?: string
-    ): Promise<void> {
+    ) {
         await Feedback.create({
             userId: id,
             feedbackText,

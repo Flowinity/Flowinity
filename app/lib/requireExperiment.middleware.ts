@@ -24,7 +24,7 @@ export default class ExperimentValidator implements ExpressMiddlewareInterface {
         req: RequestAuth,
         res: Response,
         next: NextFunction
-    ): Promise<void> {
+    ) {
         const coreService: CoreService = Container.get(CoreService)
 
         if (

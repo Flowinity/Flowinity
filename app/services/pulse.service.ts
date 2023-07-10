@@ -989,7 +989,7 @@ export class PulseService {
         userId: number | null,
         year: string | number,
         global: boolean = false
-    ): Promise<any> {
+    ) {
         if (!global) {
             const user = await User.findOne({
                 where: {

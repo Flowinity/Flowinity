@@ -56,7 +56,7 @@ let worker, cacheWorker
 if (mainWorker) {
     worker = new Worker(
         "queue:uploads",
-        async (job, jobDone): Promise<void> => {
+        async (job, jobDone) => {
             await utils.postUpload(job.data)
         },
         {
@@ -69,7 +69,7 @@ if (mainWorker) {
 
     cacheWorker = new Worker(
         "queue:cache",
-        async (job): Promise<void> => {
+        async (job) => {
             await cacheService.resetCollectionCache(job.data)
         },
         {

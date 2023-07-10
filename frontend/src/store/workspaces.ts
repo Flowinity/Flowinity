@@ -33,14 +33,14 @@ export const useWorkspacesStore = defineStore("workspaces", {
       }
     } as WorkspacesState),
   actions: {
-    async getRecent(): Promise<any> {
+    async getRecent() {
       const {data} = await axios.get("/notes/recent");
 
       this.recent = data;
 
       return data;
     },
-    async getWorkspaces(): Promise<void> {
+    async getWorkspaces() {
       const {data} = await axios.get("/notes/workspaces", {
         headers: {
           noToast: true
@@ -49,7 +49,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
 
       this.items = data;
     },
-    async selectWorkspace(id: number): Promise<void> {
+    async selectWorkspace(id: number) {
       const {data} = await axios.get(`/notes/workspace/${id}`, {
         headers: {
           noToast: true
@@ -66,10 +66,10 @@ export const useWorkspacesStore = defineStore("workspaces", {
         })
       );
     },
-    async refreshWorkspace(): Promise<void> {
+    async refreshWorkspace() {
       await this.selectWorkspace(<number>this.workspace?.id);
     },
-    async init(): Promise<void> {
+    async init() {
       const selectedWorkspace: string = localStorage.getItem("selectedWorkspace");
 
       if (selectedWorkspace) await this.selectWorkspace(JSON.parse(selectedWorkspace).id);

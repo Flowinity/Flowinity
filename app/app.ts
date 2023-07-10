@@ -218,7 +218,7 @@ export class Application {
             validation: true
         })
 
-        this.app.use("/api/docs", async (req, res): Promise<void> => {
+        this.app.use("/api/docs", async (req, res) => {
             res.redirect("/api/v3/docs")
         })
         this.app.use(
@@ -283,7 +283,7 @@ export class Application {
         this.app.set("views", path.join(global.appRoot, "/views"))
     }
 
-    private async onServerStart(): Promise<void> {
+    private async onServerStart() {
         if (config.finishedSetup) {
             await User.update(
                 {

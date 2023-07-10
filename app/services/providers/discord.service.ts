@@ -15,7 +15,7 @@ export class DiscordService {
     constructor() {
     }
 
-    async link(userId: number, token: string): Promise<void> {
+    async link(userId: number, token: string) {
         if (
             !config.providers.discord.publicKey ||
             !config.providers.discord.applicationId ||
@@ -72,7 +72,7 @@ export class DiscordService {
         }
     }
 
-    async unlink(userId: string): Promise<void> {
+    async unlink(userId: string) {
         const existing: Integration | null = await Integration.findOne({
             where: {
                 userId,
@@ -85,7 +85,7 @@ export class DiscordService {
         await existing.destroy()
     }
 
-    async getUserCache(tokenType: string, accessToken: string): Promise<any> {
+    async getUserCache(tokenType: string, accessToken: string) {
         try {
             const {data} = await axios.get(
                 `https://discord.com/api/v10/users/@me`,
@@ -168,7 +168,7 @@ export class DiscordService {
         }
     }
 
-    async providerInit(): Promise<void> {
+    async providerInit() {
         cron.schedule("0 * * * *", (): void => {
             this.renewTokens()
         })

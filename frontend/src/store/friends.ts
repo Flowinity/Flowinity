@@ -30,7 +30,7 @@ export const useFriendsStore = defineStore("friends", {
 
       return user.username;
     },
-    async getFriends(): Promise<void> {
+    async getFriends() {
       const friends: string = localStorage.getItem("friendsStore");
 
       if (friends) try {
@@ -50,7 +50,7 @@ export const useFriendsStore = defineStore("friends", {
 
       return true;
     },
-    async init(): Promise<void> {
+    async init() {
       await this.getFriends();
     }
   }

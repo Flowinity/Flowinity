@@ -62,7 +62,7 @@ export class Server {
         else return false
     }
 
-    async init(port?: number, noBackgroundTasks: boolean = false): Promise<void> {
+    async init(port?: number, noBackgroundTasks: boolean = false) {
         const cpuCount: number = os.cpus().length
         const mainWorker: boolean =
             !cluster.worker || cluster.worker?.id % cpuCount === 1

@@ -18,7 +18,7 @@ export class MyAnimeListService {
     constructor() {
     }
 
-    async link(userId: number, token: string): Promise<void> {
+    async link(userId: number, token: string) {
         if (!config.providers.mal.key || !config.providers.mal.secret)
             throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
@@ -74,7 +74,7 @@ export class MyAnimeListService {
         }
     }
 
-    async unlink(userId: string): Promise<void> {
+    async unlink(userId: string) {
         const existing: Integration | null = await Integration.findOne({
             where: {
                 userId,
@@ -177,7 +177,7 @@ export class MyAnimeListService {
         }
     }
 
-    async getOverview(userId: number, username: string, accessToken: string): Promise<any> {
+    async getOverview(userId: number, username: string, accessToken: string) {
         const cache = await redis.get(`providers:mal:${userId}:overview`)
 
         if (cache) return JSON.parse(cache)
@@ -213,7 +213,7 @@ export class MyAnimeListService {
         username: string,
         accessToken: string,
         body: MalBody
-    ): Promise<void> {
+    ) {
         try {
             const {data} = await axios.put(
                 `https://api.myanimelist.net/v2/anime/${body.id}/my_list_status`,
@@ -238,7 +238,7 @@ export class MyAnimeListService {
         }
     }
 
-    async getUserCache(userId: number, username: string, accessToken: string): Promise<any> {
+    async getUserCache(userId: number, username: string, accessToken: string) {
         try {
             const integration: Integration | null = await Integration.findOne({
                 where: {
@@ -296,7 +296,7 @@ export class MyAnimeListService {
         }
     }
 
-    async providerInit(): Promise<void> {
+    async providerInit() {
         cron.schedule("0 * * * *", (): void => {
             this.renewService()
         })

@@ -81,7 +81,7 @@ if (cluster.isPrimary) {
         }
     })
 
-    const restartWorker = async (worker: any, workers: any): Promise<void> => {
+    const restartWorker = async (worker: any, workers: any) => {
         await setEnvVariables()
 
         console.info(`[PRIVATEUPLOADER] Restarting worker ${worker.id}…`)
@@ -101,7 +101,7 @@ if (cluster.isPrimary) {
         console.info("[PRIVATEUPLOADER] Workers: ", workers)
     })
 
-    cluster.on("message", async (worker, message): Promise<void> => {
+    cluster.on("message", async (worker, message) => {
         console.info("message: ", message)
 
         if (message === "TPU_RESTART") {

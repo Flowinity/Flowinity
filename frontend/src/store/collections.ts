@@ -24,7 +24,7 @@ export const useCollectionsStore = defineStore("collections", {
     }
   },
   actions: {
-    async init(): Promise<void> {
+    async init() {
       const {data} = await axios.get("/collections", {
         headers: {
           noToast: true

@@ -211,7 +211,7 @@ function checkOperator(
 async function processFile(
     upload: Upload,
     textMetadata: string
-): Promise<void> {
+) {
     try {
         const rules: AutoCollectRule[] = await AutoCollectRule.findAll({
             where: {
@@ -368,12 +368,12 @@ async function processFile(
     }
 }
 
-async function postUpload(upload: Upload): Promise<void> {
+async function postUpload(upload: Upload) {
     await tesseract
         .recognize(global.storageRoot + upload.attachment, {
             lang: "eng"
         })
-        .then(async (text: string): Promise<void> => {
+        .then(async (text: string) => {
             await Upload.update(
                 {
                     textMetadata: text
@@ -386,7 +386,7 @@ async function postUpload(upload: Upload): Promise<void> {
             )
             await processFile(upload, text)
         })
-        .catch(async (error): Promise<void> => {
+        .catch(async (error) => {
             console.error(error.message)
 
             await processFile(upload, "")

@@ -12,7 +12,7 @@ import cluster from "cluster"
 import os from "os"
 import {Server} from "@app/server"
 
-async function initTPU(): Promise<void> {
+async function initTPU() {
     global.appRoot = path.resolve(__dirname).includes("out")
         ? path.join(__dirname, "..", "app")
         : path.join(__dirname)
@@ -36,7 +36,7 @@ async function initTPU(): Promise<void> {
     if (mainWorker && config.release !== "dev" && !config.officialInstance) await checkFrontend()
 }
 
-async function checkFrontend(): Promise<void> {
+async function checkFrontend() {
     if (fs.existsSync(path.join(global.rawAppRoot, "../frontend_build"))) {
         let version: string = ""
 
@@ -66,7 +66,7 @@ async function checkFrontend(): Promise<void> {
     } else return buildFrontend()
 }
 
-async function buildFrontend(): Promise<void> {
+async function buildFrontend() {
     console.info("[PRIVATEUPLOADER/FRONTEND] Version is outdated, rebuilding...")
 
     const pkg = require(path.join(global.rawAppRoot, "../frontend/package.json"))

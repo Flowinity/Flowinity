@@ -12,7 +12,7 @@ export class SteamService {
     constructor() {
     }
 
-    async link(userId: string, token: string): Promise<void> {
+    async link(userId: string, token: string) {
         if (!config.providers.steam)
             throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
     }

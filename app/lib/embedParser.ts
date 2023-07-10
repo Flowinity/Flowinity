@@ -55,7 +55,7 @@ export default async function embedParser(
     userId: number,
     associationId: number,
     attachments: string[] = []
-): Promise<void> {
+) {
     // Get all the links in message content, both http and https.
     let links: RegExpMatchArray | [] =
         message.content?.match(/(https?:\/\/[^\s]+)/g) || []

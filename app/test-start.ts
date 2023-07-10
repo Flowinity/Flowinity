@@ -3,7 +3,7 @@ import path from "path"
 // Import Classes
 import {DefaultTpuConfig} from "./classes/DefaultTpuConfig"
 
-export default async function (): Promise<void> {
+export default async function () {
     function setEnvVariables(): void {
         global.appRoot = path.resolve(__dirname).includes("out")
             ? path.join(__dirname, "..", "app")

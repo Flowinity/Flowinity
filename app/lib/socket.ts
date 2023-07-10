@@ -44,7 +44,7 @@ async function setDominateDevice(
 }
 
 export default {
-    async init(app: any, server: any): Promise<void> {
+    async init(app: any, server: any) {
         if (!config.finishedSetup) return
         const subClient = redis.duplicate()
         const io = require("socket.io")(server, {
@@ -58,7 +58,7 @@ export default {
 
         io.adapter(createAdapter(redis, subClient))
         io.use(auth)
-        io.on("connection", async (socket: SocketAuth): Promise<void> => {
+        io.on("connection", async (socket: SocketAuth) => {
             const user: User | null = await User.findOne({
                 where: {
                     id: socket.user.id
@@ -107,7 +107,7 @@ export default {
                     }
                 }
 
-                socket.on("disconnect", async (): Promise<void> => {
+                socket.on("disconnect", async () => {
                     let status = await redis.json.get(`user:${user.id}:platforms`)
                     if (status?.length) {
                         status = status.filter((p: any) => p.id !== device.id)
@@ -146,7 +146,7 @@ export default {
                 socket.emit("pulseConfig", {
                     interval: 10000
                 })
-                socket.on("pulse", async (data): Promise<void> => {
+                socket.on("pulse", async (data) => {
                     try {
                         setDominateDevice(user.id, device, user.storedStatus)
                         if (data.timeSpent > 3600000) return
@@ -164,7 +164,7 @@ export default {
                         console.log("error creating pulse")
                     }
                 })
-                socket.on("startPulse", async (data): Promise<void> => {
+                socket.on("startPulse", async (data) => {
                     try {
                         if (data.type === "gallery") {
                             const pulse: Pulse = await Pulse.create({
@@ -202,7 +202,7 @@ export default {
                         console.error("Error creating pulse.")
                     }
                 })
-                socket.on("updatePulse", async (data): Promise<void> => {
+                socket.on("updatePulse", async (data) => {
                     try {
                         const pulse: Pulse | null = await Pulse.findOne({
                             where: {
@@ -227,11 +227,11 @@ export default {
                 // Chat
                 let typeRateLimit: Date | null = null as Date | null
 
-                socket.on("readChat", async (associationId: number): Promise<void> => {
+                socket.on("readChat", async (associationId: number) => {
                     const chatService: ChatService = Container.get(ChatService)
                     await chatService.readChat(associationId, user.id)
                 })
-                socket.on("typing", async (associationId: number): Promise<void> => {
+                socket.on("typing", async (associationId: number) => {
                     if (
                         typeRateLimit &&
                         dayjs().isBefore(dayjs(typeRateLimit).add(2, "second"))
@@ -249,7 +249,7 @@ export default {
                 socket.emit("unauthorized", {
                     message: "Please reauth."
                 })
-                socket.on("token", async (): Promise<void> => {
+                socket.on("token", async () => {
                     socket.emit("unsupported", {
                         message: "This authentication method is unsupported."
                     })
@@ -257,7 +257,7 @@ export default {
 
                 console.info("Unauthenticated user")
 
-                socket.on("reAuth", async (): Promise<void> => {
+                socket.on("reAuth", async () => {
                     socket.disconnect()
                 })
             }

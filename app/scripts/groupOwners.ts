@@ -1,7 +1,7 @@
 // Import Models
 import {Chat} from "@app/models/chat.model"
 
-async function main(): Promise<void> {
+async function main() {
     const chats: Chat[] = await Chat.findAll({})
 
     console.log(chats)

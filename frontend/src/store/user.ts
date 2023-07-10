@@ -151,7 +151,7 @@ export const useUserStore = defineStore("user", {
           primary: "#0190ea"
         };
     },
-    async resendVerificationEmail(): Promise<void> {
+    async resendVerificationEmail() {
       try {
         const toast = useToast();
 
@@ -167,7 +167,7 @@ export const useUserStore = defineStore("user", {
         this.actions.emailSent.loading = false;
       }
     },
-    async logout(): Promise<void> {
+    async logout() {
       localStorage.removeItem("token");
       localStorage.removeItem("userStore");
       localStorage.removeItem("friendsStore");
@@ -179,14 +179,14 @@ export const useUserStore = defineStore("user", {
       };
       this._postInitRan = false;
     },
-    async changeStatus(status: string): Promise<void> {
+    async changeStatus(status: string) {
       if (!this.user) return;
 
       this.changes.storedStatus = status;
 
       await this.save();
     },
-    async runPostTasks(): Promise<void> {
+    async runPostTasks() {
       if (this.user && !this._postInitRan) {
         console.info("[PRIVATEUPLOADER/UserStore] Running post-init auth tasks");
 
@@ -316,7 +316,7 @@ export const useUserStore = defineStore("user", {
         privacyPolicyAccepted: user.privacyPolicyAccepted
       };
     },
-    async init(): Promise<void> {
+    async init() {
       const user: string = localStorage.getItem("userStore");
 
       if (user) try {
@@ -364,7 +364,7 @@ export const useUserStore = defineStore("user", {
         document.head.appendChild(style);
       }
     },
-    async save(): Promise<void> {
+    async save() {
       if (!this.user) return;
 
       this.applyCSS();

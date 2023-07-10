@@ -166,7 +166,7 @@ export class CollectionControllerV3 {
         @Auth("collections.modify") user: User,
         @Param("collectionId") collectionId: number,
         @Param("attachmentId") attachmentId: number
-    ): Promise<void> {
+    ) {
         const collection = await this.collectionService.getCollectionPermissions(
             collectionId,
             user.id,
@@ -243,7 +243,7 @@ export class CollectionControllerV3 {
             configure: boolean
             read: boolean
         }
-    ): Promise<void> {
+    ) {
         const collection = await this.collectionService.getCollectionPermissions(
             collectionId,
             user.id,
@@ -267,7 +267,7 @@ export class CollectionControllerV3 {
         @Auth("collections.modify") user: User,
         @Param("collectionId") collectionId: number,
         @Param("userId") userId: number
-    ): Promise<void> {
+    ) {
         const collection = await this.collectionService.getCollectionPermissions(
             collectionId,
             user.id,
@@ -313,7 +313,7 @@ export class CollectionControllerV3 {
         @Auth("collections.modify") user: User,
         @Param("collectionId") collectionId: number,
         @Param("attachmentId") attachmentId: number
-    ): Promise<void> {
+    ) {
         const collection = await this.collectionService.getCollectionPermissions(
             collectionId,
             user.id,
@@ -401,7 +401,7 @@ export class CollectionControllerV3 {
     async deleteBanner(
         @Auth("collections.modify") user: User,
         @Param("collectionId") collectionId: number
-    ): Promise<void> {
+    ) {
         const collection = await this.collectionService.getCollectionPermissions(
             collectionId,
             user.id,

@@ -217,7 +217,7 @@ export class SecurityService {
         })
     }
 
-    async deleteKey(uid: number, sid: string): Promise<void> {
+    async deleteKey(uid: number, sid: string) {
         await Session.destroy({
             where: {
                 userId: uid,

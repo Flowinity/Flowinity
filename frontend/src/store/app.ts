@@ -671,7 +671,7 @@ export const useAppStore = defineStore("app", {
 
       this.quickSwitcher = value;
     },
-    async deleteItem(item: Upload | undefined): Promise<void> {
+    async deleteItem(item: Upload | undefined) {
       if (!item) return;
 
       await axios.delete("/gallery/" + item.id);
@@ -680,7 +680,7 @@ export const useAppStore = defineStore("app", {
       this.dialogs.deleteItem.value = false;
       this.dialogs.deleteItem.emit = true;
     },
-    async getWeather(): Promise<void> {
+    async getWeather() {
       try {
         const {data} = await axios.get("/core/weather", {
           headers: {
@@ -694,7 +694,7 @@ export const useAppStore = defineStore("app", {
         //
       }
     },
-    async init(): Promise<void> {
+    async init() {
       this.loading = true;
 
       const core: string = localStorage.getItem("coreStore");
@@ -716,7 +716,7 @@ export const useAppStore = defineStore("app", {
 
       this.loading = false;
     },
-    async upload(): Promise<any> {
+    async upload(){
       try {
         const toast = useToast();
 
