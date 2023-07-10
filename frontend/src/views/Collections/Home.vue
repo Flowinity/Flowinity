@@ -20,7 +20,8 @@
         :key="'item-' + item.id + '-' + (item.shared ? 'shared' : 'owned')"
         cols="12"
         md="4"
-        xl="2"
+        xl="3"
+        cols="12"
       >
         <CollectionCard :item="item"></CollectionCard>
       </v-col>
