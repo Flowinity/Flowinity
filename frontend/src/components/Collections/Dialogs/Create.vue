@@ -27,12 +27,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "CreateCollectionDialog",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
@@ -44,7 +44,7 @@ export default defineComponent({
   methods: {
     async createCollection() {
       this.loading = true;
-      const {data} = await this.axios.post("/collections", {
+      const { data } = await this.axios.post("/collections", {
         name: this.name
       });
       await this.$collections.init();

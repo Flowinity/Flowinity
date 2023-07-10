@@ -38,7 +38,7 @@
       </v-card-text>
       <v-card-actions class="text-grey">
         {{ $functions.fileSize(embed.data.upload.fileSize) }}
-        <v-spacer/>
+        <v-spacer />
         <v-btn
           :href="`https://i.troplo.com/i/${embed.data?.upload?.attachment}`"
           icon
@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Embed",

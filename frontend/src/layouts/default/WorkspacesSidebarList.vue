@@ -236,15 +236,15 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import WorkspaceDialog from "@/components/Workspaces/Dialogs/Dialog.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
-import {NoteVersion} from "@/models/noteVersion";
+import { NoteVersion } from "@/models/noteVersion";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "WorkspacesSidebarList",
-  components: {CoreDialog, WorkspaceDeleteDialog, WorkspaceDialog},
+  components: { CoreDialog, WorkspaceDeleteDialog, WorkspaceDialog },
   data() {
     return {
       versions: [] as NoteVersion[],
@@ -347,7 +347,7 @@ export default defineComponent({
       }
     },
     async downloadItem() {
-      const {data} = await this.axios.get(
+      const { data } = await this.axios.get(
         "/notes/" + this.contextMenu.item?.id
       );
 
@@ -372,7 +372,7 @@ export default defineComponent({
     },
     async doCreateNote(name: string, internal: boolean = false) {
       this.createNote.loading = true;
-      const {data} = await this.axios.post("/notes", {
+      const { data } = await this.axios.post("/notes", {
         name,
         workspaceFolderId: this.createNote.folderId || this.contextMenu.item?.id
       });
@@ -414,7 +414,7 @@ export default defineComponent({
     },
     async doCreateWorkspace(name: string) {
       this.createWorkspace.loading = true;
-      const {data} = await this.axios.post("/notes/workspaces", {
+      const { data } = await this.axios.post("/notes/workspaces", {
         name: name
       });
       await this.$workspaces.init();
@@ -462,7 +462,7 @@ export default defineComponent({
       });
     },
     async getVersions() {
-      const {data} = await this.axios.get("/notes/" + this.$route.params.id);
+      const { data } = await this.axios.get("/notes/" + this.$route.params.id);
       this.versions = data.versions;
     }
   },

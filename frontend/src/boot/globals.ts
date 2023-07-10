@@ -1,5 +1,5 @@
 import router from "@/router";
-import {useToast} from "vue-toastification";
+import { useToast } from "vue-toastification";
 import SocketIO from "socket.io-client";
 
 // Import Plugins
@@ -10,15 +10,15 @@ import dayjs from "@/plugins/dayjs";
 import validation from "@/plugins/validation";
 
 // Import Stores
-import {useAdminStore} from "@/store/admin";
-import {useUserStore} from "@/store/user";
-import {useAppStore} from "@/store/app";
-import {useExperimentsStore} from "@/store/experiments";
-import {useCollectionsStore} from "@/store/collections";
-import {useWorkspacesStore} from "@/store/workspaces";
-import {useChatStore} from "@/store/chat";
-import {useFriendsStore} from "@/store/friends";
-import {useMailStore} from "@/store/mail";
+import { useAdminStore } from "@/store/admin";
+import { useUserStore } from "@/store/user";
+import { useAppStore } from "@/store/app";
+import { useExperimentsStore } from "@/store/experiments";
+import { useCollectionsStore } from "@/store/collections";
+import { useWorkspacesStore } from "@/store/workspaces";
+import { useChatStore } from "@/store/chat";
+import { useFriendsStore } from "@/store/friends";
+import { useMailStore } from "@/store/mail";
 
 export default function setup(app: any): void {
   const user = useUserStore();
@@ -53,8 +53,8 @@ export default function setup(app: any): void {
     import.meta.env.DEV
       ? ""
       : import.meta.env.CORDOVA
-        ? "https://images.flowinity.com"
-        : "",
+      ? "https://images.flowinity.com"
+      : "",
     {
       transports: ["websocket", "polling"],
       auth: {

@@ -508,7 +508,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
 
 enum Step {
@@ -526,7 +526,7 @@ enum Step {
 
 export default defineComponent({
   name: "InstanceSetupWizard",
-  components: {PromoCard},
+  components: { PromoCard },
   data() {
     return {
       step: (this.$app.site?.step as Step) || (0 as Step),
@@ -596,7 +596,7 @@ export default defineComponent({
     async pollTPU() {
       this.loading = false;
       try {
-        const {data} = (await this.axios.get("/core", {
+        const { data } = (await this.axios.get("/core", {
           headers: {
             noToast: true
           }

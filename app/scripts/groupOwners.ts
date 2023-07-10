@@ -1,12 +1,12 @@
 // Import Models
-import {Chat} from "@app/models/chat.model"
+import { Chat } from "@app/models/chat.model"
 
 async function main() {
-    const chats: Chat[] = await Chat.findAll({})
+  const chats: Chat[] = await Chat.findAll({})
 
-    console.log(chats)
+  console.log(chats)
 }
 
 main().then((r: void): void => {
-    console.log(r)
+  console.log(r)
 })

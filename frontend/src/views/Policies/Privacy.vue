@@ -3,12 +3,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import WorkspaceItem from "@/views/Workspaces/Item.vue";
 
 export default defineComponent({
   name: "PrivacyPolicy",
-  components: {WorkspaceItem},
+  components: { WorkspaceItem },
   mounted() {
     this.$app.title = "Privacy Policy";
   }

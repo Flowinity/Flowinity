@@ -5,11 +5,11 @@
 
 <script lang="ts">
 import AdminSidebar from "@/components/Admin/AdminSidebar.vue";
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Admin",
-  components: {AdminSidebar}
+  components: { AdminSidebar }
 });
 </script>
 

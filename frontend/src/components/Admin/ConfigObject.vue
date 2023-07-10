@@ -58,13 +58,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import VueMonacoEditor from "@guolao/vue-monaco-editor";
 
 export default defineComponent({
   name: "ConfigObject",
   props: ["config", "name", "value", "deep", "persistentKey"],
-  components: {VueMonacoEditor},
+  components: { VueMonacoEditor },
   computed: {
     deepStyle() {
       return {

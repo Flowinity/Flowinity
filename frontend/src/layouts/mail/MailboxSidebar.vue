@@ -16,19 +16,19 @@
         </v-list-item-subtitle>
       </v-list-item>
       <template v-if="!$mail.selected?.emails?.length">
-        <MessageSkeleton v-for="i in 50" :key="i" :pfp="false"/>
+        <MessageSkeleton v-for="i in 50" :key="i" :pfp="false" />
       </template>
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 
 export default defineComponent({
   name: "MailboxSidebar",
-  components: {MessageSkeleton}
+  components: { MessageSkeleton }
 });
 </script>
 

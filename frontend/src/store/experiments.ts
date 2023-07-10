@@ -1,4 +1,4 @@
-import {defineStore} from "pinia";
+import { defineStore } from "pinia";
 
 // Import Plugins
 import axios from "@/plugins/axios";
@@ -21,18 +21,19 @@ export const useExperimentsStore = defineStore("experiments", {
     async init() {
       const experiments: string = localStorage.getItem("experimentsStore");
 
-      if (experiments) try {
-        this.experiments = JSON.parse(experiments);
-        /*if (this.experiments.API_VERSION) {
+      if (experiments)
+        try {
+          this.experiments = JSON.parse(experiments);
+          /*if (this.experiments.API_VERSION) {
           axios.defaults.baseURL = import.meta.env.CORDOVA
             ? `https://images.flowinity.com/api/${this.experiments.API_VERSION}`
             : `/api/v${this.experiments.API_VERSION}`;
         }*/
-      } catch {
-        //
-      }
+        } catch {
+          //
+        }
 
-      const {data} = await axios.get("/core/experiments");
+      const { data } = await axios.get("/core/experiments");
 
       this.experiments = {
         ...data,

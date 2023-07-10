@@ -416,10 +416,10 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import DynamicCard from "@/components/Core/DynamicCard.vue";
 import InsightsStatsCard from "@/components/Insights/StatsCard.vue";
-import {Insight} from "@/models/insight";
+import { Insight } from "@/models/insight";
 import Chart from "@/components/Core/Chart.vue";
 import InsightsPageBanner from "@/components/Insights/Banners/Page.vue";
 import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
@@ -437,12 +437,12 @@ export default defineComponent({
     return {
       headers: {
         topChats: [
-          {title: "Chat", key: "chatName"},
-          {title: "Count", key: "count", order: "desc"}
+          { title: "Chat", key: "chatName" },
+          { title: "Count", key: "count", order: "desc" }
         ],
         words: [
-          {title: "Word", key: "word"},
-          {title: "Count", key: "count", order: "desc"}
+          { title: "Word", key: "word" },
+          { title: "Count", key: "count", order: "desc" }
         ]
       },
       report: null as Insight | null,
@@ -541,7 +541,7 @@ export default defineComponent({
       return val;
     },*/
     arrayToGraphData(array: { name: string; count: number }[] | undefined) {
-      if (!array) return {labels: [], data: []};
+      if (!array) return { labels: [], data: [] };
       // sort by count
       const labels = [];
       const data = [];
@@ -578,7 +578,7 @@ export default defineComponent({
           labels.push(key);
           data.push(value);
         }
-        return {labels, data};
+        return { labels, data };
       } else {
         /* do this, with the goals being the object2  series: [
         {

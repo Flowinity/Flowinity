@@ -1,4 +1,4 @@
-import {Service} from "typedi"
+import { Service } from "typedi"
 import axios from "axios"
 import md5 from "md5"
 
@@ -6,106 +6,105 @@ import md5 from "md5"
 import Errors from "@app/lib/errors"
 
 // Import Models
-import {Integration} from "@app/models/integration.model"
+import { Integration } from "@app/models/integration.model"
 
 @Service()
 export class LastfmService {
-    constructor() {
-    }
+  constructor() {}
 
-    async link(userId: string, token: string) {
-        if (!config.providers.lastfm.key || !config.providers.lastfm.secret)
-            throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
+  async link(userId: string, token: string) {
+    if (!config.providers.lastfm.key || !config.providers.lastfm.secret)
+      throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
-        const existing: Integration | null = await Integration.findOne({
-            where: {
-                userId,
-                type: "lastfm"
-            }
-        })
+    const existing: Integration | null = await Integration.findOne({
+      where: {
+        userId,
+        type: "lastfm"
+      }
+    })
 
-        if (existing) throw Errors.INTEGRATION_EXISTS
+    if (existing) throw Errors.INTEGRATION_EXISTS
 
-        try {
-            const params: {
-                method: string,
-                token: string,
-                api_key: string
-            } = {
-                method: "auth.getSession",
-                token,
-                api_key: config.providers.lastfm.key
-            }
-            const {data} = await axios.get(`https://ws.audioscrobbler.com/2.0/`, {
-                params: {
-                    ...params,
-                    format: "json",
-                    api_sig: this.generateSig(params)
-                }
-            })
-
-            await Integration.create({
-                userId,
-                type: "lastfm",
-                accessToken: data.session.key,
-                providerUsername: data.session.name
-            })
-        } catch {
-            throw Errors.INTEGRATION_ERROR
+    try {
+      const params: {
+        method: string
+        token: string
+        api_key: string
+      } = {
+        method: "auth.getSession",
+        token,
+        api_key: config.providers.lastfm.key
+      }
+      const { data } = await axios.get(`https://ws.audioscrobbler.com/2.0/`, {
+        params: {
+          ...params,
+          format: "json",
+          api_sig: this.generateSig(params)
         }
+      })
+
+      await Integration.create({
+        userId,
+        type: "lastfm",
+        accessToken: data.session.key,
+        providerUsername: data.session.name
+      })
+    } catch {
+      throw Errors.INTEGRATION_ERROR
     }
+  }
 
-    async unlink(userId: string) {
-        const existing: Integration | null = await Integration.findOne({
-            where: {
-                userId,
-                type: "lastfm"
-            }
-        })
+  async unlink(userId: string) {
+    const existing: Integration | null = await Integration.findOne({
+      where: {
+        userId,
+        type: "lastfm"
+      }
+    })
 
-        if (!existing) throw Errors.INTEGRATION_ERROR
+    if (!existing) throw Errors.INTEGRATION_ERROR
 
-        await existing.destroy()
-    }
+    await existing.destroy()
+  }
 
-    async getOverview(userId: number, username: string, accessToken: string) {
-        try {
-            const cache = await redis.get(`providers:lastfm:${userId}:overview`)
+  async getOverview(userId: number, username: string, accessToken: string) {
+    try {
+      const cache = await redis.get(`providers:lastfm:${userId}:overview`)
 
-            if (cache) return JSON.parse(cache)
+      if (cache) return JSON.parse(cache)
 
-            const {data} = await axios.get(`https://ws.audioscrobbler.com/2.0/`, {
-                params: {
-                    method: "user.getrecenttracks",
-                    user: username,
-                    api_key: config.providers.lastfm.key,
-                    format: "json"
-                }
-            })
-
-            redis.set(`providers:lastfm:${userId}:overview`, JSON.stringify(data), {
-                EX: 10,
-                NX: true
-            })
-
-            return data
-        } catch {
-            throw Errors.INTEGRATION_ERROR
+      const { data } = await axios.get(`https://ws.audioscrobbler.com/2.0/`, {
+        params: {
+          method: "user.getrecenttracks",
+          user: username,
+          api_key: config.providers.lastfm.key,
+          format: "json"
         }
+      })
+
+      redis.set(`providers:lastfm:${userId}:overview`, JSON.stringify(data), {
+        EX: 10,
+        NX: true
+      })
+
+      return data
+    } catch {
+      throw Errors.INTEGRATION_ERROR
     }
+  }
 
-    generateSig(params: Record<string, string>): string {
-        if (!config.providers.lastfm.secret) throw Errors.INTEGRATION_ERROR
+  generateSig(params: Record<string, string>): string {
+    if (!config.providers.lastfm.secret) throw Errors.INTEGRATION_ERROR
 
-        delete params.api_sig
-        delete params.format
+    delete params.api_sig
+    delete params.format
 
-        const keys: string[] = Object.keys(params).sort()
-        const sig: string = keys
-            .map((key: string): string => `${key}${params[key]}`)
-            .join("")
-            .concat(config.providers.lastfm.secret)
+    const keys: string[] = Object.keys(params).sort()
+    const sig: string = keys
+      .map((key: string): string => `${key}${params[key]}`)
+      .join("")
+      .concat(config.providers.lastfm.secret)
 
-        return md5(sig)
-    }
+    return md5(sig)
+  }
 }

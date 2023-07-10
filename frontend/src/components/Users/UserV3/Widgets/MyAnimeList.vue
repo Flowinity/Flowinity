@@ -168,20 +168,20 @@
       </v-list>
     </template>
     <template v-else>
-      <MessageSkeleton/>
+      <MessageSkeleton />
     </template>
   </v-card>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
-import {MalUser} from "@/types/mal/user";
-import {MalAnime} from "@/types/mal/anime";
+import { MalUser } from "@/types/mal/user";
+import { MalAnime } from "@/types/mal/anime";
 
 export default defineComponent({
   name: "MyAnimeList",
-  components: {MessageSkeleton},
+  components: { MessageSkeleton },
   props: ["user", "component"],
   data() {
     return {
@@ -314,7 +314,7 @@ export default defineComponent({
       } else {
         this.partialLoading = true;
       }
-      const {data} = await this.axios.get(
+      const { data } = await this.axios.get(
         `/providers/userv3/mal/${this.user?.username}`,
         {
           headers: {

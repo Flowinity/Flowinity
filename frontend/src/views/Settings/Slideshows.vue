@@ -91,8 +91,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {Slideshow} from "@/models/slideshow";
+import { defineComponent } from "vue";
+import { Slideshow } from "@/models/slideshow";
 
 export default defineComponent({
   name: "Slideshows",
@@ -106,7 +106,7 @@ export default defineComponent({
       await this.axios.put("/slideshows/" + slideshow.id, slideshow);
     },
     async getSlideshows() {
-      const {data} = await this.axios.get("/slideshows");
+      const { data } = await this.axios.get("/slideshows");
       this.slideshows = data;
     },
     async createSlideshow() {

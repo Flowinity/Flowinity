@@ -9,7 +9,7 @@
       <v-card-text>
         Are you sure you want to leave this group? You will not be able to
         rejoin unless you are re-added by a member.
-        <br/>
+        <br />
         Chat:
         <strong>{{ chat.name }}</strong>
         <!-- find all users that are owners, if there is only one, then the user is the only owner -->
@@ -19,7 +19,7 @@
             chat.users.filter((user) => user.rank === 'owner').length === 1
           "
         >
-          <br/>
+          <br />
           <strong style="color: #f44336">Warning:</strong>
           You are the only owner of this group. If you leave, a random member
           will be assigned as the new owner unless you give someone else
@@ -35,13 +35,13 @@
 </template>
 
 <script lang="ts">
-import {Chat} from "@/models/chat";
-import {defineComponent} from "vue";
+import { Chat } from "@/models/chat";
+import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "Leave",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: {
     modelValue: {
       type: Boolean,

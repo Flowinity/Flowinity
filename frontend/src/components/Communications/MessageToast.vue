@@ -13,7 +13,7 @@
     >
       {{ message.content }}
     </span>
-    <br/>
+    <br />
     <small class="mr-1 text-grey-lighten-3">
       - {{ message.user.username }} &bullet;
       {{ $chat.lookupChat(message.chatId).name }}
@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "MessageToast",

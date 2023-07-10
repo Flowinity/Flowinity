@@ -1,6 +1,6 @@
 <template>
   <div id="gallery-core">
-    <OCRMetadata v-model="$app.dialogs.ocr.value"/>
+    <OCRMetadata v-model="$app.dialogs.ocr.value" />
     <AddToCollection
       v-model="addToCollectionDialog"
       :items="collectivize"
@@ -48,8 +48,8 @@
         </v-btn>
       </slot>
     </div>
-    <br/>
-    <br/>
+    <br />
+    <br />
     <v-row v-if="!$app.componentLoading">
       <v-col
         v-for="item in items.gallery"
@@ -80,7 +80,7 @@
           @select="select($event)"
         >
           <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
-            <slot :name="name" v-bind="slotData"/>
+            <slot :name="name" v-bind="slotData" />
           </template>
         </GalleryItem>
       </v-col>
@@ -108,24 +108,24 @@
       >
         Random Attachment
       </v-btn>
-      <br/>
+      <br />
       Total Items: {{ items.pager?.totalItems.toLocaleString() }}
     </small>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import GalleryItem from "@/components/Gallery/GalleryItem.vue";
-import {Upload} from "@/models/upload";
+import { Upload } from "@/models/upload";
 import AddToCollection from "@/components/Gallery/Dialogs/AddToCollection.vue";
-import {CollectionCache} from "@/types/collection";
+import { CollectionCache } from "@/types/collection";
 import Paginate from "@/components/Core/Paginate.vue";
 import OCRMetadata from "@/components/Gallery/Dialogs/OCRMetadata.vue";
 
 export default defineComponent({
   name: "GalleryCore",
-  components: {OCRMetadata, Paginate, AddToCollection, GalleryItem},
+  components: { OCRMetadata, Paginate, AddToCollection, GalleryItem },
   props: {
     randomAttachmentLoading: {
       type: Boolean,
@@ -177,19 +177,19 @@ export default defineComponent({
   },
   methods: {
     collectionAdded({
-                      collection,
-                      items
-                    }: {
+      collection,
+      items
+    }: {
       collection: CollectionCache;
       items: number[] | number;
     }) {
       console.log("collectionAdded", collection, items);
       if (Array.isArray(items)) {
         for (const item of items) {
-          this.$emit("updateItem", {item, collection});
+          this.$emit("updateItem", { item, collection });
         }
       } else {
-        this.$emit("updateItem", {item: items, collection});
+        this.$emit("updateItem", { item: items, collection });
       }
       this.selected = [];
     },

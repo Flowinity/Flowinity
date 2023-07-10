@@ -1,51 +1,59 @@
-import {BelongsTo, Column, DataType, HasMany, HasOne, Model, Table} from "sequelize-typescript"
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  HasMany,
+  HasOne,
+  Model,
+  Table
+} from "sequelize-typescript"
 
 // Import Models
-import {User} from "@app/models/user.model"
-import {LegacyUser} from "@app/models/legacyUser.model"
-import {ChatAssociation} from "@app/models/chatAssociation.model"
+import { User } from "@app/models/user.model"
+import { LegacyUser } from "@app/models/legacyUser.model"
+import { ChatAssociation } from "@app/models/chatAssociation.model"
 
 @Table
 export class Chat extends Model {
-    @Column({
-        type: DataType.ENUM("direct", "group", "channel")
-    })
-    type: "direct" | "group" | "channel"
+  @Column({
+    type: DataType.ENUM("direct", "group", "channel")
+  })
+  type: "direct" | "group" | "channel"
 
-    @Column
-    name: string
+  @Column
+  name: string
 
-    @Column
-    userId: number
+  @Column
+  userId: number
 
-    @Column
-    icon: string
+  @Column
+  icon: string
 
-    @Column
-    createdAt: Date
+  @Column
+  createdAt: Date
 
-    @Column
-    updatedAt: Date
+  @Column
+  updatedAt: Date
 
-    @Column
-    legacyUserId: number
+  @Column
+  legacyUserId: number
 
-    @Column({
-        type: DataType.STRING,
-        allowNull: true
-    })
-    intent: null | string
+  @Column({
+    type: DataType.STRING,
+    allowNull: true
+  })
+  intent: null | string
 
-    @BelongsTo(() => User, "userId")
-    user: User
+  @BelongsTo(() => User, "userId")
+  user: User
 
-    @BelongsTo(() => LegacyUser, "legacyUserId")
-    legacyUser: LegacyUser
+  @BelongsTo(() => LegacyUser, "legacyUserId")
+  legacyUser: LegacyUser
 
-    @HasOne(() => ChatAssociation, "chatId")
-    association: ChatAssociation
+  @HasOne(() => ChatAssociation, "chatId")
+  association: ChatAssociation
 
-    @HasMany(() => ChatAssociation, "chatId")
-    users: ChatAssociation[]
-    recipient: any
+  @HasMany(() => ChatAssociation, "chatId")
+  users: ChatAssociation[]
+  recipient: any
 }

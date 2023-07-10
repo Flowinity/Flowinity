@@ -74,12 +74,12 @@
 </template>
 
 <script lang="ts">
-import {CollectionCache} from "@/types/collection";
-import {defineComponent} from "vue";
+import { CollectionCache } from "@/types/collection";
+import { defineComponent } from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
-import {Upload} from "@/models/upload";
+import { Upload } from "@/models/upload";
 import HoverChip from "@/components/Core/HoverChip.vue";
 import PersonalGallery from "@/views/Gallery.vue";
 
@@ -127,13 +127,13 @@ export default defineComponent({
         count: 1
       });
       this.$toast.success("Action performed");
-      const {gallery} = await this.$refs.gallery?.getGallery();
+      const { gallery } = await this.$refs.gallery?.getGallery();
       if (!gallery.length) await this.$router.push(`/autoCollect`);
     },
     updateItem({
-                 item,
-                 collection
-               }: {
+      item,
+      collection
+    }: {
       item: number;
       collection: CollectionCache;
     }) {
@@ -152,7 +152,7 @@ export default defineComponent({
         );
       }
       this.$app.componentLoading = true;
-      const {data} = await this.axios.get(
+      const { data } = await this.axios.get(
         `/collections/${this.$route.params.id}`
       );
       this.$app.componentLoading = false;

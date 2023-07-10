@@ -9,11 +9,10 @@ import Errors from "@app/lib/errors"
 
 @Service()
 export class SteamService {
-    constructor() {
-    }
+  constructor() {}
 
-    async link(userId: string, token: string) {
-        if (!config.providers.steam)
-            throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
-    }
+  async link(userId: string, token: string) {
+    if (!config.providers.steam)
+      throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
+  }
 }

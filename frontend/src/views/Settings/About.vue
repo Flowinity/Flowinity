@@ -63,7 +63,7 @@
     <a class="text-gradient" href="/api/v3/docs">
       {{ $t("settings.about.docs") }}
     </a>
-    <br/>
+    <br />
     <router-link class="text-gradient mt-5" to="/credits">
       {{ $t("settings.about.credits") }}
     </router-link>
@@ -99,7 +99,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "About",

@@ -2,8 +2,8 @@
   <CoreDialog v-model="dialog" max-width="600">
     <template v-slot:title>Add Social Link</template>
     <v-container>
-      <v-text-field v-model="link.name" label="Text" maxlength="20"/>
-      <v-text-field v-model="link.url" label="URL"/>
+      <v-text-field v-model="link.name" label="Text" maxlength="20" />
+      <v-text-field v-model="link.url" label="URL" />
       <v-color-picker
         v-model="link.color"
         label="Color"
@@ -72,14 +72,14 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
-import {User} from "@/models/user";
-import {Component} from "@/types/userv3";
+import { User } from "@/models/user";
+import { Component } from "@/types/userv3";
 
 export default defineComponent({
   name: "SocialLinks",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: {
     user: {
       type: Object as () => User,

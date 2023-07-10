@@ -1,8 +1,8 @@
 // Import Models
-import {User} from "@/models/user";
-import {Collection} from "@/models/collection";
-import {AutoCollectRule} from "@/models/autoCollectRule";
-import {Upload} from "@/models/upload";
+import { User } from "@/models/user";
+import { Collection } from "@/models/collection";
+import { AutoCollectRule } from "@/models/autoCollectRule";
+import { Upload } from "@/models/upload";
 
 export interface AutoCollectApproval {
   id: number;

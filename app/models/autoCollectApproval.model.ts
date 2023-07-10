@@ -1,43 +1,50 @@
-import {BelongsTo, Column, DataType, Default, Model, Table} from "sequelize-typescript"
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  Default,
+  Model,
+  Table
+} from "sequelize-typescript"
 
 // Import Models
-import {User} from "@app/models/user.model"
-import {Collection} from "@app/models/collection.model"
-import {Upload} from "@app/models/upload.model"
-import {AutoCollectRule} from "@app/models/autoCollectRule.model"
+import { User } from "@app/models/user.model"
+import { Collection } from "@app/models/collection.model"
+import { Upload } from "@app/models/upload.model"
+import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 
 @Table
 export class AutoCollectApproval extends Model {
-    @Column
-    autoCollectRuleId: number
+  @Column
+  autoCollectRuleId: number
 
-    @Column
-    uploadId: number
+  @Column
+  uploadId: number
 
-    @Column
-    collectionId: number
+  @Column
+  collectionId: number
 
-    @Column
-    userId: number
+  @Column
+  userId: number
 
-    @Column
-    approved: boolean
+  @Column
+  approved: boolean
 
-    @Default([])
-    @Column({
-        type: DataType.JSON
-    })
-    info: boolean
+  @Default([])
+  @Column({
+    type: DataType.JSON
+  })
+  info: boolean
 
-    @BelongsTo(() => User, "userId")
-    user: User
+  @BelongsTo(() => User, "userId")
+  user: User
 
-    @BelongsTo(() => Collection, "collectionId")
-    collection: Collection
+  @BelongsTo(() => Collection, "collectionId")
+  collection: Collection
 
-    @BelongsTo(() => AutoCollectRule, "autoCollectRuleId")
-    autoCollectRule: AutoCollectRule
+  @BelongsTo(() => AutoCollectRule, "autoCollectRuleId")
+  autoCollectRule: AutoCollectRule
 
-    @BelongsTo(() => Upload, "uploadId")
-    attachment: Upload
+  @BelongsTo(() => Upload, "uploadId")
+  attachment: Upload
 }

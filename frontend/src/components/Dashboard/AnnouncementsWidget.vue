@@ -41,12 +41,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "AnnouncementsWidget",
-  components: {UserAvatar},
+  components: { UserAvatar },
   data() {
     return {
       page: 1,

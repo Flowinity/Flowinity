@@ -1,6 +1,6 @@
 // Import Models
-import {User} from "@/models/user";
-import {Note} from "@/models/note";
+import { User } from "@/models/user";
+import { Note } from "@/models/note";
 
 export class NoteDataV2 {
   blocks: object[] = [];

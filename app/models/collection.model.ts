@@ -1,44 +1,52 @@
-import {AllowNull, BelongsTo, Column, HasMany, HasOne, Model, Table} from "sequelize-typescript"
+import {
+  AllowNull,
+  BelongsTo,
+  Column,
+  HasMany,
+  HasOne,
+  Model,
+  Table
+} from "sequelize-typescript"
 
 // Import Models
-import {User} from "@app/models/user.model"
-import {CollectionItem} from "@app/models/collectionItem.model"
-import {CollectionUser} from "@app/models/collectionUser.model"
-import {AutoCollectApproval} from "@app/models/autoCollectApproval.model"
+import { User } from "@app/models/user.model"
+import { CollectionItem } from "@app/models/collectionItem.model"
+import { CollectionUser } from "@app/models/collectionUser.model"
+import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 
 @Table
 export class Collection extends Model {
-    @Column
-    name: string
+  @Column
+  name: string
 
-    @AllowNull
-    @Column
-    image: string
+  @AllowNull
+  @Column
+  image: string
 
-    @Column
-    userId: number
+  @Column
+  userId: number
 
-    @AllowNull
-    @Column
-    shareLink: string
+  @AllowNull
+  @Column
+  shareLink: string
 
-    @BelongsTo(() => User, "userId")
-    user: User
+  @BelongsTo(() => User, "userId")
+  user: User
 
-    @HasMany(() => CollectionItem, "collectionId")
-    items: CollectionItem[]
+  @HasMany(() => CollectionItem, "collectionId")
+  items: CollectionItem[]
 
-    @HasOne(() => CollectionItem, "collectionId")
-    preview: CollectionItem
+  @HasOne(() => CollectionItem, "collectionId")
+  preview: CollectionItem
 
-    @HasMany(() => CollectionUser, "collectionId")
-    users: CollectionUser[]
+  @HasMany(() => CollectionUser, "collectionId")
+  users: CollectionUser[]
 
-    @HasOne(() => CollectionUser, "collectionId")
-    recipient: CollectionUser
+  @HasOne(() => CollectionUser, "collectionId")
+  recipient: CollectionUser
 
-    @HasMany(() => AutoCollectApproval, "collectionId")
-    autoCollectApprovals: AutoCollectApproval[]
+  @HasMany(() => AutoCollectApproval, "collectionId")
+  autoCollectApprovals: AutoCollectApproval[]
 
-    shared?: boolean
+  shared?: boolean
 }

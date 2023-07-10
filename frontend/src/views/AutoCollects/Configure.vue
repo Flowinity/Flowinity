@@ -179,8 +179,8 @@
 </template>
 
 <script lang="ts">
-import {AutoCollectRule, SubRule, SubSubRule} from "@/models/autoCollectRule";
-import {defineComponent} from "vue";
+import { AutoCollectRule, SubRule, SubSubRule } from "@/models/autoCollectRule";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "AutoCollectSettings",
@@ -188,14 +188,14 @@ export default defineComponent({
     return {
       rules: [] as AutoCollectRule[],
       operators: [
-        {text: "Contains", value: "contains"},
-        {text: "Equals", value: "equals"},
-        {text: "Does not Equal", value: "doesNotEq"},
-        {text: "Does not Contain", value: "doesNotCo"},
-        {text: "Greater Than", value: "gt"},
-        {text: "Less Than", value: "lt"},
-        {text: "Greater Than or Equal", value: "gte"},
-        {text: "Less Than or Equal", value: "lte"}
+        { text: "Contains", value: "contains" },
+        { text: "Equals", value: "equals" },
+        { text: "Does not Equal", value: "doesNotEq" },
+        { text: "Does not Contain", value: "doesNotCo" },
+        { text: "Greater Than", value: "gt" },
+        { text: "Less Than", value: "lt" },
+        { text: "Greater Than or Equal", value: "gte" },
+        { text: "Less Than or Equal", value: "lte" }
       ],
       types: [
         {
@@ -262,7 +262,7 @@ export default defineComponent({
       rule.rules = rule.rules.filter((subrule: SubRule) => subrule.id !== id);
     },
     async getRules() {
-      const {data} = await this.axios.get("/autoCollects/rules");
+      const { data } = await this.axios.get("/autoCollects/rules");
       this.rules = data;
     },
     async saveRule(rule: AutoCollectRule) {

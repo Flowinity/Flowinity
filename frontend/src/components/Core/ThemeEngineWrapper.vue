@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import ThemeEngineSidebar from "@/components/Core/ThemeEngineSidebar.vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 

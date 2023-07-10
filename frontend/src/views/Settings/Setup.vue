@@ -144,12 +144,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
   name: "Setup",
-  components: {HoverChip},
+  components: { HoverChip },
   data() {
     return {
       selected: "",
@@ -195,7 +195,7 @@ export default defineComponent({
       return data;
     },
     async getAPIKeys() {
-      const {data} = await this.axios.get("/security/keys");
+      const { data } = await this.axios.get("/security/keys");
       this.items = data;
     },
     saveFile(type: "sharex" | "sharenix" = "sharex") {
@@ -211,7 +211,7 @@ export default defineComponent({
           Services: [this.config(type)]
         });
       }
-      const blob = new Blob([data], {type: "text/plain"});
+      const blob = new Blob([data], { type: "text/plain" });
       const e = document.createEvent("MouseEvents"),
         a = document.createElement("a");
       const ext = type === "sharex" ? ".sxcu" : ".json";

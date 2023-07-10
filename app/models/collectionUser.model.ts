@@ -1,50 +1,58 @@
-import {AllowNull, BelongsTo, Column, Default, Model, Table, Unique} from "sequelize-typescript"
+import {
+  AllowNull,
+  BelongsTo,
+  Column,
+  Default,
+  Model,
+  Table,
+  Unique
+} from "sequelize-typescript"
 
 // Import Models
-import {User} from "@app/models/user.model"
-import {Collection} from "@app/models/collection.model"
+import { User } from "@app/models/user.model"
+import { Collection } from "@app/models/collection.model"
 
 @Table
 export class CollectionUser extends Model {
-    @Column
-    collectionId: number
+  @Column
+  collectionId: number
 
-    @Default(true)
-    @Column
-    read: boolean
+  @Default(true)
+  @Column
+  read: boolean
 
-    @Default(true)
-    @Column
-    write: boolean
+  @Default(true)
+  @Column
+  write: boolean
 
-    @Default(false)
-    @Column
-    configure: boolean
+  @Default(false)
+  @Column
+  configure: boolean
 
-    @Default(false)
-    @Column
-    accepted: boolean
+  @Default(false)
+  @Column
+  accepted: boolean
 
-    @Column
-    recipientId: number
+  @Column
+  recipientId: number
 
-    @Column
-    senderId: number
+  @Column
+  senderId: number
 
-    @Unique({
-        msg: "This user is already in the collection.",
-        name: "UNIQUE_COLLECTION_USER_IDENTIFIER"
-    })
-    @AllowNull
-    @Column
-    identifier: string
+  @Unique({
+    msg: "This user is already in the collection.",
+    name: "UNIQUE_COLLECTION_USER_IDENTIFIER"
+  })
+  @AllowNull
+  @Column
+  identifier: string
 
-    @BelongsTo(() => Collection, "collectionId")
-    collection: Collection
+  @BelongsTo(() => Collection, "collectionId")
+  collection: Collection
 
-    @BelongsTo(() => User, "recipientId")
-    user: User
+  @BelongsTo(() => User, "recipientId")
+  user: User
 
-    @BelongsTo(() => User, "senderId")
-    sender: User
+  @BelongsTo(() => User, "senderId")
+  sender: User
 }

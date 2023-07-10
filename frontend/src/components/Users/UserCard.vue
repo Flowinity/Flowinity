@@ -15,14 +15,14 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {User} from "@/models/user";
+import { defineComponent } from "vue";
+import { User } from "@/models/user";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "UserCard",
-  components: {UserAvatar, UserBanner},
+  components: { UserAvatar, UserBanner },
   props: ["username", "subtitle"],
   data() {
     return {
@@ -31,7 +31,7 @@ export default defineComponent({
   },
   methods: {
     async getUser() {
-      const {data} = await this.axios.get(`/user/profile/${this.username}`);
+      const { data } = await this.axios.get(`/user/profile/${this.username}`);
       this.user = data;
     }
   },

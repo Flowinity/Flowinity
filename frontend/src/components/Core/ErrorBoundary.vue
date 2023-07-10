@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type {Component} from "vue";
-import {onErrorCaptured, ref, useSlots} from "vue";
+import type { Component } from "vue";
+import { onErrorCaptured, ref, useSlots } from "vue";
 import DefaultFallback from "./Crash.vue";
 
 export interface VErrorBoundaryProps {
@@ -12,8 +12,7 @@ export interface VErrorBoundaryProps {
 
 const props = withDefaults(defineProps<VErrorBoundaryProps>(), {
   fallBack: DefaultFallback,
-  onError: () => {
-  },
+  onError: () => {},
   params: () => ({}),
   stopPropagation: false
 });
@@ -32,13 +31,13 @@ onErrorCaptured((error: Error, vm, info: string) => {
   err$.value = error;
   info$.value = info;
   props?.onError(error, vm, info);
-  emits("error-captured", {error, vm, info});
+  emits("error-captured", { error, vm, info });
   if (props.stopPropagation) return false;
 });
 </script>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "VErrorBoundary"
@@ -48,7 +47,7 @@ export default defineComponent({
 <template>
   <template v-if="!slots.boundary">
     <slot v-if="!hasError$"></slot>
-    <component :is="props.fallBack" v-else v-bind="params"/>
+    <component :is="props.fallBack" v-else v-bind="params" />
   </template>
   <slot
     v-else

@@ -46,13 +46,13 @@
 </template>
 
 <script lang="ts">
-import {Collection} from "@/models/collection";
-import {defineComponent} from "vue";
+import { Collection } from "@/models/collection";
+import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "CollectionSettings",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: {
     modelValue: {
       type: Boolean,
@@ -88,13 +88,13 @@ export default defineComponent({
     async downloadCollectionAsZIPFile() {
       this.loading = true;
 
-      const {data} = await this.axios.get(
+      const { data } = await this.axios.get(
         `/collections/${this.collection?.id}/download`,
         {
           responseType: "blob"
         }
       );
-      const blob = new Blob([data], {type: "application/zip"});
+      const blob = new Blob([data], { type: "application/zip" });
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
       link.download = `${this.collection?.name}.zip`;

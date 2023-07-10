@@ -1,25 +1,25 @@
-import {defineStore} from "pinia";
-import {useToast} from "vue-toastification";
-import {AxiosProgressEvent} from "axios";
-import {RouteLocationNormalizedLoaded, useRoute} from "vue-router";
+import { defineStore } from "pinia";
+import { useToast } from "vue-toastification";
+import { AxiosProgressEvent } from "axios";
+import { RouteLocationNormalizedLoaded, useRoute } from "vue-router";
 
 // Import Stores
-import {useChatStore} from "@/store/chat";
-import {useCollectionsStore} from "@/store/collections";
-import {useUserStore} from "@/store/user";
-import {useWorkspacesStore} from "@/store/workspaces";
-import {useExperimentsStore} from "@/store/experiments";
+import { useChatStore } from "@/store/chat";
+import { useCollectionsStore } from "@/store/collections";
+import { useUserStore } from "@/store/user";
+import { useWorkspacesStore } from "@/store/workspaces";
+import { useExperimentsStore } from "@/store/experiments";
 
 // Import Models
-import {Upload} from "@/models/upload";
+import { Upload } from "@/models/upload";
 
 // Import Types
-import {SidebarItem} from "@/types/sidebar";
+import { SidebarItem } from "@/types/sidebar";
 
 // Import Plugins
 import functions from "@/plugins/functions";
 import vuetify from "@/plugins/vuetify";
-import {i18n} from "@/plugins/i18n";
+import { i18n } from "@/plugins/i18n";
 import axios from "@/plugins/axios";
 
 export interface AppState {
@@ -63,10 +63,10 @@ export interface AppState {
       ip: string;
       whitelist:
         | {
-        ip: string;
-        name: string;
-        groups: string[];
-      }
+            ip: string;
+            name: string;
+            groups: string[];
+          }
         | false;
     };
     stats: {
@@ -343,7 +343,9 @@ export const useAppStore = defineStore("app", {
     } as AppState),
   getters: {
     quickActionItem(state: AppState): SidebarItem {
-      const item = this.sidebar.find((item): boolean => item.id === state.quickAction);
+      const item = this.sidebar.find(
+        (item): boolean => item.id === state.quickAction
+      );
 
       if (!item) return this.sidebar.find((item): boolean => item.id === 1);
 
@@ -484,77 +486,83 @@ export const useAppStore = defineStore("app", {
         state.site.inviteAFriend ||
         user.user?.moderator ||
         user.user?.administrator
-      ) items.push({
-        id: 32,
-        click(): void {
-          state.dialogs.inviteAFriend = true;
-        },
-        externalPath: "",
-        path: "",
-        name: i18n.t("core.sidebar.inviteAFriend"),
-        icon: "mdi-gift-outline",
-        new: true,
-        scope: "*"
-      });
-      if (state.site.features?.insights) items.push({
-        id: 13,
-        externalPath: "",
-        name: i18n.t("core.sidebar.insights"),
-        path: "/insights",
-        scope: "*",
-        icon: "mdi-chart-timeline-variant-shimmer",
-        new: true
-      });
-      if (state.site.features?.communications) items.push({
-        id: 11,
-        externalPath: "",
-        name: i18n.t("core.sidebar.communications"),
-        path: chat.selectedChatId
-          ? `/communications/${chat.selectedChatId}`
-          : "/communications",
-        icon: "mdi-message-processing",
-        warning: functions.checkScope("chats.view", user.user?.scopes)
-          ? chat.totalUnread || "BETA"
-          : false,
-        scope: "chats.view",
-        experimentsRequired: ["COMMUNICATIONS"]
-      });
-      if (state.site.features?.workspaces) items.push({
-        id: 10,
-        externalPath: "",
-        name: i18n.t("core.sidebar.workspaces"),
-        path: route.name?.toString()?.includes("Workspace")
-          ? "/workspaces"
-          : state.lastNote
+      )
+        items.push({
+          id: 32,
+          click(): void {
+            state.dialogs.inviteAFriend = true;
+          },
+          externalPath: "",
+          path: "",
+          name: i18n.t("core.sidebar.inviteAFriend"),
+          icon: "mdi-gift-outline",
+          new: true,
+          scope: "*"
+        });
+      if (state.site.features?.insights)
+        items.push({
+          id: 13,
+          externalPath: "",
+          name: i18n.t("core.sidebar.insights"),
+          path: "/insights",
+          scope: "*",
+          icon: "mdi-chart-timeline-variant-shimmer",
+          new: true
+        });
+      if (state.site.features?.communications)
+        items.push({
+          id: 11,
+          externalPath: "",
+          name: i18n.t("core.sidebar.communications"),
+          path: chat.selectedChatId
+            ? `/communications/${chat.selectedChatId}`
+            : "/communications",
+          icon: "mdi-message-processing",
+          warning: functions.checkScope("chats.view", user.user?.scopes)
+            ? chat.totalUnread || "BETA"
+            : false,
+          scope: "chats.view",
+          experimentsRequired: ["COMMUNICATIONS"]
+        });
+      if (state.site.features?.workspaces)
+        items.push({
+          id: 10,
+          externalPath: "",
+          name: i18n.t("core.sidebar.workspaces"),
+          path: route.name?.toString()?.includes("Workspace")
+            ? "/workspaces"
+            : state.lastNote
             ? `/workspaces/notes/${state.lastNote}`
             : "/workspaces",
-        icon: "mdi-folder-account",
-        new: true,
-        scope: "workspaces.view",
-        experimentsRequired: ["INTERACTIVE_NOTES"]
-      });
-      if (state.site.features?.collections) items.push({
-        id: 7,
-        externalPath: "",
-        name: i18n.t("core.sidebar.collections"),
-        path: "/collections",
-        icon: "mdi-folder-multiple-image",
-        new: false,
-        scope: "collections.view"
-      });
-      if (state.site.features?.autoCollects) items.push({
-        id: 9,
-        externalPath: "",
-        name: i18n.t("core.sidebar.autoCollects"),
-        path: "/autoCollect",
-        icon: "mdi-image-auto-adjust",
-        new: false,
-        scope: "collections.modify",
-        warning:
-          user.user.pendingAutoCollects > 0
-            ? user.user.pendingAutoCollects
-            : false
-      });
+          icon: "mdi-folder-account",
+          new: true,
+          scope: "workspaces.view",
+          experimentsRequired: ["INTERACTIVE_NOTES"]
+        });
+      if (state.site.features?.collections)
+        items.push({
+          id: 7,
+          externalPath: "",
+          name: i18n.t("core.sidebar.collections"),
+          path: "/collections",
+          icon: "mdi-folder-multiple-image",
+          new: false,
+          scope: "collections.view"
+        });
+      if (state.site.features?.autoCollects)
+        items.push({
+          id: 9,
+          externalPath: "",
+          name: i18n.t("core.sidebar.autoCollects"),
+          path: "/autoCollect",
+          icon: "mdi-image-auto-adjust",
+          new: false,
+          scope: "collections.modify",
+          warning:
+            user.user.pendingAutoCollects > 0
+              ? user.user.pendingAutoCollects
+              : false
+        });
 
       items.sort((a: SidebarItem, b: SidebarItem) => a.id - b.id);
 
@@ -584,8 +592,12 @@ export const useAppStore = defineStore("app", {
       const user = useUserStore()?.user;
 
       if (!user?.weatherUnit) return 0;
-      if (user?.weatherUnit === "kelvin") return Math.round((temp + 273.15) * 100) / 100; // Round to 2 decimal places.
-      else if (user?.weatherUnit === "fahrenheit") return Math.round(((temp * 9) / 5 + 32) * 100) / 100;
+      if (user?.weatherUnit === "kelvin")
+        return (
+          Math.round((temp + 273.15) * 100) / 100
+        ); // Round to 2 decimal places.
+      else if (user?.weatherUnit === "fahrenheit")
+        return Math.round(((temp * 9) / 5 + 32) * 100) / 100;
       else return temp;
     }
   },
@@ -593,18 +605,20 @@ export const useAppStore = defineStore("app", {
     toggleWorkspace(): void {
       this.workspaceDrawer = !this.workspaceDrawer;
 
-      if (vuetify.display.mobile.value && this.workspaceDrawer) this.mainDrawer = false;
+      if (vuetify.display.mobile.value && this.workspaceDrawer)
+        this.mainDrawer = false;
     },
     toggleMain(): void {
       this.mainDrawer = !this.mainDrawer;
 
-      if (vuetify.display.mobile.value && this.mainDrawer) this.workspaceDrawer = false;
+      if (vuetify.display.mobile.value && this.mainDrawer)
+        this.workspaceDrawer = false;
     },
     populateQuickSwitcher(): void {
-      const value: ({
-        name: string,
-        route: string
-      })[] = [
+      const value: {
+        name: string;
+        route: string;
+      }[] = [
         {
           route: "/",
           name: "Home"
@@ -682,7 +696,7 @@ export const useAppStore = defineStore("app", {
     },
     async getWeather() {
       try {
-        const {data} = await axios.get("/core/weather", {
+        const { data } = await axios.get("/core/weather", {
           headers: {
             noToast: true
           }
@@ -699,15 +713,16 @@ export const useAppStore = defineStore("app", {
 
       const core: string = localStorage.getItem("coreStore");
 
-      if (core) try {
-        this.site = JSON.parse(core);
-        this.domain = "https://" + this.site.domain + "/i/";
-        this.loading = false;
-      } catch {
-        //
-      }
+      if (core)
+        try {
+          this.site = JSON.parse(core);
+          this.domain = "https://" + this.site.domain + "/i/";
+          this.loading = false;
+        } catch {
+          //
+        }
 
-      const {data} = await axios.get("/core");
+      const { data } = await axios.get("/core");
 
       this.site = data;
       this.domain = "https://" + this.site.domain + "/i/";
@@ -720,7 +735,8 @@ export const useAppStore = defineStore("app", {
       try {
         const toast = useToast();
 
-        if (!this.dialogs.upload.files.length) toast.error("No files selected!");
+        if (!this.dialogs.upload.files.length)
+          toast.error("No files selected!");
 
         const formData: FormData = new FormData();
 
@@ -730,7 +746,7 @@ export const useAppStore = defineStore("app", {
 
         this.dialogs.upload.loading = true;
 
-        const {data} = await axios.post("/gallery/site", formData, {
+        const { data } = await axios.post("/gallery/site", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           },

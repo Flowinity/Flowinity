@@ -1,13 +1,13 @@
-import {defineStore} from "pinia";
-import {Router, useRouter} from "vue-router";
+import { defineStore } from "pinia";
+import { Router, useRouter } from "vue-router";
 
 // Import Plugins
 import axios from "@/plugins/axios";
 
 // Import Models
-import {Workspace} from "@/models/workspace";
-import {Note} from "@/models/note";
-import {WorkspaceFolder} from "@/models/workspaceFolder";
+import { Workspace } from "@/models/workspace";
+import { Note } from "@/models/note";
+import { WorkspaceFolder } from "@/models/workspaceFolder";
 
 export interface WorkspacesState {
   items: Workspace[];
@@ -34,14 +34,14 @@ export const useWorkspacesStore = defineStore("workspaces", {
     } as WorkspacesState),
   actions: {
     async getRecent() {
-      const {data} = await axios.get("/notes/recent");
+      const { data } = await axios.get("/notes/recent");
 
       this.recent = data;
 
       return data;
     },
     async getWorkspaces() {
-      const {data} = await axios.get("/notes/workspaces", {
+      const { data } = await axios.get("/notes/workspaces", {
         headers: {
           noToast: true
         }
@@ -50,7 +50,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
       this.items = data;
     },
     async selectWorkspace(id: number) {
-      const {data} = await axios.get(`/notes/workspace/${id}`, {
+      const { data } = await axios.get(`/notes/workspace/${id}`, {
         headers: {
           noToast: true
         }
@@ -70,9 +70,11 @@ export const useWorkspacesStore = defineStore("workspaces", {
       await this.selectWorkspace(<number>this.workspace?.id);
     },
     async init() {
-      const selectedWorkspace: string = localStorage.getItem("selectedWorkspace");
+      const selectedWorkspace: string =
+        localStorage.getItem("selectedWorkspace");
 
-      if (selectedWorkspace) await this.selectWorkspace(JSON.parse(selectedWorkspace).id);
+      if (selectedWorkspace)
+        await this.selectWorkspace(JSON.parse(selectedWorkspace).id);
 
       await this.getWorkspaces();
     }
@@ -88,7 +90,9 @@ export const useWorkspacesStore = defineStore("workspaces", {
     },
     recentOverall() {
       const notes: Note[] = this.recent
-        .map((workspace) => workspace.folders.map((folder: WorkspaceFolder) => folder.notes))
+        .map((workspace) =>
+          workspace.folders.map((folder: WorkspaceFolder) => folder.notes)
+        )
         .flat(2)
         .sort((a, b): number => {
           if (a.updatedAt > b.updatedAt) return -1;

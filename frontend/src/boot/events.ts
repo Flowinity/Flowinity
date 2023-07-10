@@ -1,5 +1,5 @@
 import router from "@/router";
-import {useAppStore} from "@/store/app";
+import { useAppStore } from "@/store/app";
 
 export default function setup(): void {
   const core = useAppStore();
@@ -9,7 +9,8 @@ export default function setup(): void {
       ["Communications", "Communication", "Note", "Workspace Item"].includes(
         router.currentRoute.value.name as string
       )
-    ) return;
+    )
+      return;
 
     if (!e.clipboardData) return;
 
@@ -19,7 +20,7 @@ export default function setup(): void {
     if (e.clipboardData.files.length > 0) {
       //@ts-ignore
       core.dialogs.upload.files = [...e.clipboardData.files];
-      core.upload().then(r => {
+      core.upload().then((r) => {
         //
       });
     }

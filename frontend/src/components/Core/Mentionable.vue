@@ -1,8 +1,18 @@
 <script lang="ts">
 //@ts-nocheck
 import getCaretPosition from "textarea-caret";
-import {Dropdown, options} from "floating-vue";
-import {computed, defineComponent, nextTick, onMounted, onUnmounted, onUpdated, PropType, ref, watch} from "vue";
+import { Dropdown, options } from "floating-vue";
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  onUpdated,
+  PropType,
+  ref,
+  watch
+} from "vue";
 
 options.themes.mentionable = {
   $extend: "dropdown",
@@ -61,7 +71,7 @@ export default defineComponent({
     }
   },
   emits: ["search", "open", "close", "apply"],
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const currentKey = ref<string>(null);
     let currentKeyIndex: number;
     const oldKey = ref<string>(null);
@@ -244,7 +254,7 @@ export default defineComponent({
     function checkKey() {
       const index = getSelectionStart();
       if (index >= 0) {
-        const {key, keyIndex} = getLastKeyBeforeCaret(index);
+        const { key, keyIndex } = getLastKeyBeforeCaret(index);
         const text = (lastSearchText = getLastSearchText(index, keyIndex));
         if (!(keyIndex < 1 || /\s/.test(getValue()[keyIndex - 1]))) {
           return false;
@@ -346,8 +356,8 @@ export default defineComponent({
         range.setStart(
           range.startContainer,
           range.startOffset -
-          currentKey.value.length -
-          (lastSearchText ? lastSearchText.length : 0)
+            currentKey.value.length -
+            (lastSearchText ? lastSearchText.length : 0)
         );
         range.deleteContents();
         range.insertNode(document.createTextNode(value));
@@ -396,7 +406,7 @@ export default defineComponent({
     class="mentionable"
     style="position: relative; width: 100%"
   >
-    <slot/>
+    <slot />
 
     <VDropdown
       ref="popper"

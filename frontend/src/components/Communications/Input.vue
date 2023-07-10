@@ -168,7 +168,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import InlineGallery from "@/components/Communications/InlineGallery.vue";
 import Mentionable from "@/components/Core/Mentionable.vue";

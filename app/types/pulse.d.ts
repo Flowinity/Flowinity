@@ -1,3 +1,3 @@
 type PulseSysInfo = {
-    ua: string
+  ua: string
 }

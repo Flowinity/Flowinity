@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Services",
@@ -35,7 +35,7 @@ export default defineComponent({
   },
   methods: {
     async getServices() {
-      const {data} = await this.axios.get("/admin/services");
+      const { data } = await this.axios.get("/admin/services");
       // sort by ones that contain Service in the name
       this.services = data.filter((service: any) =>
         service.name.includes("Service")

@@ -1,13 +1,13 @@
-import {defineStore} from "pinia";
+import { defineStore } from "pinia";
 
 // Import Plugins
 import axios from "@/plugins/axios";
 
 // Import Stores
-import {useUserStore} from "@/store/user";
+import { useUserStore } from "@/store/user";
 
 // Import Models
-import {User} from "@/models/user";
+import { User } from "@/models/user";
 
 export interface AdminState {
   //
@@ -24,12 +24,12 @@ export const useAdminStore = defineStore("admin", {
   state: () => ({} as AdminState),
   actions: {
     async getUsers(): Promise<User[]> {
-      const {data} = await axios.get("/admin/users");
+      const { data } = await axios.get("/admin/users");
 
       return data as User[];
     },
     async getExperimentValues(userId: number): Promise<Record<string, any>[]> {
-      const {data} = await axios.get(`/admin/experiment/${userId}`);
+      const { data } = await axios.get(`/admin/experiment/${userId}`);
 
       return data;
     }

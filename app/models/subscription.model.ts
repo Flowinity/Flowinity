@@ -1,37 +1,44 @@
-import {BelongsTo, Column, DataType, Default, Model, Table} from "sequelize-typescript"
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  Default,
+  Model,
+  Table
+} from "sequelize-typescript"
 
 // Import Models
-import {User} from "@app/models/user.model"
+import { User } from "@app/models/user.model"
 
 @Table
 export class Subscription extends Model {
-    @Column
-    planId: number
+  @Column
+  planId: number
 
-    @Column
-    userId: number
+  @Column
+  userId: number
 
-    @Column
-    price: number
+  @Column
+  price: number
 
-    @Default(false)
-    @Column
-    cancelled: boolean
+  @Default(false)
+  @Column
+  cancelled: boolean
 
-    @Column
-    paymentId: number
+  @Column
+  paymentId: number
 
-    @Column
-    expiredAt: Date
+  @Column
+  expiredAt: Date
 
-    @Column
-    cancelledAt: Date
+  @Column
+  cancelledAt: Date
 
-    @Column({
-        type: DataType.JSON
-    })
-    metadata: object
+  @Column({
+    type: DataType.JSON
+  })
+  metadata: object
 
-    @BelongsTo(() => User, "userId")
-    user: User
+  @BelongsTo(() => User, "userId")
+  user: User
 }

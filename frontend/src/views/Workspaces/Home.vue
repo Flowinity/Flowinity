@@ -110,13 +110,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
-import {Workspace} from "@/models/workspace";
+import { Workspace } from "@/models/workspace";
 
 export default defineComponent({
   name: "Home",
-  components: {PromoNoContent},
+  components: { PromoNoContent },
   methods: {
     workspaceNotes(workspace: Workspace) {
       return workspace.folders.map((folder) => folder.notes).flat();

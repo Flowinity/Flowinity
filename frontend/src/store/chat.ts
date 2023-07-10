@@ -1,20 +1,20 @@
 // Utilities
-import {defineStore} from "pinia";
+import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import {Chat, Typing} from "@/models/chat";
-import {useExperimentsStore} from "@/store/experiments";
+import { Chat, Typing } from "@/models/chat";
+import { useExperimentsStore } from "@/store/experiments";
 import vuetify from "@/plugins/vuetify";
-import {Router, useRouter} from "vue-router";
-import {useAppStore} from "@/store/app";
-import {User} from "@/models/user";
-import {useUserStore} from "@/store/user";
-import {useCollectionsStore} from "@/store/collections";
-import {Collection} from "@/models/collection";
-import {Message as MessageType, Message} from "@/models/message";
-import {useFriendsStore} from "@/store/friends";
-import {Paginate} from "@/types/paginate";
+import { Router, useRouter } from "vue-router";
+import { useAppStore } from "@/store/app";
+import { User } from "@/models/user";
+import { useUserStore } from "@/store/user";
+import { useCollectionsStore } from "@/store/collections";
+import { Collection } from "@/models/collection";
+import { Message as MessageType, Message } from "@/models/message";
+import { useFriendsStore } from "@/store/friends";
+import { Paginate } from "@/types/paginate";
 import dayjs from "../plugins/dayjs";
-import {useToast} from "vue-toastification";
+import { useToast } from "vue-toastification";
 
 export interface ChatState {
   search: {
@@ -173,7 +173,7 @@ export const useChatStore = defineStore("chat", {
     async doJump(message: number) {
       const element = document.getElementById(
         "message-" +
-        this.selectedChat?.messages?.findIndex((m) => m.id === message)
+          this.selectedChat?.messages?.findIndex((m) => m.id === message)
       );
       if (!element) return false;
       element.scrollIntoView({
@@ -206,7 +206,7 @@ export const useChatStore = defineStore("chat", {
     },
     async doSearch() {
       this.search.loading = true;
-      const {data} = await axios.get(`/chats/${this.selectedChatId}/search`, {
+      const { data } = await axios.get(`/chats/${this.selectedChatId}/search`, {
         params: {
           query: this.search.query,
           page: this.search.results.pager.currentPage
@@ -235,7 +235,7 @@ export const useChatStore = defineStore("chat", {
       localStorage.setItem("draftStore", JSON.stringify(this.drafts));
     },
     async saveSettings() {
-      const {data} = await axios.patch(
+      const { data } = await axios.patch(
         `/chats/${this.dialogs.groupSettings.item?.association?.id}`,
         {
           name: this.dialogs.groupSettings.item?.name
@@ -323,7 +323,7 @@ export const useChatStore = defineStore("chat", {
       } as User;
     },
     async createChat(users: number[]) {
-      const {data} = await axios.post("/chats", {users});
+      const { data } = await axios.post("/chats", { users });
       return data;
     },
     async readChat(chatId?: number) {
@@ -345,7 +345,7 @@ export const useChatStore = defineStore("chat", {
         (chat: Chat) => chat.association.id === id
       ) as Chat;
       appStore.title = this.chatName;
-      const {data} = await axios.get(`/chats/${id}/messages`);
+      const { data } = await axios.get(`/chats/${id}/messages`);
       if (id !== this.selectedChatId) return;
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === id
@@ -374,7 +374,7 @@ export const useChatStore = defineStore("chat", {
       up: boolean = true
     ) {
       this.loadingNew = true;
-      const {data} = await axios.get(
+      const { data } = await axios.get(
         `/chats/${this.selectedChatId}/messages`,
         {
           params: {
@@ -422,7 +422,7 @@ export const useChatStore = defineStore("chat", {
       } catch {
         //
       }
-      const {data} = await axios.get("/chats", {
+      const { data } = await axios.get("/chats", {
         headers: {
           noToast: true
         }
@@ -489,15 +489,15 @@ export const useChatStore = defineStore("chat", {
       return 10;
     },
     currentOffset(state: ChatState) {
-      if (!state.selectedChat?.messages?.length) return {up: 0, down: 0};
+      if (!state.selectedChat?.messages?.length) return { up: 0, down: 0 };
       const down = state.selectedChat?.messages[0]?.id
         ? state.selectedChat?.messages[0]?.id
         : 0;
       const up = state.selectedChat?.messages[
-      state.selectedChat?.messages.length - 1
-        ]?.id
+        state.selectedChat?.messages.length - 1
+      ]?.id
         ? state.selectedChat?.messages[state.selectedChat?.messages.length - 1]
-          ?.id
+            ?.id
         : 0;
       return {
         up,

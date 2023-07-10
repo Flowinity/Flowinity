@@ -57,13 +57,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import Chart from "@/components/Core/Chart.vue";
 
 export default defineComponent({
   name: "CoreStatistics",
-  components: {Chart, GraphWidget},
+  components: { Chart, GraphWidget },
   props: ["user", "username", "gold", "primary"],
   computed: {
     primaryColorResult() {

@@ -63,13 +63,13 @@
 
 <script lang="ts">
 import "cropperjs/dist/cropper.css";
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
 
 export default defineComponent({
   name: "UserBanner",
-  components: {PlaceholderCheckerboard, UploadCropper},
+  components: { PlaceholderCheckerboard, UploadCropper },
   props: ["user", "height", "collection", "gold", "darken"],
   emits: ["refreshUser"],
   data() {

@@ -39,13 +39,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
 import ColubrinaMemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
 
 export default defineComponent({
   name: "WorkspacesSidebar",
-  components: {ColubrinaMemberSidebarList, WorkspacesSidebarList},
+  components: { ColubrinaMemberSidebarList, WorkspacesSidebarList },
   methods: {
     async restoreVersion() {
       await this.axios.patch(

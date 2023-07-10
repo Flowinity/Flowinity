@@ -28,8 +28,8 @@
           <small>
             Your feedback will be used to make
             {{ $app.site.name }} better.
-            <br/>
-            <br/>
+            <br />
+            <br />
             <template v-if="!$app.site.officialInstance">
               This is a third-party instance of TPU. Feedback will be submitted
               to the instance administrators, and to the official TPU instance,
@@ -57,12 +57,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "Feedback",
-  components: {CoreDialog},
+  components: { CoreDialog },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {

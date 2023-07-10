@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import {Bar, Line} from "vue-chartjs";
+import { Bar, Line } from "vue-chartjs";
 import apexchart from "vue3-apexcharts";
 import chartJS, {
   BarElement,
@@ -42,7 +42,7 @@ import chartJS, {
   Title,
   Tooltip
 } from "chart.js";
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 ChartJS.register(
   Title,
@@ -68,7 +68,7 @@ export default defineComponent({
     "horizontal",
     "apex"
   ],
-  components: {Line, Bar, apexchart},
+  components: { Line, Bar, apexchart },
   computed: {
     chartJSData() {
       return {
@@ -184,11 +184,11 @@ export default defineComponent({
     seriesRes() {
       return !this.series
         ? [
-          {
-            name: this.name || "TPUvNEXT-Default",
-            data: this.data.data
-          }
-        ]
+            {
+              name: this.name || "TPUvNEXT-Default",
+              data: this.data.data
+            }
+          ]
         : this.series;
     }
   },

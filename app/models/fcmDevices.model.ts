@@ -1,30 +1,37 @@
-import {AllowNull, BelongsTo, Column, DataType, Model, Table} from "sequelize-typescript"
+import {
+  AllowNull,
+  BelongsTo,
+  Column,
+  DataType,
+  Model,
+  Table
+} from "sequelize-typescript"
 
 // Import Models
-import {User} from "@app/models/user.model"
+import { User } from "@app/models/user.model"
 
 @Table
 export class FCMDevice extends Model {
-    @Column({
-        type: DataType.UUID,
-        defaultValue: DataType.UUIDV4,
-        primaryKey: true
-    })
-    id: string
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+    primaryKey: true
+  })
+  id: string
 
-    @Column
-    userId: number
+  @Column
+  userId: number
 
-    @Column
-    registrationKey: string
+  @Column
+  registrationKey: string
 
-    @Column
-    invalid: boolean
+  @Column
+  invalid: boolean
 
-    @AllowNull
-    @Column
-    notificationKey?: string
+  @AllowNull
+  @Column
+  notificationKey?: string
 
-    @BelongsTo(() => User, "userId")
-    user: User
+  @BelongsTo(() => User, "userId")
+  user: User
 }

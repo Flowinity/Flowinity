@@ -144,12 +144,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "Badges",
-  components: {CoreDialog},
+  components: { CoreDialog },
   data() {
     return {
       dialog: {
@@ -161,15 +161,15 @@ export default defineComponent({
       selectedBadge: undefined as number | undefined,
       selectedUser: [] as number[],
       headers: [
-        {title: "ID", key: "id"},
-        {title: "Name", key: "name"},
-        {title: "Tooltip", key: "tooltip"},
-        {title: "Color", key: "color"},
-        {title: "Description", key: "description"},
-        {title: "Icon", key: "icon"},
-        {title: "Image", key: "image"},
-        {title: "Unlocked", key: "unlocked"},
-        {title: "Plan ID", key: "planId"},
+        { title: "ID", key: "id" },
+        { title: "Name", key: "name" },
+        { title: "Tooltip", key: "tooltip" },
+        { title: "Color", key: "color" },
+        { title: "Description", key: "description" },
+        { title: "Icon", key: "icon" },
+        { title: "Image", key: "image" },
+        { title: "Unlocked", key: "unlocked" },
+        { title: "Plan ID", key: "planId" },
         {
           title: "Users count",
           key: "users.length"
@@ -212,11 +212,11 @@ export default defineComponent({
       this.$toast.success("yes");
     },
     async getBadges() {
-      const {data} = await this.axios.get("/admin/badges");
+      const { data } = await this.axios.get("/admin/badges");
       this.badges = data;
     },
     async getUsers() {
-      const {data} = await this.axios.get("/admin/users");
+      const { data } = await this.axios.get("/admin/users");
       this.users = data;
     },
     async addBadges() {

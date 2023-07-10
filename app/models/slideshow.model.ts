@@ -1,34 +1,34 @@
-import {Column, DataType, Default, Model, Table} from "sequelize-typescript"
+import { Column, DataType, Default, Model, Table } from "sequelize-typescript"
 
 @Table
 export class Slideshow extends Model {
-    @Column
-    name: string
+  @Column
+  name: string
 
-    @Column
-    shareLink: string
+  @Column
+  shareLink: string
 
-    @Column
-    userId: number
+  @Column
+  userId: number
 
-    @Default([])
-    @Column({
-        type: DataType.JSON
-    })
-    collectionIds: number[]
+  @Default([])
+  @Column({
+    type: DataType.JSON
+  })
+  collectionIds: number[]
 
-    @Column
-    includeGallery: boolean
+  @Column
+  includeGallery: boolean
 
-    @Default(5)
-    @Column({
-        type: DataType.FLOAT
-    })
-    speed: number
+  @Default(5)
+  @Column({
+    type: DataType.FLOAT
+  })
+  speed: number
 
-    @Column
-    scaling: string
+  @Column
+  scaling: string
 
-    @Column
-    showCaptions: boolean
+  @Column
+  showCaptions: boolean
 }

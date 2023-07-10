@@ -44,7 +44,7 @@
         >
           <template v-slot:prepend>
             <v-avatar size="36" tile>
-              <v-img :src="track.image[1]['#text']"/>
+              <v-img :src="track.image[1]['#text']" />
             </v-avatar>
           </template>
           <v-list-item-title>
@@ -66,18 +66,18 @@
       </v-list>
     </template>
     <template v-else>
-      <MessageSkeleton/>
+      <MessageSkeleton />
     </template>
   </v-card>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 
 export default defineComponent({
   name: "LastFM",
-  components: {MessageSkeleton},
+  components: { MessageSkeleton },
   props: ["user", "component"],
   data() {
     return {
@@ -115,7 +115,7 @@ export default defineComponent({
   methods: {
     async getLastFM() {
       this.loading = true;
-      const {data} = await this.axios.get(
+      const { data } = await this.axios.get(
         `/providers/userv3/lastfm/${this.user?.username}`,
         {
           headers: {

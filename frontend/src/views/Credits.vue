@@ -84,12 +84,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import UserCard from "@/components/Users/UserCard.vue";
 
 export default defineComponent({
   name: "Credits",
-  components: {UserCard},
+  components: { UserCard },
   data() {
     return {
       frontend: [

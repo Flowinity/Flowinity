@@ -3,7 +3,7 @@
  *
  * Bootstraps Vuetify and other plugins then mounts the App`
  */
-import Toast, {useToast} from "vue-toastification";
+import Toast, { useToast } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import "floating-vue/dist/style.css";
 //@ts-ignore
@@ -16,10 +16,10 @@ import router from "@/router";
 import App from "./App.vue";
 
 // Import Composables
-import {createApp} from "vue";
+import { createApp } from "vue";
 
 // Import Plugins
-import {registerPlugins} from "@/plugins";
+import { registerPlugins } from "@/plugins";
 import i18n from "@/plugins/i18n";
 
 // Import Styles
@@ -88,7 +88,7 @@ app.use(VueMatomo, {
 
 if (process.env.NODE_ENV === "development") {
   const loggingMixin: {
-    beforeMount: () => void
+    beforeMount: () => void;
   } = {
     beforeMount(): void {
       if (
@@ -96,7 +96,8 @@ if (process.env.NODE_ENV === "development") {
         this.$options?.name?.startsWith("V") ||
         //@ts-ignore
         this.$options?.name === "BaseTransition"
-      ) return;
+      )
+        return;
 
       // Find where the component is defined.
       //@ts-ignore

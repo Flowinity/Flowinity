@@ -51,14 +51,14 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "ColubrinaUserMenu",
-  components: {UserAvatar, UserBadges, UserBanner},
+  components: { UserAvatar, UserBadges, UserBanner },
   computed: {
     user() {
       if (this.$chat.dialogs.userMenu.user?.id === this.$user.user?.id)

@@ -1,7 +1,7 @@
 import dayjs from "dayjs"
 import db from "@app/db"
 import redis from "@app/redis"
-import {authMock} from "@app/lib/auth-mock"
+import { authMock } from "@app/lib/auth-mock"
 import isoWeek from "dayjs/plugin/isoWeek"
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
 import io from "../lib/socket-mock"

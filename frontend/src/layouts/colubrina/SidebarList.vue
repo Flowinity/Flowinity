@@ -1,5 +1,5 @@
 <template>
-  <Leave v-model="leave.dialog" :chat="leave.chat"/>
+  <Leave v-model="leave.dialog" :chat="leave.chat" />
   <v-menu
     v-model="contextMenu.dialog"
     :style="menuStyle"
@@ -214,8 +214,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {Chat} from "@/models/chat";
+import { defineComponent } from "vue";
+import { Chat } from "@/models/chat";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import Leave from "@/components/Communications/Dialogs/Leave.vue";

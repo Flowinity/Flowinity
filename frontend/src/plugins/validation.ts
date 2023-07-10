@@ -4,8 +4,10 @@ export default {
       (value: string): string | boolean => {
         if (!value) return "Username is required";
         if (value.length < 2) return "Username must be at least 2 characters";
-        if (value.length > 16) return "Username must be less than 16 characters";
-        if (!/^[a-zA-Z0-9_]+$/.test(value)) return "Username can only contain letters, numbers, and underscores";
+        if (value.length > 16)
+          return "Username must be less than 16 characters";
+        if (!/^[a-zA-Z0-9_]+$/.test(value))
+          return "Username can only contain letters, numbers, and underscores";
 
         return true;
       }
@@ -13,7 +15,8 @@ export default {
     email: [
       (value: string): string | boolean => {
         if (!value) return "Email is required";
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Email is invalid";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+          return "Email is invalid";
 
         return true;
       }

@@ -1,513 +1,523 @@
-import {Body, Delete, Get, JsonController, Param, Patch, Post, QueryParam, Res, UploadedFile} from "routing-controllers"
-import {Response} from "express"
-import {Service} from "typedi"
+import {
+  Body,
+  Delete,
+  Get,
+  JsonController,
+  Param,
+  Patch,
+  Post,
+  QueryParam,
+  Res,
+  UploadedFile
+} from "routing-controllers"
+import { Response } from "express"
+import { Service } from "typedi"
 import JSZip from "jszip"
 import fs from "fs"
 
 // Import Libs
-import {Auth} from "@app/lib/auth"
+import { Auth } from "@app/lib/auth"
 import Errors from "@app/lib/errors"
 import uploader from "@app/lib/upload"
 
 // Import Services
-import {GalleryService} from "@app/services/gallery.service"
-import {CacheService} from "@app/services/cache.service"
-import {SortOptions} from "@app/types/sort"
-import {CollectionService} from "@app/services/collection.service"
-import {CollectionCache} from "@app/types/collection"
+import { GalleryService } from "@app/services/gallery.service"
+import { CacheService } from "@app/services/cache.service"
+import { SortOptions } from "@app/types/sort"
+import { CollectionService } from "@app/services/collection.service"
+import { CollectionCache } from "@app/types/collection"
 
 // Import Models
-import {User} from "@app/models/user.model"
-import {Collection} from "@app/models/collection.model"
-import {CollectionUser} from "@app/models/collectionUser.model"
-import {CollectionItem} from "@app/models/collectionItem.model"
-import {Upload} from "@app/models/upload.model"
+import { User } from "@app/models/user.model"
+import { Collection } from "@app/models/collection.model"
+import { CollectionUser } from "@app/models/collectionUser.model"
+import { CollectionItem } from "@app/models/collectionItem.model"
+import { Upload } from "@app/models/upload.model"
 
 @Service()
 @JsonController("/collections")
 export class CollectionControllerV3 {
-    constructor(
-        private readonly collectionService: CollectionService,
-        private readonly cacheService: CacheService,
-        private readonly galleryService: GalleryService
-    ) {
+  constructor(
+    private readonly collectionService: CollectionService,
+    private readonly cacheService: CacheService,
+    private readonly galleryService: GalleryService
+  ) {}
+
+  @Post("")
+  async createCollection(
+    @Auth("collections.create") user: User,
+    @Body()
+    body: {
+      name: string
+    }
+  ): Promise<Collection> {
+    const collection: Collection =
+      await this.collectionService.createCollection(user.id, body.name)
+
+    await this.cacheService.resetCollectionCache(collection.id)
+
+    return collection
+  }
+
+  @Get("")
+  async getCollections(
+    @Auth("collections.view") user: User,
+    @QueryParam("type")
+    type: "owned" | "shared" | "write" | "configure" | "all" = "all",
+    @QueryParam("search") search: string = ""
+  ): Promise<CollectionCache[]> {
+    return await this.collectionService.getCollectionsFilter(
+      user.id,
+      type,
+      search
+    )
+  }
+
+  @Get("/:id")
+  async getCollection(
+    @Auth("collections.view", false) user: User | null,
+    @Param("id") id: string
+  ) {
+    if (!user) {
+      const collection = await redis.json.get(`shareLinks:${id}`)
+
+      if (collection) return collection
+      else throw Errors.COLLECTION_NOT_FOUND
     }
 
-    @Post("")
-    async createCollection(
-        @Auth("collections.create") user: User,
-        @Body()
-            body: {
-            name: string
-        }
-    ): Promise<Collection> {
-        const collection: Collection =
-            await this.collectionService.createCollection(user.id, body.name)
+    let collections = await this.cacheService.getCachedCollections(user.id)
+    let collection = collections.find(
+      (collection: CollectionCache) =>
+        collection.id === parseInt(id) || collection.shareLink === id
+    )
 
-        await this.cacheService.resetCollectionCache(collection.id)
+    if (!collection) throw Errors.COLLECTION_NOT_FOUND
 
-        return collection
-    }
+    return collection
+  }
 
-    @Get("")
-    async getCollections(
-        @Auth("collections.view") user: User,
-        @QueryParam("type")
-            type: "owned" | "shared" | "write" | "configure" | "all" = "all",
-        @QueryParam("search") search: string = ""
-    ): Promise<CollectionCache[]> {
-        return await this.collectionService.getCollectionsFilter(
-            user.id,
-            type,
-            search
-        )
-    }
-
-    @Get("/:id")
-    async getCollection(
-        @Auth("collections.view", false) user: User | null,
-        @Param("id") id: string
-    ) {
-        if (!user) {
-            const collection = await redis.json.get(`shareLinks:${id}`)
-
-            if (collection) return collection
-            else throw Errors.COLLECTION_NOT_FOUND
-        }
-
-        let collections = await this.cacheService.getCachedCollections(user.id)
-        let collection = collections.find(
-            (collection: CollectionCache) =>
-                collection.id === parseInt(id) || collection.shareLink === id
-        )
-
-        if (!collection) throw Errors.COLLECTION_NOT_FOUND
-
-        return collection
-    }
-
-    @Get("/:id/gallery")
-    async getCollectionGallery(
-        @Auth("uploads.view", false) user: User | null,
-        @QueryParam("page") page: number = 1,
-        @QueryParam("sort") sort: SortOptions = "newest",
-        @QueryParam("search") search: string = "",
-        @QueryParam("array") array: boolean = false,
-        @QueryParam("textMetadata") textMetadata: boolean = false,
-        @QueryParam("filter") filter: string = "",
-        @Param("id") id: string
-    ): Promise<
-        | any[]
-        | {
+  @Get("/:id/gallery")
+  async getCollectionGallery(
+    @Auth("uploads.view", false) user: User | null,
+    @QueryParam("page") page: number = 1,
+    @QueryParam("sort") sort: SortOptions = "newest",
+    @QueryParam("search") search: string = "",
+    @QueryParam("array") array: boolean = false,
+    @QueryParam("textMetadata") textMetadata: boolean = false,
+    @QueryParam("filter") filter: string = "",
+    @Param("id") id: string
+  ): Promise<
+    | any[]
+    | {
         gallery: any[]
         pager: {
-            totalItems: number
-            currentPage: number
-            pageSize: number
-            totalPages: number
-            startPage: number
-            endPage: number
-            startIndex: number
-            endIndex: number
-            pages: number[]
+          totalItems: number
+          currentPage: number
+          pageSize: number
+          totalPages: number
+          startPage: number
+          endPage: number
+          startIndex: number
+          endIndex: number
+          pages: number[]
         }
-    }
-    > {
-        const collection = await this.getCollection(user, id)
+      }
+  > {
+    const collection = await this.getCollection(user, id)
 
-        if (!collection) throw Errors.COLLECTION_NOT_FOUND
+    if (!collection) throw Errors.COLLECTION_NOT_FOUND
 
-        return await this.galleryService.getGallery(
-            collection.id,
-            page,
-            search,
-            filter,
-            textMetadata,
-            "collection",
-            user?.itemsPerPage,
-            sort,
-            array,
-            user?.id,
-            user?.excludedCollections
-        )
-    }
+    return await this.galleryService.getGallery(
+      collection.id,
+      page,
+      search,
+      filter,
+      textMetadata,
+      "collection",
+      user?.itemsPerPage,
+      sort,
+      array,
+      user?.id,
+      user?.excludedCollections
+    )
+  }
 
-    @Post("/attachment")
-    async addAttachmentToCollection(
-        @Auth("collections.modify") user: User,
-        @Body()
-            body: { collectionId: number; attachmentId?: number; items?: number[] }
-    ): Promise<CollectionItem | CollectionItem[]> {
-        const collection = await this.collectionService.getCollectionPermissions(
-            body.collectionId,
-            user.id,
-            "write"
-        )
+  @Post("/attachment")
+  async addAttachmentToCollection(
+    @Auth("collections.modify") user: User,
+    @Body()
+    body: { collectionId: number; attachmentId?: number; items?: number[] }
+  ): Promise<CollectionItem | CollectionItem[]> {
+    const collection = await this.collectionService.getCollectionPermissions(
+      body.collectionId,
+      user.id,
+      "write"
+    )
 
-        if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-        const attachments = await Upload.findAll({
-            where: {
-                id: body.attachmentId || body.items,
-                userId: user.id
-            }
-        })
-        if (attachments.length === 0) throw Errors.ATTACHMENT_NOT_FOUND
-        if (attachments.length !== (body.attachmentId ? 1 : body.items?.length))
-            throw Errors.ATTACHMENT_NOT_FOUND
-        return await this.collectionService.addToCollection(
-            body.collectionId,
-            attachments.map((attachment) => attachment.id),
-            user.id
-        )
-    }
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+    const attachments = await Upload.findAll({
+      where: {
+        id: body.attachmentId || body.items,
+        userId: user.id
+      }
+    })
+    if (attachments.length === 0) throw Errors.ATTACHMENT_NOT_FOUND
+    if (attachments.length !== (body.attachmentId ? 1 : body.items?.length))
+      throw Errors.ATTACHMENT_NOT_FOUND
+    return await this.collectionService.addToCollection(
+      body.collectionId,
+      attachments.map((attachment) => attachment.id),
+      user.id
+    )
+  }
 
-    @Delete("/:collectionId/remove/:attachmentId")
-    async removeAttachmentFromCollection(
-        @Auth("collections.modify") user: User,
-        @Param("collectionId") collectionId: number,
-        @Param("attachmentId") attachmentId: number
-    ) {
-        const collection = await this.collectionService.getCollectionPermissions(
-            collectionId,
-            user.id,
-            "configure"
-        )
+  @Delete("/:collectionId/remove/:attachmentId")
+  async removeAttachmentFromCollection(
+    @Auth("collections.modify") user: User,
+    @Param("collectionId") collectionId: number,
+    @Param("attachmentId") attachmentId: number
+  ) {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
 
-        if (!collection) {
-            const collectionItem: CollectionItem | null =
-                await CollectionItem.findOne({
-                    where: {
-                        collectionId: collectionId,
-                        attachmentId: attachmentId,
-                        userId: user.id
-                    }
-                })
-
-            if (!collectionItem) throw Errors.COLLECTION_NO_PERMISSION
-        }
-
-        await this.collectionService.removeFromCollection(
-            collectionId,
-            attachmentId,
-            user.id
-        )
-    }
-
-    @Post("/:collectionId/user")
-    async addUserToCollection(
-        @Auth("collections.modify") user: User,
-        @Param("collectionId") collectionId: number,
-        @Body()
-            body: {
-            username: string
-            write: boolean
-            configure: boolean
-            read: boolean
-        }
-    ): Promise<{ user: { id: number; username: string } }> {
-        const collection = await this.collectionService.getCollectionPermissions(
-            collectionId,
-            user.id,
-            "configure"
-        )
-        if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-
-        const collectionUser = await this.collectionService.addUserToCollection(
-            collectionId,
-            user.id,
-            body.username,
-            body.write,
-            body.configure,
-            body.read
-        )
-
-        await this.cacheService.resetCollectionCache(collectionId)
-
-        return {
-            ...collectionUser,
-            user: {
-                id: collectionUser.user.id,
-                username: collectionUser.user.username
-            }
-        }
-    }
-
-    @Patch("/:collectionId/user")
-    async updateUserPermissions(
-        @Auth("collections.modify") user: User,
-        @Param("collectionId") collectionId: number,
-        @Body()
-            body: {
-            id: number
-            write: boolean
-            configure: boolean
-            read: boolean
-        }
-    ) {
-        const collection = await this.collectionService.getCollectionPermissions(
-            collectionId,
-            user.id,
-            "configure"
-        )
-        if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-
-        await this.collectionService.updateUser(
-            collectionId,
-            body.id,
-            body.write,
-            body.configure,
-            body.read
-        )
-
-        await this.cacheService.resetCollectionCache(collectionId)
-    }
-
-    @Delete("/:collectionId/user/:userId")
-    async removeUserFromCollection(
-        @Auth("collections.modify") user: User,
-        @Param("collectionId") collectionId: number,
-        @Param("userId") userId: number
-    ) {
-        const collection = await this.collectionService.getCollectionPermissions(
-            collectionId,
-            user.id,
-            "configure"
-        )
-        if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-        await this.collectionService.removeUserFromCollection(collectionId, userId)
-        await this.cacheService.resetCollectionCache(collectionId)
-    }
-
-    @Patch("/share")
-    async updateShareLink(
-        @Auth("collections.modify") user: User,
-        @Body()
-            body: {
-            id: number
-            type: "link" | "nobody"
-        }
-    ): Promise<{ shareLink: string } | { shareLink: null }> {
-        const collection = await this.collectionService.getCollectionPermissions(
-            body.id,
-            user.id,
-            "configure"
-        )
-
-        if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-        if (collection.shareLink)
-            await redis.json.del("shareLinks:" + collection.shareLink)
-
-        const result: { shareLink: string } | { shareLink: null } =
-            await this.collectionService.updateShareLink(body.id, body.type)
-
-        await this.cacheService.resetCollectionCache(body.id)
-
-        if (result.shareLink)
-            await this.cacheService.patchShareLinkCache(result.shareLink, body.id)
-
-        return result
-    }
-
-    @Patch("/:collectionId/pin/:attachmentId")
-    async pinAttachment(
-        @Auth("collections.modify") user: User,
-        @Param("collectionId") collectionId: number,
-        @Param("attachmentId") attachmentId: number
-    ) {
-        const collection = await this.collectionService.getCollectionPermissions(
-            collectionId,
-            user.id,
-            "configure"
-        )
-
-        if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-
-        await this.collectionService.updatePin(attachmentId, collectionId)
-    }
-
-    @Get("/:collectionId/random")
-    async getRandomAttachment(
-        @Auth("collections.view", false) user: User | null,
-        @Param("collectionId") collectionId: string
-    ): Promise<Upload> {
-        const collection = await this.collectionService.getCollectionOrShare(
-            collectionId,
-            user?.id
-        )
-
-        if (!collection) throw Errors.COLLECTION_NOT_FOUND
-
-        return await this.galleryService.getRandomAttachment(
-            collection.id,
-            "collection"
-        )
-    }
-
-    @Patch("/:collectionId")
-    async updateCollection(
-        @Auth("collections.modify") user: User,
-        @Param("collectionId") collectionId: number,
-        @Body()
-            body: {
-            name: string
-        }
-    ): Promise<{ name: string }> {
-        const collection = await this.collectionService.getCollectionPermissions(
-            collectionId,
-            user.id,
-            "configure"
-        )
-
-        if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-
-        const data = await this.collectionService.updateCollection(
-            collectionId,
-            body.name
-        )
-        await this.cacheService.resetCollectionCache(collectionId)
-        return data
-    }
-
-    @Post("/:collectionId/banner")
-    async updateBanner(
-        @Auth("collections.modify") user: User,
-        @Param("collectionId") collectionId: number,
-        @UploadedFile("banner", {
-            options: uploader
-        })
-            banner: Express.Multer.File
-    ): Promise<{ upload: Upload; url: string }> {
-        const collection = await this.collectionService.getCollectionPermissions(
-            collectionId,
-            user.id,
-            "configure"
-        )
-
-        if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-
-        const ban: { upload: Upload; url: string } =
-            await this.galleryService.createUpload(user.id, banner, false, false)
-
-        await this.collectionService.updateBanner(
-            collectionId,
-            ban.upload.attachment
-        )
-        await this.cacheService.resetCollectionCache(collectionId)
-
-        return ban
-    }
-
-    @Delete("/:collectionId/banner")
-    async deleteBanner(
-        @Auth("collections.modify") user: User,
-        @Param("collectionId") collectionId: number
-    ) {
-        const collection = await this.collectionService.getCollectionPermissions(
-            collectionId,
-            user.id,
-            "configure"
-        )
-
-        if (!collection) throw Errors.COLLECTION_NO_PERMISSION
-
-        await this.collectionService.updateBanner(collectionId, null)
-        await this.cacheService.resetCollectionCache(collectionId)
-    }
-
-    @Delete("/:collectionId")
-    async deleteCollection(
-        @Auth("*") user: User,
-        @Param("collectionId") collectionId: number
-    ) {
-        const permission = await this.collectionService.getCollectionPermissions(
-            collectionId,
-            user.id,
-            "owner"
-        )
-
-        if (!permission) throw Errors.COLLECTION_NO_PERMISSION
-
-        const collection: Collection = await this.collectionService.getCollection(
-            collectionId
-        )
-
-        await Collection.destroy({
-            where: {
-                id: collectionId,
-                userId: user.id
-            }
-        })
-        await CollectionItem.destroy({
-            where: {
-                collectionId
-            }
-        })
-        await CollectionUser.destroy({
-            where: {
-                collectionId
-            }
+    if (!collection) {
+      const collectionItem: CollectionItem | null =
+        await CollectionItem.findOne({
+          where: {
+            collectionId: collectionId,
+            attachmentId: attachmentId,
+            userId: user.id
+          }
         })
 
-        for (const u of [...collection.users, user]) {
-            if ("username" in u) {
-                await this.cacheService.generateCollectionCache(u.id)
-            } else if ("recipientId" in u) {
-                await this.cacheService.generateCollectionCache(u.recipientId)
-            }
-        }
+      if (!collectionItem) throw Errors.COLLECTION_NO_PERMISSION
     }
 
-    @Get("/:collectionId/download")
-    async downloadCollection(
-        @Auth("collections.view") user: User,
-        @Param("collectionId") collectionId: number,
-        @Res() res: Response
-    ) {
-        const collection = await this.collectionService.getCollectionPermissions(
-            collectionId,
-            user.id,
-            "configure"
+    await this.collectionService.removeFromCollection(
+      collectionId,
+      attachmentId,
+      user.id
+    )
+  }
+
+  @Post("/:collectionId/user")
+  async addUserToCollection(
+    @Auth("collections.modify") user: User,
+    @Param("collectionId") collectionId: number,
+    @Body()
+    body: {
+      username: string
+      write: boolean
+      configure: boolean
+      read: boolean
+    }
+  ): Promise<{ user: { id: number; username: string } }> {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    const collectionUser = await this.collectionService.addUserToCollection(
+      collectionId,
+      user.id,
+      body.username,
+      body.write,
+      body.configure,
+      body.read
+    )
+
+    await this.cacheService.resetCollectionCache(collectionId)
+
+    return {
+      ...collectionUser,
+      user: {
+        id: collectionUser.user.id,
+        username: collectionUser.user.username
+      }
+    }
+  }
+
+  @Patch("/:collectionId/user")
+  async updateUserPermissions(
+    @Auth("collections.modify") user: User,
+    @Param("collectionId") collectionId: number,
+    @Body()
+    body: {
+      id: number
+      write: boolean
+      configure: boolean
+      read: boolean
+    }
+  ) {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    await this.collectionService.updateUser(
+      collectionId,
+      body.id,
+      body.write,
+      body.configure,
+      body.read
+    )
+
+    await this.cacheService.resetCollectionCache(collectionId)
+  }
+
+  @Delete("/:collectionId/user/:userId")
+  async removeUserFromCollection(
+    @Auth("collections.modify") user: User,
+    @Param("collectionId") collectionId: number,
+    @Param("userId") userId: number
+  ) {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+    await this.collectionService.removeUserFromCollection(collectionId, userId)
+    await this.cacheService.resetCollectionCache(collectionId)
+  }
+
+  @Patch("/share")
+  async updateShareLink(
+    @Auth("collections.modify") user: User,
+    @Body()
+    body: {
+      id: number
+      type: "link" | "nobody"
+    }
+  ): Promise<{ shareLink: string } | { shareLink: null }> {
+    const collection = await this.collectionService.getCollectionPermissions(
+      body.id,
+      user.id,
+      "configure"
+    )
+
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+    if (collection.shareLink)
+      await redis.json.del("shareLinks:" + collection.shareLink)
+
+    const result: { shareLink: string } | { shareLink: null } =
+      await this.collectionService.updateShareLink(body.id, body.type)
+
+    await this.cacheService.resetCollectionCache(body.id)
+
+    if (result.shareLink)
+      await this.cacheService.patchShareLinkCache(result.shareLink, body.id)
+
+    return result
+  }
+
+  @Patch("/:collectionId/pin/:attachmentId")
+  async pinAttachment(
+    @Auth("collections.modify") user: User,
+    @Param("collectionId") collectionId: number,
+    @Param("attachmentId") attachmentId: number
+  ) {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
+
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    await this.collectionService.updatePin(attachmentId, collectionId)
+  }
+
+  @Get("/:collectionId/random")
+  async getRandomAttachment(
+    @Auth("collections.view", false) user: User | null,
+    @Param("collectionId") collectionId: string
+  ): Promise<Upload> {
+    const collection = await this.collectionService.getCollectionOrShare(
+      collectionId,
+      user?.id
+    )
+
+    if (!collection) throw Errors.COLLECTION_NOT_FOUND
+
+    return await this.galleryService.getRandomAttachment(
+      collection.id,
+      "collection"
+    )
+  }
+
+  @Patch("/:collectionId")
+  async updateCollection(
+    @Auth("collections.modify") user: User,
+    @Param("collectionId") collectionId: number,
+    @Body()
+    body: {
+      name: string
+    }
+  ): Promise<{ name: string }> {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
+
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    const data = await this.collectionService.updateCollection(
+      collectionId,
+      body.name
+    )
+    await this.cacheService.resetCollectionCache(collectionId)
+    return data
+  }
+
+  @Post("/:collectionId/banner")
+  async updateBanner(
+    @Auth("collections.modify") user: User,
+    @Param("collectionId") collectionId: number,
+    @UploadedFile("banner", {
+      options: uploader
+    })
+    banner: Express.Multer.File
+  ): Promise<{ upload: Upload; url: string }> {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
+
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    const ban: { upload: Upload; url: string } =
+      await this.galleryService.createUpload(user.id, banner, false, false)
+
+    await this.collectionService.updateBanner(
+      collectionId,
+      ban.upload.attachment
+    )
+    await this.cacheService.resetCollectionCache(collectionId)
+
+    return ban
+  }
+
+  @Delete("/:collectionId/banner")
+  async deleteBanner(
+    @Auth("collections.modify") user: User,
+    @Param("collectionId") collectionId: number
+  ) {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
+
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    await this.collectionService.updateBanner(collectionId, null)
+    await this.cacheService.resetCollectionCache(collectionId)
+  }
+
+  @Delete("/:collectionId")
+  async deleteCollection(
+    @Auth("*") user: User,
+    @Param("collectionId") collectionId: number
+  ) {
+    const permission = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "owner"
+    )
+
+    if (!permission) throw Errors.COLLECTION_NO_PERMISSION
+
+    const collection: Collection = await this.collectionService.getCollection(
+      collectionId
+    )
+
+    await Collection.destroy({
+      where: {
+        id: collectionId,
+        userId: user.id
+      }
+    })
+    await CollectionItem.destroy({
+      where: {
+        collectionId
+      }
+    })
+    await CollectionUser.destroy({
+      where: {
+        collectionId
+      }
+    })
+
+    for (const u of [...collection.users, user]) {
+      if ("username" in u) {
+        await this.cacheService.generateCollectionCache(u.id)
+      } else if ("recipientId" in u) {
+        await this.cacheService.generateCollectionCache(u.recipientId)
+      }
+    }
+  }
+
+  @Get("/:collectionId/download")
+  async downloadCollection(
+    @Auth("collections.view") user: User,
+    @Param("collectionId") collectionId: number,
+    @Res() res: Response
+  ) {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
+
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    const attachments: Upload[] =
+      await this.galleryService.getAttachmentsByCollectionId(collectionId)
+
+    if (attachments.length > 0) {
+      const zip: JSZip = new JSZip()
+      const size: number = attachments.reduce(
+        (acc: number, file: Upload) => acc + file.fileSize,
+        0
+      )
+
+      if (size > 10737418240) throw Errors.COLLECTION_TOO_BIG_TO_DOWNLOAD
+
+      for (let attachment of attachments) {
+        attachment = await this.galleryService.getAttachment(
+          attachment.attachment,
+          attachment.userId
         )
 
-        if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+        const file: Buffer = fs.readFileSync(
+          `${config.storage}/${attachment.attachment}`
+        )
 
-        const attachments: Upload[] =
-            await this.galleryService.getAttachmentsByCollectionId(collectionId)
+        if (!file) throw new Error("Couldn't archive collection.")
 
-        if (attachments.length > 0) {
-            const zip: JSZip = new JSZip()
-            const size: number = attachments.reduce(
-                (acc: number, file: Upload) => acc + file.fileSize,
-                0
-            )
+        zip.file(
+          `${attachment.originalFilename.split(".")[0]}.${
+            attachment.attachment
+          }`,
+          file
+        )
+      }
 
-            if (size > 10737418240) throw Errors.COLLECTION_TOO_BIG_TO_DOWNLOAD
+      const buffer: Buffer = await zip.generateAsync({ type: "nodebuffer" })
 
-            for (let attachment of attachments) {
-                attachment = await this.galleryService.getAttachment(
-                    attachment.attachment,
-                    attachment.userId
-                )
-
-                const file: Buffer = fs.readFileSync(
-                    `${config.storage}/${attachment.attachment}`
-                )
-
-                if (!file) throw new Error("Couldn't archive collection.")
-
-                zip.file(
-                    `${attachment.originalFilename.split(".")[0]}.${
-                        attachment.attachment
-                    }`,
-                    file
-                )
-            }
-
-            const buffer: Buffer = await zip.generateAsync({type: "nodebuffer"})
-
-            return res.send(buffer)
-        } else {
-            throw Errors.COLLECTION_EMPTY_TO_DOWNLOAD
-        }
+      return res.send(buffer)
+    } else {
+      throw Errors.COLLECTION_EMPTY_TO_DOWNLOAD
     }
+  }
 }

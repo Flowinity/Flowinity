@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import VueCropper from "vue-cropperjs";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
@@ -47,7 +47,7 @@ export default defineComponent({
   name: "UploadCropper",
   props: ["modelValue", "title", "aspectRatio"],
   emits: ["update:modelValue", "finish"],
-  components: {CoreDialog, VueCropper},
+  components: { CoreDialog, VueCropper },
   data() {
     return {
       file: [] as File[],

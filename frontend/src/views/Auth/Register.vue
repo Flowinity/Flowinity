@@ -94,7 +94,7 @@
           </p>
           <v-card-text>
             TPU is currently not accepting registrations.
-            <br/>
+            <br />
             If you'd like to join, you need to be invited by a current member.
           </v-card-text>
         </v-card>
@@ -104,8 +104,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {TYPE} from "vue-toastification";
+import { defineComponent } from "vue";
+import { TYPE } from "vue-toastification";
 
 export default defineComponent({
   name: "Register",
@@ -127,7 +127,7 @@ export default defineComponent({
     async getInviteKey() {
       if (this.$route.params.key) {
         this.$app.componentLoading = true;
-        const {data} = await this.axios.get(
+        const { data } = await this.axios.get(
           `/invites/${this.$route.params.key}`
         );
         this.email = data.email;
@@ -151,7 +151,7 @@ export default defineComponent({
     async register() {
       this.loading = true;
       try {
-        const {data} = await this.axios.post("/auth/register", {
+        const { data } = await this.axios.post("/auth/register", {
           username: this.username,
           password: this.password,
           email: this.email,
@@ -160,7 +160,7 @@ export default defineComponent({
         localStorage.setItem("token", data.token);
         this.axios.defaults.headers.common["Authorization"] = data.token;
         await this.$user.init();
-        this.$socket.auth = {token: data.token};
+        this.$socket.auth = { token: data.token };
         this.$socket.disconnect();
         this.$socket.connect();
         this.$router.push("/");

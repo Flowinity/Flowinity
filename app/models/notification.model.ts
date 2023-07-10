@@ -1,23 +1,23 @@
-import {BelongsTo, Column, Default, Model, Table} from "sequelize-typescript"
+import { BelongsTo, Column, Default, Model, Table } from "sequelize-typescript"
 
 // Import Models
-import {User} from "@app/models/user.model"
+import { User } from "@app/models/user.model"
 
 @Table
 export class Notification extends Model {
-    @Column
-    message: string
+  @Column
+  message: string
 
-    @Column
-    userId: number
+  @Column
+  userId: number
 
-    @Default(false)
-    @Column
-    dismissed: boolean
+  @Default(false)
+  @Column
+  dismissed: boolean
 
-    @Column
-    route: string
+  @Column
+  route: string
 
-    @BelongsTo(() => User, "userId")
-    user: User
+  @BelongsTo(() => User, "userId")
+  user: User
 }

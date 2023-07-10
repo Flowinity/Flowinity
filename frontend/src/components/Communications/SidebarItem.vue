@@ -46,14 +46,14 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import {User} from "@/models/user";
-import {Chat} from "@/models/chat";
+import { User } from "@/models/user";
+import { Chat } from "@/models/chat";
 
 export default defineComponent({
   name: "SidebarItem",
-  components: {UserAvatar},
+  components: { UserAvatar },
   props: {
     user: {
       type: Object as () => User,

@@ -250,13 +250,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import TwoFactor from "@/components/Settings/TwoFactor.vue";
-import {useTheme} from "vuetify";
+import { useTheme } from "vuetify";
 
 export default defineComponent({
   name: "SettingsHome",
-  components: {TwoFactor},
+  components: { TwoFactor },
   emits: ["update"],
   setup() {
     const theme = useTheme();
@@ -289,19 +289,19 @@ export default defineComponent({
       },
       theme: useTheme().global.name,
       themes: [
-        {title: "Light", value: "light"},
-        {title: "Dark", value: "dark"},
-        {title: "AMOLED", value: "amoled"}
+        { title: "Light", value: "light" },
+        { title: "Dark", value: "dark" },
+        { title: "AMOLED", value: "amoled" }
       ],
       temperatureUnits: [
-        {title: "Celsius (Metric)", value: "celsius"},
-        {title: "Kelvin (Metric Standard)", value: "kelvin"},
-        {title: "Fahrenheit (Imperial)", value: "fahrenheit"}
+        { title: "Celsius (Metric)", value: "celsius" },
+        { title: "Kelvin (Metric Standard)", value: "kelvin" },
+        { title: "Fahrenheit (Imperial)", value: "fahrenheit" }
       ],
       insights: [
-        {title: "Everyone", value: "everyone"},
-        {title: "Friends", value: "friends"},
-        {title: "Nobody", value: "nobody"}
+        { title: "Everyone", value: "everyone" },
+        { title: "Friends", value: "friends" },
+        { title: "Nobody", value: "nobody" }
       ],
       confirmPassword: "",
       valid: {

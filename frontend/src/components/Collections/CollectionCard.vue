@@ -79,8 +79,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {CollectionCache} from "@/types/collection";
+import { defineComponent } from "vue";
+import { CollectionCache } from "@/types/collection";
 
 export default defineComponent({
   name: "CollectionCard",

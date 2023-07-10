@@ -29,7 +29,7 @@
         item.type === "paste"
           ? "Legacy Paste"
           : String(item.type).charAt(0).toUpperCase() +
-          String(item.type).slice(1)
+            String(item.type).slice(1)
       }}
     </v-card-subtitle>
     <v-card-subtitle>
@@ -47,7 +47,7 @@
     <v-card-subtitle>{{ $t("generic.size") }}: {{ fileSize }}</v-card-subtitle>
     <slot :item="item" name="custom-values"></slot>
     <div class="ml-4">
-      <slot :item="item" name="custom-properties"/>
+      <slot :item="item" name="custom-properties" />
       <v-chip-group class="mb-1">
         <HoverChip
           v-if="supports.permissions.write && supports.collections"
@@ -161,16 +161,16 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
-import {Upload} from "@/models/upload";
-import {Collection} from "@/models/collection";
+import { Upload } from "@/models/upload";
+import { Collection } from "@/models/collection";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 
 export default defineComponent({
   name: "GalleryItem",
-  components: {WorkspaceDeleteDialog, HoverChip, GalleryPreview},
+  components: { WorkspaceDeleteDialog, HoverChip, GalleryPreview },
   props: ["item", "supports", "selected"],
   computed: {
     fileSize() {

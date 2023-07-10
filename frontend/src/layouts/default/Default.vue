@@ -56,7 +56,7 @@
     >
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <default-bar v-if="$app.site.finishedSetup"/>
+    <default-bar v-if="$app.site.finishedSetup" />
     <rail-bar
       v-if="
         $experiments.experiments.RAIL_SIDEBAR &&
@@ -87,7 +87,7 @@
       "
     />
     <theme-engine-wrapper></theme-engine-wrapper>
-    <default-view/>
+    <default-view />
     <template v-if="$experiments.experiments.FAB">
       <v-btn
         class="fab"
@@ -141,7 +141,7 @@
     <unauth-bar
       v-if="$route.name !== 'Slideshow' && $app.site.finishedSetup"
     ></unauth-bar>
-    <default-view/>
+    <default-view />
   </v-app>
 </template>
 
@@ -167,10 +167,10 @@ import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
 </script>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import MessageToast from "@/components/Communications/MessageToast.vue";
-import {Message as MessageType} from "@/models/message";
-import {Upload} from "@/models/upload";
+import { Message as MessageType } from "@/models/message";
+import { Upload } from "@/models/upload";
 import Sidebar from "@/layouts/default/Sidebar.vue";
 import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";

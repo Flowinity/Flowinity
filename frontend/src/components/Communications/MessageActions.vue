@@ -25,7 +25,7 @@
           <v-card>
             <v-container>
               <span v-for="readReceipt in message.readReceipts">
-                <ReadReceipt :message="message" :read-receipt="readReceipt"/>
+                <ReadReceipt :message="message" :read-receipt="readReceipt" />
               </span>
             </v-container>
           </v-card>
@@ -95,12 +95,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
 
 export default defineComponent({
   name: "MessageActions",
-  components: {ReadReceipt},
+  components: { ReadReceipt },
   props: ["message", "avoid", "merge"],
   data() {
     return {

@@ -81,7 +81,7 @@
       style="overflow-x: hidden"
     >
       <template v-slot:default="{ item: { user, legacyUser, rank } }">
-        <SidebarItem :legacy-user="!!legacyUser" :rank="rank" :user="user"/>
+        <SidebarItem :legacy-user="!!legacyUser" :rank="rank" :user="user" />
       </template>
     </v-virtual-scroll>
   </div>
@@ -149,9 +149,9 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {Chat} from "@/models/chat";
-import {ChatAssociation} from "@/models/chatAssociation";
+import { defineComponent } from "vue";
+import { Chat } from "@/models/chat";
+import { ChatAssociation } from "@/models/chatAssociation";
 import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";

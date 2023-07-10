@@ -11,9 +11,9 @@
     <v-btn class="mt-1 ml-1" style="float: right" @click="create = true">
       Create Collection
     </v-btn>
-    <br/>
-    <br/>
-    <br/>
+    <br />
+    <br />
+    <br />
     <v-row>
       <v-col
         v-for="item in collections"
@@ -31,15 +31,15 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
-import {Collection} from "@/models/collection";
+import { Collection } from "@/models/collection";
 import CreateCollectionDialog from "@/components/Collections/Dialogs/Create.vue";
 
 export default defineComponent({
   name: "CollectionsHome",
-  components: {CreateCollectionDialog, GalleryNavigation, CollectionCard},
+  components: { CreateCollectionDialog, GalleryNavigation, CollectionCard },
   data() {
     return {
       search: "",

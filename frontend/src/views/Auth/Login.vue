@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Login",
@@ -80,7 +80,7 @@ export default defineComponent({
     async login() {
       this.loading = true;
       try {
-        const {data} = await this.axios.post("/auth/login", {
+        const { data } = await this.axios.post("/auth/login", {
           email: this.username,
           password: this.password,
           code: this.totp
@@ -88,7 +88,7 @@ export default defineComponent({
         localStorage.setItem("token", data.token);
         this.axios.defaults.headers.common["Authorization"] = data.token;
         await this.$user.init();
-        this.$socket.auth = {token: data.token};
+        this.$socket.auth = { token: data.token };
         this.$socket.disconnect();
         this.$socket.connect();
         this.$router.push("/");

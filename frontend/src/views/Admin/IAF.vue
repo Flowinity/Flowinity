@@ -28,8 +28,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {Invite} from "@/models/invite";
+import { defineComponent } from "vue";
+import { Invite } from "@/models/invite";
 
 export default defineComponent({
   name: "IAF",
@@ -75,7 +75,7 @@ export default defineComponent({
     },
     async getInvites() {
       this.loading = true;
-      const {data} = await this.axios.get("/admin/invites");
+      const { data } = await this.axios.get("/admin/invites");
       this.invites = data.sort((a: Invite, b: Invite) => {
         return b.id - a.id;
       });

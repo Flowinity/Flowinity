@@ -67,7 +67,7 @@
     <v-card-text>
       {{ $t("settings.home.totp.scan") }}
     </v-card-text>
-    <QrcodeVue :size="250" :value="url" class="ml-4"/>
+    <QrcodeVue :size="250" :value="url" class="ml-4" />
     <v-card-text>
       {{ $t("settings.home.totp.cantScan") }}
       <code>
@@ -97,7 +97,7 @@
       </v-btn>
     </v-card-actions>
     <v-card-text>
-      <v-img :src="url"/>
+      <v-img :src="url" />
     </v-card-text>
     <v-card-text>
       <v-text-field
@@ -112,7 +112,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 import QrcodeVue from "qrcode.vue";
 
 export default defineComponent({
@@ -150,7 +150,7 @@ export default defineComponent({
     async enable() {
       try {
         this.loading = true;
-        const {data} = await this.axios.patch("/user/totp", {
+        const { data } = await this.axios.patch("/user/totp", {
           password: this.password,
           action: "enable"
         });

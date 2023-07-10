@@ -75,13 +75,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {Domain} from "@/models/domain";
+import { defineComponent } from "vue";
+import { Domain } from "@/models/domain";
 import ModifyDomainDialog from "@/components/Admin/Domains/ModifyDomain.vue";
 
 export default defineComponent({
   name: "Domains",
-  components: {ModifyDomainDialog},
+  components: { ModifyDomainDialog },
   data() {
     return {
       domains: [] as Domain[],
@@ -96,11 +96,11 @@ export default defineComponent({
   methods: {
     async setDefault(domain: string) {
       if (!this.$user.user) return;
-      await this.axios.patch("/user/domain", {domain});
+      await this.axios.patch("/user/domain", { domain });
       this.$user.user.domain.domain = domain;
     },
     async getDomains() {
-      const {data} = await this.axios.get("/domains");
+      const { data } = await this.axios.get("/domains");
       this.domains = data;
     },
     async deleteDomain(id: number) {

@@ -1,23 +1,30 @@
-import {AllowNull, BelongsTo, Column, DataType, Model, Table} from "sequelize-typescript"
+import {
+  AllowNull,
+  BelongsTo,
+  Column,
+  DataType,
+  Model,
+  Table
+} from "sequelize-typescript"
 
 // Import Models
-import {User} from "@app/models/user.model"
+import { User } from "@app/models/user.model"
 
 @Table
 export class Friend extends Model {
-    @AllowNull(false)
-    @Column(DataType.ENUM("incoming", "outgoing", "accepted"))
-    status: "incoming" | "outgoing" | "accepted"
+  @AllowNull(false)
+  @Column(DataType.ENUM("incoming", "outgoing", "accepted"))
+  status: "incoming" | "outgoing" | "accepted"
 
-    @Column
-    userId: number
+  @Column
+  userId: number
 
-    @Column
-    friendId: number
+  @Column
+  friendId: number
 
-    @BelongsTo(() => User, "userId")
-    user: User
+  @BelongsTo(() => User, "userId")
+  user: User
 
-    @BelongsTo(() => User, "friendId")
-    otherUser: User
+  @BelongsTo(() => User, "friendId")
+  otherUser: User
 }

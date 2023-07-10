@@ -75,7 +75,7 @@
           width="300"
         >
           <v-icon size="120">mdi-lock</v-icon>
-          <br/>
+          <br />
           <p class="ml-2">You need gold.</p>
         </v-card>
       </v-overlay>
@@ -216,10 +216,10 @@
 </template>
 
 <script lang="ts">
-import {DefaultThemes} from "@/plugins/vuetify";
-import {defineComponent} from "vue";
+import { DefaultThemes } from "@/plugins/vuetify";
+import { defineComponent } from "vue";
 import VueMonacoEditor from "@guolao/vue-monaco-editor";
-import {useTheme} from "vuetify/lib/framework.mjs";
+import { useTheme } from "vuetify/lib/framework.mjs";
 
 export default defineComponent({
   name: "ThemeEngineSidebar",
@@ -240,9 +240,9 @@ export default defineComponent({
     return {
       theme: useTheme().global.name,
       themes: [
-        {title: "Light", value: "light"},
-        {title: "Dark", value: "dark"},
-        {title: "AMOLED", value: "amoled"}
+        { title: "Light", value: "light" },
+        { title: "Dark", value: "dark" },
+        { title: "AMOLED", value: "amoled" }
       ],
       editor: false,
       options: {

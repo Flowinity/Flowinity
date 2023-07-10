@@ -25,7 +25,7 @@
               :value="category.key"
             >
               <v-card class="elevation-0" color="transparent" max-width="300">
-                <v-text-field v-model="search" label="Search"/>
+                <v-text-field v-model="search" label="Search" />
                 <v-row>
                   <v-col v-for="emoji in emojis" :key="emoji.hexcode">
                     <v-btn
@@ -54,9 +54,9 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 //@ts-ignore
-import {Notomoji} from "@svgmoji/noto";
+import { Notomoji } from "@svgmoji/noto";
 //@ts-ignore
 import data from "../../../assets/compact.raw.json";
 

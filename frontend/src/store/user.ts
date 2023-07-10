@@ -1,5 +1,5 @@
-import {defineStore} from "pinia";
-import {useToast} from "vue-toastification";
+import { defineStore } from "pinia";
+import { useToast } from "vue-toastification";
 
 // Import Plugins
 import vuetify from "@/plugins/vuetify";
@@ -8,17 +8,17 @@ import functions from "@/plugins/functions";
 import axios from "@/plugins/axios";
 
 // Import Stores
-import {useChatStore} from "@/store/chat";
-import {useWorkspacesStore} from "@/store/workspaces";
-import {useCollectionsStore} from "@/store/collections";
-import {useExperimentsStore} from "@/store/experiments";
-import {useFriendsStore} from "@/store/friends";
-import {useAppStore} from "@/store/app";
-import {useMailStore} from "@/store/mail";
+import { useChatStore } from "@/store/chat";
+import { useWorkspacesStore } from "@/store/workspaces";
+import { useCollectionsStore } from "@/store/collections";
+import { useExperimentsStore } from "@/store/experiments";
+import { useFriendsStore } from "@/store/friends";
+import { useAppStore } from "@/store/app";
+import { useMailStore } from "@/store/mail";
 
 // Import Models
-import {ProfileLayout, ThemeEngine, User} from "@/models/user";
-import {Notification} from "@/models/notification"
+import { ProfileLayout, ThemeEngine, User } from "@/models/user";
+import { Notification } from "@/models/notification";
 
 export interface UserState {
   user: User | null;
@@ -81,7 +81,8 @@ export const useUserStore = defineStore("user", {
     unreadNotifications(state: UserState): number {
       if (!state.user) return 0;
 
-      return state.user.notifications.filter((n: Notification) => !n.dismissed).length;
+      return state.user.notifications.filter((n: Notification) => !n.dismissed)
+        .length;
     }
   },
   actions: {
@@ -92,7 +93,8 @@ export const useUserStore = defineStore("user", {
         if (
           this.user?.plan?.internalName !== "GOLD" &&
           app.site.officialInstance
-        ) return;
+        )
+          return;
 
         const themeData = this.user?.themeEngine?.deviceSync
           ? this?.user?.themeEngine
@@ -119,7 +121,8 @@ export const useUserStore = defineStore("user", {
 
           app.fluidGradient = themeData.fluidGradient;
 
-          if (themeData.fluidGradient) document.body.classList.add("fluid-gradient");
+          if (themeData.fluidGradient)
+            document.body.classList.add("fluid-gradient");
           else document.body.classList.remove("fluid-gradient");
         } else throw new Error("Invalid theme version");
       } catch (err) {
@@ -127,10 +130,13 @@ export const useUserStore = defineStore("user", {
         document.body.style.setProperty("--gradient-offset", "100%");
       }
     },
-    primaryColorResult(primaryColor?: string | null, gold?: boolean): {
-      gradient1: string,
-      gradient2: string,
-      primary: string
+    primaryColorResult(
+      primaryColor?: string | null,
+      gold?: boolean
+    ): {
+      gradient1: string;
+      gradient2: string;
+      primary: string;
     } {
       if (primaryColor && gold)
         return {
@@ -141,15 +147,15 @@ export const useUserStore = defineStore("user", {
 
       return gold || this.gold
         ? {
-          gradient1: "#ffdb1b",
-          gradient2: "#ffd700",
-          primary: "#ffd700"
-        }
+            gradient1: "#ffdb1b",
+            gradient2: "#ffd700",
+            primary: "#ffd700"
+          }
         : {
-          gradient1: "#096fea",
-          gradient2: "#0166ea",
-          primary: "#0190ea"
-        };
+            gradient1: "#096fea",
+            gradient2: "#0166ea",
+            primary: "#0190ea"
+          };
     },
     async resendVerificationEmail() {
       try {
@@ -188,7 +194,9 @@ export const useUserStore = defineStore("user", {
     },
     async runPostTasks() {
       if (this.user && !this._postInitRan) {
-        console.info("[PRIVATEUPLOADER/UserStore] Running post-init auth tasks");
+        console.info(
+          "[PRIVATEUPLOADER/UserStore] Running post-init auth tasks"
+        );
 
         window._paq.push(["setUserId", this.user.id]);
         window._paq.push(["trackPageView"]);
@@ -264,7 +272,8 @@ export const useUserStore = defineStore("user", {
           this.applyTheme();
 
           // Remove other favicons.
-          const links: HTMLCollectionOf<HTMLLinkElement> = document.getElementsByTagName("link");
+          const links: HTMLCollectionOf<HTMLLinkElement> =
+            document.getElementsByTagName("link");
 
           //@ts-ignore
           for (const link: HTMLLinkElement of links) {
@@ -319,18 +328,19 @@ export const useUserStore = defineStore("user", {
     async init() {
       const user: string = localStorage.getItem("userStore");
 
-      if (user) try {
-        this.user = JSON.parse(user);
+      if (user)
+        try {
+          this.user = JSON.parse(user);
 
-        if (this.user) {
-          this.setChanges(this.user);
-          await this.runPostTasks();
+          if (this.user) {
+            this.setChanges(this.user);
+            await this.runPostTasks();
+          }
+        } catch {
+          //
         }
-      } catch {
-        //
-      }
 
-      const {data} = await axios.get("/user", {
+      const { data } = await axios.get("/user", {
         headers: {
           noToast: true
         }
@@ -339,7 +349,8 @@ export const useUserStore = defineStore("user", {
 
       this.setChanges(<User>this.user);
 
-      if (this.user?.themeEngine?.defaults?.prev) delete this.user.themeEngine.defaults?.prev;
+      if (this.user?.themeEngine?.defaults?.prev)
+        delete this.user.themeEngine.defaults?.prev;
 
       this.applyTheme();
       localStorage.setItem("userStore", JSON.stringify(data));

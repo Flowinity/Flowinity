@@ -1,5 +1,5 @@
 // Import Models
-import {User} from "@/models/user";
+import { User } from "@/models/user";
 
 export class Invite {
   id: number;

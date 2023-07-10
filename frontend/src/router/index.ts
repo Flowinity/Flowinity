@@ -1,6 +1,6 @@
 // Composables
-import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
-import {useUserStore} from "@/store/user";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { useUserStore } from "@/store/user";
 
 const routes = [
   {
@@ -366,13 +366,13 @@ router.beforeEach(async (to, from) => {
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");
-    return {name: "Home"};
+    return { name: "Home" };
   } else if (
     user.user &&
     ["Home", "Login", "Register"].includes(to.name as string)
   ) {
     console.log("Redirecting to dashboard");
-    return {name: "Dashboard"};
+    return { name: "Dashboard" };
   }
 });
 
