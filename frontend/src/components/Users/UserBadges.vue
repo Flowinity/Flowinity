@@ -33,12 +33,12 @@
     <HoverChip
       v-if="user.xp > 0"
       v-ripple
+      :short-text="'$' + user.xp"
       :small="true"
+      :text="'$' + user.xp + ' donated'"
       class="user-badge"
       color="primary"
       icon="mdi-star"
-      :text="'$' + user.xp + ' donated'"
-      :short-text="'$' + user.xp"
       text-color="black"
     ></HoverChip>
     <!-- Rank tiers -->

@@ -716,7 +716,7 @@ export const useAppStore = defineStore("app", {
 
       this.loading = false;
     },
-    async upload(){
+    async upload() {
       try {
         const toast = useToast();
 

@@ -12,9 +12,9 @@
       <v-col
         v-for="item in autoCollects"
         :key="'item-' + item.id + '-' + (item.shared ? 'shared' : 'owned')"
+        cols="12"
         md="4"
         xl="3"
-        cols="12"
       >
         <CollectionCard :item="item" type="autoCollect"></CollectionCard>
       </v-col>

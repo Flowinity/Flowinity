@@ -1,9 +1,9 @@
 <template>
   <v-container class="text-center">
     <v-img
-      src="@/assets/images/tpu-logo-banner.svg"
-      max-height="120"
       class="mb-3"
+      max-height="120"
+      src="@/assets/images/tpu-logo-banner.svg"
     />
     <v-divider></v-divider>
     <p class="mt-5">

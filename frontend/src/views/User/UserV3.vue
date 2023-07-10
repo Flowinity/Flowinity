@@ -229,24 +229,24 @@
           xl="2"
         >
           <StatsCard
-            title="Money donated"
-            class="my-3"
+            v-if="user.xp"
             :gold="gold"
             :primary-color="primaryColorResult.primary"
-            v-if="user.xp"
             :value="user.xp < 0 ? '-$' + user.xp * -1 : '$' + user.xp"
+            class="my-3"
+            title="Money donated"
           >
             <div>
-              <v-tooltip location="top" activator="parent" class="text-center">
+              <v-tooltip activator="parent" class="text-center" location="top">
                 ${{ user.xp }} / ${{ calculatePercentage(user.xp) }}
-                <br />
+                <br/>
                 Milestone {{ calculateMilestones(user.xp) }}
               </v-tooltip>
               <v-progress-linear
-                class="rounded-xl mt-1 mb-1"
                 :color="primaryColorResult.primary"
                 :height="5"
                 :model-value="(user.xp / calculatePercentage(user.xp)) * 100"
+                class="rounded-xl mt-1 mb-1"
               ></v-progress-linear>
             </div>
           </StatsCard>
