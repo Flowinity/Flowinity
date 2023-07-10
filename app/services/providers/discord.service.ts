@@ -15,7 +15,7 @@ export class DiscordService {
     constructor() {
     }
 
-    async link(userId: number, token: string) {
+    async link(userId: number, token: string): Promise<void> {
         if (
             !config.providers.discord.publicKey ||
             !config.providers.discord.applicationId ||
@@ -25,7 +25,7 @@ export class DiscordService {
         )
             throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
-        const existing = await Integration.findOne({
+        const existing: Integration | null = await Integration.findOne({
             where: {
                 userId,
                 type: "discord"
@@ -67,14 +67,13 @@ export class DiscordService {
                 providerUserId: userCache.id,
                 providerUserCache: userCache
             })
-        } catch (e) {
-            console.log(e)
+        } catch {
             throw Errors.INTEGRATION_ERROR
         }
     }
 
-    async unlink(userId: string) {
-        const existing = await Integration.findOne({
+    async unlink(userId: string): Promise<void> {
+        const existing: Integration | null = await Integration.findOne({
             where: {
                 userId,
                 type: "discord"
@@ -86,7 +85,7 @@ export class DiscordService {
         await existing.destroy()
     }
 
-    async getUserCache(tokenType: string, accessToken: string) {
+    async getUserCache(tokenType: string, accessToken: string): Promise<any> {
         try {
             const {data} = await axios.get(
                 `https://discord.com/api/v10/users/@me`,
@@ -114,9 +113,9 @@ export class DiscordService {
             return Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
         try {
-            console.log("[PROVIDERS/DISCORD] renewing access tokens...")
+            console.info("[PROVIDERS/DISCORD] renewing access tokens...")
 
-            const users = await User.findAll({
+            const users: User[] = await User.findAll({
                 include: [
                     {
                         model: Integration,
@@ -129,7 +128,7 @@ export class DiscordService {
             })
 
             for (const user of users) {
-                const integration = await Integration.findOne({
+                const integration: Integration | null = await Integration.findOne({
                     where: {
                         userId: user.id,
                         type: "discord"
@@ -161,17 +160,16 @@ export class DiscordService {
                 })
             }
 
-            console.log("[PROVIDERS/DISCORD] renewed access tokens.")
+            console.info("[PROVIDERS/DISCORD] renewed access tokens.")
             return true
-        } catch (e) {
-            console.log(e)
-            console.log("[PROVIDERS/DISCORD] failed to renew access tokens.")
+        } catch {
+            console.error("[PROVIDERS/DISCORD] failed to renew access tokens.")
             return false
         }
     }
 
-    async providerInit() {
-        cron.schedule("0 * * * *", () => {
+    async providerInit(): Promise<void> {
+        cron.schedule("0 * * * *", (): void => {
             this.renewTokens()
         })
 

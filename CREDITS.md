@@ -1554,28 +1554,28 @@ fee.
    distribute such modifications or work under the terms of Section 1
    above, provided that you also meet all of these conditions:
 
-    a) The modified work must itself be a software library.
+   a) The modified work must itself be a software library.
 
-    b) You must cause the files modified to carry prominent notices
-    stating that you changed the files and the date of any change.
+   b) You must cause the files modified to carry prominent notices
+   stating that you changed the files and the date of any change.
 
-    c) You must cause the whole of the work to be licensed at no
-    charge to all third parties under the terms of this License.
+   c) You must cause the whole of the work to be licensed at no
+   charge to all third parties under the terms of this License.
 
-    d) If a facility in the modified Library refers to a function or a
-    table of data to be supplied by an application program that uses
-    the facility, other than as an argument passed when the facility
-    is invoked, then you must make a good faith effort to ensure that,
-    in the event an application does not supply such function or
-    table, the facility still operates, and performs whatever part of
-    its purpose remains meaningful.
+   d) If a facility in the modified Library refers to a function or a
+   table of data to be supplied by an application program that uses
+   the facility, other than as an argument passed when the facility
+   is invoked, then you must make a good faith effort to ensure that,
+   in the event an application does not supply such function or
+   table, the facility still operates, and performs whatever part of
+   its purpose remains meaningful.
 
-    (For example, a function in a library to compute square roots has
-    a purpose that is entirely well-defined independent of the
-    application.  Therefore, Subsection 2d requires that any
-    application-supplied function or table used by this function must
-    be optional: if the application does not supply it, the square
-    root function must still compute square roots.)
+   (For example, a function in a library to compute square roots has
+   a purpose that is entirely well-defined independent of the
+   application. Therefore, Subsection 2d requires that any
+   application-supplied function or table used by this function must
+   be optional: if the application does not supply it, the square
+   root function must still compute square roots.)
 
 These requirements apply to the modified work as a whole. If
 identifiable sections of that work are not derived from the Library,
@@ -1725,14 +1725,14 @@ distribute.
    the Library and of the other library facilities is otherwise
    permitted, and provided that you do these two things:
 
-    a) Accompany the combined library with a copy of the same work
-    based on the Library, uncombined with any other library
-    facilities.  This must be distributed under the terms of the
-    Sections above.
+   a) Accompany the combined library with a copy of the same work
+   based on the Library, uncombined with any other library
+   facilities. This must be distributed under the terms of the
+   Sections above.
 
-    b) Give prominent notice with the combined library of the fact
-    that part of it is a work based on the Library, and explaining
-    where to find the accompanying uncombined form of the same work.
+   b) Give prominent notice with the combined library of the fact
+   that part of it is a work based on the Library, and explaining
+   where to find the accompanying uncombined form of the same work.
 
 8. You may not copy, modify, sublicense, link with, or distribute
    the Library except as expressly provided under this License. Any
@@ -1758,17 +1758,17 @@ distribute.
     restrictions on the recipients' exercise of the rights granted herein.
     You are not responsible for enforcing compliance by third parties with
     this License.11. If, as a consequence of a court judgment or allegation of patent
-                     infringement or for any other reason (not limited to patent issues),
-                     conditions are imposed on you (whether by court order, agreement or
-                     otherwise) that contradict the conditions of this License, they do not
-                     excuse you from the conditions of this License. If you cannot
-                     distribute so as to satisfy simultaneously your obligations under this
-                     License and any other pertinent obligations, then as a consequence you
-                     may not distribute the Library at all. For example, if a patent
-                     license would not permit royalty-free redistribution of the Library by
-                     all those who receive copies directly or indirectly through you, then
-                     the only way you could satisfy both it and this License would be to
-                     refrain entirely from distribution of the Library.
+    infringement or for any other reason (not limited to patent issues),
+    conditions are imposed on you (whether by court order, agreement or
+    otherwise) that contradict the conditions of this License, they do not
+    excuse you from the conditions of this License. If you cannot
+    distribute so as to satisfy simultaneously your obligations under this
+    License and any other pertinent obligations, then as a consequence you
+    may not distribute the Library at all. For example, if a patent
+    license would not permit royalty-free redistribution of the Library by
+    all those who receive copies directly or indirectly through you, then
+    the only way you could satisfy both it and this License would be to
+    refrain entirely from distribution of the Library.
 
 If any portion of this section is held invalid or unenforceable under any
 particular circumstance, the balance of the section is intended to apply,

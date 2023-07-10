@@ -5,9 +5,13 @@
 
 TPU is the next generation image hosting server written in Vue and TypeScript.
 
-TPU is intended to be an out of the way image hosting server for everyone else, thus it doesn't have features you'd regularly find in other ShareX servers, such as rich OpenGraph embeds. But instead has unique features like Insights, and Collections.
+TPU is intended to be an out of the way image hosting server for everyone else, thus it doesn't have features you'd
+regularly find in other ShareX servers, such as rich OpenGraph embeds. But instead has unique features like Insights,
+and Collections.
 
-Additionally, TPU has only recently become an open source project, so documentation and resources are lacking initially, but will improve over time.
+Additionally, TPU has only recently become an open source project, so documentation and resources are lacking initially,
+but will improve over time.
+
 ## Don't want to host your own server?
 
 You can use the official public instance of TPU at [https://privateuploader.com](https://privateuploader.com) (also
@@ -16,7 +20,8 @@ known as [https://images.flowinity.com](https://images.flowinity.com)).
 <details>
   <summary><h2>Screenshots (Click to expand)</h2></summary>
 
-View the full collection on [TPU](https://privateuploader.com/collections/2736179e19078284d9a5a4c1241289db7f777b180fed932b88162bbb2ec00ef1).
+View the full collection
+on [TPU](https://privateuploader.com/collections/2736179e19078284d9a5a4c1241289db7f777b180fed932b88162bbb2ec00ef1).
 
 ![Gallery](https://i.troplo.com/i/d68241bda319.png)
 ![Collection Page](https://i.troplo.com/i/a1fb3e1af098.png)
@@ -48,17 +53,22 @@ View the full collection on [TPU](https://privateuploader.com/collections/273617
 - Tesseract OCR (with English language support) for OCR features
 
 # Setting Up
-These instructions assume you're using a standard Linux system with systemd, these instructions will differ depending on what init system you use.
+
+These instructions assume you're using a standard Linux system with systemd, these instructions will differ depending on
+what init system you use.
 <details>
   <summary><h2>Docker w/ docker-compose (Quickest method)</h2></summary>
 
 1. Clone the Docker-specific repo: `git clone https://github.com/PrivateUploader/docker-compose privateuploader`
 2. Change directory into repo: `cd privateuploader`
-3. Create the container (change the environment variables to your liking): `DB_DATABASE=privateuploader DB_USER=privateuploader DB_PASSWORD=CHANGE_ME DB_ROOT_PASSWORD=CHANGE_ME docker-compose up -d`
+3. Create the container (change the environment variables to your
+   liking): `DB_DATABASE=privateuploader DB_USER=privateuploader DB_PASSWORD=CHANGE_ME DB_ROOT_PASSWORD=CHANGE_ME docker-compose up -d`
 4. Follow the setup wizard on http://localhost:34582
-5. You must change the MariaDB server hostname to `mariadb` and the redis hostname to `redis` in the setup wizard. (seen below):
-      ![Setup Wizard](https://i.troplo.com/i/87987421cfa1.png)
-      ![Setup Wizard](https://i.troplo.com/i/582d2fd8d1a7.png)
+5. You must change the MariaDB server hostname to `mariadb` and the redis hostname to `redis` in the setup wizard. (seen
+   below):
+   ![Setup Wizard](https://i.troplo.com/i/87987421cfa1.png)
+   ![Setup Wizard](https://i.troplo.com/i/582d2fd8d1a7.png)
+
 </details>
 
 <details>
@@ -72,19 +82,24 @@ These instructions assume you're using a standard Linux system with systemd, the
 6. Change directory into the repository: `cd private-uploader`
 7. Install dependencies: `yarn install`
 8. Create systemd service files for TPU with `cp tpu.service /etc/systemd/system/tpu.service`
-9. Modify the systemd service file (use nano, vim, etc), replace all instances of `CHANGE_ME` with your own values. Do not run TPU as root user and use the user created earlier.
+9. Modify the systemd service file (use nano, vim, etc), replace all instances of `CHANGE_ME` with your own values. Do
+   not run TPU as root user and use the user created earlier.
 10. Start TPU and start on boot with `systemctl enable tpu --now`
 11. Follow the setup wizard on http://localhost:34582 and configure NGINX web server.
+
 </details>
 
 <details>
   <summary><h2>NGINX Configuration</h2></summary>
 
-1. TPU includes an example NGINX configuration file, you can find it at `nginx.conf` in either of the Docker or primary TPU repositories.
-2. Copy it to your NGINX configuration directory: `cp nginx.conf /etc/nginx/conf.d/tpu.conf` (this folder can differ between distributions, it could be `/etc/nginx/sites-available`, if so, symlink it to `/etc/nginx/sites-enabled`).
+1. TPU includes an example NGINX configuration file, you can find it at `nginx.conf` in either of the Docker or primary
+   TPU repositories.
+2. Copy it to your NGINX configuration directory: `cp nginx.conf /etc/nginx/conf.d/tpu.conf` (this folder can differ
+   between distributions, it could be `/etc/nginx/sites-available`, if so, symlink it to `/etc/nginx/sites-enabled`).
 3. Modify the NGINX configuration file (use nano, vim, etc), replace all instances of `CHANGE_ME` with your own values.
 4. Test the NGINX configuration: `nginx -t`
 5. If the test is successful, reload NGINX: `systemctl restart nginx`
+
 </details>
 
 ## Scripts
@@ -101,8 +116,8 @@ process command and will automatically scale if you add more CPU cores/threads.
 
 #### Having a single CPU core will cause TPU to be temporarily unavailable when restarting.
 
-
 ## Contributors
+
 [![All Contributors](https://img.shields.io/github/all-contributors/Troplo/PrivateUploader?color=ee8449&style=flat-square)](#contributors)
 
 

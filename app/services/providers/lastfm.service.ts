@@ -13,11 +13,11 @@ export class LastfmService {
     constructor() {
     }
 
-    async link(userId: string, token: string) {
+    async link(userId: string, token: string): Promise<void> {
         if (!config.providers.lastfm.key || !config.providers.lastfm.secret)
             throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
-        const existing = await Integration.findOne({
+        const existing: Integration | null = await Integration.findOne({
             where: {
                 userId,
                 type: "lastfm"
@@ -27,7 +27,11 @@ export class LastfmService {
         if (existing) throw Errors.INTEGRATION_EXISTS
 
         try {
-            const params = {
+            const params: {
+                method: string,
+                token: string,
+                api_key: string
+            } = {
                 method: "auth.getSession",
                 token,
                 api_key: config.providers.lastfm.key
@@ -51,8 +55,8 @@ export class LastfmService {
         }
     }
 
-    async unlink(userId: string) {
-        const existing = await Integration.findOne({
+    async unlink(userId: string): Promise<void> {
+        const existing: Integration | null = await Integration.findOne({
             where: {
                 userId,
                 type: "lastfm"
@@ -64,7 +68,7 @@ export class LastfmService {
         await existing.destroy()
     }
 
-    async getOverview(userId: number, username: string, accessToken: string) {
+    async getOverview(userId: number, username: string, accessToken: string): Promise<any> {
         try {
             const cache = await redis.get(`providers:lastfm:${userId}:overview`)
 
@@ -90,15 +94,15 @@ export class LastfmService {
         }
     }
 
-    generateSig(params: Record<string, string>) {
+    generateSig(params: Record<string, string>): string {
         if (!config.providers.lastfm.secret) throw Errors.INTEGRATION_ERROR
 
         delete params.api_sig
         delete params.format
 
-        const keys = Object.keys(params).sort()
-        const sig = keys
-            .map((key) => `${key}${params[key]}`)
+        const keys: string[] = Object.keys(params).sort()
+        const sig: string = keys
+            .map((key: string): string => `${key}${params[key]}`)
             .join("")
             .concat(config.providers.lastfm.secret)
 

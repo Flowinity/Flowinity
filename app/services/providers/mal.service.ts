@@ -18,11 +18,11 @@ export class MyAnimeListService {
     constructor() {
     }
 
-    async link(userId: number, token: string) {
+    async link(userId: number, token: string): Promise<void> {
         if (!config.providers.mal.key || !config.providers.mal.secret)
             throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
-        const existing = await Integration.findOne({
+        const existing: Integration | null = await Integration.findOne({
             where: {
                 userId,
                 type: "mal"
@@ -74,8 +74,8 @@ export class MyAnimeListService {
         }
     }
 
-    async unlink(userId: string) {
-        const existing = await Integration.findOne({
+    async unlink(userId: string): Promise<void> {
+        const existing: Integration | null = await Integration.findOne({
             where: {
                 userId,
                 type: "mal"
@@ -87,7 +87,7 @@ export class MyAnimeListService {
         await existing.destroy()
     }
 
-    async renew(userId: number) {
+    async renew(userId: number): Promise<number | undefined> {
         const integration: Integration | null = await Integration.findOne({
             where: {
                 userId,
@@ -177,7 +177,7 @@ export class MyAnimeListService {
         }
     }
 
-    async getOverview(userId: number, username: string, accessToken: string) {
+    async getOverview(userId: number, username: string, accessToken: string): Promise<any> {
         const cache = await redis.get(`providers:mal:${userId}:overview`)
 
         if (cache) return JSON.parse(cache)
@@ -191,8 +191,7 @@ export class MyAnimeListService {
                     }
                 }
             )
-            .catch((e) => {
-                console.log(e)
+            .catch(() => {
                 throw Errors.INTEGRATION_ERROR
             })
 
@@ -214,7 +213,7 @@ export class MyAnimeListService {
         username: string,
         accessToken: string,
         body: MalBody
-    ) {
+    ): Promise<void> {
         try {
             const {data} = await axios.put(
                 `https://api.myanimelist.net/v2/anime/${body.id}/my_list_status`,
@@ -239,9 +238,9 @@ export class MyAnimeListService {
         }
     }
 
-    async getUserCache(userId: number, username: string, accessToken: string) {
+    async getUserCache(userId: number, username: string, accessToken: string): Promise<any> {
         try {
-            const integration = await Integration.findOne({
+            const integration: Integration | null = await Integration.findOne({
                 where: {
                     userId,
                     type: "mal"
@@ -261,13 +260,13 @@ export class MyAnimeListService {
         }
     }
 
-    async renewService() {
+    async renewService(): Promise<boolean | undefined> {
         if (!config.providers.mal.key) return
 
         try {
             console.log("[PROVIDERS/MYANIMELIST] renewing access tokens...")
 
-            const users = await User.findAll({
+            const users: User[] = await User.findAll({
                 include: [
                     {
                         model: Integration,
@@ -283,22 +282,22 @@ export class MyAnimeListService {
                 try {
                     await this.renew(user.id)
                 } catch {
-                    console.log(
+                    console.error(
                         `[PROVIDERS/MYANIMELIST] failed to renew access tokens for ${user.username}`
                     )
                 }
             }
 
-            console.log("[PROVIDERS/MYANIMELIST] renewed access tokens.")
+            console.info("[PROVIDERS/MYANIMELIST] renewed access tokens.")
             return true
         } catch {
-            console.log("[PROVIDERS/MYANIMELIST] failed to renew access tokens.")
+            console.error("[PROVIDERS/MYANIMELIST] failed to renew access tokens.")
             return false
         }
     }
 
-    async providerInit() {
-        cron.schedule("0 * * * *", () => {
+    async providerInit(): Promise<void> {
+        cron.schedule("0 * * * *", (): void => {
             this.renewService()
         })
 
