@@ -20,7 +20,7 @@
       </v-col>
     </v-row>
     <PromoNoContent
-      v-else
+      v-else-if="!$app.componentLoading"
       description="You may configure AutoCollects with the button in the top right corner."
       icon="mdi-tooltip-check"
       title="You have no pending approvals!"
@@ -44,8 +44,10 @@ export default defineComponent({
   },
   methods: {
     async getAutoCollects() {
+      this.$app.componentLoading = true;
       const { data } = await this.axios.get("/autoCollects");
       this.autoCollects = data;
+      this.$app.componentLoading = false;
     }
   },
   mounted() {
