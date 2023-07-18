@@ -427,7 +427,10 @@ export const useChatStore = defineStore("chat", {
           noToast: true
         }
       });
-      this.chats = data;
+      this.chats = data.map((chat: Chat, index: number) => ({
+        ...chat,
+        messages: this.chats[index]?.messages || null
+      }));
       localStorage.setItem("chatStore", JSON.stringify(this.chats));
     },
     async init() {

@@ -114,6 +114,9 @@ export class ChatService {
     for (const user of chat.users) {
       const key = await redis.get(`user:${user.userId}:notificationKey`)
       if (!key) continue
+      //@ts-ignore
+      const sockets = await socket.in(user.userId).allSockets()
+      console.log(await socket)
       await axios
         .post(
           `https://fcm.googleapis.com/fcm/send`,
