@@ -247,6 +247,7 @@ export class UserControllerV3 {
   }
 
   @OnUndefined(204)
+  @UseBefore(rateLimits.mailLimiter)
   @Post("/verification/send")
   async sendVerification(@Auth("user.modify") user: User) {
     await this.userUtilsService.sendVerificationEmail(user.id)
