@@ -585,3 +585,8 @@ a {
 :root:has(.disable-overscroll) {
   overscroll-behavior: none;
 }
+
+.message-container {
+  display: flex; /* Use flexbox to keep elements in the same row */
+  align-items: center; /* Align items vertically within the container */
+}

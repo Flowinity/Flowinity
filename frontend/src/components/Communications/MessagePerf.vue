@@ -77,31 +77,28 @@
               })
             "
           >
-            {{ message.user?.username }}
+            {{ $friends.getName(message.user) }}
           </a>
           <small class="text-grey">
             {{ $date(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
           </small>
-          <v-btn
-            v-if="message.edited"
-            :ripple="false"
-            color="grey"
-            icon
-            size="x-small"
-            style="margin-bottom: 2px; margin-left: 4px; position: absolute"
-          >
+        </p>
+        <div class="position-relative" v-if="!editing">
+          <span
+            :class="{ 'text-grey': message.pending, 'text-red': message.error }"
+            class="overflow-content message-content d-inline-block"
+            v-html="$functions.markdown(message.content)"
+          ></span>
+          <span v-if="message.edited" :ripple="false" class="d-inline-block">
             <v-tooltip activator="parent" location="top">
               {{ $date(message.editedAt).format("DD/MM/YYYY hh:mm:ss A") }}
             </v-tooltip>
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-        </p>
-        <span
-          v-if="!editing"
-          :class="{ 'text-grey': message.pending, 'text-red': message.error }"
-          class="overflow-content message-content"
-          v-html="$functions.markdown(message.content)"
-        ></span>
+            <v-icon color="grey" class="ml-1 mb-1" size="x-small">
+              mdi-pencil
+            </v-icon>
+          </span>
+        </div>
+
         <CommunicationsInput
           v-else
           :editing="true"
