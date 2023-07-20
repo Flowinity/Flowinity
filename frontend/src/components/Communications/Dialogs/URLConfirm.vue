@@ -1,7 +1,7 @@
 <template>
   <CoreDialog
     :model-value="modelValue"
-    max-width="500px"
+    style="max-width: 548px"
     @update:modelValue="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>You are leaving TPU</template>
