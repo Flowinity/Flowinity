@@ -1,7 +1,7 @@
 <template>
   <CoreDialog
     :model-value="modelValue"
-    max-width="500px"
+    style="max-width: 548px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>Friend Nickname</template>
