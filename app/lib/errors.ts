@@ -340,6 +340,15 @@ let Errors = {
   FRIEND_REQUEST_ALREADY_SENT: {
     message: "A friend request has already been sent to this user.",
     status: 400
+  },
+  SECURITY_SCOPE_ERROR: {
+    message:
+      "Security error\nThe scopes sent by the client do not match the app's scopes.",
+    status: 400
+  },
+  PRIVATE_APP: {
+    message: "This app is private and cannot be used by other users.",
+    status: 400
   }
 }
 

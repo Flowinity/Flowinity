@@ -61,6 +61,13 @@ export type Scope =
   | "mail.view"
   | "mail.create"
   | "mail"
+  | "oauth"
+  | "oauth.user.email"
+  | "oauth.user.id"
+  | "oauth.user.username"
+  | "oauth.user.avatar"
+  | "oauth.save"
+  | "oauth.user"
 
 async function getSession(token: string) {
   return await Session.findOne({
@@ -427,6 +434,10 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
             session.user.dataValues.stats = await redis.json.get(
               `userStats:${session?.user.id}`
             )
+
+            if (session.oauthAppId) {
+              session.user.dataValues.oauthAppId = session.oauthAppId
+            }
 
             return session.toJSON().user
           }

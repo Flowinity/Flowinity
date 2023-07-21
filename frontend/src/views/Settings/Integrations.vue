@@ -86,11 +86,88 @@
       </v-list>
     </v-container>
   </v-card>
+  <v-card v-if="oauth.length" class="mt-4">
+    <v-toolbar>
+      <v-toolbar-title>
+        {{ $t("settings.integrations.manageOauth") }}
+      </v-toolbar-title>
+    </v-toolbar>
+    <v-container>
+      <v-card v-for="app in oauth">
+        <v-card-title>
+          {{ app.name }}
+          <span v-if="app.verified">
+            <v-tooltip location="top" activator="parent">
+              Created by the TPU team
+            </v-tooltip>
+            <v-icon class="text-medium-emphasis" size="20">
+              mdi-check-circle
+            </v-icon>
+          </span>
+        </v-card-title>
+        <v-card-text>
+          {{ app.description }}
+        </v-card-text>
+        <v-list-item
+          class="mb-2"
+          v-for="scope in scopeToArray(app.sessions[0].scopes)"
+          :key="scope.id"
+          :value="scope.id"
+          style="opacity: 1"
+        >
+          <template v-slot:prepend>
+            <v-icon color="green" class="ml-1 mr-4">mdi-check-circle</v-icon>
+          </template>
+          <v-list-item-title
+            style="text-overflow: unset; white-space: normal"
+            :class="{ 'mb-n1': scope.description }"
+          >
+            {{ scope.name }}
+            <v-btn
+              color="primary"
+              v-if="scope.id === 'oauth.save'"
+              class="ml-1"
+            >
+              {{ $t("settings.integrations.manageSaves") }}
+            </v-btn>
+          </v-list-item-title>
+          <v-list-item-subtitle
+            v-if="scope.description"
+            style="text-overflow: unset; white-space: normal; display: unset"
+          >
+            {{ scope.description }}
+          </v-list-item-subtitle>
+        </v-list-item>
+        <small
+          class="text-red ml-5"
+          v-if="app.scopes !== app.sessions[0].scopes"
+        >
+          {{ $t("settings.integrations.scopesChanged") }}
+        </small>
+        <br />
+        <small
+          class="text-grey ml-5"
+          v-if="app.sessions[0].scopes.includes('oauth.save')"
+        >
+          {{ $t("settings.integrations.unlinkWarningSaves") }}
+        </small>
+        <v-card-actions>
+          <v-btn :to="`/oauth/${app.id}`" color="primary">
+            {{ $t("generic.login") }}
+          </v-btn>
+          <v-btn @click="disconnect(app.id)" color="red">
+            {{ $t("settings.integrations.disconnect") }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-container>
+  </v-card>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
+import { ScopeDefinition } from "@/views/Auth/Oauth.vue";
 
 export default defineComponent({
   name: "Integrations",
@@ -106,7 +183,20 @@ export default defineComponent({
         shortText: string;
         url: string;
         available: boolean;
-      }[]
+      }[],
+      oauth: [] as {
+        id: string;
+        name: string;
+        description: string | null;
+        scopes: string;
+        icon: string | null;
+        shortCode: string;
+        verified: boolean;
+        sessions: {
+          scopes: string;
+        }[];
+      }[],
+      scopeDefinitions: [] as ScopeDefinition[]
     };
   },
   methods: {
@@ -133,10 +223,39 @@ export default defineComponent({
     async getIntegrations() {
       const { data } = await this.axios.get("/providers/linkable");
       this.integrations = data;
+    },
+    async getUserOAuth() {
+      const { data } = await this.axios.get("/oauth");
+      this.oauth = data;
+    },
+    scopeToArray(scope: string) {
+      return scope.split(",").map((scope: string) => {
+        const scopeDefinition = this.scopeDefinitions.find(
+          (s: ScopeDefinition) => s.id === scope
+        );
+        return {
+          id: scope,
+          name: scopeDefinition ? scopeDefinition.name : scope,
+          description: scopeDefinition ? scopeDefinition.description : null
+        };
+      });
+    },
+    async getScopeDefinitions() {
+      const { data } = await this.axios.get("/oauth/scopeDefinitions");
+      this.scopeDefinitions = data;
+    },
+    async disconnect(id: string) {
+      this.loading = true;
+      await this.axios.delete(`/oauth/${id}/authorize`);
+      await this.getUserOAuth();
+      this.loading = false;
+      this.$toast.success("TPU app disconnected!");
     }
   },
   mounted() {
     this.getIntegrations();
+    this.getUserOAuth();
+    this.getScopeDefinitions();
   }
 });
 </script>

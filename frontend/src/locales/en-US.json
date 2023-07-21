@@ -216,7 +216,12 @@
       "link": "Link new accounts",
       "manage": "Manage linked accounts",
       "addedOn": "Added on {date}",
-      "linking": "Linking account... please wait..."
+      "linking": "Linking account... please wait...",
+      "manageOauth": "Manage linked applications",
+      "manageSaves": "Manage",
+      "disconnect": "Disconnect",
+      "scopesChanged": "The application has changed the scopes it requests, please re-link your account.",
+      "unlinkWarningSaves": "Disconnecting the application will not remove any saves associated with the application."
     },
     "slideshows": {
       "title": "Configure Slideshows",
@@ -285,7 +290,8 @@
     "previous": "Previous",
     "update": "Update",
     "leave": "Leave",
-    "delete": "Delete"
+    "delete": "Delete",
+    "login": "Login"
   },
   "setup": {
     "step0": {

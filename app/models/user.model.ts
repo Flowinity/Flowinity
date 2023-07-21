@@ -320,6 +320,8 @@ export class User extends Model {
 
   stats: object
 
+  oauthAppId?: string
+
   @HasOne(() => FriendNickname, "friendId")
   nickname: FriendNickname
 

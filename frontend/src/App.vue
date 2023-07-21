@@ -37,6 +37,7 @@ export default defineComponent({
     }
   },
   mounted() {
+    console.log(localStorage.getItem("token"));
     if (this.$vuetify.display.mobile) {
       this.$app.mainDrawer = false;
       this.$chat.memberSidebarShown = false;

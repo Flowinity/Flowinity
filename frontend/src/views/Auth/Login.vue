@@ -1,5 +1,5 @@
 <template>
-  <v-container class="center-container" fluid>
+  <v-container class="center-container" :fluid="true">
     <v-row align="center" justify="center">
       <v-col cols="12" md="7" sm="8" xl="5">
         <v-card
@@ -91,7 +91,15 @@ export default defineComponent({
         this.$socket.auth = { token: data.token };
         this.$socket.disconnect();
         this.$socket.connect();
-        this.$router.push("/");
+        if (!this.$route.query.redirect) {
+          this.$router.push("/");
+        } else {
+          try {
+            this.$router.push(this.$route.query.redirect);
+          } catch {
+            this.$router.push("/");
+          }
+        }
       } catch {
         this.loading = false;
       }

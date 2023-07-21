@@ -9,6 +9,7 @@ import {
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { SessionInfo } from "@app/types/auth"
+import { Col } from "@troplo/sequelize/types/utils"
 
 @Table
 export class Session extends Model {
@@ -25,7 +26,7 @@ export class Session extends Model {
   @Column({
     type: "enum"
   })
-  type: "api" | "session"
+  type: "api" | "session" | "oauth"
 
   @Column
   expiredAt: Date
@@ -38,6 +39,11 @@ export class Session extends Model {
     type: DataType.JSON
   })
   info: SessionInfo
+
+  @Column({
+    type: DataType.UUIDV4
+  })
+  oauthAppId: string
 
   @BelongsTo(() => User, "userId")
   user: User

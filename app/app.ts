@@ -47,6 +47,7 @@ import { MigrateControllerV3 } from "@app/controllers/v3/migrate.controller"
 import { SlideshowControllerV3 } from "@app/controllers/v3/slideshow.controller"
 import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
 import { InstanceControllerV3 } from "@app/controllers/v3/instance.controller"
+import { OauthControllerV3 } from "@app/controllers/v3/oauth.controller"
 
 @Service()
 @Middleware({ type: "after" })
@@ -178,7 +179,8 @@ export class Application {
             MailControllerV3,
             MigrateControllerV3,
             SlideshowControllerV3,
-            ...(config?.officialInstance ? [InstanceControllerV3] : [])
+            ...(config?.officialInstance ? [InstanceControllerV3] : []),
+            OauthControllerV3
           ]
         : [SetupControllerV3, CoreControllerV3],
       routePrefix: endpoint,
@@ -272,7 +274,11 @@ export class Application {
 
   private config() {
     // Middleware configuration
-    this.app.use(express.json())
+    this.app.use(
+      express.json({
+        limit: "100mb"
+      })
+    )
     this.app.use(express.urlencoded({ extended: true }))
     this.app.use(cookieParser())
     this.app.use(cors())
