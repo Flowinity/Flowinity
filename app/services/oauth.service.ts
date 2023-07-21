@@ -66,15 +66,14 @@ export class OauthService {
 
   async getApps(userId: number) {
     return OauthApp.findAll({
-      where: {
-        userId
-      },
       include: [
         {
           model: Session,
           where: {
-            type: "oauth"
+            type: "oauth",
+            userId
           },
+          required: true,
           attributes: [
             "expiredAt",
             "id",

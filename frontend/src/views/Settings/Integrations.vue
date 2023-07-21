@@ -93,7 +93,7 @@
       </v-toolbar-title>
     </v-toolbar>
     <v-container>
-      <v-card v-for="app in oauth">
+      <v-card v-for="app in oauth" class="mb-4">
         <v-card-title>
           {{ app.name }}
           <span v-if="app.verified">
