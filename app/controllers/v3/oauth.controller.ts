@@ -118,7 +118,7 @@ export class OauthControllerV3 {
 
   @Get("/:oauthAppId")
   async getOauthAppConfig(
-    @Auth("*", false) user: User,
+    @Auth("oauth.authorize", false) user: User,
     @Param("oauthAppId") oauthAppId: string
   ) {
     const app = await this.oauthService.getApp(oauthAppId, user?.id)
@@ -128,7 +128,7 @@ export class OauthControllerV3 {
 
   @Post("/:oauthAppId/authorize")
   async authorize(
-    @Auth("*") user: User,
+    @Auth("oauth.authorize") user: User,
     @Param("oauthAppId") oauthAppId: string,
     @Body() body: { scopes: string }
   ) {

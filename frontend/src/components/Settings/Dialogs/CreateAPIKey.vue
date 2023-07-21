@@ -153,6 +153,10 @@ export default defineComponent({
         {
           name: "Insights (View)",
           id: "insights.view"
+        },
+        {
+          name: "Authorize TPU Applications",
+          id: "oauth.authorize"
         }
       ],
       name: "",

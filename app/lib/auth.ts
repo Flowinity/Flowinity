@@ -68,6 +68,7 @@ export type Scope =
   | "oauth.user.avatar"
   | "oauth.save"
   | "oauth.user"
+  | "oauth.authorize"
 
 async function getSession(token: string) {
   return await Session.findOne({

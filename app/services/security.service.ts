@@ -32,7 +32,8 @@ export class SecurityService {
       "chats.edit",
       "insights.view",
       "starred.view",
-      "starred.modify"
+      "starred.modify",
+      "oauth.authorize"
     ]
   }
 
