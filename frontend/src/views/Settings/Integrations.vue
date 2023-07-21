@@ -29,6 +29,7 @@
             :href="integration.url"
             :short-text="integration.shortText"
             :text="integration.name"
+            class="mr-2"
           />
         </span>
       </div>
