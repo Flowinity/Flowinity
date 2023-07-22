@@ -2,10 +2,12 @@ import {
   Body,
   Delete,
   Get,
+  HeaderParam,
   JsonController,
   Param,
   Post,
-  Put
+  Put,
+  Req
 } from "routing-controllers"
 import { Service } from "typedi"
 import { SlideshowService } from "@app/services/slideshow.service"
@@ -56,7 +58,12 @@ export class OauthControllerV3 {
   }
 
   @Get("/user")
-  async getOauthUser(@Auth("oauth") user: User) {
+  async getOauthUser(
+    @Auth("oauth") user: User,
+    @HeaderParam("x-tpu-app-id") verifyAppId?: string
+  ) {
+    if (verifyAppId && verifyAppId !== user.oauthAppId)
+      throw Errors.SECURITY_APP_ID_ERROR
     const scopes = user.scopes.split(",")
     const data: { [key: string]: any } = {}
     if (scopes.includes("oauth.user.email")) data.email = user.email
@@ -73,6 +80,7 @@ export class OauthControllerV3 {
       })
       if (save) data.save = save.data
     }
+    data.oauthAppId = user.oauthAppId
     return data
   }
 

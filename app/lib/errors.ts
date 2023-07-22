@@ -349,6 +349,11 @@ let Errors = {
   PRIVATE_APP: {
     message: "This app is private and cannot be used by other users.",
     status: 400
+  },
+  SECURITY_APP_ID_ERROR: {
+    message:
+      "Security error\nThe app ID sent by the client does not match the app's ID.",
+    status: 400
   }
 }
 

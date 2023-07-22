@@ -48,6 +48,8 @@ import { SlideshowControllerV3 } from "@app/controllers/v3/slideshow.controller"
 import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
 import { InstanceControllerV3 } from "@app/controllers/v3/instance.controller"
 import { OauthControllerV3 } from "@app/controllers/v3/oauth.controller"
+import { OauthApp } from "@app/models/oauthApp.model"
+import { Provider, Configuration } from "oidc-provider"
 
 @Service()
 @Middleware({ type: "after" })
@@ -220,7 +222,28 @@ export class Application {
       },
       validation: true
     })
+    const configuration = {
+      // ... see the available options in Configuration options section
+      features: {
+        introspection: { enabled: true },
+        revocation: { enabled: true }
+      },
+      formats: {
+        AccessToken: "jwt"
+      },
+      clients: [
+        {
+          client_id: "foo",
+          client_secret: "bar",
+          redirect_uris: ["http://lvh.me:8080/cb"]
+          // + other client properties
+        }
+      ]
+      // ...
+    } as Configuration
 
+    // const oidc = new Provider("http://localhost:34583", configuration)
+    //oidc.listen(34583, () => {})
     this.app.use("/api/docs", async (req, res): Promise<void> => {
       res.redirect("/api/v3/docs")
     })
@@ -270,6 +293,10 @@ export class Application {
       }
     })
     this.onServerStart() // TODO: Fix "Promise returned from onServerStart is ignored".
+  }
+
+  async bindOIDC() {
+    // OIDC
   }
 
   private config() {
