@@ -73,11 +73,38 @@ export class AdminService {
     content: string,
     userId: number
   ): Promise<Announcement> {
-    let announcement = await Announcement.create({
+    return await Announcement.create({
       content,
       userId
     })
+  }
+
+  async editAnnouncement(
+    id: number,
+    content: string,
+    userId: number
+  ): Promise<Announcement> {
+    const announcement = await Announcement.findOne({
+      where: {
+        id
+      }
+    })
+    if (!announcement || announcement.userId !== userId) throw Errors.NOT_FOUND
+    await announcement.update({
+      content
+    })
     return announcement
+  }
+
+  async deleteAnnouncement(id: number): Promise<boolean> {
+    const announcement = await Announcement.findOne({
+      where: {
+        id
+      }
+    })
+    if (!announcement) throw Errors.NOT_FOUND
+    await announcement.destroy()
+    return true
   }
 
   async getInvites() {

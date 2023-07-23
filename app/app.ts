@@ -222,7 +222,7 @@ export class Application {
       },
       validation: true
     })
-    const configuration = {
+    /*    const configuration = {
       // ... see the available options in Configuration options section
       features: {
         introspection: { enabled: true },
@@ -231,19 +231,12 @@ export class Application {
       formats: {
         AccessToken: "jwt"
       },
-      clients: [
-        {
-          client_id: "foo",
-          client_secret: "bar",
-          redirect_uris: ["http://lvh.me:8080/cb"]
-          // + other client properties
-        }
-      ]
-      // ...
+      clients: []
     } as Configuration
 
-    // const oidc = new Provider("http://localhost:34583", configuration)
-    //oidc.listen(34583, () => {})
+    const oidc = new Provider("http://localhost:34583", configuration)
+    oidc.listen(34583, () => {})
+    */
     this.app.use("/api/docs", async (req, res): Promise<void> => {
       res.redirect("/api/v3/docs")
     })

@@ -14,6 +14,7 @@ import { useExperimentsStore } from "@/store/experiments";
 import { i18n } from "@/plugins/i18n";
 import { useRoute } from "vue-router";
 import { SidebarItem } from "@/types/sidebar";
+import { Announcement } from "@/models/announcement";
 
 export interface AppState {
   quickAction: number;
@@ -49,7 +50,7 @@ export interface AppState {
     matomoId: string | null;
     hostname: string;
     hostnameWithProtocol: string;
-    announcements: any[];
+    announcements: Announcement[];
     flowinityId: string;
     officialInstance: boolean;
     connection: {

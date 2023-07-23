@@ -12,7 +12,7 @@
           <UserCard subtitle="Lead Developer" username="Troplo"></UserCard>
           <UserCard
             subtitle="Infrastructure Manager / Code Contributor"
-            username="remy"
+            username="goose"
           ></UserCard>
           <UserCard
             subtitle="Code Contributor"
@@ -259,6 +259,9 @@ export default defineComponent({
         .sort()
         .filter((item, index, array) => array.indexOf(item) === index);
     }
+  },
+  mounted() {
+    this.$app.title = "Credits";
   }
 });
 </script>

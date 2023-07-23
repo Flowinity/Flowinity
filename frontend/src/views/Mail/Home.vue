@@ -6,7 +6,10 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Home"
+  name: "Home",
+  mounted() {
+    this.$app.title = "Mail";
+  }
 });
 </script>
 

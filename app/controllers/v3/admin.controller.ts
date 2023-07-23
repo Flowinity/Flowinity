@@ -313,6 +313,32 @@ export class AdminControllerV3 {
   }
 
   @UseBefore(HighLevel)
+  @Patch("/announcement")
+  async editAnnouncement(
+    @Auth("*") user: User,
+    @Body()
+    body: {
+      content: string
+      id: number
+    }
+  ) {
+    const announcement = await this.adminService.editAnnouncement(
+      body.id,
+      body.content,
+      user.id
+    )
+    this.cacheService.refreshState()
+    return announcement
+  }
+
+  @UseBefore(HighLevel)
+  @Delete("/announcement/:id")
+  async deleteAnnouncement(@Auth("*") user: User, @Param("id") id: number) {
+    await this.adminService.deleteAnnouncement(id)
+    this.cacheService.refreshState()
+  }
+
+  @UseBefore(HighLevel)
   @Post("/notification")
   async createNotification(
     @Auth("*") user: User,

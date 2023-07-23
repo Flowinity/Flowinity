@@ -226,7 +226,7 @@ export default {
     }
   },
   charUp(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   },
   contrast(hex: string) {
     const r = parseInt(hex.substr(1, 2), 16);

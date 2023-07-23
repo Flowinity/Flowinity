@@ -6,7 +6,15 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Mailbox"
+  name: "Mailbox",
+  mounted() {
+    this.$app.title = `${this.$functions.charUp(this.$mail.selectedMailbox)}`;
+  },
+  watch: {
+    $route() {
+      this.$app.title = `${this.$functions.charUp(this.$mail.selectedMailbox)}`;
+    }
+  }
 });
 </script>
 
