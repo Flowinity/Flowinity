@@ -373,9 +373,7 @@ async function processFile(
 
 async function postUpload(upload: Upload): Promise<void> {
   await tesseract
-    .recognize(global.storageRoot + upload.attachment, {
-      lang: "eng"
-    })
+    .recognize(global.storageRoot + upload.attachment, {})
     .then(async (text: string): Promise<void> => {
       await Upload.update(
         {
@@ -956,7 +954,7 @@ function getTypeByExt(ext: string): string {
     dll: "binary",
     so: "binary"
   } as Record<string, string>
-  return types[ext] || "binary"
+  return types[ext.toLowerCase()] || "binary"
 }
 
 export default {
