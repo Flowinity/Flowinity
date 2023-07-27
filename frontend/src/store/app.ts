@@ -89,7 +89,11 @@ export interface AppState {
         data: number[];
       } | null;
     };
-    maintenance: boolean;
+    maintenance: {
+      enabled: boolean;
+      message: string;
+      statusPage: string;
+    };
     alert: string;
     _redis: string;
     server: string;
@@ -231,7 +235,11 @@ export const useAppStore = defineStore("app", {
           chats: 0,
           crashes: 0
         },
-        maintenance: false,
+        maintenance: {
+          enabled: false,
+          message: "",
+          statusPage: ""
+        },
         _redis: new Date().toISOString(),
         server: "MAIN4",
         officialInstance: true,

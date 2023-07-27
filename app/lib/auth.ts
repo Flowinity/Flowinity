@@ -338,6 +338,13 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
   return createParamDecorator({
     required,
     value: async (action) => {
+      if (config.maintenance.enabled)
+        throw {
+          name: "MAINTENANCE",
+          message: `${config.maintenance.message}\n\nFor more information visit ${config.maintenance.statusPage}`,
+          status: 400
+        }
+
       if (!config.finishedSetup && !required) return null
       if (!config.finishedSetup) throw Errors.NOT_SETUP
       const token = action.request.header("Authorization")

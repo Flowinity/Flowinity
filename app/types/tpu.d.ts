@@ -1,7 +1,11 @@
 declare type TpuConfig = {
   hostnameWithProtocol: string
   hostname: string
-  maintenance: boolean
+  maintenance: {
+    enabled: boolean
+    message: string
+    statusPage: string
+  }
   siteName: string
   release: string
   storage: string

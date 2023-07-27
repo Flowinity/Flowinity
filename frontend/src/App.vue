@@ -5,6 +5,10 @@
     stop-propagation
     @error-captured="submitFeedback"
   >
+    <Maintenance
+      v-model="$app.site.maintenance"
+      v-if="$app.site.maintenance"
+    ></Maintenance>
     <router-view />
   </VErrorBoundary>
 </template>
@@ -13,10 +17,11 @@
 import { defineComponent } from "vue";
 import Crash from "@/components/Core/Crash.vue";
 import VErrorBoundary from "./components/Core/ErrorBoundary.vue";
+import Maintenance from "@/components/Core/Dialogs/Maintenance.vue";
 
 export default defineComponent({
   name: "TPUApp",
-  components: { Crash, VErrorBoundary },
+  components: { Maintenance, Crash, VErrorBoundary },
   data() {
     return {
       skullCrash: Crash,

@@ -9,7 +9,11 @@ export class DefaultTpuConfig {
     storage: "storage",
     registrations: false,
     mediaProxySecret: cryptoRandomString({ length: 128 }),
-    maintenance: false,
+    maintenance: {
+      enabled: false,
+      statusPage: "https://status.troplo.com",
+      message: "We are currently undergoing maintenance."
+    },
     release: "prod",
     jitsiToken: null,
     officialInstance: false,

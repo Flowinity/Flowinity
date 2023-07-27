@@ -65,6 +65,9 @@ ax.interceptors.response.use(
       ) {
         console.warn(`[TPU/HTTP] Experimental feature is not allowed.`);
         return Promise.reject(e);
+      } else if (e.response.data.errors[0].name === "MAINTENANCE") {
+        console.warn(`[TPU/HTTP] Maintenance being conducted.`);
+        return Promise.reject(e);
       }
       if (!e.response.config.headers.noToast) {
         for (const error of e.response.data.errors) {
