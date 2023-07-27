@@ -6,8 +6,8 @@
     @error-captured="submitFeedback"
   >
     <Maintenance
-      v-model="$app.site.maintenance"
-      v-if="$app.site.maintenance"
+      v-model="$app.site.maintenance.enabled"
+      v-if="$app.site.maintenance.enabled"
     ></Maintenance>
     <router-view />
   </VErrorBoundary>
