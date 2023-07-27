@@ -18,9 +18,16 @@
           color="primary"
           class="mt-n2"
           :href="$app.site.maintenance.statusPage"
+          target="_blank"
         >
           Learn more
         </v-btn>
+        <v-card-subtitle
+          v-if="checking"
+          style="position: fixed; left: 50%; transform: translateX(-50%)"
+        >
+          Checking status...
+        </v-card-subtitle>
       </div>
     </div>
   </v-dialog>
@@ -34,7 +41,25 @@ export default defineComponent({
   name: "Maintenance",
   components: { CoreDialog },
   props: ["modelValue"],
-  emits: ["update:modelValue"]
+  emits: ["update:modelValue"],
+  data() {
+    return {
+      checking: false
+    };
+  },
+  methods: {
+    check() {
+      if (this.checking) return;
+      this.checking = true;
+      this.$app.refresh().then(() => {
+        this.checking = false;
+      });
+      return this.checking;
+    }
+  },
+  mounted() {
+    setInterval(this.check, 5000);
+  }
 });
 </script>
 

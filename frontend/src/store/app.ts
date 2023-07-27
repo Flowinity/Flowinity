@@ -720,6 +720,12 @@ export const useAppStore = defineStore("app", {
       localStorage.setItem("coreStore", JSON.stringify(data));
       this.loading = false;
     },
+    async refresh() {
+      const { data } = await axios.get("/core");
+      this.site = data;
+      this.domain = "https://" + this.site.domain + "/i/";
+      localStorage.setItem("coreStore", JSON.stringify(data));
+    },
     async upload() {
       try {
         const toast = useToast();
