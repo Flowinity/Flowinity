@@ -371,14 +371,6 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
               required: true,
               include: [
                 {
-                  model: Experiment,
-                  as: "experiments"
-                },
-                {
-                  model: Subscription,
-                  as: "subscription"
-                },
-                {
                   model: Domain,
                   as: "domain"
                 },
