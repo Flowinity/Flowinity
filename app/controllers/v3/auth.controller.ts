@@ -24,7 +24,7 @@ export class AuthControllerV3 {
   ) {}
 
   @Post("/login")
-  @UseBefore(rateLimits.standardLimiter)
+  @UseBefore(rateLimits.loginLimiter)
   async login(
     @Body() body: { email: string; password: string; code?: string }
   ) {
@@ -33,7 +33,7 @@ export class AuthControllerV3 {
   }
 
   @Post("/register")
-  @UseBefore(rateLimits.mailLimiter)
+  @UseBefore(rateLimits.registerLimiter)
   async register(
     @Body()
     body: {

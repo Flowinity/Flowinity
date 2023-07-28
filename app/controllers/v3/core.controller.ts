@@ -82,6 +82,7 @@ export class CoreControllerV3 {
   @Get("")
   @Get("/state")
   async getCore(@Req() req: Request) {
+    const apiVersion = req.path.startsWith("/api/v2") ? 2 : 3
     if (!config.finishedSetup) {
       let step = await this.getStep()
       return {
@@ -104,7 +105,9 @@ export class CoreControllerV3 {
         whitelist: whitelist.find((w) => w.ip === req.ip) || false
       },
       finishedSetup: true,
-      domain: global.domain
+      domain: global.domain,
+      maintenance:
+        apiVersion === 2 ? config.maintenance.enabled : config.maintenance
     }
   }
 

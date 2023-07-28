@@ -37,6 +37,24 @@ export const mailLimiter: RateLimitRequestHandler = rateLimit({
   })
 })
 
+export const registerLimiter: RateLimitRequestHandler = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 1,
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
+  message,
+  async keyGenerator(req: any, res: any) {
+    const user = await simpleAuth(req, res)
+    return user?.id || req.ip
+  },
+  store: new RedisStore({
+    //@ts-ignore
+    sendCommand: (...args: string[]) => redis.sendCommand(args),
+    prefix: "registerLimiter:"
+  })
+})
+
 export const uploadLimiterUser: RateLimitRequestHandler = rateLimit({
   windowMs: 60 * 1000,
   max: 4,
@@ -109,6 +127,24 @@ export const standardLimiter: RateLimitRequestHandler = rateLimit({
   })
 })
 
+export const loginLimiter: RateLimitRequestHandler = rateLimit({
+  windowMs: 15 * 1000,
+  max: 5,
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  skipFailedRequests: false, // Don't count failed requests (status >= 400) towards rate limiting
+  message,
+  async keyGenerator(req: any, res: any) {
+    const user = await simpleAuth(req, res)
+    return user?.id || req.ip
+  },
+  store: new RedisStore({
+    //@ts-ignore
+    sendCommand: (...args: string[]) => redis.sendCommand(args),
+    prefix: "loginLimiter:"
+  })
+})
+
 export const uploadLimiter: RateLimitRequestHandler = rateLimit({
   windowMs: 90 * 1000,
   max: 7,
@@ -133,5 +169,7 @@ export default {
   msgLimiter,
   inviteLimiter,
   standardLimiter,
-  uploadLimiter
+  uploadLimiter,
+  registerLimiter,
+  loginLimiter
 }
