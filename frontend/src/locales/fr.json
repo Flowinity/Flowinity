@@ -15,8 +15,8 @@
       "feedback": "Envoyer des commentaires",
       "changelog": "Changelog",
       "inviteAFriend": "Inviter un ami",
-      "newWithGold": "Quoi de neuf avec Or?",
-      "upgradeToGold": "Mise à niveau vers Or",
+      "newWithGold": "Quoi de neuf avec TPU Or?",
+      "upgradeToGold": "Mise à niveau vers TPU Or",
       "colubrinaMigrate": "Migrer depuis Colubrina",
       "admin": "Administration",
       "member": "Membre de {names}",
@@ -42,61 +42,61 @@
     "stats": "Statistiques",
     "uploadStats": "Statistiques de téléversement",
     "messageStats": "Statistiques de messages",
-    "hourStats": "Temps pass"
+    "hourStats": "Temps passé"
   },
   "errors": {
-    "notFound": "The page you are looking for does not exist."
+    "notFound": "La page que vous recherchez n'existe pas."
   },
   "gallery": {
-    "totalPages": "Total Pages: {count}",
-    "totalItems": "Total Items: {count}",
-    "randomAttachment": "Random Attachment",
-    "selectAll": "Select all",
-    "deselectAll": "Deselect all",
-    "deleteSelected": "Delete selected",
-    "collectSelected": "Add to Collection",
+    "totalPages": "Nombre total de pages: {count}",
+    "totalItems": "Nombre total d'items: {count}",
+    "randomAttachment": "Item aléatoire",
+    "selectAll": "Tout sélectionner",
+    "deselectAll": "Tout désélectionner",
+    "deleteSelected": "Supprimer sélectionnés",
+    "collectSelected": "Ajouter à la Collection",
     "actions": {
       "delete": {
-        "text": "Delete",
-        "aria": "Delete item (Shift + Click to delete without confirmation)"
+        "text": "Supprimer",
+        "aria": "Supprimer l'item (Shift + Click pour supprimer sans confirmation)"
       },
       "link": {
-        "text": "Copy Link",
-        "aria": "Copy link to clipboard"
+        "text": "Copier le lien",
+        "aria": "Copier le lien sur le presse-papiers"
       },
       "download": {
-        "text": "Open",
-        "aria": "Open item in new tab"
+        "text": "Ouvrir",
+        "aria": "Ouvrir l'item dans un nouvel onglet"
       },
       "ocr": {
         "text": "OCR",
-        "aria": "Copy scanned text to clipboard"
+        "aria": "Copier texte scanné sur le presse-papiers"
       },
       "star": {
-        "text": "Star",
-        "aria": "Star item"
+        "text": "Étoile",
+        "aria": "Étoiler l'item"
       },
       "pin": {
-        "text": "Pin to collection",
-        "aria": "Pin to collection"
+        "text": "Épingler à la collection",
+        "aria": "Épingler à la collection"
       }
     }
   },
   "settings": {
     "tabs": {
-      "account": "Account",
-      "security": "Security",
-      "setup": "Setup",
-      "mobileSetup": "Mobile Setup",
-      "domains": "Domains",
-      "integrations": "Integrations",
-      "slideshows": "Slideshows",
-      "about": "About TPU",
-      "integrationError": "Some integrations need attention."
+      "account": "Compte",
+      "security": "Sécurité",
+      "setup": "Configuration",
+      "mobileSetup": "Configuration Mobile",
+      "domains": "Noms de domaine",
+      "integrations": "Intégrations",
+      "slideshows": "Diaporama",
+      "about": "À propos de TPU",
+      "integrationError": "Certaines intégrations doivent être revues."
     },
     "home": {
       "privacy": {
-        "title": "Privacy",
+        "title": "Vie privée",
         "discordPrecaching": "Discord Precaching*",
         "discordPrecachingDesc": "* Discord precaching sends the TPU link of any media attachment to a Discord channel that gets cleared every 10 minutes in order to have the image cached by Discord by the time it's sent by yourself. Do not enable this if you don't trust Discord.",
         "demoMode": "Demo Mode",
@@ -148,25 +148,25 @@
       "apiKeys": "Clés API",
       "recentLogins": "Connexions récentes",
       "addPassword": "Ajouter mot de passe",
-      "alternatePasswords": "Alternate Passwords",
-      "addAPIKey": "Add API Key",
-      "addAlternatePassword": "Add Password",
+      "alternatePasswords": "Mots de passe alterntifs",
+      "addAPIKey": "Ajouter clé d'API",
+      "addAlternatePassword": "Ajouter un mot de passe",
       "ipHistory": "View IP History",
-      "noIPHistory": "Session has no IP history.",
+      "noIPHistory": "Session n'a pas d'historique d'IP.",
       "unknownLocation": "Location inconnue",
       "unknownISP": "FAI Inconnu",
       "unknownASN": "ASN Inconnu",
       "lastSessionUsage": "Last session usage: {date}",
       "sessionCreated": "Session created: {date}",
       "sessionExpiry": "Session expiry: {date}",
-      "deleteSession": "Delete Session",
+      "deleteSession": "Supprimer la session",
       "unknownIP": "IP inconnue"
     },
     "setup": {
       "title": "API Key Options",
       "label": "Select an API Key",
-      "sharex": "How to install the ShareX configuration:",
-      "sharenix": "How to install the ShareNix configuration:",
+      "sharex": "Comment installer la configuration ShareX:",
+      "sharenix": "Comment installer la configuration ShareNix:",
       "sharenixSteps": {
         "1": "Download and install ShareNix for your distribution.",
         "2": "Download and install Flameshot or another supported screenshot tool.",
