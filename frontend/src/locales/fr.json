@@ -338,44 +338,44 @@
       }
     },
     "step5": {
-      "title": "Plan Configuration",
-      "subtitle": "Please select attributes of the default plan, such as storage per user.",
-      "storage": "Storage per user (in B)",
-      "maxUploadSize": "Max upload size (in B)"
+      "title": "Configuration des plans",
+      "subtitle": "Veuillez choisir les attributs par défaut des plans, comme le stockage par utilisateur.",
+      "storage": "Stockage par utilisateur (en octets)",
+      "maxUploadSize": "Taille maximale de téléversement (en octets)"
     },
     "step6": {
-      "title": "Mail Configuration",
-      "subtitle": "Please enter your SMTP credentials below.",
-      "host": "SMTP Host",
-      "port": "SMTP Port",
-      "username": "SMTP Username",
-      "password": "SMTP Password",
-      "secure": "SMTP Secure",
-      "test": "Test Connection",
-      "from": "From Address",
-      "testEmail": "Email address to send test email to"
+      "title": "Configuration de la messageri",
+      "subtitle": "Veuillez entrer vos identifiants SMTP ci-dessous: ",
+      "host": "Hôte SMTP",
+      "port": "Port SMTP",
+      "username": "Nom d'utilisateur SMTP",
+      "password": "Mot de passe SMTP",
+      "secure": "SMTPS",
+      "test": "Tester la connexion",
+      "from": "De:",
+      "testEmail": "Envoyer un courriel de test à"
     },
     "step7": {
-      "title": "Welcome to TPU!",
-      "subtitle": "Before continuing, TPU Server needs to be restarted, only 2 restarts should be necessary for the entire setup process.",
-      "restart": "Restart TPU Server"
+      "title": "Bienvenue sur TPU!",
+      "subtitle": "Avant de continuer, le serveur TPU doit être redémarré, seulement deux redémarrages devraient être nécessaires pour le processus de configuration.",
+      "restart": "Redémarrer le serveur TPU"
     },
     "step8": {
-      "title": "TPU Server is restarting... You will be redirected to the next step automatically."
+      "title": "Le serveur TPU est en train de redémarrer... Vous serez redirigé à la prochaine étape automatiquement."
     },
     "step9": {
-      "title": "Setup Default Domain",
+      "title": "Configurer le domaine par défaut",
       "subtitle": "TPU is designed to have an origin domain, this is used to manage TPU itself, and secondary domains which can be configured by the user, which is returned by the APIs for file uploads, this would usually be behind CloudFront, Cloudflare, or another CDN proxy.",
-      "domain": "Domain (please only base domain, no HTTPS)",
+      "domain": "Domaine (SVP, seulement le domaine de base, sans HTTPS)",
       "example": "i.troplo.com"
     }
   },
   "collections": {
     "settings": {
-      "title": "Collection Settings",
-      "removeBanner": "Remove Banner",
-      "export": "Export Collection",
-      "delete": "Delete Collection"
+      "title": "Paramètres de Collection",
+      "removeBanner": "Retirer la bannière",
+      "export": "Exporter la Collection",
+      "delete": "Supprimer la Collection"
     }
   }
 }
