@@ -75,7 +75,7 @@
         </v-window-item>
       </v-window>
     </v-container>
-    <v-card-subtitle class="text-left mt-n8">
+    <v-card-subtitle class="text-left mt-n4" v-if="cache">
       <small>
         {{ $t("generic.cache") }}: {{ $date($app.site._redis).fromNow() }}
       </small>
@@ -125,6 +125,10 @@ export default defineComponent({
     user: {
       type: Boolean,
       default: false
+    },
+    cache: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {
@@ -146,5 +150,6 @@ export default defineComponent({
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 </style>

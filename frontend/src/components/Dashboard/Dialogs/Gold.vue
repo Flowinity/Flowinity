@@ -110,7 +110,12 @@
           Close
         </v-btn>
         <span>
-          <v-btn class="no-capital" color="primary" disabled @click="step++">
+          <v-btn
+            class="no-capital"
+            color="primary"
+            :disabled="true"
+            @click="step++"
+          >
             Get started
             <v-icon class="ml-1">mdi-arrow-right</v-icon>
           </v-btn>

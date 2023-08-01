@@ -22,14 +22,14 @@
   <ColubrinaGroupSettingsDialog
     v-model="$chat.dialogs.groupSettings.value"
   ></ColubrinaGroupSettingsDialog>
-  <ColubrinaSidebar v-if="$chat.communicationsSidebar"></ColubrinaSidebar>
   <router-view></router-view>
-  <ColubrinaMemberSidebar></ColubrinaMemberSidebar>
+  <ColubrinaMemberSidebar
+    v-if="!$vuetify.display.mobile"
+  ></ColubrinaMemberSidebar>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
 import ColubrinaMemberSidebar from "@/layouts/colubrina/MemberSidebar.vue";
 import User from "@/views/User/User.vue";
 import ColubrinaUserMenu from "@/components/Communications/Menus/User.vue";
@@ -43,8 +43,7 @@ export default defineComponent({
     ColubrinaImageDialog,
     ColubrinaUserMenu,
     User,
-    ColubrinaMemberSidebar,
-    ColubrinaSidebar
+    ColubrinaMemberSidebar
   },
   computed: {
     menuStyle() {

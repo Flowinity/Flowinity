@@ -19,13 +19,14 @@
     </v-card>
   </v-menu>
   <div v-if="$vuetify.display.mobile" class="mt-2">
-    <CommunicationsAvatar
+    <UserAvatar
       :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
       :status="true"
       :user="$chat.selectedChat?.recipient"
       class="ml-4"
       size="32"
       style="display: inline-block"
+      :dot-status="true"
     />
     <h4
       id="tpu-brand-logo"
@@ -69,45 +70,21 @@
       <v-spacer></v-spacer>
     </v-card-actions>
   </div>
-  <template v-if="!$chat.search.value">
-    <v-card-text class="text-overline my-n3">MEMBERS</v-card-text>
-    <v-list v-if="users" nav>
-      <v-list-item
-        v-for="association in users"
-        :subtitle="association.legacyUser ? 'Legacy User' : undefined"
-        @click="
-          $chat.dialogs.user.username = association.user?.username;
-          $chat.dialogs.user.value = true;
-        "
-        @contextmenu.prevent="context($event, association)"
-      >
-        <template v-slot:title>
-          {{ $friends.getName(association.user) || "Deleted User" }}
-          <span>
-            <v-icon v-if="association.rank === 'owner'" color="gold">
-              mdi-crown
-            </v-icon>
-            <v-tooltip activator="parent" location="top">Group Owner</v-tooltip>
-          </span>
-          <span>
-            <v-icon v-if="association.rank === 'admin'" color="grey">
-              mdi-crown
-            </v-icon>
-            <v-tooltip activator="parent" location="top">Group Admin</v-tooltip>
-          </span>
-        </template>
-        <template v-slot:prepend>
-          <CommunicationsAvatar
-            :status="!!association.tpuUser"
-            :user="association.user"
-          ></CommunicationsAvatar>
-        </template>
-      </v-list-item>
-      <v-list-item v-if="!$chat.chats.length" class="fade-skeleton">
-        <MessageSkeleton v-for="i in 5" :animate="false"></MessageSkeleton>
-      </v-list-item>
-    </v-list>
-  </template>
+  <div class="position-relative" v-if="!$chat.search.value">
+    <v-card-text class="text-overline my-n3">
+      {{ $t("chats.members") }}
+    </v-card-text>
+    <v-virtual-scroll
+      item-height="48"
+      :items="users"
+      v-if="$chat.selectedChat"
+      style="overflow-x: hidden"
+    >
+      <template v-slot:default="{ item: { user, legacyUser, rank } }">
+        <SidebarItem :legacy-user="!!legacyUser" :rank="rank" :user="user" />
+      </template>
+    </v-virtual-scroll>
+  </div>
   <template v-else>
     <v-card-text class="text-overline my-n3">
       SEARCH
@@ -123,7 +100,7 @@
       <v-text-field
         v-model="$chat.search.query"
         append-icon="mdi-magnify"
-        autofocus
+        :autofocus="true"
         label="Search Query"
         @click:append="$chat.doSearch"
         @keyup.enter="$chat.doSearch"
@@ -174,21 +151,18 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Chat } from "@/models/chat";
-import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
-import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import { ChatAssociation } from "@/models/chatAssociation";
 import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
-
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import SidebarItem from "@/components/Communications/SidebarItem.vue";
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
   components: {
+    SidebarItem,
     Paginate,
     Message,
-    CommunicationsAvatar,
-    CreateChat,
-    MessageSkeleton
+    UserAvatar
   },
   data() {
     return {
@@ -202,8 +176,13 @@ export default defineComponent({
     };
   },
   computed: {
+    height() {
+      if (this.$vuetify.display.mobile) return "calc(100vh - 300px)";
+      return "calc(100vh - 64px)";
+    },
     users() {
-      return this.$chat.selectedChat?.users?.sort(
+      if (!this.$chat.selectedChat) return [];
+      return [...this.$chat.selectedChat.users].sort(
         (a: ChatAssociation, b: ChatAssociation) => {
           const aFriend = this.$friends.friends.find(
             (f) => f.otherUser.id === a.tpuUser?.id

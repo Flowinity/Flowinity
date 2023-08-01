@@ -89,6 +89,7 @@
   --v-toolbar-darken2: #717171;
   --v-toolbar-darken3: #555555;
   --v-toolbar-darken4: #383838;
+  --color-text-primary: black;
 }
 
 .codex-editor {
@@ -1675,7 +1676,16 @@
   -webkit-box-shadow: 0 3px 15px -3px rgba(13, 20, 33, 0.13);
   box-shadow: 0 3px 15px -3px rgba(13, 20, 33, 0.13);
   border-radius: 6px;
-  z-index: 2;
+  z-index: 20;
+}
+
+.v-theme--amoled .ce-popover, .v-theme--dark .ce-popover {
+  --color-text-primary: white;
+  --color-background-item-hover: rgba(255, 255, 255, 0.08);
+}
+
+.ce-popover-item__icon {
+  background: unset;
 }
 
 .ce-popover--left-oriented:before {
@@ -2073,6 +2083,7 @@
   --color-background: var(--v-bg-lighten2) !important;
   --color-text-secondary: var(--v-bg-base);
   --color-border: var(--v-bg-lighten2);
+  --color-text-primary: white;
   --cell-size: 34px;
   --toolbox-icon-size: 18px;
   --toolbox-padding: 6px;

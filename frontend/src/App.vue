@@ -5,6 +5,10 @@
     stop-propagation
     @error-captured="submitFeedback"
   >
+    <Maintenance
+      v-model="$app.site.maintenance.enabled"
+      v-if="$app.site.maintenance.enabled"
+    ></Maintenance>
     <router-view />
   </VErrorBoundary>
 </template>
@@ -13,10 +17,11 @@
 import { defineComponent } from "vue";
 import Crash from "@/components/Core/Crash.vue";
 import VErrorBoundary from "./components/Core/ErrorBoundary.vue";
+import Maintenance from "@/components/Core/Dialogs/Maintenance.vue";
 
 export default defineComponent({
   name: "TPUApp",
-  components: { Crash, VErrorBoundary },
+  components: { Maintenance, Crash, VErrorBoundary },
   data() {
     return {
       skullCrash: Crash,
@@ -28,12 +33,12 @@ export default defineComponent({
       this.error = e;
       console.log("[TPU/SkullCrash] Error captured:", e);
       console.error(e.error);
-      return;
+      /*return;
       await this.axios.post("/user/feedback", {
         route: this.$route.path,
         starRating: 0,
         text: `{"name":"[TPU/SkullCrash]","msg":${e?.error?.message},"stack":${e?.error?.stack}}`
-      });
+      });*/
     }
   },
   mounted() {

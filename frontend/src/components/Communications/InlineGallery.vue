@@ -3,7 +3,7 @@
     <v-text-field
       v-model="show.search"
       append-icon="mdi-magnify"
-      autofocus
+      :autofocus="true"
       class="mt-5"
       label="Search"
       @keydown.enter="getGallery()"

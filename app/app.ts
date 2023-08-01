@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express"
+import express, { NextFunction } from "express"
 import {
   ExpressErrorMiddlewareInterface,
   HttpError,
@@ -17,9 +17,6 @@ import fs from "fs"
 
 // Import Libs
 import Errors from "@app/lib/errors"
-
-// Import Classes
-import { DefaultTpuConfig } from "@app/classes/DefaultTpuConfig"
 
 // Import Schemas
 import { ApiSchema } from "@app/schema"
@@ -50,6 +47,9 @@ import { MigrateControllerV3 } from "@app/controllers/v3/migrate.controller"
 import { SlideshowControllerV3 } from "@app/controllers/v3/slideshow.controller"
 import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
 import { InstanceControllerV3 } from "@app/controllers/v3/instance.controller"
+import { OauthControllerV3 } from "@app/controllers/v3/oauth.controller"
+import { OauthApp } from "@app/models/oauthApp.model"
+import { Provider, Configuration } from "oidc-provider"
 
 @Service()
 @Middleware({ type: "after" })
@@ -181,7 +181,8 @@ export class Application {
             MailControllerV3,
             MigrateControllerV3,
             SlideshowControllerV3,
-            ...(config?.officialInstance ? [InstanceControllerV3] : [])
+            ...(config?.officialInstance ? [InstanceControllerV3] : []),
+            OauthControllerV3
           ]
         : [SetupControllerV3, CoreControllerV3],
       routePrefix: endpoint,
@@ -221,9 +222,21 @@ export class Application {
       },
       validation: true
     })
+    /*    const configuration = {
+      // ... see the available options in Configuration options section
+      features: {
+        introspection: { enabled: true },
+        revocation: { enabled: true }
+      },
+      formats: {
+        AccessToken: "jwt"
+      },
+      clients: []
+    } as Configuration
 
-    const spec = ApiSchema.generateSchema()
-
+    const oidc = new Provider("http://localhost:34583", configuration)
+    oidc.listen(34583, () => {})
+    */
     this.app.use("/api/docs", async (req, res): Promise<void> => {
       res.redirect("/api/v3/docs")
     })
@@ -232,7 +245,11 @@ export class Application {
       swaggerUi.serve,
       swaggerUi.setup(swaggerJSDoc(this.swaggerOptions))
     )
-    this.app.use("/api/v3/docs", swaggerUi.serve, swaggerUi.setup(spec))
+
+    if (config.finishedSetup) {
+      const spec = ApiSchema.generateSchema()
+      this.app.use("/api/v3/docs", swaggerUi.serve, swaggerUi.setup(spec))
+    }
 
     useExpressServer(this.app, {
       controllers: config.finishedSetup
@@ -263,6 +280,7 @@ export class Application {
       } catch (e) {
         res.status(500)
         res.render("frontend-compile", {
+          //@ts-ignore
           path: e?.path || "unknown"
         })
       }
@@ -270,9 +288,17 @@ export class Application {
     this.onServerStart() // TODO: Fix "Promise returned from onServerStart is ignored".
   }
 
+  async bindOIDC() {
+    // OIDC
+  }
+
   private config() {
     // Middleware configuration
-    this.app.use(express.json())
+    this.app.use(
+      express.json({
+        limit: "100mb"
+      })
+    )
     this.app.use(express.urlencoded({ extended: true }))
     this.app.use(cookieParser())
     this.app.use(cors())
@@ -294,6 +320,11 @@ export class Application {
           }
         }
       )
+      // delete all Redis keys containing user:*:platforms to reset statuses
+      const keys = await redis.keys("user:*:platforms")
+      for (const key of keys) {
+        await redis.del(key)
+      }
     }
   }
 }

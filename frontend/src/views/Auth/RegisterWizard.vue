@@ -2,7 +2,7 @@
   <v-container
     v-if="inviter || $app.site.registrations"
     class="center-container"
-    fluid
+    :fluid="true"
   >
     <v-row align="center" justify="center">
       <v-col cols="12" md="7" sm="8" xl="5">
@@ -19,7 +19,7 @@
               <v-text-field
                 v-model="username"
                 :rules="$validation.user.username"
-                autofocus
+                :autofocus="true"
                 label="Username"
                 @keydown.enter="register"
               />
@@ -79,7 +79,7 @@
   <v-container
     v-else-if="!$app.componentLoading"
     class="center-container"
-    fluid
+    :fluid="true"
   >
     <v-row align="center" justify="center">
       <v-col cols="12" md="7" sm="8" xl="5">
@@ -105,6 +105,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { TYPE } from "vue-toastification";
 
 export default defineComponent({
   name: "RegisterWizard",
@@ -165,7 +166,7 @@ export default defineComponent({
         this.$router.push("/");
         this.$toast.success("You have been registered, welcome to TPU!", {
           timeout: 3000,
-          type: "success"
+          type: TYPE.SUCCESS
         });
         if (this.$route.query.ref === "colubrina") {
           this.$app.dialogs.migrateWizard = true;

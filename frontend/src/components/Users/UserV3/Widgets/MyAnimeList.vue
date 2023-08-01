@@ -2,9 +2,13 @@
   <v-card class="mx-2 my-5">
     <v-toolbar>
       <v-toolbar-title>
-        MyAnimeList
-        <v-chip size="small">BETA</v-chip>
-        <template v-if="!loading">
+        <span>
+          MAL
+          <v-tooltip :eager="false" location="top" activator="parent">
+            MyAnimeList
+          </v-tooltip>
+        </span>
+        <template v-if="!loading && malUser">
           &bullet;
           {{ malUser.anime_statistics.num_episodes.toLocaleString() }}
           episodes &bullet;
@@ -16,16 +20,25 @@
         icon
         :href="`https://myanimelist.net/profile/${malUser?.name}`"
         target="_blank"
+        :disabled="!malUser?.name"
       >
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
-      <v-btn icon @click="page > 1 ? page-- : (page = 1)">
+      <v-btn
+        icon
+        @click="page > 1 ? page-- : (page = 1)"
+        :disabled="page === 1"
+      >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
       <v-btn icon @click="getMAL">
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
-      <v-btn icon @click="page < pages ? page++ : page">
+      <v-btn
+        icon
+        @click="page < pages ? page++ : page"
+        :disabled="page >= pages"
+      >
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
     </v-toolbar>
@@ -34,17 +47,30 @@
         <v-list-item
           v-for="anime in computedRecent"
           :key="anime.node.id"
-          :href="anime.url"
           target="_blank"
         >
           <template v-slot:prepend>
-            <v-img
-              :src="anime.node.main_picture.medium"
-              class="mr-3"
-              width="40"
-            ></v-img>
+            <a
+              target="_blank"
+              rel="noopener"
+              :href="`https://myanimelist.net/anime/${anime.node.id}`"
+            >
+              <v-img
+                :src="anime.node.main_picture.medium"
+                class="mr-3"
+                width="40"
+              ></v-img>
+            </a>
           </template>
-          <v-list-item-title>{{ anime.node.title }}</v-list-item-title>
+          <v-list-item-title
+            tag="a"
+            style="color: unset"
+            target="_blank"
+            rel="noopener"
+            :href="`https://myanimelist.net/anime/${anime.node.id}`"
+          >
+            {{ anime.node.title }}
+          </v-list-item-title>
           <v-progress-linear
             :color="getStatusColor(anime.node.my_list_status.status)"
             :model-value="
@@ -56,13 +82,14 @@
             height="20"
           >
             <strong
-              :class="{
-                'text-white':
-                  (anime.node.my_list_status.num_episodes_watched /
-                    anime.node.num_episodes) *
-                    100 <
-                  70
-              }"
+              :class="
+                (anime.node.my_list_status.num_episodes_watched /
+                  anime.node.num_episodes) *
+                  100 <=
+                60
+                  ? 'white-text'
+                  : 'text-black'
+              "
               style="font-size: 14px"
             >
               {{ anime.node.my_list_status.num_episodes_watched }}/{{
@@ -163,6 +190,52 @@ export default defineComponent({
       malUser: null as MalUser | null,
       loading: true,
       partialLoading: false,
+      ratings: [
+        {
+          text: "Masterpiece",
+          value: 10
+        },
+        {
+          text: "Great",
+          value: 9
+        },
+        {
+          text: "Very Good",
+          value: 8
+        },
+        {
+          text: "Good",
+          value: 7
+        },
+        {
+          text: "Fine",
+          value: 6
+        },
+        {
+          text: "Average",
+          value: 5
+        },
+        {
+          text: "Bad",
+          value: 4
+        },
+        {
+          text: "Very Bad",
+          value: 3
+        },
+        {
+          text: "Horrible",
+          value: 2
+        },
+        {
+          text: "Appalling",
+          value: 1
+        },
+        {
+          text: "Not rated",
+          value: 0
+        }
+      ],
       statuses: [
         {
           text: "Watching",
@@ -247,7 +320,7 @@ export default defineComponent({
           headers: {
             noToast: true
           }
-        }
+        } as any
       );
       if (!data.data) return;
       this.recent = data.data;

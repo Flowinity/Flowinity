@@ -62,11 +62,9 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "UnauthenticatedAppBar",
-  components: { UserAvatar },
   computed: {
     redirected() {
       return this.$route.query.redirected && this.$route.path === "/home";

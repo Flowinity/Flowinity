@@ -10,7 +10,7 @@
     <v-card-text v-if="update">
       <v-text-field
         v-model="update.domain"
-        autofocus
+        :autofocus="true"
         :label="$t('settings.domains.dialog.domain')"
         required
         @keydown.enter="updateDomain"
@@ -60,7 +60,20 @@ export default defineComponent({
       if (val) {
         if (this.type === "create")
           return (this.update = {
-            domain: ""
+            domain: "",
+            id: 0,
+            DNSProvisioned: true,
+            active: true,
+            zone: "",
+            advanced: false,
+            userId: 0,
+            subdomains: false,
+            subdomainsCreate: false,
+            customUserEligibility: [],
+            restricted: "disabled",
+            user: null,
+            users: [],
+            activeUsersCount: 0
           });
         this.update = this.domain;
       }

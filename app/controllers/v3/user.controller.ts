@@ -30,6 +30,7 @@ import fs from "fs"
 import sharp from "sharp"
 import { PatchUser } from "@app/types/auth"
 import axios from "axios"
+import { OpenAPI } from "routing-controllers-openapi"
 
 @Service()
 @JsonController("/user")
@@ -56,14 +57,14 @@ export class UserControllerV3 {
         userId: user.id
       },
       order: [["createdAt", "DESC"]],
-      limit: 15,
-      raw: true
+      limit: 15
     })
 
     return {
       ...user,
       pendingAutoCollects,
-      notifications
+      notifications,
+      platforms: await redis.json.get(`user:${user.id}:platforms`)
     }
   }
 
@@ -82,10 +83,22 @@ export class UserControllerV3 {
     )
   }
 
+  @OpenAPI({
+    description: "Used for TPU Kotlin"
+  })
+  @Post("/friends/username/:username/:action")
+  async addFriendByUsername(
+    @Auth("user.modify") user: User,
+    @Param("username") username: string,
+    @Param("action") action: "accept" | "remove" | "send"
+  ) {
+    await this.userUtilsService.friend(user.id, username, "username", action)
+  }
+
   @OnUndefined(204)
   @Post("/friends/:id")
   async addFriend(@Auth("user.modify") user: User, @Param("id") id: number) {
-    await this.userUtilsService.friend(user.id, id)
+    await this.userUtilsService.friend(user.id, id, "id")
   }
 
   @Get("/all")
@@ -107,6 +120,7 @@ export class UserControllerV3 {
     const user = await this.userUtilsService.getUser(username, authUser?.id)
     if (!user || (!user?.publicProfile && !authUser))
       throw Errors.USER_NOT_FOUND
+
     return user
   }
 
@@ -233,6 +247,7 @@ export class UserControllerV3 {
   }
 
   @OnUndefined(204)
+  @UseBefore(rateLimits.mailLimiter)
   @Post("/verification/send")
   async sendVerification(@Auth("user.modify") user: User) {
     await this.userUtilsService.sendVerificationEmail(user.id)
@@ -316,5 +331,13 @@ export class UserControllerV3 {
     res.set("Content-Type", "image/png")
     res.send(png)
     return res
+  }
+
+  @Post("/fcmToken")
+  async registerFCMToken(
+    @Auth("user.modify") user: User,
+    @Body() body: { token: string }
+  ) {
+    await this.userUtilsService.registerFCMToken(user.id, body.token)
   }
 }

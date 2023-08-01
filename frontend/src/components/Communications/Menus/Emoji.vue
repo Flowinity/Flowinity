@@ -9,13 +9,21 @@
     <v-card height="500" width="500">
       <div class="d-flex flex-row">
         <v-tabs v-model="tab" direction="vertical">
-          <v-tab v-for="category in categories" :value="category.key">
+          <v-tab
+            v-for="category in categories"
+            :value="category.key"
+            :key="category.key"
+          >
             {{ category.title }}
           </v-tab>
         </v-tabs>
         <v-card-text v-if="modelValue">
           <v-window v-model="tab">
-            <v-window-item v-for="category in categories" :value="category.key">
+            <v-window-item
+              v-for="category in categories"
+              :value="category.key"
+              :key="category.key"
+            >
               <v-card class="elevation-0" color="transparent" max-width="300">
                 <v-text-field v-model="search" label="Search" />
                 <v-row>

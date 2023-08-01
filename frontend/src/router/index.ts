@@ -97,6 +97,11 @@ const routes = [
             component: () => import("@/views/Settings/Security.vue")
           },
           {
+            path: "security/audit",
+            name: "Audit Log",
+            component: () => import("@/views/Settings/SecurityAudit.vue")
+          },
+          {
             path: "clients",
             name: "Setup",
             component: () => import("@/views/Settings/Setup.vue")
@@ -318,6 +323,11 @@ const routes = [
         component: () => import("@/views/Setup.vue")
       },
       {
+        path: "/oauth/:oauthAppId",
+        name: "OAuth",
+        component: () => import("@/views/Auth/Oauth.vue")
+      },
+      {
         path: "/:id",
         name: "Attachment Item",
         component: () => import("@/views/Item.vue")
@@ -357,7 +367,8 @@ router.beforeEach(async (to, from) => {
       "Attachment Item",
       "Credits",
       "TPU Setup Wizard",
-      "User"
+      "User",
+      "OAuth"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");

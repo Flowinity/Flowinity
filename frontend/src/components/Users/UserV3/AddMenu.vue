@@ -6,7 +6,7 @@
         Add widget
       </template>
       <v-list max-height="300">
-        <div v-for="comp in components">
+        <div v-for="comp in components" :key="comp.id">
           <v-tooltip
             v-if="comp.disabled"
             :eager="false"
@@ -15,11 +15,7 @@
           >
             Link your account in Settings > Integrations.
           </v-tooltip>
-          <v-list-item
-            :key="comp.id"
-            :disabled="comp.disabled"
-            @click="$emit('add', comp.id)"
-          >
+          <v-list-item :disabled="comp.disabled" @click="$emit('add', comp.id)">
             <v-list-item-title>{{ comp.name }}</v-list-item-title>
           </v-list-item>
         </div>

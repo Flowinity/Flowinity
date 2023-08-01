@@ -600,7 +600,7 @@ export default defineComponent({
           headers: {
             noToast: true
           }
-        })) as {
+        } as any)) as {
           data: {
             finishedSetup: boolean;
             step?: number;
@@ -674,7 +674,7 @@ export default defineComponent({
           hostnameWithProtocol: this.instance.hostnameWithProtocol,
           port: this.instance.port,
           registrations: this.instance.allowRegistrations,
-          threads: this.instance.multiThreaded,
+          threads: parseInt(this.instance.multiThreaded),
           features: this.features,
           redis: {
             db: parseInt(this.instance.redisDatabase),
@@ -743,13 +743,13 @@ export default defineComponent({
   watch: {
     "$app.site.step": {
       immediate: true,
-      handler(step: Step) {
+      handler: function (step: Step) {
         this.step = step;
       }
     },
     "$app.site.dbHost": {
       immediate: true,
-      handler() {
+      handler: function () {
         // Interpret recommended database settings for Docker
         this.instance.redisHostname = this.$app.site.redisHost || "localhost";
         this.database.host = this.$app.site.dbHost || "localhost";

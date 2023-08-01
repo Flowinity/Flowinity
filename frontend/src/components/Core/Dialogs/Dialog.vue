@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    :fullscreen="$vuetify.display.mobile"
+    :fullscreen="$vuetify.display.width < 500"
     :model-value="modelValue"
     v-bind="$attrs"
     @update:model-value="$emit('update:modelValue', $event)"

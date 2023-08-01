@@ -16,7 +16,8 @@
       "
       :src="<string>image"
       class="white--text align-end"
-      cover
+      :cover="true"
+      transition="none"
     >
       <template v-slot:placeholder>
         <v-row align="center" class="fill-height ma-0" justify="center">

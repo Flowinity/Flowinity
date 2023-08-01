@@ -6,7 +6,11 @@
     item-value="id"
     label="User"
   ></v-autocomplete>
-  <v-card v-for="experiment in relevantExperiments" class="my-2">
+  <v-card
+    v-for="experiment in relevantExperiments"
+    class="my-2"
+    :key="experiment.name"
+  >
     <v-card-title>{{ experiment.name }}</v-card-title>
     <v-card-subtitle>{{ experiment.meta?.description }}</v-card-subtitle>
     <v-card-subtitle>
@@ -40,7 +44,7 @@ export default defineComponent({
     return {
       retain: false,
       selected: 0,
-      experiments: [],
+      experiments: [] as Record<string, any>[],
       users: [
         {
           id: 0,
@@ -58,9 +62,14 @@ export default defineComponent({
         .map(([name, value]) => ({
           name,
           value,
+          //@ts-ignore
           inheritValue: this.$experiments.experimentsInherit[name],
           type: typeof value,
-          meta: this.$experiments.experimentsInherit.meta[name]
+          //@ts-ignore
+          meta: this.$experiments?.experimentsInherit?.meta?.[name] as {
+            description: string;
+            createdAt: string;
+          }
         }))
         .filter((experiment) => experiment.name !== "meta");
     }

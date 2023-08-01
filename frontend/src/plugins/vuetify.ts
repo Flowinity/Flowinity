@@ -12,7 +12,10 @@ import "vuetify/lib/styles/main.sass";
 // Composables
 import { createVuetify } from "vuetify";
 import { VDataTable } from "vuetify/labs/VDataTable";
+import { VInfiniteScroll } from "vuetify/lib/labs/components.mjs";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
+import { VVirtualScroll } from "vuetify/lib/components/index.mjs";
+import { VBottomNavigation } from "vuetify/lib/components/index.mjs";
 
 export class DefaultThemes {
   themes: any;
@@ -91,7 +94,15 @@ export class DefaultThemes {
 export default createVuetify({
   components: {
     VDataTable,
-    VSkeletonLoader
+    VSkeletonLoader,
+    VVirtualScroll,
+    VInfiniteScroll,
+    VBottomNavigation
+  },
+  display: {
+    thresholds: {
+      xl: 1600
+    }
   },
   defaults: {
     VAutoComplete: {

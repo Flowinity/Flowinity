@@ -28,7 +28,6 @@ export class GalleryControllerV3 {
   constructor(private readonly galleryService: GalleryService) {}
 
   @Get("")
-  @Get("/starred")
   async getUserGallery(
     @Auth("uploads.view") user: User,
     @QueryParam("page") page: number = 1,
@@ -45,7 +44,33 @@ export class GalleryControllerV3 {
       search,
       filter,
       textMetadata,
-      req.path.includes("/starred") ? "starred" : "user",
+      "user",
+      user.itemsPerPage,
+      sort,
+      array,
+      undefined,
+      user.excludedCollections
+    )
+  }
+
+  @Get("/starred")
+  async getStarredGallery(
+    @Auth("starred.view") user: User,
+    @QueryParam("page") page: number = 1,
+    @QueryParam("sort") sort: SortOptions = "newest",
+    @QueryParam("search") search: string = "",
+    @QueryParam("array") array: boolean = false,
+    @QueryParam("textMetadata") textMetadata: boolean = false,
+    @QueryParam("filter") filter: string = "",
+    @Req() req: RequestAuth
+  ) {
+    return await this.galleryService.getGallery(
+      user.id,
+      page,
+      search,
+      filter,
+      textMetadata,
+      "starred",
       user.itemsPerPage,
       sort,
       array,
@@ -69,7 +94,7 @@ export class GalleryControllerV3 {
       attachment,
       user.discordPrecache
     )
-    socket.to(user.id).emit("gallery/create", upload)
+    socket.to(user.id).emit("gallery/create", [upload])
     return upload
   }
 
@@ -142,16 +167,14 @@ export class GalleryControllerV3 {
     @Auth("uploads.modify") user: User,
     @Param("attachment") attachment: string
   ) {
-    return {
-      status: await this.galleryService.starUpload(attachment, user.id)
-    }
+    return await this.galleryService.starUpload(attachment, user.id)
   }
 
   @Get("/:attachment")
   async getUpload(
-    @Auth("uploads.view") user: User,
+    @Auth("uploads.view", false) user: User,
     @Param("attachment") attachment: string
   ) {
-    return await this.galleryService.getAttachment(attachment, user.id)
+    return await this.galleryService.getAttachment(attachment, user?.id)
   }
 }

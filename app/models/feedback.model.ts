@@ -2,7 +2,7 @@ import { BelongsTo, Column, DataType, Model, Table } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 
 @Table({
-  tableName: "feedback"
+  tableName: "Feedback"
 })
 export class Feedback extends Model {
   @Column

@@ -26,7 +26,9 @@
             style="background: #151515 !important"
           >
             <v-list-item @click="setNotifications('all')">
-              <v-list-item-title>All messages</v-list-item-title>
+              <v-list-item-title>
+                {{ $t("chats.notificationOptions.all") }}
+              </v-list-item-title>
               <template v-slot:append>
                 <v-icon
                   v-if="contextMenu.item.association.notifications === 'all'"
@@ -37,7 +39,9 @@
               </template>
             </v-list-item>
             <v-list-item @click="setNotifications('mentions')">
-              <v-list-item-title>Mentions only</v-list-item-title>
+              <v-list-item-title>
+                {{ $t("chats.notificationOptions.mentions") }}
+              </v-list-item-title>
               <template v-slot:append>
                 <v-icon
                   v-if="
@@ -50,9 +54,11 @@
               </template>
             </v-list-item>
             <v-list-item two-line @click="setNotifications('none')">
-              <v-list-item-title>None</v-list-item-title>
+              <v-list-item-title>
+                {{ $t("chats.notificationOptions.none") }}
+              </v-list-item-title>
               <v-list-item-subtitle>
-                This chat will be completely muted.
+                {{ $t("chats.notificationOptions.noneDesc") }}
               </v-list-item-subtitle>
               <template v-slot:append>
                 <v-icon
@@ -67,7 +73,7 @@
         </v-menu>
         <v-list-item-title>
           <v-icon class="mr-1">mdi-bell-outline</v-icon>
-          Notifications
+          {{ $t("chats.notifications") }}
           <v-icon class="ml-5">mdi-arrow-right</v-icon>
         </v-list-item-title>
       </v-list-item>
@@ -79,7 +85,7 @@
         "
       >
         <v-icon class="mr-1">mdi-rename-outline</v-icon>
-        Change Nickname
+        {{ $t("chats.changeNickname") }}
       </v-list-item>
       <v-list-item
         v-if="
@@ -106,13 +112,19 @@
         <template
           v-if="contextMenu.item?.users && contextMenu.item?.users?.length > 1"
         >
-          Leave
+          {{ $t("generic.leave") }}
         </template>
-        <template v-else>Delete</template>
+        <template v-else>
+          {{ $t("generic.delete") }}
+        </template>
       </v-list-item>
     </v-list>
   </v-menu>
-  <v-card-text class="text-overline mb-n4">
+  <!-- convert to uppercase -->
+  <v-card-text
+    class="text-overline mb-n4 unselectable"
+    style="text-transform: uppercase"
+  >
     <CreateChat v-slot="{ props }" v-model="create" type="create">
       <v-btn
         class="mr-2"
@@ -124,9 +136,40 @@
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </CreateChat>
-    CHATS
+    {{ $t("chats.chats") }}
   </v-card-text>
-  <v-list nav>
+  <v-virtual-scroll
+    item-height="48"
+    :items="$chat.chats"
+    v-if="$chat.chats.length"
+    style="overflow-x: hidden"
+  >
+    <template v-slot:default="{ item: chat }">
+      <SidebarItem
+        @contextmenu.prevent="context($event, chat)"
+        :legacy-user="chat.recipient?.legacyUser"
+        :user="chat.recipient"
+        :chat="chat"
+        :subtitle="
+          chat.type === 'group'
+            ? `${chat.users?.length} members`
+            : chat.recipient?.legacyUser
+            ? 'Legacy User'
+            : ''
+        "
+      >
+        <v-spacer></v-spacer>
+        <v-badge
+          :class="chat.unread > 99 ? 'mr-5' : 'mr-4'"
+          :content="chat.unread > 99 ? '99+' : chat.unread"
+          color="red"
+          overlap
+          v-if="chat.unread"
+        ></v-badge>
+      </SidebarItem>
+    </template>
+  </v-virtual-scroll>
+  <v-list nav v-if="false">
     <v-list-item
       v-for="chat in $chat.chats"
       :subtitle="
@@ -139,13 +182,16 @@
       :title="chatName(chat)"
       :to="`/communications/${chat.association.id}`"
       @contextmenu.prevent="context($event, chat)"
+      :key="chat.id"
     >
       <template v-slot:prepend>
-        <CommunicationsAvatar
+        <UserAvatar
           :chat="chat.type === 'group' ? chat : undefined"
           :status="true"
           :user="chat.type === 'direct' ? chat.recipient : undefined"
-        ></CommunicationsAvatar>
+          :dot-status="true"
+          class="mr-2"
+        ></UserAvatar>
       </template>
       <template v-slot:append>
         <v-badge
@@ -158,7 +204,11 @@
       </template>
     </v-list-item>
     <v-list-item v-if="!$chat.chats.length" class="fade-skeleton">
-      <MessageSkeleton v-for="i in 5" :animate="false"></MessageSkeleton>
+      <MessageSkeleton
+        v-for="i in 5"
+        :animate="false"
+        :key="i"
+      ></MessageSkeleton>
     </v-list-item>
   </v-list>
 </template>
@@ -168,12 +218,19 @@ import { defineComponent } from "vue";
 import { Chat } from "@/models/chat";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
-import CommunicationsAvatar from "@/components/Communications/CommunicationsAvatar.vue";
 import Leave from "@/components/Communications/Dialogs/Leave.vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import SidebarItem from "@/components/Communications/SidebarItem.vue";
 
 export default defineComponent({
   name: "ColubrinaSidebarList",
-  components: { Leave, CommunicationsAvatar, CreateChat, MessageSkeleton },
+  components: {
+    SidebarItem,
+    UserAvatar,
+    Leave,
+    CreateChat,
+    MessageSkeleton
+  },
   data() {
     return {
       create: false,

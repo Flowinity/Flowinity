@@ -17,7 +17,9 @@ declare global {
     rawAppRoot: string,
     queue: typeof import("@app/lib/queue").default,
     domain: string | undefined,
-    authMock: any
+    authMock: any,
+    mainWorker: boolean,
+    storageRoot: string
 }
 
 export {}

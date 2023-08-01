@@ -18,15 +18,18 @@ import { Domain } from "@app/models/domain.model"
 
 // Import Services
 import { CacheService } from "@app/services/cache.service"
+import path from "path"
 
 async function generateAPIKey(
-  type: "session" | "api" | "email"
+  type: "session" | "api" | "email" | "oauth"
 ): Promise<string> {
   switch (type) {
     case "session":
       return "TPU-WEB-" + cryptoRandomString({ length: 128 })
     case "email":
       return "TPU-EMAIL-" + cryptoRandomString({ length: 128 })
+    case "oauth":
+      return "TPU-OAUTH-" + cryptoRandomString({ length: 128 })
     default:
       return "TPU-API-" + cryptoRandomString({ length: 128 })
   }
@@ -370,9 +373,7 @@ async function processFile(
 
 async function postUpload(upload: Upload): Promise<void> {
   await tesseract
-    .recognize(config.storage + "/" + upload.attachment, {
-      lang: "eng"
-    })
+    .recognize(global.storageRoot + upload.attachment, {})
     .then(async (text: string): Promise<void> => {
       await Upload.update(
         {
@@ -407,6 +408,51 @@ async function getUserDomain(userId: number): Promise<string> {
   })
 
   return user?.domain?.domain + "/i/" || "https://i.troplo.com/i/"
+}
+
+async function processXP(
+  userId: number,
+  type:
+    | "upload"
+    | "autoCollect"
+    | "addFriend"
+    | "iaf"
+    | "hour"
+    | "messages"
+    | "gold"
+) {
+  const user = await User.findOne({
+    where: {
+      id: userId
+    }
+  })
+  if (!user) return
+  let xp = user.xp
+  switch (type) {
+    case "upload":
+      xp += 1n
+      break
+    case "autoCollect":
+      xp += 2n
+      break
+    case "addFriend":
+      xp += 50n
+      break
+    case "iaf":
+      xp += 200n
+      break
+    case "hour":
+      xp += 70n
+      break
+    // per 500 messages
+    case "messages":
+      xp += 350n
+      break
+    case "gold":
+      xp += 500n
+      break
+  }
+  console.log("XP", xp)
 }
 
 function getTypeByExt(ext: string): string {
@@ -908,7 +954,7 @@ function getTypeByExt(ext: string): string {
     dll: "binary",
     so: "binary"
   } as Record<string, string>
-  return types[ext] || "binary"
+  return types[ext.toLowerCase()] || "binary"
 }
 
 export default {
@@ -916,5 +962,6 @@ export default {
   getUserDomain,
   postUpload,
   generateAPIKey,
-  createSession
+  createSession,
+  processXP
 }

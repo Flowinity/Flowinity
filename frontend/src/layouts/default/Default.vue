@@ -1,21 +1,37 @@
 <template>
+  <PrivacyPolicyDialog
+    v-if="$user.user?.privacyPolicyAccepted == false"
+  ></PrivacyPolicyDialog>
+  <WorkspaceDeleteDialog
+    v-model="$app.dialogs.deleteItem.value"
+    :item="$app.dialogs.deleteItem.item"
+    title="Delete item?"
+    @submit="$app.deleteItem($app.dialogs.deleteItem.item)"
+  />
   <URLConfirmDialog
     v-model="$chat.dialogs.externalSite.value"
   ></URLConfirmDialog>
+  <InviteAFriend v-model="$app.dialogs.inviteAFriend"></InviteAFriend>
+  <Feedback v-model="$app.dialogs.feedback"></Feedback>
+  <Migrate
+    v-model="$app.dialogs.migrateWizard"
+    v-if="$experiments.experiments.PROJECT_MERGE"
+  ></Migrate>
+  <Gold v-model="$app.dialogs.gold.value"></Gold>
   <v-app
     v-if="$user.user"
     @drop="dragDropHandler"
     @dragover="dragOver"
-    @touchstart="touchStart"
-    @touchend="touchEnd"
+    @touchstart="
+      $experiments.experiments.LEGACY_MOBILE_NAV ? touchStart($event) : null
+    "
+    @touchend="
+      $experiments.experiments.LEGACY_MOBILE_NAV ? touchEnd($event) : null
+    "
     class="bg"
   >
     <NicknameDialog v-model="$app.dialogs.nickname.value"></NicknameDialog>
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
-    <WorkspaceDeleteDialog
-      v-model="$app.dialogs.delete.value"
-      @submit="$app.deleteItem($app.dialogs.delete.item)"
-    ></WorkspaceDeleteDialog>
     <UploadDialog v-model="$app.dialogs.upload.value"></UploadDialog>
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
     <ExperimentsManagerDialog
@@ -48,21 +64,28 @@
         $app.site.finishedSetup
       "
     ></rail-bar>
+    <keep-alive v-if="$app.rail">
+      <component :is="currentRailComponent"></component>
+    </keep-alive>
     <sidebar
       v-if="
-        ($app.railMode === 'tpu' || (!$app.rail && !$vuetify.display.mobile)) &&
-        $app.site.finishedSetup
+        !$app.rail &&
+        !$vuetify.display.mobile &&
+        $app.site.finishedSetup &&
+        (!$vuetify.display.mobile || $experiments.experiments.LEGACY_MOBILE_NAV)
       "
     ></sidebar>
     <colubrina-sidebar
-      v-if="
-        $app.railMode === 'communications' &&
-        ($app.rail || $vuetify.display.mobile)
-      "
+      v-if="!$app.rail && $chat.isCommunications"
     ></colubrina-sidebar>
-    <workspaces-sidebar
-      v-if="!$app.rail || $app.railMode === 'workspaces'"
-    ></workspaces-sidebar>
+    <workspaces-sidebar v-if="!$app.rail"></workspaces-sidebar>
+    <bottom-bar
+      v-if="
+        $app.site.finishedSetup &&
+        $vuetify.display.mobile &&
+        !$experiments.experiments.LEGACY_MOBILE_NAV
+      "
+    />
     <theme-engine-wrapper></theme-engine-wrapper>
     <default-view />
     <template v-if="$experiments.experiments.FAB">
@@ -125,29 +148,40 @@
 <script lang="ts" setup>
 import DefaultBar from "./AppBar.vue";
 import DefaultView from "./View.vue";
-import Sidebar from "@/layouts/default/Sidebar.vue";
 import UnauthBar from "@/layouts/unauth/AppBar.vue";
 import URLConfirmDialog from "@/components/Communications/Dialogs/URLConfirm.vue";
 import MemoryProfiler from "@/components/Dev/Dialogs/MemoryProfiler.vue";
 import UploadDialog from "@/components/Core/Dialogs/Upload.vue";
-import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import QuickSwitcher from "@/components/Core/Dialogs/QuickSwitcher.vue";
 import NicknameDialog from "@/components/Core/Dialogs/Nickname.vue";
 import ThemeEngineWrapper from "@/components/Core/ThemeEngineWrapper.vue";
 import RailBar from "@/layouts/default/RailBar.vue";
-import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
-import ExperimentsManager from "@/components/Dev/Dialogs/Experiments.vue";
 import ExperimentsManagerDialog from "@/components/Dev/Dialogs/Experiments.vue";
+import Gold from "@/components/Dashboard/Dialogs/Gold.vue";
+import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
+import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
+import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
+import BottomBar from "@/layouts/default/BottomBar.vue";
+import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
 </script>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import { Message as MessageType } from "@/models/message";
+import { Upload } from "@/models/upload";
+import Sidebar from "@/layouts/default/Sidebar.vue";
+import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
+import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
+  components: {
+    Sidebar,
+    WorkspacesSidebar,
+    ColubrinaSidebar
+  },
   data() {
     return {
       fab: false,
@@ -163,6 +197,17 @@ export default defineComponent({
       touchEndX: null as number | null
     };
   },
+  computed: {
+    currentRailComponent() {
+      if (this.$app.railMode === "communications") {
+        return "ColubrinaSidebar";
+      } else if (this.$app.railMode === "workspaces") {
+        return "WorkspacesSidebar";
+      } else {
+        return "Sidebar";
+      }
+    }
+  },
   methods: {
     touchEnd(event: TouchEvent) {
       if (event.target instanceof Element) {
@@ -174,7 +219,11 @@ export default defineComponent({
           event.target.classList.contains("v-btn__content") ||
           event.target.classList.contains("v-slider-thumb__ripple") ||
           event.target.classList.contains("v-slider-thumb") ||
-          event.target.classList.contains("apexcharts-svg")
+          event.target.classList.contains("apexcharts-svg") ||
+          event.target.classList.contains("v-img__gradient") ||
+          event.target.classList.contains("v-img__image") ||
+          event.target.classList.contains("v-card-text") ||
+          event.target.classList.contains("v-card-title")
         )
           return;
       }
@@ -276,6 +325,7 @@ export default defineComponent({
       if (!e.dataTransfer?.files?.length) return;
       const files = e.dataTransfer?.files;
       if (files) {
+        //@ts-ignore
         this.$app.dialogs.upload.files = [...files];
         this.$app.upload();
       }
@@ -304,7 +354,7 @@ export default defineComponent({
       } else if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
         e.preventDefault();
         this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
-      } else if (e.ctrlKey && e.shiftKey && e.key === "x") {
+      } else if (e.ctrlKey && e.key === "q") {
         e.preventDefault();
         this.$app.dialogs.experiments = !this.$app.dialogs.experiments;
       }

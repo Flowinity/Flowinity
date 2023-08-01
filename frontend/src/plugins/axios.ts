@@ -2,7 +2,11 @@
  * plugins/axios.ts
  */
 
-import axios, { AxiosStatic } from "axios";
+import axios, {
+  AxiosRequestConfig,
+  AxiosStatic,
+  InternalAxiosRequestConfig
+} from "axios";
 import { useToast } from "vue-toastification";
 import { useAppStore } from "@/store/app";
 import { useUserStore } from "@/store/user";
@@ -10,6 +14,10 @@ import router from "@/router";
 
 export interface AxiosStaticWithAvoidance extends AxiosStatic {
   _avoidToast: boolean;
+}
+
+export interface AxiosRequestConfigWithAvoidance extends AxiosRequestConfig {
+  avoidToast?: boolean;
 }
 
 const ax = axios.create({
@@ -56,6 +64,9 @@ ax.interceptors.response.use(
           "Your email address has not been verified."
       ) {
         console.warn(`[TPU/HTTP] Experimental feature is not allowed.`);
+        return Promise.reject(e);
+      } else if (e.response.data.errors[0].name === "MAINTENANCE") {
+        console.warn(`[TPU/HTTP] Maintenance being conducted.`);
         return Promise.reject(e);
       }
       if (!e.response.config.headers.noToast) {

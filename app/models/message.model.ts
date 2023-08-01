@@ -21,9 +21,9 @@ export class Message extends Model {
   userId: number
 
   @Length({
-    min: 1,
-    max: 2000,
-    msg: "Your message must be below 2000 characters and contain content."
+    min: 0,
+    max: 4000,
+    msg: "Your message must be below 4000 characters and contain content."
   })
   @Column({
     type: DataType.TEXT

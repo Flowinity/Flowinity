@@ -1,7 +1,7 @@
 <template>
   <div
     id="chat"
-    class="communications"
+    class="communications position-relative"
     @drop.prevent="dragDropHandler"
     @dragover.prevent
   >
@@ -9,9 +9,10 @@
       v-if="$vuetify.display.mobile"
       v-model="$chat.dialogs.message.value"
       color="card"
-      floating
+      :floating="true"
       location="bottom"
-      temporary
+      :temporary="true"
+      :touchless="true"
     >
       <MessageActionsList
         v-if="$chat.dialogs.message.message"
@@ -63,21 +64,47 @@
         dialogs.delete.value = false;
       "
     />
-    <v-list
+    <ol
       id="chat-list"
       ref="messageList"
-      :style="`height: calc(100vh - ${
-        145 + replyingHeight + inputHeight - 86.5
-      }px)`"
-      bg-color="transparent"
       class="message-list-container"
-      color="transparent"
-      style="overflow-x: hidden !important"
-      width="100%"
+      :style="{ height }"
       @scroll="scrollEvent"
     >
-      <div id="sentinel-bottom" ref="sentinelBottom"></div>
-      <Message
+      <div id="sentinel-bottom" ref="sentinelBottom" v-if="$chat.isReady"></div>
+      <template v-if="!$chat.selectedChat?.messages?.length && !$chat.loading">
+        <v-row align="center" justify="center">
+          <v-col cols="12" md="6" class="text-center">
+            <UserAvatar
+              :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
+              :status="true"
+              :user="$chat.selectedChat?.recipient"
+              class="ml-4"
+              size="64"
+            />
+            <v-card-title
+              class="grey--text unselectable"
+              v-if="$chat.selectedChat?.recipient?.username"
+              style="text-overflow: inherit; white-space: normal"
+            >
+              {{
+                $t("chats.start.dm", {
+                  username: $chat.selectedChat?.recipient?.username
+                })
+              }}
+            </v-card-title>
+            <v-card-title
+              class="grey--text unselectable"
+              v-else-if="$chat.selectedChat?.name"
+              style="text-overflow: inherit; white-space: normal"
+            >
+              {{ $t("chats.start.group", { name: $chat.selectedChat?.name }) }}
+            </v-card-title>
+          </v-col>
+        </v-row>
+      </template>
+      <MessagePerf
+        class="mr-2 ml-2"
         v-for="(message, index) in $chat.selectedChat?.messages"
         :id="'message-' + index"
         :key="message.id"
@@ -87,6 +114,7 @@
         :editingText="editingText"
         :merge="$chat.merge(message, index)"
         :message="message"
+        :index="index"
         @authorClick="
           $chat.dialogs.userMenu.user = $event.user;
           $chat.dialogs.userMenu.username = $event.user.username;
@@ -105,16 +133,17 @@
         @editText="editingText = $event"
         @jumpToMessage="$chat.jumpToMessage($event)"
         @reply="replyId = $event.id"
-      ></Message>
-      <div id="sentinel" ref="sentinel">
-        <MessageSkeleton v-for="i in 30" v-if="$chat.loading"></MessageSkeleton>
-      </div>
-    </v-list>
+      />
+      <div id="sentinel" ref="sentinel" v-if="$chat.isReady"></div>
+    </ol>
     <v-fade-transition v-model="avoidAutoScroll">
       <v-toolbar
         v-if="avoidAutoScroll || $chat.loadingNew || $chat.loadNew"
         :style="`position: fixed; bottom: ${
-          inputHeight + replyingHeight + uploadFileHeight - 2
+          inputHeight +
+          replyingHeight +
+          uploadFileHeight +
+          ($vuetify.display.mobile ? 43 : 0)
         }px`"
         class="pointer unselectable pl-2 pb-1 force-bg dynamic-background"
         color="transparent"
@@ -122,14 +151,14 @@
         style="
           border-radius: 20px 20px 0 0;
           font-size: 14px;
-          z-index: 1;
+          z-index: 1001;
           backdrop-filter: blur(10px);
         "
         @click="jumpToBottom"
       >
         <template v-if="!$chat.loadingNew">
           <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
-          Jump to bottom
+          {{ $t("chats.jumpToBottom") }}
         </template>
         <template v-else>
           <v-progress-circular
@@ -138,7 +167,7 @@
             class="mr-2"
             indeterminate
           ></v-progress-circular>
-          Loading messages...
+          {{ $t("chats.loading") }}
         </template>
       </v-toolbar>
     </v-fade-transition>
@@ -146,18 +175,23 @@
       <v-toolbar
         v-if="replyId"
         :style="
-          `position: sticky; bottom: ${inputHeight + uploadFileHeight}px` +
-          (!avoidAutoScroll ? '; border-radius: 20px 20px 0 0;' : '')
+          `position: absolute; bottom: ${
+            inputHeight + uploadFileHeight + ($vuetify.display.mobile ? 43 : 0)
+          }px` + (!avoidAutoScroll ? '; border-radius: 20px 20px 0 0;' : '')
         "
         class="pointer"
         color="card"
         height="35"
-        style="opacity: 0.95; z-index: 1"
+        style="opacity: 0.95; z-index: 1001"
         @click="jumpToBottom"
       >
         <v-icon class="mr-2 ml-3">mdi-reply</v-icon>
         <UserAvatar :user="replying?.user" class="mr-2" size="24"></UserAvatar>
         {{ replying?.content }}
+        <v-spacer></v-spacer>
+        <v-btn @click="replyId = null">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-toolbar>
     </v-fade-transition>
     <v-fade-transition :model-value="files.length">
@@ -209,9 +243,8 @@
     <CommunicationsInput
       ref="input"
       v-model="message"
-      :renderKey="renderKey"
       class="message-input"
-      style="bottom: 0"
+      style="margin-top: auto; z-index: 2002"
       @emoji="
         message += $event;
         $nextTick(() => focusInput());
@@ -220,6 +253,7 @@
       @paste="handlePaste"
       @quickTPULink="handleQuickTPULink"
       @sendMessage="sendMessage"
+      @focusInput="focusInput"
     ></CommunicationsInput>
   </div>
 </template>
@@ -237,6 +271,8 @@ import { Message as MessageType } from "@/models/message";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import MobileMenu from "@/components/Core/Dialogs/MobileMenu.vue";
 import MessageActionsList from "@/components/Communications/MessageActionsList.vue";
+import MessagePerf from "@/components/Communications/MessagePerf.vue";
+import UserCard from "@/components/Users/UserCard.vue";
 
 export default defineComponent({
   name: "Chat",
@@ -249,10 +285,13 @@ export default defineComponent({
     User,
     MessageSkeleton,
     Message,
-    CommunicationsInput
+    CommunicationsInput,
+    MessagePerf,
+    UserCard
   },
   data() {
     return {
+      setup: false,
       messageObserver: undefined as IntersectionObserver | undefined,
       messageBottomObserver: undefined as IntersectionObserver | undefined,
       previousScrollHeight: 0,
@@ -292,6 +331,16 @@ export default defineComponent({
     };
   },
   computed: {
+    height() {
+      let string = `calc(100dvh - 56px - 103px`;
+      if (this.$vuetify.display.mobile) string += " - 43px";
+      if (this.replyId) string += " - 35px";
+      if (this.files.length) string += " - 104.46px";
+      const lines = this.message.split("\n").length;
+      string += ` - ${(lines - 1) * 26}px`;
+      string += ")";
+      return string;
+    },
     menuStyle() {
       return `
         position: absolute;
@@ -345,6 +394,7 @@ export default defineComponent({
     async handlePaste(e: ClipboardEvent) {
       const items = e.clipboardData?.items;
       if (items) {
+        //@ts-ignore
         for (const item of items) {
           if (item.kind === "file") {
             const file = item.getAsFile();
@@ -365,6 +415,7 @@ export default defineComponent({
     },
     async uploadHandle(e: FileList) {
       if (e.length > 0) {
+        //@ts-ignore
         for (const file of e) {
           this.files.push({
             file,
@@ -383,6 +434,7 @@ export default defineComponent({
       e.stopPropagation();
       const files = e.dataTransfer?.files;
       if (files && files.length > 0) {
+        //@ts-ignore
         for (const file of files) {
           this.files.push({
             file,
@@ -455,7 +507,7 @@ export default defineComponent({
     async jumpToBottom() {
       this.avoidAutoScroll = false;
       if (this.$chat.loadNew) {
-        await this.$chat.loadHistory(Number.MAX_SAFE_INTEGER, true, false);
+        await this.$chat.loadHistory(null, true, true);
         this.$chat.loadNew = false;
       }
       this.autoScroll();
@@ -476,7 +528,6 @@ export default defineComponent({
       const replyId = this.replyId;
       const attachments = this.files.map((file) => file.tpuLink);
       this.message = "";
-      this.renderKey = !this.renderKey;
       const tempId = new Date().getTime();
       const index = await this.$chat.selectedChat?.messages.unshift({
         content: message,
@@ -534,27 +585,22 @@ export default defineComponent({
     autoScroll() {
       if (this.avoidAutoScroll) return;
       if (!this.$chat.selectedChat?.messages) return;
-      const chat = document.getElementById("chat-list");
-      if (chat) {
-        chat.scrollTop = 0;
-      }
+      const sentinel = document.getElementById("sentinel-bottom");
+      if (!sentinel) return;
+      sentinel.scrollIntoView();
+      this.$nextTick(() => {
+        sentinel.scrollIntoView();
+      });
     },
     recordScrollPosition(mode = "top") {
       this.previousScrollHeight =
         mode === "top" ? this.$chat.selectedChat?.messages.length || 0 : 1;
     },
     restoreScrollPosition() {
-      let node = this.$refs.messageList as {
-        $el: HTMLElement;
-      };
-      if (!node) return;
-      let message = document.getElementById(
-        `message-${this.previousScrollHeight}`
-      );
-      if (!message) return;
-      node.$el.scrollTop = message.offsetTop;
+      // TODO
     },
     setupIntersectionObserver() {
+      this.setup = true;
       const options = {
         root: document.getElementById("chat-list"),
         rootMargin: "10px"
@@ -591,7 +637,6 @@ export default defineComponent({
     },
     async handleBottomIntersection(entries: IntersectionObserverEntry[]) {
       if (!this.$chat.loadNew) return;
-      console.log(this.$chat.loadNew);
       const entry = entries[0];
       if (
         entry.isIntersecting &&
@@ -625,11 +670,9 @@ export default defineComponent({
       this.editing = lastMessage.id;
     },
     focusInput() {
-      //@ts-ignore
       this.$refs.input?.$refs?.textarea?.focus();
     },
     shortcutHandler(e: any) {
-      // if ctrl + up
       if (e.ctrlKey && e.key === "ArrowUp" && e.shiftKey) {
         e.preventDefault();
         if (!this.editing) return this.editLastMessage();
@@ -819,13 +862,16 @@ export default defineComponent({
       }
     },
     onResize(e: any) {
-      this.inputHeight = e[0].target.clientHeight;
+      console.info("[TPU/ChatObserver] Resized");
+      this.$nextTick(() => {
+        if (!this.avoidAutoScroll) this.autoScroll();
+      });
     }
   },
   mounted() {
+    document.body.classList.add("disable-overscroll");
     new ResizeObserver(this.onResize).observe(
-      //@ts-ignore
-      document.querySelector("#chat-input")
+      document.querySelector("#chat-list")
     );
     //document.querySelector(".message-list-container")?.addEventListener("scroll", this.scrollEvent);
     // add event listener for shortcuts
@@ -837,12 +883,10 @@ export default defineComponent({
     this.$socket.on("typing", this.onTyping);
     this.message = this.$chat.getDraft(<string>this.$route.params.chatId) || "";
     this.$app.railMode = "communications";
-
-    this.$nextTick(() => {
-      this.setupIntersectionObserver();
-    });
   },
   unmounted() {
+    document.body.classList.remove("disable-overscroll");
+    this.$chat.isReady = 0;
     this.$chat.setDraft(<string>this.$route.params.chatId, this.message);
     document.removeEventListener("scroll", this.scrollEvent);
     document.removeEventListener("keydown", this.shortcutHandler);
@@ -866,6 +910,7 @@ export default defineComponent({
       this.avoidAutoScroll = false;
       this.$nextTick(() => {
         this.autoScroll();
+        if (!this.setup) this.setupIntersectionObserver();
       });
     },
     message() {
@@ -888,20 +933,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped>
-.message-list-container {
-  overflow-y: scroll;
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.message-list-container::-webkit-scrollbar {
-  display: none;
-}
-
-.message-input {
-  position: sticky;
-  padding: 16px;
-}
-</style>

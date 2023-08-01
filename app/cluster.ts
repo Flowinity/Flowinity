@@ -25,10 +25,15 @@ function setEnvVariables() {
     global.config = new DefaultTpuConfig().config
   }
 
+  global.storageRoot = global.config.storage.startsWith("/")
+    ? global.config.storage + "/"
+    : path.join(global.appRoot, global.config.storage) + "/"
+
   process.env.APP_ROOT = global.appRoot
   process.env.RAW_APP_ROOT = global.rawAppRoot
   process.env.CONFIG = JSON.stringify(global.config)
   process.env.IS_DOCKER = isRunningInDocker() ? "true" : "false"
+  process.env.STORAGE_ROOT = global.storageRoot
   if (global.config.finishedSetup) {
     try {
       // try using system sequelize-cli first, only thing that works in Docker too
@@ -37,23 +42,28 @@ function setEnvVariables() {
         stdio: "inherit"
       })
     } catch {
-      execSync(global.appRoot + "../node_modules/.bin/sequelize db:migrate", {
-        env: process.env,
-        stdio: "inherit"
-      })
+      try {
+        execSync(global.appRoot + "../node_modules/.bin/sequelize db:migrate", {
+          env: process.env,
+          stdio: "inherit"
+        })
+      } catch {
+        console.warn("Could not run sequelize-cli")
+      }
     }
   }
 }
 
-if (cluster.isMaster) {
+if (cluster.isPrimary) {
   setEnvVariables()
   cluster.schedulingPolicy = cluster.SCHED_RR
   // Restrict to 2 processes if the setup is not finished to avoid slow restarts
-  const cpus = !global.config?.finishedSetup
-    ? 2
-    : parseInt(process.env.THREADS || "0") ||
-      global.config?.threads ||
-      os.cpus().length
+  const cpus =
+    !global.config?.finishedSetup && os.cpus().length >= 2
+      ? 2
+      : parseInt(process.env.THREADS || "0") ||
+        global.config?.threads ||
+        os.cpus().length
 
   console.info(`Clustering to ${cpus} CPUs`)
 
@@ -64,7 +74,7 @@ if (cluster.isMaster) {
   cluster.on("exit", (worker, code: number): void => {
     // Worker finished because of an error
     if (code !== 0 && !worker.exitedAfterDisconnect) {
-      console.error("Worker crashed. Starting a new one")
+      console.error(`Worker crashed. Starting a new one, code: ${code}`)
 
       cluster.fork()
     }

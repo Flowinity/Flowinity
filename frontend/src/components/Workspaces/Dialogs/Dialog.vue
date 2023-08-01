@@ -11,7 +11,7 @@
     <v-container>
       <v-text-field
         v-model="name"
-        autofocus
+        :autofocus="true"
         label="Name"
         required
         @keyup.enter="$emit('submit', name)"

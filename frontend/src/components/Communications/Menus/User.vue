@@ -15,13 +15,22 @@
         class="avatar"
         size="100"
       >
-        <div style="cursor: pointer" @click="expand">
-          <v-overlay :model-value="true" contained persistent @click="expand">
-            <v-icon large>mdi-expand</v-icon>
-          </v-overlay>
-        </div>
+        <template v-slot:default="{ hovering }">
+          <div style="cursor: pointer" @click="expand">
+            <v-overlay
+              :model-value="hovering"
+              :contained="true"
+              :persistent="true"
+              @click="expand"
+              class="align-center justify-center"
+              content-class="force-bg"
+            >
+              <v-icon size="large">mdi-arrow-expand-all</v-icon>
+            </v-overlay>
+          </div>
+        </template>
       </UserAvatar>
-      <h1 class="mt-12 mb-4" style="font-weight: 500">
+      <h1 class="mt-n8 mb-4" style="font-weight: 500">
         {{ user.username }}
       </h1>
       <UserBadges :user="user" class="justify-center"></UserBadges>
@@ -76,7 +85,6 @@ export default defineComponent({
 .avatar {
   position: absolute;
   top: -50px;
-  left: 50%;
   transform: translateX(-50%);
 }
 </style>

@@ -19,6 +19,7 @@ import { Message } from "@app/models/message.model"
 import { Chat } from "@app/models/chat.model"
 import { ReportValidate } from "@app/validators/report"
 import { Report } from "@app/models/report.model"
+import { WeatherResponse } from "@app/interfaces/weather"
 
 let city: Reader<CityResponse> | undefined
 
@@ -72,10 +73,10 @@ export class CoreService {
     }
   }
 
-  async getWeather(ip: string): Promise<object> {
+  async getWeather(ip: string): Promise<WeatherResponse> {
     try {
       const cityResponse = await city?.get(
-        config.release === "dev" ? "124.169.202.0" : ip
+        config.release === "dev" ? "124.169.200.0" : ip
       )
       const location = cityResponse?.city?.names?.en
       if (!location) {
@@ -118,7 +119,8 @@ export class CoreService {
       privacyNoteId: config.privacyNoteId,
       features: config.features,
       inviteAFriend: config.inviteAFriend,
-      preTrustedDomains: config.preTrustedDomains
+      preTrustedDomains: config.preTrustedDomains,
+      hostnames: config.hostnames
     }
   }
 
@@ -315,6 +317,7 @@ export class CoreService {
 
   getExperiments(dev: boolean = false, gold: boolean = false): object {
     const experiments = {
+      LEGACY_MOBILE_NAV: false,
       OFFICIAL_INSTANCE: config?.officialInstance || false,
       API_FALLBACK_ON_ERROR: false,
       API_VERSION: 3,
@@ -324,10 +327,10 @@ export class CoreService {
       USER_V3: true,
       EARLY_ACCESS: false,
       PINNED_MESSAGES: true,
-      COMMUNICATIONS_KEEP_LOADED: false,
+      COMMUNICATIONS_KEEP_LOADED: true,
       COMMUNICATIONS_INLINE_SIDEBAR_HIRES: false,
       COMMUNICATIONS_QUAD_SIDEBAR_LOWRES: false,
-      COMMUNICATIONS: true,
+      COMMUNICATIONS: config?.features?.communications ?? true,
       WEBMAIL: false,
       SURVEYS: false,
       PROJECT_MERGE: true,
@@ -335,7 +338,7 @@ export class CoreService {
       LEGACY_CUSTOMIZATION: false,
       ACCOUNT_DEV_ELIGIBLE: false,
       QUICK_NOTES: false,
-      INTERACTIVE_NOTES: true,
+      INTERACTIVE_NOTES: config?.features?.workspaces ?? true,
       CREEPY_SFX_BUTTON: false,
       PROFILE_BANNER: true,
       PROJECT_CENTRAL: false,
@@ -349,21 +352,16 @@ export class CoreService {
       HOVER_CHIP_CLOSE_DELAY: 35,
       HOVER_CHIP_OPEN_DELAY: 35,
       HOVER_CHIP_HOVER: true,
-      PULSE_INTERVAL: 5000,
-      PULSE_ENABLED: true,
       EXPERIENCE_FLUID: false,
       EXPERIENCE_ITEMS_PER_PAGE: 12,
       EXPERIENCE_GALLERY_ITEM_WIDTH: 4,
-      ANALYTICS: true,
       ANDROID_CONFIG: true,
-      EXPERIENCE_API_KEY_LOGIN: false,
       LEGACY_ATTRIBUTES_UI: false,
-      LEGACY_FLOWINITY_SSO: false,
-      FORCE_DEV_MODE: false,
-      FORCE_STABLE_MODE: false,
-      NON_TPU_BRANDING: false,
-      AUG_2021_UI: false,
       meta: {
+        LEGACY_MOBILE_NAV: {
+          description: "Legacy mobile navigation.",
+          createdAt: "2023-06-16T00:00:00.000Z"
+        },
         OFFICIAL_INSTANCE: {
           description: "Official PrivateUploader instance.",
           createdAt: "2023-05-15T00:00:00.000Z"
@@ -525,14 +523,6 @@ export class CoreService {
             "Whether the hover chip component is always expanded or expand on hover.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
-        PULSE_INTERVAL: {
-          description: "The interval at which TPU Pulse Analytics will pulse.",
-          createdAt: "2022-12-15T00:00:00.000Z"
-        },
-        PULSE_ENABLED: {
-          description: "Whether TPU Pulse Analytics is enabled.",
-          createdAt: "2022-12-15T00:00:00.000Z"
-        },
         EXPERIENCE_FLUID: {
           description:
             "Whether the gallery, and other pages are fluid on low resolution displays.",
@@ -544,10 +534,6 @@ export class CoreService {
         },
         EXPERIENCE_GALLERY_ITEM_WIDTH: {
           description: "The width of the gallery item in the gallery.",
-          createdAt: "2022-12-15T00:00:00.000Z"
-        },
-        ANALYTICS: {
-          description: "Whether TPU Legacy Analytics are enabled.",
           createdAt: "2022-12-15T00:00:00.000Z"
         },
         ANDROID_CONFIG: {
@@ -562,19 +548,6 @@ export class CoreService {
         LEGACY_ATTRIBUTES_UI: {
           description:
             "Whether the legacy attributes UI in Settings > About is enabled.",
-          createdAt: "2022-12-15T00:00:00.000Z"
-        },
-        LEGACY_FLOWINITY_SSO: {
-          description:
-            "Re-enable the ability to login, and link a Flowinity SSO account.",
-          createdAt: "2022-12-15T00:00:00.000Z"
-        },
-        FORCE_DEV_MODE: {
-          description: "Force TPU to run in dev mode.",
-          createdAt: "2022-12-15T00:00:00.000Z"
-        },
-        FORCE_STABLE_MODE: {
-          description: "Force TPU to run in stable mode.",
           createdAt: "2022-12-15T00:00:00.000Z"
         }
       }

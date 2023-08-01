@@ -17,7 +17,7 @@ export class MailService {
       },
       attributes: ["mailToken", "username"]
     })
-    if (!user) throw Errors.USER_NOT_FOUND
+    if (!user) throw Errors.EXPERIMENT_NOT_ALLOWED
     const client = new ImapFlow({
       host: "mail.troplo.com",
       port: 993,

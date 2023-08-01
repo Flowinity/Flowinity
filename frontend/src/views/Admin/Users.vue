@@ -33,6 +33,12 @@
           <template v-slot:item.createdAt="{ item }">
             {{ $date(item.raw.createdAt).format("YYYY/MM/DD hh:mm:ss A") }}
           </template>
+          <template v-slot:item.emailVerified="{ item }">
+            <v-checkbox
+              @change="verify(item.raw.id, $event.target.checked)"
+              v-model="item.raw.emailVerified"
+            ></v-checkbox>
+          </template>
         </v-data-table>
       </v-container>
     </v-card>
@@ -73,6 +79,10 @@ export default defineComponent({
           key: "planId"
         },
         {
+          title: "Email Verified",
+          key: "emailVerified"
+        },
+        {
           title: "Created",
           key: "createdAt"
         }
@@ -103,6 +113,10 @@ export default defineComponent({
     async getUsers() {
       const { data } = await this.axios.get("/admin/users");
       this.users = data;
+    },
+    async verify(id: number, emailVerified: boolean) {
+      await this.axios.patch("/admin/verify", { id, emailVerified });
+      this.$toast.success("User email verified status updated.");
     }
   },
   mounted() {

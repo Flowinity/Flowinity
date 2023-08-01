@@ -133,7 +133,7 @@
                   </h1>
                   <UserBadges
                     :class="{ 'justify-center': $vuetify.display.mobile }"
-                    :primaryColor="primaryColorResult"
+                    :primaryColor="primaryColorResult.primary"
                     :user="user"
                   ></UserBadges>
                 </div>
@@ -175,53 +175,17 @@
               </v-card-text>
             </v-col>
           </v-row>
-          <template
-            v-if="
-              $experiments.experiments.USER_V3_EDITOR &&
-              user?.id === $user.user?.id &&
-              config.editMode
-            "
-          >
-            <v-card-subtitle class="mt-2">Dev UserV3 actions:</v-card-subtitle>
-            <v-btn v-for="comp in components" @click="addItemDebug(comp.id)">
-              Add {{ comp.name }}
-            </v-btn>
-            <v-btn color="red" @click="layout = defaultLayout">Reset</v-btn>
-            <v-btn
-              color="primary"
-              @click="$experiments.experiments.USER_V3 = false"
-            >
-              UserV2
-            </v-btn>
-            <v-alert
-              style="
-                border-bottom-left-radius: 0;
-                border-bottom-right-radius: 0;
-              "
-              type="warning"
-              variant="tonal"
-            >
-              Warning: do not CTRL + S unless you are sure the syntax is
-              correct.
-            </v-alert>
-            <vue-monaco-editor
-              v-model:value="layoutEditor"
-              language="json"
-              style="max-height: 300px"
-              theme="vs-dark"
-            ></vue-monaco-editor>
-          </template>
           <UserV3AddMenu
             v-if="config.editMode"
             :components="visibleComponents"
             @add="addItemDebug"
           />
           <VueDraggable
+            v-if="layout"
             v-model="layout.layout.columns[0].rows"
             :disabled="!config.editMode"
             handle=".drag-handle"
             item-key="id"
-            @update="setLayout"
           >
             <div
               v-for="component in layout.layout.columns[0].rows"
@@ -235,7 +199,11 @@
                 :primary="primary"
                 :user="user"
                 :username="username"
-                @addToParent="component.props.children.push($event)"
+                @addToParent="
+                  component.props
+                    ? component.props.children.push($event)
+                    : () => {}
+                "
                 @delete="deleteComponent($event || component)"
                 @moveDown="move($event || component, 1)"
                 @moveUp="move($event || component, -1)"
@@ -243,19 +211,45 @@
                   config.component = $event || component;
                   config.dialog = true;
                 "
-                @modifyProp="component.props[$event.prop] = $event.value"
+                @modifyProp="
+                  component.props
+                    ? (component.props[$event.prop] = $event.value)
+                    : () => {}
+                "
               ></UserV3ComponentHandler>
             </div>
           </VueDraggable>
         </v-col>
         <v-col
-          v-if="!username && layout.config?.showStatsSidebar !== false"
+          v-if="!username && layout?.config?.showStatsSidebar !== false"
           cols="12"
           md="3"
           sm="12"
           xl="2"
           style="flex: 0 1 auto; white-space: nowrap"
         >
+          <StatsCard
+            title="Money donated"
+            class="my-3"
+            :gold="gold"
+            :primary-color="primaryColorResult.primary"
+            v-if="user.xp"
+            :value="user.xp < 0 ? '-$' + user.xp * -1 : '$' + user.xp"
+          >
+            <div>
+              <v-tooltip location="top" activator="parent" class="text-center">
+                ${{ user.xp }} / ${{ calculatePercentage(user.xp) }}
+                <br />
+                Milestone {{ calculateMilestones(user.xp) }}
+              </v-tooltip>
+              <v-progress-linear
+                class="rounded-xl mt-1 mb-1"
+                :color="primaryColorResult.primary"
+                :height="5"
+                :model-value="(user.xp / calculatePercentage(user.xp)) * 100"
+              ></v-progress-linear>
+            </div>
+          </StatsCard>
           <InsightsPromoCard
             v-if="
               user.insights === 'everyone' ||
@@ -268,49 +262,49 @@
           ></InsightsPromoCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="$date(user.createdAt).format('DD/MM/YYYY')"
             class="my-3"
             title="Creation date"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="user.stats.uploads.toLocaleString()"
             class="my-3"
             title="Uploads"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="$functions.fileSize(user.quota || 0)"
             class="my-3"
             title="Storage Used"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="user.stats.collections.toLocaleString()"
             class="my-3"
             title="Collections"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="user.stats.collectionItems.toLocaleString()"
             class="my-3"
             title="Collectivizations"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="user.stats.pulse.toLocaleString()"
             class="my-3"
             title="TPU Hours"
           ></StatsCard>
           <StatsCard
             :gold="gold"
-            :primary-color="primaryColorResult"
+            :primary-color="primaryColorResult.primary"
             :value="user.stats.docs"
             class="my-3"
             title="Documents"
@@ -327,26 +321,13 @@ import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
 import { ProfileLayout, User } from "@/models/user";
-import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
-import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import StatsCard from "@/components/Dashboard/StatsCard.vue";
-import BarChart from "@/components/Core/BarChart.vue";
-import LineChart from "@/components/Core/LineChart.vue";
-import Chart from "@/components/Core/Chart.vue";
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
 import { DefaultThemes } from "@/plugins/vuetify";
-import ProfileInfo from "@/components/Users/UserV3/Widgets/ProfileInfo.vue";
-import MutualCollections from "@/components/Users/UserV3/Widgets/MutualCollections.vue";
-import MutualFriends from "@/components/Users/UserV3/Widgets/MutualFriends.vue";
-import CoreStatistics from "@/components/Users/UserV3/Widgets/CoreStatistics.vue";
-import LastFM from "@/components/Users/UserV3/Widgets/LastFM.vue";
-import MyAnimeList from "@/components/Users/UserV3/Widgets/MyAnimeList.vue";
 import UserV3Settings from "@/components/Users/UserV3/Dialogs/Settings.vue";
 import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/ComponentHandler.vue";
 import { VueDraggable } from "vue-draggable-plus";
-import VueMonacoEditor from "@guolao/vue-monaco-editor";
-import { Component } from "@/types/userv3";
+import { Component, Rows } from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 
 export default defineComponent({
@@ -356,25 +337,12 @@ export default defineComponent({
     UserV3AddMenu,
     UserV3ComponentHandler,
     UserV3Settings,
-    MyAnimeList,
-    LastFM,
-    CoreStatistics,
-    MutualFriends,
-    MutualCollections,
-    ProfileInfo,
     InsightsPromoCard,
-    GraphWidget,
-    Chart,
-    LineChart,
-    BarChart,
     StatsCard,
-    CollectionCard,
-    CollectionBanner,
     UserBadges,
     UserAvatar,
     UserBanner,
-    VueDraggable,
-    VueMonacoEditor
+    VueDraggable
   },
   data() {
     return {
@@ -444,10 +412,9 @@ export default defineComponent({
         },
         version: 1
       } as any,
-      layout: null as ProfileLayout | null,
+      layout: null as ProfileLayout | undefined | null,
       user: undefined as User | undefined,
-      friendLoading: false,
-      editorTmp: ""
+      friendLoading: false
     };
   },
   computed: {
@@ -637,6 +604,7 @@ export default defineComponent({
       return this.components.filter((x) => x.visible !== false);
     },
     selectedComponent() {
+      if (!this.layout) return null;
       let component = this.layout.layout.columns[0].rows.find(
         (x) => x.id === this.config.component
       );
@@ -656,16 +624,11 @@ export default defineComponent({
       if (!component) return null;
       return component;
     },
-    layoutEditor: {
-      get() {
-        return JSON.stringify(this.layout, null, 2);
-      },
-      set(val) {
-        this.editorTmp = val;
-      }
-    },
     primaryColorResult() {
-      return this.$user.primaryColorResult(this.primary, this.gold).primary;
+      return this.$user.primaryColorResult(
+        this.$user.theme.colors.primary,
+        this.gold
+      );
     },
     primary() {
       return this.user?.themeEngine?.theme[
@@ -711,42 +674,57 @@ export default defineComponent({
     }
   },
   methods: {
-    findComponent(id: string) {
-      let component = this.layout.layout.columns[0].rows.find(
+    calculatePercentage(value) {
+      const rounded = Math.ceil(value / 50) * 50;
+      return (rounded / 100) * 100;
+    },
+    calculateMilestones(value) {
+      // calculate how many 50s it has gone up by
+      const rounded = Math.ceil(value / 50) * 50;
+      return rounded / 50;
+    },
+    findComponent(
+      id: string
+    ): { component: Component | null; parent: Rows | Component | null } | null {
+      if (!this.layout) return null;
+
+      let component: Component | undefined;
+      let parent: Rows | Component | null | undefined;
+
+      const foundRow = this.layout.layout.columns[0].rows.find(
         (x) => x.id === id
       );
-      if (component)
-        return {
-          component,
-          parent: this.layout.layout.columns[0]
-        };
-      component = this.layout.layout.columns[0].rows
-        .find(
-          (x) =>
-            x?.props?.children &&
-            x?.props?.children?.find((y: Component) => y.id === id)
-        )
-        ?.props?.children?.find((y: Component) => y.id === id);
-      return {
-        component,
-        parent: this.layout.layout.columns[0].rows.find(
-          (x) =>
-            x?.props?.children &&
-            x?.props?.children?.find((y: Component) => y.id === id)
-        )
-      };
+      if (foundRow) {
+        component = foundRow;
+        parent = this.layout.layout.columns[0];
+      } else {
+        const foundChildRow = this.layout.layout.columns[0].rows.find((x) =>
+          x?.props?.children?.find((y: Component) => y.id === id)
+        );
+        if (foundChildRow && "children" in foundChildRow.props) {
+          component = foundChildRow.props.children?.find(
+            (y: Component) => y.id === id
+          );
+          parent = foundChildRow;
+        }
+      }
+
+      if (component && parent) {
+        return { component, parent };
+      }
+
+      return null;
     },
     updateProp(data: { key: string; value: any }) {
-      if (!this.selectedComponent) return;
+      if (!this.selectedComponent?.props) return;
       this.selectedComponent.props[data.key] = data.value;
     },
     deleteComponent(component: Component) {
       const comp = this.findComponent(component.id);
-      console.log(comp, component);
       if (!comp?.component) return;
-      if (comp.parent.rows) {
+      if ("rows" in comp.parent) {
         comp.parent.rows.splice(comp.parent.rows.indexOf(comp.component), 1);
-      } else {
+      } else if ("props" in comp.parent && "children" in comp.parent.props) {
         comp.parent.props.children.splice(
           comp.parent.props.children.indexOf(comp.component),
           1
@@ -755,26 +733,22 @@ export default defineComponent({
     },
     move(component: Component, count: number) {
       const comp = this.findComponent(component.id);
-      console.log(comp, component);
-      if (!comp?.component) return;
-      if (comp.parent.rows) {
+      if (!comp?.component || !comp.parent) return;
+      if ("rows" in comp.parent) {
         const index = comp.parent.rows.indexOf(comp.component);
         comp.parent.rows.splice(index, 1);
         comp.parent.rows.splice(index + count, 0, comp.component);
-      } else {
+      } else if ("props" in comp.parent && "children" in comp.parent.props) {
         const index = comp.parent.props.children.indexOf(comp.component);
         comp.parent.props.children.splice(index, 1);
         comp.parent.props.children.splice(index + count, 0, comp.component);
       }
     },
-    setLayout(layout: ProfileLayout) {
-      console.log(layout);
-    },
     addItemDebug(name: string) {
-      this.layout.layout.columns[0].rows.unshift({
+      this.layout?.layout.columns[0].rows.unshift({
         name,
         id: this.$functions.uuid(),
-        props: this.components.find((c) => c.id === name)?.props
+        props: this.components.find((c) => c.id === name)?.props || {}
       });
     },
     setTheme(reset: boolean = false) {
@@ -844,40 +818,28 @@ export default defineComponent({
       }
       const username = this.username || this.$route.params.username;
       const { data } = await this.axios.get(`/user/profile/${username}`);
-      this.user = data;
+      this.user = data as User;
       this.layout = this.user?.profileLayout || this.defaultLayout;
       if (!this.username) this.$app.title = this.user?.username + "'s Profile";
       this.setTheme();
       this.$app.componentLoading = false;
-    },
-    eventListener(e: KeyboardEvent) {
-      if (e.ctrlKey && e.key === "s") {
-        e.preventDefault();
-        console.log(this.editorTmp);
-        try {
-          this.layout = JSON.parse(this.editorTmp);
-        } catch {
-          this.$toast.error("Invalid JSON");
-        }
-      }
     }
   },
   mounted() {
-    document.addEventListener("keydown", (e) => this.eventListener(e));
     if (!this.username) this.$app.title = "User";
     this.getUser();
   },
   unmounted() {
-    document.removeEventListener("keydown", (e) => this.eventListener(e));
     this.setTheme(true);
   },
   watch: {
     "$route.params.username"(val) {
       if (!val) return;
+      this.config.editMode = false;
       this.getUser();
     },
     layout: {
-      handler(val) {
+      handler: function (val) {
         if (this.user?.id !== this.$user.user?.id) return;
         this.$user.changes.profileLayout = val;
         this.$user.save();
@@ -918,13 +880,16 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
 }
+</style>
 
-.text-gradient {
+<style>
+.text-gradient-custom {
   background: -webkit-linear-gradient(
-    v-bind("$user.primaryColorResult(primary, gold).gradient1"),
-    v-bind("$user.primaryColorResult(primary, gold).gradient2")
+    v-bind("primaryColorResult.gradient1"),
+    v-bind("primaryColorResult.gradient2")
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 </style>

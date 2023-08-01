@@ -32,7 +32,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { User } from "@/models/user";
 import { AutoCollectRule } from "@/models/autoCollectRule";
 
 export default defineComponent({
@@ -40,7 +39,7 @@ export default defineComponent({
   data() {
     return {
       users: [],
-      selected: null as User | null,
+      selected: null as any,
       selectedRule: null as AutoCollectRule | null
     };
   },

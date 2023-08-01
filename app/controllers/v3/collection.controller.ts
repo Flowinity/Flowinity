@@ -161,8 +161,9 @@ export class CollectionControllerV3 {
         userId: user.id
       }
     })
-    if(attachments.length === 0) throw Errors.ATTACHMENT_NOT_FOUND
-    if(attachments.length !== (body.attachmentId ? 1 : body.items?.length)) throw Errors.ATTACHMENT_NOT_FOUND
+    if (attachments.length === 0) throw Errors.ATTACHMENT_NOT_FOUND
+    if (attachments.length !== (body.attachmentId ? 1 : body.items?.length))
+      throw Errors.ATTACHMENT_NOT_FOUND
     return await this.collectionService.addToCollection(
       body.collectionId,
       attachments.map((attachment) => attachment.id),
@@ -197,7 +198,8 @@ export class CollectionControllerV3 {
 
     await this.collectionService.removeFromCollection(
       collectionId,
-      attachmentId
+      attachmentId,
+      user.id
     )
   }
 

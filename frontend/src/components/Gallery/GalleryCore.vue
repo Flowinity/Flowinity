@@ -1,5 +1,6 @@
 <template>
   <div id="gallery-core">
+    <OCRMetadata v-model="$app.dialogs.ocr.value" />
     <AddToCollection
       v-model="addToCollectionDialog"
       :items="collectivize"
@@ -120,10 +121,11 @@ import { Upload } from "@/models/upload";
 import AddToCollection from "@/components/Gallery/Dialogs/AddToCollection.vue";
 import { CollectionCache } from "@/types/collection";
 import Paginate from "@/components/Core/Paginate.vue";
+import OCRMetadata from "@/components/Gallery/Dialogs/OCRMetadata.vue";
 
 export default defineComponent({
   name: "GalleryCore",
-  components: { Paginate, AddToCollection, GalleryItem },
+  components: { OCRMetadata, Paginate, AddToCollection, GalleryItem },
   props: {
     randomAttachmentLoading: {
       type: Boolean,
@@ -202,8 +204,12 @@ export default defineComponent({
       this.addToCollectionDialog = true;
       this.collectivize = this.selected;
     },
-    bulkDeleteConfirm() {
-      this.$emit("bulkDeleteConfirm", this.selected);
+    async bulkDeleteConfirm() {
+      await this.axios.post("/gallery/delete", {
+        items: this.selected
+      });
+      this.$emit("refresh");
+      this.$toast.success("Deleted selected items!");
     },
     selectAll() {
       this.selected = this.items.gallery.map((i: Upload) => i.id);

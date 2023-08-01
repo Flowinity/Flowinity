@@ -24,7 +24,7 @@ export class AuthControllerV3 {
   ) {}
 
   @Post("/login")
-  @UseBefore(rateLimits.standardLimiter)
+  @UseBefore(rateLimits.loginLimiter)
   async login(
     @Body() body: { email: string; password: string; code?: string }
   ) {
@@ -33,7 +33,7 @@ export class AuthControllerV3 {
   }
 
   @Post("/register")
-  @UseBefore(rateLimits.mailLimiter)
+  @UseBefore(rateLimits.registerLimiter)
   async register(
     @Body()
     body: {
@@ -55,18 +55,12 @@ export class AuthControllerV3 {
     if (blacklist.includes(body.username)) {
       throw Errors.INVALID_USERNAME
     }
-    const register = await this.authService.register(
+    return await this.authService.register(
       body.username,
       body.password,
       body.email,
       invite?.id
     )
-
-    // promo invite key
-    if (body.inviteKey !== "1bf9e09f-d813-4783-9aa0-050a756e68cb" && invite) {
-      await this.inviteService.useInvite(body.inviteKey || "", register.user.id)
-    }
-    return register
   }
 
   @OnUndefined(204)

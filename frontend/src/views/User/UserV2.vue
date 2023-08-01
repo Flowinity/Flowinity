@@ -148,7 +148,7 @@
               :counter="255"
               :rows="1"
               auto-grow
-              autofocus
+              :autofocus="true"
               dense
               outlined
               @keydown.esc="settings.description.value = false"
@@ -606,5 +606,6 @@ export default defineComponent({
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 </style>

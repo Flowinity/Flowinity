@@ -1,4 +1,8 @@
 <template>
+  <v-tabs class="mb-4 mt-n3">
+    <v-tab to="/settings/security">Home</v-tab>
+    <v-tab to="/settings/security/audit">Pulse Log</v-tab>
+  </v-tabs>
   <v-toolbar class="rounded-xl" color="toolbar">
     <CreateAPIKey
       v-model="dialogs.key"

@@ -10,6 +10,8 @@ import { CacheService } from "@app/services/cache.service"
 import embedParser from "@app/lib/embedParser"
 import { Op } from "sequelize"
 import paginate from "jw-paginate"
+import axios from "axios"
+import { GoogleService } from "@app/services/providers/google.service"
 
 interface ChatCache extends Chat {
   _redisSortDate: string
@@ -106,6 +108,41 @@ export class ChatService {
       ]
     }
   ]
+
+  async emitToFCMs(message: Message, chat: Chat, userId: number) {
+    if (!config.providers.google) return
+    for (const user of chat.users) {
+      const key = await redis.get(`user:${user.userId}:notificationKey`)
+      if (!key) continue
+      //@ts-ignore
+      const sockets = await socket.in(user.userId).allSockets()
+      console.log(await socket)
+      await axios
+        .post(
+          `https://fcm.googleapis.com/fcm/send`,
+          {
+            to: key,
+            data: {
+              content: message.content,
+              id: message.id,
+              associationId: user.id,
+              userId: message.userId,
+              username: message.user?.username,
+              avatar: message.user?.avatar,
+              chatName: chat.name,
+              createdAt: message.createdAt
+            }
+          },
+          {
+            headers: {
+              Authorization: `key=${config.providers.google.access_token}`,
+              "Content-Type": "application/json"
+            }
+          }
+        )
+        .catch((e) => console.log(e?.response?.data))
+    }
+  }
 
   async updateAssociationSettings(
     associationId: number,
@@ -522,15 +559,21 @@ export class ChatService {
       include: this.userIncludes
     })
     this.patchCacheForAll(chat.id)
+    const newUsers = await ChatAssociation.findAll({
+      where: {
+        id: newAssociations
+      },
+      include: this.userIncludes
+    })
     this.emitForAll(chatId, userId, "addChatUsers", {
       chatId: chat.id,
-      users: await ChatAssociation.findAll({
-        where: {
-          id: newAssociations
-        },
-        include: this.userIncludes
-      })
+      users: newUsers
     })
+    for (const association of newUsers) {
+      socket
+        .to(association.userId)
+        .emit("chatCreated", await this.getChat(chat.id, association.userId))
+    }
     return associations
   }
 
@@ -591,7 +634,10 @@ export class ChatService {
         chatId: chat.id,
         id: messageId,
         user: await Container.get(UserUtilsService).getUserById(userId),
-        pinned: !message.pinned
+        pinned: !message.pinned,
+        content: message.content,
+        edited: message.edited,
+        editedAt: message.editedAt
       })
       return true
     }
@@ -617,7 +663,8 @@ export class ChatService {
       content,
       edited: true,
       editedAt: date,
-      user: await Container.get(UserUtilsService).getUserById(userId)
+      user: await Container.get(UserUtilsService).getUserById(userId),
+      pinned: message.pinned
     })
     return true
   }
@@ -747,9 +794,11 @@ export class ChatService {
       ]
     })
     if (!chat) throw Errors.CHAT_NOT_FOUND
+    const recipient = await this.getRecipient(chat, userId)
     return {
       ...chat.toJSON(),
-      recipient: await this.getRecipient(chat, userId)
+      unread: 0,
+      recipient: recipient?.dataValues ?? null
     }
   }
 
@@ -835,6 +884,7 @@ export class ChatService {
     })
 
     if (!message) throw Errors.UNKNOWN
+    this.emitToFCMs(message, chat, message.userId)
     for (const association of chat.users) {
       if (association?.tpuUser) {
         const assoc = await ChatAssociation.findOne({
@@ -912,13 +962,14 @@ export class ChatService {
     }
     // must contain at least one character excluding spaces and newlines and must not contain just #s (one or more)
     if (!attachments?.length) {
-      content = content.trim()
+      content = content?.trim()
       if (
         !content.replace(/\s/g, "").length ||
         !content.replace(/#/g, "").length
       )
         throw Errors.NO_MESSAGE_CONTENT
     }
+    if (content.length >= 4000) throw Errors.MESSAGE_TOO_LONG
     const message = await Message.create({
       content,
       chatId: chat.id,
@@ -973,8 +1024,12 @@ export class ChatService {
 
   async getChatFromAssociation(associationId: number, userId: number) {
     const chats = await this.getCachedUserChats(userId, true)
-    const chat = chats.find((c: Chat) => c.association?.id === associationId)
-    if (!chat) throw Errors.CHAT_NOT_FOUND
+    let chat = chats.find((c: Chat) => c.association?.id === associationId)
+    if (!chat) {
+      // For TPU Kotlin
+      chat = chats.find((c: Chat) => c.id === associationId)
+      if (!chat) throw Errors.CHAT_NOT_FOUND
+    }
     return chat
   }
 
@@ -995,7 +1050,7 @@ export class ChatService {
         chatId: chat.id,
         ...where
       },
-      order: [["createdAt", position === "top" ? "DESC" : "ASC"]],
+      order: [["id", position === "top" ? "DESC" : "ASC"]],
       limit: 50,
       include: this.messageIncludes
     })

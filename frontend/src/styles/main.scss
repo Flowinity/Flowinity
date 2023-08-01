@@ -6,6 +6,7 @@
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .gold-text-gradient {
@@ -13,6 +14,7 @@
   background: -webkit-radial-gradient(#ffdb1b, #ffd700);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .unselectable {
@@ -193,11 +195,15 @@ a {
   backdrop-filter: brightness(1.5);
 }
 
+.v-theme--amoled .message:hover {
+  background: #101010;
+}
+
 .message-actions {
   position: absolute !important;
   top: 0;
   right: 0;
-  margin-top: -22px;
+  margin-top: -25px;
   margin-right: 5px;
   visibility: hidden;
 }
@@ -247,12 +253,16 @@ a {
   visibility: visible;
 }
 
-.merge .message-contents {
+.merge {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
-.merge {
-  min-height: 30px !important;
+.message-date {
+  align-self: center;
+  width: 54px;
 }
+
 
 .overflow-content p {
   white-space: pre-line !important;
@@ -264,7 +274,7 @@ a {
   overflow-wrap: anywhere !important;
 }
 
-.gold .v-progress-linear {
+.v-theme--light .v-progress-linear {
   color: black;
 }
 
@@ -423,12 +433,14 @@ a {
 }
 
 .white-text,
+.text-white,
 .white--text {
   color: white !important;
 }
 
 .black-text,
-.black--text {
+.black--text,
+.black-text {
   color: black !important;
 }
 
@@ -468,7 +480,7 @@ a {
   background: transparent !important;
 }
 
-.v-menu .v-overlay__content {
+.v-menu .v-overlay__content:not(.force-bg) {
   background: rgb(var(--v-theme-background)) !important;
 }
 
@@ -512,4 +524,69 @@ a {
     width: 100% !important;
     padding: 0 !important;
   }
+}
+
+.chip-never-active .v-chip__overlay {
+  opacity: 0 !important;
+}
+
+.member-sidebar-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 4px;
+}
+
+.member-sidebar-item:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.selected {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.v-theme--amoled .selected {
+  background-color: #101010;
+}
+
+.v-theme--amoled .member-sidebar-item:hover {
+  background-color: #101010;
+}
+
+.communications .message {
+  display: flex;
+  margin-top: 12px;
+}
+
+.message-content {
+}
+
+.communications .message-list-container {
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-x: hidden;
+}
+
+.communications .message-input {
+  bottom: 0;
+  position: sticky;
+  align-self: flex-end;
+}
+
+.communications {
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  height: 100%;
+}
+
+:root:has(.disable-overscroll) {
+  overscroll-behavior: none;
+}
+
+.message-container {
+  display: flex; /* Use flexbox to keep elements in the same row */
+  align-items: center; /* Align items vertically within the container */
 }

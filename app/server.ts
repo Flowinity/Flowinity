@@ -7,6 +7,7 @@ import isoWeek from "dayjs/plugin/isoWeek"
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
 import cluster from "cluster"
 import os from "os"
+import Provider from "oidc-provider"
 
 // Import Miscellaneous
 import { Application } from "@app/app"
@@ -29,6 +30,8 @@ import { DiscordService } from "@app/services/providers/discord.service"
 
 // Import Models
 import { Domain } from "@app/models/domain.model"
+import { OauthApp } from "@app/models/oauthApp.model"
+import { Context } from "mocha"
 
 @Service({ eager: false })
 export class Server {
@@ -64,6 +67,7 @@ export class Server {
     const cpuCount: number = os.cpus().length
     const mainWorker: boolean =
       !cluster.worker || cluster.worker?.id % cpuCount === 1
+    global.mainWorker = mainWorker
 
     this.application.app.set(
       "port",

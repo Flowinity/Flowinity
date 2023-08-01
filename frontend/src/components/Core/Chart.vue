@@ -7,13 +7,54 @@
       :type="type"
       :width="getWidth()"
       title=""
+      v-if="apex"
     ></apexchart>
+    <template v-else-if="type === 'line'">
+      <Line
+        v-if="chartJSData"
+        :data="chartJSData"
+        :options="chartJSOptions"
+        :style="height ? `max-height: ${height}px; height: ${height}px;` : ''"
+      />
+    </template>
+    <template v-else-if="type === 'bar'">
+      <Bar
+        v-if="chartJSData"
+        :data="chartJSData"
+        :options="chartJSOptions"
+        :style="height ? `max-height: ${height}px; height: ${height}px;` : ''"
+      />
+    </template>
   </div>
 </template>
 
 <script lang="ts">
+import { Line, Bar } from "vue-chartjs";
+import apexchart from "vue3-apexcharts";
+import {
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  BarElement
+} from "chart.js";
 import { defineComponent } from "vue";
+import chartJS from "chart.js";
 
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  PointElement,
+  BarElement
+);
 export default defineComponent({
   name: "Chart",
   props: [
@@ -25,9 +66,52 @@ export default defineComponent({
     "name",
     "color",
     "series",
-    "horizontal"
+    "horizontal",
+    "apex"
   ],
+  components: { Line, Bar, apexchart },
   computed: {
+    chartJSData() {
+      return {
+        labels: this.data?.labels,
+        datasets: [
+          {
+            label: this.name,
+            data: this.data?.data,
+            borderColor: this.color || this.$user.theme.colors.primary,
+            backgroundColor:
+              this.type === "line"
+                ? "white"
+                : this.color || this.$user.theme.colors.primary
+          }
+        ]
+      };
+    },
+    chartJSOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: !this.height,
+        title: {
+          display: false
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            mode: "index",
+            intersect: false
+          },
+          hover: {
+            mode: "index",
+            intersect: false
+          }
+        },
+        animation: {
+          duration: 1
+        }
+      } as chartJS.ChartOptions;
+    },
     chartOptions() {
       const result = {
         plotOptions: {

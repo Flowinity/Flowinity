@@ -22,13 +22,16 @@ async function initTPU() {
   } catch {
     global.config = new DefaultTpuConfig().config
   }
+
+  global.storageRoot = <string>process.env.STORAGE_ROOT
   console.log("Entrypoint initialized")
   Container.get(Server).init()
 
   const cpuCount: number = os.cpus().length
   const mainWorker: boolean =
     !cluster.worker || cluster.worker?.id % cpuCount === 1
-  if (mainWorker && config.release !== "dev") checkFrontend()
+  if (mainWorker && config.release !== "dev" && !config.officialInstance)
+    checkFrontend()
 }
 
 async function checkFrontend() {

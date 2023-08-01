@@ -26,6 +26,7 @@ import { FriendNickname } from "@app/models/friendNickname"
 import { AlternatePassword } from "@app/types/auth"
 import { DefaultProfileLayout } from "@app/classes/UserV3ProfileLayout"
 import { Integration } from "@app/models/integration.model"
+import { Col } from "@troplo/sequelize/types/utils"
 
 export interface ProfileLayout {
   layout: {
@@ -73,7 +74,8 @@ export interface ThemeEngine {
       "passwordResetCode",
       "passwordResetExpiry",
       "alternatePasswords",
-      "mailToken"
+      "mailToken",
+      "fcmNotificationKey"
     ]
   }
 }))
@@ -277,6 +279,22 @@ export class User extends Model {
   @Column
   publicProfile: boolean
 
+  @Column({
+    type: DataType.BIGINT
+  })
+  xp: bigint
+
+  @Column({
+    type: DataType.TEXT
+  })
+  fcmNotificationKey: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true
+  })
+  privacyPolicyAccepted: boolean
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 
@@ -301,6 +319,8 @@ export class User extends Model {
   scopes: string
 
   stats: object
+
+  oauthAppId?: string
 
   @HasOne(() => FriendNickname, "friendId")
   nickname: FriendNickname

@@ -225,8 +225,11 @@
     item-value="key"
     @update:modelValue="$emit('update')"
   />
-  <br />
-  <v-btn class="px-6" @click="$app.themeEditor = !$app.themeEditor">
+  <v-btn
+    class="mb-2 ml-5"
+    @click="$app.themeEditor = !$app.themeEditor"
+    v-if="$user.gold || !$app.site.officialInstance"
+  >
     <v-icon class="mr-2">mdi-palette</v-icon>
     <span>
       {{ $t("settings.home.preferences.themeEditor") }}
@@ -236,13 +239,13 @@
   <v-switch
     v-model="disableProfileColors"
     :label="$t('settings.home.preferences.disableProfileColors')"
-    class="px-4"
+    class="px-6"
   ></v-switch>
   <v-switch
     v-if="disableBatterySave"
     v-model="disableBatterySave"
     :label="$t('settings.home.preferences.disableBatteryPreservation')"
-    class="px-4 mt-n6"
+    class="px-6 mt-n6"
   ></v-switch>
 </template>
 

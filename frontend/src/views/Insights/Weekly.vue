@@ -28,27 +28,27 @@
           :to="'/insights/weekly' + requiredString"
           class="mr-2"
         >
-          Weekly
+          {{ $t("insights.types.weekly") }}
         </v-btn>
         <v-btn
           :color="type === 'weekly' ? 'black' : 'white'"
           :to="'/insights/monthly' + requiredString"
           class="mr-2"
         >
-          Monthly
+          {{ $t("insights.types.monthly") }}
         </v-btn>
         <v-btn
           :color="type === 'weekly' ? 'black' : 'white'"
           :to="'/insights/yearly' + requiredString"
           class="mr-2"
         >
-          Annually
+          {{ $t("insights.types.annually") }}
         </v-btn>
         <v-btn
           :color="type === 'weekly' ? 'black' : 'white'"
           :to="'/insights/dynamic' + requiredString"
         >
-          Dynamic
+          {{ $t("insights.types.dynamic") }}
         </v-btn>
       </div>
     </DynamicCard>
@@ -68,7 +68,7 @@
             report?.data.uploads.total.now - report.data.uploads.total.previous
           "
           :last="report?.data.uploads.total?.previous"
-          :title="`Uploads`"
+          :title="$t('insights.statsCards.uploads')"
         ></InsightsStatsCard>
         <InsightsStatsCard
           :count="report?.data.messages.total?.now"
@@ -77,7 +77,7 @@
             report.data.messages.total.previous
           "
           :last="report?.data.messages.total?.previous"
-          :title="`Messages`"
+          :title="$t('insights.statsCards.messages')"
           class="mt-4"
         ></InsightsStatsCard>
         <InsightsStatsCard
@@ -100,7 +100,7 @@
             report.data.uploads.streak.currentStreak.endDate
           ).format('DD/MM/YYYY')}`"
           class="mt-4"
-          title="Current UploadStreak"
+          :title="$t('insights.statsCards.currentStreak')"
         ></InsightsStatsCard>
       </v-col>
       <v-col cols="12" lg="3" md="4" sm="12" xl="2">
@@ -111,7 +111,7 @@
             report.data.uploads.average.previous
           "
           :last="report?.data.uploads.average.previous ?? 0"
-          title="Uploads/avg"
+          :title="$t('insights.statsCards.uploadsAvg')"
         ></InsightsStatsCard>
         <InsightsStatsCard
           :count="report?.data.messages.average.now ?? 0"
@@ -121,7 +121,7 @@
           "
           :last="report?.data.messages.average.previous ?? 0"
           class="mt-4"
-          title="Messages/avg"
+          :title="$t('insights.statsCards.messagesAvg')"
         ></InsightsStatsCard>
         <InsightsStatsCard
           v-if="report?.data.uploads.streak.longestStreak"
@@ -143,70 +143,77 @@
             report.data.uploads.streak.longestStreak.endDate
           ).format('DD/MM/YYYY')}`"
           class="mt-4"
-          title="Longest UploadStreak"
+          :title="$t('insights.statsCards.longestStreak')"
         ></InsightsStatsCard>
       </v-col>
       <v-col cols="12" lg="6" md="5" sm="12" xl="4">
         <InsightsStatsCard
-          :subtitle="`Last reporting period you uploaded the most at ${
-            report?.data.uploads.hours.series[0].data.reduce((a, b) =>
-              a.y > b.y ? a : b
-            ).x
-          }!`"
-          title="Uploads per hour"
+          :subtitle="
+            $t('insights.statsCards.upload.subtitle', {
+              hour: report?.data.uploads.hours.series[0].data.reduce((a, b) =>
+                a.y > b.y ? a : b
+              ).x
+            })
+          "
+          :title="$t('insights.statsCards.upload.title')"
         >
           <Chart
             :height="300"
             :series="report?.data.uploads.hours.series"
             class="mb-n6"
-            title="Uploads last week"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
         <InsightsStatsCard
           class="mt-6"
-          subtitle="See when you used TPU!"
-          title="Website usage"
+          :subtitle="$t('insights.statsCards.usage.subtitle')"
+          :title="$t('insights.statsCards.usage.title')"
         >
           <Chart
             :data="objectToGraphData(report?.data.pulses.days)"
             :height="300"
             class="mb-n6"
-            name="Hours"
+            :name="$t('insights.statsCards.usage.chartTitle')"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
       <v-col cols="12" lg="6" md="3" sm="12" xl="4">
         <InsightsStatsCard
-          :subtitle="`Last reporting period you uploaded the most on ${
-            report?.data.uploads.days.series[0].data.reduce((a, b) =>
-              a.y > b.y ? a : b
-            ).x
-          }!`"
-          title="Uploads per day"
+          :subtitle="
+            $t('insights.statsCards.uploadsPerDay.subtitle', {
+              day: report?.data.uploads.days.series[0].data.reduce((a, b) =>
+                a.y > b.y ? a : b
+              ).x
+            })
+          "
+          :title="$t('insights.statsCards.uploadsPerDay.title')"
         >
           <Chart
             :height="300"
             :series="report?.data.uploads.days.series"
             class="mb-n6"
             name="uploads-last-week"
-            title="Uploads last week"
+            :title="$t('insights.statsCards.uploadsPerDay.chartTitle')"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
         <InsightsStatsCard
           class="mt-6"
-          subtitle="See what platforms you use TPU on."
-          title="Platform usage"
+          :subtitle="$t('insights.statsCards.platform.subtitle')"
+          :title="$t('insights.statsCards.platform.title')"
         >
           <Chart
             :data="objectToGraphData(report?.data.pulses.platforms)"
             :height="300"
             :horizontal="true"
             class="mb-n6"
-            name="Hours"
+            :name="$t('insights.statsCards.platform.chartTitle')"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -218,13 +225,23 @@
         sm="12"
         xl="4"
       >
-        <InsightsStatsCard title="Uploads per month">
+        <InsightsStatsCard
+          :title="$t('insights.statsCards.uploadsPerMonth.title')"
+          :subtitle="
+            $t('insights.statsCards.uploadsPerMonth.subtitle', {
+              month: report?.data.uploads.months.series[0].data.reduce((a, b) =>
+                a.y > b.y ? a : b
+              ).x
+            })
+          "
+        >
           <Chart
             :height="300"
             :series="report?.data.uploads.months.series"
             class="mb-n6"
             name="uploads-last-month"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -236,13 +253,23 @@
         sm="12"
         xl="4"
       >
-        <InsightsStatsCard title="Uploads per year">
+        <InsightsStatsCard
+          :title="$t('insights.statsCards.uploadsPerYear.title')"
+          :subtitle="
+            $t('insights.statsCards.uploadsPerYear.subtitle', {
+              year: report?.data.uploads.years.series[0].data.reduce((a, b) =>
+                a.y > b.y ? a : b
+              ).x
+            })
+          "
+        >
           <Chart
             :height="300"
             :series="report?.data.uploads.years.series"
             class="mb-n6"
             name="uploads-last-month"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -255,8 +282,8 @@
         xl="4"
       >
         <InsightsStatsCard
-          subtitle="See the top words in your screenshots!"
-          title="Top 500 words"
+          :title="$t('insights.statsCards.topWords.title')"
+          :subtitle="$t('insights.statsCards.topWords.subtitle')"
         >
           <v-data-table
             :headers="headers.words"
@@ -287,8 +314,8 @@
         xl="4"
       >
         <InsightsStatsCard
-          subtitle="See who you talk to in TPU Communications!"
-          title="Top chats"
+          :title="$t('insights.statsCards.topChats.title')"
+          :subtitle="$t('insights.statsCards.topChats.subtitle')"
         >
           <v-data-table
             :headers="headers.topChats"
@@ -318,13 +345,17 @@
         sm="12"
         xl="4"
       >
-        <InsightsStatsCard title="AutoCollects per hour">
+        <InsightsStatsCard
+          :title="$t('insights.statsCards.autoCollects.title')"
+          :subtitle="$t('insights.statsCards.autoCollects.subtitle')"
+        >
           <Chart
             :height="300"
             :series="report?.data.pulses.autoCollects.series"
             class="mb-n6"
             name="autocollects-per-hour"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -337,8 +368,8 @@
         xl="4"
       >
         <InsightsStatsCard
-          subtitle="See when you collectivize your items!"
-          title="Collectivizations per hour"
+          :title="$t('insights.statsCards.collections.title')"
+          :subtitle="$t('insights.statsCards.collections.subtitle')"
         >
           <Chart
             :height="300"
@@ -346,13 +377,14 @@
             class="mb-n6"
             name="autocollects-per-hour"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
       <v-col cols="12" lg="6" md="3" sm="12" xl="4">
         <InsightsStatsCard
-          subtitle="Explore what TPU features you use the most!"
-          title="Feature usage"
+          :title="$t('insights.statsCards.features.title')"
+          :subtitle="$t('insights.statsCards.features.subtitle')"
         >
           <Chart
             :data="arrayToGraphData(report?.data.pulses.features)"
@@ -361,6 +393,7 @@
             class="mb-n6"
             name="Hours"
             type="bar"
+            :apex="true"
           ></Chart>
         </InsightsStatsCard>
       </v-col>
@@ -369,11 +402,14 @@
   <v-container v-else>
     <v-card>
       <v-card-text v-if="type !== 'dynamic'">
-        There is no data for last {{ strings.singular }}. Please check back
-        later.
+        {{
+          $t("insights.noData", {
+            type: strings.singular
+          })
+        }}
       </v-card-text>
       <v-card-text v-else>
-        The dynamic report is being generated. Please check back in a few hours.
+        {{ $t("insights.noDataDynamic") }}
       </v-card-text>
     </v-card>
   </v-container>
@@ -383,13 +419,14 @@
 import { defineComponent } from "vue";
 import DynamicCard from "@/components/Core/DynamicCard.vue";
 import InsightsStatsCard from "@/components/Insights/StatsCard.vue";
-import { Insight } from "@/models/insight";
+import { Insight, SeriesGraph, SeriesGraphObject } from "@/models/insight";
 import Chart from "@/components/Core/Chart.vue";
 import InsightsPageBanner from "@/components/Insights/Banners/Page.vue";
 import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
+import { type } from "os";
 
 export default defineComponent({
-  name: "Dynamic",
+  name: "InsightsReport",
   components: {
     PlaceholderCheckerboard,
     InsightsPageBanner,
@@ -470,6 +507,40 @@ export default defineComponent({
     }
   },
   methods: {
+    // todo: replace ApexCharts
+    /*  chartJSSeries(data: SeriesGraph) {
+      const d = data.series[0];
+      let val;
+      try {
+        val = {
+          labels: d.data.map((d) => d.x),
+          datasets: [
+            {
+              data: d.data.map((d) => d.y),
+              label: d.name
+            },
+            {
+              data: d.data.map((v) => v.goals.map((g) => g.value)[0]),
+              label: `Last ${this.strings.singular}`
+            }
+          ],
+          label: d.name
+        };
+      } catch (e) {
+        val = {
+          labels: d.data.map((d) => d.x),
+          datasets: [
+            {
+              data: d.data.map((d) => d.y),
+              label: d.name
+            }
+          ],
+          label: d.name
+        };
+      }
+      console.log(val);
+      return val;
+    },*/
     arrayToGraphData(array: { name: string; count: number }[] | undefined) {
       if (!array) return { labels: [], data: [] };
       // sort by count

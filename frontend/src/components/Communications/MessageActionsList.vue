@@ -51,6 +51,17 @@
         {{ $chat.dialogs.message.message.pinned ? "Unpin" : "Pin" }}
       </v-list-item-title>
     </v-list-item>
+    <v-list-item
+      @click="
+        $functions.copy($chat.dialogs.message.message?.content);
+        $chat.dialogs.message.value = false;
+      "
+    >
+      <template v-slot:prepend>
+        <v-icon>mdi-content-copy</v-icon>
+      </template>
+      <v-list-item-title>Copy message contents</v-list-item-title>
+    </v-list-item>
   </v-list>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <v-container class="text-center justify-center">
     <PromoNoContent
-      description="Chat with other TPU & Colubrina users."
+      description="Chat with other TPU users instantly."
       icon="mdi-message-processing-outline"
       title="TPU Communications"
     ></PromoNoContent>

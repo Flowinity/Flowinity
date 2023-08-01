@@ -20,7 +20,7 @@ export default defineComponent({
       message: {
         source: "",
         parsed: {
-          html: "deez"
+          html: "Default"
         }
       }
     };

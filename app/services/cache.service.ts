@@ -100,9 +100,6 @@ export class CacheService {
     try {
       const pulseService = Container.get(PulseService)
       console.info("[REDIS] Generating insights cache...")
-      // Leaderboard
-      const leaderboard = await pulseService.getLeaderboard()
-      redis.json.set(`insights:leaderboard`, "$", leaderboard)
       // Insights
       const start = new Date().getTime()
       let users
@@ -111,7 +108,6 @@ export class CacheService {
       } else {
         users = [await User.findOne({ where: { id: userId } })] as User[]
       }
-      const years = ["2021", "2022", "2023", "latest"]
       for (const user of users) {
         const dynamic = {
           data: await pulseService.generateInsights(user.id, "dynamic"),
@@ -121,14 +117,20 @@ export class CacheService {
         }
         redis.json.set(`insightsV2:${user.id}`, "$", dynamic)
       }
-      let result = {} as Record<string, number>
-      for (const year of years) {
-        result[year] = {
-          ...(await pulseService.getInsights(null, year, true)),
-          _redis: new Date().toISOString()
+      if (!userId) {
+        const years = ["2021", "2022", "2023", "latest"]
+        // Leaderboard
+        const leaderboard = await pulseService.getLeaderboard()
+        redis.json.set(`insights:leaderboard`, "$", leaderboard)
+        let result = {} as Record<string, number>
+        for (const year of years) {
+          result[year] = {
+            ...(await pulseService.getInsights(null, year, true)),
+            _redis: new Date().toISOString()
+          }
         }
+        redis.json.set(`insights:global`, "$", result)
       }
-      redis.json.set(`insights:global`, "$", result)
       const end = new Date().getTime()
       console.info(`[REDIS] Insights cache generated in ${end - start}ms`)
     } catch {}
@@ -471,7 +473,7 @@ export class CacheService {
       cron.schedule("0 4 * * *", () => {
         this.generateCollectionCache()
       })
-
+      this.generateAutoCollectCache().then(() => {})
       this.refreshState().then(() => {})
       this.generateShareLinkCache().then(() => {})
       this.generateUserStatsCache().then(() => {})

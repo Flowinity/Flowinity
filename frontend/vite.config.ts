@@ -1,6 +1,7 @@
 // Plugins
 import vue from "@vitejs/plugin-vue";
-import vuetify, { transformAssetUrls } from "@troplo/vite-plugin-vuetify";
+import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
+import { warmup } from "vite-plugin-warmup";
 
 // Utilities
 import { defineConfig } from "vite";
@@ -15,7 +16,7 @@ const resolve = (file: string) => {
 
 // https://vitejs.dev/config/
 
-let config = {
+const config = {
   build: {
     rollupOptions: {
       output: {
@@ -28,7 +29,12 @@ let config = {
     emptyOutDir: true
   },
   plugins: [
-    ViteVersion(),
+    warmup({
+      // warm up the files and its imported JS modules recursively
+      clientFiles: ["./src/**/*.ts", "./src/**/*.vue"]
+    }),
+    //@ts-ignore
+    ViteVersion.default(),
     VitePWA({
       registerType: "autoUpdate",
       workbox: {
@@ -141,6 +147,7 @@ let config = {
 };
 
 if (process.env.USE_SSL_INTERNAL === "true") {
+  //@ts-ignore
   config.server.https = {
     key: fs.readFileSync("./vite.key"),
     cert: fs.readFileSync("./vite.crt")

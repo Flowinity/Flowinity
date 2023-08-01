@@ -7,7 +7,7 @@ import { User } from "@/models/user";
 export default {
   fileSize(size: number): string {
     let i = -1;
-    let byteUnits = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    const byteUnits = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     do {
       size = size / 1024;
       i++;
@@ -35,7 +35,7 @@ export default {
     const app = useAppStore();
     if (!chat) return undefined;
     if ("username" in chat) {
-      if (chat.avatar?.length > 20) {
+      if (chat.avatar && chat.avatar.length > 20) {
         return "https://colubrina.troplo.com/usercontent/" + chat.avatar;
       } else if (chat.avatar) {
         return app.domain + chat.avatar;
@@ -43,7 +43,11 @@ export default {
         return undefined;
       }
     }
-    if (chat.type === "direct" && chat.recipient?.avatar?.length > 20) {
+    if (
+      chat.type === "direct" &&
+      chat.recipient?.avatar &&
+      chat.recipient.avatar.length > 20
+    ) {
       return (
         "https://colubrina.troplo.com/usercontent/" + chat.recipient.avatar
       );
@@ -133,17 +137,17 @@ export default {
     switch (status) {
       case "online":
         return {
-          color: "success",
+          color: "#4caf50",
           text: "Online"
         };
       case "idle":
         return {
-          color: "warning",
+          color: "#ff9800",
           text: "Idle"
         };
       case "busy":
         return {
-          color: "error",
+          color: "#f44336",
           text: "Busy"
         };
       case "invisible":
@@ -207,9 +211,28 @@ export default {
     return false;
   },
   uuid() {
-    return self.crypto.randomUUID();
+    try {
+      return self.crypto.randomUUID();
+    } catch {
+      // If self.crypto.randomUUID() is not supported
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+        /[xy]/g,
+        function (c) {
+          const r = (Math.random() * 16) | 0,
+            v = c == "x" ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        }
+      );
+    }
   },
   charUp(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  },
+  contrast(hex: string) {
+    const r = parseInt(hex.substr(1, 2), 16);
+    const g = parseInt(hex.substr(3, 2), 16);
+    const b = parseInt(hex.substr(5, 2), 16);
+    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    return yiq >= 100;
   }
 };

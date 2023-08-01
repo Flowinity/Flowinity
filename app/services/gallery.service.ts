@@ -76,7 +76,11 @@ export class GalleryService {
       }
     })
     if (upload) {
-      await fs.unlinkSync(path.join(config.storage, upload.attachment))
+      try {
+        await fs.unlinkSync(global.storageRoot + upload.attachment)
+      } catch (e) {
+        console.log(e)
+      }
       await User.update(
         {
           quota: sequelize.literal("quota -" + upload.fileSize)
@@ -152,7 +156,7 @@ export class GalleryService {
       //
     }
     return {
-      upload,
+      upload: await this.getAttachment(upload.attachment, userId),
       url
     }
   }
@@ -429,13 +433,19 @@ export class GalleryService {
     })
     if (star) {
       await star.destroy()
-      return false
+      return {
+        status: false,
+        star: null
+      }
     } else {
-      await Star.create({
+      const star = await Star.create({
         userId,
         attachmentId: upload.id
       })
-      return true
+      return {
+        status: true,
+        star
+      }
     }
   }
 
@@ -478,6 +488,7 @@ export class GalleryService {
     if (!upload) {
       throw Errors.ATTACHMENT_NOT_FOUND_ROUTE
     }
+    upload.dataValues.collections = []
     return upload
   }
 

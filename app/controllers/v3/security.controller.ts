@@ -5,7 +5,8 @@ import {
   JsonController,
   Param,
   Patch,
-  Post
+  Post,
+  QueryParam
 } from "routing-controllers"
 import { Service } from "typedi"
 import { Auth } from "@app/lib/auth"
@@ -16,6 +17,14 @@ import { SecurityService } from "@app/services/security.service"
 @JsonController("/security")
 export class SecurityControllerV3 {
   constructor(private readonly securityService: SecurityService) {}
+
+  @Get("/audit")
+  async getAuditLog(
+    @Auth("*") user: User,
+    @QueryParam("page") page: number = 1
+  ) {
+    return await this.securityService.getAuditLog(user.id, page)
+  }
 
   @Get("/keys")
   async getAPIKeys(@Auth("*") user: User) {

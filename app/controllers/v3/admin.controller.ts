@@ -281,6 +281,20 @@ export class AdminControllerV3 {
     await this.adminService.removeUsersFromBadge(body.userIds, body.id)
   }
 
+  @UseBefore(LowLevel)
+  @Patch("/verify")
+  async verifyUser(
+    @Auth("*") user: User,
+    @Body()
+    body: {
+      id: number
+      emailVerified: boolean
+    }
+  ) {
+    if (!body.id) throw Errors.INVALID_PARAMETERS
+    await this.adminService.verify(body.id, body.emailVerified)
+  }
+
   @UseBefore(HighLevel)
   @Post("/announcement")
   async createAnnouncement(
@@ -296,6 +310,32 @@ export class AdminControllerV3 {
     )
     this.cacheService.refreshState()
     return announcement
+  }
+
+  @UseBefore(HighLevel)
+  @Patch("/announcement")
+  async editAnnouncement(
+    @Auth("*") user: User,
+    @Body()
+    body: {
+      content: string
+      id: number
+    }
+  ) {
+    const announcement = await this.adminService.editAnnouncement(
+      body.id,
+      body.content,
+      user.id
+    )
+    this.cacheService.refreshState()
+    return announcement
+  }
+
+  @UseBefore(HighLevel)
+  @Delete("/announcement/:id")
+  async deleteAnnouncement(@Auth("*") user: User, @Param("id") id: number) {
+    await this.adminService.deleteAnnouncement(id)
+    this.cacheService.refreshState()
   }
 
   @UseBefore(HighLevel)
@@ -484,7 +524,7 @@ export class AdminControllerV3 {
       this.redactConfig(body, true)
     )
     console.log(tpuConfig)
-    await TpuConfigValidator.parse(tpuConfig)
+    TpuConfigValidator.parse(tpuConfig)
     await this.setupController.writeTPUConfig(tpuConfig)
     this.cacheService.refreshState()
   }

@@ -5,21 +5,8 @@
       'sidebar-patch': $experiments.experiments.RAIL_SIDEBAR && $app.rail
     }"
     color="dark"
-    floating
+    :floating="true"
   >
-    <v-card-text
-      v-if="$vuetify.display.mobile"
-      class="unselectable"
-      style="
-        color: rgb(var(--v-theme-primary));
-        cursor: pointer;
-        font-size: 12px;
-      "
-      @click="$app.railMode = 'tpu'"
-    >
-      <v-icon>mdi-arrow-left</v-icon>
-      Back to TPU
-    </v-card-text>
     <ColubrinaSidebarList></ColubrinaSidebarList>
     <template v-slot:append>
       <StatusSwitcher></StatusSwitcher>
@@ -37,11 +24,11 @@ export default defineComponent({
   components: { StatusSwitcher, ColubrinaSidebarList },
   computed: {
     val: {
-      get() {
+      get: function () {
         if (!this.$vuetify.display.mobile) return true;
         return this.$app.mainDrawer;
       },
-      set(value) {
+      set: function (value: boolean) {
         if (!this.$vuetify.display.mobile) return;
         this.$app.mainDrawer = value;
       }

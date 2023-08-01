@@ -19,7 +19,7 @@
       <v-list max-height="400">
         <v-text-field
           v-model="search"
-          autofocus
+          :autofocus="true"
           class="mx-5 my-n1"
           label="Search"
         ></v-text-field>
@@ -28,6 +28,7 @@
           :active="selected.includes(friend.otherUser.id)"
           :value="friend.otherUser.id"
           @click="add(friend.otherUser.id)"
+          :key="friend.otherUser.id"
         >
           <template v-slot:prepend>
             <UserAvatar

@@ -61,6 +61,75 @@ export type Scope =
   | "mail.view"
   | "mail.create"
   | "mail"
+  | "oauth"
+  | "oauth.user.email"
+  | "oauth.user.id"
+  | "oauth.user.username"
+  | "oauth.user.avatar"
+  | "oauth.save"
+  | "oauth.user"
+  | "oauth.authorize"
+
+async function getSession(token: string) {
+  return await Session.findOne({
+    where: {
+      token: token,
+      expiredAt: {
+        [Op.or]: [
+          {
+            [Op.gt]: new Date()
+          },
+          {
+            [Op.is]: null
+          }
+        ]
+      }
+    },
+    include: [
+      {
+        model: User,
+        as: "user",
+        required: true,
+        include: [
+          {
+            model: Experiment,
+            as: "experiments"
+          },
+          {
+            model: Subscription,
+            as: "subscription"
+          },
+          {
+            model: Domain,
+            as: "domain"
+          },
+          {
+            model: Plan,
+            as: "plan"
+          },
+          {
+            model: Theme,
+            as: "theme"
+          },
+          {
+            model: Integration,
+            as: "integrations",
+            attributes: [
+              "id",
+              "type",
+              "providerUserId",
+              "providerUsername",
+              "providerUserCache",
+              "error",
+              "createdAt",
+              "updatedAt"
+            ]
+          }
+        ]
+      }
+    ]
+  })
+}
 
 function checkScope(requiredScope: string | string[], scope: string) {
   if (scope === "*") {
@@ -127,6 +196,18 @@ async function updateSession(session: Session, ip: string) {
   )
 }
 
+export async function simpleAuth(req: RequestAuthSystem, res: Response) {
+  const token = req.header("Authorization")
+
+  if (!token) return { id: undefined }
+
+  const session = await getSession(<string>token)
+
+  if (!session?.user) return { id: undefined }
+
+  return session?.user
+}
+
 export async function authSystem(
   scope: string | string[],
   passthrough: boolean = false,
@@ -137,64 +218,7 @@ export async function authSystem(
   const token = req.header("Authorization")
   if (!scope) scope = "*"
   if (token) {
-    const session = await Session.findOne({
-      where: {
-        token: token,
-        expiredAt: {
-          [Op.or]: [
-            {
-              [Op.gt]: new Date()
-            },
-            {
-              [Op.is]: null
-            }
-          ]
-        }
-      },
-      include: [
-        {
-          model: User,
-          as: "user",
-          required: true,
-          include: [
-            {
-              model: Experiment,
-              as: "experiments"
-            },
-            {
-              model: Subscription,
-              as: "subscription"
-            },
-            {
-              model: Domain,
-              as: "domain"
-            },
-            {
-              model: Plan,
-              as: "plan"
-            },
-            {
-              model: Theme,
-              as: "theme"
-            },
-            {
-              model: Integration,
-              as: "integrations",
-              attributes: [
-                "id",
-                "type",
-                "providerUserId",
-                "providerUsername",
-                "providerUserCache",
-                "error",
-                "createdAt",
-                "updatedAt"
-              ]
-            }
-          ]
-        }
-      ]
-    })
+    const session = await getSession(token)
     if (session) {
       if (!checkScope(scope, session.scopes)) {
         if (passthrough) {
@@ -314,6 +338,13 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
   return createParamDecorator({
     required,
     value: async (action) => {
+      if (config.maintenance.enabled)
+        throw {
+          name: "MAINTENANCE",
+          message: `${config.maintenance.message}\n\nFor more information visit ${config.maintenance.statusPage}`,
+          status: 400
+        }
+
       if (!config.finishedSetup && !required) return null
       if (!config.finishedSetup) throw Errors.NOT_SETUP
       const token = action.request.header("Authorization")
@@ -339,14 +370,6 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
               as: "user",
               required: true,
               include: [
-                {
-                  model: Experiment,
-                  as: "experiments"
-                },
-                {
-                  model: Subscription,
-                  as: "subscription"
-                },
                 {
                   model: Domain,
                   as: "domain"
@@ -411,6 +434,10 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
             session.user.dataValues.stats = await redis.json.get(
               `userStats:${session?.user.id}`
             )
+
+            if (session.oauthAppId) {
+              session.user.dataValues.oauthAppId = session.oauthAppId
+            }
 
             return session.toJSON().user
           }

@@ -3,9 +3,10 @@
     <v-img
       :src="collectionImage"
       class="white--text align-end"
-      cover
+      :cover="true"
       gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)"
       height="200px"
+      transition="none"
     >
       <template v-slot:placeholder>
         <v-row align="center" class="fill-height ma-0" justify="center">

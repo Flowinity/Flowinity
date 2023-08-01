@@ -73,11 +73,38 @@ export class AdminService {
     content: string,
     userId: number
   ): Promise<Announcement> {
-    let announcement = await Announcement.create({
+    return await Announcement.create({
       content,
       userId
     })
+  }
+
+  async editAnnouncement(
+    id: number,
+    content: string,
+    userId: number
+  ): Promise<Announcement> {
+    const announcement = await Announcement.findOne({
+      where: {
+        id
+      }
+    })
+    if (!announcement || announcement.userId !== userId) throw Errors.NOT_FOUND
+    await announcement.update({
+      content
+    })
     return announcement
+  }
+
+  async deleteAnnouncement(id: number): Promise<boolean> {
+    const announcement = await Announcement.findOne({
+      where: {
+        id
+      }
+    })
+    if (!announcement) throw Errors.NOT_FOUND
+    await announcement.destroy()
+    return true
   }
 
   async getInvites() {
@@ -445,8 +472,8 @@ export class AdminService {
     })
   }
 
-  async addUsersToBadge(userIdeez: number[], badgeId: number) {
-    for (const userId of userIdeez) {
+  async addUsersToBadge(userIds: number[], badgeId: number) {
+    for (const userId of userIds) {
       await BadgeAssociation.create({
         userId,
         badgeId
@@ -495,9 +522,8 @@ export class AdminService {
     return true
   }
 
-  async removeUsersFromBadge(userIdeez: number[], badgeId: number) {
-    console.log(userIdeez, badgeId)
-    for (const userId of userIdeez) {
+  async removeUsersFromBadge(userIds: number[], badgeId: number) {
+    for (const userId of userIds) {
       await BadgeAssociation.destroy({
         where: {
           userId,
@@ -755,6 +781,21 @@ export class AdminService {
       where: {
         id: domainId
       }
+    })
+  }
+
+  async verify(userId: number, emailVerified: boolean) {
+    const user = await User.findOne({
+      where: {
+        id: userId
+      }
+    })
+
+    if (!user || user.administrator || user.moderator)
+      throw Errors.USER_NOT_FOUND
+
+    await user.update({
+      emailVerified
     })
   }
 }

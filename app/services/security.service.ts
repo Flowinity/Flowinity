@@ -6,6 +6,8 @@ import { Op } from "sequelize"
 import { User } from "@app/models/user.model"
 import argon2 from "argon2"
 import { AlternatePassword } from "@app/types/auth"
+import { Pulse } from "@app/models/pulse.model"
+import paginate from "jw-paginate"
 
 @Service()
 export class SecurityService {
@@ -30,8 +32,32 @@ export class SecurityService {
       "chats.edit",
       "insights.view",
       "starred.view",
-      "starred.modify"
+      "starred.modify",
+      "oauth.authorize"
     ]
+  }
+
+  async getAuditLog(id: number, page: number) {
+    const itemsPerPage = 50
+    const offset = page * itemsPerPage - itemsPerPage || 0
+    const entries = await Pulse.findAll({
+      where: {
+        userId: id
+      },
+      order: [["createdAt", "DESC"]],
+      limit: itemsPerPage,
+      offset
+    })
+    const count = await Pulse.count({
+      where: {
+        userId: id
+      }
+    })
+    const pager = paginate(count || entries.length, page, itemsPerPage)
+    return {
+      entries,
+      pager
+    }
   }
 
   async deleteAlternatePassword(id: number, name: string) {

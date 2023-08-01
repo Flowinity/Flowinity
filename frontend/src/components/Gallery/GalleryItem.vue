@@ -1,11 +1,5 @@
 <template>
   <v-card :id="'item-' + item.id" class="d-flex flex-column">
-    <WorkspaceDeleteDialog
-      v-model="deleteItemDialog"
-      :item="item"
-      title="Delete item?"
-      @submit="deleteItem(item)"
-    />
     <v-toolbar
       :class="{ unselectable: selected.length }"
       style="z-index: 1"
@@ -97,8 +91,10 @@
           class="my-1"
           color="red"
           icon="mdi-delete"
-          @click="
-            $event.shiftKey ? deleteItem(item) : (deleteItemDialog = true)
+          @click.shift.prevent.stop="$app.deleteItem(item)"
+          @click.prevent.stop="
+            $event.shiftKey ? null : ($app.dialogs.deleteItem.item = item);
+            $event.shiftKey ? null : ($app.dialogs.deleteItem.value = true);
           "
         ></HoverChip>
         <HoverChip
@@ -131,10 +127,15 @@
           class="my-1"
           color="green"
           icon="mdi-ocr"
-          @click="
+          @click.right.prevent.stop="
             $functions.copy(item.textMetadata);
             $toast.success('Copied to clipboard!');
           "
+          @click="
+            $app.dialogs.ocr.text = item.textMetadata;
+            $app.dialogs.ocr.value = true;
+          "
+          :disabled="!item.textMetadata"
         ></HoverChip>
         <HoverChip
           v-if="$user.user"
@@ -171,11 +172,6 @@ export default defineComponent({
   name: "GalleryItem",
   components: { WorkspaceDeleteDialog, HoverChip, GalleryPreview },
   props: ["item", "supports", "selected"],
-  data() {
-    return {
-      deleteItemDialog: false
-    };
-  },
   computed: {
     fileSize() {
       return this.$functions.fileSize(this.item.fileSize);
@@ -196,10 +192,6 @@ export default defineComponent({
     editItem(item: Upload) {
       console.log("Edit item", item);
     },
-    async deleteItem(item: Upload) {
-      await this.axios.delete("/gallery/" + item.id);
-      this.$emit("delete", item);
-    },
     async removeItem(item: Upload, collection: Collection) {
       await this.axios.delete(
         `/collections/${collection.id}/remove/${item.id}`
@@ -208,6 +200,15 @@ export default defineComponent({
         item,
         collection
       });
+    }
+  },
+  watch: {
+    "$app.dialogs.deleteItem.emit"(value: boolean) {
+      if (value) {
+        this.$app.dialogs.deleteItem.emit = false;
+        this.$emit("delete", this.$app.dialogs.deleteItem.item);
+        this.$app.dialogs.deleteItem.item = undefined;
+      }
     }
   }
 });

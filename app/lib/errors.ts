@@ -332,6 +332,28 @@ let Errors = {
   INTEGRATION_IS_NOT_LINKED: {
     message: "The integration is not linked.",
     status: 400
+  },
+  MESSAGE_TOO_LONG: {
+    message: "The message is over 4000 characters.",
+    status: 400
+  },
+  FRIEND_REQUEST_ALREADY_SENT: {
+    message: "A friend request has already been sent to this user.",
+    status: 400
+  },
+  SECURITY_SCOPE_ERROR: {
+    message:
+      "Security error\nThe scopes sent by the client do not match the app's scopes.",
+    status: 400
+  },
+  PRIVATE_APP: {
+    message: "This app is private and cannot be used by other users.",
+    status: 400
+  },
+  SECURITY_APP_ID_ERROR: {
+    message:
+      "Security error\nThe app ID sent by the client does not match the app's ID.",
+    status: 400
   }
 }
 
