@@ -365,7 +365,7 @@
     },
     "step9": {
       "title": "Configurer le domaine par défaut",
-      "subtitle": "TPU is designed to have an origin domain, this is used to manage TPU itself, and secondary domains which can be configured by the user, which is returned by the APIs for file uploads, this would usually be behind CloudFront, Cloudflare, or another CDN proxy.",
+      "subtitle": "TPU est configuré pour avoir un nom de domaine par défaut, utilisé pour gérer TPU directement, et des domaines secondaires configurés par les utilisateurs, retournés par les API pour le téléversement de fichiers, généralement en arrière de CloudFront, Cloudflare, ou un autre proxy CDN.",
       "domain": "Domaine (SVP, seulement le domaine de base, sans HTTPS)",
       "example": "i.troplo.com"
     }
