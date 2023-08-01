@@ -164,7 +164,7 @@
     },
     "setup": {
       "title": "API Key Options",
-      "label": "Select an API Key",
+      "label": "Choisir une clé d'API",
       "sharex": "Comment installer la configuration ShareX:",
       "sharenix": "Comment installer la configuration ShareNix:",
       "sharenixSteps": {
@@ -191,14 +191,14 @@
         "3": "Enable the ability to use the accessibility button for quick screenshots in Accessibility -> Touch -> Back Tap -> [Select either Double Tap or Triple Tap] -> Scroll down to \"SHORTCUTS\" -> Select TPU."
       },
       "mobile": {
-        "title": "TPU Mobile Options"
+        "title": "Options TPU pour mobile"
       },
       "actions": {
-        "apiKey": "Copy API Key",
-        "sharex": "Download ShareX Config",
-        "sharenix": "Download ShareNix Config",
-        "automate": "Download Automate Config",
-        "shortcuts": "Download Shortcuts Config"
+        "apiKey": "Copier clé d'API",
+        "sharex": "Télécharger la configuration ShareX",
+        "sharenix": "Télécharger la configuration ShareNix",
+        "automate": "Télécharger la configuration Automate",
+        "shortcuts": "Télécharger la configuration Shortcuts"
       }
     },
     "integrations": {
@@ -287,17 +287,17 @@
       "username": "Database Username",
       "password": "Database Password",
       "database": "Database Name",
-      "test": "Test Connection",
+      "test": "Tester la connexion",
       "testSuccess": "Connection successful!",
       "testError": "Connection failed, please check your credentials and try again."
     },
     "step2": {
-      "title": "Admin Account",
-      "subtitle": "Please enter your admin account details below.",
-      "username": "Username",
-      "password": "Password",
-      "passwordConfirm": "Confirm Password",
-      "email": "Email"
+      "title": "Compte administrateur",
+      "subtitle": "Veuillez entrer les détails de votre compte administrateur.",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "passwordConfirm": "Confirmer le mot de passe",
+      "email": "Courriel"
     },
     "step3": {
       "title": "Configuration de l'instance",
@@ -344,7 +344,7 @@
       "maxUploadSize": "Taille maximale de téléversement (en octets)"
     },
     "step6": {
-      "title": "Configuration de la messageri",
+      "title": "Configuration de la messagerie",
       "subtitle": "Veuillez entrer vos identifiants SMTP ci-dessous: ",
       "host": "Hôte SMTP",
       "port": "Port SMTP",
