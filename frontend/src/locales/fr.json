@@ -202,77 +202,77 @@
       }
     },
     "integrations": {
-      "link": "Link new accounts",
-      "manage": "Manage linked accounts",
-      "addedOn": "Added on {date}",
-      "linking": "Linking account... please wait..."
+      "link": "Lier de nouveaux comptes",
+      "manage": "Gérer les comptes liés",
+      "addedOn": "Ajouté le {date}",
+      "linking": "Liaison du compte... veuillez patienter..."
     },
     "slideshows": {
-      "title": "Configure Slideshows",
-      "my": "My Slideshows",
-      "shareLink": "Share Link",
-      "name": "Slideshow Name",
-      "speed": "Speed/Interval (can do decimals, in seconds)",
-      "includeGallery": "Include items from my gallery",
+      "title": "Configurer Diaporamas",
+      "my": "Mes diaporamas",
+      "shareLink": "Partager le lien",
+      "name": "Nom du diaporama",
+      "speed": "Vitesse/intervale (peut être décimal, en secondes)",
+      "includeGallery": "Inclure les items de ma gallerie",
       "collections": "Collections",
-      "none": "No slideshows found."
+      "none": "Aucun diaporama trouvé."
     },
     "about": {
-      "productName": "Product name: TPUvNEXT",
+      "productName": "Nom de produit: TPUvNEXT",
       "version": "Version: {version}",
-      "buildDate": "Build date: {date}",
-      "relative": "Build date relative: {date}",
-      "backend": "Backend environment: {release}",
-      "ip": "Backend connecting IP: {ip}",
-      "ipWhitelist": "IP whitelist groups: {groups}",
-      "server": "Server: {server}",
-      "docs": "TPU API Documentation (WIP, v3)",
-      "credits": "Credits",
-      "crash": "Crash TPU (dev)",
-      "expEnable": "Enable all experiments",
-      "expDisable": "Disable all experiments"
+      "buildDate": "Date de compilation: {date}",
+      "relative": "Date de compilation relative: {date}",
+      "backend": "Environnement de back-end: {release}",
+      "ip": "IP de connexion au back-end: {ip}",
+      "ipWhitelist": "Groupes de liste blanche IP: {groups}",
+      "server": "Serveur: {server}",
+      "docs": "Documentation de l'API TPU (en cours de production, v3)",
+      "credits": "Crédits",
+      "crash": "Faire planter TPU (dev)",
+      "expEnable": "Activer tous les tests",
+      "expDisable": "Désactiver tous les tests"
     },
     "domains": {
-      "title": "Available Domains",
-      "users": "Users: {count}",
-      "disclaimer": "If you'd like your domain added, email <a href=\"mailto:troplo{'@'}troplo.com\">troplo{'@'}troplo.com</a>, ensure your domain has already been registered and configured with a DNS provider.",
+      "title": "Domaines disponibles",
+      "users": "Utilisateurs: {count}",
+      "disclaimer": "Si vous voulez rajouter votre nom de domaine, veuillez contacter <a href=\"mailto:troplo{'@'}troplo.com\">troplo{'@'}troplo.com</a>. Assurez-vous que le domaine existe et qu'il est configuré avec un fournisseur DNS.",
       "dialog": {
-        "create": "Create Domain",
-        "domain": "Domain",
-        "update": "Update Domain"
+        "create": "Créer domaine",
+        "domain": "Domaine",
+        "update": "Mettre à jour domaine"
       }
     }
   },
   "generic": {
     "cache": "Cache",
-    "cancel": "Cancel",
-    "close": "Close",
+    "cancel": "Annuler",
+    "close": "Fermer",
     "ok": "OK",
-    "save": "Save",
-    "search": "Search",
-    "sort": "Sort",
-    "metadata": "Search in files",
-    "upload": "Upload",
-    "filter": "Filter",
-    "send": "Send",
-    "yes": "Yes",
-    "no": "No",
-    "loading": "Loading...",
+    "save": "Sauvegarder",
+    "search": "Chercher",
+    "sort": "Trier",
+    "metadata": "Chercher dans les fichiers",
+    "upload": "Téléverser",
+    "filter": "Filtrer",
+    "send": "Envoyer",
+    "yes": "Oui",
+    "no": "Non",
+    "loading": "Chargement...",
     "type": "Type",
-    "originalName": "Original name",
-    "uploadedName": "Uploaded name",
-    "createdAt": "Created at",
-    "size": "Size",
-    "new": "NEW",
-    "actionCompleted": "Action completed successfully.",
-    "enabled": "Enabled",
-    "disabled": "Disabled",
-    "enable": "Enable",
-    "disable": "Disable",
-    "never": "Never",
-    "next": "Next",
-    "previous": "Previous",
-    "update": "Update"
+    "originalName": "Nom original",
+    "uploadedName": "Nom lors du téléversement",
+    "createdAt": "Créé le",
+    "size": "Taille",
+    "new": "NOUVEAU",
+    "actionCompleted": "Action correctement complétée.",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "enable": "Activer",
+    "disable": "Désactiver",
+    "never": "Jamais",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "update": "Mettre à jour"
   },
   "setup": {
     "step0": {
@@ -300,41 +300,41 @@
       "email": "Email"
     },
     "step3": {
-      "title": "Instance Configuration",
-      "subtitle": "Please enter your instance configuration below.",
-      "name": "Instance Name",
-      "hostname": "Instance Hostname (without protocol)",
-      "hostnameWithProtocol": "Instance Hostname (with protocol)",
-      "allowRegistration": "Allow Registrations",
-      "port": "Instance Port (default: 34582)",
-      "multiThreaded": "Max thread utilization (0 for all threads, recommended)",
-      "redisHostname": "Redis Hostname",
-      "redisPort": "Redis Port",
-      "redisDatabase": "Redis Database",
-      "redisHint": "Redis is used for caching, this is an integral part of TPU, and it will not function without it."
+      "title": "Configuration de l'instance",
+      "subtitle": "Veuillez entrer la configuration de votre instance ci-dessous.",
+      "name": "Nom",
+      "hostname": "Nom d'hôte (sans protocole)",
+      "hostnameWithProtocol": "Nom d'hôte (avec protocole)",
+      "allowRegistration": "Autoriser les inscriptions",
+      "port": "Port de l'instance (défaut: 34582)",
+      "multiThreaded": "Utilisation maximale des threads (0 pour tous les threads, recommandé)",
+      "redisHostname": "Nom d'hôte Redis",
+      "redisPort": "Port Redis",
+      "redisDatabase": "Base de données Redis",
+      "redisHint": "Redis est utilisé pour le caching. TPU ne fonctionnera pas sans Redis, il s'agit d'une part intégrale."
     },
     "step4": {
-      "title": "Features",
-      "subtitle": "Please select the features you'd like to enable on your TPU instance.\nThe core features like Gallery are always enabled.",
+      "title": "Fonctionnalités",
+      "subtitle": "Veuillez choisir les fonctionnalités que vous voudriez activer sur votre instance TPU.\nLes fonctions de base comme la Galerie sont toujours activées.",
       "autoCollects": {
-        "title": "AutoCollects",
+        "title": "AutoCollections",
         "description": "Automatically add uploaded items by rules into TPU Collections."
       },
       "collections": {
         "title": "Collections",
-        "description": "Allow users to create collections of uploaded files."
+        "description": "Autoriser les utilisateurs à créer des collections de fichiers téléversés."
       },
       "communications": {
         "title": "Communications",
         "description": "Une plateforme de clavardage intégrée directement dans TPU."
       },
       "insights": {
-        "title": "Insights",
+        "title": "Aperçus",
         "description": "Get weekly, monthly, yearly, and an evolving report about how each user uses their TPU account."
       },
       "workspaces": {
-        "title": "Workspaces",
-        "description": "Allow users to create documents inside of TPU."
+        "title": "Espaces de travail",
+        "description": "Autoriser les utilisateurs à créer des documents au sein de TPU."
       }
     },
     "step5": {
@@ -367,7 +367,7 @@
       "title": "Configurer le domaine par défaut",
       "subtitle": "TPU est configuré pour avoir un nom de domaine par défaut, utilisé pour gérer TPU directement, et des domaines secondaires configurés par les utilisateurs, retournés par les API pour le téléversement de fichiers, généralement en arrière de CloudFront, Cloudflare, ou un autre proxy CDN.",
       "domain": "Domaine (SVP, seulement le domaine de base, sans HTTPS)",
-      "example": "i.troplo.com"
+      "example": "i.privateuploader.com"
     }
   },
   "collections": {
