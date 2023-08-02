@@ -282,6 +282,10 @@ export default defineComponent({
         {
           title: "Русский (Россия)",
           key: "ru"
+        },
+        {
+          title: "French",
+          key: "fr"
         }
       ],
       bindings: {
