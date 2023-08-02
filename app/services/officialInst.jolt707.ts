@@ -227,6 +227,16 @@ export class OfficialInstJolt707 {
             console.log("[BILLING] Creating subscription for Jolt707")
             await this.createSubscription(6)
           }
+          await User.update(
+            {
+              planId: 6
+            },
+            {
+              where: {
+                id: 6
+              }
+            }
+          )
           await Subscription.update(
             {
               cancelled: false,
