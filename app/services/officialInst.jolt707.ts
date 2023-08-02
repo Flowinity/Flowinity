@@ -53,7 +53,7 @@ export class OfficialInstJolt707 {
   async checkJitsiGold() {
     console.log("[BILLING] Checking Gold")
     axios
-      .get("http://localhost:24004/api/v1/jitsi", {
+      .get("https://mgmt.meet.troplo.com/api/v1/jitsi", {
         headers: {
           Authorization: config.jitsiToken
         }
