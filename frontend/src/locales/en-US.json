@@ -386,7 +386,7 @@
       "title": "Setup Default Domain",
       "subtitle": "TPU is designed to have an origin domain, this is used to manage TPU itself, and secondary domains which can be configured by the user, which is returned by the APIs for file uploads, this would usually be behind CloudFront, Cloudflare, or another CDN proxy.",
       "domain": "Domain (please only base domain, no HTTPS)",
-      "example": "i.troplo.com"
+      "example": "i.privateuploader.com"
     }
   },
   "collections": {
