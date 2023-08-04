@@ -117,7 +117,7 @@
                     :value="scope.id"
                     :label="scope.name"
                     :hint="scope.description"
-                    :persistent-hint="scope.description"
+                    persistent-hint
                     class="mt-n8"
                   ></v-checkbox>
                 </v-container>
@@ -185,6 +185,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ScopeDefinition } from "@/views/Auth/Oauth.vue";
+import { OauthApp } from "@/models/oauthApp";
 
 export default defineComponent({
   name: "AdminWhitelist",
@@ -193,7 +194,7 @@ export default defineComponent({
       app: null as OauthApp | null,
       username: "",
       loading: false,
-      scopesDefinitions: [] as ScopeDefinition,
+      scopesDefinitions: [] as ScopeDefinition[],
       headers: [
         {
           title: "Username",

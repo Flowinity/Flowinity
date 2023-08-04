@@ -1,4 +1,5 @@
 import { User } from "@/models/user";
+import { OauthUser } from "@/models/oauthUser";
 
 export interface OauthApp {
   id: string;
@@ -13,4 +14,5 @@ export interface OauthApp {
   userId: number;
   private: boolean;
   user: User;
+  oauthUsers: OauthUser[];
 }
