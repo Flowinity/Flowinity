@@ -225,7 +225,8 @@
           cols="12"
           md="3"
           sm="12"
-          xl="2"
+          xl="3"
+          xxl="2"
           style="flex: 0 1 auto; white-space: nowrap"
         >
           <StatsCard

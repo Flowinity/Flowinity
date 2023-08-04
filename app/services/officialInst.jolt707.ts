@@ -53,7 +53,7 @@ export class OfficialInstJolt707 {
   async checkJitsiGold() {
     console.log("[BILLING] Checking Gold")
     axios
-      .get("http://localhost:24004/api/v1/jitsi", {
+      .get("https://mgmt.meet.troplo.com/api/v1/jitsi", {
         headers: {
           Authorization: config.jitsiToken
         }
@@ -227,6 +227,16 @@ export class OfficialInstJolt707 {
             console.log("[BILLING] Creating subscription for Jolt707")
             await this.createSubscription(6)
           }
+          await User.update(
+            {
+              planId: 6
+            },
+            {
+              where: {
+                id: 6
+              }
+            }
+          )
           await Subscription.update(
             {
               cancelled: false,

@@ -31,6 +31,7 @@ import { PulseService } from "@app/services/pulse.service"
 import { TpuConfigValidator } from "@app/validators/setup"
 import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
 import { mergeDeep } from "@app/lib/deepMerge"
+import { OauthApp } from "@app/models/oauthApp.model"
 
 @Service()
 @Middleware({ type: "before" })
@@ -527,5 +528,51 @@ export class AdminControllerV3 {
     TpuConfigValidator.parse(tpuConfig)
     await this.setupController.writeTPUConfig(tpuConfig)
     this.cacheService.refreshState()
+  }
+
+  @UseBefore(HighLevel)
+  @Get("/oauth")
+  async getOauth(@Auth("*") user: User) {
+    return await this.adminService.getOauth()
+  }
+
+  @UseBefore(HighLevel)
+  @Post("/oauth")
+  async createOauth(
+    @Auth("*") user: User,
+    @Body()
+    body: Partial<OauthApp>
+  ) {
+    return await this.adminService.createOauth(body, user.id)
+  }
+
+  @UseBefore(HighLevel)
+  @Get("/oauth/:id")
+  async getOauthById(@Auth("*") user: User, @Param("id") id: string) {
+    return await this.adminService.getOauthById(id)
+  }
+
+  @UseBefore(HighLevel)
+  @Put("/oauth/:id")
+  async updateOauth(
+    @Auth("*") user: User,
+    @Param("id") id: string,
+    @Body()
+    body: Partial<OauthApp>
+  ) {
+    return await this.adminService.updateOauth(body, user.id)
+  }
+
+  @UseBefore(HighLevel)
+  @Post("/oauth/:id/user")
+  async createOauthUser(
+    @Auth("*") user: User,
+    @Param("id") id: string,
+    @Body()
+    body: {
+      username: string
+    }
+  ) {
+    return await this.adminService.createOauthUser(id, body.username, user.id)
   }
 }
