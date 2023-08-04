@@ -253,6 +253,16 @@ const routes = [
             path: "invites",
             name: "Admin Invite a Friend",
             component: () => import("@/views/Admin/IAF.vue")
+          },
+          {
+            path: "oauth",
+            name: "Admin AppAuth",
+            component: () => import("@/views/Admin/Oauth.vue")
+          },
+          {
+            path: "oauth/:id",
+            name: "Admin AppAuth Item",
+            component: () => import("@/views/Admin/OauthItem.vue")
           }
         ]
       },

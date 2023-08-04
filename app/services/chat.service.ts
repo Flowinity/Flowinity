@@ -939,7 +939,7 @@ export class ChatService {
     content: string,
     userId: number,
     associationId: number,
-    replyId?: number,
+    replyId?: number | null,
     type:
       | "message"
       | "leave"
@@ -951,7 +951,7 @@ export class ChatService {
     attachments?: string[]
   ) {
     const chat = await this.getChatFromAssociation(associationId, userId)
-    if (replyId) {
+    if (replyId !== undefined && replyId !== null) {
       const message = await Message.findOne({
         where: {
           id: replyId,

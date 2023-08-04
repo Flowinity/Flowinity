@@ -10,6 +10,7 @@ import {
 import { User } from "@app/models/user.model"
 import { Session } from "@app/models/session.model"
 import { Col } from "@troplo/sequelize/types/utils"
+import { OauthUser } from "@app/models/oauthUser.model"
 
 @DefaultScope(() => ({
   attributes: {
@@ -62,4 +63,7 @@ export class OauthApp extends Model {
 
   @HasMany(() => Session, "oauthAppId")
   sessions: Session[]
+
+  @HasMany(() => OauthUser, "oauthAppId")
+  oauthUsers: OauthUser[]
 }

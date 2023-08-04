@@ -126,6 +126,15 @@ export default defineComponent({
           exact: true,
           scope: "*",
           level: 2
+        },
+        {
+          id: 18,
+          name: "AppAuth",
+          path: "/admin/oauth",
+          icon: "mdi-lock",
+          exact: true,
+          scope: "*",
+          level: 2
         }
       ] as {
         id: number;

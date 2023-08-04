@@ -18,6 +18,7 @@ import cryptoRandomString from "crypto-random-string"
 import Errors from "@app/lib/errors"
 import { OauthService } from "@app/services/oauth.service"
 import { OauthSave } from "@app/models/oauthSave.model"
+import { OauthUser } from "@app/models/oauthUser.model"
 
 @Service()
 @JsonController("/oauth")
@@ -145,7 +146,16 @@ export class OauthControllerV3 {
 
     if (body.scopes !== app.scopes) throw Errors.SECURITY_SCOPE_ERROR
 
-    if (app.private && app.userId !== user.id) throw Errors.PRIVATE_APP
+    if (app.private && app.userId !== user.id) {
+      const access = await OauthUser.findOne({
+        where: {
+          oauthAppId,
+          userId: user.id,
+          active: true
+        }
+      })
+      if (!access) throw Errors.PRIVATE_APP
+    }
 
     return {
       token: await this.oauthService.getOrCreateOauthToken(

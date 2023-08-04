@@ -25,6 +25,11 @@ import { LegacyUser } from "@app/models/legacyUser.model"
 import { Message } from "@app/models/message.model"
 import { CacheType } from "@app/enums/admin/CacheType"
 import { Domain } from "@app/models/domain.model"
+import { OauthApp } from "@app/models/oauthApp.model"
+import cryptoRandomString from "crypto-random-string"
+import utils from "@app/lib/utils"
+import { OauthUser } from "@app/models/oauthUser.model"
+import { Session } from "@app/models/session.model"
 
 const inviteParams = {
   include: [
@@ -796,6 +801,111 @@ export class AdminService {
 
     await user.update({
       emailVerified
+    })
+  }
+
+  async getOauth() {
+    return await OauthApp.findAll({
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+        }
+      ],
+      order: [["createdAt", "DESC"]]
+    })
+  }
+
+  async createOauth(body: Partial<OauthApp>, userId: number) {
+    return await OauthApp.create({
+      name: body.name,
+      icon: body.icon,
+      // convert the name to a slug shortcode
+      shortCode:
+        body.name?.toLowerCase().replace(/ /g, "-") +
+        "-" +
+        cryptoRandomString({ length: 5 }),
+      verified: body.verified,
+      redirectUri: body.redirectUri,
+      secret: await utils.generateAPIKey("oauth"),
+      description: body.description,
+      scopes: body.scopes,
+      userId: userId,
+      private: body.private
+    })
+  }
+
+  async getOauthById(id: string) {
+    return await OauthApp.findOne({
+      where: {
+        id
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+        },
+        {
+          model: OauthUser,
+          as: "oauthUsers",
+          include: [
+            {
+              model: User,
+              as: "user",
+              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+            }
+          ]
+        }
+      ]
+    })
+  }
+
+  async updateOauth(body: Partial<OauthApp>, userId: number) {
+    const app = await this.getOauthById(body.id || "")
+    if (!app || app.userId !== userId) throw Errors.NOT_FOUND
+    await app.update({
+      name: body.name,
+      icon: body.icon,
+      verified: body.verified,
+      redirectUri: body.redirectUri,
+      description: body.description,
+      scopes: body.scopes,
+      private: body.private
+    })
+  }
+
+  async createOauthUser(appId: string, username: string, userId: number) {
+    const app = await this.getOauthById(appId)
+    if (!app || app.userId !== userId) throw Errors.NOT_FOUND
+    const user = await User.findOne({
+      where: {
+        username
+      }
+    })
+    if (!user || user.id === userId) throw Errors.USER_NOT_FOUND
+    const existence = await OauthUser.findOne({
+      where: {
+        userId: user.id,
+        oauthAppId: app.id
+      }
+    })
+    if (existence) {
+      await existence.destroy()
+      await Session.destroy({
+        where: {
+          oauthAppId: app.id,
+          userId: user.id,
+          type: "oauth"
+        }
+      })
+      return
+    }
+    await OauthUser.create({
+      userId: user.id,
+      oauthAppId: app.id,
+      active: true
     })
   }
 }
