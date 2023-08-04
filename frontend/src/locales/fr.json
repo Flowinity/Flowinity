@@ -135,9 +135,9 @@
         "itemsPerPage": "Éléments par page",
         "tempUnit": "Unité de température pour le gadget de météo",
         "theme": "Thème",
-        "insights": "Who can see your insights*",
-        "insightsDesc": "* Words in screenshots and top chats are always hidden.",
-        "baseCollections": "Exclude collections from non-collectivized filter",
+        "insights": "Qui peut voir vos aperçus*",
+        "insightsDesc": "* Les mots dans les captures d'écran et les discussions en haut de page sont toujours cachés.",
+        "baseCollections": "Exclure les collections du filtre non collectivisé",
         "language": "Langage",
         "themeEditor": "Ouvrir l'éditeur de thèmes",
         "disableProfileColors": "Désactiver les profils couleur",
@@ -163,7 +163,7 @@
       "unknownIP": "IP inconnue"
     },
     "setup": {
-      "title": "API Key Options",
+      "title": "Options de la clé API",
       "label": "Choisir une clé d'API",
       "sharex": "Comment installer la configuration ShareX:",
       "sharenix": "Comment installer la configuration ShareNix:",
@@ -184,7 +184,7 @@
         "6": "Démarrez le flux, et activez l'option de démarrage des flux au démarrage du système dans les paramètres de l'application si vous le souhaitez.",
         "7": "Il est recommandé d'utiliser Android 12 ou une version inférieure. Android 13 peut afficher une notification lorsqu'un élément vient d'être copié dans le presse-papiers. Dans ce cas, vous pouvez désactiver le bloc de copie automatique du presse-papiers."
       },
-      "shortcuts": "How to install the Shortcuts config for Apple iOS:",
+      "shortcuts": "Comment installer la configuration de Raccourcis pour Apple iOS :",
       "shortcutsSteps": {
         "1": "Installez le fichier de configuration via iCloud.",
         "2": "Suivez l'écran de configuration et indiquez la clé API TPU de votre choix.",
