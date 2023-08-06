@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken"
 import { IdentityToken } from "@app/interfaces/oidc"
 import { BadRequestError } from "routing-controllers"
 import fs from "fs"
+import { Plan } from "@app/models/plan.model"
 
 @Service()
 export class OauthService {
@@ -119,7 +120,14 @@ export class OauthService {
       include: [
         {
           model: User,
-          required: true
+          required: true,
+          include: [
+            {
+              model: Plan,
+              as: "plan",
+              required: true
+            }
+          ]
         }
       ]
     })

@@ -18,6 +18,7 @@ import { Session } from "@app/models/session.model"
 import jwt from "jsonwebtoken"
 import { exportJWK } from "jose"
 import fs from "fs"
+import { Plan } from "@app/models/plan.model"
 
 @Service()
 @JsonController("/oidc")
@@ -65,7 +66,14 @@ export class OidcControllerV3 {
     const user = await User.findOne({
       where: {
         id: token.userId
-      }
+      },
+      include: [
+        {
+          model: Plan,
+          as: "plan",
+          required: true
+        }
+      ]
     })
     if (!user) {
       throw new BadRequestError("Bearer error=invalid_token")
