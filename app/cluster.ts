@@ -4,6 +4,7 @@ import path from "path"
 import { DefaultTpuConfig } from "./classes/DefaultTpuConfig"
 import { execSync } from "child_process"
 import fs from "fs"
+import { generateKeyPair } from "crypto"
 
 function isRunningInDocker() {
   try {
@@ -50,6 +51,34 @@ function setEnvVariables() {
       } catch {
         console.warn("Could not run sequelize-cli")
       }
+    }
+
+    // OIDC Private and Public key generation if not already present
+    if (!fs.existsSync(global.appRoot + "/config/private.pem")) {
+      generateKeyPair(
+        "rsa",
+        {
+          modulusLength: 4096,
+          publicKeyEncoding: {
+            type: "spki",
+            format: "pem"
+          },
+          privateKeyEncoding: {
+            type: "pkcs8",
+            format: "pem",
+            cipher: "aes-256-cbc",
+            passphrase: "top secret"
+          }
+        },
+        (err, publicKey, privateKey) => {
+          if (err) {
+            console.error(err)
+          } else {
+            fs.writeFileSync(global.appRoot + "/config/private.pem", privateKey)
+            fs.writeFileSync(global.appRoot + "/config/public.pem", publicKey)
+          }
+        }
+      )
     }
   }
 }

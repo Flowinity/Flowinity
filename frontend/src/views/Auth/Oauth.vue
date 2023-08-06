@@ -131,18 +131,19 @@ export default defineComponent({
           description: scopeDefinition ? scopeDefinition.description : null
         };
       });
+    },
+    appId() {
+      return this.$route.params.oauthAppId || this.$route.query.client_id;
     }
   },
   methods: {
     async getAppData() {
       this.$app.componentLoading = true;
-      const { data } = await this.axios.get(
-        `/oauth/${this.$route.params.oauthAppId}`
-      );
+      const { data } = await this.axios.get(`/oauth/${this.appId}`);
       this.app = data;
       this.$app.componentLoading = false;
       if (data.token) {
-        window.location.href = `${this.app.redirectUri}?code=${data.token}`;
+        window.location.href = `${this.app.redirectUri}?code=${data.token}&state=${this.$route.query.state}`;
       }
     },
     async getScopeDefinitions() {
@@ -153,12 +154,12 @@ export default defineComponent({
       this.loading = true;
       try {
         const { data } = await this.axios.post(
-          `/oauth/${this.$route.params.oauthAppId}/authorize`,
+          `/oauth/${this.appId}/authorize`,
           {
             scopes: this.app.scopes
           }
         );
-        window.location.href = `${this.app.redirectUri}?code=${data.token}`;
+        window.location.href = `${this.app.redirectUri}?code=${data.token}&state=${this.$route.query.state}`;
       } finally {
         this.loading = false;
       }

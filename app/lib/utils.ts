@@ -21,7 +21,7 @@ import { CacheService } from "@app/services/cache.service"
 import path from "path"
 
 async function generateAPIKey(
-  type: "session" | "api" | "email" | "oauth"
+  type: "session" | "api" | "email" | "oauth" | "oidc"
 ): Promise<string> {
   switch (type) {
     case "session":
@@ -30,6 +30,8 @@ async function generateAPIKey(
       return "TPU-EMAIL-" + cryptoRandomString({ length: 128 })
     case "oauth":
       return "TPU-OAUTH-" + cryptoRandomString({ length: 128 })
+    case "oidc":
+      return "TPU-OIDC-" + cryptoRandomString({ length: 128 })
     default:
       return "TPU-API-" + cryptoRandomString({ length: 128 })
   }

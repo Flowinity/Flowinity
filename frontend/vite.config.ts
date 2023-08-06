@@ -40,7 +40,11 @@ const config = {
       workbox: {
         clientsClaim: true,
         skipWaiting: true,
-        navigateFallbackDenylist: [/^\/i\/.*/, /^\/api\/.*/]
+        navigateFallbackDenylist: [
+          /^\/i\/.*/,
+          /^\/api\/.*/,
+          /^\/\.well-known\/.*/
+        ]
       },
       includeAssets: [
         "favicon.ico",

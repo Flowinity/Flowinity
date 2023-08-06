@@ -575,4 +575,16 @@ export class AdminControllerV3 {
   ) {
     return await this.adminService.createOauthUser(id, body.username, user.id)
   }
+
+  @UseBefore(HighLevel)
+  @Put("/oauth/:id/secret")
+  async resetOauthSecret(@Auth("*") user: User, @Param("id") id: string) {
+    return await this.adminService.resetOauthSecret(id, user.id)
+  }
+
+  @UseBefore(HighLevel)
+  @Delete("/oauth/:id")
+  async deleteOauth(@Auth("*") user: User, @Param("id") id: string) {
+    return await this.adminService.deleteOauth(id, user.id)
+  }
 }

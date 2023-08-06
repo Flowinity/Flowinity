@@ -51,6 +51,8 @@ import { OauthControllerV3 } from "@app/controllers/v3/oauth.controller"
 import { OauthApp } from "@app/models/oauthApp.model"
 import { Provider, Configuration, ClientMetadata } from "oidc-provider"
 import OidcAdapter from "@app/lib/oidc-adapter"
+import wellKnownOidc from "@app/lib/well-known-oidc"
+import { OidcControllerV3 } from "@app/controllers/v3/oidc.controller"
 
 @Service()
 @Middleware({ type: "after" })
@@ -115,7 +117,17 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
           {
             status: err?.httpStatus || 400,
             message: err.message,
-            name: "Troplo/ValidationError"
+            name: "Troplo/BadRequest"
+          }
+        ]
+      })
+    } else if (err?.message && err?.expose === undefined && err?.status) {
+      return res.status(400).json({
+        errors: [
+          {
+            status: 400,
+            message: err.message,
+            name: "Troplo/BadRequest"
           }
         ]
       })
@@ -183,7 +195,8 @@ export class Application {
             MigrateControllerV3,
             SlideshowControllerV3,
             ...(config?.officialInstance ? [InstanceControllerV3] : []),
-            OauthControllerV3
+            OauthControllerV3,
+            OidcControllerV3
           ]
         : [SetupControllerV3, CoreControllerV3],
       routePrefix: endpoint,
@@ -229,7 +242,9 @@ export class Application {
       adapter: OidcAdapter
     })
     provider.listen(34583, () => {})*/
-
+    this.app.get("/.well-known/openid-configuration", (req, res) => {
+      res.json(wellKnownOidc())
+    })
     this.app.use("/api/docs", async (req, res): Promise<void> => {
       res.redirect("/api/v3/docs")
     })

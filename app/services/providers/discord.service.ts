@@ -163,7 +163,7 @@ export class DiscordService {
       console.log("[PROVIDERS/DISCORD] renewed access tokens.")
       return true
     } catch (e) {
-      console.log(e)
+      //console.log(e)
       console.log("[PROVIDERS/DISCORD] failed to renew access tokens.")
       return false
     }

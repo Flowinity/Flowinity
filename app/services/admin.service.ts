@@ -30,6 +30,7 @@ import cryptoRandomString from "crypto-random-string"
 import utils from "@app/lib/utils"
 import { OauthUser } from "@app/models/oauthUser.model"
 import { Session } from "@app/models/session.model"
+import { OauthSave } from "@app/models/oauthSave.model"
 
 const inviteParams = {
   include: [
@@ -836,10 +837,15 @@ export class AdminService {
     })
   }
 
-  async getOauthById(id: string) {
+  async getOauthById(id: string, userId?: number) {
     return await OauthApp.findOne({
       where: {
-        id
+        id,
+        ...(userId ? { userId } : {})
+      },
+      // include secret override
+      attributes: {
+        include: ["secret"]
       },
       include: [
         {
@@ -906,6 +912,36 @@ export class AdminService {
       userId: user.id,
       oauthAppId: app.id,
       active: true
+    })
+  }
+
+  async resetOauthSecret(appId: string, userId: number) {
+    const app = await this.getOauthById(appId)
+    if (!app || app.userId !== userId) throw Errors.NOT_FOUND
+    await app.update({
+      secret: await utils.generateAPIKey("oauth")
+    })
+  }
+
+  async deleteOauth(appId: string, userId: number) {
+    const app = await this.getOauthById(appId)
+    if (!app || app.userId !== userId) throw Errors.NOT_FOUND
+    await app.destroy()
+    await OauthUser.destroy({
+      where: {
+        oauthAppId: app.id
+      }
+    })
+    await Session.destroy({
+      where: {
+        oauthAppId: app.id,
+        type: "oauth"
+      }
+    })
+    await OauthSave.destroy({
+      where: {
+        oauthAppId: app.id
+      }
     })
   }
 }

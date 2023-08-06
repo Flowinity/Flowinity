@@ -1,5 +1,18 @@
 <template>
   <v-container v-if="app">
+    <CoreDialog v-model="deleteConfirm" max-width="500">
+      <template v-slot:title>Delete {{ app.name }}?</template>
+      <v-card-text>
+        Are you sure you want to delete {{ app.name }}? This cannot be undone.
+        It will delete all sessions, saves, and other data associated with this
+        app.
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="blue" @click="deleteConfirm = false">Cancel</v-btn>
+        <v-btn color="red" @click="deleteApp()">Delete</v-btn>
+      </v-card-actions>
+    </CoreDialog>
     <v-card>
       <v-toolbar>
         <v-toolbar-title>{{ app.name }}</v-toolbar-title>
@@ -130,6 +143,27 @@
         </v-form>
       </v-card-text>
       <v-card-text>
+        <v-btn color="blue" @click="$functions.copy(app.secret)">
+          <v-icon class="mr-1">mdi-content-copy</v-icon>
+          Copy secret
+        </v-btn>
+        <v-btn class="ml-1" color="blue" @click="$functions.copy(app.id)">
+          <v-icon class="mr-1">mdi-content-copy</v-icon>
+          Copy client ID
+        </v-btn>
+        <v-btn class="ml-1" color="red" @click="resetSecret">
+          <v-icon class="mr-1">mdi-sync</v-icon>
+          Reset secret
+        </v-btn>
+        <v-btn class="ml-1" color="red" @click="deleteConfirm = true">
+          <v-icon class="mr-1">mdi-delete</v-icon>
+          Delete
+        </v-btn>
+        <br />
+        <small>
+          The secret is only used for OpenID Connect integrations, and not
+          TPUAppAuth.
+        </small>
         <v-card-title>Configuring your app</v-card-title>
         <v-card-text>
           <strong>NGINX:</strong>
@@ -186,15 +220,18 @@
 import { defineComponent } from "vue";
 import { ScopeDefinition } from "@/views/Auth/Oauth.vue";
 import { OauthApp } from "@/models/oauthApp";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "AdminWhitelist",
+  components: { CoreDialog },
   data() {
     return {
       app: null as OauthApp | null,
       username: "",
       loading: false,
       scopesDefinitions: [] as ScopeDefinition[],
+      deleteConfirm: false,
       headers: [
         {
           title: "Username",
@@ -228,6 +265,26 @@ export default defineComponent({
     }
   },
   methods: {
+    async deleteApp() {
+      try {
+        this.loading = true;
+        await this.axios.delete(`/admin/oauth/${this.$route.params.id}`);
+        this.$toast.success("App deleted");
+        this.$router.push("/admin/oauth");
+      } finally {
+        this.loading = false;
+      }
+    },
+    async resetSecret() {
+      try {
+        this.loading = true;
+        await this.axios.put(`/admin/oauth/${this.$route.params.id}/secret`);
+        this.$toast.success("Secret reset");
+        this.getAppAuth();
+      } finally {
+        this.loading = false;
+      }
+    },
     async getScopeDefinitions() {
       const { data } = await this.axios.get(`/oauth/scopeDefinitions`);
       this.scopesDefinitions = data;

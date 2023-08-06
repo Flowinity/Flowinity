@@ -333,7 +333,7 @@ const routes = [
         component: () => import("@/views/Setup.vue")
       },
       {
-        path: "/oauth/:oauthAppId",
+        path: "/oauth/:oauthAppId?",
         name: "OAuth",
         component: () => import("@/views/Auth/Oauth.vue")
       },
