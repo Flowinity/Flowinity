@@ -95,9 +95,7 @@ export default defineComponent({
           this.$router.push("/");
         } else {
           try {
-            this.$router.push(this.$route.query.redirect, {
-              query: this.$route.query
-            });
+            this.$router.push(this.$route.query.redirect);
           } catch {
             this.$router.push("/");
           }

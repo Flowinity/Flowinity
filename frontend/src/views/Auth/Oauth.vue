@@ -169,7 +169,10 @@ export default defineComponent({
     this.getAppData();
     this.getScopeDefinitions();
     if (!this.$user.user) {
-      this.$router.push("/login?redirect=" + this.$route.fullPath);
+      this.$router.push(
+        "/login?redirect=" +
+          this.$route.fullPath.replaceAll("?", "%3F").replaceAll("&", "%26")
+      );
     }
   }
 });
