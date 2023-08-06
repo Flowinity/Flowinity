@@ -166,7 +166,17 @@ export class OauthService {
       aud: clientId,
       name: scopes.includes("oauth.user.username") ? user.username : undefined,
       email: scopes.includes("oauth.user.email") ? user.email : undefined,
-      picture: scopes.includes("oauth.user.avatar") ? user.avatar : undefined
+      picture: scopes.includes("oauth.user.avatar")
+        ? config.hostnameWithProtocol + "/i/" + user.avatar
+        : undefined,
+      preferred_username: scopes.includes("oauth.user.username")
+        ? user.username
+        : undefined,
+      tpu_administrator: user.administrator,
+      tpu_moderator: user.moderator,
+      tpu_subscription: user.plan.internalName,
+      created_at: user.createdAt,
+      tpu_has_gold: user.plan.internalName === "GOLD"
     }
     if (!partial) {
       data = {

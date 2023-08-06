@@ -15,4 +15,10 @@ export type IdentityToken = {
   name?: string
   email?: string
   picture?: string
+  preferred_username?: string
+  tpu_administrator?: boolean
+  tpu_moderator?: boolean
+  tpu_subscription?: string
+  created_at?: Date
+  tpu_has_gold?: boolean
 }
