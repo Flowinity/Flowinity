@@ -1,7 +1,7 @@
 function getWellKnownOidc() {
   return {
     issuer: `${global.config.hostnameWithProtocol}`,
-    authorization_endpoint: `http://localhost:3000/oauth`,
+    authorization_endpoint: `${config.hostnameWithProtocol}/oauth`,
     token_endpoint: `${config.hostnameWithProtocol}/api/v3/oidc/token`,
     userinfo_endpoint: `${config.hostnameWithProtocol}/api/v3/oidc/userinfo`,
     jwks_uri: `${config.hostnameWithProtocol}/api/v3/oidc/jwks.json`,
