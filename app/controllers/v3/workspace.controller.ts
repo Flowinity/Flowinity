@@ -195,9 +195,13 @@ export class WorkspaceControllerV3 {
     const zip: JSZip = new JSZip()
     for (const { dataValues } of folder.children) {
       try {
-        console.log(type)
         const data = await this.noteService.downloadNote(dataValues, type)
-        zip.file(`${dataValues.name.replaceAll("/", "-")}.${type}`, data)
+        zip.file(
+          `${dataValues.name
+            .replaceAll("/", "-")
+            .replaceAll("\\", "-")}.${type}`,
+          data
+        )
       } catch (e) {
         console.error(e)
       }

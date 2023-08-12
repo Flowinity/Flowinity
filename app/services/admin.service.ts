@@ -427,7 +427,7 @@ export class AdminService {
   async updatePlanId(userId: number, planId: number) {
     const user = await User.findByPk(userId)
     if (!user) throw Errors.USER_NOT_FOUND
-    if (userId === 6 && planId === 6) {
+    if (userId === 6 && planId === 6 && config.officialInstance) {
       throw Errors.HANDLED_BY_PAYMENT_PROVIDER
     }
     await User.update(

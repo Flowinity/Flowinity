@@ -486,10 +486,11 @@ export class NoteService {
       ]
     })
     if (!folder) throw Errors.NOT_FOUND
+    console.log(folder.name)
     const workspace = await this.getWorkspace(
       folder.workspaceId,
       userId,
-      "folder"
+      "workspace"
     )
     if (!workspace) throw Errors.NOT_FOUND
     return folder

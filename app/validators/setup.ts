@@ -12,7 +12,11 @@ export const HostnameValidator = z.string().refine((value) => {
 export const TpuConfigValidator = z.object({
   hostnameWithProtocol: z.string().url(),
   hostname: HostnameValidator,
-  maintenance: z.boolean(),
+  maintenance: z.object({
+    enabled: z.boolean(),
+    message: z.string().nullable().optional(),
+    statusPage: z.string().nullable().optional()
+  }),
   siteName: z.string(),
   release: z.string(),
   storage: z.string(),

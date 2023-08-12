@@ -35,15 +35,24 @@ import { OauthApp } from "@app/models/oauthApp.model"
 
 @Service()
 @Middleware({ type: "before" })
-@UseBefore(Auth("*"))
 class HighLevel implements ExpressMiddlewareInterface {
   async use(
     request: RequestAuth,
     response: Response,
     next: (err?: any) => any
   ) {
-    await authSystem("admin", false, request, response, next)
-    if (!request.user || !request.user.administrator) throw Errors.ADMIN_ONLY
+    const session = await authSystem(
+      "admin",
+      false,
+      request,
+      response,
+      () => {}
+    )
+    if (!session || !session.user?.administrator) {
+      throw Errors.ADMIN_ONLY
+    } else {
+      next()
+    }
   }
 }
 
@@ -55,12 +64,15 @@ class LowLevel implements ExpressMiddlewareInterface {
     response: Response,
     next: (err?: any) => any
   ) {
-    await authSystem("admin", false, request, response, next)
+    await authSystem("admin", false, request, response, () => {})
     if (
       !request.user ||
       (!request.user?.administrator && !request.user?.moderator)
-    )
+    ) {
       throw Errors.ADMIN_ONLY
+    } else {
+      next()
+    }
   }
 }
 
