@@ -1,0 +1,52 @@
+diff --git a/node_modules/editorjs-parser/build/Parser.browser.js b/node_modules/editorjs-parser/build/Parser.browser.js
+index ef16e28..724e358 100755
+--- a/node_modules/editorjs-parser/build/Parser.browser.js
++++ b/node_modules/editorjs-parser/build/Parser.browser.js
+@@ -195,7 +195,7 @@ var edjsParser = function () {
+         }
+ 
+         try {
+-          return this.parsers[block.type](block.data, this.config);
++          return this.parsers[block.type](block.data, this.config, block.tunes, block.id);
+         } catch (err) {
+           return err;
+         }
+diff --git a/node_modules/editorjs-parser/build/Parser.esm.js b/node_modules/editorjs-parser/build/Parser.esm.js
+index 57765d7..5a67eed 100755
+--- a/node_modules/editorjs-parser/build/Parser.esm.js
++++ b/node_modules/editorjs-parser/build/Parser.esm.js
+@@ -192,7 +192,7 @@ var edjsParser = /*#__PURE__*/function () {
+       }
+ 
+       try {
+-        return this.parsers[block.type](block.data, this.config);
++        return this.parsers[block.type](block.data, this.config, block.tunes, block.id);
+       } catch (err) {
+         return err;
+       }
+diff --git a/node_modules/editorjs-parser/build/Parser.node.js b/node_modules/editorjs-parser/build/Parser.node.js
+index 64dec1f..94b4a8d 100755
+--- a/node_modules/editorjs-parser/build/Parser.node.js
++++ b/node_modules/editorjs-parser/build/Parser.node.js
+@@ -190,7 +190,7 @@ class edjsParser {
+             );
+         }
+         try {
+-            return this.parsers[block.type](block.data, this.config);
++            return this.parsers[block.type](block.data, this.config, block.tunes, block.id);
+         } catch (err) {
+             return err;
+         }
+diff --git a/node_modules/editorjs-parser/src/Parser.js b/node_modules/editorjs-parser/src/Parser.js
+index 3daa4d1..b109931 100755
+--- a/node_modules/editorjs-parser/src/Parser.js
++++ b/node_modules/editorjs-parser/src/Parser.js
+@@ -27,7 +27,7 @@ export default class edjsParser {
+             );
+         }
+         try {
+-            return this.parsers[block.type](block.data, this.config);
++            return this.parsers[block.type](block.data, this.config, tunes = block.tunes && block.tunes, block.id);
+         } catch (err) {
+             return err;
+         }

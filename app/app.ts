@@ -1,5 +1,6 @@
 import express, { NextFunction } from "express"
 import {
+  BadRequestError,
   ExpressErrorMiddlewareInterface,
   HttpError,
   Middleware,
@@ -58,8 +59,6 @@ import { OidcControllerV3 } from "@app/controllers/v3/oidc.controller"
 @Middleware({ type: "after" })
 export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
   error(err: any, req: any, res: any, next: (err: any) => any) {
-    console.error(err)
-
     if (err?.status && !err?.errno) {
       return res.status(err?.status || 500).json({
         errors: [
@@ -100,7 +99,9 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
       })
     } else if (
       (err?.message && err?.expose !== undefined) ||
-      err instanceof HttpError
+      err instanceof HttpError ||
+      err instanceof BadRequestError ||
+      err?.httpCode
     ) {
       if (err.expose === false) {
         return res.status(500).json({
@@ -112,10 +113,10 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
           ]
         })
       }
-      return res.status(err?.httpStatus || 400).json({
+      return res.status(err?.httpStatus || err?.httpCode || 400).json({
         errors: [
           {
-            status: err?.httpStatus || 400,
+            status: err?.httpStatus || err?.httpCode || 400,
             message: err.message,
             name: "Troplo/BadRequest"
           }
@@ -132,6 +133,7 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
         ]
       })
     } else {
+      console.log(err)
       return res.status(500).json({
         errors: [
           {

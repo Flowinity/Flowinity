@@ -481,5 +481,30 @@
     },
     "noData": "There is no data for last {type}. Please check back later.",
     "noDataDynamic": "The dynamic report is being generated. Please check back in a few hours."
+  },
+  "workspaces": {
+    "sidebar": {
+      "rename": "Rename workspace",
+      "renameNote": "Rename note",
+      "delete": "Delete workspace",
+      "deleteNote": "Delete note"
+    },
+    "download": {
+      "title": "Download",
+      "titleZIP": "Download folder as ZIP",
+      "conversionHint": "Please ensure the resulting file meets your expectations as it will be converted.",
+      "types": {
+        "tpudoc": "TPU Document File",
+        "docx": "DOCX",
+        "odt": "LibreOffice ODT",
+        "html": "HTML"
+      }
+    },
+    "import": {
+      "title": "Import document",
+      "name": "Name",
+      "file": "TPU Document (.TPUDOC or .HTML)",
+      "import": "Import"
+    }
   }
 }

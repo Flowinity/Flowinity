@@ -1,17 +1,22 @@
 import {
   Body,
+  Controller,
   Delete,
   Get,
   JsonController,
   Param,
   Patch,
-  Post
+  Post,
+  QueryParam,
+  Res
 } from "routing-controllers"
 import { Service } from "typedi"
 import { Auth } from "@app/lib/auth"
 import Errors from "@app/lib/errors"
 import { User } from "@app/models/user.model"
 import { NoteDataV2, NoteService } from "@app/services/note.service"
+import { Response } from "express"
+import JSZip from "jszip"
 
 @Service()
 @JsonController("/notes")
@@ -179,6 +184,28 @@ export class WorkspaceControllerV3 {
     return await this.noteService.renameFolder(id, body.name, user.id)
   }
 
+  @Get("/folder/:id/download")
+  async downloadFolder(
+    @Auth("workspaces.view") user: User,
+    @Param("id") id: number,
+    @QueryParam("type") type: "tpudoc" | "html" | "docx",
+    @Res() res: Response
+  ) {
+    const folder = await this.noteService.getFolder(id, user.id)
+    const zip: JSZip = new JSZip()
+    for (const { dataValues } of folder.children) {
+      try {
+        console.log(type)
+        const data = await this.noteService.downloadNote(dataValues, type)
+        zip.file(`${dataValues.name.replaceAll("/", "-")}.${type}`, data)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    const data = await zip.generateAsync({ type: "nodebuffer" })
+    return res.contentType("application/octet-stream").send(data)
+  }
+
   @Patch("/:noteId/restore/:versionId")
   async restoreNote(
     @Auth("workspaces.modify") user: User,
@@ -186,6 +213,20 @@ export class WorkspaceControllerV3 {
     @Param("versionId") versionId: string
   ) {
     await this.noteService.restoreVersion(noteId, versionId, user.id)
+  }
+
+  @Get("/:noteId/download")
+  async downloadNote(
+    @Auth("workspaces.view") user: User,
+    @Param("noteId") noteId: number,
+    @QueryParam("type") type: "tpudoc" | "html" | "docx",
+    @Res() res: Response
+  ) {
+    const note = await this.getNote(user, noteId)
+    if (!note?.permissions?.read) throw Errors.NOT_FOUND
+
+    const data = await this.noteService.downloadNote(note, type)
+    return res.contentType("application/octet-stream").send(data)
   }
 
   // TPU Workspaces collaboration sharing code -- to port from v2 to v3

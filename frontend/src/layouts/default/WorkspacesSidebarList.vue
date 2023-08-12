@@ -1,15 +1,15 @@
 <template>
   <CoreDialog v-model="importDoc.dialog" max-width="600px">
-    <template v-slot:title>Import document</template>
+    <template v-slot:title>{{ $t("workspaces.import.title") }}</template>
     <v-container>
       <v-text-field
-        label="Name"
+        :label="$t('workspaces.import.name')"
         required
         :autofocus="true"
         v-model="importDoc.name"
       ></v-text-field>
       <v-file-input
-        label="TPU Document (.TPUDOC or .HTML)"
+        :label="$t('workspaces.import.file')"
         required
         :autofocus="true"
         v-model="importDoc.file"
@@ -20,7 +20,48 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn color="primary" @click="doImportDoc" :loading="importDoc.loading">
-        Import
+        {{ $t("workspaces.import.import") }}
+      </v-btn>
+    </v-card-actions>
+  </CoreDialog>
+  <CoreDialog v-model="download.dialog" max-width="600px">
+    <template v-slot:title v-if="!download.workspaceFolderId">
+      {{ $t("workspaces.download.title") }}
+    </template>
+    <template v-slot:title v-else>
+      {{ $t("workspaces.download.titleZIP") }}
+    </template>
+    <v-container>
+      <v-select
+        label="Type"
+        required
+        :autofocus="true"
+        v-model="download.type"
+        :items="download.types"
+        item-title="text"
+        item-value="value"
+        :hint="
+          download.type !== 'tpudoc'
+            ? $t('workspaces.download.conversionHint')
+            : undefined
+        "
+        :persistent-hint="true"
+      ></v-select>
+    </v-container>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="red"
+        @click="
+          download.dialog = false;
+          download.workspaceFolderId = undefined;
+          download.id = undefined;
+        "
+      >
+        {{ $t("generic.cancel") }}
+      </v-btn>
+      <v-btn color="primary" @click="downloadItem" :loading="download.loading">
+        {{ $t("workspaces.download.title") }}
       </v-btn>
     </v-card-actions>
   </CoreDialog>
@@ -86,8 +127,13 @@
       <v-list-item @click="renameNote.dialog = true">
         <v-list-item-title>Rename note</v-list-item-title>
       </v-list-item>
-      <v-list-item @click="downloadItem">
-        <v-list-item-title>Download</v-list-item-title>
+      <v-list-item
+        @click="
+          download.dialog = true;
+          download.id = contextMenu.item?.id;
+        "
+      >
+        <v-list-item-title>Download...</v-list-item-title>
       </v-list-item>
       <v-list-item @click="deleteNote.dialog = true">
         <v-list-item-title>Delete</v-list-item-title>
@@ -95,7 +141,15 @@
     </v-list>
     <v-list v-else-if="!contextMenu.item?.folders">
       <v-list-item @click="importDoc.dialog = true">
-        <v-list-item-title>Import TPUDOC</v-list-item-title>
+        <v-list-item-title>Import TPUDOC/HTML</v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        @click="
+          download.dialog = true;
+          download.workspaceFolderId = contextMenu.item?.id;
+        "
+      >
+        <v-list-item-title>Download folder...</v-list-item-title>
       </v-list-item>
       <v-list-item @click="renameFolder.dialog = true">
         <v-list-item-title>Rename folder</v-list-item-title>
@@ -239,7 +293,7 @@
 import { defineComponent } from "vue";
 import WorkspaceDialog from "@/components/Workspaces/Dialogs/Dialog.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
-import { NoteVersion } from "@/models/noteVersion";
+import { NoteDataV2, NoteVersion } from "@/models/noteVersion";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
@@ -303,6 +357,21 @@ export default defineComponent({
         dialog: false,
         workspaceId: undefined as number | undefined,
         loading: false
+      },
+      download: {
+        dialog: false,
+        loading: false,
+        workspaceFolderId: undefined as number | undefined,
+        id: undefined as number | undefined,
+        type: "docx" as "docx" | "tpudoc" | "html" | "odt",
+        types: [
+          {
+            text: this.$t("workspaces.download.types.tpudoc"),
+            value: "tpudoc"
+          },
+          { text: this.$t("workspaces.download.types.html"), value: "html" },
+          { text: this.$t("workspaces.download.types.docx"), value: "docx" }
+        ]
       }
     };
   },
@@ -346,21 +415,76 @@ export default defineComponent({
         );
       }
     },
-    async downloadItem() {
-      const { data } = await this.axios.get(
-        "/notes/" + this.contextMenu.item?.id
-      );
-
-      const blob = new Blob([JSON.stringify(data.data)], {
+    async getItem(id: number) {
+      const { data } = await this.axios.get("/notes/" + id);
+      return data.data;
+    },
+    async downloadAsJSON(data: NoteDataV2, name: string) {
+      const blob = new Blob([JSON.stringify(data)], {
         type: "text/plain"
       });
+      this.triggerDownload(blob, name, "tpudoc");
+    },
+    triggerDownload(blob: Blob, name: string, ext: string) {
       const e = document.createEvent("MouseEvents"),
         a = document.createElement("a");
-      a.download = this.contextMenu.item.name + ".tpudoc";
+      a.download = name + "." + ext;
       a.href = window.URL.createObjectURL(blob);
       a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
       e.initEvent("click", true, false);
       a.dispatchEvent(e);
+    },
+    /*async downloadAsHTML(data: NoteDataV2, dl = true) {
+      const edjsParser = edjsHTML();
+
+      let html = edjsParser.parse(<OutputData>data);
+
+      if (dl) {
+        const blob = new Blob([JSON.stringify(html)], {
+          type: "text/html"
+        });
+        this.triggerDownload(blob, this.contextMenu.item.name, "html");
+      } else {
+        return html;
+      }
+    },
+    async downloadAsDOCX(data: NoteDataV2) {
+      const html = await this.downloadAsHTML(data, false);
+    },*/
+    async downloadItem() {
+      try {
+        this.download.loading = true;
+        const id =
+          this.download.workspaceFolderId ||
+          this.download.id ||
+          this.download.workspaceFolderId;
+        const string = this.download.workspaceFolderId
+          ? "/notes/folder/" + id + "/download"
+          : "/notes/" + id + "/download";
+        // download from axios
+        const { data } = await this.axios.get(string, {
+          params: {
+            type: this.download.type
+          },
+          responseType: "blob",
+          headers: {
+            Accept: "application/octet-stream"
+          }
+        });
+        const blob = new Blob([data], {
+          type: "text/plain"
+        });
+        this.triggerDownload(
+          blob,
+          this.contextMenu.item.name,
+          this.download.workspaceFolderId ? "zip" : this.download.type
+        );
+        this.download.dialog = false;
+        this.download.id = undefined;
+        this.download.workspaceFolderId = undefined;
+      } finally {
+        this.download.loading = false;
+      }
     },
     context(e: any, id: string, item: any) {
       e.preventDefault();

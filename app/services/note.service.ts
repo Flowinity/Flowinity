@@ -8,6 +8,8 @@ import { NoteVersion } from "@app/models/noteVersion.model"
 import { WorkspaceUser } from "@app/models/workspaceUser.model"
 import { User } from "@app/models/user.model"
 import { Friend } from "@app/models/friend.model"
+import { WorkspacesDownloadService } from "@app/services/workspaces/download.service"
+import { BadRequestError } from "routing-controllers"
 
 //create class of NoteData
 export class NoteField {
@@ -61,7 +63,7 @@ export class NoteDataV2 {
 
 @Service()
 export class NoteService {
-  constructor() {}
+  constructor(private readonly downloadService: WorkspacesDownloadService) {}
 
   async renameWorkspace(id: number, name: string, userId: number) {
     const workspace = await this.getWorkspace(id, userId, "workspace")
@@ -381,7 +383,6 @@ export class NoteService {
           }
         ]
       })
-      console.log(id)
       if (!workspace) {
         const workspace = await Workspace.findOne({
           include: [
@@ -462,6 +463,36 @@ export class NoteService {
         read: true
       }
     }
+  }
+
+  async getFolder(id: number, userId: number) {
+    const folder = await WorkspaceFolder.findOne({
+      where: {
+        id
+      },
+      include: [
+        {
+          model: Note,
+          as: "children",
+          attributes: [
+            "id",
+            "name",
+            "createdAt",
+            "updatedAt",
+            "data",
+            "shareLink"
+          ]
+        }
+      ]
+    })
+    if (!folder) throw Errors.NOT_FOUND
+    const workspace = await this.getWorkspace(
+      folder.workspaceId,
+      userId,
+      "folder"
+    )
+    if (!workspace) throw Errors.NOT_FOUND
+    return folder
   }
 
   async createWorkspace(name: string, userId: number) {
@@ -790,5 +821,23 @@ export class NoteService {
     }
 
     return workspace[permission]
+  }
+
+  async downloadNote(note: Note, type: "tpudoc" | "html" | "docx") {
+    console.log(note.data, type)
+    switch (type) {
+      case "tpudoc": {
+        return note.data
+      }
+      case "html": {
+        return await this.downloadService.html(<NoteDataV2>note.data)
+      }
+      case "docx": {
+        return await this.downloadService.docx(<NoteDataV2>note.data)
+      }
+      default: {
+        throw new BadRequestError("Invalid type, must be tpudoc, html or docx")
+      }
+    }
   }
 }

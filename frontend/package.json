@@ -1,6 +1,6 @@
 {
   "name": "tpu-frontend",
-  "version": "3.2.47",
+  "version": "3.2.48",
   "private": true,
   "author": "Troplo <troplo@troplo.com>",
   "type": "module",
@@ -63,6 +63,7 @@
     "dayjs": "^1.11.7",
     "dompurify": "^3.0.0",
     "editorjs-header-with-anchor": "^2.6.0",
+    "editorjs-html": "^3.4.3",
     "editorjs-text-alignment-blocktune": "^1.0.3",
     "editorjs-text-color-plugin": "^2.0.2",
     "editorjs-undo": "^2.0.18",
