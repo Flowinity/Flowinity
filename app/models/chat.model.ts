@@ -54,4 +54,6 @@ export class Chat extends Model {
   @HasMany(() => ChatAssociation, "chatId")
   users: ChatAssociation[]
   recipient: any
+  unread: number | undefined
+  _redisSortDate: string | undefined
 }

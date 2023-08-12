@@ -32,6 +32,11 @@ export class CacheService {
             `chat:${chat.id}:sortDate`,
             dayjs(lastMessage.createdAt).valueOf()
           )
+        } else {
+          await redis.set(
+            `chat:${chat.id}:sortDate`,
+            dayjs(chat.createdAt).valueOf()
+          )
         }
       }
     }
@@ -477,7 +482,7 @@ export class CacheService {
       this.refreshState().then(() => {})
       this.generateShareLinkCache().then(() => {})
       this.generateUserStatsCache().then(() => {})
-      this.generateChatsCache().then(() => {})
+      //this.generateChatsCache().then(() => {})
       this.generateMissingChatDates().then(() => {})
       //this.generateInsightsCache().then(() => {})
       return true

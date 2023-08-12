@@ -157,7 +157,7 @@ export class AuthService {
     })
     const session = await utils.createSession(user.id, "*", "session")
     const cacheService = await Container.get(CacheService)
-    await cacheService.generateChatsCache(user.id)
+    //await cacheService.generateChatsCache(user.id)
     cacheService.generateAutoCollectCache(user.id)
     cacheService.generateUserStatsCache(user.id)
     cacheService.generateInsightsCache(user.id)

@@ -11,11 +11,8 @@ import embedParser from "@app/lib/embedParser"
 import { Op } from "sequelize"
 import paginate from "jw-paginate"
 import axios from "axios"
-import { GoogleService } from "@app/services/providers/google.service"
 
-interface ChatCache extends Chat {
-  _redisSortDate: string
-}
+interface ChatCache extends Chat {}
 
 @Service()
 export class ChatService {
@@ -168,11 +165,6 @@ export class ChatService {
         notifications: settings.notifications
       }
     })
-    const cache = Container.get(CacheService)
-    await cache.patchChatsCacheForUser(
-      userId,
-      await this.getChat(association.chatId, userId)
-    )
     return association
   }
 
@@ -234,7 +226,6 @@ export class ChatService {
               chatId: chat.id
             }
           })
-          await this.patchCacheForAll(chat.id, userId)
           return true
         }
         if (chat.type === "group") {
@@ -263,7 +254,6 @@ export class ChatService {
     socket.to(userId).emit("removeChat", {
       id: chat.id
     })
-    await this.patchCacheForAll(chat.id, userId)
     return true
   }
 
@@ -340,7 +330,6 @@ export class ChatService {
       rank: rank,
       chatId: chat.id
     })
-    this.patchCacheForAll(chat.id)
     return user
   }
 
@@ -424,7 +413,6 @@ export class ChatService {
         }
       }
     )
-    this.patchCacheForAll(chat.id)
     if (settings.name !== chat.name) {
       this.sendMessage(
         `<@${userId}> updated the chat name to ${settings.name}.`,
@@ -453,7 +441,8 @@ export class ChatService {
     return chat
   }
 
-  async patchCacheForAll(chatId: number, removeUserId?: number) {
+  /*
+   async patchCacheForAll(chatId: number, removeUserId?: number) {
     const cache = Container.get(CacheService)
     const chat = await Chat.findOne({
       where: {
@@ -478,7 +467,7 @@ export class ChatService {
         association: user.toJSON()
       } as ChatCache)
     }
-  }
+  }*/
 
   async removeUserFromChat(
     chatId: number,
@@ -509,7 +498,6 @@ export class ChatService {
       undefined,
       "leave"
     )
-    this.patchCacheForAll(chat.id, removeUserId)
     this.emitForAll(chatId, userId, "removeChatUser", {
       chatId: chat.id,
       id: association.id
@@ -558,7 +546,6 @@ export class ChatService {
       },
       include: this.userIncludes
     })
-    this.patchCacheForAll(chat.id)
     const newUsers = await ChatAssociation.findAll({
       where: {
         id: newAssociations
@@ -798,7 +785,7 @@ export class ChatService {
     return {
       ...chat.toJSON(),
       unread: 0,
-      recipient: recipient?.dataValues ?? null
+      recipient: recipient
     }
   }
 
@@ -831,7 +818,6 @@ export class ChatService {
           identifier: chat.id + "-" + userId
         })
         const chatWithUsers = await this.getChat(chat.id, association.userId)
-        cacheService.patchChatsCacheForUser(association.userId, chatWithUsers)
         socket.to(association.userId).emit("chatCreated", chatWithUsers)
         return chatWithUsers
       }
@@ -865,13 +851,9 @@ export class ChatService {
       )
     }
     const chatWithUsers = await this.getChat(chat.id, userId)
-    if (chatWithUsers) {
-      cacheService.patchChatsCacheForUser(userId, chatWithUsers)
-    }
     for (const association of associations) {
       const chatWithUsers = await this.getChat(chat.id, association.userId)
       if (!chatWithUsers) continue
-      cacheService.patchChatsCacheForUser(association.userId, chatWithUsers)
       socket.to(association.userId).emit("chatCreated", chatWithUsers)
     }
     return chatWithUsers
@@ -990,7 +972,7 @@ export class ChatService {
     )
     if (recipient) {
       return {
-        ...recipient.user,
+        ...recipient.user.toJSON(),
         legacyUser: !!recipient.legacyUser
       }
     } else {
@@ -1023,13 +1005,46 @@ export class ChatService {
   }
 
   async getChatFromAssociation(associationId: number, userId: number) {
-    const chats = await this.getCachedUserChats(userId, true)
-    let chat = chats.find((c: Chat) => c.association?.id === associationId)
-    if (!chat) {
-      // For TPU Kotlin
-      chat = chats.find((c: Chat) => c.id === associationId)
-      if (!chat) throw Errors.CHAT_NOT_FOUND
-    }
+    const chat = await Chat.findOne({
+      include: [
+        {
+          model: ChatAssociation,
+          where: {
+            id: associationId,
+            userId
+          },
+          required: true,
+          as: "association"
+        },
+        {
+          model: ChatAssociation,
+          as: "users",
+          attributes: [
+            "id",
+            "userId",
+            "user",
+            "rank",
+            "legacyUserId",
+            "lastRead",
+            "createdAt",
+            "updatedAt"
+          ],
+          include: [
+            {
+              model: User,
+              as: "tpuUser",
+              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+            },
+            {
+              model: LegacyUser,
+              as: "legacyUser",
+              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+            }
+          ]
+        }
+      ]
+    })
+    if (!chat) throw Errors.CHAT_NOT_FOUND
     return chat
   }
 
@@ -1089,39 +1104,34 @@ export class ChatService {
     }
   }
 
-  async getCachedUserChats(userId: number, internal = false) {
-    let chats = await redis.json.get(`chats:${userId}`)
-    if (chats) {
-      if (internal) return chats
-      const start = new Date().getTime()
-      for (const chat of chats) {
-        chat._redisSortDate = await redis.get(`chat:${chat.id}:sortDate`)
-        chat.recipient = await this.getRecipient(chat, userId)
-      }
-
-      const sorted = chats.sort((a: ChatCache, b: ChatCache) => {
-        const aDate = parseInt(a._redisSortDate) || dayjs(a.createdAt).valueOf()
-        const bDate = parseInt(b._redisSortDate) || dayjs(b.createdAt).valueOf()
-        return bDate - aDate
-      })
-      const notifications = await redis.json.get(`unread:${userId}`)
-      if (notifications) {
-        for (const chat of sorted) {
-          chat.unread = notifications[chat.id] || 0
-        }
-      } else {
-        for (const chat of sorted) {
-          chat.unread = 0
-        }
-      }
-      const end = new Date().getTime()
-      console.log("sorting took", end - start)
-      return sorted
-    } else {
-      const chats = await this.getUserChats(userId)
-      await redis.json.set(`chats:${userId}`, chats)
-      return chats
+  async getSortedUserChats(userId: number, internal = false) {
+    let chats = await this.getUserChats(userId)
+    if (internal) return chats
+    const start = new Date().getTime()
+    for (const chat of chats) {
+      chat.dataValues._redisSortDate =
+        (await redis.get(`chat:${chat.id}:sortDate`)) || "0"
+      chat.dataValues.recipient = await this.getRecipient(chat, userId)
     }
+
+    const sorted = chats.sort((a: Chat, b: Chat) => {
+      const aDate = parseInt(a.dataValues._redisSortDate)
+      const bDate = parseInt(b.dataValues._redisSortDate)
+      return bDate - aDate
+    })
+    const notifications = await redis.json.get(`unread:${userId}`)
+    if (notifications) {
+      for (const chat of sorted) {
+        chat.dataValues.unread = notifications[chat.id] || 0
+      }
+    } else {
+      for (const chat of sorted) {
+        chat.dataValues.unread = 0
+      }
+    }
+    const end = new Date().getTime()
+    console.log("sorting took", end - start)
+    return sorted
   }
 
   async getUserChats(userId: number) {

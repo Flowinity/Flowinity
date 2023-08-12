@@ -31,7 +31,7 @@ export class ChatControllerV3 {
 
   @Get("")
   async getChats(@Auth("chats.view") user: User) {
-    return await this.chatService.getCachedUserChats(user.id)
+    return await this.chatService.getSortedUserChats(user.id)
   }
 
   @Post("")
