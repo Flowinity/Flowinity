@@ -124,7 +124,15 @@ async function getSession(token: string) {
               "createdAt",
               "updatedAt"
             ]
+          },
+          {
+            model: Badge,
+            as: "badges"
           }
+        ],
+        order: [
+          [{ model: Badge, as: "badges" }, "priority", "DESC"],
+          [{ model: Badge, as: "badges" }, "id", "ASC"]
         ]
       }
     ]
@@ -350,64 +358,7 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
       const token = action.request.header("Authorization")
       if (!scope) scope = "*"
       if (token) {
-        let session = await Session.findOne({
-          where: {
-            token: token,
-            expiredAt: {
-              [Op.or]: [
-                {
-                  [Op.gt]: new Date()
-                },
-                {
-                  [Op.is]: null
-                }
-              ]
-            }
-          },
-          include: [
-            {
-              model: User,
-              as: "user",
-              required: true,
-              include: [
-                {
-                  model: Domain,
-                  as: "domain"
-                },
-                {
-                  model: Plan,
-                  as: "plan"
-                },
-                {
-                  model: Badge,
-                  as: "badges"
-                },
-                {
-                  model: Theme,
-                  as: "theme"
-                },
-                {
-                  model: Integration,
-                  as: "integrations",
-                  attributes: [
-                    "id",
-                    "type",
-                    "providerUserId",
-                    "providerUsername",
-                    "providerUserCache",
-                    "error",
-                    "createdAt",
-                    "updatedAt"
-                  ]
-                }
-              ],
-              order: [
-                [{ model: Badge, as: "badges" }, "priority", "DESC"],
-                [{ model: Badge, as: "badges" }, "id", "ASC"]
-              ]
-            }
-          ]
-        })
+        const session = await getSession(token)
 
         if (session) {
           if (!checkScope(scope, session.scopes)) {
