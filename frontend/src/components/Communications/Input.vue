@@ -41,8 +41,8 @@
           variant="outlined"
           @update:model-value="$emit('update:modelValue', $event)"
           @keydown.enter.exact="
-            $vuetify.display.mobile ? null : $event.preventDefault();
-            $vuetify.display.mobile ? null : $emit('sendMessage');
+              isMobile ? null : $event.preventDefault();
+              isMobile ? null : $emit('sendMessage');
           "
           @click:append="$emit('sendMessage')"
           @keyup.esc="$emit('edit', null)"
@@ -215,6 +215,9 @@ export default defineComponent({
           value: user.user?.id
         };
       });
+    },
+    isMobile() {
+      return this.$vuetify.display.platform.android || this.$vuetify.display.platform.ios
     }
   },
   methods: {
