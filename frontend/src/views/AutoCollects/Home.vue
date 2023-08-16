@@ -21,7 +21,7 @@
     </v-row>
     <PromoNoContent
       v-else-if="!$app.componentLoading"
-      :description="$t('autoCollects.home.description')"
+      :description="$t('autoCollects.home.subtitle')"
       icon="mdi-tooltip-check"
       :title="$t('autoCollects.home.title')"
     ></PromoNoContent>
