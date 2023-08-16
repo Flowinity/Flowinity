@@ -2,8 +2,8 @@
   <v-container>
     <div class="float-right">
       <v-btn class="rounded-xl ml-2" to="/autoCollect/configure">
-        <v-icon>mdi-cog</v-icon>
-        &nbsp;Configure AutoCollect
+        <v-icon class="mr-2">mdi-cog</v-icon>
+        {{ $t("autoCollects.configure.title") }}
       </v-btn>
     </div>
     <br />
@@ -21,11 +21,17 @@
     </v-row>
     <PromoNoContent
       v-else-if="!$app.componentLoading"
-      description="You may configure AutoCollects with the button in the top right corner."
+      :description="$t('autoCollects.home.description')"
       icon="mdi-tooltip-check"
-      title="You have no pending approvals!"
+      :title="$t('autoCollects.home.title')"
     ></PromoNoContent>
-    <small>Total Items: {{ autoCollects.length }}</small>
+    <small>
+      {{
+        $t("gallery.totalItems", {
+          count: autoCollects.length
+        })
+      }}
+    </small>
   </v-container>
 </template>
 

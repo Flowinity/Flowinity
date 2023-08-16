@@ -105,7 +105,7 @@ export default defineComponent({
     },
     async getGallery(infinite: boolean = false) {
       this.loading = true;
-      let url;
+      let url: string;
       if (!infinite) {
         this.page = 1;
       }
@@ -116,7 +116,6 @@ export default defineComponent({
       } else {
         url = "/gallery";
       }
-      if (this.type === "tenor" && !this.show.search) return;
       const { data } = await this.axios.get(url, {
         params: {
           page: this.page,

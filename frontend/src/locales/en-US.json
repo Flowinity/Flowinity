@@ -242,11 +242,13 @@
       "ip": "Backend connecting IP: {ip}",
       "ipWhitelist": "IP whitelist groups: {groups}",
       "server": "Server: {server}",
-      "docs": "TPU API Documentation (WIP, v3)",
+      "docs": "TPU API Documentation (WIP, v4)",
       "credits": "Credits",
       "crash": "Crash TPU (dev)",
       "expEnable": "Enable all experiments",
-      "expDisable": "Disable all experiments"
+      "expDisable": "Disable all experiments",
+      "uptime": "Uptime (TPU): {uptime}",
+      "sysUptime": "Uptime (System): {uptime}"
     },
     "domains": {
       "title": "Available Domains",
@@ -291,7 +293,9 @@
     "update": "Update",
     "leave": "Leave",
     "delete": "Delete",
-    "login": "Login"
+    "login": "Login",
+    "name": "Name",
+    "value": "Value"
   },
   "setup": {
     "step0": {
@@ -395,7 +399,8 @@
       "removeBanner": "Remove Banner",
       "export": "Export Collection",
       "delete": "Delete Collection"
-    }
+    },
+    "create": "Create Collection"
   },
   "chats": {
     "start": {
@@ -505,6 +510,30 @@
       "name": "Name",
       "file": "TPU Document (.TPUDOC or .HTML)",
       "import": "Import"
+    }
+  },
+  "autoCollects": {
+    "configure": {
+      "title": "Configure AutoCollects",
+      "rules": "My Rules",
+      "requireApproval": "Require approval before adding to collection",
+      "add": "Add to collection",
+      "groups": "GROUPS",
+      "or": "OR",
+      "and": "AND",
+      "addRule": "Add rule",
+      "required": "Value is required.",
+      "warning": "This operator {operator} is not recommended for this type {type}. It may not work as expected.",
+      "createSubSubRule": "Create sub-rule",
+      "createSubRule": "Create parent-rule",
+      "noRules": "No rules found.",
+      "actions": "ACTIONS",
+      "type": "Type",
+      "operator": "Operator"
+    },
+    "home": {
+      "title": "You have no pending approvals!",
+      "subtitle": "You can configure AutoCollects with the button in the top right-hand corner."
     }
   }
 }

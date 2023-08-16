@@ -2,10 +2,14 @@
   <v-container>
     <v-card class="rounded-xl" color="card" elevation="7">
       <v-toolbar color="toolbar">
-        <v-toolbar-title>Configure AutoCollect</v-toolbar-title>
+        <v-toolbar-title>
+          {{ $t("autoCollects.configure.title") }}
+        </v-toolbar-title>
       </v-toolbar>
       <v-container>
-        <v-card-title>My Rules</v-card-title>
+        <v-card-title>
+          {{ $t("autoCollects.configure.rules") }}
+        </v-card-title>
         <v-expansion-panels>
           <v-expansion-panel v-for="rule in rules" :key="rule.id">
             <template v-slot:title>
@@ -21,33 +25,35 @@
                 <v-switch
                   v-model="rule.enabled"
                   inset
-                  label="Enabled"
+                  :label="$t('generic.enabled')"
                 ></v-switch>
                 <v-switch
                   v-model="rule.requireApproval"
                   inset
-                  label="Require approval before adding to collection"
+                  :label="$t('autoCollects.configure.requireApproval')"
                 ></v-switch>
                 <v-text-field
                   v-model="rule.name"
-                  :rules="[(v: any) => !!v || 'Name is required']"
-                  label="Name"
+                  :rules="[(v: any) => !!v || $t('autoCollects.configure.required')]"
+                  :label="$t('generic.name')"
                 ></v-text-field>
                 <v-card-subtitle class="grey--text ml-n4 mb-2">
-                  ACTION
+                  {{ $t("autoCollects.configure.actions") }}
                 </v-card-subtitle>
                 <v-autocomplete
                   v-model="rule.collectionId"
                   :items="$collections.write"
                   item-title="name"
                   item-value="id"
-                  label="Add to Collection"
+                  :label="$t('autoCollects.configure.add')"
                 ></v-autocomplete>
               </v-card-text>
-              <v-card-subtitle class="mt-n7 grey--text">GROUPS</v-card-subtitle>
+              <v-card-subtitle class="mt-n7 grey--text">
+                {{ $t("autoCollects.configure.groups") }}
+              </v-card-subtitle>
               <div v-for="(subrule, i) in rule.rules" :key="subrule.id">
                 <v-card-subtitle v-if="i !== 0" class="grey--text">
-                  OR
+                  {{ $t("autoCollects.configure.or") }}
                   <v-btn icon @click="removeSubRule(rule, subrule.id)">
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
@@ -63,7 +69,7 @@
                         :items="types"
                         item-title="text"
                         item-value="value"
-                        label="Type"
+                        :label="$t('autoCollects.configure.type')"
                       ></v-select>
                     </v-col>
                     <v-col>
@@ -72,14 +78,14 @@
                         :items="operators"
                         item-title="text"
                         item-value="value"
-                        label="Operator"
+                        :label="$t('autoCollects.configure.operator')"
                       ></v-select>
                     </v-col>
                     <v-col>
                       <v-text-field
                         v-model="subsubrule.value"
                         :rules="[(v: any) => !!v || 'Value is required']"
-                        label="Value"
+                        :label="$t('autoCollects.configure.value')"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="1" style="max-width: 40px">
@@ -101,9 +107,12 @@
                     type="warning"
                     variant="text"
                   >
-                    This operator ({{ subsubrule.operator }}) is not recommended
-                    for this type ({{ subsubrule.type }}). It may not work as
-                    expected.
+                    {{
+                      $t("autoCollects.configure.warning", {
+                        operator: subsubrule.operator,
+                        type: subsubrule.type
+                      })
+                    }}
                   </v-alert>
                 </v-card-text>
                 <v-sheet class="rounded-xxl mt-n3" outlined>
@@ -111,13 +120,13 @@
                     class="rounded-xxl text-center justify-center"
                     color="white"
                     elevation="0"
-                    height="30"
+                    height="35"
                     max-width="100%"
                     variant="outlined"
                     @click="subrule.rules.push(defaultSubRule())"
                   >
                     <v-icon size="30" style="height: 100%">mdi-plus</v-icon>
-                    Create sub-sub-rule
+                    {{ $t("autoCollects.configure.createSubSubRule") }}
                   </v-card>
                 </v-sheet>
               </div>
@@ -137,7 +146,7 @@
                   "
                 >
                   <v-icon size="30" style="height: 100%">mdi-plus</v-icon>
-                  Create sub-rule
+                  {{ $t("autoCollects.configure.createSubRule") }}
                 </v-card>
               </v-sheet>
               <v-sheet class="rounded-xxl mt-3" outlined>
@@ -158,7 +167,9 @@
             </template>
           </v-expansion-panel>
         </v-expansion-panels>
-        <v-card-subtitle v-if="!rules.length">No rules found</v-card-subtitle>
+        <v-card-subtitle v-if="!rules.length">
+          {{ $t("autoCollects.configure.noRules") }}
+        </v-card-subtitle>
         <v-sheet class="rounded-xxl mt-3" outlined>
           <v-card
             class="rounded-xxl"

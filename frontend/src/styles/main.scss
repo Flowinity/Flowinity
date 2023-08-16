@@ -590,3 +590,8 @@ a {
   display: flex; /* Use flexbox to keep elements in the same row */
   align-items: center; /* Align items vertically within the container */
 }
+
+.v-icon {
+  // fix inline with text using rem
+  margin-top: 0.11rem;
+}

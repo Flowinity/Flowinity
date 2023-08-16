@@ -1,5 +1,7 @@
 import { Socket } from "socket.io"
 import djs from "dayjs"
+import { RedisClientType } from "redis"
+import { Sequelize } from "sequelize-typescript"
 
 // @ts-ignore
 export interface SocketWithUser extends Socket {
@@ -8,7 +10,7 @@ export interface SocketWithUser extends Socket {
 
 declare global {
   var redis: any,
-    db: any,
+    db: Sequelize,
     config: TpuConfig,
     dayjs: typeof djs,
     socket: SocketWithUser,

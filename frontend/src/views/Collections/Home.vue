@@ -9,12 +9,12 @@
       @update:filter="filter = $event"
     ></GalleryNavigation>
     <v-btn class="mt-1 ml-1" style="float: right" @click="create = true">
-      Create Collection
+      {{ $t("collections.create") }}
     </v-btn>
     <br />
     <br />
     <br />
-    <v-row>
+    <v-row class="mb-1">
       <v-col
         v-for="item in collections"
         :key="'item-' + item.id + '-' + (item.shared ? 'shared' : 'owned')"
@@ -25,7 +25,9 @@
         <CollectionCard :item="item"></CollectionCard>
       </v-col>
     </v-row>
-    <small>Total Items: {{ $collections.items.length }}</small>
+    <small>
+      {{ $t("gallery.totalItems", { count: $collections.items.length }) }}
+    </small>
   </v-container>
 </template>
 

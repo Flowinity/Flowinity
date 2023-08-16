@@ -139,6 +139,7 @@ const config = {
     proxy: {
       "/api/v2": "http://localhost:34582",
       "/api/v3": "http://localhost:34582",
+      "/api/v4": "http://localhost:34582",
       "/i/": "http://localhost:34582",
       "/socket.io": {
         target: "http://localhost:34582",
