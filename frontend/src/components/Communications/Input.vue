@@ -1,11 +1,12 @@
 <template>
-  <div style="width: 100%">
+  <div style="width: 100%; z-index: 10001">
     <div id="communications-bottom-navigation" v-if="!editing"></div>
     <v-toolbar
       :id="editing ? '' : 'chat-input'"
       ref="toolbar"
       :color="editing ? 'transparent' : 'dark'"
       height="auto"
+      style="z-index: 1001"
     >
       <Mentionable
         :items="users"
