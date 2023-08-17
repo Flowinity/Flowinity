@@ -595,3 +595,12 @@ a {
   // fix inline with text using rem
   margin-top: 0.11rem;
 }
+
+// Why do you need to break everything, Vuetify?
+.v-switch--inset .v-selection-control--dirty .v-switch__thumb {
+  background-color: rgb(var(--v-theme-primary));
+}
+
+.v-switch--inset .v-switch__thumb {
+  background-color: white;
+}
