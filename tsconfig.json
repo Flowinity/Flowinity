@@ -30,6 +30,7 @@
     "paths": {
       "@app/*": ["./app/*"]
     },
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "lib": ["esnext.asynciterable", "es2018", "dom", "dom.iterable"]
   }
 }

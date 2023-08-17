@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "include": [
     "app/**/*.ts",
-    "../common/**/*.ts"
+    "../common/**/*.ts",
+    "app/**/*.d.ts"
   ],
   "filesGlob": [
     "app/lib/*.mmdb"

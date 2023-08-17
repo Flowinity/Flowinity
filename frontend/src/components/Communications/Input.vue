@@ -1,12 +1,11 @@
 <template>
-  <div style="width: 100%; z-index: 10001">
+  <div style="width: 100%">
     <div id="communications-bottom-navigation" v-if="!editing"></div>
     <v-toolbar
       :id="editing ? '' : 'chat-input'"
       ref="toolbar"
       :color="editing ? 'transparent' : 'dark'"
       height="auto"
-      style="z-index: 1001"
     >
       <Mentionable
         :items="users"
@@ -41,8 +40,8 @@
           variant="outlined"
           @update:model-value="$emit('update:modelValue', $event)"
           @keydown.enter.exact="
-              isMobile ? null : $event.preventDefault();
-              isMobile ? null : $emit('sendMessage');
+            isMobile ? null : $event.preventDefault();
+            isMobile ? null : $emit('sendMessage');
           "
           @click:append="$emit('sendMessage')"
           @keyup.esc="$emit('edit', null)"
@@ -217,7 +216,10 @@ export default defineComponent({
       });
     },
     isMobile() {
-      return this.$vuetify.display.platform.android || this.$vuetify.display.platform.ios
+      return (
+        this.$vuetify.display.platform.android ||
+        this.$vuetify.display.platform.ios
+      );
     }
   },
   methods: {

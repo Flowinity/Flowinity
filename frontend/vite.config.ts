@@ -145,7 +145,8 @@ const config = {
         target: "http://localhost:34582",
         ws: true
       },
-      "/api/v1": "http://localhost:34581"
+      "/api/v1": "http://localhost:34581",
+      "/graphql": "http://localhost:34582"
     },
     https: undefined
   }
