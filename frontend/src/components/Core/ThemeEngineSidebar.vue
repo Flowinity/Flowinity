@@ -164,7 +164,6 @@
       </v-card-title>
       <v-card-title>
         <v-avatar
-          :class="{ 'v-btn--disabled': $app.fluidGradient }"
           class="v-avatar--variant-outlined pointer"
           :color="$user.changes.nameColor"
           size="22"
