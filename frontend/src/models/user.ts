@@ -153,4 +153,5 @@ export interface User {
   }[];
   privacyPolicyAccepted: boolean;
   xp?: number;
+  nameColor: string;
 }

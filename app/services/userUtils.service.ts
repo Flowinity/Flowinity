@@ -23,6 +23,9 @@ import { ExcludedCollectionsValidate } from "@app/validators/excludedCollections
 import { FCMDevice } from "@app/models/fcmDevices.model"
 import axios from "axios"
 import { GoogleService } from "@app/services/providers/google.service"
+import { HexValidate, HexValidateOptional } from "@app/validators/hex"
+import { Chat } from "@app/models/chat.model"
+import { ChatAssociation } from "@app/models/chatAssociation.model"
 
 @Service()
 export class UserUtilsService {
@@ -629,7 +632,8 @@ export class UserUtilsService {
       "language",
       "excludedCollections",
       "publicProfile",
-      "privacyPolicyAccepted"
+      "privacyPolicyAccepted",
+      "nameColor"
     ]
 
     // from body, remove all empty values
@@ -639,7 +643,7 @@ export class UserUtilsService {
       }
       if (
         (body[key] === "" && key !== "description") ||
-        body[key] === null ||
+        (body[key] === null && key !== "nameColor") ||
         body[key] === undefined
       ) {
         delete body[key]
@@ -647,15 +651,16 @@ export class UserUtilsService {
     }
 
     if (body.themeEngine) {
-      ThemeEngineValidate.parse(body.themeEngine)
+      await ThemeEngineValidate.parse(body.themeEngine)
     }
 
     if (
-      body.themeEngine &&
+      (body.themeEngine || body.nameColor) &&
       user.plan.internalName !== "GOLD" &&
       config.officialInstance
     ) {
       body.themeEngine = null
+      body.nameColor = null
     }
 
     if (body.currentPassword) {
@@ -708,7 +713,17 @@ export class UserUtilsService {
     if (body.profileLayout) await LayoutValidate.parse(body.profileLayout)
     if (body.excludedCollections)
       await ExcludedCollectionsValidate.parse(body.excludedCollections)
-    await user.update(body)
+    if (body.nameColor !== user.nameColor) {
+      await HexValidateOptional.parse(body.nameColor)
+      this.emitToChatParticipants(user.id, "userNameColor", {
+        id: user.id,
+        nameColor: body.nameColor
+      })
+    }
+
+    await user.update({
+      ...body
+    })
     delete body.currentPassword
     delete body.password
     socket.to(user.id).emit("userSettingsUpdate", body)
@@ -726,6 +741,34 @@ export class UserUtilsService {
       socket.to(friend.friendId).emit(key, value)
     }
     socket.to(userId).emit(key, value)
+  }
+
+  async emitToChatParticipants(userId: number, key: string, value: any) {
+    const chats = await Chat.findAll({
+      include: [
+        {
+          model: ChatAssociation,
+          as: "association",
+          where: {
+            userId
+          },
+          required: true
+        },
+        {
+          model: ChatAssociation,
+          as: "users"
+        }
+      ]
+    })
+    // remove duplicates and put into 1 array
+    const chatUserIds = chats.map((chat) =>
+      chat.users.map((user) => user.userId)
+    )
+    const uniqueChatUserIds = [...new Set(chatUserIds.flat())]
+    for (const id of uniqueChatUserIds) {
+      if (!id) continue
+      socket.to(id).emit(key, value)
+    }
   }
 
   async getAllUsers(

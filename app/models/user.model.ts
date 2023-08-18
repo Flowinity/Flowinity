@@ -295,6 +295,9 @@ export class User extends Model {
   })
   privacyPolicyAccepted: boolean
 
+  @Column
+  nameColor: string
+
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 

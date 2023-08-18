@@ -665,13 +665,6 @@ export default defineComponent({
           icon: "mdi-account-plus"
         };
       }
-    },
-    disableProfileColors() {
-      try {
-        return JSON.parse(localStorage.getItem("disableProfileColors")!);
-      } catch {
-        return false;
-      }
     }
   },
   methods: {
@@ -753,7 +746,7 @@ export default defineComponent({
       });
     },
     setTheme(reset: boolean = false) {
-      if (this.disableProfileColors) return false;
+      if (this.$user.disableProfileColors) return false;
       if (this.username) return false;
       if (this.user?.themeEngine?.version !== 1 && !reset) {
         this.setTheme(true);

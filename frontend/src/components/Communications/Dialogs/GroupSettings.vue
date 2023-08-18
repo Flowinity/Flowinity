@@ -4,7 +4,13 @@
     max-width="800px"
     @update:modelValue="$emit('update:modelValue', $event)"
   >
-    <UploadCropper v-model="groupIcon" @finish="uploadIcon" />
+    <UploadCropper
+      v-model="groupIcon"
+      @finish="uploadIcon"
+      type="chatIcon"
+      @remove="removeIcon"
+      :remove-text="$t('dialogs.uploadCropper.removeGroup')"
+    />
     <template v-slot:title>Group Settings</template>
     <template v-if="$chat.dialogs.groupSettings.item">
       <v-card-text>
@@ -18,8 +24,7 @@
           <v-btn color="primary" @click="$chat.saveSettings">Save</v-btn>
         </v-card-actions>
         <v-card-title>Group Icon</v-card-title>
-        <v-btn @click="groupIcon = true">Set group icon</v-btn>
-        <v-btn @click="removeIcon">Remove group icon</v-btn>
+        <v-btn @click="groupIcon = true">Change group icon</v-btn>
       </v-card-text>
       <v-card-text>
         <v-card-title>

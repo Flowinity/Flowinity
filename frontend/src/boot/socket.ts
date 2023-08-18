@@ -257,4 +257,13 @@ export default async function setup(app) {
       };
     }
   });
+  socket.on("userNameColor", (data: { id: number; nameColor: string }) => {
+    for (const c of chat.chats) {
+      for (const user of c.users) {
+        if (user.user?.id === data.id) {
+          user.user.nameColor = data.nameColor;
+        }
+      }
+    }
+  });
 }

@@ -17,6 +17,7 @@ import functions from "@/plugins/functions";
 export interface UserState {
   user: User | null;
   _postInitRan: boolean;
+  disableProfileColors: boolean;
   changes: {
     password?: string;
     email?: string;
@@ -34,6 +35,8 @@ export interface UserState {
     language?: string;
     publicProfile?: boolean;
     privacyPolicyAccepted?: boolean;
+    nameColor?: string;
+    avatar?: string;
   };
   actions: {
     emailSent: {
@@ -58,7 +61,9 @@ export const useUserStore = defineStore("user", {
           value: false,
           loading: false
         }
-      }
+      },
+      disableProfileColors:
+        localStorage.getItem("disableProfileColors") === "true"
     } as UserState),
   getters: {
     contrast() {
@@ -279,7 +284,9 @@ export const useUserStore = defineStore("user", {
         language: user.language,
         publicProfile: user.publicProfile,
         weatherUnit: user.weatherUnit,
-        privacyPolicyAccepted: user.privacyPolicyAccepted
+        privacyPolicyAccepted: user.privacyPolicyAccepted,
+        nameColor: user.nameColor,
+        avatar: user.avatar
       };
     },
     async init() {

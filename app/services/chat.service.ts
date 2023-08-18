@@ -11,57 +11,61 @@ import embedParser from "@app/lib/embedParser"
 import { Op } from "sequelize"
 import paginate from "jw-paginate"
 import axios from "axios"
+import { ClientSatisfies } from "@app/lib/clientSatisfies"
 
-interface ChatCache extends Chat {}
+class MessageIncludes {
+  constructor(showNameColor = true) {
+    return [
+      {
+        model: Message,
+        as: "reply",
+        include: [
+          {
+            model: User,
+            as: "tpuUser",
+            attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+          },
+          {
+            model: LegacyUser,
+            as: "legacyUser",
+            attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+          }
+        ]
+      },
+      {
+        model: ChatAssociation,
+        as: "readReceipts",
+        attributes: ["userId", "lastRead", "user"],
+        include: [
+          {
+            model: User,
+            as: "tpuUser",
+            attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          },
+          {
+            model: LegacyUser,
+            as: "legacyUser",
+            attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+          }
+        ]
+      },
+      {
+        model: User,
+        as: "tpuUser",
+        attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+      },
+      {
+        model: LegacyUser,
+        as: "legacyUser",
+        attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+      }
+    ]
+  }
+}
 
 @Service()
 export class ChatService {
   private userIncludes = [
-    {
-      model: User,
-      as: "tpuUser",
-      attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
-    },
-    {
-      model: LegacyUser,
-      as: "legacyUser",
-      attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-    }
-  ]
-  private messageIncludes = [
-    {
-      model: Message,
-      as: "reply",
-      include: [
-        {
-          model: User,
-          as: "tpuUser",
-          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-        },
-        {
-          model: LegacyUser,
-          as: "legacyUser",
-          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-        }
-      ]
-    },
-    {
-      model: ChatAssociation,
-      as: "readReceipts",
-      attributes: ["userId", "lastRead", "user"],
-      include: [
-        {
-          model: User,
-          as: "tpuUser",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
-        },
-        {
-          model: LegacyUser,
-          as: "legacyUser",
-          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-        }
-      ]
-    },
     {
       model: User,
       as: "tpuUser",
@@ -257,7 +261,12 @@ export class ChatService {
     return true
   }
 
-  async searchChat(chatId: number, query: string, page: number = 1) {
+  async searchChat(
+    chatId: number,
+    query: string,
+    page: number = 1,
+    clientSatisfies: ClientSatisfies
+  ) {
     if (!page) page = 1
     const chat = await Chat.findOne({
       where: {
@@ -283,7 +292,7 @@ export class ChatService {
     const messages = await Message.findAll({
       order: [["createdAt", "DESC"]],
       where,
-      include: this.messageIncludes,
+      include: new MessageIncludes(clientSatisfies.nameColor),
       limit: 20,
       offset: (page - 1) * 20
     })
@@ -862,7 +871,7 @@ export class ChatService {
   async sendMessageToUsers(messageId: number, chat: Chat) {
     const message = await Message.findOne({
       where: { id: messageId },
-      include: this.messageIncludes
+      include: new MessageIncludes(false)
     })
 
     if (!message) throw Errors.UNKNOWN
@@ -1052,6 +1061,7 @@ export class ChatService {
     chatId: number,
     userId: number,
     position: "top" | "bottom" = "top",
+    clientSatisfies: ClientSatisfies,
     offset?: number
   ) {
     const chat = await this.getChatFromAssociation(chatId, userId)
@@ -1067,7 +1077,7 @@ export class ChatService {
       },
       order: [["id", position === "top" ? "DESC" : "ASC"]],
       limit: 50,
-      include: this.messageIncludes
+      include: new MessageIncludes(clientSatisfies.nameColor)
     })
     if (position === "bottom") messages.reverse()
     return messages
@@ -1078,7 +1088,8 @@ export class ChatService {
     userId: number,
     position: "top" | "bottom" = "top",
     type: "pins" | "messages" = "messages",
-    page: number = 1
+    page: number = 1,
+    clientSatisfies: ClientSatisfies
   ) {
     const chat = await this.getChatFromAssociation(chatId, userId)
     let messages = await Message.findAll({
@@ -1088,7 +1099,7 @@ export class ChatService {
       },
       order: [["createdAt", position === "top" ? "DESC" : "ASC"]],
       limit: 50,
-      include: this.messageIncludes
+      include: new MessageIncludes(clientSatisfies.nameColor)
     })
     if (position === "bottom") messages.reverse()
     const count = await Message.count({
@@ -1104,8 +1115,12 @@ export class ChatService {
     }
   }
 
-  async getSortedUserChats(userId: number, internal = false) {
-    let chats = await this.getUserChats(userId)
+  async getSortedUserChats(
+    userId: number,
+    internal = false,
+    clientSatisfies: ClientSatisfies
+  ) {
+    let chats = await this.getUserChats(userId, clientSatisfies)
     if (internal) return chats
     const start = new Date().getTime()
     for (const chat of chats) {
@@ -1134,7 +1149,7 @@ export class ChatService {
     return sorted
   }
 
-  async getUserChats(userId: number) {
+  async getUserChats(userId: number, clientSatisfies: ClientSatisfies) {
     const chats = await Chat.findAll({
       include: [
         {
@@ -1160,7 +1175,14 @@ export class ChatService {
             {
               model: User,
               as: "tpuUser",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: [
+                "id",
+                "username",
+                "avatar",
+                "createdAt",
+                "updatedAt",
+                ...(clientSatisfies.nameColor ? ["nameColor"] : [])
+              ]
             },
             {
               model: LegacyUser,

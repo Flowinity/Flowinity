@@ -67,7 +67,9 @@
           <a
             :id="'message-author-' + message.id"
             class="mr-1 pointer underline-on-hover"
-            style="color: unset"
+            :style="`color: ${
+              $user.disableProfileColors ? 'unset' : user?.nameColor ?? 'unset'
+            }`"
             @click.prevent="
               $emit('authorClick', {
                 user: message.user,
@@ -170,6 +172,8 @@ import MessageActions from "@/components/Communications/MessageActions.vue";
 import Embed from "@/components/Communications/Embed.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
+import { Chat } from "@/models/chat";
+import { ChatAssociation } from "@/models/chatAssociation";
 
 export default defineComponent({
   name: "MessagePerf",
@@ -194,6 +198,15 @@ export default defineComponent({
     return {
       hovered: false
     };
+  },
+  computed: {
+    user() {
+      return this.$chat.chats
+        .find((chat: Chat) => chat.id === this.message.chatId)
+        ?.users.find(
+          (user: ChatAssociation) => user.userId === this.message.userId
+        )?.user;
+    }
   },
   methods: {
     context(e: any) {

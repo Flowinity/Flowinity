@@ -7,6 +7,8 @@
         title="Upload Avatar"
         @finish="changeAvatar"
         v-if="user?.id === $user.user?.id"
+        type="userProfile"
+        @remove="removeAvatar"
       />
       <v-avatar
         :size="size"
@@ -152,11 +154,10 @@ export default defineComponent({
     }
   },
   methods: {
-    removeAvatar() {
+    async removeAvatar() {
       if (!this.edit) return;
-      this.axios.delete("/user/upload/avatar").then(() => {
-        this.$emit("refresh");
-      });
+      await this.axios.delete("/user/upload/avatar");
+      this.$emit("refresh");
     },
     changeAvatar(file: File) {
       if (!file || !this.edit) return;

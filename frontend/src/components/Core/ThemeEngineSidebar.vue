@@ -7,29 +7,46 @@
     <v-card>
       <v-color-picker
         v-if="menu.selected"
-        :model-value="$vuetify.theme.themes.dark.colors[menu.selected]"
+        :model-value="
+          menu.selected === 'nameColor'
+            ? $user.changes.nameColor
+            : $vuetify.theme.themes.dark.colors[menu.selected]
+        "
         mode="hex"
         @update:model-value="setThemeColor($event, menu.selected)"
       ></v-color-picker>
+      <v-btn
+        :block="true"
+        v-if="menu.selected === 'nameColor'"
+        @click="setThemeColor(null, menu.selected)"
+      >
+        Reset
+      </v-btn>
     </v-card>
   </v-menu>
   <template v-if="$app.themeEditor">
     <v-toolbar>
       <v-toolbar-title>
-        Theme
-        <v-chip size="x-small">BETA</v-chip>
+        {{ $t("themeEditor.title") }}
+        <v-chip size="x-small">
+          {{ $t("generic.beta") }}
+        </v-chip>
       </v-toolbar-title>
       <v-btn icon @click="reset">
         <v-icon>mdi-restart</v-icon>
-        <v-tooltip activator="parent" location="top">Reset</v-tooltip>
+        <v-tooltip activator="parent" location="top">
+          {{ $t("themeEditor.reset") }}
+        </v-tooltip>
       </v-btn>
       <v-btn icon @click="$app.themeEditor = false">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
     <small class="px-4">
-      <strong>Tip:</strong>
-      Open with:
+      <strong>
+        {{ $t("themeEditor.tip") }}
+      </strong>
+      {{ $t("themeEditor.tipText") }}
       <v-kbd>CTRL</v-kbd>
       +
       <v-kbd>ALT</v-kbd>
@@ -42,8 +59,7 @@
       type="warning"
       variant="tonal"
     >
-      The AMOLED theme is not recommended for use on themes that do not have a
-      black background.
+      {{ $t("themeEditor.compatibilityWarning") }}
     </v-alert>
     <v-card-title>
       <v-select
@@ -76,7 +92,9 @@
         >
           <v-icon size="120">mdi-lock</v-icon>
           <br />
-          <p class="ml-2">You need gold.</p>
+          <p class="ml-2">
+            {{ $t("themeEditor.gold") }}
+          </p>
         </v-card>
       </v-overlay>
       <v-card-title>
@@ -86,7 +104,7 @@
           size="22"
           @click="openMenu($event, 'primary')"
         ></v-avatar>
-        Accent Color
+        {{ $t("themeEditor.colors.primary") }}
       </v-card-title>
       <v-card-title>
         <v-avatar
@@ -95,7 +113,7 @@
           size="22"
           @click="openMenu($event, 'logo1')"
         ></v-avatar>
-        Logo Gradient 1
+        {{ $t("themeEditor.colors.logo1") }}
       </v-card-title>
       <v-card-title>
         <v-avatar
@@ -104,7 +122,7 @@
           size="22"
           @click="openMenu($event, 'logo2')"
         ></v-avatar>
-        Logo Gradient 2
+        {{ $t("themeEditor.colors.logo2") }}
       </v-card-title>
       <v-card-title>
         <v-avatar
@@ -113,7 +131,7 @@
           size="22"
           @click="openMenu($event, 'background')"
         ></v-avatar>
-        Background 1
+        {{ $t("themeEditor.colors.background") }}
       </v-card-title>
       <v-card-title>
         <v-avatar
@@ -122,7 +140,7 @@
           size="22"
           @click="openMenu($event, 'background2')"
         ></v-avatar>
-        Background 2
+        {{ $t("themeEditor.colors.background2") }}
       </v-card-title>
       <v-card-title>
         <v-avatar
@@ -132,7 +150,7 @@
           size="22"
           @click="openMenu($event, 'card')"
         ></v-avatar>
-        Card
+        {{ $t("themeEditor.colors.card") }}
       </v-card-title>
       <v-card-title>
         <v-avatar
@@ -142,15 +160,28 @@
           size="22"
           @click="openMenu($event, 'toolbar')"
         ></v-avatar>
-        Toolbar
+        {{ $t("themeEditor.colors.toolbar") }}
+      </v-card-title>
+      <v-card-title>
+        <v-avatar
+          :class="{ 'v-btn--disabled': $app.fluidGradient }"
+          class="v-avatar--variant-outlined pointer"
+          :color="$user.changes.nameColor"
+          size="22"
+          @click="openMenu($event, 'nameColor')"
+        ></v-avatar>
+        {{ $t("themeEditor.colors.nameColor") }}
+        <v-chip size="x-small">
+          {{ $t("generic.new") }}
+        </v-chip>
       </v-card-title>
       <v-card-title>
         <v-switch
           v-model="$app.fluidGradient"
-          label="Transparent cards (for gradient)"
+          :label="$t('themeEditor.attributes.fluidGradient')"
           @update:model-value="triggerSave"
         ></v-switch>
-        Elevation:
+        {{ $t("themeEditor.attributes.elevation") }}:
         <v-slider
           v-model="elevation"
           :max="24"
@@ -158,7 +189,7 @@
           :step="1"
           thumb-label
         ></v-slider>
-        Gradient Offset:
+        {{ $t("themeEditor.attributes.gradientOffset") }}:
         <v-slider
           v-model="gradientOffset"
           :max="2160"
@@ -169,13 +200,13 @@
         ></v-slider>
         <v-switch
           v-model="showOnProfile"
-          label="Show on profile"
+          :label="$t('themeEditor.attributes.showOnProfile')"
           @update:model-value="triggerSave"
         ></v-switch>
         <v-switch
           v-model="deviceSync"
           class="mt-n6"
-          label="Sync across devices"
+          :label="$t('themeEditor.attributes.deviceSync')"
           @update:model-value="triggerSave"
         ></v-switch>
       </v-card-title>
@@ -186,16 +217,20 @@
           $emit('editor', editor);
         "
       >
-        {{ editor ? "Hide" : "Show" }} CSS Editor
+        {{
+          editor
+            ? $t("themeEditor.cssEditor.hide")
+            : $t("themeEditor.cssEditor.show")
+        }}
       </v-btn>
       <p v-show="editor" class="mb-1">
-        Save & Apply with
+        {{ $t("themeEditor.cssEditor.saveShortcut") }}
         <v-kbd>CTRL</v-kbd>
         +
         <v-kbd>S</v-kbd>
       </p>
       <p v-show="editor" class="mb-1">
-        Toggle CSS with
+        {{ $t("themeEditor.cssEditor.toggleShortcut") }}
         <v-kbd>CTRL</v-kbd>
         +
         <v-kbd>ALT</v-kbd>
@@ -331,6 +366,11 @@ export default defineComponent({
     },
     setThemeColor(color: string, type: string) {
       if (!this.$user.gold && this.$app.site.officialInstance) return;
+      if (type === "nameColor") {
+        this.$user.changes.nameColor = color;
+        this.triggerSave();
+        return;
+      }
       this.$vuetify.theme.themes.dark.colors[type] = color;
       this.$vuetify.theme.themes.light.colors[type] = color;
       this.$vuetify.theme.themes.amoled.colors[type] = color;

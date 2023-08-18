@@ -5,6 +5,9 @@
       aspect-ratio="5.4"
       title="Upload Banner"
       @finish="uploadBanner"
+      type="userBanner"
+      @remove="removeBanner"
+      :remove-text="$t('dialogs.uploadCropper.removeBanner')"
     />
     <v-img
       id="user-header"
@@ -91,6 +94,15 @@ export default defineComponent({
           `/collections/${this.collection?.id}/banner`,
           formData
         );
+        this.$emit("refreshUser");
+      }
+    },
+    async removeBanner() {
+      if (this.user) {
+        await this.axios.delete("/user/upload/banner");
+        this.$emit("refreshUser");
+      } else {
+        await this.axios.delete(`/collections/${this.collection?.id}/banner`);
         this.$emit("refreshUser");
       }
     }

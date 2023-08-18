@@ -2,6 +2,8 @@ import {
   Body,
   Delete,
   Get,
+  Header,
+  HeaderParam,
   JsonController,
   Param,
   Patch,
@@ -20,6 +22,7 @@ import { GalleryService } from "@app/services/gallery.service"
 import rateLimits from "@app/lib/rateLimits"
 import uploader from "@app/lib/upload"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
+import { generateClientSatisfies } from "@app/lib/clientSatisfies"
 
 @Service()
 @JsonController("/chats")
@@ -30,8 +33,16 @@ export class ChatControllerV3 {
   ) {}
 
   @Get("")
-  async getChats(@Auth("chats.view") user: User) {
-    return await this.chatService.getSortedUserChats(user.id)
+  async getChats(
+    @Auth("chats.view") user: User,
+    @HeaderParam("X-TPU-Client") client: string,
+    @HeaderParam("X-TPU-Client-Version") version: string
+  ) {
+    return await this.chatService.getSortedUserChats(
+      user.id,
+      undefined,
+      generateClientSatisfies(client, version)
+    )
   }
 
   @Post("")
@@ -92,11 +103,18 @@ export class ChatControllerV3 {
     @Auth("chats.view") user: User,
     @Param("chatId") chatId: number,
     @QueryParam("query") query: string,
-    @QueryParam("page") page: number
+    @QueryParam("page") page: number,
+    @HeaderParam("X-TPU-Client") client: string,
+    @HeaderParam("X-TPU-Client-Version") version: string
   ) {
     const chat = await this.chatService.getChatFromAssociation(chatId, user.id)
     if (!chat) throw Errors.CHAT_NOT_FOUND
-    return await this.chatService.searchChat(chat.id, query, page)
+    return await this.chatService.searchChat(
+      chat.id,
+      query,
+      page,
+      generateClientSatisfies(client, version)
+    )
   }
 
   @Delete("/:chatId/messages/:messageId")
@@ -218,6 +236,8 @@ export class ChatControllerV3 {
   async getMessages(
     @Auth("chats.view") user: User,
     @Param("associationId") associationId: number,
+    @HeaderParam("X-TPU-Client") client: string,
+    @HeaderParam("X-TPU-Client-Version") version: string,
     @QueryParam("page") page?: number,
     @QueryParam("type") type?: "pins" | "messages",
     @QueryParam("mode") mode?: "paginate" | "infinite",
@@ -230,13 +250,15 @@ export class ChatControllerV3 {
         user.id,
         position || "top",
         type || "messages",
-        page || 1
+        page || 1,
+        generateClientSatisfies(client, version)
       )
     }
     return await this.chatService.getMessages(
       associationId,
       user.id,
       position || "top",
+      generateClientSatisfies(client, version),
       offset || 0
     )
   }

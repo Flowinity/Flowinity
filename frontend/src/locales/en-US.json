@@ -295,7 +295,8 @@
     "delete": "Delete",
     "login": "Login",
     "name": "Name",
-    "value": "Value"
+    "value": "Value",
+    "beta": "BETA"
   },
   "setup": {
     "step0": {
@@ -534,6 +535,46 @@
     "home": {
       "title": "You have no pending approvals!",
       "subtitle": "You can configure AutoCollects with the button in the top right-hand corner."
+    }
+  },
+  "themeEditor": {
+    "title": "Theme",
+    "reset": "Reset",
+    "tip": "Tip:",
+    "tipText": "Open with:",
+    "compatibilityWarning": "The AMOLED theme is not recommended for use on themes that do not have a black background.",
+    "gold": "You need TPU Gold.",
+    "colors": {
+      "primary": "Accent Color",
+      "logo1": "Logo Gradient 1",
+      "logo2": "Logo Gradient 2",
+      "background": "Background 1",
+      "background2": "Background 2",
+      "card": "Card",
+      "toolbar": "Toolbar",
+      "nameColor": "Name Color"
+    },
+    "attributes": {
+      "elevation": "Elevation",
+      "gradientOffset": "Gradient Offset",
+      "fluidGradient": "Transparent cards (for gradient)",
+      "showOnProfile": "Show on profile",
+      "deviceSync": "Sync across devices"
+    },
+    "cssEditor": {
+      "show": "Show CSS Editor",
+      "hide": "Hide CSS Editor",
+      "saveShortcut": "Save & Apply with ",
+      "toggleShortcut": "Toggle CSS with "
+    }
+  },
+  "dialogs": {
+    "uploadCropper": {
+      "title": "Upload",
+      "label": "Image File",
+      "removeProfile": "Remove profile picture",
+      "removeBanner": "Remove banner",
+      "removeGroup": "Remove group icon"
     }
   }
 }

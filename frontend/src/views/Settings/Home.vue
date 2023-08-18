@@ -288,9 +288,6 @@ export default defineComponent({
           key: "fr"
         }
       ],
-      bindings: {
-        disableProfileColors: undefined as boolean | undefined
-      },
       theme: useTheme().global.name,
       themes: [
         { title: "Light", value: "light" },
@@ -326,14 +323,14 @@ export default defineComponent({
     disableProfileColors: {
       get() {
         try {
-          this.bindings.disableProfileColors;
+          this.$user.disableProfileColors;
           return JSON.parse(localStorage.getItem("disableProfileColors")!);
         } catch {
           return false;
         }
       },
       set(val: boolean) {
-        this.bindings.disableProfileColors = val;
+        this.$user.disableProfileColors = val;
         localStorage.setItem("disableProfileColors", JSON.stringify(val));
       }
     },

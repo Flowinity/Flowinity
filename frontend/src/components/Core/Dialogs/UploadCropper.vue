@@ -5,13 +5,13 @@
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:title>
-      {{ title || "Upload" }}
+      {{ title || $t("dialogs.uploadCropper.title") }}
     </template>
     <v-card-text>
       <v-file-input
         v-model="file"
         accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
-        label="Image File"
+        :label="$t('dialogs.uploadCropper.label')"
       ></v-file-input>
       <vue-cropper
         v-if="result"
@@ -24,6 +24,9 @@
       ></vue-cropper>
     </v-card-text>
     <v-card-actions>
+      <v-btn color="red" @click="$emit('remove')">
+        {{ removeText || $t("dialogs.uploadCropper.removeProfile") }}
+      </v-btn>
       <v-spacer></v-spacer>
       <v-btn
         @click="
@@ -31,9 +34,9 @@
           file = [];
         "
       >
-        Cancel
+        {{ $t("generic.cancel") }}
       </v-btn>
-      <v-btn color="primary" @click="save">Save</v-btn>
+      <v-btn color="primary" @click="save">{{ $t("generic.save") }}</v-btn>
     </v-card-actions>
   </CoreDialog>
 </template>
@@ -45,8 +48,25 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
   name: "UploadCropper",
-  props: ["modelValue", "title", "aspectRatio"],
-  emits: ["update:modelValue", "finish"],
+  props: {
+    modelValue: {
+      type: Boolean,
+      required: true
+    },
+    title: {
+      type: String,
+      default: undefined
+    },
+    aspectRatio: {
+      type: String,
+      default: undefined
+    },
+    removeText: {
+      type: String,
+      default: undefined
+    }
+  },
+  emits: ["update:modelValue", "finish", "remove"],
   components: { CoreDialog, VueCropper },
   data() {
     return {

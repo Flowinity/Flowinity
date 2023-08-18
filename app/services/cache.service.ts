@@ -13,6 +13,7 @@ import { ChatService } from "@app/services/chat.service"
 import { Chat } from "@app/models/chat.model"
 import { Message } from "@app/models/message.model"
 import cron from "node-cron"
+import { generateClientSatisfies } from "@app/lib/clientSatisfies"
 
 @Service()
 export class CacheService {
@@ -71,7 +72,10 @@ export class CacheService {
       const chatService = Container.get(ChatService)
       for (const user of users) {
         if (!user) continue
-        const chats = await chatService.getUserChats(user.id)
+        const chats = await chatService.getUserChats(
+          user.id,
+          generateClientSatisfies("", "")
+        )
         redis.json.set(`chats:${user.id}`, "$", chats)
       }
       let end = new Date().getTime()
