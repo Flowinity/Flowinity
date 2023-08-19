@@ -1,7 +1,7 @@
 // Utilities
 import { defineStore } from "pinia";
 import { CollectionCache } from "@/types/collection";
-import { UserCollectionsQuery } from "@/graphql/query/collections/getUserCollections.gql";
+import { UserCollectionsQuery } from "@/graphql/query/collections/getUserCollections.graphql";
 
 export interface CollectionsState {
   items: CollectionCache[];

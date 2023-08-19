@@ -108,10 +108,12 @@
     "@graphql-codegen/cli": "5.0.0",
     "@graphql-codegen/client-preset": "4.1.0",
     "@graphql-codegen/introspection": "4.0.0",
+    "@parcel/watcher": "^2.2.0",
     "@rollup/plugin-graphql": "^2.0.3",
     "cypress": "^12.7.0",
     "eslint": "^8.43.0",
     "eslint-plugin-vue": "^9.3.0",
+    "react": "^18.2.0",
     "rollup-plugin-visualizer": "^5.9.0"
   }
 }

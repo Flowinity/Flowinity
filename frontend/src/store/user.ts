@@ -13,7 +13,7 @@ import { useMailStore } from "@/store/mail";
 import vuetify from "@/plugins/vuetify";
 import i18n from "@/plugins/i18n";
 import functions from "@/plugins/functions";
-import { GetUserQuery } from "@/graphql/query/user/user.gql";
+import { GetUserQuery } from "@/graphql/query/user/user.graphql";
 
 export interface UserState {
   user: User | null;

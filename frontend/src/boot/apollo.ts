@@ -34,7 +34,12 @@ export default function setup(app: App) {
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {
       for (const error of graphQLErrors) {
-        toast.error(error.message);
+        if (error.extensions?.code === "UNAUTHORIZED") {
+          localStorage.removeItem("token");
+          app.config.globalProperties.$router.push("/");
+        } else {
+          toast.error(error.message);
+        }
       }
     }
 

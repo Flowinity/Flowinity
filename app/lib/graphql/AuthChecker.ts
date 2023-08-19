@@ -13,14 +13,24 @@ export const authChecker: AuthChecker<Context> = (
   const user = context.user
   if (!user && !userOptional) {
     throw new GraphQLError(
-      `You need to be logged in to do this (Authorization header is empty or invalid).`
+      `You need to be logged in to do this (Authorization header is empty or invalid).`,
+      {
+        extensions: {
+          code: "UNAUTHORIZED"
+        }
+      }
     )
   }
   const scopes = context.scopes
   if (!checkScope(requiredScope, scopes)) {
     if (!userOptional) {
       throw new GraphQLError(
-        `You need to be logged in to do this (Authorization header is empty or invalid).`
+        `You need to be logged in to do this (Authorization header is empty or invalid).`,
+        {
+          extensions: {
+            code: "UNAUTHORIZED"
+          }
+        }
       )
     }
     context.user = null

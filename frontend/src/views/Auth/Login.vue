@@ -51,6 +51,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { LoginMutation } from "@/graphql/mutation/auth/login.graphql";
+import { LoginMutationVariables } from "@/gql/graphql";
 
 export default defineComponent({
   name: "Login",
@@ -80,15 +82,22 @@ export default defineComponent({
     async login() {
       this.loading = true;
       try {
-        const { data } = await this.axios.post("/auth/login", {
-          email: this.username,
-          password: this.password,
-          code: this.totp
+        const {
+          data: { login }
+        } = await this.$apollo.mutate({
+          mutation: LoginMutation,
+          variables: {
+            input: {
+              username: this.username,
+              password: this.password,
+              totp: this.totp
+            }
+          } as LoginMutationVariables
         });
-        localStorage.setItem("token", data.token);
-        this.axios.defaults.headers.common["Authorization"] = data.token;
+        localStorage.setItem("token", login.token);
+        this.axios.defaults.headers.common["Authorization"] = login.token;
         await this.$user.init();
-        this.$socket.auth = { token: data.token };
+        this.$socket.auth = { token: login.token };
         this.$socket.disconnect();
         this.$socket.connect();
         if (!this.$route.query.redirect) {

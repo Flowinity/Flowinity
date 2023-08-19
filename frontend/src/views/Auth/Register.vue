@@ -106,6 +106,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { TYPE } from "vue-toastification";
+import { RegisterMutationVariables } from "@/gql/graphql";
+import { RegisterMutation } from "@/graphql/mutation/auth/register.graphql";
 
 export default defineComponent({
   name: "Register",
@@ -151,16 +153,23 @@ export default defineComponent({
     async register() {
       this.loading = true;
       try {
-        const { data } = await this.axios.post("/auth/register", {
-          username: this.username,
-          password: this.password,
-          email: this.email,
-          inviteKey: this.inviteKey
+        const {
+          data: { login }
+        } = await this.$apollo.mutate({
+          mutation: RegisterMutation,
+          variables: {
+            input: {
+              email: this.email,
+              username: this.username,
+              password: this.password,
+              inviteKey: this.inviteKey
+            }
+          } as RegisterMutationVariables
         });
-        localStorage.setItem("token", data.token);
-        this.axios.defaults.headers.common["Authorization"] = data.token;
+        localStorage.setItem("token", login.token);
+        this.axios.defaults.headers.common["Authorization"] = login.token;
         await this.$user.init();
-        this.$socket.auth = { token: data.token };
+        this.$socket.auth = { token: login.token };
         this.$socket.disconnect();
         this.$socket.connect();
         this.$router.push("/");

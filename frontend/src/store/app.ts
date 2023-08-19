@@ -15,7 +15,7 @@ import { i18n } from "@/plugins/i18n";
 import { useRoute } from "vue-router";
 import { SidebarItem } from "@/types/sidebar";
 import { Announcement } from "@/models/announcement";
-import { CoreStateQuery } from "@/graphql/query/core/state.gql";
+import { CoreStateQuery } from "@/graphql/query/core/state.graphql";
 
 export interface AppState {
   quickAction: number;

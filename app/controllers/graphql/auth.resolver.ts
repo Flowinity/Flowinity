@@ -31,6 +31,7 @@ import { AuthService } from "@app/services/auth.service"
 import Errors from "@app/lib/errors"
 import blacklist from "@app/lib/word-blacklist.json"
 import { InviteService } from "@app/services/invite.service"
+import { GraphQLError } from "graphql/error"
 
 @Resolver(User)
 @Service()
@@ -42,11 +43,19 @@ export class AuthResolver {
 
   @Mutation(() => LoginResponse)
   async login(@Arg("input") input: LoginInput, @Ctx() ctx: Context) {
-    return await this.authService.login(
-      input.username,
-      input.password,
-      input.totp
-    )
+    try {
+      return await this.authService.login(
+        input.username,
+        input.password,
+        input.totp
+      )
+    } catch {
+      throw new GraphQLError(Errors.INVALID_CREDENTIALS.message, {
+        extensions: {
+          code: "INVALID_CREDENTIALS"
+        }
+      })
+    }
   }
 
   @Authorized()
