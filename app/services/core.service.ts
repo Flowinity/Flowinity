@@ -20,6 +20,8 @@ import { Chat } from "@app/models/chat.model"
 import { ReportValidate } from "@app/validators/report"
 import { Report } from "@app/models/report.model"
 import { WeatherResponse } from "@app/interfaces/weather"
+import { State, Stats } from "@app/types/v4/core"
+import { CoreState } from "@app/classes/graphql/core/core"
 
 let city: Reader<CityResponse> | undefined
 
@@ -99,7 +101,7 @@ export class CoreService {
     }
   }
 
-  async getState() {
+  async getState(): Promise<Partial<State>> {
     return {
       name: config.siteName,
       release: config.release,
@@ -130,7 +132,14 @@ export class CoreService {
       include: [
         {
           model: User,
-          attributes: ["id", "username", "avatar", "moderator", "administrator"]
+          attributes: [
+            "id",
+            "username",
+            "avatar",
+            "moderator",
+            "administrator",
+            "createdAt"
+          ]
         }
       ]
     })
@@ -169,7 +178,7 @@ export class CoreService {
     }
   }
 
-  async getStats(user?: User): Promise<object> {
+  async getStats(user?: User): Promise<Partial<Stats>> {
     const where = user ? { userId: user.id } : {}
     const uploadStats = await Upload.findAll({
       where: {
@@ -270,7 +279,7 @@ export class CoreService {
           pulses.reduce((acc, pulse) => acc + pulse.timeSpent, 0) / 3600000
         ),
         pulses: await Pulse.count({ where: { userId: user.id } }),
-        usage: user.quota,
+        usage: Number(user.quota),
         hours,
         collections: await Collection.count({ where }),
         collectionItems: await CollectionItem.count({ where }),

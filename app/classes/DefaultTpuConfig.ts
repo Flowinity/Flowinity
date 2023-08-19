@@ -73,6 +73,13 @@ export class DefaultTpuConfig {
     termsNoteId: null,
     inviteAFriend: true,
     hostnames: undefined,
+    hive: {
+      enabled: false,
+      graphqlEndpoint: "https://gql.troplo.com/ingest/graphql",
+      applicationUrl: "https://gql.troplo.com",
+      usageEndpoint: "https://gql.troplo.com/ingest/usage",
+      token: ""
+    },
     preTrustedDomains: [
       "troplo.com",
       "images.flowinity.com",

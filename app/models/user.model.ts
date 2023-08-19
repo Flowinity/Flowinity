@@ -27,6 +27,7 @@ import { AlternatePassword } from "@app/types/auth"
 import { DefaultProfileLayout } from "@app/classes/UserV3ProfileLayout"
 import { Integration } from "@app/models/integration.model"
 import { Col } from "@troplo/sequelize/types/utils"
+import { Field, ObjectType } from "type-graphql"
 
 export interface ProfileLayout {
   layout: {
@@ -79,27 +80,32 @@ export interface ThemeEngine {
     ]
   }
 }))
+@ObjectType()
 @Table
 export class User extends Model {
+  @Field()
   @AllowNull(false)
   @Unique
   @Length({
-    msg: "Length of your username must be between 2-16 characters.",
+    msg: "Length of your username must be between 2-32 characters.",
     min: 2,
-    max: 16
+    max: 32
   })
   @Column
   username: string
 
+  @Field()
   @AllowNull(false)
   @Unique
   @IsEmail
   @Column
   email: string
 
+  @Field()
   @Column
   password: string
 
+  @Field()
   @AllowNull(false)
   @Default(false)
   @Column
@@ -113,6 +119,7 @@ export class User extends Model {
   })
   passwordResetExpiry: Date
 
+  @Field()
   @Length({
     msg: "Length of your description must be between 0-255 characters.",
     min: 0,
@@ -121,22 +128,27 @@ export class User extends Model {
   @Column
   description?: string
 
+  @Field()
   @Default(false)
   @Column
   administrator: boolean
 
+  @Field()
   @Default(true)
   @Column
   darkTheme: boolean
 
+  @Field()
   @Default(false)
   @Column
   emailVerified: boolean
 
+  @Field()
   @Default(false)
   @Column
   banned: boolean
 
+  @Field()
   @Column
   inviteId?: number
 

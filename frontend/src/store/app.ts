@@ -189,7 +189,7 @@ export const useAppStore = defineStore("app", {
       forcedWorkspaceDrawer: false,
       loading: true,
       componentLoading: false,
-      apiVersion: "v3",
+      apiVersion: "v4",
       title: "",
       notesSaving: false,
       themeEditor: false,
@@ -714,7 +714,9 @@ export const useAppStore = defineStore("app", {
           //
         }
       }
-      const { data } = await axios.get("/core");
+      const { data } = await this.$apollo.query({
+        query: require("@/graphql/core.gql"),
+      }
       this.site = data;
       this.domain = "https://" + this.site.domain + "/i/";
       localStorage.setItem("coreStore", JSON.stringify(data));

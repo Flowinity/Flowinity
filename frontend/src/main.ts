@@ -29,6 +29,7 @@ import "./boot/declarations";
 import globals from "./boot/globals";
 import events from "./boot/events";
 import socket from "./boot/socket";
+import apollo from "./boot/apollo";
 
 const app = createApp({
   ...App,
@@ -115,5 +116,5 @@ if (import.meta.env.DEV) app.config.performance = true;
 globals(app);
 events();
 socket(app).then(() => {});
-
+apollo(app);
 app.mount("#tpu-app");

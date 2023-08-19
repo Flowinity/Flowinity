@@ -41,7 +41,7 @@ export class ApiSchema {
         routingControllersToSpec(
           storage,
           {
-            routePrefix: "/api/v3"
+            routePrefix: "/api/v4"
           },
           {
             components: {
@@ -130,10 +130,10 @@ export class ApiSchema {
                 tpuApiKey: []
               }
             ],
-            basePath: "/api/v3",
+            basePath: "/api/v4",
             info: {
               title: "TroploPrivateUploader API",
-              version: "3.0.0",
+              version: "4.0.0",
               description: "API documentation for TPU."
             },
             schemes: ["https"]
@@ -142,6 +142,9 @@ export class ApiSchema {
       )
         .replaceAll("api v3", "APIv3")
         .replaceAll("V 3", "V3")
+        .replaceAll("V 2", "V2")
+        .replaceAll("V 1", "V1")
+        .replaceAll("V 4", "V4")
     )
   }
 }

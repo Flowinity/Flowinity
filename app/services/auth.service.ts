@@ -7,6 +7,9 @@ import utils from "@app/lib/utils"
 import speakeasy from "@levminer/speakeasy"
 import { CacheService } from "@app/services/cache.service"
 import { Login } from "@app/types/auth"
+import { Plan } from "@app/models/plan.model"
+import { Session } from "@app/models/session.model"
+import { GraphQLError } from "graphql/error"
 
 @Service()
 export class AuthService {
@@ -148,6 +151,7 @@ export class AuthService {
     if (password.length < 8) {
       throw Errors.PASSWORD_TOO_SHORT
     }
+    console.log(await User.findAll())
     const user = await User.create({
       username,
       password: await argon2.hash(password),
@@ -156,7 +160,7 @@ export class AuthService {
       planId: config.defaultPlanId || 1
     })
     const session = await utils.createSession(user.id, "*", "session")
-    const cacheService = await Container.get(CacheService)
+    const cacheService = Container.get(CacheService)
     //await cacheService.generateChatsCache(user.id)
     cacheService.generateAutoCollectCache(user.id)
     cacheService.generateUserStatsCache(user.id)
@@ -170,5 +174,18 @@ export class AuthService {
       },
       token: session
     }
+  }
+
+  async logout(token: string) {
+    const session = await Session.findOne({
+      where: {
+        token
+      }
+    })
+    if (!session) {
+      throw new GraphQLError("Invalid token")
+    }
+    await session.destroy()
+    return true
   }
 }

@@ -60,7 +60,21 @@
         })
       }}
     </p>
-    <a class="text-gradient" href="/api/v3/docs">
+    <p>
+      {{
+        $t("settings.about.uptime", {
+          uptime: $app.site.uptime
+        })
+      }}
+    </p>
+    <p>
+      {{
+        $t("settings.about.sysUptime", {
+          uptime: $app.site.sysUptime
+        })
+      }}
+    </p>
+    <a class="text-gradient" href="/api/docs">
       {{ $t("settings.about.docs") }}
     </a>
     <br />

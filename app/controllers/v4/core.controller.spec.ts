@@ -1,11 +1,9 @@
-import { expect, test, afterAll } from "@jest/globals"
-import "../lib/init-tests"
-import { CoreService } from "@app/services/core.service"
+import { expect, test, afterAll, beforeAll } from "@jest/globals"
+import "@app/lib/init-tests"
 import { Container } from "typedi"
-import { CoreControllerV3 } from "@app/controllers/v3/core.controller"
 import { RequestAuth } from "@app/types/express"
-const coreService = Container.get(CoreService)
-const coreController = Container.get(CoreControllerV3)
+import { CoreControllerV4 } from "@app/controllers/v4/core.controller"
+const coreController = Container.get(CoreControllerV4)
 
 test("Get Experiments no auth", async () => {
   await coreController.getExperiments(null)
@@ -26,4 +24,8 @@ test("Get State", async () => {
 afterAll(async () => {
   await redis.disconnect()
   await db.close()
+})
+
+beforeAll(async () => {
+  await db.sync({ force: true })
 })

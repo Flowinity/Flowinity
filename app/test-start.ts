@@ -2,7 +2,7 @@ import path from "path"
 import { DefaultTpuConfig } from "./classes/DefaultTpuConfig"
 
 export default async function () {
-  function setEnvVariables() {
+  async function setEnvVariables() {
     global.appRoot = path.resolve(__dirname).includes("out")
       ? path.join(__dirname, "..", "app")
       : path.join(__dirname)
@@ -17,7 +17,9 @@ export default async function () {
     process.env.RAW_APP_ROOT = global.rawAppRoot
     process.env.CONFIG = JSON.stringify(global.config)
     process.env.NODE_ENV = "test"
+    await db.sync({ force: true })
+    console.log("Database synced")
   }
-  setEnvVariables()
+  await setEnvVariables()
   await import("./index")
 }

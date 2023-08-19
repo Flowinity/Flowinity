@@ -139,7 +139,11 @@ async function getSession(token: string) {
   })
 }
 
-function checkScope(requiredScope: string | string[], scope: string) {
+export function checkScope(requiredScope: string | string[], scope: string) {
+  if (scope === undefined) return true
+  if (scope === "") {
+    return false
+  }
   if (scope === "*") {
     return true
   }

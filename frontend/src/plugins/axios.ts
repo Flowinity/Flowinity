@@ -22,8 +22,8 @@ export interface AxiosRequestConfigWithAvoidance extends AxiosRequestConfig {
 
 const ax = axios.create({
   baseURL: import.meta.env.CORDOVA
-    ? `https://images.flowinity.com/api/v3`
-    : `/api/v3`,
+    ? `https://images.flowinity.com/api/v`
+    : `/api/v4`,
   withCredentials: true,
   headers: {
     Authorization: localStorage.getItem("token"),

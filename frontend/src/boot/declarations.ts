@@ -17,6 +17,7 @@ import { Axios } from "axios";
 import { User } from "@/models/user";
 import { Chat } from "@/models/chat";
 import { Collection } from "@/models/collection";
+import { ApolloClient } from "@apollo/client/core";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -37,6 +38,7 @@ declare module "@vue/runtime-core" {
     $route: RouteLocationNormalizedLoaded;
     $admin: ReturnType<typeof useAdminStore>;
     axios: Axios;
+    $apollo: ApolloClient<any>;
   }
 }
 

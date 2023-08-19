@@ -7,9 +7,6 @@
   "ignorePatterns": [
     "projects/**/*"
   ],
-  "extends": [
-    "../.eslintrc.json"
-  ],
   "rules": {
     "jsdoc/check-indentation": "off"
   },

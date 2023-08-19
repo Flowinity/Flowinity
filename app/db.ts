@@ -18,7 +18,7 @@ try {
   )
 }
 
-let sequelize: any = null
+let sequelize: Sequelize | null = null
 
 if (config) {
   sequelize = new Sequelize({

@@ -18,6 +18,7 @@ import fs from "fs"
 
 // Import Libs
 import Errors from "@app/lib/errors"
+import wellKnownOidc from "@app/lib/well-known-oidc"
 
 // Import Schemas
 import { ApiSchema } from "@app/schema"
@@ -49,11 +50,43 @@ import { SlideshowControllerV3 } from "@app/controllers/v3/slideshow.controller"
 import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
 import { InstanceControllerV3 } from "@app/controllers/v3/instance.controller"
 import { OauthControllerV3 } from "@app/controllers/v3/oauth.controller"
-import { OauthApp } from "@app/models/oauthApp.model"
-import { Provider, Configuration, ClientMetadata } from "oidc-provider"
-import OidcAdapter from "@app/lib/oidc-adapter"
-import wellKnownOidc from "@app/lib/well-known-oidc"
 import { OidcControllerV3 } from "@app/controllers/v3/oidc.controller"
+
+// Import Controllers (v4)
+import { UserControllerV4 } from "@app/controllers/v4/user.controller"
+import { AuthControllerV4 } from "@app/controllers/v4/auth.controller"
+import { CoreControllerV4 } from "@app/controllers/v4/core.controller"
+import { ChatControllerV4 } from "@app/controllers/v4/chat.controller"
+import { AutoCollectControllerV4 } from "@app/controllers/v4/autoCollect.controller"
+import { GalleryControllerV4 } from "@app/controllers/v4/gallery.controller"
+import { CollectionControllerV4 } from "@app/controllers/v4/collection.controller"
+import { AdminControllerV4 } from "@app/controllers/v4/admin.controller"
+import { FileControllerV4 } from "@app/controllers/v4/file.controller"
+import { WorkspaceControllerV4 } from "@app/controllers/v4/workspace.controller"
+import { DomainControllerV4 } from "@app/controllers/v4/domain.controller"
+import { SecurityControllerV4 } from "@app/controllers/v4/security.controller"
+import { InviteControllerV4 } from "@app/controllers/v4/invite.controller"
+import { PulseControllerV4 } from "@app/controllers/v4/pulse.controller"
+import { MediaProxyControllerV4 } from "@app/controllers/v4/mediaProxy.controller"
+import { ProviderControllerV4 } from "@app/controllers/v4/provider.controller"
+import { MailControllerV4 } from "@app/controllers/v4/mail.controller"
+import { MigrateControllerV4 } from "@app/controllers/v4/migrate.controller"
+import { SlideshowControllerV4 } from "@app/controllers/v4/slideshow.controller"
+import { InstanceControllerV4 } from "@app/controllers/v4/instance.controller"
+import { OauthControllerV4 } from "@app/controllers/v4/oauth.controller"
+import { OidcControllerV4 } from "@app/controllers/v4/oidc.controller"
+import { SetupControllerV4 } from "@app/controllers/v4/setup.controller"
+import { buildSchema } from "type-graphql"
+import { createYoga, MaskError, maskError } from "graphql-yoga"
+import { UserResolver } from "@app/controllers/graphql/user.resolver"
+import { useHive } from "@graphql-hive/client"
+import { execSync } from "child_process"
+import { AccessLevel } from "@app/enums/admin/AccessLevel"
+import { Context } from "@app/types/graphql/context"
+import { authChecker } from "@app/lib/graphql/AuthChecker"
+import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
+import { GraphQLError } from "graphql/error"
+import { CoreResolver } from "@app/controllers/graphql/core.resolver"
 
 @Service()
 @Middleware({ type: "after" })
@@ -171,7 +204,7 @@ export class Application {
     this.config()
     this.bindRoutes()
   }
-  createExpressServer(endpoint: string) {
+  createExpressServerV3(endpoint: string) {
     useExpressServer(this.app, {
       controllers: config.finishedSetup
         ? [
@@ -212,16 +245,65 @@ export class Application {
       validation: true
     })
   }
-  bindRoutes() {
+
+  createExpressServerV4(endpoint: string) {
+    useExpressServer(this.app, {
+      controllers: config.finishedSetup
+        ? [
+            UserControllerV4,
+            AuthControllerV4,
+            CoreControllerV4,
+            ...(config?.features?.communications ? [ChatControllerV4] : []),
+            ...(config?.features?.autoCollects
+              ? [AutoCollectControllerV4]
+              : []),
+            GalleryControllerV4,
+            ...(config?.features?.collections ? [CollectionControllerV4] : []),
+            AdminControllerV4,
+            FileControllerV4,
+            ...(config?.features?.workspaces ? [WorkspaceControllerV4] : []),
+            DomainControllerV4,
+            SecurityControllerV4,
+            InviteControllerV4,
+            PulseControllerV4,
+            MediaProxyControllerV4,
+            ProviderControllerV4,
+            MailControllerV4,
+            MigrateControllerV4,
+            SlideshowControllerV4,
+            ...(config?.officialInstance ? [InstanceControllerV4] : []),
+            OauthControllerV4,
+            OidcControllerV4
+          ]
+        : [SetupControllerV4, CoreControllerV4],
+      routePrefix: endpoint,
+      middlewares: [HttpErrorHandler],
+      defaultErrorHandler: false,
+      classTransformer: false,
+      defaults: {
+        undefinedResultCode: 204,
+        nullResultCode: 404
+      },
+      validation: true
+    })
+  }
+
+  async bindRoutes() {
+    process.env.TPU_COMMIT_HASH = execSync("git rev-parse --short HEAD")
+      .toString()
+      .trim()
     this.app.use((req, res, next: NextFunction): void => {
-      res.setHeader("X-Powered-By", "TroploPrivateUploader/3.0.0")
+      res.setHeader("X-Powered-By", "TroploPrivateUploader/4.0.0")
       next()
     })
 
     useContainer(Container)
 
-    this.createExpressServer("/api/v3")
-    this.createExpressServer("/api/v2")
+    this.createExpressServerV3("/api/v3")
+    this.createExpressServerV3("/api/v2")
+
+    // All new changes will be made to v4
+    this.createExpressServerV4("/api/v4")
 
     // For clients that still use /api/v1, the schema is still the same for upload API, so we'll use v3
     useExpressServer(this.app, {
@@ -248,7 +330,7 @@ export class Application {
       res.json(wellKnownOidc())
     })
     this.app.use("/api/docs", async (req, res): Promise<void> => {
-      res.redirect("/api/v3/docs")
+      res.redirect("/api/v4/docs")
     })
     this.app.use(
       "/api/v2/docs",
@@ -258,7 +340,7 @@ export class Application {
 
     if (config.finishedSetup) {
       const spec = ApiSchema.generateSchema()
-      this.app.use("/api/v3/docs", swaggerUi.serve, swaggerUi.setup(spec))
+      this.app.use("/api/v4/docs", swaggerUi.serve, swaggerUi.setup(spec))
     }
 
     useExpressServer(this.app, {
@@ -276,6 +358,73 @@ export class Application {
       validation: true
     })
 
+    const schema = await buildSchema({
+      resolvers: [UserResolver, AuthResolver, CoreResolver],
+      container: Container,
+      authChecker: authChecker
+    })
+    const gqlPlugins = []
+    if (config.hive?.enabled) {
+      gqlPlugins.push(
+        useHive({
+          enabled: true,
+          token: config.hive.token,
+          reporting: {
+            author: "PrivateUploader",
+            commit: process.env.TPU_COMMIT_HASH || "unknown"
+          },
+          // Collects and send usage reporting based on executed operations
+          usage: true,
+          selfHosting: {
+            graphqlEndpoint: config.hive.graphqlEndpoint,
+            usageEndpoint: config.hive.usageEndpoint,
+            applicationUrl: config.hive.applicationUrl
+          }
+        })
+      )
+    }
+    this.app.use(
+      ["/api/v4/graphql", "/graphql"],
+      createYoga({
+        schema,
+        plugins: gqlPlugins,
+        maskedErrors: {
+          maskError(error: any, message: any, isDev: any): Error {
+            console.error(error)
+            if (
+              !message.toLowerCase().includes("sequelize") ||
+              error instanceof GraphQLError
+            ) {
+              return error
+            }
+
+            return maskError(error, message, isDev)
+          }
+        },
+        async context(ctx) {
+          const userResolver = Container.get(UserResolver)
+          const session = await userResolver.findByToken(
+            ctx.request.headers.get("Authorization")
+          )
+          return {
+            user: session?.user,
+            client: {
+              version: ctx.request.headers.get("X-TPU-Client-Version"),
+              name: ctx.request.headers.get("X-TPU-Client")
+            },
+            scopes: session?.scopes || "",
+            role: session
+              ? session?.user?.administrator
+                ? AccessLevel.ADMIN
+                : session?.user?.moderator
+                ? AccessLevel.MODERATOR
+                : AccessLevel.USER
+              : AccessLevel.NO_ACCESS,
+            token: ctx.request.headers.get("Authorization")
+          } as Context
+        }
+      })
+    )
     this.app.use(express.static(path.join(global.appRoot, "../frontend_build")))
     this.app.get("*", function (req, res, next): void {
       if (req.url.startsWith("/api/")) return next()
@@ -318,23 +467,25 @@ export class Application {
 
   private async onServerStart() {
     if (config.finishedSetup) {
-      await User.update(
-        {
-          status: "offline"
-        },
-        {
-          where: {
-            status: {
-              [Op.not]: "offline"
+      try {
+        await User.update(
+          {
+            status: "offline"
+          },
+          {
+            where: {
+              status: {
+                [Op.not]: "offline"
+              }
             }
           }
+        )
+        // delete all Redis keys containing user:*:platforms to reset statuses
+        const keys = await redis.keys("user:*:platforms")
+        for (const key of keys) {
+          await redis.del(key)
         }
-      )
-      // delete all Redis keys containing user:*:platforms to reset statuses
-      const keys = await redis.keys("user:*:platforms")
-      for (const key of keys) {
-        await redis.del(key)
-      }
+      } catch {}
     }
   }
 }
