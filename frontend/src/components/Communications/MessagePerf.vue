@@ -67,9 +67,7 @@
           <a
             :id="'message-author-' + message.id"
             class="mr-1 pointer underline-on-hover"
-            :style="`color: ${
-              $user.disableProfileColors ? 'unset' : user?.nameColor ?? 'unset'
-            }`"
+            :style="`color: ${getColor}`"
             @click.prevent="
               $emit('authorClick', {
                 user: message.user,
@@ -206,6 +204,14 @@ export default defineComponent({
         ?.users.find(
           (user: ChatAssociation) => user.userId === this.message.userId
         )?.user;
+    },
+    getColor() {
+      const color = this.$user.disableProfileColors
+        ? "unset"
+        : this.message.userId === this.$user.user?.id
+        ? this.$user.changes.nameColor
+        : this.user?.nameColor ?? "unset";
+      return color;
     }
   },
   methods: {

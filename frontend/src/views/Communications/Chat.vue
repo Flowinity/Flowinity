@@ -543,7 +543,8 @@ export default defineComponent({
         replyId: replyId,
         reply: this.replying,
         readReceipts: [],
-        pinned: false
+        pinned: false,
+        userId: this.$user.user?.id
       });
       this.replyId = undefined;
       this.files = [];
