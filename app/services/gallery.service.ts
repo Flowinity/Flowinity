@@ -15,6 +15,7 @@ import * as fs from "fs"
 import Errors from "@app/lib/errors"
 import { Plan } from "@app/models/plan.model"
 import { CacheService } from "@app/services/cache.service"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @Service()
 export class GalleryService {
@@ -143,7 +144,7 @@ export class GalleryService {
     )
     const url =
       "https://" + (await utils.getUserDomain(userId)) + upload.attachment
-    await queue.queue?.add(upload.id, upload)
+    await queue.queue?.add(upload.id.toString(), upload)
     try {
       if (precache && config.discord?.token && config.discord.webhook) {
         if (upload.type === "image" || upload.type === "video") {
@@ -273,7 +274,7 @@ export class GalleryService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar"]
+          attributes: partialUserBase
         }
       ]
     } else if (type === "autoCollect") {
@@ -319,7 +320,7 @@ export class GalleryService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username"]
+          attributes: partialUserBase
         }
       ]
     }
@@ -333,7 +334,7 @@ export class GalleryService {
           {
             model: User,
             as: "user",
-            attributes: ["id", "username"]
+            attributes: partialUserBase
           },
           {
             model: Upload,

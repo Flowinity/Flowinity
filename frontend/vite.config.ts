@@ -2,6 +2,7 @@
 import vue from "@vitejs/plugin-vue";
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 import { warmup } from "vite-plugin-warmup";
+import graphql from "@rollup/plugin-graphql";
 
 // Utilities
 import { defineConfig } from "vite";
@@ -29,6 +30,7 @@ const config = {
     emptyOutDir: true
   },
   plugins: [
+    graphql(),
     warmup({
       // warm up the files and its imported JS modules recursively
       clientFiles: ["./src/**/*.ts", "./src/**/*.vue"]

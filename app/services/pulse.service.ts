@@ -13,6 +13,7 @@ import { LegacyUser } from "@app/models/legacyUser.model"
 import { Insight } from "@app/models/insight.model"
 import dayjsInt from "dayjs"
 import cron from "node-cron"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 export class HoursOfDay {
   hours: { [key: string]: number } = {
@@ -829,12 +830,12 @@ export class PulseService {
                 {
                   model: User,
                   as: "tpuUser",
-                  attributes: ["id", "username", "avatar"]
+                  attributes: partialUserBase
                 },
                 {
                   model: LegacyUser,
                   as: "legacyUser",
-                  attributes: ["id", "username", "avatar"]
+                  attributes: partialUserBase
                 }
               ]
             }

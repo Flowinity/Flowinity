@@ -17,3 +17,12 @@ export class PartialUserBase {
   })
   avatar: string
 }
+
+export const partialUserBase = [
+  "username",
+  "id",
+  "createdAt",
+  "administrator",
+  "moderator",
+  "avatar"
+]

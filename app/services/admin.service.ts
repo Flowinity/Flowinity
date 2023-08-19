@@ -31,6 +31,7 @@ import utils from "@app/lib/utils"
 import { OauthUser } from "@app/models/oauthUser.model"
 import { Session } from "@app/models/session.model"
 import { OauthSave } from "@app/models/oauthSave.model"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 const inviteParams = {
   include: [
@@ -68,7 +69,7 @@ export class AdminService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          attributes: partialUserBase
         }
       ],
       order: [["createdAt", "DESC"]]
@@ -494,7 +495,7 @@ export class AdminService {
         {
           model: User,
           as: "users",
-          attributes: ["id", "username", "avatar"]
+          attributes: partialUserBase
         }
       ]
     })
@@ -543,7 +544,7 @@ export class AdminService {
   // AutoCollect
   async getAutoCollectRules() {
     return await User.findAll({
-      attributes: ["id", "username", "avatar"],
+      attributes: partialUserBase,
       include: [
         {
           model: AutoCollectRule,
@@ -579,12 +580,12 @@ export class AdminService {
             {
               model: User,
               as: "tpuUser",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             },
             {
               model: LegacyUser,
               as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+              attributes: partialUserBase
             }
           ]
         }
@@ -685,6 +686,7 @@ export class AdminService {
         if (users.length === users2.length) {
           if (users.every((user) => users2.includes(user))) {
             // if the users or users2 contains undefined, skip
+            //@ts-ignore
             if (users.includes(undefined) || users2.includes(undefined))
               continue
             if (users.length !== 2 || users2.length !== 2) continue
@@ -727,6 +729,7 @@ export class AdminService {
     for (const chat of chats) {
       if (chat.intent?.length) continue
       const users = chat.users.map((user) => user.tpuUser?.id)
+      //@ts-ignore
       if (users.length !== 2 || users.includes(undefined)) continue
       users.sort((a, b) => a - b)
       console.log(`setting intent for ${chat.id} to ${users}`)
@@ -811,7 +814,7 @@ export class AdminService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          attributes: partialUserBase
         }
       ],
       order: [["createdAt", "DESC"]]
@@ -851,7 +854,7 @@ export class AdminService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          attributes: partialUserBase
         },
         {
           model: OauthUser,
@@ -860,7 +863,7 @@ export class AdminService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             }
           ]
         }

@@ -14,6 +14,7 @@ import { Chat } from "@app/models/chat.model"
 import { Message } from "@app/models/message.model"
 import cron from "node-cron"
 import { generateClientSatisfies } from "@app/lib/clientSatisfies"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @Service()
 export class CacheService {
@@ -276,14 +277,14 @@ export class CacheService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username"]
+              attributes: partialUserBase
             }
           ]
         },
         {
           model: User,
           as: "user",
-          attributes: ["id", "username"]
+          attributes: partialUserBase
         },
         {
           model: CollectionItem,
@@ -333,14 +334,14 @@ export class CacheService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username"]
+              attributes: partialUserBase
             }
           ]
         },
         {
           model: User,
           as: "user",
-          attributes: ["id", "username"]
+          attributes: partialUserBase
         },
         {
           model: CollectionItem,

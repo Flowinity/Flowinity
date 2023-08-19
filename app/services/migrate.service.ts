@@ -8,6 +8,7 @@ import { MessageAttachment } from "@app/models/messageAttachment.model"
 import { Chat } from "@app/models/chat.model"
 import { CacheService } from "@app/services/cache.service"
 import { User } from "@app/models/user.model"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @Service()
 export class MigrateService {
@@ -131,7 +132,7 @@ export class MigrateService {
             {
               model: User,
               as: "tpuUser",
-              attributes: ["id", "username", "avatar"]
+              attributes: partialUserBase
             }
           ]
         }

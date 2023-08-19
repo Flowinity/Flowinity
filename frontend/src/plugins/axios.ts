@@ -70,23 +70,27 @@ ax.interceptors.response.use(
         console.warn(`[TPU/HTTP] Maintenance being conducted.`);
         return Promise.reject(e);
       }
-      if (!e.response.config.headers.noToast) {
+      /* if (!e.response.config.headers.noToast) {
         for (const error of e.response.data.errors) {
           toast.error(error.message);
         }
-      }
+      }*/
     } else {
-      if (!e?.response?.config?.headers?.noToast) {
+      /*if (!e?.response?.config?.headers?.noToast) {
         toast.error("An unknown error occurred.");
-      }
+      }*/
     }
-    return Promise.reject(e);
   }
 );
 
 ax.interceptors.request.use((config) => {
   config.headers.Authorization = localStorage.getItem("token");
   return config;
+});
+
+// block all requests if the user is not logged in
+ax.interceptors.request.use((config) => {
+  return Promise.reject(config);
 });
 
 export default ax;

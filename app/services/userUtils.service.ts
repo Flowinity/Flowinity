@@ -676,7 +676,7 @@ export class UserUtilsService {
       delete body.username
     }
     if (body.storedStatus && body.storedStatus !== user.storedStatus) {
-      const sockets = await socket.in(user.id).allSockets()
+      const sockets = await socket.in(user.id.toString()).allSockets()
       if (sockets.size !== 0) {
         const status =
           body.storedStatus === "invisible" ? "offline" : body.storedStatus

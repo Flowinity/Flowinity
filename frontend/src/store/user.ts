@@ -13,6 +13,7 @@ import { useMailStore } from "@/store/mail";
 import vuetify from "@/plugins/vuetify";
 import i18n from "@/plugins/i18n";
 import functions from "@/plugins/functions";
+import { GetUserQuery } from "@/graphql/query/user/user.gql";
 
 export interface UserState {
   user: User | null;
@@ -99,16 +100,12 @@ export const useUserStore = defineStore("user", {
             "--gradient-offset",
             `${themeData.gradientOffset}%`
           );
-          vuetify.theme.themes.value.dark = themeData.theme.dark;
-          vuetify.theme.themes.value.light = themeData.theme.light;
-          vuetify.theme.themes.value.amoled = themeData.theme.amoled;
-          vuetify.defaults.value = {
-            VAutoComplete: {
-              variant: "underlined",
-              color: "primary"
-            },
-            ...themeData.defaults
-          };
+          vuetify.theme.themes.value.dark.colors = themeData.theme.dark.colors;
+          vuetify.theme.themes.value.light.colors =
+            themeData.theme.light.colors;
+          vuetify.theme.themes.value.amoled.colors =
+            themeData.theme.amoled.colors;
+
           app.fluidGradient = themeData.fluidGradient;
           if (themeData.fluidGradient) {
             document.body.classList.add("fluid-gradient");
@@ -302,18 +299,18 @@ export const useUserStore = defineStore("user", {
           //
         }
       }
-      const { data } = await axios.get("/user", {
-        headers: {
-          noToast: true
-        }
+      const {
+        data: { currentUser }
+      } = await this.$apollo.query({
+        query: GetUserQuery
       });
-      this.user = data;
+      this.user = currentUser;
       this.setChanges(<User>this.user);
       if (this.user?.themeEngine?.defaults?.prev) {
         delete this.user.themeEngine.defaults?.prev;
       }
       this.applyTheme();
-      localStorage.setItem("userStore", JSON.stringify(data));
+      localStorage.setItem("userStore", JSON.stringify(currentUser));
       this.runPostTasks();
     },
     applyCSS(emergency: boolean = false) {

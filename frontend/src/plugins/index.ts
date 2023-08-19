@@ -15,5 +15,9 @@ import type { App } from "vue";
 
 export function registerPlugins(app: App) {
   loadFonts();
+  pinia.use(({ store }) => {
+    store.$apollo = app.config.globalProperties.$apollo;
+    store.$apolloProvider = app.config.globalProperties.$apolloProvider;
+  });
   app.use(pinia).use(vuetify).use(router);
 }

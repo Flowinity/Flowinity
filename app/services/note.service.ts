@@ -10,6 +10,7 @@ import { User } from "@app/models/user.model"
 import { Friend } from "@app/models/friend.model"
 import { WorkspacesDownloadService } from "@app/services/workspaces/download.service"
 import { BadRequestError } from "routing-controllers"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 //create class of NoteData
 export class NoteField {
@@ -243,7 +244,7 @@ export class NoteService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             }
           ]
         },
@@ -261,7 +262,7 @@ export class NoteService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          attributes: partialUserBase
         }
       ]
     })
@@ -286,7 +287,7 @@ export class NoteService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             }
           ]
         },
@@ -301,14 +302,14 @@ export class NoteService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             }
           ]
         },
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          attributes: partialUserBase
         }
       ]
     })
@@ -338,7 +339,7 @@ export class NoteService {
           {
             model: User,
             as: "user",
-            attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+            attributes: partialUserBase
           }
         ]
       },
@@ -356,7 +357,7 @@ export class NoteService {
       {
         model: User,
         as: "user",
-        attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+        attributes: partialUserBase
       }
     ]
     const workspace = await Workspace.findOne({

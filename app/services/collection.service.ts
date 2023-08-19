@@ -11,6 +11,7 @@ import { Friend } from "@app/models/friend.model"
 import { isNumeric } from "@app/lib/isNumeric"
 import upload from "@app/lib/upload"
 import { Star } from "@app/models/star.model"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @Service()
 export class CollectionService {
@@ -31,7 +32,7 @@ export class CollectionService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username"]
+          attributes: partialUserBase
         },
         {
           model: CollectionUser,
@@ -40,7 +41,7 @@ export class CollectionService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username"]
+              attributes: partialUserBase
             }
           ]
         },
@@ -81,7 +82,7 @@ export class CollectionService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username"]
+          attributes: partialUserBase
         },
         {
           model: CollectionUser,
@@ -90,7 +91,7 @@ export class CollectionService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username"]
+              attributes: partialUserBase
             }
           ]
         },
@@ -119,14 +120,14 @@ export class CollectionService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username"]
+              attributes: partialUserBase
             }
           ]
         },
         {
           model: User,
           as: "user",
-          attributes: ["id", "username"]
+          attributes: partialUserBase
         },
         {
           model: CollectionUser,
@@ -153,18 +154,26 @@ export class CollectionService {
       ]
     })
     for (let i = 0; i < collections.length; i++) {
-      collections[i].dataValues.items = await CollectionItem.count({
+      const count = await CollectionItem.count({
         where: {
           collectionId: collections[i].id
         }
       })
+      // GraphQL
+      collections[i].dataValues.itemCount = count
+      // APIv3
+      collections[i].dataValues.items = count
     }
     for (let i = 0; i < collectionShared.length; i++) {
-      collectionShared[i].dataValues.items = await CollectionItem.count({
+      const count = await CollectionItem.count({
         where: {
           collectionId: collectionShared[i].id
         }
       })
+      // GraphQL
+      collectionShared[i].dataValues.itemCount = count
+      // APIv3
+      collectionShared[i].dataValues.items = count
     }
     return [
       ...collections.map((collection) => ({
@@ -241,7 +250,7 @@ export class CollectionService {
 
   async getCollectionOrShare(
     collectionId: number | string,
-    userId: number | null
+    userId?: number | null
   ) {
     if (isNumeric(collectionId)) collectionId = parseInt(<string>collectionId)
     if (!userId) {
@@ -318,7 +327,7 @@ export class CollectionService {
           {
             model: User,
             as: "user",
-            attributes: ["id", "username"]
+            attributes: partialUserBase
           }
         ]
       })

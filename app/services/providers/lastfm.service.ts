@@ -12,7 +12,7 @@ import { Integration } from "@app/models/integration.model"
 export class LastfmService {
   constructor() {}
 
-  async link(userId: string, token: string) {
+  async link(userId: number, token: string) {
     if (!config.providers.lastfm.key || !config.providers.lastfm.secret)
       throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
 
@@ -50,7 +50,7 @@ export class LastfmService {
     }
   }
 
-  async unlink(userId: string) {
+  async unlink(userId: number) {
     const existing = await Integration.findOne({
       where: {
         userId,

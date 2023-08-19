@@ -19,6 +19,7 @@ import { Domain } from "@app/models/domain.model"
 // Import Services
 import { CacheService } from "@app/services/cache.service"
 import path from "path"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 async function generateAPIKey(
   type: "session" | "api" | "email" | "oauth" | "oidc"
@@ -63,7 +64,7 @@ async function getCollection(id: number, userId: number): Promise<Collection> {
       {
         model: User,
         as: "user",
-        attributes: ["id", "username"]
+        attributes: partialUserBase
       },
       {
         model: CollectionUser,
@@ -72,7 +73,7 @@ async function getCollection(id: number, userId: number): Promise<Collection> {
           {
             model: User,
             as: "user",
-            attributes: ["id", "username"]
+            attributes: partialUserBase
           }
         ]
       },
@@ -103,7 +104,7 @@ async function getCollection(id: number, userId: number): Promise<Collection> {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username"]
+          attributes: partialUserBase
         },
         {
           model: CollectionUser,
@@ -112,7 +113,7 @@ async function getCollection(id: number, userId: number): Promise<Collection> {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username"]
+              attributes: partialUserBase
             }
           ]
         },

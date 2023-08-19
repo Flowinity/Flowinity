@@ -3,6 +3,7 @@ import { Service } from "typedi"
 import { Domain } from "@app/models/domain.model"
 import { User } from "@app/models/user.model"
 import { Sequelize } from "sequelize"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @Service()
 export class DomainService {
@@ -17,7 +18,7 @@ export class DomainService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar"]
+          attributes: partialUserBase
         },
         {
           model: User,

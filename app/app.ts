@@ -87,6 +87,7 @@ import { authChecker } from "@app/lib/graphql/AuthChecker"
 import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
 import { GraphQLError } from "graphql/error"
 import { CoreResolver } from "@app/controllers/graphql/core.resolver"
+import { CollectionResolver } from "@app/controllers/graphql/collection.resolver"
 
 @Service()
 @Middleware({ type: "after" })
@@ -359,7 +360,7 @@ export class Application {
     })
 
     const schema = await buildSchema({
-      resolvers: [UserResolver, AuthResolver, CoreResolver],
+      resolvers: [UserResolver, AuthResolver, CoreResolver, CollectionResolver],
       container: Container,
       authChecker: authChecker
     })

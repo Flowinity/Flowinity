@@ -113,8 +113,8 @@ registerPlugins(app);
 if (import.meta.env.DEV) app.config.performance = true;
 
 // Register boot plugins
+apollo(app);
 globals(app);
 events();
 socket(app).then(() => {});
-apollo(app);
 app.mount("#tpu-app");

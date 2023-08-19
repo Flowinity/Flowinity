@@ -18,4 +18,5 @@ export interface Collection {
     write: boolean;
     read: boolean;
   };
+  itemCount: number;
 }

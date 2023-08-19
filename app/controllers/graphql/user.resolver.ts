@@ -3,6 +3,7 @@ import {
   Authorized,
   Ctx,
   FieldResolver,
+  Info,
   Int,
   Mutation,
   Query,
@@ -22,6 +23,10 @@ import { Integration } from "@app/models/integration.model"
 import { Badge } from "@app/models/badge.model"
 import { Includeable } from "sequelize"
 import { Context } from "@app/types/graphql/context"
+import { InfoParamMetadata } from "type-graphql/dist/metadata/definitions"
+import { GraphQLResolveInfo } from "graphql/type"
+import { Notification } from "@app/models/notification.model"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @Resolver(User)
 @Service()
@@ -63,23 +68,28 @@ export class UserResolver {
       {
         model: Badge,
         as: "badges"
+      },
+      {
+        model: Notification,
+        as: "notifications",
+        limit: 15,
+        order: [["createdAt", "DESC"]]
       }
     ]
   }
 
   @Authorized("user.view")
   @Query(() => User)
-  async getUser(@Ctx() ctx: Context) {
+  async currentUser(@Ctx() ctx: Context, @Info() info: GraphQLResolveInfo) {
     return await this.findByPk(ctx.user!.id)
   }
 
   async findByPk(id: number) {
     return await User.findByPk(id, {
       include: this.userIncludes,
-      order: [
-        [{ model: Badge, as: "badges" }, "priority", "DESC"],
-        [{ model: Badge, as: "badges" }, "id", "ASC"]
-      ]
+      attributes: {
+        include: ["alternatePasswords", "passwordResetEnabled"]
+      }
     })
   }
 
@@ -96,7 +106,7 @@ export class UserResolver {
           model: User,
           as: "user",
           required: true,
-          attributes: ["id", "username", "administrator", "moderator"]
+          attributes: partialUserBase
         }
       ]
     })

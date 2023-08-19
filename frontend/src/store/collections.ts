@@ -1,7 +1,7 @@
 // Utilities
 import { defineStore } from "pinia";
-import axios from "@/plugins/axios";
 import { CollectionCache } from "@/types/collection";
+import { UserCollectionsQuery } from "@/graphql/query/collections/getUserCollections.gql";
 
 export interface CollectionsState {
   items: CollectionCache[];
@@ -22,12 +22,12 @@ export const useCollectionsStore = defineStore("collections", {
   },
   actions: {
     async init() {
-      const { data } = await axios.get("/collections", {
-        headers: {
-          noToast: true
-        }
+      const {
+        data: { userCollections }
+      } = await this.$apollo.query({
+        query: UserCollectionsQuery
       });
-      this.items = data;
+      this.items = userCollections;
     }
   }
 });

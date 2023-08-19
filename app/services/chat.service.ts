@@ -12,6 +12,7 @@ import { Op } from "sequelize"
 import paginate from "jw-paginate"
 import axios from "axios"
 import { ClientSatisfies } from "@app/lib/clientSatisfies"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -23,12 +24,12 @@ class MessageIncludes {
           {
             model: User,
             as: "tpuUser",
-            attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+            attributes: partialUserBase
           },
           {
             model: LegacyUser,
             as: "legacyUser",
-            attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+            attributes: partialUserBase
           }
         ]
       },
@@ -40,24 +41,24 @@ class MessageIncludes {
           {
             model: User,
             as: "tpuUser",
-            attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+            attributes: partialUserBase
           },
           {
             model: LegacyUser,
             as: "legacyUser",
-            attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+            attributes: partialUserBase
           }
         ]
       },
       {
         model: User,
         as: "tpuUser",
-        attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+        attributes: partialUserBase
       },
       {
         model: LegacyUser,
         as: "legacyUser",
-        attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+        attributes: partialUserBase
       }
     ]
   }
@@ -69,12 +70,12 @@ export class ChatService {
     {
       model: User,
       as: "tpuUser",
-      attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+      attributes: partialUserBase
     },
     {
       model: LegacyUser,
       as: "legacyUser",
-      attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+      attributes: partialUserBase
     }
   ]
   private chatIncludes = [
@@ -85,12 +86,12 @@ export class ChatService {
         {
           model: User,
           as: "tpuUser",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          attributes: partialUserBase
         },
         {
           model: LegacyUser,
           as: "legacyUser",
-          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+          attributes: partialUserBase
         }
       ],
       attributes: [
@@ -764,12 +765,12 @@ export class ChatService {
             {
               model: User,
               as: "tpuUser",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             },
             {
               model: LegacyUser,
               as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+              attributes: partialUserBase
             }
           ],
           attributes: [
@@ -1042,12 +1043,12 @@ export class ChatService {
             {
               model: User,
               as: "tpuUser",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             },
             {
               model: LegacyUser,
               as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+              attributes: partialUserBase
             }
           ]
         }
@@ -1187,7 +1188,7 @@ export class ChatService {
             {
               model: LegacyUser,
               as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+              attributes: partialUserBase
             }
           ]
         }

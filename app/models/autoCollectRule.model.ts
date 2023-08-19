@@ -8,23 +8,39 @@ import {
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
+import { Field, ObjectType } from "type-graphql"
+import { AutoCollectParentRule } from "@app/classes/graphql/autoCollects/rules"
 
+@ObjectType()
 @Table
 export class AutoCollectRule extends Model {
+  @Field(() => Number)
+  @Column({
+    primaryKey: true,
+    autoIncrement: true,
+    type: DataType.INTEGER
+  })
+  id: number
+
+  @Field()
   @Column
   name: string
 
+  @Field()
   @Default(true)
   @Column
   enabled: boolean
 
+  @Field()
   @Column
   collectionId: number
 
+  @Field()
   @Default(true)
   @Column
   requireApproval: boolean
 
+  @Field(() => [AutoCollectParentRule])
   @Default([])
   @Column({
     type: DataType.JSON

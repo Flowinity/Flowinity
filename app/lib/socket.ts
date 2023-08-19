@@ -66,7 +66,7 @@ export default {
       })
 
       if (user && socket.user.id) {
-        socket.join(user.id)
+        socket.join(user.id.toString())
         const platform = socket.handshake.query.platform || "web"
         const device = {
           platform: platform,

@@ -15,6 +15,7 @@ import { i18n } from "@/plugins/i18n";
 import { useRoute } from "vue-router";
 import { SidebarItem } from "@/types/sidebar";
 import { Announcement } from "@/models/announcement";
+import { CoreStateQuery } from "@/graphql/query/core/state.gql";
 
 export interface AppState {
   quickAction: number;
@@ -714,19 +715,25 @@ export const useAppStore = defineStore("app", {
           //
         }
       }
-      const { data } = await this.$apollo.query({
-        query: require("@/graphql/core.gql"),
-      }
-      this.site = data;
+      const {
+        data: { coreState }
+      } = await this.$apollo.query({
+        query: CoreStateQuery
+      });
+      this.site = coreState;
       this.domain = "https://" + this.site.domain + "/i/";
-      localStorage.setItem("coreStore", JSON.stringify(data));
+      localStorage.setItem("coreStore", JSON.stringify(coreState));
       this.loading = false;
     },
     async refresh() {
-      const { data } = await axios.get("/core");
-      this.site = data;
+      const {
+        data: { coreState }
+      } = await this.$apollo.query({
+        query: CoreStateQuery
+      });
+      this.site = coreState;
       this.domain = "https://" + this.site.domain + "/i/";
-      localStorage.setItem("coreStore", JSON.stringify(data));
+      localStorage.setItem("coreStore", JSON.stringify(coreState));
     },
     async upload() {
       try {
