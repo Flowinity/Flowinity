@@ -2,7 +2,7 @@ import { Service } from "typedi"
 import { Upload } from "@app/models/upload.model"
 import paginate from "jw-paginate"
 import { Collection } from "@app/models/collection.model"
-import Sequelize, { Op } from "sequelize"
+import Sequelize, { Includeable, Op } from "sequelize"
 import utils from "@app/lib/utils"
 import { User } from "@app/models/user.model"
 import sequelize from "@app/db"
@@ -16,6 +16,15 @@ import Errors from "@app/lib/errors"
 import { Plan } from "@app/models/plan.model"
 import { CacheService } from "@app/services/cache.service"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import {
+  Filter,
+  GalleryInput,
+  Type
+} from "@app/classes/graphql/gallery/galleryInput"
+import {
+  PagerResponse,
+  PaginatedGalleryResponse
+} from "@app/classes/graphql/gallery/galleryResponse"
 
 @Service()
 export class GalleryService {
@@ -159,6 +168,112 @@ export class GalleryService {
     return {
       upload: await this.getAttachment(upload.attachment, userId),
       url
+    }
+  }
+
+  async getGalleryV4(
+    id: number,
+    input: GalleryInput,
+    limit: number = 12,
+    excludedCollections: number[] | null
+  ): Promise<PaginatedGalleryResponse> {
+    let sortParams: Sequelize.OrderItem = [
+      input.sort || "createdAt",
+      input.order || "DESC"
+    ]
+    const offset = input.page * input.limit - input.limit || 0
+    const allowed = [
+      Filter.IMAGES,
+      Filter.VIDEOS,
+      Filter.TEXT,
+      Filter.OTHER,
+      Filter.AUDIO,
+      Filter.PASTE
+    ]
+    const type = input.filters?.filter((f) => allowed.includes(f))?.length
+      ? {
+          [Op.in]: input.filters?.filter((f) => allowed.includes(f))
+        }
+      : undefined
+    let base: {
+      [key: string]: any
+    } = {
+      deletable: input.filters?.includes(Filter.INCLUDE_DELETABLE)
+        ? undefined
+        : true,
+      attachment: input.filters?.includes(Filter.GIFS)
+        ? { [Op.like]: "%.gif" }
+        : undefined,
+      type,
+      id:
+        input.filters?.includes(Filter.NO_COLLECTION) && excludedCollections
+          ? {
+              [Op.notIn]: sequelize.literal(
+                `(SELECT attachmentId FROM collectionItems WHERE collectionId NOT IN (${excludedCollections.join(
+                  ","
+                )}))`
+              )
+            }
+          : undefined,
+      userId: input.type !== Type.COLLECTION ? id : undefined,
+      [Op.or]: [
+        {
+          textMetadata: Filter.INCLUDE_METADATA
+            ? { [Op.like]: "%" + input.search + "%" }
+            : undefined
+        },
+        {
+          name: { [Op.like]: "%" + input.search + "%" }
+        },
+        { attachment: { [Op.like]: "%" + input.search + "%" } }
+      ]
+    }
+    let include: Includeable[] = []
+    switch (input.type) {
+      case Type.COLLECTION:
+        include = [
+          {
+            model: CollectionItem,
+            as: "item",
+            required: true,
+            where: {
+              collectionId: id
+            }
+          }
+        ]
+        break
+      case Type.STARRED:
+        include = [
+          {
+            model: Star,
+            as: "starred",
+            required: true,
+            where: {
+              userId: id
+            }
+          }
+        ]
+    }
+    // delete undefined keys
+    Object.keys(base).forEach(
+      (key) => base[key] === undefined && delete base[key]
+    )
+    const uploads = await Upload.findAll({
+      where: base,
+      include,
+      limit: limit || 12,
+      offset,
+      order: [sortParams]
+    })
+    const count = await Upload.count({
+      where: base,
+      include,
+      distinct: true
+    })
+    const pager = paginate(count || uploads.length, input.page, input.limit)
+    return {
+      items: uploads,
+      pager
     }
   }
 

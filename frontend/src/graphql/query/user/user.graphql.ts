@@ -6,7 +6,6 @@ GetUserQuery = gql`
     currentUser {
       username
       email
-      passwordResetEnabled
       description
       administrator
       darkTheme

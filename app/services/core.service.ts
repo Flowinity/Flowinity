@@ -22,6 +22,7 @@ import { Report } from "@app/models/report.model"
 import { WeatherResponse } from "@app/interfaces/weather"
 import { State, Stats } from "@app/types/v4/core"
 import { CoreState } from "@app/classes/graphql/core/core"
+import { ExperimentType } from "@app/classes/graphql/core/experiments"
 
 let city: Reader<CityResponse> | undefined
 
@@ -324,7 +325,31 @@ export class CoreService {
     } as Record<string, boolean>
   }
 
-  getExperiments(dev: boolean = false, gold: boolean = false): object {
+  async getUserExperimentsV4(
+    userId: number,
+    dev: boolean = false,
+    gold: boolean = false
+  ): Promise<ExperimentType[]> {
+    const overrides = await Experiment.findAll({
+      where: {
+        userId
+      }
+    })
+    const experiments = this.getExperimentsV4(dev, gold)
+    return [
+      ...experiments.map((experiment) => ({
+        ...experiment,
+        value:
+          overrides.find((override) => override.key === experiment.id)
+            ?.dataValues?.value === "true" || experiment.value
+      }))
+    ]
+  }
+
+  getExperiments(
+    dev: boolean = false,
+    gold: boolean = false
+  ): Record<string, any> {
     const experiments = {
       LEGACY_MOBILE_NAV: false,
       OFFICIAL_INSTANCE: config?.officialInstance || false,
@@ -589,6 +614,23 @@ export class CoreService {
       }
       return experiments
     }
+  }
+
+  getExperimentsV4(
+    dev: boolean = false,
+    gold: boolean = false
+  ): ExperimentType[] {
+    const experiments = this.getExperiments(dev, gold)
+    // remove meta from object.entries
+    return Object.entries(experiments)
+      .filter((experiment) => {
+        return experiment[0] !== "meta"
+      })
+      .map(([key, value]) => ({
+        id: key,
+        value,
+        ...experiments.meta[key]
+      }))
   }
 
   async checkExperiment(

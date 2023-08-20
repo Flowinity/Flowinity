@@ -1,7 +1,15 @@
 <template>
   <v-container>
     <GalleryNavigation
-      :supports="supports || { filter: true, metadata: true, search: true, upload: true, sort: true }"
+      :supports="
+        supports || {
+          filter: true,
+          metadata: true,
+          search: true,
+          upload: true,
+          sort: true
+        }
+      "
       @refreshGallery="getGallery()"
       @update:show="show = $event"
       @update:search="
@@ -18,6 +26,10 @@
       "
       @update:sort="
         show.sort = $event;
+        page = 1;
+      "
+      @update:order="
+        show.order = $event;
         page = 1;
       "
     ></GalleryNavigation>
@@ -58,6 +70,14 @@ import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import { Upload } from "@/models/upload";
 import { CollectionCache } from "@/types/collection";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
+import { GalleryQuery } from "@/graphql/query/gallery/gallery.graphql";
+import {
+  GalleryFilter,
+  GalleryInput,
+  GalleryOrder,
+  GallerySort,
+  GalleryType
+} from "@/gql/graphql";
 
 export default defineComponent({
   name: "PersonalGallery",
@@ -66,7 +86,7 @@ export default defineComponent({
   data() {
     return {
       gallery: {
-        gallery: [] as Upload[],
+        items: [] as Upload[],
         pager: {
           totalItems: 0,
           totalPages: 0
@@ -74,40 +94,11 @@ export default defineComponent({
       },
       page: 1,
       show: {
-        types: [
-          {
-            name: "All of them",
-            internalName: "all"
-          },
-          {
-            name: "Not collectivized",
-            internalName: "nonCollectivized"
-          },
-          {
-            name: "Images",
-            internalName: "image"
-          },
-          {
-            name: "Videos",
-            internalName: "video"
-          },
-          {
-            name: "Audio",
-            internalName: "audio"
-          },
-          {
-            name: "Text",
-            internalName: "text"
-          },
-          {
-            name: "Other",
-            internalName: "binary"
-          }
-        ],
         search: "",
         metadata: true,
-        selected: "all",
-        sort: "newest"
+        selected: [GalleryFilter.All],
+        sort: GallerySort.CreatedAt,
+        order: GalleryOrder.Desc
       },
       randomLoading: false
     };
@@ -124,23 +115,21 @@ export default defineComponent({
       this.randomLoading = false;
     },
     removeItemFromCollection(item: Upload, collection: CollectionCache) {
-      const index = this.gallery.gallery.findIndex(
+      const index = this.gallery.items.findIndex(
         (i: Upload) => i.id === item.id
       );
       if (index === -1) return;
-      this.gallery.gallery[index] = <Upload>{
-        ...this.gallery.gallery[index],
-        collections: this.gallery.gallery[index]?.collections.filter(
+      this.gallery.items[index] = <Upload>{
+        ...this.gallery.items[index],
+        collections: this.gallery.items[index]?.collections.filter(
           (c: any) => c.id !== collection.id
         )
       };
     },
     deleteItem(item: Upload) {
-      const index = this.gallery.gallery.findIndex(
-        (i: any) => i.id === item.id
-      );
+      const index = this.gallery.items.findIndex((i: any) => i.id === item.id);
       if (index === -1) return;
-      this.gallery.gallery.splice(index, 1);
+      this.gallery.items.splice(index, 1);
     },
     updateItem({
       item,
@@ -150,27 +139,33 @@ export default defineComponent({
       collection: CollectionCache;
     }) {
       console.log(item, collection);
-      const index = this.gallery.gallery.findIndex((i: any) => i.id === item);
+      const index = this.gallery.items.findIndex((i: any) => i.id === item);
       if (index === -1) return;
-      this.gallery.gallery[index] = {
-        ...this.gallery.gallery[index],
-        collections: [...this.gallery.gallery[index]?.collections, collection]
+      this.gallery.items[index] = {
+        ...this.gallery.items[index],
+        collections: [...this.gallery.items[index]?.collections, collection]
       };
     },
     async getGallery() {
       this.$app.componentLoading = true;
-      const { data } = await this.axios.get(this.endpoint, {
-        params: {
-          page: this.page,
-          search: this.show.search,
-          textMetadata: this.show.metadata,
-          filter: this.show.selected,
-          sort: `"${this.show.sort}"`
-        }
+      const {
+        data: { gallery }
+      } = await this.$apollo.query({
+        query: GalleryQuery,
+        variables: {
+          input: {
+            page: this.page,
+            filters: this.show.selected,
+            search: this.show.search,
+            sort: this.show.sort,
+            type: GalleryType.Personal,
+            order: this.show.order
+          }
+        } as GalleryInput
       });
-      this.gallery = data as typeof this.gallery;
+      this.gallery = gallery;
       this.$app.componentLoading = false;
-      return data;
+      return gallery;
     },
     socketRegister(
       uploads:
@@ -180,10 +175,10 @@ export default defineComponent({
       if (this.page !== 1) return;
       if (Array.isArray(uploads)) {
         for (const upload of uploads) {
-          this.gallery.gallery.unshift(upload.upload);
+          this.gallery.items.unshift(upload.upload);
         }
       } else {
-        this.gallery.gallery.unshift(uploads.upload);
+        this.gallery.items.unshift(uploads.upload);
       }
     },
     init() {

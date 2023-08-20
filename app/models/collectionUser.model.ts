@@ -10,8 +10,9 @@ import {
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, GraphQLISODateTime, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 @Table
@@ -23,6 +24,18 @@ export class CollectionUser extends Model {
     type: DataType.INTEGER
   })
   id: number
+
+  @Field(() => DateType)
+  @Column({
+    type: DataType.DATE
+  })
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column({
+    type: DataType.DATE
+  })
+  updatedAt: Date
 
   @Field()
   @Column

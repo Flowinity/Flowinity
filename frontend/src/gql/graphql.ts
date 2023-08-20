@@ -14,8 +14,11 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  Date: { input: any; output: any; }
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: { input: any; output: any; }
+  /** File custom scalar type */
+  File: { input: any; output: any; }
 };
 
 export type AlternatePassword = {
@@ -44,7 +47,7 @@ export type AutoCollectApproval = {
   collectionId: Scalars['Float']['output'];
   id: Scalars['Float']['output'];
   uploadId: Scalars['Float']['output'];
-  user?: Maybe<User>;
+  user?: Maybe<PartialUserBase>;
   userId: Scalars['Float']['output'];
 };
 
@@ -81,6 +84,7 @@ export type Badge = {
 
 export type Collection = {
   __typename?: 'Collection';
+  attachments: Array<Upload>;
   autoCollectApprovals: Array<AutoCollectApproval>;
   id: Scalars['Float']['output'];
   image?: Maybe<Scalars['String']['output']>;
@@ -98,6 +102,7 @@ export type Collection = {
 
 export type CollectionCache = {
   __typename?: 'CollectionCache';
+  attachments: Array<Upload>;
   autoCollectApprovals: Array<AutoCollectApproval>;
   id: Scalars['Float']['output'];
   image?: Maybe<Scalars['String']['output']>;
@@ -134,12 +139,14 @@ export type CollectionUser = {
   collection?: Maybe<Collection>;
   collectionId: Scalars['Float']['output'];
   configure: Scalars['Boolean']['output'];
+  createdAt: Scalars['Date']['output'];
   id: Scalars['Float']['output'];
   identifier?: Maybe<Scalars['String']['output']>;
   read: Scalars['Boolean']['output'];
   recipientId?: Maybe<Scalars['Float']['output']>;
   sender?: Maybe<PartialUserBase>;
   senderId?: Maybe<Scalars['Float']['output']>;
+  updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
   write: Scalars['Boolean']['output'];
 };
@@ -191,9 +198,9 @@ export type Domain = {
   DNSProvisioned: Scalars['Boolean']['output'];
   active: Scalars['Boolean']['output'];
   /** @deprecated Cloudflare integration was removed in TPUv2. */
-  advanced: Scalars['Boolean']['output'];
+  advanced?: Maybe<Scalars['Float']['output']>;
   /** @deprecated Granular user control was removed in TPUv2. */
-  customUserEligibility: Array<Scalars['Int']['output']>;
+  customUserEligibility?: Maybe<Array<Scalars['Int']['output']>>;
   domain: Scalars['String']['output'];
   id: Scalars['Float']['output'];
   /** @deprecated Granular user control was removed in TPUv2. */
@@ -207,7 +214,7 @@ export type Domain = {
   /** Only populated in some admin contexts */
   users?: Maybe<Array<PartialUserBase>>;
   /** @deprecated Cloudflare integration was removed in TPUv2. */
-  zone: Scalars['String']['output'];
+  zone?: Maybe<Scalars['String']['output']>;
 };
 
 export type Experiment = {
@@ -236,6 +243,54 @@ export type FriendNickname = {
   user: PartialUserBase;
   userId: Scalars['Float']['output'];
 };
+
+/** The filter to apply to the gallery request */
+export enum GalleryFilter {
+  All = 'ALL',
+  Audio = 'AUDIO',
+  Gifs = 'GIFS',
+  Images = 'IMAGES',
+  IncludeDeletable = 'INCLUDE_DELETABLE',
+  IncludeMetadata = 'INCLUDE_METADATA',
+  NoCollection = 'NO_COLLECTION',
+  Other = 'OTHER',
+  Owned = 'OWNED',
+  Paste = 'PASTE',
+  Shared = 'SHARED',
+  Text = 'TEXT',
+  Videos = 'VIDEOS'
+}
+
+export type GalleryInput = {
+  filters?: InputMaybe<Array<GalleryFilter>>;
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  order?: InputMaybe<GalleryOrder>;
+  page?: InputMaybe<Scalars['Float']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<GallerySort>;
+  type?: InputMaybe<GalleryType>;
+};
+
+/** The order to apply to the gallery request */
+export enum GalleryOrder {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
+/** The sort to apply to the gallery request */
+export enum GallerySort {
+  CreatedAt = 'CREATED_AT',
+  Name = 'NAME',
+  Size = 'SIZE',
+  UpdatedAt = 'UPDATED_AT'
+}
+
+/** The type of gallery request, for example if it's the personal gallery page, or a Collection */
+export enum GalleryType {
+  Collection = 'COLLECTION',
+  Personal = 'PERSONAL',
+  Starred = 'STARRED'
+}
 
 export type Integration = {
   __typename?: 'Integration';
@@ -282,6 +337,8 @@ export type Mutation = {
   login: LoginResponse;
   logout: Scalars['Boolean']['output'];
   register: LoginResponse;
+  updateUser: Scalars['Boolean']['output'];
+  upload: Upload;
 };
 
 
@@ -294,6 +351,16 @@ export type MutationRegisterArgs = {
   input: RegisterInput;
 };
 
+
+export type MutationUpdateUserArgs = {
+  input: UpdateUserInput;
+};
+
+
+export type MutationUploadArgs = {
+  file: Scalars['File']['input'];
+};
+
 export type Notification = {
   __typename?: 'Notification';
   dismissed: Scalars['Boolean']['output'];
@@ -304,11 +371,30 @@ export type Notification = {
   userId: Scalars['Float']['output'];
 };
 
+export type Pager = {
+  __typename?: 'Pager';
+  currentPage: Scalars['Float']['output'];
+  endIndex: Scalars['Float']['output'];
+  endPage: Scalars['Float']['output'];
+  pageSize: Scalars['Float']['output'];
+  pages: Array<Scalars['Float']['output']>;
+  startIndex: Scalars['Float']['output'];
+  startPage: Scalars['Float']['output'];
+  totalItems: Scalars['Float']['output'];
+  totalPages: Scalars['Float']['output'];
+};
+
+export type PaginatedResponseClass = {
+  __typename?: 'PaginatedResponseClass';
+  items: Array<Upload>;
+  pager: Pager;
+};
+
 export type PartialUserBase = {
   __typename?: 'PartialUserBase';
   administrator: Scalars['Boolean']['output'];
   avatar?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['String']['output'];
+  createdAt: Scalars['Date']['output'];
   id: Scalars['Float']['output'];
   moderator: Scalars['Boolean']['output'];
   username: Scalars['String']['output'];
@@ -325,10 +411,10 @@ export type Plan = {
   __typename?: 'Plan';
   color?: Maybe<Scalars['String']['output']>;
   /** @deprecated Plans are unused in TPUv2+. */
-  features?: Maybe<Array<Scalars['String']['output']>>;
+  features?: Maybe<Scalars['String']['output']>;
   icon: Scalars['String']['output'];
   /** @deprecated Plans are unused in TPUv2+. */
-  internalFeatures?: Maybe<Array<Scalars['String']['output']>>;
+  internalFeatures?: Maybe<Scalars['String']['output']>;
   internalName: Scalars['String']['output'];
   name: Scalars['String']['output'];
   /** @deprecated Plans are unused in TPUv2+. */
@@ -336,6 +422,93 @@ export type Plan = {
   /** @deprecated Plans are unused in TPUv2+. */
   purchasable: Scalars['Boolean']['output'];
   quotaMax: Scalars['Float']['output'];
+};
+
+export type ProfileLayout = {
+  __typename?: 'ProfileLayout';
+  config: ProfileLayoutConfig;
+  layout: ProfileLayoutObject;
+  version: Scalars['Float']['output'];
+};
+
+export type ProfileLayoutColumn = {
+  __typename?: 'ProfileLayoutColumn';
+  rows: Array<ProfileLayoutComponent>;
+};
+
+export type ProfileLayoutColumnInput = {
+  rows: Array<ProfileLayoutComponentInput>;
+};
+
+export type ProfileLayoutComponent = {
+  __typename?: 'ProfileLayoutComponent';
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  props?: Maybe<ProfileLayoutProps>;
+};
+
+export type ProfileLayoutComponentInput = {
+  id: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  props?: InputMaybe<ProfileLayoutPropsInput>;
+};
+
+export type ProfileLayoutConfig = {
+  __typename?: 'ProfileLayoutConfig';
+  containerMargin?: Maybe<Scalars['Float']['output']>;
+  showStatsSidebar: Scalars['Boolean']['output'];
+};
+
+export type ProfileLayoutConfigInput = {
+  containerMargin?: InputMaybe<Scalars['Float']['input']>;
+  showStatsSidebar: Scalars['Boolean']['input'];
+};
+
+export type ProfileLayoutInput = {
+  config: ProfileLayoutConfigInput;
+  layout: ProfileLayoutObjectInput;
+  version: Scalars['Float']['input'];
+};
+
+export type ProfileLayoutObject = {
+  __typename?: 'ProfileLayoutObject';
+  columns: Array<ProfileLayoutColumn>;
+};
+
+export type ProfileLayoutObjectInput = {
+  columns: Array<ProfileLayoutColumnInput>;
+};
+
+export type ProfileLayoutPropLink = {
+  __typename?: 'ProfileLayoutPropLink';
+  color: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
+export type ProfileLayoutPropLinkInput = {
+  color: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  url: Scalars['String']['input'];
+};
+
+export type ProfileLayoutProps = {
+  __typename?: 'ProfileLayoutProps';
+  children?: Maybe<Array<ProfileLayoutComponent>>;
+  display?: Maybe<Scalars['Float']['output']>;
+  friendsOnly?: Maybe<Scalars['Boolean']['output']>;
+  height?: Maybe<Scalars['Float']['output']>;
+  links?: Maybe<Array<ProfileLayoutPropLink>>;
+  type?: Maybe<Scalars['String']['output']>;
+};
+
+export type ProfileLayoutPropsInput = {
+  children?: InputMaybe<Array<ProfileLayoutComponentInput>>;
+  display?: InputMaybe<Scalars['Float']['input']>;
+  friendsOnly?: InputMaybe<Scalars['Boolean']['input']>;
+  height?: InputMaybe<Scalars['Float']['input']>;
+  links?: InputMaybe<Array<ProfileLayoutPropLinkInput>>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Providers = {
@@ -349,8 +522,15 @@ export type Query = {
   __typename?: 'Query';
   coreState: CoreState;
   currentUser: User;
+  domains: Array<Domain>;
+  gallery: PaginatedResponseClass;
   getSetupStep: Scalars['Float']['output'];
   userCollections: Array<CollectionCache>;
+};
+
+
+export type QueryGalleryArgs = {
+  input: GalleryInput;
 };
 
 
@@ -429,7 +609,7 @@ export type ThemeEngine = {
   defaults?: Maybe<ThemeEngineThemes>;
   deviceSync: Scalars['Boolean']['output'];
   fluidGradient: Scalars['Boolean']['output'];
-  gradientOffset: Scalars['Float']['output'];
+  gradientOffset: Scalars['String']['output'];
   showOnProfile: Scalars['Boolean']['output'];
   theme: ThemeEngineThemes;
   version: Scalars['Float']['output'];
@@ -456,10 +636,47 @@ export type ThemeEngineColors = {
   warning: Scalars['String']['output'];
 };
 
+export type ThemeEngineColorsInput = {
+  accent: Scalars['String']['input'];
+  background: Scalars['String']['input'];
+  background2: Scalars['String']['input'];
+  card: Scalars['String']['input'];
+  dark: Scalars['String']['input'];
+  error: Scalars['String']['input'];
+  gold: Scalars['String']['input'];
+  info: Scalars['String']['input'];
+  logo1: Scalars['String']['input'];
+  logo2: Scalars['String']['input'];
+  primary: Scalars['String']['input'];
+  secondary: Scalars['String']['input'];
+  sheet: Scalars['String']['input'];
+  success: Scalars['String']['input'];
+  text: Scalars['String']['input'];
+  toolbar: Scalars['String']['input'];
+  warning: Scalars['String']['input'];
+};
+
+export type ThemeEngineInput = {
+  baseTheme: Scalars['String']['input'];
+  customCSS?: InputMaybe<Scalars['String']['input']>;
+  defaults?: InputMaybe<ThemeEngineThemesInput>;
+  deviceSync: Scalars['Boolean']['input'];
+  fluidGradient: Scalars['Boolean']['input'];
+  gradientOffset: Scalars['String']['input'];
+  showOnProfile: Scalars['Boolean']['input'];
+  theme: ThemeEngineThemesInput;
+  version: Scalars['Float']['input'];
+};
+
 export type ThemeEngineTheme = {
   __typename?: 'ThemeEngineTheme';
   colors: ThemeEngineColors;
   dark?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type ThemeEngineThemeInput = {
+  colors: ThemeEngineColorsInput;
+  dark?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type ThemeEngineThemes = {
@@ -467,6 +684,31 @@ export type ThemeEngineThemes = {
   amoled: ThemeEngineTheme;
   dark: ThemeEngineTheme;
   light: ThemeEngineTheme;
+};
+
+export type ThemeEngineThemesInput = {
+  amoled: ThemeEngineThemeInput;
+  dark: ThemeEngineThemeInput;
+  light: ThemeEngineThemeInput;
+};
+
+export type UpdateUserInput = {
+  darkTheme?: InputMaybe<Scalars['Boolean']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  discordPrecache?: InputMaybe<Scalars['Boolean']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  excludedCollections?: InputMaybe<Array<Scalars['Float']['input']>>;
+  insights?: InputMaybe<Scalars['String']['input']>;
+  itemsPerPage?: InputMaybe<Scalars['Float']['input']>;
+  language?: InputMaybe<Scalars['String']['input']>;
+  nameColor?: InputMaybe<Scalars['String']['input']>;
+  privacyPolicyAccepted?: InputMaybe<Scalars['Boolean']['input']>;
+  profileLayout?: InputMaybe<ProfileLayoutInput>;
+  publicProfile?: InputMaybe<Scalars['Boolean']['input']>;
+  storedStatus?: InputMaybe<Scalars['String']['input']>;
+  themeEngine?: InputMaybe<ThemeEngineInput>;
+  username?: InputMaybe<Scalars['String']['input']>;
+  weatherUnit?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Upload = {
@@ -496,15 +738,16 @@ export type User = {
   __typename?: 'User';
   administrator: Scalars['Boolean']['output'];
   /** Ability to login with more then 1 password with different scopes. */
-  alternatePasswords: Array<AlternatePassword>;
+  alternatePasswords?: Maybe<Array<AlternatePassword>>;
   autoCollectRules: Array<AutoCollectRule>;
   avatar?: Maybe<Scalars['String']['output']>;
   badges: Array<Badge>;
   banned: Scalars['Boolean']['output'];
   /** UserV2 banner. */
-  banner: Scalars['String']['output'];
+  banner?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['Date']['output'];
   darkTheme: Scalars['Boolean']['output'];
-  description: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
   discordPrecache: Scalars['Boolean']['output'];
   domain?: Maybe<Domain>;
   domainId: Scalars['Float']['output'];
@@ -514,13 +757,13 @@ export type User = {
   excludedCollections?: Maybe<Array<Scalars['Float']['output']>>;
   experiments?: Maybe<Array<Experiment>>;
   /** @deprecated Fake paths are no longer available as of TPUv2/NEXT. */
-  fakePath: Scalars['String']['output'];
+  fakePath?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
   insights: Scalars['String']['output'];
   integrations: Array<Integration>;
   /** @deprecated Invisible URLs are no longer available as of TPUv2/NEXT. */
   invisibleURLs: Scalars['Boolean']['output'];
-  inviteId: Scalars['Float']['output'];
+  inviteId?: Maybe<Scalars['Float']['output']>;
   itemsPerPage: Scalars['Float']['output'];
   language: Scalars['String']['output'];
   moderator: Scalars['Boolean']['output'];
@@ -528,9 +771,9 @@ export type User = {
   nameColor?: Maybe<Scalars['String']['output']>;
   nickname?: Maybe<Array<FriendNickname>>;
   notifications: Array<Notification>;
-  passwordResetEnabled: Scalars['Boolean']['output'];
   plan?: Maybe<Plan>;
   privacyPolicyAccepted?: Maybe<Scalars['Boolean']['output']>;
+  profileLayout: ProfileLayout;
   publicProfile: Scalars['Boolean']['output'];
   /** How much the user has uploaded in bytes. */
   quota: Scalars['Float']['output'];
@@ -543,10 +786,11 @@ export type User = {
   subscription?: Maybe<Subscription>;
   /** Subscriptions are no longer used as they were in TPUv1, and are now used to store metadata for permanent Gold subscriptions. */
   subscriptionId: Scalars['Float']['output'];
-  themeEngine: ThemeEngine;
+  themeEngine?: Maybe<ThemeEngine>;
   /** @deprecated Replaced with `themeEngine`, used in legacy clients such as legacy.privateuploader.com. */
   themeId: Scalars['Float']['output'];
   totpEnable: Scalars['Boolean']['output'];
+  updatedAt: Scalars['Date']['output'];
   /** @deprecated Hidden upload usernames are no longer available as of TPUv2/NEXT. */
   uploadNameHidden: Scalars['Boolean']['output'];
   username: Scalars['String']['output'];
@@ -574,24 +818,48 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'LoginResponse', token: string, user: { __typename?: 'LoginUser', id: number, username: string, email: string } } };
 
+export type UploadMutationVariables = Exact<{
+  file: Scalars['File']['input'];
+}>;
+
+
+export type UploadMutation = { __typename?: 'Mutation', upload: { __typename?: 'Upload', id: number, attachment: string } };
+
+export type UpdateUserMutationVariables = Exact<{
+  input: UpdateUserInput;
+}>;
+
+
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: boolean };
+
 export type UserCollectionsQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserCollectionsQueryQuery = { __typename?: 'Query', userCollections: Array<{ __typename?: 'CollectionCache', id: number, name: string, image?: string | null, userId: number, shareLink?: string | null, shared?: boolean | null, itemCount?: number | null, preview?: { __typename?: 'CollectionItem', attachment: { __typename?: 'Upload', attachment: string } } | null, permissionsMetadata: { __typename?: 'PermissionsMetadata', configure: boolean, read: boolean, write: boolean }, users: Array<{ __typename?: 'CollectionUser', id: number, configure: boolean, user?: { __typename?: 'PartialUserBase', username: string, id: number, createdAt: string, administrator: boolean, moderator: boolean, avatar?: string | null } | null }> }> };
+export type UserCollectionsQueryQuery = { __typename?: 'Query', userCollections: Array<{ __typename?: 'CollectionCache', id: number, name: string, image?: string | null, userId: number, shareLink?: string | null, shared?: boolean | null, itemCount?: number | null, preview?: { __typename?: 'CollectionItem', attachment: { __typename?: 'Upload', attachment: string } } | null, permissionsMetadata: { __typename?: 'PermissionsMetadata', configure: boolean, read: boolean, write: boolean }, users: Array<{ __typename?: 'CollectionUser', id: number, configure: boolean, user?: { __typename?: 'PartialUserBase', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null } | null }> }> };
 
 export type CoreStateQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CoreStateQueryQuery = { __typename?: 'Query', coreState: { __typename?: 'CoreState', name: string, release: string, hostname: string, hostnameWithProtocol: string, registrations: boolean, officialInstance: boolean, termsNoteId?: string | null, privacyNoteId?: string | null, inviteAFriend: boolean, preTrustedDomains: Array<string>, hostnames: Array<string>, _redis: string, server: string, finishedSetup: boolean, domain: string, uptime: number, uptimeSys: number, commitVersion: string, announcements: Array<{ __typename?: 'Announcement', userId: number, content: string, type?: string | null, user: { __typename?: 'PartialUserBase', username: string, id: number, createdAt: string, administrator: boolean, moderator: boolean, avatar?: string | null } }>, stats: { __typename?: 'Stats', users: number, announcements: number, usage: number, usagePercentage: number, collections: number, collectionItems: number, uploads: number, invites: number, inviteMilestone: number, pulse: number, pulses: number, docs: number, messages: number, chats: number, hours?: Array<string> | null, uploadGraph: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> }, messageGraph: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> }, pulseGraph: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } }, maintenance: { __typename?: 'Maintenance', enabled: boolean, message?: string | null, statusPage?: string | null }, providers: { __typename?: 'Providers', anilist: boolean, lastfm: boolean, mal: boolean }, features: { __typename?: 'Features', communications: boolean, collections: boolean, autoCollects: boolean, workspaces: boolean, insights: boolean } } };
+export type CoreStateQueryQuery = { __typename?: 'Query', coreState: { __typename?: 'CoreState', name: string, release: string, hostname: string, hostnameWithProtocol: string, registrations: boolean, officialInstance: boolean, termsNoteId?: string | null, privacyNoteId?: string | null, inviteAFriend: boolean, preTrustedDomains: Array<string>, hostnames: Array<string>, _redis: string, server: string, finishedSetup: boolean, domain: string, uptime: number, uptimeSys: number, commitVersion: string, announcements: Array<{ __typename?: 'Announcement', userId: number, content: string, type?: string | null, user: { __typename?: 'PartialUserBase', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null } }>, stats: { __typename?: 'Stats', users: number, announcements: number, usage: number, usagePercentage: number, collections: number, collectionItems: number, uploads: number, invites: number, inviteMilestone: number, pulse: number, pulses: number, docs: number, messages: number, chats: number, hours?: Array<string> | null, uploadGraph: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> }, messageGraph: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> }, pulseGraph: { __typename?: 'DataLabelsGraph', data: Array<number>, labels: Array<string> } }, maintenance: { __typename?: 'Maintenance', enabled: boolean, message?: string | null, statusPage?: string | null }, providers: { __typename?: 'Providers', anilist: boolean, lastfm: boolean, mal: boolean }, features: { __typename?: 'Features', communications: boolean, collections: boolean, autoCollects: boolean, workspaces: boolean, insights: boolean } } };
+
+export type GalleryQueryVariables = Exact<{
+  input: GalleryInput;
+}>;
+
+
+export type GalleryQuery = { __typename?: 'Query', gallery: { __typename?: 'PaginatedResponseClass', pager: { __typename?: 'Pager', totalItems: number, currentPage: number, pageSize: number, totalPages: number, startPage: number, endPage: number, startIndex: number, endIndex: number }, items: Array<{ __typename?: 'Upload', id: number, attachment: string, userId: number, name?: string | null, originalFilename?: string | null, type: string, fileSize: number, deletable: boolean, textMetadata?: string | null, user?: { __typename?: 'PartialUserBase', username: string, id: number, avatar?: string | null } | null, collections: Array<{ __typename?: 'Collection', id: number, name: string }>, starred?: { __typename?: 'Star', id: number, userId: number, attachmentId: number } | null }> } };
 
 export type GetUserQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserQueryQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', username: string, email: string, passwordResetEnabled: boolean, description: string, administrator: boolean, darkTheme: boolean, emailVerified: boolean, banned: boolean, inviteId: number, discordPrecache: boolean, avatar?: string | null, domainId: number, totpEnable: boolean, quota: number, moderator: boolean, subscriptionId: number, itemsPerPage: number, banner: string, status: string, storedStatus: string, weatherUnit: string, xp: number, publicProfile: boolean, privacyPolicyAccepted?: boolean | null, excludedCollections?: Array<number> | null, id: number, language: string, nameColor?: string | null, insights: string, alternatePasswords: Array<{ __typename?: 'AlternatePassword', scopes: string, totp: boolean, name: string }>, themeEngine: { __typename?: 'ThemeEngine', fluidGradient: boolean, gradientOffset: number, version: number, deviceSync: boolean, showOnProfile: boolean, baseTheme: string, customCSS?: string | null, theme: { __typename?: 'ThemeEngineThemes', dark: { __typename?: 'ThemeEngineTheme', dark?: boolean | null, colors: { __typename?: 'ThemeEngineColors', primary: string, logo1: string, logo2: string, secondary: string, accent: string, error: string, info: string, success: string, warning: string, card: string, toolbar: string, sheet: string, text: string, dark: string, gold: string, background: string, background2: string } }, light: { __typename?: 'ThemeEngineTheme', dark?: boolean | null }, amoled: { __typename?: 'ThemeEngineTheme', dark?: boolean | null, colors: { __typename?: 'ThemeEngineColors', primary: string, logo1: string, logo2: string, secondary: string, accent: string, error: string, info: string, success: string, warning: string, card: string, toolbar: string, sheet: string, text: string, dark: string, gold: string, background: string, background2: string } } } }, plan?: { __typename?: 'Plan', quotaMax: number, color?: string | null, internalName: string, name: string, icon: string } | null, domain?: { __typename?: 'Domain', active: boolean, domain: string, id: number } | null, badges: Array<{ __typename?: 'Badge', color?: string | null, icon?: string | null, id: number, image?: string | null, name: string, priority?: number | null, tooltip?: string | null }>, subscription?: { __typename?: 'Subscription', cancelled: boolean, metadata: { __typename?: 'SubscriptionMetadata', hours: number } } | null, notifications: Array<{ __typename?: 'Notification', id: number, dismissed: boolean, message: string, route?: string | null }>, integrations: Array<{ __typename?: 'Integration', type: string, providerUsername?: string | null, providerUserId?: number | null, id: number, error?: string | null, expiresAt?: any | null }> } };
+export type GetUserQueryQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', username: string, email: string, description?: string | null, administrator: boolean, darkTheme: boolean, emailVerified: boolean, banned: boolean, inviteId?: number | null, discordPrecache: boolean, avatar?: string | null, domainId: number, totpEnable: boolean, quota: number, moderator: boolean, subscriptionId: number, itemsPerPage: number, banner?: string | null, status: string, storedStatus: string, weatherUnit: string, xp: number, publicProfile: boolean, privacyPolicyAccepted?: boolean | null, excludedCollections?: Array<number> | null, id: number, language: string, nameColor?: string | null, insights: string, alternatePasswords?: Array<{ __typename?: 'AlternatePassword', scopes: string, totp: boolean, name: string }> | null, themeEngine?: { __typename?: 'ThemeEngine', fluidGradient: boolean, gradientOffset: string, version: number, deviceSync: boolean, showOnProfile: boolean, baseTheme: string, customCSS?: string | null, theme: { __typename?: 'ThemeEngineThemes', dark: { __typename?: 'ThemeEngineTheme', dark?: boolean | null, colors: { __typename?: 'ThemeEngineColors', primary: string, logo1: string, logo2: string, secondary: string, accent: string, error: string, info: string, success: string, warning: string, card: string, toolbar: string, sheet: string, text: string, dark: string, gold: string, background: string, background2: string } }, light: { __typename?: 'ThemeEngineTheme', dark?: boolean | null }, amoled: { __typename?: 'ThemeEngineTheme', dark?: boolean | null, colors: { __typename?: 'ThemeEngineColors', primary: string, logo1: string, logo2: string, secondary: string, accent: string, error: string, info: string, success: string, warning: string, card: string, toolbar: string, sheet: string, text: string, dark: string, gold: string, background: string, background2: string } } } } | null, plan?: { __typename?: 'Plan', quotaMax: number, color?: string | null, internalName: string, name: string, icon: string } | null, domain?: { __typename?: 'Domain', active: boolean, domain: string, id: number } | null, badges: Array<{ __typename?: 'Badge', color?: string | null, icon?: string | null, id: number, image?: string | null, name: string, priority?: number | null, tooltip?: string | null }>, subscription?: { __typename?: 'Subscription', cancelled: boolean, metadata: { __typename?: 'SubscriptionMetadata', hours: number } } | null, notifications: Array<{ __typename?: 'Notification', id: number, dismissed: boolean, message: string, route?: string | null }>, integrations: Array<{ __typename?: 'Integration', type: string, providerUsername?: string | null, providerUserId?: number | null, id: number, error?: string | null, expiresAt?: any | null }> } };
 
 
 export const LoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Login"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
 export const RegisterDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Register"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisterInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterMutation, RegisterMutationVariables>;
+export const UploadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Upload"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"file"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"File"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"upload"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"file"},"value":{"kind":"Variable","name":{"kind":"Name","value":"file"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment"}}]}}]}}]} as unknown as DocumentNode<UploadMutation, UploadMutationVariables>;
+export const UpdateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<UpdateUserMutation, UpdateUserMutationVariables>;
 export const UserCollectionsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UserCollectionsQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userCollections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"shareLink"}},{"kind":"Field","name":{"kind":"Name","value":"preview"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attachment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attachment"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"shared"}},{"kind":"Field","name":{"kind":"Name","value":"permissionsMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"configure"}},{"kind":"Field","name":{"kind":"Name","value":"read"}},{"kind":"Field","name":{"kind":"Name","value":"write"}}]}},{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"configure"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"administrator"}},{"kind":"Field","name":{"kind":"Name","value":"moderator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"itemCount"}}]}}]}}]} as unknown as DocumentNode<UserCollectionsQueryQuery, UserCollectionsQueryQueryVariables>;
 export const CoreStateQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CoreStateQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coreState"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"release"}},{"kind":"Field","name":{"kind":"Name","value":"hostname"}},{"kind":"Field","name":{"kind":"Name","value":"hostnameWithProtocol"}},{"kind":"Field","name":{"kind":"Name","value":"announcements"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"administrator"}},{"kind":"Field","name":{"kind":"Name","value":"moderator"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"stats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users"}},{"kind":"Field","name":{"kind":"Name","value":"announcements"}},{"kind":"Field","name":{"kind":"Name","value":"usage"}},{"kind":"Field","name":{"kind":"Name","value":"usagePercentage"}},{"kind":"Field","name":{"kind":"Name","value":"collections"}},{"kind":"Field","name":{"kind":"Name","value":"collectionItems"}},{"kind":"Field","name":{"kind":"Name","value":"uploadGraph"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"labels"}}]}},{"kind":"Field","name":{"kind":"Name","value":"messageGraph"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"labels"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pulseGraph"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"labels"}}]}},{"kind":"Field","name":{"kind":"Name","value":"uploads"}},{"kind":"Field","name":{"kind":"Name","value":"invites"}},{"kind":"Field","name":{"kind":"Name","value":"inviteMilestone"}},{"kind":"Field","name":{"kind":"Name","value":"pulse"}},{"kind":"Field","name":{"kind":"Name","value":"pulses"}},{"kind":"Field","name":{"kind":"Name","value":"docs"}},{"kind":"Field","name":{"kind":"Name","value":"messages"}},{"kind":"Field","name":{"kind":"Name","value":"chats"}},{"kind":"Field","name":{"kind":"Name","value":"hours"}}]}},{"kind":"Field","name":{"kind":"Name","value":"maintenance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"enabled"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"statusPage"}}]}},{"kind":"Field","name":{"kind":"Name","value":"registrations"}},{"kind":"Field","name":{"kind":"Name","value":"officialInstance"}},{"kind":"Field","name":{"kind":"Name","value":"providers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"anilist"}},{"kind":"Field","name":{"kind":"Name","value":"lastfm"}},{"kind":"Field","name":{"kind":"Name","value":"mal"}}]}},{"kind":"Field","name":{"kind":"Name","value":"termsNoteId"}},{"kind":"Field","name":{"kind":"Name","value":"privacyNoteId"}},{"kind":"Field","name":{"kind":"Name","value":"features"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"communications"}},{"kind":"Field","name":{"kind":"Name","value":"collections"}},{"kind":"Field","name":{"kind":"Name","value":"autoCollects"}},{"kind":"Field","name":{"kind":"Name","value":"workspaces"}},{"kind":"Field","name":{"kind":"Name","value":"insights"}}]}},{"kind":"Field","name":{"kind":"Name","value":"inviteAFriend"}},{"kind":"Field","name":{"kind":"Name","value":"preTrustedDomains"}},{"kind":"Field","name":{"kind":"Name","value":"hostnames"}},{"kind":"Field","name":{"kind":"Name","value":"_redis"}},{"kind":"Field","name":{"kind":"Name","value":"server"}},{"kind":"Field","name":{"kind":"Name","value":"finishedSetup"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"uptime"}},{"kind":"Field","name":{"kind":"Name","value":"uptimeSys"}},{"kind":"Field","name":{"kind":"Name","value":"commitVersion"}}]}}]}}]} as unknown as DocumentNode<CoreStateQueryQuery, CoreStateQueryQueryVariables>;
-export const GetUserQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"passwordResetEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"administrator"}},{"kind":"Field","name":{"kind":"Name","value":"darkTheme"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"banned"}},{"kind":"Field","name":{"kind":"Name","value":"inviteId"}},{"kind":"Field","name":{"kind":"Name","value":"discordPrecache"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}},{"kind":"Field","name":{"kind":"Name","value":"domainId"}},{"kind":"Field","name":{"kind":"Name","value":"totpEnable"}},{"kind":"Field","name":{"kind":"Name","value":"quota"}},{"kind":"Field","name":{"kind":"Name","value":"moderator"}},{"kind":"Field","name":{"kind":"Name","value":"subscriptionId"}},{"kind":"Field","name":{"kind":"Name","value":"itemsPerPage"}},{"kind":"Field","name":{"kind":"Name","value":"banner"}},{"kind":"Field","name":{"kind":"Name","value":"alternatePasswords"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"scopes"}},{"kind":"Field","name":{"kind":"Name","value":"totp"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"storedStatus"}},{"kind":"Field","name":{"kind":"Name","value":"weatherUnit"}},{"kind":"Field","name":{"kind":"Name","value":"themeEngine"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"theme"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dark"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"colors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primary"}},{"kind":"Field","name":{"kind":"Name","value":"logo1"}},{"kind":"Field","name":{"kind":"Name","value":"logo2"}},{"kind":"Field","name":{"kind":"Name","value":"secondary"}},{"kind":"Field","name":{"kind":"Name","value":"accent"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"warning"}},{"kind":"Field","name":{"kind":"Name","value":"card"}},{"kind":"Field","name":{"kind":"Name","value":"toolbar"}},{"kind":"Field","name":{"kind":"Name","value":"sheet"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"dark"}},{"kind":"Field","name":{"kind":"Name","value":"gold"}},{"kind":"Field","name":{"kind":"Name","value":"background"}},{"kind":"Field","name":{"kind":"Name","value":"background2"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dark"}}]}},{"kind":"Field","name":{"kind":"Name","value":"light"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dark"}}]}},{"kind":"Field","name":{"kind":"Name","value":"amoled"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dark"}},{"kind":"Field","name":{"kind":"Name","value":"colors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primary"}},{"kind":"Field","name":{"kind":"Name","value":"logo1"}},{"kind":"Field","name":{"kind":"Name","value":"logo2"}},{"kind":"Field","name":{"kind":"Name","value":"secondary"}},{"kind":"Field","name":{"kind":"Name","value":"accent"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"warning"}},{"kind":"Field","name":{"kind":"Name","value":"card"}},{"kind":"Field","name":{"kind":"Name","value":"toolbar"}},{"kind":"Field","name":{"kind":"Name","value":"sheet"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"dark"}},{"kind":"Field","name":{"kind":"Name","value":"gold"}},{"kind":"Field","name":{"kind":"Name","value":"background"}},{"kind":"Field","name":{"kind":"Name","value":"background2"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"fluidGradient"}},{"kind":"Field","name":{"kind":"Name","value":"gradientOffset"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deviceSync"}},{"kind":"Field","name":{"kind":"Name","value":"showOnProfile"}},{"kind":"Field","name":{"kind":"Name","value":"baseTheme"}},{"kind":"Field","name":{"kind":"Name","value":"customCSS"}}]}},{"kind":"Field","name":{"kind":"Name","value":"xp"}},{"kind":"Field","name":{"kind":"Name","value":"publicProfile"}},{"kind":"Field","name":{"kind":"Name","value":"privacyPolicyAccepted"}},{"kind":"Field","name":{"kind":"Name","value":"plan"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"quotaMax"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"internalName"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"Field","name":{"kind":"Name","value":"domain"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"badges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}},{"kind":"Field","name":{"kind":"Name","value":"excludedCollections"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"nameColor"}},{"kind":"Field","name":{"kind":"Name","value":"subscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hours"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cancelled"}}]}},{"kind":"Field","name":{"kind":"Name","value":"insights"}},{"kind":"Field","name":{"kind":"Name","value":"notifications"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dismissed"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"route"}}]}},{"kind":"Field","name":{"kind":"Name","value":"integrations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"providerUsername"}},{"kind":"Field","name":{"kind":"Name","value":"providerUserId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserQueryQuery, GetUserQueryQueryVariables>;
+export const GalleryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Gallery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GalleryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gallery"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pager"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalItems"}},{"kind":"Field","name":{"kind":"Name","value":"currentPage"}},{"kind":"Field","name":{"kind":"Name","value":"pageSize"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"startPage"}},{"kind":"Field","name":{"kind":"Name","value":"endPage"}},{"kind":"Field","name":{"kind":"Name","value":"startIndex"}},{"kind":"Field","name":{"kind":"Name","value":"endIndex"}}]}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attachment"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"originalFilename"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"fileSize"}},{"kind":"Field","name":{"kind":"Name","value":"deletable"}},{"kind":"Field","name":{"kind":"Name","value":"textMetadata"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"collections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"starred"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"attachmentId"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GalleryQuery, GalleryQueryVariables>;
+export const GetUserQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"administrator"}},{"kind":"Field","name":{"kind":"Name","value":"darkTheme"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerified"}},{"kind":"Field","name":{"kind":"Name","value":"banned"}},{"kind":"Field","name":{"kind":"Name","value":"inviteId"}},{"kind":"Field","name":{"kind":"Name","value":"discordPrecache"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}},{"kind":"Field","name":{"kind":"Name","value":"domainId"}},{"kind":"Field","name":{"kind":"Name","value":"totpEnable"}},{"kind":"Field","name":{"kind":"Name","value":"quota"}},{"kind":"Field","name":{"kind":"Name","value":"moderator"}},{"kind":"Field","name":{"kind":"Name","value":"subscriptionId"}},{"kind":"Field","name":{"kind":"Name","value":"itemsPerPage"}},{"kind":"Field","name":{"kind":"Name","value":"banner"}},{"kind":"Field","name":{"kind":"Name","value":"alternatePasswords"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"scopes"}},{"kind":"Field","name":{"kind":"Name","value":"totp"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"storedStatus"}},{"kind":"Field","name":{"kind":"Name","value":"weatherUnit"}},{"kind":"Field","name":{"kind":"Name","value":"themeEngine"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"theme"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dark"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"colors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primary"}},{"kind":"Field","name":{"kind":"Name","value":"logo1"}},{"kind":"Field","name":{"kind":"Name","value":"logo2"}},{"kind":"Field","name":{"kind":"Name","value":"secondary"}},{"kind":"Field","name":{"kind":"Name","value":"accent"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"warning"}},{"kind":"Field","name":{"kind":"Name","value":"card"}},{"kind":"Field","name":{"kind":"Name","value":"toolbar"}},{"kind":"Field","name":{"kind":"Name","value":"sheet"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"dark"}},{"kind":"Field","name":{"kind":"Name","value":"gold"}},{"kind":"Field","name":{"kind":"Name","value":"background"}},{"kind":"Field","name":{"kind":"Name","value":"background2"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dark"}}]}},{"kind":"Field","name":{"kind":"Name","value":"light"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dark"}}]}},{"kind":"Field","name":{"kind":"Name","value":"amoled"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dark"}},{"kind":"Field","name":{"kind":"Name","value":"colors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primary"}},{"kind":"Field","name":{"kind":"Name","value":"logo1"}},{"kind":"Field","name":{"kind":"Name","value":"logo2"}},{"kind":"Field","name":{"kind":"Name","value":"secondary"}},{"kind":"Field","name":{"kind":"Name","value":"accent"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"info"}},{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"warning"}},{"kind":"Field","name":{"kind":"Name","value":"card"}},{"kind":"Field","name":{"kind":"Name","value":"toolbar"}},{"kind":"Field","name":{"kind":"Name","value":"sheet"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"dark"}},{"kind":"Field","name":{"kind":"Name","value":"gold"}},{"kind":"Field","name":{"kind":"Name","value":"background"}},{"kind":"Field","name":{"kind":"Name","value":"background2"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"fluidGradient"}},{"kind":"Field","name":{"kind":"Name","value":"gradientOffset"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"deviceSync"}},{"kind":"Field","name":{"kind":"Name","value":"showOnProfile"}},{"kind":"Field","name":{"kind":"Name","value":"baseTheme"}},{"kind":"Field","name":{"kind":"Name","value":"customCSS"}}]}},{"kind":"Field","name":{"kind":"Name","value":"xp"}},{"kind":"Field","name":{"kind":"Name","value":"publicProfile"}},{"kind":"Field","name":{"kind":"Name","value":"privacyPolicyAccepted"}},{"kind":"Field","name":{"kind":"Name","value":"plan"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"quotaMax"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"internalName"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}},{"kind":"Field","name":{"kind":"Name","value":"domain"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"badges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}},{"kind":"Field","name":{"kind":"Name","value":"tooltip"}}]}},{"kind":"Field","name":{"kind":"Name","value":"excludedCollections"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"nameColor"}},{"kind":"Field","name":{"kind":"Name","value":"subscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hours"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cancelled"}}]}},{"kind":"Field","name":{"kind":"Name","value":"insights"}},{"kind":"Field","name":{"kind":"Name","value":"notifications"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dismissed"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"route"}}]}},{"kind":"Field","name":{"kind":"Name","value":"integrations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"providerUsername"}},{"kind":"Field","name":{"kind":"Name","value":"providerUserId"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserQueryQuery, GetUserQueryQueryVariables>;

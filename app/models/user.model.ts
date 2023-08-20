@@ -27,47 +27,12 @@ import { AlternatePassword as AlternatePasswordType } from "@app/types/auth"
 import { DefaultProfileLayout } from "@app/classes/UserV3ProfileLayout"
 import { Integration } from "@app/models/integration.model"
 import { Col } from "@troplo/sequelize/types/utils"
-import { Field, Float, ObjectType } from "type-graphql"
+import { Field, Float, GraphQLISODateTime, ObjectType } from "type-graphql"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { AlternatePassword } from "@app/classes/graphql/user/alternatePassword"
 import { Notification } from "@app/models/notification.model"
-
-export interface ProfileLayout {
-  layout: {
-    columns: [
-      {
-        rows: ProfileLayoutComponent[]
-      }
-    ]
-  }
-  config: {
-    containerMargin?: number
-    showStatsSidebar: boolean
-  }
-  version: number
-}
-
-export interface ProfileLayoutComponent {
-  name: string
-  id: string
-  props?: any
-}
-
-export interface ThemeEngineType {
-  theme: {
-    dark: any
-    light: any
-    amoled: any
-  }
-  fluidGradient: boolean
-  gradientOffset: number
-  defaults: any
-  version: number
-  deviceSync: boolean
-  showOnProfile: boolean
-  baseTheme: "dark" | "light" | "amoled"
-  customCSS: string
-}
+import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @DefaultScope(() => ({
   attributes: {
@@ -94,6 +59,18 @@ export class User extends Model {
   })
   id: number
 
+  @Field(() => DateType)
+  @Column({
+    type: DataType.DATE
+  })
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column({
+    type: DataType.DATE
+  })
+  updatedAt: Date
+
   @Field()
   @AllowNull(false)
   @Unique
@@ -115,7 +92,6 @@ export class User extends Model {
   @Column
   password: string
 
-  @Field()
   @AllowNull(false)
   @Default(false)
   @Column
@@ -129,7 +105,9 @@ export class User extends Model {
   })
   passwordResetExpiry: Date
 
-  @Field()
+  @Field({
+    nullable: true
+  })
   @Length({
     msg: "Length of your description must be between 0-255 characters.",
     min: 0,
@@ -158,7 +136,9 @@ export class User extends Model {
   @Column
   banned: boolean
 
-  @Field()
+  @Field({
+    nullable: true
+  })
   @Column
   inviteId?: number
 
@@ -248,7 +228,8 @@ export class User extends Model {
   subscriptionId: number
 
   @Field({
-    deprecationReason: "Fake paths are no longer available as of TPUv2/NEXT."
+    deprecationReason: "Fake paths are no longer available as of TPUv2/NEXT.",
+    nullable: true
   })
   @AllowNull
   @Column
@@ -273,14 +254,16 @@ export class User extends Model {
   itemsPerPage: number
 
   @Field({
-    description: "UserV2 banner."
+    description: "UserV2 banner.",
+    nullable: true
   })
   @Column
   banner?: string
 
   @Field(() => [AlternatePassword], {
     description:
-      "Ability to login with more then 1 password with different scopes."
+      "Ability to login with more then 1 password with different scopes.",
+    nullable: true
   })
   @Column({
     type: DataType.JSON,
@@ -318,7 +301,9 @@ export class User extends Model {
   @Column
   mailToken?: string
 
-  @Field(() => ThemeEngine)
+  @Field(() => ThemeEngine, {
+    nullable: true
+  })
   @Column({
     type: DataType.JSON
   })
@@ -331,6 +316,7 @@ export class User extends Model {
   })
   insights: "everyone" | "friends" | "nobody"
 
+  @Field(() => ProfileLayout)
   @Column({
     type: DataType.JSON,
     defaultValue: new DefaultProfileLayout()

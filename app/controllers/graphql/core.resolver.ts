@@ -38,6 +38,7 @@ import { CoreState } from "@app/classes/graphql/core/core"
 import cluster from "cluster"
 import os from "os"
 import { CacheService } from "@app/services/cache.service"
+import { ExperimentType } from "@app/classes/graphql/core/experiments"
 
 @Resolver(User)
 @Service()
@@ -121,5 +122,13 @@ export class CoreResolver {
     } catch {
       return 0
     }
+  }
+
+  @Query(() => [ExperimentType])
+  async getExperiments(@Ctx() ctx: Context) {
+    if (!ctx.user?.id) {
+      return this.coreService.getExperimentsV4(config.release === "dev", false)
+    }
+    return await this.coreService.getUserExperimentsV4(ctx.user.id)
   }
 }

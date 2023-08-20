@@ -483,13 +483,13 @@ export class CacheService {
       cron.schedule("0 4 * * *", () => {
         this.generateCollectionCache()
       })
-      this.generateAutoCollectCache().then(() => {})
+      /*      this.generateAutoCollectCache().then(() => {})
       this.refreshState().then(() => {})
       this.generateShareLinkCache().then(() => {})
       this.generateUserStatsCache().then(() => {})
       //this.generateChatsCache().then(() => {})
       this.generateMissingChatDates().then(() => {})
-      //this.generateInsightsCache().then(() => {})
+      //this.generateInsightsCache().then(() => {})*/
       return true
     } catch {
       return false

@@ -46,17 +46,19 @@ export class Domain extends Model {
   active: boolean
 
   @Field({
-    deprecationReason: "Cloudflare integration was removed in TPUv2."
+    deprecationReason: "Cloudflare integration was removed in TPUv2.",
+    nullable: true
   })
   @Column
   zone: string
 
   @Field({
-    deprecationReason: "Cloudflare integration was removed in TPUv2."
+    deprecationReason: "Cloudflare integration was removed in TPUv2.",
+    nullable: true
   })
   @Default(false)
   @Column
-  advanced: boolean
+  advanced: number
 
   @Field({
     deprecationReason: "Subdomains were removed in TPUv2."
@@ -73,7 +75,8 @@ export class Domain extends Model {
   subdomainsCreate: boolean
 
   @Field(() => [Int], {
-    deprecationReason: "Granular user control was removed in TPUv2."
+    deprecationReason: "Granular user control was removed in TPUv2.",
+    nullable: true
   })
   @Default([])
   @Column({

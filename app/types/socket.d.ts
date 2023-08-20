@@ -1,6 +1,7 @@
 import { Socket } from "socket.io"
 import { User } from "@app/models/user.model"
+import { SocketWithUser } from "@app/types/global"
 
-export interface SocketAuth extends Socket {
+export interface SocketAuth extends SocketWithUser {
   user: User
 }

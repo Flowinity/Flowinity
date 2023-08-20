@@ -28,7 +28,7 @@ export default {
       })
 
       if (user && socket.user.id) {
-        socket.join(user.id.toString())
+        socket.join(user.id)
 
         if (
           user.storedStatus !== "invisible" &&

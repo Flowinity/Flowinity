@@ -22,14 +22,14 @@ export class Plan extends Model {
   })
   price: bigint
 
-  @Field(() => [String], {
+  @Field(() => String, {
     nullable: true,
     deprecationReason: "Plans are unused in TPUv2+."
   })
   @Column({
     type: DataType.JSON
   })
-  features: object
+  features: string[]
 
   @Field(() => String, {
     nullable: true
@@ -48,14 +48,14 @@ export class Plan extends Model {
   @Column
   purchasable: boolean
 
-  @Field(() => [String], {
+  @Field(() => String, {
     nullable: true,
     deprecationReason: "Plans are unused in TPUv2+."
   })
   @Column({
     type: DataType.JSON
   })
-  internalFeatures: object
+  internalFeatures: string[]
 
   @Field(() => String)
   @Column

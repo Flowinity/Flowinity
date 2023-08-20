@@ -1,16 +1,9 @@
 <template>
-  <VErrorBoundary
-    :fall-back="skullCrash"
-    :params="{ e: error }"
-    stop-propagation
-    @error-captured="submitFeedback"
-  >
-    <Maintenance
-      v-model="$app.site.maintenance.enabled"
-      v-if="$app.site.maintenance.enabled"
-    ></Maintenance>
-    <router-view />
-  </VErrorBoundary>
+  <Maintenance
+    v-model="$app.site.maintenance.enabled"
+    v-if="$app.site.maintenance.enabled"
+  ></Maintenance>
+  <router-view />
 </template>
 
 <script lang="ts">

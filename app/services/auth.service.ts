@@ -151,7 +151,6 @@ export class AuthService {
     if (password.length < 8) {
       throw Errors.PASSWORD_TOO_SHORT
     }
-    console.log(await User.findAll())
     const user = await User.create({
       username,
       password: await argon2.hash(password),

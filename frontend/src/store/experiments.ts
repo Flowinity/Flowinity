@@ -1,6 +1,7 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
+import { ExperimentsQuery } from "@/graphql/query/core/experiments.graphql";
 
 export interface ExperimentsState {
   experiments: Record<string, string | number | boolean | object>;
@@ -31,18 +32,19 @@ export const useExperimentsStore = defineStore("experiments", {
           //
         }
       }
-      const { data } = await axios.get("/core/experiments");
-      this.experiments = {
-        ...data,
-        ...JSON.parse(localStorage.getItem("experiments") || "{}")
-      };
-      /*if (this.experiments.API_VERSION) {
-        axios.defaults.baseURL = import.meta.env.CORDOVA
-          ? `https://images.flowinity.com/api/${this.experiments.API_VERSION}`
-          : `/api/v${this.experiments.API_VERSION}`;
-      }*/
-      this.experimentsInherit = data;
-      localStorage.setItem("experimentsStore", JSON.stringify(data));
+      const {
+        data: { getExperiments }
+      } = await this.$apollo.query({
+        query: ExperimentsQuery
+      });
+      for (const experiment of getExperiments) {
+        this.experiments[experiment.id] = experiment.value;
+      }
+      this.experimentsInherit = this.experiments;
+      localStorage.setItem(
+        "experimentsStore",
+        JSON.stringify(this.experiments)
+      );
     }
   }
 });

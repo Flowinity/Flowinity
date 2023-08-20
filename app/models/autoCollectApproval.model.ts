@@ -11,6 +11,7 @@ import { Collection } from "@app/models/collection.model"
 import { Upload } from "@app/models/upload.model"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { Field, Float, ObjectType } from "type-graphql"
+import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @ObjectType()
 @Table
@@ -50,7 +51,7 @@ export class AutoCollectApproval extends Model {
   })
   info: boolean
 
-  @Field(() => User, {
+  @Field(() => PartialUserBase, {
     nullable: true
   })
   @BelongsTo(() => User, "userId")

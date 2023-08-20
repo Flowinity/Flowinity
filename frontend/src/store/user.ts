@@ -14,18 +14,18 @@ import vuetify from "@/plugins/vuetify";
 import i18n from "@/plugins/i18n";
 import functions from "@/plugins/functions";
 import { GetUserQuery } from "@/graphql/query/user/user.graphql";
+import { UpdateUserMutation } from "@/graphql/mutation/user/update.graphql";
+import { UpdateUserInput } from "@/gql/graphql";
 
 export interface UserState {
   user: User | null;
   _postInitRan: boolean;
   disableProfileColors: boolean;
   changes: {
-    password?: string;
     email?: string;
     discordPrecache?: boolean;
     username?: string;
     itemsPerPage?: number;
-    currentPassword?: string;
     storedStatus?: string;
     description?: string;
     weatherUnit?: string;
@@ -37,7 +37,6 @@ export interface UserState {
     publicProfile?: boolean;
     privacyPolicyAccepted?: boolean;
     nameColor?: string;
-    avatar?: string;
   };
   actions: {
     emailSent: {
@@ -45,6 +44,7 @@ export interface UserState {
       loading: boolean;
     };
   };
+  defaultVuetify: any;
 }
 
 export const useUserStore = defineStore("user", {
@@ -63,6 +63,7 @@ export const useUserStore = defineStore("user", {
           loading: false
         }
       },
+      defaultVuetify: vuetify.theme.themes.value,
       disableProfileColors:
         localStorage.getItem("disableProfileColors") === "true"
     } as UserState),
@@ -266,12 +267,10 @@ export const useUserStore = defineStore("user", {
     setChanges(user: User) {
       if (!user) return;
       this.changes = {
-        password: "",
         email: user.email,
         discordPrecache: user.discordPrecache,
         username: user.username,
         itemsPerPage: user.itemsPerPage,
-        currentPassword: "",
         storedStatus: user.storedStatus,
         description: user.description,
         themeEngine: user.themeEngine as ThemeEngine,
@@ -282,8 +281,7 @@ export const useUserStore = defineStore("user", {
         publicProfile: user.publicProfile,
         weatherUnit: user.weatherUnit,
         privacyPolicyAccepted: user.privacyPolicyAccepted,
-        nameColor: user.nameColor,
-        avatar: user.avatar
+        nameColor: user.nameColor
       };
     },
     async init() {
@@ -341,12 +339,22 @@ export const useUserStore = defineStore("user", {
         //@ts-ignore
         delete this.changes.themeEngine?.prev;
       }
-      await axios.patch("/user", this.changes);
+      await this.$apollo.mutate({
+        mutation: UpdateUserMutation,
+        variables: {
+          input: {
+            ...this.changes
+          }
+        } as UpdateUserInput
+      });
       this.user = {
         ...this.user,
         ...(this.changes as any)
       };
       i18n.global.locale = this.user?.language || "en";
+    },
+    async savePasswordRequired() {
+      // TODO: new GraphQL mutation
     }
   }
 });

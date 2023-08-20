@@ -154,7 +154,7 @@ export default defineComponent({
       this.loading = true;
       try {
         const {
-          data: { login }
+          data: { register }
         } = await this.$apollo.mutate({
           mutation: RegisterMutation,
           variables: {
@@ -166,10 +166,9 @@ export default defineComponent({
             }
           } as RegisterMutationVariables
         });
-        localStorage.setItem("token", login.token);
-        this.axios.defaults.headers.common["Authorization"] = login.token;
+        localStorage.setItem("token", register.token);
         await this.$user.init();
-        this.$socket.auth = { token: login.token };
+        this.$socket.auth = { token: register.token };
         this.$socket.disconnect();
         this.$socket.connect();
         this.$router.push("/");

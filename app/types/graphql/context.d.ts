@@ -1,5 +1,6 @@
 import { User } from "@app/models/user.model"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
+import sequelize, { Sequelize } from "sequelize"
 
 export type Context = {
   user: User | null
@@ -11,4 +12,5 @@ export type Context = {
   role: AccessLevel
   token: string
   ip: string
+  dataloader: any
 }

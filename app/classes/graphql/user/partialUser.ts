@@ -1,4 +1,6 @@
-import { Field, ObjectType } from "type-graphql"
+import { Field, GraphQLISODateTime, ObjectType } from "type-graphql"
+import { DateTimeResolver } from "graphql-scalars"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 export class PartialUserBase {
@@ -6,8 +8,8 @@ export class PartialUserBase {
   username: string
   @Field()
   id: number
-  @Field()
-  createdAt: string
+  @Field(() => DateType)
+  createdAt: Date
   @Field()
   administrator: boolean
   @Field()

@@ -29,6 +29,14 @@ import { ChatAssociation } from "@app/models/chatAssociation.model"
 
 @Service()
 export class UserUtilsService {
+  async getAttribute(userId: number, attribute: string): Promise<any> {
+    const user = await User.findByPk(userId, {
+      attributes: [attribute],
+      raw: true
+    })
+    // @ts-ignore
+    return user?.[attribute] ?? null
+  }
   async registerFCMToken(userId: number, token: string) {
     if (!config.providers.google) return
     const device = await FCMDevice.findOne({

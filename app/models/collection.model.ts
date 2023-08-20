@@ -1,6 +1,7 @@
 import {
   AllowNull,
   BelongsTo,
+  BelongsToMany,
   Column,
   DataType,
   HasMany,
@@ -14,6 +15,7 @@ import { CollectionUser } from "@app/models/collectionUser.model"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import { Field, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { Upload } from "@app/models/upload.model"
 
 @ObjectType()
 @Table
@@ -85,4 +87,13 @@ export class Collection extends Model {
     nullable: true
   })
   itemCount?: number
+
+  @Field(() => [Upload])
+  @BelongsToMany(
+    () => Upload,
+    () => CollectionItem,
+    "collectionId",
+    "attachmentId"
+  )
+  attachments: Upload[]
 }

@@ -2,7 +2,7 @@
   <v-app-bar
     :key="$user.user?.emailVerified ? 1 : 2"
     :class="classString"
-    :extension-height="$user.user?.emailVerified ? 5 : 42"
+    :extension-height="$user.user?.emailVerified ? 42 : 42"
     app
     class="navbar"
     color="dark"
@@ -200,6 +200,22 @@
             @click="$user.resendVerificationEmail"
           >
             Resend Verification Email
+          </v-btn>
+        </template>
+      </v-alert>
+      <v-alert
+        variant="tonal"
+        :icon="false"
+        type="info"
+        class="rounded-0"
+        density="compact"
+      >
+        <small class="unselectable">
+          You are using an early access version of TPU.
+        </small>
+        <template v-slot:append>
+          <v-btn size="x-small" href="https://privateuploader.com">
+            Go to Stable
           </v-btn>
         </template>
       </v-alert>

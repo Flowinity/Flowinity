@@ -22,8 +22,8 @@ export interface AxiosRequestConfigWithAvoidance extends AxiosRequestConfig {
 
 const ax = axios.create({
   baseURL: import.meta.env.CORDOVA
-    ? `https://images.flowinity.com/api/v`
-    : `/api/v4`,
+    ? `https://images.flowinity.com/api/v3`
+    : `/api/v3`,
   withCredentials: true,
   headers: {
     Authorization: localStorage.getItem("token"),
@@ -90,7 +90,11 @@ ax.interceptors.request.use((config) => {
 
 // block all requests if the user is not logged in
 ax.interceptors.request.use((config) => {
-  return Promise.reject(config);
+  if (config.url.includes("/gallery/site")) {
+    return config;
+  } else {
+    return Promise.reject(config);
+  }
 });
 
 export default ax;

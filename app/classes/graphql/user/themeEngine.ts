@@ -1,6 +1,7 @@
-import { Field, ObjectType } from "type-graphql"
+import { Field, InputType, ObjectType } from "type-graphql"
 
-@ObjectType()
+@ObjectType("ThemeEngineColors")
+@InputType("ThemeEngineColorsInput")
 export class ThemeEngineColors {
   @Field()
   primary: string
@@ -74,7 +75,8 @@ export class ThemeEngineVariables {
   "theme-on-code": string
 }
 
-@ObjectType()
+@ObjectType("ThemeEngineTheme")
+@InputType("ThemeEngineThemeInput")
 export class ThemeEngineTheme {
   @Field()
   colors: ThemeEngineColors
@@ -83,7 +85,8 @@ export class ThemeEngineTheme {
   })
   dark: boolean
 }
-@ObjectType()
+@ObjectType("ThemeEngineThemes")
+@InputType("ThemeEngineThemesInput")
 export class ThemeEngineThemes {
   @Field(() => ThemeEngineTheme)
   dark: ThemeEngineTheme
@@ -93,14 +96,15 @@ export class ThemeEngineThemes {
   amoled: ThemeEngineTheme
 }
 
-@ObjectType()
+@ObjectType("ThemeEngine")
+@InputType("ThemeEngineInput")
 export class ThemeEngine {
   @Field(() => ThemeEngineThemes)
   theme: ThemeEngineThemes
   @Field()
   fluidGradient: boolean
   @Field()
-  gradientOffset: number
+  gradientOffset: string
   @Field(() => ThemeEngineThemes, {
     nullable: true
   })

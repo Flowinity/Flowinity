@@ -65,6 +65,11 @@ import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
 import { GraphQLError } from "graphql/error"
 import { CoreResolver } from "@app/controllers/graphql/core.resolver"
 import { CollectionResolver } from "@app/controllers/graphql/collection.resolver"
+//@ts-ignore
+import { createContext, EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
+import { DomainResolver } from "@app/controllers/graphql/domain.resolver"
+import { GalleryResolver } from "@app/controllers/graphql/gallery.resolver"
+import { createFetch } from "@whatwg-node/fetch"
 
 @Service()
 @Middleware({ type: "after" })
@@ -292,7 +297,14 @@ export class Application {
     })
 
     const schema = await buildSchema({
-      resolvers: [UserResolver, AuthResolver, CoreResolver, CollectionResolver],
+      resolvers: [
+        UserResolver,
+        AuthResolver,
+        CoreResolver,
+        CollectionResolver,
+        DomainResolver,
+        GalleryResolver
+      ],
       container: Container,
       authChecker: authChecker
     })
@@ -321,6 +333,18 @@ export class Application {
       createYoga({
         schema,
         plugins: gqlPlugins,
+        fetchAPI: createFetch({
+          formDataLimits: {
+            // Maximum allowed file size (in bytes)
+            fileSize: 1.37439e11,
+            // Maximum allowed number of files
+            files: 200,
+            // Maximum allowed size of content (operations, variables etc...)
+            fieldSize: 1000000,
+            // Maximum allowed header size for form data
+            headerSize: 1000000
+          }
+        }),
         maskedErrors: {
           maskError(error: any, message: any, isDev: any): Error {
             console.error(error)
@@ -353,7 +377,9 @@ export class Application {
                 ? AccessLevel.MODERATOR
                 : AccessLevel.USER
               : AccessLevel.NO_ACCESS,
-            token: ctx.request.headers.get("Authorization")
+            token: ctx.request.headers.get("Authorization"),
+            dataloader: createContext(db),
+            ip: "TODO"
           } as Context
         }
       })

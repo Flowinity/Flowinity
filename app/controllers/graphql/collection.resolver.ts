@@ -2,12 +2,14 @@ import {
   Arg,
   Authorized,
   Ctx,
+  Field,
   FieldResolver,
   Info,
   Int,
   Mutation,
   Query,
-  Resolver
+  Resolver,
+  Root
 } from "type-graphql"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { User } from "@app/models/user.model"
@@ -32,8 +34,11 @@ import {
   CollectionCache,
   UserCollectionsInput
 } from "@app/classes/graphql/collections/collections"
+import { CollectionUser } from "@app/models/collectionUser.model"
+import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
+import { Upload } from "@app/models/upload.model"
 
-@Resolver(User)
+@Resolver(Collection)
 @Service()
 export class CollectionResolver {
   constructor(private collectionService: CollectionService) {}
@@ -48,5 +53,20 @@ export class CollectionResolver {
       input?.type || "all",
       input?.search || ""
     )
+  }
+
+  @FieldResolver(() => [CollectionUser])
+  async users(@Root() collection: Collection) {
+    return await collection.$get("users")
+  }
+
+  @FieldResolver(() => [AutoCollectApproval])
+  async autoCollectApprovals(@Root() collection: Collection) {
+    return await collection.$get("autoCollectApprovals")
+  }
+
+  @FieldResolver(() => [Upload])
+  async attachments(@Root() collection: Collection) {
+    return []
   }
 }

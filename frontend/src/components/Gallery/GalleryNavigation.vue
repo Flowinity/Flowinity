@@ -17,6 +17,19 @@
         "
       ></v-text-field>
     </v-col>
+    <v-col v-if="supports.sort" cols="12" md="1">
+      <v-select
+        v-model="order"
+        :items="orderTypes"
+        :label="$t('generic.order')"
+        item-title="name"
+        item-value="internalName"
+        v-on:update:model-value="
+          $emit('update:order', order);
+          $emit('refreshGallery');
+        "
+      ></v-select>
+    </v-col>
     <v-col v-if="supports.sort" cols="12" md="2">
       <v-select
         v-model="sort"
@@ -41,6 +54,7 @@
           $emit('update:filter', filter);
           $emit('refreshGallery');
         "
+        :multiple="true"
       ></v-select>
     </v-col>
     <v-col v-if="supports.metadata" cols="12" sm="2" xl="auto">
@@ -63,7 +77,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from "vue";
+import { GalleryFilter, GalleryOrder, GallerySort } from "@/gql/graphql";
 
 export default defineComponent({
   name: "GalleryNavigation",
@@ -72,7 +87,8 @@ export default defineComponent({
     "update:search",
     "update:metadata",
     "refreshGallery",
-    "update:sort"
+    "update:sort",
+    "update:order"
   ],
   props: {
     supports: {
@@ -86,21 +102,35 @@ export default defineComponent({
         sort: true
       }
     },
+    orderTypes: {
+      type: Array,
+      required: false,
+      default: [
+        {
+          name: "Ascending",
+          internalName: GalleryOrder.Asc
+        },
+        {
+          name: "Descending",
+          internalName: GalleryOrder.Desc
+        }
+      ]
+    },
     sortTypes: {
       type: Array,
       required: false,
       default: [
         {
-          name: "Newest",
-          internalName: "newest"
+          name: "Created at",
+          internalName: GallerySort.CreatedAt
         },
         {
-          name: "Oldest",
-          internalName: "oldest"
+          name: "Name",
+          internalName: GallerySort.Name
         },
         {
           name: "Size",
-          internalName: "size"
+          internalName: GallerySort.Size
         }
       ]
     },
@@ -110,35 +140,43 @@ export default defineComponent({
       default: [
         {
           name: "All of them",
-          internalName: "all"
+          internalName: GalleryFilter.All
         },
         {
           name: "Not collectivized",
-          internalName: "nonCollectivized"
+          internalName: GalleryFilter.NoCollection
         },
         {
           name: "Images",
-          internalName: "image"
+          internalName: GalleryFilter.Images
         },
         {
           name: "Videos",
-          internalName: "video"
-        },
-        {
-          name: "GIFs",
-          internalName: "gif"
+          internalName: GalleryFilter.Videos
         },
         {
           name: "Audio",
-          internalName: "audio"
+          internalName: GalleryFilter.Audio
         },
         {
           name: "Text",
-          internalName: "text"
+          internalName: GalleryFilter.Text
         },
         {
           name: "Other",
-          internalName: "binary"
+          internalName: GalleryFilter.Other
+        },
+        {
+          name: "Include Deletable",
+          internalName: GalleryFilter.IncludeDeletable
+        },
+        {
+          name: "Owned items",
+          internalName: GalleryFilter.Owned
+        },
+        {
+          name: "Not owned items",
+          internalName: GalleryFilter.Shared
         }
       ]
     }
@@ -147,8 +185,9 @@ export default defineComponent({
     return {
       metadata: true,
       search: "",
-      filter: "all",
-      sort: "newest"
+      filter: [GalleryFilter.All],
+      sort: GallerySort.CreatedAt,
+      order: GalleryOrder.Desc
     };
   }
 });

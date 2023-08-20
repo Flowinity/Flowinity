@@ -52,7 +52,7 @@
     <br />
     <v-row v-if="!$app.componentLoading">
       <v-col
-        v-for="item in items.gallery"
+        v-for="item in items.items"
         :key="'item-' + item.id"
         :lg="!inline ? 3 : 12"
         cols="12"
