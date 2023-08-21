@@ -1,6 +1,7 @@
 // Composables
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { useUserStore } from "@/store/user";
+import { GalleryType } from "@/gql/graphql";
 
 const routes = [
   {
@@ -65,7 +66,7 @@ const routes = [
         name: "Personal Gallery",
         component: () => import("@/views/Gallery.vue"),
         props: {
-          endpoint: "/gallery",
+          type: GalleryType.Personal,
           path: "/gallery",
           name: "Gallery"
         }
@@ -74,6 +75,14 @@ const routes = [
         path: "/collections",
         name: "Collections",
         component: () => import("@/views/Collections/Home.vue")
+      },
+      {
+        path: "/collections/share/:id/:page?",
+        name: "Collection Share",
+        redirect: (to: any) =>
+          `/collections/${to.params.id}${
+            to.params.page ? "/" + to.params.page : ""
+          }`
       },
       {
         path: "/collections/:id/:page?",
@@ -183,7 +192,7 @@ const routes = [
         name: "Starred",
         component: () => import("@/views/Gallery.vue"),
         props: {
-          endpoint: "/gallery/starred",
+          type: GalleryType.Starred,
           path: "/starred",
           name: "Starred"
         }

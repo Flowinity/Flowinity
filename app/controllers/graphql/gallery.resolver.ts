@@ -32,11 +32,14 @@ import { EXPECTED_OPTIONS_KEY, createContext } from "dataloader-sequelize"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { UpdateUserInput } from "@app/classes/graphql/user/updateUser"
 import { Upload } from "@app/models/upload.model"
-import { GalleryInput } from "@app/classes/graphql/gallery/galleryInput"
+import { GalleryInput, Type } from "@app/classes/graphql/gallery/galleryInput"
 import { Collection } from "@app/models/collection.model"
 import { GalleryService } from "@app/services/gallery.service"
 import { PaginatedGalleryResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import { CollectionItem } from "@app/models/collectionItem.model"
+import { GraphQLError } from "graphql/error"
+import { CollectionService } from "@app/services/collection.service"
+import { Authorization } from "@app/lib/graphql/AuthChecker"
 
 const FileScalar = new GraphQLScalarType({
   name: "File",
@@ -48,21 +51,47 @@ const FileScalar = new GraphQLScalarType({
 export class GalleryResolver {
   constructor(
     private galleryService: GalleryService,
-    private userService: UserUtilsService
+    private userService: UserUtilsService,
+    private collectionService: CollectionService
   ) {}
 
-  @Authorized("gallery.view")
+  @Authorization({
+    scopes: ["uploads.view", "collections.view"],
+    userOptional: true
+  })
   @Query(() => PaginatedGalleryResponse)
   async gallery(
     @Ctx() ctx: Context,
     @Arg("input")
     input: GalleryInput
   ) {
+    if (input.type === Type.COLLECTION) {
+      if (!input.collectionId && !input.shareLink)
+        throw new GraphQLError(
+          "Collection ID or ShareLink is required for collection gallery"
+        )
+      const collection = await this.collectionService.getCollectionOrShare(
+        input.collectionId || input.shareLink!!,
+        ctx.user?.id
+      )
+      if (!collection)
+        throw new GraphQLError(
+          "You don't have permission to view this collection"
+        )
+      input.collectionId = collection.id
+    } else if (!ctx.user) {
+      throw new GraphQLError("You must be logged in to view the gallery")
+    }
     return await this.galleryService.getGalleryV4(
-      ctx.user!!.id,
+      ctx.user?.id,
       input,
-      ctx.user!.itemsPerPage || input.limit || 12,
-      await this.userService.getAttribute(ctx.user!!.id, "excludedCollections")
+      ctx.user?.itemsPerPage || input.limit || 12,
+      ctx.user?.id
+        ? await this.userService.getAttribute(
+            ctx.user.id,
+            "excludedCollections"
+          )
+        : null
     )
   }
 

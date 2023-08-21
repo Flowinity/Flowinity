@@ -32,6 +32,29 @@ export const UserCollectionsQuery = gql`
         }
       }
       itemCount
+      user {
+        username
+        id
+        avatar
+      }
+      recipient {
+        id
+        createdAt
+        read
+        write
+        configure
+        accepted
+        recipientId
+        user {
+          username
+          id
+          createdAt
+          administrator
+          moderator
+          avatar
+        }
+        collectionId
+      }
     }
   }
 `;

@@ -42,7 +42,7 @@
             @click="
               $functions.copy(
                 $app.site.hostnameWithProtocol +
-                  '/collections/share/' +
+                  '/collections/' +
                   collection.shareLink
               )
             "

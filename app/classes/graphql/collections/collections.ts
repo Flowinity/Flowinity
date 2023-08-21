@@ -32,3 +32,15 @@ export class UserCollectionsInput {
   })
   search: string
 }
+
+@InputType()
+export class CollectionInput {
+  @Field(() => Number, {
+    nullable: true
+  })
+  id: number
+  @Field({
+    nullable: true
+  })
+  shareLink: string
+}

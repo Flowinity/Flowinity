@@ -101,4 +101,15 @@ export class GalleryInput {
     defaultValue: Type.PERSONAL
   })
   type?: Type
+  @IsNumber()
+  @Field(() => Number, {
+    nullable: true,
+    description: "Requires Type to be COLLECTION"
+  })
+  collectionId?: number
+  @Field({
+    nullable: true,
+    description: "Requires Type to be COLLECTION"
+  })
+  shareLink?: string
 }

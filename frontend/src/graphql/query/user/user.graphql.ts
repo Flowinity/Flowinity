@@ -96,6 +96,7 @@ GetUserQuery = gql`
         internalName
         name
         icon
+        id
       }
       domain {
         active

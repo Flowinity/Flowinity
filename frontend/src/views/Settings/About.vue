@@ -74,7 +74,7 @@
         })
       }}
     </p>
-    <a class="text-gradient" href="/api/docs">
+    <a class="text-gradient" href="/graphql">
       {{ $t("settings.about.docs") }}
     </a>
     <br />

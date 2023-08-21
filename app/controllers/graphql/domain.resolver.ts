@@ -30,11 +30,14 @@ import { Notification } from "@app/models/notification.model"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { EXPECTED_OPTIONS_KEY, createContext } from "dataloader-sequelize"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
+import { Authorization } from "@app/lib/graphql/AuthChecker"
 
 @Resolver(Domain)
 @Service()
 export class DomainResolver {
-  @Authorized("user.view")
+  @Authorization({
+    scopes: "user.view"
+  })
   @Query(() => [Domain])
   async domains() {
     return await Domain.findAll()

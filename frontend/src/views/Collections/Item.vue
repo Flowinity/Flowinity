@@ -44,7 +44,7 @@
           @click="
             $functions.copy(
               $app.site.hostnameWithProtocol +
-                '/collections/share/' +
+                '/collections/' +
                 collection?.shareLink
             )
           "
@@ -63,10 +63,8 @@
   </UserBanner>
   <v-container v-if="collection">
     <PersonalGallery
-      :endpoint="`/collections/${$route.params.id || collection.id}/gallery`"
-      :name="`${collection.name} Collection`"
-      :path="`/collections/${$route.params.id || collection.id}`"
-      :random="`/collections/${$route.params.id || collection.id}/random`"
+      :type="GalleryType.Collection"
+      :id="collection.id"
       :supports="{
         multiSelect: true,
         pins: true,
@@ -82,11 +80,19 @@
           configure: collection.permissionsMetadata?.configure
         }
       }"
+      :path="`/collections/${this.$route.params.id}`"
     >
       <template v-slot:custom-values="{ item }">
         <v-card-subtitle>Creator: {{ item?.user?.username }}</v-card-subtitle>
       </template>
     </PersonalGallery>
+  </v-container>
+  <v-container v-else-if="!$app.componentLoading">
+    <PromoNoContent
+      icon="mdi-close-circle"
+      title="Collection not found"
+      description="The collection you are looking for does not exist or you don't have permission to view it."
+    ></PromoNoContent>
   </v-container>
 </template>
 
@@ -100,10 +106,20 @@ import Sharing from "@/components/Collections/Dialogs/Sharing.vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import CollectionSettings from "@/components/Collections/Dialogs/Settings.vue";
 import PersonalGallery from "@/views/Gallery.vue";
+import { GalleryType } from "@/gql/graphql";
+import { Collection } from "@/models/collection";
+import { isNumeric } from "@/plugins/isNumeric";
+import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 
 export default defineComponent({
   name: "CollectionsItem",
+  computed: {
+    GalleryType() {
+      return GalleryType;
+    }
+  },
   components: {
+    PromoNoContent,
     PersonalGallery,
     CollectionSettings,
     UserBanner,
@@ -123,16 +139,18 @@ export default defineComponent({
     async getCollection() {
       if (!this.collection && this.$collections.items.length) {
         this.collection = this.$collections.items.find(
-          (c: any) => c.id === parseInt(<string>this.$route.params.id)
+          (c: Collection) => c.id === parseInt(<string>this.$route.params.id)
         );
       }
       this.$app.componentLoading = true;
-      const { data } = await this.axios.get(
-        `/collections/${this.$route.params.id}`
+      const collection = await this.$collections.getCollection(
+        isNumeric(this.$route.params.id)
+          ? parseInt(<string>this.$route.params.id)
+          : this.$route.params.id
       );
       this.$app.componentLoading = false;
-      this.collection = data;
-      this.$app.title = this.collection?.name as string;
+      this.collection = collection;
+      this.$app.title = this.collection?.name || "Collection";
     }
   },
   mounted() {

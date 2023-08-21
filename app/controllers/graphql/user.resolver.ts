@@ -31,13 +31,16 @@ import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { EXPECTED_OPTIONS_KEY, createContext } from "dataloader-sequelize"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { UpdateUserInput } from "@app/classes/graphql/user/updateUser"
+import { Authorization } from "@app/lib/graphql/AuthChecker"
 
 @Resolver(User)
 @Service()
 export class UserResolver {
   constructor(private userUtilsService: UserUtilsService) {}
 
-  @Authorized("user.view")
+  @Authorization({
+    scopes: "user.view"
+  })
   @Query(() => User)
   async currentUser(@Ctx() ctx: Context) {
     return await this.findByPk(ctx.user!.id, ctx)
@@ -106,7 +109,9 @@ export class UserResolver {
     })
   }
 
-  @Authorized("user.modify")
+  @Authorization({
+    scopes: "user.modify"
+  })
   @Mutation(() => Boolean)
   async updateUser(@Arg("input") input: UpdateUserInput, @Ctx() ctx: Context) {
     await this.userUtilsService.updateUser(ctx.user!!.id, input)

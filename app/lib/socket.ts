@@ -82,7 +82,6 @@ export default {
             if (sockets.size < status?.length || !status) {
               status = []
             }
-            console.log(device, status)
             status.unshift(device)
             redis.json.set(`user:${user.id}:platforms`, "$", status)
           }

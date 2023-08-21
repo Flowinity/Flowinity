@@ -229,17 +229,16 @@ export class CollectionService {
 
   async getCollectionPermissions(
     collectionId: number | string,
-    userId: number | null,
+    userId: number | undefined,
     permission: "write" | "configure" | "read" | "owner"
   ) {
     if (isNumeric(collectionId)) collectionId = parseInt(<string>collectionId)
-    if (!userId) {
+    if (!userId || !isNumeric(collectionId)) {
       const collection = await redis.json.get(`shareLinks:${collectionId}`)
       if (!collection) return false
       return permission === "read"
     }
     const collections = await redis.json.get(`collections:${userId}`)
-
     const collection = collections.find(
       (collection: CollectionCache) => collection.id === collectionId
     )
@@ -251,9 +250,9 @@ export class CollectionService {
   async getCollectionOrShare(
     collectionId: number | string,
     userId?: number | null
-  ) {
+  ): Promise<Collection | false> {
     if (isNumeric(collectionId)) collectionId = parseInt(<string>collectionId)
-    if (!userId) {
+    if (!isNumeric(collectionId) || !userId) {
       const collection = await redis.json.get(`shareLinks:${collectionId}`)
       if (!collection) return false
       return collection

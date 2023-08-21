@@ -39,6 +39,9 @@ import cluster from "cluster"
 import os from "os"
 import { CacheService } from "@app/services/cache.service"
 import { ExperimentType } from "@app/classes/graphql/core/experiments"
+import { Weather } from "@app/classes/graphql/core/weather"
+import { WeatherResponse } from "@app/interfaces/weather"
+import { GraphQLError } from "graphql/error"
 
 @Resolver(User)
 @Service()
@@ -130,5 +133,36 @@ export class CoreResolver {
       return this.coreService.getExperimentsV4(config.release === "dev", false)
     }
     return await this.coreService.getUserExperimentsV4(ctx.user.id)
+  }
+
+  @FieldResolver(() => Weather)
+  @Query(() => Weather)
+  @Authorized({
+    scopes: [""]
+  })
+  async weather(@Ctx() ctx: Context) {
+    const cached = await redis.get(`core:weather:${ctx.ip}`)
+    let weather: WeatherResponse = {}
+    try {
+      if (cached) {
+        weather = JSON.parse(cached)
+        weather.cached = true
+      }
+    } catch {}
+    if (!weather?.temp) {
+      weather = await this.coreService.getWeather(ctx.ip)
+    }
+    if (weather.error) {
+      throw new GraphQLError(
+        "The weather service is not responding. Please try again later."
+      )
+    } else {
+      if (!weather.cached)
+        redis.set(`core:weather:${ctx.ip}`, JSON.stringify(weather), {
+          EX: 300,
+          NX: true
+        })
+      return weather
+    }
   }
 }

@@ -16,6 +16,7 @@ import { useRoute } from "vue-router";
 import { SidebarItem } from "@/types/sidebar";
 import { Announcement } from "@/models/announcement";
 import { CoreStateQuery } from "@/graphql/query/core/state.graphql";
+import { WeatherQuery } from "@/graphql/query/core/weather.graphql";
 
 export interface AppState {
   quickAction: number;
@@ -692,12 +693,12 @@ export const useAppStore = defineStore("app", {
     },
     async getWeather() {
       try {
-        const { data } = await axios.get("/core/weather", {
-          headers: {
-            noToast: true
-          }
+        const {
+          data: { weather }
+        } = await this.$apollo.query({
+          query: WeatherQuery
         });
-        this.weather.data = data;
+        this.weather.data = weather;
         this.weather.loading = false;
       } catch {
         //

@@ -64,7 +64,10 @@ import { authChecker } from "@app/lib/graphql/AuthChecker"
 import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
 import { GraphQLError } from "graphql/error"
 import { CoreResolver } from "@app/controllers/graphql/core.resolver"
-import { CollectionResolver } from "@app/controllers/graphql/collection.resolver"
+import {
+  CollectionResolver,
+  CollectionUserResolver
+} from "@app/controllers/graphql/collection.resolver"
 //@ts-ignore
 import { createContext, EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
 import { DomainResolver } from "@app/controllers/graphql/domain.resolver"
@@ -303,7 +306,8 @@ export class Application {
         CoreResolver,
         CollectionResolver,
         DomainResolver,
-        GalleryResolver
+        GalleryResolver,
+        CollectionUserResolver
       ],
       container: Container,
       authChecker: authChecker
@@ -379,7 +383,7 @@ export class Application {
               : AccessLevel.NO_ACCESS,
             token: ctx.request.headers.get("Authorization"),
             dataloader: createContext(db),
-            ip: "TODO"
+            ip: ctx.request.headers.get("X-Forwarded-For") || "1.1.1.1"
           } as Context
         }
       })

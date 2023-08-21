@@ -172,7 +172,7 @@ export class GalleryService {
   }
 
   async getGalleryV4(
-    id: number,
+    id: number | undefined,
     input: GalleryInput,
     limit: number = 12,
     excludedCollections: number[] | null
@@ -181,7 +181,7 @@ export class GalleryService {
       input.sort || "createdAt",
       input.order || "DESC"
     ]
-    const offset = input.page * input.limit - input.limit || 0
+    const offset = input.page * limit - limit || 0
     const allowed = [
       Filter.IMAGES,
       Filter.VIDEOS,
@@ -237,7 +237,7 @@ export class GalleryService {
             as: "item",
             required: true,
             where: {
-              collectionId: id
+              collectionId: input.collectionId
             }
           }
         ]
@@ -270,7 +270,7 @@ export class GalleryService {
       include,
       distinct: true
     })
-    const pager = paginate(count || uploads.length, input.page, input.limit)
+    const pager = paginate(count || uploads.length, input.page, limit)
     return {
       items: uploads,
       pager

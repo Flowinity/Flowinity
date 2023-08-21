@@ -82,7 +82,7 @@ import {
 export default defineComponent({
   name: "PersonalGallery",
   components: { GalleryNavigation, GalleryCore },
-  props: ["path", "endpoint", "name", "random", "supports"],
+  props: ["path", "type", "name", "random", "supports", "id"],
   data() {
     return {
       gallery: {
@@ -103,15 +103,18 @@ export default defineComponent({
       randomLoading: false
     };
   },
+  computed: {
+    rid() {
+      return this.$route.params.id;
+    }
+  },
   methods: {
     async randomAttachment() {
       this.randomLoading = true;
-      const { data } = await this.axios.get(
-        this.random || `${this.endpoint}/random`
-      );
-      this.$functions.copy(
+      // TODO
+      /*this.$functions.copy(
         "https://" + this.$user.user?.domain.domain + "/i/" + data.attachment
-      );
+      );*/
       this.randomLoading = false;
     },
     removeItemFromCollection(item: Upload, collection: CollectionCache) {
@@ -158,8 +161,10 @@ export default defineComponent({
             filters: this.show.selected,
             search: this.show.search,
             sort: this.show.sort,
-            type: GalleryType.Personal,
-            order: this.show.order
+            type: this.type,
+            order: this.show.order,
+            collectionId: typeof this.rid === "number" ? this.rid : undefined,
+            shareLink: typeof this.rid === "string" ? this.rid : undefined
           }
         } as GalleryInput
       });
@@ -186,7 +191,7 @@ export default defineComponent({
       this.$app.title = this.name || "Gallery";
       this.page = parseInt(<string>this.$route.params.page) || 1;
       this.getGallery();
-      if (this.endpoint === "/gallery") {
+      if (this.type === GalleryType.Personal) {
         this.$socket.on("gallery/create", this.socketRegister);
       }
     }
@@ -195,7 +200,7 @@ export default defineComponent({
     this.init();
   },
   unmounted() {
-    if (this.endpoint === "/gallery") {
+    if (this.type === GalleryType.Personal) {
       this.$socket.off("gallery/create", this.socketRegister);
     }
   },

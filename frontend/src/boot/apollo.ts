@@ -12,6 +12,7 @@ import {
 import { onError } from "@apollo/client/link/error";
 import { useToast } from "vue-toastification";
 import { setContext } from "@apollo/client/link/context";
+import { useUserStore } from "@/store/user";
 
 export default function setup(app: App) {
   const toast = useToast();
@@ -36,7 +37,8 @@ export default function setup(app: App) {
       for (const error of graphQLErrors) {
         if (error.extensions?.code === "UNAUTHORIZED") {
           localStorage.removeItem("token");
-          app.config.globalProperties.$router.push("/");
+          const user = useUserStore();
+          user.user = null;
         } else {
           toast.error(error.message);
         }

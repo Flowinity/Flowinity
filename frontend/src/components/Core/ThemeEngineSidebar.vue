@@ -381,8 +381,22 @@ export default defineComponent({
     },
     save() {
       const themeEngine = {
-        ...this.$user.changes.themeEngine,
-        theme: this.$vuetify.theme.themes,
+        theme: {
+          themes: {
+            amoled: {
+              colors: this.$vuetify.theme.themes.amoled.colors,
+              dark: this.$vuetify.theme.themes.amoled.dark
+            },
+            dark: {
+              colors: this.$vuetify.theme.themes.dark.colors,
+              dark: this.$vuetify.theme.themes.dark.dark
+            },
+            light: {
+              colors: this.$vuetify.theme.themes.light.colors,
+              dark: this.$vuetify.theme.themes.light.dark
+            }
+          }
+        },
         fluidGradient: this.$app.fluidGradient,
         gradientOffset: this.gradientOffset,
         version: 1,

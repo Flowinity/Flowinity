@@ -76,7 +76,7 @@ export const useUserStore = defineStore("user", {
     },
     gold(state: UserState) {
       if (!state.user) return false;
-      return state.user.plan.id === 6;
+      return state.user.plan.internalName === "GOLD";
     },
     unreadNotifications(state: UserState) {
       if (!state.user) return 0;
@@ -101,11 +101,15 @@ export const useUserStore = defineStore("user", {
             "--gradient-offset",
             `${themeData.gradientOffset}%`
           );
-          vuetify.theme.themes.value.dark.colors = themeData.theme.dark.colors;
+          vuetify.theme.themes.value.dark.colors =
+            themeData.theme.dark.colors ??
+            vuetify.theme.themes.value.dark.colors;
           vuetify.theme.themes.value.light.colors =
-            themeData.theme.light.colors;
+            themeData.theme.light.colors ??
+            vuetify.theme.themes.value.light.colors;
           vuetify.theme.themes.value.amoled.colors =
-            themeData.theme.amoled.colors;
+            themeData.theme.amoled.colors ??
+            vuetify.theme.themes.value.amoled.colors;
 
           app.fluidGradient = themeData.fluidGradient;
           if (themeData.fluidGradient) {
@@ -273,7 +277,6 @@ export const useUserStore = defineStore("user", {
         itemsPerPage: user.itemsPerPage,
         storedStatus: user.storedStatus,
         description: user.description,
-        themeEngine: user.themeEngine as ThemeEngine,
         insights: user.insights,
         profileLayout: user.profileLayout,
         excludedCollections: user.excludedCollections,
@@ -339,6 +342,18 @@ export const useUserStore = defineStore("user", {
         //@ts-ignore
         delete this.changes.themeEngine?.prev;
       }
+      /*if (!this.changes.themeEngine?.theme.dark.colors) {
+        this.changes.themeEngine.theme.dark.colors =
+          this.defaultVuetify.dark.colors;
+      }
+      if (!this.changes.themeEngine?.theme.light.colors) {
+        this.changes.themeEngine.theme.light.colors =
+          this.defaultVuetify.light.colors;
+      }
+      if (!this.changes.themeEngine?.theme.amoled.colors) {
+        this.changes.themeEngine.theme.amoled.colors =
+          this.defaultVuetify.amoled.colors;
+      }*/
       await this.$apollo.mutate({
         mutation: UpdateUserMutation,
         variables: {

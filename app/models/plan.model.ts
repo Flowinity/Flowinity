@@ -4,6 +4,14 @@ import { Field, Float, ObjectType } from "type-graphql"
 @ObjectType()
 @Table
 export class Plan extends Model {
+  @Field(() => Number)
+  @Column({
+    primaryKey: true,
+    autoIncrement: true,
+    type: DataType.INTEGER
+  })
+  id: number
+
   @Field()
   @Column
   name: string
