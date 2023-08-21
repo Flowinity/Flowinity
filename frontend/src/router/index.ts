@@ -76,6 +76,14 @@ const routes = [
         component: () => import("@/views/Collections/Home.vue")
       },
       {
+        path: "/collections/share/:id/:page?",
+        name: "Collection Share",
+        redirect: (to: any) =>
+          `/collections/${to.params.id}${
+            to.params.page ? "/" + to.params.page : ""
+          }`
+      },
+      {
         path: "/collections/:id/:page?",
         name: "Collection Item",
         component: () => import("@/views/Collections/Item.vue")
