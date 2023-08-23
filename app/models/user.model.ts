@@ -41,17 +41,8 @@ import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { Session } from "@app/models/session.model"
 import { Filter } from "@app/classes/graphql/gallery/galleryInput"
-
-export enum UserInsights {
-  EVERYONE = "everyone",
-  FRIENDS = "friends",
-  NOBODY = "nobody"
-}
-
-registerEnumType(UserInsights, {
-  name: "UserInsights",
-  description: "Insights privacy preference."
-})
+import { UserInsights } from "@app/classes/graphql/user/insights"
+import { CoreStats, Stats } from "@app/classes/graphql/core/core"
 
 @DefaultScope(() => ({
   attributes: {
@@ -429,10 +420,19 @@ export class User extends Model {
   @HasMany(() => AutoCollectRule, "userId")
   autoCollectRules: AutoCollectRule[]
 
+  @Field({
+    nullable: true
+  })
   scopes: string
 
-  stats: object
+  @Field(() => Stats, {
+    nullable: true
+  })
+  stats: Stats
 
+  @Field({
+    nullable: true
+  })
   oauthAppId?: string
 
   @Field(() => [FriendNickname], {

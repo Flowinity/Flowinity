@@ -3,12 +3,12 @@ import { DateTimeResolver } from "graphql-scalars"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { Badge } from "@app/models/badge.model"
 import { Friend } from "@app/models/friend.model"
-import { UserInsights } from "@app/models/user.model"
 import { Plan } from "@app/models/plan.model"
 import { Platform } from "@app/classes/graphql/user/platforms"
 import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
 import { Stats } from "@app/classes/graphql/core/core"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
+import { UserInsights } from "@app/classes/graphql/user/insights"
 
 @ObjectType()
 export class PartialUserBase {
@@ -37,6 +37,7 @@ export const partialUserBase = [
   "avatar"
 ]
 
+@ObjectType()
 export class PartialUserPublic {
   @Field()
   username: string
@@ -64,9 +65,13 @@ export class PartialUserPublic {
     nullable: true
   })
   description: string
-  @Field()
+  @Field({
+    nullable: true
+  })
   friend: boolean
-  @Field(() => [Friend])
+  @Field(() => [Friend], {
+    nullable: true
+  })
   friends: Friend[]
   @Field(() => UserInsights)
   insights: "everyone" | "friends" | "none"

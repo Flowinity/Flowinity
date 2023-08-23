@@ -55,7 +55,11 @@ import { OidcControllerV3 } from "@app/controllers/v3/oidc.controller"
 // GraphQL
 import { buildSchema } from "type-graphql"
 import { createYoga, MaskError, maskError } from "graphql-yoga"
-import { UserResolver } from "@app/controllers/graphql/user.resolver"
+import {
+  BadgeResolver,
+  PartialUserPublicResolver,
+  UserResolver
+} from "@app/controllers/graphql/user.resolver"
 import { useHive } from "@graphql-hive/client"
 import { execSync } from "child_process"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
@@ -307,7 +311,9 @@ export class Application {
         CollectionResolver,
         DomainResolver,
         GalleryResolver,
-        CollectionUserResolver
+        CollectionUserResolver,
+        BadgeResolver,
+        PartialUserPublicResolver
       ],
       container: Container,
       authChecker: authChecker

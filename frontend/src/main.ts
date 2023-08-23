@@ -30,6 +30,7 @@ import globals from "./boot/globals";
 import events from "./boot/events";
 import socket from "./boot/socket";
 import apollo from "./boot/apollo";
+import vuetify from "@/plugins/vuetify";
 
 const app = createApp({
   ...App,
@@ -63,6 +64,8 @@ const app = createApp({
     }
   }
 });
+
+app.use(vuetify);
 
 app.use(VueMatomo, {
   host: "https://analytics.flowinity.com",

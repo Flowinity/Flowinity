@@ -18,8 +18,6 @@ export class Stats {
   @Field()
   usage: number
   @Field()
-  usagePercentage: number
-  @Field()
   collections: number
   @Field()
   collectionItems: number
@@ -32,15 +30,30 @@ export class Stats {
   @Field()
   uploads: number
   @Field()
-  invites: number
-  @Field()
-  inviteMilestone: number
-  @Field()
   pulse: number
   @Field()
   pulses: number
   @Field()
   docs: number
+  //TODO
+  /*@Field(() => [String], {
+    nullable: true
+  })
+  hours: Record<string, number>*/
+  @Field()
+  usagePercentage: number
+}
+
+@ObjectType()
+export class CoreStats extends Stats {
+  @Field()
+  users: number
+  @Field()
+  announcements: number
+  @Field()
+  invites: number
+  @Field()
+  inviteMilestone: number
   @Field()
   messages: number
   @Field()
@@ -48,7 +61,7 @@ export class Stats {
   @Field(() => [String], {
     nullable: true
   })
-  hours: Record<string, number>
+  hours: string[]
 }
 
 @ObjectType()
@@ -109,8 +122,8 @@ export class CoreState {
   hostnameWithProtocol: string
   @Field(() => [Announcement])
   announcements: Announcement[]
-  @Field(() => Stats)
-  stats: Partial<Stats>
+  @Field(() => CoreStats)
+  stats: Partial<CoreStats>
   @Field(() => Maintenance)
   maintenance: Maintenance
   @Field()

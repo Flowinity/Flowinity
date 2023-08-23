@@ -1,6 +1,7 @@
 import {
   Arg,
   Authorized,
+  ClassType,
   Ctx,
   FieldResolver,
   Info,
@@ -26,19 +27,24 @@ import { Includeable } from "sequelize"
 import { Context } from "@app/types/graphql/context"
 import { GraphQLResolveInfo } from "graphql/type"
 import { Notification } from "@app/models/notification.model"
-import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import {
+  PartialUserBase,
+  partialUserBase,
+  PartialUserPublic
+} from "@app/classes/graphql/user/partialUser"
 import { EXPECTED_OPTIONS_KEY, createContext } from "dataloader-sequelize"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { UpdateUserInput } from "@app/classes/graphql/user/updateUser"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { UserProfileInput } from "@app/classes/graphql/user/profileInput"
 import { GraphQLError } from "graphql/error"
+import { Stats } from "@app/classes/graphql/core/core"
+import { Friend } from "@app/models/friend.model"
+import { FriendStatus } from "@app/classes/graphql/user/friends"
 
 @Resolver(User)
 @Service()
-export class UserResolver {
-  constructor(private userUtilsService: UserUtilsService) {}
-
+export class UserResolver extends createBaseResolver("User", User) {
   @Authorization({
     scopes: "user.view"
   })
@@ -47,97 +53,11 @@ export class UserResolver {
     return await this.findByPk(ctx.user!.id, ctx)
   }
 
-  async findByPk(id: number, ctx: Context) {
-    return await User.findByPk(id, {
-      [EXPECTED_OPTIONS_KEY]: createContext(db),
-      attributes: {
-        include: ["alternatePasswords"]
-      }
-    })
-  }
-
-  async findByUsername(username: string, ctx: Context) {
-    return await User.findOne({
-      [EXPECTED_OPTIONS_KEY]: createContext(db),
-      where: {
-        username
-      }
-    })
-  }
-
-  @FieldResolver(() => [Badge])
-  async badges(@Root() user: User) {
-    return await user.$get("badges")
-  }
-
-  @FieldResolver(() => [Notification])
-  async notifications(@Root() user: User, @Ctx() ctx: Context) {
-    return await user.$get("notifications")
-  }
-
-  @FieldResolver(() => [Integration])
-  async integrations(@Root() user: User, @Ctx() ctx: Context) {
-    return await user.$get("integrations")
-  }
-
-  @FieldResolver(() => [Domain])
-  async domain(@Root() user: User, @Ctx() ctx: Context) {
-    return await user.$get("domain")
-  }
-
-  @FieldResolver(() => [Subscription])
-  async subscription(@Root() user: User, @Ctx() ctx: Context) {
-    return await user.$get("subscription")
-  }
-
-  @FieldResolver(() => Plan)
-  async plan(@Root() user: User, @Ctx() ctx: Context) {
-    return await user.$get("plan")
-  }
-
-  @FieldResolver(() => AutoCollectRule)
-  async autoCollectRules(@Root() user: User, @Ctx() ctx: Context) {
-    return await user.$get("autoCollectRules")
-  }
-
-  async findByToken(token: string | null) {
-    return await Session.findOne({
-      where: {
-        token,
-        expiredAt: {
-          [Op.gt]: new Date()
-        }
-      },
-      include: [
-        {
-          model: User,
-          as: "user",
-          required: true,
-          attributes: [...partialUserBase, "itemsPerPage"]
-        }
-      ]
-    })
-  }
-
-  @Authorization({
-    scopes: "user.modify"
-  })
-  @Mutation(() => Boolean)
-  async updateUser(@Arg("input") input: UpdateUserInput, @Ctx() ctx: Context) {
-    await this.userUtilsService.updateUser(ctx.user!!.id, input)
-    return true
-  }
-
-  @FieldResolver(() => [Session])
-  async sessions(@Root() user: User, @Ctx() ctx: Context) {
-    return await user.$get("sessions")
-  }
-
   @Authorization({
     userOptional: true,
     scopes: []
   })
-  @Query(() => User || null)
+  @Query(() => PartialUserPublic || null)
   async user(@Arg("input") input: UserProfileInput, @Ctx() ctx: Context) {
     let user: User | null = null
     if (input.username) {
@@ -158,5 +78,134 @@ export class UserResolver {
       return null
     }
     return user
+  }
+  @Authorization({
+    scopes: "user.modify"
+  })
+  @Mutation(() => Boolean)
+  async updateUser(@Arg("input") input: UpdateUserInput, @Ctx() ctx: Context) {
+    await this.userUtilsService.updateUser(ctx.user!!.id, input)
+    return true
+  }
+
+  @FieldResolver(() => [Session])
+  async sessions(@Root() user: User, @Ctx() ctx: Context) {
+    return await user.$get("sessions")
+  }
+}
+
+@Resolver(PartialUserPublic)
+@Service()
+export class PartialUserPublicResolver extends createBaseResolver(
+  "PartialUserPublic",
+  PartialUserPublic
+) {}
+
+function createBaseResolver<T extends ClassType>(
+  suffix: string,
+  objectTypeCls: T
+) {
+  @Resolver(objectTypeCls)
+  abstract class UserResolver {
+    constructor(public userUtilsService: UserUtilsService) {}
+
+    async findByPk(id: number, ctx: Context) {
+      return await User.findByPk(id, {
+        [EXPECTED_OPTIONS_KEY]: createContext(db),
+        attributes: {
+          include: ["alternatePasswords"]
+        }
+      })
+    }
+
+    async findByUsername(username: string, ctx: Context) {
+      return await User.findOne({
+        [EXPECTED_OPTIONS_KEY]: createContext(db),
+        where: {
+          username
+        }
+      })
+    }
+
+    @FieldResolver(() => [Badge])
+    async badges(@Root() user: User) {
+      return await user.$get("badges")
+    }
+
+    @FieldResolver(() => [Notification])
+    async notifications(@Root() user: User, @Ctx() ctx: Context) {
+      return await user.$get("notifications")
+    }
+
+    @FieldResolver(() => [Integration])
+    async integrations(@Root() user: User, @Ctx() ctx: Context) {
+      return await user.$get("integrations")
+    }
+
+    @FieldResolver(() => [Domain])
+    async domain(@Root() user: User, @Ctx() ctx: Context) {
+      return await user.$get("domain")
+    }
+
+    @FieldResolver(() => [Subscription])
+    async subscription(@Root() user: User, @Ctx() ctx: Context) {
+      return await user.$get("subscription")
+    }
+
+    @FieldResolver(() => Plan)
+    async plan(@Root() user: User, @Ctx() ctx: Context) {
+      return await user.$get("plan")
+    }
+
+    @FieldResolver(() => AutoCollectRule)
+    async autoCollectRules(@Root() user: User, @Ctx() ctx: Context) {
+      return await user.$get("autoCollectRules")
+    }
+
+    @FieldResolver(() => Stats || null)
+    async stats(@Root() user: User, @Ctx() ctx: Context) {
+      return await redis.json.get(`userStats:${user.id}`)
+    }
+
+    @FieldResolver(() => [Friend])
+    async friends(@Root() user: User, @Ctx() ctx: Context) {
+      if (!ctx.user) return []
+      return await this.userUtilsService.getMutualFriends(user.id, ctx.user.id)
+    }
+
+    @FieldResolver(() => FriendStatus)
+    async friend(@Root() user: User, @Ctx() ctx: Context) {
+      if (!ctx.user) return null
+      return await this.userUtilsService.getFriendStatus(user.id, ctx.user.id)
+    }
+
+    async findByToken(token: string | null) {
+      return await Session.findOne({
+        where: {
+          token,
+          expiredAt: {
+            [Op.gt]: new Date()
+          }
+        },
+        include: [
+          {
+            model: User,
+            as: "user",
+            required: true,
+            attributes: [...partialUserBase, "itemsPerPage"]
+          }
+        ]
+      })
+    }
+  }
+  return UserResolver
+}
+
+@Resolver(Badge)
+@Service()
+export class BadgeResolver {
+  @FieldResolver(() => User)
+  async users(@Root() badge: Badge) {
+    return await badge.$get("users")
   }
 }

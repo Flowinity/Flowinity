@@ -16,6 +16,7 @@ import functions from "@/plugins/functions";
 import { GetUserQuery } from "@/graphql/query/user/user.graphql";
 import { UpdateUserMutation } from "@/graphql/mutation/user/update.graphql";
 import { UpdateUserInput } from "@/gql/graphql";
+import { ProfileQuery } from "@/graphql/query/user/profile.graphql";
 
 export interface UserState {
   user: User | null;
@@ -63,7 +64,7 @@ export const useUserStore = defineStore("user", {
           loading: false
         }
       },
-      defaultVuetify: vuetify.theme.themes.value,
+      defaultVuetify: null,
       disableProfileColors:
         localStorage.getItem("disableProfileColors") === "true"
     } as UserState),
@@ -84,7 +85,20 @@ export const useUserStore = defineStore("user", {
     }
   },
   actions: {
-    async getUser(username: string) {},
+    async getUser(username?: string, id?: number) {
+      const {
+        data: { user }
+      } = await this.$apollo.query({
+        query: ProfileQuery,
+        variables: {
+          input: {
+            username,
+            id
+          }
+        }
+      });
+      return user;
+    },
     applyTheme() {
       try {
         const app = useAppStore();
@@ -175,6 +189,7 @@ export const useUserStore = defineStore("user", {
     },
     async runPostTasks() {
       if (this.user && !this._postInitRan) {
+        this.defaultVuetify = vuetify.theme.themes;
         console.info("[TPU/UserStore] Running post-init auth tasks");
         window._paq.push(["setUserId", this.user.id]);
         window._paq.push(["trackPageView"]);
@@ -359,7 +374,24 @@ export const useUserStore = defineStore("user", {
         mutation: UpdateUserMutation,
         variables: {
           input: {
-            ...this.changes
+            ...this.changes,
+            themeEngine: {
+              ...this.user.themeEngine,
+              theme: {
+                amoled: {
+                  colors: vuetify.theme.themes.value.amoled.colors,
+                  dark: vuetify.theme.themes.value.amoled.dark
+                },
+                dark: {
+                  colors: vuetify.theme.themes.value.dark.colors,
+                  dark: vuetify.theme.themes.value.dark.dark
+                },
+                light: {
+                  colors: vuetify.theme.themes.value.light.colors,
+                  dark: vuetify.theme.themes.value.light.dark
+                }
+              }
+            }
           }
         } as UpdateUserInput
       });

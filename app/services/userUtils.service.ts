@@ -26,6 +26,7 @@ import { GoogleService } from "@app/services/providers/google.service"
 import { HexValidate, HexValidateOptional } from "@app/validators/hex"
 import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @Service()
 export class UserUtilsService {
@@ -860,14 +861,18 @@ export class UserUtilsService {
         {
           model: User,
           as: "user",
-          attributes: [
-            "id",
-            "username",
-            "avatar",
-            "description",
-            "administrator",
-            "moderator"
-          ],
+          attributes: partialUserBase,
+          include: [
+            {
+              model: Plan,
+              as: "plan"
+            }
+          ]
+        },
+        {
+          model: User,
+          as: "otherUser",
+          attributes: partialUserBase,
           include: [
             {
               model: Plan,
@@ -875,8 +880,7 @@ export class UserUtilsService {
             }
           ]
         }
-      ],
-      attributes: ["id", "friendId", "userId"]
+      ]
     })
   }
 

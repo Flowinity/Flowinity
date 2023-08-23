@@ -754,7 +754,7 @@ export default defineComponent({
       }
       const theme = reset
         ? this.$user.changes.themeEngine?.theme ||
-          new DefaultThemes(this.$user.gold).themes
+          new DefaultThemes(false).themes
         : this.user?.themeEngine?.theme;
       if (!theme) return false;
       this.$vuetify.theme.themes.dark = {
@@ -811,8 +811,7 @@ export default defineComponent({
         this.$app.componentLoading = true;
       }
       const username = this.username || this.$route.params.username;
-      const { data } = await this.axios.get(`/user/profile/${username}`);
-      this.user = data as User;
+      this.user = await this.$user.getUser(username);
       this.layout = this.user?.profileLayout || this.defaultLayout;
       if (!this.username) this.$app.title = this.user?.username + "'s Profile";
       this.setTheme();
