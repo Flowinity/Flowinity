@@ -9,12 +9,12 @@ import maxmind, { AsnResponse, CityResponse, Reader } from "maxmind"
 import { Subscription } from "@app/models/subscription.model"
 import { Experiment } from "@app/models/experiment.model"
 import Errors from "@app/lib/errors"
-import { AccessedFrom } from "@app/types/auth"
 import { Integration } from "@app/models/integration.model"
 import { createParamDecorator } from "routing-controllers"
 import { RequestAuthSystem } from "@app/types/express"
 import { Badge } from "@app/models/badge.model"
 import { BadRequestError } from "routing-controllers"
+import { AccessedFrom } from "@app/classes/graphql/user/session"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -69,6 +69,7 @@ export type Scope =
   | "oauth.save"
   | "oauth.user"
   | "oauth.authorize"
+  | "none"
 
 async function getSession(token: string) {
   return await Session.findOne({
@@ -140,6 +141,12 @@ async function getSession(token: string) {
 }
 
 export function checkScope(requiredScope: string | string[], scope: string) {
+  if (
+    requiredScope === "none" ||
+    requiredScope?.length === 0 ||
+    requiredScope?.includes("none")
+  )
+    return true
   if (scope === undefined) return true
   if (scope === "") {
     return false

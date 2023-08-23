@@ -1,21 +1,10 @@
 <template>
   <v-row>
     <v-col v-if="supports.search">
-      <v-text-field
+      <GalleryTextField
         v-model="search"
-        :label="$t('generic.search')"
-        append-inner-icon="mdi-close"
-        class="rounded-xl"
-        @click:append-inner="
-          search = '';
-          $emit('update:search', '');
-          $emit('refreshGallery');
-        "
-        v-on:keyup.enter="
-          $emit('update:search', search);
-          $emit('refreshGallery');
-        "
-      ></v-text-field>
+        @refreshGallery="$emit('refreshGallery')"
+      />
     </v-col>
     <v-col v-if="supports.sort" cols="12" md="1">
       <v-select
@@ -79,9 +68,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { GalleryFilter, GalleryOrder, GallerySort } from "@/gql/graphql";
+import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 
 export default defineComponent({
   name: "GalleryNavigation",
+  components: { GalleryTextField },
   emits: [
     "update:filter",
     "update:search",

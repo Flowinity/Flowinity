@@ -84,6 +84,7 @@ export const useUserStore = defineStore("user", {
     }
   },
   actions: {
+    async getUser(username: string) {},
     applyTheme() {
       try {
         const app = useAppStore();

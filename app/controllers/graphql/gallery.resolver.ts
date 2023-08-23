@@ -24,7 +24,6 @@ import { Integration } from "@app/models/integration.model"
 import { Badge } from "@app/models/badge.model"
 import { Includeable } from "sequelize"
 import { Context } from "@app/types/graphql/context"
-import { InfoParamMetadata } from "type-graphql/dist/metadata/definitions"
 import { GraphQLResolveInfo, GraphQLScalarType } from "graphql/type"
 import { Notification } from "@app/models/notification.model"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
@@ -40,6 +39,8 @@ import { CollectionItem } from "@app/models/collectionItem.model"
 import { GraphQLError } from "graphql/error"
 import { CollectionService } from "@app/services/collection.service"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
+//@ts-ignore
+import { resolver } from "graphql-sequelize"
 
 const FileScalar = new GraphQLScalarType({
   name: "File",

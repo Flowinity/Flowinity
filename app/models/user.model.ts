@@ -27,12 +27,31 @@ import { AlternatePassword as AlternatePasswordType } from "@app/types/auth"
 import { DefaultProfileLayout } from "@app/classes/UserV3ProfileLayout"
 import { Integration } from "@app/models/integration.model"
 import { Col } from "@troplo/sequelize/types/utils"
-import { Field, Float, GraphQLISODateTime, ObjectType } from "type-graphql"
+import {
+  Field,
+  Float,
+  GraphQLISODateTime,
+  ObjectType,
+  registerEnumType
+} from "type-graphql"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { AlternatePassword } from "@app/classes/graphql/user/alternatePassword"
 import { Notification } from "@app/models/notification.model"
 import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
 import { DateType } from "@app/classes/graphql/serializers/date"
+import { Session } from "@app/models/session.model"
+import { Filter } from "@app/classes/graphql/gallery/galleryInput"
+
+export enum UserInsights {
+  EVERYONE = "everyone",
+  FRIENDS = "friends",
+  NOBODY = "nobody"
+}
+
+registerEnumType(UserInsights, {
+  name: "UserInsights",
+  description: "Insights privacy preference."
+})
 
 @DefaultScope(() => ({
   attributes: {
@@ -309,7 +328,7 @@ export class User extends Model {
   })
   themeEngine: ThemeEngine | null
 
-  @Field()
+  @Field(() => UserInsights)
   @Column({
     type: DataType.ENUM("everyone", "friends", "nobody"),
     defaultValue: "nobody"
@@ -429,4 +448,8 @@ export class User extends Model {
   @Field(() => [Notification])
   @HasMany(() => Notification, "userId")
   notifications: Notification[]
+
+  @Field(() => [Session])
+  @HasMany(() => Session, "userId")
+  sessions: Session[]
 }

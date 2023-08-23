@@ -1,4 +1,4 @@
-import { AuthChecker, AuthCheckerInterface, ResolverData } from "type-graphql"
+import { AuthChecker, ResolverData } from "type-graphql"
 import { Context } from "@app/types/graphql/context"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { checkScope, Scope } from "@app/lib/auth"

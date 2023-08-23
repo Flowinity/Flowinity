@@ -24,7 +24,6 @@ import { Integration } from "@app/models/integration.model"
 import { Badge } from "@app/models/badge.model"
 import { Includeable } from "sequelize"
 import { Context } from "@app/types/graphql/context"
-import { InfoParamMetadata } from "type-graphql/dist/metadata/definitions"
 import { GraphQLResolveInfo } from "graphql/type"
 import { Notification } from "@app/models/notification.model"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
@@ -32,6 +31,8 @@ import { EXPECTED_OPTIONS_KEY, createContext } from "dataloader-sequelize"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { UpdateUserInput } from "@app/classes/graphql/user/updateUser"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
+import { UserProfileInput } from "@app/classes/graphql/user/profileInput"
+import { GraphQLError } from "graphql/error"
 
 @Resolver(User)
 @Service()
@@ -51,6 +52,15 @@ export class UserResolver {
       [EXPECTED_OPTIONS_KEY]: createContext(db),
       attributes: {
         include: ["alternatePasswords"]
+      }
+    })
+  }
+
+  async findByUsername(username: string, ctx: Context) {
+    return await User.findOne({
+      [EXPECTED_OPTIONS_KEY]: createContext(db),
+      where: {
+        username
       }
     })
   }
@@ -116,5 +126,37 @@ export class UserResolver {
   async updateUser(@Arg("input") input: UpdateUserInput, @Ctx() ctx: Context) {
     await this.userUtilsService.updateUser(ctx.user!!.id, input)
     return true
+  }
+
+  @FieldResolver(() => [Session])
+  async sessions(@Root() user: User, @Ctx() ctx: Context) {
+    return await user.$get("sessions")
+  }
+
+  @Authorization({
+    userOptional: true,
+    scopes: []
+  })
+  @Query(() => User || null)
+  async user(@Arg("input") input: UserProfileInput, @Ctx() ctx: Context) {
+    let user: User | null = null
+    if (input.username) {
+      user = await this.findByUsername(input.username, ctx)
+    } else if (input.id) {
+      user = await this.findByPk(input.id, ctx)
+    } else {
+      throw new GraphQLError("You must provide a username or id")
+    }
+
+    if (!user?.publicProfile && !ctx.user) {
+      throw new GraphQLError(
+        "You must be logged in to view this user's profile."
+      )
+    }
+
+    if (!user || user.banned) {
+      return null
+    }
+    return user
   }
 }

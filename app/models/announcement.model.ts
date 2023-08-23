@@ -28,7 +28,7 @@ export class Announcement extends Model {
   @Column
   type: string
 
-  @Field()
+  @Field(() => PartialUserBase)
   @BelongsTo(() => User, "userId")
   user: PartialUserBase
 }
