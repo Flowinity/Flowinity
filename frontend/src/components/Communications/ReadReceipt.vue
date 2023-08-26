@@ -4,8 +4,8 @@
     :id="'message-read-receipt-' + message.id + '-' + readReceipt.userId"
     :key="readReceipt.userId + '-' + message.id"
     :user="readReceipt.user"
-    class="pointer ml-2"
-    size="24"
+    class="pointer ml-2 read-receipt-avatar"
+    size="22"
     style="align-self: flex-end; z-index: 1"
     @click.prevent="
       $chat.dialogs.user.username = readReceipt.user.username;

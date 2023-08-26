@@ -43,17 +43,14 @@ export const useWorkspacesStore = defineStore("workspaces", {
       this.items = data;
     },
     async selectWorkspace(id: number) {
-      const { data } = await axios.get(`/notes/workspace/${id}`, {
-        headers: {
-          noToast: true
-        }
-      });
-      this.workspace = data;
+      const workspace = this.items.find((w) => w.id === id);
+      if (!workspace) return;
+      this.workspace = workspace;
       localStorage.setItem(
         "selectedWorkspace",
         JSON.stringify({
-          id: data.id,
-          name: data.name
+          id: workspace.id,
+          name: workspace.name
         })
       );
     },
@@ -65,7 +62,6 @@ export const useWorkspacesStore = defineStore("workspaces", {
       if (selectedWorkspace) {
         this.selectWorkspace(JSON.parse(selectedWorkspace).id);
       }
-      this.getWorkspaces();
     }
   },
   getters: {

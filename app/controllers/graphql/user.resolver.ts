@@ -41,16 +41,21 @@ import { GraphQLError } from "graphql/error"
 import { Stats } from "@app/classes/graphql/core/core"
 import { Friend } from "@app/models/friend.model"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
+import { AutoCollectCache } from "@app/types/collection"
 
 @Resolver(User)
 @Service()
 export class UserResolver extends createBaseResolver("User", User) {
   @Authorization({
-    scopes: "user.view"
+    scopes: "user.view",
+    userOptional: true
   })
-  @Query(() => User)
+  @Query(() => User || null, {
+    nullable: true
+  })
   async currentUser(@Ctx() ctx: Context) {
-    return await this.findByPk(ctx.user!.id, ctx)
+    if (!ctx.user) return null
+    return await this.findByPk(ctx.user.id, ctx)
   }
 
   @Authorization({
@@ -91,6 +96,19 @@ export class UserResolver extends createBaseResolver("User", User) {
   @FieldResolver(() => [Session])
   async sessions(@Root() user: User, @Ctx() ctx: Context) {
     return await user.$get("sessions")
+  }
+
+  @FieldResolver(() => Number)
+  async pendingAutoCollects(@Root() user: User) {
+    return await redis.json
+      .get(`autoCollects:${user.id}`)
+      .then((autoCollects: AutoCollectCache[]) => {
+        if (!autoCollects?.length) return 0
+        return autoCollects.reduce(
+          (acc, curr) => acc + curr.autoCollectApprovals.length,
+          0
+        )
+      })
   }
 }
 
@@ -134,7 +152,10 @@ function createBaseResolver<T extends ClassType>(
 
     @FieldResolver(() => [Notification])
     async notifications(@Root() user: User, @Ctx() ctx: Context) {
-      return await user.$get("notifications")
+      return await user.$get("notifications", {
+        limit: 15,
+        order: [["createdAt", "DESC"]]
+      })
     }
 
     @FieldResolver(() => [Integration])
@@ -174,9 +195,16 @@ function createBaseResolver<T extends ClassType>(
     }
 
     @FieldResolver(() => FriendStatus)
-    async friend(@Root() user: User, @Ctx() ctx: Context) {
-      if (!ctx.user) return null
-      return await this.userUtilsService.getFriendStatus(user.id, ctx.user.id)
+    async friend(
+      @Root() user: User,
+      @Ctx() ctx: Context
+    ): Promise<FriendStatus> {
+      if (!ctx.user) return FriendStatus.NONE
+      return (await this.userUtilsService.getFriendStatus(
+        user.id,
+        ctx.user.id,
+        true
+      )) as FriendStatus
     }
 
     async findByToken(token: string | null) {

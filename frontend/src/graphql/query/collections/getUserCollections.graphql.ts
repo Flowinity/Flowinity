@@ -1,27 +1,14 @@
 import { gql } from "@apollo/client";
 
 export const UserCollectionsQuery = gql`
-  query UserCollectionsQuery {
-    userCollections {
-      id
-      name
-      image
-      userId
-      shareLink
-      preview {
-        attachment {
-          attachment
-        }
-      }
-      shared
-      permissionsMetadata {
-        configure
-        read
-        write
-      }
-      users {
+  query UserCollectionsQuery($input: UserCollectionsInput!) {
+    collections(input: $input) {
+      items {
         id
-        configure
+        name
+        image
+        userId
+        shareLink
         user {
           username
           id
@@ -30,30 +17,69 @@ export const UserCollectionsQuery = gql`
           moderator
           avatar
         }
-      }
-      itemCount
-      user {
-        username
-        id
-        avatar
-      }
-      recipient {
-        id
-        createdAt
-        read
-        write
-        configure
-        accepted
-        recipientId
-        user {
-          username
+        preview {
+          attachment {
+            attachment
+            id
+          }
+        }
+        users {
           id
           createdAt
-          administrator
-          moderator
-          avatar
+          updatedAt
+          collectionId
+          read
+          write
+          configure
+          accepted
+          recipientId
+          senderId
+          identifier
+          user {
+            username
+            id
+            administrator
+            moderator
+            avatar
+          }
+          sender {
+            username
+            id
+            administrator
+            moderator
+            avatar
+          }
         }
-        collectionId
+        recipient {
+          id
+          createdAt
+          updatedAt
+          collectionId
+          read
+          write
+          configure
+          accepted
+          recipientId
+          senderId
+        }
+        shared
+        itemCount
+        permissionsMetadata {
+          write
+          read
+          configure
+        }
+      }
+      pager {
+        totalItems
+        currentPage
+        pageSize
+        totalPages
+        startPage
+        endPage
+        startIndex
+        endIndex
+        pages
       }
     }
   }

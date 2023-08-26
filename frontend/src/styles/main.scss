@@ -597,7 +597,7 @@ a {
 }
 
 // Why do you need to break everything, Vuetify?
-.v-switch--inset .v-selection-control--dirty .v-switch__thumb {
+.v-switch--inset:not(.v-input--disabled) .v-selection-control--dirty .v-switch__thumb {
   background-color: rgb(var(--v-theme-primary));
 }
 

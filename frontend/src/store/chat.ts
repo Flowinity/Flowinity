@@ -15,6 +15,7 @@ import { useFriendsStore } from "@/store/friends";
 import { Paginate } from "@/types/paginate";
 import dayjs from "../plugins/dayjs";
 import { useToast } from "vue-toastification";
+import { ChatsQuery } from "@/graphql/query/chats/chats.graphql";
 
 export interface ChatState {
   search: {
@@ -422,16 +423,31 @@ export const useChatStore = defineStore("chat", {
       } catch {
         //
       }
-      const { data } = await axios.get("/chats", {
-        headers: {
-          noToast: true
-        }
+      const {
+        data: { chats }
+      } = await this.$apollo.query({
+        query: ChatsQuery
       });
-      this.chats = data.map((chat: Chat, index: number) => ({
-        ...chat,
-        messages: this.chats[index]?.messages || null
-      }));
-      localStorage.setItem("chatStore", JSON.stringify(this.chats));
+      this.chats = chats
+        .map((chat: Chat, index: number) => ({
+          ...chat,
+          messages: this.chats[index]?.messages || null
+        }))
+        .sort((a: Chat, b: Chat) => {
+          return (
+            Number(b._redisSortDate) - Number(a._redisSortDate) ||
+            Number(b.id) - Number(a.id)
+          );
+        });
+      localStorage.setItem(
+        "chatStore",
+        JSON.stringify(
+          this.chats.map((chat) => {
+            chat.messages = undefined;
+            return chat;
+          })
+        )
+      );
     },
     async init() {
       try {
@@ -479,7 +495,6 @@ export const useChatStore = defineStore("chat", {
         };
       }
       window.tpuInternals.processLink = this.processLink;
-      this.getChats();
     }
   },
   getters: {

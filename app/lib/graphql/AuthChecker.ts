@@ -20,6 +20,7 @@ export const authChecker: AuthChecker<Context> = (
 ) => {
   const user = context.user
   const opts = options[0] as AuthCheckerOptions
+
   if (!user && !opts.userOptional) {
     throw new GraphQLError(
       `You need to be logged in to do this (Authorization header is empty or invalid).`,
@@ -38,10 +39,10 @@ export const authChecker: AuthChecker<Context> = (
   if (!checkScope(opts.scopes, scopes)) {
     if (!opts.userOptional) {
       throw new GraphQLError(
-        `You need to be logged in to do this (Authorization header is empty or invalid).`,
+        `Invalid scopes for API key (scope required: ${opts.scopes}, scopes granted: ${scopes}).`,
         {
           extensions: {
-            code: "UNAUTHORIZED"
+            code: "SCOPE_REQUIRED"
           }
         }
       )

@@ -9,6 +9,7 @@ import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
 import { Stats } from "@app/classes/graphql/core/core"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { UserInsights } from "@app/classes/graphql/user/insights"
+import { FriendStatus } from "@app/classes/graphql/user/friends"
 
 @ObjectType()
 export class PartialUserBase {
@@ -65,10 +66,10 @@ export class PartialUserPublic {
     nullable: true
   })
   description: string
-  @Field({
+  @Field(() => FriendStatus, {
     nullable: true
   })
-  friend: boolean
+  friend: FriendStatus
   @Field(() => [Friend], {
     nullable: true
   })

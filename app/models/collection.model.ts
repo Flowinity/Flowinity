@@ -16,6 +16,7 @@ import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import { Field, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { Upload } from "@app/models/upload.model"
+import { PermissionsMetadata } from "@app/classes/graphql/collections/collections"
 
 @ObjectType()
 @Table
@@ -54,7 +55,6 @@ export class Collection extends Model {
   @BelongsTo(() => User, "userId")
   user: User
 
-  @Field(() => [CollectionItem])
   @HasMany(() => CollectionItem, "collectionId")
   items: CollectionItem[]
 
@@ -96,4 +96,13 @@ export class Collection extends Model {
     "attachmentId"
   )
   attachments: Upload[]
+
+  @Field(() => PermissionsMetadata, {
+    defaultValue: {
+      write: false,
+      read: true,
+      configure: false
+    }
+  })
+  permissionsMetadata: PermissionsMetadata
 }

@@ -12,13 +12,17 @@ import { useWorkspacesStore } from "@/store/workspaces";
 import vuetify from "@/plugins/vuetify";
 import { useExperimentsStore } from "@/store/experiments";
 import { i18n } from "@/plugins/i18n";
+import i18nObject from "@/plugins/i18n";
 import { useRoute } from "vue-router";
 import { SidebarItem } from "@/types/sidebar";
 import { Announcement } from "@/models/announcement";
 import { CoreStateQuery } from "@/graphql/query/core/state.graphql";
 import { WeatherQuery } from "@/graphql/query/core/weather.graphql";
+import { CoreState } from "@/gql/graphql";
+import { Chat } from "@/models/chat";
 
 export interface AppState {
+  _postInitRan: boolean;
   quickAction: number;
   railMode: "tpu" | "workspaces" | "communications";
   fluidGradient: boolean;
@@ -65,32 +69,7 @@ export interface AppState {
           }
         | false;
     };
-    stats: {
-      collections: number;
-      collectionItems: number;
-      pulse: number;
-      users: number;
-      uploads: number;
-      usage: number;
-      pulses: number;
-      docs: number;
-      invites: number;
-      messages: number;
-      chats: number;
-      crashes: number;
-      messageGraph: {
-        labels: string[];
-        data: number[];
-      } | null;
-      pulseGraph: {
-        labels: string[];
-        data: number[];
-      } | null;
-      uploadGraph: {
-        labels: string[];
-        data: number[];
-      } | null;
-    };
+    stats: CoreState;
     maintenance: {
       enabled: boolean;
       message: string;
@@ -174,6 +153,7 @@ export interface AppState {
 export const useAppStore = defineStore("app", {
   state: () =>
     ({
+      _postInitRan: false,
       quickAction: parseInt(localStorage.getItem("quickAction") || "1"),
       railMode: "tpu",
       batterySave: false,
@@ -204,59 +184,7 @@ export const useAppStore = defineStore("app", {
         date: import.meta.env.TPU_BUILD_DATE || "N/A"
       },
       site: {
-        preTrustedDomains: [],
-        hostnames: [],
-        termsNoteId: "",
-        privacyNoteId: "",
-        finishedSetup: true,
-        alert: "",
-        registrations: false,
-        name: "TPU",
-        release: "prod",
-        route: null,
-        loading: false,
-        matomoId: null,
-        hostname: "https://images.flowinity.com",
-        hostnameWithProtocol: "https://images.flowinity.com",
-        announcements: [],
-        flowinityId: "troplo-private-uploader",
-        stats: {
-          uploadGraph: null,
-          messageGraph: null,
-          pulseGraph: null,
-          collections: 0,
-          collectionItems: 0,
-          pulse: 0,
-          users: 0,
-          uploads: 0,
-          usage: 0,
-          pulses: 0,
-          docs: 0,
-          invites: 0,
-          messages: 0,
-          chats: 0,
-          crashes: 0
-        },
-        maintenance: {
-          enabled: false,
-          message: "",
-          statusPage: ""
-        },
-        _redis: new Date().toISOString(),
-        server: "MAIN4",
-        officialInstance: true,
-        features: {
-          communications: true,
-          collections: true,
-          autoCollects: true,
-          workspaces: true,
-          insights: true
-        },
-        inviteAFriend: true,
-        connection: {
-          ip: "",
-          whitelist: false
-        }
+        name: "TPU"
       },
       weather: {
         loading: true,
@@ -704,8 +632,9 @@ export const useAppStore = defineStore("app", {
         //
       }
     },
-    async init() {
-      this.loading = true;
+    loadLocalStorage() {
+      const userStore = useUserStore();
+      const experimentsStore = useExperimentsStore();
       const core = localStorage.getItem("coreStore");
       if (core) {
         try {
@@ -716,15 +645,112 @@ export const useAppStore = defineStore("app", {
           //
         }
       }
+      const user = localStorage.getItem("userStore");
+      if (user) {
+        try {
+          userStore.user = JSON.parse(user);
+        } catch {
+          //
+        }
+      }
+      const experiments = localStorage.getItem("experimentsStore");
+      if (experiments) {
+        try {
+          experimentsStore.experiments = JSON.parse(experiments);
+        } catch {
+          //
+        }
+      }
+    },
+    postInit() {
+      if (this._postInitRan) return;
+      useWorkspacesStore().init();
+      const user = useUserStore();
+      setInterval(() => {
+        this.getWeather();
+      }, 1000 * 60 * 15);
+      this._postInitRan = true;
+      this.populateQuickSwitcher();
+      this.getWeather();
+      if (
+        this.user?.plan?.internalName === "GOLD" ||
+        !this.site.officialInstance
+      ) {
+        document.body.classList.add("gold");
+        user.applyTheme();
+        // remove other favicons
+        const links = document.getElementsByTagName("link");
+        //@ts-ignore
+        for (const link of links) {
+          if (
+            link.getAttribute("rel") !== "manifest" &&
+            link.getAttribute("rel") !== "stylesheet" &&
+            link.getAttribute("rel") !== "preload" &&
+            link.getAttribute("rel") !== "modulepreload"
+          ) {
+            link.remove();
+          }
+        }
+        // set favicon to gold
+        const link =
+          (document.querySelector("link[rel*='icon']") as HTMLLinkElement) ||
+          (document.createElement("link") as HTMLLinkElement);
+        link.type = "image/x-icon";
+        link.rel = "shortcut icon";
+        link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
+          this.user.username
+        }`;
+        document.head.appendChild(link);
+      }
+      i18nObject.global.locale = this.user?.language || "en";
+    },
+    async init() {
+      this.loadLocalStorage();
+      this.loading = true;
       const {
-        data: { coreState }
+        data: {
+          coreState,
+          experiments,
+          currentUser,
+          collections,
+          chats,
+          workspaces
+        }
       } = await this.$apollo.query({
         query: CoreStateQuery
       });
       this.site = coreState;
+      useUserStore().user = currentUser;
+      if (collections) {
+        useCollectionsStore().items = collections.items;
+        useCollectionsStore().pager = collections.pager;
+      }
+      const chatStore = useChatStore();
+      chatStore.chats = chats
+        .map((chat) => {
+          chat.messages =
+            chatStore.chats.find((c) => c.id === chat.id)?.messages || [];
+          return chat;
+        })
+        .sort((a: Chat, b: Chat) => {
+          return (
+            Number(b._redisSortDate) - Number(a._redisSortDate) ||
+            Number(b.id) - Number(a.id)
+          );
+        });
+      const experimentsStore = useExperimentsStore();
+      for (const experiment of experiments) {
+        experimentsStore.experiments[experiment.id] = experiment.value;
+      }
+      useWorkspacesStore().items = workspaces;
+      this.experimentsInherit = experimentsStore.experiments;
       this.domain = "https://" + this.site.domain + "/i/";
-      localStorage.setItem("coreStore", JSON.stringify(coreState));
       this.loading = false;
+      localStorage.setItem("coreStore", JSON.stringify(coreState));
+      localStorage.setItem("experimentsStore", JSON.stringify(experiments));
+      localStorage.setItem("userStore", JSON.stringify(currentUser));
+      localStorage.setItem("chatStore", JSON.stringify(chats));
+      this.postInit();
     },
     async refresh() {
       const {

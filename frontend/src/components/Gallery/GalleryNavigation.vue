@@ -2,7 +2,8 @@
   <v-row>
     <v-col v-if="supports.search">
       <GalleryTextField
-        v-model="search"
+        :model-value="search"
+        v-on:update:model-value="$emit('update:search', $event)"
         @refreshGallery="$emit('refreshGallery')"
       />
     </v-col>
@@ -56,6 +57,11 @@
         "
       ></v-checkbox>
     </v-col>
+    <v-col sm="auto" align-self="center">
+      <v-icon class="pointer" @click="$emit('refreshGallery')">
+        mdi-magnify
+      </v-icon>
+    </v-col>
     <v-col v-if="supports.upload" sm="1">
       <v-btn block class="mt-2" @click="$app.dialogs.upload.value = true">
         <v-icon class="mr-1">mdi-upload</v-icon>
@@ -82,6 +88,11 @@ export default defineComponent({
     "update:order"
   ],
   props: {
+    search: {
+      type: String,
+      required: false,
+      default: ""
+    },
     supports: {
       type: Object,
       required: false,
@@ -175,7 +186,6 @@ export default defineComponent({
   data() {
     return {
       metadata: true,
-      search: "",
       filter: [GalleryFilter.All],
       sort: GallerySort.CreatedAt,
       order: GalleryOrder.Desc

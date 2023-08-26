@@ -9,7 +9,7 @@
       :key="$route.params.version || $route.params.id"
       class="editorx_body mt-3"
     >
-      <div id="tpu-editor" class />
+      <div id="tpu-editor" />
     </div>
     <v-toolbar
       v-if="!id"
@@ -87,6 +87,9 @@ import { defineComponent } from "vue";
 //@ts-ignore
 import SimpleImage from "@troplo/tpu-simple-image";
 import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue";
+import { NoteQuery } from "@/graphql/query/workspaces/note";
+import { isNumeric } from "@/plugins/isNumeric";
+import { Note } from "@/gql/graphql";
 
 export default defineComponent({
   name: "WorkspaceItem",
@@ -396,11 +399,16 @@ export default defineComponent({
     },
     async getNote(id) {
       try {
-        return await this.axios.get("/notes/" + id, {
-          headers: {
-            noToast: true
+        const note = await this.$apollo.query({
+          query: NoteQuery,
+          variables: {
+            input: {
+              id: isNumeric(id) ? parseInt(id) : undefined,
+              shareLink: !isNumeric(id) ? id : undefined
+            }
           }
         });
+        return note.data.note;
       } catch {
         this.fail = true;
       }
@@ -408,21 +416,20 @@ export default defineComponent({
     onMounted() {
       this.fail = false;
       this.getNote(this.id || this.$route.params.id)
-        .then((res) => {
-          this.$app.title = res.data.name;
+        .then((res: Note) => {
+          this.$app.title = res.name;
           if (!this.id) {
             this.$app.lastNote = parseInt(this.$route.params.id);
             localStorage.setItem("lastNote", this.$route.params.id);
           }
           const note = this.$route.params.version
-            ? res.data.versions?.find(
-                (v) => v.id === this.$route.params.version
-              ).data
-            : res.data.data;
+            ? res.versions?.find((v) => v.id === this.$route.params.version)
+                ?.data
+            : res.data;
           try {
             this.editor(
               note,
-              this.$route.params.version || !res.data.permissions.modify
+              this.$route.params.version || !res.permissions.modify
             );
           } catch (e) {
             console.log(e);

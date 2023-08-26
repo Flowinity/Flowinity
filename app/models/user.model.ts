@@ -420,6 +420,11 @@ export class User extends Model {
   @HasMany(() => AutoCollectRule, "userId")
   autoCollectRules: AutoCollectRule[]
 
+  @Field(() => String, {
+    nullable: true,
+    description:
+      "The user's scopes assigned to the API key used. In format like `user.view,user.modify` which belong to `Scope`."
+  })
   @Field({
     nullable: true
   })
@@ -452,4 +457,11 @@ export class User extends Model {
   @Field(() => [Session])
   @HasMany(() => Session, "userId")
   sessions: Session[]
+
+  @Field({
+    nullable: true,
+    description:
+      "How many AutoCollect approvals the user needs to approve/reject."
+  })
+  pendingAutoCollects: number
 }

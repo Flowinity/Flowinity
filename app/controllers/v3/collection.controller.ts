@@ -33,6 +33,7 @@ import { Collection } from "@app/models/collection.model"
 import { CollectionUser } from "@app/models/collectionUser.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Upload } from "@app/models/upload.model"
+import { CollectionFilter } from "@app/classes/graphql/collections/collections"
 
 @Service()
 @JsonController("/collections")
@@ -66,11 +67,11 @@ export class CollectionControllerV3 {
     type: "owned" | "shared" | "write" | "configure" | "all" = "all",
     @QueryParam("search") search: string = ""
   ): Promise<CollectionCache[]> {
-    return await this.collectionService.getCollectionsFilter(
+    return (await this.collectionService.getCollectionsFilter(
       user.id,
-      type,
+      [CollectionFilter.ALL],
       search
-    )
+    )) as CollectionCache[]
   }
 
   @Get("/:id")

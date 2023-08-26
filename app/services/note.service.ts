@@ -119,7 +119,7 @@ export class NoteService {
     const note = await this.getNote(id, userId)
     if (!note?.permissions?.modify) throw Errors.NOT_FOUND
 
-    const versionData = note.versions.find((v: Note) => v.id === version)
+    const versionData = note.versions.find((v: NoteVersion) => v.id === version)
     if (!versionData) throw Errors.NOT_FOUND
 
     await Note.update(

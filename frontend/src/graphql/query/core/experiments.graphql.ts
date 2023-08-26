@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const ExperimentsQuery = gql`
   query GetExperiments {
-    getExperiments {
+    experiments {
       id
       value
       description

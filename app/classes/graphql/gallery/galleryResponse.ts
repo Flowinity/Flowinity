@@ -26,7 +26,7 @@ export class Pager {
 export function PagerResponse<TItem extends object>(
   TItemClass: ClassType<TItem>
 ) {
-  @ObjectType()
+  @ObjectType(`Paginated${TItemClass.name}Response`)
   abstract class PaginatedResponseClass {
     @Field((type) => [TItemClass])
     items: TItem[]

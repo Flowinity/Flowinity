@@ -1,6 +1,5 @@
 // Utilities
 import { defineStore } from "pinia";
-import { ProfileLayout, ThemeEngine, User } from "@/models/user";
 import axios from "@/plugins/axios";
 import { useChatStore } from "@/store/chat";
 import { useWorkspacesStore } from "@/store/workspaces";
@@ -15,59 +14,33 @@ import i18n from "@/plugins/i18n";
 import functions from "@/plugins/functions";
 import { GetUserQuery } from "@/graphql/query/user/user.graphql";
 import { UpdateUserMutation } from "@/graphql/mutation/user/update.graphql";
-import { UpdateUserInput } from "@/gql/graphql";
+import {
+  ProfileLayout,
+  ThemeEngine,
+  UpdateUserInput,
+  User
+} from "@/gql/graphql";
 import { ProfileQuery } from "@/graphql/query/user/profile.graphql";
 
-export interface UserState {
-  user: User | null;
-  _postInitRan: boolean;
-  disableProfileColors: boolean;
-  changes: {
-    email?: string;
-    discordPrecache?: boolean;
-    username?: string;
-    itemsPerPage?: number;
-    storedStatus?: string;
-    description?: string;
-    weatherUnit?: string;
-    themeEngine: ThemeEngine;
-    insights?: "everyone" | "friends" | "nobody";
-    profileLayout?: ProfileLayout | null;
-    excludedCollections?: number[] | null;
-    language?: string;
-    publicProfile?: boolean;
-    privacyPolicyAccepted?: boolean;
-    nameColor?: string;
-  };
-  actions: {
-    emailSent: {
-      value: boolean;
-      loading: boolean;
-    };
-  };
-  defaultVuetify: any;
-}
-
 export const useUserStore = defineStore("user", {
-  state: () =>
-    ({
-      user: null,
-      _postInitRan: false,
-      changes: {
-        themeEngine: {
-          customCSS: ""
-        }
-      },
-      actions: {
-        emailSent: {
-          value: false,
-          loading: false
-        }
-      },
-      defaultVuetify: null,
-      disableProfileColors:
-        localStorage.getItem("disableProfileColors") === "true"
-    } as UserState),
+  state: () => ({
+    user: null as User | null,
+    _postInitRan: false,
+    changes: {
+      themeEngine: {
+        customCSS: ""
+      }
+    },
+    actions: {
+      emailSent: {
+        value: false,
+        loading: false
+      }
+    },
+    defaultVuetify: null,
+    disableProfileColors:
+      localStorage.getItem("disableProfileColors") === "true"
+  }),
   getters: {
     contrast() {
       return functions.contrast(vuetify.theme.current.value.colors.primary);
@@ -75,11 +48,11 @@ export const useUserStore = defineStore("user", {
     theme() {
       return vuetify.theme.current.value;
     },
-    gold(state: UserState) {
+    gold(state) {
       if (!state.user) return false;
       return state.user.plan.internalName === "GOLD";
     },
-    unreadNotifications(state: UserState) {
+    unreadNotifications(state) {
       if (!state.user) return 0;
       return state.user.notifications.filter((n) => !n.dismissed).length;
     }
@@ -177,112 +150,12 @@ export const useUserStore = defineStore("user", {
       localStorage.removeItem("friendsStore");
       localStorage.removeItem("themeEngine");
       this.user = null;
-      this.changes = {
-        themeEngine: this.changes.themeEngine
-      };
       this._postInitRan = false;
     },
     async changeStatus(status: string) {
       if (!this.user) return;
-      this.changes.storedStatus = status;
+      this.user.storedStatus = status;
       await this.save();
-    },
-    async runPostTasks() {
-      if (this.user && !this._postInitRan) {
-        this.defaultVuetify = vuetify.theme.themes;
-        console.info("[TPU/UserStore] Running post-init auth tasks");
-        window._paq.push(["setUserId", this.user.id]);
-        window._paq.push(["trackPageView"]);
-        const app = useAppStore();
-        const chat = useChatStore();
-        const workspace = useWorkspacesStore();
-        const collections = useCollectionsStore();
-        const experiments = useExperimentsStore();
-        const friends = useFriendsStore();
-        const mail = useMailStore();
-        experiments.init().then(() => {
-          console.info("[TPU/ExperimentsStore] Experiments initialized");
-        });
-        collections.init().then(() => {
-          console.info("[TPU/CollectionsStore] Collections initialized");
-          app.populateQuickSwitcher();
-        });
-        workspace.init().then(() => {
-          console.info("[TPU/WorkspacesStore] Workspaces initialized");
-          app.populateQuickSwitcher();
-        });
-        chat.init().then(() => {
-          console.info("[TPU/ChatStore] Chat initialized");
-          app.populateQuickSwitcher();
-        });
-        friends.init().then(() => {
-          console.info("[TPU/FriendsStore] Friends initialized");
-        });
-        app.getWeather().then(() => {
-          console.info("[TPU/AppStore] Weather initialized");
-        });
-        mail.getMailboxes().then(() => {
-          console.info("[TPU/MailStore] Mailboxes initialized");
-        });
-        // every 15 minutes update the weather
-        setInterval(() => {
-          app.getWeather();
-        }, 1000 * 60 * 15);
-        this._postInitRan = true;
-        app.populateQuickSwitcher();
-        if (
-          this.user?.plan?.internalName === "GOLD" ||
-          !app.site.officialInstance
-        ) {
-          vuetify.theme.themes.value.dark.colors = {
-            ...vuetify.theme.themes.value.dark.colors,
-            primary: "#FFD700",
-            info: "#FFD700",
-            logo1: "#FFDB1B",
-            logo2: "#FFD700"
-          };
-          vuetify.theme.themes.value.light.colors = {
-            ...vuetify.theme.themes.value.light.colors,
-            primary: "#FFD700",
-            info: "#FFD700",
-            logo1: "#FFDB1B",
-            logo2: "#FFD700"
-          };
-          vuetify.theme.themes.value.amoled.colors = {
-            ...vuetify.theme.themes.value.amoled.colors,
-            primary: "#FFD700",
-            info: "#FFD700",
-            logo1: "#FFDB1B",
-            logo2: "#FFD700"
-          };
-          document.body.classList.add("gold");
-          this.applyTheme();
-          // remove other favicons
-          const links = document.getElementsByTagName("link");
-          //@ts-ignore
-          for (const link of links) {
-            if (
-              link.getAttribute("rel") !== "manifest" &&
-              link.getAttribute("rel") !== "stylesheet" &&
-              link.getAttribute("rel") !== "preload" &&
-              link.getAttribute("rel") !== "modulepreload"
-            ) {
-              link.remove();
-            }
-          }
-          // set favicon to gold
-          const link =
-            (document.querySelector("link[rel*='icon']") as HTMLLinkElement) ||
-            (document.createElement("link") as HTMLLinkElement);
-          link.type = "image/x-icon";
-          link.rel = "shortcut icon";
-          link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
-            this.user.username
-          }`;
-          document.head.appendChild(link);
-        }
-      }
-      i18n.global.locale = this.user?.language || "en";
     },
     setChanges(user: User) {
       if (!user) return;
@@ -304,6 +177,7 @@ export const useUserStore = defineStore("user", {
       };
     },
     async init() {
+      console.log(1);
       const user = localStorage.getItem("userStore");
       if (user) {
         try {
@@ -316,6 +190,7 @@ export const useUserStore = defineStore("user", {
           //
         }
       }
+      console.log(2);
       const {
         data: { currentUser }
       } = await this.$apollo.query({

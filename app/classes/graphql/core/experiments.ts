@@ -6,8 +6,8 @@ import { DateType } from "@app/classes/graphql/serializers/date"
 export class ExperimentType {
   @Field()
   id: string
-  @Field()
-  value: boolean
+  @Field(() => Number)
+  value: boolean | number
   @Field({
     nullable: true
   })

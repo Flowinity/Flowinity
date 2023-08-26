@@ -13,4 +13,5 @@ export type Context = {
   token: string
   ip: string
   dataloader: any
+  meta: Record<string, any>
 }

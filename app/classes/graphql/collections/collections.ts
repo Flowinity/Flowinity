@@ -1,5 +1,20 @@
 import { Collection } from "@app/models/collection.model"
-import { Field, InputType, ObjectType } from "type-graphql"
+import { Field, InputType, ObjectType, registerEnumType } from "type-graphql"
+import { IsNumber, Max, Min } from "class-validator"
+
+export enum CollectionFilter {
+  ALL = "all",
+  WRITE = "write",
+  READ = "read",
+  CONFIGURE = "configure",
+  SHARED = "shared",
+  OWNED = "owned"
+}
+
+registerEnumType(CollectionFilter, {
+  name: "CollectionFilter",
+  description: "The type of collection"
+})
 
 @ObjectType()
 export class PermissionsMetadata {
@@ -11,26 +26,28 @@ export class PermissionsMetadata {
   configure: boolean
 }
 
-@ObjectType()
-export class CollectionCache extends Collection {
-  @Field()
-  permissionsMetadata: PermissionsMetadata
-  @Field({
-    nullable: true
-  })
-  shared: boolean
-}
-
 @InputType()
 export class UserCollectionsInput {
-  @Field({
-    nullable: true
+  @Field(() => [CollectionFilter], {
+    defaultValue: [CollectionFilter.ALL]
   })
-  type: string
+  filter: CollectionFilter[]
   @Field({
     nullable: true
   })
   search: string
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  @Field({
+    defaultValue: 24
+  })
+  limit: number
+  @IsNumber()
+  @Field({
+    defaultValue: 1
+  })
+  page: number
 }
 
 @InputType()

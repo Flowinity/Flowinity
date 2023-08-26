@@ -57,17 +57,11 @@ export default function setup(app) {
   window.socket = app.config.globalProperties.$socket;
   app.config.globalProperties.$functions = functions;
 
-  user.init().then(() => {
-    console.info("[TPU/UserStore] User initialized");
-  });
   core.init().then(() => {
     if (!core.site.finishedSetup) {
       router.push("/setup");
     }
     console.info("[TPU/CoreStore] Core initialized");
-  });
-  experiments.init().then(() => {
-    console.info("[TPU/ExperimentsStore] Experiments initialized");
   });
   window.central = {
     user: user.user,

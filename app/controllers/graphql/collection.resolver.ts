@@ -30,7 +30,7 @@ import { Notification } from "@app/models/notification.model"
 import { CollectionService } from "@app/services/collection.service"
 import { Collection } from "@app/models/collection.model"
 import {
-  CollectionCache,
+  CollectionFilter,
   CollectionInput,
   UserCollectionsInput
 } from "@app/classes/graphql/collections/collections"
@@ -44,24 +44,36 @@ import {
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { GraphQLError } from "graphql/error"
+import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
+
+export const PaginatedCollectionsResponse = PagerResponse(Collection)
+export type PaginatedCollectionsResponse = InstanceType<
+  typeof PaginatedCollectionsResponse
+>
 
 @Resolver(Collection)
 @Service()
 export class CollectionResolver {
   constructor(private collectionService: CollectionService) {}
   @Authorization({
-    scopes: "collections.view"
+    scopes: "collections.view",
+    userOptional: true
   })
-  @Query(() => [CollectionCache])
-  async userCollections(
+  @Query(() => PaginatedCollectionsResponse, {
+    nullable: true
+  })
+  async collections(
     @Ctx() ctx: Context,
     @Arg("input", { nullable: true }) input?: UserCollectionsInput
-  ) {
-    return await this.collectionService.getCollectionsFilter(
+  ): Promise<PaginatedCollectionsResponse | null> {
+    if (!ctx.user) return null
+    return (await this.collectionService.getCollectionsFilter(
       ctx.user!!.id,
-      input?.type || "all",
-      input?.search || ""
-    )
+      input?.filter || [CollectionFilter.ALL],
+      input?.search || "",
+      input?.page || 1,
+      input?.limit || 24
+    )) as PaginatedCollectionsResponse
   }
 
   @FieldResolver(() => [CollectionUser])
@@ -100,7 +112,7 @@ export class CollectionResolver {
     scopes: "collections.view",
     userOptional: true
   })
-  @Query(() => CollectionCache, {
+  @Query(() => Collection, {
     nullable: true
   })
   async collection(

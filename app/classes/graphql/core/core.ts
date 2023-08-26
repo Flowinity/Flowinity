@@ -40,8 +40,6 @@ export class Stats {
     nullable: true
   })
   hours: Record<string, number>*/
-  @Field()
-  usagePercentage: number
 }
 
 @ObjectType()

@@ -77,6 +77,11 @@ import { createContext, EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
 import { DomainResolver } from "@app/controllers/graphql/domain.resolver"
 import { GalleryResolver } from "@app/controllers/graphql/gallery.resolver"
 import { createFetch } from "@whatwg-node/fetch"
+import { ChatResolver } from "@app/controllers/graphql/chat.resolver"
+import { ChatAssociationResolver } from "@app/controllers/graphql/chatAssociation.resolver"
+import { WorkspaceResolver } from "@app/controllers/graphql/workspace.resolver"
+import { WorkspaceFolderResolver } from "@app/controllers/graphql/workspaceFolder.resolver"
+import { NoteResolver } from "@app/controllers/graphql/note.resolver"
 
 @Service()
 @Middleware({ type: "after" })
@@ -313,7 +318,12 @@ export class Application {
         GalleryResolver,
         CollectionUserResolver,
         BadgeResolver,
-        PartialUserPublicResolver
+        PartialUserPublicResolver,
+        ChatResolver,
+        ChatAssociationResolver,
+        WorkspaceResolver,
+        WorkspaceFolderResolver,
+        NoteResolver
       ],
       container: Container,
       authChecker: authChecker
@@ -358,6 +368,7 @@ export class Application {
         maskedErrors: {
           maskError(error: any, message: any, isDev: any): Error {
             console.error(error)
+
             if (
               !message.toLowerCase().includes("sequelize") ||
               error instanceof GraphQLError
@@ -389,7 +400,8 @@ export class Application {
               : AccessLevel.NO_ACCESS,
             token: ctx.request.headers.get("Authorization"),
             dataloader: createContext(db),
-            ip: ctx.request.headers.get("X-Forwarded-For") || "1.1.1.1"
+            ip: ctx.request.headers.get("X-Forwarded-For") || "1.1.1.1",
+            meta: {}
           } as Context
         }
       })

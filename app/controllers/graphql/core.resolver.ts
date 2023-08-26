@@ -34,7 +34,7 @@ import { InviteService } from "@app/services/invite.service"
 import fs from "fs"
 import path from "path"
 import { CoreService } from "@app/services/core.service"
-import { CoreState } from "@app/classes/graphql/core/core"
+import { CoreState, CoreStats } from "@app/classes/graphql/core/core"
 import cluster from "cluster"
 import os from "os"
 import { CacheService } from "@app/services/cache.service"
@@ -43,7 +43,7 @@ import { Weather } from "@app/classes/graphql/core/weather"
 import { WeatherResponse } from "@app/interfaces/weather"
 import { GraphQLError } from "graphql/error"
 
-@Resolver(User)
+@Resolver(CoreState)
 @Service()
 export class CoreResolver {
   constructor(
@@ -54,7 +54,7 @@ export class CoreResolver {
   @Query(() => CoreState)
   async coreState(@Ctx() ctx: Context): Promise<Partial<CoreState>> {
     if (!config.finishedSetup) {
-      let step = await this.getSetupStep(ctx)
+      let step = await this.setupStep(ctx)
       return {
         finishedSetup: false,
         name: config.siteName,
@@ -80,7 +80,7 @@ export class CoreResolver {
   }
 
   @Query(() => Number)
-  async getSetupStep(@Ctx() ctx: Context) {
+  async setupStep(@Ctx() ctx: Context) {
     try {
       if (
         await Domain.findOne({
@@ -128,7 +128,7 @@ export class CoreResolver {
   }
 
   @Query(() => [ExperimentType])
-  async getExperiments(@Ctx() ctx: Context) {
+  async experiments(@Ctx() ctx: Context) {
     if (!ctx.user?.id) {
       return this.coreService.getExperimentsV4(config.release === "dev", false)
     }

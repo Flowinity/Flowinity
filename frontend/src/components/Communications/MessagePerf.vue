@@ -1,5 +1,5 @@
 <template>
-  <li>
+  <li class="position-relative">
     <div v-if="dateSeparator" class="date-separator">
       <div class="date-separator-line"></div>
       <p class="date-separator-block unselectable">
@@ -7,127 +7,139 @@
       </p>
       <div class="date-separator-line"></div>
     </div>
-    <v-toolbar
-      v-if="message.replyId"
-      class="ml-6 my-1 pointer limit"
-      color="transparent"
-      :floating="true"
-      height="auto"
-      @click.prevent="$emit('jumpToMessage', message.reply?.id)"
-    >
-      <v-icon class="mr-2">mdi-reply</v-icon>
-      <UserAvatar
-        :user="message.reply?.user"
-        class="mr-2"
-        size="24"
-      ></UserAvatar>
-      {{ message.reply?.content ?? "Deleted Message" }}
-    </v-toolbar>
-    <div
-      @contextmenu="context"
-      :class="{ merge, unselectable: $vuetify.display.mobile }"
-      class="message position-relative"
-      @mouseover="hovered = true"
-      :style="{
-        zIndex: 1000 - index
-      }"
-    >
-      <small
-        v-if="merge"
-        class="ml-2 text-grey message-date"
-        style="font-size: 9px"
-      >
-        <v-tooltip activator="parent" location="top" style="z-index: 2001">
-          {{ $date(message.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
-        </v-tooltip>
-        {{ $date(message.createdAt).format("hh:mm A") }}
-      </small>
-      <UserAvatar
-        @click="
-          $emit('authorClick', {
-            user: message.user,
-            bindingElement: 'message-author-avatar-' + message.id,
-            x: $event.x,
-            y: $event.y
-          })
-        "
-        class="ml-2 mr-3 mt-1 pointer"
-        v-if="!merge"
-        :user="message.user"
-        :id="'message-author-avatar-' + message.id"
-      />
-      <div style="width: 100%">
-        <p
-          v-if="
-            (!message.type && !merge) || (message.type === 'message' && !merge)
-          "
-          :class="{ 'text-red': message.error }"
-          class="unselectable"
+    <div class="d-flex flex-row">
+      <div class="flex-grow-1">
+        <v-toolbar
+          v-if="message.replyId"
+          class="ml-6 my-1 pointer limit"
+          color="transparent"
+          :floating="true"
+          height="auto"
+          @click.prevent="$emit('jumpToMessage', message.reply?.id)"
         >
-          <a
-            :id="'message-author-' + message.id"
-            class="mr-1 pointer underline-on-hover"
-            :style="`color: ${getColor}`"
-            @click.prevent="
+          <v-icon class="mr-2">mdi-reply</v-icon>
+          <UserAvatar
+            :user="message.reply?.user"
+            class="mr-2"
+            size="24"
+          ></UserAvatar>
+          {{ message.reply?.content ?? "Deleted Message" }}
+        </v-toolbar>
+        <div
+          @contextmenu="context"
+          :class="{ merge, unselectable: $vuetify.display.mobile }"
+          class="message position-relative"
+          @mouseover="hovered = true"
+          :style="{
+            zIndex: 1000 - index
+          }"
+        >
+          <small
+            v-if="merge"
+            class="ml-2 text-grey message-date"
+            style="font-size: 9px"
+          >
+            <v-tooltip activator="parent" location="top" style="z-index: 2001">
+              {{ $date(message.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
+            </v-tooltip>
+            {{ $date(message.createdAt).format("hh:mm A") }}
+          </small>
+          <UserAvatar
+            @click="
               $emit('authorClick', {
                 user: message.user,
-                bindingElement: 'message-author-' + message.id,
+                bindingElement: 'message-author-avatar-' + message.id,
                 x: $event.x,
                 y: $event.y
               })
             "
-          >
-            {{ $friends.getName(message.user) }}
-          </a>
-          <small class="text-grey">
-            {{ $date(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
-          </small>
-        </p>
-        <div class="position-relative" v-if="!editing">
-          <span
-            :class="{ 'text-grey': message.pending, 'text-red': message.error }"
-            class="overflow-content message-content d-inline-block"
-            v-html="$functions.markdown(message.content)"
-          ></span>
-          <span v-if="message.edited" :ripple="false" class="d-inline-block">
-            <v-tooltip activator="parent" location="top">
-              {{ $date(message.editedAt).format("DD/MM/YYYY hh:mm:ss A") }}
-            </v-tooltip>
-            <v-icon color="grey" class="ml-1 mb-1" size="x-small">
-              mdi-pencil
-            </v-icon>
-          </span>
-        </div>
+            class="ml-2 mr-3 mt-1 pointer"
+            v-if="!merge"
+            :user="message.user"
+            :id="'message-author-avatar-' + message.id"
+          />
+          <div style="width: 100%">
+            <p
+              v-if="
+                (!message.type && !merge) ||
+                (message.type === 'message' && !merge)
+              "
+              :class="{ 'text-red': message.error }"
+              class="unselectable"
+            >
+              <a
+                :id="'message-author-' + message.id"
+                class="mr-1 pointer underline-on-hover"
+                :style="`color: ${getColor}`"
+                @click.prevent="
+                  $emit('authorClick', {
+                    user: message.user,
+                    bindingElement: 'message-author-' + message.id,
+                    x: $event.x,
+                    y: $event.y
+                  })
+                "
+              >
+                {{ $friends.getName(message.user) }}
+              </a>
+              <small class="text-grey">
+                {{ $date(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
+              </small>
+            </p>
+            <div class="position-relative" v-if="!editing">
+              <span
+                :class="{
+                  'text-grey': message.pending,
+                  'text-red': message.error
+                }"
+                class="overflow-content message-content d-inline-block"
+                v-html="$functions.markdown(message.content)"
+              ></span>
+              <span
+                v-if="message.edited"
+                :ripple="false"
+                class="d-inline-block"
+              >
+                <v-tooltip activator="parent" location="top">
+                  {{ $date(message.editedAt).format("DD/MM/YYYY hh:mm:ss A") }}
+                </v-tooltip>
+                <v-icon color="grey" class="ml-1 mb-1" size="x-small">
+                  mdi-pencil
+                </v-icon>
+              </span>
+            </div>
 
-        <CommunicationsInput
-          v-else
-          :editing="true"
-          :modelValue="editingText"
-          @edit="$emit('edit', { id: null, content: null })"
-          @sendMessage="$emit('editMessage', $event)"
-          @update:modelValue="$emit('editText', $event)"
-          style="width: 100%"
-        />
-        <MessageActions
-          :message="message"
-          v-if="hovered && !$vuetify.display.mobile"
-          @delete="$emit('delete', { message, shifting: $event })"
-          @edit="$emit('edit', { id: message.id, content: message.content })"
-          @reply="$emit('reply', message)"
-          :merge="merge"
-        />
-        <Embed
-          v-for="(embed, index) in message.embeds"
-          :key="index"
-          :embed="embed"
-        />
+            <CommunicationsInput
+              v-else
+              :editing="true"
+              :modelValue="editingText"
+              @edit="$emit('edit', { id: null, content: null })"
+              @sendMessage="$emit('editMessage', $event)"
+              @update:modelValue="$emit('editText', $event)"
+              style="width: 100%"
+            />
+            <MessageActions
+              :message="message"
+              v-if="hovered && !$vuetify.display.mobile"
+              @delete="$emit('delete', { message, shifting: $event })"
+              @edit="
+                $emit('edit', { id: message.id, content: message.content })
+              "
+              @reply="$emit('reply', message)"
+              :merge="merge"
+            />
+            <Embed
+              v-for="(embed, index) in message.embeds"
+              :key="index"
+              :embed="embed"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="flex-shrink-1 align-self-end mb-1" style="width: 120px">
         <div
-          style="
-            position: absolute;
-            right: 10px;
-            bottom: 0;
-            padding-bottom: 5px;
-          "
+          style="justify-content: flex-end; display: flex; padding-right: 8px"
+          class="read-receipt-avatars"
         >
           <template
             v-for="(readReceipt, index) in message.readReceipts"

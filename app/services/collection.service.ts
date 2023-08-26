@@ -12,6 +12,9 @@ import { isNumeric } from "@app/lib/isNumeric"
 import upload from "@app/lib/upload"
 import { Star } from "@app/models/star.model"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { CollectionFilter } from "@app/classes/graphql/collections/collections"
+import paginate from "jw-paginate"
+import { PaginatedCollectionsResponse } from "@app/controllers/graphql/collection.resolver"
 
 @Service()
 export class CollectionService {
@@ -198,25 +201,49 @@ export class CollectionService {
     ]
   }
 
-  async getCollectionsFilter(userId: number, type: string, search: string) {
+  async getCollectionsFilter(
+    userId: number,
+    filters: CollectionFilter[] = [CollectionFilter.ALL],
+    search: string = "",
+    page: number = 1,
+    limit?: number
+  ): Promise<CollectionCache[] | PaginatedCollectionsResponse> {
     let collections: CollectionCache[] =
       (await redis.json.get(`collections:${userId}`)) ||
       this.getCollections(userId)
-    if (type === "owned") {
-      collections = collections.filter(
-        (collection) => collection.userId === userId
-      )
-    } else if (type === "shared") {
-      collections = collections.filter((collection) => collection.shared)
-    } else if (type === "write") {
-      collections = collections.filter(
-        (collection) => collection.permissionsMetadata.write
-      )
-    } else if (type === "configure") {
-      collections = collections.filter(
-        (collection) => collection.permissionsMetadata.configure
-      )
-    }
+
+    collections = collections.filter((collection) => {
+      if (filters.includes(CollectionFilter.OWNED)) {
+        if (collection.userId !== userId) {
+          return false
+        }
+      }
+      if (filters.includes(CollectionFilter.SHARED)) {
+        if (!collection.shared) {
+          return false
+        }
+      }
+      if (filters.includes(CollectionFilter.WRITE)) {
+        if (!collection.permissionsMetadata.write) {
+          return false
+        }
+      }
+      if (filters.includes(CollectionFilter.CONFIGURE)) {
+        if (!collection.permissionsMetadata.configure) {
+          return false
+        }
+      }
+      if (filters.includes(CollectionFilter.READ)) {
+        if (
+          !collection.permissionsMetadata.read ||
+          collection.permissionsMetadata.configure ||
+          collection.permissionsMetadata.write
+        ) {
+          return false
+        }
+      }
+      return true
+    })
 
     if (search) {
       collections = collections.filter((collection) =>
@@ -224,7 +251,14 @@ export class CollectionService {
       )
     }
 
-    return collections
+    return !limit
+      ? collections
+      : ({
+          items: limit
+            ? collections.slice((page - 1) * limit, (page - 1) * limit + limit)
+            : collections,
+          pager: paginate(collections.length, page, limit)
+        } as PaginatedCollectionsResponse)
   }
 
   async getCollectionPermissions(

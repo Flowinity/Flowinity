@@ -174,7 +174,7 @@
     v-if="!$workspaces.versionHistory && !$app.rail"
   >
     <v-icon size="20">mdi-close</v-icon>
-    Close sidebar
+    Close Workspaces
   </v-card-text>
   <v-card-text
     v-else-if="!$app.rail"
@@ -221,6 +221,7 @@
           v-for="item in $workspaces.items"
           :key="item.id"
           :value="item.id"
+          class="unselectable"
           @click="$workspaces.selectWorkspace(item.id)"
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
@@ -244,6 +245,7 @@
           <v-list-item
             v-bind="props"
             @contextmenu.prevent="context($event, `folder-${item.id}`, item)"
+            class="unselectable"
           >
             <v-list-item-title>{{ props.title }}</v-list-item-title>
           </v-list-item>
@@ -256,7 +258,10 @@
           :id="`note-${item.id}`"
           @contextmenu.prevent="context($event, `note-${note.id}`, note)"
         >
-          <v-list-item-title style="text-overflow: ellipsis">
+          <v-list-item-title
+            style="text-overflow: ellipsis"
+            class="unselectable"
+          >
             {{ note.name }}
           </v-list-item-title>
         </v-list-item>
@@ -579,7 +584,7 @@ export default defineComponent({
       this.deleteWorkspace.loading = true;
       const id = this.contextMenu.item?.id || this.deleteWorkspace.workspaceId;
       this.axios.delete(`/notes/workspace/${id}`).then(async () => {
-        this.$workspaces.workspace = null;
+        this.$workspaces.workspaceId = null;
         await this.$workspaces.init();
         this.deleteWorkspace.dialog = false;
         this.deleteWorkspace.loading = false;

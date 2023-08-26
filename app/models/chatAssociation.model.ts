@@ -10,6 +10,7 @@ import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { Chat } from "@app/models/chat.model"
 import { Field, ObjectType } from "type-graphql"
+import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @ObjectType()
 @Table
@@ -26,7 +27,9 @@ export class ChatAssociation extends Model {
   @Column
   chatId: number
 
-  @Field()
+  @Field({
+    nullable: true
+  })
   @Column
   userId: number
 
@@ -60,7 +63,7 @@ export class ChatAssociation extends Model {
   @Column
   identifier: string
 
-  @Field(() => User, {
+  @Field(() => PartialUserBase, {
     nullable: true,
     description:
       "Used for user virtual which falls back to a Colubrina account."
@@ -68,7 +71,7 @@ export class ChatAssociation extends Model {
   @BelongsTo(() => User, "userId")
   tpuUser: User
 
-  @Field(() => LegacyUser, {
+  @Field(() => PartialUserBase, {
     nullable: true,
     deprecationReason: "Use `user` instead.",
     description: "Used for legacy Colubrina accounts."
@@ -76,7 +79,7 @@ export class ChatAssociation extends Model {
   @BelongsTo(() => LegacyUser, "legacyUserId")
   legacyUser: LegacyUser
 
-  @Field(() => User, {
+  @Field(() => PartialUserBase, {
     nullable: true
   })
   @Column({

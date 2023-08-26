@@ -9,6 +9,7 @@ import {
 import { User } from "@app/models/user.model"
 import { Field, Float, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 @Table
@@ -39,6 +40,14 @@ export class Notification extends Model {
   })
   @Column
   route: string
+
+  @Field(() => DateType)
+  @Column
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column
+  updatedAt: Date
 
   @Field(() => PartialUserBase, {
     nullable: true

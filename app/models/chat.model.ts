@@ -11,6 +11,7 @@ import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { Field, ObjectType } from "type-graphql"
+import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @ObjectType()
 @Table
@@ -70,7 +71,7 @@ export class Chat extends Model {
   })
   intent: null | string
 
-  @Field({
+  @Field(() => PartialUserBase, {
     nullable: true,
     description:
       "Null if the chat is owned by a Colubrina legacy user, or the account was deleted."
@@ -78,7 +79,7 @@ export class Chat extends Model {
   @BelongsTo(() => User, "userId")
   user: User
 
-  @Field({
+  @Field(() => PartialUserBase, {
     nullable: true,
     description:
       "This is used if the chat is owned by a Colubrina legacy user.",

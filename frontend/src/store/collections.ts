@@ -3,16 +3,25 @@ import { defineStore } from "pinia";
 import { CollectionCache } from "@/types/collection";
 import { UserCollectionsQuery } from "@/graphql/query/collections/getUserCollections.graphql";
 import { CollectionQuery } from "@/graphql/query/collections/getCollection.graphql";
-import { Collection, CollectionInput } from "@/gql/graphql";
+import {
+  Collection,
+  CollectionInput,
+  Pager,
+  UserCollectionsInput
+} from "@/gql/graphql";
 
 export interface CollectionsState {
   items: CollectionCache[];
+  pager: Pager;
 }
 
 export const useCollectionsStore = defineStore("collections", {
   state: () =>
     ({
-      items: []
+      items: [],
+      pager: {
+        totalItems: 0
+      }
     } as CollectionsState),
   getters: {
     write(state) {
@@ -23,13 +32,20 @@ export const useCollectionsStore = defineStore("collections", {
     }
   },
   actions: {
-    async init() {
+    async getCollections(input: UserCollectionsInput, store = true) {
       const {
-        data: { userCollections }
+        data: { collections }
       } = await this.$apollo.query({
-        query: UserCollectionsQuery
+        query: UserCollectionsQuery,
+        variables: {
+          input
+        }
       });
-      this.items = userCollections;
+      if (store) {
+        this.items = collections.items;
+        this.pager = collections.pager;
+      }
+      return collections;
     },
     async getCollection(id: number | string): Promise<Collection | null> {
       const {

@@ -27,6 +27,7 @@ import { HexValidate, HexValidateOptional } from "@app/validators/hex"
 import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { FriendStatus } from "@app/classes/graphql/user/friends"
 
 @Service()
 export class UserUtilsService {
@@ -917,7 +918,8 @@ export class UserUtilsService {
 
   async getFriendStatus(
     userId: number,
-    otherUserId: number
+    otherUserId: number,
+    gql: boolean = false
   ): Promise<string | false> {
     const friend = await Friend.findOne({
       where: {
@@ -925,8 +927,16 @@ export class UserUtilsService {
         friendId: otherUserId
       }
     })
-    if (!friend) return false
-    return friend.status
+    if (!friend) return gql ? FriendStatus.NONE : false
+    if (!gql) return friend.status
+    switch (friend.status) {
+      case "accepted":
+        return FriendStatus.ACCEPTED
+      case "incoming":
+        return FriendStatus.INCOMING
+      case "outgoing":
+        return FriendStatus.OUTGOING
+    }
   }
 
   async getUserById(

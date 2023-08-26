@@ -79,7 +79,7 @@ export default defineComponent({
     async deleteCollection() {
       await this.axios.delete(`/collections/${this.collection?.id}`);
       this.$router.push("/collections");
-      this.$collections.init();
+      await this.$app.init();
     },
     async removeBanner() {
       await this.axios.delete(`/collections/${this.collection?.id}/banner`);

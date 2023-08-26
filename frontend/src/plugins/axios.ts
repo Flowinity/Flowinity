@@ -88,7 +88,7 @@ ax.interceptors.request.use((config) => {
   return config;
 });
 
-// block all requests if the user is not logged in
+/*
 ax.interceptors.request.use((config) => {
   if (config.url.includes("/gallery/site")) {
     return config;
@@ -96,5 +96,5 @@ ax.interceptors.request.use((config) => {
     return Promise.reject(config);
   }
 });
-
+*/
 export default ax;
