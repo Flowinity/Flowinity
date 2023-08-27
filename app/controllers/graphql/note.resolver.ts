@@ -1,59 +1,31 @@
 import {
   Arg,
-  Authorized,
   Ctx,
-  Field,
   FieldResolver,
-  Info,
   Int,
   Mutation,
   Query,
   Resolver,
   Root
 } from "type-graphql"
-import { UserUtilsService } from "@app/services/userUtils.service"
-import { User } from "@app/models/user.model"
 import { Service } from "typedi"
-import { Session } from "@app/models/session.model"
-import { Op } from "sequelize"
-import { Experiment } from "@app/models/experiment.model"
-import { Subscription } from "@app/models/subscription.model"
-import { Domain } from "@app/models/domain.model"
-import { Plan } from "@app/models/plan.model"
-import { Theme } from "@app/models/theme.model"
-import { Integration } from "@app/models/integration.model"
-import { Badge } from "@app/models/badge.model"
-import { Includeable } from "sequelize"
 import { Context } from "@app/types/graphql/context"
-import { GraphQLResolveInfo } from "graphql/type"
-import { Notification } from "@app/models/notification.model"
-import { CollectionService } from "@app/services/collection.service"
-import { Collection } from "@app/models/collection.model"
-import {
-  CollectionFilter,
-  CollectionInput,
-  PermissionsMetadata,
-  UserCollectionsInput
-} from "@app/classes/graphql/collections/collections"
-import { CollectionUser } from "@app/models/collectionUser.model"
-import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
-import { Upload } from "@app/models/upload.model"
-import {
-  partialUserBase,
-  PartialUserBase
-} from "@app/classes/graphql/user/partialUser"
-import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { GraphQLError } from "graphql/error"
-import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
-import { Workspace } from "@app/models/workspace.model"
 import { NoteService } from "@app/services/note.service"
 import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
-import { WorkspaceUser } from "@app/models/workspaceUser.model"
 import { Note } from "@app/models/note.model"
 import { NoteVersion } from "@app/models/noteVersion.model"
-import { NoteInput } from "@app/classes/graphql/workspaces/noteInput"
-import { NotePermissionsMetadata } from "@app/classes/graphql/workspaces/note"
+import {
+  CreateNoteInput,
+  CreateWorkspaceFolderInput,
+  DeleteWorkspaceItemInput,
+  NoteInput,
+  SaveNoteInput,
+  WorkspaceItemType
+} from "@app/classes/graphql/workspaces/noteInput"
+import { Workspace } from "@app/models/workspace.model"
+
 @Resolver(Note)
 @Service()
 export class NoteResolver {
@@ -81,11 +53,77 @@ export class NoteResolver {
     try {
       if (input.shareLink) ctx.meta.shareLink = true
       return await this.workspaceService.getNote(
-        input.id || input.shareLink,
+        input.id || input.shareLink || 0,
         ctx.user?.id
       )
     } catch {
       return null
     }
+  }
+
+  @Authorization({
+    scopes: ["workspaces.modify"]
+  })
+  @Mutation(() => Note)
+  async saveNote(
+    @Arg("input", () => SaveNoteInput) input: SaveNoteInput,
+    @Ctx() ctx: Context
+  ): Promise<Note> {
+    try {
+      return await this.workspaceService.saveNote(
+        input.id,
+        input.data,
+        ctx.user!!.id,
+        input.manualSave,
+        input.name
+      )
+    } catch {
+      throw new GraphQLError(
+        "Failed to save note. Perhaps you don't have access?"
+      )
+    }
+  }
+
+  @Authorization({
+    scopes: ["workspaces.create"]
+  })
+  @Mutation(() => Note)
+  async createNote(
+    @Arg("input", () => CreateNoteInput) input: CreateNoteInput,
+    @Ctx() ctx: Context
+  ) {
+    try {
+      return await this.workspaceService.createNote(
+        input.name,
+        input.workspaceFolderId,
+        ctx.user!!.id
+      )
+    } catch {
+      throw new GraphQLError(
+        "Failed to create note. Perhaps you don't have access to the Workspace?"
+      )
+    }
+  }
+
+  @Authorization({
+    scopes: ["workspaces.modify"]
+  })
+  @Mutation(() => Note, {
+    description: "Toggle the ShareLink for a Note."
+  })
+  async toggleNoteShare(
+    @Arg("input", () => Int, {
+      description: "ID of Note"
+    })
+    input: number,
+    @Ctx() ctx: Context
+  ) {
+    await this.workspaceService.toggleShareLink(input, ctx.user!!.id)
+    return await this.note(
+      {
+        id: input
+      },
+      ctx
+    )
   }
 }

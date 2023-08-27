@@ -1,7 +1,8 @@
-import { Field, Float, ObjectType } from "type-graphql"
+import { Field, Float, InputType, ObjectType } from "type-graphql"
 import { Blocks } from "@editorjs/editorjs/types/api"
 import { GraphQLJSON } from "graphql-scalars"
 
+@InputType("WorkspaceNoteInput")
 @ObjectType()
 export class WorkspaceNote {
   @Field({

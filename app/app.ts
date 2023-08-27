@@ -339,7 +339,18 @@ export class Application {
             commit: process.env.TPU_COMMIT_HASH || "unknown"
           },
           // Collects and send usage reporting based on executed operations
-          usage: true,
+          usage: {
+            clientInfo(context: Context) {
+              const name = context.req.headers.get("x-tpu-client")
+              const version = context.req.headers.get("x-tpu-client-version")
+
+              if (name && version) {
+                return { name, version }
+              }
+
+              return null
+            }
+          },
           selfHosting: {
             graphqlEndpoint: config.hive.graphqlEndpoint,
             usageEndpoint: config.hive.usageEndpoint,
@@ -401,7 +412,8 @@ export class Application {
             token: ctx.request.headers.get("Authorization"),
             dataloader: createContext(db),
             ip: ctx.request.headers.get("X-Forwarded-For") || "1.1.1.1",
-            meta: {}
+            meta: {},
+            req: ctx.request
           } as Context
         }
       })

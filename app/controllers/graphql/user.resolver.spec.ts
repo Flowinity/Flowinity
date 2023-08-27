@@ -41,7 +41,14 @@ const fakeLoggedOutContext: Context = {
   role: AccessLevel.NO_ACCESS,
   token: "",
   ip: "1.1.1.1",
-  dataloader: null
+  dataloader: null,
+  meta: {},
+  req: {
+    headers: {
+      get: () => "",
+      authorization: ""
+    }
+  } as any
 }
 
 test("Register user", async () => {

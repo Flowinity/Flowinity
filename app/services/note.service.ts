@@ -11,6 +11,7 @@ import { Friend } from "@app/models/friend.model"
 import { WorkspacesDownloadService } from "@app/services/workspaces/download.service"
 import { BadRequestError } from "routing-controllers"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { WorkspaceNote } from "@app/classes/graphql/workspaces/note"
 
 //create class of NoteData
 export class NoteField {
@@ -594,7 +595,7 @@ export class NoteService {
 
   async saveNote(
     id: number,
-    data: NoteDataV2,
+    data: WorkspaceNote,
     userId: number,
     manualSave: boolean = false,
     name?: string
