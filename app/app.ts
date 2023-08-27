@@ -82,6 +82,12 @@ import { ChatAssociationResolver } from "@app/controllers/graphql/chatAssociatio
 import { WorkspaceResolver } from "@app/controllers/graphql/workspace.resolver"
 import { WorkspaceFolderResolver } from "@app/controllers/graphql/workspaceFolder.resolver"
 import { NoteResolver } from "@app/controllers/graphql/note.resolver"
+import { useResponseCache } from "@graphql-yoga/plugin-response-cache"
+import { createRedisCache } from "@envelop/response-cache-redis"
+import { Cache } from "@envelop/response-cache"
+import redis from "@app/redis"
+import { FriendResolver } from "@app/controllers/graphql/friend.resolver"
+import { MessageResolver } from "@app/controllers/graphql/message.resolver"
 
 @Service()
 @Middleware({ type: "after" })
@@ -323,12 +329,23 @@ export class Application {
         ChatAssociationResolver,
         WorkspaceResolver,
         WorkspaceFolderResolver,
-        NoteResolver
+        NoteResolver,
+        FriendResolver,
+        MessageResolver
       ],
       container: Container,
-      authChecker: authChecker
+      authChecker: authChecker,
+      validate: true
     })
     const gqlPlugins = []
+    const cache: Cache = createRedisCache({ redis })
+    /* gqlPlugins.push(
+      useResponseCache({
+        session: () => null,
+        cache: cache as any
+      })
+    )*/
+    global.gqlCache = cache
     if (config.hive?.enabled) {
       gqlPlugins.push(
         useHive({
@@ -413,7 +430,8 @@ export class Application {
             dataloader: createContext(db),
             ip: ctx.request.headers.get("X-Forwarded-For") || "1.1.1.1",
             meta: {},
-            req: ctx.request
+            req: ctx.request,
+            cache: cache
           } as Context
         }
       })

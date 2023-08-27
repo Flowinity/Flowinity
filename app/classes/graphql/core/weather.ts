@@ -54,4 +54,16 @@ export class Weather {
     nullable: true
   })
   cached: boolean
+  @Field({
+    nullable: true
+  })
+  description: string
+  @Field({
+    nullable: true
+  })
+  main: string
+  @Field({
+    nullable: true
+  })
+  location: string
 }

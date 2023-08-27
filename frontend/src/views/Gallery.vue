@@ -70,7 +70,7 @@ import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import { Upload } from "@/models/upload";
 import { CollectionCache } from "@/types/collection";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
-import { GalleryQuery } from "@/graphql/query/gallery/gallery.graphql";
+import { GalleryQuery } from "@/graphql/gallery/gallery.graphql";
 import {
   GalleryFilter,
   GalleryInput,

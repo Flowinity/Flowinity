@@ -109,6 +109,4 @@ afterAll(async () => {
   await db.close()
 })
 
-beforeAll(async () => {
-  await db.sync({ force: true })
-})
+beforeAll(async () => {})

@@ -107,7 +107,7 @@ export default async function setup(app) {
         return;
       }
     }
-    friends.friends[index].otherUser.status = data.status;
+    friends.friends[index].user.status = data.status;
   });
   socket.on("friendRequestAccepted", async (data: Friend) => {
     friends.friends.push(data);
@@ -244,10 +244,10 @@ export default async function setup(app) {
     const index = friends.friends.findIndex((f) => f.friendId === data.id);
     if (index === -1) return;
     const friend = friends.friends[index];
-    if (friend.otherUser.nickname) {
-      friend.otherUser.nickname.nickname = data.nickname;
+    if (friend.user.nickname) {
+      friend.user.nickname.nickname = data.nickname;
     } else {
-      friend.otherUser.nickname = {
+      friend.user.nickname = {
         nickname: data.nickname,
         createdAt: new Date(),
         updatedAt: new Date(),

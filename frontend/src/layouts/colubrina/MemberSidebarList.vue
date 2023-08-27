@@ -156,6 +156,7 @@ import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import SidebarItem from "@/components/Communications/SidebarItem.vue";
+import { UserStatus } from "@/gql/graphql";
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
   components: {
@@ -185,17 +186,17 @@ export default defineComponent({
       return [...this.$chat.selectedChat.users].sort(
         (a: ChatAssociation, b: ChatAssociation) => {
           const aFriend = this.$friends.friends.find(
-            (f) => f.otherUser.id === a.tpuUser?.id
+            (f) => f.user.id === a.tpuUser?.id
           );
           const bFriend = this.$friends.friends.find(
-            (f) => f.otherUser.id === b.tpuUser?.id
+            (f) => f.user.id === b.tpuUser?.id
           );
           if (b.tpuUser?.id === this.$user.user?.id) return 2;
           if (a.tpuUser?.id === this.$user.user?.id) return -2;
           if (aFriend && bFriend) {
-            if (aFriend.otherUser.status === "online") {
+            if (aFriend.user.status === UserStatus.Online) {
               return -1;
-            } else if (bFriend.otherUser.status === "online") {
+            } else if (bFriend.user.status === UserStatus.Online) {
               return 1;
             } else {
               return 0;

@@ -2,7 +2,7 @@ import { Socket } from "socket.io"
 import djs from "dayjs"
 import { RedisClientType } from "redis"
 import { Sequelize } from "sequelize-typescript"
-import { PrismaClient } from "@prisma/client"
+import { Cache } from "@envelop/response-cache"
 
 // @ts-ignore
 export interface SocketWithUser extends Socket {
@@ -24,7 +24,7 @@ declare global {
     authMock: any,
     mainWorker: boolean,
     storageRoot: string,
-    prisma: PrismaClient
+    gqlCache: Cache
 }
 
 export {}

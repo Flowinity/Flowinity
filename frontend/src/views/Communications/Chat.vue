@@ -537,7 +537,7 @@ export default defineComponent({
         id: tempId,
         chatId: 0,
         updatedAt: new Date().toISOString(),
-        type: "message",
+        type: "MESSAGE",
         embeds: [],
         edited: false,
         replyId: replyId,
@@ -563,11 +563,7 @@ export default defineComponent({
       this.$chat.setDraft(<string>this.$route.params.chatId, "");
 
       try {
-        await this.axios.post(`/chats/${this.$route.params.chatId}/message`, {
-          content: message,
-          replyId: replyId,
-          attachments
-        });
+        await this.$chat.sendMessage(message, attachments, replyId);
       } catch (e) {
         console.log(e);
         const messageIndex = this.$chat.selectedChat?.messages.findIndex(

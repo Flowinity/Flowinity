@@ -88,7 +88,9 @@ export class Chat extends Model {
   @BelongsTo(() => LegacyUser, "legacyUserId")
   legacyUser: LegacyUser
 
-  @Field(() => ChatAssociation)
+  @Field(() => ChatAssociation, {
+    nullable: true
+  })
   @HasOne(() => ChatAssociation, "chatId")
   association: ChatAssociation
 

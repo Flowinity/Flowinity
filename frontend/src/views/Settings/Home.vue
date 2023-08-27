@@ -4,7 +4,7 @@
   </v-card-title>
   <v-card-text>
     <v-switch
-      v-model="$user.changes.discordPrecache"
+      v-model="$user.user.discordPrecache"
       class="mb-n7"
       :label="$t('settings.home.privacy.discordPrecaching')"
       @update:modelValue="$emit('update')"
@@ -13,7 +13,7 @@
       {{ $t("settings.home.privacy.discordPrecachingDesc") }}
     </small>
     <v-switch
-      v-model="$user.changes.publicProfile"
+      v-model="$user.user.publicProfile"
       class="mb-n7"
       :label="$t('settings.home.privacy.publicProfile')"
       @update:modelValue="$emit('update')"
@@ -22,7 +22,7 @@
       {{ $t("settings.home.privacy.publicProfileDesc") }}
     </small>
     <v-select
-      v-model="$user.changes.insights"
+      v-model="$user.user.insights"
       :items="insights"
       :label="$t('settings.home.preferences.insights')"
       class="mb-n2 mt-4"
@@ -44,13 +44,13 @@
       <v-expansion-panel-text>
         <v-form v-model="valid.username">
           <v-text-field
-            v-model="$user.changes.username"
+            v-model="$user.user.username"
             :label="$t('settings.home.myAccount.username')"
             :rules="$validation.user.username"
             class="mt-4"
           ></v-text-field>
           <v-text-field
-            v-model="$user.changes.currentPassword"
+            v-model="$user.user.currentPassword"
             :label="$t('settings.home.myAccount.currentPassword')"
             :rules="$validation.user.passwordSettings"
             class="mt-4"
@@ -76,14 +76,14 @@
       <v-expansion-panel-text>
         <v-form v-model="valid.password">
           <v-text-field
-            v-model="$user.changes.currentPassword"
+            v-model="$user.user.currentPassword"
             :label="$t('settings.home.myAccount.currentPassword')"
             :rules="$validation.user.passwordSettings"
             class="mt-4"
             type="password"
           ></v-text-field>
           <v-text-field
-            v-model="$user.changes.password"
+            v-model="$user.user.password"
             :label="$t('settings.home.myAccount.newPassword')"
             class="mt-4"
             type="password"
@@ -123,13 +123,13 @@
             "
           ></p>
           <v-text-field
-            v-model="$user.changes.email"
+            v-model="$user.user.email"
             :label="$t('settings.home.myAccount.email')"
             :rules="$validation.user.email"
             class="mt-4"
           ></v-text-field>
           <v-text-field
-            v-model="$user.changes.currentPassword"
+            v-model="$user.user.currentPassword"
             :label="$t('settings.home.myAccount.currentPassword')"
             :rules="$validation.user.passwordSettings"
             class="mt-4"
@@ -174,7 +174,7 @@
   </v-expansion-panels>
   <v-card-title>{{ $t("settings.home.preferences.title") }}</v-card-title>
   <v-slider
-    v-model="$user.changes.itemsPerPage"
+    v-model="$user.user.itemsPerPage"
     :label="$t('settings.home.preferences.itemsPerPage')"
     class="px-4"
     max="72"
@@ -185,7 +185,7 @@
   ></v-slider>
   <!-- select between Farenheit, Celsius or Kelvin -->
   <v-select
-    v-model="$user.changes.weatherUnit"
+    v-model="$user.user.weatherUnit"
     :items="temperatureUnits"
     :label="$t('settings.home.preferences.tempUnit')"
     class="px-6"
@@ -203,7 +203,7 @@
     @update:modelValue="$emit('update')"
   ></v-select>
   <v-autocomplete
-    v-model="$user.changes.excludedCollections"
+    v-model="$user.user.excludedCollections"
     :items="$collections.items"
     :label="$t('settings.home.preferences.baseCollections')"
     chips
@@ -217,7 +217,7 @@
     @update:modelValue="$emit('update')"
   ></v-autocomplete>
   <v-select
-    v-model="$user.changes.language"
+    v-model="$user.user.language"
     :items="languages"
     :label="$t('settings.home.preferences.language')"
     class="px-6"
@@ -253,6 +253,7 @@
 import { defineComponent } from "vue";
 import TwoFactor from "@/components/Settings/TwoFactor.vue";
 import { useTheme } from "vuetify";
+import { UserInsights } from "@/gql/graphql";
 
 export default defineComponent({
   name: "SettingsHome",
@@ -300,9 +301,9 @@ export default defineComponent({
         { title: "Fahrenheit (Imperial)", value: "fahrenheit" }
       ],
       insights: [
-        { title: "Everyone", value: "everyone" },
-        { title: "Friends", value: "friends" },
-        { title: "Nobody", value: "nobody" }
+        { title: "Everyone", value: UserInsights.Everyone },
+        { title: "Friends", value: UserInsights.Friends },
+        { title: "Nobody", value: UserInsights.Nobody }
       ],
       confirmPassword: "",
       valid: {
@@ -312,7 +313,7 @@ export default defineComponent({
       },
       validation: [
         (value: string) => {
-          if (value !== this.$user.changes.password)
+          if (value !== this.$user.user.password)
             return "Passwords do not match";
           return true;
         }

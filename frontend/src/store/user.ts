@@ -12,15 +12,15 @@ import { useMailStore } from "@/store/mail";
 import vuetify from "@/plugins/vuetify";
 import i18n from "@/plugins/i18n";
 import functions from "@/plugins/functions";
-import { GetUserQuery } from "@/graphql/query/user/user.graphql";
-import { UpdateUserMutation } from "@/graphql/mutation/user/update.graphql";
+import { GetUserQuery } from "@/graphql/user/user.graphql";
+import { UpdateUserMutation } from "@/graphql/user/update.graphql";
 import {
   ProfileLayout,
   ThemeEngine,
   UpdateUserInput,
   User
 } from "@/gql/graphql";
-import { ProfileQuery } from "@/graphql/query/user/profile.graphql";
+import { ProfileQuery } from "@/graphql/user/profile.graphql";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -249,24 +249,20 @@ export const useUserStore = defineStore("user", {
         mutation: UpdateUserMutation,
         variables: {
           input: {
-            ...this.changes,
-            themeEngine: {
-              ...this.user.themeEngine,
-              theme: {
-                amoled: {
-                  colors: vuetify.theme.themes.value.amoled.colors,
-                  dark: vuetify.theme.themes.value.amoled.dark
-                },
-                dark: {
-                  colors: vuetify.theme.themes.value.dark.colors,
-                  dark: vuetify.theme.themes.value.dark.dark
-                },
-                light: {
-                  colors: vuetify.theme.themes.value.light.colors,
-                  dark: vuetify.theme.themes.value.light.dark
-                }
-              }
-            }
+            darkTheme: this.user.darkTheme,
+            description: this.user.description,
+            discordPrecache: this.user.discordPrecache,
+            excludedCollections: this.user.excludedCollections,
+            insights: this.user.insights,
+            itemsPerPage: this.user.itemsPerPage,
+            language: this.user.language,
+            nameColor: this.user.nameColor,
+            privacyPolicyAccepted: this.user.privacyPolicyAccepted,
+            profileLayout: this.user.profileLayout,
+            publicProfile: this.user.publicProfile,
+            storedStatus: this.user.storedStatus,
+            username: this.user.username,
+            weatherUnit: this.user.weatherUnit
           }
         } as UpdateUserInput
       });

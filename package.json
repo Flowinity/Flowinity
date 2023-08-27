@@ -56,7 +56,9 @@
   "dependencies": {
     "@alt3/sequelize-to-json-schemas": "^0.3.56",
     "@editorjs/editorjs": "^2.27.2",
+    "@envelop/response-cache-redis": "^3.1.0",
     "@graphql-hive/client": "^0.24.1",
+    "@graphql-yoga/plugin-response-cache": "^2.1.1",
     "@levminer/speakeasy": "^1.4.0",
     "@socket.io/redis-adapter": "^8.1.0",
     "@troplo/sequelize": "^0.0.0-troplo-dev3",

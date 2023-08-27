@@ -151,13 +151,18 @@ export class AuthService {
     if (password.length < 8) {
       throw Errors.PASSWORD_TOO_SHORT
     }
-    const user = await User.create({
-      username,
-      password: await argon2.hash(password),
-      email,
-      inviteId: inviteId || null,
-      planId: config.defaultPlanId || 1
-    })
+    const user = await User.create(
+      {
+        username,
+        password: await argon2.hash(password),
+        email,
+        inviteId: inviteId || null,
+        planId: config.defaultPlanId || 1
+      },
+      {
+        logging: true
+      }
+    )
     const session = await utils.createSession(user.id, "*", "session")
     const cacheService = Container.get(CacheService)
     //await cacheService.generateChatsCache(user.id)

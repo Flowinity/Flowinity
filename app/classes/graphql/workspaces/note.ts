@@ -9,9 +9,13 @@ export class WorkspaceNote {
     nullable: true
   })
   version: string
-  @Field(() => GraphQLJSON, {})
+  @Field(() => GraphQLJSON, {
+    nullable: true
+  })
   blocks: Blocks
-  @Field(() => Float)
+  @Field(() => Float, {
+    nullable: true
+  })
   time: bigint
 }
 

@@ -10,6 +10,7 @@ import { Stats } from "@app/classes/graphql/core/core"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { UserInsights } from "@app/classes/graphql/user/insights"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
+import { UserStatus } from "@app/classes/graphql/user/status"
 
 @ObjectType()
 export class PartialUserBase {
@@ -122,3 +123,11 @@ export const partialUserPublic = [
   "themeEngine",
   "xp"
 ]
+
+@ObjectType()
+export class PartialUserFriend extends PartialUserBase {
+  @Field(() => UserStatus)
+  status: UserStatus
+}
+
+export const partialUserFriend = [...partialUserBase, "status"]

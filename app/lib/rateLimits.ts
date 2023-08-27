@@ -74,7 +74,7 @@ export const uploadLimiterUser: RateLimitRequestHandler = rateLimit({
 })
 
 export const msgLimiter: RateLimitRequestHandler = rateLimit({
-  windowMs: 8 * 1000,
+  windowMs: 8,
   max: 8,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers

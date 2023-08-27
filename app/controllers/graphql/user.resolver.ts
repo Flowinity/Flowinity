@@ -191,7 +191,20 @@ function createBaseResolver<T extends ClassType>(
     @FieldResolver(() => [Friend])
     async friends(@Root() user: User, @Ctx() ctx: Context) {
       if (!ctx.user) return []
-      return await this.userUtilsService.getMutualFriends(user.id, ctx.user.id)
+      const friends = await Friend.findAll({
+        where: {
+          userId: user.id,
+          status: "accepted"
+        },
+        attributes: ["friendId"]
+      })
+      return await Friend.findAll({
+        where: {
+          userId: ctx.user.id,
+          friendId: friends.map((f) => f.friendId),
+          status: "accepted"
+        }
+      })
     }
 
     @FieldResolver(() => FriendStatus)

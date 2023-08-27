@@ -254,7 +254,7 @@
           v-for="note in item.children"
           :key="note.id"
           :to="'/workspaces/notes/' + note.id"
-          :value="note.workspaceFolderId"
+          :value="note.id"
           :id="`note-${item.id}`"
           @contextmenu.prevent="context($event, `note-${note.id}`, note)"
         >
@@ -300,6 +300,8 @@ import WorkspaceDialog from "@/components/Workspaces/Dialogs/Dialog.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import { NoteDataV2, NoteVersion } from "@/models/noteVersion";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import { CreateWorkspaceMutation } from "@/graphql/workspaces/createWorkspace.graphql";
+import { CreateNoteMutation } from "@/graphql/workspaces/createNote.graphql";
 
 export default defineComponent({
   name: "WorkspacesSidebarList",
@@ -404,9 +406,7 @@ export default defineComponent({
             json = text;
           }
           const data = await this.doCreateNote(this.importDoc.name, true);
-          await this.axios.patch(`/notes/${data?.id}`, {
-            data: json
-          });
+          await this.$workspaces.saveNote(json, true);
           this.$router.push(`/workspaces/notes/${data.id}`);
           this.importDoc.dialog = false;
           this.importDoc.loading = false;
@@ -501,15 +501,24 @@ export default defineComponent({
     },
     async doCreateNote(name: string, internal: boolean = false) {
       this.createNote.loading = true;
-      const { data } = await this.axios.post("/notes", {
-        name,
-        workspaceFolderId: this.createNote.folderId || this.contextMenu.item?.id
+      const {
+        data: { createNote }
+      } = await this.$apollo.mutate({
+        mutation: CreateNoteMutation,
+        variables: {
+          input: {
+            name,
+            workspaceFolderId: this.createNote.folderId
+          }
+        }
       });
-      await this.$workspaces.refreshWorkspace();
+      this.$workspaces.workspace.folders
+        .find((f) => f.id === this.createNote.folderId)
+        ?.children.push(createNote);
       this.createNote.dialog = false;
       this.createNote.loading = false;
-      if (internal) return data;
-      this.$router.push(`/workspaces/notes/${data.id}`);
+      if (internal) return createNote;
+      this.$router.push(`/workspaces/notes/${createNote.id}`);
     },
     async doRenameNote(name: string) {
       this.renameNote.loading = true;
@@ -543,11 +552,16 @@ export default defineComponent({
     },
     async doCreateWorkspace(name: string) {
       this.createWorkspace.loading = true;
-      const { data } = await this.axios.post("/notes/workspaces", {
-        name: name
+      const {
+        data: { createWorkspace }
+      } = await this.$apollo.mutate({
+        mutation: CreateWorkspaceMutation,
+        variables: {
+          input: name
+        }
       });
-      await this.$workspaces.init();
-      await this.$workspaces.selectWorkspace(data.id);
+      this.$workspaces.items.unshift(createWorkspace);
+      this.$workspaces.selectWorkspace(createWorkspace.id);
       this.createWorkspace.dialog = false;
       this.createWorkspace.loading = false;
     },

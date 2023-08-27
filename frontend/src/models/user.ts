@@ -3,6 +3,12 @@ import { AutoCollectRule } from "@/models/autoCollectRule";
 import { AlternatePassword } from "@/types/auth";
 import { Integration } from "@/models/integration";
 import { Component } from "@/types/userv3";
+import {
+  FriendStatus,
+  UserInsights,
+  UserStatus,
+  UserStoredStatus
+} from "@/gql/graphql";
 
 export interface ThemeEngine {
   theme: {
@@ -88,7 +94,7 @@ export interface User {
   scopes: string;
   pendingAutoCollects: number;
   experiments: object;
-  friend?: "accepted" | "outgoing" | "incoming" | null;
+  friend?: FriendStatus;
   friends?: {
     id: number;
     user: User;
@@ -122,8 +128,8 @@ export interface User {
   };
   createdAt: Date;
   updatedAt: Date;
-  status: "online" | "offline" | "idle" | "busy";
-  storedStatus: "online" | "invisible" | "idle" | "busy";
+  status: UserStatus;
+  storedStatus: UserStoredStatus;
   notifications: Notification[];
   weatherUnit: "celsius" | "fahrenheit" | "kelvin";
   emailVerified: boolean;
@@ -140,7 +146,7 @@ export interface User {
     | null
     | undefined;
   themeEngine: ThemeEngine | null;
-  insights: "everyone" | "friends" | "nobody";
+  insights: UserInsights;
   profileLayout?: ProfileLayout | null;
   integrations: Integration[];
   excludedCollections: number[] | null;

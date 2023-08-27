@@ -16,6 +16,7 @@ export const WeatherQuery = gql`
       error
       cached
       icon
+      main
     }
   }
 `;

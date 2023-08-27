@@ -1,7 +1,7 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import { ExperimentsQuery } from "@/graphql/query/core/experiments.graphql";
+import { ExperimentsQuery } from "@/graphql/core/experiments.graphql";
 
 export interface ExperimentsState {
   experiments: Record<string, string | number | boolean | object>;

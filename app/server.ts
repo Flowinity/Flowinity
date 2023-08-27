@@ -34,6 +34,7 @@ import { OauthApp } from "@app/models/oauthApp.model"
 import { Context } from "mocha"
 import { Plan } from "@app/models/plan.model"
 import { User } from "@app/models/user.model"
+import { execSync } from "child_process"
 
 @Service({ eager: false })
 export class Server {
@@ -88,29 +89,6 @@ export class Server {
     dayjs().isoWeekYear()
     dayjs.extend(isSameOrBefore)
     global.db = require("@app/db").default
-    if (process.env.NODE_ENV === "test") {
-      await require("@app/db").default.query("PRAGMA foreign_keys = false;")
-      await require("@app/db").default.sync({ force: true })
-      await Plan.create({
-        id: 1,
-        internalName: "FREE",
-        name: "Free"
-      })
-      await Plan.create({
-        id: 7,
-        internalName: "FREE",
-        name: "Free"
-      })
-      await Domain.create({
-        id: 1,
-        domain: "localhost"
-      })
-      await User.create({
-        username: "test",
-        email: "eee@ee.com",
-        password: "test"
-      })
-    }
     if (config.finishedSetup) {
       global.redis = redis
       global.queue = require("@app/lib/queue").default

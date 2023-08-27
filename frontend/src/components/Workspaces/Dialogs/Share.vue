@@ -26,10 +26,7 @@
             $toast.info('Link copied to clipboard');
           "
         >
-          {{
-            "https://" + $user.user?.domain?.domain ||
-            $app.site.hostnameWithProtocol
-          }}/notes/{{ shareLink }}
+          {{ $app.site.hostnameWithProtocol }}/notes/{{ shareLink }}
         </a>
       </template>
     </v-card-text>
@@ -43,6 +40,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import { UpdateShareLinkMutation } from "@/graphql/workspaces/updateShareLink.graphql";
 
 export default defineComponent({
   name: "WorkspaceShareDialog",
@@ -58,19 +56,20 @@ export default defineComponent({
   },
   methods: {
     async update() {
-      const { data } = await this.axios.patch(
-        "/notes/" + this.$route.params.id + "/share"
-      );
-      this.shareLink = data.shareLink;
-      this.share = data.shareLink !== null;
+      const {
+        data: { toggleNoteShare }
+      } = await this.$apollo.mutate({
+        mutation: UpdateShareLinkMutation,
+        variables: {
+          input: parseInt(this.$route.params.id)
+        }
+      });
+      this.shareLink = toggleNoteShare.shareLink;
+      this.share = toggleNoteShare.shareLink !== null;
     }
   },
   async mounted() {
-    const { data } = await this.axios.get("/notes/" + this.$route.params.id, {
-      headers: {
-        noToast: true
-      }
-    });
+    const data = await this.$workspaces.getNote(this.$route.params.id);
     this.shareLink = data.shareLink;
     this.share = data.shareLink !== null;
   }

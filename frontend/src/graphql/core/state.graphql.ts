@@ -2,6 +2,21 @@ import { gql } from "@apollo/client";
 
 export const CoreStateQuery = gql`
   query CoreStateQuery {
+    friends {
+      id
+      status
+      userId
+      friendId
+      user {
+        username
+        id
+        createdAt
+        administrator
+        moderator
+        avatar
+        status
+      }
+    }
     experiments {
       id
       value

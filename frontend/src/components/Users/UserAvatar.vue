@@ -140,7 +140,7 @@ export default defineComponent({
       if (this.user.id === this.$user.user?.id)
         return this.$user.user?.storedStatus;
       return this.$friends.friends.find((f) => f.friendId === this.user.id)
-        ?.otherUser?.status;
+        ?.user?.status;
     },
     friendDevice() {
       if (!this.user) return "web";

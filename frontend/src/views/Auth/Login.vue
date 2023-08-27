@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { LoginMutation } from "@/graphql/mutation/auth/login.graphql";
+import { LoginMutation } from "@/graphql/auth/login.graphql";
 import { LoginMutationVariables } from "@/gql/graphql";
 
 export default defineComponent({

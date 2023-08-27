@@ -43,6 +43,7 @@ import { Session } from "@app/models/session.model"
 import { Filter } from "@app/classes/graphql/gallery/galleryInput"
 import { UserInsights } from "@app/classes/graphql/user/insights"
 import { CoreStats, Stats } from "@app/classes/graphql/core/core"
+import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 
 @DefaultScope(() => ({
   attributes: {
@@ -281,15 +282,15 @@ export class User extends Model {
   })
   alternatePasswords: AlternatePasswordType[]
 
-  @Field({
+  @Field(() => UserStatus, {
     description: "User status/presence shown to other users."
   })
   @Column({
     type: DataType.ENUM("online", "idle", "offline", "busy")
   })
-  status: "online" | "idle" | "offline" | "busy"
+  status: "online" | "idle" | "offline" | "busy" | "unknown"
 
-  @Field({
+  @Field(() => UserStoredStatus, {
     description:
       "User status/presence that has `invisible` and is shown to the current user."
   })

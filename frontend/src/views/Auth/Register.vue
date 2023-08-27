@@ -107,7 +107,7 @@
 import { defineComponent } from "vue";
 import { TYPE } from "vue-toastification";
 import { RegisterMutationVariables } from "@/gql/graphql";
-import { RegisterMutation } from "@/graphql/mutation/auth/register.graphql";
+import { RegisterMutation } from "@/graphql/auth/register.graphql";
 
 export default defineComponent({
   name: "Register",

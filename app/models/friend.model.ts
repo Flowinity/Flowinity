@@ -9,7 +9,11 @@ import {
 import { User } from "@app/models/user.model"
 import { Field, Float, ObjectType } from "type-graphql"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
-import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import {
+  PartialUserBase,
+  PartialUserFriend
+} from "@app/classes/graphql/user/partialUser"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 @Table
@@ -21,6 +25,14 @@ export class Friend extends Model {
     type: DataType.INTEGER
   })
   id: number
+
+  @Field(() => DateType)
+  @Column
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column
+  updatedAt: Date
 
   @Field(() => FriendStatus)
   @AllowNull(false)
@@ -35,11 +47,11 @@ export class Friend extends Model {
   @Column
   friendId: number
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserFriend)
   @BelongsTo(() => User, "userId")
   user: User
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserFriend)
   @BelongsTo(() => User, "friendId")
   otherUser: User
 }

@@ -4,6 +4,10 @@ import axios from "@/plugins/axios";
 import { Workspace } from "@/models/workspace";
 import { Note } from "@/models/note";
 import { useRouter } from "vue-router";
+import { NoteQuery } from "@/graphql/workspaces/note.graphql";
+import { isNumeric } from "@/plugins/isNumeric";
+import { SaveNoteMutation } from "@/graphql/workspaces/saveNote.graphql";
+import { SaveNoteInput, WorkspaceNote } from "@/gql/graphql";
 
 export interface WorkspacesState {
   items: Workspace[];
@@ -29,6 +33,25 @@ export const useWorkspacesStore = defineStore("workspaces", {
       }
     } as WorkspacesState),
   actions: {
+    async getNote(id: string | number) {
+      const {
+        data: { note }
+      } = await this.$apollo.query({
+        query: NoteQuery,
+        variables: {
+          input: {
+            id: isNumeric(id)
+              ? typeof id === "number"
+                ? id
+                : parseInt(id)
+              : undefined,
+            shareLink: !isNumeric(id) ? id : undefined
+          }
+        },
+        fetchPolicy: "no-cache"
+      });
+      return note;
+    },
     async getRecent() {
       const { data } = await axios.get("/notes/recent");
       this.recent = data;
@@ -42,7 +65,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
       });
       this.items = data;
     },
-    async selectWorkspace(id: number) {
+    selectWorkspace(id: number) {
       const workspace = this.items.find((w) => w.id === id);
       if (!workspace) return;
       this.workspace = workspace;
@@ -62,6 +85,18 @@ export const useWorkspacesStore = defineStore("workspaces", {
       if (selectedWorkspace) {
         this.selectWorkspace(JSON.parse(selectedWorkspace).id);
       }
+    },
+    async saveNote(data: WorkspaceNote, manualSave = false) {
+      await this.$apollo.mutate({
+        mutation: SaveNoteMutation,
+        variables: {
+          input: {
+            id: parseInt(this.$route.params.id),
+            data,
+            manualSave
+          } as SaveNoteInput
+        }
+      });
     }
   },
   getters: {

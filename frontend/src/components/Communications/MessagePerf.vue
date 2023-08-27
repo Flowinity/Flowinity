@@ -62,7 +62,7 @@
             <p
               v-if="
                 (!message.type && !merge) ||
-                (message.type === 'message' && !merge)
+                (message.type === MessageType.Message && !merge)
               "
               :class="{ 'text-red': message.error }"
               class="unselectable"
@@ -184,6 +184,7 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
 import { Chat } from "@/models/chat";
 import { ChatAssociation } from "@/models/chatAssociation";
+import { MessageType } from "@/gql/graphql";
 
 export default defineComponent({
   name: "MessagePerf",
@@ -210,6 +211,9 @@ export default defineComponent({
     };
   },
   computed: {
+    MessageType() {
+      return MessageType;
+    },
     user() {
       return this.$chat.chats
         .find((chat: Chat) => chat.id === this.message.chatId)

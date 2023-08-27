@@ -24,8 +24,8 @@
       style="z-index: 1000"
     >
       <v-card-subtitle>
-        Words: {{ words.toLocaleString() }} &bullet; Characters:
-        {{ characters.toLocaleString() }} &bullet; Speaking Time:
+        Words: {{ words?.toLocaleString() || 0 }} &bullet; Characters:
+        {{ characters?.toLocaleString() || 0 }} &bullet; Speaking Time:
         <span>
           {{ speakingTime }}
           <v-tooltip activator="parent" location="top">
@@ -33,7 +33,7 @@
           </v-tooltip>
         </span>
         <template v-if="!$vuetify.display.mobile">
-          &bullet; Blocks: {{ blocks.toLocaleString() }}
+          &bullet; Blocks: {{ blocks?.toLocaleString() || 0 }}
         </template>
       </v-card-subtitle>
     </v-toolbar>
@@ -87,9 +87,10 @@ import { defineComponent } from "vue";
 //@ts-ignore
 import SimpleImage from "@troplo/tpu-simple-image";
 import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue";
-import { NoteQuery } from "@/graphql/query/workspaces/note";
+import { NoteQuery } from "@/graphql/workspaces/note.graphql";
 import { isNumeric } from "@/plugins/isNumeric";
-import { Note } from "@/gql/graphql";
+import { Note, SaveNoteInput, WorkspaceNote } from "@/gql/graphql";
+import { SaveNoteMutation } from "@/graphql/workspaces/saveNote.graphql";
 
 export default defineComponent({
   name: "WorkspaceItem",
@@ -136,16 +137,13 @@ export default defineComponent({
         };
       }
     },
-    async save(data: object, manualSave = false) {
+    async save(data: WorkspaceNote, manualSave = false) {
       try {
         if (!this.$route.params.id) return;
         if (this.lastSave && Date.now() - this.lastSave < 500) return;
         this.lastSave = Date.now();
         this.$app.notesSaving = true;
-        await this.axios.patch("/notes/" + this.$route.params.id, {
-          data,
-          manualSave
-        });
+        await this.$workspaces.saveNote(data, manualSave);
         this.$app.notesSaving = false;
         console.log("[TPU/Editor] Saved!");
       } catch (e) {
@@ -181,7 +179,7 @@ export default defineComponent({
       return count;
     },
     count(blocks: any) {
-      this.characters = blocks.reduce((acc, block) => {
+      this.characters = blocks?.reduce((acc, block) => {
         if (block.data.text) {
           return acc + block.data.text.length || 0;
         } else if (block.data.content?.length) {
@@ -205,7 +203,7 @@ export default defineComponent({
           return acc;
         }
       }, 0);
-      this.words = blocks.reduce((acc, block) => {
+      this.words = blocks?.reduce((acc, block) => {
         if (block.data.text) {
           return acc + block.data.text?.split(" ").length || 0;
         } else if (block.data.content?.length) {
@@ -229,7 +227,7 @@ export default defineComponent({
           return acc;
         }
       }, 0);
-      this.blocks = blocks.length;
+      this.blocks = blocks?.length;
     },
     editor(data, readOnly) {
       window.__TROPLO_INTERNALS_EDITOR_SAVE = this.save;
@@ -397,49 +395,34 @@ export default defineComponent({
       }
       window.editor = new EditorJS(init);
     },
-    async getNote(id) {
+    async onMounted() {
       try {
-        const note = await this.$apollo.query({
-          query: NoteQuery,
-          variables: {
-            input: {
-              id: isNumeric(id) ? parseInt(id) : undefined,
-              shareLink: !isNumeric(id) ? id : undefined
-            }
-          }
-        });
-        return note.data.note;
-      } catch {
+        this.fail = false;
+        const res = await this.$workspaces.getNote(
+          this.id || this.$route.params.id
+        );
+        this.$app.title = res.name;
+        if (!this.id) {
+          this.$app.lastNote = parseInt(this.$route.params.id);
+          localStorage.setItem("lastNote", this.$route.params.id);
+        }
+        const note = this.$route.params.version
+          ? res.versions?.find((v) => v.id === this.$route.params.version)?.data
+          : res.data;
+        try {
+          this.editor(
+            note,
+            this.$route.params.version || !res.permissions.modify
+          );
+          this.count(res.data.blocks);
+        } catch (e) {
+          console.log(e);
+          this.editor(null);
+        }
+      } catch (e) {
+        console.log(e);
         this.fail = true;
       }
-    },
-    onMounted() {
-      this.fail = false;
-      this.getNote(this.id || this.$route.params.id)
-        .then((res: Note) => {
-          this.$app.title = res.name;
-          if (!this.id) {
-            this.$app.lastNote = parseInt(this.$route.params.id);
-            localStorage.setItem("lastNote", this.$route.params.id);
-          }
-          const note = this.$route.params.version
-            ? res.versions?.find((v) => v.id === this.$route.params.version)
-                ?.data
-            : res.data;
-          try {
-            this.editor(
-              note,
-              this.$route.params.version || !res.permissions.modify
-            );
-          } catch (e) {
-            console.log(e);
-            this.editor(null);
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-          this.fail = true;
-        });
 
       document.addEventListener(
         "keydown",

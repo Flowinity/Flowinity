@@ -3,6 +3,7 @@ import mdEmail from "./rulesEmail";
 import { useAppStore } from "@/store/app";
 import { Chat } from "@/models/chat";
 import { User } from "@/models/user";
+import { UserStatus, UserStoredStatus } from "@/gql/graphql";
 
 export default {
   fileSize(size: number): string {
@@ -133,24 +134,24 @@ export default {
   markdownEmail(text: string): any {
     return mdEmail.render(text);
   },
-  userStatus(status: "online" | "offline" | "idle" | "busy" | "invisible") {
+  userStatus(status: UserStatus | UserStoredStatus) {
     switch (status) {
-      case "online":
+      case UserStoredStatus.Online:
         return {
           color: "#4caf50",
           text: "Online"
         };
-      case "idle":
+      case UserStoredStatus.Idle:
         return {
           color: "#ff9800",
           text: "Idle"
         };
-      case "busy":
+      case UserStoredStatus.Busy:
         return {
           color: "#f44336",
           text: "Busy"
         };
-      case "invisible":
+      case UserStoredStatus.Invisible:
         return {
           color: "grey",
           text: "Invisible"

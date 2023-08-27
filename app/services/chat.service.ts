@@ -893,7 +893,7 @@ export class ChatService {
           chat: {
             name: chat.name,
             id: chat.id,
-            type: chat.type,
+            type: chat.type.toUpperCase(),
             recipient: await this.getRecipient(chat, association.user.id)
           },
           association: {

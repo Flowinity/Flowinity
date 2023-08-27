@@ -25,28 +25,24 @@
         ></v-text-field>
         <v-list-item
           v-for="friend in friends"
-          :active="selected.includes(friend.otherUser.id)"
-          :value="friend.otherUser.id"
-          @click="add(friend.otherUser.id)"
-          :key="friend.otherUser.id"
+          :active="selected.includes(friend.user.id)"
+          :value="friend.user.id"
+          @click="add(friend.user.id)"
+          :key="friend.user.id"
         >
           <template v-slot:prepend>
-            <UserAvatar
-              :user="friend.otherUser"
-              class="mr-3"
-              size="38"
-            ></UserAvatar>
+            <UserAvatar :user="friend.user" class="mr-3" size="38"></UserAvatar>
           </template>
           <template v-slot:append>
             <v-list-item-action start>
               <v-checkbox-btn
-                :model-value="selected.includes(friend.otherUser.id)"
+                :model-value="selected.includes(friend.user.id)"
                 color="primary"
               ></v-checkbox-btn>
             </v-list-item-action>
           </template>
 
-          <v-list-item-title>{{ friend.otherUser.username }}</v-list-item-title>
+          <v-list-item-title>{{ friend.user.username }}</v-list-item-title>
 
           <v-list-item-subtitle>
             Friends since {{ $date(friend.createdAt).format("DD/MM/YYYY") }}
@@ -113,9 +109,7 @@ export default defineComponent({
   computed: {
     friends() {
       return this.$friends.friends.filter((friend: Friend) =>
-        friend.otherUser.username
-          .toLowerCase()
-          .includes(this.search.toLowerCase())
+        friend.user.username.toLowerCase().includes(this.search.toLowerCase())
       ) as Friend[];
     }
   }

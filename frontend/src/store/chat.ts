@@ -15,7 +15,10 @@ import { useFriendsStore } from "@/store/friends";
 import { Paginate } from "@/types/paginate";
 import dayjs from "../plugins/dayjs";
 import { useToast } from "vue-toastification";
-import { ChatsQuery } from "@/graphql/query/chats/chats.graphql";
+import { ChatsQuery } from "@/graphql/chats/chats.graphql";
+import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
+import { MessagesInput, ScrollPosition } from "@/gql/graphql";
+import { MessagesQuery } from "@/graphql/chats/messages.graphql";
 
 export interface ChatState {
   search: {
@@ -161,6 +164,24 @@ export const useChatStore = defineStore("chat", {
       }
     } as ChatState),
   actions: {
+    async sendMessage(
+      content: string,
+      attachments = [],
+      replyId?: number,
+      associationId?: number
+    ) {
+      await this.$apollo.mutate({
+        mutation: SendMessageMutation,
+        variables: {
+          input: {
+            content,
+            attachments,
+            replyId,
+            associationId: associationId || this.selectedChat?.association?.id
+          }
+        }
+      });
+    },
     async pinMessage(id: number | undefined, pinned: boolean | undefined) {
       if (!id || pinned === undefined) return;
       await axios.put(`/chats/${this.selectedChatId}/message`, {
@@ -309,9 +330,9 @@ export const useChatStore = defineStore("chat", {
     lookupUser(id: number) {
       const friends = useFriendsStore();
       for (const chat of this.chats) {
-        const user = friends.friends.find((user) => user?.otherUser?.id === id);
+        const user = friends.friends.find((user) => user?.user?.id === id);
         if (user) {
-          return user.otherUser as User;
+          return user.user as User;
         } else {
           const user = chat.users.find((user) => user?.tpuUser?.id === id);
           if (user) {
@@ -334,6 +355,15 @@ export const useChatStore = defineStore("chat", {
     async typing() {
       await window.socket.emit("typing", this.selectedChatId);
     },
+    async getMessages(input: MessagesInput): Promise<Message> {
+      const { data } = await this.$apollo.query({
+        query: MessagesQuery,
+        variables: {
+          input
+        }
+      });
+      return data.messages;
+    },
     async setChat(id: number) {
       this.loading = true;
       const experimentsStore = useExperimentsStore();
@@ -346,7 +376,10 @@ export const useChatStore = defineStore("chat", {
         (chat: Chat) => chat.association.id === id
       ) as Chat;
       appStore.title = this.chatName;
-      const { data } = await axios.get(`/chats/${id}/messages`);
+      const data = await this.getMessages({
+        associationId: id,
+        position: ScrollPosition.Top
+      });
       if (id !== this.selectedChatId) return;
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === id

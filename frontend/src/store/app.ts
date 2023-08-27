@@ -16,10 +16,11 @@ import i18nObject from "@/plugins/i18n";
 import { useRoute } from "vue-router";
 import { SidebarItem } from "@/types/sidebar";
 import { Announcement } from "@/models/announcement";
-import { CoreStateQuery } from "@/graphql/query/core/state.graphql";
-import { WeatherQuery } from "@/graphql/query/core/weather.graphql";
+import { CoreStateQuery } from "@/graphql/core/state.graphql";
+import { WeatherQuery } from "@/graphql/core/weather.graphql";
 import { CoreState } from "@/gql/graphql";
 import { Chat } from "@/models/chat";
+import { useFriendsStore } from "@/store/friends";
 
 export interface AppState {
   _postInitRan: boolean;
@@ -184,7 +185,10 @@ export const useAppStore = defineStore("app", {
         date: import.meta.env.TPU_BUILD_DATE || "N/A"
       },
       site: {
-        name: "TPU"
+        name: "TPU",
+        maintenance: {
+          enabled: false
+        }
       },
       weather: {
         loading: true,
@@ -665,6 +669,7 @@ export const useAppStore = defineStore("app", {
     postInit() {
       if (this._postInitRan) return;
       useWorkspacesStore().init();
+      useChatStore().init();
       const user = useUserStore();
       setInterval(() => {
         this.getWeather();
@@ -714,7 +719,8 @@ export const useAppStore = defineStore("app", {
           currentUser,
           collections,
           chats,
-          workspaces
+          workspaces,
+          friends
         }
       } = await this.$apollo.query({
         query: CoreStateQuery
@@ -728,9 +734,11 @@ export const useAppStore = defineStore("app", {
       const chatStore = useChatStore();
       chatStore.chats = chats
         .map((chat) => {
-          chat.messages =
-            chatStore.chats.find((c) => c.id === chat.id)?.messages || [];
-          return chat;
+          return {
+            ...chat,
+            messages:
+              chatStore.chats.find((c) => c.id === chat.id)?.messages || []
+          };
         })
         .sort((a: Chat, b: Chat) => {
           return (
@@ -743,6 +751,7 @@ export const useAppStore = defineStore("app", {
         experimentsStore.experiments[experiment.id] = experiment.value;
       }
       useWorkspacesStore().items = workspaces;
+      useFriendsStore().friends = friends;
       this.experimentsInherit = experimentsStore.experiments;
       this.domain = "https://" + this.site.domain + "/i/";
       this.loading = false;

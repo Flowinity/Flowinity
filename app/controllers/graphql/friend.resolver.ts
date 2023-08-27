@@ -26,11 +26,18 @@ import { Includeable } from "sequelize"
 import { Context } from "@app/types/graphql/context"
 import { GraphQLResolveInfo } from "graphql/type"
 import { Notification } from "@app/models/notification.model"
-import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import {
+  PartialUserBase,
+  partialUserBase,
+  partialUserFriend,
+  PartialUserFriend
+} from "@app/classes/graphql/user/partialUser"
 import { EXPECTED_OPTIONS_KEY, createContext } from "dataloader-sequelize"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { Friend } from "@app/models/friend.model"
+import { FriendStatus } from "@app/classes/graphql/user/friends"
+import { UserStatus } from "@app/classes/graphql/user/status"
 
 @Resolver(Friend)
 @Service()
@@ -46,6 +53,24 @@ export class FriendResolver {
       where: {
         userId: ctx.user!!.id
       }
+    })
+  }
+
+  @FieldResolver(() => PartialUserFriend)
+  async user(@Root() friend: Friend) {
+    // These are flipped around intentionally, as "user" makes more sense to be the friend.
+    const fr = await friend.$get("otherUser", {
+      attributes: partialUserFriend
+    })
+    if (friend.status !== FriendStatus.ACCEPTED && fr)
+      fr.status = UserStatus.UNKNOWN
+    return fr
+  }
+
+  @FieldResolver(() => PartialUserFriend)
+  async otherUser(@Root() friend: Friend) {
+    return await friend.$get("user", {
+      attributes: partialUserFriend
     })
   }
 }
