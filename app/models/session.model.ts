@@ -9,7 +9,7 @@ import {
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { SessionInfo } from "@app/types/auth"
-import { Col } from "@troplo/sequelize/types/utils"
+import { Col } from "sequelize/types/utils"
 
 @Table
 export class Session extends Model {

@@ -26,7 +26,7 @@ import { FriendNickname } from "@app/models/friendNickname"
 import { AlternatePassword } from "@app/types/auth"
 import { DefaultProfileLayout } from "@app/classes/UserV3ProfileLayout"
 import { Integration } from "@app/models/integration.model"
-import { Col } from "@troplo/sequelize/types/utils"
+import { Col } from "sequelize/types/utils"
 
 export interface ProfileLayout {
   layout: {

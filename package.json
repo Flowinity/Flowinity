@@ -58,7 +58,6 @@
     "@editorjs/editorjs": "^2.27.2",
     "@levminer/speakeasy": "^1.4.0",
     "@socket.io/redis-adapter": "^8.1.0",
-    "@troplo/sequelize": "^0.0.0-troplo-dev3",
     "@troplo/sequelize-typescript": "^2.1.5-troplo-dev3",
     "@troplo/tpu-ogs": "^5.1.0-troplo1",
     "@types/body-parser": "1.19.1",
@@ -188,7 +187,7 @@
     "ts-node": "10.9.1",
     "tsc-watch": "^6.0.0",
     "tsconfig-paths": "4.1.2",
-    "typescript": "^5.0.4"
+    "typescript": "5.1.6"
   },
   "resolutions": {
     "wrap-ansi": "7"
