@@ -39,6 +39,13 @@ declare module "@vue/runtime-core" {
     $admin: ReturnType<typeof useAdminStore>;
     axios: Axios;
     $apollo: ApolloClient<any>;
+    $sockets: {
+      chat: Socket;
+      pulse: Socket;
+      friends: Socket;
+      mail: Socket;
+      user: Socket;
+    };
   }
 }
 

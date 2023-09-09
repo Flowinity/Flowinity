@@ -17,7 +17,7 @@ export function registerPlugins(app: App) {
   pinia.use(({ store }) => {
     store.$apollo = app.config.globalProperties.$apollo;
     store.$apolloProvider = app.config.globalProperties.$apolloProvider;
-    store.$globalProperties = app.config.globalProperties;
+    store.$app = app.config.globalProperties;
   });
   app.use(pinia).use(router);
 }

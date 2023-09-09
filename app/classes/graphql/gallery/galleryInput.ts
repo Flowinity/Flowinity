@@ -24,6 +24,17 @@ export enum Sort {
   SIZE = "fileSize"
 }
 
+export enum SearchMode {
+  AFTER = "after",
+  DURING = "during",
+  USER = "user",
+  SIZE = "fileSize",
+  NAME = "name",
+  META = "textMetadata",
+  TYPE = "type",
+  COLLECTION = "collection"
+}
+
 export enum Order {
   ASC = "ASC",
   DESC = "DESC"
@@ -55,6 +66,21 @@ registerEnumType(Type, {
   description:
     "The type of gallery request, for example if it's the personal gallery page, or a Collection"
 })
+
+registerEnumType(SearchMode, {
+  name: "GallerySearchMode",
+  description: "The advanced search mode."
+})
+
+@InputType()
+export class SearchModeInput {
+  @Field(() => SearchMode)
+  mode: SearchMode
+  @Field(() => String, {
+    nullable: true
+  })
+  value: string
+}
 
 @InputType()
 export class GalleryInput {
@@ -112,4 +138,8 @@ export class GalleryInput {
     description: "Requires Type to be COLLECTION"
   })
   shareLink?: string
+  @Field(() => [SearchModeInput], {
+    nullable: true
+  })
+  advanced?: SearchModeInput[]
 }

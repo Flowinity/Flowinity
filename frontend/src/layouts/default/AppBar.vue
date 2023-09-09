@@ -61,6 +61,13 @@
     </template>
     <v-spacer></v-spacer>
     <div v-if="$app.site.release === 'dev' && $app.cordova" class="mr-2">M</div>
+    <div class="mr-1" v-if="$app.site.release === 'dev' && $app.crashes">
+      <v-icon size="18">mdi-skull</v-icon>
+      {{ $app.crashes }}
+      <v-tooltip activator="parent" location="bottom">
+        <span>Crashes</span>
+      </v-tooltip>
+    </div>
     <small v-if="$app.notesSaving && !$vuetify.display.mobile" class="mr-3">
       Saving...
     </small>

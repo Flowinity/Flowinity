@@ -1,6 +1,6 @@
 import * as http from "http"
 import { AddressInfo } from "net"
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
 import { caching, MemoryCache } from "cache-manager"
 import dayjs from "dayjs"
 import isoWeek from "dayjs/plugin/isoWeek"
@@ -35,6 +35,14 @@ import { Context } from "mocha"
 import { Plan } from "@app/models/plan.model"
 import { User } from "@app/models/user.model"
 import { execSync } from "child_process"
+import { WebSocketServer } from "ws"
+import { useServer } from "graphql-ws/lib/use/ws"
+import { createPubSub } from "graphql-yoga"
+import { SocketControllers } from "socket-controllers"
+import { ChatSocketController } from "@app/controllers/socket/chat.socket"
+import createSocket from "@app/lib/socket-next"
+import { SocketAuthMiddleware } from "@app/lib/socket-auth"
+import { PulseSocketController } from "@app/controllers/socket/pulse.socket"
 
 @Service({ eager: false })
 export class Server {
@@ -105,13 +113,20 @@ export class Server {
     global.dayjs = dayjs
     global.whitelist = ipPrimary
     this.server = http.createServer(this.application.app)
+    const socket = await createSocket(this.application.app, this.server)
+    global.socket = socket as any
+    new SocketControllers({
+      io: socket,
+      container: Container,
+      middlewares: [SocketAuthMiddleware],
+      controllers: [ChatSocketController, PulseSocketController]
+    })
+
     if (!noBackgroundTasks) {
       this.server.listen(
         port || Server.normalizePort(this.config?.port || "34582")
       )
     }
-
-    await socket.init(this.application.app, this.server)
 
     this.server.on("error", (error: NodeJS.ErrnoException) =>
       this.onError(error)

@@ -349,11 +349,14 @@ export const useChatStore = defineStore("chat", {
       return data;
     },
     async readChat(chatId?: number) {
-      await window.socket.emit("readChat", chatId || this.selectedChatId);
+      await this.$app.$sockets.chat.emit(
+        "readChat",
+        chatId || this.selectedChatId
+      );
       if (this.selectedChat) this.selectedChat.unread = 0;
     },
     async typing() {
-      await window.socket.emit("typing", this.selectedChatId);
+      await this.$app.$sockets.chat.emit("typing", this.selectedChatId);
     },
     async getMessages(input: MessagesInput): Promise<Message> {
       const { data } = await this.$apollo.query({

@@ -149,11 +149,13 @@ export interface AppState {
   demo: boolean;
   themeProviderDefaults: any;
   batterySave: boolean;
+  crashes: number;
 }
 
 export const useAppStore = defineStore("app", {
   state: () =>
     ({
+      crashes: 0,
       _postInitRan: false,
       quickAction: parseInt(localStorage.getItem("quickAction") || "1"),
       railMode: "tpu",

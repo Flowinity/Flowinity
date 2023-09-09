@@ -3,7 +3,7 @@
     <v-col v-if="supports.search">
       <GalleryTextField
         :model-value="search"
-        v-on:update:model-value="$emit('update:search', $event)"
+        v-on:update:modelValue="$emit('update:search', $event)"
         @refreshGallery="$emit('refreshGallery')"
       />
     </v-col>

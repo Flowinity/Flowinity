@@ -13,6 +13,7 @@ import paginate from "jw-paginate"
 import axios from "axios"
 import { ClientSatisfies } from "@app/lib/clientSatisfies"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -116,9 +117,6 @@ export class ChatService {
     for (const user of chat.users) {
       const key = await redis.get(`user:${user.userId}:notificationKey`)
       if (!key) continue
-      //@ts-ignore
-      const sockets = await socket.in(user.userId).allSockets()
-      console.log(await socket)
       await axios
         .post(
           `https://fcm.googleapis.com/fcm/send`,
@@ -163,13 +161,16 @@ export class ChatService {
     await association.update({
       notifications: settings.notifications
     })
-    socket.to(userId).emit("chatUpdate", {
-      id: association.chatId,
-      association: {
-        ...association.toJSON(),
-        notifications: settings.notifications
-      }
-    })
+    socket
+      .of(SocketNamespaces.CHAT)
+      .to(userId)
+      .emit("chatUpdate", {
+        id: association.chatId,
+        association: {
+          ...association.toJSON(),
+          notifications: settings.notifications
+        }
+      })
     return association
   }
 
@@ -888,20 +889,24 @@ export class ChatService {
         })
         if (!assoc) continue
         const mention = message.content.includes(`<@${association.tpuUser.id}>`)
-        socket.to(association.tpuUser.id).emit("message", {
-          message,
-          chat: {
-            name: chat.name,
-            id: chat.id,
-            type: chat.type.toUpperCase(),
-            recipient: await this.getRecipient(chat, association.user.id)
-          },
-          association: {
-            id: association.id,
-            rank: association.rank
-          },
-          mention
-        })
+        socket.of(SocketNamespaces.CHAT).emit("ACK")
+        socket
+          .of(SocketNamespaces.CHAT)
+          .to(association.tpuUser.id)
+          .emit("message", {
+            message,
+            chat: {
+              name: chat.name,
+              id: chat.id,
+              type: chat.type,
+              recipient: await this.getRecipient(chat, association.user.id)
+            },
+            association: {
+              id: association.id,
+              rank: association.rank
+            },
+            mention
+          })
 
         if (
           association.tpuUser.id === message.userId ||

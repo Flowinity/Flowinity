@@ -12,9 +12,28 @@ import { useMailStore } from "@/store/mail";
 import { useToast } from "vue-toastification";
 import dayjs from "@/plugins/dayjs";
 import validation from "@/plugins/validation";
-import SocketIO from "socket.io-client";
+import { io } from "socket.io-client";
 import functions from "@/plugins/functions";
 import router from "@/router";
+
+function createSocket(namespace: string) {
+  console.log(`[TPU/Socket] Connecting to ${namespace}`);
+  const socket = io(`/${namespace}`, {
+    auth: {
+      token: localStorage.getItem("token")
+    },
+    transports: ["websocket"],
+    reconnection: true,
+    path: "/gateway"
+  });
+  socket.on("connect", () => {
+    console.log(`[TPU/Socket] Connected to ${namespace}`);
+  });
+  socket.on("disconnect", () => {
+    console.log(`[TPU/Socket] Disconnected from ${namespace}`);
+  });
+  return socket;
+}
 
 export default function setup(app) {
   const user = useUserStore();
@@ -41,20 +60,14 @@ export default function setup(app) {
   app.config.globalProperties.$chat = chat;
   app.config.globalProperties.$friends = friends;
   app.config.globalProperties.$mail = mail;
-  app.config.globalProperties.$socket = SocketIO(
-    import.meta.env.DEV
-      ? ""
-      : import.meta.env.CORDOVA
-      ? "https://images.flowinity.com"
-      : "",
-    {
-      transports: ["websocket", "polling"],
-      auth: {
-        token: localStorage.getItem("token")
-      }
-    }
-  );
-  window.socket = app.config.globalProperties.$socket;
+  app.config.globalProperties.$socket = createSocket("");
+  app.config.globalProperties.$sockets = {
+    chat: createSocket("chat"),
+    friends: createSocket("friends"),
+    mail: createSocket("mail"),
+    user: createSocket("user"),
+    pulse: createSocket("pulse")
+  };
   app.config.globalProperties.$functions = functions;
 
   core.init().then(() => {

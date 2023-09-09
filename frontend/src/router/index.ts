@@ -347,6 +347,11 @@ const routes = [
         component: () => import("@/views/Auth/Oauth.vue")
       },
       {
+        path: "/games/kollision",
+        name: "Kollision",
+        component: () => import("@/views/Games/Kollision/Game.vue")
+      },
+      {
         path: "/:id",
         name: "Attachment Item",
         component: () => import("@/views/Item.vue")

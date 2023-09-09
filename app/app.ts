@@ -15,6 +15,7 @@ import { Container, Service } from "typedi"
 import sequelize, { Op } from "sequelize"
 import path from "path"
 import fs from "fs"
+import { WebSocketServer } from "ws"
 
 // Import Libs
 import Errors from "@app/lib/errors"
@@ -54,7 +55,13 @@ import { OidcControllerV3 } from "@app/controllers/v3/oidc.controller"
 
 // GraphQL
 import { buildSchema } from "type-graphql"
-import { createYoga, MaskError, maskError } from "graphql-yoga"
+import {
+  createPubSub,
+  createYoga,
+  MaskError,
+  maskError,
+  YogaServerInstance
+} from "graphql-yoga"
 import {
   BadgeResolver,
   PartialUserPublicResolver,
@@ -85,9 +92,13 @@ import { NoteResolver } from "@app/controllers/graphql/note.resolver"
 import { useResponseCache } from "@graphql-yoga/plugin-response-cache"
 import { createRedisCache } from "@envelop/response-cache-redis"
 import { Cache } from "@envelop/response-cache"
-import redis from "@app/redis"
+import redis, { ioRedis } from "@app/redis"
 import { FriendResolver } from "@app/controllers/graphql/friend.resolver"
 import { MessageResolver } from "@app/controllers/graphql/message.resolver"
+import { useServer } from "graphql-ws/lib/use/ws"
+import { GraphQLSchema } from "graphql/type"
+import generateContext from "@app/classes/graphql/middleware/generateContext"
+import { RedisPubSub } from "graphql-redis-subscriptions"
 
 @Service()
 @Middleware({ type: "after" })
@@ -183,7 +194,8 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
 @Service()
 export class Application {
   app: express.Application
-
+  schema: GraphQLSchema
+  yogaApp: YogaServerInstance<any, any>
   private readonly swaggerOptions: swaggerJSDoc.Options
 
   constructor() {
@@ -313,8 +325,10 @@ export class Application {
       },
       validation: true
     })
-
-    const schema = await buildSchema({
+    global.pubsub = new RedisPubSub({
+      publisher: ioRedis
+    })
+    this.schema = await buildSchema({
       resolvers: [
         UserResolver,
         AuthResolver,
@@ -335,7 +349,8 @@ export class Application {
       ],
       container: Container,
       authChecker: authChecker,
-      validate: true
+      validate: true,
+      pubSub: global.pubsub
     })
     const gqlPlugins = []
     const cache: Cache = createRedisCache({ redis })
@@ -376,66 +391,43 @@ export class Application {
         })
       )
     }
-    this.app.use(
-      ["/api/v4/graphql", "/graphql"],
-      createYoga({
-        schema,
-        plugins: gqlPlugins,
-        fetchAPI: createFetch({
-          formDataLimits: {
-            // Maximum allowed file size (in bytes)
-            fileSize: 1.37439e11,
-            // Maximum allowed number of files
-            files: 200,
-            // Maximum allowed size of content (operations, variables etc...)
-            fieldSize: 1000000,
-            // Maximum allowed header size for form data
-            headerSize: 1000000
-          }
-        }),
-        maskedErrors: {
-          maskError(error: any, message: any, isDev: any): Error {
-            console.error(error)
-
-            if (
-              !message.toLowerCase().includes("sequelize") ||
-              error instanceof GraphQLError
-            ) {
-              return error
-            }
-
-            return maskError(error, message, isDev)
-          }
-        },
-        async context(ctx) {
-          const userResolver = Container.get(UserResolver)
-          const session = await userResolver.findByToken(
-            ctx.request.headers.get("Authorization")
-          )
-          return {
-            user: session?.user,
-            client: {
-              version: ctx.request.headers.get("X-TPU-Client-Version"),
-              name: ctx.request.headers.get("X-TPU-Client")
-            },
-            scopes: session?.scopes || "",
-            role: session
-              ? session?.user?.administrator
-                ? AccessLevel.ADMIN
-                : session?.user?.moderator
-                ? AccessLevel.MODERATOR
-                : AccessLevel.USER
-              : AccessLevel.NO_ACCESS,
-            token: ctx.request.headers.get("Authorization"),
-            dataloader: createContext(db),
-            ip: ctx.request.headers.get("X-Forwarded-For") || "1.1.1.1",
-            meta: {},
-            req: ctx.request,
-            cache: cache
-          } as Context
+    this.yogaApp = createYoga({
+      schema: this.schema,
+      plugins: gqlPlugins,
+      graphiql: {
+        subscriptionsProtocol: "WS"
+      },
+      fetchAPI: createFetch({
+        formDataLimits: {
+          // Maximum allowed file size (in bytes)
+          fileSize: 1.37439e11,
+          // Maximum allowed number of files
+          files: 200,
+          // Maximum allowed size of content (operations, variables etc...)
+          fieldSize: 1000000,
+          // Maximum allowed header size for form data
+          headerSize: 1000000
         }
-      })
-    )
+      }),
+      maskedErrors: {
+        maskError(error: any, message: any, isDev: any): Error {
+          console.error(error)
+
+          if (
+            !message.toLowerCase().includes("sequelize") ||
+            error instanceof GraphQLError
+          ) {
+            return error
+          }
+
+          return maskError(error, message, isDev)
+        }
+      },
+      async context(ctx) {
+        return await generateContext(ctx)
+      }
+    })
+    this.app.use(["/api/v4/graphql", "/graphql"], this.yogaApp)
     this.app.use(express.static(path.join(global.appRoot, "../frontend_build")))
     this.app.get("*", function (req, res, next): void {
       if (req.url.startsWith("/api/")) return next()

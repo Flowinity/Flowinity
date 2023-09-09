@@ -145,10 +145,18 @@ const config = {
       "/i/": "http://localhost:34582",
       "/socket.io": {
         target: "http://localhost:34582",
-        ws: true
+        ws: true,
+        secure: true,
+        changeOrigin: true
       },
       "/api/v1": "http://localhost:34581",
-      "/graphql": "http://localhost:34582"
+      "/graphql": "http://localhost:34582",
+      "/gateway": {
+        target: "http://localhost:34582",
+        ws: true,
+        secure: true,
+        changeOrigin: true
+      }
     },
     https: undefined
   }

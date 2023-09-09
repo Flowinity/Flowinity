@@ -111,11 +111,11 @@ app.use(Toast, {
 });
 app.config.globalProperties.$toast = useToast();
 app.use(i18n);
-registerPlugins(app);
 
 if (import.meta.env.DEV) app.config.performance = true;
 
 // Register boot plugins
+registerPlugins(app);
 apollo(app);
 globals(app);
 events();

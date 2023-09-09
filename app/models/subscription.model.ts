@@ -11,7 +11,7 @@ import { Field, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { SubscriptionMetadata } from "@app/classes/graphql/user/subscription"
 
-@ObjectType()
+@ObjectType("TPUSubscription")
 @Table
 export class Subscription extends Model {
   @Field()

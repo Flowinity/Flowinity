@@ -56,7 +56,6 @@
     "@vue/apollo-composable": "^4.0.0-beta.8",
     "@vue/apollo-option": "^4.0.0-beta.5",
     "@vue/eslint-config-typescript": "^11.0.0",
-    "@vuetify/nightly": "npm:@vuetify/nightly@4.0.0-dev-20230512.0",
     "apexcharts": "^3.37.0",
     "axios": "^1.3.2",
     "chart.js": "^4.2.1",
@@ -73,6 +72,7 @@
     "editorjs-undo": "^2.0.18",
     "floating-vue": "^2.0.0-beta.20",
     "graphql": "^16.8.0",
+    "graphql-ws": "^5.14.0",
     "markdown-it": "^13.0.1",
     "markdown-it-emoji": "^2.0.2",
     "markdown-it-unicode-emoji": "https://github.com/Troplo/markdown-it-unicode-emoji",
@@ -115,5 +115,9 @@
     "eslint-plugin-vue": "^9.3.0",
     "react": "^18.2.0",
     "rollup-plugin-visualizer": "^5.9.0"
+  },
+  "resolutions": {
+    "socket.io": "4.7.2",
+    "socket.io-client": "4.7.2"
   }
 }

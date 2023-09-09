@@ -8,7 +8,7 @@ import {
   Table
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
-import { Col } from "@troplo/sequelize/types/utils"
+import { Col } from "sequelize/types/utils"
 import { Field, Float, ObjectType } from "type-graphql"
 import { SessionInfo } from "@app/classes/graphql/user/session"
 

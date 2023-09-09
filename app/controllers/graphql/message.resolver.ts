@@ -3,9 +3,12 @@ import {
   Ctx,
   FieldResolver,
   Mutation,
+  PubSub,
+  PubSubEngine,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { Service } from "typedi"
 import { Message } from "@app/models/message.model"
@@ -24,6 +27,8 @@ import { Chat } from "@app/models/chat.model"
 import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { MessageSubscription } from "@app/classes/graphql/chat/messageSubscription"
+import { SocketEvents } from "@app/classes/graphql/SocketEvents"
 
 @Resolver(Message)
 @Service()

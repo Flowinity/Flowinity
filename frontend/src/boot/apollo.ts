@@ -13,6 +13,8 @@ import { onError } from "@apollo/client/link/error";
 import { useToast } from "vue-toastification";
 import { setContext } from "@apollo/client/link/context";
 import { useUserStore } from "@/store/user";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { createClient } from "graphql-ws";
 
 export default function setup(app: App) {
   const toast = useToast();
@@ -27,7 +29,9 @@ export default function setup(app: App) {
     return {
       headers: {
         ...headers,
-        authorization: token || ""
+        authorization: token || "",
+        clientVersion: import.meta.env.TPU_VERSION,
+        clientName: "TPUvNEXT"
       }
     };
   });
@@ -50,7 +54,18 @@ export default function setup(app: App) {
     }
   });
 
-  const appLink = from([errorLink, authLink, httpLink]);
+  const wsLink = new GraphQLWsLink(
+    createClient({
+      url: "/graphql",
+      connectionParams: {
+        token: localStorage.getItem("token") || "",
+        clientVersion: import.meta.env.TPU_VERSION,
+        clientName: "TPUvNEXT"
+      }
+    })
+  );
+
+  const appLink = from([errorLink, authLink, httpLink, wsLink]);
 
   // Create the apollo client
   const apolloClient = new ApolloClient({

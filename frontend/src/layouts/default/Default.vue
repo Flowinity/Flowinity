@@ -249,7 +249,7 @@ export default defineComponent({
     },
     getPulseSessionGlobal() {
       const id = Math.random().toString(36).substring(7);
-      this.$socket.emit("startPulse", {
+      this.$sockets.pulse.emit("startPulse", {
         type: "global",
         id,
         action: "focus",
@@ -263,13 +263,13 @@ export default defineComponent({
           type: "session"
         }
       });
-      this.$socket.on("pulseToken-" + id, (res: any) => {
+      this.$sockets.pulse.on("pulseToken-" + id, (res: any) => {
         setInterval(() => {
           if (document.hasFocus()) {
             this.pulse.timeOnPageGlobal += 5000;
-            this.$socket.emit("updatePulse", {
+            this.$sockets.pulse.emit("updatePulse", {
               id: res.id,
-              timeOnPage: this.pulse.timeOnPageGlobal
+              timeSpent: this.pulse.timeOnPageGlobal
             });
           }
         }, 5000);
@@ -287,7 +287,7 @@ export default defineComponent({
       clearInterval(this.pulse.interval);
       this.pulse.timeOnPage = 0;
       const id = Math.random().toString(36).substring(7);
-      this.$socket.emit("startPulse", {
+      this.$sockets.pulse.emit("startPulse", {
         type: "global",
         id,
         action: "focus",
@@ -301,14 +301,14 @@ export default defineComponent({
           type: "page"
         }
       });
-      this.$socket.on("pulseToken-" + id, (res: any) => {
+      this.$sockets.pulse.on("pulseToken-" + id, (res: any) => {
         this.pulse.id = res.id;
         this.pulse.interval = setInterval(() => {
           if (document.hasFocus()) {
             this.pulse.timeOnPage += 5000;
-            this.$socket.emit("updatePulse", {
+            this.$sockets.pulse.emit("updatePulse", {
               id: res.id,
-              timeOnPage: this.pulse.timeOnPage
+              timeSpent: this.pulse.timeOnPage
             });
           }
         }, 5000);
@@ -382,7 +382,7 @@ export default defineComponent({
         }
       }
       this.getPulseSession();
-      this.$socket.emit("pulse", {
+      this.$sockets.pulse.emit("pulse", {
         action: "page-change",
         route: to.path,
         timeSpent: 0,

@@ -9,7 +9,7 @@ import {
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Session } from "@app/models/session.model"
-import { Col } from "@troplo/sequelize/types/utils"
+import { Col } from "sequelize/types/utils"
 
 @Table
 export class OauthUser extends Model {
