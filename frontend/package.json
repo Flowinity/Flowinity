@@ -84,6 +84,7 @@
     "svgmoji": "^3.2.0",
     "textarea-caret": "^3.1.0",
     "typescript": "^4",
+    "v3-infinite-loading": "git+https://github.com/Troplo/vue3-infinite-loading",
     "vite": "^4.2.0",
     "vite-plugin-pwa": "^0.14.4",
     "vite-plugin-vuetify": "^1.0.2",

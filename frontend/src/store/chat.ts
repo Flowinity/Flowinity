@@ -10,15 +10,20 @@ import { User } from "@/models/user";
 import { useUserStore } from "@/store/user";
 import { useCollectionsStore } from "@/store/collections";
 import { Collection } from "@/models/collection";
-import { Message as MessageType, Message } from "@/models/message";
 import { useFriendsStore } from "@/store/friends";
 import { Paginate } from "@/types/paginate";
 import dayjs from "../plugins/dayjs";
 import { useToast } from "vue-toastification";
 import { ChatsQuery } from "@/graphql/chats/chats.graphql";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
-import { MessagesInput, ScrollPosition } from "@/gql/graphql";
+import {
+  Message,
+  MessagesInput,
+  MessageType,
+  ScrollPosition
+} from "@/gql/graphql";
 import { MessagesQuery } from "@/graphql/chats/messages.graphql";
+import { StateHandler } from "v3-infinite-loading/lib/types";
 
 export interface ChatState {
   search: {
@@ -42,7 +47,7 @@ export interface ChatState {
   dialogs: {
     message: {
       value: boolean;
-      message: MessageType | null;
+      message: Message | null;
       bindingElement: string | null;
       x: number;
       y: number;
@@ -125,7 +130,7 @@ export const useChatStore = defineStore("chat", {
       dialogs: {
         message: {
           value: false,
-          message: null as MessageType | null,
+          message: null as Message | null,
           bindingElement: null as string | null,
           x: 0,
           y: 0,
@@ -216,12 +221,12 @@ export const useChatStore = defineStore("chat", {
         await this.doJump(message);
       }
     },
-    merge(message: MessageType, index: number) {
+    merge(message: Message, index: number) {
       if (message.replyId) return false;
-      if (message.type !== "message" && message.type) return false;
+      if (message.type !== MessageType.Message && message.type) return false;
       const prev = this.selectedChat?.messages[index + 1];
       if (!prev) return false;
-      if (prev.type !== "message" && prev.type) return false;
+      if (prev.type !== MessageType.Message && prev.type) return false;
       if (dayjs(message.createdAt).diff(prev.createdAt, "minutes") > 5)
         return false;
       return prev.user?.id === message.user?.id;
@@ -363,7 +368,8 @@ export const useChatStore = defineStore("chat", {
         query: MessagesQuery,
         variables: {
           input
-        }
+        },
+        fetchPolicy: "network-only"
       });
       return data.messages;
     },
@@ -405,50 +411,28 @@ export const useChatStore = defineStore("chat", {
       appStore.title = this.chatName;
       this.readChat();
     },
-    async loadHistory(
-      offset?: number,
-      forceUnload: boolean = false,
-      up: boolean = true
-    ) {
+    async loadHistory($state: StateHandler) {
+      if (this.loadingNew) return;
       this.loadingNew = true;
-      const { data } = await axios.get(
-        `/chats/${this.selectedChatId}/messages`,
-        {
-          params: {
-            offset:
-              offset === null
-                ? undefined
-                : offset || this.currentOffset[up ? "up" : "down"],
-            position: up ? "top" : "bottom"
-          }
+      $state.loading();
+      const data = await this.getMessages({
+        associationId: this.selectedChatId,
+        position: ScrollPosition.Top,
+        offset: this.currentOffset.up,
+        limit: 50
+      });
+
+      if (data.length) {
+        this.selectedChat?.messages?.push(...data);
+        $state.loaded();
+        if (data.length < 50) {
+          $state.complete();
         }
-      );
-      const index = this.chats.findIndex(
-        (chat: Chat) => chat.association.id === this.selectedChatId
-      );
-      if (!data.length) {
-        this.loadNew = false;
-      }
-      if (!up && !forceUnload && !offset) {
-        this.chats[index].messages.unshift(...data);
-        if (this.chats[index].messages.length > 150) {
-          this.chats[index].messages = this.chats[index].messages.slice(
-            0,
-            this.chats[index].messages.length - 100
-          );
-        }
-      } else if (up && !forceUnload && !offset) {
-        this.chats[index].messages.push(...data);
-        // if messages.length over 150, remove the first 50
-        if (this.chats[index].messages.length > 150) {
-          this.chats[index].messages = this.chats[index].messages.slice(100);
-          this.loadNew = true;
-        }
+        this.loadingNew = false;
       } else {
-        this.chats[index].messages = data;
-        this.loadNew = true;
+        $state.complete();
+        this.loadingNew = false;
       }
-      this.loadingNew = false;
     },
     async getChats() {
       try {
@@ -535,12 +519,7 @@ export const useChatStore = defineStore("chat", {
   },
   getters: {
     renderableReadReceipts() {
-      if (vuetify.display.xxl) return 20;
-      if (vuetify.display.xl) return 15;
-      if (vuetify.display.md) return 10;
-      if (vuetify.display.sm) return 10;
-      if (vuetify.display.mobile) return 2;
-      return 10;
+      return 5;
     },
     currentOffset(state: ChatState) {
       if (!state.selectedChat?.messages?.length) return { up: 0, down: 0 };

@@ -1,21 +1,32 @@
 <template>
-  <UserAvatar
-    v-if="readReceipt?.user"
-    :id="'message-read-receipt-' + message.id + '-' + readReceipt.userId"
-    :key="readReceipt.userId + '-' + message.id"
-    :user="readReceipt.user"
-    class="pointer ml-2 read-receipt-avatar"
-    size="22"
-    style="align-self: flex-end; z-index: 1"
-    @click.prevent="
-      $chat.dialogs.user.username = readReceipt.user.username;
-      $chat.dialogs.user.value = true;
-    "
-  >
-    <v-tooltip activator="parent" location="top" :eager="false" offset="18">
+  <span class="d-flex flex-col">
+    <UserAvatar
+      v-if="readReceipt?.user"
+      :id="'message-read-receipt-' + message.id + '-' + readReceipt.userId"
+      :key="readReceipt.userId + '-' + message.id"
+      :user="readReceipt.user"
+      class="pointer read-receipt-avatar"
+      size="22"
+      style="align-self: flex-end; z-index: 1"
+      @click.prevent="
+        $chat.dialogs.user.username = readReceipt.user.username;
+        $chat.dialogs.user.value = true;
+      "
+    >
+      <v-tooltip
+        activator="parent"
+        location="top"
+        :eager="false"
+        offset="18"
+        v-if="!expanded"
+      >
+        {{ readReceipt.user?.username }}
+      </v-tooltip>
+    </UserAvatar>
+    <span v-if="expanded" class="ml-2">
       {{ readReceipt.user?.username }}
-    </v-tooltip>
-  </UserAvatar>
+    </span>
+  </span>
 </template>
 
 <script lang="ts">
@@ -41,6 +52,10 @@ export default defineComponent({
     message: {
       type: Object as () => Message,
       required: true
+    },
+    expanded: {
+      type: Boolean,
+      default: false
     }
   }
 });

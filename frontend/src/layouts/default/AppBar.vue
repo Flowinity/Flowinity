@@ -10,7 +10,6 @@
     :flat="true"
     :floating="true"
     style="z-index: 1001"
-    scroll-behavior="hide"
   >
     <v-app-bar-nav-icon
       v-if="

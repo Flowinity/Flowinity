@@ -76,6 +76,14 @@ export const MessagesQuery = gql`
         lastRead
         notifications
         legacyUserId
+        user {
+          username
+          id
+          createdAt
+          administrator
+          moderator
+          avatar
+        }
       }
     }
   }

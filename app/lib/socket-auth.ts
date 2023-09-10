@@ -11,7 +11,7 @@ export class SocketAuthMiddleware implements MiddlewareInterface {
   constructor(private userResolver: UserResolver) {}
 
   //@ts-ignore
-  use(socket: SocketAuth, next: (err?: any) => any) {
+  async use(socket: SocketAuth, next: (err?: any) => any) {
     socket.join(1)
     const nsp = socket.nsp
     const token = socket.handshake.auth.token
@@ -34,20 +34,20 @@ export class SocketAuthMiddleware implements MiddlewareInterface {
       }
     }
     if (token) {
-      this.userResolver.findByToken(token).then(async (session) => {
-        if (!session) {
-          socket.disconnect()
-          throw new Error("Invalid token")
-        } else if (checkScope(scope, session.scopes)) {
-          socket.request.user = session.user
-          socket.join("1")
-          next()
-        } else {
-          await socket.emitWithAck("invalidScope", true, 1)
-          socket.disconnect()
-          throw new Error("Invalid scope")
-        }
-      })
+      const session = await this.userResolver.findByToken(token)
+      if (!session) {
+        socket.disconnect()
+        throw new Error("Invalid token")
+      } else if (checkScope(scope, session.scopes)) {
+        socket.request.user = session.user
+        socket.join(session.user.id)
+        next()
+        return session
+      } else {
+        await socket.emitWithAck("invalidScope", true, 1)
+        socket.disconnect()
+        throw new Error("Invalid scope")
+      }
     }
   }
 }

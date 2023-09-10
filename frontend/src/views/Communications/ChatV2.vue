@@ -1,113 +1,38 @@
 <template>
-  <div
-    id="chat"
-    class="communications position-relative"
-    @drop.prevent="dragDropHandler"
-    @dragover.prevent
-  >
-    <v-navigation-drawer
-      v-if="$vuetify.display.mobile"
-      v-model="$chat.dialogs.message.value"
-      color="card"
-      :floating="true"
-      location="bottom"
-      :temporary="true"
-      :touchless="true"
+  <div class="flex-container">
+    <infinite-loading
+      @infinite="$chat.loadHistory"
+      direction="top"
+      :top="true"
+      :identifier="$chat.selectedChat?.id"
+      v-if="$chat.selectedChat?.messages?.length"
     >
-      <MessageActionsList
-        v-if="$chat.dialogs.message.message"
-        @delete="
-          $event
-            ? deleteMessage($chat.dialogs.message.message?.id)
-            : confirmDelete($chat.dialogs.message.message);
-          $chat.dialogs.message.value = false;
-        "
-        @edit="
-          handleEdit({
-            id: $chat.dialogs.message.message?.id || 0,
-            content: $chat.dialogs.message.message?.content || ''
-          });
-          $chat.dialogs.message.value = false;
-        "
-        @reply="
-          replyId = $chat.dialogs.message.message?.id;
-          $chat.dialogs.message.value = false;
-        "
-      ></MessageActionsList>
-    </v-navigation-drawer>
-    <v-menu v-else v-model="$chat.dialogs.message.value" :style="menuStyle">
-      <MessageActionsList
-        @delete="
-          $event
-            ? deleteMessage($chat.dialogs.message.message?.id)
-            : confirmDelete($chat.dialogs.message.message);
-          $chat.dialogs.message.value = false;
-        "
-        @edit="
-          handleEdit({
-            id: $chat.dialogs.message.message?.id || 0,
-            content: $chat.dialogs.message.message?.content || ''
-          });
-          $chat.dialogs.message.value = false;
-        "
-        @reply="
-          replyId = $chat.dialogs.message.message?.id;
-          $chat.dialogs.message.value = false;
-        "
-      ></MessageActionsList>
-    </v-menu>
-    <WorkspaceDeleteDialog
-      v-model="dialogs.delete.value"
-      title="Delete Message?"
-      @submit="
-        deleteMessage(dialogs.delete.message?.id);
-        dialogs.delete.value = false;
-      "
-    />
-    <ol
-      id="chat-list"
-      ref="messageList"
-      class="message-list-container"
-      :style="{ height }"
-      @scroll="scrollEvent"
-    >
-      <InfiniteLoading
-        @infinite="$chat.loadHistory"
-        :distance="50"
-        direction="top"
-      />
-      <div id="sentinel-bottom" ref="sentinelBottom" v-if="$chat.isReady"></div>
-      <template v-if="!$chat.selectedChat?.messages?.length && !$chat.loading">
-        <v-row align="center" justify="center">
-          <v-col cols="12" md="6" class="text-center">
-            <UserAvatar
-              :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
-              :status="true"
-              :user="$chat.selectedChat?.recipient"
-              class="ml-4"
-              size="64"
-            />
-            <v-card-title
-              class="grey--text unselectable"
-              v-if="$chat.selectedChat?.recipient?.username"
-              style="text-overflow: inherit; white-space: normal"
-            >
-              {{
-                $t("chats.start.dm", {
-                  username: $chat.selectedChat?.recipient?.username
-                })
-              }}
-            </v-card-title>
-            <v-card-title
-              class="grey--text unselectable"
-              v-else-if="$chat.selectedChat?.name"
-              style="text-overflow: inherit; white-space: normal"
-            >
-              {{ $t("chats.start.group", { name: $chat.selectedChat?.name }) }}
-            </v-card-title>
-          </v-col>
-        </v-row>
+      <template v-slot:spinner>
+        <div class="text-center" style="height: 100vh">
+          <v-progress-circular
+            :size="36"
+            :width="2"
+            indeterminate
+            :model-value="1"
+          ></v-progress-circular>
+        </div>
       </template>
+      <template v-slot:complete>
+        <div class="text-center">
+          <PromoNoContent
+            icon="mdi-message-processing-outline"
+            :title="`Welcome to the start of ${$chat.selectedChat?.name}!`"
+            description="Send a message to start the conversation!"
+          ></PromoNoContent>
+        </div>
+      </template>
+    </infinite-loading>
+    <div
+      class="d-flex flex-column-reverse communications position-relative scrollable"
+      id="chat"
+      style="flex: 0 0 auto"
+    >
+      <div id="sentinel-bottom" ref="sentinelBottom"></div>
       <MessagePerf
         class="mr-2 ml-2"
         v-for="(message, index) in $chat.selectedChat?.messages"
@@ -139,127 +64,130 @@
         @jumpToMessage="$chat.jumpToMessage($event)"
         @reply="replyId = $event.id"
       />
+      <v-skeleton-loader
+        v-if="!$chat.selectedChat?.messages?.length && $chat.loading"
+        v-for="index in 40"
+        :key="index"
+        type="list-item-avatar-three-line"
+        color="background"
+      />
       <div id="sentinel" ref="sentinel" v-if="$chat.isReady"></div>
-    </ol>
-    <v-fade-transition v-model="avoidAutoScroll">
-      <v-toolbar
-        v-if="avoidAutoScroll || $chat.loadingNew || $chat.loadNew"
-        :style="`position: fixed; bottom: ${
-          inputHeight +
-          replyingHeight +
-          uploadFileHeight +
-          ($vuetify.display.mobile ? 43 : 0)
-        }px`"
-        class="pointer unselectable pl-2 pb-1 force-bg dynamic-background"
-        color="transparent"
-        height="25"
-        style="
-          border-radius: 20px 20px 0 0;
-          font-size: 14px;
-          z-index: 1001;
-          backdrop-filter: blur(10px);
-        "
-        @click="jumpToBottom"
-      >
-        <template v-if="!$chat.loadingNew">
-          <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
-          {{ $t("chats.jumpToBottom") }}
-        </template>
-        <template v-else>
-          <v-progress-circular
-            :size="17"
-            :width="2"
+    </div>
+    <div style="position: fixed; z-index: 2001; bottom: 0; flex: 0 0 auto">
+      <v-fade-transition v-model="avoidAutoScroll">
+        <v-toolbar
+          v-if="avoidAutoScroll || $chat.loadingNew || $chat.loadNew"
+          class="pointer unselectable pl-2 pb-1 force-bg dynamic-background"
+          color="transparent"
+          height="25"
+          style="
+            border-radius: 20px 20px 0 0;
+            font-size: 14px;
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+          "
+          @click="jumpToBottom"
+        >
+          <template v-if="!$chat.loadingNew">
+            <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
+            {{ $t("chats.jumpToBottom") }}
+          </template>
+          <template v-else>
+            <v-progress-circular
+              :size="17"
+              :width="2"
+              class="mr-2"
+              indeterminate
+            ></v-progress-circular>
+            {{ $t("chats.loading") }}
+          </template>
+        </v-toolbar>
+      </v-fade-transition>
+      <v-fade-transition v-model="replyId">
+        <v-toolbar
+          v-if="replyId"
+          class="pointer"
+          color="card"
+          height="35"
+          style="opacity: 0.95; z-index: 1001"
+          @click="jumpToBottom"
+        >
+          <v-icon class="mr-2 ml-3">mdi-reply</v-icon>
+          <UserAvatar
+            :user="replying?.user"
             class="mr-2"
-            indeterminate
-          ></v-progress-circular>
-          {{ $t("chats.loading") }}
-        </template>
-      </v-toolbar>
-    </v-fade-transition>
-    <v-fade-transition v-model="replyId">
-      <v-toolbar
-        v-if="replyId"
-        :style="
-          `position: absolute; bottom: ${
-            inputHeight + uploadFileHeight + ($vuetify.display.mobile ? 43 : 0)
-          }px` + (!avoidAutoScroll ? '; border-radius: 20px 20px 0 0;' : '')
+            size="24"
+          ></UserAvatar>
+          {{ replying?.content }}
+          <v-spacer></v-spacer>
+          <v-btn @click="replyId = null">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+      </v-fade-transition>
+      <v-fade-transition :model-value="files.length">
+        <v-toolbar
+          v-if="files.length"
+          :style="
+            `position: sticky; bottom: ${inputHeight}px` +
+            (!avoidAutoScroll && !replyId
+              ? '; border-radius: 20px 20px 0 0;'
+              : '')
+          "
+          color="card"
+          height="auto"
+        >
+          <v-slide-group class="my-2 mx-1">
+            <v-slide-group-item
+              v-for="(file, index) in files"
+              :key="file.name + file.size + index"
+            >
+              <v-card class="mr-2" elevation="0" max-width="400px" show-arrows>
+                <v-progress-linear
+                  :color="uploadProgress === 100 ? 'success' : 'primary'"
+                  :model-value="file.uploadProgress"
+                  height="20"
+                >
+                  <small>{{ uploadProgress }}%</small>
+                </v-progress-linear>
+                <v-toolbar>
+                  <v-icon class="ml-2">mdi-upload</v-icon>
+                  <v-card-text class="text-center limit">
+                    {{ file.name }}
+                  </v-card-text>
+                  <v-spacer></v-spacer>
+                  <v-card-actions>
+                    <v-btn
+                      class="mr-2"
+                      color="error"
+                      @click="files.splice(index, 1)"
+                    >
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-toolbar>
+              </v-card>
+            </v-slide-group-item>
+          </v-slide-group>
+        </v-toolbar>
+      </v-fade-transition>
+      <CommunicationsInput
+        ref="input"
+        v-model="message"
+        class="message-input"
+        style="margin-top: auto; z-index: 2002"
+        @emoji="
+          message += $event;
+          $nextTick(() => focusInput());
         "
-        class="pointer"
-        color="card"
-        height="35"
-        style="opacity: 0.95; z-index: 1001"
-        @click="jumpToBottom"
-      >
-        <v-icon class="mr-2 ml-3">mdi-reply</v-icon>
-        <UserAvatar :user="replying?.user" class="mr-2" size="24"></UserAvatar>
-        {{ replying?.content }}
-        <v-spacer></v-spacer>
-        <v-btn @click="replyId = null">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-toolbar>
-    </v-fade-transition>
-    <v-fade-transition :model-value="files.length">
-      <v-toolbar
-        v-if="files.length"
-        :style="
-          `position: sticky; bottom: ${inputHeight}px` +
-          (!avoidAutoScroll && !replyId
-            ? '; border-radius: 20px 20px 0 0;'
-            : '')
-        "
-        color="card"
-        height="auto"
-      >
-        <v-slide-group class="my-2 mx-1">
-          <v-slide-group-item
-            v-for="(file, index) in files"
-            :key="file.name + file.size + index"
-          >
-            <v-card class="mr-2" elevation="0" max-width="400px" show-arrows>
-              <v-progress-linear
-                :color="uploadProgress === 100 ? 'success' : 'primary'"
-                :model-value="file.uploadProgress"
-                height="20"
-              >
-                <small>{{ uploadProgress }}%</small>
-              </v-progress-linear>
-              <v-toolbar>
-                <v-icon class="ml-2">mdi-upload</v-icon>
-                <v-card-text class="text-center limit">
-                  {{ file.name }}
-                </v-card-text>
-                <v-spacer></v-spacer>
-                <v-card-actions>
-                  <v-btn
-                    class="mr-2"
-                    color="error"
-                    @click="files.splice(index, 1)"
-                  >
-                    <v-icon>mdi-close</v-icon>
-                  </v-btn>
-                </v-card-actions>
-              </v-toolbar>
-            </v-card>
-          </v-slide-group-item>
-        </v-slide-group>
-      </v-toolbar>
-    </v-fade-transition>
-    <CommunicationsInput
-      ref="input"
-      v-model="message"
-      class="message-input"
-      style="margin-top: auto; z-index: 2002"
-      @emoji="
-        message += $event;
-        $nextTick(() => focusInput());
-      "
-      @fileUpload="uploadHandle"
-      @paste="handlePaste"
-      @quickTPULink="handleQuickTPULink"
-      @sendMessage="sendMessage"
-      @focusInput="focusInput"
-    ></CommunicationsInput>
+        @fileUpload="uploadHandle"
+        @paste="handlePaste"
+        @quickTPULink="handleQuickTPULink"
+        @sendMessage="sendMessage"
+        @focusInput="focusInput"
+        :editing="false"
+      ></CommunicationsInput>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -280,10 +208,12 @@ import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import UserCard from "@/components/Users/UserCard.vue";
 import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css";
+import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 
 export default defineComponent({
   name: "Chat",
   components: {
+    PromoNoContent,
     MessageActionsList,
     MobileMenu,
     WorkspaceDeleteDialog,
@@ -591,6 +521,7 @@ export default defineComponent({
       if (this.avoidAutoScroll) return;
       if (!this.$chat.selectedChat?.messages) return;
       const sentinel = document.getElementById("sentinel-bottom");
+      console.log(sentinel);
       if (!sentinel) return;
       sentinel.scrollIntoView();
       this.$nextTick(() => {
@@ -875,11 +806,6 @@ export default defineComponent({
   },
   mounted() {
     document.body.classList.add("disable-overscroll");
-    new ResizeObserver(this.onResize).observe(
-      document.querySelector("#chat-list")
-    );
-    //document.querySelector(".message-list-container")?.addEventListener("scroll", this.scrollEvent);
-    // add event listener for shortcuts
     document.addEventListener("keydown", this.shortcutHandler);
     this.focusInterval = setInterval(this.onFocus, 2000);
     // re-enable auto scroll for flex-direction: column-reverse;
@@ -938,3 +864,22 @@ export default defineComponent({
   }
 });
 </script>
+
+<style>
+.flex-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-container > :not(.scrollable) {
+  flex-shrink: 0;
+}
+
+.flex-container > .scrollable {
+  flex-grow: 1;
+}
+
+.scrollable {
+  overflow: auto;
+}
+</style>

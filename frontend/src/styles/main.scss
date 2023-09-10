@@ -258,12 +258,6 @@ a {
   margin-bottom: 0 !important;
 }
 
-.message-date {
-  align-self: center;
-  width: 54px;
-}
-
-
 .overflow-content p {
   white-space: pre-line !important;
   overflow-wrap: anywhere !important;
@@ -474,6 +468,14 @@ a {
   filter: brightness(150%);
 }
 
+.communications .avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60px;
+  padding: 4px;
+}
+
 .fluid-gradient .v-menu .v-overlay__content {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -603,4 +605,8 @@ a {
 
 .v-switch--inset .v-switch__thumb {
   background-color: white;
+}
+
+.communications .read-receipt-avatars .read-receipt-avatar {
+    margin-left: -10px !important;
 }

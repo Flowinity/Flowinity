@@ -34,30 +34,36 @@
             zIndex: 1000 - index
           }"
         >
-          <small
-            v-if="merge"
-            class="ml-2 text-grey message-date"
-            style="font-size: 9px"
-          >
-            <v-tooltip activator="parent" location="top" style="z-index: 2001">
-              {{ $date(message.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
-            </v-tooltip>
-            {{ $date(message.createdAt).format("hh:mm A") }}
-          </small>
-          <UserAvatar
-            @click="
-              $emit('authorClick', {
-                user: message.user,
-                bindingElement: 'message-author-avatar-' + message.id,
-                x: $event.x,
-                y: $event.y
-              })
-            "
-            class="ml-2 mr-3 mt-1 pointer"
-            v-if="!merge"
-            :user="message.user"
-            :id="'message-author-avatar-' + message.id"
-          />
+          <div class="avatar-section">
+            <small
+              v-if="merge"
+              class="mr-1 text-grey message-date"
+              style="font-size: 9px"
+            >
+              <v-tooltip
+                activator="parent"
+                location="top"
+                style="z-index: 2001"
+              >
+                {{ $date(message.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
+              </v-tooltip>
+              {{ $date(message.createdAt).format("hh:mm A") }}
+            </small>
+            <UserAvatar
+              @click="
+                $emit('authorClick', {
+                  user: message.user,
+                  bindingElement: 'message-author-avatar-' + message.id,
+                  x: $event.x,
+                  y: $event.y
+                })
+              "
+              class="pointer"
+              v-else-if="!merge"
+              :user="message.user"
+              :id="'message-author-avatar-' + message.id"
+            />
+          </div>
           <div style="width: 100%">
             <p
               v-if="
@@ -108,9 +114,8 @@
                 </v-icon>
               </span>
             </div>
-
             <CommunicationsInput
-              v-else
+              v-if="editing"
               :editing="true"
               :modelValue="editingText"
               @edit="$emit('edit', { id: null, content: null })"
@@ -168,7 +173,17 @@
                 </v-container>
               </v-card>
             </v-menu>
-            +{{ message.readReceipts.length - $chat.renderableReadReceipts }}
+            <span>
+              +{{ message.readReceipts.length - $chat.renderableReadReceipts }}
+              <v-tooltip activator="parent" location="top">
+                <ReadReceipt
+                  :message="message"
+                  v-for="readReceipt in message.readReceipts"
+                  :read-receipt="readReceipt"
+                  :expanded="true"
+                />
+              </v-tooltip>
+            </span>
           </span>
         </div>
       </div>

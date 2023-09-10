@@ -23,27 +23,27 @@ function checkMessage(id: number, chatId: number) {
 }
 
 export default async function setup(app) {
-  const socket = app.config.globalProperties.$socket;
+  const sockets = app.config.globalProperties.$sockets;
   const chat = useChatStore();
   const friends = useFriendsStore();
   const user = useUserStore();
   const experiments = useExperimentsStore();
   const toast = useToast();
 
-  socket.on("chatCreated", (newChat: Chat) => {
+  sockets.chat.on("chatCreated", (newChat: Chat) => {
     chat.chats.unshift(newChat);
   });
-  socket.on("chatChanged", (newChat: Chat) => {
+  sockets.chat.on("chatChanged", (newChat: Chat) => {
     const index = chat.chats.findIndex((c) => c.id === newChat.id);
     if (index === -1) return;
     chat.chats[index] = newChat;
   });
-  socket.on("chatDeleted", (chatId: number) => {
+  sockets.chat.on("chatDeleted", (chatId: number) => {
     const index = chat.chats.findIndex((c) => c.id === chatId);
     if (index === -1) return;
     chat.chats.splice(index, 1);
   });
-  socket.on("message", async (newMessage: any) => {
+  sockets.chat.on("message", async (newMessage: any) => {
     if (newMessage.chat.id === chat.selectedChat?.id && chat.isCommunications)
       return;
     const index = chat.chats.findIndex((c) => c.id === newMessage.chat.id);
@@ -93,7 +93,7 @@ export default async function setup(app) {
       );
     }
   });
-  socket.on("userStatus", (data: User) => {
+  sockets.chat.on("userStatus", (data: User) => {
     const index = friends.friends.findIndex((f) => f.friendId === data.id);
     if (index === -1) {
       if (data.id === user.user?.id) {
@@ -109,11 +109,11 @@ export default async function setup(app) {
     }
     friends.friends[index].user.status = data.status;
   });
-  socket.on("friendRequestAccepted", async (data: Friend) => {
+  sockets.chat.on("friendRequestAccepted", async (data: Friend) => {
     friends.friends.push(data);
     chat.sound();
   });
-  socket.on(
+  sockets.chat.on(
     "edit",
     (data: {
       chatId: number;
@@ -144,16 +144,16 @@ export default async function setup(app) {
       }
     }
   );
-  socket.on("notification", async (data: any) => {
+  sockets.user.on("notification", async (data: any) => {
     user.user?.notifications.unshift(data);
     chat.sound();
   });
-  socket.on("messageDelete", (data: { chatId: number; id: number }) => {
+  sockets.chat.on("messageDelete", (data: { chatId: number; id: number }) => {
     const message = checkMessage(data.id, data.chatId);
     if (!message) return;
     chat.chats[message.index].messages.splice(message.messageIndex, 1);
   });
-  socket.on("userSettingsUpdate", (data: any) => {
+  sockets.user.on("userSettingsUpdate", (data: any) => {
     user.user = {
       ...user.user,
       ...data
@@ -163,7 +163,7 @@ export default async function setup(app) {
       ...data
     };
   });
-  socket.on("chatUpdate", (data: any) => {
+  sockets.chat.on("chatUpdate", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.id);
     if (index === -1) return;
     chat.chats[index] = {
@@ -171,7 +171,7 @@ export default async function setup(app) {
       ...data
     };
   });
-  socket.on("readReceipt", (data: ChatAssociation) => {
+  sockets.chat.on("readReceipt", (data: ChatAssociation) => {
     const index = chat.chats.findIndex((c: Chat) => c.id === data.chatId);
     if (index === -1) return;
     if (!chat.chats[index].messages) return;
@@ -186,7 +186,7 @@ export default async function setup(app) {
     });
     chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
   });
-  socket.on("chatUserUpdate", (data: any) => {
+  sockets.chat.on("chatUserUpdate", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.chatId);
     if (index === -1) return;
     const userIndex = chat.chats[index].users.findIndex(
@@ -198,12 +198,12 @@ export default async function setup(app) {
       ...data
     };
   });
-  socket.on("addChatUsers", (data: any) => {
+  sockets.chat.on("addChatUsers", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.chatId);
     if (index === -1) return;
     chat.chats[index].users.push(...data.users);
   });
-  socket.on("removeChatUser", (data: any) => {
+  sockets.chat.on("removeChatUser", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.chatId);
     if (index === -1) return;
     const userIndex = chat.chats[index].users.findIndex(
@@ -212,7 +212,7 @@ export default async function setup(app) {
     if (userIndex === -1) return;
     chat.chats[index].users.splice(userIndex, 1);
   });
-  socket.on("removeChat", (data: any) => {
+  sockets.chat.on("removeChat", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.id);
     if (index === -1) return;
     chat.chats.splice(index, 1);
@@ -220,7 +220,7 @@ export default async function setup(app) {
       router.push("/communications/home");
     }
   });
-  socket.on("autoCollectApproval", (data: { type: string }) => {
+  sockets.user.on("autoCollectApproval", (data: { type: string }) => {
     if (!user.user) return;
     if (
       experiments.experiments["SFX_KFX"] ||
@@ -235,35 +235,41 @@ export default async function setup(app) {
       user.user.pendingAutoCollects -= 1;
     }
   });
-  socket.on("readChat", (data: { id: number }) => {
+  sockets.chat.on("readChat", (data: { id: number }) => {
     const index = chat.chats.findIndex((c) => c.id === data.id);
     if (index === -1) return;
     chat.chats[index].unread = 0;
   });
-  socket.on("friendNickname", (data: { id: number; nickname: string }) => {
-    const index = friends.friends.findIndex((f) => f.friendId === data.id);
-    if (index === -1) return;
-    const friend = friends.friends[index];
-    if (friend.user.nickname) {
-      friend.user.nickname.nickname = data.nickname;
-    } else {
-      friend.user.nickname = {
-        nickname: data.nickname,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        id: 0,
-        friendId: data.id,
-        userId: user.user?.id || 0
-      };
+  sockets.user.on(
+    "friendNickname",
+    (data: { id: number; nickname: string }) => {
+      const index = friends.friends.findIndex((f) => f.friendId === data.id);
+      if (index === -1) return;
+      const friend = friends.friends[index];
+      if (friend.user.nickname) {
+        friend.user.nickname.nickname = data.nickname;
+      } else {
+        friend.user.nickname = {
+          nickname: data.nickname,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          id: 0,
+          friendId: data.id,
+          userId: user.user?.id || 0
+        };
+      }
     }
-  });
-  socket.on("userNameColor", (data: { id: number; nameColor: string }) => {
-    for (const c of chat.chats) {
-      for (const user of c.users) {
-        if (user.user?.id === data.id) {
-          user.user.nameColor = data.nameColor;
+  );
+  sockets.friends.on(
+    "userNameColor",
+    (data: { id: number; nameColor: string }) => {
+      for (const c of chat.chats) {
+        for (const user of c.users) {
+          if (user.user?.id === data.id) {
+            user.user.nameColor = data.nameColor;
+          }
         }
       }
     }
-  });
+  );
 }

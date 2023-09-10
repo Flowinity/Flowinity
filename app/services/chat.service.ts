@@ -14,6 +14,7 @@ import axios from "axios"
 import { ClientSatisfies } from "@app/lib/clientSatisfies"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { MessageSubscription } from "@app/classes/graphql/chat/messageSubscription"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -682,70 +683,74 @@ export class ChatService {
     }
     for (const user of chat.users) {
       if (!user.userId) continue
-      socket.to(user.userId).emit(key, data)
+      socket.of(SocketNamespaces.CHAT).to(user.userId).emit(key, data)
     }
   }
 
   async readChat(associationId: number, userId: number) {
-    const chat = await this.getChatFromAssociation(associationId, userId)
-    const chatId = chat.id
-    const notifications = await redis.json.get(
-      `unread:${userId}`,
-      `$.${chatId}`
-    )
-    if (notifications) {
-      await redis.json.set(`unread:${userId}`, "$", {
-        ...notifications,
-        [chatId]: 0
-      })
-    } else {
-      await redis.json.set(`unread:${userId}`, "$", {
-        [chatId]: 0
-      })
-    }
-    socket.to(userId).emit("readChat", {
-      id: chatId
-    })
-    const message = await Message.findOne({
-      where: {
-        chatId
-      },
-      order: [["createdAt", "DESC"]]
-    })
-    if (message) {
-      const association = await ChatAssociation.findOne({
-        where: {
-          chatId,
-          userId
-        }
-      })
-      const user = await User.findOne({
-        where: {
-          id: userId
-        },
-        attributes: ["id", "status", "storedStatus"]
-      })
-      if (
-        !association ||
-        association.lastRead === message.id ||
-        user?.storedStatus === "invisible"
+    try {
+      const chat = await this.getChatFromAssociation(associationId, userId)
+      const chatId = chat.id
+      const notifications = await redis.json.get(
+        `unread:${userId}`,
+        `$.${chatId}`
       )
-        return
-      await association.update(
-        { lastRead: message.id },
-        {
+      if (notifications) {
+        await redis.json.set(`unread:${userId}`, "$", {
+          ...notifications,
+          [chatId]: 0
+        })
+      } else {
+        await redis.json.set(`unread:${userId}`, "$", {
+          [chatId]: 0
+        })
+      }
+      socket.of(SocketNamespaces.CHAT).to(userId).emit("readChat", {
+        id: chatId
+      })
+      const message = await Message.findOne({
+        where: {
+          chatId
+        },
+        order: [["createdAt", "DESC"]]
+      })
+      if (message) {
+        const association = await ChatAssociation.findOne({
           where: {
             chatId,
             userId
           }
-        }
-      )
-      this.emitForAll(association.id, userId, "readReceipt", {
-        chatId,
-        id: message.id,
-        user: await Container.get(UserUtilsService).getUserById(userId),
-        lastRead: message.id
-      })
+        })
+        const user = await User.findOne({
+          where: {
+            id: userId
+          },
+          attributes: ["id", "status", "storedStatus"]
+        })
+        if (
+          !association ||
+          association.lastRead === message.id ||
+          user?.storedStatus === "invisible"
+        )
+          return
+        await association.update(
+          { lastRead: message.id },
+          {
+            where: {
+              chatId,
+              userId
+            }
+          }
+        )
+        this.emitForAll(association.id, userId, "readReceipt", {
+          chatId,
+          id: message.id,
+          user: await Container.get(UserUtilsService).getUserById(userId),
+          lastRead: message.id
+        })
+      }
+    } catch (e) {
+      console.log(e)
     }
   }
 
@@ -889,24 +894,23 @@ export class ChatService {
         })
         if (!assoc) continue
         const mention = message.content.includes(`<@${association.tpuUser.id}>`)
-        socket.of(SocketNamespaces.CHAT).emit("ACK")
         socket
           .of(SocketNamespaces.CHAT)
           .to(association.tpuUser.id)
           .emit("message", {
-            message,
+            message: {
+              ...message.toJSON(),
+              type: message.type.toUpperCase()
+            },
             chat: {
               name: chat.name,
               id: chat.id,
               type: chat.type,
               recipient: await this.getRecipient(chat, association.user.id)
             },
-            association: {
-              id: association.id,
-              rank: association.rank
-            },
+            associationId: association.id,
             mention
-          })
+          } as MessageSubscription)
 
         if (
           association.tpuUser.id === message.userId ||

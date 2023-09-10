@@ -13,19 +13,31 @@ import { Socket } from "socket.io"
 import { ChatService } from "@app/services/chat.service"
 import { SocketAuth } from "@app/types/socket"
 import { SocketAuthMiddleware } from "@app/lib/socket-auth"
+import { UserResolver } from "@app/controllers/graphql/user.resolver"
 
 @SocketController("/chat")
 @Service()
 export class ChatSocketController {
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private userResolver: UserResolver,
+    private socketAuthMiddleware: SocketAuthMiddleware
+  ) {}
+
+  @OnConnect()
+  async onConnect(@ConnectedSocket() socket: SocketAuth) {
+    const session = await this.socketAuthMiddleware.use(socket, () => {})
+    if (session) {
+      socket.join(session.user.id)
+    }
+  }
 
   @OnMessage("readChat")
-  @EmitOnSuccess("readChat")
   async readChat(
     @ConnectedSocket() socket: SocketAuth,
-    @MessageBody() data: { associationId: number }
+    @MessageBody() data: number
   ) {
-    await this.chatService.readChat(data.associationId, socket.request.user.id)
+    await this.chatService.readChat(data, socket.request.user.id)
   }
 
   @OnMessage("typing")

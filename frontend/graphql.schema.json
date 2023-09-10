@@ -6544,7 +6544,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "Subscription",
+                    "name": "TPUSubscription",
                     "ofType": null
                   }
                 }
@@ -8912,7 +8912,34 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Subscription",
+        "name": "SubscriptionMetadata",
+        "description": null,
+        "fields": [
+          {
+            "name": "hours",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "TPUSubscription",
         "description": null,
         "fields": [
           {
@@ -9045,33 +9072,6 @@
           },
           {
             "name": "userId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "SubscriptionMetadata",
-        "description": null,
-        "fields": [
-          {
-            "name": "hours",
             "description": null,
             "args": [],
             "type": {
@@ -11333,7 +11333,7 @@
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "Subscription",
+              "name": "TPUSubscription",
               "ofType": null
             },
             "isDeprecated": false,
