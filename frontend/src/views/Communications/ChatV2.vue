@@ -8,7 +8,7 @@
       v-if="$chat.selectedChat?.messages?.length"
     >
       <template v-slot:spinner>
-        <div class="text-center" style="height: 100vh">
+        <div class="text-center">
           <v-progress-circular
             :size="36"
             :width="2"
