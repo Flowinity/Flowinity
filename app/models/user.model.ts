@@ -232,7 +232,8 @@ export class User extends Model {
 
   @Field({
     description:
-      "Subscriptions are no longer used as they were in TPUv1, and are now used to store metadata for permanent Gold subscriptions."
+      "Subscriptions are no longer used as they were in TPUv1, and are now used to store metadata for permanent Gold subscriptions.",
+    nullable: true
   })
   @Default(1)
   @Column

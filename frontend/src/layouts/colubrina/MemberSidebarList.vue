@@ -97,18 +97,15 @@
       <template v-else>({{ $chat.search.results.pager.totalItems }})</template>
     </v-card-text>
     <v-container class="mt-n8">
-      <v-text-field
+      <GalleryTextField
         v-model="$chat.search.query"
-        append-icon="mdi-magnify"
+        @submit="$chat.doSearch"
         :autofocus="true"
-        label="Search Query"
-        @click:append="$chat.doSearch"
-        @keyup.enter="$chat.doSearch"
-      ></v-text-field>
+      ></GalleryTextField>
     </v-container>
     <v-list v-if="!$chat.search.loading">
       <Message
-        v-for="(message, index) in $chat.search.results.messages"
+        v-for="(message, index) in $chat.search.results.items"
         :id="'message-' + index"
         :key="message.id"
         :message="message"
@@ -157,9 +154,11 @@ import Paginate from "@/components/Core/Paginate.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import SidebarItem from "@/components/Communications/SidebarItem.vue";
 import { UserStatus } from "@/gql/graphql";
+import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
   components: {
+    GalleryTextField,
     SidebarItem,
     Paginate,
     Message,

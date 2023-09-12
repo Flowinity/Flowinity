@@ -18,7 +18,9 @@ import {
   ProfileLayout,
   ThemeEngine,
   UpdateUserInput,
-  User
+  User,
+  UserStatus,
+  UserStoredStatus
 } from "@/gql/graphql";
 import { ProfileQuery } from "@/graphql/user/profile.graphql";
 
@@ -152,7 +154,7 @@ export const useUserStore = defineStore("user", {
       this.user = null;
       this._postInitRan = false;
     },
-    async changeStatus(status: string) {
+    async changeStatus(status: UserStoredStatus) {
       if (!this.user) return;
       this.user.storedStatus = status;
       await this.save();

@@ -102,7 +102,9 @@ export interface AppState {
     experiments: boolean;
     migrateWizard: boolean;
     quickSwitcher: boolean;
+    actionDialog: boolean;
     memoryProfiler: boolean;
+    socketProfiler: boolean;
     colubrina: boolean;
     nickname: {
       value: boolean;
@@ -238,7 +240,9 @@ export const useAppStore = defineStore("app", {
           value: false,
           text: ""
         },
-        memoryProfiler: false
+        memoryProfiler: false,
+        socketProfiler: false,
+        actionDialog: false
       },
       quickSwitcher: [
         {
@@ -593,6 +597,12 @@ export const useAppStore = defineStore("app", {
         {
           route: "/workspaces",
           name: "Workspaces"
+        },
+        {
+          name: "SP Socket Profiler",
+          click: () => {
+            this.dialogs.socketProfiler = true;
+          }
         }
       ];
       const chats = useChatStore();

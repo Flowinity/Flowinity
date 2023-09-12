@@ -32,7 +32,8 @@ export enum SearchMode {
   NAME = "name",
   META = "textMetadata",
   TYPE = "type",
-  COLLECTION = "collection"
+  COLLECTION = "collection",
+  BEFORE = "before"
 }
 
 export enum Order {

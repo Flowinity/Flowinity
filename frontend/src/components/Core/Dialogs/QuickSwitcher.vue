@@ -39,7 +39,7 @@ export default defineComponent({
   emits: ["update:modelValue"],
   data() {
     return {
-      search: null as { route: string; name: string } | null,
+      search: null as { route: string; name: string; click?: () => {} } | null,
       searchInput: ""
     };
   },

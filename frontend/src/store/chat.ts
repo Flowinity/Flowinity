@@ -11,26 +11,30 @@ import { useUserStore } from "@/store/user";
 import { useCollectionsStore } from "@/store/collections";
 import { Collection } from "@/models/collection";
 import { useFriendsStore } from "@/store/friends";
-import { Paginate } from "@/types/paginate";
 import dayjs from "../plugins/dayjs";
 import { useToast } from "vue-toastification";
 import { ChatsQuery } from "@/graphql/chats/chats.graphql";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import {
+  InfiniteMessagesInput,
   Message,
-  MessagesInput,
   MessageType,
+  PagedMessagesInput,
+  Pager,
   ScrollPosition
 } from "@/gql/graphql";
-import { MessagesQuery } from "@/graphql/chats/messages.graphql";
+import {
+  MessagesQuery,
+  PagedMessagesQuery
+} from "@/graphql/chats/messages.graphql";
 import { StateHandler } from "v3-infinite-loading/lib/types";
 
 export interface ChatState {
   search: {
     value: boolean;
     results: {
-      messages: Message[];
-      pager: Paginate;
+      items: Message[];
+      pager: Pager;
     };
     loading: boolean;
     query: string;
@@ -101,7 +105,7 @@ export const useChatStore = defineStore("chat", {
       search: {
         value: false,
         results: {
-          messages: [] as Message[],
+          items: [] as Message[],
           pager: {
             totalItems: 0,
             currentPage: 1,
@@ -216,7 +220,7 @@ export const useChatStore = defineStore("chat", {
     async jumpToMessage(message: number) {
       if (!(await this.doJump(message))) {
         this.loadingNew = true;
-        await this.loadHistory(message + 30, true);
+        await this.loadHistory(undefined, ScrollPosition.Top, message + 30);
         this.loadingNew = false;
         await this.doJump(message);
       }
@@ -233,13 +237,14 @@ export const useChatStore = defineStore("chat", {
     },
     async doSearch() {
       this.search.loading = true;
-      const { data } = await axios.get(`/chats/${this.selectedChatId}/search`, {
-        params: {
-          query: this.search.query,
-          page: this.search.results.pager.currentPage
-        }
+      this.search.results = await this.getMessages({
+        search: {
+          query: this.search.query
+        },
+        page: this.search.results.pager.currentPage,
+        associationId: this.selectedChatId,
+        position: ScrollPosition.Top
       });
-      this.search.results = data;
       this.search.loading = false;
     },
     getChatName(chat: Chat) {
@@ -363,15 +368,17 @@ export const useChatStore = defineStore("chat", {
     async typing() {
       await this.$app.$sockets.chat.emit("typing", this.selectedChatId);
     },
-    async getMessages(input: MessagesInput): Promise<Message> {
+    async getMessages(
+      input: InfiniteMessagesInput | PagedMessagesInput
+    ): Promise<Message> {
       const { data } = await this.$apollo.query({
-        query: MessagesQuery,
+        query: "page" in input ? PagedMessagesQuery : MessagesQuery,
         variables: {
           input
         },
         fetchPolicy: "network-only"
       });
-      return data.messages;
+      return "page" in input ? data.messagesPaged : data.messages;
     },
     async setChat(id: number) {
       this.loading = true;
@@ -411,28 +418,47 @@ export const useChatStore = defineStore("chat", {
       appStore.title = this.chatName;
       this.readChat();
     },
-    async loadHistory($state: StateHandler) {
-      if (this.loadingNew) return;
+    async loadHistory(
+      $state?: StateHandler,
+      position: ScrollPosition = ScrollPosition.Top,
+      offset?: number
+    ) {
       this.loadingNew = true;
-      $state.loading();
+      if ($state) $state.loading();
       const data = await this.getMessages({
         associationId: this.selectedChatId,
-        position: ScrollPosition.Top,
-        offset: this.currentOffset.up,
+        position,
+        offset:
+          offset !== undefined
+            ? offset
+            : position === ScrollPosition.Top
+            ? this.currentOffset.up
+            : this.currentOffset.down,
         limit: 50
       });
 
       if (data.length) {
-        this.selectedChat?.messages?.push(...data);
-        $state.loaded();
-        if (data.length < 50) {
-          $state.complete();
+        if (offset) {
+          this.selectedChat.messages = data;
+        } else {
+          if (position === ScrollPosition.Top)
+            this.selectedChat?.messages?.push(...data);
+          else this.selectedChat?.messages?.unshift(...data);
+        }
+        if ($state) $state.loaded();
+        if (data.length < 50 || offset === 0) {
+          if ($state) $state.complete();
         }
         this.loadingNew = false;
       } else {
-        $state.complete();
+        if ($state) $state.complete();
         this.loadingNew = false;
       }
+
+      if (offset) {
+        this.loadNew = true;
+      }
+      this.loadingNew = false;
     },
     async getChats() {
       try {

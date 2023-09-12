@@ -1,0 +1,53 @@
+<template>
+  <DevDialog>
+    <template v-slot:header>Action Activator</template>
+    <v-container>
+      <v-btn
+        v-for="dialog in Object.keys($app.dialogs).filter(
+          (key) => typeof $app.dialogs[key] === 'boolean'
+        )"
+        :key="dialog"
+        @click="$app.dialogs[dialog] = !$app.dialogs[dialog]"
+      >
+        {{ dialog }}
+      </v-btn>
+
+      <!-- some have value of {value: boolean, item: any} -->
+      <v-btn
+        v-for="dialog in Object.keys($app.dialogs).filter(
+          (key) => typeof $app.dialogs[key] === 'object'
+        )"
+        :key="dialog"
+        @click="$app.dialogs[dialog].value = !$app.dialogs[dialog].value"
+      >
+        {{ dialog }}
+      </v-btn>
+    </v-container>
+  </DevDialog>
+</template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
+
+export default defineComponent({
+  name: "ActionDialog",
+  components: { DevDialog },
+  data() {
+    return {
+      usage: []
+    };
+  },
+  computed: {
+    socketConnections() {
+      return [
+        {
+          name: "Chat",
+          connected: this.$sockets.chat.connected,
+          readyState: this.$sockets.chat.readyState
+        }
+      ];
+    }
+  }
+});
+</script>

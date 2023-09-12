@@ -3,19 +3,23 @@
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     :label="$t('generic.search')"
-    append-inner-icon="mdi-close"
+    append-inner-icon="mdi-magnify"
     class="rounded-xl"
     @click:append-inner="
-      $emit('update:modelValue', '');
-      $emit('refreshGallery');
+      $emit('update:modelValue', modelValue);
+      $emit('submit');
+      focused = false;
     "
     v-on:keyup.enter="
       $emit('update:modelValue', modelValue);
-      $emit('refreshGallery');
+      $emit('submit');
+      focused = false;
     "
     @focus="focused = true"
     @blur="focused = false"
     @change="val = $event.target.value"
+    :autofocus="autofocus"
+    @update:modelValue="focused = true"
   ></v-text-field>
   <v-scroll-y-transition>
     <v-card
@@ -52,9 +56,13 @@ export default defineComponent({
     modelValue: {
       type: String,
       required: true
+    },
+    autofocus: {
+      type: Boolean,
+      default: false
     }
   },
-  emits: ["update:modelValue", "refreshGallery"],
+  emits: ["update:modelValue", "submit"],
   data() {
     return {
       focused: false,
@@ -63,15 +71,14 @@ export default defineComponent({
   },
   computed: {
     mode(): GallerySearchMode | null {
-      console.log(this.val);
       if (this.modelValue.startsWith("user:")) {
-        return GallerySearchMode.USER;
+        return GallerySearchMode.User;
       } else if (this.modelValue.startsWith("before:")) {
-        return GallerySearchMode.BEFORE;
+        return GallerySearchMode.Before;
       } else if (this.modelValue.startsWith("after:")) {
-        return GallerySearchMode.AFTER;
+        return GallerySearchMode.After;
       } else if (this.modelValue.startsWith("during:")) {
-        return GallerySearchMode.DURING;
+        return GallerySearchMode.During;
       } else {
         return null;
       }

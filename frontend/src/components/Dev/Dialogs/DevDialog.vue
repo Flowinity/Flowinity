@@ -1,6 +1,6 @@
 <template>
   <div id="dev-overlay" class="dev-overlay">
-    <div id="dev-header" class="dev-header">
+    <div id="dev-header" class="dev-header unselectable">
       <slot name="header"></slot>
     </div>
     <slot></slot>

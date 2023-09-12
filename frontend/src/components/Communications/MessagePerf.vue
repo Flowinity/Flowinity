@@ -8,7 +8,7 @@
       <div class="date-separator-line"></div>
     </div>
     <div class="d-flex flex-row">
-      <div class="flex-grow-1">
+      <div class="flex-grow-tpu">
         <v-toolbar
           v-if="message.replyId"
           class="ml-6 my-1 pointer limit"
@@ -260,5 +260,10 @@ export default defineComponent({
 <style scoped>
 li {
   list-style-type: none;
+}
+
+.flex-grow-tpu {
+  flex-grow: 1;
+  flex-basis: 0;
 }
 </style>

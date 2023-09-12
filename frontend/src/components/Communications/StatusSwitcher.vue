@@ -7,7 +7,7 @@
   >
     <v-card>
       <v-list>
-        <v-list-item @click="$user.changeStatus('online')">
+        <v-list-item @click="$user.changeStatus(UserStoredStatus.Online)">
           <template v-slot:prepend>
             <UserAvatar
               :dot-status="true"
@@ -15,13 +15,13 @@
               :status-x-offset="1"
               :user="$user.user"
               class="mr-3"
-              emulated-status="online"
+              :emulated-status="UserStatus.Online"
               size="36"
             />
           </template>
           <v-list-item-title>Online</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="$user.changeStatus('busy')">
+        <v-list-item @click="$user.changeStatus(UserStoredStatus.Busy)">
           <template v-slot:prepend>
             <UserAvatar
               :dot-status="true"
@@ -29,7 +29,7 @@
               :status-x-offset="1"
               :user="$user.user"
               class="mr-3"
-              emulated-status="busy"
+              :emulated-status="UserStatus.Busy"
               size="36"
             />
           </template>
@@ -38,7 +38,7 @@
             You will not receive notifications.
           </v-list-item-subtitle>
         </v-list-item>
-        <v-list-item @click="$user.changeStatus('idle')">
+        <v-list-item @click="$user.changeStatus(UserStoredStatus.Idle)">
           <template v-slot:prepend>
             <UserAvatar
               :dot-status="true"
@@ -46,14 +46,14 @@
               :status-x-offset="1"
               :user="$user.user"
               class="mr-3"
-              emulated-status="idle"
+              :emulated-status="UserStatus.Idle"
               size="36"
             />
           </template>
           <v-list-item-title>Idle</v-list-item-title>
           <v-list-item-subtitle>Appear as idle.</v-list-item-subtitle>
         </v-list-item>
-        <v-list-item @click="$user.changeStatus('invisible')">
+        <v-list-item @click="$user.changeStatus(UserStoredStatus.Invisible)">
           <template v-slot:prepend>
             <UserAvatar
               :dot-status="true"
@@ -61,7 +61,7 @@
               :status-x-offset="1"
               :user="$user.user"
               class="mr-3"
-              emulated-status="offline"
+              :emulated-status="UserStatus.Offline"
               size="36"
             />
           </template>
@@ -106,11 +106,18 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { UserStatus, UserStoredStatus } from "@/gql/graphql";
 
 export default defineComponent({
   name: "StatusSwitcher",
   components: { UserAvatar },
   computed: {
+    UserStoredStatus() {
+      return UserStoredStatus;
+    },
+    UserStatus() {
+      return UserStatus;
+    },
     menuStyle() {
       return `
         position: absolute;

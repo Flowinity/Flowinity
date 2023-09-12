@@ -106,17 +106,6 @@ export class MessagesSearch {
 export class MessagesInput {
   @Field(() => Number)
   associationId: number
-  @Field(() => Number, {
-    defaultValue: 50
-  })
-  @IsNumber()
-  @Min(1)
-  @Max(100)
-  limit: number
-  @Field(() => Number, {
-    nullable: true
-  })
-  offset: number
   @Field(() => ScrollPosition, {
     nullable: true
   })
@@ -125,4 +114,27 @@ export class MessagesInput {
     nullable: true
   })
   search: MessagesSearch
+  @Field(() => Number, {
+    defaultValue: 50
+  })
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  limit: number
+}
+
+@InputType()
+export class PagedMessagesInput extends MessagesInput {
+  @Field(() => Number, {
+    defaultValue: 1
+  })
+  page: number
+}
+
+@InputType()
+export class InfiniteMessagesInput extends MessagesInput {
+  @Field(() => Number, {
+    nullable: true
+  })
+  offset: number
 }

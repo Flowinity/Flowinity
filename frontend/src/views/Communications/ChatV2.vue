@@ -32,6 +32,20 @@
       id="chat"
       style="flex: 0 0 auto"
     >
+      <infinite-loading
+        @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
+        direction="top"
+        :top="true"
+        :identifier="$chat.selectedChat?.id + $chat.loadNew"
+        v-if="$chat.selectedChat?.messages?.length"
+      >
+        <template v-slot:spinner>
+          <span></span>
+        </template>
+        <template v-slot:complete>
+          <span></span>
+        </template>
+      </infinite-loading>
       <div id="sentinel-bottom" ref="sentinelBottom"></div>
       <MessagePerf
         class="mr-2 ml-2"
@@ -73,10 +87,10 @@
       />
       <div id="sentinel" ref="sentinel" v-if="$chat.isReady"></div>
     </div>
-    <div style="position: fixed; z-index: 2001; bottom: 0; flex: 0 0 auto">
+    <div style="position: sticky; z-index: 2001; bottom: 0; flex: 0 0 auto">
       <v-fade-transition v-model="avoidAutoScroll">
         <v-toolbar
-          v-if="avoidAutoScroll || $chat.loadingNew || $chat.loadNew"
+          v-if="$chat.loadNew"
           class="pointer unselectable pl-2 pb-1 force-bg dynamic-background"
           color="transparent"
           height="25"
@@ -88,18 +102,9 @@
           "
           @click="jumpToBottom"
         >
-          <template v-if="!$chat.loadingNew">
+          <template>
             <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
             {{ $t("chats.jumpToBottom") }}
-          </template>
-          <template v-else>
-            <v-progress-circular
-              :size="17"
-              :width="2"
-              class="mr-2"
-              indeterminate
-            ></v-progress-circular>
-            {{ $t("chats.loading") }}
           </template>
         </v-toolbar>
       </v-fade-transition>
@@ -209,6 +214,7 @@ import UserCard from "@/components/Users/UserCard.vue";
 import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
+import { ScrollPosition } from "@/gql/graphql";
 
 export default defineComponent({
   name: "Chat",
@@ -269,6 +275,9 @@ export default defineComponent({
     };
   },
   computed: {
+    ScrollPosition() {
+      return ScrollPosition;
+    },
     height() {
       let string = `calc(100dvh - 56px - 103px`;
       if (this.$vuetify.display.mobile) string += " - 43px";
@@ -445,7 +454,7 @@ export default defineComponent({
     async jumpToBottom() {
       this.avoidAutoScroll = false;
       if (this.$chat.loadNew) {
-        await this.$chat.loadHistory(null, true, true);
+        await this.$chat.loadHistory(undefined, ScrollPosition.Top, 0);
         this.$chat.loadNew = false;
       }
       this.autoScroll();
@@ -869,14 +878,7 @@ export default defineComponent({
 .flex-container {
   display: flex;
   flex-direction: column;
-}
-
-.flex-container > :not(.scrollable) {
-  flex-shrink: 0;
-}
-
-.flex-container > .scrollable {
-  flex-grow: 1;
+  height: 100%;
 }
 
 .scrollable {

@@ -34,6 +34,8 @@
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
     <UploadDialog v-model="$app.dialogs.upload.value"></UploadDialog>
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
+    <SocketProfiler v-if="$app.dialogs.socketProfiler"></SocketProfiler>
+    <ActionDialog v-if="$app.dialogs.actionDialog"></ActionDialog>
     <ExperimentsManagerDialog
       v-if="
         $app.dialogs.experiments &&
@@ -164,6 +166,8 @@ import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 import BottomBar from "@/layouts/default/BottomBar.vue";
 import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
+import SocketProfiler from "@/components/Dev/Dialogs/SocketProfiler.vue";
+import ActionDialog from "@/components/Dev/Dialogs/ActionDialog.vue";
 </script>
 
 <script lang="ts">
@@ -350,7 +354,7 @@ export default defineComponent({
     document.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.ctrlKey && e.altKey && e.key === "m") {
         e.preventDefault();
-        this.$app.dialogs.memoryProfiler = !this.$app.dialogs.memoryProfiler;
+        this.$app.dialogs.actionDialog = !this.$app.dialogs.actionDialog;
       } else if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
         e.preventDefault();
         this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
