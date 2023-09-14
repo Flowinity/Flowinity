@@ -18,130 +18,137 @@
       </v-list>
     </v-card>
   </v-menu>
-  <div v-if="$vuetify.display.mobile" class="mt-2">
-    <UserAvatar
-      :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
-      :status="true"
-      :user="$chat.selectedChat?.recipient"
-      class="ml-4"
-      size="32"
-      style="display: inline-block"
-      :dot-status="true"
-    />
-    <h4
-      id="tpu-brand-logo"
-      class="unselectable ml-2 limit"
-      style="display: inline-block; align-self: center; text-align: center"
-      title="TPU Communications"
-    >
-      {{ $chat.chatName }}
-    </h4>
-    <v-card-actions v-if="$chat.selectedChat">
-      <v-spacer></v-spacer>
-      <v-btn
-        v-if="$experiments.experiments.PINNED_MESSAGES"
-        aria-label="Toggle Communications Sidebar"
-        class="mr-2"
-        icon
-      >
-        <v-icon>mdi-pin</v-icon>
-      </v-btn>
-      <v-btn
-        aria-label="Toggle Communications Search"
-        class="mr-2"
-        icon
-        @click="$chat.search.value = !$chat.search.value"
-      >
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-      <v-btn
-        aria-label="Toggle Communications Settings"
-        class="mr-2"
-        icon
-        @click="
-          $chat.dialogs.groupSettings.value = true;
-          $chat.selectedChat
-            ? ($chat.dialogs.groupSettings.item = $chat.selectedChat)
-            : () => {};
-        "
-      >
-        <v-icon>mdi-cog</v-icon>
-      </v-btn>
-      <v-spacer></v-spacer>
-    </v-card-actions>
-  </div>
-  <div class="position-relative" v-if="!$chat.search.value">
-    <v-card-text class="text-overline my-n3">
-      {{ $t("chats.members") }}
-    </v-card-text>
-    <v-virtual-scroll
-      item-height="48"
-      :items="users"
-      v-if="$chat.selectedChat"
-      style="overflow-x: hidden"
-    >
-      <template v-slot:default="{ item: { user, legacyUser, rank } }">
-        <SidebarItem :legacy-user="!!legacyUser" :rank="rank" :user="user" />
-      </template>
-    </v-virtual-scroll>
-  </div>
-  <template v-else>
-    <v-card-text class="text-overline my-n3">
-      SEARCH
-      <v-progress-circular
-        v-if="$chat.search.loading"
-        indeterminate
-        size="16"
-        width="2"
-      ></v-progress-circular>
-      <template v-else>({{ $chat.search.results.pager.totalItems }})</template>
-    </v-card-text>
-    <v-container class="mt-n8">
-      <GalleryTextField
-        v-model="$chat.search.query"
-        @submit="$chat.doSearch"
-        :autofocus="true"
-      ></GalleryTextField>
-    </v-container>
-    <v-list v-if="!$chat.search.loading">
-      <Message
-        v-for="(message, index) in $chat.search.results.items"
-        :id="'message-' + index"
-        :key="message.id"
-        :message="message"
-        :search="true"
-        class="pointer"
-        @authorClick="
-          $chat.dialogs.userMenu.user = $event.user;
-          $chat.dialogs.userMenu.username = $event.user.username;
-          $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
-          $chat.dialogs.userMenu.x = $event.x;
-          $chat.dialogs.userMenu.y = $event.y;
-          $chat.dialogs.userMenu.location = $event.location || 'top';
-        "
-        @click="
-          handleJump(
-            message.id,
-            $chat.chats.find((chat) => chat.id === message.chatId)?.association
-              .id || 0
-          )
-        "
-        @jumpToMessage="
-          handleJump(
-            $event,
-            $chat.chats.find((chat) => chat.id === message.chatId)?.association
-              .id || 0
-          )
-        "
+  <template v-if="$chat.selectedChat">
+    <div v-if="$vuetify.display.mobile" class="mt-2">
+      <UserAvatar
+        :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
+        :status="true"
+        :user="$chat.selectedChat?.recipient"
+        class="ml-4"
+        size="32"
+        style="display: inline-block"
+        :dot-status="true"
       />
-    </v-list>
-    <Paginate
-      v-model="$chat.search.results.pager.currentPage"
-      :max-visible="5"
-      :total-pages="$chat.search.results.pager.totalPages"
-      class="mb-2"
-      @update:model-value="$chat.doSearch"
-    ></Paginate>
+      <h4
+        id="tpu-brand-logo"
+        class="unselectable ml-2 limit"
+        style="display: inline-block; align-self: center; text-align: center"
+        title="TPU Communications"
+      >
+        {{ $chat.chatName }}
+      </h4>
+      <v-card-actions v-if="$chat.selectedChat">
+        <v-spacer></v-spacer>
+        <v-btn
+          v-if="$experiments.experiments.PINNED_MESSAGES"
+          aria-label="Toggle Communications Sidebar"
+          class="mr-2"
+          icon
+        >
+          <v-icon>mdi-pin</v-icon>
+        </v-btn>
+        <v-btn
+          aria-label="Toggle Communications Search"
+          class="mr-2"
+          icon
+          @click="$chat.search.value = !$chat.search.value"
+        >
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
+        <v-btn
+          aria-label="Toggle Communications Settings"
+          class="mr-2"
+          icon
+          @click="
+            $chat.dialogs.groupSettings.value = true;
+            $chat.selectedChat
+              ? ($chat.dialogs.groupSettings.item = $chat.selectedChat)
+              : () => {};
+          "
+        >
+          <v-icon>mdi-cog</v-icon>
+        </v-btn>
+        <v-spacer></v-spacer>
+      </v-card-actions>
+    </div>
+    <div class="position-relative" v-if="!$chat.search.value">
+      <v-card-text class="text-overline my-n3">
+        {{ $t("chats.members") }}
+      </v-card-text>
+      <v-virtual-scroll
+        item-height="48"
+        :items="users"
+        v-if="$chat.selectedChat"
+        style="overflow-x: hidden"
+      >
+        <template v-slot:default="{ item: { user, legacyUser, rank } }">
+          <SidebarItem :legacy-user="!!legacyUser" :rank="rank" :user="user" />
+        </template>
+      </v-virtual-scroll>
+    </div>
+    <template v-else>
+      <v-card-text class="text-overline my-n3">
+        SEARCH
+        <v-progress-circular
+          v-if="$chat.search.loading"
+          indeterminate
+          size="16"
+          width="2"
+        ></v-progress-circular>
+        <template v-else>
+          ({{ $chat.search.results.pager.totalItems }})
+        </template>
+      </v-card-text>
+      <v-container class="mt-n8">
+        <GalleryTextField
+          v-model="$chat.search.query"
+          @submit="$chat.doSearch"
+          :autofocus="true"
+        ></GalleryTextField>
+      </v-container>
+      <ol
+        class="d-flex flex-column communications position-relative"
+        v-if="!$chat.search.loading"
+      >
+        <MessagePerf
+          v-for="(message, index) in $chat.search.results.items"
+          :id="'message-' + index"
+          :key="message.id"
+          :message="message"
+          :search="true"
+          class="pointer"
+          @authorClick="
+            $chat.dialogs.userMenu.user = $event.user;
+            $chat.dialogs.userMenu.username = $event.user.username;
+            $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
+            $chat.dialogs.userMenu.x = $event.x;
+            $chat.dialogs.userMenu.y = $event.y;
+            $chat.dialogs.userMenu.location = $event.location || 'top';
+          "
+          @click="
+            handleJump(
+              message.id,
+              $chat.chats.find((chat) => chat.id === message.chatId)
+                ?.association.id || 0
+            )
+          "
+          @jumpToMessage="
+            handleJump(
+              $event,
+              $chat.chats.find((chat) => chat.id === message.chatId)
+                ?.association.id || 0
+            )
+          "
+        />
+      </ol>
+      <Paginate
+        v-model="$chat.search.results.pager.currentPage"
+        :max-visible="5"
+        :total-pages="$chat.search.results.pager.totalPages"
+        class="mb-2"
+        @update:model-value="$chat.doSearch"
+      ></Paginate>
+    </template>
   </template>
 </template>
 
@@ -155,9 +162,11 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import SidebarItem from "@/components/Communications/SidebarItem.vue";
 import { UserStatus } from "@/gql/graphql";
 import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
+import MessagePerf from "@/components/Communications/MessagePerf.vue";
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
   components: {
+    MessagePerf,
     GalleryTextField,
     SidebarItem,
     Paginate,

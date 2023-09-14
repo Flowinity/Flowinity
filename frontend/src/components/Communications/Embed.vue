@@ -1,6 +1,6 @@
 <template>
   <template v-if="embed.data">
-    <v-card v-if="embed.type === 'openGraph'" :width="width" elevation="0">
+    <v-card v-if="embed.type === 'openGraph'" :max-width="500" elevation="0">
       <v-card-text class="text-overline">
         {{ embed?.data?.siteName }}
       </v-card-text>

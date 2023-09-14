@@ -6,6 +6,7 @@
         <v-col>
           <v-card>
             <v-card-title>Memory Usage by Store</v-card-title>
+            <v-btn @click="memoryUsageByStore()">Refresh</v-btn>
             <v-card-text>
               <v-data-table
                 :headers="[
@@ -13,7 +14,7 @@
                   { title: 'Size', key: 'size' }
                 ]"
                 :hide-default-footer="true"
-                :items="memoryUsageByStore"
+                :items="usage"
                 :sort-by="[{ key: 'size', order: 'desc' }]"
               >
                 <template v-slot:item.size="{ item }">
@@ -47,36 +48,58 @@ export default defineComponent({
       usage: []
     };
   },
-  computed: {
+  methods: {
+    getCircularReplacer() {
+      const seen = new WeakSet();
+      return (key, value) => {
+        if (typeof value === "object" && value !== null) {
+          if (seen.has(value)) {
+            return;
+          }
+          seen.add(value);
+        }
+        return value;
+      };
+    },
     memoryUsageByStore() {
-      return [
+      this.usage = [
         {
           name: "ChatStore",
-          size: JSON.stringify(useChatStore()).length
+          size: JSON.stringify(useChatStore(), this.getCircularReplacer())
+            .length
         },
         {
           name: "UserStore",
-          size: JSON.stringify(useUserStore()).length
+          size: JSON.stringify(useUserStore(), this.getCircularReplacer())
+            .length
         },
         {
           name: "ExperimentsStore",
-          size: JSON.stringify(useExperimentsStore()).length
+          size: JSON.stringify(
+            useExperimentsStore(),
+            this.getCircularReplacer()
+          ).length
         },
         {
           name: "AppStore",
-          size: JSON.stringify(useAppStore()).length
+          size: JSON.stringify(useAppStore(), this.getCircularReplacer()).length
         },
         {
           name: "FriendsStore",
-          size: JSON.stringify(useFriendsStore()).length
+          size: JSON.stringify(useFriendsStore(), this.getCircularReplacer())
+            .length
         },
         {
           name: "CollectionsStore",
-          size: JSON.stringify(useCollectionsStore()).length
+          size: JSON.stringify(
+            useCollectionsStore(),
+            this.getCircularReplacer()
+          ).length
         },
         {
           name: "WorkspacesStore",
-          size: JSON.stringify(useWorkspacesStore()).length
+          size: JSON.stringify(useWorkspacesStore(), this.getCircularReplacer())
+            .length
         }
       ];
     }

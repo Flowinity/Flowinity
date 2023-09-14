@@ -141,7 +141,11 @@
           </div>
         </div>
       </div>
-      <div class="flex-shrink-1 align-self-end mb-1" style="width: 120px">
+      <div
+        class="flex-shrink-1 align-self-end mb-1"
+        style="width: 120px"
+        v-if="!$vuetify.display.mobile && !search"
+      >
         <div
           style="justify-content: flex-end; display: flex; padding-right: 8px"
           class="read-receipt-avatars"
@@ -218,7 +222,8 @@ export default defineComponent({
     "merge",
     "dateSeparator",
     "mentions",
-    "index"
+    "index",
+    "search"
   ],
   data() {
     return {

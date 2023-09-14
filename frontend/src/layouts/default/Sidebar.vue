@@ -1,7 +1,8 @@
 <template>
-  <v-navigation-drawer
+  <CoreSidebar
     v-model="$app.mainDrawer"
     app
+    name="default"
     color="dark"
     :floating="true"
     :class="$app.mainDrawer && !$vuetify.display.mobile ? 'sidebar-patch' : ''"
@@ -88,14 +89,16 @@
         </v-progress-linear>
       </div>
     </template>
-  </v-navigation-drawer>
+  </CoreSidebar>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import CoreSidebar from "@/components/Core/Sidebar.vue";
 
 export default defineComponent({
   name: "Sidebar",
+  components: { CoreSidebar },
   data() {
     return {
       order: []

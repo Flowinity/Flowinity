@@ -127,7 +127,7 @@ export const useChatStore = defineStore("chat", {
       chats: [] as Chat[],
       loading: false,
       drafts: {},
-      selectedChatId: null,
+      selectedChatId: parseInt(localStorage.getItem("selectedChatId") || "0"),
       memberSidebarShown: true,
       isReady: null,
       trustedDomains: [] as string[],
@@ -241,7 +241,7 @@ export const useChatStore = defineStore("chat", {
         search: {
           query: this.search.query
         },
-        page: this.search.results.pager.currentPage,
+        page: this.search.results.pager.currentPage || 1,
         associationId: this.selectedChatId,
         position: ScrollPosition.Top
       });
@@ -387,6 +387,7 @@ export const useChatStore = defineStore("chat", {
         if (this.selectedChat?.messages) this.selectedChat.messages = [];
       }
       this.selectedChatId = id;
+      localStorage.setItem("selectedChatId", id);
       const appStore = useAppStore();
       const chat = this.chats.find(
         (chat: Chat) => chat.association.id === id

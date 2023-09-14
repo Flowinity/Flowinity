@@ -15,6 +15,8 @@ export const GalleryQuery = gql`
       }
       items {
         id
+        createdAt
+        updatedAt
         attachment
         userId
         name

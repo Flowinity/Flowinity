@@ -128,6 +128,8 @@ export class PagedMessagesInput extends MessagesInput {
   @Field(() => Number, {
     defaultValue: 1
   })
+  @IsNumber()
+  @Min(1)
   page: number
 }
 

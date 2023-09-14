@@ -22,274 +22,141 @@ import { CoreState } from "@/gql/graphql";
 import { Chat } from "@/models/chat";
 import { useFriendsStore } from "@/store/friends";
 
-export interface AppState {
-  _postInitRan: boolean;
-  quickAction: number;
-  railMode: "tpu" | "workspaces" | "communications";
-  fluidGradient: boolean;
-  cordova: boolean;
-  domain: string;
-  mainDrawer: boolean;
-  workspaceDrawer: boolean;
-  forcedWorkspaceDrawer: boolean;
-  loading: boolean;
-  componentLoading: boolean;
-  apiVersion: string;
-  title: string;
-  notesSaving: boolean;
-  lastNote: number | null;
-  lastRoute: string | null;
-  shifting: boolean;
-  themeEditor: boolean;
-  site: {
-    redisHost?: string;
-    dbHost?: string;
-    preTrustedDomains: string[];
-    hostnames?: string[];
-    domain?: string;
-    step?: number;
-    finishedSetup: boolean;
-    registrations: boolean;
-    name: string;
-    release: string;
-    route: string | null;
-    loading: boolean;
-    matomoId: string | null;
-    hostname: string;
-    hostnameWithProtocol: string;
-    announcements: Announcement[];
-    flowinityId: string;
-    officialInstance: boolean;
-    connection: {
-      ip: string;
-      whitelist:
-        | {
-            ip: string;
-            name: string;
-            groups: string[];
-          }
-        | false;
-    };
-    stats: CoreState;
-    maintenance: {
-      enabled: boolean;
-      message: string;
-      statusPage: string;
-    };
-    alert: string;
-    _redis: string;
-    server: string;
-    inviteAFriend: boolean;
-    features: {
-      communications: boolean;
-      collections: boolean;
-      autoCollects: boolean;
-      workspaces: boolean;
-      insights: boolean;
-    };
-    termsNoteId?: string;
-    privacyNoteId?: string;
-  };
-  dialogs: {
-    deleteItem: {
-      value: boolean;
-      item: Upload | undefined;
-      emit: boolean;
-    };
-    selectDefaultMobile: boolean;
-    inviteAFriend: boolean;
-    feedback: boolean;
-    experiments: boolean;
-    migrateWizard: boolean;
-    quickSwitcher: boolean;
-    actionDialog: boolean;
-    memoryProfiler: boolean;
-    socketProfiler: boolean;
-    colubrina: boolean;
-    nickname: {
-      value: boolean;
-      userId: number;
-    };
-    upload: {
-      value: boolean;
-      percentage: number;
-      files: File[];
-      loading: boolean;
-    };
-    gold: {
-      value: boolean;
-    };
-    pi: {
-      value: boolean;
-    };
-    ocr: {
-      value: boolean;
-      text: string;
-    };
-  };
-  weather: {
-    loading: boolean;
-    data: {
-      description: string;
-      icon: string;
-      temp: number;
-      temp_max: number;
-      temp_min: number;
-      name: string;
-      id: number;
-      main: string;
-    };
-  };
-  version: {
-    current: string;
-    date: string;
-  };
-  quickSwitcher: {
-    route: string;
-    name: string;
-  }[];
-  demo: boolean;
-  themeProviderDefaults: any;
-  batterySave: boolean;
-  crashes: number;
-}
-
 export const useAppStore = defineStore("app", {
-  state: () =>
-    ({
-      crashes: 0,
-      _postInitRan: false,
-      quickAction: parseInt(localStorage.getItem("quickAction") || "1"),
-      railMode: "tpu",
-      batterySave: false,
-      themeProviderDefaults: {
-        theme: {},
-        global: {}
-      },
-      fluidGradient: false,
-      demo: false,
-      cordova: false,
-      lastRoute: null,
-      domain: import.meta.env.DEV ? "/i/" : "https://i.troplo.com/i/",
-      mainDrawer: true,
-      workspaceDrawer: localStorage.getItem("workspaceDrawer") === "true",
-      forcedWorkspaceDrawer: false,
+  state: () => ({
+    crashes: 0,
+    _postInitRan: false,
+    quickAction: parseInt(localStorage.getItem("quickAction") || "1"),
+    railMode: "tpu",
+    batterySave: false,
+    themeProviderDefaults: {
+      theme: {},
+      global: {}
+    },
+    fluidGradient: false,
+    demo: false,
+    cordova: false,
+    lastRoute: null,
+    domain: import.meta.env.DEV ? "/i/" : "https://i.troplo.com/i/",
+    mainDrawer: true,
+    workspaceDrawer: localStorage.getItem("workspaceDrawer") === "true",
+    forcedWorkspaceDrawer: false,
+    loading: true,
+    componentLoading: false,
+    apiVersion: "v4",
+    title: "",
+    notesSaving: false,
+    themeEditor: false,
+    lastNote: localStorage.getItem("lastNote")
+      ? parseInt(localStorage.getItem("lastNote") as string)
+      : null,
+    shifting: false,
+    version: {
+      current: import.meta.env.TPU_VERSION || "N/A",
+      date: import.meta.env.TPU_BUILD_DATE || "N/A"
+    },
+    site: {
+      name: "TPU",
+      maintenance: {
+        enabled: false
+      }
+    },
+    weather: {
       loading: true,
-      componentLoading: false,
-      apiVersion: "v4",
-      title: "",
-      notesSaving: false,
-      themeEditor: false,
-      lastNote: localStorage.getItem("lastNote")
-        ? parseInt(localStorage.getItem("lastNote") as string)
-        : null,
-      shifting: false,
-      version: {
-        current: import.meta.env.TPU_VERSION || "N/A",
-        date: import.meta.env.TPU_BUILD_DATE || "N/A"
+      data: {
+        description: "Clouds",
+        icon: "04d",
+        temp: 0,
+        temp_max: 0,
+        temp_min: 0,
+        name: "Australia",
+        id: 2643743,
+        main: "Clouds"
+      }
+    },
+    dialogs: {
+      deleteItem: {
+        value: false,
+        item: undefined,
+        emit: false
       },
-      site: {
-        name: "TPU",
-        maintenance: {
-          enabled: false
-        }
+      selectDefaultMobile: false,
+      feedback: false,
+      inviteAFriend: false,
+      experiments: false,
+      nickname: {
+        value: false,
+        userId: 0
       },
-      weather: {
-        loading: true,
-        data: {
-          description: "Clouds",
-          icon: "04d",
-          temp: 0,
-          temp_max: 0,
-          temp_min: 0,
-          name: "Australia",
-          id: 2643743,
-          main: "Clouds"
-        }
+      pi: {
+        value: false
       },
-      dialogs: {
-        deleteItem: {
-          value: false,
-          item: undefined,
-          emit: false
-        },
-        selectDefaultMobile: false,
-        feedback: false,
-        inviteAFriend: false,
-        experiments: false,
-        nickname: {
-          value: false,
-          userId: 0
-        },
-        pi: {
-          value: false
-        },
-        gold: {
-          value: false
-        },
-        colubrina: false,
-        migrateWizard: false,
-        quickSwitcher: false,
-        upload: {
-          value: false,
-          files: [],
-          percentage: 0,
-          loading: false
-        },
-        ocr: {
-          value: false,
-          text: ""
-        },
-        memoryProfiler: false,
-        socketProfiler: false,
-        actionDialog: false
+      gold: {
+        value: false
       },
-      quickSwitcher: [
-        {
-          route: "/",
-          name: "Home"
-        },
-        {
-          route: "/gallery",
-          name: "Gallery"
-        },
-        {
-          route: "/collections",
-          name: "Collections"
-        },
-        {
-          route: "/insights",
-          name: "Insights"
-        },
-        {
-          route: "/settings",
-          name: "Settings"
-        },
-        {
-          route: "/autoCollects",
-          name: "AutoCollects"
-        },
-        {
-          route: "/starred",
-          name: "Starred"
-        },
-        {
-          route: "/users",
-          name: "Users"
-        },
-        {
-          route: "/workspaces",
-          name: "Workspaces"
-        }
-      ]
-    } as AppState),
+      colubrina: false,
+      migrateWizard: false,
+      quickSwitcher: false,
+      upload: {
+        value: false,
+        files: [],
+        percentage: 0,
+        loading: false
+      },
+      ocr: {
+        value: false,
+        text: ""
+      },
+      memoryProfiler: false,
+      socketProfiler: false,
+      actionDialog: false
+    },
+    quickSwitcher: [
+      {
+        route: "/",
+        name: "Home"
+      },
+      {
+        route: "/gallery",
+        name: "Gallery"
+      },
+      {
+        route: "/collections",
+        name: "Collections"
+      },
+      {
+        route: "/insights",
+        name: "Insights"
+      },
+      {
+        route: "/settings",
+        name: "Settings"
+      },
+      {
+        route: "/autoCollects",
+        name: "AutoCollects"
+      },
+      {
+        route: "/starred",
+        name: "Starred"
+      },
+      {
+        route: "/users",
+        name: "Users"
+      },
+      {
+        route: "/workspaces",
+        name: "Workspaces"
+      }
+    ]
+  }),
   getters: {
-    quickActionItem(state: AppState): SidebarItem {
+    quickActionItem(state): SidebarItem {
       const item = this.sidebar.find((item) => item.id === state.quickAction);
       if (!item) return this.sidebar.find((item) => item.id === 1);
       return item;
     },
-    sidebar(state: AppState): SidebarItem[] {
+    sidebar(state): SidebarItem[] {
       const user = useUserStore();
       const chat = useChatStore();
       const route = useRoute();
@@ -433,7 +300,6 @@ export const useAppStore = defineStore("app", {
           path: "",
           name: i18n.t("core.sidebar.inviteAFriend"),
           icon: "mdi-gift-outline",
-          new: true,
           scope: "*"
         });
       }
@@ -445,8 +311,7 @@ export const useAppStore = defineStore("app", {
           name: i18n.t("core.sidebar.insights"),
           path: "/insights",
           scope: "*",
-          icon: "mdi-chart-timeline-variant-shimmer",
-          new: true
+          icon: "mdi-chart-timeline-variant-shimmer"
         });
       }
 
@@ -460,7 +325,7 @@ export const useAppStore = defineStore("app", {
             : "/communications",
           icon: "mdi-message-processing",
           warning: functions.checkScope("chats.view", user.user?.scopes)
-            ? chat.totalUnread || "BETA"
+            ? chat.totalUnread
             : false,
           scope: "chats.view",
           experimentsRequired: ["COMMUNICATIONS"]
@@ -478,7 +343,6 @@ export const useAppStore = defineStore("app", {
             ? `/workspaces/notes/${state.lastNote}`
             : "/workspaces",
           icon: "mdi-folder-account",
-          new: true,
           scope: "workspaces.view",
           experimentsRequired: ["INTERACTIVE_NOTES"]
         });
@@ -533,7 +397,7 @@ export const useAppStore = defineStore("app", {
         !vuetify.display.mobile.value
       );
     },
-    weatherTemp(state: AppState) {
+    weatherTemp(state) {
       const temp = state.weather.data?.temp;
       const user = useUserStore()?.user;
       if (!user?.weatherUnit) return 0;
@@ -669,10 +533,13 @@ export const useAppStore = defineStore("app", {
           //
         }
       }
-      const experiments = localStorage.getItem("experimentsStore");
+      let experiments = localStorage.getItem("experimentsStore");
       if (experiments) {
         try {
-          experimentsStore.experiments = JSON.parse(experiments);
+          experiments = JSON.parse(experiments);
+          for (const experiment of experiments) {
+            experimentsStore.experiments[experiment.id] = experiment.value;
+          }
         } catch {
           //
         }

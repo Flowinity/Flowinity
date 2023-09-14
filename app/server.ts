@@ -43,6 +43,7 @@ import { ChatSocketController } from "@app/controllers/socket/chat.socket"
 import createSocket from "@app/lib/socket-next"
 import { SocketAuthMiddleware } from "@app/lib/socket-auth"
 import { PulseSocketController } from "@app/controllers/socket/pulse.socket"
+import { UserSocketController } from "@app/controllers/socket/user.socket"
 
 @Service({ eager: false })
 export class Server {
@@ -119,7 +120,11 @@ export class Server {
       io: socket,
       container: Container,
       middlewares: [SocketAuthMiddleware],
-      controllers: [ChatSocketController, PulseSocketController]
+      controllers: [
+        ChatSocketController,
+        PulseSocketController,
+        UserSocketController
+      ]
     })
 
     if (!noBackgroundTasks) {

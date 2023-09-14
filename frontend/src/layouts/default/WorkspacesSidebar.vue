@@ -1,6 +1,7 @@
 <template>
-  <v-navigation-drawer
+  <CoreSidebar
     v-model="drawer"
+    name="workspaces"
     app
     color="dark"
     floating
@@ -35,17 +36,22 @@
         Restore Version
       </v-btn>
     </template>
-  </v-navigation-drawer>
+  </CoreSidebar>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
 import ColubrinaMemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
+import CoreSidebar from "@/components/Core/Sidebar.vue";
 
 export default defineComponent({
   name: "WorkspacesSidebar",
-  components: { ColubrinaMemberSidebarList, WorkspacesSidebarList },
+  components: {
+    CoreSidebar,
+    ColubrinaMemberSidebarList,
+    WorkspacesSidebarList
+  },
   methods: {
     async restoreVersion() {
       await this.axios.patch(

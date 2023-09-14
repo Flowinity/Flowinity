@@ -16,6 +16,7 @@ import { Star } from "@app/models/star.model"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import { Field, Float, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 @Table
@@ -27,6 +28,14 @@ export class Upload extends Model {
     type: DataType.BIGINT
   })
   id: number
+
+  @Field(() => DateType)
+  @Column
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column
+  updatedAt: Date
 
   @Field()
   @Unique

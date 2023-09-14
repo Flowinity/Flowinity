@@ -125,6 +125,7 @@ export class MessageResolver {
     @Ctx() ctx: Context
   ): Promise<PaginatedMessagesResponse> {
     ctx.meta.paged = true
+    console.log(input.page)
     const offset = (input.page - 1) * input.limit
     console.log(offset)
     const messages = await this.messages(

@@ -1,5 +1,11 @@
 <template>
-  <v-navigation-drawer v-model="$mail.drawer" color="dark" floating permanent>
+  <CoreSidebar
+    name="mail"
+    v-model="$mail.drawer"
+    color="dark"
+    floating
+    permanent
+  >
     <MailSidebarList></MailSidebarList>
     <template v-slot:append>
       <v-btn block>
@@ -7,16 +13,17 @@
         Compose
       </v-btn>
     </template>
-  </v-navigation-drawer>
+  </CoreSidebar>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import MailSidebarList from "@/layouts/mail/SidebarList.vue";
+import CoreSidebar from "@/components/Core/Sidebar.vue";
 
 export default defineComponent({
   name: "MailSidebar",
-  components: { MailSidebarList }
+  components: { CoreSidebar, MailSidebarList }
 });
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer color="dark" floating permanent>
+  <CoreSidebar name="admin" color="dark" floating permanent>
     <div class="rounded-0 access-level pb-1 pt-2 pl-2" height="20">
       Your access:
       {{
@@ -11,16 +11,17 @@
       }}
     </div>
     <AdminSidebarList></AdminSidebarList>
-  </v-navigation-drawer>
+  </CoreSidebar>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import AdminSidebarList from "@/components/Admin/AdminSidebarList.vue";
+import CoreSidebar from "@/components/Core/Sidebar.vue";
 
 export default defineComponent({
   name: "AdminSidebar",
-  components: { AdminSidebarList }
+  components: { CoreSidebar, AdminSidebarList }
 });
 </script>
 
