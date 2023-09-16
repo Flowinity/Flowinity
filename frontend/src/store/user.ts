@@ -15,6 +15,7 @@ import functions from "@/plugins/functions";
 import { GetUserQuery } from "@/graphql/user/user.graphql";
 import { UpdateUserMutation } from "@/graphql/user/update.graphql";
 import {
+  PartialUserFriend,
   ProfileLayout,
   ThemeEngine,
   UpdateUserInput,
@@ -41,7 +42,8 @@ export const useUserStore = defineStore("user", {
     },
     defaultVuetify: null,
     disableProfileColors:
-      localStorage.getItem("disableProfileColors") === "true"
+      localStorage.getItem("disableProfileColors") === "true",
+    tracked: [] as PartialUserFriend[]
   }),
   getters: {
     contrast() {
@@ -60,6 +62,13 @@ export const useUserStore = defineStore("user", {
     }
   },
   actions: {
+    getStatus(user: Partial<User>) {
+      if (user.id === this.user?.id) return this.user?.storedStatus;
+      const tracked = this.tracked.find((tracked) => tracked.id === user.id);
+      if (tracked) return tracked.status;
+      return useFriendsStore().friends.find((f) => f.friendId === user.id)?.user
+        ?.status;
+    },
     async getUser(username?: string, id?: number) {
       const {
         data: { user }
@@ -152,6 +161,7 @@ export const useUserStore = defineStore("user", {
       localStorage.removeItem("friendsStore");
       localStorage.removeItem("themeEngine");
       this.user = null;
+      useAppStore().reconnectSocket("");
       this._postInitRan = false;
     },
     async changeStatus(status: UserStoredStatus) {

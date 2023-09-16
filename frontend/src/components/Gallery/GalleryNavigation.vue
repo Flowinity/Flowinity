@@ -2,68 +2,91 @@
   <v-row>
     <v-col v-if="supports.search">
       <GalleryTextField
-        :model-value="search"
-        v-on:update:modelValue="$emit('update:search', $event)"
-        @refreshGallery="$emit('refreshGallery')"
+        v-model="search"
+        @update:modelValue="$emit('update:search', search)"
+        @submit="$emit('refreshGallery')"
       />
     </v-col>
-    <v-col v-if="supports.sort" cols="12" md="1">
-      <v-select
-        v-model="order"
-        :items="orderTypes"
-        :label="$t('generic.order')"
-        item-title="name"
-        item-value="internalName"
-        v-on:update:model-value="
-          $emit('update:order', order);
-          $emit('refreshGallery');
-        "
-      ></v-select>
-    </v-col>
-    <v-col v-if="supports.sort" cols="12" md="2">
+    <v-col v-if="supports.sort" cols="12" md="4">
       <v-select
         v-model="sort"
-        :items="sortTypes"
-        :label="$t('generic.sort')"
+        :items="[]"
+        :label="$t('generic.options')"
         item-title="name"
         item-value="internalName"
-        v-on:update:model-value="
-          $emit('update:sort', sort);
-          $emit('refreshGallery');
-        "
-      ></v-select>
+      >
+        <template v-slot:no-data>
+          <template v-if="supports.metadata">
+            <v-list-subheader>
+              {{ $t("generic.options") }}
+            </v-list-subheader>
+            <v-list-item
+              @click="
+                metadata = !metadata;
+                $emit('update:metadata', metadata);
+              "
+              :active="metadata"
+            >
+              {{ $t("generic.metadata") }}
+            </v-list-item>
+          </template>
+          <v-list-subheader>
+            {{ $t("generic.sortDirection") }}
+          </v-list-subheader>
+          <v-list-item
+            v-for="item in orderTypes"
+            @click="
+              order = item.internalName;
+              $emit('update:order', order);
+            "
+            :active="order === item.internalName"
+          >
+            {{ item.name }}
+          </v-list-item>
+          <template v-if="supports.sort">
+            <v-list-subheader>
+              {{ $t("generic.sort") }}
+            </v-list-subheader>
+            <v-list-item
+              v-for="item in sortTypes"
+              @click="
+                sort = item.internalName;
+                $emit('update:sort', sort);
+                $emit('refreshGallery');
+              "
+              :active="sort === item.internalName"
+            >
+              {{ item.name }}
+            </v-list-item>
+          </template>
+          <template v-if="supports.filter">
+            <v-list-subheader>{{ $t("generic.filter") }}</v-list-subheader>
+            <v-list-item
+              v-for="item in types"
+              @click="
+                filter.find((f) => f === item.internalName)
+                  ? filter.splice(filter.indexOf(item.internalName), 1)
+                  : filter.push(item.internalName);
+                $emit('update:sort', sort);
+                $emit('refreshGallery');
+              "
+              :active="filter.includes(item.internalName)"
+            >
+              {{ item.name }}
+            </v-list-item>
+          </template>
+        </template>
+        <template v-slot:selection>
+          {{
+            $t("generic.option", {
+              count: filter.length
+            })
+          }}
+        </template>
+      </v-select>
     </v-col>
-    <v-col v-if="supports.filter" cols="12" md="2">
-      <v-select
-        v-model="filter"
-        :items="types"
-        :label="$t('generic.filter')"
-        item-title="name"
-        item-value="internalName"
-        v-on:update:model-value="
-          $emit('update:filter', filter);
-          $emit('refreshGallery');
-        "
-        :multiple="true"
-      ></v-select>
-    </v-col>
-    <v-col v-if="supports.metadata" cols="12" sm="2" xl="auto">
-      <v-checkbox
-        v-model="metadata"
-        :label="$t('generic.metadata')"
-        v-on:change="
-          $emit('update:metadata', metadata);
-          $emit('refreshGallery');
-        "
-      ></v-checkbox>
-    </v-col>
-    <v-col sm="auto" align-self="center">
-      <v-icon class="pointer" @click="$emit('refreshGallery')">
-        mdi-magnify
-      </v-icon>
-    </v-col>
-    <v-col v-if="supports.upload" sm="1">
-      <v-btn block class="mt-2" @click="$app.dialogs.upload.value = true">
+    <v-col v-if="supports.upload" sm="auto" align-self="center">
+      <v-btn block @click="$app.dialogs.upload.value = true">
         <v-icon class="mr-1">mdi-upload</v-icon>
         {{ $t("generic.upload") }}
       </v-btn>
@@ -88,11 +111,6 @@ export default defineComponent({
     "update:order"
   ],
   props: {
-    search: {
-      type: String,
-      required: false,
-      default: ""
-    },
     supports: {
       type: Object,
       required: false,
@@ -188,7 +206,8 @@ export default defineComponent({
       metadata: true,
       filter: [GalleryFilter.All],
       sort: GallerySort.CreatedAt,
-      order: GalleryOrder.Desc
+      order: GalleryOrder.Desc,
+      search: ""
     };
   }
 });

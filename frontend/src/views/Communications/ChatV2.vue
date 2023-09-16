@@ -1,52 +1,26 @@
 <template>
-  <div class="flex-container">
-    <infinite-loading
-      @infinite="$chat.loadHistory"
-      direction="top"
-      :top="true"
-      :identifier="$chat.selectedChat?.id"
-      v-if="$chat.selectedChat?.messages?.length"
-    >
-      <template v-slot:spinner>
-        <div class="text-center">
-          <v-progress-circular
-            :size="36"
-            :width="2"
-            indeterminate
-            :model-value="1"
-          ></v-progress-circular>
-        </div>
-      </template>
-      <template v-slot:complete>
-        <div class="text-center">
-          <PromoNoContent
-            icon="mdi-message-processing-outline"
-            :title="`Welcome to the start of ${$chat.selectedChat?.name}!`"
-            description="Send a message to start the conversation!"
-          ></PromoNoContent>
-        </div>
-      </template>
-    </infinite-loading>
-    <div
-      class="d-flex flex-column-reverse communications position-relative scrollable"
-      id="chat"
-      style="flex: 0 0 auto"
-    >
+  <div class="container">
+    <div class="messages communications" id="chat">
+      <div id="sentinel-bottom" ref="sentinelBottom"></div>
       <infinite-loading
         @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
-        direction="top"
-        :top="true"
-        :identifier="$chat.selectedChat?.id + $chat.loadNew"
-        v-if="$chat.selectedChat?.messages?.length"
+        :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}-bottom`"
+        v-if="$chat.selectedChat?.messages?.length && $chat.loadNew"
       >
         <template v-slot:spinner>
-          <span></span>
+          <div class="text-center">
+            <v-progress-circular
+              :size="36"
+              :width="2"
+              indeterminate
+              :model-value="1"
+            ></v-progress-circular>
+          </div>
         </template>
         <template v-slot:complete>
           <span></span>
         </template>
       </infinite-loading>
-      <div id="sentinel-bottom" ref="sentinelBottom"></div>
       <MessagePerf
         class="mr-2 ml-2"
         v-for="(message, index) in $chat.selectedChat?.messages"
@@ -85,27 +59,51 @@
         type="list-item-avatar-three-line"
         color="background"
       />
+      <infinite-loading
+        @infinite="$chat.loadHistory"
+        direction="top"
+        :top="true"
+        :identifier="$chat.selectedChat?.id"
+        v-if="$chat.selectedChat?.messages?.length"
+      >
+        <template v-slot:spinner>
+          <div class="text-center">
+            <v-progress-circular
+              :size="36"
+              :width="2"
+              indeterminate
+              :model-value="1"
+            ></v-progress-circular>
+          </div>
+        </template>
+        <template v-slot:complete>
+          <div class="text-center">
+            <PromoNoContent
+              icon="mdi-message-processing-outline"
+              :title="`Welcome to the start of ${$chat.selectedChat?.name}!`"
+              description="Send a message to start the conversation!"
+            ></PromoNoContent>
+          </div>
+        </template>
+      </infinite-loading>
       <div id="sentinel" ref="sentinel" v-if="$chat.isReady"></div>
     </div>
-    <div style="position: sticky; z-index: 2001; bottom: 0; flex: 0 0 auto">
+    <div class="input-container">
       <v-fade-transition v-model="avoidAutoScroll">
         <v-toolbar
-          v-if="$chat.loadNew"
-          class="pointer unselectable pl-2 pb-1 force-bg dynamic-background"
-          color="transparent"
+          v-if="$chat.loadNew && false"
+          class="pointer unselectable pl-2 force-bg dynamic-background"
+          color="toolbar"
           height="25"
           style="
             border-radius: 20px 20px 0 0;
             font-size: 14px;
-            z-index: 1001;
             backdrop-filter: blur(10px);
           "
           @click="jumpToBottom"
         >
-          <template>
-            <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
-            {{ $t("chats.jumpToBottom") }}
-          </template>
+          <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
+          {{ $t("chats.jumpToBottom") }}
         </v-toolbar>
       </v-fade-transition>
       <v-fade-transition v-model="replyId">
@@ -131,17 +129,7 @@
         </v-toolbar>
       </v-fade-transition>
       <v-fade-transition :model-value="files.length">
-        <v-toolbar
-          v-if="files.length"
-          :style="
-            `position: sticky; bottom: ${inputHeight}px` +
-            (!avoidAutoScroll && !replyId
-              ? '; border-radius: 20px 20px 0 0;'
-              : '')
-          "
-          color="card"
-          height="auto"
-        >
+        <v-toolbar v-if="files.length" color="card" height="auto">
           <v-slide-group class="my-2 mx-1">
             <v-slide-group-item
               v-for="(file, index) in files"
@@ -279,14 +267,9 @@ export default defineComponent({
       return ScrollPosition;
     },
     height() {
-      let string = `calc(100dvh - 56px - 103px`;
-      if (this.$vuetify.display.mobile) string += " - 43px";
-      if (this.replyId) string += " - 35px";
-      if (this.files.length) string += " - 104.46px";
-      const lines = this.message.split("\n").length;
-      string += ` - ${(lines - 1) * 26}px`;
-      string += ")";
-      return string;
+      const navbar = document.getElementById("navbar");
+      if (!navbar) return "calc(100vh)";
+      return "calc(100vh - " + navbar.offsetHeight + "px)";
     },
     menuStyle() {
       return `
@@ -454,6 +437,7 @@ export default defineComponent({
     async jumpToBottom() {
       this.avoidAutoScroll = false;
       if (this.$chat.loadNew) {
+        this.$chat.selectedChat.messages = [];
         await this.$chat.loadHistory(undefined, ScrollPosition.Top, 0);
         this.$chat.loadNew = false;
       }
@@ -530,74 +514,12 @@ export default defineComponent({
       if (this.avoidAutoScroll) return;
       if (!this.$chat.selectedChat?.messages) return;
       const sentinel = document.getElementById("sentinel-bottom");
-      console.log(sentinel);
+      console.log("AS");
       if (!sentinel) return;
       sentinel.scrollIntoView();
       this.$nextTick(() => {
         sentinel.scrollIntoView();
       });
-    },
-    recordScrollPosition(mode = "top") {
-      this.previousScrollHeight =
-        mode === "top" ? this.$chat.selectedChat?.messages.length || 0 : 1;
-    },
-    restoreScrollPosition() {
-      // TODO
-    },
-    setupIntersectionObserver() {
-      this.setup = true;
-      const options = {
-        root: document.getElementById("chat-list"),
-        rootMargin: "10px"
-      };
-      const bottomObserver = new IntersectionObserver(
-        this.handleBottomIntersection,
-        options
-      );
-      const topObserver = new IntersectionObserver(
-        this.handleIntersection,
-        options
-      );
-      //const bottomSentinel = document.getElementById("sentinel-bottom");
-      //const topSentinel = document.getElementById("sentinel");
-      //if (bottomSentinel) bottomObserver.observe(bottomSentinel);
-      //if (topSentinel) topObserver.observe(topSentinel);
-    },
-    async handleIntersection(entries: IntersectionObserverEntry[]) {
-      const entry = entries[0];
-      if (
-        entry.isIntersecting &&
-        !this.$chat.loadingNew &&
-        !this.$chat.loading
-      ) {
-        console.info("[TPU/ChatSentinel/Top] Intersecting");
-        this.recordScrollPosition();
-        await this.$chat.loadHistory(undefined, undefined, true);
-        await this.$nextTick();
-        this.restoreScrollPosition();
-        return true;
-      } else {
-        return false;
-      }
-    },
-    async handleBottomIntersection(entries: IntersectionObserverEntry[]) {
-      if (!this.$chat.loadNew) return;
-      const entry = entries[0];
-      if (
-        entry.isIntersecting &&
-        !this.$chat.loadingNew &&
-        !this.$chat.loading &&
-        this.$chat.loadNew
-      ) {
-        this.recordScrollPosition("bottom");
-        console.info("[TPU/ChatSentinel/Bottom] Intersecting");
-        await this.$chat.loadHistory(undefined, undefined, false);
-        await this.$nextTick();
-        this.restoreScrollPosition();
-        return true;
-      } else {
-        return false;
-      }
     },
     async scrollEvent() {
       const elem = document.getElementById("chat-list");
@@ -845,12 +767,15 @@ export default defineComponent({
       this.files = [];
       this.replyId = undefined;
       this.focusInput();
+      this.autoScroll();
+      this.$nextTick(() => {
+        this.autoScroll();
+      });
     },
     "$chat.isReady"() {
       this.avoidAutoScroll = false;
       this.$nextTick(() => {
         this.autoScroll();
-        if (!this.setup) this.setupIntersectionObserver();
       });
     },
     message() {
@@ -875,10 +800,22 @@ export default defineComponent({
 </script>
 
 <style>
-.flex-container {
+.container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: v-bind(height);
+}
+
+.messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.input-container {
+  position: sticky;
+  bottom: 0;
 }
 
 .scrollable {

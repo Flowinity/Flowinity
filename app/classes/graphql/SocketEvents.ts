@@ -21,5 +21,8 @@ export enum SocketNamespaces {
   CHAT = "/chat",
   PULSE = "/pulse",
   USER = "/user",
-  FRIENDS = "/friends"
+  FRIENDS = "/friends",
+  AUTO_COLLECTS = "/autoCollects",
+  GALLERY = "/gallery",
+  TRACKED_USERS = "/trackedUsers"
 }

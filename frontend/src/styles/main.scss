@@ -509,7 +509,9 @@ a {
   z-index: 2001;
   background-color: #0190ea;
   color: black;
+  text-align: left;
 }
+
 
 // Align v-icon with text
 //.v-icon:not(.raw-icon) {
@@ -577,10 +579,8 @@ a {
 }
 
 .communications {
-  bottom: 0;
   display: flex;
   flex-direction: column;
-  position: sticky;
   height: 100%;
 }
 
@@ -609,4 +609,8 @@ a {
 
 .communications .read-receipt-avatars .read-receipt-avatar {
     margin-left: -10px !important;
+}
+
+.text-small {
+  font-size: 0.86em;
 }

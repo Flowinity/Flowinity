@@ -5,6 +5,7 @@
     :extension-height="$user.user?.emailVerified ? 42 : 42"
     app
     class="navbar"
+    id="navbar"
     color="dark"
     density="comfortable"
     :flat="true"
@@ -12,30 +13,12 @@
     style="z-index: 1001"
   >
     <v-app-bar-nav-icon
-      v-if="
-        (!$app.mainDrawer && !$vuetify.display.mobile) ||
-        ($vuetify.display.mobile && $chat.isCommunications)
-      "
+      v-if="!$app.mainDrawer || $vuetify.display.mobile"
       aria-label="Toggle Main Sidebar"
       style="z-index: 1000"
       @click.stop="$app.toggleMain()"
     >
       <v-icon>mdi-menu</v-icon>
-    </v-app-bar-nav-icon>
-    <v-app-bar-nav-icon
-      v-else-if="$vuetify.display.mobile"
-      :aria-label="$app.quickActionItem.name"
-      style="z-index: 1000"
-      @click="
-        $app.quickActionItem.path
-          ? $router.push($app.quickActionItem.path)
-          : handleClick($app.quickActionItem.id)
-      "
-      @contextmenu.prevent.stop="$app.dialogs.selectDefaultMobile = true"
-    >
-      <v-icon>
-        {{ $app.quickActionItem.icon }}
-      </v-icon>
     </v-app-bar-nav-icon>
     <template v-if="!$chat.isCommunications || !$chat.selectedChat">
       <LogoEasterEgg></LogoEasterEgg>

@@ -72,23 +72,60 @@
       </v-card-actions>
     </div>
     <div class="position-relative" v-if="!$chat.search.value">
-      <v-card-text class="text-overline my-n3">
+      <v-list-subheader class="ml-3 mb-n3">
         {{ $t("chats.members") }}
-      </v-card-text>
-      <v-virtual-scroll
-        item-height="48"
-        :items="users"
-        v-if="$chat.selectedChat"
-        style="overflow-x: hidden"
-      >
-        <template v-slot:default="{ item: { user, legacyUser, rank } }">
-          <SidebarItem :legacy-user="!!legacyUser" :rank="rank" :user="user" />
+      </v-list-subheader>
+      <v-list class="mb-n4" v-for="group in users" :key="group.name" nav>
+        <template v-if="group.users.length">
+          <v-list-subheader>
+            {{ group.name }} ({{ group.users.length }})
+          </v-list-subheader>
+          <v-list-item
+            v-for="association in group.users"
+            :subtitle="association.legacyUser ? 'Legacy User' : undefined"
+            @click="
+              $chat.dialogs.user.username = association.user?.username;
+              $chat.dialogs.user.value = true;
+            "
+            @contextmenu.prevent="context($event, association)"
+          >
+            <template v-slot:title>
+              {{ $friends.getName(association.user) || "Deleted User" }}
+              <span>
+                <v-icon v-if="association.rank === 'owner'" color="gold">
+                  mdi-crown
+                </v-icon>
+                <v-tooltip activator="parent" location="top">
+                  {{ $t("chats.roles.owner") }}
+                </v-tooltip>
+              </span>
+              <span>
+                <v-icon v-if="association.rank === 'admin'" color="grey">
+                  mdi-crown
+                </v-icon>
+                <v-tooltip activator="parent" location="top">
+                  {{ $t("chats.roles.admin") }}
+                </v-tooltip>
+              </span>
+            </template>
+            <template v-slot:subtitle v-if="association.legacyUserId">
+              {{ $t("chats.roles.legacyUser") }}
+            </template>
+            <template v-slot:prepend>
+              <UserAvatar
+                class="mr-2"
+                :dot-status="true"
+                :status="true"
+                :user="association.user"
+              ></UserAvatar>
+            </template>
+          </v-list-item>
         </template>
-      </v-virtual-scroll>
+      </v-list>
     </div>
     <template v-else>
-      <v-card-text class="text-overline my-n3">
-        SEARCH
+      <v-list-subheader class="ml-3 mb-4">
+        {{ $t("generic.search") }}
         <v-progress-circular
           v-if="$chat.search.loading"
           indeterminate
@@ -98,7 +135,7 @@
         <template v-else>
           ({{ $chat.search.results.pager.totalItems }})
         </template>
-      </v-card-text>
+      </v-list-subheader>
       <v-container class="mt-n8">
         <GalleryTextField
           v-model="$chat.search.query"
@@ -191,33 +228,56 @@ export default defineComponent({
     },
     users() {
       if (!this.$chat.selectedChat) return [];
-      return [...this.$chat.selectedChat.users].sort(
-        (a: ChatAssociation, b: ChatAssociation) => {
-          const aFriend = this.$friends.friends.find(
-            (f) => f.user.id === a.tpuUser?.id
-          );
-          const bFriend = this.$friends.friends.find(
-            (f) => f.user.id === b.tpuUser?.id
-          );
-          if (b.tpuUser?.id === this.$user.user?.id) return 2;
-          if (a.tpuUser?.id === this.$user.user?.id) return -2;
-          if (aFriend && bFriend) {
-            if (aFriend.user.status === UserStatus.Online) {
-              return -1;
-            } else if (bFriend.user.status === UserStatus.Online) {
-              return 1;
-            } else {
-              return 0;
-            }
-          } else if (aFriend) {
-            return -1;
-          } else if (bFriend) {
-            return 1;
-          } else {
-            return 0;
-          }
+      return [
+        {
+          name: this.$t("chats.roles.owner", 2),
+          users: this.$chat.selectedChat.users.filter((user) => {
+            return (
+              user.rank === "owner" &&
+              this.$user.getStatus({ id: user.userId }) !==
+                UserStatus.Offline &&
+              !user.legacyUserId
+            );
+          })
+        },
+        {
+          name: this.$t("chats.roles.admin", 2),
+          users: this.$chat.selectedChat.users.filter((user) => {
+            return (
+              user.rank === "admin" &&
+              this.$user.getStatus({ id: user.userId }) !==
+                UserStatus.Offline &&
+              !user.legacyUserId
+            );
+          })
+        },
+        {
+          name: this.$t("chats.roles.member", 2),
+          users: this.$chat.selectedChat.users.filter((user) => {
+            return (
+              user.rank === "member" &&
+              this.$user.getStatus({ id: user.userId }) !==
+                UserStatus.Offline &&
+              !user.legacyUserId
+            );
+          })
+        },
+        {
+          name: this.$t("chats.roles.offline", 2),
+          users: this.$chat.selectedChat.users.filter((user) => {
+            return (
+              this.$user.getStatus({ id: user.userId }) ===
+                UserStatus.Offline && !user.legacyUserId
+            );
+          })
+        },
+        {
+          name: this.$t("chats.roles.legacyUser", 1),
+          users: this.$chat.selectedChat.users.filter((user) => {
+            return user.legacyUserId;
+          })
         }
-      );
+      ];
     },
     menuStyle() {
       return `

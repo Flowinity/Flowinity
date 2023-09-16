@@ -2,6 +2,9 @@
   <div id="dev-overlay" class="dev-overlay">
     <div id="dev-header" class="dev-header unselectable">
       <slot name="header"></slot>
+      <v-btn @click="$emit('close')" size="small" class="float-right">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </div>
     <slot></slot>
   </div>
@@ -12,6 +15,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "DevDialog",
+  emits: ["close"],
   methods: {
     drag(element: any) {
       try {

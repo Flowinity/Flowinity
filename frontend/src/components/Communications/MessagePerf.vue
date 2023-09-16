@@ -7,24 +7,23 @@
       </p>
       <div class="date-separator-line"></div>
     </div>
+    <div
+      v-if="message.replyId"
+      class="ml-6 my-1 pointer limit"
+      @click.prevent="$emit('jumpToMessage', message.reply?.id)"
+    >
+      <v-icon class="mr-2">mdi-reply</v-icon>
+      <UserAvatar
+        :user="message.reply?.user"
+        class="mr-2"
+        size="24"
+      ></UserAvatar>
+      <span class="limit">
+        {{ message.reply?.content ?? "Deleted Message" }}
+      </span>
+    </div>
     <div class="d-flex flex-row">
       <div class="flex-grow-tpu">
-        <v-toolbar
-          v-if="message.replyId"
-          class="ml-6 my-1 pointer limit"
-          color="transparent"
-          :floating="true"
-          height="auto"
-          @click.prevent="$emit('jumpToMessage', message.reply?.id)"
-        >
-          <v-icon class="mr-2">mdi-reply</v-icon>
-          <UserAvatar
-            :user="message.reply?.user"
-            class="mr-2"
-            size="24"
-          ></UserAvatar>
-          {{ message.reply?.content ?? "Deleted Message" }}
-        </v-toolbar>
         <div
           @contextmenu="context"
           :class="{ merge, unselectable: $vuetify.display.mobile }"
@@ -59,10 +58,33 @@
                 })
               "
               class="pointer"
-              v-else-if="!merge"
+              v-else-if="
+                !merge &&
+                (message.type === MessageType.Message || !message.type)
+              "
               :user="message.user"
               :id="'message-author-avatar-' + message.id"
             />
+            <div v-else class="mr-3 text-grey">
+              <v-icon
+                v-if="message.type === MessageType.Join"
+                class="mr-1"
+                size="32"
+              >
+                mdi-account-plus
+              </v-icon>
+              <v-icon
+                v-else-if="message.type === MessageType.Leave"
+                class="mr-1"
+                size="32"
+              >
+                mdi-account-minus
+              </v-icon>
+              <v-icon v-else-if="message.type === MessageType.Pin" size="32">
+                mdi-pin
+              </v-icon>
+              <v-icon v-else class="mr-1" size="32">mdi-information</v-icon>
+            </div>
           </div>
           <div style="width: 100%">
             <p
@@ -148,7 +170,7 @@
       >
         <div
           style="justify-content: flex-end; display: flex; padding-right: 8px"
-          class="read-receipt-avatars"
+          :class="{ 'read-receipt-avatars': message.readReceipts.length > 3 }"
         >
           <template
             v-for="(readReceipt, index) in message.readReceipts"
@@ -158,6 +180,7 @@
               v-if="index < $chat.renderableReadReceipts"
               :message="message"
               :read-receipt="readReceipt"
+              :class="{ 'ml-1': message.readReceipts.length <= 3 }"
             />
           </template>
           <span

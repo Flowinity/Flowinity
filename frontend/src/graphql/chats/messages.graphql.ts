@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 import { PagerFragment } from "@/graphql/fragments/pager.graphql";
 
-export const StandardMessageFragment = `
-  {
+export const StandardMessageFragment = gql`
+  fragment StandardMessage on Message {
     id
     createdAt
     updatedAt
@@ -51,6 +51,11 @@ export const StandardMessageFragment = `
       replyId
       legacyUserId
       pinned
+      user {
+        id
+        username
+        avatar
+      }
     }
     legacyUser {
       username
@@ -89,16 +94,25 @@ export const StandardMessageFragment = `
 `;
 
 export const MessagesQuery = gql`
+  ${StandardMessageFragment}
   query Messages($input: InfiniteMessagesInput!) {
-    messages(input: $input) ${StandardMessageFragment}
+    messages(input: $input) {
+      ...StandardMessage
+    }
   }
 `;
 
 export const PagedMessagesQuery = gql`
+  ${StandardMessageFragment}
+  ${PagerFragment}
   query PagedMessages($input: PagedMessagesInput!) {
     messagesPaged(input: $input) {
-        items ${StandardMessageFragment}
-        pager ${PagerFragment}
+      items {
+        ...StandardMessage
+      }
+      pager {
+        ...Pager
+      }
     }
   }
 `;

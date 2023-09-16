@@ -120,11 +120,7 @@
       </v-list-item>
     </v-list>
   </v-menu>
-  <!-- convert to uppercase -->
-  <v-card-text
-    class="text-overline mb-n4 unselectable"
-    style="text-transform: uppercase"
-  >
+  <v-list-subheader class="ml-3 mb-n2 unselectable">
     <CreateChat v-slot="{ props }" v-model="create" type="create">
       <v-btn
         class="mr-2"
@@ -137,39 +133,8 @@
       </v-btn>
     </CreateChat>
     {{ $t("chats.chats") }}
-  </v-card-text>
-  <v-virtual-scroll
-    item-height="48"
-    :items="$chat.chats"
-    v-if="$chat.chats.length"
-    style="overflow-x: hidden"
-  >
-    <template v-slot:default="{ item: chat }">
-      <SidebarItem
-        @contextmenu.prevent="context($event, chat)"
-        :legacy-user="chat.recipient?.legacyUser"
-        :user="chat.recipient"
-        :chat="chat"
-        :subtitle="
-          chat.type === 'group'
-            ? `${chat.users?.length} members`
-            : chat.recipient?.legacyUser
-            ? 'Legacy User'
-            : ''
-        "
-      >
-        <v-spacer></v-spacer>
-        <v-badge
-          :class="chat.unread > 99 ? 'mr-5' : 'mr-4'"
-          :content="chat.unread > 99 ? '99+' : chat.unread"
-          color="red"
-          overlap
-          v-if="chat.unread"
-        ></v-badge>
-      </SidebarItem>
-    </template>
-  </v-virtual-scroll>
-  <v-list nav v-if="false">
+  </v-list-subheader>
+  <v-list nav>
     <v-list-item
       v-for="chat in $chat.chats"
       :subtitle="

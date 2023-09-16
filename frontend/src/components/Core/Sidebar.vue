@@ -1,6 +1,8 @@
 <template>
-  <v-navigation-drawer v-bind="$attrs" :width="w" :rail="w <= 100">
-    <slot />
+  <v-navigation-drawer v-bind="$attrs" :width="trueWidth" :rail="w <= 100">
+    <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+      <slot :name="name || 'default'" />
+    </template>
     <div
       class="resizer"
       @mousedown="startResize"
@@ -8,6 +10,7 @@
         left: $attrs.location === 'left' || !$attrs.location,
         right: $attrs.location === 'right'
       }"
+      v-if="resizable"
     ></div>
   </v-navigation-drawer>
 </template>
@@ -35,7 +38,8 @@ export default defineComponent({
     return {
       isResizing: false,
       startX: 0,
-      w: this.width
+      w: this.width,
+      resizable: this.canResize
     };
   },
   methods: {
@@ -59,7 +63,18 @@ export default defineComponent({
       document.removeEventListener("mouseup", this.stopResize);
     }
   },
+  computed: {
+    trueWidth() {
+      if (this.resizable) {
+        return this.w;
+      } else {
+        return this.width;
+      }
+    }
+  },
   mounted() {
+    this.resizable =
+      this.canResize && this.$experiments.experiments["RESIZABLE_SIDEBARS"];
     if (this.id === "sidebar") {
       console.warn(
         "[TPU/Sidebar]: Please provide a unique id for each sidebar component."

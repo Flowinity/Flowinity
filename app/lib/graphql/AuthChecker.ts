@@ -4,6 +4,8 @@ import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { checkScope, Scope } from "@app/lib/auth"
 import { GraphQLError } from "graphql/error"
 import { Authorized } from "type-graphql"
+import { Container } from "typedi"
+import { UserResolver } from "@app/controllers/graphql/user.resolver"
 
 export interface AuthCheckerOptions {
   scopes: Scope[] | Scope
@@ -14,13 +16,16 @@ export interface AuthCheckerOptions {
 export const Authorization = (options: AuthCheckerOptions) =>
   Authorized(options)
 
-export const authChecker: AuthChecker<Context> = (
+export const authChecker: AuthChecker<Context> = async (
   { root, args, context, info }: ResolverData<Context>,
   options: any[]
 ) => {
-  const user = context.user
+  const userResolver = Container.get(UserResolver)
+  const token = context.token
+  const session = await userResolver.findByToken(token)
+  const user = session?.user
   const opts = options[0] as AuthCheckerOptions
-
+  context.user = user
   if (!user && !opts.userOptional) {
     throw new GraphQLError(
       `You need to be logged in to do this (Authorization header is empty or invalid).`,

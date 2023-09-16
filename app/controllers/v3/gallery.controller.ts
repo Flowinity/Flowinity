@@ -21,6 +21,7 @@ import { SortOptions } from "@app/types/sort"
 import uploader from "@app/lib/upload"
 import { RequestAuth } from "@app/types/express"
 import { OpenAPI } from "routing-controllers-openapi"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 @Service()
 @JsonController("/gallery")
@@ -94,7 +95,7 @@ export class GalleryControllerV3 {
       attachment,
       user.discordPrecache
     )
-    socket.to(user.id).emit("gallery/create", [upload])
+    socket.of(SocketNamespaces.GALLERY).to(user.id).emit("create", [upload])
     return upload
   }
 
@@ -136,7 +137,8 @@ export class GalleryControllerV3 {
         await this.galleryService.createUpload(user.id, attachment, false)
       )
     }
-    socket.to(user.id).emit("gallery/create", files)
+    console.log(socket.of(SocketNamespaces.GALLERY))
+    socket.of(SocketNamespaces.GALLERY).to(user.id).emit("create", files)
     return files
   }
 

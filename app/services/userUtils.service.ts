@@ -22,12 +22,11 @@ import { LayoutValidate } from "@app/validators/userv3"
 import { ExcludedCollectionsValidate } from "@app/validators/excludedCollections"
 import { FCMDevice } from "@app/models/fcmDevices.model"
 import axios from "axios"
-import { GoogleService } from "@app/services/providers/google.service"
-import { HexValidate, HexValidateOptional } from "@app/validators/hex"
-import { Chat } from "@app/models/chat.model"
-import { ChatAssociation } from "@app/models/chatAssociation.model"
+import { HexValidateOptional } from "@app/validators/hex"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { UserResolver } from "@app/controllers/graphql/user.resolver"
 
 @Service()
 export class UserUtilsService {
@@ -176,7 +175,7 @@ export class UserUtilsService {
     } else {
       return null
     }
-    socket.to(userId).emit("friendNickname", {
+    socket.of(SocketNamespaces.FRIENDS).to(userId).emit("friendNickname", {
       id: friendId,
       nickname: name
     })
@@ -387,12 +386,12 @@ export class UserUtilsService {
       }
     })
 
-    socket.to(friendId).emit("friendRequest", {
+    socket.of(SocketNamespaces.FRIENDS).to(friendId).emit("request", {
       id: userId,
       status: "removed",
       friend: null
     })
-    socket.to(userId).emit("friendRequest", {
+    socket.of(SocketNamespaces.FRIENDS).to(userId).emit("request", {
       id: friendId,
       status: "removed",
       friend: null
@@ -454,16 +453,22 @@ export class UserUtilsService {
         friendId: userId,
         status: "incoming"
       })
-      socket.to(user.id).emit("friendRequest", {
-        id: userId,
-        status: "incoming",
-        friend: await this.getFriend(user.id, userId)
-      })
-      socket.to(userId).emit("friendRequest", {
-        id: user.id,
-        status: "outgoing",
-        friend: await this.getFriend(userId, user.id)
-      })
+      socket
+        .of(SocketNamespaces.FRIENDS)
+        .to(user.id)
+        .emit("request", {
+          id: userId,
+          status: "incoming",
+          friend: await this.getFriend(user.id, userId)
+        })
+      socket
+        .of(SocketNamespaces.FRIENDS)
+        .to(userId)
+        .emit("request", {
+          id: user.id,
+          status: "outgoing",
+          friend: await this.getFriend(userId, user.id)
+        })
       return true
     }
 
@@ -510,16 +515,22 @@ export class UserUtilsService {
           `${otherUser.username} has accepted your friend request!`,
           `/u/${otherUser.username}`
         )
-        socket.to(user.id).emit("friendRequest", {
-          id: userId,
-          status: "accepted",
-          friend: await this.getFriend(user.id, userId)
-        })
-        socket.to(userId).emit("friendRequest", {
-          id: user.id,
-          status: "accepted",
-          friend: await this.getFriend(userId, user.id)
-        })
+        socket
+          .of(SocketNamespaces.FRIENDS)
+          .to(user.id)
+          .emit("request", {
+            id: userId,
+            status: "accepted",
+            friend: await this.getFriend(user.id, userId)
+          })
+        socket
+          .of(SocketNamespaces.FRIENDS)
+          .to(userId)
+          .emit("request", {
+            id: user.id,
+            status: "accepted",
+            friend: await this.getFriend(userId, user.id)
+          })
         return true
       case "accepted":
         if (action === "send" || action == "accept")
@@ -701,11 +712,16 @@ export class UserUtilsService {
           }
         )
         if (body.storedStatus !== "invisible" || user.status !== "offline") {
-          await this.emitToFriends(user.id, "userStatus", {
-            id: user.id,
-            status,
-            platforms: await redis.json.get(`user:${user.id}:platforms`)
-          })
+          await this.emitToTrackedUsers(
+            user.id,
+            "userStatus",
+            {
+              id: user.id,
+              status,
+              platforms: await redis.json.get(`user:${user.id}:platforms`)
+            },
+            true
+          )
         }
       }
     }
@@ -725,7 +741,7 @@ export class UserUtilsService {
       await ExcludedCollectionsValidate.parse(body.excludedCollections)
     if (body.nameColor !== user.nameColor) {
       await HexValidateOptional.parse(body.nameColor)
-      this.emitToChatParticipants(user.id, "userNameColor", {
+      this.emitToTrackedUsers(user.id, "userNameColor", {
         id: user.id,
         nameColor: body.nameColor
       })
@@ -740,44 +756,60 @@ export class UserUtilsService {
     return true
   }
 
-  async emitToFriends(userId: number, key: string, value: any) {
+  async emitToFriends(
+    userId: number,
+    key: string,
+    value: any,
+    namespace?: SocketNamespaces | null
+  ) {
     const friends = await Friend.findAll({
       where: {
         userId,
         status: "accepted"
       }
     })
+
     for (const friend of friends) {
-      socket.to(friend.friendId).emit(key, value)
+      if (namespace) {
+        socket.of(namespace).to(friend.friendId).emit(key, value)
+      } else {
+        socket.to(friend.friendId).emit(key, value)
+      }
     }
-    socket.to(userId).emit(key, value)
+
+    if (namespace) {
+      socket.of(namespace).to(userId).emit(key, value)
+    } else {
+      socket.to(userId).emit(key, value)
+    }
   }
 
-  async emitToChatParticipants(userId: number, key: string, value: any) {
-    const chats = await Chat.findAll({
-      include: [
-        {
-          model: ChatAssociation,
-          as: "association",
-          where: {
-            userId
-          },
-          required: true
-        },
-        {
-          model: ChatAssociation,
-          as: "users"
+  async emitToTrackedUsers(
+    userId: number,
+    key: string,
+    value: any,
+    emitToFriends: boolean = false,
+    namespace: SocketNamespaces = SocketNamespaces.TRACKED_USERS
+  ) {
+    let friends: Friend[] = []
+    if (emitToFriends) {
+      friends = await Friend.findAll({
+        where: {
+          userId,
+          status: "accepted"
         }
-      ]
+      })
+    }
+    const resolver = await Container.get(UserResolver)
+    let ids = await resolver.trackedUserIds({
+      user: {
+        id: userId
+      } as User
     })
-    // remove duplicates and put into 1 array
-    const chatUserIds = chats.map((chat) =>
-      chat.users.map((user) => user.userId)
-    )
-    const uniqueChatUserIds = [...new Set(chatUserIds.flat())]
-    for (const id of uniqueChatUserIds) {
-      if (!id) continue
-      socket.to(id).emit(key, value)
+    const friendIds = friends.map((friend) => friend.friendId)
+    ids = [...new Set([...friendIds, ...ids])]
+    for (const id of ids) {
+      socket.of(namespace).to(id).emit(key, value)
     }
   }
 

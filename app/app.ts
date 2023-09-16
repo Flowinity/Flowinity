@@ -64,6 +64,7 @@ import {
 } from "graphql-yoga"
 import {
   BadgeResolver,
+  PartialUserFriendResolver,
   PartialUserPublicResolver,
   UserResolver
 } from "@app/controllers/graphql/user.resolver"
@@ -345,7 +346,8 @@ export class Application {
         WorkspaceFolderResolver,
         NoteResolver,
         FriendResolver,
-        MessageResolver
+        MessageResolver,
+        PartialUserFriendResolver
       ],
       container: Container,
       authChecker: authChecker,

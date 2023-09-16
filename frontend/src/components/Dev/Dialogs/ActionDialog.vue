@@ -1,5 +1,5 @@
 <template>
-  <DevDialog>
+  <DevDialog @close="$app.dialogs.actionDialog = false">
     <template v-slot:header>Action Activator</template>
     <v-container>
       <v-btn

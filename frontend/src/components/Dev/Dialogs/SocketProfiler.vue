@@ -1,8 +1,9 @@
 <template>
-  <DevDialog>
+  <DevDialog @close="$app.dialogs.socketProfiler = false">
     <template v-slot:header>Socket Profiler (QS -> SP)</template>
     <v-container>
-      <div v-for="item in socketConnections" :key="item.name">
+      Refreshes every second.
+      <div v-for="item in sockets" :key="item.name">
         <strong>{{ item.name }}:</strong>
         <span :style="{ color: item.connected ? '#0190ea' : '#e12929' }">
           &nbsp;
@@ -30,12 +31,16 @@ export default defineComponent({
   components: { DevDialog },
   data() {
     return {
-      usage: []
+      sockets: [] as {
+        name: string;
+        connected: boolean;
+      }[],
+      interval: null
     };
   },
-  computed: {
+  methods: {
     socketConnections() {
-      return [
+      this.sockets = [
         {
           name: "Chat",
           connected: this.$sockets.chat.connected
@@ -57,11 +62,30 @@ export default defineComponent({
           connected: this.$sockets.pulse.connected
         },
         {
+          name: "Gallery",
+          connected: this.$sockets.gallery.connected
+        },
+        {
+          name: "AutoCollects",
+          connected: this.$sockets.autoCollects.connected
+        },
+        {
+          name: "Tracked Users (Status/Presence)",
+          connected: this.$sockets.trackedUsers.connected
+        },
+        {
           name: "TPU",
           connected: this.$socket.connected
         }
       ];
     }
+  },
+  mounted() {
+    this.socketConnections();
+    this.interval = setInterval(this.socketConnections, 1000);
+  },
+  beforeUnmount() {
+    clearInterval(this.interval);
   }
 });
 </script>

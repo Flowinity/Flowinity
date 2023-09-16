@@ -8,6 +8,14 @@
     color="dark"
     :floating="true"
   >
+    <p
+      class="text-blue mt-4 ml-4 text-small"
+      v-if="$vuetify.display.mobile && $chat.isCommunications"
+      @click="$app.railMode = 'tpu'"
+    >
+      <v-icon>mdi-arrow-left</v-icon>
+      {{ $t("core.sidebar.backToTPU") }}
+    </p>
     <ColubrinaSidebarList></ColubrinaSidebarList>
     <template v-slot:append>
       <StatusSwitcher></StatusSwitcher>

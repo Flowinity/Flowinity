@@ -1,7 +1,10 @@
 <template>
   <v-text-field
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
+    @update:model-value="
+      $emit('update:modelValue', $event);
+      focused = true;
+    "
     :label="$t('generic.search')"
     append-inner-icon="mdi-magnify"
     class="rounded-xl"
@@ -10,7 +13,7 @@
       $emit('submit');
       focused = false;
     "
-    v-on:keyup.enter="
+    v-on:keydown.enter="
       $emit('update:modelValue', modelValue);
       $emit('submit');
       focused = false;
@@ -19,7 +22,6 @@
     @blur="focused = false"
     @change="val = $event.target.value"
     :autofocus="autofocus"
-    @update:modelValue="focused = true"
   ></v-text-field>
   <v-scroll-y-transition>
     <v-card
@@ -40,6 +42,12 @@
         <br />
         <v-kbd>during:2023-01-01</v-kbd>
         During a certain date
+        <br />
+        <v-kbd>order:asc</v-kbd>
+        Set the direction
+        <br />
+        <v-kbd>type:image</v-kbd>
+        Filter by type
       </v-container>
       <v-container v-else>prototype {{ mode }}</v-container>
     </v-card>
@@ -66,7 +74,8 @@ export default defineComponent({
   data() {
     return {
       focused: false,
-      val: ""
+      val: "",
+      currentTabIndex: -1
     };
   },
   computed: {
@@ -79,6 +88,10 @@ export default defineComponent({
         return GallerySearchMode.After;
       } else if (this.modelValue.startsWith("during:")) {
         return GallerySearchMode.During;
+      } else if (this.modelValue.startsWith("order:")) {
+        return GallerySearchMode.Order;
+      } else if (this.modelValue.startsWith("type:")) {
+        return GallerySearchMode.Type;
       } else {
         return null;
       }

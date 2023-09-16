@@ -173,4 +173,9 @@ export class MessageResolver {
   async legacyUser(@Root() message: Message) {
     return await message.$get("legacyUser")
   }
+
+  @FieldResolver(() => Message)
+  async reply(@Root() message: Message) {
+    return await message.$get("reply")
+  }
 }

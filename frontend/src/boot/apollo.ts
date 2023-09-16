@@ -16,24 +16,16 @@ import { useUserStore } from "@/store/user";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 
+function getToken(app: App) {
+  return (
+    app.config.globalProperties.$app.token ?? localStorage.getItem("token")
+  );
+}
+
 export default function setup(app: App) {
   const toast = useToast();
   const httpLink = new HttpLink({
     uri: "/graphql"
-  });
-
-  const authLink = setContext((_, { headers }) => {
-    // get the authentication token from local storage if it exists
-    const token = localStorage.getItem("token");
-    // return the headers to the context so httpLink can read them
-    return {
-      headers: {
-        ...headers,
-        authorization: token || "",
-        clientVersion: import.meta.env.TPU_VERSION,
-        clientName: "TPUvNEXT"
-      }
-    };
   });
 
   const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -60,23 +52,33 @@ export default function setup(app: App) {
       connectionParams: {
         token: localStorage.getItem("token") || "",
         clientVersion: import.meta.env.TPU_VERSION,
-        clientName: "TPUvNEXT"
+        clientName: "TPUvNEXT4"
       }
     })
   );
 
-  const appLink = from([errorLink, authLink, httpLink, wsLink]);
+  const authLink = new ApolloLink((operation, forward) => {
+    // add the authorization to the headers
+    const token = getToken(app);
+    operation.setContext({
+      headers: {
+        authorization: token,
+        clientVersion: import.meta.env.TPU_VERSION,
+        clientName: "TPUvNEXT"
+      }
+    });
+    return forward(operation);
+  });
+
+  const appLink = from([authLink, errorLink, httpLink, wsLink]);
 
   // Create the apollo client
   const apolloClient = new ApolloClient({
     link: appLink,
     cache: new InMemoryCache({
-      addTypename: false
+      addTypename: true
     }),
-    connectToDevTools: true,
-    headers: {
-      Authorization: localStorage.getItem("token") || ""
-    }
+    connectToDevTools: true
   });
 
   // Create a provider

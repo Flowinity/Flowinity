@@ -94,12 +94,11 @@ export default defineComponent({
             }
           } as LoginMutationVariables
         });
-        localStorage.setItem("token", login.token);
+        this.$app.token = login.token;
+        await localStorage.setItem("token", login.token);
         this.axios.defaults.headers.common["Authorization"] = login.token;
-        await this.$user.init();
-        this.$socket.auth = { token: login.token };
-        this.$socket.disconnect();
-        this.$socket.connect();
+        await this.$app.init();
+        this.$app.reconnectSocket(login.token);
         if (!this.$route.query.redirect) {
           this.$router.push("/");
         } else {
@@ -109,7 +108,8 @@ export default defineComponent({
             this.$router.push("/");
           }
         }
-      } catch {
+      } catch (e) {
+        console.log(e);
         this.loading = false;
       }
     }

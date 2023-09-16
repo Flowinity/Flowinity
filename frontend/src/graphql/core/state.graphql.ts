@@ -403,5 +403,18 @@ export const CoreStateQuery = gql`
         expiresAt
       }
     }
+    trackedUsers {
+      username
+      id
+      createdAt
+      administrator
+      moderator
+      avatar
+      status
+      nameColor
+      nickname {
+        nickname
+      }
+    }
   }
 `;

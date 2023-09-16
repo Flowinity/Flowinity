@@ -66,7 +66,10 @@ export default function setup(app) {
     friends: createSocket("friends"),
     mail: createSocket("mail"),
     user: createSocket("user"),
-    pulse: createSocket("pulse")
+    pulse: createSocket("pulse"),
+    gallery: createSocket("gallery"),
+    autoCollects: createSocket("autoCollects"),
+    trackedUsers: createSocket("trackedUsers")
   };
   app.config.globalProperties.$functions = functions;
 

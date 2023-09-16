@@ -351,7 +351,8 @@ export class CoreService {
     gold: boolean = false
   ): Record<string, any> {
     const experiments = {
-      LEGACY_MOBILE_NAV: false,
+      RESIZABLE_SIDEBARS: false,
+      LEGACY_MOBILE_NAV: true,
       OFFICIAL_INSTANCE: config?.officialInstance || false,
       API_FALLBACK_ON_ERROR: false,
       API_VERSION: 3,
@@ -392,6 +393,11 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        RESIZABLE_SIDEBARS: {
+          description:
+            "Enable resizing functionality in the TPU Sidebar component",
+          createdAt: "2023-09-16T00:00:00.000Z"
+        },
         LEGACY_MOBILE_NAV: {
           description: "Legacy mobile navigation.",
           createdAt: "2023-06-16T00:00:00.000Z"

@@ -11,6 +11,7 @@ import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { UserInsights } from "@app/classes/graphql/user/insights"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { UserStatus } from "@app/classes/graphql/user/status"
+import { FriendNickname } from "@app/models/friendNickname"
 
 @ObjectType()
 export class PartialUserBase {
@@ -128,6 +129,14 @@ export const partialUserPublic = [
 export class PartialUserFriend extends PartialUserBase {
   @Field(() => UserStatus)
   status: UserStatus
+  @Field(() => String, {
+    nullable: true
+  })
+  nameColor: string | null
+  @Field(() => FriendNickname, {
+    nullable: true
+  })
+  nickname: FriendNickname | null
 }
 
-export const partialUserFriend = [...partialUserBase, "status"]
+export const partialUserFriend = [...partialUserBase, "status", "nameColor"]

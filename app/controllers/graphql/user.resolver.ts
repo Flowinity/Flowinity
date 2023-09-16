@@ -30,6 +30,8 @@ import { Notification } from "@app/models/notification.model"
 import {
   PartialUserBase,
   partialUserBase,
+  partialUserFriend,
+  PartialUserFriend,
   PartialUserPublic
 } from "@app/classes/graphql/user/partialUser"
 import { EXPECTED_OPTIONS_KEY, createContext } from "dataloader-sequelize"
@@ -42,6 +44,10 @@ import { Stats } from "@app/classes/graphql/core/core"
 import { Friend } from "@app/models/friend.model"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { AutoCollectCache } from "@app/types/collection"
+import { ChatResolver } from "@app/controllers/graphql/chat.resolver"
+import { Chat } from "@app/models/chat.model"
+import { ChatAssociation } from "@app/models/chatAssociation.model"
+import { FriendNickname } from "@app/models/friendNickname"
 
 @Resolver(User)
 @Service()
@@ -84,6 +90,7 @@ export class UserResolver extends createBaseResolver("User", User) {
     }
     return user
   }
+
   @Authorization({
     scopes: "user.modify"
   })
@@ -109,6 +116,68 @@ export class UserResolver extends createBaseResolver("User", User) {
           0
         )
       })
+  }
+
+  @Authorization({
+    scopes: ["user.view"],
+    userOptional: true
+  })
+  @Query(() => [PartialUserFriend])
+  async trackedUsers(@Ctx() ctx: Context): Promise<PartialUserFriend[]> {
+    if (!ctx.user) return []
+
+    const ids = await this.trackedUserIds(ctx)
+
+    const users = await User.findAll({
+      where: {
+        id: ids
+      },
+      attributes: partialUserFriend
+    })
+
+    return users as PartialUserFriend[]
+  }
+
+  @Authorization({
+    scopes: ["user.view"],
+    userOptional: true
+  })
+  @Query(() => [Number])
+  async trackedUserIds(
+    @Ctx() ctx: Partial<Context>,
+    regenerate = false
+  ): Promise<number[]> {
+    if (!ctx.user) return []
+
+    let uniqueUserIds = regenerate
+      ? null
+      : await redis.json.get(`trackedUsers:${ctx.user.id}`)
+
+    if (!uniqueUserIds) {
+      const chats = await Chat.findAll({
+        attributes: ["id"],
+        include: [
+          {
+            model: ChatAssociation,
+            where: { userId: ctx.user.id },
+            required: true,
+            as: "association"
+          },
+          {
+            model: ChatAssociation,
+            as: "users",
+            attributes: ["userId"],
+            required: true
+          }
+        ]
+      })
+      uniqueUserIds = Array.from(
+        new Set(chats.flatMap((chat) => chat.users?.map((user) => user.userId)))
+      )
+      await redis.json.set(`trackedUsers:${ctx.user.id}`, "$", uniqueUserIds)
+    }
+
+    return uniqueUserIds.filter(Number)
   }
 }
 
@@ -233,13 +302,31 @@ function createBaseResolver<T extends ClassType>(
             model: User,
             as: "user",
             required: true,
-            attributes: [...partialUserBase, "itemsPerPage"]
+            attributes: [
+              ...partialUserBase,
+              "itemsPerPage",
+              "status",
+              "storedStatus"
+            ]
           }
         ]
       })
     }
   }
   return UserResolver
+}
+
+@Resolver(PartialUserFriend)
+@Service()
+export class PartialUserFriendResolver {
+  @FieldResolver(() => FriendNickname)
+  async nickname(@Root() user: User, @Ctx() ctx: Context) {
+    return user.$get("nickname", {
+      where: {
+        userId: ctx.user?.id
+      }
+    })
+  }
 }
 
 @Resolver(Badge)

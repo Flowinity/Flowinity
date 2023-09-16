@@ -24,7 +24,7 @@ import { useFriendsStore } from "@/store/friends";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
-    crashes: 0,
+    token: localStorage.getItem("token") || "",
     _postInitRan: false,
     quickAction: parseInt(localStorage.getItem("quickAction") || "1"),
     railMode: "tpu",
@@ -591,6 +591,7 @@ export const useAppStore = defineStore("app", {
     async init() {
       this.loadLocalStorage();
       this.loading = true;
+      console.log("loading");
       const {
         data: {
           coreState,
@@ -599,13 +600,16 @@ export const useAppStore = defineStore("app", {
           collections,
           chats,
           workspaces,
-          friends
+          friends,
+          trackedUsers
         }
       } = await this.$apollo.query({
-        query: CoreStateQuery
+        query: CoreStateQuery,
+        fetchPolicy: "no-cache"
       });
       this.site = coreState;
       useUserStore().user = currentUser;
+      useUserStore().tracked = trackedUsers;
       if (collections) {
         useCollectionsStore().items = collections.items;
         useCollectionsStore().pager = collections.pager;
@@ -688,6 +692,25 @@ export const useAppStore = defineStore("app", {
         this.dialogs.upload.loading = false;
         return e;
       }
+    },
+    reconnectSocket(token: string) {
+      this.$app.$socket.auth = { token };
+      this.$app.$sockets.user.auth = { token };
+      this.$app.$sockets.chat.auth = { token };
+      this.$app.$sockets.autoCollects.auth = { token };
+      this.$app.$sockets.friends.auth = { token };
+      this.$app.$sockets.gallery.auth = { token };
+      this.$app.$sockets.mail.auth = { token };
+      this.$app.$sockets.pulse.auth = { token };
+
+      this.$app.$sockets.user.disconnect().connect();
+      this.$app.$sockets.chat.disconnect().connect();
+      this.$app.$sockets.autoCollects.disconnect().connect();
+      this.$app.$sockets.friends.disconnect().connect();
+      this.$app.$sockets.gallery.disconnect().connect();
+      this.$app.$sockets.mail.disconnect().connect();
+      this.$app.$sockets.pulse.disconnect().connect();
+      this.$app.$socket.disconnect().connect();
     }
   }
 });

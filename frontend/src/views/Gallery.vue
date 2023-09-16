@@ -12,10 +12,7 @@
       "
       @refreshGallery="getGallery()"
       @update:show="show = $event"
-      @update:search="
-        show.search = $event;
-        page = 1;
-      "
+      v-model:search="show.search"
       @update:filter="
         show.selected = $event;
         page = 1;
@@ -192,7 +189,7 @@ export default defineComponent({
       this.page = parseInt(<string>this.$route.params.page) || 1;
       this.getGallery();
       if (this.type === GalleryType.Personal) {
-        this.$socket.on("gallery/create", this.socketRegister);
+        this.$sockets.gallery.on("create", this.socketRegister);
       }
     }
   },

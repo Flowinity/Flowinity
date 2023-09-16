@@ -6,7 +6,7 @@ import { PubSub } from "graphql-yoga"
 import { PubSubEngine } from "type-graphql"
 
 export type Context = {
-  user: User | null
+  user: User | null | undefined
   client: {
     name?: string
     version?: string

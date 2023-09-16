@@ -93,8 +93,8 @@ export default async function setup(app) {
       );
     }
   });
-  sockets.chat.on("userStatus", (data: User) => {
-    const index = friends.friends.findIndex((f) => f.friendId === data.id);
+  sockets.trackedUsers.on("userStatus", (data: User) => {
+    const index = user.tracked.findIndex((f) => f.userId === data.id);
     if (index === -1) {
       if (data.id === user.user?.id) {
         user.user = {
@@ -107,7 +107,11 @@ export default async function setup(app) {
         return;
       }
     }
-    friends.friends[index].user.status = data.status;
+    user.tracked[index] = {
+      ...user.tracked[index],
+      platforms: data.platforms,
+      status: data.status
+    };
   });
   sockets.chat.on("friendRequestAccepted", async (data: Friend) => {
     friends.friends.push(data);
@@ -220,7 +224,7 @@ export default async function setup(app) {
       router.push("/communications/home");
     }
   });
-  sockets.user.on("autoCollectApproval", (data: { type: string }) => {
+  sockets.autoCollects.on("autoCollectApproval", (data: { type: string }) => {
     if (!user.user) return;
     if (
       experiments.experiments["SFX_KFX"] ||
@@ -260,7 +264,7 @@ export default async function setup(app) {
       }
     }
   );
-  sockets.friends.on(
+  sockets.trackedUsers.on(
     "userNameColor",
     (data: { id: number; nameColor: string }) => {
       for (const c of chat.chats) {

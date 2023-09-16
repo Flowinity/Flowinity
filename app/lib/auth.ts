@@ -144,7 +144,8 @@ export function checkScope(requiredScope: string | string[], scope: string) {
   if (
     requiredScope === "none" ||
     requiredScope?.length === 0 ||
-    requiredScope?.includes("none")
+    (typeof requiredScope === "object" && requiredScope?.includes("none")) ||
+    (typeof requiredScope === "object" && requiredScope?.includes(""))
   )
     return true
   if (scope === undefined) return true

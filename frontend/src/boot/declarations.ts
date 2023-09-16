@@ -45,6 +45,9 @@ declare module "@vue/runtime-core" {
       friends: Socket;
       mail: Socket;
       user: Socket;
+      autoCollects: Socket;
+      gallery: Socket;
+      trackedUsers: Socket;
     };
   }
 }

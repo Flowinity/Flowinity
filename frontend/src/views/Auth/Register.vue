@@ -166,11 +166,11 @@ export default defineComponent({
             }
           } as RegisterMutationVariables
         });
-        localStorage.setItem("token", register.token);
-        await this.$user.init();
-        this.$socket.auth = { token: register.token };
-        this.$socket.disconnect();
-        this.$socket.connect();
+        this.$app.token = register.token;
+        await localStorage.setItem("token", register.token);
+        this.axios.defaults.headers.common["Authorization"] = register.token;
+        await this.$app.init();
+        this.$app.reconnectSocket(register.token);
         this.$router.push("/");
         this.$toast.success("You have been registered, welcome to TPU!", {
           timeout: 3000,

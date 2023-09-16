@@ -34,14 +34,6 @@
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
     <UploadDialog v-model="$app.dialogs.upload.value"></UploadDialog>
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
-    <SocketProfiler v-if="$app.dialogs.socketProfiler"></SocketProfiler>
-    <ActionDialog v-if="$app.dialogs.actionDialog"></ActionDialog>
-    <ExperimentsManagerDialog
-      v-if="
-        $app.dialogs.experiments &&
-        ($user.user?.administrator || $user.user?.moderator)
-      "
-    ></ExperimentsManagerDialog>
     <v-overlay
       persistent
       absolute
@@ -72,22 +64,20 @@
     <sidebar
       v-if="
         !$app.rail &&
-        !$vuetify.display.mobile &&
-        $app.site.finishedSetup &&
-        (!$vuetify.display.mobile || $experiments.experiments.LEGACY_MOBILE_NAV)
+        (!$vuetify.display.mobile ||
+          ($vuetify.display.mobile && $app.railMode === 'tpu')) &&
+        $app.site.finishedSetup
       "
     ></sidebar>
     <colubrina-sidebar
-      v-if="!$app.rail && $chat.isCommunications"
+      v-if="
+        !$app.rail &&
+        (!$vuetify.display.mobile ||
+          ($vuetify.display.mobile && $app.railMode === 'communications')) &&
+        $chat.isCommunications
+      "
     ></colubrina-sidebar>
     <workspaces-sidebar v-if="!$app.rail"></workspaces-sidebar>
-    <bottom-bar
-      v-if="
-        $app.site.finishedSetup &&
-        $vuetify.display.mobile &&
-        !$experiments.experiments.LEGACY_MOBILE_NAV
-      "
-    />
     <theme-engine-wrapper></theme-engine-wrapper>
     <default-view />
     <template v-if="$experiments.experiments.FAB">
@@ -164,7 +154,6 @@ import Gold from "@/components/Dashboard/Dialogs/Gold.vue";
 import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
-import BottomBar from "@/layouts/default/BottomBar.vue";
 import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
 import SocketProfiler from "@/components/Dev/Dialogs/SocketProfiler.vue";
 import ActionDialog from "@/components/Dev/Dialogs/ActionDialog.vue";
@@ -173,8 +162,6 @@ import ActionDialog from "@/components/Dev/Dialogs/ActionDialog.vue";
 <script lang="ts">
 import { defineComponent } from "vue";
 import MessageToast from "@/components/Communications/MessageToast.vue";
-import { Message as MessageType } from "@/models/message";
-import { Upload } from "@/models/upload";
 import Sidebar from "@/layouts/default/Sidebar.vue";
 import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";

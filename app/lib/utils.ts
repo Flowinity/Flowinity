@@ -20,6 +20,7 @@ import { Domain } from "@app/models/domain.model"
 import { CacheService } from "@app/services/cache.service"
 import path from "path"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 async function generateAPIKey(
   type: "session" | "api" | "email" | "oauth" | "oidc"
@@ -354,9 +355,12 @@ async function processFile(
           ])
         }
 
-        socket.to(upload.userId).emit("autoCollectApproval", {
-          type: "new"
-        })
+        socket
+          .of(SocketNamespaces.AUTO_COLLECTS)
+          .to(upload.userId)
+          .emit("autoCollectApproval", {
+            type: "new"
+          })
       } else if (
         results.some((result) => result.value) &&
         !rule.requireApproval

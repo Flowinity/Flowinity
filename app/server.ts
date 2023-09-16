@@ -44,6 +44,10 @@ import createSocket from "@app/lib/socket-next"
 import { SocketAuthMiddleware } from "@app/lib/socket-auth"
 import { PulseSocketController } from "@app/controllers/socket/pulse.socket"
 import { UserSocketController } from "@app/controllers/socket/user.socket"
+import { FriendsSocketController } from "@app/controllers/socket/friends.socket"
+import { GallerySocketController } from "@app/controllers/socket/gallery.socket"
+import { AutoCollectsSocketController } from "@app/controllers/socket/autoCollects.socket"
+import { TrackedUserSocketController } from "@app/controllers/socket/tracked.socket"
 
 @Service({ eager: false })
 export class Server {
@@ -123,7 +127,11 @@ export class Server {
       controllers: [
         ChatSocketController,
         PulseSocketController,
-        UserSocketController
+        UserSocketController,
+        FriendsSocketController,
+        GallerySocketController,
+        AutoCollectsSocketController,
+        TrackedUserSocketController
       ]
     })
 

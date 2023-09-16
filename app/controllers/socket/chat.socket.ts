@@ -1,19 +1,17 @@
 import {
-  OnConnect,
-  SocketController,
   ConnectedSocket,
-  OnDisconnect,
+  EmitOnSuccess,
   MessageBody,
+  OnConnect,
   OnMessage,
-  MessageAck,
-  EmitOnSuccess
+  SocketController
 } from "socket-controllers"
 import { Container, Service } from "typedi"
-import { Socket } from "socket.io"
 import { ChatService } from "@app/services/chat.service"
 import { SocketAuth } from "@app/types/socket"
 import { SocketAuthMiddleware } from "@app/lib/socket-auth"
 import { UserResolver } from "@app/controllers/graphql/user.resolver"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 @SocketController("/chat")
 @Service()
@@ -26,9 +24,15 @@ export class ChatSocketController {
 
   @OnConnect()
   async onConnect(@ConnectedSocket() socket: SocketAuth) {
-    const session = await this.socketAuthMiddleware.use(socket, () => {})
+    const session = await this.socketAuthMiddleware.use(
+      socket,
+      () => {},
+      SocketNamespaces.CHAT
+    )
     if (session) {
       socket.join(session.user.id)
+    } else {
+      socket.disconnect(true)
     }
   }
 

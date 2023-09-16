@@ -1,5 +1,5 @@
 <template>
-  <DevDialog>
+  <DevDialog @close="$app.dialogs.memoryProfiler = false">
     <template v-slot:header>Memory Profiler (CTRL + ALT + M)</template>
     <v-container>
       <v-row>

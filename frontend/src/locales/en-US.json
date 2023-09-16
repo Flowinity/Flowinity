@@ -24,7 +24,9 @@
       "close": "Close sidebar",
       "communicationsShort": "Comms",
       "quickAction": "Select a new quick action.",
-      "android": "Get the app"
+      "android": "Get the app",
+      "backToComms": "Back to Communications",
+      "backToTPU": "Back to TPU"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",
@@ -269,6 +271,7 @@
     "save": "Save",
     "search": "Search",
     "sort": "Sort",
+    "sortDirection": "Sort Direction",
     "order": "Order",
     "metadata": "Search in files",
     "upload": "Upload",
@@ -297,7 +300,9 @@
     "login": "Login",
     "name": "Name",
     "value": "Value",
-    "beta": "BETA"
+    "beta": "BETA",
+    "options": "Options",
+    "option": "No options selected | {count} option selected | {count} options selected"
   },
   "setup": {
     "step0": {
@@ -420,6 +425,13 @@
       "mentions": "Mentions only",
       "none": "None",
       "noneDesc": "This chat will be completely muted."
+    },
+    "roles": {
+      "owner": "Owner | Owners",
+      "member": "Member | Members",
+      "admin": "Administrator | Administrators",
+      "legacyUser": "Legacy User (Colubrina) | Legacy Users",
+      "offline": "Offline"
     }
   },
   "insights": {

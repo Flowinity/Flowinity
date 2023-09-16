@@ -424,6 +424,7 @@ export const useChatStore = defineStore("chat", {
       position: ScrollPosition = ScrollPosition.Top,
       offset?: number
     ) {
+      console.log("Load history", $state, position);
       this.loadingNew = true;
       if ($state) $state.loading();
       const data = await this.getMessages({
@@ -442,9 +443,17 @@ export const useChatStore = defineStore("chat", {
         if (offset) {
           this.selectedChat.messages = data;
         } else {
-          if (position === ScrollPosition.Top)
+          if (position === ScrollPosition.Top) {
             this.selectedChat?.messages?.push(...data);
-          else this.selectedChat?.messages?.unshift(...data);
+            if (this.selectedChat?.messages?.length > 350) {
+              this.selectedChat.messages.splice(0, 50);
+            }
+          } else {
+            this.selectedChat?.messages?.unshift(...data);
+            if (this.selectedChat?.messages?.length > 350) {
+              this.selectedChat.messages.splice(-50);
+            }
+          }
         }
         if ($state) $state.loaded();
         if (data.length < 50 || offset === 0) {
