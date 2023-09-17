@@ -14,6 +14,7 @@ import { ClientSatisfies } from "@app/lib/clientSatisfies"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { MessageSubscription } from "@app/classes/graphql/chat/messageSubscription"
+import { ChatPermissionsHandler } from "@app/services/chat/permissions"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -888,7 +889,9 @@ export class ChatService {
         })
       )
     }
+    const chatPermissionsHandler = new ChatPermissionsHandler()
     const chatWithUsers = await this.getChat(chat.id, userId)
+    await chatPermissionsHandler.createDefaults(chatWithUsers)
     for (const association of associations) {
       const chatWithUsers = await this.getChat(chat.id, association.userId)
       if (!chatWithUsers) continue

@@ -12,6 +12,7 @@ import { LegacyUser } from "@app/models/legacyUser.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { Field, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { ChatRank } from "@app/models/chatRank.model"
 
 @ObjectType()
 @Table
@@ -106,4 +107,8 @@ export class Chat extends Model {
     nullable: true
   })
   _redisSortDate: string | undefined
+
+  @Field(() => [ChatRank])
+  @HasMany(() => ChatRank, "chatId")
+  ranks: ChatRank[]
 }

@@ -56,56 +56,42 @@ export const CoreStateQuery = gql`
       createdAt
       updatedAt
       legacyUserId
-      user {
-        username
-        id
-        createdAt
-        administrator
-        moderator
-        avatar
-      }
       association {
         id
         chatId
+        permissions
         userId
         rank
+        createdAt
         lastRead
         notifications
         legacyUserId
-        user {
-          username
-          id
-          createdAt
-          administrator
-          moderator
-          avatar
-        }
       }
       users {
         id
         chatId
         userId
         rank
+        createdAt
         lastRead
-        notifications
         legacyUserId
-        user {
-          username
-          id
-          createdAt
-          administrator
-          moderator
-          avatar
-        }
+        ranksMap
       }
       _redisSortDate
       recipient {
-        username
         id
+      }
+      ranks {
+        id
+        color
+        name
+        userId
         createdAt
-        administrator
-        moderator
-        avatar
+        chatId
+        updatedAt
+        managed
+        index
+        permissionsMap
       }
     }
     collections(input: { filter: [ALL] }) {

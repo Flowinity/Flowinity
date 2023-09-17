@@ -94,7 +94,7 @@
             contextMenu.item.association?.rank === 'owner')
         "
         @click="
-          $chat.dialogs.groupSettings.item = contextMenu.item;
+          $chat.dialogs.groupSettings.itemId = contextMenu.item.id;
           $chat.dialogs.groupSettings.value = true;
         "
       >

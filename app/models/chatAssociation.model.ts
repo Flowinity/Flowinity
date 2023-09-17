@@ -1,7 +1,9 @@
 import {
   BelongsTo,
+  BelongsToMany,
   Column,
   DataType,
+  HasMany,
   Model,
   Table,
   Unique
@@ -11,6 +13,11 @@ import { LegacyUser } from "@app/models/legacyUser.model"
 import { Chat } from "@app/models/chat.model"
 import { Field, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { ChatPermission } from "@app/models/chatPermission.model"
+import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
+import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
+import { ChatRank } from "@app/models/chatRank.model"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 @Table
@@ -33,7 +40,10 @@ export class ChatAssociation extends Model {
   @Column
   userId: number
 
-  @Field()
+  @Field({
+    deprecationReason:
+      "`ChatRank` has replaced legacy rank for granular permission control."
+  })
   @Column({
     type: DataType.ENUM("owner", "admin", "member")
   })
@@ -44,6 +54,10 @@ export class ChatAssociation extends Model {
   })
   @Column
   lastRead: number
+
+  @Field(() => DateType)
+  @Column
+  createdAt: Date
 
   @Field()
   @Column({
@@ -92,4 +106,19 @@ export class ChatAssociation extends Model {
 
   @BelongsTo(() => Chat, "chatId")
   chat: Chat
+
+  @Field(() => [ChatRank])
+  @BelongsToMany(
+    () => ChatRank,
+    () => ChatRankAssociation,
+    "chatAssociationId",
+    "rankId"
+  )
+  ranks: ChatRank[]
+
+  @Field(() => [String])
+  ranksMap: string[]
+
+  @Field(() => [String])
+  permissions: string[]
 }

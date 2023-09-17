@@ -75,7 +75,7 @@ export const useChatStore = defineStore("chat", {
       },
       groupSettings: {
         value: false,
-        item: undefined as Chat | undefined,
+        itemId: undefined as number | undefined,
         loading: false
       },
       externalSite: {
@@ -107,6 +107,15 @@ export const useChatStore = defineStore("chat", {
     }
   }),
   actions: {
+    hasPermission(permission: string, chat?: Chat) {
+      return chat
+        ? chat?.association?.permissions.find(
+            (perm) => perm === permission || perm === "ADMIN"
+          )
+        : this.selectedChat?.association?.permissions.find(
+            (perm) => perm === permission || perm === "ADMIN"
+          );
+    },
     async sendMessage(
       content: string,
       attachments = [],
@@ -506,6 +515,17 @@ export const useChatStore = defineStore("chat", {
     }
   },
   getters: {
+    editingChat() {
+      console.log(
+        this.chats.find((chat) => {
+          return chat.id === this.dialogs.groupSettings.itemId;
+        }),
+        this.dialogs.groupSettings.itemId
+      );
+      return this.chats.find((chat) => {
+        return chat.id === this.dialogs.groupSettings.itemId;
+      });
+    },
     renderableReadReceipts() {
       return 5;
     },

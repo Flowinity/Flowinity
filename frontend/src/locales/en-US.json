@@ -435,6 +435,7 @@
     },
     "settings": {
       "title": "Group Settings",
+      "addUser": "Add User",
       "tabs": {
         "home": "Home",
         "ranks": "Ranks & Permissions",
@@ -449,7 +450,26 @@
         "clickToChange": "Click to change",
         "groupName": "Group Name",
         "groupNameDesc": "Pick a snazzy name for your group!",
-        "avatarDesc": "A square image with a minimum resolution of 256x256 is recommended."
+        "avatarDesc": "A square image with a minimum resolution of 256x256 is recommended.",
+        "insights": {
+          "name": "Group Insights"
+        }
+      },
+      "ranks": {
+        "name": "Ranks",
+        "add": {
+          "title": "Select Ranks",
+          "description": "You can add as many ranks as you wish to a user!"
+        }
+      },
+      "users": {
+        "name": "Users",
+        "createdAt": "Member since",
+        "username": "Username",
+        "accountAge": "Account created",
+        "actions": "Actions",
+        "remove": "Remove User",
+        "transferOwnership": "Transfer Ownership"
       }
     }
   },

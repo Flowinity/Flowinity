@@ -51,6 +51,23 @@ export const useUserStore = defineStore("user", {
     unreadNotifications(state) {
       if (!state.user) return 0;
       return state.user.notifications.filter((n) => !n.dismissed).length;
+    },
+    users() {
+      return this.tracked.reduce((acc, item) => {
+        if (item.id === this.user.id) {
+          acc[item.id] = {
+            username: this.user.username,
+            status: this.user.storedStatus,
+            avatar: this.user.avatar,
+            moderator: this.user.moderator,
+            administrator: this.user.administrator,
+            id: this.user.id
+          };
+          return acc;
+        }
+        acc[item.id] = item;
+        return acc;
+      }, {});
     }
   },
   actions: {

@@ -1,5 +1,6 @@
 <template>
   <div class="date-separator" style="font-size: 14px">
+    <slot name="start" />
     <div
       class="date-separator-line"
       v-if="position === 'center' || position === 'end'"
@@ -11,6 +12,7 @@
       class="date-separator-line"
       v-if="position === 'start' || position === 'center'"
     ></div>
+    <slot name="end" />
   </div>
 </template>
 

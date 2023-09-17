@@ -62,7 +62,7 @@
           @click="
             $chat.dialogs.groupSettings.value = true;
             $chat.selectedChat
-              ? ($chat.dialogs.groupSettings.item = $chat.selectedChat)
+              ? ($chat.dialogs.groupSettings.itemId = $chat.selectedChat.id)
               : () => {};
           "
         >
@@ -72,14 +72,11 @@
       </v-card-actions>
     </div>
     <div class="position-relative" v-if="!$chat.search.value">
-      <v-list-subheader class="ml-3 mb-n3">
-        {{ $t("chats.members") }}
-      </v-list-subheader>
-      <v-list class="mb-n4" v-for="group in users" :key="group.name" nav>
+      <v-list class="mb-n4" v-for="group in ranks" :key="group.name" nav>
         <template v-if="group.users.length">
-          <v-list-subheader>
+          <overline position="start">
             {{ group.name }} ({{ group.users.length }})
-          </v-list-subheader>
+          </overline>
           <v-list-item
             v-for="association in group.users"
             :subtitle="association.legacyUser ? 'Legacy User' : undefined"
@@ -200,10 +197,12 @@ import SidebarItem from "@/components/Communications/SidebarItem.vue";
 import { UserStatus } from "@/gql/graphql";
 import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
+import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
   components: {
+    Overline,
     MessagePerf,
     GalleryTextField,
     SidebarItem,
@@ -227,7 +226,64 @@ export default defineComponent({
       if (this.$vuetify.display.mobile) return "calc(100vh - 300px)";
       return "calc(100vh - 64px)";
     },
-    users() {
+    ranks() {
+      if (!this.$chat.selectedChat) return [];
+      return [
+        ...this.$chat.selectedChat.ranks.map((rank) => {
+          return {
+            ...rank,
+            users: this.$chat.selectedChat.users
+              .filter((user) => {
+                return (
+                  user.ranksMap[0] === rank.id &&
+                  (user.userId === this.$user.user?.id ||
+                    this.$user.users[user.userId]?.status !==
+                      UserStatus.Offline)
+                );
+              })
+              .map((user) => {
+                return {
+                  ...user,
+                  user: this.$user.users[user.userId]
+                };
+              })
+          };
+        }),
+        {
+          name: "Online",
+          users: this.$chat.selectedChat.users
+            .filter((user) => {
+              return (
+                this.$user.users[user.userId]?.status !== UserStatus.Offline &&
+                !user.ranksMap.length
+              );
+            })
+            .map((user) => {
+              return {
+                ...user,
+                user: this.$user.users[user.userId]
+              };
+            })
+        },
+        {
+          name: "Offline",
+          users: this.$chat.selectedChat.users
+            .filter((user) => {
+              return (
+                this.$user.users[user.userId]?.status === UserStatus.Offline &&
+                user.userId !== this.$user.user?.id
+              );
+            })
+            .map((user) => {
+              return {
+                ...user,
+                user: this.$user.users[user.userId]
+              };
+            })
+        }
+      ];
+    } /*
+    legacyUsers() {
       if (!this.$chat.selectedChat) return [];
       return [
         {
@@ -279,7 +335,7 @@ export default defineComponent({
           })
         }
       ];
-    },
+    },*/,
     menuStyle() {
       return `
         position: absolute;

@@ -4,8 +4,34 @@
     fullscreen
     @update:modelValue="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
-      {{ $t("chats.settings.title") }}
+    <template v-slot:toolbar>
+      <v-toolbar color="transparent">
+        <v-spacer></v-spacer>
+        <CreateChat
+          v-slot="{ props }"
+          v-model="add"
+          type="add"
+          @add="addUsers($event)"
+        >
+          <v-btn class="float-end mr-2" icon @click="add = true" v-bind="props">
+            <v-tooltip activator="parent" location="bottom">
+              {{ $t("chats.settings.addUser") }}
+            </v-tooltip>
+            <v-icon>mdi-account-plus</v-icon>
+          </v-btn>
+        </CreateChat>
+
+        <v-btn
+          class="float-end"
+          icon
+          @click="$emit('update:modelValue', false)"
+        >
+          <v-tooltip activator="parent" location="bottom">
+            {{ $t("generic.close") }}
+          </v-tooltip>
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
     </template>
     <UploadCropper
       v-model="groupIcon"
@@ -14,42 +40,65 @@
       @remove="removeIcon"
       :remove-text="$t('dialogs.uploadCropper.removeGroup')"
     />
-    <div class="d-flex flex-row">
+    <div class="d-flex flex-row mt-n4">
       <v-tabs direction="vertical" v-model="tab">
         <overline>
-          {{ $chat.dialogs.groupSettings.item.name }}
+          {{ $chat.editingChat.name }}
         </overline>
-        <v-tab value="home">
+        <v-tab
+          value="home"
+          :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
+        >
           <v-icon class="mr-2">mdi-home</v-icon>
           {{ $t("chats.settings.tabs.home") }}
         </v-tab>
-        <v-tab value="ranks">
+        <v-tab
+          value="ranks"
+          :disabled="!$chat.hasPermission('MANAGE_RANKS', $chat.editingChat)"
+        >
           <v-icon class="mr-2">mdi-lock</v-icon>
           {{ $t("chats.settings.tabs.ranks") }}
         </v-tab>
-        <v-tab value="users">
+        <v-tab
+          value="users"
+          :disabled="!$chat.hasPermission('MANAGE_USERS', $chat.editingChat)"
+        >
           <v-icon class="mr-2">mdi-account-group</v-icon>
           {{ $t("chats.settings.tabs.users") }}
         </v-tab>
-        <v-tab value="invites">
+        <v-tab
+          value="invites"
+          :disabled="!$chat.hasPermission('ADMIN', $chat.editingChat)"
+        >
           <v-icon class="mr-2">mdi-account-plus</v-icon>
           {{ $t("chats.settings.tabs.invites") }}
         </v-tab>
-        <v-tab value="bots">
+        <v-tab
+          value="bots"
+          :disabled="
+            !$chat.hasPermission('MANAGE_INTEGRATIONS', $chat.editingChat)
+          "
+        >
           <v-icon class="mr-2">mdi-robot</v-icon>
           {{ $t("chats.settings.tabs.bots") }}
         </v-tab>
-        <v-tab value="bans">
+        <v-tab
+          value="bans"
+          :disabled="!$chat.hasPermission('BAN_USERS', $chat.editingChat)"
+        >
           <v-icon class="mr-2">mdi-gavel</v-icon>
           {{ $t("chats.settings.tabs.bans") }}
         </v-tab>
       </v-tabs>
       <v-window v-model="tab" class="flex-grow-1">
         <v-window-item value="home">
-          <ChatSettingsHome :chat="$chat.dialogs.groupSettings.item" />
+          <ChatSettingsHome />
         </v-window-item>
         <v-window-item value="ranks">
-          <ChatSettingsHome :chat="$chat.dialogs.groupSettings.item" />
+          <ChatSettingsRanks />
+        </v-window-item>
+        <v-window-item value="users">
+          <ChatSettingsUsers />
         </v-window-item>
       </v-window>
     </div>
@@ -64,10 +113,14 @@ import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import ChatSettingsHome from "@/components/Communications/Dialogs/Settings/Home.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
+import ChatSettingsRanks from "@/components/Communications/Dialogs/Settings/Ranks.vue";
+import ChatSettingsUsers from "@/components/Communications/Dialogs/Settings/Users.vue";
 
 export default defineComponent({
   name: "ColubrinaGroupSettingsDialog",
   components: {
+    ChatSettingsUsers,
+    ChatSettingsRanks,
     Overline,
     ChatSettingsHome,
     CoreDialog,
@@ -86,41 +139,14 @@ export default defineComponent({
       tab: "home"
     };
   },
-  computed: {
-    ranks() {
-      let ranks = [
-        {
-          text: "Owner",
-          value: "owner",
-          props: { disabled: true }
-        },
-        {
-          text: "Admin",
-          value: "admin",
-          props: { disabled: false }
-        },
-        {
-          text: "Member",
-          value: "member",
-          props: { disabled: false }
-        }
-      ];
-      if (
-        this.$chat.dialogs.groupSettings.item?.association?.rank === "owner"
-      ) {
-        ranks[0].props.disabled = false;
-      }
-      return ranks;
-    }
-  },
   methods: {
     async uploadIcon(file: File) {
-      if (this.$chat.dialogs.groupSettings.item) {
+      if (this.$chat.editingChat) {
         this.groupIconLoading = true;
         const formData = new FormData();
         formData.append("icon", file);
         await this.axios.post(
-          `/chats/${this.$chat.dialogs.groupSettings.item.association?.id}/icon`,
+          `/chats/${this.$chat.editingChat.association?.id}/icon`,
           formData
         );
         this.groupIcon = false;
@@ -128,15 +154,15 @@ export default defineComponent({
       }
     },
     async removeIcon() {
-      if (this.$chat.dialogs.groupSettings.item) {
+      if (this.$chat.editingChat) {
         await this.axios.delete(
-          `/chats/${this.$chat.dialogs.groupSettings.item.association?.id}/icon`
+          `/chats/${this.$chat.editingChat.association?.id}/icon`
         );
       }
     },
     async changeRank(id: number, rank: string) {
       await this.axios.put(
-        `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users/${id}`,
+        `/chats/${this.$chat.editingChat?.association?.id}/users/${id}`,
         {
           rank
         }
@@ -144,19 +170,17 @@ export default defineComponent({
     },
     async removeUser(id: number) {
       await this.axios.delete(
-        `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users/${id}`
+        `/chats/${this.$chat.editingChat?.association?.id}/users/${id}`
       );
-      if (this.$chat.dialogs.groupSettings.item)
-        this.$chat.dialogs.groupSettings.item.users.splice(
-          this.$chat.dialogs.groupSettings.item.users.findIndex(
-            (user) => user.id === id
-          ),
+      if (this.$chat.editingChat)
+        this.$chat.editingChat.users.splice(
+          this.$chat.editingChat.users.findIndex((user) => user.id === id),
           1
         );
     },
     async addUsers(users: number[]) {
       await this.axios.post(
-        `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users`,
+        `/chats/${this.$chat.editingChat?.association?.id}/users`,
         {
           users
         }

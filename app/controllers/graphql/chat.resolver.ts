@@ -25,6 +25,9 @@ import { ChatService } from "@app/services/chat.service"
 import { UpdateChatInput } from "@app/classes/graphql/chat/updateChat"
 import { ChatInput } from "@app/classes/graphql/chat/chat"
 import { GraphQLError } from "graphql/error"
+import { ChatRank } from "@app/models/chatRank.model"
+import { ChatPermission } from "@app/models/chatPermission.model"
+import { ChatPermissionsHandler } from "@app/services/chat/permissions"
 
 @Resolver(Chat)
 @Service()
@@ -165,5 +168,17 @@ export class ChatResolver {
     return this.chat(ctx, {
       associationId: input.associationId
     })
+  }
+
+  @FieldResolver(() => [ChatRank])
+  async ranks(@Root() chat: Chat) {
+    return await chat.$get("ranks", {
+      order: [["index", "DESC"]]
+    })
+  }
+
+  @Query(() => [ChatPermission])
+  async availableChatPermissions() {
+    return await ChatPermission.findAll()
   }
 }

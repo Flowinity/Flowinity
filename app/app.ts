@@ -90,6 +90,7 @@ import { MessageResolver } from "@app/controllers/graphql/message.resolver"
 import { GraphQLSchema } from "graphql/type"
 import generateContext from "@app/classes/graphql/middleware/generateContext"
 import { RedisPubSub } from "graphql-redis-subscriptions"
+import { ChatRankResolver } from "@app/controllers/graphql/chatRank.resolver"
 
 @Service()
 @Middleware({ type: "after" })
@@ -337,7 +338,8 @@ export class Application {
         NoteResolver,
         FriendResolver,
         MessageResolver,
-        PartialUserFriendResolver
+        PartialUserFriendResolver,
+        ChatRankResolver
       ],
       container: Container,
       authChecker: authChecker,
