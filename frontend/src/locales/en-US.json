@@ -432,6 +432,25 @@
       "admin": "Administrator | Administrators",
       "legacyUser": "Legacy User (Colubrina) | Legacy Users",
       "offline": "Offline"
+    },
+    "settings": {
+      "title": "Group Settings",
+      "tabs": {
+        "home": "Home",
+        "ranks": "Ranks & Permissions",
+        "users": "Users",
+        "invites": "Invites",
+        "bots": "Bots & Applications",
+        "bans": "Bans"
+      },
+      "home": {
+        "name": "Group Overview",
+        "avatar": "Group Avatar",
+        "clickToChange": "Click to change",
+        "groupName": "Group Name",
+        "groupNameDesc": "Pick a snazzy name for your group!",
+        "avatarDesc": "A square image with a minimum resolution of 256x256 is recommended."
+      }
     }
   },
   "insights": {

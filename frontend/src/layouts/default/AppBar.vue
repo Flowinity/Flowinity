@@ -33,13 +33,33 @@
         :dot-status="true"
       />
       <h2
-        v-if="!$vuetify.display.mobile"
+        v-if="!$vuetify.display.mobile && !editingName"
         id="tpu-brand-logo"
-        class="unselectable ml-2 limit"
+        class="ml-2 limit pointer"
         title="TPU Communications"
+        @click="editingName = true"
       >
         {{ $chat.chatName }}
       </h2>
+      <v-text-field
+        v-else-if="editingName"
+        single-line
+        variant="outlined"
+        density="compact"
+        style="height: 40px"
+        class="ml-2"
+        @blur="editingName = false"
+        autofocus
+        v-model="$chat.selectedChat.name"
+        @keydown.enter="
+          $chat.saveSettings({
+            name: $chat.selectedChat.name,
+            associationId: $chat.selectedChat.association?.id
+          });
+          editingName = false;
+        "
+        @keydown.esc="editingName = false"
+      ></v-text-field>
     </template>
     <v-spacer></v-spacer>
     <div v-if="$app.site.release === 'dev' && $app.cordova" class="mr-2">M</div>
@@ -214,7 +234,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import Notifications from "@/components/Core/Notifications.vue";
 import { useTheme } from "vuetify";
@@ -230,8 +250,9 @@ export default defineComponent({
   },
   setup() {
     const theme = useTheme();
-
+    const editingName = ref(false);
     return {
+      editingName,
       toggleTheme: () => {
         const themeName = "amoled";
         localStorage.setItem("theme", themeName);

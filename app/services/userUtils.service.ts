@@ -23,10 +23,17 @@ import { ExcludedCollectionsValidate } from "@app/validators/excludedCollections
 import { FCMDevice } from "@app/models/fcmDevices.model"
 import axios from "axios"
 import { HexValidateOptional } from "@app/validators/hex"
-import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import {
+  partialUserBase,
+  PartialUserFriend,
+  partialUserFriend
+} from "@app/classes/graphql/user/partialUser"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
-import { UserResolver } from "@app/controllers/graphql/user.resolver"
+import { Ctx } from "type-graphql"
+import { Context } from "@app/types/graphql/context"
+import { Chat } from "@app/models/chat.model"
+import { ChatAssociation } from "@app/models/chatAssociation.model"
 
 @Service()
 export class UserUtilsService {
@@ -800,17 +807,66 @@ export class UserUtilsService {
         }
       })
     }
-    const resolver = await Container.get(UserResolver)
-    let ids = await resolver.trackedUserIds({
-      user: {
-        id: userId
-      } as User
-    })
+    let ids = await this.trackedUserIds(userId)
     const friendIds = friends.map((friend) => friend.friendId)
     ids = [...new Set([...friendIds, ...ids])]
     for (const id of ids) {
       socket.of(namespace).to(id).emit(key, value)
     }
+  }
+
+  async trackedUserIds(userId?: number, regenerate = false): Promise<number[]> {
+    if (!userId) return []
+
+    let uniqueUserIds = regenerate
+      ? null
+      : await redis.json.get(`trackedUsers:${userId}`)
+
+    if (!uniqueUserIds) {
+      const chats = await Chat.findAll({
+        attributes: ["id"],
+        include: [
+          {
+            model: ChatAssociation,
+            where: { userId },
+            required: true,
+            as: "association"
+          },
+          {
+            model: ChatAssociation,
+            as: "users",
+            attributes: ["userId"],
+            required: true
+          }
+        ]
+      })
+      uniqueUserIds = Array.from(
+        new Set(chats.flatMap((chat) => chat.users?.map((user) => user.userId)))
+      )
+      await redis.json.set(`trackedUsers:${userId}`, "$", uniqueUserIds)
+    }
+
+    if (regenerate) {
+      socket
+        .of(SocketNamespaces.TRACKED_USERS)
+        .to(userId)
+        .emit("trackedUsers", await this.trackedUsers(userId))
+    }
+
+    return uniqueUserIds.filter(Number)
+  }
+
+  async trackedUsers(userId: number) {
+    const ids = await this.trackedUserIds(userId)
+
+    const users = await User.findAll({
+      where: {
+        id: ids
+      },
+      attributes: partialUserFriend
+    })
+
+    return users as PartialUserFriend[]
   }
 
   async getAllUsers(

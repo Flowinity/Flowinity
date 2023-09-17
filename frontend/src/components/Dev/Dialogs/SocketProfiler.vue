@@ -8,6 +8,7 @@
         <span :style="{ color: item.connected ? '#0190ea' : '#e12929' }">
           &nbsp;
           {{ item.connected ? "Connected" : "Disconnected" }}
+          <v-btn color="white" @click="item.disconnect">Kill</v-btn>
         </span>
       </div>
       Ensure the scoped password/API has permissions for socket.
@@ -34,6 +35,8 @@ export default defineComponent({
       sockets: [] as {
         name: string;
         connected: boolean;
+        connect: () => {};
+        disconnect: () => {};
       }[],
       interval: null
     };
@@ -43,39 +46,57 @@ export default defineComponent({
       this.sockets = [
         {
           name: "Chat",
-          connected: this.$sockets.chat.connected
+          connected: this.$sockets.chat.connected,
+          disconnect: this.$sockets.chat.disconnect,
+          connect: this.$sockets.chat.connect
         },
         {
           name: "User",
-          connected: this.$sockets.user.connected
+          connected: this.$sockets.user.connected,
+          disconnect: this.$sockets.user.disconnect,
+          connect: this.$sockets.user.connect
         },
         {
           name: "Friends",
-          connected: this.$sockets.friends.connected
+          connected: this.$sockets.friends.connected,
+          disconnect: this.$sockets.friends.disconnect,
+          connect: this.$sockets.friends.connect
         },
         {
           name: "Mail",
-          connected: this.$sockets.mail.connected
+          connected: this.$sockets.mail.connected,
+          disconnect: this.$sockets.mail.disconnect,
+          connect: this.$sockets.mail.connect
         },
         {
           name: "Pulse",
-          connected: this.$sockets.pulse.connected
+          connected: this.$sockets.pulse.connected,
+          disconnect: this.$sockets.pulse.disconnect,
+          connect: this.$sockets.pulse.connect
         },
         {
           name: "Gallery",
-          connected: this.$sockets.gallery.connected
+          connected: this.$sockets.gallery.connected,
+          disconnect: this.$sockets.gallery.disconnect,
+          connect: this.$sockets.gallery.connect
         },
         {
           name: "AutoCollects",
-          connected: this.$sockets.autoCollects.connected
+          connected: this.$sockets.autoCollects.connected,
+          disconnect: this.$sockets.autoCollects.disconnect,
+          connect: this.$sockets.autoCollects.connect
         },
         {
           name: "Tracked Users (Status/Presence)",
-          connected: this.$sockets.trackedUsers.connected
+          connected: this.$sockets.trackedUsers.connected,
+          disconnect: this.$sockets.trackedUsers.disconnect,
+          connect: this.$sockets.trackedUsers.connect
         },
         {
           name: "TPU",
-          connected: this.$socket.connected
+          connected: this.$socket.connected,
+          disconnect: this.$socket.disconnect,
+          connect: this.$socket.connect
         }
       ];
     }

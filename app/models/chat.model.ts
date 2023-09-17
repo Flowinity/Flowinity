@@ -98,6 +98,12 @@ export class Chat extends Model {
   @HasMany(() => ChatAssociation, "chatId")
   users: ChatAssociation[]
   recipient: any
+  @Field(() => Number, {
+    nullable: true
+  })
   unread: number | undefined
+  @Field(() => String, {
+    nullable: true
+  })
   _redisSortDate: string | undefined
 }

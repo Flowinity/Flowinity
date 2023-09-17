@@ -15,6 +15,7 @@ import { setContext } from "@apollo/client/link/context";
 import { useUserStore } from "@/store/user";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
+import functions from "@/plugins/functions";
 
 function getToken(app: App) {
   return (
@@ -35,6 +36,14 @@ export default function setup(app: App) {
           localStorage.removeItem("token");
           const user = useUserStore();
           user.user = null;
+        } else if (error.extensions?.code === "BAD_USER_INPUT") {
+          for (const err of error.extensions.validationErrors as any[]) {
+            const values: string[] = Object.values(err.constraints);
+
+            for (const value of values) {
+              toast.error(functions.charUp(value) + ".");
+            }
+          }
         } else {
           toast.error(error.message);
         }

@@ -6,9 +6,8 @@ import { LegacyUser } from "@app/models/legacyUser.model"
 import { Message } from "@app/models/message.model"
 import Errors from "@app/lib/errors"
 import { UserUtilsService } from "@app/services/userUtils.service"
-import { CacheService } from "@app/services/cache.service"
 import embedParser from "@app/lib/embedParser"
-import { Op } from "sequelize"
+import { Includeable, Op } from "sequelize"
 import paginate from "jw-paginate"
 import axios from "axios"
 import { ClientSatisfies } from "@app/lib/clientSatisfies"
@@ -80,7 +79,7 @@ export class ChatService {
       attributes: partialUserBase
     }
   ]
-  private chatIncludes = [
+  private chatIncludes: Includeable[] = [
     {
       model: ChatAssociation,
       as: "users",
@@ -408,7 +407,7 @@ export class ChatService {
     associationId: number,
     userId: number,
     settings: {
-      name?: string
+      name?: string | null
       icon?: string | null
     }
   ) {
@@ -416,7 +415,7 @@ export class ChatService {
     await this.checkPermissions(userId, associationId, "admin")
     await Chat.update(
       {
-        name: settings.name,
+        name: settings.name === "" ? null : settings.name,
         icon: settings.icon
       },
       {
@@ -806,24 +805,24 @@ export class ChatService {
   }
 
   async createChat(users: number[], userId: number) {
-    const userUtilsService = Container.get(UserUtilsService)
-    const cacheService = Container.get(CacheService)
     if (!users.length || users.includes(userId))
       throw Errors.INVALID_FRIEND_SELECTION
-    const friends = await userUtilsService.validateFriends(userId, users)
+
+    const friends = await Container.get(UserUtilsService).validateFriends(
+      userId,
+      users
+    )
     const type = friends.length === 1 ? "direct" : "group"
     const intent = [userId, ...users].sort((a, b) => a - b).join("-")
-    console.log(intent)
     if (type === "direct") {
       const chat = await Chat.findOne({
         where: {
           type: "direct",
           intent
         },
-        // @ts-ignore
         include: this.chatIncludes
       })
-      console.log(chat?.users)
+
       if (chat?.users.find((u: ChatAssociation) => u.userId === userId)) {
         return await this.getChat(chat.id, userId)
       } else if (chat) {
@@ -833,8 +832,31 @@ export class ChatService {
           rank: "member",
           identifier: chat.id + "-" + userId
         })
+        let association2
+        if (!chat.users.length) {
+          association2 = await ChatAssociation.create({
+            userId: users[0],
+            chatId: chat.id,
+            rank: "member",
+            identifier: chat.id + "-" + users[0]
+          })
+        }
         const chatWithUsers = await this.getChat(chat.id, association.userId)
-        socket.to(association.userId).emit("chatCreated", chatWithUsers)
+        socket
+          .of(SocketNamespaces.CHAT)
+          .to(association.userId)
+          .emit("chatCreated", chatWithUsers)
+        Container.get(UserUtilsService).trackedUserIds(association.userId, true)
+        if (association2) {
+          socket
+            .of(SocketNamespaces.CHAT)
+            .to(association2.userId)
+            .emit("chatCreated", chatWithUsers)
+          Container.get(UserUtilsService).trackedUserIds(
+            association2.userId,
+            true
+          )
+        }
         return chatWithUsers
       }
     }
@@ -870,7 +892,11 @@ export class ChatService {
     for (const association of associations) {
       const chatWithUsers = await this.getChat(chat.id, association.userId)
       if (!chatWithUsers) continue
-      socket.to(association.userId).emit("chatCreated", chatWithUsers)
+      socket
+        .of(SocketNamespaces.CHAT)
+        .to(association.userId)
+        .emit("chatCreated", chatWithUsers)
+      Container.get(UserUtilsService).trackedUserIds(association.userId, true)
     }
     return chatWithUsers
   }

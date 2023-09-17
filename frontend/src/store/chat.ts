@@ -1,7 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import { Chat, Typing } from "@/models/chat";
 import { useExperimentsStore } from "@/store/experiments";
 import vuetify from "@/plugins/vuetify";
 import { Router, useRouter } from "vue-router";
@@ -21,157 +20,93 @@ import {
   MessageType,
   PagedMessagesInput,
   Pager,
-  ScrollPosition
+  PartialUserFriend,
+  ScrollPosition,
+  Chat,
+  UpdateChatInput
 } from "@/gql/graphql";
 import {
   MessagesQuery,
   PagedMessagesQuery
 } from "@/graphql/chats/messages.graphql";
 import { StateHandler } from "v3-infinite-loading/lib/types";
-
-export interface ChatState {
-  search: {
-    value: boolean;
-    results: {
-      items: Message[];
-      pager: Pager;
-    };
-    loading: boolean;
-    query: string;
-  };
-  notifications: number;
-  chats: Chat[];
-  selectedChatId: number | null;
-  loading: boolean;
-  drafts: { [key: string]: string };
-  selectedChat: Chat | null;
-  memberSidebarShown: boolean;
-  isReady: number | null;
-  users: User[];
-  dialogs: {
-    message: {
-      value: boolean;
-      message: Message | null;
-      bindingElement: string | null;
-      x: number;
-      y: number;
-      location: string;
-    };
-    groupSettings: {
-      value: boolean;
-      item: Chat | undefined;
-    };
-    user: {
-      value: boolean;
-      username: string;
-    };
-    userMenu: {
-      value: boolean;
-      username: string;
-      user: User | null;
-      bindingElement: string | null;
-      x: number;
-      y: number;
-      location: string;
-    };
-    image: {
-      value: boolean;
-      object: {
-        originalURL: string;
-        width: number;
-        height: number;
-        mimeType: string;
-        url: string;
-      } | null;
-    };
-    externalSite: {
-      value: boolean;
-      url: string;
-    };
-    statusMenu: {
-      value: boolean;
-      x: number;
-      y: number;
-    };
-  };
-  trustedDomains: string[];
-  loadNew: boolean;
-  loadingNew: boolean;
-}
+import { CreateChatMutation } from "@/graphql/chats/createChat.graphql";
+import { UpdateChatMutation } from "@/graphql/chats/updateChat.graphql";
+import { Typing } from "@/models/chat";
 
 export const useChatStore = defineStore("chat", {
-  state: () =>
-    ({
-      search: {
-        value: false,
-        results: {
-          items: [] as Message[],
-          pager: {
-            totalItems: 0,
-            currentPage: 1,
-            pageSize: 50,
-            totalPages: 1,
-            startPage: 1,
-            endPage: 1,
-            startIndex: 0,
-            endIndex: 1,
-            pages: [1]
-          }
-        },
-        loading: false,
-        query: ""
-      },
-      loadNew: false,
-      loadingNew: false,
-      notifications: 0,
-      chats: [] as Chat[],
-      loading: false,
-      drafts: {},
-      selectedChatId: parseInt(localStorage.getItem("selectedChatId") || "0"),
-      memberSidebarShown: true,
-      isReady: null,
-      trustedDomains: [] as string[],
-      dialogs: {
-        message: {
-          value: false,
-          message: null as Message | null,
-          bindingElement: null as string | null,
-          x: 0,
-          y: 0,
-          location: "top"
-        },
-        groupSettings: {
-          value: false,
-          item: undefined
-        },
-        externalSite: {
-          value: false,
-          url: ""
-        },
-        image: {
-          value: false,
-          object: null
-        },
-        user: {
-          value: false,
-          username: ""
-        },
-        userMenu: {
-          value: false,
-          username: "",
-          user: null as User | null,
-          bindingElement: null as string | null,
-          x: 0,
-          y: 0,
-          location: "top"
-        },
-        statusMenu: {
-          value: false,
-          x: 0,
-          y: 0
+  state: () => ({
+    search: {
+      value: false,
+      results: {
+        items: [] as Message[],
+        pager: {
+          totalItems: 0,
+          currentPage: 1,
+          pageSize: 50,
+          totalPages: 1,
+          startPage: 1,
+          endPage: 1,
+          startIndex: 0,
+          endIndex: 1,
+          pages: [1]
         }
+      },
+      loading: false,
+      query: ""
+    },
+    loadNew: false,
+    loadingNew: false,
+    notifications: 0,
+    chats: [] as Chat[],
+    loading: false,
+    drafts: {},
+    selectedChatId: parseInt(localStorage.getItem("selectedChatId") || "0"),
+    memberSidebarShown: true,
+    isReady: null,
+    trustedDomains: [] as string[],
+    dialogs: {
+      message: {
+        value: false,
+        message: null as Message | null,
+        bindingElement: null as string | null,
+        x: 0,
+        y: 0,
+        location: "top"
+      },
+      groupSettings: {
+        value: false,
+        item: undefined as Chat | undefined,
+        loading: false
+      },
+      externalSite: {
+        value: false,
+        url: ""
+      },
+      image: {
+        value: false,
+        object: null
+      },
+      user: {
+        value: false,
+        username: ""
+      },
+      userMenu: {
+        value: false,
+        username: "",
+        user: null as User | null,
+        bindingElement: null as string | null,
+        x: 0,
+        y: 0,
+        location: "top"
+      },
+      statusMenu: {
+        value: false,
+        x: 0,
+        y: 0
       }
-    } as ChatState),
+    }
+  }),
   actions: {
     async sendMessage(
       content: string,
@@ -266,14 +201,23 @@ export const useChatStore = defineStore("chat", {
       }
       localStorage.setItem("draftStore", JSON.stringify(this.drafts));
     },
-    async saveSettings() {
-      const { data } = await axios.patch(
-        `/chats/${this.dialogs.groupSettings.item?.association?.id}`,
-        {
-          name: this.dialogs.groupSettings.item?.name
+    async saveSettings(input?: UpdateChatInput) {
+      this.dialogs.groupSettings.loading = true;
+      const {
+        data: { updateChat }
+      } = await this.$apollo.mutate({
+        mutation: UpdateChatMutation,
+        variables: {
+          input: {
+            name: input?.name ?? this.dialogs.groupSettings.item.name,
+            associationId:
+              input?.associationId ??
+              this.dialogs.groupSettings.item.association.id
+          }
         }
-      );
-      return data;
+      });
+      this.dialogs.groupSettings.loading = false;
+      return updateChat;
     },
     async sound() {
       let sound = await import("@/assets/audio/notification.wav");
@@ -337,26 +281,35 @@ export const useChatStore = defineStore("chat", {
       this.dialogs.user.username = this.lookupUser(id).username;
       this.dialogs.user.value = true;
     },
-    lookupUser(id: number) {
+    lookupUser(id: number): PartialUserFriend {
       const friends = useFriendsStore();
       for (const chat of this.chats) {
         const user = friends.friends.find((user) => user?.user?.id === id);
         if (user) {
-          return user.user as User;
+          return user.user as PartialUserFriend;
         } else {
           const user = chat.users.find((user) => user?.tpuUser?.id === id);
           if (user) {
-            return user.tpuUser as User;
+            return user.tpuUser as PartialUserFriend;
           }
         }
       }
       return {
         username: "Unknown User"
-      } as User;
+      } as PartialUserFriend;
     },
     async createChat(users: number[]) {
-      const { data } = await axios.post("/chats", { users });
-      return data;
+      const {
+        data: { createChat }
+      } = await this.$apollo.mutate({
+        mutation: CreateChatMutation,
+        variables: {
+          input: {
+            users
+          }
+        }
+      });
+      return createChat;
     },
     async readChat(chatId?: number) {
       await this.$app.$sockets.chat.emit(
@@ -387,7 +340,7 @@ export const useChatStore = defineStore("chat", {
         if (this.selectedChat?.messages) this.selectedChat.messages = [];
       }
       this.selectedChatId = id;
-      localStorage.setItem("selectedChatId", id);
+      localStorage.setItem("selectedChatId", id.toString());
       const appStore = useAppStore();
       const chat = this.chats.find(
         (chat: Chat) => chat.association.id === id
@@ -557,15 +510,15 @@ export const useChatStore = defineStore("chat", {
     renderableReadReceipts() {
       return 5;
     },
-    currentOffset(state: ChatState) {
-      if (!state.selectedChat?.messages?.length) return { up: 0, down: 0 };
-      const down = state.selectedChat?.messages[0]?.id
-        ? state.selectedChat?.messages[0]?.id
+    currentOffset() {
+      if (!this.selectedChat?.messages?.length) return { up: 0, down: 0 };
+      const down = this.selectedChat?.messages[0]?.id
+        ? this.selectedChat?.messages[0]?.id
         : 0;
-      const up = state.selectedChat?.messages[
-        state.selectedChat?.messages.length - 1
+      const up = this.selectedChat?.messages[
+        this.selectedChat?.messages.length - 1
       ]?.id
-        ? state.selectedChat?.messages[state.selectedChat?.messages.length - 1]
+        ? this.selectedChat?.messages[this.selectedChat?.messages.length - 1]
             ?.id
         : 0;
       return {
@@ -573,25 +526,25 @@ export const useChatStore = defineStore("chat", {
         down
       };
     },
-    hasPermissions(state: ChatState) {
+    hasPermissions() {
       return {
-        owner: state.selectedChat?.association?.rank === "owner",
+        owner: this.selectedChat?.association?.rank === "owner",
         admin:
-          state.selectedChat?.association?.rank === "admin" ||
-          state.selectedChat?.association?.rank === "owner",
+          this.selectedChat?.association?.rank === "admin" ||
+          this.selectedChat?.association?.rank === "owner",
         member: true
       };
     },
-    typers(state: ChatState) {
+    typers() {
       const user = useUserStore();
-      if (!state.selectedChat) return "";
-      if (!state.selectedChat.typers?.length) return "";
-      if (state.selectedChat?.typers?.length > 3) {
-        return `${state.selectedChat.typers.length} people are typing...`;
+      if (!this.selectedChat) return "";
+      if (!this.selectedChat.typers?.length) return "";
+      if (this.selectedChat?.typers?.length > 3) {
+        return `${this.selectedChat.typers.length} people are typing...`;
       }
 
       // filter out the current user and return the usernames
-      const typers = state.selectedChat.typers
+      const typers = this.selectedChat.typers
         .filter((typer: Typing) => typer.user.id !== user.user?.id)
         .map((typer: Typing) => {
           return typer.user.username;
@@ -604,31 +557,31 @@ export const useChatStore = defineStore("chat", {
         return `${last} is typing...`;
       }
     },
-    totalUnread(state: ChatState) {
+    totalUnread(state) {
       return state.chats.reduce((total: number, chat: Chat) => {
         return total + chat.unread;
       }, 0);
     },
-    selectedChat(state: ChatState) {
+    selectedChat(state) {
       return state.chats.find(
         (chat: Chat) => chat.association.id === state.selectedChatId
       ) as Chat | null;
     },
-    chatName(state: ChatState) {
-      if (!state.selectedChat) return "Communications";
-      if (state.selectedChat.type === "direct") {
+    chatName() {
+      if (!this.selectedChat) return "Communications";
+      if (this.selectedChat.type === "direct") {
         return (
-          useFriendsStore().getName(state.selectedChat?.recipient) ||
+          useFriendsStore().getName(this.selectedChat?.recipient) ||
           "Deleted User"
         );
       } else {
-        return state.selectedChat.name;
+        return this.selectedChat.name;
       }
     },
     communicationsSidebar() {
       return !vuetify.display.mobile.value && !useAppStore().rail;
     },
-    memberSidebar(state: ChatState) {
+    memberSidebar(state) {
       if (!state.memberSidebarShown) return false;
       const experimentsStore = useExperimentsStore();
       if (experimentsStore.experiments["COMMUNICATIONS_QUAD_SIDEBAR_LOWRES"])

@@ -1,4 +1,12 @@
-import { Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql"
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  Mutation,
+  Query,
+  Resolver,
+  Root
+} from "type-graphql"
 import { Service } from "typedi"
 import { Chat } from "@app/models/chat.model"
 import { Context } from "@app/types/graphql/context"
@@ -11,11 +19,17 @@ import {
 import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { Op } from "sequelize"
+import { CreateChatInput } from "@app/classes/graphql/chat/createChat"
+import RateLimit from "@app/lib/graphql/RateLimit"
+import { ChatService } from "@app/services/chat.service"
+import { UpdateChatInput } from "@app/classes/graphql/chat/updateChat"
+import { ChatInput } from "@app/classes/graphql/chat/chat"
+import { GraphQLError } from "graphql/error"
 
 @Resolver(Chat)
 @Service()
 export class ChatResolver {
-  constructor() {}
+  constructor(private chatService: ChatService) {}
 
   @Authorization({
     scopes: ["chats.view"],
@@ -29,6 +43,32 @@ export class ChatResolver {
         {
           model: ChatAssociation,
           where: { userId: ctx.user.id },
+          required: true,
+          as: "association"
+        }
+      ]
+    })
+  }
+
+  @Authorization({
+    scopes: ["chats.view"]
+  })
+  @Query(() => Chat)
+  async chat(@Ctx() ctx: Context, @Arg("input") input: ChatInput) {
+    if (!ctx.user) return null
+    if (!input.chatId && !input.associationId)
+      throw new GraphQLError("Field `chatId` or `associationId` is required.")
+
+    const where = input.chatId
+      ? { id: input.chatId }
+      : { id: input.associationId, userId: ctx.user.id }
+
+    return await Chat.findOne({
+      where: input.chatId ? where : {},
+      include: [
+        {
+          model: ChatAssociation,
+          where: input.chatId ? { userId: ctx.user.id } : where,
           required: true,
           as: "association"
         }
@@ -90,5 +130,40 @@ export class ChatResolver {
       ]
     })
     return user?.user as PartialUserBase | null
+  }
+
+  @RateLimit({
+    window: 10,
+    max: 3
+  })
+  @Authorization({
+    scopes: ["chats.create"]
+  })
+  @Mutation(() => Chat)
+  async createChat(
+    @Ctx() ctx: Context,
+    @Arg("input") input: CreateChatInput
+  ): Promise<Chat> {
+    return await this.chatService.createChat(input.users, ctx.user!!.id)
+  }
+
+  @RateLimit({
+    window: 10,
+    max: 10
+  })
+  @Authorization({
+    scopes: ["chats.edit"]
+  })
+  @Mutation(() => Chat)
+  async updateChat(@Ctx() ctx: Context, @Arg("input") input: UpdateChatInput) {
+    await this.chatService.updateGroupSettings(
+      input.associationId,
+      ctx.user!!.id,
+      input
+    )
+
+    return this.chat(ctx, {
+      associationId: input.associationId
+    })
   }
 }

@@ -126,16 +126,7 @@ export class UserResolver extends createBaseResolver("User", User) {
   async trackedUsers(@Ctx() ctx: Context): Promise<PartialUserFriend[]> {
     if (!ctx.user) return []
 
-    const ids = await this.trackedUserIds(ctx)
-
-    const users = await User.findAll({
-      where: {
-        id: ids
-      },
-      attributes: partialUserFriend
-    })
-
-    return users as PartialUserFriend[]
+    return this.userUtilsService.trackedUsers(ctx.user.id)
   }
 
   @Authorization({
@@ -147,37 +138,7 @@ export class UserResolver extends createBaseResolver("User", User) {
     @Ctx() ctx: Partial<Context>,
     regenerate = false
   ): Promise<number[]> {
-    if (!ctx.user) return []
-
-    let uniqueUserIds = regenerate
-      ? null
-      : await redis.json.get(`trackedUsers:${ctx.user.id}`)
-
-    if (!uniqueUserIds) {
-      const chats = await Chat.findAll({
-        attributes: ["id"],
-        include: [
-          {
-            model: ChatAssociation,
-            where: { userId: ctx.user.id },
-            required: true,
-            as: "association"
-          },
-          {
-            model: ChatAssociation,
-            as: "users",
-            attributes: ["userId"],
-            required: true
-          }
-        ]
-      })
-      uniqueUserIds = Array.from(
-        new Set(chats.flatMap((chat) => chat.users?.map((user) => user.userId)))
-      )
-      await redis.json.set(`trackedUsers:${ctx.user.id}`, "$", uniqueUserIds)
-    }
-
-    return uniqueUserIds.filter(Number)
+    return await this.userUtilsService.trackedUserIds(ctx.user?.id, false)
   }
 }
 
@@ -283,8 +244,8 @@ function createBaseResolver<T extends ClassType>(
     ): Promise<FriendStatus> {
       if (!ctx.user) return FriendStatus.NONE
       return (await this.userUtilsService.getFriendStatus(
-        user.id,
         ctx.user.id,
+        user.id,
         true
       )) as FriendStatus
     }

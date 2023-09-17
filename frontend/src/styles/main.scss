@@ -447,20 +447,20 @@ a {
   color: #121212 !important;
 }
 
-.communications .date-separator {
+.date-separator {
   margin: 5px 8px 5px 8px;
   display: flex;
   justify-content: center;
 }
 
-.communications .date-separator-line {
+.date-separator-line {
   height: 12px;
   border-bottom: 1px solid #383838;
   mix-blend-mode: difference;
   width: 100%;
 }
 
-.communications .date-separator-block {
+.date-separator-block {
   padding: 0 8px;
   white-space: nowrap;
   color: #575757;
@@ -613,4 +613,15 @@ a {
 
 .text-small {
   font-size: 0.86em;
+}
+
+.subheader-content {
+  display: flex;
+}
+
+.horizontal-line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: white;
+  margin-left: 10px;
 }

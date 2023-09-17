@@ -60,7 +60,7 @@ export const useAppStore = defineStore("app", {
       maintenance: {
         enabled: false
       }
-    },
+    } as CoreState,
     weather: {
       loading: true,
       data: {

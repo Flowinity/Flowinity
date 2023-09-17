@@ -38,6 +38,7 @@ import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { Friend } from "@app/models/friend.model"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { UserStatus } from "@app/classes/graphql/user/status"
+import { FriendsInput } from "@app/classes/graphql/friends/getFriends"
 
 @Resolver(Friend)
 @Service()
@@ -47,11 +48,15 @@ export class FriendResolver {
     userOptional: true
   })
   @Query(() => [Friend])
-  async friends(@Ctx() ctx: Context) {
+  async friends(
+    @Ctx() ctx: Context,
+    @Arg("input", { nullable: true }) input?: FriendsInput
+  ) {
     if (!ctx.user) return []
     return await Friend.findAll({
       where: {
-        userId: ctx.user!!.id
+        userId: ctx.user!!.id,
+        status: input?.status ? input.status.toLowerCase() : "accepted"
       }
     })
   }
