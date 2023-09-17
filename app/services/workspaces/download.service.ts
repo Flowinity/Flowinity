@@ -6,7 +6,6 @@ import edjsHTML from "editorjs-parser"
 import { OutputData } from "@editorjs/editorjs"
 //@ts-ignore
 import HTMLtoDOCX from "html-to-docx"
-import { Blocks } from "@editorjs/editorjs/types/api"
 
 @Service()
 export class WorkspacesDownloadService {

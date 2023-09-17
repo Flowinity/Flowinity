@@ -512,7 +512,6 @@ a {
   text-align: left;
 }
 
-
 // Align v-icon with text
 //.v-icon:not(.raw-icon) {
 //  margin-top: 2px;
@@ -599,7 +598,9 @@ a {
 }
 
 // Why do you need to break everything, Vuetify?
-.v-switch--inset:not(.v-input--disabled) .v-selection-control--dirty .v-switch__thumb {
+.v-switch--inset:not(.v-input--disabled)
+  .v-selection-control--dirty
+  .v-switch__thumb {
   background-color: rgb(var(--v-theme-primary));
 }
 
@@ -608,7 +609,7 @@ a {
 }
 
 .communications .read-receipt-avatars .read-receipt-avatar {
-    margin-left: -10px !important;
+  margin-left: -10px !important;
 }
 
 .text-small {

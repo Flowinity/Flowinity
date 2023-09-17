@@ -1,12 +1,8 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint"
-  ],
-  "ignorePatterns": [
-    "projects/**/*"
-  ],
+  "plugins": ["@typescript-eslint"],
+  "ignorePatterns": ["projects/**/*"],
   "rules": {
     "jsdoc/check-indentation": "off"
   },

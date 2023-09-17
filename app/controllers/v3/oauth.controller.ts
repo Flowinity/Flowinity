@@ -5,16 +5,11 @@ import {
   HeaderParam,
   JsonController,
   Param,
-  Post,
-  Put,
-  Req
+  Post
 } from "routing-controllers"
 import { Service } from "typedi"
-import { SlideshowService } from "@app/services/slideshow.service"
 import { Auth } from "@app/lib/auth"
 import { User } from "@app/models/user.model"
-import { Slideshow } from "@app/models/slideshow.model"
-import cryptoRandomString from "crypto-random-string"
 import Errors from "@app/lib/errors"
 import { OauthService } from "@app/services/oauth.service"
 import { OauthSave } from "@app/models/oauthSave.model"

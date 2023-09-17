@@ -1,9 +1,7 @@
 import { Server, Socket } from "socket.io"
 import djs from "dayjs"
-import { RedisClientType } from "redis"
 import { Sequelize } from "sequelize-typescript"
 import { Cache } from "@envelop/response-cache"
-import { PubSub } from "graphql-yoga"
 import { PubSubEngine } from "type-graphql"
 
 // @ts-ignore

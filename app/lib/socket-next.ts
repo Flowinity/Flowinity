@@ -1,11 +1,8 @@
-import { Container } from "typedi"
 import { createAdapter } from "@socket.io/redis-adapter"
 
 // Import Libs
-import auth from "@app/lib/authSocket"
 
 import { Server } from "socket.io"
-import { SocketAuth } from "@app/types/socket"
 
 export default async function createSocket(
   app: any,

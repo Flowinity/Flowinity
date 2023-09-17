@@ -7,7 +7,6 @@ import utils from "@app/lib/utils"
 import speakeasy from "@levminer/speakeasy"
 import { CacheService } from "@app/services/cache.service"
 import { Login } from "@app/types/auth"
-import { Plan } from "@app/models/plan.model"
 import { Session } from "@app/models/session.model"
 import { GraphQLError } from "graphql/error"
 

@@ -5,7 +5,7 @@ import {
   Model,
   Table
 } from "sequelize-typescript"
-import { Field, Float, ObjectType } from "type-graphql"
+import { Field, ObjectType } from "type-graphql"
 
 @ObjectType({
   description: "Old Colubrina users"

@@ -4,7 +4,7 @@
     <div :class="{ 'mx-5 mobile': $vuetify.display.mobile }" class="hero-body">
       <div class="title">
         Welcome to
-        <span class="text-gradient">{{$app.site.name || "TPU"}}.</span>
+        <span class="text-gradient">{{ $app.site.name || "TPU" }}.</span>
       </div>
       <div class="subtitle">
         The
@@ -15,7 +15,7 @@
       <div class="mt-4">
         <v-text-field
           v-model="email"
-          class="sign-up-button "
+          class="sign-up-button"
           color="white"
           label="Email"
           outlined
@@ -43,7 +43,18 @@
             </v-btn>
           </template>
         </v-text-field>
-        <p class="mb-n2" v-if="!$app.site.officialInstance">This is a <a rel="noopener" class="text-gradient" target="_blank" href="https://github.com/Troplo/PrivateUploader">TPU</a> instance.</p>
+        <p class="mb-n2" v-if="!$app.site.officialInstance">
+          This is a
+          <a
+            rel="noopener"
+            class="text-gradient"
+            target="_blank"
+            href="https://github.com/Troplo/PrivateUploader"
+          >
+            TPU
+          </a>
+          instance.
+        </p>
       </div>
       <!-- learn more down arrow positioned at the bottom of the hero -->
       <div class="learn-more">
@@ -205,8 +216,10 @@
       title="Report an Upload"
     >
       <p>
-        Is there a file hosted on {{ $app.site.name }} that you believe violates our
-        <router-link to="/policies/content">Content Policy?</router-link> Please report it here.
+        Is there a file hosted on {{ $app.site.name }} that you believe violates
+        our
+        <router-link to="/policies/content">Content Policy?</router-link>
+        Please report it here.
       </p>
       <template v-slot:left>
         <div class="mr-3">

@@ -1,9 +1,8 @@
-import { AuthChecker, ResolverData } from "type-graphql"
+import { AuthChecker, Authorized, ResolverData } from "type-graphql"
 import { Context } from "@app/types/graphql/context"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { checkScope, Scope } from "@app/lib/auth"
 import { GraphQLError } from "graphql/error"
-import { Authorized } from "type-graphql"
 import { Container } from "typedi"
 import { UserResolver } from "@app/controllers/graphql/user.resolver"
 

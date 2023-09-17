@@ -1,26 +1,6 @@
-import {
-  Arg,
-  Authorized,
-  Ctx,
-  FieldResolver,
-  Int,
-  Mutation,
-  Query,
-  Resolver
-} from "type-graphql"
-import { UserUtilsService } from "@app/services/userUtils.service"
+import { Arg, Authorized, Ctx, Mutation, Resolver } from "type-graphql"
 import { User } from "@app/models/user.model"
 import { Service } from "typedi"
-import { Session } from "@app/models/session.model"
-import { Op } from "sequelize"
-import { Experiment } from "@app/models/experiment.model"
-import { Subscription } from "@app/models/subscription.model"
-import { Domain } from "@app/models/domain.model"
-import { Plan } from "@app/models/plan.model"
-import { Theme } from "@app/models/theme.model"
-import { Integration } from "@app/models/integration.model"
-import { Badge } from "@app/models/badge.model"
-import { Includeable } from "sequelize"
 import { Context } from "@app/types/graphql/context"
 import {
   LoginInput,

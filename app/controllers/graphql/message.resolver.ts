@@ -16,7 +16,6 @@ import { Context } from "@app/types/graphql/context"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import {
   InfiniteMessagesInput,
-  MessagesInput,
   PagedMessagesInput,
   ScrollPosition
 } from "@app/classes/graphql/chat/message"
@@ -25,7 +24,6 @@ import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { Chat } from "@app/models/chat.model"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
-import { Upload } from "@app/models/upload.model"
 import paginate from "jw-paginate"
 
 export const PaginatedMessagesResponse = PagerResponse(Message)

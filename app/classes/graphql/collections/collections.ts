@@ -1,4 +1,3 @@
-import { Collection } from "@app/models/collection.model"
 import { Field, InputType, ObjectType, registerEnumType } from "type-graphql"
 import { IsNumber, Max, Min } from "class-validator"
 

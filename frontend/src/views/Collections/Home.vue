@@ -35,7 +35,6 @@
 import { defineComponent } from "vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
-import { Collection } from "@/models/collection";
 import CreateCollectionDialog from "@/components/Collections/Dialogs/Create.vue";
 import { CollectionFilter } from "@/gql/graphql";
 

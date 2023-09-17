@@ -15,14 +15,13 @@ import { useToast } from "vue-toastification";
 import { ChatsQuery } from "@/graphql/chats/chats.graphql";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import {
+  Chat,
   InfiniteMessagesInput,
   Message,
   MessageType,
   PagedMessagesInput,
-  Pager,
   PartialUserFriend,
   ScrollPosition,
-  Chat,
   UpdateChatInput
 } from "@/gql/graphql";
 import {

@@ -1,5 +1,4 @@
-import { Field, Float, GraphQLISODateTime, ObjectType } from "type-graphql"
-import { DateTimeResolver } from "graphql-scalars"
+import { Field, Float, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { Badge } from "@app/models/badge.model"
 import { Friend } from "@app/models/friend.model"

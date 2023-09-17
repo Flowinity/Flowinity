@@ -1,4 +1,3 @@
-import { Socket } from "socket.io"
 import cryptoRandomString from "crypto-random-string"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { Container } from "typedi"

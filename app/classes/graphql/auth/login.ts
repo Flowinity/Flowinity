@@ -1,6 +1,5 @@
 import { Field, InputType, ObjectType } from "type-graphql"
-import { MaxLength, MinLength, IsEmail } from "class-validator"
-import { User } from "@app/models/user.model"
+import { IsEmail, MaxLength, MinLength } from "class-validator"
 
 @ObjectType()
 export class LoginUser {

@@ -3,7 +3,6 @@ import { UserResolver } from "@app/controllers/graphql/user.resolver"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { Context } from "@app/types/graphql/context"
 import { createContext } from "dataloader-sequelize"
-import { YogaInitialContext } from "graphql-yoga"
 
 export default async function generateContext(ctx: any): Promise<Context> {
   const userResolver = Container.get(UserResolver)

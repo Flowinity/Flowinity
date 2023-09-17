@@ -3,7 +3,6 @@ import { User } from "@app/models/user.model"
 import { NoteDataV2 } from "@app/services/note.service"
 import { Note } from "@app/models/note.model"
 import { Field, Float, ObjectType } from "type-graphql"
-import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { WorkspaceNote } from "@app/classes/graphql/workspaces/note"
 
 @ObjectType()

@@ -1,4 +1,4 @@
-import { InputType, ObjectType, Field } from "type-graphql"
+import { Field, InputType, ObjectType } from "type-graphql"
 import { GraphQLJSON } from "graphql-scalars"
 
 @ObjectType()

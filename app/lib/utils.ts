@@ -18,7 +18,6 @@ import { Domain } from "@app/models/domain.model"
 
 // Import Services
 import { CacheService } from "@app/services/cache.service"
-import path from "path"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 

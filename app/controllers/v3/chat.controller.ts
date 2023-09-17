@@ -2,7 +2,6 @@ import {
   Body,
   Delete,
   Get,
-  Header,
   HeaderParam,
   JsonController,
   Param,

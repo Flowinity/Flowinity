@@ -1,4 +1,4 @@
-import { Socket, Request } from "socket.io"
+import { Request } from "socket.io"
 import { User } from "@app/models/user.model"
 import { SocketWithUser } from "@app/types/global"
 

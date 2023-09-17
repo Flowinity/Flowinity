@@ -1679,7 +1679,8 @@
   z-index: 20;
 }
 
-.v-theme--amoled .ce-popover, .v-theme--dark .ce-popover {
+.v-theme--amoled .ce-popover,
+.v-theme--dark .ce-popover {
   --color-text-primary: white;
   --color-background-item-hover: rgba(255, 255, 255, 0.08);
 }

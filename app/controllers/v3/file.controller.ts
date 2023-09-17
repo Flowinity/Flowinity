@@ -73,8 +73,11 @@ export class FileControllerV3 {
       return res
     } else {
       //https://github.com/Microsoft/TypeScript/issues/26048
-      //@ts-ignore
-      await promisify(res.download.bind(res))(global.storageRoot + "/" + upload.attachment, upload.originalFilename)
+      await promisify(res.download.bind(res))(
+        global.storageRoot + "/" + upload.attachment,
+        //@ts-ignore
+        upload.originalFilename
+      )
       return res
     }
   }

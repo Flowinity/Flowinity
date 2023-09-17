@@ -13,18 +13,13 @@ import { Context } from "@app/types/graphql/context"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { GraphQLError } from "graphql/error"
 import { NoteService } from "@app/services/note.service"
-import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
 import { Note } from "@app/models/note.model"
 import { NoteVersion } from "@app/models/noteVersion.model"
 import {
   CreateNoteInput,
-  CreateWorkspaceFolderInput,
-  DeleteWorkspaceItemInput,
   NoteInput,
-  SaveNoteInput,
-  WorkspaceItemType
+  SaveNoteInput
 } from "@app/classes/graphql/workspaces/noteInput"
-import { Workspace } from "@app/models/workspace.model"
 
 @Resolver(Note)
 @Service()

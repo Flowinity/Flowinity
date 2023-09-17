@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from "type-graphql"
+import { Field, InputType } from "type-graphql"
 import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
 import { IsEmail, IsHexColor, MaxLength, MinLength } from "class-validator"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"

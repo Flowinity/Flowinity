@@ -1,14 +1,7 @@
-import {
-  ArgsType,
-  Field,
-  InputType,
-  ObjectType,
-  registerEnumType
-} from "type-graphql"
+import { Field, InputType, ObjectType, registerEnumType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
-import { IsNumber, Max, Min, ValidateNested } from "class-validator"
+import { IsNumber, Max, Min } from "class-validator"
 import { Upload } from "@app/models/upload.model"
-import { Type } from "class-transformer"
 
 export enum MessageType {
   MESSAGE = "message",

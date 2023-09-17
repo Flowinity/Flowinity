@@ -15,7 +15,6 @@ import {
   WorkspaceNote,
   WorkspaceNoteMetadata
 } from "@app/classes/graphql/workspaces/note"
-import { PermissionsMetadata } from "@app/classes/graphql/collections/collections"
 
 export type VersionObject = {
   createdAt: Date

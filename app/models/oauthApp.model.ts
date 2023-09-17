@@ -9,7 +9,6 @@ import {
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Session } from "@app/models/session.model"
-import { Col } from "sequelize/types/utils"
 import { OauthUser } from "@app/models/oauthUser.model"
 
 @DefaultScope(() => ({

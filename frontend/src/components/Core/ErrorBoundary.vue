@@ -37,7 +37,7 @@ onErrorCaptured((error: Error, vm, info: string) => {
 </script>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "VErrorBoundary"

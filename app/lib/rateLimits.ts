@@ -5,8 +5,7 @@ import RedisStore from "rate-limit-redis"
 import redis from "../redis"
 
 // Import Types
-import { RequestAuth } from "@app/types/express"
-import { authSystem, simpleAuth } from "@app/lib/auth"
+import { simpleAuth } from "@app/lib/auth"
 
 const message: { errors: { name: string; message: string; status: number }[] } =
   {

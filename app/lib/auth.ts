@@ -13,7 +13,6 @@ import { Integration } from "@app/models/integration.model"
 import { createParamDecorator } from "routing-controllers"
 import { RequestAuthSystem } from "@app/types/express"
 import { Badge } from "@app/models/badge.model"
-import { BadRequestError } from "routing-controllers"
 import { AccessedFrom } from "@app/classes/graphql/user/session"
 
 let asn: Reader<AsnResponse>

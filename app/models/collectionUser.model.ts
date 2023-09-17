@@ -10,7 +10,7 @@ import {
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
-import { Field, GraphQLISODateTime, ObjectType } from "type-graphql"
+import { Field, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { DateType } from "@app/classes/graphql/serializers/date"
 

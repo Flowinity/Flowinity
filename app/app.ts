@@ -15,7 +15,6 @@ import { Container, Service } from "typedi"
 import sequelize, { Op } from "sequelize"
 import path from "path"
 import fs from "fs"
-import { WebSocketServer } from "ws"
 
 // Import Libs
 import Errors from "@app/lib/errors"
@@ -55,13 +54,7 @@ import { OidcControllerV3 } from "@app/controllers/v3/oidc.controller"
 
 // GraphQL
 import { buildSchema } from "type-graphql"
-import {
-  createPubSub,
-  createYoga,
-  MaskError,
-  maskError,
-  YogaServerInstance
-} from "graphql-yoga"
+import { createYoga, maskError, YogaServerInstance } from "graphql-yoga"
 import {
   BadgeResolver,
   PartialUserFriendResolver,
@@ -70,7 +63,6 @@ import {
 } from "@app/controllers/graphql/user.resolver"
 import { useHive } from "@graphql-hive/client"
 import { execSync } from "child_process"
-import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { Context } from "@app/types/graphql/context"
 import { authChecker } from "@app/lib/graphql/AuthChecker"
 import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
@@ -90,13 +82,11 @@ import { ChatAssociationResolver } from "@app/controllers/graphql/chatAssociatio
 import { WorkspaceResolver } from "@app/controllers/graphql/workspace.resolver"
 import { WorkspaceFolderResolver } from "@app/controllers/graphql/workspaceFolder.resolver"
 import { NoteResolver } from "@app/controllers/graphql/note.resolver"
-import { useResponseCache } from "@graphql-yoga/plugin-response-cache"
 import { createRedisCache } from "@envelop/response-cache-redis"
 import { Cache } from "@envelop/response-cache"
 import redis, { ioRedis } from "@app/redis"
 import { FriendResolver } from "@app/controllers/graphql/friend.resolver"
 import { MessageResolver } from "@app/controllers/graphql/message.resolver"
-import { useServer } from "graphql-ws/lib/use/ws"
 import { GraphQLSchema } from "graphql/type"
 import generateContext from "@app/classes/graphql/middleware/generateContext"
 import { RedisPubSub } from "graphql-redis-subscriptions"

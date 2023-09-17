@@ -149,14 +149,11 @@ import QuickSwitcher from "@/components/Core/Dialogs/QuickSwitcher.vue";
 import NicknameDialog from "@/components/Core/Dialogs/Nickname.vue";
 import ThemeEngineWrapper from "@/components/Core/ThemeEngineWrapper.vue";
 import RailBar from "@/layouts/default/RailBar.vue";
-import ExperimentsManagerDialog from "@/components/Dev/Dialogs/Experiments.vue";
 import Gold from "@/components/Dashboard/Dialogs/Gold.vue";
 import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
-import SocketProfiler from "@/components/Dev/Dialogs/SocketProfiler.vue";
-import ActionDialog from "@/components/Dev/Dialogs/ActionDialog.vue";
 </script>
 
 <script lang="ts">

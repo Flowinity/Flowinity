@@ -30,8 +30,6 @@ import {
 } from "@app/classes/graphql/user/partialUser"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
-import { Ctx } from "type-graphql"
-import { Context } from "@app/types/graphql/context"
 import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 

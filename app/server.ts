@@ -7,14 +7,12 @@ import isoWeek from "dayjs/plugin/isoWeek"
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
 import cluster from "cluster"
 import os from "os"
-import Provider from "oidc-provider"
 
 // Import Miscellaneous
 import { Application } from "@app/app"
 import redis from "@app/redis"
 
 // Import Libs
-import socket from "@app/lib/socket"
 import ipPrimary from "@app/lib/whitelist/primary.json"
 
 // Import Classes
@@ -30,14 +28,6 @@ import { DiscordService } from "@app/services/providers/discord.service"
 
 // Import Models
 import { Domain } from "@app/models/domain.model"
-import { OauthApp } from "@app/models/oauthApp.model"
-import { Context } from "mocha"
-import { Plan } from "@app/models/plan.model"
-import { User } from "@app/models/user.model"
-import { execSync } from "child_process"
-import { WebSocketServer } from "ws"
-import { useServer } from "graphql-ws/lib/use/ws"
-import { createPubSub } from "graphql-yoga"
 import { SocketControllers } from "socket-controllers"
 import { ChatSocketController } from "@app/controllers/socket/chat.socket"
 import createSocket from "@app/lib/socket-next"

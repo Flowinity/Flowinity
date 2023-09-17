@@ -21,7 +21,6 @@ import { ReportValidate } from "@app/validators/report"
 import { Report } from "@app/models/report.model"
 import { WeatherResponse } from "@app/interfaces/weather"
 import { State, Stats } from "@app/types/v4/core"
-import { CoreState } from "@app/classes/graphql/core/core"
 import { ExperimentType } from "@app/classes/graphql/core/experiments"
 
 let city: Reader<CityResponse> | undefined

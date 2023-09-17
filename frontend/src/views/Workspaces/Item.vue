@@ -87,10 +87,7 @@ import { defineComponent } from "vue";
 //@ts-ignore
 import SimpleImage from "@troplo/tpu-simple-image";
 import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue";
-import { NoteQuery } from "@/graphql/workspaces/note.graphql";
-import { isNumeric } from "@/plugins/isNumeric";
-import { Note, SaveNoteInput, WorkspaceNote } from "@/gql/graphql";
-import { SaveNoteMutation } from "@/graphql/workspaces/saveNote.graphql";
+import { WorkspaceNote } from "@/gql/graphql";
 
 export default defineComponent({
   name: "WorkspaceItem",

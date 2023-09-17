@@ -14,8 +14,10 @@ import { createVuetify } from "vuetify";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { VInfiniteScroll } from "vuetify/lib/labs/components.mjs";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
-import { VVirtualScroll } from "vuetify/lib/components/index.mjs";
-import { VBottomNavigation } from "vuetify/lib/components/index.mjs";
+import {
+  VBottomNavigation,
+  VVirtualScroll
+} from "vuetify/lib/components/index.mjs";
 
 export class DefaultThemes {
   themes: any;

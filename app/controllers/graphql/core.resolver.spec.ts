@@ -1,10 +1,9 @@
-import { expect, test, afterAll, beforeAll } from "@jest/globals"
+import { afterAll, beforeAll, expect, test } from "@jest/globals"
 import "@app/lib/init-tests"
 import { Container } from "typedi"
-import { RequestAuth } from "@app/types/express"
 import { CoreResolver } from "@app/controllers/graphql/core.resolver"
-import { Ctx } from "type-graphql"
 import { Context } from "@app/types/graphql/context"
+
 const coreResolver = Container.get(CoreResolver)
 
 test("Get core state", async () => {

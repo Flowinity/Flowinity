@@ -5,13 +5,10 @@ import {
   ApolloLink,
   from,
   HttpLink,
-  InMemoryCache,
-  NextLink,
-  Operation
+  InMemoryCache
 } from "@apollo/client/core";
 import { onError } from "@apollo/client/link/error";
 import { useToast } from "vue-toastification";
-import { setContext } from "@apollo/client/link/context";
 import { useUserStore } from "@/store/user";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";

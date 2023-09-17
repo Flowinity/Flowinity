@@ -1,11 +1,11 @@
-import { expect, test, afterAll, beforeAll } from "@jest/globals"
+import { afterAll, beforeAll, expect, test } from "@jest/globals"
 import "@app/lib/init-tests"
 import { Container } from "typedi"
-import { RequestAuth } from "@app/types/express"
 import { UserResolver } from "@app/controllers/graphql/user.resolver"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { Context } from "@app/types/graphql/context"
 import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
+
 const userResolver = Container.get(UserResolver)
 const authResolver = Container.get(AuthResolver)
 

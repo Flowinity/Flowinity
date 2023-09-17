@@ -3,14 +3,8 @@
     "baseUrl": "./",
     "target": "ES2021",
     "incremental": true,
-    "types": [
-      "node",
-      "webpack-env"
-    ],
-    "typeRoots": [
-      "./app/types",
-      "./node_modules/@types"
-    ],
+    "types": ["node", "webpack-env"],
+    "typeRoots": ["./app/types", "./node_modules/@types"],
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
@@ -31,7 +25,7 @@
       "@app/*": ["./app/*"]
     },
     "strictPropertyInitialization": false,
-    "lib": ["esnext.asynciterable", "es2018", "dom", "dom.iterable"],
+    "lib": ["esnext.asynciterable", "es2018", "dom", "dom.iterable"]
   },
   "ts-node": {
     "files": true

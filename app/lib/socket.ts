@@ -6,15 +6,12 @@ import auth from "@app/lib/authSocket"
 
 // Import Services
 import { UserUtilsService } from "@app/services/userUtils.service"
-import { ChatService } from "@app/services/chat.service"
 
 // Import Models
 import { User } from "@app/models/user.model"
-import { Pulse } from "@app/models/pulse.model"
 
 // Import Types
 import { SocketAuth } from "@app/types/socket"
-import cryptoRandomString from "crypto-random-string"
 import setupV4Socket from "@app/lib/socket-v3"
 import setupV3Socket from "@app/lib/socket-v3"
 

@@ -1,13 +1,13 @@
 import dayjs from "dayjs"
-
-process.env.NODE_ENV = "test"
-process.env.CONFIG = JSON.stringify(require("../config/tpu.json"))
 import db from "@app/db"
 import redis from "@app/redis"
 import { authMock } from "@app/lib/auth-mock"
 import isoWeek from "dayjs/plugin/isoWeek"
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
 import io from "../lib/socket-mock"
+
+process.env.NODE_ENV = "test"
+process.env.CONFIG = JSON.stringify(require("../config/tpu.json"))
 global.redis = redis
 global.db = db
 global.config = JSON.parse(process.env.CONFIG)

@@ -1,14 +1,9 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import { useChatStore } from "@/store/chat";
-import { useWorkspacesStore } from "@/store/workspaces";
-import { useCollectionsStore } from "@/store/collections";
-import { useExperimentsStore } from "@/store/experiments";
 import { useFriendsStore } from "@/store/friends";
 import { useAppStore } from "@/store/app";
 import { useToast } from "vue-toastification";
-import { useMailStore } from "@/store/mail";
 import vuetify from "@/plugins/vuetify";
 import i18n from "@/plugins/i18n";
 import functions from "@/plugins/functions";
@@ -16,11 +11,8 @@ import { GetUserQuery } from "@/graphql/user/user.graphql";
 import { UpdateUserMutation } from "@/graphql/user/update.graphql";
 import {
   PartialUserFriend,
-  ProfileLayout,
-  ThemeEngine,
   UpdateUserInput,
   User,
-  UserStatus,
   UserStoredStatus
 } from "@/gql/graphql";
 import { ProfileQuery } from "@/graphql/user/profile.graphql";

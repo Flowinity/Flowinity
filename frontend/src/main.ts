@@ -21,8 +21,6 @@ import router from "@/router";
 import i18n from "@/plugins/i18n";
 //@ts-ignore
 import VueMatomo from "vue-matomo";
-import { useAdminStore } from "@/store/admin";
-import { Axios } from "axios";
 
 // Boot functions
 import "./boot/declarations";

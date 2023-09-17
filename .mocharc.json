@@ -1,8 +1,6 @@
 {
   "diff": true,
-  "extension": [
-    "js"
-  ],
+  "extension": ["js"],
   "package": "../package.json",
   "require": [
     "ts-node/register",

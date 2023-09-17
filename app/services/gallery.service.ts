@@ -21,10 +21,7 @@ import {
   GalleryInput,
   Type
 } from "@app/classes/graphql/gallery/galleryInput"
-import {
-  PagerResponse,
-  PaginatedGalleryResponse
-} from "@app/classes/graphql/gallery/galleryResponse"
+import { PaginatedGalleryResponse } from "@app/classes/graphql/gallery/galleryResponse"
 
 @Service()
 export class GalleryService {

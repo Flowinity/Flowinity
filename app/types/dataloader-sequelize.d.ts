@@ -1,6 +1,6 @@
-declare module "dataloader-sequelize";
+declare module "dataloader-sequelize"
 
-import { Sequelize } from "sequelize";
+import { Sequelize } from "sequelize"
 
-export const EXPECTED_OPTIONS_KEY: string;
-export function createContext(sequelize: Sequelize): any;
+export const EXPECTED_OPTIONS_KEY: string
+export function createContext(sequelize: Sequelize): any

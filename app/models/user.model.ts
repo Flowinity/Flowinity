@@ -26,23 +26,15 @@ import { FriendNickname } from "@app/models/friendNickname"
 import { AlternatePassword as AlternatePasswordType } from "@app/types/auth"
 import { DefaultProfileLayout } from "@app/classes/UserV3ProfileLayout"
 import { Integration } from "@app/models/integration.model"
-import { Col } from "sequelize/types/utils"
-import {
-  Field,
-  Float,
-  GraphQLISODateTime,
-  ObjectType,
-  registerEnumType
-} from "type-graphql"
+import { Field, Float, ObjectType } from "type-graphql"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { AlternatePassword } from "@app/classes/graphql/user/alternatePassword"
 import { Notification } from "@app/models/notification.model"
 import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { Session } from "@app/models/session.model"
-import { Filter } from "@app/classes/graphql/gallery/galleryInput"
 import { UserInsights } from "@app/classes/graphql/user/insights"
-import { CoreStats, Stats } from "@app/classes/graphql/core/core"
+import { Stats } from "@app/classes/graphql/core/core"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 
 @DefaultScope(() => ({
