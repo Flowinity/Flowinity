@@ -1,0 +1,25 @@
+import { registerEnumType } from "type-graphql"
+
+export enum ChatPermissions {
+  SEND_MESSAGES = "SEND_MESSAGES",
+  OVERVIEW = "OVERVIEW",
+  VIEW_INSIGHTS = "VIEW_INSIGHTS",
+  MANAGE_RANKS = "MANAGE_RANKS",
+  VIEW_AUDIT_LOG = "VIEW_AUDIT_LOG",
+  INVITE_USERS = "INVITE_USERS",
+  ADD_USERS = "ADD_USERS",
+  MANAGE_INTEGRATIONS = "MANAGE_INTEGRATIONS",
+  REMOVE_USERS = "REMOVE_USERS",
+  BAN_USERS = "BAN_USERS",
+  EXTERNAL_EMOJI = "EXTERNAL_EMOJI",
+  CREATE_EMOJI = "CREATE_EMOJI",
+  DELETE_MESSAGES = "DELETE_MESSAGES",
+  ADMIN = "ADMIN",
+  SEPARATE = "SEPARATE",
+  PIN_MESSAGES = "PIN_MESSAGES"
+}
+
+registerEnumType(ChatPermissions, {
+  name: "ChatPermissions",
+  description: "List of known chat permissions"
+})

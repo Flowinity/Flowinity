@@ -33,6 +33,12 @@ export type AccessedFrom = {
   userAgent?: Maybe<Scalars['String']['output']>;
 };
 
+export type AddRank = {
+  chatAssociationId: Scalars['Float']['input'];
+  rankId: Scalars['String']['input'];
+  updatingChatAssociationId: Scalars['Float']['input'];
+};
+
 export type AlternatePassword = {
   __typename?: 'AlternatePassword';
   name: Scalars['String']['output'];
@@ -515,6 +521,11 @@ export enum GalleryType {
   Starred = 'STARRED'
 }
 
+export type GenericSuccessObject = {
+  __typename?: 'GenericSuccessObject';
+  success: Scalars['Boolean']['output'];
+};
+
 export type InfiniteMessagesInput = {
   associationId: Scalars['Float']['input'];
   limit?: Scalars['Float']['input'];
@@ -621,6 +632,7 @@ export type Mutation = {
   sendMessage: Message;
   /** Toggle the ShareLink for a Note. */
   toggleNoteShare: Note;
+  toggleUserRank: GenericSuccessObject;
   updateChat: Chat;
   updateUser: Scalars['Boolean']['output'];
   upload: Upload;
@@ -674,6 +686,11 @@ export type MutationSendMessageArgs = {
 
 export type MutationToggleNoteShareArgs = {
   input: Scalars['Int']['input'];
+};
+
+
+export type MutationToggleUserRankArgs = {
+  input: AddRank;
 };
 
 

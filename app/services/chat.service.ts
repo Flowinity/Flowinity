@@ -15,6 +15,9 @@ import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { MessageSubscription } from "@app/classes/graphql/chat/messageSubscription"
 import { ChatPermissionsHandler } from "@app/services/chat/permissions"
+import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
+import { ChatRank } from "@app/models/chatRank.model"
+import { ChatPermission } from "@app/models/chatPermission.model"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -112,6 +115,41 @@ export class ChatService {
       ]
     }
   ]
+
+  async checkPermission(
+    userId: number,
+    associationId: number,
+    permission: ChatPermissions
+  ) {
+    const association = await ChatAssociation.findOne({
+      where: { id: associationId, userId },
+      include: [
+        {
+          model: ChatRank,
+          as: "ranks",
+          include: [
+            {
+              model: ChatPermission,
+              as: "permissions"
+            }
+          ]
+        }
+      ]
+    })
+    if (!association) return false
+    const permissions: string[] = [
+      ...new Set(
+        association.ranks.flatMap((rank) =>
+          rank.permissions.map((permission) => permission.id)
+        )
+      )
+    ]
+    return (
+      permissions.includes(permission) ||
+      permissions.includes("ADMIN") ||
+      association.userId === userId
+    )
+  }
 
   async emitToFCMs(message: Message, chat: Chat, userId: number) {
     if (!config.providers.google) return

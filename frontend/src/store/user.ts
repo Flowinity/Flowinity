@@ -61,7 +61,8 @@ export const useUserStore = defineStore("user", {
             avatar: this.user.avatar,
             moderator: this.user.moderator,
             administrator: this.user.administrator,
-            id: this.user.id
+            id: this.user.id,
+            createdAt: this.user.createdAt
           };
           return acc;
         }

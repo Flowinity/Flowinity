@@ -3,9 +3,9 @@
     {{ $t("chats.settings.users.name") }}
   </overline>
   <v-data-table :items="users" :headers="headers">
-    <template v-slot:item.user.username="{ item: { selectable } }">
+    <template v-slot:item.user.username="{ item: { selectable } }: any">
       <UserAvatar :user="selectable.user"></UserAvatar>
-      {{ selectable.user.username }}
+      {{ selectable.user.username }} ({{ selectable.id }})
       <template v-if="selectable.user.id === $chat.editingChat.userId">
         <span>
           <v-tooltip activator="parent" location="top">
@@ -15,10 +15,11 @@
         </span>
       </template>
     </template>
-    <template v-slot:item.ranks="{ item: { selectable } }">
+    <template v-slot:item.ranks="{ item: { selectable } }: any">
       <AddRole
         :ranks="$chat.editingChat.ranks"
         :association="selectable"
+        :current-association-id="$chat.editingChat.association.id"
       ></AddRole>
       <v-chip
         v-for="rank in selectable.ranks"

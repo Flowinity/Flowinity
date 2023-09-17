@@ -10,6 +10,7 @@ import { useFriendsStore } from "@/store/friends";
 import { useUserStore } from "@/store/user";
 import { useExperimentsStore } from "@/store/experiments";
 import { useToast } from "vue-toastification";
+import { AddRank } from "@/gql/graphql";
 
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();
@@ -276,4 +277,41 @@ export default async function setup(app) {
       }
     }
   );
+  sockets.chat.on("rankRemoved", (data: AddRank) => {
+    const index = chat.chats.findIndex((chat) => {
+      return chat.association.id === data.chatAssociationId;
+    });
+    if (index === -1) return;
+    const userAssociation = chat.chats[index].users.find(
+      (assoc) => assoc.id === data.updatingChatAssociationId
+    );
+    if (!userAssociation) return;
+    const rankIndex = userAssociation.ranksMap.indexOf(data.rankId);
+    if (rankIndex === -1) return;
+    userAssociation.ranksMap.splice(rankIndex, 1);
+  });
+  sockets.chat.on("rankAdded", (data: AddRank) => {
+    const index = chat.chats.findIndex((chat) => {
+      return chat.association.id === data.chatAssociationId;
+    });
+    if (index === -1) return;
+    const userAssociation = chat.chats[index].users.find(
+      (assoc) => assoc.id === data.updatingChatAssociationId
+    );
+    if (!userAssociation) return;
+    const rankIndex = userAssociation.ranksMap.indexOf(data.rankId);
+    if (rankIndex !== -1) return;
+    userAssociation.ranksMap.push(data.rankId);
+
+    const chatRanks = chat.chats[index].ranks;
+    userAssociation.ranksMap = userAssociation.ranksMap.sort((a, b) => {
+      const rankA = chatRanks.find((rank) => rank.id === a);
+      const rankB = chatRanks.find((rank) => rank.id === b);
+      if (rankA && rankB) {
+        return rankA.index - rankB.index;
+      }
+
+      return 0;
+    });
+  });
 }

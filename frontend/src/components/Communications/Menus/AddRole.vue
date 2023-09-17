@@ -29,6 +29,8 @@
           :active="association.ranksMap.includes(rank.id)"
           :value="rank.id"
           :key="rank.id"
+          :disabled="rank.managed"
+          @click="toggle(rank.id)"
         >
           <template v-slot:prepend>
             <v-avatar
@@ -57,6 +59,7 @@ import { Friend } from "@/models/friend";
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { ChatAssociation, ChatRank } from "@/gql/graphql";
+import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
 
 export default defineComponent({
   name: "AddRole",
@@ -69,6 +72,10 @@ export default defineComponent({
     association: {
       type: Object as () => ChatAssociation,
       required: true
+    },
+    currentAssociationId: {
+      type: Number,
+      required: true
     }
   },
   emits: ["add"],
@@ -80,17 +87,17 @@ export default defineComponent({
     };
   },
   methods: {
-    add(id: number) {
-      if (this.selected.includes(id)) {
-        this.selected = this.selected.filter((i) => i !== id);
-      } else {
-        this.selected.push(id);
-      }
-    },
-    async createChat() {
-      const data = await this.$chat.createChat(this.selected);
-      this.$router.push(`/communications/${data.association.id}`);
-      this.$emit("update:modelValue", false);
+    async toggle(rankId: string) {
+      await this.$apollo.mutate({
+        mutation: ToggleUserRankMutation,
+        variables: {
+          input: {
+            chatAssociationId: this.currentAssociationId,
+            updatingChatAssociationId: this.association.id,
+            rankId
+          }
+        }
+      });
     }
   },
   computed: {

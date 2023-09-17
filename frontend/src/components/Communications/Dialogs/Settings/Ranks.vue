@@ -21,7 +21,7 @@
     </v-tabs>
     <v-window v-model="selected" class="flex-grow-1">
       <v-window-item v-for="rank in $chat.editingChat.ranks" :value="rank.id">
-        Coming Soon!
+        {{ rank.id }}
       </v-window-item>
     </v-window>
   </div>
