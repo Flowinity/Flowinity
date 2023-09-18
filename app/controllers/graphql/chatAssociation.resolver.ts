@@ -13,10 +13,8 @@ import { Context } from "@app/types/graphql/context"
 import { GraphQLError } from "graphql/error"
 import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
 import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
-import { Namespace } from "socket.io"
-import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
-import { ChatRank } from "@app/models/chatRank.model"
 import { Success } from "@app/classes/graphql/generic/success"
+import { AddChatUser, ToggleUser } from "@app/classes/graphql/chat/addUser"
 
 @Resolver(ChatAssociation)
 @Service()
@@ -93,22 +91,52 @@ export class ChatAssociationResolver {
     scopes: ["chats.edit"]
   })
   @Mutation(() => Success)
+  async addChatUsers(@Ctx() ctx: Context, @Arg("input") input: AddChatUser) {
+    await this.chatService.checkPermissions(
+      ctx.user!!.id,
+      input.chatAssociationId,
+      ChatPermissions.ADD_USERS
+    )
+
+    const chat = await this.chatService.getChatFromAssociation(
+      input.chatAssociationId,
+      ctx.user!!.id
+    )
+
+    if (input.action === ToggleUser.ADD) {
+      await this.chatService.addUsersToChat(
+        input.chatAssociationId,
+        input.users,
+        ctx.user!!.id
+      )
+      return { success: true }
+    } else if (input.action === ToggleUser.REMOVE) {
+      await this.chatService.removeUserFromChat(
+        input.chatAssociationId,
+        input.users,
+        ctx.user!!.id
+      )
+      return { success: true }
+    } else {
+      return { success: false }
+    }
+  }
+
+  @Authorization({
+    scopes: ["chats.edit"]
+  })
+  @Mutation(() => Success)
   async toggleUserRank(@Ctx() ctx: Context, @Arg("input") input: AddRank) {
-    const chat = this.chatService.getChatFromAssociation(
+    const chat = await this.chatService.getChatFromAssociation(
       input.chatAssociationId,
       ctx.user!!.id
     )
     if (!chat) throw new GraphQLError("Chat not found.")
-    if (
-      !(await this.chatService.checkPermission(
-        ctx.user!!.id,
-        input.chatAssociationId,
-        ChatPermissions.MANAGE_RANKS
-      ))
+    await this.chatService.checkPermissions(
+      ctx.user!!.id,
+      input.chatAssociationId,
+      ChatPermissions.MANAGE_RANKS
     )
-      throw new GraphQLError(
-        "You do not have the necessary permissions granted to do this."
-      )
 
     const rank = await ChatRankAssociation.findOne({
       where: {
@@ -125,6 +153,12 @@ export class ChatAssociationResolver {
         "rankRemoved",
         input
       )
+      const id = chat.users.find(
+        (assoc) => assoc.id === input.updatingChatAssociationId
+      )?.userId
+      if (id) {
+        this.chatService.syncPermissions(id, input.updatingChatAssociationId)
+      }
       return {
         success: true
       }
@@ -139,6 +173,12 @@ export class ChatAssociationResolver {
         "rankAdded",
         input
       )
+      const id = chat.users.find(
+        (assoc) => assoc.id === input.updatingChatAssociationId
+      )?.userId
+      if (id) {
+        this.chatService.syncPermissions(id, input.updatingChatAssociationId)
+      }
       return {
         success: true
       }

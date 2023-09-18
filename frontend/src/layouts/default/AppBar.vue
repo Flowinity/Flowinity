@@ -27,7 +27,7 @@
       <UserAvatar
         :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
         :status="true"
-        :user="$chat.selectedChat?.recipient"
+        :user="$user.users[$chat.selectedChat?.recipient?.id]"
         class="ml-4"
         size="32"
         :dot-status="true"
@@ -220,9 +220,7 @@
         class="rounded-0"
         density="compact"
       >
-        <small class="unselectable">
-          You are using an early access version of TPU.
-        </small>
+        <small class="unselectable">it's live</small>
         <template v-slot:append>
           <v-btn size="x-small" href="https://privateuploader.com">
             Go to Stable

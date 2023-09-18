@@ -71,7 +71,7 @@
         <v-spacer></v-spacer>
       </v-card-actions>
     </div>
-    <div class="position-relative" v-if="!$chat.search.value">
+    <div v-if="!$chat.search.value" class="mt-n2">
       <v-list class="mb-n4" v-for="group in ranks" :key="group.name" nav>
         <template v-if="group.users.length">
           <overline position="start">
@@ -85,25 +85,19 @@
               $chat.dialogs.user.value = true;
             "
             @contextmenu.prevent="context($event, association)"
+            :style="{
+              color: $chat.getRankColor(
+                association.ranksMap,
+                $chat.selectedChat.ranks
+              )
+            }"
+            :class="{
+              'black-and-white':
+                $user.users[association.userId]?.status === UserStatus.Offline
+            }"
           >
             <template v-slot:title>
               {{ $friends.getName(association.user) || "Deleted User" }}
-              <span>
-                <v-icon v-if="association.rank === 'owner'" color="gold">
-                  mdi-crown
-                </v-icon>
-                <v-tooltip activator="parent" location="top">
-                  {{ $t("chats.roles.owner") }}
-                </v-tooltip>
-              </span>
-              <span>
-                <v-icon v-if="association.rank === 'admin'" color="grey">
-                  mdi-crown
-                </v-icon>
-                <v-tooltip activator="parent" location="top">
-                  {{ $t("chats.roles.admin") }}
-                </v-tooltip>
-              </span>
             </template>
             <template v-slot:subtitle v-if="association.legacyUserId">
               {{ $t("chats.roles.legacyUser") }}
@@ -222,6 +216,9 @@ export default defineComponent({
     };
   },
   computed: {
+    UserStatus() {
+      return UserStatus;
+    },
     height() {
       if (this.$vuetify.display.mobile) return "calc(100vh - 300px)";
       return "calc(100vh - 64px)";
@@ -255,7 +252,8 @@ export default defineComponent({
             .filter((user) => {
               return (
                 this.$user.users[user.userId]?.status !== UserStatus.Offline &&
-                !user.ranksMap.length
+                !user.ranksMap.length &&
+                !user.legacyUserId
               );
             })
             .map((user) => {
@@ -278,6 +276,19 @@ export default defineComponent({
               return {
                 ...user,
                 user: this.$user.users[user.userId]
+              };
+            })
+        },
+        {
+          name: "Coluforgor Users",
+          users: this.$chat.selectedChat.users
+            .filter((user) => {
+              return user.legacyUserId;
+            })
+            .map((user) => {
+              return {
+                ...user,
+                user: this.$user.user
               };
             })
         }

@@ -48,12 +48,18 @@ export class ChatSocketController {
   @EmitOnSuccess("typing")
   async typing(
     @ConnectedSocket() socket: SocketAuth,
-    @MessageBody() data: { associationId: number }
+    @MessageBody() data: number
   ) {
+    console.log("Typing????")
     const typingRateLimit = await redis.get(
       `user:${socket.request.user.id}:typing`
     )
-
+    console.log(
+      typingRateLimit &&
+        dayjs().isBefore(dayjs(typingRateLimit).add(2, "second")),
+      typingRateLimit,
+      dayjs().isBefore(dayjs(typingRateLimit).add(2, "second"))
+    )
     if (
       typingRateLimit &&
       dayjs().isBefore(dayjs(typingRateLimit).add(2, "second"))
@@ -62,7 +68,7 @@ export class ChatSocketController {
 
     const chatService: ChatService = Container.get(ChatService)
 
-    await chatService.typing(data.associationId, socket.request.user.id)
+    await chatService.typing(data, socket.request.user.id)
 
     await redis.set(
       `user:${socket.request.user.id}:typing`,

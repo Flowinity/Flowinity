@@ -18,13 +18,19 @@
       </v-card-subtitle>
       <UserAvatar
         :chat="$chat.editingChat"
-        :edit="true"
+        :edit="$chat.hasPermission('OVERVIEW', $chat.editingChat)"
         size="128"
       ></UserAvatar>
       <v-card-subtitle class="mt-2">
         {{ $t("chats.settings.home.clickToChange") }}
       </v-card-subtitle>
-      <v-btn variant="outlined" class="mt-2">Remove Avatar</v-btn>
+      <v-btn
+        variant="outlined"
+        class="mt-2"
+        :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
+      >
+        Remove Avatar
+      </v-btn>
     </div>
     <v-divider vertical class="ml-2 mr-6"></v-divider>
     <div style="width: 400px">
@@ -41,11 +47,13 @@
         {{ $t("chats.settings.home.groupNameDesc") }}
       </v-card-subtitle>
       <v-text-field
+        :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
         :label="$t('chats.settings.home.groupName')"
         v-model="$chat.editingChat.name"
       ></v-text-field>
       <v-btn
         block
+        :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
         @click="$chat.saveSettings()"
         :loading="$chat.dialogs.groupSettings.loading"
       >

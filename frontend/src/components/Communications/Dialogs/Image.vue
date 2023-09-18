@@ -1,6 +1,5 @@
 <template>
   <v-dialog
-    :height="height"
     :model-value="modelValue"
     :width="width"
     max-height="500px"
@@ -16,11 +15,19 @@
       ></v-img>
     </v-card>
     <a
-      class="text-grey mt-2 pointer underline-on-hover"
-      style="width: 130px"
+      class="text-grey pointer v-card py-2 rounded-xl px-2 hover-shade"
+      style="
+        background: rgb(var(--v-theme-toolbar));
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+      "
       @click="$chat.processLink($chat.dialogs.image.object?.originalURL || '')"
+      v-bind="props"
     >
-      Open in new tab
+      <span :class="{ 'ml-1': isHovering }">
+        <v-icon size="18" class="mx-1">mdi-open-in-new</v-icon>
+      </span>
     </a>
   </v-dialog>
 </template>

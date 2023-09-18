@@ -50,7 +50,7 @@
     </div>
     <br />
     <br />
-    <v-row v-if="!$app.componentLoading">
+    <v-row v-if="!loading">
       <v-col
         v-for="item in items.items"
         :key="'item-' + item.id"
@@ -85,6 +85,18 @@
         </GalleryItem>
       </v-col>
     </v-row>
+    <v-row v-else>
+      <v-col
+        v-for="item in 24"
+        :key="'item-' + item.id"
+        :lg="!inline ? 3 : 12"
+        cols="12"
+        md="6"
+        sm="1"
+      >
+        <GalleryItem :item="item" />
+      </v-col>
+    </v-row>
     <!--
     <v-pagination
       :length="items.pager?.totalPages"
@@ -97,6 +109,7 @@
       v-model="pageComponent"
       :total-pages="items.pager?.totalPages"
       class="mt-10"
+      @update:model-value="resetScroll()"
     ></Paginate>
     <small>
       Total Pages: {{ items.pager?.totalPages.toLocaleString() }}
@@ -152,6 +165,10 @@ export default defineComponent({
       type: Number,
       required: true
     },
+    loading: {
+      type: Boolean,
+      default: false
+    },
     supports: {
       type: Object,
       default: () => {
@@ -176,6 +193,9 @@ export default defineComponent({
     };
   },
   methods: {
+    resetScroll() {
+      document.body.scrollTop = document.documentElement.scrollTop = 0;
+    },
     collectionAdded({
       collection,
       items

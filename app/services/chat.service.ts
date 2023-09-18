@@ -18,6 +18,8 @@ import { ChatPermissionsHandler } from "@app/services/chat/permissions"
 import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
 import { ChatRank } from "@app/models/chatRank.model"
 import { ChatPermission } from "@app/models/chatPermission.model"
+import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
+import { GraphQLError } from "graphql/error"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -116,14 +118,105 @@ export class ChatService {
     }
   ]
 
-  async checkPermission(
-    userId: number,
-    associationId: number,
-    permission: ChatPermissions
-  ) {
+  async normalizeIndexes(chatId: number, emit: boolean = true) {
+    try {
+      const normalized = []
+
+      const ranks = await ChatRank.findAll({
+        where: {
+          chatId
+        },
+        order: [
+          ["managed", "DESC"],
+          ["index", "ASC"]
+        ]
+      })
+
+      for (let i = 0; i < ranks.length; i++) {
+        const rank = ranks[i]
+
+        const normalizedIndex = Math.max(i, 0)
+
+        await rank.update({ index: normalizedIndex })
+
+        normalized.push({
+          id: rank.id,
+          index: normalizedIndex
+        })
+      }
+      if (emit) {
+        const chat = await Chat.findOne({
+          where: { id: chatId },
+          include: [
+            {
+              model: ChatAssociation,
+              as: "users",
+              attributes: [
+                "id",
+                "userId",
+                "rank",
+                "legacyUserId",
+                "user",
+                "lastRead",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          ]
+        })
+        if (!chat) return false
+        for (const user of chat.users) {
+          if (!user.userId) continue
+          socket
+            .of(SocketNamespaces.CHAT)
+            .to(user.userId)
+            .emit("rankOrderUpdated", {
+              chatId,
+              ranks: normalized
+            })
+        }
+      }
+      return true
+    } catch (error) {
+      console.error("Error normalizing indexes:", error)
+      throw error
+    }
+  }
+
+  async syncPermissions(userId: number, associationId: number) {
+    const permissions = await this.getPermissions(userId, associationId)
+    socket.of(SocketNamespaces.CHAT).to(userId).emit("syncPermissions", {
+      associationId,
+      permissions,
+      userId
+    })
+  }
+
+  async getHighestIndex(chatAssociationId: number) {
+    const rank = await ChatRankAssociation.findOne({
+      where: {
+        chatAssociationId
+      },
+      include: [
+        {
+          model: ChatRank,
+          as: "rank"
+        }
+      ],
+      order: [[{ model: ChatRank, as: "rank" }, "index", "DESC"]]
+    })
+    return rank?.rank?.index || 0
+  }
+
+  async getPermissions(userId: number, associationId: number) {
     const association = await ChatAssociation.findOne({
       where: { id: associationId, userId },
       include: [
+        {
+          model: Chat,
+          attributes: ["userId"],
+          as: "chat"
+        },
         {
           model: ChatRank,
           as: "ranks",
@@ -136,19 +229,35 @@ export class ChatService {
         }
       ]
     })
-    if (!association) return false
-    const permissions: string[] = [
+    if (!association) return []
+    const permissions = [
       ...new Set(
         association.ranks.flatMap((rank) =>
           rank.permissions.map((permission) => permission.id)
         )
       )
     ]
-    return (
+    if (association.chat.userId === userId && association.chat.type === "group")
+      permissions.push("OWNER")
+    return permissions
+  }
+
+  async checkPermissions(
+    userId: number,
+    associationId: number,
+    permission: ChatPermissions,
+    noThrow: boolean = false
+  ) {
+    const permissions = await this.getPermissions(userId, associationId)
+    const hasPermission =
       permissions.includes(permission) ||
       permissions.includes("ADMIN") ||
-      association.userId === userId
-    )
+      permissions.includes("OWNER")
+    if (!noThrow && !hasPermission)
+      throw new GraphQLError(
+        "You do not have permission to perform this action on the group."
+      )
+    return hasPermission
   }
 
   async emitToFCMs(message: Message, chat: Chat, userId: number) {
@@ -397,7 +506,11 @@ export class ChatService {
       }
     })
     if (!message) {
-      await this.checkPermissions(userId, associationId, "admin")
+      await this.checkPermissions(
+        userId,
+        associationId,
+        ChatPermissions.DELETE_MESSAGES
+      )
       const message = await Message.findOne({
         where: {
           id: messageId,
@@ -422,26 +535,6 @@ export class ChatService {
     }
   }
 
-  async checkPermissions(
-    userId: number,
-    chatAssociationId: number,
-    permission: "member" | "admin" | "owner"
-  ) {
-    const chat = await ChatAssociation.findOne({
-      where: {
-        id: chatAssociationId,
-        userId
-      }
-    })
-    console.log(chat?.rank)
-    if (!chat) throw Errors.CHAT_NOT_FOUND
-    if (chat.rank === "owner") return chat.rank
-    if (chat.rank === "admin" && permission === "admin") return chat.rank
-    if (chat.rank === "member" && permission === "member") return chat.rank
-    if (chat.rank === "admin" && permission === "member") return chat.rank
-    throw Errors.CHAT_INSUFFICIENT_PERMISSIONS
-  }
-
   async updateGroupSettings(
     associationId: number,
     userId: number,
@@ -451,7 +544,7 @@ export class ChatService {
     }
   ) {
     const chat = await this.getChatFromAssociation(associationId, userId)
-    await this.checkPermissions(userId, associationId, "admin")
+    await this.checkPermissions(userId, associationId, ChatPermissions.OVERVIEW)
     await Chat.update(
       {
         name: settings.name === "" ? null : settings.name,
@@ -520,46 +613,60 @@ export class ChatService {
   }*/
 
   async removeUserFromChat(
-    chatId: number,
-    removeUserId: number,
-    userId: number,
-    rank: "member" | "admin" | "owner"
+    associationId: number,
+    removeUserId: number[],
+    userId: number
   ) {
-    const chat = await this.getChatFromAssociation(chatId, userId)
-    const association = await ChatAssociation.findOne({
+    const chat = await this.getChatFromAssociation(associationId, userId)
+    let removable = []
+    const associations = await ChatAssociation.findAll({
       where: {
         chatId: chat.id,
-        userId: removeUserId,
-        rank:
-          rank === "owner"
-            ? {
-                [Op.or]: ["member", "admin", "owner"]
-              }
-            : "member"
+        userId: removeUserId
       }
     })
-    if (!association) throw Errors.CHAT_USER_NOT_FOUND
-    if (association.rank === "owner") throw Errors.PERMISSION_DENIED_RANK
-    await association.destroy()
-    this.sendMessage(
-      `<@${userId}> removed <@${removeUserId}> from the chat.`,
-      userId,
-      chatId,
-      undefined,
-      "leave"
-    )
-    this.emitForAll(chatId, userId, "removeChatUser", {
-      chatId: chat.id,
-      id: association.id
+    const myIndex = await this.getHighestIndex(associationId)
+    for (const association of associations) {
+      if (association.userId === chat.userId) continue
+      const theirIndex = await this.getHighestIndex(associationId)
+      if (theirIndex > myIndex && chat.userId !== userId) continue
+      removable.push(association)
+    }
+    if (!associations.length) throw Errors.CHAT_USER_NOT_FOUND
+    await ChatAssociation.destroy({
+      where: {
+        chatId: chat.id,
+        id: removable.map((assoc) => assoc.id)
+      }
     })
-    socket.to(removeUserId).emit("removeChat", {
-      id: chat.id
-    })
+    for (const association of removable) {
+      this.sendMessage(
+        `<@${userId}> removed <@${association.userId}> from the chat.`,
+        userId,
+        associationId,
+        undefined,
+        "leave"
+      )
+      this.emitForAll(associationId, userId, "removeChatUser", {
+        chatId: chat.id,
+        id: association.id
+      })
+      socket.to(removeUserId).emit("removeChat", {
+        id: chat.id
+      })
+    }
+    for (const association of chat.users) {
+      Container.get(UserUtilsService).trackedUserIds(association.userId, true)
+    }
     return true
   }
 
-  async addUsersToChat(chatId: number, userIds: number[], userId: number) {
-    let chat = await this.getChatFromAssociation(chatId, userId)
+  async addUsersToChat(
+    associationId: number,
+    userIds: number[],
+    userId: number
+  ) {
+    let chat = await this.getChatFromAssociation(associationId, userId)
     const existingAssociations = await ChatAssociation.findAll({
       where: {
         chatId: chat.id,
@@ -574,6 +681,13 @@ export class ChatService {
       userIds
     )
     let newAssociations = []
+    const rank = await ChatRank.findOne({
+      where: {
+        chatId: chat.id,
+        managed: true
+      }
+    })
+    if (!rank) throw Errors.COLUBRINA_CHAT
     for (const friend of friends) {
       const association = await ChatAssociation.create({
         chatId: chat.id,
@@ -581,11 +695,15 @@ export class ChatService {
         rank: "member",
         identifier: chat.id + "-" + friend.friendId
       })
+      await ChatRankAssociation.create({
+        rankId: rank.id,
+        chatAssociationId: association.id
+      })
       newAssociations.push(association.id)
       this.sendMessage(
         `<@${userId}> added <@${friend.friendId}> to the chat.`,
         userId,
-        chatId,
+        associationId,
         undefined,
         "join"
       )
@@ -596,13 +714,25 @@ export class ChatService {
       },
       include: this.userIncludes
     })
+    for (const association of associations) {
+      Container.get(UserUtilsService).trackedUserIds(association.userId, true)
+    }
     const newUsers = await ChatAssociation.findAll({
       where: {
         id: newAssociations
       },
-      include: this.userIncludes
+      include: [
+        ...this.userIncludes,
+        {
+          model: ChatRank,
+          as: "ranks"
+        }
+      ]
     })
-    this.emitForAll(chatId, userId, "addChatUsers", {
+    for (const user of newUsers) {
+      user.dataValues.ranksMap = user.ranks.map((rank) => rank.id)
+    }
+    this.emitForAll(associationId, userId, "addChatUsers", {
       chatId: chat.id,
       users: newUsers
     })
@@ -615,7 +745,9 @@ export class ChatService {
   }
 
   async typing(associationId: number, userId: number) {
+    console.log(associationId, userId)
     const chat = await this.getChatFromAssociation(associationId, userId)
+    console.log("Typing indeex!")
     await this.emitForAll(
       associationId,
       userId,
@@ -648,7 +780,11 @@ export class ChatService {
     })
     if (!message || message.type !== "message") throw Errors.MESSAGE_NOT_FOUND
     if (pinned !== undefined) {
-      await this.checkPermissions(userId, associationId, "admin")
+      await this.checkPermissions(
+        userId,
+        associationId,
+        ChatPermissions.PIN_MESSAGES
+      )
       await Message.update(
         {
           pinned: !message.pinned
@@ -750,7 +886,7 @@ export class ChatService {
         where: {
           chatId
         },
-        order: [["createdAt", "DESC"]]
+        order: [["id", "DESC"]]
       })
       if (message) {
         const association = await ChatAssociation.findOne({
@@ -771,6 +907,7 @@ export class ChatService {
           user?.storedStatus === "invisible"
         )
           return
+        console.log(message.id)
         await association.update(
           { lastRead: message.id },
           {
@@ -803,9 +940,17 @@ export class ChatService {
           as: "association"
         },
         {
+          model: ChatRank,
+          as: "ranks"
+        },
+        {
           model: ChatAssociation,
           as: "users",
           include: [
+            {
+              model: ChatRank,
+              as: "ranks"
+            },
             {
               model: User,
               as: "tpuUser",
@@ -838,12 +983,19 @@ export class ChatService {
     const recipient = await this.getRecipient(chat, userId)
     return {
       ...chat.toJSON(),
+      users: chat.users.map((user) => {
+        return {
+          ...user.toJSON(),
+          ranksMap: user.ranks.map((rank) => rank.id)
+        }
+      }),
       unread: 0,
       recipient: recipient
     }
   }
 
   async createChat(users: number[], userId: number) {
+    const chatPermissionsHandler = new ChatPermissionsHandler()
     if (!users.length || users.includes(userId))
       throw Errors.INVALID_FRIEND_SELECTION
 
@@ -927,7 +1079,6 @@ export class ChatService {
         })
       )
     }
-    const chatPermissionsHandler = new ChatPermissionsHandler()
     const chatWithUsers = await this.getChat(chat.id, userId)
     await chatPermissionsHandler.createDefaults(chatWithUsers)
     for (const association of associations) {

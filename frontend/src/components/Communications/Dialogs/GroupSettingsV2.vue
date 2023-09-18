@@ -11,9 +11,17 @@
           v-slot="{ props }"
           v-model="add"
           type="add"
-          @add="addUsers($event)"
+          @add="
+            $chat.changeUsers($event, true, $chat.editingChat.association.id)
+          "
         >
-          <v-btn class="float-end mr-2" icon @click="add = true" v-bind="props">
+          <v-btn
+            class="float-end mr-2"
+            icon
+            @click="add = true"
+            v-bind="props"
+            v-if="$chat.hasPermission('ADD_USERS', $chat.editingChat)"
+          >
             <v-tooltip activator="parent" location="bottom">
               {{ $t("chats.settings.addUser") }}
             </v-tooltip>
@@ -45,52 +53,47 @@
         <overline>
           {{ $chat.editingChat.name }}
         </overline>
-        <v-tab
-          value="home"
-          :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
-        >
+        <v-tab value="home">
           <v-icon class="mr-2">mdi-home</v-icon>
           {{ $t("chats.settings.tabs.home") }}
         </v-tab>
         <v-tab
           value="ranks"
-          :disabled="!$chat.hasPermission('MANAGE_RANKS', $chat.editingChat)"
+          v-if="$chat.hasPermission('MANAGE_RANKS', $chat.editingChat)"
         >
           <v-icon class="mr-2">mdi-lock</v-icon>
           {{ $t("chats.settings.tabs.ranks") }}
         </v-tab>
         <v-tab
           value="users"
-          :disabled="!$chat.hasPermission('MANAGE_USERS', $chat.editingChat)"
+          v-if="$chat.hasPermission('MANAGE_USERS', $chat.editingChat)"
         >
           <v-icon class="mr-2">mdi-account-group</v-icon>
           {{ $t("chats.settings.tabs.users") }}
         </v-tab>
         <v-tab
           value="invites"
-          :disabled="!$chat.hasPermission('ADMIN', $chat.editingChat)"
+          v-if="$chat.hasPermission('MANAGE_USERS', $chat.editingChat)"
         >
           <v-icon class="mr-2">mdi-account-plus</v-icon>
           {{ $t("chats.settings.tabs.invites") }}
         </v-tab>
         <v-tab
           value="bots"
-          :disabled="
-            !$chat.hasPermission('MANAGE_INTEGRATIONS', $chat.editingChat)
-          "
+          v-if="$chat.hasPermission('MANAGE_INTEGRATIONS', $chat.editingChat)"
         >
           <v-icon class="mr-2">mdi-robot</v-icon>
           {{ $t("chats.settings.tabs.bots") }}
         </v-tab>
         <v-tab
           value="bans"
-          :disabled="!$chat.hasPermission('BAN_USERS', $chat.editingChat)"
+          v-if="$chat.hasPermission('BAN_USERS', $chat.editingChat)"
         >
           <v-icon class="mr-2">mdi-gavel</v-icon>
           {{ $t("chats.settings.tabs.bans") }}
         </v-tab>
       </v-tabs>
-      <v-window v-model="tab" class="flex-grow-1">
+      <v-window v-model="tab" class="flex-grow-1" :touch="false">
         <v-window-item value="home">
           <ChatSettingsHome />
         </v-window-item>
@@ -115,6 +118,8 @@ import ChatSettingsHome from "@/components/Communications/Dialogs/Settings/Home.
 import Overline from "@/components/Core/Typography/Overline.vue";
 import ChatSettingsRanks from "@/components/Communications/Dialogs/Settings/Ranks.vue";
 import ChatSettingsUsers from "@/components/Communications/Dialogs/Settings/Users.vue";
+import { AddChatUserMutation } from "@/graphql/chats/addUser.graphql";
+import { ToggleUser } from "@/gql/graphql";
 
 export default defineComponent({
   name: "ColubrinaGroupSettingsDialog",
@@ -177,14 +182,6 @@ export default defineComponent({
           this.$chat.editingChat.users.findIndex((user) => user.id === id),
           1
         );
-    },
-    async addUsers(users: number[]) {
-      await this.axios.post(
-        `/chats/${this.$chat.editingChat?.association?.id}/users`,
-        {
-          users
-        }
-      );
     }
   }
 });

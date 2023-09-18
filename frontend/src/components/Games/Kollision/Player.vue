@@ -2,7 +2,7 @@
   <div class="player" :style="{ left: x + 'px', top: y + 'px' }"></div>
 </template>
 
-<script type="ts">
+<script lang="ts">
 import { defineComponent } from "vue";
 
 export default defineComponent({

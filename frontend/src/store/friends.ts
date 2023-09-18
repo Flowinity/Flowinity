@@ -2,6 +2,7 @@
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
 import { Friend, User } from "@/gql/graphql";
+import { useUserStore } from "@/store/user";
 
 export interface FriendsState {
   friends: Friend[];
@@ -15,12 +16,13 @@ export const useFriendsStore = defineStore("friends", {
   actions: {
     getName(user: User | number, force = false) {
       if (!user) return undefined;
+      const userStore = useUserStore();
       const id = typeof user === "number" ? user : user?.id;
-      const friend = this.friends.find((f) => f.user.id === id);
+      const friend = userStore.users[id];
       if (friend) {
         return !force
-          ? friend.user.nickname?.nickname || friend.user.username
-          : friend.user.nickname?.nickname;
+          ? friend.nickname?.nickname || friend.username
+          : friend.nickname?.nickname;
       }
       if (typeof user === "number") {
         return undefined;

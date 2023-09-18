@@ -32,6 +32,7 @@ import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
+import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 
 @Service()
 export class UserUtilsService {
@@ -260,6 +261,7 @@ export class UserUtilsService {
         status: "accepted"
       }
     })
+    console.log(userId, friendIds)
     if (friends.length !== friendIds.length)
       throw Errors.INVALID_FRIEND_SELECTION
     return friends
@@ -705,7 +707,10 @@ export class UserUtilsService {
       const sockets = await socket.in(user.id.toString()).allSockets()
       if (sockets.size !== 0) {
         const status =
-          body.storedStatus === "invisible" ? "offline" : body.storedStatus
+          body.storedStatus === UserStoredStatus.INVISIBLE
+            ? "offline"
+            : body.storedStatus.toLowerCase()
+        console.log(status)
         await User.update(
           {
             status

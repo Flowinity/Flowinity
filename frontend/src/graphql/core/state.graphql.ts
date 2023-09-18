@@ -260,6 +260,7 @@ export const CoreStateQuery = gql`
       darkTheme
       emailVerified
       banned
+      createdAt
       inviteId
       discordPrecache
       avatar

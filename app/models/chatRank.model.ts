@@ -87,5 +87,5 @@ export class ChatRank extends Model {
     "rankId",
     "chatAssociationId"
   )
-  ranks: ChatAssociation[]
+  associations: ChatAssociation[]
 }

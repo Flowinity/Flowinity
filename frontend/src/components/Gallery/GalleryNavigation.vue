@@ -17,9 +17,9 @@
       >
         <template v-slot:no-data>
           <template v-if="supports.metadata">
-            <v-list-subheader>
+            <overline position="start">
               {{ $t("generic.options") }}
-            </v-list-subheader>
+            </overline>
             <v-list-item
               @click="
                 metadata = !metadata;
@@ -30,9 +30,9 @@
               {{ $t("generic.metadata") }}
             </v-list-item>
           </template>
-          <v-list-subheader>
+          <overline position="start">
             {{ $t("generic.sortDirection") }}
-          </v-list-subheader>
+          </overline>
           <v-list-item
             v-for="item in orderTypes"
             @click="
@@ -44,9 +44,9 @@
             {{ item.name }}
           </v-list-item>
           <template v-if="supports.sort">
-            <v-list-subheader>
+            <overline position="start">
               {{ $t("generic.sort") }}
-            </v-list-subheader>
+            </overline>
             <v-list-item
               v-for="item in sortTypes"
               @click="
@@ -60,7 +60,7 @@
             </v-list-item>
           </template>
           <template v-if="supports.filter">
-            <v-list-subheader>{{ $t("generic.filter") }}</v-list-subheader>
+            <overline position="start">{{ $t("generic.filter") }}</overline>
             <v-list-item
               v-for="item in types"
               @click="
@@ -98,10 +98,11 @@
 import { defineComponent } from "vue";
 import { GalleryFilter, GalleryOrder, GallerySort } from "@/gql/graphql";
 import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
+import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "GalleryNavigation",
-  components: { GalleryTextField },
+  components: { Overline, GalleryTextField },
   emits: [
     "update:filter",
     "update:search",

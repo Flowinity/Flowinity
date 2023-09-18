@@ -13,6 +13,7 @@ import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { Field, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { ChatRank } from "@app/models/chatRank.model"
+import { Message } from "@app/models/message.model"
 
 @ObjectType()
 @Table
@@ -111,4 +112,7 @@ export class Chat extends Model {
   @Field(() => [ChatRank])
   @HasMany(() => ChatRank, "chatId")
   ranks: ChatRank[]
+
+  @Field(() => [Message])
+  messages: Message[]
 }

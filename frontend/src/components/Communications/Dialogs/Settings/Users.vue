@@ -5,8 +5,8 @@
   <v-data-table :items="users" :headers="headers">
     <template v-slot:item.user.username="{ item: { selectable } }: any">
       <UserAvatar :user="selectable.user"></UserAvatar>
-      {{ selectable.user.username }} ({{ selectable.id }})
-      <template v-if="selectable.user.id === $chat.editingChat.userId">
+      {{ selectable.user?.username || "Unresolved user" }} ({{ selectable.id }})
+      <template v-if="selectable.user?.id === $chat.editingChat.userId">
         <span>
           <v-tooltip activator="parent" location="top">
             {{ $t("chats.roles.owner") }}
@@ -34,13 +34,20 @@
       {{ $date(selectable.createdAt).fromNow() }}
     </template>
     <template v-slot:item.user.createdAt="{ item: { selectable } }">
-      {{ $date(selectable.user.createdAt).fromNow() }}
+      {{ $date(selectable.user?.createdAt).fromNow() }}
     </template>
     <template v-slot:item.actions="{ item: { selectable } }">
       <v-btn
         icon
         class="my-1"
-        :disabled="selectable.user.id === $chat.editingChat.userId"
+        :disabled="selectable.user?.id === $chat.editingChat.userId"
+        @click="
+          $chat.changeUsers(
+            [selectable.user?.id],
+            false,
+            $chat.editingChat.association.id
+          )
+        "
       >
         <v-tooltip activator="parent" location="top">
           {{ this.$t("chats.settings.users.remove") }}
@@ -51,7 +58,7 @@
         icon
         class="my-1"
         :disabled="
-          selectable.user.id === $chat.editingChat.userId &&
+          selectable.user?.id === $chat.editingChat.userId &&
           $chat.editingChat.userId === $user.user.id
         "
       >

@@ -195,16 +195,15 @@ a {
   backdrop-filter: brightness(1.5);
 }
 
-.v-theme--amoled .message:hover {
+.v-theme--amoled .hover-message-actions:hover .message {
   background: #101010;
 }
 
 .message-actions {
   position: absolute !important;
   top: 0;
-  right: 0;
-  margin-top: -25px;
-  margin-right: 5px;
+  right: -8px;
+  margin-top: -20px;
   visibility: hidden;
 }
 
@@ -213,7 +212,7 @@ a {
   position: relative;
 }
 
-.message:hover .message-actions {
+.hover-message-actions:hover .message-actions {
   visibility: visible;
   position: relative;
 }
@@ -249,7 +248,7 @@ a {
   visibility: hidden;
 }
 
-.message:hover .message-date {
+.hover-message-actions:hover .message-date {
   visibility: visible;
 }
 
@@ -301,7 +300,7 @@ a {
   border: 2px solid #e4e4e4 !important;
 }
 
-.v-theme--amoled .v-card:not(.no-border) {
+.v-theme--amoled .v-card:not(.no-border), .v-theme--amoled .v-skeleton-loader:not(.no-border) {
   box-shadow: 0 0 0 0;
   border: 1px solid #191919;
 }
@@ -494,7 +493,7 @@ a {
 
 .dev-overlay {
   position: absolute;
-  z-index: 1500;
+  z-index: 9999999;
   background-color: rgba(0, 0, 0, 0.9);
   text-align: center;
   width: 500px;
@@ -561,9 +560,6 @@ a {
   margin-top: 12px;
 }
 
-.message-content {
-}
-
 .communications .message-list-container {
   overflow-y: scroll;
   display: flex;
@@ -592,10 +588,7 @@ a {
   align-items: center; /* Align items vertically within the container */
 }
 
-.v-icon {
-  // fix inline with text using rem
-  margin-top: 0.11rem;
-}
+
 
 // Why do you need to break everything, Vuetify?
 .v-switch--inset:not(.v-input--disabled)
@@ -625,4 +618,32 @@ a {
   height: 1px;
   background-color: white;
   margin-left: 10px;
+}
+
+.v-list-item-subtitle {
+  text-overflow: unset;
+  white-space: normal;
+  display: unset
+}
+
+.v-skeleton-loader__chip {
+  flex: 1 1 auto !important;
+}
+
+.black-and-white {
+  filter: grayscale(80%);
+}
+
+.v-field--variant-outlined .v-field__input {
+  margin-top: 2px
+}
+
+.hover-shade:hover {
+  filter: brightness(150%);
+  transition: 0.3s;
+}
+
+.hover-shade {
+  filter: brightness(100%);
+  transition: 0.3s;
 }

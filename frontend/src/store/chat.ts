@@ -16,12 +16,14 @@ import { ChatsQuery } from "@/graphql/chats/chats.graphql";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import {
   Chat,
+  ChatRank,
   InfiniteMessagesInput,
   Message,
   MessageType,
   PagedMessagesInput,
   PartialUserFriend,
   ScrollPosition,
+  ToggleUser,
   UpdateChatInput
 } from "@/gql/graphql";
 import {
@@ -32,6 +34,7 @@ import { StateHandler } from "v3-infinite-loading/lib/types";
 import { CreateChatMutation } from "@/graphql/chats/createChat.graphql";
 import { UpdateChatMutation } from "@/graphql/chats/updateChat.graphql";
 import { Typing } from "@/models/chat";
+import { AddChatUserMutation } from "@/graphql/chats/addUser.graphql";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -107,14 +110,30 @@ export const useChatStore = defineStore("chat", {
     }
   }),
   actions: {
-    hasPermission(permission: string, chat?: Chat) {
-      return chat
-        ? chat?.association?.permissions.find(
-            (perm) => perm === permission || perm === "ADMIN"
-          )
-        : this.selectedChat?.association?.permissions.find(
-            (perm) => perm === permission || perm === "ADMIN"
-          );
+    getRankColor(ranksMap: string[], ranks: ChatRank[]) {
+      for (const rankId of ranksMap) {
+        const rank = ranks.find((r) => r.id === rankId);
+        if (rank) {
+          if (rank.color !== null) {
+            return rank.color;
+          }
+        }
+      }
+      return null;
+    },
+    hasPermission(permission: string | string[], chat?: Chat) {
+      const permissionsArray = Array.isArray(permission)
+        ? permission
+        : [permission];
+
+      const c: Chat | undefined = chat ?? this.selectedChat;
+
+      return (
+        c?.association?.permissions.some(
+          (perm) => permissionsArray.includes(perm) || perm === "ADMIN"
+        ) ||
+        (c?.association?.userId === c?.userId && c?.type === "group")
+      );
     },
     async sendMessage(
       content: string,
@@ -217,10 +236,9 @@ export const useChatStore = defineStore("chat", {
         mutation: UpdateChatMutation,
         variables: {
           input: {
-            name: input?.name ?? this.dialogs.groupSettings.item.name,
+            name: input?.name ?? this.editingChat.name,
             associationId:
-              input?.associationId ??
-              this.dialogs.groupSettings.item.association.id
+              input?.associationId ?? this.editingChat.association.id
           }
         }
       });
@@ -306,6 +324,22 @@ export const useChatStore = defineStore("chat", {
         username: "Unknown User"
       } as PartialUserFriend;
     },
+    async changeUsers(
+      users: number[],
+      add: boolean = true,
+      chatAssociationId: number
+    ) {
+      await this.$apollo.mutate({
+        mutation: AddChatUserMutation,
+        variables: {
+          input: {
+            chatAssociationId,
+            users,
+            action: add ? ToggleUser.Add : ToggleUser.Remove
+          }
+        }
+      });
+    },
     async createChat(users: number[]) {
       const {
         data: { createChat }
@@ -331,7 +365,7 @@ export const useChatStore = defineStore("chat", {
     },
     async getMessages(
       input: InfiniteMessagesInput | PagedMessagesInput
-    ): Promise<Message> {
+    ): Promise<Message[]> {
       const { data } = await this.$apollo.query({
         query: "page" in input ? PagedMessagesQuery : MessagesQuery,
         variables: {
@@ -339,7 +373,10 @@ export const useChatStore = defineStore("chat", {
         },
         fetchPolicy: "network-only"
       });
-      return "page" in input ? data.messagesPaged : data.messages;
+
+      return "page" in input
+        ? structuredClone(data.messagesPaged)
+        : structuredClone(data.messages);
     },
     async setChat(id: number) {
       this.loading = true;
@@ -516,12 +553,6 @@ export const useChatStore = defineStore("chat", {
   },
   getters: {
     editingChat() {
-      console.log(
-        this.chats.find((chat) => {
-          return chat.id === this.dialogs.groupSettings.itemId;
-        }),
-        this.dialogs.groupSettings.itemId
-      );
       return this.chats.find((chat) => {
         return chat.id === this.dialogs.groupSettings.itemId;
       });

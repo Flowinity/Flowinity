@@ -10,7 +10,7 @@ import { useFriendsStore } from "@/store/friends";
 import { useUserStore } from "@/store/user";
 import { useExperimentsStore } from "@/store/experiments";
 import { useToast } from "vue-toastification";
-import { AddRank } from "@/gql/graphql";
+import { AddRank, ChatRank } from "@/gql/graphql";
 
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();
@@ -88,7 +88,7 @@ export default async function setup(app) {
           toastClassName: "message-toast",
           icon: false,
           onClick: () => {
-            router.push("/communications/" + newMessage.association.id);
+            router.push("/communications/" + newMessage.associationId);
           }
         }
       );
@@ -295,23 +295,67 @@ export default async function setup(app) {
       return chat.association.id === data.chatAssociationId;
     });
     if (index === -1) return;
-    const userAssociation = chat.chats[index].users.find(
+    const assocIndex = chat.chats[index].users.findIndex(
       (assoc) => assoc.id === data.updatingChatAssociationId
     );
-    if (!userAssociation) return;
-    const rankIndex = userAssociation.ranksMap.indexOf(data.rankId);
+    if (assocIndex === -1) return;
+    const rankIndex = chat.chats[index].users[assocIndex].ranksMap.indexOf(
+      data.rankId
+    );
     if (rankIndex !== -1) return;
-    userAssociation.ranksMap.push(data.rankId);
+    chat.chats[index].users[assocIndex].ranksMap.push(data.rankId);
 
     const chatRanks = chat.chats[index].ranks;
-    userAssociation.ranksMap = userAssociation.ranksMap.sort((a, b) => {
-      const rankA = chatRanks.find((rank) => rank.id === a);
-      const rankB = chatRanks.find((rank) => rank.id === b);
+    const rankMap = new Map(chatRanks.map((rank) => [rank.id, rank]));
+
+    chat.chats[index].users[assocIndex].ranksMap = chat.chats[index].users[
+      assocIndex
+    ].ranksMap.sort((a, b) => {
+      const rankA = rankMap.get(a);
+      const rankB = rankMap.get(b);
+
       if (rankA && rankB) {
-        return rankA.index - rankB.index;
+        return rankB.index - rankA.index;
       }
 
       return 0;
     });
   });
+  sockets.chat.on(
+    "syncPermissions",
+    (data: {
+      permissions: string[];
+      associationId: number;
+      userId: number;
+    }) => {
+      chat.chats.find(
+        (chat) => chat.association.id === data.associationId
+      ).association.permissions = data.permissions;
+    }
+  );
+  sockets.chat.on("rankUpdated", (data: ChatRank) => {
+    const localChat = chat.chats.find((chat) => chat.id === data.chatId);
+    const rankIndex = localChat.ranks.findIndex((rank) => rank.id === data.id);
+    if (rankIndex === -1) {
+      localChat.ranks.push(data);
+    } else {
+      localChat.ranks[rankIndex] = data;
+    }
+
+    localChat.ranks.sort((a, b) => {
+      return b.index - a.index || 0;
+    });
+  });
+  sockets.chat.on(
+    "rankOrderUpdated",
+    (data: { chatId: number; ranks: Partial<ChatRank>[] }) => {
+      const localChat = chat.chats.find((chat) => chat.id === data.chatId);
+      localChat.ranks.map((rank) => {
+        return {
+          ...rank,
+          index: data.ranks.find((r2) => r2.id === rank.id).index
+        };
+      });
+    }
+  );
 }

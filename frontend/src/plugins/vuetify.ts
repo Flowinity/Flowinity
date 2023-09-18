@@ -107,6 +107,9 @@ export default createVuetify({
     }
   },
   defaults: {
+    VSkeletonLoader: {
+      color: "card"
+    },
     VAutoComplete: {
       variant: "underlined",
       color: "primary"

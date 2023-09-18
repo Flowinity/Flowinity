@@ -54,10 +54,10 @@
       />
       <v-skeleton-loader
         v-if="!$chat.selectedChat?.messages?.length && $chat.loading"
-        v-for="index in 40"
+        v-for="index in 20"
         :key="index"
         type="list-item-avatar-three-line"
-        color="background"
+        color="background no-border"
       />
       <infinite-loading
         @infinite="$chat.loadHistory"
@@ -460,7 +460,10 @@ export default defineComponent({
       const attachments = this.files.map((file) => file.tpuLink);
       this.message = "";
       const tempId = new Date().getTime();
-      const index = await this.$chat.selectedChat?.messages.unshift({
+      const chatIndex = this.$chat.chats.findIndex(
+        (c) => c.id === this.$chat.selectedChat?.id
+      );
+      this.$chat.chats[chatIndex].messages.unshift({
         content: message,
         createdAt: new Date().toISOString(),
         user: this.$user.user,
@@ -482,9 +485,6 @@ export default defineComponent({
       this.autoScroll();
 
       // move chat to top
-      const chatIndex = this.$chat.chats.findIndex(
-        (c) => c.id === this.$chat.selectedChat?.id
-      );
       if (chatIndex && chatIndex !== -1) {
         const chatToMove = this.$chat.chats[chatIndex];
         this.$chat.chats.splice(chatIndex, 1);
@@ -672,6 +672,7 @@ export default defineComponent({
       this.autoScroll();
     },
     onTyping(data: Typing) {
+      if (!data) return;
       const chat =
         this.$chat.chats[
           this.$chat.chats.findIndex((c: Chat) => c.id === data.chatId)
@@ -784,7 +785,10 @@ export default defineComponent({
           !this.typingStatus.rateLimit ||
           this.typingStatus.rateLimit < Date.now()
         ) {
-          this.$socket.emit("typing", this.$chat.selectedChat?.association?.id);
+          this.$sockets.chat.emit(
+            "typing",
+            this.$chat.selectedChat?.association?.id
+          );
           this.typingStatus.rateLimit = Date.now() + 3000;
         }
       }

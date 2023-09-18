@@ -89,9 +89,10 @@
       </v-list-item>
       <v-list-item
         v-if="
-          contextMenu.item?.type === 'group' &&
-          (contextMenu.item.association?.rank === 'admin' ||
-            contextMenu.item.association?.rank === 'owner')
+          $chat.hasPermission(
+            ['ADMIN', 'OVERVIEW', 'VIEW_AUDIT_LOG', 'ADD_USER'],
+            contextMenu.item
+          )
         "
         @click="
           $chat.dialogs.groupSettings.itemId = contextMenu.item.id;
@@ -120,10 +121,10 @@
       </v-list-item>
     </v-list>
   </v-menu>
-  <v-list-subheader class="ml-3 mb-n2 unselectable">
+  <overline class="ml-3 mb-n1" position="start">
     <CreateChat v-slot="{ props }" v-model="create" type="create">
       <v-btn
-        class="mr-2"
+        class="mr-1"
         icon
         size="xsmall"
         v-bind="props"
@@ -133,7 +134,7 @@
       </v-btn>
     </CreateChat>
     {{ $t("chats.chats") }}
-  </v-list-subheader>
+  </overline>
   <v-list nav>
     <v-list-item
       v-for="chat in $chat.chats"
@@ -148,12 +149,18 @@
       :to="`/communications/${chat.association.id}`"
       @contextmenu.prevent="context($event, chat)"
       :key="chat.id"
+      :class="{
+        'black-and-white':
+          $user.users[chat.recipient?.id]?.status === UserStatus.Offline
+      }"
     >
       <template v-slot:prepend>
         <UserAvatar
           :chat="chat.type === 'group' ? chat : undefined"
           :status="true"
-          :user="chat.type === 'direct' ? chat.recipient : undefined"
+          :user="
+            chat.type === 'direct' ? $user.users[chat.recipient?.id] : undefined
+          "
           :dot-status="true"
           class="mr-2"
         ></UserAvatar>
@@ -180,16 +187,18 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Chat } from "@/models/chat";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import Leave from "@/components/Communications/Dialogs/Leave.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import SidebarItem from "@/components/Communications/SidebarItem.vue";
+import { Chat, UserStatus } from "@/gql/graphql";
+import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "ColubrinaSidebarList",
   components: {
+    Overline,
     SidebarItem,
     UserAvatar,
     Leave,
@@ -212,6 +221,9 @@ export default defineComponent({
     };
   },
   computed: {
+    UserStatus() {
+      return UserStatus;
+    },
     menuStyle() {
       return `
         position: absolute;

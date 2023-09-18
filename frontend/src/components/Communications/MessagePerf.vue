@@ -9,26 +9,28 @@
     </div>
     <div
       v-if="message.replyId"
-      class="ml-6 my-1 pointer limit"
+      class="ml-6 mt-4 mb-n1 pointer limit reply"
       @click.prevent="$emit('jumpToMessage', message.reply?.id)"
     >
       <v-icon class="mr-2">mdi-reply</v-icon>
       <UserAvatar
-        :user="message.reply?.user"
+        :user="$user.users[message.reply.userId]"
         class="mr-2"
-        size="24"
+        size="18"
       ></UserAvatar>
       <span class="limit">
         {{ message.reply?.content ?? "Deleted Message" }}
       </span>
     </div>
-    <div class="d-flex flex-row">
+    <div
+      class="d-flex flex-row hover-message-actions"
+      @mouseover="hovered = true"
+    >
       <div class="flex-grow-tpu">
         <div
           @contextmenu="context"
           :class="{ merge, unselectable: $vuetify.display.mobile }"
-          class="message position-relative"
-          @mouseover="hovered = true"
+          class="message rounded position-relative"
           :style="{
             zIndex: 1000 - index
           }"
@@ -95,9 +97,9 @@
               :class="{ 'text-red': message.error }"
               class="unselectable"
             >
-              <a
+              <span
                 :id="'message-author-' + message.id"
-                class="mr-1 pointer underline-on-hover"
+                class="mr-2 pointer underline-on-hover"
                 :style="`color: ${getColor}`"
                 @click.prevent="
                   $emit('authorClick', {
@@ -109,7 +111,7 @@
                 "
               >
                 {{ $friends.getName(message.user) }}
-              </a>
+              </span>
               <small class="text-grey">
                 {{ $date(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
               </small>
@@ -265,12 +267,13 @@ export default defineComponent({
         )?.user;
     },
     getColor() {
-      const color = this.$user.disableProfileColors
+      return this.$user.disableProfileColors
         ? "unset"
-        : this.message.userId === this.$user.user?.id
-        ? this.$user.changes.nameColor
-        : this.user?.nameColor ?? "unset";
-      return color;
+        : this.$chat.getRankColor(
+            this.$chat.selectedChat.users.find((assoc) => assoc.userId)
+              ?.ranksMap,
+            this.$chat.selectedChat.ranks
+          );
     }
   },
   methods: {

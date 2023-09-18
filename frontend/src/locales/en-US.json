@@ -236,7 +236,7 @@
       "none": "No slideshows found."
     },
     "about": {
-      "productName": "Product name: TPUvNEXT",
+      "productName": "Product name: TPUvGQL (NEXT)",
       "version": "Version: {version}",
       "buildDate": "Build date: {date}",
       "relative": "Build date relative: {date}",
@@ -284,6 +284,7 @@
     "originalName": "Original name",
     "uploadedName": "Uploaded name",
     "createdAt": "Created at",
+    "create": "Create",
     "size": "Size",
     "new": "NEW",
     "actionCompleted": "Action completed successfully.",
@@ -460,6 +461,18 @@
         "add": {
           "title": "Select Ranks",
           "description": "You can add as many ranks as you wish to a user!"
+        },
+        "manage": {
+          "groups": {
+            "MANAGE": "Manage",
+            "OPTIONS": "Options/Misc",
+            "ADMIN": "Administration",
+            "GENERAL": "General"
+          },
+          "create": "Create Rank",
+          "color": "Pick a color!",
+          "name": "Rank Name",
+          "nameDesc": "Pick a fitting name for your rank!"
         }
       },
       "users": {

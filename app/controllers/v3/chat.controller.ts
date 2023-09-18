@@ -22,6 +22,7 @@ import rateLimits from "@app/lib/rateLimits"
 import uploader from "@app/lib/upload"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { generateClientSatisfies } from "@app/lib/clientSatisfies"
+import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
 
 @Service()
 @JsonController("/chats")
@@ -154,7 +155,11 @@ export class ChatControllerV3 {
     @Param("associationId") associationId: number,
     @Body() body: { users: number[] }
   ) {
-    await this.chatService.checkPermissions(user.id, associationId, "admin")
+    await this.chatService.checkPermissions(
+      user.id,
+      associationId,
+      ChatPermissions.ADD_USERS
+    )
     return await this.chatService.addUsersToChat(
       associationId,
       body.users,
@@ -171,14 +176,9 @@ export class ChatControllerV3 {
     const rank = await this.chatService.checkPermissions(
       user.id,
       associationId,
-      "admin"
+      ChatPermissions.REMOVE_USERS
     )
-    await this.chatService.removeUserFromChat(
-      associationId,
-      userId,
-      user.id,
-      rank
-    )
+    await this.chatService.removeUserFromChat(associationId, [userId], user.id)
   }
 
   @Put("/:associationId/users/:userId")
@@ -188,13 +188,13 @@ export class ChatControllerV3 {
     @Param("userId") userId: number,
     @Body() body: { rank: "admin" | "member" | "owner" }
   ) {
+    throw Errors.API_REMOVED_V2
     const rank = await this.chatService.checkPermissions(
       user.id,
       associationId,
-      "admin"
+      ChatPermissions.MANAGE_RANKS
     )
-    if (rank !== "owner" && body.rank === "owner")
-      throw Errors.PERMISSION_DENIED_RANK
+    if (!rank) throw Errors.PERMISSION_DENIED_RANK
     await this.chatService.updateUserRank(
       userId,
       associationId,

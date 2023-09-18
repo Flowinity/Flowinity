@@ -33,6 +33,7 @@
     <GalleryCore
       :items="gallery"
       :page="page"
+      :loading="loading"
       :path="path"
       :random-attachment-loading="randomLoading"
       :show="show"
@@ -90,6 +91,7 @@ export default defineComponent({
         }
       },
       page: 1,
+      loading: true,
       show: {
         search: "",
         metadata: true,
@@ -138,7 +140,6 @@ export default defineComponent({
       item: number;
       collection: CollectionCache;
     }) {
-      console.log(item, collection);
       const index = this.gallery.items.findIndex((i: any) => i.id === item);
       if (index === -1) return;
       this.gallery.items[index] = {
@@ -147,7 +148,7 @@ export default defineComponent({
       };
     },
     async getGallery() {
-      this.$app.componentLoading = true;
+      this.loading = true;
       const {
         data: { gallery }
       } = await this.$apollo.query({
@@ -166,7 +167,7 @@ export default defineComponent({
         } as GalleryInput
       });
       this.gallery = gallery;
-      this.$app.componentLoading = false;
+      this.loading = false;
       return gallery;
     },
     socketRegister(

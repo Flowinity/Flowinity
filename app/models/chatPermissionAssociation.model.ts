@@ -40,13 +40,13 @@ export class ChatPermissionAssociation extends Model {
     nullable: true
   })
   @Column
-  createdAt: string
+  createdAt: Date
 
   @Field(() => DateType, {
     nullable: true
   })
   @Column
-  updatedAt: string
+  updatedAt: Date
 
   @Field(() => ChatPermission)
   @BelongsTo(() => ChatPermission, "permissionId")
