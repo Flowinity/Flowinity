@@ -181,10 +181,19 @@ export class UserUtilsService {
     } else {
       return null
     }
-    socket.of(SocketNamespaces.FRIENDS).to(userId).emit("friendNickname", {
-      id: friendId,
-      nickname: name
+    const nick = await FriendNickname.findOne({
+      where: {
+        userId,
+        friendId
+      }
     })
+    socket
+      .of(SocketNamespaces.FRIENDS)
+      .to(userId)
+      .emit("friendNickname", {
+        id: userId,
+        ...nick?.toJSON()
+      })
     return name
   }
 
@@ -703,14 +712,15 @@ export class UserUtilsService {
       delete body.currentPassword
       delete body.username
     }
+    console.log(body.storedStatus, body.storedStatus !== user.storedStatus)
     if (body.storedStatus && body.storedStatus !== user.storedStatus) {
-      const sockets = await socket.in(user.id.toString()).allSockets()
-      if (sockets.size !== 0) {
+      const sockets = await socket.in(user.id).fetchSockets()
+      if (sockets.length !== 0) {
         const status =
-          body.storedStatus === UserStoredStatus.INVISIBLE
+          body.storedStatus.toLowerCase() === UserStoredStatus.INVISIBLE
             ? "offline"
             : body.storedStatus.toLowerCase()
-        console.log(status)
+
         await User.update(
           {
             status
@@ -727,8 +737,7 @@ export class UserUtilsService {
             "userStatus",
             {
               id: user.id,
-              status,
-              platforms: await redis.json.get(`user:${user.id}:platforms`)
+              status: status.toUpperCase()
             },
             true
           )
@@ -762,7 +771,10 @@ export class UserUtilsService {
     })
     delete body.currentPassword
     delete body.password
-    socket.to(user.id).emit("userSettingsUpdate", body)
+    socket
+      .of(SocketNamespaces.USER)
+      .to(user.id)
+      .emit("userSettingsUpdate", body)
     return true
   }
 

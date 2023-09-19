@@ -14,6 +14,7 @@ export interface SocketServerWithUser extends Server {
   to(room: string | number | string[] | number[]): SocketServerWithUser
   join(rooms: string | string[] | number | number[]): SocketServerWithUser
   of(namespace: string): Server.Namespace
+  in(room: string | string[] | number | number[])
 }
 
 declare global {

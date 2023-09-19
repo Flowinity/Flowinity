@@ -67,9 +67,9 @@
 </template>
 
 <script lang="ts">
-import { Friend } from "@/models/friend";
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { FriendStatus } from "@/gql/graphql";
 
 export default defineComponent({
   name: "CreateChat",
@@ -108,9 +108,13 @@ export default defineComponent({
   },
   computed: {
     friends() {
-      return this.$friends.friends.filter((friend: Friend) =>
-        friend.user.username.toLowerCase().includes(this.search.toLowerCase())
-      ) as Friend[];
+      return this.$friends.friends.filter(
+        (friend) =>
+          friend.user.username
+            .toLowerCase()
+            .includes(this.search.toLowerCase()) &&
+          friend.status === FriendStatus.Accepted
+      );
     }
   }
 });

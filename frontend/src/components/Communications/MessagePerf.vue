@@ -270,8 +270,9 @@ export default defineComponent({
       return this.$user.disableProfileColors
         ? "unset"
         : this.$chat.getRankColor(
-            this.$chat.selectedChat.users.find((assoc) => assoc.userId)
-              ?.ranksMap,
+            this.$chat.selectedChat.users.find(
+              (assoc) => assoc.userId === this.message.userId
+            )?.ranksMap,
             this.$chat.selectedChat.ranks
           );
     }

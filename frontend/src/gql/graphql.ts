@@ -447,10 +447,12 @@ export type Friend = {
 
 export type FriendNickname = {
   __typename?: 'FriendNickname';
+  createdAt: Scalars['Date']['output'];
   friend: PartialUserBase;
   friendId: Scalars['Float']['output'];
   id: Scalars['Float']['output'];
   nickname: Scalars['String']['output'];
+  updatedAt: Scalars['Date']['output'];
   user: PartialUserBase;
   userId: Scalars['Float']['output'];
 };

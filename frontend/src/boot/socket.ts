@@ -1,16 +1,21 @@
-import { Chat } from "@/models/chat";
-import { Message, Message as MessageType } from "@/models/message";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import router from "@/router";
-import { User } from "@/models/user";
-import { Friend } from "@/models/friend";
-import { ChatAssociation } from "@/models/chatAssociation";
 import { useChatStore } from "@/store/chat";
 import { useFriendsStore } from "@/store/friends";
 import { useUserStore } from "@/store/user";
 import { useExperimentsStore } from "@/store/experiments";
 import { useToast } from "vue-toastification";
-import { AddRank, ChatRank } from "@/gql/graphql";
+import {
+  AddRank,
+  Chat,
+  ChatAssociation,
+  ChatRank,
+  Friend,
+  FriendNickname,
+  Message,
+  User,
+  UserStoredStatus
+} from "@/gql/graphql";
 
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();
@@ -62,7 +67,7 @@ export default async function setup(app) {
       )
     ) {
       if (!chat.chats[newIndex]?.messages) chat.chats[newIndex].messages = [];
-      chat.chats[newIndex].messages.unshift(newMessage.message as MessageType);
+      chat.chats[newIndex].messages.unshift(newMessage.message as Message);
     }
     if (
       newMessage.message.userId === user.user?.id ||
@@ -73,7 +78,7 @@ export default async function setup(app) {
       return;
     chat.chats[newIndex].unread++;
     if (
-      user.user?.storedStatus !== "busy" &&
+      user.user?.storedStatus !== UserStoredStatus.Busy &&
       newMessage.message.userId !== user.user?.id
     ) {
       chat.sound();
@@ -95,13 +100,12 @@ export default async function setup(app) {
     }
   });
   sockets.trackedUsers.on("userStatus", (data: User) => {
-    const index = user.tracked.findIndex((f) => f.userId === data.id);
+    const index = user.tracked.findIndex((f) => f.id === data.id);
     if (index === -1) {
       if (data.id === user.user?.id) {
         user.user = {
           ...user.user,
-          status: data.status,
-          platforms: data.platforms
+          status: data.status
         };
         return;
       } else {
@@ -110,7 +114,6 @@ export default async function setup(app) {
     }
     user.tracked[index] = {
       ...user.tracked[index],
-      platforms: data.platforms,
       status: data.status
     };
   });
@@ -181,7 +184,7 @@ export default async function setup(app) {
     if (index === -1) return;
     if (!chat.chats[index].messages) return;
     const messageIndex = chat.chats[index].messages.findIndex(
-      (m: MessageType) => m.id === data.id
+      (m: Message) => m.id === data.id
     );
     if (messageIndex === -1) return;
     chat.chats[index].messages.forEach((message: Message) => {
@@ -245,27 +248,18 @@ export default async function setup(app) {
     if (index === -1) return;
     chat.chats[index].unread = 0;
   });
-  sockets.user.on(
-    "friendNickname",
-    (data: { id: number; nickname: string }) => {
-      const index = friends.friends.findIndex((f) => f.friendId === data.id);
-      if (index === -1) return;
-      const friend = friends.friends[index];
-      if (friend.user.nickname) {
-        friend.user.nickname.nickname = data.nickname;
-      } else {
-        friend.user.nickname = {
-          nickname: data.nickname,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          id: 0,
-          friendId: data.id,
-          userId: user.user?.id || 0
-        };
-      }
+  sockets.user.on("friendNickname", (data: FriendNickname) => {
+    const index = friends.friends.findIndex((f) => f.friendId === data.id);
+    if (index === -1) return;
+    const friend = friends.friends[index];
+    if (friend.user.nickname) {
+      friend.user.nickname.nickname = data.nickname;
+    } else {
+      friend.user.nickname = data;
     }
-  );
-  sockets.trackedUsers.on(
+  });
+  // TODO: do something about name colors
+  /*sockets.trackedUsers.on(
     "userNameColor",
     (data: { id: number; nameColor: string }) => {
       for (const c of chat.chats) {
@@ -276,7 +270,7 @@ export default async function setup(app) {
         }
       }
     }
-  );
+  );*/
   sockets.chat.on("rankRemoved", (data: AddRank) => {
     const index = chat.chats.findIndex((chat) => {
       return chat.association.id === data.chatAssociationId;

@@ -23,9 +23,8 @@
         right: 10px;
       "
       @click="$chat.processLink($chat.dialogs.image.object?.originalURL || '')"
-      v-bind="props"
     >
-      <span :class="{ 'ml-1': isHovering }">
+      <span>
         <v-icon size="18" class="mx-1">mdi-open-in-new</v-icon>
       </span>
     </a>

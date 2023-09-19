@@ -24,12 +24,14 @@ export class FriendResolver {
     @Arg("input", { nullable: true }) input?: FriendsInput
   ) {
     if (!ctx.user) return []
-    return await Friend.findAll({
-      where: {
-        userId: ctx.user!!.id,
-        status: input?.status ? input.status.toLowerCase() : "accepted"
-      }
-    })
+    const where = input?.status
+      ? {
+          userId: ctx.user!!.id,
+          status: input.status.toLowerCase()
+        }
+      : { userId: ctx.user!!.id }
+
+    return await Friend.findAll({ where })
   }
 
   @FieldResolver(() => PartialUserFriend)
