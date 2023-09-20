@@ -54,7 +54,6 @@ export class CollectionService {
             {
               model: Upload,
               as: "attachment",
-              attributes: ["id", "attachment"],
               where: {
                 type: "image"
               }
@@ -104,7 +103,6 @@ export class CollectionService {
             {
               model: Upload,
               as: "attachment",
-              attributes: ["id", "attachment"],
               where: {
                 type: "image"
               }
@@ -146,7 +144,6 @@ export class CollectionService {
             {
               model: Upload,
               as: "attachment",
-              attributes: ["id", "attachment"],
               where: {
                 type: "image"
               }

@@ -68,7 +68,8 @@ export class MessageResolver {
   ): Promise<Message[]> {
     const chat = await this.chatService.getChatFromAssociation(
       input.associationId,
-      ctx.user!!.id
+      ctx.user!!.id,
+      true
     )
     let where = {} as WhereOptions<Message>
     if (!ctx.meta.paged) {
@@ -77,6 +78,13 @@ export class MessageResolver {
           ? { id: { [Op.lt]: input.offset } }
           : { id: { [Op.gt]: input.offset } }
         : {}
+    }
+
+    if (input.search?.pins) {
+      where = {
+        ...where,
+        pinned: true
+      }
     }
 
     if (input.search) {
@@ -123,9 +131,7 @@ export class MessageResolver {
     @Ctx() ctx: Context
   ): Promise<PaginatedMessagesResponse> {
     ctx.meta.paged = true
-    console.log(input.page)
     const offset = (input.page - 1) * input.limit
-    console.log(offset)
     const messages = await this.messages(
       {
         ...input,

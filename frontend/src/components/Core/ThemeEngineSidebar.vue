@@ -405,10 +405,12 @@ export default defineComponent({
         deviceSync: this.deviceSync,
         customCSS: this.$user.changes.themeEngine?.customCSS ?? ""
       };
+      // TODO: GQL ThemeEditor
+      /*
       delete themeEngine.theme.dark.variables;
       delete themeEngine.theme.light.variables;
       delete themeEngine.theme.amoled.variables;
-      localStorage.setItem("themeEngine", JSON.stringify(themeEngine));
+      localStorage.setItem("themeEngine", JSON.stringify(themeEngine));*/
       this.$user.changes.themeEngine = themeEngine as any;
       this.$user.save();
     },

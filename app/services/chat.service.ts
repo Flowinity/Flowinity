@@ -26,46 +26,12 @@ class MessageIncludes {
     return [
       {
         model: Message,
-        as: "reply",
-        include: [
-          {
-            model: User,
-            as: "tpuUser",
-            attributes: partialUserBase
-          },
-          {
-            model: LegacyUser,
-            as: "legacyUser",
-            attributes: partialUserBase
-          }
-        ]
+        as: "reply"
       },
       {
         model: ChatAssociation,
         as: "readReceipts",
-        attributes: ["userId", "lastRead", "user"],
-        include: [
-          {
-            model: User,
-            as: "tpuUser",
-            attributes: partialUserBase
-          },
-          {
-            model: LegacyUser,
-            as: "legacyUser",
-            attributes: partialUserBase
-          }
-        ]
-      },
-      {
-        model: User,
-        as: "tpuUser",
-        attributes: partialUserBase
-      },
-      {
-        model: LegacyUser,
-        as: "legacyUser",
-        attributes: partialUserBase
+        attributes: ["userId", "lastRead"]
       }
     ]
   }
@@ -208,13 +174,16 @@ export class ChatService {
     return rank?.rank?.index || 0
   }
 
-  async getPermissions(userId: number, associationId: number) {
+  async getPermissions(
+    userId: number,
+    associationId: number
+  ): Promise<ChatPermissions[]> {
     const association = await ChatAssociation.findOne({
       where: { id: associationId, userId },
       include: [
         {
           model: Chat,
-          attributes: ["userId"],
+          attributes: ["userId", "type"],
           as: "chat"
         },
         {
@@ -238,8 +207,8 @@ export class ChatService {
       )
     ]
     if (association.chat.userId === userId && association.chat.type === "group")
-      permissions.push("OWNER")
-    return permissions
+      permissions.push(ChatPermissions.OWNER)
+    return permissions as ChatPermissions[]
   }
 
   async checkPermissions(
@@ -247,17 +216,17 @@ export class ChatService {
     associationId: number,
     permission: ChatPermissions,
     noThrow: boolean = false
-  ) {
+  ): Promise<ChatPermissions[]> {
     const permissions = await this.getPermissions(userId, associationId)
     const hasPermission =
       permissions.includes(permission) ||
-      permissions.includes("ADMIN") ||
-      permissions.includes("OWNER")
+      permissions.includes(ChatPermissions.ADMIN) ||
+      permissions.includes(ChatPermissions.OWNER)
     if (!noThrow && !hasPermission)
       throw new GraphQLError(
         "You do not have permission to perform this action on the group."
       )
-    return hasPermission
+    return permissions
   }
 
   async emitToFCMs(message: Message, chat: Chat, userId: number) {
@@ -405,7 +374,7 @@ export class ChatService {
       id: user.id,
       chatId: chat.id
     })
-    socket.to(userId).emit("removeChat", {
+    socket.of(SocketNamespaces.CHAT).to(userId).emit("removeChat", {
       id: chat.id
     })
     return true
@@ -651,7 +620,7 @@ export class ChatService {
         chatId: chat.id,
         id: association.id
       })
-      socket.to(removeUserId).emit("removeChat", {
+      socket.of(SocketNamespaces.CHAT).to(removeUserId).emit("removeChat", {
         id: chat.id
       })
     }
@@ -738,6 +707,7 @@ export class ChatService {
     })
     for (const association of newUsers) {
       socket
+        .of(SocketNamespaces.CHAT)
         .to(association.userId)
         .emit("chatCreated", await this.getChat(chat.id, association.userId))
     }
@@ -745,9 +715,7 @@ export class ChatService {
   }
 
   async typing(associationId: number, userId: number) {
-    console.log(associationId, userId)
     const chat = await this.getChatFromAssociation(associationId, userId)
-    console.log("Typing indeex!")
     await this.emitForAll(
       associationId,
       userId,
@@ -907,7 +875,6 @@ export class ChatService {
           user?.storedStatus === "invisible"
         )
           return
-        console.log(message.id)
         await association.update(
           { lastRead: message.id },
           {
@@ -920,7 +887,7 @@ export class ChatService {
         this.emitForAll(association.id, userId, "readReceipt", {
           chatId,
           id: message.id,
-          user: await Container.get(UserUtilsService).getUserById(userId),
+          userId,
           lastRead: message.id
         })
       }
@@ -941,7 +908,8 @@ export class ChatService {
         },
         {
           model: ChatRank,
-          as: "ranks"
+          as: "ranks",
+          order: [["index", "DESC"]]
         },
         {
           model: ChatAssociation,
@@ -949,7 +917,14 @@ export class ChatService {
           include: [
             {
               model: ChatRank,
-              as: "ranks"
+              as: "ranks",
+              order: [["index", "DESC"]],
+              include: [
+                {
+                  model: ChatPermission,
+                  as: "permissions"
+                }
+              ]
             },
             {
               model: User,
@@ -986,7 +961,21 @@ export class ChatService {
       users: chat.users.map((user) => {
         return {
           ...user.toJSON(),
-          ranksMap: user.ranks.map((rank) => rank.id)
+          ranksMap: user.ranks.map((rank) => rank.id),
+          permissions: [
+            ...new Set(
+              user.ranks.flatMap((rank) =>
+                rank.permissions.map((permission) => permission.id)
+              )
+            )
+          ]
+        }
+      }),
+      ranks: chat.ranks.map((rank) => {
+        return {
+          ...rank,
+          permissionsMap:
+            rank?.permissions?.map((permission) => permission.id) || []
         }
       }),
       unread: 0,
@@ -1241,7 +1230,11 @@ export class ChatService {
     }
   }
 
-  async getChatFromAssociation(associationId: number, userId: number) {
+  async getChatFromAssociation(
+    associationId: number,
+    userId: number,
+    gql: boolean = false
+  ) {
     const chat = await Chat.findOne({
       include: [
         {
@@ -1281,6 +1274,12 @@ export class ChatService {
         }
       ]
     })
+    if (!chat && gql)
+      throw new GraphQLError("The chat could not be found.", {
+        extensions: {
+          code: "CHAT_NOT_FOUND"
+        }
+      })
     if (!chat) throw Errors.CHAT_NOT_FOUND
     return chat
   }

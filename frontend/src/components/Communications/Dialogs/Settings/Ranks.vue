@@ -27,11 +27,18 @@
               :color="rank.color"
               size="10"
             ></v-avatar>
-            {{ rank.name }}
-            <div>
-              <v-icon class="float-right" v-if="rank.managed">mdi-lock</v-icon>
-              <v-icon class="drag-handle mr-3 ml-1" v-else>mdi-drag</v-icon>
+            <div class="mr-3 ml-1">
+              <v-icon
+                v-if="
+                  rank.managed ||
+                  !$chat.canEditRank(rank.index, $chat.editingChat)
+                "
+              >
+                mdi-lock
+              </v-icon>
+              <v-icon class="drag-handle" v-else>mdi-drag</v-icon>
             </div>
+            {{ rank.name }}
           </div>
         </v-tab>
       </VueDraggable>
@@ -47,21 +54,30 @@
             <v-card-title>
               {{ $t("chats.settings.ranks.manage.color") }}
             </v-card-title>
-            <v-color-picker v-model="rank.color" mode="hexa"></v-color-picker>
+            <v-color-picker
+              v-model="rank.color"
+              mode="hexa"
+              :disabled="!$chat.canEditRank(rank.index, $chat.editingChat)"
+            ></v-color-picker>
           </div>
           <div class="ml-10">
             <v-card-title>
               {{ $t("chats.settings.ranks.manage.name") }}
             </v-card-title>
-            <v-card-subtitle style="white-space: initial" class="mb-4">
+            <v-card-subtitle
+              style="white-space: pre-line !important"
+              class="mb-4"
+            >
               {{ $t("chats.settings.ranks.manage.nameDesc") }}
             </v-card-subtitle>
             <v-text-field
+              :disabled="!$chat.canEditRank(rank.index, $chat.editingChat)"
               :label="$t('chats.settings.ranks.manage.name')"
               v-model="rank.name"
             ></v-text-field>
             <v-btn
               block
+              :disabled="!$chat.canEditRank(rank.index, $chat.editingChat)"
               @click="updateRank(rank)"
               :loading="$chat.dialogs.groupSettings.loading"
             >
@@ -69,29 +85,46 @@
             </v-btn>
           </div>
         </v-container>
-        <v-list-item-subtitle v-if="rank.managed">
-          This rank is special, it's automatically assigned to new users upon
-          joining and cannot be deleted.
+        <v-list-item-subtitle class="ml-4" v-if="rank.managed">
+          {{ $t("chats.settings.ranks.manage.managedRank") }}
         </v-list-item-subtitle>
         <v-list v-for="group in transformed" :key="group.name">
           <overline position="start">
             {{ $t(`chats.settings.ranks.manage.groups.${group.name}`) }}
           </overline>
-          <v-list-item v-for="item in group.items" :key="item.id">
-            <v-list-item-title>
-              {{ item.name }}
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ item.description }}
-            </v-list-item-subtitle>
-            <template v-slot:append>
-              <v-switch
-                density="compact"
-                :model-value="hasPermission(rank.permissionsMap, item.id)"
-                @update:model-value="updateRank(rank, item.id, $event)"
-              ></v-switch>
-            </template>
-          </v-list-item>
+          <span v-for="item in group.items" :key="item.id">
+            <v-tooltip
+              v-if="
+                item.id === 'TRUSTED' &&
+                $user.user?.id !== $chat.editingChat.userId
+              "
+              activator="parent"
+              location="top"
+            >
+              {{ $t("chats.settings.ranks.manage.trustedUserDisabled") }}
+            </v-tooltip>
+            <v-list-item
+              :disabled="
+                (item.id === 'TRUSTED' &&
+                  $user.user?.id !== $chat.editingChat.userId) ||
+                !$chat.canEditRank(rank.index, $chat.editingChat)
+              "
+            >
+              <v-list-item-title>
+                {{ item.name }}
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                {{ item.description }}
+              </v-list-item-subtitle>
+              <template v-slot:append>
+                <v-switch
+                  density="compact"
+                  :model-value="hasPermission(rank.permissionsMap, item.id)"
+                  @update:model-value="updateRank(rank, item.id, $event)"
+                ></v-switch>
+              </template>
+            </v-list-item>
+          </span>
         </v-list>
       </v-window-item>
     </v-window>
@@ -180,6 +213,7 @@ export default defineComponent({
       });
     },
     hasPermission(permissionsMap: string[], id: string) {
+      if (!permissionsMap) return false;
       return permissionsMap.includes(id);
     },
     async getRanks() {

@@ -6,6 +6,7 @@ export const ChatsQuery = gql`
       id
       type
       name
+      unread
       userId
       icon
       createdAt

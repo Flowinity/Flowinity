@@ -334,6 +334,9 @@ export default defineComponent({
       this.$app.loading = false;
       return;
     }
+    if (localStorage.getItem("rainbowMode")) {
+      document.body.classList.add("rainbow");
+    }
     // watch for CTRL + ALT + M for Memory Profiler
     document.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.ctrlKey && e.altKey && e.key === "m") {

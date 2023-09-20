@@ -1,4 +1,6 @@
+<!-- No longer used in v4 -->
 <template>
+  <!--
   <v-container>
     <v-card>
       <v-toolbar>
@@ -24,7 +26,7 @@
         </v-alert>
       </v-card-text>
     </v-card>
-  </v-container>
+  </v-container>-->
 </template>
 
 <script lang="ts">

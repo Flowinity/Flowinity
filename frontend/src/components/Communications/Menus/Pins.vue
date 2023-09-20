@@ -23,28 +23,20 @@
         size="64"
       ></v-progress-linear>
       <v-container>
-        <v-list v-if="data.messages.length">
-          <Message
-            v-for="(message, index) in data.messages"
+        <div class="messages communications" id="chat" v-if="data.items.length">
+          <MessagePerf
+            v-for="(message, index) in data.items"
             :id="'message-' + index"
             :key="message.id"
             :message="message"
             :pins="true"
             :search="true"
             class="pointer"
-            @authorClick="
-              $chat.dialogs.userMenu.user = $event.user;
-              $chat.dialogs.userMenu.username = $event.user.username;
-              $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
-              $chat.dialogs.userMenu.x = $event.x;
-              $chat.dialogs.userMenu.y = $event.y;
-              $chat.dialogs.userMenu.location = $event.location || 'top';
-            "
             @click="$chat.jumpToMessage(message.id)"
             @jumpToMessage="$chat.jumpToMessage($event.id)"
             @refresh="getPins(true)"
           />
-        </v-list>
+        </div>
         <PromoNoContent
           v-else
           description="Pinned messages will appear here."
@@ -69,10 +61,12 @@ import { Paginate as PaginateType } from "@/types/paginate";
 import Message from "@/components/Communications/Message.vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import Paginate from "@/components/Core/Paginate.vue";
+import MessagePerf from "@/components/Communications/MessagePerf.vue";
+import { ScrollPosition } from "@/gql/graphql";
 
 export default defineComponent({
   name: "Pins",
-  components: { Paginate, PromoNoContent, Message },
+  components: { MessagePerf, Paginate, PromoNoContent, Message },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
@@ -80,7 +74,7 @@ export default defineComponent({
       page: 1,
       loading: false,
       data: {
-        messages: [] as MessageType[],
+        items: [] as MessageType[],
         pager: {} as PaginateType
       }
     };
@@ -89,17 +83,14 @@ export default defineComponent({
     async getPins(e: boolean) {
       if (!e) return;
       this.loading = true;
-      const { data } = await this.axios.get(
-        `/chats/${this.$chat.selectedChatId}/messages`,
-        {
-          params: {
-            page: this.page,
-            mode: "paginate",
-            type: "pins"
-          }
-        }
-      );
-      this.data = data;
+      this.data = await this.$chat.getMessages({
+        search: {
+          pins: true
+        },
+        page: this.page,
+        associationId: this.$chat.selectedChat?.association.id,
+        position: ScrollPosition.Bottom
+      });
       this.loading = false;
     }
   },

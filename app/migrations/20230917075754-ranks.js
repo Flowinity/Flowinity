@@ -128,6 +128,13 @@ module.exports = {
         description: "Pin messages to the chat.",
         group: "MANAGE",
         name: "Pin Messages"
+      },
+      {
+        id: "TRUSTED",
+        description:
+          "This allows the user to update the highest rank associated to the user, and additionally users with the highest rank.\nThis is usually used subsequently with Administrator and should only be given to trusted users.",
+        group: "ADMIN",
+        name: "Trusted User"
       }
     ])
     await queryInterface.createTable("ChatRanks", {

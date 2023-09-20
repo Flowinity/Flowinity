@@ -6,7 +6,7 @@
     location="top"
     style="z-index: 2003"
   >
-    <v-list style="background: #151515 !important">
+    <v-list>
       <v-list-item @click="() => {}">
         <v-menu
           :close-delay="100"
@@ -21,10 +21,7 @@
           offset-x
           open-on-hover
         >
-          <v-list
-            v-if="contextMenu.item"
-            style="background: #151515 !important"
-          >
+          <v-list v-if="contextMenu.item">
             <v-list-item @click="setNotifications('all')">
               <v-list-item-title>
                 {{ $t("chats.notificationOptions.all") }}
@@ -104,20 +101,17 @@
       </v-list-item>
       <v-list-item
         color="red"
+        v-if="
+          contextMenu.item?.userId !== $user.user?.id ||
+          contextMenu.item?.type === 'direct'
+        "
         @click="
           leave.chat = contextMenu.item;
           leave.dialog = true;
         "
       >
         <v-icon class="mr-1">mdi-exit-to-app</v-icon>
-        <template
-          v-if="contextMenu.item?.users && contextMenu.item?.users?.length > 1"
-        >
-          {{ $t("generic.leave") }}
-        </template>
-        <template v-else>
-          {{ $t("generic.delete") }}
-        </template>
+        {{ $t("generic.leave") }}
       </v-list-item>
     </v-list>
   </v-menu>
@@ -141,7 +135,7 @@
       :subtitle="
         chat.type === 'group'
           ? `${chat.users?.length} members`
-          : chat.recipient?.legacyUser
+          : !chat.recipient?.id
           ? 'Legacy User'
           : ''
       "

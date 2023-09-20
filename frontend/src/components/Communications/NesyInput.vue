@@ -44,7 +44,7 @@ import { defineComponent } from "vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
-  name: "CommunicationsInput",
+  name: "NesyInput",
   components: { HoverChip },
   props: ["modelValue", "editing"],
   emits: ["update:modelValue", "sendMessage", "edit"]

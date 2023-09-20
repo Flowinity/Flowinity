@@ -3,7 +3,6 @@
     <CreateCollectionDialog v-model="create"></CreateCollectionDialog>
     <GalleryNavigation
       :supports="{ filter: true, metadata: false, search: true }"
-      :types="types"
       @refreshGallery="getCollections"
       v-model:search="search"
       @update:filter="filter = $event"

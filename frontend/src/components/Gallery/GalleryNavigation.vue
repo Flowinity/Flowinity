@@ -124,7 +124,10 @@ export default defineComponent({
       }
     },
     orderTypes: {
-      type: Array,
+      type: Array as () => {
+        name: string;
+        internalName: GalleryOrder;
+      }[],
       required: false,
       default: [
         {
@@ -138,7 +141,10 @@ export default defineComponent({
       ]
     },
     sortTypes: {
-      type: Array,
+      type: Array as () => {
+        name: string;
+        internalName: GallerySort;
+      }[],
       required: false,
       default: [
         {
@@ -156,7 +162,10 @@ export default defineComponent({
       ]
     },
     types: {
-      type: Array,
+      type: Array as () => {
+        name: string;
+        internalName: GalleryFilter;
+      }[],
       required: false,
       default: [
         {

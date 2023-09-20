@@ -46,9 +46,13 @@ export class CoreResolver {
       finishedSetup: true,
       domain: global.domain,
       maintenance: config.maintenance,
-      uptime: process.uptime(),
-      uptimeSys: os.uptime(),
-      commitVersion: process.env.TPU_COMMIT_HASH || "unknown"
+      uptime: Math.round(process.uptime()),
+      uptimeSys: Math.round(os.uptime()),
+      commitVersion: process.env.TPU_COMMIT_HASH || "unknown",
+      connection: {
+        ip: ctx.ip,
+        whitelist: false
+      }
     } as Partial<CoreState>
   }
 

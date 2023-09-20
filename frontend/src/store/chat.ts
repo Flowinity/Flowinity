@@ -24,7 +24,8 @@ import {
   PartialUserFriend,
   ScrollPosition,
   ToggleUser,
-  UpdateChatInput
+  UpdateChatInput,
+  UserStatus
 } from "@/gql/graphql";
 import {
   MessagesQuery,
@@ -96,7 +97,7 @@ export const useChatStore = defineStore("chat", {
       userMenu: {
         value: false,
         username: "",
-        user: null as User | null,
+        user: null as PartialUserFriend | null,
         bindingElement: null as string | null,
         x: 0,
         y: 0,
@@ -111,6 +112,7 @@ export const useChatStore = defineStore("chat", {
   }),
   actions: {
     getRankColor(ranksMap: string[], ranks: ChatRank[]) {
+      if (!ranksMap) ranksMap = [];
       for (const rankId of ranksMap) {
         const rank = ranks.find((r) => r.id === rankId);
         if (rank) {
@@ -121,6 +123,20 @@ export const useChatStore = defineStore("chat", {
       }
       return null;
     },
+    canEditRank(rankIndex: number, chat?: Chat) {
+      const userStore = useUserStore();
+      if (chat.userId === userStore.user?.id) return true;
+      const userRank = chat.ranks.find(
+        (rank) =>
+          rank.id ===
+          chat.users.find((user) => user.userId === chat.association.userId)
+            .ranksMap[0]
+      );
+      if (userRank.index > rankIndex) return true;
+      if (userRank.index === rankIndex && this.hasPermission("TRUSTED", chat))
+        return true;
+      return false;
+    },
     hasPermission(permission: string | string[], chat?: Chat) {
       const permissionsArray = Array.isArray(permission)
         ? permission
@@ -129,8 +145,10 @@ export const useChatStore = defineStore("chat", {
       const c: Chat | undefined = chat ?? this.selectedChat;
 
       return (
-        c?.association?.permissions.some(
-          (perm) => permissionsArray.includes(perm) || perm === "ADMIN"
+        c?.association?.permissions?.some(
+          (perm) =>
+            permissionsArray.includes(perm) ||
+            (!permissionsArray.includes("TRUSTED") && perm === "ADMIN")
         ) ||
         (c?.association?.userId === c?.userId && c?.type === "group")
       );
@@ -146,7 +164,7 @@ export const useChatStore = defineStore("chat", {
         variables: {
           input: {
             content,
-            attachments,
+            attachments: attachments.filter((attachment) => attachment),
             replyId,
             associationId: associationId || this.selectedChat?.association?.id
           }
@@ -181,6 +199,7 @@ export const useChatStore = defineStore("chat", {
     },
     async jumpToMessage(message: number) {
       if (!(await this.doJump(message))) {
+        this.selectedChat.messages = [];
         this.loadingNew = true;
         await this.loadHistory(undefined, ScrollPosition.Top, message + 30);
         this.loadingNew = false;
@@ -195,9 +214,9 @@ export const useChatStore = defineStore("chat", {
       if (prev.type !== MessageType.Message && prev.type) return false;
       if (dayjs(message.createdAt).diff(prev.createdAt, "minutes") > 5)
         return false;
-      return prev.user?.id === message.user?.id;
+      return prev.userId === message.userId;
     },
-    async doSearch() {
+    async doSearch(sort: number) {
       this.search.loading = true;
       this.search.results = await this.getMessages({
         search: {
@@ -205,7 +224,7 @@ export const useChatStore = defineStore("chat", {
         },
         page: this.search.results.pager.currentPage || 1,
         associationId: this.selectedChatId,
-        position: ScrollPosition.Top
+        position: !sort ? ScrollPosition.Top : ScrollPosition.Bottom
       });
       this.search.loading = false;
     },
@@ -304,25 +323,23 @@ export const useChatStore = defineStore("chat", {
       );
     },
     openUser(id: number) {
-      this.dialogs.user.username = this.lookupUser(id).username;
+      const user = this.lookupUser(id);
+      if (!user.id) return;
+      this.dialogs.user.username = user.username;
       this.dialogs.user.value = true;
     },
     lookupUser(id: number): PartialUserFriend {
-      const friends = useFriendsStore();
-      for (const chat of this.chats) {
-        const user = friends.friends.find((user) => user?.user?.id === id);
-        if (user) {
-          return user.user as PartialUserFriend;
-        } else {
-          const user = chat.users.find((user) => user?.tpuUser?.id === id);
-          if (user) {
-            return user.tpuUser as PartialUserFriend;
-          }
+      const user = useUserStore();
+      return (
+        user.users[id] || {
+          username: "Unknown User",
+          status: UserStatus.Offline,
+          administrator: false,
+          createdAt: new Date().toISOString(),
+          id: 0,
+          moderator: false
         }
-      }
-      return {
-        username: "Unknown User"
-      } as PartialUserFriend;
+      );
     },
     async changeUsers(
       users: number[],
@@ -595,7 +612,7 @@ export const useChatStore = defineStore("chat", {
 
       // filter out the current user and return the usernames
       const typers = this.selectedChat.typers
-        .filter((typer: Typing) => typer.user.id !== user.user?.id)
+        .filter((typer: Typing) => typer.userId !== user.user?.id)
         .map((typer: Typing) => {
           return typer.user.username;
         });

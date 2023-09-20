@@ -413,7 +413,7 @@
   "chats": {
     "start": {
       "dm": "You have sent no messages to {username} yet.",
-      "group": "There are no messages  in {name} yet."
+      "group": "There are no messages in {name} yet."
     },
     "jumpToBottom": "Jump to bottom",
     "loading": "Loading messages...",
@@ -432,7 +432,19 @@
       "member": "Member | Members",
       "admin": "Administrator | Administrators",
       "legacyUser": "Legacy User (Colubrina) | Legacy Users",
-      "offline": "Offline"
+      "offline": "Offline",
+      "online": "Online"
+    },
+    "leave": {
+      "title": "Leave Group",
+      "description": "Are you sure you want to leave the group {name}? You will not be able to join back unless you use an invite, or are manually added back by another member with permissions.",
+      "error": "You must transfer group ownership to another person to leave the group.",
+      "delete": {
+        "title": "Delete Group",
+        "description": "Are you sure you want to permanently delete the group {name}? This is irreversible! You will be asked to confirm either your password or 2FA token to proceed.",
+        "action": "Delete"
+      },
+      "action": "Leave"
     },
     "settings": {
       "title": "Group Settings",
@@ -472,7 +484,9 @@
           "create": "Create Rank",
           "color": "Pick a color!",
           "name": "Rank Name",
-          "nameDesc": "Pick a fitting name for your rank!"
+          "nameDesc": "Pick a fitting name for your rank!",
+          "trustedUserDisabled": "Only the group owner can update this permission.",
+          "managedRank": "This rank is special, it's automatically assigned to new users upon joining, and cannot be deleted or rearranged."
         }
       },
       "users": {

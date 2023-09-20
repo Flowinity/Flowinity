@@ -340,7 +340,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-$bg-color: #101010;
+$bg-color: #000000;
 $dot-color: rgba(255, 255, 255, 0.3);
 $dot-size: 1px;
 $dot-space: 22px;

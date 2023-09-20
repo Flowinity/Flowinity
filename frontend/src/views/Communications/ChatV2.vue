@@ -1,6 +1,57 @@
 <template>
   <div class="container">
-    <div class="messages communications" id="chat">
+    <v-navigation-drawer
+      v-if="$vuetify.display.mobile"
+      v-model="$chat.dialogs.message.value"
+      color="card"
+      :floating="true"
+      location="bottom"
+      :temporary="true"
+      :touchless="true"
+    >
+      <MessageActionsList
+        v-if="$chat.dialogs.message.message"
+        @delete="
+          $event
+            ? deleteMessage($chat.dialogs.message.message?.id)
+            : confirmDelete($chat.dialogs.message.message);
+          $chat.dialogs.message.value = false;
+        "
+        @edit="
+          handleEdit({
+            id: $chat.dialogs.message.message?.id || 0,
+            content: $chat.dialogs.message.message?.content || ''
+          });
+          $chat.dialogs.message.value = false;
+        "
+        @reply="
+          replyId = $chat.dialogs.message.message?.id;
+          $chat.dialogs.message.value = false;
+        "
+      ></MessageActionsList>
+    </v-navigation-drawer>
+    <v-menu v-else v-model="$chat.dialogs.message.value" :style="menuStyle">
+      <MessageActionsList
+        @delete="
+          $event
+            ? deleteMessage($chat.dialogs.message.message?.id)
+            : confirmDelete($chat.dialogs.message.message);
+          $chat.dialogs.message.value = false;
+        "
+        @edit="
+          handleEdit({
+            id: $chat.dialogs.message.message?.id || 0,
+            content: $chat.dialogs.message.message?.content || ''
+          });
+          $chat.dialogs.message.value = false;
+        "
+        @reply="
+          replyId = $chat.dialogs.message.message?.id;
+          $chat.dialogs.message.value = false;
+        "
+      ></MessageActionsList>
+    </v-menu>
+    <div class="messages communications position-relative" id="chat">
       <div id="sentinel-bottom" ref="sentinelBottom"></div>
       <infinite-loading
         @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
@@ -34,8 +85,9 @@
         :message="message"
         :index="index"
         @authorClick="
-          $chat.dialogs.userMenu.user = $event.user;
-          $chat.dialogs.userMenu.username = $event.user.username;
+          $chat.dialogs.userMenu.user = $user.users[$event.userId];
+          $chat.dialogs.userMenu.username =
+            $user.users[$event.userId]?.username;
           $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
           $chat.dialogs.userMenu.x = $event.x;
           $chat.dialogs.userMenu.y = $event.y;
@@ -89,86 +141,80 @@
       <div id="sentinel" ref="sentinel" v-if="$chat.isReady"></div>
     </div>
     <div class="input-container">
-      <v-fade-transition v-model="avoidAutoScroll">
-        <v-toolbar
-          v-if="$chat.loadNew && false"
-          class="pointer unselectable pl-2 force-bg dynamic-background"
-          color="toolbar"
-          height="25"
-          style="
-            border-radius: 20px 20px 0 0;
-            font-size: 14px;
-            backdrop-filter: blur(10px);
-          "
-          @click="jumpToBottom"
-        >
-          <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
-          {{ $t("chats.jumpToBottom") }}
-        </v-toolbar>
-      </v-fade-transition>
-      <v-fade-transition v-model="replyId">
-        <v-toolbar
-          v-if="replyId"
-          class="pointer"
-          color="card"
-          height="35"
-          style="opacity: 0.95; z-index: 1001"
-          @click="jumpToBottom"
-        >
-          <v-icon class="mr-2 ml-3">mdi-reply</v-icon>
-          <UserAvatar
-            :user="replying?.user"
-            class="mr-2"
-            size="24"
-          ></UserAvatar>
-          {{ replying?.content }}
-          <v-spacer></v-spacer>
-          <v-btn @click="replyId = null">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-toolbar>
-      </v-fade-transition>
-      <v-fade-transition :model-value="files.length">
-        <v-toolbar v-if="files.length" color="card" height="auto">
-          <v-slide-group class="my-2 mx-1">
-            <v-slide-group-item
-              v-for="(file, index) in files"
-              :key="file.name + file.size + index"
-            >
-              <v-card class="mr-2" elevation="0" max-width="400px" show-arrows>
-                <v-progress-linear
-                  :color="uploadProgress === 100 ? 'success' : 'primary'"
-                  :model-value="file.uploadProgress"
-                  height="20"
-                >
-                  <small>{{ uploadProgress }}%</small>
-                </v-progress-linear>
-                <v-toolbar>
-                  <v-icon class="ml-2">mdi-upload</v-icon>
-                  <v-card-text class="text-center limit">
-                    {{ file.name }}
-                  </v-card-text>
-                  <v-spacer></v-spacer>
-                  <v-card-actions>
-                    <v-btn
-                      class="mr-2"
-                      color="error"
-                      @click="files.splice(index, 1)"
-                    >
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-                </v-toolbar>
-              </v-card>
-            </v-slide-group-item>
-          </v-slide-group>
-        </v-toolbar>
-      </v-fade-transition>
+      <v-toolbar
+        v-if="$chat.loadNew && false"
+        class="pointer unselectable pl-2 force-bg dynamic-background"
+        color="toolbar"
+        height="25"
+        style="
+          border-radius: 20px 20px 0 0;
+          font-size: 14px;
+          backdrop-filter: blur(10px);
+        "
+        @click="jumpToBottom"
+      >
+        <v-icon class="mr-1 ml-1" size="17">mdi-arrow-down</v-icon>
+        {{ $t("chats.jumpToBottom") }}
+      </v-toolbar>
+      <v-toolbar
+        v-if="replyId"
+        class="pointer"
+        color="card"
+        height="35"
+        style="opacity: 0.95"
+        @click="jumpToBottom"
+      >
+        <v-icon class="mr-2 ml-3">mdi-reply</v-icon>
+        <UserAvatar
+          :user="$user.users[replying?.userId]"
+          class="mr-2"
+          size="24"
+        ></UserAvatar>
+        {{ replying?.content }}
+        <v-spacer></v-spacer>
+        <v-btn @click="replyId = null">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <v-toolbar v-if="files.length" color="card" height="auto">
+        <v-slide-group class="my-2 mx-1">
+          <v-slide-group-item
+            v-for="(file, index) in files"
+            :key="file.name + file.size + index"
+          >
+            <v-card class="mr-2" elevation="0" max-width="400px">
+              <v-progress-linear
+                :color="finished ? 'success' : 'primary'"
+                :model-value="file.uploadProgress"
+                height="20"
+              >
+                <small>{{ uploadProgress }}%</small>
+              </v-progress-linear>
+              <v-toolbar>
+                <v-icon class="ml-2">mdi-upload</v-icon>
+                <v-card-text class="text-center limit">
+                  {{ file.name }}
+                </v-card-text>
+                <v-spacer></v-spacer>
+                <v-card-actions>
+                  <v-btn
+                    class="mr-2"
+                    color="error"
+                    @click="files.splice(index, 1)"
+                  >
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </v-toolbar>
+            </v-card>
+          </v-slide-group-item>
+        </v-slide-group>
+      </v-toolbar>
       <CommunicationsInput
         ref="input"
         v-model="message"
         class="message-input"
-        style="margin-top: auto; z-index: 2002"
+        style="margin-top: auto"
         @emoji="
           message += $event;
           $nextTick(() => focusInput());
@@ -186,14 +232,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
-import Message from "@/components/Communications/Message.vue";
 import { MessageSocket } from "@/types/messages";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import User from "@/views/User/User.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import { Chat, Typing } from "@/models/chat";
+import { Typing } from "@/models/chat";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
-import { Message as MessageType } from "@/models/message";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import MobileMenu from "@/components/Core/Dialogs/MobileMenu.vue";
 import MessageActionsList from "@/components/Communications/MessageActionsList.vue";
@@ -202,7 +246,7 @@ import UserCard from "@/components/Users/UserCard.vue";
 import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
-import { ScrollPosition } from "@/gql/graphql";
+import { ScrollPosition, Message, Chat } from "@/gql/graphql";
 
 export default defineComponent({
   name: "Chat",
@@ -215,7 +259,6 @@ export default defineComponent({
     UserAvatar,
     User,
     MessageSkeleton,
-    Message,
     CommunicationsInput,
     MessagePerf,
     UserCard,
@@ -244,13 +287,14 @@ export default defineComponent({
         type: string;
         tpuLink: string | undefined;
         uploadProgress: number;
+        finished: boolean;
       }[],
       uploadProgress: 0,
       uploading: false,
       dialogs: {
         delete: {
           value: false,
-          message: undefined as MessageType | undefined
+          message: undefined as Message | undefined
         }
       },
       focusInterval: undefined as ReturnType<typeof setTimeout> | undefined,
@@ -277,7 +321,7 @@ export default defineComponent({
         top: ${
           this.$chat.dialogs.message.y + 190 < this.$vuetify.display.height
             ? this.$chat.dialogs.message.y
-            : this.$vuetify.display.height - 230
+            : this.$vuetify.display.height - 300
         }px;
         left: ${this.$chat.dialogs.message.x}px;`;
     },
@@ -293,6 +337,10 @@ export default defineComponent({
       return this.$chat.selectedChat?.messages?.find(
         (message) => message.id === this.replyId
       );
+    },
+    finished() {
+      if (!this.files.length) return true;
+      return !!this.files.filter((file) => file.finished).length;
     }
   },
   methods: {
@@ -304,7 +352,7 @@ export default defineComponent({
         "day"
       );
     },
-    confirmDelete(message: MessageType | undefined | null) {
+    confirmDelete(message: Message | undefined | null) {
       if (!message) return;
       this.dialogs.delete.message = message;
       this.dialogs.delete.value = true;
@@ -335,7 +383,8 @@ export default defineComponent({
                 size: file.size,
                 type: file.type,
                 tpuLink: undefined,
-                uploadProgress: 0
+                uploadProgress: 0,
+                finished: false
               });
             }
           }
@@ -386,25 +435,30 @@ export default defineComponent({
         for (const file of this.files.filter((file) => !file.tpuLink)) {
           formData.append("attachments", file.file);
         }
-        const { data } = await this.axios.post(`/gallery/site`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          },
-          onUploadProgress: (progressEvent) => {
-            this.uploadProgress = Math.round(
-              (progressEvent.loaded / (progressEvent.total || 0)) * 100
-            );
-            this.files.forEach((file) => {
-              if (!file.tpuLink) {
-                file.uploadProgress = this.uploadProgress;
-              }
-            });
-          }
-        });
-        this.files.forEach((file, index) => {
-          file.tpuLink = data[index]?.upload?.attachment;
-        });
-        this.uploading = false;
+        try {
+          const { data } = await this.axios.post(`/gallery/site`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            },
+            onUploadProgress: (progressEvent) => {
+              this.uploadProgress = Math.round(
+                (progressEvent.loaded / (progressEvent.total || 0)) * 100
+              );
+              this.files.forEach((file) => {
+                if (!file.tpuLink) {
+                  file.uploadProgress = this.uploadProgress;
+                }
+              });
+            }
+          });
+          this.files.forEach((file, index) => {
+            file.tpuLink = data[index]?.upload?.attachment;
+            file.finished = true;
+          });
+          this.uploading = false;
+        } catch {
+          this.files = [];
+        }
       } else {
         this.uploading = false;
       }
@@ -453,7 +507,7 @@ export default defineComponent({
       this.focusInput();
       if (!this.$chat.selectedChat?.messages) return;
       if (!this.message && !this.files.length) return;
-      if (this.uploading) return;
+      if (!this.finished) return;
       let message = this.message.trim();
       if (!this.message && this.files.length) message = " ";
       const replyId = this.replyId;
@@ -531,7 +585,7 @@ export default defineComponent({
       // find first message made by user
       const lastMessage = this.$chat.selectedChat?.messages
         .slice()
-        .find((message) => message.tpuUser?.id === this.$user.user?.id);
+        .find((message) => message.userId === this.$user.user?.id);
       if (!lastMessage || lastMessage.id === this.editing) return;
       this.editingText = lastMessage.content;
       this.editing = lastMessage.id;
@@ -549,7 +603,7 @@ export default defineComponent({
           .find(
             (message) =>
               message.id !== this.editing &&
-              message.tpuUser?.id === this.$user.user?.id &&
+              message.userId === this.$user.user?.id &&
               message.id < this.editing
           );
         if (!message) {
@@ -570,7 +624,7 @@ export default defineComponent({
           .find(
             (message) =>
               message.id !== this.editing &&
-              message.tpuUser?.id === this.$user.user?.id &&
+              message.userid === this.$user.user?.id &&
               message.id > this.editing
           );
         if (!message) {
@@ -679,14 +733,12 @@ export default defineComponent({
         ];
       if (!chat) return;
       if (!chat.typers) chat.typers = [];
-      chat.typers = chat.typers.filter(
-        (t: Typing) => t.user.id !== data.user.id
-      );
+      chat.typers = chat.typers.filter((t: Typing) => t.userId !== data.userId);
       chat.typers.push(data);
       setTimeout(() => {
         chat.typers = chat.typers.filter(
           (t: Typing) =>
-            t.user.id !== data.user.id &&
+            t.userId !== data.userId &&
             this.$date(t.expires).isAfter(Date.now())
         );
       }, 5000);
@@ -698,7 +750,7 @@ export default defineComponent({
       if (index === -1) return;
       if (!this.$chat.chats[index].messages) return;
       const messageIndex = this.$chat.chats[index].messages.findIndex(
-        (m: MessageType) => m.id === data.id
+        (m: Message) => m.id === data.id
       );
       if (messageIndex === -1) {
         let embedFailIndex = this.embedFails.findIndex(
@@ -820,9 +872,5 @@ export default defineComponent({
 .input-container {
   position: sticky;
   bottom: 0;
-}
-
-.scrollable {
-  overflow: auto;
 }
 </style>

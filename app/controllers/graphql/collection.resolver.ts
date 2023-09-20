@@ -6,6 +6,7 @@ import { Collection } from "@app/models/collection.model"
 import {
   CollectionFilter,
   CollectionInput,
+  PermissionsMetadata,
   UserCollectionsInput
 } from "@app/classes/graphql/collections/collections"
 import { CollectionUser } from "@app/models/collectionUser.model"
@@ -18,6 +19,7 @@ import {
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { GraphQLError } from "graphql/error"
 import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
+import { col } from "sequelize"
 
 export const PaginatedCollectionsResponse = PagerResponse(Collection)
 export type PaginatedCollectionsResponse = InstanceType<
@@ -99,6 +101,37 @@ export class CollectionResolver {
     )
     if (!collection) return null
     return collection
+  }
+
+  @FieldResolver(() => PermissionsMetadata)
+  async permissionsMetadata(
+    @Root() collection: Collection,
+    @Ctx() ctx: Context
+  ): Promise<PermissionsMetadata> {
+    if (collection.permissionsMetadata) return collection.permissionsMetadata
+    if (ctx.user!!.id === collection.userId)
+      return {
+        write: true,
+        configure: true,
+        read: true
+      }
+    const user = await collection.$get("recipient", {
+      where: {
+        recipientId: ctx.user!!.id
+      }
+    })
+    if (user) {
+      return {
+        write: user.write,
+        read: user.read,
+        configure: user.configure
+      }
+    }
+    return {
+      write: false,
+      configure: false,
+      read: true
+    }
   }
 }
 

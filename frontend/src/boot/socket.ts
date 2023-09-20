@@ -13,6 +13,7 @@ import {
   Friend,
   FriendNickname,
   Message,
+  PartialUserFriend,
   User,
   UserStoredStatus
 } from "@/gql/graphql";
@@ -117,6 +118,9 @@ export default async function setup(app) {
       status: data.status
     };
   });
+  sockets.trackedUsers.on("trackedUsers", (data: PartialUserFriend[]) => {
+    user.tracked = data;
+  });
   sockets.chat.on("friendRequestAccepted", async (data: Friend) => {
     friends.friends.push(data);
     chat.sound();
@@ -189,7 +193,7 @@ export default async function setup(app) {
     if (messageIndex === -1) return;
     chat.chats[index].messages.forEach((message: Message) => {
       message.readReceipts = message.readReceipts.filter(
-        (r: ChatAssociation) => r.user.id !== data.user.id
+        (r: ChatAssociation) => r.userId !== data.userId
       );
     });
     chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
@@ -223,6 +227,10 @@ export default async function setup(app) {
   sockets.chat.on("removeChat", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.id);
     if (index === -1) return;
+    if (chat.dialogs.groupSettings.itemId === data.id) {
+      chat.dialogs.groupSettings.value = false;
+      chat.dialogs.groupSettings.itemId = undefined;
+    }
     chat.chats.splice(index, 1);
     if (chat.selectedChat?.id === data.id && chat.isCommunications) {
       router.push("/communications/home");
@@ -344,11 +352,14 @@ export default async function setup(app) {
     "rankOrderUpdated",
     (data: { chatId: number; ranks: Partial<ChatRank>[] }) => {
       const localChat = chat.chats.find((chat) => chat.id === data.chatId);
-      localChat.ranks.map((rank) => {
+      localChat.ranks = localChat.ranks.map((rank) => {
         return {
           ...rank,
           index: data.ranks.find((r2) => r2.id === rank.id).index
         };
+      });
+      localChat.ranks.sort((a, b) => {
+        return b.index - a.index || 0;
       });
     }
   );

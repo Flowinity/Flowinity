@@ -76,7 +76,7 @@ export default defineComponent({
       required: true
     }
   },
-  emits: ["sharingDialog"],
+  emits: ["sharingDialog", "settingsDialog"],
   computed: {
     collectionImage(): string {
       if (this.collection?.image) {

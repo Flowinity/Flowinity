@@ -36,6 +36,7 @@ export class PulseSocketController {
     @ConnectedSocket() socket: SocketAuth,
     @MessageBody() data: PulseClass
   ) {
+    if (!socket.request.user) return
     try {
       if (data.type === "gallery") {
         const pulse = await Pulse.create({
@@ -79,6 +80,7 @@ export class PulseSocketController {
     @ConnectedSocket() socket: SocketAuth,
     @MessageBody() data: SinglePulse
   ) {
+    if (!socket.request.user) return
     try {
       if (data.timeSpent > 3600000) return
       await Pulse.create({
@@ -104,6 +106,7 @@ export class PulseSocketController {
     @ConnectedSocket() socket: SocketAuth,
     @MessageBody() data: SinglePulse
   ) {
+    if (!socket.request.user) return
     try {
       const pulse: Pulse | null = await Pulse.findOne({
         where: {

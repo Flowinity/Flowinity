@@ -5,7 +5,6 @@ import { useToast } from "vue-toastification";
 import functions from "@/plugins/functions";
 import { AxiosProgressEvent } from "axios";
 import { useUserStore } from "@/store/user";
-import { Upload } from "@/models/upload";
 import { useChatStore } from "@/store/chat";
 import { useCollectionsStore } from "@/store/collections";
 import { useWorkspacesStore } from "@/store/workspaces";
@@ -16,8 +15,7 @@ import { useRoute } from "vue-router";
 import { SidebarItem } from "@/types/sidebar";
 import { CoreStateQuery } from "@/graphql/core/state.graphql";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
-import { CoreState } from "@/gql/graphql";
-import { Chat } from "@/models/chat";
+import { Chat, CoreState, Upload } from "@/gql/graphql";
 import { useFriendsStore } from "@/store/friends";
 
 export const useAppStore = defineStore("app", {
@@ -531,7 +529,7 @@ export const useAppStore = defineStore("app", {
           //
         }
       }
-      let experiments = localStorage.getItem("experimentsStore");
+      let experiments: any = localStorage.getItem("experimentsStore");
       if (experiments) {
         try {
           experiments = JSON.parse(experiments);

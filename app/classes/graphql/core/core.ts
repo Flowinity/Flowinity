@@ -102,12 +102,18 @@ export class Features {
 
 @ObjectType()
 export class Connection {
+  @Field(() => String)
   ip: string
+  @Field(() => Boolean, {
+    deprecationReason: "No longer used in v4."
+  })
   whitelist: boolean
 }
 
 @ObjectType()
 export class CoreState {
+  @Field(() => Connection)
+  connection: Connection
   @Field()
   name: string
   @Field({

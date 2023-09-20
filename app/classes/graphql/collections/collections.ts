@@ -43,6 +43,7 @@ export class UserCollectionsInput {
   })
   limit: number
   @IsNumber()
+  @Min(1)
   @Field({
     defaultValue: 1
   })

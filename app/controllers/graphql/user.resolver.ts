@@ -255,7 +255,8 @@ function createBaseResolver<T extends ClassType>(
               ...partialUserBase,
               "itemsPerPage",
               "status",
-              "storedStatus"
+              "storedStatus",
+              "emailVerified"
             ]
           }
         ]

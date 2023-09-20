@@ -2,6 +2,8 @@ import { BelongsTo, Column, DataType, Model, Table } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Field, Float, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { GraphQLJSON } from "graphql-scalars"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 @Table
@@ -34,6 +36,14 @@ export class Integration extends Model {
   @Column
   expiresAt: Date
 
+  @Field(() => DateType)
+  @Column
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column
+  updatedAt: Date
+
   @Column
   tokenType: string
 
@@ -49,7 +59,9 @@ export class Integration extends Model {
   @Column
   providerUsername: string
 
-  // TODO: GraphQL
+  @Field(() => GraphQLJSON, {
+    nullable: true
+  })
   @Column({
     type: DataType.JSON
   })

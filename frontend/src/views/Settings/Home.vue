@@ -49,13 +49,15 @@
             :rules="$validation.user.username"
             class="mt-4"
           ></v-text-field>
+          <!--
           <v-text-field
             v-model="$user.user.currentPassword"
             :label="$t('settings.home.myAccount.currentPassword')"
             :rules="$validation.user.passwordSettings"
             class="mt-4"
             type="password"
-          ></v-text-field>
+          ></v-text-field>-->
+          //TODO
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
@@ -75,6 +77,7 @@
     <v-expansion-panel :title="$t('settings.home.myAccount.changePassword')">
       <v-expansion-panel-text>
         <v-form v-model="valid.password">
+          <!--
           <v-text-field
             v-model="$user.user.currentPassword"
             :label="$t('settings.home.myAccount.currentPassword')"
@@ -88,6 +91,7 @@
             class="mt-4"
             type="password"
           ></v-text-field>
+          -->
           <v-text-field
             v-model="confirmPassword"
             :label="$t('settings.home.myAccount.confirmPassword')"
@@ -128,13 +132,14 @@
             :rules="$validation.user.email"
             class="mt-4"
           ></v-text-field>
+          <!--
           <v-text-field
             v-model="$user.user.currentPassword"
             :label="$t('settings.home.myAccount.currentPassword')"
             :rules="$validation.user.passwordSettings"
             class="mt-4"
             type="password"
-          ></v-text-field>
+          ></v-text-field>-->
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
@@ -313,9 +318,11 @@ export default defineComponent({
       },
       validation: [
         (value: string) => {
+          return "TODO";
+          /*
           if (value !== this.$user.user.password)
             return "Passwords do not match";
-          return true;
+          return true;*/
         }
       ]
     };

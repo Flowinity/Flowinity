@@ -25,70 +25,31 @@ export const StandardMessageFragment = gql`
         type
       }
     }
+    reply {
+      readReceipts {
+        id
+        userId
+        lastRead
+        legacyUserId
+      }
+      content
+      userId
+      id
+      legacyUserId
+      embeds {
+        type
+      }
+    }
     edited
     editedAt
     replyId
     legacyUserId
     pinned
-    tpuUser {
-      username
-      id
-      createdAt
-      administrator
-      moderator
-      avatar
-    }
-    reply {
-      id
-      createdAt
-      updatedAt
-      chatId
-      userId
-      content
-      type
-      edited
-      editedAt
-      replyId
-      legacyUserId
-      pinned
-      user {
-        id
-        username
-        avatar
-      }
-    }
-    legacyUser {
-      username
-      id
-      createdAt
-      administrator
-      moderator
-      avatar
-    }
-    user {
-      username
-      id
-      createdAt
-      administrator
-      moderator
-      avatar
-    }
     readReceipts {
       id
-      chatId
       userId
-      rank
       lastRead
-      notifications
       legacyUserId
-      user {
-        username
-        id
-        createdAt
-        administrator
-        moderator
-        avatar
-      }
     }
   }
 `;

@@ -9,18 +9,43 @@
     </div>
     <div
       v-if="message.replyId"
-      class="ml-6 mt-4 mb-n1 pointer limit reply"
-      @click.prevent="$emit('jumpToMessage', message.reply?.id)"
+      class="ml-7 unselectable mt-4 mb-n3 pointer limit reply d-flex align-center"
+      @click.prevent="
+        message.reply ? $emit('jumpToMessage', message.replyId) : () => {}
+      "
     >
-      <v-icon class="mr-2">mdi-reply</v-icon>
-      <UserAvatar
-        :user="$user.users[message.reply.userId]"
-        class="mr-2"
-        size="18"
-      ></UserAvatar>
-      <span class="limit">
-        {{ message.reply?.content ?? "Deleted Message" }}
+      <reply-line class="mt-2"></reply-line>
+      <span class="mt-n2" v-if="message.reply">
+        <UserAvatar
+          :user="$user.users[message.reply.userId]"
+          class="mr-2"
+          size="18"
+          style="padding-left: 6px"
+        ></UserAvatar>
+        <span
+          :style="{
+            opacity: 0.8,
+            color: this.$chat.getRankColor(
+              this.$chat.selectedChat.users.find(
+                (assoc) => assoc.userId === message.reply.userId
+              )?.ranksMap,
+              this.$chat.selectedChat.ranks
+            ),
+            'margin-left': '-1px'
+          }"
+        >
+          {{ $user.users[message.reply.userId].username }}
+        </span>
+        <template v-if="message.reply.embeds.length">
+          <v-icon class="ml-1" color="#878686">mdi-image</v-icon>
+        </template>
+        <span class="limit ml-1" style="color: #878686">
+          {{ message.reply?.content || "Click to see attachment..." }}
+        </span>
       </span>
+      <template v-else>
+        <span class="text-grey text-small mt-n2 ml-2">Message deleted.</span>
+      </template>
     </div>
     <div
       class="d-flex flex-row hover-message-actions"
@@ -31,9 +56,6 @@
           @contextmenu="context"
           :class="{ merge, unselectable: $vuetify.display.mobile }"
           class="message rounded position-relative"
-          :style="{
-            zIndex: 1000 - index
-          }"
         >
           <div class="avatar-section">
             <small
@@ -53,7 +75,7 @@
             <UserAvatar
               @click="
                 $emit('authorClick', {
-                  user: message.user,
+                  user,
                   bindingElement: 'message-author-avatar-' + message.id,
                   x: $event.x,
                   y: $event.y
@@ -64,7 +86,7 @@
                 !merge &&
                 (message.type === MessageType.Message || !message.type)
               "
-              :user="message.user"
+              :user="user"
               :id="'message-author-avatar-' + message.id"
             />
             <div v-else class="mr-3 text-grey">
@@ -103,14 +125,14 @@
                 :style="`color: ${getColor}`"
                 @click.prevent="
                   $emit('authorClick', {
-                    user: message.user,
+                    user,
                     bindingElement: 'message-author-' + message.id,
                     x: $event.x,
                     y: $event.y
                   })
                 "
               >
-                {{ $friends.getName(message.user) }}
+                {{ $friends.getName(user) }}
               </span>
               <small class="text-grey">
                 {{ $date(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
@@ -226,13 +248,15 @@ import MessageActions from "@/components/Communications/MessageActions.vue";
 import Embed from "@/components/Communications/Embed.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
-import { Chat } from "@/models/chat";
-import { ChatAssociation } from "@/models/chatAssociation";
-import { MessageType } from "@/gql/graphql";
+import { Message, MessageType } from "@/gql/graphql";
+import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
+import ReplyLine from "@/components/Communications/ReplyLine.vue";
 
 export default defineComponent({
   name: "MessagePerf",
   components: {
+    ReplyLine,
+    MessageSkeleton,
     ReadReceipt,
     UserAvatar,
     Embed,
@@ -252,7 +276,8 @@ export default defineComponent({
   ],
   data() {
     return {
-      hovered: false
+      hovered: false,
+      streamedReply: null as Message | null
     };
   },
   computed: {
@@ -260,11 +285,7 @@ export default defineComponent({
       return MessageType;
     },
     user() {
-      return this.$chat.chats
-        .find((chat: Chat) => chat.id === this.message.chatId)
-        ?.users.find(
-          (user: ChatAssociation) => user.userId === this.message.userId
-        )?.user;
+      return this.$user.users[this.message.userId];
     },
     getColor() {
       return this.$user.disableProfileColors
@@ -284,7 +305,36 @@ export default defineComponent({
       this.$chat.dialogs.message.x = e.clientX;
       this.$chat.dialogs.message.y = e.clientY;
       this.$chat.dialogs.message.value = true;
+    },
+    onEdit(data: Message) {
+      if (data?.id !== this.message.replyId) return;
+      if (data.content) {
+        this.message.reply.content = data.content;
+      }
+      if (data.edited !== undefined) {
+        this.message.reply.edited = data.edited;
+      }
+      if (data.editedAt !== undefined) {
+        this.message.reply.editedAt = data.editedAt;
+      }
+      if (data.pinned !== undefined) {
+        this.message.reply.pinned = data.pinned;
+      }
+    },
+    onDelete(data: Message) {
+      if (data?.id !== this.message.replyId) return;
+      this.message.reply = null;
     }
+  },
+  mounted() {
+    if (!this.message.reply?.id) return;
+    this.$sockets.chat.on("edit", this.onEdit);
+    this.$sockets.chat.on("messageDelete", this.onDelete);
+  },
+  beforeUnmount() {
+    if (!this.message.reply?.id) return;
+    this.$sockets.chat.off("edit", this.onEdit);
+    this.$sockets.chat.off("messageDelete", this.onDelete);
   }
 });
 </script>

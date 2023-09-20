@@ -132,6 +132,8 @@ export const GetUserQuery = gql`
         type
         providerUsername
         providerUserId
+        providerUserCache
+        createdAt
         id
         error
         expiresAt

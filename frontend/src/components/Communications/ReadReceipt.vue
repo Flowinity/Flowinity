@@ -1,15 +1,15 @@
 <template>
   <span class="d-flex flex-col">
     <UserAvatar
-      v-if="readReceipt?.user"
-      :id="'message-read-receipt-' + message.id + '-' + readReceipt.userId"
-      :key="readReceipt.userId + '-' + message.id"
-      :user="readReceipt.user"
+      v-if="user"
+      :id="'message-read-receipt-' + message.id + '-' + user.userId"
+      :key="user.userId + '-' + message.id"
+      :user="user"
       class="pointer read-receipt-avatar"
       size="22"
       style="align-self: flex-end; z-index: 1"
       @click.prevent="
-        $chat.dialogs.user.username = readReceipt.user.username;
+        $chat.dialogs.user.username = user.username;
         $chat.dialogs.user.value = true;
       "
     >
@@ -20,11 +20,11 @@
         offset="18"
         v-if="!expanded"
       >
-        {{ readReceipt.user?.username }}
+        {{ user?.username }}
       </v-tooltip>
     </UserAvatar>
     <span v-if="expanded" class="ml-2">
-      {{ readReceipt.user?.username }}
+      {{ user?.username }}
     </span>
   </span>
 </template>
@@ -44,6 +44,11 @@ interface ReadReceipt {
 export default defineComponent({
   name: "ReadReceipt",
   components: { UserAvatar },
+  computed: {
+    user() {
+      return this.$user.users[this.readReceipt.userId];
+    }
+  },
   props: {
     readReceipt: {
       type: Object as () => ReadReceipt,

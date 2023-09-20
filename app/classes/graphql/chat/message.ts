@@ -93,6 +93,10 @@ export class MessagesSearch {
     nullable: true
   })
   after: Date
+  @Field(() => Boolean, {
+    nullable: true
+  })
+  pins?: boolean
 }
 
 @InputType()

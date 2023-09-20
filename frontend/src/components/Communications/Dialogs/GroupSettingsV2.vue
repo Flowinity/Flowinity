@@ -48,7 +48,7 @@
       @remove="removeIcon"
       :remove-text="$t('dialogs.uploadCropper.removeGroup')"
     />
-    <div class="d-flex flex-row mt-n4">
+    <div class="d-flex flex-row mt-n4" v-if="$chat.editingChat">
       <v-tabs direction="vertical" v-model="tab">
         <overline>
           {{ $chat.editingChat.name }}
@@ -91,6 +91,15 @@
         >
           <v-icon class="mr-2">mdi-gavel</v-icon>
           {{ $t("chats.settings.tabs.bans") }}
+        </v-tab>
+        <v-divider class="my-2"></v-divider>
+        <v-tab
+          value="delete"
+          v-if="$chat.editingChat.userId === $user.user.id"
+          style="color: red"
+        >
+          <v-icon class="mr-2">mdi-delete</v-icon>
+          {{ $t("chats.leave.delete.title") }}
         </v-tab>
       </v-tabs>
       <v-window v-model="tab" class="flex-grow-1" :touch="false">

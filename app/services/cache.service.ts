@@ -293,7 +293,6 @@ export class CacheService {
             {
               model: Upload,
               as: "attachment",
-              attributes: ["id", "attachment"],
               where: {
                 type: "image"
               }
@@ -350,7 +349,6 @@ export class CacheService {
             {
               model: Upload,
               as: "attachment",
-              attributes: ["id", "attachment"],
               where: {
                 type: "image"
               }

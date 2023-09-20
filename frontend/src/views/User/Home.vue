@@ -54,7 +54,7 @@
                 >
                   {{ user.username }}
                 </v-tooltip>
-                {{ $friends.getName(user) }}
+                {{ $friends.getName(user.id) }}
               </router-link>
             </v-card-title>
             <UserBadges :user="user" class="justify-center mt-n1 mb-2" />
@@ -85,16 +85,16 @@
 import { defineComponent } from "vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import { User } from "@/models/user";
 import UserBadges from "@/components/Users/UserBadges.vue";
 import Paginate from "@/components/Core/Paginate.vue";
+import { PartialUserPublic } from "@/gql/graphql";
 
 export default defineComponent({
   name: "UserHome",
   components: { Paginate, UserBadges, UserAvatar, PromoNoContent },
   data() {
     return {
-      users: [] as User[],
+      users: [] as PartialUserPublic[],
       pagination: {
         totalItems: 0,
         totalPages: 0,

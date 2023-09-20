@@ -50,15 +50,8 @@ export class ChatSocketController {
     @ConnectedSocket() socket: SocketAuth,
     @MessageBody() data: number
   ) {
-    console.log("Typing????")
     const typingRateLimit = await redis.get(
       `user:${socket.request.user.id}:typing`
-    )
-    console.log(
-      typingRateLimit &&
-        dayjs().isBefore(dayjs(typingRateLimit).add(2, "second")),
-      typingRateLimit,
-      dayjs().isBefore(dayjs(typingRateLimit).add(2, "second"))
     )
     if (
       typingRateLimit &&

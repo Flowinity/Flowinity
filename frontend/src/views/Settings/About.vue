@@ -1,9 +1,16 @@
 <template>
   <v-container class="text-center">
     <v-img
+      v-if="rainbow()"
+      src="@/assets/images/tpu-logo-banner-rainbow.svg"
+      max-height="120"
+      class="mb-3"
+    />
+    <v-img
       src="@/assets/images/tpu-logo-banner.svg"
       max-height="120"
       class="mb-3"
+      v-else
     />
     <v-divider></v-divider>
     <p class="mt-5">
@@ -45,13 +52,6 @@
           })
         }}
       </p>
-      <p v-if="$app.site.connection.whitelist">
-        {{
-          $t("settings.about.ipWhitelist", {
-            groups: $app.site.connection.whitelist.groups
-          })
-        }}
-      </p>
     </template>
     <p>
       {{
@@ -64,13 +64,6 @@
       {{
         $t("settings.about.uptime", {
           uptime: $app.site.uptime
-        })
-      }}
-    </p>
-    <p>
-      {{
-        $t("settings.about.sysUptime", {
-          uptime: $app.site.sysUptime
         })
       }}
     </p>
@@ -121,6 +114,9 @@ export default defineComponent({
     return {};
   },
   methods: {
+    rainbow() {
+      return localStorage.getItem("rainbowMode");
+    },
     crash() {
       throw new Error("Intentional error thrown");
     },

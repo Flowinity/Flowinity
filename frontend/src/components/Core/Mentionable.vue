@@ -1,3 +1,54 @@
+<template>
+  <div
+    ref="el"
+    :style="
+      caretPosition
+        ? {
+            top: `${caretPosition.top - 50}px`,
+            left: `${caretPosition.left}px`,
+            position: 'absolute'
+          }
+        : {}
+    "
+  >
+    <v-scroll-y-transition class="popper ml-9">
+      <v-card
+        :class="$attrs.class"
+        v-show="!!currentKey"
+        color="toolbar"
+        style="z-index: 9999"
+      >
+        <div v-if="!displayedItems.length">
+          <slot name="no-result">No result</slot>
+        </div>
+
+        <template v-else>
+          <div
+            v-for="(item, index) of displayedItems"
+            :key="index"
+            :class="{
+              'mention-selected': selectedIndex === index
+            }"
+            class="mention-item"
+            @mousedown="applyMention(index)"
+            @mouseover="selectedIndex = index"
+          >
+            <slot
+              :index="index"
+              :item="item"
+              :name="`item-${currentKey || oldKey}`"
+            >
+              <slot :index="index" :item="item" name="item">
+                {{ item.label || item.value }}
+              </slot>
+            </slot>
+          </div>
+        </template>
+      </v-card>
+    </v-scroll-y-transition>
+  </div>
+</template>
+
 <script lang="ts">
 //@ts-nocheck
 import getCaretPosition from "textarea-caret";
@@ -33,6 +84,10 @@ export default defineComponent({
   },
   inheritAttrs: false,
   props: {
+    id: {
+      type: String,
+      required: true
+    },
     keys: {
       type: Array as PropType<string[]>,
       required: true
@@ -121,15 +176,12 @@ export default defineComponent({
     const el = ref<HTMLDivElement>(null);
 
     function getInput() {
-      return (
-        el?.value?.querySelector("input") ??
-        el.value?.querySelector("textarea") ??
-        el?.value?.querySelector('[contenteditable="true"]')
-      );
+      return document.querySelector(props.id);
     }
 
     onMounted(() => {
       input = getInput();
+      console.log(getInput());
       attach();
     });
     onUpdated(() => {
@@ -398,75 +450,6 @@ export default defineComponent({
   }
 });
 </script>
-
-<template>
-  <div
-    ref="el"
-    :class="$attrs.class"
-    class="mentionable"
-    style="position: relative; width: 100%"
-  >
-    <slot />
-
-    <VDropdown
-      ref="popper"
-      :auto-hide="false"
-      :shown="!!currentKey"
-      :style="
-        caretPosition
-          ? {
-              top: `${caretPosition.top}px`,
-              left: `${caretPosition.left}px`
-            }
-          : {}
-      "
-      :theme="theme"
-      :triggers="[]"
-      class="popper ml-9"
-      style="position: absolute"
-      v-bind="{ ...$attrs, class: undefined }"
-    >
-      <div
-        :style="
-          caretPosition
-            ? {
-                height: `${caretPosition.height}px`
-              }
-            : {}
-        "
-      />
-
-      <template #popper>
-        <div v-if="!displayedItems.length">
-          <slot name="no-result">No result</slot>
-        </div>
-
-        <template v-else>
-          <div
-            v-for="(item, index) of displayedItems"
-            :key="index"
-            :class="{
-              'mention-selected': selectedIndex === index
-            }"
-            class="mention-item"
-            @mousedown="applyMention(index)"
-            @mouseover="selectedIndex = index"
-          >
-            <slot
-              :index="index"
-              :item="item"
-              :name="`item-${currentKey || oldKey}`"
-            >
-              <slot :index="index" :item="item" name="item">
-                {{ item.label || item.value }}
-              </slot>
-            </slot>
-          </div>
-        </template>
-      </template>
-    </VDropdown>
-  </div>
-</template>
 
 <style lang="scss">
 .v-popper--theme-dropdown .v-popper__inner {

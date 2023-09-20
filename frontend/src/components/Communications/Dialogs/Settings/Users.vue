@@ -3,10 +3,10 @@
     {{ $t("chats.settings.users.name") }}
   </overline>
   <v-data-table :items="users" :headers="headers">
-    <template v-slot:item.user.username="{ item: { selectable } }: any">
-      <UserAvatar :user="selectable.user"></UserAvatar>
-      {{ selectable.user?.username || "Unresolved user" }} ({{ selectable.id }})
-      <template v-if="selectable.user?.id === $chat.editingChat.userId">
+    <template v-slot:item.user.username="{ item: { raw } }">
+      <UserAvatar :user="raw.user"></UserAvatar>
+      {{ raw.user?.username || "Unresolved user" }} ({{ raw.id }})
+      <template v-if="raw.user?.id === $chat.editingChat.userId">
         <span>
           <v-tooltip activator="parent" location="top">
             {{ $t("chats.roles.owner") }}
@@ -30,20 +30,20 @@
         {{ rank.name }}
       </v-chip>
     </template>
-    <template v-slot:item.createdAt="{ item: { selectable } }">
-      {{ $date(selectable.createdAt).fromNow() }}
+    <template v-slot:item.createdAt="{ item: { raw } }">
+      {{ $date(raw.createdAt).fromNow() }}
     </template>
-    <template v-slot:item.user.createdAt="{ item: { selectable } }">
-      {{ $date(selectable.user?.createdAt).fromNow() }}
+    <template v-slot:item.user.createdAt="{ item: { raw } }">
+      {{ $date(raw.user?.createdAt).fromNow() }}
     </template>
-    <template v-slot:item.actions="{ item: { selectable } }">
+    <template v-slot:item.actions="{ item: { raw } }">
       <v-btn
         icon
         class="my-1"
-        :disabled="selectable.user?.id === $chat.editingChat.userId"
+        :disabled="raw.user?.id === $chat.editingChat.userId"
         @click="
           $chat.changeUsers(
-            [selectable.user?.id],
+            [raw.user?.id],
             false,
             $chat.editingChat.association.id
           )
@@ -58,7 +58,7 @@
         icon
         class="my-1"
         :disabled="
-          selectable.user?.id === $chat.editingChat.userId &&
+          raw.user?.id === $chat.editingChat.userId &&
           $chat.editingChat.userId === $user.user.id
         "
       >

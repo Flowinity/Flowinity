@@ -56,7 +56,7 @@ export class ChatRankResolver {
   })
   @Mutation(() => ChatRank)
   async updateChatRank(@Ctx() ctx: Context, @Arg("input") input: UpdateRank) {
-    await this.chatService.checkPermissions(
+    const permissions = await this.chatService.checkPermissions(
       ctx.user!!.id,
       input.associationId,
       ChatPermissions.MANAGE_RANKS
@@ -78,8 +78,18 @@ export class ChatRankResolver {
         }
       ]
     })
+    const highestIndex = await this.chatService.getHighestIndex(
+      input.associationId
+    )
     if (!rank) throw new GraphQLError("Rank not found.")
-
+    if (
+      rank.index >= highestIndex &&
+      !permissions.includes(ChatPermissions.TRUSTED) &&
+      !permissions.includes(ChatPermissions.OWNER)
+    )
+      throw new GraphQLError(
+        "You don't have permission to update this rank as it's higher, or at the same level as your current rank."
+      )
     // prevent duplicates by using Set
     const inputPermissions = new Set(input.permissionsMap)
 
@@ -105,6 +115,15 @@ export class ChatRankResolver {
 
     await Promise.all(
       permissionsToAdd.map(async (permissionId) => {
+        if (
+          permissionId === ChatPermissions.TRUSTED &&
+          ctx.user!!.id !== chat.userId
+        ) {
+          throw new GraphQLError(
+            "Only the group owner can update the Trusted User permission."
+          )
+        }
+
         await ChatPermissionAssociation.create({
           permissionId: permissionId,
           rankId: rank.id
@@ -114,6 +133,15 @@ export class ChatRankResolver {
 
     await Promise.all(
       permissionsToRemove.map(async (permissionId) => {
+        if (
+          permissionId === ChatPermissions.TRUSTED &&
+          ctx.user!!.id !== chat.userId
+        ) {
+          throw new GraphQLError(
+            "Only the group owner can update the Trusted User permission."
+          )
+        }
+
         const permissionIndex = rank.permissions.findIndex(
           (permission) => permission.id === permissionId
         )
@@ -246,7 +274,22 @@ export class ChatRankResolver {
       throw new GraphQLError("Invalid `rankIds` provided.")
     }
 
+    const highestIndex = await this.chatService.getHighestIndex(
+      input.associationId
+    )
+
     for (const rank of ranks) {
+      const newIndex = inputRanks.indexOf(rank.id)
+      if (
+        (newIndex >= highestIndex || rank.index >= highestIndex) &&
+        rank.index !== newIndex &&
+        ctx.user!!.id !== chat.userId
+      ) {
+        this.chatService.normalizeIndexes(chat.id)
+        throw new GraphQLError(
+          "You don't have permission to update this rank as it's higher, or at the same level as your current rank."
+        )
+      }
       await rank.update({
         index: inputRanks.indexOf(rank.id)
       })

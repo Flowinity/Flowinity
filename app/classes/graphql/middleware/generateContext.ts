@@ -10,6 +10,7 @@ export default async function generateContext(ctx: any): Promise<Context> {
     ctx?.request?.headers?.get("Authorization") ||
     ctx?.connectionParams?.token ||
     ""
+
   const session = await userResolver.findByToken(token)
   return {
     user: session?.user,
@@ -33,9 +34,10 @@ export default async function generateContext(ctx: any): Promise<Context> {
       : AccessLevel.NO_ACCESS,
     token,
     dataloader: createContext(db),
-    ip: ctx?.request?.headers?.get("X-Forwarded-For") || "0.0.0.0",
+    ip: ctx.req.ip,
     meta: {},
-    req: ctx.request,
+    request: ctx.request,
+    req: ctx.req,
     cache: global.gqlCache,
     pubsub: global.pubsub
   } as Context

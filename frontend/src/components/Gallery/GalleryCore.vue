@@ -88,7 +88,7 @@
     <v-row v-else>
       <v-col
         v-for="item in 24"
-        :key="'item-' + item.id"
+        :key="item"
         :lg="!inline ? 3 : 12"
         cols="12"
         md="6"
@@ -130,11 +130,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import GalleryItem from "@/components/Gallery/GalleryItem.vue";
-import { Upload } from "@/models/upload";
 import AddToCollection from "@/components/Gallery/Dialogs/AddToCollection.vue";
 import { CollectionCache } from "@/types/collection";
 import Paginate from "@/components/Core/Paginate.vue";
 import OCRMetadata from "@/components/Gallery/Dialogs/OCRMetadata.vue";
+import { Pager, Upload } from "@/gql/graphql";
 
 export default defineComponent({
   name: "GalleryCore",
@@ -149,8 +149,10 @@ export default defineComponent({
       default: false
     },
     items: {
-      type: Object,
-      required: true,
+      type: Object as () => {
+        items: Upload[];
+        pager: Pager;
+      },
       default: () => {
         return {
           gallery: [],

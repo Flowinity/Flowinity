@@ -16,6 +16,7 @@ export type Context = {
   dataloader: any
   meta: Record<string, any>
   req: Request
+  request: Request
   cache: Cache
   pubsub: PubSubEngine
 }

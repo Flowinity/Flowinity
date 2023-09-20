@@ -621,8 +621,6 @@ a {
 }
 
 .v-list-item-subtitle {
-  text-overflow: unset;
-  white-space: normal;
   display: unset
 }
 
@@ -646,4 +644,14 @@ a {
 .hover-shade {
   filter: brightness(100%);
   transition: 0.3s;
+}
+
+.rainbow .text-gradient {
+  background: linear-gradient(to right, #ff4e50, #ffd700, #0190ea );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rainbow .v-ripple__animation {
+  background: linear-gradient(to right, #ff4e50, #fc913a, #f9d423, #eae374, #e2f7ce, #9ed9e1, #5e6472);
 }

@@ -62,14 +62,6 @@
       ></v-text-field>
     </template>
     <v-spacer></v-spacer>
-    <div v-if="$app.site.release === 'dev' && $app.cordova" class="mr-2">M</div>
-    <div class="mr-1" v-if="$app.site.release === 'dev' && $app.crashes">
-      <v-icon size="18">mdi-skull</v-icon>
-      {{ $app.crashes }}
-      <v-tooltip activator="parent" location="bottom">
-        <span>Crashes</span>
-      </v-tooltip>
-    </div>
     <small v-if="$app.notesSaving && !$vuetify.display.mobile" class="mr-3">
       Saving...
     </small>
@@ -180,15 +172,6 @@
           <span>{{ $app.dialogs.upload.percentage }}%</span>
         </v-tooltip>
       </v-progress-linear>
-      <v-alert
-        v-if="$app.site.alert"
-        class="rounded-0"
-        color="blue"
-        type="info"
-        variant="text"
-      >
-        {{ $app.site.alert }}
-      </v-alert>
       <v-alert
         v-if="!$user.user?.emailVerified"
         :icon="false"

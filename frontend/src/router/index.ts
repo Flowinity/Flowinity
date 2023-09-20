@@ -9,6 +9,11 @@ const routes = [
     component: () => import("@/layouts/default/Default.vue"),
     children: [
       {
+        path: "/invite/:id",
+        name: "Join Chat",
+        component: () => import("@/views/Communications/Join.vue")
+      },
+      {
         path: "/communications",
         name: "Communications",
         component: () => import("@/layouts/colubrina/Colubrina.vue"),

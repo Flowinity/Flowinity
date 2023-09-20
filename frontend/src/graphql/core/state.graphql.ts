@@ -50,6 +50,7 @@ export const CoreStateQuery = gql`
     chats {
       id
       type
+      unread
       name
       userId
       icon
@@ -175,6 +176,9 @@ export const CoreStateQuery = gql`
       }
     }
     coreState {
+      connection {
+        ip
+      }
       name
       release
       hostname

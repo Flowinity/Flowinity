@@ -65,7 +65,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
-import { Upload } from "@/models/upload";
 import { CollectionCache } from "@/types/collection";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import { GalleryQuery } from "@/graphql/gallery/gallery.graphql";
@@ -74,7 +73,9 @@ import {
   GalleryInput,
   GalleryOrder,
   GallerySort,
-  GalleryType
+  GalleryType,
+  Pager,
+  Upload
 } from "@/gql/graphql";
 
 export default defineComponent({
@@ -83,13 +84,12 @@ export default defineComponent({
   props: ["path", "type", "name", "random", "supports", "id"],
   data() {
     return {
-      gallery: {
-        items: [] as Upload[],
-        pager: {
-          totalItems: 0,
-          totalPages: 0
-        }
-      },
+      gallery: undefined as
+        | {
+            items: Upload[];
+            pager: Pager;
+          }
+        | undefined,
       page: 1,
       loading: true,
       show: {

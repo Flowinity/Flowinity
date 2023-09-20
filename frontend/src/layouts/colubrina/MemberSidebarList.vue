@@ -127,12 +127,18 @@
           ({{ $chat.search.results.pager.totalItems }})
         </template>
       </v-list-subheader>
-      <v-container class="mt-n8">
+      <v-container class="mt-n8 mb-8">
         <GalleryTextField
           v-model="$chat.search.query"
-          @submit="$chat.doSearch"
+          @submit="$chat.doSearch(sort)"
           :autofocus="true"
         ></GalleryTextField>
+        <div class="float-right">
+          <v-btn-toggle v-model="sort">
+            <v-btn>Newest</v-btn>
+            <v-btn>Oldest</v-btn>
+          </v-btn-toggle>
+        </div>
       </v-container>
       <ol
         class="d-flex flex-column communications position-relative"
@@ -174,7 +180,7 @@
         :max-visible="5"
         :total-pages="$chat.search.results.pager.totalPages"
         class="mb-2"
-        @update:model-value="$chat.doSearch"
+        @update:model-value="$chat.doSearch(sort)"
       ></Paginate>
     </template>
   </template>
@@ -207,6 +213,7 @@ export default defineComponent({
   data() {
     return {
       create: false,
+      sort: 0,
       contextMenu: {
         dialog: false,
         x: 0,
@@ -247,7 +254,7 @@ export default defineComponent({
           };
         }),
         {
-          name: "Online",
+          name: this.$t("chats.roles.online"),
           users: this.$chat.selectedChat.users
             .filter((user) => {
               return (
@@ -264,7 +271,7 @@ export default defineComponent({
             })
         },
         {
-          name: "Offline",
+          name: this.$t("chats.roles.offline"),
           users: this.$chat.selectedChat.users
             .filter((user) => {
               return (
@@ -278,75 +285,9 @@ export default defineComponent({
                 user: this.$user.users[user.userId]
               };
             })
-        },
-        {
-          name: "Coluforgor Users",
-          users: this.$chat.selectedChat.users
-            .filter((user) => {
-              return user.legacyUserId;
-            })
-            .map((user) => {
-              return {
-                ...user,
-                user: this.$user.user
-              };
-            })
         }
       ];
-    } /*
-    legacyUsers() {
-      if (!this.$chat.selectedChat) return [];
-      return [
-        {
-          name: this.$t("chats.roles.owner", 2),
-          users: this.$chat.selectedChat.users.filter((user) => {
-            return (
-              user.rank === "owner" &&
-              this.$user.getStatus({ id: user.userId }) !==
-                UserStatus.Offline &&
-              !user.legacyUserId
-            );
-          })
-        },
-        {
-          name: this.$t("chats.roles.admin", 2),
-          users: this.$chat.selectedChat.users.filter((user) => {
-            return (
-              user.rank === "admin" &&
-              this.$user.getStatus({ id: user.userId }) !==
-                UserStatus.Offline &&
-              !user.legacyUserId
-            );
-          })
-        },
-        {
-          name: this.$t("chats.roles.member", 2),
-          users: this.$chat.selectedChat.users.filter((user) => {
-            return (
-              user.rank === "member" &&
-              this.$user.getStatus({ id: user.userId }) !==
-                UserStatus.Offline &&
-              !user.legacyUserId
-            );
-          })
-        },
-        {
-          name: this.$t("chats.roles.offline", 2),
-          users: this.$chat.selectedChat.users.filter((user) => {
-            return (
-              this.$user.getStatus({ id: user.userId }) ===
-                UserStatus.Offline && !user.legacyUserId
-            );
-          })
-        },
-        {
-          name: this.$t("chats.roles.legacyUser", 1),
-          users: this.$chat.selectedChat.users.filter((user) => {
-            return user.legacyUserId;
-          })
-        }
-      ];
-    },*/,
+    },
     menuStyle() {
       return `
         position: absolute;
@@ -376,6 +317,11 @@ export default defineComponent({
       } else {
         return chat.name;
       }
+    }
+  },
+  watch: {
+    sort(val) {
+      this.$chat.doSearch(val);
     }
   }
 });

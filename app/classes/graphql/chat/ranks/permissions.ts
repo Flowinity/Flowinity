@@ -16,7 +16,9 @@ export enum ChatPermissions {
   DELETE_MESSAGES = "DELETE_MESSAGES",
   ADMIN = "ADMIN",
   SEPARATE = "SEPARATE",
-  PIN_MESSAGES = "PIN_MESSAGES"
+  PIN_MESSAGES = "PIN_MESSAGES",
+  TRUSTED = "TRUSTED",
+  OWNER = "OWNER"
 }
 
 registerEnumType(ChatPermissions, {

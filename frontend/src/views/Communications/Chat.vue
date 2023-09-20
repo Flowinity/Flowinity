@@ -265,14 +265,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
-import Message from "@/components/Communications/Message.vue";
 import { MessageSocket } from "@/types/messages";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import User from "@/views/User/User.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import { Chat, Typing } from "@/models/chat";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
-import { Message as MessageType } from "@/models/message";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import MobileMenu from "@/components/Core/Dialogs/MobileMenu.vue";
 import MessageActionsList from "@/components/Communications/MessageActionsList.vue";
@@ -280,6 +277,8 @@ import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import UserCard from "@/components/Users/UserCard.vue";
 import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css";
+import { Chat, Message } from "@/gql/graphql";
+import { Typing } from "@/models/chat";
 
 export default defineComponent({
   name: "Chat",
@@ -291,7 +290,6 @@ export default defineComponent({
     UserAvatar,
     User,
     MessageSkeleton,
-    Message,
     CommunicationsInput,
     MessagePerf,
     UserCard,
@@ -326,7 +324,7 @@ export default defineComponent({
       dialogs: {
         delete: {
           value: false,
-          message: undefined as MessageType | undefined
+          message: undefined as Message | undefined
         }
       },
       focusInterval: undefined as ReturnType<typeof setTimeout> | undefined,
@@ -382,7 +380,7 @@ export default defineComponent({
         "day"
       );
     },
-    confirmDelete(message: MessageType | undefined | null) {
+    confirmDelete(message: Message | undefined | null) {
       if (!message) return;
       this.dialogs.delete.message = message;
       this.dialogs.delete.value = true;
@@ -835,7 +833,7 @@ export default defineComponent({
       if (index === -1) return;
       if (!this.$chat.chats[index].messages) return;
       const messageIndex = this.$chat.chats[index].messages.findIndex(
-        (m: MessageType) => m.id === data.id
+        (m: Message) => m.id === data.id
       );
       if (messageIndex === -1) {
         let embedFailIndex = this.embedFails.findIndex(

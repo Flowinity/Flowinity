@@ -57,7 +57,7 @@
                       ({{ user.username }})
                     </span>
                     <v-btn
-                      v-if="user?.friend === 'accepted'"
+                      v-if="user?.friend === FriendStatus.Accepted"
                       icon
                       size="x-small"
                       @click.stop="
@@ -103,7 +103,7 @@
                 </v-btn>
                 <v-btn
                   v-if="
-                    user?.friend === 'accepted' &&
+                    user?.friend === FriendStatus.Accepted &&
                     $experiments.experiments['COMMUNICATIONS']
                   "
                   :loading="friendLoading"
@@ -165,6 +165,7 @@
               </v-btn>
             </v-card-actions>
           </v-card-text>
+          <!--
           <template
             v-if="user.collections?.length && $collections.items.length"
           >
@@ -183,7 +184,7 @@
                 ></CollectionCard>
               </v-slide-group>
             </v-card-text>
-          </template>
+          </template>-->
           <template v-if="user.friends?.length">
             <v-divider></v-divider>
             <v-card-text class="text-overline">Mutual Friends</v-card-text>
@@ -218,7 +219,7 @@
           </template>
           <template
             v-if="
-              (!username && user?.friend === 'accepted') ||
+              (!username && user?.friend === FriendStatus.Accepted) ||
               (user.id === $user.user?.id && !username)
             "
           >
@@ -278,8 +279,9 @@
         <v-col v-if="!username" cols="12" md="3" sm="12">
           <InsightsPromoCard
             v-if="
-              user.insights === 'everyone' ||
-              (user.insights === 'friends' && user.friend === 'accepted')
+              user.insights === UserInsights.Everyone ||
+              (user.insights === UserInsights.Friends &&
+                user.friend === FriendStatus.Accepted)
             "
             :end-color="user.plan.id === 6 ? '#F57F17' : '#4A148C'"
             :gold="gold"
@@ -346,7 +348,6 @@ import { defineComponent } from "vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
-import { User } from "@/models/user";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import StatsCard from "@/components/Dashboard/StatsCard.vue";
@@ -356,6 +357,7 @@ import Chart from "@/components/Core/Chart.vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
 import { DefaultThemes } from "@/plugins/vuetify";
+import { FriendStatus, User, UserInsights } from "@/gql/graphql";
 
 export default defineComponent({
   name: "UserV2",
@@ -386,6 +388,12 @@ export default defineComponent({
     };
   },
   computed: {
+    UserInsights() {
+      return UserInsights;
+    },
+    FriendStatus() {
+      return FriendStatus;
+    },
     primaryColorResult() {
       return this.$user.primaryColorResult(this.primary, this.gold).primary;
     },

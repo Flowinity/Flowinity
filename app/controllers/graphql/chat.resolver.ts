@@ -27,7 +27,6 @@ import { ChatInput } from "@app/classes/graphql/chat/chat"
 import { GraphQLError } from "graphql/error"
 import { ChatRank } from "@app/models/chatRank.model"
 import { ChatPermission } from "@app/models/chatPermission.model"
-import { ChatPermissionsHandler } from "@app/services/chat/permissions"
 
 @Resolver(Chat)
 @Service()
@@ -51,6 +50,12 @@ export class ChatResolver {
         }
       ]
     })
+  }
+
+  @FieldResolver(() => Number)
+  async unread(@Root() chat: Chat, @Ctx() ctx: Context): Promise<Number> {
+    const unreads = await redis.json.get(`unread:${ctx.user!!.id}`)
+    return unreads[chat.id.toString()] || 0
   }
 
   @Authorization({

@@ -41,6 +41,14 @@ export default function setup(app: App) {
               toast.error(functions.charUp(value) + ".");
             }
           }
+        } else if (error.extensions?.code === "CHAT_NOT_FOUND") {
+          if (
+            app.config.globalProperties.$route.path.startsWith(
+              "/communications/"
+            )
+          ) {
+            app.config.globalProperties.$router.push("/communications/home");
+          }
         } else {
           toast.error(error.message);
         }

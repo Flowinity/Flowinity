@@ -2,15 +2,14 @@
   <v-dialog
     :model-value="modelValue"
     :width="width"
-    max-height="500px"
     max-width="800px"
     @update:modelValue="$emit('update:modelValue', $event)"
   >
     <v-card v-if="$chat.dialogs.image.object">
       <v-img
-        :aspect-ratio="
-          $chat.dialogs.image.object?.width / $chat.dialogs.image.object?.height
-        "
+        max-height="500px"
+        :width="width"
+        :height="height"
         :src="$chat.dialogs.image.object?.url"
       ></v-img>
     </v-card>
@@ -22,7 +21,12 @@
         bottom: 10px;
         right: 10px;
       "
-      @click="$chat.processLink($chat.dialogs.image.object?.originalURL || '')"
+      @click="
+        $chat.processLink(
+          $chat.dialogs.image.object?.originalURL ||
+            `https://${$app.site.domain}${$chat.dialogs.image.object.url}`
+        )
+      "
     >
       <span>
         <v-icon size="18" class="mx-1">mdi-open-in-new</v-icon>

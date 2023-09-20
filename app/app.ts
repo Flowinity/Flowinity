@@ -1,4 +1,4 @@
-import express, { NextFunction } from "express"
+import express, { NextFunction, Request } from "express"
 import {
   BadRequestError,
   ExpressErrorMiddlewareInterface,
@@ -91,6 +91,10 @@ import { GraphQLSchema } from "graphql/type"
 import generateContext from "@app/classes/graphql/middleware/generateContext"
 import { RedisPubSub } from "graphql-redis-subscriptions"
 import { ChatRankResolver } from "@app/controllers/graphql/chatRank.resolver"
+import { AutoCollectApprovalResolver } from "@app/controllers/graphql/autoCollectApproval.resolver"
+import { CollectionItemResolver } from "@app/controllers/graphql/collectionItem.resolver"
+import { UploadResolver } from "@app/controllers/graphql/upload.resolver"
+import { AdminResolver } from "@app/controllers/graphql/admin.resolver"
 
 @Service()
 @Middleware({ type: "after" })
@@ -339,7 +343,11 @@ export class Application {
         FriendResolver,
         MessageResolver,
         PartialUserFriendResolver,
-        ChatRankResolver
+        ChatRankResolver,
+        AutoCollectApprovalResolver,
+        CollectionItemResolver,
+        UploadResolver,
+        AdminResolver
       ],
       container: Container,
       authChecker: authChecker,
@@ -367,8 +375,10 @@ export class Application {
           // Collects and send usage reporting based on executed operations
           usage: {
             clientInfo(context: Context) {
-              const name = context.req.headers.get("x-tpu-client")
-              const version = context.req.headers.get("x-tpu-client-version")
+              const name = context.request.headers.get("x-tpu-client")
+              const version = context.request.headers.get(
+                "x-tpu-client-version"
+              )
 
               if (name && version) {
                 return { name, version }
@@ -385,6 +395,7 @@ export class Application {
         })
       )
     }
+
     this.yogaApp = createYoga({
       schema: this.schema,
       plugins: gqlPlugins,

@@ -1,31 +1,34 @@
 <template>
-  <div style="width: 100%; z-index: 10001">
-    <div id="communications-bottom-navigation" v-if="!editing"></div>
+  <div style="width: 100%">
+    <Mentionable
+      :items="users"
+      :keys="['@']"
+      :omit-key="true"
+      insert-space
+      offset="6"
+      @open="onOpen"
+      :model-value="modelValue"
+      :id="`#${editing ? 'input-editing' : 'input-main-comms'}`"
+    >
+      <template v-slot:item="{ item }">
+        <div class="my-2 mx-2">
+          <UserAvatar
+            :size="35"
+            :user="$chat.lookupUser(item.value)"
+            class="mr-1"
+          ></UserAvatar>
+          {{ $chat.lookupUser(item.value).username }}
+        </div>
+      </template>
+    </Mentionable>
     <v-toolbar
       :id="editing ? '' : 'chat-input'"
       ref="toolbar"
       :color="editing ? 'transparent' : 'dark'"
       height="auto"
-      style="z-index: 1001"
+      class="mb-1"
     >
-      <Mentionable
-        :items="users"
-        :keys="['@']"
-        :omit-key="true"
-        insert-space
-        offset="6"
-        @open="onOpen"
-      >
-        <template v-slot:item="{ item }">
-          <div class="my-2 mx-2">
-            <UserAvatar
-              :size="35"
-              :user="$chat.lookupUser(item.value)"
-              class="mr-1"
-            ></UserAvatar>
-            {{ $chat.lookupUser(item.value).username }}
-          </div>
-        </template>
+      <div class="d-flex flex-column" style="width: 100%">
         <v-textarea
           ref="textarea"
           :class="!editing ? 'mb-n4 mt-1' : 'mt-2'"
@@ -48,8 +51,8 @@
           @keyup.esc="$emit('edit', null)"
           @keydown.up="editing ? cursor($event, true) : null"
           @keydown.down="editing ? cursor($event, false) : null"
-          :id="editing ? 'input-editing' : undefined"
-          style="padding: 16px"
+          :id="editing ? 'input-editing' : 'input-main-comms'"
+          style="padding: 16px; width: 100%"
         >
           <template v-slot:append>
             <v-icon
@@ -141,28 +144,22 @@
             ></EmojiPicker>
             <v-icon class="pointer raw-icon">mdi-emoticon</v-icon>
           </template>
-          <template v-if="!editing" v-slot:details>
-            <span
-              class="details-container"
-              style="margin-left: -25px !important"
-            ></span>
-          </template>
         </v-textarea>
-        <div v-if="!editing">
+        <div v-if="!editing" style="margin-top: 2px">
           <span
-            class="float-start mt-n1 mt-n6 text-grey ml-14"
-            style="font-size: 12px"
+            class="float-start mt-n5 text-grey ml-14"
+            style="font-size: 12px; color: white"
           >
             {{ $chat.typers }}
           </span>
           <span
-            class="float-end mt-n1 mt-n6 text-grey mr-14"
-            style="font-size: 12px"
+            class="float-end mt-n1 mt-n5 text-grey mr-14"
+            style="font-size: 12px; color: white"
           >
             {{ modelValue?.length }} / 4000
           </span>
         </div>
-      </Mentionable>
+      </div>
     </v-toolbar>
   </div>
 </template>
@@ -209,12 +206,14 @@ export default defineComponent({
     },
     users() {
       if (!this.$chat.selectedChat?.users) return [];
-      return this.$chat.selectedChat?.users.map((user: any) => {
-        return {
-          label: user.user?.username,
-          value: user.user?.id
-        };
-      });
+      return this.$chat.selectedChat?.users
+        .filter((user) => !user.legacyUserId)
+        .map((user: any) => {
+          return {
+            label: this.$user.users[user.userId]?.username,
+            value: this.$user.users[user.userId]?.id
+          };
+        });
     },
     isMobile() {
       return (

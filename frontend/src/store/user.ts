@@ -25,7 +25,7 @@ export const useUserStore = defineStore("user", {
       themeEngine: {
         customCSS: ""
       }
-    },
+    } as Partial<User>,
     actions: {
       emailSent: {
         value: false,
@@ -52,7 +52,7 @@ export const useUserStore = defineStore("user", {
       if (!state.user) return 0;
       return state.user.notifications.filter((n) => !n.dismissed).length;
     },
-    users() {
+    users(): Record<number, PartialUserFriend> {
       return this.tracked.reduce((acc, item) => {
         if (item.id === this.user.id) {
           acc[item.id] = {
@@ -84,6 +84,7 @@ export const useUserStore = defineStore("user", {
         data: { user }
       } = await this.$apollo.query({
         query: ProfileQuery,
+        fetchPolicy: "network-only",
         variables: {
           input: {
             username,
