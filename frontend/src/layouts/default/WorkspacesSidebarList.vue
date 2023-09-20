@@ -490,8 +490,8 @@ export default defineComponent({
       e.preventDefault();
       this.contextMenu.item = item;
       this.contextMenu.id = id;
-      this.contextMenu.x = e.clientX;
-      this.contextMenu.y = e.clientY;
+      this.contextMenu.x = e.clientX + window.scrollX;
+      this.contextMenu.y = e.clientY + window.scrollY;
       this.contextMenu.dialog = true;
     },
     async doCreateNote(name: string, internal: boolean = false) {

@@ -345,11 +345,11 @@ export default defineComponent({
       return `
         position: absolute;
         top: ${
-          this.$chat.dialogs.message.y + 190 < this.$vuetify.display.height
-            ? this.$chat.dialogs.message.y
-            : this.$vuetify.display.height - 230
+          this.$chat.dialogs.message.y + window.scrollY + 280 < this.$vuetify.display.height
+            ? this.$chat.dialogs.message.y + window.scrollY
+            : this.$vuetify.display.height - 280
         }px;
-        left: ${this.$chat.dialogs.message.x}px;`;
+        left: ${this.$chat.dialogs.message.x + window.scrollX}px;`;
     },
     uploadFileHeight() {
       if (this.files.length > 0) return 84;
