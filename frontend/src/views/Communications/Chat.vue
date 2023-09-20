@@ -342,14 +342,35 @@ export default defineComponent({
       return string;
     },
     menuStyle() {
+      let offset = 0;
+      if (this.$chat.dialogs.message?.message?.userId === this.$user.user?.id) {
+        offset += 48;
+      }
+      if (
+        this.$chat.dialogs.message?.message?.userId === this.$user.user?.id ||
+        (this.$chat.selectedChat?.association.rank &&
+          ["admin", "owner"].includes(
+            this.$chat.selectedChat?.association.rank
+          ))
+      ) {
+        offset += 48;
+      }
+      if (
+        this.$chat.dialogs.message.message &&
+        this.$chat.selectedChat?.association.rank &&
+        ["admin", "owner"].includes(this.$chat.selectedChat?.association.rank)
+      ) {
+        offset += 48;
+      }
       return `
         position: absolute;
         top: ${
-          this.$chat.dialogs.message.y + 190 < this.$vuetify.display.height
-            ? this.$chat.dialogs.message.y
-            : this.$vuetify.display.height - 230
+          this.$chat.dialogs.message.y + window.scrollY + 211 + offset <
+          this.$vuetify.display.height
+            ? this.$chat.dialogs.message.y + window.scrollY
+            : this.$vuetify.display.height - 211 - offset
         }px;
-        left: ${this.$chat.dialogs.message.x}px;`;
+        left: ${this.$chat.dialogs.message.x + window.scrollX}px;`;
     },
     uploadFileHeight() {
       if (this.files.length > 0) return 84;
