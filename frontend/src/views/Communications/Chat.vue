@@ -345,9 +345,9 @@ export default defineComponent({
       return `
         position: absolute;
         top: ${
-          this.$chat.dialogs.message.y + window.scrollY + 280 < this.$vuetify.display.height
+          this.$chat.dialogs.message.y + window.scrollY + 307 < this.$vuetify.display.height
             ? this.$chat.dialogs.message.y + window.scrollY
-            : this.$vuetify.display.height - 280
+            : this.$vuetify.display.height - 307
         }px;
         left: ${this.$chat.dialogs.message.x + window.scrollX}px;`;
     },
