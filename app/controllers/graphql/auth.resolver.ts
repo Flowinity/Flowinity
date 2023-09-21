@@ -23,19 +23,12 @@ export class AuthResolver {
 
   @Mutation(() => LoginResponse)
   async login(@Arg("input") input: LoginInput, @Ctx() ctx: Context) {
-    try {
-      return await this.authService.login(
-        input.username,
-        input.password,
-        input.totp
-      )
-    } catch {
-      throw new GraphQLError(Errors.INVALID_CREDENTIALS.message, {
-        extensions: {
-          code: "INVALID_CREDENTIALS"
-        }
-      })
-    }
+    return await this.authService.login(
+      input.username,
+      input.password,
+      input.totp,
+      true
+    )
   }
 
   @Authorized()

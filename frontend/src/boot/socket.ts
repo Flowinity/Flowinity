@@ -225,6 +225,9 @@ export default async function setup(app) {
     chat.chats[index].users.splice(userIndex, 1);
   });
   sockets.chat.on("removeChat", (data: any) => {
+    if (chat.selectedChat?.id === data.id && chat.isCommunications) {
+      router.push("/communications/home");
+    }
     const index = chat.chats.findIndex((c) => c.id === data.id);
     if (index === -1) return;
     if (chat.dialogs.groupSettings.itemId === data.id) {
@@ -232,9 +235,6 @@ export default async function setup(app) {
       chat.dialogs.groupSettings.itemId = undefined;
     }
     chat.chats.splice(index, 1);
-    if (chat.selectedChat?.id === data.id && chat.isCommunications) {
-      router.push("/communications/home");
-    }
   });
   sockets.autoCollects.on("autoCollectApproval", (data: { type: string }) => {
     if (!user.user) return;

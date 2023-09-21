@@ -77,6 +77,9 @@ export class ChatAssociation extends Model {
   @Column
   identifier: string
 
+  @Column()
+  hidden: boolean
+
   @Field(() => PartialUserBase, {
     nullable: true,
     description:

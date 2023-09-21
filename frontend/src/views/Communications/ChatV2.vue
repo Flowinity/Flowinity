@@ -56,7 +56,7 @@
       <infinite-loading
         @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
         :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}-bottom`"
-        v-if="$chat.selectedChat?.messages?.length && $chat.loadNew"
+        v-if="$chat.selectedChat?.messages && $chat.loadNew"
       >
         <template v-slot:spinner>
           <div class="text-center">
@@ -75,7 +75,7 @@
       <MessagePerf
         class="mr-2 ml-2"
         v-for="(message, index) in $chat.selectedChat?.messages"
-        :id="'message-' + index"
+        :id="'message-id-' + message.id"
         :key="message.id"
         :class="{ 'replying-message': message.id === replyId }"
         :date-separator="dateSeparator(index)"
@@ -115,8 +115,9 @@
         @infinite="$chat.loadHistory"
         direction="top"
         :top="true"
-        :identifier="$chat.selectedChat?.id"
-        v-if="$chat.selectedChat?.messages?.length"
+        :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}`"
+        v-if="$chat.selectedChat?.messages"
+        :value="'bottom'"
       >
         <template v-slot:spinner>
           <div class="text-center">
@@ -132,7 +133,9 @@
           <div class="text-center">
             <PromoNoContent
               icon="mdi-message-processing-outline"
-              :title="`Welcome to the start of ${$chat.selectedChat?.name}!`"
+              :title="`Welcome to the start of ${$chat.chatName(
+                $chat.selectedChat
+              )}!`"
               description="Send a message to start the conversation!"
             ></PromoNoContent>
           </div>
@@ -142,7 +145,7 @@
     </div>
     <div class="input-container">
       <v-toolbar
-        v-if="$chat.loadNew && false"
+        v-if="$chat.loadNew"
         class="pointer unselectable pl-2 force-bg dynamic-background"
         color="toolbar"
         height="25"
@@ -243,7 +246,7 @@ import MobileMenu from "@/components/Core/Dialogs/MobileMenu.vue";
 import MessageActionsList from "@/components/Communications/MessageActionsList.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import UserCard from "@/components/Users/UserCard.vue";
-import InfiniteLoading from "v3-infinite-loading";
+import InfiniteLoading from "@/components/Scroll/InfiniteScroll.vue";
 import "v3-infinite-loading/lib/style.css";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import { ScrollPosition, Message, Chat } from "@/gql/graphql";
@@ -491,8 +494,7 @@ export default defineComponent({
     async jumpToBottom() {
       this.avoidAutoScroll = false;
       if (this.$chat.loadNew) {
-        this.$chat.selectedChat.messages = [];
-        await this.$chat.loadHistory(undefined, ScrollPosition.Top, 0);
+        this.$chat.setChat(this.$chat.selectedChat?.association.id);
         this.$chat.loadNew = false;
       }
       this.autoScroll();

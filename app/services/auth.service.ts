@@ -9,6 +9,14 @@ import { CacheService } from "@app/services/cache.service"
 import { Login } from "@app/types/auth"
 import { Session } from "@app/models/session.model"
 import { GraphQLError } from "graphql/error"
+import {
+  AuthValidationRequirements,
+  AuthValidationResponse
+} from "@app/classes/graphql/auth/requirements"
+import { undefined } from "zod"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { LoginResponse } from "@app/classes/graphql/auth/login"
+import { GqlError } from "@app/lib/gqlErrors"
 
 @Service()
 export class AuthService {
@@ -64,79 +72,142 @@ export class AuthService {
     }
   }
 
-  async login(
-    username: string,
-    password: string,
-    totp?: string
-  ): Promise<Login> {
+  async validateAuthMethod(
+    requirements: AuthValidationRequirements,
+    gql: boolean = true
+  ): Promise<AuthValidationResponse> {
+    if (!requirements.credentials.password && requirements.password) {
+      throw gql
+        ? new GqlError("INVALID_CREDENTIALS")
+        : Errors.INVALID_CREDENTIALS
+    }
+    if (!requirements.password && !requirements.totp) {
+      throw new GraphQLError("No requirements specified.")
+    }
     const user = await User.findOne({
       where: {
-        [Op.or]: [
-          {
-            username
-          },
-          {
-            email: username
-          }
-        ]
+        [Op.or]: requirements.userId
+          ? [
+              {
+                id: requirements.userId
+              }
+            ]
+          : [
+              {
+                username: requirements.username || ""
+              },
+              {
+                email: requirements.username || ""
+              }
+            ]
       },
       attributes: [
-        "id",
-        "username",
-        "password",
-        "email",
-        "totpEnable",
+        ...partialUserBase,
         "totpSecret",
-        "alternatePasswords"
+        "totpEnable",
+        "password",
+        "alternatePasswords",
+        "email"
       ]
     })
     if (!user) {
-      throw Errors.INVALID_CREDENTIALS
+      throw gql
+        ? new GqlError("INVALID_CREDENTIALS")
+        : Errors.INVALID_CREDENTIALS
     }
-    if (user.password === "sso-enforced") {
-      throw Errors.SSO_ENFORCED
+    if (user.password === "sso-enforced" && requirements.password) {
+      throw gql ? new GqlError("SSO_ENFORCED") : Errors.SSO_ENFORCED
     }
     let alternatePassword = null
-    if (!(await argon2.verify(user.password, password))) {
-      if (!user.alternatePasswords) {
-        throw Errors.INVALID_CREDENTIALS
+    if (
+      requirements.password &&
+      !(await argon2.verify(
+        user.password,
+        <string>requirements.credentials.password
+      ))
+    ) {
+      if (!user.alternatePasswords || !requirements.alternatePassword) {
+        throw gql
+          ? new GqlError("INVALID_CREDENTIALS")
+          : Errors.INVALID_CREDENTIALS
       }
       for (const pw of user.alternatePasswords) {
-        if (await argon2.verify(pw.password, password)) {
+        if (
+          await argon2.verify(
+            pw.password,
+            <string>requirements.credentials.password
+          )
+        ) {
           alternatePassword = pw
           break
         }
       }
       if (!alternatePassword?.scopes) {
-        throw Errors.INVALID_CREDENTIALS
+        throw gql
+          ? new GqlError("INVALID_CREDENTIALS")
+          : Errors.INVALID_CREDENTIALS
       }
     }
-    if (user.totpEnable && user.totpSecret && !alternatePassword) {
+    if (
+      user.totpEnable &&
+      user.totpSecret &&
+      !alternatePassword &&
+      requirements.totp
+    ) {
       try {
-        let tokenValidation = await speakeasy.totp.verify({
+        let tokenValidation = speakeasy.totp.verify({
           secret: user.totpSecret,
-          token: totp?.replaceAll(" ", "") || "",
+          token: requirements.credentials.totp?.replaceAll(" ", "") || "",
           encoding: "base32"
         })
         if (!tokenValidation) {
-          throw Errors.INVALID_TOTP
+          throw gql ? new GqlError("INVALID_TOTP") : Errors.INVALID_TOTP
         }
       } catch (e) {
         console.log(e)
-        throw Errors.INVALID_TOTP
+        throw gql ? new GqlError("INVALID_TOTP") : Errors.INVALID_TOTP
       }
     }
-    const session = await utils.createSession(
-      user.id,
-      alternatePassword?.scopes ? alternatePassword?.scopes : "*",
-      "session"
-    )
     return {
+      alternatePassword,
+      success: true,
       user: {
         id: user.id,
         username: user.username,
         email: user.email
+      }
+    }
+  }
+
+  async login(
+    username: string,
+    password: string,
+    totp?: string,
+    gql: boolean = false
+  ): Promise<LoginResponse> {
+    const validation = await this.validateAuthMethod(
+      {
+        credentials: {
+          password,
+          totp
+        },
+        username,
+        password: true,
+        alternatePassword: true,
+        totp: true
       },
+      gql
+    )
+
+    const session = await utils.createSession(
+      validation.user.id,
+      validation.alternatePassword?.scopes
+        ? validation.alternatePassword.scopes
+        : "*",
+      "session"
+    )
+    return {
+      user: validation.user,
       token: session
     }
   }
@@ -147,37 +218,44 @@ export class AuthService {
     email: string,
     inviteId?: number
   ): Promise<Login> {
-    if (password.length < 8) {
-      throw Errors.PASSWORD_TOO_SHORT
-    }
-    const user = await User.create(
-      {
-        username,
-        password: await argon2.hash(password),
-        email,
-        inviteId: inviteId || null,
-        planId: config.defaultPlanId || 1,
-        // TODO: REMOVE THIS!!!!!!!!!!
-        emailVerified: true
-      },
-      {
-        logging: true
+    try {
+      if (password.length < 8) {
+        throw new GraphQLError("Password is too short!")
       }
-    )
-    const session = await utils.createSession(user.id, "*", "session")
-    const cacheService = Container.get(CacheService)
-    //await cacheService.generateChatsCache(user.id)
-    cacheService.generateAutoCollectCache(user.id)
-    cacheService.generateUserStatsCache(user.id)
-    cacheService.generateInsightsCache(user.id)
-    await cacheService.generateCollectionCache(user.id)
-    return {
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email
-      },
-      token: session
+      const user = await User.create(
+        {
+          username,
+          password: await argon2.hash(password),
+          email,
+          inviteId: inviteId || null,
+          planId: config.defaultPlanId || 1,
+          // TODO: REMOVE THIS!!!!!!!!!!
+          emailVerified: true
+        },
+        {
+          logging: true
+        }
+      )
+      const session = await utils.createSession(user.id, "*", "session")
+      const cacheService = Container.get(CacheService)
+      //await cacheService.generateChatsCache(user.id)
+      cacheService.generateAutoCollectCache(user.id)
+      cacheService.generateUserStatsCache(user.id)
+      cacheService.generateInsightsCache(user.id)
+      await cacheService.generateCollectionCache(user.id)
+      return {
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email
+        },
+        token: session
+      }
+    } catch (e) {
+      if (!(e instanceof GraphQLError)) {
+        throw new GqlError("USERNAME_TAKEN")
+      }
+      throw e
     }
   }
 

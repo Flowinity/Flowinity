@@ -12,7 +12,7 @@ import cors from "cors"
 import swaggerJSDoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
 import { Container, Service } from "typedi"
-import sequelize, { Op } from "sequelize"
+import sequelize, { Op, ValidationError } from "sequelize"
 import path from "path"
 import fs from "fs"
 
@@ -417,6 +417,13 @@ export class Application {
       maskedErrors: {
         maskError(error: any, message: any, isDev: any): Error {
           console.error(error)
+
+          if (error instanceof ValidationError) {
+            return {
+              message: error.toString(),
+              name: error.name
+            }
+          }
 
           if (
             !message.toLowerCase().includes("sequelize") ||

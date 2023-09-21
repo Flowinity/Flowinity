@@ -15,6 +15,8 @@ import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
 import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { Success } from "@app/classes/graphql/generic/success"
 import { AddChatUser, ToggleUser } from "@app/classes/graphql/chat/addUser"
+import { LeaveChatInput } from "@app/classes/graphql/chat/deleteChat"
+import { GqlError } from "@app/lib/gqlErrors"
 
 @Resolver(ChatAssociation)
 @Service()
@@ -98,11 +100,6 @@ export class ChatAssociationResolver {
       ChatPermissions.ADD_USERS
     )
 
-    const chat = await this.chatService.getChatFromAssociation(
-      input.chatAssociationId,
-      ctx.user!!.id
-    )
-
     if (input.action === ToggleUser.ADD) {
       await this.chatService.addUsersToChat(
         input.chatAssociationId,
@@ -181,6 +178,43 @@ export class ChatAssociationResolver {
       }
       return {
         success: true
+      }
+    }
+  }
+
+  @Authorization({
+    scopes: ["chats.edit"]
+  })
+  @Mutation(() => Success)
+  async leaveChat(
+    @Ctx() ctx: Context,
+    @Arg("input") input: LeaveChatInput
+  ): Success {
+    const chat = await this.chatService.getChatFromAssociation(
+      input.associationId,
+      ctx.user!!.id
+    )
+    if (chat.userId === ctx.user!!.id && chat.type !== "direct") {
+      throw new GqlError("GROUP_OWNER_CANNOT_LEAVE")
+    }
+    const association = await ChatAssociation.findOne({
+      where: {
+        id: input.associationId,
+        userId: ctx.user!!.id
+      }
+    })
+    if (!association) throw new GqlError("UNKNOWN")
+    switch (chat.type) {
+      case "group": {
+        await this.chatService.removeUserFromChat(
+          input.associationId,
+          [ctx.user!!.id],
+          ctx.user!!.id,
+          true
+        )
+        return { success: true }
+      }
+      case "direct": {
       }
     }
   }

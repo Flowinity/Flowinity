@@ -1,5 +1,5 @@
 <template>
-  <Leave v-model="leave.dialog" :chat="leave.chat" />
+  <Leave v-if="$chat.dialogs.leave.value" v-model="$chat.dialogs.leave.value" />
   <v-menu
     v-model="contextMenu.dialog"
     :style="menuStyle"
@@ -139,7 +139,7 @@
           ? 'Legacy User'
           : ''
       "
-      :title="chatName(chat)"
+      :title="$chat.chatName(chat)"
       :to="`/communications/${chat.association.id}`"
       @contextmenu.prevent="context($event, chat)"
       :key="chat.id"
@@ -242,13 +242,6 @@ export default defineComponent({
       this.contextMenu.x = e.clientX;
       this.contextMenu.y = e.clientY;
       this.contextMenu.dialog = true;
-    },
-    chatName(chat: Chat) {
-      if (chat.type === "direct") {
-        return this.$friends.getName(chat.recipient) || "Deleted User";
-      } else {
-        return chat.name;
-      }
     }
   }
 });

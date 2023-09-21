@@ -27,11 +27,22 @@ import { ChatInput } from "@app/classes/graphql/chat/chat"
 import { GraphQLError } from "graphql/error"
 import { ChatRank } from "@app/models/chatRank.model"
 import { ChatPermission } from "@app/models/chatPermission.model"
+import { DangerZoneChatInput } from "@app/classes/graphql/chat/deleteChat"
+import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
+import { AuthService } from "@app/services/auth.service"
+import { Message } from "@app/models/message.model"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
+import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
+import { Success } from "@app/classes/graphql/generic/success"
 
 @Resolver(Chat)
 @Service()
 export class ChatResolver {
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private authService: AuthService
+  ) {}
 
   @Authorization({
     scopes: ["chats.view"],
@@ -185,5 +196,91 @@ export class ChatResolver {
   @Query(() => [ChatPermission])
   async availableChatPermissions() {
     return await ChatPermission.findAll()
+  }
+
+  @RateLimit({
+    window: 10,
+    max: 10
+  })
+  @Authorization({
+    scopes: ["*"]
+  })
+  @Mutation(() => Success)
+  async deleteGroup(
+    @Ctx() ctx: Context,
+    @Arg("input") input: DangerZoneChatInput
+  ) {
+    if (!input.totp && !input.password) {
+      throw new GraphQLError(
+        "You must either enter your password or 2FA token to continue."
+      )
+    }
+    await this.chatService.checkPermissions(
+      ctx.user!!.id,
+      input.associationId,
+      ChatPermissions.OWNER
+    )
+    const chat = await this.chatService.getChatFromAssociation(
+      input.associationId,
+      ctx.user!!.id
+    )
+    await this.authService.validateAuthMethod({
+      userId: ctx.user!!.id,
+      credentials: {
+        password: input.password,
+        totp: input.totp
+      },
+      totp: !!input.totp,
+      password: !!input.password,
+      alternatePassword: false
+    })
+    for (const association of chat.users) {
+      await association.destroy()
+      await ChatRankAssociation.destroy({
+        where: {
+          chatAssociationId: association.id
+        }
+      })
+      if (!association.userId) continue
+      let unread: Record<string, string> = await redis.json.get(
+        `unread:${association.userId}`
+      )
+      delete unread[chat.id.toString()]
+      await redis.json.set(`unread:${association.userId}`, "$", unread)
+      socket
+        .of(SocketNamespaces.CHAT)
+        .to(association.userId)
+        .emit("removeChat", {
+          id: chat.id
+        })
+    }
+    await Message.destroy({
+      where: {
+        chatId: chat.id
+      }
+    })
+    const ranks = await ChatRank.findAll({
+      where: {
+        chatId: chat.id
+      }
+    })
+    await ChatPermissionAssociation.destroy({
+      where: {
+        rankId: ranks.map((rank) => rank.id)
+      }
+    })
+    await ChatRank.destroy({
+      where: {
+        chatId: chat.id
+      }
+    })
+    await Chat.destroy({
+      where: {
+        id: chat.id
+      }
+    })
+    return {
+      success: true
+    }
   }
 }

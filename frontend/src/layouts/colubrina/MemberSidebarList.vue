@@ -18,7 +18,7 @@
       </v-list>
     </v-card>
   </v-menu>
-  <template v-if="$chat.selectedChat">
+  <template v-if="$chat.selectedChat && $route.path !== '/communications/home'">
     <div v-if="$vuetify.display.mobile" class="mt-2">
       <UserAvatar
         :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
@@ -35,7 +35,7 @@
         style="display: inline-block; align-self: center; text-align: center"
         title="TPU Communications"
       >
-        {{ $chat.chatName }}
+        {{ $chat.chatName($chat.selectedChat) }}
       </h4>
       <v-card-actions v-if="$chat.selectedChat">
         <v-spacer></v-spacer>
@@ -151,24 +151,9 @@
           :message="message"
           :search="true"
           class="pointer"
-          @authorClick="
-            $chat.dialogs.userMenu.user = $event.user;
-            $chat.dialogs.userMenu.username = $event.user.username;
-            $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
-            $chat.dialogs.userMenu.x = $event.x;
-            $chat.dialogs.userMenu.y = $event.y;
-            $chat.dialogs.userMenu.location = $event.location || 'top';
-          "
           @click="
             handleJump(
               message.id,
-              $chat.chats.find((chat) => chat.id === message.chatId)
-                ?.association.id || 0
-            )
-          "
-          @jumpToMessage="
-            handleJump(
-              $event,
               $chat.chats.find((chat) => chat.id === message.chatId)
                 ?.association.id || 0
             )
@@ -241,8 +226,9 @@ export default defineComponent({
                 return (
                   user.ranksMap[0] === rank.id &&
                   (user.userId === this.$user.user?.id ||
-                    this.$user.users[user.userId]?.status !==
-                      UserStatus.Offline)
+                    (this.$user.users[user.userId]?.status !==
+                      UserStatus.Offline &&
+                      this.$user.users[user.userId]?.status))
                 );
               })
               .map((user) => {

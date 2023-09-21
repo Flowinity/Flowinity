@@ -1,5 +1,5 @@
 <template>
-  <div class="date-separator" style="font-size: 14px">
+  <div class="date-separator" style="font-size: 14px; display: flex">
     <slot name="start" />
     <div
       class="date-separator-line"

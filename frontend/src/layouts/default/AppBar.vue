@@ -39,7 +39,7 @@
         title="TPU Communications"
         @click="$chat.hasPermissions.admin ? (editingName = true) : () => {}"
       >
-        {{ $chat.chatName }}
+        {{ $chat.chatName($chat.selectedChat) }}
       </h2>
       <v-text-field
         v-else-if="editingName"

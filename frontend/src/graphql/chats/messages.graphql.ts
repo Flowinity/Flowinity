@@ -39,6 +39,26 @@ export const StandardMessageFragment = gql`
       embeds {
         type
       }
+      legacyUser {
+        username
+        id
+        avatar
+      }
+      user {
+        username
+        id
+        avatar
+      }
+    }
+    legacyUser {
+      username
+      id
+      avatar
+    }
+    user {
+      username
+      id
+      avatar
     }
     edited
     editedAt

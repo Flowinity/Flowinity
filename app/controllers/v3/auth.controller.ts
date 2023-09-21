@@ -29,7 +29,12 @@ export class AuthControllerV3 {
     @Body() body: { email: string; password: string; code?: string }
   ) {
     if (!body.email || !body.password) throw Errors.INVALID_CREDENTIALS
-    return await this.authService.login(body.email, body.password, body.code)
+    return await this.authService.login(
+      body.email,
+      body.password,
+      body.code,
+      false
+    )
   }
 
   @Post("/register")

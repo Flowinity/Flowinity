@@ -64,7 +64,7 @@ export class ChatControllerV3 {
     icon: Express.Multer.File,
     @Param("chatId") chatId: number
   ) {
-    await this.chatService.getChatFromAssociation(chatId, user.id)
+    await this.chatService.getChatFromAssociation(chatId, user.id, false)
     const upload = await this.galleryService.createUpload(
       user.id,
       icon,
@@ -84,7 +84,7 @@ export class ChatControllerV3 {
     @Auth("chats.edit") user: User,
     @Param("chatId") chatId: number
   ) {
-    await this.chatService.getChatFromAssociation(chatId, user.id)
+    await this.chatService.getChatFromAssociation(chatId, user.id, false)
     await this.chatService.updateGroupSettings(chatId, user.id, {
       icon: null
     })
@@ -95,6 +95,7 @@ export class ChatControllerV3 {
     @Auth("chats.edit") user: User,
     @Param("chatId") chatId: number
   ) {
+    throw Errors.API_REMOVED_V2
     await this.chatService.leaveGroupChat(chatId, user.id)
   }
 
@@ -107,7 +108,11 @@ export class ChatControllerV3 {
     @HeaderParam("X-TPU-Client") client: string,
     @HeaderParam("X-TPU-Client-Version") version: string
   ) {
-    const chat = await this.chatService.getChatFromAssociation(chatId, user.id)
+    const chat = await this.chatService.getChatFromAssociation(
+      chatId,
+      user.id,
+      false
+    )
     if (!chat) throw Errors.CHAT_NOT_FOUND
     return await this.chatService.searchChat(
       chat.id,
@@ -211,7 +216,8 @@ export class ChatControllerV3 {
   ) {
     const chat = await this.chatService.getChatFromAssociation(
       associationId,
-      user.id
+      user.id,
+      false
     )
     if (!chat) throw Errors.CHAT_NOT_FOUND
     await this.chatService.editMessage(

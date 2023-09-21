@@ -11,7 +11,9 @@
       v-if="message.replyId"
       class="ml-7 unselectable mt-4 mb-n3 pointer limit reply d-flex align-center"
       @click.prevent="
-        message.reply ? $emit('jumpToMessage', message.replyId) : () => {}
+        message.reply && !search
+          ? $emit('jumpToMessage', message.replyId)
+          : () => {}
       "
     >
       <reply-line class="mt-2"></reply-line>

@@ -206,6 +206,9 @@ export class ChatService {
         )
       )
     ]
+    console.log(
+      association.chat.userId === userId && association.chat.type === "group"
+    )
     if (association.chat.userId === userId && association.chat.type === "group")
       permissions.push(ChatPermissions.OWNER)
     return permissions as ChatPermissions[]
@@ -218,10 +221,19 @@ export class ChatService {
     noThrow: boolean = false
   ): Promise<ChatPermissions[]> {
     const permissions = await this.getPermissions(userId, associationId)
-    const hasPermission =
-      permissions.includes(permission) ||
-      permissions.includes(ChatPermissions.ADMIN) ||
-      permissions.includes(ChatPermissions.OWNER)
+
+    let hasPermission: boolean
+    if (
+      permission === ChatPermissions.OWNER ||
+      permission === ChatPermissions.TRUSTED
+    ) {
+      hasPermission = permissions.includes(permission)
+    } else {
+      hasPermission =
+        permissions.includes(permission) ||
+        permissions.includes(ChatPermissions.ADMIN) ||
+        permissions.includes(ChatPermissions.OWNER)
+    }
     if (!noThrow && !hasPermission)
       throw new GraphQLError(
         "You do not have permission to perform this action on the group."
@@ -584,7 +596,8 @@ export class ChatService {
   async removeUserFromChat(
     associationId: number,
     removeUserId: number[],
-    userId: number
+    userId: number,
+    isLeaving: boolean = false
   ) {
     const chat = await this.getChatFromAssociation(associationId, userId)
     let removable = []
@@ -594,12 +607,16 @@ export class ChatService {
         userId: removeUserId
       }
     })
-    const myIndex = await this.getHighestIndex(associationId)
-    for (const association of associations) {
-      if (association.userId === chat.userId) continue
-      const theirIndex = await this.getHighestIndex(associationId)
-      if (theirIndex > myIndex && chat.userId !== userId) continue
-      removable.push(association)
+    if (!isLeaving) {
+      const myIndex = await this.getHighestIndex(associationId)
+      for (const association of associations) {
+        if (association.userId === chat.userId) continue
+        const theirIndex = await this.getHighestIndex(associationId)
+        if (theirIndex > myIndex && chat.userId !== userId) continue
+        removable.push(association)
+      }
+    } else {
+      removable.push(...associations)
     }
     if (!associations.length) throw Errors.CHAT_USER_NOT_FOUND
     await ChatAssociation.destroy({
@@ -609,13 +626,28 @@ export class ChatService {
       }
     })
     for (const association of removable) {
-      this.sendMessage(
-        `<@${userId}> removed <@${association.userId}> from the chat.`,
-        userId,
-        associationId,
-        undefined,
-        "leave"
+      if (!isLeaving) {
+        this.sendMessage(
+          `<@${userId}> removed <@${association.userId}> from the chat.`,
+          userId,
+          associationId,
+          undefined,
+          "leave"
+        )
+      } else {
+        this.sendMessage(
+          `<@${userId} left the chat.`,
+          userId,
+          associationId,
+          undefined,
+          "leave"
+        )
+      }
+      let unread: Record<string, string> = await redis.json.get(
+        `unread:${association.userId}`
       )
+      delete unread[chat.id.toString()]
+      await redis.json.set(`unread:${association.userId}`, "$", unread)
       this.emitForAll(associationId, userId, "removeChatUser", {
         chatId: chat.id,
         id: association.id
@@ -956,6 +988,7 @@ export class ChatService {
     })
     if (!chat) throw Errors.CHAT_NOT_FOUND
     const recipient = await this.getRecipient(chat, userId)
+
     return {
       ...chat.toJSON(),
       users: chat.users.map((user) => {
@@ -971,13 +1004,17 @@ export class ChatService {
           ]
         }
       }),
-      ranks: chat.ranks.map((rank) => {
-        return {
-          ...rank,
-          permissionsMap:
-            rank?.permissions?.map((permission) => permission.id) || []
-        }
-      }),
+      ranks: chat.ranks
+        .map((rank) => {
+          return {
+            ...rank.toJSON(),
+            permissionsMap:
+              rank?.permissions?.map((permission) => permission.id) || []
+          }
+        })
+        .sort((a, b) => {
+          return b.index - a.index || 0
+        }),
       unread: 0,
       recipient: recipient
     }
@@ -1047,6 +1084,7 @@ export class ChatService {
       userId,
       intent: type === "direct" ? intent : null
     })
+    redis.set(`chat:${chat.id}:sortDate`, dayjs().valueOf())
     let associations = []
 
     associations.push(
@@ -1233,7 +1271,7 @@ export class ChatService {
   async getChatFromAssociation(
     associationId: number,
     userId: number,
-    gql: boolean = false
+    gql: boolean = true
   ) {
     const chat = await Chat.findOne({
       include: [

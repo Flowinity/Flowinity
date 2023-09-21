@@ -61,6 +61,7 @@ export const useChatStore = defineStore("chat", {
     loadNew: false,
     loadingNew: false,
     notifications: 0,
+    limit: 0,
     chats: [] as Chat[],
     loading: false,
     drafts: {},
@@ -69,6 +70,11 @@ export const useChatStore = defineStore("chat", {
     isReady: null,
     trustedDomains: [] as string[],
     dialogs: {
+      leave: {
+        value: false,
+        itemId: undefined as number | undefined,
+        loading: false
+      },
       message: {
         value: false,
         message: null as Message | null,
@@ -182,10 +188,7 @@ export const useChatStore = defineStore("chat", {
       );
     },
     async doJump(message: number) {
-      const element = document.getElementById(
-        "message-" +
-          this.selectedChat?.messages?.findIndex((m) => m.id === message)
-      );
+      const element = document.getElementById(`message-id-${message}`);
       if (!element) return false;
       element.scrollIntoView({
         block: "center",
@@ -195,13 +198,22 @@ export const useChatStore = defineStore("chat", {
       setTimeout(() => {
         element.classList.remove("message-jumped");
       }, 1000);
+      await this.$nextTick();
+      element.scrollIntoView({
+        block: "center",
+        inline: "center"
+      });
       return true;
     },
     async jumpToMessage(message: number) {
       if (!(await this.doJump(message))) {
-        this.selectedChat.messages = [];
+        this.selectedChat.messages = null;
         this.loadingNew = true;
-        await this.loadHistory(undefined, ScrollPosition.Top, message + 30);
+        await this.loadHistory(
+          undefined,
+          ScrollPosition.Top,
+          message ? message + 30 : undefined
+        );
         this.loadingNew = false;
         await this.doJump(message);
       }
@@ -407,7 +419,7 @@ export const useChatStore = defineStore("chat", {
       const chat = this.chats.find(
         (chat: Chat) => chat.association.id === id
       ) as Chat;
-      appStore.title = this.chatName;
+      appStore.title = this.chatName(this.selectedChat);
       const data = await this.getMessages({
         associationId: id,
         position: ScrollPosition.Top
@@ -431,7 +443,7 @@ export const useChatStore = defineStore("chat", {
       }
       this.loading = false;
       this.isReady = id;
-      appStore.title = this.chatName;
+      appStore.title = this.chatName(this.selectedChat);
       this.readChat();
     },
     async loadHistory(
@@ -439,7 +451,10 @@ export const useChatStore = defineStore("chat", {
       position: ScrollPosition = ScrollPosition.Top,
       offset?: number
     ) {
-      console.log("Load history", $state, position);
+      if (offset) {
+        this.selectedChat.messages = null;
+        this.loadNew = true;
+      }
       this.loadingNew = true;
       if ($state) $state.loading();
       const data = await this.getMessages({
@@ -566,6 +581,33 @@ export const useChatStore = defineStore("chat", {
         };
       }
       window.tpuInternals.processLink = this.processLink;
+    },
+    chatName(chat: Chat) {
+      if (!chat) return "Communications";
+      if (chat.type === "direct") {
+        return useFriendsStore().getName(chat?.recipient) || "Deleted User";
+      } else {
+        const userStore = useUserStore();
+        const friendStore = useFriendsStore();
+        if (chat.name === "Unnamed Group") {
+          const users = chat.users
+            .filter((user) => user.userId !== userStore.user?.id)
+            .map(
+              (user) =>
+                friendStore.getName(userStore.users[user.userId]) ||
+                "Deleted User"
+            );
+
+          const limitedUsers = users.slice(0, 3); // Get the first 3 users
+
+          const remainingUsersCount = Math.max(0, users.length - 3); // Calculate the remaining users count
+
+          return `${limitedUsers.join(", ")}${
+            remainingUsersCount > 0 ? `, +${remainingUsersCount} others` : ""
+          }`;
+        }
+        return chat.name;
+      }
     }
   },
   getters: {
@@ -633,17 +675,6 @@ export const useChatStore = defineStore("chat", {
       return state.chats.find(
         (chat: Chat) => chat.association.id === state.selectedChatId
       ) as Chat | null;
-    },
-    chatName() {
-      if (!this.selectedChat) return "Communications";
-      if (this.selectedChat.type === "direct") {
-        return (
-          useFriendsStore().getName(this.selectedChat?.recipient) ||
-          "Deleted User"
-        );
-      } else {
-        return this.selectedChat.name;
-      }
     },
     communicationsSidebar() {
       return !vuetify.display.mobile.value && !useAppStore().rail;

@@ -27,7 +27,7 @@ export class PartialUserBase {
   @Field({
     nullable: true
   })
-  avatar: string
+  avatar?: string
 }
 
 export const partialUserBase = [
@@ -54,7 +54,7 @@ export class PartialUserPublic {
   @Field({
     nullable: true
   })
-  avatar: string
+  avatar?: string
   @Field(() => [Badge])
   badges: Badge[]
   @Field()

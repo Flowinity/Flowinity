@@ -76,7 +76,10 @@ export class User extends Model {
 
   @Field()
   @AllowNull(false)
-  @Unique
+  @Unique({
+    msg: "Username is already taken.",
+    name: "USERNAME_TAKEN"
+  })
   @Length({
     msg: "Length of your username must be between 2-32 characters.",
     min: 2,
