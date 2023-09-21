@@ -59,6 +59,7 @@ export const CoreStateQuery = gql`
       legacyUserId
       association {
         id
+        hidden
         chatId
         permissions
         userId
@@ -401,11 +402,20 @@ export const CoreStateQuery = gql`
       administrator
       moderator
       avatar
+      blocked
       status
       nameColor
       nickname {
         nickname
       }
+    }
+    blockedUsers {
+      id
+      userId
+      createdAt
+      updatedAt
+      blockedUserId
+      silent
     }
   }
 `;

@@ -38,7 +38,14 @@
           :autofocus="true"
           color="primary"
           density="compact"
-          label="Type a message..."
+          :label="
+            blocked?.value
+              ? blocked.you
+                ? $t('dialogs.block.commsInputYou')
+                : $t('dialogs.block.commsInputThem')
+              : 'Type a message...'
+          "
+          :disabled="blocked?.value"
           placeholder="Keep it civil"
           rows="1"
           variant="outlined"
@@ -182,7 +189,7 @@ export default defineComponent({
     GalleryCore,
     Mentionable
   },
-  props: ["modelValue", "editing"],
+  props: ["modelValue", "editing", "blocked"],
   emits: [
     "update:modelValue",
     "sendMessage",

@@ -31,13 +31,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useAppStore } from "@/store/app";
-import { useUserStore } from "@/store/user";
-import { useChatStore } from "@/store/chat";
-import { useExperimentsStore } from "@/store/experiments";
-import { useFriendsStore } from "@/store/friends";
-import { useCollectionsStore } from "@/store/collections";
-import { useWorkspacesStore } from "@/store/workspaces";
+import { useAppStore } from "@/store/app.store";
+import { useUserStore } from "@/store/user.store";
+import { useChatStore } from "@/store/chat.store";
+import { useExperimentsStore } from "@/store/experiments.store";
+import { useFriendsStore } from "@/store/friends.store";
+import { useCollectionsStore } from "@/store/collections.store";
+import { useWorkspacesStore } from "@/store/workspaces.store";
 import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
 
 export default defineComponent({

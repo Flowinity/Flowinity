@@ -1,5 +1,5 @@
 <template>
-  <Leave v-if="$chat.dialogs.leave.value" v-model="$chat.dialogs.leave.value" />
+  <Leave v-model="$chat.dialogs.leave.value" />
   <v-menu
     v-model="contextMenu.dialog"
     :style="menuStyle"
@@ -100,18 +100,38 @@
         Group Settings
       </v-list-item>
       <v-list-item
-        color="red"
         v-if="
-          contextMenu.item?.userId !== $user.user?.id ||
-          contextMenu.item?.type === 'direct'
+          contextMenu.item?.userId !== $user.user?.id &&
+          contextMenu.item?.type !== 'direct'
         "
         @click="
-          leave.chat = contextMenu.item;
-          leave.dialog = true;
+          $chat.dialogs.leave.itemId = contextMenu.item.id;
+          $chat.dialogs.leave.value = true;
         "
+        style="color: rgb(var(--v-theme-error)"
       >
         <v-icon class="mr-1">mdi-exit-to-app</v-icon>
         {{ $t("generic.leave") }}
+      </v-list-item>
+      <v-list-item
+        v-if="contextMenu.item?.type === 'direct'"
+        @click="$chat.leaveChat(contextMenu.item.association.id)"
+      >
+        <v-icon class="mr-1">mdi-close</v-icon>
+        {{ $t("generic.close") }}
+      </v-list-item>
+      <v-list-item
+        style="color: rgb(var(--v-theme-error)"
+        v-if="contextMenu.item?.type === 'direct'"
+        @click="
+          $user.dialogs.block.userId = contextMenu.item.recipient.id;
+          $user.dialogs.block.username =
+            $user.users[contextMenu.item.recipient.id]?.username;
+          $user.dialogs.block.value = true;
+        "
+      >
+        <v-icon class="mr-1">mdi-account-cancel</v-icon>
+        {{ $t("dialogs.block.action") }}
       </v-list-item>
     </v-list>
   </v-menu>

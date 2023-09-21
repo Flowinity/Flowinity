@@ -97,7 +97,7 @@
           class="text-left"
           value="delete"
           v-if="$chat.editingChat.userId === $user.user.id"
-          style="color: red"
+          style="color: rgb(var(--v-theme-error)"
           @click.prevent="
             $chat.dialogs.leave.itemId = $chat.editingChat.id;
             $chat.dialogs.leave.value = true;

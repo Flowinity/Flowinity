@@ -5,7 +5,8 @@ const { DataType } = require("sequelize-typescript")
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.addColumn("ChatAssociations", "hidden", {
-      type: Sequelize.BOOLEAN
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     })
 
     await queryInterface.createTable("BlockedUsers", {

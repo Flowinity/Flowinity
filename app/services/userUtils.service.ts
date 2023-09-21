@@ -33,6 +33,7 @@ import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
+import { BlockedUser } from "@app/models/blockedUser.model"
 
 @Service()
 export class UserUtilsService {
@@ -811,7 +812,8 @@ export class UserUtilsService {
     key: string,
     value: any,
     emitToFriends: boolean = false,
-    namespace: SocketNamespaces = SocketNamespaces.TRACKED_USERS
+    namespace: SocketNamespaces = SocketNamespaces.TRACKED_USERS,
+    important: boolean = false
   ) {
     let friends: Friend[] = []
     if (emitToFriends) {
@@ -826,8 +828,38 @@ export class UserUtilsService {
     const friendIds = friends.map((friend) => friend.friendId)
     ids = [...new Set([...friendIds, ...ids])]
     for (const id of ids) {
+      if (!important) {
+        const blocked = await this.blocked(id, userId, true)
+        if (blocked) continue
+      }
       socket.of(namespace).to(id).emit(key, value)
     }
+  }
+
+  async blocked(
+    userId: number,
+    blockedUserId: number,
+    strict: boolean = false
+  ) {
+    return await BlockedUser.findOne({
+      where: strict
+        ? {
+            blockedUserId: userId,
+            userId: blockedUserId
+          }
+        : {
+            [Op.or]: [
+              {
+                userId: userId || 0,
+                blockedUserId: blockedUserId || 0
+              },
+              {
+                userId: blockedUserId || 0,
+                blockedUserId: userId || 0
+              }
+            ]
+          }
+    })
   }
 
   async trackedUserIds(userId?: number, regenerate = false): Promise<number[]> {
@@ -862,10 +894,21 @@ export class UserUtilsService {
     }
 
     if (regenerate) {
+      const tracked = await this.trackedUsers(userId)
       socket
         .of(SocketNamespaces.TRACKED_USERS)
         .to(userId)
-        .emit("trackedUsers", await this.trackedUsers(userId))
+        .emit(
+          "trackedUsers",
+          tracked.map((user) => {
+            return {
+              // without this @ts-ignore toJSON isn't implemented and will memory leak!
+              //@ts-ignore
+              ...user.toJSON(),
+              status: user.status.toUpperCase()
+            }
+          })
+        )
     }
 
     return uniqueUserIds.filter(Number)
@@ -878,8 +921,22 @@ export class UserUtilsService {
       where: {
         id: ids
       },
-      attributes: partialUserFriend
+      attributes: partialUserFriend,
+      include: [
+        {
+          model: BlockedUser,
+          required: false,
+          where: {
+            blockedUserId: userId
+          }
+        }
+      ]
     })
+
+    for (const user of users) {
+      if (user.blocked) user.status = UserStatus.OFFLINE
+      delete user.blocked
+    }
 
     return users as PartialUserFriend[]
   }

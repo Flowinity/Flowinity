@@ -12,3 +12,11 @@ export class ChatInput {
   })
   chatId?: number
 }
+
+@InputType()
+export class ChatsInput {
+  @Field(() => Boolean, {
+    defaultValue: false
+  })
+  hidden: boolean
+}

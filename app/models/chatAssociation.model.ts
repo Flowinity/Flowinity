@@ -77,7 +77,14 @@ export class ChatAssociation extends Model {
   @Column
   identifier: string
 
-  @Column()
+  @Field({
+    nullable: true,
+    description:
+      "Only true/false for current user, null for other ChatAssociations. This determines whether the chat is visible in the sidebar (open or closed)."
+  })
+  @Column({
+    defaultValue: false
+  })
   hidden: boolean
 
   @Field(() => PartialUserBase, {

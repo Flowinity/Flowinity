@@ -73,6 +73,7 @@
         </template>
       </infinite-loading>
       <MessagePerf
+        :uncollapse-blocked="uncollapseBlocked"
         class="mr-2 ml-2"
         v-for="(message, index) in $chat.selectedChat?.messages"
         :id="'message-id-' + message.id"
@@ -227,6 +228,7 @@
         @quickTPULink="handleQuickTPULink"
         @sendMessage="sendMessage"
         @focusInput="focusInput"
+        :blocked="blocked"
         :editing="false"
       ></CommunicationsInput>
     </div>
@@ -269,6 +271,7 @@ export default defineComponent({
   },
   data() {
     return {
+      uncollapseBlocked: false,
       setup: false,
       messageObserver: undefined as IntersectionObserver | undefined,
       messageBottomObserver: undefined as IntersectionObserver | undefined,
@@ -310,6 +313,22 @@ export default defineComponent({
     };
   },
   computed: {
+    blocked(): { value: boolean; you: boolean } {
+      return this.$user.blocked.find(
+        (block) =>
+          block.blockedUserId === this.$chat.selectedChat?.recipient?.id
+      )
+        ? {
+            value: true,
+            you: true
+          }
+        : this.$user.users[this.$chat.selectedChat?.recipient?.id]?.blocked
+        ? {
+            value: true,
+            you: false
+          }
+        : { value: false, you: false };
+    },
     ScrollPosition() {
       return ScrollPosition;
     },

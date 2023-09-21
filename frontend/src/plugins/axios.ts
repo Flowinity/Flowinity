@@ -4,8 +4,8 @@
 
 import axios, { AxiosRequestConfig, AxiosStatic } from "axios";
 import { useToast } from "vue-toastification";
-import { useAppStore } from "@/store/app";
-import { useUserStore } from "@/store/user";
+import { useAppStore } from "@/store/app.store";
+import { useUserStore } from "@/store/user.store";
 import router from "@/router";
 
 export interface AxiosStaticWithAvoidance extends AxiosStatic {

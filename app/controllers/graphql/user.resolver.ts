@@ -21,6 +21,7 @@ import { Badge } from "@app/models/badge.model"
 import { Context } from "@app/types/graphql/context"
 import { Notification } from "@app/models/notification.model"
 import {
+  PartialUserBase,
   partialUserBase,
   PartialUserFriend,
   PartialUserPublic
@@ -36,6 +37,8 @@ import { Friend } from "@app/models/friend.model"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { AutoCollectCache } from "@app/types/collection"
 import { FriendNickname } from "@app/models/friendNickname"
+import { BlockedUser } from "@app/models/blockedUser.model"
+import { GqlError } from "@app/lib/gqlErrors"
 
 @Resolver(User)
 @Service()
@@ -56,7 +59,9 @@ export class UserResolver extends createBaseResolver("User", User) {
     userOptional: true,
     scopes: []
   })
-  @Query(() => PartialUserPublic || null)
+  @Query(() => PartialUserPublic, {
+    nullable: true
+  })
   async user(@Arg("input") input: UserProfileInput, @Ctx() ctx: Context) {
     let user: User | null = null
     if (input.username) {
@@ -75,6 +80,9 @@ export class UserResolver extends createBaseResolver("User", User) {
 
     if (!user || user.banned) {
       return null
+    }
+    if (await this.userUtilsService.blocked(ctx.user!!.id, user.id, true)) {
+      throw new GqlError("BLOCKED")
     }
     return user
   }
@@ -276,6 +284,18 @@ export class PartialUserFriendResolver {
         userId: ctx.user?.id
       }
     })
+  }
+
+  @FieldResolver(() => Boolean)
+  async blocked(@Ctx() ctx: Context, @Root() user: User) {
+    const block = await BlockedUser.findOne({
+      where: {
+        userId: user.id,
+        blockedUserId: ctx.user!!.id
+      }
+    })
+    if (!block) return false
+    return !block.silent
   }
 }
 

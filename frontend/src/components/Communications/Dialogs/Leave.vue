@@ -124,14 +124,8 @@ export default defineComponent({
     },
     async leave() {
       if (!this.chat) return;
-      await this.axios.delete(
-        `/chats/${this.chat.association?.id}/association`
-      );
+      await this.$chat.leaveChat(this.chat.association.id);
       this.$emit("update:modelValue", false);
-      this.$toast.success("You have left the group.");
-      if (parseInt(this.$route.params.chatId) === this.chat.association?.id) {
-        this.$router.push("/communications/home");
-      }
     }
   }
 });

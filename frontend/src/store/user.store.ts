@@ -1,8 +1,8 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import { useFriendsStore } from "@/store/friends";
-import { useAppStore } from "@/store/app";
+import { useFriendsStore } from "@/store/friends.store";
+import { useAppStore } from "@/store/app.store";
 import { useToast } from "vue-toastification";
 import vuetify from "@/plugins/vuetify";
 import i18n from "@/plugins/i18n";
@@ -10,12 +10,14 @@ import functions from "@/plugins/functions";
 import { GetUserQuery } from "@/graphql/user/user.graphql";
 import { UpdateUserMutation } from "@/graphql/user/update.graphql";
 import {
+  BlockedUser,
   PartialUserFriend,
   UpdateUserInput,
   User,
   UserStoredStatus
 } from "@/gql/graphql";
 import { ProfileQuery } from "@/graphql/user/profile.graphql";
+import { BlockUserMutation } from "@/graphql/user/blockUser.graphql";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -32,10 +34,19 @@ export const useUserStore = defineStore("user", {
         loading: false
       }
     },
+    dialogs: {
+      block: {
+        userId: undefined as number | undefined,
+        value: false,
+        silent: false,
+        username: ""
+      }
+    },
     defaultVuetify: null,
     disableProfileColors:
       localStorage.getItem("disableProfileColors") === "true",
-    tracked: [] as PartialUserFriend[]
+    tracked: [] as PartialUserFriend[],
+    blocked: [] as BlockedUser[]
   }),
   getters: {
     contrast() {
@@ -72,6 +83,20 @@ export const useUserStore = defineStore("user", {
     }
   },
   actions: {
+    async blockUser() {
+      await this.$apollo.mutate({
+        mutation: BlockUserMutation,
+        variables: {
+          input: {
+            userId: this.dialogs.block.userId,
+            silent: this.dialogs.block.silent
+          }
+        }
+      });
+      this.dialogs.block.value = false;
+      this.dialogs.block.userId = undefined;
+      this.dialogs.block.silent = false;
+    },
     getStatus(user: Partial<User>) {
       if (user.id === this.user?.id) return this.user?.storedStatus;
       const tracked = this.tracked.find((tracked) => tracked.id === user.id);

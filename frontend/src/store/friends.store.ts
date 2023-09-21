@@ -2,7 +2,7 @@
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
 import { Friend, User } from "@/gql/graphql";
-import { useUserStore } from "@/store/user";
+import { useUserStore } from "@/store/user.store";
 
 export interface FriendsState {
   friends: Friend[];

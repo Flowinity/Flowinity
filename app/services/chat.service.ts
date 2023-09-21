@@ -20,6 +20,8 @@ import { ChatRank } from "@app/models/chatRank.model"
 import { ChatPermission } from "@app/models/chatPermission.model"
 import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { GraphQLError } from "graphql/error"
+import { BlockedUser } from "@app/models/blockedUser.model"
+import { GqlError } from "@app/lib/gqlErrors"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -75,6 +77,7 @@ export class ChatService {
         "user",
         "lastRead",
         "createdAt",
+        "hidden",
         "updatedAt"
       ],
       order: [
@@ -1039,8 +1042,20 @@ export class ChatService {
         },
         include: this.chatIncludes
       })
-
-      if (chat?.users.find((u: ChatAssociation) => u.userId === userId)) {
+      const assoc = chat?.users.find(
+        (u: ChatAssociation) => u.userId === userId
+      )
+      if (assoc && chat) {
+        if (assoc.hidden) {
+          assoc.update({
+            hidden: false
+          })
+          const chatWithUsers = await this.getChat(chat.id, assoc.userId)
+          socket
+            .of(SocketNamespaces.CHAT)
+            .to(assoc.userId)
+            .emit("chatCreated", chatWithUsers)
+        }
         return await this.getChat(chat.id, userId)
       } else if (chat) {
         const association = await ChatAssociation.create({
@@ -1135,9 +1150,20 @@ export class ChatService {
             id: association.id,
             userId: association.tpuUser.id
           },
-          attributes: ["id", "notifications"]
+          attributes: ["id", "notifications", "userId", "hidden"]
         })
         if (!assoc) continue
+        if (assoc.hidden) {
+          await assoc.update({
+            hidden: false
+          })
+          const chatWithUsers = await this.getChat(chat.id, association.userId)
+          if (!chatWithUsers) continue
+          await socket
+            .of(SocketNamespaces.CHAT)
+            .to(assoc.userId)
+            .emit("chatCreated", chatWithUsers)
+        }
         const mention = message.content.includes(`<@${association.tpuUser.id}>`)
         socket
           .of(SocketNamespaces.CHAT)
@@ -1196,6 +1222,11 @@ export class ChatService {
       | "system" = "message",
     attachments?: string[]
   ) {
+    await this.checkPermissions(
+      userId,
+      associationId,
+      ChatPermissions.SEND_MESSAGES
+    )
     const chat = await this.getChatFromAssociation(associationId, userId)
     if (replyId !== undefined && replyId !== null) {
       const message = await Message.findOne({
@@ -1216,6 +1247,14 @@ export class ChatService {
         throw Errors.NO_MESSAGE_CONTENT
     }
     if (content.length >= 4000) throw Errors.MESSAGE_TOO_LONG
+    if (chat.type === "direct") {
+      const userService = Container.get(UserUtilsService)
+      const block = await userService.blocked(
+        chat.users[0]?.userId,
+        chat.users[1]?.userId
+      )
+      if (block) throw new GqlError("RESTRICTED_MESSAGING")
+    }
     const message = await Message.create({
       content,
       chatId: chat.id,

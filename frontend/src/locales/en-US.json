@@ -654,6 +654,21 @@
       "removeProfile": "Remove profile picture",
       "removeBanner": "Remove banner",
       "removeGroup": "Remove group icon"
+    },
+    "block": {
+      "title": "Block User",
+      "description": "Are you sure you want to block {name}? They will no longer be able to message you, or view your profile.",
+      "silentMode": "Enable Silent Mode",
+      "silentModeDesc": "With Silent Mode enabled, they will still be able to message you, and view your profile, but you will not receive any messages or notifications from them.",
+      "friendWarning": "By blocking this user, they will be automatically removed from your friends list.",
+      "action": "Block",
+      "commsInputYou": "You cannot message this user as you have blocked them.",
+      "commsInputThem": "You cannot message this user as you're blocked."
+    },
+    "unblock": {
+      "title": "Unblock User",
+      "description": "The user will not be notified that they are unblocked, but they will immediately be able to message you and view your profile again.",
+      "action": "Unblock"
     }
   }
 }

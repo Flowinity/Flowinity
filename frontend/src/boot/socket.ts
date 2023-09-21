@@ -1,12 +1,13 @@
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import router from "@/router";
-import { useChatStore } from "@/store/chat";
-import { useFriendsStore } from "@/store/friends";
-import { useUserStore } from "@/store/user";
-import { useExperimentsStore } from "@/store/experiments";
+import { useChatStore } from "@/store/chat.store";
+import { useFriendsStore } from "@/store/friends.store";
+import { useUserStore } from "@/store/user.store";
+import { useExperimentsStore } from "@/store/experiments.store";
 import { useToast } from "vue-toastification";
 import {
   AddRank,
+  BlockedUser,
   Chat,
   ChatAssociation,
   ChatRank,
@@ -361,6 +362,32 @@ export default async function setup(app) {
       localChat.ranks.sort((a, b) => {
         return b.index - a.index || 0;
       });
+    }
+  );
+  sockets.trackedUsers.on(
+    "userBlocked",
+    (data: { userId: number; blocked: boolean }) => {
+      const u = user.tracked.find((user) => {
+        return user.id === data.userId;
+      });
+      u.blocked = data.blocked;
+    }
+  );
+  sockets.user.on(
+    "userBlocked",
+    (
+      data:
+        | (BlockedUser & { blocked: boolean })
+        | { blockedUserId: number; blocked: boolean }
+    ) => {
+      if ("id" in data && data.blocked) {
+        delete data.blocked;
+        user.blocked.push(data);
+      } else {
+        user.blocked = user.blocked.filter(
+          (block) => block.blockedUserId !== data.blockedUserId
+        );
+      }
     }
   );
 }

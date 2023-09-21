@@ -20,6 +20,18 @@ const Errors = {
   },
   UNKNOWN: {
     message: "Something went wrong."
+  },
+  UNSUPPORTED_OPERATION: {
+    message: "Unsupported operation."
+  },
+  USER_NOT_FOUND: {
+    message: "User not found."
+  },
+  RESTRICTED_MESSAGING: {
+    message: "You cannot send messages to this user."
+  },
+  BLOCKED: {
+    message: "You have been blocked by this user."
   }
 }
 

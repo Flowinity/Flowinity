@@ -1,5 +1,5 @@
 import router from "@/router";
-import { useAppStore } from "@/store/app";
+import { useAppStore } from "@/store/app.store";
 
 export default function setup() {
   const core = useAppStore();

@@ -4,19 +4,19 @@ import axios from "@/plugins/axios";
 import { useToast } from "vue-toastification";
 import functions from "@/plugins/functions";
 import { AxiosProgressEvent } from "axios";
-import { useUserStore } from "@/store/user";
-import { useChatStore } from "@/store/chat";
-import { useCollectionsStore } from "@/store/collections";
-import { useWorkspacesStore } from "@/store/workspaces";
+import { useUserStore } from "@/store/user.store";
+import { useChatStore } from "@/store/chat.store";
+import { useCollectionsStore } from "@/store/collections.store";
+import { useWorkspacesStore } from "@/store/workspaces.store";
 import vuetify from "@/plugins/vuetify";
-import { useExperimentsStore } from "@/store/experiments";
+import { useExperimentsStore } from "@/store/experiments.store";
 import i18nObject, { i18n } from "@/plugins/i18n";
 import { useRoute } from "vue-router";
 import { SidebarItem } from "@/types/sidebar";
 import { CoreStateQuery } from "@/graphql/core/state.graphql";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
 import { Chat, CoreState, Upload } from "@/gql/graphql";
-import { useFriendsStore } from "@/store/friends";
+import { useFriendsStore } from "@/store/friends.store";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
@@ -597,15 +597,18 @@ export const useAppStore = defineStore("app", {
           chats,
           workspaces,
           friends,
-          trackedUsers
+          trackedUsers,
+          blockedUsers
         }
       } = await this.$apollo.query({
         query: CoreStateQuery,
         fetchPolicy: "no-cache"
       });
       this.site = coreState;
-      useUserStore().user = currentUser;
-      useUserStore().tracked = trackedUsers;
+      const userStore = useUserStore();
+      userStore.user = currentUser;
+      userStore.tracked = trackedUsers;
+      userStore.blocked = blockedUsers;
       if (collections) {
         useCollectionsStore().items = collections.items;
         useCollectionsStore().pager = collections.pager;

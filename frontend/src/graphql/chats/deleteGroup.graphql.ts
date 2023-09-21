@@ -7,3 +7,11 @@ export const DeleteGroupMutation = gql`
     }
   }
 `;
+
+export const LeaveGroupMutation = gql`
+  mutation LeaveChat($input: LeaveChatInput!) {
+    leaveChat(input: $input) {
+      success
+    }
+  }
+`;

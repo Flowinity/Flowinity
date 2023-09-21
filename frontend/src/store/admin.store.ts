@@ -2,7 +2,7 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import { useUserStore } from "@/store/user";
+import { useUserStore } from "@/store/user.store";
 import { User } from "@/models/user";
 
 export interface AdminState {}

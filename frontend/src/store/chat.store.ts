@@ -1,15 +1,15 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import { useExperimentsStore } from "@/store/experiments";
+import { useExperimentsStore } from "@/store/experiments.store";
 import vuetify from "@/plugins/vuetify";
 import { Router, useRouter } from "vue-router";
-import { useAppStore } from "@/store/app";
+import { useAppStore } from "@/store/app.store";
 import { User } from "@/models/user";
-import { useUserStore } from "@/store/user";
-import { useCollectionsStore } from "@/store/collections";
+import { useUserStore } from "@/store/user.store";
+import { useCollectionsStore } from "@/store/collections.store";
 import { Collection } from "@/models/collection";
-import { useFriendsStore } from "@/store/friends";
+import { useFriendsStore } from "@/store/friends.store";
 import dayjs from "../plugins/dayjs";
 import { useToast } from "vue-toastification";
 import { ChatsQuery } from "@/graphql/chats/chats.graphql";
@@ -36,6 +36,7 @@ import { CreateChatMutation } from "@/graphql/chats/createChat.graphql";
 import { UpdateChatMutation } from "@/graphql/chats/updateChat.graphql";
 import { Typing } from "@/models/chat";
 import { AddChatUserMutation } from "@/graphql/chats/addUser.graphql";
+import { LeaveGroupMutation } from "@/graphql/chats/deleteGroup.graphql";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -117,6 +118,16 @@ export const useChatStore = defineStore("chat", {
     }
   }),
   actions: {
+    async leaveChat(associationId: number) {
+      await this.$apollo.mutate({
+        mutation: LeaveGroupMutation,
+        variables: {
+          input: {
+            associationId
+          }
+        }
+      });
+    },
     getRankColor(ranksMap: string[], ranks: ChatRank[]) {
       if (!ranksMap) ranksMap = [];
       for (const rankId of ranksMap) {
@@ -476,11 +487,13 @@ export const useChatStore = defineStore("chat", {
           if (position === ScrollPosition.Top) {
             this.selectedChat?.messages?.push(...data);
             if (this.selectedChat?.messages?.length > 350) {
+              this.loadNew = true;
               this.selectedChat.messages.splice(0, 50);
             }
           } else {
             this.selectedChat?.messages?.unshift(...data);
             if (this.selectedChat?.messages?.length > 350) {
+              this.loadNew = true;
               this.selectedChat.messages.splice(-50);
             }
           }

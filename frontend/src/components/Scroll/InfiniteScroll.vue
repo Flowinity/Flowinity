@@ -2,7 +2,7 @@
 import type { Props, Params, State, StateHandler } from "./types";
 import { onMounted, ref, toRefs, onUnmounted, watch, nextTick } from "vue";
 import { startObserver, getParentEl, isVisible } from "./utils";
-import { useChatStore } from "@/store/chat";
+import { useChatStore } from "@/store/chat.store";
 
 const emit = defineEmits<{ infinite: [$state: StateHandler] }>();
 const props = withDefaults(defineProps<Props>(), {

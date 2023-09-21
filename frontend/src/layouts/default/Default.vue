@@ -1,4 +1,5 @@
 <template>
+  <BlockUserDialog v-model="$user.dialogs.block.value" />
   <PrivacyPolicyDialog
     v-if="$user.user?.privacyPolicyAccepted == false"
   ></PrivacyPolicyDialog>
@@ -154,6 +155,7 @@ import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
+import BlockUserDialog from "@/components/Users/Dialogs/Block.vue";
 </script>
 
 <script lang="ts">

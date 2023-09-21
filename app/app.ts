@@ -95,6 +95,7 @@ import { AutoCollectApprovalResolver } from "@app/controllers/graphql/autoCollec
 import { CollectionItemResolver } from "@app/controllers/graphql/collectionItem.resolver"
 import { UploadResolver } from "@app/controllers/graphql/upload.resolver"
 import { AdminResolver } from "@app/controllers/graphql/admin.resolver"
+import { BlockedUserResolver } from "@app/controllers/graphql/blockedUser.resolver"
 
 @Service()
 @Middleware({ type: "after" })
@@ -347,7 +348,8 @@ export class Application {
         AutoCollectApprovalResolver,
         CollectionItemResolver,
         UploadResolver,
-        AdminResolver
+        AdminResolver,
+        BlockedUserResolver
       ],
       container: Container,
       authChecker: authChecker,

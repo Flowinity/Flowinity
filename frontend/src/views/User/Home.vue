@@ -54,7 +54,7 @@
                 >
                   {{ user.username }}
                 </v-tooltip>
-                {{ $friends.getName(user.id) }}
+                {{ $friends.getName(user.id) || user.username }}
               </router-link>
             </v-card-title>
             <UserBadges :user="user" class="justify-center mt-n1 mb-2" />

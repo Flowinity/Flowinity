@@ -36,6 +36,7 @@ import { Session } from "@app/models/session.model"
 import { UserInsights } from "@app/classes/graphql/user/insights"
 import { Stats } from "@app/classes/graphql/core/core"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
+import { BlockedUser } from "@app/models/blockedUser.model"
 
 @DefaultScope(() => ({
   attributes: {
@@ -284,7 +285,7 @@ export class User extends Model {
   @Column({
     type: DataType.ENUM("online", "idle", "offline", "busy")
   })
-  status: "online" | "idle" | "offline" | "busy" | "unknown"
+  status: "online" | "idle" | "offline" | "busy" | "unknown" | UserStatus
 
   @Field(() => UserStoredStatus, {
     description:
@@ -293,7 +294,7 @@ export class User extends Model {
   @Column({
     type: DataType.ENUM("online", "idle", "busy", "invisible")
   })
-  storedStatus: "online" | "idle" | "busy" | "invisible"
+  storedStatus: "online" | "idle" | "busy" | "invisible" | UserStoredStatus
 
   @Field()
   @Column({
@@ -461,4 +462,7 @@ export class User extends Model {
       "How many AutoCollect approvals the user needs to approve/reject."
   })
   pendingAutoCollects: number
+
+  @HasOne(() => BlockedUser, "userId")
+  blocked?: BlockedUser
 }

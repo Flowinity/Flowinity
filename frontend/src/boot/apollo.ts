@@ -9,7 +9,7 @@ import {
 } from "@apollo/client/core";
 import { onError } from "@apollo/client/link/error";
 import { useToast } from "vue-toastification";
-import { useUserStore } from "@/store/user";
+import { useUserStore } from "@/store/user.store";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import functions from "@/plugins/functions";

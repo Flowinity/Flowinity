@@ -1,6 +1,6 @@
 import md from "./rules";
 import mdEmail from "./rulesEmail";
-import { useAppStore } from "@/store/app";
+import { useAppStore } from "@/store/app.store";
 import { Chat } from "@/models/chat";
 import { User } from "@/models/user";
 import { UserStatus, UserStoredStatus } from "@/gql/graphql";

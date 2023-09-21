@@ -1,6 +1,6 @@
 // Composables
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import { useUserStore } from "@/store/user";
+import { useUserStore } from "@/store/user.store";
 import { GalleryType } from "@/gql/graphql";
 
 const routes = [

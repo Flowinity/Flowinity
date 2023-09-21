@@ -17,6 +17,7 @@ import { Success } from "@app/classes/graphql/generic/success"
 import { AddChatUser, ToggleUser } from "@app/classes/graphql/chat/addUser"
 import { LeaveChatInput } from "@app/classes/graphql/chat/deleteChat"
 import { GqlError } from "@app/lib/gqlErrors"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 @Resolver(ChatAssociation)
 @Service()
@@ -189,7 +190,7 @@ export class ChatAssociationResolver {
   async leaveChat(
     @Ctx() ctx: Context,
     @Arg("input") input: LeaveChatInput
-  ): Success {
+  ): Promise<Success> {
     const chat = await this.chatService.getChatFromAssociation(
       input.associationId,
       ctx.user!!.id
@@ -215,6 +216,16 @@ export class ChatAssociationResolver {
         return { success: true }
       }
       case "direct": {
+        await association.update({
+          hidden: true
+        })
+        socket.of(SocketNamespaces.CHAT).to(ctx.user!!.id).emit("removeChat", {
+          id: chat.id
+        })
+        return { success: true }
+      }
+      default: {
+        throw new GqlError("UNSUPPORTED_OPERATION")
       }
     }
   }

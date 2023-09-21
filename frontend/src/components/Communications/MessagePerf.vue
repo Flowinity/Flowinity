@@ -36,14 +36,24 @@
             'margin-left': '-1px'
           }"
         >
-          {{ $user.users[message.reply.userId].username }}
+          {{
+            $user.users[message.reply.userId]?.username ||
+            message.reply.user?.username
+          }}
         </span>
-        <template v-if="message.reply.embeds.length">
-          <v-icon class="ml-1" color="#878686">mdi-image</v-icon>
+        <template v-if="!blocked($user.users[message.reply.userId].id)">
+          <template v-if="message.reply.embeds.length">
+            <v-icon class="ml-1" color="#878686">mdi-image</v-icon>
+          </template>
+          <span class="limit ml-1" style="color: #878686">
+            {{ message.reply?.content || "Click to see attachment..." }}
+          </span>
         </template>
-        <span class="limit ml-1" style="color: #878686">
-          {{ message.reply?.content || "Click to see attachment..." }}
-        </span>
+        <template v-else>
+          <span class="limit ml-1" style="color: #878686">
+            Blocked message...
+          </span>
+        </template>
       </span>
       <template v-else>
         <span class="text-grey text-small mt-n2 ml-2">Message deleted.</span>
@@ -274,7 +284,8 @@ export default defineComponent({
     "dateSeparator",
     "mentions",
     "index",
-    "search"
+    "search",
+    "uncollapseBlocked"
   ],
   data() {
     return {
@@ -301,6 +312,11 @@ export default defineComponent({
     }
   },
   methods: {
+    blocked(userId?: number) {
+      return this.$user.blocked.find(
+        (block) => block.blockedUserId === userId ?? this.message.userId
+      );
+    },
     context(e: any) {
       e.preventDefault();
       this.$chat.dialogs.message.message = this.message;

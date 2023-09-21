@@ -23,7 +23,7 @@ import { CreateChatInput } from "@app/classes/graphql/chat/createChat"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import { ChatService } from "@app/services/chat.service"
 import { UpdateChatInput } from "@app/classes/graphql/chat/updateChat"
-import { ChatInput } from "@app/classes/graphql/chat/chat"
+import { ChatInput, ChatsInput } from "@app/classes/graphql/chat/chat"
 import { GraphQLError } from "graphql/error"
 import { ChatRank } from "@app/models/chatRank.model"
 import { ChatPermission } from "@app/models/chatPermission.model"
@@ -49,13 +49,16 @@ export class ChatResolver {
     userOptional: true
   })
   @Query(() => [Chat])
-  async chats(@Ctx() ctx: Context) {
+  async chats(
+    @Ctx() ctx: Context,
+    @Arg("input", { nullable: true }) input?: ChatsInput
+  ) {
     if (!ctx.user) return []
     return await Chat.findAll({
       include: [
         {
           model: ChatAssociation,
-          where: { userId: ctx.user.id },
+          where: { userId: ctx.user.id, hidden: !!input?.hidden },
           required: true,
           as: "association"
         }

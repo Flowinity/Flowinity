@@ -1,4 +1,4 @@
-import { Field, Float, ObjectType } from "type-graphql"
+import { createUnionType, Field, Float, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { Badge } from "@app/models/badge.model"
 import { Friend } from "@app/models/friend.model"
@@ -136,6 +136,10 @@ export class PartialUserFriend extends PartialUserBase {
     nullable: true
   })
   nickname: FriendNickname | null
+  @Field(() => Boolean, {
+    nullable: true
+  })
+  blocked?: boolean
 }
 
 export const partialUserFriend = [...partialUserBase, "status", "nameColor"]
