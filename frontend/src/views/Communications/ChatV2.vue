@@ -73,10 +73,12 @@
         </template>
       </infinite-loading>
       <MessagePerf
+        @update:uncollapse-blocked="uncollapseBlocked = $event"
         :uncollapse-blocked="uncollapseBlocked"
         class="mr-2 ml-2"
         v-for="(message, index) in $chat.selectedChat?.messages"
         :id="'message-id-' + message.id"
+        :style="{ zIndex: 1000 - index }"
         :key="message.id"
         :class="{ 'replying-message': message.id === replyId }"
         :date-separator="dateSeparator(index)"
@@ -218,7 +220,7 @@
         ref="input"
         v-model="message"
         class="message-input"
-        style="margin-top: auto"
+        style="margin-top: auto; z-index: 1001"
         @emoji="
           message += $event;
           $nextTick(() => focusInput());

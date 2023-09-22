@@ -1,5 +1,12 @@
 <template>
-  <li class="position-relative">
+  <li
+    class="position-relative"
+    v-if="
+      !blocked(message.userId) ||
+      (blocked(message.userId) && merge && uncollapseBlocked) ||
+      !merge
+    "
+  >
     <div v-if="dateSeparator" class="date-separator">
       <div class="date-separator-line"></div>
       <p class="date-separator-block unselectable">
@@ -65,7 +72,7 @@
     >
       <div class="flex-grow-tpu">
         <div
-          @contextmenu="context"
+          @contextmenu="editing ? () => {} : context($event)"
           :class="{ merge, unselectable: $vuetify.display.mobile }"
           class="message rounded position-relative"
         >
@@ -95,6 +102,8 @@
               "
               class="pointer"
               v-else-if="
+                (!blocked(message.userId) ||
+                  (blocked(message.userId) && uncollapseBlocked)) &&
                 !merge &&
                 (message.type === MessageType.Message || !message.type)
               "
@@ -102,8 +111,11 @@
               :id="'message-author-avatar-' + message.id"
             />
             <div v-else class="mr-3 text-grey">
+              <v-icon class="mr-1" size="32" v-if="blocked(message.userId)">
+                mdi-account-cancel
+              </v-icon>
               <v-icon
-                v-if="message.type === MessageType.Join"
+                v-else-if="message.type === MessageType.Join"
                 class="mr-1"
                 size="32"
               >
@@ -123,8 +135,11 @@
             </div>
           </div>
           <div style="width: 100%">
+            <p v-if="blocked(message.userId) && !uncollapseBlocked">
+              Blocked message.
+            </p>
             <p
-              v-if="
+              v-else-if="
                 (!message.type && !merge) ||
                 (message.type === MessageType.Message && !merge)
               "
@@ -150,7 +165,15 @@
                 {{ $date(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
               </small>
             </p>
-            <div class="position-relative" v-if="!editing">
+            <div v-if="blocked(message.userId) && !uncollapseBlocked">
+              <a
+                class="pointer"
+                @click="$emit('update:uncollapseBlocked', true)"
+              >
+                Click to expand
+              </a>
+            </div>
+            <div class="position-relative" v-else-if="!editing">
               <span
                 :class="{
                   'text-grey': message.pending,
@@ -286,6 +309,16 @@ export default defineComponent({
     "index",
     "search",
     "uncollapseBlocked"
+  ],
+  emits: [
+    "authorClick",
+    "update:uncollapseBlocked",
+    "editText",
+    "edit",
+    "delete",
+    "reply",
+    "editMessage",
+    "jumpToMessage"
   ],
   data() {
     return {

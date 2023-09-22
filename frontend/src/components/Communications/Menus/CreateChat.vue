@@ -3,25 +3,25 @@
     :close-on-content-click="false"
     :model-value="modelValue"
     location="end"
-    style="z-index: 4001"
     @update:model-value="$emit('update:modelValue', $event)"
+    max-width="420"
   >
     <template v-slot:activator="{ props }">
       <slot :props="props"></slot>
     </template>
     <v-card>
-      <v-card-title class="text-h6">Select Friends</v-card-title>
-      <v-card-subtitle>
-        You can friend people from their profile.
-        <br />
-        Adding 2 or more users will create a group chat.
+      <v-card-title class="text-h6">
+        {{ $t("chats.settings.users.addUser.title") }}
+      </v-card-title>
+      <v-card-subtitle style="white-space: pre-line">
+        {{ $t("chats.settings.users.addUser.description") }}
       </v-card-subtitle>
       <v-list max-height="400">
         <v-text-field
           v-model="search"
           :autofocus="true"
           class="mx-5 my-n1"
-          label="Search"
+          :label="$t('generic.search')"
         ></v-text-field>
         <v-list-item
           v-for="friend in friends"
@@ -45,7 +45,11 @@
           <v-list-item-title>{{ friend.user.username }}</v-list-item-title>
 
           <v-list-item-subtitle>
-            Friends since {{ $date(friend.createdAt).format("DD/MM/YYYY") }}
+            {{
+              $t("chats.settings.users.addUser.friendsSince", {
+                date: $date(friend.createdAt).format("DD/MM/YYYY")
+              })
+            }}
           </v-list-item-subtitle>
         </v-list-item>
       </v-list>
@@ -57,11 +61,55 @@
           @click="type === 'create' ? createChat() : $emit('add', selected)"
         >
           <template v-if="type === 'create'">
-            {{ selected.length < 2 ? "Create DM" : "Create Group" }}
+            {{
+              selected.length < 2
+                ? $t("chats.settings.users.addUser.createDM")
+                : $t("chats.settings.users.addUser.createGroup")
+            }}
           </template>
-          <template v-else>Add</template>
+          <template v-else>
+            {{ $t("chats.settings.users.addUser.add") }}
+          </template>
         </v-btn>
       </v-card-actions>
+      <template
+        v-if="
+          type === 'add' &&
+          $chat.hasPermission('INVITE_USERS', $chat.editingChat)
+        "
+      >
+        <v-divider></v-divider>
+        <v-card-title class="text-h6">
+          {{ $t("chats.settings.users.addUser.invites.title") }}
+        </v-card-title>
+        <v-card-subtitle style="white-space: initial">
+          {{ $t("chats.settings.users.addUser.invites.description") }}
+        </v-card-subtitle>
+        <p class="mx-4">
+          {{ invite }}
+          <v-btn icon size="x-small">
+            <v-icon>mdi-content-copy</v-icon>
+          </v-btn>
+        </p>
+        <v-select
+          variant="outlined"
+          class="mx-4 mt-4"
+          density="compact"
+          :items="expireOptions"
+          v-model="expireOption"
+          :label="$t('chats.settings.users.addUser.invites.expire')"
+        ></v-select>
+        <v-select
+          variant="outlined"
+          class="mx-4"
+          density="compact"
+          :items="$chat.editingChat.ranks"
+          item-title="name"
+          item-key="id"
+          v-model="rankId"
+          :label="$t('chats.settings.users.addUser.invites.rank')"
+        ></v-select>
+      </template>
     </v-card>
   </v-menu>
 </template>
@@ -89,7 +137,41 @@ export default defineComponent({
   data() {
     return {
       search: "",
-      selected: [] as number[]
+      selected: [] as number[],
+      select: false,
+      invite: "22",
+      rankId: null as number | null,
+      expireOption: null as number | null,
+      expireOptions: [
+        {
+          title: "1 hour",
+          value: 1
+        },
+        {
+          title: "12 hours",
+          value: 12
+        },
+        {
+          title: "1 day",
+          value: 24
+        },
+        {
+          title: "7 days",
+          value: 168
+        },
+        {
+          title: "14 days",
+          value: 336
+        },
+        {
+          title: "30 days",
+          value: 720
+        },
+        {
+          title: "Never expire",
+          value: null
+        }
+      ]
     };
   },
   methods: {

@@ -15,6 +15,8 @@ import validation from "@/plugins/validation";
 import { io } from "socket.io-client";
 import functions from "@/plugins/functions";
 import router from "@/router";
+import { Router, useRouter } from "vue-router";
+import { Collection } from "@/models/collection";
 
 function createSocket(namespace: string) {
   console.log(`[TPU/Socket] Connecting to ${namespace}`);
@@ -46,6 +48,33 @@ export default function setup(app) {
   const friends = useFriendsStore();
   const mail = useMailStore();
   const toast = useToast();
+  if (!window.tpuInternals) {
+    const router = useRouter() as Router;
+    window.tpuInternals = {
+      processLink: chat.processLink,
+      readChat: chat.readChat,
+      lookupUser: chat.lookupUser,
+      setChat: ((id) => router.push("/communications/" + id)) as (
+        id: number
+      ) => void,
+      lookupChat: chat.lookupChat,
+      openUser: chat.openUser,
+      router,
+      lookupCollection: (id) => {
+        return (
+          (collections.items.find(
+            (collection) => collection.id === id
+          ) as Collection) ||
+          ({
+            name: "Unknown Collection"
+          } as Collection)
+        );
+      },
+      openCollection: ((id) => router.push("/collections/" + id)) as (
+        id: number
+      ) => void
+    };
+  }
   app.config.globalProperties.axios = axios;
   core.themeProviderDefaults.theme = vuetify.theme.themes.value;
   core.themeProviderDefaults.global = vuetify.defaults.value;

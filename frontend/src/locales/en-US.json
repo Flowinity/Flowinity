@@ -25,12 +25,13 @@
       "communicationsShort": "Comms",
       "quickAction": "Select a new quick action.",
       "android": "Get the app",
+      "discord": "Join the Discord",
       "backToComms": "Back to Communications",
       "backToTPU": "Back to TPU"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",
-      "desc": "Please review the updated Privacy Policy. By continuing to use TPU, you agree to the new Privacy Policy.",
+      "desc": "Please review the updated Privacy Policy. By continuing to use PrivateUploader, you agree to the new Privacy Policy.",
       "close": "I agree"
     }
   },
@@ -496,7 +497,21 @@
         "accountAge": "Account created",
         "actions": "Actions",
         "remove": "Remove User",
-        "transferOwnership": "Transfer Ownership"
+        "transferOwnership": "Transfer Ownership",
+        "addUser": {
+          "title": "Select Friends",
+          "description": "You can friend people from their profile.\nAdding two or more people will create a group chat.",
+          "friendsSince": "Friends since {date}",
+          "add": "Add",
+          "createDM": "Create DM",
+          "createGroup": "Create Group",
+          "invites": {
+            "title": "Send Invite",
+            "description": "Invites allow you to invite users outside of the PrivateUploader platform, and people whom have disabled the ability to directly add to groups.",
+            "rank": "Auto-assign rank on join",
+            "expire": "Set invite usage expiry"
+          }
+        }
       }
     }
   },

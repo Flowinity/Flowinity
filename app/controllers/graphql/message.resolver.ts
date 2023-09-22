@@ -98,7 +98,6 @@ export class MessageResolver {
         ...(after && { createdAt: { [Op.gt]: after } })
       }
     }
-
     let messages = await Message.findAll({
       where: {
         chatId: chat.id,

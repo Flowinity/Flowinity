@@ -117,6 +117,9 @@
         <v-window-item value="users">
           <ChatSettingsUsers />
         </v-window-item>
+        <v-window-item value="invites">
+          <ChatSettingsInvites />
+        </v-window-item>
       </v-window>
     </div>
   </CoreDialog>
@@ -134,10 +137,12 @@ import ChatSettingsRanks from "@/components/Communications/Dialogs/Settings/Rank
 import ChatSettingsUsers from "@/components/Communications/Dialogs/Settings/Users.vue";
 import { AddChatUserMutation } from "@/graphql/chats/addUser.graphql";
 import { ToggleUser } from "@/gql/graphql";
+import ChatSettingsInvites from "@/components/Communications/Dialogs/Settings/Invites.vue";
 
 export default defineComponent({
   name: "ColubrinaGroupSettingsDialog",
   components: {
+    ChatSettingsInvites,
     ChatSettingsUsers,
     ChatSettingsRanks,
     Overline,

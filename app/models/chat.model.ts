@@ -14,6 +14,7 @@ import { Field, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { ChatRank } from "@app/models/chatRank.model"
 import { Message } from "@app/models/message.model"
+import { ChatInvite } from "@app/models/chatInvite.model"
 
 @ObjectType()
 @Table
@@ -115,4 +116,11 @@ export class Chat extends Model {
 
   @Field(() => [Message])
   messages: Message[]
+
+  @Field(() => [ChatInvite], {
+    description:
+      "Array is empty if you don't have the `OVERVIEW` permission in the chat."
+  })
+  @HasMany(() => ChatInvite, "chatId")
+  invites: ChatInvite[]
 }

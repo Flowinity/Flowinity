@@ -18,6 +18,7 @@ import { AddChatUser, ToggleUser } from "@app/classes/graphql/chat/addUser"
 import { LeaveChatInput } from "@app/classes/graphql/chat/deleteChat"
 import { GqlError } from "@app/lib/gqlErrors"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { ChatInvite } from "@app/models/chatInvite.model"
 
 @Resolver(ChatAssociation)
 @Service()
@@ -228,5 +229,10 @@ export class ChatAssociationResolver {
         throw new GqlError("UNSUPPORTED_OPERATION")
       }
     }
+  }
+
+  @FieldResolver(() => ChatInvite)
+  async invite(@Root() assoc: ChatAssociation) {
+    return await assoc.$get("invite")
   }
 }

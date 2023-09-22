@@ -18,6 +18,7 @@ import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation
 import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { ChatRank } from "@app/models/chatRank.model"
 import { DateType } from "@app/classes/graphql/serializers/date"
+import { ChatInvite } from "@app/models/chatInvite.model"
 
 @ObjectType()
 @Table
@@ -86,6 +87,18 @@ export class ChatAssociation extends Model {
     defaultValue: false
   })
   hidden: boolean
+
+  @Field(() => String, {
+    nullable: true
+  })
+  @Column
+  inviteUsed: string
+
+  @Field(() => ChatInvite, {
+    nullable: true
+  })
+  @BelongsTo(() => ChatInvite, "inviteUsed")
+  invite: ChatInvite
 
   @Field(() => PartialUserBase, {
     nullable: true,

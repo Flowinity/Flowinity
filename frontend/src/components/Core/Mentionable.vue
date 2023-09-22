@@ -1,23 +1,41 @@
 <template>
   <div
     ref="el"
-    :style="
-      caretPosition
-        ? {
-            top: `${caretPosition.top - 50}px`,
-            left: `${caretPosition.left}px`,
-            position: 'absolute'
-          }
-        : {}
-    "
+    :class="$attrs.class"
+    class="mentionable"
+    style="position: relative; width: 100%"
   >
-    <v-scroll-y-transition class="popper ml-9">
-      <v-card
-        :class="$attrs.class"
-        v-show="!!currentKey"
-        color="toolbar"
-        style="z-index: 9999"
-      >
+    <slot />
+
+    <VDropdown
+      ref="popper"
+      :auto-hide="false"
+      :shown="!!currentKey"
+      :style="
+        caretPosition
+          ? {
+              top: `${caretPosition.top}px`,
+              left: `${caretPosition.left}px`
+            }
+          : {}
+      "
+      :theme="theme"
+      :triggers="[]"
+      class="popper ml-9"
+      style="position: absolute"
+      v-bind="{ ...$attrs, class: undefined }"
+    >
+      <div
+        :style="
+          caretPosition
+            ? {
+                height: `${caretPosition.height}px`
+              }
+            : {}
+        "
+      />
+
+      <template #popper>
         <div v-if="!displayedItems.length">
           <slot name="no-result">No result</slot>
         </div>
@@ -29,7 +47,7 @@
             :class="{
               'mention-selected': selectedIndex === index
             }"
-            class="mention-item"
+            class="mention-item rounded"
             @mousedown="applyMention(index)"
             @mouseover="selectedIndex = index"
           >
@@ -44,11 +62,10 @@
             </slot>
           </div>
         </template>
-      </v-card>
-    </v-scroll-y-transition>
+      </template>
+    </VDropdown>
   </div>
 </template>
-
 <script lang="ts">
 //@ts-nocheck
 import getCaretPosition from "textarea-caret";
@@ -453,17 +470,20 @@ export default defineComponent({
 
 <style lang="scss">
 .v-popper--theme-dropdown .v-popper__inner {
-  background: #181818 !important;
+  background: rgb(var(--v-theme-background));
   color: white;
   border-radius: 6px;
-  border: 0 solid;
   box-shadow: 0 6px 30px #0000001a;
   padding: 6px;
 }
 
+.v-popper--theme-dropdown .v-popper__inner {
+  border: 1px solid #191919;
+}
+
 .v-popper--theme-dropdown .v-popper__arrow-inner {
   visibility: visible;
-  border-color: #181818;
+  border-color: rgb(var(--v-theme-background));
 }
 
 .v-popper--theme-dropdown .v-popper__arrow-outer {

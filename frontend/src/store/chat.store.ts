@@ -565,35 +565,6 @@ export const useChatStore = defineStore("chat", {
       } catch {
         //
       }
-      if (!window.tpuInternals) {
-        const collection = useCollectionsStore();
-        const router = useRouter() as Router;
-        window.tpuInternals = {
-          processLink: this.processLink,
-          readChat: this.readChat,
-          lookupUser: this.lookupUser,
-          setChat: ((id) => router.push("/communications/" + id)) as (
-            id: number
-          ) => void,
-          lookupChat: this.lookupChat,
-          openUser: this.openUser,
-          router,
-          lookupCollection: (id) => {
-            return (
-              (collection.items.find(
-                (collection) => collection.id === id
-              ) as Collection) ||
-              ({
-                name: "Unknown Collection"
-              } as Collection)
-            );
-          },
-          openCollection: ((id) => router.push("/collections/" + id)) as (
-            id: number
-          ) => void
-        };
-      }
-      window.tpuInternals.processLink = this.processLink;
     },
     chatName(chat: Chat) {
       if (!chat) return "Communications";

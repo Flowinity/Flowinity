@@ -35,6 +35,7 @@ import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
 import { Success } from "@app/classes/graphql/generic/success"
+import { ChatInvite } from "@app/models/chatInvite.model"
 
 @Resolver(Chat)
 @Service()
@@ -284,6 +285,34 @@ export class ChatResolver {
     })
     return {
       success: true
+    }
+  }
+
+  @FieldResolver(() => [ChatInvite])
+  async invites(@Root() chat: Chat, @Ctx() ctx: Context) {
+    try {
+      await this.chatService.checkPermissions(
+        ctx.user!!.id,
+        chat?.association?.id,
+        ChatPermissions.OVERVIEW
+      )
+      return await chat.$get("invites", {
+        where: {
+          invalidated: false,
+          expiredAt: {
+            [Op.or]: [
+              {
+                [Op.gt]: new Date()
+              },
+              {
+                [Op.is]: null
+              }
+            ]
+          }
+        }
+      })
+    } catch {
+      return []
     }
   }
 }

@@ -57,6 +57,15 @@ export const CoreStateQuery = gql`
       createdAt
       updatedAt
       legacyUserId
+      invites {
+        id
+        userId
+        createdAt
+        rankId
+        updatedAt
+        expiredAt
+        invalidated
+      }
       association {
         id
         hidden

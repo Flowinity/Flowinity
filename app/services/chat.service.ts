@@ -136,6 +136,7 @@ export class ChatService {
         if (!chat) return false
         for (const user of chat.users) {
           if (!user.userId) continue
+          await this.getPermissions(user.userId, user.id, true)
           socket
             .of(SocketNamespaces.CHAT)
             .to(user.userId)
@@ -153,7 +154,7 @@ export class ChatService {
   }
 
   async syncPermissions(userId: number, associationId: number) {
-    const permissions = await this.getPermissions(userId, associationId)
+    const permissions = await this.getPermissions(userId, associationId, true)
     socket.of(SocketNamespaces.CHAT).to(userId).emit("syncPermissions", {
       associationId,
       permissions,
@@ -179,41 +180,54 @@ export class ChatService {
 
   async getPermissions(
     userId: number,
-    associationId: number
+    associationId: number,
+    reset: boolean = false
   ): Promise<ChatPermissions[]> {
-    const association = await ChatAssociation.findOne({
-      where: { id: associationId, userId },
-      include: [
-        {
-          model: Chat,
-          attributes: ["userId", "type"],
-          as: "chat"
-        },
-        {
-          model: ChatRank,
-          as: "ranks",
-          include: [
-            {
-              model: ChatPermission,
-              as: "permissions"
-            }
-          ]
-        }
-      ]
-    })
-    if (!association) return []
-    const permissions = [
-      ...new Set(
-        association.ranks.flatMap((rank) =>
-          rank.permissions.map((permission) => permission.id)
-        )
-      )
-    ]
-    console.log(
-      association.chat.userId === userId && association.chat.type === "group"
+    let permissions = await redis.json.get(
+      `chatPermissions:${userId}:${associationId}`
     )
-    if (association.chat.userId === userId && association.chat.type === "group")
-      permissions.push(ChatPermissions.OWNER)
+
+    if (!permissions || reset) {
+      const association = await ChatAssociation.findOne({
+        where: { id: associationId, userId },
+        include: [
+          {
+            model: Chat,
+            attributes: ["userId", "type"],
+            as: "chat"
+          },
+          {
+            model: ChatRank,
+            as: "ranks",
+            include: [
+              {
+                model: ChatPermission,
+                as: "permissions"
+              }
+            ]
+          }
+        ]
+      })
+      if (!association) return []
+      permissions = [
+        ...new Set(
+          association.ranks.flatMap((rank) =>
+            rank.permissions.map((permission) => permission.id)
+          )
+        )
+      ]
+      if (
+        association.chat.userId === userId &&
+        association.chat.type === "group"
+      )
+        permissions.push(ChatPermissions.OWNER)
+      await redis.json.set(
+        `chatPermissions:${userId}:${associationId}`,
+        "$",
+        permissions
+      )
+    }
+
     return permissions as ChatPermissions[]
   }
 
@@ -223,8 +237,9 @@ export class ChatService {
     permission: ChatPermissions,
     noThrow: boolean = false
   ): Promise<ChatPermissions[]> {
+    const date = new Date().getTime()
     const permissions = await this.getPermissions(userId, associationId)
-
+    console.log(`took: ${new Date().getTime() - date}ms`)
     let hasPermission: boolean
     if (
       permission === ChatPermissions.OWNER ||

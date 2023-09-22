@@ -137,13 +137,7 @@
   </v-menu>
   <overline class="ml-3 mb-n1" position="start">
     <CreateChat v-slot="{ props }" v-model="create" type="create">
-      <v-btn
-        class="mr-1"
-        icon
-        size="xsmall"
-        v-bind="props"
-        @click="create = true"
-      >
+      <v-btn class="mr-1" icon size="xsmall" v-bind="props">
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </CreateChat>

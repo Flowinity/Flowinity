@@ -20,6 +20,7 @@ import { useFriendsStore } from "@/store/friends.store";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
+    connected: true,
     token: localStorage.getItem("token") || "",
     _postInitRan: false,
     quickAction: parseInt(localStorage.getItem("quickAction") || "1"),
@@ -543,6 +544,12 @@ export const useAppStore = defineStore("app", {
     },
     postInit() {
       if (this._postInitRan) return;
+      this.$app.$socket.on("disconnect", () => {
+        this.connected = false;
+      });
+      this.$app.$socket.on("connect", () => {
+        this.connected = true;
+      });
       useWorkspacesStore().init();
       useChatStore().init();
       const user = useUserStore();

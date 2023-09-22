@@ -62,6 +62,14 @@
       ></v-text-field>
     </template>
     <v-spacer></v-spacer>
+    <template v-if="!$app.connected">
+      <v-progress-circular
+        indeterminate
+        size="24"
+        class="ml-2"
+      ></v-progress-circular>
+      <span class="mx-2">Reconnecting...</span>
+    </template>
     <small v-if="$app.notesSaving && !$vuetify.display.mobile" class="mr-3">
       Saving...
     </small>

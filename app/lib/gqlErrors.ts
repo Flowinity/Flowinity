@@ -32,6 +32,12 @@ const Errors = {
   },
   BLOCKED: {
     message: "You have been blocked by this user."
+  },
+  RANK_NOT_FOUND: {
+    message: "Rank not found."
+  },
+  RANK_TOO_HIGH: {
+    message: "You don't have permission to modify this rank."
   }
 }
 
