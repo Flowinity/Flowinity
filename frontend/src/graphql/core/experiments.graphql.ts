@@ -10,3 +10,12 @@ export const ExperimentsQuery = gql`
     }
   }
 `;
+
+export const SetExperimentMutation = gql`
+  mutation SetExperiment($input: SetExperimentInput!) {
+    setExperiment(input: $input) {
+      value
+      key
+    }
+  }
+`;

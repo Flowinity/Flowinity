@@ -467,7 +467,11 @@
         "avatarDesc": "A square image with a minimum resolution of 256x256 is recommended.",
         "insights": {
           "name": "Group Insights"
-        }
+        },
+        "background": "Invite Background",
+        "backgroundDesc": "This background is shown on your group's invite pages. Ensure it's 16:9",
+        "description": "Group Description",
+        "descriptionDesc": "This description is shown on your group's invite pages."
       },
       "ranks": {
         "name": "Ranks",

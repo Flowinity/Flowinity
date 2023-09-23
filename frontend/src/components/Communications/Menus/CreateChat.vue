@@ -85,12 +85,34 @@
         <v-card-subtitle style="white-space: initial">
           {{ $t("chats.settings.users.addUser.invites.description") }}
         </v-card-subtitle>
-        <p class="mx-4">
-          {{ invite }}
-          <v-btn icon size="x-small">
+        <p class="mx-4" v-if="invite">
+          {{ $app.site.hostnameWithProtocol + "/invite/" + invite }}
+          <v-btn
+            icon
+            size="x-small"
+            class="ml-1"
+            @click="
+              $functions.copy(
+                $app.site.hostnameWithProtocol + '/invite/' + invite
+              )
+            "
+          >
             <v-icon>mdi-content-copy</v-icon>
           </v-btn>
         </p>
+        <i
+          v-else-if="!loading"
+          class="text-blue text-small mx-4"
+          @click="generateInvite()"
+        >
+          generate
+        </i>
+        <v-progress-circular
+          v-else
+          :width="2"
+          size="18"
+          :indeterminate="true"
+        ></v-progress-circular>
         <v-select
           variant="outlined"
           class="mx-4 mt-4"
@@ -105,10 +127,17 @@
           density="compact"
           :items="$chat.editingChat.ranks"
           item-title="name"
-          item-key="id"
+          item-value="id"
           v-model="rankId"
           :label="$t('chats.settings.users.addUser.invites.rank')"
         ></v-select>
+        <v-btn
+          :loading="loading"
+          class="mt-n2 mb-4 mx-4 float-right"
+          @click="generateInvite()"
+        >
+          Generate
+        </v-btn>
       </template>
     </v-card>
   </v-menu>
@@ -118,6 +147,7 @@
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { FriendStatus } from "@/gql/graphql";
+import { CreateChatInviteMutation } from "@/graphql/chats/invite.graphql";
 
 export default defineComponent({
   name: "CreateChat",
@@ -139,9 +169,10 @@ export default defineComponent({
       search: "",
       selected: [] as number[],
       select: false,
-      invite: "22",
-      rankId: null as number | null,
+      invite: null as string | null,
+      rankId: null as string | null,
       expireOption: null as number | null,
+      loading: false,
       expireOptions: [
         {
           title: "1 hour",
@@ -186,6 +217,26 @@ export default defineComponent({
       const data = await this.$chat.createChat(this.selected);
       this.$router.push(`/communications/${data.association.id}`);
       this.$emit("update:modelValue", false);
+    },
+    async generateInvite() {
+      try {
+        this.loading = true;
+        const {
+          data: { createChatInvite }
+        } = await this.$apollo.mutate({
+          mutation: CreateChatInviteMutation,
+          variables: {
+            input: {
+              rankId: this.rankId,
+              expiry: this.expireOption,
+              associationId: this.$chat.editingChat.association.id
+            }
+          }
+        });
+        this.invite = createChatInvite.id;
+      } finally {
+        this.loading = false;
+      }
     }
   },
   computed: {

@@ -34,7 +34,7 @@ export const useAppStore = defineStore("app", {
     demo: false,
     cordova: false,
     lastRoute: null,
-    domain: import.meta.env.DEV ? "/i/" : "https://i.troplo.com/i/",
+    domain: "/i/",
     mainDrawer: true,
     workspaceDrawer: localStorage.getItem("workspaceDrawer") === "true",
     forcedWorkspaceDrawer: false,

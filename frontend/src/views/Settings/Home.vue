@@ -230,6 +230,14 @@
     item-value="key"
     @update:modelValue="$emit('update')"
   />
+  <v-select
+    v-model="$experiments.experiments['NOTIFICATION_SOUND']"
+    :items="notificationSounds"
+    class="px-6"
+    item-title="title"
+    item-value="key"
+    label="Notification Sound"
+  />
   <v-btn
     class="mb-2 ml-5"
     @click="$app.themeEditor = !$app.themeEditor"
@@ -245,12 +253,6 @@
     v-model="disableProfileColors"
     :label="$t('settings.home.preferences.disableProfileColors')"
     class="px-6"
-  ></v-switch>
-  <v-switch
-    v-if="disableBatterySave"
-    v-model="disableBatterySave"
-    :label="$t('settings.home.preferences.disableBatteryPreservation')"
-    class="px-6 mt-n6"
   ></v-switch>
 </template>
 
@@ -276,6 +278,20 @@ export default defineComponent({
   },
   data() {
     return {
+      notificationSounds: [
+        {
+          title: "Default",
+          key: 1
+        },
+        {
+          title: "Classic",
+          key: 2
+        },
+        {
+          title: "KDE",
+          key: 3
+        }
+      ],
       languages: [
         {
           title: "English (United States)",
@@ -358,6 +374,10 @@ export default defineComponent({
   watch: {
     theme() {
       this.toggleTheme(this.theme);
+    },
+    "$experiments.experiments.NOTIFICATION_SOUND"(val) {
+      this.$chat.sound();
+      this.$experiments.setExperiment("NOTIFICATION_SOUND", val);
     }
   },
   mounted() {

@@ -100,6 +100,23 @@ export class Chat extends Model {
   @Field(() => [ChatAssociation])
   @HasMany(() => ChatAssociation, "chatId")
   users: ChatAssociation[]
+
+  @Field(() => String, {
+    nullable: true
+  })
+  @Column({
+    type: DataType.TEXT
+  })
+  description: string | null
+
+  @Field(() => String, {
+    nullable: true
+  })
+  @Column({
+    type: DataType.STRING
+  })
+  background: string | null
+
   recipient: any
   @Field(() => Number, {
     nullable: true

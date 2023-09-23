@@ -1,5 +1,5 @@
 import { Arg, Ctx, FieldResolver, Mutation, Resolver, Root } from "type-graphql"
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import {
   partialUserBase,
@@ -19,6 +19,14 @@ import { LeaveChatInput } from "@app/classes/graphql/chat/deleteChat"
 import { GqlError } from "@app/lib/gqlErrors"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { ChatInvite } from "@app/models/chatInvite.model"
+import RateLimit from "@app/lib/graphql/RateLimit"
+import { Chat } from "@app/models/chat.model"
+import { JoinChatFromInviteInput } from "@app/classes/graphql/chat/invites/joinInvite"
+import { Op } from "sequelize"
+import { ChatRank } from "@app/models/chatRank.model"
+import { UserUtilsService } from "@app/services/userUtils.service"
+import { User } from "@app/models/user.model"
+import { LegacyUser } from "@app/models/legacyUser.model"
 
 @Resolver(ChatAssociation)
 @Service()
@@ -234,5 +242,141 @@ export class ChatAssociationResolver {
   @FieldResolver(() => ChatInvite)
   async invite(@Root() assoc: ChatAssociation) {
     return await assoc.$get("invite")
+  }
+
+  @RateLimit({
+    window: 10,
+    max: 10
+  })
+  @Authorization({
+    scopes: ["chats.edit"],
+    emailOptional: true
+  })
+  @Mutation(() => ChatAssociation)
+  async joinChatFromInvite(
+    @Ctx() ctx: Context,
+    @Arg("input") input: JoinChatFromInviteInput
+  ) {
+    const invite = await ChatInvite.findOne({
+      where: {
+        id: input.inviteId,
+        invalidated: false,
+        expiredAt: {
+          [Op.or]: [
+            {
+              [Op.gt]: new Date()
+            },
+            {
+              [Op.is]: null
+            }
+          ]
+        }
+      },
+      include: [
+        {
+          model: ChatRank,
+          as: "rank"
+        },
+        {
+          model: Chat,
+          as: "chat"
+        }
+      ]
+    })
+    if (!invite) throw new GqlError("INVALID_INVITE")
+    const existing = await ChatAssociation.findOne({
+      where: {
+        userId: ctx.user!!.id,
+        chatId: invite.chat.id
+      }
+    })
+    console.log(existing)
+    if (existing) throw new GqlError("ALREADY_IN_CHAT")
+    const rank = invite.rank
+      ? invite.rank
+      : await ChatRank.findOne({
+          where: {
+            chatId: invite.chat.id,
+            managed: true
+          }
+        })
+
+    if (!rank) throw new GqlError("COLUBRINA_CHAT")
+
+    const association = await ChatAssociation.create({
+      userId: ctx.user!!.id,
+      chatId: invite.chat.id,
+      rank: "member",
+      identifier: invite.chat.id + "-" + ctx.user!!.id,
+      inviteUsed: invite.id
+    })
+    await ChatRankAssociation.create({
+      rankId: rank.id,
+      chatAssociationId: association.id
+    })
+    this.chatService.sendMessage(
+      `<@${ctx.user!!.id}> joined the chat via an invite!`,
+      ctx.user!!.id,
+      association.id,
+      undefined,
+      "join"
+    )
+    const associations = await ChatAssociation.findAll({
+      where: {
+        chatId: invite.chat.id
+      },
+      include: [
+        {
+          model: User,
+          as: "tpuUser",
+          attributes: partialUserBase
+        },
+        {
+          model: LegacyUser,
+          as: "legacyUser",
+          attributes: partialUserBase
+        }
+      ]
+    })
+    for (const association of associations) {
+      Container.get(UserUtilsService).trackedUserIds(association.userId, true)
+    }
+    const emitUser = await ChatAssociation.findOne({
+      where: {
+        id: association.id
+      },
+      include: [
+        {
+          model: User,
+          as: "tpuUser",
+          attributes: partialUserBase
+        },
+        {
+          model: LegacyUser,
+          as: "legacyUser",
+          attributes: partialUserBase
+        },
+        {
+          model: ChatRank,
+          as: "ranks"
+        }
+      ]
+    })
+    if (!emitUser) throw new GqlError("USER_NOT_FOUND")
+    emitUser.dataValues.ranksMap = emitUser.dataValues.ranks.map(
+      (rank: ChatRank) => rank.id
+    )
+    this.chatService.emitForAll(association.id, ctx.user!!.id, "addChatUsers", {
+      chatId: invite.chat.id,
+      users: [emitUser]
+    })
+    socket
+      .of(SocketNamespaces.CHAT)
+      .to(emitUser.userId)
+      .emit(
+        "chatCreated",
+        await this.chatService.getChat(invite.chat.id, association.userId)
+      )
+    return emitUser
   }
 }

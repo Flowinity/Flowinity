@@ -8,7 +8,12 @@
     max-width="1000"
   >
     <v-row style="margin: 0">
-      <v-col v-if="image" cols="12" md="6" style="padding: 0">
+      <v-col
+        v-if="image && (!right || $vuetify.display.mobile)"
+        cols="12"
+        md="6"
+        style="padding: 0"
+      >
         <v-img :src="image" contain></v-img>
       </v-col>
       <v-col
@@ -28,6 +33,14 @@
           </div>
         </div>
       </v-col>
+      <v-col
+        v-if="image && right && !$vuetify.display.mobile"
+        cols="12"
+        md="6"
+        style="padding: 0"
+      >
+        <v-img :src="image" contain></v-img>
+      </v-col>
       <v-col v-if="left">
         <slot name="left"></slot>
       </v-col>
@@ -40,7 +53,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "PromoCard",
-  props: ["title", "image", "icon", "width", "height", "hover", "left"]
+  props: ["title", "image", "icon", "width", "height", "hover", "left", "right"]
 });
 </script>
 

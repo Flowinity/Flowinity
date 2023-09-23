@@ -140,21 +140,37 @@
       <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn aria-label="Personal Menu" icon v-bind="props">
-            <UserAvatar :user="$user.user" size="38" />
+            <UserAvatar
+              :user="$user.user"
+              size="38"
+              :dot-status="true"
+              :status="true"
+            />
           </v-btn>
         </template>
-
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in dropdown"
-            :key="item.id"
-            :disabled="item.disabled"
-            :to="item.path"
-            @click="handleClickDropdown(index)"
-          >
-            <v-list-item-title>{{ item.name }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
+        <v-card max-width="360">
+          <v-list>
+            <v-list-item
+              v-for="(item, index) in dropdown"
+              :key="item.id"
+              :disabled="item.disabled"
+              :to="item.path"
+              @click="handleClickDropdown(index)"
+              :style="{
+                color: item.id === 15 ? 'rgb(var(--v-theme-error))' : undefined
+              }"
+            >
+              <template v-slot:prepend>
+                <v-icon>
+                  {{ item.icon }}
+                </v-icon>
+              </template>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+          <v-divider></v-divider>
+          <StatusSwitcherList />
+        </v-card>
       </v-menu>
       <v-btn
         v-if="!$app.rail"
@@ -211,7 +227,7 @@
         class="rounded-0"
         density="compact"
       >
-        <small class="unselectable">it's live</small>
+        <small class="unselectable">Welcome to the new PrivateUploader!</small>
         <template v-slot:append>
           <v-btn size="x-small" href="https://privateuploader.com">
             Go to Stable
@@ -229,9 +245,13 @@ import Notifications from "@/components/Core/Notifications.vue";
 import { useTheme } from "vuetify";
 import Pins from "@/components/Communications/Menus/Pins.vue";
 import LogoEasterEgg from "@/components/Core/LogoEasterEgg.vue";
+import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
+import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.vue";
 
 export default defineComponent({
   components: {
+    StatusSwitcherList,
+    StatusSwitcher,
     LogoEasterEgg,
     Pins,
     Notifications,
@@ -296,6 +316,7 @@ export default defineComponent({
       if (!this.$user?.user) return [];
       return [
         {
+          icon: "mdi-account",
           id: 12,
           click() {},
           path: "/u/" + this.$user.user.username,
@@ -303,6 +324,7 @@ export default defineComponent({
           disabled: false
         },
         {
+          icon: "mdi-palette",
           id: 13,
           click() {},
           path: "/settings",
@@ -310,6 +332,7 @@ export default defineComponent({
           disabled: false
         },
         {
+          icon: "mdi-exit-to-app",
           id: 15,
           async click() {
             //@ts-ignore

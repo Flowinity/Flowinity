@@ -12,6 +12,12 @@ import {
 import { User } from "@app/models/user.model"
 import { Field, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
+import {
+  PartialUserBase,
+  PartialUserFriend
+} from "@app/classes/graphql/user/partialUser"
+import { Chat } from "@app/models/chat.model"
+import { ChatRank } from "@app/models/chatRank.model"
 
 @ObjectType()
 @Table
@@ -60,6 +66,17 @@ export class ChatInvite extends Model {
   })
   invalidated: boolean
 
+  @Field(() => PartialUserBase)
   @BelongsTo(() => User, "userId")
-  user: User
+  user: PartialUserBase
+
+  @Field(() => Chat)
+  @BelongsTo(() => Chat, "chatId")
+  chat: Chat
+
+  @Field(() => ChatRank, {
+    nullable: true
+  })
+  @BelongsTo(() => ChatRank, "rankId")
+  rank: ChatRank | null
 }

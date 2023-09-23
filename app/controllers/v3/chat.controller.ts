@@ -62,7 +62,8 @@ export class ChatControllerV3 {
       options: uploader
     })
     icon: Express.Multer.File,
-    @Param("chatId") chatId: number
+    @Param("chatId") chatId: number,
+    @QueryParam("type") type: "icon" | "background" = "icon"
   ) {
     await this.chatService.getChatFromAssociation(chatId, user.id, false)
     const upload = await this.galleryService.createUpload(
@@ -71,11 +72,14 @@ export class ChatControllerV3 {
       false,
       false
     )
+    if (type !== "icon" && type !== "background") {
+      throw Errors.INVALID_PARAMETERS
+    }
     await this.chatService.updateGroupSettings(chatId, user.id, {
-      icon: upload.upload.attachment
+      [type]: upload.upload.attachment
     })
     return {
-      icon: upload.upload.attachment
+      [type]: upload.upload.attachment
     }
   }
 
@@ -137,7 +141,10 @@ export class ChatControllerV3 {
     @Param("associationId") associationId: number,
     @Body() body: { name: string; icon: string }
   ) {
-    await this.chatService.updateGroupSettings(associationId, user.id, body)
+    await this.chatService.updateGroupSettings(associationId, user.id, {
+      name: body.name,
+      icon: body.icon
+    })
   }
 
   @Patch("/association/:associationId")

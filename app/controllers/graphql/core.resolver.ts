@@ -1,4 +1,12 @@
-import { Authorized, Ctx, FieldResolver, Query, Resolver } from "type-graphql"
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  FieldResolver,
+  Mutation,
+  Query,
+  Resolver
+} from "type-graphql"
 import { User } from "@app/models/user.model"
 import { Service } from "typedi"
 import { Domain } from "@app/models/domain.model"
@@ -15,6 +23,10 @@ import { ExperimentType } from "@app/classes/graphql/core/experiments"
 import { Weather } from "@app/classes/graphql/core/weather"
 import { WeatherResponse } from "@app/interfaces/weather"
 import { GraphQLError } from "graphql/error"
+import { Experiment } from "@app/models/experiment.model"
+import { SetExperimentInput } from "@app/classes/graphql/core/setExperiment"
+import { GqlError } from "@app/lib/gqlErrors"
+import { Authorization } from "@app/lib/graphql/AuthChecker"
 
 @Resolver(CoreState)
 @Service()
@@ -104,18 +116,26 @@ export class CoreResolver {
     }
   }
 
+  @Authorization({
+    scopes: [],
+    userOptional: true
+  })
   @Query(() => [ExperimentType])
   async experiments(@Ctx() ctx: Context) {
     if (!ctx.user?.id) {
       return this.coreService.getExperimentsV4(config.release === "dev", false)
     }
-    return await this.coreService.getUserExperimentsV4(ctx.user.id)
+    return await this.coreService.getUserExperimentsV4(
+      ctx.user.id,
+      config.release === "dev",
+      ctx.user!!.plan?.id === 6
+    )
   }
 
   @FieldResolver(() => Weather)
   @Query(() => Weather)
-  @Authorized({
-    scopes: [""]
+  @Authorization({
+    scopes: []
   })
   async weather(@Ctx() ctx: Context) {
     const cached = await redis.get(`core:weather:${ctx.ip}`)
@@ -140,6 +160,41 @@ export class CoreResolver {
           NX: true
         })
       return weather
+    }
+  }
+
+  @Mutation(() => Experiment)
+  @Authorization({
+    scopes: ["user.modify"]
+  })
+  async setExperiment(
+    @Ctx() ctx: Context,
+    @Arg("input") input: SetExperimentInput
+  ) {
+    const validExperiments = ["NOTIFICATION_SOUND", "THEME"]
+    if (input.userId && !ctx.user?.administrator)
+      throw new GqlError("NOT_ADMIN")
+    if (!validExperiments.includes(input.key) && !ctx.user?.administrator)
+      throw new GraphQLError(
+        `The experiment specified "${input.key}" cannot be manually reassigned.`
+      )
+    const experiment = await Experiment.findOne({
+      where: {
+        userId: input.userId || ctx.user!!.id,
+        key: input.key
+      }
+    })
+    if (experiment) {
+      await experiment.update({
+        value: input.value
+      })
+      return experiment
+    } else {
+      return await Experiment.create({
+        userId: input.userId || ctx.user!!.id,
+        key: input.key,
+        value: input.value
+      })
     }
   }
 }

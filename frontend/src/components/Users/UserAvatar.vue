@@ -156,19 +156,16 @@ export default defineComponent({
       await this.axios.delete("/user/upload/avatar");
       this.$emit("refresh");
     },
-    changeAvatar(file: File) {
+    async changeAvatar(file: File) {
       if (!file || !this.edit) return;
       let formData = new FormData();
       formData.append("banner", file);
-      this.axios
-        .post("/user/upload/avatar", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        })
-        .then(() => {
-          this.$emit("refresh");
-        });
+      await this.axios.post("/user/upload/avatar", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+      this.$emit("refresh");
     }
     /*calcOffset() {
       if (this.user.administrator || this.user.admin || this.user.moderator) {

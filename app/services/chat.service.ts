@@ -540,22 +540,17 @@ export class ChatService {
     settings: {
       name?: string | null
       icon?: string | null
+      background?: string | null
     }
   ) {
     const chat = await this.getChatFromAssociation(associationId, userId)
     await this.checkPermissions(userId, associationId, ChatPermissions.OVERVIEW)
-    await Chat.update(
-      {
-        name: settings.name === "" ? null : settings.name,
-        icon: settings.icon
-      },
-      {
-        where: {
-          id: chat.id
-        }
+    await Chat.update(settings, {
+      where: {
+        id: chat.id
       }
-    )
-    if (settings.name !== chat.name) {
+    })
+    if (settings.name !== chat.name && settings.name !== undefined) {
       this.sendMessage(
         `<@${userId}> updated the chat name to ${settings.name}.`,
         userId,
@@ -576,9 +571,13 @@ export class ChatService {
       )
     }
     this.emitForAll(associationId, userId, "chatUpdate", {
-      name: settings.name,
+      name: settings.name ?? chat.name,
       id: chat.id,
-      icon: settings.icon
+      icon: settings.icon === undefined ? chat.icon : settings.icon,
+      background:
+        settings.background === undefined
+          ? chat.background
+          : settings.background
     })
     return chat
   }
@@ -637,15 +636,12 @@ export class ChatService {
       removable.push(...associations)
     }
     if (!associations.length) throw Errors.CHAT_USER_NOT_FOUND
-    await ChatAssociation.destroy({
-      where: {
-        chatId: chat.id,
-        id: removable.map((assoc) => assoc.id)
-      }
-    })
     for (const association of removable) {
+      await redis.json.del(
+        `chatPermissions:${association.userId}:${association.id}`
+      )
       if (!isLeaving) {
-        this.sendMessage(
+        await this.sendMessage(
           `<@${userId}> removed <@${association.userId}> from the chat.`,
           userId,
           associationId,
@@ -653,8 +649,8 @@ export class ChatService {
           "leave"
         )
       } else {
-        this.sendMessage(
-          `<@${userId} left the chat.`,
+        await this.sendMessage(
+          `<@${userId}> left the chat.`,
           userId,
           associationId,
           undefined,
@@ -666,7 +662,7 @@ export class ChatService {
       )
       delete unread[chat.id.toString()]
       await redis.json.set(`unread:${association.userId}`, "$", unread)
-      this.emitForAll(associationId, userId, "removeChatUser", {
+      await this.emitForAll(associationId, userId, "removeChatUser", {
         chatId: chat.id,
         id: association.id
       })
@@ -674,6 +670,12 @@ export class ChatService {
         id: chat.id
       })
     }
+    await ChatAssociation.destroy({
+      where: {
+        chatId: chat.id,
+        id: removable.map((assoc) => assoc.id)
+      }
+    })
     for (const association of chat.users) {
       Container.get(UserUtilsService).trackedUserIds(association.userId, true)
     }

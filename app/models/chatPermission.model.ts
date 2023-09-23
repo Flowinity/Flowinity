@@ -53,7 +53,6 @@ export class ChatPermission extends Model {
   @Column
   group: PermissionGroup
 
-  @Field(() => [ChatPermissionAssociation])
   @HasMany(() => ChatPermissionAssociation, "permissionId")
   associations: ChatPermissionAssociation[]
 

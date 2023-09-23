@@ -16,6 +16,7 @@ import { ChatsQuery } from "@/graphql/chats/chats.graphql";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import {
   Chat,
+  ChatInvite,
   ChatRank,
   InfiniteMessagesInput,
   Message,
@@ -37,6 +38,10 @@ import { UpdateChatMutation } from "@/graphql/chats/updateChat.graphql";
 import { Typing } from "@/models/chat";
 import { AddChatUserMutation } from "@/graphql/chats/addUser.graphql";
 import { LeaveGroupMutation } from "@/graphql/chats/deleteGroup.graphql";
+import {
+  ChatInviteQuery,
+  JoinChatInviteMutation
+} from "@/graphql/chats/invite.graphql";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -118,6 +123,32 @@ export const useChatStore = defineStore("chat", {
     }
   }),
   actions: {
+    async joinInvite(inviteId: string): Promise<{ id: number }> {
+      const {
+        data: { joinChatFromInvite }
+      } = await this.$apollo.mutate({
+        mutation: JoinChatInviteMutation,
+        variables: {
+          input: {
+            inviteId
+          }
+        }
+      });
+      return joinChatFromInvite;
+    },
+    async getInvite(inviteId: string): Promise<ChatInvite> {
+      const {
+        data: { chatInvite }
+      } = await this.$apollo.query({
+        query: ChatInviteQuery,
+        variables: {
+          input: {
+            inviteId
+          }
+        }
+      });
+      return chatInvite;
+    },
     async leaveChat(associationId: number) {
       await this.$apollo.mutate({
         mutation: LeaveGroupMutation,
@@ -270,7 +301,7 @@ export const useChatStore = defineStore("chat", {
       }
       localStorage.setItem("draftStore", JSON.stringify(this.drafts));
     },
-    async saveSettings(input?: UpdateChatInput) {
+    async saveSettings(input?: Partial<UpdateChatInput>) {
       this.dialogs.groupSettings.loading = true;
       const {
         data: { updateChat }
@@ -280,7 +311,10 @@ export const useChatStore = defineStore("chat", {
           input: {
             name: input?.name ?? this.editingChat.name,
             associationId:
-              input?.associationId ?? this.editingChat.association.id
+              input?.associationId ?? this.editingChat.association.id,
+            background: input?.background === null ? null : undefined,
+            icon: input?.icon === null ? null : undefined,
+            description: input?.description ?? this.editingChat.description
           }
         }
       });
@@ -288,7 +322,16 @@ export const useChatStore = defineStore("chat", {
       return updateChat;
     },
     async sound() {
-      let sound = await import("@/assets/audio/notification.wav");
+      const experiments = useExperimentsStore();
+      let sound;
+      const id = experiments.experiments.NOTIFICATION_SOUND;
+      if (id === 3) {
+        sound = await import("@/assets/audio/kfx.wav");
+      } else if (id === 2) {
+        sound = await import("@/assets/audio/notification.wav");
+      } else {
+        sound = await import("@/assets/audio/proposal1.wav");
+      }
       const audio = new Audio(sound.default);
       await audio.play();
     },

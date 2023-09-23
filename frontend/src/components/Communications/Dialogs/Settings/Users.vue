@@ -2,6 +2,12 @@
   <overline position="center">
     {{ $t("chats.settings.users.name") }}
   </overline>
+  <v-text-field
+    :label="$t('generic.search')"
+    class="mx-2"
+    autofocus
+    v-model="search"
+  ></v-text-field>
   <v-data-table :items="users" :headers="headers">
     <template v-slot:item.user.username="{ item: { raw } }">
       <UserAvatar :user="raw.user"></UserAvatar>
@@ -91,6 +97,7 @@ export default defineComponent({
   data() {
     return {
       add: false,
+      search: "",
       headers: [
         {
           title: this.$t("chats.settings.users.username"),
@@ -118,7 +125,13 @@ export default defineComponent({
   computed: {
     users() {
       return this.$chat.editingChat.users
-        .filter((user) => !user.legacyUserId)
+        .filter(
+          (user) =>
+            !user.legacyUserId &&
+            this.$user.users[user.userId]?.username
+              .toLowerCase()
+              .includes(this.search.toLowerCase())
+        )
         .map((user) => {
           return {
             ...user,

@@ -397,7 +397,8 @@ router.beforeEach(async (to, from) => {
       "Credits",
       "TPU Setup Wizard",
       "User",
-      "OAuth"
+      "OAuth",
+      "Join Chat"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");

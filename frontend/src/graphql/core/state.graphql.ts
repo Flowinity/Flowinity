@@ -49,7 +49,9 @@ export const CoreStateQuery = gql`
     }
     chats {
       id
+      description
       type
+      background
       unread
       name
       userId

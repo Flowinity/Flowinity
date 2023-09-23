@@ -6,134 +6,128 @@
     location="top"
     style="z-index: 2003"
   >
-    <v-list>
-      <v-list-item @click="() => {}">
-        <v-menu
-          :close-delay="100"
-          :close-on-click="false"
-          :close-on-content-click="false"
-          :nudge-right="10"
-          :open-delay="0"
-          activator="parent"
-          bottom
-          class="ml-2"
-          location="right"
-          offset-x
-          open-on-hover
+    <v-card>
+      <v-list>
+        <v-list-item @click="() => {}">
+          <v-menu
+            :close-delay="100"
+            :close-on-click="false"
+            :close-on-content-click="false"
+            :nudge-right="10"
+            :open-delay="0"
+            activator="parent"
+            bottom
+            class="ml-2"
+            location="right"
+            offset-x
+            open-on-hover
+          >
+            <v-card>
+              <v-list v-if="contextMenu.item">
+                <v-list-item @click="setNotifications('all')">
+                  <v-list-item-title>
+                    {{ $t("chats.notificationOptions.all") }}
+                  </v-list-item-title>
+                  <template v-slot:append>
+                    <v-icon
+                      v-if="
+                        contextMenu.item.association.notifications === 'all'
+                      "
+                      style="float: right"
+                    >
+                      mdi-check
+                    </v-icon>
+                  </template>
+                </v-list-item>
+                <v-list-item @click="setNotifications('mentions')">
+                  <v-list-item-title>
+                    {{ $t("chats.notificationOptions.mentions") }}
+                  </v-list-item-title>
+                  <template v-slot:append>
+                    <v-icon
+                      v-if="
+                        contextMenu.item.association.notifications ===
+                        'mentions'
+                      "
+                      style="float: right"
+                    >
+                      mdi-check
+                    </v-icon>
+                  </template>
+                </v-list-item>
+                <v-list-item two-line @click="setNotifications('none')">
+                  <v-list-item-title>
+                    {{ $t("chats.notificationOptions.none") }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    {{ $t("chats.notificationOptions.noneDesc") }}
+                  </v-list-item-subtitle>
+                  <template v-slot:append>
+                    <v-icon
+                      v-if="
+                        contextMenu.item.association.notifications === 'none'
+                      "
+                      style="float: right"
+                    >
+                      mdi-check
+                    </v-icon>
+                  </template>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-menu>
+          <v-list-item-title>
+            <v-icon class="mr-1">mdi-bell-outline</v-icon>
+            {{ $t("chats.notifications") }}
+            <v-icon class="ml-5">mdi-arrow-right</v-icon>
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="
+            $chat.hasPermission(
+              ['ADMIN', 'OVERVIEW', 'VIEW_AUDIT_LOG', 'ADD_USER'],
+              contextMenu.item
+            )
+          "
+          @click="
+            $chat.dialogs.groupSettings.itemId = contextMenu.item.id;
+            $chat.dialogs.groupSettings.value = true;
+          "
         >
-          <v-list v-if="contextMenu.item">
-            <v-list-item @click="setNotifications('all')">
-              <v-list-item-title>
-                {{ $t("chats.notificationOptions.all") }}
-              </v-list-item-title>
-              <template v-slot:append>
-                <v-icon
-                  v-if="contextMenu.item.association.notifications === 'all'"
-                  style="float: right"
-                >
-                  mdi-check
-                </v-icon>
-              </template>
-            </v-list-item>
-            <v-list-item @click="setNotifications('mentions')">
-              <v-list-item-title>
-                {{ $t("chats.notificationOptions.mentions") }}
-              </v-list-item-title>
-              <template v-slot:append>
-                <v-icon
-                  v-if="
-                    contextMenu.item.association.notifications === 'mentions'
-                  "
-                  style="float: right"
-                >
-                  mdi-check
-                </v-icon>
-              </template>
-            </v-list-item>
-            <v-list-item two-line @click="setNotifications('none')">
-              <v-list-item-title>
-                {{ $t("chats.notificationOptions.none") }}
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                {{ $t("chats.notificationOptions.noneDesc") }}
-              </v-list-item-subtitle>
-              <template v-slot:append>
-                <v-icon
-                  v-if="contextMenu.item.association.notifications === 'none'"
-                  style="float: right"
-                >
-                  mdi-check
-                </v-icon>
-              </template>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-        <v-list-item-title>
-          <v-icon class="mr-1">mdi-bell-outline</v-icon>
-          {{ $t("chats.notifications") }}
-          <v-icon class="ml-5">mdi-arrow-right</v-icon>
-        </v-list-item-title>
-      </v-list-item>
-      <v-list-item
-        v-if="contextMenu.item?.recipient"
-        @click="
-          $app.dialogs.nickname.userId = contextMenu.item?.recipient?.id || 0;
-          $app.dialogs.nickname.value = true;
-        "
-      >
-        <v-icon class="mr-1">mdi-rename-outline</v-icon>
-        {{ $t("chats.changeNickname") }}
-      </v-list-item>
-      <v-list-item
-        v-if="
-          $chat.hasPermission(
-            ['ADMIN', 'OVERVIEW', 'VIEW_AUDIT_LOG', 'ADD_USER'],
-            contextMenu.item
-          )
-        "
-        @click="
-          $chat.dialogs.groupSettings.itemId = contextMenu.item.id;
-          $chat.dialogs.groupSettings.value = true;
-        "
-      >
-        <v-icon class="mr-1">mdi-cog-outline</v-icon>
-        Group Settings
-      </v-list-item>
-      <v-list-item
-        v-if="
-          contextMenu.item?.userId !== $user.user?.id &&
-          contextMenu.item?.type !== 'direct'
-        "
-        @click="
-          $chat.dialogs.leave.itemId = contextMenu.item.id;
-          $chat.dialogs.leave.value = true;
-        "
-        style="color: rgb(var(--v-theme-error)"
-      >
-        <v-icon class="mr-1">mdi-exit-to-app</v-icon>
-        {{ $t("generic.leave") }}
-      </v-list-item>
-      <v-list-item
-        v-if="contextMenu.item?.type === 'direct'"
-        @click="$chat.leaveChat(contextMenu.item.association.id)"
-      >
-        <v-icon class="mr-1">mdi-close</v-icon>
-        {{ $t("generic.close") }}
-      </v-list-item>
-      <v-list-item
-        style="color: rgb(var(--v-theme-error)"
-        v-if="contextMenu.item?.type === 'direct'"
-        @click="
-          $user.dialogs.block.userId = contextMenu.item.recipient.id;
-          $user.dialogs.block.username =
-            $user.users[contextMenu.item.recipient.id]?.username;
-          $user.dialogs.block.value = true;
-        "
-      >
-        <v-icon class="mr-1">mdi-account-cancel</v-icon>
-        {{ $t("dialogs.block.action") }}
-      </v-list-item>
-    </v-list>
+          <v-icon class="mr-1">mdi-cog-outline</v-icon>
+          Group Settings
+        </v-list-item>
+        <UserSidebarOptions
+          :user="$user.users[contextMenu.item.recipient?.id]"
+          v-if="
+            contextMenu.item?.type === 'direct' &&
+            $user.users[contextMenu.item.recipient?.id]
+          "
+          :hide-message="true"
+        ></UserSidebarOptions>
+        <v-list-item
+          v-if="
+            contextMenu.item?.userId !== $user.user?.id &&
+            contextMenu.item?.type !== 'direct'
+          "
+          @click="
+            $chat.dialogs.leave.itemId = contextMenu.item.id;
+            $chat.dialogs.leave.value = true;
+          "
+          style="color: rgb(var(--v-theme-error)"
+        >
+          <v-icon class="mr-1">mdi-exit-to-app</v-icon>
+          {{ $t("generic.leave") }}
+        </v-list-item>
+        <v-list-item
+          v-if="contextMenu.item?.type === 'direct'"
+          @click="$chat.leaveChat(contextMenu.item.association.id)"
+        >
+          <v-icon class="mr-1">mdi-close</v-icon>
+          {{ $t("generic.close") }}
+        </v-list-item>
+      </v-list>
+    </v-card>
   </v-menu>
   <overline class="ml-3 mb-n1" position="start">
     <CreateChat v-slot="{ props }" v-model="create" type="create">
@@ -202,10 +196,12 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import SidebarItem from "@/components/Communications/SidebarItem.vue";
 import { Chat, UserStatus } from "@/gql/graphql";
 import Overline from "@/components/Core/Typography/Overline.vue";
+import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
 
 export default defineComponent({
   name: "ColubrinaSidebarList",
   components: {
+    UserSidebarOptions,
     Overline,
     SidebarItem,
     UserAvatar,

@@ -5,16 +5,11 @@
     style="z-index: 6001 !important"
   >
     <v-card>
-      <v-list style="background: #121212 !important">
-        <v-list-item
-          @click="
-            $app.dialogs.nickname.userId = contextMenu.item?.userId || 0;
-            $app.dialogs.nickname.value = true;
-          "
-        >
-          <v-icon class="mr-1">mdi-rename-outline</v-icon>
-          Change Nickname
-        </v-list-item>
+      <v-list>
+        <UserSidebarOptions
+          :user="$user.users[contextMenu.item.userId]"
+          v-if="$user.users[contextMenu.item.userId]"
+        ></UserSidebarOptions>
       </v-list>
     </v-card>
   </v-menu>
@@ -179,14 +174,16 @@ import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import SidebarItem from "@/components/Communications/SidebarItem.vue";
-import { UserStatus } from "@/gql/graphql";
+import { FriendStatus, UserStatus } from "@/gql/graphql";
 import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
+import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
 
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
   components: {
+    UserSidebarOptions,
     Overline,
     MessagePerf,
     GalleryTextField,
@@ -208,6 +205,9 @@ export default defineComponent({
     };
   },
   computed: {
+    FriendStatus() {
+      return FriendStatus;
+    },
     UserStatus() {
       return UserStatus;
     },

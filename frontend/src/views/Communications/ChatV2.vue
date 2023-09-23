@@ -148,7 +148,7 @@
     </div>
     <div class="input-container">
       <v-toolbar
-        v-if="$chat.loadNew"
+        v-if="$chat.loadNew || avoidAutoScroll"
         class="pointer unselectable pl-2 force-bg dynamic-background"
         color="toolbar"
         height="25"
@@ -591,7 +591,6 @@ export default defineComponent({
       if (this.avoidAutoScroll) return;
       if (!this.$chat.selectedChat?.messages) return;
       const sentinel = document.getElementById("sentinel-bottom");
-      console.log("AS");
       if (!sentinel) return;
       sentinel.scrollIntoView();
       this.$nextTick(() => {
@@ -599,7 +598,7 @@ export default defineComponent({
       });
     },
     async scrollEvent() {
-      const elem = document.getElementById("chat-list");
+      const elem = document.getElementById("chat");
       if (!elem) return;
       const scrollPos = elem.scrollTop;
       this.avoidAutoScroll = scrollPos < -300;
@@ -816,6 +815,8 @@ export default defineComponent({
     document.addEventListener("keydown", this.shortcutHandler);
     this.focusInterval = setInterval(this.onFocus, 2000);
     // re-enable auto scroll for flex-direction: column-reverse;
+    const chat = document.getElementById("chat");
+    if (chat) chat.addEventListener("scroll", this.scrollEvent);
     this.$sockets.chat.on("message", this.onMessage);
     this.$sockets.chat.on("embedResolution", this.onEmbedResolution);
     this.$sockets.chat.on("typing", this.onTyping);

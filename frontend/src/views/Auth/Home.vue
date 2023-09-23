@@ -3,46 +3,20 @@
   <div class="hero">
     <div :class="{ 'mx-5 mobile': $vuetify.display.mobile }" class="hero-body">
       <div class="title">
-        Welcome to
-        <span class="text-gradient">{{ $app.site.name || "TPU" }}.</span>
+        Welcome to the
+        <strong>new</strong>
+        social platform.
       </div>
       <div class="subtitle">
         The
-        <span class="text-gradient">versatile</span>
-        image hosting service, now for
-        <span class="text-gradient">everyone.</span>
+        <strong>versatile</strong>
+        all-in-one online platform, now for
+        <strong>everyone.</strong>
       </div>
       <div class="mt-4">
-        <v-text-field
-          v-model="email"
-          class="sign-up-button"
-          color="white"
-          label="Email"
-          outlined
-          placeholder="troplo@troplo.com"
-          type="email"
-          variant="filled"
-          @keydown.enter="getStarted"
-        >
-          <template v-slot:append>
-            <v-btn
-              block
-              color="white"
-              height="100%"
-              style="background-color: #121212; letter-spacing: 0.045em"
-              title="Get Started"
-              variant="outlined"
-              @click="getStarted"
-            >
-              <template v-if="!$vuetify.display.mobile">
-                Get Started...
-              </template>
-              <template v-else>
-                <v-icon>mdi-chevron-right</v-icon>
-              </template>
-            </v-btn>
-          </template>
-        </v-text-field>
+        <v-btn variant="outlined">
+          Register now
+        </v-btn>
         <p class="mb-n2" v-if="!$app.site.officialInstance">
           This is a
           <a
@@ -69,148 +43,29 @@
     </div>
   </div>
   <v-container id="content">
+    <v-card-title class="text-center mb-3" style="font-size: 30px">Why <span class="text-gradient">PrivateUploader</span>?</v-card-title>
+    <div class="d-flex flex-column" style="gap: 10px;">
+      <PromoCard width="100%" title="Chat with friends in an instant!" image="https://i.troplo.com/i/6bc5f9f7f4d3.png">
+        As a fully-fledged chatting application, you can instantly contact your friends with direct messages and in groups.
+      </PromoCard>
+      <PromoCard width="100%" title="Have Full Control" image="https://i.troplo.com/i/8ec635313416.png" :right="true">
+        With PrivateUploader Communications you can now create "Ranks" which can be assigned to individual users with a vast number of different permissions to choose from.<br><v-chip class="mt-1" variant="outlined">New in version 4</v-chip>
+      </PromoCard>
+      <PromoCard width="100%" title="Safely Store Your Files" image="https://i.troplo.com/i/815f20a6f39e.png">
+        With the Gallery, you can securely store files such as screenshots, images, videos, and other files.<br><br>PrivateUploader also integrates with ShareX, and has APIs to create various other integrations.
+      </PromoCard>
+      <PromoCard width="100%" title="Organization Made Easy" image="https://i.troplo.com/i/8e62bab88002.png" :right="true">
+        You can add as many files as you please into Collections, which can be shared publicly, or to other PrivateUploader users with different permissions.
+      </PromoCard>
+      <PromoCard width="100%" title="Security First" image="https://i.troplo.com/i/34f6a6a57bc9.png">
+        With PrivateUploader, you can easily create as many API keys as you want, all with different account access permissions.<br><br>You can even create Alternate Passwords which have different account permissions when used.
+      </PromoCard>
+      <PromoCard width="100%" title="100% Open Source" image="https://i.troplo.com/i/1ff020441915.png" :right="true">
+        PrivateUploader is completely open source on GitHub, and can also be easily self-hosted bare-metal or under Docker (Only Linux supported).<br><br>
+        <v-btn variant="outlined" href="https://github.com/PrivateUploader/PrivateUploader"><v-icon class="mr-2">mdi-star</v-icon>Star on GitHub</v-btn>
+      </PromoCard>
+    </div>
     <PromoCard
-      :height="260"
-      :hover="true"
-      class="mb-6"
-      image="https://i.troplo.com/i/aae2fb2c0cf8.png"
-      title="Feature Update: TPU v2.1"
-    >
-      <p>
-        TPU 2.1 adds Workspaces, a new way to create documents and quick notes.
-      </p>
-    </PromoCard>
-    <v-row>
-      <v-col cols="12" md="4" sm="12">
-        <PromoCard
-          :height="260"
-          :hover="true"
-          icon="mdi-lock"
-          title="Scoped API Keys"
-        >
-          <p>
-            TPU's API is designed to be simple, yet customizable, you can create
-            a different API key for each integration, each with their own sets
-            of rules on what they can access.
-          </p>
-        </PromoCard>
-      </v-col>
-      <v-col cols="12" md="4" sm="12">
-        <PromoCard
-          :height="260"
-          :hover="true"
-          icon="mdi-folder-multiple-image"
-          title="Collections"
-        >
-          <p>
-            Want to organize your screenshots or files? Collections are the way
-            to do so, add items to one or many collections of your choosing to
-            greater organize your files.
-          </p>
-        </PromoCard>
-      </v-col>
-      <v-col cols="12" md="4" sm="12">
-        <PromoCard
-          :height="260"
-          :hover="true"
-          icon="mdi-image-auto-adjust"
-          title="AutoCollects"
-        >
-          <p>
-            AutoCollects allow you to create rules that automatically add files
-            to a collection, for example, you can have a rule that triggers when
-            the scanned text of the image contains "Skyrim" and add it to a
-            "Games" collection.
-          </p>
-        </PromoCard>
-      </v-col>
-      <v-col cols="12" md="4" sm="12">
-        <PromoCard
-          :height="260"
-          :hover="true"
-          icon="mdi-chart-timeline-variant-shimmer"
-          title="Insights"
-        >
-          <p>
-            Insights allow you to see highly detailed statistics on how you use
-            TPU. Such as when you upload files, how many you've uploaded, how
-            much you use TPU, and more.
-          </p>
-        </PromoCard>
-      </v-col>
-      <v-col cols="12" md="4" sm="12">
-        <PromoCard
-          :height="260"
-          :hover="true"
-          icon="mdi-folder-account"
-          title="Workspaces"
-        >
-          <p>
-            TPU Workspaces allow you to create documents right inside of your
-            TPU account. You can create documents, edit them, and share them
-            with others.
-          </p>
-        </PromoCard>
-      </v-col>
-      <v-col cols="12" md="4" sm="12">
-        <PromoCard
-          :height="260"
-          :hover="true"
-          icon="mdi-message-processing"
-          title="Communications"
-        >
-          <p>
-            TPU Communications allow you to create direct messages, and groups
-            with other TPU members in a fully featured messaging system.
-          </p>
-        </PromoCard>
-      </v-col>
-      <v-col cols="12" md="4" sm="12">
-        <PromoCard
-          :height="260"
-          :hover="true"
-          icon="mdi-upload"
-          title="ShareX Compatible"
-        >
-          <p>
-            TPU is fully compatible with ShareX and Sharenix, you can
-            additionally use TPU's API to create custom integrations.
-          </p>
-        </PromoCard>
-      </v-col>
-      <v-col cols="12" md="4" sm="12">
-        <PromoCard
-          :height="260"
-          :hover="true"
-          icon="mdi-form-textbox-password"
-          title="Scoped Passwords"
-        >
-          <p>
-            Scoped Passwords allow you to create a different password with
-            different API access permissions, if you need a way to access a part
-            of your TPU without risking the rest of your account, Scoped
-            Passwords are an option.
-          </p>
-        </PromoCard>
-      </v-col>
-      <v-col cols="12" md="4" sm="12">
-        <PromoCard
-          :height="260"
-          :hover="true"
-          icon="mdi-share"
-          title="Sharing & Collaboration"
-        >
-          <p>
-            TPU is built from the ground up to allow for collaboration and
-            sharing, share collections, slideshows, workspace documents and more
-            with other TPU users and non-TPU users via a unique share link.
-          </p>
-        </PromoCard>
-      </v-col>
-    </v-row>
-    <PromoCard
-      :height="365"
-      :hover="true"
       :left="true"
       class="mb-6 mt-4"
       title="Report an Upload"
@@ -250,13 +105,16 @@
             variant="filled"
             @keyup.enter="reportUpload"
           ></v-text-field>
-          <v-btn
-            :loading="report.loading"
-            color="primary"
-            @click="reportUpload"
-          >
-            Report
-          </v-btn>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :loading="report.loading"
+              color="primary"
+              @click="reportUpload"
+            >
+             Report
+           </v-btn>
+          </v-card-actions>
         </div>
       </template>
     </PromoCard>
@@ -340,33 +198,19 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-$bg-color: #000000;
-$dot-color: rgba(255, 255, 255, 0.3);
-$dot-size: 1px;
-$dot-space: 22px;
 .hero {
-  height: calc(100vh - 56px);
+  height: 400px;
   width: 100%;
   display: flex;
   position: relative;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-        90deg,
-        $bg-color ($dot-space - $dot-size),
-        transparent 1%
-      )
-      center,
-    linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center,
-    $dot-color;
-  background-size: $dot-space $dot-space;
+  background: rgba(0, 67, 143, 0.8)
 }
 
 .hero-body {
   text-align: center;
-  color: white;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  background-image: radial-gradient(#dcd6d6 1px, transparent 0);
 }
 
 .hero-body .title {

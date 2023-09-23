@@ -10,6 +10,7 @@ export interface AuthCheckerOptions {
   scopes: Scope[] | Scope
   userOptional?: boolean
   accessLevel?: AccessLevel
+  emailOptional?: boolean
 }
 
 export const Authorization = (options: AuthCheckerOptions) =>
@@ -41,6 +42,7 @@ export const authChecker: AuthChecker<Context> = async (
     typeof opts.scopes === "string" ? [opts.scopes] : opts.scopes
 
   if (
+    !opts.emailOptional &&
     user &&
     !user.emailVerified &&
     !scopeNormalized?.some(

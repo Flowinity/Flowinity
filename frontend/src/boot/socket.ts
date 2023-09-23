@@ -390,4 +390,20 @@ export default async function setup(app) {
       }
     }
   );
+  sockets.friends.on(
+    "request",
+    (data: {
+      id: number;
+      status: "removed" | "incoming" | "outgoing";
+      friend: Friend | null;
+    }) => {
+      if (data.status === "removed") {
+        friends.friends = friends.friends.filter(
+          (friend) => friend.friendId === data.id
+        );
+      } else {
+        friends.friends.push(data.friend);
+      }
+    }
+  );
 }

@@ -3,6 +3,7 @@
     :model-value="modelValue"
     max-width="700px"
     @update:modelValue="$emit('update:modelValue', $event)"
+    v-if="chat"
   >
     <template v-slot:title>
       {{
@@ -21,7 +22,7 @@
       </v-container>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue" @click="deleteGroup ? (del.step = 1) : leave">
+        <v-btn color="blue" @click="deleteGroup ? (del.step = 1) : leave()">
           {{ deleteGroup ? $t("generic.next") : $t("chats.leave.action") }}
         </v-btn>
       </v-card-actions>

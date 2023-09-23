@@ -24,7 +24,16 @@
       ></vue-cropper>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="red" @click="$emit('remove')">
+      <v-btn
+        v-if="result"
+        @click="
+          $emit('finish', file[0]);
+          $emit('update:modelValue', false);
+        "
+      >
+        Skip Crop
+      </v-btn>
+      <v-btn color="red" @click="$emit('remove')" v-if="supportsRemoval">
         {{ removeText || $t("dialogs.uploadCropper.removeProfile") }}
       </v-btn>
       <v-spacer></v-spacer>
@@ -36,7 +45,9 @@
       >
         {{ $t("generic.cancel") }}
       </v-btn>
-      <v-btn color="primary" @click="save">{{ $t("generic.save") }}</v-btn>
+      <v-btn color="primary" @click="save" :loading="loading">
+        {{ $t("generic.save") }}
+      </v-btn>
     </v-card-actions>
   </CoreDialog>
 </template>
@@ -64,6 +75,10 @@ export default defineComponent({
     removeText: {
       type: String,
       default: undefined
+    },
+    supportsRemoval: {
+      type: Boolean,
+      default: true
     }
   },
   emits: ["update:modelValue", "finish", "remove"],
@@ -105,6 +120,10 @@ export default defineComponent({
       this.result = undefined;
       await this.fileReader();
       this.key++;
+    },
+    modelValue() {
+      this.file = [];
+      this.result = undefined;
     }
   }
 });

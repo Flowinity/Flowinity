@@ -22,6 +22,7 @@ import { Report } from "@app/models/report.model"
 import { WeatherResponse } from "@app/interfaces/weather"
 import { State, Stats } from "@app/types/v4/core"
 import { ExperimentType } from "@app/classes/graphql/core/experiments"
+import { isNumeric } from "@app/lib/isNumeric"
 
 let city: Reader<CityResponse> | undefined
 
@@ -336,12 +337,22 @@ export class CoreService {
     })
     const experiments = this.getExperimentsV4(dev, gold)
     return [
-      ...experiments.map((experiment) => ({
-        ...experiment,
-        value:
-          overrides.find((override) => override.key === experiment.id)
-            ?.dataValues?.value === "true" || experiment.value
-      }))
+      ...experiments.map((experiment) => {
+        const override = overrides.find(
+          (override) => override.key === experiment.id
+        )
+        return {
+          ...experiment,
+          value:
+            override?.dataValues?.value === "true"
+              ? true
+              : override?.dataValues?.value === "false"
+              ? false
+              : isNumeric(override?.dataValues?.value)
+              ? parseInt(override?.dataValues?.value)
+              : experiment.value
+        }
+      })
     ]
   }
 
@@ -350,6 +361,8 @@ export class CoreService {
     gold: boolean = false
   ): Record<string, any> {
     const experiments = {
+      THEME: 3,
+      NOTIFICATION_SOUND: 1,
       RESIZABLE_SIDEBARS: false,
       LEGACY_MOBILE_NAV: true,
       OFFICIAL_INSTANCE: config?.officialInstance || false,
@@ -392,6 +405,16 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        THEME: {
+          description:
+            "What frontend theme is applied. 1 is light, 2 is dark, 3 is amoled.",
+          createdAt: "2023-09-24T00:00:00.000Z"
+        },
+        NOTIFICATION_SOUND: {
+          description:
+            "What sound plays when a notification is received. 1 is default, 2 is classic.",
+          createdAt: "2023-09-24T00:00:00.000Z"
+        },
         RESIZABLE_SIDEBARS: {
           description:
             "Enable resizing functionality in the TPU Sidebar component",

@@ -22,6 +22,7 @@ import {
   partialUserBase,
   PartialUserBase
 } from "@app/classes/graphql/user/partialUser"
+import { Friend } from "@app/models/friend.model"
 
 @Resolver(BlockedUser)
 @Service()
@@ -82,6 +83,18 @@ export class BlockedUserResolver {
         blockedUserId: input.userId,
         silent: input.silent
       })
+      await Friend.destroy({
+        where: {
+          userId: ctx.user!!.id,
+          friendId: input.userId
+        }
+      })
+      await Friend.destroy({
+        where: {
+          userId: input.userId,
+          friendId: ctx.user!!.id
+        }
+      })
       if (!input.silent) {
         socket
           .of(SocketNamespaces.TRACKED_USERS)
@@ -91,6 +104,16 @@ export class BlockedUserResolver {
             blocked: true
           })
       }
+      socket.of(SocketNamespaces.FRIENDS).to(ctx.user!!.id).emit("request", {
+        id: input.userId,
+        status: "removed",
+        friend: null
+      })
+      socket.of(SocketNamespaces.FRIENDS).to(input.userId).emit("request", {
+        id: ctx.user!!.id,
+        status: "removed",
+        friend: null
+      })
       socket
         .of(SocketNamespaces.USER)
         .to(ctx.user!!.id)

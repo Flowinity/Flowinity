@@ -1,4 +1,12 @@
-import { Arg, Ctx, Mutation, Resolver } from "type-graphql"
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  Mutation,
+  Query,
+  Resolver,
+  Root
+} from "type-graphql"
 import { Service } from "typedi"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { ChatService } from "@app/services/chat.service"
@@ -10,6 +18,10 @@ import RateLimit from "@app/lib/graphql/RateLimit"
 import cryptoRandomString from "crypto-random-string"
 import { ChatRank } from "@app/models/chatRank.model"
 import { GqlError } from "@app/lib/gqlErrors"
+import { InviteInput } from "@app/classes/graphql/chat/invites/getInvite"
+import { Op } from "sequelize"
+import { Chat } from "@app/models/chat.model"
+import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @Resolver(ChatInvite)
 @Service()
@@ -70,5 +82,41 @@ export class ChatInviteResolver {
       rankId: input.rankId ?? null,
       userId: ctx.user!!.id
     })
+  }
+
+  @Query(() => ChatInvite, {
+    nullable: true
+  })
+  async chatInvite(@Ctx() ctx: Context, @Arg("input") input: InviteInput) {
+    return await ChatInvite.findOne({
+      where: {
+        id: input.inviteId,
+        expiredAt: {
+          [Op.or]: [
+            {
+              [Op.gt]: new Date()
+            },
+            {
+              [Op.is]: null
+            }
+          ]
+        }
+      }
+    })
+  }
+
+  @FieldResolver(() => Chat)
+  async chat(@Root() invite: ChatInvite) {
+    return await invite.$get("chat")
+  }
+
+  @FieldResolver(() => PartialUserBase)
+  async user(@Root() invite: ChatInvite) {
+    return await invite.$get("user")
+  }
+
+  @FieldResolver(() => ChatRank)
+  async rank(@Root() invite: ChatInvite) {
+    return await invite.$get("rank")
   }
 }

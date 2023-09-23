@@ -36,6 +36,8 @@ import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
 import { Success } from "@app/classes/graphql/generic/success"
 import { ChatInvite } from "@app/models/chatInvite.model"
+import { JoinChatFromInviteInput } from "@app/classes/graphql/chat/invites/joinInvite"
+import { GqlError } from "@app/lib/gqlErrors"
 
 @Resolver(Chat)
 @Service()
@@ -69,8 +71,8 @@ export class ChatResolver {
 
   @FieldResolver(() => Number)
   async unread(@Root() chat: Chat, @Ctx() ctx: Context): Promise<Number> {
-    const unreads = await redis.json.get(`unread:${ctx.user!!.id}`)
-    return unreads[chat.id.toString()] || 0
+    const unreads = await redis.json.get(`unread:${ctx.user?.id || 0}`)
+    return unreads?.[chat.id.toString()] || 0
   }
 
   @Authorization({
@@ -179,6 +181,17 @@ export class ChatResolver {
   })
   @Mutation(() => Chat)
   async updateChat(@Ctx() ctx: Context, @Arg("input") input: UpdateChatInput) {
+    if (
+      (input.icon !== null && input.icon !== undefined) ||
+      (input.background !== undefined && input.background !== null)
+    ) {
+      throw new GraphQLError(
+        "If you are trying to set the group icon/background, please use the REST API."
+      )
+    }
+    if (input.name === null) {
+      throw new GraphQLError("The group name must be undefined or be a string.")
+    }
     await this.chatService.updateGroupSettings(
       input.associationId,
       ctx.user!!.id,
@@ -314,5 +327,10 @@ export class ChatResolver {
     } catch {
       return []
     }
+  }
+
+  @FieldResolver(() => [Message])
+  async messages() {
+    return []
   }
 }

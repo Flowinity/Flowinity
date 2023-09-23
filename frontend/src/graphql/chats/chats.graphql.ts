@@ -4,6 +4,8 @@ export const ChatsQuery = gql`
   query ChatsQuery {
     chats {
       id
+      background
+      description
       type
       name
       unread

@@ -1,6 +1,9 @@
 // Utilities
 import { defineStore } from "pinia";
-import { ExperimentsQuery } from "@/graphql/core/experiments.graphql";
+import {
+  ExperimentsQuery,
+  SetExperimentMutation
+} from "@/graphql/core/experiments.graphql";
 
 export interface ExperimentsState {
   experiments: Record<string, string | number | boolean | object>;
@@ -17,6 +20,18 @@ export const useExperimentsStore = defineStore("experiments", {
     } as ExperimentsState),
   getters: {},
   actions: {
+    async setExperiment(key: string, value: string, userId?: number) {
+      await this.$apollo.mutate({
+        mutation: SetExperimentMutation,
+        variables: {
+          input: {
+            key,
+            value,
+            userId
+          }
+        }
+      });
+    },
     async init() {
       const experiments = localStorage.getItem("experimentsStore");
       if (experiments) {

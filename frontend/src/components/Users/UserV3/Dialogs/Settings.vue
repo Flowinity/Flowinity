@@ -65,7 +65,7 @@
               :items="prop.meta.options"
               :label="prop.meta.name"
               :model-value="component.props[prop.key]"
-              item-key="value"
+              item-value="value"
               item-title="text"
               @update:model-value="
                 $emit('update', {

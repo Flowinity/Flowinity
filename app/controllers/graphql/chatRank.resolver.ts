@@ -297,4 +297,9 @@ export class ChatRankResolver {
     this.chatService.normalizeIndexes(chat.id)
     return ranks
   }
+
+  @FieldResolver(() => [ChatAssociation])
+  async associations(@Root() chatRank: ChatRank) {
+    return await chatRank.$get("associations")
+  }
 }

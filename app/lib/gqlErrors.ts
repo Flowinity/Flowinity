@@ -38,6 +38,18 @@ const Errors = {
   },
   RANK_TOO_HIGH: {
     message: "You don't have permission to modify this rank."
+  },
+  INVALID_INVITE: {
+    message: "The invite is invalid or has expired."
+  },
+  COLUBRINA_CHAT: {
+    message: "This chat needs to be migrated from Colubrina to Communications."
+  },
+  ALREADY_IN_CHAT: {
+    message: "You're already in the chat!"
+  },
+  NOT_ADMIN: {
+    message: "You need to be an administrator to do this."
   }
 }
 
