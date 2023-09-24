@@ -1,4 +1,9 @@
 <template>
+  <TransferOwnership
+    :user="$user.users[transferOwnership.userId]"
+    :chat="$chat.editingChat"
+    v-model="transferOwnership.value"
+  />
   <overline position="center">
     {{ $t("chats.settings.users.name") }}
   </overline>
@@ -21,19 +26,35 @@
         </span>
       </template>
     </template>
-    <template v-slot:item.ranks="{ item: { selectable } }: any">
+    <template v-slot:item.ranks="{ item: { raw } }: any">
       <AddRole
         :ranks="$chat.editingChat.ranks"
-        :association="selectable"
+        :association="raw"
         :current-association-id="$chat.editingChat.association.id"
       ></AddRole>
       <v-chip
-        v-for="rank in selectable.ranks"
+        v-for="rank in raw.ranks"
         :key="rank.id"
         :color="rank.color"
         class="ml-2"
       >
         {{ rank.name }}
+        <v-icon
+          class="pointer ml-1"
+          @click="
+            $chat.toggleUserRank(
+              raw.id,
+              $chat.editingChat.association.id,
+              rank.id
+            )
+          "
+          size="20"
+          v-if="
+            !rank.managed && $chat.canEditRank(rank.index, $chat.editingChat)
+          "
+        >
+          mdi-close
+        </v-icon>
       </v-chip>
     </template>
     <template v-slot:item.createdAt="{ item: { raw } }">
@@ -63,13 +84,15 @@
       <v-btn
         icon
         class="my-1"
-        :disabled="
-          raw.user?.id === $chat.editingChat.userId &&
-          $chat.editingChat.userId === $user.user.id
+        :disabled="raw.user?.id === $chat.editingChat.userId"
+        v-if="$chat.editingChat.userId === $user.user.id"
+        @click="
+          transferOwnership.userId = raw.user?.id;
+          transferOwnership.value = true;
         "
       >
         <v-tooltip activator="parent" location="top">
-          {{ this.$t("chats.settings.users.transferOwnership") }}
+          {{ $t("chats.settings.users.transferOwnership") }}
         </v-tooltip>
         <v-icon>mdi-swap-horizontal</v-icon>
       </v-btn>
@@ -85,10 +108,18 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import AddRole from "@/components/Communications/Menus/AddRole.vue";
+import TransferOwnership from "@/components/Communications/Dialogs/TransferOwnership.vue";
 
 export default defineComponent({
   name: "ChatSettingsUsers",
-  components: { AddRole, CreateChat, GraphWidget, UserAvatar, Overline },
+  components: {
+    TransferOwnership,
+    AddRole,
+    CreateChat,
+    GraphWidget,
+    UserAvatar,
+    Overline
+  },
   props: {
     chat: {
       type: Object as () => Chat
@@ -98,6 +129,10 @@ export default defineComponent({
     return {
       add: false,
       search: "",
+      transferOwnership: {
+        userId: undefined as number | undefined,
+        value: false
+      },
       headers: [
         {
           title: this.$t("chats.settings.users.username"),

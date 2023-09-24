@@ -37,6 +37,7 @@ import { UserInsights } from "@app/classes/graphql/user/insights"
 import { Stats } from "@app/classes/graphql/core/core"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { BlockedUser } from "@app/models/blockedUser.model"
+import { FindOptions } from "sequelize"
 
 @DefaultScope(() => ({
   attributes: {

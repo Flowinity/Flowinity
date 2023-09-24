@@ -42,6 +42,7 @@ import {
   ChatInviteQuery,
   JoinChatInviteMutation
 } from "@/graphql/chats/invite.graphql";
+import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -123,6 +124,22 @@ export const useChatStore = defineStore("chat", {
     }
   }),
   actions: {
+    async toggleUserRank(
+      updatingChatAssociationId: number,
+      chatAssociationId: number,
+      rankId: string
+    ) {
+      await this.$apollo.mutate({
+        mutation: ToggleUserRankMutation,
+        variables: {
+          input: {
+            chatAssociationId,
+            updatingChatAssociationId,
+            rankId
+          }
+        }
+      });
+    },
     async joinInvite(inviteId: string): Promise<{ id: number }> {
       const {
         data: { joinChatFromInvite }

@@ -65,6 +65,7 @@ export class GalleryResolver {
     } else if (!ctx.user) {
       throw new GraphQLError("You must be logged in to view the gallery")
     }
+
     return await this.galleryService.getGalleryV4(
       ctx.user?.id,
       input,

@@ -239,7 +239,7 @@ export class ChatService {
   ): Promise<ChatPermissions[]> {
     const date = new Date().getTime()
     const permissions = await this.getPermissions(userId, associationId)
-    console.log(`took: ${new Date().getTime() - date}ms`)
+    //console.log(`took: ${new Date().getTime() - date}ms`)
     let hasPermission: boolean
     if (
       permission === ChatPermissions.OWNER ||

@@ -14,7 +14,7 @@
         <strong>everyone.</strong>
       </div>
       <div class="mt-4">
-        <v-btn variant="outlined">
+        <v-btn variant="outlined" :class="{'mb-8': $vuetify.display.mobile}" to="/register">
           Register now
         </v-btn>
         <p class="mb-n2" v-if="!$app.site.officialInstance">
@@ -43,7 +43,7 @@
     </div>
   </div>
   <v-container id="content">
-    <v-card-title class="text-center mb-3" style="font-size: 30px">Why <span class="text-gradient">PrivateUploader</span>?</v-card-title>
+    <v-card-title class="text-center mb-3 initial" style="font-size: 30px">Why <span class="text-gradient">PrivateUploader</span>?</v-card-title>
     <div class="d-flex flex-column" style="gap: 10px;">
       <PromoCard width="100%" title="Chat with friends in an instant!" image="https://i.troplo.com/i/6bc5f9f7f4d3.png">
         As a fully-fledged chatting application, you can instantly contact your friends with direct messages and in groups.
@@ -76,48 +76,49 @@
         <router-link to="/policies/content">Content Policy?</router-link>
         Please report it here.
       </p>
-      <template v-slot:left>
-        <div class="mr-3">
-          <v-text-field
-            v-model="report.tpuLink"
-            color="white"
-            label="URL to Report"
-            outlined
-            placeholder="https://i.troplo.com/i/aae2fb2c0cf8.png"
-            variant="filled"
-            @keyup.enter="reportUpload"
-          ></v-text-field>
-          <v-text-field
-            v-model="report.content"
-            auto-grow
-            color="white"
-            label="Reporting reason"
-            placeholder="This upload violates the Content Policy because..."
-            variant="filled"
-            @keyup.enter="reportUpload"
-          ></v-text-field>
-          <v-text-field
-            v-model="report.email"
-            color="white"
-            label="Email to get back to you (optional)"
-            outlined
-            placeholder="troplo@troplo.com"
-            variant="filled"
-            @keyup.enter="reportUpload"
-          ></v-text-field>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              :loading="report.loading"
-              color="primary"
-              @click="reportUpload"
-            >
-             Report
-           </v-btn>
-          </v-card-actions>
-        </div>
-      </template>
+      <div class="mt-4 mb-n2">
+        <v-text-field
+          v-model="report.tpuLink"
+          color="white"
+          label="URL to Report"
+          outlined
+          placeholder="https://i.troplo.com/i/aae2fb2c0cf8.png"
+          variant="filled"
+          @keyup.enter="reportUpload"
+        ></v-text-field>
+        <v-text-field
+          v-model="report.content"
+          auto-grow
+          color="white"
+          label="Reporting reason"
+          placeholder="This upload violates the Content Policy because..."
+          variant="filled"
+          @keyup.enter="reportUpload"
+        ></v-text-field>
+        <v-text-field
+          v-model="report.email"
+          color="white"
+          label="Email to get back to you (optional)"
+          outlined
+          placeholder="troplo@troplo.com"
+          variant="filled"
+          @keyup.enter="reportUpload"
+        ></v-text-field>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            :loading="report.loading"
+            color="primary"
+            @click="reportUpload"
+          >
+           Report
+         </v-btn>
+        </v-card-actions>
+      </div>
     </PromoCard>
+    <div class="text-center">
+      <small>PrivateUploader by TroploServices, formerly TPU/TPUFlowinityImages.</small>
+    </div>
   </v-container>
 </template>
 

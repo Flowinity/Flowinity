@@ -30,6 +30,10 @@
       </v-btn>
     </template>
   </v-data-table>
+  <small>
+    Some information may be hidden based on your permissions and the
+    auto-granting rank.
+  </small>
 </template>
 
 <script lang="ts">

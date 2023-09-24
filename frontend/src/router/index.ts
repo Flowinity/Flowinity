@@ -312,11 +312,6 @@ const routes = [
         component: () => import("@/views/Auth/Register.vue")
       },
       {
-        path: "/invite/:key?",
-        name: "Invite",
-        redirect: (to: any) => `/register/${to.params.key}`
-      },
-      {
         path: "/home",
         name: "Home",
         component: () => import("@/views/Auth/Home.vue")

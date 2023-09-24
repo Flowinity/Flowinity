@@ -37,7 +37,8 @@ const Errors = {
     message: "Rank not found."
   },
   RANK_TOO_HIGH: {
-    message: "You don't have permission to modify this rank."
+    message:
+      "You don't have permission to update this rank as it's higher, or at the same level as your current rank."
   },
   INVALID_INVITE: {
     message: "The invite is invalid or has expired."

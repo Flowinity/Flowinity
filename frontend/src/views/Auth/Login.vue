@@ -7,8 +7,13 @@
           :elevation="$vuetify.display.mobile ? 0 : 8"
           :flat="$vuetify.display.mobile"
         >
-          <p class="text-center text-gradient mb-n5" style="font-size: 64px">
-            TPU
+          <p
+            class="text-center text-gradient mt-2"
+            :style="
+              $vuetify.display.mobile ? 'font-size: 38px' : 'font-size: 48px'
+            "
+          >
+            PrivateUploader
           </p>
           <v-container>
             <v-form>

@@ -20,7 +20,7 @@ export default {
     navigator.clipboard.writeText(text);
   },
   doSinglePulse(type: string, other: object, timeOnPage?: number) {
-    window.socket.emit("pulse", {
+    window.tpuInternals.$sockets.pulse.emit("pulse", {
       action: type,
       timeSpent: timeOnPage || 0,
       route: window.location.pathname,

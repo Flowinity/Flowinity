@@ -29,44 +29,19 @@
     </template>
     <template v-else>
       <v-card-text>
-        <v-text-field
-          v-if="$user.user.totpEnable && !del.passwordMode"
-          :label="$t('settings.home.totp.code')"
-          v-model="del.totp"
-          @keydown.enter="doDelete"
-        >
-          <template v-slot:details>
-            Having problems?
-            <a class="unselectable pointer" @click="del.passwordMode = true">
-              &nbsp;Use your password instead.
-            </a>
-          </template>
-        </v-text-field>
-        <v-text-field
-          v-else
-          v-model="del.password"
-          type="password"
-          @keydown.enter="doDelete"
-          :label="$t('settings.home.myAccount.currentPassword')"
-        >
-          <template v-slot:details>
-            Having problems?
-            <a
-              class="unselectable pointer"
-              @click="del.passwordMode = false"
-              v-if="$user.user.totpEnable"
-            >
-              &nbsp;Use your 2FA code instead.
-            </a>
-          </template>
-        </v-text-field>
+        <DangerZoneInput
+          v-model:password="del.password"
+          v-model:password-mode="del.passwordMode"
+          v-model:totp="del.totp"
+          @confirm="doDelete()"
+        ></DangerZoneInput>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue" @click="$emit('update:modelValue', false)">
           Cancel
         </v-btn>
-        <v-btn color="red" @click="doDelete">Delete</v-btn>
+        <v-btn color="red" @click="doDelete()">Delete</v-btn>
       </v-card-actions>
     </template>
   </CoreDialog>
@@ -77,10 +52,11 @@ import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { Chat } from "@/gql/graphql";
 import { DeleteGroupMutation } from "@/graphql/chats/deleteGroup.graphql";
+import DangerZoneInput from "@/components/Core/DangerZoneInput.vue";
 
 export default defineComponent({
   name: "Leave",
-  components: { CoreDialog },
+  components: { DangerZoneInput, CoreDialog },
   props: {
     modelValue: {
       type: Boolean,

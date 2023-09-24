@@ -250,6 +250,19 @@ export class GalleryService {
             }
           }
         ]
+        break
+      case Type.AUTO_COLLECT:
+        include = [
+          {
+            model: AutoCollectApproval,
+            as: "autoCollectApproval",
+            required: true,
+            where: {
+              userId: id,
+              collectionId: input.collectionId
+            }
+          }
+        ]
     }
     // delete undefined keys
     Object.keys(base).forEach(

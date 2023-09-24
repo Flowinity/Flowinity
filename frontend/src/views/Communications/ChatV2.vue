@@ -812,6 +812,7 @@ export default defineComponent({
   },
   mounted() {
     document.body.classList.add("disable-overscroll");
+    new ResizeObserver(this.onResize).observe(document.querySelector("#chat"));
     document.addEventListener("keydown", this.shortcutHandler);
     this.focusInterval = setInterval(this.onFocus, 2000);
     // re-enable auto scroll for flex-direction: column-reverse;

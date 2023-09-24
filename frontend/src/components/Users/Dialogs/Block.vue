@@ -17,6 +17,7 @@
           }}
         </v-card-text>
         <v-switch
+          v-model="$user.dialogs.block.silent"
           :label="$t('dialogs.block.silentMode')"
           class="ml-4"
         ></v-switch>

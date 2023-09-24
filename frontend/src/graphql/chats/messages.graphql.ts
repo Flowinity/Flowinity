@@ -12,18 +12,7 @@ export const StandardMessageFragment = gql`
     type
     embeds {
       type
-      data {
-        url
-        title
-        description
-        siteName
-        width
-        height
-        upload {
-          id
-        }
-        type
-      }
+      data
     }
     reply {
       readReceipts {

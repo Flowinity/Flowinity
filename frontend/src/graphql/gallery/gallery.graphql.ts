@@ -14,6 +14,10 @@ export const GalleryQuery = gql`
         endIndex
       }
       items {
+        autoCollectApproval {
+          id
+          autoCollectRuleId
+        }
         id
         createdAt
         updatedAt

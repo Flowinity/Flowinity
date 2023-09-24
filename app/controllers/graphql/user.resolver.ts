@@ -55,6 +55,13 @@ export class UserResolver extends createBaseResolver("User", User) {
     return await this.findByPk(ctx.user.id, ctx)
   }
 
+  @FieldResolver(() => String, {
+    nullable: true
+  })
+  async scopes(@Ctx() ctx: Context) {
+    return ctx?.scopes || "*"
+  }
+
   @Authorization({
     userOptional: true,
     scopes: []
@@ -286,8 +293,11 @@ export class PartialUserFriendResolver {
     })
   }
 
-  @FieldResolver(() => Boolean)
+  @FieldResolver(() => Boolean, {
+    nullable: true
+  })
   async blocked(@Ctx() ctx: Context, @Root() user: User) {
+    if (!user) return false
     const block = await BlockedUser.findOne({
       where: {
         userId: user.id,

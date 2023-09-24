@@ -77,6 +77,7 @@ import {
   Pager,
   Upload
 } from "@/gql/graphql";
+import { isNumeric } from "@/plugins/isNumeric";
 
 export default defineComponent({
   name: "PersonalGallery",
@@ -153,6 +154,7 @@ export default defineComponent({
         data: { gallery }
       } = await this.$apollo.query({
         query: GalleryQuery,
+        fetchPolicy: "network-only",
         variables: {
           input: {
             page: this.page,
@@ -161,8 +163,8 @@ export default defineComponent({
             sort: this.show.sort,
             type: this.type,
             order: this.show.order,
-            collectionId: typeof this.rid === "number" ? this.rid : undefined,
-            shareLink: typeof this.rid === "string" ? this.rid : undefined
+            collectionId: isNumeric(this.rid) ? parseInt(this.rid) : undefined,
+            shareLink: isNumeric(this.rid) ? undefined : this.rid
           }
         } as GalleryInput
       });

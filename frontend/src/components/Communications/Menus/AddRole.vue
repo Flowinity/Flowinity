@@ -29,8 +29,12 @@
           :active="association.ranksMap.includes(rank.id)"
           :value="rank.id"
           :key="rank.id"
-          :disabled="rank.managed"
-          @click="toggle(rank.id)"
+          :disabled="
+            rank.managed || !$chat.canEditRank(rank.index, $chat.editingChat)
+          "
+          @click="
+            $chat.toggleUserRank(association.id, currentAssociationId, rank.id)
+          "
         >
           <template v-slot:prepend>
             <v-avatar
@@ -86,20 +90,7 @@ export default defineComponent({
       selected: [] as number[]
     };
   },
-  methods: {
-    async toggle(rankId: string) {
-      await this.$apollo.mutate({
-        mutation: ToggleUserRankMutation,
-        variables: {
-          input: {
-            chatAssociationId: this.currentAssociationId,
-            updatingChatAssociationId: this.association.id,
-            rankId
-          }
-        }
-      });
-    }
-  },
+  methods: {},
   computed: {
     ranksSearch() {
       return this.ranks.filter((rank: ChatRank) =>

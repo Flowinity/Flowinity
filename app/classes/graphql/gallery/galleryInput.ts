@@ -45,7 +45,8 @@ export enum Order {
 export enum Type {
   PERSONAL,
   STARRED,
-  COLLECTION
+  COLLECTION,
+  AUTO_COLLECT
 }
 
 registerEnumType(Filter, {

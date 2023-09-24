@@ -12,13 +12,30 @@
         {{ dialog }}
       </v-btn>
 
-      <!-- some have value of {value: boolean, item: any} -->
       <v-btn
         v-for="dialog in Object.keys($app.dialogs).filter(
           (key) => typeof $app.dialogs[key] === 'object'
         )"
         :key="dialog"
         @click="$app.dialogs[dialog].value = !$app.dialogs[dialog].value"
+      >
+        {{ dialog }}
+      </v-btn>
+      <v-btn
+        v-for="dialog in Object.keys($chat.dialogs).filter(
+          (key) => typeof $chat.dialogs[key] === 'object'
+        )"
+        :key="dialog"
+        @click="$chat.dialogs[dialog].value = !$chat.dialogs[dialog].value"
+      >
+        {{ dialog }}
+      </v-btn>
+      <v-btn
+        v-for="dialog in Object.keys($user.dialogs).filter(
+          (key) => typeof $user.dialogs[key] === 'object'
+        )"
+        :key="dialog"
+        @click="$user.dialogs[dialog].value = !$user.dialogs[dialog].value"
       >
         {{ dialog }}
       </v-btn>

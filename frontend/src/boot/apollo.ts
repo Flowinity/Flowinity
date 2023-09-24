@@ -30,9 +30,11 @@ export default function setup(app: App) {
     if (graphQLErrors) {
       for (const error of graphQLErrors) {
         if (error.extensions?.code === "UNAUTHORIZED") {
-          localStorage.removeItem("token");
-          const user = useUserStore();
-          user.user = null;
+          console.log("ERROR LOGOUT THROWN");
+          console.log(error);
+          //localStorage.removeItem("token");
+          //const user = useUserStore();
+          //user.user = null;
         } else if (error.extensions?.code === "BAD_USER_INPUT") {
           for (const err of error.extensions.validationErrors as any[]) {
             const values: string[] = Object.values(err.constraints);

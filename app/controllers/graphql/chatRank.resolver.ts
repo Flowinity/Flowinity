@@ -30,6 +30,7 @@ import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation
 import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { ChatPermissionsHandler } from "@app/services/chat/permissions"
+import { GqlError } from "@app/lib/gqlErrors"
 
 @Resolver(ChatRank)
 @Service()
@@ -83,13 +84,14 @@ export class ChatRankResolver {
     )
     if (!rank) throw new GraphQLError("Rank not found.")
     if (
-      rank.index >= highestIndex &&
-      !permissions.includes(ChatPermissions.TRUSTED) &&
-      !permissions.includes(ChatPermissions.OWNER)
+      (rank.index >= highestIndex &&
+        !permissions.includes(ChatPermissions.TRUSTED) &&
+        !permissions.includes(ChatPermissions.OWNER)) ||
+      (!permissions.includes(ChatPermissions.OWNER) &&
+        permissions.includes(ChatPermissions.TRUSTED) &&
+        rank.index > highestIndex)
     )
-      throw new GraphQLError(
-        "You don't have permission to update this rank as it's higher, or at the same level as your current rank."
-      )
+      throw new GqlError("RANK_TOO_HIGH")
     // prevent duplicates by using Set
     const inputPermissions = new Set(input.permissionsMap)
 
@@ -210,7 +212,7 @@ export class ChatRankResolver {
       name: input.name,
       color: input.color,
       userId: ctx.user!!.id,
-      index: 2
+      index: 1
     })
     const permissions = []
     const permissionHandler = new ChatPermissionsHandler()
@@ -286,9 +288,7 @@ export class ChatRankResolver {
         ctx.user!!.id !== chat.userId
       ) {
         this.chatService.normalizeIndexes(chat.id)
-        throw new GraphQLError(
-          "You don't have permission to update this rank as it's higher, or at the same level as your current rank."
-        )
+        throw new GqlError("RANK_TOO_HIGH")
       }
       await rank.update({
         index: inputRanks.indexOf(rank.id)

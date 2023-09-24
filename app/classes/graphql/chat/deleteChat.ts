@@ -22,6 +22,14 @@ export class DangerZoneChatInput {
 }
 
 @InputType()
+export class TransferOwnershipInput extends DangerZoneChatInput {
+  @Field(() => Number, {
+    description: "User to transfer to."
+  })
+  userId: number
+}
+
+@InputType()
 export class LeaveChatInput {
   @Field(() => Number)
   associationId: number

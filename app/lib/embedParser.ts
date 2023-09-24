@@ -147,8 +147,29 @@ export default async function embedParser(
   }
 
   for (let [, link] of links.entries()) {
-    const test = await ogsMetadataParser(link, blacklist)
-    if (test) embeds.push(test)
+    try {
+      const url = new URL(link)
+      if (
+        config.hostname === url.host ||
+        config.hostnames?.includes(url.host)
+      ) {
+        if (url.pathname.startsWith("/invite/")) {
+          embeds.push({
+            type: "native",
+            data: {
+              type: "TPU_CHAT_INVITE",
+              id: url.pathname.split("/invite/")[1]
+            }
+          })
+          continue
+        }
+      }
+      const test = await ogsMetadataParser(link, blacklist)
+      if (test) embeds.push(test)
+    } catch {
+      const test = await ogsMetadataParser(link, blacklist)
+      if (test) embeds.push(test)
+    }
   }
 
   if (embeds.length) {

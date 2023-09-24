@@ -2,6 +2,7 @@ import { Field, InputType, ObjectType, registerEnumType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { IsNumber, Max, Min } from "class-validator"
 import { Upload } from "@app/models/upload.model"
+import { GraphQLJSON } from "graphql-scalars"
 
 export enum MessageType {
   MESSAGE = "message",
@@ -69,7 +70,7 @@ export class EmbedData {
 export class Embed {
   @Field()
   type: string
-  @Field({
+  @Field(() => GraphQLJSON, {
     nullable: true
   })
   data: EmbedData

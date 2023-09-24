@@ -48,33 +48,6 @@ export default function setup(app) {
   const friends = useFriendsStore();
   const mail = useMailStore();
   const toast = useToast();
-  if (!window.tpuInternals) {
-    const router = useRouter() as Router;
-    window.tpuInternals = {
-      processLink: chat.processLink,
-      readChat: chat.readChat,
-      lookupUser: chat.lookupUser,
-      setChat: ((id) => router.push("/communications/" + id)) as (
-        id: number
-      ) => void,
-      lookupChat: chat.lookupChat,
-      openUser: chat.openUser,
-      router,
-      lookupCollection: (id) => {
-        return (
-          (collections.items.find(
-            (collection) => collection.id === id
-          ) as Collection) ||
-          ({
-            name: "Unknown Collection"
-          } as Collection)
-        );
-      },
-      openCollection: ((id) => router.push("/collections/" + id)) as (
-        id: number
-      ) => void
-    };
-  }
   app.config.globalProperties.axios = axios;
   core.themeProviderDefaults.theme = vuetify.theme.themes.value;
   core.themeProviderDefaults.global = vuetify.defaults.value;
@@ -102,6 +75,34 @@ export default function setup(app) {
     trackedUsers: createSocket("trackedUsers")
   };
   app.config.globalProperties.$functions = functions;
+  if (!window.tpuInternals) {
+    const router = useRouter() as Router;
+    window.tpuInternals = {
+      processLink: chat.processLink,
+      readChat: chat.readChat,
+      lookupUser: chat.lookupUser,
+      setChat: ((id) => router.push("/communications/" + id)) as (
+        id: number
+      ) => void,
+      lookupChat: chat.lookupChat,
+      openUser: chat.openUser,
+      router,
+      lookupCollection: (id) => {
+        return (
+          (collections.items.find(
+            (collection) => collection.id === id
+          ) as Collection) ||
+          ({
+            name: "Unknown Collection"
+          } as Collection)
+        );
+      },
+      openCollection: ((id) => router.push("/collections/" + id)) as (
+        id: number
+      ) => void,
+      $sockets: app.config.globalProperties.$sockets
+    };
+  }
 
   core.init().then(() => {
     if (!core.site.finishedSetup) {

@@ -47,7 +47,7 @@ const app = createApp({
         localStorage.setItem("workspaceDrawer", val.toString());
       },
       "$app.title"(val) {
-        document.title = val + " - TPU";
+        document.title = `${val} - ${this.$app.site.name}`;
       },
       "$vuetify.display.mobile"(val) {
         this.$app.mainDrawer = !val;

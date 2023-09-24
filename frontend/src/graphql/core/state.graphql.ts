@@ -288,6 +288,7 @@ export const CoreStateQuery = gql`
       itemsPerPage
       banner
       pendingAutoCollects
+      scopes
       alternatePasswords {
         scopes
         totp

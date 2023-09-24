@@ -65,6 +65,7 @@ declare global {
       lookupCollection: (id: number) => Collection;
       openCollection: (id: number) => void;
       router: Router;
+      $sockets: Record<string, Socket>;
     };
     _paq: {
       push: (args: any[]) => void;

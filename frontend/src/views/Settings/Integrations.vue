@@ -32,6 +32,9 @@
             class="mr-2"
           />
         </span>
+        <v-chip color="#42b883" @click="$app.dialogs.migrateWizard = true">
+          Colubrina
+        </v-chip>
       </div>
     </v-container>
   </v-card>

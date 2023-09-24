@@ -10,7 +10,7 @@
     id="main-drawer"
   >
     <p
-      class="text-blue mt-4 ml-4 text-small"
+      class="text-blue mt-4 ml-4 text-small pointer unselectable"
       v-if="$vuetify.display.mobile && $chat.isCommunications"
       @click="$app.railMode = 'communications'"
     >

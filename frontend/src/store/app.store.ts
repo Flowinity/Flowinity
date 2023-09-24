@@ -17,6 +17,7 @@ import { CoreStateQuery } from "@/graphql/core/state.graphql";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
 import { Chat, CoreState, Upload } from "@/gql/graphql";
 import { useFriendsStore } from "@/store/friends.store";
+import { useMailStore } from "@/store/mail.store";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
@@ -222,7 +223,7 @@ export const useAppStore = defineStore("app", {
           path: "",
           name: i18n.t("core.sidebar.feedback"),
           icon: "mdi-comment-question-outline",
-          scope: "*"
+          scope: ""
         },
         {
           id: 30,
@@ -247,19 +248,6 @@ export const useAppStore = defineStore("app", {
           experimentsRequired: ["EARLY_ACCESS", "OFFICIAL_INSTANCE"]
         },
         {
-          id: 39,
-          click() {
-            state.dialogs.migrateWizard = true;
-          },
-          externalPath: "",
-          path: "",
-          name: i18n.t("core.sidebar.colubrinaMigrate"),
-          icon: "mdi-chart-gantt",
-          new: false,
-          scope: "user.view",
-          experimentsRequired: ["PROJECT_MERGE", "OFFICIAL_INSTANCE"]
-        },
-        {
           id: 37,
           externalPath: "",
           path: "/admin",
@@ -278,7 +266,7 @@ export const useAppStore = defineStore("app", {
           icon: "mdi-android",
           new: false,
           warning: "BETA",
-          scope: "*"
+          scope: ""
         }
       ] as SidebarItem[];
 
@@ -297,7 +285,7 @@ export const useAppStore = defineStore("app", {
           path: "",
           name: i18n.t("core.sidebar.inviteAFriend"),
           icon: "mdi-gift-outline",
-          scope: "*"
+          scope: ""
         });
       }
 
@@ -641,6 +629,7 @@ export const useAppStore = defineStore("app", {
       }
       useWorkspacesStore().items = workspaces;
       useFriendsStore().friends = friends;
+      useMailStore().init();
       this.experimentsInherit = experimentsStore.experiments;
       this.domain = "https://" + this.site.domain + "/i/";
       this.loading = false;

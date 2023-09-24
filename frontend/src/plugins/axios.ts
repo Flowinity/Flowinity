@@ -66,15 +66,17 @@ ax.interceptors.response.use(
         console.warn(`[TPU/HTTP] Maintenance being conducted.`);
         return Promise.reject(e);
       }
-      /* if (!e.response.config.headers.noToast) {
+      if (!e.response.config.headers.noToast) {
         for (const error of e.response.data.errors) {
           toast.error(error.message);
         }
-      }*/
+      }
+      return Promise.reject(e);
     } else {
-      /*if (!e?.response?.config?.headers?.noToast) {
+      if (!e?.response?.config?.headers?.noToast) {
         toast.error("An unknown error occurred.");
-      }*/
+      }
+      return Promise.reject(e);
     }
   }
 );

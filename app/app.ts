@@ -97,6 +97,7 @@ import { UploadResolver } from "@app/controllers/graphql/upload.resolver"
 import { AdminResolver } from "@app/controllers/graphql/admin.resolver"
 import { BlockedUserResolver } from "@app/controllers/graphql/blockedUser.resolver"
 import { ChatInviteResolver } from "@app/controllers/graphql/chatInvite.resolver"
+import { MailResolver } from "@app/controllers/graphql/mail.resolver"
 
 @Service()
 @Middleware({ type: "after" })
@@ -351,7 +352,8 @@ export class Application {
         UploadResolver,
         AdminResolver,
         BlockedUserResolver,
-        ChatInviteResolver
+        ChatInviteResolver,
+        MailResolver
       ],
       container: Container,
       authChecker: authChecker,

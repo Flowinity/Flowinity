@@ -6,6 +6,69 @@
   >
     <v-card>
       <v-list>
+        <v-list-item
+          v-if="$chat.hasPermission('MANAGE_RANKS', $chat.selectedChat)"
+          @click="() => {}"
+        >
+          <v-menu
+            :close-delay="100"
+            :close-on-click="false"
+            :close-on-content-click="false"
+            :nudge-right="10"
+            :open-delay="0"
+            activator="parent"
+            bottom
+            class="ml-2"
+            location="left"
+            offset-x
+            open-on-hover
+          >
+            <v-list max-height="400" min-width="200" max-width="500">
+              <v-text-field
+                v-model="searchRanks"
+                :autofocus="true"
+                class="mx-5 my-n1"
+                label="Search"
+              ></v-text-field>
+              <v-list-item
+                v-for="rank in ranksFiltered"
+                :active="contextMenu.item.ranksMap.includes(rank.id)"
+                :value="rank.id"
+                :key="rank.id"
+                :disabled="
+                  rank.managed ||
+                  !$chat.canEditRank(rank.index, $chat.selectedChat)
+                "
+                @click="
+                  $chat.toggleUserRank(
+                    contextMenu.item.id,
+                    $chat.selectedChat.association.id,
+                    rank.id
+                  )
+                "
+              >
+                <template v-slot:prepend>
+                  <v-avatar
+                    class="v-avatar--variant-outlined pointer"
+                    :color="rank.color"
+                    size="22"
+                  ></v-avatar>
+                </template>
+                <template v-slot:append>
+                  <v-list-item-action start>
+                    <v-checkbox-btn
+                      :model-value="contextMenu.item.ranksMap.includes(rank.id)"
+                      color="primary"
+                    ></v-checkbox-btn>
+                  </v-list-item-action>
+                </template>
+                <v-list-item-title>{{ rank.name }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+          <v-icon class="mr-1">mdi-arrow-left</v-icon>
+          Roles
+        </v-list-item>
         <UserSidebarOptions
           :user="$user.users[contextMenu.item.userId]"
           v-if="$user.users[contextMenu.item.userId]"
@@ -168,21 +231,27 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Chat } from "@/models/chat";
-import { ChatAssociation } from "@/models/chatAssociation";
 import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import SidebarItem from "@/components/Communications/SidebarItem.vue";
-import { FriendStatus, UserStatus } from "@/gql/graphql";
+import {
+  ChatAssociation,
+  FriendStatus,
+  UserStatus,
+  Chat,
+  ChatRank
+} from "@/gql/graphql";
 import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
+import AddRole from "@/components/Communications/Menus/AddRole.vue";
 
 export default defineComponent({
   name: "ColubrinaMemberSidebarList",
   components: {
+    AddRole,
     UserSidebarOptions,
     Overline,
     MessagePerf,
@@ -201,10 +270,18 @@ export default defineComponent({
         x: 0,
         y: 0,
         item: null as ChatAssociation | null
-      }
+      },
+      searchRanks: ""
     };
   },
   computed: {
+    ranksFiltered() {
+      return (
+        this.$chat.selectedChat?.ranks.filter((rank: ChatRank) =>
+          rank.name.toLowerCase().includes(this.searchRanks.toLowerCase())
+        ) || []
+      );
+    },
     FriendStatus() {
       return FriendStatus;
     },

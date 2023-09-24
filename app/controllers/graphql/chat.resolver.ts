@@ -27,7 +27,10 @@ import { ChatInput, ChatsInput } from "@app/classes/graphql/chat/chat"
 import { GraphQLError } from "graphql/error"
 import { ChatRank } from "@app/models/chatRank.model"
 import { ChatPermission } from "@app/models/chatPermission.model"
-import { DangerZoneChatInput } from "@app/classes/graphql/chat/deleteChat"
+import {
+  DangerZoneChatInput,
+  TransferOwnershipInput
+} from "@app/classes/graphql/chat/deleteChat"
 import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
 import { AuthService } from "@app/services/auth.service"
 import { Message } from "@app/models/message.model"
@@ -36,8 +39,6 @@ import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
 import { Success } from "@app/classes/graphql/generic/success"
 import { ChatInvite } from "@app/models/chatInvite.model"
-import { JoinChatFromInviteInput } from "@app/classes/graphql/chat/invites/joinInvite"
-import { GqlError } from "@app/lib/gqlErrors"
 
 @Resolver(Chat)
 @Service()
@@ -304,12 +305,15 @@ export class ChatResolver {
   @FieldResolver(() => [ChatInvite])
   async invites(@Root() chat: Chat, @Ctx() ctx: Context) {
     try {
-      await this.chatService.checkPermissions(
+      const permissions = await this.chatService.checkPermissions(
         ctx.user!!.id,
         chat?.association?.id,
         ChatPermissions.OVERVIEW
       )
-      return await chat.$get("invites", {
+      const highestRank = await this.chatService.getHighestIndex(
+        chat?.association?.id
+      )
+      const invites = await chat.$get("invites", {
         where: {
           invalidated: false,
           expiredAt: {
@@ -322,8 +326,24 @@ export class ChatResolver {
               }
             ]
           }
-        }
+        },
+        include: [
+          {
+            model: ChatRank,
+            as: "rank"
+          }
+        ]
       })
+      if (!permissions.includes(ChatPermissions.OWNER)) {
+        for (const invite of invites) {
+          if (!invite.rank) continue
+          if (invite.rank.index >= highestRank) {
+            const index = invites.indexOf(invite)
+            invites.splice(index, 1)
+          }
+        }
+      }
+      return invites
     } catch {
       return []
     }
@@ -332,5 +352,76 @@ export class ChatResolver {
   @FieldResolver(() => [Message])
   async messages() {
     return []
+  }
+
+  @RateLimit({
+    window: 10,
+    max: 10
+  })
+  @Authorization({
+    scopes: ["*"]
+  })
+  @Mutation(() => Chat)
+  async transferGroupOwnership(
+    @Ctx() ctx: Context,
+    @Arg("input") input: TransferOwnershipInput
+  ) {
+    if (!input.totp && !input.password) {
+      throw new GraphQLError(
+        "You must either enter your password or 2FA token to continue."
+      )
+    }
+    await this.chatService.checkPermissions(
+      ctx.user!!.id,
+      input.associationId,
+      ChatPermissions.OWNER
+    )
+    const chat = await this.chatService.getChatFromAssociation(
+      input.associationId,
+      ctx.user!!.id
+    )
+    await this.authService.validateAuthMethod({
+      userId: ctx.user!!.id,
+      credentials: {
+        password: input.password,
+        totp: input.totp
+      },
+      totp: !!input.totp,
+      password: !!input.password,
+      alternatePassword: false
+    })
+    const remoteAssociation = await ChatAssociation.findOne({
+      where: {
+        chatId: chat.id,
+        userId: input.userId
+      }
+    })
+    if (!remoteAssociation) throw new GraphQLError("User is not in group.")
+    await chat.update({
+      userId: input.userId
+    })
+    await this.chatService.getPermissions(
+      ctx.user!!.id,
+      input.associationId,
+      true
+    )
+    await this.chatService.getPermissions(
+      input.userId,
+      remoteAssociation.id,
+      true
+    )
+    this.chatService.emitForAll(
+      remoteAssociation.id,
+      remoteAssociation.userId,
+      "chatUpdate",
+      {
+        id: chat.id,
+        userId: remoteAssociation.userId
+      }
+    )
+    return {
+      ...chat,
+      userId: remoteAssociation.userId
+    }
   }
 }

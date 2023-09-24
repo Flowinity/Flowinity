@@ -139,21 +139,43 @@ export class ChatAssociationResolver {
       ctx.user!!.id
     )
     if (!chat) throw new GraphQLError("Chat not found.")
-    await this.chatService.checkPermissions(
+    const permissions = await this.chatService.checkPermissions(
       ctx.user!!.id,
       input.chatAssociationId,
       ChatPermissions.MANAGE_RANKS
     )
 
-    const rank = await ChatRankAssociation.findOne({
+    const highestIndex = await this.chatService.getHighestIndex(
+      input.chatAssociationId
+    )
+
+    const rank = await ChatRank.findOne({
+      where: { id: input.rankId, chatId: chat.id }
+    })
+
+    if (!rank) throw new GqlError("RANK_NOT_FOUND")
+
+    if (
+      (rank.index >= highestIndex &&
+        !permissions.includes(ChatPermissions.TRUSTED) &&
+        !permissions.includes(ChatPermissions.OWNER)) ||
+      (!permissions.includes(ChatPermissions.OWNER) &&
+        permissions.includes(ChatPermissions.TRUSTED) &&
+        rank.index > highestIndex) ||
+      rank.managed
+    ) {
+      throw new GqlError("RANK_TOO_HIGH")
+    }
+
+    const rankAssoc = await ChatRankAssociation.findOne({
       where: {
         chatAssociationId: input.updatingChatAssociationId,
         rankId: input.rankId
       }
     })
 
-    if (rank) {
-      await rank.destroy()
+    if (rankAssoc) {
+      await rankAssoc.destroy()
       this.chatService.emitForAll(
         input.chatAssociationId,
         ctx.user!!.id,
