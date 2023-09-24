@@ -14,6 +14,7 @@
       style="z-index: 10; cursor: pointer; font-size: 32px"
       title="TroploPrivateUploader"
       @click="$router.push('/')"
+      v-if="!$vuetify.display.mobile"
     >
       {{ $app.site.name }}
     </h1>
