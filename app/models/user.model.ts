@@ -384,6 +384,12 @@ export class User extends Model {
   @Column
   nameColor: string
 
+  @Field({
+    description: "Whether the user is a bot user."
+  })
+  @Column
+  bot: boolean
+
   @Field(() => Plan, {
     nullable: true
   })
@@ -423,9 +429,6 @@ export class User extends Model {
     nullable: true,
     description:
       "The user's scopes assigned to the API key used. In format like `user.view,user.modify` which belong to `Scope`."
-  })
-  @Field({
-    nullable: true
   })
   scopes: string
 

@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql"
+import { Field, InputType, ObjectType } from "type-graphql"
 
 @ObjectType()
 export class ListResponse {
@@ -20,4 +20,16 @@ export class ListResponse {
     nullable: true
   })
   subscribed: boolean
+}
+
+@InputType()
+export class GetMailInput {
+  @Field()
+  userId: number
+  @Field()
+  mailbox: string
+  @Field({
+    nullable: true
+  })
+  page: number
 }

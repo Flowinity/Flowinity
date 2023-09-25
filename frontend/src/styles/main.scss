@@ -192,12 +192,12 @@ a {
   font-size: 3.5em;
 }
 
-.message:hover {
-  backdrop-filter: brightness(1.5);
-}
-
 .v-theme--amoled .hover-message-actions:hover .message {
   background: #101010;
+}
+
+.hover-message-actions:hover .message {
+  backdrop-filter: brightness(1.5);
 }
 
 .message-actions {

@@ -91,7 +91,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
         mutation: SaveNoteMutation,
         variables: {
           input: {
-            id: parseInt(this.$route.params.id),
+            id: parseInt(this.$app.$route.params.id),
             data,
             manualSave
           } as SaveNoteInput

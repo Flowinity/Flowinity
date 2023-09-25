@@ -51,6 +51,9 @@ const Errors = {
   },
   NOT_ADMIN: {
     message: "You need to be an administrator to do this."
+  },
+  INVALID_EMOJI: {
+    message: "Invalid emoji."
   }
 }
 

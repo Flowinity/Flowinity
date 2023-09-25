@@ -69,6 +69,8 @@ export type Scope =
   | "oauth.user"
   | "oauth.authorize"
   | "none"
+  | "dev.view"
+  | "dev.modify"
 
 async function getSession(token: string) {
   return await Session.findOne({

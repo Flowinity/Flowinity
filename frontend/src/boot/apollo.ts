@@ -86,7 +86,21 @@ export default function setup(app: App) {
     return forward(operation);
   });
 
-  const appLink = from([authLink, errorLink, httpLink, wsLink]);
+  const cleanTypeName = new ApolloLink((operation, forward) => {
+    if (operation.variables) {
+      const omitTypename = (key, value) =>
+        key === "__typename" ? undefined : value;
+      operation.variables = JSON.parse(
+        JSON.stringify(operation.variables),
+        omitTypename
+      );
+    }
+    return forward(operation).map((data) => {
+      return data;
+    });
+  });
+
+  const appLink = from([cleanTypeName, authLink, errorLink, httpLink, wsLink]);
 
   // Create the apollo client
   const apolloClient = new ApolloClient({

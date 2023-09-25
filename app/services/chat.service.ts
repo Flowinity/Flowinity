@@ -22,6 +22,9 @@ import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { GraphQLError } from "graphql/error"
 import { BlockedUser } from "@app/models/blockedUser.model"
 import { GqlError } from "@app/lib/gqlErrors"
+import { ChatEmoji } from "@app/models/chatEmoji.model"
+import { ChatEmojiResolver } from "@app/controllers/graphql/chatEmoji.resolver"
+import { Context } from "@app/types/graphql/context"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -1224,6 +1227,25 @@ export class ChatService {
     return message
   }
 
+  async userEmoji(
+    userId: number,
+    reset: boolean = false
+  ): Promise<ChatEmoji[]> {
+    const cache = await redis.json.get(`emoji:${userId}`)
+    if (cache && !reset) return cache
+    const chats = await this.getUserChats(userId, {
+      nameColor: false,
+      uptime: false
+    })
+    const emoji = await ChatEmoji.findAll({
+      where: {
+        chatId: chats.map((chat) => chat.id)
+      }
+    })
+    await redis.json.set(`emoji:${userId}`, "$", emoji)
+    return emoji
+  }
+
   async sendMessage(
     content: string,
     userId: number,
@@ -1264,6 +1286,15 @@ export class ChatService {
         throw Errors.NO_MESSAGE_CONTENT
     }
     if (content.length >= 4000) throw Errors.MESSAGE_TOO_LONG
+    const emoji = await this.userEmoji(userId)
+    for (const match of content.match(/:[\w-]+:\w+:/g) || []) {
+      try {
+        const find = emoji.find((e) => e.id === match.split(":")[2])
+        if (!find) throw new GqlError("INVALID_EMOJI")
+      } catch {
+        throw new GqlError("INVALID_EMOJI")
+      }
+    }
     if (chat.type === "direct") {
       const userService = Container.get(UserUtilsService)
       const block = await userService.blocked(

@@ -55,9 +55,12 @@ export class MailService {
     })
     console.log(message)
     if (message.seq < 50) {
-      for await (let msg of client.fetch(`*`, {
-        envelope: true
-      })) {
+      for await (let msg of client.fetch(
+        {},
+        {
+          envelope: true
+        }
+      )) {
         messages.push(msg)
       }
     } else {

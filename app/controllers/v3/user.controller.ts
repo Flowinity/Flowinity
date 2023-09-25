@@ -255,10 +255,7 @@ export class UserControllerV3 {
 
   @OnUndefined(204)
   @Patch("/verification")
-  async verifyUser(
-    @Auth("user.modify") user: User,
-    @Body() body: { token: string }
-  ) {
+  async verifyUser(@Body() body: { token: string }) {
     await this.userUtilsService.verifyEmail(body.token)
   }
 

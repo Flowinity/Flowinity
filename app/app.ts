@@ -98,6 +98,11 @@ import { AdminResolver } from "@app/controllers/graphql/admin.resolver"
 import { BlockedUserResolver } from "@app/controllers/graphql/blockedUser.resolver"
 import { ChatInviteResolver } from "@app/controllers/graphql/chatInvite.resolver"
 import { MailResolver } from "@app/controllers/graphql/mail.resolver"
+import {
+  OAuthAppResolver,
+  OAuthUserResolver
+} from "@app/controllers/graphql/oAuthApp.resolver"
+import { ChatEmojiResolver } from "@app/controllers/graphql/chatEmoji.resolver"
 
 @Service()
 @Middleware({ type: "after" })
@@ -353,7 +358,10 @@ export class Application {
         AdminResolver,
         BlockedUserResolver,
         ChatInviteResolver,
-        MailResolver
+        MailResolver,
+        OAuthAppResolver,
+        OAuthUserResolver,
+        ChatEmojiResolver
       ],
       container: Container,
       authChecker: authChecker,

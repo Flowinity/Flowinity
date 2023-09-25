@@ -1,5 +1,11 @@
 <template>
+  <Mentionable
+    id="#gallery-search"
+    :keys="['user:']"
+    :model-value="modelValue"
+  />
   <v-text-field
+    id="gallery-search"
     :model-value="modelValue"
     @update:model-value="
       $emit('update:modelValue', $event);
@@ -23,7 +29,7 @@
     @change="val = $event.target.value"
     :autofocus="autofocus"
   ></v-text-field>
-  <v-scroll-y-transition>
+  <v-scroll-y-transition v-if="false">
     <v-card
       v-show="focused"
       style="position: absolute; z-index: 2"
@@ -57,9 +63,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { GallerySearchMode } from "@/gql/graphql";
+import Mentionable from "@/components/Core/Mentionable.vue";
 
 export default defineComponent({
   name: "GalleryTextField",
+  components: { Mentionable },
   props: {
     modelValue: {
       type: String,

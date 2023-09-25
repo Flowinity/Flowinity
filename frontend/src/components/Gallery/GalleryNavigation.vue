@@ -67,7 +67,7 @@
                 filter.find((f) => f === item.internalName)
                   ? filter.splice(filter.indexOf(item.internalName), 1)
                   : filter.push(item.internalName);
-                $emit('update:sort', sort);
+                $emit('update:filter', filter);
                 $emit('refreshGallery');
               "
               :active="filter.includes(item.internalName)"
@@ -102,6 +102,11 @@ import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "GalleryNavigation",
+  computed: {
+    GalleryFilter() {
+      return GalleryFilter;
+    }
+  },
   components: { Overline, GalleryTextField },
   emits: [
     "update:filter",

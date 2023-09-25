@@ -92,9 +92,9 @@
         </v-tooltip>
       </span>
       <span class="mr-3">
-        {{ $app.weatherTemp }}°{{
-          $user.user?.weatherUnit.charAt(0).toUpperCase()
-        }}
+        {{ $app.weatherTemp
+        }}{{ $user.user?.weatherUnit.charAt(0).toUpperCase() === "K" ? "" : "°"
+        }}{{ $user.user?.weatherUnit.charAt(0).toUpperCase() }}
       </span>
     </template>
     <!-- Workspaces custom actions -->
@@ -160,12 +160,12 @@
                 color: item.id === 15 ? 'rgb(var(--v-theme-error))' : undefined
               }"
             >
-              <template v-slot:prepend>
-                <v-icon>
+              <v-list-item-title>
+                <v-icon class="mr-1">
                   {{ item.icon }}
                 </v-icon>
-              </template>
-              <v-list-item-title>{{ item.name }}</v-list-item-title>
+                {{ item.name }}
+              </v-list-item-title>
             </v-list-item>
           </v-list>
           <v-divider></v-divider>

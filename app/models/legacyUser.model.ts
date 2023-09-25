@@ -76,4 +76,13 @@ export class LegacyUser extends Model {
   @Field()
   @Column
   moderator: boolean
+
+  @Field()
+  @Column({
+    type: DataType.VIRTUAL,
+    get() {
+      return false
+    }
+  })
+  bot: boolean
 }

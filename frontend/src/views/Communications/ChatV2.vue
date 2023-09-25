@@ -532,6 +532,19 @@ export default defineComponent({
       if (!this.message && !this.files.length) return;
       if (!this.finished) return;
       let message = this.message.trim();
+
+      // this system appends the IDs of the emojis to the message for backend parsing.
+      // messages without :emoji-name:uuid: will not be turned into emojis.
+      const emojiRegex = /:[\w-]+:/g;
+      message = message.replace(emojiRegex, (match) => {
+        try {
+          const name = match.split(":")[1].split(":")[0];
+          const emoji = this.$chat.emoji.find((emoji) => emoji.name === name);
+          return `:${name}:${emoji.id}:`;
+        } catch {
+          return match;
+        }
+      });
       if (!this.message && this.files.length) message = " ";
       const replyId = this.replyId;
       const attachments = this.files.map((file) => file.tpuLink);
@@ -555,7 +568,8 @@ export default defineComponent({
         reply: this.replying,
         readReceipts: [],
         pinned: false,
-        userId: this.$user.user?.id
+        userId: this.$user.user?.id,
+        emoji: this.$chat.emoji
       });
       this.replyId = undefined;
       this.files = [];

@@ -144,6 +144,11 @@ const routes = [
             path: "integrations/link/:provider",
             name: "Link Integration",
             component: () => import("@/views/Settings/IntegrationsLink.vue")
+          },
+          {
+            path: "developer",
+            name: "Developer Portal",
+            component: () => import("@/views/Settings/Developer.vue")
           }
         ]
       },

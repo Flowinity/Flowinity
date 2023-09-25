@@ -192,7 +192,7 @@
           :autofocus="true"
         ></GalleryTextField>
         <div class="float-right">
-          <v-btn-toggle v-model="sort">
+          <v-btn-toggle v-model="sort" density="compact">
             <v-btn>Newest</v-btn>
             <v-btn>Oldest</v-btn>
           </v-btn-toggle>
@@ -240,7 +240,8 @@ import {
   FriendStatus,
   UserStatus,
   Chat,
-  ChatRank
+  ChatRank,
+  UserStoredStatus
 } from "@/gql/graphql";
 import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
@@ -305,6 +306,8 @@ export default defineComponent({
                   (user.userId === this.$user.user?.id ||
                     (this.$user.users[user.userId]?.status !==
                       UserStatus.Offline &&
+                      this.$user.users[user.id]?.status !==
+                        UserStoredStatus.Invisible &&
                       this.$user.users[user.userId]?.status))
                 );
               })

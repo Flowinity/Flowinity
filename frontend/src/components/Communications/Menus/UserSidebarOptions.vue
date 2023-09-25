@@ -29,16 +29,13 @@
         : 'rgb(var(--v-theme-error))'
     }"
     @click="
-      $user.dialogs.block.userId = user.userId;
+      $user.dialogs.block.userId = user.id;
       $user.dialogs.block.username = $user.users[user.id]?.username;
       $user.dialogs.block.value = true;
     "
-    v-if="user?.userId !== $user.user?.id"
   >
     <template
-      v-if="
-        $user.blocked.find((blocked) => blocked.blockedUserId === user.userId)
-      "
+      v-if="$user.blocked.find((blocked) => blocked.blockedUserId === user.id)"
     >
       <v-icon class="mr-1">mdi-account-check</v-icon>
       {{ $t("dialogs.unblock.action") }}

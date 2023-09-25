@@ -13,7 +13,8 @@ import { Context } from "@app/types/graphql/context"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { GraphQLError } from "graphql/error"
 import { MailService } from "@app/services/mail.service"
-import { ListResponse } from "@app/classes/graphql/mail/mailbox"
+import { GetMailInput, ListResponse } from "@app/classes/graphql/mail/mailbox"
+import { GraphQLJSON } from "graphql-scalars"
 
 @Resolver()
 @Service()
@@ -33,4 +34,16 @@ export class MailResolver {
   })
   @Query(() => Number)
   async unreadMail(@Ctx() ctx: Context) {}
+
+  @Authorization({
+    scopes: "mail.view"
+  })
+  @Query(() => GraphQLJSON)
+  async getMail(@Ctx() ctx: Context, @Arg("input") input: GetMailInput) {
+    return await this.mailService.getMessages(
+      ctx.user!!.id,
+      input.mailbox,
+      input.page
+    )
+  }
 }

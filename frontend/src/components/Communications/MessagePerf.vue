@@ -180,7 +180,7 @@
                   'text-red': message.error
                 }"
                 class="overflow-content message-content d-inline-block"
-                v-html="$functions.markdown(message.content)"
+                v-html="$functions.markdown(message.content, message)"
               ></span>
               <span
                 v-if="message.edited"
@@ -224,7 +224,7 @@
       </div>
       <div
         class="flex-shrink-1 align-self-end mb-1"
-        style="width: 120px"
+        style="width: 100px"
         v-if="!$vuetify.display.mobile && !search"
       >
         <div
@@ -266,6 +266,7 @@
                   :message="message"
                   v-for="readReceipt in message.readReceipts"
                   :read-receipt="readReceipt"
+                  class="my-1"
                   :expanded="true"
                 />
               </v-tooltip>

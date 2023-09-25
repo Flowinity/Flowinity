@@ -10,6 +10,12 @@ export const StandardMessageFragment = gql`
     userId
     content
     type
+    emoji {
+      name
+      icon
+      id
+      chatId
+    }
     embeds {
       type
       data

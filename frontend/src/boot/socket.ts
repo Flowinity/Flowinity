@@ -10,6 +10,7 @@ import {
   BlockedUser,
   Chat,
   ChatAssociation,
+  ChatEmoji,
   ChatRank,
   Friend,
   FriendNickname,
@@ -406,4 +407,7 @@ export default async function setup(app) {
       }
     }
   );
+  sockets.chat.on("emojiCreated", (data: ChatEmoji) => {
+    chat.emoji.push(data);
+  });
 }

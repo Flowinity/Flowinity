@@ -3,7 +3,7 @@ import mdEmail from "./rulesEmail";
 import { useAppStore } from "@/store/app.store";
 import { Chat } from "@/models/chat";
 import { User } from "@/models/user";
-import { UserStatus, UserStoredStatus } from "@/gql/graphql";
+import { Message, UserStatus, UserStoredStatus } from "@/gql/graphql";
 
 export default {
   fileSize(size: number): string {
@@ -68,9 +68,22 @@ export default {
       return undefined;
     }
   },
-  richMessage(content: string) {
+  richMessage(content: string, message: Message) {
     const regex = /\\?&lt;(@\d+)&gt;/g;
     const mentions = content.match(regex);
+    const regexEmoji = content.match(
+      /:(.*?)-(.*?)-(.*?):(.*?)-(.*?)-(.*?):|:.*?:.*?:/g
+    );
+    if (regexEmoji) {
+      for (const emoji of regexEmoji) {
+        const find = message.emoji?.find((e) => e.id === emoji.split(":")[2]);
+        if (!find) continue;
+        content = content.replace(
+          emoji,
+          `<span><img class="emoji emoji-large" src="/i/${find.icon}"></span>`
+        );
+      }
+    }
     if (mentions) {
       for (const mention of mentions) {
         const userId = mention.match(/&lt;@(\d+)&gt;/)![1];
@@ -128,8 +141,8 @@ export default {
     }
     return content;
   },
-  markdown(text: string): any {
-    return this.richMessage(md.render(text));
+  markdown(text: string, message: Message): any {
+    return this.richMessage(md.render(text), message);
   },
   markdownEmail(text: string): any {
     return mdEmail.render(text);

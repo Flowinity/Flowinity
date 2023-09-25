@@ -79,6 +79,13 @@
           {{ $t("chats.settings.tabs.invites") }}
         </v-tab>
         <v-tab
+          value="emoji"
+          v-if="$chat.hasPermission('CREATE_EMOJI', $chat.editingChat)"
+        >
+          <v-icon class="mr-2">mdi-emoticon</v-icon>
+          {{ $t("chats.settings.tabs.emoji") }}
+        </v-tab>
+        <v-tab
           value="bots"
           v-if="$chat.hasPermission('MANAGE_INTEGRATIONS', $chat.editingChat)"
         >
@@ -120,6 +127,9 @@
         <v-window-item value="invites">
           <ChatSettingsInvites />
         </v-window-item>
+        <v-window-item value="emoji">
+          <ChatSettingsEmoji />
+        </v-window-item>
       </v-window>
     </div>
   </CoreDialog>
@@ -138,10 +148,12 @@ import ChatSettingsUsers from "@/components/Communications/Dialogs/Settings/User
 import { AddChatUserMutation } from "@/graphql/chats/addUser.graphql";
 import { ToggleUser } from "@/gql/graphql";
 import ChatSettingsInvites from "@/components/Communications/Dialogs/Settings/Invites.vue";
+import ChatSettingsEmoji from "@/components/Communications/Dialogs/Settings/Emoji.vue";
 
 export default defineComponent({
   name: "ColubrinaGroupSettingsDialog",
   components: {
+    ChatSettingsEmoji,
     ChatSettingsInvites,
     ChatSettingsUsers,
     ChatSettingsRanks,

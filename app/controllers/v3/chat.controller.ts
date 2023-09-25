@@ -19,10 +19,12 @@ import Errors from "@app/lib/errors"
 import { ChatService } from "@app/services/chat.service"
 import { GalleryService } from "@app/services/gallery.service"
 import rateLimits from "@app/lib/rateLimits"
-import uploader from "@app/lib/upload"
+import uploader, { uploaderSmall } from "@app/lib/upload"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { generateClientSatisfies } from "@app/lib/clientSatisfies"
 import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
+import { ChatEmoji } from "@app/models/chatEmoji.model"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 @Service()
 @JsonController("/chats")
@@ -54,35 +56,72 @@ export class ChatControllerV3 {
     return await this.chatService.createChat(body.users, user.id)
   }
 
+  slugify(str: string) {
+    return String(str)
+      .normalize("NFKD") // split accented characters into their base characters and diacritical marks
+      .replace(/[\u0300-\u036f]/g, "") // remove all the accents, which happen to be all in the \u03xx UNICODE block.
+      .trim() // trim leading or trailing whitespace
+      .toLowerCase() // convert to lowercase
+      .replace(/[^a-z0-9 -]/g, "") // remove non-alphanumeric characters
+      .replace(/\s+/g, "-") // replace spaces with hyphens
+      .replace(/-+/g, "-") // remove consecutive hyphens
+  }
+
   @Post("/:chatId/icon")
   @UseBefore(rateLimits.uploadLimiterUser)
   async setChatIcon(
     @Auth("chats.edit") user: User,
     @UploadedFile("icon", {
-      options: uploader
+      options: uploaderSmall
     })
     icon: Express.Multer.File,
     @Param("chatId") chatId: number,
-    @QueryParam("type") type: "icon" | "background" = "icon"
+    @QueryParam("type") type: "icon" | "background" | "emoji" = "icon"
   ) {
-    await this.chatService.getChatFromAssociation(chatId, user.id, false)
+    if (type !== "icon" && type !== "background" && type !== "emoji") {
+      throw Errors.INVALID_PARAMETERS
+    }
+    const chat = await this.chatService.getChatFromAssociation(
+      chatId,
+      user.id,
+      false
+    )
     const upload = await this.galleryService.createUpload(
       user.id,
       icon,
       false,
       false
     )
-    if (type !== "icon" && type !== "background") {
+
+    if (type === "icon" || type === "background") {
+      await this.chatService.updateGroupSettings(chatId, user.id, {
+        [type]: upload.upload.attachment
+      })
+      return {
+        [type]: upload.upload.attachment
+      }
+    } else if (type === "emoji") {
+      const count = await ChatEmoji.count({
+        where: {
+          chatId: chat.id
+        }
+      })
+      if (count >= 30) throw Errors.MAX_EMOJI
+      const emoji = await ChatEmoji.create({
+        chatId: chat.id,
+        icon: upload.upload.attachment,
+        userId: user.id,
+        name: this.slugify(upload.upload.originalFilename.split(".")[0])
+      })
+      for (const user of chat.users) {
+        redis.json.del(`emoji:${user.userId}`)
+      }
+      this.chatService.emitForAll(chatId, user.id, "emojiCreated", emoji)
+      return emoji
+    } else {
       throw Errors.INVALID_PARAMETERS
     }
-    await this.chatService.updateGroupSettings(chatId, user.id, {
-      [type]: upload.upload.attachment
-    })
-    return {
-      [type]: upload.upload.attachment
-    }
   }
-
   @Delete("/:chatId/icon")
   async deleteChatIcon(
     @Auth("chats.edit") user: User,

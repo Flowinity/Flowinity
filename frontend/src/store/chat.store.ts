@@ -16,6 +16,7 @@ import { ChatsQuery } from "@/graphql/chats/chats.graphql";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import {
   Chat,
+  ChatEmoji,
   ChatInvite,
   ChatRank,
   InfiniteMessagesInput,
@@ -121,7 +122,8 @@ export const useChatStore = defineStore("chat", {
         x: 0,
         y: 0
       }
-    }
+    },
+    emoji: [] as ChatEmoji[]
   }),
   actions: {
     async toggleUserRank(
@@ -661,7 +663,7 @@ export const useChatStore = defineStore("chat", {
       });
     },
     renderableReadReceipts() {
-      return 5;
+      return 3;
     },
     currentOffset() {
       if (!this.selectedChat?.messages?.length) return { up: 0, down: 0 };

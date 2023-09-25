@@ -2,6 +2,8 @@ import { Chat } from "@app/models/chat.model"
 import { ChatRank } from "@app/models/chatRank.model"
 import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
 import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
+import { Container } from "typedi"
+import { ChatService } from "@app/services/chat.service"
 
 export class ChatPermissionsHandler {
   public permissions: {
@@ -129,7 +131,7 @@ export class ChatPermissionsHandler {
   async createDefaults(chat: Chat) {
     const member = await ChatRank.create({
       name: "Members",
-      userId: chat.userId,
+      userId: chat.userId || 1,
       chatId: chat.id,
       managed: true,
       index: 0
@@ -138,7 +140,7 @@ export class ChatPermissionsHandler {
     if (chat.type !== "direct") {
       admin = await ChatRank.create({
         name: "Administrators",
-        userId: chat.userId,
+        userId: chat.userId || 1,
         chatId: chat.id,
         color: "#0190EA",
         index: 1
@@ -170,8 +172,9 @@ export class ChatPermissionsHandler {
       ...adminPermissions
     ])
 
+    const chatService = Container.get(ChatService)
+
     if (chat.type !== "direct") {
-      console.log(chat.users.find((assoc) => assoc.userId === chat.userId)?.id)
       await ChatRankAssociation.create({
         rankId: admin!!.id,
         chatAssociationId: chat.users.find(
@@ -185,6 +188,8 @@ export class ChatPermissionsHandler {
         rankId: member.id,
         chatAssociationId: user.id
       })
+      if (!user.userId) continue
+      await chatService.getPermissions(user.userId, user.id, true)
     }
   }
 }

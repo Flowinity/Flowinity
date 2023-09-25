@@ -212,6 +212,17 @@ export default defineComponent({
     },
     endpoint() {
       this.init();
+    },
+    "show.selected"() {
+      if (
+        this.show.selected.includes(GalleryFilter.All) &&
+        this.show.selected.length > 1
+      ) {
+        this.show.selected.splice(
+          this.show.selected.indexOf(GalleryFilter.All),
+          1
+        );
+      }
     }
   }
 });

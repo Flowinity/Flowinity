@@ -358,6 +358,10 @@ let Errors = {
   COLUBRINA_CHAT: {
     message: "This chat needs to be migrated from Colubrina to Communications.",
     status: 400
+  },
+  MAX_EMOJI: {
+    message: "Maximum amount of 30 chat emoji has been reached.",
+    status: 400
   }
 }
 

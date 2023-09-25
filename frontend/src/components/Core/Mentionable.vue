@@ -411,15 +411,38 @@ export default defineComponent({
     // Apply
     function applyMention(itemIndex: number) {
       const item = displayedItems.value[itemIndex];
+      let end = "";
+      let start = "";
+      switch (currentKey.value) {
+        case "@":
+          end = ">";
+          break;
+        case ":":
+          end = ":";
+          break;
+        default:
+          end = "INVALID!";
+          break;
+      }
+      switch (currentKey.value) {
+        case "@":
+          start = "<@";
+          break;
+        case ":":
+          start = ":";
+          break;
+        default:
+          start = "INVALID! Please add into mentionable component.";
+          break;
+      }
       const value =
         (props.omitKey ? "" : currentKey.value) +
         String(
           props.mapInsert
-            ? "<@" + props.mapInsert(item, currentKey.value) + ">"
-            : "<@" + item.value + ">"
+            ? start + props.mapInsert(item, currentKey.value) + end
+            : start + item.value + end
         ) +
         (props.insertSpace ? " " : "");
-      console.log(value);
       if (input.isContentEditable) {
         const range = window.getSelection().getRangeAt(0);
         range.setStart(

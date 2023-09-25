@@ -429,5 +429,14 @@ export const CoreStateQuery = gql`
       blockedUserId
       silent
     }
+    userEmoji {
+      id
+      userId
+      chatId
+      icon
+      name
+      createdAt
+      updatedAt
+    }
   }
 `;

@@ -2,7 +2,7 @@
   <div style="width: 100%">
     <Mentionable
       :items="users"
-      :keys="['@']"
+      :keys="['@', ':']"
       :omit-key="true"
       insert-space
       offset="6"
@@ -10,8 +10,8 @@
       :model-value="modelValue"
       :id="`#${editing ? 'input-editing' : 'input-main-comms'}`"
     >
-      <template v-slot:item="{ item }">
-        <div class="my-2 mx-2">
+      <template v-slot:item="{ item }: any">
+        <div class="my-2 mx-2" v-if="key === '@'">
           <UserAvatar
             :size="35"
             :user="$chat.lookupUser(item.value)"
@@ -19,16 +19,28 @@
           ></UserAvatar>
           {{ $chat.lookupUser(item.value).username }}
         </div>
+        <div class="my-2 mx-2" v-else>
+          <v-avatar v-if="item.emoji" size="24">
+            <v-img :src="$app.domain + item.emoji.icon" />
+          </v-avatar>
+          {{ item.label }}
+          <span v-if="item.emoji" class="text-grey" style="font-size: 12px">
+            From
+            {{
+              $chat.chats.find((chat) => chat.id === item.emoji.chatId)?.name
+            }}
+          </span>
+        </div>
       </template>
     </Mentionable>
     <v-toolbar
       :id="editing ? '' : 'chat-input'"
       ref="toolbar"
-      :color="editing ? 'transparent' : 'dark'"
+      :color="editing ? 'transparent' : 'transparent'"
       height="auto"
-      class="mb-1"
+      class="mb-1 mt-1"
     >
-      <div class="d-flex flex-column" style="width: 100%">
+      <div class="d-flex flex-column rounded-xl" style="width: 100%">
         <v-textarea
           ref="textarea"
           :class="!editing ? 'mb-n4 mt-1' : 'mt-2'"
@@ -179,6 +191,7 @@ import Mentionable from "@/components/Core/Mentionable.vue";
 import EmojiPicker from "@/components/Communications/Menus/Emoji.vue";
 import emoji from "@/components/Communications/Menus/Emoji.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import emojiData from "markdown-it-emoji/lib/data/full.json";
 
 export default defineComponent({
   name: "CommunicationsInput",
@@ -204,7 +217,8 @@ export default defineComponent({
       tab: null as string | null,
       menu: false,
       items: [] as any,
-      emojiPicker: false
+      emojiPicker: false,
+      key: "@"
     };
   },
   computed: {
@@ -212,15 +226,36 @@ export default defineComponent({
       return emoji;
     },
     users() {
-      if (!this.$chat.selectedChat?.users) return [];
-      return this.$chat.selectedChat?.users
-        .filter((user) => !user.legacyUserId)
-        .map((user: any) => {
-          return {
-            label: this.$user.users[user.userId]?.username,
-            value: this.$user.users[user.userId]?.id
-          };
-        });
+      switch (this.key) {
+        case "@":
+          if (!this.$chat.selectedChat?.users) return [];
+          return this.$chat.selectedChat?.users
+            .filter((user) => !user.legacyUserId)
+            .map((user: any) => {
+              return {
+                label: this.$user.users[user.userId]?.username,
+                value: this.$user.users[user.userId]?.id
+              };
+            });
+        case ":":
+          return [
+            ...this.$chat.emoji.map((emoji) => {
+              return {
+                value: emoji.name,
+                label: emoji.name,
+                emoji: emoji
+              };
+            }),
+            ...Object.entries(emojiData).map((key) => {
+              return {
+                value: key[0],
+                label: key[1] + " " + key[0]
+              };
+            })
+          ];
+        default:
+          return [];
+      }
     },
     isMobile() {
       return (
@@ -239,7 +274,7 @@ export default defineComponent({
       this.$refs?.uploadInput?.click();
     },
     onOpen(key: string) {
-      this.items = key === "@" ? this.$chat.selectedChat?.users : [];
+      this.key = key;
     },
     cursor(e, up: boolean) {
       e.preventDefault();

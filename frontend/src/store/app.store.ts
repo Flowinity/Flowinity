@@ -593,7 +593,8 @@ export const useAppStore = defineStore("app", {
           workspaces,
           friends,
           trackedUsers,
-          blockedUsers
+          blockedUsers,
+          userEmoji
         }
       } = await this.$apollo.query({
         query: CoreStateQuery,
@@ -609,6 +610,7 @@ export const useAppStore = defineStore("app", {
         useCollectionsStore().pager = collections.pager;
       }
       const chatStore = useChatStore();
+      chatStore.emoji = userEmoji;
       chatStore.chats = chats
         .map((chat) => {
           return {

@@ -28,6 +28,8 @@ export class PartialUserBase {
     nullable: true
   })
   avatar?: string
+  @Field()
+  bot: boolean
 }
 
 export const partialUserBase = [
@@ -36,11 +38,14 @@ export const partialUserBase = [
   "createdAt",
   "administrator",
   "moderator",
-  "avatar"
+  "avatar",
+  "bot"
 ]
 
 @ObjectType()
 export class PartialUserPublic {
+  @Field()
+  bot: boolean
   @Field()
   username: string
   @Field()
@@ -121,7 +126,8 @@ export const partialUserPublic = [
   "publicProfile",
   "quota",
   "themeEngine",
-  "xp"
+  "xp",
+  "bot"
 ]
 
 @ObjectType()
@@ -140,6 +146,8 @@ export class PartialUserFriend extends PartialUserBase {
     nullable: true
   })
   blocked?: boolean
+  @Field()
+  bot: boolean
 }
 
 export const partialUserFriend = [...partialUserBase, "status", "nameColor"]
