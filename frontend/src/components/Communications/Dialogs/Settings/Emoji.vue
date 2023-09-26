@@ -6,11 +6,11 @@
     :supports-removal="false"
   />
   <overline position="center">
-    {{ $t("chats.settings.emoji.name") }}
+    {{ $t("chats.settings.emoji.name") }} ({{ emojis.length }}/30)
   </overline>
-  <div class="">
+  <div>
     <v-btn @click="upload = true">Add Emoji</v-btn>
-    <v-list v-for="emoji in emojis" :key="emoji.id">
+    <v-list v-for="emoji in emojis" :key="emoji.id" max-width="600">
       <v-list-item>
         <template v-slot:prepend>
           <v-img
@@ -18,6 +18,11 @@
             :src="$app.domain + emoji.icon"
             class="mr-4"
           ></v-img>
+        </template>
+        <template v-slot:append>
+          <v-btn icon @click="deleteEmoji(emoji.id)" size="small">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
         </template>
         <v-list-item-title
           @click="
@@ -64,6 +69,7 @@ import Overline from "@/components/Core/Typography/Overline.vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { UpdateEmojiMutation } from "@/graphql/chats/updateEmoji.graphql";
+import { DeleteEmojiMutation } from "@/graphql/chats/deleteEmoji.graphql";
 
 export default defineComponent({
   name: "ChatSettingsEmoji",
@@ -83,6 +89,17 @@ export default defineComponent({
     }
   },
   methods: {
+    async deleteEmoji(id: string) {
+      await this.$apollo.mutate({
+        mutation: DeleteEmojiMutation,
+        variables: {
+          input: {
+            associationId: this.$chat.editingChat.association.id,
+            id
+          }
+        }
+      });
+    },
     async updateEmoji(id: string, name: string) {
       const emoji = this.$chat.emoji.find((emoji) => emoji.id === this.editing);
       this.editing = "";

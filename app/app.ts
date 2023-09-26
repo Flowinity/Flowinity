@@ -103,12 +103,24 @@ import {
   OAuthUserResolver
 } from "@app/controllers/graphql/oAuthApp.resolver"
 import { ChatEmojiResolver } from "@app/controllers/graphql/chatEmoji.resolver"
+import { MulterError } from "multer"
+import { ChatAuditLogResolver } from "@app/controllers/graphql/chatAuditLog.resolver"
 
 @Service()
 @Middleware({ type: "after" })
 export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
   error(err: any, req: any, res: any, next: (err: any) => any) {
-    if (err?.status && !err?.errno) {
+    if (err instanceof MulterError) {
+      return res.status(400).json({
+        errors: [
+          {
+            name: err.code,
+            message: err.message,
+            status: 400
+          }
+        ]
+      })
+    } else if (err?.status && !err?.errno) {
       return res.status(err?.status || 500).json({
         errors: [
           {
@@ -361,7 +373,8 @@ export class Application {
         MailResolver,
         OAuthAppResolver,
         OAuthUserResolver,
-        ChatEmojiResolver
+        ChatEmojiResolver,
+        ChatAuditLogResolver
       ],
       container: Container,
       authChecker: authChecker,

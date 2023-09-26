@@ -186,7 +186,7 @@ export class MessageResolver {
 
   @FieldResolver(() => [ChatEmoji])
   async emoji(@Root() message: Message) {
-    const matches = message.content.match(/:([\w-]+)(?::([\w-]+))?:/g)
+    const matches = message.content.match(/:([\w~-]+)(?::([\w~-]+))?:/g)
     return await ChatEmoji.findAll({
       where: {
         id: matches?.map((match) => match.split(":")[2]) || []

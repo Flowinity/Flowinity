@@ -25,6 +25,11 @@ import { generateClientSatisfies } from "@app/lib/clientSatisfies"
 import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { ChatAuditLog } from "@app/models/chatAuditLog.model"
+import {
+  AuditLogActionType,
+  AuditLogCategory
+} from "@app/classes/graphql/chat/auditLog/categories"
 
 @Service()
 @JsonController("/chats")
@@ -103,7 +108,8 @@ export class ChatControllerV3 {
     } else if (type === "emoji") {
       const count = await ChatEmoji.count({
         where: {
-          chatId: chat.id
+          chatId: chat.id,
+          deleted: false
         }
       })
       if (count >= 30) throw Errors.MAX_EMOJI
@@ -112,6 +118,13 @@ export class ChatControllerV3 {
         icon: upload.upload.attachment,
         userId: user.id,
         name: this.slugify(upload.upload.originalFilename.split(".")[0])
+      })
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: user.id,
+        category: AuditLogCategory.EMOJI,
+        actionType: AuditLogActionType.ADD,
+        message: `<@${user.id}> added an emoji called **${emoji.name}**`
       })
       for (const user of chat.users) {
         redis.json.del(`emoji:${user.userId}`)

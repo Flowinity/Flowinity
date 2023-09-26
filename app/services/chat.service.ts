@@ -22,6 +22,11 @@ import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { GraphQLError } from "graphql/error"
 import { GqlError } from "@app/lib/gqlErrors"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
+import { ChatAuditLog } from "@app/models/chatAuditLog.model"
+import {
+  AuditLogActionType,
+  AuditLogCategory
+} from "@app/classes/graphql/chat/auditLog/categories"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -551,24 +556,24 @@ export class ChatService {
       }
     })
     if (settings.name !== chat.name && settings.name !== undefined) {
-      this.sendMessage(
-        `<@${userId}> updated the chat name to ${settings.name}.`,
-        userId,
-        associationId,
-        undefined,
-        "rename",
-        []
-      )
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: userId,
+        category: AuditLogCategory.SETTINGS,
+        actionType: AuditLogActionType.MODIFY,
+        message: `<@${userId}> updated the group's name from **${chat.name}** to **${settings.name}**`
+      })
     }
-    if (settings.icon !== undefined) {
-      this.sendMessage(
-        `<@${userId}> updated the chat icon.`,
-        userId,
-        associationId,
-        undefined,
-        "system",
-        []
-      )
+    if (settings.icon !== undefined || settings.background !== undefined) {
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: userId,
+        category: AuditLogCategory.SETTINGS,
+        actionType: AuditLogActionType.MODIFY,
+        message: `<@${userId}> updated the group's **${
+          settings.icon ? "icon" : "background"
+        }**`
+      })
     }
     this.emitForAll(associationId, userId, "chatUpdate", {
       name: settings.name ?? chat.name,
@@ -648,6 +653,13 @@ export class ChatService {
           undefined,
           "leave"
         )
+        await ChatAuditLog.create({
+          chatId: chat.id,
+          userId: userId,
+          category: AuditLogCategory.USER,
+          actionType: AuditLogActionType.REMOVE,
+          message: `<@${userId}> removed <@${association.userId}> from the chat.`
+        })
       } else {
         await this.sendMessage(
           `<@${userId}> left the chat.`,
@@ -656,6 +668,13 @@ export class ChatService {
           undefined,
           "leave"
         )
+        await ChatAuditLog.create({
+          chatId: chat.id,
+          userId: userId,
+          category: AuditLogCategory.USER,
+          actionType: AuditLogActionType.REMOVE,
+          message: `<@${userId}> left the chat.`
+        })
       }
       let unread: Record<string, string> = await redis.json.get(
         `unread:${association.userId}`
@@ -728,6 +747,13 @@ export class ChatService {
         undefined,
         "join"
       )
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: userId,
+        category: AuditLogCategory.USER,
+        actionType: AuditLogActionType.ADD,
+        message: `<@${userId}> added <@${friend.friendId}> to the chat.`
+      })
     }
     const associations = await ChatAssociation.findAll({
       where: {
@@ -806,6 +832,7 @@ export class ChatService {
     associationId: number,
     pinned?: boolean
   ) {
+    const matches = content.match(/:([\w~-]+)(?::([\w~-]+))?:/g)
     const chat = await this.getChatFromAssociation(associationId, userId)
     if (!chat) throw Errors.CHAT_NOT_FOUND
     const message = await Message.findOne({
@@ -846,7 +873,12 @@ export class ChatService {
         pinned: !message.pinned,
         content: message.content,
         edited: message.edited,
-        editedAt: message.editedAt
+        editedAt: message.editedAt,
+        emoji: await ChatEmoji.findAll({
+          where: {
+            id: matches?.map((match) => match.split(":")[2]) || []
+          }
+        })
       })
       return true
     }
@@ -866,7 +898,6 @@ export class ChatService {
         }
       }
     )
-    const matches = message.content.match(/:([\w-]+)(?::([\w-]+))?:/g)
     this.emitForAll(associationId, userId, "edit", {
       chatId: message.chatId,
       id: messageId,
@@ -1184,7 +1215,7 @@ export class ChatService {
       include: new MessageIncludes(false)
     })
     if (!message) throw Errors.UNKNOWN
-    const matches = message.content.match(/:([\w-]+)(?::([\w-]+))?:/g)
+    const matches = message.content.match(/:([\w~-]+)(?::([\w~-]+))?:/g)
     message.dataValues.emoji = await ChatEmoji.findAll({
       where: {
         id: matches?.map((match) => match.split(":")[2]) || []
@@ -1268,7 +1299,8 @@ export class ChatService {
     })
     const emoji = await ChatEmoji.findAll({
       where: {
-        chatId: chats.map((chat) => chat.id)
+        chatId: chats.map((chat) => chat.id),
+        deleted: false
       },
       order: [["createdAt", "ASC"]]
     })

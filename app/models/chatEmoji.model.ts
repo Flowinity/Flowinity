@@ -33,6 +33,10 @@ export class ChatEmoji extends Model {
   @Column
   name: string
 
+  @Field()
+  @Column
+  deleted: boolean
+
   @Field(() => DateType)
   @Column
   createdAt: Date

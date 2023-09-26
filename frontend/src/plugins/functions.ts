@@ -79,7 +79,7 @@ export default {
         content
           .replaceAll("\n", "")
           .replace(/<\/?[^>]+(>|$)/g, "")
-          .replace(/:([\w-]+)(?::([\w-]+))?:(?!\w)/g, "")
+          .replace(/:([\w~-]+)(?::([\w~-]+))?:(?!\w)/g, "")
           .replaceAll(" ", "") === "";
       for (const emoji of regexEmoji) {
         const find = message.emoji?.find((e) => e.id === emoji.split(":")[2]);

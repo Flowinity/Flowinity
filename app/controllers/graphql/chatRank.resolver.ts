@@ -31,6 +31,11 @@ import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { ChatPermissionsHandler } from "@app/services/chat/permissions"
 import { GqlError } from "@app/lib/gqlErrors"
+import { ChatAuditLog } from "@app/models/chatAuditLog.model"
+import {
+  AuditLogActionType,
+  AuditLogCategory
+} from "@app/classes/graphql/chat/auditLog/categories"
 
 @Resolver(ChatRank)
 @Service()
@@ -155,10 +160,37 @@ export class ChatRankResolver {
       })
     )
 
+    if (permissionsToAdd.length || permissionsToRemove.length) {
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: ctx.user!!.id,
+        category: AuditLogCategory.RANK,
+        actionType: AuditLogActionType.MODIFY,
+        message: `<@${ctx.user!!.id}> added ${
+          permissionsToAdd.length
+        } additional permissions, and removed ${
+          permissionsToRemove.length
+        } permissions from the rank ${rank.name}`
+      })
+    }
+
     if (input.name || input.color) {
       await rank.update({
         name: input.name ?? rank.name,
         color: input.color ?? rank.color
+      })
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: ctx.user!!.id,
+        category: AuditLogCategory.RANK,
+        actionType: AuditLogActionType.MODIFY,
+        message: input.name
+          ? `<@${ctx.user!!.id}> updated the rank name from **${
+              rank.name
+            }** to **${input.name}**`
+          : `<@${ctx.user!!.id}> updated the rank color from **${
+              rank.color
+            }** to **${input.color}**`
       })
     }
 
@@ -222,6 +254,13 @@ export class ChatRankResolver {
         permissionId: permission
       })
     }
+    await ChatAuditLog.create({
+      chatId: chat.id,
+      userId: ctx.user!!.id,
+      category: AuditLogCategory.RANK,
+      actionType: AuditLogActionType.ADD,
+      message: `<@${ctx.user!!.id}> created the rank **${rank.name}**`
+    })
     await ChatPermissionAssociation.bulkCreate(permissions)
     this.chatService.emitForAll(
       input.associationId,
@@ -279,6 +318,14 @@ export class ChatRankResolver {
     const highestIndex = await this.chatService.getHighestIndex(
       input.associationId
     )
+
+    await ChatAuditLog.create({
+      chatId: chat.id,
+      userId: ctx.user!!.id,
+      category: AuditLogCategory.RANK,
+      actionType: AuditLogActionType.MODIFY,
+      message: `<@${ctx.user!!.id}> updated the rank order.`
+    })
 
     for (const rank of ranks) {
       const newIndex = inputRanks.indexOf(rank.id)

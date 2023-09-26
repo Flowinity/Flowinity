@@ -491,6 +491,17 @@ export default defineComponent({
       if (!this.editingText?.length) {
         return this.deleteMessage(this.editing!);
       }
+      const emojiRegex = /(?:^|[^:\w~-]):[\w~-]+:(?![\w~-])/g;
+      this.editingText = this.editingText.replace(emojiRegex, (match) => {
+        try {
+          const name = match.split(":")[1].split(":")[0];
+          console.log(name);
+          const emoji = this.$chat.emoji.find((emoji) => emoji.name === name);
+          return `:${name}:${emoji.id}:`;
+        } catch {
+          return match;
+        }
+      });
       await this.axios.put(
         `/chats/${this.$chat.selectedChat?.association?.id}/message`,
         {

@@ -10,11 +10,11 @@
     <v-card-text>
       <v-file-input
         v-model="file"
-        accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+        accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/svg+xml"
         :label="$t('dialogs.uploadCropper.label')"
       ></v-file-input>
       <vue-cropper
-        v-if="result"
+        v-if="result && file[0]?.type !== 'image/gif'"
         id="banner-editor"
         :key="key"
         ref="cropper"
@@ -22,6 +22,7 @@
         :src="result"
         alt="banner"
       ></vue-cropper>
+      <p v-else-if="result">Cropping unsupported on GIFs.</p>
     </v-card-text>
     <v-card-actions>
       <v-btn
@@ -102,6 +103,11 @@ export default defineComponent({
     },
     async save() {
       if (!this.file.length) return;
+      if (this.file[0].type === "image/gif") {
+        this.$emit("finish", this.file[0]);
+        this.$emit("update:modelValue", false);
+        return;
+      }
       // get the img in the banner-editor id div
       const file = this.$functions.base64ToFile(
         //@ts-ignore

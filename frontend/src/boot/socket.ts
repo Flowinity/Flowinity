@@ -137,12 +137,17 @@ export default async function setup(app) {
       editedAt: Date;
       userId: number;
       pinned: boolean;
+      emoji?: ChatEmoji[];
     }) => {
       const message = checkMessage(data.id, data.chatId);
       if (!message) return;
       if (data.content) {
         chat.chats[message.index].messages[message.messageIndex].content =
           data.content;
+      }
+      if (data.emoji) {
+        chat.chats[message.index].messages[message.messageIndex].emoji =
+          data.emoji;
       }
       if (data.edited !== undefined) {
         chat.chats[message.index].messages[message.messageIndex].edited =
@@ -434,6 +439,10 @@ export default async function setup(app) {
     if (emoji) {
       emoji.name = data.name;
     }
+    handleDuplicates();
+  });
+  sockets.chat.on("emojiDeleted", (data: { id: string }) => {
+    chat.emoji = chat.emoji.filter((emoji) => emoji.id !== data.id);
     handleDuplicates();
   });
 }
