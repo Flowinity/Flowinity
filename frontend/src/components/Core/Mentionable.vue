@@ -4,6 +4,7 @@
     :class="$attrs.class"
     class="mentionable"
     style="position: relative; width: 100%"
+    v-if="displayedItems.length"
   >
     <slot />
 
@@ -36,32 +37,26 @@
       />
 
       <template #popper>
-        <div v-if="!displayedItems.length">
-          <slot name="no-result">No result</slot>
-        </div>
-
-        <template v-else>
-          <div
-            v-for="(item, index) of displayedItems"
-            :key="index"
-            :class="{
-              'mention-selected': selectedIndex === index
-            }"
-            class="mention-item rounded"
-            @mousedown="applyMention(index)"
-            @mouseover="selectedIndex = index"
+        <div
+          v-for="(item, index) of displayedItems"
+          :key="index"
+          :class="{
+            'mention-selected': selectedIndex === index
+          }"
+          class="mention-item rounded"
+          @mousedown="applyMention(index)"
+          @mouseover="selectedIndex = index"
+        >
+          <slot
+            :index="index"
+            :item="item"
+            :name="`item-${currentKey || oldKey}`"
           >
-            <slot
-              :index="index"
-              :item="item"
-              :name="`item-${currentKey || oldKey}`"
-            >
-              <slot :index="index" :item="item" name="item">
-                {{ item.label || item.value }}
-              </slot>
+            <slot :index="index" :item="item" name="item">
+              {{ item.label || item.value }}
             </slot>
-          </div>
-        </template>
+          </slot>
+        </div>
       </template>
     </VDropdown>
   </div>
@@ -81,6 +76,7 @@ import {
   ref,
   watch
 } from "vue";
+import { useChatStore } from "@/store/chat.store";
 
 options.themes.mentionable = {
   $extend: "dropdown",
@@ -419,6 +415,31 @@ export default defineComponent({
           break;
         case ":":
           end = ":";
+          const id = item.emoji?.id || item.value;
+          const chat = useChatStore();
+          if (!chat.recentEmoji[id]) {
+            chat.recentEmoji = {
+              [id]: 1,
+              ...chat.recentEmoji
+            };
+          } else {
+            const val = chat.recentEmoji[id] + 1;
+            delete chat.recentEmoji[id];
+            chat.recentEmoji = {
+              [id]: val,
+              ...chat.recentEmoji
+            };
+          }
+          const keys = Object.keys(chat.recentEmoji);
+
+          if (keys.length > 20) {
+            const keysToDelete = keys.slice(20);
+
+            keysToDelete.forEach((key) => {
+              delete chat.recentEmoji[key];
+            });
+          }
+          localStorage.setItem("emojiStore", JSON.stringify(chat.recentEmoji));
           break;
         default:
           end = "INVALID!";

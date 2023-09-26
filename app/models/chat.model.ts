@@ -15,6 +15,7 @@ import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { ChatRank } from "@app/models/chatRank.model"
 import { Message } from "@app/models/message.model"
 import { ChatInvite } from "@app/models/chatInvite.model"
+import { ChatEmoji } from "@app/models/chatEmoji.model"
 
 @ObjectType()
 @Table
@@ -140,4 +141,10 @@ export class Chat extends Model {
   })
   @HasMany(() => ChatInvite, "chatId")
   invites: ChatInvite[]
+
+  @Field(() => [ChatEmoji], {
+    nullable: true
+  })
+  @HasMany(() => ChatEmoji, "chatId")
+  emoji: ChatEmoji
 }

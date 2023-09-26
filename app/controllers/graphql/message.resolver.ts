@@ -26,7 +26,7 @@ import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import paginate from "jw-paginate"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
-import { GqlError } from "@app/lib/gqlErrors"
+import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
 
 export const PaginatedMessagesResponse = PagerResponse(Message)
 export type PaginatedMessagesResponse = InstanceType<
@@ -186,9 +186,7 @@ export class MessageResolver {
 
   @FieldResolver(() => [ChatEmoji])
   async emoji(@Root() message: Message) {
-    const matches = message.content.match(
-      /:(.*?)-(.*?)-(.*?):(.*?)-(.*?)-(.*?):|:.*?:.*?:/g
-    )
+    const matches = message.content.match(/:([\w-]+)(?::([\w-]+))?:/g)
     return await ChatEmoji.findAll({
       where: {
         id: matches?.map((match) => match.split(":")[2]) || []

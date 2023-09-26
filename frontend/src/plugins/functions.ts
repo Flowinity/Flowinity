@@ -75,12 +75,20 @@ export default {
       /:(.*?)-(.*?)-(.*?):(.*?)-(.*?)-(.*?):|:.*?:.*?:/g
     );
     if (regexEmoji) {
+      const isOnlyEmojis =
+        content
+          .replaceAll("\n", "")
+          .replace(/<\/?[^>]+(>|$)/g, "")
+          .replace(/:([\w-]+)(?::([\w-]+))?:(?!\w)/g, "")
+          .replaceAll(" ", "") === "";
       for (const emoji of regexEmoji) {
         const find = message.emoji?.find((e) => e.id === emoji.split(":")[2]);
         if (!find) continue;
         content = content.replace(
           emoji,
-          `<span><img class="emoji emoji-large" src="/i/${find.icon}"></span>`
+          `<span><img class="emoji${
+            isOnlyEmojis ? " emoji-large" : ""
+          }" src="/i/${find.icon}"></span>`
         );
       }
     }

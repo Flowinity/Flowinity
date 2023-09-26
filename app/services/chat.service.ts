@@ -20,11 +20,8 @@ import { ChatRank } from "@app/models/chatRank.model"
 import { ChatPermission } from "@app/models/chatPermission.model"
 import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { GraphQLError } from "graphql/error"
-import { BlockedUser } from "@app/models/blockedUser.model"
 import { GqlError } from "@app/lib/gqlErrors"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
-import { ChatEmojiResolver } from "@app/controllers/graphql/chatEmoji.resolver"
-import { Context } from "@app/types/graphql/context"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -786,6 +783,22 @@ export class ChatService {
     return true
   }
 
+  async cancelTyping(associationId: number, userId: number) {
+    const chat = await this.getChatFromAssociation(associationId, userId)
+    await this.emitForAll(
+      associationId,
+      userId,
+      "cancelTyping",
+      {
+        chatId: chat.id,
+        userId,
+        user: await Container.get(UserUtilsService).getUserById(userId)
+      },
+      true
+    )
+    return true
+  }
+
   async editMessage(
     messageId: number,
     userId: number,
@@ -853,6 +866,7 @@ export class ChatService {
         }
       }
     )
+    const matches = message.content.match(/:([\w-]+)(?::([\w-]+))?:/g)
     this.emitForAll(associationId, userId, "edit", {
       chatId: message.chatId,
       id: messageId,
@@ -860,7 +874,12 @@ export class ChatService {
       edited: true,
       editedAt: date,
       user: await Container.get(UserUtilsService).getUserById(userId),
-      pinned: message.pinned
+      pinned: message.pinned,
+      emoji: await ChatEmoji.findAll({
+        where: {
+          id: matches?.map((match) => match.split(":")[2]) || []
+        }
+      })
     })
     return true
   }
@@ -1155,13 +1174,23 @@ export class ChatService {
     return chatWithUsers
   }
 
-  async sendMessageToUsers(messageId: number, chat: Chat) {
+  async sendMessageToUsers(
+    messageId: number,
+    chat: Chat,
+    emojiPermission: boolean = true
+  ) {
     const message = await Message.findOne({
       where: { id: messageId },
       include: new MessageIncludes(false)
     })
-
     if (!message) throw Errors.UNKNOWN
+    const matches = message.content.match(/:([\w-]+)(?::([\w-]+))?:/g)
+    message.dataValues.emoji = await ChatEmoji.findAll({
+      where: {
+        id: matches?.map((match) => match.split(":")[2]) || []
+      }
+    })
+
     this.emitToFCMs(message, chat, message.userId)
     for (const association of chat.users) {
       if (association?.tpuUser) {
@@ -1240,8 +1269,26 @@ export class ChatService {
     const emoji = await ChatEmoji.findAll({
       where: {
         chatId: chats.map((chat) => chat.id)
-      }
+      },
+      order: [["createdAt", "ASC"]]
     })
+
+    // Handle duplicate names, this system will append ~offset onto them
+    // For example, the oldest smiley will be :smiley: but subsequent will be
+    // :smiley~1: / :smiley~2: / etc
+    const emojiNameCount: Record<string, number> = {}
+
+    for (const e of emoji) {
+      const emojiName = e.name
+
+      if (emojiNameCount.hasOwnProperty(emojiName)) {
+        emojiNameCount[emojiName]++
+        e.name = `${emojiName}~${emojiNameCount[emojiName]}`
+      } else {
+        emojiNameCount[emojiName] = 0
+      }
+    }
+
     await redis.json.set(`emoji:${userId}`, "$", emoji)
     return emoji
   }
@@ -1261,7 +1308,7 @@ export class ChatService {
       | "system" = "message",
     attachments?: string[]
   ) {
-    await this.checkPermissions(
+    const permissions = await this.checkPermissions(
       userId,
       associationId,
       ChatPermissions.SEND_MESSAGES
@@ -1286,7 +1333,7 @@ export class ChatService {
         throw Errors.NO_MESSAGE_CONTENT
     }
     if (content.length >= 4000) throw Errors.MESSAGE_TOO_LONG
-    const emoji = await this.userEmoji(userId)
+    /*const emoji = await this.userEmoji(userId)
     for (const match of content.match(/:[\w-]+:\w+:/g) || []) {
       try {
         const find = emoji.find((e) => e.id === match.split(":")[2])
@@ -1294,7 +1341,7 @@ export class ChatService {
       } catch {
         throw new GqlError("INVALID_EMOJI")
       }
-    }
+    }*/
     if (chat.type === "direct") {
       const userService = Container.get(UserUtilsService)
       const block = await userService.blocked(
@@ -1313,7 +1360,11 @@ export class ChatService {
 
     redis.set(`chat:${chat.id}:sortDate`, dayjs(message.createdAt).valueOf())
     embedParser(message, message.chatId, userId, associationId, attachments)
-    return await this.sendMessageToUsers(message.id, chat)
+    return await this.sendMessageToUsers(
+      message.id,
+      chat,
+      permissions.includes(ChatPermissions.EXTERNAL_EMOJI)
+    )
   }
 
   async getRecipient(chat: Chat, userId: number) {

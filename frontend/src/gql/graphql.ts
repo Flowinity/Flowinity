@@ -133,6 +133,7 @@ export type Chat = {
   background?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTimeISO']['output'];
   description?: Maybe<Scalars['String']['output']>;
+  emoji?: Maybe<Array<ChatEmoji>>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
   /** Array is empty if you don't have the `OVERVIEW` permission in the chat. */

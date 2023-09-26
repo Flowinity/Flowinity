@@ -252,7 +252,12 @@ export default defineComponent({
                 label: key[1] + " " + key[0]
               };
             })
-          ];
+          ].sort((a, b) => {
+            const idA = this.$chat.recentEmoji[a.emoji?.id || a.value] || 0;
+            const idB = this.$chat.recentEmoji[b.emoji?.id || b.value] || 0;
+            return idB - idA;
+          });
+
         default:
           return [];
       }

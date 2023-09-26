@@ -5,10 +5,20 @@
     activator="parent"
     location="top right"
     @update:model-value="$emit('update:modelValue', $event)"
+    height="500"
   >
-    <v-card height="500" width="500">
+    <v-card width="500" class="position-relative">
       <div class="d-flex flex-row">
         <v-tabs v-model="tab" direction="vertical">
+          <v-tab
+            v-for="chat in chatEmojis"
+            :value="chat.id"
+            :key="chat.id"
+            @click="type = 'chat'"
+          >
+            {{ chat.name }}
+          </v-tab>
+          <v-divider class="mb-2"></v-divider>
           <v-tab
             v-for="category in categories"
             :value="category.key"
@@ -18,36 +28,41 @@
           </v-tab>
         </v-tabs>
         <v-card-text v-if="modelValue">
-          <v-window v-model="tab">
-            <v-window-item
-              v-for="category in categories"
-              :value="category.key"
-              :key="category.key"
+          <div v-for="chat in chatEmojis" :key="chat.id + '-chat'">
+            <overline position="start">
+              {{ chat.name }}
+            </overline>
+            <div
+              class="d-grid"
+              style="grid-template-columns: auto auto auto auto"
             >
-              <v-card class="elevation-0" color="transparent" max-width="300">
-                <v-text-field v-model="search" label="Search" />
-                <v-row>
-                  <v-col v-for="emoji in emojis" :key="emoji.hexcode">
-                    <v-btn
-                      class="d-flex justify-center"
-                      icon
-                      @click="
-                        $emit('emoji', emoji.unicode);
-                        $emit('update:modelValue', false);
-                      "
-                    >
-                      <img
-                        :alt="emoji.label"
-                        :src="`/all.svg#${emoji.hexcode}`"
-                        height="32"
-                      />
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-card>
-            </v-window-item>
-          </v-window>
+              <v-btn
+                v-for="emoji of chat.emoji"
+                icon
+                @click="$emit('emoji', `:${emoji.name}:`)"
+                @mouseover="hover = emoji"
+              >
+                <v-img :src="$app.domain + emoji.icon" width="30" />
+              </v-btn>
+            </div>
+          </div>
         </v-card-text>
+        <div style="position: fixed; bottom: 0; width: 100%">
+          <v-toolbar style="width: 100%">
+            <template v-if="hover">
+              <div class="d-flex mx-4">
+                <v-img :src="$app.domain + hover.icon" width="60" />
+              </div>
+              :{{ hover.name }}:
+            </template>
+            <template v-else>
+              <div class="d-flex mx-4">
+                <v-icon size="40">mdi-emoticon</v-icon>
+              </div>
+              Hover over something to preview.
+            </template>
+          </v-toolbar>
+        </div>
       </div>
     </v-card>
   </v-menu>
@@ -55,19 +70,28 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-//@ts-ignore
-import { Notomoji } from "@svgmoji/noto";
-//@ts-ignore
-import data from "../../../assets/compact.raw.json";
+import data from "markdown-it-emoji/lib/data/full.json";
+import InfiniteLoading from "v3-infinite-loading";
+import Grid from "vue-virtual-scroll-grid";
+import { Chat, ChatEmoji } from "@/gql/graphql";
+import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "EmojiPicker",
   props: ["modelValue"],
   emits: ["update:modelValue", "emoji"],
+  components: {
+    Overline,
+    InfiniteLoading,
+    Grid
+  },
   data() {
     return {
       tab: 0,
       search: "",
+      page: 1,
+      type: "chat" as "chat" | "native",
+      hover: null as ChatEmoji | null,
       categories: [
         {
           key: 0,
@@ -122,18 +146,36 @@ export default defineComponent({
       ]
     };
   },
+  methods: {
+    async getEmojis(pageNumber: number, pageSize: number) {
+      return Promise.resolve(
+        this.emojis.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
+      );
+    }
+  },
   computed: {
     emojis() {
-      const filtered = data.filter((emoji: any) => emoji.group === this.tab);
-      if (this.search) {
-        return filtered.filter((emoji: any) =>
-          emoji.label.includes(this.search)
-        );
+      return Object.entries(data);
+    },
+    chatEmojis() {
+      const map: Chat[] = [];
+      for (const emoji of this.$chat.emoji) {
+        const existingIndex = map.findIndex((chat) => chat.id === emoji.chatId);
+        if (existingIndex !== -1) {
+          map[existingIndex].emoji.push(emoji);
+        } else {
+          const chat = this.$chat.chats.find(
+            (chat) => chat.id === emoji.chatId
+          );
+          if (!chat) continue;
+          map.push({
+            ...chat,
+            emoji: [emoji]
+          });
+        }
       }
-      return filtered;
+      return map;
     }
   }
 });
 </script>
-
-<style scoped></style>

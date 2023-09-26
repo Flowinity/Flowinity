@@ -15,6 +15,7 @@ import { Field, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { Embed, MessageType } from "@app/classes/graphql/chat/message"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { ChatEmoji } from "@app/models/chatEmoji.model"
 
 @ObjectType()
 @Table
@@ -145,4 +146,9 @@ export class Message extends Model {
   @Field(() => Chat)
   @BelongsTo(() => Chat, "chatId")
   chat: Chat
+
+  @Field(() => [ChatEmoji], {
+    nullable: true
+  })
+  emoji: ChatEmoji[]
 }

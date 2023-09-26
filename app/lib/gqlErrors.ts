@@ -54,6 +54,9 @@ const Errors = {
   },
   INVALID_EMOJI: {
     message: "Invalid emoji."
+  },
+  ILLEGAL_EMOJI_CHARACTER: {
+    message: "Your emoji name cannot include ~"
   }
 }
 

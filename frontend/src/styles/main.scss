@@ -188,6 +188,20 @@ a {
   top: 0.15em;
 }
 
+.emoji-large {
+  width: 3.5em;
+  height: 3.5em;
+  position: relative;
+  top: 0.15em;
+}
+
+p:has(.emoji-large) img {
+  width: 3.5em;
+  height: 3.5em;
+  position: relative;
+  top: 0.15em;
+}
+
 .emoji-large-text {
   font-size: 3.5em;
 }
@@ -688,4 +702,8 @@ $invite-dot-space: 22px;
 
 .initial {
   white-space: initial !important;
+}
+
+.d-grid {
+  display: grid;
 }

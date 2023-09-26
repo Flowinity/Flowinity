@@ -101,6 +101,7 @@
     "vue-router": "^4.0.0",
     "vue-toastification": "^2.0.0-rc.5",
     "vue-tsc": "^1.0.9",
+    "vue-virtual-scroll-grid": "^1.10.2",
     "vue3-apexcharts": "^1.4.1",
     "vuetify": "^3.2.2",
     "webfontloader": "^1.0.0"

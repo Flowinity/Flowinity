@@ -407,7 +407,33 @@ export default async function setup(app) {
       }
     }
   );
+  function handleDuplicates() {
+    // Handle duplicate names, this system will append ~offset onto them
+    // For example, the oldest smiley will be :smiley: but subsequent will be
+    // :smiley~1: / :smiley~2: / etc
+    const emojiNameCount: Record<string, number> = {};
+
+    for (const e of chat.emoji) {
+      const emojiName = e.name;
+
+      if (emojiNameCount.hasOwnProperty(emojiName)) {
+        emojiNameCount[emojiName]++;
+
+        e.name = `${emojiName}~${emojiNameCount[emojiName]}`;
+      } else {
+        emojiNameCount[emojiName] = 0;
+      }
+    }
+  }
   sockets.chat.on("emojiCreated", (data: ChatEmoji) => {
     chat.emoji.push(data);
+    handleDuplicates();
+  });
+  sockets.chat.on("emojiUpdated", (data: Partial<ChatEmoji>) => {
+    const emoji = chat.emoji.find((emoji) => emoji.id === data.id);
+    if (emoji) {
+      emoji.name = data.name;
+    }
+    handleDuplicates();
   });
 }

@@ -535,10 +535,12 @@ export default defineComponent({
 
       // this system appends the IDs of the emojis to the message for backend parsing.
       // messages without :emoji-name:uuid: will not be turned into emojis.
-      const emojiRegex = /:[\w-]+:/g;
+      const emojiRegex = /:[\w~-]+:/g;
       message = message.replace(emojiRegex, (match) => {
         try {
+          console.log("OKOKOK");
           const name = match.split(":")[1].split(":")[0];
+          console.log(name);
           const emoji = this.$chat.emoji.find((emoji) => emoji.name === name);
           return `:${name}:${emoji.id}:`;
         } catch {
@@ -587,7 +589,6 @@ export default defineComponent({
       try {
         await this.$chat.sendMessage(message, attachments, replyId);
       } catch (e) {
-        console.log(e);
         const messageIndex = this.$chat.selectedChat?.messages.findIndex(
           (message) => message.id === tempId
         );
@@ -625,6 +626,9 @@ export default defineComponent({
       if (!lastMessage || lastMessage.id === this.editing) return;
       this.editingText = lastMessage.content;
       this.editing = lastMessage.id;
+      this.$nextTick(() => {
+        this.autoScroll();
+      });
     },
     focusInput() {
       this.$refs.input?.$refs?.textarea?.focus();
@@ -779,6 +783,14 @@ export default defineComponent({
         );
       }, 5000);
     },
+    onCancelTyping(data: Typing) {
+      const chat =
+        this.$chat.chats[
+          this.$chat.chats.findIndex((c: Chat) => c.id === data.chatId)
+        ];
+      if (!chat && !chat.typers) return;
+      chat.typers = chat.typers.filter((t: Typing) => t.userId !== data.userId);
+    },
     onEmbedResolution(data: { chatId: any; id: any; embeds: any }) {
       const index = this.$chat.chats.findIndex(
         (c: Chat) => c.id === data.chatId
@@ -835,6 +847,7 @@ export default defineComponent({
     this.$sockets.chat.on("message", this.onMessage);
     this.$sockets.chat.on("embedResolution", this.onEmbedResolution);
     this.$sockets.chat.on("typing", this.onTyping);
+    this.$sockets.chat.on("cancelTyping", this.onCancelTyping);
     this.message = this.$chat.getDraft(<string>this.$route.params.chatId) || "";
     this.$app.railMode = "communications";
   },
@@ -880,8 +893,14 @@ export default defineComponent({
             "typing",
             this.$chat.selectedChat?.association?.id
           );
-          this.typingStatus.rateLimit = Date.now() + 3000;
+          this.typingStatus.rateLimit = Date.now() + 2000;
         }
+      } else {
+        this.$sockets.chat.emit(
+          "cancelTyping",
+          this.$chat.selectedChat?.association?.id
+        );
+        this.typingStatus.rateLimit = null;
       }
     },
     replyId() {

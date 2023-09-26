@@ -123,7 +123,8 @@ export const useChatStore = defineStore("chat", {
         y: 0
       }
     },
-    emoji: [] as ChatEmoji[]
+    emoji: [] as ChatEmoji[],
+    recentEmoji: {} as Record<string, number>
   }),
   actions: {
     async toggleUserRank(
@@ -623,6 +624,14 @@ export const useChatStore = defineStore("chat", {
         const drafts = localStorage.getItem("draftStore");
         if (drafts) {
           this.drafts = JSON.parse(drafts);
+        }
+      } catch {
+        //
+      }
+      try {
+        const emoji = localStorage.getItem("emojiStore");
+        if (emoji) {
+          this.recentEmoji = JSON.parse(emoji);
         }
       } catch {
         //

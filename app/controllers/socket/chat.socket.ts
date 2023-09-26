@@ -45,7 +45,6 @@ export class ChatSocketController {
   }
 
   @OnMessage("typing")
-  @EmitOnSuccess("typing")
   async typing(
     @ConnectedSocket() socket: SocketAuth,
     @MessageBody() data: number
@@ -69,5 +68,15 @@ export class ChatSocketController {
       "EX",
       2
     )
+  }
+
+  @OnMessage("cancelTyping")
+  async cancelTyping(
+    @ConnectedSocket() socket: SocketAuth,
+    @MessageBody() data: number
+  ) {
+    await redis.del(`user:${socket.request.user.id}:typing`)
+    const chatService: ChatService = Container.get(ChatService)
+    await chatService.cancelTyping(data, socket.request.user.id)
   }
 }
