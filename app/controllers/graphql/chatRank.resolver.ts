@@ -20,6 +20,7 @@ import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { Context } from "@app/types/graphql/context"
 import {
   CreateRank,
+  DeleteRank,
   UpdateRank,
   UpdateRankOrder
 } from "@app/classes/graphql/chat/ranks/updateRank"
@@ -36,6 +37,7 @@ import {
   AuditLogActionType,
   AuditLogCategory
 } from "@app/classes/graphql/chat/auditLog/categories"
+import { Success } from "@app/classes/graphql/generic/success"
 
 @Resolver(ChatRank)
 @Service()
@@ -170,7 +172,7 @@ export class ChatRankResolver {
           permissionsToAdd.length
         } additional permissions, and removed ${
           permissionsToRemove.length
-        } permissions from the rank ${rank.name}`
+        } permissions from the rank **${rank.name}**`
       })
     }
 
@@ -179,19 +181,22 @@ export class ChatRankResolver {
         name: input.name ?? rank.name,
         color: input.color ?? rank.color
       })
-      await ChatAuditLog.create({
-        chatId: chat.id,
-        userId: ctx.user!!.id,
-        category: AuditLogCategory.RANK,
-        actionType: AuditLogActionType.MODIFY,
-        message: input.name
-          ? `<@${ctx.user!!.id}> updated the rank name from **${
-              rank.name
-            }** to **${input.name}**`
-          : `<@${ctx.user!!.id}> updated the rank color from **${
-              rank.color
-            }** to **${input.color}**`
-      })
+      if (input.name !== rank.name || input.color !== rank.color) {
+        await ChatAuditLog.create({
+          chatId: chat.id,
+          userId: ctx.user!!.id,
+          category: AuditLogCategory.RANK,
+          actionType: AuditLogActionType.MODIFY,
+          message:
+            input.name !== rank.name
+              ? `<@${ctx.user!!.id}> updated the rank name from **${
+                  rank.name
+                }** to **${input.name}**`
+              : `<@${ctx.user!!.id}> updated the rank color from **${
+                  rank.color
+                }** to **${input.color}**`
+        })
+      }
     }
 
     for (const association of rank.associations) {
@@ -348,5 +353,65 @@ export class ChatRankResolver {
   @FieldResolver(() => [ChatAssociation])
   async associations(@Root() chatRank: ChatRank) {
     return await chatRank.$get("associations")
+  }
+
+  @RateLimit({
+    window: 8,
+    max: 8
+  })
+  @Authorization({
+    scopes: ["chats.edit"]
+  })
+  @Mutation(() => Success)
+  async deleteChatRank(@Ctx() ctx: Context, @Arg("input") input: DeleteRank) {
+    const permissions = await this.chatService.checkPermissions(
+      ctx.user!!.id,
+      input.associationId,
+      ChatPermissions.MANAGE_RANKS
+    )
+    const chat = await this.chatService.getChatFromAssociation(
+      input.associationId,
+      ctx.user!!.id
+    )
+    const rank = await ChatRank.findOne({
+      where: {
+        id: input.rankId,
+        chatId: chat.id
+      }
+    })
+    if (!rank) throw new GqlError("RANK_NOT_FOUND")
+    const highestIndex = await this.chatService.getHighestIndex(
+      input.associationId
+    )
+    if (
+      (rank.index >= highestIndex &&
+        !permissions.includes(ChatPermissions.TRUSTED) &&
+        !permissions.includes(ChatPermissions.OWNER)) ||
+      (!permissions.includes(ChatPermissions.OWNER) &&
+        permissions.includes(ChatPermissions.TRUSTED) &&
+        rank.index > highestIndex)
+    )
+      throw new GqlError("RANK_TOO_HIGH")
+    await rank.destroy()
+    await ChatAuditLog.create({
+      chatId: chat.id,
+      userId: ctx.user!!.id,
+      category: AuditLogCategory.RANK,
+      actionType: AuditLogActionType.REMOVE,
+      message: `<@${ctx.user!!.id}> deleted the rank **${rank.name}**.`
+    })
+    this.chatService.emitForAll(
+      input.associationId,
+      ctx.user!!.id,
+      "rankDeleted",
+      {
+        id: rank.id,
+        chatId: chat.id
+      }
+    )
+    for (const association of chat.users) {
+      this.chatService.syncPermissions(association.userId, association.id)
+    }
+    return { success: true }
   }
 }

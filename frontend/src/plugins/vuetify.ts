@@ -170,6 +170,10 @@ export default createVuetify({
       color: "primary",
       variant: "underlined"
     },
+    VAutocomplete: {
+      color: "primary",
+      variant: "underlined"
+    },
     VContainer: {
       fluid: true
     },

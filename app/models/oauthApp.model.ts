@@ -77,6 +77,12 @@ export class OauthApp extends Model {
   @Column
   userId: number
 
+  @Field({
+    nullable: true
+  })
+  @Column
+  botId: number
+
   @Field()
   @Column
   private: boolean
@@ -85,10 +91,21 @@ export class OauthApp extends Model {
   @BelongsTo(() => User, "userId")
   user: PartialUserBase
 
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
+  @BelongsTo(() => User, "botId")
+  bot: PartialUserBase
+
   @HasMany(() => Session, "oauthAppId")
   sessions: Session[]
 
   @Field(() => [OauthUser])
   @HasMany(() => OauthUser, "oauthAppId")
   oauthUsers: OauthUser[]
+
+  @Field(() => String, {
+    nullable: true
+  })
+  token?: string
 }

@@ -21,6 +21,7 @@ import { Badge } from "@app/models/badge.model"
 import { Context } from "@app/types/graphql/context"
 import { Notification } from "@app/models/notification.model"
 import {
+  PartialUserAuth,
   PartialUserBase,
   partialUserBase,
   PartialUserFriend,
@@ -39,6 +40,7 @@ import { AutoCollectCache } from "@app/types/collection"
 import { FriendNickname } from "@app/models/friendNickname"
 import { BlockedUser } from "@app/models/blockedUser.model"
 import { GqlError } from "@app/lib/gqlErrors"
+import { OauthApp } from "@app/models/oauthApp.model"
 
 @Resolver(User)
 @Service()
@@ -254,7 +256,41 @@ function createBaseResolver<T extends ClassType>(
     }
 
     async findByToken(token: string | null) {
-      return await Session.findOne({
+      if (token?.startsWith("TPU-OAUTH-")) {
+        const app = await OauthApp.findOne({
+          where: {
+            secret: token
+          },
+          include: [
+            {
+              model: User,
+              as: "bot",
+              required: true,
+              attributes: [
+                ...partialUserBase,
+                "itemsPerPage",
+                "status",
+                "storedStatus",
+                "emailVerified"
+              ]
+            }
+          ]
+        })
+        if (app) {
+          return {
+            token,
+            userId: app.bot.id,
+            user: app.bot as PartialUserAuth,
+            scopes:
+              "user,uploads,collections,chats.view,chats.send,chats.edit,insights,starred",
+            type: "api",
+            expiredAt: null,
+            oauthAppId: app.id,
+            fake: true
+          }
+        }
+      }
+      return (await Session.findOne({
         where: {
           token,
           expiredAt: {
@@ -275,7 +311,9 @@ function createBaseResolver<T extends ClassType>(
             ]
           }
         ]
-      })
+      })) as Session & {
+        user: PartialUserAuth
+      }
     }
   }
   return UserResolver

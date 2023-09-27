@@ -23,7 +23,11 @@
             <template v-slot:append>
               <v-list-item-action>
                 <v-btn
-                  :to="`/admin/oauth/${app.id}`"
+                  :to="
+                    $route.fullPath.startsWith('/admin')
+                      ? `/admin/oauth/${app.id}`
+                      : `/settings/developer/${app.id}`
+                  "
                   :disabled="app.userId != $user.user?.id"
                   color="primary"
                 >
@@ -44,6 +48,10 @@ import { defineComponent } from "vue";
 import CreateAppAuthDialog from "@/components/Admin/AppAuth/CreateAppAuthDialog.vue";
 import { VContainer } from "vuetify/components";
 import { MyAppsQuery } from "@/graphql/developer/myApps.graphql";
+import {
+  AvailableChatPermissionsDocument,
+  ChatPermission
+} from "@/gql/graphql";
 
 export default defineComponent({
   name: "AdminOAuth",
@@ -62,11 +70,11 @@ export default defineComponent({
   methods: {
     async getAppAuth() {
       const {
-        data: { devApps }
+        data: { oauthApps, availableChatPermissions }
       } = await this.$apollo.query({
         query: MyAppsQuery
       });
-      this.apps = devApps;
+      this.apps = oauthApps;
     }
   },
   mounted() {

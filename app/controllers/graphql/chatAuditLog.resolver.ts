@@ -43,7 +43,8 @@ export class ChatAuditLogResolver {
         chatId: chat.id
       },
       offset,
-      limit: input.limit
+      limit: input.limit,
+      order: [["createdAt", "DESC"]]
     })
     const entries = await ChatAuditLog.count({
       where: {

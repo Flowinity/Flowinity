@@ -445,4 +445,24 @@ export default async function setup(app) {
     chat.emoji = chat.emoji.filter((emoji) => emoji.id !== data.id);
     handleDuplicates();
   });
+  sockets.chat.on("rankDeleted", (data: { id: string; chatId: number }) => {
+    const targetedChat = chat.chats.find((chat) => chat.id === data.chatId);
+    if (!targetedChat) return;
+    for (const user of targetedChat.users) {
+      if (user.ranksMap)
+        user.ranksMap = user.ranksMap.filter((rank) => rank !== data.id);
+      if (user.ranks)
+        user.ranks = user.ranks.filter((rank) => rank.id !== data.id);
+    }
+    if (targetedChat.association.ranksMap)
+      targetedChat.association.ranksMap =
+        targetedChat.association.ranksMap.filter((rank) => rank !== data.id);
+    if (targetedChat.association.ranks)
+      targetedChat.association.ranks = targetedChat.association.ranks.filter(
+        (rank) => rank.id !== data.id
+      );
+    targetedChat.ranks = targetedChat.ranks.filter(
+      (rank) => rank.id !== data.id
+    );
+  });
 }

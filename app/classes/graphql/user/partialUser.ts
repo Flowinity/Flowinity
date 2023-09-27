@@ -9,7 +9,7 @@ import { Stats } from "@app/classes/graphql/core/core"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { UserInsights } from "@app/classes/graphql/user/insights"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
-import { UserStatus } from "@app/classes/graphql/user/status"
+import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { FriendNickname } from "@app/models/friendNickname"
 
 @ObjectType()
@@ -148,6 +148,18 @@ export class PartialUserFriend extends PartialUserBase {
   blocked?: boolean
   @Field()
   bot: boolean
+}
+
+@ObjectType()
+export class PartialUserAuth extends PartialUserBase {
+  @Field(() => Number)
+  itemsPerPage: number
+  @Field(() => UserStatus)
+  status: UserStatus
+  @Field(() => UserStoredStatus)
+  storedStatus: UserStoredStatus
+  @Field(() => Boolean)
+  emailVerified: boolean
 }
 
 export const partialUserFriend = [...partialUserBase, "status", "nameColor"]

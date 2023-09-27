@@ -10,7 +10,7 @@
           sort: true
         }
       "
-      @refreshGallery="getGallery()"
+      @refreshGallery="getGallery(undefined, true)"
       @update:show="show = $event"
       v-model:search="show.search"
       @update:filter="
@@ -78,6 +78,7 @@ import {
   Upload
 } from "@/gql/graphql";
 import { isNumeric } from "@/plugins/isNumeric";
+import { StateHandler } from "@/components/Scroll/types";
 
 export default defineComponent({
   name: "PersonalGallery",
@@ -148,8 +149,15 @@ export default defineComponent({
         collections: [...this.gallery.items[index]?.collections, collection]
       };
     },
-    async getGallery() {
+    async getGallery(
+      input?: { state: StateHandler; page: number },
+      reset: boolean = false
+    ) {
       this.loading = true;
+      if (input) {
+        input.state.loading();
+        this.page++;
+      }
       const {
         data: { gallery }
       } = await this.$apollo.query({
@@ -164,11 +172,26 @@ export default defineComponent({
             type: this.type,
             order: this.show.order,
             collectionId: isNumeric(this.rid) ? parseInt(this.rid) : undefined,
-            shareLink: isNumeric(this.rid) ? undefined : this.rid
+            shareLink: isNumeric(this.rid) ? undefined : this.rid,
+            limit: 12
           }
         } as GalleryInput
       });
-      this.gallery = gallery;
+      if (this.gallery && !reset) {
+        this.gallery = {
+          items: [...this.gallery.items, ...gallery.items],
+          pager: gallery.pager
+        };
+      } else {
+        this.gallery = gallery;
+        this.$route.params.page = 1;
+      }
+      if (!gallery.items.length && input) {
+        input.state.complete();
+      } else if (input) {
+        input.state.loaded();
+      }
+
       this.loading = false;
       return gallery;
     },

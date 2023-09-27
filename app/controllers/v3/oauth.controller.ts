@@ -127,7 +127,10 @@ export class OauthControllerV3 {
   ) {
     const app = await this.oauthService.getApp(oauthAppId, user?.id)
     if (!app) throw Errors.NOT_FOUND
-    return app
+    return {
+      ...app.toJSON(),
+      secret: undefined
+    }
   }
 
   @Post("/:oauthAppId/authorize")

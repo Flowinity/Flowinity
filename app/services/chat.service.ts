@@ -27,6 +27,7 @@ import {
   AuditLogActionType,
   AuditLogCategory
 } from "@app/classes/graphql/chat/auditLog/categories"
+import { Friend } from "@app/models/friend.model"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -704,7 +705,8 @@ export class ChatService {
   async addUsersToChat(
     associationId: number,
     userIds: number[],
-    userId: number
+    userId: number,
+    force: boolean = false
   ) {
     let chat = await this.getChatFromAssociation(associationId, userId)
     const existingAssociations = await ChatAssociation.findAll({
@@ -716,10 +718,13 @@ export class ChatService {
     if (existingAssociations.length > 0) {
       throw Errors.USER_ALREADY_IN_CHAT
     }
-    const friends = await Container.get(UserUtilsService).validateFriends(
-      userId,
-      userIds
-    )
+    let friends: Friend[] = []
+    if (!force) {
+      friends = await Container.get(UserUtilsService).validateFriends(
+        userId,
+        userIds
+      )
+    }
     let newAssociations = []
     const rank = await ChatRank.findOne({
       where: {
@@ -728,12 +733,13 @@ export class ChatService {
       }
     })
     if (!rank) throw Errors.COLUBRINA_CHAT
-    for (const friend of friends) {
+    for (const friend of force ? userIds : friends) {
+      const id = typeof friend === "number" ? friend : friend.friendId
       const association = await ChatAssociation.create({
         chatId: chat.id,
-        userId: friend.friendId,
+        userId: id,
         rank: "member",
-        identifier: chat.id + "-" + friend.friendId
+        identifier: chat.id + "-" + id
       })
       await ChatRankAssociation.create({
         rankId: rank.id,
@@ -741,7 +747,7 @@ export class ChatService {
       })
       newAssociations.push(association.id)
       this.sendMessage(
-        `<@${userId}> added <@${friend.friendId}> to the chat.`,
+        `<@${userId}> added <@${id}> to the chat.`,
         userId,
         associationId,
         undefined,
@@ -752,7 +758,7 @@ export class ChatService {
         userId: userId,
         category: AuditLogCategory.USER,
         actionType: AuditLogActionType.ADD,
-        message: `<@${userId}> added <@${friend.friendId}> to the chat.`
+        message: `<@${userId}> added <@${id}> to the chat.`
       })
     }
     const associations = await ChatAssociation.findAll({

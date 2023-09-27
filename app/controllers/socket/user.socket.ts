@@ -30,7 +30,7 @@ export class UserSocketController {
       socket.join(session.user.id)
       const user = session.user
       if (user.storedStatus === "invisible") return
-      if (user.status !== user.storedStatus) {
+      if (user.status.toString() !== user.storedStatus.toString()) {
         await User.update(
           {
             status: user.storedStatus

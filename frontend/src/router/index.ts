@@ -148,7 +148,12 @@ const routes = [
           {
             path: "developer",
             name: "Developer Portal",
-            component: () => import("@/views/Settings/Developer.vue")
+            component: () => import("@/views/Admin/Oauth.vue")
+          },
+          {
+            path: "developer/:id",
+            name: "Developer Portal App",
+            component: () => import("@/views/Admin/OauthItem.vue")
           }
         ]
       },

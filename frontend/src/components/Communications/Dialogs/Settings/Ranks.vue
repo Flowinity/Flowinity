@@ -15,11 +15,32 @@
         class="v-slide-group v-slide-group--vertical v-tabs v-tabs--vertical v-tabs--align-tabs-start v-tabs--density-default d-flex"
         handle=".drag-handle"
       >
+        <v-menu v-model="context" :style="menuStyle" location="end">
+          <v-list>
+            <v-list-item
+              style="color: rgb(var(--v-theme-error))"
+              @click="deleteRank(contextRank?.id)"
+              :disabled="
+                !$chat.canEditRank(contextRank?.index, $chat.editingChat)
+              "
+            >
+              <v-icon>mdi-delete</v-icon>
+              {{ $t("generic.delete") }}
+            </v-list-item>
+          </v-list>
+        </v-menu>
         <v-tab
           v-for="rank in $chat.editingChat.ranks"
           :value="rank.id"
+          @contextmenu.prevent="
+            contextY = $event.y;
+            contextX = $event.x;
+            contextRank = rank;
+            context = true;
+          "
           :color="rank.color"
           item-key="id"
+          :id="`rank-${rank.id}`"
         >
           <div class="d-flex justify-space-between align-center">
             <v-avatar
@@ -148,6 +169,7 @@ import {
 } from "@/graphql/chats/updateRank.graphql";
 import { VueDraggable } from "vue-draggable-plus";
 import CreateRank from "@/components/Communications/Dialogs/CreateRank.vue";
+import { DeleteChatRankMutation } from "@/graphql/chats/deleteRank.graphql";
 
 export default defineComponent({
   name: "ChatSettingsRanks",
@@ -156,10 +178,20 @@ export default defineComponent({
     return {
       selected: "admin",
       availablePermissions: [] as ChatPermission[],
-      createRank: false
+      createRank: false,
+      context: false,
+      contextRank: undefined as ChatRank | undefined,
+      contextY: 0,
+      contextX: 0
     };
   },
   computed: {
+    menuStyle() {
+      return `
+        position: absolute;
+        top: ${this.contextY}px;
+        left: ${this.contextX}px;`;
+    },
     transformed() {
       return this.availablePermissions.reduce((result, currentObj) => {
         const groupName = currentObj.group;
@@ -184,6 +216,17 @@ export default defineComponent({
     }
   },
   methods: {
+    async deleteRank(id: string) {
+      await this.$apollo.mutate({
+        mutation: DeleteChatRankMutation,
+        variables: {
+          input: {
+            associationId: this.$chat.editingChat.association.id,
+            rankId: id
+          }
+        }
+      });
+    },
     async updateRankOrder() {
       await this.$apollo.mutate({
         mutation: UpdateRankOrderMutation,

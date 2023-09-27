@@ -106,7 +106,8 @@
       "integrations": "Integrations",
       "slideshows": "Slideshows",
       "about": "About",
-      "integrationError": "Some integrations need attention."
+      "integrationError": "Some integrations need attention.",
+      "developer": "My Apps & Bots"
     },
     "home": {
       "privacy": {
@@ -456,7 +457,9 @@
         "users": "Users",
         "invites": "Invites",
         "bots": "Bots & Applications",
-        "bans": "Bans"
+        "bans": "Bans",
+        "audit": "Audit Log",
+        "emoji": "Custom Emoji"
       },
       "home": {
         "name": "Group Overview",
@@ -516,6 +519,15 @@
             "expire": "Set invite usage expiry"
           }
         }
+      },
+      "emoji": {
+        "name": "Custom Emoji",
+        "add": "Add Emoji",
+        "description": "You can add Custom Emoji which can always be used within the group, and in external groups for users that are part of your group. Max file size is 1MiB. Supported file types are: PNG/GIF/JPG/JPEG/SVG. Duplicate emoji names will be appended ~number which applies globally. If you see an emoji with this suffix, it does not reflect the true emoji name.",
+        "uploadedBy": "Uploaded by: "
+      },
+      "audit": {
+        "name": "Audit Log"
       }
     }
   },

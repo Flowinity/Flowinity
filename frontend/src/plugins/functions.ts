@@ -68,7 +68,7 @@ export default {
       return undefined;
     }
   },
-  richMessage(content: string, message: Message) {
+  richMessage(content: string, message: Message | null) {
     const regex = /\\?&lt;(@\d+)&gt;/g;
     const mentions = content.match(regex);
     const regexEmoji = content.match(
@@ -82,7 +82,7 @@ export default {
           .replace(/:([\w~-]+)(?::([\w~-]+))?:(?!\w)/g, "")
           .replaceAll(" ", "") === "";
       for (const emoji of regexEmoji) {
-        const find = message.emoji?.find((e) => e.id === emoji.split(":")[2]);
+        const find = message?.emoji?.find((e) => e.id === emoji.split(":")[2]);
         if (!find) continue;
         content = content.replace(
           emoji,
@@ -149,7 +149,7 @@ export default {
     }
     return content;
   },
-  markdown(text: string, message: Message): any {
+  markdown(text: string, message: Message | null): any {
     return this.richMessage(md.render(text), message);
   },
   markdownEmail(text: string): any {

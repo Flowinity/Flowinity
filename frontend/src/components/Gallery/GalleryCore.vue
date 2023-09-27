@@ -1,129 +1,148 @@
 <template>
   <div id="gallery-core">
-    <OCRMetadata v-model="$app.dialogs.ocr.value" />
-    <AddToCollection
-      v-model="addToCollectionDialog"
-      :items="collectivize"
-      @collectionAdded="collectionAdded($event)"
-    ></AddToCollection>
-    <div v-if="!selected.length && supports.multiSelect" class="float-right">
-      <slot name="multi-select-actions">
-        <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
-          <v-icon>mdi-plus</v-icon>
-          &nbsp;{{ $t("gallery.selectAll") }}
-        </v-btn>
-      </slot>
-    </div>
-    <div v-if="selected.length && supports.multiSelect" class="float-right">
-      <slot
-        :deselectAll="deselectAll"
-        :selectAll="selectAll"
-        :selected="selected"
-        name="multi-select-actions-length"
-      >
-        <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
-          <v-icon class="mr-1">mdi-plus</v-icon>
-          {{ $t("gallery.selectAll") }}
-        </v-btn>
-        <v-btn class="rounded-xl ml-2" variant="text" @click="deselectAll()">
-          <v-icon class="mr-1">mdi-close</v-icon>
-          {{ $t("gallery.deselectAll") }}
-        </v-btn>
-        <v-btn
-          class="rounded-xl"
-          color="red darken-1"
-          variant="text"
-          @click="bulkDeleteConfirm()"
-        >
-          <v-icon class="mr-1">mdi-delete</v-icon>
-          {{ $t("gallery.deleteSelected") }}
-        </v-btn>
-        <v-btn
-          class="rounded-xl ml-2"
-          variant="text"
-          @click="bulkAddCollection()"
-        >
-          <v-icon class="mr-1">mdi-folder-multiple-image</v-icon>
-          {{ $t("gallery.collectSelected") }}
-        </v-btn>
-      </slot>
-    </div>
-    <br />
-    <br />
-    <v-row v-if="!loading">
-      <v-col
-        v-for="item in items.items"
-        :key="'item-' + item.id"
-        :lg="!inline ? 3 : 12"
-        cols="12"
-        md="6"
-        sm="1"
-      >
-        <GalleryItem
-          :item="item"
+    <drag-select v-model="selected">
+      <OCRMetadata v-model="$app.dialogs.ocr.value" />
+      <AddToCollection
+        v-model="addToCollectionDialog"
+        :items="collectivize"
+        @collectionAdded="collectionAdded($event)"
+      ></AddToCollection>
+      <div v-if="!selected.length && supports.multiSelect" class="float-right">
+        <slot name="multi-select-actions">
+          <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
+            <v-icon>mdi-plus</v-icon>
+            &nbsp;{{ $t("gallery.selectAll") }}
+          </v-btn>
+        </slot>
+      </div>
+      <div v-if="selected.length && supports.multiSelect" class="float-right">
+        <slot
+          :deselectAll="deselectAll"
+          :selectAll="selectAll"
           :selected="selected"
-          :supports="{
-            ...supports,
-            collections: true,
-            permissions: {
-              ...supports.permissions,
-              write: item.user ? item.user.id === $user.user?.id : true
-            }
-          }"
-          @collectivize="
-            addToCollectionDialog = true;
-            collectivize = $event;
-          "
-          @delete="$emit('delete', $event)"
-          @refresh="$emit('refresh', $event)"
-          @remove="$emit('remove', $event)"
-          @select="select($event)"
+          name="multi-select-actions-length"
         >
-          <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
-            <slot :name="name" v-bind="slotData" />
-          </template>
-        </GalleryItem>
-      </v-col>
-    </v-row>
-    <v-row v-else>
-      <v-col
-        v-for="item in 24"
-        :key="item"
-        :lg="!inline ? 3 : 12"
-        cols="12"
-        md="6"
-        sm="1"
-      >
-        <GalleryItem :item="item" />
-      </v-col>
-    </v-row>
-    <!--
-    <v-pagination
-      :length="items.pager?.totalPages"
-      class="mt-3"
-      v-model="pageComponent"
-      :total-visible="$vuetify.display.xlAndUp ? 15 : undefined"
-    >
-    </v-pagination>-->
-    <Paginate
-      v-model="pageComponent"
-      :total-pages="items.pager?.totalPages"
-      class="mt-10"
-      @update:model-value="resetScroll()"
-    ></Paginate>
-    <small>
-      Total Pages: {{ items.pager?.totalPages.toLocaleString() }}
-      <v-btn
-        v-if="supports.randomAttachment"
-        :loading="randomAttachmentLoading"
-        style="float: right"
-        @click="$emit('randomAttachment')"
-      >
-        Random Attachment
-      </v-btn>
+          <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
+            <v-icon class="mr-1">mdi-plus</v-icon>
+            {{ $t("gallery.selectAll") }}
+          </v-btn>
+          <v-btn class="rounded-xl ml-2" variant="text" @click="deselectAll()">
+            <v-icon class="mr-1">mdi-close</v-icon>
+            {{ $t("gallery.deselectAll") }}
+          </v-btn>
+          <v-btn
+            class="rounded-xl"
+            color="red darken-1"
+            variant="text"
+            @click="bulkDeleteConfirm()"
+          >
+            <v-icon class="mr-1">mdi-delete</v-icon>
+            {{ $t("gallery.deleteSelected") }}
+          </v-btn>
+          <v-btn
+            class="rounded-xl ml-2"
+            variant="text"
+            @click="bulkAddCollection()"
+          >
+            <v-icon class="mr-1">mdi-folder-multiple-image</v-icon>
+            {{ $t("gallery.collectSelected") }}
+          </v-btn>
+        </slot>
+      </div>
       <br />
-      Total Items: {{ items.pager?.totalItems.toLocaleString() }}
-    </small>
+      <br />
+      <v-row>
+        <v-col
+          v-for="item in items.items"
+          :key="'item-' + item.id"
+          :lg="!inline ? 3 : 12"
+          cols="12"
+          md="6"
+          sm="1"
+          :value="item.id"
+        >
+          <drag-select-option :value="item.id">
+            <GalleryItem
+              :item="item"
+              :selected="selected"
+              :supports="{
+                ...supports,
+                collections: true,
+                permissions: {
+                  ...supports.permissions,
+                  write: item.user ? item.user.id === $user.user?.id : true
+                }
+              }"
+              @collectivize="
+                addToCollectionDialog = true;
+                collectivize = $event;
+              "
+              @delete="$emit('delete', $event)"
+              @refresh="$emit('refresh', $event)"
+              @remove="$emit('remove', $event)"
+              @select="select($event)"
+            >
+              <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+                <slot :name="name" v-bind="slotData" />
+              </template>
+            </GalleryItem>
+          </drag-select-option>
+        </v-col>
+      </v-row>
+      <v-row v-if="loading">
+        <v-col
+          v-for="item in 12"
+          :key="item"
+          :lg="!inline ? 3 : 12"
+          cols="12"
+          md="6"
+          sm="1"
+        >
+          <GalleryItem :item="item" />
+        </v-col>
+      </v-row>
+      <infinite-loading
+        @infinite="
+          $emit('refreshGallery', { state: $event, page: pageComponent++ })
+        "
+        identifier="gallery-bottom"
+      >
+        <template v-slot:spinner>
+          <div class="text-center">
+            <v-progress-circular
+              :size="36"
+              :width="2"
+              indeterminate
+              :model-value="1"
+            ></v-progress-circular>
+          </div>
+        </template>
+        <template v-slot:complete>
+          <span></span>
+        </template>
+      </infinite-loading>
+      <template v-if="false">
+        <Paginate
+          v-model="pageComponent"
+          :total-pages="items.pager?.totalPages"
+          class="mt-10"
+          @update:model-value="resetScroll()"
+        ></Paginate>
+        <small>
+          Total Pages: {{ items.pager?.totalPages.toLocaleString() }}
+          <v-btn
+            v-if="supports.randomAttachment"
+            :loading="randomAttachmentLoading"
+            style="float: right"
+            @click="$emit('randomAttachment')"
+          >
+            Random Attachment
+          </v-btn>
+          <br />
+          Total Items: {{ items.pager?.totalItems.toLocaleString() }}
+        </small>
+      </template>
+    </drag-select>
   </div>
 </template>
 
@@ -135,10 +154,20 @@ import { CollectionCache } from "@/types/collection";
 import Paginate from "@/components/Core/Paginate.vue";
 import OCRMetadata from "@/components/Gallery/Dialogs/OCRMetadata.vue";
 import { Pager, Upload } from "@/gql/graphql";
+import InfiniteLoading from "@/components/Scroll/InfiniteScroll.vue";
+import { DragSelect, DragSelectOption } from "@/components/DragToSelect";
 
 export default defineComponent({
   name: "GalleryCore",
-  components: { OCRMetadata, Paginate, AddToCollection, GalleryItem },
+  components: {
+    DragSelectOption,
+    DragSelect,
+    InfiniteLoading,
+    OCRMetadata,
+    Paginate,
+    AddToCollection,
+    GalleryItem
+  },
   props: {
     randomAttachmentLoading: {
       type: Boolean,

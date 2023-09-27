@@ -4,9 +4,10 @@
       <v-toolbar
         :class="{ unselectable: selected.length }"
         style="z-index: 1"
-        @click="
+        @click.prevent.stop="
           selected.length && supports.multiSelect ? $emit('select', item) : null
         "
+        :color="selected.includes(item.id) ? '#006fab' : undefined"
       >
         <v-toolbar-title>{{ item.name }}</v-toolbar-title>
         <v-btn

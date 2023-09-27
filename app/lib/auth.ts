@@ -14,6 +14,7 @@ import { createParamDecorator } from "routing-controllers"
 import { RequestAuthSystem } from "@app/types/express"
 import { Badge } from "@app/models/badge.model"
 import { AccessedFrom } from "@app/classes/graphql/user/session"
+import { SessionInfo } from "@app/types/auth"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -183,13 +184,6 @@ export async function updateSession(session: Session, ip: string) {
     session.info?.accessedFrom?.length
   )
     return
-  if (session.type === "session") {
-    session
-      .update({
-        expiredAt: new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000)
-      })
-      .then(() => {})
-  }
   let accessedFrom = session.info?.accessedFrom || []
   if (!accessedFrom.find((aF: AccessedFrom) => aF.ip === ip)) {
     const asnResponse = await asn?.get(ip)
@@ -207,7 +201,11 @@ export async function updateSession(session: Session, ip: string) {
       info: {
         ...session.info,
         accessedFrom: accessedFrom
-      }
+      },
+      expiredAt:
+        session.type === "session"
+          ? new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000)
+          : session.expiredAt
     },
     {
       where: {

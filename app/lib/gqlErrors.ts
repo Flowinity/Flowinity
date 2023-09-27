@@ -57,6 +57,16 @@ const Errors = {
   },
   ILLEGAL_EMOJI_CHARACTER: {
     message: "Your emoji name cannot include ~"
+  },
+  APP_NOT_FOUND: {
+    message: "The app could not be found."
+  },
+  APP_USER_NOT_FOUND: {
+    message: "The app user could not be found."
+  },
+  PRIVATE_APP: {
+    message:
+      "This app is private and you need to be added by the owner or manager."
   }
 }
 

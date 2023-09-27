@@ -9,7 +9,12 @@
     {{ $t("chats.settings.emoji.name") }} ({{ emojis.length }}/30)
   </overline>
   <div>
-    <v-btn @click="upload = true">Add Emoji</v-btn>
+    <v-card-subtitle class="initial" style="max-width: 600px">
+      {{ $t("chats.settings.emoji.description") }}
+    </v-card-subtitle>
+    <v-btn @click="upload = true" class="my-1 ml-2">
+      {{ $t("chats.settings.emoji.add") }}
+    </v-btn>
     <v-list v-for="emoji in emojis" :key="emoji.id" max-width="600">
       <v-list-item>
         <template v-slot:prepend>
@@ -53,7 +58,7 @@
         />
         <template v-slot:subtitle>
           <div>
-            Uploaded by:
+            {{ $t("chats.settings.emoji.uploadedBy") }}
             <UserAvatar size="18" :user="$user.users[emoji.userId]" />
             {{ $user.users[emoji.userId]?.username }}
           </div>

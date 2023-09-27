@@ -52,3 +52,11 @@ export class UpdateRankOrder {
   })
   rankIds: string[]
 }
+
+@InputType()
+export class DeleteRank {
+  @Field(() => Number)
+  associationId: number
+  @Field(() => String)
+  rankId: string
+}

@@ -138,7 +138,7 @@
           <ChatSettingsEmoji />
         </v-window-item>
         <v-window-item value="audit">
-          <ChatSettingsAudit />
+          <ChatSettingsAudit :active="tab === 'audit'" />
         </v-window-item>
       </v-window>
     </div>

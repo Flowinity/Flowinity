@@ -37,7 +37,8 @@ export const authChecker: AuthChecker<Context> = async (
     )
   }
 
-  if (session) updateSession(session, context.ip).then(() => {})
+  if (session && !("fake" in session))
+    updateSession(session, context.ip).then(() => {})
   const scopeNormalized =
     typeof opts.scopes === "string" ? [opts.scopes] : opts.scopes
 

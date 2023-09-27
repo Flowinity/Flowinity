@@ -1,0 +1,1 @@
+# https://github.com/credred/vue-drag-select

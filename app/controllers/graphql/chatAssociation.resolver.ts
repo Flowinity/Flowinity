@@ -27,11 +27,18 @@ import { ChatRank } from "@app/models/chatRank.model"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
+import { AddBotToChatInput } from "@app/classes/graphql/developers/addBotToChat"
+import { OauthService } from "@app/services/oauth.service"
+import { OauthUser } from "@app/models/oauthUser.model"
+import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
 
 @Resolver(ChatAssociation)
 @Service()
 export class ChatAssociationResolver {
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private oauthService: OauthService
+  ) {}
 
   @FieldResolver(() => PartialUserBase, {
     nullable: true
@@ -103,7 +110,11 @@ export class ChatAssociationResolver {
     scopes: ["chats.edit"]
   })
   @Mutation(() => Success)
-  async addChatUsers(@Ctx() ctx: Context, @Arg("input") input: AddChatUser) {
+  async addChatUsers(
+    @Ctx() ctx: Context,
+    @Arg("input") input: AddChatUser,
+    force: boolean = false
+  ) {
     await this.chatService.checkPermissions(
       ctx.user!!.id,
       input.chatAssociationId,
@@ -114,7 +125,8 @@ export class ChatAssociationResolver {
       await this.chatService.addUsersToChat(
         input.chatAssociationId,
         input.users,
-        ctx.user!!.id
+        ctx.user!!.id,
+        force
       )
       return { success: true }
     } else if (input.action === ToggleUser.REMOVE) {
@@ -312,7 +324,6 @@ export class ChatAssociationResolver {
         chatId: invite.chat.id
       }
     })
-    console.log(existing)
     if (existing) throw new GqlError("ALREADY_IN_CHAT")
     const rank = invite.rank
       ? invite.rank
@@ -400,5 +411,124 @@ export class ChatAssociationResolver {
         await this.chatService.getChat(invite.chat.id, association.userId)
       )
     return emitUser
+  }
+
+  @RateLimit({
+    window: 10,
+    max: 10
+  })
+  @Authorization({
+    scopes: ["chats.edit"]
+  })
+  @Mutation(() => ChatAssociation)
+  async addBotToChat(
+    @Ctx() ctx: Context,
+    @Arg("input") input: AddBotToChatInput
+  ) {
+    const app = await this.oauthService.getApp(input.botAppId, ctx.user!!.id)
+    if (!app || !app.botId) throw new GqlError("APP_NOT_FOUND")
+    const bot = await User.findOne({
+      where: {
+        id: app.botId
+      }
+    })
+    if (!bot) throw new GqlError("APP_NOT_FOUND")
+    const chat = await this.chatService.getChatFromAssociation(
+      input.associationId,
+      ctx.user!!.id
+    )
+
+    if (app.private && app.userId !== ctx.user!!.id) {
+      const access = await OauthUser.findOne({
+        where: {
+          oauthAppId: input.botAppId,
+          userId: ctx.user!!.id,
+          active: true
+        }
+      })
+      if (!access) throw new GqlError("PRIVATE_APP")
+    }
+
+    await this.addChatUsers(
+      ctx,
+      {
+        chatAssociationId: input.associationId,
+        users: [app.botId],
+        action: ToggleUser.ADD
+      },
+      true
+    )
+    const assoc = await ChatAssociation.findOne({
+      where: {
+        userId: app.botId,
+        chatId: chat.id
+      }
+    })
+    if (!assoc) throw new GqlError("UNKNOWN")
+    const rank = await ChatRank.create({
+      chatId: chat.id,
+      userId: ctx.user!!.id,
+      name: bot.username,
+      index: 0
+    })
+    this.chatService.normalizeIndexes(chat.id)
+    await ChatRankAssociation.create({
+      chatAssociationId: assoc.id,
+      rankId: rank.id
+    })
+    const check = await ChatPermission.findAll({
+      where: {
+        id: input.permissions
+      }
+    })
+    for (const permission of check) {
+      try {
+        await this.chatService.checkPermissions(
+          ctx.user!!.id,
+          input.associationId,
+          <ChatPermissions>permission.id
+        )
+        await ChatPermissionAssociation.create({
+          rankId: rank.id,
+          permissionId: permission.id
+        })
+      } catch (e) {
+        // Doesn't have permission. Will not grant.
+        console.log(e)
+      }
+    }
+    const permissions = await ChatPermissionAssociation.findAll({
+      where: {
+        rankId: rank.id
+      }
+    })
+    await this.chatService.emitForAll(
+      input.associationId,
+      ctx.user!!.id,
+      "rankUpdated",
+      {
+        permissionsMap: permissions.map((perm) => perm.permissionId),
+        name: rank.name,
+        color: rank.color,
+        id: rank.id,
+        userId: rank.userId,
+        createdAt: rank.createdAt,
+        chatId: rank.chatId,
+        updatedAt: rank.updatedAt,
+        managed: rank.managed,
+        index: rank.index
+      }
+    )
+    this.chatService.emitForAll(
+      input.associationId,
+      ctx.user!!.id,
+      "rankAdded",
+      {
+        chatAssociationId: input.associationId,
+        updatingChatAssociationId: assoc.id,
+        rankId: rank.id
+      }
+    )
+    return assoc
   }
 }

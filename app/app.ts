@@ -100,6 +100,7 @@ import { ChatInviteResolver } from "@app/controllers/graphql/chatInvite.resolver
 import { MailResolver } from "@app/controllers/graphql/mail.resolver"
 import {
   OAuthAppResolver,
+  OauthConsentAppResolver,
   OAuthUserResolver
 } from "@app/controllers/graphql/oAuthApp.resolver"
 import { ChatEmojiResolver } from "@app/controllers/graphql/chatEmoji.resolver"
@@ -374,7 +375,8 @@ export class Application {
         OAuthAppResolver,
         OAuthUserResolver,
         ChatEmojiResolver,
-        ChatAuditLogResolver
+        ChatAuditLogResolver,
+        OauthConsentAppResolver
       ],
       container: Container,
       authChecker: authChecker,
