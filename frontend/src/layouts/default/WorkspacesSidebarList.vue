@@ -174,7 +174,7 @@
     v-if="!$workspaces.versionHistory && !$app.rail"
   >
     <v-icon size="20">mdi-close</v-icon>
-    Close sidebar
+    Close Workspaces
   </v-card-text>
   <v-card-text
     v-else-if="!$app.rail"
@@ -221,6 +221,7 @@
           v-for="item in $workspaces.items"
           :key="item.id"
           :value="item.id"
+          class="unselectable"
           @click="$workspaces.selectWorkspace(item.id)"
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
@@ -244,6 +245,7 @@
           <v-list-item
             v-bind="props"
             @contextmenu.prevent="context($event, `folder-${item.id}`, item)"
+            class="unselectable"
           >
             <v-list-item-title>{{ props.title }}</v-list-item-title>
           </v-list-item>
@@ -252,11 +254,14 @@
           v-for="note in item.children"
           :key="note.id"
           :to="'/workspaces/notes/' + note.id"
-          :value="note.workspaceFolderId"
+          :value="note.id"
           :id="`note-${item.id}`"
           @contextmenu.prevent="context($event, `note-${note.id}`, note)"
         >
-          <v-list-item-title style="text-overflow: ellipsis">
+          <v-list-item-title
+            style="text-overflow: ellipsis"
+            class="unselectable"
+          >
             {{ note.name }}
           </v-list-item-title>
         </v-list-item>
@@ -295,6 +300,8 @@ import WorkspaceDialog from "@/components/Workspaces/Dialogs/Dialog.vue";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import { NoteDataV2, NoteVersion } from "@/models/noteVersion";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import { CreateWorkspaceMutation } from "@/graphql/workspaces/createWorkspace.graphql";
+import { CreateNoteMutation } from "@/graphql/workspaces/createNote.graphql";
 
 export default defineComponent({
   name: "WorkspacesSidebarList",
@@ -399,9 +406,7 @@ export default defineComponent({
             json = text;
           }
           const data = await this.doCreateNote(this.importDoc.name, true);
-          await this.axios.patch(`/notes/${data?.id}`, {
-            data: json
-          });
+          await this.$workspaces.saveNote(json, true);
           this.$router.push(`/workspaces/notes/${data.id}`);
           this.importDoc.dialog = false;
           this.importDoc.loading = false;
@@ -496,15 +501,24 @@ export default defineComponent({
     },
     async doCreateNote(name: string, internal: boolean = false) {
       this.createNote.loading = true;
-      const { data } = await this.axios.post("/notes", {
-        name,
-        workspaceFolderId: this.createNote.folderId || this.contextMenu.item?.id
+      const {
+        data: { createNote }
+      } = await this.$apollo.mutate({
+        mutation: CreateNoteMutation,
+        variables: {
+          input: {
+            name,
+            workspaceFolderId: this.createNote.folderId
+          }
+        }
       });
-      await this.$workspaces.refreshWorkspace();
+      this.$workspaces.workspace.folders
+        .find((f) => f.id === this.createNote.folderId)
+        ?.children.push(createNote);
       this.createNote.dialog = false;
       this.createNote.loading = false;
-      if (internal) return data;
-      this.$router.push(`/workspaces/notes/${data.id}`);
+      if (internal) return createNote;
+      this.$router.push(`/workspaces/notes/${createNote.id}`);
     },
     async doRenameNote(name: string) {
       this.renameNote.loading = true;
@@ -538,11 +552,16 @@ export default defineComponent({
     },
     async doCreateWorkspace(name: string) {
       this.createWorkspace.loading = true;
-      const { data } = await this.axios.post("/notes/workspaces", {
-        name: name
+      const {
+        data: { createWorkspace }
+      } = await this.$apollo.mutate({
+        mutation: CreateWorkspaceMutation,
+        variables: {
+          input: name
+        }
       });
-      await this.$workspaces.init();
-      await this.$workspaces.selectWorkspace(data.id);
+      this.$workspaces.items.unshift(createWorkspace);
+      this.$workspaces.selectWorkspace(createWorkspace.id);
       this.createWorkspace.dialog = false;
       this.createWorkspace.loading = false;
     },
@@ -579,7 +598,7 @@ export default defineComponent({
       this.deleteWorkspace.loading = true;
       const id = this.contextMenu.item?.id || this.deleteWorkspace.workspaceId;
       this.axios.delete(`/notes/workspace/${id}`).then(async () => {
-        this.$workspaces.workspace = null;
+        this.$workspaces.workspaceId = null;
         await this.$workspaces.init();
         this.deleteWorkspace.dialog = false;
         this.deleteWorkspace.loading = false;

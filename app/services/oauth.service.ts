@@ -9,10 +9,11 @@ import { IdentityToken } from "@app/interfaces/oidc"
 import { BadRequestError } from "routing-controllers"
 import fs from "fs"
 import { Plan } from "@app/models/plan.model"
+import { GqlError } from "@app/lib/gqlErrors"
 
 @Service()
 export class OauthService {
-  async getApp(oauthAppId: string, userId?: number) {
+  async getApp(oauthAppId: string, userId?: number): Promise<OauthApp> {
     const app = await OauthApp.findOne({
       where: {
         id: oauthAppId
@@ -21,7 +22,7 @@ export class OauthService {
         include: ["secret"]
       }
     })
-    if (!app) throw Errors.NOT_FOUND
+    if (!app) throw new GqlError("APP_NOT_FOUND")
     if (userId) {
       const session = await Session.findOne({
         where: {
@@ -31,11 +32,11 @@ export class OauthService {
         }
       })
       if (session) {
-        return {
-          ...app.toJSON(),
-          scopes: session.scopes,
-          token: session.token
-        }
+        app.scopes = session.scopes
+        app.token = session.token
+        app.dataValues.scopes = session.scopes
+        app.dataValues.token = session.token
+        return app
       }
     }
     return app

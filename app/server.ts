@@ -1,20 +1,18 @@
 import * as http from "http"
 import { AddressInfo } from "net"
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
 import { caching, MemoryCache } from "cache-manager"
 import dayjs from "dayjs"
 import isoWeek from "dayjs/plugin/isoWeek"
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
 import cluster from "cluster"
 import os from "os"
-import Provider from "oidc-provider"
 
 // Import Miscellaneous
 import { Application } from "@app/app"
 import redis from "@app/redis"
 
 // Import Libs
-import socket from "@app/lib/socket"
 import ipPrimary from "@app/lib/whitelist/primary.json"
 
 // Import Classes
@@ -30,8 +28,16 @@ import { DiscordService } from "@app/services/providers/discord.service"
 
 // Import Models
 import { Domain } from "@app/models/domain.model"
-import { OauthApp } from "@app/models/oauthApp.model"
-import { Context } from "mocha"
+import { SocketControllers } from "socket-controllers"
+import { ChatSocketController } from "@app/controllers/socket/chat.socket"
+import createSocket from "@app/lib/socket-next"
+import { SocketAuthMiddleware } from "@app/lib/socket-auth"
+import { PulseSocketController } from "@app/controllers/socket/pulse.socket"
+import { UserSocketController } from "@app/controllers/socket/user.socket"
+import { FriendsSocketController } from "@app/controllers/socket/friends.socket"
+import { GallerySocketController } from "@app/controllers/socket/gallery.socket"
+import { AutoCollectsSocketController } from "@app/controllers/socket/autoCollects.socket"
+import { TrackedUserSocketController } from "@app/controllers/socket/tracked.socket"
 
 @Service({ eager: false })
 export class Server {
@@ -85,8 +91,7 @@ export class Server {
     dayjs().isoWeekday()
     dayjs().isoWeekYear()
     dayjs.extend(isSameOrBefore)
-
-    global.db = require("@app/db")
+    global.db = require("@app/db").default
     if (config.finishedSetup) {
       global.redis = redis
       global.queue = require("@app/lib/queue").default
@@ -103,13 +108,28 @@ export class Server {
     global.dayjs = dayjs
     global.whitelist = ipPrimary
     this.server = http.createServer(this.application.app)
+    const socket = await createSocket(this.application.app, this.server)
+    global.socket = socket as any
+    new SocketControllers({
+      io: socket,
+      container: Container,
+      middlewares: [SocketAuthMiddleware],
+      controllers: [
+        ChatSocketController,
+        PulseSocketController,
+        UserSocketController,
+        FriendsSocketController,
+        GallerySocketController,
+        AutoCollectsSocketController,
+        TrackedUserSocketController
+      ]
+    })
+
     if (!noBackgroundTasks) {
       this.server.listen(
         port || Server.normalizePort(this.config?.port || "34582")
       )
     }
-
-    await socket.init(this.application.app, this.server)
 
     this.server.on("error", (error: NodeJS.ErrnoException) =>
       this.onError(error)

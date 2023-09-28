@@ -15,19 +15,19 @@
     </span>
     <br />
     <small class="mr-1 text-grey-lighten-3">
-      - {{ message.user.username }} &bullet;
+      - {{ user?.username }} &bullet;
       {{ $chat.lookupChat(message.chatId).name }}
     </small>
     <div class="position-absolute" style="right: 0; top: 0">
       <div
-        v-if="message.user.avatar"
+        v-if="user?.avatar"
         class="v-avatar theme--dark v-avatar--density-default v-avatar--size-default v-avatar--variant-flat"
         style="background-color: #303030"
       >
         <div class="v-responsive v-img">
           <div class="v-responsive__sizer" style="padding-bottom: 100%"></div>
           <img
-            :src="$app.domain + message.user.avatar"
+            :src="$app.domain + user?.avatar"
             alt=""
             class="v-img__img v-img__img--cover"
             style=""
@@ -41,7 +41,7 @@
         style="background-color: rgb(1, 144, 234)"
       >
         <span class="text-h5">
-          {{ message?.user?.username?.charAt(0)?.toUpperCase() }}
+          {{ user?.username?.charAt(0)?.toUpperCase() }}
         </span>
         <span class="v-avatar__underlay"></span>
       </div>
@@ -54,7 +54,12 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "MessageToast",
-  props: ["message"]
+  props: ["message"],
+  computed: {
+    user() {
+      return this.$user.users[this.message.userId];
+    }
+  }
 });
 </script>
 

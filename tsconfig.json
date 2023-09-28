@@ -3,14 +3,8 @@
     "baseUrl": "./",
     "target": "ES2021",
     "incremental": true,
-    "types": [
-      "reflect-metadata",
-      "@types/mocha",
-      "mocha",
-      "node",
-      "webpack-env",
-      "@types/sequelize"
-    ],
+    "types": ["node", "webpack-env"],
+    "typeRoots": ["./app/types", "./node_modules/@types"],
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
@@ -32,5 +26,9 @@
     },
     "strictPropertyInitialization": false,
     "lib": ["esnext.asynciterable", "es2018", "dom", "dom.iterable"]
-  }
+  },
+  "ts-node": {
+    "files": true
+  },
+  "extends": "ts-node/node16/tsconfig.json"
 }

@@ -5,14 +5,7 @@
     "moduleResolution": "Node",
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "webworker"
-    ]
+    "lib": ["esnext", "dom", "dom.iterable", "webworker"]
   },
-  "include": [
-    "vite.config.ts"
-  ]
+  "include": ["vite.config.ts"]
 }

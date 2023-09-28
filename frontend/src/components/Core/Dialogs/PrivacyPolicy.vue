@@ -11,7 +11,7 @@
     <v-btn
       style="z-index: 9999"
       @click="
-        $user.changes.privacyPolicyAccepted = true;
+        $user.user.privacyPolicyAccepted = true;
         $user.save();
       "
     >

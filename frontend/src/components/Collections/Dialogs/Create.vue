@@ -47,7 +47,7 @@ export default defineComponent({
       const { data } = await this.axios.post("/collections", {
         name: this.name
       });
-      await this.$collections.init();
+      await this.$app.init();
       this.$emit("update:modelValue", false);
       this.loading = false;
       this.$router.push(`/collections/${data.id}`);

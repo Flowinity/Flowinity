@@ -12,8 +12,14 @@ const storage: multer.StorageEngine = multer.diskStorage({
   }
 })
 
-const uploader: multer.Multer = multer({
-  storage: storage
+const uploader = multer({
+  storage
+})
+
+const uploaderSmall = multer({
+  limits: { fileSize: 1048576 },
+  storage
 })
 
 export default uploader
+export { uploaderSmall }

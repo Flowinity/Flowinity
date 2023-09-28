@@ -20,6 +20,9 @@ import { Chat } from "@app/models/chat.model"
 import { ReportValidate } from "@app/validators/report"
 import { Report } from "@app/models/report.model"
 import { WeatherResponse } from "@app/interfaces/weather"
+import { State, Stats } from "@app/types/v4/core"
+import { ExperimentType } from "@app/classes/graphql/core/experiments"
+import { isNumeric } from "@app/lib/isNumeric"
 
 let city: Reader<CityResponse> | undefined
 
@@ -99,7 +102,7 @@ export class CoreService {
     }
   }
 
-  async getState() {
+  async getState(): Promise<Partial<State>> {
     return {
       name: config.siteName,
       release: config.release,
@@ -130,7 +133,14 @@ export class CoreService {
       include: [
         {
           model: User,
-          attributes: ["id", "username", "avatar", "moderator", "administrator"]
+          attributes: [
+            "id",
+            "username",
+            "avatar",
+            "moderator",
+            "administrator",
+            "createdAt"
+          ]
         }
       ]
     })
@@ -169,7 +179,7 @@ export class CoreService {
     }
   }
 
-  async getStats(user?: User): Promise<object> {
+  async getStats(user?: User): Promise<Partial<Stats>> {
     const where = user ? { userId: user.id } : {}
     const uploadStats = await Upload.findAll({
       where: {
@@ -270,7 +280,7 @@ export class CoreService {
           pulses.reduce((acc, pulse) => acc + pulse.timeSpent, 0) / 3600000
         ),
         pulses: await Pulse.count({ where: { userId: user.id } }),
-        usage: user.quota,
+        usage: Number(user.quota),
         hours,
         collections: await Collection.count({ where }),
         collectionItems: await CollectionItem.count({ where }),
@@ -315,9 +325,46 @@ export class CoreService {
     } as Record<string, boolean>
   }
 
-  getExperiments(dev: boolean = false, gold: boolean = false): object {
+  async getUserExperimentsV4(
+    userId: number,
+    dev: boolean = false,
+    gold: boolean = false
+  ): Promise<ExperimentType[]> {
+    const overrides = await Experiment.findAll({
+      where: {
+        userId
+      }
+    })
+    const experiments = this.getExperimentsV4(dev, gold)
+    return [
+      ...experiments.map((experiment) => {
+        const override = overrides.find(
+          (override) => override.key === experiment.id
+        )
+        return {
+          ...experiment,
+          value:
+            override?.dataValues?.value === "true"
+              ? true
+              : override?.dataValues?.value === "false"
+              ? false
+              : isNumeric(override?.dataValues?.value)
+              ? parseInt(override?.dataValues?.value)
+              : experiment.value
+        }
+      })
+    ]
+  }
+
+  getExperiments(
+    dev: boolean = false,
+    gold: boolean = false
+  ): Record<string, any> {
     const experiments = {
-      LEGACY_MOBILE_NAV: false,
+      THEME: 3,
+      NOTIFICATION_SOUND: 1,
+      RESIZABLE_SIDEBARS: false,
+      LEGACY_MOBILE_NAV: true,
       OFFICIAL_INSTANCE: config?.officialInstance || false,
       API_FALLBACK_ON_ERROR: false,
       API_VERSION: 3,
@@ -358,6 +405,21 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        THEME: {
+          description:
+            "What frontend theme is applied. 1 is light, 2 is dark, 3 is amoled.",
+          createdAt: "2023-09-24T00:00:00.000Z"
+        },
+        NOTIFICATION_SOUND: {
+          description:
+            "What sound plays when a notification is received. 1 is default, 2 is classic.",
+          createdAt: "2023-09-24T00:00:00.000Z"
+        },
+        RESIZABLE_SIDEBARS: {
+          description:
+            "Enable resizing functionality in the TPU Sidebar component",
+          createdAt: "2023-09-16T00:00:00.000Z"
+        },
         LEGACY_MOBILE_NAV: {
           description: "Legacy mobile navigation.",
           createdAt: "2023-06-16T00:00:00.000Z"
@@ -580,6 +642,23 @@ export class CoreService {
       }
       return experiments
     }
+  }
+
+  getExperimentsV4(
+    dev: boolean = false,
+    gold: boolean = false
+  ): ExperimentType[] {
+    const experiments = this.getExperiments(dev, gold)
+    // remove meta from object.entries
+    return Object.entries(experiments)
+      .filter((experiment) => {
+        return experiment[0] !== "meta"
+      })
+      .map(([key, value]) => ({
+        id: key,
+        value,
+        ...experiments.meta[key]
+      }))
   }
 
   async checkExperiment(

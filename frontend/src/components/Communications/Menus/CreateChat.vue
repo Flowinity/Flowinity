@@ -3,53 +3,53 @@
     :close-on-content-click="false"
     :model-value="modelValue"
     location="end"
-    style="z-index: 4001"
     @update:model-value="$emit('update:modelValue', $event)"
+    max-width="420"
   >
     <template v-slot:activator="{ props }">
       <slot :props="props"></slot>
     </template>
     <v-card>
-      <v-card-title class="text-h6">Select Friends</v-card-title>
-      <v-card-subtitle>
-        You can friend people from their profile.
-        <br />
-        Adding 2 or more users will create a group chat.
+      <v-card-title class="text-h6">
+        {{ $t("chats.settings.users.addUser.title") }}
+      </v-card-title>
+      <v-card-subtitle style="white-space: pre-line">
+        {{ $t("chats.settings.users.addUser.description") }}
       </v-card-subtitle>
       <v-list max-height="400">
         <v-text-field
           v-model="search"
           :autofocus="true"
           class="mx-5 my-n1"
-          label="Search"
+          :label="$t('generic.search')"
         ></v-text-field>
         <v-list-item
           v-for="friend in friends"
-          :active="selected.includes(friend.otherUser.id)"
-          :value="friend.otherUser.id"
-          @click="add(friend.otherUser.id)"
-          :key="friend.otherUser.id"
+          :active="selected.includes(friend.user.id)"
+          :value="friend.user.id"
+          @click="add(friend.user.id)"
+          :key="friend.user.id"
         >
           <template v-slot:prepend>
-            <UserAvatar
-              :user="friend.otherUser"
-              class="mr-3"
-              size="38"
-            ></UserAvatar>
+            <UserAvatar :user="friend.user" class="mr-3" size="38"></UserAvatar>
           </template>
           <template v-slot:append>
             <v-list-item-action start>
               <v-checkbox-btn
-                :model-value="selected.includes(friend.otherUser.id)"
+                :model-value="selected.includes(friend.user.id)"
                 color="primary"
               ></v-checkbox-btn>
             </v-list-item-action>
           </template>
 
-          <v-list-item-title>{{ friend.otherUser.username }}</v-list-item-title>
+          <v-list-item-title>{{ friend.user.username }}</v-list-item-title>
 
           <v-list-item-subtitle>
-            Friends since {{ $date(friend.createdAt).format("DD/MM/YYYY") }}
+            {{
+              $t("chats.settings.users.addUser.friendsSince", {
+                date: $date(friend.createdAt).format("DD/MM/YYYY")
+              })
+            }}
           </v-list-item-subtitle>
         </v-list-item>
       </v-list>
@@ -61,19 +61,93 @@
           @click="type === 'create' ? createChat() : $emit('add', selected)"
         >
           <template v-if="type === 'create'">
-            {{ selected.length < 2 ? "Create DM" : "Create Group" }}
+            {{
+              selected.length < 2
+                ? $t("chats.settings.users.addUser.createDM")
+                : $t("chats.settings.users.addUser.createGroup")
+            }}
           </template>
-          <template v-else>Add</template>
+          <template v-else>
+            {{ $t("chats.settings.users.addUser.add") }}
+          </template>
         </v-btn>
       </v-card-actions>
+      <template
+        v-if="
+          type === 'add' &&
+          $chat.hasPermission('INVITE_USERS', $chat.editingChat)
+        "
+      >
+        <v-divider></v-divider>
+        <v-card-title class="text-h6">
+          {{ $t("chats.settings.users.addUser.invites.title") }}
+        </v-card-title>
+        <v-card-subtitle style="white-space: initial">
+          {{ $t("chats.settings.users.addUser.invites.description") }}
+        </v-card-subtitle>
+        <p class="mx-4" v-if="invite">
+          {{ $app.site.hostnameWithProtocol + "/invite/" + invite }}
+          <v-btn
+            icon
+            size="x-small"
+            class="ml-1"
+            @click="
+              $functions.copy(
+                $app.site.hostnameWithProtocol + '/invite/' + invite
+              )
+            "
+          >
+            <v-icon>mdi-content-copy</v-icon>
+          </v-btn>
+        </p>
+        <i
+          v-else-if="!loading"
+          class="text-blue text-small mx-4"
+          @click="generateInvite()"
+        >
+          generate
+        </i>
+        <v-progress-circular
+          v-else
+          :width="2"
+          size="18"
+          :indeterminate="true"
+        ></v-progress-circular>
+        <v-select
+          variant="outlined"
+          class="mx-4 mt-4"
+          density="compact"
+          :items="expireOptions"
+          v-model="expireOption"
+          :label="$t('chats.settings.users.addUser.invites.expire')"
+        ></v-select>
+        <v-select
+          variant="outlined"
+          class="mx-4"
+          density="compact"
+          :items="$chat.editingChat.ranks"
+          item-title="name"
+          item-value="id"
+          v-model="rankId"
+          :label="$t('chats.settings.users.addUser.invites.rank')"
+        ></v-select>
+        <v-btn
+          :loading="loading"
+          class="mt-n2 mb-4 mx-4 float-right"
+          @click="generateInvite()"
+        >
+          Generate
+        </v-btn>
+      </template>
     </v-card>
   </v-menu>
 </template>
 
 <script lang="ts">
-import { Friend } from "@/models/friend";
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { FriendStatus } from "@/gql/graphql";
+import { CreateChatInviteMutation } from "@/graphql/chats/invite.graphql";
 
 export default defineComponent({
   name: "CreateChat",
@@ -93,7 +167,42 @@ export default defineComponent({
   data() {
     return {
       search: "",
-      selected: [] as number[]
+      selected: [] as number[],
+      select: false,
+      invite: null as string | null,
+      rankId: null as string | null,
+      expireOption: null as number | null,
+      loading: false,
+      expireOptions: [
+        {
+          title: "1 hour",
+          value: 1
+        },
+        {
+          title: "12 hours",
+          value: 12
+        },
+        {
+          title: "1 day",
+          value: 24
+        },
+        {
+          title: "7 days",
+          value: 168
+        },
+        {
+          title: "14 days",
+          value: 336
+        },
+        {
+          title: "30 days",
+          value: 720
+        },
+        {
+          title: "Never expire",
+          value: null
+        }
+      ]
     };
   },
   methods: {
@@ -108,15 +217,37 @@ export default defineComponent({
       const data = await this.$chat.createChat(this.selected);
       this.$router.push(`/communications/${data.association.id}`);
       this.$emit("update:modelValue", false);
+    },
+    async generateInvite() {
+      try {
+        this.loading = true;
+        const {
+          data: { createChatInvite }
+        } = await this.$apollo.mutate({
+          mutation: CreateChatInviteMutation,
+          variables: {
+            input: {
+              rankId: this.rankId,
+              expiry: this.expireOption,
+              associationId: this.$chat.editingChat.association.id
+            }
+          }
+        });
+        this.invite = createChatInvite.id;
+      } finally {
+        this.loading = false;
+      }
     }
   },
   computed: {
     friends() {
-      return this.$friends.friends.filter((friend: Friend) =>
-        friend.otherUser.username
-          .toLowerCase()
-          .includes(this.search.toLowerCase())
-      ) as Friend[];
+      return this.$friends.friends.filter(
+        (friend) =>
+          friend.user.username
+            .toLowerCase()
+            .includes(this.search.toLowerCase()) &&
+          friend.status === FriendStatus.Accepted
+      );
     }
   }
 });

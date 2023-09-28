@@ -58,6 +58,7 @@
           required
           hint="Only use this for public facing and TPU endorsed apps"
           persistent-hint
+          v-if="$user.user?.administrator"
         ></v-checkbox>
       </v-form>
     </v-card-text>

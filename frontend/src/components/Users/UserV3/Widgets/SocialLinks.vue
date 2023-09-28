@@ -74,8 +74,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
-import { User } from "@/models/user";
-import { Component } from "@/types/userv3";
+import { ProfileLayoutComponent, User } from "@/gql/graphql";
 
 export default defineComponent({
   name: "SocialLinks",
@@ -86,7 +85,7 @@ export default defineComponent({
       required: true
     },
     component: {
-      type: Object as () => Component,
+      type: Object as () => ProfileLayoutComponent,
       required: true
     }
   },

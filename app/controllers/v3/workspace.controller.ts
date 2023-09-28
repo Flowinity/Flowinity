@@ -1,6 +1,5 @@
 import {
   Body,
-  Controller,
   Delete,
   Get,
   JsonController,
@@ -14,9 +13,10 @@ import { Service } from "typedi"
 import { Auth } from "@app/lib/auth"
 import Errors from "@app/lib/errors"
 import { User } from "@app/models/user.model"
-import { NoteDataV2, NoteService } from "@app/services/note.service"
+import { NoteService } from "@app/services/note.service"
 import { Response } from "express"
 import JSZip from "jszip"
+import { WorkspaceNote } from "@app/classes/graphql/workspaces/note"
 
 @Service()
 @JsonController("/notes")
@@ -71,7 +71,7 @@ export class WorkspaceControllerV3 {
     @Body()
     body: {
       name?: string
-      data?: NoteDataV2
+      data?: WorkspaceNote
       manualSave?: boolean
     }
   ) {

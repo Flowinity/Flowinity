@@ -1,3 +1,66 @@
+<template>
+  <div
+    ref="el"
+    :class="$attrs.class"
+    class="mentionable"
+    style="position: relative; width: 100%"
+    v-if="displayedItems.length"
+  >
+    <slot />
+
+    <VDropdown
+      ref="popper"
+      :auto-hide="false"
+      :shown="!!currentKey"
+      :style="
+        caretPosition
+          ? {
+              top: `${caretPosition.top}px`,
+              left: `${caretPosition.left}px`
+            }
+          : {}
+      "
+      :theme="theme"
+      :triggers="[]"
+      class="popper ml-9"
+      style="position: absolute"
+      v-bind="{ ...$attrs, class: undefined }"
+    >
+      <div
+        :style="
+          caretPosition
+            ? {
+                height: `${caretPosition.height}px`
+              }
+            : {}
+        "
+      />
+
+      <template #popper>
+        <div
+          v-for="(item, index) of displayedItems"
+          :key="index"
+          :class="{
+            'mention-selected': selectedIndex === index
+          }"
+          class="mention-item rounded"
+          @mousedown="applyMention(index)"
+          @mouseover="selectedIndex = index"
+        >
+          <slot
+            :index="index"
+            :item="item"
+            :name="`item-${currentKey || oldKey}`"
+          >
+            <slot :index="index" :item="item" name="item">
+              {{ item.label || item.value }}
+            </slot>
+          </slot>
+        </div>
+      </template>
+    </VDropdown>
+  </div>
+</template>
 <script lang="ts">
 //@ts-nocheck
 import getCaretPosition from "textarea-caret";
@@ -13,6 +76,7 @@ import {
   ref,
   watch
 } from "vue";
+import { useChatStore } from "@/store/chat.store";
 
 options.themes.mentionable = {
   $extend: "dropdown",
@@ -33,6 +97,10 @@ export default defineComponent({
   },
   inheritAttrs: false,
   props: {
+    id: {
+      type: String,
+      required: true
+    },
     keys: {
       type: Array as PropType<string[]>,
       required: true
@@ -121,11 +189,7 @@ export default defineComponent({
     const el = ref<HTMLDivElement>(null);
 
     function getInput() {
-      return (
-        el?.value?.querySelector("input") ??
-        el.value?.querySelector("textarea") ??
-        el?.value?.querySelector('[contenteditable="true"]')
-      );
+      return document.querySelector(props.id);
     }
 
     onMounted(() => {
@@ -256,7 +320,10 @@ export default defineComponent({
       if (index >= 0) {
         const { key, keyIndex } = getLastKeyBeforeCaret(index);
         const text = (lastSearchText = getLastSearchText(index, keyIndex));
-        if (!(keyIndex < 1 || /\s/.test(getValue()[keyIndex - 1]))) {
+        if (
+          !key.includes("!") &&
+          !(keyIndex < 1 || /\s/.test(getValue()[keyIndex - 1]))
+        ) {
           return false;
         }
         if (text != null) {
@@ -272,7 +339,7 @@ export default defineComponent({
     function getLastKeyBeforeCaret(caretIndex: number) {
       const [keyData] = props.keys
         .map((key) => ({
-          key,
+          key: key === "!" ? getValue().split("!")[0] + "!" : key,
           keyIndex: getValue().lastIndexOf(key, caretIndex - 1)
         }))
         .sort((a, b) => b.keyIndex - a.keyIndex);
@@ -342,16 +409,66 @@ export default defineComponent({
     // Apply
     function applyMention(itemIndex: number) {
       const item = displayedItems.value[itemIndex];
+      let end = "";
+      let start = "";
+      switch (currentKey.value) {
+        case "@":
+          end = ">";
+          break;
+        case ":":
+          end = ":";
+          const id = item.emoji?.id || item.value;
+          const chat = useChatStore();
+          if (!chat.recentEmoji[id]) {
+            chat.recentEmoji = {
+              [id]: 1,
+              ...chat.recentEmoji
+            };
+          } else {
+            const val = chat.recentEmoji[id] + 1;
+            delete chat.recentEmoji[id];
+            chat.recentEmoji = {
+              [id]: val,
+              ...chat.recentEmoji
+            };
+          }
+          const keys = Object.keys(chat.recentEmoji);
+
+          if (keys.length > 20) {
+            const keysToDelete = keys.slice(20);
+
+            keysToDelete.forEach((key) => {
+              delete chat.recentEmoji[key];
+            });
+          }
+          localStorage.setItem("emojiStore", JSON.stringify(chat.recentEmoji));
+          break;
+        default:
+          end = "";
+          break;
+      }
+      switch (currentKey.value) {
+        case "@":
+          start = "<@";
+          break;
+        case ":":
+          start = ":";
+          break;
+        default:
+          start = currentKey.value;
+          break;
+      }
       const value =
         (props.omitKey ? "" : currentKey.value) +
         String(
           props.mapInsert
-            ? "<@" + props.mapInsert(item, currentKey.value) + ">"
-            : "<@" + item.value + ">"
+            ? start + props.mapInsert(item, currentKey.value) + end
+            : start + item.value + end
         ) +
         (props.insertSpace ? " " : "");
-      console.log(value);
-      if (input.isContentEditable) {
+      if (value.includes("!")) {
+        setValue(value);
+      } else if (input.isContentEditable) {
         const range = window.getSelection().getRangeAt(0);
         range.setStart(
           range.startContainer,
@@ -399,88 +516,22 @@ export default defineComponent({
 });
 </script>
 
-<template>
-  <div
-    ref="el"
-    :class="$attrs.class"
-    class="mentionable"
-    style="position: relative; width: 100%"
-  >
-    <slot />
-
-    <VDropdown
-      ref="popper"
-      :auto-hide="false"
-      :shown="!!currentKey"
-      :style="
-        caretPosition
-          ? {
-              top: `${caretPosition.top}px`,
-              left: `${caretPosition.left}px`
-            }
-          : {}
-      "
-      :theme="theme"
-      :triggers="[]"
-      class="popper ml-9"
-      style="position: absolute"
-      v-bind="{ ...$attrs, class: undefined }"
-    >
-      <div
-        :style="
-          caretPosition
-            ? {
-                height: `${caretPosition.height}px`
-              }
-            : {}
-        "
-      />
-
-      <template #popper>
-        <div v-if="!displayedItems.length">
-          <slot name="no-result">No result</slot>
-        </div>
-
-        <template v-else>
-          <div
-            v-for="(item, index) of displayedItems"
-            :key="index"
-            :class="{
-              'mention-selected': selectedIndex === index
-            }"
-            class="mention-item"
-            @mousedown="applyMention(index)"
-            @mouseover="selectedIndex = index"
-          >
-            <slot
-              :index="index"
-              :item="item"
-              :name="`item-${currentKey || oldKey}`"
-            >
-              <slot :index="index" :item="item" name="item">
-                {{ item.label || item.value }}
-              </slot>
-            </slot>
-          </div>
-        </template>
-      </template>
-    </VDropdown>
-  </div>
-</template>
-
 <style lang="scss">
 .v-popper--theme-dropdown .v-popper__inner {
-  background: #181818 !important;
+  background: rgb(var(--v-theme-background));
   color: white;
   border-radius: 6px;
-  border: 0 solid;
   box-shadow: 0 6px 30px #0000001a;
   padding: 6px;
 }
 
+.v-popper--theme-dropdown .v-popper__inner {
+  border: 1px solid #191919;
+}
+
 .v-popper--theme-dropdown .v-popper__arrow-inner {
   visibility: visible;
-  border-color: #181818;
+  border-color: rgb(var(--v-theme-background));
 }
 
 .v-popper--theme-dropdown .v-popper__arrow-outer {

@@ -2,7 +2,7 @@ import { Service } from "typedi"
 import { Upload } from "@app/models/upload.model"
 import paginate from "jw-paginate"
 import { Collection } from "@app/models/collection.model"
-import Sequelize, { Op } from "sequelize"
+import Sequelize, { Includeable, Op } from "sequelize"
 import utils from "@app/lib/utils"
 import { User } from "@app/models/user.model"
 import sequelize from "@app/db"
@@ -15,6 +15,13 @@ import * as fs from "fs"
 import Errors from "@app/lib/errors"
 import { Plan } from "@app/models/plan.model"
 import { CacheService } from "@app/services/cache.service"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import {
+  Filter,
+  GalleryInput,
+  Type
+} from "@app/classes/graphql/gallery/galleryInput"
+import { PaginatedGalleryResponse } from "@app/classes/graphql/gallery/galleryResponse"
 
 @Service()
 export class GalleryService {
@@ -143,7 +150,7 @@ export class GalleryService {
     )
     const url =
       "https://" + (await utils.getUserDomain(userId)) + upload.attachment
-    await queue.queue?.add(upload.id, upload)
+    await queue.queue?.add(upload.id.toString(), upload)
     try {
       if (precache && config.discord?.token && config.discord.webhook) {
         if (upload.type === "image" || upload.type === "video") {
@@ -158,6 +165,125 @@ export class GalleryService {
     return {
       upload: await this.getAttachment(upload.attachment, userId),
       url
+    }
+  }
+
+  async getGalleryV4(
+    id: number | undefined,
+    input: GalleryInput,
+    limit: number = 12,
+    excludedCollections: number[] | null
+  ): Promise<PaginatedGalleryResponse> {
+    let sortParams: Sequelize.OrderItem = [
+      input.sort || "createdAt",
+      input.order || "DESC"
+    ]
+    const offset = input.page * limit - limit || 0
+    const allowed = [
+      Filter.IMAGES,
+      Filter.VIDEOS,
+      Filter.TEXT,
+      Filter.OTHER,
+      Filter.AUDIO,
+      Filter.PASTE
+    ]
+    const type = input.filters?.filter((f) => allowed.includes(f))?.length
+      ? {
+          [Op.in]: input.filters?.filter((f) => allowed.includes(f))
+        }
+      : undefined
+    let base: {
+      [key: string]: any
+    } = {
+      deletable: input.filters?.includes(Filter.INCLUDE_DELETABLE)
+        ? undefined
+        : true,
+      attachment: input.filters?.includes(Filter.GIFS)
+        ? { [Op.like]: "%.gif" }
+        : undefined,
+      type,
+      id:
+        input.filters?.includes(Filter.NO_COLLECTION) && excludedCollections
+          ? {
+              [Op.notIn]: sequelize.literal(
+                `(SELECT attachmentId FROM collectionItems WHERE collectionId NOT IN (${excludedCollections.join(
+                  ","
+                )}))`
+              )
+            }
+          : undefined,
+      userId: input.type !== Type.COLLECTION ? id : undefined,
+      [Op.or]: [
+        {
+          textMetadata: Filter.INCLUDE_METADATA
+            ? { [Op.like]: "%" + input.search + "%" }
+            : undefined
+        },
+        {
+          name: { [Op.like]: "%" + input.search + "%" }
+        },
+        { attachment: { [Op.like]: "%" + input.search + "%" } }
+      ]
+    }
+    let include: Includeable[] = []
+    switch (input.type) {
+      case Type.COLLECTION:
+        include = [
+          {
+            model: CollectionItem,
+            as: "item",
+            required: true,
+            where: {
+              collectionId: input.collectionId
+            }
+          }
+        ]
+        break
+      case Type.STARRED:
+        include = [
+          {
+            model: Star,
+            as: "starred",
+            required: true,
+            where: {
+              userId: id
+            }
+          }
+        ]
+        break
+      case Type.AUTO_COLLECT:
+        include = [
+          {
+            model: AutoCollectApproval,
+            as: "autoCollectApproval",
+            required: true,
+            where: {
+              userId: id,
+              collectionId: input.collectionId
+            }
+          }
+        ]
+    }
+    // delete undefined keys
+    Object.keys(base).forEach(
+      (key) => base[key] === undefined && delete base[key]
+    )
+    const uploads = await Upload.findAll({
+      where: base,
+      include,
+      limit: limit || 12,
+      offset,
+      order: [sortParams]
+    })
+    const count = await Upload.count({
+      where: base,
+      include,
+      distinct: true
+    })
+    const pager = paginate(count || uploads.length, input.page, limit)
+    return {
+      items: uploads,
+      pager
     }
   }
 
@@ -273,7 +399,7 @@ export class GalleryService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar"]
+          attributes: partialUserBase
         }
       ]
     } else if (type === "autoCollect") {
@@ -319,7 +445,7 @@ export class GalleryService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username"]
+          attributes: partialUserBase
         }
       ]
     }
@@ -333,7 +459,7 @@ export class GalleryService {
           {
             model: User,
             as: "user",
-            attributes: ["id", "username"]
+            attributes: partialUserBase
           },
           {
             model: Upload,

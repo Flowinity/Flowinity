@@ -74,7 +74,7 @@ export default defineComponent({
   name: "UserBanner",
   components: { PlaceholderCheckerboard, UploadCropper },
   props: ["user", "height", "collection", "gold", "darken"],
-  emits: ["refreshUser"],
+  emits: ["refreshUser", "sharingDialog"],
   data() {
     return {
       dialog: false

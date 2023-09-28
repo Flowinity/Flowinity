@@ -1,9 +1,9 @@
 <template>
-  <CreateAppAuthDialog v-model="create"></CreateAppAuthDialog>
-  <v-container>
+  <component :is="$route.fullPath.startsWith('/admin') ? VContainer : 'div'">
+    <CreateAppAuthDialog v-model="create"></CreateAppAuthDialog>
     <v-card>
       <v-toolbar>
-        <v-toolbar-title>AppAuth</v-toolbar-title>
+        <v-toolbar-title>My Applications</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon @click="create = true">
           <v-tooltip activator="parent" location="bottom">Create app</v-tooltip>
@@ -23,7 +23,11 @@
             <template v-slot:append>
               <v-list-item-action>
                 <v-btn
-                  :to="`/admin/oauth/${app.id}`"
+                  :to="
+                    $route.fullPath.startsWith('/admin')
+                      ? `/admin/oauth/${app.id}`
+                      : `/settings/developer/${app.id}`
+                  "
                   :disabled="app.userId != $user.user?.id"
                   color="primary"
                 >
@@ -36,15 +40,26 @@
         </v-list>
       </v-container>
     </v-card>
-  </v-container>
+  </component>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import CreateAppAuthDialog from "@/components/Admin/AppAuth/CreateAppAuthDialog.vue";
+import { VContainer } from "vuetify/components";
+import { MyAppsQuery } from "@/graphql/developer/myApps.graphql";
+import {
+  AvailableChatPermissionsDocument,
+  ChatPermission
+} from "@/gql/graphql";
 
 export default defineComponent({
-  name: "AdminWhitelist",
+  name: "AdminOAuth",
+  computed: {
+    VContainer() {
+      return VContainer;
+    }
+  },
   components: { CreateAppAuthDialog },
   data() {
     return {
@@ -54,8 +69,12 @@ export default defineComponent({
   },
   methods: {
     async getAppAuth() {
-      const { data } = await this.axios.get("/admin/oauth");
-      this.apps = data;
+      const {
+        data: { oauthApps, availableChatPermissions }
+      } = await this.$apollo.query({
+        query: MyAppsQuery
+      });
+      this.apps = oauthApps;
     }
   },
   mounted() {

@@ -419,11 +419,10 @@
 import { defineComponent } from "vue";
 import DynamicCard from "@/components/Core/DynamicCard.vue";
 import InsightsStatsCard from "@/components/Insights/StatsCard.vue";
-import { Insight, SeriesGraph, SeriesGraphObject } from "@/models/insight";
+import { Insight } from "@/models/insight";
 import Chart from "@/components/Core/Chart.vue";
 import InsightsPageBanner from "@/components/Insights/Banners/Page.vue";
 import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
-import { type } from "os";
 
 export default defineComponent({
   name: "InsightsReport",

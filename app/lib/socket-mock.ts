@@ -1,5 +1,4 @@
 import { Container } from "typedi"
-import { createAdapter } from "@socket.io/redis-adapter"
 
 // Import Libs
 import auth from "@app/lib/authSocket"
@@ -14,6 +13,7 @@ import { Pulse } from "@app/models/pulse.model"
 
 // Import Types
 import { SocketAuth } from "@app/types/socket"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 export default {
   async init(): Promise<void> {
@@ -49,10 +49,15 @@ export default {
 
           const userService: UserUtilsService = Container.get(UserUtilsService)
 
-          await userService.emitToFriends(user.id, "userStatus", {
-            id: user.id,
-            status: user.storedStatus
-          })
+          await userService.emitToFriends(
+            user.id,
+            "userStatus",
+            {
+              id: user.id,
+              status: user.storedStatus
+            },
+            SocketNamespaces.FRIENDS
+          )
         }
 
         socket.on("disconnect", async (): Promise<void> => {

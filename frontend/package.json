@@ -1,6 +1,6 @@
 {
   "name": "tpu-frontend",
-  "version": "3.2.51",
+  "version": "4.0.0-beta1",
   "private": true,
   "author": "Troplo <troplo@troplo.com>",
   "type": "module",
@@ -11,9 +11,11 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix --ignore-path .gitignore",
-    "build-mobile": "CORDOVA=true vite build && rm -rf ./mobile/www && cp -r ./dist ./mobile/www"
+    "build-mobile": "CORDOVA=true vite build && rm -rf ./mobile/www && cp -r ./dist ./mobile/www",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.1",
     "@codemirror/autocomplete": "^6.4.2",
     "@codemirror/basic-setup": "^0.20.0",
     "@codemirror/lang-css": "^6.1.1",
@@ -51,8 +53,9 @@
     "@types/vue-cropperjs": "^4.1.2",
     "@types/webfontloader": "^1.6.35",
     "@vitejs/plugin-vue": "^4.1.0",
+    "@vue/apollo-composable": "^4.0.0-beta.8",
+    "@vue/apollo-option": "^4.0.0-beta.5",
     "@vue/eslint-config-typescript": "^11.0.0",
-    "@vuetify/nightly": "npm:@vuetify/nightly@4.0.0-dev-20230512.0",
     "apexcharts": "^3.37.0",
     "axios": "^1.3.2",
     "chart.js": "^4.2.1",
@@ -68,6 +71,8 @@
     "editorjs-text-color-plugin": "^2.0.2",
     "editorjs-undo": "^2.0.18",
     "floating-vue": "^2.0.0-beta.20",
+    "graphql": "^16.8.0",
+    "graphql-ws": "^5.14.0",
     "markdown-it": "^13.0.1",
     "markdown-it-emoji": "^2.0.2",
     "markdown-it-unicode-emoji": "https://github.com/Troplo/markdown-it-unicode-emoji",
@@ -79,6 +84,7 @@
     "svgmoji": "^3.2.0",
     "textarea-caret": "^3.1.0",
     "typescript": "^4",
+    "v3-infinite-loading": "^1.3.1",
     "vite": "^4.2.0",
     "vite-plugin-pwa": "^0.14.4",
     "vite-plugin-vuetify": "^1.0.2",
@@ -95,14 +101,25 @@
     "vue-router": "^4.0.0",
     "vue-toastification": "^2.0.0-rc.5",
     "vue-tsc": "^1.0.9",
+    "vue-virtual-scroll-grid": "^1.10.2",
     "vue3-apexcharts": "^1.4.1",
     "vuetify": "^3.2.2",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/client-preset": "4.1.0",
+    "@graphql-codegen/introspection": "4.0.0",
+    "@parcel/watcher": "^2.2.0",
+    "@rollup/plugin-graphql": "^2.0.3",
     "cypress": "^12.7.0",
     "eslint": "^8.43.0",
     "eslint-plugin-vue": "^9.3.0",
+    "react": "^18.2.0",
     "rollup-plugin-visualizer": "^5.9.0"
+  },
+  "resolutions": {
+    "socket.io": "4.7.2",
+    "socket.io-client": "4.7.2"
   }
 }

@@ -136,7 +136,7 @@ import Crash from "@/components/Core/CrashAlt.vue";
 import { Component } from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 import SocialLinks from "@/components/Users/UserV3/Widgets/SocialLinks.vue";
-import { User } from "@/models/user";
+import { ProfileLayoutComponent, User } from "@/gql/graphql";
 
 export default defineComponent({
   name: "UserV3ComponentHandler",
@@ -153,7 +153,7 @@ export default defineComponent({
   },
   props: {
     component: {
-      type: Object as () => Component,
+      type: Object as () => ProfileLayoutComponent,
       required: true
     },
     user: {

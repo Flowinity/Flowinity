@@ -9,12 +9,12 @@ import maxmind, { AsnResponse, CityResponse, Reader } from "maxmind"
 import { Subscription } from "@app/models/subscription.model"
 import { Experiment } from "@app/models/experiment.model"
 import Errors from "@app/lib/errors"
-import { AccessedFrom } from "@app/types/auth"
 import { Integration } from "@app/models/integration.model"
 import { createParamDecorator } from "routing-controllers"
 import { RequestAuthSystem } from "@app/types/express"
 import { Badge } from "@app/models/badge.model"
-import { BadRequestError } from "routing-controllers"
+import { AccessedFrom } from "@app/classes/graphql/user/session"
+import { SessionInfo } from "@app/types/auth"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
@@ -69,6 +69,9 @@ export type Scope =
   | "oauth.save"
   | "oauth.user"
   | "oauth.authorize"
+  | "none"
+  | "dev.view"
+  | "dev.modify"
 
 async function getSession(token: string) {
   return await Session.findOne({
@@ -139,7 +142,18 @@ async function getSession(token: string) {
   })
 }
 
-function checkScope(requiredScope: string | string[], scope: string) {
+export function checkScope(requiredScope: string | string[], scope: string) {
+  if (
+    requiredScope === "none" ||
+    requiredScope?.length === 0 ||
+    (typeof requiredScope === "object" && requiredScope?.includes("none")) ||
+    (typeof requiredScope === "object" && requiredScope?.includes(""))
+  )
+    return true
+  if (scope === undefined) return true
+  if (scope === "") {
+    return false
+  }
   if (scope === "*") {
     return true
   }
@@ -164,19 +178,12 @@ function checkScope(requiredScope: string | string[], scope: string) {
   return false
 }
 
-async function updateSession(session: Session, ip: string) {
+export async function updateSession(session: Session, ip: string) {
   if (
     session.updatedAt.getTime() + 5 * 60 * 1000 > new Date().getTime() &&
     session.info?.accessedFrom?.length
   )
     return
-  if (session.type === "session") {
-    session
-      .update({
-        expiredAt: new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000)
-      })
-      .then(() => {})
-  }
   let accessedFrom = session.info?.accessedFrom || []
   if (!accessedFrom.find((aF: AccessedFrom) => aF.ip === ip)) {
     const asnResponse = await asn?.get(ip)
@@ -194,7 +201,11 @@ async function updateSession(session: Session, ip: string) {
       info: {
         ...session.info,
         accessedFrom: accessedFrom
-      }
+      },
+      expiredAt:
+        session.type === "session"
+          ? new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000)
+          : session.expiredAt
     },
     {
       where: {

@@ -1,22 +1,23 @@
-import { useUserStore } from "@/store/user";
-import { useAppStore } from "@/store/app";
-import { useExperimentsStore } from "@/store/experiments";
+import { useUserStore } from "@/store/user.store";
+import { useAppStore } from "@/store/app.store";
+import { useExperimentsStore } from "@/store/experiments.store";
 import dayjs from "@/plugins/dayjs";
 import functions from "@/plugins/functions";
-import { useCollectionsStore } from "@/store/collections";
+import { useCollectionsStore } from "@/store/collections.store";
 import { ToastInterface } from "vue-toastification";
 import validation from "@/plugins/validation";
-import { useWorkspacesStore } from "@/store/workspaces";
-import { useChatStore } from "@/store/chat";
+import { useWorkspacesStore } from "@/store/workspaces.store";
+import { useChatStore } from "@/store/chat.store";
 import { Socket } from "socket.io-client";
-import { useFriendsStore } from "@/store/friends";
-import { useMailStore } from "@/store/mail";
+import { useFriendsStore } from "@/store/friends.store";
+import { useMailStore } from "@/store/mail.store";
 import { RouteLocationNormalizedLoaded, Router } from "vue-router";
-import { useAdminStore } from "@/store/admin";
+import { useAdminStore } from "@/store/admin.store";
 import { Axios } from "axios";
 import { User } from "@/models/user";
 import { Chat } from "@/models/chat";
 import { Collection } from "@/models/collection";
+import { ApolloClient } from "@apollo/client/core";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -37,6 +38,17 @@ declare module "@vue/runtime-core" {
     $route: RouteLocationNormalizedLoaded;
     $admin: ReturnType<typeof useAdminStore>;
     axios: Axios;
+    $apollo: ApolloClient<any>;
+    $sockets: {
+      chat: Socket;
+      pulse: Socket;
+      friends: Socket;
+      mail: Socket;
+      user: Socket;
+      autoCollects: Socket;
+      gallery: Socket;
+      trackedUsers: Socket;
+    };
   }
 }
 
@@ -53,6 +65,7 @@ declare global {
       lookupCollection: (id: number) => Collection;
       openCollection: (id: number) => void;
       router: Router;
+      $sockets: Record<string, Socket>;
     };
     _paq: {
       push: (args: any[]) => void;

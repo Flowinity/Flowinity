@@ -6,9 +6,35 @@
     class="mx-auto promo-card"
     elevation="6"
     max-width="1000"
+    :color="color"
   >
-    <v-row style="margin: 0">
-      <v-col v-if="image" cols="12" md="6" style="padding: 0">
+    <div :class="{ container: !$vuetify.display.mobile }">
+      <div class="image" v-if="image && (!right || $vuetify.display.mobile)">
+        <v-img :src="image" contain></v-img>
+      </div>
+      <div class="text">
+        <v-icon v-if="icon" class="text-grey mt-3" size="92">
+          {{ icon }}
+        </v-icon>
+        <v-card-title class="display-1 font-weight-bold text-center initial">
+          {{ title }}
+        </v-card-title>
+        <div class="text-center">
+          <slot></slot>
+        </div>
+      </div>
+      <div class="image" v-if="image && right && !$vuetify.display.mobile">
+        <v-img :src="image" contain></v-img>
+      </div>
+    </div>
+
+    <v-row style="margin: 0" v-if="false">
+      <v-col
+        v-if="image && (!right || $vuetify.display.mobile)"
+        cols="12"
+        md="6"
+        style="padding: 0"
+      >
         <v-img :src="image" contain></v-img>
       </v-col>
       <v-col
@@ -28,6 +54,14 @@
           </div>
         </div>
       </v-col>
+      <v-col
+        v-if="image && right && !$vuetify.display.mobile"
+        cols="12"
+        md="6"
+        style="padding: 0"
+      >
+        <v-img :src="image" contain></v-img>
+      </v-col>
       <v-col v-if="left">
         <slot name="left"></slot>
       </v-col>
@@ -36,11 +70,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "PromoCard",
-  props: ["title", "image", "icon", "width", "height", "hover", "left"]
+  props: [
+    "title",
+    "image",
+    "icon",
+    "width",
+    "height",
+    "hover",
+    "left",
+    "right",
+    "color"
+  ]
 });
 </script>
 
@@ -64,5 +108,21 @@ export default defineComponent({
   align-items: center;
   height: 100%;
   width: 100%;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.image {
+  flex: 2; /* Take up one-third of the container width for the image */
+}
+
+.text {
+  flex: 2; /* Take up two-thirds of the container width for the text */
+  text-align: center; /* Center the text horizontally */
+  padding: 20px; /* Optional: Add some spacing around the text */
 }
 </style>

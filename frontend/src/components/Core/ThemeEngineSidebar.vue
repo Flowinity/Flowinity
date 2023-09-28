@@ -370,25 +370,47 @@ export default defineComponent({
         this.triggerSave();
         return;
       }
-      this.$vuetify.theme.themes.dark.colors[type] = color;
-      this.$vuetify.theme.themes.light.colors[type] = color;
-      this.$vuetify.theme.themes.amoled.colors[type] = color;
+      if (color) {
+        this.$vuetify.theme.themes.dark.colors[type] = color;
+        this.$vuetify.theme.themes.light.colors[type] = color;
+        this.$vuetify.theme.themes.amoled.colors[type] = color;
+      } else {
+        this.$vuetify.theme.themes = this.$user.defaultVuetify;
+      }
       this.triggerSave();
     },
     save() {
       const themeEngine = {
-        ...this.$user.changes.themeEngine,
-        theme: this.$vuetify.theme.themes,
+        theme: {
+          themes: {
+            amoled: {
+              colors: this.$vuetify.theme.themes.amoled.colors,
+              dark: this.$vuetify.theme.themes.amoled.dark
+            },
+            dark: {
+              colors: this.$vuetify.theme.themes.dark.colors,
+              dark: this.$vuetify.theme.themes.dark.dark
+            },
+            light: {
+              colors: this.$vuetify.theme.themes.light.colors,
+              dark: this.$vuetify.theme.themes.light.dark
+            }
+          }
+        },
         fluidGradient: this.$app.fluidGradient,
         gradientOffset: this.gradientOffset,
-        defaults: this.$vuetify.defaults,
         version: 1,
         baseTheme: this.$vuetify.theme.name,
         showOnProfile: this.showOnProfile,
         deviceSync: this.deviceSync,
         customCSS: this.$user.changes.themeEngine?.customCSS ?? ""
       };
-      localStorage.setItem("themeEngine", JSON.stringify(themeEngine));
+      // TODO: GQL ThemeEditor
+      /*
+      delete themeEngine.theme.dark.variables;
+      delete themeEngine.theme.light.variables;
+      delete themeEngine.theme.amoled.variables;
+      localStorage.setItem("themeEngine", JSON.stringify(themeEngine));*/
       this.$user.changes.themeEngine = themeEngine as any;
       this.$user.save();
     },

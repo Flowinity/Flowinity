@@ -66,8 +66,8 @@ export default defineComponent({
       return (
         this.$friends.friends.find(
           (friend) =>
-            friend.otherUser.username === this.$chat.dialogs.userMenu.username
-        )?.otherUser || this.$chat.dialogs.userMenu.user
+            friend.user.username === this.$chat.dialogs.userMenu.username
+        )?.user || this.$chat.dialogs.userMenu.user
       );
     }
   },

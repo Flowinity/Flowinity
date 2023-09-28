@@ -11,8 +11,13 @@
           :elevation="$vuetify.display.mobile ? 0 : 8"
           :flat="$vuetify.display.mobile"
         >
-          <p class="text-center text-gradient mb-n5" style="font-size: 64px">
-            TPU
+          <p
+            class="text-center text-gradient mt-2"
+            :style="
+              $vuetify.display.mobile ? 'font-size: 38px' : 'font-size: 48px'
+            "
+          >
+            PrivateUploader
           </p>
           <v-container>
             <v-form v-model="form">
@@ -36,24 +41,31 @@
                 type="password"
                 @keydown.enter="register"
               />
-              <v-checkbox v-model="terms" :rules="$validation.user.terms">
-                <template v-slot:label>
+              <div class="d-flex mt-n4">
+                <v-checkbox
+                  v-model="terms"
+                  class="flex-0 flex-grow-0"
+                ></v-checkbox>
+                <span
+                  class="ml-4 mt-4 flex-grow-1 unselectable pointer"
+                  @click="terms = !terms"
+                >
                   <span>I agree to the</span>
                   <router-link
                     style="text-decoration: none; color: #0190ea"
                     to="/policies/content"
                   >
-                    &nbsp;TPU Content Policy&nbsp;
+                    Content Policy
                   </router-link>
                   and the
                   <router-link
                     style="text-decoration: none; color: #0190ea"
                     to="/policies/privacy"
                   >
-                    &nbsp;TPU Privacy Policy
+                    Privacy Policy
                   </router-link>
-                </template>
-              </v-checkbox>
+                </span>
+              </div>
             </v-form>
             <small v-if="fact">Fun fact: {{ fact }}</small>
           </v-container>
@@ -64,7 +76,7 @@
             </v-btn>
             <v-spacer></v-spacer>
             <v-btn
-              :disabled="!form"
+              :disabled="!form || !terms"
               :loading="loading"
               color="primary"
               @click="register"
@@ -106,6 +118,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { TYPE } from "vue-toastification";
+import { RegisterMutationVariables } from "@/gql/graphql";
+import { RegisterMutation } from "@/graphql/auth/register.graphql";
 
 export default defineComponent({
   name: "Register",
@@ -149,20 +163,27 @@ export default defineComponent({
       }
     },
     async register() {
+      if (!this.terms) return;
       this.loading = true;
       try {
-        const { data } = await this.axios.post("/auth/register", {
-          username: this.username,
-          password: this.password,
-          email: this.email,
-          inviteKey: this.inviteKey
+        const {
+          data: { register }
+        } = await this.$apollo.mutate({
+          mutation: RegisterMutation,
+          variables: {
+            input: {
+              email: this.email,
+              username: this.username,
+              password: this.password,
+              inviteKey: this.inviteKey
+            }
+          } as RegisterMutationVariables
         });
-        localStorage.setItem("token", data.token);
-        this.axios.defaults.headers.common["Authorization"] = data.token;
-        await this.$user.init();
-        this.$socket.auth = { token: data.token };
-        this.$socket.disconnect();
-        this.$socket.connect();
+        this.$app.token = register.token;
+        await localStorage.setItem("token", register.token);
+        this.axios.defaults.headers.common["Authorization"] = register.token;
+        await this.$app.init();
+        this.$app.reconnectSocket(register.token);
         this.$router.push("/");
         this.$toast.success("You have been registered, welcome to TPU!", {
           timeout: 3000,

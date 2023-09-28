@@ -1,4 +1,4 @@
-import { All, Get, JsonController, Res } from "routing-controllers"
+import { All, JsonController, Res } from "routing-controllers"
 import { Service } from "typedi"
 import { Response } from "express"
 import Errors from "@app/lib/errors"

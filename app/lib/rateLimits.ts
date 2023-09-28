@@ -5,8 +5,7 @@ import RedisStore from "rate-limit-redis"
 import redis from "../redis"
 
 // Import Types
-import { RequestAuth } from "@app/types/express"
-import { authSystem, simpleAuth } from "@app/lib/auth"
+import { simpleAuth } from "@app/lib/auth"
 
 const message: { errors: { name: string; message: string; status: number }[] } =
   {
@@ -74,7 +73,7 @@ export const uploadLimiterUser: RateLimitRequestHandler = rateLimit({
 })
 
 export const msgLimiter: RateLimitRequestHandler = rateLimit({
-  windowMs: 8 * 1000,
+  windowMs: 8,
   max: 8,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers

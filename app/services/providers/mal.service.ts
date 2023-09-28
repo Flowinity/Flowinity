@@ -73,7 +73,7 @@ export class MyAnimeListService {
     }
   }
 
-  async unlink(userId: string) {
+  async unlink(userId: number) {
     const existing = await Integration.findOne({
       where: {
         userId,

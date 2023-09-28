@@ -18,10 +18,11 @@ import { Domain } from "@app/models/domain.model"
 
 // Import Services
 import { CacheService } from "@app/services/cache.service"
-import path from "path"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 async function generateAPIKey(
-  type: "session" | "api" | "email" | "oauth" | "oidc"
+  type: "session" | "api" | "email" | "oauth" | "oidc" | "bot-email"
 ): Promise<string> {
   switch (type) {
     case "session":
@@ -32,6 +33,8 @@ async function generateAPIKey(
       return "TPU-OAUTH-" + cryptoRandomString({ length: 128 })
     case "oidc":
       return "TPU-OIDC-" + cryptoRandomString({ length: 128 })
+    case "bot-email":
+      return "reject-" + cryptoRandomString({ length: 16 })
     default:
       return "TPU-API-" + cryptoRandomString({ length: 128 })
   }
@@ -63,7 +66,7 @@ async function getCollection(id: number, userId: number): Promise<Collection> {
       {
         model: User,
         as: "user",
-        attributes: ["id", "username"]
+        attributes: partialUserBase
       },
       {
         model: CollectionUser,
@@ -72,7 +75,7 @@ async function getCollection(id: number, userId: number): Promise<Collection> {
           {
             model: User,
             as: "user",
-            attributes: ["id", "username"]
+            attributes: partialUserBase
           }
         ]
       },
@@ -103,7 +106,7 @@ async function getCollection(id: number, userId: number): Promise<Collection> {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username"]
+          attributes: partialUserBase
         },
         {
           model: CollectionUser,
@@ -112,7 +115,7 @@ async function getCollection(id: number, userId: number): Promise<Collection> {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username"]
+              attributes: partialUserBase
             }
           ]
         },
@@ -353,9 +356,12 @@ async function processFile(
           ])
         }
 
-        socket.to(upload.userId).emit("autoCollectApproval", {
-          type: "new"
-        })
+        socket
+          .of(SocketNamespaces.AUTO_COLLECTS)
+          .to(upload.userId)
+          .emit("autoCollectApproval", {
+            type: "new"
+          })
       } else if (
         results.some((result) => result.value) &&
         !rule.requireApproval

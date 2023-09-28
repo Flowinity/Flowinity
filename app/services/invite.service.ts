@@ -4,6 +4,7 @@ import Errors from "@app/lib/errors"
 import { Invite } from "@app/models/invite.model"
 import { Upload } from "@app/models/upload.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @Service()
 export class InviteService {
@@ -55,7 +56,7 @@ export class InviteService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username"]
+          attributes: partialUserBase
         }
       ]
     })
@@ -78,7 +79,7 @@ export class InviteService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar"]
+          attributes: partialUserBase
         }
       ]
     })

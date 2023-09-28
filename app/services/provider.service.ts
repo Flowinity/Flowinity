@@ -2,8 +2,9 @@ import { Service } from "typedi"
 import axios from "axios"
 import Errors from "@app/lib/errors"
 import { Integration } from "@app/models/integration.model"
-import { ProfileLayoutComponent, User } from "@app/models/user.model"
+import { User } from "@app/models/user.model"
 import cryptoRandomString from "crypto-random-string"
+import { ProfileLayoutComponent } from "@app/classes/graphql/user/profileLayout"
 
 @Service()
 export class ProviderService {
@@ -101,7 +102,7 @@ export class ProviderService {
       ) &&
       !user?.profileLayout?.layout.columns[0].rows
         .find((row) => row.name === "parent")
-        ?.props.children.find(
+        ?.props?.children?.find(
           (child: ProfileLayoutComponent) =>
             child.name === (provider === "lastfm" ? "last-fm" : provider)
         ) &&

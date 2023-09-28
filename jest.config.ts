@@ -39,7 +39,7 @@ export default {
   // ],
 
   // Indicates which provider should be used to instrument code for coverage
-  coverageProvider: "babel"
+  coverageProvider: "babel",
 
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
@@ -68,7 +68,7 @@ export default {
 
   // A path to a module which exports an async function that is triggered once before all test suites
   // globalSetup: undefined,
-
+  globalSetup: "./app/test-start.ts"
   // A path to a module which exports an async function that is triggered once after all test suites
   // globalTeardown: undefined,
 

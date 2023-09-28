@@ -1,21 +1,15 @@
-import { NextFunction, Response } from "express"
 import { Session } from "@app/models/session.model"
 import { User } from "@app/models/user.model"
 import { Plan } from "@app/models/plan.model"
 import { Theme } from "@app/models/theme.model"
 import { Domain } from "@app/models/domain.model"
 import { Op } from "sequelize"
-import maxmind, { AsnResponse, CityResponse, Reader } from "maxmind"
+import { AsnResponse, CityResponse, Reader } from "maxmind"
 import { Subscription } from "@app/models/subscription.model"
 import { Experiment } from "@app/models/experiment.model"
 import Errors from "@app/lib/errors"
-import { AccessedFrom } from "@app/types/auth"
 import { Integration } from "@app/models/integration.model"
-import { createParamDecorator } from "routing-controllers"
-import { RequestAuthSystem } from "@app/types/express"
-import { Badge } from "@app/models/badge.model"
-import { BadRequestError } from "routing-controllers"
-import db from "@app/db"
+
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>
 

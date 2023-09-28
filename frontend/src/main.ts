@@ -1,7 +1,7 @@
 /**
  * main.ts
  *
- * Bootstraps Vuetify and other plugins then mounts the App`
+ * Bootstraps Vuetify and other plugins then mounts the App
  */
 
 // Components
@@ -21,14 +21,14 @@ import router from "@/router";
 import i18n from "@/plugins/i18n";
 //@ts-ignore
 import VueMatomo from "vue-matomo";
-import { useAdminStore } from "@/store/admin";
-import { Axios } from "axios";
 
 // Boot functions
 import "./boot/declarations";
 import globals from "./boot/globals";
 import events from "./boot/events";
 import socket from "./boot/socket";
+import apollo from "./boot/apollo";
+import vuetify from "@/plugins/vuetify";
 
 const app = createApp({
   ...App,
@@ -47,7 +47,7 @@ const app = createApp({
         localStorage.setItem("workspaceDrawer", val.toString());
       },
       "$app.title"(val) {
-        document.title = val + " - TPU";
+        document.title = `${val} - ${this.$app.site.name}`;
       },
       "$vuetify.display.mobile"(val) {
         this.$app.mainDrawer = !val;
@@ -62,6 +62,8 @@ const app = createApp({
     }
   }
 });
+
+app.use(vuetify);
 
 app.use(VueMatomo, {
   host: "https://analytics.flowinity.com",
@@ -107,13 +109,13 @@ app.use(Toast, {
 });
 app.config.globalProperties.$toast = useToast();
 app.use(i18n);
-registerPlugins(app);
 
 if (import.meta.env.DEV) app.config.performance = true;
 
 // Register boot plugins
+registerPlugins(app);
+apollo(app);
 globals(app);
 events();
 socket(app).then(() => {});
-
 app.mount("#tpu-app");

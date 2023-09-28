@@ -1,21 +1,16 @@
 import { Service } from "typedi"
 import {
-  All,
   BadRequestError,
   Body,
   Get,
-  Header,
   HeaderParam,
   JsonController,
-  Post,
-  Req,
-  Res
+  Post
 } from "routing-controllers"
 import { OauthService } from "@app/services/oauth.service"
 import { OidcTokenBody } from "@app/interfaces/oidc"
 import { User } from "@app/models/user.model"
 import { Session } from "@app/models/session.model"
-import jwt from "jsonwebtoken"
 import { exportJWK } from "jose"
 import fs from "fs"
 import { Plan } from "@app/models/plan.model"

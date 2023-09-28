@@ -8,8 +8,13 @@
           :flat="$vuetify.display.mobile"
           v-if="app"
         >
-          <p class="text-center text-gradient mb-n3" style="font-size: 64px">
-            TPU
+          <p
+            class="text-center text-gradient mt-2"
+            :style="
+              $vuetify.display.mobile ? 'font-size: 38px' : 'font-size: 48px'
+            "
+          >
+            PrivateUploader
           </p>
           <p class="text-center text-grey">
             <v-avatar size="30" v-if="app.icon">
@@ -17,7 +22,8 @@
                 :src="$app.site.hostnameWithProtocol + '/i/' + app.icon"
               ></v-img>
             </v-avatar>
-            Continuing to {{ app.name }}
+            <template v-if="!bot">Continuing to {{ app.name }}</template>
+            <template v-else>Add {{ app.bot.username }} to your chat.</template>
             <span v-if="app.verified">
               <v-tooltip location="top" activator="parent">
                 Created by the TPU team
@@ -28,6 +34,14 @@
           <p class="text-center text-grey">
             {{ app.description }}
           </p>
+          <v-autocomplete
+            :items="chats"
+            item-title="name"
+            item-value="association.id"
+            v-model="selectedBotChat"
+            label="Add to group"
+            class="mx-6"
+          />
           <v-list>
             <v-list-item
               v-for="scope in scopes"
@@ -35,9 +49,10 @@
               :value="scope.id"
               :disabled="true"
               style="opacity: 1"
+              v-if="!bot"
             >
               <template v-slot:prepend>
-                <v-icon color="green" class="ml-1 mr-4">
+                <v-icon color="green" class="ml-4 mr-1">
                   mdi-check-circle
                 </v-icon>
               </template>
@@ -57,9 +72,38 @@
                 {{ scope.description }}
               </v-list-item-subtitle>
             </v-list-item>
+            <v-list-item
+              v-for="permission in permissions"
+              :key="permission.id"
+              :value="permission.id"
+              :disabled="true"
+              style="opacity: 1"
+              v-else
+            >
+              <template v-slot:prepend>
+                <v-icon color="green" class="ml-4 mr-1">
+                  mdi-check-circle
+                </v-icon>
+              </template>
+              <v-list-item-title
+                style="text-overflow: unset; white-space: normal"
+              >
+                {{ permission.name }}
+              </v-list-item-title>
+              <v-list-item-subtitle
+                v-if="permission.description"
+                style="
+                  text-overflow: unset;
+                  white-space: normal;
+                  display: unset;
+                "
+              >
+                {{ permission.description }}
+              </v-list-item-subtitle>
+            </v-list-item>
             <v-list-item :disabled="true" style="opacity: 1">
               <template v-slot:prepend>
-                <v-icon color="red" class="ml-1 mr-4">mdi-close-circle</v-icon>
+                <v-icon color="red" class="ml-4 mr-1">mdi-close-circle</v-icon>
               </template>
               <v-list-item-title
                 style="text-overflow: unset; white-space: normal"
@@ -73,18 +117,28 @@
                   display: unset;
                 "
               >
-                This or any other apps cannot access your password or other
+                No PrivateUploader app is able to access your password or other
                 sensitive information.
               </v-list-item-subtitle>
             </v-list-item>
           </v-list>
           <small class="text-grey ml-5">
             You will be redirected to {{ url }} after authorizing.
+            <template v-if="!app.verified">
+              This application is
+              <b>not</b>
+              endorsed, or published by PrivateUploader.
+            </template>
           </small>
           <v-card-actions>
             <v-btn to="/login">Cancel</v-btn>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click="authorize" :loading="loading">
+            <v-btn
+              color="primary"
+              @click="bot ? addBot() : authorize()"
+              :loading="loading"
+              :disabled="bot && !selectedBotChat"
+            >
               Authorize
             </v-btn>
           </v-card-actions>
@@ -96,6 +150,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { ChatPermission, OauthApp } from "@/gql/graphql";
+import {
+  AddBotToChat,
+  OauthAppConsentQuery
+} from "@/graphql/developer/consent.graphql";
 
 export type ScopeDefinition = {
   id: string;
@@ -107,16 +166,53 @@ export default defineComponent({
   name: "Oauth",
   data() {
     return {
-      app: null as any,
+      availablePermissions: [] as ChatPermission[],
+      app: null as OauthApp | null,
       scopesDefinitions: [] as ScopeDefinition[],
-      loading: false
+      loading: false,
+      selectedBotChat: null as number | null
     };
   },
   computed: {
+    chats() {
+      return this.$chat.chats.filter((chat) =>
+        chat.association.permissions.includes("ADMIN")
+      );
+    },
+    permissions() {
+      if (!this.bot || !this.$route.query.permissions) return [];
+      try {
+        const array = this.$route.query.permissions.split(",");
+        return array.map((id) => {
+          const foundPermission = this.availablePermissions.find(
+            (permission) => permission.id === id
+          );
+          return foundPermission
+            ? { ...foundPermission }
+            : {
+                name: id,
+                id
+              };
+        });
+      } catch (e) {
+        console.error(e);
+        return [];
+      }
+    },
+    permissionsMap() {
+      return this.$route.query.permissions.split(",");
+    },
+    bot() {
+      return this.$route.query.scope === "bot" && this.app.bot;
+    },
     url() {
-      if (!this.app) return "";
-      const url = new URL(this.app.redirectUri);
-      return url.hostname;
+      try {
+        if (!this.app) return "";
+        const url = new URL(this.app.redirectUri);
+        return url.hostname;
+      } catch {
+        return "";
+      }
     },
     scopes() {
       if (!this.app) return [];
@@ -139,16 +235,43 @@ export default defineComponent({
   methods: {
     async getAppData() {
       this.$app.componentLoading = true;
-      const { data } = await this.axios.get(`/oauth/${this.appId}`);
-      this.app = data;
+      const {
+        data: { oauthAppConsent, availableChatPermissions }
+      } = await this.$apollo.query({
+        query: OauthAppConsentQuery,
+        variables: {
+          input: {
+            id: this.appId
+          }
+        }
+      });
+      this.app = oauthAppConsent;
+      this.availablePermissions = availableChatPermissions;
       this.$app.componentLoading = false;
-      if (data.token) {
-        window.location.href = `${this.app.redirectUri}?code=${data.token}&state=${this.$route.query.state}`;
+      if (oauthAppConsent.token) {
+        window.location.href = `${this.app.redirectUri}?code=${oauthAppConsent.token}&state=${this.$route.query.state}`;
       }
     },
     async getScopeDefinitions() {
       const { data } = await this.axios.get(`/oauth/scopeDefinitions`);
       this.scopesDefinitions = data;
+    },
+    async addBot() {
+      this.loading = true;
+      try {
+        await this.$apollo.mutate({
+          mutation: AddBotToChat,
+          variables: {
+            input: {
+              permissions: this.permissionsMap,
+              botAppId: this.app.id,
+              associationId: this.selectedBotChat
+            }
+          }
+        });
+      } finally {
+        this.loading = false;
+      }
     },
     async authorize() {
       this.loading = true;

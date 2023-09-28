@@ -34,7 +34,7 @@
             <v-card-title>
               {{ item.name }}
               <small v-if="type === 'collection'" class="float-end">
-                {{ item.items }} items
+                {{ item.itemCount }} items
               </small>
               <small v-if="type === 'autoCollect'" class="float-end">
                 {{ item.autoCollectApprovals?.length }} pending approvals

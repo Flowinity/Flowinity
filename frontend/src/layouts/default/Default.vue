@@ -1,4 +1,5 @@
 <template>
+  <BlockUserDialog v-model="$user.dialogs.block.value" />
   <PrivacyPolicyDialog
     v-if="$user.user?.privacyPolicyAccepted == false"
   ></PrivacyPolicyDialog>
@@ -34,12 +35,6 @@
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
     <UploadDialog v-model="$app.dialogs.upload.value"></UploadDialog>
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
-    <ExperimentsManagerDialog
-      v-if="
-        $app.dialogs.experiments &&
-        ($user.user?.administrator || $user.user?.moderator)
-      "
-    ></ExperimentsManagerDialog>
     <v-overlay
       persistent
       absolute
@@ -70,22 +65,20 @@
     <sidebar
       v-if="
         !$app.rail &&
-        !$vuetify.display.mobile &&
-        $app.site.finishedSetup &&
-        (!$vuetify.display.mobile || $experiments.experiments.LEGACY_MOBILE_NAV)
+        (!$vuetify.display.mobile ||
+          ($vuetify.display.mobile && $app.railMode === 'tpu')) &&
+        $app.site.finishedSetup
       "
     ></sidebar>
     <colubrina-sidebar
-      v-if="!$app.rail && $chat.isCommunications"
+      v-if="
+        !$app.rail &&
+        (!$vuetify.display.mobile ||
+          ($vuetify.display.mobile && $app.railMode === 'communications')) &&
+        $chat.isCommunications
+      "
     ></colubrina-sidebar>
     <workspaces-sidebar v-if="!$app.rail"></workspaces-sidebar>
-    <bottom-bar
-      v-if="
-        $app.site.finishedSetup &&
-        $vuetify.display.mobile &&
-        !$experiments.experiments.LEGACY_MOBILE_NAV
-      "
-    />
     <theme-engine-wrapper></theme-engine-wrapper>
     <default-view />
     <template v-if="$experiments.experiments.FAB">
@@ -157,20 +150,17 @@ import QuickSwitcher from "@/components/Core/Dialogs/QuickSwitcher.vue";
 import NicknameDialog from "@/components/Core/Dialogs/Nickname.vue";
 import ThemeEngineWrapper from "@/components/Core/ThemeEngineWrapper.vue";
 import RailBar from "@/layouts/default/RailBar.vue";
-import ExperimentsManagerDialog from "@/components/Dev/Dialogs/Experiments.vue";
 import Gold from "@/components/Dashboard/Dialogs/Gold.vue";
 import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
-import BottomBar from "@/layouts/default/BottomBar.vue";
 import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
+import BlockUserDialog from "@/components/Users/Dialogs/Block.vue";
 </script>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import MessageToast from "@/components/Communications/MessageToast.vue";
-import { Message as MessageType } from "@/models/message";
-import { Upload } from "@/models/upload";
 import Sidebar from "@/layouts/default/Sidebar.vue";
 import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
 import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
@@ -249,7 +239,7 @@ export default defineComponent({
     },
     getPulseSessionGlobal() {
       const id = Math.random().toString(36).substring(7);
-      this.$socket.emit("startPulse", {
+      this.$sockets.pulse.emit("startPulse", {
         type: "global",
         id,
         action: "focus",
@@ -263,13 +253,13 @@ export default defineComponent({
           type: "session"
         }
       });
-      this.$socket.on("pulseToken-" + id, (res: any) => {
+      this.$sockets.pulse.on("pulseToken-" + id, (res: any) => {
         setInterval(() => {
           if (document.hasFocus()) {
             this.pulse.timeOnPageGlobal += 5000;
-            this.$socket.emit("updatePulse", {
+            this.$sockets.pulse.emit("updatePulse", {
               id: res.id,
-              timeOnPage: this.pulse.timeOnPageGlobal
+              timeSpent: this.pulse.timeOnPageGlobal
             });
           }
         }, 5000);
@@ -287,7 +277,7 @@ export default defineComponent({
       clearInterval(this.pulse.interval);
       this.pulse.timeOnPage = 0;
       const id = Math.random().toString(36).substring(7);
-      this.$socket.emit("startPulse", {
+      this.$sockets.pulse.emit("startPulse", {
         type: "global",
         id,
         action: "focus",
@@ -301,14 +291,14 @@ export default defineComponent({
           type: "page"
         }
       });
-      this.$socket.on("pulseToken-" + id, (res: any) => {
+      this.$sockets.pulse.on("pulseToken-" + id, (res: any) => {
         this.pulse.id = res.id;
         this.pulse.interval = setInterval(() => {
           if (document.hasFocus()) {
             this.pulse.timeOnPage += 5000;
-            this.$socket.emit("updatePulse", {
+            this.$sockets.pulse.emit("updatePulse", {
               id: res.id,
-              timeOnPage: this.pulse.timeOnPage
+              timeSpent: this.pulse.timeOnPage
             });
           }
         }, 5000);
@@ -346,11 +336,14 @@ export default defineComponent({
       this.$app.loading = false;
       return;
     }
+    if (localStorage.getItem("rainbowMode")) {
+      document.body.classList.add("rainbow");
+    }
     // watch for CTRL + ALT + M for Memory Profiler
     document.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.ctrlKey && e.altKey && e.key === "m") {
         e.preventDefault();
-        this.$app.dialogs.memoryProfiler = !this.$app.dialogs.memoryProfiler;
+        this.$app.dialogs.actionDialog = !this.$app.dialogs.actionDialog;
       } else if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
         e.preventDefault();
         this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
@@ -382,7 +375,7 @@ export default defineComponent({
         }
       }
       this.getPulseSession();
-      this.$socket.emit("pulse", {
+      this.$sockets.pulse.emit("pulse", {
         action: "page-change",
         route: to.path,
         timeSpent: 0,

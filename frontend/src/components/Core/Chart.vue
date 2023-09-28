@@ -29,9 +29,10 @@
 </template>
 
 <script lang="ts">
-import { Line, Bar } from "vue-chartjs";
+import { Bar, Line } from "vue-chartjs";
 import apexchart from "vue3-apexcharts";
-import {
+import chartJS, {
+  BarElement,
   CategoryScale,
   Chart as ChartJS,
   Legend,
@@ -39,11 +40,9 @@ import {
   LineElement,
   PointElement,
   Title,
-  Tooltip,
-  BarElement
+  Tooltip
 } from "chart.js";
 import { defineComponent } from "vue";
-import chartJS from "chart.js";
 
 ChartJS.register(
   Title,

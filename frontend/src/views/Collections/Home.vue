@@ -3,9 +3,8 @@
     <CreateCollectionDialog v-model="create"></CreateCollectionDialog>
     <GalleryNavigation
       :supports="{ filter: true, metadata: false, search: true }"
-      :types="types"
-      @refreshGallery="$collections.init()"
-      @update:search="search = $event"
+      @refreshGallery="getCollections"
+      v-model:search="search"
       @update:filter="filter = $event"
     ></GalleryNavigation>
     <v-btn class="mt-1 ml-1" style="float: right" @click="create = true">
@@ -16,7 +15,7 @@
     <br />
     <v-row class="mb-1">
       <v-col
-        v-for="item in collections"
+        v-for="item in $collections.items"
         :key="'item-' + item.id + '-' + (item.shared ? 'shared' : 'owned')"
         md="4"
         xl="3"
@@ -26,7 +25,7 @@
       </v-col>
     </v-row>
     <small>
-      {{ $t("gallery.totalItems", { count: $collections.items.length }) }}
+      {{ $t("gallery.totalItems", { count: $collections.pager.totalItems }) }}
     </small>
   </v-container>
 </template>
@@ -35,8 +34,8 @@
 import { defineComponent } from "vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
-import { Collection } from "@/models/collection";
 import CreateCollectionDialog from "@/components/Collections/Dialogs/Create.vue";
+import { CollectionFilter } from "@/gql/graphql";
 
 export default defineComponent({
   name: "CollectionsHome",
@@ -44,53 +43,57 @@ export default defineComponent({
   data() {
     return {
       search: "",
-      filter: "all",
+      filter: [CollectionFilter.All],
       create: false,
+      page: 1,
       types: [
         {
           name: "All",
-          internalName: "all"
+          internalName: CollectionFilter.All
         },
         {
           name: "Owned by me",
-          internalName: "owned"
+          internalName: CollectionFilter.Owned
         },
         {
           name: "Shared with me",
-          internalName: "shared"
+          internalName: CollectionFilter.Shared
         },
         {
           name: "Write access",
-          internalName: "write"
+          internalName: CollectionFilter.Write
         },
         {
           name: "Configure access",
-          internalName: "configure"
+          internalName: CollectionFilter.Configure
+        },
+        {
+          name: "Read-only access",
+          internalName: CollectionFilter.Read
         }
       ]
     };
   },
-  computed: {
-    collections() {
-      const items = this.$collections.items.filter((item: Collection) =>
-        item.name.toLowerCase().includes(this.search.toLowerCase())
+  methods: {
+    async getCollections() {
+      console.log({
+        search: this.search,
+        filter: this.filter,
+        page: this.page
+      });
+      await this.$collections.getCollections(
+        {
+          search: this.search,
+          filter: this.filter,
+          page: this.page
+        },
+        true
       );
-      if (this.filter === "all") {
-        return items;
-      } else if (this.filter === "owned") {
-        return items.filter((item: any) => !item.shared);
-      } else if (this.filter === "shared") {
-        return items.filter((item: any) => item.shared);
-      } else if (this.filter === "write") {
-        return items.filter((item: any) => item.permissionsMetadata.write);
-      } else if (this.filter === "configure") {
-        return items.filter((item: any) => item.permissionsMetadata.configure);
-      }
     }
   },
   mounted() {
     this.$app.title = "Collections";
-    this.$collections.init();
+    this.$app.init();
   }
 });
 </script>

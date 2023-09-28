@@ -6,58 +6,41 @@ import { LegacyUser } from "@app/models/legacyUser.model"
 import { Message } from "@app/models/message.model"
 import Errors from "@app/lib/errors"
 import { UserUtilsService } from "@app/services/userUtils.service"
-import { CacheService } from "@app/services/cache.service"
 import embedParser from "@app/lib/embedParser"
-import { Op } from "sequelize"
+import { Includeable, Op } from "sequelize"
 import paginate from "jw-paginate"
 import axios from "axios"
 import { ClientSatisfies } from "@app/lib/clientSatisfies"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { MessageSubscription } from "@app/classes/graphql/chat/messageSubscription"
+import { ChatPermissionsHandler } from "@app/services/chat/permissions"
+import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
+import { ChatRank } from "@app/models/chatRank.model"
+import { ChatPermission } from "@app/models/chatPermission.model"
+import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
+import { GraphQLError } from "graphql/error"
+import { GqlError } from "@app/lib/gqlErrors"
+import { ChatEmoji } from "@app/models/chatEmoji.model"
+import { ChatAuditLog } from "@app/models/chatAuditLog.model"
+import {
+  AuditLogActionType,
+  AuditLogCategory
+} from "@app/classes/graphql/chat/auditLog/categories"
+import { Friend } from "@app/models/friend.model"
+import { EmbedInput } from "@app/classes/graphql/chat/message"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
     return [
       {
         model: Message,
-        as: "reply",
-        include: [
-          {
-            model: User,
-            as: "tpuUser",
-            attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-          },
-          {
-            model: LegacyUser,
-            as: "legacyUser",
-            attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-          }
-        ]
+        as: "reply"
       },
       {
         model: ChatAssociation,
         as: "readReceipts",
-        attributes: ["userId", "lastRead", "user"],
-        include: [
-          {
-            model: User,
-            as: "tpuUser",
-            attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
-          },
-          {
-            model: LegacyUser,
-            as: "legacyUser",
-            attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
-          }
-        ]
-      },
-      {
-        model: User,
-        as: "tpuUser",
-        attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
-      },
-      {
-        model: LegacyUser,
-        as: "legacyUser",
-        attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+        attributes: ["userId", "lastRead"]
       }
     ]
   }
@@ -69,15 +52,15 @@ export class ChatService {
     {
       model: User,
       as: "tpuUser",
-      attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+      attributes: partialUserBase
     },
     {
       model: LegacyUser,
       as: "legacyUser",
-      attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+      attributes: partialUserBase
     }
   ]
-  private chatIncludes = [
+  private chatIncludes: Includeable[] = [
     {
       model: ChatAssociation,
       as: "users",
@@ -85,12 +68,12 @@ export class ChatService {
         {
           model: User,
           as: "tpuUser",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          attributes: partialUserBase
         },
         {
           model: LegacyUser,
           as: "legacyUser",
-          attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+          attributes: partialUserBase
         }
       ],
       attributes: [
@@ -101,6 +84,7 @@ export class ChatService {
         "user",
         "lastRead",
         "createdAt",
+        "hidden",
         "updatedAt"
       ],
       order: [
@@ -110,14 +94,183 @@ export class ChatService {
     }
   ]
 
+  async normalizeIndexes(chatId: number, emit: boolean = true) {
+    try {
+      const normalized = []
+
+      const ranks = await ChatRank.findAll({
+        where: {
+          chatId
+        },
+        order: [
+          ["managed", "DESC"],
+          ["index", "ASC"]
+        ]
+      })
+
+      for (let i = 0; i < ranks.length; i++) {
+        const rank = ranks[i]
+
+        const normalizedIndex = Math.max(i, 0)
+
+        await rank.update({ index: normalizedIndex })
+
+        normalized.push({
+          id: rank.id,
+          index: normalizedIndex
+        })
+      }
+      if (emit) {
+        const chat = await Chat.findOne({
+          where: { id: chatId },
+          include: [
+            {
+              model: ChatAssociation,
+              as: "users",
+              attributes: [
+                "id",
+                "userId",
+                "rank",
+                "legacyUserId",
+                "user",
+                "lastRead",
+                "createdAt",
+                "updatedAt"
+              ]
+            }
+          ]
+        })
+        if (!chat) return false
+        for (const user of chat.users) {
+          if (!user.userId) continue
+          await this.getPermissions(user.userId, user.id, true)
+          socket
+            .of(SocketNamespaces.CHAT)
+            .to(user.userId)
+            .emit("rankOrderUpdated", {
+              chatId,
+              ranks: normalized
+            })
+        }
+      }
+      return true
+    } catch (error) {
+      console.error("Error normalizing indexes:", error)
+      throw error
+    }
+  }
+
+  async syncPermissions(userId: number, associationId: number) {
+    const permissions = await this.getPermissions(userId, associationId, true)
+    socket.of(SocketNamespaces.CHAT).to(userId).emit("syncPermissions", {
+      associationId,
+      permissions,
+      userId
+    })
+  }
+
+  async getHighestIndex(chatAssociationId: number) {
+    const rank = await ChatRankAssociation.findOne({
+      where: {
+        chatAssociationId
+      },
+      include: [
+        {
+          model: ChatRank,
+          as: "rank"
+        }
+      ],
+      order: [[{ model: ChatRank, as: "rank" }, "index", "DESC"]]
+    })
+    return rank?.rank?.index || 0
+  }
+
+  async getPermissions(
+    userId: number,
+    associationId: number,
+    reset: boolean = false
+  ): Promise<ChatPermissions[]> {
+    let permissions = await redis.json.get(
+      `chatPermissions:${userId}:${associationId}`
+    )
+
+    if (!permissions || reset) {
+      const association = await ChatAssociation.findOne({
+        where: { id: associationId, userId },
+        include: [
+          {
+            model: Chat,
+            attributes: ["userId", "type"],
+            as: "chat"
+          },
+          {
+            model: ChatRank,
+            as: "ranks",
+            include: [
+              {
+                model: ChatPermission,
+                as: "permissions"
+              }
+            ]
+          }
+        ]
+      })
+      if (!association) return []
+      permissions = [
+        ...new Set(
+          association.ranks.flatMap((rank) =>
+            rank.permissions.map((permission) => permission.id)
+          )
+        )
+      ]
+      if (
+        association.chat.userId === userId &&
+        association.chat.type === "group"
+      )
+        permissions.push(ChatPermissions.OWNER)
+      await redis.json.set(
+        `chatPermissions:${userId}:${associationId}`,
+        "$",
+        permissions
+      )
+    }
+
+    return permissions as ChatPermissions[]
+  }
+
+  async checkPermissions(
+    userId: number,
+    associationId: number,
+    permission: ChatPermissions,
+    noThrow: boolean = false
+  ): Promise<ChatPermissions[]> {
+    const date = new Date().getTime()
+    const permissions = await this.getPermissions(userId, associationId)
+    //console.log(`took: ${new Date().getTime() - date}ms`)
+    let hasPermission: boolean
+    if (
+      permission === ChatPermissions.OWNER ||
+      permission === ChatPermissions.TRUSTED
+    ) {
+      hasPermission = permissions.includes(permission)
+    } else {
+      hasPermission =
+        permissions.includes(permission) ||
+        permissions.includes(ChatPermissions.ADMIN) ||
+        permissions.includes(ChatPermissions.OWNER)
+    }
+    if (!noThrow && !hasPermission)
+      throw new GraphQLError(
+        "You do not have permission to perform this action on the group."
+      )
+    return permissions
+  }
+
   async emitToFCMs(message: Message, chat: Chat, userId: number) {
     if (!config.providers.google) return
     for (const user of chat.users) {
       const key = await redis.get(`user:${user.userId}:notificationKey`)
       if (!key) continue
-      //@ts-ignore
-      const sockets = await socket.in(user.userId).allSockets()
-      console.log(await socket)
       await axios
         .post(
           `https://fcm.googleapis.com/fcm/send`,
@@ -162,13 +315,16 @@ export class ChatService {
     await association.update({
       notifications: settings.notifications
     })
-    socket.to(userId).emit("chatUpdate", {
-      id: association.chatId,
-      association: {
-        ...association.toJSON(),
-        notifications: settings.notifications
-      }
-    })
+    socket
+      .of(SocketNamespaces.CHAT)
+      .to(userId)
+      .emit("chatUpdate", {
+        id: association.chatId,
+        association: {
+          ...association.toJSON(),
+          notifications: settings.notifications
+        }
+      })
     return association
   }
 
@@ -255,7 +411,7 @@ export class ChatService {
       id: user.id,
       chatId: chat.id
     })
-    socket.to(userId).emit("removeChat", {
+    socket.of(SocketNamespaces.CHAT).to(userId).emit("removeChat", {
       id: chat.id
     })
     return true
@@ -356,7 +512,11 @@ export class ChatService {
       }
     })
     if (!message) {
-      await this.checkPermissions(userId, associationId, "admin")
+      await this.checkPermissions(
+        userId,
+        associationId,
+        ChatPermissions.DELETE_MESSAGES
+      )
       const message = await Message.findOne({
         where: {
           id: messageId,
@@ -381,71 +541,50 @@ export class ChatService {
     }
   }
 
-  async checkPermissions(
-    userId: number,
-    chatAssociationId: number,
-    permission: "member" | "admin" | "owner"
-  ) {
-    const chat = await ChatAssociation.findOne({
-      where: {
-        id: chatAssociationId,
-        userId
-      }
-    })
-    console.log(chat?.rank)
-    if (!chat) throw Errors.CHAT_NOT_FOUND
-    if (chat.rank === "owner") return chat.rank
-    if (chat.rank === "admin" && permission === "admin") return chat.rank
-    if (chat.rank === "member" && permission === "member") return chat.rank
-    if (chat.rank === "admin" && permission === "member") return chat.rank
-    throw Errors.CHAT_INSUFFICIENT_PERMISSIONS
-  }
-
   async updateGroupSettings(
     associationId: number,
     userId: number,
     settings: {
-      name?: string
+      name?: string | null
       icon?: string | null
+      background?: string | null
     }
   ) {
     const chat = await this.getChatFromAssociation(associationId, userId)
-    await this.checkPermissions(userId, associationId, "admin")
-    await Chat.update(
-      {
-        name: settings.name,
-        icon: settings.icon
-      },
-      {
-        where: {
-          id: chat.id
-        }
+    await this.checkPermissions(userId, associationId, ChatPermissions.OVERVIEW)
+    await Chat.update(settings, {
+      where: {
+        id: chat.id
       }
-    )
-    if (settings.name !== chat.name) {
-      this.sendMessage(
-        `<@${userId}> updated the chat name to ${settings.name}.`,
-        userId,
-        associationId,
-        undefined,
-        "rename",
-        []
-      )
+    })
+    if (settings.name !== chat.name && settings.name !== undefined) {
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: userId,
+        category: AuditLogCategory.SETTINGS,
+        actionType: AuditLogActionType.MODIFY,
+        message: `<@${userId}> updated the group's name from **${chat.name}** to **${settings.name}**`
+      })
     }
-    if (settings.icon !== undefined) {
-      this.sendMessage(
-        `<@${userId}> updated the chat icon.`,
-        userId,
-        associationId,
-        undefined,
-        "system",
-        []
-      )
+    if (settings.icon !== undefined || settings.background !== undefined) {
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: userId,
+        category: AuditLogCategory.SETTINGS,
+        actionType: AuditLogActionType.MODIFY,
+        message: `<@${userId}> updated the group's **${
+          settings.icon ? "icon" : "background"
+        }**`
+      })
     }
     this.emitForAll(associationId, userId, "chatUpdate", {
-      name: settings.name,
+      name: settings.name ?? chat.name,
       id: chat.id,
-      icon: settings.icon
+      icon: settings.icon === undefined ? chat.icon : settings.icon,
+      background:
+        settings.background === undefined
+          ? chat.background
+          : settings.background
     })
     return chat
   }
@@ -479,46 +618,98 @@ export class ChatService {
   }*/
 
   async removeUserFromChat(
-    chatId: number,
-    removeUserId: number,
+    associationId: number,
+    removeUserId: number[],
     userId: number,
-    rank: "member" | "admin" | "owner"
+    isLeaving: boolean = false
   ) {
-    const chat = await this.getChatFromAssociation(chatId, userId)
-    const association = await ChatAssociation.findOne({
+    const chat = await this.getChatFromAssociation(associationId, userId)
+    let removable = []
+    const associations = await ChatAssociation.findAll({
       where: {
         chatId: chat.id,
-        userId: removeUserId,
-        rank:
-          rank === "owner"
-            ? {
-                [Op.or]: ["member", "admin", "owner"]
-              }
-            : "member"
+        userId: removeUserId
       }
     })
-    if (!association) throw Errors.CHAT_USER_NOT_FOUND
-    if (association.rank === "owner") throw Errors.PERMISSION_DENIED_RANK
-    await association.destroy()
-    this.sendMessage(
-      `<@${userId}> removed <@${removeUserId}> from the chat.`,
-      userId,
-      chatId,
-      undefined,
-      "leave"
-    )
-    this.emitForAll(chatId, userId, "removeChatUser", {
-      chatId: chat.id,
-      id: association.id
+    if (!isLeaving) {
+      const myIndex = await this.getHighestIndex(associationId)
+      for (const association of associations) {
+        if (association.userId === chat.userId) continue
+        const theirIndex = await this.getHighestIndex(associationId)
+        if (theirIndex > myIndex && chat.userId !== userId) continue
+        removable.push(association)
+      }
+    } else {
+      removable.push(...associations)
+    }
+    if (!associations.length) throw Errors.CHAT_USER_NOT_FOUND
+    for (const association of removable) {
+      await redis.json.del(
+        `chatPermissions:${association.userId}:${association.id}`
+      )
+      if (!isLeaving) {
+        await this.sendMessage(
+          `<@${userId}> removed <@${association.userId}> from the chat.`,
+          userId,
+          associationId,
+          undefined,
+          "leave"
+        )
+        await ChatAuditLog.create({
+          chatId: chat.id,
+          userId: userId,
+          category: AuditLogCategory.USER,
+          actionType: AuditLogActionType.REMOVE,
+          message: `<@${userId}> removed <@${association.userId}> from the chat.`
+        })
+      } else {
+        await this.sendMessage(
+          `<@${userId}> left the chat.`,
+          userId,
+          associationId,
+          undefined,
+          "leave"
+        )
+        await ChatAuditLog.create({
+          chatId: chat.id,
+          userId: userId,
+          category: AuditLogCategory.USER,
+          actionType: AuditLogActionType.REMOVE,
+          message: `<@${userId}> left the chat.`
+        })
+      }
+      let unread: Record<string, string> = await redis.json.get(
+        `unread:${association.userId}`
+      )
+      delete unread[chat.id.toString()]
+      await redis.json.set(`unread:${association.userId}`, "$", unread)
+      await this.emitForAll(associationId, userId, "removeChatUser", {
+        chatId: chat.id,
+        id: association.id
+      })
+      socket.of(SocketNamespaces.CHAT).to(removeUserId).emit("removeChat", {
+        id: chat.id
+      })
+    }
+    await ChatAssociation.destroy({
+      where: {
+        chatId: chat.id,
+        id: removable.map((assoc) => assoc.id)
+      }
     })
-    socket.to(removeUserId).emit("removeChat", {
-      id: chat.id
-    })
+    for (const association of chat.users) {
+      Container.get(UserUtilsService).trackedUserIds(association.userId, true)
+    }
     return true
   }
 
-  async addUsersToChat(chatId: number, userIds: number[], userId: number) {
-    let chat = await this.getChatFromAssociation(chatId, userId)
+  async addUsersToChat(
+    associationId: number,
+    userIds: number[],
+    userId: number,
+    force: boolean = false
+  ) {
+    let chat = await this.getChatFromAssociation(associationId, userId)
     const existingAssociations = await ChatAssociation.findAll({
       where: {
         chatId: chat.id,
@@ -528,26 +719,48 @@ export class ChatService {
     if (existingAssociations.length > 0) {
       throw Errors.USER_ALREADY_IN_CHAT
     }
-    const friends = await Container.get(UserUtilsService).validateFriends(
-      userId,
-      userIds
-    )
+    let friends: Friend[] = []
+    if (!force) {
+      friends = await Container.get(UserUtilsService).validateFriends(
+        userId,
+        userIds
+      )
+    }
     let newAssociations = []
-    for (const friend of friends) {
+    const rank = await ChatRank.findOne({
+      where: {
+        chatId: chat.id,
+        managed: true
+      }
+    })
+    if (!rank) throw Errors.COLUBRINA_CHAT
+    for (const friend of force ? userIds : friends) {
+      const id = typeof friend === "number" ? friend : friend.friendId
       const association = await ChatAssociation.create({
         chatId: chat.id,
-        userId: friend.friendId,
+        userId: id,
         rank: "member",
-        identifier: chat.id + "-" + friend.friendId
+        identifier: chat.id + "-" + id
+      })
+      await ChatRankAssociation.create({
+        rankId: rank.id,
+        chatAssociationId: association.id
       })
       newAssociations.push(association.id)
       this.sendMessage(
-        `<@${userId}> added <@${friend.friendId}> to the chat.`,
+        `<@${userId}> added <@${id}> to the chat.`,
         userId,
-        chatId,
+        associationId,
         undefined,
         "join"
       )
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: userId,
+        category: AuditLogCategory.USER,
+        actionType: AuditLogActionType.ADD,
+        message: `<@${userId}> added <@${id}> to the chat.`
+      })
     }
     const associations = await ChatAssociation.findAll({
       where: {
@@ -555,18 +768,31 @@ export class ChatService {
       },
       include: this.userIncludes
     })
+    for (const association of associations) {
+      Container.get(UserUtilsService).trackedUserIds(association.userId, true)
+    }
     const newUsers = await ChatAssociation.findAll({
       where: {
         id: newAssociations
       },
-      include: this.userIncludes
+      include: [
+        ...this.userIncludes,
+        {
+          model: ChatRank,
+          as: "ranks"
+        }
+      ]
     })
-    this.emitForAll(chatId, userId, "addChatUsers", {
+    for (const user of newUsers) {
+      user.dataValues.ranksMap = user.ranks.map((rank) => rank.id)
+    }
+    this.emitForAll(associationId, userId, "addChatUsers", {
       chatId: chat.id,
       users: newUsers
     })
     for (const association of newUsers) {
       socket
+        .of(SocketNamespaces.CHAT)
         .to(association.userId)
         .emit("chatCreated", await this.getChat(chat.id, association.userId))
     }
@@ -590,6 +816,22 @@ export class ChatService {
     return true
   }
 
+  async cancelTyping(associationId: number, userId: number) {
+    const chat = await this.getChatFromAssociation(associationId, userId)
+    await this.emitForAll(
+      associationId,
+      userId,
+      "cancelTyping",
+      {
+        chatId: chat.id,
+        userId,
+        user: await Container.get(UserUtilsService).getUserById(userId)
+      },
+      true
+    )
+    return true
+  }
+
   async editMessage(
     messageId: number,
     userId: number,
@@ -597,6 +839,7 @@ export class ChatService {
     associationId: number,
     pinned?: boolean
   ) {
+    const matches = content.match(/:([\w~-]+)(?::([\w~-]+))?:/g)
     const chat = await this.getChatFromAssociation(associationId, userId)
     if (!chat) throw Errors.CHAT_NOT_FOUND
     const message = await Message.findOne({
@@ -607,7 +850,11 @@ export class ChatService {
     })
     if (!message || message.type !== "message") throw Errors.MESSAGE_NOT_FOUND
     if (pinned !== undefined) {
-      await this.checkPermissions(userId, associationId, "admin")
+      await this.checkPermissions(
+        userId,
+        associationId,
+        ChatPermissions.PIN_MESSAGES
+      )
       await Message.update(
         {
           pinned: !message.pinned
@@ -633,7 +880,12 @@ export class ChatService {
         pinned: !message.pinned,
         content: message.content,
         edited: message.edited,
-        editedAt: message.editedAt
+        editedAt: message.editedAt,
+        emoji: await ChatEmoji.findAll({
+          where: {
+            id: matches?.map((match) => match.split(":")[2]) || []
+          }
+        })
       })
       return true
     }
@@ -660,7 +912,12 @@ export class ChatService {
       edited: true,
       editedAt: date,
       user: await Container.get(UserUtilsService).getUserById(userId),
-      pinned: message.pinned
+      pinned: message.pinned,
+      emoji: await ChatEmoji.findAll({
+        where: {
+          id: matches?.map((match) => match.split(":")[2]) || []
+        }
+      })
     })
     return true
   }
@@ -680,70 +937,75 @@ export class ChatService {
     }
     for (const user of chat.users) {
       if (!user.userId) continue
-      socket.to(user.userId).emit(key, data)
+      socket.of(SocketNamespaces.CHAT).to(user.userId).emit(key, data)
     }
   }
 
   async readChat(associationId: number, userId: number) {
-    const chat = await this.getChatFromAssociation(associationId, userId)
-    const chatId = chat.id
-    const notifications = await redis.json.get(
-      `unread:${userId}`,
-      `$.${chatId}`
-    )
-    if (notifications) {
-      await redis.json.set(`unread:${userId}`, "$", {
-        ...notifications,
-        [chatId]: 0
-      })
-    } else {
-      await redis.json.set(`unread:${userId}`, "$", {
-        [chatId]: 0
-      })
-    }
-    socket.to(userId).emit("readChat", {
-      id: chatId
-    })
-    const message = await Message.findOne({
-      where: {
-        chatId
-      },
-      order: [["createdAt", "DESC"]]
-    })
-    if (message) {
-      const association = await ChatAssociation.findOne({
-        where: {
-          chatId,
-          userId
-        }
-      })
-      const user = await User.findOne({
-        where: {
-          id: userId
-        },
-        attributes: ["id", "status", "storedStatus"]
-      })
-      if (
-        !association ||
-        association.lastRead === message.id ||
-        user?.storedStatus === "invisible"
+    try {
+      const chat = await this.getChatFromAssociation(associationId, userId)
+      const chatId = chat.id
+      const notifications = await redis.json.get(
+        `unread:${userId}`,
+        `$.${chatId}`
       )
-        return
-      await association.update(
-        { lastRead: message.id },
-        {
+      if (notifications) {
+        await redis.json.set(`unread:${userId}`, "$", {
+          ...notifications,
+          [chatId]: 0
+        })
+      } else {
+        await redis.json.set(`unread:${userId}`, "$", {
+          [chatId]: 0
+        })
+      }
+      socket.of(SocketNamespaces.CHAT).to(userId).emit("readChat", {
+        id: chatId
+      })
+      const message = await Message.findOne({
+        where: {
+          chatId
+        },
+        order: [["id", "DESC"]]
+      })
+      if (message) {
+        const association = await ChatAssociation.findOne({
           where: {
             chatId,
             userId
           }
-        }
-      )
-      this.emitForAll(association.id, userId, "readReceipt", {
-        chatId,
-        id: message.id,
-        user: await Container.get(UserUtilsService).getUserById(userId),
-        lastRead: message.id
-      })
+        })
+        const user = await User.findOne({
+          where: {
+            id: userId
+          },
+          attributes: ["id", "status", "storedStatus", "bot"]
+        })
+        if (
+          !association ||
+          association.lastRead === message.id ||
+          user?.storedStatus === "invisible" ||
+          user?.bot
+        )
+          return
+        await association.update(
+          { lastRead: message.id },
+          {
+            where: {
+              chatId,
+              userId
+            }
+          }
+        )
+        this.emitForAll(association.id, userId, "readReceipt", {
+          chatId,
+          id: message.id,
+          userId,
+          lastRead: message.id
+        })
+      }
+    } catch (e) {
+      console.log(e)
     }
   }
 
@@ -758,18 +1020,34 @@ export class ChatService {
           as: "association"
         },
         {
+          model: ChatRank,
+          as: "ranks",
+          order: [["index", "DESC"]]
+        },
+        {
           model: ChatAssociation,
           as: "users",
           include: [
             {
+              model: ChatRank,
+              as: "ranks",
+              order: [["index", "DESC"]],
+              include: [
+                {
+                  model: ChatPermission,
+                  as: "permissions"
+                }
+              ]
+            },
+            {
               model: User,
               as: "tpuUser",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             },
             {
               model: LegacyUser,
               as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+              attributes: partialUserBase
             }
           ],
           attributes: [
@@ -791,33 +1069,71 @@ export class ChatService {
     })
     if (!chat) throw Errors.CHAT_NOT_FOUND
     const recipient = await this.getRecipient(chat, userId)
+
     return {
       ...chat.toJSON(),
+      users: chat.users.map((user) => {
+        return {
+          ...user.toJSON(),
+          ranksMap: user.ranks.map((rank) => rank.id),
+          permissions: [
+            ...new Set(
+              user.ranks.flatMap((rank) =>
+                rank.permissions.map((permission) => permission.id)
+              )
+            )
+          ]
+        }
+      }),
+      ranks: chat.ranks
+        .map((rank) => {
+          return {
+            ...rank.toJSON(),
+            permissionsMap:
+              rank?.permissions?.map((permission) => permission.id) || []
+          }
+        })
+        .sort((a, b) => {
+          return b.index - a.index || 0
+        }),
       unread: 0,
       recipient: recipient
     }
   }
 
   async createChat(users: number[], userId: number) {
-    const userUtilsService = Container.get(UserUtilsService)
-    const cacheService = Container.get(CacheService)
+    const chatPermissionsHandler = new ChatPermissionsHandler()
     if (!users.length || users.includes(userId))
       throw Errors.INVALID_FRIEND_SELECTION
-    const friends = await userUtilsService.validateFriends(userId, users)
+
+    const friends = await Container.get(UserUtilsService).validateFriends(
+      userId,
+      users
+    )
     const type = friends.length === 1 ? "direct" : "group"
     const intent = [userId, ...users].sort((a, b) => a - b).join("-")
-    console.log(intent)
     if (type === "direct") {
       const chat = await Chat.findOne({
         where: {
           type: "direct",
           intent
         },
-        // @ts-ignore
         include: this.chatIncludes
       })
-      console.log(chat?.users)
-      if (chat?.users.find((u: ChatAssociation) => u.userId === userId)) {
+      const assoc = chat?.users.find(
+        (u: ChatAssociation) => u.userId === userId
+      )
+      if (assoc && chat) {
+        if (assoc.hidden) {
+          assoc.update({
+            hidden: false
+          })
+          const chatWithUsers = await this.getChat(chat.id, assoc.userId)
+          socket
+            .of(SocketNamespaces.CHAT)
+            .to(assoc.userId)
+            .emit("chatCreated", chatWithUsers)
+        }
         return await this.getChat(chat.id, userId)
       } else if (chat) {
         const association = await ChatAssociation.create({
@@ -826,8 +1142,31 @@ export class ChatService {
           rank: "member",
           identifier: chat.id + "-" + userId
         })
+        let association2
+        if (!chat.users.length) {
+          association2 = await ChatAssociation.create({
+            userId: users[0],
+            chatId: chat.id,
+            rank: "member",
+            identifier: chat.id + "-" + users[0]
+          })
+        }
         const chatWithUsers = await this.getChat(chat.id, association.userId)
-        socket.to(association.userId).emit("chatCreated", chatWithUsers)
+        socket
+          .of(SocketNamespaces.CHAT)
+          .to(association.userId)
+          .emit("chatCreated", chatWithUsers)
+        Container.get(UserUtilsService).trackedUserIds(association.userId, true)
+        if (association2) {
+          socket
+            .of(SocketNamespaces.CHAT)
+            .to(association2.userId)
+            .emit("chatCreated", chatWithUsers)
+          Container.get(UserUtilsService).trackedUserIds(
+            association2.userId,
+            true
+          )
+        }
         return chatWithUsers
       }
     }
@@ -838,6 +1177,7 @@ export class ChatService {
       userId,
       intent: type === "direct" ? intent : null
     })
+    redis.set(`chat:${chat.id}:sortDate`, dayjs().valueOf())
     let associations = []
 
     associations.push(
@@ -860,21 +1200,36 @@ export class ChatService {
       )
     }
     const chatWithUsers = await this.getChat(chat.id, userId)
+    await chatPermissionsHandler.createDefaults(chatWithUsers)
     for (const association of associations) {
       const chatWithUsers = await this.getChat(chat.id, association.userId)
       if (!chatWithUsers) continue
-      socket.to(association.userId).emit("chatCreated", chatWithUsers)
+      socket
+        .of(SocketNamespaces.CHAT)
+        .to(association.userId)
+        .emit("chatCreated", chatWithUsers)
+      Container.get(UserUtilsService).trackedUserIds(association.userId, true)
     }
     return chatWithUsers
   }
 
-  async sendMessageToUsers(messageId: number, chat: Chat) {
+  async sendMessageToUsers(
+    messageId: number,
+    chat: Chat,
+    emojiPermission: boolean = true
+  ) {
     const message = await Message.findOne({
       where: { id: messageId },
       include: new MessageIncludes(false)
     })
-
     if (!message) throw Errors.UNKNOWN
+    const matches = message.content.match(/:([\w~-]+)(?::([\w~-]+))?:/g)
+    message.dataValues.emoji = await ChatEmoji.findAll({
+      where: {
+        id: matches?.map((match) => match.split(":")[2]) || []
+      }
+    })
+
     this.emitToFCMs(message, chat, message.userId)
     for (const association of chat.users) {
       if (association?.tpuUser) {
@@ -883,24 +1238,38 @@ export class ChatService {
             id: association.id,
             userId: association.tpuUser.id
           },
-          attributes: ["id", "notifications"]
+          attributes: ["id", "notifications", "userId", "hidden"]
         })
         if (!assoc) continue
+        if (assoc.hidden) {
+          await assoc.update({
+            hidden: false
+          })
+          const chatWithUsers = await this.getChat(chat.id, association.userId)
+          if (!chatWithUsers) continue
+          await socket
+            .of(SocketNamespaces.CHAT)
+            .to(assoc.userId)
+            .emit("chatCreated", chatWithUsers)
+        }
         const mention = message.content.includes(`<@${association.tpuUser.id}>`)
-        socket.to(association.tpuUser.id).emit("message", {
-          message,
-          chat: {
-            name: chat.name,
-            id: chat.id,
-            type: chat.type,
-            recipient: await this.getRecipient(chat, association.user.id)
-          },
-          association: {
-            id: association.id,
-            rank: association.rank
-          },
-          mention
-        })
+        socket
+          .of(SocketNamespaces.CHAT)
+          .to(association.tpuUser.id)
+          .emit("message", {
+            message: {
+              ...message.toJSON(),
+              type: message.type.toUpperCase()
+            },
+            chat: {
+              name: chat.name,
+              id: chat.id,
+              type: chat.type,
+              recipient: await this.getRecipient(chat, association.user.id)
+            },
+            associationId: association.id,
+            mention
+          } as MessageSubscription)
 
         if (
           association.tpuUser.id === message.userId ||
@@ -926,6 +1295,44 @@ export class ChatService {
     return message
   }
 
+  async userEmoji(
+    userId: number,
+    reset: boolean = false
+  ): Promise<ChatEmoji[]> {
+    const cache = await redis.json.get(`emoji:${userId}`)
+    if (cache && !reset) return cache
+    const chats = await this.getUserChats(userId, {
+      nameColor: false,
+      uptime: false
+    })
+    const emoji = await ChatEmoji.findAll({
+      where: {
+        chatId: chats.map((chat) => chat.id),
+        deleted: false
+      },
+      order: [["createdAt", "ASC"]]
+    })
+
+    // Handle duplicate names, this system will append ~offset onto them
+    // For example, the oldest smiley will be :smiley: but subsequent will be
+    // :smiley~1: / :smiley~2: / etc
+    const emojiNameCount: Record<string, number> = {}
+
+    for (const e of emoji) {
+      const emojiName = e.name
+
+      if (emojiNameCount.hasOwnProperty(emojiName)) {
+        emojiNameCount[emojiName]++
+        e.name = `${emojiName}~${emojiNameCount[emojiName]}`
+      } else {
+        emojiNameCount[emojiName] = 0
+      }
+    }
+
+    await redis.json.set(`emoji:${userId}`, "$", emoji)
+    return emoji
+  }
+
   async sendMessage(
     content: string,
     userId: number,
@@ -939,8 +1346,14 @@ export class ChatService {
       | "administrator"
       | "rename"
       | "system" = "message",
-    attachments?: string[]
+    attachments?: string[],
+    embeds?: EmbedInput[]
   ) {
+    const permissions = await this.checkPermissions(
+      userId,
+      associationId,
+      ChatPermissions.SEND_MESSAGES
+    )
     const chat = await this.getChatFromAssociation(associationId, userId)
     if (replyId !== undefined && replyId !== null) {
       const message = await Message.findOne({
@@ -952,7 +1365,7 @@ export class ChatService {
       if (!message) throw Errors.REPLY_MESSAGE_NOT_FOUND
     }
     // must contain at least one character excluding spaces and newlines and must not contain just #s (one or more)
-    if (!attachments?.length) {
+    if (!attachments?.length && !embeds?.length) {
       content = content?.trim()
       if (
         !content.replace(/\s/g, "").length ||
@@ -961,17 +1374,46 @@ export class ChatService {
         throw Errors.NO_MESSAGE_CONTENT
     }
     if (content.length >= 4000) throw Errors.MESSAGE_TOO_LONG
+    /*const emoji = await this.userEmoji(userId)
+    for (const match of content.match(/:[\w-]+:\w+:/g) || []) {
+      try {
+        const find = emoji.find((e) => e.id === match.split(":")[2])
+        if (!find) throw new GqlError("INVALID_EMOJI")
+      } catch {
+        throw new GqlError("INVALID_EMOJI")
+      }
+    }*/
+    if (chat.type === "direct") {
+      const userService = Container.get(UserUtilsService)
+      const block = await userService.blocked(
+        chat.users[0]?.userId,
+        chat.users[1]?.userId
+      )
+      if (block) throw new GqlError("RESTRICTED_MESSAGING")
+    }
     const message = await Message.create({
       content,
       chatId: chat.id,
       userId,
       type,
-      replyId
+      replyId,
+      embeds:
+        embeds?.map((embed) => {
+          return {
+            data: embed,
+            type: "bot",
+            url: ""
+          }
+        }) || []
     })
 
     redis.set(`chat:${chat.id}:sortDate`, dayjs(message.createdAt).valueOf())
     embedParser(message, message.chatId, userId, associationId, attachments)
-    return await this.sendMessageToUsers(message.id, chat)
+    return await this.sendMessageToUsers(
+      message.id,
+      chat,
+      permissions.includes(ChatPermissions.EXTERNAL_EMOJI)
+    )
   }
 
   async getRecipient(chat: Chat, userId: number) {
@@ -1013,7 +1455,11 @@ export class ChatService {
     }
   }
 
-  async getChatFromAssociation(associationId: number, userId: number) {
+  async getChatFromAssociation(
+    associationId: number,
+    userId: number,
+    gql: boolean = true
+  ) {
     const chat = await Chat.findOne({
       include: [
         {
@@ -1042,17 +1488,23 @@ export class ChatService {
             {
               model: User,
               as: "tpuUser",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             },
             {
               model: LegacyUser,
               as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+              attributes: partialUserBase
             }
           ]
         }
       ]
     })
+    if (!chat && gql)
+      throw new GraphQLError("The chat could not be found.", {
+        extensions: {
+          code: "CHAT_NOT_FOUND"
+        }
+      })
     if (!chat) throw Errors.CHAT_NOT_FOUND
     return chat
   }
@@ -1187,7 +1639,7 @@ export class ChatService {
             {
               model: LegacyUser,
               as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+              attributes: partialUserBase
             }
           ]
         }

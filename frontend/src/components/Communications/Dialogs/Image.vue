@@ -1,26 +1,36 @@
 <template>
   <v-dialog
-    :height="height"
     :model-value="modelValue"
     :width="width"
-    max-height="500px"
     max-width="800px"
     @update:modelValue="$emit('update:modelValue', $event)"
   >
     <v-card v-if="$chat.dialogs.image.object">
       <v-img
-        :aspect-ratio="
-          $chat.dialogs.image.object?.width / $chat.dialogs.image.object?.height
-        "
+        max-height="500px"
+        :width="width"
+        :height="height"
         :src="$chat.dialogs.image.object?.url"
       ></v-img>
     </v-card>
     <a
-      class="text-grey mt-2 pointer underline-on-hover"
-      style="width: 130px"
-      @click="$chat.processLink($chat.dialogs.image.object?.originalURL || '')"
+      class="text-grey pointer v-card py-2 rounded-xl px-2 hover-shade"
+      style="
+        background: rgb(var(--v-theme-toolbar));
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+      "
+      @click="
+        $chat.processLink(
+          $chat.dialogs.image.object?.originalURL ||
+            `https://${$app.site.domain}${$chat.dialogs.image.object.url}`
+        )
+      "
     >
-      Open in new tab
+      <span>
+        <v-icon size="18" class="mx-1">mdi-open-in-new</v-icon>
+      </span>
     </a>
   </v-dialog>
 </template>

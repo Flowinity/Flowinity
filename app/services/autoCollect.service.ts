@@ -5,6 +5,7 @@ import { CollectionItem } from "@app/models/collectionItem.model"
 import Errors from "@app/lib/errors"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { Upload } from "@app/models/upload.model"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 @Service()
 export class AutoCollectService {
@@ -44,17 +45,23 @@ export class AutoCollectService {
           collectionId: autoCollect.collectionId,
           userId
         })
-        socket.to(userId).emit("autoCollectApproval", {
-          type: "approve",
-          id: autoCollect.id
-        })
+        socket
+          .of(SocketNamespaces.AUTO_COLLECTS)
+          .to(userId)
+          .emit("autoCollectApproval", {
+            type: "approve",
+            id: autoCollect.id
+          })
         await autoCollect.destroy()
         return true
       case "deny":
-        socket.to(userId).emit("autoCollectApproval", {
-          type: "deny",
-          id: autoCollect.id
-        })
+        socket
+          .of(SocketNamespaces.AUTO_COLLECTS)
+          .to(userId)
+          .emit("autoCollectApproval", {
+            type: "deny",
+            id: autoCollect.id
+          })
         await autoCollect.destroy()
         return true
       default:

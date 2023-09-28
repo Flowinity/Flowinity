@@ -23,47 +23,21 @@ import { Badge } from "@app/models/badge.model"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { FriendNickname } from "@app/models/friendNickname"
-import { AlternatePassword } from "@app/types/auth"
+import { AlternatePassword as AlternatePasswordType } from "@app/types/auth"
 import { DefaultProfileLayout } from "@app/classes/UserV3ProfileLayout"
 import { Integration } from "@app/models/integration.model"
-import { Col } from "sequelize/types/utils"
-
-export interface ProfileLayout {
-  layout: {
-    columns: [
-      {
-        rows: ProfileLayoutComponent[]
-      }
-    ]
-  }
-  config: {
-    containerMargin?: number
-    showStatsSidebar: boolean
-  }
-  version: number
-}
-
-export interface ProfileLayoutComponent {
-  name: string
-  id: string
-  props?: any
-}
-
-export interface ThemeEngine {
-  theme: {
-    dark: any
-    light: any
-    amoled: any
-  }
-  fluidGradient: boolean
-  gradientOffset: number
-  defaults: any
-  version: number
-  deviceSync: boolean
-  showOnProfile: boolean
-  baseTheme: "dark" | "light" | "amoled"
-  customCSS: string
-}
+import { Field, Float, ObjectType } from "type-graphql"
+import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
+import { AlternatePassword } from "@app/classes/graphql/user/alternatePassword"
+import { Notification } from "@app/models/notification.model"
+import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
+import { DateType } from "@app/classes/graphql/serializers/date"
+import { Session } from "@app/models/session.model"
+import { UserInsights } from "@app/classes/graphql/user/insights"
+import { Stats } from "@app/classes/graphql/core/core"
+import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
+import { BlockedUser } from "@app/models/blockedUser.model"
+import { FindOptions } from "sequelize"
 
 @DefaultScope(() => ({
   attributes: {
@@ -79,18 +53,44 @@ export interface ThemeEngine {
     ]
   }
 }))
+@ObjectType()
 @Table
 export class User extends Model {
+  @Field(() => Float)
+  @Column({
+    primaryKey: true,
+    autoIncrement: true,
+    type: DataType.BIGINT
+  })
+  id: number
+
+  @Field(() => DateType)
+  @Column({
+    type: DataType.DATE
+  })
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column({
+    type: DataType.DATE
+  })
+  updatedAt: Date
+
+  @Field()
   @AllowNull(false)
-  @Unique
+  @Unique({
+    msg: "Username is already taken.",
+    name: "USERNAME_TAKEN"
+  })
   @Length({
-    msg: "Length of your username must be between 2-16 characters.",
+    msg: "Length of your username must be between 2-32 characters.",
     min: 2,
-    max: 16
+    max: 32
   })
   @Column
   username: string
 
+  @Field()
   @AllowNull(false)
   @Unique
   @IsEmail
@@ -113,6 +113,9 @@ export class User extends Model {
   })
   passwordResetExpiry: Date
 
+  @Field({
+    nullable: true
+  })
   @Length({
     msg: "Length of your description must be between 0-255 characters.",
     min: 0,
@@ -121,22 +124,29 @@ export class User extends Model {
   @Column
   description?: string
 
+  @Field()
   @Default(false)
   @Column
   administrator: boolean
 
+  @Field()
   @Default(true)
   @Column
   darkTheme: boolean
 
+  @Field()
   @Default(false)
   @Column
   emailVerified: boolean
 
+  @Field()
   @Default(false)
   @Column
   banned: boolean
 
+  @Field({
+    nullable: true
+  })
   @Column
   inviteId?: number
 
@@ -156,21 +166,31 @@ export class User extends Model {
   })
   openGraph: OpenGraph
 
+  @Field()
   @Default(false)
   @Column
   discordPrecache: boolean
 
+  @Field({
+    nullable: true
+  })
   @AllowNull
   @Column
   avatar?: string
 
+  @Field({
+    nullable: true,
+    deprecationReason: "Subdomains are no longer available as of TPUv2/NEXT."
+  })
   @Column
   subdomainId?: number
 
+  @Field()
   @Default(1)
   @Column
   domainId: number
 
+  @Field()
   @Default(false)
   @Column
   totpEnable: boolean
@@ -179,34 +199,60 @@ export class User extends Model {
   @Column
   totpSecret?: string
 
+  @Field(() => Float, {
+    description: "How much the user has uploaded in bytes."
+  })
   @Default(0)
   @Column
   quota: bigint
 
+  @Field({
+    deprecationReason:
+      "Hidden upload usernames are no longer available as of TPUv2/NEXT."
+  })
   @Default(false)
   @Column
   uploadNameHidden: boolean
 
+  @Field({
+    deprecationReason:
+      "Invisible URLs are no longer available as of TPUv2/NEXT."
+  })
   @Default(false)
   @Column
   invisibleURLs: boolean
 
+  @Field()
   @Default(false)
   @Column
   moderator: boolean
 
+  @Field({
+    description:
+      "Subscriptions are no longer used as they were in TPUv1, and are now used to store metadata for permanent Gold subscriptions.",
+    nullable: true
+  })
   @Default(1)
   @Column
   subscriptionId: number
 
+  @Field({
+    deprecationReason: "Fake paths are no longer available as of TPUv2/NEXT.",
+    nullable: true
+  })
   @AllowNull
   @Column
   fakePath?: string
 
+  @Field({
+    deprecationReason:
+      "Replaced with `themeEngine`, used in legacy clients such as legacy.privateuploader.com."
+  })
   @Default(1)
   @Column
   themeId: number
 
+  @Field()
   @Default(12)
   @Column({
     validate: {
@@ -216,25 +262,42 @@ export class User extends Model {
   })
   itemsPerPage: number
 
+  @Field({
+    description: "UserV2 banner.",
+    nullable: true
+  })
   @Column
   banner?: string
 
+  @Field(() => [AlternatePassword], {
+    description:
+      "Ability to login with more then 1 password with different scopes.",
+    nullable: true
+  })
   @Column({
     type: DataType.JSON,
     defaultValue: []
   })
-  alternatePasswords: AlternatePassword[]
+  alternatePasswords: AlternatePasswordType[]
 
+  @Field(() => UserStatus, {
+    description: "User status/presence shown to other users."
+  })
   @Column({
     type: DataType.ENUM("online", "idle", "offline", "busy")
   })
-  status: "online" | "idle" | "offline" | "busy"
+  status: "online" | "idle" | "offline" | "busy" | "unknown" | UserStatus
 
+  @Field(() => UserStoredStatus, {
+    description:
+      "User status/presence that has `invisible` and is shown to the current user."
+  })
   @Column({
     type: DataType.ENUM("online", "idle", "busy", "invisible")
   })
-  storedStatus: "online" | "idle" | "busy" | "invisible"
+  storedStatus: "online" | "idle" | "busy" | "invisible" | UserStoredStatus
 
+  @Field()
   @Column({
     type: DataType.ENUM("celsius", "fahrenheit", "kelvin"),
     defaultValue: "celsius"
@@ -247,38 +310,54 @@ export class User extends Model {
   @Column
   mailToken?: string
 
+  @Field(() => ThemeEngine, {
+    nullable: true
+  })
   @Column({
     type: DataType.JSON
   })
   themeEngine: ThemeEngine | null
 
+  @Field(() => UserInsights)
   @Column({
     type: DataType.ENUM("everyone", "friends", "nobody"),
     defaultValue: "nobody"
   })
   insights: "everyone" | "friends" | "nobody"
 
+  @Field(() => ProfileLayout)
   @Column({
     type: DataType.JSON,
     defaultValue: new DefaultProfileLayout()
   })
   profileLayout: ProfileLayout
 
+  @Field(() => [Number], {
+    description:
+      "Collections that are excluded from the Collections filter in Gallery.",
+    nullable: true
+  })
   @Column({
     type: DataType.JSON,
     defaultValue: []
   })
   excludedCollections: number[] | null
 
+  @Field()
   @Column({
     type: DataType.STRING,
     defaultValue: "en"
   })
   language: string
 
+  @Field()
   @Column
   publicProfile: boolean
 
+  @Field(() => Float, {
+    description:
+      "How much the user has donated to PrivateUploader. (Likely unused in unofficial instances.)"
+  })
   @Column({
     type: DataType.BIGINT
   })
@@ -289,45 +368,105 @@ export class User extends Model {
   })
   fcmNotificationKey: string
 
+  @Field(() => Boolean, {
+    nullable: true
+  })
   @Column({
     type: DataType.BOOLEAN,
     defaultValue: true
   })
   privacyPolicyAccepted: boolean
 
+  @Field(() => String, {
+    description: "The user's name color in Communications.",
+    nullable: true
+  })
   @Column
   nameColor: string
 
+  @Field({
+    description: "Whether the user is a bot user."
+  })
+  @Column
+  bot: boolean
+
+  @Field(() => Plan, {
+    nullable: true
+  })
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 
   @BelongsTo(() => Theme, "themeId")
   theme: Theme
 
+  @Field(() => Domain, {
+    nullable: true
+  })
   @BelongsTo(() => Domain, "domainId")
   domain: Domain
 
+  @Field(() => Subscription, {
+    nullable: true
+  })
   @HasOne(() => Subscription, "userId")
   subscription: Subscription
 
+  @Field(() => [Experiment], {
+    nullable: true
+  })
   @HasMany(() => Experiment, "userId")
   experiments: Experiment[]
 
+  @Field(() => [Badge])
   @BelongsToMany(() => Badge, () => BadgeAssociation, "userId", "badgeId")
   badges: Badge[]
 
+  @Field(() => [AutoCollectRule])
   @HasMany(() => AutoCollectRule, "userId")
   autoCollectRules: AutoCollectRule[]
 
+  @Field(() => String, {
+    nullable: true,
+    description:
+      "The user's scopes assigned to the API key used. In format like `user.view,user.modify` which belong to `Scope`."
+  })
   scopes: string
 
-  stats: object
+  @Field(() => Stats, {
+    nullable: true
+  })
+  stats: Stats
 
+  @Field({
+    nullable: true
+  })
   oauthAppId?: string
 
+  @Field(() => [FriendNickname], {
+    nullable: true
+  })
   @HasOne(() => FriendNickname, "friendId")
   nickname: FriendNickname
 
+  @Field(() => [Integration])
   @HasMany(() => Integration, "userId")
   integrations: Integration[]
+
+  @Field(() => [Notification])
+  @HasMany(() => Notification, "userId")
+  notifications: Notification[]
+
+  @Field(() => [Session])
+  @HasMany(() => Session, "userId")
+  sessions: Session[]
+
+  @Field({
+    nullable: true,
+    description:
+      "How many AutoCollect approvals the user needs to approve/reject."
+  })
+  pendingAutoCollects: number
+
+  @HasOne(() => BlockedUser, "userId")
+  blocked?: BlockedUser
 }

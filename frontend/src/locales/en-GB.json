@@ -20,7 +20,7 @@
       "colubrinaMigrate": "Migrate from Colubrina",
       "admin": "Admin Panel",
       "member": "Member of {names}",
-      "experiments": "TPU Experimental Overrides (NEXT)",
+      "experiments": "TPU Experimental Overrides (GQL)",
       "close": "Close sidebar"
     }
   },
@@ -215,7 +215,7 @@
       "none": "No slideshows found."
     },
     "about": {
-      "productName": "Product name: TPUvNEXT",
+      "productName": "Product name: TPUvGQL (NEXT)",
       "version": "Version: {version}",
       "buildDate": "Build date: {date}",
       "relative": "Build date relative: {date}",
@@ -223,7 +223,7 @@
       "ip": "Backend connecting IP: {ip}",
       "ipWhitelist": "IP whitelist groups: {groups}",
       "server": "Server: {server}",
-      "docs": "TPU API Documentation (WIP, v3)",
+      "docs": "PrivateUploader API Documentation",
       "credits": "Credits",
       "crash": "Crash TPU (dev)",
       "expEnable": "Enable all experiments",

@@ -1,0 +1,591 @@
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  Mutation,
+  Query,
+  Resolver,
+  Root
+} from "type-graphql"
+import { Container, Service } from "typedi"
+import { ChatAssociation } from "@app/models/chatAssociation.model"
+import {
+  partialUserBase,
+  PartialUserBase
+} from "@app/classes/graphql/user/partialUser"
+import { ChatPermission } from "@app/models/chatPermission.model"
+import { Authorization } from "@app/lib/graphql/AuthChecker"
+import { AddRank } from "@app/classes/graphql/chat/ranks/addRank"
+import { ChatService } from "@app/services/chat.service"
+import { Context } from "@app/types/graphql/context"
+import { GraphQLError } from "graphql/error"
+import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
+import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
+import { Success } from "@app/classes/graphql/generic/success"
+import { AddChatUser, ToggleUser } from "@app/classes/graphql/chat/addUser"
+import { LeaveChatInput } from "@app/classes/graphql/chat/deleteChat"
+import { GqlError } from "@app/lib/gqlErrors"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { ChatInvite } from "@app/models/chatInvite.model"
+import RateLimit from "@app/lib/graphql/RateLimit"
+import { Chat } from "@app/models/chat.model"
+import { JoinChatFromInviteInput } from "@app/classes/graphql/chat/invites/joinInvite"
+import { Op } from "sequelize"
+import { ChatRank } from "@app/models/chatRank.model"
+import { UserUtilsService } from "@app/services/userUtils.service"
+import { User } from "@app/models/user.model"
+import { LegacyUser } from "@app/models/legacyUser.model"
+import { AddBotToChatInput } from "@app/classes/graphql/developers/addBotToChat"
+import { OauthService } from "@app/services/oauth.service"
+import { OauthUser } from "@app/models/oauthUser.model"
+import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
+import {
+  Command,
+  LookupPrefix,
+  LookupPrefixInput,
+  Prefix
+} from "@app/classes/graphql/developers/prefix/prefix"
+
+@Resolver(ChatAssociation)
+@Service()
+export class ChatAssociationResolver {
+  constructor(
+    private chatService: ChatService,
+    private oauthService: OauthService
+  ) {}
+
+  @FieldResolver(() => PartialUserBase, {
+    nullable: true
+  })
+  async user(
+    @Root() chatAssociation: ChatAssociation
+  ): Promise<PartialUserBase | null> {
+    if (!chatAssociation.userId)
+      return await chatAssociation.$get("legacyUser", {
+        attributes: partialUserBase
+      })
+    return (await chatAssociation.$get("tpuUser", {
+      attributes: partialUserBase
+    })) as PartialUserBase
+  }
+
+  @FieldResolver(() => PartialUserBase)
+  async tpuUser(
+    @Root() chatAssociation: ChatAssociation
+  ): Promise<PartialUserBase> {
+    return (await chatAssociation.$get("tpuUser", {
+      attributes: partialUserBase
+    })) as PartialUserBase
+  }
+
+  @FieldResolver(() => PartialUserBase)
+  async legacyUser(
+    @Root() chatAssociation: ChatAssociation
+  ): Promise<PartialUserBase> {
+    return (await chatAssociation.$get("legacyUser", {
+      attributes: partialUserBase
+    })) as PartialUserBase
+  }
+
+  @FieldResolver(() => [ChatPermission])
+  async ranks(@Root() chatAssociation: ChatAssociation) {
+    return await chatAssociation.$get("ranks")
+  }
+
+  @FieldResolver(() => [String])
+  async ranksMap(@Root() chatAssociation: ChatAssociation) {
+    const ranks = await chatAssociation.$get("ranks", {
+      order: [["index", "DESC"]]
+    })
+    return ranks.map((rank) => rank.id)
+  }
+
+  @FieldResolver(() => [String])
+  async permissions(@Root() chatAssociation: ChatAssociation) {
+    const ranks = await chatAssociation.$get("ranks", {
+      order: [["index", "DESC"]],
+      include: [
+        {
+          model: ChatPermission,
+          as: "permissions"
+        }
+      ]
+    })
+    return [
+      ...new Set(
+        ranks.flatMap((rank) =>
+          rank.permissions.map((permission) => permission.id)
+        )
+      )
+    ]
+  }
+
+  @Authorization({
+    scopes: ["chats.edit"]
+  })
+  @Mutation(() => Success)
+  async addChatUsers(
+    @Ctx() ctx: Context,
+    @Arg("input") input: AddChatUser,
+    force: boolean = false
+  ) {
+    await this.chatService.checkPermissions(
+      ctx.user!!.id,
+      input.chatAssociationId,
+      ChatPermissions.ADD_USERS
+    )
+
+    if (input.action === ToggleUser.ADD) {
+      await this.chatService.addUsersToChat(
+        input.chatAssociationId,
+        input.users,
+        ctx.user!!.id,
+        force
+      )
+      return { success: true }
+    } else if (input.action === ToggleUser.REMOVE) {
+      await this.chatService.removeUserFromChat(
+        input.chatAssociationId,
+        input.users,
+        ctx.user!!.id
+      )
+      return { success: true }
+    } else {
+      return { success: false }
+    }
+  }
+
+  @Authorization({
+    scopes: ["chats.edit"]
+  })
+  @Mutation(() => Success)
+  async toggleUserRank(@Ctx() ctx: Context, @Arg("input") input: AddRank) {
+    const chat = await this.chatService.getChatFromAssociation(
+      input.chatAssociationId,
+      ctx.user!!.id
+    )
+    if (!chat) throw new GraphQLError("Chat not found.")
+    const permissions = await this.chatService.checkPermissions(
+      ctx.user!!.id,
+      input.chatAssociationId,
+      ChatPermissions.MANAGE_RANKS
+    )
+
+    const highestIndex = await this.chatService.getHighestIndex(
+      input.chatAssociationId
+    )
+
+    const rank = await ChatRank.findOne({
+      where: { id: input.rankId, chatId: chat.id }
+    })
+
+    if (!rank) throw new GqlError("RANK_NOT_FOUND")
+
+    if (
+      (rank.index >= highestIndex &&
+        !permissions.includes(ChatPermissions.TRUSTED) &&
+        !permissions.includes(ChatPermissions.OWNER)) ||
+      (!permissions.includes(ChatPermissions.OWNER) &&
+        permissions.includes(ChatPermissions.TRUSTED) &&
+        rank.index > highestIndex) ||
+      rank.managed
+    ) {
+      throw new GqlError("RANK_TOO_HIGH")
+    }
+
+    const rankAssoc = await ChatRankAssociation.findOne({
+      where: {
+        chatAssociationId: input.updatingChatAssociationId,
+        rankId: input.rankId
+      }
+    })
+
+    if (rankAssoc) {
+      await rankAssoc.destroy()
+      this.chatService.emitForAll(
+        input.chatAssociationId,
+        ctx.user!!.id,
+        "rankRemoved",
+        input
+      )
+      const id = chat.users.find(
+        (assoc) => assoc.id === input.updatingChatAssociationId
+      )?.userId
+      if (id) {
+        this.chatService.syncPermissions(id, input.updatingChatAssociationId)
+      }
+      return {
+        success: true
+      }
+    } else {
+      await ChatRankAssociation.create({
+        chatAssociationId: input.updatingChatAssociationId,
+        rankId: input.rankId
+      })
+      this.chatService.emitForAll(
+        input.chatAssociationId,
+        ctx.user!!.id,
+        "rankAdded",
+        {
+          ...input,
+          chatId: chat.id
+        }
+      )
+      const id = chat.users.find(
+        (assoc) => assoc.id === input.updatingChatAssociationId
+      )?.userId
+      if (id) {
+        this.chatService.syncPermissions(id, input.updatingChatAssociationId)
+      }
+      return {
+        success: true
+      }
+    }
+  }
+
+  @Authorization({
+    scopes: ["chats.edit"]
+  })
+  @Mutation(() => Success)
+  async leaveChat(
+    @Ctx() ctx: Context,
+    @Arg("input") input: LeaveChatInput
+  ): Promise<Success> {
+    const chat = await this.chatService.getChatFromAssociation(
+      input.associationId,
+      ctx.user!!.id
+    )
+    if (chat.userId === ctx.user!!.id && chat.type !== "direct") {
+      throw new GqlError("GROUP_OWNER_CANNOT_LEAVE")
+    }
+    const association = await ChatAssociation.findOne({
+      where: {
+        id: input.associationId,
+        userId: ctx.user!!.id
+      }
+    })
+    if (!association) throw new GqlError("UNKNOWN")
+    switch (chat.type) {
+      case "group": {
+        await this.chatService.removeUserFromChat(
+          input.associationId,
+          [ctx.user!!.id],
+          ctx.user!!.id,
+          true
+        )
+        return { success: true }
+      }
+      case "direct": {
+        await association.update({
+          hidden: true
+        })
+        socket.of(SocketNamespaces.CHAT).to(ctx.user!!.id).emit("removeChat", {
+          id: chat.id
+        })
+        return { success: true }
+      }
+      default: {
+        throw new GqlError("UNSUPPORTED_OPERATION")
+      }
+    }
+  }
+
+  @FieldResolver(() => ChatInvite)
+  async invite(@Root() assoc: ChatAssociation) {
+    return await assoc.$get("invite")
+  }
+
+  @RateLimit({
+    window: 10,
+    max: 10
+  })
+  @Authorization({
+    scopes: ["chats.edit"],
+    emailOptional: true
+  })
+  @Mutation(() => ChatAssociation)
+  async joinChatFromInvite(
+    @Ctx() ctx: Context,
+    @Arg("input") input: JoinChatFromInviteInput
+  ) {
+    const invite = await ChatInvite.findOne({
+      where: {
+        id: input.inviteId,
+        invalidated: false,
+        expiredAt: {
+          [Op.or]: [
+            {
+              [Op.gt]: new Date()
+            },
+            {
+              [Op.is]: null
+            }
+          ]
+        }
+      },
+      include: [
+        {
+          model: ChatRank,
+          as: "rank"
+        },
+        {
+          model: Chat,
+          as: "chat"
+        }
+      ]
+    })
+    if (!invite) throw new GqlError("INVALID_INVITE")
+    const existing = await ChatAssociation.findOne({
+      where: {
+        userId: ctx.user!!.id,
+        chatId: invite.chat.id
+      }
+    })
+    if (existing) throw new GqlError("ALREADY_IN_CHAT")
+    const rank = invite.rank
+      ? invite.rank
+      : await ChatRank.findOne({
+          where: {
+            chatId: invite.chat.id,
+            managed: true
+          }
+        })
+
+    if (!rank) throw new GqlError("COLUBRINA_CHAT")
+
+    const association = await ChatAssociation.create({
+      userId: ctx.user!!.id,
+      chatId: invite.chat.id,
+      rank: "member",
+      identifier: invite.chat.id + "-" + ctx.user!!.id,
+      inviteUsed: invite.id
+    })
+    await ChatRankAssociation.create({
+      rankId: rank.id,
+      chatAssociationId: association.id
+    })
+    this.chatService.sendMessage(
+      `<@${ctx.user!!.id}> joined the chat via an invite!`,
+      ctx.user!!.id,
+      association.id,
+      undefined,
+      "join"
+    )
+    const associations = await ChatAssociation.findAll({
+      where: {
+        chatId: invite.chat.id
+      },
+      include: [
+        {
+          model: User,
+          as: "tpuUser",
+          attributes: partialUserBase
+        },
+        {
+          model: LegacyUser,
+          as: "legacyUser",
+          attributes: partialUserBase
+        }
+      ]
+    })
+    for (const association of associations) {
+      Container.get(UserUtilsService).trackedUserIds(association.userId, true)
+    }
+    const emitUser = await ChatAssociation.findOne({
+      where: {
+        id: association.id
+      },
+      include: [
+        {
+          model: User,
+          as: "tpuUser",
+          attributes: partialUserBase
+        },
+        {
+          model: LegacyUser,
+          as: "legacyUser",
+          attributes: partialUserBase
+        },
+        {
+          model: ChatRank,
+          as: "ranks"
+        }
+      ]
+    })
+    if (!emitUser) throw new GqlError("USER_NOT_FOUND")
+    emitUser.dataValues.ranksMap = emitUser.dataValues.ranks.map(
+      (rank: ChatRank) => rank.id
+    )
+    this.chatService.emitForAll(association.id, ctx.user!!.id, "addChatUsers", {
+      chatId: invite.chat.id,
+      users: [emitUser]
+    })
+    socket
+      .of(SocketNamespaces.CHAT)
+      .to(emitUser.userId)
+      .emit(
+        "chatCreated",
+        await this.chatService.getChat(invite.chat.id, association.userId)
+      )
+    return emitUser
+  }
+
+  @RateLimit({
+    window: 10,
+    max: 10
+  })
+  @Authorization({
+    scopes: ["chats.edit"]
+  })
+  @Mutation(() => ChatAssociation)
+  async addBotToChat(
+    @Ctx() ctx: Context,
+    @Arg("input") input: AddBotToChatInput
+  ) {
+    const app = await this.oauthService.getApp(input.botAppId, ctx.user!!.id)
+    if (!app || !app.botId) throw new GqlError("APP_NOT_FOUND")
+    const bot = await User.findOne({
+      where: {
+        id: app.botId
+      }
+    })
+    if (!bot) throw new GqlError("APP_NOT_FOUND")
+    const chat = await this.chatService.getChatFromAssociation(
+      input.associationId,
+      ctx.user!!.id
+    )
+
+    if (app.private && app.userId !== ctx.user!!.id) {
+      const access = await OauthUser.findOne({
+        where: {
+          oauthAppId: input.botAppId,
+          userId: ctx.user!!.id,
+          active: true
+        }
+      })
+      if (!access) throw new GqlError("PRIVATE_APP")
+    }
+
+    await this.addChatUsers(
+      ctx,
+      {
+        chatAssociationId: input.associationId,
+        users: [app.botId],
+        action: ToggleUser.ADD
+      },
+      true
+    )
+    const assoc = await ChatAssociation.findOne({
+      where: {
+        userId: app.botId,
+        chatId: chat.id
+      }
+    })
+    if (!assoc) throw new GqlError("UNKNOWN")
+    const rank = await ChatRank.create({
+      chatId: chat.id,
+      userId: ctx.user!!.id,
+      name: bot.username,
+      index: 0
+    })
+    this.chatService.normalizeIndexes(chat.id)
+    await ChatRankAssociation.create({
+      chatAssociationId: assoc.id,
+      rankId: rank.id
+    })
+    const check = await ChatPermission.findAll({
+      where: {
+        id: input.permissions
+      }
+    })
+    for (const permission of check) {
+      try {
+        await this.chatService.checkPermissions(
+          ctx.user!!.id,
+          input.associationId,
+          <ChatPermissions>permission.id
+        )
+        await ChatPermissionAssociation.create({
+          rankId: rank.id,
+          permissionId: permission.id
+        })
+      } catch (e) {
+        // Doesn't have permission. Will not grant.
+        console.log(e)
+      }
+    }
+    const permissions = await ChatPermissionAssociation.findAll({
+      where: {
+        rankId: rank.id
+      }
+    })
+    await this.chatService.emitForAll(
+      input.associationId,
+      ctx.user!!.id,
+      "rankUpdated",
+      {
+        permissionsMap: permissions.map((perm) => perm.permissionId),
+        name: rank.name,
+        color: rank.color,
+        id: rank.id,
+        userId: rank.userId,
+        createdAt: rank.createdAt,
+        chatId: rank.chatId,
+        updatedAt: rank.updatedAt,
+        managed: rank.managed,
+        index: rank.index
+      }
+    )
+    this.chatService.emitForAll(
+      input.associationId,
+      ctx.user!!.id,
+      "rankAdded",
+      {
+        chatId: chat.id,
+        chatAssociationId: input.associationId,
+        updatingChatAssociationId: assoc.id,
+        rankId: rank.id
+      }
+    )
+    return assoc
+  }
+
+  @Authorization({
+    scopes: ["chats.view"]
+  })
+  @Query(() => Prefix)
+  async lookupBotPrefix(
+    @Ctx() ctx: Context,
+    @Arg("input") input: LookupPrefixInput
+  ): Promise<Prefix> {
+    const chat = await this.chatService.getChatFromAssociation(
+      input.chatAssociationId,
+      ctx.user!!.id
+    )
+    const bots = chat.users.filter((user) => user?.tpuUser?.bot)
+    if (!bots.length)
+      return {
+        prefix: input.prefix,
+        commands: []
+      }
+    const commands: LookupPrefix[] = []
+    for (const bot of bots) {
+      const prefix = await redis.json.get(`prefix:${bot.userId}`)
+      if (prefix !== input.prefix) continue
+      commands.push(
+        ...((await redis.json.get(`commands:${bot.userId}`)).map(
+          (command: Command) => {
+            return {
+              ...command,
+              botId: bot.userId
+            }
+          }
+        ) || [])
+      )
+    }
+    return {
+      prefix: input.prefix,
+      commands
+    }
+  }
+}

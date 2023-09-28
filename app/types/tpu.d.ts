@@ -128,4 +128,13 @@ declare type TpuConfig = {
   inviteAFriend: boolean
   hostnames?: string[]
   preTrustedDomains: string[]
+  hive:
+    | {
+        enabled: boolean
+        graphqlEndpoint: string
+        token: string
+        usageEndpoint: string
+        applicationUrl: string
+      }
+    | undefined
 }

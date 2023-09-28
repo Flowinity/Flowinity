@@ -7,8 +7,13 @@
           :elevation="$vuetify.display.mobile ? 0 : 8"
           :flat="$vuetify.display.mobile"
         >
-          <p class="text-center text-gradient mb-n5" style="font-size: 64px">
-            TPU
+          <p
+            class="text-center text-gradient mt-2"
+            :style="
+              $vuetify.display.mobile ? 'font-size: 38px' : 'font-size: 48px'
+            "
+          >
+            PrivateUploader
           </p>
           <v-container>
             <v-form>
@@ -51,6 +56,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { LoginMutation } from "@/graphql/auth/login.graphql";
+import { LoginMutationVariables } from "@/gql/graphql";
 
 export default defineComponent({
   name: "Login",
@@ -80,17 +87,23 @@ export default defineComponent({
     async login() {
       this.loading = true;
       try {
-        const { data } = await this.axios.post("/auth/login", {
-          email: this.username,
-          password: this.password,
-          code: this.totp
+        const {
+          data: { login }
+        } = await this.$apollo.mutate({
+          mutation: LoginMutation,
+          variables: {
+            input: {
+              username: this.username,
+              password: this.password,
+              totp: this.totp
+            }
+          } as LoginMutationVariables
         });
-        localStorage.setItem("token", data.token);
-        this.axios.defaults.headers.common["Authorization"] = data.token;
-        await this.$user.init();
-        this.$socket.auth = { token: data.token };
-        this.$socket.disconnect();
-        this.$socket.connect();
+        this.$app.token = login.token;
+        await localStorage.setItem("token", login.token);
+        this.axios.defaults.headers.common["Authorization"] = login.token;
+        await this.$app.init();
+        this.$app.reconnectSocket(login.token);
         if (!this.$route.query.redirect) {
           this.$router.push("/");
         } else {
@@ -100,7 +113,8 @@ export default defineComponent({
             this.$router.push("/");
           }
         }
-      } catch {
+      } catch (e) {
+        console.log(e);
         this.loading = false;
       }
     }

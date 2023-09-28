@@ -42,7 +42,7 @@
             @click="
               $functions.copy(
                 $app.site.hostnameWithProtocol +
-                  '/collections/share/' +
+                  '/collections/' +
                   collection.shareLink
               )
             "
@@ -58,7 +58,7 @@
         {{ collection.users.map((user) => user.user.username).join(", ") }}
       </v-card-text>
       <v-card-text v-else class="mt-n3">
-        {{ collection.items }} items
+        {{ collection.itemCount }} items
       </v-card-text>
     </v-img>
   </v-card>
@@ -76,6 +76,7 @@ export default defineComponent({
       required: true
     }
   },
+  emits: ["sharingDialog", "settingsDialog"],
   computed: {
     collectionImage(): string {
       if (this.collection?.image) {

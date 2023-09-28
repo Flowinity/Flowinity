@@ -2,17 +2,20 @@ import {
   BelongsTo,
   Column,
   DataType,
-  DefaultScope,
   HasMany,
   Model,
   Table
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Session } from "@app/models/session.model"
-import { Col } from "sequelize/types/utils"
+import { Field, ObjectType } from "type-graphql"
+import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
+@ObjectType()
 @Table
 export class OauthUser extends Model {
+  @Field()
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
@@ -20,15 +23,31 @@ export class OauthUser extends Model {
   })
   id: string
 
+  @Field()
   @Column
   userId: number
 
+  @Field()
   @Column
   oauthAppId: string
 
+  @Field()
   @Column
   active: boolean
 
+  @Field(() => DateType)
+  @Column
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column
+  updatedAt: Date
+
+  @Field()
+  @Column
+  manage: boolean
+
+  @Field(() => PartialUserBase)
   @BelongsTo(() => User, "userId")
   user: User
 

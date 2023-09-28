@@ -1,31 +1,53 @@
 <template>
-  <div style="width: 100%; z-index: 10001">
-    <div id="communications-bottom-navigation" v-if="!editing"></div>
+  <div style="width: 100%">
+    <Mentionable
+      :items="users"
+      :keys="['@', ':', '!']"
+      :omit-key="true"
+      insert-space
+      offset="6"
+      @open="onOpen"
+      :model-value="modelValue"
+      :id="`#${editing ? 'input-editing' : 'input-main-comms'}`"
+    >
+      <template v-slot:item="{ item }: any">
+        <div class="my-2 mx-2" v-if="key === '@'">
+          <UserAvatar
+            :size="35"
+            :user="$chat.lookupUser(item.value)"
+            class="mr-1"
+          ></UserAvatar>
+          {{ $chat.lookupUser(item.value).username }}
+        </div>
+        <div class="my-2 mx-2" v-else-if="key === ':'">
+          <v-avatar v-if="item.emoji" size="24">
+            <v-img :src="$app.domain + item.emoji.icon" />
+          </v-avatar>
+          {{ item.label }}
+          <span v-if="item.emoji" class="text-grey" style="font-size: 12px">
+            From
+            {{
+              $chat.chats.find((chat) => chat.id === item.emoji.chatId)?.name
+            }}
+          </span>
+        </div>
+        <div class="my-2 mx-2" v-else>
+          <UserAvatar :user="$user.users[item.botId]" :size="24" class="mr-2" />
+          {{ item.command }}
+          <span class="text-grey ml-2" style="font-size: 12px">
+            {{ item.description }}
+          </span>
+        </div>
+      </template>
+    </Mentionable>
     <v-toolbar
       :id="editing ? '' : 'chat-input'"
       ref="toolbar"
-      :color="editing ? 'transparent' : 'dark'"
+      :color="editing ? 'transparent' : 'transparent'"
       height="auto"
-      style="z-index: 1001"
+      class="mb-1 mt-1"
     >
-      <Mentionable
-        :items="users"
-        :keys="['@']"
-        :omit-key="true"
-        insert-space
-        offset="6"
-        @open="onOpen"
-      >
-        <template v-slot:item="{ item }">
-          <div class="my-2 mx-2">
-            <UserAvatar
-              :size="35"
-              :user="$chat.lookupUser(item.value)"
-              class="mr-1"
-            ></UserAvatar>
-            {{ $chat.lookupUser(item.value).username }}
-          </div>
-        </template>
+      <div class="d-flex flex-column rounded-xl" style="width: 100%">
         <v-textarea
           ref="textarea"
           :class="!editing ? 'mb-n4 mt-1' : 'mt-2'"
@@ -35,7 +57,14 @@
           :autofocus="true"
           color="primary"
           density="compact"
-          label="Type a message..."
+          :label="
+            blocked?.value
+              ? blocked.you
+                ? $t('dialogs.block.commsInputYou')
+                : $t('dialogs.block.commsInputThem')
+              : 'Type a message...'
+          "
+          :disabled="blocked?.value"
           placeholder="Keep it civil"
           rows="1"
           variant="outlined"
@@ -48,8 +77,8 @@
           @keyup.esc="$emit('edit', null)"
           @keydown.up="editing ? cursor($event, true) : null"
           @keydown.down="editing ? cursor($event, false) : null"
-          :id="editing ? 'input-editing' : undefined"
-          style="padding: 16px"
+          :id="editing ? 'input-editing' : 'input-main-comms'"
+          style="padding: 16px; width: 100%"
         >
           <template v-slot:append>
             <v-icon
@@ -141,28 +170,22 @@
             ></EmojiPicker>
             <v-icon class="pointer raw-icon">mdi-emoticon</v-icon>
           </template>
-          <template v-if="!editing" v-slot:details>
-            <span
-              class="details-container"
-              style="margin-left: -25px !important"
-            ></span>
-          </template>
         </v-textarea>
-        <div v-if="!editing">
+        <div v-if="!editing" style="margin-top: 2px">
           <span
-            class="float-start mt-n1 mt-n6 text-grey ml-14"
-            style="font-size: 12px"
+            class="float-start mt-n5 text-grey ml-14"
+            style="font-size: 12px; color: white"
           >
             {{ $chat.typers }}
           </span>
           <span
-            class="float-end mt-n1 mt-n6 text-grey mr-14"
-            style="font-size: 12px"
+            class="float-end mt-n1 mt-n5 text-grey mr-14"
+            style="font-size: 12px; color: white"
           >
             {{ modelValue?.length }} / 4000
           </span>
         </div>
-      </Mentionable>
+      </div>
     </v-toolbar>
   </div>
 </template>
@@ -175,6 +198,9 @@ import Mentionable from "@/components/Core/Mentionable.vue";
 import EmojiPicker from "@/components/Communications/Menus/Emoji.vue";
 import emoji from "@/components/Communications/Menus/Emoji.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import emojiData from "markdown-it-emoji/lib/data/full.json";
+import { LookupPrefix, Prefix } from "@/gql/graphql";
+import { LookupBotPrefix } from "@/graphql/developer/lookupPrefix.graphql";
 
 export default defineComponent({
   name: "CommunicationsInput",
@@ -185,7 +211,7 @@ export default defineComponent({
     GalleryCore,
     Mentionable
   },
-  props: ["modelValue", "editing"],
+  props: ["modelValue", "editing", "blocked"],
   emits: [
     "update:modelValue",
     "sendMessage",
@@ -200,7 +226,9 @@ export default defineComponent({
       tab: null as string | null,
       menu: false,
       items: [] as any,
-      emojiPicker: false
+      emojiPicker: false,
+      key: "@",
+      cachedPrefixes: [] as Prefix[]
     };
   },
   computed: {
@@ -208,13 +236,54 @@ export default defineComponent({
       return emoji;
     },
     users() {
-      if (!this.$chat.selectedChat?.users) return [];
-      return this.$chat.selectedChat?.users.map((user: any) => {
-        return {
-          label: user.user?.username,
-          value: user.user?.id
-        };
-      });
+      if (this.key.includes("!")) {
+        const find = this.cachedPrefixes.find(
+          (prefix) => prefix.prefix === this.key
+        );
+        if (find)
+          return find.commands.map((command) => {
+            return {
+              ...command,
+              value: command.command,
+              label: command.command
+            };
+          });
+        return [];
+      }
+      switch (this.key) {
+        case "@":
+          if (!this.$chat.selectedChat?.users) return [];
+          return this.$chat.selectedChat?.users
+            .filter((user) => !user.legacyUserId)
+            .map((user: any) => {
+              return {
+                label: this.$user.users[user.userId]?.username,
+                value: this.$user.users[user.userId]?.id
+              };
+            });
+        case ":":
+          return [
+            ...this.$chat.emoji.map((emoji) => {
+              return {
+                value: emoji.name,
+                label: emoji.name,
+                emoji: emoji
+              };
+            }),
+            ...Object.entries(emojiData).map((key) => {
+              return {
+                value: key[0],
+                label: key[1] + " " + key[0]
+              };
+            })
+          ].sort((a, b) => {
+            const idA = this.$chat.recentEmoji[a.emoji?.id || a.value] || 0;
+            const idB = this.$chat.recentEmoji[b.emoji?.id || b.value] || 0;
+            return idB - idA;
+          });
+        default:
+          return [];
+      }
     },
     isMobile() {
       return (
@@ -232,8 +301,26 @@ export default defineComponent({
       //@ts-ignore
       this.$refs?.uploadInput?.click();
     },
-    onOpen(key: string) {
-      this.items = key === "@" ? this.$chat.selectedChat?.users : [];
+    async onOpen(key: string) {
+      this.key = key;
+      if (this.key.includes("!")) {
+        const find = this.cachedPrefixes.find(
+          (prefix) => prefix.prefix === this.key
+        );
+        if (find) return;
+        const {
+          data: { lookupBotPrefix }
+        } = await this.$apollo.query({
+          query: LookupBotPrefix,
+          variables: {
+            input: {
+              chatAssociationId: parseInt(this.$route.params.chatId),
+              prefix: this.key
+            }
+          }
+        });
+        this.cachedPrefixes.push(lookupBotPrefix);
+      }
     },
     cursor(e, up: boolean) {
       e.preventDefault();
@@ -248,6 +335,11 @@ export default defineComponent({
           textarea.value.length,
           textarea.value.length
         );
+    }
+  },
+  watch: {
+    "$route.params.chatId"() {
+      this.cachedPrefixes = [];
     }
   }
 });

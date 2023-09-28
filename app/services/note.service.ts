@@ -10,6 +10,8 @@ import { User } from "@app/models/user.model"
 import { Friend } from "@app/models/friend.model"
 import { WorkspacesDownloadService } from "@app/services/workspaces/download.service"
 import { BadRequestError } from "routing-controllers"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { WorkspaceNote } from "@app/classes/graphql/workspaces/note"
 
 //create class of NoteData
 export class NoteField {
@@ -118,7 +120,7 @@ export class NoteService {
     const note = await this.getNote(id, userId)
     if (!note?.permissions?.modify) throw Errors.NOT_FOUND
 
-    const versionData = note.versions.find((v: Note) => v.id === version)
+    const versionData = note.versions.find((v: NoteVersion) => v.id === version)
     if (!versionData) throw Errors.NOT_FOUND
 
     await Note.update(
@@ -243,7 +245,7 @@ export class NoteService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             }
           ]
         },
@@ -261,7 +263,7 @@ export class NoteService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          attributes: partialUserBase
         }
       ]
     })
@@ -286,7 +288,7 @@ export class NoteService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             }
           ]
         },
@@ -301,14 +303,14 @@ export class NoteService {
             {
               model: User,
               as: "user",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             }
           ]
         },
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          attributes: partialUserBase
         }
       ]
     })
@@ -338,7 +340,7 @@ export class NoteService {
           {
             model: User,
             as: "user",
-            attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+            attributes: partialUserBase
           }
         ]
       },
@@ -356,7 +358,7 @@ export class NoteService {
       {
         model: User,
         as: "user",
-        attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+        attributes: partialUserBase
       }
     ]
     const workspace = await Workspace.findOne({
@@ -593,7 +595,7 @@ export class NoteService {
 
   async saveNote(
     id: number,
-    data: NoteDataV2,
+    data: WorkspaceNote,
     userId: number,
     manualSave: boolean = false,
     name?: string

@@ -1,15 +1,17 @@
 <template>
-  <div
-    class="member-sidebar-item unselectable"
+  <v-list-item
+    class="unselectable"
     @click="handleClick"
     :class="{ pointer: chat || !legacyUser, selected: isSelected }"
   >
-    <UserAvatar
-      :user="user"
-      :status="!!user"
-      :dot-status="!!user"
-      :chat="chat"
-    ></UserAvatar>
+    <template v-slot:prepend>
+      <UserAvatar
+        :user="user"
+        :status="!!user"
+        :dot-status="!!user"
+        :chat="chat"
+      ></UserAvatar>
+    </template>
     <div class="ml-2">
       <span class="limit" v-if="user">
         {{
@@ -42,7 +44,7 @@
       </p>
     </div>
     <slot></slot>
-  </div>
+  </v-list-item>
 </template>
 
 <script lang="ts">

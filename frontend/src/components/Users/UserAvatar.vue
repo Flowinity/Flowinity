@@ -6,7 +6,7 @@
         aspect-ratio="1"
         title="Upload Avatar"
         @finish="changeAvatar"
-        v-if="user?.id === $user.user?.id"
+        v-if="edit && user?.id === $user.user?.id"
         type="userProfile"
         @remove="removeAvatar"
       />
@@ -137,10 +137,7 @@ export default defineComponent({
     friendStatus() {
       if (!this.user) return;
       if (this.emulatedStatus) return this.emulatedStatus;
-      if (this.user.id === this.$user.user?.id)
-        return this.$user.user?.storedStatus;
-      return this.$friends.friends.find((f) => f.friendId === this.user.id)
-        ?.otherUser?.status;
+      return this.$user.getStatus(this.user);
     },
     friendDevice() {
       if (!this.user) return "web";
@@ -150,7 +147,7 @@ export default defineComponent({
       const friend = this.$friends.friends.find(
         (f) => f.friendId === this.user.id
       );
-      return friend.otherUser?.platforms?.[0]?.platform ?? "web";
+      return friend?.otherUser?.platforms?.[0]?.platform ?? "web";
     }
   },
   methods: {
@@ -159,19 +156,16 @@ export default defineComponent({
       await this.axios.delete("/user/upload/avatar");
       this.$emit("refresh");
     },
-    changeAvatar(file: File) {
+    async changeAvatar(file: File) {
       if (!file || !this.edit) return;
       let formData = new FormData();
       formData.append("banner", file);
-      this.axios
-        .post("/user/upload/avatar", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        })
-        .then(() => {
-          this.$emit("refresh");
-        });
+      await this.axios.post("/user/upload/avatar", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+      this.$emit("refresh");
     }
     /*calcOffset() {
       if (this.user.administrator || this.user.admin || this.user.moderator) {

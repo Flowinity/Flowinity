@@ -37,6 +37,9 @@
             </v-tooltip>
           </v-btn>
         </v-tab>
+        <v-tab prepend-icon="mdi-code-tags" to="/settings/developer">
+          {{ $t("settings.tabs.developer") }}
+        </v-tab>
         <v-tab prepend-icon="mdi-image-multiple" to="/settings/slideshows">
           {{ $t("settings.tabs.slideshows") }}
         </v-tab>

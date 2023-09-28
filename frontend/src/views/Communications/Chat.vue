@@ -71,6 +71,11 @@
       :style="{ height }"
       @scroll="scrollEvent"
     >
+      <InfiniteLoading
+        @infinite="$chat.loadHistory"
+        :distance="50"
+        direction="top"
+      />
       <div id="sentinel-bottom" ref="sentinelBottom" v-if="$chat.isReady"></div>
       <template v-if="!$chat.selectedChat?.messages?.length && !$chat.loading">
         <v-row align="center" justify="center">
@@ -260,19 +265,20 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CommunicationsInput from "@/components/Communications/Input.vue";
-import Message from "@/components/Communications/Message.vue";
 import { MessageSocket } from "@/types/messages";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import User from "@/views/User/User.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import { Chat, Typing } from "@/models/chat";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
-import { Message as MessageType } from "@/models/message";
 import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 import MobileMenu from "@/components/Core/Dialogs/MobileMenu.vue";
 import MessageActionsList from "@/components/Communications/MessageActionsList.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import UserCard from "@/components/Users/UserCard.vue";
+import InfiniteLoading from "v3-infinite-loading";
+import "v3-infinite-loading/lib/style.css";
+import { Chat, Message } from "@/gql/graphql";
+import { Typing } from "@/models/chat";
 
 export default defineComponent({
   name: "Chat",
@@ -284,10 +290,10 @@ export default defineComponent({
     UserAvatar,
     User,
     MessageSkeleton,
-    Message,
     CommunicationsInput,
     MessagePerf,
-    UserCard
+    UserCard,
+    InfiniteLoading
   },
   data() {
     return {
@@ -318,7 +324,7 @@ export default defineComponent({
       dialogs: {
         delete: {
           value: false,
-          message: undefined as MessageType | undefined
+          message: undefined as Message | undefined
         }
       },
       focusInterval: undefined as ReturnType<typeof setTimeout> | undefined,
@@ -395,7 +401,7 @@ export default defineComponent({
         "day"
       );
     },
-    confirmDelete(message: MessageType | undefined | null) {
+    confirmDelete(message: Message | undefined | null) {
       if (!message) return;
       this.dialogs.delete.message = message;
       this.dialogs.delete.value = true;
@@ -558,7 +564,7 @@ export default defineComponent({
         id: tempId,
         chatId: 0,
         updatedAt: new Date().toISOString(),
-        type: "message",
+        type: "MESSAGE",
         embeds: [],
         edited: false,
         replyId: replyId,
@@ -584,11 +590,7 @@ export default defineComponent({
       this.$chat.setDraft(<string>this.$route.params.chatId, "");
 
       try {
-        await this.axios.post(`/chats/${this.$route.params.chatId}/message`, {
-          content: message,
-          replyId: replyId,
-          attachments
-        });
+        await this.$chat.sendMessage(message, attachments, replyId);
       } catch (e) {
         console.log(e);
         const messageIndex = this.$chat.selectedChat?.messages.findIndex(
@@ -635,10 +637,10 @@ export default defineComponent({
         this.handleIntersection,
         options
       );
-      const bottomSentinel = document.getElementById("sentinel-bottom");
-      const topSentinel = document.getElementById("sentinel");
-      if (bottomSentinel) bottomObserver.observe(bottomSentinel);
-      if (topSentinel) topObserver.observe(topSentinel);
+      //const bottomSentinel = document.getElementById("sentinel-bottom");
+      //const topSentinel = document.getElementById("sentinel");
+      //if (bottomSentinel) bottomObserver.observe(bottomSentinel);
+      //if (topSentinel) topObserver.observe(topSentinel);
     },
     async handleIntersection(entries: IntersectionObserverEntry[]) {
       const entry = entries[0];
@@ -852,7 +854,7 @@ export default defineComponent({
       if (index === -1) return;
       if (!this.$chat.chats[index].messages) return;
       const messageIndex = this.$chat.chats[index].messages.findIndex(
-        (m: MessageType) => m.id === data.id
+        (m: Message) => m.id === data.id
       );
       if (messageIndex === -1) {
         let embedFailIndex = this.embedFails.findIndex(
@@ -900,9 +902,9 @@ export default defineComponent({
     document.addEventListener("keydown", this.shortcutHandler);
     this.focusInterval = setInterval(this.onFocus, 2000);
     // re-enable auto scroll for flex-direction: column-reverse;
-    this.$socket.on("message", this.onMessage);
-    this.$socket.on("embedResolution", this.onEmbedResolution);
-    this.$socket.on("typing", this.onTyping);
+    this.$sockets.chat.on("message", this.onMessage);
+    this.$sockets.chat.on("embedResolution", this.onEmbedResolution);
+    this.$sockets.chat.on("typing", this.onTyping);
     this.message = this.$chat.getDraft(<string>this.$route.params.chatId) || "";
     this.$app.railMode = "communications";
   },
@@ -916,9 +918,9 @@ export default defineComponent({
       .querySelector(".message-input")
       ?.removeEventListener("resize", this.onResize);
     clearInterval(this.focusInterval);
-    this.$socket.off("message", this.onMessage);
-    this.$socket.off("typing", this.onTyping);
-    this.$socket.off("embedResolution", this.onEmbedResolution);
+    this.$sockets.chat.off("message", this.onMessage);
+    this.$sockets.chat.off("typing", this.onTyping);
+    this.$sockets.chat.off("embedResolution", this.onEmbedResolution);
   },
   watch: {
     "$route.params.chatId"(val, oldVal) {

@@ -4,7 +4,7 @@
   </v-card-title>
   <v-card-text>
     <v-switch
-      v-model="$user.changes.discordPrecache"
+      v-model="$user.user.discordPrecache"
       class="mb-n7"
       :label="$t('settings.home.privacy.discordPrecaching')"
       @update:modelValue="$emit('update')"
@@ -13,7 +13,7 @@
       {{ $t("settings.home.privacy.discordPrecachingDesc") }}
     </small>
     <v-switch
-      v-model="$user.changes.publicProfile"
+      v-model="$user.user.publicProfile"
       class="mb-n7"
       :label="$t('settings.home.privacy.publicProfile')"
       @update:modelValue="$emit('update')"
@@ -22,7 +22,7 @@
       {{ $t("settings.home.privacy.publicProfileDesc") }}
     </small>
     <v-select
-      v-model="$user.changes.insights"
+      v-model="$user.user.insights"
       :items="insights"
       :label="$t('settings.home.preferences.insights')"
       class="mb-n2 mt-4"
@@ -44,18 +44,20 @@
       <v-expansion-panel-text>
         <v-form v-model="valid.username">
           <v-text-field
-            v-model="$user.changes.username"
+            v-model="$user.user.username"
             :label="$t('settings.home.myAccount.username')"
             :rules="$validation.user.username"
             class="mt-4"
           ></v-text-field>
+          <!--
           <v-text-field
-            v-model="$user.changes.currentPassword"
+            v-model="$user.user.currentPassword"
             :label="$t('settings.home.myAccount.currentPassword')"
             :rules="$validation.user.passwordSettings"
             class="mt-4"
             type="password"
-          ></v-text-field>
+          ></v-text-field>-->
+          //TODO
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
@@ -75,19 +77,21 @@
     <v-expansion-panel :title="$t('settings.home.myAccount.changePassword')">
       <v-expansion-panel-text>
         <v-form v-model="valid.password">
+          <!--
           <v-text-field
-            v-model="$user.changes.currentPassword"
+            v-model="$user.user.currentPassword"
             :label="$t('settings.home.myAccount.currentPassword')"
             :rules="$validation.user.passwordSettings"
             class="mt-4"
             type="password"
           ></v-text-field>
           <v-text-field
-            v-model="$user.changes.password"
+            v-model="$user.user.password"
             :label="$t('settings.home.myAccount.newPassword')"
             class="mt-4"
             type="password"
           ></v-text-field>
+          -->
           <v-text-field
             v-model="confirmPassword"
             :label="$t('settings.home.myAccount.confirmPassword')"
@@ -123,18 +127,19 @@
             "
           ></p>
           <v-text-field
-            v-model="$user.changes.email"
+            v-model="$user.user.email"
             :label="$t('settings.home.myAccount.email')"
             :rules="$validation.user.email"
             class="mt-4"
           ></v-text-field>
+          <!--
           <v-text-field
-            v-model="$user.changes.currentPassword"
+            v-model="$user.user.currentPassword"
             :label="$t('settings.home.myAccount.currentPassword')"
             :rules="$validation.user.passwordSettings"
             class="mt-4"
             type="password"
-          ></v-text-field>
+          ></v-text-field>-->
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
@@ -174,7 +179,7 @@
   </v-expansion-panels>
   <v-card-title>{{ $t("settings.home.preferences.title") }}</v-card-title>
   <v-slider
-    v-model="$user.changes.itemsPerPage"
+    v-model="$user.user.itemsPerPage"
     :label="$t('settings.home.preferences.itemsPerPage')"
     class="px-4"
     max="72"
@@ -185,7 +190,7 @@
   ></v-slider>
   <!-- select between Farenheit, Celsius or Kelvin -->
   <v-select
-    v-model="$user.changes.weatherUnit"
+    v-model="$user.user.weatherUnit"
     :items="temperatureUnits"
     :label="$t('settings.home.preferences.tempUnit')"
     class="px-6"
@@ -203,7 +208,7 @@
     @update:modelValue="$emit('update')"
   ></v-select>
   <v-autocomplete
-    v-model="$user.changes.excludedCollections"
+    v-model="$user.user.excludedCollections"
     :items="$collections.items"
     :label="$t('settings.home.preferences.baseCollections')"
     chips
@@ -217,13 +222,21 @@
     @update:modelValue="$emit('update')"
   ></v-autocomplete>
   <v-select
-    v-model="$user.changes.language"
+    v-model="$user.user.language"
     :items="languages"
     :label="$t('settings.home.preferences.language')"
     class="px-6"
     item-title="title"
     item-value="key"
     @update:modelValue="$emit('update')"
+  />
+  <v-select
+    v-model="$experiments.experiments['NOTIFICATION_SOUND']"
+    :items="notificationSounds"
+    class="px-6"
+    item-title="title"
+    item-value="key"
+    label="Notification Sound"
   />
   <v-btn
     class="mb-2 ml-5"
@@ -241,18 +254,13 @@
     :label="$t('settings.home.preferences.disableProfileColors')"
     class="px-6"
   ></v-switch>
-  <v-switch
-    v-if="disableBatterySave"
-    v-model="disableBatterySave"
-    :label="$t('settings.home.preferences.disableBatteryPreservation')"
-    class="px-6 mt-n6"
-  ></v-switch>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import TwoFactor from "@/components/Settings/TwoFactor.vue";
 import { useTheme } from "vuetify";
+import { UserInsights } from "@/gql/graphql";
 
 export default defineComponent({
   name: "SettingsHome",
@@ -270,6 +278,20 @@ export default defineComponent({
   },
   data() {
     return {
+      notificationSounds: [
+        {
+          title: "Default",
+          key: 1
+        },
+        {
+          title: "Classic",
+          key: 2
+        },
+        {
+          title: "KDE",
+          key: 3
+        }
+      ],
       languages: [
         {
           title: "English (United States)",
@@ -300,9 +322,9 @@ export default defineComponent({
         { title: "Fahrenheit (Imperial)", value: "fahrenheit" }
       ],
       insights: [
-        { title: "Everyone", value: "everyone" },
-        { title: "Friends", value: "friends" },
-        { title: "Nobody", value: "nobody" }
+        { title: "Everyone", value: UserInsights.Everyone },
+        { title: "Friends", value: UserInsights.Friends },
+        { title: "Nobody", value: UserInsights.Nobody }
       ],
       confirmPassword: "",
       valid: {
@@ -312,9 +334,11 @@ export default defineComponent({
       },
       validation: [
         (value: string) => {
-          if (value !== this.$user.changes.password)
+          return "TODO";
+          /*
+          if (value !== this.$user.user.password)
             return "Passwords do not match";
-          return true;
+          return true;*/
         }
       ]
     };
@@ -350,6 +374,10 @@ export default defineComponent({
   watch: {
     theme() {
       this.toggleTheme(this.theme);
+    },
+    "$experiments.experiments.NOTIFICATION_SOUND"(val) {
+      this.$chat.sound();
+      this.$experiments.setExperiment("NOTIFICATION_SOUND", val);
     }
   },
   mounted() {

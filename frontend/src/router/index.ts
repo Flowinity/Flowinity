@@ -1,12 +1,18 @@
 // Composables
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import { useUserStore } from "@/store/user";
+import { useUserStore } from "@/store/user.store";
+import { GalleryType } from "@/gql/graphql";
 
 const routes = [
   {
     path: "/",
     component: () => import("@/layouts/default/Default.vue"),
     children: [
+      {
+        path: "/invite/:id",
+        name: "Join Chat",
+        component: () => import("@/views/Communications/Join.vue")
+      },
       {
         path: "/communications",
         name: "Communications",
@@ -21,7 +27,7 @@ const routes = [
           {
             path: ":chatId",
             name: "Communication",
-            component: () => import("@/views/Communications/Chat.vue")
+            component: () => import("@/views/Communications/ChatV2.vue")
           }
         ]
       },
@@ -65,7 +71,7 @@ const routes = [
         name: "Personal Gallery",
         component: () => import("@/views/Gallery.vue"),
         props: {
-          endpoint: "/gallery",
+          type: GalleryType.Personal,
           path: "/gallery",
           name: "Gallery"
         }
@@ -138,6 +144,16 @@ const routes = [
             path: "integrations/link/:provider",
             name: "Link Integration",
             component: () => import("@/views/Settings/IntegrationsLink.vue")
+          },
+          {
+            path: "developer",
+            name: "Developer Portal",
+            component: () => import("@/views/Admin/Oauth.vue")
+          },
+          {
+            path: "developer/:id",
+            name: "Developer Portal App",
+            component: () => import("@/views/Admin/OauthItem.vue")
           }
         ]
       },
@@ -191,7 +207,7 @@ const routes = [
         name: "Starred",
         component: () => import("@/views/Gallery.vue"),
         props: {
-          endpoint: "/gallery/starred",
+          type: GalleryType.Starred,
           path: "/starred",
           name: "Starred"
         }
@@ -306,11 +322,6 @@ const routes = [
         component: () => import("@/views/Auth/Register.vue")
       },
       {
-        path: "/invite/:key?",
-        name: "Invite",
-        redirect: (to: any) => `/register/${to.params.key}`
-      },
-      {
         path: "/home",
         name: "Home",
         component: () => import("@/views/Auth/Home.vue")
@@ -344,6 +355,11 @@ const routes = [
         path: "/oauth/:oauthAppId?",
         name: "OAuth",
         component: () => import("@/views/Auth/Oauth.vue")
+      },
+      {
+        path: "/games/kollision",
+        name: "Kollision",
+        component: () => import("@/views/Games/Kollision/Game.vue")
       },
       {
         path: "/:id",
@@ -386,7 +402,8 @@ router.beforeEach(async (to, from) => {
       "Credits",
       "TPU Setup Wizard",
       "User",
-      "OAuth"
+      "OAuth",
+      "Join Chat"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");

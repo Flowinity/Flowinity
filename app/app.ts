@@ -1,4 +1,4 @@
-import express, { NextFunction } from "express"
+import express, { NextFunction, Request } from "express"
 import {
   BadRequestError,
   ExpressErrorMiddlewareInterface,
@@ -12,12 +12,13 @@ import cors from "cors"
 import swaggerJSDoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
 import { Container, Service } from "typedi"
-import sequelize, { Op } from "sequelize"
+import sequelize, { Op, ValidationError } from "sequelize"
 import path from "path"
 import fs from "fs"
 
 // Import Libs
 import Errors from "@app/lib/errors"
+import wellKnownOidc from "@app/lib/well-known-oidc"
 
 // Import Schemas
 import { ApiSchema } from "@app/schema"
@@ -49,17 +50,78 @@ import { SlideshowControllerV3 } from "@app/controllers/v3/slideshow.controller"
 import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
 import { InstanceControllerV3 } from "@app/controllers/v3/instance.controller"
 import { OauthControllerV3 } from "@app/controllers/v3/oauth.controller"
-import { OauthApp } from "@app/models/oauthApp.model"
-import { Provider, Configuration, ClientMetadata } from "oidc-provider"
-import OidcAdapter from "@app/lib/oidc-adapter"
-import wellKnownOidc from "@app/lib/well-known-oidc"
 import { OidcControllerV3 } from "@app/controllers/v3/oidc.controller"
+
+// GraphQL
+import { buildSchema } from "type-graphql"
+import { createYoga, maskError, YogaServerInstance } from "graphql-yoga"
+import {
+  BadgeResolver,
+  PartialUserFriendResolver,
+  PartialUserPublicResolver,
+  UserResolver
+} from "@app/controllers/graphql/user.resolver"
+import { useHive } from "@graphql-hive/client"
+import { execSync } from "child_process"
+import { Context } from "@app/types/graphql/context"
+import { authChecker } from "@app/lib/graphql/AuthChecker"
+import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
+import { GraphQLError } from "graphql/error"
+import { CoreResolver } from "@app/controllers/graphql/core.resolver"
+import {
+  CollectionResolver,
+  CollectionUserResolver
+} from "@app/controllers/graphql/collection.resolver"
+//@ts-ignore
+import { createContext, EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
+import { DomainResolver } from "@app/controllers/graphql/domain.resolver"
+import { GalleryResolver } from "@app/controllers/graphql/gallery.resolver"
+import { createFetch } from "@whatwg-node/fetch"
+import { ChatResolver } from "@app/controllers/graphql/chat.resolver"
+import { ChatAssociationResolver } from "@app/controllers/graphql/chatAssociation.resolver"
+import { WorkspaceResolver } from "@app/controllers/graphql/workspace.resolver"
+import { WorkspaceFolderResolver } from "@app/controllers/graphql/workspaceFolder.resolver"
+import { NoteResolver } from "@app/controllers/graphql/note.resolver"
+import { createRedisCache } from "@envelop/response-cache-redis"
+import { Cache } from "@envelop/response-cache"
+import redis, { ioRedis } from "@app/redis"
+import { FriendResolver } from "@app/controllers/graphql/friend.resolver"
+import { MessageResolver } from "@app/controllers/graphql/message.resolver"
+import { GraphQLSchema } from "graphql/type"
+import generateContext from "@app/classes/graphql/middleware/generateContext"
+import { RedisPubSub } from "graphql-redis-subscriptions"
+import { ChatRankResolver } from "@app/controllers/graphql/chatRank.resolver"
+import { AutoCollectApprovalResolver } from "@app/controllers/graphql/autoCollectApproval.resolver"
+import { CollectionItemResolver } from "@app/controllers/graphql/collectionItem.resolver"
+import { UploadResolver } from "@app/controllers/graphql/upload.resolver"
+import { AdminResolver } from "@app/controllers/graphql/admin.resolver"
+import { BlockedUserResolver } from "@app/controllers/graphql/blockedUser.resolver"
+import { ChatInviteResolver } from "@app/controllers/graphql/chatInvite.resolver"
+import { MailResolver } from "@app/controllers/graphql/mail.resolver"
+import {
+  OAuthAppResolver,
+  OauthConsentAppResolver,
+  OAuthUserResolver
+} from "@app/controllers/graphql/oAuthApp.resolver"
+import { ChatEmojiResolver } from "@app/controllers/graphql/chatEmoji.resolver"
+import { MulterError } from "multer"
+import { ChatAuditLogResolver } from "@app/controllers/graphql/chatAuditLog.resolver"
 
 @Service()
 @Middleware({ type: "after" })
 export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
   error(err: any, req: any, res: any, next: (err: any) => any) {
-    if (err?.status && !err?.errno) {
+    if (err instanceof MulterError) {
+      return res.status(400).json({
+        errors: [
+          {
+            name: err.code,
+            message: err.message,
+            status: 400
+          }
+        ]
+      })
+    } else if (err?.status && !err?.errno) {
       return res.status(err?.status || 500).json({
         errors: [
           {
@@ -149,7 +211,8 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
 @Service()
 export class Application {
   app: express.Application
-
+  schema: GraphQLSchema
+  yogaApp: YogaServerInstance<any, any>
   private readonly swaggerOptions: swaggerJSDoc.Options
 
   constructor() {
@@ -171,7 +234,7 @@ export class Application {
     this.config()
     this.bindRoutes()
   }
-  createExpressServer(endpoint: string) {
+  createExpressServerV3(endpoint: string) {
     useExpressServer(this.app, {
       controllers: config.finishedSetup
         ? [
@@ -212,16 +275,20 @@ export class Application {
       validation: true
     })
   }
-  bindRoutes() {
+
+  async bindRoutes() {
+    process.env.TPU_COMMIT_HASH = execSync("git rev-parse --short HEAD")
+      .toString()
+      .trim()
     this.app.use((req, res, next: NextFunction): void => {
-      res.setHeader("X-Powered-By", "TroploPrivateUploader/3.0.0")
+      res.setHeader("X-Powered-By", "TroploPrivateUploader/4.0.0")
       next()
     })
 
     useContainer(Container)
 
-    this.createExpressServer("/api/v3")
-    this.createExpressServer("/api/v2")
+    this.createExpressServerV3("/api/v3")
+    this.createExpressServerV3("/api/v2")
 
     // For clients that still use /api/v1, the schema is still the same for upload API, so we'll use v3
     useExpressServer(this.app, {
@@ -248,7 +315,7 @@ export class Application {
       res.json(wellKnownOidc())
     })
     this.app.use("/api/docs", async (req, res): Promise<void> => {
-      res.redirect("/api/v3/docs")
+      res.redirect("/api/v4/docs")
     })
     this.app.use(
       "/api/v2/docs",
@@ -258,7 +325,7 @@ export class Application {
 
     if (config.finishedSetup) {
       const spec = ApiSchema.generateSchema()
-      this.app.use("/api/v3/docs", swaggerUi.serve, swaggerUi.setup(spec))
+      this.app.use("/api/v4/docs", swaggerUi.serve, swaggerUi.setup(spec))
     }
 
     useExpressServer(this.app, {
@@ -275,7 +342,133 @@ export class Application {
       },
       validation: true
     })
+    global.pubsub = new RedisPubSub({
+      publisher: ioRedis
+    })
+    this.schema = await buildSchema({
+      resolvers: [
+        UserResolver,
+        AuthResolver,
+        CoreResolver,
+        CollectionResolver,
+        DomainResolver,
+        GalleryResolver,
+        CollectionUserResolver,
+        BadgeResolver,
+        PartialUserPublicResolver,
+        ChatResolver,
+        ChatAssociationResolver,
+        WorkspaceResolver,
+        WorkspaceFolderResolver,
+        NoteResolver,
+        FriendResolver,
+        MessageResolver,
+        PartialUserFriendResolver,
+        ChatRankResolver,
+        AutoCollectApprovalResolver,
+        CollectionItemResolver,
+        UploadResolver,
+        AdminResolver,
+        BlockedUserResolver,
+        ChatInviteResolver,
+        MailResolver,
+        OAuthAppResolver,
+        OAuthUserResolver,
+        ChatEmojiResolver,
+        ChatAuditLogResolver,
+        OauthConsentAppResolver
+      ],
+      container: Container,
+      authChecker: authChecker,
+      validate: true,
+      pubSub: global.pubsub
+    })
+    const gqlPlugins = []
+    const cache: Cache = createRedisCache({ redis })
+    /* gqlPlugins.push(
+      useResponseCache({
+        session: () => null,
+        cache: cache as any
+      })
+    )*/
+    global.gqlCache = cache
+    if (config.hive?.enabled) {
+      gqlPlugins.push(
+        useHive({
+          enabled: true,
+          token: config.hive.token,
+          reporting: {
+            author: "PrivateUploader",
+            commit: process.env.TPU_COMMIT_HASH || "unknown"
+          },
+          // Collects and send usage reporting based on executed operations
+          usage: {
+            clientInfo(context: Context) {
+              const name = context.request.headers.get("x-tpu-client")
+              const version = context.request.headers.get(
+                "x-tpu-client-version"
+              )
 
+              if (name && version) {
+                return { name, version }
+              }
+
+              return null
+            }
+          },
+          selfHosting: {
+            graphqlEndpoint: config.hive.graphqlEndpoint,
+            usageEndpoint: config.hive.usageEndpoint,
+            applicationUrl: config.hive.applicationUrl
+          }
+        })
+      )
+    }
+
+    this.yogaApp = createYoga({
+      schema: this.schema,
+      plugins: gqlPlugins,
+      graphiql: {
+        subscriptionsProtocol: "WS"
+      },
+      fetchAPI: createFetch({
+        formDataLimits: {
+          // Maximum allowed file size (in bytes)
+          fileSize: 1.37439e11,
+          // Maximum allowed number of files
+          files: 200,
+          // Maximum allowed size of content (operations, variables etc...)
+          fieldSize: 1000000,
+          // Maximum allowed header size for form data
+          headerSize: 1000000
+        }
+      }),
+      maskedErrors: {
+        maskError(error: any, message: any, isDev: any): Error {
+          console.error(error)
+
+          if (error instanceof ValidationError) {
+            return {
+              message: error.toString(),
+              name: error.name
+            }
+          }
+
+          if (
+            !message.toLowerCase().includes("sequelize") ||
+            error instanceof GraphQLError
+          ) {
+            return error
+          }
+
+          return maskError(error, message, isDev)
+        }
+      },
+      async context(ctx) {
+        return await generateContext(ctx)
+      }
+    })
+    this.app.use(["/api/v4/graphql", "/graphql"], this.yogaApp)
     this.app.use(express.static(path.join(global.appRoot, "../frontend_build")))
     this.app.get("*", function (req, res, next): void {
       if (req.url.startsWith("/api/")) return next()
@@ -318,23 +511,25 @@ export class Application {
 
   private async onServerStart() {
     if (config.finishedSetup) {
-      await User.update(
-        {
-          status: "offline"
-        },
-        {
-          where: {
-            status: {
-              [Op.not]: "offline"
+      try {
+        await User.update(
+          {
+            status: "offline"
+          },
+          {
+            where: {
+              status: {
+                [Op.not]: "offline"
+              }
             }
           }
+        )
+        // delete all Redis keys containing user:*:platforms to reset statuses
+        const keys = await redis.keys("user:*:platforms")
+        for (const key of keys) {
+          await redis.del(key)
         }
-      )
-      // delete all Redis keys containing user:*:platforms to reset statuses
-      const keys = await redis.keys("user:*:platforms")
-      for (const key of keys) {
-        await redis.del(key)
-      }
+      } catch {}
     }
   }
 }

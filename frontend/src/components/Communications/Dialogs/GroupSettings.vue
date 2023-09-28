@@ -12,11 +12,11 @@
       :remove-text="$t('dialogs.uploadCropper.removeGroup')"
     />
     <template v-slot:title>Group Settings</template>
-    <template v-if="$chat.dialogs.groupSettings.item">
+    <template v-if="$chat.editingChat">
       <v-card-text>
         <v-card-title>Group Name</v-card-title>
         <v-text-field
-          v-model="$chat.dialogs.groupSettings.item.name"
+          v-model="$chat.editingChat.name"
           class="mx-4"
         ></v-text-field>
         <v-card-actions class="mb-n5">
@@ -48,7 +48,7 @@
         </v-card-title>
         <v-list max-height="500">
           <v-list-item
-            v-for="member in $chat.dialogs.groupSettings.item?.users"
+            v-for="member in $chat.editingChat?.users"
             :key="member.id"
           >
             <template v-slot:prepend>
@@ -130,9 +130,7 @@ export default defineComponent({
           props: { disabled: false }
         }
       ];
-      if (
-        this.$chat.dialogs.groupSettings.item?.association?.rank === "owner"
-      ) {
+      if (this.$chat.editingChat?.association?.rank === "owner") {
         ranks[0].props.disabled = false;
       }
       return ranks;
@@ -140,12 +138,12 @@ export default defineComponent({
   },
   methods: {
     async uploadIcon(file: File) {
-      if (this.$chat.dialogs.groupSettings.item) {
+      if (this.$chat.editingChat) {
         this.groupIconLoading = true;
         const formData = new FormData();
         formData.append("icon", file);
         await this.axios.post(
-          `/chats/${this.$chat.dialogs.groupSettings.item.association?.id}/icon`,
+          `/chats/${this.$chat.editingChat.association?.id}/icon`,
           formData
         );
         this.groupIcon = false;
@@ -153,15 +151,15 @@ export default defineComponent({
       }
     },
     async removeIcon() {
-      if (this.$chat.dialogs.groupSettings.item) {
+      if (this.$chat.editingChat) {
         await this.axios.delete(
-          `/chats/${this.$chat.dialogs.groupSettings.item.association?.id}/icon`
+          `/chats/${this.$chat.editingChat.association?.id}/icon`
         );
       }
     },
     async changeRank(id: number, rank: string) {
       await this.axios.put(
-        `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users/${id}`,
+        `/chats/${this.$chat.editingChat?.association?.id}/users/${id}`,
         {
           rank
         }
@@ -169,19 +167,17 @@ export default defineComponent({
     },
     async removeUser(id: number) {
       await this.axios.delete(
-        `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users/${id}`
+        `/chats/${this.$chat.editingChat?.association?.id}/users/${id}`
       );
-      if (this.$chat.dialogs.groupSettings.item)
-        this.$chat.dialogs.groupSettings.item.users.splice(
-          this.$chat.dialogs.groupSettings.item.users.findIndex(
-            (user) => user.id === id
-          ),
+      if (this.$chat.editingChat)
+        this.$chat.editingChat.users.splice(
+          this.$chat.editingChat.users.findIndex((user) => user.id === id),
           1
         );
     },
     async addUsers(users: number[]) {
       await this.axios.post(
-        `/chats/${this.$chat.dialogs.groupSettings.item?.association?.id}/users`,
+        `/chats/${this.$chat.editingChat?.association?.id}/users`,
         {
           users
         }

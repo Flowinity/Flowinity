@@ -2,14 +2,10 @@
  * plugins/axios.ts
  */
 
-import axios, {
-  AxiosRequestConfig,
-  AxiosStatic,
-  InternalAxiosRequestConfig
-} from "axios";
+import axios, { AxiosRequestConfig, AxiosStatic } from "axios";
 import { useToast } from "vue-toastification";
-import { useAppStore } from "@/store/app";
-import { useUserStore } from "@/store/user";
+import { useAppStore } from "@/store/app.store";
+import { useUserStore } from "@/store/user.store";
 import router from "@/router";
 
 export interface AxiosStaticWithAvoidance extends AxiosStatic {
@@ -47,8 +43,8 @@ ax.interceptors.response.use(
       } else if (e.response.data.errors[0].name === "INVALID_TOKEN") {
         const user = useUserStore();
         if (user.user) {
-          user.logout();
-          router.push("/login");
+          //user.logout();
+          //router.push("/login");
         }
         return Promise.reject(e);
       } else if (e.response.data.errors[0].name === "SCOPE_REQUIRED") {
@@ -75,12 +71,13 @@ ax.interceptors.response.use(
           toast.error(error.message);
         }
       }
+      return Promise.reject(e);
     } else {
       if (!e?.response?.config?.headers?.noToast) {
         toast.error("An unknown error occurred.");
       }
+      return Promise.reject(e);
     }
-    return Promise.reject(e);
   }
 );
 
@@ -89,4 +86,13 @@ ax.interceptors.request.use((config) => {
   return config;
 });
 
+/*
+ax.interceptors.request.use((config) => {
+  if (config.url.includes("/gallery/site")) {
+    return config;
+  } else {
+    return Promise.reject(config);
+  }
+});
+*/
 export default ax;

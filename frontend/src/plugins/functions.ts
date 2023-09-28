@@ -1,8 +1,9 @@
 import md from "./rules";
 import mdEmail from "./rulesEmail";
-import { useAppStore } from "@/store/app";
+import { useAppStore } from "@/store/app.store";
 import { Chat } from "@/models/chat";
 import { User } from "@/models/user";
+import { Message, UserStatus, UserStoredStatus } from "@/gql/graphql";
 
 export default {
   fileSize(size: number): string {
@@ -19,7 +20,7 @@ export default {
     navigator.clipboard.writeText(text);
   },
   doSinglePulse(type: string, other: object, timeOnPage?: number) {
-    window.socket.emit("pulse", {
+    window.tpuInternals.$sockets.pulse.emit("pulse", {
       action: type,
       timeSpent: timeOnPage || 0,
       route: window.location.pathname,
@@ -67,9 +68,30 @@ export default {
       return undefined;
     }
   },
-  richMessage(content: string) {
+  richMessage(content: string, message: Message | null) {
     const regex = /\\?&lt;(@\d+)&gt;/g;
     const mentions = content.match(regex);
+    const regexEmoji = content.match(
+      /:(.*?)-(.*?)-(.*?):(.*?)-(.*?)-(.*?):|:.*?:.*?:/g
+    );
+    if (regexEmoji) {
+      const isOnlyEmojis =
+        content
+          .replaceAll("\n", "")
+          .replace(/<\/?[^>]+(>|$)/g, "")
+          .replace(/:([\w~-]+)(?::([\w~-]+))?:(?!\w)/g, "")
+          .replaceAll(" ", "") === "";
+      for (const emoji of regexEmoji) {
+        const find = message?.emoji?.find((e) => e.id === emoji.split(":")[2]);
+        if (!find) continue;
+        content = content.replace(
+          emoji,
+          `<span><img class="emoji${
+            isOnlyEmojis ? " emoji-large" : ""
+          }" src="/i/${find.icon}"></span>`
+        );
+      }
+    }
     if (mentions) {
       for (const mention of mentions) {
         const userId = mention.match(/&lt;@(\d+)&gt;/)![1];
@@ -127,30 +149,30 @@ export default {
     }
     return content;
   },
-  markdown(text: string): any {
-    return this.richMessage(md.render(text));
+  markdown(text: string, message: Message | null): any {
+    return this.richMessage(md.render(text), message);
   },
   markdownEmail(text: string): any {
     return mdEmail.render(text);
   },
-  userStatus(status: "online" | "offline" | "idle" | "busy" | "invisible") {
+  userStatus(status: UserStatus | UserStoredStatus) {
     switch (status) {
-      case "online":
+      case UserStoredStatus.Online:
         return {
           color: "#4caf50",
           text: "Online"
         };
-      case "idle":
+      case UserStoredStatus.Idle:
         return {
           color: "#ff9800",
           text: "Idle"
         };
-      case "busy":
+      case UserStoredStatus.Busy:
         return {
           color: "#f44336",
           text: "Busy"
         };
-      case "invisible":
+      case UserStoredStatus.Invisible:
         return {
           color: "grey",
           text: "Invisible"

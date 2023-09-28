@@ -5,7 +5,7 @@
       :component="selectedComponent"
       :components="components"
       :user="user"
-      @trigger="layout = $user.changes.profileLayout"
+      @trigger="layout = $user.user.profileLayout"
       @update="updateProp"
     ></UserV3Settings>
     <UserBanner
@@ -65,6 +65,9 @@
                     "
                   >
                     {{ $friends.getName(user) }}
+                    <v-chip class="ml-1" v-if="user?.bot" size="x-small">
+                      BOT
+                    </v-chip>
                     <span
                       v-if="$friends.getName(user) !== user.username"
                       class="text-grey"
@@ -113,7 +116,7 @@
                       <v-icon v-else>mdi-check</v-icon>
                     </v-btn>
                     <v-btn
-                      v-if="user?.friend === 'accepted'"
+                      v-if="user?.friend === FriendStatus.Accepted"
                       icon
                       size="x-small"
                       @click.stop="
@@ -160,7 +163,7 @@
                 </v-btn>
                 <v-btn
                   v-if="
-                    user?.friend === 'accepted' &&
+                    user?.friend === FriendStatus.Accepted &&
                     $experiments.experiments['COMMUNICATIONS']
                   "
                   :loading="friendLoading"
@@ -253,8 +256,9 @@
           </StatsCard>
           <InsightsPromoCard
             v-if="
-              user.insights === 'everyone' ||
-              (user.insights === 'friends' && user.friend === 'accepted')
+              user.insights === UserInsights.Everyone ||
+              (user.insights === UserInsights.Friends &&
+                user.friend === FriendStatus.Accepted)
             "
             :end-color="user.plan.id === 6 ? '#F57F17' : '#4A148C'"
             :gold="gold"
@@ -321,7 +325,6 @@ import { defineComponent } from "vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
-import { ProfileLayout, User } from "@/models/user";
 import StatsCard from "@/components/Dashboard/StatsCard.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
 import { DefaultThemes } from "@/plugins/vuetify";
@@ -330,6 +333,7 @@ import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/ComponentH
 import { VueDraggable } from "vue-draggable-plus";
 import { Component, Rows } from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
+import { FriendStatus, ProfileLayout, User, UserInsights } from "@/gql/graphql";
 
 export default defineComponent({
   name: "UserV3",
@@ -419,6 +423,12 @@ export default defineComponent({
     };
   },
   computed: {
+    FriendStatus() {
+      return FriendStatus;
+    },
+    UserInsights() {
+      return UserInsights;
+    },
     components() {
       return [
         {
@@ -640,30 +650,31 @@ export default defineComponent({
       return this.user?.plan.internalName === "GOLD";
     },
     friends() {
-      if (this.user?.friend === "accepted") {
-        return {
-          text: "Remove Friend",
-          color: "red",
-          icon: "mdi-account-minus"
-        };
-      } else if (this.user?.friend === "outgoing") {
-        return {
-          text: "Cancel Request",
-          color: "grey",
-          icon: "mdi-account-minus"
-        };
-      } else if (this.user?.friend === "incoming") {
-        return {
-          text: "Accept Request",
-          color: "green",
-          icon: "mdi-account-plus"
-        };
-      } else {
-        return {
-          text: "Add Friend",
-          color: "green",
-          icon: "mdi-account-plus"
-        };
+      switch (this.user?.friend) {
+        case FriendStatus.Accepted:
+          return {
+            text: "Remove Friend",
+            color: "red",
+            icon: "mdi-account-minus"
+          };
+        case FriendStatus.Outgoing:
+          return {
+            text: "Cancel Request",
+            color: "grey",
+            icon: "mdi-account-minus"
+          };
+        case FriendStatus.Incoming:
+          return {
+            text: "Accept Request",
+            color: "green",
+            icon: "mdi-account-plus"
+          };
+        default:
+          return {
+            text: "Add Friend",
+            color: "green",
+            icon: "mdi-account-plus"
+          };
       }
     }
   },
@@ -754,7 +765,7 @@ export default defineComponent({
       }
       const theme = reset
         ? this.$user.changes.themeEngine?.theme ||
-          new DefaultThemes(this.$user.gold).themes
+          new DefaultThemes(false).themes
         : this.user?.themeEngine?.theme;
       if (!theme) return false;
       this.$vuetify.theme.themes.dark = {
@@ -811,8 +822,7 @@ export default defineComponent({
         this.$app.componentLoading = true;
       }
       const username = this.username || this.$route.params.username;
-      const { data } = await this.axios.get(`/user/profile/${username}`);
-      this.user = data as User;
+      this.user = await this.$user.getUser(username);
       this.layout = this.user?.profileLayout || this.defaultLayout;
       if (!this.username) this.$app.title = this.user?.username + "'s Profile";
       this.setTheme();

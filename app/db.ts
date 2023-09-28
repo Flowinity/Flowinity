@@ -18,11 +18,12 @@ try {
   )
 }
 
-let sequelize: any = null
+let sequelize: Sequelize | null = null
 
 if (config) {
   sequelize = new Sequelize({
     ...config[process.env.NODE_ENV || "development"],
+    logQueryParameters: true,
     models: [__dirname + "/models"],
     modelMatch: () => {
       return true

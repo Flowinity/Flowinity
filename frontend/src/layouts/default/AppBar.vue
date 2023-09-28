@@ -2,9 +2,10 @@
   <v-app-bar
     :key="$user.user?.emailVerified ? 1 : 2"
     :class="classString"
-    :extension-height="$user.user?.emailVerified ? 5 : 42"
+    :extension-height="$user.user?.emailVerified ? 42 : 42"
     app
     class="navbar"
+    id="navbar"
     color="dark"
     density="comfortable"
     :flat="true"
@@ -12,30 +13,12 @@
     style="z-index: 1001"
   >
     <v-app-bar-nav-icon
-      v-if="
-        (!$app.mainDrawer && !$vuetify.display.mobile) ||
-        ($vuetify.display.mobile && $chat.isCommunications)
-      "
+      v-if="!$app.mainDrawer || $vuetify.display.mobile"
       aria-label="Toggle Main Sidebar"
       style="z-index: 1000"
       @click.stop="$app.toggleMain()"
     >
       <v-icon>mdi-menu</v-icon>
-    </v-app-bar-nav-icon>
-    <v-app-bar-nav-icon
-      v-else-if="$vuetify.display.mobile"
-      :aria-label="$app.quickActionItem.name"
-      style="z-index: 1000"
-      @click="
-        $app.quickActionItem.path
-          ? $router.push($app.quickActionItem.path)
-          : handleClick($app.quickActionItem.id)
-      "
-      @contextmenu.prevent.stop="$app.dialogs.selectDefaultMobile = true"
-    >
-      <v-icon>
-        {{ $app.quickActionItem.icon }}
-      </v-icon>
     </v-app-bar-nav-icon>
     <template v-if="!$chat.isCommunications || !$chat.selectedChat">
       <LogoEasterEgg></LogoEasterEgg>
@@ -44,22 +27,49 @@
       <UserAvatar
         :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
         :status="true"
-        :user="$chat.selectedChat?.recipient"
+        :user="$user.users[$chat.selectedChat?.recipient?.id]"
         class="ml-4"
         size="32"
         :dot-status="true"
       />
       <h2
-        v-if="!$vuetify.display.mobile"
+        v-if="!$vuetify.display.mobile && !editingName"
         id="tpu-brand-logo"
-        class="unselectable ml-2 limit"
+        class="ml-2 limit pointer unselectable"
         title="TPU Communications"
+        @click="$chat.hasPermissions.admin ? (editingName = true) : () => {}"
       >
-        {{ $chat.chatName }}
+        {{ $chat.chatName($chat.selectedChat) }}
       </h2>
+      <v-text-field
+        v-else-if="editingName"
+        single-line
+        variant="outlined"
+        density="compact"
+        style="height: 40px"
+        class="ml-2"
+        @blur="editingName = false"
+        autofocus
+        v-model="$chat.selectedChat.name"
+        @keydown.enter="
+          $chat.saveSettings({
+            name: $chat.selectedChat.name,
+            associationId: $chat.selectedChat.association?.id
+          });
+          editingName = false;
+        "
+        @keydown.esc="editingName = false"
+      ></v-text-field>
     </template>
     <v-spacer></v-spacer>
-    <div v-if="$app.site.release === 'dev' && $app.cordova" class="mr-2">M</div>
+    <template v-if="!$app.connected">
+      <v-progress-circular
+        indeterminate
+        size="24"
+        class="ml-2"
+      ></v-progress-circular>
+      <span class="mx-2">Reconnecting...</span>
+    </template>
     <small v-if="$app.notesSaving && !$vuetify.display.mobile" class="mr-3">
       Saving...
     </small>
@@ -82,9 +92,9 @@
         </v-tooltip>
       </span>
       <span class="mr-3">
-        {{ $app.weatherTemp }}°{{
-          $user.user?.weatherUnit.charAt(0).toUpperCase()
-        }}
+        {{ $app.weatherTemp
+        }}{{ $user.user?.weatherUnit.charAt(0).toUpperCase() === "K" ? "" : "°"
+        }}{{ $user.user?.weatherUnit.charAt(0).toUpperCase() }}
       </span>
     </template>
     <!-- Workspaces custom actions -->
@@ -130,21 +140,37 @@
       <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn aria-label="Personal Menu" icon v-bind="props">
-            <UserAvatar :user="$user.user" size="38" />
+            <UserAvatar
+              :user="$user.user"
+              size="38"
+              :dot-status="true"
+              :status="true"
+            />
           </v-btn>
         </template>
-
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in dropdown"
-            :key="item.id"
-            :disabled="item.disabled"
-            :to="item.path"
-            @click="handleClickDropdown(index)"
-          >
-            <v-list-item-title>{{ item.name }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
+        <v-card max-width="360">
+          <v-list>
+            <v-list-item
+              v-for="(item, index) in dropdown"
+              :key="item.id"
+              :disabled="item.disabled"
+              :to="item.path"
+              @click="handleClickDropdown(index)"
+              :style="{
+                color: item.id === 15 ? 'rgb(var(--v-theme-error))' : undefined
+              }"
+            >
+              <v-list-item-title>
+                <v-icon class="mr-1">
+                  {{ item.icon }}
+                </v-icon>
+                {{ item.name }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+          <v-divider></v-divider>
+          <StatusSwitcherList />
+        </v-card>
       </v-menu>
       <v-btn
         v-if="!$app.rail"
@@ -171,15 +197,6 @@
         </v-tooltip>
       </v-progress-linear>
       <v-alert
-        v-if="$app.site.alert"
-        class="rounded-0"
-        color="blue"
-        type="info"
-        variant="text"
-      >
-        {{ $app.site.alert }}
-      </v-alert>
-      <v-alert
         v-if="!$user.user?.emailVerified"
         :icon="false"
         :type="!$user.actions.emailSent.value ? 'error' : 'success'"
@@ -203,20 +220,38 @@
           </v-btn>
         </template>
       </v-alert>
+      <v-alert
+        variant="tonal"
+        :icon="false"
+        type="info"
+        class="rounded-0"
+        density="compact"
+      >
+        <small class="unselectable">Welcome to the new PrivateUploader!</small>
+        <template v-slot:append>
+          <v-btn size="x-small" href="https://privateuploader.com">
+            Go to Stable
+          </v-btn>
+        </template>
+      </v-alert>
     </template>
   </v-app-bar>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import Notifications from "@/components/Core/Notifications.vue";
 import { useTheme } from "vuetify";
 import Pins from "@/components/Communications/Menus/Pins.vue";
 import LogoEasterEgg from "@/components/Core/LogoEasterEgg.vue";
+import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
+import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.vue";
 
 export default defineComponent({
   components: {
+    StatusSwitcherList,
+    StatusSwitcher,
     LogoEasterEgg,
     Pins,
     Notifications,
@@ -224,8 +259,9 @@ export default defineComponent({
   },
   setup() {
     const theme = useTheme();
-
+    const editingName = ref(false);
     return {
+      editingName,
       toggleTheme: () => {
         const themeName = "amoled";
         localStorage.setItem("theme", themeName);
@@ -280,6 +316,7 @@ export default defineComponent({
       if (!this.$user?.user) return [];
       return [
         {
+          icon: "mdi-account",
           id: 12,
           click() {},
           path: "/u/" + this.$user.user.username,
@@ -287,6 +324,7 @@ export default defineComponent({
           disabled: false
         },
         {
+          icon: "mdi-palette",
           id: 13,
           click() {},
           path: "/settings",
@@ -294,6 +332,7 @@ export default defineComponent({
           disabled: false
         },
         {
+          icon: "mdi-exit-to-app",
           id: 15,
           async click() {
             //@ts-ignore

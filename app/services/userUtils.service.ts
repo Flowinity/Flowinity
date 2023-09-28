@@ -22,13 +22,29 @@ import { LayoutValidate } from "@app/validators/userv3"
 import { ExcludedCollectionsValidate } from "@app/validators/excludedCollections"
 import { FCMDevice } from "@app/models/fcmDevices.model"
 import axios from "axios"
-import { GoogleService } from "@app/services/providers/google.service"
-import { HexValidate, HexValidateOptional } from "@app/validators/hex"
+import { HexValidateOptional } from "@app/validators/hex"
+import {
+  partialUserBase,
+  PartialUserFriend,
+  partialUserFriend
+} from "@app/classes/graphql/user/partialUser"
+import { FriendStatus } from "@app/classes/graphql/user/friends"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
+import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
+import { BlockedUser } from "@app/models/blockedUser.model"
 
 @Service()
 export class UserUtilsService {
+  async getAttribute(userId: number, attribute: string): Promise<any> {
+    const user = await User.findByPk(userId, {
+      attributes: [attribute],
+      raw: true
+    })
+    // @ts-ignore
+    return user?.[attribute] ?? null
+  }
   async registerFCMToken(userId: number, token: string) {
     if (!config.providers.google) return
     const device = await FCMDevice.findOne({
@@ -166,10 +182,19 @@ export class UserUtilsService {
     } else {
       return null
     }
-    socket.to(userId).emit("friendNickname", {
-      id: friendId,
-      nickname: name
+    const nick = await FriendNickname.findOne({
+      where: {
+        userId,
+        friendId
+      }
     })
+    socket
+      .of(SocketNamespaces.FRIENDS)
+      .to(userId)
+      .emit("friendNickname", {
+        id: userId,
+        ...nick?.toJSON()
+      })
     return name
   }
 
@@ -246,6 +271,7 @@ export class UserUtilsService {
         status: "accepted"
       }
     })
+    console.log(userId, friendIds)
     if (friends.length !== friendIds.length)
       throw Errors.INVALID_FRIEND_SELECTION
     return friends
@@ -377,12 +403,12 @@ export class UserUtilsService {
       }
     })
 
-    socket.to(friendId).emit("friendRequest", {
+    socket.of(SocketNamespaces.FRIENDS).to(friendId).emit("request", {
       id: userId,
       status: "removed",
       friend: null
     })
-    socket.to(userId).emit("friendRequest", {
+    socket.of(SocketNamespaces.FRIENDS).to(userId).emit("request", {
       id: friendId,
       status: "removed",
       friend: null
@@ -444,16 +470,22 @@ export class UserUtilsService {
         friendId: userId,
         status: "incoming"
       })
-      socket.to(user.id).emit("friendRequest", {
-        id: userId,
-        status: "incoming",
-        friend: await this.getFriend(user.id, userId)
-      })
-      socket.to(userId).emit("friendRequest", {
-        id: user.id,
-        status: "outgoing",
-        friend: await this.getFriend(userId, user.id)
-      })
+      socket
+        .of(SocketNamespaces.FRIENDS)
+        .to(user.id)
+        .emit("request", {
+          id: userId,
+          status: "incoming",
+          friend: await this.getFriend(user.id, userId)
+        })
+      socket
+        .of(SocketNamespaces.FRIENDS)
+        .to(userId)
+        .emit("request", {
+          id: user.id,
+          status: "outgoing",
+          friend: await this.getFriend(userId, user.id)
+        })
       return true
     }
 
@@ -500,16 +532,22 @@ export class UserUtilsService {
           `${otherUser.username} has accepted your friend request!`,
           `/u/${otherUser.username}`
         )
-        socket.to(user.id).emit("friendRequest", {
-          id: userId,
-          status: "accepted",
-          friend: await this.getFriend(user.id, userId)
-        })
-        socket.to(userId).emit("friendRequest", {
-          id: user.id,
-          status: "accepted",
-          friend: await this.getFriend(userId, user.id)
-        })
+        socket
+          .of(SocketNamespaces.FRIENDS)
+          .to(user.id)
+          .emit("request", {
+            id: userId,
+            status: "accepted",
+            friend: await this.getFriend(user.id, userId)
+          })
+        socket
+          .of(SocketNamespaces.FRIENDS)
+          .to(userId)
+          .emit("request", {
+            id: user.id,
+            status: "accepted",
+            friend: await this.getFriend(userId, user.id)
+          })
         return true
       case "accepted":
         if (action === "send" || action == "accept")
@@ -675,11 +713,15 @@ export class UserUtilsService {
       delete body.currentPassword
       delete body.username
     }
+    console.log(body.storedStatus, body.storedStatus !== user.storedStatus)
     if (body.storedStatus && body.storedStatus !== user.storedStatus) {
-      const sockets = await socket.in(user.id).allSockets()
-      if (sockets.size !== 0) {
+      const sockets = await socket.in(user.id).fetchSockets()
+      if (sockets.length !== 0) {
         const status =
-          body.storedStatus === "invisible" ? "offline" : body.storedStatus
+          body.storedStatus.toLowerCase() === UserStoredStatus.INVISIBLE
+            ? "offline"
+            : body.storedStatus.toLowerCase()
+
         await User.update(
           {
             status
@@ -691,11 +733,15 @@ export class UserUtilsService {
           }
         )
         if (body.storedStatus !== "invisible" || user.status !== "offline") {
-          await this.emitToFriends(user.id, "userStatus", {
-            id: user.id,
-            status,
-            platforms: await redis.json.get(`user:${user.id}:platforms`)
-          })
+          await this.emitToTrackedUsers(
+            user.id,
+            "userStatus",
+            {
+              id: user.id,
+              status: status.toUpperCase()
+            },
+            true
+          )
         }
       }
     }
@@ -715,7 +761,7 @@ export class UserUtilsService {
       await ExcludedCollectionsValidate.parse(body.excludedCollections)
     if (body.nameColor !== user.nameColor) {
       await HexValidateOptional.parse(body.nameColor)
-      this.emitToChatParticipants(user.id, "userNameColor", {
+      this.emitToTrackedUsers(user.id, "userNameColor", {
         id: user.id,
         nameColor: body.nameColor
       })
@@ -726,49 +772,173 @@ export class UserUtilsService {
     })
     delete body.currentPassword
     delete body.password
-    socket.to(user.id).emit("userSettingsUpdate", body)
+    socket
+      .of(SocketNamespaces.USER)
+      .to(user.id)
+      .emit("userSettingsUpdate", body)
     return true
   }
 
-  async emitToFriends(userId: number, key: string, value: any) {
+  async emitToFriends(
+    userId: number,
+    key: string,
+    value: any,
+    namespace?: SocketNamespaces | null
+  ) {
     const friends = await Friend.findAll({
       where: {
         userId,
         status: "accepted"
       }
     })
+
     for (const friend of friends) {
-      socket.to(friend.friendId).emit(key, value)
+      if (namespace) {
+        socket.of(namespace).to(friend.friendId).emit(key, value)
+      } else {
+        socket.to(friend.friendId).emit(key, value)
+      }
     }
-    socket.to(userId).emit(key, value)
+
+    if (namespace) {
+      socket.of(namespace).to(userId).emit(key, value)
+    } else {
+      socket.to(userId).emit(key, value)
+    }
   }
 
-  async emitToChatParticipants(userId: number, key: string, value: any) {
-    const chats = await Chat.findAll({
+  async emitToTrackedUsers(
+    userId: number,
+    key: string,
+    value: any,
+    emitToFriends: boolean = false,
+    namespace: SocketNamespaces = SocketNamespaces.TRACKED_USERS,
+    important: boolean = false
+  ) {
+    let friends: Friend[] = []
+    if (emitToFriends) {
+      friends = await Friend.findAll({
+        where: {
+          userId,
+          status: "accepted"
+        }
+      })
+    }
+    let ids = await this.trackedUserIds(userId)
+    const friendIds = friends.map((friend) => friend.friendId)
+    ids = [...new Set([...friendIds, ...ids])]
+    for (const id of ids) {
+      if (!important) {
+        const blocked = await this.blocked(id, userId, true)
+        if (blocked) continue
+      }
+      socket.of(namespace).to(id).emit(key, value)
+    }
+  }
+
+  async blocked(
+    userId: number,
+    blockedUserId: number,
+    strict: boolean = false
+  ) {
+    return await BlockedUser.findOne({
+      where: strict
+        ? {
+            blockedUserId: userId,
+            userId: blockedUserId
+          }
+        : {
+            [Op.or]: [
+              {
+                userId: userId || 0,
+                blockedUserId: blockedUserId || 0
+              },
+              {
+                userId: blockedUserId || 0,
+                blockedUserId: userId || 0
+              }
+            ]
+          }
+    })
+  }
+
+  async trackedUserIds(userId?: number, regenerate = false): Promise<number[]> {
+    if (!userId) return []
+
+    let uniqueUserIds = regenerate
+      ? null
+      : await redis.json.get(`trackedUsers:${userId}`)
+
+    if (!uniqueUserIds) {
+      const chats = await Chat.findAll({
+        attributes: ["id"],
+        include: [
+          {
+            model: ChatAssociation,
+            where: { userId },
+            required: true,
+            as: "association"
+          },
+          {
+            model: ChatAssociation,
+            as: "users",
+            attributes: ["userId"],
+            required: true
+          }
+        ]
+      })
+      uniqueUserIds = Array.from(
+        new Set(chats.flatMap((chat) => chat.users?.map((user) => user.userId)))
+      )
+      await redis.json.set(`trackedUsers:${userId}`, "$", uniqueUserIds)
+    }
+
+    if (regenerate) {
+      const tracked = await this.trackedUsers(userId)
+      socket
+        .of(SocketNamespaces.TRACKED_USERS)
+        .to(userId)
+        .emit(
+          "trackedUsers",
+          tracked.map((user) => {
+            return {
+              // without this @ts-ignore toJSON isn't implemented and will memory leak!
+              //@ts-ignore
+              ...user.toJSON(),
+              status: user.status.toUpperCase()
+            }
+          })
+        )
+    }
+
+    return uniqueUserIds.filter(Number)
+  }
+
+  async trackedUsers(userId: number) {
+    const ids = await this.trackedUserIds(userId)
+
+    const users = await User.findAll({
+      where: {
+        id: ids
+      },
+      attributes: partialUserFriend,
       include: [
         {
-          model: ChatAssociation,
-          as: "association",
+          model: BlockedUser,
+          required: false,
           where: {
-            userId
-          },
-          required: true
-        },
-        {
-          model: ChatAssociation,
-          as: "users"
+            blockedUserId: userId
+          }
         }
       ]
     })
-    // remove duplicates and put into 1 array
-    const chatUserIds = chats.map((chat) =>
-      chat.users.map((user) => user.userId)
-    )
-    const uniqueChatUserIds = [...new Set(chatUserIds.flat())]
-    for (const id of uniqueChatUserIds) {
-      if (!id) continue
-      socket.to(id).emit(key, value)
+
+    for (const user of users) {
+      if (user.blocked) user.status = UserStatus.OFFLINE
+      delete user.blocked
     }
+
+    return users as PartialUserFriend[]
   }
 
   async getAllUsers(
@@ -852,14 +1022,18 @@ export class UserUtilsService {
         {
           model: User,
           as: "user",
-          attributes: [
-            "id",
-            "username",
-            "avatar",
-            "description",
-            "administrator",
-            "moderator"
-          ],
+          attributes: partialUserBase,
+          include: [
+            {
+              model: Plan,
+              as: "plan"
+            }
+          ]
+        },
+        {
+          model: User,
+          as: "otherUser",
+          attributes: partialUserBase,
           include: [
             {
               model: Plan,
@@ -867,8 +1041,7 @@ export class UserUtilsService {
             }
           ]
         }
-      ],
-      attributes: ["id", "friendId", "userId"]
+      ]
     })
   }
 
@@ -905,7 +1078,8 @@ export class UserUtilsService {
 
   async getFriendStatus(
     userId: number,
-    otherUserId: number
+    otherUserId: number,
+    gql: boolean = false
   ): Promise<string | false> {
     const friend = await Friend.findOne({
       where: {
@@ -913,8 +1087,16 @@ export class UserUtilsService {
         friendId: otherUserId
       }
     })
-    if (!friend) return false
-    return friend.status
+    if (!friend) return gql ? FriendStatus.NONE : false
+    if (!gql) return friend.status
+    switch (friend.status) {
+      case "accepted":
+        return FriendStatus.ACCEPTED
+      case "incoming":
+        return FriendStatus.INCOMING
+      case "outgoing":
+        return FriendStatus.OUTGOING
+    }
   }
 
   async getUserById(

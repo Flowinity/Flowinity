@@ -354,6 +354,14 @@ let Errors = {
     message:
       "Security error\nThe app ID sent by the client does not match the app's ID.",
     status: 400
+  },
+  COLUBRINA_CHAT: {
+    message: "This chat needs to be migrated from Colubrina to Communications.",
+    status: 400
+  },
+  MAX_EMOJI: {
+    message: "Maximum amount of 30 chat emoji has been reached.",
+    status: 400
   }
 }
 

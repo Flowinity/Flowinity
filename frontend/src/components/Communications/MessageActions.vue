@@ -5,39 +5,14 @@
     class="message-actions mr-2 rounded-xl v-card"
     style="z-index: 5001; background-color: rgb(var(--v-theme-dark))"
   >
-    <span class="mr-2" v-if="message.readReceipts?.length && merge">
-      <template
-        v-for="(readReceipt, index) in message.readReceipts"
-        :key="readReceipt.id"
-      >
-        <ReadReceipt
-          v-if="index < $chat.renderableReadReceipts"
-          :message="message"
-          :read-receipt="readReceipt"
-        />
-      </template>
-      <span
-        v-if="message.readReceipts.length > $chat.renderableReadReceipts"
-        class="text-grey ml-1 mr-2"
-        @click.stop
-      >
-        <v-menu activator="parent" location="top">
-          <v-card>
-            <v-container>
-              <span v-for="readReceipt in message.readReceipts">
-                <ReadReceipt :message="message" :read-receipt="readReceipt" />
-              </span>
-            </v-container>
-          </v-card>
-        </v-menu>
-        +{{ message.readReceipts.length - $chat.renderableReadReceipts }}
-      </span>
-    </span>
     <button
       type="button"
       class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
       @click="$chat.pinMessage(message.id, !message.pinned)"
-      v-if="$chat.hasPermissions.admin && message.type === 'message'"
+      v-if="
+        $chat.hasPermission('PIN_MESSAGES') &&
+        message.type === MessageType.Message
+      "
     >
       <v-tooltip activator="parent" location="top" :eager="false">
         {{ message.pinned ? "Unpin" : "Pin" }}
@@ -49,7 +24,10 @@
     <button
       type="button"
       class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
-      v-if="message.userId === $user.user?.id && message.type === 'message'"
+      v-if="
+        message.userId === $user.user?.id &&
+        message.type === MessageType.Message
+      "
       @click="$emit('edit')"
     >
       <v-tooltip activator="parent" location="top" :eager="false">
@@ -61,8 +39,10 @@
       type="button"
       class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
       v-if="
-        (message.userId === $user.user?.id && message.type === 'message') ||
-        ($chat.hasPermissions.admin && message.type === 'message')
+        (message.userId === $user.user?.id &&
+          message.type === MessageType.Message) ||
+        ($chat.hasPermission('DELETE_MESSAGES') &&
+          message.type === MessageType.Message)
       "
       @click="$emit('delete', $event.shiftKey)"
     >
@@ -97,9 +77,15 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
+import { MessageType } from "@/gql/graphql";
 
 export default defineComponent({
   name: "MessageActions",
+  computed: {
+    MessageType() {
+      return MessageType;
+    }
+  },
   components: { ReadReceipt },
   props: ["message", "avoid", "merge"],
   data() {

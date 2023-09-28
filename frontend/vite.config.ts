@@ -2,6 +2,7 @@
 import vue from "@vitejs/plugin-vue";
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 import { warmup } from "vite-plugin-warmup";
+import graphql from "@rollup/plugin-graphql";
 
 // Utilities
 import { defineConfig } from "vite";
@@ -29,6 +30,7 @@ const config = {
     emptyOutDir: true
   },
   plugins: [
+    graphql(),
     warmup({
       // warm up the files and its imported JS modules recursively
       clientFiles: ["./src/**/*.ts", "./src/**/*.vue"]
@@ -143,10 +145,18 @@ const config = {
       "/i/": "http://localhost:34582",
       "/socket.io": {
         target: "http://localhost:34582",
-        ws: true
+        ws: true,
+        secure: true,
+        changeOrigin: true
       },
       "/api/v1": "http://localhost:34581",
-      "/graphql": "http://localhost:34582"
+      "/graphql": "http://localhost:34582",
+      "/gateway": {
+        target: "http://localhost:34582",
+        ws: true,
+        secure: true,
+        changeOrigin: true
+      }
     },
     https: undefined
   }

@@ -1,20 +1,42 @@
 import axios from "@/plugins/axios";
 import vuetify from "@/plugins/vuetify";
-import { useAdminStore } from "@/store/admin";
-import { useUserStore } from "@/store/user";
-import { useAppStore } from "@/store/app";
-import { useExperimentsStore } from "@/store/experiments";
-import { useCollectionsStore } from "@/store/collections";
-import { useWorkspacesStore } from "@/store/workspaces";
-import { useChatStore } from "@/store/chat";
-import { useFriendsStore } from "@/store/friends";
-import { useMailStore } from "@/store/mail";
+import { useAdminStore } from "@/store/admin.store";
+import { useUserStore } from "@/store/user.store";
+import { useAppStore } from "@/store/app.store";
+import { useExperimentsStore } from "@/store/experiments.store";
+import { useCollectionsStore } from "@/store/collections.store";
+import { useWorkspacesStore } from "@/store/workspaces.store";
+import { useChatStore } from "@/store/chat.store";
+import { useFriendsStore } from "@/store/friends.store";
+import { useMailStore } from "@/store/mail.store";
 import { useToast } from "vue-toastification";
 import dayjs from "@/plugins/dayjs";
 import validation from "@/plugins/validation";
-import SocketIO from "socket.io-client";
+import { io } from "socket.io-client";
 import functions from "@/plugins/functions";
 import router from "@/router";
+import { Router, useRouter } from "vue-router";
+import { Collection } from "@/models/collection";
+
+function createSocket(namespace: string) {
+  console.log(`[TPU/Socket] Connecting to ${namespace}`);
+  const socket = io(`/${namespace}`, {
+    auth: {
+      token: localStorage.getItem("token")
+    },
+    transports: ["websocket"],
+    reconnection: true,
+    path: "/gateway",
+    reconnectionAttempts: 99999
+  });
+  socket.on("connect", () => {
+    console.log(`[TPU/Socket] Connected to ${namespace}`);
+  });
+  socket.on("disconnect", () => {
+    console.log(`[TPU/Socket] Disconnected from ${namespace}`);
+  });
+  return socket;
+}
 
 export default function setup(app) {
   const user = useUserStore();
@@ -41,33 +63,52 @@ export default function setup(app) {
   app.config.globalProperties.$chat = chat;
   app.config.globalProperties.$friends = friends;
   app.config.globalProperties.$mail = mail;
-  app.config.globalProperties.$socket = SocketIO(
-    import.meta.env.DEV
-      ? ""
-      : import.meta.env.CORDOVA
-      ? "https://images.flowinity.com"
-      : "",
-    {
-      transports: ["websocket", "polling"],
-      auth: {
-        token: localStorage.getItem("token")
-      }
-    }
-  );
-  window.socket = app.config.globalProperties.$socket;
+  app.config.globalProperties.$socket = createSocket("");
+  app.config.globalProperties.$sockets = {
+    chat: createSocket("chat"),
+    friends: createSocket("friends"),
+    mail: createSocket("mail"),
+    user: createSocket("user"),
+    pulse: createSocket("pulse"),
+    gallery: createSocket("gallery"),
+    autoCollects: createSocket("autoCollects"),
+    trackedUsers: createSocket("trackedUsers")
+  };
   app.config.globalProperties.$functions = functions;
+  if (!window.tpuInternals) {
+    const router = useRouter() as Router;
+    window.tpuInternals = {
+      processLink: chat.processLink,
+      readChat: chat.readChat,
+      lookupUser: chat.lookupUser,
+      setChat: ((id) => router.push("/communications/" + id)) as (
+        id: number
+      ) => void,
+      lookupChat: chat.lookupChat,
+      openUser: chat.openUser,
+      router,
+      lookupCollection: (id) => {
+        return (
+          (collections.items.find(
+            (collection) => collection.id === id
+          ) as Collection) ||
+          ({
+            name: "Unknown Collection"
+          } as Collection)
+        );
+      },
+      openCollection: ((id) => router.push("/collections/" + id)) as (
+        id: number
+      ) => void,
+      $sockets: app.config.globalProperties.$sockets
+    };
+  }
 
-  user.init().then(() => {
-    console.info("[TPU/UserStore] User initialized");
-  });
   core.init().then(() => {
     if (!core.site.finishedSetup) {
       router.push("/setup");
     }
     console.info("[TPU/CoreStore] Core initialized");
-  });
-  experiments.init().then(() => {
-    console.info("[TPU/ExperimentsStore] Experiments initialized");
   });
   window.central = {
     user: user.user,

@@ -31,6 +31,8 @@ import utils from "@app/lib/utils"
 import { OauthUser } from "@app/models/oauthUser.model"
 import { Session } from "@app/models/session.model"
 import { OauthSave } from "@app/models/oauthSave.model"
+import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { parsePath } from "type-graphql/build/typings/helpers/filesystem"
 
 const inviteParams = {
   include: [
@@ -68,7 +70,7 @@ export class AdminService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          attributes: partialUserBase
         }
       ],
       order: [["createdAt", "DESC"]]
@@ -494,7 +496,7 @@ export class AdminService {
         {
           model: User,
           as: "users",
-          attributes: ["id", "username", "avatar"]
+          attributes: partialUserBase
         }
       ]
     })
@@ -543,7 +545,7 @@ export class AdminService {
   // AutoCollect
   async getAutoCollectRules() {
     return await User.findAll({
-      attributes: ["id", "username", "avatar"],
+      attributes: partialUserBase,
       include: [
         {
           model: AutoCollectRule,
@@ -579,12 +581,12 @@ export class AdminService {
             {
               model: User,
               as: "tpuUser",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
             },
             {
               model: LegacyUser,
               as: "legacyUser",
-              attributes: ["id", "username", "createdAt", "updatedAt", "avatar"]
+              attributes: partialUserBase
             }
           ]
         }
@@ -685,6 +687,7 @@ export class AdminService {
         if (users.length === users2.length) {
           if (users.every((user) => users2.includes(user))) {
             // if the users or users2 contains undefined, skip
+            //@ts-ignore
             if (users.includes(undefined) || users2.includes(undefined))
               continue
             if (users.length !== 2 || users2.length !== 2) continue
@@ -727,6 +730,7 @@ export class AdminService {
     for (const chat of chats) {
       if (chat.intent?.length) continue
       const users = chat.users.map((user) => user.tpuUser?.id)
+      //@ts-ignore
       if (users.length !== 2 || users.includes(undefined)) continue
       users.sort((a, b) => a - b)
       console.log(`setting intent for ${chat.id} to ${users}`)
@@ -811,7 +815,7 @@ export class AdminService {
         {
           model: User,
           as: "user",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+          attributes: partialUserBase
         }
       ],
       order: [["createdAt", "DESC"]]
@@ -837,40 +841,53 @@ export class AdminService {
     })
   }
 
-  async getOauthById(id: string, userId?: number) {
-    return await OauthApp.findOne({
+  async getOauthById(id: string, userId?: number, gql?: boolean) {
+    const app = await OauthApp.findOne({
       where: {
-        id,
-        ...(userId ? { userId } : {})
+        id
       },
       // include secret override
       attributes: {
         include: ["secret"]
       },
-      include: [
-        {
-          model: User,
-          as: "user",
-          attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
-        },
-        {
-          model: OauthUser,
-          as: "oauthUsers",
-          include: [
+      include: !gql
+        ? [
             {
               model: User,
               as: "user",
-              attributes: ["id", "username", "avatar", "createdAt", "updatedAt"]
+              attributes: partialUserBase
+            },
+            {
+              model: OauthUser,
+              as: "oauthUsers",
+              include: [
+                {
+                  model: User,
+                  as: "user",
+                  attributes: partialUserBase
+                }
+              ]
             }
           ]
-        }
-      ]
+        : []
     })
+    if (app && userId && userId !== app.userId) {
+      const check = await OauthUser.findOne({
+        where: {
+          oauthAppId: app.id,
+          userId,
+          manage: true
+        }
+      })
+      if (check) return app
+      return null
+    }
+    return app
   }
 
   async updateOauth(body: Partial<OauthApp>, userId: number) {
-    const app = await this.getOauthById(body.id || "")
-    if (!app || app.userId !== userId) throw Errors.NOT_FOUND
+    const app = await this.getOauthById(body.id || "", userId, true)
+    if (!app) throw Errors.NOT_FOUND
     await app.update({
       name: body.name,
       icon: body.icon,
@@ -882,9 +899,14 @@ export class AdminService {
     })
   }
 
-  async createOauthUser(appId: string, username: string, userId: number) {
-    const app = await this.getOauthById(appId)
-    if (!app || app.userId !== userId) throw Errors.NOT_FOUND
+  async createOauthUser(
+    appId: string,
+    username: string,
+    userId: number,
+    manage: boolean = false
+  ) {
+    const app = await this.getOauthById(appId, userId)
+    if (!app) throw Errors.NOT_FOUND
     const user = await User.findOne({
       where: {
         username
@@ -906,26 +928,31 @@ export class AdminService {
           type: "oauth"
         }
       })
-      return
+      return existence
     }
-    await OauthUser.create({
+    return await OauthUser.create({
       userId: user.id,
       oauthAppId: app.id,
-      active: true
+      active: true,
+      manage
     })
   }
 
   async resetOauthSecret(appId: string, userId: number) {
-    const app = await this.getOauthById(appId)
-    if (!app || app.userId !== userId) throw Errors.NOT_FOUND
+    const app = await this.getOauthById(appId, userId)
+    if (!app) throw Errors.NOT_FOUND
+    const secret = await utils.generateAPIKey("oauth")
     await app.update({
-      secret: await utils.generateAPIKey("oauth")
+      secret
     })
+    return {
+      secret
+    }
   }
 
   async deleteOauth(appId: string, userId: number) {
-    const app = await this.getOauthById(appId)
-    if (!app || app.userId !== userId) throw Errors.NOT_FOUND
+    const app = await this.getOauthById(appId, userId)
+    if (!app) throw Errors.NOT_FOUND
     await app.destroy()
     await OauthUser.destroy({
       where: {

@@ -1,13 +1,18 @@
 <template>
   <v-container>
     <GalleryNavigation
-      :supports="supports || { filter: true, metadata: true, search: true, upload: true, sort: true }"
-      @refreshGallery="getGallery()"
-      @update:show="show = $event"
-      @update:search="
-        show.search = $event;
-        page = 1;
+      :supports="
+        supports || {
+          filter: true,
+          metadata: true,
+          search: true,
+          upload: true,
+          sort: true
+        }
       "
+      @refreshGallery="getGallery(undefined, true)"
+      @update:show="show = $event"
+      v-model:search="show.search"
       @update:filter="
         show.selected = $event;
         page = 1;
@@ -20,10 +25,15 @@
         show.sort = $event;
         page = 1;
       "
+      @update:order="
+        show.order = $event;
+        page = 1;
+      "
     ></GalleryNavigation>
     <GalleryCore
       :items="gallery"
       :page="page"
+      :loading="loading"
       :path="path"
       :random-attachment-loading="randomLoading"
       :show="show"
@@ -55,92 +65,75 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
-import { Upload } from "@/models/upload";
 import { CollectionCache } from "@/types/collection";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
+import { GalleryQuery } from "@/graphql/gallery/gallery.graphql";
+import {
+  GalleryFilter,
+  GalleryInput,
+  GalleryOrder,
+  GallerySort,
+  GalleryType,
+  Pager,
+  Upload
+} from "@/gql/graphql";
+import { isNumeric } from "@/plugins/isNumeric";
+import { StateHandler } from "@/components/Scroll/types";
 
 export default defineComponent({
   name: "PersonalGallery",
   components: { GalleryNavigation, GalleryCore },
-  props: ["path", "endpoint", "name", "random", "supports"],
+  props: ["path", "type", "name", "random", "supports", "id"],
   data() {
     return {
-      gallery: {
-        gallery: [] as Upload[],
-        pager: {
-          totalItems: 0,
-          totalPages: 0
-        }
-      },
-      page: 1,
-      show: {
-        types: [
-          {
-            name: "All of them",
-            internalName: "all"
-          },
-          {
-            name: "Not collectivized",
-            internalName: "nonCollectivized"
-          },
-          {
-            name: "Images",
-            internalName: "image"
-          },
-          {
-            name: "Videos",
-            internalName: "video"
-          },
-          {
-            name: "Audio",
-            internalName: "audio"
-          },
-          {
-            name: "Text",
-            internalName: "text"
-          },
-          {
-            name: "Other",
-            internalName: "binary"
+      gallery: undefined as
+        | {
+            items: Upload[];
+            pager: Pager;
           }
-        ],
+        | undefined,
+      page: 1,
+      loading: true,
+      show: {
         search: "",
         metadata: true,
-        selected: "all",
-        sort: "newest"
+        selected: [GalleryFilter.All],
+        sort: GallerySort.CreatedAt,
+        order: GalleryOrder.Desc
       },
       randomLoading: false
     };
   },
+  computed: {
+    rid() {
+      return this.$route.params.id;
+    }
+  },
   methods: {
     async randomAttachment() {
       this.randomLoading = true;
-      const { data } = await this.axios.get(
-        this.random || `${this.endpoint}/random`
-      );
-      this.$functions.copy(
+      // TODO
+      /*this.$functions.copy(
         "https://" + this.$user.user?.domain.domain + "/i/" + data.attachment
-      );
+      );*/
       this.randomLoading = false;
     },
     removeItemFromCollection(item: Upload, collection: CollectionCache) {
-      const index = this.gallery.gallery.findIndex(
+      const index = this.gallery.items.findIndex(
         (i: Upload) => i.id === item.id
       );
       if (index === -1) return;
-      this.gallery.gallery[index] = <Upload>{
-        ...this.gallery.gallery[index],
-        collections: this.gallery.gallery[index]?.collections.filter(
+      this.gallery.items[index] = <Upload>{
+        ...this.gallery.items[index],
+        collections: this.gallery.items[index]?.collections.filter(
           (c: any) => c.id !== collection.id
         )
       };
     },
     deleteItem(item: Upload) {
-      const index = this.gallery.gallery.findIndex(
-        (i: any) => i.id === item.id
-      );
+      const index = this.gallery.items.findIndex((i: any) => i.id === item.id);
       if (index === -1) return;
-      this.gallery.gallery.splice(index, 1);
+      this.gallery.items.splice(index, 1);
     },
     updateItem({
       item,
@@ -149,28 +142,58 @@ export default defineComponent({
       item: number;
       collection: CollectionCache;
     }) {
-      console.log(item, collection);
-      const index = this.gallery.gallery.findIndex((i: any) => i.id === item);
+      const index = this.gallery.items.findIndex((i: any) => i.id === item);
       if (index === -1) return;
-      this.gallery.gallery[index] = {
-        ...this.gallery.gallery[index],
-        collections: [...this.gallery.gallery[index]?.collections, collection]
+      this.gallery.items[index] = {
+        ...this.gallery.items[index],
+        collections: [...this.gallery.items[index]?.collections, collection]
       };
     },
-    async getGallery() {
-      this.$app.componentLoading = true;
-      const { data } = await this.axios.get(this.endpoint, {
-        params: {
-          page: this.page,
-          search: this.show.search,
-          textMetadata: this.show.metadata,
-          filter: this.show.selected,
-          sort: `"${this.show.sort}"`
-        }
+    async getGallery(
+      input?: { state: StateHandler; page: number },
+      reset: boolean = false
+    ) {
+      this.loading = true;
+      if (input) {
+        input.state.loading();
+        this.page++;
+      }
+      const {
+        data: { gallery }
+      } = await this.$apollo.query({
+        query: GalleryQuery,
+        fetchPolicy: "network-only",
+        variables: {
+          input: {
+            page: this.page,
+            filters: this.show.selected,
+            search: this.show.search,
+            sort: this.show.sort,
+            type: this.type,
+            order: this.show.order,
+            collectionId: isNumeric(this.rid) ? parseInt(this.rid) : undefined,
+            shareLink: isNumeric(this.rid) ? undefined : this.rid,
+            limit: 12
+          }
+        } as GalleryInput
       });
-      this.gallery = data as typeof this.gallery;
-      this.$app.componentLoading = false;
-      return data;
+      if (this.gallery && !reset) {
+        this.gallery = {
+          items: [...this.gallery.items, ...gallery.items],
+          pager: gallery.pager
+        };
+      } else {
+        this.gallery = gallery;
+        this.$route.params.page = 1;
+      }
+      if (!gallery.items.length && input) {
+        input.state.complete();
+      } else if (input) {
+        input.state.loaded();
+      }
+
+      this.loading = false;
+      return gallery;
     },
     socketRegister(
       uploads:
@@ -180,10 +203,10 @@ export default defineComponent({
       if (this.page !== 1) return;
       if (Array.isArray(uploads)) {
         for (const upload of uploads) {
-          this.gallery.gallery.unshift(upload.upload);
+          this.gallery.items.unshift(upload.upload);
         }
       } else {
-        this.gallery.gallery.unshift(uploads.upload);
+        this.gallery.items.unshift(uploads.upload);
       }
     },
     init() {
@@ -191,8 +214,8 @@ export default defineComponent({
       this.$app.title = this.name || "Gallery";
       this.page = parseInt(<string>this.$route.params.page) || 1;
       this.getGallery();
-      if (this.endpoint === "/gallery") {
-        this.$socket.on("gallery/create", this.socketRegister);
+      if (this.type === GalleryType.Personal) {
+        this.$sockets.gallery.on("create", this.socketRegister);
       }
     }
   },
@@ -200,7 +223,7 @@ export default defineComponent({
     this.init();
   },
   unmounted() {
-    if (this.endpoint === "/gallery") {
+    if (this.type === GalleryType.Personal) {
       this.$socket.off("gallery/create", this.socketRegister);
     }
   },
@@ -212,6 +235,17 @@ export default defineComponent({
     },
     endpoint() {
       this.init();
+    },
+    "show.selected"() {
+      if (
+        this.show.selected.includes(GalleryFilter.All) &&
+        this.show.selected.length > 1
+      ) {
+        this.show.selected.splice(
+          this.show.selected.indexOf(GalleryFilter.All),
+          1
+        );
+      }
     }
   }
 });

@@ -6,7 +6,6 @@
 
 // Plugins
 import { loadFonts } from "./webfontloader";
-import vuetify from "./vuetify";
 import pinia from "../store";
 import router from "../router";
 
@@ -15,5 +14,10 @@ import type { App } from "vue";
 
 export function registerPlugins(app: App) {
   loadFonts();
-  app.use(pinia).use(vuetify).use(router);
+  pinia.use(({ store }) => {
+    store.$apollo = app.config.globalProperties.$apollo;
+    store.$apolloProvider = app.config.globalProperties.$apolloProvider;
+    store.$app = app.config.globalProperties;
+  });
+  app.use(pinia).use(router);
 }

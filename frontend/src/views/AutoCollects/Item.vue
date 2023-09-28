@@ -3,7 +3,7 @@
     <CollectionBanner :collection="collection"></CollectionBanner>
     <PersonalGallery
       ref="gallery"
-      :endpoint="`/autoCollects/${collection.id}`"
+      :type="GalleryType.AutoCollect"
       :name="`${collection.name} AutoCollects`"
       :path="`/autoCollect/${collection.id}`"
       :supports="{
@@ -82,9 +82,15 @@ import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
 import { Upload } from "@/models/upload";
 import HoverChip from "@/components/Core/HoverChip.vue";
 import PersonalGallery from "@/views/Gallery.vue";
+import { GalleryType } from "@/gql/graphql";
 
 export default defineComponent({
   name: "AutoCollectsItem",
+  computed: {
+    GalleryType() {
+      return GalleryType;
+    }
+  },
   components: {
     PersonalGallery,
     HoverChip,
@@ -127,8 +133,8 @@ export default defineComponent({
         count: 1
       });
       this.$toast.success("Action performed");
-      const { gallery } = await this.$refs.gallery?.getGallery();
-      if (!gallery.length) await this.$router.push(`/autoCollect`);
+      const gallery = await this.$refs.gallery?.getGallery();
+      if (!gallery.items.length) await this.$router.push(`/autoCollect`);
     },
     updateItem({
       item,

@@ -2,7 +2,6 @@ import {
   Body,
   Delete,
   Get,
-  Header,
   HeaderParam,
   JsonController,
   Param,
@@ -20,9 +19,17 @@ import Errors from "@app/lib/errors"
 import { ChatService } from "@app/services/chat.service"
 import { GalleryService } from "@app/services/gallery.service"
 import rateLimits from "@app/lib/rateLimits"
-import uploader from "@app/lib/upload"
+import uploader, { uploaderSmall } from "@app/lib/upload"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { generateClientSatisfies } from "@app/lib/clientSatisfies"
+import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
+import { ChatEmoji } from "@app/models/chatEmoji.model"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { ChatAuditLog } from "@app/models/chatAuditLog.model"
+import {
+  AuditLogActionType,
+  AuditLogCategory
+} from "@app/classes/graphql/chat/auditLog/categories"
 
 @Service()
 @JsonController("/chats")
@@ -54,37 +61,86 @@ export class ChatControllerV3 {
     return await this.chatService.createChat(body.users, user.id)
   }
 
+  slugify(str: string) {
+    return String(str)
+      .normalize("NFKD") // split accented characters into their base characters and diacritical marks
+      .replace(/[\u0300-\u036f]/g, "") // remove all the accents, which happen to be all in the \u03xx UNICODE block.
+      .trim() // trim leading or trailing whitespace
+      .toLowerCase() // convert to lowercase
+      .replace(/[^a-z0-9 -]/g, "") // remove non-alphanumeric characters
+      .replace(/\s+/g, "-") // replace spaces with hyphens
+      .replace(/-+/g, "-") // remove consecutive hyphens
+  }
+
   @Post("/:chatId/icon")
   @UseBefore(rateLimits.uploadLimiterUser)
   async setChatIcon(
     @Auth("chats.edit") user: User,
     @UploadedFile("icon", {
-      options: uploader
+      options: uploaderSmall
     })
     icon: Express.Multer.File,
-    @Param("chatId") chatId: number
+    @Param("chatId") chatId: number,
+    @QueryParam("type") type: "icon" | "background" | "emoji" = "icon"
   ) {
-    await this.chatService.getChatFromAssociation(chatId, user.id)
+    if (type !== "icon" && type !== "background" && type !== "emoji") {
+      throw Errors.INVALID_PARAMETERS
+    }
+    const chat = await this.chatService.getChatFromAssociation(
+      chatId,
+      user.id,
+      false
+    )
     const upload = await this.galleryService.createUpload(
       user.id,
       icon,
       false,
       false
     )
-    await this.chatService.updateGroupSettings(chatId, user.id, {
-      icon: upload.upload.attachment
-    })
-    return {
-      icon: upload.upload.attachment
+
+    if (type === "icon" || type === "background") {
+      await this.chatService.updateGroupSettings(chatId, user.id, {
+        [type]: upload.upload.attachment
+      })
+      return {
+        [type]: upload.upload.attachment
+      }
+    } else if (type === "emoji") {
+      const count = await ChatEmoji.count({
+        where: {
+          chatId: chat.id,
+          deleted: false
+        }
+      })
+      if (count >= 30) throw Errors.MAX_EMOJI
+      const emoji = await ChatEmoji.create({
+        chatId: chat.id,
+        icon: upload.upload.attachment,
+        userId: user.id,
+        name: this.slugify(upload.upload.originalFilename.split(".")[0])
+      })
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: user.id,
+        category: AuditLogCategory.EMOJI,
+        actionType: AuditLogActionType.ADD,
+        message: `<@${user.id}> added an emoji called **${emoji.name}**`
+      })
+      for (const user of chat.users) {
+        redis.json.del(`emoji:${user.userId}`)
+      }
+      this.chatService.emitForAll(chatId, user.id, "emojiCreated", emoji)
+      return emoji
+    } else {
+      throw Errors.INVALID_PARAMETERS
     }
   }
-
   @Delete("/:chatId/icon")
   async deleteChatIcon(
     @Auth("chats.edit") user: User,
     @Param("chatId") chatId: number
   ) {
-    await this.chatService.getChatFromAssociation(chatId, user.id)
+    await this.chatService.getChatFromAssociation(chatId, user.id, false)
     await this.chatService.updateGroupSettings(chatId, user.id, {
       icon: null
     })
@@ -95,6 +151,7 @@ export class ChatControllerV3 {
     @Auth("chats.edit") user: User,
     @Param("chatId") chatId: number
   ) {
+    throw Errors.API_REMOVED_V2
     await this.chatService.leaveGroupChat(chatId, user.id)
   }
 
@@ -107,7 +164,11 @@ export class ChatControllerV3 {
     @HeaderParam("X-TPU-Client") client: string,
     @HeaderParam("X-TPU-Client-Version") version: string
   ) {
-    const chat = await this.chatService.getChatFromAssociation(chatId, user.id)
+    const chat = await this.chatService.getChatFromAssociation(
+      chatId,
+      user.id,
+      false
+    )
     if (!chat) throw Errors.CHAT_NOT_FOUND
     return await this.chatService.searchChat(
       chat.id,
@@ -132,7 +193,10 @@ export class ChatControllerV3 {
     @Param("associationId") associationId: number,
     @Body() body: { name: string; icon: string }
   ) {
-    await this.chatService.updateGroupSettings(associationId, user.id, body)
+    await this.chatService.updateGroupSettings(associationId, user.id, {
+      name: body.name,
+      icon: body.icon
+    })
   }
 
   @Patch("/association/:associationId")
@@ -155,7 +219,11 @@ export class ChatControllerV3 {
     @Param("associationId") associationId: number,
     @Body() body: { users: number[] }
   ) {
-    await this.chatService.checkPermissions(user.id, associationId, "admin")
+    await this.chatService.checkPermissions(
+      user.id,
+      associationId,
+      ChatPermissions.ADD_USERS
+    )
     return await this.chatService.addUsersToChat(
       associationId,
       body.users,
@@ -172,14 +240,9 @@ export class ChatControllerV3 {
     const rank = await this.chatService.checkPermissions(
       user.id,
       associationId,
-      "admin"
+      ChatPermissions.REMOVE_USERS
     )
-    await this.chatService.removeUserFromChat(
-      associationId,
-      userId,
-      user.id,
-      rank
-    )
+    await this.chatService.removeUserFromChat(associationId, [userId], user.id)
   }
 
   @Put("/:associationId/users/:userId")
@@ -189,13 +252,13 @@ export class ChatControllerV3 {
     @Param("userId") userId: number,
     @Body() body: { rank: "admin" | "member" | "owner" }
   ) {
+    throw Errors.API_REMOVED_V2
     const rank = await this.chatService.checkPermissions(
       user.id,
       associationId,
-      "admin"
+      ChatPermissions.MANAGE_RANKS
     )
-    if (rank !== "owner" && body.rank === "owner")
-      throw Errors.PERMISSION_DENIED_RANK
+    if (!rank) throw Errors.PERMISSION_DENIED_RANK
     await this.chatService.updateUserRank(
       userId,
       associationId,
@@ -212,7 +275,8 @@ export class ChatControllerV3 {
   ) {
     const chat = await this.chatService.getChatFromAssociation(
       associationId,
-      user.id
+      user.id,
+      false
     )
     if (!chat) throw Errors.CHAT_NOT_FOUND
     await this.chatService.editMessage(

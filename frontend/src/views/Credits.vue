@@ -6,31 +6,44 @@
       </v-toolbar>
       <v-container>
         <v-card-title>
-          TPU was made possible by the following people:
+          PrivateUploader was made possible by the following people:
         </v-card-title>
         <template v-if="$app.site.officialInstance">
-          <UserCard subtitle="Lead Developer" username="Troplo"></UserCard>
+          <UserCard
+            subtitle="Lead Developer"
+            username="Troplo"
+            :user="users['Troplo']"
+          ></UserCard>
           <UserCard
             subtitle="Infrastructure Manager / Code Contributor"
             username="goose"
+            :user="users['goose']"
           ></UserCard>
           <UserCard
             subtitle="Code Contributor"
             username="electrics01"
+            :user="users['electrics01']"
           ></UserCard>
           <UserCard
             subtitle="Code Contributor / Ideas"
             username="bytedefined"
+            :user="users['bytedefined']"
           ></UserCard>
           <UserCard
             subtitle="Code Contributor / Moral Support, sometimes"
             username="Jolt707"
+            :user="users['Jolt707']"
           ></UserCard>
           <UserCard
             subtitle="Buys me my favorite beverage, Pepsi Max"
             username="Avinera"
+            :user="users['Avinera']"
           ></UserCard>
-          <UserCard subtitle="Buys me lunch" username="Spy"></UserCard>
+          <UserCard
+            subtitle="Buys me lunch"
+            username="Spy"
+            :user="users['Spy']"
+          ></UserCard>
         </template>
         <template v-else>
           <ul class="ml-8">
@@ -71,7 +84,8 @@
         </template>
         <v-card-subtitle>... and everyone else!</v-card-subtitle>
         <v-card-title class="mt-3">
-          TPU was made possible by the following open source projects:
+          PrivateUploader was made possible by the following open source
+          projects:
         </v-card-title>
         <ul class="ml-8">
           <li v-for="pkg in items">
@@ -86,12 +100,15 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import UserCard from "@/components/Users/UserCard.vue";
+import { CreditsQuery } from "@/graphql/user/credits.graphql";
+import { PartialUserBase } from "@/gql/graphql";
 
 export default defineComponent({
   name: "Credits",
   components: { UserCard },
   data() {
     return {
+      users: {} as Record<string, PartialUserBase>,
       frontend: [
         "@vitejs/plugin-vue",
         "@vue/eslint-config-typescript",
@@ -260,8 +277,17 @@ export default defineComponent({
         .filter((item, index, array) => array.indexOf(item) === index);
     }
   },
+  methods: {
+    async getUsers() {
+      const { data } = await this.$apollo.query({
+        query: CreditsQuery
+      });
+      this.users = data;
+    }
+  },
   mounted() {
     this.$app.title = "Credits";
+    this.getUsers();
   }
 });
 </script>

@@ -8,7 +8,7 @@
         <v-select
           v-model="selected"
           :items="users"
-          item-key="id"
+          item-value="id"
           item-title="username"
           label="Users"
           return-object
@@ -17,7 +17,7 @@
           v-if="selected"
           v-model="selectedRule"
           :items="selected.autoCollectRules"
-          item-key="id"
+          item-value="id"
           item-title="name"
           label="Rule"
           return-object

@@ -59,7 +59,7 @@ export default async function embedParser(
   // Get all the links in message content, both http and https.
   let links: RegExpMatchArray | [] =
     message.content?.match(/(https?:\/\/[^\s]+)/g) || []
-  let embeds: any[] = []
+  let embeds: any[] = message.embeds || []
 
   if (links && links.length > 3) links.slice(0, 3)
   if (attachments && attachments.length > 5) attachments.slice(0, 5)
@@ -147,14 +147,43 @@ export default async function embedParser(
   }
 
   for (let [, link] of links.entries()) {
-    const test = await ogsMetadataParser(link, blacklist)
-    if (test) embeds.push(test)
+    try {
+      const url = new URL(link)
+      if (
+        config.hostname === url.host ||
+        config.hostnames?.includes(url.host)
+      ) {
+        if (url.pathname.startsWith("/invite/")) {
+          embeds.push({
+            type: "native",
+            data: {
+              type: "TPU_CHAT_INVITE",
+              id: url.pathname.split("/invite/")[1]
+            }
+          })
+          continue
+        }
+      }
+      const test = await ogsMetadataParser(link, blacklist)
+      if (test) embeds.push(test)
+    } catch {
+      const test = await ogsMetadataParser(link, blacklist)
+      if (test) embeds.push(test)
+    }
   }
 
   if (embeds.length) {
-    await message.update({
-      embeds
-    })
+    await Message.update(
+      {
+        embeds
+      },
+      {
+        where: {
+          id: message.id
+        }
+      }
+    )
+    console.log(embeds)
 
     const chatService: ChatService = Container.get(ChatService)
 

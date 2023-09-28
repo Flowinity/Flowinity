@@ -529,7 +529,8 @@ export default defineComponent({
   components: { PromoCard },
   data() {
     return {
-      step: (this.$app.site?.step as Step) || (0 as Step),
+      // TODO: GQL
+      step: 8, // (this.$app.site?.step as Step) || (0 as Step),
       loading: false,
       database: {
         host: "localhost",

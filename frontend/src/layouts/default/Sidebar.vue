@@ -1,18 +1,27 @@
 <template>
-  <v-navigation-drawer
+  <CoreSidebar
     v-model="$app.mainDrawer"
     app
+    name="default"
     color="dark"
     :floating="true"
     :class="$app.mainDrawer && !$vuetify.display.mobile ? 'sidebar-patch' : ''"
     style="z-index: 2001"
     id="main-drawer"
   >
+    <p
+      class="text-blue mt-4 ml-4 text-small pointer unselectable"
+      v-if="$vuetify.display.mobile && $chat.isCommunications"
+      @click="$app.railMode = 'communications'"
+    >
+      <v-icon>mdi-arrow-right</v-icon>
+      {{ $t("core.sidebar.backToComms") }}
+    </p>
     <v-list density="comfortable" :nav="true" class="mt-1">
       <v-list-item
         v-for="item in $app.sidebar"
         :key="item.id"
-        class="ml-1 my-1 unselectable"
+        class="mx-1 my-1 unselectable"
         style="text-transform: unset !important"
         :href="item.externalPath"
         :link="true"
@@ -22,6 +31,9 @@
         :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
         :prepend-icon="item.icon"
       >
+        <template v-slot:prepend v-if="item.customIcon">
+          <DiscordIcon style="margin-right: 32px" />
+        </template>
         <v-list-item-title>
           {{ item.name }}
           <v-chip
@@ -31,7 +43,7 @@
             variant="tonal"
             size="x-small"
           >
-            NEW
+            {{ $t("generic.new") }}
           </v-chip>
           <v-chip
             class="pb-n2 ml-1"
@@ -88,14 +100,17 @@
         </v-progress-linear>
       </div>
     </template>
-  </v-navigation-drawer>
+  </CoreSidebar>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import CoreSidebar from "@/components/Core/Sidebar.vue";
+import DiscordIcon from "@/components/Icons/Discord.vue";
 
 export default defineComponent({
   name: "Sidebar",
+  components: { DiscordIcon, CoreSidebar },
   data() {
     return {
       order: []

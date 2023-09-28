@@ -1,16 +1,17 @@
 <template>
-  <VErrorBoundary
-    :fall-back="skullCrash"
-    :params="{ e: error }"
-    stop-propagation
-    @error-captured="submitFeedback"
-  >
-    <Maintenance
-      v-model="$app.site.maintenance.enabled"
-      v-if="$app.site.maintenance.enabled"
-    ></Maintenance>
-    <router-view />
-  </VErrorBoundary>
+  <SocketProfiler v-if="$app.dialogs.socketProfiler"></SocketProfiler>
+  <ActionDialog v-if="$app.dialogs.actionDialog"></ActionDialog>
+  <ExperimentsManagerDialog
+    v-if="
+      $app.dialogs.experiments &&
+      ($user.user?.administrator || $user.user?.moderator)
+    "
+  ></ExperimentsManagerDialog>
+  <Maintenance
+    v-model="$app.site.maintenance.enabled"
+    v-if="$app.site.maintenance.enabled"
+  ></Maintenance>
+  <router-view />
 </template>
 
 <script lang="ts">
@@ -18,10 +19,20 @@ import { defineComponent } from "vue";
 import Crash from "@/components/Core/Crash.vue";
 import VErrorBoundary from "./components/Core/ErrorBoundary.vue";
 import Maintenance from "@/components/Core/Dialogs/Maintenance.vue";
+import SocketProfiler from "@/components/Dev/Dialogs/SocketProfiler.vue";
+import ActionDialog from "@/components/Dev/Dialogs/ActionDialog.vue";
+import ExperimentsManagerDialog from "@/components/Dev/Dialogs/Experiments.vue";
 
 export default defineComponent({
   name: "TPUApp",
-  components: { Maintenance, Crash, VErrorBoundary },
+  components: {
+    ExperimentsManagerDialog,
+    ActionDialog,
+    SocketProfiler,
+    Maintenance,
+    Crash,
+    VErrorBoundary
+  },
   data() {
     return {
       skullCrash: Crash,

@@ -1,15 +1,24 @@
-import { Chat } from "@/models/chat";
-import { Message, Message as MessageType } from "@/models/message";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import router from "@/router";
-import { User } from "@/models/user";
-import { Friend } from "@/models/friend";
-import { ChatAssociation } from "@/models/chatAssociation";
-import { useChatStore } from "@/store/chat";
-import { useFriendsStore } from "@/store/friends";
-import { useUserStore } from "@/store/user";
-import { useExperimentsStore } from "@/store/experiments";
+import { useChatStore } from "@/store/chat.store";
+import { useFriendsStore } from "@/store/friends.store";
+import { useUserStore } from "@/store/user.store";
+import { useExperimentsStore } from "@/store/experiments.store";
 import { useToast } from "vue-toastification";
+import {
+  AddRank,
+  BlockedUser,
+  Chat,
+  ChatAssociation,
+  ChatEmoji,
+  ChatRank,
+  Friend,
+  FriendNickname,
+  Message,
+  PartialUserFriend,
+  User,
+  UserStoredStatus
+} from "@/gql/graphql";
 
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();
@@ -23,27 +32,27 @@ function checkMessage(id: number, chatId: number) {
 }
 
 export default async function setup(app) {
-  const socket = app.config.globalProperties.$socket;
+  const sockets = app.config.globalProperties.$sockets;
   const chat = useChatStore();
   const friends = useFriendsStore();
   const user = useUserStore();
   const experiments = useExperimentsStore();
   const toast = useToast();
 
-  socket.on("chatCreated", (newChat: Chat) => {
+  sockets.chat.on("chatCreated", (newChat: Chat) => {
     chat.chats.unshift(newChat);
   });
-  socket.on("chatChanged", (newChat: Chat) => {
+  sockets.chat.on("chatChanged", (newChat: Chat) => {
     const index = chat.chats.findIndex((c) => c.id === newChat.id);
     if (index === -1) return;
     chat.chats[index] = newChat;
   });
-  socket.on("chatDeleted", (chatId: number) => {
+  sockets.chat.on("chatDeleted", (chatId: number) => {
     const index = chat.chats.findIndex((c) => c.id === chatId);
     if (index === -1) return;
     chat.chats.splice(index, 1);
   });
-  socket.on("message", async (newMessage: any) => {
+  sockets.chat.on("message", async (newMessage: any) => {
     if (newMessage.chat.id === chat.selectedChat?.id && chat.isCommunications)
       return;
     const index = chat.chats.findIndex((c) => c.id === newMessage.chat.id);
@@ -61,7 +70,7 @@ export default async function setup(app) {
       )
     ) {
       if (!chat.chats[newIndex]?.messages) chat.chats[newIndex].messages = [];
-      chat.chats[newIndex].messages.unshift(newMessage.message as MessageType);
+      chat.chats[newIndex].messages.unshift(newMessage.message as Message);
     }
     if (
       newMessage.message.userId === user.user?.id ||
@@ -72,7 +81,7 @@ export default async function setup(app) {
       return;
     chat.chats[newIndex].unread++;
     if (
-      user.user?.storedStatus !== "busy" &&
+      user.user?.storedStatus !== UserStoredStatus.Busy &&
       newMessage.message.userId !== user.user?.id
     ) {
       chat.sound();
@@ -87,33 +96,38 @@ export default async function setup(app) {
           toastClassName: "message-toast",
           icon: false,
           onClick: () => {
-            router.push("/communications/" + newMessage.association.id);
+            router.push("/communications/" + newMessage.associationId);
           }
         }
       );
     }
   });
-  socket.on("userStatus", (data: User) => {
-    const index = friends.friends.findIndex((f) => f.friendId === data.id);
+  sockets.trackedUsers.on("userStatus", (data: User) => {
+    const index = user.tracked.findIndex((f) => f.id === data.id);
     if (index === -1) {
       if (data.id === user.user?.id) {
         user.user = {
           ...user.user,
-          status: data.status,
-          platforms: data.platforms
+          status: data.status
         };
         return;
       } else {
         return;
       }
     }
-    friends.friends[index].otherUser.status = data.status;
+    user.tracked[index] = {
+      ...user.tracked[index],
+      status: data.status
+    };
   });
-  socket.on("friendRequestAccepted", async (data: Friend) => {
+  sockets.trackedUsers.on("trackedUsers", (data: PartialUserFriend[]) => {
+    user.tracked = data;
+  });
+  sockets.chat.on("friendRequestAccepted", async (data: Friend) => {
     friends.friends.push(data);
     chat.sound();
   });
-  socket.on(
+  sockets.chat.on(
     "edit",
     (data: {
       chatId: number;
@@ -123,12 +137,17 @@ export default async function setup(app) {
       editedAt: Date;
       userId: number;
       pinned: boolean;
+      emoji?: ChatEmoji[];
     }) => {
       const message = checkMessage(data.id, data.chatId);
       if (!message) return;
       if (data.content) {
         chat.chats[message.index].messages[message.messageIndex].content =
           data.content;
+      }
+      if (data.emoji) {
+        chat.chats[message.index].messages[message.messageIndex].emoji =
+          data.emoji;
       }
       if (data.edited !== undefined) {
         chat.chats[message.index].messages[message.messageIndex].edited =
@@ -144,16 +163,16 @@ export default async function setup(app) {
       }
     }
   );
-  socket.on("notification", async (data: any) => {
+  sockets.user.on("notification", async (data: any) => {
     user.user?.notifications.unshift(data);
     chat.sound();
   });
-  socket.on("messageDelete", (data: { chatId: number; id: number }) => {
+  sockets.chat.on("messageDelete", (data: { chatId: number; id: number }) => {
     const message = checkMessage(data.id, data.chatId);
     if (!message) return;
     chat.chats[message.index].messages.splice(message.messageIndex, 1);
   });
-  socket.on("userSettingsUpdate", (data: any) => {
+  sockets.user.on("userSettingsUpdate", (data: any) => {
     user.user = {
       ...user.user,
       ...data
@@ -163,7 +182,7 @@ export default async function setup(app) {
       ...data
     };
   });
-  socket.on("chatUpdate", (data: any) => {
+  sockets.chat.on("chatUpdate", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.id);
     if (index === -1) return;
     chat.chats[index] = {
@@ -171,22 +190,22 @@ export default async function setup(app) {
       ...data
     };
   });
-  socket.on("readReceipt", (data: ChatAssociation) => {
+  sockets.chat.on("readReceipt", (data: ChatAssociation) => {
     const index = chat.chats.findIndex((c: Chat) => c.id === data.chatId);
     if (index === -1) return;
     if (!chat.chats[index].messages) return;
     const messageIndex = chat.chats[index].messages.findIndex(
-      (m: MessageType) => m.id === data.id
+      (m: Message) => m.id === data.id
     );
     if (messageIndex === -1) return;
     chat.chats[index].messages.forEach((message: Message) => {
       message.readReceipts = message.readReceipts.filter(
-        (r: ChatAssociation) => r.user.id !== data.user.id
+        (r: ChatAssociation) => r.userId !== data.userId
       );
     });
     chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
   });
-  socket.on("chatUserUpdate", (data: any) => {
+  sockets.chat.on("chatUserUpdate", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.chatId);
     if (index === -1) return;
     const userIndex = chat.chats[index].users.findIndex(
@@ -198,12 +217,12 @@ export default async function setup(app) {
       ...data
     };
   });
-  socket.on("addChatUsers", (data: any) => {
+  sockets.chat.on("addChatUsers", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.chatId);
     if (index === -1) return;
     chat.chats[index].users.push(...data.users);
   });
-  socket.on("removeChatUser", (data: any) => {
+  sockets.chat.on("removeChatUser", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.chatId);
     if (index === -1) return;
     const userIndex = chat.chats[index].users.findIndex(
@@ -212,15 +231,19 @@ export default async function setup(app) {
     if (userIndex === -1) return;
     chat.chats[index].users.splice(userIndex, 1);
   });
-  socket.on("removeChat", (data: any) => {
-    const index = chat.chats.findIndex((c) => c.id === data.id);
-    if (index === -1) return;
-    chat.chats.splice(index, 1);
+  sockets.chat.on("removeChat", (data: any) => {
     if (chat.selectedChat?.id === data.id && chat.isCommunications) {
       router.push("/communications/home");
     }
+    const index = chat.chats.findIndex((c) => c.id === data.id);
+    if (index === -1) return;
+    if (chat.dialogs.groupSettings.itemId === data.id) {
+      chat.dialogs.groupSettings.value = false;
+      chat.dialogs.groupSettings.itemId = undefined;
+    }
+    chat.chats.splice(index, 1);
   });
-  socket.on("autoCollectApproval", (data: { type: string }) => {
+  sockets.autoCollects.on("autoCollectApproval", (data: { type: string }) => {
     if (!user.user) return;
     if (
       experiments.experiments["SFX_KFX"] ||
@@ -235,35 +258,211 @@ export default async function setup(app) {
       user.user.pendingAutoCollects -= 1;
     }
   });
-  socket.on("readChat", (data: { id: number }) => {
+  sockets.chat.on("readChat", (data: { id: number }) => {
     const index = chat.chats.findIndex((c) => c.id === data.id);
     if (index === -1) return;
     chat.chats[index].unread = 0;
   });
-  socket.on("friendNickname", (data: { id: number; nickname: string }) => {
+  sockets.user.on("friendNickname", (data: FriendNickname) => {
     const index = friends.friends.findIndex((f) => f.friendId === data.id);
     if (index === -1) return;
     const friend = friends.friends[index];
-    if (friend.otherUser.nickname) {
-      friend.otherUser.nickname.nickname = data.nickname;
+    if (friend.user.nickname) {
+      friend.user.nickname.nickname = data.nickname;
     } else {
-      friend.otherUser.nickname = {
-        nickname: data.nickname,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        id: 0,
-        friendId: data.id,
-        userId: user.user?.id || 0
-      };
+      friend.user.nickname = data;
     }
   });
-  socket.on("userNameColor", (data: { id: number; nameColor: string }) => {
-    for (const c of chat.chats) {
-      for (const user of c.users) {
-        if (user.user?.id === data.id) {
-          user.user.nameColor = data.nameColor;
+  // TODO: do something about name colors
+  /*sockets.trackedUsers.on(
+    "userNameColor",
+    (data: { id: number; nameColor: string }) => {
+      for (const c of chat.chats) {
+        for (const user of c.users) {
+          if (user.user?.id === data.id) {
+            user.user.nameColor = data.nameColor;
+          }
         }
       }
     }
+  );*/
+  sockets.chat.on("rankRemoved", (data: AddRank) => {
+    const index = chat.chats.findIndex((chat) => {
+      return chat.association.id === data.chatAssociationId;
+    });
+    if (index === -1) return;
+    const userAssociation = chat.chats[index].users.find(
+      (assoc) => assoc.id === data.updatingChatAssociationId
+    );
+    if (!userAssociation) return;
+    const rankIndex = userAssociation.ranksMap.indexOf(data.rankId);
+    if (rankIndex === -1) return;
+    userAssociation.ranksMap.splice(rankIndex, 1);
+  });
+  sockets.chat.on("rankAdded", (data: AddRank & { chatId: number }) => {
+    const index = chat.chats.findIndex((chat) => {
+      return chat.id === data.chatId;
+    });
+    if (index === -1) return;
+    const assocIndex = chat.chats[index].users.findIndex(
+      (assoc) => assoc.id === data.updatingChatAssociationId
+    );
+    if (assocIndex === -1) return;
+    const rankIndex = chat.chats[index].users[assocIndex].ranksMap.indexOf(
+      data.rankId
+    );
+    if (rankIndex !== -1) return;
+    chat.chats[index].users[assocIndex].ranksMap.push(data.rankId);
+
+    const chatRanks = chat.chats[index].ranks;
+    const rankMap = new Map(chatRanks.map((rank) => [rank.id, rank]));
+
+    chat.chats[index].users[assocIndex].ranksMap = chat.chats[index].users[
+      assocIndex
+    ].ranksMap.sort((a, b) => {
+      const rankA = rankMap.get(a);
+      const rankB = rankMap.get(b);
+
+      if (rankA && rankB) {
+        return rankB.index - rankA.index;
+      }
+
+      return 0;
+    });
+  });
+  sockets.chat.on(
+    "syncPermissions",
+    (data: {
+      permissions: string[];
+      associationId: number;
+      userId: number;
+    }) => {
+      chat.chats.find(
+        (chat) => chat.association.id === data.associationId
+      ).association.permissions = data.permissions;
+    }
+  );
+  sockets.chat.on("rankUpdated", (data: ChatRank) => {
+    const localChat = chat.chats.find((chat) => chat.id === data.chatId);
+    const rankIndex = localChat.ranks.findIndex((rank) => rank.id === data.id);
+    if (rankIndex === -1) {
+      localChat.ranks.push(data);
+    } else {
+      localChat.ranks[rankIndex] = data;
+    }
+
+    localChat.ranks.sort((a, b) => {
+      return b.index - a.index || 0;
+    });
+  });
+  sockets.chat.on(
+    "rankOrderUpdated",
+    (data: { chatId: number; ranks: Partial<ChatRank>[] }) => {
+      const localChat = chat.chats.find((chat) => chat.id === data.chatId);
+      localChat.ranks = localChat.ranks.map((rank) => {
+        return {
+          ...rank,
+          index: data.ranks.find((r2) => r2.id === rank.id).index
+        };
+      });
+      localChat.ranks.sort((a, b) => {
+        return b.index - a.index || 0;
+      });
+    }
+  );
+  sockets.trackedUsers.on(
+    "userBlocked",
+    (data: { userId: number; blocked: boolean }) => {
+      const u = user.tracked.find((user) => {
+        return user.id === data.userId;
+      });
+      u.blocked = data.blocked;
+    }
+  );
+  sockets.user.on(
+    "userBlocked",
+    (
+      data:
+        | (BlockedUser & { blocked: boolean })
+        | { blockedUserId: number; blocked: boolean }
+    ) => {
+      if ("id" in data && data.blocked) {
+        delete data.blocked;
+        user.blocked.push(data);
+      } else {
+        user.blocked = user.blocked.filter(
+          (block) => block.blockedUserId !== data.blockedUserId
+        );
+      }
+    }
+  );
+  sockets.friends.on(
+    "request",
+    (data: {
+      id: number;
+      status: "removed" | "incoming" | "outgoing";
+      friend: Friend | null;
+    }) => {
+      if (data.status === "removed") {
+        friends.friends = friends.friends.filter(
+          (friend) => friend.friendId === data.id
+        );
+      } else {
+        friends.friends.push(data.friend);
+      }
+    }
+  );
+  function handleDuplicates() {
+    // Handle duplicate names, this system will append ~offset onto them
+    // For example, the oldest smiley will be :smiley: but subsequent will be
+    // :smiley~1: / :smiley~2: / etc
+    const emojiNameCount: Record<string, number> = {};
+
+    for (const e of chat.emoji) {
+      const emojiName = e.name;
+
+      if (emojiNameCount.hasOwnProperty(emojiName)) {
+        emojiNameCount[emojiName]++;
+
+        e.name = `${emojiName}~${emojiNameCount[emojiName]}`;
+      } else {
+        emojiNameCount[emojiName] = 0;
+      }
+    }
+  }
+  sockets.chat.on("emojiCreated", (data: ChatEmoji) => {
+    chat.emoji.push(data);
+    handleDuplicates();
+  });
+  sockets.chat.on("emojiUpdated", (data: Partial<ChatEmoji>) => {
+    const emoji = chat.emoji.find((emoji) => emoji.id === data.id);
+    if (emoji) {
+      emoji.name = data.name;
+    }
+    handleDuplicates();
+  });
+  sockets.chat.on("emojiDeleted", (data: { id: string }) => {
+    chat.emoji = chat.emoji.filter((emoji) => emoji.id !== data.id);
+    handleDuplicates();
+  });
+  sockets.chat.on("rankDeleted", (data: { id: string; chatId: number }) => {
+    const targetedChat = chat.chats.find((chat) => chat.id === data.chatId);
+    if (!targetedChat) return;
+    for (const user of targetedChat.users) {
+      if (user.ranksMap)
+        user.ranksMap = user.ranksMap.filter((rank) => rank !== data.id);
+      if (user.ranks)
+        user.ranks = user.ranks.filter((rank) => rank.id !== data.id);
+    }
+    if (targetedChat.association.ranksMap)
+      targetedChat.association.ranksMap =
+        targetedChat.association.ranksMap.filter((rank) => rank !== data.id);
+    if (targetedChat.association.ranks)
+      targetedChat.association.ranks = targetedChat.association.ranks.filter(
+        (rank) => rank.id !== data.id
+      );
+    targetedChat.ranks = targetedChat.ranks.filter(
+      (rank) => rank.id !== data.id
+    );
   });
 }
