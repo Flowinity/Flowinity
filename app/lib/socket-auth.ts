@@ -45,6 +45,11 @@ export class SocketAuthMiddleware implements MiddlewareInterface {
       }
       case SocketNamespaces.TRACKED_USERS: {
         scope = "user.view"
+        break
+      }
+      default: {
+        scope = "user.view"
+        break
       }
     }
     if (token) {
@@ -54,12 +59,18 @@ export class SocketAuthMiddleware implements MiddlewareInterface {
         socket.disconnect()
         throw new Error("Invalid token")
       } else if (checkScope(scope, session.scopes)) {
-        socket.request.user = session.user
+        if (!socket.request.user) socket.request.user = {}
+        socket.request.user[namespace] = session.user
         socket.join(session.user.id)
+        socket.emitWithAck("connected", namespace)
         next()
         return session
       } else {
-        await socket.emitWithAck("invalidScope", true, 1)
+        await socket.emitWithAck(
+          "invalidScope",
+          namespace ?? "/unknown",
+          `Required scope: ${scope}, you have ${session.scopes}`
+        )
         socket.disconnect()
         throw new Error("Invalid scope")
       }

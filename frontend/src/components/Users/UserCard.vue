@@ -23,21 +23,7 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 export default defineComponent({
   name: "UserCard",
   components: { UserAvatar, UserBanner },
-  props: ["username", "subtitle"],
-  data() {
-    return {
-      user: null as User | null
-    };
-  },
-  methods: {
-    async getUser() {
-      const { data } = await this.axios.get(`/user/profile/${this.username}`);
-      this.user = data;
-    }
-  },
-  mounted() {
-    this.getUser();
-  }
+  props: ["username", "subtitle", "user"]
 });
 </script>
 

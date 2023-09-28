@@ -147,7 +147,6 @@
           ? 'Legacy User'
           : ''
       "
-      :title="$chat.chatName(chat)"
       :to="`/communications/${chat.association.id}`"
       @contextmenu.prevent="context($event, chat)"
       :key="chat.id"
@@ -156,6 +155,16 @@
           $user.users[chat.recipient?.id]?.status === UserStatus.Offline
       }"
     >
+      <template v-slot:title>
+        {{ $chat.chatName(chat) }}
+        <v-chip
+          class="ml-1"
+          v-if="$user.users[chat.recipient?.id]?.bot"
+          size="x-small"
+        >
+          BOT
+        </v-chip>
+      </template>
       <template v-slot:prepend>
         <UserAvatar
           :chat="chat.type === 'group' ? chat : undefined"

@@ -22,12 +22,14 @@ export class ChatSocketController {
     private socketAuthMiddleware: SocketAuthMiddleware
   ) {}
 
+  private nsp = SocketNamespaces.CHAT
+
   @OnConnect()
   async onConnect(@ConnectedSocket() socket: SocketAuth) {
     const session = await this.socketAuthMiddleware.use(
       socket,
       () => {},
-      SocketNamespaces.CHAT
+      this.nsp
     )
     if (session) {
       socket.join(session.user.id)
@@ -41,7 +43,8 @@ export class ChatSocketController {
     @ConnectedSocket() socket: SocketAuth,
     @MessageBody() data: number
   ) {
-    await this.chatService.readChat(data, socket.request.user.id)
+    if (!socket.request.user[this.nsp]) return
+    await this.chatService.readChat(data, socket.request.user[this.nsp].id)
   }
 
   @OnMessage("typing")
@@ -49,8 +52,9 @@ export class ChatSocketController {
     @ConnectedSocket() socket: SocketAuth,
     @MessageBody() data: number
   ) {
+    if (!socket.request.user[this.nsp]) return
     const typingRateLimit = await redis.get(
-      `user:${socket.request.user.id}:typing`
+      `user:${socket.request.user[this.nsp].id}:typing`
     )
     if (
       typingRateLimit &&
@@ -60,10 +64,10 @@ export class ChatSocketController {
 
     const chatService: ChatService = Container.get(ChatService)
 
-    await chatService.typing(data, socket.request.user.id)
+    await chatService.typing(data, socket.request.user[this.nsp].id)
 
     await redis.set(
-      `user:${socket.request.user.id}:typing`,
+      `user:${socket.request.user[this.nsp].id}:typing`,
       new Date().toISOString(),
       "EX",
       2
@@ -75,8 +79,9 @@ export class ChatSocketController {
     @ConnectedSocket() socket: SocketAuth,
     @MessageBody() data: number
   ) {
-    await redis.del(`user:${socket.request.user.id}:typing`)
+    if (!socket.request.user[this.nsp]) return
+    await redis.del(`user:${socket.request.user[this.nsp].id}:typing`)
     const chatService: ChatService = Container.get(ChatService)
-    await chatService.cancelTyping(data, socket.request.user.id)
+    await chatService.cancelTyping(data, socket.request.user[this.nsp].id)
   }
 }

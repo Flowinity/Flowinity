@@ -40,6 +40,15 @@ import utils from "@app/lib/utils"
 import { OauthService } from "@app/services/oauth.service"
 import Errors from "@app/lib/errors"
 import { OauthConsentApp } from "@app/classes/graphql/developers/oauthConsentApp"
+import {
+  DeregisterCommand,
+  RegisterCommand,
+  RegisterPrefix
+} from "@app/classes/graphql/developers/prefix/register"
+import {
+  Command,
+  LookupPrefix
+} from "@app/classes/graphql/developers/prefix/prefix"
 
 @Resolver(OauthApp)
 @Service()
@@ -301,6 +310,76 @@ export class OAuthUserResolver {
       ctx.user!!.id,
       input.manage
     )
+  }
+
+  // Bot "Slash Commands" but done properly
+  @Authorization({
+    scopes: ["user.view"]
+  })
+  @Mutation(() => Success)
+  async registerBotPrefix(
+    @Ctx() ctx: Context,
+    @Arg("input") input: RegisterPrefix
+  ) {
+    if (input.prefix.includes("!"))
+      throw new GraphQLError("Do not include ! in prefix")
+    if (!ctx.user?.bot) throw new GqlError("NOT_BOT")
+    await redis.json.set(`prefix:${ctx.user.id}`, "$", input.prefix + "!")
+    return { success: true }
+  }
+
+  @Authorization({
+    scopes: ["user.view"]
+  })
+  @Mutation(() => Success)
+  async registerBotCommand(
+    @Ctx() ctx: Context,
+    @Arg("input") input: RegisterCommand
+  ) {
+    if (!ctx.user?.bot) throw new GqlError("NOT_BOT")
+    const commands: Command[] | null = await redis.json.get(
+      `commands:${ctx.user.id}`
+    )
+    if (!commands) {
+      const commands = [input]
+      await redis.json.set(`commands:${ctx.user.id}`, "$", commands)
+      return { success: true }
+    }
+    const command = commands.find(
+      (command) => command.command === input.command
+    )
+    if (command) {
+      command.description = input.description
+    } else {
+      commands.push(input)
+    }
+    await redis.json.set(`commands:${ctx.user.id}`, "$", commands)
+    return { success: true }
+  }
+
+  @Authorization({
+    scopes: ["user.view"]
+  })
+  @Mutation(() => Success)
+  async deregisterBotCommand(
+    @Ctx() ctx: Context,
+    @Arg("input") input: DeregisterCommand
+  ) {
+    if (!ctx.user?.bot) throw new GqlError("NOT_BOT")
+    const commands: Command[] | null = await redis.json.get(
+      `commands:${ctx.user.id}`
+    )
+    if (!commands) {
+      return { success: true }
+    }
+    const command = commands.find(
+      (command) => command.command === input.command
+    )
+    if (!command) return { success: true }
+    const index = commands.indexOf(command)
+    commands.splice(index, 1)
+    await redis.json.set(`commands:${ctx.user.id}`, "$", commands)
+    return { success: true }
   }
 }
 

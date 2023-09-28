@@ -156,6 +156,13 @@
           >
             <template v-slot:title>
               {{ $friends.getName(association.user) || "Deleted User" }}
+              <v-chip
+                class="ml-1"
+                v-if="$user.users[association.userId]?.bot"
+                size="x-small"
+              >
+                BOT
+              </v-chip>
             </template>
             <template v-slot:subtitle v-if="association.legacyUserId">
               {{ $t("chats.roles.legacyUser") }}

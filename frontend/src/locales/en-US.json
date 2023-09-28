@@ -27,7 +27,8 @@
       "android": "Get the app",
       "discord": "Join the Discord",
       "backToComms": "Back to Communications",
-      "backToTPU": "Back to TPU"
+      "backToTPU": "Back to TPU",
+      "communicationsPublic": "Join the TPU Chat"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",
@@ -246,7 +247,7 @@
       "ip": "Backend connecting IP: {ip}",
       "ipWhitelist": "IP whitelist groups: {groups}",
       "server": "Server: {server}",
-      "docs": "TPU API Documentation (WIP, v4)",
+      "docs": "PrivateUploader API Documentation",
       "credits": "Credits",
       "crash": "Crash TPU (dev)",
       "expEnable": "Enable all experiments",

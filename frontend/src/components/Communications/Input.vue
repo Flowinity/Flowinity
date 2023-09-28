@@ -2,7 +2,7 @@
   <div style="width: 100%">
     <Mentionable
       :items="users"
-      :keys="['@', ':']"
+      :keys="['@', ':', '!']"
       :omit-key="true"
       insert-space
       offset="6"
@@ -19,7 +19,7 @@
           ></UserAvatar>
           {{ $chat.lookupUser(item.value).username }}
         </div>
-        <div class="my-2 mx-2" v-else>
+        <div class="my-2 mx-2" v-else-if="key === ':'">
           <v-avatar v-if="item.emoji" size="24">
             <v-img :src="$app.domain + item.emoji.icon" />
           </v-avatar>
@@ -29,6 +29,13 @@
             {{
               $chat.chats.find((chat) => chat.id === item.emoji.chatId)?.name
             }}
+          </span>
+        </div>
+        <div class="my-2 mx-2" v-else>
+          <UserAvatar :user="$user.users[item.botId]" :size="24" class="mr-2" />
+          {{ item.command }}
+          <span class="text-grey ml-2" style="font-size: 12px">
+            {{ item.description }}
           </span>
         </div>
       </template>
@@ -192,6 +199,8 @@ import EmojiPicker from "@/components/Communications/Menus/Emoji.vue";
 import emoji from "@/components/Communications/Menus/Emoji.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
+import { LookupPrefix, Prefix } from "@/gql/graphql";
+import { LookupBotPrefix } from "@/graphql/developer/lookupPrefix.graphql";
 
 export default defineComponent({
   name: "CommunicationsInput",
@@ -218,7 +227,8 @@ export default defineComponent({
       menu: false,
       items: [] as any,
       emojiPicker: false,
-      key: "@"
+      key: "@",
+      cachedPrefixes: [] as Prefix[]
     };
   },
   computed: {
@@ -226,6 +236,20 @@ export default defineComponent({
       return emoji;
     },
     users() {
+      if (this.key.includes("!")) {
+        const find = this.cachedPrefixes.find(
+          (prefix) => prefix.prefix === this.key
+        );
+        if (find)
+          return find.commands.map((command) => {
+            return {
+              ...command,
+              value: command.command,
+              label: command.command
+            };
+          });
+        return [];
+      }
       switch (this.key) {
         case "@":
           if (!this.$chat.selectedChat?.users) return [];
@@ -257,7 +281,6 @@ export default defineComponent({
             const idB = this.$chat.recentEmoji[b.emoji?.id || b.value] || 0;
             return idB - idA;
           });
-
         default:
           return [];
       }
@@ -278,8 +301,26 @@ export default defineComponent({
       //@ts-ignore
       this.$refs?.uploadInput?.click();
     },
-    onOpen(key: string) {
+    async onOpen(key: string) {
       this.key = key;
+      if (this.key.includes("!")) {
+        const find = this.cachedPrefixes.find(
+          (prefix) => prefix.prefix === this.key
+        );
+        if (find) return;
+        const {
+          data: { lookupBotPrefix }
+        } = await this.$apollo.query({
+          query: LookupBotPrefix,
+          variables: {
+            input: {
+              chatAssociationId: parseInt(this.$route.params.chatId),
+              prefix: this.key
+            }
+          }
+        });
+        this.cachedPrefixes.push(lookupBotPrefix);
+      }
     },
     cursor(e, up: boolean) {
       e.preventDefault();
@@ -294,6 +335,11 @@ export default defineComponent({
           textarea.value.length,
           textarea.value.length
         );
+    }
+  },
+  watch: {
+    "$route.params.chatId"() {
+      this.cachedPrefixes = [];
     }
   }
 });

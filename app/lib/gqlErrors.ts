@@ -67,6 +67,12 @@ const Errors = {
   PRIVATE_APP: {
     message:
       "This app is private and you need to be added by the owner or manager."
+  },
+  BLOCK_SELF: {
+    message: "You can't block yourself."
+  },
+  NOT_BOT: {
+    message: "You need to be a bot to do this."
   }
 }
 

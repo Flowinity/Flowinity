@@ -299,9 +299,9 @@ export default async function setup(app) {
     if (rankIndex === -1) return;
     userAssociation.ranksMap.splice(rankIndex, 1);
   });
-  sockets.chat.on("rankAdded", (data: AddRank) => {
+  sockets.chat.on("rankAdded", (data: AddRank & { chatId: number }) => {
     const index = chat.chats.findIndex((chat) => {
-      return chat.association.id === data.chatAssociationId;
+      return chat.id === data.chatId;
     });
     if (index === -1) return;
     const assocIndex = chat.chats[index].users.findIndex(

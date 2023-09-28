@@ -11,6 +11,19 @@
         {{ embed?.data?.description }}
       </v-card-text>
     </v-card>
+    <v-card v-else-if="embed.type === 'bot'" :max-width="500" elevation="0">
+      <v-card-text class="text-overline">
+        {{ embed?.data?.siteName }}
+      </v-card-text>
+      <v-card-text class="mt-n8" style="font-size: 15px">
+        {{ embed?.data?.title }}
+      </v-card-text>
+      <v-card-text
+        class="mt-n8"
+        style="font-size: 13px; white-space: pre-line"
+        v-html="$functions.markdown(embed?.data?.description, null)"
+      ></v-card-text>
+    </v-card>
     <v-img
       v-else-if="embed.type === 'image'"
       :aspect-ratio="embed.data.width / embed.data.height"
@@ -48,11 +61,9 @@
       </v-card-actions>
     </v-card>
     <v-card v-else-if="embed.type === 'video'" :max-width="width" elevation="0">
-      <video
-        :src="$app.domain + embed.data.upload.attachment"
-        :style="'max-width:' + width + 'px;'"
-        controls
-      ></video>
+      <video :style="'max-width:' + width + 'px;'" controls height="300">
+        <source :src="$app.domain + embed.data.upload.attachment" />
+      </video>
     </v-card>
     <v-card
       v-else-if="embed.data.type === 'TPU_CHAT_INVITE'"

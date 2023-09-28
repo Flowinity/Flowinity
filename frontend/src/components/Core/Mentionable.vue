@@ -194,7 +194,6 @@ export default defineComponent({
 
     onMounted(() => {
       input = getInput();
-      console.log(getInput());
       attach();
     });
     onUpdated(() => {
@@ -321,7 +320,10 @@ export default defineComponent({
       if (index >= 0) {
         const { key, keyIndex } = getLastKeyBeforeCaret(index);
         const text = (lastSearchText = getLastSearchText(index, keyIndex));
-        if (!(keyIndex < 1 || /\s/.test(getValue()[keyIndex - 1]))) {
+        if (
+          !key.includes("!") &&
+          !(keyIndex < 1 || /\s/.test(getValue()[keyIndex - 1]))
+        ) {
           return false;
         }
         if (text != null) {
@@ -337,7 +339,7 @@ export default defineComponent({
     function getLastKeyBeforeCaret(caretIndex: number) {
       const [keyData] = props.keys
         .map((key) => ({
-          key,
+          key: key === "!" ? getValue().split("!")[0] + "!" : key,
           keyIndex: getValue().lastIndexOf(key, caretIndex - 1)
         }))
         .sort((a, b) => b.keyIndex - a.keyIndex);
@@ -442,7 +444,7 @@ export default defineComponent({
           localStorage.setItem("emojiStore", JSON.stringify(chat.recentEmoji));
           break;
         default:
-          end = "INVALID!";
+          end = "";
           break;
       }
       switch (currentKey.value) {
@@ -453,7 +455,7 @@ export default defineComponent({
           start = ":";
           break;
         default:
-          start = "INVALID! Please add into mentionable component.";
+          start = currentKey.value;
           break;
       }
       const value =
@@ -464,7 +466,9 @@ export default defineComponent({
             : start + item.value + end
         ) +
         (props.insertSpace ? " " : "");
-      if (input.isContentEditable) {
+      if (value.includes("!")) {
+        setValue(value);
+      } else if (input.isContentEditable) {
         const range = window.getSelection().getRangeAt(0);
         range.setStart(
           range.startContainer,

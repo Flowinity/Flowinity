@@ -19,12 +19,13 @@ import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 @Service()
 export class PulseSocketController {
   constructor(private socketAuthMiddleware: SocketAuthMiddleware) {}
+  private nsp = SocketNamespaces.PULSE
   @OnConnect()
   async onConnect(@ConnectedSocket() socket: SocketAuth) {
     const session = await this.socketAuthMiddleware.use(
       socket,
       () => {},
-      SocketNamespaces.PULSE
+      this.nsp
     )
     if (session) {
       socket.join(session.user.id)
@@ -36,11 +37,11 @@ export class PulseSocketController {
     @ConnectedSocket() socket: SocketAuth,
     @MessageBody() data: PulseClass
   ) {
-    if (!socket.request.user) return
+    if (!socket.request.user[this.nsp]) return
     try {
       if (data.type === "gallery") {
         const pulse = await Pulse.create({
-          userId: socket.request.user.id,
+          userId: socket.request.user[this.nsp].id,
           action: "focus",
           route: "/gallery",
           timeSpent: 0,
@@ -55,7 +56,7 @@ export class PulseSocketController {
         })
       } else if (data.type === "global") {
         const pulse: Pulse = await Pulse.create({
-          userId: socket.request.user.id,
+          userId: socket.request.user[this.nsp].id,
           action: "focus",
           route: data.route,
           timeSpent: 0,
@@ -80,11 +81,11 @@ export class PulseSocketController {
     @ConnectedSocket() socket: SocketAuth,
     @MessageBody() data: SinglePulse
   ) {
-    if (!socket.request.user) return
+    if (!socket.request.user[this.nsp]) return
     try {
       if (data.timeSpent > 3600000) return
       await Pulse.create({
-        userId: socket.request.user.id,
+        userId: socket.request.user[this.nsp].id,
         action: data.action,
         route: data.route,
         timeSpent: data.timeSpent || 0,
@@ -106,7 +107,7 @@ export class PulseSocketController {
     @ConnectedSocket() socket: SocketAuth,
     @MessageBody() data: SinglePulse
   ) {
-    if (!socket.request.user) return
+    if (!socket.request.user[this.nsp]) return
     try {
       const pulse: Pulse | null = await Pulse.findOne({
         where: {

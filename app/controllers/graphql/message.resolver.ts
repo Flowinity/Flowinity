@@ -27,6 +27,7 @@ import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import paginate from "jw-paginate"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
 import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
+import { GraphQLError } from "graphql/error"
 
 export const PaginatedMessagesResponse = PagerResponse(Message)
 export type PaginatedMessagesResponse = InstanceType<
@@ -50,13 +51,16 @@ export class MessageResolver {
     @Arg("input") input: SendMessageInput,
     @Ctx() ctx: Context
   ): Promise<Message> {
+    if (input.embeds?.length && !ctx.user?.bot)
+      throw new GraphQLError("You need to be a bot to use embeds.")
     return await this.chatService.sendMessage(
       input.content,
       ctx.user!!.id,
       input.associationId,
       input.replyId,
       "message",
-      input.attachments
+      input.attachments,
+      input.embeds
     )
   }
 

@@ -1,4 +1,12 @@
-import { Arg, Ctx, FieldResolver, Mutation, Resolver, Root } from "type-graphql"
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  Mutation,
+  Query,
+  Resolver,
+  Root
+} from "type-graphql"
 import { Container, Service } from "typedi"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import {
@@ -31,6 +39,12 @@ import { AddBotToChatInput } from "@app/classes/graphql/developers/addBotToChat"
 import { OauthService } from "@app/services/oauth.service"
 import { OauthUser } from "@app/models/oauthUser.model"
 import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
+import {
+  Command,
+  LookupPrefix,
+  LookupPrefixInput,
+  Prefix
+} from "@app/classes/graphql/developers/prefix/prefix"
 
 @Resolver(ChatAssociation)
 @Service()
@@ -212,7 +226,10 @@ export class ChatAssociationResolver {
         input.chatAssociationId,
         ctx.user!!.id,
         "rankAdded",
-        input
+        {
+          ...input,
+          chatId: chat.id
+        }
       )
       const id = chat.users.find(
         (assoc) => assoc.id === input.updatingChatAssociationId
@@ -524,11 +541,51 @@ export class ChatAssociationResolver {
       ctx.user!!.id,
       "rankAdded",
       {
+        chatId: chat.id,
         chatAssociationId: input.associationId,
         updatingChatAssociationId: assoc.id,
         rankId: rank.id
       }
     )
     return assoc
+  }
+
+  @Authorization({
+    scopes: ["chats.view"]
+  })
+  @Query(() => Prefix)
+  async lookupBotPrefix(
+    @Ctx() ctx: Context,
+    @Arg("input") input: LookupPrefixInput
+  ): Promise<Prefix> {
+    const chat = await this.chatService.getChatFromAssociation(
+      input.chatAssociationId,
+      ctx.user!!.id
+    )
+    const bots = chat.users.filter((user) => user?.tpuUser?.bot)
+    if (!bots.length)
+      return {
+        prefix: input.prefix,
+        commands: []
+      }
+    const commands: LookupPrefix[] = []
+    for (const bot of bots) {
+      const prefix = await redis.json.get(`prefix:${bot.userId}`)
+      if (prefix !== input.prefix) continue
+      commands.push(
+        ...((await redis.json.get(`commands:${bot.userId}`)).map(
+          (command: Command) => {
+            return {
+              ...command,
+              botId: bot.userId
+            }
+          }
+        ) || [])
+      )
+    }
+    return {
+      prefix: input.prefix,
+      commands
+    }
   }
 }

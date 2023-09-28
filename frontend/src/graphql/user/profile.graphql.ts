@@ -9,6 +9,7 @@ export const ProfileQuery = gql`
       administrator
       moderator
       avatar
+      bot
       badges {
         id
         name

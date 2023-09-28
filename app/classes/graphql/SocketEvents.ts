@@ -24,5 +24,6 @@ export enum SocketNamespaces {
   FRIENDS = "/friends",
   AUTO_COLLECTS = "/autoCollects",
   GALLERY = "/gallery",
-  TRACKED_USERS = "/trackedUsers"
+  TRACKED_USERS = "/trackedUsers",
+  TPU = ""
 }

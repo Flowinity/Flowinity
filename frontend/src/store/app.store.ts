@@ -159,6 +159,7 @@ export const useAppStore = defineStore("app", {
       const chat = useChatStore();
       const route = useRoute();
       const experiments = useExperimentsStore();
+      const app = useAppStore();
 
       if (!user.user) return [];
       const items = [
@@ -186,7 +187,7 @@ export const useAppStore = defineStore("app", {
           exact: false,
           name: i18n.t("core.sidebar.gallery"),
           icon: "mdi-image-multiple",
-          scope: "gallery.view"
+          scope: "uploads.view"
         },
         {
           id: 12,
@@ -203,7 +204,7 @@ export const useAppStore = defineStore("app", {
           name: i18n.t("core.sidebar.starred"),
           path: "/starred",
           icon: "mdi-star",
-          scope: ["gallery.view", "starred.view"],
+          scope: ["uploads.view", "starred.view"],
           new: false
         },
         {
@@ -258,6 +259,25 @@ export const useAppStore = defineStore("app", {
           experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
         },
         {
+          id: 39,
+          path: "/invite/privateuploader",
+          name: i18n.t("core.sidebar.communicationsPublic"),
+          icon: "mdi-help",
+          new: true,
+          scope: "",
+          if:
+            !chat?.chats?.find((chat) => chat.id === 375) &&
+            app.site.officialInstance
+        },
+        {
+          id: 39,
+          externalPath: "https://discord.gg/4fB6GCR3Qv",
+          name: i18n.t("core.sidebar.discord"),
+          customIcon: "@/assets/images/discord.svg",
+          new: true,
+          scope: ""
+        },
+        {
           id: 38,
           externalPath:
             "https://play.google.com/store/apps/details?id=com.troplo.privateuploader",
@@ -295,7 +315,7 @@ export const useAppStore = defineStore("app", {
           externalPath: "",
           name: i18n.t("core.sidebar.insights"),
           path: "/insights",
-          scope: "*",
+          scope: "insights.view",
           icon: "mdi-chart-timeline-variant-shimmer"
         });
       }

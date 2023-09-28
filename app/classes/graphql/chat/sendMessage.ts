@@ -1,10 +1,10 @@
 import { Field, InputType } from "type-graphql"
-import { MaxLength, MinLength } from "class-validator"
+import { ArrayMaxSize, IsOptional, MaxLength, MinLength } from "class-validator"
+import { Embed, EmbedInput } from "@app/classes/graphql/chat/message"
 
 @InputType()
 export class SendMessageInput {
   @Field(() => String)
-  @MinLength(1)
   @MaxLength(4000)
   content: string
   @Field()
@@ -17,4 +17,10 @@ export class SendMessageInput {
     nullable: true
   })
   replyId?: number
+  @Field(() => [EmbedInput], {
+    nullable: true
+  })
+  @ArrayMaxSize(3)
+  @IsOptional()
+  embeds?: EmbedInput[]
 }

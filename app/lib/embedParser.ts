@@ -59,7 +59,7 @@ export default async function embedParser(
   // Get all the links in message content, both http and https.
   let links: RegExpMatchArray | [] =
     message.content?.match(/(https?:\/\/[^\s]+)/g) || []
-  let embeds: any[] = []
+  let embeds: any[] = message.embeds || []
 
   if (links && links.length > 3) links.slice(0, 3)
   if (attachments && attachments.length > 5) attachments.slice(0, 5)
@@ -173,9 +173,17 @@ export default async function embedParser(
   }
 
   if (embeds.length) {
-    await message.update({
-      embeds
-    })
+    await Message.update(
+      {
+        embeds
+      },
+      {
+        where: {
+          id: message.id
+        }
+      }
+    )
+    console.log(embeds)
 
     const chatService: ChatService = Container.get(ChatService)
 

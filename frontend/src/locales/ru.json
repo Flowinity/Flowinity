@@ -223,7 +223,7 @@
       "ip": "Backend connecting IP: {ip}",
       "ipWhitelist": "IP whitelist groups: {groups}",
       "server": "Server: {server}",
-      "docs": "TPU API Documentation (WIP, v3)",
+      "docs": "PrivateUploader API Documentation",
       "credits": "Kредиты",
       "crash": "Crash TPU (dev)",
       "expEnable": "Enable all experiments",

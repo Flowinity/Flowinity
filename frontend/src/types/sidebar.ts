@@ -10,4 +10,6 @@ export type SidebarItem = {
   experimentsRequired?: string[];
   click?: (instance: any) => void;
   exact?: boolean;
+  customIcon?: string;
+  if?: boolean;
 };

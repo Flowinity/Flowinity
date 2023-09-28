@@ -282,7 +282,7 @@ function createBaseResolver<T extends ClassType>(
             userId: app.bot.id,
             user: app.bot as PartialUserAuth,
             scopes:
-              "user,uploads,collections,chats.view,chats.send,chats.edit,insights,starred",
+              "user.view,uploads.view,uploads.modify,chats.view,chats.edit,chats.send,uploads.create,collections.view,collections.modify,insights.view,starred.view,starred.modify",
             type: "api",
             expiredAt: null,
             oauthAppId: app.id,
@@ -324,6 +324,7 @@ function createBaseResolver<T extends ClassType>(
 export class PartialUserFriendResolver {
   @FieldResolver(() => FriendNickname)
   async nickname(@Root() user: User, @Ctx() ctx: Context) {
+    if (!ctx.user?.id) return null
     return user.$get("nickname", {
       where: {
         userId: ctx.user?.id
@@ -336,6 +337,7 @@ export class PartialUserFriendResolver {
   })
   async blocked(@Ctx() ctx: Context, @Root() user: User) {
     if (!user) return false
+    if (!ctx.user?.id) return false
     const block = await BlockedUser.findOne({
       where: {
         userId: user.id,

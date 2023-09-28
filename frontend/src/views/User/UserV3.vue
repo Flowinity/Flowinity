@@ -65,6 +65,9 @@
                     "
                   >
                     {{ $friends.getName(user) }}
+                    <v-chip class="ml-1" v-if="user?.bot" size="x-small">
+                      BOT
+                    </v-chip>
                     <span
                       v-if="$friends.getName(user) !== user.username"
                       class="text-grey"

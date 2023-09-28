@@ -31,6 +31,9 @@
         :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
         :prepend-icon="item.icon"
       >
+        <template v-slot:prepend v-if="item.customIcon">
+          <DiscordIcon style="margin-right: 32px" />
+        </template>
         <v-list-item-title>
           {{ item.name }}
           <v-chip
@@ -103,10 +106,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
+import DiscordIcon from "@/components/Icons/Discord.vue";
 
 export default defineComponent({
   name: "Sidebar",
-  components: { CoreSidebar },
+  components: { DiscordIcon, CoreSidebar },
   data() {
     return {
       order: []

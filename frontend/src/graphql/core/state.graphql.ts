@@ -417,6 +417,7 @@ export const CoreStateQuery = gql`
       blocked
       status
       nameColor
+      bot
       nickname {
         nickname
       }

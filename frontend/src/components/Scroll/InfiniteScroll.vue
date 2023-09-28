@@ -31,10 +31,10 @@ const params: Params = {
   parentEl: null,
   emit() {
     if (!top) {
-      prevMessage = chat.selectedChat.messages[0]?.id;
+      prevMessage = chat.selectedChat?.messages[0]?.id;
     } else {
       prevMessage =
-        chat.selectedChat.messages[chat.selectedChat.messages.length - 1]?.id;
+        chat.selectedChat?.messages[chat.selectedChat?.messages.length - 1]?.id;
     }
     stateHandler.loading();
     emit("infinite", stateHandler);

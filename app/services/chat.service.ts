@@ -28,6 +28,7 @@ import {
   AuditLogCategory
 } from "@app/classes/graphql/chat/auditLog/categories"
 import { Friend } from "@app/models/friend.model"
+import { EmbedInput } from "@app/classes/graphql/chat/message"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -978,12 +979,13 @@ export class ChatService {
           where: {
             id: userId
           },
-          attributes: ["id", "status", "storedStatus"]
+          attributes: ["id", "status", "storedStatus", "bot"]
         })
         if (
           !association ||
           association.lastRead === message.id ||
-          user?.storedStatus === "invisible"
+          user?.storedStatus === "invisible" ||
+          user?.bot
         )
           return
         await association.update(
@@ -1344,7 +1346,8 @@ export class ChatService {
       | "administrator"
       | "rename"
       | "system" = "message",
-    attachments?: string[]
+    attachments?: string[],
+    embeds?: EmbedInput[]
   ) {
     const permissions = await this.checkPermissions(
       userId,
@@ -1362,7 +1365,7 @@ export class ChatService {
       if (!message) throw Errors.REPLY_MESSAGE_NOT_FOUND
     }
     // must contain at least one character excluding spaces and newlines and must not contain just #s (one or more)
-    if (!attachments?.length) {
+    if (!attachments?.length && !embeds?.length) {
       content = content?.trim()
       if (
         !content.replace(/\s/g, "").length ||
@@ -1393,7 +1396,15 @@ export class ChatService {
       chatId: chat.id,
       userId,
       type,
-      replyId
+      replyId,
+      embeds:
+        embeds?.map((embed) => {
+          return {
+            data: embed,
+            type: "bot",
+            url: ""
+          }
+        }) || []
     })
 
     redis.set(`chat:${chat.id}:sortDate`, dayjs(message.createdAt).valueOf())

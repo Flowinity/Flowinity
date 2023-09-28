@@ -55,6 +55,7 @@ export class BlockedUserResolver {
       }
     })
     if (!user) throw new GqlError("USER_NOT_FOUND")
+    if (user.id === ctx.user!!.id) throw new GqlError("BLOCK_SELF")
     const exists = await BlockedUser.findOne({
       where: {
         userId: ctx.user!!.id,
