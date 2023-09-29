@@ -45,6 +45,11 @@ import {
   LookupPrefixInput,
   Prefix
 } from "@app/classes/graphql/developers/prefix/prefix"
+import { ChatAuditLog } from "@app/models/chatAuditLog.model"
+import {
+  AuditLogActionType,
+  AuditLogCategory
+} from "@app/classes/graphql/chat/auditLog/categories"
 
 @Resolver(ChatAssociation)
 @Service()
@@ -167,6 +172,19 @@ export class ChatAssociationResolver {
       ctx.user!!.id
     )
     if (!chat) throw new GraphQLError("Chat not found.")
+    const user = await ChatAssociation.findOne({
+      where: {
+        id: input.updatingChatAssociationId,
+        chatId: chat.id
+      },
+      include: [
+        {
+          model: User,
+          as: "tpuUser"
+        }
+      ]
+    })
+    if (!user) throw new GraphQLError("User not found.")
     const permissions = await this.chatService.checkPermissions(
       ctx.user!!.id,
       input.chatAssociationId,
@@ -203,6 +221,15 @@ export class ChatAssociationResolver {
     })
 
     if (rankAssoc) {
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: ctx.user!!.id,
+        category: AuditLogCategory.USER,
+        actionType: AuditLogActionType.MODIFY,
+        message: `<@${ctx.user!!.id}> removed the rank **${
+          rank.name
+        }** from <@${user.tpuUser.id}>`
+      })
       await rankAssoc.destroy()
       this.chatService.emitForAll(
         input.chatAssociationId,
@@ -220,6 +247,15 @@ export class ChatAssociationResolver {
         success: true
       }
     } else {
+      await ChatAuditLog.create({
+        chatId: chat.id,
+        userId: ctx.user!!.id,
+        category: AuditLogCategory.USER,
+        actionType: AuditLogActionType.MODIFY,
+        message: `<@${ctx.user!!.id}> added the rank **${rank.name}** from <@${
+          user.tpuUser.id
+        }>`
+      })
       await ChatRankAssociation.create({
         chatAssociationId: input.updatingChatAssociationId,
         rankId: input.rankId

@@ -107,6 +107,13 @@ export default createVuetify({
     }
   },
   defaults: {
+    VWindowItem: {
+      transition: false,
+      reverseTransition: false
+    },
+    VWindow: {
+      transition: false
+    },
     VSkeletonLoader: {
       color: "card"
     },

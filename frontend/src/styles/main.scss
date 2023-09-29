@@ -679,7 +679,7 @@ $invite-dot-size: 1px;
 $invite-dot-space: 22px;
 
 .invite {
-  height: calc(100vh - 56px - 40px);
+  height: calc(100vh - 56px);
   width: 100%;
   display: flex;
   position: relative;

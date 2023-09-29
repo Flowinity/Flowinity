@@ -932,6 +932,9 @@ export class ChatService {
         }
       })
     })
+    message.content = content
+    message.dataValues.content = content
+    embedParser(message, message.chatId, userId, associationId, [])
     return true
   }
 

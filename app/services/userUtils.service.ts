@@ -364,6 +364,19 @@ export class UserUtilsService {
     banner: string | null,
     type: "banner" | "avatar"
   ) {
+    if (type === "avatar") {
+      this.emitToTrackedUsers(
+        userId,
+        "changeAvatar",
+        {
+          id: userId,
+          avatar: banner
+        },
+        true,
+        SocketNamespaces.TRACKED_USERS,
+        true
+      )
+    }
     return await User.update(
       {
         [type]: banner

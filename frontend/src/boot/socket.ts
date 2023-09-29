@@ -468,4 +468,20 @@ export default async function setup(app) {
       (rank) => rank.id !== data.id
     );
   });
+  sockets.trackedUsers.on(
+    "changeUsername",
+    (data: { id: number; username: string }) => {
+      const u = user.tracked.find((user) => user.id === data.id);
+      if (!u) return;
+      u.username = data.username;
+    }
+  );
+  sockets.trackedUsers.on(
+    "changeAvatar",
+    (data: { id: number; avatar: string }) => {
+      const u = user.tracked.find((user) => user.id === data.id);
+      if (!u) return;
+      u.avatar = data.avatar;
+    }
+  );
 }

@@ -104,7 +104,7 @@
         "publicProfileDesc": "Autoriser les utilisateurs non connctés à voir votre profil s'ils ont le lien. Par défaut, seuls les utilisateurs connectés peuvent voir votre profil."
       },
       "myAccount": {
-        "title": "Mon compte TPU",
+        "title": "Mon compte PrivateUploader",
         "changeUsername": "Changer le nom d'utilisateur",
         "changeEmail": "Changer le courriel",
         "changePassword": "Changer le mot de passe",

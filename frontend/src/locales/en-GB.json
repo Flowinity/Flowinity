@@ -97,11 +97,11 @@
       "privacy": {
         "title": "Privacy",
         "discordPrecaching": "Discord Precaching*",
-        "discordPrecachingDesc": "* Discord precaching sends the TPU link of any media attachment to a Discord channel that gets cleared every 10 minutes in order to have the image cached by Discord by the time it's sent by yourself. Do not enable this if you don't trust Discord.",
+        "discordPrecachingDesc": "* Discord precaching sends the PrivateUploader link of any media attachment to a Discord channel that gets cleared every 10 minutes in order to have the image cached by Discord by the time it's sent by yourself. Do not enable this if you don't trust Discord.",
         "demoMode": "Demo Mode"
       },
       "myAccount": {
-        "title": "My TPU",
+        "title": "My PrivateUploader",
         "changeUsername": "Change Username",
         "changeEmail": "Change Email",
         "changePassword": "Change Password",

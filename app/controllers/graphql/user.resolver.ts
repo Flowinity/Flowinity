@@ -23,14 +23,17 @@ import { Context } from "@app/types/graphql/context"
 import { Notification } from "@app/models/notification.model"
 import {
   PartialUserAuth,
-  PartialUserBase,
   partialUserBase,
   PartialUserFriend,
   PartialUserPublic
 } from "@app/classes/graphql/user/partialUser"
 import { createContext, EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
-import { UpdateUserInput } from "@app/classes/graphql/user/updateUser"
+import {
+  ChangePasswordInput,
+  ChangeUsernameInput,
+  UpdateUserInput
+} from "@app/classes/graphql/user/updateUser"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { UserProfileInput } from "@app/classes/graphql/user/profileInput"
 import { GraphQLError } from "graphql/error"
@@ -42,6 +45,10 @@ import { FriendNickname } from "@app/models/friendNickname"
 import { BlockedUser } from "@app/models/blockedUser.model"
 import { GqlError } from "@app/lib/gqlErrors"
 import { OauthApp } from "@app/models/oauthApp.model"
+import { AuthService } from "@app/services/auth.service"
+import argon2 from "argon2"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import RateLimit from "@app/lib/graphql/RateLimit"
 
 @Resolver(User)
 @Service()
@@ -97,12 +104,97 @@ export class UserResolver extends createBaseResolver("User", User) {
     return user
   }
 
+  @RateLimit({
+    window: 30,
+    max: 12
+  })
   @Authorization({
     scopes: "user.modify"
   })
   @Mutation(() => Boolean)
   async updateUser(@Arg("input") input: UpdateUserInput, @Ctx() ctx: Context) {
     await this.userUtilsService.updateUser(ctx.user!!.id, input)
+    return true
+  }
+
+  @RateLimit({
+    window: 30,
+    max: 5
+  })
+  @Authorization({
+    scopes: "user.modify"
+  })
+  @Mutation(() => Boolean)
+  async changeUserPassword(
+    @Arg("input") input: ChangePasswordInput,
+    @Ctx() ctx: Context
+  ) {
+    await this.authService.validateAuthMethod({
+      credentials: {
+        password: input.currentPassword,
+        totp: input.totp
+      },
+      password: true,
+      alternatePassword: false,
+      totp: true,
+      userId: ctx.user!!.id
+    })
+    await User.update(
+      {
+        password: await argon2.hash(input.newPassword)
+      },
+      {
+        where: {
+          id: ctx.user!!.id
+        }
+      }
+    )
+    return true
+  }
+
+  @RateLimit({
+    window: 120,
+    max: 5
+  })
+  @Authorization({
+    scopes: "user.modify"
+  })
+  @Mutation(() => Boolean)
+  async changeUsername(
+    @Arg("input") input: ChangeUsernameInput,
+    @Ctx() ctx: Context
+  ) {
+    await this.authService.validateAuthMethod({
+      credentials: {
+        password: input.password,
+        totp: input.totp
+      },
+      userId: ctx.user!!.id,
+      totp: !!input.totp,
+      password: !!input.password,
+      alternatePassword: false
+    })
+    await User.update(
+      {
+        username: input.username
+      },
+      {
+        where: {
+          id: ctx.user!!.id
+        }
+      }
+    )
+    this.userUtilsService.emitToTrackedUsers(
+      ctx.user!!.id,
+      "changeUsername",
+      {
+        id: ctx.user!!.id,
+        username: input.username
+      },
+      true,
+      SocketNamespaces.TRACKED_USERS,
+      true
+    )
     return true
   }
 
@@ -161,7 +253,10 @@ function createBaseResolver<T extends ClassType>(
 ) {
   @Resolver(objectTypeCls)
   abstract class UserResolver {
-    constructor(public userUtilsService: UserUtilsService) {}
+    constructor(
+      public userUtilsService: UserUtilsService,
+      public authService: AuthService
+    ) {}
 
     async findByPk(id: number, ctx: Context) {
       return await User.findByPk(id, {

@@ -60,6 +60,7 @@ export default async function embedParser(
   let links: RegExpMatchArray | [] =
     message.content?.match(/(https?:\/\/[^\s]+)/g) || []
   let embeds: any[] = message.embeds || []
+  embeds = embeds.filter((embed) => embed.type === "bot")
 
   if (links && links.length > 3) links.slice(0, 3)
   if (attachments && attachments.length > 5) attachments.slice(0, 5)

@@ -48,7 +48,7 @@
   <v-list-item
     @click="$router.push(`/u/${$user.users[user.id]?.username}`)"
     style="color: rgb(var(--v-theme-error))"
-    v-if="user.id !== $user.user?.id"
+    v-if="false && user.id !== $user.user?.id"
   >
     <v-icon class="mr-1">mdi-flag</v-icon>
     Report

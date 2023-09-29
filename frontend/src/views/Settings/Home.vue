@@ -44,31 +44,24 @@
       <v-expansion-panel-text>
         <v-form v-model="valid.username">
           <v-text-field
-            v-model="$user.user.username"
+            v-model="username.username"
             :label="$t('settings.home.myAccount.username')"
             :rules="$validation.user.username"
             class="mt-4"
           ></v-text-field>
-          <!--
-          <v-text-field
-            v-model="$user.user.currentPassword"
-            :label="$t('settings.home.myAccount.currentPassword')"
-            :rules="$validation.user.passwordSettings"
-            class="mt-4"
-            type="password"
-          ></v-text-field>-->
-          //TODO
+          <DangerZoneInput
+            v-model:password="username.password"
+            v-model:password-mode="username.passwordMode"
+            v-model:totp="username.totp"
+          />
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
               :disabled="!valid.username"
               color="primary"
-              @click="
-                $user.save().then(() => $emit('update'));
-                $toast.success($t('generic.actionCompleted'));
-              "
+              @click="changeUsername"
             >
-              {{ $t("generic.save") }}
+              {{ $t("generic.update") }}
             </v-btn>
           </v-card-actions>
         </v-form>
@@ -77,23 +70,21 @@
     <v-expansion-panel :title="$t('settings.home.myAccount.changePassword')">
       <v-expansion-panel-text>
         <v-form v-model="valid.password">
-          <!--
           <v-text-field
-            v-model="$user.user.currentPassword"
+            v-model="password.password"
             :label="$t('settings.home.myAccount.currentPassword')"
             :rules="$validation.user.passwordSettings"
             class="mt-4"
             type="password"
           ></v-text-field>
           <v-text-field
-            v-model="$user.user.password"
+            v-model="password.newPassword"
             :label="$t('settings.home.myAccount.newPassword')"
             class="mt-4"
             type="password"
           ></v-text-field>
-          -->
           <v-text-field
-            v-model="confirmPassword"
+            v-model="password.confirmNewPassword"
             :label="$t('settings.home.myAccount.confirmPassword')"
             :rules="[...$validation.user.passwordSettings, ...validation]"
             class="mt-4"
@@ -104,12 +95,9 @@
             <v-btn
               :disabled="!valid.password"
               color="primary"
-              @click="
-                $user.save().then(() => $emit('update'));
-                $toast.success($t('generic.actionCompleted'));
-              "
+              @click="changePassword()"
             >
-              {{ $t("generic.save") }}
+              {{ $t("generic.update") }}
             </v-btn>
           </v-card-actions>
         </v-form>
@@ -262,10 +250,15 @@ import TwoFactor from "@/components/Settings/TwoFactor.vue";
 import { useTheme } from "vuetify";
 import { Collection, UserInsights } from "@/gql/graphql";
 import { UserLightCollectionsQuery } from "@/graphql/collections/getUserCollections.graphql";
+import DangerZoneInput from "@/components/Core/DangerZoneInput.vue";
+import {
+  ChangeUsernameMutation,
+  ChangeUserPasswordMutation
+} from "@/graphql/user/changeUsername.graphql";
 
 export default defineComponent({
   name: "SettingsHome",
-  components: { TwoFactor },
+  components: { DangerZoneInput, TwoFactor },
   emits: ["update"],
   setup() {
     const theme = useTheme();
@@ -279,6 +272,18 @@ export default defineComponent({
   },
   data() {
     return {
+      password: {
+        confirmNewPassword: "",
+        newPassword: "",
+        password: "",
+        totp: ""
+      },
+      username: {
+        username: "",
+        password: "",
+        totp: "",
+        passwordMode: false
+      },
       collections: [] as Collection[],
       notificationSounds: [
         {
@@ -336,11 +341,9 @@ export default defineComponent({
       },
       validation: [
         (value: string) => {
-          return "TODO";
-          /*
-          if (value !== this.$user.user.password)
+          if (value !== this.password.newPassword)
             return "Passwords do not match";
-          return true;*/
+          return true;
         }
       ]
     };
@@ -380,6 +383,34 @@ export default defineComponent({
     "$experiments.experiments.NOTIFICATION_SOUND"(val) {
       this.$chat.sound();
       this.$experiments.setExperiment("NOTIFICATION_SOUND", val);
+    }
+  },
+  methods: {
+    async changePassword() {
+      await this.$apollo.mutate({
+        mutation: ChangeUserPasswordMutation,
+        variables: {
+          input: {
+            newPassword: this.password.newPassword,
+            currentPassword: this.password.password
+          }
+        }
+      });
+    },
+    async changeUsername() {
+      await this.$apollo.mutate({
+        mutation: ChangeUsernameMutation,
+        variables: {
+          input: {
+            username: this.username.username,
+            password: this.username.passwordMode
+              ? this.username.password
+              : undefined,
+            totp: this.username.passwordMode ? undefined : this.username.totp
+          }
+        }
+      });
+      this.$toast.success("Your username has been updated!");
     }
   },
   async mounted() {

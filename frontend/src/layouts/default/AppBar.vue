@@ -2,7 +2,7 @@
   <v-app-bar
     :key="$user.user?.emailVerified ? 1 : 2"
     :class="classString"
-    :extension-height="$user.user?.emailVerified ? 42 : 42"
+    :extension-height="$user.user?.emailVerified ? 0 : 42"
     app
     class="navbar"
     id="navbar"
@@ -226,6 +226,7 @@
         type="info"
         class="rounded-0"
         density="compact"
+        v-if="false"
       >
         <small class="unselectable">Welcome to the new PrivateUploader!</small>
         <template v-slot:append>

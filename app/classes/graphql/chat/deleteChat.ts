@@ -1,12 +1,9 @@
 import { Field, InputType, Int } from "type-graphql"
 
 @InputType({
-  description: "Used for deleting chats and transferring ownership."
+  description: "Used for dangerous operations."
 })
-export class DangerZoneChatInput {
-  @Field(() => Int)
-  associationId: number
-
+export class DangerZoneInput {
   @Field(() => String, {
     nullable: true,
     description: "You may use either 2FA token or password to delete the chat."
@@ -19,6 +16,14 @@ export class DangerZoneChatInput {
       "TOTP/2FA code if enabled. You may use either 2FA token or password to delete the chat."
   })
   totp?: string
+}
+
+@InputType({
+  description: "Used for deleting chats and transferring ownership."
+})
+export class DangerZoneChatInput extends DangerZoneInput {
+  @Field(() => Int)
+  associationId: number
 }
 
 @InputType()

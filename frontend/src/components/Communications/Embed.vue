@@ -24,18 +24,21 @@
         v-html="$functions.markdown(embed?.data?.description, null)"
       ></v-card-text>
     </v-card>
-    <v-img
-      v-else-if="embed.type === 'image'"
-      :aspect-ratio="embed.data.width / embed.data.height"
-      :max-height="embed.data.height > 400 ? 700 : embed.data.height * 2"
-      :max-width="width <= 500 ? width : 500"
-      :src="embed.data.url"
-      class="pointer rounded-xl mb-1"
-      @click="
-        $chat.dialogs.image.object = embed.data;
-        $chat.dialogs.image.value = true;
-      "
-    ></v-img>
+    <div v-else-if="embed.type === 'image'">
+      <img
+        :style="{
+          maxWidth: width <= 500 + 'px' ? width + 'px' : 500 + 'px',
+          maxHeight:
+            embed.data.height > 400 ? 700 + 'px' : embed.data.height * 2 + 'px'
+        }"
+        :src="embed.data.url"
+        class="pointer rounded-xl mb-1"
+        @click="
+          $chat.dialogs.image.object = embed.data;
+          $chat.dialogs.image.value = true;
+        "
+      />
+    </div>
     <v-card
       v-else-if="embed.type === 'file'"
       :max-height="500"

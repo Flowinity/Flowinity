@@ -2,6 +2,7 @@ import { Field, InputType } from "type-graphql"
 import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
 import { IsEmail, IsHexColor, MaxLength, MinLength } from "class-validator"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
+import { DangerZoneInput } from "@app/classes/graphql/chat/deleteChat"
 
 @InputType()
 export class UpdateUserInput {
@@ -73,4 +74,25 @@ export class UpdateUserInput {
     nullable: true
   })
   nameColor: string
+}
+
+@InputType()
+export class ChangePasswordInput {
+  @Field({
+    nullable: true
+  })
+  totp?: string
+  @Field()
+  currentPassword: string
+  @Field()
+  @MinLength(8)
+  newPassword: string
+}
+
+@InputType()
+export class ChangeUsernameInput extends DangerZoneInput {
+  @Field()
+  @MaxLength(32)
+  @MinLength(2)
+  username: string
 }

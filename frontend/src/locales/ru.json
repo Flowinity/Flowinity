@@ -101,7 +101,7 @@
         "demoMode": "Демонстрационный режим"
       },
       "myAccount": {
-        "title": "Моя учетная запись «TPU»",
+        "title": "Моя учетная запись «PrivateUploader»",
         "changeUsername": "Изменить имя пользователя",
         "changeEmail": "Изменить адрес электронной почты",
         "changePassword": "Поменять пароль",
