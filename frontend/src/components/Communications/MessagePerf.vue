@@ -197,6 +197,14 @@
                   mdi-pencil
                 </v-icon>
               </span>
+              <div v-if="blocked(message.userId) && uncollapseBlocked">
+                <a
+                  class="pointer"
+                  @click="$emit('update:uncollapseBlocked', false)"
+                >
+                  Hide blocked message
+                </a>
+              </div>
             </div>
             <CommunicationsInput
               v-if="editing"

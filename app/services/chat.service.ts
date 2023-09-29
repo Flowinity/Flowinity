@@ -41,6 +41,11 @@ class MessageIncludes {
         model: ChatAssociation,
         as: "readReceipts",
         attributes: ["userId", "lastRead"]
+      },
+      {
+        model: User,
+        as: "tpuUser",
+        attributes: ["id", "avatar", "username", "bot"]
       }
     ]
   }
@@ -839,7 +844,7 @@ export class ChatService {
     associationId: number,
     pinned?: boolean
   ) {
-    const matches = content.match(/:([\w~-]+)(?::([\w~-]+))?:/g)
+    const matches = content?.match(/:([\w~-]+)(?::([\w~-]+))?:/g)
     const chat = await this.getChatFromAssociation(associationId, userId)
     if (!chat) throw Errors.CHAT_NOT_FOUND
     const message = await Message.findOne({

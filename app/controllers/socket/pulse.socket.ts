@@ -112,7 +112,7 @@ export class PulseSocketController {
       const pulse: Pulse | null = await Pulse.findOne({
         where: {
           id: data.id,
-          userId: socket.request.user.id
+          userId: socket.request.user[this.nsp].id
         }
       })
 
@@ -124,8 +124,8 @@ export class PulseSocketController {
           timeSpent: data.timeSpent
         })
       }
-    } catch {
-      console.error("Error updating pulse.")
+    } catch (e) {
+      console.error("Error updating pulse.", e)
     }
   }
 }

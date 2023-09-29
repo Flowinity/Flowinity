@@ -21,15 +21,15 @@
   <v-data-table :headers="headers" :items="apiKeys">
     <template v-slot:item.actions="{ item }">
       <v-icon
-        :disabled="!item.raw.info?.accessedFrom.length"
+        :disabled="!item.info?.accessedFrom.length"
         class="mr-3"
         @click="
-          ipHistory = item.raw.info?.accessedFrom;
+          ipHistory = item.info?.accessedFrom;
           dialogs.ipHistory = true;
         "
       >
         <v-tooltip activator="parent" location="top">
-          <span v-if="item.raw.info?.accessedFrom?.length">
+          <span v-if="item.info?.accessedFrom?.length">
             {{ $t("settings.security.ipHistory") }}
           </span>
           <span v-else>
@@ -38,10 +38,10 @@
         </v-tooltip>
         mdi-web
       </v-icon>
-      <v-icon class="mr-2" small @click="$functions.copy(item.raw.token)">
+      <v-icon class="mr-2" small @click="$functions.copy(item.token)">
         mdi-content-copy
       </v-icon>
-      <v-icon class="mr-2" small @click="deleteApiKey(item.raw.id)">
+      <v-icon class="mr-2" small @click="deleteApiKey(item.id)">
         mdi-delete
       </v-icon>
     </template>

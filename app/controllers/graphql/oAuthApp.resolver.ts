@@ -43,6 +43,7 @@ import { OauthConsentApp } from "@app/classes/graphql/developers/oauthConsentApp
 import {
   DeregisterCommand,
   RegisterCommand,
+  RegisterCommands,
   RegisterPrefix
 } from "@app/classes/graphql/developers/prefix/register"
 import {
@@ -332,53 +333,15 @@ export class OAuthUserResolver {
     scopes: ["user.view"]
   })
   @Mutation(() => Success)
-  async registerBotCommand(
+  async registerBotCommands(
     @Ctx() ctx: Context,
-    @Arg("input") input: RegisterCommand
+    @Arg("input") input: RegisterCommands
   ) {
     if (!ctx.user?.bot) throw new GqlError("NOT_BOT")
     const commands: Command[] | null = await redis.json.get(
       `commands:${ctx.user.id}`
     )
-    if (!commands) {
-      const commands = [input]
-      await redis.json.set(`commands:${ctx.user.id}`, "$", commands)
-      return { success: true }
-    }
-    const command = commands.find(
-      (command) => command.command === input.command
-    )
-    if (command) {
-      command.description = input.description
-    } else {
-      commands.push(input)
-    }
-    await redis.json.set(`commands:${ctx.user.id}`, "$", commands)
-    return { success: true }
-  }
-
-  @Authorization({
-    scopes: ["user.view"]
-  })
-  @Mutation(() => Success)
-  async deregisterBotCommand(
-    @Ctx() ctx: Context,
-    @Arg("input") input: DeregisterCommand
-  ) {
-    if (!ctx.user?.bot) throw new GqlError("NOT_BOT")
-    const commands: Command[] | null = await redis.json.get(
-      `commands:${ctx.user.id}`
-    )
-    if (!commands) {
-      return { success: true }
-    }
-    const command = commands.find(
-      (command) => command.command === input.command
-    )
-    if (!command) return { success: true }
-    const index = commands.indexOf(command)
-    commands.splice(index, 1)
-    await redis.json.set(`commands:${ctx.user.id}`, "$", commands)
+    await redis.json.set(`commands:${ctx.user.id}`, "$", commands ?? input)
     return { success: true }
   }
 }

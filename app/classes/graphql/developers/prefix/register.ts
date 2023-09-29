@@ -1,5 +1,5 @@
 import { Field, InputType } from "type-graphql"
-import { MaxLength, MinLength } from "class-validator"
+import { ArrayMaxSize, MaxLength, MinLength } from "class-validator"
 
 @InputType()
 export class RegisterPrefix {
@@ -19,6 +19,13 @@ export class RegisterCommand {
   @MinLength(1)
   @MaxLength(256)
   description: string
+}
+
+@InputType()
+export class RegisterCommands {
+  @Field(() => [RegisterCommand])
+  @ArrayMaxSize(64)
+  commands: RegisterCommand[]
 }
 
 @InputType()

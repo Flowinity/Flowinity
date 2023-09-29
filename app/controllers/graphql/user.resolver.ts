@@ -294,7 +294,14 @@ function createBaseResolver<T extends ClassType>(
         where: {
           token,
           expiredAt: {
-            [Op.gt]: new Date()
+            [Op.or]: [
+              {
+                [Op.gt]: new Date()
+              },
+              {
+                [Op.is]: null
+              }
+            ]
           }
         },
         include: [
