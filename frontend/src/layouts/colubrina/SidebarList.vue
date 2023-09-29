@@ -258,8 +258,8 @@ export default defineComponent({
     context(e: any, item: any) {
       e.preventDefault();
       this.contextMenu.item = item;
-      this.contextMenu.x = e.clientX;
-      this.contextMenu.y = e.clientY;
+      this.contextMenu.x = e.clientX + window.scrollX;
+      this.contextMenu.y = e.clientY + window.scrollY;
       this.contextMenu.dialog = true;
     }
   }
