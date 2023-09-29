@@ -24,6 +24,33 @@
         <CollectionCard :item="item"></CollectionCard>
       </v-col>
     </v-row>
+    <v-row v-if="loading">
+      <v-col v-for="item in 12" :key="item" md="4" xl="3" cols="12">
+        <v-skeleton-loader
+          class="rounded-xl"
+          type="heading, image, paragraph"
+        ></v-skeleton-loader>
+      </v-col>
+    </v-row>
+    <infinite-loading
+      v-if="!$collections.complete"
+      @infinite="getCollections"
+      identifier="collections-bottom"
+    >
+      <template v-slot:spinner>
+        <div class="text-center">
+          <v-progress-circular
+            :size="36"
+            :width="2"
+            indeterminate
+            :model-value="1"
+          ></v-progress-circular>
+        </div>
+      </template>
+      <template v-slot:complete>
+        <span></span>
+      </template>
+    </infinite-loading>
     <small>
       {{ $t("gallery.totalItems", { count: $collections.pager.totalItems }) }}
     </small>
@@ -36,16 +63,24 @@ import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import CreateCollectionDialog from "@/components/Collections/Dialogs/Create.vue";
 import { CollectionFilter } from "@/gql/graphql";
+import InfiniteLoading from "@/components/Scroll/InfiniteScroll.vue";
+import { StateHandler } from "v3-infinite-loading/lib/types";
 
 export default defineComponent({
   name: "CollectionsHome",
-  components: { CreateCollectionDialog, GalleryNavigation, CollectionCard },
+  components: {
+    InfiniteLoading,
+    CreateCollectionDialog,
+    GalleryNavigation,
+    CollectionCard
+  },
   data() {
     return {
       search: "",
       filter: [CollectionFilter.All],
+      complete: false,
       create: false,
-      page: 1,
+      loading: false,
       types: [
         {
           name: "All",
@@ -75,25 +110,36 @@ export default defineComponent({
     };
   },
   methods: {
-    async getCollections() {
-      console.log({
-        search: this.search,
-        filter: this.filter,
-        page: this.page
-      });
-      await this.$collections.getCollections(
+    async getCollections($state: StateHandler) {
+      this.loading = true;
+      $state.loading();
+      this.$collections.page++;
+      const collections = await this.$collections.getCollections(
         {
           search: this.search,
           filter: this.filter,
-          page: this.page
+          page: this.$collections.page
         },
         true
       );
+      $state.loaded();
+      if (!collections.items.length) {
+        $state.complete();
+      }
+      this.loading = false;
     }
   },
   mounted() {
     this.$app.title = "Collections";
-    this.$app.init();
+    if (this.$collections.items.length) return;
+    this.$collections.getCollections(
+      {
+        search: this.search,
+        filter: this.filter,
+        page: 1
+      },
+      true
+    );
   }
 });
 </script>

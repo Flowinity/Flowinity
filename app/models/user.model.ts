@@ -26,7 +26,7 @@ import { FriendNickname } from "@app/models/friendNickname"
 import { AlternatePassword as AlternatePasswordType } from "@app/types/auth"
 import { DefaultProfileLayout } from "@app/classes/UserV3ProfileLayout"
 import { Integration } from "@app/models/integration.model"
-import { Field, Float, ObjectType } from "type-graphql"
+import { Field, Float, Int, ObjectType } from "type-graphql"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { AlternatePassword } from "@app/classes/graphql/user/alternatePassword"
 import { Notification } from "@app/models/notification.model"
@@ -37,7 +37,6 @@ import { UserInsights } from "@app/classes/graphql/user/insights"
 import { Stats } from "@app/classes/graphql/core/core"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { BlockedUser } from "@app/models/blockedUser.model"
-import { FindOptions } from "sequelize"
 
 @DefaultScope(() => ({
   attributes: {
@@ -56,7 +55,7 @@ import { FindOptions } from "sequelize"
 @ObjectType()
 @Table
 export class User extends Model {
-  @Field(() => Float)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,
@@ -379,7 +378,8 @@ export class User extends Model {
 
   @Field(() => String, {
     description: "The user's name color in Communications.",
-    nullable: true
+    nullable: true,
+    deprecationReason: "Replaced by ranks"
   })
   @Column
   nameColor: string

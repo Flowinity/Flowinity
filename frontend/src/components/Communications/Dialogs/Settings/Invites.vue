@@ -3,36 +3,41 @@
     {{ $t("chats.settings.invites.name") }}
   </overline>
   <v-data-table :items="$chat.editingChat.invites" :headers="headers">
-    <template v-slot:item.id="{ item: { raw } }">
-      {{ raw.id }}
-      <v-btn icon size="x-small">
+    <template v-slot:item.id="{ item }">
+      {{ item.id }}
+      <v-btn
+        @click="
+          $functions.copy(`${$app.site.hostnameWithProtocol}/invite/${item.id}`)
+        "
+        icon
+        size="x-small"
+      >
         <v-icon>mdi-content-copy</v-icon>
       </v-btn>
     </template>
-    <template v-slot:item.userId="{ item: { raw } }">
-      <UserAvatar :user="$user.users[raw.userId]" size="32"></UserAvatar>
-      {{ $user.users[raw.userId]?.username }}
+    <template v-slot:item.userId="{ item }">
+      <UserAvatar :user="$user.users[item.userId]" size="32"></UserAvatar>
+      {{ $user.users[item.userId]?.username }}
     </template>
-    <template v-slot:item.expiredAt="{ item: { raw } }">
-      {{ raw.expiredAt ? $date(raw.expiredAt).fromNow() : "Never" }}
+    <template v-slot:item.expiredAt="{ item }">
+      {{ item.expiredAt ? $date(item.expiredAt).fromNow() : "Never" }}
     </template>
-    <template v-slot:item.rankId="{ item: { raw } }">
+    <template v-slot:item.rankId="{ item }">
       {{
-        raw.rankId
-          ? $chat.editingChat.ranks.find((rank) => rank.id === raw.rankId)
+        item.rankId
+          ? $chat.editingChat.ranks.find((rank) => rank.id === item.rankId)
               ?.name || "Deleted Rank"
           : "None"
       }}
     </template>
-    <template v-slot:item.actions="{ item: { raw } }">
-      <v-btn icon>
+    <template v-slot:item.actions="{ item }">
+      <v-btn icon @click="invalidate(item.id)">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </template>
   </v-data-table>
   <small>
-    Some information may be hidden based on your permissions and the
-    auto-granting rank.
+    {{ $t("chats.settings.invites.message") }}
   </small>
 </template>
 
@@ -40,10 +45,13 @@
 import { defineComponent } from "vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { DeleteInviteMutation } from "@/graphql/chats/deleteInvite.graphql";
+import { GetInvitesForChatQuery } from "@/graphql/chats/invite.graphql";
 
 export default defineComponent({
   name: "ChatSettingsInvites",
   components: { UserAvatar, Overline },
+  props: ["active"],
   data() {
     return {
       headers: [
@@ -69,6 +77,45 @@ export default defineComponent({
         }
       ]
     };
+  },
+  methods: {
+    async invalidate(id: string) {
+      await this.$apollo.mutate({
+        mutation: DeleteInviteMutation,
+        variables: {
+          input: {
+            inviteId: id,
+            associationId: this.$chat.editingChat?.association.id
+          }
+        }
+      });
+      this.getInvites();
+    },
+    async getInvites() {
+      const {
+        data: {
+          chat: { invites }
+        }
+      } = await this.$apollo.query({
+        query: GetInvitesForChatQuery,
+        fetchPolicy: "network-only",
+        variables: {
+          input: {
+            associationId: this.$chat.editingChat?.association.id
+          }
+        }
+      });
+      this.$chat.editingChat.invites = invites;
+    }
+  },
+  mounted() {
+    this.getInvites();
+  },
+  watch: {
+    active(val) {
+      if (!val) return;
+      this.getInvites();
+    }
   }
 });
 </script>

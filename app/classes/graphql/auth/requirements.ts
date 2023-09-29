@@ -1,4 +1,4 @@
-import { InputType, ObjectType, Field } from "type-graphql"
+import { InputType, ObjectType, Field, Int } from "type-graphql"
 import { AlternatePassword } from "@app/classes/graphql/user/alternatePassword"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { LoginResponse, LoginUser } from "@app/classes/graphql/auth/login"
@@ -27,7 +27,7 @@ export class AuthValidationRequirements {
   totp: boolean
   @Field(() => AuthValidationCredentials)
   credentials: AuthValidationCredentials
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   userId?: number

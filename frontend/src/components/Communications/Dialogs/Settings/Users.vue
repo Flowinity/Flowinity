@@ -14,10 +14,10 @@
     v-model="search"
   ></v-text-field>
   <v-data-table :items="users" :headers="headers">
-    <template v-slot:item.user.username="{ item: { raw } }">
-      <UserAvatar :user="raw.user"></UserAvatar>
-      {{ raw.user?.username || "Unresolved user" }} ({{ raw.id }})
-      <template v-if="raw.user?.id === $chat.editingChat.userId">
+    <template v-slot:item.user.username="{ item }">
+      <UserAvatar :user="item.user"></UserAvatar>
+      {{ item.user?.username || "Unresolved user" }} ({{ item.id }})
+      <template v-if="item.user?.id === $chat.editingChat.userId">
         <span>
           <v-tooltip activator="parent" location="top">
             {{ $t("chats.roles.owner") }}
@@ -26,24 +26,24 @@
         </span>
       </template>
     </template>
-    <template v-slot:item.ranks="{ item: { raw } }: any">
+    <template v-slot:item.ranks="{ item }: any">
       <AddRole
         :ranks="$chat.editingChat.ranks"
-        :association="raw"
+        :association="item"
         :current-association-id="$chat.editingChat.association.id"
       ></AddRole>
       <v-chip
-        v-for="rank in raw.ranks"
+        v-for="rank in item.ranks"
         :key="rank.id"
         :color="rank.color"
-        class="ml-2"
+        class="ml-2 my-1"
       >
         {{ rank.name }}
         <v-icon
           class="pointer ml-1"
           @click="
             $chat.toggleUserRank(
-              raw.id,
+              item.id,
               $chat.editingChat.association.id,
               rank.id
             )
@@ -57,20 +57,20 @@
         </v-icon>
       </v-chip>
     </template>
-    <template v-slot:item.createdAt="{ item: { raw } }">
-      {{ $date(raw.createdAt).fromNow() }}
+    <template v-slot:item.createdAt="{ item }">
+      {{ $date(item.createdAt).fromNow() }}
     </template>
-    <template v-slot:item.user.createdAt="{ item: { raw } }">
-      {{ $date(raw.user?.createdAt).fromNow() }}
+    <template v-slot:item.user.createdAt="{ item }">
+      {{ $date(item.user?.createdAt).fromNow() }}
     </template>
-    <template v-slot:item.actions="{ item: { raw } }">
+    <template v-slot:item.actions="{ item }">
       <v-btn
         icon
         class="my-1"
-        :disabled="raw.user?.id === $chat.editingChat.userId"
+        :disabled="item.user?.id === $chat.editingChat.userId"
         @click="
           $chat.changeUsers(
-            [raw.user?.id],
+            [item.user?.id],
             false,
             $chat.editingChat.association.id
           )
@@ -84,10 +84,10 @@
       <v-btn
         icon
         class="my-1"
-        :disabled="raw.user?.id === $chat.editingChat.userId"
+        :disabled="item.user?.id === $chat.editingChat.userId"
         v-if="$chat.editingChat.userId === $user.user.id"
         @click="
-          transferOwnership.userId = raw.user?.id;
+          transferOwnership.userId = item.user?.id;
           transferOwnership.value = true;
         "
       >

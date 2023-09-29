@@ -148,6 +148,8 @@ export class AutoCollectControllerV3 {
       }
     })
 
+    console.log(body.ids)
+
     for (const autoCollect of autoCollects) {
       await this.autoCollectService.actAutoCollect(
         user.id,

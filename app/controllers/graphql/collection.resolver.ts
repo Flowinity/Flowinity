@@ -1,4 +1,12 @@
-import { Arg, Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql"
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  Int,
+  Query,
+  Resolver,
+  Root
+} from "type-graphql"
 import { Service } from "typedi"
 import { Context } from "@app/types/graphql/context"
 import { CollectionService } from "@app/services/collection.service"
@@ -73,7 +81,7 @@ export class CollectionResolver {
     return []
   }
 
-  @FieldResolver(() => Number)
+  @FieldResolver(() => Int)
   async itemCount(@Root() collection: Collection) {
     return await collection.$count("attachments")
   }

@@ -1,7 +1,7 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, Int } from "type-graphql"
 
 @InputType()
 export class CreateEmojiInput {
-  @Field(() => Number)
+  @Field(() => Int)
   associationId: number
 }

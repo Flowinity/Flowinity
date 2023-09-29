@@ -6,7 +6,7 @@
     style="z-index: 4001"
   >
     <template v-slot:activator="{ props }">
-      <v-chip class="ml-2" v-bind="props">
+      <v-chip class="ml-2 my-1" v-bind="props">
         <v-icon>mdi-plus</v-icon>
       </v-chip>
     </template>

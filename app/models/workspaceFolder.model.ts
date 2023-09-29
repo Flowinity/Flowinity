@@ -8,13 +8,13 @@ import {
 } from "sequelize-typescript"
 import { Workspace } from "@app/models/workspace.model"
 import { Note } from "@app/models/note.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 @Table
 export class WorkspaceFolder extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,

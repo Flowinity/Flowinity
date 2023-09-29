@@ -2,14 +2,14 @@
   <v-container>
     <v-data-table :items="invites" :headers="headers">
       <template v-slot:item.createdAt="{ item }">
-        {{ $date(item.raw.createdAt).format("MMMM Do YYYY, h:mm:ss A") }}
+        {{ $date(item.createdAt).format("MMMM Do YYYY, h:mm:ss A") }}
       </template>
       <template v-slot:item.actions="{ item }">
         <v-btn
           icon
           small
-          v-if="item.raw.status === 'pending'"
-          @click="actInvite('accepted', item.raw)"
+          v-if="item.status === 'pending'"
+          @click="actInvite('accepted', item)"
         >
           <v-icon>mdi-check</v-icon>
         </v-btn>
@@ -17,8 +17,8 @@
           icon
           small
           class="ml-5"
-          v-if="item.raw.status === 'pending'"
-          @click="actInvite('rejected', item.raw)"
+          v-if="item.status === 'pending'"
+          @click="actInvite('rejected', item)"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>

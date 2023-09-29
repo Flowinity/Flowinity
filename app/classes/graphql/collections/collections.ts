@@ -1,4 +1,10 @@
-import { Field, InputType, ObjectType, registerEnumType } from "type-graphql"
+import {
+  Field,
+  InputType,
+  Int,
+  ObjectType,
+  registerEnumType
+} from "type-graphql"
 import { IsNumber, Max, Min } from "class-validator"
 
 export enum CollectionFilter {
@@ -37,7 +43,6 @@ export class UserCollectionsInput {
   search: string
   @IsNumber()
   @Min(1)
-  @Max(100)
   @Field({
     defaultValue: 24
   })
@@ -52,7 +57,7 @@ export class UserCollectionsInput {
 
 @InputType()
 export class CollectionInput {
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   id: number

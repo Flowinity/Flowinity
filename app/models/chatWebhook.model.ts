@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { Column, DataType, Model, Table } from "sequelize-typescript"
 import { DateType } from "@app/classes/graphql/serializers/date"
 
@@ -13,11 +13,11 @@ export class ChatWebhook extends Model {
   })
   id: string
 
-  @Field(() => Number)
+  @Field(() => Int)
   @Column
   userId: number
 
-  @Field(() => Number)
+  @Field(() => Int)
   @Column
   chatId: number
 

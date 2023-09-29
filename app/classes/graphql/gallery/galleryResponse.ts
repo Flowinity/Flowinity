@@ -1,23 +1,23 @@
-import { ClassType, Field, ObjectType } from "type-graphql"
+import { ClassType, Field, Int, ObjectType } from "type-graphql"
 import { Upload } from "@app/models/upload.model"
 
 @ObjectType()
 export class Pager {
-  @Field(() => Number)
+  @Field(() => Int)
   totalItems: number
-  @Field(() => Number)
+  @Field(() => Int)
   currentPage: number
-  @Field(() => Number)
+  @Field(() => Int)
   pageSize: number
-  @Field(() => Number)
+  @Field(() => Int)
   totalPages: number
-  @Field(() => Number)
+  @Field(() => Int)
   startPage: number
-  @Field(() => Number)
+  @Field(() => Int)
   endPage: number
-  @Field(() => Number)
+  @Field(() => Int)
   startIndex: number
-  @Field(() => Number)
+  @Field(() => Int)
   endIndex: number
   @Field(() => [Number])
   pages: number[]

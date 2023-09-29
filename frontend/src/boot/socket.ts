@@ -220,7 +220,10 @@ export default async function setup(app) {
   sockets.chat.on("addChatUsers", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.chatId);
     if (index === -1) return;
-    chat.chats[index].users.push(...data.users);
+    for (const user of data.users) {
+      if (chat.chats[index].users.find((u) => u.userId === user.id)) return;
+      chat.chats[index].users.push(...data.users);
+    }
   });
   sockets.chat.on("removeChatUser", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.chatId);

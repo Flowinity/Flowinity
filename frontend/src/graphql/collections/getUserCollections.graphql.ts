@@ -1,5 +1,16 @@
 import { gql } from "@apollo/client";
 
+export const UserLightCollectionsQuery = gql`
+  query UserLightCollectionsQuery($input: UserCollectionsInput!) {
+    collections(input: $input) {
+      items {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const UserCollectionsQuery = gql`
   query UserCollectionsQuery($input: UserCollectionsInput!) {
     collections(input: $input) {

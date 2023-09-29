@@ -1,19 +1,7 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  HasMany,
-  HasOne,
-  Model,
-  Table
-} from "sequelize-typescript"
+import { BelongsTo, Column, DataType, Model, Table } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
-import { ChatAssociation } from "@app/models/chatAssociation.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
-import { ChatRank } from "@app/models/chatRank.model"
-import { Message } from "@app/models/message.model"
 import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
@@ -27,7 +15,7 @@ export class BlockedUser extends Model {
   })
   id: string
 
-  @Field(() => Number)
+  @Field(() => Int)
   @Column
   userId: number
 
@@ -39,7 +27,7 @@ export class BlockedUser extends Model {
   @Column
   updatedAt: Date
 
-  @Field(() => Number)
+  @Field(() => Int)
   @Column
   blockedUserId: number
 

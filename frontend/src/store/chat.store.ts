@@ -5,10 +5,8 @@ import { useExperimentsStore } from "@/store/experiments.store";
 import vuetify from "@/plugins/vuetify";
 import { Router, useRouter } from "vue-router";
 import { useAppStore } from "@/store/app.store";
-import { User } from "@/models/user";
 import { useUserStore } from "@/store/user.store";
 import { useCollectionsStore } from "@/store/collections.store";
-import { Collection } from "@/models/collection";
 import { useFriendsStore } from "@/store/friends.store";
 import dayjs from "../plugins/dayjs";
 import { useToast } from "vue-toastification";
@@ -36,7 +34,6 @@ import {
 import { StateHandler } from "v3-infinite-loading/lib/types";
 import { CreateChatMutation } from "@/graphql/chats/createChat.graphql";
 import { UpdateChatMutation } from "@/graphql/chats/updateChat.graphql";
-import { Typing } from "@/models/chat";
 import { AddChatUserMutation } from "@/graphql/chats/addUser.graphql";
 import { LeaveGroupMutation } from "@/graphql/chats/deleteGroup.graphql";
 import {
@@ -44,6 +41,7 @@ import {
   JoinChatInviteMutation
 } from "@/graphql/chats/invite.graphql";
 import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
+import { Typing } from "@/models/chat";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -423,7 +421,8 @@ export const useChatStore = defineStore("chat", {
           administrator: false,
           createdAt: new Date().toISOString(),
           id: 0,
-          moderator: false
+          moderator: false,
+          bot: false
         }
       );
     },

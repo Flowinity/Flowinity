@@ -14,10 +14,8 @@ import { useMailStore } from "@/store/mail.store";
 import { RouteLocationNormalizedLoaded, Router } from "vue-router";
 import { useAdminStore } from "@/store/admin.store";
 import { Axios } from "axios";
-import { User } from "@/models/user";
-import { Chat } from "@/models/chat";
-import { Collection } from "@/models/collection";
 import { ApolloClient } from "@apollo/client/core";
+import { User, Collection, Chat, PartialUserFriend } from "@/gql/graphql";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -58,11 +56,11 @@ declare global {
     tpuInternals: {
       processLink: (link: string) => void;
       readChat: () => void;
-      lookupUser: (id: number) => User;
+      lookupUser: (id: number) => PartialUserFriend;
       lookupChat: (id: number) => Chat;
       openUser: (id: number) => void;
       setChat: (id: number) => void;
-      lookupCollection: (id: number) => Collection;
+      lookupCollection: (id: number) => any;
       openCollection: (id: number) => void;
       router: Router;
       $sockets: Record<string, Socket>;

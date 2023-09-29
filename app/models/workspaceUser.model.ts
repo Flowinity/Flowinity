@@ -8,14 +8,14 @@ import {
 } from "sequelize-typescript"
 import { Workspace } from "@app/models/workspace.model"
 import { User } from "@app/models/user.model"
-import { Field, Float, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @ObjectType()
 @Table
 export class WorkspaceUser extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,
@@ -51,11 +51,11 @@ export class WorkspaceUser extends Model {
   @Column
   accepted: boolean
 
-  @Field(() => Float)
+  @Field(() => Int)
   @Column
   recipientId: number
 
-  @Field(() => Float)
+  @Field(() => Int)
   @Column
   senderId: number
 

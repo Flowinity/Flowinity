@@ -1,4 +1,4 @@
-import { Field, InputType, registerEnumType } from "type-graphql"
+import { Field, InputType, Int, registerEnumType } from "type-graphql"
 import { ArrayMaxSize, ArrayMinSize } from "class-validator"
 
 export enum ToggleUser {
@@ -13,7 +13,7 @@ registerEnumType(ToggleUser, {
 
 @InputType()
 export class AddChatUser {
-  @Field(() => Number)
+  @Field(() => Int)
   chatAssociationId: number
   @Field(() => [Number])
   @ArrayMaxSize(10)

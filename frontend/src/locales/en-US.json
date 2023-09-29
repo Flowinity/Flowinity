@@ -28,7 +28,7 @@
       "discord": "Join the Discord",
       "backToComms": "Back to Communications",
       "backToTPU": "Back to TPU",
-      "communicationsPublic": "Join the TPU Chat"
+      "communicationsPublic": "Join the Chat"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",
@@ -529,6 +529,10 @@
       },
       "audit": {
         "name": "Audit Log"
+      },
+      "invites": {
+        "name": "Group Invites",
+        "message": "Some information may be hidden based on your permissions and the auto-granting rank."
       }
     }
   },

@@ -41,7 +41,7 @@ export const useAppStore = defineStore("app", {
     forcedWorkspaceDrawer: false,
     loading: true,
     componentLoading: false,
-    apiVersion: "v4",
+    apiVersion: "v3",
     title: "",
     notesSaving: false,
     themeEditor: false,
@@ -333,7 +333,8 @@ export const useAppStore = defineStore("app", {
             ? chat.totalUnread
             : false,
           scope: "chats.view",
-          experimentsRequired: ["COMMUNICATIONS"]
+          experimentsRequired: ["COMMUNICATIONS"],
+          new: true
         });
       }
 
@@ -626,8 +627,7 @@ export const useAppStore = defineStore("app", {
       userStore.tracked = trackedUsers;
       userStore.blocked = blockedUsers;
       if (collections) {
-        useCollectionsStore().items = collections.items;
-        useCollectionsStore().pager = collections.pager;
+        useCollectionsStore().persistent = collections.items;
       }
       const chatStore = useChatStore();
       chatStore.emoji = userEmoji;

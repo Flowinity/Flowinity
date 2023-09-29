@@ -1,11 +1,11 @@
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 export class ExperimentType {
   @Field()
   id: string
-  @Field(() => Number)
+  @Field(() => Int)
   value: boolean | number
   @Field({
     nullable: true

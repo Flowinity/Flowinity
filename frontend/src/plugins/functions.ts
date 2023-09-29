@@ -68,7 +68,7 @@ export default {
       return undefined;
     }
   },
-  richMessage(content: string, message: Message | null) {
+  richMessage(content: string, message?: Message | null) {
     const regex = /\\?&lt;(@\d+)&gt;/g;
     const mentions = content.match(regex);
     const regexEmoji = content.match(
@@ -149,7 +149,7 @@ export default {
     }
     return content;
   },
-  markdown(text: string, message: Message | null): any {
+  markdown(text: string, message?: Message | null): any {
     return this.richMessage(md.render(text), message);
   },
   markdownEmail(text: string): any {

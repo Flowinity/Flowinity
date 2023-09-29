@@ -10,14 +10,14 @@ import {
 import { User } from "@app/models/user.model"
 import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
 import { WorkspaceUser } from "@app/models/workspaceUser.model"
-import { Field, Float, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @ObjectType()
 @Table
 export class Workspace extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,
@@ -29,7 +29,7 @@ export class Workspace extends Model {
   @Column
   name: string
 
-  @Field(() => Float)
+  @Field(() => Int)
   @Column
   userId: number
 

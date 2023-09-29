@@ -1,13 +1,13 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, Int } from "type-graphql"
 
 @InputType()
 export class ChatInput {
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   associationId?: number
 
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   chatId?: number

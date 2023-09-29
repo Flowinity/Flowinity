@@ -16,7 +16,7 @@ import { io } from "socket.io-client";
 import functions from "@/plugins/functions";
 import router from "@/router";
 import { Router, useRouter } from "vue-router";
-import { Collection } from "@/models/collection";
+import { Collection } from "@/gql/graphql";
 
 function createSocket(namespace: string) {
   console.log(`[TPU/Socket] Connecting to ${namespace}`);
@@ -89,12 +89,9 @@ export default function setup(app) {
       router,
       lookupCollection: (id) => {
         return (
-          (collections.items.find(
-            (collection) => collection.id === id
-          ) as Collection) ||
-          ({
+          collections.persistent.find((collection) => collection.id === id) || {
             name: "Unknown Collection"
-          } as Collection)
+          }
         );
       },
       openCollection: ((id) => router.push("/collections/" + id)) as (

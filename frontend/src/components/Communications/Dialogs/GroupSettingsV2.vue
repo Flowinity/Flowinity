@@ -132,7 +132,7 @@
           <ChatSettingsUsers />
         </v-window-item>
         <v-window-item value="invites">
-          <ChatSettingsInvites />
+          <ChatSettingsInvites :active="tab === 'invites'" />
         </v-window-item>
         <v-window-item value="emoji">
           <ChatSettingsEmoji />

@@ -1,12 +1,12 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, Int } from "type-graphql"
 
 @InputType()
 export class SetExperimentInput {
   @Field(() => String)
   key: string
-  @Field(() => Number)
+  @Field(() => Int)
   value: number
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true,
     description: "Admin only."
   })

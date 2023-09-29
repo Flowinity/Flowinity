@@ -8,13 +8,13 @@ import {
   Table
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { SessionInfo } from "@app/classes/graphql/user/session"
 
 @ObjectType()
 @Table
 export class Session extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,

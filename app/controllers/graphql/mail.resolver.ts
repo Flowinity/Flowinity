@@ -32,7 +32,7 @@ export class MailResolver {
   @Authorization({
     scopes: "mail.view"
   })
-  @Query(() => Number)
+  @Query(() => Int)
   async unreadMail(@Ctx() ctx: Context) {}
 
   @Authorization({

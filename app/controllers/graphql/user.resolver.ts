@@ -3,6 +3,7 @@ import {
   ClassType,
   Ctx,
   FieldResolver,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -110,7 +111,7 @@ export class UserResolver extends createBaseResolver("User", User) {
     return await user.$get("sessions")
   }
 
-  @FieldResolver(() => Number)
+  @FieldResolver(() => Int)
   async pendingAutoCollects(@Root() user: User) {
     return await redis.json
       .get(`autoCollects:${user.id}`)

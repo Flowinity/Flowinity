@@ -11,7 +11,7 @@ import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { Chat } from "@app/models/chat.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { Embed, MessageType } from "@app/classes/graphql/chat/message"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
@@ -20,7 +20,7 @@ import { ChatEmoji } from "@app/models/chatEmoji.model"
 @ObjectType()
 @Table
 export class Message extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,
@@ -36,11 +36,11 @@ export class Message extends Model {
   @Column
   updatedAt: Date
 
-  @Field(() => Number)
+  @Field(() => Int)
   @Column
   chatId: number
 
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   @Column
@@ -92,13 +92,13 @@ export class Message extends Model {
   @Column
   editedAt: Date
 
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   @Column
   replyId: number
 
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   @Column

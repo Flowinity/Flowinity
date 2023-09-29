@@ -209,7 +209,7 @@
   ></v-select>
   <v-autocomplete
     v-model="$user.user.excludedCollections"
-    :items="$collections.items"
+    :items="collections"
     :label="$t('settings.home.preferences.baseCollections')"
     chips
     class="px-6 mt-4"
@@ -260,7 +260,8 @@
 import { defineComponent } from "vue";
 import TwoFactor from "@/components/Settings/TwoFactor.vue";
 import { useTheme } from "vuetify";
-import { UserInsights } from "@/gql/graphql";
+import { Collection, UserInsights } from "@/gql/graphql";
+import { UserLightCollectionsQuery } from "@/graphql/collections/getUserCollections.graphql";
 
 export default defineComponent({
   name: "SettingsHome",
@@ -278,6 +279,7 @@ export default defineComponent({
   },
   data() {
     return {
+      collections: [] as Collection[],
       notificationSounds: [
         {
           title: "Default",
@@ -380,8 +382,21 @@ export default defineComponent({
       this.$experiments.setExperiment("NOTIFICATION_SOUND", val);
     }
   },
-  mounted() {
+  async mounted() {
     this.$app.title = "Settings";
+    const {
+      data: {
+        collections: { items }
+      }
+    } = await this.$apollo.query({
+      query: UserLightCollectionsQuery,
+      variables: {
+        input: {
+          limit: 99999
+        }
+      }
+    });
+    this.collections = items;
   }
 });
 </script>

@@ -8,7 +8,7 @@ import {
 } from "sequelize-typescript"
 import { NoteVersion } from "@app/models/noteVersion.model"
 import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import {
   NotePermissionsMetadata,
@@ -26,7 +26,7 @@ export type VersionObject = {
 @ObjectType()
 @Table
 export class Note extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,

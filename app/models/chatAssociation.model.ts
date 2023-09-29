@@ -3,7 +3,6 @@ import {
   BelongsToMany,
   Column,
   DataType,
-  HasMany,
   Model,
   Table,
   Unique
@@ -11,10 +10,8 @@ import {
 import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { Chat } from "@app/models/chat.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
-import { ChatPermission } from "@app/models/chatPermission.model"
-import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
 import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { ChatRank } from "@app/models/chatRank.model"
 import { DateType } from "@app/classes/graphql/serializers/date"
@@ -23,7 +20,7 @@ import { ChatInvite } from "@app/models/chatInvite.model"
 @ObjectType()
 @Table
 export class ChatAssociation extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,

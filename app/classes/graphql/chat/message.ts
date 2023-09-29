@@ -1,4 +1,10 @@
-import { Field, InputType, ObjectType, registerEnumType } from "type-graphql"
+import {
+  Field,
+  InputType,
+  Int,
+  ObjectType,
+  registerEnumType
+} from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { IsNumber, Max, Min } from "class-validator"
 import { Upload } from "@app/models/upload.model"
@@ -127,7 +133,7 @@ export class MessagesSearch {
     nullable: true
   })
   query: string
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   userId: number
@@ -147,7 +153,7 @@ export class MessagesSearch {
 
 @InputType()
 export class MessagesInput {
-  @Field(() => Number)
+  @Field(() => Int)
   associationId: number
   @Field(() => ScrollPosition, {
     nullable: true
@@ -157,7 +163,7 @@ export class MessagesInput {
     nullable: true
   })
   search: MessagesSearch
-  @Field(() => Number, {
+  @Field(() => Int, {
     defaultValue: 50
   })
   @IsNumber()
@@ -168,7 +174,7 @@ export class MessagesInput {
 
 @InputType()
 export class PagedMessagesInput extends MessagesInput {
-  @Field(() => Number, {
+  @Field(() => Int, {
     defaultValue: 1
   })
   @IsNumber()
@@ -178,7 +184,7 @@ export class PagedMessagesInput extends MessagesInput {
 
 @InputType()
 export class InfiniteMessagesInput extends MessagesInput {
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   offset: number

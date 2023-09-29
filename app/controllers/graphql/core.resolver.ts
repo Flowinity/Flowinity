@@ -3,6 +3,7 @@ import {
   Authorized,
   Ctx,
   FieldResolver,
+  Int,
   Mutation,
   Query,
   Resolver
@@ -68,7 +69,7 @@ export class CoreResolver {
     } as Partial<CoreState>
   }
 
-  @Query(() => Number)
+  @Query(() => Int)
   async setupStep(@Ctx() ctx: Context) {
     try {
       if (

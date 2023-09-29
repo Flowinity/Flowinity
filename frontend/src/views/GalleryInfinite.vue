@@ -10,7 +10,7 @@
           sort: true
         }
       "
-      @refreshGallery="getGallery()"
+      @refreshGallery="getGallery(undefined, true)"
       @update:show="show = $event"
       v-model:search="show.search"
       @update:filter="
@@ -30,7 +30,7 @@
         page = 1;
       "
     ></GalleryNavigation>
-    <GalleryCore
+    <GalleryCoreInfinite
       :items="gallery"
       :page="page"
       :loading="loading"
@@ -58,7 +58,7 @@
       <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
         <slot :name="name" v-bind="slotData" />
       </template>
-    </GalleryCore>
+    </GalleryCoreInfinite>
   </v-container>
 </template>
 
@@ -78,10 +78,12 @@ import {
   Upload
 } from "@/gql/graphql";
 import { isNumeric } from "@/plugins/isNumeric";
+import { StateHandler } from "@/components/Scroll/types";
+import GalleryCoreInfinite from "@/components/Gallery/GalleryCoreInfinite.vue";
 
 export default defineComponent({
   name: "PersonalGallery",
-  components: { GalleryNavigation, GalleryCore },
+  components: { GalleryCoreInfinite, GalleryNavigation, GalleryCore },
   props: ["path", "type", "name", "random", "supports", "id"],
   data() {
     return {
@@ -105,8 +107,7 @@ export default defineComponent({
   },
   computed: {
     rid() {
-      const id = this.$route.params.id;
-      return isNumeric(id) ? parseInt(id) : id;
+      return this.$route.params.id;
     }
   },
   methods: {
@@ -149,8 +150,15 @@ export default defineComponent({
         collections: [...this.gallery.items[index]?.collections, collection]
       };
     },
-    async getGallery() {
+    async getGallery(
+      input?: { state: StateHandler; page: number },
+      reset: boolean = false
+    ) {
       this.loading = true;
+      if (input) {
+        input.state.loading();
+        this.page++;
+      }
       const {
         data: { gallery }
       } = await this.$apollo.query({
@@ -164,12 +172,27 @@ export default defineComponent({
             sort: this.show.sort,
             type: this.type,
             order: this.show.order,
-            collectionId: typeof this.rid === "number" ? this.rid : undefined,
-            shareLink: typeof this.rid === "string" ? this.rid : undefined
+            collectionId: isNumeric(this.rid) ? parseInt(this.rid) : undefined,
+            shareLink: isNumeric(this.rid) ? undefined : this.rid,
+            limit: 12
           }
         } as GalleryInput
       });
-      this.gallery = gallery;
+      if (this.gallery && !reset) {
+        this.gallery = {
+          items: [...this.gallery.items, ...gallery.items],
+          pager: gallery.pager
+        };
+      } else {
+        this.gallery = gallery;
+        this.$route.params.page = 1;
+      }
+      if (!gallery.items.length && input) {
+        input.state.complete();
+      } else if (input) {
+        input.state.loaded();
+      }
+
       this.loading = false;
       return gallery;
     },
@@ -213,6 +236,20 @@ export default defineComponent({
     },
     endpoint() {
       this.init();
+    },
+    "show.selected"() {
+      if (
+        this.show.selected.includes(GalleryFilter.All) &&
+        this.show.selected.length > 1
+      ) {
+        this.show.selected.splice(
+          this.show.selected.indexOf(GalleryFilter.All),
+          1
+        );
+      }
+    },
+    type() {
+      this.getGallery(undefined, true);
     }
   }
 });

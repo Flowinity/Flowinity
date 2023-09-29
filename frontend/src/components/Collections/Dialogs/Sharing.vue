@@ -49,35 +49,35 @@
       <v-data-table :headers="sharing.headers" :items="collection.users">
         <template v-slot:item="row">
           <tr>
-            <td>{{ row.item.raw.user.username }}</td>
+            <td>{{ row.item.user.username }}</td>
             <td>
               <v-checkbox
-                v-model="row.item.raw.read"
+                v-model="row.item.read"
                 disabled
                 label="Read"
               ></v-checkbox>
             </td>
             <td>
               <v-checkbox
-                v-model="row.item.raw.write"
-                :disabled="row.item.raw.configure"
+                v-model="row.item.write"
+                :disabled="row.item.configure"
                 label="Write"
-                @change="updateUser(row.item.raw)"
+                @change="updateUser(row.item)"
               ></v-checkbox>
             </td>
             <td>
               <v-checkbox
-                v-model="row.item.raw.configure"
-                :disabled="row.item.raw.recipientId === $user.user?.id"
+                v-model="row.item.configure"
+                :disabled="row.item.recipientId === $user.user?.id"
                 label="Conf."
-                @change="updateUser(row.item.raw)"
+                @change="updateUser(row.item)"
               ></v-checkbox>
             </td>
             <td>
               <v-btn
-                :disabled="row.item.raw.userId === $user.user?.id"
+                :disabled="row.item.userId === $user.user?.id"
                 icon
-                @click="deleteUser(row.item.raw)"
+                @click="deleteUser(row.item)"
               >
                 <v-icon>mdi-close</v-icon>
               </v-btn>

@@ -1,21 +1,8 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  Default,
-  DefaultScope,
-  IsEmail,
-  Model,
-  Table,
-  Unique
-} from "sequelize-typescript"
+import { BelongsTo, Column, DataType, Model, Table } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
-import {
-  PartialUserBase,
-  PartialUserFriend
-} from "@app/classes/graphql/user/partialUser"
+import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { Chat } from "@app/models/chat.model"
 import { ChatRank } from "@app/models/chatRank.model"
 
@@ -30,11 +17,11 @@ export class ChatInvite extends Model {
   })
   id: string
 
-  @Field(() => Number)
+  @Field(() => Int)
   @Column
   userId: number
 
-  @Field(() => Number)
+  @Field(() => Int)
   @Column
   chatId: number
 

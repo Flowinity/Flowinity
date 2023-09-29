@@ -1,10 +1,10 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, Int } from "type-graphql"
 
 @InputType({
   description: "Used for deleting chats and transferring ownership."
 })
 export class DangerZoneChatInput {
-  @Field(() => Number)
+  @Field(() => Int)
   associationId: number
 
   @Field(() => String, {
@@ -23,7 +23,7 @@ export class DangerZoneChatInput {
 
 @InputType()
 export class TransferOwnershipInput extends DangerZoneChatInput {
-  @Field(() => Number, {
+  @Field(() => Int, {
     description: "User to transfer to."
   })
   userId: number
@@ -31,6 +31,6 @@ export class TransferOwnershipInput extends DangerZoneChatInput {
 
 @InputType()
 export class LeaveChatInput {
-  @Field(() => Number)
+  @Field(() => Int)
   associationId: number
 }

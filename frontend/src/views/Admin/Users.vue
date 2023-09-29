@@ -8,35 +8,32 @@
         <v-data-table :headers="headers" :items="users">
           <template v-slot:item.banned="{ item }">
             <v-checkbox
-              :model-value="<boolean>item.raw.banned"
-              @change="ban(<number>item.raw.id, $event.target.checked)"
+              :model-value="<boolean>item.banned"
+              @change="ban(<number>item.id, $event.target.checked)"
             ></v-checkbox>
           </template>
           <template v-slot:item.administrator="{ item }">
-            <v-checkbox
-              :model-value="item.raw.administrator"
-              disabled
-            ></v-checkbox>
+            <v-checkbox :model-value="item.administrator" disabled></v-checkbox>
           </template>
           <template v-slot:item.planId="{ item }">
             <v-checkbox
-              :model-value="<number>item.raw.planId === 6"
+              :model-value="<number>item.planId === 6"
               @change="
                 gold(
-                  <number>item.raw.id,
+                  <number>item.id,
                   $event.target.checked,
-                  <string>item.raw.createdAt
+                  <string>item.createdAt
                 )
               "
             ></v-checkbox>
           </template>
           <template v-slot:item.createdAt="{ item }">
-            {{ $date(item.raw.createdAt).format("YYYY/MM/DD hh:mm:ss A") }}
+            {{ $date(item.createdAt).format("YYYY/MM/DD hh:mm:ss A") }}
           </template>
           <template v-slot:item.emailVerified="{ item }">
             <v-checkbox
-              @change="verify(item.raw.id, $event.target.checked)"
-              v-model="item.raw.emailVerified"
+              @change="verify(item.id, $event.target.checked)"
+              v-model="item.emailVerified"
             ></v-checkbox>
           </template>
         </v-data-table>

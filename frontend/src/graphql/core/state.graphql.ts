@@ -107,86 +107,6 @@ export const CoreStateQuery = gql`
         permissionsMap
       }
     }
-    collections(input: { filter: [ALL] }) {
-      items {
-        id
-        name
-        image
-        userId
-        shareLink
-        user {
-          username
-          id
-          createdAt
-          administrator
-          moderator
-          avatar
-        }
-        preview {
-          attachment {
-            attachment
-            id
-          }
-        }
-        users {
-          id
-          createdAt
-          updatedAt
-          collectionId
-          read
-          write
-          configure
-          accepted
-          recipientId
-          senderId
-          identifier
-          user {
-            username
-            id
-            administrator
-            moderator
-            avatar
-          }
-          sender {
-            username
-            id
-            administrator
-            moderator
-            avatar
-          }
-        }
-        recipient {
-          id
-          createdAt
-          updatedAt
-          collectionId
-          read
-          write
-          configure
-          accepted
-          recipientId
-          senderId
-        }
-        shared
-        itemCount
-        permissionsMetadata {
-          write
-          read
-          configure
-        }
-      }
-      pager {
-        totalItems
-        currentPage
-        pageSize
-        totalPages
-        startPage
-        endPage
-        startIndex
-        endIndex
-        pages
-      }
-    }
     coreState {
       connection {
         ip
@@ -267,6 +187,17 @@ export const CoreStateQuery = gql`
       uptime
       uptimeSys
       commitVersion
+    }
+    collections {
+      items {
+        id
+        permissionsMetadata {
+          write
+          read
+          configure
+        }
+        name
+      }
     }
     currentUser {
       username

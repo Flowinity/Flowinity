@@ -77,16 +77,16 @@
               <template v-slot:item.actions="{ item }">
                 <v-btn
                   icon
-                  @click="addUser(item.raw.user.username, true)"
+                  @click="addUser(item.user.username, true)"
                   color="red"
                 >
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </template>
-              <template v-slot:item.manage="{ item: { raw } }">
+              <template v-slot:item.manage="{ item }">
                 <v-checkbox
                   label="Manage"
-                  v-model="raw.manage"
+                  v-model="item.manage"
                   @update:model-value=""
                 ></v-checkbox>
               </template>

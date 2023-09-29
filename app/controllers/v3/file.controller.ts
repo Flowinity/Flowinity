@@ -29,7 +29,14 @@ export class FileControllerV3 {
     const upload = await Upload.findOne({
       where: {
         attachment
-      }
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["banned"]
+        }
+      ]
     })
     if (config.release === "dev") {
       try {
@@ -47,10 +54,12 @@ export class FileControllerV3 {
     }
     //Acropalypse temporary patch
     if (
-      upload.userId === 1 &&
-      upload.name.startsWith("Screenshot_2022") &&
-      user?.id !== 1 &&
-      config.officialInstance
+      (upload.userId === 1 &&
+        upload.name.startsWith("Screenshot_2022") &&
+        user?.id !== 1 &&
+        config.officialInstance) ||
+      upload.user?.banned ||
+      !upload.user
     ) {
       const file = path.resolve(appRoot + "/assets/AuthRequired.png")
       await promisify<string, void>(res.sendFile.bind(res))(file)

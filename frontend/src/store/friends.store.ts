@@ -1,7 +1,13 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import { Friend, FriendStatus, User } from "@/gql/graphql";
+import {
+  Friend,
+  FriendStatus,
+  PartialUserBase,
+  PartialUserFriend,
+  User
+} from "@/gql/graphql";
 import { useUserStore } from "@/store/user.store";
 
 export interface FriendsState {
@@ -20,7 +26,10 @@ export const useFriendsStore = defineStore("friends", {
         FriendStatus.None
       );
     },
-    getName(user: User | number, force = false) {
+    getName(
+      user: PartialUserFriend | PartialUserBase | User | number,
+      force = false
+    ) {
       if (!user) return undefined;
       const userStore = useUserStore();
       const id = typeof user === "number" ? user : user?.id;

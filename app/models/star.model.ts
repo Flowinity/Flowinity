@@ -1,13 +1,13 @@
 import { BelongsTo, Column, DataType, Model, Table } from "sequelize-typescript"
 import { Upload } from "@app/models/upload.model"
 import { User } from "@app/models/user.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @ObjectType()
 @Table
 export class Star extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,

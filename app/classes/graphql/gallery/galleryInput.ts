@@ -1,4 +1,4 @@
-import { Field, InputType, registerEnumType } from "type-graphql"
+import { Field, InputType, Int, registerEnumType } from "type-graphql"
 import { IsEnum, IsNumber, Max, Min } from "class-validator"
 
 export enum Filter {
@@ -92,7 +92,7 @@ export class GalleryInput {
     defaultValue: ""
   })
   search: string
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true,
     defaultValue: 1
   })
@@ -100,7 +100,7 @@ export class GalleryInput {
   @IsNumber()
   @Min(1)
   @Max(100)
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   limit: number
@@ -131,7 +131,7 @@ export class GalleryInput {
   })
   type?: Type
   @IsNumber()
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true,
     description: "Requires Type to be COLLECTION"
   })

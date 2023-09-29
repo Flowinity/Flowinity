@@ -1,8 +1,8 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, Int } from "type-graphql"
 
 @InputType()
 export class BlockUserInput {
-  @Field(() => Number)
+  @Field(() => Int)
   userId: number
   @Field()
   silent: boolean

@@ -5,7 +5,7 @@ import {
   Model,
   Table
 } from "sequelize-typescript"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 
 @ObjectType({
   description: "Old Colubrina users"
@@ -17,7 +17,7 @@ import { Field, ObjectType } from "type-graphql"
 }))
 @Table
 export class LegacyUser extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,

@@ -10,24 +10,28 @@ import {
   UserCollectionsInput
 } from "@/gql/graphql";
 
-export interface CollectionsState {
-  items: CollectionCache[];
-  pager: Pager;
-}
-
 export const useCollectionsStore = defineStore("collections", {
-  state: () =>
-    ({
-      items: [],
-      pager: {
-        totalItems: 0
-      }
-    } as CollectionsState),
+  state: () => ({
+    items: [] as CollectionCache[],
+    pager: {
+      totalItems: 0
+    } as Pager,
+    complete: false,
+    page: 1,
+    persistent: [] as {
+      id: number;
+      name: string;
+      permissionsMetadata: {
+        write: boolean;
+        read: boolean;
+        configure: boolean;
+      };
+    }[]
+  }),
   getters: {
     write(state) {
-      return state.items.filter(
-        (c: CollectionCache) =>
-          c.permissionsMetadata.write || c.permissionsMetadata.configure
+      return state.persistent.filter(
+        (c) => c.permissionsMetadata.write || c.permissionsMetadata.configure
       );
     }
   },
@@ -38,12 +42,18 @@ export const useCollectionsStore = defineStore("collections", {
       } = await this.$apollo.query({
         query: UserCollectionsQuery,
         variables: {
-          input
+          input: {
+            ...input,
+            page: input?.page || this.page
+          }
         }
       });
       if (store) {
-        this.items = collections.items;
+        this.items.push(...collections.items);
         this.pager = collections.pager;
+      }
+      if (!collections.items.length) {
+        this.complete = true;
       }
       return collections;
     },

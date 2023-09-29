@@ -9,13 +9,13 @@ import {
 import { User } from "@app/models/user.model"
 import { Plan } from "@app/models/plan.model"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @ObjectType()
 @Table
 export class Badge extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,

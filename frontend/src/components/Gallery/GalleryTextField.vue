@@ -1,9 +1,4 @@
 <template>
-  <Mentionable
-    id="#gallery-search"
-    :keys="['user:']"
-    :model-value="modelValue"
-  />
   <v-text-field
     id="gallery-search"
     :model-value="modelValue"
@@ -29,13 +24,17 @@
     @change="val = $event.target.value"
     :autofocus="autofocus"
   ></v-text-field>
-  <v-scroll-y-transition v-if="false">
+  <v-scroll-y-transition>
     <v-card
       v-show="focused"
-      style="position: absolute; z-index: 2"
+      style="
+        position: absolute;
+        z-index: 2;
+        max-height: 400px;
+        overflow-y: visible;
+      "
       color="toolbar"
     >
-      {{ mode }}
       <v-container v-if="!mode">
         <v-kbd>user:{{ $user.user?.username || "username" }}</v-kbd>
         Filter by user
@@ -55,7 +54,16 @@
         <v-kbd>type:image</v-kbd>
         Filter by type
       </v-container>
-      <v-container v-else>prototype {{ mode }}</v-container>
+      <v-container v-else>
+        <v-list-item
+          :active="selectedIndex === index"
+          v-for="(item, index) of items"
+          @mouseover="selectedIndex = index"
+          class="rounded pointer"
+        >
+          {{ item.label }}
+        </v-list-item>
+      </v-container>
     </v-card>
   </v-scroll-y-transition>
 </template>
@@ -81,12 +89,24 @@ export default defineComponent({
   emits: ["update:modelValue", "submit"],
   data() {
     return {
+      selectedIndex: -1,
       focused: false,
       val: "",
       currentTabIndex: -1
     };
   },
   computed: {
+    items() {
+      switch (this.mode) {
+        case GallerySearchMode.User:
+          return this.$user.tracked.map((user) => {
+            return {
+              label: user.username,
+              value: user.id
+            };
+          });
+      }
+    },
     mode(): GallerySearchMode | null {
       if (this.modelValue.startsWith("user:")) {
         return GallerySearchMode.User;
@@ -104,6 +124,47 @@ export default defineComponent({
         return null;
       }
     }
+  },
+  methods: {
+    onKeyDown(e: KeyboardEvent) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        this.selectedIndex++;
+        if (this.selectedIndex >= this.items.length) {
+          this.selectedIndex = 0;
+        }
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        this.selectedIndex--;
+        if (this.selectedIndex < 0) {
+          this.selectedIndex = this.items.length - 1;
+        }
+      }
+      if (
+        (e.key === "Enter" || e.key === "Tab") &&
+        this.items.length > 0 &&
+        this.selectedIndex !== -1
+      ) {
+        e.preventDefault();
+        this.$emit(
+          "update:modelValue",
+          this.modelValue + this.items[this.selectedIndex]?.value
+        );
+      }
+      if (e.key === "Escape") {
+        this.closeMenu();
+      }
+    },
+    cancelEvent() {
+      document.removeEventListener("keydown", this.onKeyDown);
+    },
+    closeMenu() {
+      this.focused = false;
+    }
+  },
+  mounted() {
+    document.addEventListener("keydown", this.onKeyDown);
   }
 });
 </script>

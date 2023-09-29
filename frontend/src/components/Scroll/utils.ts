@@ -3,7 +3,8 @@ import type { Ref } from "vue";
 import type { Params, Target } from "./types";
 
 function isVisible(el: Element, view: Element | null): boolean {
-  const elRect = el.getBoundingClientRect();
+  const elRect = el?.getBoundingClientRect();
+  if (!elRect) return;
   if (!view) return elRect.top >= 0 && elRect.bottom <= window.innerHeight;
   const viewRect = view.getBoundingClientRect();
   return elRect.top >= viewRect.top && elRect.bottom <= viewRect.bottom;

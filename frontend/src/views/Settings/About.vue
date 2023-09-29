@@ -67,7 +67,7 @@
         })
       }}
     </p>
-    <a class="text-gradient" href="/graphql">
+    <a class="text-gradient" href="https://docs.privateuploader.com">
       {{ $t("settings.about.docs") }}
     </a>
     <br />

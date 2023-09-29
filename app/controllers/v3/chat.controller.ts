@@ -237,12 +237,18 @@ export class ChatControllerV3 {
     @Param("associationId") associationId: number,
     @Param("userId") userId: number
   ) {
-    const rank = await this.chatService.checkPermissions(
+    const permissions = await this.chatService.checkPermissions(
       user.id,
       associationId,
       ChatPermissions.REMOVE_USERS
     )
-    await this.chatService.removeUserFromChat(associationId, [userId], user.id)
+    await this.chatService.removeUserFromChat(
+      associationId,
+      [userId],
+      user.id,
+      false,
+      permissions
+    )
   }
 
   @Put("/:associationId/users/:userId")

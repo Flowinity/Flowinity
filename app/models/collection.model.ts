@@ -13,7 +13,7 @@ import { User } from "@app/models/user.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { CollectionUser } from "@app/models/collectionUser.model"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { Upload } from "@app/models/upload.model"
 import { PermissionsMetadata } from "@app/classes/graphql/collections/collections"
@@ -21,7 +21,7 @@ import { PermissionsMetadata } from "@app/classes/graphql/collections/collection
 @ObjectType()
 @Table
 export class Collection extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,
@@ -83,7 +83,7 @@ export class Collection extends Model {
   })
   shared?: boolean
 
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   itemCount?: number

@@ -10,7 +10,7 @@ import {
 import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { ChatRank } from "@app/models/chatRank.model"
 import { Message } from "@app/models/message.model"
@@ -20,7 +20,7 @@ import { ChatEmoji } from "@app/models/chatEmoji.model"
 @ObjectType()
 @Table
 export class Chat extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,
@@ -119,7 +119,7 @@ export class Chat extends Model {
   background: string | null
 
   recipient: any
-  @Field(() => Number, {
+  @Field(() => Int, {
     nullable: true
   })
   unread: number | undefined

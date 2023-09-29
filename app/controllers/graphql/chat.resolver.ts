@@ -2,6 +2,7 @@ import {
   Arg,
   Ctx,
   FieldResolver,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -70,7 +71,7 @@ export class ChatResolver {
     })
   }
 
-  @FieldResolver(() => Number)
+  @FieldResolver(() => Int)
   async unread(@Root() chat: Chat, @Ctx() ctx: Context): Promise<Number> {
     const unreads = await redis.json.get(`unread:${ctx.user?.id || 0}`)
     return unreads?.[chat.id.toString()] || 0

@@ -626,7 +626,8 @@ export class ChatService {
     associationId: number,
     removeUserId: number[],
     userId: number,
-    isLeaving: boolean = false
+    isLeaving: boolean = false,
+    permissions: ChatPermissions[]
   ) {
     const chat = await this.getChatFromAssociation(associationId, userId)
     let removable = []
@@ -640,8 +641,15 @@ export class ChatService {
       const myIndex = await this.getHighestIndex(associationId)
       for (const association of associations) {
         if (association.userId === chat.userId) continue
-        const theirIndex = await this.getHighestIndex(associationId)
-        if (theirIndex > myIndex && chat.userId !== userId) continue
+        const theirIndex = await this.getHighestIndex(association.id)
+        if (
+          ((theirIndex >= myIndex &&
+            !permissions.includes(ChatPermissions.TRUSTED)) ||
+            (theirIndex > myIndex &&
+              permissions.includes(ChatPermissions.TRUSTED))) &&
+          chat.userId !== userId
+        )
+          continue
         removable.push(association)
       }
     } else {

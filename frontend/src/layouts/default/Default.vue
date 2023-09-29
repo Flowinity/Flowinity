@@ -21,14 +21,10 @@
   <Gold v-model="$app.dialogs.gold.value"></Gold>
   <v-app
     v-if="$user.user"
-    @drop="dragDropHandler"
-    @dragover="dragOver"
-    @touchstart="
-      $experiments.experiments.LEGACY_MOBILE_NAV ? touchStart($event) : null
-    "
-    @touchend="
-      $experiments.experiments.LEGACY_MOBILE_NAV ? touchEnd($event) : null
-    "
+    @drop="this.dragDropHandler"
+    @dragover="this.dragOver"
+    @touchstart="this.touchStart($event)"
+    @touchend="this.touchEnd($event)"
     class="bg"
   >
     <NicknameDialog v-model="$app.dialogs.nickname.value"></NicknameDialog>
@@ -60,7 +56,7 @@
       "
     ></rail-bar>
     <keep-alive v-if="$app.rail">
-      <component :is="currentRailComponent"></component>
+      <component :is="this.currentRailComponent"></component>
     </keep-alive>
     <sidebar
       v-if="
@@ -81,45 +77,6 @@
     <workspaces-sidebar v-if="!$app.rail"></workspaces-sidebar>
     <theme-engine-wrapper></theme-engine-wrapper>
     <default-view />
-    <template v-if="$experiments.experiments.FAB">
-      <v-btn
-        variant="flat"
-        icon
-        position="sticky"
-        class="fab"
-        color="primary"
-        style="color: #151515 !important"
-        @click="fab = !fab"
-      >
-        <v-icon>{{ fab ? "mdi-close" : "mdi-plus" }}</v-icon>
-      </v-btn>
-      <v-fab-transition>
-        <v-btn
-          v-if="fab"
-          variant="flat"
-          icon
-          position="sticky"
-          class="fab-2"
-          color="indigo"
-          @click="fab = !fab"
-        >
-          <v-icon>mdi-upload</v-icon>
-        </v-btn>
-      </v-fab-transition>
-      <v-fab-transition>
-        <v-btn
-          v-if="fab"
-          variant="flat"
-          icon
-          position="absolute"
-          class="fab-3"
-          color="success"
-          @click="fab = !fab"
-        >
-          <v-icon>mdi-file-document-plus</v-icon>
-        </v-btn>
-      </v-fab-transition>
-    </template>
   </v-app>
   <v-app v-else>
     <v-overlay :model-value="$app.loading" class="align-center justify-center">

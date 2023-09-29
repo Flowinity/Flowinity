@@ -102,7 +102,7 @@ export default defineComponent({
     return {
       collection: undefined as CollectionCache | undefined,
       gallery: {
-        gallery: [] as Upload[]
+        items: [] as Upload[]
       },
       page: 1,
       show: {
@@ -113,11 +113,17 @@ export default defineComponent({
     };
   },
   methods: {
-    async act(id: number | object, action: "approve" | "deny") {
+    async act(id: number | number[], action: "approve" | "deny") {
       if (typeof id === "object") {
+        const applicable = id.map((id) => {
+          const objectWithID = this.$refs.gallery.gallery.items.find(
+            (upload) => upload.id === id
+          );
+          return objectWithID ? objectWithID.autoCollectApproval.id : null;
+        });
         await this.axios.post(`/autoCollects/bulk`, {
           action,
-          ids: id
+          ids: applicable
         });
       } else {
         await this.axios.post(`/autoCollects/${id}`, {
@@ -158,9 +164,7 @@ export default defineComponent({
         );
       }
       this.$app.componentLoading = true;
-      const { data } = await this.axios.get(
-        `/collections/${this.$route.params.id}`
-      );
+      const data = await this.$collections.getCollection(this.$route.params.id);
       this.$app.componentLoading = false;
       this.collection = data;
       if (this.collection)

@@ -54,7 +54,6 @@ export class SocketAuthMiddleware implements MiddlewareInterface {
     }
     if (token) {
       const session = await this.userResolver.findByToken(token)
-
       if (!session) {
         socket.disconnect()
         throw new Error("Invalid token")

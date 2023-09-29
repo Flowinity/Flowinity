@@ -39,6 +39,22 @@ export const ChatInviteQuery = gql`
   }
 `;
 
+export const GetInvitesForChatQuery = gql`
+  query GetInvitesForChat($input: ChatInput!) {
+    chat(input: $input) {
+      invites {
+        id
+        userId
+        createdAt
+        rankId
+        updatedAt
+        expiredAt
+        invalidated
+      }
+    }
+  }
+`;
+
 export const JoinChatInviteMutation = gql`
   mutation JoinChatFromInvite($input: JoinChatFromInviteInput!) {
     joinChatFromInvite(input: $input) {

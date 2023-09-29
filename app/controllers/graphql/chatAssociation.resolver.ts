@@ -129,7 +129,7 @@ export class ChatAssociationResolver {
     @Arg("input") input: AddChatUser,
     force: boolean = false
   ) {
-    await this.chatService.checkPermissions(
+    const permissions = await this.chatService.checkPermissions(
       ctx.user!!.id,
       input.chatAssociationId,
       ChatPermissions.ADD_USERS
@@ -147,7 +147,9 @@ export class ChatAssociationResolver {
       await this.chatService.removeUserFromChat(
         input.chatAssociationId,
         input.users,
-        ctx.user!!.id
+        ctx.user!!.id,
+        false,
+        permissions
       )
       return { success: true }
     } else {
@@ -271,7 +273,8 @@ export class ChatAssociationResolver {
           input.associationId,
           [ctx.user!!.id],
           ctx.user!!.id,
-          true
+          true,
+          []
         )
         return { success: true }
       }

@@ -32,7 +32,20 @@
       <v-card-actions>
         <v-btn to="/" :active="false">Cancel</v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="blue" @click="join">Join</v-btn>
+        <v-btn color="blue" @click="join" v-if="$user.user">Join</v-btn>
+        <v-btn
+          color="blue"
+          @click="
+            $router.push(
+              `/login?redirect=${$route.fullPath
+                .replaceAll('?', '%3F')
+                .replaceAll('&', '%26')}`
+            )
+          "
+          v-else
+        >
+          Login & Join
+        </v-btn>
       </v-card-actions>
     </v-card>
     <v-card

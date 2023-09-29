@@ -13,7 +13,10 @@ import { ChatService } from "@app/services/chat.service"
 import { Context } from "@app/types/graphql/context"
 import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
 import { ChatInvite } from "@app/models/chatInvite.model"
-import { CreateInviteInput } from "@app/classes/graphql/chat/invites/createInvite"
+import {
+  CreateInviteInput,
+  InvalidateInviteInput
+} from "@app/classes/graphql/chat/invites/createInvite"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import cryptoRandomString from "crypto-random-string"
 import { ChatRank } from "@app/models/chatRank.model"
@@ -22,6 +25,12 @@ import { InviteInput } from "@app/classes/graphql/chat/invites/getInvite"
 import { Op } from "sequelize"
 import { Chat } from "@app/models/chat.model"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { Success } from "@app/classes/graphql/generic/success"
+import { ChatAuditLog } from "@app/models/chatAuditLog.model"
+import {
+  AuditLogActionType,
+  AuditLogCategory
+} from "@app/classes/graphql/chat/auditLog/categories"
 
 @Resolver(ChatInvite)
 @Service()
@@ -103,6 +112,49 @@ export class ChatInviteResolver {
         }
       }
     })
+  }
+
+  @RateLimit({
+    window: 12,
+    max: 5
+  })
+  @Authorization({
+    scopes: ["chats.edit"]
+  })
+  @Mutation(() => Success)
+  async invalidateChatInvite(
+    @Ctx() ctx: Context,
+    @Arg("input") input: InvalidateInviteInput
+  ) {
+    await this.chatService.checkPermissions(
+      ctx.user!!.id,
+      input.associationId,
+      ChatPermissions.OVERVIEW
+    )
+    const chat = await this.chatService.getChatFromAssociation(
+      input.associationId,
+      ctx.user!!.id
+    )
+    const invite = await ChatInvite.findOne({
+      where: {
+        id: input.inviteId,
+        chatId: chat.id
+      }
+    })
+    if (!invite) throw new GqlError("INVALID_INVITE")
+    await ChatAuditLog.create({
+      chatId: chat.id,
+      userId: ctx.user!!.id,
+      category: AuditLogCategory.INVITE,
+      actionType: AuditLogActionType.REMOVE,
+      message: `<@${
+        ctx.user!!.id
+      }> deleted an invite that previously had the value of **${
+        input.inviteId
+      }**`
+    })
+    await invite.destroy()
+    return { success: true }
   }
 
   @FieldResolver(() => Chat)

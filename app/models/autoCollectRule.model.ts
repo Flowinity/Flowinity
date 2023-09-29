@@ -8,13 +8,13 @@ import {
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { AutoCollectParentRule } from "@app/classes/graphql/autoCollects/rules"
 
 @ObjectType()
 @Table
 export class AutoCollectRule extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,

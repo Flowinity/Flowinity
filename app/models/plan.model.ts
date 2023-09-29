@@ -1,10 +1,10 @@
 import { Column, DataType, Default, Model, Table } from "sequelize-typescript"
-import { Field, Float, ObjectType } from "type-graphql"
+import { Field, Float, Int, ObjectType } from "type-graphql"
 
 @ObjectType()
 @Table
 export class Plan extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,

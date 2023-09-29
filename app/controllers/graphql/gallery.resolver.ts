@@ -23,6 +23,8 @@ import { CollectionService } from "@app/services/collection.service"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 //@ts-ignore
 import { resolver } from "graphql-sequelize"
+import { CollectionUser } from "@app/models/collectionUser.model"
+import { Op } from "sequelize"
 
 const FileScalar = new GraphQLScalarType({
   name: "File",
@@ -62,10 +64,22 @@ export class GalleryResolver {
           "You don't have permission to view this collection"
         )
       input.collectionId = collection.id
+    } else if (input.type === Type.AUTO_COLLECT) {
+      if (!input.collectionId)
+        throw new GraphQLError(
+          "You must specify `collectionId` for AutoCollects."
+        )
+      const collection = await this.collectionService.getCollectionOrShare(
+        input.collectionId,
+        ctx.user?.id
+      )
+      if (!collection)
+        throw new GraphQLError(
+          "You don't have permission to view this collection"
+        )
     } else if (!ctx.user) {
       throw new GraphQLError("You must be logged in to view the gallery")
     }
-
     return await this.galleryService.getGalleryV4(
       ctx.user?.id,
       input,
@@ -79,9 +93,32 @@ export class GalleryResolver {
     )
   }
 
-  @FieldResolver(() => Collection)
-  async collections(@Root() upload: Upload) {
-    return await upload.$get("collections")
+  @FieldResolver(() => [Collection])
+  async collections(@Root() upload: Upload, @Ctx() ctx: Context) {
+    if (!ctx.user) return []
+    return await upload.$get("collections", {
+      where: {
+        [Op.or]: [
+          {
+            userId: ctx.user!!.id
+          },
+          {
+            "$recipient.recipientId$": ctx.user.id
+          }
+        ]
+      },
+      include: [
+        {
+          model: CollectionUser,
+          as: "recipient",
+          attributes: ["recipientId"],
+          required: false,
+          where: {
+            recipientId: ctx.user.id
+          }
+        }
+      ]
+    })
   }
 
   @FieldResolver(() => User)

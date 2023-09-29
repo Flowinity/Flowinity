@@ -10,13 +10,13 @@ import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { Upload } from "@app/models/upload.model"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @ObjectType()
 @Table
 export class AutoCollectApproval extends Model {
-  @Field(() => Number)
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true,

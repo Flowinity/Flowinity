@@ -1,21 +1,8 @@
-import {
-  BelongsTo,
-  BelongsToMany,
-  Column,
-  DataType,
-  HasMany,
-  HasOne,
-  Model,
-  Table
-} from "sequelize-typescript"
-import { User } from "@app/models/user.model"
-import { Field, Float, ObjectType } from "type-graphql"
-import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { BelongsTo, Column, DataType, Model, Table } from "sequelize-typescript"
+import { Field, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
-import { PermissionGroup } from "@app/classes/graphql/chat/ranks/group"
 import { ChatPermission } from "@app/models/chatPermission.model"
 import { ChatRank } from "@app/models/chatRank.model"
-import { ChatAssociation } from "@app/models/chatAssociation.model"
 
 @Table
 @ObjectType()

@@ -1,4 +1,4 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, Int } from "type-graphql"
 import { IsOptional, IsString, MaxLength, ValidateIf } from "class-validator"
 
 @InputType()
@@ -9,7 +9,7 @@ export class UpdateChatInput {
   @IsString()
   @MaxLength(50)
   name?: string
-  @Field(() => Number)
+  @Field(() => Int)
   associationId: number
   @Field(() => String, {
     nullable: true,

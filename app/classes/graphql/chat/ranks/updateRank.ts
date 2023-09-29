@@ -1,9 +1,9 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, Int } from "type-graphql"
 import { IsHexColor, IsOptional, MaxLength, MinLength } from "class-validator"
 
 @InputType()
 export class UpdateRank {
-  @Field(() => Number)
+  @Field(() => Int)
   associationId: number
   @Field()
   rankId: string
@@ -26,7 +26,7 @@ export class UpdateRank {
 
 @InputType()
 export class CreateRank {
-  @Field(() => Number)
+  @Field(() => Int)
   associationId: number
   @Field(() => String, {
     nullable: true
@@ -44,7 +44,7 @@ export class CreateRank {
 
 @InputType()
 export class UpdateRankOrder {
-  @Field(() => Number)
+  @Field(() => Int)
   associationId: number
   @Field(() => [String], {
     description:
@@ -55,7 +55,7 @@ export class UpdateRankOrder {
 
 @InputType()
 export class DeleteRank {
-  @Field(() => Number)
+  @Field(() => Int)
   associationId: number
   @Field(() => String)
   rankId: string
