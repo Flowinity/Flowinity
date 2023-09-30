@@ -602,8 +602,8 @@ export const useAppStore = defineStore("app", {
       i18nObject.global.locale = this.user?.language || "en";
     },
     async init() {
-      this.loadLocalStorage();
       this.loading = true;
+      this.loadLocalStorage();
       const chatStore = useChatStore();
       const collectionsStore = useCollectionsStore();
       if (!window.tpuInternals) {
@@ -683,7 +683,6 @@ export const useAppStore = defineStore("app", {
       useMailStore().init();
       this.experimentsInherit = experimentsStore.experiments;
       this.domain = "https://" + this.site.domain + "/i/";
-      this.loading = false;
       localStorage.setItem("coreStore", JSON.stringify(coreState));
       localStorage.setItem("experimentsStore", JSON.stringify(experiments));
       localStorage.setItem("userStore", JSON.stringify(currentUser));
