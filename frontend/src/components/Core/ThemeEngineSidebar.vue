@@ -403,8 +403,11 @@ export default defineComponent({
         deviceSync: this.deviceSync,
         customCSS: this.$user.changes.themeEngine?.customCSS ?? ""
       };
+      //@ts-ignore
       delete themeEngine.theme.dark.variables;
+      //@ts-ignore
       delete themeEngine.theme.light.variables;
+      //@ts-ignore
       delete themeEngine.theme.amoled.variables;
       localStorage.setItem("themeEngine", JSON.stringify(themeEngine));
       this.$user.user.themeEngine = themeEngine;

@@ -281,10 +281,10 @@ export default async function setup(app) {
     );
     if (index1 === -1) return;
     const friend1 = friends.friends[index];
-    if (friend1.nickname) {
-      friend1.nickname.nickname = data.nickname;
+    if (friend1.otherUser.nickname) {
+      friend1.otherUser.nickname.nickname = data.nickname;
     } else {
-      friend1.nickname = data;
+      friend1.otherUser.nickname = data;
     }
   });
   // TODO: do something about name colors

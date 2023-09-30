@@ -86,7 +86,7 @@
           <v-text-field
             v-model="password.confirmNewPassword"
             :label="$t('settings.home.myAccount.confirmPassword')"
-            :rules="[...$validation.user.passwordSettings, ...validation]"
+            :rules="[...$validation.user.passwordSettings]"
             class="mt-4"
             type="password"
           ></v-text-field>
@@ -331,14 +331,7 @@ export default defineComponent({
         password: true,
         username: true,
         email: true
-      },
-      validation: [
-        (value: string) => {
-          if (value !== this.password.newPassword)
-            return "Passwords do not match";
-          return true;
-        }
-      ]
+      }
     };
   },
   computed: {
@@ -394,6 +387,9 @@ export default defineComponent({
       this.$user.user.emailVerified = false;
     },
     async changePassword() {
+      if (this.password.newPassword !== this.password.confirmNewPassword) {
+        return this.$toast.error("Password doesn't match.");
+      }
       await this.$apollo.mutate({
         mutation: ChangeUserPasswordMutation,
         variables: {

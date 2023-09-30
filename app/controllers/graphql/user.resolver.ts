@@ -204,7 +204,8 @@ export class UserResolver extends createBaseResolver("User", User) {
     max: 5
   })
   @Authorization({
-    scopes: "user.modify"
+    scopes: "user.modify",
+    emailOptional: true
   })
   @Mutation(() => Boolean)
   async changeUserEmail(
