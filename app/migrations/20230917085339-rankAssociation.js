@@ -4,11 +4,6 @@ const { DataType } = require("sequelize-typescript")
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.renameColumn(
-      "ChatRankAssociations",
-      "userId",
-      "chatAssociationId"
-    )
     await queryInterface.addColumn("ChatRanks", "chatId", {
       type: DataType.INTEGER
     })

@@ -218,13 +218,14 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE"
       },
-      userId: {
-        type: DataType.BIGINT,
+      chatAssociationId: {
+        type: DataType.INTEGER,
         allowNull: false,
         references: {
-          model: "Users",
+          model: "ChatAssociations",
           key: "id"
-        }
+        },
+        onDelete: "CASCADE"
       },
       createdAt: {
         type: DataType.DATE
