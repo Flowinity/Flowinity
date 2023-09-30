@@ -128,7 +128,9 @@ export class CoreResolver {
     }
     return await this.coreService.getUserExperimentsV4(
       ctx.user.id,
-      config.release === "dev",
+      config.release === "dev" ||
+        ctx.user?.administrator ||
+        ctx.user?.moderator,
       false
     )
   }
