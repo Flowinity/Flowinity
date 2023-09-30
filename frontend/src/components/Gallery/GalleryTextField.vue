@@ -24,7 +24,7 @@
     @change="val = $event.target.value"
     :autofocus="autofocus"
   ></v-text-field>
-  <v-scroll-y-transition>
+  <v-scroll-y-transition v-if="false">
     <v-card
       v-show="focused"
       style="
