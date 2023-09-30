@@ -84,7 +84,7 @@ import { WorkspaceFolderResolver } from "@app/controllers/graphql/workspaceFolde
 import { NoteResolver } from "@app/controllers/graphql/note.resolver"
 import { createRedisCache } from "@envelop/response-cache-redis"
 import { Cache } from "@envelop/response-cache"
-import redis, { ioRedis } from "@app/redis"
+import redis from "@app/redis"
 import { FriendResolver } from "@app/controllers/graphql/friend.resolver"
 import { MessageResolver } from "@app/controllers/graphql/message.resolver"
 import { GraphQLSchema } from "graphql/type"
@@ -342,9 +342,6 @@ export class Application {
       },
       validation: true
     })
-    global.pubsub = new RedisPubSub({
-      publisher: ioRedis
-    })
     this.schema = await buildSchema({
       resolvers: [
         UserResolver,
@@ -380,8 +377,7 @@ export class Application {
       ],
       container: Container,
       authChecker: authChecker,
-      validate: true,
-      pubSub: global.pubsub
+      validate: true
     })
     const gqlPlugins = []
     const cache: Cache = createRedisCache({ redis })

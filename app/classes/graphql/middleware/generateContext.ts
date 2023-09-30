@@ -38,7 +38,6 @@ export default async function generateContext(ctx: any): Promise<Context> {
     meta: {},
     request: ctx.request,
     req: ctx.req,
-    cache: global.gqlCache,
-    pubsub: global.pubsub
+    cache: global.gqlCache
   } as Context
 }

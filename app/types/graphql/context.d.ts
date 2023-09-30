@@ -22,5 +22,4 @@ export type Context = {
   req: Request
   request: Request
   cache: Cache
-  pubsub: PubSubEngine
 }
