@@ -348,7 +348,9 @@ export const useUserStore = defineStore("user", {
             storedStatus: this.user.storedStatus,
             username: this.user.username,
             weatherUnit: this.user.weatherUnit,
-            themeEngine: this.user.themeEngine
+            themeEngine: this.user.themeEngine?.theme?.amoled?.colors
+              ? this.user.themeEngine
+              : null
           }
         } as UpdateUserInput
       });
