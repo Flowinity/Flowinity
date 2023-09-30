@@ -309,20 +309,24 @@ export const useUserStore = defineStore("user", {
       if (!this.user) return;
       this.applyCSS();
       // prev is undocumented and contains previous Vuetify values causing a memory leak
-      //@ts-ignore
-      if (this.changes.themeEngine?.prev) {
-        //@ts-ignore
-        delete this.changes.themeEngine?.prev;
-      }
-      if (!this.user.themeEngine?.theme?.dark?.colors) {
+      if (
+        !this.user.themeEngine?.theme?.dark?.colors &&
+        this.user.themeEngine?.theme?.dark
+      ) {
         this.user.themeEngine.theme.dark.colors =
           this.defaultVuetify.dark.colors;
       }
-      if (!this.user.themeEngine?.theme?.light?.colors) {
+      if (
+        !this.user.themeEngine?.theme?.light?.colors &&
+        this.user.themeEngine?.theme?.light
+      ) {
         this.user.themeEngine.theme.light.colors =
           this.defaultVuetify.light.colors;
       }
-      if (!this.user.themeEngine?.theme?.amoled?.colors) {
+      if (
+        !this.user.themeEngine?.theme?.amoled?.colors &&
+        this.user.themeEngine?.theme?.amoled
+      ) {
         this.user.themeEngine.theme.amoled.colors =
           this.defaultVuetify.amoled.colors;
       }
