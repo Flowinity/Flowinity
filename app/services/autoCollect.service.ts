@@ -43,7 +43,8 @@ export class AutoCollectService {
         await CollectionItem.create({
           attachmentId: autoCollect.uploadId,
           collectionId: autoCollect.collectionId,
-          userId
+          userId,
+          identifier: autoCollect.uploadId + "-" + autoCollect.collectionId
         })
         socket
           .of(SocketNamespaces.AUTO_COLLECTS)
