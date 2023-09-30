@@ -37,6 +37,7 @@ import { UserInsights } from "@app/classes/graphql/user/insights"
 import { Stats } from "@app/classes/graphql/core/core"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { BlockedUser } from "@app/models/blockedUser.model"
+import { GraphQLJSON } from "graphql-scalars"
 
 @DefaultScope(() => ({
   attributes: {
@@ -309,7 +310,7 @@ export class User extends Model {
   @Column
   mailToken?: string
 
-  @Field(() => ThemeEngine, {
+  @Field(() => GraphQLJSON, {
     nullable: true
   })
   @Column({

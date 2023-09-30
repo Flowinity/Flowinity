@@ -20,7 +20,7 @@ export default {
     navigator.clipboard.writeText(text);
   },
   doSinglePulse(type: string, other: object, timeOnPage?: number) {
-    window.tpuInternals.$sockets.pulse.emit("pulse", {
+    window.tpuInternals.pulse.emit("pulse", {
       action: type,
       timeSpent: timeOnPage || 0,
       route: window.location.pathname,
@@ -71,9 +71,9 @@ export default {
   richMessage(content: string, message?: Message | null) {
     const regex = /\\?&lt;(@\d+)&gt;/g;
     const mentions = content.match(regex);
-    const regexEmoji = content.match(
-      /:(.*?)-(.*?)-(.*?):(.*?)-(.*?)-(.*?):|:.*?:.*?:/g
-    );
+    const regexEmoji = content.match(/:([^:]+):([\w-]+):/g);
+    if (import.meta.env.DEV)
+      console.warn(`Rich message re-rendered: ${message?.id ?? "no object"}`);
     if (regexEmoji) {
       const isOnlyEmojis =
         content
@@ -82,11 +82,19 @@ export default {
           .replace(/:([\w~-]+)(?::([\w~-]+))?:(?!\w)/g, "")
           .replaceAll(" ", "") === "";
       for (const emoji of regexEmoji) {
+        console.log(emoji);
         const find = message?.emoji?.find((e) => e.id === emoji.split(":")[2]);
         if (!find) continue;
+        const bind = `emoji-bind-${message.id}-${Math.random()
+          .toString(36)
+          .substring(2, 10)}`;
         content = content.replace(
           emoji,
-          `<span><img class="emoji${
+          `<span class="pointer" id="${bind}" onclick="tpuInternals.openEmoji('${
+            find.id
+          }', '${find.name}', '${find.icon}', ${find.chatId}, ${
+            message.id
+          }, '${bind}')"><img class="emoji${
             isOnlyEmojis ? " emoji-large" : ""
           }" src="/i/${find.icon}"></span>`
         );
@@ -149,9 +157,11 @@ export default {
     }
     return content;
   },
+  /** Should be used alongside v-memo or v-once to prevent unwanted re-renders */
   markdown(text: string, message?: Message | null): any {
     return this.richMessage(md.render(text), message);
   },
+  /** Should be used alongside v-memo or v-once to prevent unwanted re-renders */
   markdownEmail(text: string): any {
     return mdEmail.render(text);
   },

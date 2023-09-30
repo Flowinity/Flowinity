@@ -2,7 +2,7 @@
   <div style="width: 100%">
     <Mentionable
       :items="users"
-      :keys="['@', ':', '!']"
+      :keys="['@', ':', '!', '#', '&']"
       :omit-key="true"
       insert-space
       offset="6"
@@ -20,8 +20,17 @@
           {{ $chat.lookupUser(item.value).username }}
         </div>
         <div class="my-2 mx-2" v-else-if="key === ':'">
-          <v-avatar v-if="item.emoji" size="24">
-            <v-img :src="$app.domain + item.emoji.icon" />
+          <v-avatar size="24">
+            <v-img v-if="item.emoji" :src="$app.domain + item.emoji.icon" />
+            <v-img
+              draggable="false"
+              v-else
+              width="24"
+              :alt="item.value"
+              :src="`/emoji/emoji_u${item.display
+                ?.codePointAt(0)
+                ?.toString(16)}.svg`"
+            ></v-img>
           </v-avatar>
           {{ item.label }}
           <span v-if="item.emoji" class="text-grey" style="font-size: 12px">
@@ -30,6 +39,10 @@
               $chat.chats.find((chat) => chat.id === item.emoji.chatId)?.name
             }}
           </span>
+        </div>
+        <div class="my-2 mx-2" v-else-if="key === '&' || key === '#'">
+          <UserAvatar v-if="key === '#'" :chat="item.chat" size="24" />
+          {{ item.label }}
         </div>
         <div class="my-2 mx-2" v-else>
           <UserAvatar :user="$user.users[item.botId]" :size="24" class="mr-2" />
@@ -273,7 +286,8 @@ export default defineComponent({
             ...Object.entries(emojiData).map((key) => {
               return {
                 value: key[0],
-                label: key[1] + " " + key[0]
+                label: key[0],
+                display: key[1]
               };
             })
           ].sort((a, b) => {
@@ -281,6 +295,23 @@ export default defineComponent({
             const idB = this.$chat.recentEmoji[b.emoji?.id || b.value] || 0;
             return idB - idA;
           });
+        case "&":
+          return this.$collections.persistent.map((collection) => {
+            return {
+              label: collection.name,
+              value: collection.id
+            };
+          });
+        case "#":
+          return this.$chat.chats
+            .filter((chat) => chat.type === "group")
+            .map((chat) => {
+              return {
+                label: this.$chat.getChatName(chat),
+                value: chat.id,
+                chat: chat
+              };
+            });
         default:
           return [];
       }

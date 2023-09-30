@@ -8,6 +8,32 @@
     "
   />
   <div class="container">
+    <v-menu
+      :attach="$chat.dialogs.emojiMenu.bindingElement"
+      v-model="$chat.dialogs.emojiMenu.value"
+      style="margin-left: 60px; z-index: 99999"
+      height="60px"
+      content-class="force-bg"
+    >
+      <v-card color="toolbar" width="100%" class="no-border">
+        <div
+          class="justify-items-center align-content-center width flex-row"
+          style="width: 100%"
+          v-if="$chat.dialogs.emojiMenu.emoji"
+        >
+          <v-card-title class="mt-n1">
+            :{{ $chat.dialogs.emojiMenu.emoji.name }}:
+          </v-card-title>
+          <v-card-subtitle class="mt-n3">
+            {{
+              $chat.dialogs.emojiMenu.chat
+                ? $chat.getChatName($chat.dialogs.emojiMenu.chat)
+                : "Private group"
+            }}
+          </v-card-subtitle>
+        </div>
+      </v-card>
+    </v-menu>
     <v-navigation-drawer
       v-if="$vuetify.display.mobile"
       v-model="$chat.dialogs.message.value"
@@ -81,14 +107,19 @@
         </template>
       </infinite-loading>
       <MessagePerf
+        :unread-id="unreadId"
         @update:uncollapse-blocked="uncollapseBlocked = $event"
         :uncollapse-blocked="uncollapseBlocked"
         class="mr-2 ml-2"
         v-for="(message, index) in $chat.selectedChat?.messages"
         :id="'message-id-' + message.id"
+        :ref="`message-${index}`"
         :style="{ zIndex: 1000 - index }"
         :key="message.id"
-        :class="{ 'replying-message': message.id === replyId }"
+        :class="{
+          'message-jumped': message.id === replyId,
+          'message-mention': message.content.includes(`<@${$user.user?.id}>`)
+        }"
         :date-separator="dateSeparator(index)"
         :editing="editing === message.id"
         :editingText="editingText"
@@ -281,6 +312,8 @@ export default defineComponent({
   },
   data() {
     return {
+      resizeObserver: null as ResizeObserver | null,
+      unreadId: 0,
       uncollapseBlocked: false,
       setup: false,
       messageObserver: undefined as IntersectionObserver | undefined,
@@ -520,7 +553,6 @@ export default defineComponent({
       this.editingText = this.editingText.replace(emojiRegex, (match) => {
         try {
           const name = match.split(":")[1].split(":")[0];
-          console.log(name);
           const emoji = this.$chat.emoji.find((emoji) => emoji.name === name);
           return `:${name}:${emoji.id}:`;
         } catch {
@@ -564,6 +596,7 @@ export default defineComponent({
     },
     async sendMessage() {
       this.focusInput();
+      if (this.unreadId) this.unreadId = 0;
       if (!this.$chat.selectedChat?.messages) return;
       if (!this.message && !this.files.length) return;
       if (!this.finished) return;
@@ -574,9 +607,7 @@ export default defineComponent({
       const emojiRegex = /:[\w~-]+:/g;
       message = message.replace(emojiRegex, (match) => {
         try {
-          console.log("OKOKOK");
           const name = match.split(":")[1].split(":")[0];
-          console.log(name);
           const emoji = this.$chat.emoji.find((emoji) => emoji.name === name);
           return `:${name}:${emoji.id}:`;
         } catch {
@@ -643,6 +674,9 @@ export default defineComponent({
       if (!this.$chat.selectedChat?.messages) return;
       const sentinel = document.getElementById("sentinel-bottom");
       if (!sentinel) return;
+      if (this.$refs[`message-0`]) {
+        this.resizeObserver.observe(this.$refs[`message-0`][0]?.$el);
+      }
       sentinel.scrollIntoView();
       this.$nextTick(() => {
         sentinel.scrollIntoView();
@@ -753,7 +787,7 @@ export default defineComponent({
         this.$chat.search.value = !this.$chat.search.value;
       }
       if (e.metaKey || e.ctrlKey) return;
-      if (e.key === "ArrowUp" && !this.message.length && !this.editing) {
+      if (e.key === "ArrowUp" && !this.message.length) {
         e.preventDefault();
         return this.editLastMessage();
       }
@@ -764,6 +798,7 @@ export default defineComponent({
       )
         return;
       if (e.key === "Escape") {
+        if (this.unreadId) this.unreadId = 0;
         if (this.replyId) return (this.replyId = undefined);
         if (this.$chat.search.value) {
           this.$chat.search.value = false;
@@ -809,14 +844,16 @@ export default defineComponent({
         ];
       if (!chat) return;
       if (!chat.typers) chat.typers = [];
-      chat.typers = chat.typers.filter((t: Typing) => t.userId !== data.userId);
+      chat.typers =
+        chat.typers?.filter((t: Typing) => t.userId !== data.userId) || [];
       chat.typers.push(data);
       setTimeout(() => {
-        chat.typers = chat.typers.filter(
-          (t: Typing) =>
-            t.userId !== data.userId &&
-            this.$date(t.expires).isAfter(Date.now())
-        );
+        chat.typers =
+          chat.typers?.filter(
+            (t: Typing) =>
+              t.userId !== data.userId &&
+              this.$date(t.expires).isAfter(Date.now())
+          ) || [];
       }, 5000);
     },
     onCancelTyping(data: Typing) {
@@ -825,7 +862,8 @@ export default defineComponent({
           this.$chat.chats.findIndex((c: Chat) => c.id === data.chatId)
         ];
       if (!chat && !chat.typers) return;
-      chat.typers = chat.typers.filter((t: Typing) => t.userId !== data.userId);
+      chat.typers =
+        chat.typers?.filter((t: Typing) => t.userId !== data.userId) || [];
     },
     onEmbedResolution(data: { chatId: any; id: any; embeds: any }) {
       const index = this.$chat.chats.findIndex(
@@ -867,14 +905,20 @@ export default defineComponent({
     },
     onResize(e: any) {
       console.info("[TPU/ChatObserver] Resized");
+      this.autoScroll();
       this.$nextTick(() => {
         if (!this.avoidAutoScroll) this.autoScroll();
       });
     }
   },
   mounted() {
+    this.resizeObserver = new ResizeObserver(this.onResize);
+    console.log(this.$chat.selectedChat?.unread, this.$chat.selectedChat?.name);
+    if (this.$chat.selectedChat?.unread) {
+      console.log(this.$chat.selectedChat?.association.lastRead);
+      this.unreadId = this.$chat.selectedChat?.association.lastRead;
+    }
     document.body.classList.add("disable-overscroll");
-    new ResizeObserver(this.onResize).observe(document.querySelector("#chat"));
     document.addEventListener("keydown", this.shortcutHandler);
     this.focusInterval = setInterval(this.onFocus, 2000);
     // re-enable auto scroll for flex-direction: column-reverse;
@@ -903,6 +947,14 @@ export default defineComponent({
   },
   watch: {
     "$route.params.chatId"(val, oldVal) {
+      console.log(
+        this.$chat.selectedChat?.unread,
+        this.$chat.selectedChat?.name
+      );
+      if (this.$chat.selectedChat?.unread) {
+        console.log(this.$chat.selectedChat?.association.lastRead);
+        this.unreadId = this.$chat.selectedChat?.association.lastRead;
+      }
       this.$chat.setDraft(oldVal, this.message);
       this.message = this.$chat.getDraft(val) || "";
       this.files = [];

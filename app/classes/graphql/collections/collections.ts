@@ -44,7 +44,7 @@ export class UserCollectionsInput {
   @IsNumber()
   @Min(1)
   @Field({
-    defaultValue: 24
+    nullable: true
   })
   limit: number
   @IsNumber()

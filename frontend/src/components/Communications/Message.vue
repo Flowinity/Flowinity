@@ -167,6 +167,7 @@
             class="overflow-content"
             style="display: inline-block"
             v-html="$functions.markdown(message.content, message)"
+            v-memo="message.content"
           ></span>
           <span v-if="message.edited && merge">
             <v-tooltip activator="parent" location="top">

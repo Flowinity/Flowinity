@@ -42,7 +42,7 @@ export const useUserStore = defineStore("user", {
         username: ""
       }
     },
-    defaultVuetify: null,
+    defaultVuetify: null as any,
     disableProfileColors:
       localStorage.getItem("disableProfileColors") === "true",
     tracked: [] as PartialUserFriend[],
@@ -127,15 +127,47 @@ export const useUserStore = defineStore("user", {
           app.site.officialInstance
         )
           return;
-        const themeData = this.user?.themeEngine?.deviceSync
-          ? this?.user?.themeEngine
-          : JSON.parse(localStorage.getItem("themeEngine") || "{}");
+        const themeData = {
+          ...(this.user?.themeEngine?.deviceSync
+            ? this?.user?.themeEngine
+            : JSON.parse(localStorage.getItem("themeEngine") || "{}"))
+        };
         if (themeData.version === 1) {
           this.applyCSS();
           document.body.style.setProperty(
             "--gradient-offset",
             `${themeData.gradientOffset}%`
           );
+          for (const theme of Object.entries(themeData.theme)) {
+            //@ts-ignore
+            theme[1].colors = {
+              background: "#121212",
+              surface: "#212121",
+              "surface-bright": "#ccbfd6",
+              "surface-variant": "#a3a3a3",
+              "on-surface-variant": "#424242",
+              primary: "#0190ea",
+              "primary-darken-1": "#3700B3",
+              secondary: "#757575",
+              "secondary-darken-1": "#03DAC5",
+              error: "#F44336",
+              info: "#2196F3",
+              success: "#4CAF50",
+              warning: "#ff9800",
+              logo1: "#096fea",
+              logo2: "#0166ea",
+              accent: "#000000",
+              card: "#161616",
+              toolbar: "#191919",
+              sheet: "#151515",
+              text: "#000000",
+              dark: "#151515",
+              background2: "#121212",
+              gold: "#ffd700",
+              //@ts-ignore
+              ...theme[1].colors
+            };
+          }
           vuetify.theme.themes.value.dark.colors =
             themeData.theme.dark.colors ??
             vuetify.theme.themes.value.dark.colors;
@@ -145,6 +177,7 @@ export const useUserStore = defineStore("user", {
           vuetify.theme.themes.value.amoled.colors =
             themeData.theme.amoled.colors ??
             vuetify.theme.themes.value.amoled.colors;
+          console.log(vuetify.theme.themes.value.dark.colors);
 
           app.fluidGradient = themeData.fluidGradient;
           if (themeData.fluidGradient) {
@@ -281,18 +314,18 @@ export const useUserStore = defineStore("user", {
         //@ts-ignore
         delete this.changes.themeEngine?.prev;
       }
-      /*if (!this.changes.themeEngine?.theme.dark.colors) {
-        this.changes.themeEngine.theme.dark.colors =
+      if (!this.user.themeEngine?.theme?.dark?.colors) {
+        this.user.themeEngine.theme.dark.colors =
           this.defaultVuetify.dark.colors;
       }
-      if (!this.changes.themeEngine?.theme.light.colors) {
-        this.changes.themeEngine.theme.light.colors =
+      if (!this.user.themeEngine?.theme?.light?.colors) {
+        this.user.themeEngine.theme.light.colors =
           this.defaultVuetify.light.colors;
       }
-      if (!this.changes.themeEngine?.theme.amoled.colors) {
-        this.changes.themeEngine.theme.amoled.colors =
+      if (!this.user.themeEngine?.theme?.amoled?.colors) {
+        this.user.themeEngine.theme.amoled.colors =
           this.defaultVuetify.amoled.colors;
-      }*/
+      }
       await this.$apollo.mutate({
         mutation: UpdateUserMutation,
         variables: {
@@ -310,7 +343,8 @@ export const useUserStore = defineStore("user", {
             publicProfile: this.user.publicProfile,
             storedStatus: this.user.storedStatus,
             username: this.user.username,
-            weatherUnit: this.user.weatherUnit
+            weatherUnit: this.user.weatherUnit,
+            themeEngine: this.user.themeEngine
           }
         } as UpdateUserInput
       });

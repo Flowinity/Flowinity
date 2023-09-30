@@ -21,6 +21,7 @@
       <v-card-text
         class="mt-n8"
         style="font-size: 13px; white-space: pre-line"
+        v-memo="embed?.data?.description"
         v-html="$functions.markdown(embed?.data?.description, null)"
       ></v-card-text>
     </v-card>

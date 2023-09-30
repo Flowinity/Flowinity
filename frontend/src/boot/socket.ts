@@ -266,14 +266,25 @@ export default async function setup(app) {
     if (index === -1) return;
     chat.chats[index].unread = 0;
   });
-  sockets.user.on("friendNickname", (data: FriendNickname) => {
-    const index = friends.friends.findIndex((f) => f.friendId === data.id);
+  sockets.friends.on("friendNickname", (data: FriendNickname) => {
+    const index = user.tracked.findIndex((f) => f.id === data.friendId);
     if (index === -1) return;
-    const friend = friends.friends[index];
-    if (friend.user.nickname) {
-      friend.user.nickname.nickname = data.nickname;
+    const friend = user.tracked[index];
+    console.log(friend);
+    if (friend.nickname) {
+      friend.nickname.nickname = data.nickname;
     } else {
-      friend.user.nickname = data;
+      friend.nickname = data;
+    }
+    const index1 = friends.friends.findIndex(
+      (f) => f.friendId === data.friendId
+    );
+    if (index1 === -1) return;
+    const friend1 = friends.friends[index];
+    if (friend1.nickname) {
+      friend1.nickname.nickname = data.nickname;
+    } else {
+      friend1.nickname = data;
     }
   });
   // TODO: do something about name colors

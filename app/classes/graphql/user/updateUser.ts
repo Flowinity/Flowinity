@@ -3,6 +3,7 @@ import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
 import { IsEmail, IsHexColor, MaxLength, MinLength } from "class-validator"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { DangerZoneInput } from "@app/classes/graphql/chat/deleteChat"
+import { GraphQLJSON } from "graphql-scalars"
 
 @InputType()
 export class UpdateUserInput {
@@ -41,7 +42,7 @@ export class UpdateUserInput {
     nullable: true
   })
   weatherUnit: "celsius" | "fahrenheit" | "kelvin"
-  @Field(() => ThemeEngine, {
+  @Field(() => GraphQLJSON, {
     nullable: true
   })
   themeEngine: ThemeEngine

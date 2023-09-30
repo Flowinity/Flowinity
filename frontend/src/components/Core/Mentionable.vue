@@ -409,13 +409,23 @@ export default defineComponent({
     // Apply
     function applyMention(itemIndex: number) {
       const item = displayedItems.value[itemIndex];
-      let end = "";
-      let start = "";
+      let end: string;
+      let start: string;
       switch (currentKey.value) {
         case "@":
+          start = "<@";
+          end = ">";
+          break;
+        case "&":
+          start = "<&";
+          end = ">";
+          break;
+        case "#":
+          start = "<#";
           end = ">";
           break;
         case ":":
+          start = ":";
           end = ":";
           const id = item.emoji?.id || item.value;
           const chat = useChatStore();
@@ -444,18 +454,8 @@ export default defineComponent({
           localStorage.setItem("emojiStore", JSON.stringify(chat.recentEmoji));
           break;
         default:
-          end = "";
-          break;
-      }
-      switch (currentKey.value) {
-        case "@":
-          start = "<@";
-          break;
-        case ":":
-          start = ":";
-          break;
-        default:
           start = currentKey.value;
+          end = "";
           break;
       }
       const value =

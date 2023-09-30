@@ -105,6 +105,8 @@ export default defineComponent({
               value: user.id
             };
           });
+        default:
+          return [];
       }
     },
     mode(): GallerySearchMode | null {

@@ -247,14 +247,12 @@ export class CollectionService {
       )
     }
 
-    return !limit
-      ? collections
-      : ({
-          items: limit
-            ? collections.slice((page - 1) * limit, (page - 1) * limit + limit)
-            : collections,
-          pager: paginate(collections.length, page, limit)
-        } as PaginatedCollectionsResponse)
+    return {
+      items: limit
+        ? collections.slice((page - 1) * limit, (page - 1) * limit + limit)
+        : collections,
+      pager: paginate(collections.length, page, limit)
+    } as PaginatedCollectionsResponse
   }
 
   async getCollectionPermissions(

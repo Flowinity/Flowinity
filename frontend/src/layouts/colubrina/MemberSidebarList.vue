@@ -180,7 +180,7 @@
       </v-list>
     </div>
     <template v-else>
-      <v-list-subheader class="ml-3 mb-4">
+      <overline position="start" class="ml-3 mb-n1">
         {{ $t("generic.search") }}
         <v-progress-circular
           v-if="$chat.search.loading"
@@ -191,8 +191,11 @@
         <template v-else>
           ({{ $chat.search.results.pager.totalItems }})
         </template>
-      </v-list-subheader>
-      <v-container class="mt-n8 mb-8">
+        <template v-slot:end>
+          <v-icon @click="$chat.search.value = false">mdi-close</v-icon>
+        </template>
+      </overline>
+      <v-container class="mb-8">
         <GalleryTextField
           v-model="$chat.search.query"
           @submit="$chat.doSearch(sort)"
@@ -208,6 +211,7 @@
       <ol
         class="d-flex flex-column communications position-relative"
         v-if="!$chat.search.loading"
+        style="height: unset"
       >
         <MessagePerf
           v-for="(message, index) in $chat.search.results.items"

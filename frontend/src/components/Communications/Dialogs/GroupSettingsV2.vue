@@ -121,26 +121,26 @@
           {{ $t("chats.leave.delete.title") }}
         </v-btn>
       </v-tabs>
-      <v-window v-model="tab" class="flex-grow-1" :touch="false">
-        <v-window-item value="home">
+      <div style="width: 100%">
+        <div v-show="tab === 'home'">
           <ChatSettingsHome />
-        </v-window-item>
-        <v-window-item value="ranks">
+        </div>
+        <div v-show="tab === 'ranks'">
           <ChatSettingsRanks />
-        </v-window-item>
-        <v-window-item value="users">
+        </div>
+        <div v-show="tab === 'users'">
           <ChatSettingsUsers />
-        </v-window-item>
-        <v-window-item value="invites">
+        </div>
+        <div v-show="tab === 'invites'">
           <ChatSettingsInvites :active="tab === 'invites'" />
-        </v-window-item>
-        <v-window-item value="emoji">
+        </div>
+        <div v-show="tab === 'emoji'">
           <ChatSettingsEmoji />
-        </v-window-item>
-        <v-window-item value="audit">
+        </div>
+        <div v-show="tab === 'audit'">
           <ChatSettingsAudit :active="tab === 'audit'" />
-        </v-window-item>
-      </v-window>
+        </div>
+      </div>
     </div>
   </CoreDialog>
 </template>

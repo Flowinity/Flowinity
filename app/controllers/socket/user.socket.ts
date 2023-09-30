@@ -61,23 +61,26 @@ export class UserSocketController {
 
     if (session) {
       const user = session.user
-      if (user.storedStatus === "invisible") return
-      await User.update(
-        {
-          status: "offline"
-        },
-        {
-          where: {
-            id: user.id
+      const sockets = await global.socket.in(user.id).allSockets()
+      if (sockets.size === 0) {
+        if (user.storedStatus === "invisible") return
+        await User.update(
+          {
+            status: "offline"
+          },
+          {
+            where: {
+              id: user.id
+            }
           }
-        }
-      )
-      await this.userService.emitToTrackedUsers(user.id, "userStatus", {
-        id: user.id,
-        status: "OFFLINE",
-        // TODO: Platform presence
-        platforms: []
-      })
+        )
+        await this.userService.emitToTrackedUsers(user.id, "userStatus", {
+          id: user.id,
+          status: "OFFLINE",
+          // TODO: Platform presence
+          platforms: []
+        })
+      }
     }
   }
 }

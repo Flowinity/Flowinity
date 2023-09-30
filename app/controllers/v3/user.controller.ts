@@ -291,7 +291,8 @@ export class UserControllerV3 {
   @Get("/favicon.png")
   async getFavicon(
     @QueryParam("username") username: string,
-    @Res() res: Response
+    @Res() res: Response,
+    @QueryParam("unread") unread?: number
   ) {
     const user = await User.findOne({
       where: { username: username },
@@ -307,9 +308,26 @@ export class UserControllerV3 {
       !user?.themeEngine ||
       (user.plan.internalName !== "GOLD" && config.officialInstance)
     ) {
-      res.sendFile("/favicon.png", {
-        root: "./frontend/public"
-      })
+      const svg = await fs.readFileSync("./frontend/public/favicon.svg")
+      const png = await sharp(Buffer.from(svg))
+        .png()
+        .resize(128, 128)
+        .composite(
+          unread && unread > 0
+            ? [
+                {
+                  input: `./frontend/public/unread-favicon/${
+                    unread >= 10 ? "10" : unread
+                  }.png`,
+                  blend: "over"
+                }
+              ]
+            : []
+        )
+        .toBuffer()
+
+      res.set("Content-Type", "image/png")
+      res.send(png)
       return res
     }
     const gradient1 = user?.themeEngine?.theme.dark.colors.logo1
@@ -323,6 +341,18 @@ export class UserControllerV3 {
     const png = await sharp(Buffer.from(svgString2))
       .png()
       .resize(128, 128)
+      .composite(
+        unread && unread > 0
+          ? [
+              {
+                input: `./frontend/public/unread-favicon/${
+                  unread >= 10 ? "10" : unread
+                }.png`,
+                blend: "over"
+              }
+            ]
+          : []
+      )
       .toBuffer()
 
     res.set("Content-Type", "image/png")

@@ -28,7 +28,10 @@
           </div>
         </template>
         <template v-slot:title>
-          <span v-html="$functions.markdown(entry.message, null)"></span>
+          <span
+            v-memo="entry.message"
+            v-html="$functions.markdown(entry.message, null)"
+          ></span>
         </template>
         <template v-slot:subtitle>
           {{ $date(entry.createdAt).format("YYYY-MM-DD HH:mm:ss A") }}

@@ -252,7 +252,7 @@ export class ChatAssociationResolver {
         userId: ctx.user!!.id,
         category: AuditLogCategory.USER,
         actionType: AuditLogActionType.MODIFY,
-        message: `<@${ctx.user!!.id}> added the rank **${rank.name}** from <@${
+        message: `<@${ctx.user!!.id}> added the rank **${rank.name}** to <@${
           user.tpuUser.id
         }>`
       })

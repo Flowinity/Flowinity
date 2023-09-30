@@ -206,7 +206,7 @@ p:has(.emoji-large) img {
   font-size: 3.5em;
 }
 
-.v-theme--amoled .hover-message-actions:hover .message {
+.v-theme--amoled li:not(.message-mention):not(.message-jumped) .hover-message-actions:hover .message {
   background: #101010;
 }
 
@@ -255,8 +255,8 @@ p:has(.emoji-large) img {
   margin-right: 0.1em;
 }
 
-.message-jumped {
-  background-color: rgb(1, 144, 234, 0.2);
+.message-jumped .message {
+  background-color: rgb(1, 144, 234, 0.1);
 }
 
 .message-date {
@@ -328,10 +328,10 @@ p:has(.emoji-large) img {
   border-radius: 0 !important;
 }
 
-.message-mention {
-  border-radius: 4px;
-  padding: 2px 4px;
+.message-mention .message {
   border-left: 4px solid rgb(1, 144, 234);
+  margin-left: -4px;
+  background-color: rgb(1, 144, 234, 0.1);
 }
 
 .mention-selected {
@@ -474,12 +474,20 @@ p:has(.emoji-large) img {
   width: 100%;
 }
 
+.comms-new .date-separator-line {
+  border-bottom: 1px solid rgb(var(--v-theme-error)) !important
+}
+
 .date-separator-block {
   padding: 0 8px;
   white-space: nowrap;
   color: #575757;
   mix-blend-mode: difference;
   filter: brightness(150%);
+}
+
+.comms-new .date-separator-block {
+  color: rgb(var(--v-theme-error)) !important
 }
 
 .communications .avatar-section {

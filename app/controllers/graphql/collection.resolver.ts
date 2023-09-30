@@ -55,7 +55,7 @@ export class CollectionResolver {
       input?.filter || [CollectionFilter.ALL],
       input?.search || "",
       input?.page || 1,
-      input?.limit || 24
+      input?.limit
     )) as PaginatedCollectionsResponse
   }
 

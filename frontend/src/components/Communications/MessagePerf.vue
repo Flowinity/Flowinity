@@ -7,6 +7,14 @@
       !merge
     "
   >
+    <overline
+      v-if="unreadId === message.id"
+      position="end"
+      style="color: rgb(var(--v-theme-error)) !important"
+      class="comms-new"
+    >
+      NEW
+    </overline>
     <div v-if="dateSeparator" class="date-separator">
       <div class="date-separator-line"></div>
       <p class="date-separator-block unselectable">
@@ -184,6 +192,7 @@
                 }"
                 class="overflow-content message-content d-inline-block"
                 v-html="$functions.markdown(message.content, message)"
+                v-memo="message.content"
               ></span>
               <span
                 v-if="message.edited"
@@ -298,10 +307,12 @@ import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
 import { Message, MessageType } from "@/gql/graphql";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import ReplyLine from "@/components/Communications/ReplyLine.vue";
+import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "MessagePerf",
   components: {
+    Overline,
     ReplyLine,
     MessageSkeleton,
     ReadReceipt,
@@ -320,7 +331,8 @@ export default defineComponent({
     "mentions",
     "index",
     "search",
-    "uncollapseBlocked"
+    "uncollapseBlocked",
+    "unreadId"
   ],
   emits: [
     "authorClick",

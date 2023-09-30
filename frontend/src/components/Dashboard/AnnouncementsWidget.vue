@@ -83,7 +83,8 @@
           <p
             class="mb-1 mt-n1"
             v-if="!announcement.editing"
-            v-html="$functions.markdown(announcement.content)"
+            v-memo="announcement.content"
+            v-html="$functions.markdownEmail(announcement.content)"
           />
           <small>
             {{
@@ -179,6 +180,7 @@ export default defineComponent({
     },
     async submitEdit(announcement: Announcement) {
       this.loading = true;
+      console.log(announcement);
       const { data } = await this.axios.patch(`/admin/announcement`, {
         content: announcement.content,
         id: announcement.id

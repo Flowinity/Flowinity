@@ -16,7 +16,7 @@ import { io } from "socket.io-client";
 import functions from "@/plugins/functions";
 import router from "@/router";
 import { Router, useRouter } from "vue-router";
-import { Collection } from "@/gql/graphql";
+import { ChatEmoji, Collection } from "@/gql/graphql";
 
 function createSocket(namespace: string) {
   console.log(`[TPU/Socket] Connecting to ${namespace}`);
@@ -75,31 +75,6 @@ export default function setup(app) {
     trackedUsers: createSocket("trackedUsers")
   };
   app.config.globalProperties.$functions = functions;
-  if (!window.tpuInternals) {
-    const router = useRouter() as Router;
-    window.tpuInternals = {
-      processLink: chat.processLink,
-      readChat: chat.readChat,
-      lookupUser: chat.lookupUser,
-      setChat: ((id) => router.push("/communications/" + id)) as (
-        id: number
-      ) => void,
-      lookupChat: chat.lookupChat,
-      openUser: chat.openUser,
-      router,
-      lookupCollection: (id) => {
-        return (
-          collections.persistent.find((collection) => collection.id === id) || {
-            name: "Unknown Collection"
-          }
-        );
-      },
-      openCollection: ((id) => router.push("/collections/" + id)) as (
-        id: number
-      ) => void,
-      $sockets: app.config.globalProperties.$sockets
-    };
-  }
 
   core.init().then(() => {
     if (!core.site.finishedSetup) {

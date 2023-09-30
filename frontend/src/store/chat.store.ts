@@ -3,10 +3,9 @@ import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
 import { useExperimentsStore } from "@/store/experiments.store";
 import vuetify from "@/plugins/vuetify";
-import { Router, useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAppStore } from "@/store/app.store";
 import { useUserStore } from "@/store/user.store";
-import { useCollectionsStore } from "@/store/collections.store";
 import { useFriendsStore } from "@/store/friends.store";
 import dayjs from "../plugins/dayjs";
 import { useToast } from "vue-toastification";
@@ -42,6 +41,7 @@ import {
 } from "@/graphql/chats/invite.graphql";
 import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
 import { Typing } from "@/models/chat";
+import { nextTick } from "vue";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -115,6 +115,13 @@ export const useChatStore = defineStore("chat", {
         y: 0,
         location: "top"
       },
+      emojiMenu: {
+        value: false,
+        bindingElement: null as string | null,
+        location: "right",
+        emoji: null as ChatEmoji | null,
+        chat: null as Chat | null
+      },
       statusMenu: {
         value: false,
         x: 0,
@@ -125,6 +132,26 @@ export const useChatStore = defineStore("chat", {
     recentEmoji: {} as Record<string, number>
   }),
   actions: {
+    openEmoji(
+      emojiId: string,
+      emojiName: string,
+      emojiUrl: string,
+      chatId: number,
+      messageId: number,
+      bindingElement: string
+    ) {
+      console.log(5940);
+      this.dialogs.emojiMenu.bindingElement = `#${bindingElement}`;
+      this.dialogs.emojiMenu.chat = this.chats.find(
+        (chat) => chat.id === chatId
+      );
+      this.dialogs.emojiMenu.emoji = {
+        name: emojiName,
+        id: emojiId,
+        icon: emojiUrl
+      };
+      this.dialogs.emojiMenu.value = true;
+    },
     async toggleUserRank(
       updatingChatAssociationId: number,
       chatAssociationId: number,
@@ -258,7 +285,7 @@ export const useChatStore = defineStore("chat", {
       setTimeout(() => {
         element.classList.remove("message-jumped");
       }, 1000);
-      await this.$nextTick();
+      await nextTick();
       element.scrollIntoView({
         block: "center",
         inline: "center"
@@ -456,11 +483,13 @@ export const useChatStore = defineStore("chat", {
       return createChat;
     },
     async readChat(chatId?: number) {
-      await this.$app.$sockets.chat.emit(
-        "readChat",
-        chatId || this.selectedChatId
-      );
-      if (this.selectedChat) this.selectedChat.unread = 0;
+      if (document.hasFocus()) {
+        await this.$app.$sockets.chat.emit(
+          "readChat",
+          chatId || this.selectedChatId
+        );
+        if (this.selectedChat) this.selectedChat.unread = 0;
+      }
     },
     async typing() {
       await this.$app.$sockets.chat.emit("typing", this.selectedChatId);
@@ -565,13 +594,15 @@ export const useChatStore = defineStore("chat", {
           if ($state) $state.complete();
         }
         this.loadingNew = false;
+        if (offset) {
+          this.loadNew = true;
+        }
       } else {
         if ($state) $state.complete();
         this.loadingNew = false;
-      }
-
-      if (offset) {
-        this.loadNew = true;
+        if (ScrollPosition.Bottom) {
+          this.loadNew = false;
+        }
       }
       this.loadingNew = false;
     },

@@ -51,7 +51,10 @@ md.renderer.rules = {
         ? `<span class="emoji-large-text">${tokens[idx].content}</span>`
         : `<span>${tokens[idx].content}</span>`;
     }
-    if (tokens.filter((token) => token.type !== "emoji").length === 0) {
+    if (
+      tokens.filter((token) => token.type !== "emoji" && token.content !== " ")
+        .length === 0
+    ) {
       return `<img class="emoji emoji-large" draggable="false" alt="${tokens[idx].content}" src="/emoji/emoji_u${codepoint}.svg">`;
     }
     return `<img class="emoji" draggable="false" alt="${tokens[idx].content}" src="/emoji/emoji_u${codepoint}.svg">`;

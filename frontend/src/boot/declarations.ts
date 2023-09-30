@@ -53,6 +53,7 @@ declare module "@vue/runtime-core" {
 declare global {
   interface Window {
     socket: Socket;
+    _tpu_router: Router;
     tpuInternals: {
       processLink: (link: string) => void;
       readChat: () => void;
@@ -63,7 +64,8 @@ declare global {
       lookupCollection: (id: number) => any;
       openCollection: (id: number) => void;
       router: Router;
-      $sockets: Record<string, Socket>;
+      pulse: Socket;
+      openEmoji: (...args) => void;
     };
     _paq: {
       push: (args: any[]) => void;

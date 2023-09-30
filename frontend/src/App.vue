@@ -53,6 +53,7 @@ export default defineComponent({
     }
   },
   mounted() {
+    window._tpu_router = this.$router;
     if (this.$vuetify.display.mobile) {
       this.$app.mainDrawer = false;
       this.$chat.memberSidebarShown = false;

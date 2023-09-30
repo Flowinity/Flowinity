@@ -22,6 +22,7 @@ import {
   Type
 } from "@app/classes/graphql/gallery/galleryInput"
 import { PaginatedGalleryResponse } from "@app/classes/graphql/gallery/galleryResponse"
+import { CollectionUser } from "@app/models/collectionUser.model"
 
 @Service()
 export class GalleryService {
@@ -386,7 +387,25 @@ export class GalleryService {
         {
           model: Collection,
           as: "collections",
-          attributes: ["id", "name"]
+          attributes: ["id", "name"],
+          where: {
+            [Op.or]: [
+              {
+                userId: userId ?? 0
+              }
+            ]
+          },
+          include: [
+            {
+              model: CollectionUser,
+              as: "recipient",
+              attributes: ["recipientId"],
+              required: false,
+              where: {
+                recipientId: userId ?? 0
+              }
+            }
+          ]
         },
         {
           model: Star,
@@ -424,7 +443,25 @@ export class GalleryService {
         {
           model: Collection,
           as: "collections",
-          attributes: ["id", "name"]
+          attributes: ["id", "name", "userId"],
+          where: {
+            [Op.or]: [
+              {
+                userId: userId ?? 0
+              }
+            ]
+          },
+          include: [
+            {
+              model: CollectionUser,
+              as: "recipient",
+              attributes: ["recipientId"],
+              required: false,
+              where: {
+                recipientId: userId ?? 0
+              }
+            }
+          ]
         }
       ]
     } else {
@@ -440,7 +477,25 @@ export class GalleryService {
         {
           model: Collection,
           as: "collections",
-          attributes: ["id", "name"]
+          attributes: ["id", "name", "userId"],
+          where: {
+            [Op.or]: [
+              {
+                userId: userId ?? 0
+              }
+            ]
+          },
+          include: [
+            {
+              model: CollectionUser,
+              as: "recipient",
+              attributes: ["recipientId"],
+              required: false,
+              where: {
+                recipientId: userId ?? 0
+              }
+            }
+          ]
         },
         {
           model: User,
@@ -470,7 +525,15 @@ export class GalleryService {
               {
                 model: Collection,
                 as: "collections",
-                attributes: ["id", "name"]
+                attributes: ["id", "name", "userId"],
+                required: false,
+                where: {
+                  [Op.or]: [
+                    {
+                      userId: userId ?? 0
+                    }
+                  ]
+                }
               }
             ]
           }

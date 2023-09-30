@@ -12,7 +12,9 @@
       class="date-separator-line"
       v-if="position === 'start' || position === 'center'"
     ></div>
-    <slot name="end" />
+    <div class="date-separator-block" v-if="$slots.end">
+      <slot name="end" />
+    </div>
   </div>
 </template>
 

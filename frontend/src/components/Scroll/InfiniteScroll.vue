@@ -79,7 +79,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="infiniteLoading" style="min-height: 1px">
+  <div
+    ref="infiniteLoading"
+    :style="{ 'min-height': state !== 'complete' ? '1px' : undefined }"
+  >
     <div v-show="state == 'loading'">
       <slot name="spinner"></slot>
     </div>

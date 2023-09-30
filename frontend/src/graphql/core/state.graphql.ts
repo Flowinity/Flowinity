@@ -119,6 +119,9 @@ export const CoreStateQuery = gql`
         userId
         content
         type
+        id
+        createdAt
+        updatedAt
         user {
           username
           id
@@ -228,64 +231,7 @@ export const CoreStateQuery = gql`
       status
       storedStatus
       weatherUnit
-      themeEngine {
-        theme {
-          dark {
-            colors {
-              primary
-              logo1
-              logo2
-              secondary
-              accent
-              error
-              info
-              success
-              warning
-              card
-              toolbar
-              sheet
-              text
-              dark
-              gold
-              background
-              background2
-            }
-            dark
-          }
-          light {
-            dark
-          }
-          amoled {
-            dark
-            colors {
-              primary
-              logo1
-              logo2
-              secondary
-              accent
-              error
-              info
-              success
-              warning
-              card
-              toolbar
-              sheet
-              text
-              dark
-              gold
-              background
-              background2
-            }
-          }
-        }
-        fluidGradient
-        gradientOffset
-        version
-        deviceSync
-        showOnProfile
-        baseTheme
-        customCSS
-      }
+      themeEngine
       xp
       publicProfile
       privacyPolicyAccepted

@@ -24,6 +24,7 @@
               @click="
                 metadata = !metadata;
                 $emit('update:metadata', metadata);
+                $emit('refreshGallery');
               "
               :active="metadata"
             >
@@ -38,6 +39,7 @@
             @click="
               order = item.internalName;
               $emit('update:order', order);
+              $emit('refreshGallery');
             "
             :active="order === item.internalName"
           >

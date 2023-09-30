@@ -11,7 +11,7 @@ import { useWorkspacesStore } from "@/store/workspaces.store";
 import vuetify from "@/plugins/vuetify";
 import { useExperimentsStore } from "@/store/experiments.store";
 import i18nObject, { i18n } from "@/plugins/i18n";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { SidebarItem } from "@/types/sidebar";
 import { CoreStateQuery } from "@/graphql/core/state.graphql";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
@@ -560,7 +560,8 @@ export const useAppStore = defineStore("app", {
         this.connected = true;
       });
       useWorkspacesStore().init();
-      useChatStore().init();
+      const chat = useChatStore();
+      chat.init();
       const user = useUserStore();
       setInterval(() => {
         this.getWeather();
@@ -569,7 +570,7 @@ export const useAppStore = defineStore("app", {
       this.populateQuickSwitcher();
       this.getWeather();
       if (
-        this.user?.plan?.internalName === "GOLD" ||
+        user.user?.plan?.internalName === "GOLD" ||
         !this.site.officialInstance
       ) {
         document.body.classList.add("gold");
@@ -594,8 +595,8 @@ export const useAppStore = defineStore("app", {
         link.type = "image/x-icon";
         link.rel = "shortcut icon";
         link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
-          this.user.username
-        }`;
+          user.user?.username
+        }&unread=${chat.totalUnread || 0}`;
         document.head.appendChild(link);
       }
       i18nObject.global.locale = this.user?.language || "en";
@@ -603,7 +604,34 @@ export const useAppStore = defineStore("app", {
     async init() {
       this.loadLocalStorage();
       this.loading = true;
-      console.log("loading");
+      const chatStore = useChatStore();
+      const collectionsStore = useCollectionsStore();
+      if (!window.tpuInternals) {
+        window.tpuInternals = {
+          processLink: chatStore.processLink,
+          readChat: chatStore.readChat,
+          lookupUser: chatStore.lookupUser,
+          setChat: (id) => window._tpu_router.push(`/communications/${id}`),
+          lookupChat: chatStore.lookupChat,
+          openUser: chatStore.openUser,
+          router: window._tpu_router,
+          lookupCollection: (id) => {
+            return (
+              collectionsStore.persistent.find(
+                (collection) => collection.id === id
+              ) || {
+                name: "Unknown Collection"
+              }
+            );
+          },
+          openCollection: ((id) =>
+            window._tpu_router.push("/collections/" + id)) as (
+            id: number
+          ) => void,
+          pulse: this.$app.$sockets.pulse,
+          openEmoji: chatStore.openEmoji
+        };
+      }
       const {
         data: {
           coreState,
@@ -623,13 +651,14 @@ export const useAppStore = defineStore("app", {
       });
       this.site = coreState;
       const userStore = useUserStore();
+      userStore.defaultVuetify = vuetify.theme.themes;
+      //userStore.applyTheme();
       userStore.user = currentUser;
       userStore.tracked = trackedUsers;
       userStore.blocked = blockedUsers;
       if (collections) {
-        useCollectionsStore().persistent = collections.items;
+        collectionsStore.persistent = collections.items;
       }
-      const chatStore = useChatStore();
       chatStore.emoji = userEmoji;
       chatStore.chats = chats
         .map((chat) => {

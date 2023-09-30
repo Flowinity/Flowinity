@@ -9,7 +9,7 @@
         v-if="menu.selected"
         :model-value="
           menu.selected === 'nameColor'
-            ? $user.changes.nameColor
+            ? $user.user.nameColor
             : $vuetify.theme.themes.dark.colors[menu.selected]
         "
         mode="hex"
@@ -366,7 +366,7 @@ export default defineComponent({
     setThemeColor(color: string, type: string) {
       if (!this.$user.gold && this.$app.site.officialInstance) return;
       if (type === "nameColor") {
-        this.$user.changes.nameColor = color;
+        this.$user.user.nameColor = color;
         this.triggerSave();
         return;
       }
@@ -382,19 +382,17 @@ export default defineComponent({
     save() {
       const themeEngine = {
         theme: {
-          themes: {
-            amoled: {
-              colors: this.$vuetify.theme.themes.amoled.colors,
-              dark: this.$vuetify.theme.themes.amoled.dark
-            },
-            dark: {
-              colors: this.$vuetify.theme.themes.dark.colors,
-              dark: this.$vuetify.theme.themes.dark.dark
-            },
-            light: {
-              colors: this.$vuetify.theme.themes.light.colors,
-              dark: this.$vuetify.theme.themes.light.dark
-            }
+          amoled: {
+            colors: this.$vuetify.theme.themes.amoled.colors,
+            dark: this.$vuetify.theme.themes.amoled.dark
+          },
+          dark: {
+            colors: this.$vuetify.theme.themes.dark.colors,
+            dark: this.$vuetify.theme.themes.dark.dark
+          },
+          light: {
+            colors: this.$vuetify.theme.themes.light.colors,
+            dark: this.$vuetify.theme.themes.light.dark
           }
         },
         fluidGradient: this.$app.fluidGradient,
@@ -405,13 +403,11 @@ export default defineComponent({
         deviceSync: this.deviceSync,
         customCSS: this.$user.changes.themeEngine?.customCSS ?? ""
       };
-      // TODO: GQL ThemeEditor
-      /*
       delete themeEngine.theme.dark.variables;
       delete themeEngine.theme.light.variables;
       delete themeEngine.theme.amoled.variables;
-      localStorage.setItem("themeEngine", JSON.stringify(themeEngine));*/
-      this.$user.changes.themeEngine = themeEngine as any;
+      localStorage.setItem("themeEngine", JSON.stringify(themeEngine));
+      this.$user.user.themeEngine = themeEngine;
       this.$user.save();
     },
     triggerSave() {

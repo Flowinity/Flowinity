@@ -3,7 +3,7 @@
     <CreateCollectionDialog v-model="create"></CreateCollectionDialog>
     <GalleryNavigation
       :supports="{ filter: true, metadata: false, search: true }"
-      @refreshGallery="getCollections"
+      @refreshGallery="getCollections(undefined, true)"
       v-model:search="search"
       @update:filter="filter = $event"
     ></GalleryNavigation>
@@ -110,9 +110,9 @@ export default defineComponent({
     };
   },
   methods: {
-    async getCollections($state: StateHandler) {
+    async getCollections($state?: StateHandler, reset: boolean = false) {
       this.loading = true;
-      $state.loading();
+      if ($state) $state.loading();
       this.$collections.page++;
       const collections = await this.$collections.getCollections(
         {
@@ -120,11 +120,12 @@ export default defineComponent({
           filter: this.filter,
           page: this.$collections.page
         },
-        true
+        true,
+        reset
       );
-      $state.loaded();
+      if ($state) $state.loaded();
       if (!collections.items.length) {
-        $state.complete();
+        if ($state) $state.complete();
       }
       this.loading = false;
     }

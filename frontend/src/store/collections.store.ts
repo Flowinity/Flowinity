@@ -36,7 +36,12 @@ export const useCollectionsStore = defineStore("collections", {
     }
   },
   actions: {
-    async getCollections(input: UserCollectionsInput, store = true) {
+    async getCollections(
+      input: UserCollectionsInput,
+      store = true,
+      reset = false
+    ) {
+      if (reset) this.page = 1;
       const {
         data: { collections }
       } = await this.$apollo.query({
@@ -44,12 +49,15 @@ export const useCollectionsStore = defineStore("collections", {
         variables: {
           input: {
             ...input,
-            page: input?.page || this.page
+            page: this.page
           }
         }
       });
-      if (store) {
+      if (store && !reset) {
         this.items.push(...collections.items);
+        this.pager = collections.pager;
+      } else if (store && reset) {
+        this.items = collections.items;
         this.pager = collections.pager;
       }
       if (!collections.items.length) {

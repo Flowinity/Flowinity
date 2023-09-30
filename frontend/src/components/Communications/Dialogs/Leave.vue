@@ -22,6 +22,9 @@
       </v-container>
       <v-card-actions>
         <v-spacer></v-spacer>
+        <v-btn color="red" @click="$emit('update:modelValue', false)">
+          Cancel
+        </v-btn>
         <v-btn color="blue" @click="deleteGroup ? (del.step = 1) : leave()">
           {{ deleteGroup ? $t("generic.next") : $t("chats.leave.action") }}
         </v-btn>
