@@ -228,9 +228,7 @@ export class AuthService {
           password: await argon2.hash(password),
           email,
           inviteId: inviteId || null,
-          planId: config.defaultPlanId || 1,
-          // TODO: REMOVE THIS!!!!!!!!!!
-          emailVerified: true
+          planId: config.defaultPlanId || 1
         },
         {
           logging: true
