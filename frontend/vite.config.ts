@@ -45,7 +45,9 @@ const config = {
         navigateFallbackDenylist: [
           /^\/i\/.*/,
           /^\/api\/.*/,
-          /^\/\.well-known\/.*/
+          /^\/\.well-known\/.*/,
+          /^\/graphql\/.*/,
+          /^\/gateway\/.*/
         ]
       },
       includeAssets: [
