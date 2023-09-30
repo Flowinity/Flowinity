@@ -106,39 +106,25 @@
     <v-expansion-panel :title="$t('settings.home.myAccount.changeEmail')">
       <v-expansion-panel-text>
         <v-form v-model="valid.email">
-          <p
-            class="px-1"
-            v-html="
-              $t('settings.home.myAccount.emailSet', {
-                email: $user.user?.email
-              })
-            "
-          ></p>
           <v-text-field
-            v-model="$user.user.email"
+            v-model="email.email"
             :label="$t('settings.home.myAccount.email')"
             :rules="$validation.user.email"
             class="mt-4"
           ></v-text-field>
-          <!--
-          <v-text-field
-            v-model="$user.user.currentPassword"
-            :label="$t('settings.home.myAccount.currentPassword')"
-            :rules="$validation.user.passwordSettings"
-            class="mt-4"
-            type="password"
-          ></v-text-field>-->
+          <DangerZoneInput
+            v-model:password="email.password"
+            v-model:password-mode="email.passwordMode"
+            v-model:totp="email.totp"
+          />
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-              :disabled="!valid.email"
+              :disabled="!valid.username"
               color="primary"
-              @click="
-                $user.save().then(() => $emit('update'));
-                $toast.success($t('generic.actionCompleted'));
-              "
+              @click="changeEmail"
             >
-              {{ $t("generic.save") }}
+              {{ $t("generic.update") }}
             </v-btn>
           </v-card-actions>
         </v-form>
@@ -252,6 +238,7 @@ import { Collection, UserInsights } from "@/gql/graphql";
 import { UserLightCollectionsQuery } from "@/graphql/collections/getUserCollections.graphql";
 import DangerZoneInput from "@/components/Core/DangerZoneInput.vue";
 import {
+  ChangeUserEmailMutation,
   ChangeUsernameMutation,
   ChangeUserPasswordMutation
 } from "@/graphql/user/changeUsername.graphql";
@@ -272,6 +259,12 @@ export default defineComponent({
   },
   data() {
     return {
+      email: {
+        password: "",
+        totp: "",
+        email: "",
+        passwordMode: false
+      },
       password: {
         confirmNewPassword: "",
         newPassword: "",
@@ -386,6 +379,20 @@ export default defineComponent({
     }
   },
   methods: {
+    async changeEmail() {
+      await this.$apollo.mutate({
+        mutation: ChangeUserEmailMutation,
+        variables: {
+          input: {
+            email: this.email.email,
+            password: this.email.passwordMode ? this.email.password : undefined,
+            totp: this.email.passwordMode ? undefined : this.email.totp
+          }
+        }
+      });
+      this.$user.user.email = this.email.email;
+      this.$user.user.emailVerified = false;
+    },
     async changePassword() {
       await this.$apollo.mutate({
         mutation: ChangeUserPasswordMutation,

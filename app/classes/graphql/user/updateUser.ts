@@ -97,3 +97,10 @@ export class ChangeUsernameInput extends DangerZoneInput {
   @MinLength(2)
   username: string
 }
+
+@InputType()
+export class ChangeEmailInput extends DangerZoneInput {
+  @Field()
+  @IsEmail()
+  email: string
+}

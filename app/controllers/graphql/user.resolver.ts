@@ -30,6 +30,7 @@ import {
 import { createContext, EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import {
+  ChangeEmailInput,
   ChangePasswordInput,
   ChangeUsernameInput,
   UpdateUserInput
@@ -194,6 +195,42 @@ export class UserResolver extends createBaseResolver("User", User) {
       true,
       SocketNamespaces.TRACKED_USERS,
       true
+    )
+    return true
+  }
+
+  @RateLimit({
+    window: 120,
+    max: 5
+  })
+  @Authorization({
+    scopes: "user.modify"
+  })
+  @Mutation(() => Boolean)
+  async changeUserEmail(
+    @Arg("input") input: ChangeEmailInput,
+    @Ctx() ctx: Context
+  ) {
+    await this.authService.validateAuthMethod({
+      credentials: {
+        password: input.password,
+        totp: input.totp
+      },
+      userId: ctx.user!!.id,
+      totp: !!input.totp,
+      password: !!input.password,
+      alternatePassword: false
+    })
+    await User.update(
+      {
+        email: input.email,
+        emailVerified: false
+      },
+      {
+        where: {
+          id: ctx.user!!.id
+        }
+      }
     )
     return true
   }
