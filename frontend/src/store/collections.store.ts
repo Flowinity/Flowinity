@@ -49,7 +49,8 @@ export const useCollectionsStore = defineStore("collections", {
         variables: {
           input: {
             ...input,
-            page: this.page
+            page: this.page,
+            limit: 24
           }
         }
       });
