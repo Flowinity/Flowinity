@@ -21,10 +21,10 @@
   <Gold v-model="$app.dialogs.gold.value"></Gold>
   <v-app
     v-if="$user.user"
-    @drop="this.dragDropHandler"
-    @dragover="this.dragOver"
-    @touchstart="this.touchStart($event)"
-    @touchend="this.touchEnd($event)"
+    @drop="dragDropHandler"
+    @dragover="dragOver"
+    @touchstart="touchStart($event)"
+    @touchend="touchEnd($event)"
     class="bg"
   >
     <NicknameDialog v-model="$app.dialogs.nickname.value"></NicknameDialog>
@@ -56,7 +56,7 @@
       "
     ></rail-bar>
     <keep-alive v-if="$app.rail">
-      <component :is="this.currentRailComponent"></component>
+      <component :is="currentRailComponent"></component>
     </keep-alive>
     <sidebar
       v-if="
@@ -89,8 +89,12 @@
     <default-view />
   </v-app>
 </template>
-
-<script lang="ts" setup>
+<script lang="ts">
+import { defineComponent } from "vue";
+import MessageToast from "@/components/Communications/MessageToast.vue";
+import Sidebar from "@/layouts/default/Sidebar.vue";
+import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
+import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
 import DefaultBar from "./AppBar.vue";
 import DefaultView from "./View.vue";
 import UnauthBar from "@/layouts/unauth/AppBar.vue";
@@ -108,21 +112,30 @@ import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
 import BlockUserDialog from "@/components/Users/Dialogs/Block.vue";
-</script>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import MessageToast from "@/components/Communications/MessageToast.vue";
-import Sidebar from "@/layouts/default/Sidebar.vue";
-import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
-import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
   components: {
     Sidebar,
     WorkspacesSidebar,
-    ColubrinaSidebar
+    ColubrinaSidebar,
+    DefaultBar,
+    DefaultView,
+    UnauthBar,
+    URLConfirmDialog,
+    MemoryProfiler,
+    UploadDialog,
+    WorkspaceDeleteDialog,
+    QuickSwitcher,
+    NicknameDialog,
+    ThemeEngineWrapper,
+    RailBar,
+    Gold,
+    InviteAFriend,
+    Feedback,
+    Migrate,
+    PrivacyPolicyDialog,
+    BlockUserDialog
   },
   data() {
     return {
