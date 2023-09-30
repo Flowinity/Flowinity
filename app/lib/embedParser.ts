@@ -184,7 +184,6 @@ export default async function embedParser(
         }
       }
     )
-    console.log(embeds)
 
     const chatService: ChatService = Container.get(ChatService)
 
