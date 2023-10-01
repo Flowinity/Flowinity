@@ -673,7 +673,7 @@ export const useAppStore = defineStore("app", {
         .map((chat) => {
           return {
             ...chat,
-            messages: chatStore.chats.find((c) => c.id === chat.id).messages
+            messages: chatStore.chats.find((c) => c.id === chat.id)?.messages
           };
         })
         .sort((a: Chat, b: Chat) => {
