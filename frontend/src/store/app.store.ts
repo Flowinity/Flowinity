@@ -541,6 +541,14 @@ export const useAppStore = defineStore("app", {
           //
         }
       }
+      const tracked = localStorage.getItem("trackedUsersStore");
+      if (tracked) {
+        try {
+          userStore.tracked = JSON.parse(tracked);
+        } catch {
+          //
+        }
+      }
       let experiments: any = localStorage.getItem("experimentsStore");
       if (experiments) {
         try {
@@ -697,6 +705,7 @@ export const useAppStore = defineStore("app", {
           })
         )
       );
+      localStorage.setItem("trackedUsersStore", JSON.stringify(trackedUsers));
       this.postInit();
     },
     async refresh() {

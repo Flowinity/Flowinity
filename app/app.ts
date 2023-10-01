@@ -442,11 +442,19 @@ export class Application {
       maskedErrors: {
         maskError(error: any, message: any, isDev: any): Error {
           console.error(error)
-
           if (error instanceof ValidationError) {
             return {
               message: error.toString(),
               name: error.name
+            }
+          }
+          if (
+            error.message.toLowerCase().includes("sqlstate") ||
+            error.message.toLowerCase().includes("sequelize")
+          ) {
+            return {
+              message: "Unknown Error",
+              name: "UNKNOWN"
             }
           }
 

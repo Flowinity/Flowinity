@@ -57,7 +57,7 @@
             message.reply.user?.username
           }}
         </span>
-        <template v-if="!blocked($user.users[message.reply.userId].id)">
+        <template v-if="!blocked($user.users[message.reply.userId]?.id)">
           <template v-if="message.reply.embeds.length">
             <v-icon class="ml-1" color="#878686">mdi-image</v-icon>
           </template>
@@ -168,7 +168,7 @@
                   })
                 "
               >
-                {{ $friends.getName(user) }}
+                {{ $friends.getName(user) || "Unknown User" }}
                 <v-chip class="ml-1" v-if="user?.bot" size="x-small">
                   BOT
                 </v-chip>
