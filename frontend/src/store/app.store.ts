@@ -673,8 +673,7 @@ export const useAppStore = defineStore("app", {
         .map((chat) => {
           return {
             ...chat,
-            messages:
-              chatStore.chats.find((c) => c.id === chat.id)?.messages || []
+            messages: chatStore.chats.find((c) => c.id === chat.id).messages
           };
         })
         .sort((a: Chat, b: Chat) => {
@@ -696,15 +695,6 @@ export const useAppStore = defineStore("app", {
       localStorage.setItem("experimentsStore", JSON.stringify(experiments));
       localStorage.setItem("userStore", JSON.stringify(currentUser));
       localStorage.setItem("chatStore", JSON.stringify(chats));
-      localStorage.setItem(
-        "chatStore",
-        JSON.stringify(
-          chatStore.chats.map((chat) => {
-            chat.messages = undefined;
-            return chat;
-          })
-        )
-      );
       localStorage.setItem("trackedUsersStore", JSON.stringify(trackedUsers));
       this.postInit();
     },
