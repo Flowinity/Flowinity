@@ -69,8 +69,9 @@ export class ChatSocketController {
     await redis.set(
       `user:${socket.request.user[this.nsp].id}:typing`,
       new Date().toISOString(),
-      "EX",
-      2
+      {
+        EX: 2
+      }
     )
   }
 

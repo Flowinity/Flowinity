@@ -59,6 +59,15 @@ export class SocketAuthMiddleware implements MiddlewareInterface {
         throw new Error("Invalid token")
       } else if (checkScope(scope, session.scopes)) {
         if (!socket.request.user) socket.request.user = {}
+        if (!session.user.pulse && namespace === SocketNamespaces.PULSE) {
+          await socket.emitWithAck(
+            "pulseDisabled",
+            namespace ?? "/unknown",
+            `You have disabled Pulse in Settings. You cannot connect to this namespace until it's re-enabled.`
+          )
+          socket.disconnect()
+          throw new Error("Invalid scope")
+        }
         socket.request.user[namespace] = session.user
         socket.join(session.user.id)
         socket.emitWithAck("connected", namespace)

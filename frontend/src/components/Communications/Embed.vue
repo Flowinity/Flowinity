@@ -163,6 +163,7 @@ export default defineComponent({
   name: "Embed",
   components: { UserAvatar, Overline },
   props: ["embed"],
+  emits: ["autoScroll"],
   computed: {
     width() {
       if (this.$vuetify.display.width < 600) return undefined;

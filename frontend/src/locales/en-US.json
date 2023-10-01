@@ -99,7 +99,7 @@
   },
   "settings": {
     "tabs": {
-      "account": "Account",
+      "account": "My Account",
       "security": "Security",
       "setup": "Setup",
       "mobileSetup": "Mobile Setup",
@@ -108,7 +108,8 @@
       "slideshows": "Slideshows",
       "about": "About",
       "integrationError": "Some integrations need attention.",
-      "developer": "My Apps & Bots"
+      "developer": "My Apps & Bots",
+      "privacy": "Privacy"
     },
     "home": {
       "privacy": {
@@ -117,7 +118,11 @@
         "discordPrecachingDesc": "* Discord precaching sends the PrivateUploader link of any media attachment to a Discord channel that gets cleared every 10 minutes in order to have the image cached by Discord by the time it's sent by yourself. Do not enable this if you don't trust Discord.",
         "demoMode": "Demo Mode",
         "publicProfile": "Public Profile",
-        "publicProfileDesc": "Allow non-logged in users to view your profile if they have the link. By default only logged in users can view."
+        "publicProfileDesc": "Allow non-logged in users to view your profile if they have the link. By default only logged in users can view.",
+        "pulse": "Send usage information to PrivateUploader",
+        "pulseDesc": "By turning this off, you are disabling \"Pulse\" functionality. This is used for tracking how much time you spend on PrivateUploader, and what functions you use to generate your Insights. Some information may still be stored by PrivateUploader as outlined in the Privacy Policy.",
+        "groupPrivacy": "Who can add you to a group?",
+        "friendPrivacy": "Who can send you a friend request?"
       },
       "myAccount": {
         "title": "My PrivateUploader",

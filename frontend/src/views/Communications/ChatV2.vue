@@ -85,7 +85,11 @@
         "
       ></MessageActionsList>
     </v-menu>
-    <div class="messages communications position-relative" id="chat">
+    <div
+      class="messages communications position-relative"
+      id="chat"
+      @scrollend="scrollEvent"
+    >
       <div id="sentinel-bottom" ref="sentinelBottom"></div>
       <infinite-loading
         @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
@@ -674,8 +678,12 @@ export default defineComponent({
       if (!this.$chat.selectedChat?.messages) return;
       const sentinel = document.getElementById("sentinel-bottom");
       if (!sentinel) return;
-      if (this.$refs[`message-0`]) {
-        this.resizeObserver.observe(this.$refs[`message-0`][0]?.$el);
+      try {
+        if (this.$refs[`message-0`][0]?.$el) {
+          this.resizeObserver.observe(this.$refs[`message-0`][0]?.$el);
+        }
+      } catch (e) {
+        console.log(e);
       }
       sentinel.scrollIntoView();
       this.$nextTick(() => {
@@ -922,8 +930,6 @@ export default defineComponent({
     document.addEventListener("keydown", this.shortcutHandler);
     this.focusInterval = setInterval(this.onFocus, 2000);
     // re-enable auto scroll for flex-direction: column-reverse;
-    const chat = document.getElementById("chat");
-    if (chat) chat.addEventListener("scroll", this.scrollEvent);
     this.$sockets.chat.on("message", this.onMessage);
     this.$sockets.chat.on("embedResolution", this.onEmbedResolution);
     this.$sockets.chat.on("typing", this.onTyping);
@@ -935,7 +941,6 @@ export default defineComponent({
     document.body.classList.remove("disable-overscroll");
     this.$chat.isReady = 0;
     this.$chat.setDraft(<string>this.$route.params.chatId, this.message);
-    document.removeEventListener("scroll", this.scrollEvent);
     document.removeEventListener("keydown", this.shortcutHandler);
     document
       .querySelector(".message-input")

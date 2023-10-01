@@ -73,6 +73,9 @@ const Errors = {
   },
   NOT_BOT: {
     message: "You need to be a bot to do this."
+  },
+  FRIEND_REQUESTS_DISABLED: {
+    message: "This user does not allow you to send friend requests to them."
   }
 }
 

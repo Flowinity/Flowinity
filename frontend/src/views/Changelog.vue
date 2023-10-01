@@ -1,12 +1,15 @@
 <template>
-  <v-container class="text-center">
-    <h1>TPU Changelogs</h1>
+  <v-container>
+    <h1 class="text-center">TPU Changelogs</h1>
     <template v-for="version in versions">
       <h2 class="mt-4">{{ version.version }}</h2>
-      <v-card-title v-if="version.subheading" style="font-size: 17px">
+      <v-card-title
+        v-if="version.subheading"
+        style="font-size: 17px; padding: 0"
+      >
         {{ version.subheading }}
       </v-card-title>
-      <v-card-subtitle>{{ version.date }}</v-card-subtitle>
+      <v-card-subtitle style="padding: 0">{{ version.date }}</v-card-subtitle>
       <div v-for="change in version.changes" :key="change.text">
         <v-chip
           v-for="tag in change.tags"
@@ -52,9 +55,58 @@ export default defineComponent({
         },
         Profile: {
           color: "pink"
+        },
+        Breaking: {
+          color: "red"
+        },
+        API: {
+          color: "blue"
         }
       } as Record<string, { color: string | undefined }>,
       versions: [
+        {
+          version: "4.0.0",
+          subheading: "Communications Update - Communications is out of beta!",
+          date: "2023-10-01",
+          changes: [
+            {
+              tags: ["Breaking", "API"],
+              text: "The WebSocket address has changed from /socket.io to /gateway and uses Namespaces to disallow scoped API keys from accessing disallowed information. The API v2 and v3 WebSockets are no longer available as of this release. This will break older clients such as legacy.privateuploader.com. An updated Android app release will be coming soon to adjust for these changes."
+            },
+            {
+              tags: ["New", "Communications"],
+              text: "You can now create custom Ranks with different permissions to assign to users in groups."
+            },
+            {
+              tags: ["New", "Communications"],
+              text: "You can now create bots and add them to groups. Documentation: https://docs.privateuploader.com"
+            },
+            {
+              tags: ["New", "Communications"],
+              text: "You can now create Custom Emoji in groups, which can be used in the group itself, direct messages, or external groups that allow it"
+            },
+            {
+              tags: ["New", "Communications"],
+              text: "You can now create Invites with a customizable description and background to send to external and existing TPU users."
+            },
+            {
+              tags: ["New", "API"],
+              text: "There is a new GraphQL API which most new APIs will be implemented in. For developers you can visit https://docs.privateuploader.com or https://privateuploader.com/graphql"
+            },
+            {
+              tags: ["New", "Communications"],
+              text: "There is now a favicon status indicator when you have unread messages."
+            },
+            {
+              tags: ["New", "Communications"],
+              text: "There is separator for new messages you haven't read."
+            },
+            {
+              tags: ["New", "TPU"],
+              text: "There is a Developer page that allows you to add OpenID "
+            }
+          ]
+        },
         {
           version: "3.2.0",
           subheading: "Improved User Profiles!",

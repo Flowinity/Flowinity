@@ -38,6 +38,10 @@ import { Stats } from "@app/classes/graphql/core/core"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { BlockedUser } from "@app/models/blockedUser.model"
 import { GraphQLJSON } from "graphql-scalars"
+import {
+  FriendRequestPrivacy,
+  GroupPrivacy
+} from "@app/classes/graphql/user/privacy"
 
 @DefaultScope(() => ({
   attributes: {
@@ -384,6 +388,28 @@ export class User extends Model {
   })
   @Column
   nameColor: string
+
+  @Field({
+    description: "Whether the user has TPU Pulse Telemetry enabled."
+  })
+  @Column
+  pulse: boolean
+
+  @Field(() => GroupPrivacy, {
+    description: "Whether the user can be added directly into groups."
+  })
+  @Column({
+    type: DataType.ENUM("FRIENDS", "NOBODY")
+  })
+  groupPrivacy: GroupPrivacy
+
+  @Field(() => FriendRequestPrivacy, {
+    description: "Whether the user can be sent a friend request."
+  })
+  @Column({
+    type: DataType.ENUM("EVERYONE", "NOBODY")
+  })
+  friendRequests: FriendRequestPrivacy
 
   @Field({
     description: "Whether the user is a bot user."

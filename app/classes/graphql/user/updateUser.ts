@@ -4,6 +4,10 @@ import { IsEmail, IsHexColor, MaxLength, MinLength } from "class-validator"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { DangerZoneInput } from "@app/classes/graphql/chat/deleteChat"
 import { GraphQLJSON } from "graphql-scalars"
+import {
+  FriendRequestPrivacy,
+  GroupPrivacy
+} from "@app/classes/graphql/user/privacy"
 
 @InputType()
 export class UpdateUserInput {
@@ -75,6 +79,18 @@ export class UpdateUserInput {
     nullable: true
   })
   nameColor: string
+  @Field(() => GroupPrivacy, {
+    nullable: true
+  })
+  groupPrivacy: GroupPrivacy
+  @Field({
+    nullable: true
+  })
+  pulse: boolean
+  @Field(() => FriendRequestPrivacy, {
+    nullable: true
+  })
+  friendRequests: FriendRequestPrivacy
 }
 
 @InputType()

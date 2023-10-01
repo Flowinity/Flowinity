@@ -736,7 +736,8 @@ export class ChatService {
     if (!force) {
       friends = await Container.get(UserUtilsService).validateFriends(
         userId,
-        userIds
+        userIds,
+        true
       )
     }
     let newAssociations = []
@@ -1122,11 +1123,12 @@ export class ChatService {
     if (!users.length || users.includes(userId))
       throw Errors.INVALID_FRIEND_SELECTION
 
+    const type = users.length === 1 ? "direct" : "group"
     const friends = await Container.get(UserUtilsService).validateFriends(
       userId,
-      users
+      users,
+      type !== "direct"
     )
-    const type = friends.length === 1 ? "direct" : "group"
     const intent = [userId, ...users].sort((a, b) => a - b).join("-")
     if (type === "direct") {
       const chat = await Chat.findOne({

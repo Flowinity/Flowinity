@@ -519,6 +519,8 @@ export const useAppStore = defineStore("app", {
       }
     },
     loadLocalStorage() {
+      const chatStore = useChatStore();
+      chatStore.init();
       const userStore = useUserStore();
       const experimentsStore = useExperimentsStore();
       const core = localStorage.getItem("coreStore");
@@ -561,7 +563,6 @@ export const useAppStore = defineStore("app", {
       });
       useWorkspacesStore().init();
       const chat = useChatStore();
-      chat.init();
       const user = useUserStore();
       setInterval(() => {
         this.getWeather();
@@ -687,6 +688,15 @@ export const useAppStore = defineStore("app", {
       localStorage.setItem("experimentsStore", JSON.stringify(experiments));
       localStorage.setItem("userStore", JSON.stringify(currentUser));
       localStorage.setItem("chatStore", JSON.stringify(chats));
+      localStorage.setItem(
+        "chatStore",
+        JSON.stringify(
+          chatStore.chats.map((chat) => {
+            chat.messages = undefined;
+            return chat;
+          })
+        )
+      );
       this.postInit();
     },
     async refresh() {

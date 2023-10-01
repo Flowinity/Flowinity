@@ -16,7 +16,8 @@
   <v-data-table :items="users" :headers="headers">
     <template v-slot:item.user.username="{ item }">
       <UserAvatar :user="item.user"></UserAvatar>
-      {{ item.user?.username || "Unresolved user" }} ({{ item.id }})
+      {{ item.user?.username || "Unresolved user" }}
+      <template v-if="dev">({{ item.id }})</template>
       <template v-if="item.user?.id === $chat.editingChat.userId">
         <span>
           <v-tooltip activator="parent" location="top">
@@ -158,6 +159,9 @@ export default defineComponent({
     };
   },
   computed: {
+    dev() {
+      return import.meta.env.DEV;
+    },
     users() {
       return this.$chat.editingChat.users
         .filter(

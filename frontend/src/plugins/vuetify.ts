@@ -26,6 +26,12 @@ export class DefaultThemes {
     this.themes = {
       dark: {
         colors: {
+          surface: "#212121",
+          "surface-bright": "#ccbfd6",
+          "surface-variant": "#a3a3a3",
+          "on-surface-variant": "#424242",
+          "primary-darken-1": "#3700B3",
+          "secondary-darken-1": "#03DAC5",
           primary: gold ? "#FFD700" : "#0190ea",
           logo1: gold ? "#FFDB1B" : "#096fea",
           logo2: gold ? "#FFD700" : "#0166ea",
@@ -47,6 +53,12 @@ export class DefaultThemes {
       },
       amoled: {
         colors: {
+          surface: "#212121",
+          "surface-bright": "#ccbfd6",
+          "surface-variant": "#a3a3a3",
+          "on-surface-variant": "#424242",
+          "primary-darken-1": "#3700B3",
+          "secondary-darken-1": "#03DAC5",
           primary: gold ? "#FFD700" : "#0190ea",
           logo1: gold ? "#FFDB1B" : "#096fea",
           logo2: gold ? "#FFD700" : "#0166ea",
@@ -69,6 +81,12 @@ export class DefaultThemes {
       },
       light: {
         colors: {
+          surface: "#212121",
+          "surface-bright": "#ccbfd6",
+          "surface-variant": "#e4e4e4",
+          "on-surface-variant": "#d8d8d8",
+          "primary-darken-1": "#3700B3",
+          "secondary-darken-1": "#03DAC5",
           primary: gold ? "#FFD700" : "#0190ea",
           logo1: gold ? "#FFDB1B" : "#096fea",
           logo2: gold ? "#FFD700" : "#0166ea",
@@ -190,10 +208,10 @@ export default createVuetify({
   },
   theme: {
     defaultTheme: ["dark", "amoled", "light"].includes(
-      localStorage.getItem("theme") || "amoled"
+      localStorage.getItem("theme") || "dark"
     )
-      ? localStorage.getItem("theme") || "amoled"
-      : "amoled",
+      ? localStorage.getItem("theme") || "dark"
+      : "dark",
     themes: new DefaultThemes().themes
   }
 });

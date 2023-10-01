@@ -107,12 +107,12 @@ export class BlockedUserResolver {
       }
       socket.of(SocketNamespaces.FRIENDS).to(ctx.user!!.id).emit("request", {
         id: input.userId,
-        status: "removed",
+        status: "REMOVED",
         friend: null
       })
       socket.of(SocketNamespaces.FRIENDS).to(input.userId).emit("request", {
         id: ctx.user!!.id,
-        status: "removed",
+        status: "REMOVED",
         friend: null
       })
       socket

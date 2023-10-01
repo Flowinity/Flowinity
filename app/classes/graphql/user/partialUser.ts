@@ -160,6 +160,8 @@ export class PartialUserAuth extends PartialUserBase {
   storedStatus: UserStoredStatus
   @Field(() => Boolean)
   emailVerified: boolean
+  @Field(() => Boolean)
+  pulse: boolean
 }
 
 export const partialUserFriend = [...partialUserBase, "status", "nameColor"]

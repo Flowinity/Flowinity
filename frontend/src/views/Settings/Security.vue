@@ -82,44 +82,49 @@
           $t("settings.security.unknownLocation")
         }}
       </v-list-item-title>
-      <v-list-item-subtitle class="mt-1">
-        {{
-          login.info?.accessedFrom?.at(-1)?.isp ||
-          $t("settings.security.unknownISP")
-        }}
-        {{
-          login.info?.accessedFrom?.at(-1)?.asn ||
-          $t("settings.security.unknownASN")
-        }}
-        -
-        {{
-          login.info?.accessedFrom?.at(-1)?.ip ||
-          $t("settings.security.unknownIP")
-        }}
-      </v-list-item-subtitle>
-      <v-list-item-subtitle class="mt-1">
-        {{
-          $t("settings.security.lastSessionUsage", {
-            date: $date().to(login.updatedAt)
-          })
-        }}
-      </v-list-item-subtitle>
-      <v-list-item-subtitle class="mt-1">
-        {{
-          $t("settings.security.sessionCreated", {
-            date: $date().to(login.createdAt)
-          })
-        }}
-      </v-list-item-subtitle>
-      <v-list-item-subtitle class="mt-1">
-        {{
-          $t("settings.security.sessionExpiry", {
-            date: login.expiredAt
-              ? $date().to(login.expiredAt)
-              : $t("generic.never")
-          })
-        }}
-      </v-list-item-subtitle>
+      <div>
+        <v-list-item-subtitle class="mt-1">
+          {{
+            login.info?.accessedFrom?.at(-1)?.isp ||
+            $t("settings.security.unknownISP")
+          }}
+          {{
+            login.info?.accessedFrom?.at(-1)?.asn ||
+            $t("settings.security.unknownASN")
+          }}
+          -
+          {{
+            login.info?.accessedFrom?.at(-1)?.ip ||
+            $t("settings.security.unknownIP")
+          }}
+        </v-list-item-subtitle>
+        <br />
+        <v-list-item-subtitle class="mt-1">
+          {{
+            $t("settings.security.lastSessionUsage", {
+              date: $date().to(login.updatedAt)
+            })
+          }}
+        </v-list-item-subtitle>
+        <br />
+        <v-list-item-subtitle class="mt-1">
+          {{
+            $t("settings.security.sessionCreated", {
+              date: $date().to(login.createdAt)
+            })
+          }}
+        </v-list-item-subtitle>
+        <br />
+        <v-list-item-subtitle class="mt-1">
+          {{
+            $t("settings.security.sessionExpiry", {
+              date: login.expiredAt
+                ? $date().to(login.expiredAt)
+                : $t("generic.never")
+            })
+          }}
+        </v-list-item-subtitle>
+      </div>
       <template v-slot:append>
         <v-btn color="red" icon @click="deleteApiKey(login.id)">
           <v-tooltip activator="parent" location="top">

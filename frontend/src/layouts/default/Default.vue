@@ -304,6 +304,9 @@ export default defineComponent({
     if (localStorage.getItem("rainbowMode")) {
       document.body.classList.add("rainbow");
     }
+    if (this.$vuetify.display.mobile && this.$app.workspaceDrawer) {
+      this.$app.workspaceDrawer = false;
+    }
     // watch for CTRL + ALT + M for Memory Profiler
     document.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.ctrlKey && e.altKey && e.key === "m") {

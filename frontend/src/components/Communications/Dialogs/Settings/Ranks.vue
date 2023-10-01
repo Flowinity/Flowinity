@@ -6,8 +6,14 @@
   <overline position="center">
     {{ selectedRank?.name || $t("chats.settings.ranks.name") }}
   </overline>
-  <div class="d-flex flex-grow-1">
-    <v-tabs direction="vertical" v-model="selected">
+  <div
+    class="d-flex flex-grow-1"
+    :style="{ 'flex-column': $vuetify.display.mobile }"
+  >
+    <v-tabs
+      :direction="$vuetify.display.mobile ? 'horizontal' : 'vertical'"
+      v-model="selected"
+    >
       <VueDraggable
         @end="updateRankOrder"
         v-model="$chat.editingChat.ranks"
@@ -70,7 +76,10 @@
     </v-tabs>
     <v-window v-model="selected" class="flex-grow-1" :touch="false">
       <v-window-item v-for="rank in $chat.editingChat.ranks" :value="rank.id">
-        <v-container class="d-flex justify-center text-center">
+        <v-container
+          class="justify-center text-center"
+          :class="{ 'd-flex': !$vuetify.display.mobile }"
+        >
           <div>
             <v-card-title>
               {{ $t("chats.settings.ranks.manage.color") }}

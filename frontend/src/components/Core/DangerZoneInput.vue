@@ -26,12 +26,11 @@
     @keydown.enter="$emit('confirm')"
     :label="$t('settings.home.myAccount.currentPassword')"
   >
-    <template v-slot:details>
+    <template v-slot:details v-if="$user.user.totpEnable">
       Having problems?
       <a
         class="unselectable pointer"
         @click="$emit('update:passwordMode', false)"
-        v-if="$user.user.totpEnable"
       >
         &nbsp;Use your 2FA code instead.
       </a>

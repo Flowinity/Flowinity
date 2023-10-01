@@ -13,7 +13,9 @@ export class GoogleService {
       })
       const client = await auth.getClient()
       const token = await client.getAccessToken()
-      await redis.set("providers:google:token", token.token, "EX", 3500)
+      await redis.set("providers:google:token", token.token, {
+        EX: 3500
+      })
       console.log(token.token)
       return token.token
     } catch (e) {

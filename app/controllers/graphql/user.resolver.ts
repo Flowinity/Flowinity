@@ -405,7 +405,8 @@ function createBaseResolver<T extends ClassType>(
                 "itemsPerPage",
                 "status",
                 "storedStatus",
-                "emailVerified"
+                "emailVerified",
+                "pulse"
               ]
             }
           ]
@@ -448,7 +449,8 @@ function createBaseResolver<T extends ClassType>(
               "itemsPerPage",
               "status",
               "storedStatus",
-              "emailVerified"
+              "emailVerified",
+              "pulse"
             ]
           }
         ]

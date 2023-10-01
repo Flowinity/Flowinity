@@ -42,7 +42,9 @@ export class InviteService {
       ...inv.toJSON(),
       facts: await this.getFacts(inviteKey)
     }
-    redis.json.set(`invites:${inviteKey}`, "$", invite, "EX", 43200)
+    redis.json.set(`invites:${inviteKey}`, "$", invite, {
+      EX: 43200
+    })
     return invite
   }
 

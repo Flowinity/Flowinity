@@ -6,6 +6,9 @@
   >
     <template v-slot:toolbar>
       <v-toolbar color="transparent">
+        <overline v-if="$vuetify.display.mobile">
+          {{ $chat.editingChat.name }}
+        </overline>
         <v-spacer></v-spacer>
         <CreateChat
           v-slot="{ props }"
@@ -48,9 +51,17 @@
       @remove="removeIcon"
       :remove-text="$t('dialogs.uploadCropper.removeGroup')"
     />
-    <div class="d-flex flex-row mt-n4" v-if="$chat.editingChat">
-      <v-tabs direction="vertical" v-model="tab" style="max-width: 220px">
-        <overline>
+    <div
+      class="d-flex mt-n4"
+      :class="{ 'flex-column': $vuetify.display.mobile }"
+      v-if="$chat.editingChat"
+    >
+      <v-tabs
+        :direction="$vuetify.display.mobile ? 'horizontal' : 'vertical'"
+        v-model="tab"
+        :style="{ maxWidth: $vuetify.display.mobile ? undefined : '220px' }"
+      >
+        <overline v-if="!$vuetify.display.mobile">
           {{ $chat.editingChat.name }}
         </overline>
         <v-tab value="home">
@@ -94,14 +105,16 @@
         </v-tab>
         <v-tab
           value="bots"
-          v-if="$chat.hasPermission('MANAGE_INTEGRATIONS', $chat.editingChat)"
+          v-if="
+            dev && $chat.hasPermission('MANAGE_INTEGRATIONS', $chat.editingChat)
+          "
         >
           <v-icon class="mr-2">mdi-robot</v-icon>
           {{ $t("chats.settings.tabs.bots") }}
         </v-tab>
         <v-tab
           value="bans"
-          v-if="$chat.hasPermission('BAN_USERS', $chat.editingChat)"
+          v-if="dev && $chat.hasPermission('BAN_USERS', $chat.editingChat)"
         >
           <v-icon class="mr-2">mdi-gavel</v-icon>
           {{ $t("chats.settings.tabs.bans") }}
@@ -121,7 +134,10 @@
           {{ $t("chats.leave.delete.title") }}
         </v-btn>
       </v-tabs>
-      <div style="width: 100%">
+      <div
+        style="width: 100%"
+        :style="{ padding: $vuetify.display.mobile ? '10px' : undefined }"
+      >
         <div v-show="tab === 'home'">
           <ChatSettingsHome />
         </div>
@@ -186,6 +202,11 @@ export default defineComponent({
       groupIconLoading: false,
       tab: "home"
     };
+  },
+  computed: {
+    dev() {
+      return import.meta.env.DEV;
+    }
   },
   methods: {
     async uploadIcon(file: File) {

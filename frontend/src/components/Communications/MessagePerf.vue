@@ -6,6 +6,7 @@
       (blocked(message.userId) && merge && uncollapseBlocked) ||
       !merge
     "
+    :ref="`message-${message.id}`"
   >
     <overline
       v-if="unreadId === message.id"
@@ -322,6 +323,7 @@ export default defineComponent({
     CommunicationsInput
   },
   props: [
+    "resizeObserver",
     "message",
     "editing",
     "shifting",
@@ -342,7 +344,8 @@ export default defineComponent({
     "delete",
     "reply",
     "editMessage",
-    "jumpToMessage"
+    "jumpToMessage",
+    "autoScroll"
   ],
   data() {
     return {
@@ -410,6 +413,9 @@ export default defineComponent({
     if (!this.message.reply?.id) return;
     this.$sockets.chat.off("edit", this.onEdit);
     this.$sockets.chat.off("messageDelete", this.onDelete);
+    const el = this.$refs[`message-${this.message.id}`]?.$el;
+    if (!el) return;
+    this.resizeObserver.unobserve(this.$refs[el]);
   }
 });
 </script>

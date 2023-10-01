@@ -13,7 +13,7 @@ export const ChangeUserPasswordMutation = gql`
 `;
 
 export const ChangeUserEmailMutation = gql`
-  mutation ChangeUserPassword($input: ChangeEmailInput!) {
+  mutation ChangeUserEmail($input: ChangeEmailInput!) {
     changeUserEmail(input: $input)
   }
 `;

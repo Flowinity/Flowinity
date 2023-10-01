@@ -387,25 +387,7 @@ export class GalleryService {
         {
           model: Collection,
           as: "collections",
-          attributes: ["id", "name"],
-          where: {
-            [Op.or]: [
-              {
-                userId: userId ?? 0
-              }
-            ]
-          },
-          include: [
-            {
-              model: CollectionUser,
-              as: "recipient",
-              attributes: ["recipientId"],
-              required: false,
-              where: {
-                recipientId: userId ?? 0
-              }
-            }
-          ]
+          attributes: ["id", "name"]
         },
         {
           model: Star,
@@ -444,6 +426,7 @@ export class GalleryService {
           model: Collection,
           as: "collections",
           attributes: ["id", "name", "userId"],
+          required: false,
           where: {
             [Op.or]: [
               {
@@ -477,25 +460,7 @@ export class GalleryService {
         {
           model: Collection,
           as: "collections",
-          attributes: ["id", "name", "userId"],
-          where: {
-            [Op.or]: [
-              {
-                userId: userId ?? 0
-              }
-            ]
-          },
-          include: [
-            {
-              model: CollectionUser,
-              as: "recipient",
-              attributes: ["recipientId"],
-              required: false,
-              where: {
-                recipientId: userId ?? 0
-              }
-            }
-          ]
+          attributes: ["id", "name", "userId"]
         },
         {
           model: User,
@@ -525,15 +490,7 @@ export class GalleryService {
               {
                 model: Collection,
                 as: "collections",
-                attributes: ["id", "name", "userId"],
-                required: false,
-                where: {
-                  [Op.or]: [
-                    {
-                      userId: userId ?? 0
-                    }
-                  ]
-                }
+                attributes: ["id", "name", "userId"]
               }
             ]
           }

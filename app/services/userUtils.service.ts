@@ -34,6 +34,12 @@ import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { BlockedUser } from "@app/models/blockedUser.model"
+import {
+  FriendRequestPrivacy,
+  GroupPrivacy
+} from "@app/classes/graphql/user/privacy"
+import { GqlError } from "@app/lib/gqlErrors"
+import { GraphQLError } from "graphql/error"
 
 @Service()
 export class UserUtilsService {
@@ -263,22 +269,40 @@ export class UserUtilsService {
     return true
   }
 
-  async validateFriends(userId: number, friendIds: number[]) {
+  async validateFriends(
+    userId: number,
+    friendIds: number[],
+    checkDMPrivacy: boolean = false
+  ) {
     const friends = await Friend.findAll({
       where: {
         userId,
         friendId: friendIds,
         status: "accepted"
-      }
+      },
+      include: [
+        {
+          model: User,
+          as: "otherUser",
+          attributes: ["groupPrivacy", "username"]
+        }
+      ]
     })
-    console.log(userId, friendIds)
     if (friends.length !== friendIds.length)
       throw Errors.INVALID_FRIEND_SELECTION
+    const find = friends.find(
+      (friend) => friend.otherUser.groupPrivacy === GroupPrivacy.NOBODY
+    )
+    if (find) {
+      throw new GraphQLError(
+        `${find.otherUser.username} can't be directly added to groups. You must send them an invite after the group has been created.`
+      )
+    }
     return friends
   }
 
   async getFriend(userId: number, friendId: number) {
-    return await Friend.findOne({
+    const friend = await Friend.findOne({
       where: {
         userId,
         friendId
@@ -306,6 +330,11 @@ export class UserUtilsService {
         }
       ]
     })
+    if (!friend) return null
+    friend.dataValues.status = friend.dataValues.status?.toUpperCase()
+    //@ts-ignore
+    friend.status = friend.status?.toUpperCase()
+    return friend
   }
 
   async getFriends(userId: number) {
@@ -399,7 +428,10 @@ export class UserUtilsService {
       message,
       route
     })
-    socket.to(userId).emit("notification", notification)
+    socket
+      .of(SocketNamespaces.USER)
+      .to(userId)
+      .emit("notification", notification)
   }
 
   async removeFriend(userId: number, friendId: number): Promise<void> {
@@ -418,12 +450,12 @@ export class UserUtilsService {
 
     socket.of(SocketNamespaces.FRIENDS).to(friendId).emit("request", {
       id: userId,
-      status: "removed",
+      status: "REMOVED",
       friend: null
     })
     socket.of(SocketNamespaces.FRIENDS).to(userId).emit("request", {
       id: friendId,
-      status: "removed",
+      status: "REMOVED",
       friend: null
     })
   }
@@ -439,7 +471,7 @@ export class UserUtilsService {
       where: {
         [type]: friendId
       },
-      attributes: ["username", "id"]
+      attributes: ["username", "id", "friendRequests"]
     })
 
     const otherUser = await User.findOne({
@@ -459,14 +491,14 @@ export class UserUtilsService {
       }
     })
     if (!friend) {
+      if (user.friendRequests === FriendRequestPrivacy.NOBODY)
+        throw new GqlError("FRIEND_REQUESTS_DISABLED")
       // Prevent user spam by avoiding to send the notification if the request is made <30minutes
+      console.log(await redis.get(`friendNotification:${user.id}:${userId}`))
       if (!(await redis.get(`friendNotification:${user.id}:${userId}`))) {
-        await redis.set(
-          `friendNotification:${user.id}:${userId}`,
-          "true",
-          "EX",
-          1800
-        )
+        await redis.set(`friendNotification:${user.id}:${userId}`, "true", {
+          EX: 1800
+        })
         await this.createNotification(
           user.id,
           `${otherUser.username} has sent you a friend request!`,
@@ -488,7 +520,7 @@ export class UserUtilsService {
         .to(user.id)
         .emit("request", {
           id: userId,
-          status: "incoming",
+          status: "INCOMING",
           friend: await this.getFriend(user.id, userId)
         })
       socket
@@ -496,7 +528,7 @@ export class UserUtilsService {
         .to(userId)
         .emit("request", {
           id: user.id,
-          status: "outgoing",
+          status: "OUTGOING",
           friend: await this.getFriend(userId, user.id)
         })
       return true
@@ -550,7 +582,7 @@ export class UserUtilsService {
           .to(user.id)
           .emit("request", {
             id: userId,
-            status: "accepted",
+            status: "ACCEPTED",
             friend: await this.getFriend(user.id, userId)
           })
         socket
@@ -558,7 +590,7 @@ export class UserUtilsService {
           .to(userId)
           .emit("request", {
             id: user.id,
-            status: "accepted",
+            status: "ACCEPTED",
             friend: await this.getFriend(userId, user.id)
           })
         return true
@@ -684,7 +716,10 @@ export class UserUtilsService {
       "excludedCollections",
       "publicProfile",
       "privacyPolicyAccepted",
-      "nameColor"
+      "nameColor",
+      "pulse",
+      "groupPrivacy",
+      "friendRequests"
     ]
 
     // from body, remove all empty values

@@ -350,7 +350,10 @@ export const useUserStore = defineStore("user", {
             weatherUnit: this.user.weatherUnit,
             themeEngine: this.user.themeEngine?.theme?.amoled?.colors
               ? this.user.themeEngine
-              : null
+              : null,
+            pulse: this.user.pulse,
+            groupPrivacy: this.user.groupPrivacy,
+            friendRequests: this.user.friendRequests
           }
         } as UpdateUserInput
       });

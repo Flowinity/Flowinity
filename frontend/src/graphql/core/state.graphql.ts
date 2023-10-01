@@ -205,6 +205,9 @@ export const CoreStateQuery = gql`
     currentUser {
       username
       email
+      pulse
+      groupPrivacy
+      friendRequests
       description
       administrator
       darkTheme

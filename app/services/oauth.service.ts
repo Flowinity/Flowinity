@@ -143,8 +143,9 @@ export class OauthService {
         oauthAppId: client.id,
         scopes: session.scopes
       }),
-      "EX",
-      60 * 60 * 2
+      {
+        EX: 60 * 60 * 2
+      }
     )
     return {
       access_token: accessToken,

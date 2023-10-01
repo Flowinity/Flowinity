@@ -643,6 +643,14 @@ export const useChatStore = defineStore("chat", {
     },
     async init() {
       try {
+        const chats = localStorage.getItem("chatStore");
+        if (chats) {
+          this.chats = JSON.parse(chats);
+        }
+      } catch {
+        //
+      }
+      try {
         const trustedDomains = localStorage.getItem("trustedDomainsStore");
         if (trustedDomains) {
           this.trustedDomains = JSON.parse(trustedDomains);

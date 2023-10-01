@@ -1,9 +1,12 @@
 <template>
   <v-container>
-    <v-card>
-      <v-tabs>
+    <v-card :class="{ 'd-flex': !$vuetify.display.mobile }">
+      <v-tabs :direction="$vuetify.display.mobile ? 'horizontal' : 'vertical'">
         <v-tab prepend-icon="mdi-account" to="/settings/dashboard">
           {{ $t("settings.tabs.account") }}
+        </v-tab>
+        <v-tab prepend-icon="mdi-account" to="/settings/privacy">
+          {{ $t("settings.tabs.privacy") }}
         </v-tab>
         <v-tab prepend-icon="mdi-lock" to="/settings/security">
           {{ $t("settings.tabs.security") }}
@@ -47,13 +50,28 @@
           {{ $t("settings.tabs.about") }}
         </v-tab>
         <v-spacer></v-spacer>
-        <v-progress-circular
-          v-if="loading"
-          class="mt-2 mr-2"
-          indeterminate
-          size="24"
-          width="3"
-        ></v-progress-circular>
+        <template v-if="$vuetify.display.mobile">
+          <v-progress-circular
+            v-if="loading"
+            class="mt-2 mr-2"
+            indeterminate
+            size="24"
+            width="3"
+          ></v-progress-circular>
+        </template>
+        <template v-else>
+          <v-fade-transition :model-value="loading">
+            <v-toolbar
+              density="compact"
+              class="text-center justify-center"
+              v-if="loading"
+            >
+              <v-spacer></v-spacer>
+              Saving...
+              <v-spacer></v-spacer>
+            </v-toolbar>
+          </v-fade-transition>
+        </template>
       </v-tabs>
       <v-container>
         <router-view @loading="loading = $event" @update="update"></router-view>
@@ -74,10 +92,13 @@ export default defineComponent({
   },
   methods: {
     async update() {
-      this.loading = true;
-      await this.$user.save();
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      this.loading = false;
+      try {
+        this.loading = true;
+        await this.$user.save();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      } finally {
+        this.loading = false;
+      }
     }
   }
 });

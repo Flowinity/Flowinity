@@ -8,7 +8,10 @@
   <overline position="center">
     {{ $t("chats.settings.home.name") }}
   </overline>
-  <div class="d-flex text-center flex-grow-1 justify-center">
+  <div
+    class="text-center flex-grow-1 justify-center"
+    :class="{ 'd-flex': !$vuetify.display.mobile }"
+  >
     <div style="max-width: 400px">
       <v-card-title
         style="

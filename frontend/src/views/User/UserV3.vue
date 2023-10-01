@@ -163,7 +163,7 @@
                 </v-btn>
                 <v-btn
                   v-if="
-                    user?.friend === FriendStatus.Accepted &&
+                    friends.status === FriendStatus.Accepted &&
                     $experiments.experiments['COMMUNICATIONS']
                   "
                   :loading="friendLoading"
@@ -650,30 +650,45 @@ export default defineComponent({
       return this.user?.plan.internalName === "GOLD";
     },
     friends() {
-      switch (this.user?.friend) {
+      const find = this.$friends.friends.find(
+        (friend) => friend.friendId === this.user?.id
+      );
+      if (!find) {
+        return {
+          text: "Add Friend",
+          color: "green",
+          icon: "mdi-account-plus",
+          status: FriendStatus.None
+        };
+      }
+      switch (find.status) {
         case FriendStatus.Accepted:
           return {
             text: "Remove Friend",
             color: "red",
-            icon: "mdi-account-minus"
+            icon: "mdi-account-minus",
+            status: FriendStatus.Accepted
           };
         case FriendStatus.Outgoing:
           return {
             text: "Cancel Request",
             color: "grey",
-            icon: "mdi-account-minus"
+            icon: "mdi-account-minus",
+            status: FriendStatus.Outgoing
           };
         case FriendStatus.Incoming:
           return {
             text: "Accept Request",
             color: "green",
-            icon: "mdi-account-plus"
+            icon: "mdi-account-plus",
+            status: FriendStatus.Incoming
           };
         default:
           return {
             text: "Add Friend",
             color: "green",
-            icon: "mdi-account-plus"
+            icon: "mdi-account-plus",
+            status: FriendStatus.None
           };
       }
     }

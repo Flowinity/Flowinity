@@ -14,6 +14,7 @@ import {
   ChatRank,
   Friend,
   FriendNickname,
+  FriendStatus,
   Message,
   PartialUserFriend,
   User,
@@ -414,15 +415,24 @@ export default async function setup(app) {
     "request",
     (data: {
       id: number;
-      status: "removed" | "incoming" | "outgoing";
+      status: FriendStatus & "REMOVED";
       friend: Friend | null;
     }) => {
-      if (data.status === "removed") {
+      if (data.status === "REMOVED") {
         friends.friends = friends.friends.filter(
-          (friend) => friend.friendId === data.id
+          (friend) => friend.friendId !== data.id
         );
-      } else {
+      } else if (
+        data.status === FriendStatus.Incoming ||
+        data.status === FriendStatus.Outgoing
+      ) {
         friends.friends.push(data.friend);
+      } else {
+        const friend = friends.friends.find(
+          (friend) => friend.id === data.friend.id
+        );
+        if (!friend) return;
+        friend.status = FriendStatus.Accepted;
       }
     }
   );

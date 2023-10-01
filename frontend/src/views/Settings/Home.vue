@@ -1,233 +1,196 @@
 <template>
-  <v-card-title>
-    {{ $t("settings.home.privacy.title") }}
-  </v-card-title>
-  <v-card-text>
-    <v-switch
-      v-model="$user.user.discordPrecache"
-      class="mb-n7"
-      :label="$t('settings.home.privacy.discordPrecaching')"
+  <div>
+    <v-card-title>{{ $t("settings.home.myAccount.title") }}</v-card-title>
+    <v-expansion-panels class="px-4">
+      <v-expansion-panel :title="$t('settings.home.myAccount.changeUsername')">
+        <v-expansion-panel-text>
+          <v-form v-model="valid.username">
+            <v-text-field
+              v-model="username.username"
+              :label="$t('settings.home.myAccount.username')"
+              :rules="$validation.user.username"
+              class="mt-4"
+            ></v-text-field>
+            <DangerZoneInput
+              v-model:password="username.password"
+              v-model:password-mode="username.passwordMode"
+              v-model:totp="username.totp"
+            />
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                :disabled="!valid.username"
+                color="primary"
+                @click="changeUsername"
+              >
+                {{ $t("generic.update") }}
+              </v-btn>
+            </v-card-actions>
+          </v-form>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel :title="$t('settings.home.myAccount.changePassword')">
+        <v-expansion-panel-text>
+          <v-form v-model="valid.password">
+            <v-text-field
+              v-model="password.password"
+              :label="$t('settings.home.myAccount.currentPassword')"
+              :rules="$validation.user.passwordSettings"
+              class="mt-4"
+              type="password"
+            ></v-text-field>
+            <v-text-field
+              v-model="password.newPassword"
+              :label="$t('settings.home.myAccount.newPassword')"
+              class="mt-4"
+              type="password"
+            ></v-text-field>
+            <v-text-field
+              v-model="password.confirmNewPassword"
+              :label="$t('settings.home.myAccount.confirmPassword')"
+              :rules="[...$validation.user.passwordSettings]"
+              class="mt-4"
+              type="password"
+            ></v-text-field>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                :disabled="!valid.password"
+                color="primary"
+                @click="changePassword()"
+              >
+                {{ $t("generic.update") }}
+              </v-btn>
+            </v-card-actions>
+          </v-form>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel :title="$t('settings.home.myAccount.changeEmail')">
+        <v-expansion-panel-text>
+          <v-form v-model="valid.email">
+            <v-text-field
+              v-model="email.email"
+              :label="$t('settings.home.myAccount.email')"
+              :rules="$validation.user.email"
+              class="mt-4"
+            ></v-text-field>
+            <DangerZoneInput
+              v-model:password="email.password"
+              v-model:password-mode="email.passwordMode"
+              v-model:totp="email.totp"
+            />
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                :disabled="!valid.username"
+                color="primary"
+                @click="changeEmail"
+              >
+                {{ $t("generic.update") }}
+              </v-btn>
+            </v-card-actions>
+          </v-form>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-title class="bg-card">
+          {{ $t("settings.home.myAccount.2fa") }}
+          <v-chip
+            v-if="$user.user?.totpEnable"
+            class="ml-2"
+            color="green"
+            label
+            size="small"
+          >
+            {{ $t("generic.enabled") }}
+          </v-chip>
+          <v-chip v-else class="ml-2" color="error" label size="small">
+            {{ $t("generic.disabled") }}
+          </v-chip>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <TwoFactor></TwoFactor>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+    <v-card-title>{{ $t("settings.home.preferences.title") }}</v-card-title>
+    <v-slider
+      v-model="$user.user.itemsPerPage"
+      :label="$t('settings.home.preferences.itemsPerPage')"
+      class="px-4"
+      max="72"
+      min="12"
+      step="12"
+      thumb-label
       @update:modelValue="$emit('update')"
-    ></v-switch>
-    <small>
-      {{ $t("settings.home.privacy.discordPrecachingDesc") }}
-    </small>
-    <v-switch
-      v-model="$user.user.publicProfile"
-      class="mb-n7"
-      :label="$t('settings.home.privacy.publicProfile')"
-      @update:modelValue="$emit('update')"
-    ></v-switch>
-    <small>
-      {{ $t("settings.home.privacy.publicProfileDesc") }}
-    </small>
+    ></v-slider>
+    <!-- select between Farenheit, Celsius or Kelvin -->
     <v-select
-      v-model="$user.user.insights"
-      :items="insights"
-      :label="$t('settings.home.preferences.insights')"
-      class="mb-n2 mt-4"
+      v-model="$user.user.weatherUnit"
+      :items="temperatureUnits"
+      :label="$t('settings.home.preferences.tempUnit')"
+      class="px-6"
+      item-title="title"
+      item-value="value"
       @update:modelValue="$emit('update')"
     ></v-select>
-    <small>
-      {{ $t("settings.home.preferences.insightsDesc") }}
-    </small>
+    <v-select
+      v-model="theme"
+      :items="themes"
+      :label="$t('settings.home.preferences.theme')"
+      class="px-6"
+      item-title="title"
+      item-value="value"
+      @update:modelValue="$emit('update')"
+    ></v-select>
+    <v-autocomplete
+      v-model="$user.user.excludedCollections"
+      :items="collections"
+      :label="$t('settings.home.preferences.baseCollections')"
+      chips
+      class="px-6 mt-4"
+      closable-chips
+      color="primary"
+      item-title="name"
+      item-value="id"
+      multiple
+      variant="underlined"
+      @update:modelValue="$emit('update')"
+    ></v-autocomplete>
+    <v-select
+      v-model="$user.user.language"
+      :items="languages"
+      :label="$t('settings.home.preferences.language')"
+      class="px-6"
+      item-title="title"
+      item-value="key"
+      @update:modelValue="$emit('update')"
+    />
+    <v-select
+      v-model="$experiments.experiments['NOTIFICATION_SOUND']"
+      :items="notificationSounds"
+      class="px-6"
+      item-title="title"
+      item-value="key"
+      label="Notification Sound"
+    />
+    <v-btn
+      class="mb-2 ml-5"
+      @click="$app.themeEditor = !$app.themeEditor"
+      v-if="$user.gold || !$app.site.officialInstance"
+    >
+      <v-icon class="mr-2">mdi-palette</v-icon>
+      <span>
+        {{ $t("settings.home.preferences.themeEditor") }}
+        <v-chip size="x-small">{{ $t("generic.new") }}</v-chip>
+      </span>
+    </v-btn>
     <v-switch
-      v-if="$app.site.release === 'dev'"
-      v-model="$app.demo"
-      class="mb-n7"
-      :label="$t('settings.home.privacy.demoMode')"
+      v-model="disableProfileColors"
+      :label="$t('settings.home.preferences.disableProfileColors')"
+      class="px-6"
     ></v-switch>
-  </v-card-text>
-  <v-card-title>{{ $t("settings.home.myAccount.title") }}</v-card-title>
-  <v-expansion-panels class="px-4">
-    <v-expansion-panel :title="$t('settings.home.myAccount.changeUsername')">
-      <v-expansion-panel-text>
-        <v-form v-model="valid.username">
-          <v-text-field
-            v-model="username.username"
-            :label="$t('settings.home.myAccount.username')"
-            :rules="$validation.user.username"
-            class="mt-4"
-          ></v-text-field>
-          <DangerZoneInput
-            v-model:password="username.password"
-            v-model:password-mode="username.passwordMode"
-            v-model:totp="username.totp"
-          />
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              :disabled="!valid.username"
-              color="primary"
-              @click="changeUsername"
-            >
-              {{ $t("generic.update") }}
-            </v-btn>
-          </v-card-actions>
-        </v-form>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-    <v-expansion-panel :title="$t('settings.home.myAccount.changePassword')">
-      <v-expansion-panel-text>
-        <v-form v-model="valid.password">
-          <v-text-field
-            v-model="password.password"
-            :label="$t('settings.home.myAccount.currentPassword')"
-            :rules="$validation.user.passwordSettings"
-            class="mt-4"
-            type="password"
-          ></v-text-field>
-          <v-text-field
-            v-model="password.newPassword"
-            :label="$t('settings.home.myAccount.newPassword')"
-            class="mt-4"
-            type="password"
-          ></v-text-field>
-          <v-text-field
-            v-model="password.confirmNewPassword"
-            :label="$t('settings.home.myAccount.confirmPassword')"
-            :rules="[...$validation.user.passwordSettings]"
-            class="mt-4"
-            type="password"
-          ></v-text-field>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              :disabled="!valid.password"
-              color="primary"
-              @click="changePassword()"
-            >
-              {{ $t("generic.update") }}
-            </v-btn>
-          </v-card-actions>
-        </v-form>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-    <v-expansion-panel :title="$t('settings.home.myAccount.changeEmail')">
-      <v-expansion-panel-text>
-        <v-form v-model="valid.email">
-          <v-text-field
-            v-model="email.email"
-            :label="$t('settings.home.myAccount.email')"
-            :rules="$validation.user.email"
-            class="mt-4"
-          ></v-text-field>
-          <DangerZoneInput
-            v-model:password="email.password"
-            v-model:password-mode="email.passwordMode"
-            v-model:totp="email.totp"
-          />
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              :disabled="!valid.username"
-              color="primary"
-              @click="changeEmail"
-            >
-              {{ $t("generic.update") }}
-            </v-btn>
-          </v-card-actions>
-        </v-form>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-    <v-expansion-panel>
-      <v-expansion-panel-title class="bg-card">
-        {{ $t("settings.home.myAccount.2fa") }}
-        <v-chip
-          v-if="$user.user?.totpEnable"
-          class="ml-2"
-          color="green"
-          label
-          size="small"
-        >
-          {{ $t("generic.enabled") }}
-        </v-chip>
-        <v-chip v-else class="ml-2" color="error" label size="small">
-          {{ $t("generic.disabled") }}
-        </v-chip>
-      </v-expansion-panel-title>
-      <v-expansion-panel-text>
-        <TwoFactor></TwoFactor>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-  </v-expansion-panels>
-  <v-card-title>{{ $t("settings.home.preferences.title") }}</v-card-title>
-  <v-slider
-    v-model="$user.user.itemsPerPage"
-    :label="$t('settings.home.preferences.itemsPerPage')"
-    class="px-4"
-    max="72"
-    min="12"
-    step="12"
-    thumb-label
-    @update:modelValue="$emit('update')"
-  ></v-slider>
-  <!-- select between Farenheit, Celsius or Kelvin -->
-  <v-select
-    v-model="$user.user.weatherUnit"
-    :items="temperatureUnits"
-    :label="$t('settings.home.preferences.tempUnit')"
-    class="px-6"
-    item-title="title"
-    item-value="value"
-    @update:modelValue="$emit('update')"
-  ></v-select>
-  <v-select
-    v-model="theme"
-    :items="themes"
-    :label="$t('settings.home.preferences.theme')"
-    class="px-6"
-    item-title="title"
-    item-value="value"
-    @update:modelValue="$emit('update')"
-  ></v-select>
-  <v-autocomplete
-    v-model="$user.user.excludedCollections"
-    :items="collections"
-    :label="$t('settings.home.preferences.baseCollections')"
-    chips
-    class="px-6 mt-4"
-    closable-chips
-    color="primary"
-    item-title="name"
-    item-value="id"
-    multiple
-    variant="underlined"
-    @update:modelValue="$emit('update')"
-  ></v-autocomplete>
-  <v-select
-    v-model="$user.user.language"
-    :items="languages"
-    :label="$t('settings.home.preferences.language')"
-    class="px-6"
-    item-title="title"
-    item-value="key"
-    @update:modelValue="$emit('update')"
-  />
-  <v-select
-    v-model="$experiments.experiments['NOTIFICATION_SOUND']"
-    :items="notificationSounds"
-    class="px-6"
-    item-title="title"
-    item-value="key"
-    label="Notification Sound"
-  />
-  <v-btn
-    class="mb-2 ml-5"
-    @click="$app.themeEditor = !$app.themeEditor"
-    v-if="$user.gold || !$app.site.officialInstance"
-  >
-    <v-icon class="mr-2">mdi-palette</v-icon>
-    <span>
-      {{ $t("settings.home.preferences.themeEditor") }}
-      <v-chip size="x-small">{{ $t("generic.new") }}</v-chip>
-    </span>
-  </v-btn>
-  <v-switch
-    v-model="disableProfileColors"
-    :label="$t('settings.home.preferences.disableProfileColors')"
-    class="px-6"
-  ></v-switch>
+  </div>
 </template>
 
 <script lang="ts">
