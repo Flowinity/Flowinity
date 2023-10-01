@@ -8,7 +8,7 @@
   </overline>
   <div
     class="d-flex flex-grow-1"
-    :style="{ 'flex-column': $vuetify.display.mobile }"
+    :class="{ 'flex-column': $vuetify.display.mobile }"
   >
     <v-tabs
       :direction="$vuetify.display.mobile ? 'horizontal' : 'vertical'"
