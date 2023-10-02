@@ -5,12 +5,14 @@
       src="@/assets/images/tpu-logo-banner-rainbow.svg"
       max-height="120"
       class="mb-3"
+      @click="rainbowMode(false)"
     />
     <v-img
       src="@/assets/images/tpu-logo-banner.svg"
       max-height="120"
       class="mb-3"
       v-else
+      @click="rainbowMode(true)"
     />
     <v-divider></v-divider>
     <p class="mt-5">
@@ -111,9 +113,22 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "About",
   data() {
-    return {};
+    return {
+      clickCount: 0
+    };
   },
   methods: {
+    rainbowMode(val: boolean) {
+      this.clickCount++;
+      if (val && this.clickCount > 4) {
+        localStorage.setItem("rainbowMode", JSON.stringify(val));
+        this.clickCount = 0;
+        this.$toast.info("Enabled rainbow mode.");
+      } else if (!val) {
+        localStorage.removeItem("rainbowMode");
+        this.$toast.info("Disabled rainbow mode.");
+      }
+    },
     rainbow() {
       return localStorage.getItem("rainbowMode");
     },

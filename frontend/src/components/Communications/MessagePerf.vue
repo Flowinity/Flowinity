@@ -240,6 +240,18 @@
               :key="index"
               :embed="embed"
             />
+            <div
+              class="float-right"
+              v-for="(readReceipt, index) in message.readReceipts"
+              :key="readReceipt.id"
+            >
+              <ReadReceipt
+                v-if="index < $chat.renderableReadReceipts"
+                :message="message"
+                :read-receipt="readReceipt"
+                :class="{ 'ml-1': message.readReceipts.length <= 3 }"
+              />
+            </div>
           </div>
         </div>
       </div>

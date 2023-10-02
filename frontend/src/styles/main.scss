@@ -272,7 +272,7 @@ p:has(.emoji-large) img {
   margin-bottom: 0 !important;
 }
 
-.overflow-content p {
+.overflow-content * {
   white-space: pre-line !important;
   overflow-wrap: anywhere !important;
 }

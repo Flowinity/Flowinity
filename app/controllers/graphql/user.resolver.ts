@@ -99,7 +99,10 @@ export class UserResolver extends createBaseResolver("User", User) {
     if (!user || user.banned) {
       return null
     }
-    if (await this.userUtilsService.blocked(ctx.user!!.id, user.id, true)) {
+    if (
+      ctx.user &&
+      (await this.userUtilsService.blocked(ctx.user.id, user.id, true))
+    ) {
       throw new GqlError("BLOCKED")
     }
     return user
