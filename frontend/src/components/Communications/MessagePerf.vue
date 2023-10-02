@@ -325,7 +325,6 @@
                     location="top"
                     :eager="false"
                     offset="18"
-                    v-if="!expanded"
                   >
                     {{ user?.username }}
                   </v-tooltip>

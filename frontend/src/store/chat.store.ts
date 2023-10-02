@@ -710,7 +710,7 @@ export const useChatStore = defineStore("chat", {
       });
     },
     renderableReadReceipts() {
-      if (vuetify.display.mobile) return 1;
+      if (vuetify.display.mobile.value) return 1;
       return 3;
     },
     currentOffset() {
