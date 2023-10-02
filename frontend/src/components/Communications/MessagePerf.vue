@@ -240,8 +240,24 @@
               :key="index"
               :embed="embed"
             />
-            <div
-              class="float-right"
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex-shrink-1 align-self-end mb-1"
+        :style="{ width: $vuetify.display.mobile ? '45px' : '100px' }"
+        v-if="!search"
+      >
+        <div
+          style="justify-content: flex-end; display: flex; padding-right: 8px"
+          :class="{ 'read-receipt-avatars': message.readReceipts.length > 3 }"
+        >
+          <template
+            v-if="
+              !$vuetify.display.mobile || message.readReceipts?.length === 1
+            "
+          >
+            <template
               v-for="(readReceipt, index) in message.readReceipts"
               :key="readReceipt.id"
             >
@@ -251,29 +267,7 @@
                 :read-receipt="readReceipt"
                 :class="{ 'ml-1': message.readReceipts.length <= 3 }"
               />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="flex-shrink-1 align-self-end mb-1"
-        style="width: 100px"
-        v-if="!$vuetify.display.mobile && !search"
-      >
-        <div
-          style="justify-content: flex-end; display: flex; padding-right: 8px"
-          :class="{ 'read-receipt-avatars': message.readReceipts.length > 3 }"
-        >
-          <template
-            v-for="(readReceipt, index) in message.readReceipts"
-            :key="readReceipt.id"
-          >
-            <ReadReceipt
-              v-if="index < $chat.renderableReadReceipts"
-              :message="message"
-              :read-receipt="readReceipt"
-              :class="{ 'ml-1': message.readReceipts.length <= 3 }"
-            />
+            </template>
           </template>
           <span
             v-if="message.readReceipts.length > $chat.renderableReadReceipts"
@@ -283,27 +277,61 @@
             <v-menu activator="parent" location="top">
               <v-card>
                 <v-container>
-                  <span v-for="readReceipt in message.readReceipts">
+                  <span
+                    v-for="readReceipt in message.readReceipts"
+                    class="d-flex"
+                    style="gap: 6px"
+                  >
                     <ReadReceipt
                       :message="message"
                       :read-receipt="readReceipt"
                     />
+                    {{ $user.users[readReceipt.userId]?.username }}
                   </span>
                 </v-container>
               </v-card>
             </v-menu>
-            <span>
-              +{{ message.readReceipts.length - $chat.renderableReadReceipts }}
-              <v-tooltip activator="parent" location="top">
-                <ReadReceipt
-                  :message="message"
-                  v-for="readReceipt in message.readReceipts"
-                  :read-receipt="readReceipt"
-                  class="my-1"
-                  :expanded="true"
-                />
-              </v-tooltip>
-            </span>
+            <template v-if="!$vuetify.display.mobile">
+              <span>
+                +{{
+                  message.readReceipts?.length - $chat.renderableReadReceipts
+                }}
+                <v-tooltip activator="parent" location="top">
+                  <ReadReceipt
+                    :message="message"
+                    v-for="readReceipt in message.readReceipts"
+                    :read-receipt="readReceipt"
+                    class="my-1"
+                    :expanded="true"
+                  />
+                </v-tooltip>
+              </span>
+            </template>
+            <template v-else>
+              <span class="d-flex flex-col">
+                <v-avatar
+                  color="primary"
+                  size="22"
+                  class="pointer read-receipt-avatar"
+                  style="
+                    align-self: flex-end;
+                    z-index: 1;
+                    color: black !important;
+                  "
+                >
+                  {{ message.readReceipts?.length }}
+                  <v-tooltip
+                    activator="parent"
+                    location="top"
+                    :eager="false"
+                    offset="18"
+                    v-if="!expanded"
+                  >
+                    {{ user?.username }}
+                  </v-tooltip>
+                </v-avatar>
+              </span>
+            </template>
           </span>
         </div>
       </div>
