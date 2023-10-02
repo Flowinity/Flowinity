@@ -376,7 +376,8 @@ export class ChatRankResolver {
     const rank = await ChatRank.findOne({
       where: {
         id: input.rankId,
-        chatId: chat.id
+        chatId: chat.id,
+        managed: false
       }
     })
     if (!rank) throw new GqlError("RANK_NOT_FOUND")
