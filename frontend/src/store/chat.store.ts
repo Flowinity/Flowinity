@@ -605,7 +605,7 @@ export const useChatStore = defineStore("chat", {
         }
       }
       this.loadingNew = false;
-    },
+    } /*
     async getChats() {
       try {
         const chats = localStorage.getItem("chatStore");
@@ -645,12 +645,17 @@ export const useChatStore = defineStore("chat", {
           })
         )
       );
-    },
+    },*/,
     async init() {
       try {
         const chats = localStorage.getItem("chatStore");
         if (chats) {
-          this.chats = JSON.parse(chats);
+          this.chats = JSON.parse(chats).sort((a: Chat, b: Chat) => {
+            return (
+              Number(b._redisSortDate) - Number(a._redisSortDate) ||
+              Number(b.id) - Number(a.id)
+            );
+          });
         }
       } catch {
         //
