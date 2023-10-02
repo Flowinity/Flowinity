@@ -27,7 +27,8 @@
               style="color: rgb(var(--v-theme-error))"
               @click="deleteRank(contextRank?.id)"
               :disabled="
-                !$chat.canEditRank(contextRank?.index, $chat.editingChat)
+                !$chat.canEditRank(contextRank?.index, $chat.editingChat) &&
+                !contextRank?.managed
               "
             >
               <v-icon>mdi-delete</v-icon>
