@@ -93,7 +93,6 @@
                 'REMOVE_USERS',
                 'OWNER',
                 'BAN_USERS',
-                'EXTERNAL_EMOJI',
                 'REMOVE_USERS',
                 'CREATE_EMOJI',
                 'MANAGE_INTEGRATIONS',
