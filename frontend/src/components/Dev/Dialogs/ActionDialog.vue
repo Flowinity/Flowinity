@@ -2,6 +2,7 @@
   <DevDialog @close="$app.dialogs.actionDialog = false">
     <template v-slot:header>Action Activator</template>
     <v-container>
+      <p class="mb-3">You found the secret menu! (CTRL + ALT + M)</p>
       <v-btn
         v-for="dialog in Object.keys($app.dialogs).filter(
           (key) => typeof $app.dialogs[key] === 'boolean'

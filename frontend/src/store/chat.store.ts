@@ -126,6 +126,9 @@ export const useChatStore = defineStore("chat", {
         value: false,
         x: 0,
         y: 0
+      },
+      chatDevOptions: {
+        value: false
       }
     },
     emoji: [] as ChatEmoji[],

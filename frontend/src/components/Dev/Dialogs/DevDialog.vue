@@ -1,6 +1,6 @@
 <template>
-  <div id="dev-overlay" class="dev-overlay">
-    <div id="dev-header" class="dev-header unselectable">
+  <div :id="`dev-overlay-${id}`" class="dev-overlay">
+    <div :id="`dev-header-${id}`" class="dev-header unselectable">
       <slot name="header"></slot>
       <v-btn @click="$emit('close')" size="small" class="float-right">
         <v-icon>mdi-close</v-icon>
@@ -16,6 +16,11 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "DevDialog",
   emits: ["close"],
+  data() {
+    return {
+      id: `tpu-dev-${Math.random().toString(36).substring(2, 10)}`
+    };
+  },
   methods: {
     drag(element: any) {
       try {
@@ -23,9 +28,9 @@ export default defineComponent({
           pos2 = 0,
           pos3 = 0,
           pos4 = 0;
-        if (document.getElementById("dev-header")) {
-          //@ts-ignore
-          document.getElementById("dev-header").onmousedown = dragMouseDown;
+        if (document.getElementById(`dev-header-${this.id}`)) {
+          document.getElementById(`dev-header-${this.id}`).onmousedown =
+            dragMouseDown;
         } else {
           // otherwise, move the DIV from anywhere inside the DIV:
           element.onmousedown = dragMouseDown;
@@ -64,7 +69,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.drag(document.getElementById("dev-overlay"));
+    this.drag(document.getElementById(`dev-overlay-${this.id}`));
   }
 });
 </script>

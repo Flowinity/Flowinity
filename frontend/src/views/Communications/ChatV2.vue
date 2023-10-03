@@ -1,4 +1,5 @@
 <template>
+  <chat-dev-options v-if="$chat.dialogs.chatDevOptions.value" />
   <WorkspaceDeleteDialog
     title="Delete Message"
     v-model="dialogs.delete.value"
@@ -297,10 +298,12 @@ import InfiniteLoading from "@/components/Scroll/InfiniteScroll.vue";
 import "v3-infinite-loading/lib/style.css";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import { ScrollPosition, Message, Chat } from "@/gql/graphql";
+import ChatDevOptions from "@/components/Dev/Dialogs/ChatDevOptionsDialog.vue";
 
 export default defineComponent({
   name: "Chat",
   components: {
+    ChatDevOptions,
     PromoNoContent,
     MessageActionsList,
     MobileMenu,
