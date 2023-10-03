@@ -193,7 +193,7 @@
                 }"
                 class="overflow-content message-content d-inline-block"
                 v-html="$functions.markdown(message.content, message)"
-                v-memo="message.content"
+                v-memo="[message.content, message.error, message.pending]"
               ></span>
               <span
                 v-if="message.edited"
@@ -244,7 +244,7 @@
         </div>
       </div>
       <div
-        class="flex-shrink-1 align-self-end mb-1"
+        class="flex-shrink-1 align-self-end"
         :style="{ width: $vuetify.display.mobile ? '45px' : '100px' }"
         v-if="!search"
       >

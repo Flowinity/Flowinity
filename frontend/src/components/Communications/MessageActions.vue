@@ -5,72 +5,86 @@
     class="message-actions mr-2 rounded-xl v-card"
     style="z-index: 5001; background-color: rgb(var(--v-theme-dark))"
   >
-    <button
-      type="button"
-      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
-      @click="$chat.pinMessage(message.id, !message.pinned)"
-      v-if="
-        $chat.hasPermission('PIN_MESSAGES') &&
-        message.type === MessageType.Message
-      "
-    >
-      <v-tooltip activator="parent" location="top" :eager="false">
-        {{ message.pinned ? "Unpin" : "Pin" }}
-      </v-tooltip>
-      <v-icon>
-        {{ message.pinned ? "mdi-pin-off" : "mdi-pin" }}
-      </v-icon>
-    </button>
-    <button
-      type="button"
-      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
-      v-if="
-        message.userId === $user.user?.id &&
-        message.type === MessageType.Message
-      "
-      @click="$emit('edit')"
-    >
-      <v-tooltip activator="parent" location="top" :eager="false">
-        Edit
-      </v-tooltip>
-      <v-icon>mdi-pencil</v-icon>
-    </button>
-    <button
-      type="button"
-      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
-      v-if="
-        (message.userId === $user.user?.id &&
-          message.type === MessageType.Message) ||
-        ($chat.hasPermission('DELETE_MESSAGES') &&
-          message.type === MessageType.Message)
-      "
-      @click="$emit('delete', $event.shiftKey)"
-    >
-      <v-tooltip activator="parent" location="top" :eager="false">
-        Delete
-      </v-tooltip>
-      <v-icon>mdi-delete</v-icon>
-    </button>
-    <button
-      type="button"
-      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
-      @click="$emit('reply')"
-    >
-      <v-tooltip activator="parent" location="top" :eager="false">
-        Reply
-      </v-tooltip>
-      <v-icon>mdi-reply</v-icon>
-    </button>
-    <button
-      type="button"
-      class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
-      @click="$functions.copy(message.id)"
-    >
-      <v-tooltip activator="parent" location="top" :eager="false">
-        Copy ID
-      </v-tooltip>
-      <v-icon>mdi-identifier</v-icon>
-    </button>
+    <template v-if="!message.pending && !message.error">
+      <button
+        type="button"
+        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+        @click="$chat.pinMessage(message.id, !message.pinned)"
+        v-if="
+          $chat.hasPermission('PIN_MESSAGES') &&
+          message.type === MessageType.Message
+        "
+      >
+        <v-tooltip activator="parent" location="top" :eager="false">
+          {{ message.pinned ? "Unpin" : "Pin" }}
+        </v-tooltip>
+        <v-icon>
+          {{ message.pinned ? "mdi-pin-off" : "mdi-pin" }}
+        </v-icon>
+      </button>
+      <button
+        type="button"
+        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+        v-if="
+          message.userId === $user.user?.id &&
+          message.type === MessageType.Message
+        "
+        @click="$emit('edit')"
+      >
+        <v-tooltip activator="parent" location="top" :eager="false">
+          Edit
+        </v-tooltip>
+        <v-icon>mdi-pencil</v-icon>
+      </button>
+      <button
+        type="button"
+        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+        v-if="
+          (message.userId === $user.user?.id &&
+            message.type === MessageType.Message) ||
+          ($chat.hasPermission('DELETE_MESSAGES') &&
+            message.type === MessageType.Message)
+        "
+        @click="$emit('delete', $event.shiftKey)"
+      >
+        <v-tooltip activator="parent" location="top" :eager="false">
+          Delete
+        </v-tooltip>
+        <v-icon>mdi-delete</v-icon>
+      </button>
+      <button
+        type="button"
+        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+        @click="$emit('reply')"
+      >
+        <v-tooltip activator="parent" location="top" :eager="false">
+          Reply
+        </v-tooltip>
+        <v-icon>mdi-reply</v-icon>
+      </button>
+      <button
+        type="button"
+        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+        @click="$functions.copy(message.id)"
+      >
+        <v-tooltip activator="parent" location="top" :eager="false">
+          Copy ID
+        </v-tooltip>
+        <v-icon>mdi-identifier</v-icon>
+      </button>
+    </template>
+    <template v-else-if="message.error">
+      <button
+        type="button"
+        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+        @click="attemptResend"
+      >
+        <v-tooltip activator="parent" location="top" :eager="false">
+          Resend
+        </v-tooltip>
+        <v-icon>mdi-refresh</v-icon>
+      </button>
+    </template>
   </div>
 </template>
 
@@ -92,6 +106,25 @@ export default defineComponent({
     return {
       size: "small"
     };
+  },
+  methods: {
+    async attemptResend() {
+      await this.$chat.sendMessage(
+        this.message.content,
+        this.message.attachments,
+        this.message.replyId
+      );
+      const messageIndex = this.$chat.selectedChat?.messages.findIndex(
+        (message) => message.id === this.message.id
+      );
+      if (
+        messageIndex === -1 ||
+        messageIndex === undefined ||
+        !this.$chat.selectedChat
+      )
+        return;
+      this.$chat.selectedChat.messages.splice(messageIndex, 1);
+    }
   }
 });
 </script>
