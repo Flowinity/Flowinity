@@ -294,12 +294,12 @@
           >
             <template v-slot:item.word="{ item }">
               <div class="limit" style="max-width: 200px">
-                {{ item.columns.word }}
+                {{ item.word }}
               </div>
             </template>
             <template v-slot:item.count="{ item }">
               <div class="limit">
-                {{ item.columns.count }}
+                {{ item.count }}
               </div>
             </template>
           </v-data-table>
@@ -326,12 +326,12 @@
           >
             <template v-slot:item.word="{ item }">
               <div class="limit" style="max-width: 200px">
-                {{ item.columns.chatName }}
+                {{ item.chatName }}
               </div>
             </template>
             <template v-slot:item.count="{ item }">
               <div class="limit">
-                {{ item.columns.count }}
+                {{ item.count }}
               </div>
             </template>
           </v-data-table>

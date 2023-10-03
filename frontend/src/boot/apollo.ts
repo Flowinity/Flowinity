@@ -26,8 +26,9 @@ export default function setup(app: App) {
     uri: "/graphql"
   });
 
-  const errorLink = onError(({ graphQLErrors, networkError }) => {
+  const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
     if (graphQLErrors) {
+      const ctx = operation.getContext();
       for (const error of graphQLErrors) {
         if (error.extensions?.code === "UNAUTHORIZED") {
           console.log("ERROR LOGOUT THROWN");
@@ -51,7 +52,7 @@ export default function setup(app: App) {
           ) {
             app.config.globalProperties.$router.push("/communications/home");
           }
-        } else {
+        } else if (!ctx.noToast) {
           toast.error(error.message);
         }
       }

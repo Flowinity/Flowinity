@@ -309,7 +309,7 @@ export class ChatResolver {
       const permissions = await this.chatService.checkPermissions(
         ctx.user!!.id,
         chat?.association?.id,
-        ChatPermissions.OVERVIEW
+        ChatPermissions.REMOVE_USERS
       )
       const highestRank = await this.chatService.getHighestIndex(
         chat?.association?.id

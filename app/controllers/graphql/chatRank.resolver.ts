@@ -1,18 +1,6 @@
-import {
-  Arg,
-  Ctx,
-  Field,
-  FieldResolver,
-  Mutation,
-  Resolver,
-  Root
-} from "type-graphql"
+import { Arg, Ctx, FieldResolver, Mutation, Resolver, Root } from "type-graphql"
 import { Service } from "typedi"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
-import {
-  partialUserBase,
-  PartialUserBase
-} from "@app/classes/graphql/user/partialUser"
 import { ChatPermission } from "@app/models/chatPermission.model"
 import { ChatRank } from "@app/models/chatRank.model"
 import RateLimit from "@app/lib/graphql/RateLimit"
@@ -28,8 +16,6 @@ import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
 import { ChatService } from "@app/services/chat.service"
 import { GraphQLError } from "graphql/error"
 import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
-import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
-import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { ChatPermissionsHandler } from "@app/services/chat/permissions"
 import { GqlError } from "@app/lib/gqlErrors"
 import { ChatAuditLog } from "@app/models/chatAuditLog.model"
@@ -130,6 +116,16 @@ export class ChatRankResolver {
         ) {
           throw new GraphQLError(
             "Only the group owner can update the Trusted User permission."
+          )
+        }
+
+        if (
+          !permissions.includes(permissionId as ChatPermissions) &&
+          (!permissions.includes(ChatPermissions.OWNER) ||
+            !permissions.includes(ChatPermissions.ADMIN))
+        ) {
+          throw new GraphQLError(
+            `You don't have the ${permissionId} permission you are trying to grant.`
           )
         }
 

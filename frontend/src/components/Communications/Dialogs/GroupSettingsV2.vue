@@ -77,14 +77,14 @@
         </v-tab>
         <v-tab
           value="users"
-          v-if="$chat.hasPermission('MANAGE_USERS', $chat.editingChat)"
+          v-if="$chat.hasPermission('REMOVE_USERS', $chat.editingChat)"
         >
           <v-icon class="mr-2">mdi-account-group</v-icon>
           {{ $t("chats.settings.tabs.users") }}
         </v-tab>
         <v-tab
           value="invites"
-          v-if="$chat.hasPermission('MANAGE_USERS', $chat.editingChat)"
+          v-if="$chat.hasPermission('REMOVE_USERS', $chat.editingChat)"
         >
           <v-icon class="mr-2">mdi-account-plus</v-icon>
           {{ $t("chats.settings.tabs.invites") }}

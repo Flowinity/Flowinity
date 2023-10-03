@@ -226,9 +226,9 @@ export const useChatStore = defineStore("chat", {
             .ranksMap[0]
       );
       if (userRank.index > rankIndex) return true;
-      if (userRank.index === rankIndex && this.hasPermission("TRUSTED", chat))
-        return true;
-      return false;
+      return (
+        userRank.index === rankIndex && this.hasPermission("TRUSTED", chat)
+      );
     },
     hasPermission(permission: string | string[], chat?: Chat) {
       const permissionsArray = Array.isArray(permission)
@@ -737,15 +737,6 @@ export const useChatStore = defineStore("chat", {
       return {
         up,
         down
-      };
-    },
-    hasPermissions() {
-      return {
-        owner: this.selectedChat?.association?.rank === "owner",
-        admin:
-          this.selectedChat?.association?.rank === "admin" ||
-          this.selectedChat?.association?.rank === "owner",
-        member: true
       };
     },
     typers() {

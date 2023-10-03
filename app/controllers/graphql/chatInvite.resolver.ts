@@ -129,7 +129,7 @@ export class ChatInviteResolver {
     await this.chatService.checkPermissions(
       ctx.user!!.id,
       input.associationId,
-      ChatPermissions.OVERVIEW
+      ChatPermissions.REMOVE_USERS
     )
     const chat = await this.chatService.getChatFromAssociation(
       input.associationId,

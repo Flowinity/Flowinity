@@ -6,10 +6,7 @@
   >
     <v-card>
       <v-list>
-        <v-list-item
-          v-if="$chat.hasPermission('MANAGE_RANKS', $chat.selectedChat)"
-          @click="() => {}"
-        >
+        <v-list-item @click="() => {}">
           <v-menu
             :close-delay="100"
             :close-on-click="false"
@@ -36,8 +33,9 @@
                 :value="rank.id"
                 :key="rank.id"
                 :disabled="
-                  rank.managed ||
-                  !$chat.canEditRank(rank.index, $chat.selectedChat)
+                  !$chat.hasPermission('MANAGE_RANKS', $chat.selectedChat) &&
+                  (rank.managed ||
+                    !$chat.canEditRank(rank.index, $chat.selectedChat))
                 "
                 @click="
                   $chat.toggleUserRank(

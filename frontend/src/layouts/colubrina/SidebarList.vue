@@ -85,7 +85,21 @@
         <v-list-item
           v-if="
             $chat.hasPermission(
-              ['ADMIN', 'OVERVIEW', 'VIEW_AUDIT_LOG', 'ADD_USER'],
+              [
+                'ADMIN',
+                'OVERVIEW',
+                'VIEW_AUDIT_LOG',
+                'ADD_USERS',
+                'REMOVE_USERS',
+                'OWNER',
+                'BAN_USERS',
+                'EXTERNAL_EMOJI',
+                'REMOVE_USERS',
+                'CREATE_EMOJI',
+                'MANAGE_INTEGRATIONS',
+                'MANAGE_RANKS',
+                'VIEW_INSIGHTS'
+              ],
               contextMenu.item
             )
           "
@@ -151,8 +165,7 @@
       @contextmenu.prevent="context($event, chat)"
       :key="chat.id"
       :class="{
-        'black-and-white':
-          $user.users[chat.recipient?.id]?.status === UserStatus.Offline
+        'black-and-white': chat.association.notifications === 'none'
       }"
     >
       <template v-slot:title>

@@ -79,8 +79,8 @@ module.exports = {
       },
       {
         id: "REMOVE_USERS",
-        description: "Remove users from the group.",
-        name: "Remove Users",
+        description: "Remove users from the group & manage invites.",
+        name: "Manage Users",
         group: "MANAGE"
       },
       {

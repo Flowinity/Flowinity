@@ -125,6 +125,9 @@ export default defineComponent({
             associationId: this.$chat.editingChat.association.id,
             page: this.page
           }
+        },
+        context: {
+          noToast: true
         }
       });
       this.log = chatAuditLog;

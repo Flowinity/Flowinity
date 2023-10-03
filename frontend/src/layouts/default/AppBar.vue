@@ -35,9 +35,12 @@
       <h2
         v-if="!$vuetify.display.mobile && !editingName"
         id="tpu-brand-logo"
-        class="ml-2 limit pointer unselectable"
+        class="ml-2 limit unselectable"
         title="TPU Communications"
-        @click="$chat.hasPermissions.admin ? (editingName = true) : () => {}"
+        :class="{ pointer: $chat.hasPermission('OVERVIEW') }"
+        @click="
+          $chat.hasPermission('OVERVIEW') ? (editingName = true) : () => {}
+        "
       >
         {{ $chat.chatName($chat.selectedChat) }}
       </h2>

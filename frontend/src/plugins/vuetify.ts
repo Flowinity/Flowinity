@@ -121,10 +121,15 @@ export default createVuetify({
   },
   display: {
     thresholds: {
-      xl: 1600
-    }
+      xl: 1600,
+      xs: 900
+    },
+    mobileBreakpoint: "xs"
   },
   defaults: {
+    VMenu: {
+      minWidth: 100
+    },
     VWindowItem: {
       transition: false,
       reverseTransition: false

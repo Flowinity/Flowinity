@@ -654,7 +654,7 @@ p:has(.emoji-large) img {
 }
 
 .black-and-white {
-  filter: grayscale(80%);
+  opacity: 0.4
 }
 
 .v-field--variant-outlined .v-field__input {

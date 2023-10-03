@@ -134,11 +134,20 @@ export class ChatAssociationResolver {
     @Arg("input") input: AddChatUser,
     force: boolean = false
   ) {
-    const permissions = await this.chatService.checkPermissions(
-      ctx.user!!.id,
-      input.chatAssociationId,
-      ChatPermissions.ADD_USERS
-    )
+    let permissions: ChatPermissions[] = []
+    if (input.action === ToggleUser.ADD) {
+      permissions = await this.chatService.checkPermissions(
+        ctx.user!!.id,
+        input.chatAssociationId,
+        ChatPermissions.ADD_USERS
+      )
+    } else {
+      permissions = await this.chatService.checkPermissions(
+        ctx.user!!.id,
+        input.chatAssociationId,
+        ChatPermissions.REMOVE_USERS
+      )
+    }
 
     if (input.action === ToggleUser.ADD) {
       await this.chatService.addUsersToChat(

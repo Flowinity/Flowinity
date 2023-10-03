@@ -85,11 +85,11 @@
           :class="{ merge, unselectable: $vuetify.display.mobile }"
           class="message rounded position-relative"
         >
-          <div class="avatar-section">
+          <div class="avatar-section d-flex">
             <small
               v-if="merge"
-              class="mr-1 text-grey message-date"
-              style="font-size: 9px"
+              class="mr-1 text-grey message-date text-center"
+              style="font-size: 8px; height: 100%"
             >
               <v-tooltip
                 activator="parent"
