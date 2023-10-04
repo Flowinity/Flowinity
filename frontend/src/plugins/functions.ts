@@ -82,7 +82,6 @@ export default {
           .replace(/:([\w~-]+)(?::([\w~-]+))?:(?!\w)/g, "")
           .replaceAll(" ", "") === "";
       for (const emoji of regexEmoji) {
-        console.log(emoji);
         const find = message?.emoji?.find((e) => e.id === emoji.split(":")[2]);
         if (!find) continue;
         const bind = `emoji-bind-${message.id}-${Math.random()
@@ -94,7 +93,7 @@ export default {
             find.id
           }', '${find.name}', '${find.icon}', ${find.chatId}, ${
             message.id
-          }, '${bind}')"><img class="emoji${
+          }, '${bind}')"><img class="undraggable v-img__img--contain emoji${
             isOnlyEmojis ? " emoji-large" : ""
           }" src="/i/${find.icon}"></span>`
         );
