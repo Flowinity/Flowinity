@@ -23,7 +23,12 @@
         size="64"
       ></v-progress-linear>
       <v-container>
-        <div class="messages communications" id="chat" v-if="data.items.length">
+        <div
+          class="messages communications"
+          id="chat"
+          v-if="data.items.length"
+          style="flex-direction: column"
+        >
           <MessagePerf
             v-for="(message, index) in data.items"
             :id="'message-' + index"

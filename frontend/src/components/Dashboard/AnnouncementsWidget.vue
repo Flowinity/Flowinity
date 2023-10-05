@@ -47,6 +47,7 @@
             v-if="announcement.editing"
             v-model="announcement.content"
             autofocus
+            class="mb-4"
           >
             <template v-slot:append>
               <div class="d-flex flex-column">
@@ -82,7 +83,6 @@
           </v-textarea>
           <p
             class="mb-1 mt-n1"
-            v-if="!announcement.editing"
             v-memo="announcement.content"
             v-html="$functions.markdownEmail(announcement.content)"
           />
