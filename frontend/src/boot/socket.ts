@@ -20,6 +20,7 @@ import {
   User,
   UserStoredStatus
 } from "@/gql/graphql";
+import emojiData from "markdown-it-emoji/lib/data/full.json";
 
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();
@@ -441,6 +442,10 @@ export default async function setup(app) {
     // For example, the oldest smiley will be :smiley: but subsequent will be
     // :smiley~1: / :smiley~2: / etc
     const emojiNameCount: Record<string, number> = {};
+
+    for (const e of Object.keys(emojiData)) {
+      emojiNameCount[e] = (emojiNameCount[e] || 0) + 1;
+    }
 
     for (const e of chat.emoji) {
       const emojiName = e.name;

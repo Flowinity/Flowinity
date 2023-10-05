@@ -29,6 +29,7 @@ import {
 } from "@app/classes/graphql/chat/auditLog/categories"
 import { Friend } from "@app/models/friend.model"
 import { EmbedInput } from "@app/classes/graphql/chat/message"
+import emojiData from "@app/lib/emoji.json"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -1335,6 +1336,10 @@ export class ChatService {
     // For example, the oldest smiley will be :smiley: but subsequent will be
     // :smiley~1: / :smiley~2: / etc
     const emojiNameCount: Record<string, number> = {}
+
+    for (const e of Object.keys(emojiData)) {
+      emojiNameCount[e] = (emojiNameCount[e] || 0) + 1
+    }
 
     for (const e of emoji) {
       const emojiName = e.name
