@@ -23,6 +23,7 @@
   >
     <v-textarea
       v-model="$user.changes.description"
+      v-model="$user.user.description"
       :counter="255"
       :rows="1"
       auto-grow
