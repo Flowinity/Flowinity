@@ -355,10 +355,7 @@ export class OAuthUserResolver {
     @Arg("input") input: RegisterCommands
   ) {
     if (!ctx.user?.bot) throw new GqlError("NOT_BOT")
-    const commands: Command[] | null = await redis.json.get(
-      `commands:${ctx.user.id}`
-    )
-    await redis.json.set(`commands:${ctx.user.id}`, "$", commands ?? input)
+    await redis.json.set(`commands:${ctx.user.id}`, "$", input.commands)
     return { success: true }
   }
 }
