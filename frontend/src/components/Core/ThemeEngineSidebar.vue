@@ -165,7 +165,7 @@
       <v-card-title>
         <v-avatar
           class="v-avatar--variant-outlined pointer"
-          :color="$user.changes.nameColor"
+          :color="$user.user.nameColor"
           size="22"
           @click="openMenu($event, 'nameColor')"
         ></v-avatar>
@@ -238,7 +238,7 @@
       </p>
       <vue-monaco-editor
         v-if="editor"
-        v-model:value="$user.changes.themeEngine.customCSS"
+        v-model:value="$user.user.themeEngine.customCSS"
         :options="options"
         class="mb-4"
         language="css"
@@ -305,20 +305,20 @@ export default defineComponent({
     },
     deviceSync: {
       get() {
-        return this.$user.changes.themeEngine?.deviceSync ?? false;
+        return this.$user.user.themeEngine?.deviceSync ?? false;
       },
       set(value: boolean) {
-        if (!this.$user.changes.themeEngine) return;
-        this.$user.changes.themeEngine.deviceSync = value;
+        if (!this.$user.user.themeEngine) return;
+        this.$user.user.themeEngine.deviceSync = value;
       }
     },
     showOnProfile: {
       get() {
-        return this.$user.changes.themeEngine?.showOnProfile ?? false;
+        return this.$user.user.themeEngine?.showOnProfile ?? false;
       },
       set(value: boolean) {
-        if (!this.$user.changes.themeEngine) return;
-        this.$user.changes.themeEngine.showOnProfile = value;
+        if (!this.$user.user.themeEngine) return;
+        this.$user.user.themeEngine.showOnProfile = value;
       }
     },
     elevation: {
@@ -401,7 +401,7 @@ export default defineComponent({
         baseTheme: this.$vuetify.theme.name,
         showOnProfile: this.showOnProfile,
         deviceSync: this.deviceSync,
-        customCSS: this.$user.changes.themeEngine?.customCSS ?? ""
+        customCSS: this.$user.user.themeEngine?.customCSS ?? ""
       };
       //@ts-ignore
       delete themeEngine.theme.dark.variables;

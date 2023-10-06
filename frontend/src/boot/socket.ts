@@ -179,10 +179,6 @@ export default async function setup(app) {
       ...user.user,
       ...data
     };
-    user.changes = {
-      ...user.changes,
-      ...data
-    };
   });
   sockets.chat.on("chatUpdate", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.id);

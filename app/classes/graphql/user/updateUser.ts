@@ -54,7 +54,7 @@ export class UpdateUserInput {
     nullable: true
   })
   insights: "everyone" | "friends" | "nobody"
-  @Field(() => ProfileLayout, {
+  @Field(() => GraphQLJSON, {
     nullable: true
   })
   profileLayout: ProfileLayout

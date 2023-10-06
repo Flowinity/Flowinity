@@ -23,11 +23,6 @@ export const useUserStore = defineStore("user", {
   state: () => ({
     user: null as User | null,
     _postInitRan: false,
-    changes: {
-      themeEngine: {
-        customCSS: ""
-      }
-    } as Partial<User>,
     actions: {
       emailSent: {
         value: false,
@@ -238,47 +233,24 @@ export const useUserStore = defineStore("user", {
       this.user.storedStatus = status;
       await this.save();
     },
-    setChanges(user: User) {
-      if (!user) return;
-      this.changes = {
-        email: user.email,
-        discordPrecache: user.discordPrecache,
-        username: user.username,
-        itemsPerPage: user.itemsPerPage,
-        storedStatus: user.storedStatus,
-        description: user.description,
-        insights: user.insights,
-        profileLayout: user.profileLayout,
-        excludedCollections: user.excludedCollections,
-        language: user.language,
-        publicProfile: user.publicProfile,
-        weatherUnit: user.weatherUnit,
-        privacyPolicyAccepted: user.privacyPolicyAccepted,
-        nameColor: user.nameColor
-      };
-    },
     async init() {
-      console.log(1);
       const user = localStorage.getItem("userStore");
       if (user) {
         try {
           this.user = JSON.parse(user);
           if (this.user) {
-            this.setChanges(this.user);
             this.runPostTasks();
           }
         } catch {
           //
         }
       }
-      console.log(2);
       const {
         data: { currentUser }
       } = await this.$apollo.query({
         query: GetUserQuery
       });
       this.user = currentUser;
-      this.setChanges(<User>this.user);
       if (this.user?.themeEngine?.defaults?.prev) {
         delete this.user.themeEngine.defaults?.prev;
       }
@@ -289,8 +261,8 @@ export const useUserStore = defineStore("user", {
     applyCSS(emergency: boolean = false) {
       //if (this.user?.plan.internalName !== "GOLD") return;
       if (
-        this.changes.themeEngine?.customCSS !== undefined &&
-        this.changes.themeEngine?.customCSS !== null
+        this.user.themeEngine?.customCSS !== undefined &&
+        this.user.themeEngine?.customCSS !== null
       ) {
         let style = document.getElementById("user-css");
         if (style?.innerHTML === "") {
@@ -301,7 +273,7 @@ export const useUserStore = defineStore("user", {
         }
         style = document.createElement("style");
         style.id = "user-css";
-        style.innerHTML = emergency ? "" : this.changes.themeEngine.customCSS;
+        style.innerHTML = emergency ? "" : this.user.themeEngine.customCSS;
         document.head.appendChild(style);
       }
     },
@@ -357,10 +329,6 @@ export const useUserStore = defineStore("user", {
           }
         } as UpdateUserInput
       });
-      this.user = {
-        ...this.user,
-        ...(this.changes as any)
-      };
       i18n.global.locale = this.user?.language || "en";
     },
     async savePasswordRequired() {

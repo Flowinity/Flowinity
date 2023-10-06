@@ -1,6 +1,6 @@
 <template>
   <CoreDialog
-    v-if="$user.changes.profileLayout"
+    v-if="$user.user.profileLayout"
     :model-value="modelValue"
     max-width="600px"
     @update:model-value="$emit('update:modelValue', $event)"
@@ -11,7 +11,7 @@
     <template v-if="!component">
       <v-container>
         <v-switch
-          v-model="$user.changes.profileLayout.config.showStatsSidebar"
+          v-model="$user.user.profileLayout.config.showStatsSidebar"
           label="Stats sidebar"
           @change="
             $user.save();

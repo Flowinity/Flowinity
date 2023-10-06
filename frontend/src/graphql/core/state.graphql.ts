@@ -208,6 +208,7 @@ export const CoreStateQuery = gql`
       pulse
       groupPrivacy
       friendRequests
+      profileLayout
       description
       administrator
       darkTheme

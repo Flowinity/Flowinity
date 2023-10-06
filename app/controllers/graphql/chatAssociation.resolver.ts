@@ -135,13 +135,13 @@ export class ChatAssociationResolver {
     force: boolean = false
   ) {
     let permissions: ChatPermissions[] = []
-    if (input.action === ToggleUser.ADD) {
+    if (input.action === ToggleUser.ADD && !force) {
       permissions = await this.chatService.checkPermissions(
         ctx.user!!.id,
         input.chatAssociationId,
         ChatPermissions.ADD_USERS
       )
-    } else {
+    } else if (input.action === ToggleUser.REMOVE) {
       permissions = await this.chatService.checkPermissions(
         ctx.user!!.id,
         input.chatAssociationId,
@@ -503,6 +503,12 @@ export class ChatAssociationResolver {
       ctx.user!!.id
     )
 
+    const chatPermissions = await this.chatService.checkPermissions(
+      ctx.user!!.id,
+      input.associationId,
+      ChatPermissions.MANAGE_INTEGRATIONS
+    )
+
     if (app.private && app.userId !== ctx.user!!.id) {
       const access = await OauthUser.findOne({
         where: {
@@ -548,11 +554,8 @@ export class ChatAssociationResolver {
     })
     for (const permission of check) {
       try {
-        await this.chatService.checkPermissions(
-          ctx.user!!.id,
-          input.associationId,
-          <ChatPermissions>permission.id
-        )
+        if (!chatPermissions.includes(<ChatPermissions>permission.id))
+          throw Error("No permission. Continue.")
         await ChatPermissionAssociation.create({
           rankId: rank.id,
           permissionId: permission.id

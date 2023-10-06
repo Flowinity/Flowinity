@@ -761,7 +761,6 @@ export class UserUtilsService {
       delete body.currentPassword
       delete body.username
     }
-    console.log(body.storedStatus, body.storedStatus !== user.storedStatus)
     if (body.storedStatus && body.storedStatus !== user.storedStatus) {
       const sockets = await socket.in(user.id).fetchSockets()
       if (sockets.length !== 0) {
@@ -807,13 +806,13 @@ export class UserUtilsService {
     if (body.profileLayout) await LayoutValidate.parse(body.profileLayout)
     if (body.excludedCollections)
       await ExcludedCollectionsValidate.parse(body.excludedCollections)
-    if (body.nameColor !== user.nameColor) {
+    /*  if (body.nameColor !== user.nameColor) {
       await HexValidateOptional.parse(body.nameColor)
       this.emitToTrackedUsers(user.id, "userNameColor", {
         id: user.id,
         nameColor: body.nameColor
       })
-    }
+    }*/
 
     await user.update({
       ...body

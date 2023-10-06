@@ -1,6 +1,6 @@
 <template>
-  <div class="d-flex flex-row" v-if="app">
-    <v-tabs direction="vertical" class="mr-2" v-model="tab">
+  <div v-if="app">
+    <v-tabs class="mr-2 mb-2" v-model="tab">
       <v-tab value="home">Home</v-tab>
       <v-tab value="bot">Bot</v-tab>
     </v-tabs>
@@ -26,16 +26,15 @@
         <v-window-item value="home">
           <v-container>
             <div class="d-flex align-center mb-4">
-              <v-avatar size="128">
-                <v-img
-                  :src="
-                    app.icon
-                      ? $app.domain + app.icon
-                      : 'https://i.troplo.com/i/50ba79e4.png'
-                  "
-                  width="128"
-                ></v-img>
-              </v-avatar>
+              <UserAvatar
+                :user="{ avatar: app.icon, username: app.name }"
+                :bot="false"
+                :override-id="app.id"
+                size="128"
+                :edit="true"
+                @refresh="getAppAuth"
+                v-if="tab === 'home'"
+              />
               <v-card-text class="ml-n4">
                 <div class="d-flex flex-column flex-grow-1 justify-center">
                   <v-card-title>
@@ -86,8 +85,8 @@
               <template v-slot:item.manage="{ item }">
                 <v-checkbox
                   label="Manage"
-                  v-model="item.manage"
-                  @update:model-value=""
+                  @update:model-value="updateUser(item.id, $event)"
+                  :model-value="item.manage"
                 ></v-checkbox>
               </template>
             </v-data-table>
@@ -185,8 +184,8 @@
             </v-btn>
             <br />
             <small>
-              The secret is only used for OpenID Connect integrations, and not
-              TPUAppAuth.
+              The secret is only used for OpenID Connect and Communications Bot
+              integrations, and not TPUAppAuth.
             </small>
             <v-card-title>Configuring your app</v-card-title>
             <v-card-text>
@@ -242,7 +241,15 @@
           <template v-if="app.bot">
             <v-container>
               <div class="d-flex align-center mb-4">
-                <UserAvatar :size="128" :user="app.bot" />
+                <UserAvatar
+                  :size="128"
+                  :user="app.bot"
+                  :edit="true"
+                  :override-id="app.id"
+                  v-if="tab === 'bot'"
+                  @refresh="getAppAuth"
+                  :bot="true"
+                />
                 <v-card-text class="ml-n4">
                   <div class="d-flex flex-column flex-grow-1 justify-center">
                     <v-card-title>
@@ -256,7 +263,14 @@
               </div>
               <v-card-title>Generate Invite Link</v-card-title>
               <v-row>
-                <v-col v-for="permission in availablePermissions" sm="2">
+                <v-col
+                  cols="12"
+                  v-for="permission in availablePermissions"
+                  sm="12"
+                  md="6"
+                  lg="4"
+                  xl="2"
+                >
                   <v-checkbox
                     :label="permission.name"
                     :model-value="selectedPermissions.includes(permission.id)"
@@ -273,11 +287,33 @@
                   />
                 </v-col>
               </v-row>
-              <v-text-field :model-value="botLink" readonly />
+              <v-text-field
+                :model-value="botLink"
+                readonly
+                @click="
+                  $functions.copy(botLink);
+                  $toast.success('Copied to clipboard!');
+                "
+              />
+              View the documentation at
+              <a href="https://docs.privateuploader.com">
+                docs.privateuploader.com
+              </a>
+              or view an
+              <a href="https://github.com/PrivateUploader/StatsBot">
+                example bot on GitHub
+              </a>
             </v-container>
           </template>
           <template v-else>
-            <v-btn>Create bot account</v-btn>
+            <CreateBotAccountDialog
+              :model-value="createBot"
+              :id="app?.id"
+              @refresh="getAppAuth"
+            />
+            <v-btn @click="createBot = true" class="my-2 mx-2">
+              Create bot account
+            </v-btn>
           </template>
         </v-window-item>
       </v-window>
@@ -297,13 +333,22 @@ import {
   OauthUser
 } from "@/gql/graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import CreateBotAccountDialog from "@/components/Admin/AppAuth/CreateBotAccountDialog.vue";
+import {
+  AddOauthUserMutation,
+  DeleteOauthAppMutation,
+  ResetOauthAppSecretMutation,
+  UpdateOauthAppMutation,
+  UpdateOauthUserMutation
+} from "@/graphql/developer/updateApp.graphql";
 
 export default defineComponent({
   name: "AdminOauthItem",
-  components: { UserAvatar, CoreDialog },
+  components: { CreateBotAccountDialog, UserAvatar, CoreDialog },
   data() {
     return {
       app: null as OauthApp | null,
+      createBot: false,
       username: "",
       loading: false,
       scopesDefinitions: [] as ScopeDefinition[],
@@ -348,6 +393,24 @@ export default defineComponent({
     }
   },
   methods: {
+    async updateUser(id: string, manage: boolean) {
+      try {
+        this.loading = true;
+        await this.$apollo.mutate({
+          mutation: UpdateOauthUserMutation,
+          variables: {
+            input: {
+              id,
+              oauthAppId: this.app.id,
+              manage
+            }
+          }
+        });
+        this.getAppAuth();
+      } finally {
+        this.loading = false;
+      }
+    },
     async getPermissions() {
       const {
         data: { availableChatPermissions }
@@ -359,7 +422,14 @@ export default defineComponent({
     async deleteApp() {
       try {
         this.loading = true;
-        await this.axios.delete(`/admin/oauth/${this.$route.params.id}`);
+        await this.$apollo.mutate({
+          mutation: DeleteOauthAppMutation,
+          variables: {
+            input: {
+              id: this.app.id
+            }
+          }
+        });
         this.$toast.success("App deleted");
         this.$router.push("/admin/oauth");
       } finally {
@@ -369,7 +439,14 @@ export default defineComponent({
     async resetSecret() {
       try {
         this.loading = true;
-        await this.axios.put(`/admin/oauth/${this.$route.params.id}/secret`);
+        await this.$apollo.mutate({
+          mutation: ResetOauthAppSecretMutation,
+          variables: {
+            input: {
+              id: this.app.id
+            }
+          }
+        });
         this.$toast.success("Secret reset");
         this.getAppAuth();
       } finally {
@@ -402,8 +479,18 @@ export default defineComponent({
     async updateAppAuth() {
       try {
         this.loading = true;
-        await this.axios.put(`/admin/oauth/${this.$route.params.id}`, {
-          ...this.app
+        await this.$apollo.mutate({
+          mutation: UpdateOauthAppMutation,
+          variables: {
+            input: {
+              name: this.app.name,
+              description: this.app.description,
+              redirectUri: this.app.redirectUri,
+              private: this.app.private,
+              verified: this.app.verified,
+              id: this.app.id
+            }
+          }
         });
         this.$toast.success("App updated");
       } finally {
@@ -422,8 +509,15 @@ export default defineComponent({
           return this.$toast.error("User already added.");
         }
         this.loading = true;
-        await this.axios.post(`/admin/oauth/${this.$route.params.id}/user`, {
-          username: username || this.username
+        await this.$apollo.mutate({
+          mutation: AddOauthUserMutation,
+          variables: {
+            input: {
+              oauthAppId: this.app.id,
+              username: username || this.username,
+              manage: false
+            }
+          }
         });
         this.$toast.success("User configuration updated");
       } finally {

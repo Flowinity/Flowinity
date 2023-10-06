@@ -779,8 +779,7 @@ export default defineComponent({
         return false;
       }
       const theme = reset
-        ? this.$user.changes.themeEngine?.theme ||
-          new DefaultThemes(false).themes
+        ? this.$user.user.themeEngine?.theme || new DefaultThemes(false).themes
         : this.user?.themeEngine?.theme;
       if (!theme) return false;
       this.$vuetify.theme.themes.dark = {
@@ -800,7 +799,7 @@ export default defineComponent({
           "--gradient-offset",
           `${
             this.user?.themeEngine?.gradientOffset ||
-            this.$user.changes.themeEngine.gradientOffset
+            this.$user.user.themeEngine.gradientOffset
           }%`
         );
         this.$app.fluidGradient =
@@ -808,10 +807,10 @@ export default defineComponent({
       } else {
         document.body.style.setProperty(
           "--gradient-offset",
-          `${this.$user.changes?.themeEngine?.gradientOffset || 100}%`
+          `${this.$user.user?.themeEngine?.gradientOffset || 100}%`
         );
         this.$app.fluidGradient =
-          this.$user.changes?.themeEngine?.fluidGradient || false;
+          this.$user.user?.themeEngine?.fluidGradient || false;
       }
       return true;
     },
@@ -860,7 +859,7 @@ export default defineComponent({
     layout: {
       handler: function (val) {
         if (this.user?.id !== this.$user.user?.id) return;
-        this.$user.changes.profileLayout = val;
+        this.$user.user.profileLayout = val;
         this.$user.save();
       },
       deep: true

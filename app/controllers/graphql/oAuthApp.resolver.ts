@@ -64,11 +64,25 @@ export class OAuthAppResolver {
   })
   @Query(() => [OauthApp])
   async oauthApps(@Ctx() ctx: Context) {
-    return await OauthApp.findAll({
+    const owned = await OauthApp.findAll({
       where: {
         userId: ctx.user!!.id
       }
     })
+    const shared = await OauthApp.findAll({
+      include: [
+        {
+          model: OauthUser,
+          as: "oauthUser",
+          required: true,
+          where: {
+            userId: ctx.user!!.id,
+            manage: true
+          }
+        }
+      ]
+    })
+    return [...owned, ...shared]
   }
 
   @Authorization({
@@ -204,8 +218,9 @@ export class OAuthAppResolver {
   async resetOauthSecret(
     @Ctx() ctx: Context,
     @Arg("input") input: MyAppInput
-  ): Promise<OauthAppSecret> {
-    return await this.adminService.resetOauthSecret(input.id, ctx.user!!.id)
+  ): Promise<Success> {
+    await this.adminService.resetOauthSecret(input.id, ctx.user!!.id)
+    return { success: true }
   }
 
   @Authorization({
@@ -292,7 +307,7 @@ export class OAuthUserResolver {
       manage: input.manage
     })
     return {
-      ...user,
+      ...user.toJSON(),
       manage: input.manage
     }
   }

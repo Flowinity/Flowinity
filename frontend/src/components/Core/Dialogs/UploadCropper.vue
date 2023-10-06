@@ -18,7 +18,7 @@
         id="banner-editor"
         :key="key"
         ref="cropper"
-        :aspectRatio="aspectRatio"
+        :aspectRatio="parseInt(aspectRatio)"
         :src="result"
         alt="banner"
       ></vue-cropper>
@@ -57,6 +57,7 @@
 import { defineComponent } from "vue";
 import VueCropper from "vue-cropperjs";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import "cropperjs/dist/cropper.css";
 
 export default defineComponent({
   name: "UploadCropper",

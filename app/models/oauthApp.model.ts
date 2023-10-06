@@ -4,6 +4,7 @@ import {
   DataType,
   DefaultScope,
   HasMany,
+  HasOne,
   Model,
   Table
 } from "sequelize-typescript"
@@ -103,6 +104,10 @@ export class OauthApp extends Model {
   @Field(() => [OauthUser])
   @HasMany(() => OauthUser, "oauthAppId")
   oauthUsers: OauthUser[]
+
+  @Field(() => OauthUser)
+  @HasOne(() => OauthUser, "oauthAppId")
+  oauthUser: OauthUser
 
   @Field(() => String, {
     nullable: true

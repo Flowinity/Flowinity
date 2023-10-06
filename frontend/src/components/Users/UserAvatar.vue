@@ -6,14 +6,14 @@
         aspect-ratio="1"
         title="Upload Avatar"
         @finish="changeAvatar"
-        v-if="edit && user?.id === $user.user?.id"
+        v-if="(edit && user?.id === $user.user?.id) || (edit && overrideId)"
         type="userProfile"
         @remove="removeAvatar"
       />
       <v-avatar
         :size="size"
         v-bind="props"
-        class="text-center justify-center undraggable position-relative"
+        class="text-center justify-center undraggable position-relative user-avatar-parent"
         justify="center"
         :color="
           noColor || $functions.avatar(chat || user) ? undefined : 'primary'
@@ -97,7 +97,9 @@ export default defineComponent({
     "dotStatus",
     "statusYOffset",
     "light",
-    "chat"
+    "chat",
+    "overrideId",
+    "bot"
   ],
   data() {
     return {
@@ -163,7 +165,13 @@ export default defineComponent({
       await this.axios.post("/user/upload/avatar", formData, {
         headers: {
           "Content-Type": "multipart/form-data"
-        }
+        },
+        params: this.overrideId
+          ? {
+              oauthAppId: this.overrideId,
+              bot: this.bot
+            }
+          : {}
       });
       this.$emit("refresh");
     }

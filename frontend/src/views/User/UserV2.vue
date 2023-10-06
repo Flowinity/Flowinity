@@ -144,7 +144,7 @@
             style="overflow-wrap: break-word; white-space: pre-line"
           >
             <v-textarea
-              v-model="$user.changes.description"
+              v-model="$user.user.description"
               :counter="255"
               :rows="1"
               auto-grow
@@ -482,7 +482,7 @@ export default defineComponent({
         return false;
       }
       const theme = reset
-        ? this.$user.changes.themeEngine?.theme ||
+        ? this.$user.user.themeEngine?.theme ||
           new DefaultThemes(this.$user.gold).themes
         : this.user?.themeEngine?.theme;
       if (!theme) return false;
@@ -503,7 +503,7 @@ export default defineComponent({
           "--gradient-offset",
           `${
             this.user?.themeEngine?.gradientOffset ||
-            this.$user.changes.themeEngine.gradientOffset
+            this.$user.user.themeEngine.gradientOffset
           }%`
         );
         this.$app.fluidGradient =
@@ -511,10 +511,10 @@ export default defineComponent({
       } else {
         document.body.style.setProperty(
           "--gradient-offset",
-          `${this.$user.changes?.themeEngine?.gradientOffset || 100}%`
+          `${this.$user.user?.themeEngine?.gradientOffset || 100}%`
         );
         this.$app.fluidGradient =
-          this.$user.changes?.themeEngine?.fluidGradient || false;
+          this.$user.user?.themeEngine?.fluidGradient || false;
       }
       return true;
     },

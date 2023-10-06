@@ -75,6 +75,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import { CreateOauthAppMutation } from "@/graphql/developer/createApp.graphql";
 
 export default defineComponent({
   name: "CreateAppAuthDialog",
@@ -82,7 +83,7 @@ export default defineComponent({
   props: {
     modelValue: Boolean
   },
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "refresh"],
   data() {
     return {
       name: "",
@@ -96,17 +97,25 @@ export default defineComponent({
   },
   methods: {
     async createAppAuth() {
-      this.loading = true;
-      await this.axios.post("/admin/oauth", {
-        name: this.name,
-        description: this.description,
-        icon: this.icon,
-        redirectUri: this.redirect,
-        private: this.private,
-        verified: this.verified
-      });
-      this.$emit("update:modelValue", false);
-      this.loading = false;
+      try {
+        this.loading = true;
+        await this.$apollo.mutate({
+          mutation: CreateOauthAppMutation,
+          variables: {
+            input: {
+              verified: this.verified,
+              redirectUri: this.redirect || undefined,
+              private: this.private,
+              name: this.name,
+              description: this.description
+            }
+          }
+        });
+        this.$emit("update:modelValue", false);
+        this.$emit("refresh");
+      } finally {
+        this.loading = false;
+      }
     }
   }
 });

@@ -31,13 +31,16 @@ import sharp from "sharp"
 import { PatchUser } from "@app/types/auth"
 import axios from "axios"
 import { OpenAPI } from "routing-controllers-openapi"
+import { AdminService } from "@app/services/admin.service"
+import { OauthApp } from "@app/models/oauthApp.model"
 
 @Service()
 @JsonController("/user")
 export class UserControllerV3 {
   constructor(
     private userUtilsService: UserUtilsService,
-    private galleryService: GalleryService
+    private galleryService: GalleryService,
+    private adminService: AdminService
   ) {}
 
   @Get("")
@@ -215,20 +218,42 @@ export class UserControllerV3 {
       options: uploader
     })
     banner: Express.Multer.File,
-    @Param("type") type: "banner" | "avatar"
+    @Param("type") type: "banner" | "avatar",
+    @QueryParam("oauthAppId") oauthAppId?: string,
+    @QueryParam("bot") bot?: boolean
   ) {
     if (type !== "banner" && type !== "avatar") throw Errors.INVALID_PARAMETERS
+    let userId = user.id
+    let app: OauthApp | null = null
+    if (oauthAppId) {
+      app = await this.adminService.getOauthById(oauthAppId, user.id, true)
+      if (!app) throw Errors.APP_NOT_FOUND
+      if (bot) {
+        const botUser = await app.$get("bot")
+        if (!botUser) throw Errors.APP_NOT_FOUND
+        userId = botUser.id
+      }
+    }
     const ban = await this.galleryService.createUpload(
       user.id,
       banner,
       false,
       false
     )
-    await this.userUtilsService.updateBanner(
-      user.id,
-      ban.upload.attachment,
-      type
-    )
+
+    if (bot || !oauthAppId) {
+      await this.userUtilsService.updateBanner(
+        userId,
+        ban.upload.attachment,
+        type
+      )
+    } else if (!bot && oauthAppId) {
+      app?.update({
+        icon: ban.upload.attachment
+      })
+    } else {
+      throw Errors.INVALID_PARAMETERS
+    }
   }
 
   @OnUndefined(204)

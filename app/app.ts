@@ -106,6 +106,7 @@ import {
 import { ChatEmojiResolver } from "@app/controllers/graphql/chatEmoji.resolver"
 import { MulterError } from "multer"
 import { ChatAuditLogResolver } from "@app/controllers/graphql/chatAuditLog.resolver"
+import { ZodError } from "zod"
 
 @Service()
 @Middleware({ type: "after" })
@@ -442,6 +443,12 @@ export class Application {
       maskedErrors: {
         maskError(error: any, message: any, isDev: any): Error {
           console.error(error)
+          if (error instanceof ZodError) {
+            return {
+              message: "deez",
+              name: "ddez"
+            }
+          }
           if (error instanceof ValidationError) {
             return {
               message: error.toString(),
@@ -453,7 +460,7 @@ export class Application {
             error.message.toLowerCase().includes("sequelize")
           ) {
             return {
-              message: "Unknown Error",
+              message: "Something went wrong! Please try again later.",
               name: "UNKNOWN"
             }
           }

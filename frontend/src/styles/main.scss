@@ -672,9 +672,13 @@ p:has(.emoji-large) img {
 }
 
 .rainbow .text-gradient {
-  background: linear-gradient(to right, #ff4e50, #ffd700, #0190ea );
+  background: linear-gradient(to right, #ff4e50, #ffd700, #0190ea);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.rainbow .user-avatar-parent:not(:has(.v-img)) {
+  background: linear-gradient(to bottom right, #ff4e50, #ffd700, #0190ea);
 }
 
 .rainbow .v-ripple__animation {

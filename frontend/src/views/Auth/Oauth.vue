@@ -17,11 +17,12 @@
             PrivateUploader
           </p>
           <p class="text-center text-grey">
-            <v-avatar size="30" v-if="app.icon">
-              <v-img
-                :src="$app.site.hostnameWithProtocol + '/i/' + app.icon"
-              ></v-img>
-            </v-avatar>
+            <UserAvatar
+              :user="{ username: app.name, avatar: app.icon }"
+              v-if="app.icon"
+              size="28"
+              class="mr-2"
+            />
             <template v-if="!bot">Continuing to {{ app.name }}</template>
             <template v-else>Add {{ app.bot.username }} to your chat.</template>
             <span v-if="app.verified">
@@ -41,6 +42,7 @@
             v-model="selectedBotChat"
             label="Add to group"
             class="mx-6"
+            v-if="bot"
           />
           <v-list>
             <v-list-item
@@ -123,7 +125,8 @@
             </v-list-item>
           </v-list>
           <small class="text-grey ml-5">
-            You will be redirected to {{ url }} after authorizing.
+            You will be redirected to {{ url || "privateuploader.com" }} after
+            authorizing.
             <template v-if="!app.verified">
               This application is
               <b>not</b>
@@ -155,6 +158,7 @@ import {
   AddBotToChat,
   OauthAppConsentQuery
 } from "@/graphql/developer/consent.graphql";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export type ScopeDefinition = {
   id: string;
@@ -164,6 +168,7 @@ export type ScopeDefinition = {
 
 export default defineComponent({
   name: "Oauth",
+  components: { UserAvatar },
   data() {
     return {
       availablePermissions: [] as ChatPermission[],
@@ -175,8 +180,10 @@ export default defineComponent({
   },
   computed: {
     chats() {
-      return this.$chat.chats.filter((chat) =>
-        chat.association.permissions.includes("ADMIN")
+      return this.$chat.chats.filter(
+        (chat) =>
+          chat.association.permissions.includes("ADMIN") ||
+          chat.association.permissions.includes("MANAGE_INTEGRATIONS")
       );
     },
     permissions() {
@@ -269,6 +276,7 @@ export default defineComponent({
             }
           }
         });
+        this.$router.push(`/communications/${this.selectedBotChat}`);
       } finally {
         this.loading = false;
       }

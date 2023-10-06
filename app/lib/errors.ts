@@ -362,6 +362,10 @@ let Errors = {
   MAX_EMOJI: {
     message: "Maximum amount of 30 chat emoji has been reached.",
     status: 400
+  },
+  APP_NOT_FOUND: {
+    message: "The integration app could not be found.",
+    status: 400
   }
 }
 

@@ -66,7 +66,7 @@ const Component: any = z.discriminatedUnion("name", [
           z.object({
             name: z.string().max(20).min(1),
             url: z.string().url(),
-            color: z.string().length(7).regex(/^#/)
+            color: z.string().length(7).regex(/^#/).nullable().optional()
           })
         )
         .max(10)

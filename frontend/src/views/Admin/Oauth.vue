@@ -1,6 +1,9 @@
 <template>
   <component :is="$route.fullPath.startsWith('/admin') ? VContainer : 'div'">
-    <CreateAppAuthDialog v-model="create"></CreateAppAuthDialog>
+    <CreateAppAuthDialog
+      @refresh="getAppAuth"
+      v-model="create"
+    ></CreateAppAuthDialog>
     <v-card>
       <v-toolbar>
         <v-toolbar-title>My Applications</v-toolbar-title>
@@ -14,7 +17,13 @@
       <v-container>
         <v-list>
           <v-list-item v-for="app in apps" :key="app.id">
-            <v-img :src="app.icon"></v-img>
+            <template v-slot:prepend>
+              <UserAvatar
+                class="mr-3"
+                :edit="false"
+                :user="{ username: app.name, avatar: app.icon }"
+              ></UserAvatar>
+            </template>
             <v-list-item-title>{{ app.name }}</v-list-item-title>
             <v-list-item-subtitle>
               {{ app.description || "No description" }} -
@@ -28,7 +37,6 @@
                       ? `/admin/oauth/${app.id}`
                       : `/settings/developer/${app.id}`
                   "
-                  :disabled="app.userId != $user.user?.id"
                   color="primary"
                 >
                   Manage
@@ -52,6 +60,7 @@ import {
   AvailableChatPermissionsDocument,
   ChatPermission
 } from "@/gql/graphql";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "AdminOAuth",
@@ -60,7 +69,7 @@ export default defineComponent({
       return VContainer;
     }
   },
-  components: { CreateAppAuthDialog },
+  components: { UserAvatar, CreateAppAuthDialog },
   data() {
     return {
       apps: [],
@@ -72,7 +81,8 @@ export default defineComponent({
       const {
         data: { oauthApps, availableChatPermissions }
       } = await this.$apollo.query({
-        query: MyAppsQuery
+        query: MyAppsQuery,
+        fetchPolicy: "network-only"
       });
       this.apps = oauthApps;
     }

@@ -329,7 +329,7 @@ export class User extends Model {
   })
   insights: "everyone" | "friends" | "nobody"
 
-  @Field(() => ProfileLayout)
+  @Field(() => GraphQLJSON)
   @Column({
     type: DataType.JSON,
     defaultValue: new DefaultProfileLayout()
