@@ -420,7 +420,7 @@ function createBaseResolver<T extends ClassType>(
             userId: app.bot.id,
             user: app.bot as PartialUserAuth,
             scopes:
-              "user.view,uploads.view,uploads.modify,chats.view,chats.edit,chats.send,uploads.create,collections.view,collections.modify,insights.view,starred.view,starred.modify",
+              "user.view,user.modify,uploads.view,uploads.modify,chats.view,chats.edit,chats.send,uploads.create,collections.view,collections.modify,insights.view,starred.view,starred.modify",
             type: "api",
             expiredAt: null,
             oauthAppId: app.id,

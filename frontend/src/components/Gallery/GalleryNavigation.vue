@@ -144,6 +144,10 @@ export default defineComponent({
         {
           name: "Descending",
           internalName: GalleryOrder.Desc
+        },
+        {
+          name: "Random",
+          internalName: GalleryOrder.Random
         }
       ]
     },

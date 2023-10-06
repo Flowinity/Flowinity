@@ -19,6 +19,7 @@ import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import {
   Filter,
   GalleryInput,
+  Order,
   Type
 } from "@app/classes/graphql/gallery/galleryInput"
 import { PaginatedGalleryResponse } from "@app/classes/graphql/gallery/galleryResponse"
@@ -175,10 +176,11 @@ export class GalleryService {
     limit: number = 12,
     excludedCollections: number[] | null
   ): Promise<PaginatedGalleryResponse> {
-    let sortParams: Sequelize.OrderItem = [
-      input.sort || "createdAt",
-      input.order || "DESC"
-    ]
+    let sortParams: any =
+      input.order === Order.RANDOM
+        ? [sequelize.literal("RAND()")]
+        : [input.sort || "createdAt", input.order || "DESC"]
+
     const offset = input.page * limit - limit || 0
     const allowed = [
       Filter.IMAGES,

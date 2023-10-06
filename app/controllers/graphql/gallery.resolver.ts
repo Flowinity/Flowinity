@@ -83,7 +83,7 @@ export class GalleryResolver {
     return await this.galleryService.getGalleryV4(
       ctx.user?.id,
       input,
-      ctx.user?.itemsPerPage || input.limit || 12,
+      input.limit || ctx.user?.itemsPerPage || 12,
       ctx.user?.id
         ? await this.userService.getAttribute(
             ctx.user.id,

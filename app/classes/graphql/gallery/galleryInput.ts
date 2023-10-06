@@ -39,7 +39,8 @@ export enum SearchMode {
 
 export enum Order {
   ASC = "ASC",
-  DESC = "DESC"
+  DESC = "DESC",
+  RANDOM = "RANDOM"
 }
 
 export enum Type {
