@@ -139,6 +139,7 @@
                 v-model="app.verified"
                 label="Verified"
                 dense
+                v-if="$user.user.administrator"
                 required
                 hint="Only use this for public facing and TPU endorsed apps"
                 persistent-hint

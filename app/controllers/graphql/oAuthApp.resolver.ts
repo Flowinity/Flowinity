@@ -231,9 +231,11 @@ export class OAuthAppResolver {
     @Ctx() ctx: Context,
     @Arg("input") input: UpdateAppInput
   ): Promise<OauthApp> {
-    await this.adminService.updateOauth(input, ctx.user!!.id)
     const app = await this.adminService.getOauthById(input.id, ctx.user!!.id)
     if (!app) throw new GqlError("APP_NOT_FOUND")
+    if (app.verified !== input.verified && !ctx.user!!.administrator)
+      throw new GqlError("NOT_ADMIN")
+    await this.adminService.updateOauth(input, ctx.user!!.id)
     return app
   }
 
