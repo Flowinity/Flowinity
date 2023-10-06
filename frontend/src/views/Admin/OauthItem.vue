@@ -307,7 +307,7 @@
           </template>
           <template v-else>
             <CreateBotAccountDialog
-              :model-value="createBot"
+              v-model="createBot"
               :id="app?.id"
               @refresh="getAppAuth"
             />
