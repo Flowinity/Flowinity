@@ -112,7 +112,7 @@ export class ChatControllerV3 {
           deleted: false
         }
       })
-      if (count >= 30) throw Errors.MAX_EMOJI
+      if (count >= 100) throw Errors.MAX_EMOJI
       const emoji = await ChatEmoji.create({
         chatId: chat.id,
         icon: upload.upload.attachment,

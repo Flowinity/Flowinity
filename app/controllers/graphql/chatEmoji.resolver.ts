@@ -81,6 +81,7 @@ export class ChatEmojiResolver {
       }
     })
     if (!emoji) throw new GqlError("INVALID_EMOJI")
+    const oldName = emoji.name
     const name = this.slugify(input.name)
     if (name.includes("~")) throw new GqlError("ILLEGAL_EMOJI_CHARACTER")
     await emoji.update({
@@ -91,9 +92,9 @@ export class ChatEmojiResolver {
       userId: ctx.user!!.id,
       category: AuditLogCategory.EMOJI,
       actionType: AuditLogActionType.MODIFY,
-      message: `<@${ctx.user!!.id}> updated the emoji name of **${
-        emoji.name
-      }** to **${name}**`
+      message: `<@${
+        ctx.user!!.id
+      }> updated the emoji name of **${oldName}** to **${name}**`
     })
     for (const user of chat.users) {
       if (!user.userId) continue

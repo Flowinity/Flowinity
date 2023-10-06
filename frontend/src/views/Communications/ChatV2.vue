@@ -90,6 +90,7 @@
       class="messages communications position-relative"
       id="chat"
       @scrollend="scrollEvent"
+      :key="$chat.selectedChatId"
     >
       <div id="sentinel-bottom" ref="sentinelBottom"></div>
       <infinite-loading

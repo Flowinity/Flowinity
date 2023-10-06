@@ -166,6 +166,7 @@
       :class="{
         'black-and-white': chat.association.notifications === 'none'
       }"
+      class="position-relative"
     >
       <template v-slot:title>
         {{ $chat.chatName(chat) }}
@@ -188,13 +189,12 @@
           class="mr-2"
         ></UserAvatar>
       </template>
-      <template v-slot:append>
+      <template v-slot:append v-if="chat.unread">
+        a
         <v-badge
-          v-if="chat.unread"
-          :class="chat.unread > 99 ? 'mr-5' : 'mr-4'"
+          :class="chat.unread > 99 ? 'mr-6' : 'mr-4'"
           :content="chat.unread > 99 ? '99+' : chat.unread"
           color="red"
-          overlap
         ></v-badge>
       </template>
     </v-list-item>

@@ -6,7 +6,7 @@
     :supports-removal="false"
   />
   <overline position="center">
-    {{ $t("chats.settings.emoji.name") }} ({{ emojis.length }}/30)
+    {{ $t("chats.settings.emoji.name") }} ({{ emojis.length }}/100)
   </overline>
   <div>
     <v-card-subtitle class="initial" style="max-width: 600px">
