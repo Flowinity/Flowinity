@@ -62,7 +62,9 @@ export class AdminResolver {
       }
     })
     for (const user of users) {
-      this.userUtilsService.sendVerificationEmail(user.id, true)
+      console.log(`sending for ${user.username}`)
+      this.userUtilsService.sendVerificationEmail(user.id, true, false)
+      await new Promise((resolve) => setTimeout(resolve, 60000))
     }
     return { success: true }
   }

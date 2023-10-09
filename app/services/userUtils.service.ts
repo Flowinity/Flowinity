@@ -225,7 +225,11 @@ export class UserUtilsService {
     return true
   }
 
-  async sendVerificationEmail(userId: number, correction: boolean = false) {
+  async sendVerificationEmail(
+    userId: number,
+    correction: boolean = false,
+    updateCode: boolean = true
+  ) {
     const user = await User.findOne({
       where: {
         id: userId
@@ -233,16 +237,18 @@ export class UserUtilsService {
     })
     if (!user || user.emailVerified) throw Errors.USER_NOT_FOUND
     const code = await utils.generateAPIKey("email")
-    await User.update(
-      {
-        emailToken: code
-      },
-      {
-        where: {
-          id: userId
+    if (updateCode || !user.emailToken) {
+      await User.update(
+        {
+          emailToken: code
+        },
+        {
+          where: {
+            id: userId
+          }
         }
-      }
-    )
+      )
+    }
     const adminService = Container.get(AdminService)
     adminService.sendEmail(
       {
