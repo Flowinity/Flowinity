@@ -8,10 +8,14 @@ import { Chat } from "@app/models/chat.model"
 import { ChatRank } from "@app/models/chatRank.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { ChatPermissionsHandler } from "@app/services/chat/permissions"
+import { User } from "@app/models/user.model"
+import { UserUtilsService } from "@app/services/userUtils.service"
 
 @Resolver()
 @Service()
 export class AdminResolver {
+  constructor(private userUtilsService: UserUtilsService) {}
+
   @Authorization({
     accessLevel: AccessLevel.ADMIN,
     scopes: "*"
@@ -40,6 +44,25 @@ export class AdminResolver {
       const service = new ChatPermissionsHandler()
       await service.createDefaults(chat)
       console.log(chat.id)
+    }
+    return { success: true }
+  }
+
+  @Authorization({
+    accessLevel: AccessLevel.ADMIN,
+    scopes: "*"
+  })
+  @Mutation(() => Success)
+  async adminSendEmailForUnverifiedUsers(
+    @Ctx() ctx: Context
+  ): Promise<Success> {
+    const users = await User.findAll({
+      where: {
+        emailVerified: false
+      }
+    })
+    for (const user of users) {
+      this.userUtilsService.sendVerificationEmail(user.id, true)
     }
     return { success: true }
   }

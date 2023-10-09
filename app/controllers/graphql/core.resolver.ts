@@ -119,7 +119,8 @@ export class CoreResolver {
 
   @Authorization({
     scopes: [],
-    userOptional: true
+    userOptional: true,
+    emailOptional: true
   })
   @Query(() => [ExperimentType])
   async experiments(@Ctx() ctx: Context) {
@@ -138,7 +139,9 @@ export class CoreResolver {
   @FieldResolver(() => Weather)
   @Query(() => Weather)
   @Authorization({
-    scopes: []
+    scopes: [],
+    userOptional: true,
+    emailOptional: true
   })
   async weather(@Ctx() ctx: Context) {
     const cached = await redis.get(`core:weather:${ctx.ip}`)
@@ -168,7 +171,8 @@ export class CoreResolver {
 
   @Mutation(() => Experiment)
   @Authorization({
-    scopes: ["user.modify"]
+    scopes: ["user.modify"],
+    emailOptional: true
   })
   async setExperiment(
     @Ctx() ctx: Context,

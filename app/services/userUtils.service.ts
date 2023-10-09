@@ -225,7 +225,7 @@ export class UserUtilsService {
     return true
   }
 
-  async sendVerificationEmail(userId: number) {
+  async sendVerificationEmail(userId: number, correction: boolean = false) {
     const user = await User.findOne({
       where: {
         id: userId
@@ -248,11 +248,14 @@ export class UserUtilsService {
       {
         body: {
           name: user.username,
-          intro:
-            "You recently requested to verify your email address for your TPU account. Please click the button below to verify your email address.",
+          intro: `${
+            !correction
+              ? "You recently requested to verify your email address for your PrivateUploader account. Please"
+              : "We discovered an issue where some verification emails weren't being sent out correctly. If you did not initially receive a verification email you can click"
+          } the button below to verify your email address.`,
           action: [
             {
-              instructions: `Click the button below to verify your account and start using TPU!`,
+              instructions: `Click the button below to verify your account and start using PrivateUploader!`,
               button: {
                 color: "#0190ea", // Optional action button color
                 text: "Verify",
@@ -260,11 +263,11 @@ export class UserUtilsService {
               }
             }
           ],
-          outro: "Thank you for using TPU!"
+          outro: "Thank you for using PrivateUploader!"
         }
       },
       user.email,
-      "TPU Email Verification"
+      "PrivateUploader Email Verification"
     )
     return true
   }

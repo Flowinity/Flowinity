@@ -16,7 +16,7 @@ import { FriendNickname } from "@app/models/friendNickname"
 export class PartialUserBase {
   @Field()
   username: string
-  @Field()
+  @Field(() => Int)
   id: number
   @Field(() => DateType)
   createdAt: Date
@@ -48,7 +48,7 @@ export class PartialUserPublic {
   bot: boolean
   @Field()
   username: string
-  @Field()
+  @Field(() => Int)
   id: number
   @Field(() => DateType)
   createdAt: Date
