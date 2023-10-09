@@ -236,8 +236,9 @@ export class UserUtilsService {
       }
     })
     if (!user || user.emailVerified) throw Errors.USER_NOT_FOUND
-    const code = await utils.generateAPIKey("email")
+    let code = user.emailToken
     if (updateCode || !user.emailToken) {
+      code = await utils.generateAPIKey("email")
       await User.update(
         {
           emailToken: code
