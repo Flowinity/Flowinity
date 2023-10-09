@@ -107,14 +107,7 @@ export class CoreControllerV3 {
       finishedSetup: true,
       domain: global.domain,
       maintenance:
-        apiVersion === 2
-          ? config.maintenance.enabled
-          : {
-              enabled: true,
-              statusPage: "https://status.troplo.com",
-              message:
-                "**README** Please CTRL + SHIFT + R to upgrade your version of PrivateUploader to enjoy the latest new features of PrivateUploader version 4."
-            }
+        apiVersion === 2 ? config.maintenance.enabled : config.maintenance
     }
   }
 

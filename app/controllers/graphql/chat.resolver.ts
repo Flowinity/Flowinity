@@ -59,7 +59,7 @@ export class ChatResolver {
     @Arg("input", { nullable: true }) input?: ChatsInput
   ) {
     if (!ctx.user) return []
-    return await Chat.findAll({
+    const chats = await Chat.findAll({
       include: [
         {
           model: ChatAssociation,
@@ -68,6 +68,15 @@ export class ChatResolver {
           as: "association"
         }
       ]
+    })
+    for (const chat of chats) {
+      chat._redisSortDate = (await redis.get(`chat:${chat.id}:sortDate`)) || "0"
+    }
+    return chats.sort((a: Chat, b: Chat) => {
+      return (
+        Number(b._redisSortDate) - Number(a._redisSortDate) ||
+        Number(b.id) - Number(a.id)
+      )
     })
   }
 

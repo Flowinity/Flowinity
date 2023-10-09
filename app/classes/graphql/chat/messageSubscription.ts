@@ -1,5 +1,5 @@
 import { Message } from "@app/models/message.model"
-import { Field, InputType, ObjectType } from "type-graphql"
+import { Field, InputType, Int, ObjectType } from "type-graphql"
 import { Chat } from "@app/models/chat.model"
 
 @ObjectType()
@@ -10,7 +10,7 @@ export class MessageSubscription {
   })
   message: Message | null
 
-  @Field()
+  @Field(() => Int)
   associationId: number
 
   @Field()

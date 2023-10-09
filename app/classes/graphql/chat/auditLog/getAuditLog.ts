@@ -1,9 +1,9 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, Int } from "type-graphql"
 import { IsNumber, IsOptional, Max, Min } from "class-validator"
 
 @InputType()
 export class AuditLogInput {
-  @Field()
+  @Field(() => Int)
   associationId: number
   @Field({
     defaultValue: 1

@@ -1,4 +1,4 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, Int } from "type-graphql"
 import { MaxLength, MinLength } from "class-validator"
 
 @InputType()
@@ -9,6 +9,6 @@ export class UpdateEmojiInput {
   @MinLength(3)
   @Field()
   name: string
-  @Field()
+  @Field(() => Int)
   associationId: number
 }

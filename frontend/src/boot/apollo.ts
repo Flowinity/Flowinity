@@ -68,8 +68,8 @@ export default function setup(app: App) {
       url: "/graphql",
       connectionParams: {
         token: localStorage.getItem("token") || "",
-        clientVersion: import.meta.env.TPU_VERSION,
-        clientName: "TPUvNEXT4"
+        "x-tpu-version": import.meta.env.TPU_VERSION,
+        "x-tpu-client": "TPUvNEXT"
       }
     })
   );
@@ -80,8 +80,8 @@ export default function setup(app: App) {
     operation.setContext({
       headers: {
         authorization: token,
-        clientVersion: import.meta.env.TPU_VERSION,
-        clientName: "TPUvNEXT"
+        "x-tpu-client-version": import.meta.env.TPU_VERSION,
+        "x-tpu-client": "TPUvNEXT"
       }
     });
     return forward(operation);

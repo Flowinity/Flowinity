@@ -1,4 +1,4 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, Int } from "type-graphql"
 import { ArrayMaxSize, IsOptional, MaxLength, MinLength } from "class-validator"
 import { Embed, EmbedInput } from "@app/classes/graphql/chat/message"
 
@@ -7,13 +7,13 @@ export class SendMessageInput {
   @Field(() => String)
   @MaxLength(4000)
   content: string
-  @Field()
+  @Field(() => Int)
   associationId: number
   @Field(() => [String], {
     defaultValue: []
   })
   attachments: string[]
-  @Field({
+  @Field(() => Int, {
     nullable: true
   })
   replyId?: number

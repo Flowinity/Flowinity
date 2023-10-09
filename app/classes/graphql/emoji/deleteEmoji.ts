@@ -1,10 +1,10 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, Int } from "type-graphql"
 import { MaxLength, MinLength } from "class-validator"
 
 @InputType()
 export class DeleteEmojiInput {
   @Field()
   id: string
-  @Field()
+  @Field(() => Int)
   associationId: number
 }

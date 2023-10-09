@@ -401,10 +401,12 @@ export class Application {
           // Collects and send usage reporting based on executed operations
           usage: {
             clientInfo(context: Context) {
-              const name = context.request.headers.get("x-tpu-client")
-              const version = context.request.headers.get(
-                "x-tpu-client-version"
-              )
+              const name =
+                context.request.headers.get("x-tpu-client") ||
+                context.request.headers.get("clientName")
+              const version =
+                context.request.headers.get("x-tpu-client-version") ||
+                context.request.headers.get("clientVersion")
 
               if (name && version) {
                 return { name, version }

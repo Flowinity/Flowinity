@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from "type-graphql"
+import { Field, InputType, Int, ObjectType } from "type-graphql"
 
 @ObjectType()
 export class Prefix {
@@ -28,7 +28,7 @@ export class LookupPrefix {
 
 @InputType()
 export class LookupPrefixInput {
-  @Field()
+  @Field(() => Int)
   chatAssociationId: number
   @Field()
   prefix: string
