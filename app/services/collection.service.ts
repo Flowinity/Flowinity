@@ -298,8 +298,8 @@ export class CollectionService {
     uploadId: number | Array<number>,
     userId: number
   ) {
-    if (typeof uploadId === "object" && uploadId?.length > 24) {
-      throw Errors.INVALID_PARAMETERS
+    if (typeof uploadId === "object" && uploadId?.length >= 48) {
+      throw Errors.MAX_COLLECTION_ADDITIONS
     }
     if (typeof uploadId === "number") {
       const item = await CollectionItem.create({

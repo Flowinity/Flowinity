@@ -366,6 +366,11 @@ let Errors = {
   APP_NOT_FOUND: {
     message: "The integration app could not be found.",
     status: 400
+  },
+  MAX_COLLECTION_ADDITIONS: {
+    message:
+      "The maximum amount of items you can add to a collection at a time is 48.",
+    status: 400
   }
 }
 

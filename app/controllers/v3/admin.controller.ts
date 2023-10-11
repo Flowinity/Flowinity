@@ -158,7 +158,9 @@ export class AdminControllerV3 {
                   color: "#0190ea", // Optional action button color
                   text: "Create your account",
                   link:
-                    config.hostnameWithProtocol + "/invite/" + invite.inviteKey
+                    config.hostnameWithProtocol +
+                    "/register/" +
+                    invite.inviteKey
                 }
               },
               {
