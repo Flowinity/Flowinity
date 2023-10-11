@@ -41,13 +41,13 @@ export class UserSocketController {
             }
           }
         )
-        await this.userService.emitToTrackedUsers(user.id, "userStatus", {
-          id: user.id,
-          status: user.storedStatus.toUpperCase(),
-          // TODO: Platform presence
-          platforms: []
-        })
       }
+      await this.userService.emitToTrackedUsers(user.id, "userStatus", {
+        id: user.id,
+        status: user.storedStatus.toUpperCase(),
+        // TODO: Platform presence
+        platforms: []
+      })
     }
   }
 

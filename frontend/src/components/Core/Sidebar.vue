@@ -2,16 +2,16 @@
   <v-navigation-drawer v-bind="$attrs" :width="trueWidth" :rail="w <= 100">
     <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
       <slot :name="name || 'default'" />
+      <div
+        class="resizer"
+        @mousedown="startResize"
+        :class="{
+          left: $attrs.location === 'left' || !$attrs.location,
+          right: $attrs.location === 'right'
+        }"
+        v-if="resizable"
+      ></div>
     </template>
-    <div
-      class="resizer"
-      @mousedown="startResize"
-      :class="{
-        left: $attrs.location === 'left' || !$attrs.location,
-        right: $attrs.location === 'right'
-      }"
-      v-if="resizable"
-    ></div>
   </v-navigation-drawer>
 </template>
 

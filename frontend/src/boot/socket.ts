@@ -298,9 +298,9 @@ export default async function setup(app) {
       }
     }
   );*/
-  sockets.chat.on("rankRemoved", (data: AddRank) => {
+  sockets.chat.on("rankRemoved", (data: AddRank & { chatId: number }) => {
     const index = chat.chats.findIndex((chat) => {
-      return chat.association.id === data.chatAssociationId;
+      return chat.id === data.chatId;
     });
     if (index === -1) return;
     const userAssociation = chat.chats[index].users.find(

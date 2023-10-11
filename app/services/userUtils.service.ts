@@ -695,7 +695,9 @@ export class UserUtilsService {
         "password",
         "administrator",
         "moderator",
-        "status"
+        "status",
+        "profileLayout",
+        "themeEngine"
       ],
       include: [
         {
@@ -747,7 +749,11 @@ export class UserUtilsService {
     }
 
     if (body.themeEngine) {
-      await ThemeEngineValidate.parse(body.themeEngine)
+      try {
+        await ThemeEngineValidate.parse(body.themeEngine)
+      } catch {
+        body.themeEngine = user.themeEngine
+      }
     }
 
     if (
@@ -813,7 +819,11 @@ export class UserUtilsService {
         delete body.profileLayout
       }
     }
-    if (body.profileLayout) await LayoutValidate.parse(body.profileLayout)
+    try {
+      if (body.profileLayout) await LayoutValidate.parse(body.profileLayout)
+    } catch {
+      body.profileLayout = user.profileLayout
+    }
     if (body.excludedCollections)
       await ExcludedCollectionsValidate.parse(body.excludedCollections)
     /*  if (body.nameColor !== user.nameColor) {

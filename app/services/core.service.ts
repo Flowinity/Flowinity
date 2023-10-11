@@ -362,7 +362,7 @@ export class CoreService {
   ): Record<string, any> {
     const experiments = {
       THEME: 3,
-      NOTIFICATION_SOUND: 1,
+      NOTIFICATION_SOUND: 2,
       RESIZABLE_SIDEBARS: false,
       LEGACY_MOBILE_NAV: true,
       OFFICIAL_INSTANCE: config?.officialInstance || false,

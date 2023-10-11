@@ -32,4 +32,5 @@ export interface Props {
   identifier?: any;
   firstload?: boolean;
   slots?: Slots;
+  standalone?: boolean;
 }

@@ -401,6 +401,7 @@ export class Application {
           // Collects and send usage reporting based on executed operations
           usage: {
             clientInfo(context: Context) {
+              // Some versions of TPUvNEXT used the clientName/clientVersion headers.
               const name =
                 context.request.headers.get("x-tpu-client") ||
                 context.request.headers.get("clientName")

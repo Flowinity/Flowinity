@@ -76,6 +76,10 @@ const Errors = {
   },
   FRIEND_REQUESTS_DISABLED: {
     message: "This user does not allow you to send friend requests to them."
+  },
+  INVALID_SCOPE: {
+    message:
+      "Please ensure you have the correct API scope permissions to view this."
   }
 }
 

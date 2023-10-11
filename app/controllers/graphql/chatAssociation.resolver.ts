@@ -244,7 +244,11 @@ export class ChatAssociationResolver {
         input.chatAssociationId,
         ctx.user!!.id,
         "rankRemoved",
-        input
+        {
+          chatId: chat.id,
+          updatingChatAssociationId: input.updatingChatAssociationId,
+          rankId: input.rankId
+        }
       )
       const id = chat.users.find(
         (assoc) => assoc.id === input.updatingChatAssociationId

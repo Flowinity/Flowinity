@@ -8,7 +8,8 @@ const emit = defineEmits<{ infinite: [$state: StateHandler] }>();
 const props = withDefaults(defineProps<Props>(), {
   top: false,
   firstload: true,
-  distance: 0
+  distance: 0,
+  standalone: false
 });
 defineSlots<{
   spinner(props: {}): any;
@@ -18,6 +19,7 @@ defineSlots<{
 
 let observer: IntersectionObserver | null = null;
 let prevMessage = 0;
+let prevHeight = 0;
 const infiniteLoading = ref(null);
 const state = ref<State>("");
 const { top, firstload, distance } = props;
@@ -30,6 +32,13 @@ const params: Params = {
   distance,
   parentEl: null,
   emit() {
+    if (props.standalone) {
+      const parentEl = params.parentEl || document.documentElement;
+      prevHeight = parentEl.scrollHeight;
+      stateHandler.loading();
+      emit("infinite", stateHandler);
+      return;
+    }
     if (!top) {
       prevMessage = chat.selectedChat?.messages[0]?.id;
     } else {
@@ -48,9 +57,14 @@ const stateHandler: StateHandler = {
   async loaded() {
     state.value = "loaded";
     await nextTick();
-    const message = document.getElementById(`message-id-${prevMessage}`);
-    if (message) {
-      message.scrollIntoView();
+    if (!props.standalone) {
+      const message = document.getElementById(`message-id-${prevMessage}`);
+      if (message) {
+        message.scrollIntoView();
+      }
+    } else {
+      const parentEl = params.parentEl || document.documentElement;
+      if (top) parentEl.scrollTop = parentEl.scrollHeight - prevHeight;
     }
     if (isVisible(infiniteLoading.value!, params.parentEl)) params.emit();
   },

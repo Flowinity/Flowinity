@@ -36,6 +36,7 @@
       v-if="!$collections.complete"
       @infinite="getCollections"
       identifier="collections-bottom"
+      :standalone="true"
     >
       <template v-slot:spinner>
         <div class="text-center">

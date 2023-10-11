@@ -25,6 +25,8 @@ import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { resolver } from "graphql-sequelize"
 import { CollectionUser } from "@app/models/collectionUser.model"
 import { Op } from "sequelize"
+import { checkScope } from "@app/lib/auth"
+import { GqlError } from "@app/lib/gqlErrors"
 
 const FileScalar = new GraphQLScalarType({
   name: "File",
@@ -41,7 +43,7 @@ export class GalleryResolver {
   ) {}
 
   @Authorization({
-    scopes: ["uploads.view", "collections.view"],
+    scopes: ["uploads.view", "collections.view", "starred.view"],
     userOptional: true
   })
   @Query(() => PaginatedGalleryResponse)
@@ -55,6 +57,9 @@ export class GalleryResolver {
         throw new GraphQLError(
           "Collection ID or ShareLink is required for collection gallery"
         )
+      if (input.collectionId && !checkScope("collections.view", ctx.scopes)) {
+        throw new GqlError("INVALID_SCOPE")
+      }
       const collection = await this.collectionService.getCollectionOrShare(
         input.collectionId || input.shareLink!!,
         ctx.user?.id
@@ -65,6 +70,9 @@ export class GalleryResolver {
         )
       input.collectionId = collection.id
     } else if (input.type === Type.AUTO_COLLECT) {
+      if (!checkScope("collections.view", ctx.scopes)) {
+        throw new GqlError("INVALID_SCOPE")
+      }
       if (!input.collectionId)
         throw new GraphQLError(
           "You must specify `collectionId` for AutoCollects."
@@ -79,6 +87,17 @@ export class GalleryResolver {
         )
     } else if (!ctx.user) {
       throw new GraphQLError("You must be logged in to view the gallery")
+    }
+    if (
+      input.type === Type.PERSONAL &&
+      !checkScope("gallery.view", ctx.scopes)
+    ) {
+      throw new GqlError("INVALID_SCOPE")
+    } else if (
+      input.type === Type.STARRED &&
+      !checkScope("starred.view", ctx.scopes)
+    ) {
+      throw new GqlError("INVALID_SCOPE")
     }
     return await this.galleryService.getGalleryV4(
       ctx.user?.id,
