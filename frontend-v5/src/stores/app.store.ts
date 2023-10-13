@@ -1,5 +1,5 @@
 import { ref, computed, markRaw, type Raw } from "vue";
-import { defineStore } from "pinia";
+import { defineStore, getActivePinia } from "pinia";
 import {
   RiAndroidFill,
   RiAndroidLine,
@@ -25,11 +25,13 @@ import {
   RiUserLine,
   type SVGComponent
 } from "vue-remix-icons";
-import type { CoreState } from "@/gql/graphql";
+import type { Chat, CoreState } from "@/gql/graphql";
 import { useUserStore } from "@/stores/user.store";
 import { useChatStore } from "@/stores/chat.store";
 import { useExperimentsStore } from "@/stores/experiments.store";
 import { CoreStateQuery } from "@/graphql/core/state.graphql";
+import { useRoute } from "vue-router";
+import { WeatherQuery } from "@/graphql/core/weather.graphql";
 
 export enum RailMode {
   HOME,
@@ -57,8 +59,48 @@ export const useAppStore = defineStore("app", () => {
   const domain = computed(() => {
     return state.value.domain ? `https://${state.value.domain}/i/` : "/i/";
   });
+  const weather = ref({
+    loading: true,
+    data: {
+      description: "Clouds",
+      icon: "04d",
+      temp: 0,
+      temp_max: 0,
+      temp_min: 0,
+      name: "Australia",
+      id: 2643743,
+      main: "Clouds",
+      location: ""
+    }
+  });
+  const weatherTemp = computed(() => {
+    const temp = weather.value.data?.temp;
+    const user = useUserStore()?.user;
+    if (!user?.weatherUnit) return 0;
+    if (user?.weatherUnit === "kelvin") {
+      // round to 2 decimal places
+      return Math.round((temp + 273.15) * 100) / 100;
+    } else if (user?.weatherUnit === "fahrenheit") {
+      return Math.round(((temp * 9) / 5 + 32) * 100) / 100;
+    } else {
+      return temp;
+    }
+  });
 
   // State functions
+  async function getWeather() {
+    try {
+      const { data } =
+        await getActivePinia()._a.config.globalProperties.$apollo.query({
+          query: WeatherQuery
+        });
+      weather.value.data = data.weather;
+      weather.value.loading = false;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   function loadLocalStorage() {
     const chatStore = useChatStore();
     chatStore.init();
@@ -68,7 +110,7 @@ export const useAppStore = defineStore("app", () => {
     if (core) {
       try {
         state.value = JSON.parse(core);
-        laoding.value = false;
+        loading.value = false;
       } catch {
         //
       }
@@ -108,6 +150,7 @@ export const useAppStore = defineStore("app", () => {
     if (!window.tpuInternals) {
       window.tpuInternals = {};
     }
+    getWeather();
     const {
       data: {
         coreState,
@@ -132,17 +175,31 @@ export const useAppStore = defineStore("app", () => {
     userStore.user = currentUser;
     userStore.tracked = trackedUsers;
     userStore.blocked = blockedUsers;
-    chatStore.chats = chats.map((chat) => {
+    chatStore.chats = chats.map((chat: Chat) => {
       return {
         ...chat,
         messages: chatStore.chats.find((c) => c.id === chat.id)?.messages
       };
     });
+    chatStore.emoji = userEmoji;
     for (const experiment of experiments) {
       experimentsStore.experiments[experiment.id] = experiment.value;
     }
     loading.value = false;
   }
+
+  const lookupNav = computed(() => {
+    const pathToOption = {};
+    for (const railMode in navigation.value.railOptions) {
+      for (const option of navigation.value.options[railMode]) {
+        pathToOption[option.path] = {
+          ...option,
+          _rail: railMode
+        };
+      }
+    }
+    return pathToOption;
+  });
 
   // Navigation
   const navigation = ref({
@@ -244,6 +301,19 @@ export const useAppStore = defineStore("app", () => {
     return navigation.value.miscOptions[navigation.value.mode];
   });
 
+  const route = useRoute();
+
+  const currentNavItem = computed(() => {
+    const lookup = lookupNav.value[route.path];
+    if (!lookup) return null;
+    return {
+      item: lookup,
+      rail: navigation.value.railOptions.find(
+        (rail) => rail.id === parseInt(lookup._rail)
+      )
+    };
+  });
+
   return {
     navigation,
     currentRail,
@@ -253,6 +323,9 @@ export const useAppStore = defineStore("app", () => {
     title,
     init,
     loading,
-    domain
+    domain,
+    currentNavItem,
+    weather,
+    weatherTemp
   };
 });

@@ -1,9 +1,13 @@
 import md from "./rules";
 import mdEmail from "./rulesEmail";
 import { useAppStore } from "@/stores/app.store";
-import { Chat } from "@/models/chat";
-import { User } from "@/models/user";
-import { Message, UserStatus, UserStoredStatus } from "@/gql/graphql";
+import {
+  type Message,
+  UserStatus,
+  type User,
+  type Chat,
+  UserStoredStatus
+} from "@/gql/graphql";
 
 export default {
   fileSize(size: number): string {

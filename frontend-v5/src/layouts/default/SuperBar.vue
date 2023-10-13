@@ -7,8 +7,9 @@ const appStore = useAppStore();
 </script>
 
 <template>
-  <div
-    class="h-screen border-r-2 dark:border-outline-dark dark:bg-sidebar-dark w-24 2xl:w-16 p-3 border-dark space-x-1"
+  <aside
+    class="sticky h-screen border-r-2 dark:border-outline-dark dark:bg-sidebar-dark p-3 border-dark space-x-1"
+    style="min-width: 72px; max-width: 72px"
   >
     <div class="justify-between flex flex-col h-full">
       <div class="items-start">
@@ -45,7 +46,7 @@ const appStore = useAppStore();
         </div>
       </div>
     </div>
-  </div>
+  </aside>
 </template>
 
 <style scoped></style>

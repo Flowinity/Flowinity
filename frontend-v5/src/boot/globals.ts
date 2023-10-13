@@ -1,5 +1,4 @@
 import axios from "@/plugins/axios";
-import vuetify from "@/plugins/vuetify";
 import { useAdminStore } from "@/stores/admin.store";
 import { useUserStore } from "@/stores/user.store";
 import { useAppStore } from "@/stores/app.store";
@@ -15,8 +14,8 @@ import validation from "@/plugins/validation";
 import { io } from "socket.io-client";
 import functions from "@/plugins/functions";
 import router from "@/router";
-import { Router, useRouter } from "vue-router";
-import { ChatEmoji, Collection } from "@/gql/graphql";
+import type { Router, useRouter } from "vue-router";
+import type { ChatEmoji, Collection } from "@/gql/graphql";
 
 function createSocket(namespace: string) {
   console.log(`[TPU/Socket] Connecting to ${namespace}`);
@@ -49,8 +48,6 @@ export default function setup(app) {
   const mail = useMailStore();
   const toast = useToast();
   app.config.globalProperties.axios = axios;
-  core.themeProviderDefaults.theme = vuetify.theme.themes.value;
-  core.themeProviderDefaults.global = vuetify.defaults.value;
   app.config.globalProperties.$user = user;
   app.config.globalProperties.$app = core;
   app.config.globalProperties.$experiments = experiments;
@@ -77,7 +74,7 @@ export default function setup(app) {
   app.config.globalProperties.$functions = functions;
 
   core.init().then(() => {
-    if (!core.site.finishedSetup) {
+    if (!core.state.finishedSetup) {
       router.push("/setup");
     }
     console.info("[TPU/CoreStore] Core initialized");

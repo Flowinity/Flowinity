@@ -2,7 +2,7 @@
  * plugins/axios.ts
  */
 
-import axios, { AxiosRequestConfig, AxiosStatic } from "axios";
+import axios, { type AxiosRequestConfig, type AxiosStatic } from "axios";
 import { useToast } from "vue-toastification";
 import { useAppStore } from "@/stores/app.store";
 import { useUserStore } from "@/stores/user.store";

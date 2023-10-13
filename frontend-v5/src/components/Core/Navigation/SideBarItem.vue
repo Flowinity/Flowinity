@@ -24,6 +24,7 @@ const selected = computed(() => {
     }"
     v-if="item"
     @click="!selected ? router.push(item.path) : () => {}"
+    v-wave
   >
     <component
       :is="selected && item.selectedIcon ? item.selectedIcon : item.icon"

@@ -5,7 +5,7 @@ import { useFriendsStore } from "@/stores/friends.store";
 import { useUserStore } from "@/stores/user.store";
 import { useExperimentsStore } from "@/stores/experiments.store";
 import { useToast } from "vue-toastification";
-import {
+import type {
   AddRank,
   BlockedUser,
   Chat,
@@ -17,9 +17,9 @@ import {
   FriendStatus,
   Message,
   PartialUserFriend,
-  User,
-  UserStoredStatus
+  User
 } from "@/gql/graphql";
+import { UserStoredStatus } from "@/gql/graphql";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
 
 function checkMessage(id: number, chatId: number) {

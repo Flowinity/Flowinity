@@ -66,4 +66,8 @@ export class Weather {
     nullable: true
   })
   location: string
+  @Field({
+    nullable: true
+  })
+  name: string
 }

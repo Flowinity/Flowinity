@@ -12,9 +12,14 @@ import events from "./boot/events";
 import socket from "./boot/socket";
 import apollo from "./boot/apollo";
 import { registerPlugins } from "@/plugins";
+import VWave from "v-wave";
 
 const app = createApp(App);
 
+app.use(VWave, {
+  easing: "ease-out",
+  cancellationPeriod: 30
+});
 app.use(router);
 
 // Register boot plugins

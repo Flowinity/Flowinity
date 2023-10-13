@@ -1,4 +1,4 @@
-import { App } from "vue";
+import type { App } from "vue";
 import { createApolloProvider } from "@vue/apollo-option";
 import {
   ApolloClient,
@@ -9,7 +9,6 @@ import {
 } from "@apollo/client/core";
 import { onError } from "@apollo/client/link/error";
 import { useToast } from "vue-toastification";
-import { useUserStore } from "@/stores/user.store";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import functions from "@/plugins/functions";

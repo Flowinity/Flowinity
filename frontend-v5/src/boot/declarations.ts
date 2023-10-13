@@ -4,18 +4,18 @@ import { useExperimentsStore } from "@/stores/experiments.store";
 import dayjs from "@/plugins/dayjs";
 import functions from "@/plugins/functions";
 import { useCollectionsStore } from "@/stores/collections.store";
-import { ToastInterface } from "vue-toastification";
+import type { ToastInterface } from "vue-toastification";
 import validation from "@/plugins/validation";
 import { useWorkspacesStore } from "@/stores/workspaces.store";
 import { useChatStore } from "@/stores/chat.store";
 import { Socket } from "socket.io-client";
 import { useFriendsStore } from "@/stores/friends.store";
 import { useMailStore } from "@/stores/mail.store";
-import { RouteLocationNormalizedLoaded, Router } from "vue-router";
+import type { RouteLocationNormalizedLoaded, Router } from "vue-router";
 import { useAdminStore } from "@/stores/admin.store";
 import { Axios } from "axios";
 import { ApolloClient } from "@apollo/client/core";
-import { User, Collection, Chat, PartialUserFriend } from "@/gql/graphql";
+import type { User, Collection, Chat, PartialUserFriend } from "@/gql/graphql";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {

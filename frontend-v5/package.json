@@ -24,6 +24,7 @@
     "pinia": "^2.1.6",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
+    "v-wave": "^1.5.1",
     "vue": "^3.3.4",
     "vue-remix-icons": "^3.5.0",
     "vue-router": "^4.2.4",

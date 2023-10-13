@@ -12,6 +12,7 @@ const props = defineProps({
       'bg-outline-dark': props.selected || props.highlighted,
       'rounded-full': props.highlighted
     }"
+    v-wave
   >
     <slot />
   </div>
