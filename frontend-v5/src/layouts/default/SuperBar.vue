@@ -19,9 +19,10 @@ const appStore = useAppStore();
             <RiSearchLine />
           </super-bar-item>
         </div>
-      </div>
-      <div class="items-center">
-        <div class="flex flex-col gap-y-2">
+        <div
+          class="divide-outline-dark border border-outline-dark mt-4 w-full"
+        />
+        <div class="flex flex-col gap-y-2 mt-4">
           <super-bar-item
             v-for="item in appStore.navigation.railOptions"
             :key="item.id"
@@ -33,6 +34,7 @@ const appStore = useAppStore();
           </super-bar-item>
         </div>
       </div>
+      <div class="items-center"></div>
       <div class="items-end">
         <div class="flex flex-col gap-y-4">
           <super-bar-item :highlighted="true">

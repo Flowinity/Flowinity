@@ -962,7 +962,7 @@ function getTypeByExt(ext: string): string {
     dll: "binary",
     so: "binary"
   } as Record<string, string>
-  return types[ext.toLowerCase()] || "binary"
+  return types[ext?.toLowerCase()] || "binary"
 }
 
 export default {

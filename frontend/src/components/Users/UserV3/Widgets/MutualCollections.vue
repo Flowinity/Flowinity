@@ -1,5 +1,5 @@
 <template>
-  <v-card-text class="text-overline">Mutual Collections</v-card-text>
+  <overline position="start">Mutual Collections</overline>
   <v-card-text class="subtitle-1 mt-n6">
     <v-slide-group>
       <CollectionCard
@@ -16,10 +16,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
+import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "MutualCollections",
-  components: { CollectionCard },
+  components: { Overline, CollectionCard },
   props: ["user", "username"]
 });
 </script>

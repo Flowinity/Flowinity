@@ -12,6 +12,7 @@ import { useToast } from "vue-toastification";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import functions from "@/plugins/functions";
+import { DefaultApolloClient } from "@vue/apollo-composable";
 
 function getToken(app: App) {
   return (
@@ -118,4 +119,5 @@ export default function setup(app: App) {
   app.config.globalProperties.$apollo = apolloClient;
 
   app.use(apolloProvider);
+  app.provide(DefaultApolloClient, apolloClient);
 }

@@ -1,7 +1,11 @@
 <script setup lang="ts">
 const props = defineProps({
   secondary: Boolean,
-  outlined: Boolean
+  outlined: Boolean,
+  padding: {
+    type: Boolean,
+    default: true
+  }
 });
 </script>
 
@@ -10,9 +14,10 @@ const props = defineProps({
     :class="{
       'dark:bg-card-dark': !props.secondary && !outlined,
       'dark:bg-card-secondary-dark': props.secondary && !outlined,
-      'outline dark:outline-outline-dark': outlined
+      'outline dark:outline-outline-dark': outlined,
+      'p-4': padding
     }"
-    class="rounded-xl p-4"
+    class="rounded-xl"
   >
     <strong v-if="$slots.header">
       <slot name="header" />

@@ -11,7 +11,7 @@
     <v-card-text>
       <v-textarea
         class="mb-n4"
-        :disabled="true"
+        :readonly="true"
         auto-grow
         variant="outlined"
         rows="1"

@@ -1,5 +1,5 @@
 <template>
-  <v-card-text class="text-overline">Statistics</v-card-text>
+  <overline position="start">Statistics</overline>
   <v-card-text>
     <v-row>
       <v-col :md="!username ? 6 : 12" cols="12" sm="12">
@@ -60,10 +60,11 @@
 import { defineComponent } from "vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import Chart from "@/components/Core/Chart.vue";
+import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "CoreStatistics",
-  components: { Chart, GraphWidget },
+  components: { Overline, Chart, GraphWidget },
   props: ["user", "username", "gold", "primary"],
   computed: {
     primaryColorResult() {

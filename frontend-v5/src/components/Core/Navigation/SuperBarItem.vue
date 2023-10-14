@@ -7,15 +7,14 @@ const props = defineProps({
 
 <template>
   <div
-    class="rounded-2xl hover:bg-outline-dark cursor-pointer p-2"
+    class="rounded-2xl hover:bg-outline-dark cursor-pointer p-2 relative"
     :class="{
       'bg-outline-dark': props.selected || props.highlighted,
       'rounded-full': props.highlighted
     }"
     v-wave
   >
+    <div class="blue-line bg-blue" :class="{ active: props.selected }"></div>
     <slot />
   </div>
 </template>
-
-<style scoped></style>

@@ -30,7 +30,7 @@ import {
   MessagesQuery,
   PagedMessagesQuery
 } from "@/graphql/chats/messages.graphql";
-import { StateHandler } from "v3-infinite-loading/lib/types";
+import { StateHandler } from "@/components/Scroll/types";
 import { CreateChatMutation } from "@/graphql/chats/createChat.graphql";
 import { UpdateChatMutation } from "@/graphql/chats/updateChat.graphql";
 import { AddChatUserMutation } from "@/graphql/chats/addUser.graphql";

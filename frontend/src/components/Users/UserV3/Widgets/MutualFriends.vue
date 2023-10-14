@@ -1,5 +1,5 @@
 <template>
-  <v-card-text class="text-overline">Mutual Friends</v-card-text>
+  <overline position="start">Mutual Friends</overline>
   <v-card-text class="subtitle-1 mt-n6">
     <v-slide-group>
       <v-card
@@ -31,10 +31,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "MutualFriends",
-  components: { UserAvatar },
+  components: { Overline, UserAvatar },
   props: ["user", "username"]
 });
 </script>

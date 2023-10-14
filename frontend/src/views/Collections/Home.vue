@@ -65,7 +65,7 @@ import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import CreateCollectionDialog from "@/components/Collections/Dialogs/Create.vue";
 import { CollectionFilter } from "@/gql/graphql";
 import InfiniteLoading from "@/components/Scroll/InfiniteScroll.vue";
-import { StateHandler } from "v3-infinite-loading/lib/types";
+import { StateHandler } from "@/components/Scroll/types";
 
 export default defineComponent({
   name: "CollectionsHome",

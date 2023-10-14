@@ -465,6 +465,7 @@ export default defineComponent({
         //@ts-ignore
         for (const item of items) {
           if (item.kind === "file") {
+            e.preventDefault();
             const file = item.getAsFile();
             if (file) {
               this.files.push({

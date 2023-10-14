@@ -26,6 +26,8 @@ import {
   type SVGComponent
 } from "vue-remix-icons";
 import type { Chat, ChatEmoji, User } from "@/gql/graphql";
+import { useFriendsStore } from "@/stores/friends.store";
+import { useUserStore } from "@/stores/user.store";
 
 export const useChatStore = defineStore("chat", () => {
   const chats = ref<Chat[]>([]);
@@ -39,6 +41,34 @@ export const useChatStore = defineStore("chat", () => {
   const drafts = ref<Record<number, string>>({});
   const emoji = ref<ChatEmoji[]>([]);
   const recentEmoji = ref<Record<string, number>>({});
+
+  function chatName(chat: Chat) {
+    if (!chat) return "Communications";
+    if (chat.type === "direct") {
+      return useFriendsStore().getName(chat?.recipient) || "Deleted User";
+    } else {
+      const userStore = useUserStore();
+      const friendStore = useFriendsStore();
+      if (chat.name === "Unnamed Group") {
+        const users = chat.users
+          .filter((user) => user.userId !== userStore.user?.id)
+          .map(
+            (user) =>
+              friendStore.getName(userStore.users[user.userId]) ||
+              "Deleted User"
+          );
+
+        const limitedUsers = users.slice(0, 3); // Get the first 3 users
+
+        const remainingUsersCount = Math.max(0, users.length - 3); // Calculate the remaining users count
+
+        return `${limitedUsers.join(", ")}${
+          remainingUsersCount > 0 ? `, +${remainingUsersCount} others` : ""
+        }`;
+      }
+      return chat.name;
+    }
+  }
 
   async function init() {
     try {
@@ -88,6 +118,7 @@ export const useChatStore = defineStore("chat", () => {
     trustedDomains,
     drafts,
     emoji,
-    recentEmoji
+    recentEmoji,
+    chatName
   };
 });

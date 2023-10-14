@@ -1,4 +1,4 @@
-import { ref, computed, markRaw, type Raw } from "vue";
+import { ref, computed, markRaw, type Raw, watch } from "vue";
 import { defineStore, getActivePinia } from "pinia";
 import {
   RiAndroidFill,
@@ -7,6 +7,7 @@ import {
   RiDashboardLine,
   RiFileTextFill,
   RiFileTextLine,
+  RiFolderImageLine,
   RiGalleryLine,
   RiGiftFill,
   RiGiftLine,
@@ -14,6 +15,8 @@ import {
   RiGroupLine,
   RiHome5Fill,
   RiHome5Line,
+  RiImage2Fill,
+  RiImage2Line,
   RiInformationFill,
   RiInformationLine,
   RiLineChartFill,
@@ -21,6 +24,10 @@ import {
   RiSettings4Line,
   RiSettings5Fill,
   RiSettings5Line,
+  RiSparkling2Fill,
+  RiSparkling2Line,
+  RiStarFill,
+  RiStarLine,
   RiUserFill,
   RiUserLine,
   type SVGComponent
@@ -32,6 +39,7 @@ import { useExperimentsStore } from "@/stores/experiments.store";
 import { CoreStateQuery } from "@/graphql/core/state.graphql";
 import { useRoute } from "vue-router";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
+import { useCollectionsStore } from "@/stores/collections.store";
 
 export enum RailMode {
   HOME,
@@ -43,8 +51,9 @@ export enum RailMode {
 export interface NavigationOption {
   icon: Raw<SVGComponent>;
   name: string;
-  path: string;
-  selectedIcon: Raw<SVGComponent>;
+  path?: string;
+  selectedIcon?: Raw<SVGComponent>;
+  badge?: string;
 }
 
 export const useAppStore = defineStore("app", () => {
@@ -172,6 +181,7 @@ export const useAppStore = defineStore("app", () => {
     const userStore = useUserStore();
     const chatStore = useChatStore();
     const experimentsStore = useExperimentsStore();
+    const collectionsStore = useCollectionsStore();
     userStore.user = currentUser;
     userStore.tracked = trackedUsers;
     userStore.blocked = blockedUsers;
@@ -185,25 +195,31 @@ export const useAppStore = defineStore("app", () => {
     for (const experiment of experiments) {
       experimentsStore.experiments[experiment.id] = experiment.value;
     }
+    collectionsStore.items = collections.items;
+    collectionsStore.pager = collections.pager;
     loading.value = false;
   }
 
   const lookupNav = computed(() => {
-    const pathToOption = {};
-    for (const railMode in navigation.value.railOptions) {
-      for (const option of navigation.value.options[railMode]) {
+    const pathToOption: Record<string, NavigationOption & { _rail: number }> =
+      {};
+    for (const railMode of navigation.value.railOptions) {
+      for (const option of navigation.value.options[railMode.id]) {
         pathToOption[option.path] = {
           ...option,
-          _rail: railMode
+          _rail: railMode.id
         };
       }
     }
     return pathToOption;
   });
 
+  const userStore = useUserStore();
+
   // Navigation
   const navigation = ref({
-    mode: RailMode.HOME as RailMode,
+    mode:
+      parseInt(localStorage.getItem("railMode")) || (RailMode.HOME as RailMode),
     options: {
       [RailMode.HOME]: [
         {
@@ -237,7 +253,27 @@ export const useAppStore = defineStore("app", () => {
           selectedIcon: markRaw(RiSettings5Fill)
         }
       ],
-      [RailMode.GALLERY]: [],
+      [RailMode.GALLERY]: [
+        {
+          icon: markRaw(RiImage2Line),
+          name: "My Gallery",
+          path: "/gallery",
+          selectedIcon: markRaw(RiImage2Fill)
+        },
+        {
+          icon: markRaw(RiStarLine),
+          name: "Starred",
+          path: "/starred",
+          selectedIcon: markRaw(RiStarFill)
+        },
+        {
+          icon: markRaw(RiSparkling2Line),
+          name: `AutoCollects`,
+          path: "/auto-collects",
+          selectedIcon: markRaw(RiSparkling2Fill),
+          badge: userStore.user?.pendingAutoCollects || ""
+        }
+      ],
       [RailMode.CHAT]: [],
       [RailMode.WORKSPACES]: []
     } as Record<RailMode, NavigationOption[]>,
@@ -270,13 +306,13 @@ export const useAppStore = defineStore("app", () => {
         id: RailMode.HOME
       },
       {
-        icon: markRaw(RiGalleryLine),
-        name: "Gallery",
+        icon: markRaw(RiFolderImageLine),
+        name: "Files",
         id: RailMode.GALLERY
       },
       {
         icon: markRaw(RiChat1Line),
-        name: "Chat",
+        name: "Comms",
         id: RailMode.CHAT
       },
       {
@@ -287,11 +323,30 @@ export const useAppStore = defineStore("app", () => {
     ]
   });
 
+  watch(
+    () => userStore.user?.pendingAutoCollects,
+    (val) => {
+      const item = navigation.value.options[RailMode.GALLERY].find(
+        (item) => item.path === "/auto-collects"
+      );
+      if (!item) return;
+      item.badge = !val ? undefined : val.toString();
+    }
+  );
+
   const currentRail = computed(() => {
     return navigation.value.railOptions.find(
       (rail) => rail.id === navigation.value.mode
     );
   });
+
+  watch(
+    () => currentRail.value,
+    (val) => {
+      if (!val) return;
+      localStorage.setItem("railMode", val.id.toString());
+    }
+  );
 
   const currentNavOptions = computed(() => {
     return navigation.value.options[navigation.value.mode];
@@ -309,7 +364,7 @@ export const useAppStore = defineStore("app", () => {
     return {
       item: lookup,
       rail: navigation.value.railOptions.find(
-        (rail) => rail.id === parseInt(lookup._rail)
+        (rail) => rail.id === lookup._rail
       )
     };
   });

@@ -10,10 +10,10 @@
       </tpu-button>
     </div>
     <div class="grid grid-cols-2 gap-4 mt-4">
-      <card>
+      <card outlined>
         <template #header>At a Glance</template>
         <div class="grid grid-cols-2 gap-4 mt-4">
-          <card :secondary="true">
+          <card :secondary="false">
             <div class="flex justify-between px-4">
               <div>
                 <strong>
@@ -31,33 +31,33 @@
               <img src="@/assets/icons/weather.svg" />
             </div>
           </card>
-          <card :secondary="true">
-            <template #header>At a Glance</template>
+          <card :secondary="false">
+            <template #header>todo</template>
           </card>
         </div>
       </card>
-      <card>
+      <card outlined>
         <template #header>Flowinity Statistics</template>
-        <div class="grid grid-cols-4 gap-4 mt-4">
-          <card :secondary="true" class="text-center">
+        <div class="grid 2xl:grid-cols-4 sm:grid-cols-3 gap-4 mt-4">
+          <card :secondary="false" class="text-center">
             <template #header>Uploads</template>
             <p class="mt-2 text-4xl">
               {{ appStore.state.stats.uploads.toLocaleString() }}
             </p>
           </card>
-          <card :secondary="true" class="text-center">
+          <card :secondary="false" class="text-center">
             <template #header>Users</template>
             <p class="mt-2 text-4xl">
               {{ appStore.state.stats.users.toLocaleString() }}
             </p>
           </card>
-          <card :secondary="true" class="text-center">
+          <card :secondary="false" class="text-center">
             <template #header>Messages</template>
             <p class="mt-2 text-4xl">
               {{ appStore.state.stats.messages.toLocaleString() }}
             </p>
           </card>
-          <card :secondary="true" class="text-center">
+          <card :secondary="false" class="text-center">
             <template #header>Time Spent</template>
             <p class="mt-2 text-4xl">
               {{ appStore.state.stats.pulse.toLocaleString() }}h

@@ -236,8 +236,8 @@
     <template v-if="$workspaces.workspace">
       <v-list-group
         v-for="item in $workspaces.workspace.folders"
-        :key="item.id"
-        :value="item.id"
+        :key="`folder-${item.id}`"
+        :value="`folder-${item.id}`"
         :title="item.name"
         :id="`folder-${item.id}`"
       >
@@ -252,10 +252,11 @@
         </template>
         <v-list-item
           v-for="note in item.children"
-          :key="note.id"
+          :key="`note-${item.id}`"
           :to="'/workspaces/notes/' + note.id"
-          :value="note.id"
+          :value="`note-${item.id}`"
           :id="`note-${item.id}`"
+          :active="$route.path === `/workspaces/notes/${note.id}`"
           @contextmenu.prevent="context($event, `note-${note.id}`, note)"
         >
           <v-list-item-title
