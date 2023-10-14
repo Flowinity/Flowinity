@@ -1,5 +1,5 @@
 <template>
-  <overline position="start">Statistics</overline>
+  <v-card-text class="text-overline">Statistics</v-card-text>
   <v-card-text>
     <v-row>
       <v-col :md="!username ? 6 : 12" cols="12" sm="12">

@@ -1,5 +1,5 @@
 <template>
-  <overline position="start">Mutual Friends</overline>
+  <v-card-text class="text-overline">Mutual Friends</v-card-text>
   <v-card-text class="subtitle-1 mt-n6">
     <v-slide-group>
       <v-card
