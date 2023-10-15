@@ -3,6 +3,7 @@ import { defineStore, getActivePinia } from "pinia";
 import RiAndroidFill from "vue-remix-icons/icons/ri-android-fill.vue";
 import RiAndroidLine from "vue-remix-icons/icons/ri-android-line.vue";
 import RiChat1Line from "vue-remix-icons/icons/ri-chat-1-line.vue";
+import RiChat1Fill from "vue-remix-icons/icons/ri-chat-1-fill.vue";
 import RiCollageFill from "vue-remix-icons/icons/ri-collage-fill.vue";
 import RiCollageLine from "vue-remix-icons/icons/ri-collage-line.vue";
 import RiDashboardLine from "vue-remix-icons/icons/ri-dashboard-line.vue";
@@ -31,6 +32,8 @@ import RiStarFill from "vue-remix-icons/icons/ri-star-fill.vue";
 import RiStarLine from "vue-remix-icons/icons/ri-star-line.vue";
 import RiUserFill from "vue-remix-icons/icons/ri-user-fill.vue";
 import RiUserLine from "vue-remix-icons/icons/ri-user-line.vue";
+import RiDashboardFill from "vue-remix-icons/icons/ri-dashboard-fill.vue";
+import RiFolderImageFill from "vue-remix-icons/icons/ri-folder-image-fill.vue";
 import type { Chat, CoreState, Upload } from "@/gql/graphql";
 import { useUserStore } from "@/stores/user.store";
 import { useChatStore } from "@/stores/chat.store";
@@ -311,27 +314,42 @@ export const useAppStore = defineStore("app", () => {
         icon: markRaw(RiDashboardLine),
         name: "Dashboard",
         id: RailMode.HOME,
-        path: "/"
+        path: "/",
+        selectedIcon: markRaw(RiDashboardFill)
       },
       {
         icon: markRaw(RiFolderImageLine),
         name: "Files",
         id: RailMode.GALLERY,
-        path: "/gallery"
+        path: "/gallery",
+        selectedIcon: markRaw(RiFolderImageFill)
       },
       {
         icon: markRaw(RiChat1Line),
         name: "Comms",
         id: RailMode.CHAT,
-        path: "/communications"
+        path: "/communications",
+        selectedIcon: markRaw(RiChat1Fill)
       },
       {
         icon: markRaw(RiFileTextLine),
         name: "Workspaces",
         id: RailMode.WORKSPACES,
-        path: "/workspaces"
+        path: "/workspaces",
+        selectedIcon: markRaw(RiFileTextFill)
       }
     ]
+  });
+
+  document.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.ctrlKey && e.key === "ArrowUp") {
+      if (navigation.value.mode <= 0) return;
+      navigation.value.mode--;
+    } else if (e.ctrlKey && e.key === "ArrowDown") {
+      if (navigation.value.mode >= navigation.value.railOptions.length - 1)
+        return;
+      navigation.value.mode++;
+    }
   });
 
   watch(

@@ -34,7 +34,13 @@ const props = defineProps({
             @click="appStore.navigation.mode = item.id"
             class="text-gray"
           >
-            <component :is="item.icon" />
+            <component
+              :is="
+                appStore.navigation.mode === item.id
+                  ? item.selectedIcon
+                  : item.icon
+              "
+            />
           </super-bar-item>
         </div>
       </div>
