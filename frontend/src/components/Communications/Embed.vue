@@ -56,7 +56,7 @@
         {{ $functions.fileSize(embed.data.upload.fileSize) }}
         <v-spacer />
         <v-btn
-          :href="`https://i.troplo.com/i/${embed.data?.upload?.attachment}`"
+          :href="`${$app.domain}${embed.data?.upload?.attachment}`"
           icon
           target="_blank"
         >

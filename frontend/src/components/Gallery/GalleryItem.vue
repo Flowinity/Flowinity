@@ -118,7 +118,7 @@
           ></HoverChip>
           <HoverChip
             :aria-label="$t('gallery.actions.download.aria')"
-            :href="'https://i.troplo.com/i/' + item.attachment + '?force=true'"
+            :href="$app.domain + item.attachment + '?force=true'"
             :text="$t('gallery.actions.download.text')"
             class="my-1"
             color="primary"
