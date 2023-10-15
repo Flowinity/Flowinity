@@ -157,7 +157,12 @@ export class CoreResolver {
     }
     if (weather.error) {
       throw new GraphQLError(
-        "The weather service is not responding. Please try again later."
+        "The weather service is not responding. Please try again later.",
+        {
+          extensions: {
+            code: "WEATHER_NOT_RESPONDING"
+          }
+        }
       )
     } else {
       if (!weather.cached)
