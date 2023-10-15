@@ -52,6 +52,8 @@ export default function setup(app: App) {
           ) {
             app.config.globalProperties.$router.push("/communications/home");
           }
+        } else if (error.extensions?.code === "WEATHER_NOT_RESPONDING") {
+          //
         } else if (!ctx.noToast) {
           toast.error(error.message);
         }
