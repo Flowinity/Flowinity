@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { useAppStore } from "@/stores/app.store";
 import SuperBarItem from "@/components/Core/Navigation/SuperBarItem.vue";
-import { RiSearchLine, RiSettings5Line } from "vue-remix-icons";
+import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
+import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
 
 const appStore = useAppStore();
+const props = defineProps({
+  drawer: Boolean
+});
 </script>
 
 <template>
   <aside
-    class="sticky h-screen border-r-2 dark:border-outline-dark dark:bg-sidebar-dark p-3 border-dark space-x-1"
+    class="sticky border-r-2 dark:border-outline-dark dark:bg-sidebar-dark p-3 border-dark space-x-1"
     style="min-width: 72px; max-width: 72px"
   >
     <div class="justify-between flex flex-col h-full">

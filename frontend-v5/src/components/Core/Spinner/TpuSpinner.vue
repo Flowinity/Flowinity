@@ -1,8 +1,8 @@
 <template>
   <svg
     class="spinner"
-    width="65px"
-    height="65px"
+    :width="props.size"
+    :height="props.size"
     viewBox="0 0 66 66"
     xmlns="http://www.w3.org/2000/svg"
   >
@@ -20,7 +20,21 @@
 
 <script setup>
 // Props
-const { size = "medium", color = "primary" } = defineProps(["size", "color"]);
+import { computed } from "vue";
+
+const props = defineProps({
+  size: {
+    type: Number,
+    default: 64
+  },
+  color: {
+    type: String
+  }
+});
+
+const color = computed(() => {
+  return props.color || "white";
+});
 </script>
 
 <style scoped lang="scss">
@@ -45,13 +59,7 @@ $duration: 1.2s;
   stroke-dashoffset: 0;
   transform-origin: center;
   animation: dash $duration ease-in-out infinite;
-  stroke: white;
-}
-
-@keyframes colors {
-  0% {
-    stroke: white;
-  }
+  stroke: v-bind(color);
 }
 
 @keyframes dash {
@@ -59,7 +67,7 @@ $duration: 1.2s;
     stroke-dashoffset: $offset;
   }
   50% {
-    stroke-dashoffset: $offset/4;
+    stroke-dashoffset: calc($offset/4);
     transform: rotate(135deg);
   }
   100% {

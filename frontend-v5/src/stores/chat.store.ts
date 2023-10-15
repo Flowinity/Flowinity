@@ -1,30 +1,5 @@
 import { ref, computed, markRaw, type Raw } from "vue";
 import { defineStore } from "pinia";
-import {
-  RiAndroidFill,
-  RiAndroidLine,
-  RiChat1Line,
-  RiDashboardLine,
-  RiFileTextFill,
-  RiFileTextLine,
-  RiGalleryLine,
-  RiGiftFill,
-  RiGiftLine,
-  RiGroupFill,
-  RiGroupLine,
-  RiHome5Fill,
-  RiHome5Line,
-  RiInformationFill,
-  RiInformationLine,
-  RiLineChartFill,
-  RiLineChartLine,
-  RiSettings4Line,
-  RiSettings5Fill,
-  RiSettings5Line,
-  RiUserFill,
-  RiUserLine,
-  type SVGComponent
-} from "vue-remix-icons";
 import type { Chat, ChatEmoji, User } from "@/gql/graphql";
 import { useFriendsStore } from "@/stores/friends.store";
 import { useUserStore } from "@/stores/user.store";

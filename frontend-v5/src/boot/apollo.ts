@@ -1,5 +1,4 @@
 import type { App } from "vue";
-import { createApolloProvider } from "@vue/apollo-option";
 import {
   ApolloClient,
   ApolloLink,
@@ -12,12 +11,13 @@ import { useToast } from "vue-toastification";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import functions from "@/plugins/functions";
-import { DefaultApolloClient } from "@vue/apollo-composable";
+import {
+  DefaultApolloClient,
+  provideApolloClient
+} from "@vue/apollo-composable";
 
-function getToken(app: App) {
-  return (
-    app.config.globalProperties.$app.token ?? localStorage.getItem("token")
-  );
+function getToken() {
+  return localStorage.getItem("token");
 }
 
 export default function setup(app: App) {
@@ -52,6 +52,8 @@ export default function setup(app: App) {
           ) {
             app.config.globalProperties.$router.push("/communications/home");
           }
+        } else if (error.extensions?.code === "WEATHER_NOT_RESPONDING") {
+          //
         } else if (!ctx.noToast) {
           toast.error(error.message);
         }
@@ -76,12 +78,12 @@ export default function setup(app: App) {
 
   const authLink = new ApolloLink((operation, forward) => {
     // add the authorization to the headers
-    const token = getToken(app);
+    const token = getToken();
     operation.setContext({
       headers: {
         authorization: token,
         "x-tpu-client-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": "TPUvNEXT"
+        "x-tpu-client": "TPUv5 (Flowinity)"
       }
     });
     return forward(operation);
@@ -89,7 +91,7 @@ export default function setup(app: App) {
 
   const cleanTypeName = new ApolloLink((operation, forward) => {
     if (operation.variables) {
-      const omitTypename = (key, value) =>
+      const omitTypename = (key: any, value: any) =>
         key === "__typename" ? undefined : value;
       operation.variables = JSON.parse(
         JSON.stringify(operation.variables),
@@ -112,12 +114,8 @@ export default function setup(app: App) {
     connectToDevTools: true
   });
 
-  // Create a provider
-  const apolloProvider = createApolloProvider({
-    defaultClient: apolloClient
-  });
   app.config.globalProperties.$apollo = apolloClient;
 
-  app.use(apolloProvider);
   app.provide(DefaultApolloClient, apolloClient);
+  provideApolloClient(apolloClient);
 }

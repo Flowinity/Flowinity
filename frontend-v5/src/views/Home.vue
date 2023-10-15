@@ -78,7 +78,8 @@
 import Card from "@/components/Core/Card/Card.vue";
 import Container from "@/components/Core/Container/Container.vue";
 import { useUserStore } from "@/stores/user.store";
-import { RiPencilLine, RiAddLine } from "vue-remix-icons";
+import RiPencilLine from "vue-remix-icons/icons/ri-pencil-line.vue";
+import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
 import TpuButton from "@/components/Core/Button/TpuButton.vue";
 import { useAppStore } from "@/stores/app.store";
 

@@ -3,13 +3,19 @@ import type { NavigationOption } from "@/stores/app.store";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import TpuBadge from "@/components/Core/Badge/TpuBadge.vue";
+import { useAppStore } from "@/stores/app.store";
 
 const props = defineProps({
   highlighted: Boolean,
   item: [Object as () => NavigationOption, undefined],
-  to: [String, undefined]
+  to: [String, undefined],
+  closeOnClick: {
+    type: Boolean,
+    default: true
+  }
 });
 
+const appStore = useAppStore();
 const router = useRouter();
 
 const selected = computed(() => {
@@ -24,7 +30,10 @@ const selected = computed(() => {
       'bg-outline-dark': selected || props.highlighted,
       'rounded-full': props.highlighted
     }"
-    @click="!selected ? router.push(item?.path || to) : () => {}"
+    @click="
+      props.closeOnClick ? (appStore.drawer = false) : () => {};
+      !selected ? router.push(item?.path || to) : () => {};
+    "
     v-wave
   >
     <template v-if="item?.selectedIcon && item.icon">

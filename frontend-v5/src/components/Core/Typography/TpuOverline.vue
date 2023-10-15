@@ -1,16 +1,24 @@
 <template>
-  <div class="date-separator" style="font-size: 14px; display: flex">
+  <div
+    class="date-separator"
+    style="font-size: 14px; display: flex"
+    :style="props.position === 'none' ? 'margin: 0' : ''"
+  >
     <slot name="start" />
     <div
       class="date-separator-line"
-      v-if="position === 'center' || position === 'end'"
+      v-if="
+        props.position === 'center' ||
+        props.position === 'end' ||
+        props.position === 'none'
+      "
     ></div>
-    <p class="date-separator-block unselectable">
+    <p class="date-separator-block unselectable" v-if="position !== 'none'">
       <slot />
     </p>
     <div
       class="date-separator-line"
-      v-if="position === 'start' || position === 'center'"
+      v-if="props.position === 'start' || props.position === 'center'"
     ></div>
     <div class="date-separator-block" v-if="$slots.end">
       <slot name="end" />
@@ -18,16 +26,11 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "TpuOverline",
-  props: {
-    position: {
-      type: String as () => "start" | "center" | "end",
-      default: "center"
-    }
+<script lang="ts" setup>
+const props = defineProps({
+  position: {
+    type: String as () => "start" | "center" | "end" | "none",
+    default: "center"
   }
 });
 </script>

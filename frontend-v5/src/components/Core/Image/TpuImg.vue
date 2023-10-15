@@ -3,6 +3,7 @@
     <div
       class="w-full flex items-center justify-center fill-medium-emphasis-dark text-medium-emphasis-dark"
       v-if="loading || errored"
+      :style="{ height: height + 'px' }"
     >
       <tpu-spinner v-if="!errored" />
       <RiLinkUnlinkM :style="{ width: height + 'px' }" v-else />
@@ -21,13 +22,14 @@
       @load="onImageLoad"
       @error="onImageError"
     />
+    <slot />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import TpuSpinner from "@/components/Core/Spinner/TpuSpinner.vue";
-import { RiLinkUnlinkM } from "vue-remix-icons";
+import RiLinkUnlinkM from "vue-remix-icons/icons/ri-link-unlink-m.vue";
 
 const loading = ref(true);
 const errored = ref(false);

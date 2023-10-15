@@ -10,6 +10,8 @@ import pinia from "../stores";
 // Types
 import type { App } from "vue";
 import { useRouter } from "vue-router";
+import { createI18n } from "vue-i18n";
+import en from "@/locales/en-US.json";
 
 export function registerPlugins(app: App) {
   loadFonts();
@@ -19,5 +21,14 @@ export function registerPlugins(app: App) {
     store.$app = app.config.globalProperties;
     store.$router = useRouter();
   });
+  const i18n = createI18n({
+    legacy: false,
+    locale: "en",
+    fallbackLocale: "en",
+    messages: {
+      en
+    }
+  });
+  app.use(i18n);
   app.use(pinia);
 }

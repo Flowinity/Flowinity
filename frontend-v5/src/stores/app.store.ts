@@ -1,38 +1,37 @@
 import { ref, computed, markRaw, type Raw, watch } from "vue";
 import { defineStore, getActivePinia } from "pinia";
-import {
-  RiAndroidFill,
-  RiAndroidLine,
-  RiChat1Line,
-  RiDashboardLine,
-  RiFileTextFill,
-  RiFileTextLine,
-  RiFolderImageLine,
-  RiGalleryLine,
-  RiGiftFill,
-  RiGiftLine,
-  RiGroupFill,
-  RiGroupLine,
-  RiHome5Fill,
-  RiHome5Line,
-  RiImage2Fill,
-  RiImage2Line,
-  RiInformationFill,
-  RiInformationLine,
-  RiLineChartFill,
-  RiLineChartLine,
-  RiSettings4Line,
-  RiSettings5Fill,
-  RiSettings5Line,
-  RiSparkling2Fill,
-  RiSparkling2Line,
-  RiStarFill,
-  RiStarLine,
-  RiUserFill,
-  RiUserLine,
-  type SVGComponent
-} from "vue-remix-icons";
-import type { Chat, CoreState } from "@/gql/graphql";
+import RiAndroidFill from "vue-remix-icons/icons/ri-android-fill.vue";
+import RiAndroidLine from "vue-remix-icons/icons/ri-android-line.vue";
+import RiChat1Line from "vue-remix-icons/icons/ri-chat-1-line.vue";
+import RiCollageFill from "vue-remix-icons/icons/ri-collage-fill.vue";
+import RiCollageLine from "vue-remix-icons/icons/ri-collage-line.vue";
+import RiDashboardLine from "vue-remix-icons/icons/ri-dashboard-line.vue";
+import RiFileTextFill from "vue-remix-icons/icons/ri-file-text-fill.vue";
+import RiFileTextLine from "vue-remix-icons/icons/ri-file-text-line.vue";
+import RiFolderImageLine from "vue-remix-icons/icons/ri-folder-image-line.vue";
+import RiGalleryLine from "vue-remix-icons/icons/ri-gallery-line.vue";
+import RiGiftFill from "vue-remix-icons/icons/ri-gift-fill.vue";
+import RiGiftLine from "vue-remix-icons/icons/ri-gift-line.vue";
+import RiGroupFill from "vue-remix-icons/icons/ri-group-fill.vue";
+import RiGroupLine from "vue-remix-icons/icons/ri-group-line.vue";
+import RiHome5Fill from "vue-remix-icons/icons/ri-home-5-fill.vue";
+import RiHome5Line from "vue-remix-icons/icons/ri-home-5-line.vue";
+import RiImage2Fill from "vue-remix-icons/icons/ri-image-2-fill.vue";
+import RiImage2Line from "vue-remix-icons/icons/ri-image-2-line.vue";
+import RiInformationFill from "vue-remix-icons/icons/ri-information-fill.vue";
+import RiInformationLine from "vue-remix-icons/icons/ri-information-line.vue";
+import RiLineChartFill from "vue-remix-icons/icons/ri-line-chart-fill.vue";
+import RiLineChartLine from "vue-remix-icons/icons/ri-line-chart-line.vue";
+import RiSettings4Line from "vue-remix-icons/icons/ri-settings-4-line.vue";
+import RiSettings5Fill from "vue-remix-icons/icons/ri-settings-5-fill.vue";
+import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
+import RiSparkling2Fill from "vue-remix-icons/icons/ri-sparkling-2-fill.vue";
+import RiSparkling2Line from "vue-remix-icons/icons/ri-sparkling-2-line.vue";
+import RiStarFill from "vue-remix-icons/icons/ri-star-fill.vue";
+import RiStarLine from "vue-remix-icons/icons/ri-star-line.vue";
+import RiUserFill from "vue-remix-icons/icons/ri-user-fill.vue";
+import RiUserLine from "vue-remix-icons/icons/ri-user-line.vue";
+import type { Chat, CoreState, Upload } from "@/gql/graphql";
 import { useUserStore } from "@/stores/user.store";
 import { useChatStore } from "@/stores/chat.store";
 import { useExperimentsStore } from "@/stores/experiments.store";
@@ -40,6 +39,7 @@ import { CoreStateQuery } from "@/graphql/core/state.graphql";
 import { useRoute } from "vue-router";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
 import { useCollectionsStore } from "@/stores/collections.store";
+import type { Ref } from "vue";
 
 export enum RailMode {
   HOME,
@@ -183,6 +183,9 @@ export const useAppStore = defineStore("app", () => {
     const experimentsStore = useExperimentsStore();
     const collectionsStore = useCollectionsStore();
     userStore.user = currentUser;
+    if (!currentUser) localStorage.removeItem("userStore");
+    if (currentUser)
+      localStorage.setItem("userStore", JSON.stringify(currentUser));
     userStore.tracked = trackedUsers;
     userStore.blocked = blockedUsers;
     chatStore.chats = chats.map((chat: Chat) => {
@@ -195,8 +198,10 @@ export const useAppStore = defineStore("app", () => {
     for (const experiment of experiments) {
       experimentsStore.experiments[experiment.id] = experiment.value;
     }
-    collectionsStore.items = collections.items;
-    collectionsStore.pager = collections.pager;
+    if (collections) {
+      collectionsStore.items = collections.items;
+      collectionsStore.pager = collections.pager;
+    }
     loading.value = false;
   }
 
@@ -205,7 +210,7 @@ export const useAppStore = defineStore("app", () => {
       {};
     for (const railMode of navigation.value.railOptions) {
       for (const option of navigation.value.options[railMode.id]) {
-        pathToOption[option.path] = {
+        pathToOption[<string>option.path] = {
           ...option,
           _rail: railMode.id
         };
@@ -217,9 +222,11 @@ export const useAppStore = defineStore("app", () => {
   const userStore = useUserStore();
 
   // Navigation
+  const drawer = ref(false);
   const navigation = ref({
     mode:
-      parseInt(localStorage.getItem("railMode")) || (RailMode.HOME as RailMode),
+      parseInt(localStorage.getItem("railMode") || "0") ||
+      (RailMode.HOME as RailMode),
     options: {
       [RailMode.HOME]: [
         {
@@ -303,22 +310,26 @@ export const useAppStore = defineStore("app", () => {
       {
         icon: markRaw(RiDashboardLine),
         name: "Dashboard",
-        id: RailMode.HOME
+        id: RailMode.HOME,
+        path: "/"
       },
       {
         icon: markRaw(RiFolderImageLine),
         name: "Files",
-        id: RailMode.GALLERY
+        id: RailMode.GALLERY,
+        path: "/gallery"
       },
       {
         icon: markRaw(RiChat1Line),
         name: "Comms",
-        id: RailMode.CHAT
+        id: RailMode.CHAT,
+        path: "/communications"
       },
       {
         icon: markRaw(RiFileTextLine),
         name: "Workspaces",
-        id: RailMode.WORKSPACES
+        id: RailMode.WORKSPACES,
+        path: "/workspaces"
       }
     ]
   });
@@ -349,16 +360,33 @@ export const useAppStore = defineStore("app", () => {
   );
 
   const currentNavOptions = computed(() => {
-    return navigation.value.options[navigation.value.mode];
+    return navigation.value.options[navigation.value.mode as RailMode];
   });
 
   const currentMiscNavOptions = computed(() => {
-    return navigation.value.miscOptions[navigation.value.mode];
+    return navigation.value.miscOptions[navigation.value.mode as RailMode];
   });
 
   const route = useRoute();
+  const collectionsStore = useCollectionsStore();
 
   const currentNavItem = computed(() => {
+    if (route.path.startsWith("/collections/")) {
+      const find = collectionsStore.items.find(
+        (collection) => collection.id === parseInt(<string>route.params.id)
+      );
+      return {
+        item: {
+          name: find?.name,
+          icon: markRaw(RiCollageLine),
+          path: route.path,
+          selectedIcon: markRaw(RiCollageFill)
+        },
+        rail: navigation.value.railOptions.find(
+          (rail) => rail.id === RailMode.GALLERY
+        )
+      };
+    }
     const lookup = lookupNav.value[route.path];
     if (!lookup) return null;
     return {
@@ -368,6 +396,19 @@ export const useAppStore = defineStore("app", () => {
       )
     };
   });
+
+  // Dialogs
+  const dialogs = ref({
+    gallery: {
+      delete: {
+        value: false,
+        upload: null as Upload | null,
+        bulkIds: [] as number[]
+      }
+    }
+  });
+
+  const appBarImage: Ref<string | null> = ref(null);
 
   return {
     navigation,
@@ -381,6 +422,9 @@ export const useAppStore = defineStore("app", () => {
     domain,
     currentNavItem,
     weather,
-    weatherTemp
+    weatherTemp,
+    drawer,
+    dialogs,
+    appBarImage
   };
 });

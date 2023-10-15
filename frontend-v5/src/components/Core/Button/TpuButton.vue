@@ -1,29 +1,74 @@
 <template>
-  <div
-    class="rounded-full p-2 flex dark:text-white select-none cursor-pointer"
-    v-wave
+  <component
+    :is="props.to ? RouterLink : 'a'"
+    class="rounded-full flex dark:text-white select-none"
+    v-wave="!disabled"
+    :to="to ? to : undefined"
+    :href="href ? href : undefined"
     :style="{
-      background: `rgb(${rgbColor})`
+      background:
+        variant === 'tonal' || selected ? `rgb(${rgbColor})` : undefined,
+      color:
+        variant === 'tonal' || variant === 'passive' || selected
+          ? color
+          : undefined
     }"
-    :class="{ 'outline dark:outline-outline-dark': !props.color }"
+    :class="{
+      'outline dark:outline-outline-dark': variant === 'outlined',
+      'px-2 py-2': props.icon,
+      'px-3 py-1': !props.icon,
+      'opacity-50': props.disabled,
+      'cursor-pointer': !props.disabled
+    }"
+    @click="props.disabled ? $event.preventDefault : () => {}"
   >
-    <slot />
-  </div>
+    <template v-if="!props.loading">
+      <slot />
+    </template>
+    <template v-else>
+      <tpu-spinner :color="color" :size="24" />
+    </template>
+  </component>
 </template>
 
 <script setup lang="ts">
 import theme from "@/plugins/theme";
 import { computed } from "vue";
+import TpuSpinner from "@/components/Core/Spinner/TpuSpinner.vue";
+import { RouterLink } from "vue-router";
 
 const props = defineProps({
   icon: Boolean,
   to: String,
   href: String,
-  color: String
+  color: String,
+  variant: {
+    type: String as () => "outlined" | "tonal" | "passive",
+    default: "tonal"
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  selected: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const color = computed(() => {
-  return theme.colors[props.color];
+  if (
+    props.variant !== "tonal" &&
+    props.variant !== "passive" &&
+    !props.selected
+  ) {
+    return "#ffffff";
+  }
+  return theme.colors[props.color] || theme.colors["white"];
 });
 
 const rgbColor = computed(() => {

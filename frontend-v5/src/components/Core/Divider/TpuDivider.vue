@@ -1,5 +1,5 @@
 <template>
-  <tpu-overline position="start"></tpu-overline>
+  <tpu-overline position="none"></tpu-overline>
 </template>
 
 <script setup lang="ts">

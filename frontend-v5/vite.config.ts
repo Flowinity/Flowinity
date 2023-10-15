@@ -3,10 +3,22 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
-
+import graphql from "@rollup/plugin-graphql";
+import ViteVersion from "@troplo/vite-version";
+import EntryShakingPlugin from "vite-plugin-entry-shaking";
+import { resolve } from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueJsx()],
+  plugins: [
+    graphql(),
+    vue(),
+    vueJsx(),
+    ViteVersion(),
+    EntryShakingPlugin({
+      targets: [resolve(__dirname, "node_modules/vue-remix-icons")],
+      ignorePatterns: [/node_modules\/(?!vue-remix-icons\/).*/]
+    })
+  ],
   build: {
     rollupOptions: {
       output: {

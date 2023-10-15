@@ -1,4 +1,5 @@
 import "./assets/index.css";
+import "./assets/transitions.scss";
 
 import { createApp } from "vue";
 
@@ -13,18 +14,37 @@ import socket from "./boot/socket";
 import apollo from "./boot/apollo";
 import { registerPlugins } from "@/plugins";
 import VWave from "v-wave";
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+import FloatingVue from "floating-vue";
+import "floating-vue/dist/style.css";
 
 const app = createApp(App);
 
+app.use(FloatingVue, {
+  arrowPadding: 10,
+  distance: 7,
+  container: "#app",
+  boundary: "#app",
+  themes: {
+    tooltip: {
+      delay: {
+        show: 50,
+        hide: 50
+      }
+    }
+  }
+});
 app.use(VWave, {
   easing: "ease-out",
   cancellationPeriod: 30
 });
 app.use(router);
+app.use(Toast, {});
 
 // Register boot plugins
-registerPlugins(app);
 apollo(app);
+registerPlugins(app);
 globals(app);
 events();
 socket(app).then(() => {});

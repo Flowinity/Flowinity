@@ -1,31 +1,71 @@
 <template>
-  <div class="material-text-field">
+  <div class="material-text-field relative mt-3 mb-1">
+    <label
+      :for="id"
+      class="field-label cursor-text pointer-events-none"
+      :class="{ active: focus || modelValue.length }"
+    >
+      {{ props.label }}
+    </label>
     <textarea
-      id="message"
-      class="form__field"
+      :id="id"
+      class="text-field"
       :placeholder="props.placeholder"
       :rows="computedRows.toString()"
       @input="$emit('update:modelValue', $event.target?.value)"
       :value="props.modelValue"
       ref="input"
       v-if="props.textarea"
+      @focus="
+        focus = true;
+        interactedWith = true;
+      "
+      :maxlength="maxlength"
+      @blur="
+        focus = false;
+        interactedWith = true;
+      "
+      v-bind="$attrs"
+      :class="{ 'placeholder-shown': !modelValue.length && focus }"
     ></textarea>
     <input
       v-else
+      :id="id"
       :placeholder="props.placeholder"
       @input="$emit('update:modelValue', $event.target?.value)"
       :value="props.modelValue"
       ref="input"
-      class="form__field"
+      class="text-field"
+      @focus="
+        focus = true;
+        interactedWith = true;
+      "
+      @blur="
+        focus = false;
+        interactedWith = true;
+      "
+      :type="type"
+      :maxlength="maxlength"
+      v-bind="$attrs"
+      :class="{ 'placeholder-shown': !modelValue.length && focus }"
     />
-    <label for="message" class="form__label">{{ props.label }}</label>
+    <div
+      class="justify-end flex text-red text-xs mt-1"
+      v-if="error || lengthError"
+    >
+      {{ error || lengthError }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, defineProps, computed, watch, toRefs, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const input = ref<HTMLElement | null>(null);
+const focus = ref(false);
+const interactedWith = ref(false);
 
 onMounted(() => {
   if (!props.ctrlEnterNewLine) {
@@ -53,10 +93,28 @@ const props = defineProps([
   "label",
   "modelValue",
   "placeholder",
-  "ctrlEnterNewLine"
+  "type",
+  "maxlength",
+  "minlength",
+  "ctrlEnterNewLine",
+  "error"
 ]);
 
+const id = (Math.random() + 1).toString(36).substring(7);
+
 defineEmits(["update:modelValue"]);
+
+const lengthError = computed(() => {
+  if (
+    props.minlength &&
+    interactedWith.value &&
+    props.modelValue?.length < props.minlength
+  ) {
+    return t("generic.minLength", props.minlength);
+  } else {
+    return null;
+  }
+});
 
 const computedRows = computed(() => {
   if (props.textarea) {
@@ -74,13 +132,7 @@ const computedRows = computed(() => {
 </script>
 
 <style scoped lang="scss">
-.form__group {
-  position: relative;
-  padding: 15px 0 0;
-  margin-top: 10px;
-}
-
-.form__field {
+.text-field {
   font-family: inherit;
   width: 100%;
   border: 0;
@@ -90,34 +142,30 @@ const computedRows = computed(() => {
   padding: 7px 0;
   background: transparent;
   transition: border-color 0.2s;
+  &:focus {
+    padding-bottom: 6px;
+    border-bottom: 2px solid #0190ea;
+  }
 }
 
-.form__field::placeholder {
-  color: transparent;
-}
-
-.form__field:placeholder-shown ~ .form__label {
-  font-size: 16px;
-  cursor: text;
-  top: 20px;
-}
-
-label,
-.form__field:focus ~ .form__label {
+.field-label {
   position: absolute;
-  top: 0;
   display: block;
   transition: 0.2s;
-  font-size: 12px;
+  font-size: 16px;
   color: #9b9b9b;
+  top: 5px;
+  &.active {
+    top: -10px;
+    font-size: 12px;
+  }
 }
 
-.form__field:focus ~ .form__label {
+.text-field:not(.placeholder-shown)::placeholder {
+  display: none;
+}
+
+.text-field:focus + .form__label {
   color: #0190ea;
-}
-
-.form__field:focus {
-  padding-bottom: 6px;
-  border-bottom: 2px solid #0190ea;
 }
 </style>

@@ -10,12 +10,16 @@ import functions from "@/plugins/functions";
 const appStore = useAppStore();
 const chatStore = useChatStore();
 const collectionsStore = useCollectionsStore();
+const props = defineProps({
+  drawer: Boolean
+});
 </script>
 
 <template>
   <aside
-    class="border-r-2 sticky z-50 h-screen dark:border-outline-dark dark:bg-sidebar-dark p-3 border-dark space-x-1 flex flex-col overflow-y-auto overflow-x-hidden"
+    class="border-r-2 sticky z-50 dark:border-outline-dark dark:bg-sidebar-dark p-3 border-dark space-x-1 flex flex-col overflow-y-auto overflow-x-hidden"
     style="min-width: 256px; max-width: 256px"
+    :class="{ 'h-screen': !props.drawer, 'h-[calc(100vh-64px)]': props.drawer }"
   >
     <div v-if="appStore.currentRail" class="flex ml-4 items-center">
       <component :is="appStore.currentRail?.icon" class="w-8" />

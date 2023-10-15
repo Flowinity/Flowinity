@@ -25,4 +25,60 @@
 *::-webkit-scrollbar-thumb {
     background-color: #202020;
 }
+@layer base {
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
+.md-tooltip {
+    position: absolute;
+    padding: 8px;
+    background-color: #3f3f3f;
+    color: #fff;
+    border-radius: 4px;
+    transition: opacity 0.3s;
+    animation: move 0.3s ease forwards;
+    z-index: 999;
+    pointer-events: none;
+}
+
+@keyframes move {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Positioning classes */
+.md-tooltip-top {
+    bottom: 100%;
+    left: 50%;
+    margin-bottom: 4px;
+    transform: translateX(-50%);
+}
+
+.md-tooltip-right {
+    top: 50%;
+    left: 100%;
+    margin-left: 4px;
+    transform: translateY(-50%);
+}
+
+.md-tooltip-left {
+    top: 50%;
+    right: 100%;
+    margin-right: 4px;
+    transform: translateY(-50%);
+}
+
+.md-tooltip-bottom {
+    top: 100%;
+    left: 50%;
+    margin-top: 4px;
+    transform: translateX(-50%);
+}
 @tailwind utilities;
