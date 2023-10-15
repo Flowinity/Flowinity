@@ -15,7 +15,9 @@ export class Stats {
   users: number
   @Field()
   announcements: number
-  @Field()
+  @Field({
+    nullable: true
+  })
   usage: number
   @Field()
   collections: number
