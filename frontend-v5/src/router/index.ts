@@ -34,6 +34,11 @@ const router = createRouter({
       component: () => import("@/views/Gallery/Collection.vue")
     },
     {
+      path: "/communications/:id",
+      name: "Chat",
+      component: () => import("@/views/Chats/Chat.vue")
+    },
+    {
       path: "/login",
       name: "Login",
       component: () => import("@/views/Login.vue")

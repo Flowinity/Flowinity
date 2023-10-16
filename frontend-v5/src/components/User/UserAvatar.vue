@@ -42,13 +42,7 @@ const user = computed(() => {
 <template>
   <tpu-avatar
     :alt="props.alt || props.username"
-    :color="
-      src
-        ? undefined
-        : functions.avatar(user)
-        ? undefined
-        : props.color || 'blue'
-    "
+    :color="src ? undefined : functions.avatar(user) ? undefined : true"
     :size="size"
     :src="src ? src : user.avatar ? functions.avatar(user) : undefined"
   >
@@ -56,7 +50,9 @@ const user = computed(() => {
       <slot />
     </template>
     <template #default v-else>
-      {{ props.username?.charAt(0).toUpperCase() ?? "?" }}
+      <span style="font-size: 26px">
+        {{ props.username?.charAt(0).toUpperCase() ?? "?" }}
+      </span>
     </template>
   </tpu-avatar>
 </template>

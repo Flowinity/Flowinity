@@ -1,6 +1,8 @@
-import { ref, computed, markRaw, type Raw, watch } from "vue";
+import { ref, computed, markRaw, type Raw, watch, h } from "vue";
 import { defineStore, getActivePinia } from "pinia";
-import RiAndroidFill from "vue-remix-icons/icons/ri-android-fill.vue";
+import RiAndroidFill, {
+  type SVGComponent
+} from "vue-remix-icons/icons/ri-android-fill.vue";
 import RiAndroidLine from "vue-remix-icons/icons/ri-android-line.vue";
 import RiChat1Line from "vue-remix-icons/icons/ri-chat-1-line.vue";
 import RiChat1Fill from "vue-remix-icons/icons/ri-chat-1-fill.vue";
@@ -43,12 +45,14 @@ import { useRoute } from "vue-router";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
 import { useCollectionsStore } from "@/stores/collections.store";
 import type { Ref } from "vue";
-
+import UserAvatar from "@/components/User/UserAvatar.vue";
+import functions from "@/plugins/functions";
 export enum RailMode {
   HOME,
   GALLERY,
   CHAT,
-  WORKSPACES
+  WORKSPACES,
+  SETTINGS
 }
 
 export interface NavigationOption {
@@ -285,7 +289,8 @@ export const useAppStore = defineStore("app", () => {
         }
       ],
       [RailMode.CHAT]: [],
-      [RailMode.WORKSPACES]: []
+      [RailMode.WORKSPACES]: [],
+      [RailMode.SETTINGS]: []
     } as Record<RailMode, NavigationOption[]>,
     miscOptions: {
       [RailMode.HOME]: [
@@ -337,15 +342,22 @@ export const useAppStore = defineStore("app", () => {
         id: RailMode.WORKSPACES,
         path: "/workspaces",
         selectedIcon: markRaw(RiFileTextFill)
+      },
+      {
+        icon: markRaw(RiSettings5Line),
+        name: "Settings",
+        id: RailMode.SETTINGS,
+        path: "/settings",
+        selectedIcon: markRaw(RiSettings5Fill)
       }
     ]
   });
 
   document.addEventListener("keydown", (e: KeyboardEvent) => {
-    if (e.ctrlKey && e.key === "ArrowUp") {
+    if (e.ctrlKey && e.shiftKey && e.key === "ArrowUp") {
       if (navigation.value.mode <= 0) return;
       navigation.value.mode--;
-    } else if (e.ctrlKey && e.key === "ArrowDown") {
+    } else if (e.ctrlKey && e.shiftKey && e.key === "ArrowDown") {
       if (navigation.value.mode >= navigation.value.railOptions.length - 1)
         return;
       navigation.value.mode++;
@@ -387,6 +399,7 @@ export const useAppStore = defineStore("app", () => {
 
   const route = useRoute();
   const collectionsStore = useCollectionsStore();
+  const chatStore = useChatStore();
 
   const currentNavItem = computed(() => {
     if (route.path.startsWith("/collections/")) {
@@ -402,6 +415,26 @@ export const useAppStore = defineStore("app", () => {
         },
         rail: navigation.value.railOptions.find(
           (rail) => rail.id === RailMode.GALLERY
+        )
+      };
+    } else if (route.path.startsWith("/communications/")) {
+      const find = chatStore.chats.find(
+        (chat) => chat.association?.id === parseInt(<string>route.params.id)
+      );
+      return {
+        item: {
+          name: find ? chatStore.chatName(find) : "Flowinity",
+          icon: h(UserAvatar, {
+            username: chatStore.chatName(<Chat>find),
+            userId: find?.recipient?.id,
+            src: find?.recipient ? undefined : functions.avatar(find),
+            size: 32
+          }),
+          path: route.path,
+          selectedIcon: markRaw(RiCollageFill)
+        },
+        rail: navigation.value.railOptions.find(
+          (rail) => rail.id === RailMode.CHAT
         )
       };
     }
@@ -428,6 +461,17 @@ export const useAppStore = defineStore("app", () => {
 
   const appBarImage: Ref<string | null> = ref(null);
 
+  const heightOffset = computed(() => {
+    console.log(appBarImage.value);
+    return "h-full";
+  });
+
+  const scrollPosition = ref(0);
+
+  document.addEventListener("scroll", (ev) => {
+    scrollPosition.value = Math.ceil(window.scrollY);
+  });
+
   return {
     navigation,
     currentRail,
@@ -443,6 +487,8 @@ export const useAppStore = defineStore("app", () => {
     weatherTemp,
     drawer,
     dialogs,
-    appBarImage
+    appBarImage,
+    heightOffset,
+    scrollPosition
   };
 });

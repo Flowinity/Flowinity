@@ -20,6 +20,12 @@
       'opacity-50': props.disabled,
       'cursor-pointer': !props.disabled
     }"
+    tabindex="0"
+    @keydown.enter="$event.target.click()"
+    @keydown.space="
+      $event.preventDefault();
+      $event.target?.click();
+    "
     @click="props.disabled ? $event.preventDefault : () => {}"
   >
     <template v-if="!props.loading">

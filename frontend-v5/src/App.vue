@@ -34,7 +34,11 @@ const userStore = useUserStore();
         />
         <div class="flex flex-col w-full">
           <app-bar class="bg-white z-10" />
-          <main class="w-full overflow-auto h-[calc(100vh-64px)]" id="app-area">
+          <main
+            class="w-full overflow-auto"
+            :class="appStore.heightOffset"
+            id="app-area"
+          >
             <RouterView />
           </main>
         </div>

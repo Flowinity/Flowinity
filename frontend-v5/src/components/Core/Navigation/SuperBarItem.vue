@@ -13,6 +13,12 @@ const props = defineProps({
       'rounded-full': props.highlighted
     }"
     v-wave
+    tabindex="0"
+    @keydown.enter="$event.target?.click()"
+    @keydown.space="
+      $event.preventDefault();
+      $event.target?.click();
+    "
   >
     <div class="blue-line bg-blue" :class="{ active: props.selected }"></div>
     <slot />

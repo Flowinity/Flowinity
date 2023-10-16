@@ -22,6 +22,7 @@
     "axios": "^1.5.1",
     "floating-vue": "^2.0.0-beta.24",
     "graphql": "^16.8.1",
+    "lodash": "^4.17.21",
     "markdown-it": "^13.0.2",
     "markdown-it-emoji": "^2.0.2",
     "pinia": "^2.1.6",

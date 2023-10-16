@@ -11,7 +11,7 @@ const props = defineProps({
     type: String
   },
   color: {
-    type: String
+    type: [String, Boolean]
   },
   alt: {
     type: String
@@ -29,6 +29,7 @@ function loadError() {
 <template>
   <div
     class="rounded-full whitespace-nowrap overflow-hidden overflow-ellipsis"
+    :class="{ gradient: props.color === true }"
     :style="`min-width: ${props.size}px; min-height: ${
       props.size
     }px; max-width: ${props.size}px; max-height: ${props.size}px; background: ${
@@ -54,4 +55,8 @@ function loadError() {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.gradient {
+  background: linear-gradient(to bottom, #03b8f8, #4181ea) !important;
+}
+</style>

@@ -35,6 +35,12 @@ const selected = computed(() => {
       !selected ? router.push(item?.path || to) : () => {};
     "
     v-wave
+    tabindex="0"
+    @keydown.enter="$event.target?.click()"
+    @keydown.space="
+      $event.preventDefault();
+      $event.target?.click();
+    "
   >
     <template v-if="item?.selectedIcon && item.icon">
       <component

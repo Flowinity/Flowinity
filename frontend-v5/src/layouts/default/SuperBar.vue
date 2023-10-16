@@ -12,8 +12,9 @@ const props = defineProps({
 
 <template>
   <aside
-    class="sticky border-r-2 dark:border-outline-dark dark:bg-sidebar-dark p-3 border-dark space-x-1"
+    class="border-r-2 sticky z-50 dark:border-outline-dark dark:bg-sidebar-dark p-3 border-dark space-x-1 flex flex-col overflow-y-auto overflow-x-hidden"
     style="min-width: 72px; max-width: 72px"
+    :class="{ 'h-screen': !props.drawer, 'h-[calc(100vh-64px)]': props.drawer }"
   >
     <div class="justify-between flex flex-col h-full">
       <div class="items-start">

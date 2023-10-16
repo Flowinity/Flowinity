@@ -13,6 +13,7 @@
             component="a"
             :absolute="true"
             :model-value="hovering"
+            class="z-10"
           >
             <RiExternalLinkLine style="width: 64px" class="fill-white" />
           </tpu-overlay>
