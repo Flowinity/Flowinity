@@ -9,19 +9,18 @@
       <v-toolbar-title>Create bot account</v-toolbar-title>
     </template>
     <v-card-text>
-      <v-form class="d-flex flex-column">
-        <v-text-field
-          v-model="username"
-          label="Username"
-          outlined
-          dense
-          required
-          :rules="[
-            (v) => !!v || 'Username is required',
-            (v) => v.length <= 32 || 'Username must be less than 32 characters'
-          ]"
-        ></v-text-field>
-      </v-form>
+      <v-text-field
+        v-model="username"
+        label="Username"
+        outlined
+        dense
+        required
+        :rules="[
+          (v) => !!v || 'Username is required',
+          (v) => v.length <= 32 || 'Username must be less than 32 characters'
+        ]"
+        @keydown.enter="createBot"
+      ></v-text-field>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>

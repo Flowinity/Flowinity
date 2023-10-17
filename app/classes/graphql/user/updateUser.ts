@@ -1,6 +1,12 @@
 import { Field, InputType } from "type-graphql"
 import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
-import { IsEmail, IsHexColor, MaxLength, MinLength } from "class-validator"
+import {
+  IsEmail,
+  IsHexColor,
+  Matches,
+  MaxLength,
+  MinLength
+} from "class-validator"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { DangerZoneInput } from "@app/classes/graphql/chat/deleteChat"
 import { GraphQLJSON } from "graphql-scalars"
@@ -110,6 +116,9 @@ export class ChangePasswordInput {
 export class ChangeUsernameInput extends DangerZoneInput {
   @Field()
   @MaxLength(32)
+  @Matches(/^[A-Za-z0-9.-_]+$/, {
+    message: "Username can only contain alphanumeric characters including .-_"
+  })
   @MinLength(2)
   username: string
 }

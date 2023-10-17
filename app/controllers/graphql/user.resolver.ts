@@ -409,7 +409,8 @@ function createBaseResolver<T extends ClassType>(
                 "status",
                 "storedStatus",
                 "emailVerified",
-                "pulse"
+                "pulse",
+                "bot"
               ]
             }
           ]
@@ -453,7 +454,8 @@ function createBaseResolver<T extends ClassType>(
               "status",
               "storedStatus",
               "emailVerified",
-              "pulse"
+              "pulse",
+              "bot"
             ]
           }
         ]

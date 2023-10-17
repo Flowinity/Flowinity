@@ -360,6 +360,7 @@ export class ChatAssociationResolver {
     @Ctx() ctx: Context,
     @Arg("input") input: JoinChatFromInviteInput
   ) {
+    if (ctx.user?.bot) throw new GqlError("INVITE_BOT")
     const invite = await ChatInvite.findOne({
       where: {
         id: input.inviteId,

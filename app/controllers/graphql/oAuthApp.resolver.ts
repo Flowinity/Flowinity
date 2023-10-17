@@ -256,7 +256,7 @@ export class OAuthAppResolver {
         password: "sso-enforced",
         email: (await utils.generateAPIKey("bot-email")) + "@troplo.com",
         emailVerified: true,
-        planId: 1,
+        planId: config.defaultPlanId,
         bot: true
       })
       await app.update({

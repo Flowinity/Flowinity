@@ -1,5 +1,11 @@
 import { Field, InputType, ObjectType } from "type-graphql"
-import { IsOptional, IsUrl, MaxLength, MinLength } from "class-validator"
+import {
+  Matches,
+  IsOptional,
+  IsUrl,
+  MaxLength,
+  MinLength
+} from "class-validator"
 
 @InputType()
 export class MyAppInput {
@@ -31,6 +37,9 @@ export class AuthorizeAppResponse {
 @InputType()
 export class CreateBotInput extends MyAppInput {
   @Field()
+  @Matches(/^[A-Za-z0-9.-_]+$/, {
+    message: "Username can only contain alphanumeric characters including .-_"
+  })
   @MinLength(2)
   @MaxLength(32)
   username: string

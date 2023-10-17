@@ -80,6 +80,10 @@ const Errors = {
   INVALID_SCOPE: {
     message:
       "Please ensure you have the correct API scope permissions to view this."
+  },
+  INVITE_BOT: {
+    message:
+      "You cannot join groups directly as a bot user, you must be added explicitly by a group administrator."
   }
 }
 
