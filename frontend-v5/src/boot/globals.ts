@@ -16,26 +16,7 @@ import functions from "@/plugins/functions";
 import router from "@/router";
 import type { Router, useRouter } from "vue-router";
 import type { ChatEmoji, Collection } from "@/gql/graphql";
-
-function createSocket(namespace: string) {
-  console.log(`[TPU/Socket] Connecting to ${namespace}`);
-  const socket = io(`/${namespace}`, {
-    auth: {
-      token: localStorage.getItem("token")
-    },
-    transports: ["websocket"],
-    reconnection: true,
-    path: "/gateway",
-    reconnectionAttempts: 99999
-  });
-  socket.on("connect", () => {
-    console.log(`[TPU/Socket] Connected to ${namespace}`);
-  });
-  socket.on("disconnect", () => {
-    console.log(`[TPU/Socket] Disconnected from ${namespace}`);
-  });
-  return socket;
-}
+import { useSocket } from "@/boot/socket.service";
 
 export default function setup(app) {
   const user = useUserStore();
@@ -60,17 +41,8 @@ export default function setup(app) {
   app.config.globalProperties.$chat = chat;
   app.config.globalProperties.$friends = friends;
   app.config.globalProperties.$mail = mail;
-  app.config.globalProperties.$socket = createSocket("");
-  app.config.globalProperties.$sockets = {
-    chat: createSocket("chat"),
-    friends: createSocket("friends"),
-    mail: createSocket("mail"),
-    user: createSocket("user"),
-    pulse: createSocket("pulse"),
-    gallery: createSocket("gallery"),
-    autoCollects: createSocket("autoCollects"),
-    trackedUsers: createSocket("trackedUsers")
-  };
+  app.config.globalProperties.$socket = useSocket.core;
+  app.config.globalProperties.$sockets = useSocket;
   app.config.globalProperties.$functions = functions;
 
   core.init().then(() => {

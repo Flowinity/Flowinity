@@ -24,6 +24,7 @@ import {
 } from "@app/classes/graphql/gallery/galleryInput"
 import { PaginatedGalleryResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import { CollectionUser } from "@app/models/collectionUser.model"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 @Service()
 export class GalleryService {
@@ -116,6 +117,7 @@ export class GalleryService {
         }
       })
       await upload.destroy()
+      socket.of(SocketNamespaces.GALLERY).to(userId).emit("delete", id)
 
       return true
     } else {

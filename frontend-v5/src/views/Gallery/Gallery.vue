@@ -1,20 +1,44 @@
 <template>
+  <upload-file v-model="appStore.dialogs.gallery.upload.value" />
+  <add-to-collection v-model="appStore.dialogs.gallery.collect.value" />
   <delete-upload v-model="appStore.dialogs.gallery.delete.value" />
-  <gallery-core :selected="selected" :items="items" @select="select($event)" />
-  <tpu-pager v-model="page" :total-pages="pager?.totalPages || 1" />
+  <gallery-navigation v-model:search="search" @refresh="getGallery()" />
+  <gallery-core
+    :id="id"
+    :type="type"
+    :selected="selected"
+    :items="items"
+    @select="select($event)"
+  />
+  <tpu-pager
+    class="mb-1"
+    v-model="page"
+    :total-pages="pager?.totalPages || 1"
+  />
+  <div class="mb-2 text-center text-medium-emphasis-dark">
+    <p>
+      Total items: {{ pager?.totalItems.toLocaleString() }} &bullet; Total
+      pages:
+      {{ pager?.totalPages.toLocaleString() }}
+    </p>
+  </div>
 </template>
 
 <script setup lang="ts">
-import type { GalleryInput, Upload, Pager } from "@/gql/graphql";
-import { GalleryType } from "@/gql/graphql";
+import type { AddToCollectionInput, Pager, Upload } from "@/gql/graphql";
+import { GalleryInput, GalleryType } from "@/gql/graphql";
 import { onMounted, type Ref, ref, watch } from "vue";
 import { GalleryQuery } from "@/graphql/gallery/gallery.graphql";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import { useApolloClient } from "@vue/apollo-composable";
-import TextField from "@/components/Core/Input/TextField.vue";
 import TpuPager from "@/components/Core/Pager/TpuPager.vue";
 import DeleteUpload from "@/components/Gallery/Dialogs/DeleteUpload.vue";
 import { useAppStore } from "@/stores/app.store";
+import AddToCollection from "@/components/Gallery/Dialogs/AddToCollection.vue";
+import { useCollectionsStore } from "@/stores/collections.store";
+import { useSocket } from "@/boot/socket.service";
+import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
+import UploadFile from "@/components/Gallery/Dialogs/UploadFile.vue";
 
 const page = ref(1);
 const loading = ref(false);
@@ -22,6 +46,8 @@ const items = ref<Upload[]>([]);
 const pager = ref<Pager | null>(null);
 const appStore = useAppStore();
 const selected: Ref<number[]> = ref([]);
+const collectionsStore = useCollectionsStore();
+const search = ref("");
 
 function select(id: number | number[]) {
   if (Array.isArray(id)) {
@@ -41,6 +67,17 @@ function select(id: number | number[]) {
   }
 }
 
+function pushCollection(data: AddToCollectionInput) {
+  const collection = collectionsStore.items.find(
+    (collection) => collection.id === data.collectionId
+  );
+  if (!collection) return;
+  for (const item of data.items) {
+    const find = items.value.find((upload) => upload.id === item);
+    if (find) find.collections.push(collection);
+  }
+}
+
 async function getGallery() {
   loading.value = true;
   const {
@@ -49,6 +86,7 @@ async function getGallery() {
     query: GalleryQuery,
     variables: {
       input: {
+        search: search.value,
         page: page.value,
         type: props.type,
         collectionId: typeof props.id === "number" ? props.id : undefined,
@@ -91,18 +129,35 @@ function resetScroll() {
 }
 
 watch(
-  () => props.type,
+  () => [props.type, props.id],
   () => {
+    page.value = 1;
+    search.value = "";
     getGallery();
   }
 );
 
 watch(
-  () => [page.value, props.id],
+  () => [page.value],
   () => {
     getGallery();
   }
 );
+
+// Socket handler
+useSocket.gallery.on("update", (data: Upload[]) => {
+  items.value = items.value.map((item) => {
+    const matchingUpload = data.find((upload) => upload.id === item.id);
+    if (matchingUpload) {
+      return { ...item, collections: matchingUpload.collections };
+    }
+    return item;
+  });
+});
+
+useSocket.gallery.on("delete", (data: number) => {
+  items.value = items.value.filter((upload) => upload.id !== data);
+});
 </script>
 
 <style scoped></style>

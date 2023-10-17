@@ -3,10 +3,10 @@
     <card :padding="false">
       <div class="flex flex-col justify-center items-center p-4">
         <img src="@/assets/flowinity.svg" style="width: 64px" />
+        <p class="mt-2">alpha</p>
         <text-field
           v-model="username"
           :label="t('login.username')"
-          placeholder="Troplo"
           @keydown.enter="login"
         ></text-field>
         <text-field

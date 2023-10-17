@@ -8,6 +8,7 @@
       {{ props.label }}
     </label>
     <textarea
+      tabindex="0"
       :id="id"
       class="text-field"
       :placeholder="props.placeholder"
@@ -29,6 +30,7 @@
       :class="{ 'placeholder-shown': !modelValue.length && focus }"
     ></textarea>
     <input
+      tabindex="0"
       v-else
       :id="id"
       :placeholder="props.placeholder"
@@ -68,6 +70,9 @@ const focus = ref(false);
 const interactedWith = ref(false);
 
 onMounted(() => {
+  if (props.autofocus !== undefined) {
+    input.value?.focus();
+  }
   if (!props.ctrlEnterNewLine) {
     input.value?.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === "Enter") {
@@ -97,7 +102,8 @@ const props = defineProps([
   "maxlength",
   "minlength",
   "ctrlEnterNewLine",
-  "error"
+  "error",
+  "autofocus"
 ]);
 
 const id = (Math.random() + 1).toString(36).substring(7);

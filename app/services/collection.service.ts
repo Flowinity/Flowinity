@@ -14,6 +14,7 @@ import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { CollectionFilter } from "@app/classes/graphql/collections/collections"
 import paginate from "jw-paginate"
 import { PaginatedCollectionsResponse } from "@app/controllers/graphql/collection.resolver"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 @Service()
 export class CollectionService {
@@ -330,35 +331,38 @@ export class CollectionService {
   }
 
   async emitUpdate(uploadId: number | number[], userId: number) {
-    socket.to(userId).emit(
-      "gallery/update",
-      await Upload.findAll({
-        where: {
-          id: uploadId,
-          userId
-        },
-        include: [
-          {
-            model: Star,
-            as: "starred",
-            required: false,
-            where: {
-              userId: userId
+    socket
+      .of(SocketNamespaces.GALLERY)
+      .to(userId)
+      .emit(
+        "update",
+        await Upload.findAll({
+          where: {
+            id: uploadId,
+            userId
+          },
+          include: [
+            {
+              model: Star,
+              as: "starred",
+              required: false,
+              where: {
+                userId: userId
+              }
+            },
+            {
+              model: Collection,
+              as: "collections",
+              attributes: ["id", "name"]
+            },
+            {
+              model: User,
+              as: "user",
+              attributes: partialUserBase
             }
-          },
-          {
-            model: Collection,
-            as: "collections",
-            attributes: ["id", "name"]
-          },
-          {
-            model: User,
-            as: "user",
-            attributes: partialUserBase
-          }
-        ]
-      })
-    )
+          ]
+        })
+      )
   }
 
   async removeFromCollection(

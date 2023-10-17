@@ -1,11 +1,22 @@
 <template>
-  <div
-    class="dialog-scrim"
-    v-if="props.modelValue"
-    @click="$emit('update:modelValue', false)"
-  >
-    <div class="dialog-content" @click.stop>
-      <transition name="dialog-transition" appear>
+  <div class="dialog-scrim" v-if="props.modelValue" />
+  <transition name="dialog-transition" appear>
+    <div
+      v-if="props.modelValue"
+      @click="$emit('update:modelValue', false)"
+      class="dialog-outer"
+      @keydown.esc="$emit('update:modelValue', false)"
+    >
+      <div
+        class="dialog-content"
+        @click.stop
+        :style="{
+          height: height + 'px',
+          maxHeight: height + 'px',
+          width: props.width + 'px',
+          maxWidth: props.width + 'px'
+        }"
+      >
         <slot name="content">
           <card :padding="false" v-bind="$attrs">
             <div>
@@ -14,7 +25,11 @@
                   <slot name="toolbar"></slot>
                 </div>
                 <div>
-                  <tpu-button variant="passive" icon>
+                  <tpu-button
+                    variant="passive"
+                    icon
+                    @click="$emit('update:modelValue', false)"
+                  >
                     <RiCloseLine style="height: 20px" />
                   </tpu-button>
                 </div>
@@ -25,9 +40,9 @@
             </div>
           </card>
         </slot>
-      </transition>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script setup>
@@ -38,7 +53,9 @@ import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import TpuButton from "@/components/Core/Button/TpuButton.vue";
 
 const props = defineProps({
-  modelValue: Boolean
+  modelValue: Boolean,
+  width: [Number, String],
+  height: [Number, String]
 });
 defineEmits(["update:modelValue"]);
 </script>
@@ -54,6 +71,18 @@ defineEmits(["update:modelValue"]);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10001;
+  z-index: 3001;
+}
+
+.dialog-outer {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3002;
 }
 </style>

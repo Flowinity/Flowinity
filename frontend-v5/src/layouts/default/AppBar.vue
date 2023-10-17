@@ -25,20 +25,22 @@
             :key="appStore.currentNavItem?.rail?.id"
             v-if="appStore.currentNavItem?.rail?.name"
           >
-            <router-link
-              :to="appStore.currentNavItem?.rail.path"
-              class="cursor-pointer flex items-center"
-            >
-              <component
-                :is="appStore.currentNavItem?.rail?.icon"
-                class="w-8 mr-2 fill-medium-emphasis-dark"
-                v-if="appStore.currentNavItem?.rail?.icon"
-              />
-              <span class="text-medium-emphasis-dark">
-                {{ appStore.currentNavItem?.rail?.name }}
-              </span>
-            </router-link>
-            <RiArrowRightSLine class="w-6 mx-3 fill-medium-emphasis-dark" />
+            <div class="flex items-center">
+              <router-link
+                :to="appStore.currentNavItem?.rail.path"
+                class="cursor-pointer flex items-center"
+              >
+                <component
+                  :is="appStore.currentNavItem?.rail?.icon"
+                  class="w-8 mr-2 fill-medium-emphasis-dark"
+                  v-if="appStore.currentNavItem?.rail?.icon"
+                />
+                <span class="text-medium-emphasis-dark">
+                  {{ appStore.currentNavItem?.rail?.name }}
+                </span>
+              </router-link>
+              <RiArrowRightSLine class="w-6 mx-3 fill-medium-emphasis-dark" />
+            </div>
           </div>
         </Transition>
         <Transition mode="out-in" name="slide-up">
@@ -47,12 +49,14 @@
             :class="{ 'items-center': !expanded, 'items-end': expanded }"
             :key="appStore.currentNavItem?.item"
           >
-            <component
-              :is="appStore.currentNavItem?.item.icon"
-              class="w-8 mr-2 items-center fill-white"
-              v-if="appStore.currentNavItem?.item.icon"
-            />
-            {{ appStore.currentNavItem?.item.name || "Flowinity" }}
+            <div class="items-center flex">
+              <component
+                :is="appStore.currentNavItem?.item.icon"
+                class="w-8 mr-2 items-center fill-white"
+                v-if="appStore.currentNavItem?.item.icon"
+              />
+              {{ appStore.currentNavItem?.item.name || "Flowinity" }}
+            </div>
           </div>
         </Transition>
       </div>

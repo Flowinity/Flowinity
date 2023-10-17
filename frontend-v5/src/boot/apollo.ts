@@ -15,6 +15,7 @@ import {
   DefaultApolloClient,
   provideApolloClient
 } from "@vue/apollo-composable";
+import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 
 function getToken() {
   return localStorage.getItem("token");
@@ -116,6 +117,10 @@ export default function setup(app: App) {
 
   app.config.globalProperties.$apollo = apolloClient;
 
+  if (import.meta.env.DEV) {
+    loadDevMessages();
+    loadErrorMessages();
+  }
   app.provide(DefaultApolloClient, apolloClient);
   provideApolloClient(apolloClient);
 }

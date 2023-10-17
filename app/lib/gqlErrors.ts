@@ -84,6 +84,13 @@ const Errors = {
   INVITE_BOT: {
     message:
       "You cannot join groups directly as a bot user, you must be added explicitly by a group administrator."
+  },
+  COLLECTION_NOT_FOUND: {
+    message:
+      "The requested collection could not be found or you don't have permission to access it."
+  },
+  ATTACHMENT_NOT_FOUND: {
+    message: "The requested upload(s) couldn't be found."
   }
 }
 

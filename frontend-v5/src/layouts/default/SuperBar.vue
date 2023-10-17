@@ -29,7 +29,9 @@ const props = defineProps({
         />
         <div class="flex flex-col gap-y-2 mt-4">
           <super-bar-item
-            v-for="item in appStore.navigation.railOptions"
+            v-for="item in appStore.navigation.railOptions.filter(
+              (opt) => !opt.misc
+            )"
             :key="item.id"
             :selected="appStore.navigation.mode === item.id"
             @click="appStore.navigation.mode = item.id"
@@ -48,8 +50,23 @@ const props = defineProps({
       <div class="items-center"></div>
       <div class="items-end">
         <div class="flex flex-col gap-y-4">
-          <super-bar-item :highlighted="true">
-            <RiSettings5Line />
+          <super-bar-item
+            v-for="item in appStore.navigation.railOptions.filter(
+              (opt) => opt.misc
+            )"
+            :key="item.id"
+            :selected="appStore.navigation.mode === item.id"
+            @click="appStore.navigation.mode = item.id"
+            class="text-gray"
+            highlighted
+          >
+            <component
+              :is="
+                appStore.navigation.mode === item.id
+                  ? item.selectedIcon
+                  : item.icon
+              "
+            />
           </super-bar-item>
           <img
             class="rounded-full"

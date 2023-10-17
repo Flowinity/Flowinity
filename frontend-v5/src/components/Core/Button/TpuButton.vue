@@ -17,16 +17,27 @@
       'outline dark:outline-outline-dark': variant === 'outlined',
       'px-2 py-2': props.icon,
       'px-3 py-1': !props.icon,
-      'opacity-50': props.disabled,
+      'opacity-50 pointer-events-none': props.disabled,
       'cursor-pointer': !props.disabled
     }"
     tabindex="0"
-    @keydown.enter="$event.target.click()"
-    @keydown.space="
-      $event.preventDefault();
-      $event.target?.click();
+    @keydown.enter="
+      disabled
+        ? () => {}
+        : () => {
+            $event.target.click();
+          }
     "
-    @click="props.disabled ? $event.preventDefault : () => {}"
+    @keydown.space="
+      disabled
+        ? () => {}
+        : () => {
+            $event.preventDefault();
+            $event.target?.click();
+          }
+    "
+    :disabled="disabled"
+    v-bind="$attrs"
   >
     <template v-if="!props.loading">
       <slot />

@@ -7,7 +7,11 @@
   },
   "generic": {
     "minLength": "You need at least 1 character. | You need at least {count} characters.",
-    "delete": "Delete"
+    "delete": "Delete",
+    "add": "Add",
+    "OK": "OK",
+    "cancel": "Cancel",
+    "upload": "Upload"
   },
   "gallery": {
     "addToCollection": "Add to Collection",
@@ -23,12 +27,16 @@
       "delete": {
         "title": "Delete {item}?",
         "description": "The upload {item} will be permanently deleted from Flowinity."
+      },
+      "collect": {
+        "title": "Add 1 item to a collection? | Add {count} items to a collection?"
       }
     },
     "nav": {
       "delete": "Delete Selected",
       "selectAll": "Select all",
-      "deselectAll": "Deselect all"
+      "deselectAll": "Deselect all",
+      "randomAttachment": "Random Attachment"
     }
   },
   "collections": {

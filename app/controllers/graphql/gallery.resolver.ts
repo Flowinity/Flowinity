@@ -27,6 +27,8 @@ import { CollectionUser } from "@app/models/collectionUser.model"
 import { Op } from "sequelize"
 import { checkScope } from "@app/lib/auth"
 import { GqlError } from "@app/lib/gqlErrors"
+import { DeleteUploadInput } from "@app/classes/graphql/gallery/deleteUploadInput"
+import { Success } from "@app/classes/graphql/generic/success"
 
 const FileScalar = new GraphQLScalarType({
   name: "File",
@@ -138,6 +140,20 @@ export class GalleryResolver {
         }
       ]
     })
+  }
+
+  @Authorization({
+    scopes: "uploads.modify"
+  })
+  @Mutation(() => Success)
+  async deleteUploads(
+    @Ctx() ctx: Context,
+    @Arg("input") input: DeleteUploadInput
+  ): Promise<Success> {
+    for (const id of input.items) {
+      await this.galleryService.deleteUpload(id, ctx.user!!.id)
+    }
+    return { success: true }
   }
 
   @FieldResolver(() => User)

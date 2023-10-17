@@ -1,7 +1,7 @@
 <template>
   <card
     :padding="false"
-    class="flex flex-col h-full justify-between overflow-hidden overflow-ellipsis"
+    class="flex flex-col h-full relative justify-between overflow-hidden overflow-ellipsis"
   >
     <div>
       <tpu-toolbar
@@ -44,20 +44,41 @@
         </p>
         <p>Size: {{ functions.fileSize(props.item.fileSize) }}</p>
         <div class="flex mt-2 gap-4">
-          <div class="flex flex-wrap gap-2">
-            <tpu-button v-tooltip="$t('gallery.addToCollection')">
+          <tpu-slide-group
+            class="gap-2 mb-1"
+            :key="
+              props.item.collections
+                .map((collection) => collection.id)
+                .join(',')
+            "
+          >
+            <tpu-button
+              v-tooltip="$t('gallery.addToCollection')"
+              @click="
+                $app.dialogs.gallery.collect.items = [props.item.id];
+                $app.dialogs.gallery.collect.value = true;
+              "
+            >
               <RiAddLine style="width: 20px" />
             </tpu-button>
             <tpu-button
               v-for="collection in props.item.collections"
               :key="collection.id"
+              :to="`/collections/${collection.id}`"
             >
-              <RiCloseLine style="width: 20px" />
+              <RiCloseLine
+                style="width: 20px"
+                @click.prevent="
+                  collectionsStore.removeFromCollection(collection.id, [
+                    props.item.id
+                  ])
+                "
+              />
               <span class="mx-1">
                 {{ collection.name }}
               </span>
             </tpu-button>
-          </div>
+          </tpu-slide-group>
         </div>
       </div>
     </div>
@@ -133,8 +154,11 @@ import RiCheckboxCircleFill from "vue-remix-icons/icons/ri-checkbox-circle-fill.
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
 import { ref } from "vue";
+import TpuSlideGroup from "@/components/Core/SlideGroup/TpuSlideGroup.vue";
+import { useCollectionsStore } from "@/stores/collections.store";
 
 const appStore = useAppStore();
+const collectionsStore = useCollectionsStore();
 const props = defineProps({
   item: {
     type: Object as () => Upload,

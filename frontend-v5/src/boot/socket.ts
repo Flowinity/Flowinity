@@ -21,7 +21,6 @@ import type {
 } from "@/gql/graphql";
 import { UserStoredStatus } from "@/gql/graphql";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
-
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();
   const index = chat.chats.findIndex((c) => c.id === chatId);

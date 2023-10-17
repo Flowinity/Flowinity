@@ -36,6 +36,12 @@ import RiUserFill from "vue-remix-icons/icons/ri-user-fill.vue";
 import RiUserLine from "vue-remix-icons/icons/ri-user-line.vue";
 import RiDashboardFill from "vue-remix-icons/icons/ri-dashboard-fill.vue";
 import RiFolderImageFill from "vue-remix-icons/icons/ri-folder-image-fill.vue";
+import RiAuctionLine from "vue-remix-icons/icons/ri-auction-line.vue";
+import RiAuctionFill from "vue-remix-icons/icons/ri-auction-fill.vue";
+import RiMailLine from "vue-remix-icons/icons/ri-mail-line.vue";
+import RiMailFill from "vue-remix-icons/icons/ri-mail-fill.vue";
+import RiBug2Line from "vue-remix-icons/icons/ri-bug-2-line.vue";
+import RiBug2Fill from "vue-remix-icons/icons/ri-bug-2-fill.vue";
 import type { Chat, CoreState, Upload } from "@/gql/graphql";
 import { useUserStore } from "@/stores/user.store";
 import { useChatStore } from "@/stores/chat.store";
@@ -47,11 +53,17 @@ import { useCollectionsStore } from "@/stores/collections.store";
 import type { Ref } from "vue";
 import UserAvatar from "@/components/User/UserAvatar.vue";
 import functions from "@/plugins/functions";
+import type { AxiosProgressEvent } from "axios";
+import { useToast } from "vue-toastification";
+import axios from "@/plugins/axios";
 export enum RailMode {
   HOME,
   GALLERY,
   CHAT,
   WORKSPACES,
+  MAIL,
+  ADMIN,
+  DEBUG,
   SETTINGS
 }
 
@@ -61,6 +73,8 @@ export interface NavigationOption {
   path?: string;
   selectedIcon?: Raw<SVGComponent>;
   badge?: string;
+  misc?: boolean;
+  id?: RailMode;
 }
 
 export const useAppStore = defineStore("app", () => {
@@ -290,7 +304,10 @@ export const useAppStore = defineStore("app", () => {
       ],
       [RailMode.CHAT]: [],
       [RailMode.WORKSPACES]: [],
-      [RailMode.SETTINGS]: []
+      [RailMode.SETTINGS]: [],
+      [RailMode.ADMIN]: [],
+      [RailMode.MAIL]: [],
+      [RailMode.DEBUG]: []
     } as Record<RailMode, NavigationOption[]>,
     miscOptions: {
       [RailMode.HOME]: [
@@ -344,13 +361,35 @@ export const useAppStore = defineStore("app", () => {
         selectedIcon: markRaw(RiFileTextFill)
       },
       {
+        icon: markRaw(RiMailLine),
+        name: "Mail",
+        id: RailMode.MAIL,
+        path: "/mail",
+        selectedIcon: markRaw(RiMailFill)
+      },
+      {
+        icon: markRaw(RiAuctionLine),
+        name: "Admin",
+        id: RailMode.ADMIN,
+        path: "/admin",
+        selectedIcon: markRaw(RiAuctionFill)
+      },
+      {
+        icon: markRaw(RiBug2Line),
+        name: "Debug",
+        id: RailMode.DEBUG,
+        path: "/debug",
+        selectedIcon: markRaw(RiBug2Fill)
+      },
+      {
         icon: markRaw(RiSettings5Line),
         name: "Settings",
         id: RailMode.SETTINGS,
         path: "/settings",
-        selectedIcon: markRaw(RiSettings5Fill)
+        selectedIcon: markRaw(RiSettings5Fill),
+        misc: true
       }
-    ]
+    ] as NavigationOption[]
   });
 
   document.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -455,6 +494,16 @@ export const useAppStore = defineStore("app", () => {
         value: false,
         upload: null as Upload | null,
         bulkIds: [] as number[]
+      },
+      collect: {
+        value: false,
+        items: [] as number[]
+      },
+      upload: {
+        value: false,
+        files: [] as File[],
+        loading: false,
+        percentage: 0
       }
     }
   });
@@ -471,6 +520,48 @@ export const useAppStore = defineStore("app", () => {
   document.addEventListener("scroll", (ev) => {
     scrollPosition.value = Math.ceil(window.scrollY);
   });
+
+  async function upload() {
+    try {
+      const appStore = useAppStore();
+      const toast = useToast();
+      if (!dialogs.value.gallery.upload.files.length)
+        toast.error("No files selected!");
+      const formData = new FormData();
+      for (const file of dialogs.value.gallery.upload.files) {
+        formData.append("attachments", file);
+      }
+      dialogs.value.gallery.upload.loading = true;
+      const { data } = await axios.post("/gallery/site", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+        onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+          if (!progressEvent.total) return;
+          dialogs.value.gallery.upload.percentage = Math.round(
+            (progressEvent.loaded / progressEvent.total) * 100
+          );
+        }
+      });
+      if (dialogs.value.gallery.upload.files.length === 1) {
+        functions.copy(data[0].url);
+        toast.success(
+          "Successfully uploaded file and copied Flowinity link to clipboard!"
+        );
+      } else {
+        toast.success("Successfully uploaded files!");
+      }
+      dialogs.value.gallery.upload.value = false;
+      dialogs.value.gallery.upload.files = [];
+      dialogs.value.gallery.upload.percentage = 0;
+      dialogs.value.gallery.upload.loading = false;
+    } catch (e) {
+      console.log(e);
+      dialogs.value.gallery.upload.percentage = 0;
+      dialogs.value.gallery.upload.loading = false;
+      return e;
+    }
+  }
 
   return {
     navigation,
@@ -489,6 +580,7 @@ export const useAppStore = defineStore("app", () => {
     dialogs,
     appBarImage,
     heightOffset,
-    scrollPosition
+    scrollPosition,
+    upload
   };
 });

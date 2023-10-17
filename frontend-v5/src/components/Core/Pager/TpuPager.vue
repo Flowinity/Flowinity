@@ -1,16 +1,23 @@
 <template>
-  <div class="pager flex flex-wrap justify-center gap-4 mb-5">
+  <div class="pager flex flex-wrap justify-center gap-4">
     <tpu-button
-      :disabled="props.modelValue === 1"
+      :disabled="props.modelValue <= 1"
       icon
       class="px-3"
       variant="passive"
+      @click="$emit('update:modelValue', props.modelValue - 1)"
     >
       <RiArrowLeftSLine style="width: 20px"></RiArrowLeftSLine>
     </tpu-button>
     <template v-if="totalPages">
       <template v-if="!pages.includes(1)">
-        <tpu-button icon class="rounded-full px-4">1</tpu-button>
+        <tpu-button
+          icon
+          class="rounded-full px-4"
+          @click="$emit('update:modelValue', 1)"
+        >
+          1
+        </tpu-button>
         <tpu-button icon class="rounded-full px-4">...</tpu-button>
       </template>
       <tpu-button

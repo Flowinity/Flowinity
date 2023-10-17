@@ -51,3 +51,11 @@ export const GalleryQuery = gql`
     }
   }
 `;
+
+export const DeleteUploadMutation = gql`
+  mutation DeleteUploads($input: DeleteUploadInput!) {
+    deleteUploads(input: $input) {
+      success
+    }
+  }
+`;
