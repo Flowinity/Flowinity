@@ -43,6 +43,7 @@
           {{ dayjs(props.item.createdAt).format("Do of MMMM YYYY, h:mm A") }}
         </p>
         <p>Size: {{ functions.fileSize(props.item.fileSize) }}</p>
+        <slot name="extra-item-attributes" :item="props.item"></slot>
         <div class="flex mt-2 gap-4">
           <tpu-slide-group
             class="gap-2 mb-1"
@@ -55,8 +56,8 @@
             <tpu-button
               v-tooltip="$t('gallery.addToCollection')"
               @click="
-                $app.dialogs.gallery.collect.items = [props.item.id];
-                $app.dialogs.gallery.collect.value = true;
+                appStore.dialogs.gallery.collect.items = [props.item.id];
+                appStore.dialogs.gallery.collect.value = true;
               "
             >
               <RiAddLine style="width: 20px" />
@@ -85,7 +86,14 @@
     <div>
       <card-actions position="center">
         <slot name="actions" :item="props.item">
-          <tpu-button color="blue" v-tooltip="$t('gallery.actions.edit')">
+          <tpu-button
+            color="blue"
+            v-tooltip="$t('gallery.actions.edit')"
+            @click="
+              appStore.dialogs.gallery.edit.upload = props.item;
+              appStore.dialogs.gallery.edit.value = true;
+            "
+          >
             <RiEditLine style="width: 20px" />
           </tpu-button>
           <tpu-button
@@ -113,9 +121,28 @@
           >
             <RiDownloadLine style="width: 20px" />
           </tpu-button>
-          <tpu-button color="purple" v-tooltip="$t('gallery.actions.ocr')">
-            <RiCharacterRecognitionLine style="width: 20px" />
-          </tpu-button>
+          <span
+            v-tooltip="
+              props.item.textMetadata === null
+                ? $t('gallery.actions.ocrProcessing')
+                : $t('gallery.actions.ocr')
+            "
+            v-if="props.item.type === 'image'"
+          >
+            <tpu-button
+              color="purple"
+              @click="
+                appStore.dialogs.gallery.ocr.content = props.item.textMetadata;
+                appStore.dialogs.gallery.ocr.value = true;
+              "
+              :disabled="!props.item.textMetadata"
+              @click.right="functions.copy(props.item.textMetadata)"
+              :loading="props.item.textMetadata === null"
+            >
+              <RiCharacterRecognitionLine style="width: 20px" />
+            </tpu-button>
+          </span>
+
           <tpu-button
             color="star"
             v-tooltip="$t('gallery.actions.star', props.item.starred ? 2 : 1)"

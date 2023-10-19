@@ -137,7 +137,6 @@ export class GalleryControllerV3 {
         await this.galleryService.createUpload(user.id, attachment, false)
       )
     }
-    console.log(socket.of(SocketNamespaces.GALLERY))
     socket.of(SocketNamespaces.GALLERY).to(user.id).emit("create", files)
     return files
   }

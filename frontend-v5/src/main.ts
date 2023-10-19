@@ -5,6 +5,7 @@ import { createApp } from "vue";
 
 import App from "./App.vue";
 import router from "./router";
+import VueApolloComponents from "@vue/apollo-components";
 
 // Boot functions
 import "./boot/declarations";
@@ -24,8 +25,8 @@ const app = createApp(App);
 app.use(FloatingVue, {
   arrowPadding: 10,
   distance: 7,
-  container: "#app",
-  boundary: "#app",
+  container: "#main-area",
+  boundary: "#main-area",
   themes: {
     tooltip: {
       delay: {
@@ -44,6 +45,7 @@ app.use(Toast, {});
 
 // Register boot plugins
 apollo(app);
+app.use(VueApolloComponents);
 registerPlugins(app);
 globals(app);
 events();

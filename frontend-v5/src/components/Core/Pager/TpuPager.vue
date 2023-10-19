@@ -14,11 +14,15 @@
         <tpu-button
           icon
           class="rounded-full px-4"
+          :selected="page === 1"
+          variant="passive"
           @click="$emit('update:modelValue', 1)"
         >
           1
         </tpu-button>
-        <tpu-button icon class="rounded-full px-4">...</tpu-button>
+        <tpu-button icon class="rounded-full px-4" variant="passive">
+          ...
+        </tpu-button>
       </template>
       <tpu-button
         icon
@@ -42,6 +46,7 @@
           variant="passive"
           class="flex justify-center"
           style="min-width: 40px; min-height: 40px"
+          @click="$emit('update:modelValue', totalPages)"
         >
           {{ totalPages }}
         </tpu-button>

@@ -81,4 +81,9 @@
     margin-top: 4px;
     transform: translateX(-50%);
 }
+.v-popper--theme-dropdown .v-popper__inner {
+    background: unset !important;
+    border: unset !important;
+    color: inherit !important;
+}
 @tailwind utilities;

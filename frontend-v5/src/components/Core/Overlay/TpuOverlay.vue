@@ -12,7 +12,8 @@
     <div>
       <div
         v-if="props.modelValue"
-        class="inset-0 bg-black opacity-50"
+        class="bg-black opacity-50"
+        style="width: 100%; height: 100%; left: 0; top: 0"
         :class="{ fixed: !props.absolute, absolute: props.absolute }"
       ></div>
       <div class="relative" v-if="props.modelValue">
@@ -22,7 +23,7 @@
   </component>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const props = defineProps({
   modelValue: Boolean,
   absolute: Boolean,

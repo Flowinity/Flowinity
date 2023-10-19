@@ -1,5 +1,5 @@
 <template>
-  <div class="justify-center items-center flex" style="height: 150px">
+  <div class="justify-center items-center flex relative" style="height: 150px">
     <tpu-hover v-if="props.item.type === 'image'">
       <template v-slot="{ hovering }">
         <tpu-img

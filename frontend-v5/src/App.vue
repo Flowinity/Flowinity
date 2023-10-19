@@ -11,7 +11,7 @@ const appStore = useAppStore();
 const userStore = useUserStore();
 </script>
 <template>
-  <div class="dark w-full">
+  <div class="dark w-full" id="main-area">
     <div
       class="dark:bg-dark bg-white text-black dark:fill-white dark:text-white flex w-full"
     >

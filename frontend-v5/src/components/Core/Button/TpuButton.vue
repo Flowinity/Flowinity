@@ -43,7 +43,7 @@
       <slot />
     </template>
     <template v-else>
-      <tpu-spinner :color="color" :size="24" />
+      <tpu-spinner :color="color" :size="20" />
     </template>
   </component>
 </template>

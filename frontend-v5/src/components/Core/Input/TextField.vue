@@ -10,7 +10,7 @@
     <textarea
       tabindex="0"
       :id="id"
-      class="text-field"
+      class="text-field resize-none"
       :placeholder="props.placeholder"
       :rows="computedRows.toString()"
       @input="$emit('update:modelValue', $event.target?.value)"
@@ -27,7 +27,11 @@
         interactedWith = true;
       "
       v-bind="$attrs"
-      :class="{ 'placeholder-shown': !modelValue.length && focus }"
+      :disabled="props.disabled"
+      :class="{
+        'placeholder-shown': !modelValue.length && focus,
+        'text-medium-emphasis-dark': props.disabled
+      }"
     ></textarea>
     <input
       tabindex="0"
@@ -49,7 +53,11 @@
       :type="type"
       :maxlength="maxlength"
       v-bind="$attrs"
-      :class="{ 'placeholder-shown': !modelValue.length && focus }"
+      :disabled="props.disabled"
+      :class="{
+        'placeholder-shown': !modelValue.length && focus,
+        'text-medium-emphasis-dark': props.disabled
+      }"
     />
     <div
       class="justify-end flex text-red text-xs mt-1"

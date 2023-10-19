@@ -20,6 +20,7 @@ import { CacheService } from "@app/services/cache.service"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { SortOptions } from "@app/types/sort"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
+import { ActOnAutoCollectAction } from "@app/classes/graphql/autoCollects/actOnAutoCollectsInput"
 
 @Service()
 @JsonController("/autoCollects")
@@ -154,7 +155,9 @@ export class AutoCollectControllerV3 {
       await this.autoCollectService.actAutoCollect(
         user.id,
         autoCollect,
-        body.action
+        body.action === "approve"
+          ? ActOnAutoCollectAction.APPROVE
+          : ActOnAutoCollectAction.REJECT
       )
       await this.cacheService.patchAutoCollectCache(
         user.id,
@@ -190,7 +193,9 @@ export class AutoCollectControllerV3 {
     await this.autoCollectService.actAutoCollect(
       user.id,
       autoCollect,
-      body.action
+      body.action === "approve"
+        ? ActOnAutoCollectAction.APPROVE
+        : ActOnAutoCollectAction.REJECT
     )
     await this.cacheService.patchAutoCollectCache(
       user.id,

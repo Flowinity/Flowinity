@@ -17,6 +17,7 @@
   "dependencies": {
     "@apollo/client": "^3.8.5",
     "@troplo/vite-version": "^1.0.3",
+    "@vue/apollo-components": "^4.0.0-beta.10",
     "@vue/apollo-composable": "^4.0.0-beta.11",
     "@vue/apollo-option": "^4.0.0-beta.9",
     "axios": "^1.5.1",

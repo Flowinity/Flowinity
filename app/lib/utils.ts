@@ -393,11 +393,60 @@ async function postUpload(upload: Upload): Promise<void> {
           }
         }
       )
+      const find = await Upload.findOne({
+        where: {
+          id: upload.id
+        },
+        include: [
+          {
+            model: Collection,
+            as: "collections"
+          }
+        ]
+      })
+      await socket
+        .of(SocketNamespaces.GALLERY)
+        .to(upload.userId)
+        .emit("update", [
+          {
+            ...find?.toJSON(),
+            textMetadata: text
+          }
+        ])
       await processFile(upload, text)
     })
     .catch(async (error): Promise<void> => {
       console.error(error.message)
-
+      await Upload.update(
+        {
+          textMetadata: ""
+        },
+        {
+          where: {
+            id: upload.id
+          }
+        }
+      )
+      const find = await Upload.findOne({
+        where: {
+          id: upload.id
+        },
+        include: [
+          {
+            model: Collection,
+            as: "collections"
+          }
+        ]
+      })
+      await socket
+        .of(SocketNamespaces.GALLERY)
+        .to(upload.userId)
+        .emit("update", [
+          {
+            ...find?.toJSON(),
+            textMetadata: ""
+          }
+        ])
       await processFile(upload, "")
     })
 }

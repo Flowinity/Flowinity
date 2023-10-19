@@ -27,7 +27,7 @@
         <div class="v-responsive v-img">
           <div class="v-responsive__sizer" style="padding-bottom: 100%"></div>
           <img
-            :src="$app.domain + user?.avatar"
+            :src="appStore.domain + user?.avatar"
             alt=""
             class="v-img__img v-img__img--cover"
             style=""

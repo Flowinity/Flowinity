@@ -233,10 +233,12 @@ export class CacheService {
     const collection = autoCollects.find(
       (c: Collection) => c.id === collectionId
     )
+    console.log(collection)
     if (collection) {
       collection.autoCollectApprovals = collection.autoCollectApprovals.filter(
         (a: AutoCollectApproval) => a.id !== approvalId
       )
+      console.log(collection.autoCollectApprovals, approvalId)
       if (!collection.autoCollectApprovals.length) {
         autoCollects.splice(autoCollects.indexOf(collection), 1)
       }

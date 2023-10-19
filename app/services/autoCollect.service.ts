@@ -6,6 +6,7 @@ import Errors from "@app/lib/errors"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { Upload } from "@app/models/upload.model"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { ActOnAutoCollectAction } from "@app/classes/graphql/autoCollects/actOnAutoCollectsInput"
 
 @Service()
 export class AutoCollectService {
@@ -36,10 +37,10 @@ export class AutoCollectService {
   async actAutoCollect(
     userId: number,
     autoCollect: AutoCollectApproval,
-    action: "approve" | "deny"
+    action: ActOnAutoCollectAction
   ) {
     switch (action) {
-      case "approve":
+      case ActOnAutoCollectAction.APPROVE:
         await CollectionItem.create({
           attachmentId: autoCollect.uploadId,
           collectionId: autoCollect.collectionId,
@@ -55,7 +56,7 @@ export class AutoCollectService {
           })
         await autoCollect.destroy()
         return true
-      case "deny":
+      case ActOnAutoCollectAction.REJECT:
         socket
           .of(SocketNamespaces.AUTO_COLLECTS)
           .to(userId)

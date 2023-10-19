@@ -1,4 +1,12 @@
-import { Arg, Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql"
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  Mutation,
+  Query,
+  Resolver,
+  Root
+} from "type-graphql"
 import { Service } from "typedi"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import { AutoCollectService } from "@app/services/autoCollect.service"
@@ -9,11 +17,19 @@ import { Collection } from "@app/models/collection.model"
 import { Upload } from "@app/models/upload.model"
 import paginate from "jw-paginate"
 import { UserCollectionsInput } from "@app/classes/graphql/collections/collections"
+import { AutoCollectRule } from "@app/models/autoCollectRule.model"
+import { CollectionItem } from "@app/models/collectionItem.model"
+import { ActOnAutoCollectsInput } from "@app/classes/graphql/autoCollects/actOnAutoCollectsInput"
+import { CacheService } from "@app/services/cache.service"
+import { Success } from "@app/classes/graphql/generic/success"
 
 @Resolver(AutoCollectApproval)
 @Service()
 export class AutoCollectApprovalResolver {
-  constructor(private autoCollectService: AutoCollectService) {}
+  constructor(
+    private autoCollectService: AutoCollectService,
+    private cacheService: CacheService
+  ) {}
 
   @Authorization({
     scopes: ["collections.view"]
@@ -30,6 +46,7 @@ export class AutoCollectApprovalResolver {
         userId: ctx.user!!.id
       }
     })
+    console.log(autoCollects.map((ma: any) => ma.autoCollectApprovals))
     const pager = paginate(count, input.page, input.limit)
     if (autoCollects) {
       return {
@@ -58,6 +75,38 @@ export class AutoCollectApprovalResolver {
     }
   }
 
+  @Authorization({
+    scopes: ["collections.modify"]
+  })
+  @Mutation(() => Success)
+  async actOnAutoCollects(
+    @Ctx() ctx: Context,
+    @Arg("input") input: ActOnAutoCollectsInput
+  ) {
+    const autoCollects = await AutoCollectApproval.findAll({
+      where: {
+        userId: ctx.user!!.id,
+        id: input.items
+      }
+    })
+
+    for (const autoCollect of autoCollects) {
+      await this.autoCollectService.actAutoCollect(
+        ctx.user!!.id,
+        autoCollect,
+        input.action
+      )
+      console.log(autoCollect.collectionId, autoCollect.id)
+      await this.cacheService.patchAutoCollectCache(
+        ctx.user!!.id,
+        autoCollect.collectionId,
+        autoCollect.id
+      )
+    }
+
+    return { success: true }
+  }
+
   @FieldResolver(() => Collection)
   async collection(@Root() autoCollectApproval: AutoCollectApproval) {
     return await autoCollectApproval.$get("collection")
@@ -66,5 +115,10 @@ export class AutoCollectApprovalResolver {
   @FieldResolver(() => Upload)
   async attachment(@Root() autoCollectApproval: AutoCollectApproval) {
     return await autoCollectApproval.$get("attachment")
+  }
+
+  @FieldResolver(() => AutoCollectRule)
+  async autoCollectRule(@Root() autoCollectApproval: AutoCollectApproval) {
+    return await autoCollectApproval.$get("autoCollectRule")
   }
 }

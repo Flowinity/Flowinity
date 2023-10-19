@@ -1,4 +1,6 @@
 <template>
+  <upload-editor v-model="$app.dialogs.gallery.edit.value" />
+  <OCRScanned v-model="$app.dialogs.gallery.ocr.value" />
   <upload-file v-model="appStore.dialogs.gallery.upload.value" />
   <add-to-collection v-model="appStore.dialogs.gallery.collect.value" />
   <delete-upload v-model="appStore.dialogs.gallery.delete.value" />
@@ -9,9 +11,13 @@
     :selected="selected"
     :items="items"
     @select="select($event)"
-  />
+  >
+    <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+      <slot :name="name" v-bind="slotData" />
+    </template>
+  </gallery-core>
   <tpu-pager
-    class="mb-1"
+    class="mb-2"
     v-model="page"
     :total-pages="pager?.totalPages || 1"
   />
@@ -39,6 +45,8 @@ import { useCollectionsStore } from "@/stores/collections.store";
 import { useSocket } from "@/boot/socket.service";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import UploadFile from "@/components/Gallery/Dialogs/UploadFile.vue";
+import OCRScanned from "@/components/Gallery/Dialogs/OCRScanned.vue";
+import UploadEditor from "@/components/Gallery/Dialogs/UploadEditor.vue";
 
 const page = ref(1);
 const loading = ref(false);
@@ -125,7 +133,7 @@ onMounted(() => {
 });
 
 function resetScroll() {
-  document.getElementById("app-area").scrollTop = 0;
+  document.getElementById("app-area")!.scrollTop = 0;
 }
 
 watch(
@@ -149,14 +157,30 @@ useSocket.gallery.on("update", (data: Upload[]) => {
   items.value = items.value.map((item) => {
     const matchingUpload = data.find((upload) => upload.id === item.id);
     if (matchingUpload) {
-      return { ...item, collections: matchingUpload.collections };
+      return {
+        ...item,
+        name: matchingUpload.name,
+        textMetadata: matchingUpload.textMetadata,
+        collections: matchingUpload.collections
+      };
     }
     return item;
   });
+  console.log("update");
 });
 
 useSocket.gallery.on("delete", (data: number) => {
   items.value = items.value.filter((upload) => upload.id !== data);
+});
+
+useSocket.gallery.on("create", (data: { upload: Upload; url: String }[]) => {
+  if (page.value !== 1 || props.type !== GalleryType.Personal) return;
+  items.value = [...data.map((d) => d.upload), ...items.value];
+  console.log("update");
+});
+
+defineExpose({
+  getGallery
 });
 </script>
 

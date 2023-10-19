@@ -11,7 +11,9 @@
     "add": "Add",
     "OK": "OK",
     "cancel": "Cancel",
-    "upload": "Upload"
+    "upload": "Upload",
+    "close": "Close",
+    "save": "Save"
   },
   "gallery": {
     "addToCollection": "Add to Collection",
@@ -21,7 +23,17 @@
       "copy": "Copy Link",
       "download": "Download",
       "ocr": "View Scanned Text",
-      "star": "Star | Unstar"
+      "star": "Star | Unstar",
+      "ocrProcessing": "Scanned text is being processed...",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "attributes": {
+      "triggeredByRule": "Triggered by rule: {rule}",
+      "originalName": "Original name: {name}",
+      "uploadedName": "Uploaded name: {name}",
+      "size": "Size: {size}",
+      "createdBy": "Uploaded by: {name}"
     },
     "dialogs": {
       "delete": {
@@ -30,6 +42,14 @@
       },
       "collect": {
         "title": "Add 1 item to a collection? | Add {count} items to a collection?"
+      },
+      "ocr": {
+        "title": "View Scanned Text",
+        "copyAll": "Copy all"
+      },
+      "edit": {
+        "title": "Edit Upload",
+        "name": "Upload name"
       }
     },
     "nav": {

@@ -29,6 +29,8 @@ import { checkScope } from "@app/lib/auth"
 import { GqlError } from "@app/lib/gqlErrors"
 import { DeleteUploadInput } from "@app/classes/graphql/gallery/deleteUploadInput"
 import { Success } from "@app/classes/graphql/generic/success"
+import { UpdateUploadInput } from "@app/classes/graphql/gallery/updateUploadInput"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 
 const FileScalar = new GraphQLScalarType({
   name: "File",
@@ -156,6 +158,37 @@ export class GalleryResolver {
     return { success: true }
   }
 
+  @Authorization({
+    scopes: "uploads.modify"
+  })
+  @Mutation(() => Upload)
+  async updateUpload(
+    @Ctx() ctx: Context,
+    @Arg("input", () => UpdateUploadInput) input: UpdateUploadInput
+  ) {
+    const upload = await Upload.findOne({
+      where: {
+        id: input.uploadId,
+        userId: ctx.user!!.id
+      },
+      include: [
+        {
+          model: Collection,
+          as: "collections"
+        }
+      ]
+    })
+    if (!upload) throw new GqlError("ATTACHMENT_NOT_FOUND")
+    await upload.update({
+      name: input.name
+    })
+    socket
+      .of(SocketNamespaces.GALLERY)
+      .to(ctx.user!!.id)
+      .emit("update", [upload.toJSON()])
+    return upload
+  }
+
   @FieldResolver(() => User)
   async user(@Root() upload: Upload) {
     return await upload.$get("user")
@@ -164,10 +197,5 @@ export class GalleryResolver {
   @FieldResolver(() => CollectionItem)
   async items(@Root() upload: Upload) {
     return await upload.$get("items")
-  }
-
-  @Mutation(() => Upload)
-  async upload(@Ctx() ctx: Context, @Arg("file", () => FileScalar) file: any) {
-    console.log(file)
   }
 }

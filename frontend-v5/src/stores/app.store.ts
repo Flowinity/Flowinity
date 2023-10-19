@@ -178,7 +178,21 @@ export const useAppStore = defineStore("app", () => {
     loading.value = true;
     loadLocalStorage();
     if (!window.tpuInternals) {
-      window.tpuInternals = {};
+      const userStore = useUserStore();
+      window.tpuInternals = {
+        lookupUser: (id) => {
+          const user = userStore.users[id];
+          if (!user) {
+            return {
+              username: "Deleted"
+            };
+          }
+          return userStore.users[id];
+        },
+        lookupCollection: () => {
+          return {};
+        }
+      };
     }
     getWeather();
     const {
@@ -441,7 +455,10 @@ export const useAppStore = defineStore("app", () => {
   const chatStore = useChatStore();
 
   const currentNavItem = computed(() => {
-    if (route.path.startsWith("/collections/")) {
+    if (
+      route.path.startsWith("/collections/") ||
+      route.path.startsWith("/auto-collects/")
+    ) {
       const find = collectionsStore.items.find(
         (collection) => collection.id === parseInt(<string>route.params.id)
       );
@@ -504,6 +521,19 @@ export const useAppStore = defineStore("app", () => {
         files: [] as File[],
         loading: false,
         percentage: 0
+      },
+      ocr: {
+        value: false,
+        content: ""
+      },
+      edit: {
+        value: false,
+        upload: null as Upload | null
+      }
+    },
+    tutorials: {
+      actionBar: {
+        value: false
       }
     }
   });

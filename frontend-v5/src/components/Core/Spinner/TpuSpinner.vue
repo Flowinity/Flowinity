@@ -11,6 +11,7 @@
       fill="none"
       stroke-width="6"
       stroke-linecap="round"
+      stroke
       cx="33"
       cy="33"
       r="30"

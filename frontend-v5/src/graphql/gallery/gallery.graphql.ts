@@ -16,6 +16,9 @@ export const GalleryQuery = gql`
       items {
         autoCollectApproval {
           id
+          autoCollectRule {
+            name
+          }
           autoCollectRuleId
         }
         id
@@ -56,6 +59,14 @@ export const DeleteUploadMutation = gql`
   mutation DeleteUploads($input: DeleteUploadInput!) {
     deleteUploads(input: $input) {
       success
+    }
+  }
+`;
+
+export const UpdateUploadMutation = gql`
+  mutation UpdateUpload($input: UpdateUploadInput!) {
+    updateUpload(input: $input) {
+      id
     }
   }
 `;

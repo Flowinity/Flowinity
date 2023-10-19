@@ -3,6 +3,8 @@
     style="min-height: 64px; max-height: 64px"
     id="appbar"
     :class="navbarClasses"
+    v-tooltip.bottom="markRaw(MeetActionBar)"
+    class="z-50"
   >
     <div class="flex p-4 justify-items-end h-full justify-between z-50">
       <div class="flex select-none">
@@ -60,11 +62,21 @@
           </div>
         </Transition>
       </div>
-      <div
-        id="appbar-options"
-        class="flex gap-2"
-        :class="{ 'items-center': !expanded, 'items-end': expanded }"
-      />
+      <VDropdown
+        :distance="6"
+        :triggers="[]"
+        :shown="appStore.dialogs.tutorials.actionBar.value"
+      >
+        <div
+          id="appbar-options"
+          class="flex gap-2"
+          :class="{ 'items-center': !expanded, 'items-end': expanded }"
+        />
+
+        <template #popper>
+          <meet-action-bar />
+        </template>
+      </VDropdown>
     </div>
   </div>
 </template>
@@ -75,8 +87,9 @@ import RiArrowRightSLine from "vue-remix-icons/icons/ri-arrow-right-s-line.vue";
 import RiMenuLine from "vue-remix-icons/icons/ri-menu-line.vue";
 import TpuButton from "@/components/Core/Button/TpuButton.vue";
 import { useUserStore } from "@/stores/user.store";
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, markRaw } from "vue";
 import { debounce } from "lodash";
+import MeetActionBar from "@/components/Tutorials/MeetActionBar.vue";
 
 const appStore = useAppStore();
 const userStore = useUserStore();

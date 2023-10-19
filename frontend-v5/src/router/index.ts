@@ -34,6 +34,20 @@ const router = createRouter({
       component: () => import("@/views/Gallery/Collection.vue")
     },
     {
+      path: "/auto-collects/:id",
+      name: "AutoCollect",
+      component: () => import("@/views/Gallery/AutoCollectsGallery.vue")
+    },
+    {
+      path: "/auto-collects",
+      name: "AutoCollects",
+      component: () => import("@/views/AutoCollects/AutoCollects.vue")
+    },
+    {
+      path: "/autoCollects",
+      redirect: "/auto-collects"
+    },
+    {
       path: "/communications/:id",
       name: "Chat",
       component: () => import("@/views/Chats/Chat.vue")
