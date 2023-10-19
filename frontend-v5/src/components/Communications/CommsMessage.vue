@@ -93,3 +93,9 @@ function blocked(userId?: number) {
   padding: 4px;
 }
 </style>
+
+<style>
+.message a {
+  color: #0190ea;
+}
+</style>
