@@ -46,7 +46,6 @@ export class AutoCollectApprovalResolver {
         userId: ctx.user!!.id
       }
     })
-    console.log(autoCollects.map((ma: any) => ma.autoCollectApprovals))
     const pager = paginate(count, input.page, input.limit)
     if (autoCollects) {
       return {
