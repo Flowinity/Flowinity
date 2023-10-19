@@ -81,7 +81,7 @@ onMounted(() => {
   if (props.autofocus !== undefined) {
     input.value?.focus();
   }
-  if (!props.ctrlEnterNewLine) {
+  if (!props.shiftEnterNewLine) {
     input.value?.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === "Enter") {
         e.stopPropagation();
@@ -89,9 +89,8 @@ onMounted(() => {
     });
   } else {
     input.value?.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === "Enter") {
+      if (e.key === "Enter" && !e.shiftKey) {
         e.stopPropagation();
-      } else if (e.key === "Enter") {
         e.preventDefault();
       }
     });
@@ -109,7 +108,7 @@ const props = defineProps([
   "type",
   "maxlength",
   "minlength",
-  "ctrlEnterNewLine",
+  "shiftEnterNewLine",
   "error",
   "autofocus"
 ]);
@@ -142,6 +141,10 @@ const computedRows = computed(() => {
     return tmpRows;
   }
   return 1;
+});
+
+defineExpose({
+  input
 });
 </script>
 
@@ -176,7 +179,7 @@ const computedRows = computed(() => {
 }
 
 .text-field:not(.placeholder-shown)::placeholder {
-  display: none;
+  color: transparent;
 }
 
 .text-field:focus + .form__label {

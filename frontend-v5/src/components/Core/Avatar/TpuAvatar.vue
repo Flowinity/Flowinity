@@ -28,7 +28,7 @@ function loadError() {
 
 <template>
   <div
-    class="rounded-full whitespace-nowrap overflow-hidden overflow-ellipsis"
+    class="rounded-full whitespace-nowrap overflow-hidden overflow-ellipsis select-none"
     :class="{ gradient: props.color === true }"
     :style="`min-width: ${props.size}px; min-height: ${
       props.size

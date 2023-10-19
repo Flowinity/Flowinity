@@ -56,6 +56,7 @@ import functions from "@/plugins/functions";
 import type { AxiosProgressEvent } from "axios";
 import { useToast } from "vue-toastification";
 import axios from "@/plugins/axios";
+
 export enum RailMode {
   HOME,
   GALLERY,

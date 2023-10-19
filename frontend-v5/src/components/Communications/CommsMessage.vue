@@ -1,7 +1,10 @@
 <template>
   <div
     class="relative message hover:bg-card-secondary-dark hover-message-actions"
+    :class="{ 'mt-2': !merge }"
     :ref="`message-${message.id}`"
+    @mouseenter="hovered = true"
+    @mouseleave="hovering = false"
   >
     <div class="flex flex-grow basis-0">
       <div class="avatar-section" :class="{ 'justify-center': merge }">
@@ -18,7 +21,7 @@
           {{ $date(message.createdAt).format("hh:mm A") }}
         </p>
       </div>
-      <div class="flex-col ml-2">
+      <div class="flex-col">
         <div class="flex items-center" v-if="!merge">
           {{ friendsStore.getName(message.userId) }}
           <p class="text-medium-emphasis-dark text-sm ml-2">
@@ -36,6 +39,7 @@
         ></span>
       </div>
     </div>
+    <comms-message-actions v-if="hovered"></comms-message-actions>
   </div>
 </template>
 
@@ -46,7 +50,11 @@ import ReplyLine from "@/components/Communications/ReplyLine.vue";
 import { useUserStore } from "@/stores/user.store";
 import { useFriendsStore } from "@/stores/friends.store";
 import dayjs from "../../plugins/dayjs";
+import CommsMessageActions from "@/components/Communications/CommsMessageActions.vue";
+import TpuHover from "@/components/Core/Hover/TpuHover.vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
+const hovered = ref(false);
 const friendsStore = useFriendsStore();
 const userStore = useUserStore();
 const props = defineProps({
@@ -95,6 +103,14 @@ function blocked(userId?: number) {
 </style>
 
 <style>
+.message-actions {
+  display: none;
+}
+
+.hover-message-actions:hover .message-actions,
+.message-actions:hover .message-actions {
+  display: block;
+}
 .message a {
   color: #0190ea;
 }
