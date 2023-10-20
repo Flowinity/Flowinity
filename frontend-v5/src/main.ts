@@ -45,10 +45,11 @@ app.use(Toast, {});
 
 // Register boot plugins
 apollo(app);
-app.use(VueApolloComponents);
 registerPlugins(app);
 globals(app);
 events();
 socket(app).then(() => {});
+
+app.use(VueApolloComponents);
 
 app.mount("#app");

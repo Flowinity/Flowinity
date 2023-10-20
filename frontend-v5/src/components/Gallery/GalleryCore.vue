@@ -84,10 +84,11 @@
               variant="passive"
               color="red"
               v-tooltip.bottom="t('gallery.nav.delete')"
-              @click="
+              @click.exact="
                 appStore.dialogs.gallery.delete.bulkIds = selected;
                 appStore.dialogs.gallery.delete.value = true;
               "
+              @click.shift.exact="galleryStore.deleteUploads(selected)"
             >
               <RiDeleteBinLine style="width: 20px" />
             </tpu-button>
@@ -161,6 +162,7 @@ import { GalleryOrder, GalleryType } from "@/gql/graphql";
 import { ref } from "vue";
 import functions from "@/plugins/functions";
 import { useAppStore } from "@/stores/app.store";
+import { useGalleryStore } from "@/stores/gallery.store";
 
 const { t } = useI18n();
 const props = defineProps({
@@ -184,6 +186,8 @@ defineEmits(["select"]);
 
 const randomAttachmentLoading = ref(false);
 const appStore = useAppStore();
+const galleryStore = useGalleryStore();
+
 async function randomAttachment() {
   randomAttachmentLoading.value = true;
   const {

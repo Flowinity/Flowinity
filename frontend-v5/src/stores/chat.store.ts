@@ -1,4 +1,4 @@
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { defineStore } from "pinia";
 import type {
   Chat,
@@ -19,6 +19,9 @@ import { useApolloClient } from "@vue/apollo-composable";
 import { useAppStore } from "@/stores/app.store";
 import { useSocket } from "@/boot/socket.service";
 import { useRoute, useRouter } from "vue-router";
+import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
+import { useExperimentsStore } from "@/stores/experiments.store";
+import { useMessagesStore } from "@/stores/messages.store";
 
 export const useChatStore = defineStore("chat", () => {
   const chats = ref<Chat[]>([]);
@@ -34,6 +37,18 @@ export const useChatStore = defineStore("chat", () => {
   const recentEmoji = ref<Record<string, number>>({});
   const loading = ref(false);
   const isReady = ref(0);
+  const { resolveClient } = useApolloClient();
+  const client = resolveClient();
+  const messagesStore = useMessagesStore();
+
+  function lookupChat(id: number) {
+    return (
+      (this.chats.find((chat) => chat.id === id) as Chat) ||
+      ({
+        name: "Unknown Chat"
+      } as Chat)
+    );
+  }
 
   function chatName(chat: Chat) {
     if (!chat) return "Communications";
@@ -106,7 +121,7 @@ export const useChatStore = defineStore("chat", () => {
   function merge(message: Message, index: number) {
     if (message.replyId) return false;
     if (message.type !== MessageType.Message && message.type) return false;
-    const prev = selectedChat.value?.messages[index + 1];
+    const prev = messagesStore.selected[index + 1];
     if (!prev) return false;
     if (prev.type !== MessageType.Message && prev.type) return false;
     if (dayjs(message.createdAt).diff(prev.createdAt, "minutes") > 5)
@@ -114,45 +129,17 @@ export const useChatStore = defineStore("chat", () => {
     return prev.userId === message.userId;
   }
 
-  const { resolveClient } = useApolloClient();
-  const client = resolveClient();
-
-  async function getMessages(
-    input: InfiniteMessagesInput | PagedMessagesInput
-  ): Promise<Message[]> {
-    const { data } = await client.query({
-      query: "page" in input ? PagedMessagesQuery : MessagesQuery,
-      variables: {
-        input
-      },
-      fetchPolicy: "network-only"
-    });
-
-    return "page" in input
-      ? structuredClone(data.messagesPaged)
-      : structuredClone(data.messages);
-  }
-
   async function setChat(id: number) {
     loading.value = true;
     selectedChatAssociationId.value = id;
     const appStore = useAppStore();
     appStore.title = chatName(selectedChat.value?.id);
-    const messages = await getMessages({
+    const messages = await messagesStore.getMessages({
       associationId: id,
       position: ScrollPosition.Top
     });
     if (id !== selectedChatAssociationId.value) return;
-    const index = chats.value.findIndex(
-      (chat: Chat) => chat.association?.id === id
-    );
-    chats.value[index] = {
-      ...(chats.value.find(
-        (chat: Chat) => chat.association?.id === id
-      ) as Chat),
-      messages,
-      unread: 0
-    };
+    messagesStore.messages[selectedChatAssociationId.value] = messages;
     readChat();
     isReady.value = id;
     loading.value = false;
@@ -168,15 +155,6 @@ export const useChatStore = defineStore("chat", () => {
     }
   }
 
-  const route = useRoute();
-  watch(
-    () => route.path,
-    (val) => {
-      if (!val.startsWith("/communications/") || !route.params.id) return;
-      setChat(parseInt(<string>route.params.id));
-    }
-  );
-
   return {
     chats,
     selectedChatAssociationId,
@@ -189,6 +167,7 @@ export const useChatStore = defineStore("chat", () => {
     chatName,
     merge,
     readChat,
-    setChat
+    setChat,
+    lookupChat
   };
 });

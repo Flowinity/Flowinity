@@ -396,13 +396,7 @@ async function postUpload(upload: Upload): Promise<void> {
       const find = await Upload.findOne({
         where: {
           id: upload.id
-        },
-        include: [
-          {
-            model: Collection,
-            as: "collections"
-          }
-        ]
+        }
       })
       await socket
         .of(SocketNamespaces.GALLERY)
@@ -430,13 +424,7 @@ async function postUpload(upload: Upload): Promise<void> {
       const find = await Upload.findOne({
         where: {
           id: upload.id
-        },
-        include: [
-          {
-            model: Collection,
-            as: "collections"
-          }
-        ]
+        }
       })
       await socket
         .of(SocketNamespaces.GALLERY)

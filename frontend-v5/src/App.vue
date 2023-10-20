@@ -1,20 +1,24 @@
 <script setup lang="ts">
-import { RouterView } from "vue-router";
+import { RouterView, useRoute } from "vue-router";
 import SuperBar from "@/layouts/default/SuperBar.vue";
 import SideBar from "@/layouts/default/SideBar.vue";
 import AppBar from "@/layouts/default/AppBar.vue";
 import TpuNavigationDrawer from "@/components/Core/NavigationDrawer/TpuNavigationDrawer.vue";
 import { useAppStore } from "@/stores/app.store";
 import { useUserStore } from "@/stores/user.store";
+import MemberSideBar from "@/layouts/default/MemberSideBar.vue";
+import QuickSwitcher from "@/components/QuickSwitcher/QuickSwitcher.vue";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
+const route = useRoute();
 </script>
 <template>
   <div class="dark w-full" id="main-area">
     <div
       class="dark:bg-dark bg-white text-black dark:fill-white dark:text-white flex w-full"
     >
+      <quick-switcher v-model="appStore.dialogs.core.quickSwitcher.value" />
       <tpu-navigation-drawer
         v-model="appStore.drawer"
         class="flex"
@@ -42,6 +46,10 @@ const userStore = useUserStore();
             <RouterView />
           </main>
         </div>
+        <member-side-bar
+          class="fixed top-0 left-0 max-sm:hidden"
+          v-if="route.path.startsWith('/communications/')"
+        />
       </div>
     </div>
   </div>

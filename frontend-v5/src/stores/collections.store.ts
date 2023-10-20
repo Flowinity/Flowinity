@@ -8,6 +8,7 @@ import {
   AddToCollectionMutation,
   RemoveFromCollectionMutation
 } from "@/graphql/collections/addToCollection.graphql";
+import { useRoute } from "vue-router";
 
 export const useCollectionsStore = defineStore("collections", () => {
   const items = ref<Collection[]>([]);
@@ -52,11 +53,20 @@ export const useCollectionsStore = defineStore("collections", () => {
     await data.mutate();
   }
 
+  const route = useRoute();
+  const selected = computed(() => {
+    if (!route.path.startsWith("/collections/")) return;
+    return items.value.find(
+      (collection) => collection.id === parseInt(<string>route.params.id)
+    );
+  });
+
   return {
     items,
     pager,
     getCollection,
     addToCollection,
-    removeFromCollection
+    removeFromCollection,
+    selected
   };
 });

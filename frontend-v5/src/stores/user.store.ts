@@ -31,11 +31,16 @@ export const useUserStore = defineStore("user", () => {
     }, {});
   });
 
+  const unreadNotifications = computed(() => {
+    return user.value?.notifications.filter((noti) => !noti.dismissed) || [];
+  });
+
   return {
     user,
     gold,
     blocked,
     tracked,
-    users
+    users,
+    unreadNotifications
   };
 });

@@ -17,12 +17,6 @@
       </p>
       <card-actions>
         <tpu-button
-          variant="passive"
-          @click="$emit('update:modelValue', false)"
-        >
-          {{ t("generic.close") }}
-        </tpu-button>
-        <tpu-button
           color="blue"
           variant="passive"
           @click="$functions.copy(appStore.dialogs.gallery.ocr.content)"

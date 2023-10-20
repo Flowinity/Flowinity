@@ -1,4 +1,4 @@
-import { ref, computed, markRaw, type Raw, watch, h } from "vue";
+import { ref, computed, markRaw, type Raw, watch, h, onMounted } from "vue";
 import { defineStore, getActivePinia } from "pinia";
 import RiAndroidFill, {
   type SVGComponent
@@ -415,6 +415,10 @@ export const useAppStore = defineStore("app", () => {
       if (navigation.value.mode >= navigation.value.railOptions.length - 1)
         return;
       navigation.value.mode++;
+    } else if (e.ctrlKey && e.key === "k") {
+      e.preventDefault();
+      dialogs.value.core.quickSwitcher.value =
+        !dialogs.value.core.quickSwitcher.value;
     }
   });
 
@@ -536,6 +540,11 @@ export const useAppStore = defineStore("app", () => {
       actionBar: {
         value: false
       }
+    },
+    core: {
+      quickSwitcher: {
+        value: false
+      }
     }
   });
 
@@ -582,6 +591,13 @@ export const useAppStore = defineStore("app", () => {
       } else {
         toast.success("Successfully uploaded files!");
       }
+      const collectionsStore = useCollectionsStore();
+      if (collectionsStore.selected) {
+        await collectionsStore.addToCollection(
+          collectionsStore.selected.id,
+          data.map((item) => item.upload.id)
+        );
+      }
       dialogs.value.gallery.upload.value = false;
       dialogs.value.gallery.upload.files = [];
       dialogs.value.gallery.upload.percentage = 0;
@@ -593,6 +609,15 @@ export const useAppStore = defineStore("app", () => {
       return e;
     }
   }
+
+  watch(
+    () => route.path,
+    (val) => {
+      console.log(route);
+      if (!val.startsWith("/communications/") || !route.params.id) return;
+      chatStore.setChat(parseInt(<string>route.params.id));
+    }
+  );
 
   return {
     navigation,

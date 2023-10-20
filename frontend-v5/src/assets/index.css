@@ -10,7 +10,7 @@
 }
 
 *::-webkit-scrollbar-track {
-    @apply bg-sidebar-dark;
+    @apply border-2 border-sidebar-dark;
 }
 
 *::-webkit-scrollbar-thumb {
@@ -86,4 +86,74 @@
     border: unset !important;
     color: inherit !important;
 }
+.message-toast {
+    background: rgba(64, 62, 62, 0.7) !important;
+}
+.emoji {
+    width: 1.2em;
+    height: 1.2em;
+    position: relative;
+    top: 0.15em;
+}
+
+.emoji-large {
+    width: 3.5em;
+    height: 3.5em;
+    position: relative;
+    top: 0.15em;
+}
+
+.emoji-large {
+    width: 3.5em;
+    height: 3.5em;
+    position: relative;
+    top: 0.15em;
+}
+
+p:has(.emoji-large) img {
+    width: 3.5em;
+    height: 3.5em;
+    position: relative;
+    top: 0.15em;
+}
+
+.emoji-large-text {
+    font-size: 3.5em;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-weight: bolder;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+h4 {
+    font-size: 1em;
+}
+
+h5 {
+    font-size: .83em;
+}
+
+h6 {
+    font-size: .67em;
+}
+
+.mention {
+    background-color: rgba(1, 144, 234, 0.1);
+    border-radius: 4px;
+    padding: 2px 4px;
+    color: #0190ea;
+}
+
 @tailwind utilities;

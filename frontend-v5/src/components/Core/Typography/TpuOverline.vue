@@ -55,7 +55,7 @@ const props = defineProps({
 }
 
 .date-separator-block {
-  padding: 0 8px;
+  padding: 0 8px 0 0;
   white-space: nowrap;
   @apply text-medium-emphasis-dark;
   mix-blend-mode: difference;

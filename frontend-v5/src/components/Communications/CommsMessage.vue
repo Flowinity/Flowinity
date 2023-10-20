@@ -1,45 +1,76 @@
 <template>
-  <div
-    class="relative message hover:bg-card-secondary-dark hover-message-actions"
-    :class="{ 'mt-2': !merge }"
-    :ref="`message-${message.id}`"
-    @mouseenter="hovered = true"
-    @mouseleave="hovering = false"
-  >
-    <div class="flex flex-grow basis-0">
-      <div class="avatar-section" :class="{ 'justify-center': merge }">
-        <UserAvatar
-          :user-id="message.userId || 0"
-          :username="message.user?.username"
-          v-if="!merge"
-        />
-        <p
-          style="font-size: 10px"
-          class="text-medium-emphasis-dark merge-date"
-          v-else
-        >
-          {{ $date(message.createdAt).format("hh:mm A") }}
-        </p>
-      </div>
-      <div class="flex-col">
-        <div class="flex items-center" v-if="!merge">
-          {{ friendsStore.getName(message.userId) }}
-          <p class="text-medium-emphasis-dark text-sm ml-2">
-            {{ dayjs(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
+  <div class="flex-col items-center">
+    <message-reply :reply="message.reply" class="ml-9 items-center mt-2" />
+    <div
+      v-bind="$attrs"
+      class="message hover-message-actions flex"
+      :class="{
+        'mt-2': !merge && !message.reply,
+        'mt-1': message.reply
+      }"
+      :ref="`message-${message.id}`"
+      @mouseenter="hovered = true"
+    >
+      <div class="flex flex-grow basis-0 message-main relative rounded-l">
+        <div class="avatar-section" :class="{ 'justify-center': merge }">
+          <UserAvatar
+            :user-id="message.userId || 0"
+            :username="message.user?.username"
+            v-if="!merge"
+          />
+          <p
+            style="font-size: 10px"
+            class="text-medium-emphasis-dark merge-date"
+            v-else
+          >
+            {{ $date(message.createdAt).format("hh:mm A") }}
           </p>
         </div>
-        <span
-          :class="{
-            'text-grey': message.pending,
-            'text-red': message.error
-          }"
-          class="overflow-content message-content d-inline-block"
-          v-html="$functions.markdown(message.content || '', message)"
-          v-memo="[message.content, message.error, message.pending]"
-        ></span>
+        <div class="flex-col">
+          <div class="flex items-center" v-if="!merge">
+            {{ friendsStore.getName(message.userId) }}
+            <p class="text-medium-emphasis-dark text-sm ml-2">
+              {{ dayjs(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
+            </p>
+          </div>
+          <div class="relative inline-block">
+            <span
+              class="overflow-content"
+              v-html="$functions.markdown(message.content || '', message)"
+              :class="{
+                'text-medium-emphasis-dark': message.pending,
+                'text-red': message.error
+              }"
+              v-memo="[message.content, message.error, message.pending]"
+            ></span>
+          </div>
+        </div>
+        <comms-message-actions
+          @reply="$emit('reply', message.id)"
+          v-if="hovered"
+        ></comms-message-actions>
+      </div>
+      <div
+        class="flex-shrink-1 justify-end align-bottom relative align-self-end h-full flex flex-col items-end"
+        v-if="!search"
+        style="width: 100px; height: 100%"
+      >
+        <div
+          class="flex align-bottom h-100"
+          :class="{ 'read-receipt-avatars': message.readReceipts.length > 3 }"
+        >
+          <user-avatar
+            v-for="(readReceipt, index) in message.readReceipts"
+            :user-id="readReceipt.userId || 0"
+            :key="readReceipt.id"
+            :class="{ 'ml-1': message.readReceipts.length <= 3 }"
+            size="22"
+            class="read-receipt-avatar"
+            v-tooltip="userStore.users[readReceipt.userId || 0]?.username"
+          ></user-avatar>
+        </div>
       </div>
     </div>
-    <comms-message-actions v-if="hovered"></comms-message-actions>
   </div>
 </template>
 
@@ -53,6 +84,7 @@ import dayjs from "../../plugins/dayjs";
 import CommsMessageActions from "@/components/Communications/CommsMessageActions.vue";
 import TpuHover from "@/components/Core/Hover/TpuHover.vue";
 import { onMounted, onUnmounted, ref } from "vue";
+import MessageReply from "@/components/Communications/MessageReply.vue";
 
 const hovered = ref(false);
 const friendsStore = useFriendsStore();
@@ -76,6 +108,9 @@ const props = defineProps({
   },
   merge: {
     type: Boolean
+  },
+  search: {
+    type: Boolean
   }
 });
 
@@ -98,6 +133,7 @@ function blocked(userId?: number) {
   flex-direction: column;
   align-items: center;
   width: 60px;
+  min-width: 60px;
   padding: 4px;
 }
 </style>
@@ -113,5 +149,17 @@ function blocked(userId?: number) {
 }
 .message a {
   color: #0190ea;
+}
+.overflow-content * {
+  white-space: pre-line !important;
+  overflow-wrap: anywhere !important;
+}
+
+.hover-message-actions:hover .message-main {
+  @apply bg-card-secondary-dark;
+}
+
+.communications .read-receipt-avatars .read-receipt-avatar {
+  margin-left: -10px !important;
 }
 </style>

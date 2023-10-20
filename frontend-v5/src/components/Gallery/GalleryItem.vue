@@ -44,6 +44,10 @@
         </p>
         <p>Size: {{ functions.fileSize(props.item.fileSize) }}</p>
         <slot name="extra-item-attributes" :item="props.item"></slot>
+      </div>
+    </div>
+    <div>
+      <div class="pl-2 text-medium-emphasis-dark text-sm">
         <div class="flex mt-2 gap-4">
           <tpu-slide-group
             class="gap-2 mb-1"
@@ -82,8 +86,6 @@
           </tpu-slide-group>
         </div>
       </div>
-    </div>
-    <div>
       <card-actions position="center">
         <slot name="actions" :item="props.item">
           <tpu-button
@@ -93,16 +95,19 @@
               appStore.dialogs.gallery.edit.upload = props.item;
               appStore.dialogs.gallery.edit.value = true;
             "
+            v-if="props.item?.userId === userStore.user?.id"
           >
             <RiEditLine style="width: 20px" />
           </tpu-button>
           <tpu-button
             color="red"
             v-tooltip="$t('gallery.actions.delete')"
-            @click="
+            @click.exact="
               appStore.dialogs.gallery.delete.upload = props.item;
               appStore.dialogs.gallery.delete.value = true;
             "
+            @click.shift.exact="galleryStore.deleteUploads([props.item?.id])"
+            v-if="props.item?.userId === userStore.user?.id"
           >
             <RiDeleteBinLine style="width: 20px" />
           </tpu-button>
@@ -136,7 +141,7 @@
                 appStore.dialogs.gallery.ocr.value = true;
               "
               :disabled="!props.item.textMetadata"
-              @click.right="functions.copy(props.item.textMetadata)"
+              @click.right="functions.copy(props.item?.textMetadata)"
               :loading="props.item.textMetadata === null"
             >
               <RiCharacterRecognitionLine style="width: 20px" />
@@ -146,6 +151,9 @@
           <tpu-button
             color="star"
             v-tooltip="$t('gallery.actions.star', props.item.starred ? 2 : 1)"
+            @click="starUpload"
+            :loading="loading"
+            v-if="userStore.user?.id"
           >
             <RiStarLine style="width: 20px" v-if="!props.item.starred" />
             <RiStarFill style="width: 20px" v-else />
@@ -183,9 +191,14 @@ import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
 import { ref } from "vue";
 import TpuSlideGroup from "@/components/Core/SlideGroup/TpuSlideGroup.vue";
 import { useCollectionsStore } from "@/stores/collections.store";
-
+import { StarUploadMutation } from "@/graphql/gallery/starUpload";
+import { useApolloClient } from "@vue/apollo-composable";
+import { useGalleryStore } from "@/stores/gallery.store";
+import { useUserStore } from "@/stores/user.store";
 const appStore = useAppStore();
 const collectionsStore = useCollectionsStore();
+const galleryStore = useGalleryStore();
+const userStore = useUserStore();
 const props = defineProps({
   item: {
     type: Object as () => Upload,
@@ -196,6 +209,23 @@ const props = defineProps({
     required: true
   }
 });
+const loading = ref(false);
+
+async function starUpload() {
+  try {
+    loading.value = true;
+    await useApolloClient().client.mutate({
+      mutation: StarUploadMutation,
+      variables: {
+        input: {
+          attachment: props.item?.attachment
+        }
+      }
+    });
+  } finally {
+    loading.value = false;
+  }
+}
 
 defineEmits(["select"]);
 </script>

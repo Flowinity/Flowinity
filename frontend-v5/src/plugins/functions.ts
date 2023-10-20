@@ -1,4 +1,5 @@
 import md from "./rules";
+import mdReply from "./rulesReply";
 import mdEmail from "./rulesEmail";
 import { useAppStore } from "@/stores/app.store";
 import {
@@ -163,6 +164,9 @@ export default {
   /** Should be used alongside v-memo or v-once to prevent unwanted re-renders */
   markdown(text: string, message?: Message | null): any {
     return this.richMessage(md.render(text), message);
+  },
+  markdownReply(text: string, message?: Message | null): any {
+    return this.richMessage(mdReply.render(text), message);
   },
   /** Should be used alongside v-memo or v-once to prevent unwanted re-renders */
   markdownEmail(text: string): any {

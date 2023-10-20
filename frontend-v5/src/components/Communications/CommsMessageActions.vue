@@ -15,7 +15,7 @@
         <RiDeleteBinLine style="width: 20px" />
       </tpu-button>
       <tpu-button variant="passive" icon class="rounded-none">
-        <RiReplyLine style="width: 20px" />
+        <RiReplyLine @click="$emit('reply')" style="width: 20px" />
       </tpu-button>
     </div>
   </card>
@@ -28,6 +28,8 @@ import RiEditLine from "vue-remix-icons/icons/ri-edit-line.vue";
 import RiDeleteBinLine from "vue-remix-icons/icons/ri-delete-bin-line.vue";
 import RiReplyLine from "vue-remix-icons/icons/ri-reply-line.vue";
 import RiPushpinLine from "vue-remix-icons/icons/ri-pushpin-line.vue";
+
+defineEmits(["reply"]);
 </script>
 
 <style scoped></style>

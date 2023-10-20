@@ -583,6 +583,15 @@ export class GalleryService {
     })
     if (star) {
       await star.destroy()
+      socket
+        .of(SocketNamespaces.GALLERY)
+        .to(userId)
+        .emit("update", [
+          {
+            ...upload.toJSON(),
+            starred: null
+          }
+        ])
       return {
         status: false,
         star: null
@@ -592,9 +601,18 @@ export class GalleryService {
         userId,
         attachmentId: upload.id
       })
+      socket
+        .of(SocketNamespaces.GALLERY)
+        .to(userId)
+        .emit("update", [
+          {
+            ...upload.toJSON(),
+            starred: star.toJSON()
+          }
+        ])
       return {
         status: true,
-        star
+        star: star.toJSON()
       }
     }
   }

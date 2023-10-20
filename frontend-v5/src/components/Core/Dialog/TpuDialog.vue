@@ -7,45 +7,47 @@
       class="dialog-outer"
       @keydown.esc="$emit('update:modelValue', false)"
     >
-      <div
-        class="dialog-content"
-        @click.stop
-        :style="{
-          height: height + 'px',
-          maxHeight: height + 'px',
-          width: props.width + 'px',
-          maxWidth: props.width + 'px'
-        }"
-      >
-        <slot name="content">
-          <card :padding="false" v-bind="$attrs">
-            <div>
-              <tpu-toolbar class="flex justify-between items-center">
-                <div>
-                  <slot name="toolbar"></slot>
-                </div>
-                <div>
-                  <tpu-button
-                    variant="passive"
-                    icon
-                    @click="$emit('update:modelValue', false)"
-                  >
-                    <RiCloseLine style="height: 20px" />
-                  </tpu-button>
-                </div>
-              </tpu-toolbar>
+      <slot name="dialog-outer">
+        <div
+          class="dialog-content"
+          @click.stop
+          :style="{
+            height: height + 'px',
+            maxHeight: height + 'px',
+            width: props.width + 'px',
+            maxWidth: props.width + 'px'
+          }"
+        >
+          <slot name="content">
+            <card :padding="false" v-bind="$attrs">
               <div>
-                <slot></slot>
+                <tpu-toolbar class="flex justify-between items-center">
+                  <div>
+                    <slot name="toolbar"></slot>
+                  </div>
+                  <div>
+                    <tpu-button
+                      variant="passive"
+                      icon
+                      @click="$emit('update:modelValue', false)"
+                    >
+                      <RiCloseLine style="height: 20px" />
+                    </tpu-button>
+                  </div>
+                </tpu-toolbar>
+                <div>
+                  <slot></slot>
+                </div>
               </div>
-            </div>
-          </card>
-        </slot>
-      </div>
+            </card>
+          </slot>
+        </div>
+      </slot>
     </div>
   </transition>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from "vue";
 import TpuToolbar from "@/components/Core/Toolbar/TpuToolbar.vue";
 import Card from "@/components/Core/Card/Card.vue";

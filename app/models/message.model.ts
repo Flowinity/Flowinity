@@ -139,6 +139,24 @@ export class Message extends Model {
   })
   user: User | LegacyUser
 
+  @Field()
+  @Column({
+    type: DataType.VIRTUAL,
+    get(this: Message) {
+      return false
+    }
+  })
+  pending: boolean
+
+  @Field()
+  @Column({
+    type: DataType.VIRTUAL,
+    get(this: Message) {
+      return false
+    }
+  })
+  error: boolean
+
   @Field(() => [ChatAssociation])
   @HasMany(() => ChatAssociation, "lastRead")
   readReceipts: ChatAssociation[]

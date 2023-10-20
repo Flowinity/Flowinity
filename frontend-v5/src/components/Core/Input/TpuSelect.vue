@@ -7,20 +7,21 @@
       v-bind="$attrs"
       @keydown.down.stop="
         focused = true;
-        selected >= items.length ? (selected = 0) : selected++;
+        selected >= items.length - 1 ? (selected = 0) : selected++;
       "
       @keydown.up.stop="
         focused = true;
-        selected <= 0 ? (selected = items.length) : selected--;
+        selected <= 0 ? (selected = items.length - 1) : selected--;
       "
-      @keydown.enter="
+      @keydown.enter.prevent.stop="
         $emit('update:modelValue', items[selected].id);
         hovering = false;
         focused = false;
       "
       @click="focused = true"
-      disabled
+      :disabled="props.disabled"
       @update:model-value="focused = true"
+      ref="input"
     />
     <transition name="dialog-transition" appear>
       <div
@@ -39,6 +40,8 @@
             @click.stop.prevent="
               $emit('update:modelValue', item.id);
               hovering = false;
+              focus();
+              focused = false;
             "
             @mouseover="selected = index"
           >
@@ -63,7 +66,8 @@ const props = defineProps({
       name: string;
       [key: string]: any;
     }[]
-  }
+  },
+  disabled: Boolean
 });
 defineEmits(["update:modelValue"]);
 const show = computed(() => {
@@ -89,6 +93,10 @@ const text = computed({
     filter.value = newValue;
   }
 });
+const input = ref<InstanceType<typeof TextField> | null>(null);
+function focus() {
+  input.value?.input?.focus();
+}
 function scrollTo(index: number) {}
 </script>
 

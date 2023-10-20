@@ -61,6 +61,7 @@ const loading = ref(false);
 
 async function add() {
   try {
+    if (!selectedCollection.value) return;
     loading.value = true;
     await collectionsStore.addToCollection(
       selectedCollection.value,

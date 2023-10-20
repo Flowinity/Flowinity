@@ -50,6 +50,12 @@
       "edit": {
         "title": "Edit Upload",
         "name": "Upload name"
+      },
+      "upload": {
+        "title": "Upload to {collection}",
+        "clickToUpload": "Click to upload",
+        "dragAndDrop": " or drag and drop",
+        "addMore": "Add more files"
       }
     },
     "nav": {
@@ -62,7 +68,20 @@
   "collections": {
     "nav": {
       "share": "Sharing",
-      "settings": "Settings"
+      "settings": "Settings",
+      "banner": "Change Banner"
+    },
+    "settings": {
+      "title": "Collection Settings",
+      "name": "Name"
+    },
+    "sharing": {
+      "title": "Collection Sharing"
+    }
+  },
+  "communications": {
+    "members": {
+      "title": "Members"
     }
   }
 }

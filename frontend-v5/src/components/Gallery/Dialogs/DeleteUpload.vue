@@ -35,6 +35,7 @@ import { DeleteUploadMutation } from "@/graphql/gallery/gallery.graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
+import { useGalleryStore } from "@/stores/gallery.store";
 
 const { t } = useI18n();
 const props = defineProps({
@@ -47,20 +48,14 @@ const loading = ref(false);
 async function deleteUploads() {
   loading.value = true;
   try {
-    await useApolloClient().client.mutate({
-      mutation: DeleteUploadMutation,
-      variables: {
-        input: {
-          items: !appStore.dialogs.gallery.delete.bulkIds.length
-            ? appStore.dialogs.gallery.delete.upload?.id
-            : appStore.dialogs.gallery.delete.bulkIds
-        }
-      }
-    });
+    await useGalleryStore().deleteUploads(
+      appStore.dialogs.gallery.delete.bulkIds.length
+        ? appStore.dialogs.gallery.delete.bulkIds
+        : [appStore.dialogs.gallery.delete.upload?.id]
+    );
     appStore.dialogs.gallery.delete.bulkIds = [];
     appStore.dialogs.gallery.delete.upload = null;
     emit("update:modelValue", false);
-    useToast().success("Successfully deleted items.");
   } finally {
     loading.value = false;
   }

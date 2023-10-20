@@ -6,7 +6,11 @@
     v-tooltip.bottom="markRaw(MeetActionBar)"
     class="z-50"
   >
-    <div class="flex p-4 justify-items-end h-full justify-between z-50">
+    <div
+      class="flex p-4 justify-items-end h-full justify-between z-50"
+      :class="{ 'items-center': !expanded, 'items-end': expanded }"
+      :style="{ 'max-height: 63px; min-height: 63px': !expanded }"
+    >
       <div class="flex select-none">
         <div class="max-sm:block hidden">
           <tpu-button
@@ -25,6 +29,10 @@
             class="flex"
             :class="{ 'items-center': !expanded, 'items-end': expanded }"
             :key="appStore.currentNavItem?.rail?.id"
+            v-memo="[
+              appStore.currentRail?.name,
+              appStore.currentNavItem?.rail?.id
+            ]"
             v-if="appStore.currentNavItem?.rail?.name"
           >
             <div class="flex items-center">
@@ -50,6 +58,10 @@
             class="flex"
             :class="{ 'items-center': !expanded, 'items-end': expanded }"
             :key="appStore.currentNavItem?.item"
+            v-memo="[
+              appStore.currentNavItem?.item?.name,
+              appStore.currentNavItem?.rail?.id
+            ]"
           >
             <div class="items-center flex">
               <component
@@ -66,7 +78,13 @@
         :distance="6"
         :triggers="[]"
         :shown="appStore.dialogs.tutorials.actionBar.value"
+        class="flex"
       >
+        <div
+          id="appbar-options-first"
+          class="flex gap-2 mr-2"
+          :class="{ 'items-center': !expanded, 'items-end': expanded }"
+        />
         <div
           id="appbar-options"
           class="flex gap-2"
@@ -103,10 +121,8 @@ const navbarClasses: Record<any, any> = ref({
 });
 const expanded = ref(false);
 const handleScroll = () => {
-  console.log("scroll trigger");
   const hasImage = !!image.value;
   scrolled.value = appStore.scrollPosition > 1;
-  console.log(appStore.scrollPosition);
   navbarClasses.value = {
     "border-b-2 w-full dark:border-outline-dark dark:bg-dark backdrop-blur-lg sticky top-0 z-50 overflow-clip":
       true,

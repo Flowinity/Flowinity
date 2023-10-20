@@ -1,70 +1,50 @@
 <template>
-  <div class="position-relative">
-    <span
-      class="mb-n7"
-      style="
-        display: block;
-        width: 200px;
-        height: 50px;
-        word-break: break-all;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      "
-    >
-      {{ message.content }}
-    </span>
-    <br />
-    <small class="mr-1 text-grey-lighten-3">
-      - {{ user?.username }} &bullet;
-      {{ $chat.lookupChat(message.chatId).name }}
-    </small>
-    <div class="position-absolute" style="right: 0; top: 0">
-      <div
-        v-if="user?.avatar"
-        class="v-avatar theme--dark v-avatar--density-default v-avatar--size-default v-avatar--variant-flat"
-        style="background-color: #303030"
-      >
-        <div class="v-responsive v-img">
-          <div class="v-responsive__sizer" style="padding-bottom: 100%"></div>
-          <img
-            :src="appStore.domain + user?.avatar"
-            alt=""
-            class="v-img__img v-img__img--cover"
-            style=""
-          />
-        </div>
-        <span class="v-avatar__underlay"></span>
-      </div>
-      <div
-        v-else
-        class="v-avatar v-theme--dark v-avatar--density-default v-avatar--size-default v-avatar--variant-flat"
-        style="background-color: rgb(1, 144, 234)"
-      >
-        <span class="text-h5">
-          {{ user?.username?.charAt(0)?.toUpperCase() }}
-        </span>
-        <span class="v-avatar__underlay"></span>
-      </div>
+  <a
+    :href="`/communications/${
+      chatStore.chats.find((chat) => chat.id === message!.chatId)?.association
+        ?.id
+    }`"
+    @click.prevent
+    class="relative flex"
+  >
+    <div class="flex justify-center items-center">
+      <user-avatar size="50" :user-id="message!.userId" />
     </div>
-  </div>
+    <div style="max-width: 200px; max-height: 50px" class="text-ellipsis ml-2">
+      <p>
+        {{ message?.content }}
+      </p>
+      <small>
+        - {{ user?.username }} &bullet;
+        {{ chatStore.lookupChat(message!.chatId)?.name }}
+      </small>
+    </div>
+  </a>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
+import type { Message } from "@/gql/graphql";
+import { useUserStore } from "@/stores/user.store";
+import { computed } from "vue";
+import { useAppStore } from "@/stores/app.store";
+import { useChatStore } from "@/stores/chat.store";
+import UserAvatar from "@/components/User/UserAvatar.vue";
 
-export default defineComponent({
-  name: "MessageToast",
-  props: ["message"],
-  computed: {
-    user() {
-      return this.$user.users[this.message.userId];
-    }
+const appStore = useAppStore();
+const userStore = useUserStore();
+const chatStore = useChatStore();
+const props = defineProps({
+  message: {
+    type: Object as () => Message
   }
 });
-</script>
 
-<style>
-.message-toast {
-  background: rgba(64, 62, 62, 0.7);
-}
-</style>
+const user = computed(() => {
+  if (!props.message?.userId)
+    return {
+      username: "?",
+      avatar: null
+    };
+  return userStore.users[props.message.userId];
+});
+</script>

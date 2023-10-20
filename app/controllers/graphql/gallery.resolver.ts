@@ -31,6 +31,11 @@ import { DeleteUploadInput } from "@app/classes/graphql/gallery/deleteUploadInpu
 import { Success } from "@app/classes/graphql/generic/success"
 import { UpdateUploadInput } from "@app/classes/graphql/gallery/updateUploadInput"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { Star } from "@app/models/star.model"
+import {
+  StarUploadInput,
+  StarUploadResponse
+} from "@app/classes/graphql/gallery/star"
 
 const FileScalar = new GraphQLScalarType({
   name: "File",
@@ -187,6 +192,24 @@ export class GalleryResolver {
       .to(ctx.user!!.id)
       .emit("update", [upload.toJSON()])
     return upload
+  }
+
+  @Authorization({
+    scopes: "starred.modify"
+  })
+  @Mutation(() => StarUploadResponse)
+  async starUpload(@Ctx() ctx: Context, @Arg("input") input: StarUploadInput) {
+    return await this.galleryService.starUpload(input.attachment, ctx.user!!.id)
+  }
+
+  @FieldResolver(() => Star)
+  async starred(@Root() upload: Upload, @Ctx() ctx: Context) {
+    if (!ctx.user?.id) return null
+    return await upload.$get("starred", {
+      where: {
+        userId: ctx.user?.id
+      }
+    })
   }
 
   @FieldResolver(() => User)

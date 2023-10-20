@@ -3,6 +3,7 @@ import {
   Ctx,
   FieldResolver,
   Int,
+  Mutation,
   Query,
   Resolver,
   Root
@@ -28,6 +29,12 @@ import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { GraphQLError } from "graphql/error"
 import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import { col } from "sequelize"
+import { UpdateCollectionInput } from "@app/classes/graphql/collections/updateCollection"
+import { GqlError } from "@app/lib/gqlErrors"
+import { CacheService } from "@app/services/cache.service"
+import { Success } from "@app/classes/graphql/generic/success"
+import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import RateLimit from "@app/lib/graphql/RateLimit"
 
 export const PaginatedCollectionsResponse = PagerResponse(Collection)
 export type PaginatedCollectionsResponse = InstanceType<
@@ -37,7 +44,10 @@ export type PaginatedCollectionsResponse = InstanceType<
 @Resolver(Collection)
 @Service()
 export class CollectionResolver {
-  constructor(private collectionService: CollectionService) {}
+  constructor(
+    private collectionService: CollectionService,
+    private cacheService: CacheService
+  ) {}
   @Authorization({
     scopes: "collections.view",
     userOptional: true
@@ -140,6 +150,32 @@ export class CollectionResolver {
       configure: false,
       read: true
     }
+  }
+
+  @RateLimit({
+    window: 12,
+    max: 5
+  })
+  @Authorization({
+    scopes: "collections.modify"
+  })
+  @Mutation(() => Success)
+  async updateCollection(
+    @Arg("input") input: UpdateCollectionInput,
+    @Ctx() ctx: Context
+  ) {
+    const collection = await this.collectionService.getCollectionPermissions(
+      input.collectionId,
+      ctx.user!!.id,
+      "configure"
+    )
+    if (!collection) throw new GqlError("COLLECTION_NOT_FOUND")
+    const data = await this.collectionService.updateCollection(
+      input.collectionId,
+      input.name
+    )
+    await this.cacheService.resetCollectionCache(input.collectionId)
+    return { success: true }
   }
 }
 

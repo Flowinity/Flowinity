@@ -154,21 +154,38 @@ watch(
 
 // Socket handler
 useSocket.gallery.on("update", (data: Upload[]) => {
-  items.value = items.value.map((item) => {
-    const matchingUpload = data.find((upload) => upload.id === item.id);
-    if (matchingUpload) {
-      return {
-        ...item,
-        name: matchingUpload.name,
-        textMetadata: matchingUpload.textMetadata,
-        collections: matchingUpload.collections
-      };
+  data.forEach((upload) => {
+    const isNewItem = !items.value.some((item) => item.id === upload.id);
+    if (
+      isNewItem &&
+      props.type === GalleryType.Collection &&
+      upload.collections.some((collection) => collection.id === props.id)
+    ) {
+      items.value = [upload, ...items.value];
+    } else {
+      items.value = items.value.map((item) => {
+        if (item.id === upload.id) {
+          return {
+            ...item,
+            name: upload.name !== undefined ? upload.name : item.name,
+            textMetadata:
+              upload.textMetadata !== undefined
+                ? upload.textMetadata
+                : item.textMetadata,
+            collections:
+              upload.collections !== undefined
+                ? upload.collections
+                : item.collections,
+            starred:
+              upload.starred !== undefined ? upload.starred : item.starred
+          };
+        }
+        return item;
+      });
     }
-    return item;
   });
   console.log("update");
 });
-
 useSocket.gallery.on("delete", (data: number) => {
   items.value = items.value.filter((upload) => upload.id !== data);
 });

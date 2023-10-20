@@ -17,20 +17,25 @@ const props = defineProps({
 
 <template>
   <aside
-    class="border-r-2 sticky z-50 dark:border-outline-dark dark:bg-sidebar-dark p-3 border-dark space-x-1 flex flex-col overflow-y-auto overflow-x-hidden"
+    class="border-r-2 sticky z-50 dark:border-outline-dark dark:bg-sidebar-dark border-dark flex flex-col overflow-y-auto overflow-x-hidden"
     style="min-width: 256px; max-width: 256px"
     :class="{ 'h-screen': !props.drawer, 'h-[calc(100vh-64px)]': props.drawer }"
   >
-    <div v-if="appStore.currentRail" class="flex ml-4 items-center">
-      <component :is="appStore.currentRail?.icon" class="w-8" />
+    <div
+      v-if="appStore.currentRail"
+      class="flex items-center pt-0 dark:border-outline-dark border-b-2 border-outline-dark"
+      style="min-height: 64px; max-height: 64px"
+    >
+      <component :is="appStore.currentRail?.icon" class="w-8 ml-4" />
       <p class="text-xl font-semibold ml-4">
         {{ appStore.currentRail.name }}
       </p>
     </div>
     <Transition name="slide-fade" mode="out-in">
       <div
-        class="justify-between flex-col mt-6 flex-1"
+        class="justify-between flex-col flex-1 px-3"
         :key="appStore.currentRail?.id"
+        style="margin-top: 16px"
       >
         <div class="flex-col flex gap-y-2 flex-1">
           <template v-if="appStore.currentRail?.id === RailMode.CHAT">
@@ -47,6 +52,8 @@ const props = defineProps({
                         ? functions.avatar(chat)
                         : undefined
                     "
+                    :status="chat.type === 'direct'"
+                    :badge="chat.unread > 99 ? '99+' : chat.unread"
                   ></user-avatar>
                 </template>
                 <template #title>
@@ -83,7 +90,7 @@ const props = defineProps({
       </div>
     </Transition>
     <Transition name="slide-fade" mode="out-in">
-      <div class="flex-col flex gap-y-2" :key="appStore.currentRail?.id">
+      <div class="flex-col flex gap-y-2 px-3" :key="appStore.currentRail?.id">
         <SideBarItem
           v-for="item in appStore.currentMiscNavOptions"
           :key="item.name"

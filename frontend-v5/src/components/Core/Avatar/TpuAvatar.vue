@@ -5,7 +5,7 @@ import { ref } from "vue";
 const props = defineProps({
   size: {
     default: 24,
-    type: Number
+    type: [Number, String]
   },
   src: {
     type: String
@@ -27,31 +27,37 @@ function loadError() {
 </script>
 
 <template>
-  <div
-    class="rounded-full whitespace-nowrap overflow-hidden overflow-ellipsis select-none"
-    :class="{ gradient: props.color === true }"
-    :style="`min-width: ${props.size}px; min-height: ${
-      props.size
-    }px; max-width: ${props.size}px; max-height: ${props.size}px; background: ${
-      props.color !== undefined && !error
-        ? theme.colors[props.color || 'blue']
-        : undefined
-    }`"
-  >
+  <div class="relative">
     <slot name="outer" />
-    <template v-if="props.src && !error">
-      <img
-        @error="loadError"
-        style="width: 100%; height: 100%"
-        :src="props.src"
-        :alt="props.alt || 'Avatar'"
-      />
-    </template>
-    <template v-else>
-      <div class="flex items-center justify-center h-full">
-        <slot />
-      </div>
-    </template>
+
+    <div
+      class="rounded-full whitespace-nowrap overflow-hidden overflow-ellipsis select-none relative"
+      :class="{ gradient: props.color === true }"
+      :style="`min-width: ${props.size}px; min-height: ${
+        props.size
+      }px; max-width: ${props.size}px; max-height: ${
+        props.size
+      }px; background: ${
+        props.color !== undefined && !error
+          ? theme.colors[props.color || 'blue']
+          : undefined
+      }`"
+      v-bind="$attrs"
+    >
+      <template v-if="props.src && !error">
+        <img
+          @error="loadError"
+          style="width: 100%; height: 100%"
+          :src="props.src"
+          :alt="props.alt || 'Avatar'"
+        />
+      </template>
+      <template v-else>
+        <div class="flex items-center justify-center h-full">
+          <slot />
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 

@@ -540,6 +540,30 @@ export class CollectionService {
     }
   }
 
+  async emitToRecipients(
+    collectionId: number,
+    key: string,
+    value: any,
+    nsp: SocketNamespaces = SocketNamespaces.GALLERY
+  ) {
+    const collection = await Collection.findOne({
+      where: {
+        id: collectionId
+      },
+      include: [
+        {
+          model: CollectionUser,
+          as: "users"
+        }
+      ]
+    })
+    if (!collection) return
+    socket.of(nsp).to(collection.userId).emit(key, value)
+    for (const user of collection.users) {
+      socket.of(nsp).to(user.recipientId).emit(key, value)
+    }
+  }
+
   async updateCollection(id: number, name: string) {
     const collection = await Collection.findOne({
       where: {
@@ -550,6 +574,11 @@ export class CollectionService {
     if (!collection) throw Errors.COLLECTION_NOT_FOUND
 
     await collection?.update({
+      name
+    })
+
+    this.emitToRecipients(id, "collectionUpdate", {
+      id,
       name
     })
 

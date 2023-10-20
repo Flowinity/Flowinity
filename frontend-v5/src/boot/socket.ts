@@ -12,6 +12,7 @@ import type {
   ChatAssociation,
   ChatEmoji,
   ChatRank,
+  Collection,
   Friend,
   FriendNickname,
   FriendStatus,
@@ -21,6 +22,8 @@ import type {
 } from "@/gql/graphql";
 import { UserStoredStatus } from "@/gql/graphql";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
+import { useMessagesStore } from "@/stores/messages.store";
+import { useCollectionsStore } from "@/stores/collections.store";
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();
   const index = chat.chats.findIndex((c) => c.id === chatId);
@@ -35,9 +38,11 @@ function checkMessage(id: number, chatId: number) {
 export default async function setup(app) {
   const sockets = app.config.globalProperties.$sockets;
   const chat = useChatStore();
+  const messages = useMessagesStore();
   const friends = useFriendsStore();
   const user = useUserStore();
   const experiments = useExperimentsStore();
+  const collections = useCollectionsStore();
   const toast = useToast();
 
   sockets.chat.on("chatCreated", (newChat: Chat) => {
@@ -54,38 +59,51 @@ export default async function setup(app) {
     chat.chats.splice(index, 1);
   });
   sockets.chat.on("message", async (newMessage: any) => {
-    if (newMessage.chat.id === chat.selectedChat?.id && chat.isCommunications)
-      return;
     const index = chat.chats.findIndex((c) => c.id === newMessage.chat.id);
     if (index === -1) return;
     // move chat to top
     const chatToMove = chat.chats[index];
-    chat.chats.splice(index, 1);
-    chat.chats.unshift(chatToMove);
-    const newIndex = chat.chats.findIndex((c) => c.id === newMessage.chat.id);
+    chat.chats = [
+      chatToMove,
+      ...chat.chats.slice(0, index),
+      ...chat.chats.slice(index + 1)
+    ];
+    const msgChat = chat.chats.find((c) => c.id === newMessage.chat.id);
+    const assocId = msgChat?.association?.id || -1;
     if (
-      experiments.experiments.COMMUNICATIONS_KEEP_LOADED &&
-      !chat.chats[newIndex].messages &&
-      !chat.chats[newIndex].messages?.find(
-        (m) => m.id === newMessage.message.id
-      )
+      assocId &&
+      messages.messages[assocId] &&
+      !messages.messages[assocId].find((m) => m.id === newMessage.message.id)
     ) {
-      if (!chat.chats[newIndex]?.messages) chat.chats[newIndex].messages = [];
-      chat.chats[newIndex].messages.unshift(newMessage.message as Message);
+      const index = messages.messages[assocId]?.findIndex(
+        (msg) => msg.pending && msg.content === newMessage.message.content
+      );
+      if (index === -1) {
+        messages.messages[assocId].unshift(newMessage.message as Message);
+      } else {
+        messages.messages[assocId].splice(index, 1);
+        messages.messages[assocId].unshift(newMessage.message);
+      }
+
+      if (
+        document.hasFocus() &&
+        chat.selectedChat?.id === newMessage.message.chatId
+      ) {
+        chat.readChat();
+      }
     }
     if (
       newMessage.message.userId === user.user?.id ||
-      (chatToMove.association.notifications === "mentions" &&
+      (chatToMove.association?.notifications === "mentions" &&
         !newMessage.mention) ||
-      chatToMove.association.notifications === "none"
+      chatToMove.association?.notifications === "none"
     )
       return;
-    chat.chats[newIndex].unread++;
     if (
       user.user?.storedStatus !== UserStoredStatus.Busy &&
       newMessage.message.userId !== user.user?.id
     ) {
-      chat.sound();
+      messages.sound();
       toast.info(
         {
           component: MessageToast,
@@ -126,7 +144,7 @@ export default async function setup(app) {
   });
   sockets.chat.on("friendRequestAccepted", async (data: Friend) => {
     friends.friends.push(data);
-    chat.sound();
+    messages.sound();
   });
   sockets.chat.on(
     "edit",
@@ -166,7 +184,7 @@ export default async function setup(app) {
   );
   sockets.user.on("notification", async (data: any) => {
     user.user?.notifications.unshift(data);
-    chat.sound();
+    messages.sound();
   });
   sockets.chat.on("messageDelete", (data: { chatId: number; id: number }) => {
     const message = checkMessage(data.id, data.chatId);
@@ -188,19 +206,20 @@ export default async function setup(app) {
     };
   });
   sockets.chat.on("readReceipt", (data: ChatAssociation) => {
-    const index = chat.chats.findIndex((c: Chat) => c.id === data.chatId);
-    if (index === -1) return;
-    if (!chat.chats[index].messages) return;
-    const messageIndex = chat.chats[index].messages.findIndex(
+    const chat1 = chat.chats.find((c: Chat) => c.id === data.chatId);
+    if (!chat1) return;
+    const assocId = chat1.association?.id || -1;
+    if (!messages.messages[assocId]?.length) return;
+    const messageIndex = messages.messages[assocId].findIndex(
       (m: Message) => m.id === data.id
     );
     if (messageIndex === -1) return;
-    chat.chats[index].messages.forEach((message: Message) => {
+    messages.messages[assocId].forEach((message: Message) => {
       message.readReceipts = message.readReceipts.filter(
         (r: ChatAssociation) => r.userId !== data.userId
       );
     });
-    chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
+    messages.messages[assocId][messageIndex].readReceipts.push(data);
   });
   sockets.chat.on("chatUserUpdate", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.chatId);
@@ -503,6 +522,26 @@ export default async function setup(app) {
       const u = user.tracked.find((user) => user.id === data.id);
       if (!u) return;
       u.avatar = data.avatar;
+    }
+  );
+
+  sockets.gallery.on(
+    "collectionUpdate",
+    (data: { id: number; name: string }) => {
+      const collectionIndex = collections.items.findIndex(
+        (collection) => collection.id === data.id
+      );
+
+      if (collectionIndex !== -1) {
+        // Create a new array with the updated object
+        const updatedItems: Collection[] = [...collections.items];
+        updatedItems[collectionIndex] = {
+          ...updatedItems[collectionIndex],
+          name: data.name
+        };
+
+        collections.items = updatedItems;
+      }
     }
   );
 }

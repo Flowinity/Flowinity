@@ -8,7 +8,8 @@ import {
   Post,
   QueryParam,
   Res,
-  UploadedFile
+  UploadedFile,
+  UseBefore
 } from "routing-controllers"
 import { Response } from "express"
 import { Service } from "typedi"
@@ -34,6 +35,7 @@ import { CollectionUser } from "@app/models/collectionUser.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Upload } from "@app/models/upload.model"
 import { CollectionFilter } from "@app/classes/graphql/collections/collections"
+import rateLimits from "@app/lib/rateLimits"
 
 @Service()
 @JsonController("/collections")
@@ -354,6 +356,7 @@ export class CollectionControllerV3 {
     )
   }
 
+  @UseBefore(rateLimits.standardLimiter)
   @Patch("/:collectionId")
   async updateCollection(
     @Auth("collections.modify") user: User,
@@ -438,9 +441,8 @@ export class CollectionControllerV3 {
 
     if (!permission) throw Errors.COLLECTION_NO_PERMISSION
 
-    const collection: Collection = await this.collectionService.getCollection(
-      collectionId
-    )
+    const collection: Collection =
+      await this.collectionService.getCollection(collectionId)
 
     await Collection.destroy({
       where: {

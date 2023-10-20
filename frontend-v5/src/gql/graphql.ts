@@ -848,9 +848,11 @@ export type Message = {
   editedAt?: Maybe<Scalars['Date']['output']>;
   embeds: Array<Embed>;
   emoji?: Maybe<Array<ChatEmoji>>;
+  error: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
   legacyUser?: Maybe<PartialUserBase>;
   legacyUserId?: Maybe<Scalars['Int']['output']>;
+  pending: Scalars['Boolean']['output'];
   pinned: Scalars['Boolean']['output'];
   readReceipts: Array<ChatAssociation>;
   reply?: Maybe<Message>;
@@ -926,6 +928,7 @@ export type Mutation = {
   saveNote: Note;
   sendMessage: Message;
   setExperiment: Experiment;
+  starUpload: StarUploadResponse;
   /** Toggle the ShareLink for a Note. */
   toggleNoteShare: Note;
   toggleUserRank: GenericSuccessObject;
@@ -1123,6 +1126,11 @@ export type MutationSendMessageArgs = {
 
 export type MutationSetExperimentArgs = {
   input: SetExperimentInput;
+};
+
+
+export type MutationStarUploadArgs = {
+  input: StarUploadInput;
 };
 
 
@@ -1683,6 +1691,17 @@ export type Star = {
   id: Scalars['Int']['output'];
   user: PartialUserBase;
   userId: Scalars['Float']['output'];
+};
+
+export type StarUploadInput = {
+  /** The upload's attachment ID, not numerical ID, such as 1d7fe21g3jd1.png */
+  attachment: Scalars['String']['input'];
+};
+
+export type StarUploadResponse = {
+  __typename?: 'StarUploadResponse';
+  star?: Maybe<Star>;
+  status: Scalars['Boolean']['output'];
 };
 
 export type Stats = {

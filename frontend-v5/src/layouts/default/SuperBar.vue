@@ -3,11 +3,16 @@ import { useAppStore } from "@/stores/app.store";
 import SuperBarItem from "@/components/Core/Navigation/SuperBarItem.vue";
 import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
 import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
+import UserAvatar from "@/components/User/UserAvatar.vue";
+import { useUserStore } from "@/stores/user.store";
+import RiNotificationLine from "vue-remix-icons/icons/ri-notification-line.vue";
+import RiNotificationFill from "vue-remix-icons/icons/ri-notification-fill.vue";
 
 const appStore = useAppStore();
 const props = defineProps({
   drawer: Boolean
 });
+const userStore = useUserStore();
 </script>
 
 <template>
@@ -19,8 +24,24 @@ const props = defineProps({
     <div class="justify-between flex flex-col h-full">
       <div class="items-start">
         <div class="flex flex-col gap-y-4">
-          <img src="@/assets/flowinity.svg" alt="Flowinity Logo" />
-          <super-bar-item :highlighted="true">
+          <img
+            src="@/assets/flowinity.svg"
+            alt="Flowinity Logo"
+            @click="$router.push('/')"
+            class="cursor-pointer"
+            v-tooltip.right="'Flowinity'"
+          />
+          <super-bar-item
+            :highlighted="true"
+            @click="$app.dialogs.core.quickSwitcher.value = true"
+          >
+            <RiNotificationLine v-if="!userStore.unreadNotifications.length" />
+            <RiNotificationFill v-else />
+          </super-bar-item>
+          <super-bar-item
+            :highlighted="true"
+            @click="$app.dialogs.core.quickSwitcher.value = true"
+          >
             <RiSearchLine />
           </super-bar-item>
         </div>
@@ -49,7 +70,7 @@ const props = defineProps({
       </div>
       <div class="items-center"></div>
       <div class="items-end">
-        <div class="flex flex-col gap-y-4">
+        <div class="flex flex-col gap-y-2">
           <super-bar-item
             v-for="item in appStore.navigation.railOptions.filter(
               (opt) => opt.misc
@@ -68,11 +89,16 @@ const props = defineProps({
               "
             />
           </super-bar-item>
-          <img
-            class="rounded-full"
-            src="https://i.troplo.com/i/50ba79e4.png"
-            alt="Profile picture"
-          />
+          <super-bar-item
+            class="flex justify-center align-middle items-center rounded-xl"
+            style="height: 47px"
+          >
+            <user-avatar
+              :user-id="userStore.user?.id"
+              :username="userStore.user?.username"
+              :status="true"
+            />
+          </super-bar-item>
         </div>
       </div>
     </div>
