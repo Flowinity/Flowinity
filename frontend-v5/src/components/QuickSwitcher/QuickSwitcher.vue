@@ -52,11 +52,11 @@
 </template>
 
 <script setup lang="ts">
-import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
+import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { RailMode, useAppStore } from "@/stores/app.store";
-import TextField from "@/components/Core/Input/TextField.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
 import { computed, h, markRaw, ref, watch } from "vue";
-import Card from "@/components/Core/Card/Card.vue";
+import Card from "@/components/Framework/Card/Card.vue";
 import RiArrowGoBack from "vue-remix-icons/icons/ri-arrow-go-back-line.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useChatStore } from "@/stores/chat.store";

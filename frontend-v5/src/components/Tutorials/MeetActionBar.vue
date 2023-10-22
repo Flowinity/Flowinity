@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import Card from "@/components/Core/Card/Card.vue";
+import Card from "@/components/Framework/Card/Card.vue";
 </script>
 
 <style scoped></style>

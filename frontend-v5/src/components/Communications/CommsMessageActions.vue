@@ -22,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import Card from "@/components/Core/Card/Card.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import Card from "@/components/Framework/Card/Card.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiEditLine from "vue-remix-icons/icons/ri-edit-line.vue";
 import RiDeleteBinLine from "vue-remix-icons/icons/ri-delete-bin-line.vue";
 import RiReplyLine from "vue-remix-icons/icons/ri-reply-line.vue";

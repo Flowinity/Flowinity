@@ -49,10 +49,10 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import TpuToolbar from "@/components/Core/Toolbar/TpuToolbar.vue";
-import Card from "@/components/Core/Card/Card.vue";
+import TpuToolbar from "@/components/Framework/Toolbar/TpuToolbar.vue";
+import Card from "@/components/Framework/Card/Card.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 
 const props = defineProps({
   modelValue: Boolean,

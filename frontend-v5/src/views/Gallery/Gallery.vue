@@ -62,7 +62,7 @@ import { computed, onMounted, type Ref, ref, watch } from "vue";
 import { GalleryQuery } from "@/graphql/gallery/gallery.graphql";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import { useApolloClient } from "@vue/apollo-composable";
-import TpuPager from "@/components/Core/Pager/TpuPager.vue";
+import TpuPager from "@/components/Framework/Pager/TpuPager.vue";
 import DeleteUpload from "@/components/Gallery/Dialogs/DeleteUpload.vue";
 import { useAppStore } from "@/stores/app.store";
 import AddToCollection from "@/components/Gallery/Dialogs/AddToCollection.vue";

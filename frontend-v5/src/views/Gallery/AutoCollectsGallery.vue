@@ -139,7 +139,7 @@ import {
 import { useCollectionsStore } from "@/stores/collections.store";
 import { isNumeric } from "@/plugins/isNumeric";
 import { useAppStore } from "@/stores/app.store";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiShareForwardFill from "vue-remix-icons/icons/ri-share-forward-fill.vue";
 import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
 import { useI18n } from "vue-i18n";

@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import TextField from "@/components/Core/Input/TextField.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
 import { ref } from "vue";
 
 const input = ref<InstanceType<typeof TextField> | null>(null);

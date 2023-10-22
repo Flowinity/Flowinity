@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import TextField from "@/components/Core/Input/TextField.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
 import { computed, ref, watch } from "vue";
 const props = defineProps({
   modelValue: [String, Number],

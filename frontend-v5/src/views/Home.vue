@@ -78,12 +78,12 @@
 </template>
 
 <script setup lang="ts">
-import Card from "@/components/Core/Card/Card.vue";
-import Container from "@/components/Core/Container/Container.vue";
+import Card from "@/components/Framework/Card/Card.vue";
+import Container from "@/components/Framework/Container/Container.vue";
 import { useUserStore } from "@/stores/user.store";
 import RiPencilLine from "vue-remix-icons/icons/ri-pencil-line.vue";
 import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import { useAppStore } from "@/stores/app.store";
 
 const userStore = useUserStore();

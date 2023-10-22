@@ -119,29 +119,29 @@
 </template>
 
 <script setup lang="ts">
-import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
+import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { useI18n } from "vue-i18n";
-import TextField from "@/components/Core/Input/TextField.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useCollectionsStore } from "@/stores/collections.store";
-import CardActions from "@/components/Core/Card/CardActions.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import CardActions from "@/components/Framework/Card/CardActions.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import { useApolloClient } from "@vue/apollo-composable";
 import { UpdateCollectionMutation } from "@/graphql/collections/updateCollection.graphql";
-import TpuSelect from "@/components/Core/Input/TpuSelect.vue";
+import TpuSelect from "@/components/Framework/Input/TpuSelect.vue";
 import { useAppStore } from "@/stores/app.store";
 import functions from "@/plugins/functions";
 import { useToast } from "vue-toastification";
 import { Collection } from "@/gql/graphql";
-import TpuDataTable from "@/components/Core/Table/TpuDataTable.vue";
-import TpuCheckbox from "@/components/Core/Input/TpuCheckbox.vue";
+import TpuDataTable from "@/components/Framework/Table/TpuDataTable.vue";
+import TpuCheckbox from "@/components/Framework/Input/TpuCheckbox.vue";
 import {
   AddCollectionUserMutation,
   RemoveCollectionUser,
   UpdateCollectionUserPermissionsMutation
 } from "@/graphql/collections/collectionUser.graphql";
 import { useFriendsStore } from "@/stores/friends.store";
-import TpuAutoComplete from "@/components/Core/Input/TpuAutoComplete.vue";
+import TpuAutoComplete from "@/components/Framework/Input/TpuAutoComplete.vue";
 import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import { useUserStore } from "@/stores/user.store";

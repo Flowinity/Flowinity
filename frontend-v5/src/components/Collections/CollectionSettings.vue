@@ -28,13 +28,13 @@
 </template>
 
 <script setup lang="ts">
-import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
+import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { useI18n } from "vue-i18n";
-import TextField from "@/components/Core/Input/TextField.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
 import { onMounted, ref, watch } from "vue";
 import { useCollectionsStore } from "@/stores/collections.store";
-import CardActions from "@/components/Core/Card/CardActions.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import CardActions from "@/components/Framework/Card/CardActions.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import { useApolloClient } from "@vue/apollo-composable";
 import { UpdateCollectionMutation } from "@/graphql/collections/updateCollection.graphql";
 

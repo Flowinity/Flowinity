@@ -14,7 +14,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import TpuDivider from "@/components/Core/Divider/TpuDivider.vue";
+import TpuDivider from "@/components/Framework/Divider/TpuDivider.vue";
 
 const props = defineProps({
   position: {

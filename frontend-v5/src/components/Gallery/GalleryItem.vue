@@ -170,13 +170,13 @@
 
 <script setup lang="ts">
 import type { Upload } from "@/gql/graphql";
-import Card from "@/components/Core/Card/Card.vue";
+import Card from "@/components/Framework/Card/Card.vue";
 import { useAppStore } from "@/stores/app.store";
-import TpuToolbar from "@/components/Core/Toolbar/TpuToolbar.vue";
+import TpuToolbar from "@/components/Framework/Toolbar/TpuToolbar.vue";
 import dayjs from "../../plugins/dayjs";
 import functions from "../../plugins/functions";
-import CardActions from "@/components/Core/Card/CardActions.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import CardActions from "@/components/Framework/Card/CardActions.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiEditLine from "vue-remix-icons/icons/ri-edit-line.vue";
 import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
@@ -191,9 +191,9 @@ import RiCircleLine from "vue-remix-icons/icons/ri-circle-line.vue";
 import RiCheckboxCircleFill from "vue-remix-icons/icons/ri-checkbox-circle-fill.vue";
 import RiAlertLine from "vue-remix-icons/icons/ri-alert-line.vue";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
-import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
+import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { computed, ref } from "vue";
-import TpuSlideGroup from "@/components/Core/SlideGroup/TpuSlideGroup.vue";
+import TpuSlideGroup from "@/components/Framework/SlideGroup/TpuSlideGroup.vue";
 import { useCollectionsStore } from "@/stores/collections.store";
 import { StarUploadMutation } from "@/graphql/gallery/starUpload";
 import { useApolloClient } from "@vue/apollo-composable";

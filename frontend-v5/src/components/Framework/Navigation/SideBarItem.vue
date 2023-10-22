@@ -2,7 +2,7 @@
 import type { NavigationOption } from "@/stores/app.store";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import TpuBadge from "@/components/Core/Badge/TpuBadge.vue";
+import TpuBadge from "@/components/Framework/Badge/TpuBadge.vue";
 import { useAppStore } from "@/stores/app.store";
 
 const props = defineProps({

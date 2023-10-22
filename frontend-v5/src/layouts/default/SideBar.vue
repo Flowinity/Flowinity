@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { RailMode, useAppStore } from "@/stores/app.store";
-import SideBarItem from "@/components/Core/Navigation/SideBarItem.vue";
+import SideBarItem from "@/components/Framework/Navigation/SideBarItem.vue";
 import { useChatStore } from "@/stores/chat.store";
 import { useCollectionsStore } from "@/stores/collections.store";
-import TpuOverline from "@/components/Core/Typography/TpuOverline.vue";
+import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
 import UserAvatar from "@/components/User/UserAvatar.vue";
 import functions from "@/plugins/functions";
 

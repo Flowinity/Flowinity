@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import theme from "@/plugins/theme";
 import { computed } from "vue";
-import TpuSpinner from "@/components/Core/Spinner/TpuSpinner.vue";
+import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
 import { RouterLink } from "vue-router";
 
 const props = defineProps({

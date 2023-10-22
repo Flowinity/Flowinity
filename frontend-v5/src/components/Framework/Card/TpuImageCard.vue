@@ -26,8 +26,8 @@
 </template>
 
 <script setup lang="ts">
-import Card from "@/components/Core/Card/Card.vue";
-import TpuImg from "@/components/Core/Image/TpuImg.vue";
+import Card from "@/components/Framework/Card/Card.vue";
+import TpuImg from "@/components/Framework/Image/TpuImg.vue";
 
 const props = defineProps({
   src: String,

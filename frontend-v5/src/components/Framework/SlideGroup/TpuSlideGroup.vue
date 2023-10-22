@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import RiArrowLeftSLine from "vue-remix-icons/icons/ri-arrow-left-s-line.vue";
 import RiArrowRightSLine from "vue-remix-icons/icons/ri-arrow-right-s-line.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import { computed, ref } from "vue";
 const scrollX = ref(0);
 const carousel = ref<HTMLElement | null>(null);

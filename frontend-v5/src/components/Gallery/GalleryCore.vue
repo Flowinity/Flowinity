@@ -153,7 +153,7 @@ import RiDeleteBinLine from "vue-remix-icons/icons/ri-delete-bin-line.vue";
 import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import RiUploadLine from "vue-remix-icons/icons/ri-upload-cloud-2-line.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import MdiDice from "@/components/Icons/MdiDice.vue";
 import { useI18n } from "vue-i18n";
 import { useApolloClient } from "@vue/apollo-composable";

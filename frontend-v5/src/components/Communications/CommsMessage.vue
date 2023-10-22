@@ -82,7 +82,7 @@ import { useUserStore } from "@/stores/user.store";
 import { useFriendsStore } from "@/stores/friends.store";
 import dayjs from "../../plugins/dayjs";
 import CommsMessageActions from "@/components/Communications/CommsMessageActions.vue";
-import TpuHover from "@/components/Core/Hover/TpuHover.vue";
+import TpuHover from "@/components/Framework/Hover/TpuHover.vue";
 import { onMounted, onUnmounted, ref } from "vue";
 import MessageReply from "@/components/Communications/MessageReply.vue";
 

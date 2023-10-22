@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import TpuOverline from "@/components/Core/Typography/TpuOverline.vue";
+import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
 </script>
 
 <style scoped></style>

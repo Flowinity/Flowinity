@@ -110,15 +110,15 @@
 </template>
 
 <script setup lang="ts">
-import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
+import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { useI18n } from "vue-i18n";
 import { useAppStore } from "@/stores/app.store";
-import CardActions from "@/components/Core/Card/CardActions.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import CardActions from "@/components/Framework/Card/CardActions.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiUploadLine from "vue-remix-icons/icons/ri-upload-cloud-2-line.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
-import TpuProgressBar from "@/components/Core/Spinner/TpuProgressBar.vue";
+import TpuProgressBar from "@/components/Framework/Spinner/TpuProgressBar.vue";
 import { useCollectionsStore } from "@/stores/collections.store";
 const { t } = useI18n();
 const props = defineProps({

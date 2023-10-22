@@ -122,12 +122,12 @@
 import { useAppStore } from "@/stores/app.store";
 import RiArrowRightSLine from "vue-remix-icons/icons/ri-arrow-right-s-line.vue";
 import RiMenuLine from "vue-remix-icons/icons/ri-menu-line.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import { useUserStore } from "@/stores/user.store";
 import { computed, ref, watch, markRaw } from "vue";
 import { debounce } from "lodash";
 import MeetActionBar from "@/components/Tutorials/MeetActionBar.vue";
-import TpuSpinner from "@/components/Core/Spinner/TpuSpinner.vue";
+import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
 
 const appStore = useAppStore();
 const userStore = useUserStore();

@@ -24,7 +24,7 @@ import { computed, ref } from "vue";
 import RiCheckboxBlankLine from "vue-remix-icons/icons/ri-checkbox-blank-line.vue";
 import RiCheckboxFill from "vue-remix-icons/icons/ri-checkbox-fill.vue";
 import theme from "@/plugins/theme";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 
 const props = defineProps({
   modelValue: Boolean,

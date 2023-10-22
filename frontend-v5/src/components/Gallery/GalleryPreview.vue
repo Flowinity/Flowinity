@@ -41,11 +41,11 @@
 import type { Upload } from "@/gql/graphql";
 import RiFileLine from "vue-remix-icons/icons/ri-file-line.vue";
 import RiExternalLinkLine from "vue-remix-icons/icons/ri-external-link-line.vue";
-import TpuImg from "@/components/Core/Image/TpuImg.vue";
+import TpuImg from "@/components/Framework/Image/TpuImg.vue";
 import { useAppStore } from "@/stores/app.store";
-import TpuSpinner from "@/components/Core/Spinner/TpuSpinner.vue";
-import TpuHover from "@/components/Core/Hover/TpuHover.vue";
-import TpuOverlay from "@/components/Core/Overlay/TpuOverlay.vue";
+import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
+import TpuHover from "@/components/Framework/Hover/TpuHover.vue";
+import TpuOverlay from "@/components/Framework/Overlay/TpuOverlay.vue";
 
 const appStore = useAppStore();
 const props = defineProps({

@@ -34,13 +34,13 @@
 </template>
 
 <script setup lang="ts">
-import Card from "@/components/Core/Card/Card.vue";
+import Card from "@/components/Framework/Card/Card.vue";
 import { useAppStore } from "@/stores/app.store";
-import TextField from "@/components/Core/Input/TextField.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import CardActions from "@/components/Core/Card/CardActions.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import CardActions from "@/components/Framework/Card/CardActions.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import { useApolloClient } from "@vue/apollo-composable";
 import { LoginMutation } from "@/graphql/auth/login.graphql";
 import { useRouter } from "vue-router";

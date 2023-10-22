@@ -3,12 +3,12 @@ import { RouterView, useRoute } from "vue-router";
 import SuperBar from "@/layouts/default/SuperBar.vue";
 import SideBar from "@/layouts/default/SideBar.vue";
 import AppBar from "@/layouts/default/AppBar.vue";
-import TpuNavigationDrawer from "@/components/Core/NavigationDrawer/TpuNavigationDrawer.vue";
+import TpuNavigationDrawer from "@/components/Framework/NavigationDrawer/TpuNavigationDrawer.vue";
 import { useAppStore } from "@/stores/app.store";
 import { useUserStore } from "@/stores/user.store";
 import MemberSideBar from "@/layouts/default/MemberSideBar.vue";
 import QuickSwitcher from "@/components/QuickSwitcher/QuickSwitcher.vue";
-import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
+import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 
 const appStore = useAppStore();
 const userStore = useUserStore();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TpuAvatar from "@/components/Core/Avatar/TpuAvatar.vue";
+import TpuAvatar from "@/components/Framework/Avatar/TpuAvatar.vue";
 import { computed } from "vue";
 import { useUserStore } from "@/stores/user.store";
 import { useAppStore } from "@/stores/app.store";

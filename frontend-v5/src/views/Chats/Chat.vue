@@ -65,9 +65,9 @@ import { useUserStore } from "@/stores/user.store";
 import { Chat, Message, MessageType } from "@/gql/graphql";
 import { useSocket } from "@/boot/socket.service";
 import { useMessagesStore } from "@/stores/messages.store";
-import Card from "@/components/Core/Card/Card.vue";
+import Card from "@/components/Framework/Card/Card.vue";
 import MessageReply from "@/components/Communications/MessageReply.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import { useAppStore } from "@/stores/app.store";
 

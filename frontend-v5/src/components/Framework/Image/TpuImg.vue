@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import TpuSpinner from "@/components/Core/Spinner/TpuSpinner.vue";
+import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
 import RiLinkUnlinkM from "vue-remix-icons/icons/ri-link-unlink-m.vue";
 import { isNumeric } from "@/plugins/isNumeric";
 

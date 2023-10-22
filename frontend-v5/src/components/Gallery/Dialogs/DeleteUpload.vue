@@ -26,11 +26,11 @@
 </template>
 
 <script setup lang="ts">
-import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
+import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { useI18n } from "vue-i18n";
 import { useAppStore } from "@/stores/app.store";
-import CardActions from "@/components/Core/Card/CardActions.vue";
-import TpuButton from "@/components/Core/Button/TpuButton.vue";
+import CardActions from "@/components/Framework/Card/CardActions.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import { DeleteUploadMutation } from "@/graphql/gallery/gallery.graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { ref } from "vue";

@@ -99,9 +99,9 @@
 </template>
 
 <script setup lang="ts">
-import TextField from "@/components/Core/Input/TextField.vue";
-import TpuSelect from "@/components/Core/Input/TpuSelect.vue";
-import TpuOverline from "@/components/Core/Typography/TpuOverline.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
+import TpuSelect from "@/components/Framework/Input/TpuSelect.vue";
+import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
 import { GalleryFilter, GalleryOrder, GallerySort } from "@/gql/graphql";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";

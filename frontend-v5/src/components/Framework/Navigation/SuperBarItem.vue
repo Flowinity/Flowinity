@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TpuBadge from "@/components/Core/Badge/TpuBadge.vue";
+import TpuBadge from "@/components/Framework/Badge/TpuBadge.vue";
 
 const props = defineProps({
   selected: Boolean,
