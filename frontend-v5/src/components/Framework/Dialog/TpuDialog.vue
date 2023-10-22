@@ -5,8 +5,11 @@
       v-if="props.modelValue"
       @mousedown="scrimDetect"
       class="dialog-outer"
-      @keydown.esc="$emit('update:modelValue', false)"
-      @mouseup="scrim ? $emit('update:modelValue', false) : () => {}"
+      @mouseup="
+        scrim && !props.persistent
+          ? $emit('update:modelValue', false)
+          : () => {}
+      "
     >
       <slot name="dialog-outer">
         <div
@@ -57,13 +60,21 @@ import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 const props = defineProps({
   modelValue: Boolean,
   width: [Number, String],
-  height: [Number, String]
+  height: [Number, String],
+  persistent: Boolean
 });
-defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue"]);
 const scrim = ref(false);
 
 function scrimDetect(event) {
   scrim.value = event?.target?.classList.contains("dialog-outer");
+}
+
+function handleClose(event: KeyboardEvent) {
+  if (props.persistent) return;
+  if (event.key === "Escape") {
+    emit("update:modelValue", false);
+  }
 }
 
 watch(
@@ -71,8 +82,10 @@ watch(
   (val) => {
     if (!val) {
       document.body.classList.remove("blocked-scroll");
+      document.removeEventListener("keydown", handleClose);
       return;
     }
+    document.addEventListener("keydown", handleClose);
     document.body.classList.add("blocked-scroll");
   }
 );

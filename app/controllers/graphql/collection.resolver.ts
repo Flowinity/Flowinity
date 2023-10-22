@@ -40,6 +40,8 @@ import {
   UpdateCollectionUserPermissionsInput
 } from "@app/classes/graphql/collections/collectionUsers"
 import Errors from "@app/lib/errors"
+import { CollectionItem } from "@app/models/collectionItem.model"
+import { CreateCollectionInput } from "@app/classes/graphql/collections/createCollection"
 
 export const PaginatedCollectionsResponse = PagerResponse(Collection)
 export type PaginatedCollectionsResponse = InstanceType<
@@ -74,6 +76,28 @@ export class CollectionResolver {
     )) as PaginatedCollectionsResponse
   }
 
+  @RateLimit({
+    window: 5,
+    max: 5
+  })
+  @Authorization({
+    scopes: "collections.create"
+  })
+  @Mutation(() => Collection)
+  async createCollection(
+    @Ctx() ctx: Context,
+    @Arg("input") input: CreateCollectionInput
+  ) {
+    const collection = await this.collectionService.createCollection(
+      ctx.user!!.id,
+      input.name
+    )
+
+    await this.cacheService.resetCollectionCache(collection.id)
+
+    return collection
+  }
+
   @FieldResolver(() => [CollectionUser])
   async users(@Root() collection: Collection) {
     return await collection.$get("users")
@@ -104,6 +128,30 @@ export class CollectionResolver {
   @FieldResolver(() => CollectionUser)
   async recipient(@Root() collection: Collection) {
     return await collection.$get("recipient")
+  }
+
+  @FieldResolver(() => String, {
+    nullable: true
+  })
+  async banner(@Root() collection: Collection) {
+    if (collection.image) return collection.image
+    if (collection.preview?.attachment?.attachment)
+      return collection.preview?.attachment?.attachment
+    const preview = await collection.$get("preview", {
+      attributes: ["attachmentId"],
+      include: [
+        {
+          model: Upload,
+          as: "attachment",
+          attributes: ["attachment"],
+          where: {
+            type: "image"
+          }
+        }
+      ]
+    })
+    if (preview?.attachment?.attachment) return preview?.attachment?.attachment
+    return null
   }
 
   @Authorization({

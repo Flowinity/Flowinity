@@ -186,14 +186,14 @@ watch(
   }
 );
 
-// Socket handler
+// Socket handlers
 useSocket.gallery.on("update", (data: Upload[]) => {
   data.forEach((upload) => {
     const isNewItem = !items.value.some((item) => item.id === upload.id);
     if (
       isNewItem &&
       props.type === GalleryType.Collection &&
-      upload.collections.some((collection) => collection.id === props.id)
+      upload.collections?.some((collection) => collection.id === props.id)
     ) {
       items.value = [upload, ...items.value];
     } else {
@@ -265,7 +265,7 @@ const types = computed(() => {
       internalName: GalleryFilter.Other
     },
     {
-      name: "Include Deletable",
+      name: "Include Undeletable",
       internalName: GalleryFilter.IncludeDeletable
     }
   ];

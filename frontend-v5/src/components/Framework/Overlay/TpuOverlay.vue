@@ -14,7 +14,11 @@
         v-if="props.modelValue"
         class="bg-black opacity-50"
         style="width: 100%; height: 100%; left: 0; top: 0"
-        :class="{ fixed: !props.absolute, absolute: props.absolute }"
+        :class="{
+          fixed: !props.absolute,
+          absolute: props.absolute,
+          ...overlayClasses
+        }"
       ></div>
       <div class="relative" v-if="props.modelValue">
         <slot></slot>
@@ -27,7 +31,8 @@
 const props = defineProps({
   modelValue: Boolean,
   absolute: Boolean,
-  component: String
+  component: String,
+  overlayClasses: Object
 });
 defineEmits(["update:modelValue"]);
 </script>

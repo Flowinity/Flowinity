@@ -108,6 +108,7 @@
             "
             @click.shift.exact="galleryStore.deleteUploads([props.item?.id])"
             v-if="props.item?.userId === userStore.user?.id"
+            :disabled="!item.deletable"
           >
             <RiDeleteBinLine style="width: 20px" />
           </tpu-button>

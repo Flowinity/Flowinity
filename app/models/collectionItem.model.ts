@@ -12,6 +12,7 @@ import { Collection } from "@app/models/collection.model"
 import { Upload } from "@app/models/upload.model"
 import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 @Table
@@ -44,6 +45,14 @@ export class CollectionItem extends Model {
   @AllowNull
   @Column
   identifier: string
+
+  @Field(() => DateType)
+  @Column
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column
+  updatedAt: Date
 
   @Field()
   @Column({

@@ -6,7 +6,29 @@
       :model-value="props.search"
       @update:model-value="$emit('update:search', $event)"
       @keydown.enter="$emit('refresh')"
-    ></text-field>
+    >
+      <template #append>
+        <div class="flex items-center justify-center gap-1 mb-4">
+          <tpu-button
+            style="width: 45px; height: 45px"
+            variant="passive"
+            @click="
+              $emit('update:search', '');
+              $emit('refresh');
+            "
+          >
+            <RiCloseLine />
+          </tpu-button>
+          <tpu-button
+            style="width: 45px; height: 45px"
+            variant="passive"
+            @click="$emit('refresh')"
+          >
+            <RiSearchLine />
+          </tpu-button>
+        </div>
+      </template>
+    </text-field>
     <tpu-select
       style="min-width: 200px"
       :label="t('gallery.options.filter')"
@@ -103,9 +125,11 @@ import TextField from "@/components/Framework/Input/TextField.vue";
 import TpuSelect from "@/components/Framework/Input/TpuSelect.vue";
 import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
 import { GalleryFilter, GalleryOrder, GallerySort } from "@/gql/graphql";
-import { computed, ref } from "vue";
+import { computed, ref, PropType } from "vue";
 import { useI18n } from "vue-i18n";
-
+import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
+import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 const { t } = useI18n();
 const props = defineProps({
   search: {
@@ -117,20 +141,22 @@ const props = defineProps({
       internalName: GalleryOrder;
     }[],
     required: false,
-    default: [
-      {
-        name: "Ascending",
-        internalName: GalleryOrder.Asc
-      },
-      {
-        name: "Descending",
-        internalName: GalleryOrder.Desc
-      },
-      {
-        name: "Random",
-        internalName: GalleryOrder.Random
-      }
-    ]
+    default: () => {
+      return [
+        {
+          name: "Ascending",
+          internalName: GalleryOrder.Asc
+        },
+        {
+          name: "Descending",
+          internalName: GalleryOrder.Desc
+        },
+        {
+          name: "Random",
+          internalName: GalleryOrder.Random
+        }
+      ];
+    }
   },
   sortTypes: {
     type: Array as () => {
@@ -138,20 +164,22 @@ const props = defineProps({
       internalName: GallerySort;
     }[],
     required: false,
-    default: [
-      {
-        name: "Created at",
-        internalName: GallerySort.CreatedAt
-      },
-      {
-        name: "Name",
-        internalName: GallerySort.Name
-      },
-      {
-        name: "Size",
-        internalName: GallerySort.Size
-      }
-    ]
+    default: () => {
+      return [
+        {
+          name: "Created at",
+          internalName: GallerySort.CreatedAt
+        },
+        {
+          name: "Name",
+          internalName: GallerySort.Name
+        },
+        {
+          name: "Size",
+          internalName: GallerySort.Size
+        }
+      ];
+    }
   },
   types: {
     type: Array as () => {
@@ -159,48 +187,50 @@ const props = defineProps({
       internalName: GalleryFilter;
     }[],
     required: false,
-    default: [
-      {
-        name: "Search in screenshots",
-        internalName: GalleryFilter.IncludeMetadata
-      },
-      {
-        name: "Not collectivized",
-        internalName: GalleryFilter.NoCollection
-      },
-      {
-        name: "Images",
-        internalName: GalleryFilter.Images
-      },
-      {
-        name: "Videos",
-        internalName: GalleryFilter.Videos
-      },
-      {
-        name: "Audio",
-        internalName: GalleryFilter.Audio
-      },
-      {
-        name: "Text",
-        internalName: GalleryFilter.Text
-      },
-      {
-        name: "Other",
-        internalName: GalleryFilter.Other
-      },
-      {
-        name: "Include Deletable",
-        internalName: GalleryFilter.IncludeDeletable
-      },
-      {
-        name: "Owned items",
-        internalName: GalleryFilter.Owned
-      },
-      {
-        name: "Not owned items",
-        internalName: GalleryFilter.Shared
-      }
-    ]
+    default: () => {
+      return [
+        {
+          name: "Search in screenshots",
+          internalName: GalleryFilter.IncludeMetadata
+        },
+        {
+          name: "Not collectivized",
+          internalName: GalleryFilter.NoCollection
+        },
+        {
+          name: "Images",
+          internalName: GalleryFilter.Images
+        },
+        {
+          name: "Videos",
+          internalName: GalleryFilter.Videos
+        },
+        {
+          name: "Audio",
+          internalName: GalleryFilter.Audio
+        },
+        {
+          name: "Text",
+          internalName: GalleryFilter.Text
+        },
+        {
+          name: "Other",
+          internalName: GalleryFilter.Other
+        },
+        {
+          name: "Include Undeletable",
+          internalName: GalleryFilter.IncludeDeletable
+        },
+        {
+          name: "Owned items",
+          internalName: GalleryFilter.Owned
+        },
+        {
+          name: "Not owned items",
+          internalName: GalleryFilter.Shared
+        }
+      ];
+    }
   },
   filter: {
     default: () => {
@@ -209,12 +239,16 @@ const props = defineProps({
     type: Object as () => GalleryFilter[]
   },
   sort: {
-    default: GallerySort.CreatedAt,
-    type: Object as () => GallerySort
+    default: () => {
+      return GallerySort.CreatedAt;
+    },
+    type: Object as () => PropType<GallerySort>
   },
   order: {
-    default: GalleryOrder.Desc,
-    type: Object as () => GalleryOrder
+    default: () => {
+      return GalleryOrder.Desc;
+    },
+    type: Object as () => PropType<GalleryOrder>
   }
 });
 const emit = defineEmits([

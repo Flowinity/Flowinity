@@ -1,5 +1,9 @@
 <template>
-  <collection-settings v-model="settings" />
+  <collection-settings
+    @refresh="refresh"
+    v-model="settings"
+    :collection="collection"
+  />
   <collection-sharing v-model="sharing" :collection="collection" />
   <gallery
     :path="`/collections/${route.params.id}`"
@@ -20,13 +24,22 @@
   <teleport to="#appbar-options-first">
     <transition mode="out-in" name="slide-up" appear>
       <div class="flex gap-2">
-        <tpu-button
-          icon
-          variant="passive"
-          v-tooltip.bottom="t('collections.nav.banner')"
-        >
-          <RiImageEditLine style="width: 20px" />
-        </tpu-button>
+        <transition appear v-if="collection?.shareLink">
+          <tpu-button
+            icon
+            :key="!!collection?.shareLink"
+            variant="passive"
+            @click="
+              functions.copy(
+                `${appStore.state.hostnameWithProtocol}/collections/${collection?.shareLink}`
+              );
+              toast.success(t('generic.copied'));
+            "
+            v-tooltip.bottom="t('collections.nav.shareLink')"
+          >
+            <RiLink style="width: 20px" />
+          </tpu-button>
+        </transition>
         <tpu-button
           icon
           variant="passive"
@@ -67,8 +80,12 @@ import CollectionSettings from "@/components/Collections/CollectionSettings.vue"
 import { useSocket } from "@/boot/socket.service";
 import RiImageEditLine from "vue-remix-icons/icons/ri-image-edit-line.vue";
 import CollectionSharing from "@/components/Collections/CollectionSharing.vue";
+import SetPictureDialog from "@/components/Core/Dialogs/SetPictureDialog.vue";
+import axios from "@/plugins/axios";
+import functions from "@/plugins/functions";
+import { useToast } from "vue-toastification";
 const collectionsStore = useCollectionsStore();
-const collection = ref<Collection | null>(null);
+const collection = ref<Collection | undefined>(undefined);
 const route = useRoute();
 const appStore = useAppStore();
 const { t } = useI18n();
@@ -78,21 +95,17 @@ const id: ComputedRef<number | string> = computed(() => {
   const rid = <string>route.params.id;
   return isNumeric(rid) ? (typeof rid === "number" ? rid : parseInt(rid)) : rid;
 });
+const toast = useToast();
+import RiLink from "vue-remix-icons/icons/ri-link.vue";
 
 const banner = computed(() => {
-  if (collection.value?.image) {
-    return appStore.domain + collection.value.image;
-  } else if (collection.value?.preview?.attachment?.attachment) {
-    return appStore.domain + collection.value.preview.attachment.attachment;
-  } else {
-    return "https://i.troplo.com/i/a050d6f271c3.png";
-  }
+  if (!collection.value?.banner) return null;
+  return appStore.domain + collection.value?.banner;
 });
 
 watch(
   () => banner.value,
   (val) => {
-    console.log("updated banner");
     appStore.appBarImage = val;
   }
 );
@@ -114,15 +127,18 @@ watch(
 
 async function onCollectionUpdate(data: { id?: number; name?: string }) {
   if (data.id !== collection.value?.id) return;
-  collection.value = await collectionsStore.getCollection(id.value);
+  refresh();
 }
 
 async function onCollectionUserUpdate(data: {
   id?: number;
   collectionId: number;
 }) {
-  console.log(data.collectionId, collection.value?.id);
   if (data.collectionId !== collection.value?.id) return;
+  refresh();
+}
+
+async function refresh() {
   collection.value = await collectionsStore.getCollection(id.value);
 }
 

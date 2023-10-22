@@ -208,7 +208,7 @@ export default defineComponent({
           internalName: GalleryFilter.Other
         },
         {
-          name: "Include Deletable",
+          name: "Include Undeletable",
           internalName: GalleryFilter.IncludeDeletable
         },
         {

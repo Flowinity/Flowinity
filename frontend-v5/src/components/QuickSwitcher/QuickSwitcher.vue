@@ -23,7 +23,10 @@
           <a @click.prevent :href="result.path" class="fill-white">
             <card
               class="flex gap-4 overflow-ellipsis whitespace-nowrap overflow-hidden"
-              @click="$router.push(result.path)"
+              @click="
+                $router.push(result.path);
+                $emit('update:modelValue', false);
+              "
               :secondary="selected === index"
               @mouseover="selected = index"
             >
@@ -91,7 +94,8 @@ const results = computed(() => {
             path: lastRoute.value,
             selectedIcon: markRaw(RiArrowGoBack),
             rail: -1,
-            subtitle: lastRoute.value
+            subtitle: lastRoute.value,
+            id: -1
           }
         ]),
     ...Object.entries(appStore.navigation.options).flatMap(
@@ -109,15 +113,21 @@ const results = computed(() => {
         }),
         name: chatStore.chatName(chat),
         path: `/communications/${chat.association?.id}`,
-        rail: RailMode.CHAT
+        rail: RailMode.CHAT,
+        id: `chat-${chat.id}`
       };
     }),
     ...collectionStore.items.map((collection) => {
       return {
-        icon: markRaw(RiCollageLine),
+        icon: h(UserAvatar, {
+          src: collection.avatar || collection.banner,
+          username: collection.name,
+          class: "mr-4"
+        }),
         name: collection.name,
         path: `/collections/${collection.id}`,
-        rail: RailMode.GALLERY
+        rail: RailMode.GALLERY,
+        id: `collection-${collection.id}`
       };
     })
   ];

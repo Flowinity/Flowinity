@@ -7,6 +7,8 @@ export const CollectionQuery = gql`
       name
       image
       userId
+      banner
+      avatar
       shareLink
       user {
         username

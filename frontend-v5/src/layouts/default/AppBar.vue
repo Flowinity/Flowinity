@@ -64,11 +64,14 @@
             ]"
           >
             <div class="items-center flex">
-              <component
-                :is="appStore.currentNavItem?.item.icon"
-                class="w-8 mr-2 items-center fill-white"
-                v-if="appStore.currentNavItem?.item.icon"
-              />
+              <div class="mr-3">
+                <component
+                  :is="appStore.currentNavItem?.item.icon"
+                  class="w-8 items-center fill-white"
+                  v-if="appStore.currentNavItem?.item.icon"
+                />
+              </div>
+
               {{ appStore.currentNavItem?.item.name || "Flowinity" }}
             </div>
           </div>
@@ -132,6 +135,7 @@ import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
 const appStore = useAppStore();
 const userStore = useUserStore();
 const image = computed(() => {
+  console.log(appStore.appBarImage);
   return appStore.appBarImage ? `url(${appStore.appBarImage})` : undefined;
 });
 const scrolled = ref(false);

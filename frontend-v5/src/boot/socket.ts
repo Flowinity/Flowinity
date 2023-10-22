@@ -544,14 +544,23 @@ export default async function setup(app: App) {
         const updatedItems: Collection[] = [...collections.items];
         updatedItems[collectionIndex] = {
           ...updatedItems[collectionIndex],
-          name: data.name || updatedItems[collectionIndex].name,
-          shareLink:
-            data.shareLink === undefined
-              ? updatedItems[collectionIndex].shareLink
-              : data.shareLink
+          ...data
         };
 
         collections.items = updatedItems;
+      }
+    }
+  );
+
+  sockets.gallery.on(
+    "addedToCollection",
+    (data: { id: number; name: string }) => {
+      const collectionIndex = collections.items.findIndex(
+        (collection) => collection.id === data.id
+      );
+
+      if (collectionIndex === -1) {
+        collections.items = [data, ...collections.items];
       }
     }
   );

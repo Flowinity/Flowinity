@@ -1,5 +1,6 @@
 <template>
   <div class="relative">
+    <div class="overlay"></div>
     <text-field
       @focus="focused = true"
       @blur="focused = false"
@@ -26,6 +27,7 @@
       "
       ref="input"
     />
+
     <transition name="dialog-transition" appear>
       <div
         class="dropdown-options rounded-l bg-card-dark"
@@ -118,6 +120,21 @@ function remove(val) {
 </script>
 
 <style scoped>
+.overlay {
+  position: absolute;
+  user-select: none;
+  width: 100%;
+  height: 100%;
+}
+.overlay::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
 .dropdown-options {
   position: absolute;
   max-height: 200px;

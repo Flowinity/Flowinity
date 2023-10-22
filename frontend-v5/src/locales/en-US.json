@@ -14,7 +14,10 @@
     "upload": "Upload",
     "close": "Close",
     "save": "Save",
-    "copied": "Copied to clipboard!"
+    "copied": "Copied to clipboard!",
+    "back": "Back",
+    "search": "Search",
+    "remove": "Remove"
   },
   "gallery": {
     "addToCollection": "Add to Collection",
@@ -79,7 +82,7 @@
     "nav": {
       "share": "Sharing",
       "settings": "Settings",
-      "banner": "Change Banner"
+      "shareLink": "Copy ShareLink"
     },
     "settings": {
       "title": "Collection Settings",
@@ -88,11 +91,37 @@
     "sharing": {
       "title": "Collection Sharing",
       "add": "Add friend to collection"
+    },
+    "create": {
+      "title": "Create Collection",
+      "create": "Create"
     }
   },
   "communications": {
     "members": {
       "title": "Members"
+    }
+  },
+  "dialogs": {
+    "uploadCropper": {
+      "skipCrop": "Skip Crop & Save",
+      "title": "Upload"
+    }
+  },
+  "sidebar": {
+    "collections": {
+      "create": "Create collection",
+      "title": "Collections",
+      "sort": {
+        "alphabetical": "Alphabetical",
+        "updated": "Last updated",
+        "createdAt": "Creation date",
+        "itemCount": "Item count",
+        "direction": "Direction",
+        "sort": "Sort",
+        "asc": "Ascending",
+        "desc": "Descending"
+      }
     }
   }
 }

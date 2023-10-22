@@ -20,10 +20,15 @@ import { WhereOptions } from "sequelize"
 @Service()
 export class CollectionService {
   async createCollection(userId: number, name: string) {
-    return await Collection.create({
+    const collection = await Collection.create({
       userId,
       name
     })
+    socket.of(SocketNamespaces.GALLERY).to(userId).emit("addedToCollection", {
+      id: collection.id,
+      name: collection.name
+    })
+    return collection
   }
 
   // this is not used by any routes!!
@@ -627,17 +632,22 @@ export class CollectionService {
     }
   }
 
-  async updateBanner(id: number, banner: string | null) {
+  async updateBanner(id: number, banner: string | null, key = "image") {
     const collection = await Collection.findOne({
       where: {
         id
       }
     })
 
+    this.emitToRecipients(id, "collectionUpdate", {
+      id,
+      [key]: banner
+    })
+
     if (!collection) throw Errors.COLLECTION_NOT_FOUND
 
     await collection.update({
-      image: banner
+      [key]: banner
     })
 
     return {

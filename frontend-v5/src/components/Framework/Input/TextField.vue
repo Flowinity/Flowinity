@@ -1,5 +1,9 @@
 <template>
-  <div class="material-text-field relative mt-3 mb-1">
+  <div class="relative mt-3 mb-1 flex">
+    <slot name="prepend-outer" />
+    <div class="absolute left-0">
+      <slot name="prepend" />
+    </div>
     <label
       :for="id"
       class="field-label cursor-text pointer-events-none"
@@ -61,6 +65,10 @@
       }"
       :readonly="props.readonly"
     />
+    <div class="absolute right-0 -top-3">
+      <slot name="append" />
+    </div>
+    <slot name="append-outer" />
     <div
       class="justify-end flex text-red text-xs mt-1"
       v-if="error || lengthError"

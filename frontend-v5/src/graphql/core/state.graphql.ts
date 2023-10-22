@@ -193,7 +193,16 @@ export const CoreStateQuery = gql`
     }
     collections {
       items {
+        preview {
+          updatedAt
+        }
+        updatedAt
+        createdAt
+        avatar
+        banner
+        itemCount
         id
+        image
         shareLink
         permissionsMetadata {
           write

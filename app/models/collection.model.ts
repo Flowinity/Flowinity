@@ -17,6 +17,7 @@ import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { Upload } from "@app/models/upload.model"
 import { PermissionsMetadata } from "@app/classes/graphql/collections/collections"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 @Table
@@ -29,12 +30,22 @@ export class Collection extends Model {
   })
   id: number
 
+  @Field(() => DateType)
+  @Column
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column
+  updatedAt: Date
+
   @Field()
   @Column
   name: string
 
   @Field({
-    nullable: true
+    nullable: true,
+    description:
+      "Please use field `banner` instead if you want to obtain the banner for a collection."
   })
   @AllowNull
   @Column
@@ -50,6 +61,20 @@ export class Collection extends Model {
   @AllowNull
   @Column
   shareLink: string
+
+  @Field({
+    nullable: true
+  })
+  @AllowNull
+  @Column
+  avatar: string
+
+  @Field(() => String, {
+    nullable: true,
+    description:
+      "The recommended way to obtain the banner for a collection, it uses field `image`, and if null, falls back to the last added image preview."
+  })
+  banner: string
 
   @Field(() => PartialUserBase)
   @BelongsTo(() => User, "userId")

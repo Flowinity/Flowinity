@@ -84,8 +84,13 @@
 .v-popper--theme-dropdown .v-popper__inner {
     background: unset !important;
     border: unset !important;
-    color: inherit !important;
+    color: white !important;
 }
+
+.v-popper--theme-dropdown .v-popper__arrow-inner,.v-popper--theme-dropdown .v-popper__arrow-outer {
+    display: none;
+}
+
 .message-toast {
     background: rgba(64, 62, 62, 0.7) !important;
 }
@@ -160,5 +165,7 @@ h6 {
     overflow: hidden;
     padding-inline-end: 8px;
 }
+
+
 
 @tailwind utilities;

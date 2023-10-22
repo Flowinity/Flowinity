@@ -36,14 +36,14 @@ const userStore = useUserStore();
             :highlighted="true"
             @click="$app.dialogs.core.quickSwitcher.value = true"
           >
-            <RiNotificationLine v-if="!userStore.unreadNotifications.length" />
-            <RiNotificationFill v-else />
+            <RiSearchLine />
           </super-bar-item>
           <super-bar-item
             :highlighted="true"
             @click="$app.dialogs.core.quickSwitcher.value = true"
           >
-            <RiSearchLine />
+            <RiNotificationLine v-if="!userStore.unreadNotifications.length" />
+            <RiNotificationFill v-else />
           </super-bar-item>
         </div>
         <div

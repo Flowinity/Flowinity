@@ -4,13 +4,17 @@
     class="relative w-full select-none"
   >
     <div
-      class="w-full h-full flex items-center justify-center stroke-medium-emphasis-dark absolute"
+      class="w-full h-full flex items-center justify-center absolute"
       style="z-index: 1"
       v-if="loading || errored"
       :style="{ height: height + 'px' }"
     >
-      <tpu-spinner v-if="!errored" color="text-medium-emphasis-dark" />
-      <RiLinkUnlinkM :style="{ width: height + 'px' }" v-else />
+      <tpu-spinner
+        v-if="!errored"
+        color="text-medium-emphasis-dark"
+        :style="{ width: height + 'px' }"
+      />
+      <RiLinkUnlinkM :style="{ width: height || 72 + 'px' }" v-else />
     </div>
     <img
       :src="src"
@@ -25,6 +29,7 @@
       alt="Image"
       @load="onImageLoad"
       @error="onImageError"
+      v-bind="$attrs"
     />
     <slot />
   </div>
@@ -51,7 +56,7 @@ const onImageError = () => {
 const props = defineProps({
   cover: Boolean,
   src: String,
-  size: String,
+  size: [String, Number],
   gradient: String,
   height: [String, Number],
   width: [String, Number],

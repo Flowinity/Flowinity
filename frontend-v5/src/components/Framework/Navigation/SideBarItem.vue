@@ -24,7 +24,7 @@ const selected = computed(() => {
 </script>
 
 <template>
-  <a :href="item?.path || to" class="w-full" @click.prevent.stop>
+  <a :href="item?.path || to" class="w-full" @click.prevent.stop tabindex="-1">
     <div
       class="rounded-2xl hover:bg-outline-dark cursor-pointer p-2 flex items-center h-full w-full dark:fill-white"
       :class="{
@@ -38,6 +38,7 @@ const selected = computed(() => {
       v-wave
       tabindex="0"
       @keydown.enter="$event.target?.click()"
+      v-bind="$attrs"
       @keydown.space="
         $event.preventDefault();
         $event.target?.click();
@@ -61,6 +62,9 @@ const selected = computed(() => {
         <template v-else>
           <slot name="title" />
         </template>
+        <div class="text-medium-emphasis-dark">
+          <slot name="subtitle" />
+        </div>
         <template v-if="item?.badge">
           <tpu-badge class="ml-2">
             {{ item.badge }}

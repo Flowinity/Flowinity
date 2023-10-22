@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import TpuAvatar from "@/components/Framework/Avatar/TpuAvatar.vue";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useUserStore } from "@/stores/user.store";
 import { useAppStore } from "@/stores/app.store";
 import functions from "@/plugins/functions";
+import SetPictureDialog from "@/components/Core/Dialogs/SetPictureDialog.vue";
+import TpuHover from "@/components/Framework/Hover/TpuHover.vue";
+import RiUploadLine from "vue-remix-icons/icons/ri-upload-cloud-2-line.vue";
+import TpuOverlay from "@/components/Framework/Overlay/TpuOverlay.vue";
 
 const props = defineProps({
   size: {
@@ -30,6 +34,9 @@ const props = defineProps({
   },
   badge: {
     type: [String, Number]
+  },
+  edit: {
+    type: Boolean
   }
 });
 const userStore = useUserStore();
@@ -43,37 +50,60 @@ const user = computed(() => {
     }
   );
 });
+const editing = ref(false);
+
+defineEmits(["setImage"]);
 </script>
 
 <template>
-  <tpu-avatar
-    :alt="props.alt || props.username"
-    :color="src ? undefined : functions.avatar(user) ? undefined : true"
-    :size="size"
-    :src="src ? src : user.avatar ? functions.avatar(user) : undefined"
-  >
-    <slot v-if="$slots.default" />
-    <span style="font-size: 26px" v-else>
-      {{ props.username?.charAt(0).toUpperCase() ?? "?" }}
-    </span>
-    <template #outer>
-      <div
-        v-if="props.status"
-        class="status dark:border-sidebar-dark border-2"
-        :style="{
-          backgroundColor: functions.userStatus(user.status).color
-        }"
-        v-tooltip="functions.userStatus(user.status).text"
-      ></div>
-      <div
-        v-if="props.badge"
-        class="badge rounded-xl bg-red px-1"
-        style="font-size: 11px"
+  <set-picture-dialog
+    v-if="edit"
+    v-model="editing"
+    @set-image="
+      $emit('setImage', $event);
+      editing = false;
+    "
+  />
+  <div class="relative" :class="{ 'cursor-pointer': edit }">
+    <tpu-hover v-slot="{ hovering }">
+      <tpu-overlay
+        :overlay-classes="{ 'rounded-full': true }"
+        absolute
+        :model-value="hovering && edit"
+        @click="editing = true"
       >
-        {{ props.badge }}
-      </div>
-    </template>
-  </tpu-avatar>
+        <RiUploadLine style="width: 40px" />
+      </tpu-overlay>
+      <tpu-avatar
+        :alt="props.alt || props.username"
+        :color="src ? undefined : functions.avatar(user) ? undefined : true"
+        :size="size"
+        :src="src ? src : user.avatar ? functions.avatar(user) : undefined"
+      >
+        <slot v-if="$slots.default" />
+        <span style="font-size: 26px" v-else>
+          {{ props.username?.charAt(0).toUpperCase() ?? "?" }}
+        </span>
+        <template #outer>
+          <div
+            v-if="props.status"
+            class="status dark:border-sidebar-dark border-2"
+            :style="{
+              backgroundColor: functions.userStatus(user.status).color
+            }"
+            v-tooltip="functions.userStatus(user.status).text"
+          ></div>
+          <div
+            v-if="props.badge"
+            class="badge rounded-xl bg-red px-1"
+            style="font-size: 11px"
+          >
+            {{ props.badge }}
+          </div>
+        </template>
+      </tpu-avatar>
+    </tpu-hover>
+  </div>
 </template>
 
 <style scoped>

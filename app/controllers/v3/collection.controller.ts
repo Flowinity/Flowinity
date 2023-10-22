@@ -411,6 +411,36 @@ export class CollectionControllerV3 {
     return ban
   }
 
+  @Post("/:collectionId/avatar")
+  async updateAvatar(
+    @Auth("collections.modify") user: User,
+    @Param("collectionId") collectionId: number,
+    @UploadedFile("avatar", {
+      options: uploader
+    })
+    avatar: Express.Multer.File
+  ): Promise<{ upload: Upload; url: string }> {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
+
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    const ban: { upload: Upload; url: string } =
+      await this.galleryService.createUpload(user.id, avatar, false, false)
+
+    await this.collectionService.updateBanner(
+      collectionId,
+      ban.upload.attachment,
+      "avatar"
+    )
+    await this.cacheService.resetCollectionCache(collectionId)
+
+    return ban
+  }
+
   @Delete("/:collectionId/banner")
   async deleteBanner(
     @Auth("collections.modify") user: User,
@@ -425,6 +455,23 @@ export class CollectionControllerV3 {
     if (!collection) throw Errors.COLLECTION_NO_PERMISSION
 
     await this.collectionService.updateBanner(collectionId, null)
+    await this.cacheService.resetCollectionCache(collectionId)
+  }
+
+  @Delete("/:collectionId/avatar")
+  async deleteAvatar(
+    @Auth("collections.modify") user: User,
+    @Param("collectionId") collectionId: number
+  ): Promise<void> {
+    const collection = await this.collectionService.getCollectionPermissions(
+      collectionId,
+      user.id,
+      "configure"
+    )
+
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    await this.collectionService.updateBanner(collectionId, null, "avatar")
     await this.cacheService.resetCollectionCache(collectionId)
   }
 

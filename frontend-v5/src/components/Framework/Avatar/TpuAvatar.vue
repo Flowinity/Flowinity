@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import theme from "@/plugins/theme";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import TpuImg from "@/components/Framework/Image/TpuImg.vue";
+import { isNumeric } from "@/plugins/isNumeric";
 
 const props = defineProps({
   size: {
@@ -24,6 +26,10 @@ function loadError() {
   console.log("error");
   error.value = true;
 }
+
+const dimensions = computed(() => {
+  return isNumeric(props.size) ? props.size + "px" : props.size || "100%";
+});
 </script>
 
 <template>
@@ -33,22 +39,28 @@ function loadError() {
     <div
       class="rounded-full whitespace-nowrap overflow-hidden overflow-ellipsis select-none relative"
       :class="{ gradient: props.color === true }"
-      :style="`min-width: ${props.size}px; min-height: ${
-        props.size
-      }px; max-width: ${props.size}px; max-height: ${
-        props.size
-      }px; background: ${
-        props.color !== undefined && !error
-          ? theme.colors[props.color || 'blue']
-          : undefined
-      }`"
+      :style="{
+        minWidth: dimensions,
+        maxWidth: dimensions,
+        minHeight: dimensions,
+        maxHeight: dimensions,
+        height: dimensions,
+        width: dimensions,
+        background:
+          props.color !== undefined && !error
+            ? theme.colors[props.color || 'blue']
+            : undefined
+      }"
       v-bind="$attrs"
     >
       <template v-if="props.src && !error">
-        <img
+        <tpu-img
+          :height="size || 24"
+          :width="size || 24"
           @error="loadError"
           style="width: 100%; height: 100%"
           :src="props.src"
+          :cover="true"
           :alt="props.alt || 'Avatar'"
         />
       </template>

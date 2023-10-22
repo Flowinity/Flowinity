@@ -77,7 +77,6 @@ import TpuNoContent from "@/components/Framework/NoContent/TpuNoContent.vue";
 import RiCheckboxMultipleFill from "vue-remix-icons/icons/ri-checkbox-multiple-fill.vue";
 import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
-import RiShareForwardFill from "vue-remix-icons";
 const appStore = useAppStore();
 
 function collectionImage(collection: Collection): string {

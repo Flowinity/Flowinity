@@ -473,7 +473,13 @@ export const useAppStore = defineStore("app", () => {
       return {
         item: {
           name: find?.name,
-          icon: markRaw(RiCollageLine),
+          icon: find?.avatar
+            ? h(UserAvatar, {
+                username: find.name,
+                src: domain.value + find.avatar,
+                size: 32
+              })
+            : markRaw(RiCollageLine),
           path: route.path,
           selectedIcon: markRaw(RiCollageFill)
         },
@@ -554,7 +560,6 @@ export const useAppStore = defineStore("app", () => {
   const appBarImage: Ref<string | null> = ref(null);
 
   const heightOffset = computed(() => {
-    console.log(appBarImage.value);
     return "h-full";
   });
 
