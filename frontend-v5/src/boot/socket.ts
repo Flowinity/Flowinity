@@ -24,6 +24,7 @@ import { UserStoredStatus } from "@/gql/graphql";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
 import { useMessagesStore } from "@/stores/messages.store";
 import { useCollectionsStore } from "@/stores/collections.store";
+import { App } from "vue";
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();
   const index = chat.chats.findIndex((c) => c.id === chatId);
@@ -35,7 +36,7 @@ function checkMessage(id: number, chatId: number) {
   };
 }
 
-export default async function setup(app) {
+export default async function setup(app: App) {
   const sockets = app.config.globalProperties.$sockets;
   const chat = useChatStore();
   const messages = useMessagesStore();
@@ -64,7 +65,13 @@ export default async function setup(app) {
     // move chat to top
     const chatToMove = chat.chats[index];
     chat.chats = [
-      chatToMove,
+      {
+        ...chatToMove,
+        unread:
+          chat.selectedChat?.id === newMessage.message.chatId
+            ? chatToMove.unread
+            : (chatToMove.unread || 0) + 1
+      },
       ...chat.chats.slice(0, index),
       ...chat.chats.slice(index + 1)
     ];
@@ -527,7 +534,7 @@ export default async function setup(app) {
 
   sockets.gallery.on(
     "collectionUpdate",
-    (data: { id: number; name: string }) => {
+    (data: { id: number; name?: string; shareLink?: string | null }) => {
       const collectionIndex = collections.items.findIndex(
         (collection) => collection.id === data.id
       );
@@ -537,7 +544,11 @@ export default async function setup(app) {
         const updatedItems: Collection[] = [...collections.items];
         updatedItems[collectionIndex] = {
           ...updatedItems[collectionIndex],
-          name: data.name
+          name: data.name || updatedItems[collectionIndex].name,
+          shareLink:
+            data.shareLink === undefined
+              ? updatedItems[collectionIndex].shareLink
+              : data.shareLink
         };
 
         collections.items = updatedItems;

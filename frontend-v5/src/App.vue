@@ -8,15 +8,27 @@ import { useAppStore } from "@/stores/app.store";
 import { useUserStore } from "@/stores/user.store";
 import MemberSideBar from "@/layouts/default/MemberSideBar.vue";
 import QuickSwitcher from "@/components/QuickSwitcher/QuickSwitcher.vue";
+import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
 const route = useRoute();
+
+function drop(e: Event) {
+  if (!e.dataTransfer.files?.length) return;
+  e.preventDefault();
+  appStore.dialogs.gallery.upload.files.push(
+    ...Array.from(e.dataTransfer.files)
+  );
+  appStore.upload();
+}
 </script>
 <template>
   <div class="dark w-full" id="main-area">
     <div
       class="dark:bg-dark bg-white text-black dark:fill-white dark:text-white flex w-full"
+      @drop="drop"
+      @dragover.prevent
     >
       <quick-switcher v-model="appStore.dialogs.core.quickSwitcher.value" />
       <tpu-navigation-drawer

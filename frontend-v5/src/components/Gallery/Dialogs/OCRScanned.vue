@@ -8,18 +8,24 @@
       {{ t("gallery.dialogs.ocr.title") }}
     </template>
     <template #default>
-      <p class="my-4 mx-4">
+      <div class="my-4 mx-4">
+        <small class="break-normal">
+          {{ t("gallery.dialogs.ocr.tip") }}
+        </small>
         <text-field
           :model-value="appStore.dialogs.gallery.ocr.content"
           :disabled="true"
           :textarea="true"
         />
-      </p>
+      </div>
       <card-actions>
         <tpu-button
           color="blue"
           variant="passive"
-          @click="$functions.copy(appStore.dialogs.gallery.ocr.content)"
+          @click="
+            $functions.copy(appStore.dialogs.gallery.ocr.content);
+            toast.success('generic.copied');
+          "
         >
           {{ t("gallery.dialogs.ocr.copyAll") }}
         </tpu-button>
@@ -35,20 +41,14 @@ import { useAppStore } from "@/stores/app.store";
 import CardActions from "@/components/Core/Card/CardActions.vue";
 import TpuButton from "@/components/Core/Button/TpuButton.vue";
 import TextField from "@/components/Core/Input/TextField.vue";
-import TpuSelect from "@/components/Core/Input/TpuSelect.vue";
-import { ref } from "vue";
-import { useCollectionsStore } from "@/stores/collections.store";
-import axios from "@/plugins/axios";
+import { useToast } from "vue-toastification";
 
 const { t } = useI18n();
 const props = defineProps({
   modelValue: Boolean
 });
 const appStore = useAppStore();
-const collectionsStore = useCollectionsStore();
-const emit = defineEmits(["update:modelValue", "addToCollection"]);
-const loading = ref(false);
-const upload = ref<File | null>(null);
+const toast = useToast();
 </script>
 
 <style scoped></style>

@@ -15,6 +15,7 @@ import { CollectionFilter } from "@app/classes/graphql/collections/collections"
 import paginate from "jw-paginate"
 import { PaginatedCollectionsResponse } from "@app/controllers/graphql/collection.resolver"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { WhereOptions } from "sequelize"
 
 @Service()
 export class CollectionService {
@@ -338,8 +339,7 @@ export class CollectionService {
         "update",
         await Upload.findAll({
           where: {
-            id: uploadId,
-            userId
+            id: uploadId
           },
           include: [
             {
@@ -390,6 +390,11 @@ export class CollectionService {
       }
     })
 
+    this.emitToRecipients(collectionId, "collectionUserRemove", {
+      collectionId,
+      recipientId
+    })
+
     if (!result) throw Errors.COLLECTION_USER_NOT_FOUND
 
     return result
@@ -398,7 +403,7 @@ export class CollectionService {
   async addUserToCollection(
     collectionId: number,
     senderId: number,
-    username: string,
+    username: string | number,
     write: boolean,
     configure: boolean,
     read: boolean
@@ -413,10 +418,17 @@ export class CollectionService {
       throw Errors.COLLECTION_NOT_FOUND
     }
 
+    const where: WhereOptions =
+      typeof username === "number"
+        ? {
+            id: username
+          }
+        : {
+            username
+          }
+
     const user = await User.findOne({
-      where: {
-        username
-      }
+      where
     })
 
     if (!user) {
@@ -439,18 +451,29 @@ export class CollectionService {
       throw Errors.NOT_FRIENDS_WITH_USER_COLLECTION
     }
 
+    const collectionUser = await CollectionUser.create({
+      collectionId,
+      recipientId: user.id,
+      senderId: senderId,
+      write,
+      configure,
+      read,
+      identifier: collectionId + "-" + user.id
+    })
+
+    this.emitToRecipients(
+      collectionId,
+      "collectionUserAdd",
+      collectionUser.toJSON()
+    )
+
+    socket.of(SocketNamespaces.GALLERY).to(user.id).emit("addedToCollection", {
+      id: collection.id,
+      name: collection.name
+    })
+
     return {
-      ...(
-        await CollectionUser.create({
-          collectionId,
-          recipientId: user.id,
-          senderId: senderId,
-          write,
-          configure,
-          read,
-          identifier: collectionId + "-" + user.id
-        })
-      ).dataValues,
+      ...collectionUser.toJSON(),
       user,
       collection: {
         id: collection.id,
@@ -479,8 +502,17 @@ export class CollectionService {
         }
       }
     )
+    console.log(result)
 
     if (!result) throw Errors.COLLECTION_USER_NOT_FOUND
+
+    this.emitToRecipients(collectionId, "collectionUserUpdate", {
+      collectionId,
+      recipientId,
+      write,
+      read,
+      configure
+    })
 
     return result
   }
@@ -499,6 +531,10 @@ export class CollectionService {
             }
           }
         )
+        this.emitToRecipients(collectionId, "collectionUpdate", {
+          id: collectionId,
+          shareLink
+        })
         return {
           shareLink
         }
@@ -513,6 +549,10 @@ export class CollectionService {
             }
           }
         )
+        this.emitToRecipients(collectionId, "collectionUpdate", {
+          id: collectionId,
+          shareLink: null
+        })
         return {
           shareLink: null
         }

@@ -16,9 +16,8 @@ import {
   PagedMessagesQuery
 } from "@/graphql/chats/messages.graphql";
 import { useApolloClient } from "@vue/apollo-composable";
-import { useAppStore } from "@/stores/app.store";
+import { RailMode, useAppStore } from "@/stores/app.store";
 import { useSocket } from "@/boot/socket.service";
-import { useRoute, useRouter } from "vue-router";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import { useExperimentsStore } from "@/stores/experiments.store";
 import { useMessagesStore } from "@/stores/messages.store";
@@ -155,6 +154,19 @@ export const useChatStore = defineStore("chat", () => {
     }
   }
 
+  const unread = computed(() => {
+    return chats.value.reduce((sum, chat) => sum + chat.unread, 0);
+  });
+
+  watch(
+    () => unread.value,
+    (val) => {
+      const appStore = useAppStore();
+      appStore.navigation.railOptions[RailMode.CHAT].badge =
+        val >= 1000 ? "1k+" : val;
+    }
+  );
+
   return {
     chats,
     selectedChatAssociationId,
@@ -168,6 +180,7 @@ export const useChatStore = defineStore("chat", () => {
     merge,
     readChat,
     setChat,
-    lookupChat
+    lookupChat,
+    unread
   };
 });

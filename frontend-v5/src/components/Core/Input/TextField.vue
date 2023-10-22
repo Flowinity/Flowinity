@@ -32,6 +32,7 @@
         'placeholder-shown': !modelValue.length && focus,
         'text-medium-emphasis-dark': props.disabled
       }"
+      :readonly="props.readonly"
     ></textarea>
     <input
       tabindex="0"
@@ -58,6 +59,7 @@
         'placeholder-shown': !modelValue.length && focus,
         'text-medium-emphasis-dark': props.disabled
       }"
+      :readonly="props.readonly"
     />
     <div
       class="justify-end flex text-red text-xs mt-1"

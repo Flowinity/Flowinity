@@ -288,7 +288,7 @@ export class CollectionControllerV3 {
     )
     if (!collection) throw Errors.COLLECTION_NO_PERMISSION
     await this.collectionService.removeUserFromCollection(collectionId, userId)
-    await this.cacheService.resetCollectionCache(collectionId)
+    await this.cacheService.resetCollectionCache(collectionId, userId)
   }
 
   @Patch("/share")

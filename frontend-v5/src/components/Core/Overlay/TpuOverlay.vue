@@ -1,7 +1,7 @@
 <template>
   <component
     :is="props.component || 'div'"
-    class="flex items-center justify-center z-50"
+    class="flex items-center justify-center z-10"
     :class="{
       fixed: !props.absolute,
       absolute: props.absolute,

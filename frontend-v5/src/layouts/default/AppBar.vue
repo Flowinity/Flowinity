@@ -1,6 +1,6 @@
 <template>
   <div
-    style="min-height: 64px; max-height: 64px"
+    style="min-height: 64px; max-height: 64px; z-index: 100"
     id="appbar"
     :class="navbarClasses"
     v-tooltip.bottom="markRaw(MeetActionBar)"
@@ -26,7 +26,7 @@
         </div>
         <Transition mode="out-in" name="slide-up">
           <div
-            class="flex"
+            class="flex max-sm:hidden"
             :class="{ 'items-center': !expanded, 'items-end': expanded }"
             :key="appStore.currentNavItem?.rail?.id"
             v-memo="[
@@ -81,6 +81,25 @@
         class="flex"
       >
         <div
+          class="flex gap-2 mr-2"
+          :class="{ 'items-center': !expanded, 'items-end': expanded }"
+          v-if="appStore.dialogs.gallery.upload.loading"
+        >
+          <tpu-spinner
+            :percentage="appStore.dialogs.gallery.upload.percentage"
+            size="35"
+            v-tooltip.bottom="
+              appStore.dialogs.gallery.upload.files
+                .map((file: File) => file.name)
+                .join(', ')
+            "
+          >
+            <p style="font-size: 9px">
+              {{ appStore.dialogs.gallery.upload.percentage }}%
+            </p>
+          </tpu-spinner>
+        </div>
+        <div
           id="appbar-options-first"
           class="flex gap-2 mr-2"
           :class="{ 'items-center': !expanded, 'items-end': expanded }"
@@ -108,6 +127,7 @@ import { useUserStore } from "@/stores/user.store";
 import { computed, ref, watch, markRaw } from "vue";
 import { debounce } from "lodash";
 import MeetActionBar from "@/components/Tutorials/MeetActionBar.vue";
+import TpuSpinner from "@/components/Core/Spinner/TpuSpinner.vue";
 
 const appStore = useAppStore();
 const userStore = useUserStore();

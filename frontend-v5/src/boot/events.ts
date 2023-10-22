@@ -12,11 +12,11 @@ export default function setup() {
       return;
     if (!e.clipboardData) return;
     console.info("[TPU/InstantUpload] Paste detected");
-    if (core.dialogs.upload.loading) return;
+    if (core.dialogs.gallery.upload.loading) return;
     if (e.clipboardData.files.length > 0) {
       // Convert the legacy FileList object to an Array
       //@ts-ignore
-      core.dialogs.upload.files = [...e.clipboardData.files];
+      core.dialogs.gallery.upload.files = [...e.clipboardData.files];
       core.upload();
     }
   });

@@ -406,7 +406,7 @@ export class CacheService {
     console.info(`[REDIS] User collections cache generated in ${end - start}ms`)
   }
 
-  async resetCollectionCache(id: number) {
+  async resetCollectionCache(id: number, deletionUserId?: number) {
     try {
       const collectionService = Container.get(CollectionService)
       console.info(
@@ -414,6 +414,15 @@ export class CacheService {
       )
       let start = new Date().getTime()
       const collection = await collectionService.getCollection(id)
+
+      if (deletionUserId) {
+        let collections = await redis.json.get(`collections:${deletionUserId}`)
+        const index: number = collections.findIndex(
+          (c: Collection) => c.id === collection.id
+        )
+        collections.splice(index, 1)
+        redis.json.set(`collections:${deletionUserId}`, "$", collections)
+      }
 
       const updateCache = async (user: CollectionUser) => {
         const id = user.recipientId

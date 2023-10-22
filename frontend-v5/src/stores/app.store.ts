@@ -56,6 +56,7 @@ import functions from "@/plugins/functions";
 import type { AxiosProgressEvent } from "axios";
 import { useToast } from "vue-toastification";
 import axios from "@/plugins/axios";
+import { useFriendsStore } from "@/stores/friends.store";
 
 export enum RailMode {
   HOME,
@@ -218,6 +219,8 @@ export const useAppStore = defineStore("app", () => {
     const chatStore = useChatStore();
     const experimentsStore = useExperimentsStore();
     const collectionsStore = useCollectionsStore();
+    const friendsStore = useFriendsStore();
+    friendsStore.friends = friends;
     userStore.user = currentUser;
     if (!currentUser) localStorage.removeItem("userStore");
     if (currentUser)

@@ -160,6 +160,6 @@ function blocked(userId?: number) {
 }
 
 .communications .read-receipt-avatars .read-receipt-avatar {
-  margin-left: -10px !important;
+  margin-left: -4px !important;
 }
 </style>

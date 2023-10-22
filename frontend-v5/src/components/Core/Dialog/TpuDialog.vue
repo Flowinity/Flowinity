@@ -3,14 +3,14 @@
   <transition name="dialog-transition" appear>
     <div
       v-if="props.modelValue"
-      @click="$emit('update:modelValue', false)"
+      @mousedown="scrimDetect"
       class="dialog-outer"
       @keydown.esc="$emit('update:modelValue', false)"
+      @mouseup="scrim ? $emit('update:modelValue', false) : () => {}"
     >
       <slot name="dialog-outer">
         <div
-          class="dialog-content"
-          @click.stop
+          class="dialog-content break-all"
           :style="{
             height: height + 'px',
             maxHeight: height + 'px',
@@ -60,6 +60,22 @@ const props = defineProps({
   height: [Number, String]
 });
 defineEmits(["update:modelValue"]);
+const scrim = ref(false);
+
+function scrimDetect(event) {
+  scrim.value = event?.target?.classList.contains("dialog-outer");
+}
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (!val) {
+      document.body.classList.remove("blocked-scroll");
+      return;
+    }
+    document.body.classList.add("blocked-scroll");
+  }
+);
 </script>
 
 <style scoped>

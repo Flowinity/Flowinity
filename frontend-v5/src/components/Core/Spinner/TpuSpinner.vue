@@ -1,49 +1,85 @@
 <template>
-  <svg
-    class="spinner"
-    :width="props.size"
-    :height="props.size"
-    viewBox="0 0 66 66"
-    xmlns="http://www.w3.org/2000/svg"
+  <div
+    class="relative flex items-center justify-center"
+    :style="{
+      maxWidth: size,
+      maxHeight: size
+    }"
   >
-    <circle
-      class="path"
-      fill="none"
-      stroke-width="6"
-      stroke-linecap="round"
-      stroke
-      cx="33"
-      cy="33"
-      r="30"
-    ></circle>
-  </svg>
+    <svg
+      :width="size"
+      :height="size"
+      :color="color"
+      viewBox="0 0 66 66"
+      xmlns="http://www.w3.org/2000/svg"
+      :class="{ spinner: indeterminate }"
+    >
+      <circle
+        class="path"
+        fill="none"
+        :stroke-width="innerWidth"
+        stroke-linecap="round"
+        :stroke="spinnerColor"
+        :stroke-dasharray="indeterminate ? null : circumference"
+        :stroke-dashoffset="indeterminate ? null : dashOffset"
+        cx="33"
+        cy="33"
+        r="30"
+        v-if="!indeterminate"
+      ></circle>
+      <circle
+        v-else
+        class="path-indeterminate"
+        fill="none"
+        :stroke-width="innerWidth"
+        stroke-linecap="round"
+        cx="33"
+        cy="33"
+        r="30"
+      ></circle>
+    </svg>
+    <div class="absolute">
+      <slot />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 
 const props = defineProps({
+  percentage: Number,
+  color: String,
   size: {
-    type: Number,
-    default: 64
+    type: [Number, String]
   },
-  color: {
-    type: String
+  innerWidth: {
+    type: [Number, String],
+    default: 4
   }
 });
 
-const color = computed(() => {
+const spinnerColor = computed(() => {
   return props.color || "white";
+});
+
+const size = computed(() => {
+  return props.size || 64;
+});
+
+const indeterminate = computed(() => props.percentage === undefined);
+
+const circumference = ref(2 * Math.PI * 30);
+const dashOffset = computed(() => {
+  return indeterminate.value
+    ? null
+    : circumference.value * (1 - props.percentage! / 100);
 });
 </script>
 
 <style scoped lang="scss">
 $offset: 187;
 $duration: 1.2s;
-
-.spinner {
-  animation: rotator $duration linear infinite;
-}
 
 @keyframes rotator {
   0% {
@@ -55,11 +91,21 @@ $duration: 1.2s;
 }
 
 .path {
+  transform-origin: center;
+  stroke: v-bind(spinnerColor);
+  transform: rotate(260deg);
+}
+
+.spinner {
+  animation: rotator $duration linear infinite;
+}
+
+.path-indeterminate {
   stroke-dasharray: $offset;
   stroke-dashoffset: 0;
   transform-origin: center;
   animation: dash $duration ease-in-out infinite;
-  stroke: v-bind(color);
+  stroke: v-bind(spinnerColor);
 }
 
 @keyframes dash {

@@ -10,7 +10,7 @@ export default {
         orange: "#ff7849",
         green: "#13ce66",
         yellow: "#ffc82c",
-        "gray-dark": "#273444",
+        "gray-dark": "#386ba5",
         gray: "#8492a6",
         "gray-light": "#d3dce6",
         dark: "#0e0f11",

@@ -3,7 +3,7 @@
     :padding="false"
     class="flex flex-col h-full relative justify-between overflow-hidden overflow-ellipsis"
   >
-    <div>
+    <div class="w-full">
       <tpu-toolbar
         class="flex justify-between items-center"
         @click="selected.length ? $emit('select') : () => {}"
@@ -126,14 +126,7 @@
           >
             <RiDownloadLine style="width: 20px" />
           </tpu-button>
-          <span
-            v-tooltip="
-              props.item.textMetadata === null
-                ? $t('gallery.actions.ocrProcessing')
-                : $t('gallery.actions.ocr')
-            "
-            v-if="props.item.type === 'image'"
-          >
+          <span v-tooltip="ocrStatus.text" v-if="props.item.type === 'image'">
             <tpu-button
               color="purple"
               @click="
@@ -141,10 +134,20 @@
                 appStore.dialogs.gallery.ocr.value = true;
               "
               :disabled="!props.item.textMetadata"
-              @click.right="functions.copy(props.item?.textMetadata)"
-              :loading="props.item.textMetadata === null"
+              @click.right.prevent="
+                functions.copy(props.item?.textMetadata || '');
+                toast.success(t('generic.copied'));
+              "
+              :loading="ocrStatus.status === 1"
             >
-              <RiCharacterRecognitionLine style="width: 20px" />
+              <component
+                :is="
+                  ocrStatus.status !== 2
+                    ? RiCharacterRecognitionLine
+                    : RiAlertLine
+                "
+                style="width: 20px"
+              />
             </tpu-button>
           </span>
 
@@ -186,19 +189,23 @@ import RiStarLine from "vue-remix-icons/icons/ri-star-line.vue";
 import RiFileLine from "vue-remix-icons/icons/ri-file-line.vue";
 import RiCircleLine from "vue-remix-icons/icons/ri-circle-line.vue";
 import RiCheckboxCircleFill from "vue-remix-icons/icons/ri-checkbox-circle-fill.vue";
+import RiAlertLine from "vue-remix-icons/icons/ri-alert-line.vue";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import TpuSlideGroup from "@/components/Core/SlideGroup/TpuSlideGroup.vue";
 import { useCollectionsStore } from "@/stores/collections.store";
 import { StarUploadMutation } from "@/graphql/gallery/starUpload";
 import { useApolloClient } from "@vue/apollo-composable";
 import { useGalleryStore } from "@/stores/gallery.store";
 import { useUserStore } from "@/stores/user.store";
+import { useI18n } from "vue-i18n";
+import { useToast } from "vue-toastification";
 const appStore = useAppStore();
 const collectionsStore = useCollectionsStore();
 const galleryStore = useGalleryStore();
 const userStore = useUserStore();
+const toast = useToast();
 const props = defineProps({
   item: {
     type: Object as () => Upload,
@@ -226,6 +233,27 @@ async function starUpload() {
     loading.value = false;
   }
 }
+
+const { t } = useI18n();
+
+const ocrStatus = computed(() => {
+  if (props.item.type !== "image")
+    return { status: 2, text: t("gallery.actions.ocrError") };
+  return props.item.textMetadata === null
+    ? dayjs().diff(dayjs(props.item.createdAt), "day") >= 1
+      ? {
+          status: 2,
+          text: t("gallery.actions.ocrError")
+        }
+      : {
+          status: 1,
+          text: t("gallery.actions.ocrProcessing")
+        }
+    : {
+        status: 0,
+        text: t("gallery.actions.ocr")
+      };
+});
 
 defineEmits(["select"]);
 </script>

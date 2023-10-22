@@ -108,9 +108,7 @@ export default function setup(app: App) {
   // Create the apollo client
   const apolloClient = new ApolloClient({
     link: appLink,
-    cache: new InMemoryCache({
-      addTypename: true
-    }),
+    cache: null,
     connectToDevTools: true
   });
 

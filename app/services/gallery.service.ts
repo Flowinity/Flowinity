@@ -25,6 +25,7 @@ import {
 import { PaginatedGalleryResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import { CollectionUser } from "@app/models/collectionUser.model"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { GraphQLError } from "graphql/error"
 
 @Service()
 export class GalleryService {
@@ -192,6 +193,15 @@ export class GalleryService {
       Filter.AUDIO,
       Filter.PASTE
     ]
+    if (
+      (input.filters?.includes(Filter.SHARED) ||
+        input.filters?.includes(Filter.OWNED)) &&
+      input.type === Type.PERSONAL
+    ) {
+      throw new GraphQLError(
+        "Cannot used SHARED and OWNED filter types on the Personal Gallery."
+      )
+    }
     const type = input.filters?.filter((f) => allowed.includes(f))?.length
       ? {
           [Op.in]: input.filters?.filter((f) => allowed.includes(f))
@@ -217,13 +227,16 @@ export class GalleryService {
               )
             }
           : undefined,
-      userId: input.type !== Type.COLLECTION ? id : undefined,
+      userId:
+        input.type === Type.PERSONAL || input.filters?.includes(Filter.OWNED)
+          ? id
+          : input.filters?.includes(Filter.SHARED)
+          ? { [Op.not]: id }
+          : undefined,
       [Op.or]: [
-        {
-          textMetadata: Filter.INCLUDE_METADATA
-            ? { [Op.like]: "%" + input.search + "%" }
-            : undefined
-        },
+        input.filters?.includes(Filter.INCLUDE_METADATA)
+          ? [{ textMetadata: { [Op.like]: "%" + input.search + "%" } }]
+          : [],
         {
           name: { [Op.like]: "%" + input.search + "%" }
         },

@@ -29,6 +29,7 @@ const userStore = useUserStore();
             alt="Flowinity Logo"
             @click="$router.push('/')"
             class="cursor-pointer"
+            draggable="false"
             v-tooltip.right="'Flowinity'"
           />
           <super-bar-item
@@ -57,6 +58,7 @@ const userStore = useUserStore();
             :selected="appStore.navigation.mode === item.id"
             @click="appStore.navigation.mode = item.id"
             class="text-gray"
+            :badge="item.badge"
           >
             <component
               :is="

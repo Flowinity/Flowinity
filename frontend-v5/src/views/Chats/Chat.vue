@@ -69,6 +69,7 @@ import Card from "@/components/Core/Card/Card.vue";
 import MessageReply from "@/components/Communications/MessageReply.vue";
 import TpuButton from "@/components/Core/Button/TpuButton.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
+import { useAppStore } from "@/stores/app.store";
 
 const chatStore = useChatStore();
 const userStore = useUserStore();
@@ -80,6 +81,7 @@ const editingText = ref("");
 const content = ref("");
 const input = ref<InstanceType<typeof CommsInput> | null>(null);
 const avoidAutoScroll = ref(false);
+const appStore = useAppStore();
 
 function dateSeparator(index: number) {
   const message = messagesStore.selected[index];
@@ -88,9 +90,7 @@ function dateSeparator(index: number) {
 }
 
 const height = computed(() => {
-  const navbar = document.getElementById("appbar");
-  if (!navbar) return "calc(100vh)";
-  return "calc(100vh - " + navbar.offsetHeight + "px)";
+  return "calc(100vh - 64px)";
 });
 
 async function sendMessage() {

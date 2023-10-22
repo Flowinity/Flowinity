@@ -1,6 +1,6 @@
 <template>
   <collection-settings v-model="settings" />
-  <collection-sharing v-model="sharing" />
+  <collection-sharing v-model="sharing" :collection="collection" />
   <gallery
     :path="`/collections/${route.params.id}`"
     :name="`${collection?.name} Collection`"
@@ -112,18 +112,33 @@ watch(
   }
 );
 
-function onCollectionUpdate(data: { id: number; name: string }) {
+async function onCollectionUpdate(data: { id?: number; name?: string }) {
   if (data.id !== collection.value?.id) return;
-  collectionsStore.getCollection(id.value);
+  collection.value = await collectionsStore.getCollection(id.value);
+}
+
+async function onCollectionUserUpdate(data: {
+  id?: number;
+  collectionId: number;
+}) {
+  console.log(data.collectionId, collection.value?.id);
+  if (data.collectionId !== collection.value?.id) return;
+  collection.value = await collectionsStore.getCollection(id.value);
 }
 
 onMounted(() => {
   useSocket.gallery.on("collectionUpdate", onCollectionUpdate);
+  useSocket.gallery.on("collectionUserUpdate", onCollectionUserUpdate);
+  useSocket.gallery.on("collectionUserAdd", onCollectionUserUpdate);
+  useSocket.gallery.on("collectionUserRemove", onCollectionUserUpdate);
 });
 
 onUnmounted(() => {
   appStore.appBarImage = null;
   useSocket.gallery.off("collectionUpdate", onCollectionUpdate);
+  useSocket.gallery.off("collectionUserUpdate", onCollectionUserUpdate);
+  useSocket.gallery.off("collectionUserAdd", onCollectionUserUpdate);
+  useSocket.gallery.off("collectionUserRemove", onCollectionUserUpdate);
 });
 </script>
 

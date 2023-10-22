@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import TpuBadge from "@/components/Core/Badge/TpuBadge.vue";
+
 const props = defineProps({
   selected: Boolean,
-  highlighted: Boolean
+  highlighted: Boolean,
+  badge: [Number, String]
 });
 </script>
 
@@ -21,6 +24,9 @@ const props = defineProps({
     "
   >
     <div class="blue-line bg-blue" :class="{ active: props.selected }"></div>
+    <tpu-badge v-if="props.badge" class="absolute -top-1 -right-1" color="red">
+      {{ props.badge }}
+    </tpu-badge>
     <slot />
   </div>
 </template>

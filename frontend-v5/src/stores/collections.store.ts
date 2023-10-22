@@ -3,7 +3,7 @@ import { defineStore, getActivePinia } from "pinia";
 import type { Collection, CollectionInput, Pager } from "@/gql/graphql";
 import { CollectionQuery } from "@/graphql/collections/getCollection.graphql";
 import { isNumeric } from "@/plugins/isNumeric";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useApolloClient, useMutation, useQuery } from "@vue/apollo-composable";
 import {
   AddToCollectionMutation,
   RemoveFromCollectionMutation
@@ -13,18 +13,21 @@ import { useRoute } from "vue-router";
 export const useCollectionsStore = defineStore("collections", () => {
   const items = ref<Collection[]>([]);
   const pager = ref<Pager | null>(null);
+  const { resolveClient } = useApolloClient();
+  const client = resolveClient();
 
   async function getCollection(id: string | number) {
     const {
       data: { collection }
-    } = await getActivePinia()!!._a.config.globalProperties.$apollo.query({
+    } = await client.query({
       query: CollectionQuery,
       variables: {
         input: {
           id: isNumeric(id) ? id : undefined,
           shareLink: !isNumeric(id) ? id : undefined
         }
-      } as CollectionInput
+      } as CollectionInput,
+      fetchPolicy: "network-only"
     });
     return collection;
   }

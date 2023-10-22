@@ -194,6 +194,7 @@ export const CoreStateQuery = gql`
     collections {
       items {
         id
+        shareLink
         permissionsMetadata {
           write
           read

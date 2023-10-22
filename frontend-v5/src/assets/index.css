@@ -156,4 +156,9 @@ h6 {
     color: #0190ea;
 }
 
+.blocked-scroll {
+    overflow: hidden;
+    padding-inline-end: 8px;
+}
+
 @tailwind utilities;

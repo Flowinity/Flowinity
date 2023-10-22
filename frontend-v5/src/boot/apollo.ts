@@ -107,6 +107,11 @@ export default function setup(app: App) {
 
   const appLink = from([cleanTypeName, authLink, errorLink, httpLink, wsLink]);
 
+  if (import.meta.env.DEV) {
+    loadDevMessages();
+    loadErrorMessages();
+  }
+
   // Create the apollo client
   const apolloClient = new ApolloClient({
     link: appLink,
@@ -121,11 +126,6 @@ export default function setup(app: App) {
   const apolloProvider = createApolloProvider({
     defaultClient: apolloClient
   });
-
-  if (import.meta.env.DEV) {
-    loadDevMessages();
-    loadErrorMessages();
-  }
 
   app.use(apolloProvider);
   app.provide(DefaultApolloClient, apolloClient);

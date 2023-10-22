@@ -18,7 +18,14 @@ export const useFriendsStore = defineStore("friends", {
   state: () =>
     ({
       friends: []
-    } as FriendsState),
+    }) as FriendsState,
+  getters: {
+    validFriends(state) {
+      return state.friends.filter(
+        (friend) => friend.status === FriendStatus.Accepted
+      );
+    }
+  },
   actions: {
     friendStatus(userId: number) {
       return (

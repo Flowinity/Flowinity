@@ -14,7 +14,7 @@
     </template>
     <template #default>
       <p class="my-4 mx-4">
-        <tpu-select
+        <tpu-auto-complete
           v-model="selectedCollection"
           autofocus
           label="Select a Collection"
@@ -48,6 +48,7 @@ import TpuSelect from "@/components/Core/Input/TpuSelect.vue";
 import { ref } from "vue";
 import { useCollectionsStore } from "@/stores/collections.store";
 import { useToast } from "vue-toastification";
+import TpuAutoComplete from "@/components/Core/Input/TpuAutoComplete.vue";
 
 const { t } = useI18n();
 const props = defineProps({

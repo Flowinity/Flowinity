@@ -1,6 +1,6 @@
 <template>
   <div class="justify-center items-center flex relative" style="height: 150px">
-    <tpu-hover v-if="props.item.type === 'image'">
+    <tpu-hover v-if="props.item.type === 'image'" class="w-full">
       <template v-slot="{ hovering }">
         <tpu-img
           :src="appStore.domain + props.item?.attachment"

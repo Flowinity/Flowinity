@@ -5,6 +5,7 @@
   >
     <div
       class="w-full h-full flex items-center justify-center stroke-medium-emphasis-dark absolute"
+      style="z-index: 1"
       v-if="loading || errored"
       :style="{ height: height + 'px' }"
     >
@@ -13,6 +14,7 @@
     </div>
     <img
       :src="src"
+      style="z-index: 2"
       :class="[cover ? 'object-cover' : 'object-contain', imageClasses]"
       :style="{
         height: dimensions.height,

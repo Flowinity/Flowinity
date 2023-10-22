@@ -4,7 +4,15 @@
   <upload-file v-model="appStore.dialogs.gallery.upload.value" />
   <add-to-collection v-model="appStore.dialogs.gallery.collect.value" />
   <delete-upload v-model="appStore.dialogs.gallery.delete.value" />
-  <gallery-navigation v-model:search="search" @refresh="getGallery()" />
+  <gallery-navigation
+    v-model:search="search"
+    @refresh="getGallery()"
+    v-model:filter="filter"
+    v-model:metadata="metadata"
+    v-model:sort="sort"
+    v-model:order="order"
+    :types="types"
+  />
   <gallery-core
     :id="id"
     :type="type"
@@ -14,6 +22,18 @@
   >
     <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
       <slot :name="name" v-bind="slotData" />
+    </template>
+    <template
+      #extra-item-attributes="{ item }: { item: Upload }"
+      v-if="type === GalleryType.Starred"
+    >
+      <p>
+        {{
+          t("gallery.attributes.createdBy", {
+            name: item.user?.username
+          })
+        }}
+      </p>
     </template>
   </gallery-core>
   <tpu-pager
@@ -32,8 +52,13 @@
 
 <script setup lang="ts">
 import type { AddToCollectionInput, Pager, Upload } from "@/gql/graphql";
-import { GalleryInput, GalleryType } from "@/gql/graphql";
-import { onMounted, type Ref, ref, watch } from "vue";
+import {
+  GalleryFilter,
+  GalleryOrder,
+  GallerySort,
+  GalleryType
+} from "@/gql/graphql";
+import { computed, onMounted, type Ref, ref, watch } from "vue";
 import { GalleryQuery } from "@/graphql/gallery/gallery.graphql";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import { useApolloClient } from "@vue/apollo-composable";
@@ -47,7 +72,9 @@ import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import UploadFile from "@/components/Gallery/Dialogs/UploadFile.vue";
 import OCRScanned from "@/components/Gallery/Dialogs/OCRScanned.vue";
 import UploadEditor from "@/components/Gallery/Dialogs/UploadEditor.vue";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const page = ref(1);
 const loading = ref(false);
 const items = ref<Upload[]>([]);
@@ -56,6 +83,10 @@ const appStore = useAppStore();
 const selected: Ref<number[]> = ref([]);
 const collectionsStore = useCollectionsStore();
 const search = ref("");
+const filter = ref([GalleryFilter.IncludeMetadata]);
+const sort = ref(GallerySort.CreatedAt);
+const order = ref(GalleryOrder.Desc);
+const metadata = ref(false);
 
 function select(id: number | number[]) {
   if (Array.isArray(id)) {
@@ -97,6 +128,9 @@ async function getGallery() {
         search: search.value,
         page: page.value,
         type: props.type,
+        filters: filter.value,
+        sort: sort.value,
+        order: order.value,
         collectionId: typeof props.id === "number" ? props.id : undefined,
         shareLink: typeof props.id === "string" ? props.id : undefined
       }
@@ -198,6 +232,56 @@ useSocket.gallery.on("create", (data: { upload: Upload; url: String }[]) => {
 
 defineExpose({
   getGallery
+});
+
+const types = computed(() => {
+  const types = [
+    {
+      name: "Search in screenshots",
+      internalName: GalleryFilter.IncludeMetadata
+    },
+    {
+      name: "Not collectivized",
+      internalName: GalleryFilter.NoCollection
+    },
+    {
+      name: "Images",
+      internalName: GalleryFilter.Images
+    },
+    {
+      name: "Videos",
+      internalName: GalleryFilter.Videos
+    },
+    {
+      name: "Audio",
+      internalName: GalleryFilter.Audio
+    },
+    {
+      name: "Text",
+      internalName: GalleryFilter.Text
+    },
+    {
+      name: "Other",
+      internalName: GalleryFilter.Other
+    },
+    {
+      name: "Include Deletable",
+      internalName: GalleryFilter.IncludeDeletable
+    }
+  ];
+  if (props.type !== GalleryType.Personal) {
+    types.push(
+      {
+        name: "Owned items",
+        internalName: GalleryFilter.Owned
+      },
+      {
+        name: "Not owned items",
+        internalName: GalleryFilter.Shared
+      }
+    );
+  }
+  return types;
 });
 </script>
 

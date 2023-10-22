@@ -35,6 +35,11 @@ import { CacheService } from "@app/services/cache.service"
 import { Success } from "@app/classes/graphql/generic/success"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import RateLimit from "@app/lib/graphql/RateLimit"
+import {
+  RemoveCollectionUserInput,
+  UpdateCollectionUserPermissionsInput
+} from "@app/classes/graphql/collections/collectionUsers"
+import Errors from "@app/lib/errors"
 
 export const PaginatedCollectionsResponse = PagerResponse(Collection)
 export type PaginatedCollectionsResponse = InstanceType<
@@ -159,10 +164,82 @@ export class CollectionResolver {
   @Authorization({
     scopes: "collections.modify"
   })
-  @Mutation(() => Success)
+  @Mutation(() => Collection)
   async updateCollection(
     @Arg("input") input: UpdateCollectionInput,
     @Ctx() ctx: Context
+  ) {
+    const permission = await this.collectionService.getCollectionPermissions(
+      input.collectionId,
+      ctx.user!!.id,
+      "configure"
+    )
+    const collection = await Collection.findOne({
+      where: {
+        id: input.collectionId
+      }
+    })
+
+    if (!permission || !collection) throw new GqlError("COLLECTION_NOT_FOUND")
+
+    if (input.name) {
+      await this.collectionService.updateCollection(
+        input.collectionId,
+        input.name
+      )
+    } else if (input.shareLink !== undefined) {
+      if (collection.shareLink)
+        await redis.json.del("shareLinks:" + collection.shareLink)
+
+      const result = await this.collectionService.updateShareLink(
+        input.collectionId,
+        input.shareLink ? "link" : "nobody"
+      )
+
+      await this.cacheService.resetCollectionCache(input.collectionId)
+
+      if (result.shareLink)
+        await this.cacheService.patchShareLinkCache(
+          result.shareLink,
+          input.collectionId
+        )
+    }
+    await this.cacheService.resetCollectionCache(input.collectionId)
+    const collectionRes = await Collection.findOne({
+      where: {
+        id: input.collectionId
+      }
+    })
+    return collectionRes?.toJSON()
+  }
+}
+
+@Resolver(CollectionUser)
+@Service()
+export class CollectionUserResolver {
+  constructor(
+    private collectionService: CollectionService,
+    private cacheService: CacheService
+  ) {}
+
+  @FieldResolver(() => PartialUserBase)
+  async user(@Root() collectionUser: CollectionUser) {
+    return await collectionUser.$get("user", {
+      attributes: partialUserBase
+    })
+  }
+
+  @RateLimit({
+    window: 12,
+    max: 12
+  })
+  @Authorization({
+    scopes: "collections.modify"
+  })
+  @Mutation(() => CollectionUser)
+  async updateCollectionUserPermissions(
+    @Ctx() ctx: Context,
+    @Arg("input") input: UpdateCollectionUserPermissionsInput
   ) {
     const collection = await this.collectionService.getCollectionPermissions(
       input.collectionId,
@@ -170,24 +247,83 @@ export class CollectionResolver {
       "configure"
     )
     if (!collection) throw new GqlError("COLLECTION_NOT_FOUND")
-    const data = await this.collectionService.updateCollection(
+    await this.collectionService.updateUser(
       input.collectionId,
-      input.name
+      input.userId,
+      input.write,
+      input.configure,
+      input.read
     )
     await this.cacheService.resetCollectionCache(input.collectionId)
-    return { success: true }
-  }
-}
-
-@Resolver(CollectionUser)
-@Service()
-export class CollectionUserResolver {
-  constructor(private collectionService: CollectionService) {}
-
-  @FieldResolver(() => PartialUserBase)
-  async user(@Root() collectionUser: CollectionUser) {
-    return await collectionUser.$get("user", {
-      attributes: partialUserBase
+    const res = await CollectionUser.findOne({
+      where: {
+        collectionId: input.collectionId,
+        recipientId: input.userId
+      }
     })
+    return res?.toJSON()
+  }
+
+  @RateLimit({
+    window: 12,
+    max: 12
+  })
+  @Authorization({
+    scopes: "collections.modify"
+  })
+  @Mutation(() => CollectionUser)
+  async addCollectionUser(
+    @Ctx() ctx: Context,
+    @Arg("input") input: UpdateCollectionUserPermissionsInput
+  ) {
+    const collection = await this.collectionService.getCollectionPermissions(
+      input.collectionId,
+      ctx.user!!.id,
+      "configure"
+    )
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    const collectionUser = await this.collectionService.addUserToCollection(
+      input.collectionId,
+      ctx.user!!.id,
+      input.userId,
+      input.write,
+      input.configure,
+      input.read
+    )
+
+    await this.cacheService.resetCollectionCache(input.collectionId)
+
+    return collectionUser
+  }
+
+  @RateLimit({
+    window: 12,
+    max: 12
+  })
+  @Authorization({
+    scopes: "collections.modify"
+  })
+  @Mutation(() => Success)
+  async removeCollectionUser(
+    @Ctx() ctx: Context,
+    @Arg("input") input: RemoveCollectionUserInput
+  ) {
+    const collection = await this.collectionService.getCollectionPermissions(
+      input.collectionId,
+      ctx.user!!.id,
+      "configure"
+    )
+    if (!collection) throw Errors.COLLECTION_NO_PERMISSION
+
+    await this.collectionService.removeUserFromCollection(
+      input.collectionId,
+      input.userId
+    )
+    await this.cacheService.resetCollectionCache(
+      input.collectionId,
+      input.userId
+    )
+    return { success: true }
   }
 }

@@ -13,7 +13,8 @@
     "cancel": "Cancel",
     "upload": "Upload",
     "close": "Close",
-    "save": "Save"
+    "save": "Save",
+    "copied": "Copied to clipboard!"
   },
   "gallery": {
     "addToCollection": "Add to Collection",
@@ -26,7 +27,8 @@
       "star": "Star | Unstar",
       "ocrProcessing": "Scanned text is being processed...",
       "approve": "Approve",
-      "reject": "Reject"
+      "reject": "Reject",
+      "ocrError": "Scanned text failed to process"
     },
     "attributes": {
       "triggeredByRule": "Triggered by rule: {rule}",
@@ -45,7 +47,8 @@
       },
       "ocr": {
         "title": "View Scanned Text",
-        "copyAll": "Copy all"
+        "copyAll": "Copy all",
+        "tip": "Instantly copy the entire scanned text content by right clicking the purple button."
       },
       "edit": {
         "title": "Edit Upload",
@@ -63,6 +66,13 @@
       "selectAll": "Select all",
       "deselectAll": "Deselect all",
       "randomAttachment": "Random Attachment"
+    },
+    "options": {
+      "filter": "Filter",
+      "sort": "Sort",
+      "filterTypes": {
+        "INCLUDE_METADATA": "Search in files"
+      }
     }
   },
   "collections": {
@@ -76,7 +86,8 @@
       "name": "Name"
     },
     "sharing": {
-      "title": "Collection Sharing"
+      "title": "Collection Sharing",
+      "add": "Add friend to collection"
     }
   },
   "communications": {

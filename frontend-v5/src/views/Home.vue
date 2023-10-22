@@ -38,7 +38,10 @@
       </card>
       <card outlined>
         <template #header>Flowinity Statistics</template>
-        <div class="grid 2xl:grid-cols-4 sm:grid-cols-3 gap-4 mt-4">
+        <div
+          class="grid 2xl:grid-cols-4 sm:grid-cols-3 gap-4 mt-4"
+          v-if="appStore.state?.stats"
+        >
           <card :secondary="false" class="text-center">
             <template #header>Uploads</template>
             <p class="mt-2 text-4xl">

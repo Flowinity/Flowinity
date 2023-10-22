@@ -2,7 +2,7 @@
   <tpu-dialog
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
-    width="400"
+    width="500"
   >
     <template #toolbar>
       {{ t("collections.settings.title") }}
@@ -31,7 +31,7 @@
 import TpuDialog from "@/components/Core/Dialog/TpuDialog.vue";
 import { useI18n } from "vue-i18n";
 import TextField from "@/components/Core/Input/TextField.vue";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useCollectionsStore } from "@/stores/collections.store";
 import CardActions from "@/components/Core/Card/CardActions.vue";
 import TpuButton from "@/components/Core/Button/TpuButton.vue";
@@ -47,9 +47,9 @@ const { t } = useI18n();
 const collectionStore = useCollectionsStore();
 const loading = ref(false);
 watch(
-  () => collectionStore.selected?.name,
+  () => collectionStore.selected,
   (val) => {
-    name.value = val;
+    name.value = val?.name ?? "";
   }
 );
 
@@ -70,6 +70,10 @@ async function updateCollection() {
     loading.value = false;
   }
 }
+
+onMounted(() => {
+  name.value = collectionStore.selected?.name ?? "";
+});
 </script>
 
 <style scoped></style>

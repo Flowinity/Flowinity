@@ -5,8 +5,14 @@ import { MaxLength, MinLength } from "class-validator"
 export class UpdateCollectionInput {
   @Field(() => Int)
   collectionId: number
-  @Field(() => String)
+  @Field(() => String, {
+    nullable: true
+  })
   @MaxLength(64)
   @MinLength(3)
-  name: string
+  name?: string
+  @Field(() => Boolean, {
+    nullable: true
+  })
+  shareLink?: boolean
 }
