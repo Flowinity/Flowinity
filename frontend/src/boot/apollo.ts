@@ -7,6 +7,7 @@ import {
   HttpLink,
   InMemoryCache
 } from "@apollo/client/core";
+import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import { onError } from "@apollo/client/link/error";
 import { useToast } from "vue-toastification";
 import { useUserStore } from "@/store/user.store";
@@ -103,12 +104,19 @@ export default function setup(app: App) {
     });
   });
 
+  if (import.meta.env.DEV) {
+    loadDevMessages();
+    loadErrorMessages();
+  }
+
   const appLink = from([cleanTypeName, authLink, errorLink, httpLink, wsLink]);
 
   // Create the apollo client
   const apolloClient = new ApolloClient({
     link: appLink,
-    cache: null,
+    cache: new InMemoryCache({
+      addTypename: true
+    }),
     connectToDevTools: true
   });
 
