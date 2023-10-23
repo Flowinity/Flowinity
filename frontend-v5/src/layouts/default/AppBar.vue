@@ -1,10 +1,9 @@
 <template>
   <div
-    style="min-height: 64px; max-height: 64px; z-index: 100"
+    style="min-height: 64px; max-height: 64px; z-index: 49"
     id="appbar"
     :class="navbarClasses"
     v-tooltip.bottom="markRaw(MeetActionBar)"
-    class="z-50"
   >
     <div
       class="flex p-4 justify-items-end h-full justify-between z-50"
@@ -64,7 +63,7 @@
             ]"
           >
             <div class="items-center flex">
-              <div class="mr-3">
+              <div class="-ml-1.5 mr-3">
                 <component
                   :is="appStore.currentNavItem?.item.icon"
                   class="w-8 items-center fill-white"

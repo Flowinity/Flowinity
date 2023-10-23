@@ -80,24 +80,8 @@ const lastRoute = ref("/");
 const chatStore = useChatStore();
 const collectionStore = useCollectionsStore();
 
-const results = computed(() => {
-  const searchString = content.value.toLowerCase();
-
-  // Flatten the options from all RailModes with the rail property
-  const allOptions = [
-    ...(searchString.length
-      ? []
-      : [
-          {
-            icon: markRaw(RiArrowGoBack),
-            name: "Go back",
-            path: lastRoute.value,
-            selectedIcon: markRaw(RiArrowGoBack),
-            rail: -1,
-            subtitle: lastRoute.value,
-            id: -1
-          }
-        ]),
+const options = computed(() => {
+  return [
     ...Object.entries(appStore.navigation.options).flatMap(
       ([rail, options]) => {
         return options.map((option) => ({ rail, ...option }));
@@ -118,9 +102,10 @@ const results = computed(() => {
       };
     }),
     ...collectionStore.items.map((collection) => {
+      console.log(collection.avatar ?? collection.image);
       return {
         icon: h(UserAvatar, {
-          src: collection.avatar || collection.banner,
+          src: collection.avatar ?? collection.image,
           username: collection.name,
           class: "mr-4"
         }),
@@ -130,6 +115,26 @@ const results = computed(() => {
         id: `collection-${collection.id}`
       };
     })
+  ];
+});
+
+const results = computed(() => {
+  const searchString = content.value.toLowerCase();
+  const allOptions = [
+    ...(searchString.length
+      ? [
+          {
+            icon: markRaw(RiArrowGoBack),
+            name: "Go back",
+            path: lastRoute.value,
+            selectedIcon: markRaw(RiArrowGoBack),
+            rail: -1,
+            subtitle: lastRoute.value,
+            id: -1
+          }
+        ]
+      : []),
+    ...options.value
   ];
 
   if (!searchString) {

@@ -20,6 +20,7 @@ export enum Filter {
 export enum Sort {
   CREATED_AT = "createdAt",
   UPDATED_AT = "updatedAt",
+  ADDED_AT = "addedAt",
   NAME = "name",
   SIZE = "fileSize"
 }

@@ -55,9 +55,14 @@ const selected = computed(() => {
           <slot name="icon" />
         </div>
       </template>
-      <p class="ml-4 select-none truncate">
+      <p class="ml-4 select-none truncate ">
         <template v-if="item?.name">
           {{ item.name }}
+          <template v-if="item?.badge">
+            <tpu-badge class="ml-2">
+              {{ item.badge }}
+            </tpu-badge>
+          </template>
         </template>
         <template v-else>
           <slot name="title" />
@@ -65,11 +70,7 @@ const selected = computed(() => {
         <div class="text-medium-emphasis-dark">
           <slot name="subtitle" />
         </div>
-        <template v-if="item?.badge">
-          <tpu-badge class="ml-2">
-            {{ item.badge }}
-          </tpu-badge>
-        </template>
+
       </p>
     </div>
   </a>

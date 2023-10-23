@@ -10,8 +10,6 @@ export const AddToCollectionMutation = gql`
 
 export const RemoveFromCollectionMutation = gql`
   mutation RemoveFromCollection($input: AddToCollectionInput!) {
-    removeFromCollection(input: $input) {
-      success
-    }
+    removeFromCollection(input: $input)
   }
 `;

@@ -4,6 +4,8 @@ import { useAppStore } from "@/store/app.store";
 import { Chat } from "@/models/chat";
 import { User } from "@/models/user";
 import { Message, UserStatus, UserStoredStatus } from "@/gql/graphql";
+import { useToast } from "vue-toastification";
+import { useI18n } from "vue-i18n";
 
 export default {
   fileSize(size: number): string {

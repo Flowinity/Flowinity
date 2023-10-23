@@ -2,7 +2,11 @@
   <upload-editor v-model="$app.dialogs.gallery.edit.value" />
   <OCRScanned v-model="$app.dialogs.gallery.ocr.value" />
   <upload-file v-model="appStore.dialogs.gallery.upload.value" />
-  <add-to-collection v-model="appStore.dialogs.gallery.collect.value" />
+  <add-to-collection
+    v-model="appStore.dialogs.gallery.collect.value"
+    :remove="appStore.dialogs.gallery.collect.remove"
+    @selected="selected = $event"
+  />
   <delete-upload v-model="appStore.dialogs.gallery.delete.value" />
   <gallery-navigation
     v-model:search="search"
@@ -27,6 +31,16 @@
       #extra-item-attributes="{ item }: { item: Upload }"
       v-if="type === GalleryType.Starred"
     >
+      <p>
+        {{
+          t("gallery.attributes.starredAt", {
+            date: dayjs(item?.starred?.createdAt).format(
+              "Do of MMMM YYYY, h:mm A"
+            )
+          })
+        }}
+      </p>
+
       <p>
         {{
           t("gallery.attributes.createdBy", {
@@ -73,6 +87,7 @@ import UploadFile from "@/components/Gallery/Dialogs/UploadFile.vue";
 import OCRScanned from "@/components/Gallery/Dialogs/OCRScanned.vue";
 import UploadEditor from "@/components/Gallery/Dialogs/UploadEditor.vue";
 import { useI18n } from "vue-i18n";
+import dayjs from "@/plugins/dayjs";
 
 const { t } = useI18n();
 const page = ref(1);
@@ -80,7 +95,7 @@ const loading = ref(false);
 const items = ref<Upload[]>([]);
 const pager = ref<Pager | null>(null);
 const appStore = useAppStore();
-const selected: Ref<number[]> = ref([]);
+const selected: Ref<Upload[]> = ref([]);
 const collectionsStore = useCollectionsStore();
 const search = ref("");
 const filter = ref([GalleryFilter.IncludeMetadata]);
@@ -88,18 +103,18 @@ const sort = ref(GallerySort.CreatedAt);
 const order = ref(GalleryOrder.Desc);
 const metadata = ref(false);
 
-function select(id: number | number[]) {
-  if (Array.isArray(id)) {
-    if (!id.length) return (selected.value = []);
-    for (const numberToAdd of id) {
-      if (selected.value.indexOf(numberToAdd) === -1) {
-        selected.value.push(numberToAdd);
+function select(upload: Upload | Upload[]) {
+  if (Array.isArray(upload)) {
+    if (!upload.length) return (selected.value = []);
+    for (const add of upload) {
+      if (!selected.value.find((item) => item.id === add.id)) {
+        selected.value.push(add);
       }
     }
   } else {
-    const index = selected.value.indexOf(id);
+    const index = selected.value.findIndex((item) => item.id === upload.id);
     if (index === -1) {
-      selected.value.push(id);
+      selected.value.push(upload);
     } else {
       selected.value.splice(index, 1);
     }
@@ -197,6 +212,16 @@ useSocket.gallery.on("update", (data: Upload[]) => {
     ) {
       items.value = [upload, ...items.value];
     } else {
+      if (
+        props.type === GalleryType.Collection &&
+        !upload.collections?.some((collection) => collection.id === props.id) &&
+        upload.collections
+      ) {
+        return (items.value = items.value.filter(
+          (item) => item.id !== upload.id
+        ));
+      }
+
       items.value = items.value.map((item) => {
         if (item.id === upload.id) {
           return {

@@ -21,6 +21,8 @@
   },
   "gallery": {
     "addToCollection": "Add to Collection",
+    "addToCollectionBulk": "Add to Collection\n(⇧ to bulk-remove)",
+    "removeFromCollection": "Remove from Collection",
     "actions": {
       "edit": "Edit",
       "delete": "Delete",
@@ -38,7 +40,9 @@
       "originalName": "Original name: {name}",
       "uploadedName": "Uploaded name: {name}",
       "size": "Size: {size}",
-      "createdBy": "Uploaded by: {name}"
+      "createdBy": "Uploaded by: {name}",
+      "addedAt": "Collectivized at: {date}",
+      "starredAt": "Starred at: {date}"
     },
     "dialogs": {
       "delete": {
@@ -46,7 +50,8 @@
         "description": "The upload {item} will be permanently deleted from Flowinity."
       },
       "collect": {
-        "title": "Add 1 item to a collection? | Add {count} items to a collection?"
+        "titleAdd": "Add 1 item to a collection? | Add {count} items to a collection?",
+        "titleRemove": "Remove 1 item from a collection? | Remove {count} items from a collection?"
       },
       "ocr": {
         "title": "View Scanned Text",

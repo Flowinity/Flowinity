@@ -1,4 +1,12 @@
-import { Arg, Ctx, FieldResolver, Mutation, Resolver, Root } from "type-graphql"
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  Int,
+  Mutation,
+  Resolver,
+  Root
+} from "type-graphql"
 import { Collection } from "@app/models/collection.model"
 import { Service } from "typedi"
 import { CollectionItem } from "@app/models/collectionItem.model"
@@ -8,8 +16,6 @@ import { AddToCollectionInput } from "@app/classes/graphql/collections/addToColl
 import { CollectionService } from "@app/services/collection.service"
 import { GqlError } from "@app/lib/gqlErrors"
 import { Upload } from "@app/models/upload.model"
-import Errors from "@app/lib/errors"
-import { Success } from "@app/classes/graphql/generic/success"
 
 @Resolver(CollectionItem)
 @Service()
@@ -41,8 +47,7 @@ export class CollectionItemResolver {
         userId: ctx.user!!.id
       }
     })
-    if (uploads.length === 0 || uploads.length !== input.items?.length)
-      throw new GqlError("ATTACHMENT_NOT_FOUND")
+    if (!uploads.length) throw new GqlError("ATTACHMENT_NOT_FOUND")
     return await this.collectionService.addToCollection(
       input.collectionId,
       uploads.map((attachment) => attachment.id),
@@ -53,11 +58,11 @@ export class CollectionItemResolver {
   @Authorization({
     scopes: "collections.modify"
   })
-  @Mutation(() => Success)
+  @Mutation(() => Int)
   async removeFromCollection(
     @Ctx() ctx: Context,
     @Arg("input") input: AddToCollectionInput
-  ): Promise<Success> {
+  ): Promise<Number> {
     const collection = await this.collectionService.getCollectionPermissions(
       input.collectionId,
       ctx.user!!.id,
@@ -73,7 +78,7 @@ export class CollectionItemResolver {
       })
 
       if (!items.length) throw new GqlError("ATTACHMENT_NOT_FOUND")
-      await CollectionItem.destroy({
+      const destroyed = await CollectionItem.destroy({
         where: {
           collectionId: input.collectionId,
           attachmentId: input.items,
@@ -84,13 +89,12 @@ export class CollectionItemResolver {
         items.map((item) => item.attachmentId),
         ctx.user!!.id
       )
-      return { success: true }
+      return destroyed
     }
-    await this.collectionService.removeFromCollection(
+    return await this.collectionService.removeFromCollection(
       input.collectionId,
       input.items,
       ctx.user!!.id
     )
-    return { success: true }
   }
 }

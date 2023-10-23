@@ -139,8 +139,29 @@ const createCollection = ref(false);
               :item="item"
             />
             <template v-if="appStore.currentRail?.id === RailMode.GALLERY">
-              <tpu-overline position="start">
+              <tpu-overline
+                position="start"
+                style="margin-right: -8px; margin-left: 0.25rem"
+              >
                 {{ $t("sidebar.collections.title") }}
+                <template #end>
+                  <tpu-button
+                    icon
+                    variant="passive"
+                    @click="createCollection = true"
+                    class="flex items-center justify-center"
+                    style="
+                      margin-right: 2.25px;
+                      margin-left: 6px;
+                      margin-top: -0.4rem;
+                    "
+                  >
+                    <RiAddLine
+                      style="width: 20px"
+                      class="fill-medium-emphasis-dark"
+                    />
+                  </tpu-button>
+                </template>
               </tpu-overline>
               <div class="pl-1 gap-1 flex">
                 <text-field
@@ -205,16 +226,6 @@ const createCollection = ref(false);
                     </card>
                   </template>
                 </VDropdown>
-              </div>
-              <div>
-                <tpu-button
-                  class="flex h-12 gap-3 mb-1 items-center font-medium"
-                  variant="outlined"
-                  @click="createCollection = true"
-                >
-                  <RiAddLine style="width: 40px" />
-                  {{ $t("sidebar.collections.create") }}
-                </tpu-button>
               </div>
               <div
                 v-for="collection in filteredCollections"

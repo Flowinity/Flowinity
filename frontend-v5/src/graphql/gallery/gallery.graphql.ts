@@ -44,8 +44,10 @@ export const GalleryQuery = gql`
         item {
           id
           pinned
+          createdAt
         }
         starred {
+          createdAt
           id
           userId
           attachmentId

@@ -75,6 +75,7 @@
     >
       {{ error || lengthError }}
     </div>
+    <slot :focus="focus" />
   </div>
 </template>
 

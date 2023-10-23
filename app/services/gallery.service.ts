@@ -20,6 +20,7 @@ import {
   Filter,
   GalleryInput,
   Order,
+  Sort,
   Type
 } from "@app/classes/graphql/gallery/galleryInput"
 import { PaginatedGalleryResponse } from "@app/classes/graphql/gallery/galleryResponse"
@@ -179,10 +180,29 @@ export class GalleryService {
     limit: number = 12,
     excludedCollections: number[] | null
   ): Promise<PaginatedGalleryResponse> {
-    let sortParams: any =
-      input.order === Order.RANDOM
-        ? [sequelize.literal("RAND()")]
-        : [input.sort || "createdAt", input.order || "DESC"]
+    let sortParams: any
+    switch (input.order) {
+      case Order.RANDOM:
+        sortParams = [sequelize.literal("RAND()")]
+        break
+      default:
+        if (input.sort === Sort.ADDED_AT && input.type !== Type.PERSONAL) {
+          sortParams = [
+            input.type === Type.COLLECTION
+              ? { model: CollectionItem, as: "item" }
+              : input.type === Type.STARRED
+              ? { model: Star, as: "starred" }
+              : input.type === Type.AUTO_COLLECT
+              ? { model: AutoCollectApproval, as: "autoCollectApproval" }
+              : {},
+            "createdAt",
+            input.order || "DESC"
+          ]
+        } else {
+          sortParams = [input.sort || "createdAt", input.order || "DESC"]
+        }
+        break
+    }
 
     const offset = input.page * limit - limit || 0
     const allowed = [

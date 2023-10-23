@@ -14,6 +14,13 @@
     <template #extra-item-attributes="{ item }: { item: Upload }">
       <p>
         {{
+          t("gallery.attributes.addedAt", {
+            date: dayjs(item?.item?.createdAt).format("Do of MMMM YYYY, h:mm A")
+          })
+        }}
+      </p>
+      <p>
+        {{
           t("gallery.attributes.createdBy", {
             name: item.user?.username
           })
@@ -97,6 +104,7 @@ const id: ComputedRef<number | string> = computed(() => {
 });
 const toast = useToast();
 import RiLink from "vue-remix-icons/icons/ri-link.vue";
+import dayjs from "@/plugins/dayjs";
 
 const banner = computed(() => {
   if (!collection.value?.banner) return null;

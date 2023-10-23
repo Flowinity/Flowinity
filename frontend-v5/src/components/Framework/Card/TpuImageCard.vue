@@ -13,9 +13,9 @@
     <tpu-img
       :src="src"
       cover
-      class="h-full w-full absolute z-5"
+      class="h-full w-full absolute"
       image-classes="rounded-xl"
-      :gradient="true"
+      gradient="true"
     ></tpu-img>
     <div
       class="absolute inset-0 flex items-end p-4 bg-gradient-to-b from-opacity-0 to-opacity-100"

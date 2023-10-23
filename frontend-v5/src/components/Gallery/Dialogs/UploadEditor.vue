@@ -16,7 +16,7 @@
         />
       </p>
       <card-actions>
-        <tpu-button color="blue" variant="passive" @click="updateUpload">
+        <tpu-button variant="passive" @click="updateUpload">
           {{ t("generic.save") }}
         </tpu-button>
       </card-actions>

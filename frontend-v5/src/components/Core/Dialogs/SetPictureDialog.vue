@@ -44,14 +44,10 @@
         </tpu-button>
       </template>
       <template v-if="image.src">
-        <tpu-button
-          variant="passive"
-          color="blue"
-          @click="$emit('setImage', files[0])"
-        >
+        <tpu-button variant="passive" @click="$emit('setImage', files[0])">
           {{ t("dialogs.uploadCropper.skipCrop") }}
         </tpu-button>
-        <tpu-button variant="passive" color="blue" @click="save">
+        <tpu-button variant="passive" @click="save">
           {{ t("generic.save") }}
         </tpu-button>
       </template>

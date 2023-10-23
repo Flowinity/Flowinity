@@ -41,7 +41,7 @@ export const useCollectionsStore = defineStore("collections", () => {
         }
       }
     });
-    await data.mutate();
+    return await data.mutate();
   }
 
   async function removeFromCollection(collectionId: number, items: number[]) {
@@ -53,7 +53,7 @@ export const useCollectionsStore = defineStore("collections", () => {
         }
       }
     });
-    await data.mutate();
+    return await data.mutate();
   }
 
   const route = useRoute();
@@ -64,12 +64,17 @@ export const useCollectionsStore = defineStore("collections", () => {
     );
   });
 
+  const writable = computed(() => {
+    return items.value.filter((item) => item.permissionsMetadata.write);
+  });
+
   return {
     items,
     pager,
     getCollection,
     addToCollection,
     removeFromCollection,
-    selected
+    selected,
+    writable
   };
 });

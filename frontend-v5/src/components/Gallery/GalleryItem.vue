@@ -21,7 +21,7 @@
         >
           <RiCircleLine
             style="max-width: 20px; min-width: 20px"
-            v-if="!selected.includes(props.item?.id)"
+            v-if="!selected.find((i) => i.id === props.item?.id)"
           />
           <RiCheckboxCircleFill
             v-else
@@ -38,11 +38,11 @@
           {{ props.item.originalFilename }}
         </p>
         <p>Uploaded name: {{ props.item.attachment }}</p>
+        <p>Size: {{ functions.fileSize(props.item.fileSize) }}</p>
         <p>
           Created at:
           {{ dayjs(props.item.createdAt).format("Do of MMMM YYYY, h:mm A") }}
         </p>
-        <p>Size: {{ functions.fileSize(props.item.fileSize) }}</p>
         <slot name="extra-item-attributes" :item="props.item"></slot>
       </div>
     </div>
@@ -60,9 +60,11 @@
             <tpu-button
               v-tooltip="$t('gallery.addToCollection')"
               @click="
-                appStore.dialogs.gallery.collect.items = [props.item.id];
+                appStore.dialogs.gallery.collect.remove = false;
+                appStore.dialogs.gallery.collect.items = [props.item];
                 appStore.dialogs.gallery.collect.value = true;
               "
+              v-if="props.item.userId === userStore.user?.id"
             >
               <RiAddLine style="width: 20px" />
             </tpu-button>
@@ -74,9 +76,12 @@
               <RiCloseLine
                 style="width: 20px"
                 @click.prevent="
+                  toast.success(
+                    `Successfully removed the item from ${collection.name}`
+                  );
                   collectionsStore.removeFromCollection(collection.id, [
                     props.item.id
-                  ])
+                  ]);
                 "
               />
               <span class="mx-1">
@@ -115,7 +120,10 @@
           <tpu-button
             color="teal"
             v-tooltip="$t('gallery.actions.copy')"
-            @click="functions.copy(appStore.domain + props.item.attachment)"
+            @click="
+              functions.copy(appStore.domain + props.item.attachment);
+              toast.success(t('generic.copied'));
+            "
           >
             <RiFileCopyLine style="width: 20px" />
           </tpu-button>
@@ -213,7 +221,7 @@ const props = defineProps({
     required: true
   },
   selected: {
-    type: Object as () => Number[],
+    type: Object as () => Upload[],
     required: true
   }
 });

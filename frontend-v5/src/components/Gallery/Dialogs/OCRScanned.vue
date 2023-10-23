@@ -20,11 +20,10 @@
       </div>
       <card-actions>
         <tpu-button
-          color="blue"
           variant="passive"
           @click="
             $functions.copy(appStore.dialogs.gallery.ocr.content);
-            toast.success('generic.copied');
+            toast.success(t('generic.copied'));
           "
         >
           {{ t("gallery.dialogs.ocr.copyAll") }}

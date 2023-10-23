@@ -15,7 +15,7 @@ import socket from "./boot/socket";
 import apollo from "./boot/apollo";
 import { registerPlugins } from "@/plugins";
 import VWave from "v-wave";
-import Toast from "vue-toastification";
+import Toast, { POSITION } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
@@ -41,7 +41,12 @@ app.use(VWave, {
   cancellationPeriod: 30
 });
 app.use(router);
-app.use(Toast, {});
+app.use(Toast, {
+  position: POSITION.BOTTOM_RIGHT,
+  shareAppContext: true,
+  maxToasts: 5,
+  newestOnTop: true
+});
 
 // Register boot plugins
 apollo(app);

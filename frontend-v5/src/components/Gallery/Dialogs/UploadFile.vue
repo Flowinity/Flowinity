@@ -19,7 +19,6 @@
       />
       <card-actions>
         <tpu-button
-          color="blue"
           variant="passive"
           @click="appStore.upload()"
           :loading="appStore.dialogs.gallery.upload.loading"

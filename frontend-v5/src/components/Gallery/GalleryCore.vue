@@ -4,7 +4,7 @@
   >
     <gallery-item
       :selected="selected"
-      @select="$emit('select', item.id)"
+      @select="$emit('select', item)"
       v-for="item in props.items"
       :item="item"
       :key="item.id"
@@ -43,12 +43,7 @@
                 icon
                 variant="passive"
                 v-tooltip.bottom="t('gallery.nav.selectAll')"
-                @click="
-                  $emit(
-                    'select',
-                    props.items?.map((item) => item.id)
-                  )
-                "
+                @click="$emit('select', props.items)"
               >
                 <RiAddLine style="width: 20px" />
               </tpu-button>
@@ -88,21 +83,31 @@
                 appStore.dialogs.gallery.delete.bulkIds = selected;
                 appStore.dialogs.gallery.delete.value = true;
               "
-              @click.shift.exact="galleryStore.deleteUploads(selected)"
+              @click.shift.exact="
+                galleryStore.deleteUploads(selected.map((item) => item.id))
+              "
             >
               <RiDeleteBinLine style="width: 20px" />
             </tpu-button>
             <tpu-button
               icon
               variant="passive"
-              color="blue"
+              :color="appStore.shifting ? 'red' : 'blue'"
               @click="
+                appStore.dialogs.gallery.collect.remove = appStore.shifting;
                 appStore.dialogs.gallery.collect.items = selected;
                 appStore.dialogs.gallery.collect.value = true;
               "
-              v-tooltip.bottom="t('gallery.addToCollection')"
+              v-tooltip.bottom="
+                appStore.shifting
+                  ? t('gallery.removeFromCollection')
+                  : t('gallery.addToCollectionBulk')
+              "
             >
-              <RiImageAddLine style="width: 20px" />
+              <component
+                :is="appStore.shifting ? RiImageCloseLine : RiImageAddLine"
+                style="width: 20px"
+              />
             </tpu-button>
             <tpu-button
               icon
@@ -119,14 +124,9 @@
               :disabled="
                 props.items
                   ?.map((item) => item.id)
-                  .every((id) => selected.includes(id))
+                  .every((id) => selected.some((item) => item.id === id))
               "
-              @click="
-                $emit(
-                  'select',
-                  props.items?.map((item) => item.id)
-                )
-              "
+              @click="$emit('select', props.items)"
             >
               <RiAddLine style="width: 20px" />
             </tpu-button>
@@ -163,6 +163,7 @@ import { ref } from "vue";
 import functions from "@/plugins/functions";
 import { useAppStore } from "@/stores/app.store";
 import { useGalleryStore } from "@/stores/gallery.store";
+import RiImageCloseLine from "@/components/Icons/RiImageCloseLine.vue";
 
 const { t } = useI18n();
 const props = defineProps({
@@ -170,7 +171,7 @@ const props = defineProps({
     type: Object as () => Upload[]
   },
   selected: {
-    type: Object as () => Number[],
+    type: Object as () => Upload[],
     required: true
   },
   type: {

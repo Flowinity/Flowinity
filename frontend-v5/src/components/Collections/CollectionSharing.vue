@@ -107,7 +107,6 @@
     </div>
     <card-actions>
       <tpu-button
-        color="blue"
         variant="passive"
         :loading="loading"
         @click="$emit('update:modelValue', false)"

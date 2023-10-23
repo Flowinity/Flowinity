@@ -18,7 +18,6 @@
     </div>
     <img
       :src="src"
-      style="z-index: 2"
       :class="[cover ? 'object-cover' : 'object-contain', imageClasses]"
       :style="{
         height: dimensions.height,

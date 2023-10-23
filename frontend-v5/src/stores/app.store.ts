@@ -42,6 +42,9 @@ import RiMailLine from "vue-remix-icons/icons/ri-mail-line.vue";
 import RiMailFill from "vue-remix-icons/icons/ri-mail-fill.vue";
 import RiBug2Line from "vue-remix-icons/icons/ri-bug-2-line.vue";
 import RiBug2Fill from "vue-remix-icons/icons/ri-bug-2-fill.vue";
+import RiVideoChatLine from "vue-remix-icons/icons/ri-video-chat-line.vue";
+import RiVideoChatFill from "vue-remix-icons/icons/ri-video-chat-fill.vue";
+
 import type { Chat, CoreState, Upload } from "@/gql/graphql";
 import { useUserStore } from "@/stores/user.store";
 import { useChatStore } from "@/stores/chat.store";
@@ -63,6 +66,7 @@ export enum RailMode {
   GALLERY,
   CHAT,
   WORKSPACES,
+  MEET,
   MAIL,
   ADMIN,
   DEBUG,
@@ -325,7 +329,8 @@ export const useAppStore = defineStore("app", () => {
       [RailMode.SETTINGS]: [],
       [RailMode.ADMIN]: [],
       [RailMode.MAIL]: [],
-      [RailMode.DEBUG]: []
+      [RailMode.DEBUG]: [],
+      [RailMode.MEET]: []
     } as Record<RailMode, NavigationOption[]>,
     miscOptions: {
       [RailMode.HOME]: [
@@ -379,6 +384,13 @@ export const useAppStore = defineStore("app", () => {
         selectedIcon: markRaw(RiFileTextFill)
       },
       {
+        icon: markRaw(RiVideoChatLine),
+        name: "Meet",
+        id: RailMode.MEET,
+        path: "/meet",
+        selectedIcon: markRaw(RiVideoChatFill)
+      },
+      {
         icon: markRaw(RiMailLine),
         name: "Mail",
         id: RailMode.MAIL,
@@ -410,7 +422,11 @@ export const useAppStore = defineStore("app", () => {
     ] as NavigationOption[]
   });
 
+  const shifting = ref(false);
+
   document.addEventListener("keydown", (e: KeyboardEvent) => {
+    shifting.value = e.shiftKey;
+
     if (e.ctrlKey && e.shiftKey && e.key === "ArrowUp") {
       if (navigation.value.mode <= 0) return;
       navigation.value.mode--;
@@ -423,6 +439,11 @@ export const useAppStore = defineStore("app", () => {
       dialogs.value.core.quickSwitcher.value =
         !dialogs.value.core.quickSwitcher.value;
     }
+  });
+
+  document.addEventListener("keyup", (e: KeyboardEvent) => {
+    if (!shifting.value) return;
+    shifting.value = false;
   });
 
   watch(
@@ -528,7 +549,8 @@ export const useAppStore = defineStore("app", () => {
       },
       collect: {
         value: false,
-        items: [] as number[]
+        items: [] as Upload[],
+        remove: false
       },
       upload: {
         value: false,
@@ -645,6 +667,7 @@ export const useAppStore = defineStore("app", () => {
     appBarImage,
     heightOffset,
     scrollPosition,
-    upload
+    upload,
+    shifting
   };
 });

@@ -166,6 +166,46 @@ h6 {
     padding-inline-end: 8px;
 }
 
+.Vue-Toastification__toast--success {
+    background-color: rgba(30, 169, 124, 0.2) !important;
+    color: #1ea97c !important;
+    backdrop-filter: blur(99px);
+}
 
+.Vue-Toastification__toast--success .Vue-Toastification__progress-bar {
+    background-color: rgba(30, 169, 124, 0.2) !important;
+}
+
+.Vue-Toastification__toast--success .Vue-Toastification__close-button {
+    color: #4caf50 !important
+}
+
+.Vue-Toastification__toast--info {
+    background-color: rgba(1, 144, 234, 0.2);
+    color: #0190ea;
+    backdrop-filter: blur(99px);
+}
+
+.Vue-Toastification__toast--info .Vue-Toastification__progress-bar {
+    background-color: rgba(1, 144, 234, 0.2);
+}
+
+.Vue-Toastification__toast--info .Vue-Toastification__close-button {
+    color: #0190ea
+}
+
+.Vue-Toastification__toast--error {
+    background-color: rgba(244, 67, 54, 0.2) !important;
+    color: #F44336 !important;
+    backdrop-filter: blur(99px);
+}
+
+.Vue-Toastification__toast--error .Vue-Toastification__progress-bar {
+    background-color: rgba(244, 67, 54, 0.2) !important;
+}
+
+.Vue-Toastification__toast--error .Vue-Toastification__close-button {
+    color: #F44336 !important
+}
 
 @tailwind utilities;
