@@ -51,26 +51,22 @@
           <tr>
             <td>{{ row.item.user.username }}</td>
             <td>
-              <v-checkbox
-                v-model="row.item.read"
-                disabled
-                label="Read"
-              ></v-checkbox>
+              <v-checkbox :model-value="row.item.read" disabled></v-checkbox>
             </td>
             <td>
               <v-checkbox
-                v-model="row.item.write"
+                :model-value="row.item.write"
                 :disabled="row.item.configure"
-                label="Write"
-                @change="updateUser(row.item)"
+                @update:model-value="updateUser({ ...row.item, write: $event })"
               ></v-checkbox>
             </td>
             <td>
               <v-checkbox
-                v-model="row.item.configure"
+                :model-value="row.item.configure"
                 :disabled="row.item.recipientId === $user.user?.id"
-                label="Conf."
-                @change="updateUser(row.item)"
+                @update:model-value="
+                  updateUser({ ...row.item, configure: $event })
+                "
               ></v-checkbox>
             </td>
             <td>
@@ -185,7 +181,6 @@ export default defineComponent({
         type: this.sharing.public
       });
       this.sharing.loading = false;
-      this.collection.shareLink = data.shareLink;
     },
     async updateUser(item: any) {
       if (item.configure && !item.write) {

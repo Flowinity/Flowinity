@@ -16,21 +16,6 @@
         item-value="internalName"
       >
         <template v-slot:no-data>
-          <template v-if="supports.metadata">
-            <overline position="start">
-              {{ $t("generic.options") }}
-            </overline>
-            <v-list-item
-              @click="
-                metadata = !metadata;
-                $emit('update:metadata', metadata);
-                $emit('refreshGallery');
-              "
-              :active="metadata"
-            >
-              {{ $t("generic.metadata") }}
-            </v-list-item>
-          </template>
           <overline position="start">
             {{ $t("generic.sortDirection") }}
           </overline>
@@ -180,8 +165,8 @@ export default defineComponent({
       required: false,
       default: [
         {
-          name: "All of them",
-          internalName: GalleryFilter.All
+          name: "Search in screenshots",
+          internalName: GalleryFilter.IncludeMetadata
         },
         {
           name: "Not collectivized",
@@ -225,7 +210,7 @@ export default defineComponent({
   data() {
     return {
       metadata: true,
-      filter: [GalleryFilter.All],
+      filter: [GalleryFilter.IncludeMetadata],
       sort: GallerySort.CreatedAt,
       order: GalleryOrder.Desc,
       search: ""

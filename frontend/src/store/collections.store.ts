@@ -71,6 +71,7 @@ export const useCollectionsStore = defineStore("collections", {
         data: { collection }
       } = await this.$apollo.query({
         query: CollectionQuery,
+        fetchPolicy: "network-only",
         variables: {
           input: {
             id: typeof id === "string" ? undefined : id,

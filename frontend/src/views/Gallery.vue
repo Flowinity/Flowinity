@@ -96,7 +96,7 @@ export default defineComponent({
       show: {
         search: "",
         metadata: true,
-        selected: [GalleryFilter.All],
+        selected: [GalleryFilter.IncludeMetadata],
         sort: GallerySort.CreatedAt,
         order: GalleryOrder.Desc
       },

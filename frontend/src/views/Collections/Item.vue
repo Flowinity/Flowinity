@@ -4,7 +4,6 @@
     v-model="sharing"
     :collection="collection"
     @get-collection="getCollection"
-    @collection-users-push="collection?.users?.push($event)"
   ></Sharing>
   <CollectionSettings
     v-model="settings"
@@ -136,13 +135,15 @@ export default defineComponent({
     };
   },
   methods: {
-    async getCollection() {
-      if (!this.collection && this.$collections.items.length) {
+    async getCollection(load = true) {
+      if (!this.collection && this.$collections.items.length && load) {
         this.collection = this.$collections.items.find(
           (c: Collection) => c.id === parseInt(<string>this.$route.params.id)
         );
       }
-      this.$app.componentLoading = true;
+      if (load) {
+        this.$app.componentLoading = true;
+      }
       const collection = await this.$collections.getCollection(
         isNumeric(this.$route.params.id)
           ? parseInt(<string>this.$route.params.id)
@@ -151,10 +152,41 @@ export default defineComponent({
       this.$app.componentLoading = false;
       this.collection = collection;
       this.$app.title = this.collection?.name || "Collection";
+    },
+    async onCollectionUserUpdate(data: { id?: number; collectionId: number }) {
+      if (data.collectionId !== this.collection?.id) return;
+      console.log(1);
+      this.getCollection(false);
+    },
+    async onCollectionUpdate(data: { id?: number; name?: string }) {
+      if (data.id !== this.collection?.id) return;
+      this.getCollection(false);
     }
   },
   mounted() {
     this.getCollection();
+    this.$sockets.gallery.on("collectionUpdate", this.onCollectionUpdate);
+    this.$sockets.gallery.on(
+      "collectionUserUpdate",
+      this.onCollectionUserUpdate
+    );
+    this.$sockets.gallery.on("collectionUserAdd", this.onCollectionUserUpdate);
+    this.$sockets.gallery.on(
+      "collectionUserRemove",
+      this.onCollectionUserUpdate
+    );
+  },
+  unmounted() {
+    this.$sockets.gallery.off("collectionUpdate", this.onCollectionUpdate);
+    this.$sockets.gallery.off(
+      "collectionUserUpdate",
+      this.onCollectionUserUpdate
+    );
+    this.$sockets.gallery.off("collectionUserAdd", this.onCollectionUserUpdate);
+    this.$sockets.gallery.off(
+      "collectionUserRemove",
+      this.onCollectionUserUpdate
+    );
   },
   watch: {
     "$route.params.id"(val) {
