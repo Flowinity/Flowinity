@@ -62,6 +62,8 @@ const dimensions = computed(() => {
           :src="props.src"
           :cover="true"
           :alt="props.alt || 'Avatar'"
+          :spinner-size="24"
+          :spinner-inner-width="6"
         />
       </template>
       <template v-else>

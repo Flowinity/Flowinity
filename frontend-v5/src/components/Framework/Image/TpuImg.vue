@@ -11,14 +11,23 @@
     >
       <tpu-spinner
         v-if="!errored"
-        color="text-medium-emphasis-dark"
-        :style="{ width: height + 'px' }"
+        color="medium-emphasis-dark"
+        :size="spinnerSize"
+        :inner-width="spinnerInnerWidth"
       />
-      <RiLinkUnlinkM :style="{ width: height || 72 + 'px' }" v-else />
+      <RiLinkUnlinkM
+        :style="{ width: height || 72 + 'px' }"
+        v-else
+        alt="Image error"
+      />
     </div>
     <img
       :src="src"
-      :class="[cover ? 'object-cover' : 'object-contain', imageClasses]"
+      :class="[
+        cover ? 'object-cover' : 'object-contain',
+        { loaded: !loading },
+        imageClasses
+      ]"
       :style="{
         height: dimensions.height,
         maxHeight: dimensions.height,
@@ -29,6 +38,7 @@
       @load="onImageLoad"
       @error="onImageError"
       v-bind="$attrs"
+      v-if="!errored"
     />
     <slot />
   </div>
@@ -59,7 +69,9 @@ const props = defineProps({
   gradient: String,
   height: [String, Number],
   width: [String, Number],
-  imageClasses: String
+  imageClasses: String,
+  spinnerSize: [String, Number],
+  spinnerInnerWidth: [String, Number]
 });
 
 const dimensions = computed(() => {
@@ -103,5 +115,12 @@ onMounted(() => {
 }
 .gradient {
   border-radius: 12px;
+}
+img {
+  transition: opacity 0.2s;
+  opacity: 0;
+}
+img.loaded {
+  opacity: 1;
 }
 </style>

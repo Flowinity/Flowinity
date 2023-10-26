@@ -176,7 +176,7 @@ function editLastMessage() {
   });
 }
 
-function shortcutHandler(e: any) {
+function shortcutHandler(e: KeyboardEvent) {
   if (e.key === "Escape") {
     e.preventDefault();
     replyId.value = undefined;

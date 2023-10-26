@@ -31,6 +31,7 @@ const userStore = useUserStore();
             class="cursor-pointer"
             draggable="false"
             v-tooltip.right="'Flowinity'"
+            style="width: 46.55px; height: 46.55px"
           />
           <super-bar-item
             :highlighted="true"
@@ -52,7 +53,7 @@ const userStore = useUserStore();
         <div class="flex flex-col gap-y-2 mt-4">
           <super-bar-item
             v-for="item in appStore.navigation.railOptions.filter(
-              (opt) => !opt.misc
+              (opt) => !opt.misc && !opt.fake
             )"
             :key="item.id"
             :selected="appStore.navigation.mode === item.id"

@@ -121,7 +121,7 @@ const options = computed(() => {
 const results = computed(() => {
   const searchString = content.value.toLowerCase();
   const allOptions = [
-    ...(searchString.length
+    ...(!searchString.length
       ? [
           {
             icon: markRaw(RiArrowGoBack),

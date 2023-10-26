@@ -95,14 +95,9 @@
         :disabled="
           items
             ?.map((item: Upload) => item.id)
-            .every((id: number) => selected.includes(id))
+            .every((id) => selected.some((item) => item.id === id))
         "
-        @click="
-          $emit(
-            'select',
-            items?.map((item: Upload) => item.id)
-          )
-        "
+        @click="emit('select', items)"
       >
         <RiAddLine style="width: 20px" />
       </tpu-button>
@@ -112,12 +107,7 @@
         icon
         variant="passive"
         v-tooltip.bottom="t('gallery.nav.selectAll')"
-        @click="
-          emit(
-            'select',
-            items?.map((item: Upload) => item.id)
-          )
-        "
+        @click="emit('select', items)"
       >
         <RiAddLine style="width: 20px" />
       </tpu-button>

@@ -2,17 +2,36 @@
   <div
     class="grid md:grid-cols-2 xl:grid-cols-4 3xl:grid-cols-6 2xl:grid-cols-4 sm:grid-cols-1 gap-4 p-4"
   >
-    <gallery-item
-      :selected="selected"
-      @select="$emit('select', item)"
-      v-for="item in props.items"
-      :item="item"
-      :key="item.id"
-    >
-      <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
-        <slot :name="name" v-bind="slotData" />
-      </template>
-    </gallery-item>
+    <template v-if="!loading">
+      <div v-for="(item, index) in props.items" :key="item.id">
+        <gallery-item
+          :selected="selected"
+          @select="$emit('select', item)"
+          :item="item"
+        >
+          <p v-if="appStore.dev">Index: {{ index }}</p>
+          <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+            <slot :name="name" v-bind="slotData" />
+          </template>
+        </gallery-item>
+      </div>
+    </template>
+    <template v-else>
+      <tpu-skeleton-loader
+        :types="[
+          'toolbar',
+          'image',
+          'paragraph',
+          'paragraph',
+          'paragraph',
+          'paragraph',
+          'paragraph',
+          'button'
+        ]"
+        v-for="i in 24"
+        :key="i"
+      />
+    </template>
   </div>
   <teleport to="#appbar-options">
     <transition mode="out-in" name="slide-up" appear>
@@ -164,6 +183,7 @@ import functions from "@/plugins/functions";
 import { useAppStore } from "@/stores/app.store";
 import { useGalleryStore } from "@/stores/gallery.store";
 import RiImageCloseLine from "@/components/Icons/RiImageCloseLine.vue";
+import TpuSkeletonLoader from "@/components/Framework/SkeletonLoader/TpuSkeletonLoader.vue";
 
 const { t } = useI18n();
 const props = defineProps({
@@ -180,7 +200,8 @@ const props = defineProps({
   },
   id: {
     type: [String, Number]
-  }
+  },
+  loading: Boolean
 });
 
 defineEmits(["select"]);

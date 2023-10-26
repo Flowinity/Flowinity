@@ -22,6 +22,8 @@ import "floating-vue/dist/style.css";
 
 const app = createApp(App);
 
+app.config.performance = true;
+
 app.use(FloatingVue, {
   arrowPadding: 10,
   distance: 7,
@@ -57,4 +59,4 @@ socket(app).then(() => {});
 
 app.use(VueApolloComponents);
 
-app.mount("#app");
+app.mount("#flowinity-app");

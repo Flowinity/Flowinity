@@ -1,5 +1,9 @@
 <template>
-  <div class="relative mt-3 mb-1 flex">
+  <div
+    class="relative mt-3 mb-1 flex"
+    :class="parentClasses"
+    :style="parentStyle"
+  >
     <slot name="prepend-outer" />
     <div class="absolute left-0">
       <slot name="prepend" />
@@ -121,7 +125,9 @@ const props = defineProps([
   "minlength",
   "shiftEnterNewLine",
   "error",
-  "autofocus"
+  "autofocus",
+  "parentClasses",
+  "parentStyle"
 ]);
 
 const id = (Math.random() + 1).toString(36).substring(7);

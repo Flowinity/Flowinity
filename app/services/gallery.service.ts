@@ -199,7 +199,10 @@ export class GalleryService {
             input.order || "DESC"
           ]
         } else {
-          sortParams = [input.sort || "createdAt", input.order || "DESC"]
+          sortParams = [
+            input.sort === "addedAt" ? "createdAt" : input.sort || "createdAt",
+            input.order || "DESC"
+          ]
         }
         break
     }

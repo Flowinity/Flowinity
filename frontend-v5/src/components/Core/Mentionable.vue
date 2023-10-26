@@ -2,7 +2,7 @@
   <div
     ref="el"
     :class="$attrs.class"
-    class="mentionable"
+    class="mentionable absolute"
     style="position: relative; width: 100%"
     v-if="displayedItems.length"
   >
@@ -77,6 +77,7 @@ import {
   watch
 } from "vue";
 import { useChatStore } from "@/stores/chat.store";
+import "floating-vue/dist/style.css";
 
 options.themes.mentionable = {
   $extend: "dropdown",

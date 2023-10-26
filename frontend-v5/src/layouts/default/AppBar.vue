@@ -23,29 +23,29 @@
             <RiMenuLine style="width: 20px" />
           </tpu-button>
         </div>
-        <Transition mode="out-in" name="slide-up">
+        <Transition
+          mode="out-in"
+          name="slide-up"
+          v-for="rail in appStore.currentNavItem?.rail"
+        >
           <div
             class="flex max-sm:hidden"
             :class="{ 'items-center': !expanded, 'items-end': expanded }"
-            :key="appStore.currentNavItem?.rail?.id"
-            v-memo="[
-              appStore.currentRail?.name,
-              appStore.currentNavItem?.rail?.id
-            ]"
-            v-if="appStore.currentNavItem?.rail?.name"
+            v-if="rail.name"
+            :key="rail.id"
           >
             <div class="flex items-center">
               <router-link
-                :to="appStore.currentNavItem?.rail.path"
+                :to="rail.path"
                 class="cursor-pointer flex items-center"
               >
                 <component
-                  :is="appStore.currentNavItem?.rail?.icon"
+                  :is="rail?.icon"
                   class="w-8 mr-2 fill-medium-emphasis-dark"
-                  v-if="appStore.currentNavItem?.rail?.icon"
+                  v-if="rail?.icon"
                 />
                 <span class="text-medium-emphasis-dark">
-                  {{ appStore.currentNavItem?.rail?.name }}
+                  {{ rail.name }}
                 </span>
               </router-link>
               <RiArrowRightSLine class="w-6 mx-3 fill-medium-emphasis-dark" />
@@ -71,7 +71,9 @@
                 />
               </div>
 
-              {{ appStore.currentNavItem?.item.name || "Flowinity" }}
+              {{
+                appStore.currentNavItem?.item.name || route.name || "Flowinity"
+              }}
             </div>
           </div>
         </Transition>
@@ -130,6 +132,7 @@ import { computed, ref, watch, markRaw } from "vue";
 import { debounce } from "lodash";
 import MeetActionBar from "@/components/Tutorials/MeetActionBar.vue";
 import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
+import { useRoute } from "vue-router";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -157,6 +160,7 @@ const handleScroll = () => {
 };
 // Define a debounce function with a 200ms delay (adjust as needed)
 const debouncedHandleScroll = debounce(handleScroll, 10);
+const route = useRoute();
 watch(
   () => image.value,
   () => {

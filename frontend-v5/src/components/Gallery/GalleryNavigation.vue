@@ -1,49 +1,11 @@
 <template>
   <div class="gap-4 p-4 flex w-full relative">
-    <text-field
-      :label="t('generic.search')"
-      class="flex-grow"
-      id="gallery-input"
+    <gallery-input
       :model-value="props.search"
       @update:model-value="$emit('update:search', $event)"
-      @keydown.enter="
-        $emit('refresh');
-        searchHistory.push(props.search!);
-      "
-    >
-      <template #append>
-        <div class="flex items-center justify-center gap-1 mb-4">
-          <tpu-button
-            style="width: 45px; height: 45px"
-            variant="passive"
-            @click="
-              $emit('update:search', '');
-              $emit('refresh');
-            "
-          >
-            <RiCloseLine />
-          </tpu-button>
-          <tpu-button
-            style="width: 45px; height: 45px"
-            variant="passive"
-            @click="$emit('refresh')"
-          >
-            <RiSearchLine />
-          </tpu-button>
-        </div>
-      </template>
-      <template v-slot="{ focus }">
-        <card
-          :outlined="true"
-          v-if="focus"
-          class="absolute bg-card-secondary-dark"
-          :secondary="true"
-          style="bottom: -69px; z-index: 2"
-        ></card>
-      </template>
-    </text-field>
-    <mentionable :keys="[]" id="#gallery-input" :items="results"></mentionable>
-
+      @refresh="$emit('refresh')"
+      id="gallery-input"
+    />
     <tpu-select
       style="min-width: 200px"
       :label="t('gallery.options.filter')"
@@ -147,6 +109,7 @@ import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import Card from "@/components/Framework/Card/Card.vue";
 import Mentionable from "@/components/Core/Mentionable.vue";
+import GalleryInput from "@/components/Gallery/GalleryInput.vue";
 const { t } = useI18n();
 const props = defineProps({
   search: {
@@ -280,23 +243,6 @@ const emit = defineEmits([
   "update:sort",
   "update:order"
 ]);
-const searchHistory = ref([]);
-
-const results = computed(() => {
-  return searchHistory.value.filter((item) => {
-    return item.toLowerCase().includes(props.search?.toLowerCase());
-  });
-});
-
-watch(
-  () => searchHistory,
-  () => {
-    localStorage.setItem(
-      "gallery-search-history",
-      JSON.stringify(searchHistory.value.splice(0, 10))
-    );
-  }
-);
 
 function removeFilter(filter: GalleryFilter) {
   const indexToRemove = props.filter.indexOf(filter);
@@ -328,11 +274,6 @@ const sortText = computed(() => {
 
 onMounted(() => {
   console.log("rerendereed searfch");
-
-  const storage = localStorage.getItem("gallery-search-history");
-  if (storage) {
-    searchHistory.value = JSON.parse(searchHistory);
-  }
 });
 </script>
 

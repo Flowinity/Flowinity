@@ -45,7 +45,7 @@ import RiBug2Fill from "vue-remix-icons/icons/ri-bug-2-fill.vue";
 import RiVideoChatLine from "vue-remix-icons/icons/ri-video-chat-line.vue";
 import RiVideoChatFill from "vue-remix-icons/icons/ri-video-chat-fill.vue";
 
-import type { Chat, CoreState, Upload } from "@/gql/graphql";
+import type { Chat, CoreState, Upload, Weather } from "@/gql/graphql";
 import { useUserStore } from "@/stores/user.store";
 import { useChatStore } from "@/stores/chat.store";
 import { useExperimentsStore } from "@/stores/experiments.store";
@@ -70,7 +70,10 @@ export enum RailMode {
   MAIL,
   ADMIN,
   DEBUG,
-  SETTINGS
+  SETTINGS,
+  // Fake rail-modes
+  AUTO_COLLECTS,
+  COLLECTIONS
 }
 
 export interface NavigationOption {
@@ -97,17 +100,7 @@ export const useAppStore = defineStore("app", () => {
   });
   const weather = ref({
     loading: true,
-    data: {
-      description: "Clouds",
-      icon: "04d",
-      temp: 0,
-      temp_max: 0,
-      temp_min: 0,
-      name: "Australia",
-      id: 2643743,
-      main: "Clouds",
-      location: ""
-    }
+    data: {} as Weather
   });
   const weatherTemp = computed(() => {
     const temp = weather.value.data?.temp;
@@ -330,7 +323,9 @@ export const useAppStore = defineStore("app", () => {
       [RailMode.ADMIN]: [],
       [RailMode.MAIL]: [],
       [RailMode.DEBUG]: [],
-      [RailMode.MEET]: []
+      [RailMode.MEET]: [],
+      [RailMode.AUTO_COLLECTS]: [],
+      [RailMode.COLLECTIONS]: []
     } as Record<RailMode, NavigationOption[]>,
     miscOptions: {
       [RailMode.HOME]: [
@@ -418,6 +413,22 @@ export const useAppStore = defineStore("app", () => {
         path: "/settings",
         selectedIcon: markRaw(RiSettings5Fill),
         misc: true
+      },
+      {
+        icon: markRaw(RiSparkling2Line),
+        name: "AutoCollects",
+        id: RailMode.AUTO_COLLECTS,
+        selectedIcon: markRaw(RiSparkling2Fill),
+        path: "/auto-collects",
+        fake: true
+      },
+      {
+        icon: markRaw(RiCollageLine),
+        name: "Collections",
+        id: RailMode.COLLECTIONS,
+        selectedIcon: markRaw(RiCollageFill),
+        path: "/gallery",
+        fake: true
       }
     ] as NavigationOption[]
   });
@@ -431,8 +442,7 @@ export const useAppStore = defineStore("app", () => {
       if (navigation.value.mode <= 0) return;
       navigation.value.mode--;
     } else if (e.ctrlKey && e.shiftKey && e.key === "ArrowDown") {
-      if (navigation.value.mode >= navigation.value.railOptions.length - 1)
-        return;
+      if (navigation.value.mode > RailMode.SETTINGS - 1) return;
       navigation.value.mode++;
     } else if (e.ctrlKey && e.key === "k") {
       e.preventDefault();
@@ -504,9 +514,18 @@ export const useAppStore = defineStore("app", () => {
           path: route.path,
           selectedIcon: markRaw(RiCollageFill)
         },
-        rail: navigation.value.railOptions.find(
-          (rail) => rail.id === RailMode.GALLERY
-        )
+        rail: [
+          navigation.value.railOptions.find(
+            (rail) => rail.id === RailMode.GALLERY
+          ),
+          ...(route.path.startsWith("/auto-collects/")
+            ? [
+                navigation.value.railOptions.find(
+                  (rail) => rail.id === RailMode.AUTO_COLLECTS
+                )
+              ]
+            : [])
+        ]
       };
     } else if (route.path.startsWith("/communications/")) {
       const find = chatStore.chats.find(
@@ -514,7 +533,7 @@ export const useAppStore = defineStore("app", () => {
       );
       return {
         item: {
-          name: find ? chatStore.chatName(find) : "Flowinity",
+          name: find ? chatStore.chatName(find) : "Unknown",
           icon: h(UserAvatar, {
             username: chatStore.chatName(<Chat>find),
             userId: find?.recipient?.id,
@@ -524,18 +543,18 @@ export const useAppStore = defineStore("app", () => {
           path: route.path,
           selectedIcon: markRaw(RiCollageFill)
         },
-        rail: navigation.value.railOptions.find(
-          (rail) => rail.id === RailMode.CHAT
-        )
+        rail: [
+          navigation.value.railOptions.find((rail) => rail.id === RailMode.CHAT)
+        ]
       };
     }
     const lookup = lookupNav.value[route.path];
     if (!lookup) return null;
     return {
       item: lookup,
-      rail: navigation.value.railOptions.find(
-        (rail) => rail.id === lookup._rail
-      )
+      rail: [
+        navigation.value.railOptions.find((rail) => rail.id === lookup._rail)
+      ]
     };
   });
 
@@ -668,6 +687,7 @@ export const useAppStore = defineStore("app", () => {
     heightOffset,
     scrollPosition,
     upload,
-    shifting
+    shifting,
+    dev: import.meta.env.DEV
   };
 });

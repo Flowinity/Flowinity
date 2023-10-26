@@ -12,17 +12,18 @@
     v-model:search="search"
     @refresh="getGallery()"
     v-model:filter="filter"
-    v-model:metadata="metadata"
     v-model:sort="sort"
     v-model:order="order"
     :types="types"
   />
   <gallery-core
     :id="id"
+    :loading="loading"
     :type="type"
     :selected="selected"
     :items="items"
     @select="select($event)"
+    v-memo="[items, selected, loading]"
   >
     <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
       <slot :name="name" v-bind="slotData" />
@@ -72,7 +73,7 @@ import {
   GallerySort,
   GalleryType
 } from "@/gql/graphql";
-import { computed, onMounted, type Ref, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, type Ref, ref, watch } from "vue";
 import { GalleryQuery } from "@/graphql/gallery/gallery.graphql";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import { useApolloClient } from "@vue/apollo-composable";
@@ -101,7 +102,6 @@ const search = ref("");
 const filter = ref([GalleryFilter.IncludeMetadata]);
 const sort = ref(GallerySort.CreatedAt);
 const order = ref(GalleryOrder.Desc);
-const metadata = ref(false);
 
 function select(upload: Upload | Upload[]) {
   if (Array.isArray(upload)) {
@@ -177,8 +177,30 @@ const props = defineProps({
   }
 });
 
+function focusInput() {}
+
+function shortcutHandler(e: KeyboardEvent) {
+  if (e.target?.tagName === "INPUT" || e.target?.tagName === "TEXTAREA") return;
+  if (e.ctrlKey && e.key === "a") {
+    e.preventDefault();
+    selected.value = items.value;
+  } else if (
+    (e.key === "v" && e.ctrlKey) ||
+    (e.target?.tagName !== "INPUT" &&
+      e.target?.tagName !== "TEXTAREA" &&
+      !e.ctrlKey)
+  ) {
+    focusInput();
+  }
+}
+
 onMounted(() => {
   getGallery();
+  document.addEventListener("keydown", shortcutHandler);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("keydown", shortcutHandler);
 });
 
 function resetScroll() {
@@ -190,6 +212,7 @@ watch(
   () => {
     page.value = 1;
     search.value = "";
+    selected.value = [];
     getGallery();
   }
 );
@@ -266,10 +289,6 @@ const types = computed(() => {
       internalName: GalleryFilter.IncludeMetadata
     },
     {
-      name: "Not collectivized",
-      internalName: GalleryFilter.NoCollection
-    },
-    {
       name: "Images",
       internalName: GalleryFilter.Images
     },
@@ -305,6 +324,11 @@ const types = computed(() => {
         internalName: GalleryFilter.Shared
       }
     );
+  } else if (props.type !== GalleryType.Collection) {
+    types.splice(1, 0, {
+      name: "Not collectivized",
+      internalName: GalleryFilter.NoCollection
+    });
   }
   return types;
 });

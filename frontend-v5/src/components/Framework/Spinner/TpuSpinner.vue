@@ -32,6 +32,7 @@
         class="path-indeterminate"
         fill="none"
         :stroke-width="innerWidth"
+        :stroke="spinnerColor"
         stroke-linecap="round"
         cx="33"
         cy="33"
@@ -46,6 +47,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import theme from "@/plugins/theme";
 
 const props = defineProps({
   percentage: Number,
@@ -60,7 +62,9 @@ const props = defineProps({
 });
 
 const spinnerColor = computed(() => {
-  return props.color || "white";
+  return props.color?.startsWith("#")
+    ? props.color
+    : theme.colors[props.color] || "#ffffff";
 });
 
 const size = computed(() => {

@@ -163,6 +163,9 @@ h6 {
 
 .blocked-scroll {
     overflow: hidden;
+}
+
+.scrollbar-fake-padding {
     padding-inline-end: 8px;
 }
 
@@ -206,6 +209,17 @@ h6 {
 
 .Vue-Toastification__toast--error .Vue-Toastification__close-button {
     color: #F44336 !important
+}
+
+.Vue-Toastification__container  {
+    bottom: 0 !important;
+    right: 0 !important;
+    padding: unset !important;
+    padding-right: 1rem !important;
+}
+
+.Vue-Toastification__toast:nth-child(1) {
+    margin-bottom: calc(1rem + 8px) !important;
 }
 
 @tailwind utilities;

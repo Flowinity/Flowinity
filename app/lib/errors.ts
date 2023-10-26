@@ -369,7 +369,7 @@ let Errors = {
   },
   MAX_COLLECTION_ADDITIONS: {
     message:
-      "The maximum amount of items you can add to a collection at a time is 48.",
+      "The maximum amount of items you can add to a collection at a time is 72.",
     status: 400
   }
 }

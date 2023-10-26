@@ -56,6 +56,7 @@ import TpuToolbar from "@/components/Framework/Toolbar/TpuToolbar.vue";
 import Card from "@/components/Framework/Card/Card.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
+import { useFrameworkStore } from "@/stores/framework.store";
 
 const props = defineProps({
   modelValue: Boolean,
@@ -77,16 +78,31 @@ function handleClose(event: KeyboardEvent) {
   }
 }
 
+const framework = useFrameworkStore();
+
 watch(
   () => props.modelValue,
   (val) => {
     if (!val) {
-      document.body.classList.remove("blocked-scroll");
+      framework.dialogsOpened = framework.dialogsOpened - 1;
+      if (!framework.dialogsOpened) {
+        document.body.classList.remove(
+          "blocked-scroll",
+          "scrollbar-fake-padding"
+        );
+      }
       document.removeEventListener("keydown", handleClose);
       return;
     }
+    framework.dialogsOpened++;
     document.addEventListener("keydown", handleClose);
     document.body.classList.add("blocked-scroll");
+    if (
+      document.documentElement.scrollHeight >
+      document.documentElement.clientHeight
+    ) {
+      document.body.classList.add("scrollbar-fake-padding");
+    }
   }
 );
 </script>

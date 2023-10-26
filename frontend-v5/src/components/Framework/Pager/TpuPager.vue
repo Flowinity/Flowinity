@@ -14,15 +14,43 @@
         <tpu-button
           icon
           class="rounded-full px-4"
-          :selected="page === 1"
           variant="passive"
           @click="$emit('update:modelValue', 1)"
         >
           1
         </tpu-button>
-        <tpu-button icon class="rounded-full px-4" variant="passive">
-          ...
-        </tpu-button>
+        <template v-if="!left.value">
+          <tpu-button
+            icon
+            class="rounded-full px-4"
+            variant="passive"
+            @click="left.value = true"
+          >
+            ...
+          </tpu-button>
+        </template>
+        <template v-else>
+          <text-field
+            parent-style="margin: 0"
+            v-model="left.content"
+            style="width: 40px; height: 40px"
+            type="number"
+            min="1"
+            @keydown.enter="
+              $emit('update:modelValue', parseInt(left.content));
+              left.value = false;
+            "
+            @blur="
+              left.value = false;
+              left.content = '';
+            "
+            @keydown.esc="
+              left.value = false;
+              left.content = '';
+            "
+            autofocus
+          />
+        </template>
       </template>
       <tpu-button
         icon
@@ -38,9 +66,38 @@
         {{ page }}
       </tpu-button>
       <template v-if="!pages.includes(totalPages)">
-        <tpu-button icon class="rounded-full px-4" variant="passive">
-          ...
-        </tpu-button>
+        <template v-if="!right.value">
+          <tpu-button
+            icon
+            class="rounded-full px-4"
+            variant="passive"
+            @click="right.value = true"
+          >
+            ...
+          </tpu-button>
+        </template>
+        <template v-else>
+          <text-field
+            parent-style="margin: 0"
+            v-model="right.content"
+            min="1"
+            style="width: 40px; height: 40px"
+            type="number"
+            autofocus
+            @keydown.enter="
+              $emit('update:modelValue', parseInt(right.content));
+              right.value = false;
+            "
+            @blur="
+              right.value = false;
+              right.content = '';
+            "
+            @keydown.esc="
+              right.value = false;
+              right.content = '';
+            "
+          />
+        </template>
         <tpu-button
           icon
           variant="passive"
@@ -65,10 +122,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiArrowLeftSLine from "vue-remix-icons/icons/ri-arrow-left-s-line.vue";
 import RiArrowRightSLine from "vue-remix-icons/icons/ri-arrow-right-s-line.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
+import { isNumeric } from "@/plugins/isNumeric";
 
 const props = defineProps({
   modelValue: {
@@ -87,6 +146,14 @@ const props = defineProps({
 });
 defineEmits(["update:modelValue"]);
 const maxVisibleResponsive = 10;
+const left = ref({
+  content: "",
+  value: false
+});
+const right = ref({
+  content: "",
+  value: false
+});
 
 const pages = computed(() => {
   let startPage = Math.max(

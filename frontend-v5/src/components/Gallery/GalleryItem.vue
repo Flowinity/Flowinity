@@ -33,6 +33,7 @@
       <gallery-preview :item="props.item" />
 
       <div class="p-4 text-medium-emphasis-dark text-sm">
+        <slot />
         <p>
           Original name:
           {{ props.item.originalFilename }}

@@ -305,7 +305,7 @@ export class CollectionService {
     uploadId: number | Array<number>,
     userId: number
   ) {
-    if (typeof uploadId === "object" && uploadId?.length >= 48) {
+    if (typeof uploadId === "object" && uploadId?.length > 72) {
       throw Errors.MAX_COLLECTION_ADDITIONS
     }
     if (typeof uploadId === "number") {
@@ -375,6 +375,9 @@ export class CollectionService {
     uploadId: number | Array<number>,
     userId: number
   ) {
+    if (typeof uploadId === "object" && uploadId?.length > 72) {
+      throw Errors.MAX_COLLECTION_ADDITIONS
+    }
     const result = await CollectionItem.destroy({
       where: {
         collectionId,

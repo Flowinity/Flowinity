@@ -14,7 +14,7 @@
         :label="t('collections.settings.name')"
         class="mb-2"
       />
-      <div class="flex relative items-center gap-3">
+      <div class="flex relative gap-3">
         <div>
           <user-avatar
             :username="name"
@@ -24,6 +24,7 @@
             @set-image="uploadAvatar"
           />
           <div
+            v-if="collection?.avatar"
             class="text-center text-medium-emphasis-dark cursor-pointer"
             @click="removeAttribute('avatar')"
           >
@@ -54,6 +55,7 @@
             </tpu-hover>
           </div>
           <div
+            v-if="collection?.image"
             class="text-center text-medium-emphasis-dark cursor-pointer"
             @click="removeAttribute('banner')"
           >
