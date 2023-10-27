@@ -193,8 +193,8 @@ export default defineComponent({
           internalName: GalleryFilter.Other
         },
         {
-          name: "Include Undeletable",
-          internalName: GalleryFilter.IncludeDeletable
+          name: "Undeletable",
+          internalName: GalleryFilter.OnlyUndeletable
         },
         {
           name: "Owned items",

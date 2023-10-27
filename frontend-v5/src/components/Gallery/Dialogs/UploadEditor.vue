@@ -7,12 +7,14 @@
     <template #toolbar>
       {{ t("gallery.dialogs.edit.title") }}
     </template>
-    <template #default>
+    <template #default v-if="!editor">
+      <tpu-button @click="editor = true">editor</tpu-button>
       <p class="my-4 mx-4">
         <text-field
           v-if="appStore.dialogs.gallery.edit.upload"
           v-model="uploadName"
           :label="$t('gallery.dialogs.edit.name')"
+          autofocus
         />
       </p>
       <card-actions>
@@ -20,6 +22,13 @@
           {{ t("generic.save") }}
         </tpu-button>
       </card-actions>
+    </template>
+    <template v-if="editor">
+      <GalleryEditor
+        :image="
+          appStore.domain + appStore.dialogs.gallery.edit.upload?.attachment
+        "
+      />
     </template>
   </tpu-dialog>
 </template>
@@ -41,6 +50,7 @@ import {
   UpdateUploadMutation
 } from "@/graphql/gallery/gallery.graphql";
 import { useToast } from "vue-toastification";
+import GalleryEditor from "@/components/Gallery/GalleryEditor.vue";
 
 const { t } = useI18n();
 const props = defineProps({
@@ -50,6 +60,7 @@ const appStore = useAppStore();
 const emit = defineEmits(["update:modelValue", "addToCollection"]);
 const loading = ref(false);
 const uploadName = ref("");
+const editor = ref(false);
 
 watch(
   () => appStore.dialogs.gallery.edit.upload?.name,

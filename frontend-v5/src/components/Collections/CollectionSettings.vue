@@ -14,18 +14,19 @@
         :label="t('collections.settings.name')"
         class="mb-2"
       />
-      <div class="flex relative gap-3">
+      <div class="flex relative gap-3 justify-center">
         <div>
           <user-avatar
             :username="name"
             :edit="true"
             :src="'/i/' + collection?.avatar"
             :size="100"
+            :key="collection?.avatar || ''"
             @set-image="uploadAvatar"
           />
           <div
             v-if="collection?.avatar"
-            class="text-center text-medium-emphasis-dark cursor-pointer"
+            class="text-center text-medium-emphasis-dark cursor-pointer mt-1"
             @click="removeAttribute('avatar')"
           >
             {{ t("generic.remove") }}
@@ -56,7 +57,7 @@
           </div>
           <div
             v-if="collection?.image"
-            class="text-center text-medium-emphasis-dark cursor-pointer"
+            class="text-center text-medium-emphasis-dark cursor-pointer mt-1"
             @click="removeAttribute('banner')"
           >
             {{ t("generic.remove") }}
@@ -142,11 +143,12 @@ async function uploadBanner(blob: Blob) {
   emit("refresh");
 }
 
-async function uploadAvatar(blob: Blob) {
+async function uploadAvatar(blob: Blob, callback: () => {}) {
   const formData = new FormData();
   formData.append("avatar", blob);
   await axios.post(`/collections/${props.collection?.id}/avatar`, formData);
   emit("refresh");
+  if (callback) callback();
 }
 
 async function removeAttribute(key: "banner" | "avatar") {
@@ -158,7 +160,6 @@ async function removeAttribute(key: "banner" | "avatar") {
 <style scoped>
 .banner-example {
   height: 100px;
-  @apply border-2 border-outline-dark border-dashed rounded-xl;
   width: 335px;
   border-spacing: 15px;
   display: flex;

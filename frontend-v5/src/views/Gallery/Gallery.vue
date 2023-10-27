@@ -309,8 +309,8 @@ const types = computed(() => {
       internalName: GalleryFilter.Other
     },
     {
-      name: "Include Undeletable",
-      internalName: GalleryFilter.IncludeDeletable
+      name: "Undeletable",
+      internalName: GalleryFilter.OnlyUndeletable
     }
   ];
   if (props.type !== GalleryType.Personal) {

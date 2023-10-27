@@ -14,7 +14,8 @@ export enum Filter {
   OTHER = "binary",
   PASTE = "paste",
   INCLUDE_METADATA = "metadata",
-  INCLUDE_DELETABLE = "deletable"
+  INCLUDE_UNDELETABLE = "includeUndeletable",
+  ONLY_UNDELETABLE = "undeletable"
 }
 
 export enum Sort {

@@ -78,7 +78,7 @@ export class Upload extends Model {
 
   @Field({
     description:
-      "Non-deletable items are used for profile pictures, banners, etc and are not visible in the Gallery page."
+      "Non-deletable items are used for profile pictures, banners, etc and are not visible in the Gallery page by default, and cannot be deleted."
   })
   @Column
   deletable: boolean

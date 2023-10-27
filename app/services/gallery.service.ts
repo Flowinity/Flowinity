@@ -84,7 +84,8 @@ export class GalleryService {
     const upload = await Upload.findOne({
       where: {
         id,
-        userId
+        userId,
+        deletable: true
       }
     })
     if (upload) {
@@ -233,9 +234,9 @@ export class GalleryService {
     let base: {
       [key: string]: any
     } = {
-      deletable: input.filters?.includes(Filter.INCLUDE_DELETABLE)
+      deletable: input.filters?.includes(Filter.INCLUDE_UNDELETABLE)
         ? undefined
-        : true,
+        : !input.filters?.includes(Filter.ONLY_UNDELETABLE),
       attachment: input.filters?.includes(Filter.GIFS)
         ? { [Op.like]: "%.gif" }
         : undefined,

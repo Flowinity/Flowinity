@@ -1,13 +1,18 @@
 <template>
   <text-field
     :label="t('generic.search')"
+    :assist="true"
     class="flex-grow"
-    :id="props.id"
+    autocomplete="off"
+    :htmlId="props.inputId"
     :model-value="props.modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     @keydown.enter="
       $emit('refresh');
-      searchHistory.push({ value: $event });
+      addItem({
+        value: props.modelValue || '',
+        date: new Date().toISOString()
+      });
     "
   >
     <template #append>
@@ -31,21 +36,7 @@
         </tpu-button>
       </div>
     </template>
-    <template v-slot="{ focus }">
-      <card
-        :outlined="true"
-        v-if="focus"
-        class="absolute bg-card-secondary-dark"
-        :secondary="true"
-        style="bottom: -69px; z-index: 2"
-      ></card>
-    </template>
   </text-field>
-  <mentionable :keys="['@']" :id="`#${props.id}`" :items="results">
-    <template #item="{ item }">
-      {{ item }}
-    </template>
-  </mentionable>
 </template>
 
 <script setup lang="ts">
@@ -57,36 +48,48 @@ import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import { useI18n } from "vue-i18n";
 import { computed, onMounted, ref, watch } from "vue";
-
+import TpuList from "@/components/Framework/List/TpuList.vue";
+import TpuListItem from "@/components/Framework/List/TpuListItem.vue";
+import TpuAutoComplete from "@/components/Framework/Input/TpuAutoComplete.vue";
 const props = defineProps({
   modelValue: String,
-  id: String
+  inputId: String
 });
 
 defineEmits(["update:modelValue", "refresh"]);
 
 const { t } = useI18n();
+const selectedIndex = ref(0);
 
-const searchHistory = ref<{ value: strinfddffd }[]>([]);
-
-const results = computed(() => {
-  return searchHistory.value.filter((item) => {
-    return item.toLowerCase().includes(props.modelValue?.toLowerCase());
-  });
-});
-
+const searchHistory = ref<{ value: string; date: string }[]>([]);
+const hover = ref(false);
 watch(
-  () => searchHistory,
+  () => searchHistory.value,
   () => {
     localStorage.setItem(
-      "gallery-search-history",
-      JSON.stringify(searchHistory.value.splice(0, 10))
+      `${props.inputId}-search-history`,
+      JSON.stringify(searchHistory.value)
     );
+  },
+  {
+    deep: true
   }
 );
 
+function addItem(item: { value: string; date: string }) {
+  if (item.value === "") return;
+  const find = searchHistory.value.findIndex(
+    (entry) => entry.value === item.value
+  );
+  if (find !== -1) {
+    searchHistory.value.splice(find, 1);
+  }
+  searchHistory.value.unshift(item);
+  searchHistory.value = searchHistory.value.slice(0, 20);
+}
+
 onMounted(() => {
-  const storage = localStorage.getItem(`${props.id}-search-history`);
+  const storage = localStorage.getItem(`${props.inputId}-search-history`);
   if (storage) {
     searchHistory.value = JSON.parse(storage);
   }

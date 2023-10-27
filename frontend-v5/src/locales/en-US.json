@@ -24,7 +24,7 @@
     "addToCollectionBulk": "Add to Collection\n(⇧ to bulk-remove)",
     "removeFromCollection": "Remove from Collection",
     "actions": {
-      "edit": "Edit",
+      "edit": "Edit & Caption",
       "delete": "Delete",
       "copy": "Copy Link",
       "download": "Download",

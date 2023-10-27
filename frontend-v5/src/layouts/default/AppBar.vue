@@ -48,7 +48,7 @@
                   {{ rail.name }}
                 </span>
               </router-link>
-              <RiArrowRightSLine class="w-6 mx-3 fill-medium-emphasis-dark" />
+              <RiArrowRightSLine class="w-6 mx-2 fill-medium-emphasis-dark" />
             </div>
           </div>
         </Transition>
@@ -63,7 +63,7 @@
             ]"
           >
             <div class="items-center flex">
-              <div class="-ml-1.5 mr-3">
+              <div>
                 <component
                   :is="appStore.currentNavItem?.item.icon"
                   class="w-8 items-center fill-white"
@@ -71,9 +71,13 @@
                 />
               </div>
 
-              {{
-                appStore.currentNavItem?.item.name || route.name || "Flowinity"
-              }}
+              <div class="ml-3">
+                {{
+                  appStore.currentNavItem?.item.name ||
+                  route.name ||
+                  "Flowinity"
+                }}
+              </div>
             </div>
           </div>
         </Transition>

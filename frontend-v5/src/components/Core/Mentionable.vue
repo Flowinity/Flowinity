@@ -1,29 +1,22 @@
 <template>
-  <div
-    ref="el"
-    :class="$attrs.class"
-    class="mentionable absolute"
-    style="position: relative; width: 100%"
-    v-if="displayedItems.length"
-  >
+  <div ref="el" :class="$attrs.class" class="mentionable" style="width: 100%">
     <slot />
-
     <VDropdown
       ref="popper"
       :auto-hide="false"
-      :shown="!!currentKey"
+      :shown="currentKey !== null"
       :style="
         caretPosition
           ? {
-              top: `${caretPosition.top}px`,
-              left: `${caretPosition.left}px`
+              top: `${caretPosition.top + 128}px`,
+              left: `${caretPosition.left + 2}px`
             }
           : {}
       "
       :theme="theme"
-      :triggers="[]"
-      class="popper ml-9"
+      class="bg-card-secondary-dark"
       style="position: absolute"
+      v-if="displayedItems.length"
       v-bind="{ ...$attrs, class: undefined }"
     >
       <div
@@ -53,7 +46,7 @@
             :name="`item-${currentKey || oldKey}`"
           >
             <slot :index="index" :item="item" name="item">
-              {{ item.label || item.value }}
+              {{ item.label || item.value }}ds
             </slot>
           </slot>
         </div>
@@ -141,7 +134,7 @@ export default defineComponent({
   },
   emits: ["search", "open", "close", "apply"],
   setup(props, { emit }) {
-    const currentKey = ref<string>(null);
+    const currentKey = ref<string | null>(null);
     let currentKeyIndex: number;
     const oldKey = ref<string>(null);
     // Items
@@ -209,6 +202,10 @@ export default defineComponent({
       detach();
     });
 
+    function onFocus() {
+      checkKey();
+    }
+
     // Events
     function attach() {
       if (input) {
@@ -217,6 +214,7 @@ export default defineComponent({
         input.addEventListener("keyup", onKeyUp);
         input.addEventListener("scroll", onScroll);
         input.addEventListener("blur", onBlur);
+        input.addEventListener("focus", onFocus);
       }
     }
 
@@ -227,6 +225,7 @@ export default defineComponent({
         input.removeEventListener("keyup", onKeyUp);
         input.removeEventListener("scroll", onScroll);
         input.removeEventListener("blur", onBlur);
+        input.removeEventListener("focus", onFocus);
       }
     }
 
@@ -321,6 +320,12 @@ export default defineComponent({
       if (index >= 0) {
         const { key, keyIndex } = getLastKeyBeforeCaret(index);
         const text = (lastSearchText = getLastSearchText(index, keyIndex));
+        if (key.includes("") && getValue() === "") {
+          console.log(69);
+          openMenu(key, keyIndex);
+          searchText.value = text;
+          return true;
+        }
         if (
           !key.includes("!") &&
           !(keyIndex < 1 || /\s/.test(getValue()[keyIndex - 1]))
@@ -363,8 +368,11 @@ export default defineComponent({
       null
     );
 
+    console.log(input);
+
     function updateCaretPosition() {
-      if (currentKey.value) {
+      console.log("called");
+      if (currentKey.value !== undefined) {
         if (input.isContentEditable) {
           const rect = window
             .getSelection()
@@ -390,6 +398,7 @@ export default defineComponent({
 
     // Open/close
     function openMenu(key: string, keyIndex: number) {
+      console.log(currentKey.value, key);
       if (currentKey.value !== key) {
         currentKey.value = key;
         currentKeyIndex = keyIndex;
@@ -517,36 +526,8 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-.v-popper--theme-dropdown .v-popper__inner {
-  background: rgb(var(--v-theme-background));
-  color: white;
-  border-radius: 6px;
-  box-shadow: 0 6px 30px #0000001a;
-  padding: 6px;
-}
-
-.v-popper--theme-dropdown .v-popper__inner {
-  border: 1px solid #191919;
-}
-
-.v-popper--theme-dropdown .v-popper__arrow-inner {
-  visibility: visible;
-  border-color: rgb(var(--v-theme-background));
-}
-
-.v-popper--theme-dropdown .v-popper__arrow-outer {
-  border-color: #202020;
-}
-
-.v-popper--theme-tooltip .v-popper__inner {
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border-radius: 6px;
-  padding: 7px 12px 6px;
-}
-
-.v-popper--theme-tooltip .v-popper__arrow-outer {
-  border-color: #000c;
+<style lang="postcss">
+.popper {
+  padding: 2px;
 }
 </style>

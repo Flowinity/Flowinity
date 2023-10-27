@@ -56,15 +56,18 @@ defineEmits(["setImage"]);
 </script>
 
 <template>
-  <set-picture-dialog
-    v-if="edit"
-    v-model="editing"
-    @set-image="
-      $emit('setImage', $event);
-      editing = false;
-    "
-  />
   <div class="relative" :class="{ 'cursor-pointer': edit }">
+    <teleport to="#main-area" v-if="edit">
+      <set-picture-dialog
+        v-model="editing"
+        @set-image="
+          $emit('setImage', $event, () => {
+            console.log('deez');
+            editing = false;
+          })
+        "
+      />
+    </teleport>
     <tpu-hover v-slot="{ hovering }">
       <tpu-overlay
         :overlay-classes="{ 'rounded-full': true }"

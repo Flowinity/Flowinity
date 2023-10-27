@@ -4,7 +4,7 @@
       :model-value="props.search"
       @update:model-value="$emit('update:search', $event)"
       @refresh="$emit('refresh')"
-      id="gallery-input"
+      inputId="gallery-input"
     />
     <tpu-select
       style="min-width: 200px"
@@ -202,8 +202,8 @@ const props = defineProps({
           internalName: GalleryFilter.Other
         },
         {
-          name: "Include Undeletable",
-          internalName: GalleryFilter.IncludeDeletable
+          name: "Undeletable",
+          internalName: GalleryFilter.OnlyUndeletable
         },
         {
           name: "Owned items",

@@ -15,7 +15,7 @@
         selected <= 0 ? (selected = items.length - 1) : selected--;
       "
       @keydown.enter.prevent.stop="
-        $emit('update:modelValue', items[selected].id);
+        !assist ? $emit('update:modelValue', items[selected].id) : () => {};
         hovering = false;
         focused = false;
       "
@@ -24,9 +24,14 @@
       @update:model-value="
         focused = true;
         remove($event);
+        assist ? $emit('update:modelValue', items[selected].value) : () => {};
       "
       ref="input"
-    />
+    >
+      <template #append>
+        <slot name="append" />
+      </template>
+    </text-field>
 
     <transition name="dialog-transition" appear>
       <div
@@ -46,7 +51,9 @@
               :class="{ 'bg-card-secondary-dark': selected === index }"
               v-for="(item, index) in items"
               @click.stop.prevent="
-                $emit('update:modelValue', item.id);
+                assist
+                  ? $emit('update:modelValue', items[selected].value)
+                  : $emit('update:modelValue', items[selected].id);
                 hovering = false;
                 focus();
                 focused = false;
@@ -54,9 +61,11 @@
               @mouseover="selected = index"
               class="text-ellipsis overflow-hidden"
             >
-              <div class="my-2 mx-2">
-                {{ item.name }}
-              </div>
+              <slot name="item" :item="item">
+                <div class="my-2 mx-2">
+                  {{ item.name }}
+                </div>
+              </slot>
             </li>
           </ul>
         </slot>
@@ -78,7 +87,8 @@ const props = defineProps({
     }[]
   },
   disabled: Boolean,
-  customText: String
+  customText: String,
+  assist: Boolean
 });
 const emit = defineEmits(["update:modelValue"]);
 const show = computed(() => {
@@ -89,10 +99,35 @@ const focused = ref(false);
 const filter = ref("");
 const selected = ref(0);
 const items = computed(() => {
-  if (!props.items) return [];
-  return props.items?.filter((item) => {
-    return item.name.toLowerCase().includes(filter.value.toLowerCase());
-  });
+  if (!props.items)
+    return [
+      ...(props.assist
+        ? [
+            {
+              id: -1,
+              name: filter.value || "Enter a query to search...",
+              value: filter.value
+            }
+          ]
+        : [])
+    ];
+  return [
+    ...(props.assist
+      ? [
+          {
+            id: -1,
+            name: filter.value || "Enter a query to search...",
+            value: filter.value
+          }
+        ]
+      : []),
+    ...props.items.filter((item) => {
+      return item.name
+        .toString()
+        .toLowerCase()
+        .includes(filter.value.toLowerCase());
+    })
+  ];
 });
 const text = computed({
   get() {
@@ -110,6 +145,7 @@ function focus() {
   input.value?.input?.focus();
 }
 function remove(val) {
+  if (props.assist) return;
   if (!val) {
     selected.value = 0;
     emit("update:modelValue", 0);

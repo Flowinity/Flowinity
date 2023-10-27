@@ -44,10 +44,14 @@
         </tpu-button>
       </template>
       <template v-if="image.src">
-        <tpu-button variant="passive" @click="$emit('setImage', files[0])">
+        <tpu-button
+          variant="passive"
+          @click="$emit('setImage', files[0])"
+          :loading="loading"
+        >
           {{ t("dialogs.uploadCropper.skipCrop") }}
         </tpu-button>
-        <tpu-button variant="passive" @click="save">
+        <tpu-button variant="passive" @click="save" :loading="loading">
           {{ t("generic.save") }}
         </tpu-button>
       </template>
@@ -122,13 +126,14 @@ async function save() {
   crop?.canvas?.toBlob((blob) => {
     if (!blob) return;
     loading.value = true;
-    emit("setImage", new File([blob], "tpu-cropped.png"));
-    emit("update:modelValue", false);
-    loading.value = false;
-    revoke();
-    files.value = [];
-    image.value.src = "";
-    image.value.type = "";
+    emit("setImage", new File([blob], "tpu-cropped.png"), () => {
+      emit("update:modelValue", false);
+      loading.value = false;
+      revoke();
+      files.value = [];
+      image.value.src = "";
+      image.value.type = "";
+    });
   });
 }
 

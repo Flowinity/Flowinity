@@ -127,10 +127,13 @@ const props = defineProps([
   "error",
   "autofocus",
   "parentClasses",
-  "parentStyle"
+  "parentStyle",
+  "htmlId"
 ]);
 
-const id = (Math.random() + 1).toString(36).substring(7);
+const id = computed(() => {
+  return props.htmlId || (Math.random() + 1).toString(36).substring(7);
+});
 
 defineEmits(["update:modelValue"]);
 

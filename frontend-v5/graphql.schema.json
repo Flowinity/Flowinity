@@ -6330,19 +6330,25 @@
             "deprecationReason": null
           },
           {
-            "name": "INCLUDE_DELETABLE",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "INCLUDE_METADATA",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
+            "name": "INCLUDE_UNDELETABLE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "NO_COLLECTION",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ONLY_UNDELETABLE",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -14676,6 +14682,22 @@
             "deprecationReason": null
           },
           {
+            "name": "createdAt",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Date",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "args": [],
@@ -14685,6 +14707,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updatedAt",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Date",
                 "ofType": null
               }
             },
@@ -16820,7 +16858,7 @@
           },
           {
             "name": "deletable",
-            "description": "Non-deletable items are used for profile pictures, banners, etc and are not visible in the Gallery page.",
+            "description": "Non-deletable items are used for profile pictures, banners, etc and are not visible in the Gallery page by default, and cannot be deleted.",
             "args": [],
             "type": {
               "kind": "NON_NULL",
