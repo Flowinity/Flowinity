@@ -928,8 +928,9 @@ export default defineComponent({
     this.resizeObserver = new ResizeObserver(this.onResize);
     console.log(this.$chat.selectedChat?.unread, this.$chat.selectedChat?.name);
     if (this.$chat.selectedChat?.unread) {
-      console.log(this.$chat.selectedChat?.association.lastRead);
-      this.unreadId = this.$chat.selectedChat?.association.lastRead;
+      const index = this.$chat.selectedChat?.messages.indexOf((message) => message.id === this.$chat.selectedChat?.association.lastRead);
+      const message = this.$chat.selectedChat?.messages[index + 1];
+      if(message) this.unreadId = message.id;
     }
     document.body.classList.add("disable-overscroll");
     document.addEventListener("keydown", this.shortcutHandler);
