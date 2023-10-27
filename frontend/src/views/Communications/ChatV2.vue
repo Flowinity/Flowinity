@@ -360,7 +360,8 @@ export default defineComponent({
       embedFails: [] as {
         data: { chatId: any; id: any; embeds: any };
         retries: number;
-      }[]
+      }[],
+      unread: 0
     };
   },
   computed: {
@@ -926,11 +927,6 @@ export default defineComponent({
   },
   mounted() {
     this.resizeObserver = new ResizeObserver(this.onResize);
-    console.log(this.$chat.selectedChat?.unread, this.$chat.selectedChat?.name);
-    if (this.$chat.selectedChat?.unread) {
-      console.log(this.$chat.selectedChat?.association.lastRead);
-      this.unreadId = this.$chat.selectedChat?.association.lastRead;
-    }
     document.body.classList.add("disable-overscroll");
     document.addEventListener("keydown", this.shortcutHandler);
     this.focusInterval = setInterval(this.onFocus, 2000);
@@ -943,6 +939,7 @@ export default defineComponent({
     this.$app.railMode = "communications";
   },
   unmounted() {
+    this.unread = 0;
     document.body.classList.remove("disable-overscroll");
     this.$chat.isReady = 0;
     this.$chat.setDraft(<string>this.$route.params.chatId, this.message);
@@ -957,14 +954,7 @@ export default defineComponent({
   },
   watch: {
     "$route.params.chatId"(val, oldVal) {
-      console.log(
-        this.$chat.selectedChat?.unread,
-        this.$chat.selectedChat?.name
-      );
-      if (this.$chat.selectedChat?.unread) {
-        console.log(this.$chat.selectedChat?.association.lastRead);
-        this.unreadId = this.$chat.selectedChat?.association.lastRead;
-      }
+      this.unread = this.$chat.selectedChat?.unread;
       this.$chat.setDraft(oldVal, this.message);
       this.message = this.$chat.getDraft(val) || "";
       this.files = [];
@@ -980,6 +970,23 @@ export default defineComponent({
       this.$nextTick(() => {
         this.autoScroll();
       });
+
+      if (this.unread) {
+        const lastReadMessage = this.$chat.selectedChat?.messages?.find(
+          (message) =>
+            message.id === this.$chat.selectedChat?.association?.lastRead
+        );
+        const nextMessageIndex =
+          this.$chat.selectedChat?.messages?.indexOf(lastReadMessage) + 1;
+        console.log("index: " + nextMessageIndex, lastReadMessage);
+
+        if (nextMessageIndex !== -1) {
+          this.unreadId =
+            this.$chat.selectedChat?.messages?.[nextMessageIndex]?.id;
+        } else if (lastReadMessage) {
+          this.unreadId = lastReadMessage?.id;
+        }
+      }
     },
     message() {
       if (this.message.length > 0) {

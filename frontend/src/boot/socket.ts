@@ -202,6 +202,10 @@ export default async function setup(app) {
       );
     });
     chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
+
+    if (data?.userId === user.user?.id) {
+      chat.chats[index].association.lastRead = data.lastRead;
+    }
   });
   sockets.chat.on("chatUserUpdate", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.chatId);
