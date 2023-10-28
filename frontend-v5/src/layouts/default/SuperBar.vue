@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAppStore } from "@/stores/app.store";
+import { RailMode, useAppStore } from "@/stores/app.store";
 import SuperBarItem from "@/components/Framework/Navigation/SuperBarItem.vue";
 import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
 import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
@@ -27,7 +27,10 @@ const userStore = useUserStore();
           <img
             src="@/assets/flowinity.svg"
             alt="Flowinity Logo"
-            @click="$router.push('/')"
+            @click="
+              $router.push('/');
+              appStore.navigation.mode = RailMode.HOME;
+            "
             class="cursor-pointer"
             draggable="false"
             v-tooltip.right="'Flowinity'"

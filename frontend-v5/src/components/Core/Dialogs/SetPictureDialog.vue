@@ -19,6 +19,8 @@
             :src="image.src"
             v-if="image.src"
             :stencil-props="{
+              minAspectRatio: aspectRatio,
+              maxAspectRatio: aspectRatio,
               aspectRatio: aspectRatio
             }"
             ref="cropperRef"

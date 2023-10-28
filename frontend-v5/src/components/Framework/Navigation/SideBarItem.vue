@@ -17,9 +17,10 @@ const props = defineProps({
 
 const appStore = useAppStore();
 const router = useRouter();
+const route = useRoute()
 
 const selected = computed(() => {
-  return useRoute().path === (props.item?.path || props.to);
+  return route?.path === (props.item?.path || props.to);
 });
 </script>
 

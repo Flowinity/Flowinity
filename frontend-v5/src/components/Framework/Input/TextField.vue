@@ -47,7 +47,10 @@
       v-else
       :id="id"
       :placeholder="props.placeholder"
-      @input="$emit('update:modelValue', $event.target?.value)"
+      @input="
+        $emit('update:modelValue', $event.target?.value);
+        props.dynamicWidth ? setWidth() : () => {};
+      "
       :value="props.modelValue"
       ref="input"
       class="text-field"
@@ -110,7 +113,17 @@ onMounted(() => {
       }
     });
   }
+
+  if (props.dynamicWidth) setWidth();
 });
+
+const setWidth = () => {
+  if (!props.dynamicWidth) return undefined;
+  if (!props.modelValue.length) return;
+  input.value!!.style.width = "60px";
+  input.value!!.style.width = `${input.value!!.scrollWidth}px`;
+};
+
 const props = defineProps([
   "readonly",
   "disabled",
@@ -128,7 +141,8 @@ const props = defineProps([
   "autofocus",
   "parentClasses",
   "parentStyle",
-  "htmlId"
+  "htmlId",
+  "dynamicWidth"
 ]);
 
 const id = computed(() => {

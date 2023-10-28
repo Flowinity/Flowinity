@@ -500,6 +500,7 @@ async function processXP(
   console.log("XP", xp)
 }
 
+/** @deprecated */
 function getTypeByExt(ext: string): string {
   const types: Record<string, string> = {
     ase: "text",
@@ -1002,11 +1003,22 @@ function getTypeByExt(ext: string): string {
   return types[ext?.toLowerCase()] || "binary"
 }
 
+function getTypeByMime(mimeVal: string) {
+  console.log(mimeVal)
+  const mime = mimeVal.toLowerCase()
+  if (mime.startsWith("image/")) return "image"
+  if (mime.startsWith("video/")) return "video"
+  if (mime.startsWith("audio/")) return "audio"
+  if (mime.startsWith("text/")) return "text"
+  return "binary"
+}
+
 export default {
   getTypeByExt,
   getUserDomain,
   postUpload,
   generateAPIKey,
   createSession,
-  processXP
+  processXP,
+  getTypeByMime
 }

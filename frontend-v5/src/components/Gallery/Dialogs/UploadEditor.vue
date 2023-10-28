@@ -2,33 +2,57 @@
   <tpu-dialog
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
-    width="500"
+    :width="editor ? 800 : 500"
   >
     <template #toolbar>
       {{ t("gallery.dialogs.edit.title") }}
     </template>
     <template #default v-if="!editor">
-      <tpu-button @click="editor = true">editor</tpu-button>
-      <p class="my-4 mx-4">
-        <text-field
-          v-if="appStore.dialogs.gallery.edit.upload"
-          v-model="uploadName"
-          :label="$t('gallery.dialogs.edit.name')"
-          autofocus
-        />
-      </p>
-      <card-actions>
-        <tpu-button variant="passive" @click="updateUpload">
-          {{ t("generic.save") }}
-        </tpu-button>
-      </card-actions>
+      <transition
+        name="scroll-x-transition"
+        mode="out-in"
+        appear
+        v-if="!editor"
+      >
+        <div>
+          <p class="my-4 mx-4">
+            <text-field
+              v-if="appStore.dialogs.gallery.edit.upload"
+              v-model="uploadName"
+              :label="$t('gallery.dialogs.edit.name')"
+              autofocus
+            />
+          </p>
+          <card-actions>
+            <tpu-button
+              @click="editor = true"
+              color="purple"
+              v-if="appStore.dialogs.gallery.edit.upload?.type === 'image'"
+            >
+              {{ t("generic.edit") }}
+            </tpu-button>
+            <tpu-button variant="passive" @click="updateUpload">
+              {{ t("generic.save") }}
+            </tpu-button>
+          </card-actions>
+        </div>
+      </transition>
     </template>
-    <template v-if="editor">
-      <GalleryEditor
-        :image="
-          appStore.domain + appStore.dialogs.gallery.edit.upload?.attachment
-        "
-      />
+    <template v-else #default>
+      <transition
+        name="scroll-x-reverse-transition"
+        mode="out-in"
+        appear
+        v-if="editor"
+      >
+        <GalleryEditor
+          @back="editor = false"
+          :name="appStore.dialogs.gallery.edit.upload!.name"
+          :image="
+            appStore.domain + appStore.dialogs.gallery.edit.upload?.attachment
+          "
+        />
+      </transition>
     </template>
   </tpu-dialog>
 </template>

@@ -15,11 +15,13 @@
     v-model:sort="sort"
     v-model:order="order"
     :types="types"
+    ref="galleryNav"
   />
   <gallery-core
     :id="id"
     :loading="loading"
     :type="type"
+    ref="galleryCore"
     :selected="selected"
     :items="items"
     @select="select($event)"
@@ -89,6 +91,7 @@ import OCRScanned from "@/components/Gallery/Dialogs/OCRScanned.vue";
 import UploadEditor from "@/components/Gallery/Dialogs/UploadEditor.vue";
 import { useI18n } from "vue-i18n";
 import dayjs from "@/plugins/dayjs";
+import TextField from "@/components/Framework/Input/TextField.vue";
 
 const { t } = useI18n();
 const page = ref(1);
@@ -102,6 +105,8 @@ const search = ref("");
 const filter = ref([GalleryFilter.IncludeMetadata]);
 const sort = ref(GallerySort.CreatedAt);
 const order = ref(GalleryOrder.Desc);
+const galleryCore = ref<InstanceType<typeof GalleryCore> | null>(null);
+const galleryNav = ref<InstanceType<typeof GalleryNavigation> | null>(null);
 
 function select(upload: Upload | Upload[]) {
   if (Array.isArray(upload)) {
@@ -177,18 +182,36 @@ const props = defineProps({
   }
 });
 
-function focusInput() {}
+function focusInput() {
+  galleryNav.value?.galleryInput.input.input.focus();
+}
 
 function shortcutHandler(e: KeyboardEvent) {
+  if (e.altKey && (e.key === "a" || e.key === "A")) {
+    if (!selected.value.length) return;
+    appStore.dialogs.gallery.collect.remove = e.shiftKey;
+    appStore.dialogs.gallery.collect.items = selected.value;
+    appStore.dialogs.gallery.collect.value =
+      !appStore.dialogs.gallery.collect.value;
+  }
   if (e.target?.tagName === "INPUT" || e.target?.tagName === "TEXTAREA") return;
   if (e.ctrlKey && e.key === "a") {
     e.preventDefault();
-    selected.value = items.value;
+    if (
+      items.value
+        ?.map((item) => item.id)
+        .every((id) => selected.value.some((item) => item.id === id))
+    ) {
+      selected.value = [];
+    } else {
+      selected.value = [...items.value];
+    }
   } else if (
     (e.key === "v" && e.ctrlKey) ||
     (e.target?.tagName !== "INPUT" &&
       e.target?.tagName !== "TEXTAREA" &&
-      !e.ctrlKey)
+      !e.ctrlKey &&
+      !e.altKey)
   ) {
     focusInput();
   }

@@ -75,7 +75,11 @@
       </tpu-button>
     </card-actions>
   </tpu-dialog>
-  <set-picture-dialog v-model="banner" @set-image="uploadBanner" />
+  <set-picture-dialog
+    :aspect-ratio="157 / 29"
+    v-model="banner"
+    @set-image="uploadBanner"
+  />
 </template>
 
 <script setup lang="ts">

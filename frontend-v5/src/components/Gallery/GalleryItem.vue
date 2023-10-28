@@ -41,6 +41,14 @@
         <p>Uploaded name: {{ props.item.attachment }}</p>
         <p>Size: {{ functions.fileSize(props.item.fileSize) }}</p>
         <p>
+          Type:
+          {{
+            props.item.type === "binary"
+              ? "Unknown"
+              : functions.charUp(props.item.type)
+          }}
+        </p>
+        <p>
           Created at:
           {{ dayjs(props.item.createdAt).format("Do of MMMM YYYY, h:mm A") }}
         </p>
@@ -69,26 +77,29 @@
             >
               <RiAddLine style="width: 20px" />
             </tpu-button>
-            <tpu-button
+            <a
               v-for="collection in props.item.collections"
               :key="collection.id"
-              :to="`/collections/${collection.id}`"
+              :href="`/collections/${collection.id}`"
+              @click.prevent.stop
             >
-              <RiCloseLine
-                style="width: 20px"
-                @click.prevent="
-                  toast.success(
-                    `Successfully removed the item from ${collection.name}`
-                  );
-                  collectionsStore.removeFromCollection(collection.id, [
-                    props.item.id
-                  ]);
-                "
-              />
-              <span class="mx-1">
-                {{ collection.name }}
-              </span>
-            </tpu-button>
+              <tpu-button :to="`/collections/${collection.id}`">
+                <RiCloseLine
+                  style="width: 20px"
+                  @click.prevent="
+                    toast.success(
+                      `Successfully removed the item from ${collection.name}`
+                    );
+                    collectionsStore.removeFromCollection(collection.id, [
+                      props.item.id
+                    ]);
+                  "
+                />
+                <span class="mx-1">
+                  {{ collection.name }}
+                </span>
+              </tpu-button>
+            </a>
           </tpu-slide-group>
         </div>
       </div>

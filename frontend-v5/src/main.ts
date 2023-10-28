@@ -21,6 +21,10 @@ import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
 
 const app = createApp(App);
+//@ts-ignore
+import VueSimpleContextMenu from "vue-simple-context-menu";
+
+app.component("vue-simple-context-menu", VueSimpleContextMenu);
 
 app.config.performance = true;
 

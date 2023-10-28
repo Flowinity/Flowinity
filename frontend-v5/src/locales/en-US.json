@@ -17,12 +17,20 @@
     "copied": "Copied to clipboard!",
     "back": "Back",
     "search": "Search",
-    "remove": "Remove"
+    "remove": "Remove",
+    "edit": "Edit"
   },
   "gallery": {
     "addToCollection": "Add to Collection",
     "addToCollectionBulk": "Add to Collection\n(⇧ to bulk-remove)",
     "removeFromCollection": "Remove from Collection",
+    "editor": {
+      "back": "Back",
+      "addText": "Add Text",
+      "addBox": "Add Box",
+      "addEmptyBox": "Add Empty Box",
+      "saveCopy": "Save a Copy"
+    },
     "actions": {
       "edit": "Edit & Caption",
       "delete": "Delete",

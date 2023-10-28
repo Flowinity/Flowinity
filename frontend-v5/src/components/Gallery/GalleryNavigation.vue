@@ -1,10 +1,12 @@
 <template>
-  <div class="gap-4 p-4 flex w-full relative">
+  <div class="gap-4 p-4 w-full relative md:grid md:grid-cols-3 lg:grid-cols-4">
     <gallery-input
       :model-value="props.search"
       @update:model-value="$emit('update:search', $event)"
       @refresh="$emit('refresh')"
       inputId="gallery-input"
+      class="lg:col-span-2"
+      ref="galleryInputRef"
     />
     <tpu-select
       style="min-width: 200px"
@@ -111,6 +113,7 @@ import Card from "@/components/Framework/Card/Card.vue";
 import Mentionable from "@/components/Core/Mentionable.vue";
 import GalleryInput from "@/components/Gallery/GalleryInput.vue";
 const { t } = useI18n();
+const galleryInputRef = ref<InstanceType<typeof GalleryInput> | null>(null);
 const props = defineProps({
   search: {
     type: String
@@ -272,8 +275,8 @@ const sortText = computed(() => {
   return props.sortTypes.find((type) => type.internalName === props.sort)?.name;
 });
 
-onMounted(() => {
-  console.log("rerendereed searfch");
+defineExpose({
+  galleryInput: galleryInputRef
 });
 </script>
 

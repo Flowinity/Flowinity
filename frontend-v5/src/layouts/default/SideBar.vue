@@ -16,6 +16,8 @@ import Card from "@/components/Framework/Card/Card.vue";
 import TpuList from "@/components/Framework/List/TpuList.vue";
 import TpuListItem from "@/components/Framework/List/TpuListItem.vue";
 import CreateCollectionDialog from "@/components/Collections/CreateCollectionDialog.vue";
+//@ts-ignore
+import VueSimpleContextMenu from "vue-simple-context-menu";
 
 const search = ref("");
 const appStore = useAppStore();
@@ -81,6 +83,8 @@ const filteredCollections = computed(() => {
 });
 
 const createCollection = ref(false);
+
+const context = ref(0);
 </script>
 
 <template>
@@ -230,25 +234,44 @@ const createCollection = ref(false);
               <div
                 v-for="collection in filteredCollections"
                 :key="collection.id"
+                @click.right.prevent="
+                  collectionCtx?.showMenu($event, collection)
+                "
               >
-                <SideBarItem
-                  class="flex h-14 items-center"
-                  :to="`/collections/${collection.id}`"
+                <VDropdown
+                  :triggers="[]"
+                  placement="right"
+                  class="flex items-center"
+                  :shown="context === collection.id"
+                  @update:shown="!$event ? (context = 0) : () => {}"
                 >
-                  <template #icon>
-                    <user-avatar
-                      :status="false"
-                      :src="`/i/${collection.avatar || collection.banner}`"
-                      :username="collection.name"
-                    ></user-avatar>
+                  <SideBarItem
+                    class="flex h-14 items-center"
+                    :to="`/collections/${collection.id}`"
+                    @click.right="context = collection.id"
+                  >
+                    <template #icon>
+                      <user-avatar
+                        :status="false"
+                        :src="`/i/${collection.avatar || collection.banner}`"
+                        :username="collection.name"
+                      ></user-avatar>
+                    </template>
+                    <template #title>
+                      {{ collection.name }}
+                    </template>
+                    <template #subtitle>
+                      {{ collection.itemCount?.toLocaleString() || 0 }} items
+                    </template>
+                  </SideBarItem>
+                  <template #popper>
+                    <card class="dark:bg-outline-dark" :padding="false">
+                      <tpu-list>
+                        <tpu-list-item>Settings</tpu-list-item>
+                      </tpu-list>
+                    </card>
                   </template>
-                  <template #title>
-                    {{ collection.name }}
-                  </template>
-                  <template #subtitle>
-                    {{ collection.itemCount?.toLocaleString() || 0 }} items
-                  </template>
-                </SideBarItem>
+                </VDropdown>
               </div>
             </template>
           </template>
@@ -281,5 +304,67 @@ const createCollection = ref(false);
 .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
+}
+</style>
+
+<style lang="scss">
+.vue-simple-context-menu {
+  $light-grey: #0190ea;
+  $black: #000000;
+  $blue: #0190ea;
+  $white: #ffffff;
+  $grey: #0190ea;
+  background-color: $light-grey;
+  border-bottom-width: 0px;
+  border-radius: 4px;
+  box-shadow: 0 3px 6px 0 rgba($black, 0.2);
+  display: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  left: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  z-index: 1000000;
+
+  &--active {
+    display: block;
+  }
+
+  &__item {
+    align-items: center;
+    color: $black;
+    cursor: pointer;
+    display: flex;
+    padding: 5px 15px;
+
+    &:hover {
+      background-color: $blue;
+      color: $white;
+    }
+  }
+
+  &__divider {
+    background-clip: content-box;
+    background-color: $grey;
+    box-sizing: content-box;
+    height: 2px;
+    padding: 4px 0;
+    pointer-events: none;
+  }
+
+  // Have to use the element so we can make use of `first-of-type` and `last-of-type`
+  li {
+    &:first-of-type {
+      margin-top: 4px;
+    }
+
+    &:last-of-type {
+      margin-bottom: 4px;
+    }
+  }
 }
 </style>

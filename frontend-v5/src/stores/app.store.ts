@@ -60,6 +60,7 @@ import type { AxiosProgressEvent } from "axios";
 import { useToast } from "vue-toastification";
 import axios from "@/plugins/axios";
 import { useFriendsStore } from "@/stores/friends.store";
+import { debounce } from "lodash";
 
 export enum RailMode {
   HOME,
@@ -84,6 +85,7 @@ export interface NavigationOption {
   badge?: string;
   misc?: boolean;
   id?: RailMode;
+  fake?: boolean;
 }
 
 export const useAppStore = defineStore("app", () => {
@@ -508,7 +510,8 @@ export const useAppStore = defineStore("app", () => {
             ? h(UserAvatar, {
                 username: find.name,
                 src: domain.value + find.avatar,
-                size: 32
+                size: 32,
+                style: "margin: 0px 4px 0px 4px"
               })
             : markRaw(RiCollageLine),
           path: route.path,

@@ -14,25 +14,19 @@
         date: new Date().toISOString()
       });
     "
+    ref="input"
   >
     <template #append>
       <div class="flex items-center justify-center gap-1 mb-4">
         <tpu-button
-          style="width: 45px; height: 45px"
           variant="passive"
+          style="width: 45px; height: 45px"
           @click="
             $emit('update:modelValue', '');
             $emit('refresh');
           "
         >
           <RiCloseLine />
-        </tpu-button>
-        <tpu-button
-          style="width: 45px; height: 45px"
-          variant="passive"
-          @click="$emit('refresh')"
-        >
-          <RiSearchLine />
         </tpu-button>
       </div>
     </template>
@@ -55,7 +49,10 @@ const props = defineProps({
   modelValue: String,
   inputId: String
 });
-
+const input = ref<InstanceType<typeof TextField> | null>(null);
+defineExpose({
+  input
+});
 defineEmits(["update:modelValue", "refresh"]);
 
 const { t } = useI18n();

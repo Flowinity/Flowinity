@@ -26,7 +26,7 @@
         <Transition
           mode="out-in"
           name="slide-up"
-          v-for="rail in appStore.currentNavItem?.rail"
+          v-for="(rail, index) in appStore.currentNavItem?.rail"
         >
           <div
             class="flex max-sm:hidden"
@@ -37,41 +37,75 @@
             <div class="flex items-center">
               <router-link
                 :to="rail.path"
+                @click="
+                  rail?.fake ? () => {} : (appStore.navigation.mode = rail?.id)
+                "
                 class="cursor-pointer flex items-center"
               >
                 <component
                   :is="rail?.icon"
-                  class="w-8 mr-2 fill-medium-emphasis-dark"
+                  class="w-8"
                   v-if="rail?.icon"
+                  :class="
+                    appStore.currentNavItem?.item?.path ===
+                    appStore.currentNavItem?.rail[0]?.path
+                      ? 'fill-white'
+                      : 'fill-medium-emphasis-dark'
+                  "
                 />
-                <span class="text-medium-emphasis-dark">
+                <span
+                  style="margin: 0px 0px 0px 8px"
+                  :class="
+                    appStore.currentNavItem?.item?.path ===
+                    appStore.currentNavItem?.rail[0]?.path
+                      ? 'text-white'
+                      : 'text-medium-emphasis-dark'
+                  "
+                >
                   {{ rail.name }}
                 </span>
               </router-link>
-              <RiArrowRightSLine class="w-6 mx-2 fill-medium-emphasis-dark" />
+              <RiArrowRightSLine
+                v-if="appStore.currentNavItem?.rail?.length - 1 !== index"
+                class="w-6 fill-medium-emphasis-dark items-center"
+                v-memo="[]"
+                style="margin: 0px 4px 0px 4px"
+              />
             </div>
           </div>
         </Transition>
         <Transition mode="out-in" name="slide-up">
           <div
+            v-if="
+              appStore.currentNavItem?.item?.path !==
+              appStore.currentNavItem?.rail[0]?.path
+            "
             class="flex"
-            :class="{ 'items-center': !expanded, 'items-end': expanded }"
             :key="appStore.currentNavItem?.item"
             v-memo="[
               appStore.currentNavItem?.item?.name,
               appStore.currentNavItem?.rail?.id
             ]"
           >
+            <RiArrowRightSLine
+              v-if="
+                appStore.currentNavItem?.item?.path !==
+                appStore.currentNavItem?.rail[0]?.path
+              "
+              class="w-6 fill-medium-emphasis-dark items-center"
+              v-memo="[]"
+              style="margin: 0px 4px 0px 4px"
+            />
             <div class="items-center flex">
               <div>
                 <component
                   :is="appStore.currentNavItem?.item.icon"
-                  class="w-8 items-center fill-white"
+                  class="w-8 fill-white"
                   v-if="appStore.currentNavItem?.item.icon"
                 />
               </div>
 
-              <div class="ml-3">
+              <div style="padding-left: 8px">
                 {{
                   appStore.currentNavItem?.item.name ||
                   route.name ||
