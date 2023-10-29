@@ -10,6 +10,8 @@ import {
 import { User } from "@app/models/user.model"
 import { Field, Int, ObjectType } from "type-graphql"
 import { SessionInfo } from "@app/classes/graphql/user/session"
+import { SessionType } from "@app/classes/graphql/user/sessions"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 @Table
@@ -22,8 +24,24 @@ export class Session extends Model {
   })
   id: number
 
+  @Field({
+    description: "Only populated for `API` type sessions on `currentUser`.",
+    nullable: true
+  })
   @Column
   token: string
+
+  @Field(() => DateType, {
+    nullable: true
+  })
+  @Column
+  createdAt: Date
+
+  @Field(() => DateType, {
+    nullable: true
+  })
+  @Column
+  updatedAt: Date
 
   @Field()
   @Column
@@ -33,12 +51,12 @@ export class Session extends Model {
   @Column
   scopes: string
 
-  @Field()
+  @Field(() => SessionType)
   @Default("session")
   @Column({
     type: "enum"
   })
-  type: "api" | "session" | "oauth"
+  type: SessionType
 
   @Field({
     nullable: true

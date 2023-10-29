@@ -23,7 +23,7 @@
         <tr
           v-for="item in sortedItems"
           :key="item.id"
-          class="border-b dark:border-outline-dark"
+          class="border-b dark:border-outline-dark hover:bg-outline-dark"
         >
           <td
             v-for="header in headers"

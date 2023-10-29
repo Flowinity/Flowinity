@@ -11,7 +11,7 @@
     <label
       :for="id"
       class="field-label cursor-text pointer-events-none"
-      :class="{ active: focus || modelValue.length }"
+      :class="{ active: focus || modelValue?.length }"
     >
       {{ props.label }}
     </label>
@@ -37,7 +37,7 @@
       v-bind="$attrs"
       :disabled="props.disabled"
       :class="{
-        'placeholder-shown': !modelValue.length && focus,
+        'placeholder-shown': !modelValue?.length && focus,
         'text-medium-emphasis-dark': props.disabled
       }"
       :readonly="props.readonly"
@@ -67,7 +67,7 @@
       v-bind="$attrs"
       :disabled="props.disabled"
       :class="{
-        'placeholder-shown': !modelValue.length && focus,
+        'placeholder-shown': !modelValue?.length && focus,
         'text-medium-emphasis-dark': props.disabled
       }"
       :readonly="props.readonly"
@@ -165,7 +165,7 @@ const lengthError = computed(() => {
 
 const computedRows = computed(() => {
   if (props.textarea) {
-    let tmpRows = props.modelValue.split("\n").length;
+    let tmpRows = props.modelValue?.split("\n").length;
     if (props.minLines) {
       tmpRows = Math.max(tmpRows, props.minLines);
     }

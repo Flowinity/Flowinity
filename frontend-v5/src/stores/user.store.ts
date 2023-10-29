@@ -1,6 +1,14 @@
 import { ref, computed, markRaw, type Raw, type ComputedRef } from "vue";
 import { defineStore } from "pinia";
-import type { BlockedUser, PartialUserFriend, User } from "@/gql/graphql";
+import type {
+  BlockedUser,
+  PartialUserFriend,
+  UpdateUserInput,
+  User
+} from "@/gql/graphql";
+import { useApolloClient } from "@vue/apollo-composable";
+import { UpdateUserMutation } from "@/graphql/user/update.graphql";
+import { useI18n } from "vue-i18n";
 
 export const useUserStore = defineStore("user", () => {
   const user = ref<User | null>(null);
@@ -35,12 +43,52 @@ export const useUserStore = defineStore("user", () => {
     return user.value?.notifications.filter((noti) => !noti.dismissed) || [];
   });
 
+  const updatingUser = ref(false);
+
+  async function updateUser() {
+    try {
+      updatingUser.value = true;
+      if (!user.value) return;
+      await useApolloClient().client.mutate({
+        mutation: UpdateUserMutation,
+        variables: {
+          input: {
+            darkTheme: user.value.darkTheme,
+            description: user.value.description,
+            discordPrecache: user.value.discordPrecache,
+            excludedCollections: user.value.excludedCollections,
+            insights: user.value.insights,
+            itemsPerPage: user.value.itemsPerPage,
+            language: user.value.language,
+            nameColor: user.value.nameColor,
+            privacyPolicyAccepted: user.value.privacyPolicyAccepted,
+            profileLayout: user.value.profileLayout,
+            publicProfile: user.value.publicProfile,
+            storedStatus: user.value.storedStatus,
+            username: user.value.username,
+            weatherUnit: user.value.weatherUnit,
+            themeEngine: user.value.themeEngine?.theme?.amoled?.colors
+              ? user.value.themeEngine
+              : null,
+            pulse: user.value.pulse,
+            groupPrivacy: user.value.groupPrivacy,
+            friendRequests: user.value.friendRequests
+          }
+        } as UpdateUserInput
+      });
+    } finally {
+      updatingUser.value = false;
+    }
+  }
+
   return {
     user,
     gold,
     blocked,
     tracked,
     users,
-    unreadNotifications
+    unreadNotifications,
+    updatingUser,
+    updateUser
   };
 });

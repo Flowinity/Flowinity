@@ -1,7 +1,7 @@
 <template>
   <tpu-divider></tpu-divider>
   <div
-    class="p-3 gap-4"
+    class="py-3 px-3 gap-4"
     :class="{ 'flex justify-between': double }"
     v-bind="$attrs"
   >

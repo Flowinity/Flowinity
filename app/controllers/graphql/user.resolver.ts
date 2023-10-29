@@ -50,6 +50,8 @@ import { AuthService } from "@app/services/auth.service"
 import argon2 from "argon2"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import RateLimit from "@app/lib/graphql/RateLimit"
+import { SessionInput } from "@app/classes/graphql/user/sessionsInput"
+import { SessionType } from "@app/classes/graphql/user/sessions"
 
 @Resolver(User)
 @Service()
@@ -240,8 +242,57 @@ export class UserResolver extends createBaseResolver("User", User) {
   }
 
   @FieldResolver(() => [Session])
-  async sessions(@Root() user: User, @Ctx() ctx: Context) {
-    return await user.$get("sessions")
+  async sessions(
+    @Root() user: User,
+    @Ctx() ctx: Context,
+    @Arg("input", {
+      nullable: true
+    })
+    input: SessionInput
+  ) {
+    if (ctx.scopes !== "*") return []
+    const sessions = await user.$get(
+      "sessions",
+      input
+        ? {
+            order: [["updatedAt", "DESC"]],
+            where: {
+              expiredAt: {
+                [Op.or]: [
+                  {
+                    [Op.gt]: new Date()
+                  },
+                  {
+                    [Op.is]: null
+                  }
+                ]
+              },
+              type: input.type
+            }
+          }
+        : {
+            order: [["updatedAt", "DESC"]],
+            where: {
+              expiredAt: {
+                [Op.or]: [
+                  {
+                    [Op.gt]: new Date()
+                  },
+                  {
+                    [Op.is]: null
+                  }
+                ]
+              }
+            }
+          }
+    )
+
+    return sessions.map((session) => {
+      return {
+        ...session.toJSON(),
+        token: session.type === SessionType.API ? session.token : null
+      }
+    })
   }
 
   @FieldResolver(() => Int)

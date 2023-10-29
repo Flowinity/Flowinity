@@ -22,7 +22,7 @@
             functions.copy(
               `${appStore.state.hostnameWithProtocol}/collections/${shareLink}`
             );
-            useToast().success('Copied to clipboard!');
+            $toast.success(t('generic.copied'));
           "
           :href="`${appStore.state.hostnameWithProtocol}/collections/${shareLink}`"
         >

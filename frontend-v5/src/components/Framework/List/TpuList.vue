@@ -1,5 +1,5 @@
 <template>
-  <ul class="select-none">
+  <ul>
     <slot />
   </ul>
 </template>

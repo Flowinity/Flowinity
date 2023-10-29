@@ -10,10 +10,10 @@
       </tpu-button>
     </div>
     <div class="grid grid-cols-2 gap-4 mt-4">
-      <card outlined>
+      <card outlined padding>
         <template #header>At a Glance</template>
         <div class="grid grid-cols-2 gap-4 mt-4">
-          <card :secondary="false">
+          <card :secondary="false" padding>
             <div class="flex justify-between px-4">
               <div>
                 <strong>
@@ -31,36 +31,36 @@
               <img src="@/assets/icons/weather.svg" />
             </div>
           </card>
-          <card :secondary="false">
+          <card :secondary="false" padding>
             <template #header>todo</template>
           </card>
         </div>
       </card>
-      <card outlined>
+      <card outlined padding>
         <template #header>Flowinity Statistics</template>
         <div
           class="grid 2xl:grid-cols-4 sm:grid-cols-3 gap-4 mt-4"
           v-if="appStore.state?.stats"
         >
-          <card :secondary="false" class="text-center">
+          <card :secondary="false" class="text-center" padding>
             <template #header>Uploads</template>
             <p class="mt-2 text-4xl">
               {{ appStore.state.stats.uploads.toLocaleString() }}
             </p>
           </card>
-          <card :secondary="false" class="text-center">
+          <card :secondary="false" class="text-center" padding>
             <template #header>Users</template>
             <p class="mt-2 text-4xl">
               {{ appStore.state.stats.users.toLocaleString() }}
             </p>
           </card>
-          <card :secondary="false" class="text-center">
+          <card :secondary="false" class="text-center" padding>
             <template #header>Messages</template>
             <p class="mt-2 text-4xl">
               {{ appStore.state.stats.messages.toLocaleString() }}
             </p>
           </card>
-          <card :secondary="false" class="text-center">
+          <card :secondary="false" class="text-center" padding>
             <template #header>Time Spent</template>
             <p class="mt-2 text-4xl">
               {{ appStore.state.stats.pulse.toLocaleString() }}h

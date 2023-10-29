@@ -22,6 +22,7 @@
         <div v-for="(result, index) in results" :key="result.id" class="mt-2">
           <a @click.prevent :href="result.path" class="fill-white">
             <card
+              padding
               class="flex gap-4 overflow-ellipsis whitespace-nowrap overflow-hidden"
               @click="
                 $router.push(result.path);

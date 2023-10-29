@@ -24,7 +24,7 @@
           <slot name="content">
             <card :padding="false" v-bind="$attrs">
               <div>
-                <tpu-toolbar class="flex justify-between items-center">
+                <tpu-toolbar class="flex justify-between items-center px-4">
                   <div>
                     <slot name="toolbar"></slot>
                   </div>

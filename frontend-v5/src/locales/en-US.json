@@ -121,6 +121,37 @@
       "title": "Upload"
     }
   },
+  "settings":  {
+    "account": {
+      "title": "My Flowinity",
+      "username": {
+        "title": "Change Username"
+      },
+      "password": {
+        "title": "Change Password"
+      },
+      "email": {
+        "title": "Change Email"
+      }
+    },
+    "preferences": {
+      "title": "Preferences",
+      "itemsPerPage": "Items per page",
+      "language": "Language",
+      "weatherUnit": "Weather unit",
+      "languages": {
+        "en": "English (United States)"
+      }
+    },
+    "setup": {
+      "actions": {
+        "copy": "Copy",
+        "downloadShareX": "Download ShareX Config",
+        "downloadShareNix": "Download ShareNix Config",
+        "downloadAutomate": "Download Automate Config"
+      }
+    }
+  },
   "sidebar": {
     "collections": {
       "create": "Create collection",

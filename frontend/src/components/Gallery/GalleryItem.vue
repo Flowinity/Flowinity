@@ -113,7 +113,7 @@
                   item.attachment
                 }`
               );
-              $toast.success('Copied to clipboard!');
+              $toast.success($t('generic.copied'));
             "
           ></HoverChip>
           <HoverChip

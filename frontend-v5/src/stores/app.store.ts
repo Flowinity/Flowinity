@@ -44,6 +44,19 @@ import RiBug2Line from "vue-remix-icons/icons/ri-bug-2-line.vue";
 import RiBug2Fill from "vue-remix-icons/icons/ri-bug-2-fill.vue";
 import RiVideoChatLine from "vue-remix-icons/icons/ri-video-chat-line.vue";
 import RiVideoChatFill from "vue-remix-icons/icons/ri-video-chat-fill.vue";
+import RiShieldUserFill from "vue-remix-icons/icons/ri-shield-user-fill.vue";
+import RiShieldUserLine from "vue-remix-icons/icons/ri-shield-user-line.vue";
+import RiLockLine from "vue-remix-icons/icons/ri-lock-line.vue";
+import RiLockFill from "vue-remix-icons/icons/ri-lock-fill.vue";
+import RiToolsLine from "vue-remix-icons/icons/ri-tools-line.vue";
+import RiToolsFill from "vue-remix-icons/icons/ri-tools-fill.vue";
+import RiGlobalLine from "vue-remix-icons/icons/ri-global-line.vue";
+import RiGlobalFill from "vue-remix-icons/icons/ri-global-fill.vue";
+import RiLink from "vue-remix-icons/icons/ri-link.vue";
+import RiCodeLine from "vue-remix-icons/icons/ri-code-line.vue";
+import RiCodeFill from "vue-remix-icons/icons/ri-code-fill.vue";
+import RiSlideshow2Line from "vue-remix-icons/icons/ri-slideshow-2-line.vue";
+import RiSlideshow2Fill from "vue-remix-icons/icons/ri-slideshow-2-fill.vue";
 
 import type { Chat, CoreState, Upload, Weather } from "@/gql/graphql";
 import { useUserStore } from "@/stores/user.store";
@@ -94,6 +107,11 @@ export const useAppStore = defineStore("app", () => {
     release: "prod",
     name: "Flowinity"
   } as CoreState);
+
+  const versioning = ref({
+    current: import.meta.env.TPU_VERSION || "N/A",
+    date: import.meta.env.TPU_BUILD_DATE || "N/A"
+  });
 
   const title = ref("");
   const loading = ref(true);
@@ -290,12 +308,6 @@ export const useAppStore = defineStore("app", () => {
           name: "My Profile",
           path: "/profile",
           selectedIcon: markRaw(RiUserFill)
-        },
-        {
-          icon: markRaw(RiSettings5Line),
-          name: "Settings",
-          path: "/settings",
-          selectedIcon: markRaw(RiSettings5Fill)
         }
       ],
       [RailMode.GALLERY]: [
@@ -321,7 +333,62 @@ export const useAppStore = defineStore("app", () => {
       ],
       [RailMode.CHAT]: [],
       [RailMode.WORKSPACES]: [],
-      [RailMode.SETTINGS]: [],
+      [RailMode.SETTINGS]: [
+        {
+          icon: markRaw(RiUserLine),
+          name: "My Account",
+          path: "/settings/account",
+          selectedIcon: markRaw(RiUserFill)
+        },
+        {
+          icon: markRaw(RiShieldUserLine),
+          name: "Privacy",
+          path: "/settings/privacy",
+          selectedIcon: markRaw(RiShieldUserFill)
+        },
+        {
+          icon: markRaw(RiLockLine),
+          name: "Security",
+          path: "/settings/security",
+          selectedIcon: markRaw(RiLockFill)
+        },
+        {
+          icon: markRaw(RiToolsLine),
+          name: "Setup",
+          path: "/settings/setup",
+          selectedIcon: markRaw(RiToolsFill)
+        },
+        {
+          icon: markRaw(RiGlobalLine),
+          name: "Domains",
+          path: "/settings/domains",
+          selectedIcon: markRaw(RiGlobalFill)
+        },
+        {
+          icon: markRaw(RiLink),
+          name: "Integrations",
+          path: "/settings/integrations",
+          selectedIcon: markRaw(RiLink)
+        },
+        {
+          icon: markRaw(RiCodeLine),
+          name: "Developer Portal",
+          path: "/settings/developer",
+          selectedIcon: markRaw(RiCodeFill)
+        },
+        {
+          icon: markRaw(RiSlideshow2Line),
+          name: "Slideshows",
+          path: "/settings/slideshows",
+          selectedIcon: markRaw(RiSlideshow2Fill)
+        },
+        {
+          icon: markRaw(RiInformationLine),
+          name: "About",
+          path: "/settings/about",
+          selectedIcon: markRaw(RiInformationFill)
+        }
+      ],
       [RailMode.ADMIN]: [],
       [RailMode.MAIL]: [],
       [RailMode.DEBUG]: [],
@@ -691,6 +758,7 @@ export const useAppStore = defineStore("app", () => {
     scrollPosition,
     upload,
     shifting,
-    dev: import.meta.env.DEV
+    dev: import.meta.env.DEV,
+    versioning
   };
 });

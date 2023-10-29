@@ -17,6 +17,7 @@
     </template>
     <template #actions="{ item }">
       <tpu-button
+        icon
         color="green"
         v-tooltip="t('gallery.actions.approve')"
         @click="
@@ -30,6 +31,7 @@
         <RiCheckLine style="width: 20px" />
       </tpu-button>
       <tpu-button
+        icon
         color="red"
         v-tooltip="t('gallery.actions.reject')"
         @click="

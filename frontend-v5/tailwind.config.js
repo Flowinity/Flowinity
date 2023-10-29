@@ -23,7 +23,8 @@ export default {
         red: "#F44336",
         teal: "#009688",
         star: "#ffa000",
-        white: "#ffffff"
+        white: "#ffffff",
+        indigo: "#3f51b5"
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"]

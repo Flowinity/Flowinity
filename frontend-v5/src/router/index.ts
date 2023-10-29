@@ -53,6 +53,26 @@ const router = createRouter({
       component: () => import("@/views/Chats/Chat.vue")
     },
     {
+      path: "/settings/account",
+      name: "Account Settings",
+      component: () => import("@/views/Settings/SettingsAccount.vue")
+    },
+    {
+      path: "/settings/setup",
+      name: "Client Setup",
+      component: () => import("@/views/Settings/SettingsSetup.vue")
+    },
+    {
+      path: "/settings/about",
+      name: "About Flowinity",
+      component: () => import("@/views/Settings/SettingsAbout.vue")
+    },
+    {
+      path: "/settings/security",
+      name: "Account Security",
+      component: () => import("@/views/Settings/SettingsSecurity.vue")
+    },
+    {
       path: "/login",
       name: "Login",
       component: () => import("@/views/Login.vue")

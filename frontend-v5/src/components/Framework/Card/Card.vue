@@ -4,7 +4,7 @@ const props = defineProps({
   outlined: Boolean,
   padding: {
     type: Boolean,
-    default: true
+    default: false
   }
 });
 </script>
@@ -17,7 +17,7 @@ const props = defineProps({
       'outline dark:outline-outline-dark': outlined,
       'p-4': padding
     }"
-    class="rounded-xl"
+    class="rounded-xl break-all"
   >
     <strong v-if="$slots.header">
       <slot name="header" />

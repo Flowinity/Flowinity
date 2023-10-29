@@ -5,7 +5,7 @@
   >
     <div class="w-full">
       <tpu-toolbar
-        class="flex justify-between items-center"
+        class="flex justify-between items-center px-4"
         @click="selected.length ? $emit('select') : () => {}"
         :class="{
           'cursor-pointer select-none': selected.length
@@ -107,6 +107,7 @@
         <slot name="actions" :item="props.item">
           <tpu-button
             color="blue"
+            icon
             v-tooltip="$t('gallery.actions.edit')"
             @click="
               appStore.dialogs.gallery.edit.upload = props.item;
@@ -118,6 +119,7 @@
           </tpu-button>
           <tpu-button
             color="red"
+            icon
             v-tooltip="$t('gallery.actions.delete')"
             @click.exact="
               appStore.dialogs.gallery.delete.upload = props.item;
@@ -131,6 +133,7 @@
           </tpu-button>
           <tpu-button
             color="teal"
+            icon
             v-tooltip="$t('gallery.actions.copy')"
             @click="
               functions.copy(appStore.domain + props.item.attachment);
@@ -141,6 +144,7 @@
           </tpu-button>
           <tpu-button
             color="green"
+            icon
             v-tooltip="$t('gallery.actions.download')"
             :href="appStore.domain + props.item.attachment"
             target="_blank"
@@ -149,6 +153,7 @@
           </tpu-button>
           <span v-tooltip="ocrStatus.text" v-if="props.item.type === 'image'">
             <tpu-button
+              icon
               color="purple"
               @click="
                 appStore.dialogs.gallery.ocr.content = props.item.textMetadata;
@@ -173,6 +178,7 @@
           </span>
 
           <tpu-button
+            icon
             color="star"
             v-tooltip="$t('gallery.actions.star', props.item.starred ? 2 : 1)"
             @click="starUpload"
