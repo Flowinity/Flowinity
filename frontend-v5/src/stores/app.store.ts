@@ -329,6 +329,12 @@ export const useAppStore = defineStore("app", () => {
           path: "/auto-collects",
           selectedIcon: markRaw(RiSparkling2Fill),
           badge: userStore.user?.pendingAutoCollects || ""
+        },
+        {
+          icon: markRaw(RiSlideshow2Line),
+          name: "Slideshows",
+          path: "/slideshows",
+          selectedIcon: markRaw(RiSlideshow2Fill)
         }
       ],
       [RailMode.CHAT]: [],
@@ -375,12 +381,6 @@ export const useAppStore = defineStore("app", () => {
           name: "Developer Portal",
           path: "/settings/developer",
           selectedIcon: markRaw(RiCodeFill)
-        },
-        {
-          icon: markRaw(RiSlideshow2Line),
-          name: "Slideshows",
-          path: "/settings/slideshows",
-          selectedIcon: markRaw(RiSlideshow2Fill)
         },
         {
           icon: markRaw(RiInformationLine),

@@ -10,6 +10,7 @@
     @submit="$app.deleteItem($app.dialogs.deleteItem.item)"
   />
   <URLConfirmDialog
+    v-if="$chat?.dialogs"
     v-model="$chat.dialogs.externalSite.value"
   ></URLConfirmDialog>
   <InviteAFriend v-model="$app.dialogs.inviteAFriend"></InviteAFriend>
@@ -356,9 +357,8 @@ export default defineComponent({
         (document.createElement("link") as HTMLLinkElement);
       link.type = "image/x-icon";
       link.rel = "shortcut icon";
-      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
-        this.$user.user?.username
-      }&unread=${val || 0}`;
+      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${this
+        .$user.user?.username}&unread=${val || 0}`;
       document.head.appendChild(link);
     },
     $route(to, from) {
