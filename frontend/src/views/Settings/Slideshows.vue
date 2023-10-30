@@ -44,7 +44,7 @@
               ></v-switch>
               <v-select
                 v-model="slideshow.collectionIds"
-                :items="$collections.items"
+                :items="$collections.persistent"
                 :label="$t('settings.slideshows.collections')"
                 chips
                 deletable-chips

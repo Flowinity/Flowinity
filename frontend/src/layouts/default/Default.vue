@@ -9,6 +9,7 @@
     title="Delete item?"
     @submit="$app.deleteItem($app.dialogs.deleteItem.item)"
   />
+  <!-- Caused a crash in Slideshows, some globals aren't initialized in that state, so we v-if it -->
   <URLConfirmDialog
     v-if="$chat?.dialogs"
     v-model="$chat.dialogs.externalSite.value"
