@@ -139,7 +139,10 @@ export class GalleryService {
       userId: userId,
       originalFilename: file.originalname,
       name: file.originalname,
-      type: utils.getTypeByMime(file.mimetype),
+      type: utils.getTypeByMime(
+        file.mimetype,
+        file.originalname?.split(".")[1] || ".bin"
+      ),
       fileSize: file.size,
       deletable
     })

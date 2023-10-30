@@ -1003,8 +1003,8 @@ function getTypeByExt(ext: string): string {
   return types[ext?.toLowerCase()] || "binary"
 }
 
-function getTypeByMime(mimeVal: string) {
-  console.log(mimeVal)
+function getTypeByMime(mimeVal: string, ext: string) {
+  if (!mimeVal) return getTypeByExt(ext)
   const mime = mimeVal.toLowerCase()
   if (mime.startsWith("image/")) return "image"
   if (mime.startsWith("video/")) return "video"
