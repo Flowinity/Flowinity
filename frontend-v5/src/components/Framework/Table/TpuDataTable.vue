@@ -8,11 +8,14 @@
           class="border-t-2 border-b-2 border-gray-300 dark:border-outline-dark"
         >
           <th
-            v-for="header in headers"
+            v-for="(header, index) in headers"
             :key="header.id"
             scope="col"
             class="py-2 px-4 font-semibold text-sm text-gray-600 dark:text-gray-300"
-            :class="{ 'cursor-pointer': header.sortable }"
+            :class="{
+              'cursor-pointer': header.sortable,
+              'text-center': index !== 0
+            }"
             @click="sort(header.id)"
           >
             {{ header.name }}
@@ -26,13 +29,16 @@
           class="border-b dark:border-outline-dark hover:bg-outline-dark"
         >
           <td
-            v-for="header in headers"
+            v-for="(header, index) in headers"
             :key="header.id"
             class="px-4 text-sm flex-col justify-center"
+            :class="{ 'text-center items-center': index !== 0 }"
           >
-            <slot :name="'item.' + header.id" :item="item">
-              {{ accessNestedProperty(item, header.id) }}
-            </slot>
+            <div class="text-left items-start flex" style="width: fit-content">
+              <slot :name="'item.' + header.id" :item="item">
+                {{ accessNestedProperty(item, header.id) }}
+              </slot>
+            </div>
           </td>
         </tr>
       </tbody>

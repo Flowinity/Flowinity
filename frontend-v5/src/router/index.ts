@@ -73,6 +73,11 @@ const router = createRouter({
       component: () => import("@/views/Settings/SettingsSecurity.vue")
     },
     {
+      path: "/settings/domains",
+      name: "Account Domain",
+      component: () => import("@/views/Settings/SettingsDomains.vue")
+    },
+    {
       path: "/login",
       name: "Login",
       component: () => import("@/views/Login.vue")

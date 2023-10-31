@@ -368,7 +368,7 @@ export const useAppStore = defineStore("app", () => {
           icon: markRaw(RiGlobalLine),
           name: "Domains",
           path: "/settings/domains",
-          selectedIcon: markRaw(RiGlobalFill)
+          selectedIcon: markRaw(RiGlobalLine)
         },
         {
           icon: markRaw(RiLink),
