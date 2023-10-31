@@ -21,6 +21,7 @@
     "@vue/apollo-composable": "^4.0.0-beta.11",
     "@vue/apollo-option": "^4.0.0-beta.9",
     "axios": "^1.5.1",
+    "dayjs": "^1.11.10",
     "dom-to-image": "^2.6.0",
     "floating-vue": "^2.0.0-beta.24",
     "graphql": "^16.8.1",
