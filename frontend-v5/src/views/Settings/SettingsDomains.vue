@@ -22,6 +22,7 @@
           <tpu-button
             :disabled="userStore.user?.domainId === item.id"
             variant="passive"
+            @click="applyDomain(item.id)"
           >
             {{ userStore.user?.domainId === item.id ? "Applied" : "Apply" }}
           </tpu-button>
@@ -43,6 +44,7 @@ import UserAvatar from "@/components/User/UserAvatar.vue";
 import { useAppStore } from "@/stores/app.store";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import { useUserStore } from "@/stores/user.store";
+import { gql } from "@apollo/client";
 const appStore = useAppStore();
 const userStore = useUserStore();
 const items = ref<Domain[]>([]);
@@ -70,6 +72,21 @@ async function getDomains() {
     query: DomainQuery
   });
   items.value = domains;
+}
+
+async function applyDomain(id: number) {
+  await useApolloClient().client.mutate({
+    mutation: gql`
+      mutation ApplyDomain($domainId: Int!) {
+        applyDomain(domainId: $domainId) {
+          id
+        }
+      }
+    `,
+    variables: {
+      domainId: id
+    }
+  });
 }
 
 onMounted(() => {

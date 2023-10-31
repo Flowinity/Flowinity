@@ -15,7 +15,7 @@ import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 @ObjectType()
 @Table
 export class Domain extends Model {
-  @Field()
+  @Field(() => Int)
   @Column({
     primaryKey: true,
     autoIncrement: true
@@ -29,7 +29,7 @@ export class Domain extends Model {
   })
   domain: string
 
-  @Field()
+  @Field(() => Int)
   @Column
   userId: number
 

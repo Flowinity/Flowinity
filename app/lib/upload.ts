@@ -17,7 +17,7 @@ const uploader = multer({
 })
 
 const uploaderSmall = multer({
-  limits: { fileSize: 1048576 },
+  limits: { fileSize: 2097152 },
   storage
 })
 
