@@ -183,7 +183,7 @@ function shortcutHandler(e: KeyboardEvent) {
   } else if (e.ctrlKey && e.key === "ArrowUp") {
     e.preventDefault();
     e.stopPropagation();
-    // edit next messsge
+    // edit next message
     const message = messagesStore.selected
       .slice()
       .find((message) => (replyId.value ? message.id < replyId.value : true));
@@ -195,7 +195,7 @@ function shortcutHandler(e: KeyboardEvent) {
   } else if (e.ctrlKey && e.key === "ArrowDown") {
     e.preventDefault();
     if (!replyId.value) return;
-    // edit last messsge
+    // edit last message
     const message = messagesStore.selected
       .slice()
       .reverse()
