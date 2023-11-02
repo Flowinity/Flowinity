@@ -18,71 +18,17 @@ import TpuListItem from "@/components/Framework/List/TpuListItem.vue";
 import CreateCollectionDialog from "@/components/Collections/CreateCollectionDialog.vue";
 //@ts-ignore
 import VueSimpleContextMenu from "vue-simple-context-menu";
+import SidebarCollections from "@/components/Sidebar/SidebarCollections.vue";
+import SidebarComms from "@/components/Sidebar/SidebarComms.vue";
+import SidebarMail from "@/components/Sidebar/SidebarMail.vue";
 
-const search = ref("");
 const appStore = useAppStore();
 const chatStore = useChatStore();
-enum SortOption {
-  UPDATED,
-  ALPHABETICAL,
-  CREATED_AT,
-  ITEM_COUNT
-}
-const desc = ref(localStorage.getItem("sidebarCollectionsDesc") !== "false");
-watch(
-  () => desc.value,
-  (val) => {
-    localStorage.setItem("sidebarCollectionsDesc", val.toString());
-  }
-);
-const sortOption = ref<SortOption>(
-  parseInt(
-    localStorage.getItem("sidebarCollectionsSort") ||
-      SortOption.UPDATED.toString()
-  )
-);
-watch(
-  () => sortOption.value,
-  (val) => {
-    localStorage.setItem("sidebarCollectionsSort", val.toString());
-  }
-);
+
 const collectionsStore = useCollectionsStore();
 const props = defineProps({
   drawer: Boolean
 });
-const filteredCollections = computed(() => {
-  const items = collectionsStore.items.slice().sort((a, b) => {
-    const left = desc.value ? b : a;
-    const right = desc.value ? a : b;
-
-    switch (sortOption.value) {
-      case SortOption.ITEM_COUNT:
-        return (left.itemCount || 0) - (right.itemCount || 0);
-      case SortOption.UPDATED:
-        return (
-          (left.preview?.createdAt
-            ? new Date(left.preview.createdAt).getTime()
-            : new Date(left.updatedAt).getTime()) -
-          (right.preview?.createdAt
-            ? new Date(right.preview.createdAt).getTime()
-            : new Date(right.updatedAt).getTime())
-        );
-      case SortOption.ALPHABETICAL:
-        return right.name.localeCompare(left.name);
-      case SortOption.CREATED_AT:
-        return (
-          new Date(left.createdAt).getTime() -
-          new Date(right.createdAt).getTime()
-        );
-    }
-  });
-  return items.filter((collection) =>
-    collection.name.toLowerCase().includes(search.value.toLowerCase())
-  );
-});
-
-const createCollection = ref(false);
 
 const context = ref(0);
 </script>
@@ -93,188 +39,43 @@ const context = ref(0);
     style="min-width: 256px; max-width: 256px"
     :class="{ 'h-screen': !props.drawer, 'h-[calc(100vh-64px)]': props.drawer }"
   >
-    <CreateCollectionDialog v-model="createCollection" />
     <div
-      v-if="appStore.currentRail"
-      class="flex items-center pt-0 dark:border-outline-dark border-b-2 border-outline-dark"
+      class="flex justify-between pt-0 dark:border-outline-dark border-b-2 border-outline-dark"
       style="min-height: 64px; max-height: 64px"
     >
-      <component :is="appStore.currentRail?.icon" class="w-8 ml-4" />
-      <p class="text-xl font-semibold ml-4">
-        {{ appStore.currentRail.name }}
-      </p>
+      <Transition name="slide-fade" mode="out-in">
+        <div
+          :key="appStore.currentRail?.id"
+          v-if="appStore.currentRail"
+          class="flex items-center"
+        >
+          <component :is="appStore.currentRail?.icon" class="w-8 ml-4" />
+          <p class="text-xl font-semibold ml-4">
+            {{ appStore.currentRail.name }}
+          </p>
+        </div>
+      </Transition>
+      <div id="sidebar-actions" class="flex items-center mr-4" />
     </div>
+
     <Transition name="slide-fade" mode="out-in">
       <div
         class="justify-between flex-col flex-1 px-3"
         :key="appStore.currentRail?.id"
         style="margin-top: 16px"
       >
-        <div class="flex-col flex gap-y-2 flex-1">
-          <template v-if="appStore.currentRail?.id === RailMode.CHAT">
-            <div v-for="chat in chatStore.chats" :key="chat.id">
-              <SideBarItem :to="`/communications/${chat.association?.id}`">
-                <template #icon>
-                  <user-avatar
-                    :username="chat.type === 'group' ? chat.name : undefined"
-                    :user-id="
-                      chat.type === 'direct' ? chat.recipient?.id : undefined
-                    "
-                    :src="
-                      chat.type === 'group' && chat.icon
-                        ? functions.avatar(chat)
-                        : undefined
-                    "
-                    :status="chat.type === 'direct'"
-                    :badge="chat.unread > 99 ? '99+' : chat.unread"
-                  ></user-avatar>
-                </template>
-                <template #title>
-                  {{ chatStore.chatName(chat) }}
-                </template>
-              </SideBarItem>
-            </div>
-          </template>
-          <template v-else>
-            <SideBarItem
-              v-for="item in appStore.currentNavOptions"
-              :key="item.name"
-              class="flex h-12 items-center"
-              :item="item"
-            />
-            <template v-if="appStore.currentRail?.id === RailMode.GALLERY">
-              <tpu-overline
-                position="start"
-                style="margin-right: -8px; margin-left: 0.25rem"
-              >
-                {{ $t("sidebar.collections.title") }}
-                <template #end>
-                  <tpu-button
-                    icon
-                    variant="passive"
-                    @click="createCollection = true"
-                    class="flex items-center justify-center"
-                    style="
-                      margin-right: 2.25px;
-                      margin-left: 6px;
-                      margin-top: -0.4rem;
-                    "
-                  >
-                    <RiAddLine
-                      style="width: 20px"
-                      class="fill-medium-emphasis-dark"
-                    />
-                  </tpu-button>
-                </template>
-              </tpu-overline>
-              <div class="pl-1 gap-1 flex">
-                <text-field
-                  class="flex-grow"
-                  v-model="search"
-                  :label="$t('generic.search')"
-                />
-                <VDropdown
-                  :triggers="['click']"
-                  placement="right"
-                  class="flex items-center"
-                >
-                  <tpu-button
-                    icon
-                    variant="passive"
-                    class="flex items-center justify-center"
-                    style="width: 40px; height: 40px"
-                  >
-                    <RiSortDesc v-if="desc" style="width: 20px" />
-                    <RiSortAsc v-else style="width: 20px" />
-                  </tpu-button>
-                  <template #popper>
-                    <card :padding="false" class="py-1">
-                      <tpu-list>
-                        <tpu-overline position="start">
-                          {{ $t("sidebar.collections.sort.sort") }}
-                        </tpu-overline>
-                        <tpu-list-item
-                          :selected="sortOption === SortOption.UPDATED"
-                          @click="sortOption = SortOption.UPDATED"
-                        >
-                          {{ $t("sidebar.collections.sort.updated") }}
-                        </tpu-list-item>
-                        <tpu-list-item
-                          :selected="sortOption === SortOption.ALPHABETICAL"
-                          @click="sortOption = SortOption.ALPHABETICAL"
-                        >
-                          {{ $t("sidebar.collections.sort.alphabetical") }}
-                        </tpu-list-item>
-                        <tpu-list-item
-                          :selected="sortOption === SortOption.CREATED_AT"
-                          @click="sortOption = SortOption.CREATED_AT"
-                        >
-                          {{ $t("sidebar.collections.sort.createdAt") }}
-                        </tpu-list-item>
-                        <tpu-list-item
-                          :selected="sortOption === SortOption.ITEM_COUNT"
-                          @click="sortOption = SortOption.ITEM_COUNT"
-                        >
-                          {{ $t("sidebar.collections.sort.itemCount") }}
-                        </tpu-list-item>
-                        <tpu-overline position="start">
-                          {{ $t("sidebar.collections.sort.direction") }}
-                        </tpu-overline>
-                        <tpu-list-item :selected="!desc" @click="desc = false">
-                          {{ $t("sidebar.collections.sort.asc") }}
-                        </tpu-list-item>
-                        <tpu-list-item :selected="desc" @click="desc = true">
-                          {{ $t("sidebar.collections.sort.desc") }}
-                        </tpu-list-item>
-                      </tpu-list>
-                    </card>
-                  </template>
-                </VDropdown>
-              </div>
-              <div
-                v-for="collection in filteredCollections"
-                :key="collection.id"
-                @click.right.prevent="
-                  collectionCtx?.showMenu($event, collection)
-                "
-              >
-                <VDropdown
-                  :triggers="[]"
-                  placement="right"
-                  class="flex items-center"
-                  :shown="context === collection.id"
-                  @update:shown="!$event ? (context = 0) : () => {}"
-                >
-                  <SideBarItem
-                    class="flex h-14 items-center"
-                    :to="`/collections/${collection.id}`"
-                    @click.right="context = collection.id"
-                  >
-                    <template #icon>
-                      <user-avatar
-                        :status="false"
-                        :src="`/i/${collection.avatar || collection.banner}`"
-                        :username="collection.name"
-                      ></user-avatar>
-                    </template>
-                    <template #title>
-                      {{ collection.name }}
-                    </template>
-                    <template #subtitle>
-                      {{ collection.itemCount?.toLocaleString() || 0 }} items
-                    </template>
-                  </SideBarItem>
-                  <template #popper>
-                    <card class="dark:bg-outline-dark" :padding="false">
-                      <tpu-list>
-                        <tpu-list-item>Settings</tpu-list-item>
-                      </tpu-list>
-                    </card>
-                  </template>
-                </VDropdown>
-              </div>
-            </template>
-          </template>
+        <div class="flex-col flex gap-y-2 flex-1 relative">
+          <SidebarComms v-show="appStore.currentRail?.id === RailMode.CHAT" />
+          <SidebarMail v-show="appStore.currentRail?.id === RailMode.MAIL" />
+          <SideBarItem
+            v-for="item in appStore.currentNavOptions"
+            :key="item.name"
+            class="flex h-12 items-center"
+            :item="item"
+          />
+          <SidebarCollections
+            v-show="appStore.currentRail?.id === RailMode.GALLERY"
+          />
         </div>
       </div>
     </Transition>

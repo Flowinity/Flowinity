@@ -122,6 +122,10 @@
     }
   },
   "settings":  {
+    "actionBar": {
+      "saving": "Saving...",
+      "saved": "Saved!"
+    },
     "account": {
       "title": "My Flowinity",
       "username": {

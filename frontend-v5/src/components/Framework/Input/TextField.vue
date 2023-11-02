@@ -187,14 +187,13 @@ defineExpose({
   font-family: inherit;
   width: 100%;
   border: 0;
-  border-bottom: 1px solid #212224;
+  border-bottom: 2px solid #212224;
   outline: 0;
   font-size: 16px;
   padding: 7px 0;
   background: transparent;
   transition: border-color 0.2s;
   &:focus {
-    padding-bottom: 6px;
     border-bottom: 2px solid #0190ea;
   }
 }

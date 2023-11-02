@@ -78,7 +78,7 @@
 import TextField from "@/components/Framework/Input/TextField.vue";
 import { computed, ref, watch } from "vue";
 const props = defineProps({
-  modelValue: [String, Number],
+  modelValue: [String, Number, Boolean],
   items: {
     type: Object as () => {
       id: string | boolean | number;

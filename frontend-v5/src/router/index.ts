@@ -53,29 +53,41 @@ const router = createRouter({
       component: () => import("@/views/Chats/Chat.vue")
     },
     {
-      path: "/settings/account",
-      name: "Account Settings",
-      component: () => import("@/views/Settings/SettingsAccount.vue")
-    },
-    {
-      path: "/settings/setup",
-      name: "Client Setup",
-      component: () => import("@/views/Settings/SettingsSetup.vue")
-    },
-    {
-      path: "/settings/about",
-      name: "About Flowinity",
-      component: () => import("@/views/Settings/SettingsAbout.vue")
-    },
-    {
-      path: "/settings/security",
-      name: "Account Security",
-      component: () => import("@/views/Settings/SettingsSecurity.vue")
-    },
-    {
-      path: "/settings/domains",
-      name: "Account Domain",
-      component: () => import("@/views/Settings/SettingsDomains.vue")
+      path: "/settings",
+      name: "Settings",
+      component: () => import("@/views/Settings/SettingsMain.vue"),
+      children: [
+        {
+          path: "/settings/account",
+          name: "Account Settings",
+          component: () => import("@/views/Settings/SettingsAccount.vue")
+        },
+        {
+          path: "/settings/setup",
+          name: "Client Setup",
+          component: () => import("@/views/Settings/SettingsSetup.vue")
+        },
+        {
+          path: "/settings/about",
+          name: "About Flowinity",
+          component: () => import("@/views/Settings/SettingsAbout.vue")
+        },
+        {
+          path: "/settings/security",
+          name: "Account Security",
+          component: () => import("@/views/Settings/SettingsSecurity.vue")
+        },
+        {
+          path: "/settings/domains",
+          name: "Account Domain",
+          component: () => import("@/views/Settings/SettingsDomains.vue")
+        },
+        {
+          path: "/settings/privacy",
+          name: "Account Privacy",
+          component: () => import("@/views/Settings/SettingsPrivacy.vue")
+        }
+      ]
     },
     {
       path: "/login",

@@ -17,7 +17,7 @@ const props = defineProps({
       'outline dark:outline-outline-dark': outlined,
       'p-4': padding
     }"
-    class="rounded-xl break-all"
+    class="rounded-xl break-words"
   >
     <strong v-if="$slots.header">
       <slot name="header" />

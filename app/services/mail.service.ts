@@ -45,6 +45,24 @@ export class MailService {
     return mailboxes
   }
 
+  async getUnread(userId: number) {
+    const client = await this.connect(userId)
+    const mailboxes = await client.list()
+    let unread = 0
+    for (const mailbox of mailboxes) {
+      try {
+        await client.mailboxOpen(mailbox.name)
+        // get the number of unread messages
+        const { unseen } = await client.status(mailbox.name, {
+          unseen: true
+        })
+        if (unseen) unread += unseen
+      } catch {}
+    }
+    client.logout()
+    return unread
+  }
+
   async getMessages(userId: number, mailbox: string, page: number = 1) {
     const client = await this.connect(userId)
     await client.mailboxOpen(mailbox)

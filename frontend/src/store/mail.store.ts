@@ -32,7 +32,7 @@ export const useMailStore = defineStore("mail", {
       mailboxDrawer: true,
       selectedMailbox: "INBOX",
       loading: false
-    } as MailState),
+    }) as MailState,
   actions: {
     getSender(email: Email) {
       return email.from[0]?.name || email.from[0]?.address || "Unknown";

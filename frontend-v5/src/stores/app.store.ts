@@ -74,6 +74,8 @@ import { useToast } from "vue-toastification";
 import axios from "@/plugins/axios";
 import { useFriendsStore } from "@/stores/friends.store";
 import { debounce } from "lodash";
+import RiWebhook from "@/components/Icons/RiWebhook.vue";
+import { useMailStore } from "@/stores/mail.store";
 
 export enum RailMode {
   HOME,
@@ -214,6 +216,7 @@ export const useAppStore = defineStore("app", () => {
       };
     }
     getWeather();
+    useMailStore().init();
     const {
       data: {
         coreState,
@@ -372,9 +375,15 @@ export const useAppStore = defineStore("app", () => {
         },
         {
           icon: markRaw(RiLink),
-          name: "Integrations",
+          name: "Linked Applications",
           path: "/settings/integrations",
           selectedIcon: markRaw(RiLink)
+        },
+        {
+          icon: markRaw(RiWebhook),
+          name: "Webhooks",
+          path: "/settings/webhooks",
+          selectedIcon: markRaw(RiWebhook)
         },
         {
           icon: markRaw(RiCodeLine),

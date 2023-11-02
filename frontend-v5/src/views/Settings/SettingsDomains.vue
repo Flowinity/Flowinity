@@ -22,6 +22,7 @@
           <tpu-button
             :disabled="userStore.user?.domainId === item.id"
             variant="passive"
+            :table="true"
             @click="applyDomain(item.id)"
           >
             {{ userStore.user?.domainId === item.id ? "Applied" : "Apply" }}

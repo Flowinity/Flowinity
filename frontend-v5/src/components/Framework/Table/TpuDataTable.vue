@@ -13,8 +13,7 @@
             scope="col"
             class="py-2 px-4 font-semibold text-sm text-gray-600 dark:text-gray-300"
             :class="{
-              'cursor-pointer': header.sortable,
-              'text-center': index !== 0
+              'cursor-pointer': header.sortable
             }"
             @click="sort(header.id)"
           >
@@ -31,7 +30,7 @@
           <td
             v-for="(header, index) in headers"
             :key="header.id"
-            class="px-4 text-sm flex-col justify-center"
+            class="px-4 text-sm flex-col"
             :class="{ 'text-center items-center': index !== 0 }"
           >
             <div class="text-left items-start flex" style="width: fit-content">

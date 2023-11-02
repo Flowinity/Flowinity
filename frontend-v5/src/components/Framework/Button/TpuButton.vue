@@ -2,7 +2,7 @@
   <component
     :is="props.to ? RouterLink : 'a'"
     class="rounded-full flex dark:text-white select-none"
-    v-wave="!disabled"
+    v-wave="!disabled && !table"
     :to="to ? to : undefined"
     :href="href ? href : undefined"
     :style="{
@@ -11,14 +11,15 @@
       color:
         variant === 'tonal' || variant === 'passive' || selected
           ? color
-          : undefined
+          : undefined,
+      'margin-left': table ? '-0.75rem' : '0'
     }"
     :class="{
       'outline dark:outline-outline-dark': variant === 'outlined',
-      'px-2 py-2': props.icon,
-      'px-3 py-1': !props.icon,
-      'opacity-50 pointer-events-none': props.disabled,
-      'cursor-pointer': !props.disabled
+      'px-2 py-2': icon,
+      'px-3 py-1': !icon,
+      'opacity-50 pointer-events-none': disabled,
+      'cursor-pointer': !disabled
     }"
     tabindex="0"
     @keydown.enter="
@@ -33,13 +34,13 @@
         ? () => {}
         : () => {
             $event.preventDefault();
-            $event.target?.click();
+            $event.target.click();
           }
     "
     :disabled="disabled"
     v-bind="$attrs"
   >
-    <template v-if="!props.loading">
+    <template v-if="!loading">
       <slot />
     </template>
     <template v-else>
@@ -62,6 +63,10 @@ const props = defineProps({
   variant: {
     type: String as () => "outlined" | "tonal" | "passive",
     default: "tonal"
+  },
+  table: {
+    type: Boolean,
+    default: false
   },
   loading: {
     type: Boolean,

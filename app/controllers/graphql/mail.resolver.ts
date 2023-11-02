@@ -33,7 +33,14 @@ export class MailResolver {
     scopes: "mail.view"
   })
   @Query(() => Int)
-  async unreadMail(@Ctx() ctx: Context) {}
+  async unreadMail(@Ctx() ctx: Context) {
+    try {
+      return await this.mailService.getUnread(ctx.user!!.id)
+    } catch (e) {
+      console.error(e)
+      return 0
+    }
+  }
 
   @Authorization({
     scopes: "mail.view"

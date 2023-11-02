@@ -9,7 +9,7 @@
         <RiPencilLine style="width: 20px" />
       </tpu-button>
     </div>
-    <div class="grid grid-cols-2 gap-4 mt-4">
+    <div class="grid grid-flow-col grid-cols-2 gap-4 mt-4">
       <card outlined padding>
         <template #header>At a Glance</template>
         <div class="grid grid-cols-2 gap-4 mt-4">
