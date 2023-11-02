@@ -2,7 +2,11 @@
   <div class="flex justify-center items-center h-[calc(100vh-64px)]">
     <card :padding="false">
       <div class="flex flex-col justify-center items-center p-4">
-        <img src="@/assets/flowinity.svg" style="width: 64px" />
+        <img
+          alt="Flowinity logo"
+          src="@/assets/flowinity.svg"
+          style="width: 64px"
+        />
         <p class="mt-2">alpha</p>
         <text-field
           v-model="username"
