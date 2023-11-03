@@ -50,11 +50,7 @@ module.exports = {
       }
     })
     await queryInterface.addColumn("ChatAssociations", "inviteUsed", {
-      type: DataType.STRING,
-      references: {
-        model: "ChatInvites",
-        key: "id"
-      }
+      type: DataType.STRING
     })
     await queryInterface.addColumn("OauthApps", "botId", {
       type: DataType.BIGINT,
