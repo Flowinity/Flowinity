@@ -59,6 +59,7 @@
     "@envelop/response-cache-redis": "^3.1.0",
     "@graphql-hive/client": "^0.24.1",
     "@graphql-yoga/plugin-response-cache": "^2.1.1",
+    "@jest/globals": "^29.7.0",
     "@levminer/speakeasy": "^1.4.0",
     "@socket.io/redis-adapter": "^8.1.0",
     "@troplo/sequelize-typescript": "^2.1.5-troplo-dev3",
