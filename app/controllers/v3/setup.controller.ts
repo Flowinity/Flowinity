@@ -4,7 +4,7 @@ import {
   JsonController,
   Post
 } from "routing-controllers"
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
 import { AdminService } from "@app/services/admin.service"
 import { Sequelize } from "sequelize"
 import fs from "fs"
@@ -15,6 +15,7 @@ import { User } from "@app/models/user.model"
 import argon2 from "argon2"
 import { Domain } from "@app/models/domain.model"
 import { TpuConfigValidatorPartial } from "@app/validators/setup"
+import { CacheService } from "@app/services/cache.service"
 
 @Service()
 @JsonController("/setup")
@@ -131,7 +132,7 @@ export class SetupControllerV3 {
       email: string
     }
   ) {
-    return await User.create({
+    const user = await User.create({
       username: body.username,
       password: await argon2.hash(body.password),
       email: body.email,
@@ -140,6 +141,12 @@ export class SetupControllerV3 {
       id: 1,
       administrator: true
     })
+    const cacheService = Container.get(CacheService)
+    cacheService.generateAutoCollectCache(user.id)
+    cacheService.generateUserStatsCache(user.id)
+    cacheService.generateInsightsCache(user.id)
+    await cacheService.generateCollectionCache(user.id)
+    return user
   }
 
   @Post("/instance")
