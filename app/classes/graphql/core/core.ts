@@ -114,7 +114,12 @@ export class Connection {
 
 @ObjectType()
 export class CoreState {
-  @Field(() => Connection)
+  @Field(() => Connection, {
+    defaultValue: {
+      ip: "",
+      whitelist: false
+    }
+  })
   connection: Connection
   @Field()
   name: string

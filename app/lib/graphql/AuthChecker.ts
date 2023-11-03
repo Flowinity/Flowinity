@@ -5,6 +5,8 @@ import { checkScope, Scope, updateSession } from "@app/lib/auth"
 import { GraphQLError } from "graphql/error"
 import { Container } from "typedi"
 import { UserResolver } from "@app/controllers/graphql/user.resolver"
+import { Session } from "@app/models/session.model"
+import { PartialUserAuth } from "@app/classes/graphql/user/partialUser"
 
 export interface AuthCheckerOptions {
   scopes: Scope[] | Scope
@@ -20,10 +22,28 @@ export const authChecker: AuthChecker<Context> = async (
   { root, args, context, info }: ResolverData<Context>,
   options: any[]
 ) => {
-  const userResolver = Container.get(UserResolver)
-  const token = context.token
-  const session = await userResolver.findByToken(token)
-  const user = session?.user
+  let user: PartialUserAuth | null = null
+  let session:
+    | {
+        expiredAt: null
+        oauthAppId: string
+        fake: boolean
+        scopes: string
+        type: string
+        userId: number
+        user: PartialUserAuth
+        token: string | null
+      }
+    | (Session & { user: PartialUserAuth })
+    | null = null
+  if (global.config.finishedSetup) {
+    const userResolver = Container.get(UserResolver)
+    const token = context.token
+    session = await userResolver.findByToken(token)
+    user = session?.user
+  } else {
+    user = null
+  }
   const opts = options[0] as AuthCheckerOptions
   context.user = user
   if (!user && !opts.userOptional) {

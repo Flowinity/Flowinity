@@ -16,7 +16,7 @@ import { Context } from "@app/types/graphql/context"
 import fs from "fs"
 import path from "path"
 import { CoreService } from "@app/services/core.service"
-import { CoreState } from "@app/classes/graphql/core/core"
+import { CoreState, Providers } from "@app/classes/graphql/core/core"
 import cluster from "cluster"
 import os from "os"
 import { CacheService } from "@app/services/cache.service"
@@ -28,6 +28,14 @@ import { Experiment } from "@app/models/experiment.model"
 import { SetExperimentInput } from "@app/classes/graphql/core/setExperiment"
 import { GqlError } from "@app/lib/gqlErrors"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
+import { Announcement } from "@app/models/announcement.model"
+import { Collection } from "@app/models/collection.model"
+import { CollectionItem } from "@app/models/collectionItem.model"
+import { Upload } from "@app/models/upload.model"
+import { Pulse } from "@app/models/pulse.model"
+import { Note } from "@app/models/note.model"
+import { Message } from "@app/models/message.model"
+import { Chat } from "@app/models/chat.model"
 
 @Resolver(CoreState)
 @Service()
@@ -42,12 +50,52 @@ export class CoreResolver {
     if (!config.finishedSetup) {
       let step = await this.setupStep(ctx)
       return {
+        ...(await this.coreService.getState()),
         finishedSetup: false,
-        name: config.siteName,
-        step,
+        name: config.siteName || "PrivateUploader",
         // Test if running inside default Docker environment
-        dbHost: process.env.IS_DOCKER === "true" ? "mariadb" : "localhost",
-        redisHost: process.env.IS_DOCKER === "true" ? "redis" : "localhost"
+        server: cluster.worker?.id
+          ? `${os.hostname()?.toUpperCase()}#${cluster.worker?.id}`
+          : os.hostname()?.toUpperCase(),
+        domain: "",
+        maintenance: {
+          enabled: false,
+          message: "",
+          statusPage: ""
+        },
+        uptime: Math.round(process.uptime()),
+        uptimeSys: Math.round(os.uptime()),
+        commitVersion: process.env.TPU_COMMIT_HASH || "unknown",
+        connection: {
+          ip: ctx.ip,
+          whitelist: false
+        },
+        release: "prod",
+        hostname: "privateuploader.com",
+        hostnameWithProtocol: "https://privateuploader.com",
+        announcements: [],
+        stats: {
+          users: 0,
+          announcements: 0,
+          usage: 0,
+          collections: 0,
+          collectionItems: 0,
+          uploadGraph: await this.coreService.convertToGraph([]),
+          messageGraph: await this.coreService.convertToGraph([]),
+          pulseGraph: await this.coreService.convertToGraph([], "pulse"),
+          uploads: 0,
+          invites: 0,
+          inviteMilestone: 0,
+          pulse: 0,
+          pulses: 0,
+          docs: 0,
+          messages: 0,
+          chats: 0
+        },
+        registrations: true,
+        officialInstance: config.officialInstance,
+        hostnames: [],
+        _redis: "0"
       } as Partial<CoreState>
     }
     return {
@@ -72,6 +120,7 @@ export class CoreResolver {
   @Query(() => Int)
   async setupStep(@Ctx() ctx: Context) {
     try {
+      if (config.finishedSetup) return -1
       if (
         await Domain.findOne({
           where: {
@@ -82,10 +131,10 @@ export class CoreResolver {
         return 8
       }
       if (config.email.from !== "default@privateuploader.local") {
-        return 6
+        return 7
       }
       if (await fs.existsSync(path.join(appRoot, "config", "tpu.json"))) {
-        return 5
+        return 6
       }
       if (
         await User.findOne({
@@ -144,6 +193,15 @@ export class CoreResolver {
     emailOptional: true
   })
   async weather(@Ctx() ctx: Context) {
+    if (!config.finishedSetup)
+      throw new GraphQLError(
+        "The weather service is not responding. Please try again later.",
+        {
+          extensions: {
+            code: "WEATHER_NOT_RESPONDING"
+          }
+        }
+      )
     const cached = await redis.get(`core:weather:${ctx.ip}`)
     let weather: WeatherResponse = {}
     try {

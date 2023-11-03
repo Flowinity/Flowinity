@@ -1,515 +1,494 @@
 <template>
-  <v-container class="center-container">
-    <v-row align="center" justify="center">
-      <v-col cols="12" md="7" sm="12" xl="5">
-        <transition-group name="slide-fade">
-          <template v-if="step === 0">
-            <v-card
-              :color="$vuetify.display.mobile ? 'transparent' : 'card'"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
-              :flat="$vuetify.display.mobile"
-              class="text-center"
-              max-width="90vw"
-              variant="outlined"
-            >
-              <div>
-                <p
-                  class="text-center text-gradient mb-n5"
-                  style="font-size: 64px"
-                >
-                  TPU
-                </p>
-                <v-container>
-                  <v-card-text>
-                    {{ $t("setup.step0.description") }}
-                  </v-card-text>
-                  <v-card-text class="text-grey">
-                    {{ $t("setup.step0.subtitle") }}
-                  </v-card-text>
-                </v-container>
-              </div>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn :loading="loading" color="primary" @click="step++">
-                  {{ $t("generic.next") }}
-                  <v-icon class="ml-1">mdi-arrow-right</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-          <template v-if="step === 1">
-            <v-card
-              :color="$vuetify.display.mobile ? 'transparent' : 'card'"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
-              :flat="$vuetify.display.mobile"
-              class="text-center"
-              max-width="90vw"
-              variant="outlined"
-            >
-              <v-card-title>
-                {{ $t("setup.step1.title") }}
-              </v-card-title>
-              <v-card-text class="overflow text-grey">
-                {{ $t("setup.step1.subtitle") }}
-              </v-card-text>
-              <v-form @submit="testMariaDBConnection">
-                <v-card-text>
-                  <v-text-field
-                    v-model="database.host"
-                    :label="$t('setup.step1.host')"
-                    @keyup.enter="testMariaDBConnection"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="database.port"
-                    :label="$t('setup.step1.port')"
-                    @keyup.enter="testMariaDBConnection"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="database.database"
-                    :label="$t('setup.step1.database')"
-                    @keyup.enter="testMariaDBConnection"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="database.username"
-                    :label="$t('setup.step1.username')"
-                    @keyup.enter="testMariaDBConnection"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="database.password"
-                    :label="$t('setup.step1.password')"
-                    type="password"
-                    @keyup.enter="testMariaDBConnection"
-                  ></v-text-field>
-                </v-card-text>
-              </v-form>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  :loading="loading"
-                  color="primary"
-                  @click="testMariaDBConnection"
-                >
-                  {{ $t("generic.next") }}
-                  <v-icon class="ml-1">mdi-arrow-right</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-          <template v-if="step === 2">
-            <v-card
-              :color="$vuetify.display.mobile ? 'transparent' : 'card'"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
-              :flat="$vuetify.display.mobile"
-              class="text-center"
-              max-width="90vw"
-              variant="outlined"
-            >
-              <v-card-title>
-                {{ $t("setup.step5.title") }}
-              </v-card-title>
-              <v-card-text class="text-grey">
-                {{ $t("setup.step5.subtitle") }}
-              </v-card-text>
-              <v-form @submit="createDefaultPlan">
-                <v-card-text>
-                  <v-text-field
-                    v-model="plan.quotaMax"
-                    :label="$t('setup.step5.storage')"
-                    type="number"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="plan.maxFileSize"
-                    :label="$t('setup.step5.maxUploadSize')"
-                    type="number"
-                  ></v-text-field>
-                </v-card-text>
-              </v-form>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  :loading="loading"
-                  color="primary"
-                  @click="createDefaultPlan"
-                >
-                  {{ $t("generic.next") }}
-                  <v-icon class="ml-1">mdi-arrow-right</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-          <template v-if="step === 3">
-            <v-card
-              :color="$vuetify.display.mobile ? 'transparent' : 'card'"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
-              :flat="$vuetify.display.mobile"
-              class="text-center"
-              max-width="90vw"
-              variant="outlined"
-            >
-              <v-card-title>
-                {{ $t("setup.step2.title") }}
-              </v-card-title>
-              <v-card-subtitle>
-                {{ $t("setup.step2.subtitle") }}
-              </v-card-subtitle>
-              <v-form @submit="createAdminAccount">
-                <v-card-text>
-                  <v-text-field
-                    v-model="admin.username"
-                    :label="$t('setup.step2.username')"
-                    :rules="$validation.user.username"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="admin.email"
-                    :label="$t('setup.step2.email')"
-                    :rules="$validation.user.email"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="admin.password"
-                    :label="$t('setup.step2.password')"
-                    :rules="$validation.user.password"
-                    type="password"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="admin.passwordConfirm"
-                    :label="$t('setup.step2.passwordConfirm')"
-                    :rules="$validation.user.password"
-                    type="password"
-                  ></v-text-field>
-                </v-card-text>
-              </v-form>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  :loading="loading"
-                  color="primary"
-                  @click="createAdminAccount"
-                >
-                  {{ $t("generic.next") }}
-                  <v-icon class="ml-1">mdi-arrow-right</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-          <template v-if="step === 4">
-            <v-card
-              :color="$vuetify.display.mobile ? 'transparent' : 'card'"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
-              :flat="$vuetify.display.mobile"
-              class="text-center"
-              max-width="90vw"
-              variant="outlined"
-            >
-              <v-card-title>
-                {{ $t("setup.step3.title") }}
-              </v-card-title>
-              <v-card-subtitle>
-                {{ $t("setup.step3.subtitle") }}
-              </v-card-subtitle>
-              <v-form @submit="step++">
-                <v-card-text>
-                  <v-text-field
-                    v-model="instance.name"
-                    :label="$t('setup.step3.name')"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="instance.hostname"
-                    :label="$t('setup.step3.hostname')"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="instance.hostnameWithProtocol"
-                    :label="$t('setup.step3.hostnameWithProtocol')"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="instance.port"
-                    :label="$t('setup.step3.port')"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="instance.multiThreaded"
-                    :label="$t('setup.step3.multiThreaded')"
-                  ></v-text-field>
-                  <v-switch
-                    v-model="instance.allowRegistrations"
-                    :label="$t('setup.step3.allowRegistration')"
-                  ></v-switch>
-                  <v-text-field
-                    v-model="instance.redisHostname"
-                    :label="$t('setup.step3.redisHostname')"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="instance.redisDatabase"
-                    :label="$t('setup.step3.redisDatabase')"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="instance.redisPort"
-                    :label="$t('setup.step3.redisPort')"
-                  ></v-text-field>
-                  <small>
-                    {{ $t("setup.step3.redisHint") }}
-                  </small>
-                </v-card-text>
-              </v-form>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn :loading="loading" color="primary" @click="step++">
-                  {{ $t("generic.next") }}
-                  <v-icon class="ml-1">mdi-arrow-right</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-          <template v-if="step === 5">
-            <v-card
-              :color="$vuetify.display.mobile ? 'transparent' : 'card'"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
-              :flat="$vuetify.display.mobile"
-              class="text-center"
-              max-width="90vw"
-              variant="outlined"
-            >
-              <v-card-title>
-                {{ $t("setup.step4.title") }}
-              </v-card-title>
-              <v-card-text class="text-grey overflow">
-                {{ $t("setup.step4.subtitle") }}
-              </v-card-text>
-              <PromoCard
-                :title="$t('setup.step4.collections.title')"
-                class="my-3"
-                image="https://i.troplo.com/i/3276e55f5ce4.png"
-              >
-                {{ $t("setup.step4.collections.description") }}
-                <v-switch
-                  v-model="features.collections"
-                  hide-details
-                  style="display: flex; justify-content: center"
-                ></v-switch>
-              </PromoCard>
-              <PromoCard
-                :title="$t('setup.step4.autoCollects.title')"
-                class="my-3"
-                image="https://i.troplo.com/i/f8e3d77d3128.png"
-              >
-                {{ $t("setup.step4.autoCollects.description") }}
-                <v-switch
-                  v-model="features.autoCollects"
-                  hide-details
-                  style="display: flex; justify-content: center"
-                ></v-switch>
-              </PromoCard>
-              <PromoCard
-                :title="$t('setup.step4.communications.title')"
-                class="my-3"
-                image="https://i.troplo.com/i/356a95ba22ff.png"
-              >
-                {{ $t("setup.step4.communications.description") }}
-                <v-switch
-                  v-model="features.communications"
-                  hide-details
-                  style="display: flex; justify-content: center"
-                ></v-switch>
-              </PromoCard>
-              <PromoCard
-                :title="$t('setup.step4.insights.title')"
-                class="my-3"
-                image="https://i.troplo.com/i/ff3eda567a8e.png"
-              >
-                {{ $t("setup.step4.insights.description") }}
-                <v-switch
-                  v-model="features.insights"
-                  hide-details
-                  style="display: flex; justify-content: center"
-                ></v-switch>
-              </PromoCard>
-              <PromoCard
-                :title="$t('setup.step4.workspaces.title')"
-                class="my-3"
-                image="https://i.troplo.com/i/d251cd7d08af.png"
-              >
-                {{ $t("setup.step4.workspaces.description") }}
-                <v-switch
-                  v-model="features.workspaces"
-                  hide-details
-                  style="display: flex; justify-content: center"
-                ></v-switch>
-              </PromoCard>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  :loading="loading"
-                  color="primary"
-                  @click="configureInstance"
-                >
-                  {{ $t("generic.next") }}
-                  <v-icon class="ml-1">mdi-arrow-right</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-          <template v-if="step === 6">
-            <v-card
-              :color="$vuetify.display.mobile ? 'transparent' : 'card'"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
-              :flat="$vuetify.display.mobile"
-              class="text-center"
-              max-width="90vw"
-              variant="outlined"
-            >
-              <v-card-title>
-                {{ $t("setup.step6.title") }}
-              </v-card-title>
-              <v-card-text class="text-grey overflow">
-                {{ $t("setup.step6.subtitle") }}
-              </v-card-text>
-
-              <v-form>
-                <v-card-text>
-                  <v-text-field
-                    v-model="mail.host"
-                    :label="$t('setup.step6.host')"
-                    required
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="mail.port"
-                    :label="$t('setup.step6.port')"
-                    required
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="mail.username"
-                    :label="$t('setup.step6.username')"
-                    required
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="mail.password"
-                    :label="$t('setup.step6.password')"
-                    required
-                    type="password"
-                  ></v-text-field>
-                  <v-text-field
-                    v-model="mail.from"
-                    :label="$t('setup.step6.from')"
-                    required
-                  ></v-text-field>
-                  <v-switch
-                    v-model="mail.secure"
-                    :label="$t('setup.step6.secure')"
-                  ></v-switch>
-                  <v-text-field
-                    v-model="mail.testEmail"
-                    :label="$t('setup.step6.testEmail')"
-                  ></v-text-field>
-                </v-card-text>
-              </v-form>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn :loading="loading" @click="testMail">
-                  {{ $t("setup.step6.test") }}
-                </v-btn>
-                <v-btn
-                  :loading="loading"
-                  color="primary"
-                  @click="configureMail"
-                >
-                  {{ $t("generic.next") }}
-                  <v-icon class="ml-1">mdi-arrow-right</v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-          <template v-if="step === 7">
-            <v-card
-              :color="$vuetify.display.mobile ? 'transparent' : 'card'"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
-              :flat="$vuetify.display.mobile"
-              class="text-center"
-              max-width="90vw"
-              variant="outlined"
-            >
-              <v-card-title>
-                {{ $t("setup.step9.title") }}
-              </v-card-title>
-              <v-card-text class="text-grey overflow">
-                {{ $t("setup.step9.subtitle") }}
-              </v-card-text>
-              <v-form @submit="setupDomain">
-                <v-card-text>
-                  <v-text-field
-                    v-model="domain.domain"
-                    :label="$t('setup.step9.domain')"
-                    :placeholder="$t('setup.step9.example')"
-                    required
-                  ></v-text-field>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn :loading="loading" @click="setupDomain">
-                    {{ $t("generic.next") }}
-                  </v-btn>
-                </v-card-actions>
-              </v-form>
-            </v-card>
-          </template>
-          <template v-if="step === 8">
-            <v-card
-              :color="$vuetify.display.mobile ? 'transparent' : 'card'"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
-              :flat="$vuetify.display.mobile"
-              class="text-center"
-              max-width="90vw"
-              variant="outlined"
-            >
-              <p
-                class="text-center text-gradient mb-n5"
-                style="font-size: 64px"
-              >
-                TPU
-              </p>
-              <v-card-title>
-                {{ $t("setup.step7.title") }}
-              </v-card-title>
-              <v-card-text class="text-grey overflow">
-                {{ $t("setup.step7.subtitle") }}
-              </v-card-text>
-              <v-btn
-                :loading="loading"
-                class="mb-4"
-                color="primary"
-                @click="restartTPU"
-              >
-                {{ $t("setup.step7.restart") }}
-              </v-btn>
-            </v-card>
-          </template>
-          <template v-if="step === 9">
-            <v-card
-              :color="$vuetify.display.mobile ? 'transparent' : 'card'"
-              :elevation="$vuetify.display.mobile ? 0 : 8"
-              :flat="$vuetify.display.mobile"
-              class="text-center"
-              max-width="90vw"
-              variant="outlined"
-            >
-              <p
-                class="text-center text-gradient mb-n5"
-                style="font-size: 64px"
-              >
-                TPU
-              </p>
+  <v-container
+    style="align-items: center; height: 100%"
+    class="d-flex justify-center align-center"
+  >
+    <transition-group name="slide-fade">
+      <template v-if="step === 0">
+        <v-card
+          :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
+          class="text-center"
+          variant="outlined"
+        >
+          <div>
+            <p class="text-center text-gradient mb-n5" style="font-size: 64px">
+              TPU
+            </p>
+            <v-container>
               <v-card-text>
-                {{ $t("setup.step8.title") }}
+                {{ $t("setup.step0.description") }}
               </v-card-text>
-            </v-card>
-          </template>
-        </transition-group>
-      </v-col>
-    </v-row>
+              <v-card-text class="text-grey">
+                {{ $t("setup.step0.subtitle") }}
+              </v-card-text>
+            </v-container>
+          </div>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn :loading="loading" color="primary" @click="step++">
+              {{ $t("generic.next") }}
+              <v-icon class="ml-1">mdi-arrow-right</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+      <template v-if="step === 1">
+        <v-card
+          :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
+          class="text-center"
+          variant="outlined"
+        >
+          <v-card-title>
+            {{ $t("setup.step1.title") }}
+          </v-card-title>
+          <v-card-text class="overflow text-grey">
+            {{ $t("setup.step1.subtitle") }}
+          </v-card-text>
+          <v-form @submit="testMariaDBConnection">
+            <v-card-text>
+              <v-text-field
+                v-model="database.host"
+                :label="$t('setup.step1.host')"
+                @keyup.enter="testMariaDBConnection"
+              ></v-text-field>
+              <v-text-field
+                v-model="database.port"
+                :label="$t('setup.step1.port')"
+                @keyup.enter="testMariaDBConnection"
+              ></v-text-field>
+              <v-text-field
+                v-model="database.database"
+                :label="$t('setup.step1.database')"
+                @keyup.enter="testMariaDBConnection"
+              ></v-text-field>
+              <v-text-field
+                v-model="database.username"
+                :label="$t('setup.step1.username')"
+                @keyup.enter="testMariaDBConnection"
+              ></v-text-field>
+              <v-text-field
+                v-model="database.password"
+                :label="$t('setup.step1.password')"
+                type="password"
+                @keyup.enter="testMariaDBConnection"
+              ></v-text-field>
+            </v-card-text>
+          </v-form>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :loading="loading"
+              color="primary"
+              @click="testMariaDBConnection"
+            >
+              {{ $t("generic.next") }}
+              <v-icon class="ml-1">mdi-arrow-right</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+      <template v-if="step === 2">
+        <v-card
+          :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
+          class="text-center"
+          variant="outlined"
+        >
+          <v-card-title>
+            {{ $t("setup.step5.title") }}
+          </v-card-title>
+          <v-card-text class="text-grey">
+            {{ $t("setup.step5.subtitle") }}
+          </v-card-text>
+          <v-form @submit="createDefaultPlan">
+            <v-card-text>
+              <v-text-field
+                v-model="plan.quotaMax"
+                :label="$t('setup.step5.storage')"
+                type="number"
+              ></v-text-field>
+              <v-text-field
+                v-model="plan.maxFileSize"
+                :label="$t('setup.step5.maxUploadSize')"
+                type="number"
+              ></v-text-field>
+            </v-card-text>
+          </v-form>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :loading="loading"
+              color="primary"
+              @click="createDefaultPlan"
+            >
+              {{ $t("generic.next") }}
+              <v-icon class="ml-1">mdi-arrow-right</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+      <template v-if="step === 3">
+        <v-card
+          :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
+          class="text-center"
+          variant="outlined"
+        >
+          <v-card-title>
+            {{ $t("setup.step2.title") }}
+          </v-card-title>
+          <v-card-subtitle>
+            {{ $t("setup.step2.subtitle") }}
+          </v-card-subtitle>
+          <v-form @submit="createAdminAccount">
+            <v-card-text>
+              <v-text-field
+                v-model="admin.username"
+                :label="$t('setup.step2.username')"
+                :rules="$validation.user.username"
+              ></v-text-field>
+              <v-text-field
+                v-model="admin.email"
+                :label="$t('setup.step2.email')"
+                :rules="$validation.user.email"
+              ></v-text-field>
+              <v-text-field
+                v-model="admin.password"
+                :label="$t('setup.step2.password')"
+                :rules="$validation.user.password"
+                type="password"
+              ></v-text-field>
+              <v-text-field
+                v-model="admin.passwordConfirm"
+                :label="$t('setup.step2.passwordConfirm')"
+                :rules="$validation.user.password"
+                type="password"
+              ></v-text-field>
+            </v-card-text>
+          </v-form>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :loading="loading"
+              color="primary"
+              @click="createAdminAccount"
+            >
+              {{ $t("generic.next") }}
+              <v-icon class="ml-1">mdi-arrow-right</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+      <template v-if="step === 4">
+        <v-card
+          :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
+          class="text-center"
+          variant="outlined"
+        >
+          <v-card-title>
+            {{ $t("setup.step3.title") }}
+          </v-card-title>
+          <v-card-subtitle>
+            {{ $t("setup.step3.subtitle") }}
+          </v-card-subtitle>
+          <v-form @submit="step++">
+            <v-card-text>
+              <v-text-field
+                v-model="instance.name"
+                :label="$t('setup.step3.name')"
+              ></v-text-field>
+              <v-text-field
+                v-model="instance.hostname"
+                :label="$t('setup.step3.hostname')"
+                placeholder="privateuploader.com"
+              ></v-text-field>
+              <v-text-field
+                v-model="instance.hostnameWithProtocol"
+                :label="$t('setup.step3.hostnameWithProtocol')"
+                placeholder="https://privateuploader.com"
+              ></v-text-field>
+              <v-text-field
+                v-model="instance.port"
+                :label="$t('setup.step3.port')"
+              ></v-text-field>
+              <v-text-field
+                v-model="instance.multiThreaded"
+                :label="$t('setup.step3.multiThreaded')"
+              ></v-text-field>
+              <v-switch
+                v-model="instance.allowRegistrations"
+                :label="$t('setup.step3.allowRegistration')"
+              ></v-switch>
+              <v-text-field
+                v-model="instance.redisHostname"
+                :label="$t('setup.step3.redisHostname')"
+              ></v-text-field>
+              <v-text-field
+                v-model="instance.redisDatabase"
+                :label="$t('setup.step3.redisDatabase')"
+              ></v-text-field>
+              <v-text-field
+                v-model="instance.redisPort"
+                :label="$t('setup.step3.redisPort')"
+              ></v-text-field>
+              <small>
+                {{ $t("setup.step3.redisHint") }}
+              </small>
+            </v-card-text>
+          </v-form>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn :loading="loading" color="primary" @click="step++">
+              {{ $t("generic.next") }}
+              <v-icon class="ml-1">mdi-arrow-right</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+      <template v-if="step === 5">
+        <v-card
+          :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
+          class="text-center"
+          variant="outlined"
+        >
+          <v-card-title>
+            {{ $t("setup.step4.title") }}
+          </v-card-title>
+          <v-card-text class="text-grey overflow">
+            {{ $t("setup.step4.subtitle") }}
+          </v-card-text>
+          <PromoCard
+            :title="$t('setup.step4.collections.title')"
+            class="my-3"
+            image="https://i.troplo.com/i/3276e55f5ce4.png"
+          >
+            {{ $t("setup.step4.collections.description") }}
+            <v-switch
+              v-model="features.collections"
+              hide-details
+              style="display: flex; justify-content: center"
+            ></v-switch>
+          </PromoCard>
+          <PromoCard
+            :title="$t('setup.step4.autoCollects.title')"
+            class="my-3"
+            image="https://i.troplo.com/i/f8e3d77d3128.png"
+          >
+            {{ $t("setup.step4.autoCollects.description") }}
+            <v-switch
+              v-model="features.autoCollects"
+              hide-details
+              style="display: flex; justify-content: center"
+            ></v-switch>
+          </PromoCard>
+          <PromoCard
+            :title="$t('setup.step4.communications.title')"
+            class="my-3"
+            image="https://i.troplo.com/i/356a95ba22ff.png"
+          >
+            {{ $t("setup.step4.communications.description") }}
+            <v-switch
+              v-model="features.communications"
+              hide-details
+              style="display: flex; justify-content: center"
+            ></v-switch>
+          </PromoCard>
+          <PromoCard
+            :title="$t('setup.step4.insights.title')"
+            class="my-3"
+            image="https://i.troplo.com/i/ff3eda567a8e.png"
+          >
+            {{ $t("setup.step4.insights.description") }}
+            <v-switch
+              v-model="features.insights"
+              hide-details
+              style="display: flex; justify-content: center"
+            ></v-switch>
+          </PromoCard>
+          <PromoCard
+            :title="$t('setup.step4.workspaces.title')"
+            class="my-3"
+            image="https://i.troplo.com/i/d251cd7d08af.png"
+          >
+            {{ $t("setup.step4.workspaces.description") }}
+            <v-switch
+              v-model="features.workspaces"
+              hide-details
+              style="display: flex; justify-content: center"
+            ></v-switch>
+          </PromoCard>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :loading="loading"
+              color="primary"
+              @click="configureInstance"
+            >
+              {{ $t("generic.next") }}
+              <v-icon class="ml-1">mdi-arrow-right</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+      <template v-if="step === 6">
+        <v-card
+          :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
+          class="text-center"
+          variant="outlined"
+        >
+          <v-card-title>
+            {{ $t("setup.step6.title") }}
+          </v-card-title>
+          <v-card-text class="text-grey overflow">
+            {{ $t("setup.step6.subtitle") }}
+          </v-card-text>
+
+          <v-form>
+            <v-card-text>
+              <v-text-field
+                v-model="mail.host"
+                :label="$t('setup.step6.host')"
+                required
+              ></v-text-field>
+              <v-text-field
+                v-model="mail.port"
+                :label="$t('setup.step6.port')"
+                required
+              ></v-text-field>
+              <v-text-field
+                v-model="mail.username"
+                :label="$t('setup.step6.username')"
+                required
+              ></v-text-field>
+              <v-text-field
+                v-model="mail.password"
+                :label="$t('setup.step6.password')"
+                required
+                type="password"
+              ></v-text-field>
+              <v-text-field
+                v-model="mail.from"
+                :label="$t('setup.step6.from')"
+                required
+              ></v-text-field>
+              <v-switch
+                v-model="mail.secure"
+                :label="$t('setup.step6.secure')"
+              ></v-switch>
+              <v-text-field
+                v-model="mail.testEmail"
+                :label="$t('setup.step6.testEmail')"
+              ></v-text-field>
+            </v-card-text>
+          </v-form>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn :loading="loading" @click="testMail">
+              {{ $t("setup.step6.test") }}
+            </v-btn>
+            <v-btn :loading="loading" color="primary" @click="configureMail">
+              {{ $t("generic.next") }}
+              <v-icon class="ml-1">mdi-arrow-right</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+      <template v-if="step === 7">
+        <v-card
+          :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
+          class="text-center"
+          variant="outlined"
+        >
+          <v-card-title>
+            {{ $t("setup.step9.title") }}
+          </v-card-title>
+          <v-card-text class="text-grey overflow">
+            {{ $t("setup.step9.subtitle") }}
+          </v-card-text>
+          <v-form @submit="setupDomain">
+            <v-card-text>
+              <v-text-field
+                v-model="domain.domain"
+                :label="$t('setup.step9.domain')"
+                :placeholder="$t('setup.step9.example')"
+                required
+              ></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn :loading="loading" @click="setupDomain">
+                {{ $t("generic.next") }}
+              </v-btn>
+            </v-card-actions>
+          </v-form>
+        </v-card>
+      </template>
+      <template v-if="step === 8">
+        <v-card
+          :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
+          class="text-center"
+          variant="outlined"
+        >
+          <p class="text-center text-gradient mb-n5" style="font-size: 64px">
+            TPU
+          </p>
+          <v-card-title>
+            {{ $t("setup.step7.title") }}
+          </v-card-title>
+          <v-card-text class="text-grey overflow">
+            {{ $t("setup.step7.subtitle") }}
+          </v-card-text>
+          <v-btn
+            :loading="loading"
+            class="mb-4"
+            color="primary"
+            @click="restartTPU"
+          >
+            {{ $t("setup.step7.restart") }}
+          </v-btn>
+        </v-card>
+      </template>
+      <template v-if="step === 9">
+        <v-card
+          :color="$vuetify.display.mobile ? 'transparent' : 'card'"
+          :elevation="$vuetify.display.mobile ? 0 : 8"
+          :flat="$vuetify.display.mobile"
+          class="text-center"
+          variant="outlined"
+        >
+          <p class="text-center text-gradient mb-n5" style="font-size: 64px">
+            TPU
+          </p>
+          <v-card-text>
+            {{ $t("setup.step8.title") }}
+          </v-card-text>
+        </v-card>
+      </template>
+    </transition-group>
   </v-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
+import { gql } from "@apollo/client";
 
 enum Step {
   Welcome = 0,
@@ -530,7 +509,7 @@ export default defineComponent({
   data() {
     return {
       // TODO: GQL
-      step: 8, // (this.$app.site?.step as Step) || (0 as Step),
+      step: 0, // (this.$app.site?.step as Step) || (0 as Step),
       loading: false,
       database: {
         host: "localhost",
@@ -736,9 +715,22 @@ export default defineComponent({
       } catch {
         this.loading = false;
       }
+    },
+    async getCurrentStep() {
+      try {
+        const { data } = await this.$apollo.query({
+          query: gql`
+            query GetSetupStep {
+              setupStep
+            }
+          `
+        });
+        this.step = data.setupStep;
+      } catch {}
     }
   },
   mounted() {
+    this.getCurrentStep();
     this.$app.title = "Setup Wizard";
   },
   watch: {

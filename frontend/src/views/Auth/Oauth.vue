@@ -14,7 +14,7 @@
               $vuetify.display.mobile ? 'font-size: 38px' : 'font-size: 48px'
             "
           >
-            PrivateUploader
+            {{ $app.site?.name || "PrivateUploader" }}
           </p>
           <p class="text-center text-grey">
             <UserAvatar

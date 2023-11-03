@@ -350,7 +350,7 @@
       "redisHostname": "Redis Hostname",
       "redisPort": "Redis Port",
       "redisDatabase": "Redis Database",
-      "redisHint": "Redis is used for caching, this is an integral part of TPU, and it will not function without it."
+      "redisHint": "If you are using Docker, the Redis hostname will likely be \"redis\". Redis is used for caching, this is an integral part of TPU, and it will not function without it."
     },
     "step4": {
       "title": "Features",

@@ -25,7 +25,7 @@
             target="_blank"
             href="https://github.com/Troplo/PrivateUploader"
           >
-            TPU
+            PrivateUploader
           </a>
           instance.
         </p>

@@ -108,8 +108,10 @@ export class CoreService {
       release: config.release,
       hostname: config.hostname,
       hostnameWithProtocol: config.hostnameWithProtocol,
-      announcements: await this.getAnnouncements(),
-      stats: await this.getStats(),
+      announcements: config.finishedSetup
+        ? await this.getAnnouncements()
+        : undefined,
+      stats: config.finishedSetup ? await this.getStats() : undefined,
       maintenance: config.maintenance,
       registrations: config.registrations,
       officialInstance: config.officialInstance,

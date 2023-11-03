@@ -8,7 +8,7 @@
           :flat="$vuetify.display.mobile"
         >
           <p class="text-center text-gradient mb-n5" style="font-size: 64px">
-            TPU
+            {{ $app.site?.name || "PrivateUploader" }}
           </p>
           <v-container>
             <v-form v-model="valid">

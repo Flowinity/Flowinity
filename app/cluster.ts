@@ -15,13 +15,14 @@ function isRunningInDocker() {
   }
 }
 
-function setEnvVariables() {
+async function setEnvVariables() {
   global.appRoot = path.resolve(__dirname).includes("out")
     ? path.join(__dirname, "..", "app")
     : path.join(__dirname)
   global.rawAppRoot = path.resolve(__dirname)
   try {
-    global.config = require(global.appRoot + "/config/tpu.json")
+    const data = fs.readFileSync(global.appRoot + "/config/tpu.json")
+    global.config = JSON.parse(data.toString())
   } catch {
     global.config = new DefaultTpuConfig().config
   }
@@ -81,6 +82,7 @@ function setEnvVariables() {
       )
     }
   }
+  await new Promise((resolve) => setTimeout(resolve, 50))
 }
 
 if (cluster.isPrimary) {
@@ -100,9 +102,9 @@ if (cluster.isPrimary) {
     cluster.fork()
   }
 
-  cluster.on("exit", (worker, code: number): void => {
+  cluster.on("exit", (worker, code: number | null): void => {
     // Worker finished because of an error
-    if (code !== 0 && !worker.exitedAfterDisconnect) {
+    if (code && !worker.exitedAfterDisconnect) {
       console.error(`Worker crashed. Starting a new one, code: ${code}`)
 
       cluster.fork()

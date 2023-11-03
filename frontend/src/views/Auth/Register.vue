@@ -17,7 +17,7 @@
               $vuetify.display.mobile ? 'font-size: 38px' : 'font-size: 48px'
             "
           >
-            PrivateUploader
+            {{ $app.site?.name || "PrivateUploader" }}
           </p>
           <v-container>
             <v-form v-model="form">

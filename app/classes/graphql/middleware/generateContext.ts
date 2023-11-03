@@ -5,13 +5,17 @@ import { Context } from "@app/types/graphql/context"
 import { createContext } from "dataloader-sequelize"
 
 export default async function generateContext(ctx: any): Promise<Context> {
-  const userResolver = Container.get(UserResolver)
-  const token =
+  let token
+  let session
+  token =
     ctx?.request?.headers?.get("Authorization") ||
     ctx?.connectionParams?.token ||
     ""
+  if (global.config?.finishedSetup) {
+    const userResolver = Container.get(UserResolver)
+    session = await userResolver.findByToken(token)
+  }
 
-  const session = await userResolver.findByToken(token)
   return {
     user: session?.user,
     client: {
@@ -33,7 +37,7 @@ export default async function generateContext(ctx: any): Promise<Context> {
         : AccessLevel.USER
       : AccessLevel.NO_ACCESS,
     token,
-    dataloader: createContext(db),
+    dataloader: global.config?.finishedSetup ? createContext(db) : null,
     ip: ctx.req.ip,
     meta: {},
     request: ctx.request,
