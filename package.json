@@ -63,6 +63,7 @@
     "@socket.io/redis-adapter": "^8.1.0",
     "@troplo/sequelize-typescript": "^2.1.5-troplo-dev3",
     "@troplo/tpu-ogs": "^5.1.0-troplo1",
+    "@tsconfig/node18": "^18.2.2",
     "@types/body-parser": "1.19.1",
     "@types/chai": "4.3.3",
     "@types/cookie-parser": "1.4.3",

@@ -30,5 +30,5 @@
   "ts-node": {
     "files": true
   },
-  "extends": "ts-node/node16/tsconfig.json"
+  "extends": "@tsconfig/node18/tsconfig.json"
 }
