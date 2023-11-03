@@ -33,7 +33,8 @@ import {
   ChangeEmailInput,
   ChangePasswordInput,
   ChangeUsernameInput,
-  UpdateUserInput
+  UpdateUserInput,
+  UpdateUserStatusInput
 } from "@app/classes/graphql/user/updateUser"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { UserProfileInput } from "@app/classes/graphql/user/profileInput"
@@ -52,6 +53,7 @@ import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import { SessionInput } from "@app/classes/graphql/user/sessionsInput"
 import { SessionType } from "@app/classes/graphql/user/sessions"
+import { UserStoredStatus } from "@app/classes/graphql/user/status"
 
 @Resolver(User)
 @Service()
@@ -112,10 +114,11 @@ export class UserResolver extends createBaseResolver("User", User) {
 
   @RateLimit({
     window: 30,
-    max: 12
+    max: 30
   })
   @Authorization({
-    scopes: "user.modify"
+    scopes: "user.modify",
+    emailOptional: true
   })
   @Mutation(() => Boolean)
   async updateUser(@Arg("input") input: UpdateUserInput, @Ctx() ctx: Context) {
@@ -125,10 +128,30 @@ export class UserResolver extends createBaseResolver("User", User) {
 
   @RateLimit({
     window: 30,
+    max: 30
+  })
+  @Authorization({
+    scopes: ["user.modify", "chats.send"],
+    emailOptional: true
+  })
+  @Mutation(() => UserStoredStatus)
+  async updateStatus(
+    @Arg("input") input: UpdateUserStatusInput,
+    @Ctx() ctx: Context
+  ) {
+    await this.userUtilsService.updateUser(ctx.user!!.id, {
+      storedStatus: input.storedStatus
+    })
+    return input.storedStatus
+  }
+
+  @RateLimit({
+    window: 30,
     max: 5
   })
   @Authorization({
-    scopes: "user.modify"
+    scopes: "user.modify",
+    emailOptional: true
   })
   @Mutation(() => Boolean)
   async changeUserPassword(

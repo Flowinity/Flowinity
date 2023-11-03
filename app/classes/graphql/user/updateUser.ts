@@ -14,6 +14,7 @@ import {
   FriendRequestPrivacy,
   GroupPrivacy
 } from "@app/classes/graphql/user/privacy"
+import { UserStoredStatus } from "@app/classes/graphql/user/status"
 
 @InputType()
 export class UpdateUserInput {
@@ -128,4 +129,10 @@ export class ChangeEmailInput extends DangerZoneInput {
   @Field()
   @IsEmail()
   email: string
+}
+
+@InputType()
+export class UpdateUserStatusInput {
+  @Field(() => UserStoredStatus)
+  storedStatus: UserStoredStatus
 }

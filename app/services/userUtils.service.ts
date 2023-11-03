@@ -697,7 +697,8 @@ export class UserUtilsService {
         "moderator",
         "status",
         "profileLayout",
-        "themeEngine"
+        "themeEngine",
+        "storedStatus"
       ],
       include: [
         {
@@ -842,7 +843,12 @@ export class UserUtilsService {
     socket
       .of(SocketNamespaces.USER)
       .to(user.id)
-      .emit("userSettingsUpdate", body)
+      .emit("userSettingsUpdate", {
+        ...body,
+        storedStatus:
+          body.storedStatus?.toUpperCase() ?? user.storedStatus.toUpperCase(),
+        status: user.status?.toUpperCase() ?? user.status.toUpperCase()
+      })
     return true
   }
 

@@ -12,6 +12,12 @@ export default {
   moduleNameMapper: {
     "^@app/(.*)$": "<rootDir>/app/$1"
   },
+  testPathIgnorePatterns: [
+    "/node_modules/",
+    "/out/",
+    "/frontend/",
+    "/frontend-v5/"
+  ],
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -68,7 +74,8 @@ export default {
 
   // A path to a module which exports an async function that is triggered once before all test suites
   // globalSetup: undefined,
-  globalSetup: "./app/test-start.ts"
+  globalSetup: "./app/test-start.ts",
+  setupFilesAfterEnv: ["<rootDir>/app/lib/uninit-tests.ts"]
   // A path to a module which exports an async function that is triggered once after all test suites
   // globalTeardown: undefined,
 

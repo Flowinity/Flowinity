@@ -11,13 +11,15 @@
         :label="t('settings.privacy.usageInformation')"
         @update:model-value="userStore.updateUser()"
       />
-      <p class="text-sm">{{ t("settings.privacy.usageInformationDesc") }}</p>
+      <p class="text-xs pb-2 pt-1">
+        {{ t("settings.privacy.usageInformationDesc") }}
+      </p>
       <tpu-switch
         v-model="userStore.user!.publicProfile"
         :label="t('settings.privacy.publicProfile')"
         @update:model-value="userStore.updateUser()"
       />
-      <p class="text-sm">
+      <p class="text-xs pb-2 pt-1">
         {{ t("settings.privacy.publicProfileDesc") }}
       </p>
       <tpu-switch
@@ -25,25 +27,25 @@
         :label="t('settings.privacy.discordPrecache')"
         :disabled="true"
       />
-      <p class="text-sm mb-4">
-        {{ t("settings.privacy.discordPrecacheDeprecationNotice") }}
+      <p class="text-xs pb-2 pt-1 mb-4">
+        {{ t("settings.privacy.discordPrecacheDesc") }}
       </p>
       <tpu-select
         v-model="userStore.user!.insights"
         :items="options.insights"
-        :label="$t('settings.home.privacy.insightsPrivacy')"
+        :label="$t('settings.privacy.insightsPrivacy')"
         @update:model-value="userStore.updateUser()"
       ></tpu-select>
       <tpu-select
         v-model="userStore.user!.groupPrivacy"
         :items="options.group"
-        :label="$t('settings.home.privacy.groupPrivacy')"
+        :label="$t('settings.privacy.groupPrivacy')"
         @update:model-value="userStore.updateUser()"
       ></tpu-select>
       <tpu-select
         v-model="userStore.user!.friendRequests"
         :items="options.friend"
-        :label="$t('settings.home.privacy.friendPrivacy')"
+        :label="$t('settings.privacy.friendPrivacy')"
         @update:model-value="userStore.updateUser()"
       ></tpu-select>
     </div>

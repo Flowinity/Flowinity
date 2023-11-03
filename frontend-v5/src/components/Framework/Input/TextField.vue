@@ -38,13 +38,14 @@
       :disabled="props.disabled"
       :class="{
         'placeholder-shown': !modelValue?.length && focus,
-        'text-medium-emphasis-dark': props.disabled
+        'text-medium-emphasis-dark': props.disabled,
+        focused: focus
       }"
       :readonly="props.readonly"
     ></textarea>
     <input
       tabindex="0"
-      v-else
+      v-else-if="!props.readonly"
       :id="id"
       :placeholder="props.placeholder"
       @input="
@@ -68,10 +69,39 @@
       :disabled="props.disabled"
       :class="{
         'placeholder-shown': !modelValue?.length && focus,
-        'text-medium-emphasis-dark': props.disabled
+        'text-medium-emphasis-dark': props.disabled,
+        focused: focus
       }"
       :readonly="props.readonly"
     />
+    <div
+      class="text-field"
+      v-else
+      @click="
+        focus = !focus;
+        focus ? $emit('focus') : $emit('blur');
+        interactedWith = !interactedWith;
+      "
+      @blur="
+        $emit('blur');
+        focus = false;
+        interactedWith = false;
+      "
+      role="button"
+      tabindex="-1"
+      :class="{
+        'placeholder-shown': !modelValue?.length && focus,
+        'text-medium-emphasis-dark': props.disabled,
+        focused: focus
+      }"
+      style="min-width: 200px"
+    >
+      <span v-if="props.modelValue.length">{{ props.modelValue }}</span>
+      <span v-else-if="props.placeholder && focus">
+        {{ props.placeholder }}
+      </span>
+      <span v-else class="text-medium-emphasis-dark">&nbsp;</span>
+    </div>
     <div class="absolute right-0 -top-3">
       <slot name="append" />
     </div>
@@ -193,9 +223,10 @@ defineExpose({
   padding: 7px 0;
   background: transparent;
   transition: border-color 0.2s;
-  &:focus {
-    border-bottom: 2px solid #0190ea;
-  }
+}
+
+.focused {
+  border-bottom: 2px solid #0190ea;
 }
 
 .field-label {

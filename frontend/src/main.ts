@@ -65,26 +65,28 @@ const app = createApp({
 
 app.use(vuetify);
 
-app.use(VueMatomo, {
-  host: "https://analytics.flowinity.com",
-  siteId: 3,
-  trackerFileName: "matomo",
-  router: router,
-  enableLinkTracking: true,
-  requireConsent: false,
-  trackInitialView: true,
-  disableCookies: false,
-  requireCookieConsent: false,
-  enableHeartBeatTimer: false,
-  heartBeatTimerInterval: 15,
-  debug: false,
-  userId: undefined,
-  cookieDomain: undefined,
-  domains: undefined,
-  preInitActions: [],
-  trackSiteSearch: false,
-  crossOrigin: undefined
-});
+if (import.meta.env.VITE_PROD_ANALYTICS === "true") {
+  app.use(VueMatomo, {
+    host: "https://analytics.flowinity.com",
+    siteId: 3,
+    trackerFileName: "matomo",
+    router: router,
+    enableLinkTracking: true,
+    requireConsent: false,
+    trackInitialView: true,
+    disableCookies: false,
+    requireCookieConsent: false,
+    enableHeartBeatTimer: false,
+    heartBeatTimerInterval: 15,
+    debug: false,
+    userId: undefined,
+    cookieDomain: undefined,
+    domains: undefined,
+    preInitActions: [],
+    trackSiteSearch: false,
+    crossOrigin: undefined
+  });
+}
 
 if (process.env.NODE_ENV === "development") {
   const loggingMixin = {

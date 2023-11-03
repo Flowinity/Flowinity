@@ -13,7 +13,7 @@
       tabindex="0"
       @keydown.space.prevent="value = !value"
       @keydown.enter.prevent="value = !value"
-      class="w-14 h-9 flex rounded-full items-center transition duration-200 ease-in-out border-2"
+      class="flex rounded-full items-center transition duration-200 ease-in-out border-2"
       :class="{
         'transition-background-color duration-300 ease-in-out bg-blue dark:border-blue':
           value,
@@ -21,6 +21,12 @@
           !value,
         'bg-opacity-10 border-opacity-10': variant === 'tonal'
       }"
+      style="
+        min-width: 56px;
+        min-height: 36px;
+        max-height: 36px;
+        max-width: 56px;
+      "
     >
       <input
         type="checkbox"

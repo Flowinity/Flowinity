@@ -68,13 +68,12 @@
               <RiArrowRightSLine
                 v-if="appStore.currentNavItem?.rail?.length - 1 !== index"
                 class="w-6 fill-medium-emphasis-dark items-center"
-                v-memo="[]"
                 style="margin: 0px 4px 0px 4px"
               />
             </div>
           </div>
         </Transition>
-        <Transition mode="out-in" name="slide-up">
+        <Transition mode="out-in" name="slide-up" appear>
           <div
             v-if="
               appStore.currentNavItem?.item?.path !==

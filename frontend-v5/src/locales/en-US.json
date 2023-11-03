@@ -122,6 +122,23 @@
     }
   },
   "settings":  {
+    "status": {
+      "online": {
+        "title": "Online"
+      },
+      "idle": {
+        "title": "Idle",
+        "description": "You will appear as idle."
+      },
+      "busy": {
+        "title": "Do not Disturb",
+        "description": "You will not receive any sound or desktop notifications."
+      },
+      "invisible": {
+        "title": "Invisible",
+        "description": "You will appear as offline, the typing indicator and read receipts will not be shown to others."
+      }
+    },
     "actionBar": {
       "saving": "Saving...",
       "saved": "Saved!"
@@ -145,6 +162,11 @@
       "weatherUnit": "Weather unit",
       "languages": {
         "en": "English (United States)"
+      },
+      "temp": {
+        "celsius": "Celsius",
+        "fahrenheit": "Fahrenheit",
+        "kelvin": "Kelvin"
       }
     },
     "setup": {
@@ -154,6 +176,23 @@
         "downloadShareNix": "Download ShareNix Config",
         "downloadAutomate": "Download Automate Config"
       }
+    },
+    "privacy": {
+      "title": "Privacy",
+      "usageInformation": "Send usage information to Flowinity",
+      "usageInformationDesc": "By turning this off, you are disabling \"Pulse\" functionality. This is used for tracking how much time you spend on Flowinity, and what features you use to generate your Insights. Some information may still be stored by Flowinity as outlined in the Privacy Policy.",
+      "publicProfile": "Public Profile",
+      "publicProfileDesc": "Your profile can be viewed by anyone, including people who aren't logged into Flowinity.",
+      "discordPrecache": "Discord Precaching",
+      "discordPrecacheDesc": "Discord Precaching has now been replaced with Flowinity Webhooks!\nThe previous Discord Precaching feature sent your newly created uploads in a Discord channel to allow Discord to cache the embed on upload.",
+      "options": {
+        "everyone": "Everyone",
+        "friends": "Friends only",
+        "nobody": "Only myself"
+      },
+      "insightsPrivacy": "Who can see your Insights",
+      "groupPrivacy": "Who can add you to a group",
+      "friendPrivacy": "Who can add you as a friend"
     }
   },
   "sidebar": {

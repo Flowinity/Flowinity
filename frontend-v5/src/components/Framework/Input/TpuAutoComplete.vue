@@ -19,7 +19,6 @@
         hovering = false;
         focused = false;
       "
-      @click="focused = true"
       :disabled="props.disabled"
       @update:model-value="
         focused = true;
@@ -27,6 +26,7 @@
         assist ? $emit('update:modelValue', items[selected].value) : () => {};
       "
       ref="input"
+      :readonly="props.readonly"
     >
       <template #append>
         <slot name="append" />
@@ -88,7 +88,8 @@ const props = defineProps({
   },
   disabled: Boolean,
   customText: String,
-  assist: Boolean
+  assist: Boolean,
+  readonly: Boolean
 });
 const emit = defineEmits(["update:modelValue"]);
 const show = computed(() => {

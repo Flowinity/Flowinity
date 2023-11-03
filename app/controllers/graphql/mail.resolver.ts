@@ -26,7 +26,7 @@ export class MailResolver {
   })
   @Query(() => [ListResponse])
   async mailboxes(@Ctx() ctx: Context) {
-    return await this.mailService.getMailboxes(ctx.user!!.id)
+    return await this.mailService.getMailboxes(ctx.user!!.id, true)
   }
 
   @Authorization({
@@ -50,7 +50,8 @@ export class MailResolver {
     return await this.mailService.getMessages(
       ctx.user!!.id,
       input.mailbox,
-      input.page
+      input.page,
+      true
     )
   }
 }

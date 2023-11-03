@@ -12,9 +12,4 @@ test("Get core state", async () => {
   expect(state?.name).toBe("TPU")
 })
 
-afterAll(async () => {
-  await redis.disconnect()
-  await db.close()
-})
-
 beforeAll(async () => {})

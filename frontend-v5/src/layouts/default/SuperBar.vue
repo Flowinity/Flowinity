@@ -7,6 +7,7 @@ import UserAvatar from "@/components/User/UserAvatar.vue";
 import { useUserStore } from "@/stores/user.store";
 import RiNotificationLine from "vue-remix-icons/icons/ri-notification-line.vue";
 import RiNotificationFill from "vue-remix-icons/icons/ri-notification-fill.vue";
+import UserStatusPicker from "@/components/User/UserStatusPicker.vue";
 
 const appStore = useAppStore();
 const props = defineProps({
@@ -95,16 +96,25 @@ const userStore = useUserStore();
               "
             />
           </super-bar-item>
-          <super-bar-item
-            class="flex justify-center align-middle items-center rounded-xl"
-            style="height: 47px"
+          <VDropdown
+            :triggers="['click']"
+            placement="right"
+            class="flex items-center"
           >
-            <user-avatar
-              :user-id="userStore.user?.id"
-              :username="userStore.user?.username"
-              :status="true"
-            />
-          </super-bar-item>
+            <super-bar-item
+              class="flex justify-center align-middle items-center rounded-xl"
+              style="height: 47px"
+            >
+              <user-avatar
+                :user-id="userStore.user?.id"
+                :username="userStore.user?.username"
+                :status="true"
+              />
+            </super-bar-item>
+            <template #popper="{ hide }">
+              <UserStatusPicker @click="hide()" />
+            </template>
+          </VDropdown>
         </div>
       </div>
     </div>

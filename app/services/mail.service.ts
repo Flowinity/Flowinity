@@ -4,10 +4,11 @@ import { simpleParser } from "mailparser"
 import { User } from "@app/models/user.model"
 import Errors from "@app/lib/errors"
 import { Op } from "sequelize"
+import { GqlError } from "@app/lib/gqlErrors"
 
 @Service()
 export class MailService {
-  async connect(userId: number) {
+  async connect(userId: number, gql?: boolean) {
     const user = await User.findOne({
       where: {
         id: userId,
@@ -17,7 +18,10 @@ export class MailService {
       },
       attributes: ["mailToken", "username"]
     })
-    if (!user) throw Errors.EXPERIMENT_NOT_ALLOWED
+    if (!user) {
+      if (gql) throw new GqlError("EXPERIMENT_NOT_ALLOWED")
+      throw Errors.EXPERIMENT_NOT_ALLOWED
+    }
     const client = new ImapFlow({
       host: "mail.troplo.com",
       port: 993,
@@ -38,15 +42,15 @@ export class MailService {
     return client
   }
 
-  async getMailboxes(userId: number) {
-    const client = await this.connect(userId)
+  async getMailboxes(userId: number, gql?: boolean) {
+    const client = await this.connect(userId, gql)
     const mailboxes = await client.list()
     client.logout()
     return mailboxes
   }
 
   async getUnread(userId: number) {
-    const client = await this.connect(userId)
+    const client = await this.connect(userId, true)
     const mailboxes = await client.list()
     let unread = 0
     for (const mailbox of mailboxes) {
@@ -63,8 +67,13 @@ export class MailService {
     return unread
   }
 
-  async getMessages(userId: number, mailbox: string, page: number = 1) {
-    const client = await this.connect(userId)
+  async getMessages(
+    userId: number,
+    mailbox: string,
+    page: number = 1,
+    gql?: boolean
+  ) {
+    const client = await this.connect(userId, gql)
     await client.mailboxOpen(mailbox)
     let messages = []
     // @ts-ignore
@@ -101,8 +110,13 @@ export class MailService {
       .reverse()
   }
 
-  async getMessage(userId: number, mailbox: string, uid: string) {
-    const client = await this.connect(userId)
+  async getMessage(
+    userId: number,
+    mailbox: string,
+    uid: string,
+    gql?: boolean
+  ) {
+    const client = await this.connect(userId, gql)
     await client.mailboxOpen(mailbox)
     console.log(uid === "22728")
     //@ts-ignore

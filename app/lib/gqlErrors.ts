@@ -94,6 +94,9 @@ const Errors = {
   },
   USER_BANNED: {
     message: "Your account has been disabled. Please contact support."
+  },
+  EXPERIMENT_NOT_ALLOWED: {
+    message: "You are not allowed to use this experimental feature."
   }
 }
 

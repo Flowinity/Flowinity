@@ -48,7 +48,11 @@ const fakeLoggedOutContext: Context = {
       get: () => "",
       authorization: ""
     }
-  } as any
+  } as any,
+  request: {
+    ip: "1.1.1.1"
+  } as any,
+  cache: global.gqlCache
 }
 
 test("Register user", async () => {
@@ -102,11 +106,6 @@ test("Get user and test token", async () => {
     fakeContext
   )
   expect(autoCollectRules).toBeDefined()
-})
-
-afterAll(async () => {
-  await redis.disconnect()
-  await db.close()
 })
 
 beforeAll(async () => {})

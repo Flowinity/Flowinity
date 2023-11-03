@@ -3,6 +3,7 @@
     class="text-white flex-col text-center"
     :secondary="true"
     style="max-width: 400px"
+    padding
   >
     <p class="text-xl">Meet the Action Bar!</p>
     <p>
