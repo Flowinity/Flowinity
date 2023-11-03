@@ -40,7 +40,7 @@ export const authChecker: AuthChecker<Context> = async (
     const userResolver = Container.get(UserResolver)
     const token = context.token
     session = await userResolver.findByToken(token)
-    user = session?.user
+    user = !session?.user?.banned ? session?.user : null
   } else {
     user = null
   }

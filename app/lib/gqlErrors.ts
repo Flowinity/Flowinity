@@ -91,6 +91,9 @@ const Errors = {
   },
   ATTACHMENT_NOT_FOUND: {
     message: "The requested upload(s) couldn't be found."
+  },
+  USER_BANNED: {
+    message: "Your account has been disabled. Please contact support."
   }
 }
 

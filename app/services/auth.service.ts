@@ -107,7 +107,8 @@ export class AuthService {
         "totpEnable",
         "password",
         "alternatePasswords",
-        "email"
+        "email",
+        "banned"
       ]
     })
     if (!user) {
@@ -167,6 +168,9 @@ export class AuthService {
         console.log(e)
         throw gql ? new GqlError("INVALID_TOTP") : Errors.INVALID_TOTP
       }
+    }
+    if (user.banned) {
+      throw gql ? new GqlError("USER_BANNED") : Errors.BANNED
     }
     return {
       alternatePassword,
