@@ -213,7 +213,7 @@ export class CollectionService {
   ): Promise<CollectionCache[] | PaginatedCollectionsResponse> {
     let collections: CollectionCache[] =
       (await redis.json.get(`collections:${userId}`)) ||
-      this.getCollections(userId)
+      (await this.getCollections(userId))
 
     collections = collections.filter((collection) => {
       if (filters.includes(CollectionFilter.OWNED)) {
