@@ -13,7 +13,7 @@
         <v-carousel-item
           v-for="image in slideshow"
           :key="image.id"
-          :src="`${$app.domain}/${image.attachment.attachment}`"
+          :src="`${$app.domain}${image.attachment.attachment}`"
           contain
         >
           <template v-slot:placeholder>
