@@ -103,7 +103,7 @@ export default defineComponent({
             },
             {
               tags: ["New", "TPU"],
-              text: "There is a Developer page that allows you to add OpenID "
+              text: "There is a new Developer page that allows you to add OpenID Connect & Bot applications to integrate with PrivateUploader in Settings."
             }
           ]
         },
