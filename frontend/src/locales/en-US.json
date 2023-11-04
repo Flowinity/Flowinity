@@ -311,7 +311,8 @@
     "value": "Value",
     "beta": "BETA",
     "options": "Options",
-    "option": "No options selected | {count} option selected | {count} options selected"
+    "option": "No options selected | {count} option selected | {count} options selected",
+    "copied": "Copied to clipboard!"
   },
   "setup": {
     "step0": {
@@ -650,7 +651,8 @@
       "noRules": "No rules found.",
       "actions": "ACTIONS",
       "type": "Type",
-      "operator": "Operator"
+      "operator": "Operator",
+      "value": "Value"
     },
     "home": {
       "title": "You have no pending approvals!",
