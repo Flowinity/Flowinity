@@ -64,7 +64,7 @@
         <v-textarea
           ref="textarea"
           :class="!editing ? 'mb-n4 mt-1' : 'mt-2'"
-          :maxlength="2000"
+          :maxlength="4000"
           :model-value="modelValue"
           auto-grow
           :autofocus="true"
