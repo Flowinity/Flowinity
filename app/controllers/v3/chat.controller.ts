@@ -333,8 +333,8 @@ export class ChatControllerV3 {
     )
   }
 
-  @Post("/:associationId/message")
   @UseBefore(rateLimits.msgLimiter)
+  @Post("/:associationId/message")
   async sendMessage(
     @Auth("chats.send") user: User,
     @Param("associationId") associationId: number,

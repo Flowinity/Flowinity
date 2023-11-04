@@ -695,6 +695,7 @@ export class GalleryService {
       throw Errors.ATTACHMENT_NOT_FOUND_ROUTE
     }
     upload.dataValues.collections = []
+    upload.collections = []
     return upload
   }
 

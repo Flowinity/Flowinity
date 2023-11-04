@@ -1004,7 +1004,13 @@ function getTypeByExt(ext: string): string {
 }
 
 function getTypeByMime(mimeVal: string, ext: string) {
-  if (!mimeVal) return getTypeByExt(ext)
+  if (
+    !mimeVal ||
+    mimeVal === "*/*" ||
+    mimeVal === "application/octet-stream" ||
+    mimeVal === "text/plain"
+  )
+    return getTypeByExt(ext)
   const mime = mimeVal.toLowerCase()
   if (mime.startsWith("image/")) return "image"
   if (mime.startsWith("video/")) return "video"

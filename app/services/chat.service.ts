@@ -36,12 +36,39 @@ class MessageIncludes {
     return [
       {
         model: Message,
-        as: "reply"
+        as: "reply",
+        attributes: {
+          include: ["user"]
+        },
+        include: [
+          {
+            model: User,
+            as: "tpuUser",
+            attributes: partialUserBase
+          },
+          {
+            model: LegacyUser,
+            as: "legacyUser",
+            attributes: partialUserBase
+          }
+        ]
       },
       {
         model: ChatAssociation,
         as: "readReceipts",
-        attributes: ["userId", "lastRead"]
+        attributes: ["userId", "lastRead", "user"],
+        include: [
+          {
+            model: User,
+            as: "tpuUser",
+            attributes: partialUserBase
+          },
+          {
+            model: LegacyUser,
+            as: "legacyUser",
+            attributes: partialUserBase
+          }
+        ]
       },
       {
         model: User,
@@ -997,7 +1024,14 @@ export class ChatService {
           where: {
             id: userId
           },
-          attributes: ["id", "status", "storedStatus", "bot"]
+          attributes: [
+            "id",
+            "status",
+            "storedStatus",
+            "bot",
+            "username",
+            "avatar"
+          ]
         })
         if (
           !association ||
@@ -1015,11 +1049,17 @@ export class ChatService {
             }
           }
         )
+        if (!user) return
         this.emitForAll(association.id, userId, "readReceipt", {
           chatId,
           id: message.id,
-          userId,
-          lastRead: message.id
+          userId: user.id,
+          lastRead: message.id,
+          user: {
+            id: user.id,
+            username: user?.username,
+            avatar: user?.avatar
+          }
         })
       }
     } catch (e) {
