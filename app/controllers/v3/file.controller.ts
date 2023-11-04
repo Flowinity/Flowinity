@@ -66,8 +66,11 @@ export class FileControllerV3 {
       return res
     }
     if (force) {
-      res.download(
-        global.storageRoot + "/" + attachment,
+      // Reason for ts-ignore:
+      //https://github.com/Microsoft/TypeScript/issues/26048
+      await promisify(res.download.bind(res))(
+        global.storageRoot + "/" + upload.attachment,
+        //@ts-ignore
         upload.originalFilename
       )
       return res
