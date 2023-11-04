@@ -23,10 +23,7 @@
             <v-card-text>
               <v-text-field
                 :label="$t('settings.slideshows.shareLink')"
-                :model-value="
-                  'https://images.flowinity.com/slideshow/' +
-                  slideshow.shareLink
-                "
+                :model-value="`${$app.site.hostnameWithProtocol}/slideshows/${slideshow.shareLink}`"
                 disabled
               />
               <v-text-field
