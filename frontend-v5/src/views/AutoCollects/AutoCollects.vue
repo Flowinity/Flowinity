@@ -61,7 +61,7 @@
 
   <teleport to="#appbar-options">
     <transition mode="out-in" name="slide-up" appear>
-      <tpu-button variant="passive" icon>
+      <tpu-button variant="passive" icon to="/auto-collects/settings">
         <RiSettings5Line style="width: 20px" />
       </tpu-button>
     </transition>

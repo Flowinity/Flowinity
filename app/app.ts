@@ -445,13 +445,15 @@ export class Application {
       }),
       maskedErrors: {
         maskError(error: any, message: any, isDev: any): Error {
-          console.error(error)
           if (error instanceof ZodError) {
             return {
-              message: "deez",
-              name: "ddez"
+              message: error.message || "Validation error!",
+              name: "VALIDATION_ERROR"
             }
           }
+
+          if (process.env.NODE_ENV === "development") console.error(error)
+
           if (error instanceof ValidationError) {
             return {
               message: error.toString(),

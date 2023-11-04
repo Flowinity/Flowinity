@@ -44,8 +44,19 @@ const router = createRouter({
       component: () => import("@/views/AutoCollects/AutoCollects.vue")
     },
     {
-      path: "/autoCollects",
-      redirect: "/auto-collects"
+      path: "/auto-collects/settings",
+      name: "AutoCollects Settings",
+      component: () => import("@/views/AutoCollects/AutoCollectsSettings.vue")
+    },
+    {
+      path: "/autoCollects/:id?/:page?",
+      redirect: (to) => {
+        if (to.params.id) {
+          return `/auto-collects/${to.params.id}`;
+        } else {
+          return "/auto-collects";
+        }
+      }
     },
     {
       path: "/communications/:id",
