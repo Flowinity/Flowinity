@@ -46,23 +46,60 @@
           <RiCloseLine style="width: 40px" />
         </tpu-button>
       </card>
-      <comms-input
-        v-model="content"
-        ref="input"
-        @keydown.enter.exact="sendMessage"
-      />
+      <div class="flex-col">
+        <comms-input
+          v-model="content"
+          ref="input"
+          @keydown.enter.exact="sendMessage"
+          @update:model-value="type"
+        />
+        <div class="flex justify-between">
+          <div class="flex items-center">
+            <div class="user-avatars">
+              <UserAvatar
+                v-for="typer in excludedTypers"
+                :user-id="typer.userId"
+                class="user-avatar"
+                :key="typer.userId"
+                size="20"
+              />
+            </div>
+            <p
+              class="text-medium-emphasis-dark ml-2"
+              v-if="excludedTypers.length"
+            >
+              {{
+                t(
+                  "chats.typing",
+                  {
+                    users: excludedTypers
+                      .map((typer) => userStore.users[typer.userId]?.username)
+                      .join(", ")
+                  },
+                  excludedTypers.length > 1
+                    ? 1
+                    : excludedTypers.length > 5
+                    ? 2
+                    : 0
+                )
+              }}
+            </p>
+          </div>
+          <p class="text-medium-emphasis-dark">{{ content.length }}/4000</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useChatStore } from "@/stores/chat.store";
-import { computed, onMounted, onUnmounted, ref, nextTick } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import dayjs from "@/plugins/dayjs";
 import CommsMessage from "@/components/Communications/CommsMessage.vue";
 import CommsInput from "@/components/Communications/CommsInput.vue";
 import { useUserStore } from "@/stores/user.store";
-import { Chat, Message, MessageType } from "@/gql/graphql";
+import { Chat, Message, MessageType, UserStoredStatus } from "@/gql/graphql";
 import { useSocket } from "@/boot/socket.service";
 import { useMessagesStore } from "@/stores/messages.store";
 import Card from "@/components/Framework/Card/Card.vue";
@@ -70,7 +107,11 @@ import MessageReply from "@/components/Communications/MessageReply.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import { useAppStore } from "@/stores/app.store";
+import { throttle } from "lodash";
+import UserAvatar from "@/components/User/UserAvatar.vue";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const chatStore = useChatStore();
 const userStore = useUserStore();
 const messagesStore = useMessagesStore();
@@ -82,6 +123,23 @@ const content = ref("");
 const input = ref<InstanceType<typeof CommsInput> | null>(null);
 const avoidAutoScroll = ref(false);
 const appStore = useAppStore();
+const type = throttle(handleTyping, 1000);
+
+const excludedTypers = computed(() => {
+  return chatStore.typers.filter(
+    (typer) => typer.userId !== userStore.user?.id
+  );
+});
+
+function handleTyping() {
+  if (userStore.user?.storedStatus === UserStoredStatus.Invisible) return;
+  if (!chatStore.selectedChat) return;
+  if (!content.value.length) {
+    return chatStore.cancelType();
+  } else {
+    return chatStore.type();
+  }
+}
 
 function dateSeparator(index: number) {
   const message = messagesStore.selected[index];
@@ -241,6 +299,15 @@ onUnmounted(() => {
   document.removeEventListener("keydown", shortcutHandler);
   useSocket.chat.on("message", onMessage);
 });
+
+watch(
+  () => [
+    chatStore.selectedChat?.name,
+    chatStore.selectedChat?.id,
+    chatStore.selectedChat?.icon
+  ],
+  () => {}
+);
 </script>
 
 <style scoped>

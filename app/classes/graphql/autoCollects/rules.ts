@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql"
+import { Field, InputType, Int, ObjectType } from "type-graphql"
 
 @ObjectType()
 export class SubRule {
@@ -18,4 +18,10 @@ export class AutoCollectParentRule {
   id: number
   @Field(() => [SubRule])
   rules: SubRule[]
+}
+
+@InputType()
+export class AutoCollectRuleQueryInput {
+  @Field(() => Int)
+  id: number
 }

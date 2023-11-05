@@ -36,45 +36,51 @@
             class="status dark:border-sidebar-dark border-2 fill-black flex items-center justify-center"
             :style="{
               backgroundColor:
-                user.status === UserStatus.Idle
+                user.status === UserStatus.Idle && !typing
                   ? '#101113'
                   : functions.userStatus(user.status).color
             }"
+            :class="{ 'typing-status': typing }"
             v-tooltip="functions.userStatus(user.status).text"
           >
             <transition name="scale-transition">
-              <div
-                style="height: 2px; width: 6px; background: #101113"
-                class="rounded"
-                v-if="user.status === UserStatus.Busy"
-              />
-              <div
-                style="height: 4.5px; width: 4.5px; background: #101113"
-                class="rounded"
-                v-else-if="
-                  user.status === UserStatus.Offline ||
-                  user.status === UserStoredStatus.Invisible
-                "
-              />
-              <RiMoonFill
-                style="
-                  height: 8px;
-                  width: 8px;
-                  stroke-width: 1px;
-                  transform: rotate(-90deg);
-                "
-                :style="{
-                  strokeColor: functions.userStatus(user.status).color,
-                  fill: functions.userStatus(user.status).color
-                }"
-                class="rounded"
-                v-else-if="user.status === UserStatus.Idle"
-              />
-              <RiCheckLine
-                style="height: 8px; width: 8px"
-                class="rounded"
-                v-else-if="user.status === UserStatus.Online"
-              />
+              <template v-if="!typing">
+                <div
+                  style="height: 2px; width: 6px; background: #101113"
+                  class="rounded"
+                  v-if="user.status === UserStatus.Busy"
+                />
+                <div
+                  style="height: 4.5px; width: 4.5px; background: #101113"
+                  class="rounded"
+                  v-else-if="
+                    user.status === UserStatus.Offline ||
+                    user.status === UserStoredStatus.Invisible
+                  "
+                />
+                <RiMoonFill
+                  style="
+                    height: 8px;
+                    width: 8px;
+                    stroke-width: 1px;
+                    transform: rotate(-90deg);
+                  "
+                  :style="{
+                    strokeColor: functions.userStatus(user.status).color,
+                    fill: functions.userStatus(user.status).color
+                  }"
+                  class="rounded"
+                  v-else-if="user.status === UserStatus.Idle"
+                />
+                <RiCheckLine
+                  style="height: 8px; width: 8px"
+                  class="rounded"
+                  v-else-if="user.status === UserStatus.Online"
+                />
+              </template>
+              <template v-else>
+                <RiMoreFill style="height: 12px" />
+              </template>
             </transition>
           </div>
           <div
@@ -103,7 +109,7 @@ import TpuOverlay from "@/components/Framework/Overlay/TpuOverlay.vue";
 import { UserStatus, UserStoredStatus } from "@/gql/graphql";
 import RiMoonFill from "vue-remix-icons/icons/ri-moon-fill.vue";
 import RiCheckLine from "vue-remix-icons/icons/ri-check-line.vue";
-
+import RiMoreFill from "vue-remix-icons/icons/ri-more-fill.vue";
 const props = defineProps({
   size: {
     default: 40,
@@ -135,6 +141,10 @@ const props = defineProps({
   },
   fakeStatus: {
     type: String as () => UserStoredStatus | UserStatus
+  },
+  typing: {
+    type: Boolean,
+    default: false
   }
 });
 const userStore = useUserStore();
@@ -164,6 +174,15 @@ defineEmits(["setImage"]);
   border-radius: 50%;
   z-index: 1;
   color: #ff6f66;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    width 0.2s;
+}
+
+.typing-status {
+  width: 24px;
+  border-radius: 12px;
 }
 
 .badge {

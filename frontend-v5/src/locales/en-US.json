@@ -210,5 +210,8 @@
         "desc": "Descending"
       }
     }
+  },
+  "chats": {
+    "typing": "{users} is typing... | {users} are typing... | Many people are typing..."
   }
 }

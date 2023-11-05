@@ -44,6 +44,12 @@ const router = createRouter({
       component: () => import("@/views/AutoCollects/AutoCollects.vue")
     },
     {
+      path: "/auto-collects/settings/:id",
+      name: "AutoCollects Settings Rule",
+      component: () =>
+        import("@/views/AutoCollects/AutoCollectsSettingsRule.vue")
+    },
+    {
       path: "/auto-collects/settings",
       name: "AutoCollects Settings",
       component: () => import("@/views/AutoCollects/AutoCollectsSettings.vue")

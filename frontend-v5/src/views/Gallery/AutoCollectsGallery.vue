@@ -130,7 +130,7 @@ import {
 } from "@/gql/graphql";
 import { useCollectionsStore } from "@/stores/collections.store";
 import { isNumeric } from "@/plugins/isNumeric";
-import { useAppStore } from "@/stores/app.store";
+import { RailMode, useAppStore } from "@/stores/app.store";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiShareForwardFill from "vue-remix-icons/icons/ri-share-forward-fill.vue";
 import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
@@ -139,6 +139,10 @@ import RiCheckLine from "vue-remix-icons/icons/ri-check-line.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import { useApolloClient } from "@vue/apollo-composable";
 import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
+import { h, markRaw } from "vue";
+import UserAvatar from "@/components/User/UserAvatar.vue";
+import RiCollageLine from "vue-remix-icons/icons/ri-collage-line.vue";
+import RiCollageFill from "vue-remix-icons/icons/ri-collage-fill.vue";
 
 const collectionsStore = useCollectionsStore();
 const collection = ref<Collection | null>(null);
@@ -148,6 +152,38 @@ const { t } = useI18n();
 const loading = ref(false);
 const galleryComponent = ref<InstanceType<typeof Gallery> | null>(null);
 const router = useRouter();
+
+function setAppBar() {
+  appStore.currentNavItem = {
+    item: {
+      name: collection.value?.name || "Loading...",
+      icon: collection.value?.avatar
+        ? h(UserAvatar, {
+            username: collection.value?.name,
+            src: appStore.domain + collection.value?.avatar,
+            size: 32,
+            style: "margin: 0px 4px 0px 4px"
+          })
+        : markRaw(RiCollageLine),
+      path: route.path,
+      selectedIcon: markRaw(RiCollageFill)
+    },
+    rail: [
+      appStore.navigation.railOptions.find(
+        (rail) => rail.id === RailMode.GALLERY
+      ),
+      appStore.navigation.railOptions.find(
+        (rail) => rail.id === RailMode.AUTO_COLLECTS
+      ),
+      {
+        id: RailMode.AUTO_COLLECTS,
+        name: "Settings",
+        icon: markRaw(RiSettings5Line),
+        path: `/auto-collects/${route.params.id}`
+      }
+    ]
+  };
+}
 
 async function actAutoCollect(items: number[], action: AutoCollectAction) {
   loading.value = true;
@@ -194,6 +230,7 @@ watch(
 
 onMounted(async () => {
   collection.value = await collectionsStore.getCollection(id.value);
+  setAppBar();
 });
 
 watch(
@@ -204,6 +241,7 @@ watch(
       return;
     }
     collection.value = await collectionsStore.getCollection(id.value);
+    setAppBar();
   }
 );
 

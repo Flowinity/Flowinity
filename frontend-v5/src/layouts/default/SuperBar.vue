@@ -99,7 +99,7 @@ const userStore = useUserStore();
           <VDropdown
             :triggers="['click']"
             placement="right"
-            class="flex items-center"
+            class="flex items-center justify-center"
           >
             <super-bar-item
               class="flex justify-center align-middle items-center rounded-xl"

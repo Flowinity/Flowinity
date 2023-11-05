@@ -841,7 +841,7 @@ export class ChatService {
     return associations
   }
 
-  async typing(associationId: number, userId: number) {
+  async typing(associationId: number, userId: number, isV5: boolean = false) {
     const chat = await this.getChatFromAssociation(associationId, userId)
     await this.emitForAll(
       associationId,
@@ -853,12 +853,16 @@ export class ChatService {
         user: await Container.get(UserUtilsService).getUserById(userId),
         expires: Date.now() + 5000
       },
-      true
+      !isV5
     )
     return true
   }
 
-  async cancelTyping(associationId: number, userId: number) {
+  async cancelTyping(
+    associationId: number,
+    userId: number,
+    isV5: boolean = false
+  ) {
     const chat = await this.getChatFromAssociation(associationId, userId)
     await this.emitForAll(
       associationId,
@@ -869,7 +873,7 @@ export class ChatService {
         userId,
         user: await Container.get(UserUtilsService).getUserById(userId)
       },
-      true
+      !isV5
     )
     return true
   }

@@ -107,6 +107,7 @@ import { ChatEmojiResolver } from "@app/controllers/graphql/chatEmoji.resolver"
 import { MulterError } from "multer"
 import { ChatAuditLogResolver } from "@app/controllers/graphql/chatAuditLog.resolver"
 import { ZodError } from "zod"
+import { AutoCollectRuleResolver } from "@app/controllers/graphql/autoCollectRule.resolver"
 
 @Service()
 @Middleware({ type: "after" })
@@ -374,7 +375,8 @@ export class Application {
         OAuthUserResolver,
         ChatEmojiResolver,
         ChatAuditLogResolver,
-        OauthConsentAppResolver
+        OauthConsentAppResolver,
+        AutoCollectRuleResolver
       ],
       container: Container,
       authChecker: authChecker,

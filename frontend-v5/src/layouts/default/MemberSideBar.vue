@@ -125,6 +125,11 @@ const ranks = computed(() => {
                   :status="true"
                   :username="friendStore.getName(assoc.userId || 0)"
                   :user-id="assoc.userId || 0"
+                  :typing="
+                    chatStore.currentTypers.findIndex(
+                      (typer) => typer.userId === assoc.userId
+                    ) !== -1
+                  "
                 ></user-avatar>
               </template>
               <template #title>

@@ -10,7 +10,10 @@ function createSocket(namespace: string) {
     transports: ["websocket"],
     reconnection: true,
     path: "/gateway",
-    reconnectionAttempts: 99999
+    reconnectionAttempts: 99999,
+    query: {
+      version: 5
+    }
   });
   socket.on("connect", () => {
     console.log(`[TPU/Socket] Connected to ${namespace}`);

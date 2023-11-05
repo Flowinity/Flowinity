@@ -73,11 +73,11 @@ import Gallery from "@/views/Gallery/Gallery.vue";
 import { useRoute } from "vue-router";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import type { Collection } from "@/gql/graphql";
-import { GalleryType, Upload } from "@/gql/graphql";
+import { Chat, GalleryType, Upload } from "@/gql/graphql";
 import { useCollectionsStore } from "@/stores/collections.store";
 import { isNumeric } from "@/plugins/isNumeric";
 import type { ComputedRef } from "vue";
-import { useAppStore } from "@/stores/app.store";
+import { RailMode, useAppStore } from "@/stores/app.store";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiShareForwardFill from "vue-remix-icons/icons/ri-share-forward-fill.vue";
 import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
@@ -105,6 +105,10 @@ const id: ComputedRef<number | string> = computed(() => {
 const toast = useToast();
 import RiLink from "vue-remix-icons/icons/ri-link.vue";
 import dayjs from "@/plugins/dayjs";
+import { h, markRaw } from "vue";
+import UserAvatar from "@/components/User/UserAvatar.vue";
+import RiCollageLine from "vue-remix-icons/icons/ri-collage-line.vue";
+import RiCollageFill from "vue-remix-icons/icons/ri-collage-fill.vue";
 
 const banner = computed(() => {
   if (!collection.value?.banner) return null;
@@ -121,6 +125,36 @@ watch(
 onMounted(async () => {
   collection.value = await collectionsStore.getCollection(id.value);
 });
+
+function setAppBar() {
+  appStore.currentNavItem = {
+    item: {
+      name: collection.value?.name || "Loading...",
+      icon: collection.value?.avatar
+        ? h(UserAvatar, {
+            username: collection.value?.name,
+            src: appStore.domain + collection.value?.avatar,
+            size: 32,
+            style: "margin: 0px 4px 0px 4px"
+          })
+        : markRaw(RiCollageLine),
+      path: route.path,
+      selectedIcon: markRaw(RiCollageFill)
+    },
+    rail: [
+      appStore.navigation.railOptions.find(
+        (rail) => rail.id === RailMode.GALLERY
+      )
+    ]
+  };
+}
+
+watch(
+  () => collection.value?.name,
+  (val) => {
+    setAppBar();
+  }
+);
 
 watch(
   () => route.params.id,
@@ -155,6 +189,7 @@ onMounted(() => {
   useSocket.gallery.on("collectionUserUpdate", onCollectionUserUpdate);
   useSocket.gallery.on("collectionUserAdd", onCollectionUserUpdate);
   useSocket.gallery.on("collectionUserRemove", onCollectionUserUpdate);
+  setAppBar();
 });
 
 onUnmounted(() => {

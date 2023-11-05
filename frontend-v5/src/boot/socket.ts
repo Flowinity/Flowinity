@@ -25,6 +25,7 @@ import emojiData from "markdown-it-emoji/lib/data/full.json";
 import { useMessagesStore } from "@/stores/messages.store";
 import { useCollectionsStore } from "@/stores/collections.store";
 import { App } from "vue";
+
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();
   const index = chat.chats.findIndex((c) => c.id === chatId);
@@ -561,6 +562,54 @@ export default async function setup(app: App) {
 
       if (collectionIndex === -1) {
         collections.items = [data, ...collections.items];
+      }
+    }
+  );
+
+  sockets.chat.on(
+    "typing",
+    (data: { chatId: number; userId: number; expires: string }) => {
+      const index = chat.typers.findIndex(
+        (t) => t.chatId === data.chatId && t.userId === data.userId
+      );
+      if (index !== -1) {
+        const val = chat.typers.find(
+          (t) => t.chatId === data.chatId && t.userId === data.userId
+        );
+        clearTimeout(val?.timeout);
+        chat.typers.splice(index, 1);
+      }
+      chat.typers.push({
+        chatId: data.chatId,
+        userId: data.userId,
+        expires: data.expires,
+        timeout: setTimeout(
+          () => {
+            const index = chat.typers.findIndex(
+              (t) => t.chatId === data.chatId && t.userId === data.userId
+            );
+            if (index !== -1) {
+              chat.typers.splice(index, 1);
+            }
+          },
+          new Date(data.expires).getTime() - Date.now()
+        )
+      });
+    }
+  );
+
+  sockets.chat.on(
+    "cancelTyping",
+    (data: { chatId: number; userId: number }) => {
+      const index = chat.typers.findIndex(
+        (t) => t.chatId === data.chatId && t.userId === data.userId
+      );
+      if (index !== -1) {
+        const val = chat.typers.find(
+          (t) => t.chatId === data.chatId && t.userId === data.userId
+        );
+        clearTimeout(val?.timeout);
+        chat.typers.splice(index, 1);
       }
     }
   );

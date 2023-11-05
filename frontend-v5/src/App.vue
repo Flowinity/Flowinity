@@ -10,6 +10,7 @@ import MemberSideBar from "@/layouts/default/MemberSideBar.vue";
 import QuickSwitcher from "@/components/QuickSwitcher/QuickSwitcher.vue";
 import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { useFrameworkStore } from "@/stores/framework.store";
+import Stats from "stats.js";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -24,6 +25,28 @@ function drop(e: Event) {
   );
   appStore.upload();
 }
+
+const stats = new Stats();
+//FPS and MS
+stats.showPanel(0);
+stats.dom.style.position = "fixed";
+stats.dom.style.left = "unset";
+stats.dom.style.right = "0";
+stats.dom.style.top = "unset";
+stats.dom.style.bottom = "0";
+document.body.appendChild(stats.dom);
+
+function animate() {
+  stats.begin();
+
+  // monitored code goes here
+
+  stats.end();
+
+  requestAnimationFrame(animate);
+}
+
+requestAnimationFrame(animate);
 </script>
 <template>
   <div class="dark w-full">

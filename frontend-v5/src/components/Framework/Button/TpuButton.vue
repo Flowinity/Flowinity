@@ -2,7 +2,7 @@
   <component
     :is="props.to ? RouterLink : 'a'"
     class="rounded-full flex dark:text-white select-none"
-    v-wave="!disabled && !table"
+    v-wave="!disabled && !table && !noRipple"
     :to="to ? to : undefined"
     :href="href ? href : undefined"
     :style="{
@@ -19,7 +19,7 @@
       'px-2 py-2': icon,
       'px-3 py-1': !icon,
       'opacity-50 pointer-events-none': disabled,
-      'cursor-pointer': !disabled
+      'cursor-pointer': !disabled && !noRipple
     }"
     tabindex="0"
     @keydown.enter="
@@ -77,6 +77,10 @@ const props = defineProps({
     default: false
   },
   selected: {
+    type: Boolean,
+    default: false
+  },
+  noRipple: {
     type: Boolean,
     default: false
   }

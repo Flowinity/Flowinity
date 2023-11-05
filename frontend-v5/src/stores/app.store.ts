@@ -570,71 +570,26 @@ export const useAppStore = defineStore("app", () => {
   const route = useRoute();
   const collectionsStore = useCollectionsStore();
   const chatStore = useChatStore();
+  const _currentNavItem = ref<{
+    item: NavigationOption & { _rail: number };
+    rail: NavigationOption[];
+  } | null>(null);
 
-  const currentNavItem = computed(() => {
-    if (
-      route.path.startsWith("/collections/") ||
-      route.path.startsWith("/auto-collects/")
-    ) {
-      const find = collectionsStore.items.find(
-        (collection) => collection.id === parseInt(<string>route.params.id)
-      );
+  const currentNavItem = computed({
+    get() {
+      const lookup = lookupNav.value[route.path];
+      if (!lookup && _currentNavItem.value) return _currentNavItem.value;
+      if (!lookup) return null;
       return {
-        item: {
-          name: find?.name,
-          icon: find?.avatar
-            ? h(UserAvatar, {
-                username: find.name,
-                src: domain.value + find.avatar,
-                size: 32,
-                style: "margin: 0px 4px 0px 4px"
-              })
-            : markRaw(RiCollageLine),
-          path: route.path,
-          selectedIcon: markRaw(RiCollageFill)
-        },
+        item: lookup,
         rail: [
-          navigation.value.railOptions.find(
-            (rail) => rail.id === RailMode.GALLERY
-          ),
-          ...(route.path.startsWith("/auto-collects/")
-            ? [
-                navigation.value.railOptions.find(
-                  (rail) => rail.id === RailMode.AUTO_COLLECTS
-                )
-              ]
-            : [])
+          navigation.value.railOptions.find((rail) => rail.id === lookup._rail)
         ]
       };
-    } else if (route.path.startsWith("/communications/")) {
-      const find = chatStore.chats.find(
-        (chat) => chat.association?.id === parseInt(<string>route.params.id)
-      );
-      return {
-        item: {
-          name: find ? chatStore.chatName(find) : "Unknown",
-          icon: h(UserAvatar, {
-            username: chatStore.chatName(<Chat>find),
-            userId: find?.recipient?.id,
-            src: find?.recipient ? undefined : functions.avatar(find),
-            size: 32
-          }),
-          path: route.path,
-          selectedIcon: markRaw(RiCollageFill)
-        },
-        rail: [
-          navigation.value.railOptions.find((rail) => rail.id === RailMode.CHAT)
-        ]
-      };
+    },
+    set(val) {
+      _currentNavItem.value = val;
     }
-    const lookup = lookupNav.value[route.path];
-    if (!lookup) return null;
-    return {
-      item: lookup,
-      rail: [
-        navigation.value.railOptions.find((rail) => rail.id === lookup._rail)
-      ]
-    };
   });
 
   // Dialogs
@@ -741,7 +696,6 @@ export const useAppStore = defineStore("app", () => {
   watch(
     () => route.path,
     (val) => {
-      console.log(route);
       if (!val.startsWith("/communications/") || !route.params.id) return;
       chatStore.setChat(parseInt(<string>route.params.id));
     }
@@ -768,6 +722,7 @@ export const useAppStore = defineStore("app", () => {
     upload,
     shifting,
     dev: import.meta.env.DEV,
-    versioning
+    versioning,
+    _currentNavItem
   };
 });

@@ -39,10 +39,18 @@ export const useChatStore = defineStore("chat", () => {
   const { resolveClient } = useApolloClient();
   const client = resolveClient();
   const messagesStore = useMessagesStore();
+  const typers = ref<
+    {
+      chatId: number;
+      userId: number;
+      expires: Date | string;
+      timeout: number;
+    }[]
+  >([]);
 
   function lookupChat(id: number) {
     return (
-      (this.chats.find((chat) => chat.id === id) as Chat) ||
+      (chats.value.find((chat) => chat.id === id) as Chat) ||
       ({
         name: "Unknown Chat"
       } as Chat)
@@ -75,6 +83,14 @@ export const useChatStore = defineStore("chat", () => {
       }
       return chat.name;
     }
+  }
+
+  async function type() {
+    useSocket.chat.emit("typing", selectedChatAssociationId.value);
+  }
+
+  async function cancelType() {
+    useSocket.chat.emit("cancelTyping", selectedChatAssociationId.value);
   }
 
   async function init() {
@@ -167,6 +183,12 @@ export const useChatStore = defineStore("chat", () => {
     }
   );
 
+  const currentTypers = computed(() => {
+    return typers.value.filter(
+      (typer) => typer.chatId === selectedChat.value?.id
+    );
+  });
+
   return {
     chats,
     selectedChatAssociationId,
@@ -181,6 +203,10 @@ export const useChatStore = defineStore("chat", () => {
     readChat,
     setChat,
     lookupChat,
-    unread
+    unread,
+    typers,
+    currentTypers,
+    type,
+    cancelType
   };
 });

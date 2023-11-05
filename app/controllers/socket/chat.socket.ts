@@ -64,7 +64,11 @@ export class ChatSocketController {
 
     const chatService: ChatService = Container.get(ChatService)
 
-    await chatService.typing(data, socket.request.user[this.nsp].id)
+    await chatService.typing(
+      data,
+      socket.request.user[this.nsp].id,
+      socket.handshake.query.version === "5"
+    )
 
     await redis.set(
       `user:${socket.request.user[this.nsp].id}:typing`,
@@ -83,6 +87,10 @@ export class ChatSocketController {
     if (!socket.request.user[this.nsp]) return
     await redis.del(`user:${socket.request.user[this.nsp].id}:typing`)
     const chatService: ChatService = Container.get(ChatService)
-    await chatService.cancelTyping(data, socket.request.user[this.nsp].id)
+    await chatService.cancelTyping(
+      data,
+      socket.request.user[this.nsp].id,
+      socket.handshake.query.version === "5"
+    )
   }
 }
