@@ -35,9 +35,9 @@ const props = defineProps({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .date-separator {
-  margin: 5px 8px 5px 8px;
+  //  margin: 5px 8px 5px 8px;
   display: flex;
   justify-content: center;
 }

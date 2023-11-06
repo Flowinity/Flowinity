@@ -1,54 +1,56 @@
 <template>
-  <card padding class="my-4 mx-4">
-    <tpu-list>
-      <tpu-list-item
-        v-for="item in autoCollects"
-        :key="item.id"
-        @click="$router.push(`/auto-collects/settings/${item.id}`)"
-      >
-        <div class="flex justify-between">
-          <div class="flex items-center gap-2">
-            {{ item.name }}
-            <tpu-button
-              color="medium-emphasis-dark"
-              variant="tonal"
-              :to="`/collections/${item.collectionId}`"
-            >
-              <RiCollageLine style="width: 20px" class="mr-2" />
-              {{
-                collectionsStore.items.find(
-                  (collection) => collection.id === item.collectionId
-                )?.name
-              }}
-            </tpu-button>
-            <tpu-button
-              variant="tonal"
-              :color="item.enabled ? 'green' : 'red'"
-              :no-ripple="true"
-            >
-              <RiCheckLine
-                style="width: 20px"
-                class="mr-2"
-                v-if="item.enabled"
-              />
-              <RiCloseLine style="width: 20px" class="mr-2" v-else />
-              {{ t(item.enabled ? "generic.enabled" : "generic.disabled") }}
-            </tpu-button>
-          </div>
+  <transition name="scroll-y-reverse-transition" appear>
+    <card padding class="my-4 mx-4">
+      <tpu-list>
+        <tpu-list-item
+          v-for="item in autoCollects"
+          :key="item.id"
+          @click="$router.push(`/auto-collects/settings/${item.id}`)"
+        >
+          <div class="flex justify-between">
+            <div class="flex items-center gap-2">
+              {{ item.name }}
+              <tpu-button
+                color="medium-emphasis-dark"
+                variant="tonal"
+                :to="`/collections/${item.collectionId}`"
+              >
+                <RiCollageLine style="width: 20px" class="mr-2" />
+                {{
+                  collectionsStore.items.find(
+                    (collection) => collection.id === item.collectionId
+                  )?.name
+                }}
+              </tpu-button>
+              <tpu-button
+                variant="tonal"
+                :color="item.enabled ? 'green' : 'red'"
+                :no-ripple="true"
+              >
+                <RiCheckLine
+                  style="width: 20px"
+                  class="mr-2"
+                  v-if="item.enabled"
+                />
+                <RiCloseLine style="width: 20px" class="mr-2" v-else />
+                {{ t(item.enabled ? "generic.enabled" : "generic.disabled") }}
+              </tpu-button>
+            </div>
 
-          <div class="flex">
-            <tpu-button
-              variant="passive"
-              :to="`/auto-collects/settings/${item.id}`"
-              icon
-            >
-              <RiArrowRightSLine style="width: 20px" />
-            </tpu-button>
+            <div class="flex">
+              <tpu-button
+                variant="passive"
+                :to="`/auto-collects/settings/${item.id}`"
+                icon
+              >
+                <RiArrowRightSLine style="width: 20px" />
+              </tpu-button>
+            </div>
           </div>
-        </div>
-      </tpu-list-item>
-    </tpu-list>
-  </card>
+        </tpu-list-item>
+      </tpu-list>
+    </card>
+  </transition>
 </template>
 
 <script setup lang="ts">

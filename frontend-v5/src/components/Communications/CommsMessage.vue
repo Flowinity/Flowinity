@@ -44,6 +44,13 @@
               v-memo="[message.content, message.error, message.pending]"
             ></span>
           </div>
+          <div class="flex-col flex">
+            <comms-message-embed
+              v-for="embed in message.embeds"
+              :embed="embed"
+              :key="embed"
+            />
+          </div>
         </div>
         <comms-message-actions
           @reply="$emit('reply', message.id)"
@@ -85,6 +92,7 @@ import CommsMessageActions from "@/components/Communications/CommsMessageActions
 import TpuHover from "@/components/Framework/Hover/TpuHover.vue";
 import { onMounted, onUnmounted, ref } from "vue";
 import MessageReply from "@/components/Communications/MessageReply.vue";
+import CommsMessageEmbed from "@/components/Communications/CommsMessageEmbed.vue";
 
 const hovered = ref(false);
 const friendsStore = useFriendsStore();

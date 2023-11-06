@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex-col flex gap-y-2 flex-1 relative">
     <div v-for="chat in chatStore.chats" :key="chat.id">
       <SideBarItem :to="`/communications/${chat.association?.id}`">
         <template #icon>

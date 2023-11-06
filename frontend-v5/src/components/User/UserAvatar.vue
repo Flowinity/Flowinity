@@ -33,7 +33,7 @@
         <template #outer>
           <div
             v-if="props.status"
-            class="status dark:border-sidebar-dark border-2 fill-black flex items-center justify-center"
+            class="status dark:border-sidebar-dark border-2 fill-black flex items-center justify-center relative"
             :style="{
               backgroundColor:
                 user.status === UserStatus.Idle && !typing
@@ -79,7 +79,11 @@
                 />
               </template>
               <template v-else>
-                <RiMoreFill style="height: 12px" />
+                <div class="inline-flex items-center justify-center">
+                  <div class="dot" style="margin-right: 2px"></div>
+                  <div class="dot" style="margin-right: 2px"></div>
+                  <div class="dot"></div>
+                </div>
               </template>
             </transition>
           </div>
@@ -173,7 +177,6 @@ defineEmits(["setImage"]);
   height: 12px;
   border-radius: 50%;
   z-index: 1;
-  color: #ff6f66;
   transition:
     background-color 0.2s,
     color 0.2s,
@@ -190,5 +193,32 @@ defineEmits(["setImage"]);
   right: -0.3rem;
   top: 0;
   z-index: 100;
+}
+
+.dot {
+  width: 0.2em;
+  height: 0.2em;
+  background: #101113;
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+  opacity: 0;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.375s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.75s;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
 }
 </style>

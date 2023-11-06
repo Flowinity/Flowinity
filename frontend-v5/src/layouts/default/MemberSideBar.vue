@@ -32,11 +32,10 @@ const ranks = computed(() => {
           .selectedChat!.users.filter((user) => {
             return (
               user.ranksMap[0] === rank.id &&
-              (user.userId === userStore.user?.id ||
-                (userStore.users[user.userId]?.status !== UserStatus.Offline &&
-                  userStore.users[user.id]?.status !==
-                    UserStoredStatus.Invisible &&
-                  userStore.users[user.userId]?.status))
+              userStore.users[user.userId]?.status !== UserStatus.Offline &&
+              userStore.users[user.userId]?.status !==
+                UserStoredStatus.Invisible &&
+              userStore.users[user.userId]?.status
             );
           })
           .map((user) => {
@@ -69,8 +68,8 @@ const ranks = computed(() => {
       users: chatStore.selectedChat.users
         .filter((user) => {
           return (
-            userStore.users[user.userId]?.status === UserStatus.Offline &&
-            user.userId !== userStore.user?.id
+            userStore.users[user.userId]?.status === UserStatus.Offline ||
+            userStore.users[user.userId]?.status === UserStoredStatus.Invisible
           );
         })
         .map((user) => {
@@ -106,7 +105,7 @@ const ranks = computed(() => {
           <template v-if="group.users.length">
             <tpu-overline
               position="start"
-              class="select-none"
+              class="select-none ml-2"
               style="padding: 0"
             >
               {{ group.name }} ({{ group.users.length }})

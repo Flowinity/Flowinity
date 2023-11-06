@@ -285,6 +285,47 @@ function autoScroll() {
   });
 }
 
+const embedFails = [] as {
+  data: { chatId: any; id: any; embeds: any };
+  retries: number;
+}[];
+
+function onEmbedResolution(data: { chatId: any; id: any; embeds: any }) {
+  console.log(data);
+  if (data.chatId !== chatStore.selectedChat?.id) return;
+  const messageIndex = messagesStore.messages[
+    chatStore.selectedChat?.association?.id!
+  ].findIndex((m: Message) => m.id === data.id);
+  console.log(messageIndex);
+  if (messageIndex === -1) {
+    let embedFailIndex = embedFails.findIndex((e) => e.data.id === data.id);
+    if (embedFailIndex === -1) {
+      embedFails.push({
+        data,
+        retries: 0
+      });
+      embedFailIndex = embedFails.length - 1;
+    }
+    if (embedFails[embedFailIndex]?.retries > 5) {
+      embedFails.splice(embedFailIndex, 1);
+      return;
+    }
+    setTimeout(() => {
+      onEmbedResolution(data);
+    }, 50);
+    embedFails[embedFailIndex].retries++;
+    return;
+  }
+  messagesStore.messages[chatStore.selectedChat?.association?.id!][
+    messageIndex
+  ].embeds = data.embeds;
+  autoScroll();
+
+  nextTick(() => {
+    autoScroll();
+  });
+}
+
 function onMessage(message: { message: Message; chat: Chat }) {
   if (message.message.id !== chatStore.selectedChat?.id) return;
   autoScroll();
@@ -293,11 +334,13 @@ function onMessage(message: { message: Message; chat: Chat }) {
 onMounted(() => {
   document.addEventListener("keydown", shortcutHandler);
   useSocket.chat.on("message", onMessage);
+  useSocket.chat.on("embedResolution", onEmbedResolution);
 });
 
 onUnmounted(() => {
   document.removeEventListener("keydown", shortcutHandler);
-  useSocket.chat.on("message", onMessage);
+  useSocket.chat.off("message", onMessage);
+  useSocket.chat.off("embedResolution", onEmbedResolution);
 });
 
 watch(
