@@ -14,18 +14,18 @@
     floating
     location="right"
   >
-    <ColubrinaMemberSidebarList></ColubrinaMemberSidebarList>
+    <member-sidebar-list></member-sidebar-list>
   </CoreSidebar>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ColubrinaMemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
+import MemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
 
 export default defineComponent({
   name: "ColubrinaMemberSidebar",
-  components: { CoreSidebar, ColubrinaMemberSidebarList }
+  components: { CoreSidebar, MemberSidebarList }
 });
 </script>
 

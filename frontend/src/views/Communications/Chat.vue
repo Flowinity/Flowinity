@@ -14,7 +14,7 @@
       :temporary="true"
       :touchless="true"
     >
-      <MessageActionsList
+      <message-actions-list
         v-if="$chat.dialogs.message.message"
         @delete="
           $event
@@ -33,10 +33,10 @@
           replyId = $chat.dialogs.message.message?.id;
           $chat.dialogs.message.value = false;
         "
-      ></MessageActionsList>
+      ></message-actions-list>
     </v-navigation-drawer>
     <v-menu v-else v-model="$chat.dialogs.message.value" :style="menuStyle">
-      <MessageActionsList
+      <message-actions-list
         @delete="
           $event
             ? deleteMessage($chat.dialogs.message.message?.id)
@@ -54,7 +54,7 @@
           replyId = $chat.dialogs.message.message?.id;
           $chat.dialogs.message.value = false;
         "
-      ></MessageActionsList>
+      ></message-actions-list>
     </v-menu>
     <WorkspaceDeleteDialog
       v-model="dialogs.delete.value"
@@ -108,7 +108,7 @@
           </v-col>
         </v-row>
       </template>
-      <MessagePerf
+      <message-perf
         class="mr-2 ml-2"
         v-for="(message, index) in $chat.selectedChat?.messages"
         :id="'message-' + index"

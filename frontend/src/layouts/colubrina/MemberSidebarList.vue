@@ -6,7 +6,7 @@
   >
     <v-card>
       <v-list>
-        <v-list-item @click="() => {}">
+        <v-list-item>
           <v-menu
             :close-delay="100"
             :close-on-click="false"
@@ -211,7 +211,7 @@
         v-if="!$chat.search.loading"
         style="height: unset"
       >
-        <MessagePerf
+        <message-perf
           v-for="(message, index) in $chat.search.results.items"
           :id="'message-' + index"
           :key="message.id"
