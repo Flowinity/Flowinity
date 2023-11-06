@@ -1,17 +1,17 @@
 <template>
   <v-card
-    v-if="user"
+    v-if="$chat.dialogs.userMenu.user"
     class="justify-center text-center"
     style="position: relative"
     width="300"
   >
-    <UserBanner :user="user" height="90"></UserBanner>
+    <UserBanner :user="$chat.dialogs.userMenu.user" height="90"></UserBanner>
     <v-card-text class="ml-n2 center" style="position: relative">
       <UserAvatar
         :no-badges="true"
         :outline="true"
         :status="true"
-        :user="user"
+        :user="$chat.dialogs.userMenu.user"
         class="avatar"
         size="100"
       >
@@ -31,19 +31,22 @@
         </template>
       </UserAvatar>
       <h1 class="mt-n8 mb-4" style="font-weight: 500">
-        {{ user.username }}
+        {{ $chat.dialogs.userMenu.user.username }}
       </h1>
-      <UserBadges :user="user" class="justify-center"></UserBadges>
-      <template v-if="user.description">
+      <UserBadges
+        :user="$chat.dialogs.userMenu.user"
+        class="justify-center"
+      ></UserBadges>
+      <template v-if="$chat.dialogs.userMenu.user.description">
         <v-divider class="mt-1 mb-n1"></v-divider>
         <v-card-text class="text-overline">
-          About {{ user.username }}
+          About {{ $chat.dialogs.userMenu.user.username }}
         </v-card-text>
         <v-card-text
           class="text-body-2 mt-n6"
           style="overflow-wrap: break-word; white-space: pre-line"
         >
-          {{ user.description }}
+          {{ $chat.dialogs.userMenu.user.description }}
         </v-card-text>
       </template>
     </v-card-text>
@@ -59,18 +62,6 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 export default defineComponent({
   name: "ColubrinaUserMenu",
   components: { UserAvatar, UserBadges, UserBanner },
-  computed: {
-    user() {
-      if (this.$chat.dialogs.userMenu.user?.id === this.$user.user?.id)
-        return this.$user.user;
-      return (
-        this.$friends.friends.find(
-          (friend) =>
-            friend.user.username === this.$chat.dialogs.userMenu.username
-        )?.user || this.$chat.dialogs.userMenu.user
-      );
-    }
-  },
   methods: {
     expand() {
       this.$chat.dialogs.user.username = this.$chat.dialogs.userMenu.username;

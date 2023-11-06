@@ -32,7 +32,7 @@
 import { defineComponent } from "vue";
 import ColubrinaMemberSidebar from "@/layouts/colubrina/MemberSidebar.vue";
 import User from "@/views/User/User.vue";
-import ColubrinaUserMenu from "@/components/Communications/Menus/User.vue";
+import ColubrinaUserMenu from "@/components/Communications/Menus/UserMenu.vue";
 import ColubrinaImageDialog from "@/components/Communications/Dialogs/Image.vue";
 import ColubrinaGroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettingsV2.vue";
 
