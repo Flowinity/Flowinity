@@ -225,7 +225,7 @@
               @update:modelValue="$emit('editText', $event)"
               style="width: 100%"
             />
-            <MessageActions
+            <message-actions
               :message="message"
               v-if="hovered && !$vuetify.display.mobile"
               @delete="$emit('delete', { message, shifting: $event })"

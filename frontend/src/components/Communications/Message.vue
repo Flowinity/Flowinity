@@ -191,7 +191,7 @@
           @sendMessage="$emit('editMessage', $event)"
           @update:modelValue="$emit('editText', $event)"
         />
-        <MessageActions
+        <message-actions
           v-if="(!search && isHovering) || (!search && avoid)"
           :avoid="avoid"
           :message="message"
@@ -199,7 +199,7 @@
           @delete="$emit('delete', { message, shifting: $event })"
           @edit="$emit('edit', { id: message.id, content: message.content })"
           @reply="$emit('reply', message)"
-        ></MessageActions>
+        ></message-actions>
         <Embed
           v-for="(embed, index) in message.embeds"
           :key="index"

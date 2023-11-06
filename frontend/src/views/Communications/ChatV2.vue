@@ -44,7 +44,7 @@
       :temporary="true"
       :touchless="true"
     >
-      <MessageActionsList
+      <message-actions-list
         v-if="$chat.dialogs.message.message"
         @delete="
           $event
@@ -63,10 +63,10 @@
           replyId = $chat.dialogs.message.message?.id;
           $chat.dialogs.message.value = false;
         "
-      ></MessageActionsList>
+      ></message-actions-list>
     </v-navigation-drawer>
     <v-menu v-else v-model="$chat.dialogs.message.value" :style="menuStyle">
-      <MessageActionsList
+      <message-actions-list
         @delete="
           $event
             ? deleteMessage($chat.dialogs.message.message?.id)
@@ -84,7 +84,7 @@
           replyId = $chat.dialogs.message.message?.id;
           $chat.dialogs.message.value = false;
         "
-      ></MessageActionsList>
+      ></message-actions-list>
     </v-menu>
     <div
       class="messages communications position-relative"
@@ -112,7 +112,7 @@
           <span></span>
         </template>
       </infinite-loading>
-      <MessagePerf
+      <message-perf
         :unread-id="unreadId"
         @update:uncollapse-blocked="uncollapseBlocked = $event"
         :uncollapse-blocked="uncollapseBlocked"
@@ -132,15 +132,7 @@
         :merge="$chat.merge(message, index)"
         :message="message"
         :index="index"
-        @authorClick="
-          $chat.dialogs.userMenu.user = $user.users[$event.userId];
-          $chat.dialogs.userMenu.username =
-            $user.users[$event.userId]?.username;
-          $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
-          $chat.dialogs.userMenu.x = $event.x;
-          $chat.dialogs.userMenu.y = $event.y;
-          $chat.dialogs.userMenu.location = $event.location || 'top';
-        "
+        @authorClick="handleAuthorClick($event, message.user.username)"
         @delete="
           $event.shifting
             ? deleteMessage($event.message.id)
@@ -917,12 +909,21 @@ export default defineComponent({
         this.$chat.readChat();
       }
     },
-    onResize(e: any) {
+    onResize() {
       console.info("[TPU/ChatObserver] Resized");
       this.autoScroll();
       this.$nextTick(() => {
         if (!this.avoidAutoScroll) this.autoScroll();
       });
+    },
+    async handleAuthorClick(event, username) {
+      const user = await this.$user.getUser(username);
+      this.$chat.dialogs.userMenu.user = user;
+      this.$chat.dialogs.userMenu.username = user.username;
+      this.$chat.dialogs.userMenu.bindingElement = event.bindingElement;
+      this.$chat.dialogs.userMenu.x = event.x;
+      this.$chat.dialogs.userMenu.y = event.y;
+      this.$chat.dialogs.userMenu.location = event.location || "top";
     }
   },
   mounted() {

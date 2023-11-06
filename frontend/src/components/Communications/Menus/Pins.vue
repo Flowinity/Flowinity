@@ -29,7 +29,7 @@
           v-if="data.items.length"
           style="flex-direction: column"
         >
-          <MessagePerf
+          <message-perf
             v-for="(message, index) in data.items"
             :id="'message-' + index"
             :key="message.id"
