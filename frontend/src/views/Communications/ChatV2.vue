@@ -473,7 +473,7 @@ export default defineComponent({
             }
           }
         }
-        await this.uploadFiles();
+        this.uploadFiles();
       }
     },
     async uploadHandle(e: FileList) {
@@ -489,7 +489,7 @@ export default defineComponent({
             uploadProgress: 0
           });
         }
-        await this.uploadFiles();
+        this.uploadFiles();
       }
     },
     async dragDropHandler(e: DragEvent) {
@@ -508,7 +508,7 @@ export default defineComponent({
             uploadProgress: 0
           });
         }
-        await this.uploadFiles();
+        this.uploadFiles();
       }
     },
     async uploadFiles() {
@@ -585,7 +585,7 @@ export default defineComponent({
     async jumpToBottom() {
       this.avoidAutoScroll = false;
       if (this.$chat.loadNew) {
-        await this.$chat.setChat(this.$chat.selectedChat?.association.id);
+        this.$chat.setChat(this.$chat.selectedChat?.association.id);
         this.$chat.loadNew = false;
       }
       this.autoScroll();
@@ -829,17 +829,16 @@ export default defineComponent({
         if (this.$chat.selectedChat)
           this.$chat.selectedChat.messages[findMessage] = message.message;
         this.autoScroll();
-        await this.$chat.readChat();
+        this.$chat.readChat();
         return;
       }
       await this.$chat.chats
         .find((c) => c.id === this.$chat.selectedChat?.id)
         ?.messages.unshift(message.message);
       if (document.hasFocus()) {
-        await this.$chat.readChat();
+        this.$chat.readChat();
       } else {
-        if (message.message.userId !== this.$user.user?.id)
-          await this.$chat.sound();
+        if (message.message.userId !== this.$user.user?.id) this.$chat.sound();
       }
       this.autoScroll();
     },
