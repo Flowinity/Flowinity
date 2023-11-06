@@ -133,8 +133,13 @@
         :message="message"
         :index="index"
         @authorClick="
-          $chat.dialogs.user.username = message.user.username;
-          $chat.dialogs.user.value = true;
+          $chat.dialogs.userMenu.user = $user.users[message.user.id];
+          $chat.dialogs.userMenu.username =
+            $user.users[message.user.id].username;
+          $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
+          $chat.dialogs.userMenu.x = $event.x;
+          $chat.dialogs.userMenu.y = $event.y;
+          $chat.dialogs.userMenu.location = $event.location || 'top';
         "
         @delete="
           $event.shifting
