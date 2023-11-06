@@ -132,15 +132,7 @@
         :merge="$chat.merge(message, index)"
         :message="message"
         :index="index"
-        @authorClick="
-          $chat.dialogs.userMenu.user = $user.users[message.user.id];
-          $chat.dialogs.userMenu.username =
-            $user.users[message.user.id].username;
-          $chat.dialogs.userMenu.bindingElement = $event.bindingElement;
-          $chat.dialogs.userMenu.x = $event.x;
-          $chat.dialogs.userMenu.y = $event.y;
-          $chat.dialogs.userMenu.location = $event.location || 'top';
-        "
+        @authorClick="handleAuthorClick($event, message.user.username)"
         @delete="
           $event.shifting
             ? deleteMessage($event.message.id)
@@ -481,7 +473,7 @@ export default defineComponent({
             }
           }
         }
-        this.uploadFiles();
+        await this.uploadFiles();
       }
     },
     async uploadHandle(e: FileList) {
@@ -497,7 +489,7 @@ export default defineComponent({
             uploadProgress: 0
           });
         }
-        this.uploadFiles();
+        await this.uploadFiles();
       }
     },
     async dragDropHandler(e: DragEvent) {
@@ -516,7 +508,7 @@ export default defineComponent({
             uploadProgress: 0
           });
         }
-        this.uploadFiles();
+        await this.uploadFiles();
       }
     },
     async uploadFiles() {
@@ -593,7 +585,7 @@ export default defineComponent({
     async jumpToBottom() {
       this.avoidAutoScroll = false;
       if (this.$chat.loadNew) {
-        this.$chat.setChat(this.$chat.selectedChat?.association.id);
+        await this.$chat.setChat(this.$chat.selectedChat?.association.id);
         this.$chat.loadNew = false;
       }
       this.autoScroll();
@@ -837,16 +829,17 @@ export default defineComponent({
         if (this.$chat.selectedChat)
           this.$chat.selectedChat.messages[findMessage] = message.message;
         this.autoScroll();
-        this.$chat.readChat();
+        await this.$chat.readChat();
         return;
       }
       await this.$chat.chats
         .find((c) => c.id === this.$chat.selectedChat?.id)
         ?.messages.unshift(message.message);
       if (document.hasFocus()) {
-        this.$chat.readChat();
+        await this.$chat.readChat();
       } else {
-        if (message.message.userId !== this.$user.user?.id) this.$chat.sound();
+        if (message.message.userId !== this.$user.user?.id)
+          await this.$chat.sound();
       }
       this.autoScroll();
     },
@@ -917,12 +910,21 @@ export default defineComponent({
         this.$chat.readChat();
       }
     },
-    onResize(e: any) {
+    onResize() {
       console.info("[TPU/ChatObserver] Resized");
       this.autoScroll();
       this.$nextTick(() => {
         if (!this.avoidAutoScroll) this.autoScroll();
       });
+    },
+    async handleAuthorClick(event, username) {
+      const user = await this.$user.getUser(username);
+      this.$chat.dialogs.userMenu.user = user;
+      this.$chat.dialogs.userMenu.username = user.username;
+      this.$chat.dialogs.userMenu.bindingElement = event.bindingElement;
+      this.$chat.dialogs.userMenu.x = event.x;
+      this.$chat.dialogs.userMenu.y = event.y;
+      this.$chat.dialogs.userMenu.location = event.location || "top";
     }
   },
   mounted() {

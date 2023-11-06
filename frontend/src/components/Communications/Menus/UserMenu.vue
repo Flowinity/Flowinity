@@ -63,12 +63,7 @@ export default defineComponent({
     user() {
       if (this.$chat.dialogs.userMenu.user?.id === this.$user.user?.id)
         return this.$user.user;
-      return (
-        this.$friends.friends.find(
-          (friend) =>
-            friend.user.username === this.$chat.dialogs.userMenu.username
-        )?.user || this.$chat.dialogs.userMenu.user
-      );
+      return this.$chat.dialogs.userMenu.user;
     }
   },
   methods: {
