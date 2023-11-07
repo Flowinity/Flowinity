@@ -71,7 +71,7 @@ export default defineComponent({
   components: { UserAvatar },
   props: {
     ranks: {
-      type: Object as () => ChatRank,
+      type: Object as () => ChatRank[],
       required: true
     },
     association: {
