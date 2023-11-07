@@ -1,5 +1,6 @@
 import { Field, ObjectType } from "type-graphql"
 import { Announcement } from "@app/models/announcement.model"
+import { GraphQLJSON } from "graphql-scalars"
 
 @ObjectType()
 export class DataLabelsGraph {
@@ -23,12 +24,18 @@ export class Stats {
   collections: number
   @Field()
   collectionItems: number
-  @Field(() => DataLabelsGraph)
-  uploadGraph: DataLabelsGraph
-  @Field(() => DataLabelsGraph)
-  messageGraph: DataLabelsGraph
-  @Field(() => DataLabelsGraph)
-  pulseGraph: DataLabelsGraph
+  @Field(() => DataLabelsGraph, {
+    nullable: true
+  })
+  uploadGraph: DataLabelsGraph | null
+  @Field(() => DataLabelsGraph, {
+    nullable: true
+  })
+  messageGraph: DataLabelsGraph | null
+  @Field(() => DataLabelsGraph, {
+    nullable: true
+  })
+  pulseGraph: DataLabelsGraph | null
   @Field()
   uploads: number
   @Field()
@@ -37,11 +44,10 @@ export class Stats {
   pulses: number
   @Field()
   docs: number
-  //TODO
-  /*@Field(() => [String], {
+  @Field(() => GraphQLJSON, {
     nullable: true
   })
-  hours: Record<string, number>*/
+  hours: Record<string, number> | null
 }
 
 @ObjectType()
@@ -58,10 +64,6 @@ export class CoreStats extends Stats {
   messages: number
   @Field()
   chats: number
-  @Field(() => [String], {
-    nullable: true
-  })
-  hours: string[]
 }
 
 @ObjectType()

@@ -102,7 +102,9 @@ export default defineComponent({
   },
   computed: {
     collectionImage(): string {
-      if (this.item?.image) {
+      if (this.item?.banner) {
+        return this.$app.domain + this.item.banner;
+      } else if (this.item?.image) {
         return this.$app.domain + this.item.image;
       } else if (this.item?.preview?.attachment) {
         return this.$app.domain + this.item.preview.attachment.attachment;

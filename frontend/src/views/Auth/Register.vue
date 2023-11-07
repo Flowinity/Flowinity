@@ -102,10 +102,11 @@
           class="text-center"
         >
           <p class="text-center text-gradient mb-n5" style="font-size: 64px">
-            TPU
+            {{ $app.site?.name || "PrivateUploader" }}
           </p>
           <v-card-text>
-            TPU is currently not accepting registrations.
+            {{ $app.site?.name || "PrivateUploader" }} is not currently
+            accepting registrations.
             <br />
             If you'd like to join, you need to be invited by a current member.
           </v-card-text>

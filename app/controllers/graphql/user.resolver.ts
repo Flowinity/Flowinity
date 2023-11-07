@@ -54,6 +54,7 @@ import RateLimit from "@app/lib/graphql/RateLimit"
 import { SessionInput } from "@app/classes/graphql/user/sessionsInput"
 import { SessionType } from "@app/classes/graphql/user/sessions"
 import { UserStoredStatus } from "@app/classes/graphql/user/status"
+import { Collection } from "@app/models/collection.model"
 
 @Resolver(User)
 @Service()
@@ -109,6 +110,9 @@ export class UserResolver extends createBaseResolver("User", User) {
     ) {
       throw new GqlError("BLOCKED")
     }
+    ctx.meta.friends = ctx.user
+      ? await this.userUtilsService.getFriendStatus(ctx.user.id, user.id, true)
+      : FriendStatus.NONE
     return user
   }
 
@@ -431,7 +435,17 @@ function createBaseResolver<T extends ClassType>(
 
     @FieldResolver(() => Stats || null)
     async stats(@Root() user: User, @Ctx() ctx: Context) {
-      return await redis.json.get(`userStats:${user.id}`)
+      const data = (await redis.json.get(`userStats:${user.id}`)) as Stats
+      if (
+        ctx.meta.friends !== FriendStatus.ACCEPTED &&
+        ctx.user?.id !== user.id
+      ) {
+        data.uploadGraph = null
+        data.hours = null
+        data.messageGraph = null
+        data.pulseGraph = null
+      }
+      return data
     }
 
     @FieldResolver(() => [Friend])
@@ -451,6 +465,15 @@ function createBaseResolver<T extends ClassType>(
           status: "accepted"
         }
       })
+    }
+
+    @FieldResolver(() => [Collection])
+    async mutualCollections(@Root() user: User, @Ctx() ctx: Context) {
+      if (!ctx.user) return []
+      return await this.userUtilsService.getMutualCollections(
+        ctx.user.id,
+        user.id
+      )
     }
 
     @FieldResolver(() => FriendStatus)

@@ -110,6 +110,7 @@ export const ProfileQuery = gql`
       publicProfile
       quota
       stats {
+        hours
         usage
         collections
         collectionItems
@@ -131,6 +132,15 @@ export const ProfileQuery = gql`
         docs
       }
       xp
+      mutualCollections {
+        id
+        shareLink
+        avatar
+        itemCount
+        image
+        name
+        banner
+      }
     }
   }
 `;

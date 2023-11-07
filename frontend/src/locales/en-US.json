@@ -27,7 +27,7 @@
       "android": "Get the app",
       "discord": "Join the Discord",
       "backToComms": "Back to Communications",
-      "backToTPU": "Back to TPU",
+      "backToTPU": "Back to PrivateUploader",
       "communicationsPublic": "Join the Chat"
     },
     "privacy": {
@@ -54,7 +54,7 @@
     "stats": "Stats",
     "uploadStats": "Upload Stats",
     "messageStats": "Messages Stats",
-    "hourStats": "Time spent on TPU"
+    "hourStats": "Hours Used"
   },
   "errors": {
     "notFound": "The page you are looking for does not exist."
@@ -193,14 +193,14 @@
         "2": "Download and install Flameshot or another supported screenshot tool.",
         "3": "Download the ShareNix configuration file.",
         "4": "Move the downloaded config to ~/.sharenix.json, example:",
-        "5": "Run <code>sharenix {file}</code> or <code>sharenix-section</code> (for a screenshot) to upload a file to TPU."
+        "5": "Run <code>sharenix {file}</code> or <code>sharenix-section</code> (for a screenshot) to upload a file to PrivateUploader."
       },
       "automate": "How to install the Automate config for Android:",
       "automateSteps": {
         "1": "Download the Automate app from the Google Play Store <a href=\"https://play.google.com/store/apps/details?id=com.llamalab.automate\">here.</a>",
-        "2": "Download the Automate .flo config from TPU.",
+        "2": "Download the Automate .flo config from PrivateUploader.",
         "3": "From the 3 dots on the top right hand corner, press the \"Import\" button and import the .flo file using the file manager.",
-        "4": "Select the imported TPU flow, and hit the \"Edit\" icon floating action button, and then the graph icon.",
+        "4": "Select the imported PrivateUploader flow, and hit the \"Edit\" icon floating action button, and then the graph icon.",
         "5": "Modify the 3 top block variables collectionId, apiKey, path to your liking, collectionId may be null, this will send an additional network request to add any uploads to a collection from your device.",
         "6": "Start the flow, and enable the option to start flows at system boot in the app settings if you'd like.",
         "7": "Android 12 or lower is recommended. Android 13 may display a notification when an item has been newly copied to the clipboard, you may want to disable the auto clipboard copy block in this case."
@@ -208,11 +208,11 @@
       "shortcuts": "How to install the Shortcuts config for Apple iOS:",
       "shortcutsSteps": {
         "1": "Install the configuration file via iCloud.",
-        "2": "Follow setup screen and provide your TPU API key of choice.",
+        "2": "Follow setup screen and provide your PrivateUploader API key of choice.",
         "3": "Enable the ability to use the accessibility button for quick screenshots in Accessibility -> Touch -> Back Tap -> [Select either Double Tap or Triple Tap] -> Scroll down to \"SHORTCUTS\" -> Select TPU."
       },
       "mobile": {
-        "title": "TPU Mobile Options"
+        "title": "PrivateUploader Mobile Options"
       },
       "actions": {
         "apiKey": "Copy API Key",
@@ -257,7 +257,7 @@
       "crash": "Crash TPU (dev)",
       "expEnable": "Enable all experiments",
       "expDisable": "Disable all experiments",
-      "uptime": "Uptime (TPU): {uptime}",
+      "uptime": "Uptime (PrivateUploader): {uptime}",
       "sysUptime": "Uptime (System): {uptime}"
     },
     "domains": {
@@ -316,7 +316,7 @@
   },
   "setup": {
     "step0": {
-      "description": "Welcome to your new TPU instance! The open file sharing and social suite.",
+      "description": "Welcome to your new PrivateUploader instance! The open file sharing and social suite.",
       "subtitle": "This wizard will guide you through the initial setup process such as setting up the database, and registering an account."
     },
     "step1": {
@@ -351,14 +351,14 @@
       "redisHostname": "Redis Hostname",
       "redisPort": "Redis Port",
       "redisDatabase": "Redis Database",
-      "redisHint": "If you are using Docker, the Redis hostname will likely be \"redis\". Redis is used for caching, this is an integral part of TPU, and it will not function without it."
+      "redisHint": "If you are using Docker, the Redis hostname will likely be \"redis\". Redis is used for caching, this is an integral part of PrivateUploader, and it will not function without it."
     },
     "step4": {
       "title": "Features",
-      "subtitle": "Please select the features you'd like to enable on your TPU instance.\nThe core features like Gallery are always enabled.",
+      "subtitle": "Please select the features you'd like to enable on your PrivateUploader instance.\nThe core features like Gallery are always enabled.",
       "autoCollects": {
         "title": "AutoCollects",
-        "description": "Automatically add uploaded items by rules into TPU Collections."
+        "description": "Automatically add uploaded items by rules into PrivateUploader Collections."
       },
       "collections": {
         "title": "Collections",
@@ -366,15 +366,15 @@
       },
       "communications": {
         "title": "Communications",
-        "description": "A chatting platform built right into TPU."
+        "description": "A chatting platform built right into PrivateUploader."
       },
       "insights": {
         "title": "Insights",
-        "description": "Get weekly, monthly, yearly, and an evolving report about how each user uses their TPU account."
+        "description": "Get weekly, monthly, yearly, and an evolving report about how each user uses their PrivateUploader account."
       },
       "workspaces": {
         "title": "Workspaces",
-        "description": "Allow users to create documents inside of TPU."
+        "description": "Allow users to create documents inside of PrivateUploader."
       }
     },
     "step5": {
@@ -396,16 +396,16 @@
       "testEmail": "Email address to send test email to"
     },
     "step7": {
-      "title": "Welcome to TPU!",
-      "subtitle": "Before continuing, TPU Server needs to be restarted, only 2 restarts should be necessary for the entire setup process.",
-      "restart": "Restart TPU Server"
+      "title": "Welcome to PrivateUploader!",
+      "subtitle": "Before continuing, PrivateUploader Server needs to be restarted, only 2 restarts should be necessary for the entire setup process.",
+      "restart": "Restart PrivateUploader Server"
     },
     "step8": {
-      "title": "TPU Server is restarting... You will be redirected to the next step automatically."
+      "title": "PrivateUploader Server is restarting... You will be redirected to the next step automatically."
     },
     "step9": {
       "title": "Setup Default Domain",
-      "subtitle": "TPU is designed to have an origin domain, this is used to manage TPU itself, and secondary domains which can be configured by the user, which is returned by the APIs for file uploads, this would usually be behind CloudFront, Cloudflare, or another CDN proxy.",
+      "subtitle": "PrivateUploader is designed to have an origin domain, this is used to manage PrivateUploader itself, and secondary domains which can be configured by the user, which is returned by the APIs for file uploads, this would usually be behind CloudFront, Cloudflare, or another CDN proxy.",
       "domain": "Domain (please only base domain, no HTTPS)",
       "example": "i.privateuploader.com"
     }
@@ -561,7 +561,7 @@
         "subtitle": "This reporting period you uploaded the most at {hour}!"
       },
       "usage": {
-        "subtitle": "See when you used TPU!",
+        "subtitle": "See when you used PrivateUploader!",
         "title": "Website usage",
         "chartTitle": "Hours"
       },
@@ -572,7 +572,7 @@
       },
       "platform": {
         "title": "Platform usage",
-        "subtitle": "See what platforms you used TPU on!",
+        "subtitle": "See what platforms you used PrivateUploader on!",
         "chartTitle": "Hours"
       },
       "uploadsPerMonth": {
@@ -591,7 +591,7 @@
       },
       "topChats": {
         "title": "Top chats",
-        "subtitle": "See who you talk to in TPU Communications!"
+        "subtitle": "See who you talk to in PrivateUploader Communications!"
       },
       "autoCollects": {
         "title": "AutoCollects per hour",
@@ -603,7 +603,7 @@
       },
       "features": {
         "title": "Feature usage",
-        "subtitle": "Explore what TPU features you use the most!"
+        "subtitle": "Explore what PrivateUploader features you use the most!"
       }
     },
     "noData": "There is no data for last {type}. Please check back later.",
@@ -621,7 +621,7 @@
       "titleZIP": "Download folder as ZIP",
       "conversionHint": "Please ensure the resulting file meets your expectations as it will be converted.",
       "types": {
-        "tpudoc": "TPU Document File",
+        "tpudoc": "PrivateUploader Document File",
         "docx": "DOCX",
         "odt": "LibreOffice ODT",
         "html": "HTML"
@@ -630,7 +630,7 @@
     "import": {
       "title": "Import document",
       "name": "Name",
-      "file": "TPU Document (.TPUDOC or .HTML)",
+      "file": "PrivateUploader Document (.TPUDOC or .HTML)",
       "import": "Import"
     }
   },
@@ -665,7 +665,7 @@
     "tip": "Tip:",
     "tipText": "Open with:",
     "compatibilityWarning": "The AMOLED theme is not recommended for use on themes that do not have a black background.",
-    "gold": "You need TPU Gold.",
+    "gold": "You need PrivateUploader Gold.",
     "colors": {
       "primary": "Accent Color",
       "logo1": "Logo Gradient 1",

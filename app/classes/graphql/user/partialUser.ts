@@ -11,6 +11,7 @@ import { UserInsights } from "@app/classes/graphql/user/insights"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { FriendNickname } from "@app/models/friendNickname"
+import { Collection } from "@app/models/collection.model"
 
 @ObjectType()
 export class PartialUserBase {
@@ -108,6 +109,8 @@ export class PartialUserPublic {
     nullable: true
   })
   xp: number
+  @Field(() => [Collection])
+  mutualCollections: Collection[]
 }
 
 export const partialUserPublic = [

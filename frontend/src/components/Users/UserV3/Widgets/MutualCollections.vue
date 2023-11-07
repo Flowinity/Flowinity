@@ -3,9 +3,9 @@
   <v-card-text class="subtitle-1 mt-n6">
     <v-slide-group>
       <CollectionCard
-        v-for="collection in user.collections"
+        v-for="collection in user.mutualCollections"
         :key="collection.id"
-        :item="$collections.items.find((item) => item.id === collection.id)"
+        :item="collection"
         class="mr-4"
         style="width: 400px"
       ></CollectionCard>

@@ -1140,7 +1140,12 @@ export class UserUtilsService {
               name: collection.name,
               image: collection.image,
               preview: collection.preview?.attachment?.attachment,
-              items: collection.items
+              items: collection.items,
+              banner:
+                collection.banner ||
+                collection.image ||
+                collection.preview?.attachment?.attachment,
+              avatar: collection.avatar
             }
           }) || []
       )
@@ -1153,7 +1158,7 @@ export class UserUtilsService {
     userId: number,
     otherUserId: number,
     gql: boolean = false
-  ): Promise<string | false> {
+  ): Promise<string | FriendStatus | false> {
     const friend = await Friend.findOne({
       where: {
         userId,

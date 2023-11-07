@@ -42,7 +42,7 @@
     "stats": "Stats",
     "uploadStats": "Upload Stats",
     "messageStats": "Messages Stats",
-    "hourStats": "Time spent on TPU"
+    "hourStats": "Hours Used"
   },
   "errors": {
     "notFound": "The page you are looking for does not exist."

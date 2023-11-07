@@ -136,7 +136,7 @@ import Crash from "@/components/Core/CrashAlt.vue";
 import { Component } from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 import SocialLinks from "@/components/Users/UserV3/Widgets/SocialLinks.vue";
-import { ProfileLayoutComponent, User } from "@/gql/graphql";
+import { FriendStatus, ProfileLayoutComponent, User } from "@/gql/graphql";
 
 export default defineComponent({
   name: "UserV3ComponentHandler",
@@ -211,7 +211,7 @@ export default defineComponent({
       if (component.name !== name) return false;
       if (
         component.props?.friendsOnly &&
-        this.user?.friend !== "accepted" &&
+        this.user?.friend !== FriendStatus.Accepted &&
         this.user?.id !== this.$user.user?.id
       )
         return false;
@@ -224,7 +224,7 @@ export default defineComponent({
       if (
         (component.props?.mutualCollections ||
           component.name === "mutual-collections") &&
-        !this.user?.collections?.length
+        !this.user?.mutualCollections?.length
       )
         return false;
       return true;
