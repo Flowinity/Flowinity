@@ -1,10 +1,10 @@
 <template>
   <v-dialog v-model="$chat.dialogs.user.value" max-width="800px">
     <v-card>
-      <User
+      <user
         :key="$chat.dialogs.user.username"
         :username="$chat.dialogs.user.username"
-      ></User>
+      ></user>
     </v-card>
   </v-dialog>
   <v-menu
@@ -14,36 +14,32 @@
     location="top"
     style="z-index: 2001"
   >
-    <ColubrinaUserMenu></ColubrinaUserMenu>
+    <user-menu></user-menu>
   </v-menu>
-  <ColubrinaImageDialog
-    v-model="$chat.dialogs.image.value"
-  ></ColubrinaImageDialog>
-  <ColubrinaGroupSettingsDialog
+  <image-dialog v-model="$chat.dialogs.image.value"></image-dialog>
+  <group-settings-dialog
     v-model="$chat.dialogs.groupSettings.value"
-  ></ColubrinaGroupSettingsDialog>
+  ></group-settings-dialog>
   <router-view></router-view>
-  <ColubrinaMemberSidebar
-    v-if="!$vuetify.display.mobile"
-  ></ColubrinaMemberSidebar>
+  <member-sidebar v-if="!$vuetify.display.mobile"></member-sidebar>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ColubrinaMemberSidebar from "@/layouts/colubrina/MemberSidebar.vue";
+import MemberSidebar from "@/layouts/colubrina/MemberSidebar.vue";
 import User from "@/views/User/User.vue";
-import ColubrinaUserMenu from "@/components/Communications/Menus/UserMenu.vue";
-import ColubrinaImageDialog from "@/components/Communications/Dialogs/Image.vue";
-import ColubrinaGroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettingsV2.vue";
+import UserMenu from "@/components/Communications/Menus/UserMenu.vue";
+import ImageDialog from "@/components/Communications/Dialogs/Image.vue";
+import GroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettingsV2.vue";
 
 export default defineComponent({
   name: "Colubrina",
   components: {
-    ColubrinaGroupSettingsDialog,
-    ColubrinaImageDialog,
-    ColubrinaUserMenu,
-    User,
-    ColubrinaMemberSidebar
+    GroupSettingsDialog,
+    ImageDialog,
+    MemberSidebar,
+    UserMenu,
+    User
   },
   computed: {
     menuStyle() {

@@ -1,6 +1,5 @@
 <template>
   <v-card
-    v-if="user"
     class="justify-center text-center"
     style="position: relative"
     width="300"
@@ -57,18 +56,16 @@ import UserBadges from "@/components/Users/UserBadges.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
-  name: "ColubrinaUserMenu",
   components: { UserAvatar, UserBadges, UserBanner },
   computed: {
     user() {
-      if (this.$chat.dialogs.userMenu.user?.id === this.$user.user?.id)
-        return this.$user.user;
       return this.$chat.dialogs.userMenu.user;
     }
   },
   methods: {
     expand() {
-      this.$chat.dialogs.user.username = this.$chat.dialogs.userMenu.username;
+      this.$chat.dialogs.user.username =
+        this.$chat.dialogs.userMenu.user.username;
       this.$chat.dialogs.user.value = true;
       this.$chat.dialogs.userMenu.value = false;
     }
