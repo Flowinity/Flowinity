@@ -31,5 +31,3 @@ import RiPushpinLine from "vue-remix-icons/icons/ri-pushpin-line.vue";
 
 defineEmits(["reply"]);
 </script>
-
-<style scoped></style>

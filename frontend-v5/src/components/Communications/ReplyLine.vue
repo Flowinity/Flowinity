@@ -14,13 +14,3 @@
     />
   </svg>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "ReplyLine"
-});
-</script>
-
-<style scoped></style>

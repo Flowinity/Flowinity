@@ -26,11 +26,9 @@
 import type { Message } from "@/gql/graphql";
 import { useUserStore } from "@/stores/user.store";
 import { computed } from "vue";
-import { useAppStore } from "@/stores/app.store";
 import { useChatStore } from "@/stores/chat.store";
 import UserAvatar from "@/components/User/UserAvatar.vue";
 
-const appStore = useAppStore();
 const userStore = useUserStore();
 const chatStore = useChatStore();
 const props = defineProps({

@@ -67,7 +67,7 @@
           :class="{ 'read-receipt-avatars': message.readReceipts.length > 3 }"
         >
           <user-avatar
-            v-for="(readReceipt, index) in message.readReceipts"
+            v-for="readReceipt in message.readReceipts"
             :user-id="readReceipt.userId || 0"
             :key="readReceipt.id"
             :class="{ 'ml-1': message.readReceipts.length <= 3 }"
@@ -84,13 +84,11 @@
 <script setup lang="ts">
 import type { Message } from "@/gql/graphql";
 import UserAvatar from "@/components/User/UserAvatar.vue";
-import ReplyLine from "@/components/Communications/ReplyLine.vue";
 import { useUserStore } from "@/stores/user.store";
 import { useFriendsStore } from "@/stores/friends.store";
 import dayjs from "../../plugins/dayjs";
 import CommsMessageActions from "@/components/Communications/CommsMessageActions.vue";
-import TpuHover from "@/components/Framework/Hover/TpuHover.vue";
-import { onMounted, onUnmounted, ref } from "vue";
+import { ref } from "vue";
 import MessageReply from "@/components/Communications/MessageReply.vue";
 import CommsMessageEmbed from "@/components/Communications/CommsMessageEmbed.vue";
 
