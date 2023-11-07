@@ -924,7 +924,7 @@ export default defineComponent({
         this.$chat.dialogs.userMenu.y = event.y;
         this.$chat.dialogs.userMenu.location = event.location || "top";
         this.$chat.dialogs.userMenu.value = true;
-      } else console.log(this.$chat.dialogs.userMenu.value);
+      }
     }
   },
   mounted() {
