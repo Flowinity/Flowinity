@@ -4,9 +4,24 @@
     style="position: relative"
     width="300"
   >
-    <UserBanner :user="user" height="90"></UserBanner>
-    <v-card-text class="ml-n2 center" style="position: relative">
-      <UserAvatar
+    <UserBanner :user="user" height="90">
+      <template v-slot:default="{ hovering }">
+        <div style="cursor: pointer" @click="expand">
+          <v-overlay
+            :model-value="hovering"
+            :contained="true"
+            :persistent="true"
+            @click="expand"
+            class="align-center justify-center"
+            content-class="force-bg"
+          >
+            <v-icon size="large" class="mb-6">mdi-arrow-expand-all</v-icon>
+          </v-overlay>
+        </div>
+      </template>
+    </UserBanner>
+    <v-card-text style="position: relative">
+      <user-avatar
         :no-badges="true"
         :outline="true"
         :status="true"
@@ -28,23 +43,57 @@
             </v-overlay>
           </div>
         </template>
-      </UserAvatar>
-      <h1 class="mt-n8 mb-4" style="font-weight: 500">
+      </user-avatar>
+      <h1 class="mt-n9 mb-4" style="font-weight: 500">
         {{ user.username }}
       </h1>
-      <UserBadges :user="user" class="justify-center"></UserBadges>
+
+      <v-slide-group>
+        <v-slide-group-item>
+          <user-badges :user="user" class="justify-center"></user-badges>
+        </v-slide-group-item>
+      </v-slide-group>
       <template v-if="user.description">
-        <v-divider class="mt-1 mb-n1"></v-divider>
-        <v-card-text class="text-overline">
-          About {{ user.username }}
-        </v-card-text>
-        <v-card-text
-          class="text-body-2 mt-n6"
-          style="overflow-wrap: break-word; white-space: pre-line"
-        >
+        <overline>About {{ user.username }}</overline>
+        <p style="overflow-wrap: break-word; white-space: pre-line">
           {{ user.description }}
-        </v-card-text>
+        </p>
       </template>
+      <overline>Ranks in {{ $chat.selectedChat?.name }}</overline>
+      <div class="flex" v-if="$chat.selectedChat && association">
+        <add-role
+          :ranks="$chat.selectedChat.ranks"
+          :association="association"
+          size="small"
+          :chat="$chat.selectedChat"
+          :current-association-id="$chat.selectedChat.association.id"
+        ></add-role>
+        <v-chip
+          v-for="rank in association?.ranks"
+          :key="rank.id"
+          :color="rank.color"
+          class="ml-1 my-1"
+          size="small"
+        >
+          {{ rank.name }}
+          <v-icon
+            class="pointer ml-1"
+            @click="
+              $chat.toggleUserRank(
+                association.id,
+                $chat.selectedChat.association.id,
+                rank.id
+              )
+            "
+            size="20"
+            v-if="
+              !rank.managed && $chat.canEditRank(rank.index, $chat.selectedChat)
+            "
+          >
+            mdi-close
+          </v-icon>
+        </v-chip>
+      </div>
     </v-card-text>
   </v-card>
 </template>
@@ -54,12 +103,26 @@ import { defineComponent } from "vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import AddRole from "@/components/Communications/Menus/AddRole.vue";
+import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
-  components: { UserAvatar, UserBadges, UserBanner },
+  components: { Overline, AddRole, UserAvatar, UserBadges, UserBanner },
   computed: {
     user() {
       return this.$chat.dialogs.userMenu.user;
+    },
+    association() {
+      const assoc = this.$chat.selectedChat?.users.find(
+        (user) => user.userId === this.user.id
+      );
+      if (assoc)
+        assoc.ranks = assoc?.ranksMap.map((rank) => {
+          return this.$chat.selectedChat.ranks.find((r) => {
+            return r.id === rank;
+          });
+        });
+      return assoc;
     }
   },
   methods: {

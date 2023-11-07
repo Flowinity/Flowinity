@@ -53,7 +53,7 @@ export class DefaultThemes {
       },
       amoled: {
         colors: {
-          surface: "#212121",
+          surface: "#000000",
           "surface-bright": "#ccbfd6",
           "surface-variant": "#a3a3a3",
           "on-surface-variant": "#424242",
@@ -81,7 +81,7 @@ export class DefaultThemes {
       },
       light: {
         colors: {
-          surface: "#212121",
+          surface: "#ffffff",
           "surface-bright": "#ccbfd6",
           "surface-variant": "#e4e4e4",
           "on-surface-variant": "#d8d8d8",

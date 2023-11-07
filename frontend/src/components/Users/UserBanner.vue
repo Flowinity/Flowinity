@@ -59,7 +59,7 @@
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
       </transition>
-      <slot></slot>
+      <slot :hovering="isHovering"></slot>
     </v-img>
   </v-hover>
 </template>

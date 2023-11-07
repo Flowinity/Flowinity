@@ -24,9 +24,9 @@
       v-if="!user.plan?.internalName.includes('FREE')"
       v-ripple
       :color="primaryColor || user.plan?.color"
-      :icon="user.plan?.icon"
+      :short-text="user.plan?.name"
       :small="true"
-      :text="'TPU ' + user.plan?.name"
+      :text="'PrivateUploader ' + user.plan?.name"
       class="user-badge"
       text-color="black"
     ></HoverChip>

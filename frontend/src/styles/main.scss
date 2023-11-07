@@ -283,7 +283,7 @@ p:has(.emoji-large) img {
 }
 
 .v-theme--light .v-progress-linear {
-  color: black;
+  color: black !important
 }
 
 .highlighted {

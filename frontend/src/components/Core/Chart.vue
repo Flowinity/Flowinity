@@ -200,3 +200,9 @@ export default defineComponent({
   }
 });
 </script>
+
+<style>
+.apexcharts-svg {
+  background: transparent !important;
+}
+</style>

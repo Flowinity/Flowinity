@@ -6,7 +6,7 @@
     style="z-index: 4001"
   >
     <template v-slot:activator="{ props }">
-      <v-chip class="ml-2 my-1" v-bind="props">
+      <v-chip class="ml-2 my-1" v-bind="props" :size="size">
         <v-icon>mdi-plus</v-icon>
       </v-chip>
     </template>
@@ -30,7 +30,8 @@
           :value="rank.id"
           :key="rank.id"
           :disabled="
-            rank.managed || !$chat.canEditRank(rank.index, $chat.editingChat)
+            rank.managed ||
+            !$chat.canEditRank(rank.index, chat || $chat.editingChat)
           "
           @click="
             $chat.toggleUserRank(association.id, currentAssociationId, rank.id)
@@ -62,7 +63,7 @@
 import { Friend } from "@/models/friend";
 import { defineComponent } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import { ChatAssociation, ChatRank } from "@/gql/graphql";
+import { Chat, ChatAssociation, ChatRank } from "@/gql/graphql";
 import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
 
 export default defineComponent({
@@ -80,6 +81,12 @@ export default defineComponent({
     currentAssociationId: {
       type: Number,
       required: true
+    },
+    size: {
+      type: String
+    },
+    chat: {
+      type: Object as () => Chat
     }
   },
   emits: ["add"],

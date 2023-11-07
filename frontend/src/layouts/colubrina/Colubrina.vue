@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="$chat.dialogs.user.value" max-width="800px">
+  <v-dialog v-model="$chat.dialogs.user.value" style="max-width: 75vw">
     <v-card>
       <user
         :key="$chat.dialogs.user.username"
