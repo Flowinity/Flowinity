@@ -1,5 +1,5 @@
 <template>
-  <CoreSidebar
+  <core-sidebar
     name="chat-members"
     v-model="$chat.memberSidebarShown"
     :class="
@@ -15,7 +15,7 @@
     location="right"
   >
     <member-sidebar-list></member-sidebar-list>
-  </CoreSidebar>
+  </core-sidebar>
 </template>
 
 <script lang="ts">
@@ -24,7 +24,6 @@ import MemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
 
 export default defineComponent({
-  name: "ColubrinaMemberSidebar",
   components: { CoreSidebar, MemberSidebarList }
 });
 </script>

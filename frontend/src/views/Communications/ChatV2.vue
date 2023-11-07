@@ -114,8 +114,8 @@
       </infinite-loading>
       <message-perf
         :unread-id="unreadId"
-        @update:uncollapse-blocked="uncollapseBlocked = $event"
-        :uncollapse-blocked="uncollapseBlocked"
+        @update:uncollapse-blocked="expandBlocked = $event"
+        :uncollapse-blocked="expandBlocked"
         class="mr-2 ml-2"
         v-for="(message, index) in $chat.selectedChat?.messages"
         :id="'message-id-' + message.id"
@@ -290,7 +290,7 @@ import UserCard from "@/components/Users/UserCard.vue";
 import InfiniteLoading from "@/components/Scroll/InfiniteScroll.vue";
 import "v3-infinite-loading/lib/style.css";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
-import { ScrollPosition, Message, Chat } from "@/gql/graphql";
+import { Chat, Message, ScrollPosition } from "@/gql/graphql";
 import ChatDevOptions from "@/components/Dev/Dialogs/ChatDevOptionsDialog.vue";
 
 export default defineComponent({
@@ -314,7 +314,7 @@ export default defineComponent({
     return {
       resizeObserver: null as ResizeObserver | null,
       unreadId: 0,
-      uncollapseBlocked: false,
+      expandBlocked: false,
       setup: false,
       messageObserver: undefined as IntersectionObserver | undefined,
       messageBottomObserver: undefined as IntersectionObserver | undefined,
@@ -917,13 +917,14 @@ export default defineComponent({
       });
     },
     async handleAuthorClick(event, username) {
-      const user = await this.$user.getUser(username);
-      this.$chat.dialogs.userMenu.user = user;
-      this.$chat.dialogs.userMenu.username = user.username;
-      this.$chat.dialogs.userMenu.bindingElement = event.bindingElement;
-      this.$chat.dialogs.userMenu.x = event.x;
-      this.$chat.dialogs.userMenu.y = event.y;
-      this.$chat.dialogs.userMenu.location = event.location || "top";
+      if (this.$chat.dialogs.userMenu.value === false) {
+        this.$chat.dialogs.userMenu.user = await this.$user.getUser(username);
+        this.$chat.dialogs.userMenu.bindingElement = event.bindingElement;
+        this.$chat.dialogs.userMenu.x = event.x;
+        this.$chat.dialogs.userMenu.y = event.y;
+        this.$chat.dialogs.userMenu.location = event.location || "top";
+        this.$chat.dialogs.userMenu.value = true;
+      } else console.log(this.$chat.dialogs.userMenu.value);
     }
   },
   mounted() {
