@@ -15,7 +15,7 @@ import ReplyLine from "@/components/Communications/ReplyLine.vue";
 import UserAvatar from "@/components/User/UserAvatar.vue";
 import { Message } from "@/gql/graphql";
 
-const props = defineProps({
+defineProps({
   reply: {
     type: Object as () => Message
   },
@@ -25,5 +25,3 @@ const props = defineProps({
   }
 });
 </script>
-
-<style scoped></style>

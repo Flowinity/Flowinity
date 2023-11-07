@@ -16,11 +16,9 @@ import TextField from "@/components/Framework/Input/TextField.vue";
 import { ref } from "vue";
 
 const input = ref<InstanceType<typeof TextField> | null>(null);
-const props = defineProps({
+defineProps({
   modelValue: String
 });
 defineEmits(["update:modelValue"]);
 defineExpose({ input });
 </script>
-
-<style scoped></style>

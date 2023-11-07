@@ -16,7 +16,7 @@
 import { Embed } from "@/gql/graphql";
 import { computed } from "vue";
 
-const props = defineProps({
+defineProps({
   embed: {
     type: Object as () => Embed
   }
@@ -26,5 +26,3 @@ const width = computed(() => {
   return 700;
 });
 </script>
-
-<style scoped></style>
