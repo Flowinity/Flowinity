@@ -1,9 +1,8 @@
 const TestSequencer = require("@jest/test-sequencer").default
 
 class CustomSequencer extends TestSequencer {
-  // @ts-ignore
   sort(tests) {
-    return tests.sort((a: any, b: any) => {
+    return tests.sort((a, b) => {
       const categoryOrder = ["auth", "user", "gallery"]
 
       const categoryA = categoryOrder.find((category) =>

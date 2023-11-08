@@ -23,7 +23,7 @@ export async function init() {
   await db.query("CREATE DATABASE `upload_test`")
   await db.query("USE `upload_test`")
   try {
-    console.log("DB ok")
+    console.log("DB OK")
     // try using system sequelize-cli first, only thing that works in Docker too
     await execSync("NODE_ENV=test sequelize db:migrate", {
       cwd: global.appRoot,

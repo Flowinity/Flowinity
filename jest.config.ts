@@ -20,7 +20,7 @@ export default {
   ],
   moduleDirectories: ["node_modules", "app"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  testSequencer: "<rootDir>/app/sortTests.ts",
+  testSequencer: "<rootDir>/app/sortTests.js",
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
