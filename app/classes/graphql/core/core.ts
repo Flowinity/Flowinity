@@ -48,6 +48,8 @@ export class Stats {
     nullable: true
   })
   hours: Record<string, number> | null
+  @Field()
+  messages: number
 }
 
 @ObjectType()
@@ -60,8 +62,6 @@ export class CoreStats extends Stats {
   invites: number
   @Field()
   inviteMilestone: number
-  @Field()
-  messages: number
   @Field()
   chats: number
 }

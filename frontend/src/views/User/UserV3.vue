@@ -305,14 +305,21 @@
             :primary-color="primaryColorResult.primary"
             :value="user.stats.pulse.toLocaleString()"
             class="my-3"
-            title="TPU Hours"
+            title="Hours"
           ></StatsCard>
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult.primary"
-            :value="user.stats.docs"
+            :value="user.stats.docs.toLocaleString()"
             class="my-3"
             title="Documents"
+          ></StatsCard>
+          <StatsCard
+            :gold="gold"
+            :primary-color="primaryColorResult.primary"
+            :value="user.stats.messages.toLocaleString()"
+            class="my-3"
+            title="Messages"
           ></StatsCard>
         </v-col>
       </v-row>
@@ -718,8 +725,8 @@ export default defineComponent({
         component = foundRow;
         parent = this.layout.layout.columns[0];
       } else {
-        const foundChildRow = this.layout.layout.columns[0].rows.find((x) =>
-          x?.props?.children?.find((y: Component) => y.id === id)
+        const foundChildRow = this.layout.layout.columns[0].rows.find(
+          (x) => x?.props?.children?.find((y: Component) => y.id === id)
         );
         if (foundChildRow && "children" in foundChildRow.props) {
           component = foundChildRow.props.children?.find(

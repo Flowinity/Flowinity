@@ -111,6 +111,7 @@ export const ProfileQuery = gql`
       quota
       stats {
         hours
+        messages
         usage
         collections
         collectionItems
