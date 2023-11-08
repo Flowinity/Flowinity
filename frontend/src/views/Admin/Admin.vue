@@ -12,5 +12,3 @@ export default defineComponent({
   components: { AdminSidebar }
 });
 </script>
-
-<style scoped></style>

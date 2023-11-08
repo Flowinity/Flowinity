@@ -20,5 +20,3 @@ export default defineComponent({
   emits: ["update:modelValue"]
 });
 </script>
-
-<style scoped></style>

@@ -29,7 +29,7 @@ import { defineComponent } from "vue";
 import MemberSidebar from "@/layouts/colubrina/MemberSidebar.vue";
 import User from "@/views/User/User.vue";
 import UserMenu from "@/components/Communications/Menus/UserMenu.vue";
-import ImageDialog from "@/components/Communications/Dialogs/Image.vue";
+import ImageDialog from "@/components/Communications/Dialogs/ImageDialog.vue";
 import GroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettingsV2.vue";
 
 export default defineComponent({
@@ -51,5 +51,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped></style>

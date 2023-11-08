@@ -30,5 +30,3 @@ export default defineComponent({
   components: { PrivacyPolicy, CoreDialog }
 });
 </script>
-
-<style scoped></style>

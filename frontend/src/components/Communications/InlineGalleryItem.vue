@@ -39,5 +39,3 @@ export default defineComponent({
   props: ["item"]
 });
 </script>
-
-<style scoped></style>

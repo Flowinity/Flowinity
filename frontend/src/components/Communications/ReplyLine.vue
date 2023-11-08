@@ -22,5 +22,3 @@ export default defineComponent({
   name: "ReplyLine"
 });
 </script>
-
-<style scoped></style>

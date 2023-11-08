@@ -36,5 +36,3 @@ export default defineComponent({
   name: "AdminWhitelist"
 });
 </script>
-
-<style scoped></style>

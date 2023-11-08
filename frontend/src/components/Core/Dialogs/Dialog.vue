@@ -37,10 +37,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "CoreDialog",
   props: ["modelValue"],
   emits: ["update:modelValue"]
 });
 </script>
-
-<style scoped></style>

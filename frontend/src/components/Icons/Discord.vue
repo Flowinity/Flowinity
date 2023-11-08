@@ -20,5 +20,3 @@ export default defineComponent({
   name: "DiscordIcon"
 });
 </script>
-
-<style scoped></style>

@@ -39,7 +39,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "ColubrinaImageDialog",
   props: ["modelValue"],
   emits: ["update:modelValue"],
   computed: {
@@ -54,5 +53,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped></style>

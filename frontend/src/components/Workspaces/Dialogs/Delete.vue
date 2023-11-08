@@ -38,5 +38,3 @@ export default defineComponent({
   emits: ["update:modelValue", "submit"]
 });
 </script>
-
-<style scoped></style>
