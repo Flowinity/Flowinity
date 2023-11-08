@@ -50,5 +50,3 @@ export default defineComponent({
   emits: ["update:modelValue", "sendMessage", "edit"]
 });
 </script>
-
-<style scoped></style>

@@ -31,5 +31,3 @@ export default defineComponent({
   components: { MessageSkeleton }
 });
 </script>
-
-<style scoped></style>

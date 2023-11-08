@@ -26,5 +26,3 @@ export default defineComponent({
   components: { CoreSidebar, MailSidebarList }
 });
 </script>
-
-<style scoped></style>

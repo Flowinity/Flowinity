@@ -13,5 +13,3 @@ export default defineComponent({
   components: { Domains }
 });
 </script>
-
-<style scoped></style>

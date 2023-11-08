@@ -14,5 +14,3 @@ export default defineComponent({
   components: { MailboxSidebar, MailSidebar }
 });
 </script>
-
-<style scoped></style>

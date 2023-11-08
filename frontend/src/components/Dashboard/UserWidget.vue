@@ -22,5 +22,3 @@ export default defineComponent({
   components: { UserBadges, UserAvatar }
 });
 </script>
-
-<style scoped></style>

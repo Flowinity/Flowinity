@@ -16,5 +16,3 @@ export default defineComponent({
   props: ["icon", "title", "description"]
 });
 </script>
-
-<style scoped></style>

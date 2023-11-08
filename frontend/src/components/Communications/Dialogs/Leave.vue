@@ -53,7 +53,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
-import { Chat } from "@/gql/graphql";
 import { DeleteGroupMutation } from "@/graphql/chats/deleteGroup.graphql";
 import DangerZoneInput from "@/components/Core/DangerZoneInput.vue";
 
@@ -110,5 +109,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped></style>

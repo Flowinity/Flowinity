@@ -698,7 +698,7 @@ export const useAppStore = defineStore("app", {
       }
       useWorkspacesStore().items = workspaces;
       useFriendsStore().friends = friends;
-      useMailStore().init();
+      if (experimentsStore.experiments.WEBMAIL) useMailStore().init();
       this.experimentsInherit = experimentsStore.experiments;
       this.domain = "https://" + this.site.domain + "/i/";
       localStorage.setItem("coreStore", JSON.stringify(coreState));
