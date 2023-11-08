@@ -364,6 +364,7 @@ export class CoreService {
     gold: boolean = false
   ): Record<string, any> {
     const experiments = {
+      PRIDE: false,
       THEME: 3,
       NOTIFICATION_SOUND: 2,
       RESIZABLE_SIDEBARS: false,
@@ -408,6 +409,10 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        PRIDE: {
+          description: "Enable pride theme.",
+          createdAt: "2023-11-08T00:00:00.000Z"
+        },
         THEME: {
           description:
             "What frontend theme is applied. 1 is light, 2 is dark, 3 is amoled.",

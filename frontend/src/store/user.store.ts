@@ -172,7 +172,6 @@ export const useUserStore = defineStore("user", {
           vuetify.theme.themes.value.amoled.colors =
             themeData.theme.amoled.colors ??
             vuetify.theme.themes.value.amoled.colors;
-          console.log(vuetify.theme.themes.value.dark.colors);
 
           app.fluidGradient = themeData.fluidGradient;
           if (themeData.fluidGradient) {

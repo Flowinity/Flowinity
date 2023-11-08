@@ -121,16 +121,18 @@ export default defineComponent({
     rainbowMode(val: boolean) {
       this.clickCount++;
       if (val && this.clickCount > 4) {
-        localStorage.setItem("rainbowMode", JSON.stringify(val));
+        this.$experiments.setExperiment("PRIDE", 1);
         this.clickCount = 0;
         this.$toast.info("Enabled rainbow mode.");
+        document.body.classList.add("rainbow");
       } else if (!val) {
-        localStorage.removeItem("rainbowMode");
+        this.$experiments.setExperiment("PRIDE", 0);
         this.$toast.info("Disabled rainbow mode.");
+        document.body.classList.remove("rainbow");
       }
     },
     rainbow() {
-      return localStorage.getItem("rainbowMode");
+      return this.$experiments.experiments["PRIDE"];
     },
     crash() {
       throw new Error("Intentional error thrown");

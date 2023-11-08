@@ -1,4 +1,12 @@
-import { Arg, Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql"
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  Mutation,
+  Query,
+  Resolver,
+  Root
+} from "type-graphql"
 import { Service } from "typedi"
 import { Context } from "@app/types/graphql/context"
 import {
@@ -10,10 +18,14 @@ import { Friend } from "@app/models/friend.model"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { UserStatus } from "@app/classes/graphql/user/status"
 import { FriendsInput } from "@app/classes/graphql/friends/getFriends"
+import { AddFriendInput } from "@app/classes/graphql/friends/addFriend"
+import { UserUtilsService } from "@app/services/userUtils.service"
 
 @Resolver(Friend)
 @Service()
 export class FriendResolver {
+  constructor(private userUtilsService: UserUtilsService) {}
+
   @Authorization({
     scopes: "user.view",
     userOptional: true
@@ -50,5 +62,19 @@ export class FriendResolver {
     return await friend.$get("user", {
       attributes: partialUserFriend
     })
+  }
+
+  @Authorization({
+    scopes: "user.modify"
+  })
+  @Mutation(() => Boolean)
+  async friend(@Ctx() ctx: Context, @Arg("input") input: AddFriendInput) {
+    return await this.userUtilsService.friend(
+      ctx.user!!.id,
+      input.username || input.userId,
+      input.username ? "username" : "id",
+      input.action,
+      true
+    )
   }
 }

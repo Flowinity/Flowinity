@@ -55,6 +55,7 @@ import { SessionInput } from "@app/classes/graphql/user/sessionsInput"
 import { SessionType } from "@app/classes/graphql/user/sessions"
 import { UserStoredStatus } from "@app/classes/graphql/user/status"
 import { Collection } from "@app/models/collection.model"
+import { Success } from "@app/classes/graphql/generic/success"
 
 @Resolver(User)
 @Service()
@@ -94,6 +95,8 @@ export class UserResolver extends createBaseResolver("User", User) {
     } else {
       throw new GraphQLError("You must provide a username or id")
     }
+
+    console.log(user, input)
 
     if (!user?.publicProfile && !ctx.user) {
       throw new GraphQLError(
@@ -257,7 +260,8 @@ export class UserResolver extends createBaseResolver("User", User) {
     await User.update(
       {
         email: input.email,
-        emailVerified: false
+        emailVerified: false,
+        emailToken: null
       },
       {
         where: {
@@ -265,6 +269,31 @@ export class UserResolver extends createBaseResolver("User", User) {
         }
       }
     )
+    await this.resendVerificationEmail(ctx)
+    return true
+  }
+
+  @RateLimit({
+    window: 120,
+    max: 5
+  })
+  @Mutation(() => Boolean)
+  async verifyEmail(@Arg("token") token: string) {
+    await this.userUtilsService.verifyEmail(token)
+    return true
+  }
+
+  @RateLimit({
+    window: 10,
+    max: 1
+  })
+  @Authorization({
+    scopes: "user.modify",
+    emailOptional: true
+  })
+  @Mutation(() => Boolean)
+  async resendVerificationEmail(@Ctx() ctx: Context) {
+    await this.userUtilsService.sendVerificationEmail(ctx.user!!.id)
     return true
   }
 
@@ -397,11 +426,13 @@ function createBaseResolver<T extends ClassType>(
 
     @FieldResolver(() => [Badge])
     async badges(@Root() user: User) {
+      if (!user) return []
       return await user.$get("badges")
     }
 
     @FieldResolver(() => [Notification])
     async notifications(@Root() user: User, @Ctx() ctx: Context) {
+      if (!user) return []
       return await user.$get("notifications", {
         limit: 15,
         order: [["createdAt", "DESC"]]
@@ -410,31 +441,37 @@ function createBaseResolver<T extends ClassType>(
 
     @FieldResolver(() => [Integration])
     async integrations(@Root() user: User, @Ctx() ctx: Context) {
+      if (!user) return []
       return await user.$get("integrations")
     }
 
     @FieldResolver(() => [Domain])
     async domain(@Root() user: User, @Ctx() ctx: Context) {
+      if (!user) return null
       return await user.$get("domain")
     }
 
     @FieldResolver(() => [Subscription])
     async subscription(@Root() user: User, @Ctx() ctx: Context) {
+      if (!user) return null
       return await user.$get("subscription")
     }
 
     @FieldResolver(() => Plan)
     async plan(@Root() user: User, @Ctx() ctx: Context) {
+      if (!user) return await Plan.findByPk(1)
       return await user.$get("plan")
     }
 
     @FieldResolver(() => AutoCollectRule)
     async autoCollectRules(@Root() user: User, @Ctx() ctx: Context) {
+      if (!user) return []
       return await user.$get("autoCollectRules")
     }
 
     @FieldResolver(() => Stats || null)
     async stats(@Root() user: User, @Ctx() ctx: Context) {
+      if (!user) return null
       const data = (await redis.json.get(`userStats:${user.id}`)) as Stats
       if (
         ctx.meta.friends !== FriendStatus.ACCEPTED &&
@@ -450,7 +487,7 @@ function createBaseResolver<T extends ClassType>(
 
     @FieldResolver(() => [Friend])
     async friends(@Root() user: User, @Ctx() ctx: Context) {
-      if (!ctx.user) return []
+      if (!ctx.user || !user) return []
       const friends = await Friend.findAll({
         where: {
           userId: user.id,
@@ -469,7 +506,7 @@ function createBaseResolver<T extends ClassType>(
 
     @FieldResolver(() => [Collection])
     async mutualCollections(@Root() user: User, @Ctx() ctx: Context) {
-      if (!ctx.user) return []
+      if (!ctx.user || !user) return []
       return await this.userUtilsService.getMutualCollections(
         ctx.user.id,
         user.id
@@ -481,7 +518,7 @@ function createBaseResolver<T extends ClassType>(
       @Root() user: User,
       @Ctx() ctx: Context
     ): Promise<FriendStatus> {
-      if (!ctx.user) return FriendStatus.NONE
+      if (!ctx.user || !user) return FriendStatus.NONE
       return (await this.userUtilsService.getFriendStatus(
         ctx.user.id,
         user.id,
@@ -490,6 +527,7 @@ function createBaseResolver<T extends ClassType>(
     }
 
     async findByToken(token: string | null) {
+      if (!token) return null
       if (token?.startsWith("TPU-OAUTH-")) {
         const app = await OauthApp.findOne({
           where: {
@@ -571,7 +609,7 @@ function createBaseResolver<T extends ClassType>(
 export class PartialUserFriendResolver {
   @FieldResolver(() => FriendNickname)
   async nickname(@Root() user: User, @Ctx() ctx: Context) {
-    if (!ctx.user?.id) return null
+    if (!ctx.user?.id || !user) return null
     return user.$get("nickname", {
       where: {
         userId: ctx.user?.id
@@ -583,8 +621,7 @@ export class PartialUserFriendResolver {
     nullable: true
   })
   async blocked(@Ctx() ctx: Context, @Root() user: User) {
-    if (!user) return false
-    if (!ctx.user?.id) return false
+    if (!ctx.user?.id || !user) return false
     const block = await BlockedUser.findOne({
       where: {
         userId: user.id,

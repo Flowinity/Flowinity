@@ -337,7 +337,8 @@ export class CollectionUserResolver {
       input.userId,
       input.write,
       input.configure,
-      input.read
+      input.read,
+      true
     )
 
     await this.cacheService.resetCollectionCache(input.collectionId)

@@ -54,6 +54,15 @@ export type AddChatUser = {
   users: Array<Scalars['Float']['input']>;
 };
 
+export type AddFriendInput = {
+  /** If null, it works as a toggle. This is for explicit actions. */
+  action?: InputMaybe<FriendAction>;
+  /** Can use `userId` or `username` */
+  userId?: InputMaybe<Scalars['Int']['input']>;
+  /** Can use `userId` or `username` */
+  username?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type AddRank = {
   chatAssociationId: Scalars['Int']['input'];
   rankId: Scalars['String']['input'];
@@ -655,6 +664,12 @@ export type Friend = {
   userId: Scalars['Int']['output'];
 };
 
+export enum FriendAction {
+  Accept = 'ACCEPT',
+  Remove = 'REMOVE',
+  Send = 'SEND'
+}
+
 export type FriendNickname = {
   __typename?: 'FriendNickname';
   createdAt: Scalars['Date']['output'];
@@ -934,6 +949,7 @@ export type Mutation = {
   deleteUploads: GenericSuccessObject;
   /** Delete a Note. */
   deleteWorkspaceItem: Scalars['Boolean']['output'];
+  friend: Scalars['Boolean']['output'];
   invalidateChatInvite: GenericSuccessObject;
   joinChatFromInvite: ChatAssociation;
   leaveChat: GenericSuccessObject;
@@ -946,6 +962,7 @@ export type Mutation = {
   registerBotPrefix: GenericSuccessObject;
   removeCollectionUser: GenericSuccessObject;
   removeFromCollection: Scalars['Int']['output'];
+  resendVerificationEmail: Scalars['Boolean']['output'];
   resetOauthSecret: GenericSuccessObject;
   saveNote: Note;
   sendMessage: Message;
@@ -966,6 +983,7 @@ export type Mutation = {
   updateStatus: UserStoredStatus;
   updateUpload: Upload;
   updateUser: Scalars['Boolean']['output'];
+  verifyEmail: Scalars['Boolean']['output'];
 };
 
 
@@ -1096,6 +1114,11 @@ export type MutationDeleteUploadsArgs = {
 
 export type MutationDeleteWorkspaceItemArgs = {
   input: DeleteWorkspaceItemInput;
+};
+
+
+export type MutationFriendArgs = {
+  input: AddFriendInput;
 };
 
 
@@ -1246,6 +1269,11 @@ export type MutationUpdateUploadArgs = {
 
 export type MutationUpdateUserArgs = {
   input: UpdateUserInput;
+};
+
+
+export type MutationVerifyEmailArgs = {
+  token: Scalars['String']['input'];
 };
 
 export type MyAppInput = {

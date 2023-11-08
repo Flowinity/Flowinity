@@ -97,6 +97,15 @@ const Errors = {
   },
   EXPERIMENT_NOT_ALLOWED: {
     message: "You are not allowed to use this experimental feature."
+  },
+  CANNOT_ADD_OWNER: {
+    message: "You cannot add the owner to the collection."
+  },
+  NOT_FRIENDS_WITH_USER_COLLECTION: {
+    message: "You must be friends with the user to add them to your collection."
+  },
+  CANNOT_FRIEND_SELF: {
+    message: "You cannot friend yourself."
   }
 }
 
