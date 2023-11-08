@@ -72,5 +72,3 @@ export default defineComponent({
   name: "MessageActionsList"
 });
 </script>
-
-<style scoped></style>

@@ -27,5 +27,3 @@ export default defineComponent({
   components: { CoreSidebar, MemberSidebarList }
 });
 </script>
-
-<style scoped></style>

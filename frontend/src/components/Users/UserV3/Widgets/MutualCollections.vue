@@ -24,5 +24,3 @@ export default defineComponent({
   props: ["user", "username"]
 });
 </script>
-
-<style scoped></style>

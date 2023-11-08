@@ -21,5 +21,3 @@ export default defineComponent({
   components: { DynamicCard }
 });
 </script>
-
-<style scoped></style>

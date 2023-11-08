@@ -33,5 +33,3 @@ export default defineComponent({
   emits: ["add"]
 });
 </script>
-
-<style scoped></style>
