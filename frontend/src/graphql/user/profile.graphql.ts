@@ -142,6 +142,7 @@ export const ProfileQuery = gql`
         name
         banner
       }
+      themeEngine
     }
   }
 `;

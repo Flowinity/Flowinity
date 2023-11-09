@@ -12,6 +12,7 @@ import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { FriendNickname } from "@app/models/friendNickname"
 import { Collection } from "@app/models/collection.model"
+import { GraphQLJSON } from "graphql-scalars"
 
 @ObjectType()
 export class PartialUserBase {
@@ -101,7 +102,7 @@ export class PartialUserPublic {
     nullable: true
   })
   stats: Stats
-  @Field(() => ThemeEngine, {
+  @Field(() => GraphQLJSON, {
     nullable: true
   })
   themeEngine: ThemeEngine

@@ -18,6 +18,9 @@ export default {
     "/frontend/",
     "/frontend-v5/"
   ],
+  moduleDirectories: ["node_modules", "app"],
+  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
+  testSequencer: "<rootDir>/app/sortTests.js",
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -32,6 +35,12 @@ export default {
 
   // Indicates whether the coverage information should be collected while executing the test
   collectCoverage: true,
+  collectCoverageFrom: [
+    "app/**/*.{ts,tsx}",
+    "!app/**/*.d.ts",
+    "!app/**/*.spec.ts",
+    "!app/**/*.spec.tsx"
+  ],
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   // collectCoverageFrom: undefined,
@@ -74,7 +83,7 @@ export default {
 
   // A path to a module which exports an async function that is triggered once before all test suites
   // globalSetup: undefined,
-  globalSetup: "./app/test-start.ts",
+  globalSetup: "./app/testEnv.ts",
   setupFilesAfterEnv: ["<rootDir>/app/lib/uninit-tests.ts"]
   // A path to a module which exports an async function that is triggered once after all test suites
   // globalTeardown: undefined,

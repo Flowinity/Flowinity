@@ -472,7 +472,7 @@ export default defineComponent({
             }
           }
         });
-        this.app = oauthApp;
+        this.app = { ...oauthApp };
       } finally {
         this.$app.componentLoading = false;
       }

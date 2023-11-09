@@ -15,12 +15,13 @@ export const useExperimentsStore = defineStore("experiments", {
     ({
       experiments: {
         API_VERSION: 3
-      },
-      experimentsInherit: {}
-    } as ExperimentsState),
+      } as Record<string, number>,
+      experimentsInherit: {} as Record<string, number>
+    }) as ExperimentsState,
   getters: {},
   actions: {
-    async setExperiment(key: string, value: string, userId?: number) {
+    async setExperiment(key: string, value: number, userId?: number) {
+      this.experiments[key] = value;
       await this.$apollo.mutate({
         mutation: SetExperimentMutation,
         variables: {

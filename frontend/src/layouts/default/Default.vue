@@ -303,9 +303,6 @@ export default defineComponent({
       this.$app.loading = false;
       return;
     }
-    if (localStorage.getItem("rainbowMode")) {
-      document.body.classList.add("rainbow");
-    }
     if (this.$vuetify.display.mobile && this.$app.workspaceDrawer) {
       this.$app.workspaceDrawer = false;
     }
