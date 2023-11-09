@@ -108,6 +108,29 @@ describe("CollectionResolver", () => {
     })
   })
 
+  test("Get collection gallery", async () => {
+    const gallery = await gCall({
+      source: GalleryQuery,
+      token: user?.token,
+      variableValues: {
+        input: {
+          page: 1,
+          collectionId,
+          type: GalleryType.Collection
+        }
+      }
+    })
+    expect(gallery.errors).toBeUndefined()
+    expect(gallery.data?.gallery).toMatchObject({
+      items: [],
+      pager: {
+        currentPage: 0,
+        totalItems: 0,
+        totalPages: 0
+      }
+    })
+  })
+
   describe("Sharing", () => {
     test("Create a user to share with", async () => {
       const u = await gCall({
@@ -702,5 +725,4 @@ describe("CollectionItemResolver", () => {
 
 beforeAll(async () => {
   user = await getUser()
-  console.log(user)
 })
