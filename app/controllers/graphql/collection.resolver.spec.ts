@@ -109,6 +109,30 @@ describe("CollectionResolver", () => {
   })
 
   describe("Sharing", () => {
+    test("Create a user to share with", async () => {
+      const u = await gCall({
+        source: RegisterMutation,
+        variableValues: {
+          input: {
+            username: `Collectivizer${rid}`,
+            password: rid,
+            email: `${rid}-collectivizer@example.com`
+          }
+        }
+      })
+      console.log(JSON.stringify(u.errors, null, 2))
+      expect(u.errors).toBeUndefined()
+      expect(u.data?.register).toMatchObject({
+        user: {
+          id: expect.any(Number),
+          username: `Collectivizer${rid}`,
+          email: `${rid}-collectivizer@example.com`
+        },
+        token: expect.any(String)
+      })
+      friendToShare = await getUser(u.data.register.user.id)
+    })
+
     test("Set ShareLink", async () => {
       const update = await gCall({
         source: UpdateCollectionMutation,
@@ -131,6 +155,40 @@ describe("CollectionResolver", () => {
     test("Get collection from ShareLink", async () => {
       const collection = await gCall({
         source: CollectionQuery,
+        variableValues: {
+          input: {
+            shareLink
+          }
+        }
+      })
+      expect(collection.errors).toBeUndefined()
+      expect(collection.data?.collection).toMatchObject({
+        id: collectionId,
+        name: "Test Collection"
+      })
+    })
+
+    test("Get collection from ShareLink logged in", async () => {
+      const collection = await gCall({
+        source: CollectionQuery,
+        token: user?.token,
+        variableValues: {
+          input: {
+            shareLink
+          }
+        }
+      })
+      expect(collection.errors).toBeUndefined()
+      expect(collection.data?.collection).toMatchObject({
+        id: collectionId,
+        name: "Test Collection"
+      })
+    })
+
+    test("Get collection from ShareLink as another user", async () => {
+      const collection = await gCall({
+        source: CollectionQuery,
+        token: friendToShare?.token,
         variableValues: {
           input: {
             shareLink
@@ -171,30 +229,6 @@ describe("CollectionResolver", () => {
       })
       expect(collection.errors).toBeUndefined()
       expect(collection.data?.collection).toBeNull()
-    })
-
-    test("Create a user to share with", async () => {
-      const u = await gCall({
-        source: RegisterMutation,
-        variableValues: {
-          input: {
-            username: `Collectivizer${rid}`,
-            password: rid,
-            email: `${rid}-collectivizer@example.com`
-          }
-        }
-      })
-      console.log(JSON.stringify(u.errors, null, 2))
-      expect(u.errors).toBeUndefined()
-      expect(u.data?.register).toMatchObject({
-        user: {
-          id: expect.any(Number),
-          username: `Collectivizer${rid}`,
-          email: `${rid}-collectivizer@example.com`
-        },
-        token: expect.any(String)
-      })
-      friendToShare = await getUser(u.data.register.user.id)
     })
 
     test("Add user to collection", async () => {

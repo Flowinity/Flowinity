@@ -15,12 +15,22 @@ import { NoteResolver } from "@app/controllers/graphql/note.resolver"
 import { CreateWorkspaceFolderMutation } from "../../../frontend-v5/src/graphql/workspaces/createFolder.graphql"
 import { SaveNoteMutation } from "../../../frontend-v5/src/graphql/workspaces/saveNote.graphql"
 import { NoteQuery } from "../../../frontend-v5/src/graphql/workspaces/note.graphql"
+import { UpdateShareLinkMutation } from "../../../frontend-v5/src/graphql/workspaces/updateShareLink.graphql"
+import { RegisterMutation } from "../../../frontend/src/graphql/auth/register.graphql"
+import cryptoRandomString from "crypto-random-string"
 
 let user: TestUser | null = null
+let user2: TestUser | null = null
 
 let workspaceId = 0
 let folderId = 0
 let noteId = 0
+let shareLink = ""
+
+const rid = cryptoRandomString({
+  length: 10,
+  type: "alphanumeric"
+})
 
 const testData = {
   time: 1699538882916,
@@ -124,10 +134,9 @@ describe("NoteResolver", () => {
     const save = await gCall({
       source: SaveNoteMutation,
       variableValues: {
-        data: testData,
-        id: noteId,
-        manualSave: false
-      }
+        input: { data: testData, id: noteId, manualSave: false }
+      },
+      token: user?.token
     })
     expect(save.errors).toBeUndefined()
     expect(save.data?.saveNote.id).toBe(noteId)
@@ -136,7 +145,12 @@ describe("NoteResolver", () => {
   test("Load note", async () => {
     const note = await gCall({
       source: NoteQuery,
-      token: user?.token
+      token: user?.token,
+      variableValues: {
+        input: {
+          id: noteId
+        }
+      }
     })
     expect(note.errors).toBeUndefined()
     expect(note.data?.note.id).toBe(noteId)
@@ -147,10 +161,9 @@ describe("NoteResolver", () => {
     const save = await gCall({
       source: SaveNoteMutation,
       variableValues: {
-        data: testDataUpdate,
-        id: noteId,
-        manualSave: true
-      }
+        input: { data: testDataUpdate, id: noteId, manualSave: true }
+      },
+      token: user?.token
     })
     expect(save.errors).toBeUndefined()
     expect(save.data?.saveNote.id).toBe(noteId)
@@ -159,12 +172,125 @@ describe("NoteResolver", () => {
   test("Test version control", async () => {
     const note = await gCall({
       source: NoteQuery,
-      token: user?.token
+      token: user?.token,
+      variableValues: {
+        input: {
+          id: noteId
+        }
+      }
     })
     expect(note.errors).toBeUndefined()
     expect(note.data?.note.id).toBe(noteId)
     expect(note.data?.note.data).toMatchObject(testDataUpdate)
     expect(note.data?.note.versions[0].data).toMatchObject(testData)
+  })
+
+  test("Enable ShareLink", async () => {
+    const note = await gCall({
+      source: UpdateShareLinkMutation,
+      token: user?.token,
+      variableValues: {
+        input: noteId
+      }
+    })
+    expect(note.errors).toBeUndefined()
+    expect(note.data?.toggleNoteShare.shareLink).toBeTruthy()
+    shareLink = note.data?.toggleNoteShare.shareLink
+  })
+
+  test("Load note with ShareLink", async () => {
+    const note = await gCall({
+      source: NoteQuery,
+      token: user?.token,
+      variableValues: {
+        input: {
+          shareLink
+        }
+      }
+    })
+    expect(note.errors).toBeUndefined()
+    expect(note.data?.note.id).toBe(noteId)
+    expect(note.data?.note.data).toMatchObject(testDataUpdate)
+    // Versions should not be returned for a ShareLink
+    expect(note.data?.note.versions).toMatchObject([])
+  })
+
+  test("Load note with ShareLink unauthenticated", async () => {
+    const note = await gCall({
+      source: NoteQuery,
+      variableValues: {
+        input: {
+          shareLink
+        }
+      }
+    })
+    expect(note.errors).toBeUndefined()
+    expect(note.data?.note.id).toBe(noteId)
+    expect(note.data?.note.data).toMatchObject(testDataUpdate)
+    // Versions should not be returned for a ShareLink
+    expect(note.data?.note.versions).toMatchObject([])
+
+    // Also ensure the note cannot be viewed with id
+    const note2 = await gCall({
+      source: NoteQuery,
+      variableValues: {
+        input: {
+          id: noteId
+        }
+      }
+    })
+    expect(note2.data?.note).toBeNull()
+  })
+
+  test("Load note as another user", async () => {
+    const register = await gCall({
+      source: RegisterMutation,
+      variableValues: {
+        input: {
+          username: `Collectivizer${rid}`,
+          email: `${rid}-reject@troplo.com`,
+          password: "password12345678!"
+        }
+      }
+    })
+    expect(register.errors).toBeUndefined()
+    expect(register.data?.register?.user.id).toBeGreaterThan(0)
+    const user2 = await getUser(register.data?.register?.user.id)
+    const note = await gCall({
+      source: NoteQuery,
+      token: user2?.token,
+      variableValues: {
+        input: {
+          id: noteId
+        }
+      }
+    })
+    expect(note.data?.note).toBeNull()
+  })
+
+  test("Disable ShareLink", async () => {
+    const note = await gCall({
+      source: UpdateShareLinkMutation,
+      token: user?.token,
+      variableValues: {
+        input: noteId
+      }
+    })
+    expect(note.errors).toBeUndefined()
+    expect(note.data?.toggleNoteShare.shareLink).toBeFalsy()
+  })
+
+  test("Ensure removal of ShareLink", async () => {
+    const note = await gCall({
+      source: NoteQuery,
+      token: user?.token,
+      variableValues: {
+        input: {
+          shareLink
+        }
+      }
+    })
+    expect(note.data?.note).toBeNull()
   })
 })
 
