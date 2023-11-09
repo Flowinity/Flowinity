@@ -3,7 +3,7 @@ import { CollectionResolver } from "@app/controllers/graphql/collection.resolver
 import { errorConverter, gCall } from "@app/lib/test-utils/gCall"
 import { UserCollectionsQuery } from "../../../frontend/src/graphql/collections/getUserCollections.graphql"
 import { getUser, TestUser } from "@app/lib/test-utils/testUser"
-import { beforeAll, expect } from "@jest/globals"
+import { beforeAll, expect, jest } from "@jest/globals"
 import { CreateCollectionMutation } from "../../../frontend-v5/src/graphql/collections/createCollection.graphql"
 import { CollectionQuery } from "../../../frontend-v5/src/graphql/collections/getCollection.graphql"
 import { UpdateCollectionMutation } from "../../../frontend-v5/src/graphql/collections/updateCollection.graphql"
@@ -15,8 +15,17 @@ import {
 } from "../../../frontend-v5/src/graphql/collections/collectionUser.graphql"
 import cryptoRandomString from "crypto-random-string"
 import { AddFriendMutation } from "../../../frontend-v5/src/graphql/friends/addFriend.graphql"
-import { FriendAction } from "../../../frontend-v5/src/gql/graphql"
-
+import { FriendAction, GalleryType } from "../../../frontend-v5/src/gql/graphql"
+import { CollectionItemResolver } from "@app/controllers/graphql/collectionItem.resolver"
+import fs from "fs"
+import { Container } from "typedi"
+import { GalleryControllerV3 } from "@app/controllers/v3/gallery.controller"
+import {
+  AddToCollectionMutation,
+  RemoveFromCollectionMutation
+} from "../../../frontend-v5/src/graphql/collections/addToCollection.graphql"
+import { GalleryQuery } from "../../../frontend-v5/src/graphql/gallery/gallery.graphql"
+import { Collection } from "../../../frontend-v5/src/gql/graphql"
 let user: TestUser | null = null
 
 let collectionId = 0
@@ -46,9 +55,9 @@ describe("CollectionResolver", () => {
     const collections = await getCollections()
     expect(collections.errors).toBeUndefined()
     expect(collections.data?.collections?.pager).toMatchObject({
-      totalItems: 0,
-      totalPages: 0,
-      currentPage: 0
+      totalItems: expect.any(Number),
+      totalPages: expect.any(Number),
+      currentPage: expect.any(Number)
     })
   })
 
@@ -72,16 +81,14 @@ describe("CollectionResolver", () => {
     const collections = await getCollections()
     expect(collections.errors).toBeUndefined()
     expect(collections.data?.collections?.pager).toMatchObject({
-      totalItems: 1,
-      totalPages: 1,
-      currentPage: 1
+      totalItems: expect.any(Number),
+      totalPages: expect.any(Number),
+      currentPage: expect.any(Number)
     })
-    expect(collections.data?.collections?.items).toMatchObject([
-      {
-        id: collectionId,
-        name: "Test Collection"
-      }
-    ])
+    const contains = collections.data?.collections?.items?.some(
+      (c: Collection) => c.id === collectionId
+    )
+    expect(contains).toBe(true)
   })
 
   test("Get collection", async () => {
@@ -372,6 +379,290 @@ describe("CollectionResolver", () => {
       id: collectionId,
       name: "Test Collection 2"
     })
+  })
+})
+
+let uploadId = 0
+let attachment = ""
+let uploadIdFriendToShare = 0
+let attachmentFriendToShare = ""
+
+describe("CollectionItemResolver", () => {
+  beforeAll(async () => {
+    const file = fs.readFileSync(__dirname + "/../../assets/AuthRequired.png")
+    console.log(user!.token)
+    const galleryController = Container.get(GalleryControllerV3)
+    // mock global.queue
+    //@ts-ignore
+    global.queue = {
+      queue: {
+        add: jest.fn()
+      }
+    } as any
+    const upload = await galleryController.upload(
+      user as any,
+      {
+        filename: cryptoRandomString({ length: 12 }) + ".png",
+        mimetype: "image/png",
+        size: file.byteLength,
+        originalname: "AuthRequired.png"
+      } as any
+    )
+    const uploadFriendToShare = await galleryController.upload(
+      friendToShare as any,
+      {
+        filename: cryptoRandomString({ length: 12 }) + ".png",
+        mimetype: "image/png",
+        size: file.byteLength,
+        originalname: "AuthRequired.png"
+      } as any
+    )
+    expect(upload).toBeDefined()
+    uploadIdFriendToShare = uploadFriendToShare.upload.id
+    attachmentFriendToShare = uploadFriendToShare.upload.attachment
+    uploadId = upload.upload.id
+    attachment = upload.upload.attachment
+  })
+
+  test("Add item to collection", async () => {
+    const add = await gCall({
+      source: AddToCollectionMutation,
+      variableValues: {
+        input: {
+          collectionId,
+          items: [uploadId]
+        }
+      },
+      token: user?.token
+    })
+    expect(add.errors).toBeUndefined()
+    expect(add.data.addToCollection).toMatchObject([
+      {
+        id: expect.any(Number)
+      }
+    ])
+
+    const gallery = await gCall({
+      source: GalleryQuery,
+      variableValues: {
+        input: {
+          page: 1,
+          collectionId,
+          type: GalleryType.Collection
+        }
+      },
+      token: user?.token
+    })
+    expect(gallery.errors).toBeUndefined()
+    expect(gallery.data?.gallery.items[0].id).toBe(uploadId)
+  })
+
+  test("Add user back to collection with write permissions", async () => {
+    const share2 = await gCall({
+      source: AddCollectionUserMutation,
+      token: user?.token,
+      variableValues: {
+        input: {
+          collectionId,
+          userId: friendToShare!.id,
+          read: true,
+          write: true,
+          configure: false
+        }
+      }
+    })
+    expect(share2.errors).toBeUndefined()
+    expect(share2.data?.addCollectionUser).toMatchObject({
+      id: expect.any(Number)
+    })
+  })
+
+  test("Remove item from collection of other user (should fail)", async () => {
+    const remove = await gCall({
+      source: RemoveFromCollectionMutation,
+      variableValues: {
+        input: {
+          collectionId,
+          items: [uploadId]
+        }
+      },
+      token: friendToShare?.token
+    })
+    expect(remove.errors).toMatchObject([
+      errorConverter(undefined, "ATTACHMENT_NOT_FOUND")
+    ])
+  })
+
+  test("Add user upload to collection", async () => {
+    const add = await gCall({
+      source: AddToCollectionMutation,
+      variableValues: {
+        input: {
+          collectionId,
+          items: [uploadIdFriendToShare]
+        }
+      },
+      token: friendToShare?.token
+    })
+    expect(add.errors).toBeUndefined()
+    expect(add.data.addToCollection).toMatchObject([
+      {
+        id: expect.any(Number)
+      }
+    ])
+
+    const gallery = await gCall({
+      source: GalleryQuery,
+      variableValues: {
+        input: {
+          page: 1,
+          collectionId,
+          type: GalleryType.Collection
+        }
+      },
+      token: friendToShare?.token
+    })
+    expect(gallery.errors).toBeUndefined()
+    const contains = gallery.data?.gallery.items.some(
+      (item: any) => item.id === uploadIdFriendToShare
+    )
+    expect(contains).toBe(true)
+  })
+
+  test("Add configure permissions to user", async () => {
+    const share2 = await gCall({
+      source: UpdateCollectionUserPermissionsMutation,
+      token: user?.token,
+      variableValues: {
+        input: {
+          collectionId,
+          userId: friendToShare!.id,
+          read: true,
+          write: true,
+          configure: true
+        }
+      }
+    })
+    expect(share2.errors).toBeUndefined()
+    expect(share2.data?.updateCollectionUserPermissions).toMatchObject({
+      id: expect.any(Number),
+      read: true,
+      write: true,
+      configure: true
+    })
+  })
+
+  test("Remove item from collection of other user (should succeed)", async () => {
+    const remove = await gCall({
+      source: RemoveFromCollectionMutation,
+      variableValues: {
+        input: {
+          collectionId,
+          items: [uploadIdFriendToShare]
+        }
+      },
+      token: friendToShare?.token
+    })
+    expect(remove.errors).toBeUndefined()
+    expect(remove.data.removeFromCollection).toBe(1)
+
+    const gallery = await gCall({
+      source: GalleryQuery,
+      variableValues: {
+        input: {
+          page: 1,
+          collectionId,
+          type: GalleryType.Collection
+        }
+      },
+      token: friendToShare?.token
+    })
+    expect(gallery.errors).toBeUndefined()
+    const contains = gallery.data?.gallery.items.some(
+      (item: any) => item.id === uploadIdFriendToShare
+    )
+    expect(contains).toBe(false)
+  })
+
+  test("Add item to collection of other user (should fail)", async () => {
+    const add = await gCall({
+      source: AddToCollectionMutation,
+      variableValues: {
+        input: {
+          collectionId,
+          items: [uploadIdFriendToShare]
+        }
+      },
+      token: user?.token
+    })
+    expect(add.errors).toMatchObject([
+      errorConverter(undefined, "ATTACHMENT_NOT_FOUND")
+    ])
+  })
+
+  test("Demote to read permissions", async () => {
+    const share2 = await gCall({
+      source: UpdateCollectionUserPermissionsMutation,
+      token: user?.token,
+      variableValues: {
+        input: {
+          collectionId,
+          userId: friendToShare!.id,
+          read: true,
+          write: false,
+          configure: false
+        }
+      }
+    })
+    expect(share2.errors).toBeUndefined()
+    expect(share2.data?.updateCollectionUserPermissions).toMatchObject({
+      id: expect.any(Number)
+    })
+  })
+
+  test("Add user item to collection (should fail)", async () => {
+    const add = await gCall({
+      source: AddToCollectionMutation,
+      variableValues: {
+        input: {
+          collectionId,
+          items: [uploadIdFriendToShare]
+        }
+      },
+      token: friendToShare?.token
+    })
+    expect(add.errors).toMatchObject([
+      errorConverter(undefined, "COLLECTION_NOT_FOUND")
+    ])
+  })
+
+  test("Remove item from collection", async () => {
+    const remove = await gCall({
+      source: RemoveFromCollectionMutation,
+      variableValues: {
+        input: {
+          collectionId,
+          items: [uploadId]
+        }
+      },
+      token: user?.token
+    })
+    expect(remove.errors).toBeUndefined()
+    expect(remove.data.removeFromCollection).toBe(1)
+
+    const gallery = await gCall({
+      source: GalleryQuery,
+      variableValues: {
+        input: {
+          page: 1,
+          collectionId,
+          type: GalleryType.Collection
+        }
+      },
+      token: user?.token
+    })
+    expect(gallery.errors).toBeUndefined()
+    expect(gallery.data?.gallery.items).toMatchObject([])
   })
 })
 

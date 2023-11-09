@@ -7,7 +7,7 @@ export class TestUser {
   constructor() {
     this.id = 1
     this.username = cryptoRandomString({ length: 10 })
-    this.email = cryptoRandomString({ length: 10 }) + "@example.com"
+    this.email = cryptoRandomString({ length: 10 }) + "-reject@troplo.com"
     this.token = ""
     this.password = "password12345678!"
   }

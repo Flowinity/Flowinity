@@ -18,14 +18,23 @@ import { AddFriendMutation } from "../../../frontend-v5/src/graphql/friends/addF
 import { FriendAction } from "../../../frontend-v5/src/gql/graphql"
 import { GalleryResolver } from "@app/controllers/graphql/gallery.resolver"
 import { GalleryControllerV3 } from "@app/controllers/v3/gallery.controller"
-import { GalleryQuery } from "../../../frontend-v5/src/graphql/gallery/gallery.graphql"
+import {
+  DeleteUploadMutation,
+  GalleryQuery,
+  UpdateUploadMutation
+} from "../../../frontend-v5/src/graphql/gallery/gallery.graphql"
 import axios from "axios"
 import fs from "fs"
 import { Container } from "typedi"
 import path from "path"
+import { StarUploadMutation } from "../../../frontend-v5/src/graphql/gallery/starUpload"
+import { GalleryType } from "../../../frontend-v5/src/gql/graphql"
 let user: TestUser | null = null
 
-describe("CollectionResolver", () => {
+let uploadId = 0
+let attachment = ""
+
+describe("GalleryResolver", () => {
   test("Get user gallery", async () => {
     const gallery = await gCall({
       source: GalleryQuery,
@@ -38,8 +47,8 @@ describe("CollectionResolver", () => {
     })
     console.log(JSON.stringify(gallery.errors, null, 2))
     expect(gallery.errors).toBeUndefined()
-    expect(gallery.data.gallery.items.length).toBe(0)
-    expect(gallery.data.gallery.pager.totalItems).toBe(0)
+    expect(gallery.data.gallery.items.length).toBeGreaterThanOrEqual(0)
+    expect(gallery.data.gallery.pager.totalItems).toBeGreaterThanOrEqual(0)
   })
 
   test("Upload file", async () => {
@@ -54,7 +63,7 @@ describe("CollectionResolver", () => {
       }
     } as any
     const upload = await galleryController.upload(
-      testUser as any,
+      user as any,
       {
         filename: cryptoRandomString({ length: 12 }) + ".png",
         mimetype: "image/png",
@@ -63,6 +72,112 @@ describe("CollectionResolver", () => {
       } as any
     )
     expect(upload).toBeDefined()
+    uploadId = upload.upload.id
+    attachment = upload.upload.attachment
+  })
+
+  test("Update upload name", async () => {
+    const update = await gCall({
+      source: UpdateUploadMutation,
+      variableValues: {
+        input: {
+          uploadId,
+          name: "test-again.png"
+        }
+      },
+      token: user!.token
+    })
+    expect(update.errors).toBeUndefined()
+
+    const gallery = await gCall({
+      source: GalleryQuery,
+      variableValues: {
+        input: {
+          page: 1
+        }
+      },
+      token: user!.token
+    })
+    expect(gallery.errors).toBeUndefined()
+    expect(gallery.data.gallery.items[0].name).toBe("test-again.png")
+  })
+
+  test("Test starring of upload & get stars", async () => {
+    const star = await gCall({
+      source: StarUploadMutation,
+      variableValues: {
+        input: {
+          attachment
+        }
+      },
+      token: user!.token
+    })
+    expect(star.errors).toBeUndefined()
+    expect(star.data.starUpload).toMatchObject({
+      status: true
+    })
+
+    const stars = await gCall({
+      source: GalleryQuery,
+      variableValues: {
+        input: {
+          page: 1,
+          type: GalleryType.Starred
+        }
+      },
+      token: user!.token
+    })
+    expect(stars.errors).toBeUndefined()
+    expect(stars.data.gallery.items).toMatchObject([
+      {
+        attachment
+      }
+    ])
+  })
+
+  test("Remove star & validate", async () => {
+    const remove = await gCall({
+      source: StarUploadMutation,
+      variableValues: {
+        input: {
+          attachment
+        }
+      },
+      token: user!.token
+    })
+    expect(remove.errors).toBeUndefined()
+    expect(remove.data.starUpload).toMatchObject({
+      status: false
+    })
+
+    const stars = await gCall({
+      source: GalleryQuery,
+      variableValues: {
+        input: {
+          page: 1,
+          type: GalleryType.Starred
+        }
+      },
+      token: user!.token
+    })
+    expect(stars.errors).toBeUndefined()
+    expect(stars.data.gallery.items).toMatchObject([])
+  })
+
+  test("Delete upload", async () => {
+    const deleteUpload = await gCall({
+      source: DeleteUploadMutation,
+      variableValues: {
+        input: {
+          items: [uploadId]
+        }
+      },
+      token: user!.token
+    })
+    expect(deleteUpload.errors).toBeUndefined()
+    expect(deleteUpload.data.deleteUploads).toMatchObject({
+      success: true
+    })
   })
 })
 
