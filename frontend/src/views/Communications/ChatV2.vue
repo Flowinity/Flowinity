@@ -294,7 +294,6 @@ import { Chat, Message, ScrollPosition } from "@/gql/graphql";
 import ChatDevOptions from "@/components/Dev/Dialogs/ChatDevOptionsDialog.vue";
 
 export default defineComponent({
-  name: "Chat",
   components: {
     ChatDevOptions,
     PromoNoContent,
@@ -979,8 +978,7 @@ export default defineComponent({
             message.id === this.$chat.selectedChat?.association?.lastRead
         );
         const nextMessageIndex =
-          this.$chat.selectedChat?.messages?.indexOf(lastReadMessage) + 1;
-        console.log("index: " + nextMessageIndex, lastReadMessage);
+          this.$chat.selectedChat?.messages?.indexOf(lastReadMessage) - 1;
 
         if (nextMessageIndex !== -1) {
           this.unreadId =

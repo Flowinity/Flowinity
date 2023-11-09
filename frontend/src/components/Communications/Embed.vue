@@ -160,7 +160,6 @@ import Overline from "@/components/Core/Typography/Overline.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
-  name: "Embed",
   components: { UserAvatar, Overline },
   props: ["embed"],
   emits: ["autoScroll"],

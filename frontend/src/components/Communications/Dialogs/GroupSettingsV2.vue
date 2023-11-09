@@ -124,7 +124,7 @@
           class="text-left"
           value="delete"
           v-if="$chat.editingChat.userId === $user.user.id"
-          style="color: rgb(var(--v-theme-error)"
+          style="color: rgb(var(--v-theme-error))"
           @click.prevent="
             $chat.dialogs.leave.itemId = $chat.editingChat.id;
             $chat.dialogs.leave.value = true;
@@ -178,7 +178,6 @@ import ChatSettingsEmoji from "@/components/Communications/Dialogs/Settings/Emoj
 import ChatSettingsAudit from "@/components/Communications/Dialogs/Settings/Audit.vue";
 
 export default defineComponent({
-  name: "ColubrinaGroupSettingsDialog",
   components: {
     ChatSettingsAudit,
     ChatSettingsEmoji,
@@ -228,24 +227,6 @@ export default defineComponent({
           `/chats/${this.$chat.editingChat.association?.id}/icon`
         );
       }
-    },
-    async changeRank(id: number, rank: string) {
-      await this.axios.put(
-        `/chats/${this.$chat.editingChat?.association?.id}/users/${id}`,
-        {
-          rank
-        }
-      );
-    },
-    async removeUser(id: number) {
-      await this.axios.delete(
-        `/chats/${this.$chat.editingChat?.association?.id}/users/${id}`
-      );
-      if (this.$chat.editingChat)
-        this.$chat.editingChat.users.splice(
-          this.$chat.editingChat.users.findIndex((user) => user.id === id),
-          1
-        );
     }
   }
 });

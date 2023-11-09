@@ -9,7 +9,7 @@
     :ref="`message-${message.id}`"
   >
     <overline
-      v-if="unreadId === message.id - 2"
+      v-if="unreadId === message.id"
       position="end"
       style="color: rgb(var(--v-theme-error)) !important"
       class="comms-new"

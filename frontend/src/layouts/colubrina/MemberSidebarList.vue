@@ -244,6 +244,11 @@ import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import SidebarItem from "@/components/Communications/SidebarItem.vue";
+import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
+import MessagePerf from "@/components/Communications/MessagePerf.vue";
+import Overline from "@/components/Core/Typography/Overline.vue";
+import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
+import AddRole from "@/components/Communications/Menus/AddRole.vue";
 import {
   ChatAssociation,
   FriendStatus,
@@ -252,14 +257,9 @@ import {
   ChatRank,
   UserStoredStatus
 } from "@/gql/graphql";
-import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
-import MessagePerf from "@/components/Communications/MessagePerf.vue";
-import Overline from "@/components/Core/Typography/Overline.vue";
-import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
-import AddRole from "@/components/Communications/Menus/AddRole.vue";
 
 export default defineComponent({
-  name: "ColubrinaMemberSidebarList",
+  name: "MemberSidebarList",
   components: {
     AddRole,
     UserSidebarOptions,
