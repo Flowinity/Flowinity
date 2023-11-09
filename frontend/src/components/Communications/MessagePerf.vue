@@ -9,7 +9,7 @@
     :ref="`message-${message.id}`"
   >
     <overline
-      v-if="unreadId === message.id"
+      v-if="unreadId === message.id - 2"
       position="end"
       style="color: rgb(var(--v-theme-error)) !important"
       class="comms-new"
@@ -350,7 +350,6 @@ import ReplyLine from "@/components/Communications/ReplyLine.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
-  name: "MessagePerf",
   components: {
     Overline,
     ReplyLine,
