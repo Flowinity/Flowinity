@@ -18,6 +18,8 @@ import { NoteQuery } from "../../../frontend-v5/src/graphql/workspaces/note.grap
 import { UpdateShareLinkMutation } from "../../../frontend-v5/src/graphql/workspaces/updateShareLink.graphql"
 import { RegisterMutation } from "../../../frontend/src/graphql/auth/register.graphql"
 import cryptoRandomString from "crypto-random-string"
+import { DeleteWorkspaceItemMutation } from "../../../frontend-v5/src/graphql/workspaces/deleteWorkspaceItem"
+import { WorkspaceItemType } from "../../../frontend-v5/src/gql/graphql"
 
 let user: TestUser | null = null
 let user2: TestUser | null = null
@@ -291,6 +293,197 @@ describe("NoteResolver", () => {
       }
     })
     expect(note.data?.note).toBeNull()
+  })
+
+  test("Test saving of invalid note", async () => {
+    const save = await gCall({
+      source: SaveNoteMutation,
+      variableValues: {
+        input: {
+          data: {
+            blocks: []
+          },
+          manualSave: true
+        }
+      },
+      token: user?.token
+    })
+    expect(save.errors).toBeDefined()
+  })
+})
+
+describe("Delete Items", () => {
+  test("Attempt deletion of items via invalid user", async () => {
+    for (const token of [user2?.token, undefined]) {
+      const document = await gCall({
+        source: DeleteWorkspaceItemMutation,
+        variableValues: {
+          input: {
+            id: noteId,
+            type: WorkspaceItemType.Note
+          }
+        },
+        token
+      })
+
+      const folder = await gCall({
+        source: DeleteWorkspaceItemMutation,
+        variableValues: {
+          input: {
+            id: folderId,
+            type: WorkspaceItemType.Folder
+          }
+        },
+        token
+      })
+
+      const workspace = await gCall({
+        source: DeleteWorkspaceItemMutation,
+        variableValues: {
+          input: {
+            id: workspaceId,
+            type: WorkspaceItemType.Workspace
+          }
+        },
+        token
+      })
+
+      expect(document.errors).toBeDefined()
+      expect(folder.errors).toBeDefined()
+      expect(workspace.errors).toBeDefined()
+    }
+  })
+
+  test("Delete Workspace Document", async () => {
+    const coreStateBefore = await gCall({
+      source: CoreStateQuery,
+      token: user?.token
+    })
+    let findWorkspace = coreStateBefore.data?.workspaces.find(
+      (w: any) => w.id === workspaceId
+    )
+    let findFolder = findWorkspace?.folders.find((f: any) => f.id === folderId)
+    let findNote = findFolder?.children.find((n: any) => n.id === noteId)
+    expect(findNote).toBeTruthy()
+
+    const noteBefore = await gCall({
+      source: NoteQuery,
+      token: user?.token,
+      variableValues: {
+        input: {
+          id: noteId
+        }
+      }
+    })
+
+    expect(noteBefore.data?.note).toBeTruthy()
+
+    const document = await gCall({
+      source: DeleteWorkspaceItemMutation,
+      variableValues: {
+        input: {
+          id: noteId,
+          type: WorkspaceItemType.Note
+        }
+      },
+      token: user?.token
+    })
+
+    expect(document.errors).toBeUndefined()
+    expect(document.data?.deleteWorkspaceItem).toBeTruthy()
+
+    const note = await gCall({
+      source: NoteQuery,
+      token: user?.token,
+      variableValues: {
+        input: {
+          id: noteId
+        }
+      }
+    })
+
+    expect(note.data?.note).toBeNull()
+
+    const coreStateAfter = await gCall({
+      source: CoreStateQuery,
+      token: user?.token
+    })
+
+    findWorkspace = coreStateAfter.data?.workspaces.find(
+      (w: any) => w.id === workspaceId
+    )
+    findFolder = findWorkspace?.folders.find((f: any) => f.id === folderId)
+    findNote = findFolder?.children.find((n: any) => n.id === noteId)
+    expect(findNote).toBeUndefined()
+  })
+
+  test("Delete Workspace Folder", async () => {
+    const coreStateBefore = await gCall({
+      source: CoreStateQuery,
+      token: user?.token
+    })
+    let findWorkspace = coreStateBefore.data?.workspaces.find(
+      (w: any) => w.id === workspaceId
+    )
+    let findFolder = findWorkspace?.folders.find((f: any) => f.id === folderId)
+    expect(findFolder).toBeTruthy()
+
+    const folder = await gCall({
+      source: DeleteWorkspaceItemMutation,
+      variableValues: {
+        input: {
+          id: folderId,
+          type: WorkspaceItemType.Folder
+        }
+      },
+      token: user?.token
+    })
+
+    expect(folder.errors).toBeUndefined()
+    expect(folder.data?.deleteWorkspaceItem).toBeTruthy()
+
+    const coreStateAfter = await gCall({
+      source: CoreStateQuery,
+      token: user?.token
+    })
+    findWorkspace = coreStateAfter.data?.workspaces.find(
+      (w: any) => w.id === workspaceId
+    )
+    findFolder = findWorkspace?.folders.find((f: any) => f.id === folderId)
+    expect(findFolder).toBeUndefined()
+  })
+
+  test("Delete Workspace", async () => {
+    const coreStateBefore = await gCall({
+      source: CoreStateQuery,
+      token: user?.token
+    })
+    let findWorkspace = coreStateBefore.data?.workspaces.find(
+      (w: any) => w.id === workspaceId
+    )
+    expect(findWorkspace).toBeTruthy()
+    const workspace = await gCall({
+      source: DeleteWorkspaceItemMutation,
+      variableValues: {
+        input: {
+          id: workspaceId,
+          type: WorkspaceItemType.Workspace
+        }
+      },
+      token: user?.token
+    })
+
+    expect(workspace.errors).toBeUndefined()
+    expect(workspace.data?.deleteWorkspaceItem).toBeTruthy()
+
+    const coreStateAfter = await gCall({
+      source: CoreStateQuery,
+      token: user?.token
+    })
+    findWorkspace = coreStateAfter.data?.workspaces.find(
+      (w: any) => w.id === workspaceId
+    )
+    expect(findWorkspace).toBeUndefined()
   })
 })
 
