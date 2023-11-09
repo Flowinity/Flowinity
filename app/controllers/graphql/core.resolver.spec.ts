@@ -8,6 +8,7 @@ import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { SetExperimentInput } from "@app/classes/graphql/core/setExperiment"
 import { getUser, TestUser, testUser } from "@app/lib/test-utils/testUser"
 import { SetExperimentMutation } from "../../../frontend/src/graphql/core/experiments.graphql"
+import { CoreResolver } from "@app/controllers/graphql/core.resolver"
 
 let user: TestUser | null = null
 
