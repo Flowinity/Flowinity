@@ -16,6 +16,8 @@ import paginate from "jw-paginate"
 import { PaginatedCollectionsResponse } from "@app/controllers/graphql/collection.resolver"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { WhereOptions } from "sequelize"
+import { GqlError } from "@app/lib/gqlErrors"
+import { GraphQLError } from "graphql/error"
 
 @Service()
 export class CollectionService {
@@ -414,7 +416,8 @@ export class CollectionService {
     username: string | number,
     write: boolean,
     configure: boolean,
-    read: boolean
+    read: boolean,
+    gql = false
   ) {
     const collection = await Collection.findOne({
       where: {
@@ -423,7 +426,9 @@ export class CollectionService {
     })
 
     if (!collection) {
-      throw Errors.COLLECTION_NOT_FOUND
+      throw gql
+        ? new GqlError("COLLECTION_NOT_FOUND")
+        : Errors.COLLECTION_NOT_FOUND
     }
 
     const where: WhereOptions =
@@ -440,11 +445,11 @@ export class CollectionService {
     })
 
     if (!user) {
-      throw Errors.USER_NOT_FOUND
+      throw gql ? new GqlError("USER_NOT_FOUND") : Errors.USER_NOT_FOUND
     }
 
     if (collection.userId === user.id) {
-      throw Errors.CANNOT_ADD_OWNER
+      throw gql ? new GqlError("CANNOT_ADD_OWNER") : Errors.CANNOT_ADD_OWNER
     }
 
     const friend = await Friend.findOne({
@@ -456,7 +461,9 @@ export class CollectionService {
     })
 
     if (!friend) {
-      throw Errors.NOT_FRIENDS_WITH_USER_COLLECTION
+      throw gql
+        ? new GqlError("NOT_FRIENDS_WITH_USER_COLLECTION")
+        : Errors.NOT_FRIENDS_WITH_USER_COLLECTION
     }
 
     const collectionUser = await CollectionUser.create({

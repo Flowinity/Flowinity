@@ -69,6 +69,11 @@ export default defineComponent({
     "apex"
   ],
   components: { Line, Bar, apexchart },
+  data() {
+    return {
+      gradient: ""
+    };
+  },
   computed: {
     chartJSData() {
       return {
@@ -77,17 +82,30 @@ export default defineComponent({
           {
             label: this.name,
             data: this.data?.data,
-            borderColor: this.color || this.$user.theme.colors.primary,
-            backgroundColor:
-              this.type === "line"
-                ? "white"
-                : this.color || this.$user.theme.colors.primary
+            borderColor: (context) => {
+              if (!this.$experiments.experiments.PRIDE)
+                return this.color || this.$user.theme.colors.primary;
+              const chart = context.chart;
+              const { ctx, chartArea } = chart;
+              if (!chartArea) return;
+              return this.getGradient(ctx, chartArea);
+            },
+            backgroundColor: () => {
+              if (!this.$experiments.experiments.PRIDE)
+                return this.color || this.$user.theme.colors.primary;
+              return this.gradient;
+            }
           }
         ]
       };
     },
     chartJSOptions() {
       return {
+        elements: {
+          line: {
+            tension: 0.1
+          }
+        },
         responsive: true,
         maintainAspectRatio: !this.height,
         title: {
@@ -193,6 +211,29 @@ export default defineComponent({
     }
   },
   methods: {
+    getGradient(ctx, chartArea) {
+      let width, height, gradient;
+      const chartWidth = chartArea.right - chartArea.left;
+      const chartHeight = chartArea.bottom - chartArea.top;
+      if (!gradient || width !== chartWidth || height !== chartHeight) {
+        // Create the gradient because this is either the first render
+        // or the size of the chart has changed
+        width = chartWidth;
+        height = chartHeight;
+        gradient = ctx.createLinearGradient(
+          0,
+          chartArea.bottom,
+          0,
+          chartArea.top
+        );
+        gradient.addColorStop(0, "#ff4e50");
+        gradient.addColorStop(0.5, "#ffd700");
+        gradient.addColorStop(1, "#0190ea");
+      }
+
+      this.gradient = gradient;
+      return gradient;
+    },
     getWidth() {
       if (this.width) return this.width;
       return "100%";

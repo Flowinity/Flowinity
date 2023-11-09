@@ -2,7 +2,7 @@
   <div
     v-if="!$vuetify.display.mobile"
     :class="{ 'no-hide': avoid }"
-    class="message-actions mr-2 rounded-xl v-card"
+    class="message-actions mr-2 rounded-xl v-card glass"
     style="z-index: 5001; background-color: rgb(var(--v-theme-dark))"
   >
     <template v-if="!message.pending && !message.error">

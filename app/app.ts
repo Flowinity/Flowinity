@@ -1,4 +1,4 @@
-import express, { NextFunction, Request } from "express"
+import express, { NextFunction } from "express"
 import {
   BadRequestError,
   ExpressErrorMiddlewareInterface,
@@ -53,61 +53,22 @@ import { OauthControllerV3 } from "@app/controllers/v3/oauth.controller"
 import { OidcControllerV3 } from "@app/controllers/v3/oidc.controller"
 
 // GraphQL
-import { buildSchema } from "type-graphql"
 import { createYoga, maskError, YogaServerInstance } from "graphql-yoga"
-import {
-  BadgeResolver,
-  PartialUserFriendResolver,
-  PartialUserPublicResolver,
-  UserResolver
-} from "@app/controllers/graphql/user.resolver"
 import { useHive } from "@graphql-hive/client"
 import { execSync } from "child_process"
 import { Context } from "@app/types/graphql/context"
-import { authChecker } from "@app/lib/graphql/AuthChecker"
-import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
 import { GraphQLError } from "graphql/error"
-import { CoreResolver } from "@app/controllers/graphql/core.resolver"
-import {
-  CollectionResolver,
-  CollectionUserResolver
-} from "@app/controllers/graphql/collection.resolver"
 //@ts-ignore
 import { createContext, EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
-import { DomainResolver } from "@app/controllers/graphql/domain.resolver"
-import { GalleryResolver } from "@app/controllers/graphql/gallery.resolver"
 import { createFetch } from "@whatwg-node/fetch"
-import { ChatResolver } from "@app/controllers/graphql/chat.resolver"
-import { ChatAssociationResolver } from "@app/controllers/graphql/chatAssociation.resolver"
-import { WorkspaceResolver } from "@app/controllers/graphql/workspace.resolver"
-import { WorkspaceFolderResolver } from "@app/controllers/graphql/workspaceFolder.resolver"
-import { NoteResolver } from "@app/controllers/graphql/note.resolver"
 import { createRedisCache } from "@envelop/response-cache-redis"
 import { Cache } from "@envelop/response-cache"
 import redis from "@app/redis"
-import { FriendResolver } from "@app/controllers/graphql/friend.resolver"
-import { MessageResolver } from "@app/controllers/graphql/message.resolver"
 import { GraphQLSchema } from "graphql/type"
 import generateContext from "@app/classes/graphql/middleware/generateContext"
-import { RedisPubSub } from "graphql-redis-subscriptions"
-import { ChatRankResolver } from "@app/controllers/graphql/chatRank.resolver"
-import { AutoCollectApprovalResolver } from "@app/controllers/graphql/autoCollectApproval.resolver"
-import { CollectionItemResolver } from "@app/controllers/graphql/collectionItem.resolver"
-import { UploadResolver } from "@app/controllers/graphql/upload.resolver"
-import { AdminResolver } from "@app/controllers/graphql/admin.resolver"
-import { BlockedUserResolver } from "@app/controllers/graphql/blockedUser.resolver"
-import { ChatInviteResolver } from "@app/controllers/graphql/chatInvite.resolver"
-import { MailResolver } from "@app/controllers/graphql/mail.resolver"
-import {
-  OAuthAppResolver,
-  OauthConsentAppResolver,
-  OAuthUserResolver
-} from "@app/controllers/graphql/oAuthApp.resolver"
-import { ChatEmojiResolver } from "@app/controllers/graphql/chatEmoji.resolver"
 import { MulterError } from "multer"
-import { ChatAuditLogResolver } from "@app/controllers/graphql/chatAuditLog.resolver"
 import { ZodError } from "zod"
-import { AutoCollectRuleResolver } from "@app/controllers/graphql/autoCollectRule.resolver"
+import { generateSchema } from "@app/lib/generateSchema"
 
 @Service()
 @Middleware({ type: "after" })
@@ -344,44 +305,7 @@ export class Application {
       },
       validation: true
     })
-    this.schema = await buildSchema({
-      resolvers: [
-        UserResolver,
-        AuthResolver,
-        CoreResolver,
-        CollectionResolver,
-        DomainResolver,
-        GalleryResolver,
-        CollectionUserResolver,
-        BadgeResolver,
-        PartialUserPublicResolver,
-        ChatResolver,
-        ChatAssociationResolver,
-        WorkspaceResolver,
-        WorkspaceFolderResolver,
-        NoteResolver,
-        FriendResolver,
-        MessageResolver,
-        PartialUserFriendResolver,
-        ChatRankResolver,
-        AutoCollectApprovalResolver,
-        CollectionItemResolver,
-        UploadResolver,
-        AdminResolver,
-        BlockedUserResolver,
-        ChatInviteResolver,
-        MailResolver,
-        OAuthAppResolver,
-        OAuthUserResolver,
-        ChatEmojiResolver,
-        ChatAuditLogResolver,
-        OauthConsentAppResolver,
-        AutoCollectRuleResolver
-      ],
-      container: Container,
-      authChecker: authChecker,
-      validate: true
-    })
+    this.schema = await generateSchema()
     const gqlPlugins = []
     const cache: Cache = createRedisCache({ redis })
     /* gqlPlugins.push(

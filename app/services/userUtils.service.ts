@@ -475,7 +475,8 @@ export class UserUtilsService {
     friendId: number | string,
     type: "id" | "username",
     // Used for TPU Kotlin
-    action?: "accept" | "remove" | "send"
+    action?: "accept" | "remove" | "send",
+    gql?: boolean
   ): Promise<boolean> {
     const user = await User.findOne({
       where: {
@@ -491,8 +492,10 @@ export class UserUtilsService {
       attributes: ["username", "id"]
     })
 
-    if (!user || !otherUser) throw Errors.USER_NOT_FOUND
-    if (user.id === userId) throw Errors.CANNOT_FRIEND_SELF
+    if (!user || !otherUser)
+      throw gql ? new GqlError("USER_NOT_FOUND") : Errors.USER_NOT_FOUND
+    if (user.id === userId)
+      throw gql ? new GqlError("CANNOT_FRIEND_SELF") : Errors.CANNOT_FRIEND_SELF
 
     const friend = await Friend.findOne({
       where: {

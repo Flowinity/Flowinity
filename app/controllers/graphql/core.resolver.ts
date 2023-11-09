@@ -1,6 +1,5 @@
 import {
   Arg,
-  Authorized,
   Ctx,
   FieldResolver,
   Int,
@@ -16,7 +15,7 @@ import { Context } from "@app/types/graphql/context"
 import fs from "fs"
 import path from "path"
 import { CoreService } from "@app/services/core.service"
-import { CoreState, Providers } from "@app/classes/graphql/core/core"
+import { CoreState } from "@app/classes/graphql/core/core"
 import cluster from "cluster"
 import os from "os"
 import { CacheService } from "@app/services/cache.service"
@@ -28,14 +27,6 @@ import { Experiment } from "@app/models/experiment.model"
 import { SetExperimentInput } from "@app/classes/graphql/core/setExperiment"
 import { GqlError } from "@app/lib/gqlErrors"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
-import { Announcement } from "@app/models/announcement.model"
-import { Collection } from "@app/models/collection.model"
-import { CollectionItem } from "@app/models/collectionItem.model"
-import { Upload } from "@app/models/upload.model"
-import { Pulse } from "@app/models/pulse.model"
-import { Note } from "@app/models/note.model"
-import { Message } from "@app/models/message.model"
-import { Chat } from "@app/models/chat.model"
 
 @Resolver(CoreState)
 @Service()
@@ -97,6 +88,14 @@ export class CoreResolver {
         hostnames: [],
         _redis: "0"
       } as Partial<CoreState>
+    }
+    if (!global.domain) {
+      global.domain = await Domain.findOne({
+        where: { id: 1 }
+      }).then((domain: Domain | null) => {
+        if (domain) return domain.domain
+        else return undefined
+      })
     }
     return {
       ...((await redis.json.get("core:state")) ||
@@ -241,7 +240,7 @@ export class CoreResolver {
     @Ctx() ctx: Context,
     @Arg("input") input: SetExperimentInput
   ) {
-    const validExperiments = ["NOTIFICATION_SOUND", "THEME"]
+    const validExperiments = ["NOTIFICATION_SOUND", "THEME", "PRIDE"]
     if (input.userId && !ctx.user?.administrator)
       throw new GqlError("NOT_ADMIN")
     if (!validExperiments.includes(input.key) && !ctx.user?.administrator)

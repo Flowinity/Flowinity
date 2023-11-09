@@ -556,6 +556,9 @@ export const useAppStore = defineStore("app", {
           for (const experiment of experiments) {
             experimentsStore.experiments[experiment.id] = experiment.value;
           }
+          if (experimentsStore.experiments.PRIDE) {
+            document.body.classList.add("rainbow");
+          }
         } catch {
           //
         }
@@ -572,9 +575,12 @@ export const useAppStore = defineStore("app", {
       useWorkspacesStore().init();
       const chat = useChatStore();
       const user = useUserStore();
-      setInterval(() => {
-        this.getWeather();
-      }, 1000 * 60 * 15);
+      setInterval(
+        () => {
+          this.getWeather();
+        },
+        1000 * 60 * 15
+      );
       this._postInitRan = true;
       this.populateQuickSwitcher();
       this.getWeather();
@@ -603,9 +609,8 @@ export const useAppStore = defineStore("app", {
           (document.createElement("link") as HTMLLinkElement);
         link.type = "image/x-icon";
         link.rel = "shortcut icon";
-        link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
-          user.user?.username
-        }&unread=${chat.totalUnread || 0}`;
+        link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${user
+          .user?.username}&unread=${chat.totalUnread || 0}`;
         document.head.appendChild(link);
       }
       i18nObject.global.locale = this.user?.language || "en";
@@ -685,6 +690,11 @@ export const useAppStore = defineStore("app", {
       const experimentsStore = useExperimentsStore();
       for (const experiment of experiments) {
         experimentsStore.experiments[experiment.id] = experiment.value;
+      }
+      if (experimentsStore.experiments.PRIDE) {
+        document.body.classList.add("rainbow");
+      } else {
+        document.body.classList.remove("rainbow");
       }
       useWorkspacesStore().items = workspaces;
       useFriendsStore().friends = friends;

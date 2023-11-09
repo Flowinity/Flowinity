@@ -14,8 +14,10 @@
     "build": "tsc --project tsconfig.app.json",
     "format": "prettier --config ../.prettierrc.yaml --write \"app/**/*\"",
     "lint": "eslint -c .eslintrc.json \"./app/**/*.ts\" --format stylish",
-    "test": "jest --detectOpenHandles --forceExit --coverage",
-    "postinstall": "patch-package"
+    "test": "NODE_ENV=test yarn init:db && yarn test:no-db",
+    "postinstall": "patch-package",
+    "test:no-db": "NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest --detectOpenHandles --forceExit --coverage",
+    "init:db": "NODE_ENV=test ts-node ./app/testStart.ts"
   },
   "nyc": {
     "check-coverage": true,
