@@ -350,7 +350,6 @@ import ReplyLine from "@/components/Communications/ReplyLine.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
-  name: "MessagePerf",
   components: {
     Overline,
     ReplyLine,

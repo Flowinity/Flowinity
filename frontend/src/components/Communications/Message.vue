@@ -251,7 +251,6 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
 
 export default defineComponent({
-  name: "Message",
   components: {
     ReadReceipt,
     UserAvatar,

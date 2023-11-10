@@ -70,7 +70,6 @@ import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import { ScrollPosition } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "Pins",
   components: { MessagePerf, Paginate, PromoNoContent, Message },
   props: ["modelValue"],
   emits: ["update:modelValue"],

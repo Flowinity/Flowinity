@@ -22,7 +22,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Overline",
   props: {
     position: {
       type: String as () => "start" | "center" | "end",

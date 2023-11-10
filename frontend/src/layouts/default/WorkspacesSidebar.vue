@@ -24,7 +24,7 @@
         $app.forcedWorkspaceDrawer
       "
     ></WorkspacesSidebarList>
-    <ColubrinaMemberSidebarList v-else></ColubrinaMemberSidebarList>
+    <MemberSidebarList v-else></MemberSidebarList>
     <template v-slot:append v-if="$workspaces.versionHistory">
       <v-btn
         width="228px"
@@ -42,14 +42,14 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
-import ColubrinaMemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
+import MemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
 
 export default defineComponent({
   name: "WorkspacesSidebar",
   components: {
     CoreSidebar,
-    ColubrinaMemberSidebarList,
+    MemberSidebarList,
     WorkspacesSidebarList
   },
   methods: {
