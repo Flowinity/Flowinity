@@ -687,6 +687,7 @@ export const useAppStore = defineStore("app", {
             Number(b.id) - Number(a.id)
           );
         });
+      this.loading = false;
       const experimentsStore = useExperimentsStore();
       for (const experiment of experiments) {
         experimentsStore.experiments[experiment.id] = experiment.value;

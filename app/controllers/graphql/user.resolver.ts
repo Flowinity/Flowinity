@@ -56,6 +56,7 @@ import { SessionType } from "@app/classes/graphql/user/sessions"
 import { UserStoredStatus } from "@app/classes/graphql/user/status"
 import { Collection } from "@app/models/collection.model"
 import { Success } from "@app/classes/graphql/generic/success"
+import { defaultHomeWidgets } from "@app/classes/graphql/home/homeWidgets"
 
 @Resolver(User)
 @Service()
@@ -407,12 +408,17 @@ function createBaseResolver<T extends ClassType>(
     ) {}
 
     async findByPk(id: number, ctx: Context) {
-      return await User.findByPk(id, {
+      const user = await User.findByPk(id, {
         [EXPECTED_OPTIONS_KEY]: createContext(db),
         attributes: {
           include: ["alternatePasswords"]
         }
       })
+      if (!user) return null
+      if (!user.homeWidgets || user.homeWidgets.default) {
+        user.homeWidgets = defaultHomeWidgets
+      }
+      return user
     }
 
     async findByUsername(username: string, ctx: Context) {

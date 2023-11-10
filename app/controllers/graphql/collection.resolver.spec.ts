@@ -30,6 +30,7 @@ let user: TestUser | null = null
 
 let collectionId = 0
 let shareLink = ""
+let collectionId2 = 0
 
 let friendToShare: TestUser | null = null
 
@@ -514,6 +515,42 @@ describe("CollectionItemResolver", () => {
     expect(gallery.data?.gallery.items[0].id).toBe(uploadId)
   })
 
+  test("Create secondary collection", async () => {
+    const collection = await gCall({
+      source: CreateCollectionMutation,
+      token: user?.token,
+      variableValues: {
+        input: {
+          name: "Secondary Collection"
+        }
+      }
+    })
+    expect(collection.errors).toBeUndefined()
+    expect(collection.data?.createCollection).toMatchObject({
+      id: expect.any(Number)
+    })
+    collectionId2 = collection.data?.createCollection.id
+  })
+
+  test("Add item to secondary collection", async () => {
+    const add = await gCall({
+      source: AddToCollectionMutation,
+      variableValues: {
+        input: {
+          collectionId: collectionId2,
+          items: [uploadId]
+        }
+      },
+      token: user?.token
+    })
+    expect(add.errors).toBeUndefined()
+    expect(add.data.addToCollection).toMatchObject([
+      {
+        id: expect.any(Number)
+      }
+    ])
+  })
+
   test("Add user back to collection with write permissions", async () => {
     const share2 = await gCall({
       source: AddCollectionUserMutation,
@@ -532,6 +569,55 @@ describe("CollectionItemResolver", () => {
     expect(share2.data?.addCollectionUser).toMatchObject({
       id: expect.any(Number)
     })
+  })
+
+  test("Test collection hiding", async () => {
+    const gallery = await gCall({
+      source: GalleryQuery,
+      variableValues: {
+        input: {
+          page: 1,
+          collectionId: collectionId,
+          type: GalleryType.Collection
+        }
+      },
+      token: friendToShare?.token
+    })
+    expect(gallery.errors).toBeUndefined()
+
+    // Find the item
+    const item = gallery.data?.gallery.items.find(
+      (item: any) => item.id === uploadId
+    )
+    expect(item).toBeDefined()
+    // ensure the secondary collection is not in collections field
+    const collection = item.collections.find((c: any) => c.id === collectionId2)
+    expect(collection).toBeUndefined()
+    expect(item.collections).toHaveLength(1)
+
+    // Ensure the secondary collection is in the collections field for other user
+    const gallery2 = await gCall({
+      source: GalleryQuery,
+      variableValues: {
+        input: {
+          page: 1,
+          collectionId: collectionId,
+          type: GalleryType.Collection
+        }
+      },
+      token: user?.token
+    })
+    expect(gallery2.errors).toBeUndefined()
+
+    const item2 = gallery2.data?.gallery.items.find(
+      (item: any) => item.id === uploadId
+    )
+    expect(item2).toBeDefined()
+    const collection2 = item2.collections.find(
+      (c: any) => c.id === collectionId2
+    )
+    expect(collection2).toBeDefined()
+    expect(item2.collections).toHaveLength(2)
   })
 
   test("Remove item from collection of other user (should fail)", async () => {

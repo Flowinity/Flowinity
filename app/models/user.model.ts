@@ -42,6 +42,10 @@ import {
   FriendRequestPrivacy,
   GroupPrivacy
 } from "@app/classes/graphql/user/privacy"
+import {
+  defaultHomeWidgets,
+  HomeWidgets
+} from "@app/classes/graphql/home/homeWidgets"
 
 @DefaultScope(() => ({
   attributes: {
@@ -418,6 +422,15 @@ export class User extends Model {
   })
   @Column
   bot: boolean
+
+  @Field(() => HomeWidgets, {
+    nullable: true
+  })
+  @Column({
+    type: DataType.JSON,
+    defaultValue: defaultHomeWidgets
+  })
+  homeWidgets: HomeWidgets
 
   @Field(() => Plan, {
     nullable: true
