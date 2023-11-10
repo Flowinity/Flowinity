@@ -297,6 +297,15 @@ export const CoreStateQuery = gql`
         error
         expiresAt
       }
+      homeWidgets {
+        rows {
+          widgets {
+            type
+            props
+          }
+        }
+        default
+      }
     }
     trackedUsers {
       username

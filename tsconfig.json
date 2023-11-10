@@ -3,7 +3,7 @@
     "baseUrl": "./",
     "target": "ES2021",
     "incremental": true,
-    "types": ["node", "webpack-env"],
+    "types": ["node", "webpack-env", "jest"],
     "typeRoots": ["./app/types", "./node_modules/@types"],
     "module": "commonjs",
     "moduleResolution": "node",

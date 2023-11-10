@@ -58,7 +58,9 @@
       {{ collection.user.username }},
       {{ collection.users.map((user) => user.user.username).join(", ") }}
     </v-card-text>
-    <v-card-text v-else class="mt-n3">{{ collection.items }} items</v-card-text>
+    <v-card-text v-else class="mt-n3">
+      {{ collection.itemCount }} items
+    </v-card-text>
   </UserBanner>
   <v-container v-if="collection">
     <PersonalGallery

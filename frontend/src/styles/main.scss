@@ -686,11 +686,6 @@ p:has(.emoji-large) img {
   background: linear-gradient(to right, #ff4e50, #fc913a, #f9d423, #eae374, #e2f7ce, #9ed9e1, #5e6472);
 }
 
-$invite-bg-color: #000000;
-$invite-dot-color: rgba(230, 230, 230, 0.3);
-$invite-dot-size: 1px;
-$invite-dot-space: 22px;
-
 .invite {
   height: calc(100vh - 56px);
   width: 100%;
@@ -698,15 +693,6 @@ $invite-dot-space: 22px;
   position: relative;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-                  90deg,
-                  $invite-bg-color ($invite-dot-space - $invite-dot-size),
-                  transparent 1%
-  )
-  center,
-  linear-gradient($invite-bg-color ($invite-dot-space - $invite-dot-size), transparent 1%) center,
-  $invite-dot-color;
-  background-size: $invite-dot-space $invite-dot-space;
 }
 
 .circle {

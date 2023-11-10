@@ -1,0 +1,214 @@
+name: PrivateUploader Backend Tests
+
+on:
+  push:
+    branches:
+      - api-v4
+
+jobs:
+  tpu-backend-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: "redis/redis-stack"
+        ports:
+          - 6379:6379
+      mariadb:
+        image: "mariadb:10.6.13"
+        env:
+          MYSQL_DATABASE: upload_test
+          MYSQL_USER: upload
+          MYSQL_PASSWORD: test
+          MYSQL_ROOT_PASSWORD: test
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install yarn, and other deps
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Install global dependencies
+        run: yarn global add sequelize-cli mariadb
+
+      - name: Print current path
+        run: echo $PWD && ls -la
+
+      - name: Create Sequelize config file
+        run: |
+          echo '{
+            "test": {
+              "username": "root",
+              "password": "test",
+              "database": "upload_test",
+              "host": "localhost",
+              "dialect": "mariadb",
+              "logging": false
+            }
+          }' > app/config/config.json
+
+      - name: Create default tpu.json
+        run: |
+          echo '{
+                  "defaultPlanId": 1,
+                  "port": 34582,
+                  "flowinityId": "Deprecated",
+                  "flowinitySecret": "Deprecated",
+                  "maintenance": {
+                    "enabled": false,
+                    "statusPage": "https://status.troplo.com",
+                    "message": ""
+                  },
+                  "siteName": "PrivateUploader",
+                  "hostname": "test.privateuploader.gql.troplo.com",
+                  "hostnameWithProtocol": "https://test.privateuploader.gql.troplo.com",
+                  "release": "dev",
+                  "storage": "storage",
+                  "jitsiToken": null,
+                  "registrations": true,
+                  "mediaProxySecret": "RANDOM STRING HERE!",
+                  "weatherApiKey": null,
+                  "redis": {
+                    "host": "localhost",
+                    "db": 0,
+                    "port": 6379
+                  },
+                  "providers": {
+                    "tenor": null,
+                    "lastfm": {
+                      "key": null,
+                      "secret": null
+                    },
+                    "mal": {
+                      "key": null,
+                      "secret": null
+                    },
+                    "anilist": {
+                      "key": null,
+                      "secret": null
+                    },
+                    "discord": {
+                      "applicationId": "",
+                      "publicKey": "",
+                      "oAuthClientId": "",
+                      "oAuthClientSecret": "",
+                      "oAuthRedirectUri": "https://privateuploader.com/settings/integrations/link/discord"
+                    },
+                    "google": null
+                  },
+                  "email": {
+                    "host": "mysmtpserver",
+                    "port": 587,
+                    "from": "\"TroploPrivateUploader\" <no-reply@privateuploader.com>",
+                    "secure": false,
+                    "username": "no-reply@privateuploader.com",
+                    "password": ""
+                  },
+                  "discord": {
+                    "webhook": "",
+                    "token": ""
+                  },
+                  "officialInstance": false,
+                  "finishedSetup": true,
+                  "termsNoteId": "",
+                  "privacyNoteId": "",
+                  "threads": 0,
+                  "inviteAFriend": true,
+                  "features": {
+                    "communications": true,
+                    "collections": true,
+                    "autoCollects": true,
+                    "workspaces": true,
+                    "insights": true
+                  },
+                  "hive": {
+                    "enabled": false
+                  },
+                  "hostnames": [],
+                  "preTrustedDomains": [
+                    "troplo.com",
+                    "images.flowinity.com",
+                    "i.troplo.com",
+                    "central.troplo.com",
+                    "home.troplo.com",
+                    "localhost",
+                    "youtube.com",
+                    "youtu.be",
+                    "vimeo.com",
+                    "twitch.tv",
+                    "i.flowinity.com",
+                    "scpe.eu.org",
+                    "colubrina.troplo.com",
+                    "compass.troplo.com",
+                    "plex.troplo.com",
+                    "meet.troplo.com",
+                    "flowinity.com",
+                    "synclounge.troplo.com",
+                    "overseerr.troplo.com",
+                    "jellyfin.troplo.com",
+                    "radarr.troplo.com",
+                    "sonarr.troplo.com",
+                    "google.com",
+                    "wikipedia.org",
+                    "troplo.eu.org",
+                    "flowinity.eu.org",
+                    "kaverti.com",
+                    "www.kaverti.com",
+                    "www.troplo.com",
+                    "www.flowinity.com",
+                    "www.google.com",
+                    "www.wikipedia.org",
+                    "en.wikipedia.org",
+                    "discordapp.com",
+                    "discord.com",
+                    "www.discordapp.com",
+                    "www.discord.com",
+                    "discord.gg",
+                    "speedtest.net",
+                    "www.speedtest.net",
+                    "speedtest.troplo.com",
+                    "office.com",
+                    "www.office.com",
+                    "drive.google.com",
+                    "www.youtube.com",
+                    "www.youtu.be",
+                    "www.vimeo.com",
+                    "www.twitch.tv",
+                    "next.images.flowinity.com",
+                    "legacy.images.flowinity.com",
+                    "app.i.troplo.com",
+                    "tenor.com",
+                    "media.tenor.com",
+                    "www.tenor.com",
+                    "giphy.com",
+                    "media.giphy.com",
+                    "www.giphy.com",
+                    "geo.troplo.com",
+                    "privateuploader.com",
+                    "www.privateuploader.com",
+                    "i.privateuploader.com",
+                    "next.privateuploader.com",
+                    "tpu-mobile.troplo.com",
+                    "twitter.com",
+                    "www.twitter.com"
+                  ]
+                }' > app/config/tpu.json
+
+      - name: Run Jest tests
+        run: yarn test
+
+      - name: Finalize
+        run: echo "Tests have completed successfully!"

@@ -89,7 +89,7 @@ describe("UserResolver", () => {
       },
       attributes: ["id", "emailVerified", "emailToken"]
     })
-    console.log(u)
+
     if (u?.emailVerified) {
       console.log("Email already verified")
       expect(u.emailVerified).toBe(true)

@@ -95,6 +95,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import { UpdateCollectionMutation } from "@/graphql/collections/updateCollection.graphql";
 
 export default defineComponent({
   name: "Sharing",
@@ -176,9 +177,14 @@ export default defineComponent({
     },
     async updateShare() {
       this.sharing.loading = true;
-      const { data } = await this.axios.patch(`/collections/share`, {
-        id: this.collection.id,
-        type: this.sharing.public
+      await this.$apollo.mutate({
+        mutation: UpdateCollectionMutation,
+        variables: {
+          input: {
+            collectionId: this.collection.id,
+            shareLink: this.sharing.public === "link"
+          }
+        }
       });
       this.sharing.loading = false;
     },
