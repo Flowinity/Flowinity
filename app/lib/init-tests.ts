@@ -5,6 +5,10 @@ import { authMock } from "@app/lib/auth-mock"
 import isoWeek from "dayjs/plugin/isoWeek"
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
 import io from "../lib/socket-mock"
+import { getUser } from "@app/lib/test-utils/testUser"
+import { gCall } from "@app/lib/test-utils/gCall"
+import { ClearCacheMutation } from "../../frontend-v5/src/graphql/admin/cache.graphql"
+import { AdminCacheType } from "../../frontend-v5/src/gql/graphql"
 
 process.env.NODE_ENV = "test"
 process.env.CONFIG = JSON.stringify(require("../config/tpu.json"))
@@ -20,3 +24,23 @@ dayjs().isoWeekYear()
 dayjs.extend(isSameOrBefore)
 global.dayjs = dayjs
 io.init()
+
+export async function resetState() {
+  await new Promise((resolve) => setTimeout(resolve, 100))
+  const user = await getUser(undefined, undefined, true)
+
+  const data = await gCall({
+    source: ClearCacheMutation,
+    variableValues: {
+      input: {
+        type: AdminCacheType.State,
+        await: true,
+        userId: null
+      }
+    },
+    token: user.token
+  })
+
+  if (!data?.data?.adminClearCache?.success)
+    throw Error("Failed to clear cache" + JSON.stringify(data))
+}

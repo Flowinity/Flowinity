@@ -1,6 +1,6 @@
 import "@app/lib/init-tests"
 import { CollectionResolver } from "@app/controllers/graphql/collection.resolver"
-import { errorConverter, gCall } from "@app/lib/test-utils/gCall"
+import { gCall } from "@app/lib/test-utils/gCall"
 import { UserCollectionsQuery } from "../../../frontend/src/graphql/collections/getUserCollections.graphql"
 import { getUser, testUser, TestUser } from "@app/lib/test-utils/testUser"
 import { beforeAll, expect, jest } from "@jest/globals"
@@ -29,6 +29,7 @@ import { Container } from "typedi"
 import path from "path"
 import { StarUploadMutation } from "../../../frontend-v5/src/graphql/gallery/starUpload"
 import { GalleryType } from "../../../frontend-v5/src/gql/graphql"
+import { resetState } from "@app/lib/init-tests"
 let user: TestUser | null = null
 
 let uploadId = 0
@@ -183,4 +184,5 @@ describe("GalleryResolver", () => {
 
 beforeAll(async () => {
   user = await getUser()
+  await resetState()
 })

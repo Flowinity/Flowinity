@@ -1,6 +1,7 @@
 import "@app/lib/init-tests"
 import { CollectionResolver } from "@app/controllers/graphql/collection.resolver"
-import { errorConverter, gCall } from "@app/lib/test-utils/gCall"
+import { gCall } from "@app/lib/test-utils/gCall"
+import { errorConverter } from "@app/lib/test-utils/errorConverter"
 import { UserCollectionsQuery } from "../../../frontend/src/graphql/collections/getUserCollections.graphql"
 import { getUser, TestUser } from "@app/lib/test-utils/testUser"
 import { beforeAll, expect, jest } from "@jest/globals"
@@ -26,6 +27,7 @@ import {
 } from "../../../frontend-v5/src/graphql/collections/addToCollection.graphql"
 import { GalleryQuery } from "../../../frontend-v5/src/graphql/gallery/gallery.graphql"
 import { Collection } from "../../../frontend-v5/src/gql/graphql"
+import { resetState } from "@app/lib/init-tests"
 let user: TestUser | null = null
 
 let collectionId = 0
@@ -810,5 +812,6 @@ describe("CollectionItemResolver", () => {
 })
 
 beforeAll(async () => {
+  await resetState()
   user = await getUser()
 })

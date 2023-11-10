@@ -1,4 +1,4 @@
-import { Ctx, Mutation, Resolver } from "type-graphql"
+import { Arg, Ctx, Mutation, Resolver } from "type-graphql"
 import { Service } from "typedi"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
@@ -10,11 +10,16 @@ import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { ChatPermissionsHandler } from "@app/services/chat/permissions"
 import { User } from "@app/models/user.model"
 import { UserUtilsService } from "@app/services/userUtils.service"
+import { ClearCacheInput } from "@app/classes/graphql/admin/cache"
+import { AdminService } from "@app/services/admin.service"
 
 @Resolver()
 @Service()
 export class AdminResolver {
-  constructor(private userUtilsService: UserUtilsService) {}
+  constructor(
+    private userUtilsService: UserUtilsService,
+    private adminService: AdminService
+  ) {}
 
   @Authorization({
     accessLevel: AccessLevel.ADMIN,
@@ -67,5 +72,31 @@ export class AdminResolver {
       await new Promise((resolve) => setTimeout(resolve, 60000))
     }
     return { success: true }
+  }
+
+  @Authorization({
+    accessLevel: AccessLevel.ADMIN,
+    scopes: "*"
+  })
+  @Mutation(() => Success)
+  async adminClearCache(
+    @Ctx() ctx: Context,
+    @Arg("input") input: ClearCacheInput
+  ) {
+    if (input.userId) {
+      if (input.await) {
+        await this.adminService.purgeUserCache(input.userId)
+      } else {
+        this.adminService.purgeUserCache(input.userId)
+      }
+      return { success: true }
+    } else {
+      if (input.await) {
+        await this.adminService.purgeCache(input.type)
+      } else {
+        this.adminService.purgeCache(input.type)
+      }
+      return { success: true }
+    }
   }
 }

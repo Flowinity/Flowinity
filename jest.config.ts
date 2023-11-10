@@ -84,7 +84,7 @@ export default {
   // A path to a module which exports an async function that is triggered once before all test suites
   // globalSetup: undefined,
   globalSetup: "./app/testEnv.ts",
-  setupFilesAfterEnv: ["<rootDir>/app/lib/uninit-tests.ts"]
+  setupFiles: ["<rootDir>/app/testSetup.ts"]
   // A path to a module which exports an async function that is triggered once after all test suites
   // globalTeardown: undefined,
 

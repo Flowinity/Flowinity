@@ -33,6 +33,7 @@ import { Session } from "@app/models/session.model"
 import { OauthSave } from "@app/models/oauthSave.model"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { parsePath } from "type-graphql/build/typings/helpers/filesystem"
+import SMTPTransport from "nodemailer/lib/smtp-transport"
 
 const inviteParams = {
   include: [
@@ -183,35 +184,36 @@ export class AdminService {
   }
 
   async purgeCache(type: CacheType) {
+    const cacheService = Container.get(CacheService)
     switch (type) {
       case CacheType.everything:
-        await this.cacheService.refreshState()
-        await this.cacheService.generateCollectionCache()
-        await this.cacheService.generateShareLinkCache()
+        await cacheService.refreshState()
+        await cacheService.generateCollectionCache()
+        await cacheService.generateShareLinkCache()
         return true
       case CacheType.state:
-        await this.cacheService.refreshState()
+        await cacheService.refreshState()
         return true
       case CacheType.collections:
-        await this.cacheService.generateCollectionCache()
+        await cacheService.generateCollectionCache()
         return true
       case CacheType.sharelinks:
-        await this.cacheService.generateShareLinkCache()
+        await cacheService.generateShareLinkCache()
         return true
       case CacheType.autocollects:
-        await this.cacheService.generateAutoCollectCache()
+        await cacheService.generateAutoCollectCache()
         return true
       case CacheType.invites:
         await redis.del("invites")
         return true
       case CacheType.chats:
-        await this.cacheService.generateChatsCache()
+        await cacheService.generateChatsCache()
         return true
       case CacheType.insights:
-        await this.cacheService.generateInsightsCache()
+        await cacheService.generateInsightsCache()
         return true
       case CacheType.userstats:
-        await this.cacheService.generateUserStatsCache()
+        await cacheService.generateUserStatsCache()
         return true
       case CacheType.lastfm:
         console.log("[AdminService] Purging lastfm cache")
@@ -243,7 +245,7 @@ export class AdminService {
       password: string
       from: string
     }
-  ) {
+  ): Promise<SMTPTransport.SentMessageInfo | true> {
     console.log("[AdminService] Sending email to", email)
     let mailGenerator = new Mailgen({
       theme: "cerberus",

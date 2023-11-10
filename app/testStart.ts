@@ -29,6 +29,7 @@ export async function init() {
     cwd: global.appRoot,
     stdio: "inherit"
   })
+  await new Promise((resolve) => setTimeout(resolve, 500))
   await db.query("SET FOREIGN_KEY_CHECKS = 0")
   await db.models.User.create({
     id: 69,

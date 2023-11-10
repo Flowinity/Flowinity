@@ -428,9 +428,9 @@ export class User extends Model {
   })
   @Column({
     type: DataType.JSON,
-    defaultValue: defaultHomeWidgets
+    defaultValue: null
   })
-  homeWidgets: HomeWidgets
+  homeWidgets: HomeWidgets | null
 
   @Field(() => Plan, {
     nullable: true

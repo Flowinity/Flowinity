@@ -74,6 +74,21 @@ export type AddToCollectionInput = {
   items: Array<Scalars['Float']['input']>;
 };
 
+/** The type of cache to clear */
+export enum AdminCacheType {
+  Autocollects = 'autocollects',
+  Chats = 'chats',
+  Collections = 'collections',
+  Everything = 'everything',
+  Insights = 'insights',
+  Invites = 'invites',
+  Lastfm = 'lastfm',
+  Mal = 'mal',
+  Sharelinks = 'sharelinks',
+  State = 'state',
+  Userstats = 'userstats'
+}
+
 export type AlternatePassword = {
   __typename?: 'AlternatePassword';
   name: Scalars['String']['output'];
@@ -364,6 +379,12 @@ export type ChatRank = {
 
 export type ChatsInput = {
   hidden?: Scalars['Boolean']['input'];
+};
+
+export type ClearCacheInput = {
+  await?: InputMaybe<Scalars['Boolean']['input']>;
+  type: AdminCacheType;
+  userId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Collection = {
@@ -960,6 +981,7 @@ export type Mutation = {
   addCollectionUser: CollectionUser;
   addOauthUser: OauthUser;
   addToCollection: Array<CollectionItem>;
+  adminClearCache: GenericSuccessObject;
   adminMigrateLegacyRanksForChat: GenericSuccessObject;
   adminSendEmailForUnverifiedUsers: GenericSuccessObject;
   applyDomain: Domain;
@@ -1054,6 +1076,11 @@ export type MutationAddOauthUserArgs = {
 
 export type MutationAddToCollectionArgs = {
   input: AddToCollectionInput;
+};
+
+
+export type MutationAdminClearCacheArgs = {
+  input: ClearCacheInput;
 };
 
 

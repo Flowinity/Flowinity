@@ -1,15 +1,12 @@
-import { generateSchema } from "@app/lib/generateSchema"
+import { generateSchema } from "../generateSchema"
 import { DocumentNode, ExecutionResult, graphql, Source } from "graphql"
-import { User } from "@app/models/user.model"
-import generateContext from "@app/classes/graphql/middleware/generateContext"
-import { expect } from "@jest/globals"
+import generateContext from "../../classes/graphql/middleware/generateContext"
 import { GraphQLSchema } from "graphql/type"
 
 interface Options {
   source: string | Source | DocumentNode
   variableValues?: Record<string, any>
   userId?: string
-  user?: User
   token?: string
 }
 
@@ -23,7 +20,6 @@ export async function gCall<T>({
   source,
   variableValues,
   userId,
-  user,
   token
 }: Options): Promise<ExecutionResult<T | any>> {
   if (!schema) schema = await generateSchema()
@@ -53,26 +49,4 @@ export async function gCall<T>({
       }
     })
   })
-}
-
-export function errorConverter(message?: string, code?: string) {
-  if (!message && !code)
-    throw new Error("You must provide either a message or a code")
-  return {
-    message: message ?? expect.any(String),
-    locations: [
-      {
-        line: expect.any(Number),
-        column: expect.any(Number)
-      }
-    ],
-    path: [expect.any(String)],
-    ...(code
-      ? {
-          extensions: {
-            code
-          }
-        }
-      : {})
-  }
 }

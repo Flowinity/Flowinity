@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test } from "@jest/globals"
 import "@app/lib/init-tests"
-import { errorConverter, gCall } from "@app/lib/test-utils/gCall"
+import { gCall } from "@app/lib/test-utils/gCall"
 import { RegisterMutation } from "../../../frontend/src/graphql/auth/register.graphql"
 import { LoginMutation } from "../../../frontend/src/graphql/auth/login.graphql"
 import { CoreStateQuery } from "../../../frontend/src/graphql/core/state.graphql"
@@ -20,6 +20,9 @@ import {
   ChangeUserPasswordMutation
 } from "../../../frontend/src/graphql/user/changeUsername.graphql"
 import { getUser, TestUser } from "@app/lib/test-utils/testUser"
+import { errorConverter } from "@app/lib/test-utils/errorConverter"
+import { resetState } from "@app/lib/init-tests"
+import { AdminService } from "@app/services/admin.service"
 
 let user: TestUser | null = null
 let token = ""
@@ -94,6 +97,9 @@ describe("UserResolver", () => {
       console.log("Email already verified")
       expect(u.emailVerified).toBe(true)
     } else {
+      jest
+        .spyOn(AdminService.prototype, "sendEmail")
+        .mockImplementation(() => Promise.resolve(true))
       const data = await gCall({
         source: VerifyEmailMutation,
         variableValues: {
@@ -311,4 +317,9 @@ describe("UserResolver", () => {
     user = await getUser(undefined, false)
     token = user!.token
   })
+})
+
+beforeAll(async () => {
+  user = await getUser()
+  await resetState()
 })

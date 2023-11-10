@@ -1,4 +1,4 @@
-import { expect, test } from "@jest/globals"
+import { beforeAll, expect, test } from "@jest/globals"
 import { gCall } from "@app/lib/test-utils/gCall"
 import { RegisterMutation } from "../../../frontend/src/graphql/auth/register.graphql"
 import { LoginMutation } from "../../../frontend/src/graphql/auth/login.graphql"
@@ -6,6 +6,7 @@ import cryptoRandomString from "crypto-random-string"
 import "@app/lib/init-tests"
 // REQUIRED IMPORT TO COUNT CODE COVERAGE
 import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
+import { resetState } from "@app/lib/init-tests"
 let user = {
   id: 1,
   username: cryptoRandomString({ length: 10, type: "alphanumeric" }),
@@ -68,4 +69,8 @@ describe("AuthResolver", () => {
     })
     token = login.data?.login?.token
   })
+})
+
+beforeAll(async () => {
+  await resetState()
 })

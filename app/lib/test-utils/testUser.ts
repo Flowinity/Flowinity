@@ -1,7 +1,6 @@
 import cryptoRandomString from "crypto-random-string"
-import { User } from "@app/models/user.model"
-import { Session } from "@app/models/session.model"
 import { Op } from "sequelize"
+import db from "../../db"
 
 export class TestUser {
   constructor() {
@@ -22,9 +21,10 @@ export const testUser = new TestUser()
 
 export const getUser = async (
   id?: number,
-  emailVerified = true
+  emailVerified = true,
+  admin = false
 ): Promise<TestUser> => {
-  const u = await User.findOne({
+  const u = (await db.models.User.findOne({
     ...(id
       ? {
           where: {
@@ -37,7 +37,12 @@ export const getUser = async (
             emailVerified: true,
             username: {
               [Op.notLike]: `%Collectivizer%`
-            }
+            },
+            ...(admin
+              ? {
+                  administrator: true
+                }
+              : {})
           }
         }
       : {
@@ -50,14 +55,14 @@ export const getUser = async (
     order: [["createdAt", "DESC"]],
     include: [
       {
-        model: Session,
+        model: db.models.Session,
         as: "sessions",
         order: [["createdAt", "DESC"]],
         required: true,
         limit: 1
       }
     ]
-  })
+  })) as any
   if (!u) throw new Error("User not found")
   return {
     id: u.id,

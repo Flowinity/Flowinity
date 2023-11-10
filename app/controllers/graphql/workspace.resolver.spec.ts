@@ -20,6 +20,7 @@ import { RegisterMutation } from "../../../frontend/src/graphql/auth/register.gr
 import cryptoRandomString from "crypto-random-string"
 import { DeleteWorkspaceItemMutation } from "../../../frontend-v5/src/graphql/workspaces/deleteWorkspaceItem"
 import { WorkspaceItemType } from "../../../frontend-v5/src/gql/graphql"
+import { resetState } from "@app/lib/init-tests"
 
 let user: TestUser | null = null
 let user2: TestUser | null = null
@@ -489,4 +490,5 @@ describe("Delete Items", () => {
 
 beforeAll(async () => {
   user = await getUser()
+  await resetState()
 })
