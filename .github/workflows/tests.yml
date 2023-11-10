@@ -1,0 +1,128 @@
+name: PrivateUploader Backend Tests
+
+on:
+  push:
+    branches:
+      - api-v4
+
+jobs:
+  test-and-setup:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: "redis/redis-stack"
+        ports:
+          - 6379:6379
+      mariadb:
+        image: "mariadb:10.6.13"
+        env:
+          MYSQL_DATABASE: test
+          MYSQL_USER: test
+          MYSQL_PASSWORD: test
+          MYSQL_ROOT_PASSWORD: test
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install yarn, and other deps
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Install global dependencies
+        run: yarn global add sequelize-cli mariadb
+
+      - name: Print current path
+        run: echo $PWD && ls -la
+
+      - name: Create Sequelize config file
+        run: |
+          echo '{
+            "test": {
+              "username": "test",
+              "password": "test",
+              "database": "test",
+              "host": "localhost",
+              "dialect": "mariadb"
+            }
+          }' > app/config/config.json
+
+      - name: Create default tpu.json
+        run: |
+          echo '{
+            "port": 34582,
+            "siteName": "PrivateUploader",
+            "hostname": "test.privateuploader.gql.troplo.com",
+            "hostnameWithProtocol": "https://test.privateuploader.gql.troplo.com",
+            "storage": "storage",
+            "registrations": true,
+            "mediaProxySecret": "",
+            "maintenance": false,
+            "release": "prod",
+            "jitsiToken": null,
+            "officialInstance": false,
+            "finishedSetup": true,
+            "weatherApiKey": null,
+            "discord": {
+              "webhook": null,
+              "token": null
+            },
+            "providers": {
+              "tenor": null,
+              "lastfm": {
+                "key": null,
+                "secret": null
+              },
+              "mal": {
+                "key": null,
+                "secret": null
+              },
+              "anilist": {
+                "key": null,
+                "secret": null
+              }
+            },
+            "email": {
+              "host": "",
+              "port": 587,
+              "username": "",
+              "password": "",
+              "from": "\"TroploPrivateUploader\" <noreply@privateuploader.com>",
+              "secure": false
+            },
+            "redis": {
+              "db": 0,
+              "host": "localhost",
+              "port": 6379
+            },
+            "threads": 0,
+            "features": {
+              "autoCollects": true,
+              "collections": true,
+              "workspaces": true,
+              "insights": true,
+              "communications": true
+            },
+            "defaultPlanId": 1,
+            "privacyNoteId": null,
+            "termsNoteId": null,
+            "inviteAFriend": true
+          }' > app/config/tpu.json
+
+      - name: Run Jest tests
+        run: yarn test
+
+      - name: Finalize
+        run: echo "Tests have completed successfully!"
