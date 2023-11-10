@@ -1,24 +1,26 @@
 {
+  "defaultPlanId": 1,
   "port": 34582,
-  "siteName": "PrivateUploader",
-  "hostname": "mydomain.com",
-  "hostnameWithProtocol": "https://mydomain.com",
-  "storage": "storage",
-  "registrations": true,
-  "mediaProxySecret": "GENERATE RANDOM STRING HERE!",
+  "flowinityId": "Deprecated",
+  "flowinitySecret": "Deprecated",
   "maintenance": {
     "enabled": false,
     "statusPage": "https://status.troplo.com",
-    "message": "PrivateUploader is being migrated to a new server.\nIf you are still seeing this message after migration is complete, please check your DNS configuration."
+    "message": ""
   },
-  "release": "prod",
+  "siteName": "PrivateUploader",
+  "hostname": "mydomain.com",
+  "hostnameWithProtocol": "https://mydomain.com",
+  "release": "dev",
+  "storage": "storage",
   "jitsiToken": null,
-  "officialInstance": false,
-  "finishedSetup": true,
+  "registrations": true,
+  "mediaProxySecret": "RANDOM STRING HERE!",
   "weatherApiKey": null,
-  "discord": {
-    "webhook": null,
-    "token": null
+  "redis": {
+    "host": "localhost",
+    "db": 0,
+    "port": 6379
   },
   "providers": {
     "tenor": null,
@@ -33,31 +35,110 @@
     "anilist": {
       "key": null,
       "secret": null
-    }
+    },
+    "discord": {
+      "applicationId": "",
+      "publicKey": "",
+      "oAuthClientId": "",
+      "oAuthClientSecret": "",
+      "oAuthRedirectUri": "https://privateuploader.com/settings/integrations/link/discord"
+    },
+    "google": null
   },
   "email": {
-    "host": "",
+    "host": "mysmtpserver",
     "port": 587,
-    "username": "",
-    "password": "",
-    "from": "\"TroploPrivateUploader\" <noreply@privateuploader.com>",
-    "secure": false
+    "from": "\"TroploPrivateUploader\" <no-reply@privateuploader.com>",
+    "secure": false,
+    "username": "no-reply@privateuploader.com",
+    "password": ""
   },
-  "redis": {
-    "db": 0,
-    "host": "localhost",
-    "port": 6379
+  "discord": {
+    "webhook": "",
+    "token": ""
   },
+  "officialInstance": false,
+  "finishedSetup": true,
+  "termsNoteId": "",
+  "privacyNoteId": "",
   "threads": 0,
+  "inviteAFriend": true,
   "features": {
-    "autoCollects": true,
+    "communications": true,
     "collections": true,
+    "autoCollects": true,
     "workspaces": true,
-    "insights": true,
-    "communications": true
+    "insights": true
   },
-  "defaultPlanId": 1,
-  "privacyNoteId": null,
-  "termsNoteId": null,
-  "inviteAFriend": true
+  "hive": {
+    "enabled": false
+  },
+  "hostnames": [],
+  "preTrustedDomains": [
+    "troplo.com",
+    "images.flowinity.com",
+    "i.troplo.com",
+    "central.troplo.com",
+    "home.troplo.com",
+    "localhost",
+    "youtube.com",
+    "youtu.be",
+    "vimeo.com",
+    "twitch.tv",
+    "i.flowinity.com",
+    "scpe.eu.org",
+    "colubrina.troplo.com",
+    "compass.troplo.com",
+    "plex.troplo.com",
+    "meet.troplo.com",
+    "flowinity.com",
+    "synclounge.troplo.com",
+    "overseerr.troplo.com",
+    "jellyfin.troplo.com",
+    "radarr.troplo.com",
+    "sonarr.troplo.com",
+    "google.com",
+    "wikipedia.org",
+    "troplo.eu.org",
+    "flowinity.eu.org",
+    "kaverti.com",
+    "www.kaverti.com",
+    "www.troplo.com",
+    "www.flowinity.com",
+    "www.google.com",
+    "www.wikipedia.org",
+    "en.wikipedia.org",
+    "discordapp.com",
+    "discord.com",
+    "www.discordapp.com",
+    "www.discord.com",
+    "discord.gg",
+    "speedtest.net",
+    "www.speedtest.net",
+    "speedtest.troplo.com",
+    "office.com",
+    "www.office.com",
+    "drive.google.com",
+    "www.youtube.com",
+    "www.youtu.be",
+    "www.vimeo.com",
+    "www.twitch.tv",
+    "next.images.flowinity.com",
+    "legacy.images.flowinity.com",
+    "app.i.troplo.com",
+    "tenor.com",
+    "media.tenor.com",
+    "www.tenor.com",
+    "giphy.com",
+    "media.giphy.com",
+    "www.giphy.com",
+    "geo.troplo.com",
+    "privateuploader.com",
+    "www.privateuploader.com",
+    "i.privateuploader.com",
+    "next.privateuploader.com",
+    "tpu-mobile.troplo.com",
+    "twitter.com",
+    "www.twitter.com"
+  ]
 }
