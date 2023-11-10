@@ -3,6 +3,7 @@ import "reflect-metadata"
 import path from "path"
 import { exec, execSync } from "child_process"
 import db from "@app/db"
+import cryptoRandomString from "crypto-random-string"
 
 export async function init() {
   console.log("init")
@@ -35,7 +36,14 @@ export async function init() {
       username: "testaccountnottakenadmin",
       email: "eee@ee.com",
       password: "nologin",
-      administrator: true
+      administrator: true,
+      emailVerified: true
+    })
+    await db.models.Session.create({
+      userId: 69,
+      token: "TPU-WEB-" + cryptoRandomString({ length: 128 }),
+      scopes: "*",
+      type: "session"
     })
     await db.models.Plan.create({
       id: 1,

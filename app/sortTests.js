@@ -16,7 +16,8 @@ class CustomSequencer extends TestSequencer {
         const indexA = categoryOrder.indexOf(categoryA)
         const indexB = categoryOrder.indexOf(categoryB)
 
-        return indexA - indexB
+        // Reverse the comparison to make "auth" come first
+        return indexB - indexA
       }
 
       if (categoryA) {

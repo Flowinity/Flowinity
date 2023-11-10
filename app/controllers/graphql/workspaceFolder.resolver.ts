@@ -1,4 +1,4 @@
-import { FieldResolver, Resolver, Root } from "type-graphql"
+import { Arg, Ctx, FieldResolver, Mutation, Resolver, Root } from "type-graphql"
 import { Service } from "typedi"
 import { Workspace } from "@app/models/workspace.model"
 import { NoteService } from "@app/services/note.service"

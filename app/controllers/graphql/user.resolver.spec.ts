@@ -155,7 +155,49 @@ describe("UserResolver", () => {
       source: CoreStateQuery,
       token
     })
+    expect(state2.errors).toBeUndefined()
     expect(state2.data.currentUser.publicProfile).toBe(true)
+  })
+
+  test("Test public profiles", async () => {
+    const state = await gCall({
+      source: ProfileQuery,
+      variableValues: {
+        input: {
+          id: user!.id
+        }
+      }
+    })
+    console.log(state.data.user)
+    expect(state.errors).toBeUndefined()
+    expect(state.data.user.publicProfile).toBe(true)
+  })
+
+  test("Unset public profile", async () => {
+    const state = await gCall({
+      source: UpdateUserMutation,
+      token,
+      variableValues: {
+        input: {
+          publicProfile: false
+        }
+      }
+    })
+    expect(state.errors).toBeUndefined()
+    expect(state.data.updateUser).toBe(true)
+  })
+
+  test("Test private profiles", async () => {
+    const state = await gCall({
+      source: ProfileQuery,
+      variableValues: {
+        input: {
+          id: user!.id
+        }
+      }
+    })
+    expect(state.errors).toBeDefined()
+    expect(state.data.user).toBeNull()
   })
 
   test("Update status", async () => {
@@ -240,6 +282,32 @@ describe("UserResolver", () => {
   })
 
   beforeAll(async () => {
+    const testUser = new TestUser()
+    const register = await gCall({
+      source: RegisterMutation,
+      variableValues: {
+        input: {
+          username: testUser.username,
+          email: testUser.email,
+          password: "password12345678!"
+        }
+      }
+    })
+    expect(register.errors).toBeUndefined()
+    expect(register).toMatchObject({
+      data: {
+        register: {
+          user: {
+            id: expect.any(Number),
+            username: testUser.username,
+            email: testUser.email
+          },
+          token: expect.any(String)
+        }
+      }
+    })
+    user = register.data?.register?.user
+    token = register.data?.register?.token
     user = await getUser(undefined, false)
     token = user!.token
   })
