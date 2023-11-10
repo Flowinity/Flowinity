@@ -72,6 +72,7 @@
     "@types/cors": "2.8.12",
     "@types/express": "4.17.13",
     "@types/imapflow": "^1.0.11",
+    "@types/jest": "^29.5.8",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/mailparser": "^3.4.0",
     "@types/md5": "^2.3.2",
@@ -182,7 +183,6 @@
   "devDependencies": {
     "@apollo/client": "^3.8.7",
     "@jest/globals": "^29.7.0",
-    "@types/jest": "^29.5.8",
     "@vitest/coverage-c8": "^0.31.1",
     "@vitest/ui": "^0.31.1",
     "babel-jest": "^29.5.0",
