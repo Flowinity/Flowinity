@@ -6,7 +6,11 @@
   "storage": "storage",
   "registrations": true,
   "mediaProxySecret": "GENERATE RANDOM STRING HERE!",
-  "maintenance": false,
+  "maintenance": {
+    "enabled": false,
+    "statusPage": "https://status.troplo.com",
+    "message": "PrivateUploader is being migrated to a new server.\nIf you are still seeing this message after migration is complete, please check your DNS configuration."
+  },
   "release": "prod",
   "jitsiToken": null,
   "officialInstance": false,
