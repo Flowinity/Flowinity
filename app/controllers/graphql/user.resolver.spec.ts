@@ -59,6 +59,10 @@ describe("UserResolver", () => {
   })
 
   test("Change email address while unverified", async () => {
+    jest
+      .spyOn(AdminService.prototype, "sendEmail")
+      .mockImplementation(() => Promise.resolve(true))
+
     const newEmail = `${cryptoRandomString({
       length: 10,
       type: "alphanumeric"
