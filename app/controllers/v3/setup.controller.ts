@@ -224,6 +224,7 @@ export class SetupControllerV3 {
       password: string
       from: string
       secure: boolean
+      enabled: boolean
     }
   ) {
     // read from config/tpu.json
@@ -237,7 +238,8 @@ export class SetupControllerV3 {
       username: body.username,
       password: body.password,
       from: body.from,
-      secure: body.secure
+      secure: body.secure,
+      enabled: body.enabled
     }
     await this.writeTPUConfig(tpuConfig)
   }

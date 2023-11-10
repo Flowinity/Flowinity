@@ -226,18 +226,15 @@ export class AuthService {
       if (password.length < 8) {
         throw new GraphQLError("Password is too short!")
       }
-      const user = await User.create(
-        {
-          username,
-          password: await argon2.hash(password),
-          email,
-          inviteId: inviteId || null,
-          planId: config.defaultPlanId || 1
-        },
-        {
-          logging: true
-        }
-      )
+      console.log(`EMAIL CFG: ${!config.email.enabled}`)
+      const user = await User.create({
+        username,
+        password: await argon2.hash(password),
+        email,
+        inviteId: inviteId || null,
+        planId: config.defaultPlanId || 1,
+        emailVerified: !config.email.enabled
+      })
       const session = await utils.createSession(user.id, "*", "session")
       const cacheService = Container.get(CacheService)
       //await cacheService.generateChatsCache(user.id)

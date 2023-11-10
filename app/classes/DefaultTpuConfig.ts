@@ -53,7 +53,8 @@ export class DefaultTpuConfig {
       password: "",
       from: "default@privateuploader.local",
       host: "localhost",
-      port: 25
+      port: 25,
+      enabled: true
     },
     redis: {
       host: "defaulthostname",

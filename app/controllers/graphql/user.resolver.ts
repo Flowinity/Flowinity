@@ -261,7 +261,7 @@ export class UserResolver extends createBaseResolver("User", User) {
     await User.update(
       {
         email: input.email,
-        emailVerified: false,
+        emailVerified: !config.email.enabled,
         emailToken: null
       },
       {

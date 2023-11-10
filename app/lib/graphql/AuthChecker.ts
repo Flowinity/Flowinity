@@ -73,7 +73,8 @@ export const authChecker: AuthChecker<Context> = async (
         item.includes("workspaces.view") ||
         item.includes("collections.view") ||
         item.includes("")
-    )
+    ) &&
+    config.email.enabled
   ) {
     throw new GraphQLError("Please verify your email address first!", {
       extensions: {

@@ -393,7 +393,8 @@
       "secure": "SMTP Secure",
       "test": "Test Connection",
       "from": "From Address",
-      "testEmail": "Email address to send test email to"
+      "testEmail": "Email address to send test email to",
+      "enabled": "Enable email verification"
     },
     "step7": {
       "title": "Welcome to PrivateUploader!",

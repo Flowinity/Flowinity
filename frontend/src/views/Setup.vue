@@ -14,7 +14,7 @@
         >
           <div>
             <p class="text-center text-gradient mb-n5" style="font-size: 64px">
-              TPU
+              PrivateUploader
             </p>
             <v-container>
               <v-card-text>
@@ -357,6 +357,10 @@
 
           <v-form>
             <v-card-text>
+              <v-switch
+                v-model="mail.enabled"
+                :label="$t('setup.step6.enabled')"
+              ></v-switch>
               <v-text-field
                 v-model="mail.host"
                 :label="$t('setup.step6.host')"
@@ -553,7 +557,8 @@ export default defineComponent({
         password: "",
         from: '"TroploPrivateUploader" <noreply@privateuploader.com>',
         secure: true,
-        testEmail: ""
+        testEmail: "",
+        enabled: true
       },
       domain: {
         domain: ""
@@ -636,7 +641,8 @@ export default defineComponent({
           username: this.mail.username,
           password: this.mail.password,
           from: this.mail.from,
-          secure: this.mail.secure
+          secure: this.mail.secure,
+          enabled: this.mail.enabled
         });
         this.step++;
         this.$toast("Successfully configured mail");

@@ -106,6 +106,7 @@ declare type TpuConfig = {
     from: string
     host: string
     port: number
+    enabled: boolean
   }
   discord: {
     webhook: string | undefined | null

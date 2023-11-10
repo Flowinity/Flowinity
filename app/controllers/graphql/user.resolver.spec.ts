@@ -59,9 +59,9 @@ describe("UserResolver", () => {
   })
 
   test("Change email address while unverified", async () => {
-    jest
-      .spyOn(AdminService.prototype, "sendEmail")
-      .mockImplementation(() => Promise.resolve(true))
+    jest.spyOn(AdminService.prototype, "sendEmail").mockImplementation(() => {
+      return Promise.resolve(true)
+    })
 
     const newEmail = `${cryptoRandomString({
       length: 10,
@@ -97,6 +97,8 @@ describe("UserResolver", () => {
       attributes: ["id", "emailVerified", "emailToken"]
     })
 
+    console.log(u)
+
     if (u?.emailVerified) {
       console.log("Email already verified")
       expect(u.emailVerified).toBe(true)
@@ -107,7 +109,7 @@ describe("UserResolver", () => {
       const data = await gCall({
         source: VerifyEmailMutation,
         variableValues: {
-          token: u?.emailToken
+          token: u?.emailToken || ""
         },
         token
       })
@@ -324,6 +326,5 @@ describe("UserResolver", () => {
 })
 
 beforeAll(async () => {
-  user = await getUser()
   await resetState()
 })

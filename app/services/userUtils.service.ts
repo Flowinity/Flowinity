@@ -230,6 +230,7 @@ export class UserUtilsService {
     correction: boolean = false,
     updateCode: boolean = true
   ) {
+    if (!config.email.enabled) return true
     const user = await User.findOne({
       where: {
         id: userId

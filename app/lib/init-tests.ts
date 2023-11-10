@@ -7,8 +7,6 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
 import io from "../lib/socket-mock"
 import { getUser } from "@app/lib/test-utils/testUser"
 import { gCall } from "@app/lib/test-utils/gCall"
-import { ClearCacheMutation } from "../../frontend-v5/src/graphql/admin/cache.graphql"
-import { AdminCacheType } from "../../frontend-v5/src/gql/graphql"
 
 process.env.NODE_ENV = "test"
 process.env.CONFIG = JSON.stringify(require("../config/tpu.json"))
@@ -30,10 +28,16 @@ export async function resetState() {
   const user = await getUser(undefined, undefined, true)
 
   const data = await gCall({
-    source: ClearCacheMutation,
+    source: `
+      mutation AdminClearCache($input: ClearCacheInput!) {
+        adminClearCache(input: $input) {
+          success
+        }
+      }
+    `,
     variableValues: {
       input: {
-        type: AdminCacheType.State,
+        type: "state",
         await: true,
         userId: null
       }

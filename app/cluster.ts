@@ -81,6 +81,32 @@ async function setEnvVariables() {
         }
       )
     }
+
+    // Add enabled field for email verification if not present
+    if (global.config.email.enabled === undefined && global.config.email) {
+      console.log("Adding enabled field to email config")
+      fs.writeFileSync(
+        path.join(appRoot, "config", "tpu.json"),
+        JSON.stringify(
+          {
+            ...global.config,
+            email: {
+              ...global.config.email,
+              enabled: true
+            }
+          },
+          null,
+          2
+        )
+      )
+      try {
+        const data = fs.readFileSync(global.appRoot + "/config/tpu.json")
+        global.config = JSON.parse(data.toString())
+      } catch {
+        global.config = new DefaultTpuConfig().config
+      }
+      process.env.CONFIG = JSON.stringify(global.config)
+    }
   }
   await new Promise((resolve) => setTimeout(resolve, 50))
 }

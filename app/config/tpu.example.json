@@ -51,7 +51,8 @@
     "from": "\"TroploPrivateUploader\" <no-reply@privateuploader.com>",
     "secure": false,
     "username": "no-reply@privateuploader.com",
-    "password": ""
+    "password": "",
+    "enabled": false
   },
   "discord": {
     "webhook": "",
