@@ -8,12 +8,13 @@ import {
   Post
 } from "routing-controllers"
 import { Service } from "typedi"
-import { Auth } from "@app/lib/auth"
+import { Auth, checkScope } from "@app/lib/auth"
 import { User } from "@app/models/user.model"
 import Errors from "@app/lib/errors"
 import { OauthService } from "@app/services/oauth.service"
 import { OauthSave } from "@app/models/oauthSave.model"
 import { OauthUser } from "@app/models/oauthUser.model"
+import { OauthApp } from "@app/models/oauthApp.model"
 
 @Service()
 @JsonController("/oauth")
@@ -86,6 +87,10 @@ export class OauthControllerV3 {
     @Body() body: { data: any }
   ) {
     if (!user.oauthAppId) throw Errors.UNAUTHORIZED
+
+    const app = await OauthApp.findByPk(user.oauthAppId)
+
+    if (!checkScope("oauth.save", app!.scopes)) throw Errors.SCOPE_REQUIRED
 
     const save = await OauthSave.findOne({
       where: {

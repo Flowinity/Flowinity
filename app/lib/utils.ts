@@ -20,6 +20,7 @@ import { Domain } from "@app/models/domain.model"
 import { CacheService } from "@app/services/cache.service"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import os from "os"
 
 async function generateAPIKey(
   type: "session" | "api" | "email" | "oauth" | "oidc" | "bot-email"
@@ -226,7 +227,10 @@ async function processFile(
         userId: upload.userId
       }
     })
+
     textMetadata = textMetadata?.toLowerCase() || textMetadata
+
+    console.log(`Information: ${textMetadata}`, rules)
 
     for (const rule of rules) {
       let results: any[] = []
@@ -356,6 +360,8 @@ async function processFile(
           ])
         }
 
+        console.log(`Sending socket,`)
+
         socket
           .of(SocketNamespaces.AUTO_COLLECTS)
           .to(upload.userId)
@@ -380,8 +386,12 @@ async function processFile(
 }
 
 async function postUpload(upload: Upload): Promise<void> {
+  let path = global.storageRoot
+  if (process.env.NODE_ENV === "test") {
+    path = `${os.homedir()}/test_uploads/`
+  }
   await tesseract
-    .recognize(global.storageRoot + upload.attachment, {})
+    .recognize(path + upload.attachment, {})
     .then(async (text: string): Promise<void> => {
       await Upload.update(
         {

@@ -106,6 +106,9 @@ const Errors = {
   },
   CANNOT_FRIEND_SELF: {
     message: "You cannot friend yourself."
+  },
+  SCOPE_NOT_FOUND: {
+    message: "The requested scope could not be found."
   }
 }
 

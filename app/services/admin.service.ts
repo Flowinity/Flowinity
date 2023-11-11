@@ -890,6 +890,24 @@ export class AdminService {
   async updateOauth(body: Partial<OauthApp>, userId: number) {
     const app = await this.getOauthById(body.id || "", userId, true)
     if (!app) throw Errors.NOT_FOUND
+    if (body.private && !app.private) {
+      const manualUsers = await OauthUser.findAll({
+        where: {
+          oauthAppId: app.id
+        },
+        attributes: ["userId"]
+      })
+      const ids = [...manualUsers.map((user) => user.userId), app.userId]
+      await Session.destroy({
+        where: {
+          oauthAppId: app.id,
+          type: "oauth",
+          userId: {
+            [Op.notIn]: ids
+          }
+        }
+      })
+    }
     await app.update({
       name: body.name,
       icon: body.icon,

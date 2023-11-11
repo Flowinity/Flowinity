@@ -37,7 +37,7 @@ export class AuthorizeAppResponse {
 @InputType()
 export class CreateBotInput extends MyAppInput {
   @Field()
-  @Matches(/^[A-Za-z0-9.-_]+$/, {
+  @Matches(/^[A-Za-z0-9.\-_]+$/, {
     message: "Username can only contain alphanumeric characters including .-_"
   })
   @MinLength(2)
@@ -59,7 +59,10 @@ export class CreateAppInput {
   @Field({
     nullable: true
   })
-  @IsUrl()
+  @IsUrl({
+    require_tld: false,
+    require_protocol: true
+  })
   @IsOptional()
   redirectUri: string
   @Field()
@@ -72,6 +75,10 @@ export class CreateAppInput {
 export class UpdateAppInput extends CreateAppInput {
   @Field()
   id: string
+  @Field(() => [String], {
+    nullable: true
+  })
+  scopes: string[]
 }
 
 @ObjectType()

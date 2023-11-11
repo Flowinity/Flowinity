@@ -1995,6 +1995,13 @@
   dependencies:
     "@types/superagent" "*"
 
+"@types/supertest@<7":
+  version "2.0.16"
+  resolved "https://registry.yarnpkg.com/@types/supertest/-/supertest-2.0.16.tgz#7a1294edebecb960d957bbe9b26002a2b7f21cd7"
+  integrity sha512-6c2ogktZ06tr2ENoZivgm7YnprnhYE4ZoXGMY+oA7IuAf17M8FWvujXZGmxLv8y0PTyts4x5A+erSwVUFA8XSg==
+  dependencies:
+    "@types/superagent" "*"
+
 "@types/swagger-jsdoc@6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@types/swagger-jsdoc/-/swagger-jsdoc-6.0.1.tgz#94a99aca0356cb64ad2a6eb903ed034703453801"
@@ -2027,6 +2034,13 @@
   version "1.18.2"
   resolved "https://registry.yarnpkg.com/@types/webpack-env/-/webpack-env-1.18.2.tgz#0264bc30c0c4a073118ce5b26c5ef143da4374df"
   integrity sha512-BFqcTHHTrrI8EBmIzNAmLPP3IqtEG9J1IPFWbPeS/F0/TGNmo0pI5svOa7JbMF9vSCXQCvJWT2gxLJNVuf9blw==
+
+"@types/ws@7.x || 8.x":
+  version "8.5.9"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.9.tgz#384c489f99c83225a53f01ebc3eddf3b8e202a8c"
+  integrity sha512-jbdrY0a8lxfdTp/+r7Z4CkycbOFN8WX+IOchLJr3juT/xzbJ8URyTVSJ/hvNdadTgM1mnedb47n+Y31GsFnQlg==
+  dependencies:
+    "@types/node" "*"
 
 "@types/ws@^8.5.5":
   version "8.5.6"
@@ -9522,7 +9536,7 @@ socket.io-adapter@~2.5.2:
   dependencies:
     ws "~8.11.0"
 
-socket.io-client@4.7.2:
+socket.io-client@4.7.2, socket.io-client@^4.7.2:
   version "4.7.2"
   resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.7.2.tgz#f2f13f68058bd4e40f94f2a1541f275157ff2c08"
   integrity sha512-vtA0uD4ibrYD793SOIAwlo8cj6haOeMHrGvwPxJsxH7CeIksqJ+3Zc06RvWTIFgiSqx4A3sOnTXpfAEE2Zyz6w==
@@ -9897,6 +9911,15 @@ supertest@^6.3.3:
   dependencies:
     methods "^1.1.2"
     superagent "^8.0.5"
+
+superwstest@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/superwstest/-/superwstest-2.0.3.tgz#7270ba3a8be071123100950724792cb30a4f28f8"
+  integrity sha512-NRZMg+1UU1KNWzkE/QBqBDuTKPG2vFBLvG4xahcPqzZynVnbs3idllwgUL7zglPXymPP1g04+3NDGhbt6NCa5A==
+  dependencies:
+    "@types/supertest" "<7"
+    "@types/ws" "7.x || 8.x"
+    ws "7.x || 8.x"
 
 supports-color@8.1.1, supports-color@^8.0.0:
   version "8.1.1"
@@ -10694,7 +10717,7 @@ write-file-atomic@^4.0.2:
     imurmurhash "^0.1.4"
     signal-exit "^3.0.7"
 
-ws@^8.14.0:
+"ws@7.x || 8.x", ws@^8.14.0:
   version "8.14.2"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.14.2.tgz#6c249a806eb2db7a20d26d51e7709eab7b2e6c7f"
   integrity sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g==

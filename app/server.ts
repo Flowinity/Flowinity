@@ -38,7 +38,9 @@ import { FriendsSocketController } from "@app/controllers/socket/friends.socket"
 import { GallerySocketController } from "@app/controllers/socket/gallery.socket"
 import { AutoCollectsSocketController } from "@app/controllers/socket/autoCollects.socket"
 import { TrackedUserSocketController } from "@app/controllers/socket/tracked.socket"
-
+import { Server as SocketServer } from "socket.io"
+import { DefaultEventsMap } from "socket.io/dist/typed-events"
+import { SocketServerWithUser } from "./types/global"
 @Service({ eager: false })
 export class Server {
   private static readonly baseDix: number = 10
@@ -46,7 +48,8 @@ export class Server {
   private config: TpuConfig = process.env.CONFIG
     ? JSON.parse(process.env.CONFIG || "{}")
     : new DefaultTpuConfig().config
-  private server: http.Server
+  public server: http.Server
+  public socket: SocketServer | undefined
   public readonly ready: any
   constructor(
     private readonly application: Application,
@@ -67,6 +70,27 @@ export class Server {
     if (isNaN(port)) return val
     else if (port >= 0) return port
     else return false
+  }
+
+  async startSocket() {
+    if (!this.server) this.server = http.createServer(this.application.app)
+    this.socket = await createSocket(this.application.app, this.server)
+    global.socket = this.socket as unknown as SocketServerWithUser
+    new SocketControllers({
+      // @ts-ignore
+      io: socket,
+      container: Container,
+      middlewares: [SocketAuthMiddleware],
+      controllers: [
+        ChatSocketController,
+        PulseSocketController,
+        UserSocketController,
+        FriendsSocketController,
+        GallerySocketController,
+        AutoCollectsSocketController,
+        TrackedUserSocketController
+      ]
+    })
   }
 
   async init(port?: number, noBackgroundTasks = false): Promise<void> {
@@ -108,23 +132,7 @@ export class Server {
     global.dayjs = dayjs
     global.whitelist = ipPrimary
     this.server = http.createServer(this.application.app)
-    const socket = await createSocket(this.application.app, this.server)
-    global.socket = socket as any
-    new SocketControllers({
-      io: socket,
-      container: Container,
-      middlewares: [SocketAuthMiddleware],
-      controllers: [
-        ChatSocketController,
-        PulseSocketController,
-        UserSocketController,
-        FriendsSocketController,
-        GallerySocketController,
-        AutoCollectsSocketController,
-        TrackedUserSocketController
-      ]
-    })
-
+    await this.startSocket()
     if (!noBackgroundTasks) {
       this.server.listen(
         port || Server.normalizePort(this.config?.port || "34582")

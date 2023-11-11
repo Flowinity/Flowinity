@@ -3,7 +3,7 @@ import { CollectionResolver } from "@app/controllers/graphql/collection.resolver
 import { gCall } from "@app/lib/test-utils/gCall"
 import { UserCollectionsQuery } from "../../../frontend/src/graphql/collections/getUserCollections.graphql"
 import { getUser, testUser, TestUser } from "@app/lib/test-utils/testUser"
-import { beforeAll, expect, jest } from "@jest/globals"
+import { beforeAll, expect, jest, beforeEach, afterEach } from "@jest/globals"
 import { CreateCollectionMutation } from "../../../frontend-v5/src/graphql/collections/createCollection.graphql"
 import { CollectionQuery } from "../../../frontend-v5/src/graphql/collections/getCollection.graphql"
 import { UpdateCollectionMutation } from "../../../frontend-v5/src/graphql/collections/updateCollection.graphql"
@@ -30,10 +30,23 @@ import path from "path"
 import { StarUploadMutation } from "../../../frontend-v5/src/graphql/gallery/starUpload"
 import { GalleryType } from "../../../frontend-v5/src/gql/graphql"
 import { resetState } from "@app/lib/init-tests"
+import { Application } from "@app/app"
+import { Server } from "@app/server"
 let user: TestUser | null = null
+import http from "http"
+import supertest from "supertest"
+import { AddressInfo } from "net"
+import Client, { io, Manager, Socket } from "socket.io-client"
+import {
+  connectSocket,
+  waitForSocketEvent
+} from "@app/lib/test-utils/socketHelper"
 
 let uploadId = 0
 let attachment = ""
+let req: supertest.SuperTest<supertest.Test> | null = null
+let server: http.Server | null = null
+let socketClient: Socket | null = null
 
 describe("GalleryResolver", () => {
   test("Get user gallery", async () => {
@@ -53,28 +66,51 @@ describe("GalleryResolver", () => {
   })
 
   test("Upload file", async () => {
-    const file = fs.readFileSync(__dirname + "/../../assets/AuthRequired.png")
-    console.log(user!.token)
-    const galleryController = Container.get(GalleryControllerV3)
-    // mock global.queue
-    //@ts-ignore
-    global.queue = {
-      queue: {
-        add: jest.fn()
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    const socketEventPromise = waitForSocketEvent(
+      socketClient,
+      "create",
+      1000,
+      (data) => {
+        expect(data).toMatchObject([
+          {
+            upload: {
+              id: expect.any(Number),
+              name: expect.any(String),
+              attachment: expect.any(String)
+            },
+            url: expect.any(String)
+          }
+        ])
       }
-    } as any
-    const upload = await galleryController.upload(
-      user as any,
-      {
-        filename: cryptoRandomString({ length: 12 }) + ".png",
-        mimetype: "image/png",
-        size: file.byteLength,
-        originalname: "AuthRequired.png"
-      } as any
     )
-    expect(upload).toBeDefined()
-    uploadId = upload.upload.id
-    attachment = upload.upload.attachment
+
+    console.log(socketClient?.connected + " connected")
+
+    const upload = await req!
+      .post("/api/v3/gallery")
+      .attach("attachment", __dirname + "/../../assets/AuthRequired.png")
+      .set({
+        Authorization: user!.token,
+        "Content-Type": "multipart/form-data"
+      })
+
+    await socketEventPromise
+
+    console.log("body + ", upload.body)
+
+    expect(upload.status).toBe(200)
+    expect(upload.body).toMatchObject({
+      url: expect.any(String),
+      upload: {
+        id: expect.any(Number),
+        name: expect.any(String),
+        attachment: expect.any(String)
+      }
+    })
+
+    uploadId = upload.body.upload.id
+    attachment = upload.body.upload.attachment
   })
 
   test("Update upload name", async () => {
@@ -100,7 +136,9 @@ describe("GalleryResolver", () => {
       token: user!.token
     })
     expect(gallery.errors).toBeUndefined()
-    expect(gallery.data.gallery.items[0].name).toBe("test-again.png")
+    expect(
+      gallery.data.gallery.items.find((i: any) => i.id === uploadId)?.name
+    ).toBe("test-again.png")
   })
 
   test("Test starring of upload & get stars", async () => {
@@ -185,4 +223,8 @@ describe("GalleryResolver", () => {
 beforeAll(async () => {
   user = await getUser()
   await resetState()
+  const app = Container.get(Application)
+  req = supertest(app.app)
+  const ws = await connectSocket("/gallery", user!.token)
+  socketClient = ws.socketClient
 })

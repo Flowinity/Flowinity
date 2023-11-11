@@ -40,7 +40,7 @@ export class LoginInput {
 export class RegisterInput {
   @MaxLength(32)
   @MinLength(2)
-  @Matches(/^[A-Za-z0-9.-_]+$/, {
+  @Matches(/^[A-Za-z0-9.\-_]+$/, {
     message: "Username can only contain alphanumeric characters including .-_"
   })
   @Field()

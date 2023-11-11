@@ -1,9 +1,13 @@
 import multer from "multer"
 import cryptoRandomString from "crypto-random-string"
 import path from "path"
+import os from "os"
 
 const storage: multer.StorageEngine = multer.diskStorage({
-  destination: process.env.STORAGE_ROOT,
+  destination:
+    process.env.NODE_ENV === "test"
+      ? `${os.homedir()}/test_uploads/`
+      : process.env.STORAGE_ROOT,
   filename: (req, file: Express.Multer.File, cb): void => {
     cb(
       null,

@@ -50,13 +50,15 @@ import {
   Command,
   LookupPrefix
 } from "@app/classes/graphql/developers/prefix/prefix"
+import { OauthControllerV3 } from "@app/controllers/v3/oauth.controller"
 
 @Resolver(OauthApp)
 @Service()
 export class OAuthAppResolver {
   constructor(
     public adminService: AdminService,
-    public oauthService: OauthService
+    public oauthService: OauthService,
+    public oauthController: OauthControllerV3
   ) {}
 
   @Authorization({
@@ -129,7 +131,7 @@ export class OAuthAppResolver {
     if (app.private && app.userId !== ctx.user!!.id) {
       const access = await OauthUser.findOne({
         where: {
-          id: input.id,
+          oauthAppId: input.id,
           userId: ctx.user!!.id,
           active: true
         }
@@ -156,7 +158,7 @@ export class OAuthAppResolver {
     @Arg("input") input: MyAppInput
   ): Promise<Success> {
     const app = await this.oauthService.getApp(input.id, ctx.user!!.id)
-    if (!app) throw Errors.NOT_FOUND
+    if (!app) throw new GqlError("APP_NOT_FOUND")
 
     await this.oauthService.deauthorize(app.id, ctx.user!!.id)
     return { success: true }
@@ -235,7 +237,20 @@ export class OAuthAppResolver {
     if (!app) throw new GqlError("APP_NOT_FOUND")
     if (app.verified !== input.verified && !ctx.user!!.administrator)
       throw new GqlError("NOT_ADMIN")
-    await this.adminService.updateOauth(input, ctx.user!!.id)
+    const availableScopes = await this.oauthController.getScopeDefinitions()
+
+    input.scopes.forEach((scope) => {
+      if (!availableScopes.find((s) => s.id === scope))
+        throw new GqlError("SCOPE_NOT_FOUND")
+    })
+
+    await this.adminService.updateOauth(
+      {
+        ...input,
+        scopes: input.scopes.join(",")
+      },
+      ctx.user!!.id
+    )
     return { success: true }
   }
 

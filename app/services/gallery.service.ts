@@ -158,7 +158,9 @@ export class GalleryService {
     )
     const url =
       "https://" + (await utils.getUserDomain(userId)) + upload.attachment
-    await queue.queue?.add(upload.id.toString(), upload)
+    if (process.env.NODE_ENV !== "test")
+      await queue.queue?.add(upload.id.toString(), upload)
+    else utils.postUpload(upload)
     try {
       if (precache && config.discord?.token && config.discord.webhook) {
         if (upload.type === "image" || upload.type === "video") {

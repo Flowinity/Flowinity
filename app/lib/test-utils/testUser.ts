@@ -42,14 +42,16 @@ export const getUser = async (
               ? {
                   administrator: true
                 }
-              : {})
+              : {}),
+            bot: false
           }
         }
       : {
           where: {
             username: {
               [Op.notLike]: `%Collectivizer%`
-            }
+            },
+            bot: false
           }
         }),
     order: [["createdAt", "DESC"]],
@@ -59,7 +61,10 @@ export const getUser = async (
         as: "sessions",
         order: [["createdAt", "DESC"]],
         required: true,
-        limit: 1
+        limit: 1,
+        where: {
+          type: "session"
+        }
       }
     ]
   })) as any

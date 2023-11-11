@@ -117,7 +117,7 @@ export class ChangePasswordInput {
 export class ChangeUsernameInput extends DangerZoneInput {
   @Field()
   @MaxLength(32)
-  @Matches(/^[A-Za-z0-9.-_]+$/, {
+  @Matches(/^[A-Za-z0-9.\-_]+$/, {
     message: "Username can only contain alphanumeric characters including .-_"
   })
   @MinLength(2)
