@@ -1163,10 +1163,12 @@ export class ChatService {
     }
   }
 
-  async createChat(users: number[], userId: number) {
+  async createChat(users: number[], userId: number, gql?: boolean) {
     const chatPermissionsHandler = new ChatPermissionsHandler()
     if (!users.length || users.includes(userId))
-      throw Errors.INVALID_FRIEND_SELECTION
+      throw gql
+        ? new GqlError("INVALID_FRIEND_SELECTION")
+        : Errors.INVALID_FRIEND_SELECTION
 
     const type = users.length === 1 ? "direct" : "group"
     const friends = await Container.get(UserUtilsService).validateFriends(

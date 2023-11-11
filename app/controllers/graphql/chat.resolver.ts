@@ -180,7 +180,7 @@ export class ChatResolver {
     @Ctx() ctx: Context,
     @Arg("input") input: CreateChatInput
   ): Promise<Chat> {
-    return await this.chatService.createChat(input.users, ctx.user!!.id)
+    return await this.chatService.createChat(input.users, ctx.user!!.id, true)
   }
 
   @RateLimit({

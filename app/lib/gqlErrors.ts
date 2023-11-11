@@ -109,6 +109,9 @@ const Errors = {
   },
   SCOPE_NOT_FOUND: {
     message: "The requested scope could not be found."
+  },
+  INVALID_FRIEND_SELECTION: {
+    message: "You must be friends with the user to add them."
   }
 }
 

@@ -283,7 +283,8 @@ export class UserUtilsService {
   async validateFriends(
     userId: number,
     friendIds: number[],
-    checkDMPrivacy: boolean = false
+    checkDMPrivacy: boolean = false,
+    gql: boolean = false
   ) {
     const friends = await Friend.findAll({
       where: {
@@ -300,7 +301,7 @@ export class UserUtilsService {
       ]
     })
     if (friends.length !== friendIds.length)
-      throw Errors.INVALID_FRIEND_SELECTION
+      throw new GqlError("INVALID_FRIEND_SELECTION")
     const find = friends.find(
       (friend) => friend.otherUser.groupPrivacy === GroupPrivacy.NOBODY
     )

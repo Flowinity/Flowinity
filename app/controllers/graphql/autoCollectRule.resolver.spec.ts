@@ -218,10 +218,9 @@ describe("AutoCollectRuleResolver", () => {
 
     expect(data3.errors).toBeUndefined()
     console.log(data3.data.gallery)
-    expect(data3.data?.gallery.items[0]).toMatchObject({
-      id: uploadId
-    })
-    itemId = data3.data?.gallery.items[0].autoCollectApproval.id
+    const find2 = data3.data?.gallery.items.find((i: any) => i.id === uploadId)
+    expect(find2).toBeDefined()
+    itemId = find2.autoCollectApproval.id
 
     const data4 = await gCall({
       source: ActAutoCollectsMutation,
