@@ -1,3 +1,4 @@
+import "jest-extended"
 import { Server, Socket } from "socket.io"
 import djs from "dayjs"
 import { Sequelize } from "sequelize-typescript"
