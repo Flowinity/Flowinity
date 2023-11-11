@@ -44,6 +44,9 @@ jobs:
       - name: Install global dependencies
         run: yarn global add sequelize-cli mariadb
 
+      - name: Install Tesseract OCR
+        run: sudo apt update -y && apt install tesseract-ocr tesseract-ocr-eng -y
+
       - name: Print current path
         run: echo $PWD && ls -la
 
