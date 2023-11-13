@@ -101,6 +101,7 @@ export interface NavigationOption {
   misc?: boolean;
   id?: RailMode;
   fake?: boolean;
+  allowOverride?: boolean;
 }
 
 export const useAppStore = defineStore("app", () => {
@@ -309,8 +310,9 @@ export const useAppStore = defineStore("app", () => {
         {
           icon: markRaw(RiUserLine),
           name: "My Profile",
-          path: "/profile",
-          selectedIcon: markRaw(RiUserFill)
+          path: `/u/${userStore.user?.username}`,
+          selectedIcon: markRaw(RiUserFill),
+          allowOverride: true
         }
       ],
       [RailMode.GALLERY]: [
@@ -511,6 +513,14 @@ export const useAppStore = defineStore("app", () => {
     ] as NavigationOption[]
   });
 
+  watch(
+    () => userStore.user?.username,
+    (val) => {
+      if (!val) return;
+      navigation.value.options[RailMode.HOME][3].path = `/u/${val}`;
+    }
+  );
+
   const shifting = ref(false);
 
   document.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -578,7 +588,8 @@ export const useAppStore = defineStore("app", () => {
   const currentNavItem = computed({
     get() {
       const lookup = lookupNav.value[route.path];
-      if (!lookup && _currentNavItem.value) return _currentNavItem.value;
+      if ((!lookup && _currentNavItem.value) || lookup?.allowOverride)
+        return _currentNavItem.value;
       if (!lookup) return null;
       return {
         item: lookup,

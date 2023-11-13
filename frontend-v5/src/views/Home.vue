@@ -23,12 +23,23 @@
         </tpu-button>
       </div>
     </div>
-    <div class="masonry">
-      <home-widget-handler
-        v-for="(widget, index) in flatWidgets"
-        :key="index"
-        :widget="widget"
-      />
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-4">
+        <home-widget-handler
+          v-for="widget in col1"
+          :key="widget.id"
+          :widget="widget"
+          :locked="locked"
+        />
+      </div>
+      <div class="flex flex-col gap-4">
+        <home-widget-handler
+          v-for="widget in col2"
+          :key="widget.id"
+          :widget="widget"
+          :locked="locked"
+        />
+      </div>
     </div>
     <div class="grid grid-flow-col grid-cols-2 gap-4 mt-4"></div>
     <card outlined class="mt-4">
@@ -73,6 +84,14 @@ provide("locked", locked);
 
 const flatWidgets = computed(() => {
   return userStore.user?.homeWidgets?.rows.map((row) => row.widgets).flat();
+});
+
+const col1 = computed(() => {
+  return flatWidgets.value?.filter((widget, index) => index % 2 === 0);
+});
+
+const col2 = computed(() => {
+  return flatWidgets.value?.filter((widget, index) => index % 2 === 1);
 });
 </script>
 

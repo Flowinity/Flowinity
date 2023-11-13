@@ -230,8 +230,6 @@ async function processFile(
 
     textMetadata = textMetadata?.toLowerCase() || textMetadata
 
-    console.log(`Information: ${textMetadata}`, rules)
-
     for (const rule of rules) {
       let results: any[] = []
 

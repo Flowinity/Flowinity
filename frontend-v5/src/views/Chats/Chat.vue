@@ -94,7 +94,16 @@
 
 <script setup lang="ts">
 import { useChatStore } from "@/stores/chat.store";
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import {
+  computed,
+  h,
+  markRaw,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch
+} from "vue";
 import dayjs from "@/plugins/dayjs";
 import CommsMessage from "@/components/Communications/CommsMessage.vue";
 import CommsInput from "@/components/Communications/CommsInput.vue";
@@ -106,10 +115,14 @@ import Card from "@/components/Framework/Card/Card.vue";
 import MessageReply from "@/components/Communications/MessageReply.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
-import { useAppStore } from "@/stores/app.store";
+import { RailMode, useAppStore } from "@/stores/app.store";
 import { throttle } from "lodash";
 import UserAvatar from "@/components/User/UserAvatar.vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
+import RiAtFill from "vue-remix-icons/icons/ri-at-fill.vue";
+import RiAtLine from "vue-remix-icons/icons/ri-at-line.vue";
+import functions from "@/plugins/functions";
 
 const { t } = useI18n();
 const chatStore = useChatStore();
@@ -343,13 +356,40 @@ onUnmounted(() => {
   useSocket.chat.off("embedResolution", onEmbedResolution);
 });
 
+const route = useRoute();
+
 watch(
   () => [
     chatStore.selectedChat?.name,
     chatStore.selectedChat?.id,
     chatStore.selectedChat?.icon
   ],
-  () => {}
+  () => {
+    const chat = chatStore.selectedChat;
+    if (!chat) return;
+    appStore.currentNavItem = {
+      item: {
+        name: chatStore.chatName(chat) || "Loading...",
+        icon:
+          chat.icon ||
+          (chat.recipient && userStore.users[chat.recipient.id]?.avatar)
+            ? h(UserAvatar, {
+                username: chat.name,
+                src: functions.avatar(chat),
+                size: 32,
+                style: "margin: 0px 4px 0px 4px"
+              })
+            : markRaw(RiAtLine),
+        path: route.path,
+        selectedIcon: markRaw(RiAtFill)
+      },
+      rail: [
+        appStore.navigation.railOptions.find(
+          (rail) => rail.id === RailMode.CHAT
+        )
+      ]
+    };
+  }
 );
 </script>
 

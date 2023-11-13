@@ -10,6 +10,9 @@
       <home-widget-announcements
         v-else-if="widget.type === HomeWidgetType.Announcements"
       />
+      <home-widget-site-graph
+        v-else-if="widget.type === HomeWidgetType.SiteStatsGraph"
+      />
       <div v-else class="py-4">Unsupported widget type: {{ widget.type }}</div>
 
       <div
@@ -40,6 +43,7 @@ import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiEditLine from "vue-remix-icons/icons/ri-edit-line.vue";
 import RiDragMoveLine from "vue-remix-icons/icons/ri-drag-move-line.vue";
 import HomeWidgetAnnouncements from "@/components/Home/Widgets/HomeWidgetAnnouncements.vue";
+import HomeWidgetSiteGraph from "@/components/Home/Widgets/HomeWidgetSiteGraph.vue";
 
 const props = defineProps({
   widget: {

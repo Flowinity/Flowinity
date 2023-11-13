@@ -87,7 +87,8 @@ export class GalleryControllerV3 {
     @UploadedFile("attachment", {
       options: uploader
     })
-    attachment: Express.Multer.File
+    attachment: Express.Multer.File,
+    @Req() req: Request
   ) {
     if (!attachment) throw Errors.NO_FILE
     const upload = await this.galleryService.createUpload(
@@ -107,9 +108,10 @@ export class GalleryControllerV3 {
     @UploadedFile("attachment", {
       options: uploader
     })
-    attachment: Express.Multer.File
+    attachment: Express.Multer.File,
+    @Req() req: Request
   ) {
-    return await this.upload(user, attachment)
+    return await this.upload(user, attachment, req)
   }
 
   @Get("/starred/random")

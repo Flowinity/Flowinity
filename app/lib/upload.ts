@@ -9,6 +9,7 @@ const storage: multer.StorageEngine = multer.diskStorage({
       ? `${os.homedir()}/test_uploads/`
       : process.env.STORAGE_ROOT,
   filename: (req, file: Express.Multer.File, cb): void => {
+    console.log(file)
     cb(
       null,
       cryptoRandomString({ length: 12 }) + path.extname(file.originalname)
