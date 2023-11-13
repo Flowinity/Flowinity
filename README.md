@@ -1,7 +1,7 @@
 ![TroploPrivateUploader Banner](https://i.troplo.com/i/9ea16d8ab178.png)
 ![TPU Features](https://i.troplo.com/i/086834402e31.png)
 
-# TPU/TroploPrivateUploader
+# TPU/TroploPrivateUploader [![codecov](https://codecov.io/gh/PrivateUploader/PrivateUploader/branch/api-v4/graph/badge.svg?token=RT9XLUOX5Y)](https://codecov.io/gh/PrivateUploader/PrivateUploader)
 
 TPU is the next generation image hosting server written in Vue and TypeScript.
 
