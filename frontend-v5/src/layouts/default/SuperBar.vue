@@ -8,18 +8,25 @@ import { useUserStore } from "@/stores/user.store";
 import RiNotificationLine from "vue-remix-icons/icons/ri-notification-line.vue";
 import RiNotificationFill from "vue-remix-icons/icons/ri-notification-fill.vue";
 import UserStatusPicker from "@/components/User/UserStatusPicker.vue";
+import { useChatStore } from "@/stores/chat.store";
+import { useRoute } from "vue-router";
+import functions from "@/plugins/functions";
+import { useExperimentsStore } from "@/stores/experiments.store";
 
 const appStore = useAppStore();
 const props = defineProps({
   drawer: Boolean
 });
 const userStore = useUserStore();
+const chatStore = useChatStore();
+const experimentsStore = useExperimentsStore();
+const route = useRoute();
 </script>
 
 <template>
   <aside
-    class="border-r-2 sticky z-50 dark:border-outline-dark dark:bg-sidebar-dark p-3 border-dark space-x-1 flex flex-col overflow-y-auto overflow-x-hidden"
-    style="min-width: 72px; max-width: 72px"
+    class="border-r-2 superbar sticky z-50 dark:border-outline-dark dark:bg-sidebar-dark p-3 border-dark space-x-1 flex flex-col overflow-y-auto overflow-x-hidden"
+    style="scrollbar-width: none; min-width: 72px; max-width: 72px; width: 72px"
     :class="{ 'h-screen': !props.drawer, 'h-[calc(100vh-64px)]': props.drawer }"
   >
     <div class="justify-between flex flex-col h-full">
@@ -74,6 +81,24 @@ const userStore = useUserStore();
             />
           </super-bar-item>
         </div>
+        <template v-if="experimentsStore.experiments.COMMS_SUPERBAR">
+          <div
+            class="divide-outline-dark border border-outline-dark mt-4 w-full"
+          />
+          <div class="flex flex-col gap-y-2 mt-4">
+            <super-bar-item
+              v-for="item in chatStore.chats"
+              :key="item.id"
+              :selected="route.params.chatId === item.association.id"
+              @click="appStore.navigation.mode = item.id"
+              class="flex justify-center align-middle items-center rounded-xl"
+              :badge="item?.unread"
+              style="height: 47px"
+            >
+              <user-avatar :src="functions.avatar(item)" />
+            </super-bar-item>
+          </div>
+        </template>
       </div>
       <div class="items-center"></div>
       <div class="items-end">
@@ -121,4 +146,12 @@ const userStore = useUserStore();
   </aside>
 </template>
 
-<style scoped></style>
+<style scoped>
+.superbar {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+.superbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+</style>

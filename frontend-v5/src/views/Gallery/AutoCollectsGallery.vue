@@ -174,13 +174,7 @@ function setAppBar() {
       ),
       appStore.navigation.railOptions.find(
         (rail) => rail.id === RailMode.AUTO_COLLECTS
-      ),
-      {
-        id: RailMode.AUTO_COLLECTS,
-        name: "Settings",
-        icon: markRaw(RiSettings5Line),
-        path: `/auto-collects/${route.params.id}`
-      }
+      )
     ]
   };
 }
@@ -229,6 +223,7 @@ watch(
 );
 
 onMounted(async () => {
+  setAppBar();
   collection.value = await collectionsStore.getCollection(id.value);
   setAppBar();
 });

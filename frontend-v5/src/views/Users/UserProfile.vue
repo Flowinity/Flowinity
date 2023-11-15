@@ -41,10 +41,18 @@ async function getUser() {
           })
         : markRaw(RiUserLine),
       path: route.path,
-      selectedIcon: markRaw(RiUserFill)
+      selectedIcon: markRaw(RiUserFill),
+      _rail: 0
     },
     rail: [
-      appStore.navigation.railOptions.find((rail) => rail.id === RailMode.HOME)
+      appStore.navigation.railOptions.find((rail) => rail.id === RailMode.HOME),
+      {
+        icon: markRaw(RiUserLine),
+        name: "Users",
+        id: 0,
+        path: "/users",
+        selectedIcon: markRaw(RiUserFill)
+      }
     ]
   };
 }

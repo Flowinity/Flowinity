@@ -31,6 +31,11 @@
           :widget="widget"
           :locked="locked"
         />
+        <card outlined class="mt-4">
+          <div class="justify-center flex fill-medium-emphasis-dark">
+            <RiAddLine class="w-20" />
+          </div>
+        </card>
       </div>
       <div class="flex flex-col gap-4">
         <home-widget-handler
@@ -39,14 +44,13 @@
           :widget="widget"
           :locked="locked"
         />
+        <card outlined class="mt-4">
+          <div class="justify-center flex fill-medium-emphasis-dark">
+            <RiAddLine class="w-20" />
+          </div>
+        </card>
       </div>
     </div>
-    <div class="grid grid-flow-col grid-cols-2 gap-4 mt-4"></div>
-    <card outlined class="mt-4">
-      <div class="justify-center flex fill-medium-emphasis-dark">
-        <RiAddLine class="w-20" />
-      </div>
-    </card>
   </container>
 </template>
 
