@@ -11,11 +11,13 @@ import QuickSwitcher from "@/components/QuickSwitcher/QuickSwitcher.vue";
 import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { useFrameworkStore } from "@/stores/framework.store";
 import Stats from "stats.js";
+import { useChatStore } from "@/stores/chat.store";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
 const route = useRoute();
 const frameworkStore = useFrameworkStore();
+const chatStore = useChatStore();
 
 function drop(e: Event) {
   if (!e.dataTransfer.files?.length) return;
@@ -69,7 +71,7 @@ requestAnimationFrame(animate);
         class="fixed top-0 left-0 z-50"
         v-if="userStore.user && !frameworkStore.breakpoints.mobile"
       />
-      <div class="flex w-full">
+      <div class="flex w-full" id="main-flex">
         <side-bar
           class="fixed top-0 left-0"
           v-if="userStore.user && !frameworkStore.breakpoints.mobile"
@@ -84,10 +86,6 @@ requestAnimationFrame(animate);
             <RouterView />
           </main>
         </div>
-        <member-side-bar
-          class="fixed top-0 left-0 max-sm:hidden"
-          v-if="route.path.startsWith('/communications/')"
-        />
       </div>
     </div>
   </div>

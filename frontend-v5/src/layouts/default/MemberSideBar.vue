@@ -32,16 +32,16 @@ const ranks = computed(() => {
           .selectedChat!.users.filter((user) => {
             return (
               user.ranksMap[0] === rank.id &&
-              userStore.users[user.userId]?.status !== UserStatus.Offline &&
-              userStore.users[user.userId]?.status !==
+              userStore.users[user.userId!]?.status !== UserStatus.Offline &&
+              userStore.users[user.userId!]?.status !==
                 UserStoredStatus.Invisible &&
-              userStore.users[user.userId]?.status
+              userStore.users[user.userId!]?.status
             );
           })
           .map((user) => {
             return {
               ...user,
-              user: userStore.users[user.userId]
+              user: userStore.users[user.userId!]
             };
           })
       };
@@ -51,7 +51,7 @@ const ranks = computed(() => {
       users: chatStore.selectedChat.users
         .filter((user) => {
           return (
-            userStore.users[user.userId]?.status !== UserStatus.Offline &&
+            userStore.users[user.userId!]?.status !== UserStatus.Offline &&
             !user.ranksMap.length &&
             !user.legacyUserId
           );
@@ -59,7 +59,7 @@ const ranks = computed(() => {
         .map((user) => {
           return {
             ...user,
-            user: userStore.users[user.userId]
+            user: userStore.users[user.userId!]
           };
         })
     },
@@ -68,14 +68,14 @@ const ranks = computed(() => {
       users: chatStore.selectedChat.users
         .filter((user) => {
           return (
-            userStore.users[user.userId]?.status === UserStatus.Offline ||
-            userStore.users[user.userId]?.status === UserStoredStatus.Invisible
+            userStore.users[user.userId!]?.status === UserStatus.Offline ||
+            userStore.users[user.userId!]?.status === UserStoredStatus.Invisible
           );
         })
         .map((user) => {
           return {
             ...user,
-            user: userStore.users[user.userId]
+            user: userStore.users[user.userId!]
           };
         })
     }
@@ -84,13 +84,8 @@ const ranks = computed(() => {
 </script>
 
 <template>
-  <aside
-    class="border-l-2 sticky z-50 dark:border-outline-dark dark:bg-sidebar-dark border-dark flex flex-col overflow-y-auto overflow-x-hidden"
-    style="min-width: 256px; max-width: 256px"
-    :class="{ 'h-screen': !props.drawer, 'h-[calc(100vh-64px)]': props.drawer }"
-  >
+  <div>
     <div
-      v-if="appStore.currentRail"
       class="flex items-center pt-0 dark:border-outline-dark border-b-2 border-outline-dark"
       style="min-height: 64px; max-height: 64px"
     >
@@ -139,7 +134,7 @@ const ranks = computed(() => {
         </div>
       </div>
     </Transition>
-  </aside>
+  </div>
 </template>
 
 <style>

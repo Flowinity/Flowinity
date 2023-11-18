@@ -7,8 +7,12 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
+    "jsxFactory": "VueTsxSupport",
+    "jsx": "preserve",
     "verbatimModuleSyntax": false
   }
 }

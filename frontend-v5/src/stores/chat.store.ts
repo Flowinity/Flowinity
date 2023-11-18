@@ -189,6 +189,23 @@ export const useChatStore = defineStore("chat", () => {
     );
   });
 
+  const uiOptions = ref({
+    memberSidebar: !localStorage.getItem("memberList")
+      ? true
+      : localStorage.getItem("memberList") === "true",
+    searchSidebar: false
+  });
+
+  watch(
+    () => uiOptions.value.memberSidebar,
+    () => {
+      localStorage.setItem(
+        "memberList",
+        uiOptions.value.memberSidebar.toString()
+      );
+    }
+  );
+
   return {
     chats,
     selectedChatAssociationId,
@@ -207,6 +224,7 @@ export const useChatStore = defineStore("chat", () => {
     typers,
     currentTypers,
     type,
-    cancelType
+    cancelType,
+    uiOptions
   };
 });

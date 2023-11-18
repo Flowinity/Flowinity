@@ -13,7 +13,9 @@ export default defineConfig({
     graphql(),
     vue(),
     vueJsx(),
-    ViteVersion(),
+    // hack for esm
+    //@ts-ignore
+    ViteVersion.default(),
     EntryShakingPlugin({
       targets: [resolve(__dirname, "node_modules/vue-remix-icons")],
       ignorePatterns: [/node_modules\/(?!vue-remix-icons\/).*/]

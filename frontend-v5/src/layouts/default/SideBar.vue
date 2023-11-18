@@ -80,12 +80,17 @@ const context = ref(0);
       </div>
     </Transition>
     <Transition name="slide-fade" mode="out-in">
-      <div class="flex-col flex gap-y-2 px-3" :key="appStore.currentRail?.id">
+      <div
+        class="flex-col flex gap-y-2 px-3"
+        style="margin-bottom: 16px"
+        :key="appStore.currentRail?.id"
+      >
         <SideBarItem
           v-for="item in appStore.currentMiscNavOptions"
           :key="item.name"
-          class="flex items-center text-medium-emphasis-dark fill-medium-emphasis-dark"
+          class="flex items-center text-medium-emphasis-dark"
           :item="item"
+          style="fill: #878889"
         />
       </div>
     </Transition>

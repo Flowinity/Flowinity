@@ -37,7 +37,8 @@
       v-bind="$attrs"
       :disabled="props.disabled"
       :class="{
-        'placeholder-shown': !modelValue?.length && focus,
+        'placeholder-shown':
+          !modelValue?.length && (focus || persistentPlaceholder),
         'text-medium-emphasis-dark': props.disabled,
         focused: focus
       }"
@@ -68,9 +69,11 @@
       v-bind="$attrs"
       :disabled="props.disabled"
       :class="{
-        'placeholder-shown': !modelValue?.length && focus,
+        'placeholder-shown':
+          !modelValue?.length && (focus || persistentPlaceholder),
         'text-medium-emphasis-dark': props.disabled,
-        focused: focus
+        focused: focus,
+        'hide-value': props.rawInject
       }"
       :readonly="props.readonly"
     />
@@ -90,7 +93,8 @@
       role="button"
       tabindex="-1"
       :class="{
-        'placeholder-shown': !modelValue?.length && focus,
+        'placeholder-shown':
+          !modelValue?.length && (focus || persistentPlaceholder),
         'text-medium-emphasis-dark': props.disabled,
         focused: focus
       }"
@@ -172,7 +176,9 @@ const props = defineProps([
   "parentClasses",
   "parentStyle",
   "htmlId",
-  "dynamicWidth"
+  "dynamicWidth",
+  "persistentPlaceholder",
+  "rawInject"
 ]);
 
 const id = computed(() => {
@@ -248,5 +254,9 @@ defineExpose({
 
 .text-field:focus + .form__label {
   color: #0190ea;
+}
+
+.hide-value {
+  color: transparent;
 }
 </style>

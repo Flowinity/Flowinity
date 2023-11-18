@@ -79,8 +79,8 @@
                   excludedTypers.length > 1
                     ? 1
                     : excludedTypers.length > 5
-                    ? 2
-                    : 0
+                      ? 2
+                      : 0
                 )
               }}
             </p>
@@ -90,6 +90,76 @@
       </div>
     </div>
   </div>
+
+  <teleport to="#appbar-options">
+    <transition mode="out-in" name="slide-up" appear>
+      <div class="flex gap-2">
+        <tpu-button
+          icon
+          variant="passive"
+          v-tooltip.bottom="
+            chatStore.uiOptions.searchSidebar
+              ? t('chats.searchSidebar.hide')
+              : t('chats.searchSidebar.show')
+          "
+          @click="
+            chatStore.uiOptions.searchSidebar =
+              !chatStore.uiOptions.searchSidebar
+          "
+        >
+          <RiSearchLine
+            style="width: 20px"
+            v-if="!chatStore.uiOptions.searchSidebar"
+          />
+          <RiSearchFill style="width: 20px" v-else />
+        </tpu-button>
+        <tpu-button
+          icon
+          variant="passive"
+          v-tooltip.bottom="
+            chatStore.uiOptions.memberSidebar
+              ? t('chats.memberSidebar.hide')
+              : t('chats.memberSidebar.show')
+          "
+          @click="
+            chatStore.uiOptions.searchSidebar &&
+            chatStore.uiOptions.memberSidebar
+              ? (chatStore.uiOptions.searchSidebar = false)
+              : (chatStore.uiOptions.memberSidebar =
+                  !chatStore.uiOptions.memberSidebar);
+            chatStore.uiOptions.searchSidebar = false;
+          "
+        >
+          <RiUserLine
+            style="width: 20px"
+            v-if="
+              !chatStore.uiOptions.memberSidebar ||
+              chatStore.uiOptions.searchSidebar
+            "
+          />
+          <RiUserFill style="width: 20px" v-else />
+        </tpu-button>
+      </div>
+    </transition>
+  </teleport>
+
+  <teleport to="#main-flex">
+    <second-side-bar
+      class="fixed top-0 left-0 max-sm:hidden sidebar-transition"
+      v-if="
+        chatStore.uiOptions.memberSidebar || chatStore.uiOptions.searchSidebar
+      "
+      :width="chatStore.uiOptions.searchSidebar ? '384px' : '256px'"
+    >
+      <search-side-bar v-show="chatStore.uiOptions.searchSidebar" />
+      <member-side-bar
+        v-show="
+          chatStore.uiOptions.memberSidebar &&
+          !chatStore.uiOptions.searchSidebar
+        "
+      />
+    </second-side-bar>
+  </teleport>
 </template>
 
 <script setup lang="ts">
@@ -123,6 +193,15 @@ import { useRoute } from "vue-router";
 import RiAtFill from "vue-remix-icons/icons/ri-at-fill.vue";
 import RiAtLine from "vue-remix-icons/icons/ri-at-line.vue";
 import functions from "@/plugins/functions";
+import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
+import RiCheckLine from "vue-remix-icons/icons/ri-check-line.vue";
+import RiUserLine from "vue-remix-icons/icons/ri-user-line.vue";
+import RiUserFill from "vue-remix-icons/icons/ri-user-fill.vue";
+import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
+import RiSearchFill from "vue-remix-icons/icons/ri-search-fill.vue";
+import SecondSideBar from "@/layouts/default/SecondSideBar.vue";
+import MemberSideBar from "@/layouts/default/MemberSideBar.vue";
+import SearchSideBar from "@/layouts/default/SearchSideBar.vue";
 
 const { t } = useI18n();
 const chatStore = useChatStore();
@@ -248,6 +327,7 @@ function editLastMessage() {
 }
 
 function shortcutHandler(e: KeyboardEvent) {
+  console.log(e.target?.classList);
   if (e.key === "Escape") {
     e.preventDefault();
     replyId.value = undefined;
@@ -281,9 +361,13 @@ function shortcutHandler(e: KeyboardEvent) {
     (e.key === "v" && e.ctrlKey) ||
     (e.target?.tagName !== "INPUT" &&
       e.target?.tagName !== "TEXTAREA" &&
-      !e.ctrlKey)
+      !e.ctrlKey &&
+      !e.target?.classList.contains("ProseMirror"))
   ) {
     focusInput();
+  } else if (e.ctrlKey && e.key === "f") {
+    e.preventDefault();
+    chatStore.uiOptions.searchSidebar = !chatStore.uiOptions.searchSidebar;
   }
 }
 
