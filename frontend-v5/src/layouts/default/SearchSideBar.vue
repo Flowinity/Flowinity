@@ -5,8 +5,15 @@
       style="min-height: 64px; max-height: 64px"
     >
       <RiSearchLine class="w-8 ml-3" />
+      <text-field
+        v-model="search"
+        class="ml-2"
+        style="border-bottom: none; margin-top: 0; margin-bottom: 0"
+        placeholder="Search..."
+        :persistent-placeholder="true"
+        ref="searchInput"
+      />
     </div>
-    <tpu-smart-text-field v-model="search" class="ml-2" />
   </div>
 </template>
 
@@ -17,6 +24,7 @@ import { nextTick, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useChatStore } from "@/stores/chat.store";
 import TpuSmartTextField from "@/components/Framework/Input/TpuSmartTextField.vue";
+import { useRoute } from "vue-router";
 
 const search = ref("");
 const { t } = useI18n();
@@ -30,6 +38,14 @@ watch(
       await nextTick();
       searchInput.value?.input?.focus();
     }
+  }
+);
+
+const route = useRoute();
+watch(
+  () => route.params.id,
+  () => {
+    chatStore.uiOptions.searchSidebar = false;
   }
 );
 </script>
