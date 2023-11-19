@@ -7,12 +7,24 @@
       <RiSearchLine class="w-8 ml-3" />
       <text-field
         v-model="search"
-        class="ml-2"
+        class="ml-2 w-full"
         style="border-bottom: none; margin-top: 0; margin-bottom: 0"
         placeholder="Search..."
         :persistent-placeholder="true"
         ref="searchInput"
-      />
+        @keydown.escape="chatStore.uiOptions.searchSidebar = false"
+      >
+        <div class="flex items-end justify-end mr-2">
+          <tpu-button
+            variant="passive"
+            style="width: 42px"
+            @click="chatStore.uiOptions.searchSidebar = false"
+            icon
+          >
+            <RiCloseLine />
+          </tpu-button>
+        </div>
+      </text-field>
     </div>
   </div>
 </template>
@@ -25,7 +37,8 @@ import { useI18n } from "vue-i18n";
 import { useChatStore } from "@/stores/chat.store";
 import TpuSmartTextField from "@/components/Framework/Input/TpuSmartTextField.vue";
 import { useRoute } from "vue-router";
-
+import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 const search = ref("");
 const { t } = useI18n();
 const searchInput = ref<InstanceType<typeof TextField>>();

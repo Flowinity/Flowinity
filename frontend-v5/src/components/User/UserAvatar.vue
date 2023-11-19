@@ -50,14 +50,6 @@
                   class="rounded"
                   v-if="user.status === UserStatus.Busy"
                 />
-                <div
-                  style="height: 4.5px; width: 4.5px; background: #101113"
-                  class="rounded"
-                  v-else-if="
-                    user.status === UserStatus.Offline ||
-                    user.status === UserStoredStatus.Invisible
-                  "
-                />
                 <RiMoonFill
                   style="
                     height: 8px;
@@ -76,6 +68,11 @@
                   style="height: 8px; width: 8px"
                   class="rounded"
                   v-else-if="user.status === UserStatus.Online"
+                />
+                <div
+                  style="height: 4.5px; width: 4.5px; background: #101113"
+                  class="rounded"
+                  v-else
                 />
               </template>
               <template v-else>
