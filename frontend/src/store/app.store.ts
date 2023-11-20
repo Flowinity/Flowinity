@@ -612,7 +612,7 @@ export const useAppStore = defineStore("app", {
         document.head.appendChild(link);
       }
       i18nObject.global.locale =
-        (user.user.language as "en" | "en-GB" | "fr" | "ru") || "en";
+        (user.user?.language as "en" | "en-GB" | "fr" | "ru") || "en";
     },
     async init() {
       this.loading = true;

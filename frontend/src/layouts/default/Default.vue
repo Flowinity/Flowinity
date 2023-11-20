@@ -151,7 +151,7 @@ export default defineComponent({
   computed: {
     currentRailComponent() {
       if (this.$app.railMode === "communications") {
-        return "ColubrinaSidebar";
+        return "CommsSidebar";
       } else if (this.$app.railMode === "workspaces") {
         return "WorkspacesSidebar";
       } else {
