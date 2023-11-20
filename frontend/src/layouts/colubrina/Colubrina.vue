@@ -4,7 +4,7 @@
       <user
         :key="$chat.dialogs.user.username"
         :username="$chat.dialogs.user.username"
-      ></user>
+      />
     </v-card>
   </v-dialog>
   <v-menu
@@ -14,14 +14,12 @@
     location="top"
     style="z-index: 2001"
   >
-    <user-menu></user-menu>
+    <user-menu />
   </v-menu>
-  <image-dialog v-model="$chat.dialogs.image.value"></image-dialog>
-  <group-settings-dialog
-    v-model="$chat.dialogs.groupSettings.value"
-  ></group-settings-dialog>
-  <router-view></router-view>
-  <member-sidebar v-if="!$vuetify.display.mobile"></member-sidebar>
+  <image-dialog v-model="$chat.dialogs.image.value" />
+  <group-settings-dialog v-model="$chat.dialogs.groupSettings.value" />
+  <router-view />
+  <member-sidebar v-if="!$vuetify.display.mobile" />
 </template>
 
 <script lang="ts">

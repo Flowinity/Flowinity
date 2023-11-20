@@ -16,22 +16,21 @@
       <v-icon>mdi-arrow-left</v-icon>
       {{ $t("core.sidebar.backToTPU") }}
     </p>
-    <ColubrinaSidebarList></ColubrinaSidebarList>
+    <SidebarList />
     <template v-slot:append>
-      <StatusSwitcher></StatusSwitcher>
+      <StatusSwitcher />
     </template>
   </CoreSidebar>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ColubrinaSidebarList from "@/layouts/colubrina/SidebarList.vue";
+import SidebarList from "@/layouts/colubrina/SidebarList.vue";
 import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
 
 export default defineComponent({
-  name: "ColubrinaSidebar",
-  components: { CoreSidebar, StatusSwitcher, ColubrinaSidebarList },
+  components: { CoreSidebar, StatusSwitcher, SidebarList },
   computed: {
     val: {
       get: function () {

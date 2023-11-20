@@ -87,7 +87,7 @@
                   label="Manage"
                   @update:model-value="updateUser(item.id, $event)"
                   :model-value="item.manage"
-                ></v-checkbox>
+                />
               </template>
             </v-data-table>
           </v-container>
@@ -104,20 +104,20 @@
                   (v) =>
                     v.length <= 32 || 'Name must be less than 32 characters'
                 ]"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="app.description"
                 label="Description"
                 outlined
                 dense
-              ></v-text-field>
+              />
               <v-text-field
                 placeholder="https://i.troplo.com/i/50ba79e4.png"
                 v-model="app.icon"
                 label="Icon"
                 outlined
                 dense
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="app.redirectUri"
                 label="Redirect"
@@ -126,7 +126,7 @@
                 required
                 :rules="[(v) => !!v || 'Redirect is required']"
                 placeholder="https://oci3.troplo.com/tpu_callback"
-              ></v-text-field>
+              />
               <v-checkbox
                 v-model="app.private"
                 label="Private"
@@ -134,7 +134,7 @@
                 required
                 persistent-hint
                 hint="Private apps can only be used by the owner or manually added users"
-              ></v-checkbox>
+              />
               <v-checkbox
                 v-model="app.verified"
                 label="Verified"
@@ -143,7 +143,7 @@
                 required
                 hint="Only use this for public facing and TPU endorsed apps"
                 persistent-hint
-              ></v-checkbox>
+              />
               <v-expansion-panels class="my-2">
                 <v-expansion-panel title="Scopes">
                   <template v-slot:text>
@@ -156,7 +156,7 @@
                         :hint="scope.description"
                         persistent-hint
                         class="mt-n8"
-                      ></v-checkbox>
+                      />
                     </v-container>
                   </template>
                 </v-expansion-panel>

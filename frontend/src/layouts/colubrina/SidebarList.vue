@@ -117,7 +117,7 @@
             $user.users[contextMenu.item.recipient?.id]
           "
           :hide-message="true"
-        ></UserSidebarOptions>
+        />
         <v-list-item
           v-if="
             contextMenu.item?.userId !== $user.user?.id &&
@@ -127,7 +127,7 @@
             $chat.dialogs.leave.itemId = contextMenu.item.id;
             $chat.dialogs.leave.value = true;
           "
-          style="color: rgb(var(--v-theme-error)"
+          style="color: rgb(var(--v-theme-error))"
         >
           <v-icon class="mr-1">mdi-exit-to-app</v-icon>
           {{ $t("generic.leave") }}
@@ -187,7 +187,7 @@
           "
           :dot-status="true"
           class="mr-2"
-        ></UserAvatar>
+        />
       </template>
       <template v-slot:append v-if="chat.unread">
         a
@@ -195,15 +195,11 @@
           :class="chat.unread > 99 ? 'mr-6' : 'mr-4'"
           :content="chat.unread > 99 ? '99+' : chat.unread"
           color="red"
-        ></v-badge>
+        />
       </template>
     </v-list-item>
     <v-list-item v-if="!$chat.chats.length" class="fade-skeleton">
-      <MessageSkeleton
-        v-for="i in 5"
-        :animate="false"
-        :key="i"
-      ></MessageSkeleton>
+      <MessageSkeleton v-for="i in 5" :animate="false" :key="i" />
     </v-list-item>
   </v-list>
 </template>
@@ -220,7 +216,6 @@ import Overline from "@/components/Core/Typography/Overline.vue";
 import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
 
 export default defineComponent({
-  name: "ColubrinaSidebarList",
   components: {
     UserSidebarOptions,
     Overline,

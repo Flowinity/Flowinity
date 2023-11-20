@@ -9,7 +9,7 @@
       @keydown.enter="getGallery()"
       @click:append="getGallery()"
       ref="search"
-    ></v-text-field>
+    />
     <Paginate v-model="page" :total-pages="null" class="mb-2 mt-n2"></Paginate>
     <v-row v-if="!loading">
       <v-col v-for="item in gallery.gallery" :item="item" cols="12" sm="6">

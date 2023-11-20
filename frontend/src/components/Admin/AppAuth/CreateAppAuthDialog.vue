@@ -20,20 +20,20 @@
             (v) => !!v || 'Name is required',
             (v) => v.length <= 32 || 'Name must be less than 32 characters'
           ]"
-        ></v-text-field>
+        />
         <v-text-field
           v-model="description"
           label="Description"
           outlined
           dense
-        ></v-text-field>
+        />
         <v-text-field
           placeholder="https://i.troplo.com/i/50ba79e4.png"
           v-model="icon"
           label="Icon"
           outlined
           dense
-        ></v-text-field>
+        />
         <v-text-field
           v-model="redirect"
           label="Redirect"
@@ -42,7 +42,7 @@
           required
           :rules="[(v) => !!v || 'Redirect is required']"
           placeholder="https://oci3.troplo.com/tpu_callback"
-        ></v-text-field>
+        />
         <v-checkbox
           v-model="private"
           label="Private"

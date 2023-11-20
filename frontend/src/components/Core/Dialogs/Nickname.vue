@@ -12,7 +12,7 @@
         label="Nickname"
         outlined
         @keydown.enter="update"
-      ></v-text-field>
+      />
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>

@@ -29,7 +29,7 @@
         show.order = $event;
         page = 1;
       "
-    ></GalleryNavigation>
+    />
     <GalleryCoreInfinite
       :items="gallery"
       :page="page"

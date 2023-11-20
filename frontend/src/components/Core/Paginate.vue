@@ -31,7 +31,7 @@
           type="number"
           @blur="doCustomPage"
           @keyup.enter="doCustomPage"
-        ></v-text-field>
+        />
         <v-chip
           v-if="!customLeft"
           size="large"
@@ -65,7 +65,7 @@
           type="number"
           @blur="doCustomPage"
           @keyup.enter="doCustomPage"
-        ></v-text-field>
+        />
         <v-chip
           v-if="!customRight"
           size="large"

@@ -9,7 +9,7 @@
           placeholder="Search for a user"
           @keydown.enter="getUsers"
           @click:append-inner="getUsers"
-        ></v-text-field>
+        />
       </v-col>
       <v-col cols="12" md="4" sm="12">
         <v-select

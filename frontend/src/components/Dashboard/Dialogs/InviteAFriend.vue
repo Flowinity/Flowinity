@@ -17,7 +17,7 @@
         required
         type="email"
         @keyup.enter="inviteFriend"
-      ></v-text-field>
+      />
       <small>
         You will receive an email when your request is accepted or denied by a
         TPU administrator.

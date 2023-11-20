@@ -138,7 +138,7 @@
                     :class="{ 'justify-center': $vuetify.display.mobile }"
                     :primaryColor="primaryColorResult.primary"
                     :user="user"
-                  ></UserBadges>
+                  />
                 </div>
               </v-card-text>
             </v-col>
@@ -725,8 +725,8 @@ export default defineComponent({
         component = foundRow;
         parent = this.layout.layout.columns[0];
       } else {
-        const foundChildRow = this.layout.layout.columns[0].rows.find(
-          (x) => x?.props?.children?.find((y: Component) => y.id === id)
+        const foundChildRow = this.layout.layout.columns[0].rows.find((x) =>
+          x?.props?.children?.find((y: Component) => y.id === id)
         );
         if (foundChildRow && "children" in foundChildRow.props) {
           component = foundChildRow.props.children?.find(

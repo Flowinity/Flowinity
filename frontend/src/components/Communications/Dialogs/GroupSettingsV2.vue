@@ -171,8 +171,6 @@ import ChatSettingsHome from "@/components/Communications/Dialogs/Settings/Home.
 import Overline from "@/components/Core/Typography/Overline.vue";
 import ChatSettingsRanks from "@/components/Communications/Dialogs/Settings/Ranks.vue";
 import ChatSettingsUsers from "@/components/Communications/Dialogs/Settings/Users.vue";
-import { AddChatUserMutation } from "@/graphql/chats/addUser.graphql";
-import { ToggleUser } from "@/gql/graphql";
 import ChatSettingsInvites from "@/components/Communications/Dialogs/Settings/Invites.vue";
 import ChatSettingsEmoji from "@/components/Communications/Dialogs/Settings/Emoji.vue";
 import ChatSettingsAudit from "@/components/Communications/Dialogs/Settings/Audit.vue";

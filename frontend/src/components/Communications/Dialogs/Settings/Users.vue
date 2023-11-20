@@ -12,7 +12,7 @@
     class="mx-2"
     autofocus
     v-model="search"
-  ></v-text-field>
+  />
   <v-data-table :items="users" :headers="headers">
     <template v-slot:item.user.username="{ item }">
       <UserAvatar :user="item.user"></UserAvatar>

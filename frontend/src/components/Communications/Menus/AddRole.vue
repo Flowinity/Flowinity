@@ -23,7 +23,7 @@
           :autofocus="true"
           class="mx-5 my-n1"
           label="Search"
-        ></v-text-field>
+        />
         <v-list-item
           v-for="rank in ranksSearch"
           :active="association.ranksMap.includes(rank.id)"

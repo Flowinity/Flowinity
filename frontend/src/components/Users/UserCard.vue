@@ -2,7 +2,7 @@
   <v-card :to="`/u/${username}`" class="my-2 user-card">
     <UserBanner :height="120" :user="user">
       <div class="d-flex" style="align-items: center; height: 120px">
-        <UserAvatar :size="80" :user="user" class="ml-4"></UserAvatar>
+        <UserAvatar :size="80" :user="user" class="ml-4" />
         <v-card-title>
           <h3>{{ user?.username }}</h3>
           <v-card-subtitle v-if="subtitle" style="padding-left: 0">
@@ -16,7 +16,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { User } from "@/models/user";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 

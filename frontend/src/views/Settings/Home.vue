@@ -10,14 +10,14 @@
               :label="$t('settings.home.myAccount.username')"
               :rules="$validation.user.username"
               class="mt-4"
-            ></v-text-field>
+            />
             <DangerZoneInput
               v-model:password="username.password"
               v-model:password-mode="username.passwordMode"
               v-model:totp="username.totp"
             />
             <v-card-actions>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn
                 :disabled="!valid.username"
                 color="primary"
@@ -38,22 +38,22 @@
               :rules="$validation.user.passwordSettings"
               class="mt-4"
               type="password"
-            ></v-text-field>
+            />
             <v-text-field
               v-model="password.newPassword"
               :label="$t('settings.home.myAccount.newPassword')"
               class="mt-4"
               type="password"
-            ></v-text-field>
+            />
             <v-text-field
               v-model="password.confirmNewPassword"
               :label="$t('settings.home.myAccount.confirmPassword')"
               :rules="[...$validation.user.passwordSettings]"
               class="mt-4"
               type="password"
-            ></v-text-field>
+            />
             <v-card-actions>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn
                 :disabled="!valid.password"
                 color="primary"
@@ -73,14 +73,14 @@
               :label="$t('settings.home.myAccount.email')"
               :rules="$validation.user.email"
               class="mt-4"
-            ></v-text-field>
+            />
             <DangerZoneInput
               v-model:password="email.password"
               v-model:password-mode="email.passwordMode"
               v-model:totp="email.totp"
             />
             <v-card-actions>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn
                 :disabled="!valid.username"
                 color="primary"
@@ -109,7 +109,7 @@
           </v-chip>
         </v-expansion-panel-title>
         <v-expansion-panel-text>
-          <TwoFactor></TwoFactor>
+          <TwoFactor />
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -123,7 +123,7 @@
       step="12"
       thumb-label
       @update:modelValue="$emit('update')"
-    ></v-slider>
+    />
     <!-- select between Farenheit, Celsius or Kelvin -->
     <v-select
       v-model="$user.user.weatherUnit"
@@ -133,7 +133,7 @@
       item-title="title"
       item-value="value"
       @update:modelValue="$emit('update')"
-    ></v-select>
+    />
     <v-select
       v-model="theme"
       :items="themes"
@@ -142,7 +142,7 @@
       item-title="title"
       item-value="value"
       @update:modelValue="$emit('update')"
-    ></v-select>
+    />
     <v-autocomplete
       v-model="$user.user.excludedCollections"
       :items="collections"
@@ -156,7 +156,7 @@
       multiple
       variant="underlined"
       @update:modelValue="$emit('update')"
-    ></v-autocomplete>
+    />
     <v-select
       v-model="$user.user.language"
       :items="languages"
@@ -189,7 +189,7 @@
       v-model="disableProfileColors"
       :label="$t('settings.home.preferences.disableProfileColors')"
       class="px-6"
-    ></v-switch>
+    />
   </div>
 </template>
 
