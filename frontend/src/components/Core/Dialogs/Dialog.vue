@@ -28,7 +28,7 @@
           </v-btn>
         </v-toolbar>
       </slot>
-      <slot></slot>
+      <slot />
     </v-card>
   </v-dialog>
 </template>

@@ -6,7 +6,7 @@
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </div>
-    <slot></slot>
+    <slot />
   </div>
 </template>
 

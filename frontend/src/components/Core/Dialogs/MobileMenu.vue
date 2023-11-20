@@ -6,7 +6,7 @@
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-card style="bottom: 0; top: auto; position: absolute">
-      <slot></slot>
+      <slot />
     </v-card>
   </v-dialog>
 </template>

@@ -11,7 +11,7 @@
       >
         {{ title }}
       </strong>
-      <slot></slot>
+      <slot />
       <p style="font-size: 36px">
         {{ value }}
       </p>

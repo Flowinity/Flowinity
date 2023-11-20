@@ -14,7 +14,7 @@
         "
         mode="hex"
         @update:model-value="setThemeColor($event, menu.selected)"
-      ></v-color-picker>
+      />
       <v-btn
         :block="true"
         v-if="menu.selected === 'nameColor'"
@@ -187,7 +187,7 @@
           :min="0"
           :step="1"
           thumb-label
-        ></v-slider>
+        />
         {{ $t("themeEditor.attributes.gradientOffset") }}:
         <v-slider
           v-model="gradientOffset"
@@ -196,7 +196,7 @@
           :step="1"
           thumb-label
           @update:model-value="triggerSave"
-        ></v-slider>
+        />
         <v-switch
           v-model="showOnProfile"
           :label="$t('themeEditor.attributes.showOnProfile')"

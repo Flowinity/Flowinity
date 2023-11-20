@@ -33,7 +33,7 @@
           upload = true;
           intent = 'icon';
         "
-      ></UserAvatar>
+      />
       <v-card-subtitle class="mt-2">
         {{ $t("chats.settings.home.clickToChange") }}
       </v-card-subtitle>
@@ -99,7 +99,7 @@
               color="toolbar"
               class="no-border"
               :boilerplate="true"
-            ></v-skeleton-loader>
+            />
           </v-card>
         </div>
       </v-hover>
@@ -152,7 +152,7 @@
           variant="underlined"
           color="blue"
           maxlength="200"
-        ></v-textarea>
+        />
         <v-btn
           block
           :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"

@@ -15,7 +15,7 @@
         label="Select collection"
         outlined
         @keydown.enter="select($event.target.value)"
-      ></v-autocomplete>
+      />
     </v-card-text>
     <v-card-actions>
       <v-spacer />

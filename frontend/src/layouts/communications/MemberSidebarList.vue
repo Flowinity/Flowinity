@@ -26,7 +26,7 @@
                 :autofocus="true"
                 class="mx-5 my-n1"
                 label="Search"
-              ></v-text-field>
+              />
               <v-list-item
                 v-for="rank in ranksFiltered"
                 :active="contextMenu.item.ranksMap.includes(rank.id)"
@@ -57,7 +57,7 @@
                     <v-checkbox-btn
                       :model-value="contextMenu.item.ranksMap.includes(rank.id)"
                       color="primary"
-                    ></v-checkbox-btn>
+                    />
                   </v-list-item-action>
                 </template>
                 <v-list-item-title>{{ rank.name }}</v-list-item-title>
@@ -70,7 +70,7 @@
         <UserSidebarOptions
           :user="$user.users[contextMenu.item.userId]"
           v-if="$user.users[contextMenu.item.userId]"
-        ></UserSidebarOptions>
+        />
       </v-list>
     </v-card>
   </v-menu>
@@ -171,7 +171,7 @@
                 :dot-status="true"
                 :status="true"
                 :user="association.user"
-              ></UserAvatar>
+              />
             </template>
           </v-list-item>
         </template>
@@ -198,7 +198,7 @@
           v-model="$chat.search.query"
           @submit="$chat.doSearch(sort)"
           :autofocus="true"
-        ></GalleryTextField>
+        />
         <div class="float-right">
           <v-btn-toggle v-model="sort" density="compact">
             <v-btn>Newest</v-btn>
@@ -233,7 +233,7 @@
         :total-pages="$chat.search.results.pager.totalPages"
         class="mb-2"
         @update:model-value="$chat.doSearch(sort)"
-      ></Paginate>
+      />
     </template>
   </template>
 </template>

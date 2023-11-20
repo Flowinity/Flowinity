@@ -16,7 +16,7 @@
             :size="35"
             :user="$chat.lookupUser(item.value)"
             class="mr-1"
-          ></UserAvatar>
+          />
           {{ $chat.lookupUser(item.value).username }}
         </div>
         <div class="my-2 mx-2" v-else-if="key === ':'">
@@ -129,7 +129,7 @@
                         style="display: none"
                         truncate-length="15"
                         @update:model-value="$emit('fileUpload', $event)"
-                      ></v-file-input>
+                      />
                       <v-row
                         align="center"
                         class="d-flex flex-column"
@@ -150,7 +150,7 @@
                           $emit('quickTPULink', $event);
                           menu = false;
                         "
-                      ></InlineGallery>
+                      />
                     </v-window-item>
                     <v-window-item value="starred">
                       <InlineGallery

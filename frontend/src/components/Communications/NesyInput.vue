@@ -22,18 +22,14 @@
       @keyup.esc="$emit('edit', null)"
     >
       <template v-if="!editing" v-slot:prepend>
-        <HoverChip :old="true" icon="mdi-plus" text="Attachment"></HoverChip>
+        <HoverChip :old="true" icon="mdi-plus" text="Attachment" />
       </template>
       <template v-slot:append-inner>
-        <HoverChip :old="true" icon="mdi-star" text="Star"></HoverChip>
-        <HoverChip
-          :old="true"
-          icon="mdi-emoticon"
-          text="Emoji Picker"
-        ></HoverChip>
+        <HoverChip :old="true" icon="mdi-star" text="Star" />
+        <HoverChip :old="true" icon="mdi-emoticon" text="Emoji Picker" />
       </template>
       <template v-slot:append>
-        <HoverChip :old="true" icon="mdi-send" text="Send"></HoverChip>
+        <HoverChip :old="true" icon="mdi-send" text="Send" />
       </template>
     </v-textarea>
   </v-toolbar>

@@ -36,7 +36,7 @@
                   v-model="rule.name"
                   :rules="[(v: any) => !!v || $t('autoCollects.configure.required')]"
                   :label="$t('generic.name')"
-                ></v-text-field>
+                />
                 <v-card-subtitle class="grey--text ml-n4 mb-2">
                   {{ $t("autoCollects.configure.actions") }}
                 </v-card-subtitle>
@@ -46,7 +46,7 @@
                   item-title="name"
                   item-value="id"
                   :label="$t('autoCollects.configure.add')"
-                ></v-autocomplete>
+                />
               </v-card-text>
               <v-card-subtitle class="mt-n7 grey--text">
                 {{ $t("autoCollects.configure.groups") }}
@@ -86,7 +86,7 @@
                         v-model="subsubrule.value"
                         :rules="[(v: any) => !!v || 'Value is required']"
                         :label="$t('autoCollects.configure.value')"
-                      ></v-text-field>
+                      />
                     </v-col>
                     <v-col cols="1" style="max-width: 40px">
                       <v-btn

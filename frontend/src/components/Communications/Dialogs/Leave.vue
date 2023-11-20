@@ -37,7 +37,7 @@
           v-model:password-mode="del.passwordMode"
           v-model:totp="del.totp"
           @confirm="doDelete()"
-        ></DangerZoneInput>
+        />
       </v-card-text>
       <v-card-actions>
         <v-spacer />

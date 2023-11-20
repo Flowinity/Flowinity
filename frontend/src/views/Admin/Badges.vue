@@ -3,28 +3,22 @@
     <CoreDialog v-model="dialog.value" max-width="600">
       <template v-slot:title>Edit badge</template>
       <v-col>
-        <v-text-field v-model="dialog.item.name" label="Name"></v-text-field>
+        <v-text-field v-model="dialog.item.name" label="Name" />
       </v-col>
       <v-col>
-        <v-text-field
-          v-model="dialog.item.tooltip"
-          label="Tooltip"
-        ></v-text-field>
+        <v-text-field v-model="dialog.item.tooltip" label="Tooltip" />
       </v-col>
       <v-col>
-        <v-text-field v-model="dialog.item.color" label="Color"></v-text-field>
+        <v-text-field v-model="dialog.item.color" label="Color" />
       </v-col>
       <v-col>
-        <v-text-field
-          v-model="dialog.item.description"
-          label="Description"
-        ></v-text-field>
+        <v-text-field v-model="dialog.item.description" label="Description" />
       </v-col>
       <v-col>
-        <v-text-field v-model="dialog.item.icon" label="Icon"></v-text-field>
+        <v-text-field v-model="dialog.item.icon" label="Icon" />
       </v-col>
       <v-col>
-        <v-text-field v-model="dialog.item.image" label="Image"></v-text-field>
+        <v-text-field v-model="dialog.item.image" label="Image" />
       </v-col>
       <v-col>
         <v-checkbox v-model="dialog.item.unlocked" label="Unlocked" />
@@ -34,14 +28,14 @@
           v-model="dialog.item.planId"
           label="Plan ID"
           type="number"
-        ></v-text-field>
+        />
       </v-col>
       <v-col>
         <v-text-field
           v-model="dialog.item.priority"
           label="Priority"
           type="number"
-        ></v-text-field>
+        />
       </v-col>
       <v-btn @click="updateItem">Update</v-btn>
     </CoreDialog>
@@ -77,28 +71,22 @@
         <v-card-title>Create badge</v-card-title>
         <v-row>
           <v-col>
-            <v-text-field v-model="create.name" label="Name"></v-text-field>
+            <v-text-field v-model="create.name" label="Name" />
           </v-col>
           <v-col>
-            <v-text-field
-              v-model="create.tooltip"
-              label="Tooltip"
-            ></v-text-field>
+            <v-text-field v-model="create.tooltip" label="Tooltip" />
           </v-col>
           <v-col>
-            <v-text-field v-model="create.color" label="Color"></v-text-field>
+            <v-text-field v-model="create.color" label="Color" />
           </v-col>
           <v-col>
-            <v-text-field
-              v-model="create.description"
-              label="Description"
-            ></v-text-field>
+            <v-text-field v-model="create.description" label="Description" />
           </v-col>
           <v-col>
-            <v-text-field v-model="create.icon" label="Icon"></v-text-field>
+            <v-text-field v-model="create.icon" label="Icon" />
           </v-col>
           <v-col>
-            <v-text-field v-model="create.image" label="Image"></v-text-field>
+            <v-text-field v-model="create.image" label="Image" />
           </v-col>
           <v-col>
             <v-checkbox v-model="create.unlocked" label="Unlocked" />
@@ -108,14 +96,14 @@
               v-model="create.planId"
               label="Plan ID"
               type="number"
-            ></v-text-field>
+            />
           </v-col>
           <v-col>
             <v-text-field
               v-model="create.priority"
               label="Prority"
               type="number"
-            ></v-text-field>
+            />
           </v-col>
         </v-row>
         <v-btn @click="createBadge">Create badge</v-btn>

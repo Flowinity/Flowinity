@@ -15,7 +15,7 @@
   />
   <v-data-table :items="users" :headers="headers">
     <template v-slot:item.user.username="{ item }">
-      <UserAvatar :user="item.user"></UserAvatar>
+      <UserAvatar :user="item.user" />
       {{ item.user?.username || "Unresolved user" }}
       <template v-if="dev">({{ item.id }})</template>
       <template v-if="item.user?.id === $chat.editingChat.userId">

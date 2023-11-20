@@ -7,7 +7,7 @@
         required
         :autofocus="true"
         v-model="importDoc.name"
-      ></v-text-field>
+      />
       <v-file-input
         :label="$t('workspaces.import.file')"
         required
@@ -15,7 +15,7 @@
         v-model="importDoc.file"
         ref="importDocFile"
         accept=".tpudoc,.html"
-      ></v-file-input>
+      />
     </v-container>
     <v-card-actions>
       <v-spacer />

@@ -67,7 +67,7 @@
                 CONFIGURE
               </v-chip>
             </v-card-text>
-            <slot></slot>
+            <slot />
           </div>
         </div>
       </div>

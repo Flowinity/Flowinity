@@ -44,7 +44,7 @@
             </v-overlay>
           </div>
         </v-fade-transition>
-        <slot :hovering="isHovering as boolean"></slot>
+        <slot :hovering="isHovering as boolean" />
       </v-avatar>
       <template v-if="status && friendStatus">
         <div

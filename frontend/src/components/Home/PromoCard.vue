@@ -20,7 +20,7 @@
           {{ title }}
         </v-card-title>
         <div class="text-center">
-          <slot></slot>
+          <slot />
         </div>
       </div>
       <div class="image" v-if="image && right && !$vuetify.display.mobile">
@@ -50,7 +50,7 @@
             {{ title }}
           </v-card-title>
           <div style="padding: 0 16px">
-            <slot></slot>
+            <slot />
           </div>
         </div>
       </v-col>

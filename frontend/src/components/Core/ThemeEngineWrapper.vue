@@ -10,13 +10,13 @@
     location="right"
     permanent
   >
-    <ThemeEngineSidebar @editor="editor = $event"></ThemeEngineSidebar>
+    <ThemeEngineSidebar @editor="editor = $event" />
   </CoreSidebar>
   <CoreDialog v-if="$vuetify.display.mobile" v-model="$app.themeEditor">
     <template v-slot:toolbar>
       <div></div>
     </template>
-    <ThemeEngineSidebar @editor="editor = $event"></ThemeEngineSidebar>
+    <ThemeEngineSidebar @editor="editor = $event" />
   </CoreDialog>
 </template>
 

@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import SidebarList from "@/layouts/colubrina/SidebarList.vue";
+import SidebarList from "@/layouts/communications/SidebarList.vue";
 import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
 

@@ -1,12 +1,12 @@
 <template>
   <v-container>
-    <CreateCollectionDialog v-model="create"></CreateCollectionDialog>
+    <CreateCollectionDialog v-model="create" />
     <GalleryNavigation
       :supports="{ filter: true, metadata: false, search: true }"
       @refreshGallery="getCollections(undefined, true)"
       v-model:search="search"
       @update:filter="filter = $event"
-    ></GalleryNavigation>
+    />
     <v-btn class="mt-1 ml-1" style="float: right" @click="create = true">
       {{ $t("collections.create") }}
     </v-btn>
@@ -21,7 +21,7 @@
         xl="3"
         cols="12"
       >
-        <CollectionCard :item="item"></CollectionCard>
+        <CollectionCard :item="item" />
       </v-col>
     </v-row>
     <v-row v-if="loading">
@@ -29,7 +29,7 @@
         <v-skeleton-loader
           class="rounded-xl"
           type="heading, image, paragraph"
-        ></v-skeleton-loader>
+        />
       </v-col>
     </v-row>
     <infinite-loading

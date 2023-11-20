@@ -8,7 +8,7 @@
       :width="getWidth()"
       title=""
       v-if="apex"
-    ></apexchart>
+    />
     <template v-else-if="type === 'line'">
       <Line
         v-if="chartJSData"

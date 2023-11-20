@@ -5,7 +5,7 @@
     item-title="username"
     item-value="id"
     label="User"
-  ></v-autocomplete>
+  />
   <v-card
     v-for="experiment in relevantExperiments"
     class="my-2"
@@ -18,9 +18,9 @@
     </v-card-subtitle>
     <v-card-text v-if="experiment.type === 'boolean'">
       <v-radio-group v-model="$experiments.experiments[experiment.name]">
-        <v-radio :value="experiment.inheritValue" label="Inherit"></v-radio>
-        <v-radio :value="true" label="Enabled"></v-radio>
-        <v-radio :value="false" label="Disabled"></v-radio>
+        <v-radio :value="experiment.inheritValue" label="Inherit" />
+        <v-radio :value="true" label="Enabled" />
+        <v-radio :value="false" label="Disabled" />
       </v-radio-group>
     </v-card-text>
     <v-card-text v-else-if="experiment.type === 'number'">

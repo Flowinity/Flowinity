@@ -85,7 +85,7 @@
           placeholder="https://i.troplo.com/i/aae2fb2c0cf8.png"
           variant="filled"
           @keyup.enter="reportUpload"
-        ></v-text-field>
+        />
         <v-text-field
           v-model="report.content"
           auto-grow
@@ -94,7 +94,7 @@
           placeholder="This upload violates the Content Policy because..."
           variant="filled"
           @keyup.enter="reportUpload"
-        ></v-text-field>
+         />
         <v-text-field
           v-model="report.email"
           color="white"
@@ -103,7 +103,7 @@
           placeholder="troplo@troplo.com"
           variant="filled"
           @keyup.enter="reportUpload"
-        ></v-text-field>
+         />
         <v-card-actions>
           <v-spacer />
           <v-btn

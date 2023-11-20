@@ -6,7 +6,7 @@
     floating
     permanent
   >
-    <MailSidebarList></MailSidebarList>
+    <MailSidebarList />
     <template v-slot:append>
       <v-btn block>
         <v-icon class="mr-1">mdi-pencil</v-icon>

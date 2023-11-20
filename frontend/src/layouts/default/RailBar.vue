@@ -21,7 +21,7 @@
         :active="$app.railMode === 'tpu'"
         @click="$app.railMode = 'tpu'"
         prepend-icon="mdi-home"
-      ></v-list-item>
+      />
       <v-list-item
         aria-label="Workspaces"
         prepend-icon="mdi-folder-account"
@@ -29,7 +29,7 @@
         value="workspaces"
         :active="$app.railMode === 'workspaces'"
         @click="$app.railMode = 'workspaces'"
-      ></v-list-item>
+      />
       <v-list-item
         aria-label="Communications"
         prepend-icon="mdi-message-processing"
@@ -37,7 +37,7 @@
         value="communications"
         :active="$app.railMode === 'communications'"
         @click="$app.railMode = 'communications'"
-      ></v-list-item>
+      />
     </v-list>
   </v-navigation-drawer>
 </template>

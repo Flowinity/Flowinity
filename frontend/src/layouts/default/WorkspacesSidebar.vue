@@ -23,8 +23,8 @@
         !$chat.isCommunications ||
         $app.forcedWorkspaceDrawer
       "
-    ></WorkspacesSidebarList>
-    <MemberSidebarList v-else></MemberSidebarList>
+    />
+    <MemberSidebarList v-else />
     <template v-slot:append v-if="$workspaces.versionHistory">
       <v-btn
         width="228px"

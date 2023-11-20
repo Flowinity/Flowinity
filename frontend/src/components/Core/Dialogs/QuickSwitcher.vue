@@ -18,7 +18,7 @@
         return-object
         @select="handleEnter($event.target.value)"
         @keydown.enter="handleEnter($event.target.value)"
-      ></v-autocomplete>
+      />
     </v-container>
   </CoreDialog>
 </template>

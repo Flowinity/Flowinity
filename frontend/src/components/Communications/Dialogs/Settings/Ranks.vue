@@ -2,7 +2,7 @@
   <CreateRank
     v-model="createRank"
     :association-id="$chat.editingChat.association.id"
-  ></CreateRank>
+  />
   <overline position="center">
     {{ selectedRank?.name || $t("chats.settings.ranks.name") }}
   </overline>

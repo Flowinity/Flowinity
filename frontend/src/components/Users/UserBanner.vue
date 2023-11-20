@@ -56,7 +56,7 @@
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
       </transition>
-      <slot :hovering="isHovering"></slot>
+      <slot :hovering="isHovering" />
     </v-img>
   </v-hover>
 </template>

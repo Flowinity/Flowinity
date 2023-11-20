@@ -21,7 +21,7 @@
       <v-icon>mdi-menu</v-icon>
     </v-app-bar-nav-icon>
     <template v-if="!$chat.isCommunications || !$chat.selectedChat">
-      <LogoEasterEgg></LogoEasterEgg>
+      <LogoEasterEgg />
     </template>
     <template v-else>
       <UserAvatar
@@ -62,7 +62,7 @@
           editingName = false;
         "
         @keydown.esc="editingName = false"
-      ></v-text-field>
+      />
     </template>
     <v-spacer />
     <template v-if="!$app.connected">

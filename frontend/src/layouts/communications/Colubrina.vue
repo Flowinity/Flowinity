@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import MemberSidebar from "@/layouts/colubrina/MemberSidebar.vue";
+import MemberSidebar from "@/layouts/communications/MemberSidebar.vue";
 import User from "@/views/User/User.vue";
 import UserMenu from "@/components/Communications/Menus/UserMenu.vue";
 import ImageDialog from "@/components/Communications/Dialogs/ImageDialog.vue";

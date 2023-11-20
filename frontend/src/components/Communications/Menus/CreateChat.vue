@@ -31,14 +31,14 @@
           :key="friend.user.id"
         >
           <template v-slot:prepend>
-            <UserAvatar :user="friend.user" class="mr-3" size="38"></UserAvatar>
+            <UserAvatar :user="friend.user" class="mr-3" size="38" />
           </template>
           <template v-slot:append>
             <v-list-item-action start>
               <v-checkbox-btn
                 :model-value="selected.includes(friend.user.id)"
                 color="primary"
-              ></v-checkbox-btn>
+              />
             </v-list-item-action>
           </template>
 

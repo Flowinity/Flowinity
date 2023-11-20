@@ -39,7 +39,7 @@
           class="mr-2"
           size="18"
           style="padding-left: 6px"
-        ></UserAvatar>
+        />
         <span
           :style="{
             opacity: 0.8,
@@ -85,21 +85,19 @@
           :class="{ merge, unselectable: $vuetify.display.mobile }"
           class="message rounded position-relative"
         >
-          <div class="avatar-section d-flex">
-            <small
-              v-if="merge"
-              class="mr-1 text-grey message-date text-center"
-              style="font-size: 8px; height: 100%"
-            >
-              <v-tooltip
-                activator="parent"
-                location="top"
-                style="z-index: 2001"
-              >
-                {{ $date(message.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
-              </v-tooltip>
-              {{ $date(message.createdAt).format("hh:mm A") }}
-            </small>
+          <div class="avatar-section">
+            <div v-if="merge" class="message-date">
+              <small class="text-grey" style="font-size: 8px">
+                <v-tooltip
+                  activator="parent"
+                  location="top"
+                  style="z-index: 2001"
+                >
+                  {{ $date(message.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
+                </v-tooltip>
+                {{ $date(message.createdAt).format("hh:mm A") }}
+              </small>
+            </div>
             <UserAvatar
               @click="
                 $emit('authorClick', {
@@ -168,7 +166,9 @@
                   })
                 "
               >
-                {{ $friends.getName(user) || "Unknown User" }}
+                <span>
+                  {{ $friends.getName(user) || "Unknown User" }}
+                </span>
                 <v-chip class="ml-1" v-if="user?.bot" size="x-small">
                   BOT
                 </v-chip>

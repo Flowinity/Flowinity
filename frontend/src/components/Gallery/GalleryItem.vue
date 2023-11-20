@@ -58,7 +58,7 @@
             :text="$t('gallery.collectSelected')"
             icon="mdi-plus"
             @click="$emit('collectivize', item.id)"
-          ></HoverChip>
+          />
           <v-chip
             v-for="collection in item.collections"
             :key="collection.id"
@@ -87,7 +87,7 @@
             v-if="supports.permissions.write"
             class="my-1"
             aria-label="Edit item"
-          ></HoverChip>-->
+           />-->
           <HoverChip
             v-if="supports.permissions.write"
             :aria-label="$t('gallery.actions.delete.aria')"
@@ -100,7 +100,7 @@
               $event.shiftKey ? null : ($app.dialogs.deleteItem.item = item);
               $event.shiftKey ? null : ($app.dialogs.deleteItem.value = true);
             "
-          ></HoverChip>
+          />
           <HoverChip
             :aria-label="$t('gallery.actions.link.aria')"
             :text="$t('gallery.actions.link.text')"
@@ -115,7 +115,7 @@
               );
               $toast.success($t('generic.copied'));
             "
-          ></HoverChip>
+          />
           <HoverChip
             :aria-label="$t('gallery.actions.download.aria')"
             :href="$app.domain + item.attachment + '?force=true'"
@@ -123,7 +123,7 @@
             class="my-1"
             color="primary"
             icon="mdi-download"
-          ></HoverChip>
+          />
           <HoverChip
             v-if="item.type === 'image'"
             :aria-label="$t('gallery.actions.ocr.aria')"
@@ -140,7 +140,7 @@
               $app.dialogs.ocr.value = true;
             "
             :disabled="!item.textMetadata"
-          ></HoverChip>
+          />
           <HoverChip
             v-if="$user.user"
             :aria-label="$t('gallery.actions.star.aria')"
@@ -149,7 +149,7 @@
             class="my-1"
             color="amber-darken-2"
             @click="star(item)"
-          ></HoverChip>
+          />
           <HoverChip
             v-if="$user.user && item.item && supports.pins"
             :aria-label="$t('gallery.actions.pin.aria')"
@@ -158,7 +158,7 @@
             class="my-1"
             color="lime"
             @click="pin(item)"
-          ></HoverChip>
+          />
         </slot>
       </v-card-text>
     </v-card>
@@ -166,7 +166,7 @@
       v-else
       class="rounded-xl"
       type="heading, image, paragraph, chip, chip, chip, chip, chip"
-    ></v-skeleton-loader>
+    />
   </div>
 </template>
 
