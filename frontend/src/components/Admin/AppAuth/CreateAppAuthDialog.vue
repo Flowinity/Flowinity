@@ -50,7 +50,7 @@
           required
           persistent-hint
           hint="Private apps can only be used by the owner or manually added users"
-        ></v-checkbox>
+        />
         <v-checkbox
           v-model="verified"
           label="Verified"
@@ -59,11 +59,11 @@
           hint="Only use this for public facing and TPU endorsed apps"
           persistent-hint
           v-if="$user.user?.administrator"
-        ></v-checkbox>
+        />
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn @click="$emit('update:modelValue', false)">Cancel</v-btn>
       <v-btn color="primary" @click="createAppAuth" :loading="loading">
         Create

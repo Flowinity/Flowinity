@@ -33,7 +33,7 @@
           upload = true;
           intent = 'icon';
         "
-      ></UserAvatar>
+      />
       <v-card-subtitle class="mt-2">
         {{ $t("chats.settings.home.clickToChange") }}
       </v-card-subtitle>
@@ -46,7 +46,7 @@
       >
         Remove Avatar
       </v-btn>
-      <v-divider class="my-4"></v-divider>
+      <v-divider class="my-4" />
       <v-card-title
         style="
           padding: 0 10px 0 10px !important;
@@ -99,7 +99,7 @@
               color="toolbar"
               class="no-border"
               :boilerplate="true"
-            ></v-skeleton-loader>
+            />
           </v-card>
         </div>
       </v-hover>
@@ -113,7 +113,7 @@
         Remove Background
       </v-btn>
     </div>
-    <v-divider vertical class="ml-2 mr-6"></v-divider>
+    <v-divider vertical class="ml-2 mr-6" />
     <div style="width: 400px">
       <v-card-title
         style="
@@ -152,7 +152,7 @@
           variant="underlined"
           color="blue"
           maxlength="200"
-        ></v-textarea>
+        />
         <v-btn
           block
           :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
@@ -172,15 +172,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Chat } from "@/gql/graphql";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 
 export default defineComponent({
   name: "ChatSettingsHome",
-  components: { UploadCropper, GraphWidget, UserAvatar, Overline },
+  components: { UploadCropper, UserAvatar, Overline },
   data() {
     return {
       upload: false,

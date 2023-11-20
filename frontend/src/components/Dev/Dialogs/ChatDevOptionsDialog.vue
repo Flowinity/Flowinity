@@ -50,7 +50,7 @@
       </p>
       <p style="color: rgb(var(--v-theme-error))" v-else>Chat not loaded</p>
       <p
-        style="color: rgb(var(--v-theme-error"
+        style="color: rgb(var(--v-theme-error))"
         v-if="$chat.selectedChat.id.toString().startsWith('-')"
       >
         Pre-Colubrina migrate group

@@ -14,7 +14,7 @@
         "
         mode="hex"
         @update:model-value="setThemeColor($event, menu.selected)"
-      ></v-color-picker>
+      />
       <v-btn
         :block="true"
         v-if="menu.selected === 'nameColor'"
@@ -69,7 +69,7 @@
         item-value="value"
         label="Base Theme"
         @update:modelValue="triggerSave"
-      ></v-select>
+      />
     </v-card-title>
     <v-card
       :class="{ 'v-card--disabled': !$user.gold && $app.site.officialInstance }"
@@ -103,7 +103,7 @@
           color="primary"
           size="22"
           @click="openMenu($event, 'primary')"
-        ></v-avatar>
+        />
         {{ $t("themeEditor.colors.primary") }}
       </v-card-title>
       <v-card-title>
@@ -112,7 +112,7 @@
           color="logo1"
           size="22"
           @click="openMenu($event, 'logo1')"
-        ></v-avatar>
+        />
         {{ $t("themeEditor.colors.logo1") }}
       </v-card-title>
       <v-card-title>
@@ -121,7 +121,7 @@
           color="logo2"
           size="22"
           @click="openMenu($event, 'logo2')"
-        ></v-avatar>
+        />
         {{ $t("themeEditor.colors.logo2") }}
       </v-card-title>
       <v-card-title>
@@ -130,7 +130,7 @@
           color="background"
           size="22"
           @click="openMenu($event, 'background')"
-        ></v-avatar>
+        />
         {{ $t("themeEditor.colors.background") }}
       </v-card-title>
       <v-card-title>
@@ -139,7 +139,7 @@
           color="background2"
           size="22"
           @click="openMenu($event, 'background2')"
-        ></v-avatar>
+        />
         {{ $t("themeEditor.colors.background2") }}
       </v-card-title>
       <v-card-title>
@@ -149,7 +149,7 @@
           color="card"
           size="22"
           @click="openMenu($event, 'card')"
-        ></v-avatar>
+        />
         {{ $t("themeEditor.colors.card") }}
       </v-card-title>
       <v-card-title>
@@ -159,7 +159,7 @@
           color="toolbar"
           size="22"
           @click="openMenu($event, 'toolbar')"
-        ></v-avatar>
+        />
         {{ $t("themeEditor.colors.toolbar") }}
       </v-card-title>
       <v-card-title>
@@ -168,7 +168,7 @@
           :color="$user.user.nameColor"
           size="22"
           @click="openMenu($event, 'nameColor')"
-        ></v-avatar>
+        />
         {{ $t("themeEditor.colors.nameColor") }}
         <v-chip size="x-small">
           {{ $t("generic.new") }}
@@ -179,7 +179,7 @@
           v-model="$app.fluidGradient"
           :label="$t('themeEditor.attributes.fluidGradient')"
           @update:model-value="triggerSave"
-        ></v-switch>
+        />
         {{ $t("themeEditor.attributes.elevation") }}:
         <v-slider
           v-model="elevation"
@@ -187,7 +187,7 @@
           :min="0"
           :step="1"
           thumb-label
-        ></v-slider>
+        />
         {{ $t("themeEditor.attributes.gradientOffset") }}:
         <v-slider
           v-model="gradientOffset"
@@ -196,18 +196,18 @@
           :step="1"
           thumb-label
           @update:model-value="triggerSave"
-        ></v-slider>
+        />
         <v-switch
           v-model="showOnProfile"
           :label="$t('themeEditor.attributes.showOnProfile')"
           @update:model-value="triggerSave"
-        ></v-switch>
+        />
         <v-switch
           v-model="deviceSync"
           class="mt-n6"
           :label="$t('themeEditor.attributes.deviceSync')"
           @update:model-value="triggerSave"
-        ></v-switch>
+        />
       </v-card-title>
       <v-btn
         class="mt-n8"

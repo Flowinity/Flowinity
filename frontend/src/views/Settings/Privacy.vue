@@ -9,7 +9,7 @@
         class="mb-n7"
         :label="$t('settings.home.privacy.pulse')"
         @update:modelValue="$emit('update')"
-      ></v-switch>
+      />
       <small>
         {{ $t("settings.home.privacy.pulseDesc") }}
       </small>
@@ -18,7 +18,7 @@
         class="mb-n7"
         :label="$t('settings.home.privacy.discordPrecaching')"
         @update:modelValue="$emit('update')"
-      ></v-switch>
+      />
       <small>
         {{ $t("settings.home.privacy.discordPrecachingDesc") }}
       </small>
@@ -27,7 +27,7 @@
         class="mb-n7"
         :label="$t('settings.home.privacy.publicProfile')"
         @update:modelValue="$emit('update')"
-      ></v-switch>
+      />
       <small>
         {{ $t("settings.home.privacy.publicProfileDesc") }}
       </small>
@@ -37,7 +37,7 @@
         :label="$t('settings.home.preferences.insights')"
         class="mb-n2 mt-4"
         @update:modelValue="$emit('update')"
-      ></v-select>
+      />
       <small>
         {{ $t("settings.home.preferences.insightsDesc") }}
       </small>
@@ -46,21 +46,21 @@
         v-model="$app.demo"
         class="mb-n7"
         :label="$t('settings.home.privacy.demoMode')"
-      ></v-switch>
+      />
       <v-select
         v-model="$user.user.groupPrivacy"
         :items="group"
         :label="$t('settings.home.privacy.groupPrivacy')"
         class="mb-n2 mt-4"
         @update:modelValue="$emit('update')"
-      ></v-select>
+      />
       <v-select
         v-model="$user.user.friendRequests"
         :items="friend"
         :label="$t('settings.home.privacy.friendPrivacy')"
         class="mb-n2 mt-4"
         @update:modelValue="$emit('update')"
-      ></v-select>
+      />
     </v-card-text>
   </div>
 </template>
@@ -70,18 +70,11 @@ import { defineComponent } from "vue";
 import TwoFactor from "@/components/Settings/TwoFactor.vue";
 import { useTheme } from "vuetify";
 import {
-  Collection,
   UserFriendRequestPrivacy,
   UserGroupPrivacy,
   UserInsights
 } from "@/gql/graphql";
-import { UserLightCollectionsQuery } from "@/graphql/collections/getUserCollections.graphql";
 import DangerZoneInput from "@/components/Core/DangerZoneInput.vue";
-import {
-  ChangeUserEmailMutation,
-  ChangeUsernameMutation,
-  ChangeUserPasswordMutation
-} from "@/graphql/user/changeUsername.graphql";
 
 export default defineComponent({
   name: "SettingsHome",

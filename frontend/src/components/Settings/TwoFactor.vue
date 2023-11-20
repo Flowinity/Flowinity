@@ -27,7 +27,7 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn :disabled="!valid" :loading="loading" color="red" @click="disable">
         {{ $t("generic.disable") }}
       </v-btn>
@@ -37,7 +37,7 @@
     <v-card-title>
       {{ $t("settings.home.totp.enable") }}
     </v-card-title>
-    <v-card-text v-html="$t('settings.home.totp.enableText')"></v-card-text>
+    <v-card-text v-html="$t('settings.home.totp.enableText')" />
     <v-card-text class="my-n4">
       <v-form v-model="valid" @submit.prevent="enable">
         <v-text-field
@@ -49,7 +49,7 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         :disabled="!valid"
         :loading="loading"
@@ -86,7 +86,7 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         :disabled="!valid"
         :loading="loading"

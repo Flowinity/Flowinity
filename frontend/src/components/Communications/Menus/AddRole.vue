@@ -42,14 +42,14 @@
               class="v-avatar--variant-outlined pointer"
               :color="rank.color"
               size="22"
-            ></v-avatar>
+            />
           </template>
           <template v-slot:append>
             <v-list-item-action start>
               <v-checkbox-btn
                 :model-value="association.ranksMap.includes(rank.id)"
                 color="primary"
-              ></v-checkbox-btn>
+              />
             </v-list-item-action>
           </template>
           <v-list-item-title>{{ rank.name }}</v-list-item-title>

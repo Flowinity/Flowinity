@@ -9,7 +9,7 @@
       color="#0190ea"
       icon="mdi-shield"
       text="TPU Administrator"
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.moderator"
       v-ripple
@@ -18,7 +18,7 @@
       color="success"
       icon="mdi-shield"
       text="TPU Moderator"
-    ></HoverChip>
+    />
     <!-- Plan/joke badges -->
     <HoverChip
       v-if="!user.plan?.internalName.includes('FREE')"
@@ -29,7 +29,7 @@
       :text="'PrivateUploader ' + user.plan?.name"
       class="user-badge"
       text-color="black"
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.xp > 0"
       v-ripple
@@ -40,7 +40,7 @@
       :text="'$' + user.xp + ' donated'"
       :short-text="'$' + user.xp"
       text-color="black"
-    ></HoverChip>
+    />
     <!-- Rank tiers -->
     <HoverChip
       v-if="rank === 'god'"
@@ -51,7 +51,7 @@
       icon="mdi-crown"
       text="TPU God"
       title="You're Better than the rest™."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="rank === 'champion'"
       v-ripple
@@ -61,7 +61,7 @@
       icon="mdi-compass"
       text="TPU Champion"
       title="Champion deez nuts."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="rank === 'legend'"
       v-ripple
@@ -71,7 +71,7 @@
       icon="mdi-chess-knight"
       text="TPU Legend"
       title="You're a legend."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="rank === 'medium'"
       v-ripple
@@ -81,7 +81,7 @@
       icon="mdi-microsoft-xbox-controller-battery-medium"
       text="TPU Mediumist"
       title="You're medium."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="rank === 'intermediate'"
       v-ripple
@@ -91,7 +91,7 @@
       icon="mdi-target-account"
       text="TPU Intermediate"
       title="You're getting Better™."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="rank === 'noob'"
       v-ripple
@@ -101,7 +101,7 @@
       icon="mdi-chess-pawn"
       text="TPU Noob"
       title="Noob. Get Better™."
-    ></HoverChip>
+    />
     <!-- God, #0190ea/primary -->
     <HoverChip
       v-if="user.stats?.pulse >= 100"
@@ -112,7 +112,7 @@
       icon="mdi-clock"
       text="Chronic TPU Addiction Condition Disorder (CTPUACD)"
       title="Have 100h+ in TPU."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.uploads >= 100000"
       v-ripple
@@ -122,7 +122,7 @@
       icon="mdi-account-arrow-up"
       text="Chronic Screenshot Addiction Condition Disorder (CSACD)"
       title="Upload 100K+ items."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="
         user.stats?.uploads >= 10000 &&
@@ -135,7 +135,7 @@
       icon="mdi-rhombus-split"
       text="Chronic Kollectivization Addiction Condition Disorder (CKACD)"
       title="Have a collectivized to upload percentage of 100% or more."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.collections >= 100"
       v-ripple
@@ -145,7 +145,7 @@
       icon="mdi-folder-multiple-image"
       text="Chronic Collection Addiction Condition Disorder (CCACD)"
       title="Have 100+ collections."
-    ></HoverChip>
+    />
     <!-- Champion, #ffd700/gold -->
     <HoverChip
       v-if="user.stats?.uploads >= 50000 && user.stats?.uploads < 100000"
@@ -156,7 +156,7 @@
       icon="mdi-account-arrow-up"
       text="Champion Uploader"
       title="Upload 50K+ items."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.pulse >= 72 && user.stats?.pulse < 100"
       v-ripple
@@ -166,7 +166,7 @@
       icon="mdi-clock"
       text="TPU Addict"
       title="Have 72h+ in TPU."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="
         user.stats?.uploads >= 10000 &&
@@ -180,7 +180,7 @@
       icon="mdi-rhombus-split"
       text="Champion Collectivist"
       title="Have a collectivized to upload percentage of 90% or more."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.collections >= 25 && user.stats?.collections < 100"
       v-ripple
@@ -190,7 +190,7 @@
       icon="mdi-folder-multiple-image"
       text="Extreme kollection kreator"
       title="Have 25+ collections."
-    ></HoverChip>
+    />
     <!-- Legend tier, #673ab7/purple -->
     <HoverChip
       v-if="user.stats?.uploads >= 10000 && user.stats?.uploads < 50000"
@@ -201,7 +201,7 @@
       icon="mdi-account-arrow-up"
       text="Extreme Uploader"
       title="Upload 10K+ items."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.pulse >= 69 && user.stats?.pulse < 72"
       v-ripple
@@ -211,7 +211,7 @@
       icon="mdi-clock"
       text="Nice Hours"
       title="Have 69h+ in TPU."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="
         user.stats?.uploads >= 1000 &&
@@ -226,7 +226,7 @@
       icon="mdi-rhombus-split"
       text="True Collectivist"
       title="Have a collectivized to upload percentage of 80% or more."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.collections >= 20 && user.stats?.collections < 25"
       v-ripple
@@ -236,7 +236,7 @@
       icon="mdi-folder-multiple-image"
       text="Extreme kollection kreator"
       title="Have 20+ collections."
-    ></HoverChip>
+    />
     <!-- Mediumist tier, #1ac62b/Thomas lime -->
     <HoverChip
       v-if="user.stats?.uploads >= 4154 && user.stats?.uploads < 10000"
@@ -247,7 +247,7 @@
       icon="mdi-upload"
       text="Pro Uploader"
       title="Upload 4154+ items."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.pulse >= 24 && user.stats?.pulse < 69"
       v-ripple
@@ -257,7 +257,7 @@
       icon="mdi-clock-fast"
       text="TPU All Nighter"
       title="Have 24h+ in TPU."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="
         user.stats?.uploads >= 1000 &&
@@ -271,7 +271,7 @@
       icon="mdi-rhombus-split"
       text="Nice Collectivist"
       title="Have a collectivized to upload percentage of 69% or more."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.collections >= 15 && user.stats?.collections < 20"
       v-ripple
@@ -281,7 +281,7 @@
       icon="mdi-folder-multiple-image"
       text="Pro kollection kreator"
       title="Have 15+ collections."
-    ></HoverChip>
+    />
     <!-- Mediumist, #00bcd4/cyan -->
     <HoverChip
       v-if="user.stats?.uploads >= 1000 && user.stats?.uploads < 4154"
@@ -292,7 +292,7 @@
       icon="mdi-upload"
       text="Getting Better™"
       title="Upload 1K+ items."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.pulse >= 12 && user.stats?.pulse < 24"
       v-ripple
@@ -302,7 +302,7 @@
       icon="mdi-clock"
       text="Better than Average"
       title="Have 12h+ in TPU."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="
         user.stats?.uploads >= 1000 &&
@@ -316,7 +316,7 @@
       icon="mdi-rhombus-split"
       text="Noob Collectivist"
       title="Have a collectivized to upload percentage of 41.54% or more."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.collections >= 10 && user.stats?.collections < 15"
       v-ripple
@@ -326,7 +326,7 @@
       icon="mdi-folder-multiple-image"
       text="Better™ kollection kreator"
       title="Have 10+ collections."
-    ></HoverChip>
+    />
     <!-- Noob, grey -->
     <HoverChip
       v-if="user.stats?.uploads >= 500 && user.stats?.uploads < 1000"
@@ -337,7 +337,7 @@
       icon="mdi-upload"
       text="Getting Started"
       title="Upload 500+ items."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.pulse >= 8 && user.stats?.pulse < 12"
       v-ripple
@@ -347,7 +347,7 @@
       icon="mdi-clock"
       text="Average User"
       title="Have 8h+ in TPU."
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.stats?.collections >= 5 && user.stats?.collections < 10"
       v-ripple
@@ -357,7 +357,7 @@
       icon="mdi-folder-multiple-image"
       text="Average kollection kreator"
       title="Have 5+ collections."
-    ></HoverChip>
+    />
 
     <!-- Other -->
     <HoverChip
@@ -369,7 +369,7 @@
       :title="`${user.username}'s account is ${age} years old.`"
       class="user-badge"
       color="teal"
-    ></HoverChip>
+    />
     <HoverChip
       v-if="cakeWeek && age >= 1"
       v-ripple
@@ -379,7 +379,7 @@
       color="pink lighten-2"
       icon="mdi-cake"
       text="Cake Week"
-    ></HoverChip>
+    />
     <HoverChip
       v-for="badge in user.badges"
       v-ripple
@@ -391,7 +391,7 @@
       :title="badge.tooltip"
       class="user-badge"
       @click="handleClick(badge)"
-    ></HoverChip>
+    />
     <HoverChip
       v-if="user.noFriends"
       v-ripple
@@ -401,7 +401,7 @@
       icon="mdi-account-multiple-remove"
       text="No friends :("
       title="Get Better ™ 😟"
-    ></HoverChip>
+    />
     <HoverChip
       v-if="
         !$friends.friends.find((f) => f.friendId === user.id) &&
@@ -413,8 +413,8 @@
       color="grey"
       icon="mdi-account-off"
       text="Not friends with user, some information may be unavailable."
-    ></HoverChip>
-    <slot></slot>
+    />
+    <slot />
   </v-chip-group>
 </template>
 

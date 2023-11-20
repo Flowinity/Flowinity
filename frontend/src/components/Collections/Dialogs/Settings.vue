@@ -34,7 +34,7 @@
       >
         {{ $t("collections.settings.delete") }}
       </v-btn>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn color="blue darken-1" @click="$emit('update:modelValue', false)">
         {{ $t("generic.cancel") }}
       </v-btn>

@@ -31,7 +31,7 @@
       </v-card-subtitle>
       <v-card-actions>
         <v-btn to="/" :active="false">Cancel</v-btn>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn color="blue" @click="join" v-if="$user.user">Join</v-btn>
         <v-btn
           color="blue"
@@ -68,7 +68,7 @@
         You can't join this group right now as the invite is no longer valid.
       </v-card-subtitle>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn color="blue" to="/" :active="false">Continue</v-btn>
       </v-card-actions>
     </v-card>

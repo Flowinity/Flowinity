@@ -7,7 +7,7 @@
         required
         :autofocus="true"
         v-model="importDoc.name"
-      ></v-text-field>
+      />
       <v-file-input
         :label="$t('workspaces.import.file')"
         required
@@ -15,10 +15,10 @@
         v-model="importDoc.file"
         ref="importDocFile"
         accept=".tpudoc,.html"
-      ></v-file-input>
+      />
     </v-container>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn color="primary" @click="doImportDoc" :loading="importDoc.loading">
         {{ $t("workspaces.import.import") }}
       </v-btn>
@@ -46,10 +46,10 @@
             : undefined
         "
         :persistent-hint="true"
-      ></v-select>
+      />
     </v-container>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="red"
         @click="

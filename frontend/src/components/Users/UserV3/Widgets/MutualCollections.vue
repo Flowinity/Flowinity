@@ -8,7 +8,7 @@
         :item="collection"
         class="mr-4"
         style="width: 400px"
-      ></CollectionCard>
+      />
     </v-slide-group>
   </v-card-text>
 </template>
@@ -16,11 +16,10 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
-import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "MutualCollections",
-  components: { Overline, CollectionCard },
+  components: { CollectionCard },
   props: ["user", "username"]
 });
 </script>

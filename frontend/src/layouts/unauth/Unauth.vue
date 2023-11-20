@@ -1,13 +1,13 @@
 <template>
   <v-app>
     <v-overlay :model-value="$app.loading" class="align-center justify-center">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <v-overlay
       :model-value="$app.componentLoading"
       class="align-center justify-center"
     >
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <default-bar v-if="$app.site.finishedSetup" />
     <default-view />

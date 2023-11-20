@@ -1,7 +1,7 @@
 <template>
-  <MailSidebar></MailSidebar>
-  <MailboxSidebar></MailboxSidebar>
-  <router-view></router-view>
+  <MailSidebar />
+  <MailboxSidebar />
+  <router-view />
 </template>
 
 <script lang="ts">

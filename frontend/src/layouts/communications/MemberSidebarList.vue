@@ -26,7 +26,7 @@
                 :autofocus="true"
                 class="mx-5 my-n1"
                 label="Search"
-              ></v-text-field>
+              />
               <v-list-item
                 v-for="rank in ranksFiltered"
                 :active="contextMenu.item.ranksMap.includes(rank.id)"
@@ -50,14 +50,14 @@
                     class="v-avatar--variant-outlined pointer"
                     :color="rank.color"
                     size="22"
-                  ></v-avatar>
+                  />
                 </template>
                 <template v-slot:append>
                   <v-list-item-action start>
                     <v-checkbox-btn
                       :model-value="contextMenu.item.ranksMap.includes(rank.id)"
                       color="primary"
-                    ></v-checkbox-btn>
+                    />
                   </v-list-item-action>
                 </template>
                 <v-list-item-title>{{ rank.name }}</v-list-item-title>
@@ -70,7 +70,7 @@
         <UserSidebarOptions
           :user="$user.users[contextMenu.item.userId]"
           v-if="$user.users[contextMenu.item.userId]"
-        ></UserSidebarOptions>
+        />
       </v-list>
     </v-card>
   </v-menu>
@@ -94,7 +94,7 @@
         {{ $chat.chatName($chat.selectedChat) }}
       </h4>
       <v-card-actions v-if="$chat.selectedChat">
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           v-if="$experiments.experiments.PINNED_MESSAGES"
           aria-label="Toggle Communications Sidebar"
@@ -124,7 +124,7 @@
         >
           <v-icon>mdi-cog</v-icon>
         </v-btn>
-        <v-spacer></v-spacer>
+        <v-spacer />
       </v-card-actions>
     </div>
     <div v-if="!$chat.search.value" class="mt-n2">
@@ -135,6 +135,7 @@
           </overline>
           <v-list-item
             v-for="association in group.users"
+            :key="association.id"
             :subtitle="association.legacyUser ? 'Legacy User' : undefined"
             @click="
               $chat.dialogs.user.username = association.user?.username;
@@ -171,7 +172,7 @@
                 :dot-status="true"
                 :status="true"
                 :user="association.user"
-              ></UserAvatar>
+              />
             </template>
           </v-list-item>
         </template>
@@ -185,7 +186,7 @@
           indeterminate
           size="16"
           width="2"
-        ></v-progress-circular>
+        />
         <template v-else>
           ({{ $chat.search.results.pager.totalItems }})
         </template>
@@ -198,7 +199,7 @@
           v-model="$chat.search.query"
           @submit="$chat.doSearch(sort)"
           :autofocus="true"
-        ></GalleryTextField>
+        />
         <div class="float-right">
           <v-btn-toggle v-model="sort" density="compact">
             <v-btn>Newest</v-btn>
@@ -233,22 +234,19 @@
         :total-pages="$chat.search.results.pager.totalPages"
         class="mb-2"
         @update:model-value="$chat.doSearch(sort)"
-      ></Paginate>
+      />
     </template>
   </template>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import SidebarItem from "@/components/Communications/SidebarItem.vue";
 import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
-import AddRole from "@/components/Communications/Menus/AddRole.vue";
 import {
   ChatAssociation,
   FriendStatus,
@@ -261,14 +259,11 @@ import {
 export default defineComponent({
   name: "MemberSidebarList",
   components: {
-    AddRole,
     UserSidebarOptions,
     Overline,
     MessagePerf,
     GalleryTextField,
-    SidebarItem,
     Paginate,
-    Message,
     UserAvatar
   },
   data() {

@@ -10,7 +10,7 @@
   >
     <div :class="{ container: !$vuetify.display.mobile }">
       <div class="image" v-if="image && (!right || $vuetify.display.mobile)">
-        <v-img :src="image" contain></v-img>
+        <v-img :src="image" contain />
       </div>
       <div class="text">
         <v-icon v-if="icon" class="text-grey mt-3" size="92">
@@ -20,11 +20,11 @@
           {{ title }}
         </v-card-title>
         <div class="text-center">
-          <slot></slot>
+          <slot />
         </div>
       </div>
       <div class="image" v-if="image && right && !$vuetify.display.mobile">
-        <v-img :src="image" contain></v-img>
+        <v-img :src="image" contain />
       </div>
     </div>
 
@@ -35,7 +35,7 @@
         md="6"
         style="padding: 0"
       >
-        <v-img :src="image" contain></v-img>
+        <v-img :src="image" contain />
       </v-col>
       <v-col
         :md="image ? 6 : 12"
@@ -50,7 +50,7 @@
             {{ title }}
           </v-card-title>
           <div style="padding: 0 16px">
-            <slot></slot>
+            <slot />
           </div>
         </div>
       </v-col>
@@ -60,7 +60,7 @@
         md="6"
         style="padding: 0"
       >
-        <v-img :src="image" contain></v-img>
+        <v-img :src="image" contain />
       </v-col>
       <v-col v-if="left">
         <slot name="left"></slot>

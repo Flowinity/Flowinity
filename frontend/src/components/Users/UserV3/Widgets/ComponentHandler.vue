@@ -1,11 +1,10 @@
 <template>
-  <!--
-  <VErrorBoundary
-    :fall-back="skullCrash"
-    :params="{ e: error, name: 'UserV3 widget' }"
-    stop-propagation
-    @error-captured="err"
-  ></VErrorBoundary>-->
+  <!--  <VErrorBoundary-->
+  <!--    :fall-back="skullCrash"-->
+  <!--    :params="{ e: error, name: 'UserV3 widget' }"-->
+  <!--    stop-propagation-->
+  <!--    @error-captured="err"-->
+  <!--  />-->
   <v-toolbar v-if="editMode" border class="rounded-xl">
     <v-toolbar-title>
       {{ components.find((c) => c.id === component.name)?.name }}
@@ -76,7 +75,7 @@
     v-else-if="willShow(component, 'spacer')"
     :style="{ height: component.props?.height + 'px' }"
   ></div>
-  <v-divider v-if="willShow(component, 'divider')"></v-divider>
+  <v-divider v-if="willShow(component, 'divider')" />
   <profile-info
     v-else-if="component.name === 'profile-info'"
     :user="user"
@@ -120,7 +119,7 @@
         value: $event
       })
     "
-  ></social-links>
+  />
 </template>
 
 <script lang="ts">

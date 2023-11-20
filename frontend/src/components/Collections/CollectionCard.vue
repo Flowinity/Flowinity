@@ -17,10 +17,7 @@
         justify="center"
         v-if="loading"
       >
-        <v-progress-circular
-          color="grey lighten-5"
-          indeterminate
-        ></v-progress-circular>
+        <v-progress-circular color="grey lighten-5" indeterminate />
       </v-row>
       <img
         :src="collectionImage"
@@ -70,7 +67,7 @@
                 CONFIGURE
               </v-chip>
             </v-card-text>
-            <slot></slot>
+            <slot />
           </div>
         </div>
       </div>

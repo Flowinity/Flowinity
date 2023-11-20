@@ -12,16 +12,16 @@
   >
     <v-card>
       <v-toolbar>
-        <v-spacer></v-spacer>
+        <v-spacer />
         Pins
-        <v-spacer></v-spacer>
+        <v-spacer />
       </v-toolbar>
       <v-progress-linear
         v-if="loading"
         :model-value="'true'"
         indeterminate
         size="64"
-      ></v-progress-linear>
+      />
       <v-container>
         <div
           class="messages communications"
@@ -53,7 +53,7 @@
           v-model="page"
           :total-pages="data.pager.totalPages"
           class="mt-2"
-        ></Paginate>
+        />
       </v-container>
     </v-card>
   </v-menu>
@@ -63,14 +63,13 @@
 import { defineComponent } from "vue";
 import { Message as MessageType } from "@/models/message";
 import { Paginate as PaginateType } from "@/types/paginate";
-import Message from "@/components/Communications/Message.vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import { ScrollPosition } from "@/gql/graphql";
 
 export default defineComponent({
-  components: { MessagePerf, Paginate, PromoNoContent, Message },
+  components: { MessagePerf, Paginate, PromoNoContent },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {

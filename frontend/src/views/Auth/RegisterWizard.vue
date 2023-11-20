@@ -62,7 +62,7 @@
               <v-icon class="mr-1">mdi-arrow-left</v-icon>
               Login
             </v-btn>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               :disabled="!form"
               :loading="loading"

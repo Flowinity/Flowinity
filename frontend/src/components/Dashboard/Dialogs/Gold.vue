@@ -34,7 +34,7 @@
               }"
               class="justify-center"
               style="display: inline-block"
-            ></UserBadges>
+            />
             <span style="display: inline-block; position: relative; top: -1em">
               Swagger badge
             </span>
@@ -100,7 +100,7 @@
         You can still view your current reports.
       </small>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           class="no-capital"
           color="red"
@@ -139,32 +139,8 @@ export default defineComponent({
   emits: ["update:modelValue"],
   data() {
     return {
-      step: 1,
-      geoSave: undefined as File[] | undefined,
-      colubrina: {
-        username: "",
-        password: "",
-        totp: "",
-        loading: false
-      }
+      step: 1
     };
-  },
-  methods: {
-    async checkColubrina() {
-      this.colubrina.loading = true;
-      try {
-        await this.axios.post("/migrate/colubrina", {
-          username: this.colubrina.username,
-          password: this.colubrina.password,
-          totp: this.colubrina.totp
-        });
-        if (this.$experiments.experiments["CLASSIC_MIGRATE"]) this.step++;
-        else this.step = 8;
-        this.colubrina.loading = false;
-      } catch {
-        this.colubrina.loading = false;
-      }
-    }
   },
   watch: {
     modelValue: {

@@ -135,7 +135,7 @@
           </small>
           <v-card-actions>
             <v-btn to="/login">Cancel</v-btn>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               color="primary"
               @click="bot ? addBot() : authorize()"

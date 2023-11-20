@@ -10,7 +10,7 @@
         :status="!!user"
         :dot-status="!!user"
         :chat="chat"
-      ></UserAvatar>
+      />
     </template>
     <div class="ml-2">
       <span class="limit" v-if="user">
@@ -43,7 +43,7 @@
         {{ subtitle }}
       </p>
     </div>
-    <slot></slot>
+    <slot />
   </v-list-item>
 </template>
 

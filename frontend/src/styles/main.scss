@@ -260,7 +260,11 @@ p:has(.emoji-large) img {
 }
 
 .message-date {
-  visibility: hidden;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  visibility: visible;
+  font-size: 8px;
 }
 
 .hover-message-actions:hover .message-date {

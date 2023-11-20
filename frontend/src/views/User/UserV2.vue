@@ -4,7 +4,7 @@
       :height="username ? 250 : undefined"
       :user="user"
       @refreshUser="getUser(false)"
-    ></UserBanner>
+    />
     <v-container :style="username ? 'max-width: 100%;' : ''" class="mt-2">
       <v-row>
         <v-col :lg="!username ? 9 : 12" cols="12" md="12">
@@ -75,10 +75,7 @@
                       <v-icon>mdi-rename</v-icon>
                     </v-btn>
                   </h1>
-                  <UserBadges
-                    :primaryColor="primaryColorResult"
-                    :user="user"
-                  ></UserBadges>
+                  <UserBadges :primaryColor="primaryColorResult" :user="user" />
                 </div>
               </v-card-text>
             </v-col>
@@ -118,7 +115,7 @@
               </v-card-text>
             </v-col>
           </v-row>
-          <v-divider class="mt-3"></v-divider>
+          <v-divider class="mt-3" />
           <v-card-text class="text-overline">
             About {{ user.username }}
           </v-card-text>
@@ -153,9 +150,9 @@
               outlined
               @keydown.esc="settings.description.value = false"
               @keydown.exact.ctrl.enter="save"
-            ></v-textarea>
+            />
             <v-card-actions class="mt-n4">
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn
                 :loading="settings.description.loading"
                 color="primary"
@@ -165,28 +162,27 @@
               </v-btn>
             </v-card-actions>
           </v-card-text>
-          <!--
-          <template
-            v-if="user.collections?.length && $collections.items.length"
-          >
-            <v-divider></v-divider>
-            <v-card-text class="text-overline">Mutual Collections</v-card-text>
-            <v-card-text class="subtitle-1 mt-n6">
-              <v-slide-group>
-                <CollectionCard
-                  v-for="collection in user.collections"
-                  :key="collection.id"
-                  :item="
-                    $collections.items.find((item) => item.id === collection.id)
-                  "
-                  class="mr-4"
-                  style="width: 400px"
-                ></CollectionCard>
-              </v-slide-group>
-            </v-card-text>
-          </template>-->
+          <!--          <template-->
+          <!--            v-if="user.collections?.length && $collections.items.length"-->
+          <!--          >-->
+          <!--            <v-divider />-->
+          <!--            <v-card-text class="text-overline">Mutual Collections</v-card-text>-->
+          <!--            <v-card-text class="subtitle-1 mt-n6">-->
+          <!--              <v-slide-group>-->
+          <!--                <CollectionCard-->
+          <!--                  v-for="collection in user.collections"-->
+          <!--                  :key="collection.id"-->
+          <!--                  :item="-->
+          <!--                    $collections.items.find((item) => item.id === collection.id)-->
+          <!--                  "-->
+          <!--                  class="mr-4"-->
+          <!--                  style="width: 400px"-->
+          <!--                />-->
+          <!--              </v-slide-group>-->
+          <!--            </v-card-text>-->
+          <!--          </template>-->
           <template v-if="user.friends?.length">
-            <v-divider></v-divider>
+            <v-divider />
             <v-card-text class="text-overline">Mutual Friends</v-card-text>
             <v-card-text class="subtitle-1 mt-n6">
               <v-slide-group>
@@ -223,7 +219,7 @@
               (user.id === $user.user?.id && !username)
             "
           >
-            <v-divider></v-divider>
+            <v-divider />
             <v-card-text class="text-overline">Statistics</v-card-text>
             <v-card-text>
               <v-row>
@@ -251,7 +247,7 @@
                       :max-height="$vuetify.display.mobile ? 320 : undefined"
                       name="Uploads"
                       type="bar"
-                    ></Chart>
+                    />
                   </v-card>
                 </v-col>
                 <v-col md="6" sm="12">
@@ -269,7 +265,7 @@
                       :primary-color="primaryColorResult"
                       :pulse-graph="user.stats.pulseGraph"
                       :upload-graph="user.stats.uploadGraph"
-                    ></GraphWidget>
+                    />
                   </v-card>
                 </v-col>
               </v-row>
@@ -287,56 +283,56 @@
             :gold="gold"
             :start-color="user.plan.id === 6 ? '#FBC02D' : '#6A1B9A'"
             :username="user.username"
-          ></InsightsPromoCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult"
             :value="$date(user.createdAt).format('DD/MM/YYYY')"
             class="my-3"
             title="Creation date"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult"
             :value="user.stats.uploads.toLocaleString()"
             class="my-3"
             title="Uploads"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult"
             :value="$functions.fileSize(user.quota || 0)"
             class="my-3"
             title="Storage Used"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult"
             :value="user.stats.collections.toLocaleString()"
             class="my-3"
             title="Collections"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult"
             :value="user.stats.collectionItems.toLocaleString()"
             class="my-3"
             title="Collectivizations"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult"
             :value="user.stats.pulse.toLocaleString()"
             class="my-3"
             title="TPU Hours"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult"
             :value="user.stats.docs"
             class="my-3"
             title="Documents"
-          ></StatsCard>
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -348,11 +344,7 @@ import { defineComponent } from "vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
-import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
-import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import StatsCard from "@/components/Dashboard/StatsCard.vue";
-import BarChart from "@/components/Core/BarChart.vue";
-import LineChart from "@/components/Core/LineChart.vue";
 import Chart from "@/components/Core/Chart.vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
@@ -366,11 +358,7 @@ export default defineComponent({
     InsightsPromoCard,
     GraphWidget,
     Chart,
-    LineChart,
-    BarChart,
     StatsCard,
-    CollectionCard,
-    CollectionBanner,
     UserBadges,
     UserAvatar,
     UserBanner

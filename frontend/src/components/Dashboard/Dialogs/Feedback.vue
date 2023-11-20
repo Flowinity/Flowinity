@@ -15,7 +15,7 @@
               background-color="grey darken-1"
               color="yellow darken-3"
               hover
-            ></v-rating>
+            />
           </v-col>
           <v-col cols="12">
             <v-textarea
@@ -23,7 +23,7 @@
               class="rounded-xl"
               label="Enter your Feedback"
               required
-            ></v-textarea>
+            />
           </v-col>
           <small>
             Your feedback will be used to make
@@ -41,7 +41,7 @@
       </v-container>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         class="rounded-xl"
         color="blue darken-1"

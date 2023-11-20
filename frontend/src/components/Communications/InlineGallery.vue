@@ -10,19 +10,19 @@
       @click:append="getGallery()"
       ref="search"
     />
-    <Paginate v-model="page" :total-pages="null" class="mb-2 mt-n2"></Paginate>
+    <Paginate v-model="page" :total-pages="null" class="mb-2 mt-n2" />
     <v-row v-if="!loading">
       <v-col v-for="item in gallery.gallery" :item="item" cols="12" sm="6">
         <InlineGalleryItem
           :item="item"
           @clickItem="$emit('clickItem', $event)"
-        ></InlineGalleryItem>
+        />
       </v-col>
     </v-row>
     <v-card-text v-if="!gallery.gallery.length" class="text-center mt-5">
       Enter a search term to find images.
     </v-card-text>
-    <Paginate v-model="page" :total-pages="null" class="mt-5"></Paginate>
+    <Paginate v-model="page" :total-pages="null" class="mt-5" />
   </div>
 </template>
 

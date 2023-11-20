@@ -9,7 +9,6 @@ import { loadFonts } from "./webfontloader";
 import pinia from "../store";
 // Types
 import type { App } from "vue";
-import { markRaw } from "vue";
 import { useRouter } from "vue-router";
 import router from "@/router";
 

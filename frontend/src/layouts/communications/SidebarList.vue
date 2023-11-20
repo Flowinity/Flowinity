@@ -210,7 +210,6 @@ import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import Leave from "@/components/Communications/Dialogs/Leave.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import SidebarItem from "@/components/Communications/SidebarItem.vue";
 import { Chat, UserStatus } from "@/gql/graphql";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
@@ -219,7 +218,6 @@ export default defineComponent({
   components: {
     UserSidebarOptions,
     Overline,
-    SidebarItem,
     UserAvatar,
     Leave,
     CreateChat,

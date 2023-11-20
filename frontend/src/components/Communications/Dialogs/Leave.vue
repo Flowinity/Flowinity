@@ -21,7 +21,7 @@
         </v-card-text>
       </v-container>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn color="red" @click="$emit('update:modelValue', false)">
           Cancel
         </v-btn>
@@ -37,10 +37,10 @@
           v-model:password-mode="del.passwordMode"
           v-model:totp="del.totp"
           @confirm="doDelete()"
-        ></DangerZoneInput>
+        />
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn color="blue" @click="$emit('update:modelValue', false)">
           Cancel
         </v-btn>

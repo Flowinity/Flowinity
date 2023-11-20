@@ -7,7 +7,7 @@
           'skeleton-loader-no-animate': !animate
         }"
         size="40"
-      ></v-avatar>
+      />
     </template>
     <p>
       <small

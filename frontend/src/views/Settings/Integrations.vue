@@ -170,12 +170,9 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import HoverChip from "@/components/Core/HoverChip.vue";
 import { ScopeDefinition } from "@/views/Auth/Oauth.vue";
 
 export default defineComponent({
-  name: "Integrations",
-  components: { HoverChip },
   data() {
     return {
       loading: false,

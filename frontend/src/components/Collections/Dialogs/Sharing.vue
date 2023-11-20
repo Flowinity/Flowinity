@@ -14,7 +14,7 @@
         item-value="value"
         label="Public Accessibility"
         @update:model-value="updateShare"
-      ></v-select>
+      />
       <template v-if="collection.shareLink">
         This collection can be viewed publicly from
         <a :href="'/collections/' + collection.shareLink" target="_blank">
@@ -40,7 +40,7 @@
             item-title="name"
             item-value="value"
             label="Role"
-          ></v-select>
+          />
         </v-col>
         <v-col sm="2">
           <v-btn @click="addUser">Add</v-btn>
@@ -51,14 +51,14 @@
           <tr>
             <td>{{ row.item.user.username }}</td>
             <td>
-              <v-checkbox :model-value="row.item.read" disabled></v-checkbox>
+              <v-checkbox :model-value="row.item.read" disabled />
             </td>
             <td>
               <v-checkbox
                 :model-value="row.item.write"
                 :disabled="row.item.configure"
                 @update:model-value="updateUser({ ...row.item, write: $event })"
-              ></v-checkbox>
+              />
             </td>
             <td>
               <v-checkbox
@@ -67,7 +67,7 @@
                 @update:model-value="
                   updateUser({ ...row.item, configure: $event })
                 "
-              ></v-checkbox>
+              />
             </td>
             <td>
               <v-btn
@@ -84,7 +84,7 @@
       </v-data-table>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn color="blue darken-1" @click="$emit('update:modelValue', false)">
         OK
       </v-btn>

@@ -12,7 +12,7 @@
     <v-toolbar-title>
       {{ $t("settings.security.apiKeys") }}
     </v-toolbar-title>
-    <v-spacer></v-spacer>
+    <v-spacer />
     <v-btn color="primary" @click="dialogs.key = true">
       <v-icon left>mdi-plus</v-icon>
       {{ $t("settings.security.addAPIKey") }}
@@ -55,7 +55,7 @@
     <v-toolbar-title>
       {{ $t("settings.security.alternatePasswords") }}
     </v-toolbar-title>
-    <v-spacer></v-spacer>
+    <v-spacer />
     <v-btn color="primary" @click="dialogs.password = true">
       <v-icon left>mdi-plus</v-icon>
       {{ $t("settings.security.addAlternatePassword") }}

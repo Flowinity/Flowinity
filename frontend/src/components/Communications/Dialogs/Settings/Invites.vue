@@ -16,7 +16,7 @@
       </v-btn>
     </template>
     <template v-slot:item.userId="{ item }">
-      <UserAvatar :user="$user.users[item.userId]" size="32"></UserAvatar>
+      <UserAvatar :user="$user.users[item.userId]" size="32" />
       {{ $user.users[item.userId]?.username }}
     </template>
     <template v-slot:item.expiredAt="{ item }">

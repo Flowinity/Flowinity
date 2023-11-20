@@ -12,7 +12,7 @@
           item-title="username"
           label="Users"
           return-object
-        ></v-select>
+        />
         <v-select
           v-if="selected"
           v-model="selectedRule"
@@ -21,7 +21,7 @@
           item-title="name"
           label="Rule"
           return-object
-        ></v-select>
+        />
         <v-btn color="red" @click="runGallery">
           Run entire gallery through AutoCollect Rule (may take up to 24h)
         </v-btn>

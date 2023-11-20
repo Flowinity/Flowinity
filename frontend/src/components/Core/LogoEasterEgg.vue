@@ -42,7 +42,7 @@
       src="https://i.troplo.com/i/1bcf4db450ba.svg"
       style="position: relative; top: 0.15em; display: inline-block"
       width="32"
-    ></v-img>
+    />
     <v-icon
       v-if="event === '420'"
       class="text-gradient ml-n1"

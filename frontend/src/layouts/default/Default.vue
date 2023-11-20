@@ -90,7 +90,7 @@ import { defineComponent } from "vue";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import Sidebar from "@/layouts/default/Sidebar.vue";
 import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
-import CommsSidebar from "@/layouts/colubrina/CommsSidebar.vue";
+import CommsSidebar from "@/layouts/communications/CommsSidebar.vue";
 import DefaultBar from "./AppBar.vue";
 import DefaultView from "./View.vue";
 import UnauthBar from "@/layouts/unauth/AppBar.vue";

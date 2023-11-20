@@ -11,11 +11,7 @@
             {{ $app.site?.name || "PrivateUploader" }}
           </p>
           <v-container v-if="!error" class="text-center">
-            <v-progress-circular
-              v-if="loading"
-              indeterminate
-              size="48"
-            ></v-progress-circular>
+            <v-progress-circular v-if="loading" indeterminate size="48" />
             <v-card-title>Verifying email...</v-card-title>
           </v-container>
           <v-container v-else class="text-center">

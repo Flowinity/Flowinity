@@ -60,11 +60,10 @@
 import { defineComponent } from "vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import Chart from "@/components/Core/Chart.vue";
-import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "CoreStatistics",
-  components: { Overline, Chart, GraphWidget },
+  components: { Chart, GraphWidget },
   props: ["user", "username", "gold", "primary"],
   computed: {
     primaryColorResult() {

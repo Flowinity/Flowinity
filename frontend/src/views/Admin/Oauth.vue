@@ -7,7 +7,7 @@
     <v-card>
       <v-toolbar>
         <v-toolbar-title>My Applications</v-toolbar-title>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn icon @click="create = true">
           <v-tooltip activator="parent" location="bottom">Create app</v-tooltip>
           <v-icon>mdi-plus</v-icon>
@@ -56,10 +56,6 @@ import { defineComponent } from "vue";
 import CreateAppAuthDialog from "@/components/Admin/AppAuth/CreateAppAuthDialog.vue";
 import { VContainer } from "vuetify/components";
 import { MyAppsQuery } from "@/graphql/developer/myApps.graphql";
-import {
-  AvailableChatPermissionsDocument,
-  ChatPermission
-} from "@/gql/graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({

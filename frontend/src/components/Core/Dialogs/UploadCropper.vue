@@ -12,7 +12,7 @@
         v-model="file"
         accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/svg+xml"
         :label="$t('dialogs.uploadCropper.label')"
-      ></v-file-input>
+      />
       <vue-cropper
         v-if="result && file[0]?.type !== 'image/gif'"
         id="banner-editor"
@@ -21,7 +21,7 @@
         :aspectRatio="parseInt(aspectRatio)"
         :src="result"
         alt="banner"
-      ></vue-cropper>
+      />
       <p v-else-if="result">Cropping unsupported on GIFs.</p>
     </v-card-text>
     <v-card-actions>
@@ -37,7 +37,7 @@
       <v-btn color="red" @click="$emit('remove')" v-if="supportsRemoval">
         {{ removeText || $t("dialogs.uploadCropper.removeProfile") }}
       </v-btn>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         @click="
           $emit('update:modelValue', false);

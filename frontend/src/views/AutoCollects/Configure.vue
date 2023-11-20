@@ -26,17 +26,17 @@
                   v-model="rule.enabled"
                   inset
                   :label="$t('generic.enabled')"
-                ></v-switch>
+                />
                 <v-switch
                   v-model="rule.requireApproval"
                   inset
                   :label="$t('autoCollects.configure.requireApproval')"
-                ></v-switch>
+                />
                 <v-text-field
                   v-model="rule.name"
                   :rules="[(v: any) => !!v || $t('autoCollects.configure.required')]"
                   :label="$t('generic.name')"
-                ></v-text-field>
+                />
                 <v-card-subtitle class="grey--text ml-n4 mb-2">
                   {{ $t("autoCollects.configure.actions") }}
                 </v-card-subtitle>
@@ -46,7 +46,7 @@
                   item-title="name"
                   item-value="id"
                   :label="$t('autoCollects.configure.add')"
-                ></v-autocomplete>
+                />
               </v-card-text>
               <v-card-subtitle class="mt-n7 grey--text">
                 {{ $t("autoCollects.configure.groups") }}
@@ -70,7 +70,7 @@
                         item-title="text"
                         item-value="value"
                         :label="$t('autoCollects.configure.type')"
-                      ></v-select>
+                      />
                     </v-col>
                     <v-col>
                       <v-select
@@ -79,14 +79,14 @@
                         item-title="text"
                         item-value="value"
                         :label="$t('autoCollects.configure.operator')"
-                      ></v-select>
+                      />
                     </v-col>
                     <v-col>
                       <v-text-field
                         v-model="subsubrule.value"
                         :rules="[(v: any) => !!v || 'Value is required']"
                         :label="$t('autoCollects.configure.value')"
-                      ></v-text-field>
+                      />
                     </v-col>
                     <v-col cols="1" style="max-width: 40px">
                       <v-btn

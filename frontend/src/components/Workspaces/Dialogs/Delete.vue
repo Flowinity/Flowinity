@@ -16,7 +16,7 @@
       </v-card-text>
     </v-container>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn color="primary" @click="$emit('update:modelValue', false)">
         Cancel
       </v-btn>

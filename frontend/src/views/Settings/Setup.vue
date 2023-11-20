@@ -11,7 +11,7 @@
       class="mx-3"
       item-title="name"
       item-value="token"
-    ></v-select>
+    />
     <div class="mt-n3 mx-3">
       <HoverChip
         :disabled="!selected"

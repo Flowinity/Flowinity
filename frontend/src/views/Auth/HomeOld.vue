@@ -231,7 +231,7 @@
             placeholder="https://i.troplo.com/i/aae2fb2c0cf8.png"
             variant="filled"
             @keyup.enter="reportUpload"
-          ></v-text-field>
+          />
           <v-text-field
             v-model="report.content"
             auto-grow
@@ -240,7 +240,7 @@
             placeholder="This upload violates the Content Policy because..."
             variant="filled"
             @keyup.enter="reportUpload"
-          ></v-text-field>
+          />
           <v-text-field
             v-model="report.email"
             color="white"
@@ -249,7 +249,7 @@
             placeholder="troplo@troplo.com"
             variant="filled"
             @keyup.enter="reportUpload"
-          ></v-text-field>
+          />
           <v-btn
             :loading="report.loading"
             color="primary"
@@ -264,7 +264,6 @@
 </template>
 
 <script lang="ts">
-import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
 import { defineComponent } from "vue";
 import ColubrinaTPU from "@/components/Home/Dialogs/ColubrinaTPU.vue";
@@ -272,7 +271,7 @@ import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
   name: "UnauthHome",
-  components: { HoverChip, ColubrinaTPU, PromoCard, StatsWidget },
+  components: { HoverChip, ColubrinaTPU, PromoCard },
   data() {
     return {
       email: "",

@@ -24,13 +24,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import CreateAPIKey from "@/components/Settings/Dialogs/CreateAPIKey.vue";
-import IPHistory from "@/components/Settings/Dialogs/IPHistory.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
   name: "Security",
-  components: { Paginate, IPHistory, CreateAPIKey },
+  components: { Paginate },
   data() {
     return {
       audit: [] as any[],

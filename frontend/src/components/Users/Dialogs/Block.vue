@@ -20,13 +20,13 @@
           v-model="$user.dialogs.block.silent"
           :label="$t('dialogs.block.silentMode')"
           class="ml-4"
-        ></v-switch>
+        />
         <v-card-text class="mt-n8">
           {{ $t("dialogs.block.silentModeDesc") }}
         </v-card-text>
       </v-container>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn color="red" @click="$user.blockUser()">
           {{ $t("dialogs.block.action") }}
         </v-btn>
@@ -39,7 +39,7 @@
         </v-card-text>
       </v-container>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn color="blue" @click="$user.blockUser()">
           {{ $t("dialogs.unblock.action") }}
         </v-btn>
@@ -51,8 +51,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
-import { Chat } from "@/gql/graphql";
-import { DeleteGroupMutation } from "@/graphql/chats/deleteGroup.graphql";
 
 export default defineComponent({
   name: "BlockUserDialog",

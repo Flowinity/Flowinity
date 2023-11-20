@@ -271,56 +271,56 @@
             :value="$date(user.createdAt).format('DD/MM/YYYY')"
             class="my-3"
             title="Creation date"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult.primary"
             :value="user.stats.uploads.toLocaleString()"
             class="my-3"
             title="Uploads"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult.primary"
             :value="$functions.fileSize(user.quota || 0)"
             class="my-3"
             title="Storage Used"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult.primary"
             :value="user.stats.collections.toLocaleString()"
             class="my-3"
             title="Collections"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult.primary"
             :value="user.stats.collectionItems.toLocaleString()"
             class="my-3"
             title="Collectivizations"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult.primary"
             :value="user.stats.pulse.toLocaleString()"
             class="my-3"
             title="Hours"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult.primary"
             :value="user.stats.docs.toLocaleString()"
             class="my-3"
             title="Documents"
-          ></StatsCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult.primary"
             :value="user.stats.messages.toLocaleString()"
             class="my-3"
             title="Messages"
-          ></StatsCard>
+          />
         </v-col>
       </v-row>
     </v-container>

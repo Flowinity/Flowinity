@@ -23,8 +23,8 @@
         !$chat.isCommunications ||
         $app.forcedWorkspaceDrawer
       "
-    ></WorkspacesSidebarList>
-    <MemberSidebarList v-else></MemberSidebarList>
+    />
+    <MemberSidebarList v-else />
     <template v-slot:append v-if="$workspaces.versionHistory">
       <v-btn
         width="228px"
@@ -42,7 +42,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
-import MemberSidebarList from "@/layouts/colubrina/MemberSidebarList.vue";
+import MemberSidebarList from "@/layouts/communications/MemberSidebarList.vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
 
 export default defineComponent({

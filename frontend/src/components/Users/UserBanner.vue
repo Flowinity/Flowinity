@@ -38,10 +38,7 @@
           class="fill-height ma-0"
           justify="center"
         >
-          <v-progress-circular
-            color="grey lighten-5"
-            indeterminate
-          ></v-progress-circular>
+          <v-progress-circular color="grey lighten-5" indeterminate />
         </v-row>
       </template>
       <transition
@@ -59,7 +56,7 @@
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
       </transition>
-      <slot :hovering="isHovering"></slot>
+      <slot :hovering="isHovering" />
     </v-img>
   </v-hover>
 </template>

@@ -10,7 +10,7 @@
           : "Get out!1111"
       }}
     </div>
-    <AdminSidebarList></AdminSidebarList>
+    <AdminSidebarList />
   </CoreSidebar>
 </template>
 

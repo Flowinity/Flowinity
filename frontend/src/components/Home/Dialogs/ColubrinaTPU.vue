@@ -5,7 +5,7 @@
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-card color="#151515">
-      <v-img class="mx-4" src="https://i.troplo.com/i/69d36e5ebdea.png"></v-img>
+      <v-img class="mx-4" src="https://i.troplo.com/i/69d36e5ebdea.png" />
       <v-card-title class="text-center justify-center">
         Colubrina is now TPU.
       </v-card-title>

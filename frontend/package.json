@@ -103,7 +103,7 @@
     "vue-virtual-scroll-grid": "^1.10.2",
     "vue-virtual-scroller": "^2.0.0-beta.8",
     "vue3-apexcharts": "^1.4.1",
-    "vuetify": "^3.2.2",
+    "vuetify": "3.3.23",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {

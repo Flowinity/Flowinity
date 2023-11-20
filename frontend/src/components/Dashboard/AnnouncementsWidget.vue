@@ -31,7 +31,7 @@
           size="58"
           style="cursor: pointer"
           @click="$router.push(`/u/${announcement.user.username}`)"
-        ></UserAvatar>
+        />
         <v-card-title
           style="cursor: pointer"
           @click="$router.push(`/u/${announcement.user.username}`)"
@@ -113,7 +113,7 @@
           </template>
         </v-card-text>
       </v-card>
-      <v-pagination v-model="page" :length="pages"></v-pagination>
+      <v-pagination v-model="page" :length="pages" />
     </v-container>
   </v-card>
 </template>

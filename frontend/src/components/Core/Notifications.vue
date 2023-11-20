@@ -11,9 +11,9 @@
   >
     <v-card>
       <v-toolbar>
-        <v-spacer></v-spacer>
+        <v-spacer />
         Notifications
-        <v-spacer></v-spacer>
+        <v-spacer />
       </v-toolbar>
       <v-list class="rounded-0">
         <template v-for="item in $user.user?.notifications" :key="item.id">
@@ -30,7 +30,7 @@
               {{ $date().to(item.createdAt) }}
             </v-list-item-subtitle>
           </v-list-item>
-          <v-divider></v-divider>
+          <v-divider />
         </template>
         <v-list-item v-if="!$user.user?.notifications.length">
           <div class="justify-center text-center">

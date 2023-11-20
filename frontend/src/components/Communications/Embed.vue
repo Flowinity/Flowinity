@@ -23,7 +23,7 @@
         style="font-size: 13px; white-space: pre-line"
         v-memo="embed?.data?.description"
         v-html="$functions.markdown(embed?.data?.description, null)"
-      ></v-card-text>
+      />
     </v-card>
     <div v-else-if="embed.type === 'image'">
       <img
@@ -38,6 +38,7 @@
           $chat.dialogs.image.object = embed.data;
           $chat.dialogs.image.value = true;
         "
+        alt="Embedded image"
       />
     </div>
     <v-card
@@ -79,7 +80,7 @@
           v-if="invite.chat.background"
           cover
           max-height="100"
-        ></v-img>
+        />
         <overline position="start" class="mb-n2">
           You have been invited to a group by
           <UserAvatar :user="invite.user" size="20" />

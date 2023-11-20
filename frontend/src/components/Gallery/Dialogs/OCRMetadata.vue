@@ -16,13 +16,13 @@
         variant="outlined"
         rows="1"
         :model-value="$app.dialogs.ocr.text"
-      ></v-textarea>
+      />
       <small>
         {{ $t("gallery.actions.ocr.tip") }}
       </small>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn color="primary" @click="$emit('update:modelValue', false)">
         {{ $t("generic.close") }}
       </v-btn>

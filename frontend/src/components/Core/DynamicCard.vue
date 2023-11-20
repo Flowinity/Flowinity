@@ -21,13 +21,10 @@
     >
       <template v-slot:placeholder>
         <v-row align="center" class="fill-height ma-0" justify="center">
-          <v-progress-circular
-            color="grey lighten-5"
-            indeterminate
-          ></v-progress-circular>
+          <v-progress-circular color="grey lighten-5" indeterminate />
         </v-row>
       </template>
-      <slot></slot>
+      <slot />
       <v-card-title v-if="title">
         {{ title }}
         <small v-if="subtitle" class="float-end">

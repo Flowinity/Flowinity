@@ -24,7 +24,7 @@
       </small>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         :disabled="!email.length"
         class="rounded-xl"

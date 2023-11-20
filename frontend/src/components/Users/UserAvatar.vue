@@ -24,7 +24,7 @@
           :src="$functions.avatar(chat || user)"
           class="undraggable user-avatar"
           :cover="true"
-        ></v-img>
+        />
         <span v-else :class="textSize" class="unselectable">
           {{
             user?.username?.charAt(0)?.toUpperCase() ??
@@ -44,7 +44,7 @@
             </v-overlay>
           </div>
         </v-fade-transition>
-        <slot :hovering="isHovering as boolean"></slot>
+        <slot :hovering="isHovering as boolean" />
       </v-avatar>
       <template v-if="status && friendStatus">
         <div

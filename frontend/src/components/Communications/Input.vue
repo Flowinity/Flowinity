@@ -16,7 +16,7 @@
             :size="35"
             :user="$chat.lookupUser(item.value)"
             class="mr-1"
-          ></UserAvatar>
+          />
           {{ $chat.lookupUser(item.value).username }}
         </div>
         <div class="my-2 mx-2" v-else-if="key === ':'">
@@ -30,7 +30,7 @@
               :src="`/emoji/emoji_u${item.display
                 ?.codePointAt(0)
                 ?.toString(16)}.svg`"
-            ></v-img>
+            />
           </v-avatar>
           {{ item.label }}
           <span v-if="item.emoji" class="text-grey" style="font-size: 12px">
@@ -129,7 +129,7 @@
                         style="display: none"
                         truncate-length="15"
                         @update:model-value="$emit('fileUpload', $event)"
-                      ></v-file-input>
+                      />
                       <v-row
                         align="center"
                         class="d-flex flex-column"
@@ -150,7 +150,7 @@
                           $emit('quickTPULink', $event);
                           menu = false;
                         "
-                      ></InlineGallery>
+                      />
                     </v-window-item>
                     <v-window-item value="starred">
                       <InlineGallery
@@ -159,7 +159,7 @@
                           $emit('quickTPULink', $event);
                           menu = false;
                         "
-                      ></InlineGallery>
+                      />
                     </v-window-item>
                     <v-window-item value="gif">
                       <InlineGallery
@@ -168,7 +168,7 @@
                           $emit('quickTPULink', $event);
                           menu = false;
                         "
-                      ></InlineGallery>
+                      />
                     </v-window-item>
                   </v-window>
                 </v-card-text>
@@ -180,7 +180,7 @@
             <EmojiPicker
               v-model="emojiPicker"
               @emoji="$emit('emoji', $event)"
-            ></EmojiPicker>
+            />
             <v-icon class="pointer raw-icon">mdi-emoticon</v-icon>
           </template>
         </v-textarea>

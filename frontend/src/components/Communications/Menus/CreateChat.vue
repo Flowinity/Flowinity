@@ -7,7 +7,7 @@
     max-width="420"
   >
     <template v-slot:activator="{ props }">
-      <slot :props="props"></slot>
+      <slot :props="props" />
     </template>
     <v-card>
       <v-card-title class="text-h6">
@@ -31,14 +31,14 @@
           :key="friend.user.id"
         >
           <template v-slot:prepend>
-            <UserAvatar :user="friend.user" class="mr-3" size="38"></UserAvatar>
+            <UserAvatar :user="friend.user" class="mr-3" size="38" />
           </template>
           <template v-slot:append>
             <v-list-item-action start>
               <v-checkbox-btn
                 :model-value="selected.includes(friend.user.id)"
                 color="primary"
-              ></v-checkbox-btn>
+              />
             </v-list-item-action>
           </template>
 
@@ -54,7 +54,7 @@
         </v-list-item>
       </v-list>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           :disabled="!selected.length"
           color="primary"
@@ -78,7 +78,7 @@
           $chat.hasPermission('INVITE_USERS', $chat.editingChat)
         "
       >
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-title class="text-h6">
           {{ $t("chats.settings.users.addUser.invites.title") }}
         </v-card-title>
@@ -112,7 +112,7 @@
           :width="2"
           size="18"
           :indeterminate="true"
-        ></v-progress-circular>
+        />
         <v-select
           variant="outlined"
           class="mx-4 mt-4"
@@ -120,7 +120,7 @@
           :items="expireOptions"
           v-model="expireOption"
           :label="$t('chats.settings.users.addUser.invites.expire')"
-        ></v-select>
+        />
         <v-select
           variant="outlined"
           class="mx-4"
@@ -130,7 +130,7 @@
           item-value="id"
           v-model="rankId"
           :label="$t('chats.settings.users.addUser.invites.rank')"
-        ></v-select>
+        />
         <v-btn
           :loading="loading"
           class="mt-n2 mb-4 mx-4 float-right"

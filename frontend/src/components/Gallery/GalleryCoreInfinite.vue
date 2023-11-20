@@ -114,7 +114,7 @@
               :width="2"
               indeterminate
               :model-value="1"
-            ></v-progress-circular>
+            />
           </div>
         </template>
         <template v-slot:complete>

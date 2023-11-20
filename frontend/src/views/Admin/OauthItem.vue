@@ -12,7 +12,7 @@
         app.
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn color="blue" @click="deleteConfirm = false">Cancel</v-btn>
         <v-btn color="red" @click="deleteApp()">Delete</v-btn>
       </v-card-actions>

@@ -79,7 +79,7 @@
             </v-card-text>
           </v-form>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               :loading="loading"
               color="primary"
@@ -120,7 +120,7 @@
             </v-card-text>
           </v-form>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               :loading="loading"
               color="primary"
@@ -173,7 +173,7 @@
             </v-card-text>
           </v-form>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               :loading="loading"
               color="primary"
@@ -226,7 +226,7 @@
               <v-switch
                 v-model="instance.allowRegistrations"
                 :label="$t('setup.step3.allowRegistration')"
-              ></v-switch>
+              />
               <v-text-field
                 v-model="instance.redisHostname"
                 :label="$t('setup.step3.redisHostname')"
@@ -245,7 +245,7 @@
             </v-card-text>
           </v-form>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn :loading="loading" color="primary" @click="step++">
               {{ $t("generic.next") }}
               <v-icon class="ml-1">mdi-arrow-right</v-icon>
@@ -277,7 +277,7 @@
               v-model="features.collections"
               hide-details
               style="display: flex; justify-content: center"
-            ></v-switch>
+            />
           </PromoCard>
           <PromoCard
             :title="$t('setup.step4.autoCollects.title')"
@@ -289,7 +289,7 @@
               v-model="features.autoCollects"
               hide-details
               style="display: flex; justify-content: center"
-            ></v-switch>
+            />
           </PromoCard>
           <PromoCard
             :title="$t('setup.step4.communications.title')"
@@ -301,7 +301,7 @@
               v-model="features.communications"
               hide-details
               style="display: flex; justify-content: center"
-            ></v-switch>
+            />
           </PromoCard>
           <PromoCard
             :title="$t('setup.step4.insights.title')"
@@ -313,7 +313,7 @@
               v-model="features.insights"
               hide-details
               style="display: flex; justify-content: center"
-            ></v-switch>
+            />
           </PromoCard>
           <PromoCard
             :title="$t('setup.step4.workspaces.title')"
@@ -325,10 +325,10 @@
               v-model="features.workspaces"
               hide-details
               style="display: flex; justify-content: center"
-            ></v-switch>
+            />
           </PromoCard>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               :loading="loading"
               color="primary"
@@ -360,7 +360,7 @@
               <v-switch
                 v-model="mail.enabled"
                 :label="$t('setup.step6.enabled')"
-              ></v-switch>
+              />
               <v-text-field
                 v-model="mail.host"
                 :label="$t('setup.step6.host')"
@@ -390,7 +390,7 @@
               <v-switch
                 v-model="mail.secure"
                 :label="$t('setup.step6.secure')"
-              ></v-switch>
+              />
               <v-text-field
                 v-model="mail.testEmail"
                 :label="$t('setup.step6.testEmail')"
@@ -399,7 +399,7 @@
           </v-form>
 
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn :loading="loading" @click="testMail">
               {{ $t("setup.step6.test") }}
             </v-btn>
@@ -434,7 +434,7 @@
               />
             </v-card-text>
             <v-card-actions>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn :loading="loading" @click="setupDomain">
                 {{ $t("generic.next") }}
               </v-btn>

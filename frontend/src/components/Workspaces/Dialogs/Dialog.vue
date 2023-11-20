@@ -18,7 +18,7 @@
       />
     </v-container>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn color="error" @click="$emit('update:modelValue', false)">
         Cancel
       </v-btn>

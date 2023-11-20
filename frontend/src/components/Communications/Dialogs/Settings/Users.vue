@@ -15,7 +15,7 @@
   />
   <v-data-table :items="users" :headers="headers">
     <template v-slot:item.user.username="{ item }">
-      <UserAvatar :user="item.user"></UserAvatar>
+      <UserAvatar :user="item.user" />
       {{ item.user?.username || "Unresolved user" }}
       <template v-if="dev">({{ item.id }})</template>
       <template v-if="item.user?.id === $chat.editingChat.userId">
@@ -32,7 +32,7 @@
         :ranks="$chat.editingChat.ranks"
         :association="item"
         :current-association-id="$chat.editingChat.association.id"
-      ></AddRole>
+      />
       <v-chip
         v-for="rank in item.ranks"
         :key="rank.id"
@@ -106,8 +106,6 @@ import { defineComponent } from "vue";
 import { Chat } from "@/gql/graphql";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
-import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import AddRole from "@/components/Communications/Menus/AddRole.vue";
 import TransferOwnership from "@/components/Communications/Dialogs/TransferOwnership.vue";
 
@@ -116,8 +114,6 @@ export default defineComponent({
   components: {
     TransferOwnership,
     AddRole,
-    CreateChat,
-    GraphWidget,
     UserAvatar,
     Overline
   },
