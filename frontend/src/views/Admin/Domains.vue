@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <Domains></Domains>
+    <Domains />
   </v-container>
 </template>
 

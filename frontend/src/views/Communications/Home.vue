@@ -4,7 +4,7 @@
       description="Chat with other TPU users instantly."
       icon="mdi-message-processing-outline"
       title="TPU Communications"
-    ></PromoNoContent>
+    />
   </v-container>
 </template>
 

@@ -2,7 +2,7 @@
   <UserV3
     v-if="$experiments.experiments.USER_V3 && !$route.query.forceV2"
     :username="username"
-  ></UserV3>
+  />
   <div v-else>UserV2 no longer available.</div>
 </template>
 

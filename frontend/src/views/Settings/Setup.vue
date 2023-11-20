@@ -22,7 +22,7 @@
         color="teal"
         icon="mdi-content-copy"
         @click="$functions.copy(selected)"
-      ></HoverChip>
+      />
       <HoverChip
         :disabled="!selected"
         :disabled-text="$t('settings.setup.label')"
@@ -32,7 +32,7 @@
         color="indigo"
         icon="mdi-download"
         @click="saveFile('sharex')"
-      ></HoverChip>
+      />
       <HoverChip
         :disabled="!selected"
         :disabled-text="$t('settings.setup.label')"
@@ -42,7 +42,7 @@
         color="deep-purple"
         icon="mdi-download"
         @click="saveFile('sharenix')"
-      ></HoverChip>
+      />
       <HoverChip
         :old="true"
         :text="$t('settings.setup.actions.automate')"
@@ -50,7 +50,7 @@
         color="#78C257"
         href="https://i.troplo.com/i/c9069cbd9284.flo"
         icon="mdi-android"
-      ></HoverChip>
+      />
       <HoverChip
         :old="true"
         :text="$t('settings.setup.actions.shortcuts')"
@@ -59,7 +59,7 @@
         href="https://www.icloud.com/shortcuts/2d3bca05bfe94ee3ac57611b6b1e5764"
         icon="mdi-apple"
         target="_blank"
-      ></HoverChip>
+      />
     </div>
     <v-card-title>
       {{ $t("settings.setup.sharex") }}

@@ -67,7 +67,7 @@
           @moveUp="$emit('moveUp', $event)"
           @settings="$emit('settings', $event)"
           @modifyProp="$emit('modifyProp', $event)"
-        ></UserV3ComponentHandler>
+        />
       </v-col>
     </v-row>
   </div>
@@ -80,24 +80,24 @@
     v-else-if="component.name === 'profile-info'"
     :user="user"
     :username="username"
-  ></profile-info>
+  />
   <mutual-collections
     v-else-if="willShow(component, 'mutual-collections')"
     :user="user"
     :username="username"
-  ></mutual-collections>
+  />
   <mutual-friends
     v-else-if="willShow(component, 'mutual-friends')"
     :user="user"
     :username="username"
-  ></mutual-friends>
+  />
   <core-statistics
     v-else-if="willShow(component, 'core-statistics')"
     :gold="gold"
     :primary="primary"
     :user="user"
     :username="username"
-  ></core-statistics>
+  />
   <LastFM
     v-else-if="willShow(component, 'last-fm')"
     :component="component"

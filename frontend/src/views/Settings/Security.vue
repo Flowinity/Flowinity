@@ -4,11 +4,7 @@
     <v-tab to="/settings/security/audit">Pulse Log</v-tab>
   </v-tabs>
   <v-toolbar class="rounded-xl" color="toolbar">
-    <CreateAPIKey
-      v-model="dialogs.key"
-      type="api"
-      @create="getAPIKeys"
-    ></CreateAPIKey>
+    <CreateAPIKey v-model="dialogs.key" type="api" @create="getAPIKeys" />
     <v-toolbar-title>
       {{ $t("settings.security.apiKeys") }}
     </v-toolbar-title>
@@ -51,7 +47,7 @@
       v-model="dialogs.password"
       type="password"
       @create="getAlternatePasswords"
-    ></CreateAPIKey>
+    />
     <v-toolbar-title>
       {{ $t("settings.security.alternatePasswords") }}
     </v-toolbar-title>

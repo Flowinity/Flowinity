@@ -30,7 +30,7 @@
         :end-color="user?.plan?.id === 6 || gold ? '#f5b217' : undefined"
         :start-color="user?.plan?.id === 6 || gold ? '#FBC02D' : undefined"
         style="position: absolute; top: 0; left: 0; z-index: -2"
-      ></PlaceholderCheckerboard>
+      />
       <template v-slot:placeholder>
         <v-row
           v-if="banner !== 'placeholder'"

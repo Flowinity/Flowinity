@@ -69,7 +69,7 @@
           "
           :last="report?.data.uploads.total?.previous"
           :title="$t('insights.statsCards.uploads')"
-        ></InsightsStatsCard>
+        />
         <InsightsStatsCard
           :count="report?.data.messages.total?.now"
           :difference="
@@ -79,7 +79,7 @@
           :last="report?.data.messages.total?.previous"
           :title="$t('insights.statsCards.messages')"
           class="mt-4"
-        ></InsightsStatsCard>
+        />
         <InsightsStatsCard
           v-if="report?.data.uploads.streak.currentStreak"
           :count="report?.data.uploads.streak.currentStreak.length"
@@ -101,7 +101,7 @@
           ).format('DD/MM/YYYY')}`"
           class="mt-4"
           :title="$t('insights.statsCards.currentStreak')"
-        ></InsightsStatsCard>
+        />
       </v-col>
       <v-col cols="12" lg="3" md="4" sm="12" xl="2">
         <InsightsStatsCard
@@ -112,7 +112,7 @@
           "
           :last="report?.data.uploads.average.previous ?? 0"
           :title="$t('insights.statsCards.uploadsAvg')"
-        ></InsightsStatsCard>
+        />
         <InsightsStatsCard
           :count="report?.data.messages.average.now ?? 0"
           :difference="
@@ -122,7 +122,7 @@
           :last="report?.data.messages.average.previous ?? 0"
           class="mt-4"
           :title="$t('insights.statsCards.messagesAvg')"
-        ></InsightsStatsCard>
+        />
         <InsightsStatsCard
           v-if="report?.data.uploads.streak.longestStreak"
           :count="report?.data.uploads.streak.longestStreak.length"
@@ -144,7 +144,7 @@
           ).format('DD/MM/YYYY')}`"
           class="mt-4"
           :title="$t('insights.statsCards.longestStreak')"
-        ></InsightsStatsCard>
+        />
       </v-col>
       <v-col cols="12" lg="6" md="5" sm="12" xl="4">
         <InsightsStatsCard
@@ -163,7 +163,7 @@
             class="mb-n6"
             type="bar"
             :apex="true"
-          ></Chart>
+          />
         </InsightsStatsCard>
         <InsightsStatsCard
           class="mt-6"
@@ -177,7 +177,7 @@
             :name="$t('insights.statsCards.usage.chartTitle')"
             type="bar"
             :apex="true"
-          ></Chart>
+          />
         </InsightsStatsCard>
       </v-col>
       <v-col cols="12" lg="6" md="3" sm="12" xl="4">
@@ -199,7 +199,7 @@
             :title="$t('insights.statsCards.uploadsPerDay.chartTitle')"
             type="bar"
             :apex="true"
-          ></Chart>
+          />
         </InsightsStatsCard>
         <InsightsStatsCard
           class="mt-6"
@@ -214,7 +214,7 @@
             :name="$t('insights.statsCards.platform.chartTitle')"
             type="bar"
             :apex="true"
-          ></Chart>
+          />
         </InsightsStatsCard>
       </v-col>
       <v-col
@@ -242,7 +242,7 @@
             name="uploads-last-month"
             type="bar"
             :apex="true"
-          ></Chart>
+          />
         </InsightsStatsCard>
       </v-col>
       <v-col
@@ -270,7 +270,7 @@
             name="uploads-last-month"
             type="bar"
             :apex="true"
-          ></Chart>
+          />
         </InsightsStatsCard>
       </v-col>
       <v-col
@@ -356,7 +356,7 @@
             name="autocollects-per-hour"
             type="bar"
             :apex="true"
-          ></Chart>
+          />
         </InsightsStatsCard>
       </v-col>
       <v-col
@@ -378,7 +378,7 @@
             name="autocollects-per-hour"
             type="bar"
             :apex="true"
-          ></Chart>
+          />
         </InsightsStatsCard>
       </v-col>
       <v-col cols="12" lg="6" md="3" sm="12" xl="4">
@@ -394,7 +394,7 @@
             name="Hours"
             type="bar"
             :apex="true"
-          ></Chart>
+          />
         </InsightsStatsCard>
       </v-col>
     </v-row>

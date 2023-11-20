@@ -86,7 +86,7 @@ export default defineComponent({
         this.$app.rail
       ) {
         return "sidebar-patch";
-      }
+      } else return null;
     }
   }
 });

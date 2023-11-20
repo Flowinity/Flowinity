@@ -74,7 +74,7 @@
         </template>
       </v-tabs>
       <v-container>
-        <router-view @loading="loading = $event" @update="update"></router-view>
+        <router-view @loading="loading = $event" @update="update" />
       </v-container>
     </v-card>
   </v-container>

@@ -30,7 +30,7 @@
             name="Uploads"
             type="bar"
             class="ml-3 mr-3"
-          ></Chart>
+          />
         </v-card>
       </v-col>
       <v-col :md="!username ? 6 : 12" cols="12" sm="12">
@@ -49,7 +49,7 @@
             :pulse-graph="user.stats.pulseGraph"
             :upload-graph="user.stats.uploadGraph"
             :cache="false"
-          ></GraphWidget>
+          />
         </div>
       </v-col>
     </v-row>
@@ -62,7 +62,6 @@ import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import Chart from "@/components/Core/Chart.vue";
 
 export default defineComponent({
-  name: "CoreStatistics",
   components: { Chart, GraphWidget },
   props: ["user", "username", "gold", "primary"],
   computed: {

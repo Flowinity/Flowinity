@@ -1,6 +1,6 @@
 <template>
   <v-container v-if="collection">
-    <CollectionBanner :collection="collection"></CollectionBanner>
+    <CollectionBanner :collection="collection" />
     <PersonalGallery
       ref="gallery"
       :type="GalleryType.AutoCollect"
@@ -54,20 +54,20 @@
           icon="mdi-check"
           text="Approve"
           @click="act(item.autoCollectApproval.id, 'approve')"
-        ></HoverChip>
+        />
         <HoverChip
           color="red"
           icon="mdi-close"
           text="Reject"
           @click="act(item.autoCollectApproval.id, 'deny')"
-        ></HoverChip>
+        />
         <HoverChip
           class="my-1"
           color="teal"
           icon="mdi-content-copy"
           text="Link"
           @click="$functions.copy($app.domain + item.attachment)"
-        ></HoverChip>
+        />
       </template>
     </PersonalGallery>
   </v-container>

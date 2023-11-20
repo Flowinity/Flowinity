@@ -111,7 +111,7 @@
       :total-pages="items.pager?.totalPages"
       class="mt-10"
       @update:model-value="resetScroll()"
-    ></Paginate>
+    />
     <small>
       Total Pages: {{ items.pager?.totalPages.toLocaleString() }}
       <v-btn
