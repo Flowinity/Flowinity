@@ -63,14 +63,13 @@
 import { defineComponent } from "vue";
 import { Message as MessageType } from "@/models/message";
 import { Paginate as PaginateType } from "@/types/paginate";
-import Message from "@/components/Communications/Message.vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import { ScrollPosition } from "@/gql/graphql";
 
 export default defineComponent({
-  components: { MessagePerf, Paginate, PromoNoContent, Message },
+  components: { MessagePerf, Paginate, PromoNoContent },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {

@@ -135,6 +135,7 @@
           </overline>
           <v-list-item
             v-for="association in group.users"
+            :key="association.id"
             :subtitle="association.legacyUser ? 'Legacy User' : undefined"
             @click="
               $chat.dialogs.user.username = association.user?.username;
@@ -240,7 +241,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Message from "@/components/Communications/Message.vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import SidebarItem from "@/components/Communications/SidebarItem.vue";
@@ -268,7 +268,6 @@ export default defineComponent({
     GalleryTextField,
     SidebarItem,
     Paginate,
-    Message,
     UserAvatar
   },
   data() {
