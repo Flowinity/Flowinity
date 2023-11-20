@@ -30,7 +30,7 @@
               :src="`/emoji/emoji_u${item.display
                 ?.codePointAt(0)
                 ?.toString(16)}.svg`"
-            ></v-img>
+            />
           </v-avatar>
           {{ item.label }}
           <span v-if="item.emoji" class="text-grey" style="font-size: 12px">

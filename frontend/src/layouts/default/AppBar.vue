@@ -64,13 +64,9 @@
         @keydown.esc="editingName = false"
       ></v-text-field>
     </template>
-    <v-spacer></v-spacer>
+    <v-spacer />
     <template v-if="!$app.connected">
-      <v-progress-circular
-        indeterminate
-        size="24"
-        class="ml-2"
-      ></v-progress-circular>
+      <v-progress-circular indeterminate size="24" class="ml-2" />
       <span class="mx-2">Reconnecting...</span>
     </template>
     <small v-if="$app.notesSaving && !$vuetify.display.mobile" class="mr-3">
@@ -89,7 +85,7 @@
           :src="`https://openweathermap.org/img/wn/${$app.weather.data?.icon}@2x.png`"
           height="32"
           width="32"
-        ></v-img>
+        />
         <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
           {{ $app.weather.data?.main }}
         </v-tooltip>
@@ -171,7 +167,7 @@
               </v-list-item-title>
             </v-list-item>
           </v-list>
-          <v-divider></v-divider>
+          <v-divider />
           <StatusSwitcherList />
         </v-card>
       </v-menu>

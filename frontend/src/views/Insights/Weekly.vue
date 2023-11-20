@@ -19,7 +19,7 @@
             item-title="name"
             item-value="id"
             @update:model-value="getReport"
-          ></v-select>
+          />
         </span>
       </v-card-text>
       <div v-if="!$vuetify.display.mobile" class="float-right mb-3 mr-4">

@@ -37,7 +37,7 @@
       <v-btn color="red" @click="$emit('remove')" v-if="supportsRemoval">
         {{ removeText || $t("dialogs.uploadCropper.removeProfile") }}
       </v-btn>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         @click="
           $emit('update:modelValue', false);

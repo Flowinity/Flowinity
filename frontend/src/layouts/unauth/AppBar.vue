@@ -18,7 +18,7 @@
     >
       {{ $app.site.name }}
     </h1>
-    <v-spacer></v-spacer>
+    <v-spacer />
     <!-- theme v-menu -->
     <v-menu
       :close-on-content-click="false"

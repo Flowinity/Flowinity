@@ -63,7 +63,7 @@
           replyId = $chat.dialogs.message.message?.id;
           $chat.dialogs.message.value = false;
         "
-      ></message-actions-list>
+      />
     </v-navigation-drawer>
     <v-menu v-else v-model="$chat.dialogs.message.value" :style="menuStyle">
       <message-actions-list
@@ -84,7 +84,7 @@
           replyId = $chat.dialogs.message.message?.id;
           $chat.dialogs.message.value = false;
         "
-      ></message-actions-list>
+      />
     </v-menu>
     <div
       class="messages communications position-relative"
@@ -105,7 +105,7 @@
               :width="2"
               indeterminate
               :model-value="1"
-            ></v-progress-circular>
+            />
           </div>
         </template>
         <template v-slot:complete>
@@ -166,7 +166,7 @@
               :width="2"
               indeterminate
               :model-value="1"
-            ></v-progress-circular>
+            />
           </div>
         </template>
         <template v-slot:complete>
@@ -177,7 +177,7 @@
                 $chat.selectedChat
               )}!`"
               description="Send a message to start the conversation!"
-            ></PromoNoContent>
+            />
           </div>
         </template>
       </infinite-loading>
@@ -212,9 +212,9 @@
           :user="$user.users[replying?.userId]"
           class="mr-2"
           size="24"
-        ></UserAvatar>
+        />
         {{ replying?.content }}
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn @click="replyId = null">
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -238,7 +238,7 @@
                 <v-card-text class="text-center limit">
                   {{ file.name }}
                 </v-card-text>
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-card-actions>
                   <v-btn
                     class="mr-2"
@@ -269,7 +269,7 @@
         @focusInput="focusInput"
         :blocked="blocked"
         :editing="false"
-      ></CommunicationsInput>
+      />
     </div>
   </div>
 </template>

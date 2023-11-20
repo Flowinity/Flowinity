@@ -19,7 +19,7 @@
           item-value="value"
           label="Sort by"
           @change="getUsers"
-        ></v-select>
+        />
       </v-col>
     </v-row>
     <v-row>

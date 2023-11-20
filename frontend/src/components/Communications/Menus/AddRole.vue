@@ -42,7 +42,7 @@
               class="v-avatar--variant-outlined pointer"
               :color="rank.color"
               size="22"
-            ></v-avatar>
+            />
           </template>
           <template v-slot:append>
             <v-list-item-action start>

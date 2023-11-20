@@ -20,7 +20,7 @@
       </p>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn @click="$emit('update:modelValue', false)">Cancel</v-btn>
       <v-btn color="primary" @click="$chat.confirmLink(false)">Continue</v-btn>
     </v-card-actions>

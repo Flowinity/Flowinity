@@ -27,7 +27,7 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn :disabled="!valid" :loading="loading" color="red" @click="disable">
         {{ $t("generic.disable") }}
       </v-btn>
@@ -49,7 +49,7 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         :disabled="!valid"
         :loading="loading"
@@ -86,7 +86,7 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         :disabled="!valid"
         :loading="loading"

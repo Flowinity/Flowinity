@@ -38,7 +38,7 @@
                 v-model="slideshow.includeGallery"
                 :label="$t('settings.slideshows.includeGallery')"
                 inset
-              ></v-switch>
+              />
               <v-select
                 v-model="slideshow.collectionIds"
                 :items="$collections.persistent"
@@ -48,7 +48,7 @@
                 item-title="name"
                 item-value="id"
                 multiple
-              ></v-select>
+              />
             </v-card-text>
 
             <v-sheet class="rounded-xxl mt-3" outlined>

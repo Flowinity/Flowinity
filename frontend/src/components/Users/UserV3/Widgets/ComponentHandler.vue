@@ -76,7 +76,7 @@
     v-else-if="willShow(component, 'spacer')"
     :style="{ height: component.props?.height + 'px' }"
   ></div>
-  <v-divider v-if="willShow(component, 'divider')"></v-divider>
+  <v-divider v-if="willShow(component, 'divider')" />
   <profile-info
     v-else-if="component.name === 'profile-info'"
     :user="user"

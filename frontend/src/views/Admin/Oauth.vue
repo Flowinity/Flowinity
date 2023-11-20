@@ -7,7 +7,7 @@
     <v-card>
       <v-toolbar>
         <v-toolbar-title>My Applications</v-toolbar-title>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn icon @click="create = true">
           <v-tooltip activator="parent" location="bottom">Create app</v-tooltip>
           <v-icon>mdi-plus</v-icon>

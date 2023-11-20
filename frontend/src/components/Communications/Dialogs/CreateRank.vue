@@ -16,7 +16,7 @@
       />
     </v-container>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn @click="create">
         {{ $t("generic.create") }}
       </v-btn>

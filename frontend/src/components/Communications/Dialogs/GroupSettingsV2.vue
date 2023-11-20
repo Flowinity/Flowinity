@@ -9,7 +9,7 @@
         <overline v-if="$vuetify.display.mobile">
           {{ $chat.editingChat.name }}
         </overline>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <CreateChat
           v-slot="{ props }"
           v-model="add"
@@ -119,7 +119,7 @@
           <v-icon class="mr-2">mdi-gavel</v-icon>
           {{ $t("chats.settings.tabs.bans") }}
         </v-tab>
-        <v-divider class="my-2"></v-divider>
+        <v-divider class="my-2" />
         <v-btn
           class="text-left"
           value="delete"

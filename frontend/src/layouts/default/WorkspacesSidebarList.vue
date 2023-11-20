@@ -18,7 +18,7 @@
       ></v-file-input>
     </v-container>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn color="primary" @click="doImportDoc" :loading="importDoc.loading">
         {{ $t("workspaces.import.import") }}
       </v-btn>
@@ -46,10 +46,10 @@
             : undefined
         "
         :persistent-hint="true"
-      ></v-select>
+      />
     </v-container>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         color="red"
         @click="

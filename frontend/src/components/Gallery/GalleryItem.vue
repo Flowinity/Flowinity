@@ -76,7 +76,7 @@
           </v-chip>
         </v-chip-group>
       </div>
-      <v-divider></v-divider>
+      <v-divider />
       <v-card-text class="text-center">
         <slot :item="item" name="actions">
           <!--<HoverChip

@@ -35,7 +35,7 @@
         item-value="id"
         label="Select"
         multiple
-      ></v-select>
+      />
     </v-card-text>
     <v-card-text v-else>
       <v-text-field v-model="key" :disabled="true" label="Key" readonly />
@@ -45,7 +45,7 @@
       </p>
     </v-card-text>
     <v-card-actions v-if="!key">
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn color="primary" @click="$emit('update:modelValue', false)">
         Cancel
       </v-btn>
@@ -57,7 +57,7 @@
       </v-btn>
     </v-card-actions>
     <v-card-actions v-else>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn color="primary" @click="$emit('update:modelValue', false)">
         Close
       </v-btn>

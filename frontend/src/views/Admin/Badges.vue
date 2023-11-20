@@ -27,10 +27,7 @@
         <v-text-field v-model="dialog.item.image" label="Image"></v-text-field>
       </v-col>
       <v-col>
-        <v-checkbox
-          v-model="dialog.item.unlocked"
-          label="Unlocked"
-        ></v-checkbox>
+        <v-checkbox v-model="dialog.item.unlocked" label="Unlocked" />
       </v-col>
       <v-col>
         <v-text-field
@@ -104,7 +101,7 @@
             <v-text-field v-model="create.image" label="Image"></v-text-field>
           </v-col>
           <v-col>
-            <v-checkbox v-model="create.unlocked" label="Unlocked"></v-checkbox>
+            <v-checkbox v-model="create.unlocked" label="Unlocked" />
           </v-col>
           <v-col>
             <v-text-field

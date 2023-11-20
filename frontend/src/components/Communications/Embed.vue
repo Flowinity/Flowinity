@@ -79,7 +79,7 @@
           v-if="invite.chat.background"
           cover
           max-height="100"
-        ></v-img>
+        />
         <overline position="start" class="mb-n2">
           You have been invited to a group by
           <UserAvatar :user="invite.user" size="20" />

@@ -54,7 +54,7 @@
               class="v-avatar--variant-outlined pointer mr-2"
               :color="rank.color"
               size="10"
-            ></v-avatar>
+            />
             <div class="mr-3 ml-1">
               <v-icon
                 v-if="
@@ -89,7 +89,7 @@
               v-model="rank.color"
               mode="hexa"
               :disabled="!$chat.canEditRank(rank.index, $chat.editingChat)"
-            ></v-color-picker>
+            />
           </div>
           <div class="ml-10">
             <v-card-title>
@@ -152,7 +152,7 @@
                   density="compact"
                   :model-value="hasPermission(rank.permissionsMap, item.id)"
                   @update:model-value="updateRank(rank, item.id, $event)"
-                ></v-switch>
+                />
               </template>
             </v-list-item>
           </span>

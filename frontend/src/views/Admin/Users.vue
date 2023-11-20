@@ -10,10 +10,10 @@
             <v-checkbox
               :model-value="<boolean>item.banned"
               @change="ban(<number>item.id, $event.target.checked)"
-            ></v-checkbox>
+            />
           </template>
           <template v-slot:item.administrator="{ item }">
-            <v-checkbox :model-value="item.administrator" disabled></v-checkbox>
+            <v-checkbox :model-value="item.administrator" disabled />
           </template>
           <template v-slot:item.planId="{ item }">
             <v-checkbox
@@ -25,7 +25,7 @@
                   <string>item.createdAt
                 )
               "
-            ></v-checkbox>
+            />
           </template>
           <template v-slot:item.createdAt="{ item }">
             {{ $date(item.createdAt).format("YYYY/MM/DD hh:mm:ss A") }}
@@ -34,7 +34,7 @@
             <v-checkbox
               @change="verify(item.id, $event.target.checked)"
               v-model="item.emailVerified"
-            ></v-checkbox>
+            />
           </template>
         </v-data-table>
       </v-container>

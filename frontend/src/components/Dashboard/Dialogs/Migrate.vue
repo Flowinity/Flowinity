@@ -9,7 +9,7 @@
       <template
         v-if="step === 1 && $experiments.experiments['CLASSIC_MIGRATE']"
       >
-        <v-img src="https://i.troplo.com/i/e180024e804e.png"></v-img>
+        <v-img src="https://i.troplo.com/i/e180024e804e.png" />
         <v-card-subtitle class="text-center justify-center">
           This is a wizard designed to help you seamlessly migrate your existing
           TroploServices accounts.
@@ -30,7 +30,7 @@
         </v-card-actions>
       </template>
       <template v-else-if="step === 1">
-        <v-img src="https://i.troplo.com/i/888e1eac2f56.png"></v-img>
+        <v-img src="https://i.troplo.com/i/888e1eac2f56.png" />
         <v-card-subtitle class="text-center justify-center">
           This is a wizard designed to help you seamlessly migrate your
           Colubrina account.
@@ -55,7 +55,7 @@
           class="wizard-banner"
           src="https://i.troplo.com/i/a99a0e3bfbed.png"
           width="1920"
-        ></v-img>
+        />
         <v-card-title class="text-center justify-center">
           Do you have a Colubrina account?
         </v-card-title>
@@ -88,7 +88,7 @@
           max-height="400"
           src="https://i.troplo.com/i/a99a0e3bfbed.png"
           width="1920"
-        ></v-img>
+        />
         <v-card-title class="text-center justify-center">
           Now for your credentials...
         </v-card-title>
@@ -152,7 +152,7 @@
           max-height="400"
           src="https://i.troplo.com/i/e2442d036b4f.png"
           width="1920"
-        ></v-img>
+        />
         <v-card-subtitle class="text-center justify-center">
           Remember the new address!
         </v-card-subtitle>
@@ -169,7 +169,7 @@
           max-height="400"
           src="https://i.troplo.com/i/2b0f90b34cad.png"
           width="1920"
-        ></v-img>
+        />
         <v-card-subtitle class="text-center justify-center">
           You're done!
         </v-card-subtitle>

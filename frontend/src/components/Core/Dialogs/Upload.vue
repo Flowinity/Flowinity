@@ -31,7 +31,7 @@
       </small>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         :loading="$app.dialogs.upload.loading"
         color="primary"

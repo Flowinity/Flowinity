@@ -66,9 +66,9 @@
               class="text-center justify-center"
               v-if="loading"
             >
-              <v-spacer></v-spacer>
+              <v-spacer />
               Saving...
-              <v-spacer></v-spacer>
+              <v-spacer />
             </v-toolbar>
           </v-fade-transition>
         </template>

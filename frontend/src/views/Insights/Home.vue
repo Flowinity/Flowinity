@@ -17,9 +17,9 @@
     </CoreDialog>
     <v-card>
       <v-toolbar>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-card-title>Insights</v-card-title>
-        <v-spacer></v-spacer>
+        <v-spacer />
       </v-toolbar>
       <v-container class="text-center justify-center">
         <v-card-title>Welcome to the new Insights!</v-card-title>

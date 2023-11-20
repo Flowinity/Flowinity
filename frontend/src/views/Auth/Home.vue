@@ -105,7 +105,7 @@
           @keyup.enter="reportUpload"
         ></v-text-field>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             :loading="report.loading"
             color="primary"

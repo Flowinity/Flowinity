@@ -46,7 +46,7 @@
       >
         Remove Avatar
       </v-btn>
-      <v-divider class="my-4"></v-divider>
+      <v-divider class="my-4" />
       <v-card-title
         style="
           padding: 0 10px 0 10px !important;
@@ -113,7 +113,7 @@
         Remove Background
       </v-btn>
     </div>
-    <v-divider vertical class="ml-2 mr-6"></v-divider>
+    <v-divider vertical class="ml-2 mr-6" />
     <div style="width: 400px">
       <v-card-title
         style="

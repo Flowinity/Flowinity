@@ -6,7 +6,7 @@
     <p class="mx-4">
       {{ $t("core.privacy.desc") }}
     </p>
-    <v-divider></v-divider>
+    <v-divider />
     <PrivacyPolicy class="mx-4 mt-n11 mb-n16"></PrivacyPolicy>
     <v-btn
       style="z-index: 9999"

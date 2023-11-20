@@ -12,9 +12,9 @@
   >
     <v-card>
       <v-toolbar>
-        <v-spacer></v-spacer>
+        <v-spacer />
         Pins
-        <v-spacer></v-spacer>
+        <v-spacer />
       </v-toolbar>
       <v-progress-linear
         v-if="loading"

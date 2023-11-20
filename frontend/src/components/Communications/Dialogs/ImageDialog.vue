@@ -11,7 +11,7 @@
         :width="width"
         :height="height"
         :src="$chat.dialogs.image.object?.url"
-      ></v-img>
+      />
     </v-card>
     <a
       class="text-grey pointer v-card py-2 rounded-xl px-2 hover-shade"

@@ -41,7 +41,7 @@
       </v-container>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         class="rounded-xl"
         color="blue darken-1"

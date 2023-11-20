@@ -10,13 +10,13 @@
     <v-card width="500" class="position-relative">
       <div class="d-flex flex-row">
         <v-tabs v-model="tab" direction="vertical">
-          <v-divider class="mb-2"></v-divider>
+          <v-divider class="mb-2" />
           <v-tab :value="0">All</v-tab>
-          <v-divider class="my-1"></v-divider>
+          <v-divider class="my-1" />
           <v-tab v-for="chat in chatEmojis" :value="chat.id" :key="chat.id">
             {{ chat.name }}
           </v-tab>
-          <v-divider class="my-1"></v-divider>
+          <v-divider class="my-1" />
           <v-tab :value="1">Built-in</v-tab>
         </v-tabs>
         <v-card-text v-if="modelValue">
@@ -48,7 +48,7 @@
                 :src="`/emoji/emoji_u${emoji.id
                   .codePointAt(0)
                   ?.toString(16)}.svg`"
-              ></v-img>
+              />
             </v-btn>
           </RecycleScroller>
         </v-card-text>
@@ -72,7 +72,7 @@
                   :src="`/emoji/emoji_u${hover.id
                     .codePointAt(0)
                     ?.toString(16)}.svg`"
-                ></v-img>
+                />
               </div>
               :{{ hover.name }}:
               <v-card-subtitle v-if="hover.chatId">

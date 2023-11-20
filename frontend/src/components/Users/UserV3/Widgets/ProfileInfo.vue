@@ -33,7 +33,7 @@
       @keydown.exact.ctrl.enter="save"
     ></v-textarea>
     <v-card-actions class="mt-n4">
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         :loading="settings.description.loading"
         color="primary"

@@ -42,10 +42,7 @@
                 @keydown.enter="register"
               />
               <div class="d-flex mt-n4">
-                <v-checkbox
-                  v-model="terms"
-                  class="flex-0 flex-grow-0"
-                ></v-checkbox>
+                <v-checkbox v-model="terms" class="flex-0 flex-grow-0" />
                 <span
                   class="ml-4 mt-4 flex-grow-1 unselectable pointer"
                   @click="terms = !terms"
@@ -74,7 +71,7 @@
               <v-icon class="mr-1">mdi-arrow-left</v-icon>
               Login
             </v-btn>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               :disabled="!form || !terms"
               :loading="loading"

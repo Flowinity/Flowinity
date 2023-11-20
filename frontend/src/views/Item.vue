@@ -32,7 +32,7 @@
     </v-row>
   </v-container>
   <v-container v-else-if="!$app.componentLoading">
-    <NotFound></NotFound>
+    <NotFound />
   </v-container>
 </template>
 

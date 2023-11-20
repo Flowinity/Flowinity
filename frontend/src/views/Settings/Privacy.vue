@@ -9,7 +9,7 @@
         class="mb-n7"
         :label="$t('settings.home.privacy.pulse')"
         @update:modelValue="$emit('update')"
-      ></v-switch>
+      />
       <small>
         {{ $t("settings.home.privacy.pulseDesc") }}
       </small>
@@ -18,7 +18,7 @@
         class="mb-n7"
         :label="$t('settings.home.privacy.discordPrecaching')"
         @update:modelValue="$emit('update')"
-      ></v-switch>
+      />
       <small>
         {{ $t("settings.home.privacy.discordPrecachingDesc") }}
       </small>
@@ -27,7 +27,7 @@
         class="mb-n7"
         :label="$t('settings.home.privacy.publicProfile')"
         @update:modelValue="$emit('update')"
-      ></v-switch>
+      />
       <small>
         {{ $t("settings.home.privacy.publicProfileDesc") }}
       </small>
@@ -37,7 +37,7 @@
         :label="$t('settings.home.preferences.insights')"
         class="mb-n2 mt-4"
         @update:modelValue="$emit('update')"
-      ></v-select>
+      />
       <small>
         {{ $t("settings.home.preferences.insightsDesc") }}
       </small>
@@ -46,21 +46,21 @@
         v-model="$app.demo"
         class="mb-n7"
         :label="$t('settings.home.privacy.demoMode')"
-      ></v-switch>
+      />
       <v-select
         v-model="$user.user.groupPrivacy"
         :items="group"
         :label="$t('settings.home.privacy.groupPrivacy')"
         class="mb-n2 mt-4"
         @update:modelValue="$emit('update')"
-      ></v-select>
+      />
       <v-select
         v-model="$user.user.friendRequests"
         :items="friend"
         :label="$t('settings.home.privacy.friendPrivacy')"
         class="mb-n2 mt-4"
         @update:modelValue="$emit('update')"
-      ></v-select>
+      />
     </v-card-text>
   </div>
 </template>

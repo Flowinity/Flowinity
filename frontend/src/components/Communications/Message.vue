@@ -16,11 +16,7 @@
       @click.prevent="$emit('jumpToMessage', message.reply.id)"
     >
       <v-icon class="mr-2">mdi-reply</v-icon>
-      <UserAvatar
-        :user="message.reply?.user"
-        class="mr-2"
-        size="24"
-      ></UserAvatar>
+      <UserAvatar :user="message.reply?.user" class="mr-2" size="24" />
       {{ message.reply?.content }}
     </v-toolbar>
     <v-toolbar
@@ -31,11 +27,7 @@
       height="auto"
     >
       <v-icon class="mr-2">mdi-reply</v-icon>
-      <UserAvatar
-        :user="{ id: 0, username: '?' }"
-        class="mr-2"
-        size="24"
-      ></UserAvatar>
+      <UserAvatar :user="{ id: 0, username: '?' }" class="mr-2" size="24" />
       Deleted Message
     </v-toolbar>
     <v-hover v-slot="{ isHovering, props }">
@@ -83,7 +75,7 @@
                 :id="'message-author-avatar-' + message.id"
                 :user="message.user"
                 class="mr-2"
-              ></UserAvatar>
+              />
             </div>
             <div v-else class="mr-3 text-grey">
               <v-icon v-if="message.type === 'join'" class="mr-1" size="36">
@@ -199,7 +191,7 @@
           @delete="$emit('delete', { message, shifting: $event })"
           @edit="$emit('edit', { id: message.id, content: message.content })"
           @reply="$emit('reply', message)"
-        ></message-actions>
+        />
         <Embed
           v-for="(embed, index) in message.embeds"
           :key="index"

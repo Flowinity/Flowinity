@@ -23,7 +23,7 @@
             :src="$app.domain + emoji.icon"
             class="mr-4"
             max-height="40"
-          ></v-img>
+          />
         </template>
         <template v-slot:append>
           <v-btn icon @click="deleteEmoji(emoji.id)" size="small">

@@ -59,7 +59,7 @@
                 :src="anime.node.main_picture.medium"
                 class="mr-3"
                 width="40"
-              ></v-img>
+              />
             </a>
           </template>
           <v-list-item-title

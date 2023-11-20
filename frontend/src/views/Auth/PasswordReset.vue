@@ -31,7 +31,7 @@
           </v-container>
           <v-card-actions>
             <v-btn to="/login">Login</v-btn>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               :disabled="!valid"
               :loading="loading"

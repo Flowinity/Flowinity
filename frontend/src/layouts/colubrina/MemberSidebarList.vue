@@ -50,7 +50,7 @@
                     class="v-avatar--variant-outlined pointer"
                     :color="rank.color"
                     size="22"
-                  ></v-avatar>
+                  />
                 </template>
                 <template v-slot:append>
                   <v-list-item-action start>
@@ -94,7 +94,7 @@
         {{ $chat.chatName($chat.selectedChat) }}
       </h4>
       <v-card-actions v-if="$chat.selectedChat">
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           v-if="$experiments.experiments.PINNED_MESSAGES"
           aria-label="Toggle Communications Sidebar"
@@ -124,7 +124,7 @@
         >
           <v-icon>mdi-cog</v-icon>
         </v-btn>
-        <v-spacer></v-spacer>
+        <v-spacer />
       </v-card-actions>
     </div>
     <div v-if="!$chat.search.value" class="mt-n2">
@@ -185,7 +185,7 @@
           indeterminate
           size="16"
           width="2"
-        ></v-progress-circular>
+        />
         <template v-else>
           ({{ $chat.search.results.pager.totalItems }})
         </template>

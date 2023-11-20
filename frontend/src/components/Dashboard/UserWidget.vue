@@ -6,7 +6,7 @@
         {{ $user.user?.username }}
       </v-card-title>
       <UserBadges :user="$user.user" class="justify-center" />
-      <v-divider class="mt-3 mb-3"></v-divider>
+      <v-divider class="mt-3 mb-3" />
       {{ $user.user?.description }}
     </v-container>
   </v-card>

@@ -24,7 +24,7 @@
           :src="$functions.avatar(chat || user)"
           class="undraggable user-avatar"
           :cover="true"
-        ></v-img>
+        />
         <span v-else :class="textSize" class="unselectable">
           {{
             user?.username?.charAt(0)?.toUpperCase() ??

@@ -118,7 +118,7 @@
               </v-card-text>
             </v-col>
           </v-row>
-          <v-divider class="mt-3"></v-divider>
+          <v-divider class="mt-3" />
           <v-card-text class="text-overline">
             About {{ user.username }}
           </v-card-text>
@@ -155,7 +155,7 @@
               @keydown.exact.ctrl.enter="save"
             ></v-textarea>
             <v-card-actions class="mt-n4">
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn
                 :loading="settings.description.loading"
                 color="primary"
@@ -169,7 +169,7 @@
           <template
             v-if="user.collections?.length && $collections.items.length"
           >
-            <v-divider></v-divider>
+            <v-divider />
             <v-card-text class="text-overline">Mutual Collections</v-card-text>
             <v-card-text class="subtitle-1 mt-n6">
               <v-slide-group>
@@ -186,7 +186,7 @@
             </v-card-text>
           </template>-->
           <template v-if="user.friends?.length">
-            <v-divider></v-divider>
+            <v-divider />
             <v-card-text class="text-overline">Mutual Friends</v-card-text>
             <v-card-text class="subtitle-1 mt-n6">
               <v-slide-group>
@@ -223,7 +223,7 @@
               (user.id === $user.user?.id && !username)
             "
           >
-            <v-divider></v-divider>
+            <v-divider />
             <v-card-text class="text-overline">Statistics</v-card-text>
             <v-card-text>
               <v-row>
