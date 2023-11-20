@@ -263,7 +263,8 @@ p:has(.emoji-large) img {
   height: 100%;
   display: flex;
   align-items: center;
-  visibility: hidden;
+  visibility: visible;
+  font-size: 8px;
 }
 
 .hover-message-actions:hover .message-date {

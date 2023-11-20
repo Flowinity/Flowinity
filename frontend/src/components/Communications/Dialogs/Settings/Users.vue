@@ -32,7 +32,7 @@
         :ranks="$chat.editingChat.ranks"
         :association="item"
         :current-association-id="$chat.editingChat.association.id"
-      ></AddRole>
+      />
       <v-chip
         v-for="rank in item.ranks"
         :key="rank.id"

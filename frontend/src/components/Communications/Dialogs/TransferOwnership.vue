@@ -29,7 +29,7 @@
           v-model:password-mode="passwordMode"
           v-model:totp="totp"
           @confirm="transfer"
-        ></DangerZoneInput>
+        />
       </v-card-title>
       <v-card-actions>
         <v-spacer />

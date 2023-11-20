@@ -8,7 +8,7 @@
         :item="collection"
         class="mr-4"
         style="width: 400px"
-      ></CollectionCard>
+      />
     </v-slide-group>
   </v-card-text>
 </template>

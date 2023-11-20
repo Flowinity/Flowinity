@@ -5,7 +5,7 @@
       v-model="addToCollectionDialog"
       :items="collectivize"
       @collectionAdded="collectionAdded($event)"
-    ></AddToCollection>
+    />
     <div v-if="!selected.length && supports.multiSelect" class="float-right">
       <slot name="multi-select-actions">
         <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">

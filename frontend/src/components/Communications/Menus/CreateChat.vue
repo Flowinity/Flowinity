@@ -7,7 +7,7 @@
     max-width="420"
   >
     <template v-slot:activator="{ props }">
-      <slot :props="props"></slot>
+      <slot :props="props" />
     </template>
     <v-card>
       <v-card-title class="text-h6">

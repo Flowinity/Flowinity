@@ -50,7 +50,7 @@
 
       <v-slide-group>
         <v-slide-group-item>
-          <user-badges :user="user" class="justify-center"></user-badges>
+          <user-badges :user="user" class="justify-center" />
         </v-slide-group-item>
       </v-slide-group>
       <template v-if="user.description">
@@ -67,7 +67,7 @@
           size="small"
           :chat="$chat.selectedChat"
           :current-association-id="$chat.selectedChat.association.id"
-        ></add-role>
+        />
         <v-chip
           v-for="rank in association?.ranks"
           :key="rank.id"

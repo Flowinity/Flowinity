@@ -21,7 +21,7 @@
         :model-value="'true'"
         indeterminate
         size="64"
-      ></v-progress-linear>
+      />
       <v-container>
         <div
           class="messages communications"
@@ -53,7 +53,7 @@
           v-model="page"
           :total-pages="data.pager.totalPages"
           class="mt-2"
-        ></Paginate>
+        />
       </v-container>
     </v-card>
   </v-menu>

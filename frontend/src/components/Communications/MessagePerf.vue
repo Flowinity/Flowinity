@@ -32,7 +32,7 @@
           : () => {}
       "
     >
-      <reply-line class="mt-2"></reply-line>
+      <reply-line class="mt-2" />
       <span class="mt-n2" v-if="message.reply">
         <UserAvatar
           :user="$user.users[message.reply.userId]"
@@ -87,7 +87,7 @@
         >
           <div class="avatar-section">
             <div v-if="merge" class="message-date">
-              <small class="text-grey" style="font-size: 8px">
+              <span class="text-grey">
                 <v-tooltip
                   activator="parent"
                   location="top"
@@ -96,7 +96,7 @@
                   {{ $date(message.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
                 </v-tooltip>
                 {{ $date(message.createdAt).format("hh:mm A") }}
-              </small>
+              </span>
             </div>
             <UserAvatar
               @click="
