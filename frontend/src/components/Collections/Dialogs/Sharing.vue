@@ -31,7 +31,7 @@
             v-model="sharing.username"
             label="Username"
             @keydown.enter="addUser"
-          ></v-text-field>
+          />
         </v-col>
         <v-col>
           <v-select

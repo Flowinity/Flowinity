@@ -26,7 +26,7 @@
             </v-container>
           </div>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn :loading="loading" color="primary" @click="step++">
               {{ $t("generic.next") }}
               <v-icon class="ml-1">mdi-arrow-right</v-icon>
@@ -54,28 +54,28 @@
                 v-model="database.host"
                 :label="$t('setup.step1.host')"
                 @keyup.enter="testMariaDBConnection"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="database.port"
                 :label="$t('setup.step1.port')"
                 @keyup.enter="testMariaDBConnection"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="database.database"
                 :label="$t('setup.step1.database')"
                 @keyup.enter="testMariaDBConnection"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="database.username"
                 :label="$t('setup.step1.username')"
                 @keyup.enter="testMariaDBConnection"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="database.password"
                 :label="$t('setup.step1.password')"
                 type="password"
                 @keyup.enter="testMariaDBConnection"
-              ></v-text-field>
+              />
             </v-card-text>
           </v-form>
           <v-card-actions>
@@ -111,12 +111,12 @@
                 v-model="plan.quotaMax"
                 :label="$t('setup.step5.storage')"
                 type="number"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="plan.maxFileSize"
                 :label="$t('setup.step5.maxUploadSize')"
                 type="number"
-              ></v-text-field>
+              />
             </v-card-text>
           </v-form>
           <v-card-actions>
@@ -152,24 +152,24 @@
                 v-model="admin.username"
                 :label="$t('setup.step2.username')"
                 :rules="$validation.user.username"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="admin.email"
                 :label="$t('setup.step2.email')"
                 :rules="$validation.user.email"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="admin.password"
                 :label="$t('setup.step2.password')"
                 :rules="$validation.user.password"
                 type="password"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="admin.passwordConfirm"
                 :label="$t('setup.step2.passwordConfirm')"
                 :rules="$validation.user.password"
                 type="password"
-              ></v-text-field>
+              />
             </v-card-text>
           </v-form>
           <v-card-actions>
@@ -204,25 +204,25 @@
               <v-text-field
                 v-model="instance.name"
                 :label="$t('setup.step3.name')"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="instance.hostname"
                 :label="$t('setup.step3.hostname')"
                 placeholder="privateuploader.com"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="instance.hostnameWithProtocol"
                 :label="$t('setup.step3.hostnameWithProtocol')"
                 placeholder="https://privateuploader.com"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="instance.port"
                 :label="$t('setup.step3.port')"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="instance.multiThreaded"
                 :label="$t('setup.step3.multiThreaded')"
-              ></v-text-field>
+              />
               <v-switch
                 v-model="instance.allowRegistrations"
                 :label="$t('setup.step3.allowRegistration')"
@@ -230,15 +230,15 @@
               <v-text-field
                 v-model="instance.redisHostname"
                 :label="$t('setup.step3.redisHostname')"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="instance.redisDatabase"
                 :label="$t('setup.step3.redisDatabase')"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="instance.redisPort"
                 :label="$t('setup.step3.redisPort')"
-              ></v-text-field>
+              />
               <small>
                 {{ $t("setup.step3.redisHint") }}
               </small>
@@ -365,28 +365,28 @@
                 v-model="mail.host"
                 :label="$t('setup.step6.host')"
                 required
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="mail.port"
                 :label="$t('setup.step6.port')"
                 required
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="mail.username"
                 :label="$t('setup.step6.username')"
                 required
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="mail.password"
                 :label="$t('setup.step6.password')"
                 required
                 type="password"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="mail.from"
                 :label="$t('setup.step6.from')"
                 required
-              ></v-text-field>
+              />
               <v-switch
                 v-model="mail.secure"
                 :label="$t('setup.step6.secure')"
@@ -394,7 +394,7 @@
               <v-text-field
                 v-model="mail.testEmail"
                 :label="$t('setup.step6.testEmail')"
-              ></v-text-field>
+              />
             </v-card-text>
           </v-form>
 
@@ -431,7 +431,7 @@
                 :label="$t('setup.step9.domain')"
                 :placeholder="$t('setup.step9.example')"
                 required
-              ></v-text-field>
+              />
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>

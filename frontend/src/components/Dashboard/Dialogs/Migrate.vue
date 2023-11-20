@@ -104,7 +104,7 @@
             outlined
             placeholder="Troplo"
             @keyup.enter="checkColubrina"
-          ></v-text-field>
+          />
           <v-text-field
             v-model="colubrina.password"
             dense
@@ -112,7 +112,7 @@
             outlined
             type="password"
             @keyup.enter="checkColubrina"
-          ></v-text-field>
+          />
           <v-text-field
             v-model="colubrina.totp"
             dense
@@ -120,7 +120,7 @@
             outlined
             type="number"
             @keyup.enter="checkColubrina"
-          ></v-text-field>
+          />
         </v-container>
         <v-card-actions class="text-center justify-center">
           <v-btn

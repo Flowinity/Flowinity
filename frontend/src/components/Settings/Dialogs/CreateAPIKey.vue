@@ -14,20 +14,20 @@
         label="Name"
         required
         @keydown.enter="addAPIKey"
-      ></v-text-field>
+      />
       <v-text-field
         v-if="type === 'api'"
         v-model="expiry"
         disabled
         label="Expiry"
         readonly
-      ></v-text-field>
+      />
       <v-text-field
         v-if="type === 'password'"
         v-model="password"
         label="Password"
         type="password"
-      ></v-text-field>
+      />
       <v-select
         v-model="scopes"
         :items="availableScopes"
@@ -38,12 +38,7 @@
       ></v-select>
     </v-card-text>
     <v-card-text v-else>
-      <v-text-field
-        v-model="key"
-        :disabled="true"
-        label="Key"
-        readonly
-      ></v-text-field>
+      <v-text-field v-model="key" :disabled="true" label="Key" readonly />
       <p>
         Use this key with any TPU integrations. This is a secret, do not share
         it with anyone.

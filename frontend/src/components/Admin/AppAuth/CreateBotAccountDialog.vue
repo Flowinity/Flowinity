@@ -20,7 +20,7 @@
           (v) => v.length <= 32 || 'Username must be less than 32 characters'
         ]"
         @keydown.enter="createBot"
-      ></v-text-field>
+      />
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>

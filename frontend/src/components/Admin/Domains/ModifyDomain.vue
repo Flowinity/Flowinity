@@ -14,7 +14,7 @@
         :label="$t('settings.domains.dialog.domain')"
         required
         @keydown.enter="updateDomain"
-      ></v-text-field>
+      />
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>

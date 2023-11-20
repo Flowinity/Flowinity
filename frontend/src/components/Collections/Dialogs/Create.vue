@@ -12,7 +12,7 @@
         label="Name"
         required
         @keydown.enter="createCollection"
-      ></v-text-field>
+      />
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>

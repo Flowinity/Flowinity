@@ -1,16 +1,16 @@
 <template>
-  <SocketProfiler v-if="$app.dialogs.socketProfiler"></SocketProfiler>
-  <ActionDialog v-if="$app.dialogs.actionDialog"></ActionDialog>
+  <SocketProfiler v-if="$app.dialogs.socketProfiler" />
+  <ActionDialog v-if="$app.dialogs.actionDialog" />
   <ExperimentsManagerDialog
     v-if="
       $app.dialogs.experiments &&
       ($user.user?.administrator || $user.user?.moderator)
     "
-  ></ExperimentsManagerDialog>
+  />
   <Maintenance
     v-model="$app.site.maintenance.enabled"
     v-if="$app.site.maintenance.enabled"
-  ></Maintenance>
+  />
   <router-view />
 </template>
 

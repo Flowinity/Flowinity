@@ -1,8 +1,6 @@
 <template>
   <BlockUserDialog v-model="$user.dialogs.block.value" />
-  <PrivacyPolicyDialog
-    v-if="$user.user?.privacyPolicyAccepted == false"
-  ></PrivacyPolicyDialog>
+  <PrivacyPolicyDialog v-if="$user.user?.privacyPolicyAccepted == false" />
   <WorkspaceDeleteDialog
     v-model="$app.dialogs.deleteItem.value"
     :item="$app.dialogs.deleteItem.item"
@@ -13,14 +11,14 @@
   <URLConfirmDialog
     v-if="$chat?.dialogs"
     v-model="$chat.dialogs.externalSite.value"
-  ></URLConfirmDialog>
-  <InviteAFriend v-model="$app.dialogs.inviteAFriend"></InviteAFriend>
-  <Feedback v-model="$app.dialogs.feedback"></Feedback>
+  />
+  <InviteAFriend v-model="$app.dialogs.inviteAFriend" />
+  <Feedback v-model="$app.dialogs.feedback" />
   <Migrate
     v-model="$app.dialogs.migrateWizard"
     v-if="$experiments.experiments.PROJECT_MERGE"
-  ></Migrate>
-  <Gold v-model="$app.dialogs.gold.value"></Gold>
+  />
+  <Gold v-model="$app.dialogs.gold.value" />
   <v-app
     v-if="$user.user"
     @drop="dragDropHandler"
@@ -29,17 +27,17 @@
     @touchend="touchEnd($event)"
     class="bg"
   >
-    <NicknameDialog v-model="$app.dialogs.nickname.value"></NicknameDialog>
-    <QuickSwitcher v-model="$app.dialogs.quickSwitcher"></QuickSwitcher>
-    <UploadDialog v-model="$app.dialogs.upload.value"></UploadDialog>
-    <MemoryProfiler v-if="$app.dialogs.memoryProfiler"></MemoryProfiler>
+    <NicknameDialog v-model="$app.dialogs.nickname.value" />
+    <QuickSwitcher v-model="$app.dialogs.quickSwitcher" />
+    <UploadDialog v-model="$app.dialogs.upload.value" />
+    <MemoryProfiler v-if="$app.dialogs.memoryProfiler" />
     <v-overlay
       persistent
       absolute
       :model-value="$app.loading"
       class="align-center justify-center"
     >
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <v-overlay
       persistent
@@ -47,7 +45,7 @@
       class="align-center justify-center"
       absolute
     >
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <default-bar v-if="$app.site.finishedSetup" />
     <rail-bar
@@ -56,9 +54,9 @@
         $app.rail &&
         $app.site.finishedSetup
       "
-    ></rail-bar>
+    />
     <keep-alive v-if="$app.rail">
-      <component :is="currentRailComponent"></component>
+      <component :is="currentRailComponent" />
     </keep-alive>
     <sidebar
       v-if="
@@ -67,27 +65,23 @@
           ($vuetify.display.mobile && $app.railMode === 'tpu')) &&
         $app.site.finishedSetup
       "
-    ></sidebar>
-    <colubrina-sidebar
-      v-if="!$app.rail && $chat.isCommunications"
-    ></colubrina-sidebar>
-    <workspaces-sidebar v-if="!$app.rail"></workspaces-sidebar>
-    <theme-engine-wrapper></theme-engine-wrapper>
+    />
+    <comms-sidebar v-if="!$app.rail && $chat.isCommunications" />
+    <workspaces-sidebar v-if="!$app.rail" />
+    <theme-engine-wrapper />
     <default-view />
   </v-app>
   <v-app v-else>
     <v-overlay :model-value="$app.loading" class="align-center justify-center">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <v-overlay
       :model-value="$app.componentLoading"
       class="align-center justify-center"
     >
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <v-progress-circular indeterminate size="64" />
     </v-overlay>
-    <unauth-bar
-      v-if="$route.name !== 'Slideshow' && $app.site.finishedSetup"
-    ></unauth-bar>
+    <unauth-bar v-if="$route.name !== 'Slideshow' && $app.site.finishedSetup" />
     <default-view />
   </v-app>
 </template>
@@ -96,7 +90,7 @@ import { defineComponent } from "vue";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import Sidebar from "@/layouts/default/Sidebar.vue";
 import WorkspacesSidebar from "@/layouts/default/WorkspacesSidebar.vue";
-import ColubrinaSidebar from "@/layouts/colubrina/Sidebar.vue";
+import CommsSidebar from "@/layouts/colubrina/CommsSidebar.vue";
 import DefaultBar from "./AppBar.vue";
 import DefaultView from "./View.vue";
 import UnauthBar from "@/layouts/unauth/AppBar.vue";
@@ -120,7 +114,7 @@ export default defineComponent({
   components: {
     Sidebar,
     WorkspacesSidebar,
-    ColubrinaSidebar,
+    CommsSidebar,
     DefaultBar,
     DefaultView,
     UnauthBar,
@@ -355,8 +349,9 @@ export default defineComponent({
         (document.createElement("link") as HTMLLinkElement);
       link.type = "image/x-icon";
       link.rel = "shortcut icon";
-      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${this
-        .$user.user?.username}&unread=${val || 0}`;
+      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
+        this.$user.user?.username
+      }&unread=${val || 0}`;
       document.head.appendChild(link);
     },
     $route(to, from) {

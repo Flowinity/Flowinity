@@ -1,6 +1,6 @@
 <template>
-  <AdminSidebar></AdminSidebar>
-  <router-view></router-view>
+  <AdminSidebar />
+  <router-view />
 </template>
 
 <script lang="ts">

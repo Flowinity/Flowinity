@@ -30,7 +30,7 @@
         @update:model-value="
           $experiments.experiments[experiment.name] = parseInt($event || '0')
         "
-      ></v-text-field>
+      />
     </v-card-text>
   </v-card>
 </template>

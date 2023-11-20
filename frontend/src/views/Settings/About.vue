@@ -14,7 +14,7 @@
       v-else
       @click="rainbowMode(true)"
     />
-    <v-divider></v-divider>
+    <v-divider />
     <p class="mt-5">
       {{ $t("settings.about.productName") }}
     </p>

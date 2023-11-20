@@ -49,7 +49,7 @@
         <v-tab prepend-icon="mdi-information" to="/settings/about">
           {{ $t("settings.tabs.about") }}
         </v-tab>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <template v-if="$vuetify.display.mobile">
           <v-progress-circular
             v-if="loading"
@@ -57,7 +57,7 @@
             indeterminate
             size="24"
             width="3"
-          ></v-progress-circular>
+          />
         </template>
         <template v-else>
           <v-fade-transition :model-value="loading">

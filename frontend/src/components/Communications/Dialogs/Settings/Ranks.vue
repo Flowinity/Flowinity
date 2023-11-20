@@ -105,7 +105,7 @@
               :disabled="!$chat.canEditRank(rank.index, $chat.editingChat)"
               :label="$t('chats.settings.ranks.manage.name')"
               v-model="rank.name"
-            ></v-text-field>
+            />
             <v-btn
               block
               :disabled="!$chat.canEditRank(rank.index, $chat.editingChat)"

@@ -131,7 +131,7 @@
         :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
         :label="$t('chats.settings.home.groupName')"
         v-model="$chat.editingChat.name"
-      ></v-text-field>
+      />
       <div style="width: 400px">
         <v-card-title
           style="

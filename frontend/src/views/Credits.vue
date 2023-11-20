@@ -13,37 +13,37 @@
             subtitle="Lead Developer"
             username="Troplo"
             :user="users['Troplo']"
-          ></UserCard>
+          />
           <UserCard
             subtitle="Infrastructure Manager / Code Contributor"
             username="goose"
             :user="users['goose']"
-          ></UserCard>
+          />
           <UserCard
             subtitle="Code Contributor"
             username="electrics01"
             :user="users['electrics01']"
-          ></UserCard>
+          />
           <UserCard
             subtitle="Code Contributor / Ideas"
             username="bytedefined"
             :user="users['bytedefined']"
-          ></UserCard>
+          />
           <UserCard
             subtitle="Code Contributor / Moral Support, sometimes"
             username="Jolt707"
             :user="users['Jolt707']"
-          ></UserCard>
+          />
           <UserCard
             subtitle="Buys me my favorite beverage, Pepsi Max"
             username="Avinera"
             :user="users['Avinera']"
-          ></UserCard>
+          />
           <UserCard
             subtitle="Buys me lunch"
             username="Spy"
             :user="users['Spy']"
-          ></UserCard>
+          />
         </template>
         <template v-else>
           <ul class="ml-8">

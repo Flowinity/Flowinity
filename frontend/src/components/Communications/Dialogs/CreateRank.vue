@@ -13,7 +13,7 @@
         v-model="name"
         :label="$t('generic.name')"
         @keydown.enter="create"
-      ></v-text-field>
+      />
     </v-container>
     <v-card-actions>
       <v-spacer></v-spacer>

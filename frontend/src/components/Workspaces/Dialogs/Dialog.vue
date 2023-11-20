@@ -15,7 +15,7 @@
         label="Name"
         required
         @keyup.enter="$emit('submit', name)"
-      ></v-text-field>
+      />
     </v-container>
     <v-card-actions>
       <v-spacer></v-spacer>

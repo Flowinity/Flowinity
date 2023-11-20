@@ -22,7 +22,7 @@
           :autofocus="true"
           class="mx-5 my-n1"
           :label="$t('generic.search')"
-        ></v-text-field>
+        />
         <v-list-item
           v-for="friend in friends"
           :active="selected.includes(friend.user.id)"

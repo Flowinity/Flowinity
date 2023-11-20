@@ -13,7 +13,7 @@
         :autofocus="true"
         label="Name"
         required
-      ></v-text-field>
+      />
       <v-btn class="ml-n4" color="red" @click="removeBanner">
         {{ $t("collections.settings.removeBanner") }}
       </v-btn>

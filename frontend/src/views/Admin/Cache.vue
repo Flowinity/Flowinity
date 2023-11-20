@@ -14,7 +14,7 @@
             label="Purge by UserID"
             single-line
             @click:append-outer="purgeKeyUser"
-          ></v-text-field>
+          />
           <v-list-item v-for="item in items" :key="item.id">
             {{ item.name }}
             <template v-slot:append>
