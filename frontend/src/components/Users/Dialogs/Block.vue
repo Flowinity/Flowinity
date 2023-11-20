@@ -51,8 +51,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
-import { Chat } from "@/gql/graphql";
-import { DeleteGroupMutation } from "@/graphql/chats/deleteGroup.graphql";
 
 export default defineComponent({
   name: "BlockUserDialog",

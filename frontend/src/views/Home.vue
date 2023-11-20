@@ -15,8 +15,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
-import UserBadges from "@/components/Users/UserBadges.vue";
 import UserWidget from "@/components/Dashboard/UserWidget.vue";
 import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
 import AnnouncementsWidget from "@/components/Dashboard/AnnouncementsWidget.vue";
@@ -28,9 +26,7 @@ export default defineComponent({
     GraphWidget,
     AnnouncementsWidget,
     StatsWidget,
-    UserWidget,
-    UserBadges,
-    UserAvatar
+    UserWidget
   },
   mounted() {
     this.$app.title = "Dashboard";

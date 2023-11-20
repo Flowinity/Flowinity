@@ -3,13 +3,12 @@ import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
 import { useExperimentsStore } from "@/store/experiments.store";
 import vuetify from "@/plugins/vuetify";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useAppStore } from "@/store/app.store";
 import { useUserStore } from "@/store/user.store";
 import { useFriendsStore } from "@/store/friends.store";
 import dayjs from "../plugins/dayjs";
 import { useToast } from "vue-toastification";
-import { ChatsQuery } from "@/graphql/chats/chats.graphql";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import {
   Chat,

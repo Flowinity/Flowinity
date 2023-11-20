@@ -176,11 +176,10 @@ import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 import { Upload } from "@/models/upload";
 import { Collection } from "@/models/collection";
-import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 
 export default defineComponent({
   name: "GalleryItem",
-  components: { WorkspaceDeleteDialog, HoverChip, GalleryPreview },
+  components: { HoverChip, GalleryPreview },
   props: ["item", "supports", "selected"],
   computed: {
     fileSize() {

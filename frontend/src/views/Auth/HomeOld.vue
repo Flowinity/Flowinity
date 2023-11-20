@@ -264,7 +264,6 @@
 </template>
 
 <script lang="ts">
-import StatsWidget from "@/components/Dashboard/StatsWidget.vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
 import { defineComponent } from "vue";
 import ColubrinaTPU from "@/components/Home/Dialogs/ColubrinaTPU.vue";
@@ -272,7 +271,7 @@ import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
   name: "UnauthHome",
-  components: { HoverChip, ColubrinaTPU, PromoCard, StatsWidget },
+  components: { HoverChip, ColubrinaTPU, PromoCard },
   data() {
     return {
       email: "",

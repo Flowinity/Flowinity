@@ -106,8 +106,6 @@ import { defineComponent } from "vue";
 import { Chat } from "@/gql/graphql";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
-import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import AddRole from "@/components/Communications/Menus/AddRole.vue";
 import TransferOwnership from "@/components/Communications/Dialogs/TransferOwnership.vue";
 
@@ -116,8 +114,6 @@ export default defineComponent({
   components: {
     TransferOwnership,
     AddRole,
-    CreateChat,
-    GraphWidget,
     UserAvatar,
     Overline
   },

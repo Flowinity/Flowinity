@@ -245,13 +245,11 @@ import Notifications from "@/components/Core/Notifications.vue";
 import { useTheme } from "vuetify";
 import Pins from "@/components/Communications/Menus/Pins.vue";
 import LogoEasterEgg from "@/components/Core/LogoEasterEgg.vue";
-import StatusSwitcher from "@/components/Communications/StatusSwitcher.vue";
 import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.vue";
 
 export default defineComponent({
   components: {
     StatusSwitcherList,
-    StatusSwitcher,
     LogoEasterEgg,
     Pins,
     Notifications,

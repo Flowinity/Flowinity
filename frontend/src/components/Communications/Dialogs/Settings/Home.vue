@@ -172,15 +172,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Chat } from "@/gql/graphql";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 
 export default defineComponent({
   name: "ChatSettingsHome",
-  components: { UploadCropper, GraphWidget, UserAvatar, Overline },
+  components: { UploadCropper, UserAvatar, Overline },
   data() {
     return {
       upload: false,

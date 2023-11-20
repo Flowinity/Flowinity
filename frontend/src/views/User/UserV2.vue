@@ -344,11 +344,7 @@ import { defineComponent } from "vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
-import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
-import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import StatsCard from "@/components/Dashboard/StatsCard.vue";
-import BarChart from "@/components/Core/BarChart.vue";
-import LineChart from "@/components/Core/LineChart.vue";
 import Chart from "@/components/Core/Chart.vue";
 import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
@@ -362,11 +358,7 @@ export default defineComponent({
     InsightsPromoCard,
     GraphWidget,
     Chart,
-    LineChart,
-    BarChart,
     StatsCard,
-    CollectionCard,
-    CollectionBanner,
     UserBadges,
     UserAvatar,
     UserBanner

@@ -97,10 +97,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import data from "markdown-it-emoji/lib/data/full.json";
-import InfiniteLoading from "v3-infinite-loading";
-import Grid from "vue-virtual-scroll-grid";
 import { Chat, ChatEmoji } from "@/gql/graphql";
-import Overline from "@/components/Core/Typography/Overline.vue";
 //@ts-ignore
 import { RecycleScroller } from "vue-virtual-scroller";
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
@@ -110,9 +107,6 @@ export default defineComponent({
   props: ["modelValue"],
   emits: ["update:modelValue", "emoji"],
   components: {
-    Overline,
-    InfiniteLoading,
-    Grid,
     RecycleScroller
   },
   data() {

@@ -15,8 +15,6 @@ import validation from "@/plugins/validation";
 import { io } from "socket.io-client";
 import functions from "@/plugins/functions";
 import router from "@/router";
-import { Router, useRouter } from "vue-router";
-import { ChatEmoji, Collection } from "@/gql/graphql";
 
 function createSocket(namespace: string) {
   console.log(`[TPU/Socket] Connecting to ${namespace}`);

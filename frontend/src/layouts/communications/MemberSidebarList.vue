@@ -243,12 +243,10 @@
 import { defineComponent } from "vue";
 import Paginate from "@/components/Core/Paginate.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import SidebarItem from "@/components/Communications/SidebarItem.vue";
 import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
-import AddRole from "@/components/Communications/Menus/AddRole.vue";
 import {
   ChatAssociation,
   FriendStatus,
@@ -261,12 +259,10 @@ import {
 export default defineComponent({
   name: "MemberSidebarList",
   components: {
-    AddRole,
     UserSidebarOptions,
     Overline,
     MessagePerf,
     GalleryTextField,
-    SidebarItem,
     Paginate,
     UserAvatar
   },

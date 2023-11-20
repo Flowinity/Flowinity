@@ -38,14 +38,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
 import NotFound from "@/views/Errors/404.vue";
 import { Upload } from "@/models/upload";
 import GalleryItem from "@/components/Gallery/GalleryItem.vue";
 
 export default defineComponent({
   name: "Item",
-  components: { GalleryItem, NotFound, GalleryPreview },
+  components: { GalleryItem, NotFound },
   data() {
     return {
       item: null as Upload | null

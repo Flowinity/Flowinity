@@ -56,10 +56,6 @@ import { defineComponent } from "vue";
 import CreateAppAuthDialog from "@/components/Admin/AppAuth/CreateAppAuthDialog.vue";
 import { VContainer } from "vuetify/components";
 import { MyAppsQuery } from "@/graphql/developer/myApps.graphql";
-import {
-  AvailableChatPermissionsDocument,
-  ChatPermission
-} from "@/gql/graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({

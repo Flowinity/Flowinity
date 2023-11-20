@@ -70,18 +70,11 @@ import { defineComponent } from "vue";
 import TwoFactor from "@/components/Settings/TwoFactor.vue";
 import { useTheme } from "vuetify";
 import {
-  Collection,
   UserFriendRequestPrivacy,
   UserGroupPrivacy,
   UserInsights
 } from "@/gql/graphql";
-import { UserLightCollectionsQuery } from "@/graphql/collections/getUserCollections.graphql";
 import DangerZoneInput from "@/components/Core/DangerZoneInput.vue";
-import {
-  ChangeUserEmailMutation,
-  ChangeUsernameMutation,
-  ChangeUserPasswordMutation
-} from "@/graphql/user/changeUsername.graphql";
 
 export default defineComponent({
   name: "SettingsHome",
