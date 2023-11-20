@@ -67,18 +67,14 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import TwoFactor from "@/components/Settings/TwoFactor.vue";
 import { useTheme } from "vuetify";
 import {
   UserFriendRequestPrivacy,
   UserGroupPrivacy,
   UserInsights
 } from "@/gql/graphql";
-import DangerZoneInput from "@/components/Core/DangerZoneInput.vue";
 
 export default defineComponent({
-  name: "SettingsHome",
-  components: { DangerZoneInput, TwoFactor },
   emits: ["update"],
   setup() {
     const theme = useTheme();

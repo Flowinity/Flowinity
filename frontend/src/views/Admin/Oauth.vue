@@ -75,7 +75,7 @@ export default defineComponent({
   methods: {
     async getAppAuth() {
       const {
-        data: { oauthApps, availableChatPermissions }
+        data: { oauthApps }
       } = await this.$apollo.query({
         query: MyAppsQuery,
         fetchPolicy: "network-only"

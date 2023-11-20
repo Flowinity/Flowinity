@@ -166,13 +166,10 @@
 import { defineComponent } from "vue";
 import {
   AvailableChatPermissionsDocument,
-  Chat,
   ChatPermission,
   ChatRank
 } from "@/gql/graphql";
 import Overline from "@/components/Core/Typography/Overline.vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
-import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import {
   UpdateRankMutation,
   UpdateRankOrderMutation
@@ -183,7 +180,7 @@ import { DeleteChatRankMutation } from "@/graphql/chats/deleteRank.graphql";
 
 export default defineComponent({
   name: "ChatSettingsRanks",
-  components: { CreateRank, VueDraggable, GraphWidget, UserAvatar, Overline },
+  components: { CreateRank, VueDraggable, Overline },
   data() {
     return {
       selected: "admin",

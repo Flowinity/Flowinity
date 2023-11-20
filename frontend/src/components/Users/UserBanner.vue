@@ -129,14 +129,14 @@ export default defineComponent({
         return this.user.banner;
       } else if (this.collection) {
         return this.collection.image;
-      }
+      } else return false;
     },
     canEdit() {
       if (this.user) {
         return this.user.id === this.$user.user?.id;
       } else if (this.collection) {
         return this.collection.permissionsMetadata?.configure;
-      }
+      } else return false;
     }
   }
 });

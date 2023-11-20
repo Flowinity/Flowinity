@@ -27,17 +27,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import GalleryCore from "@/components/Gallery/GalleryCore.vue";
-import { Upload } from "@/models/upload";
-import { CollectionCache } from "@/types/collection";
-import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import InlineGalleryItem from "@/components/Communications/InlineGalleryItem.vue";
 import Paginate from "@/components/Core/Paginate.vue";
+import { Upload } from "@/models/upload";
+import { CollectionCache } from "@/types/collection";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "InlineStarred",
-  components: { Paginate, InlineGalleryItem, GalleryNavigation, GalleryCore },
+  components: { Paginate, InlineGalleryItem },
   props: ["type"],
   data() {
     return {

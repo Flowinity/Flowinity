@@ -205,14 +205,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import InlineGallery from "@/components/Communications/InlineGallery.vue";
 import Mentionable from "@/components/Core/Mentionable.vue";
 import EmojiPicker from "@/components/Communications/Menus/Emoji.vue";
 import emoji from "@/components/Communications/Menus/Emoji.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
-import { LookupPrefix, Prefix } from "@/gql/graphql";
+import { Prefix } from "@/gql/graphql";
 import { LookupBotPrefix } from "@/graphql/developer/lookupPrefix.graphql";
 
 export default defineComponent({
@@ -221,7 +220,6 @@ export default defineComponent({
     UserAvatar,
     EmojiPicker,
     InlineGallery,
-    GalleryCore,
     Mentionable
   },
   props: ["modelValue", "editing", "blocked"],

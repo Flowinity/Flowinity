@@ -43,21 +43,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import Paginate from "@/components/Core/Paginate.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
-import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
 import {
   AuditLogActionType,
   AuditLogCategory,
   PaginatedChatAuditLogResponse
 } from "@/gql/graphql";
 import { AuditLogQuery } from "@/graphql/chats/auditLog.graphql";
-import Paginate from "@/components/Core/Paginate.vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "ChatSettingsAudit",
-  components: { Paginate, UserAvatar, UploadCropper, Overline },
+  components: { Paginate, Overline },
   props: ["active"],
   data() {
     return {

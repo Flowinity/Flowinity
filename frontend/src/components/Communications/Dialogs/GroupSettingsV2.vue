@@ -163,7 +163,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
 import CreateChat from "@/components/Communications/Menus/CreateChat.vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
@@ -186,8 +185,7 @@ export default defineComponent({
     ChatSettingsHome,
     CoreDialog,
     UploadCropper,
-    CreateChat,
-    UserAvatar
+    CreateChat
   },
   props: ["modelValue"],
   emits: ["update:modelValue"],

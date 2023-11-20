@@ -60,15 +60,10 @@
 </template>
 
 <script lang="ts">
-import { Friend } from "@/models/friend";
 import { defineComponent } from "vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { Chat, ChatAssociation, ChatRank } from "@/gql/graphql";
-import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
 
 export default defineComponent({
-  name: "AddRole",
-  components: { UserAvatar },
   props: {
     ranks: {
       type: Object as () => ChatRank[],
