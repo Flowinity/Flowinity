@@ -4,11 +4,7 @@ import { Collection } from "@app/models/collection.model"
 import { Upload } from "@app/models/upload.model"
 import { routingControllersToSpec } from "routing-controllers-openapi"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
-import {
-  JsonSchemaManager,
-  OpenApi3Strategy
-  //@ts-ignore
-} from "@alt3/sequelize-to-json-schemas"
+import { JsonSchemaManager, OpenApi3Strategy } from "@alt3/sequelize-to-json-schemas"
 import { getMetadataArgsStorage } from "routing-controllers"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Announcement } from "@app/models/announcement.model"

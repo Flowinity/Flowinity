@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { computed, provide, Ref, ref, toRef, unref } from "vue";
-import {
-  InnerDragSelectProps,
-  forOptionActionKey,
-  Option
-} from "./DragSelectCommon";
+import { forOptionActionKey, InnerDragSelectProps, Option } from "./DragSelectCommon";
 import { useDragToSelect } from "./DragSelectHook";
 import { MaybeRef } from "./typings/internal";
 import { setIsEqual } from "./utils/setIsEqual";

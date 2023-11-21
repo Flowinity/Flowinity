@@ -6,7 +6,6 @@ import Sequelize, { Includeable, Op } from "sequelize"
 import utils from "@app/lib/utils"
 import { User } from "@app/models/user.model"
 import sequelize from "@app/db"
-import path from "path"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Star } from "@app/models/star.model"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
@@ -16,13 +15,7 @@ import Errors from "@app/lib/errors"
 import { Plan } from "@app/models/plan.model"
 import { CacheService } from "@app/services/cache.service"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
-import {
-  Filter,
-  GalleryInput,
-  Order,
-  Sort,
-  Type
-} from "@app/classes/graphql/gallery/galleryInput"
+import { Filter, GalleryInput, Order, Sort, Type } from "@app/classes/graphql/gallery/galleryInput"
 import { PaginatedGalleryResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import { CollectionUser } from "@app/models/collectionUser.model"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"

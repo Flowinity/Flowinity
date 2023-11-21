@@ -7,7 +7,7 @@
     </v-toolbar>
     <v-container>
       <div>
-        <span v-for="integration in integrations">
+        <span v-for="integration in integrations" :key="integration.id">
           <v-tooltip
             :text="`${
               ($user.user.integrations.find((i) => i.type === integration.id)
@@ -97,7 +97,7 @@
       </v-toolbar-title>
     </v-toolbar>
     <v-container>
-      <v-card v-for="app in oauth" class="mb-4">
+      <v-card v-for="app in oauth" class="mb-4" :key="app.id">
         <v-card-title>
           {{ app.name }}
           <span v-if="app.verified">

@@ -327,12 +327,7 @@ import { defineComponent } from "vue";
 import { ScopeDefinition } from "@/views/Auth/Oauth.vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { MyAppQuery } from "@/graphql/developer/myApps.graphql";
-import {
-  AvailableChatPermissionsDocument,
-  ChatPermission,
-  OauthApp,
-  OauthUser
-} from "@/gql/graphql";
+import { AvailableChatPermissionsDocument, ChatPermission, OauthApp, OauthUser } from "@/gql/graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import CreateBotAccountDialog from "@/components/Admin/AppAuth/CreateBotAccountDialog.vue";
 import {

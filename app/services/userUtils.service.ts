@@ -22,22 +22,14 @@ import { LayoutValidate } from "@app/validators/userv3"
 import { ExcludedCollectionsValidate } from "@app/validators/excludedCollections"
 import { FCMDevice } from "@app/models/fcmDevices.model"
 import axios from "axios"
-import { HexValidateOptional } from "@app/validators/hex"
-import {
-  partialUserBase,
-  PartialUserFriend,
-  partialUserFriend
-} from "@app/classes/graphql/user/partialUser"
+import { partialUserBase, PartialUserFriend, partialUserFriend } from "@app/classes/graphql/user/partialUser"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { BlockedUser } from "@app/models/blockedUser.model"
-import {
-  FriendRequestPrivacy,
-  GroupPrivacy
-} from "@app/classes/graphql/user/privacy"
+import { FriendRequestPrivacy, GroupPrivacy } from "@app/classes/graphql/user/privacy"
 import { GqlError } from "@app/lib/gqlErrors"
 import { GraphQLError } from "graphql/error"
 

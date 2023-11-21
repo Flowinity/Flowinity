@@ -1,11 +1,5 @@
 import { Field, InputType, ObjectType } from "type-graphql"
-import {
-  Matches,
-  IsOptional,
-  IsUrl,
-  MaxLength,
-  MinLength
-} from "class-validator"
+import { IsOptional, IsUrl, Matches, MaxLength, MinLength } from "class-validator"
 
 @InputType()
 export class MyAppInput {

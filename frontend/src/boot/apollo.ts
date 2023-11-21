@@ -1,16 +1,9 @@
 import { App } from "vue";
 import { createApolloProvider } from "@vue/apollo-option";
-import {
-  ApolloClient,
-  ApolloLink,
-  from,
-  HttpLink,
-  InMemoryCache
-} from "@apollo/client/core";
+import { ApolloClient, ApolloLink, from, HttpLink, InMemoryCache } from "@apollo/client/core";
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import { onError } from "@apollo/client/link/error";
 import { useToast } from "vue-toastification";
-import { useUserStore } from "@/store/user.store";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import functions from "@/plugins/functions";

@@ -88,7 +88,7 @@
           projects:
         </v-card-title>
         <ul class="ml-8">
-          <li v-for="pkg in items">
+          <li v-for="pkg in items" :key="pkg">
             {{ pkg }}
           </li>
         </ul>
@@ -272,7 +272,7 @@ export default defineComponent({
   computed: {
     items() {
       // include frontend and backend packages and order them alphabetically and remove duplicates
-      return [...this.frontend.sort(), ...this.backend.sort()]
+      return [...this.frontend, ...this.backend]
         .sort()
         .filter((item, index, array) => array.indexOf(item) === index);
     }

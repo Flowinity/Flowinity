@@ -45,64 +45,66 @@
             v-if="bot"
           />
           <v-list>
-            <v-list-item
-              v-for="scope in scopes"
-              :key="scope.id"
-              :value="scope.id"
-              :disabled="true"
-              style="opacity: 1"
-              v-if="!bot"
-            >
-              <template v-slot:prepend>
-                <v-icon color="green" class="ml-4 mr-1">
-                  mdi-check-circle
-                </v-icon>
-              </template>
-              <v-list-item-title
-                style="text-overflow: unset; white-space: normal"
+            <template v-if="!bot">
+              <v-list-item
+                v-for="scope in scopes"
+                :key="scope.id"
+                :value="scope.id"
+                :disabled="true"
+                style="opacity: 1"
               >
-                {{ scope.name }}
-              </v-list-item-title>
-              <v-list-item-subtitle
-                v-if="scope.description"
-                style="
-                  text-overflow: unset;
-                  white-space: normal;
-                  display: unset;
-                "
+                <template v-slot:prepend>
+                  <v-icon color="green" class="ml-4 mr-1">
+                    mdi-check-circle
+                  </v-icon>
+                </template>
+                <v-list-item-title
+                  style="text-overflow: unset; white-space: normal"
+                >
+                  {{ scope.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle
+                  v-if="scope.description"
+                  style="
+                    text-overflow: unset;
+                    white-space: normal;
+                    display: unset;
+                  "
+                >
+                  {{ scope.description }}
+                </v-list-item-subtitle>
+              </v-list-item>
+            </template>
+            <template v-else>
+              <v-list-item
+                v-for="permission in permissions"
+                :key="permission.id"
+                :value="permission.id"
+                :disabled="true"
+                style="opacity: 1"
               >
-                {{ scope.description }}
-              </v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item
-              v-for="permission in permissions"
-              :key="permission.id"
-              :value="permission.id"
-              :disabled="true"
-              style="opacity: 1"
-              v-else
-            >
-              <template v-slot:prepend>
-                <v-icon color="green" class="ml-4 mr-1">
-                  mdi-check-circle
-                </v-icon>
-              </template>
-              <v-list-item-title
-                style="text-overflow: unset; white-space: normal"
-              >
-                {{ permission.name }}
-              </v-list-item-title>
-              <v-list-item-subtitle
-                v-if="permission.description"
-                style="
-                  text-overflow: unset;
-                  white-space: normal;
-                  display: unset;
-                "
-              >
-                {{ permission.description }}
-              </v-list-item-subtitle>
-            </v-list-item>
+                <template v-slot:prepend>
+                  <v-icon color="green" class="ml-4 mr-1">
+                    mdi-check-circle
+                  </v-icon>
+                </template>
+                <v-list-item-title
+                  style="text-overflow: unset; white-space: normal"
+                >
+                  {{ permission.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle
+                  v-if="permission.description"
+                  style="
+                    text-overflow: unset;
+                    white-space: normal;
+                    display: unset;
+                  "
+                >
+                  {{ permission.description }}
+                </v-list-item-subtitle>
+              </v-list-item>
+            </template>
             <v-list-item :disabled="true" style="opacity: 1">
               <template v-slot:prepend>
                 <v-icon color="red" class="ml-4 mr-1">mdi-close-circle</v-icon>
@@ -154,10 +156,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ChatPermission, OauthApp } from "@/gql/graphql";
-import {
-  AddBotToChat,
-  OauthAppConsentQuery
-} from "@/graphql/developer/consent.graphql";
+import { AddBotToChat, OauthAppConsentQuery } from "@/graphql/developer/consent.graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export type ScopeDefinition = {

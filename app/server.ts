@@ -39,8 +39,8 @@ import { GallerySocketController } from "@app/controllers/socket/gallery.socket"
 import { AutoCollectsSocketController } from "@app/controllers/socket/autoCollects.socket"
 import { TrackedUserSocketController } from "@app/controllers/socket/tracked.socket"
 import { Server as SocketServer } from "socket.io"
-import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { SocketServerWithUser } from "./types/global"
+
 @Service({ eager: false })
 export class Server {
   private static readonly baseDix: number = 10

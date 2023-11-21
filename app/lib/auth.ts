@@ -14,7 +14,6 @@ import { createParamDecorator } from "routing-controllers"
 import { RequestAuthSystem } from "@app/types/express"
 import { Badge } from "@app/models/badge.model"
 import { AccessedFrom } from "@app/classes/graphql/user/session"
-import { SessionInfo } from "@app/types/auth"
 
 let asn: Reader<AsnResponse>
 let city: Reader<CityResponse>

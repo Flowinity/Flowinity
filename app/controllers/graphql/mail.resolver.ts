@@ -1,17 +1,7 @@
-import {
-  Arg,
-  Ctx,
-  FieldResolver,
-  Int,
-  Mutation,
-  Query,
-  Resolver,
-  Root
-} from "type-graphql"
+import { Arg, Ctx, Int, Query, Resolver } from "type-graphql"
 import { Service } from "typedi"
 import { Context } from "@app/types/graphql/context"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
-import { GraphQLError } from "graphql/error"
 import { MailService } from "@app/services/mail.service"
 import { GetMailInput, ListResponse } from "@app/classes/graphql/mail/mailbox"
 import { GraphQLJSON } from "graphql-scalars"

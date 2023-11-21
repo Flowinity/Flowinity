@@ -1,15 +1,8 @@
-import {
-  Field,
-  InputType,
-  Int,
-  ObjectType,
-  registerEnumType
-} from "type-graphql"
+import { Field, InputType, Int, ObjectType, registerEnumType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { IsNumber, Max, Min } from "class-validator"
 import { Upload } from "@app/models/upload.model"
 import { GraphQLJSON } from "graphql-scalars"
-import { SeriesGraph } from "@app/models/insight.model"
 import { DataLabelsGraph } from "@app/classes/graphql/core/core"
 
 export enum MessageType {

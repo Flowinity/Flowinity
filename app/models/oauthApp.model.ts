@@ -1,13 +1,4 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  DefaultScope,
-  HasMany,
-  HasOne,
-  Model,
-  Table
-} from "sequelize-typescript"
+import { BelongsTo, Column, DataType, DefaultScope, HasMany, HasOne, Model, Table } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Session } from "@app/models/session.model"
 import { OauthUser } from "@app/models/oauthUser.model"

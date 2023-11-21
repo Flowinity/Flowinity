@@ -1,12 +1,4 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  HasMany,
-  HasOne,
-  Model,
-  Table
-} from "sequelize-typescript"
+import { BelongsTo, Column, DataType, HasMany, HasOne, Model, Table } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
 import { WorkspaceUser } from "@app/models/workspaceUser.model"

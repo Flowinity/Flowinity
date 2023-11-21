@@ -17,7 +17,6 @@ import { PaginatedCollectionsResponse } from "@app/controllers/graphql/collectio
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { WhereOptions } from "sequelize"
 import { GqlError } from "@app/lib/gqlErrors"
-import { GraphQLError } from "graphql/error"
 
 @Service()
 export class CollectionService {

@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from "type-graphql"
-import { IsOptional, IsString, MaxLength, ValidateIf } from "class-validator"
+import { IsOptional, IsString, MaxLength } from "class-validator"
 
 @InputType()
 export class UpdateChatInput {

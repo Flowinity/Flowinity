@@ -32,7 +32,6 @@ import { OauthUser } from "@app/models/oauthUser.model"
 import { Session } from "@app/models/session.model"
 import { OauthSave } from "@app/models/oauthSave.model"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
-import { parsePath } from "type-graphql/build/typings/helpers/filesystem"
 import SMTPTransport from "nodemailer/lib/smtp-transport"
 
 const inviteParams = {

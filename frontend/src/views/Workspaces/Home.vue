@@ -80,7 +80,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <template v-for="item in $workspaces.recent">
+    <template v-for="item in $workspaces.recent" :key="item.id">
       <h3 class="mt-2">{{ item.name }}</h3>
       <v-row class="mt-1">
         <v-col

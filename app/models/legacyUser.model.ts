@@ -1,10 +1,4 @@
-import {
-  Column,
-  DataType,
-  DefaultScope,
-  Model,
-  Table
-} from "sequelize-typescript"
+import { Column, DataType, DefaultScope, Model, Table } from "sequelize-typescript"
 import { Field, Int, ObjectType } from "type-graphql"
 
 @ObjectType({

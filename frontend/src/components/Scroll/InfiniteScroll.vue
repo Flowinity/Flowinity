@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { Props, Params, State, StateHandler } from "./types";
-import { onMounted, ref, toRefs, onUnmounted, watch, nextTick } from "vue";
-import { startObserver, getParentEl, isVisible } from "./utils";
+import type { Params, Props, State, StateHandler } from "./types";
+import { nextTick, onMounted, onUnmounted, ref, toRefs, watch } from "vue";
+import { getParentEl, isVisible, startObserver } from "./utils";
 import { useChatStore } from "@/store/chat.store";
 
 const emit = defineEmits<{ infinite: [$state: StateHandler] }>();

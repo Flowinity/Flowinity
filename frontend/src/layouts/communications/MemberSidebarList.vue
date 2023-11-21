@@ -247,14 +247,7 @@ import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
-import {
-  ChatAssociation,
-  FriendStatus,
-  UserStatus,
-  Chat,
-  ChatRank,
-  UserStoredStatus
-} from "@/gql/graphql";
+import { Chat, ChatAssociation, ChatRank, FriendStatus, UserStatus, UserStoredStatus } from "@/gql/graphql";
 
 export default defineComponent({
   name: "MemberSidebarList",

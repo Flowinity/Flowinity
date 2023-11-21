@@ -1,4 +1,4 @@
-import { watch, ref, unref } from "vue";
+import { ref, unref, watch } from "vue";
 import { Option } from "./DragSelectCommon";
 import { useDragRect } from "./hooks/useDragRect";
 import useAutoScrollByPoint from "./hooks/useAutoScrollByPoint";

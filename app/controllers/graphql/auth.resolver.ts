@@ -11,7 +11,6 @@ import { AuthService } from "@app/services/auth.service"
 import Errors from "@app/lib/errors"
 import blacklist from "@app/lib/word-blacklist.json"
 import { InviteService } from "@app/services/invite.service"
-import { GraphQLError } from "graphql/error"
 
 @Resolver(User)
 @Service()

@@ -1,7 +1,6 @@
 import { createAdapter } from "@socket.io/redis-adapter"
 
 // Import Libs
-
 import { Server } from "socket.io"
 
 export default async function createSocket(

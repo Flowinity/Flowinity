@@ -252,10 +252,10 @@
         </template>
         <v-list-item
           v-for="note in item.children"
-          :key="`note-${item.id}`"
+          :key="`note-${note.id}`"
           :to="'/workspaces/notes/' + note.id"
-          :value="`note-${item.id}`"
-          :id="`note-${item.id}`"
+          :value="`note-${note.id}`"
+          :id="`note-${note.id}`"
           :active="$route.path === `/workspaces/notes/${note.id}`"
           @contextmenu.prevent="context($event, `note-${note.id}`, note)"
         >

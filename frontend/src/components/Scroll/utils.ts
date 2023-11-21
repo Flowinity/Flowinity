@@ -1,5 +1,5 @@
-import { nextTick } from "vue";
 import type { Ref } from "vue";
+import { nextTick } from "vue";
 import type { Params, Target } from "./types";
 
 function isVisible(el: Element, view: Element | null): boolean {

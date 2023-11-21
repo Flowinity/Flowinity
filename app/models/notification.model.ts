@@ -1,11 +1,4 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  Default,
-  Model,
-  Table
-} from "sequelize-typescript"
+import { BelongsTo, Column, DataType, Default, Model, Table } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"

@@ -19,12 +19,11 @@ import Errors from "@app/lib/errors"
 import { ChatService } from "@app/services/chat.service"
 import { GalleryService } from "@app/services/gallery.service"
 import rateLimits from "@app/lib/rateLimits"
-import uploader, { uploaderSmall } from "@app/lib/upload"
+import { uploaderSmall } from "@app/lib/upload"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { generateClientSatisfies } from "@app/lib/clientSatisfies"
 import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
-import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { ChatAuditLog } from "@app/models/chatAuditLog.model"
 import {
   AuditLogActionType,

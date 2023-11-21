@@ -1,11 +1,4 @@
-import {
-  BelongsTo,
-  BelongsToMany,
-  Column,
-  DataType,
-  Model,
-  Table
-} from "sequelize-typescript"
+import { BelongsTo, BelongsToMany, Column, DataType, Model, Table } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Plan } from "@app/models/plan.model"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"

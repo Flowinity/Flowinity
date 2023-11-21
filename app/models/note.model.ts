@@ -1,20 +1,9 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  HasMany,
-  Model,
-  Table
-} from "sequelize-typescript"
+import { BelongsTo, Column, DataType, HasMany, Model, Table } from "sequelize-typescript"
 import { NoteVersion } from "@app/models/noteVersion.model"
 import { WorkspaceFolder } from "@app/models/workspaceFolder.model"
 import { Field, Int, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
-import {
-  NotePermissionsMetadata,
-  WorkspaceNote,
-  WorkspaceNoteMetadata
-} from "@app/classes/graphql/workspaces/note"
+import { NotePermissionsMetadata, WorkspaceNote, WorkspaceNoteMetadata } from "@app/classes/graphql/workspaces/note"
 
 export type VersionObject = {
   createdAt: Date

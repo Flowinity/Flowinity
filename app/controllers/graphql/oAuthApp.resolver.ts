@@ -22,7 +22,6 @@ import {
   CreateAppInput,
   CreateBotInput,
   MyAppInput,
-  OauthAppSecret,
   UpdateAppInput
 } from "@app/classes/graphql/developers/app"
 import RateLimit from "@app/lib/graphql/RateLimit"
@@ -35,21 +34,14 @@ import {
 import { Success } from "@app/classes/graphql/generic/success"
 import { User } from "@app/models/user.model"
 import { GraphQLError } from "graphql/error"
-import argon2 from "argon2"
 import utils from "@app/lib/utils"
 import { OauthService } from "@app/services/oauth.service"
 import Errors from "@app/lib/errors"
 import { OauthConsentApp } from "@app/classes/graphql/developers/oauthConsentApp"
 import {
-  DeregisterCommand,
-  RegisterCommand,
   RegisterCommands,
   RegisterPrefix
 } from "@app/classes/graphql/developers/prefix/register"
-import {
-  Command,
-  LookupPrefix
-} from "@app/classes/graphql/developers/prefix/prefix"
 import { OauthControllerV3 } from "@app/controllers/v3/oauth.controller"
 
 @Resolver(OauthApp)

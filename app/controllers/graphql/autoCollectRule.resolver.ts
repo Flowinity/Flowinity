@@ -1,5 +1,4 @@
 import { Arg, Ctx, Query, Resolver } from "type-graphql"
-import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import { Service } from "typedi"
 import { AutoCollectService } from "@app/services/autoCollect.service"
 import { CacheService } from "@app/services/cache.service"

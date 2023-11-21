@@ -65,17 +65,7 @@
 //@ts-nocheck
 import getCaretPosition from "textarea-caret";
 import { Dropdown, options } from "floating-vue";
-import {
-  computed,
-  defineComponent,
-  nextTick,
-  onMounted,
-  onUnmounted,
-  onUpdated,
-  PropType,
-  ref,
-  watch
-} from "vue";
+import { computed, defineComponent, nextTick, onMounted, onUnmounted, onUpdated, PropType, ref, watch } from "vue";
 import { useChatStore } from "@/store/chat.store";
 
 options.themes.mentionable = {

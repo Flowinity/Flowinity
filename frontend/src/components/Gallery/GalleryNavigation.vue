@@ -27,6 +27,7 @@
               $emit('refreshGallery');
             "
             :active="order === item.internalName"
+            :key="item.internalName"
           >
             {{ item.name }}
           </v-list-item>
@@ -42,6 +43,7 @@
                 $emit('refreshGallery');
               "
               :active="sort === item.internalName"
+              :key="item.internalName"
             >
               {{ item.name }}
             </v-list-item>
@@ -58,6 +60,7 @@
                 $emit('refreshGallery');
               "
               :active="filter.includes(item.internalName)"
+              :key="item.internalName"
             >
               {{ item.name }}
             </v-list-item>

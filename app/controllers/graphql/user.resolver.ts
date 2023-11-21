@@ -55,7 +55,6 @@ import { SessionInput } from "@app/classes/graphql/user/sessionsInput"
 import { SessionType } from "@app/classes/graphql/user/sessions"
 import { UserStoredStatus } from "@app/classes/graphql/user/status"
 import { Collection } from "@app/models/collection.model"
-import { Success } from "@app/classes/graphql/generic/success"
 import { defaultHomeWidgets } from "@app/classes/graphql/home/homeWidgets"
 
 @Resolver(User)
