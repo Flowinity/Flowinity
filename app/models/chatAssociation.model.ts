@@ -1,12 +1,4 @@
-import {
-  BelongsTo,
-  BelongsToMany,
-  Column,
-  DataType,
-  Model,
-  Table,
-  Unique
-} from "sequelize-typescript"
+import { BelongsTo, BelongsToMany, Column, DataType, Model, Table, Unique } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { Chat } from "@app/models/chat.model"

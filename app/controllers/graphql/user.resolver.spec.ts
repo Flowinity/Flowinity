@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, expect, test } from "@jest/globals"
+import { beforeAll, expect, test } from "@jest/globals"
 import "@app/lib/init-tests"
 import { gCall } from "@app/lib/test-utils/gCall"
 import { RegisterMutation } from "../../../frontend/src/graphql/auth/register.graphql"

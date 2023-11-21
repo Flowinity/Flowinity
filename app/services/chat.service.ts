@@ -23,10 +23,7 @@ import { GraphQLError } from "graphql/error"
 import { GqlError } from "@app/lib/gqlErrors"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
 import { ChatAuditLog } from "@app/models/chatAuditLog.model"
-import {
-  AuditLogActionType,
-  AuditLogCategory
-} from "@app/classes/graphql/chat/auditLog/categories"
+import { AuditLogActionType, AuditLogCategory } from "@app/classes/graphql/chat/auditLog/categories"
 import { Friend } from "@app/models/friend.model"
 import { EmbedInput } from "@app/classes/graphql/chat/message"
 import emojiData from "@app/lib/emoji.json"

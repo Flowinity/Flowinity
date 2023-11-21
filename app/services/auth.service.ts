@@ -9,11 +9,7 @@ import { CacheService } from "@app/services/cache.service"
 import { Login } from "@app/types/auth"
 import { Session } from "@app/models/session.model"
 import { GraphQLError } from "graphql/error"
-import {
-  AuthValidationRequirements,
-  AuthValidationResponse
-} from "@app/classes/graphql/auth/requirements"
-import { undefined } from "zod"
+import { AuthValidationRequirements, AuthValidationResponse } from "@app/classes/graphql/auth/requirements"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { LoginResponse } from "@app/classes/graphql/auth/login"
 import { GqlError } from "@app/lib/gqlErrors"

@@ -1,6 +1,5 @@
 import {
   ConnectedSocket,
-  EmitOnSuccess,
   MessageBody,
   OnConnect,
   OnMessage,

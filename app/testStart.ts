@@ -1,7 +1,7 @@
 import "tsconfig-paths/register"
 import "reflect-metadata"
 import path from "path"
-import { exec, execSync } from "child_process"
+import { execSync } from "child_process"
 import db from "@app/db"
 import cryptoRandomString from "crypto-random-string"
 

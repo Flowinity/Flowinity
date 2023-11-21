@@ -1,11 +1,5 @@
-import {
-  Field,
-  InputType,
-  Int,
-  ObjectType,
-  registerEnumType
-} from "type-graphql"
-import { IsNumber, Max, Min } from "class-validator"
+import { Field, InputType, Int, ObjectType, registerEnumType } from "type-graphql"
+import { IsNumber, Min } from "class-validator"
 
 export enum CollectionFilter {
   ALL = "all",

@@ -1,13 +1,13 @@
 import {
-  AllowNull,
-  BelongsTo,
-  BelongsToMany,
-  Column,
-  DataType,
-  HasMany,
-  HasOne,
-  Model,
-  Table
+    AllowNull,
+    BelongsTo,
+    BelongsToMany,
+    Column,
+    DataType,
+    HasMany,
+    HasOne,
+    Model,
+    Table
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { CollectionItem } from "@app/models/collectionItem.model"

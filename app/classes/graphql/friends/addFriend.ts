@@ -1,5 +1,4 @@
 import { Field, InputType, Int, registerEnumType } from "type-graphql"
-import { FriendStatus } from "@app/classes/graphql/user/friends"
 
 export enum FriendAction {
   SEND = "send",

@@ -1,4 +1,4 @@
-import { createUnionType, Field, Float, Int, ObjectType } from "type-graphql"
+import { Field, Float, Int, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { Badge } from "@app/models/badge.model"
 import { Friend } from "@app/models/friend.model"

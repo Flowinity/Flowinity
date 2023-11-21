@@ -1,11 +1,4 @@
-import {
-  BelongsTo,
-  BelongsToMany,
-  Column,
-  DataType,
-  Model,
-  Table
-} from "sequelize-typescript"
+import { BelongsTo, BelongsToMany, Column, DataType, Model, Table } from "sequelize-typescript"
 import { Field, Int, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { ChatAssociation } from "@app/models/chatAssociation.model"

@@ -26,7 +26,6 @@ import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import paginate from "jw-paginate"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
-import { ChatPermissions } from "@app/classes/graphql/chat/ranks/permissions"
 import { GraphQLError } from "graphql/error"
 
 export const PaginatedMessagesResponse = PagerResponse(Message)

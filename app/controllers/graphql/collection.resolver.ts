@@ -28,19 +28,16 @@ import {
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { GraphQLError } from "graphql/error"
 import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
-import { col } from "sequelize"
 import { UpdateCollectionInput } from "@app/classes/graphql/collections/updateCollection"
 import { GqlError } from "@app/lib/gqlErrors"
 import { CacheService } from "@app/services/cache.service"
 import { Success } from "@app/classes/graphql/generic/success"
-import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import {
   RemoveCollectionUserInput,
   UpdateCollectionUserPermissionsInput
 } from "@app/classes/graphql/collections/collectionUsers"
 import Errors from "@app/lib/errors"
-import { CollectionItem } from "@app/models/collectionItem.model"
 import { CreateCollectionInput } from "@app/classes/graphql/collections/createCollection"
 
 export const PaginatedCollectionsResponse = PagerResponse(Collection)

@@ -7,6 +7,7 @@ import "@app/lib/init-tests"
 // REQUIRED IMPORT TO COUNT CODE COVERAGE
 import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
 import { resetState } from "@app/lib/init-tests"
+
 let user = {
   id: 1,
   username: cryptoRandomString({ length: 10, type: "alphanumeric" }),

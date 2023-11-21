@@ -1,9 +1,7 @@
 import { Field, ObjectType } from "type-graphql"
-import { BelongsTo, Column, DataType, HasMany } from "sequelize-typescript"
+import { BelongsTo } from "sequelize-typescript"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { User } from "@app/models/user.model"
-import { Session } from "@app/models/session.model"
-import { OauthUser } from "@app/models/oauthUser.model"
 
 @ObjectType()
 export class OauthConsentApp {

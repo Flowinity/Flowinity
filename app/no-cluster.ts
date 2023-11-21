@@ -1,5 +1,3 @@
-import cluster from "cluster"
-import os from "os"
 import path from "path"
 import { DefaultTpuConfig } from "./classes/DefaultTpuConfig"
 import { execSync } from "child_process"

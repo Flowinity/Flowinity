@@ -1,7 +1,6 @@
-import { InputType, ObjectType, Field, Int } from "type-graphql"
+import { Field, InputType, Int, ObjectType } from "type-graphql"
 import { AlternatePassword } from "@app/classes/graphql/user/alternatePassword"
-import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
-import { LoginResponse, LoginUser } from "@app/classes/graphql/auth/login"
+import { LoginUser } from "@app/classes/graphql/auth/login"
 
 @InputType("AuthValidationCredentialsInput")
 @ObjectType()

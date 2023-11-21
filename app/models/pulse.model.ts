@@ -1,12 +1,4 @@
-import {
-  AllowNull,
-  BelongsTo,
-  Column,
-  DataType,
-  Default,
-  Model,
-  Table
-} from "sequelize-typescript"
+import { AllowNull, BelongsTo, Column, DataType, Default, Model, Table } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 
 @Table

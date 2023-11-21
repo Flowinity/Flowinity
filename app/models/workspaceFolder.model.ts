@@ -1,11 +1,4 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  HasMany,
-  Model,
-  Table
-} from "sequelize-typescript"
+import { BelongsTo, Column, DataType, HasMany, Model, Table } from "sequelize-typescript"
 import { Workspace } from "@app/models/workspace.model"
 import { Note } from "@app/models/note.model"
 import { Field, Int, ObjectType } from "type-graphql"

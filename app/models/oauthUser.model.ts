@@ -1,11 +1,4 @@
-import {
-  BelongsTo,
-  Column,
-  DataType,
-  HasMany,
-  Model,
-  Table
-} from "sequelize-typescript"
+import { BelongsTo, Column, DataType, HasMany, Model, Table } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Session } from "@app/models/session.model"
 import { Field, ObjectType } from "type-graphql"

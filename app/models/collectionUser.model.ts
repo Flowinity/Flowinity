@@ -1,13 +1,4 @@
-import {
-  AllowNull,
-  BelongsTo,
-  Column,
-  DataType,
-  Default,
-  Model,
-  Table,
-  Unique
-} from "sequelize-typescript"
+import { AllowNull, BelongsTo, Column, DataType, Default, Model, Table, Unique } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { Field, Int, ObjectType } from "type-graphql"

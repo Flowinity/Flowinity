@@ -1,6 +1,6 @@
 import { Field, InputType, Int } from "type-graphql"
-import { ArrayMaxSize, IsOptional, MaxLength, MinLength } from "class-validator"
-import { Embed, EmbedInput } from "@app/classes/graphql/chat/message"
+import { ArrayMaxSize, IsOptional, MaxLength } from "class-validator"
+import { EmbedInput } from "@app/classes/graphql/chat/message"
 
 @InputType()
 export class SendMessageInput {
