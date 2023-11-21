@@ -12,7 +12,13 @@
     />
     <Paginate v-model="page" :total-pages="null" class="mb-2 mt-n2" />
     <v-row v-if="!loading">
-      <v-col v-for="item in gallery.gallery" :item="item" cols="12" sm="6">
+      <v-col
+        v-for="item in gallery.gallery"
+        :key="item.id"
+        :item="item"
+        cols="12"
+        sm="6"
+      >
         <InlineGalleryItem
           :item="item"
           @clickItem="$emit('clickItem', $event)"

@@ -301,6 +301,7 @@
                   <ReadReceipt
                     :message="message"
                     v-for="readReceipt in message.readReceipts"
+                    :key="readReceipt.userId"
                     :read-receipt="readReceipt"
                     class="my-1"
                     :expanded="true"
