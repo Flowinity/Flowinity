@@ -22,7 +22,7 @@
     </template>
     <template v-else>
       <v-container>
-        <div v-for="prop of props">
+        <div v-for="prop of props" :key="prop.key">
           <template v-if="prop.type === 'number'">
             <v-text-field
               :label="prop.key"

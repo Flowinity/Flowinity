@@ -15,6 +15,7 @@
           v-for="tag in change.tags"
           :color="tags[tag]?.color"
           class="my-2 mr-2"
+          :key="tag"
         >
           {{ tag }}
         </v-chip>

@@ -281,6 +281,7 @@
                     v-for="readReceipt in message.readReceipts"
                     class="d-flex"
                     style="gap: 6px"
+                    :key="readReceipt.id"
                   >
                     <ReadReceipt
                       :message="message"

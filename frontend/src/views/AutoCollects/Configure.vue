@@ -20,7 +20,7 @@
                 </v-btn>
               </div>
             </template>
-            <template v-slot:text color="toolbar">
+            <template v-slot:text>
               <v-card-text>
                 <v-switch
                   v-model="rule.enabled"
@@ -34,7 +34,9 @@
                 />
                 <v-text-field
                   v-model="rule.name"
-                  :rules="[(v: any) => !!v || $t('autoCollects.configure.required')]"
+                  :rules="[
+                    (v: any) => !!v || $t('autoCollects.configure.required')
+                  ]"
                   :label="$t('generic.name')"
                 />
                 <v-card-subtitle class="grey--text ml-n4 mb-2">

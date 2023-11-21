@@ -3,12 +3,7 @@ import { AutoCollectRule } from "@/models/autoCollectRule";
 import { AlternatePassword } from "@/types/auth";
 import { Integration } from "@/models/integration";
 import { Component } from "@/types/userv3";
-import {
-  FriendStatus,
-  UserInsights,
-  UserStatus,
-  UserStoredStatus
-} from "@/gql/graphql";
+import { FriendStatus, UserInsights, UserStatus, UserStoredStatus } from "@/gql/graphql";
 
 export interface ThemeEngine {
   theme: {

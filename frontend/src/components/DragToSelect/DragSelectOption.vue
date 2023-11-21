@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, inject, ref, computed, watch, unref } from "vue";
+import { computed, inject, onMounted, ref, unref, watch } from "vue";
 import { forOptionActionKey, Option } from "./DragSelectCommon";
 
 const props = defineProps({

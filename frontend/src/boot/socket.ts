@@ -6,19 +6,19 @@ import { useUserStore } from "@/store/user.store";
 import { useExperimentsStore } from "@/store/experiments.store";
 import { useToast } from "vue-toastification";
 import {
-  AddRank,
-  BlockedUser,
-  Chat,
-  ChatAssociation,
-  ChatEmoji,
-  ChatRank,
-  Friend,
-  FriendNickname,
-  FriendStatus,
-  Message,
-  PartialUserFriend,
-  User,
-  UserStoredStatus
+    AddRank,
+    BlockedUser,
+    Chat,
+    ChatAssociation,
+    ChatEmoji,
+    ChatRank,
+    Friend,
+    FriendNickname,
+    FriendStatus,
+    Message,
+    PartialUserFriend,
+    User,
+    UserStoredStatus
 } from "@/gql/graphql";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
 

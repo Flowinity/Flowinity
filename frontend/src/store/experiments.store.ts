@@ -1,9 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
-import {
-  ExperimentsQuery,
-  SetExperimentMutation
-} from "@/graphql/core/experiments.graphql";
+import { ExperimentsQuery, SetExperimentMutation } from "@/graphql/core/experiments.graphql";
 
 export interface ExperimentsState {
   experiments: Record<string, string | number | boolean | object>;

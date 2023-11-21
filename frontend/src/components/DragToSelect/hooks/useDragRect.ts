@@ -1,4 +1,4 @@
-import { unref, computed, CSSProperties } from 'vue';
+import { computed, CSSProperties, unref } from 'vue';
 import { MaybeNullableRef, MaybeRef, Position, Rect } from '../typings/internal';
 import { clipNumber } from '../utils/clipNumber';
 import { toRect } from '../utils/toRect';

@@ -1,13 +1,7 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import {
-  Friend,
-  FriendStatus,
-  PartialUserBase,
-  PartialUserFriend,
-  User
-} from "@/gql/graphql";
+import { Friend, FriendStatus, PartialUserBase, PartialUserFriend, User } from "@/gql/graphql";
 import { useUserStore } from "@/store/user.store";
 
 export interface FriendsState {

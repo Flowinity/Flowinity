@@ -9,13 +9,7 @@ import i18n from "@/plugins/i18n";
 import functions from "@/plugins/functions";
 import { GetUserQuery } from "@/graphql/user/user.graphql";
 import { UpdateUserMutation } from "@/graphql/user/update.graphql";
-import {
-  BlockedUser,
-  PartialUserFriend,
-  UpdateUserInput,
-  User,
-  UserStoredStatus
-} from "@/gql/graphql";
+import { BlockedUser, PartialUserFriend, UpdateUserInput, User, UserStoredStatus } from "@/gql/graphql";
 import { ProfileQuery } from "@/graphql/user/profile.graphql";
 import { BlockUserMutation } from "@/graphql/user/blockUser.graphql";
 

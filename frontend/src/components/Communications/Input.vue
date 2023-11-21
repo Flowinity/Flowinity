@@ -212,7 +212,7 @@ import EmojiPicker from "@/components/Communications/Menus/Emoji.vue";
 import emoji from "@/components/Communications/Menus/Emoji.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
-import { LookupPrefix, Prefix } from "@/gql/graphql";
+import { Prefix } from "@/gql/graphql";
 import { LookupBotPrefix } from "@/graphql/developer/lookupPrefix.graphql";
 
 export default defineComponent({

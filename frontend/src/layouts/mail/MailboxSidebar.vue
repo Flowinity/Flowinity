@@ -9,6 +9,7 @@
       <v-list-item
         v-for="email in $mail.selected?.emails"
         :to="`/mail/${$mail.selectedMailbox}/${email.seq}`"
+        :key="email.seq"
       >
         <v-list-item-title>{{ email.subject }}</v-list-item-title>
         <v-list-item-subtitle>

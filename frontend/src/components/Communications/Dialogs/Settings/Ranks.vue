@@ -166,7 +166,6 @@
 import { defineComponent } from "vue";
 import {
   AvailableChatPermissionsDocument,
-  Chat,
   ChatPermission,
   ChatRank
 } from "@/gql/graphql";

@@ -3,12 +3,7 @@ import { defineStore } from "pinia";
 import { CollectionCache } from "@/types/collection";
 import { UserCollectionsQuery } from "@/graphql/collections/getUserCollections.graphql";
 import { CollectionQuery } from "@/graphql/collections/getCollection.graphql";
-import {
-  Collection,
-  CollectionInput,
-  Pager,
-  UserCollectionsInput
-} from "@/gql/graphql";
+import { Collection, CollectionInput, Pager, UserCollectionsInput } from "@/gql/graphql";
 
 export const useCollectionsStore = defineStore("collections", {
   state: () => ({

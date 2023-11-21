@@ -13,7 +13,7 @@ import { createApp } from "vue";
 // Plugins
 import { registerPlugins } from "@/plugins";
 import "./styles/main.scss";
-import Toast, { POSITION, useToast } from "vue-toastification";
+import Toast, { useToast } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import "./styles/tpu-editorjs.css";
 import "floating-vue/dist/style.css";
