@@ -1,9 +1,6 @@
 <template>
   <v-container v-if="!$workspaces.items.length">
-    <PromoNoContent
-      icon="mdi-folder-account-outline"
-      title="Workspaces"
-    ></PromoNoContent>
+    <PromoNoContent icon="mdi-folder-account-outline" title="Workspaces" />
     <v-row class="mt-2">
       <v-col cols="12" sm="4">
         <v-card class="text-center">

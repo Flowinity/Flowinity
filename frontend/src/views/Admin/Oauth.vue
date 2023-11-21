@@ -1,9 +1,6 @@
 <template>
   <component :is="$route.fullPath.startsWith('/admin') ? VContainer : 'div'">
-    <CreateAppAuthDialog
-      @refresh="getAppAuth"
-      v-model="create"
-    ></CreateAppAuthDialog>
+    <CreateAppAuthDialog @refresh="getAppAuth" v-model="create" />
     <v-card>
       <v-toolbar>
         <v-toolbar-title>My Applications</v-toolbar-title>
@@ -22,7 +19,7 @@
                 class="mr-3"
                 :edit="false"
                 :user="{ username: app.name, avatar: app.icon }"
-              ></UserAvatar>
+              />
             </template>
             <v-list-item-title>{{ app.name }}</v-list-item-title>
             <v-list-item-subtitle>
@@ -75,7 +72,7 @@ export default defineComponent({
   methods: {
     async getAppAuth() {
       const {
-        data: { oauthApps, availableChatPermissions }
+        data: { oauthApps }
       } = await this.$apollo.query({
         query: MyAppsQuery,
         fetchPolicy: "network-only"

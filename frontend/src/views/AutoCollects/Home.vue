@@ -16,7 +16,7 @@
         xl="3"
         cols="12"
       >
-        <CollectionCard :item="item" type="autoCollect"></CollectionCard>
+        <CollectionCard :item="item" type="autoCollect" />
       </v-col>
     </v-row>
     <PromoNoContent
@@ -24,7 +24,7 @@
       :description="$t('autoCollects.home.subtitle')"
       icon="mdi-tooltip-check"
       :title="$t('autoCollects.home.title')"
-    ></PromoNoContent>
+    />
     <small>
       {{
         $t("gallery.totalItems", {

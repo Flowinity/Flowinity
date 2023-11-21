@@ -4,12 +4,12 @@
     v-model="sharing"
     :collection="collection"
     @get-collection="getCollection"
-  ></Sharing>
+  />
   <CollectionSettings
     v-model="settings"
     :collection="collection"
     @refreshCollection="getCollection"
-  ></CollectionSettings>
+  />
   <UserBanner
     v-if="collection"
     :collection="collection"
@@ -93,7 +93,7 @@
       icon="mdi-close-circle"
       title="Collection not found"
       description="The collection you are looking for does not exist or you don't have permission to view it."
-    ></PromoNoContent>
+    />
   </v-container>
 </template>
 

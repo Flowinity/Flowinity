@@ -24,7 +24,7 @@
           </v-icon>
         </v-btn>
       </v-toolbar>
-      <GalleryPreview :item="item"></GalleryPreview>
+      <GalleryPreview :item="item" />
       <v-card-subtitle class="mt-3">
         {{ $t("generic.type") }}:
         {{

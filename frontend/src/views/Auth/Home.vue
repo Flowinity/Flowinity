@@ -1,5 +1,5 @@
 <template>
-  <ColubrinaTPU v-model="$app.dialogs.colubrina"></ColubrinaTPU>
+  <ColubrinaTPU v-model="$app.dialogs.colubrina"/>
   <div class="hero">
     <div :class="{ 'mx-5 mobile': $vuetify.display.mobile }" class="hero-body">
       <div class="title">
@@ -38,7 +38,7 @@
           icon="mdi-chevron-down"
           text="Learn More"
           @click="scrollDown()"
-        ></HoverChip>
+         />
       </div>
     </div>
   </div>

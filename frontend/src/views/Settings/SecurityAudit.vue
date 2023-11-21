@@ -15,7 +15,7 @@
           v-model="pager.currentPage"
           :total-pages="pager.totalPages"
           :total-visible="5"
-        ></Paginate>
+        />
       </div>
     </template>
   </v-data-table>

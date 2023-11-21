@@ -90,17 +90,14 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
 import { MessageType } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "MessageActions",
   computed: {
     MessageType() {
       return MessageType;
     }
   },
-  components: { ReadReceipt },
   props: ["message", "avoid", "merge"],
   data() {
     return {

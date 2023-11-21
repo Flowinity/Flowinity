@@ -712,7 +712,7 @@ export default defineComponent({
       if (e.ctrlKey && e.key === "ArrowUp" && e.shiftKey) {
         e.preventDefault();
         if (!this.editing) return this.editLastMessage();
-        // edit next messsge
+        // edit next message
         const message = this.$chat.selectedChat?.messages
           .slice()
           .find(
@@ -732,7 +732,7 @@ export default defineComponent({
       if (e.ctrlKey && e.key === "ArrowDown" && e.shiftKey) {
         e.preventDefault();
         if (!this.editing) return;
-        // edit last messsge
+        // edit last message
         const message = this.$chat.selectedChat?.messages
           .slice()
           .reverse()
@@ -752,7 +752,7 @@ export default defineComponent({
       }
       if (e.ctrlKey && e.key === "ArrowUp" && !e.shiftKey) {
         e.preventDefault();
-        // edit next messsge
+        // edit next message
         const message = this.$chat.selectedChat?.messages
           .slice()
           .find((message) => (this.replyId ? message.id < this.replyId : true));
@@ -766,7 +766,7 @@ export default defineComponent({
       if (e.ctrlKey && e.key === "ArrowDown" && !e.shiftKey) {
         e.preventDefault();
         if (!this.replyId) return;
-        // edit last messsge
+        // edit last message
         const message = this.$chat.selectedChat?.messages
           .slice()
           .reverse()

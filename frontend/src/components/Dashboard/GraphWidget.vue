@@ -26,7 +26,7 @@
               :height="height"
               name="Uploads"
               type="line"
-            ></Chart>
+            />
           </div>
         </v-window-item>
         <v-window-item value="messages">
@@ -48,7 +48,7 @@
               :height="height"
               name="Messages"
               type="line"
-            ></Chart>
+            />
           </div>
         </v-window-item>
         <v-window-item value="hours">
@@ -70,7 +70,7 @@
               :height="height"
               name="Hours"
               type="line"
-            ></Chart>
+            />
           </div>
         </v-window-item>
       </v-window>

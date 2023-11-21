@@ -131,10 +131,6 @@ const onChange = (selectedOptions: Set<unknown>) => {
   }
 };
 
-const isDisableClick = () => {
-  return !!dragged.value;
-};
-
 const { options, consumePointerDownedOnOption } = useOptions(
   currentSelectedOptions
 );
@@ -142,11 +138,7 @@ const { options, consumePointerDownedOnOption } = useOptions(
 const contentRef = ref<HTMLElement>();
 const containerRef = ref<HTMLElement>();
 
-const {
-  areaStyle: areaRectStyle,
-  dragged,
-  isDragging
-} = useDragToSelect({
+const { areaStyle: areaRectStyle, isDragging } = useDragToSelect({
   contentRef,
   containerRef,
   options,
@@ -167,11 +159,6 @@ const dragSelectClass = computed(() => ({
   "drag-select--disabled": props.disabled
 }));
 
-const onContentRefClick = () => {
-  if (isDisableClick()) return;
-  onChange(new Set());
-};
-
 defineExpose({
   isDragging
 });
@@ -189,5 +176,3 @@ defineExpose({
     </div>
   </div>
 </template>
-
-<style></style>

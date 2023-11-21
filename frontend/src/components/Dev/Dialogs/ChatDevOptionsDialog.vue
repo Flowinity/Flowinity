@@ -15,6 +15,7 @@
         v-for="rank in $chat.selectedChat.users.find(
           (assoc) => assoc.userId === $chat.selectedChat.association.userId
         )?.ranksMap"
+        :key="rank"
       >
         <p>
           {{

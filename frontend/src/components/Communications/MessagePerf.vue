@@ -301,6 +301,7 @@
                   <ReadReceipt
                     :message="message"
                     v-for="readReceipt in message.readReceipts"
+                    :key="readReceipt.userId"
                     :read-receipt="readReceipt"
                     class="my-1"
                     :expanded="true"
@@ -346,7 +347,6 @@ import Embed from "@/components/Communications/Embed.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import ReadReceipt from "@/components/Communications/ReadReceipt.vue";
 import { Message, MessageType } from "@/gql/graphql";
-import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 import ReplyLine from "@/components/Communications/ReplyLine.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 
@@ -354,7 +354,6 @@ export default defineComponent({
   components: {
     Overline,
     ReplyLine,
-    MessageSkeleton,
     ReadReceipt,
     UserAvatar,
     Embed,

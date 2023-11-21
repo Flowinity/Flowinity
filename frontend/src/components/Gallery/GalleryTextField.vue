@@ -69,13 +69,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
 import { GallerySearchMode } from "@/gql/graphql";
-import Mentionable from "@/components/Core/Mentionable.vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "GalleryTextField",
-  components: { Mentionable },
   props: {
     modelValue: {
       type: String,

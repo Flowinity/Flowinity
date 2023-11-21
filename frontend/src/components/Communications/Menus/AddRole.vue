@@ -61,12 +61,9 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { Chat, ChatAssociation, ChatRank } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "AddRole",
-  components: { UserAvatar },
   props: {
     ranks: {
       type: Object as () => ChatRank[],

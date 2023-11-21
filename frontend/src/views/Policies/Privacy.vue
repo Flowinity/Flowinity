@@ -1,5 +1,5 @@
 <template>
-  <WorkspaceItem :id="$app.site.privacyNoteId"></WorkspaceItem>
+  <WorkspaceItem :id="$app.site.privacyNoteId" />
 </template>
 
 <script lang="ts">

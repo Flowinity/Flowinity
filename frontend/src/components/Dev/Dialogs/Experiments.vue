@@ -5,7 +5,7 @@
       <v-card>
         <v-card-title>Modify experiment values</v-card-title>
         <v-card-text>
-          <ExperimentsManager></ExperimentsManager>
+          <ExperimentsManager />
         </v-card-text>
       </v-card>
     </v-container>

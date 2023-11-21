@@ -53,7 +53,7 @@
               item-title="name"
               item-value="id"
               label="Badges"
-            ></v-autocomplete>
+            />
           </v-col>
           <v-col>
             <v-autocomplete
@@ -63,7 +63,7 @@
               item-value="id"
               label="Users"
               multiple
-            ></v-autocomplete>
+            />
           </v-col>
         </v-row>
         <v-btn @click="addBadges">Add badges</v-btn>

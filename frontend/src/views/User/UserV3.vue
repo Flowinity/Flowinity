@@ -7,12 +7,12 @@
       :user="user"
       @trigger="layout = $user.user.profileLayout"
       @update="updateProp"
-    ></UserV3Settings>
+    />
     <UserBanner
       :height="username ? 250 : undefined"
       :user="user"
       @refreshUser="getUser(false)"
-    ></UserBanner>
+    />
     <v-container class="mt-2" style="max-width: 100%">
       <v-row>
         <v-col cols="12" style="flex: 1 1 auto; width: 200px">
@@ -219,7 +219,7 @@
                     ? (component.props[$event.prop] = $event.value)
                     : () => {}
                 "
-              ></UserV3ComponentHandler>
+              />
             </div>
           </VueDraggable>
         </v-col>
@@ -251,7 +251,7 @@
                 :color="primaryColorResult.primary"
                 :height="5"
                 :model-value="(user.xp / calculatePercentage(user.xp)) * 100"
-              ></v-progress-linear>
+              />
             </div>
           </StatsCard>
           <InsightsPromoCard
@@ -264,7 +264,7 @@
             :gold="gold"
             :start-color="user.plan.id === 6 ? '#FBC02D' : '#6A1B9A'"
             :username="user.username"
-          ></InsightsPromoCard>
+          />
           <StatsCard
             :gold="gold"
             :primary-color="primaryColorResult.primary"

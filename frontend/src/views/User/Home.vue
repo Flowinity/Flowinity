@@ -77,7 +77,7 @@
       description="Try searching for something else."
       icon="mdi-magnify"
       title="No users found"
-    ></PromoNoContent>
+    />
   </v-container>
 </template>
 
