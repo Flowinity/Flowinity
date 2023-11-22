@@ -192,7 +192,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "MigrateWizard",
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {

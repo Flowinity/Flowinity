@@ -51,7 +51,6 @@ import { GetInvitesForChatQuery } from "@/graphql/chats/invite.graphql";
 export default defineComponent({
   name: "ChatSettingsInvites",
   components: { UserAvatar, Overline },
-  props: ["active"],
   data() {
     return {
       headers: [
@@ -110,12 +109,6 @@ export default defineComponent({
   },
   mounted() {
     this.getInvites();
-  },
-  watch: {
-    active(val) {
-      if (!val) return;
-      this.getInvites();
-    }
   }
 });
 </script>

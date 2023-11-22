@@ -62,7 +62,6 @@ import { defineComponent } from "vue";
 import { Upload } from "@/models/upload";
 
 export default defineComponent({
-  name: "GalleryPreview",
   props: {
     item: {
       type: Object as () => Upload,

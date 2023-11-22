@@ -5,9 +5,13 @@
         <v-toolbar-title>Services</v-toolbar-title>
       </v-toolbar>
       <v-expansion-panels>
-        <v-expansion-panel v-for="service in services" :title="service.name">
+        <v-expansion-panel
+          v-for="service in services"
+          :key="service.functions"
+          :title="service.name"
+        >
           <template v-slot:text>
-            <v-card v-for="fun in service.functions">
+            <v-card v-for="fun in service.functions" :key="fun.params">
               {{ fun.name }}:
               {{
                 fun.params
@@ -27,7 +31,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Services",
   data() {
     return {
       services: [] as { name: string; functions: any[] }[]

@@ -2,8 +2,8 @@
   <overline position="center">
     {{ $t("chats.settings.audit.name") }}
   </overline>
-  <div>
-    <v-list v-for="entry in log.items" v-if="log" :key="entry.id">
+  <div v-if="log?.items.length">
+    <v-list v-for="entry in log.items" :key="entry.id">
       <v-list-item>
         <template v-slot:prepend>
           <div class="position-relative mr-2">
@@ -56,7 +56,6 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "ChatSettingsAudit",
   components: { Paginate, Overline },
-  props: ["active"],
   data() {
     return {
       log: null as PaginatedChatAuditLogResponse | null,
@@ -133,12 +132,6 @@ export default defineComponent({
   },
   mounted() {
     this.getAudit();
-  },
-  watch: {
-    active(val) {
-      if (!val) return;
-      this.getAudit();
-    }
   }
 });
 </script>

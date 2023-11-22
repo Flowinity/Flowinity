@@ -80,7 +80,6 @@ import { defineComponent } from "vue";
 import { CollectionCache } from "@/types/collection";
 
 export default defineComponent({
-  name: "CollectionCard",
   props: {
     type: {
       type: String as () => "collection" | "autoCollect",

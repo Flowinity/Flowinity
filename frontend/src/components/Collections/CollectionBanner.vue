@@ -66,7 +66,6 @@ import { defineComponent } from "vue";
 import { CollectionCache } from "@/types/collection";
 
 export default defineComponent({
-  name: "CollectionBanner",
   props: {
     collection: {
       type: Object as () => CollectionCache,
