@@ -8,7 +8,10 @@
         })
       "
       :model-value="value"
-      :label="<string>persistentKey + (persistentKey.includes('flowinity') ? ' (deprecated)' : '')"
+      :label="
+        persistentKey +
+        (persistentKey.includes('flowinity') ? ' (deprecated)' : '')
+      "
       v-if="typeof value === 'string' || typeof value === 'number'"
       :type="
         ['password', 'token', 'secret', 'key'].some((s) =>
@@ -40,18 +43,18 @@
       "
     />
     <div
-      v-for="(value2, name2, i) in value"
+      v-for="(value2, key2, i) in value"
+      :key="key2"
       v-else-if="typeof value === 'object' && !Array.isArray(value)"
     >
       <v-card-text style="padding: 0" v-if="i === 0">{{ name }}:</v-card-text>
       <ConfigObject
         :style="deepStyle"
         :value="value2"
-        :name="name2"
-        :config="value2"
+        :name="key2"
         :deep="deep + 1"
         @update:object="$emit('update:object', $event)"
-        :persistentKey="persistentKey + '.' + name2"
+        :persistentKey="persistentKey + '.' + key2"
       />
     </div>
   </div>
@@ -61,7 +64,12 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: ["config", "name", "value", "deep", "persistentKey"],
+  props: {
+    name: { type: [String, undefined] },
+    value: { type: Object },
+    deep: { type: Number },
+    persistentKey: { type: String }
+  },
   computed: {
     deepStyle() {
       return {
