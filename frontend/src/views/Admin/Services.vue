@@ -7,7 +7,7 @@
       <v-expansion-panels>
         <v-expansion-panel
           v-for="service in services"
-          :key="service.functions"
+          :key="service.name"
           :title="service.name"
         >
           <template v-slot:text>

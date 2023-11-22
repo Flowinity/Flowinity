@@ -37,7 +37,7 @@
               :value="value"
               :fullConfig="config"
               :persistentKey="key.toString()"
-              :name="key"
+              :name="key.toString()"
               :deep="0"
               @update:object="update"
             />
