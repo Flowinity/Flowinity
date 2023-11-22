@@ -38,6 +38,7 @@
         </v-menu>
         <v-tab
           v-for="rank in $chat.editingChat.ranks"
+          :key="rank.id"
           :value="rank.id"
           @contextmenu.prevent="
             contextY = $event.y;
@@ -76,7 +77,11 @@
       </v-btn>
     </v-tabs>
     <v-window v-model="selected" class="flex-grow-1" :touch="false">
-      <v-window-item v-for="rank in $chat.editingChat.ranks" :value="rank.id">
+      <v-window-item
+        v-for="rank in $chat.editingChat.ranks"
+        :key="rank.id"
+        :value="rank.id"
+      >
         <v-container
           class="justify-center text-center"
           :class="{ 'd-flex': !$vuetify.display.mobile }"

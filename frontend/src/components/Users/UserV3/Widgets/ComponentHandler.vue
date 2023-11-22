@@ -130,7 +130,7 @@ import MutualFriends from "@/components/Users/UserV3/Widgets/MutualFriends.vue";
 import CoreStatistics from "@/components/Users/UserV3/Widgets/CoreStatistics.vue";
 import LastFM from "@/components/Users/UserV3/Widgets/LastFM.vue";
 import MyAnimeList from "@/components/Users/UserV3/Widgets/MyAnimeList.vue";
-import VErrorBoundary from "@/components/Core/ErrorBoundary.vue";
+// import VErrorBoundary from "@/components/Core/ErrorBoundary.vue";
 import Crash from "@/components/Core/CrashAlt.vue";
 import { Component } from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
@@ -147,8 +147,8 @@ export default defineComponent({
     CoreStatistics,
     MutualFriends,
     ProfileInfo,
-    MutualCollections,
-    VErrorBoundary
+    MutualCollections
+    // VErrorBoundary
   },
   props: {
     component: {

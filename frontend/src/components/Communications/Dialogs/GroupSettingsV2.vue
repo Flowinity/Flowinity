@@ -138,24 +138,12 @@
         style="width: 100%"
         :style="{ padding: $vuetify.display.mobile ? '10px' : undefined }"
       >
-        <div v-show="tab === 'home'">
-          <ChatSettingsHome />
-        </div>
-        <div v-show="tab === 'ranks'">
-          <ChatSettingsRanks />
-        </div>
-        <div v-show="tab === 'users'">
-          <ChatSettingsUsers />
-        </div>
-        <div v-show="tab === 'invites'">
-          <ChatSettingsInvites :active="tab === 'invites'" />
-        </div>
-        <div v-show="tab === 'emoji'">
-          <ChatSettingsEmoji />
-        </div>
-        <div v-show="tab === 'audit'">
-          <ChatSettingsAudit :active="tab === 'audit'" />
-        </div>
+        <ChatSettingsHome v-if="tab === 'home'" />
+        <ChatSettingsRanks v-else-if="tab === 'ranks'" />
+        <ChatSettingsUsers v-else-if="tab === 'users'" />
+        <ChatSettingsInvites v-else-if="tab === 'invites'" />
+        <ChatSettingsEmoji v-else-if="tab === 'emoji'" />
+        <ChatSettingsAudit v-else-if="tab === 'audit'" />
       </div>
     </div>
   </CoreDialog>

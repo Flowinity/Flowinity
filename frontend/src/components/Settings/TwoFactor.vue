@@ -116,7 +116,6 @@ import { defineComponent } from "vue";
 import QrcodeVue from "qrcode.vue";
 
 export default defineComponent({
-  name: "TwoFactor",
   components: {
     QrcodeVue
   },

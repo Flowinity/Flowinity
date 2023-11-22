@@ -53,7 +53,6 @@ import DangerZoneInput from "@/components/Core/DangerZoneInput.vue";
 import { TransferOwnershipMutation } from "@/graphql/chats/transferOwnership.graphql";
 
 export default defineComponent({
-  name: "TransferOwnership",
   components: { DangerZoneInput, UserAvatar, CoreDialog },
   props: {
     modelValue: {

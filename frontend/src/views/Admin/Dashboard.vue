@@ -31,12 +31,12 @@
             <v-icon class="mr-2">mdi-content-save</v-icon>
             Save Config
           </v-btn>
-          <div v-for="(value, key, i) in config">
+          <div v-for="(value, key, i) in config" :key="key">
             <v-card-text style="padding: 0" v-if="i === 0">root:</v-card-text>
             <ConfigObject
               :value="value"
               :fullConfig="config"
-              :persistentKey="key"
+              :persistentKey="key.toString()"
               :name="key"
               :deep="0"
               @update:object="update"
