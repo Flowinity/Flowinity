@@ -23,10 +23,14 @@ import { GraphQLError } from "graphql/error"
 import { GqlError } from "@app/lib/gqlErrors"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
 import { ChatAuditLog } from "@app/models/chatAuditLog.model"
-import { AuditLogActionType, AuditLogCategory } from "@app/classes/graphql/chat/auditLog/categories"
+import {
+  AuditLogActionType,
+  AuditLogCategory
+} from "@app/classes/graphql/chat/auditLog/categories"
 import { Friend } from "@app/models/friend.model"
 import { EmbedInput } from "@app/classes/graphql/chat/message"
 import emojiData from "@app/lib/emoji.json"
+import { pubSub } from "@app/lib/graphql/pubsub"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -1315,23 +1319,31 @@ export class ChatService {
             .emit("chatCreated", chatWithUsers)
         }
         const mention = message.content.includes(`<@${association.tpuUser.id}>`)
+        const data = {
+          message: {
+            ...message.toJSON(),
+            type: message.type.toUpperCase()
+          },
+          chat: {
+            name: chat.name,
+            id: chat.id,
+            type: chat.type,
+            recipient: await this.getRecipient(chat, association.user.id)
+          },
+          associationId: association.id,
+          mention
+        } as MessageSubscription
+        await pubSub.publish(`MESSAGES:${association.tpuUser.id}`, {
+          ...data,
+          message: {
+            ...data.message,
+            type: message.type
+          }
+        })
         socket
           .of(SocketNamespaces.CHAT)
           .to(association.tpuUser.id)
-          .emit("message", {
-            message: {
-              ...message.toJSON(),
-              type: message.type.toUpperCase()
-            },
-            chat: {
-              name: chat.name,
-              id: chat.id,
-              type: chat.type,
-              recipient: await this.getRecipient(chat, association.user.id)
-            },
-            associationId: association.id,
-            mention
-          } as MessageSubscription)
+          .emit("message", data)
 
         if (
           association.tpuUser.id === message.userId ||

@@ -41,7 +41,7 @@ export class ApiSchema {
         routingControllersToSpec(
           storage,
           {
-            routePrefix: "/api/v4"
+            routePrefix: "/api/v3"
           },
           {
             components: {

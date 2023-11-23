@@ -83,12 +83,22 @@
       </VDropdown>
     </div>
     <div class="flex flex-col gap-4 mt-4">
-      <div
-        v-for="collection in filteredCollections"
-        :key="collection.id"
-        @click.right.prevent="collectionCtx?.showMenu($event, collection)"
+      <side-bar-item
+        to="/collections/manage"
+        class="flex h-14 items-center w-full"
       >
-        <SideBarItem
+        <template #icon>
+          <span style="width: 40px">
+            <ri-settings5-line class="w-7 ml-2" />
+          </span>
+        </template>
+        <template #title>
+          {{ $t("sidebar.collections.invited") }}
+        </template>
+        <template #subtitle>collections</template>
+      </side-bar-item>
+      <div v-for="collection in filteredCollections" :key="collection.id">
+        <side-bar-item
           class="flex h-14 items-center w-full"
           :to="`/collections/${collection.id}`"
         >
@@ -105,7 +115,7 @@
           <template #subtitle>
             {{ collection.itemCount?.toLocaleString() || 0 }} items
           </template>
-        </SideBarItem>
+        </side-bar-item>
       </div>
     </div>
   </div>
@@ -127,6 +137,7 @@ import Card from "@/components/Framework/Card/Card.vue";
 import { computed, ref, watch } from "vue";
 import { useCollectionsStore } from "@/stores/collections.store";
 import CreateCollectionDialog from "@/components/Collections/CreateCollectionDialog.vue";
+import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
 
 const appStore = useAppStore();
 const collectionsStore = useCollectionsStore();

@@ -1,4 +1,10 @@
-import { Field, InputType, Int, ObjectType, registerEnumType } from "type-graphql"
+import {
+  Field,
+  InputType,
+  Int,
+  ObjectType,
+  registerEnumType
+} from "type-graphql"
 import { IsNumber, Min } from "class-validator"
 
 export enum CollectionFilter {
@@ -47,6 +53,10 @@ export class UserCollectionsInput {
     defaultValue: 1
   })
   page: number
+  @Field(() => Boolean, {
+    defaultValue: false
+  })
+  onlyInvited: boolean
 }
 
 @InputType()

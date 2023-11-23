@@ -7,10 +7,13 @@ import { createContext } from "dataloader-sequelize"
 export default async function generateContext(ctx: any): Promise<Context> {
   let token
   let session
+
   token =
     ctx?.request?.headers?.get("Authorization") ||
+    ctx?.connectionParams?.Authorization ||
     ctx?.connectionParams?.token ||
     ""
+
   if (global.config?.finishedSetup) {
     const userResolver = Container.get(UserResolver)
     session = await userResolver.findByToken(token)
@@ -33,12 +36,12 @@ export default async function generateContext(ctx: any): Promise<Context> {
       ? session?.user?.administrator
         ? AccessLevel.ADMIN
         : session?.user?.moderator
-        ? AccessLevel.MODERATOR
-        : AccessLevel.USER
+          ? AccessLevel.MODERATOR
+          : AccessLevel.USER
       : AccessLevel.NO_ACCESS,
     token,
     dataloader: global.config?.finishedSetup ? createContext(db) : null,
-    ip: ctx.req.ip,
+    ip: ctx.req?.ip || "0.0.0.0",
     meta: {},
     request: ctx.request,
     req: ctx.req,

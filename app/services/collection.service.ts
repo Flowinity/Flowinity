@@ -82,43 +82,51 @@ export class CollectionService {
     return collection
   }
 
-  async getCollections(userId: number) {
-    const collections = await Collection.findAll({
-      where: {
-        userId
-      },
-      include: [
-        {
-          model: User,
-          as: "user",
-          attributes: partialUserBase
+  async getCollections(
+    userId: number,
+    invited: boolean = false
+  ): Promise<Collection[]> {
+    let collections: Collection[] = []
+
+    if (!invited) {
+      collections = await Collection.findAll({
+        where: {
+          userId
         },
-        {
-          model: CollectionUser,
-          as: "users",
-          include: [
-            {
-              model: User,
-              as: "user",
-              attributes: partialUserBase
-            }
-          ]
-        },
-        {
-          model: CollectionItem,
-          as: "preview",
-          include: [
-            {
-              model: Upload,
-              as: "attachment",
-              where: {
-                type: "image"
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: partialUserBase
+          },
+          {
+            model: CollectionUser,
+            as: "users",
+            include: [
+              {
+                model: User,
+                as: "user",
+                attributes: partialUserBase
               }
-            }
-          ]
-        }
-      ]
-    })
+            ]
+          },
+          {
+            model: CollectionItem,
+            as: "preview",
+            include: [
+              {
+                model: Upload,
+                as: "attachment",
+                where: {
+                  type: "image"
+                }
+              }
+            ]
+          }
+        ]
+      })
+    }
+
     let collectionShared = await Collection.findAll({
       include: [
         {
@@ -142,7 +150,8 @@ export class CollectionService {
           as: "recipient",
           required: true,
           where: {
-            recipientId: userId
+            recipientId: userId,
+            accepted: !invited
           }
         },
         {
@@ -648,12 +657,12 @@ export class CollectionService {
       }
     })
 
+    if (!collection) throw Errors.COLLECTION_NOT_FOUND
+
     this.emitToRecipients(id, "collectionUpdate", {
       id,
       [key]: banner
     })
-
-    if (!collection) throw Errors.COLLECTION_NOT_FOUND
 
     await collection.update({
       [key]: banner

@@ -339,5 +339,6 @@ export const CoreStateQuery = gql`
       createdAt
       updatedAt
     }
+    collectionInvitesCount
   }
 `;

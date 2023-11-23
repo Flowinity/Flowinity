@@ -47,4 +47,7 @@ class SocketService {
   }
 }
 
+/**
+ * @deprecated Use GraphQL subscriptions instead if available.
+ */
 export const useSocket = new SocketService();

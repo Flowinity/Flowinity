@@ -21,6 +21,7 @@ import VueSimpleContextMenu from "vue-simple-context-menu";
 import SidebarCollections from "@/components/Sidebar/SidebarCollections.vue";
 import SidebarComms from "@/components/Sidebar/SidebarComms.vue";
 import SidebarMail from "@/components/Sidebar/SidebarMail.vue";
+import SidebarDebug from "@/components/Sidebar/SidebarDebug.vue";
 
 const appStore = useAppStore();
 const chatStore = useChatStore();
@@ -76,6 +77,7 @@ const context = ref(0);
           <SidebarCollections
             v-show="appStore.currentRail?.id === RailMode.GALLERY"
           />
+          <SidebarDebug v-if="appStore.currentRail?.id === RailMode.DEBUG" />
         </div>
       </div>
     </Transition>

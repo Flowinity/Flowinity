@@ -39,6 +39,7 @@ import {
 } from "@app/classes/graphql/collections/collectionUsers"
 import Errors from "@app/lib/errors"
 import { CreateCollectionInput } from "@app/classes/graphql/collections/createCollection"
+import paginate from "jw-paginate"
 
 export const PaginatedCollectionsResponse = PagerResponse(Collection)
 export type PaginatedCollectionsResponse = InstanceType<
@@ -64,6 +65,16 @@ export class CollectionResolver {
     @Arg("input", { nullable: true }) input?: UserCollectionsInput
   ): Promise<PaginatedCollectionsResponse | null> {
     if (!ctx.user) return null
+    if (input?.onlyInvited) {
+      const collections = await this.collectionService.getCollections(
+        ctx.user.id,
+        true
+      )
+      return {
+        items: collections,
+        pager: paginate(collections.length, 1, 50)
+      }
+    }
     return (await this.collectionService.getCollectionsFilter(
       ctx.user!!.id,
       input?.filter || [CollectionFilter.ALL],
@@ -371,5 +382,23 @@ export class CollectionUserResolver {
       input.userId
     )
     return { success: true }
+  }
+
+  @Authorization({
+    scopes: "collections.view",
+    userOptional: true
+  })
+  @Query(() => Int, {
+    description:
+      "Return the number of pending invitations for collections for the current user"
+  })
+  async collectionInvitesCount(@Ctx() ctx: Context) {
+    if (!ctx.user) return 0
+    return await CollectionUser.count({
+      where: {
+        recipientId: ctx.user.id,
+        accepted: false
+      }
+    })
   }
 }

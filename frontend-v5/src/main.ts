@@ -23,6 +23,7 @@ import "floating-vue/dist/style.css";
 const app = createApp(App);
 //@ts-ignore
 import VueSimpleContextMenu from "vue-simple-context-menu";
+import { setupSockets } from "@/boot/sockets";
 
 app.component("vue-simple-context-menu", VueSimpleContextMenu);
 
@@ -55,12 +56,11 @@ app.use(Toast, {
 });
 
 // Register boot plugins
-apollo(app);
 registerPlugins(app);
+apollo(app);
 globals(app);
 events();
-socket(app).then(() => {});
-
+setupSockets();
 app.use(VueApolloComponents);
 
 app.mount("#flowinity-app");

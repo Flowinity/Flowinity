@@ -1,11 +1,11 @@
 import express, { NextFunction } from "express"
 import {
-    BadRequestError,
-    ExpressErrorMiddlewareInterface,
-    HttpError,
-    Middleware,
-    useContainer,
-    useExpressServer
+  BadRequestError,
+  ExpressErrorMiddlewareInterface,
+  HttpError,
+  Middleware,
+  useContainer,
+  useExpressServer
 } from "routing-controllers"
 import cookieParser from "cookie-parser"
 import cors from "cors"
@@ -69,6 +69,7 @@ import generateContext from "@app/classes/graphql/middleware/generateContext"
 import { MulterError } from "multer"
 import { ZodError } from "zod"
 import { generateSchema } from "@app/lib/generateSchema"
+import { WebSocketServer } from "ws"
 
 @Service()
 @Middleware({ type: "after" })
@@ -278,7 +279,7 @@ export class Application {
       res.json(wellKnownOidc())
     })
     this.app.use("/api/docs", async (req, res): Promise<void> => {
-      res.redirect("/api/v4/docs")
+      res.redirect("/api/v3/docs")
     })
     this.app.use(
       "/api/v2/docs",
@@ -288,7 +289,7 @@ export class Application {
 
     if (config.finishedSetup) {
       const spec = ApiSchema.generateSchema()
-      this.app.use("/api/v4/docs", swaggerUi.serve, swaggerUi.setup(spec))
+      this.app.use("/api/v3/docs", swaggerUi.serve, swaggerUi.setup(spec))
     }
 
     useExpressServer(this.app, {
@@ -326,14 +327,18 @@ export class Application {
           },
           // Collects and send usage reporting based on executed operations
           usage: {
-            clientInfo(context: Context) {
+            clientInfo(context: any) {
               // Some versions of TPUvNEXT used the clientName/clientVersion headers.
-              const name =
-                context.request.headers.get("x-tpu-client") ||
-                context.request.headers.get("clientName")
-              const version =
-                context.request.headers.get("x-tpu-client-version") ||
-                context.request.headers.get("clientVersion")
+              const name = context?.request?.headers
+                ? context.request.headers.get("x-tpu-client") ||
+                  context.request.headers.get("clientName")
+                : context.connectionParams["x-tpu-client"] ||
+                  context.connectionParams["clientName"]
+              const version = context?.request?.headers
+                ? context.request.headers.get("x-tpu-client-version") ||
+                  context.request.headers.get("clientVersion")
+                : context.connectionParams["x-tpu-client-version"] ||
+                  context.connectionParams["clientVersion"]
 
               if (name && version) {
                 return { name, version }
@@ -357,6 +362,7 @@ export class Application {
       graphiql: {
         subscriptionsProtocol: "WS"
       },
+      landingPage: false,
       fetchAPI: createFetch({
         formDataLimits: {
           // Maximum allowed file size (in bytes)
@@ -410,7 +416,7 @@ export class Application {
         return await generateContext(ctx)
       }
     })
-    this.app.use(["/api/v4/graphql", "/graphql"], this.yogaApp)
+
     this.app.use(express.static(path.join(global.appRoot, "../frontend_build")))
     this.app.get("*", function (req, res, next): void {
       if (req.url.startsWith("/api/")) return next()

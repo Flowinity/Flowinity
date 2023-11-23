@@ -1,11 +1,13 @@
 import {
   Arg,
+  Args,
   Ctx,
   FieldResolver,
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { Service } from "typedi"
 import { Message } from "@app/models/message.model"
@@ -16,6 +18,7 @@ import { Context } from "@app/types/graphql/context"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import {
   InfiniteMessagesInput,
+  MessageType,
   PagedMessagesInput,
   ScrollPosition
 } from "@app/classes/graphql/chat/message"
@@ -27,6 +30,7 @@ import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import paginate from "jw-paginate"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
 import { GraphQLError } from "graphql/error"
+import { MessageSubscription } from "@app/classes/graphql/chat/messageSubscription"
 
 export const PaginatedMessagesResponse = PagerResponse(Message)
 export type PaginatedMessagesResponse = InstanceType<
@@ -195,5 +199,35 @@ export class MessageResolver {
         id: matches?.map((match) => match.split(":")[2]) || []
       }
     })
+  }
+
+  @Authorization({
+    scopes: "chats.view"
+  })
+  @Subscription({
+    topics: ({ context }) => {
+      return `MESSAGES:${context.user!!.id}`
+    }
+  })
+  newMessage(
+    @Root() payload: MessageSubscription,
+    @Ctx() ctx: Context
+  ): MessageSubscription {
+    return payload
+  }
+
+  @Authorization({
+    scopes: "chats.view"
+  })
+  @Subscription({
+    topics: ({ context }) => {
+      return `READ_RECEIPTS:${context.user!!.id}`
+    }
+  })
+  readReceipt(
+    @Root() payload: MessageSubscription,
+    @Ctx() ctx: Context
+  ): MessageSubscription {
+    return payload
   }
 }

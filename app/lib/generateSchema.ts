@@ -1,13 +1,16 @@
 import { buildSchema } from "type-graphql"
 import {
-    BadgeResolver,
-    PartialUserFriendResolver,
-    PartialUserPublicResolver,
-    UserResolver
+  BadgeResolver,
+  PartialUserFriendResolver,
+  PartialUserPublicResolver,
+  UserResolver
 } from "@app/controllers/graphql/user.resolver"
 import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
 import { CoreResolver } from "@app/controllers/graphql/core.resolver"
-import { CollectionResolver, CollectionUserResolver } from "@app/controllers/graphql/collection.resolver"
+import {
+  CollectionResolver,
+  CollectionUserResolver
+} from "@app/controllers/graphql/collection.resolver"
 import { DomainResolver } from "@app/controllers/graphql/domain.resolver"
 import { GalleryResolver } from "@app/controllers/graphql/gallery.resolver"
 import { ChatResolver } from "@app/controllers/graphql/chat.resolver"
@@ -26,15 +29,16 @@ import { BlockedUserResolver } from "@app/controllers/graphql/blockedUser.resolv
 import { ChatInviteResolver } from "@app/controllers/graphql/chatInvite.resolver"
 import { MailResolver } from "@app/controllers/graphql/mail.resolver"
 import {
-    OAuthAppResolver,
-    OauthConsentAppResolver,
-    OAuthUserResolver
+  OAuthAppResolver,
+  OauthConsentAppResolver,
+  OAuthUserResolver
 } from "@app/controllers/graphql/oAuthApp.resolver"
 import { ChatEmojiResolver } from "@app/controllers/graphql/chatEmoji.resolver"
 import { ChatAuditLogResolver } from "@app/controllers/graphql/chatAuditLog.resolver"
 import { AutoCollectRuleResolver } from "@app/controllers/graphql/autoCollectRule.resolver"
 import { Container } from "typedi"
 import { authChecker } from "@app/lib/graphql/AuthChecker"
+import { pubSub } from "@app/lib/graphql/pubsub"
 
 export const generateSchema = () => {
   return buildSchema({
@@ -73,6 +77,7 @@ export const generateSchema = () => {
     ],
     container: Container,
     authChecker: authChecker,
-    validate: true
+    validate: true,
+    pubSub: pubSub
   })
 }

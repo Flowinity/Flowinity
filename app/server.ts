@@ -40,6 +40,9 @@ import { AutoCollectsSocketController } from "@app/controllers/socket/autoCollec
 import { TrackedUserSocketController } from "@app/controllers/socket/tracked.socket"
 import { Server as SocketServer } from "socket.io"
 import { SocketServerWithUser } from "./types/global"
+import { WebSocketServer } from "ws"
+import { useServer } from "graphql-ws/lib/use/ws"
+import generateContext from "@app/classes/graphql/middleware/generateContext"
 
 @Service({ eager: false })
 export class Server {
@@ -49,8 +52,10 @@ export class Server {
     ? JSON.parse(process.env.CONFIG || "{}")
     : new DefaultTpuConfig().config
   public server: http.Server
+  public legacyServer: http.Server
   public socket: SocketServer | undefined
   public readonly ready: any
+
   constructor(
     private readonly application: Application,
     private readonly cacheService: CacheService,
@@ -74,7 +79,7 @@ export class Server {
 
   async startSocket() {
     if (!this.server) this.server = http.createServer(this.application.app)
-    this.socket = await createSocket(this.application.app, this.server)
+    this.socket = await createSocket(this.application.app, this.legacyServer)
     global.socket = this.socket as unknown as SocketServerWithUser
     new SocketControllers({
       // @ts-ignore
@@ -91,6 +96,51 @@ export class Server {
         TrackedUserSocketController
       ]
     })
+
+    const wsServer = new WebSocketServer({
+      server: this.server,
+      path: "/graphql"
+    })
+
+    useServer(
+      {
+        execute: (args: any) => args.rootValue.execute(args),
+        subscribe: (args: any) => args.rootValue.subscribe(args),
+        onSubscribe: async (ctx, msg) => {
+          const {
+            schema,
+            execute,
+            subscribe,
+            contextFactory,
+            parse,
+            validate
+          } = this.application.yogaApp.getEnveloped({
+            ...ctx,
+            ...(await generateContext(ctx)),
+            req: ctx.extra.request,
+            socket: ctx.extra.socket,
+            params: msg.payload
+          })
+
+          const args = {
+            schema,
+            operationName: msg.payload.operationName,
+            document: parse(msg.payload.query),
+            variableValues: msg.payload.variables,
+            contextValue: await contextFactory(),
+            rootValue: {
+              execute,
+              subscribe
+            }
+          }
+
+          const errors = validate(args.schema, args.document)
+          if (errors.length) return errors
+          return args
+        }
+      },
+      wsServer
+    )
   }
 
   async init(port?: number, noBackgroundTasks = false): Promise<void> {
@@ -131,15 +181,21 @@ export class Server {
     global.rawAppRoot = process.env.RAW_APP_ROOT || ""
     global.dayjs = dayjs
     global.whitelist = ipPrimary
-    this.server = http.createServer(this.application.app)
+    this.server = http.createServer(this.application.yogaApp)
+    this.legacyServer = http.createServer(this.application.app)
     await this.startSocket()
     if (!noBackgroundTasks) {
-      this.server.listen(
+      this.legacyServer.listen(
         port || Server.normalizePort(this.config?.port || "34582")
       )
+      this.server.listen(34583)
     }
 
     this.server.on("error", (error: NodeJS.ErrnoException) =>
+      this.onError(error)
+    )
+
+    this.legacyServer.on("error", (error: NodeJS.ErrnoException) =>
       this.onError(error)
     )
 
@@ -152,6 +208,7 @@ export class Server {
     )
 
     this.server.on("listening", () => this.onListening())
+    this.legacyServer.on("listening", () => this.onLegacyListening())
 
     if (mainWorker && !noBackgroundTasks) {
       await this.cacheService.cacheInit()
@@ -208,6 +265,14 @@ export class Server {
     const bind: string = `port ${addr.port}`
 
     // eslint-disable-next-line no-console
-    console.log(`Listening on ${bind}`)
+    console.log(`[SERVER_V5] Listening on ${bind}`)
+  }
+
+  private onLegacyListening(): void {
+    const addr: AddressInfo = this.legacyServer.address() as AddressInfo
+    const bind: string = `port ${addr.port}`
+
+    // eslint-disable-next-line no-console
+    console.log(`[SERVER_LEGACY] Listening on ${bind}`)
   }
 }

@@ -17,6 +17,10 @@ import {
 } from "@vue/apollo-composable";
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import { createApolloProvider } from "@vue/apollo-option";
+import { getMainDefinition } from "@apollo/client/utilities";
+import { split } from "@apollo/client";
+import { useAppStore } from "@/stores/app.store";
+import { useDebugStore } from "@/stores/debug.store";
 
 function getToken() {
   return localStorage.getItem("token");
@@ -24,6 +28,29 @@ function getToken() {
 
 export default function setup(app: App) {
   const toast = useToast();
+  const debugStore = useDebugStore();
+
+  const debugLink = new ApolloLink((operation, forward) => {
+    console.log(operation);
+    const startTime = performance.now();
+    return forward(operation).map((response) => {
+      const endTime = performance.now();
+      const elapsedTime = endTime - startTime;
+
+      debugStore.recentOperations.unshift({
+        id: new Date().getTime().toString(),
+        name: operation.operationName,
+        args: operation.variables,
+        result: response.data,
+        time: elapsedTime,
+        //@ts-ignore
+        type: operation.query.definitions[0]?.operation
+      });
+
+      return response;
+    });
+  });
+
   const httpLink = new HttpLink({
     uri: "/graphql"
   });
@@ -72,11 +99,17 @@ export default function setup(app: App) {
 
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: "/graphql",
+      url: "ws://localhost:3000/graphql",
       connectionParams: {
-        token: localStorage.getItem("token") || "",
-        "x-tpu-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": "TPUvNEXT"
+        Authorization: localStorage.getItem("token") || "",
+        "x-tpu-client-version": import.meta.env.TPU_VERSION,
+        "x-tpu-client": "TPUv5 (Flowinity)"
+      },
+      lazy: false,
+      on: {
+        connected: () => {
+          console.log("[Flowinity/GraphQL] Connected to socket.");
+        }
       }
     })
   );
@@ -108,7 +141,7 @@ export default function setup(app: App) {
     });
   });
 
-  const appLink = from([cleanTypeName, authLink, errorLink, httpLink, wsLink]);
+  const appLink = from([cleanTypeName, authLink, errorLink, debugLink, wsLink]);
 
   if (import.meta.env.DEV) {
     loadDevMessages();
@@ -121,7 +154,7 @@ export default function setup(app: App) {
     cache: new InMemoryCache({
       addTypename: true
     }),
-    connectToDevTools: true
+    connectToDevTools: import.meta.env.DEV
   });
 
   app.config.globalProperties.$apollo = apolloClient;

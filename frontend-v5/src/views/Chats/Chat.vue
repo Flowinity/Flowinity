@@ -202,6 +202,8 @@ import RiSearchFill from "vue-remix-icons/icons/ri-search-fill.vue";
 import SecondSideBar from "@/layouts/default/SecondSideBar.vue";
 import MemberSideBar from "@/layouts/default/MemberSideBar.vue";
 import SearchSideBar from "@/layouts/default/SearchSideBar.vue";
+import { NewMessageSubscription } from "@/graphql/chats/subscriptions/newMessage.graphql";
+import { useSubscription } from "@vue/apollo-composable";
 
 const { t } = useI18n();
 const chatStore = useChatStore();
@@ -430,14 +432,17 @@ function onMessage(message: { message: Message; chat: Chat }) {
 
 onMounted(() => {
   document.addEventListener("keydown", shortcutHandler);
-  useSocket.chat.on("message", onMessage);
+  useSubscription(NewMessageSubscription, {
+    onSubscriptionData: (data) => {
+      console.log(data);
+      onMessage(data.subscriptionData.data.message);
+    }
+  });
   useSocket.chat.on("embedResolution", onEmbedResolution);
 });
 
 onUnmounted(() => {
   document.removeEventListener("keydown", shortcutHandler);
-  useSocket.chat.off("message", onMessage);
-  useSocket.chat.off("embedResolution", onEmbedResolution);
 });
 
 const route = useRoute();
