@@ -15,12 +15,17 @@ import {
   MessagesQuery,
   PagedMessagesQuery
 } from "@/graphql/chats/messages.graphql";
-import { useApolloClient } from "@vue/apollo-composable";
+import {
+  useApolloClient,
+  useMutation,
+  useSubscription
+} from "@vue/apollo-composable";
 import { RailMode, useAppStore } from "@/stores/app.store";
 import { useSocket } from "@/boot/socket.service";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import { useExperimentsStore } from "@/stores/experiments.store";
 import { useMessagesStore } from "@/stores/messages.store";
+import { gql } from "@apollo/client";
 
 export const useChatStore = defineStore("chat", () => {
   const chats = ref<Chat[]>([]);
@@ -86,11 +91,33 @@ export const useChatStore = defineStore("chat", () => {
   }
 
   async function type() {
-    useSocket.chat.emit("typing", selectedChatAssociationId.value);
+    const mutate = useMutation(
+      gql`
+        mutation Typing($input: Float!) {
+          typing(input: $input)
+        }
+      `,
+      {
+        variables: {
+          input: selectedChatAssociationId.value
+        }
+      }
+    );
+    await mutate.mutate();
   }
 
   async function cancelType() {
-    useSocket.chat.emit("cancelTyping", selectedChatAssociationId.value);
+    const mutate = useMutation(
+      gql`
+        mutation CancelTyping($input: Float!) {
+          cancelTyping(input: $input)
+        }
+      `,
+      {
+        variables: { input: selectedChatAssociationId.value }
+      }
+    );
+    await mutate.mutate();
   }
 
   async function init() {

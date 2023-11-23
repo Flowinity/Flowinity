@@ -6,7 +6,8 @@ import {
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { Service } from "typedi"
 import { Chat } from "@app/models/chat.model"
@@ -40,6 +41,7 @@ import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
 import { Success } from "@app/classes/graphql/generic/success"
 import { ChatInvite } from "@app/models/chatInvite.model"
+import { ChatTypingEvent } from "@app/classes/graphql/chat/events/typing"
 
 @Resolver(Chat)
 @Service()
@@ -433,5 +435,65 @@ export class ChatResolver {
       ...chat,
       userId: remoteAssociation.userId
     }
+  }
+
+  @Authorization({
+    scopes: ["chats.send"]
+  })
+  @Mutation(() => Boolean)
+  async typing(
+    @Ctx() ctx: Context,
+    @Arg("input") input: number
+  ): Promise<Boolean> {
+    if (!ctx.user) return false
+    const typingRateLimit = await redis.get(`user:${ctx.user.id}:typing`)
+
+    if (
+      typingRateLimit &&
+      dayjs().isBefore(dayjs(typingRateLimit).add(2, "second"))
+    )
+      return false
+    await this.chatService.typing(input, ctx.user!!.id)
+    return true
+  }
+
+  @Authorization({
+    scopes: ["chats.send"]
+  })
+  @Mutation(() => Boolean)
+  async cancelTyping(
+    @Ctx() ctx: Context,
+    @Arg("input") input: number
+  ): Promise<Boolean> {
+    if (!ctx.user) return false
+    await redis.del(`user:${ctx.user.id}:typing`)
+    await this.chatService.cancelTyping(input, ctx.user!!.id)
+    return true
+  }
+
+  @Authorization({
+    scopes: ["chats.view"]
+  })
+  @Subscription(() => ChatTypingEvent, {
+    topics: ({ context }) => {
+      return `TYPING:${context.user!!.id}`
+    }
+  })
+  async typingEvent(@Root() data: ChatTypingEvent): Promise<ChatTypingEvent> {
+    return data
+  }
+
+  @Authorization({
+    scopes: ["chats.view"]
+  })
+  @Subscription(() => ChatTypingEvent, {
+    topics: ({ context }) => {
+      return `CANCEL_TYPING:${context.user!!.id}`
+    }
+  })
+  async cancelTypingEvent(
+    @Root() data: ChatTypingEvent
+  ): Promise<ChatTypingEvent> {
+    return data
   }
 }
