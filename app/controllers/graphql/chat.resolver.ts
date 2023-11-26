@@ -453,7 +453,7 @@ export class ChatResolver {
       dayjs().isBefore(dayjs(typingRateLimit).add(2, "second"))
     )
       return false
-    await this.chatService.typing(input, ctx.user!!.id)
+    await this.chatService.typing(input, ctx.user!!.id, true)
     return true
   }
 
@@ -467,7 +467,7 @@ export class ChatResolver {
   ): Promise<Boolean> {
     if (!ctx.user) return false
     await redis.del(`user:${ctx.user.id}:typing`)
-    await this.chatService.cancelTyping(input, ctx.user!!.id)
+    await this.chatService.cancelTyping(input, ctx.user!!.id, true)
     return true
   }
 

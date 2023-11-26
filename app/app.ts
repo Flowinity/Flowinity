@@ -332,13 +332,13 @@ export class Application {
               const name = context?.request?.headers
                 ? context.request.headers.get("x-tpu-client") ||
                   context.request.headers.get("clientName")
-                : context.connectionParams["x-tpu-client"] ||
-                  context.connectionParams["clientName"]
+                : context.connectionParams?.["x-tpu-client"] ||
+                  context.connectionParams?.["clientname"]
               const version = context?.request?.headers
                 ? context.request.headers.get("x-tpu-client-version") ||
                   context.request.headers.get("clientVersion")
-                : context.connectionParams["x-tpu-client-version"] ||
-                  context.connectionParams["clientVersion"]
+                : context.connectionParams?.["x-tpu-client-version"] ||
+                  context.connectionParams?.["clientversion"]
 
               if (name && version) {
                 return { name, version }

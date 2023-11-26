@@ -22,6 +22,7 @@ import SidebarCollections from "@/components/Sidebar/SidebarCollections.vue";
 import SidebarComms from "@/components/Sidebar/SidebarComms.vue";
 import SidebarMail from "@/components/Sidebar/SidebarMail.vue";
 import SidebarDebug from "@/components/Sidebar/SidebarDebug.vue";
+import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 
 const appStore = useAppStore();
 const chatStore = useChatStore();
@@ -40,25 +41,38 @@ const context = ref(0);
     style="min-width: 256px; max-width: 256px"
     :class="{ 'h-screen': !props.drawer, 'h-[calc(100vh-64px)]': props.drawer }"
   >
-    <div
-      class="flex justify-between pt-0 dark:border-outline-dark border-b-2 border-outline-dark"
-      style="min-height: 64px; max-height: 64px"
-    >
-      <Transition name="slide-fade" mode="out-in">
-        <div
-          :key="appStore.currentRail?.id"
-          v-if="appStore.currentRail"
-          class="flex items-center"
-        >
-          <component :is="appStore.currentRail?.icon" class="w-8 ml-4" />
-          <p class="text-xl font-semibold ml-4">
-            {{ appStore.currentRail.name }}
-          </p>
-        </div>
-      </Transition>
-      <div id="sidebar-actions" class="flex items-center mr-4" />
-    </div>
-
+    <VDropdown :triggers="['click']" placement="top-start" class="w-full">
+      <div
+        class="flex cursor-pointer select-none justify-between pt-0 dark:border-outline-dark border-b-2 border-outline-dark"
+        style="min-height: 64px; max-height: 64px"
+      >
+        <Transition name="slide-fade" mode="out-in">
+          <div
+            :key="appStore.currentRail?.id"
+            v-if="appStore.currentRail"
+            class="flex items-center"
+          >
+            <component :is="appStore.currentRail?.icon" class="w-8 ml-4" />
+            <p class="text-xl font-semibold ml-4">
+              {{ appStore.currentRail.name }}
+            </p>
+          </div>
+        </Transition>
+        <div id="sidebar-actions" class="flex items-center mr-4" />
+      </div>
+      <template #popper>
+        <card class="w-full" :secondary="true">
+          <tpu-list>
+            <tpu-list-item class="p-3 text-red fill-red">
+              <div class="flex">
+                <ri-close-line style="width: 20px" />
+                {{ $t("sidebar.remove") }}
+              </div>
+            </tpu-list-item>
+          </tpu-list>
+        </card>
+      </template>
+    </VDropdown>
     <Transition name="slide-fade" mode="out-in">
       <div
         class="justify-between flex-col flex-1 px-3"

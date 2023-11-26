@@ -7,6 +7,10 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user.store";
 import { useMessagesStore } from "@/stores/messages.store";
 import { useToast } from "vue-toastification";
+import {
+  CancelTypingSubscription,
+  TypingSubscription
+} from "@/graphql/chats/subscriptions/typing.graphql";
 
 export default function setup() {
   const chatStore = useChatStore();
@@ -89,6 +93,58 @@ export default function setup() {
           }
         }
       );
+    }
+  });
+
+  const typing = useSubscription(TypingSubscription);
+  const cancelTyping = useSubscription(CancelTypingSubscription);
+
+  typing.onResult(({ data: { typingEvent } }) => {
+    const index = chatStore.typers.findIndex(
+      (t) => t.chatId === typingEvent.chatId && t.userId === typingEvent.user.id
+    );
+    if (index !== -1) {
+      const val = chatStore.typers.find(
+        (t) =>
+          t.chatId === typingEvent.chatId && t.userId === typingEvent.user.id
+      );
+      clearTimeout(val?.timeout);
+      chatStore.typers.splice(index, 1);
+    }
+    chatStore.typers.push({
+      chatId: typingEvent.chatId,
+      userId: typingEvent.user.id,
+      expires: typingEvent.expires,
+      timeout: setTimeout(
+        () => {
+          const index = chatStore.typers.findIndex(
+            (t) =>
+              t.chatId === typingEvent.chatId &&
+              t.userId === typingEvent.user.id
+          );
+          if (index !== -1) {
+            chatStore.typers.splice(index, 1);
+          }
+        },
+        new Date(typingEvent.expires).getTime() - Date.now()
+      )
+    });
+  });
+
+  cancelTyping.onResult(({ data: { cancelTypingEvent } }) => {
+    const index = chatStore.typers.findIndex(
+      (t) =>
+        t.chatId === cancelTypingEvent.chatId &&
+        t.userId === cancelTypingEvent.user.id
+    );
+    if (index !== -1) {
+      const val = chatStore.typers.find(
+        (t) =>
+          t.chatId === cancelTypingEvent.chatId &&
+          t.userId === cancelTypingEvent.user.id
+      );
+      clearTimeout(val?.timeout);
+      chatStore.typers.splice(index, 1);
     }
   });
 }

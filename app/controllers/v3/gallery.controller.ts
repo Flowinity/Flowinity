@@ -22,6 +22,7 @@ import uploader from "@app/lib/upload"
 import { RequestAuth } from "@app/types/express"
 import { OpenAPI } from "routing-controllers-openapi"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { pubSub } from "@app/lib/graphql/pubsub"
 
 @Service()
 @JsonController("/gallery")
@@ -96,6 +97,7 @@ export class GalleryControllerV3 {
       attachment,
       user.discordPrecache
     )
+    pubSub.publish(`CREATE_UPLOADS:${user.id}`, [upload])
     socket.of(SocketNamespaces.GALLERY).to(user.id).emit("create", [upload])
     return upload
   }
@@ -135,9 +137,14 @@ export class GalleryControllerV3 {
   ) {
     let files = []
     for (const attachment of attachments) {
-      files.push(
-        await this.galleryService.createUpload(user.id, attachment, false)
+      const upload = await this.galleryService.createUpload(
+        user.id,
+        attachment,
+        false
       )
+
+      files.push(upload)
+      pubSub.publish(`CREATE_UPLOAD:${user.id}`, upload)
     }
     socket.of(SocketNamespaces.GALLERY).to(user.id).emit("create", files)
     return files

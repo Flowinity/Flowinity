@@ -20,7 +20,8 @@ import {
   InfiniteMessagesInput,
   MessageType,
   PagedMessagesInput,
-  ScrollPosition
+  ScrollPosition,
+  SubscriptionMessageInput
 } from "@app/classes/graphql/chat/message"
 import { Op, WhereOptions } from "sequelize"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
@@ -204,14 +205,18 @@ export class MessageResolver {
   @Authorization({
     scopes: "chats.view"
   })
-  @Subscription({
+  @Subscription(() => MessageSubscription, {
     topics: ({ context }) => {
       return `MESSAGES:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      return args.input.associationId === payload.associationId
     }
   })
   newMessage(
     @Root() payload: MessageSubscription,
-    @Ctx() ctx: Context
+    @Ctx() ctx: Context,
+    @Arg("input") input: SubscriptionMessageInput
   ): MessageSubscription {
     return payload
   }

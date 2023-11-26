@@ -78,7 +78,11 @@ import {
 import { computed, onMounted, onUnmounted, type Ref, ref, watch } from "vue";
 import { GalleryQuery } from "@/graphql/gallery/gallery.graphql";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
-import { useApolloClient } from "@vue/apollo-composable";
+import {
+  useApolloClient,
+  useSubscription,
+  UseSubscriptionReturn
+} from "@vue/apollo-composable";
 import TpuPager from "@/components/Framework/Pager/TpuPager.vue";
 import DeleteUpload from "@/components/Gallery/Dialogs/DeleteUpload.vue";
 import { useAppStore } from "@/stores/app.store";
@@ -92,6 +96,7 @@ import UploadEditor from "@/components/Gallery/Dialogs/UploadEditor.vue";
 import { useI18n } from "vue-i18n";
 import dayjs from "@/plugins/dayjs";
 import TextField from "@/components/Framework/Input/TextField.vue";
+import { UploadsSubscription } from "@/graphql/gallery/subscriptions/createUploads.graphql";
 
 const { t } = useI18n();
 const page = ref(1);
@@ -139,6 +144,7 @@ function pushCollection(data: AddToCollectionInput) {
 
 async function getGallery() {
   loading.value = true;
+  generateSubscription();
   const {
     data: { gallery }
   } = await useApolloClient().client.query({
@@ -294,12 +300,25 @@ useSocket.gallery.on("update", (data: Upload[]) => {
 useSocket.gallery.on("delete", (data: number) => {
   items.value = items.value.filter((upload) => upload.id !== data);
 });
+let createSubscription: null | UseSubscriptionReturn<any, any> = null;
 
-useSocket.gallery.on("create", (data: { upload: Upload; url: String }[]) => {
-  if (page.value !== 1 || props.type !== GalleryType.Personal) return;
-  items.value = [...data.map((d) => d.upload), ...items.value];
-  console.log("update");
-});
+function generateSubscription() {
+  createSubscription?.stop();
+  createSubscription = useSubscription(UploadsSubscription, {
+    input: {
+      type: props.type,
+      collectionId: typeof props.id === "number" ? props.id : undefined
+    }
+  });
+}
+
+watch(
+  () => createSubscription?.result,
+  (res) => {
+    if (page.value !== 1) return;
+    items.value = [...res.value.data.createUpload.upload, ...items.value];
+  }
+);
 
 defineExpose({
   getGallery

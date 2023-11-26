@@ -8,7 +8,7 @@ const router = createRouter({
     {
       path: "/",
       name: "Home",
-      component: () => import("@/views/Home.vue")
+      component: () => import("@/views/HomeHandler.vue")
     },
     {
       path: "/gallery",
@@ -147,11 +147,12 @@ router.beforeEach(async (to, from) => {
       "TPU Setup Wizard",
       "User",
       "OAuth",
-      "Join Chat"
+      "Join Chat",
+      "Home"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");
-    return { name: "Login" };
+    return { name: "Home" };
   } else if (u && ["Login", "Register"].includes(to.name as string)) {
     console.log("Redirecting to dashboard");
     return { name: "Home" };

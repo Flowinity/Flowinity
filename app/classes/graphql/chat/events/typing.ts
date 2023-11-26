@@ -13,6 +13,8 @@ export class ChatTypingEvent {
   chatId: number
   @Field(() => PartialUserFriend)
   user: PartialUserFriend
-  @Field(() => DateType)
-  expires: Date
+  @Field({
+    nullable: true
+  })
+  expires: number
 }

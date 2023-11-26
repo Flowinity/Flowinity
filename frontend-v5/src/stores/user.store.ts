@@ -14,6 +14,7 @@ export const useUserStore = defineStore("user", () => {
   const user = ref<User | null>(null);
   const tracked = ref<PartialUserFriend[]>([]);
   const blocked = ref<BlockedUser[]>([]);
+  const token = ref<string | null>(localStorage.getItem("token"));
 
   const gold = computed(() => {
     return user?.value?.plan?.internalName === "GOLD";
@@ -89,6 +90,7 @@ export const useUserStore = defineStore("user", () => {
     users,
     unreadNotifications,
     updatingUser,
-    updateUser
+    updateUser,
+    token
   };
 });

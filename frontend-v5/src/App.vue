@@ -12,12 +12,15 @@ import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { useFrameworkStore } from "@/stores/framework.store";
 import Stats from "stats.js";
 import { useChatStore } from "@/stores/chat.store";
+import { usePulseStore } from "@/stores/pulse.store";
+import { watch } from "vue";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
 const route = useRoute();
 const frameworkStore = useFrameworkStore();
 const chatStore = useChatStore();
+const pulseStore = usePulseStore();
 
 function drop(e: Event) {
   if (!e.dataTransfer.files?.length) return;
@@ -49,6 +52,16 @@ function animate() {
 }
 
 requestAnimationFrame(animate);
+
+pulseStore.getPulseSessionGlobal();
+pulseStore.getPulseSession();
+
+watch(
+  () => route.path,
+  () => {
+    pulseStore.getPulseSession();
+  }
+);
 </script>
 <template>
   <div class="dark w-full">
@@ -77,7 +90,7 @@ requestAnimationFrame(animate);
           v-if="userStore.user && !frameworkStore.breakpoints.mobile"
         />
         <div class="flex flex-col w-full">
-          <app-bar class="bg-white z-10" />
+          <app-bar class="bg-white z-10" v-if="userStore.user" />
           <main
             class="w-full overflow-auto"
             :class="appStore.heightOffset"

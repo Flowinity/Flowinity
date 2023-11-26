@@ -13,7 +13,6 @@
         ] || []"
         :id="'message-id-' + message.id"
         :ref="`message-${index}`"
-        :style="{ zIndex: 1000 - index }"
         :key="message.id"
         :class="{
           'message-jumped': message.id === replyId,

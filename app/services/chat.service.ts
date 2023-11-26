@@ -987,6 +987,12 @@ export class ChatService {
     }
     for (const user of chat.users) {
       if (!user.userId) continue
+      // translate camelCase to SCREAMING_SNAKE_CASE and append :userId to the end
+      const translated =
+        key.replace(/([A-Z])/g, "_$1").toUpperCase() + ":" + user.userId
+      pubSub.publish(translated, data).then(() => {
+        console.log(translated)
+      })
       socket.of(SocketNamespaces.CHAT).to(user.userId).emit(key, data)
     }
   }

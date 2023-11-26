@@ -1,4 +1,11 @@
-import { Field, InputType, Int, ObjectType, registerEnumType } from "type-graphql"
+import {
+  ArgsType,
+  Field,
+  InputType,
+  Int,
+  ObjectType,
+  registerEnumType
+} from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { IsNumber, Max, Min } from "class-validator"
 import { Upload } from "@app/models/upload.model"
@@ -181,4 +188,16 @@ export class InfiniteMessagesInput extends MessagesInput {
     nullable: true
   })
   offset: number
+}
+
+@InputType()
+export class SubscriptionMessageInput {
+  @Field(() => Int, {
+    nullable: true
+  })
+  associationId: number
+  @Field(() => Int, {
+    nullable: true
+  })
+  chatId: number
 }

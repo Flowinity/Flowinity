@@ -14,7 +14,7 @@ export class OauthSave extends Model {
   userId: number
 
   @Column(DataType.UUIDV4)
-  oauthAppId: number
+  oauthAppId: string
 
   @Column(DataType.JSON)
   data: any

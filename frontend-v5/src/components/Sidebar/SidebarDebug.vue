@@ -20,13 +20,20 @@
     </div>
   </tpu-dialog>
   <div class="flex flex-col gap-4">
-    {{ settings }}
     <tpu-expansion-panel v-model:expanded="settings.graphql">
       <template #header>GraphQL</template>
       <div>
+        <tpu-switch
+          v-model="settings.gqlExclPulse"
+          label="Excl. Pulse"
+        ></tpu-switch>
         <tpu-list>
           <tpu-list-item
-            v-for="operation in debugStore.recentOperations"
+            v-for="operation in settings.gqlExclPulse
+              ? debugStore.recentOperations.filter(
+                  (o) => !o.name.includes('Pulse')
+                )
+              : debugStore.recentOperations"
             :key="operation.id"
           >
             <div>
@@ -41,7 +48,7 @@
                         : 'yellow'
                   "
                   :no-ripple="true"
-                  style="font-size: 12px"
+                  style="font-size: 8px"
                   class="flex items-center"
                 >
                   {{ operation.type?.toUpperCase().slice(0, 3) }}
@@ -58,7 +65,15 @@
                   style="font-size: 14px"
                   class="flex items-center"
                 >
-                  {{ Math.round(operation.time) }}
+                  <template v-if="!operation.pending">
+                    {{ Math.round(operation.time) }}
+                  </template>
+                  <template v-else>
+                    <tpu-spinner
+                      style="width: 20px; height: 22px"
+                      color="green"
+                    />
+                  </template>
                 </tpu-button>
                 <tpu-button
                   v-tooltip.top="'Arguments'"
@@ -107,6 +122,8 @@ import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { onMounted, ref, watch } from "vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
 import { useSocket } from "@/boot/socket.service";
+import TpuSwitch from "@/components/Framework/Input/TpuSwitch.vue";
+import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
 
 const apollo = useApolloClient();
 const debugStore = useDebugStore();
@@ -115,7 +132,8 @@ const dialog = ref(false);
 const result = ref<any>({});
 const settings = ref({
   graphql: false,
-  websocket: false
+  websocket: false,
+  gqlExclPulse: true
 });
 const sockets = useSocket;
 const socketConnected = ref<Record<string, boolean>>({});
@@ -127,7 +145,11 @@ setTimeout(() => {
 }, 1000);
 
 watch(
-  () => [settings.value.graphql, settings.value.websocket],
+  () => [
+    settings.value.graphql,
+    settings.value.websocket,
+    settings.value.gqlExclPulse
+  ],
   () => {
     localStorage.setItem("debug", JSON.stringify(settings.value));
   }
@@ -135,7 +157,6 @@ watch(
 
 onMounted(() => {
   const debug = localStorage.getItem("debug");
-  console.log(debug);
   if (debug) {
     settings.value = JSON.parse(debug);
   }

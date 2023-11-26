@@ -286,7 +286,7 @@ export const useAppStore = defineStore("app", () => {
   const navigation = ref({
     mode:
       parseInt(localStorage.getItem("railMode") || "0") ||
-      (RailMode.HOME as RailMode),
+      (RailMode.HOME as RailMode as RailMode),
     options: {
       [RailMode.HOME]: [
         {

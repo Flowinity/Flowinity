@@ -7,11 +7,15 @@
     :href="href ? href : undefined"
     :style="{
       background:
-        variant === 'tonal' || selected ? `rgb(${rgbColor})` : undefined,
+        variant === 'tonal' || selected || variant === 'filled'
+          ? `rgb(${rgbColor})`
+          : undefined,
       color:
         variant === 'tonal' || variant === 'passive' || selected
           ? color
-          : undefined,
+          : variant === 'filled'
+            ? '#ffffff'
+            : undefined,
       'margin-left': table ? '-0.75rem' : '0'
     }"
     :class="{
@@ -61,7 +65,7 @@ const props = defineProps({
   href: String,
   color: String,
   variant: {
-    type: String as () => "outlined" | "tonal" | "passive",
+    type: String as () => "outlined" | "tonal" | "passive" | "filled",
     default: "tonal"
   },
   table: {
@@ -90,6 +94,7 @@ const color = computed(() => {
   if (
     props.variant !== "tonal" &&
     props.variant !== "passive" &&
+    props.variant !== "filled" &&
     !props.selected
   ) {
     return "#ffffff";
@@ -100,6 +105,7 @@ const color = computed(() => {
 const rgbColor = computed(() => {
   if (!color.value) return;
   const [r, g, b] = color.value.match(/\w\w/g).map((x) => parseInt(x, 16));
+  if (props.variant === "filled") return `${r},${g},${b},1.00`;
   return `${r},${g},${b},0.15`;
 });
 </script>

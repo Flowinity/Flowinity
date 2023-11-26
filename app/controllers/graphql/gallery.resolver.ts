@@ -2,10 +2,12 @@ import {
   Arg,
   Ctx,
   FieldResolver,
+  Int,
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { User } from "@app/models/user.model"
@@ -36,6 +38,8 @@ import {
   StarUploadInput,
   StarUploadResponse
 } from "@app/classes/graphql/gallery/star"
+import { pubSub } from "@app/lib/graphql/pubsub"
+import { CreateUploadEvent } from "@app/classes/graphql/autoCollects/subscriptions/createUploadEvent"
 
 const FileScalar = new GraphQLScalarType({
   name: "File",
@@ -166,6 +170,18 @@ export class GalleryResolver {
   @Authorization({
     scopes: "uploads.modify"
   })
+  @Subscription(() => Int, {
+    topics: ({ context }) => {
+      return `DELETE_UPLOAD:${context.user!!.id}`
+    }
+  })
+  deleteUpload(@Root() id: number) {
+    return id
+  }
+
+  @Authorization({
+    scopes: "uploads.modify"
+  })
   @Mutation(() => Upload)
   async updateUpload(
     @Ctx() ctx: Context,
@@ -187,11 +203,24 @@ export class GalleryResolver {
     await upload.update({
       name: input.name
     })
+    pubSub.publish(`UPDATE_UPLOADS:${ctx.user!!.id}`, [upload.toJSON()])
     socket
       .of(SocketNamespaces.GALLERY)
       .to(ctx.user!!.id)
       .emit("update", [upload.toJSON()])
     return upload
+  }
+
+  @Authorization({
+    scopes: "uploads.modify"
+  })
+  @Subscription(() => [Upload], {
+    topics: ({ context }) => {
+      return `UPDATE_UPLOADS:${context.user!!.id}`
+    }
+  })
+  updateUploads(@Root() uploads: Upload[]) {
+    return uploads
   }
 
   @Authorization({
@@ -210,6 +239,35 @@ export class GalleryResolver {
         userId: ctx.user?.id
       }
     })
+  }
+
+  @Authorization({
+    scopes: "uploads.view"
+  })
+  @Subscription(() => CreateUploadEvent, {
+    topics: ({ context }) => {
+      return `CREATE_UPLOAD:${context.user!!.id}`
+    },
+    filter: ({ payload, context, args }) => {
+      if (!args.input) return true
+      if (
+        args.input.collectionId &&
+        !payload.upload.collections?.find(
+          (c: Collection) => c.id === args.input.collectionId
+        )
+      )
+        return false
+      return args.input.type !== Type.STARRED
+    }
+  })
+  createUpload(
+    @Root() uploads: CreateUploadEvent,
+    @Arg("input", {
+      nullable: true
+    })
+    input: GalleryInput
+  ) {
+    return uploads
   }
 
   @FieldResolver(() => User)

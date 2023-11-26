@@ -5,7 +5,8 @@ import {
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { Service } from "typedi"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
@@ -21,6 +22,7 @@ import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { ActOnAutoCollectsInput } from "@app/classes/graphql/autoCollects/actOnAutoCollectsInput"
 import { CacheService } from "@app/services/cache.service"
 import { Success } from "@app/classes/graphql/generic/success"
+import { AutoCollectApprovalEvent } from "@app/classes/graphql/autoCollects/subscriptions/autoCollectApprovalEvent"
 
 @Resolver(AutoCollectApproval)
 @Service()
@@ -103,6 +105,18 @@ export class AutoCollectApprovalResolver {
     }
 
     return { success: true }
+  }
+
+  @Authorization({
+    scopes: ["collections.view"]
+  })
+  @Subscription(() => AutoCollectApprovalEvent, {
+    topics: ({ context }) => {
+      return `AUTO_COLLECT_APPROVAL:${context.user!!.id}`
+    }
+  })
+  autoCollectApproval(@Root() autoCollectApproval: AutoCollectApprovalEvent) {
+    return autoCollectApproval
   }
 
   @FieldResolver(() => Collection)

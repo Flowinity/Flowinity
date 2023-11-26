@@ -10,7 +10,7 @@ export default async function generateContext(ctx: any): Promise<Context> {
 
   token =
     ctx?.request?.headers?.get("Authorization") ||
-    ctx?.connectionParams?.Authorization ||
+    ctx?.connectionParams?.authorization ||
     ctx?.connectionParams?.token ||
     ""
 
@@ -24,11 +24,11 @@ export default async function generateContext(ctx: any): Promise<Context> {
     client: {
       version:
         ctx?.request?.headers?.get("X-TPU-Client-Version") ||
-        ctx?.connectionParams?.clientVersion ||
+        ctx?.connectionParams?.["x-tpu-client-version"] ||
         "unknown",
       name:
         ctx?.request?.headers?.get("X-TPU-Client") ||
-        ctx?.connectionParams?.clientName ||
+        ctx?.connectionParams?.["x-tpu-client"] ||
         "unknown"
     },
     scopes: session?.scopes || "",
