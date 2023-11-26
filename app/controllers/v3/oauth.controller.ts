@@ -192,7 +192,8 @@ export class OauthControllerV3 {
         secret: verifyAppSecret
       }
     })
-    if (!app) throw Errors.SECURITY_APP_ID_ERROR
+    if (!app || !verifyAppSecret || !verifyAppId)
+      throw Errors.SECURITY_APP_ID_ERROR
     const saves = await OauthSave.findAll({
       where: {
         oauthAppId: app.id
