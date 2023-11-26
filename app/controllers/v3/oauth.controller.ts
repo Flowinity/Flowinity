@@ -180,4 +180,39 @@ export class OauthControllerV3 {
 
     await this.oauthService.deauthorize(app.id, user.id)
   }
+
+  @Get("/saves")
+  async getSaves(
+    @HeaderParam("x-tpu-app-id") verifyAppId?: string,
+    @HeaderParam("x-tpu-app-secret") verifyAppSecret?: string
+  ) {
+    const app = await OauthApp.findOne({
+      where: {
+        id: verifyAppId,
+        secret: verifyAppSecret
+      }
+    })
+    if (!app) throw Errors.SECURITY_APP_ID_ERROR
+    const saves = await OauthSave.findAll({
+      where: {
+        oauthAppId: app.id
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username"]
+        }
+      ]
+    })
+    return saves.map((save) => {
+      return {
+        id: save.id,
+        appId: save.oauthAppId,
+        data: save.data,
+        history: save.history,
+        user: save.user
+      }
+    })
+  }
 }
