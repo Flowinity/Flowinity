@@ -156,7 +156,10 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ChatPermission, OauthApp } from "@/gql/graphql";
-import { AddBotToChat, OauthAppConsentQuery } from "@/graphql/developer/consent.graphql";
+import {
+  AddBotToChat,
+  OauthAppConsentQuery
+} from "@/graphql/developer/consent.graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export type ScopeDefinition = {
@@ -241,21 +244,24 @@ export default defineComponent({
   methods: {
     async getAppData() {
       this.$app.componentLoading = true;
-      const {
-        data: { oauthAppConsent, availableChatPermissions }
-      } = await this.$apollo.query({
-        query: OauthAppConsentQuery,
-        variables: {
-          input: {
-            id: this.appId
+      try {
+        const {
+          data: { oauthAppConsent, availableChatPermissions }
+        } = await this.$apollo.query({
+          query: OauthAppConsentQuery,
+          variables: {
+            input: {
+              id: this.appId
+            }
           }
+        });
+        this.app = oauthAppConsent;
+        this.availablePermissions = availableChatPermissions;
+        if (oauthAppConsent.token) {
+          window.location.href = `${this.app.redirectUri}?code=${oauthAppConsent.token}&state=${this.$route.query.state}`;
         }
-      });
-      this.app = oauthAppConsent;
-      this.availablePermissions = availableChatPermissions;
-      this.$app.componentLoading = false;
-      if (oauthAppConsent.token) {
-        window.location.href = `${this.app.redirectUri}?code=${oauthAppConsent.token}&state=${this.$route.query.state}`;
+      } catch {
+        this.$app.componentLoading = false;
       }
     },
     async getScopeDefinitions() {
@@ -299,6 +305,7 @@ export default defineComponent({
     this.getAppData();
     this.getScopeDefinitions();
     if (!this.$user.user) {
+      this.$app.componentLoading = false;
       this.$router.push(
         "/login?redirect=" +
           this.$route.fullPath.replaceAll("?", "%3F").replaceAll("&", "%26")
