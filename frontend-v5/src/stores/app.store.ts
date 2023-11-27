@@ -76,6 +76,7 @@ import { useFriendsStore } from "@/stores/friends.store";
 import { debounce } from "lodash";
 import RiWebhook from "@/components/Icons/RiWebhook.vue";
 import { useMailStore } from "@/stores/mail.store";
+import { useWorkspacesStore } from "@/stores/workspaces.store";
 
 export enum RailMode {
   HOME,
@@ -216,8 +217,19 @@ export const useAppStore = defineStore("app", () => {
         }
       };
     }
+    const userStore = useUserStore();
+    const chatStore = useChatStore();
+    const experimentsStore = useExperimentsStore();
+    const collectionsStore = useCollectionsStore();
+    const friendsStore = useFriendsStore();
+    const workspacesStore = useWorkspacesStore();
     getWeather();
     useMailStore().init();
+    userStore.init();
+    workspacesStore.init();
+    friendsStore.init();
+    chatStore.init();
+    collectionsStore.init();
     const {
       data: {
         coreState,
@@ -236,31 +248,8 @@ export const useAppStore = defineStore("app", () => {
       fetchPolicy: "no-cache"
     });
     state.value = coreState;
-    const userStore = useUserStore();
-    const chatStore = useChatStore();
-    const experimentsStore = useExperimentsStore();
-    const collectionsStore = useCollectionsStore();
-    const friendsStore = useFriendsStore();
-    friendsStore.friends = friends;
-    userStore.user = currentUser;
-    if (!currentUser) localStorage.removeItem("userStore");
-    if (currentUser)
-      localStorage.setItem("userStore", JSON.stringify(currentUser));
-    userStore.tracked = trackedUsers;
-    userStore.blocked = blockedUsers;
-    chatStore.chats = chats.map((chat: Chat) => {
-      return {
-        ...chat,
-        messages: chatStore.chats.find((c) => c.id === chat.id)?.messages
-      };
-    });
-    chatStore.emoji = userEmoji;
     for (const experiment of experiments) {
       experimentsStore.experiments[experiment.id] = experiment.value;
-    }
-    if (collections) {
-      collectionsStore.items = collections.items;
-      collectionsStore.pager = collections.pager;
     }
     loading.value = false;
   }

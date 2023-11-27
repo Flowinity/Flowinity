@@ -417,22 +417,29 @@ function createBaseResolver<T extends ClassType>(
       if (!user.homeWidgets || user.homeWidgets.default) {
         user.homeWidgets = defaultHomeWidgets
       }
+      ctx.dataloader.prime(user)
       return user
     }
 
     async findByUsername(username: string, ctx: Context) {
-      return await User.findOne({
+      const user = await User.findOne({
         [EXPECTED_OPTIONS_KEY]: createContext(db),
         where: {
           username
         }
       })
+      ctx.dataloader.prime(user)
+      return user
     }
 
     @FieldResolver(() => [Badge])
-    async badges(@Root() user: User) {
+    async badges(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return []
-      return await user.$get("badges")
+      const badges = await user.$get("badges", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
+      ctx.dataloader.prime(badges)
+      return badges
     }
 
     @FieldResolver(() => [Notification])
@@ -440,38 +447,49 @@ function createBaseResolver<T extends ClassType>(
       if (!user) return []
       return await user.$get("notifications", {
         limit: 15,
-        order: [["createdAt", "DESC"]]
+        order: [["createdAt", "DESC"]],
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
       })
     }
 
     @FieldResolver(() => [Integration])
     async integrations(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return []
-      return await user.$get("integrations")
+      return await user.$get("integrations", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
     }
 
     @FieldResolver(() => [Domain])
     async domain(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return null
-      return await user.$get("domain")
+      return await user.$get("domain", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
     }
 
     @FieldResolver(() => [Subscription])
     async subscription(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return null
-      return await user.$get("subscription")
+      return await user.$get("subscription", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
     }
 
     @FieldResolver(() => Plan)
     async plan(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return await Plan.findByPk(1)
-      return await user.$get("plan")
+      return await user.$get("plan", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
     }
 
     @FieldResolver(() => AutoCollectRule)
     async autoCollectRules(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return []
-      return await user.$get("autoCollectRules")
+      return await user.$get("autoCollectRules", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
     }
 
     @FieldResolver(() => Stats || null)
@@ -498,14 +516,16 @@ function createBaseResolver<T extends ClassType>(
           userId: user.id,
           status: "accepted"
         },
-        attributes: ["friendId"]
+        attributes: ["friendId"],
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
       })
       return await Friend.findAll({
         where: {
           userId: ctx.user.id,
           friendId: friends.map((f) => f.friendId),
           status: "accepted"
-        }
+        },
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
       })
     }
 
@@ -618,7 +638,8 @@ export class PartialUserFriendResolver {
     return user.$get("nickname", {
       where: {
         userId: ctx.user?.id
-      }
+      },
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
   }
 
@@ -631,7 +652,8 @@ export class PartialUserFriendResolver {
       where: {
         userId: user.id,
         blockedUserId: ctx.user!!.id
-      }
+      },
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
     if (!block) return false
     return !block.silent
@@ -642,7 +664,9 @@ export class PartialUserFriendResolver {
 @Service()
 export class BadgeResolver {
   @FieldResolver(() => User)
-  async users(@Root() badge: Badge) {
-    return await badge.$get("users")
+  async users(@Root() badge: Badge, @Ctx() ctx: Context) {
+    return await badge.$get("users", {
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+    })
   }
 }

@@ -165,7 +165,6 @@ export class Server {
     dayjs().isoWeekday()
     dayjs().isoWeekYear()
     dayjs.extend(isSameOrBefore)
-    global.db = require("@app/db").default
     if (config.finishedSetup) {
       global.redis = redis
       global.queue = require("@app/lib/queue").default

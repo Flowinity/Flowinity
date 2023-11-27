@@ -26,6 +26,7 @@ import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import { useExperimentsStore } from "@/stores/experiments.store";
 import { useMessagesStore } from "@/stores/messages.store";
 import { gql } from "@apollo/client";
+import { ChatsQuery } from "@/graphql/chats/chats.graphql";
 
 export const useChatStore = defineStore("chat", () => {
   const chats = ref<Chat[]>([]);
@@ -158,6 +159,14 @@ export const useChatStore = defineStore("chat", () => {
     } catch {
       //
     }
+
+    const {
+      data: { chats, userEmoji }
+    } = await client.query({
+      query: ChatsQuery
+    });
+    this.chats = chats;
+    this.emoji = userEmoji;
   }
 
   function merge(message: Message, index: number) {

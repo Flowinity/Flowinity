@@ -2,7 +2,7 @@ import { Container } from "typedi"
 import { UserResolver } from "@app/controllers/graphql/user.resolver"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { Context } from "@app/types/graphql/context"
-import { createContext } from "dataloader-sequelize"
+import { createContext } from "@app/lib/dataloader"
 
 export default async function generateContext(ctx: any): Promise<Context> {
   let token
@@ -16,7 +16,30 @@ export default async function generateContext(ctx: any): Promise<Context> {
 
   if (global.config?.finishedSetup) {
     const userResolver = Container.get(UserResolver)
-    session = await userResolver.findByToken(token)
+    session = await redis.json.get(`session:${token}`)
+    const user = await redis.json.get(`user:${session?.userId || 0}`)
+    if (session && user) {
+      session.user = user
+    } else {
+      session = await userResolver.findByToken(token)
+      if (session) {
+        redis.json.set(
+          `session:${token}`,
+          "$",
+          {
+            ...("toJSON" in session ? session.toJSON() : session),
+            user: undefined
+          },
+          {
+            ttl: session?.expiredAt
+              ? dayjs(session.expiredAt).diff(dayjs(), "second")
+              : 60 * 60 * 24 * 7
+          }
+        )
+
+        redis.json.set(`user:${session.userId}`, "$", session.user)
+      }
+    }
   }
 
   return {

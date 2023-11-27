@@ -402,11 +402,8 @@ export class Application {
             }
           }
 
-          if (
-            !message.toLowerCase().includes("sequelize") ||
-            error instanceof GraphQLError
-          ) {
-            return error
+          if (config.release === "dev") {
+            console.error(error)
           }
 
           return maskError(error, message, isDev)

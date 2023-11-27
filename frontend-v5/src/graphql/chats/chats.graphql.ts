@@ -2,6 +2,15 @@ import { gql } from "@apollo/client";
 
 export const ChatsQuery = gql`
   query ChatsQuery {
+    userEmoji {
+      id
+      userId
+      chatId
+      icon
+      name
+      createdAt
+      updatedAt
+    }
     chats {
       id
       background

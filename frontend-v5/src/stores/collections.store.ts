@@ -9,6 +9,7 @@ import {
   RemoveFromCollectionMutation
 } from "@/graphql/collections/addToCollection.graphql";
 import { useRoute } from "vue-router";
+import { UserLightCollectionsQuery } from "@/graphql/collections/getUserCollections.graphql";
 
 export const useCollectionsStore = defineStore("collections", () => {
   const items = ref<Collection[]>([]);
@@ -68,6 +69,19 @@ export const useCollectionsStore = defineStore("collections", () => {
     return items.value.filter((item) => item.permissionsMetadata.write);
   });
 
+  async function init() {
+    const {
+      data: { collections }
+    } = await client.query({
+      query: UserLightCollectionsQuery,
+      variables: {
+        input: {}
+      } as CollectionInput,
+      fetchPolicy: "network-only"
+    });
+    items.value = collections.items;
+  }
+
   return {
     items,
     pager,
@@ -75,6 +89,7 @@ export const useCollectionsStore = defineStore("collections", () => {
     addToCollection,
     removeFromCollection,
     selected,
-    writable
+    writable,
+    init
   };
 });

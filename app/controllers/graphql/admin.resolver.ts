@@ -12,6 +12,8 @@ import { User } from "@app/models/user.model"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { ClearCacheInput } from "@app/classes/graphql/admin/cache"
 import { AdminService } from "@app/services/admin.service"
+import { EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
+import { Sequelize } from "sequelize-typescript"
 
 @Resolver()
 @Service()
@@ -98,5 +100,23 @@ export class AdminResolver {
       }
       return { success: true }
     }
+  }
+
+  @Authorization({
+    accessLevel: AccessLevel.ADMIN,
+    scopes: "*"
+  })
+  @Mutation(() => Success)
+  async adminDebugBatch(@Ctx() ctx: Context) {
+    console.log(User.findByPk)
+    // get sequelize-typescript instance for dataloader-sequelize
+    let user1 = await User.findByPk(1, {
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+    })
+    let user2 = await User.findByPk(6, {
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+    })
+    console.log(user1?.username, user2?.username)
+    return { success: true }
   }
 }

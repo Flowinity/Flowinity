@@ -9,6 +9,7 @@ import type {
 import { useApolloClient } from "@vue/apollo-composable";
 import { UpdateUserMutation } from "@/graphql/user/update.graphql";
 import { useI18n } from "vue-i18n";
+import { GetUserQuery } from "@/graphql/user/user.graphql";
 
 export const useUserStore = defineStore("user", () => {
   const user = ref<User | null>(null);
@@ -82,6 +83,18 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
+  async function init() {
+    const {
+      data: { currentUser, trackedUsers, blockedUsers }
+    } = await useApolloClient().client.query({
+      query: GetUserQuery,
+      fetchPolicy: "network-only"
+    });
+    user.value = currentUser;
+    tracked.value = trackedUsers;
+    blocked.value = blockedUsers;
+  }
+
   return {
     user,
     gold,
@@ -91,6 +104,7 @@ export const useUserStore = defineStore("user", () => {
     unreadNotifications,
     updatingUser,
     updateUser,
-    token
+    token,
+    init
   };
 });

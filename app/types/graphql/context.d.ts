@@ -1,6 +1,7 @@
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { Cache } from "@envelop/response-cache"
 import { PartialUserAuth } from "@app/classes/graphql/user/partialUser"
+import { Model, ModelCtor } from "sequelize-typescript"
 
 export type Context = {
   user: PartialUserAuth | null | undefined

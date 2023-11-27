@@ -21,6 +21,7 @@ import {
   PartialUserBase
 } from "@app/classes/graphql/user/partialUser"
 import { Friend } from "@app/models/friend.model"
+import { EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
 
 @Resolver(BlockedUser)
 @Service()
@@ -35,7 +36,8 @@ export class BlockedUserResolver {
     return await BlockedUser.findAll({
       where: {
         userId: ctx.user.id
-      }
+      },
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
   }
 
@@ -125,16 +127,18 @@ export class BlockedUserResolver {
   }
 
   @FieldResolver(() => PartialUserBase)
-  async user(@Root() blockedUser: BlockedUser) {
+  async user(@Root() blockedUser: BlockedUser, @Ctx() ctx: Context) {
     return await blockedUser.$get("user", {
-      attributes: partialUserBase
+      attributes: partialUserBase,
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
   }
 
   @FieldResolver(() => PartialUserBase)
-  async blockedUser(@Root() blockedUser: BlockedUser) {
+  async blockedUser(@Root() blockedUser: BlockedUser, @Ctx() ctx: Context) {
     return await blockedUser.$get("blockedUser", {
-      attributes: partialUserBase
+      attributes: partialUserBase,
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
   }
 }
