@@ -73,7 +73,7 @@
               which will apply to both Public and Private apps.
             </v-card-subtitle>
             <v-data-table :headers="headers" :items="app.oauthUsers">
-              <template v-slot:item.actions="{ item }">
+              <template v-slot:[`item.actions`]="{ item }">
                 <v-btn
                   icon
                   @click="addUser(item.user.username, true)"
@@ -82,7 +82,7 @@
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </template>
-              <template v-slot:item.manage="{ item }">
+              <template v-slot:[`item.manage`]="{ item }">
                 <v-checkbox
                   label="Manage"
                   @update:model-value="updateUser(item.id, $event)"
@@ -150,6 +150,7 @@
                     <v-container class="my-2">
                       <v-checkbox
                         v-for="scope in scopesDefinitions"
+                        :key="scope.id"
                         v-model="scopes"
                         :value="scope.id"
                         :label="scope.name"
@@ -267,6 +268,7 @@
                 <v-col
                   cols="12"
                   v-for="permission in availablePermissions"
+                  :key="permission.id"
                   sm="12"
                   md="6"
                   lg="4"
@@ -327,7 +329,12 @@ import { defineComponent } from "vue";
 import { ScopeDefinition } from "@/views/Auth/Oauth.vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { MyAppQuery } from "@/graphql/developer/myApps.graphql";
-import { AvailableChatPermissionsDocument, ChatPermission, OauthApp, OauthUser } from "@/gql/graphql";
+import {
+  AvailableChatPermissionsDocument,
+  ChatPermission,
+  OauthApp,
+  OauthUser
+} from "@/gql/graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import CreateBotAccountDialog from "@/components/Admin/AppAuth/CreateBotAccountDialog.vue";
 import {

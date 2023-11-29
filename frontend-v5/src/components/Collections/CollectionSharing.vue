@@ -93,7 +93,7 @@
             "
           />
         </template>
-        <template v-slot:item.actions="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <tpu-button
             style="width: 40px; height: 40px"
             icon

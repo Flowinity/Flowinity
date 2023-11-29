@@ -12,7 +12,7 @@
         :items-per-page="10"
         class="elevation-0"
       >
-        <template v-slot:item.date="{ item }">
+        <template v-slot:[`item.date`]="{ item }">
           <span>
             {{ $date(item.columns.date).format("DD/MM/YYYY hh:mm A") }}
           </span>

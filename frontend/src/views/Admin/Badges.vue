@@ -109,7 +109,7 @@
         <v-btn @click="createBadge">Create badge</v-btn>
       </v-container>
       <v-data-table :headers="headers" :items="badges" :items-per-page="-1">
-        <template v-slot:item.actions="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-btn
             icon
             @click="

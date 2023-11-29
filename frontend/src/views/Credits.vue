@@ -112,7 +112,6 @@ export default defineComponent({
       frontend: [
         "@vitejs/plugin-vue",
         "@vue/eslint-config-typescript",
-        "cypress",
         "eslint",
         "eslint-plugin-vue",
         "rollup-plugin-visualizer",

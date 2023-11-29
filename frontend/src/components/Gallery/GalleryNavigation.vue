@@ -91,7 +91,6 @@ import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
-  name: "GalleryNavigation",
   computed: {
     GalleryFilter() {
       return GalleryFilter;
@@ -110,12 +109,14 @@ export default defineComponent({
     supports: {
       type: Object,
       required: false,
-      default: {
-        filter: true,
-        metadata: true,
-        search: true,
-        upload: false,
-        sort: true
+      default() {
+        return {
+          filter: true,
+          metadata: true,
+          search: true,
+          upload: false,
+          sort: true
+        };
       }
     },
     orderTypes: {
@@ -124,20 +125,22 @@ export default defineComponent({
         internalName: GalleryOrder;
       }[],
       required: false,
-      default: [
-        {
-          name: "Ascending",
-          internalName: GalleryOrder.Asc
-        },
-        {
-          name: "Descending",
-          internalName: GalleryOrder.Desc
-        },
-        {
-          name: "Random",
-          internalName: GalleryOrder.Random
-        }
-      ]
+      default() {
+        return [
+          {
+            name: "Ascending",
+            internalName: GalleryOrder.Asc
+          },
+          {
+            name: "Descending",
+            internalName: GalleryOrder.Desc
+          },
+          {
+            name: "Random",
+            internalName: GalleryOrder.Random
+          }
+        ];
+      }
     },
     sortTypes: {
       type: Array as () => {
@@ -145,20 +148,22 @@ export default defineComponent({
         internalName: GallerySort;
       }[],
       required: false,
-      default: [
-        {
-          name: "Created at",
-          internalName: GallerySort.CreatedAt
-        },
-        {
-          name: "Name",
-          internalName: GallerySort.Name
-        },
-        {
-          name: "Size",
-          internalName: GallerySort.Size
-        }
-      ]
+      default() {
+        return [
+          {
+            name: "Created at",
+            internalName: GallerySort.CreatedAt
+          },
+          {
+            name: "Name",
+            internalName: GallerySort.Name
+          },
+          {
+            name: "Size",
+            internalName: GallerySort.Size
+          }
+        ];
+      }
     },
     types: {
       type: Array as () => {
@@ -166,48 +171,50 @@ export default defineComponent({
         internalName: GalleryFilter;
       }[],
       required: false,
-      default: [
-        {
-          name: "Search in screenshots",
-          internalName: GalleryFilter.IncludeMetadata
-        },
-        {
-          name: "Not collectivized",
-          internalName: GalleryFilter.NoCollection
-        },
-        {
-          name: "Images",
-          internalName: GalleryFilter.Images
-        },
-        {
-          name: "Videos",
-          internalName: GalleryFilter.Videos
-        },
-        {
-          name: "Audio",
-          internalName: GalleryFilter.Audio
-        },
-        {
-          name: "Text",
-          internalName: GalleryFilter.Text
-        },
-        {
-          name: "Other",
-          internalName: GalleryFilter.Other
-        },
-        {
-          name: "Undeletable",
-          internalName: GalleryFilter.OnlyUndeletable
-        },
-        {
-          name: "Owned items",
-          internalName: GalleryFilter.Owned
-        },
-        {
-          name: "Not owned items",
-          internalName: GalleryFilter.Shared
-        }
-      ]
+      default() {
+        return [
+          {
+            name: "Search in screenshots",
+            internalName: GalleryFilter.IncludeMetadata
+          },
+          {
+            name: "Not collectivized",
+            internalName: GalleryFilter.NoCollection
+          },
+          {
+            name: "Images",
+            internalName: GalleryFilter.Images
+          },
+          {
+            name: "Videos",
+            internalName: GalleryFilter.Videos
+          },
+          {
+            name: "Audio",
+            internalName: GalleryFilter.Audio
+          },
+          {
+            name: "Text",
+            internalName: GalleryFilter.Text
+          },
+          {
+            name: "Other",
+            internalName: GalleryFilter.Other
+          },
+          {
+            name: "Undeletable",
+            internalName: GalleryFilter.OnlyUndeletable
+          },
+          {
+            name: "Owned items",
+            internalName: GalleryFilter.Owned
+          },
+          {
+            name: "Not owned items",
+            internalName: GalleryFilter.Shared
+          }
+        ];
+      }
     }
   },
   data() {

@@ -118,7 +118,7 @@
           </div>
         </template>
         <template v-slot:complete>
-          <span></span>
+          <span />
         </template>
       </infinite-loading>
       <template v-if="false">

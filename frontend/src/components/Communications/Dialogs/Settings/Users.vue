@@ -14,7 +14,7 @@
     v-model="search"
   />
   <v-data-table :items="users" :headers="headers">
-    <template v-slot:item.user.username="{ item }">
+    <template v-slot:[`item.user.username`]="{ item }">
       <UserAvatar :user="item.user" />
       {{ item.user?.username || "Unresolved user" }}
       <template v-if="dev">({{ item.id }})</template>
@@ -27,7 +27,7 @@
         </span>
       </template>
     </template>
-    <template v-slot:item.ranks="{ item }: any">
+    <template v-slot:[`item.ranks`]="{ item }: any">
       <AddRole
         :ranks="$chat.editingChat.ranks"
         :association="item"
@@ -58,13 +58,13 @@
         </v-icon>
       </v-chip>
     </template>
-    <template v-slot:item.createdAt="{ item }">
+    <template v-slot:[`item.createdAt`]="{ item }">
       {{ $date(item.createdAt).fromNow() }}
     </template>
-    <template v-slot:item.user.createdAt="{ item }">
+    <template v-slot:[`item.user.createdAt`]="{ item }">
       {{ $date(item.user?.createdAt).fromNow() }}
     </template>
-    <template v-slot:item.actions="{ item }">
+    <template v-slot:[`item.actions`]="{ item }">
       <v-btn
         icon
         class="my-1"

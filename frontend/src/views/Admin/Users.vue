@@ -6,16 +6,16 @@
       </v-toolbar>
       <v-container>
         <v-data-table :headers="headers" :items="users">
-          <template v-slot:item.banned="{ item }">
+          <template v-slot:[`item.banned`]="{ item }">
             <v-checkbox
               :model-value="<boolean>item.banned"
               @change="ban(<number>item.id, $event.target.checked)"
             />
           </template>
-          <template v-slot:item.administrator="{ item }">
+          <template v-slot:[`item.administrator`]="{ item }">
             <v-checkbox :model-value="item.administrator" disabled />
           </template>
-          <template v-slot:item.planId="{ item }">
+          <template v-slot:[`item.planId`]="{ item }">
             <v-checkbox
               :model-value="<number>item.planId === 6"
               @change="
@@ -27,10 +27,10 @@
               "
             />
           </template>
-          <template v-slot:item.createdAt="{ item }">
+          <template v-slot:[`item.createdAt`]="{ item }">
             {{ $date(item.createdAt).format("YYYY/MM/DD hh:mm:ss A") }}
           </template>
-          <template v-slot:item.emailVerified="{ item }">
+          <template v-slot:[`item.emailVerified`]="{ item }">
             <v-checkbox
               @change="verify(item.id, $event.target.checked)"
               v-model="item.emailVerified"

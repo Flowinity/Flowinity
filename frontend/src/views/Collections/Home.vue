@@ -49,7 +49,7 @@
         </div>
       </template>
       <template v-slot:complete>
-        <span></span>
+        <span />
       </template>
     </infinite-loading>
     <small>

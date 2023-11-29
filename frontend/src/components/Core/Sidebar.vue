@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer v-bind="$attrs" :width="trueWidth" :rail="w <= 100">
-    <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+    <template v-for="(_, name) in $slots" :key="name" v-slot:[name]>
       <slot :name="name || 'default'" />
       <div
         class="resizer"

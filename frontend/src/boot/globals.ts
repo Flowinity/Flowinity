@@ -9,7 +9,6 @@ import { useWorkspacesStore } from "@/store/workspaces.store";
 import { useChatStore } from "@/store/chat.store";
 import { useFriendsStore } from "@/store/friends.store";
 import { useMailStore } from "@/store/mail.store";
-import { useToast } from "vue-toastification";
 import dayjs from "@/plugins/dayjs";
 import validation from "@/plugins/validation";
 import { io } from "socket.io-client";
@@ -45,7 +44,6 @@ export default function setup(app) {
   const chat = useChatStore();
   const friends = useFriendsStore();
   const mail = useMailStore();
-  const toast = useToast();
   app.config.globalProperties.axios = axios;
   core.themeProviderDefaults.theme = vuetify.theme.themes.value;
   core.themeProviderDefaults.global = vuetify.defaults.value;

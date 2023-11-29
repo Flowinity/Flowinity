@@ -56,8 +56,9 @@
       </v-container>
       <v-container v-else>
         <v-list-item
-          :active="selectedIndex === index"
           v-for="(item, index) of items"
+          :key="item.label"
+          :active="selectedIndex === index"
           @mouseover="selectedIndex = index"
           class="rounded pointer"
         >

@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <v-data-table :items="invites" :headers="headers">
-      <template v-slot:item.createdAt="{ item }">
+      <template v-slot:[`item.createdAt`]="{ item }">
         {{ $date(item.createdAt).format("MMMM Do YYYY, h:mm:ss A") }}
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-btn
           icon
           small

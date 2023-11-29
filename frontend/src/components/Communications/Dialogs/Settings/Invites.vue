@@ -3,7 +3,7 @@
     {{ $t("chats.settings.invites.name") }}
   </overline>
   <v-data-table :items="$chat.editingChat.invites" :headers="headers">
-    <template v-slot:item.id="{ item }">
+    <template v-slot:[`item.id`]="{ item }">
       {{ item.id }}
       <v-btn
         @click="
@@ -15,14 +15,14 @@
         <v-icon>mdi-content-copy</v-icon>
       </v-btn>
     </template>
-    <template v-slot:item.userId="{ item }">
+    <template v-slot:[`item.userId`]="{ item }">
       <UserAvatar :user="$user.users[item.userId]" size="32" />
       {{ $user.users[item.userId]?.username }}
     </template>
-    <template v-slot:item.expiredAt="{ item }">
+    <template v-slot:[`item.expiredAt`]="{ item }">
       {{ item.expiredAt ? $date(item.expiredAt).fromNow() : "Never" }}
     </template>
-    <template v-slot:item.rankId="{ item }">
+    <template v-slot:[`item.rankId`]="{ item }">
       {{
         item.rankId
           ? $chat.editingChat.ranks.find((rank) => rank.id === item.rankId)
@@ -30,7 +30,7 @@
           : "None"
       }}
     </template>
-    <template v-slot:item.actions="{ item }">
+    <template v-slot:[`item.actions`]="{ item }">
       <v-btn icon @click="invalidate(item.id)">
         <v-icon>mdi-close</v-icon>
       </v-btn>

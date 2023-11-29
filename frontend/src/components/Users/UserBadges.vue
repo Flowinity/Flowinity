@@ -382,6 +382,7 @@
     />
     <HoverChip
       v-for="badge in user.badges"
+      :key="badge.id"
       v-ripple
       :color="badge.color"
       :icon="badge.icon"
