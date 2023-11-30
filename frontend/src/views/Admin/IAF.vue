@@ -1,23 +1,23 @@
 <template>
   <v-container>
     <v-data-table :items="invites" :headers="headers">
-      <template v-slot:[`item.createdAt`]="{ item }">
+      <template #[`item.createdAt`]="{ item }">
         {{ $date(item.createdAt).format("MMMM Do YYYY, h:mm:ss A") }}
       </template>
-      <template v-slot:[`item.actions`]="{ item }">
+      <template #[`item.actions`]="{ item }">
         <v-btn
+          v-if="item.status === 'pending'"
           icon
           small
-          v-if="item.status === 'pending'"
           @click="actInvite('accepted', item)"
         >
           <v-icon>mdi-check</v-icon>
         </v-btn>
         <v-btn
+          v-if="item.status === 'pending'"
           icon
           small
           class="ml-5"
-          v-if="item.status === 'pending'"
           @click="actInvite('rejected', item)"
         >
           <v-icon>mdi-close</v-icon>
@@ -65,6 +65,9 @@ export default defineComponent({
       ]
     };
   },
+  mounted() {
+    this.getInvites();
+  },
   methods: {
     async actInvite(type: "accepted" | "rejected", item: Invite) {
       this.loading = true;
@@ -80,9 +83,6 @@ export default defineComponent({
         return b.id - a.id;
       });
     }
-  },
-  mounted() {
-    this.getInvites();
   }
 });
 </script>

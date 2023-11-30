@@ -1,6 +1,6 @@
 <template>
   <DevDialog @close="$app.dialogs.experiments = false">
-    <template v-slot:header>Experiments Manager (CTRL + X)</template>
+    <template #header>Experiments Manager (CTRL + X)</template>
     <v-container style="background: black">
       <v-card>
         <v-card-title>Modify experiment values</v-card-title>

@@ -8,8 +8,8 @@
     "
   />
   <Maintenance
-    v-model="$app.site.maintenance.enabled"
     v-if="$app.site.maintenance.enabled"
+    v-model="$app.site.maintenance.enabled"
   />
   <router-view />
 </template>
@@ -39,17 +39,9 @@ export default defineComponent({
       error: null
     };
   },
-  methods: {
-    async submitFeedback(e: any) {
-      this.error = e;
-      console.log("[TPU/SkullCrash] Error captured:", e);
-      console.error(e.error);
-      /*return;
-      await this.axios.post("/user/feedback", {
-        route: this.$route.path,
-        starRating: 0,
-        text: `{"name":"[TPU/SkullCrash]","msg":${e?.error?.message},"stack":${e?.error?.stack}}`
-      });*/
+  watch: {
+    "$route.path"(val) {
+      this.$app.lastRoute = val;
     }
   },
   mounted() {
@@ -75,9 +67,17 @@ export default defineComponent({
       false
     );
   },
-  watch: {
-    "$route.path"(val) {
-      this.$app.lastRoute = val;
+  methods: {
+    async submitFeedback(e: any) {
+      this.error = e;
+      console.log("[TPU/SkullCrash] Error captured:", e);
+      console.error(e.error);
+      /*return;
+      await this.axios.post("/user/feedback", {
+        route: this.$route.path,
+        starRating: 0,
+        text: `{"name":"[TPU/SkullCrash]","msg":${e?.error?.message},"stack":${e?.error?.stack}}`
+      });*/
     }
   }
 });

@@ -276,6 +276,10 @@ export default defineComponent({
         .filter((item, index, array) => array.indexOf(item) === index);
     }
   },
+  mounted() {
+    this.$app.title = "Credits";
+    this.getUsers();
+  },
   methods: {
     async getUsers() {
       const { data } = await this.$apollo.query({
@@ -283,10 +287,6 @@ export default defineComponent({
       });
       this.users = data;
     }
-  },
-  mounted() {
-    this.$app.title = "Credits";
-    this.getUsers();
   }
 });
 </script>

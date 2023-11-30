@@ -24,7 +24,7 @@
           variant="filled"
           @keydown.enter="getStarted"
         >
-          <template v-slot:append>
+          <template #append>
             <v-btn
               block
               color="white"
@@ -43,7 +43,7 @@
             </v-btn>
           </template>
         </v-text-field>
-        <p class="mb-n2" v-if="!$app.site.officialInstance">
+        <p v-if="!$app.site.officialInstance" class="mb-n2">
           This is a
           <a
             rel="noopener"
@@ -221,7 +221,7 @@
         <router-link to="/policies/content">Content Policy?</router-link>
         Please report it here.
       </p>
-      <template v-slot:left>
+      <template #left>
         <div class="mr-3">
           <v-text-field
             v-model="report.tpuLink"
@@ -283,6 +283,23 @@ export default defineComponent({
       }
     };
   },
+  mounted() {
+    // Check $app.site.hostnames and window.location.hostname to see if we should redirect
+    if (this.$app.site.release !== "dev") {
+      if (
+        this.$app.site.hostnames &&
+        !this.$app.site.hostnames.includes(window.location.hostname)
+      ) {
+        window.location.href =
+          (this.$app.site.hostnameWithProtocol ??
+            "https://images.flowinity.com") + "/home?redirected=true";
+      }
+    }
+    this.$app.title = "Welcome";
+    if (this.$route.query.ref === "colubrina") {
+      this.$app.dialogs.colubrina = true;
+    }
+  },
   methods: {
     async reportUpload() {
       this.report.loading = true;
@@ -316,23 +333,6 @@ export default defineComponent({
           inline: "nearest"
         });
       }
-    }
-  },
-  mounted() {
-    // Check $app.site.hostnames and window.location.hostname to see if we should redirect
-    if (this.$app.site.release !== "dev") {
-      if (
-        this.$app.site.hostnames &&
-        !this.$app.site.hostnames.includes(window.location.hostname)
-      ) {
-        window.location.href =
-          (this.$app.site.hostnameWithProtocol ??
-            "https://images.flowinity.com") + "/home?redirected=true";
-      }
-    }
-    this.$app.title = "Welcome";
-    if (this.$route.query.ref === "colubrina") {
-      this.$app.dialogs.colubrina = true;
     }
   }
 });

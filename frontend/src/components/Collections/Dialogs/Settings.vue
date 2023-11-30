@@ -4,7 +4,7 @@
     max-width="600px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
+    <template #title>
       {{ $t("collections.settings.title") }}
     </template>
     <v-card-text v-if="collection">
@@ -18,9 +18,9 @@
         {{ $t("collections.settings.removeBanner") }}
       </v-btn>
       <v-btn
-        @click="downloadCollectionAsZIPFile"
         :loading="loading"
         class="float-right"
+        @click="downloadCollectionAsZIPFile"
       >
         <v-icon class="mr-1" style="font-size: 20px">mdi-download</v-icon>
         {{ $t("collections.settings.export") }}
@@ -62,12 +62,12 @@ export default defineComponent({
       type: Object as () => Collection
     }
   },
+  emits: ["update:modelValue", "refreshCollection"],
   data() {
     return {
       loading: false
     };
   },
-  emits: ["update:modelValue", "refreshCollection"],
   methods: {
     async updateSettings() {
       await this.axios.patch(`/collections/${this.collection?.id}`, {

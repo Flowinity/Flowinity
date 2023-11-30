@@ -1,6 +1,6 @@
 <template>
   <DevDialog @close="$app.dialogs.memoryProfiler = false">
-    <template v-slot:header>Memory Profiler (CTRL + ALT + M)</template>
+    <template #header>Memory Profiler (CTRL + ALT + M)</template>
     <v-container>
       <v-row>
         <v-col>
@@ -17,7 +17,7 @@
                 :items="usage"
                 :sort-by="[{ key: 'size', order: 'desc' }]"
               >
-                <template v-slot:[`item.size`]="{ item }">
+                <template #[`item.size`]="{ item }">
                   {{ $functions.fileSize(item.size) }}
                 </template>
               </v-data-table>

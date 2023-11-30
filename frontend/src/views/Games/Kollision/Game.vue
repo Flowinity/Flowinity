@@ -1,5 +1,5 @@
 <template>
-  <div class="kollision" id="kollision">
+  <div id="kollision" class="kollision">
     <KollisionPlayer :x="playerX" :y="playerY" />
     <KollisionBall
       v-for="(ball, index) in balls"
@@ -28,6 +28,18 @@ export default defineComponent({
       playerY: 0,
       gameLoopInterval: null as unknown as NodeJS.Timeout
     };
+  },
+  mounted() {
+    this.spawnBalls();
+    this.startGameLoop();
+    const element = document.getElementById("kollision");
+    element.addEventListener("click", async () => {
+      await element.requestPointerLock();
+    });
+    document.addEventListener("mousemove", this.movePlayer);
+  },
+  beforeUnmount() {
+    this.stopGameLoop();
   },
   methods: {
     updateBallPositions() {
@@ -104,18 +116,6 @@ export default defineComponent({
         });
       }
     }
-  },
-  mounted() {
-    this.spawnBalls();
-    this.startGameLoop();
-    const element = document.getElementById("kollision");
-    element.addEventListener("click", async () => {
-      await element.requestPointerLock();
-    });
-    document.addEventListener("mousemove", this.movePlayer);
-  },
-  beforeUnmount() {
-    this.stopGameLoop();
   }
 });
 </script>

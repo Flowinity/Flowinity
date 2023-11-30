@@ -15,7 +15,7 @@
             }
           }"
         >
-          <template v-slot:custom-values="{ item }">
+          <template #custom-values="{ item }">
             <div style="display: flex; align-items: baseline">
               <v-card-subtitle style="opacity: 0.6; margin-right: -28px">
                 Creator:
@@ -50,6 +50,9 @@ export default defineComponent({
       item: null as Upload | null
     };
   },
+  mounted() {
+    this.fetchItem();
+  },
   methods: {
     async fetchItem() {
       try {
@@ -74,9 +77,6 @@ export default defineComponent({
         this.$app.componentLoading = false;
       }
     }
-  },
-  mounted() {
-    this.fetchItem();
   }
 });
 </script>

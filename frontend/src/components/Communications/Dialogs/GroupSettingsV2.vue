@@ -4,7 +4,7 @@
     fullscreen
     @update:modelValue="$emit('update:modelValue', $event)"
   >
-    <template v-slot:toolbar>
+    <template #toolbar>
       <v-toolbar color="transparent">
         <overline v-if="$vuetify.display.mobile">
           {{ $chat.editingChat.name }}
@@ -19,11 +19,11 @@
           "
         >
           <v-btn
+            v-if="$chat.hasPermission('ADD_USERS', $chat.editingChat)"
             class="float-end mr-2"
             icon
-            @click="add = true"
             v-bind="props"
-            v-if="$chat.hasPermission('ADD_USERS', $chat.editingChat)"
+            @click="add = true"
           >
             <v-tooltip activator="parent" location="bottom">
               {{ $t("chats.settings.addUser") }}
@@ -46,19 +46,19 @@
     </template>
     <UploadCropper
       v-model="groupIcon"
-      @finish="uploadIcon"
       type="chatIcon"
-      @remove="removeIcon"
       :remove-text="$t('dialogs.uploadCropper.removeGroup')"
+      @finish="uploadIcon"
+      @remove="removeIcon"
     />
     <div
+      v-if="$chat.editingChat"
       class="d-flex mt-n4"
       :class="{ 'flex-column': $vuetify.display.mobile }"
-      v-if="$chat.editingChat"
     >
       <v-tabs
-        :direction="$vuetify.display.mobile ? 'horizontal' : 'vertical'"
         v-model="tab"
+        :direction="$vuetify.display.mobile ? 'horizontal' : 'vertical'"
         :style="{ maxWidth: $vuetify.display.mobile ? undefined : '220px' }"
       >
         <overline v-if="!$vuetify.display.mobile">
@@ -69,61 +69,61 @@
           {{ $t("chats.settings.tabs.home") }}
         </v-tab>
         <v-tab
-          value="ranks"
           v-if="$chat.hasPermission('MANAGE_RANKS', $chat.editingChat)"
+          value="ranks"
         >
           <v-icon class="mr-2">mdi-lock</v-icon>
           {{ $t("chats.settings.tabs.ranks") }}
         </v-tab>
         <v-tab
-          value="users"
           v-if="$chat.hasPermission('REMOVE_USERS', $chat.editingChat)"
+          value="users"
         >
           <v-icon class="mr-2">mdi-account-group</v-icon>
           {{ $t("chats.settings.tabs.users") }}
         </v-tab>
         <v-tab
-          value="invites"
           v-if="$chat.hasPermission('REMOVE_USERS', $chat.editingChat)"
+          value="invites"
         >
           <v-icon class="mr-2">mdi-account-plus</v-icon>
           {{ $t("chats.settings.tabs.invites") }}
         </v-tab>
         <v-tab
-          value="emoji"
           v-if="$chat.hasPermission('CREATE_EMOJI', $chat.editingChat)"
+          value="emoji"
         >
           <v-icon class="mr-2">mdi-emoticon</v-icon>
           {{ $t("chats.settings.tabs.emoji") }}
         </v-tab>
         <v-tab
-          value="audit"
           v-if="$chat.hasPermission('VIEW_AUDIT_LOG', $chat.editingChat)"
+          value="audit"
         >
           <v-icon class="mr-2">mdi-note-search</v-icon>
           {{ $t("chats.settings.tabs.audit") }}
         </v-tab>
         <v-tab
-          value="bots"
           v-if="
             dev && $chat.hasPermission('MANAGE_INTEGRATIONS', $chat.editingChat)
           "
+          value="bots"
         >
           <v-icon class="mr-2">mdi-robot</v-icon>
           {{ $t("chats.settings.tabs.bots") }}
         </v-tab>
         <v-tab
-          value="bans"
           v-if="dev && $chat.hasPermission('BAN_USERS', $chat.editingChat)"
+          value="bans"
         >
           <v-icon class="mr-2">mdi-gavel</v-icon>
           {{ $t("chats.settings.tabs.bans") }}
         </v-tab>
         <v-divider class="my-2" />
         <v-btn
+          v-if="$chat.editingChat.userId === $user.user.id"
           class="text-left"
           value="delete"
-          v-if="$chat.editingChat.userId === $user.user.id"
           style="color: rgb(var(--v-theme-error))"
           @click.prevent="
             $chat.dialogs.leave.itemId = $chat.editingChat.id;

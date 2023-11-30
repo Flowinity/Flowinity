@@ -12,18 +12,18 @@
   >
     <div class="image-container">
       <v-row
+        v-if="loading"
         align="center"
         class="fill-height ma-0"
         justify="center"
-        v-if="loading"
       >
         <v-progress-circular color="grey lighten-5" indeterminate />
       </v-row>
       <img
         :src="collectionImage"
-        @load="loading = false"
         :alt="item.name"
         class="cover-image"
+        @load="loading = false"
       />
       <div>
         <div class="overlay">

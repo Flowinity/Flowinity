@@ -9,7 +9,7 @@
       'background-size': invite?.chat?.background ? 'cover' : undefined
     }"
   >
-    <v-card max-width="600" class="text-center mx-3 px-3 pt-3" v-if="invite">
+    <v-card v-if="invite" max-width="600" class="text-center mx-3 px-3 pt-3">
       <UserAvatar :chat="invite.chat" size="64" />
       <v-card-title class="initial">
         Join {{ invite.chat.name }} on Communications!
@@ -32,8 +32,9 @@
       <v-card-actions>
         <v-btn to="/" :active="false">Cancel</v-btn>
         <v-spacer />
-        <v-btn color="blue" @click="join" v-if="$user.user">Join</v-btn>
+        <v-btn v-if="$user.user" color="blue" @click="join">Join</v-btn>
         <v-btn
+          v-else
           color="blue"
           @click="
             $router.push(
@@ -42,16 +43,15 @@
                 .replaceAll('&', '%26')}`
             )
           "
-          v-else
         >
           Login & Join
         </v-btn>
       </v-card-actions>
     </v-card>
     <v-card
+      v-else-if="!$app.componentLoading"
       min-width="500"
       class="text-center pt-4"
-      v-else-if="!$app.componentLoading"
     >
       <v-icon class="text-gradient" size="48">mdi-gift-off</v-icon>
       <v-card-title>
@@ -89,6 +89,15 @@ export default defineComponent({
       loading: false
     };
   },
+  watch: {
+    "$route.params.id"(val) {
+      if (!val) return;
+      this.getInvite();
+    }
+  },
+  async mounted() {
+    this.getInvite();
+  },
   methods: {
     async getInvite() {
       try {
@@ -106,15 +115,6 @@ export default defineComponent({
       const data = await this.$chat.joinInvite(this.invite.id);
       this.loading = false;
       this.$router.push(`/communications/${data.id}`);
-    }
-  },
-  async mounted() {
-    this.getInvite();
-  },
-  watch: {
-    "$route.params.id"(val) {
-      if (!val) return;
-      this.getInvite();
     }
   }
 });

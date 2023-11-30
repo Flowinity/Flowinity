@@ -16,7 +16,7 @@
           :src="`${$app.domain}${image.attachment.attachment}`"
           contain
         >
-          <template v-slot:placeholder>
+          <template #placeholder>
             <v-row align="center" class="fill-height ma-0" justify="center">
               <v-progress-circular color="grey lighten-5" indeterminate />
             </v-row>
@@ -50,13 +50,6 @@ export default defineComponent({
       model: 0
     };
   },
-  watch: {
-    model() {
-      if (this.model === this.slideshow.length - 3) {
-        this.getSlideshow();
-      }
-    }
-  },
   computed: {
     interval() {
       return this.config.speed * 1000;
@@ -64,6 +57,17 @@ export default defineComponent({
     height() {
       return this.$vuetify.display.height;
     }
+  },
+  watch: {
+    model() {
+      if (this.model === this.slideshow.length - 3) {
+        this.getSlideshow();
+      }
+    }
+  },
+  mounted() {
+    this.getSlideshow();
+    this.getSlideshowConfig();
   },
   methods: {
     copy(text: string) {
@@ -81,10 +85,6 @@ export default defineComponent({
       );
       this.config = data;
     }
-  },
-  mounted() {
-    this.getSlideshow();
-    this.getSlideshowConfig();
   }
 });
 </script>

@@ -1,20 +1,20 @@
 <template>
   <TransferOwnership
+    v-model="transferOwnership.value"
     :user="$user.users[transferOwnership.userId]"
     :chat="$chat.editingChat"
-    v-model="transferOwnership.value"
   />
   <overline position="center">
     {{ $t("chats.settings.users.name") }}
   </overline>
   <v-text-field
+    v-model="search"
     :label="$t('generic.search')"
     class="mx-2"
     autofocus
-    v-model="search"
   />
   <v-data-table :items="users" :headers="headers">
-    <template v-slot:[`item.user.username`]="{ item }">
+    <template #[`item.user.username`]="{ item }">
       <UserAvatar :user="item.user" />
       {{ item.user?.username || "Unresolved user" }}
       <template v-if="dev">({{ item.id }})</template>
@@ -27,7 +27,7 @@
         </span>
       </template>
     </template>
-    <template v-slot:[`item.ranks`]="{ item }: any">
+    <template #[`item.ranks`]="{ item }: any">
       <AddRole
         :ranks="$chat.editingChat.ranks"
         :association="item"
@@ -41,7 +41,11 @@
       >
         {{ rank.name }}
         <v-icon
+          v-if="
+            !rank.managed && $chat.canEditRank(rank.index, $chat.editingChat)
+          "
           class="pointer ml-1"
+          size="20"
           @click="
             $chat.toggleUserRank(
               item.id,
@@ -49,22 +53,18 @@
               rank.id
             )
           "
-          size="20"
-          v-if="
-            !rank.managed && $chat.canEditRank(rank.index, $chat.editingChat)
-          "
         >
           mdi-close
         </v-icon>
       </v-chip>
     </template>
-    <template v-slot:[`item.createdAt`]="{ item }">
+    <template #[`item.createdAt`]="{ item }">
       {{ $date(item.createdAt).fromNow() }}
     </template>
-    <template v-slot:[`item.user.createdAt`]="{ item }">
+    <template #[`item.user.createdAt`]="{ item }">
       {{ $date(item.user?.createdAt).fromNow() }}
     </template>
-    <template v-slot:[`item.actions`]="{ item }">
+    <template #[`item.actions`]="{ item }">
       <v-btn
         icon
         class="my-1"
@@ -78,15 +78,15 @@
         "
       >
         <v-tooltip activator="parent" location="top">
-          {{ this.$t("chats.settings.users.remove") }}
+          {{ $t("chats.settings.users.remove") }}
         </v-tooltip>
         <v-icon>mdi-close</v-icon>
       </v-btn>
       <v-btn
+        v-if="$chat.editingChat.userId === $user.user.id"
         icon
         class="my-1"
         :disabled="item.user?.id === $chat.editingChat.userId"
-        v-if="$chat.editingChat.userId === $user.user.id"
         @click="
           transferOwnership.userId = item.user?.id;
           transferOwnership.value = true;

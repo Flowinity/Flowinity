@@ -4,7 +4,7 @@
     max-width="700px"
     @update:modelValue="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
+    <template #title>
       {{ blocked ? $t("dialogs.unblock.title") : $t("dialogs.block.title") }}
     </template>
     <template v-if="!blocked">

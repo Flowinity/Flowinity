@@ -4,10 +4,10 @@
       v-model="dialog"
       aspect-ratio="5.4"
       title="Upload Banner"
-      @finish="uploadBanner"
       type="userBanner"
-      @remove="removeBanner"
       :remove-text="$t('dialogs.uploadCropper.removeBanner')"
+      @finish="uploadBanner"
+      @remove="removeBanner"
     />
     <v-img
       id="user-header"
@@ -31,7 +31,7 @@
         :start-color="user?.plan?.id === 6 || gold ? '#FBC02D' : undefined"
         style="position: absolute; top: 0; left: 0; z-index: -2"
       />
-      <template v-slot:placeholder>
+      <template #placeholder>
         <v-row
           v-if="banner !== 'placeholder'"
           align="center"
@@ -77,33 +77,6 @@ export default defineComponent({
       dialog: false
     };
   },
-  methods: {
-    async uploadBanner(file: File) {
-      if (this.user) {
-        const formData = new FormData();
-        formData.append("banner", file);
-        await this.axios.post("/user/upload/banner", formData);
-        this.$emit("refreshUser");
-      } else {
-        const formData = new FormData();
-        formData.append("banner", file);
-        await this.axios.post(
-          `/collections/${this.collection?.id}/banner`,
-          formData
-        );
-        this.$emit("refreshUser");
-      }
-    },
-    async removeBanner() {
-      if (this.user) {
-        await this.axios.delete("/user/upload/banner");
-        this.$emit("refreshUser");
-      } else {
-        await this.axios.delete(`/collections/${this.collection?.id}/banner`);
-        this.$emit("refreshUser");
-      }
-    }
-  },
   computed: {
     banner() {
       if (this.user) {
@@ -137,6 +110,33 @@ export default defineComponent({
       } else if (this.collection) {
         return this.collection.permissionsMetadata?.configure;
       } else return false;
+    }
+  },
+  methods: {
+    async uploadBanner(file: File) {
+      if (this.user) {
+        const formData = new FormData();
+        formData.append("banner", file);
+        await this.axios.post("/user/upload/banner", formData);
+        this.$emit("refreshUser");
+      } else {
+        const formData = new FormData();
+        formData.append("banner", file);
+        await this.axios.post(
+          `/collections/${this.collection?.id}/banner`,
+          formData
+        );
+        this.$emit("refreshUser");
+      }
+    },
+    async removeBanner() {
+      if (this.user) {
+        await this.axios.delete("/user/upload/banner");
+        this.$emit("refreshUser");
+      } else {
+        await this.axios.delete(`/collections/${this.collection?.id}/banner`);
+        this.$emit("refreshUser");
+      }
     }
   }
 });

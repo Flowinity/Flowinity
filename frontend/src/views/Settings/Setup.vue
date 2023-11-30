@@ -156,6 +156,12 @@ export default defineComponent({
       items: []
     };
   },
+  mounted() {
+    this.getAPIKeys();
+    if (this.$app.cordova) {
+      console.log(window.cordova.file);
+    }
+  },
   methods: {
     config(type: "sharex" | "sharenix" = "sharex") {
       let data = {
@@ -222,12 +228,6 @@ export default defineComponent({
       a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
       e.initEvent("click", true, false);
       a.dispatchEvent(e);
-    }
-  },
-  mounted() {
-    this.getAPIKeys();
-    if (this.$app.cordova) {
-      console.log(window.cordova.file);
     }
   }
 });

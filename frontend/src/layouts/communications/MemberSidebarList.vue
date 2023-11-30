@@ -29,9 +29,9 @@
               />
               <v-list-item
                 v-for="rank in ranksFiltered"
+                :key="rank.id"
                 :active="contextMenu.item.ranksMap.includes(rank.id)"
                 :value="rank.id"
-                :key="rank.id"
                 :disabled="
                   !$chat.hasPermission('MANAGE_RANKS', $chat.selectedChat) &&
                   (rank.managed ||
@@ -45,14 +45,14 @@
                   )
                 "
               >
-                <template v-slot:prepend>
+                <template #prepend>
                   <v-avatar
                     class="v-avatar--variant-outlined pointer"
                     :color="rank.color"
                     size="22"
                   />
                 </template>
-                <template v-slot:append>
+                <template #append>
                   <v-list-item-action start>
                     <v-checkbox-btn
                       :model-value="contextMenu.item.ranksMap.includes(rank.id)"
@@ -68,8 +68,8 @@
           Roles
         </v-list-item>
         <UserSidebarOptions
-          :user="$user.users[contextMenu.item.userId]"
           v-if="$user.users[contextMenu.item.userId]"
+          :user="$user.users[contextMenu.item.userId]"
         />
       </v-list>
     </v-card>
@@ -128,7 +128,7 @@
       </v-card-actions>
     </div>
     <div v-if="!$chat.search.value" class="mt-n2">
-      <v-list class="mb-n4" v-for="group in ranks" :key="group.name" nav>
+      <v-list v-for="group in ranks" :key="group.name" class="mb-n4" nav>
         <template v-if="group.users.length">
           <overline position="start">
             {{ group.name }} ({{ group.users.length }})
@@ -137,11 +137,6 @@
             v-for="association in group.users"
             :key="association.id"
             :subtitle="association.legacyUser ? 'Legacy User' : undefined"
-            @click="
-              $chat.dialogs.user.username = association.user?.username;
-              $chat.dialogs.user.value = true;
-            "
-            @contextmenu.prevent="context($event, association)"
             :style="{
               color: $chat.getRankColor(
                 association.ranksMap,
@@ -152,21 +147,26 @@
               'black-and-white':
                 $user.users[association.userId]?.status === UserStatus.Offline
             }"
+            @click="
+              $chat.dialogs.user.username = association.user?.username;
+              $chat.dialogs.user.value = true;
+            "
+            @contextmenu.prevent="context($event, association)"
           >
-            <template v-slot:title>
+            <template #title>
               {{ $friends.getName(association.user) || "Deleted User" }}
               <v-chip
-                class="ml-1"
                 v-if="$user.users[association.userId]?.bot"
+                class="ml-1"
                 size="x-small"
               >
                 BOT
               </v-chip>
             </template>
-            <template v-slot:subtitle v-if="association.legacyUserId">
+            <template v-if="association.legacyUserId" #subtitle>
               {{ $t("chats.roles.legacyUser") }}
             </template>
-            <template v-slot:prepend>
+            <template #prepend>
               <UserAvatar
                 class="mr-2"
                 :dot-status="true"
@@ -190,15 +190,15 @@
         <template v-else>
           ({{ $chat.search.results.pager.totalItems }})
         </template>
-        <template v-slot:end>
+        <template #end>
           <v-icon @click="$chat.search.value = false">mdi-close</v-icon>
         </template>
       </overline>
       <v-container class="mb-8">
         <GalleryTextField
           v-model="$chat.search.query"
-          @submit="$chat.doSearch(sort)"
           :autofocus="true"
+          @submit="$chat.doSearch(sort)"
         />
         <div class="float-right">
           <v-btn-toggle v-model="sort" density="compact">
@@ -208,8 +208,8 @@
         </div>
       </v-container>
       <ol
-        class="d-flex flex-column communications position-relative"
         v-if="!$chat.search.loading"
+        class="d-flex flex-column communications position-relative"
         style="height: unset"
       >
         <message-perf
@@ -358,6 +358,11 @@ export default defineComponent({
         left: ${this.contextMenu.x + 10}px;`;
     }
   },
+  watch: {
+    sort(val) {
+      this.$chat.doSearch(val);
+    }
+  },
   methods: {
     async handleJump(messageId: number, associationId: number) {
       if (this.$chat.selectedChatId !== associationId) {
@@ -380,11 +385,6 @@ export default defineComponent({
       } else {
         return chat.name;
       }
-    }
-  },
-  watch: {
-    sort(val) {
-      this.$chat.doSearch(val);
     }
   }
 });

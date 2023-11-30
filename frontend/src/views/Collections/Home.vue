@@ -2,9 +2,9 @@
   <v-container>
     <CreateCollectionDialog v-model="create" />
     <GalleryNavigation
+      v-model:search="search"
       :supports="{ filter: true, metadata: false, search: true }"
       @refreshGallery="getCollections(undefined, true)"
-      v-model:search="search"
       @update:filter="filter = $event"
     />
     <v-btn class="mt-1 ml-1" style="float: right" @click="create = true">
@@ -34,11 +34,11 @@
     </v-row>
     <infinite-loading
       v-if="!$collections.complete"
-      @infinite="getCollections"
       identifier="collections-bottom"
       :standalone="true"
+      @infinite="getCollections"
     >
-      <template v-slot:spinner>
+      <template #spinner>
         <div class="text-center">
           <v-progress-circular
             :size="36"
@@ -48,7 +48,7 @@
           />
         </div>
       </template>
-      <template v-slot:complete>
+      <template #complete>
         <span />
       </template>
     </infinite-loading>
@@ -110,6 +110,18 @@ export default defineComponent({
       ]
     };
   },
+  mounted() {
+    this.$app.title = "Collections";
+    if (this.$collections.items.length) return;
+    this.$collections.getCollections(
+      {
+        search: this.search,
+        filter: this.filter,
+        page: 1
+      },
+      true
+    );
+  },
   methods: {
     async getCollections($state?: StateHandler, reset: boolean = false) {
       this.loading = true;
@@ -130,18 +142,6 @@ export default defineComponent({
       }
       this.loading = false;
     }
-  },
-  mounted() {
-    this.$app.title = "Collections";
-    if (this.$collections.items.length) return;
-    this.$collections.getCollections(
-      {
-        search: this.search,
-        filter: this.filter,
-        page: 1
-      },
-      true
-    );
   }
 });
 </script>

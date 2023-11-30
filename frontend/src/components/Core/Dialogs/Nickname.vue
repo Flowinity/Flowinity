@@ -4,7 +4,7 @@
     style="max-width: 548px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>Friend Nickname</template>
+    <template #title>Friend Nickname</template>
     <v-card-text>
       <v-text-field
         v-model="nickname"
@@ -28,13 +28,19 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 export default defineComponent({
   name: "NicknameDialog",
   components: { CoreDialog },
-  emits: ["update:modelValue", "upload"],
   props: ["modelValue"],
+  emits: ["update:modelValue", "upload"],
   data() {
     return {
       nickname: "",
       loading: false
     };
+  },
+  watch: {
+    modelValue() {
+      this.nickname =
+        this.$friends.getName(this.$app.dialogs.nickname.userId, true) || "";
+    }
   },
   methods: {
     async update() {
@@ -47,12 +53,6 @@ export default defineComponent({
       );
       this.loading = false;
       this.$emit("update:modelValue", false);
-    }
-  },
-  watch: {
-    modelValue() {
-      this.nickname =
-        this.$friends.getName(this.$app.dialogs.nickname.userId, true) || "";
     }
   }
 });

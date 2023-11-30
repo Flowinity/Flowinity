@@ -1,18 +1,12 @@
 <template>
   <div>
     <v-text-field
-      @update:model-value="
-        $emit('update:object', {
-          key: persistentKey,
-          value: typeof value === 'number' ? parseInt($event) : $event
-        })
-      "
+      v-if="typeof value === 'string' || typeof value === 'number'"
       :model-value="value"
       :label="
         persistentKey +
         (persistentKey.includes('flowinity') ? ' (deprecated)' : '')
       "
-      v-if="typeof value === 'string' || typeof value === 'number'"
       :type="
         ['password', 'token', 'secret', 'key'].some((s) =>
           persistentKey.toLowerCase().includes(s)
@@ -20,16 +14,22 @@
           ? 'password'
           : undefined
       "
+      @update:model-value="
+        $emit('update:object', {
+          key: persistentKey,
+          value: typeof value === 'number' ? parseInt($event) : $event
+        })
+      "
     />
     <v-switch
       v-else-if="typeof value === 'boolean'"
       :model-value="value"
       :label="name"
       :disabled="name === 'officialInstance'"
+      class="mb-n6"
       @update:model-value="
         $emit('update:object', { key: persistentKey, value: $event })
       "
-      class="mb-n6"
     />
     <v-textarea
       v-else-if="Array.isArray(value)"
@@ -44,17 +44,17 @@
     />
     <div
       v-for="(value2, key2, i) in value"
-      :key="key2"
       v-else-if="typeof value === 'object' && !Array.isArray(value)"
+      :key="key2"
     >
-      <v-card-text style="padding: 0" v-if="i === 0">{{ name }}:</v-card-text>
+      <v-card-text v-if="i === 0" style="padding: 0">{{ name }}:</v-card-text>
       <ConfigObject
         :style="deepStyle"
         :value="value2"
         :name="key2"
         :deep="deep + 1"
+        :persistent-key="persistentKey + '.' + key2"
         @update:object="$emit('update:object', $event)"
-        :persistentKey="persistentKey + '.' + key2"
       />
     </div>
   </div>

@@ -15,17 +15,17 @@
   <InviteAFriend v-model="$app.dialogs.inviteAFriend" />
   <Feedback v-model="$app.dialogs.feedback" />
   <Migrate
-    v-model="$app.dialogs.migrateWizard"
     v-if="$experiments.experiments.PROJECT_MERGE"
+    v-model="$app.dialogs.migrateWizard"
   />
   <Gold v-model="$app.dialogs.gold.value" />
   <v-app
     v-if="$user.user"
+    class="bg"
     @drop="dragDropHandler"
     @dragover="dragOver"
     @touchstart="touchStart($event)"
     @touchend="touchEnd($event)"
-    class="bg"
   >
     <NicknameDialog v-model="$app.dialogs.nickname.value" />
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher" />
@@ -159,6 +159,92 @@ export default defineComponent({
       }
     }
   },
+  watch: {
+    "$chat.totalUnread"(val) {
+      console.log(`updating favicon with ${val}`);
+      // remove other favicons
+      const links = document.getElementsByTagName("link");
+      //@ts-ignore
+      for (const link of links) {
+        if (
+          link.getAttribute("rel") !== "manifest" &&
+          link.getAttribute("rel") !== "stylesheet" &&
+          link.getAttribute("rel") !== "preload" &&
+          link.getAttribute("rel") !== "modulepreload"
+        ) {
+          link.remove();
+        }
+      }
+      // set favicon to gold
+      const link =
+        (document.querySelector("link[rel*='icon']") as HTMLLinkElement) ||
+        (document.createElement("link") as HTMLLinkElement);
+      link.type = "image/x-icon";
+      link.rel = "shortcut icon";
+      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
+        this.$user.user?.username
+      }&unread=${val || 0}`;
+      document.head.appendChild(link);
+    },
+    $route(to, from) {
+      if (!this.$user.gold) {
+        const goldElements = document.getElementsByClassName("gold");
+        while (goldElements.length > 0) {
+          goldElements[0].classList.remove("gold");
+        }
+      }
+      this.getPulseSession();
+      this.$sockets.pulse.emit("pulse", {
+        action: "page-change",
+        route: to.path,
+        timeSpent: 0,
+        device: navigator.platform,
+        sysInfo: {
+          ua: navigator.userAgent
+        },
+        name: null,
+        other: {
+          lastRoute: from.path
+        }
+      });
+    }
+  },
+  mounted() {
+    if (window.location.pathname.startsWith("/slideshow/")) {
+      this.$app.componentLoading = false;
+      this.$app.loading = false;
+      return;
+    }
+    if (this.$vuetify.display.mobile && this.$app.workspaceDrawer) {
+      this.$app.workspaceDrawer = false;
+    }
+    // watch for CTRL + ALT + M for Memory Profiler
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.altKey && e.key === "m") {
+        e.preventDefault();
+        this.$app.dialogs.actionDialog = !this.$app.dialogs.actionDialog;
+      } else if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
+        e.preventDefault();
+        this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
+      } else if (e.ctrlKey && e.key === "q") {
+        e.preventDefault();
+        this.$app.dialogs.experiments = !this.$app.dialogs.experiments;
+      }
+      if (
+        (e.ctrlKey && e.altKey && e.key === "d") ||
+        (e.metaKey && e.altKey && e.key === "d")
+      ) {
+        e.preventDefault();
+        console.log("Revert CSS");
+        this.$user.applyCSS(true);
+      }
+      if (e.ctrlKey && e.altKey && e.key === "e") {
+        this.$app.themeEditor = !this.$app.themeEditor;
+      }
+    });
+    this.getPulseSession();
+    this.getPulseSessionGlobal();
+  },
   methods: {
     touchEnd(event: TouchEvent) {
       if (event.target instanceof Element) {
@@ -289,92 +375,6 @@ export default defineComponent({
         return;
       e.preventDefault();
       e.stopPropagation();
-    }
-  },
-  mounted() {
-    if (window.location.pathname.startsWith("/slideshow/")) {
-      this.$app.componentLoading = false;
-      this.$app.loading = false;
-      return;
-    }
-    if (this.$vuetify.display.mobile && this.$app.workspaceDrawer) {
-      this.$app.workspaceDrawer = false;
-    }
-    // watch for CTRL + ALT + M for Memory Profiler
-    document.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.altKey && e.key === "m") {
-        e.preventDefault();
-        this.$app.dialogs.actionDialog = !this.$app.dialogs.actionDialog;
-      } else if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
-        e.preventDefault();
-        this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
-      } else if (e.ctrlKey && e.key === "q") {
-        e.preventDefault();
-        this.$app.dialogs.experiments = !this.$app.dialogs.experiments;
-      }
-      if (
-        (e.ctrlKey && e.altKey && e.key === "d") ||
-        (e.metaKey && e.altKey && e.key === "d")
-      ) {
-        e.preventDefault();
-        console.log("Revert CSS");
-        this.$user.applyCSS(true);
-      }
-      if (e.ctrlKey && e.altKey && e.key === "e") {
-        this.$app.themeEditor = !this.$app.themeEditor;
-      }
-    });
-    this.getPulseSession();
-    this.getPulseSessionGlobal();
-  },
-  watch: {
-    "$chat.totalUnread"(val) {
-      console.log(`updating favicon with ${val}`);
-      // remove other favicons
-      const links = document.getElementsByTagName("link");
-      //@ts-ignore
-      for (const link of links) {
-        if (
-          link.getAttribute("rel") !== "manifest" &&
-          link.getAttribute("rel") !== "stylesheet" &&
-          link.getAttribute("rel") !== "preload" &&
-          link.getAttribute("rel") !== "modulepreload"
-        ) {
-          link.remove();
-        }
-      }
-      // set favicon to gold
-      const link =
-        (document.querySelector("link[rel*='icon']") as HTMLLinkElement) ||
-        (document.createElement("link") as HTMLLinkElement);
-      link.type = "image/x-icon";
-      link.rel = "shortcut icon";
-      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
-        this.$user.user?.username
-      }&unread=${val || 0}`;
-      document.head.appendChild(link);
-    },
-    $route(to, from) {
-      if (!this.$user.gold) {
-        const goldElements = document.getElementsByClassName("gold");
-        while (goldElements.length > 0) {
-          goldElements[0].classList.remove("gold");
-        }
-      }
-      this.getPulseSession();
-      this.$sockets.pulse.emit("pulse", {
-        action: "page-change",
-        route: to.path,
-        timeSpent: 0,
-        device: navigator.platform,
-        sysInfo: {
-          ua: navigator.userAgent
-        },
-        name: null,
-        other: {
-          lastRoute: from.path
-        }
-      });
     }
   }
 });

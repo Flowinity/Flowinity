@@ -104,6 +104,55 @@ export default defineComponent({
       lines: 0
     };
   },
+  computed: {
+    speakingTime() {
+      const avgWordsPerMinute = 150;
+      const minutes = Math.floor(this.words / avgWordsPerMinute);
+      const seconds = Math.floor(
+        (this.words / avgWordsPerMinute - minutes) * 60
+      );
+
+      let result = "";
+      if (minutes > 60) {
+        const hours = Math.floor(minutes / 60);
+        result += `${hours}h`;
+      }
+      if (minutes > 0) {
+        result += `${minutes % 60}m`;
+      }
+      if (seconds > 0) {
+        result += `${seconds}s`;
+      }
+
+      if (!result) result = "0s";
+
+      return result;
+    },
+    toolbarStyles() {
+      if (this.$app.mainDrawer && !this.$vuetify.display.mobile)
+        return "margin-left: 256px";
+      else return {};
+    }
+  },
+  watch: {
+    $route(val) {
+      if (!val.params.id) return;
+      this.onMounted();
+    }
+  },
+  mounted() {
+    this.onMounted();
+    if (!this.$app.workspaceDrawer && !this.$vuetify.display.mobile) {
+      this.$app.forcedWorkspaceDrawer = true;
+      this.$app.workspaceDrawer = true;
+    }
+    this.$app.title = "Workspace Editor";
+  },
+  unmounted() {
+    this.$app.workspaceDrawer =
+      localStorage.getItem("workspaceDrawer") === "true";
+    this.$app.forcedWorkspaceDrawer = false;
+  },
   methods: {
     async upload(file: any) {
       try {
@@ -436,55 +485,6 @@ export default defineComponent({
         },
         false
       );
-    }
-  },
-  computed: {
-    speakingTime() {
-      const avgWordsPerMinute = 150;
-      const minutes = Math.floor(this.words / avgWordsPerMinute);
-      const seconds = Math.floor(
-        (this.words / avgWordsPerMinute - minutes) * 60
-      );
-
-      let result = "";
-      if (minutes > 60) {
-        const hours = Math.floor(minutes / 60);
-        result += `${hours}h`;
-      }
-      if (minutes > 0) {
-        result += `${minutes % 60}m`;
-      }
-      if (seconds > 0) {
-        result += `${seconds}s`;
-      }
-
-      if (!result) result = "0s";
-
-      return result;
-    },
-    toolbarStyles() {
-      if (this.$app.mainDrawer && !this.$vuetify.display.mobile)
-        return "margin-left: 256px";
-      else return {};
-    }
-  },
-  mounted() {
-    this.onMounted();
-    if (!this.$app.workspaceDrawer && !this.$vuetify.display.mobile) {
-      this.$app.forcedWorkspaceDrawer = true;
-      this.$app.workspaceDrawer = true;
-    }
-    this.$app.title = "Workspace Editor";
-  },
-  unmounted() {
-    this.$app.workspaceDrawer =
-      localStorage.getItem("workspaceDrawer") === "true";
-    this.$app.forcedWorkspaceDrawer = false;
-  },
-  watch: {
-    $route(val) {
-      if (!val.params.id) return;
-      this.onMounted();
     }
   }
 });

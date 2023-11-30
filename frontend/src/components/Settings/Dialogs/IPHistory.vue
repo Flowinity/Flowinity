@@ -4,7 +4,7 @@
     max-width="900px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>IP History</template>
+    <template #title>IP History</template>
     <v-card-text>
       <v-data-table
         :headers="headers"
@@ -12,7 +12,7 @@
         :items-per-page="10"
         class="elevation-0"
       >
-        <template v-slot:[`item.date`]="{ item }">
+        <template #[`item.date`]="{ item }">
           <span>
             {{ $date(item.columns.date).format("DD/MM/YYYY hh:mm A") }}
           </span>

@@ -75,7 +75,7 @@
                       <v-icon>mdi-rename</v-icon>
                     </v-btn>
                   </h1>
-                  <UserBadges :primaryColor="primaryColorResult" :user="user" />
+                  <UserBadges :primary-color="primaryColorResult" :user="user" />
                 </div>
               </v-card-text>
             </v-col>
@@ -353,7 +353,6 @@ import { FriendStatus, User, UserInsights } from "@/gql/graphql";
 
 export default defineComponent({
   name: "UserV2",
-  props: ["username"],
   components: {
     InsightsPromoCard,
     GraphWidget,
@@ -363,6 +362,7 @@ export default defineComponent({
     UserAvatar,
     UserBanner
   },
+  props: ["username"],
   data() {
     return {
       user: undefined as User | undefined,
@@ -461,6 +461,19 @@ export default defineComponent({
       }
     }
   },
+  watch: {
+    "$route.params.username"(val) {
+      if (!val) return;
+      this.getUser();
+    }
+  },
+  mounted() {
+    if (!this.username) this.$app.title = "User";
+    this.getUser();
+  },
+  unmounted() {
+    this.setTheme(true);
+  },
   methods: {
     setTheme(reset: boolean = false) {
       if (this.$user.disableProfileColors) return false;
@@ -539,19 +552,6 @@ export default defineComponent({
       if (!this.username) this.$app.title = this.user?.username + "'s Profile";
       this.setTheme();
       this.$app.componentLoading = false;
-    }
-  },
-  mounted() {
-    if (!this.username) this.$app.title = "User";
-    this.getUser();
-  },
-  unmounted() {
-    this.setTheme(true);
-  },
-  watch: {
-    "$route.params.username"(val) {
-      if (!val) return;
-      this.getUser();
     }
   }
 });

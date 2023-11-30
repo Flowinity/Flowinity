@@ -1,11 +1,11 @@
 <template>
   <v-app-bar
+    id="navbar"
     :key="$user.user?.emailVerified ? 1 : 2"
     :class="classString"
     :extension-height="$user.user?.emailVerified ? 0 : 42"
     app
     class="navbar"
-    id="navbar"
     color="dark"
     density="comfortable"
     :flat="true"
@@ -46,14 +46,14 @@
       </h2>
       <v-text-field
         v-else-if="editingName"
+        v-model="$chat.selectedChat.name"
         single-line
         variant="outlined"
         density="compact"
         style="height: 40px"
         class="ml-2"
-        @blur="editingName = false"
         autofocus
-        v-model="$chat.selectedChat.name"
+        @blur="editingName = false"
         @keydown.enter="
           $chat.saveSettings({
             name: $chat.selectedChat.name,
@@ -137,7 +137,7 @@
     </v-btn>
     <template v-if="$user.user">
       <v-menu>
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <v-btn aria-label="Personal Menu" icon v-bind="props">
             <UserAvatar
               :user="$user.user"
@@ -154,10 +154,10 @@
               :key="item.id"
               :disabled="item.disabled"
               :to="item.path"
-              @click="handleClickDropdown(index)"
               :style="{
                 color: item.id === 15 ? 'rgb(var(--v-theme-error))' : undefined
               }"
+              @click="handleClickDropdown(index)"
             >
               <v-list-item-title>
                 <v-icon class="mr-1">
@@ -185,7 +185,7 @@
         <v-icon>mdi-menu-open</v-icon>
       </v-btn>
     </template>
-    <template v-slot:extension>
+    <template #extension>
       <v-progress-linear
         v-if="$app.dialogs.upload.loading"
         :model-value="$app.dialogs.upload.percentage"
@@ -209,7 +209,7 @@
           Verification email sent! Please check your email,
           <strong>{{ $user.user?.email }}</strong>
         </small>
-        <template v-slot:append>
+        <template #append>
           <v-btn
             :loading="$user.actions.emailSent.loading"
             size="x-small"
@@ -220,15 +220,15 @@
         </template>
       </v-alert>
       <v-alert
+        v-if="false"
         variant="tonal"
         :icon="false"
         type="info"
         class="rounded-0"
         density="compact"
-        v-if="false"
       >
         <small class="unselectable">Welcome to the new PrivateUploader!</small>
-        <template v-slot:append>
+        <template #append>
           <v-btn size="x-small" href="https://privateuploader.com">
             Go to Stable
           </v-btn>

@@ -114,18 +114,6 @@ import { Workspace } from "@/models/workspace";
 export default defineComponent({
   name: "Home",
   components: { PromoNoContent },
-  methods: {
-    workspaceNotes(workspace: Workspace) {
-      return workspace.folders.map((folder) => folder.notes).flat();
-    },
-    async getRecent() {
-      if (!this.$workspaces.recent.length) {
-        this.$app.componentLoading = true;
-      }
-      await this.$workspaces.getRecent();
-      this.$app.componentLoading = false;
-    }
-  },
   computed: {
     items() {
       return this.$workspaces.items;
@@ -143,6 +131,18 @@ export default defineComponent({
     this.$app.workspaceDrawer =
       localStorage.getItem("workspaceDrawer") === "true";
     this.$app.forcedWorkspaceDrawer = false;
+  },
+  methods: {
+    workspaceNotes(workspace: Workspace) {
+      return workspace.folders.map((folder) => folder.notes).flat();
+    },
+    async getRecent() {
+      if (!this.$workspaces.recent.length) {
+        this.$app.componentLoading = true;
+      }
+      await this.$workspaces.getRecent();
+      this.$app.componentLoading = false;
+    }
   }
 });
 </script>

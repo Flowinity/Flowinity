@@ -1,12 +1,12 @@
 <template>
   <v-menu
-    @update:model-value="$emit('update:modelValue', $event)"
+    :id="id"
     :model-value="modelValue"
     :style="menuStyle"
     style="z-index: 6001 !important"
-    :id="id"
     :min-width="100"
     :eager="true"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <div :id="id">
       <slot />
@@ -38,12 +38,6 @@ export default defineComponent({
     return {
       id: ""
     };
-  },
-  methods: {
-    genId() {
-      this.id = `tpu-menu-${Math.random().toString(36).substring(2, 10)}`;
-      return this.id;
-    }
   },
   computed: {
     menuStyle() {
@@ -93,6 +87,12 @@ export default defineComponent({
   },
   mounted() {
     this.genId();
+  },
+  methods: {
+    genId() {
+      this.id = `tpu-menu-${Math.random().toString(36).substring(2, 10)}`;
+      return this.id;
+    }
   }
 });
 </script>

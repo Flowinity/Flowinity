@@ -1,12 +1,12 @@
 <template>
   <li
-    class="position-relative"
     v-if="
       !blocked(message.userId) ||
       (blocked(message.userId) && merge && uncollapseBlocked) ||
       !merge
     "
     :ref="`message-${message.id}`"
+    class="position-relative"
   >
     <overline
       v-if="unreadId === message.id"
@@ -33,7 +33,7 @@
       "
     >
       <reply-line class="mt-2" />
-      <span class="mt-n2" v-if="message.reply">
+      <span v-if="message.reply" class="mt-n2">
         <UserAvatar
           :user="$user.users[message.reply.userId]"
           class="mr-2"
@@ -43,11 +43,11 @@
         <span
           :style="{
             opacity: 0.8,
-            color: this.$chat.getRankColor(
-              this.$chat.selectedChat.users.find(
+            color: $chat.getRankColor(
+              $chat.selectedChat.users.find(
                 (assoc) => assoc.userId === message.reply.userId
               )?.ranksMap,
-              this.$chat.selectedChat.ranks
+              $chat.selectedChat.ranks
             ),
             'margin-left': '-1px'
           }"
@@ -81,9 +81,9 @@
     >
       <div class="flex-grow-tpu">
         <div
-          @contextmenu="editing ? () => {} : context($event)"
           :class="{ merge, unselectable: $vuetify.display.mobile }"
           class="message rounded position-relative"
+          @contextmenu="editing ? () => {} : context($event)"
         >
           <div class="avatar-section">
             <div v-if="merge" class="message-date">
@@ -99,6 +99,15 @@
               </span>
             </div>
             <UserAvatar
+              v-else-if="
+                (!blocked(message.userId) ||
+                  (blocked(message.userId) && uncollapseBlocked)) &&
+                !merge &&
+                (message.type === MessageType.Message || !message.type)
+              "
+              :id="'message-author-avatar-' + message.id"
+              class="pointer"
+              :user="user"
               @click="
                 $emit('authorClick', {
                   user,
@@ -107,18 +116,9 @@
                   y: $event.y
                 })
               "
-              class="pointer"
-              v-else-if="
-                (!blocked(message.userId) ||
-                  (blocked(message.userId) && uncollapseBlocked)) &&
-                !merge &&
-                (message.type === MessageType.Message || !message.type)
-              "
-              :user="user"
-              :id="'message-author-avatar-' + message.id"
             />
             <div v-else class="mr-3 text-grey">
-              <v-icon class="mr-1" size="32" v-if="blocked(message.userId)">
+              <v-icon v-if="blocked(message.userId)" class="mr-1" size="32">
                 mdi-account-cancel
               </v-icon>
               <v-icon
@@ -169,7 +169,7 @@
                 <span>
                   {{ $friends.getName(user) || "Unknown User" }}
                 </span>
-                <v-chip class="ml-1" v-if="user?.bot" size="x-small">
+                <v-chip v-if="user?.bot" class="ml-1" size="x-small">
                   BOT
                 </v-chip>
               </span>
@@ -185,15 +185,15 @@
                 Click to expand
               </a>
             </div>
-            <div class="position-relative" v-else-if="!editing">
+            <div v-else-if="!editing" class="position-relative">
               <span
+                v-memo="[message.content, message.error, message.pending]"
                 :class="{
                   'text-grey': message.pending,
                   'text-red': message.error
                 }"
                 class="overflow-content message-content d-inline-block"
                 v-html="$functions.markdown(message.content, message)"
-                v-memo="[message.content, message.error, message.pending]"
               ></span>
               <span
                 v-if="message.edited"
@@ -219,21 +219,21 @@
             <CommunicationsInput
               v-if="editing"
               :editing="true"
-              :modelValue="editingText"
+              :model-value="editingText"
+              style="width: 100%"
               @edit="$emit('edit', { id: null, content: null })"
               @sendMessage="$emit('editMessage', $event)"
               @update:modelValue="$emit('editText', $event)"
-              style="width: 100%"
             />
             <message-actions
-              :message="message"
               v-if="hovered && !$vuetify.display.mobile"
+              :message="message"
+              :merge="merge"
               @delete="$emit('delete', { message, shifting: $event })"
               @edit="
                 $emit('edit', { id: message.id, content: message.content })
               "
               @reply="$emit('reply', message)"
-              :merge="merge"
             />
             <Embed
               v-for="(embed, index) in message.embeds"
@@ -244,9 +244,9 @@
         </div>
       </div>
       <div
+        v-if="!search"
         class="flex-shrink-1 align-self-end"
         :style="{ width: $vuetify.display.mobile ? '45px' : '100px' }"
-        v-if="!search"
       >
         <div
           style="justify-content: flex-end; display: flex; padding-right: 8px"
@@ -279,9 +279,9 @@
                 <v-container>
                   <span
                     v-for="readReceipt in message.readReceipts"
+                    :key="readReceipt.id"
                     class="d-flex"
                     style="gap: 6px"
-                    :key="readReceipt.id"
                   >
                     <ReadReceipt
                       :message="message"
@@ -299,9 +299,9 @@
                 }}
                 <v-tooltip activator="parent" location="top">
                   <ReadReceipt
-                    :message="message"
                     v-for="readReceipt in message.readReceipts"
                     :key="readReceipt.userId"
+                    :message="message"
                     :read-receipt="readReceipt"
                     class="my-1"
                     :expanded="true"
@@ -409,6 +409,19 @@ export default defineComponent({
           );
     }
   },
+  mounted() {
+    if (!this.message.reply?.id) return;
+    this.$sockets.chat.on("edit", this.onEdit);
+    this.$sockets.chat.on("messageDelete", this.onDelete);
+  },
+  beforeUnmount() {
+    if (!this.message.reply?.id) return;
+    this.$sockets.chat.off("edit", this.onEdit);
+    this.$sockets.chat.off("messageDelete", this.onDelete);
+    const el = this.$refs[`message-${this.message.id}`]?.$el;
+    if (!el) return;
+    this.resizeObserver.unobserve(this.$refs[el]);
+  },
   methods: {
     blocked(userId?: number) {
       return this.$user.blocked.find(
@@ -441,19 +454,6 @@ export default defineComponent({
       if (data?.id !== this.message.replyId) return;
       this.message.reply = null;
     }
-  },
-  mounted() {
-    if (!this.message.reply?.id) return;
-    this.$sockets.chat.on("edit", this.onEdit);
-    this.$sockets.chat.on("messageDelete", this.onDelete);
-  },
-  beforeUnmount() {
-    if (!this.message.reply?.id) return;
-    this.$sockets.chat.off("edit", this.onEdit);
-    this.$sockets.chat.off("messageDelete", this.onDelete);
-    const el = this.$refs[`message-${this.message.id}`]?.$el;
-    if (!el) return;
-    this.resizeObserver.unobserve(this.$refs[el]);
   }
 });
 </script>

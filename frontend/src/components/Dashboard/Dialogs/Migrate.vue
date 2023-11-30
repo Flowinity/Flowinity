@@ -206,6 +206,14 @@ export default defineComponent({
       }
     };
   },
+  watch: {
+    modelValue: {
+      immediate: true,
+      handler(val) {
+        if (!val) this.step = 1;
+      }
+    }
+  },
   methods: {
     async checkColubrina() {
       this.colubrina.loading = true;
@@ -220,14 +228,6 @@ export default defineComponent({
         this.colubrina.loading = false;
       } catch {
         this.colubrina.loading = false;
-      }
-    }
-  },
-  watch: {
-    modelValue: {
-      immediate: true,
-      handler(val) {
-        if (!val) this.step = 1;
       }
     }
   }

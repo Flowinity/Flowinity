@@ -1,6 +1,6 @@
 <template>
   <CoreDialog v-model="dialog" max-width="600">
-    <template v-slot:title>Add Social Link</template>
+    <template #title>Add Social Link</template>
     <v-container>
       <v-text-field v-model="link.name" label="Text" maxlength="20" />
       <v-text-field v-model="link.url" label="URL" />
@@ -36,18 +36,18 @@
     <v-container>
       <v-chip
         v-for="link in component?.props?.links"
-        @click.prevent="$chat.processLink(link.url)"
+        :key="link.url"
         target="_blank"
         class="mr-2 social-link unselectable"
         :color="link.color"
-        @click.middle.prevent.stop="$chat.processLink(link.url)"
         :href="link.url"
-        :key="link.url"
+        @click.prevent="$chat.processLink(link.url)"
+        @click.middle.prevent.stop="$chat.processLink(link.url)"
       >
         {{ link.name }}
         <v-icon
-          small
           v-if="user.id === $user.user?.id"
+          small
           class="ml-1"
           @click.prevent="
             $emit(
@@ -60,9 +60,9 @@
         </v-icon>
       </v-chip>
       <v-chip
-        @click="dialog = true"
         v-if="user.id === $user.user?.id"
         class="unselectable"
+        @click="dialog = true"
       >
         <v-icon class="mr-1">mdi-plus</v-icon>
         Add Link
@@ -100,20 +100,12 @@ export default defineComponent({
       }
     };
   },
-  methods: {
-    // While maybe hacky, this prevents the user from opening a new tab when middle clicking a link
-    // while retaining the ability to preview the link using the native browser
-    aTag() {
-      const aTags = document.getElementsByClassName("social-link");
-      //@ts-ignore
-      for (const a of aTags) {
-        a.addEventListener(
-          "auxclick",
-          function (e) {
-            e.preventDefault();
-          },
-          false
-        );
+  watch: {
+    "component.props.links": {
+      immediate: true,
+      handler: async function () {
+        await this.$nextTick();
+        this.aTag();
       }
     }
   },
@@ -130,12 +122,20 @@ export default defineComponent({
       );
     }
   },
-  watch: {
-    "component.props.links": {
-      immediate: true,
-      handler: async function () {
-        await this.$nextTick();
-        this.aTag();
+  methods: {
+    // While maybe hacky, this prevents the user from opening a new tab when middle clicking a link
+    // while retaining the ability to preview the link using the native browser
+    aTag() {
+      const aTags = document.getElementsByClassName("social-link");
+      //@ts-ignore
+      for (const a of aTags) {
+        a.addEventListener(
+          "auxclick",
+          function (e) {
+            e.preventDefault();
+          },
+          false
+        );
       }
     }
   }

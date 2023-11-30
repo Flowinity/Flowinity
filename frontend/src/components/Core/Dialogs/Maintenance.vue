@@ -1,9 +1,9 @@
 <template>
   <v-dialog
-    @update:model-value="$emit('update:modelValue', $event)"
     :model-value="modelValue"
     :fullscreen="true"
     :persistent="true"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <div class="crash-parent">
       <div class="crashed">
@@ -44,6 +44,9 @@ export default defineComponent({
       checking: false
     };
   },
+  mounted() {
+    setInterval(this.check, 5000);
+  },
   methods: {
     check() {
       if (this.checking) return;
@@ -53,9 +56,6 @@ export default defineComponent({
       });
       return this.checking;
     }
-  },
-  mounted() {
-    setInterval(this.check, 5000);
   }
 });
 </script>

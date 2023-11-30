@@ -1,6 +1,7 @@
 <template>
   <div id="inline-gallery">
     <v-text-field
+      ref="search"
       v-model="show.search"
       append-icon="mdi-magnify"
       :autofocus="true"
@@ -8,7 +9,6 @@
       label="Search"
       @keydown.enter="getGallery()"
       @click:append="getGallery()"
-      ref="search"
     />
     <Paginate v-model="page" :total-pages="null" class="mb-2 mt-n2" />
     <v-row v-if="!loading">
@@ -91,6 +91,26 @@ export default defineComponent({
       loading: false
     };
   },
+  watch: {
+    page() {
+      console.log("page changed");
+      this.getGallery(true);
+    }
+  },
+  async mounted() {
+    // infinite scroll for div with id="inline-gallery"
+    const el = document.getElementById("inline-gallery");
+    if (!el) return;
+    el.addEventListener("scroll", () => {
+      if (
+        el.scrollTop + el.clientHeight >=
+        el.scrollHeight - el.clientHeight / 2
+      ) {
+        this.page++;
+      }
+    });
+    this.getGallery();
+  },
   methods: {
     updateItem({
       item,
@@ -133,26 +153,6 @@ export default defineComponent({
       this.next = data.next;
       if (this.type === "tenor") return (this.gallery.gallery = data.results);
       this.gallery = data;
-    }
-  },
-  async mounted() {
-    // infinite scroll for div with id="inline-gallery"
-    const el = document.getElementById("inline-gallery");
-    if (!el) return;
-    el.addEventListener("scroll", () => {
-      if (
-        el.scrollTop + el.clientHeight >=
-        el.scrollHeight - el.clientHeight / 2
-      ) {
-        this.page++;
-      }
-    });
-    this.getGallery();
-  },
-  watch: {
-    page() {
-      console.log("page changed");
-      this.getGallery(true);
     }
   }
 });

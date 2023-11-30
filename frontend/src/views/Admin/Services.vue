@@ -10,7 +10,7 @@
           :key="service.name"
           :title="service.name"
         >
-          <template v-slot:text>
+          <template #text>
             <v-card v-for="fun in service.functions" :key="fun.params">
               {{ fun.name }}:
               {{
@@ -36,6 +36,9 @@ export default defineComponent({
       services: [] as { name: string; functions: any[] }[]
     };
   },
+  mounted() {
+    this.getServices();
+  },
   methods: {
     async getServices() {
       const { data } = await this.axios.get("/admin/services");
@@ -44,9 +47,6 @@ export default defineComponent({
         service.name.includes("Service")
       );
     }
-  },
-  mounted() {
-    this.getServices();
   }
 });
 </script>

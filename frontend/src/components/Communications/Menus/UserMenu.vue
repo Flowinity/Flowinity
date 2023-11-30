@@ -5,15 +5,15 @@
     width="300"
   >
     <UserBanner :user="user" height="90">
-      <template v-slot:default="{ hovering }">
+      <template #default="{ hovering }">
         <div style="cursor: pointer" @click="expand">
           <v-overlay
             :model-value="hovering"
             :contained="true"
             :persistent="true"
-            @click="expand"
             class="align-center justify-center"
             content-class="force-bg"
+            @click="expand"
           >
             <v-icon size="large" class="mb-6">mdi-arrow-expand-all</v-icon>
           </v-overlay>
@@ -29,15 +29,15 @@
         class="avatar"
         size="100"
       >
-        <template v-slot:default="{ hovering }">
+        <template #default="{ hovering }">
           <div style="cursor: pointer" @click="expand">
             <v-overlay
               :model-value="hovering"
               :contained="true"
               :persistent="true"
-              @click="expand"
               class="align-center justify-center"
               content-class="force-bg"
+              @click="expand"
             >
               <v-icon size="large">mdi-arrow-expand-all</v-icon>
             </v-overlay>
@@ -60,7 +60,7 @@
         </p>
       </template>
       <overline>Ranks in {{ $chat.selectedChat?.name }}</overline>
-      <div class="flex" v-if="$chat.selectedChat && association">
+      <div v-if="$chat.selectedChat && association" class="flex">
         <add-role
           :ranks="$chat.selectedChat.ranks"
           :association="association"
@@ -77,17 +77,17 @@
         >
           {{ rank.name }}
           <v-icon
+            v-if="
+              !rank.managed && $chat.canEditRank(rank.index, $chat.selectedChat)
+            "
             class="pointer ml-1"
+            size="20"
             @click="
               $chat.toggleUserRank(
                 association.id,
                 $chat.selectedChat.association.id,
                 rank.id
               )
-            "
-            size="20"
-            v-if="
-              !rank.managed && $chat.canEditRank(rank.index, $chat.selectedChat)
             "
           >
             mdi-close

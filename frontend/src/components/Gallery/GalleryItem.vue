@@ -1,13 +1,13 @@
 <template>
   <div>
-    <v-card :id="'item-' + item.id" class="d-flex flex-column" v-if="item.id">
+    <v-card v-if="item.id" :id="'item-' + item.id" class="d-flex flex-column">
       <v-toolbar
         :class="{ unselectable: selected.length }"
         style="z-index: 1"
+        :color="selected.includes(item.id) ? '#006fab' : undefined"
         @click.prevent.stop="
           selected.length && supports.multiSelect ? $emit('select', item) : null
         "
-        :color="selected.includes(item.id) ? '#006fab' : undefined"
       >
         <v-toolbar-title>{{ item.name }}</v-toolbar-title>
         <v-btn
@@ -131,6 +131,7 @@
             class="my-1"
             color="green"
             icon="mdi-ocr"
+            :disabled="!item.textMetadata"
             @click.right.prevent.stop="
               $functions.copy(item.textMetadata);
               $toast.success('Copied to clipboard!');
@@ -139,7 +140,6 @@
               $app.dialogs.ocr.text = item.textMetadata;
               $app.dialogs.ocr.value = true;
             "
-            :disabled="!item.textMetadata"
           />
           <HoverChip
             v-if="$user.user"
@@ -186,6 +186,15 @@ export default defineComponent({
       return this.$functions.fileSize(this.item.fileSize);
     }
   },
+  watch: {
+    "$app.dialogs.deleteItem.emit"(value: boolean) {
+      if (value) {
+        this.$app.dialogs.deleteItem.emit = false;
+        this.$emit("delete", this.$app.dialogs.deleteItem.item);
+        this.$app.dialogs.deleteItem.item = undefined;
+      }
+    }
+  },
   methods: {
     async pin(item: Upload) {
       await this.axios.patch(
@@ -209,15 +218,6 @@ export default defineComponent({
         item,
         collection
       });
-    }
-  },
-  watch: {
-    "$app.dialogs.deleteItem.emit"(value: boolean) {
-      if (value) {
-        this.$app.dialogs.deleteItem.emit = false;
-        this.$emit("delete", this.$app.dialogs.deleteItem.item);
-        this.$app.dialogs.deleteItem.item = undefined;
-      }
     }
   }
 });

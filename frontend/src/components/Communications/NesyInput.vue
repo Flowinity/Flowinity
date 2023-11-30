@@ -21,14 +21,14 @@
       @click:append="$emit('sendMessage')"
       @keyup.esc="$emit('edit', null)"
     >
-      <template v-if="!editing" v-slot:prepend>
+      <template v-if="!editing" #prepend>
         <HoverChip :old="true" icon="mdi-plus" text="Attachment" />
       </template>
-      <template v-slot:append-inner>
+      <template #append-inner>
         <HoverChip :old="true" icon="mdi-star" text="Star" />
         <HoverChip :old="true" icon="mdi-emoticon" text="Emoji Picker" />
       </template>
-      <template v-slot:append>
+      <template #append>
         <HoverChip :old="true" icon="mdi-send" text="Send" />
       </template>
     </v-textarea>

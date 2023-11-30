@@ -7,7 +7,7 @@
     @update:model-value="$emit('update:totp', $event)"
     @keydown.enter="$emit('confirm')"
   >
-    <template v-slot:details>
+    <template #details>
       Having problems?
       <a
         class="unselectable pointer"
@@ -21,12 +21,12 @@
     v-else
     autofocus
     :model-value="password"
-    @update:model-value="$emit('update:password', $event)"
     type="password"
-    @keydown.enter="$emit('confirm')"
     :label="$t('settings.home.myAccount.currentPassword')"
+    @update:model-value="$emit('update:password', $event)"
+    @keydown.enter="$emit('confirm')"
   >
-    <template v-slot:details v-if="$user.user.totpEnable">
+    <template v-if="$user.user.totpEnable" #details>
       Having problems?
       <a
         class="unselectable pointer"

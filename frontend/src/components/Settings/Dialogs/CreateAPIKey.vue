@@ -4,7 +4,7 @@
     max-width="600px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
+    <template #title>
       {{ type === "api" ? "Add API Key" : "Add Alternate Password" }}
     </template>
     <v-card-text v-if="!key">
@@ -160,6 +160,14 @@ export default defineComponent({
       password: ""
     };
   },
+  watch: {
+    modelValue() {
+      this.key = "";
+      this.name = "";
+      this.expiry = "";
+      this.scopes = ["uploads.create", "user.view"];
+    }
+  },
   methods: {
     async addAPIKey() {
       const { data } = await this.axios.post("/security/keys", {
@@ -179,14 +187,6 @@ export default defineComponent({
       });
       this.$emit("create", data);
       this.$emit("update:modelValue", false);
-    }
-  },
-  watch: {
-    modelValue() {
-      this.key = "";
-      this.name = "";
-      this.expiry = "";
-      this.scopes = ["uploads.create", "user.view"];
     }
   }
 });

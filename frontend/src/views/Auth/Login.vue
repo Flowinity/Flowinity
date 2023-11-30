@@ -69,6 +69,9 @@ export default defineComponent({
       loading: false
     };
   },
+  mounted() {
+    this.$app.title = "Login";
+  },
   methods: {
     async forgotPassword() {
       this.loading = true;
@@ -118,9 +121,6 @@ export default defineComponent({
         this.loading = false;
       }
     }
-  },
-  mounted() {
-    this.$app.title = "Login";
   }
 });
 </script>

@@ -1,11 +1,11 @@
 <template>
   <CoreDialog
+    v-if="chat && user"
     :model-value="modelValue"
     max-width="700px"
     @update:modelValue="$emit('update:modelValue', $event)"
-    v-if="chat && user"
   >
-    <template v-slot:title>
+    <template #title>
       {{ $t("chats.settings.users.transferOwnership") }}
     </template>
     <div class="text-center">
@@ -36,7 +36,7 @@
         <v-btn color="red">
           {{ $t("generic.cancel") }}
         </v-btn>
-        <v-btn color="primary" @click="transfer" :loading="loading">
+        <v-btn color="primary" :loading="loading" @click="transfer">
           Transfer
         </v-btn>
       </v-card-actions>

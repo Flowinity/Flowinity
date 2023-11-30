@@ -11,7 +11,7 @@
       </v-card-title>
       <v-expansion-panels>
         <v-expansion-panel v-for="slideshow in slideshows" :key="slideshow.id">
-          <template v-slot:title>
+          <template #title>
             {{ slideshow.name }}
             <div style="float: right">
               <v-btn icon @click="deleteSlideshow(slideshow)">
@@ -19,7 +19,7 @@
               </v-btn>
             </div>
           </template>
-          <template v-slot:text>
+          <template #text>
             <v-card-text>
               <v-text-field
                 :label="$t('settings.slideshows.shareLink')"
@@ -98,6 +98,9 @@ export default defineComponent({
       slideshows: [] as Slideshow[]
     };
   },
+  mounted() {
+    this.getSlideshows();
+  },
   methods: {
     async saveSlideshow(slideshow: Slideshow) {
       await this.axios.put("/slideshows/" + slideshow.id, slideshow);
@@ -119,9 +122,6 @@ export default defineComponent({
       this.$toast.success("Slideshow deleted!");
       await this.getSlideshows();
     }
-  },
-  mounted() {
-    this.getSlideshows();
   }
 });
 </script>

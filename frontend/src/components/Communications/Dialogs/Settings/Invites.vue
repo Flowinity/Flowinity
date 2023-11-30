@@ -3,26 +3,26 @@
     {{ $t("chats.settings.invites.name") }}
   </overline>
   <v-data-table :items="$chat.editingChat.invites" :headers="headers">
-    <template v-slot:[`item.id`]="{ item }">
+    <template #[`item.id`]="{ item }">
       {{ item.id }}
       <v-btn
+        icon
+        size="x-small"
         @click="
           $functions.copy(`${$app.site.hostnameWithProtocol}/invite/${item.id}`)
         "
-        icon
-        size="x-small"
       >
         <v-icon>mdi-content-copy</v-icon>
       </v-btn>
     </template>
-    <template v-slot:[`item.userId`]="{ item }">
+    <template #[`item.userId`]="{ item }">
       <UserAvatar :user="$user.users[item.userId]" size="32" />
       {{ $user.users[item.userId]?.username }}
     </template>
-    <template v-slot:[`item.expiredAt`]="{ item }">
+    <template #[`item.expiredAt`]="{ item }">
       {{ item.expiredAt ? $date(item.expiredAt).fromNow() : "Never" }}
     </template>
-    <template v-slot:[`item.rankId`]="{ item }">
+    <template #[`item.rankId`]="{ item }">
       {{
         item.rankId
           ? $chat.editingChat.ranks.find((rank) => rank.id === item.rankId)
@@ -30,7 +30,7 @@
           : "None"
       }}
     </template>
-    <template v-slot:[`item.actions`]="{ item }">
+    <template #[`item.actions`]="{ item }">
       <v-btn icon @click="invalidate(item.id)">
         <v-icon>mdi-close</v-icon>
       </v-btn>
@@ -77,6 +77,9 @@ export default defineComponent({
       ]
     };
   },
+  mounted() {
+    this.getInvites();
+  },
   methods: {
     async invalidate(id: string) {
       await this.$apollo.mutate({
@@ -106,9 +109,6 @@ export default defineComponent({
       });
       this.$chat.editingChat.invites = invites;
     }
-  },
-  mounted() {
-    this.getInvites();
   }
 });
 </script>

@@ -4,7 +4,7 @@
     max-width="700px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>Invite a Friend</template>
+    <template #title>Invite a Friend</template>
     <v-card-text>
       Enter your friends email, your invite will be sent to them after Troplo,
       or another TPU administrator approves it.
@@ -51,6 +51,11 @@ export default defineComponent({
       email: ""
     };
   },
+  watch: {
+    modelValue() {
+      this.email = "";
+    }
+  },
   methods: {
     async inviteFriend() {
       await this.axios.post("/invites", {
@@ -58,11 +63,6 @@ export default defineComponent({
       });
       this.$emit("update:modelValue", false);
       this.$toast.success("Request received!");
-    }
-  },
-  watch: {
-    modelValue() {
-      this.email = "";
     }
   }
 });

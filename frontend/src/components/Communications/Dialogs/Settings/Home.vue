@@ -1,9 +1,9 @@
 <template>
   <UploadCropper
     v-model="upload"
-    @finish="uploadIcon"
     type="chatIcon"
     :supports-removal="false"
+    @finish="uploadIcon"
   />
   <overline position="center">
     {{ $t("chats.settings.home.name") }}
@@ -38,11 +38,11 @@
         {{ $t("chats.settings.home.clickToChange") }}
       </v-card-subtitle>
       <v-btn
+        v-if="$chat.editingChat.icon"
         variant="outlined"
         class="mt-2"
         :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
         @click="$chat.saveSettings({ icon: null })"
-        v-if="$chat.editingChat.icon"
       >
         Remove Avatar
       </v-btn>
@@ -104,11 +104,11 @@
         </div>
       </v-hover>
       <v-btn
+        v-if="$chat.editingChat.background"
         variant="outlined"
         class="mt-2"
         :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
         @click="$chat.saveSettings({ background: null })"
-        v-if="$chat.editingChat.background"
       >
         Remove Background
       </v-btn>
@@ -128,9 +128,9 @@
         {{ $t("chats.settings.home.groupNameDesc") }}
       </v-card-subtitle>
       <v-text-field
+        v-model="$chat.editingChat.name"
         :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
         :label="$t('chats.settings.home.groupName')"
-        v-model="$chat.editingChat.name"
       />
       <div style="width: 400px">
         <v-card-title
@@ -146,9 +146,9 @@
           {{ $t("chats.settings.home.descriptionDesc") }}
         </v-card-subtitle>
         <v-textarea
+          v-model="$chat.editingChat.description"
           :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
           :label="$t('chats.settings.home.description')"
-          v-model="$chat.editingChat.description"
           variant="underlined"
           color="blue"
           maxlength="200"
@@ -156,8 +156,8 @@
         <v-btn
           block
           :disabled="!$chat.hasPermission('OVERVIEW', $chat.editingChat)"
-          @click="$chat.saveSettings()"
           :loading="$chat.dialogs.groupSettings.loading"
+          @click="$chat.saveSettings()"
         >
           Save
         </v-btn>

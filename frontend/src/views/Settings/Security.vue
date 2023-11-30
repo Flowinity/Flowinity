@@ -15,7 +15,7 @@
     </v-btn>
   </v-toolbar>
   <v-data-table :headers="headers" :items="apiKeys">
-    <template v-slot:[`item.actions`]="{ item }">
+    <template #[`item.actions`]="{ item }">
       <v-icon
         :disabled="!item.info?.accessedFrom.length"
         class="mr-3"
@@ -58,7 +58,7 @@
     </v-btn>
   </v-toolbar>
   <v-data-table :headers="headers" :items="alternatePasswords.items">
-    <template v-slot:[`item.actions`]="{ item }">
+    <template #[`item.actions`]="{ item }">
       <v-icon class="mr-2" small @click="deleteAlternatePassword(item.name)">
         mdi-delete
       </v-icon>
@@ -121,7 +121,7 @@
           }}
         </v-list-item-subtitle>
       </div>
-      <template v-slot:append>
+      <template #append>
         <v-btn color="red" icon @click="deleteApiKey(login.id)">
           <v-tooltip activator="parent" location="top">
             {{ $t("settings.security.deleteSession") }}
@@ -194,6 +194,11 @@ export default defineComponent({
       sessions: [] as any[]
     };
   },
+  mounted() {
+    this.getAPIKeys();
+    this.getAlternatePasswords();
+    this.getSessions();
+  },
   methods: {
     async getAPIKeys() {
       const { data } = await this.axios.get("/security/keys");
@@ -218,11 +223,6 @@ export default defineComponent({
       const { data } = await this.axios.get("/security/logins");
       this.sessions = data;
     }
-  },
-  mounted() {
-    this.getAPIKeys();
-    this.getAlternatePasswords();
-    this.getSessions();
   }
 });
 </script>

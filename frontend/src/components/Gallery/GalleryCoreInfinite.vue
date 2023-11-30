@@ -17,8 +17,8 @@
       </div>
       <div v-if="selected.length && supports.multiSelect" class="float-right">
         <slot
-          :deselectAll="deselectAll"
-          :selectAll="selectAll"
+          :deselect-all="deselectAll"
+          :select-all="selectAll"
           :selected="selected"
           name="multi-select-actions-length"
         >
@@ -82,7 +82,7 @@
               @remove="$emit('remove', $event)"
               @select="select($event)"
             >
-              <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+              <template v-for="(_, name) in $slots" #[name]="slotData">
                 <slot :name="name" v-bind="slotData" />
               </template>
             </GalleryItem>
@@ -102,12 +102,12 @@
         </v-col>
       </v-row>
       <infinite-loading
+        identifier="gallery-bottom"
         @infinite="
           $emit('refreshGallery', { state: $event, page: pageComponent++ })
         "
-        identifier="gallery-bottom"
       >
-        <template v-slot:spinner>
+        <template #spinner>
           <div class="text-center">
             <v-progress-circular
               :size="36"
@@ -117,7 +117,7 @@
             />
           </div>
         </template>
-        <template v-slot:complete>
+        <template #complete>
           <span />
         </template>
       </infinite-loading>
@@ -223,6 +223,16 @@ export default defineComponent({
       selected: [] as number[]
     };
   },
+  computed: {
+    pageComponent: {
+      get() {
+        return this.page;
+      },
+      set(value: number) {
+        this.$emit("page-change", value);
+      }
+    }
+  },
   methods: {
     resetScroll() {
       document.body.scrollTop = document.documentElement.scrollTop = 0;
@@ -267,16 +277,6 @@ export default defineComponent({
     },
     deselectAll() {
       this.selected = [];
-    }
-  },
-  computed: {
-    pageComponent: {
-      get() {
-        return this.page;
-      },
-      set(value: number) {
-        this.$emit("page-change", value);
-      }
     }
   }
 });

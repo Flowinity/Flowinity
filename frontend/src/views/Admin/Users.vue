@@ -6,16 +6,16 @@
       </v-toolbar>
       <v-container>
         <v-data-table :headers="headers" :items="users">
-          <template v-slot:[`item.banned`]="{ item }">
+          <template #[`item.banned`]="{ item }">
             <v-checkbox
               :model-value="<boolean>item.banned"
               @change="ban(<number>item.id, $event.target.checked)"
             />
           </template>
-          <template v-slot:[`item.administrator`]="{ item }">
+          <template #[`item.administrator`]="{ item }">
             <v-checkbox :model-value="item.administrator" disabled />
           </template>
-          <template v-slot:[`item.planId`]="{ item }">
+          <template #[`item.planId`]="{ item }">
             <v-checkbox
               :model-value="<number>item.planId === 6"
               @change="
@@ -27,13 +27,13 @@
               "
             />
           </template>
-          <template v-slot:[`item.createdAt`]="{ item }">
+          <template #[`item.createdAt`]="{ item }">
             {{ $date(item.createdAt).format("YYYY/MM/DD hh:mm:ss A") }}
           </template>
-          <template v-slot:[`item.emailVerified`]="{ item }">
+          <template #[`item.emailVerified`]="{ item }">
             <v-checkbox
-              @change="verify(item.id, $event.target.checked)"
               v-model="item.emailVerified"
+              @change="verify(item.id, $event.target.checked)"
             />
           </template>
         </v-data-table>
@@ -85,6 +85,9 @@ export default defineComponent({
       ]
     };
   },
+  mounted() {
+    this.getUsers();
+  },
   methods: {
     async gold(id: number, gold: boolean, createdAt: string) {
       const legacyUser =
@@ -114,9 +117,6 @@ export default defineComponent({
       await this.axios.patch("/admin/verify", { id, emailVerified });
       this.$toast.success("User email verified status updated.");
     }
-  },
-  mounted() {
-    this.getUsers();
   }
 });
 </script>

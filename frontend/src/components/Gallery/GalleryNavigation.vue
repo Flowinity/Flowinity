@@ -15,19 +15,19 @@
         item-title="name"
         item-value="internalName"
       >
-        <template v-slot:no-data>
+        <template #no-data>
           <overline position="start">
             {{ $t("generic.sortDirection") }}
           </overline>
           <v-list-item
             v-for="item in orderTypes"
+            :key="item.internalName"
+            :active="order === item.internalName"
             @click="
               order = item.internalName;
               $emit('update:order', order);
               $emit('refreshGallery');
             "
-            :active="order === item.internalName"
-            :key="item.internalName"
           >
             {{ item.name }}
           </v-list-item>
@@ -37,13 +37,13 @@
             </overline>
             <v-list-item
               v-for="item in sortTypes"
+              :key="item.internalName"
+              :active="sort === item.internalName"
               @click="
                 sort = item.internalName;
                 $emit('update:sort', sort);
                 $emit('refreshGallery');
               "
-              :active="sort === item.internalName"
-              :key="item.internalName"
             >
               {{ item.name }}
             </v-list-item>
@@ -52,6 +52,8 @@
             <overline position="start">{{ $t("generic.filter") }}</overline>
             <v-list-item
               v-for="item in types"
+              :key="item.internalName"
+              :active="filter.includes(item.internalName)"
               @click="
                 filter.find((f) => f === item.internalName)
                   ? filter.splice(filter.indexOf(item.internalName), 1)
@@ -59,14 +61,12 @@
                 $emit('update:filter', filter);
                 $emit('refreshGallery');
               "
-              :active="filter.includes(item.internalName)"
-              :key="item.internalName"
             >
               {{ item.name }}
             </v-list-item>
           </template>
         </template>
-        <template v-slot:selection>
+        <template #selection>
           {{
             $t("generic.option", {
               count: filter.length
@@ -91,20 +91,7 @@ import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
-  computed: {
-    GalleryFilter() {
-      return GalleryFilter;
-    }
-  },
   components: { Overline, GalleryTextField },
-  emits: [
-    "update:filter",
-    "update:search",
-    "update:metadata",
-    "refreshGallery",
-    "update:sort",
-    "update:order"
-  ],
   props: {
     supports: {
       type: Object,
@@ -217,6 +204,14 @@ export default defineComponent({
       }
     }
   },
+  emits: [
+    "update:filter",
+    "update:search",
+    "update:metadata",
+    "refreshGallery",
+    "update:sort",
+    "update:order"
+  ],
   data() {
     return {
       metadata: true,
@@ -225,6 +220,11 @@ export default defineComponent({
       order: GalleryOrder.Desc,
       search: ""
     };
+  },
+  computed: {
+    GalleryFilter() {
+      return GalleryFilter;
+    }
   }
 });
 </script>
