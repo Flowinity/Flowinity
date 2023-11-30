@@ -34,11 +34,7 @@
       <v-btn icon @click="getMAL">
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
-      <v-btn
-        icon
-        :disabled="page >= pages"
-        @click="page < pages ? page++ : page"
-      >
+      <v-btn icon :disabled="page >= pages" @click="page < pages ? page++ : ''">
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
     </v-toolbar>

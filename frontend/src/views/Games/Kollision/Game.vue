@@ -39,8 +39,8 @@ export default defineComponent({
     document.addEventListener("mousemove", this.movePlayer);
   },
   beforeUnmount() {
-    this.stopGameLoop();
     document.removeEventListener("mousemove", this.movePlayer);
+    this.stopGameLoop();
   },
   methods: {
     updateBallPositions() {
