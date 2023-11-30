@@ -24,7 +24,6 @@ export const useChatStore = defineStore("chat", () => {
   const recentEmoji = ref<Record<string, number>>({});
   const loading = ref(false);
   const isReady = ref(0);
-  const { resolveClient } = useApolloClient();
   const messagesStore = useMessagesStore();
   const typers = ref<
     {
