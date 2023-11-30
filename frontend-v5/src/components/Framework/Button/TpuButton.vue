@@ -25,14 +25,7 @@
     :disabled="disabled"
     v-bind="$attrs"
     @keydown.enter="!disabled ? $event.target.click() : ''"
-    @keydown.space="
-      !disabled
-        ? () => {
-            $event.preventDefault();
-            $event.target.click();
-          }
-        : ''
-    "
+    @keydown.space="!disabled ? handleSpace($event) : ''"
   >
     <template v-if="!loading">
       <slot />
@@ -90,12 +83,17 @@ const color = computed(() => {
   }
   return theme.colors[props.color] || theme.colors["white"];
 });
-
 const rgbColor = computed(() => {
   if (!color.value) return;
-  const [r, g, b] = color.value.match(/\w\w/g).map((x) => parseInt(x, 16));
+  const [r, g, b] = color.value
+    .match(/\w\w/g)
+    .map((x: string) => parseInt(x, 16));
   return `${r},${g},${b},0.15`;
 });
+const handleSpace = (e: KeyboardEvent) => {
+  e.preventDefault();
+  (e.target as HTMLInputElement).click();
+};
 </script>
 
 <style scoped>
