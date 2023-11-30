@@ -92,7 +92,6 @@ import { defineComponent } from "vue";
 import { Slideshow } from "@/models/slideshow";
 
 export default defineComponent({
-  name: "Slideshows",
   data() {
     return {
       slideshows: [] as Slideshow[]

@@ -40,7 +40,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Slideshow",
   data() {
     return {
       slideshow: [] as any[],

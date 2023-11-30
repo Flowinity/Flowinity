@@ -339,7 +339,6 @@ import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 import { FriendStatus, ProfileLayout, User, UserInsights } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "UserV3",
   components: {
     UserV3AddMenu,
     UserV3ComponentHandler,

@@ -27,7 +27,6 @@ import { defineComponent } from "vue";
 import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
-  name: "Security",
   components: { Paginate },
   data() {
     return {

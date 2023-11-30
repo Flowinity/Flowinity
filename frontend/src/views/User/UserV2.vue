@@ -353,7 +353,6 @@ import { DefaultThemes } from "@/plugins/vuetify";
 import { FriendStatus, User, UserInsights } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "UserV2",
   components: {
     InsightsPromoCard,
     GraphWidget,

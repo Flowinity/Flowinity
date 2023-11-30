@@ -148,7 +148,6 @@ import { defineComponent } from "vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
-  name: "Setup",
   components: { HoverChip },
   data() {
     return {

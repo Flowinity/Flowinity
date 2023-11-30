@@ -158,7 +158,6 @@ import CreateAPIKey from "@/components/Settings/Dialogs/CreateAPIKey.vue";
 import IPHistory from "@/components/Settings/Dialogs/IPHistory.vue";
 
 export default defineComponent({
-  name: "Security",
   components: { IPHistory, CreateAPIKey },
   data() {
     return {
