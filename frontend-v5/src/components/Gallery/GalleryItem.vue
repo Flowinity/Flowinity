@@ -9,7 +9,7 @@
         :class="{
           'cursor-pointer select-none': selected.length
         }"
-        @click="selected.length ? $emit('select') : () => {}"
+        @click="selected.length ? $emit('select') : ''"
       >
         <p class="flex-grow" style="white-space: nowrap; overflow: hidden">
           {{ props.item.name }}

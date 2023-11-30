@@ -66,7 +66,7 @@
       :readonly="props.readonly"
       @input="
         $emit('update:modelValue', $event.target?.value);
-        props.dynamicWidth ? setWidth() : () => {};
+        props.dynamicWidth ? setWidth() : '';
       "
       @focus="
         focus = true;
