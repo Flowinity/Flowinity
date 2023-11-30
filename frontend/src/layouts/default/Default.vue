@@ -108,6 +108,7 @@ import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
 import BlockUserDialog from "@/components/Users/Dialogs/Block.vue";
+import { IKeyboardEvent } from "monaco-editor";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
@@ -219,31 +220,12 @@ export default defineComponent({
       this.$app.workspaceDrawer = false;
     }
     // watch for CTRL + ALT + M for Memory Profiler
-    document.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.altKey && e.key === "m") {
-        e.preventDefault();
-        this.$app.dialogs.actionDialog = !this.$app.dialogs.actionDialog;
-      } else if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
-        e.preventDefault();
-        this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
-      } else if (e.ctrlKey && e.key === "q") {
-        e.preventDefault();
-        this.$app.dialogs.experiments = !this.$app.dialogs.experiments;
-      }
-      if (
-        (e.ctrlKey && e.altKey && e.key === "d") ||
-        (e.metaKey && e.altKey && e.key === "d")
-      ) {
-        e.preventDefault();
-        console.log("Revert CSS");
-        this.$user.applyCSS(true);
-      }
-      if (e.ctrlKey && e.altKey && e.key === "e") {
-        this.$app.themeEditor = !this.$app.themeEditor;
-      }
-    });
+    document.addEventListener("keydown", this.keydownEvent);
     this.getPulseSession();
     this.getPulseSessionGlobal();
+  },
+  unmounted() {
+    document.removeEventListener("keydown", this.keydownEvent);
   },
   methods: {
     touchEnd(event: TouchEvent) {
@@ -375,6 +357,29 @@ export default defineComponent({
         return;
       e.preventDefault();
       e.stopPropagation();
+    },
+    keydownEvent(e: KeyboardEvent) {
+      if (e.ctrlKey && e.altKey && e.key === "m") {
+        e.preventDefault();
+        this.$app.dialogs.actionDialog = !this.$app.dialogs.actionDialog;
+      } else if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
+        e.preventDefault();
+        this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
+      } else if (e.ctrlKey && e.key === "q") {
+        e.preventDefault();
+        this.$app.dialogs.experiments = !this.$app.dialogs.experiments;
+      }
+      if (
+        (e.ctrlKey && e.altKey && e.key === "d") ||
+        (e.metaKey && e.altKey && e.key === "d")
+      ) {
+        e.preventDefault();
+        console.log("Revert CSS");
+        this.$user.applyCSS(true);
+      }
+      if (e.ctrlKey && e.altKey && e.key === "e") {
+        this.$app.themeEditor = !this.$app.themeEditor;
+      }
     }
   }
 });
