@@ -80,7 +80,7 @@ import LinkTool from "@editorjs/link";
 //@ts-ignore
 import AlignmentTuneTool from "editorjs-text-alignment-blocktune";
 //@ts-ignore;
-import WorkspaceHome from "@/views/Workspaces/Home";
+import WorkspaceHome from "@/views/Workspaces/WorkspaceHome.vue";
 //@ts-ignore
 import Undo from "editorjs-undo";
 import { defineComponent } from "vue";
@@ -90,7 +90,6 @@ import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue";
 import { WorkspaceNote } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "WorkspaceItem",
   components: { WorkspaceShareDialog, WorkspaceHome },
   props: ["id"],
   data() {
@@ -149,6 +148,7 @@ export default defineComponent({
     this.$app.title = "Workspace Editor";
   },
   unmounted() {
+    document.removeEventListener("keydown", this.saveEvent);
     this.$app.workspaceDrawer =
       localStorage.getItem("workspaceDrawer") === "true";
     this.$app.forcedWorkspaceDrawer = false;
@@ -470,21 +470,18 @@ export default defineComponent({
         this.fail = true;
       }
 
-      document.addEventListener(
-        "keydown",
-        (e) => {
-          if (
-            (window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) &&
-            e.keyCode === 83
-          ) {
-            e.preventDefault();
-            editor.save().then((outputData) => {
-              window.__TROPLO_INTERNALS_EDITOR_SAVE(outputData, true);
-            });
-          }
-        },
-        false
-      );
+      document.addEventListener("keydown", this.saveEvent, false);
+    },
+    saveEvent() {
+      if (
+        (window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) &&
+        e.keyCode === 83
+      ) {
+        e.preventDefault();
+        editor.save().then((outputData) => {
+          window.__TROPLO_INTERNALS_EDITOR_SAVE(outputData, true);
+        });
+      }
     }
   }
 });

@@ -112,7 +112,6 @@ import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import { Workspace } from "@/models/workspace";
 
 export default defineComponent({
-  name: "Home",
   components: { PromoNoContent },
   computed: {
     items() {

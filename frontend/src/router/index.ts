@@ -190,12 +190,12 @@ const routes = [
       {
         path: "/workspaces",
         name: "Workspaces",
-        component: () => import("@/views/Workspaces/Home.vue")
+        component: () => import("@/views/Workspaces/WorkspaceHome.vue")
       },
       {
         path: "/workspaces/notes/:id/:version?",
         name: "Workspace Item",
-        component: () => import("@/views/Workspaces/Item.vue")
+        component: () => import("@/views/Workspaces/WorkspaceItem.vue")
       },
       {
         path: "/users",

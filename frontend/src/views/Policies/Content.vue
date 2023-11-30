@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import WorkspaceItem from "@/views/Workspaces/Item.vue";
+import WorkspaceItem from "@/views/Workspaces/WorkspaceItem.vue";
 
 export default defineComponent({
   name: "ContentPolicies",
