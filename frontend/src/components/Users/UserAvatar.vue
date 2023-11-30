@@ -101,6 +101,7 @@ export default defineComponent({
     "overrideId",
     "bot"
   ],
+  emits: ["refresh"],
   data() {
     return {
       dialog: false

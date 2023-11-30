@@ -113,6 +113,7 @@ export default defineComponent({
   name: "UserV3Settings",
   components: { CoreDialog },
   props: ["modelValue", "user", "component", "components"],
+  emits: ["update", "trigger", "update:modelValue"],
   computed: {
     metaComponent() {
       return (

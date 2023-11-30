@@ -188,6 +188,14 @@ export default defineComponent({
       }
     }
   },
+  emits: [
+    "delete",
+    "refresh",
+    "remove",
+    "randomAttachment",
+    "updateItem",
+    "page-change"
+  ],
   data() {
     return {
       addToCollectionDialog: false,
@@ -228,7 +236,7 @@ export default defineComponent({
     },
     select(item: Upload) {
       if (this.selected.includes(item.id)) {
-        this.selected = this.selected.filter((i) => i !== item.id);
+        this.selected = this.selected.filter((i: number) => i !== item.id);
       } else {
         this.selected.push(item.id);
       }

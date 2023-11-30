@@ -16,8 +16,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Crash from "@/components/Core/Crash.vue";
-import VErrorBoundary from "./components/Core/ErrorBoundary.vue";
 import Maintenance from "@/components/Core/Dialogs/Maintenance.vue";
 import SocketProfiler from "@/components/Dev/Dialogs/SocketProfiler.vue";
 import ActionDialog from "@/components/Dev/Dialogs/ActionDialog.vue";
@@ -29,15 +27,7 @@ export default defineComponent({
     ExperimentsManagerDialog,
     ActionDialog,
     SocketProfiler,
-    Maintenance,
-    Crash,
-    VErrorBoundary
-  },
-  data() {
-    return {
-      skullCrash: Crash,
-      error: null
-    };
+    Maintenance
   },
   watch: {
     "$route.path"(val) {
@@ -66,19 +56,6 @@ export default defineComponent({
       },
       false
     );
-  },
-  methods: {
-    async submitFeedback(e: any) {
-      this.error = e;
-      console.log("[TPU/SkullCrash] Error captured:", e);
-      console.error(e.error);
-      /*return;
-      await this.axios.post("/user/feedback", {
-        route: this.$route.path,
-        starRating: 0,
-        text: `{"name":"[TPU/SkullCrash]","msg":${e?.error?.message},"stack":${e?.error?.stack}}`
-      });*/
-    }
   }
 });
 </script>

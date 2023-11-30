@@ -69,6 +69,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "MessageActionsList"
+  name: "MessageActionsList",
+  emits: ["edit", "reply", "delete"]
 });
 </script>

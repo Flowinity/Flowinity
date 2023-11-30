@@ -33,6 +33,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "InlineGalleryItem",
-  props: ["item"]
+  props: ["item"],
+  emits: ["clickItem"]
 });
 </script>

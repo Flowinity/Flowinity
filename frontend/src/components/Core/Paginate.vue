@@ -116,6 +116,7 @@ export default defineComponent({
       default: 15
     }
   },
+  emits: ["update:modelValue"],
   data() {
     return {
       customLeft: false,

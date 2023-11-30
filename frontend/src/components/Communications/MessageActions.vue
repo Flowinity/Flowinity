@@ -94,6 +94,7 @@ import { MessageType } from "@/gql/graphql";
 
 export default defineComponent({
   props: ["message", "avoid", "merge"],
+  emits: ["delete", "reply", "edit"],
   data() {
     return {
       size: "small"

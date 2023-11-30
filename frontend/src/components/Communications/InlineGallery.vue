@@ -43,6 +43,7 @@ export default defineComponent({
   name: "InlineStarred",
   components: { Paginate, InlineGalleryItem },
   props: ["type"],
+  emits: ["clickItem"],
   data() {
     return {
       gallery: {

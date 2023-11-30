@@ -79,15 +79,6 @@
       <v-divider />
       <v-card-text class="text-center">
         <slot :item="item" name="actions">
-          <!--<HoverChip
-            text="Edit & Caption"
-            icon="mdi-pencil"
-            color="indigo-lighten-1"
-            @click="editItem(item)"
-            v-if="supports.permissions.write"
-            class="my-1"
-            aria-label="Edit item"
-           />-->
           <HoverChip
             v-if="supports.permissions.write"
             :aria-label="$t('gallery.actions.delete.aria')"
@@ -181,6 +172,7 @@ export default defineComponent({
   name: "GalleryItem",
   components: { HoverChip, GalleryPreview },
   props: ["item", "supports", "selected"],
+  emits: ["delete", "refresh", "remove", "select", "collectivize"],
   computed: {
     fileSize() {
       return this.$functions.fileSize(this.item.fileSize);
@@ -206,9 +198,6 @@ export default defineComponent({
     async star(item: Upload) {
       await this.axios.post("/gallery/star/" + item.attachment);
       item.starred = !item.starred;
-    },
-    editItem(item: Upload) {
-      console.log("Edit item", item);
     },
     async removeItem(item: Upload, collection: Collection) {
       await this.axios.delete(
