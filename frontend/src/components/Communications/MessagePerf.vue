@@ -27,9 +27,7 @@
       v-if="message.replyId"
       class="ml-7 unselectable mt-4 mb-n3 pointer limit reply d-flex align-center"
       @click.prevent="
-        message.reply && !search
-          ? $emit('jumpToMessage', message.replyId)
-          : () => {}
+        message.reply && !search ? $emit('jumpToMessage', message.replyId) : ''
       "
     >
       <reply-line class="mt-2" />
@@ -83,7 +81,7 @@
         <div
           :class="{ merge, unselectable: $vuetify.display.mobile }"
           class="message rounded position-relative"
-          @contextmenu="editing ? () => {} : context($event)"
+          @contextmenu="!editing ? context($event) : ''"
         >
           <div class="avatar-section">
             <div v-if="merge" class="message-date">

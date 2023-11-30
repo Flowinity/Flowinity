@@ -11,7 +11,7 @@
         'items-center justify-center cursor-pointer': !files.length,
         'cursor-normal': files.length
       }"
-      @click="files.length ? $event.preventDefault() : () => {}"
+      @click="files.length ? $event.preventDefault() : ''"
     >
       <div class="flex flex-col justify-center pt-3 pb-3 h-full">
         <template v-if="!files.length">

@@ -18,14 +18,14 @@
         selected <= 0 ? (selected = items.length - 1) : selected--;
       "
       @keydown.enter.prevent.stop="
-        !assist ? $emit('update:modelValue', items[selected].id) : () => {};
+        !assist ? $emit('update:modelValue', items[selected].id) : '';
         hovering = false;
         focused = false;
       "
       @update:model-value="
         focused = true;
         remove($event);
-        assist ? $emit('update:modelValue', items[selected].value) : () => {};
+        assist ? $emit('update:modelValue', items[selected].value) : '';
       "
     >
       <template #append>

@@ -119,7 +119,7 @@
             $chat.dialogs.groupSettings.value = true;
             $chat.selectedChat
               ? ($chat.dialogs.groupSettings.itemId = $chat.selectedChat.id)
-              : () => {};
+              : '';
           "
         >
           <v-icon>mdi-cog</v-icon>
@@ -247,7 +247,14 @@ import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 import MessagePerf from "@/components/Communications/MessagePerf.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
-import { Chat, ChatAssociation, ChatRank, FriendStatus, UserStatus, UserStoredStatus } from "@/gql/graphql";
+import {
+  Chat,
+  ChatAssociation,
+  ChatRank,
+  FriendStatus,
+  UserStatus,
+  UserStoredStatus
+} from "@/gql/graphql";
 
 export default defineComponent({
   name: "MemberSidebarList",

@@ -46,9 +46,7 @@ const selected = computed(() => {
         tabindex="0"
         v-bind="$attrs"
         @click.prevent.stop="
-          !selected && !$attrs['onClick']
-            ? router.push(item?.path || to)
-            : () => {};
+          !selected && !$attrs['onClick'] ? router.push(item?.path || to) : '';
           props.closeOnClick ? (appStore.drawer = false) : () => {};
         "
         @keydown.enter="$event.target?.click()"

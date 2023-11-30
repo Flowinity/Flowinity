@@ -44,9 +44,7 @@
                   <h1
                     :class="username ? 'mb-2 pointer' : ''"
                     style="font-weight: 500"
-                    @click="
-                      username ? $router.push(`/u/${username}`) : () => {}
-                    "
+                    @click="username ? $router.push(`/u/${username}`) : ''"
                   >
                     {{ $friends.getName(user) }}
                     <span
@@ -75,7 +73,10 @@
                       <v-icon>mdi-rename</v-icon>
                     </v-btn>
                   </h1>
-                  <UserBadges :primary-color="primaryColorResult" :user="user" />
+                  <UserBadges
+                    :primary-color="primaryColorResult"
+                    :user="user"
+                  />
                 </div>
               </v-card-text>
             </v-col>

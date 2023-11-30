@@ -6,9 +6,7 @@
       class="dialog-outer"
       @mousedown="scrimDetect"
       @mouseup="
-        scrim && !props.persistent
-          ? $emit('update:modelValue', false)
-          : () => {}
+        scrim && !props.persistent ? $emit('update:modelValue', false) : ''
       "
     >
       <slot name="dialog-outer">

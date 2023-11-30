@@ -35,7 +35,7 @@
           class="flex-1"
           :items="friends"
           :label="t('collections.sharing.add')"
-          @keydown.enter="friend ? addUser : () => {}"
+          @keydown.enter="friend ? addUser : ''"
         />
         <tpu-button
           icon

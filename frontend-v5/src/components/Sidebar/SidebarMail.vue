@@ -11,7 +11,7 @@
         @click="
           mailStore.selectedMailbox !== item.path
             ? mailStore.setMailbox(item.path)
-            : () => {}
+            : ''
         "
       ></SideBarItem>
     </div>

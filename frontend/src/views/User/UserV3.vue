@@ -60,9 +60,7 @@
                   <h1
                     :class="username ? 'mb-2 pointer' : ''"
                     style="font-weight: 500"
-                    @click="
-                      username ? $router.push(`/u/${username}`) : () => {}
-                    "
+                    @click="username ? $router.push(`/u/${username}`) : ''"
                   >
                     {{ $friends.getName(user) }}
                     <v-chip v-if="user?.bot" class="ml-1" size="x-small">
@@ -203,9 +201,7 @@
                 :user="user"
                 :username="username"
                 @add-to-parent="
-                  component.props
-                    ? component.props.children.push($event)
-                    : () => {}
+                  component.props ? component.props.children.push($event) : ''
                 "
                 @delete="deleteComponent($event || component)"
                 @move-down="move($event || component, 1)"
@@ -217,7 +213,7 @@
                 @modify-prop="
                   component.props
                     ? (component.props[$event.prop] = $event.value)
-                    : () => {}
+                    : ''
                 "
               />
             </div>

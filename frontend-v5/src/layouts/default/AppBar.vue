@@ -40,7 +40,7 @@
                 :to="rail.path"
                 class="cursor-pointer flex items-center"
                 @click="
-                  rail?.fake ? () => {} : (appStore.navigation.mode = rail?.id)
+                  !rail?.fake ? (appStore.navigation.mode = rail?.id) : ''
                 "
               >
                 <component

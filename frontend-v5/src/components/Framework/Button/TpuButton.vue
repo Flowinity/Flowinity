@@ -24,20 +24,14 @@
     tabindex="0"
     :disabled="disabled"
     v-bind="$attrs"
-    @keydown.enter="
-      disabled
-        ? () => {}
-        : () => {
-            $event.target.click();
-          }
-    "
+    @keydown.enter="!disabled ? $event.target.click() : ''"
     @keydown.space="
-      disabled
-        ? () => {}
-        : () => {
+      !disabled
+        ? () => {
             $event.preventDefault();
             $event.target.click();
           }
+        : ''
     "
   >
     <template v-if="!loading">

@@ -38,9 +38,7 @@
         class="ml-2 limit unselectable"
         title="TPU Communications"
         :class="{ pointer: $chat.hasPermission('OVERVIEW') }"
-        @click="
-          $chat.hasPermission('OVERVIEW') ? (editingName = true) : () => {}
-        "
+        @click="$chat.hasPermission('OVERVIEW') ? (editingName = true) : ''"
       >
         {{ $chat.chatName($chat.selectedChat) }}
       </h2>
