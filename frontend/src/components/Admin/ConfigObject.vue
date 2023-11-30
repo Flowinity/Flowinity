@@ -70,6 +70,7 @@ export default defineComponent({
     deep: { type: Number },
     persistentKey: { type: String }
   },
+  emits: ["update:object"],
   computed: {
     deepStyle() {
       return {

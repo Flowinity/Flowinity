@@ -8,23 +8,17 @@
         <v-data-table :headers="headers" :items="users">
           <template #[`item.banned`]="{ item }">
             <v-checkbox
-              :model-value="<boolean>item.banned"
-              @change="ban(<number>item.id, $event.target.checked)"
+              :model-value="item.banned"
+              @change="ban(item.id, $event.target.checked)"
             />
           </template>
           <template #[`item.administrator`]="{ item }">
-            <v-checkbox :model-value="item.administrator" disabled />
+            <v-checkbox :model-value="item.administrator" :disabled="true" />
           </template>
           <template #[`item.planId`]="{ item }">
             <v-checkbox
-              :model-value="<number>item.planId === 6"
-              @change="
-                gold(
-                  <number>item.id,
-                  $event.target.checked,
-                  <string>item.createdAt
-                )
-              "
+              :model-value="item.planId === 6"
+              @change="gold(item.id, $event.target.checked, item.createdAt)"
             />
           </template>
           <template #[`item.createdAt`]="{ item }">

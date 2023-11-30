@@ -2,10 +2,10 @@
   <CoreDialog v-model="dialog" max-width="600">
     <template #title>Add Social Link</template>
     <v-container>
-      <v-text-field v-model="link.name" label="Text" maxlength="20" />
-      <v-text-field v-model="link.url" label="URL" />
+      <v-text-field v-model="socialLink.name" label="Text" maxlength="20" />
+      <v-text-field v-model="socialLink.url" label="URL" />
       <v-color-picker
-        v-model="link.color"
+        v-model="socialLink.color"
         label="Color"
         mode="hex"
         width="100%"
@@ -16,9 +16,12 @@
       <v-btn
         color="primary"
         @click="
-          $emit('addLink', [...(component?.props?.links ?? []), ...[link]]);
+          $emit('addLink', [
+            ...(component?.props?.links ?? []),
+            ...[socialLink]
+          ]);
           dialog = false;
-          link = {
+          socialLink = {
             name: '',
             url: '',
             color: ''
@@ -77,7 +80,6 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { ProfileLayoutComponent, User } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "SocialLinks",
   components: { CoreDialog },
   props: {
     user: {
@@ -93,7 +95,7 @@ export default defineComponent({
   data() {
     return {
       dialog: false,
-      link: {
+      socialLink: {
         name: "",
         url: "",
         color: ""
@@ -113,7 +115,7 @@ export default defineComponent({
     const aTags = document.getElementsByClassName("social-link");
     //@ts-ignore
     for (const a of aTags) {
-      a.removeEventListener("auxClick", e.preventDefault(), false);
+      a.removeEventListener("auxclick", this.handleEvent, false);
     }
   },
   methods: {
@@ -123,8 +125,11 @@ export default defineComponent({
       const aTags = document.getElementsByClassName("social-link");
       //@ts-ignore
       for (const a of aTags) {
-        a.addEventListener("auxClick", e.preventDefault(), false);
+        a.addEventListener("auxclick", this.handleEvent, false);
       }
+    },
+    handleEvent(event: Event) {
+      event.preventDefault();
     }
   }
 });
