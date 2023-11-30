@@ -3,7 +3,7 @@
     :model-value="modelValue"
     :width="width"
     max-width="800px"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-card v-if="$chat.dialogs.image.object">
       <v-img

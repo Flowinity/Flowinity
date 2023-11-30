@@ -3,7 +3,7 @@
     v-if="chat && user"
     :model-value="modelValue"
     max-width="700px"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #title>
       {{ $t("chats.settings.users.transferOwnership") }}

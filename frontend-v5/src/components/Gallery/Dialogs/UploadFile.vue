@@ -1,8 +1,8 @@
 <template>
   <tpu-dialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     width="500"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #toolbar>
       {{
@@ -20,9 +20,9 @@
       <card-actions>
         <tpu-button
           variant="passive"
-          @click="appStore.upload()"
           :loading="appStore.dialogs.gallery.upload.loading"
           :disabled="!appStore.dialogs.gallery.upload.files.length"
+          @click="appStore.upload()"
         >
           {{ t("generic.upload") }}
         </tpu-button>

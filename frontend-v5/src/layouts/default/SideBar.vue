@@ -45,8 +45,8 @@ const context = ref(0);
     >
       <Transition name="slide-fade" mode="out-in">
         <div
-          :key="appStore.currentRail?.id"
           v-if="appStore.currentRail"
+          :key="appStore.currentRail?.id"
           class="flex items-center"
         >
           <component :is="appStore.currentRail?.icon" class="w-8 ml-4" />
@@ -60,8 +60,8 @@ const context = ref(0);
 
     <Transition name="slide-fade" mode="out-in">
       <div
-        class="justify-between flex-col flex-1 px-3"
         :key="appStore.currentRail?.id"
+        class="justify-between flex-col flex-1 px-3"
         style="margin-top: 16px"
       >
         <div class="flex-col flex gap-y-2 flex-1 relative">
@@ -81,9 +81,9 @@ const context = ref(0);
     </Transition>
     <Transition name="slide-fade" mode="out-in">
       <div
+        :key="appStore.currentRail?.id"
         class="flex-col flex gap-y-2 px-3"
         style="margin-bottom: 16px"
-        :key="appStore.currentRail?.id"
       >
         <SideBarItem
           v-for="item in appStore.currentMiscNavOptions"

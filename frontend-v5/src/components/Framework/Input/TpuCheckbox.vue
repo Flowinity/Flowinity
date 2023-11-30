@@ -3,17 +3,17 @@
     variant="passive"
     icon
     class="select-none"
-    @click="$emit('update:modelValue', !modelValue)"
     :disabled="props.disabled"
     :style="{ maxWidth: px, maxHeight: px, minWidth: px, minHeight: px }"
+    @click="$emit('update:modelValue', !modelValue)"
   >
     <RiCheckboxBlankLine
+      v-if="!modelValue"
       class="w-full h-full"
       :style="{ color }"
-      v-if="!modelValue"
     />
-    <RiCheckboxFill class="w-full h-full" v-else :style="{ color }" />
-    <span class="text-gray-900 dark:text-white" v-if="props.label">
+    <RiCheckboxFill v-else class="w-full h-full" :style="{ color }" />
+    <span v-if="props.label" class="text-gray-900 dark:text-white">
       {{ props.label }}
     </span>
   </tpu-button>

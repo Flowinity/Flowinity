@@ -122,7 +122,7 @@
       min="12"
       step="12"
       thumb-label
-      @update:modelValue="$emit('update')"
+      @update:model-value="$emit('update')"
     />
     <!-- select between Farenheit, Celsius or Kelvin -->
     <v-select
@@ -132,7 +132,7 @@
       class="px-6"
       item-title="title"
       item-value="value"
-      @update:modelValue="$emit('update')"
+      @update:model-value="$emit('update')"
     />
     <v-select
       v-model="theme"
@@ -141,7 +141,7 @@
       class="px-6"
       item-title="title"
       item-value="value"
-      @update:modelValue="$emit('update')"
+      @update:model-value="$emit('update')"
     />
     <v-autocomplete
       v-model="$user.user.excludedCollections"
@@ -155,7 +155,7 @@
       item-value="id"
       multiple
       variant="underlined"
-      @update:modelValue="$emit('update')"
+      @update:model-value="$emit('update')"
     />
     <v-select
       v-model="$user.user.language"
@@ -164,7 +164,7 @@
       class="px-6"
       item-title="title"
       item-value="key"
-      @update:modelValue="$emit('update')"
+      @update:model-value="$emit('update')"
     />
     <v-select
       v-model="$experiments.experiments['NOTIFICATION_SOUND']"

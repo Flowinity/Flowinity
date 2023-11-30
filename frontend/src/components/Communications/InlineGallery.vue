@@ -21,7 +21,7 @@
       >
         <InlineGalleryItem
           :item="item"
-          @clickItem="$emit('clickItem', $event)"
+          @click-item="$emit('clickItem', $event)"
         />
       </v-col>
     </v-row>

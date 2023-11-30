@@ -3,7 +3,7 @@
     <UserBanner
       :height="username ? 250 : undefined"
       :user="user"
-      @refreshUser="getUser(false)"
+      @refresh-user="getUser(false)"
     />
     <v-container :style="username ? 'max-width: 100%;' : ''" class="mt-2">
       <v-row>

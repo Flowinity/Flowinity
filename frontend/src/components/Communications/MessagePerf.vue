@@ -222,8 +222,8 @@
               :model-value="editingText"
               style="width: 100%"
               @edit="$emit('edit', { id: null, content: null })"
-              @sendMessage="$emit('editMessage', $event)"
-              @update:modelValue="$emit('editText', $event)"
+              @send-message="$emit('editMessage', $event)"
+              @update:model-value="$emit('editText', $event)"
             />
             <message-actions
               v-if="hovered && !$vuetify.display.mobile"

@@ -53,35 +53,35 @@ requestAnimationFrame(animate);
 <template>
   <div class="dark w-full">
     <div
+      id="main-area"
       class="dark:bg-dark bg-white text-black dark:fill-white dark:text-white flex w-full"
       @drop="drop"
       @dragover.prevent
-      id="main-area"
     >
       <quick-switcher v-model="appStore.dialogs.core.quickSwitcher.value" />
       <tpu-navigation-drawer
+        v-if="userStore.user && frameworkStore.breakpoints.mobile"
         v-model="appStore.drawer"
         class="flex"
-        v-if="userStore.user && frameworkStore.breakpoints.mobile"
       >
         <super-bar class="fixed top-0 left-0" :drawer="true" />
         <side-bar class="fixed top-0 left-0" :drawer="true" />
       </tpu-navigation-drawer>
       <super-bar
-        class="fixed top-0 left-0 z-50"
         v-if="userStore.user && !frameworkStore.breakpoints.mobile"
+        class="fixed top-0 left-0 z-50"
       />
-      <div class="flex w-full" id="main-flex">
+      <div id="main-flex" class="flex w-full">
         <side-bar
-          class="fixed top-0 left-0"
           v-if="userStore.user && !frameworkStore.breakpoints.mobile"
+          class="fixed top-0 left-0"
         />
         <div class="flex flex-col w-full">
           <app-bar class="bg-white z-10" />
           <main
+            id="app-area"
             class="w-full overflow-auto"
             :class="appStore.heightOffset"
-            id="app-area"
           >
             <RouterView />
           </main>

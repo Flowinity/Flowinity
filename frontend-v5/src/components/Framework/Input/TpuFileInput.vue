@@ -10,7 +10,7 @@
     <input
       type="file"
       class="file-input"
-      v-on:change="$emit('update:modelValue', $event.target?.files)"
+      @change="$emit('update:modelValue', $event.target?.files)"
     />
   </div>
 </template>

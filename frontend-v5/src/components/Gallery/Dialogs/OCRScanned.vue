@@ -1,8 +1,8 @@
 <template>
   <tpu-dialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     width="500"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #toolbar>
       {{ t("gallery.dialogs.ocr.title") }}

@@ -57,13 +57,13 @@ const dimensions = computed(() => {
         <tpu-img
           :height="size || 24"
           :width="size || 24"
-          @error="loadError"
           style="width: 100%; height: 100%"
           :src="props.src"
           :cover="true"
           :alt="props.alt || 'Avatar'"
           :spinner-size="24"
           :spinner-inner-width="6"
+          @error="loadError"
         />
       </template>
       <template v-else>

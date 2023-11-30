@@ -4,7 +4,7 @@
     <GalleryNavigation
       v-model:search="search"
       :supports="{ filter: true, metadata: false, search: true }"
-      @refreshGallery="getCollections(undefined, true)"
+      @refresh-gallery="getCollections(undefined, true)"
       @update:filter="filter = $event"
     />
     <v-btn class="mt-1 ml-1" style="float: right" @click="create = true">

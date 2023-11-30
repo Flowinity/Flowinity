@@ -2,7 +2,7 @@
   <CoreDialog
     :model-value="modelValue"
     fullscreen
-    @update:modelValue="$emit('update:modelValue', $event)"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #toolbar>
       <v-toolbar color="transparent">

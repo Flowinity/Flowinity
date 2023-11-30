@@ -11,7 +11,7 @@
     <UserBanner
       :height="username ? 250 : undefined"
       :user="user"
-      @refreshUser="getUser(false)"
+      @refresh-user="getUser(false)"
     />
     <v-container class="mt-2" style="max-width: 100%">
       <v-row>
@@ -202,19 +202,19 @@
                 :primary="primary"
                 :user="user"
                 :username="username"
-                @addToParent="
+                @add-to-parent="
                   component.props
                     ? component.props.children.push($event)
                     : () => {}
                 "
                 @delete="deleteComponent($event || component)"
-                @moveDown="move($event || component, 1)"
-                @moveUp="move($event || component, -1)"
+                @move-down="move($event || component, 1)"
+                @move-up="move($event || component, -1)"
                 @settings="
                   config.component = $event || component;
                   config.dialog = true;
                 "
-                @modifyProp="
+                @modify-prop="
                   component.props
                     ? (component.props[$event.prop] = $event.value)
                     : () => {}

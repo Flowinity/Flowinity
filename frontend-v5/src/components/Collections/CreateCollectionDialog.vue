@@ -1,16 +1,16 @@
 <template>
   <tpu-dialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     width="500"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #toolbar>
       {{ t("collections.create.title") }}
     </template>
     <div class="py-4 px-4 relative">
       <text-field
-        autofocus
         v-model="name"
+        autofocus
         :label="t('collections.settings.name')"
         class="mb-2"
         @keyup.enter="createCollection"

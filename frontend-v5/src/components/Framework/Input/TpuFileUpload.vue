@@ -23,7 +23,7 @@
             {{ t("gallery.dialogs.upload.dragAndDrop") }}
           </p>
         </template>
-        <slot name="after-select" v-else>
+        <slot v-else name="after-select">
           <div class="flex-col justify-between h-full">
             <div class="flex-col gap-2 mx-4">
               <div
@@ -43,19 +43,19 @@
             </div>
           </div>
           <div class="flex justify-center mx-4">
-            <tpu-progress-bar :percentage="percentage" v-if="loading" />
+            <tpu-progress-bar v-if="loading" :percentage="percentage" />
           </div>
         </slot>
       </div>
       <input
         id="dropzone-file"
         ref="file"
+        :key="files.map((file) => file.name).join(', ')"
         class="hidden"
         type="file"
         :multiple="props.multiple"
-        v-on:change="$emit('update:files', Array.from($event.target?.files))"
-        :key="files.map((file) => file.name).join(', ')"
         :accept="accept"
+        @change="$emit('update:files', Array.from($event.target?.files))"
       />
     </label>
   </div>

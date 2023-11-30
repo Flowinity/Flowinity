@@ -1,12 +1,12 @@
 <template>
   <text-field
-    :label="$t('generic.dangerZone.totp')"
     v-if="userStore.user?.totpEnable && !passwordMode"
+    :label="$t('generic.dangerZone.totp')"
     autofocus
-    @keydown.enter="$emit('confirm')"
-    @update:model-value="$emit('update:totp', $event)"
     :model-value="totp"
     parent-classes="flex-col"
+    @keydown.enter="$emit('confirm')"
+    @update:model-value="$emit('update:totp', $event)"
   >
     <div class="flex justify-end">
       <a
@@ -18,16 +18,16 @@
     </div>
   </text-field>
   <text-field
-    :label="$t('generic.dangerZone.password')"
     v-else
+    :label="$t('generic.dangerZone.password')"
     autofocus
     type="password"
-    @keydown.enter="$emit('confirm')"
-    @update:model-value="$emit('update:password', $event)"
     :model-value="password"
     parent-classes="flex-col"
+    @keydown.enter="$emit('confirm')"
+    @update:model-value="$emit('update:password', $event)"
   >
-    <div class="flex justify-end" v-if="userStore.user?.totpEnable">
+    <div v-if="userStore.user?.totpEnable" class="flex justify-end">
       <a
         class="select-none cursor-pointer text-blue"
         @click="$emit('update:passwordMode', false)"

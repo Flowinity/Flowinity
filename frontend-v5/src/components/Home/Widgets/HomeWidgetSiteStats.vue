@@ -2,8 +2,8 @@
   <card outlined padding>
     <template #header>Flowinity Statistics</template>
     <div
-      class="grid 2xl:grid-cols-4 sm:grid-cols-3 gap-4 mt-4"
       v-if="appStore.state?.stats"
+      class="grid 2xl:grid-cols-4 sm:grid-cols-3 gap-4 mt-4"
     >
       <card :secondary="false" class="text-center" padding>
         <template #header>Uploads</template>

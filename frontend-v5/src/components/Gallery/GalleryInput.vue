@@ -1,10 +1,11 @@
 <template>
   <text-field
+    ref="input"
     :label="t('generic.search')"
     :assist="true"
     class="flex-grow"
     autocomplete="off"
-    :htmlId="props.inputId"
+    :html-id="props.inputId"
     :model-value="props.modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     @keydown.enter="
@@ -14,7 +15,6 @@
         date: new Date().toISOString()
       });
     "
-    ref="input"
   >
     <template #append>
       <div class="flex items-center justify-center gap-1 mb-4">

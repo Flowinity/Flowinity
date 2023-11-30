@@ -1,18 +1,16 @@
 <template>
   <div
     class="flex items-center min-w"
-    @click="value = !value"
     :class="{
       'opacity-60': disabled,
       'cursor-pointer': !disabled,
       'cursor-not-allowed': disabled
     }"
     :aria-disabled="disabled"
+    @click="value = !value"
   >
     <div
       tabindex="0"
-      @keydown.space.prevent="value = !value"
-      @keydown.enter.prevent="value = !value"
       class="flex rounded-full items-center transition duration-200 ease-in-out border-2"
       :class="{
         'transition-background-color duration-300 ease-in-out bg-blue dark:border-blue':
@@ -27,11 +25,13 @@
         max-height: 36px;
         max-width: 56px;
       "
+      @keydown.space.prevent="value = !value"
+      @keydown.enter.prevent="value = !value"
     >
       <input
+        v-model="value"
         type="checkbox"
         class="hidden"
-        v-model="value"
         :disabled="disabled"
         :aria-disabled="disabled"
       />
@@ -45,8 +45,8 @@
         }"
         style="margin-left: 0.5px"
       >
-        <RiCheckLine style="width: 15px" v-if="value" />
-        <RiCloseLine style="width: 15px" v-else />
+        <RiCheckLine v-if="value" style="width: 15px" />
+        <RiCloseLine v-else style="width: 15px" />
       </div>
     </div>
     <div

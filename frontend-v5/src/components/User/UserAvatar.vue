@@ -1,6 +1,6 @@
 <template>
   <div class="relative" :class="{ 'cursor-pointer': edit }">
-    <teleport to="#main-area" v-if="edit">
+    <teleport v-if="edit" to="#main-area">
       <set-picture-dialog
         v-model="editing"
         @set-image="
@@ -27,12 +27,13 @@
         style="z-index: 0"
       >
         <slot v-if="$slots.default" />
-        <span style="font-size: 26px" v-else>
+        <span v-else style="font-size: 26px">
           {{ props.username?.charAt(0).toUpperCase() ?? "?" }}
         </span>
         <template #outer>
           <div
             v-if="props.status"
+            v-tooltip="functions.userStatus(user.status).text"
             class="status dark:border-sidebar-dark border-2 fill-black flex items-center justify-center relative"
             :style="{
               backgroundColor:
@@ -41,16 +42,16 @@
                   : functions.userStatus(user.status).color
             }"
             :class="{ 'typing-status': typing }"
-            v-tooltip="functions.userStatus(user.status).text"
           >
             <transition name="scale-transition">
               <template v-if="!typing">
                 <div
+                  v-if="user.status === UserStatus.Busy"
                   style="height: 2px; width: 6px; background: #101113"
                   class="rounded"
-                  v-if="user.status === UserStatus.Busy"
                 />
                 <RiMoonFill
+                  v-else-if="user.status === UserStatus.Idle"
                   style="
                     height: 8px;
                     width: 8px;
@@ -62,17 +63,16 @@
                     fill: functions.userStatus(user.status).color
                   }"
                   class="rounded"
-                  v-else-if="user.status === UserStatus.Idle"
                 />
                 <RiCheckLine
+                  v-else-if="user.status === UserStatus.Online"
                   style="height: 8px; width: 8px"
                   class="rounded"
-                  v-else-if="user.status === UserStatus.Online"
                 />
                 <div
+                  v-else
                   style="height: 4.5px; width: 4.5px; background: #101113"
                   class="rounded"
-                  v-else
                 />
               </template>
               <template v-else>

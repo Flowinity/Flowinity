@@ -1,10 +1,10 @@
 <template>
   <tpu-auto-complete
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     v-bind="$props"
     :readonly="true"
     class="cursor-pointer select-none"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <slot />
   </tpu-auto-complete>

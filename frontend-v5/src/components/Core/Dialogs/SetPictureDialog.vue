@@ -1,36 +1,36 @@
 <template>
   <tpu-dialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     width="500"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #toolbar>
       {{ title || t("dialogs.uploadCropper.title") }}
     </template>
     <div class="relative">
       <tpu-file-upload
-        :multiple="false"
         v-model:files="files"
+        :multiple="false"
         accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/svg+xml"
       >
         <template #after-select>
           <cropper
+            v-if="image.src"
+            ref="cropperRef"
             class="cropper"
             :src="image.src"
-            v-if="image.src"
             :stencil-props="{
               minAspectRatio: aspectRatio,
               maxAspectRatio: aspectRatio,
               aspectRatio: aspectRatio
             }"
-            ref="cropperRef"
           />
         </template>
       </tpu-file-upload>
     </div>
 
     <card-actions :double="!!image.src">
-      <template #start v-if="image.src">
+      <template v-if="image.src" #start>
         <tpu-button
           class="gap-1"
           variant="passive"
@@ -48,19 +48,19 @@
       <template v-if="image.src">
         <tpu-button
           variant="passive"
-          @click="$emit('setImage', files[0])"
           :loading="loading"
+          @click="$emit('setImage', files[0])"
         >
           {{ t("dialogs.uploadCropper.skipCrop") }}
         </tpu-button>
-        <tpu-button variant="passive" @click="save" :loading="loading">
+        <tpu-button variant="passive" :loading="loading" @click="save">
           {{ t("generic.save") }}
         </tpu-button>
       </template>
       <template v-else>
         <tpu-button
-          @click="$emit('update:modelValue', false)"
           variant="passive"
+          @click="$emit('update:modelValue', false)"
         >
           {{ t("generic.cancel") }}
         </tpu-button>

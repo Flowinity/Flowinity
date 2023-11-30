@@ -62,6 +62,7 @@
     >
       <div class="d-flex flex-column rounded-xl" style="width: 100%">
         <v-textarea
+          :id="editing ? 'input-editing' : 'input-main-comms'"
           ref="textarea"
           :class="!editing ? 'mb-n4 mt-1' : 'mt-2'"
           :maxlength="4000"
@@ -77,7 +78,6 @@
                 : $t('dialogs.block.commsInputThem')
               : 'Type a message...'
           "
-          :id="editing ? 'input-editing' : 'input-main-comms'"
           :disabled="blocked?.value"
           placeholder="Keep it civil"
           rows="1"
@@ -146,7 +146,7 @@
                     <v-window-item value="gallery">
                       <InlineGallery
                         type="gallery"
-                        @clickItem="
+                        @click-item="
                           $emit('quickTPULink', $event);
                           menu = false;
                         "
@@ -155,7 +155,7 @@
                     <v-window-item value="starred">
                       <InlineGallery
                         type="starred"
-                        @clickItem="
+                        @click-item="
                           $emit('quickTPULink', $event);
                           menu = false;
                         "
@@ -164,7 +164,7 @@
                     <v-window-item value="gif">
                       <InlineGallery
                         type="tenor"
-                        @clickItem="
+                        @click-item="
                           $emit('quickTPULink', $event);
                           menu = false;
                         "

@@ -2,7 +2,7 @@
   <CoreDialog
     :model-value="modelValue"
     style="max-width: 548px"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #title>You are leaving TPU</template>
     <v-card-text>

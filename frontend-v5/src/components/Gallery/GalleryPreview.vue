@@ -1,7 +1,7 @@
 <template>
   <div class="justify-center items-center flex relative" style="height: 150px">
     <tpu-hover v-if="props.item.type === 'image'" class="w-full">
-      <template v-slot="{ hovering }">
+      <template #default="{ hovering }">
         <tpu-img
           :src="appStore.domain + props.item?.attachment"
           height="150"
@@ -29,8 +29,8 @@
       <source :src="appStore.domain + props.item?.attachment" />
     </video>
     <div
-      class="w-full flex items-center justify-center fill-medium-emphasis-dark text-medium-emphasis-dark"
       v-else
+      class="w-full flex items-center justify-center fill-medium-emphasis-dark text-medium-emphasis-dark"
     >
       <RiFileLine :style="{ width: 150 + 'px' }" />
     </div>

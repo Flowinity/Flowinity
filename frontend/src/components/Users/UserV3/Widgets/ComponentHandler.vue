@@ -63,10 +63,10 @@
           :user="user"
           :username="username"
           @delete="$emit('delete', $event)"
-          @moveDown="$emit('moveDown', $event)"
-          @moveUp="$emit('moveUp', $event)"
+          @move-down="$emit('moveDown', $event)"
+          @move-up="$emit('moveUp', $event)"
           @settings="$emit('settings', $event)"
-          @modifyProp="$emit('modifyProp', $event)"
+          @modify-prop="$emit('modifyProp', $event)"
         />
       </v-col>
     </v-row>
@@ -112,7 +112,7 @@
     v-else-if="component.name === 'social-links'"
     :user="user"
     :component="component"
-    @addLink="
+    @add-link="
       $emit('modifyProp', {
         component: component,
         prop: 'links',

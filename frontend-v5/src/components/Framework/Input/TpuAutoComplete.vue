@@ -2,10 +2,13 @@
   <div class="relative">
     <div class="overlay"></div>
     <text-field
+      v-bind="$attrs"
+      ref="input"
+      v-model="text"
+      :disabled="props.disabled"
+      :readonly="props.readonly"
       @focus="focused = true"
       @blur="focused = false"
-      v-model="text"
-      v-bind="$attrs"
       @keydown.down.stop.prevent="
         focused = true;
         selected >= items.length - 1 ? (selected = 0) : selected++;
@@ -19,14 +22,11 @@
         hovering = false;
         focused = false;
       "
-      :disabled="props.disabled"
       @update:model-value="
         focused = true;
         remove($event);
         assist ? $emit('update:modelValue', items[selected].value) : () => {};
       "
-      ref="input"
-      :readonly="props.readonly"
     >
       <template #append>
         <slot name="append" />
@@ -35,9 +35,9 @@
 
     <transition name="dialog-transition" appear>
       <div
-        class="dropdown-options rounded-l bg-card-dark"
-        :key="show"
         v-if="show"
+        :key="show"
+        class="dropdown-options rounded-l bg-card-dark"
         @mouseover="hovering = true"
         @mouseleave="hovering = false"
         @click="focus()"
@@ -45,11 +45,12 @@
         <slot>
           <ul>
             <li
+              v-for="(item, index) in items"
+              :key="item.id"
               v-wave
               tabindex="0"
-              :key="item.id"
               :class="{ 'bg-card-secondary-dark': selected === index }"
-              v-for="(item, index) in items"
+              class="text-ellipsis overflow-hidden"
               @click.stop.prevent="
                 assist
                   ? $emit('update:modelValue', items[selected].value)
@@ -59,7 +60,6 @@
                 focused = false;
               "
               @mouseover="selected = index"
-              class="text-ellipsis overflow-hidden"
             >
               <slot name="item" :item="item">
                 <div class="my-2 mx-2">

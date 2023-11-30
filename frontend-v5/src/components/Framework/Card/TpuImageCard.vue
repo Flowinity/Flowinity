@@ -1,5 +1,6 @@
 <template>
   <card
+    v-wave
     :padding="false"
     :style="{
       maxWidth: props.width + 'px',
@@ -8,7 +9,6 @@
       maxHeight: props.height + 'px'
     }"
     class="relative h-full w-full"
-    v-wave
   >
     <tpu-img
       :src="src"

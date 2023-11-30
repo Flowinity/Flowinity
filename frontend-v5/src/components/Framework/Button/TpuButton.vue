@@ -1,8 +1,8 @@
 <template>
   <component
     :is="props.to ? RouterLink : 'a'"
-    class="rounded-full flex dark:text-white select-none"
     v-wave="!disabled && !table && !noRipple"
+    class="rounded-full flex dark:text-white select-none"
     :to="to ? to : undefined"
     :href="href ? href : undefined"
     :style="{
@@ -22,6 +22,8 @@
       'cursor-pointer': !disabled && !noRipple
     }"
     tabindex="0"
+    :disabled="disabled"
+    v-bind="$attrs"
     @keydown.enter="
       disabled
         ? () => {}
@@ -37,8 +39,6 @@
             $event.target.click();
           }
     "
-    :disabled="disabled"
-    v-bind="$attrs"
   >
     <template v-if="!loading">
       <slot />

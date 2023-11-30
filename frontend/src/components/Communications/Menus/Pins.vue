@@ -38,7 +38,7 @@
             :search="true"
             class="pointer"
             @click="$chat.jumpToMessage(message.id)"
-            @jumpToMessage="$chat.jumpToMessage($event.id)"
+            @jump-to-message="$chat.jumpToMessage($event.id)"
             @refresh="getPins(true)"
           />
         </div>

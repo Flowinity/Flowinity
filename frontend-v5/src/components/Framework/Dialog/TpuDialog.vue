@@ -1,10 +1,10 @@
 <template>
-  <div class="dialog-scrim" v-if="props.modelValue" />
+  <div v-if="props.modelValue" class="dialog-scrim" />
   <transition name="dialog-transition" appear>
     <div
       v-if="props.modelValue"
-      @mousedown="scrimDetect"
       class="dialog-outer"
+      @mousedown="scrimDetect"
       @mouseup="
         scrim && !props.persistent
           ? $emit('update:modelValue', false)

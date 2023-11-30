@@ -9,8 +9,8 @@
         <template #header>{{ t("settings.account.username.title") }}</template>
         <div>
           <text-field
-            :label="t('settings.account.username.newUsername')"
             v-model="username.attrs.username"
+            :label="t('settings.account.username.newUsername')"
           />
           <danger-zone-input
             v-model:password-mode="username.passwordMode"
@@ -30,12 +30,12 @@
         </template>
         <div>
           <text-field
-            :label="t('settings.account.password.newPassword')"
             v-model="password.attrs.password"
+            :label="t('settings.account.password.newPassword')"
           />
           <text-field
-            :label="t('settings.account.password.confirmNewPassword')"
             v-model="password.attrs.confirmPassword"
+            :label="t('settings.account.password.confirmNewPassword')"
           />
           <danger-zone-input
             v-model:password="password.password"
@@ -54,8 +54,8 @@
         </template>
         <div>
           <text-field
-            :label="t('settings.account.email.newEmail')"
             v-model="password.attrs.email"
+            :label="t('settings.account.email.newEmail')"
           />
           <danger-zone-input
             v-model:password-mode="email.passwordMode"

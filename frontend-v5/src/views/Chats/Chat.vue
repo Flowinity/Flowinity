@@ -1,32 +1,32 @@
 <template>
   <div class="communications">
     <div
-      class="messages position-relative"
       :key="chatStore.selectedChatAssociationId"
+      class="messages position-relative"
     >
       <div id="sentinel-bottom" ref="sentinelBottom"></div>
       <CommsMessage
-        :unread-id="0"
-        class="mr-2 ml-2"
         v-for="(message, index) in messagesStore.messages[
           chatStore.selectedChatAssociationId
         ] || []"
         :id="'message-id-' + message.id"
         :ref="`message-${index}`"
-        :style="{ zIndex: 1000 - index }"
         :key="message.id"
+        :unread-id="0"
+        class="mr-2 ml-2"
+        :style="{ zIndex: 1000 - index }"
         :class="{
           'message-jumped': message.id === replyId,
           'message-mention': message.content?.includes(`<@${$user.user?.id}>`)
         }"
         :date-separator="dateSeparator(index)"
         :editing="editing === message.id"
-        :editingText="editingText"
+        :editing-text="editingText"
         :message="message"
         :index="index"
-        @editText="editingText = $event"
-        @reply="replyId = $event"
         :merge="$chat.merge(message, index)"
+        @edit-text="editingText = $event"
+        @reply="replyId = $event"
       />
     </div>
     <div class="input mx-4 my-2">
@@ -48,8 +48,8 @@
       </card>
       <div class="flex-col">
         <comms-input
-          v-model="content"
           ref="input"
+          v-model="content"
           @keydown.enter.exact="sendMessage"
           @update:model-value="type"
         />
@@ -58,15 +58,15 @@
             <div class="user-avatars">
               <UserAvatar
                 v-for="typer in excludedTypers"
+                :key="typer.userId"
                 :user-id="typer.userId"
                 class="user-avatar"
-                :key="typer.userId"
                 size="20"
               />
             </div>
             <p
-              class="text-medium-emphasis-dark ml-2"
               v-if="excludedTypers.length"
+              class="text-medium-emphasis-dark ml-2"
             >
               {{
                 t(
@@ -95,32 +95,32 @@
     <transition mode="out-in" name="slide-up" appear>
       <div class="flex gap-2">
         <tpu-button
-          icon
-          variant="passive"
           v-tooltip.bottom="
             chatStore.uiOptions.searchSidebar
               ? t('chats.searchSidebar.hide')
               : t('chats.searchSidebar.show')
           "
+          icon
+          variant="passive"
           @click="
             chatStore.uiOptions.searchSidebar =
               !chatStore.uiOptions.searchSidebar
           "
         >
           <RiSearchLine
-            style="width: 20px"
             v-if="!chatStore.uiOptions.searchSidebar"
+            style="width: 20px"
           />
-          <RiSearchFill style="width: 20px" v-else />
+          <RiSearchFill v-else style="width: 20px" />
         </tpu-button>
         <tpu-button
-          icon
-          variant="passive"
           v-tooltip.bottom="
             chatStore.uiOptions.memberSidebar
               ? t('chats.memberSidebar.hide')
               : t('chats.memberSidebar.show')
           "
+          icon
+          variant="passive"
           @click="
             chatStore.uiOptions.searchSidebar &&
             chatStore.uiOptions.memberSidebar
@@ -131,13 +131,13 @@
           "
         >
           <RiUserLine
-            style="width: 20px"
             v-if="
               !chatStore.uiOptions.memberSidebar ||
               chatStore.uiOptions.searchSidebar
             "
+            style="width: 20px"
           />
-          <RiUserFill style="width: 20px" v-else />
+          <RiUserFill v-else style="width: 20px" />
         </tpu-button>
       </div>
     </transition>
@@ -145,10 +145,10 @@
 
   <teleport to="#main-flex">
     <second-side-bar
-      class="fixed top-0 left-0 max-sm:hidden sidebar-transition"
       v-if="
         chatStore.uiOptions.memberSidebar || chatStore.uiOptions.searchSidebar
       "
+      class="fixed top-0 left-0 max-sm:hidden sidebar-transition"
       :width="chatStore.uiOptions.searchSidebar ? '384px' : '256px'"
     >
       <search-side-bar v-show="chatStore.uiOptions.searchSidebar" />

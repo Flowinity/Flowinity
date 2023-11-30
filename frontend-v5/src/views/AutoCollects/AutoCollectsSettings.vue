@@ -28,11 +28,11 @@
                 :no-ripple="true"
               >
                 <RiCheckLine
+                  v-if="item.enabled"
                   style="width: 20px"
                   class="mr-2"
-                  v-if="item.enabled"
                 />
-                <RiCloseLine style="width: 20px" class="mr-2" v-else />
+                <RiCloseLine v-else style="width: 20px" class="mr-2" />
                 {{ t(item.enabled ? "generic.enabled" : "generic.disabled") }}
               </tpu-button>
             </div>

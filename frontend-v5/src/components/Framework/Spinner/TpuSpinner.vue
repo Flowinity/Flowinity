@@ -15,6 +15,7 @@
       :class="{ spinner: indeterminate }"
     >
       <circle
+        v-if="!indeterminate"
         class="path"
         fill="none"
         :stroke-width="innerWidth"
@@ -25,7 +26,6 @@
         cx="33"
         cy="33"
         r="30"
-        v-if="!indeterminate"
       ></circle>
       <circle
         v-else

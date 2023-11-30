@@ -43,8 +43,8 @@
       </tbody>
     </table>
     <div
-      class="px-4 py-2 justify-center flex w-full"
       v-if="!sortedItems.length"
+      class="px-4 py-2 justify-center flex w-full"
     >
       No items
     </div>

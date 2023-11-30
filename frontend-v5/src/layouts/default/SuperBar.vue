@@ -33,16 +33,16 @@ const route = useRoute();
       <div class="items-start">
         <div class="flex flex-col gap-y-4">
           <img
+            v-tooltip.right="'Flowinity'"
             src="@/assets/flowinity.svg"
             alt="Flowinity Logo"
+            class="cursor-pointer"
+            draggable="false"
+            style="width: 46.55px; height: 46.55px"
             @click="
               $router.push('/');
               appStore.navigation.mode = RailMode.HOME;
             "
-            class="cursor-pointer"
-            draggable="false"
-            v-tooltip.right="'Flowinity'"
-            style="width: 46.55px; height: 46.55px"
           />
           <super-bar-item
             :highlighted="true"
@@ -68,9 +68,9 @@ const route = useRoute();
             )"
             :key="item.id"
             :selected="appStore.navigation.mode === item.id"
-            @click="appStore.navigation.mode = item.id"
             class="text-gray"
             :badge="item.badge"
+            @click="appStore.navigation.mode = item.id"
           >
             <component
               :is="
@@ -90,10 +90,10 @@ const route = useRoute();
               v-for="item in chatStore.chats"
               :key="item.id"
               :selected="route.params.chatId === item.association.id"
-              @click="appStore.navigation.mode = item.id"
               class="flex justify-center align-middle items-center rounded-xl"
               :badge="item?.unread"
               style="height: 47px"
+              @click="appStore.navigation.mode = item.id"
             >
               <user-avatar :src="functions.avatar(item)" />
             </super-bar-item>
@@ -109,9 +109,9 @@ const route = useRoute();
             )"
             :key="item.id"
             :selected="appStore.navigation.mode === item.id"
-            @click="appStore.navigation.mode = item.id"
             class="text-gray"
             highlighted
+            @click="appStore.navigation.mode = item.id"
           >
             <component
               :is="
