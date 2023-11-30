@@ -113,13 +113,7 @@ export default defineComponent({
     const aTags = document.getElementsByClassName("social-link");
     //@ts-ignore
     for (const a of aTags) {
-      a.removeEventListener(
-        "auxclick",
-        function (e) {
-          e.preventDefault();
-        },
-        false
-      );
+      a.removeEventListener("auxClick", e.preventDefault(), false);
     }
   },
   methods: {
@@ -129,13 +123,7 @@ export default defineComponent({
       const aTags = document.getElementsByClassName("social-link");
       //@ts-ignore
       for (const a of aTags) {
-        a.addEventListener(
-          "auxclick",
-          function (e) {
-            e.preventDefault();
-          },
-          false
-        );
+        a.addEventListener("auxClick", e.preventDefault(), false);
       }
     }
   }
