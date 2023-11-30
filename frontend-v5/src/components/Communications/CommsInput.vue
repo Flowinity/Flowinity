@@ -1,13 +1,13 @@
 <template>
   <text-field
+    ref="input"
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     placeholder="Keep it civil..."
     label="Send a message"
-    ref="input"
     :textarea="true"
     :max-lines="7"
     :shift-enter-new-line="true"
+    @update:model-value="$emit('update:modelValue', $event)"
   />
 </template>
 

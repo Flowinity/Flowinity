@@ -28,7 +28,7 @@
                   <v-list-item-title>
                     {{ $t("chats.notificationOptions.all") }}
                   </v-list-item-title>
-                  <template v-slot:append>
+                  <template #append>
                     <v-icon
                       v-if="
                         contextMenu.item.association.notifications === 'all'
@@ -43,7 +43,7 @@
                   <v-list-item-title>
                     {{ $t("chats.notificationOptions.mentions") }}
                   </v-list-item-title>
-                  <template v-slot:append>
+                  <template #append>
                     <v-icon
                       v-if="
                         contextMenu.item.association.notifications ===
@@ -62,7 +62,7 @@
                   <v-list-item-subtitle>
                     {{ $t("chats.notificationOptions.noneDesc") }}
                   </v-list-item-subtitle>
-                  <template v-slot:append>
+                  <template #append>
                     <v-icon
                       v-if="
                         contextMenu.item.association.notifications === 'none'
@@ -111,11 +111,11 @@
           Group Settings
         </v-list-item>
         <UserSidebarOptions
-          :user="$user.users[contextMenu.item.recipient?.id]"
           v-if="
             contextMenu.item?.type === 'direct' &&
             $user.users[contextMenu.item.recipient?.id]
           "
+          :user="$user.users[contextMenu.item.recipient?.id]"
           :hide-message="true"
         />
         <v-list-item
@@ -123,11 +123,11 @@
             contextMenu.item?.userId !== $user.user?.id &&
             contextMenu.item?.type !== 'direct'
           "
+          style="color: rgb(var(--v-theme-error))"
           @click="
             $chat.dialogs.leave.itemId = contextMenu.item.id;
             $chat.dialogs.leave.value = true;
           "
-          style="color: rgb(var(--v-theme-error))"
         >
           <v-icon class="mr-1">mdi-exit-to-app</v-icon>
           {{ $t("generic.leave") }}
@@ -153,6 +153,7 @@
   <v-list nav>
     <v-list-item
       v-for="chat in $chat.chats"
+      :key="chat.id"
       :subtitle="
         chat.type === 'group'
           ? `${chat.users?.length} members`
@@ -161,24 +162,23 @@
           : ''
       "
       :to="`/communications/${chat.association.id}`"
-      @contextmenu.prevent="context($event, chat)"
-      :key="chat.id"
       :class="{
         'black-and-white': chat.association.notifications === 'none'
       }"
       class="position-relative"
+      @contextmenu.prevent="context($event, chat)"
     >
-      <template v-slot:title>
+      <template #title>
         {{ $chat.chatName(chat) }}
         <v-chip
-          class="ml-1"
           v-if="$user.users[chat.recipient?.id]?.bot"
+          class="ml-1"
           size="x-small"
         >
           BOT
         </v-chip>
       </template>
-      <template v-slot:prepend>
+      <template #prepend>
         <UserAvatar
           :chat="chat.type === 'group' ? chat : undefined"
           :status="true"
@@ -189,7 +189,7 @@
           class="mr-2"
         />
       </template>
-      <template v-slot:append v-if="chat.unread">
+      <template v-if="chat.unread" #append>
         a
         <v-badge
           :class="chat.unread > 99 ? 'mr-6' : 'mr-4'"
@@ -199,7 +199,7 @@
       </template>
     </v-list-item>
     <v-list-item v-if="!$chat.chats.length" class="fade-skeleton">
-      <MessageSkeleton v-for="i in 5" :animate="false" :key="i" />
+      <MessageSkeleton v-for="i in 5" :key="i" :animate="false" />
     </v-list-item>
   </v-list>
 </template>

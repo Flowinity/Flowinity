@@ -10,9 +10,9 @@
         <tpu-button
           icon
           variant="passive"
-          @click="createCollection = true"
           class="flex items-center justify-center"
           style="margin-right: 2.25px; margin-left: 6px; margin-top: -0.4rem"
+          @click="createCollection = true"
         >
           <RiAddLine style="width: 20px" class="fill-medium-emphasis-dark" />
         </tpu-button>
@@ -20,8 +20,8 @@
     </tpu-overline>
     <div class="pl-1 gap-1 flex w-full">
       <text-field
-        class="flex-grow"
         v-model="search"
+        class="flex-grow"
         :label="$t('generic.search')"
       />
       <VDropdown
@@ -112,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import { RailMode, useAppStore } from "@/stores/app.store";
+import { useAppStore } from "@/stores/app.store";
 import TextField from "@/components/Framework/Input/TextField.vue";
 import TpuList from "@/components/Framework/List/TpuList.vue";
 import TpuListItem from "@/components/Framework/List/TpuListItem.vue";

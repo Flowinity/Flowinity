@@ -2,17 +2,17 @@
   <div class="date-separator" style="font-size: 14px; display: flex">
     <slot name="start" />
     <div
-      class="date-separator-line"
       v-if="position === 'center' || position === 'end'"
+      class="date-separator-line"
     ></div>
     <p class="date-separator-block unselectable">
       <slot />
     </p>
     <div
-      class="date-separator-line"
       v-if="position === 'start' || position === 'center'"
+      class="date-separator-line"
     ></div>
-    <div class="date-separator-block" v-if="$slots.end">
+    <div v-if="$slots.end" class="date-separator-block">
       <slot name="end" />
     </div>
   </div>

@@ -15,7 +15,7 @@ import type { RouteLocationNormalizedLoaded, Router } from "vue-router";
 import { useAdminStore } from "@/stores/admin.store";
 import { Axios } from "axios";
 import { ApolloClient } from "@apollo/client/core";
-import type { User, Collection, Chat, PartialUserFriend } from "@/gql/graphql";
+import type { Chat, PartialUserFriend } from "@/gql/graphql";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {

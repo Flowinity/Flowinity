@@ -138,6 +138,15 @@ export default defineComponent({
       }
     }
   },
+  watch: {
+    page() {
+      this.getUsers();
+    }
+  },
+  mounted() {
+    this.$app.title = "Users";
+    this.getUsers();
+  },
   methods: {
     async getUsers() {
       this.$app.componentLoading = true;
@@ -152,15 +161,6 @@ export default defineComponent({
       this.users = data.users;
       this.pagination = data.pager;
       this.$app.componentLoading = false;
-    }
-  },
-  mounted() {
-    this.$app.title = "Users";
-    this.getUsers();
-  },
-  watch: {
-    page() {
-      this.getUsers();
     }
   }
 });

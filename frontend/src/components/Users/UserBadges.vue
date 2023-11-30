@@ -382,6 +382,7 @@
     />
     <HoverChip
       v-for="badge in user.badges"
+      :key="badge.id"
       v-ripple
       :color="badge.color"
       :icon="badge.icon"
@@ -424,19 +425,6 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "UserBadges",
-  methods: {
-    crash() {
-      throw "Error";
-    },
-    async handleClick(badge: any) {
-      if (badge.name === ":skull:") {
-        this.crash();
-      } else if (badge.name === "Click me") {
-        await this.axios.head("/user/getRekt");
-        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
-      }
-    }
-  },
   components: { HoverChip },
   props: ["user", "primaryColor"],
   computed: {
@@ -506,6 +494,19 @@ export default defineComponent({
         "-" +
         this.$date(this.user.createdAt).format("MM-DD");
       return this.$date().isSame(this.$date(date), "week");
+    }
+  },
+  methods: {
+    crash() {
+      throw "Error";
+    },
+    async handleClick(badge: any) {
+      if (badge.name === ":skull:") {
+        this.crash();
+      } else if (badge.name === "Click me") {
+        await this.axios.head("/user/getRekt");
+        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
+      }
     }
   }
 });

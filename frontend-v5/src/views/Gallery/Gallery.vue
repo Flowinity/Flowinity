@@ -9,30 +9,30 @@
   />
   <delete-upload v-model="appStore.dialogs.gallery.delete.value" />
   <gallery-navigation
+    ref="galleryNav"
     v-model:search="search"
-    @refresh="getGallery()"
     v-model:filter="filter"
     v-model:sort="sort"
     v-model:order="order"
     :types="types"
-    ref="galleryNav"
+    @refresh="getGallery()"
   />
   <gallery-core
     :id="id"
+    ref="galleryCore"
+    v-memo="[items, selected, loading]"
     :loading="loading"
     :type="type"
-    ref="galleryCore"
     :selected="selected"
     :items="items"
     @select="select($event)"
-    v-memo="[items, selected, loading]"
   >
-    <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+    <template v-for="(_, name) in $slots" #[name]="slotData">
       <slot :name="name" v-bind="slotData" />
     </template>
     <template
-      #extra-item-attributes="{ item }: { item: Upload }"
       v-if="type === GalleryType.Starred"
+      #extra-item-attributes="{ item }: { item: Upload }"
     >
       <p>
         {{
@@ -54,8 +54,8 @@
     </template>
   </gallery-core>
   <tpu-pager
-    class="mb-2"
     v-model="page"
+    class="mb-2"
     :total-pages="pager?.totalPages || 1"
   />
   <div class="mb-2 text-center text-medium-emphasis-dark">
@@ -91,7 +91,6 @@ import OCRScanned from "@/components/Gallery/Dialogs/OCRScanned.vue";
 import UploadEditor from "@/components/Gallery/Dialogs/UploadEditor.vue";
 import { useI18n } from "vue-i18n";
 import dayjs from "@/plugins/dayjs";
-import TextField from "@/components/Framework/Input/TextField.vue";
 
 const { t } = useI18n();
 const page = ref(1);

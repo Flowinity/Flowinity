@@ -1,36 +1,16 @@
 <script setup lang="ts">
 import { RailMode, useAppStore } from "@/stores/app.store";
 import SideBarItem from "@/components/Framework/Navigation/SideBarItem.vue";
-import { useChatStore } from "@/stores/chat.store";
-import { useCollectionsStore } from "@/stores/collections.store";
-import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
-import UserAvatar from "@/components/User/UserAvatar.vue";
-import functions from "@/plugins/functions";
-import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
-import TextField from "@/components/Framework/Input/TextField.vue";
-import { computed, ref, watch } from "vue";
-import TpuButton from "@/components/Framework/Button/TpuButton.vue";
-import RiSortDesc from "vue-remix-icons/icons/ri-sort-desc.vue";
-import RiSortAsc from "vue-remix-icons/icons/ri-sort-asc.vue";
-import Card from "@/components/Framework/Card/Card.vue";
-import TpuList from "@/components/Framework/List/TpuList.vue";
-import TpuListItem from "@/components/Framework/List/TpuListItem.vue";
-import CreateCollectionDialog from "@/components/Collections/CreateCollectionDialog.vue";
 //@ts-ignore
-import VueSimpleContextMenu from "vue-simple-context-menu";
 import SidebarCollections from "@/components/Sidebar/SidebarCollections.vue";
 import SidebarComms from "@/components/Sidebar/SidebarComms.vue";
 import SidebarMail from "@/components/Sidebar/SidebarMail.vue";
 
 const appStore = useAppStore();
-const chatStore = useChatStore();
 
-const collectionsStore = useCollectionsStore();
 const props = defineProps({
   drawer: Boolean
 });
-
-const context = ref(0);
 </script>
 
 <template>
@@ -45,8 +25,8 @@ const context = ref(0);
     >
       <Transition name="slide-fade" mode="out-in">
         <div
-          :key="appStore.currentRail?.id"
           v-if="appStore.currentRail"
+          :key="appStore.currentRail?.id"
           class="flex items-center"
         >
           <component :is="appStore.currentRail?.icon" class="w-8 ml-4" />
@@ -60,8 +40,8 @@ const context = ref(0);
 
     <Transition name="slide-fade" mode="out-in">
       <div
-        class="justify-between flex-col flex-1 px-3"
         :key="appStore.currentRail?.id"
+        class="justify-between flex-col flex-1 px-3"
         style="margin-top: 16px"
       >
         <div class="flex-col flex gap-y-2 flex-1 relative">
@@ -81,9 +61,9 @@ const context = ref(0);
     </Transition>
     <Transition name="slide-fade" mode="out-in">
       <div
+        :key="appStore.currentRail?.id"
         class="flex-col flex gap-y-2 px-3"
         style="margin-bottom: 16px"
-        :key="appStore.currentRail?.id"
       >
         <SideBarItem
           v-for="item in appStore.currentMiscNavOptions"

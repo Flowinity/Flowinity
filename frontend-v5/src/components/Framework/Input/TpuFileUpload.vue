@@ -11,7 +11,7 @@
         'items-center justify-center cursor-pointer': !files.length,
         'cursor-normal': files.length
       }"
-      @click="files.length ? $event.preventDefault() : () => {}"
+      @click="files.length ? $event.preventDefault() : ''"
     >
       <div class="flex flex-col justify-center pt-3 pb-3 h-full">
         <template v-if="!files.length">
@@ -23,7 +23,7 @@
             {{ t("gallery.dialogs.upload.dragAndDrop") }}
           </p>
         </template>
-        <slot name="after-select" v-else>
+        <slot v-else name="after-select">
           <div class="flex-col justify-between h-full">
             <div class="flex-col gap-2 mx-4">
               <div
@@ -43,32 +43,30 @@
             </div>
           </div>
           <div class="flex justify-center mx-4">
-            <tpu-progress-bar :percentage="percentage" v-if="loading" />
+            <tpu-progress-bar v-if="loading" :percentage="percentage" />
           </div>
         </slot>
       </div>
       <input
         id="dropzone-file"
         ref="file"
+        :key="files.map((file) => file.name).join(', ')"
         class="hidden"
         type="file"
         :multiple="props.multiple"
-        v-on:change="$emit('update:files', Array.from($event.target?.files))"
-        :key="files.map((file) => file.name).join(', ')"
         :accept="accept"
+        @change="$emit('update:files', Array.from($event.target?.files))"
       />
     </label>
   </div>
 </template>
 
 <script setup lang="ts">
-import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
 import RiUploadLine from "vue-remix-icons/icons/ri-upload-cloud-2-line.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import TpuProgressBar from "@/components/Framework/Spinner/TpuProgressBar.vue";
 import { useI18n } from "vue-i18n";
-import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 
 const props = defineProps({
   files: {

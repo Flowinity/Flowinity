@@ -6,11 +6,11 @@
       <div v-for="(item, index) in props.items" :key="item.id">
         <gallery-item
           :selected="selected"
-          @select="$emit('select', item)"
           :item="item"
+          @select="$emit('select', item)"
         >
           <p v-if="appStore.dev">Index: {{ index }}</p>
-          <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+          <template v-for="(_, name) in $slots" #[name]="slotData">
             <slot :name="name" v-bind="slotData" />
           </template>
         </gallery-item>
@@ -18,6 +18,8 @@
     </template>
     <template v-else>
       <tpu-skeleton-loader
+        v-for="i in 24"
+        :key="i"
         :types="[
           'toolbar',
           'image',
@@ -28,8 +30,6 @@
           'paragraph',
           'button'
         ]"
-        v-for="i in 24"
-        :key="i"
       />
     </template>
   </div>
@@ -50,26 +50,26 @@
           >
             <div class="flex gap-2">
               <tpu-button
+                v-tooltip.bottom="t('gallery.nav.randomAttachment')"
                 icon
                 variant="passive"
-                v-tooltip.bottom="t('gallery.nav.randomAttachment')"
-                @click="randomAttachment()"
                 :loading="randomAttachmentLoading"
+                @click="randomAttachment()"
               >
                 <MdiDice style="width: 20px" />
               </tpu-button>
               <tpu-button
+                v-tooltip.bottom="t('gallery.nav.selectAll')"
                 icon
                 variant="passive"
-                v-tooltip.bottom="t('gallery.nav.selectAll')"
                 @click="$emit('select', props.items)"
               >
                 <RiAddLine style="width: 20px" />
               </tpu-button>
               <tpu-button
+                v-tooltip.bottom="t('generic.upload')"
                 icon
                 variant="passive"
-                v-tooltip.bottom="t('generic.upload')"
                 @click="appStore.dialogs.gallery.upload.value = true"
               >
                 <RiUploadLine style="width: 20px" />
@@ -77,7 +77,7 @@
             </div>
           </slot>
         </template>
-        <div class="flex gap-2" v-else>
+        <div v-else class="flex gap-2">
           <slot
             name="appbar-options-selected"
             :items="items"
@@ -85,19 +85,19 @@
             :emit="$emit"
           >
             <tpu-button
+              v-tooltip.bottom="t('gallery.nav.randomAttachment')"
               icon
               variant="passive"
-              v-tooltip.bottom="t('gallery.nav.randomAttachment')"
-              @click="randomAttachment()"
               :loading="randomAttachmentLoading"
+              @click="randomAttachment()"
             >
               <MdiDice style="width: 20px" />
             </tpu-button>
             <tpu-button
+              v-tooltip.bottom="t('gallery.nav.delete')"
               icon
               variant="passive"
               color="red"
-              v-tooltip.bottom="t('gallery.nav.delete')"
               @click.exact="
                 appStore.dialogs.gallery.delete.bulkIds = selected;
                 appStore.dialogs.gallery.delete.value = true;
@@ -109,6 +109,11 @@
               <RiDeleteBinLine style="width: 20px" />
             </tpu-button>
             <tpu-button
+              v-tooltip.bottom="
+                appStore.shifting
+                  ? t('gallery.removeFromCollection')
+                  : t('gallery.addToCollectionBulk')
+              "
               icon
               variant="passive"
               :color="appStore.shifting ? 'red' : 'blue'"
@@ -117,11 +122,6 @@
                 appStore.dialogs.gallery.collect.items = selected;
                 appStore.dialogs.gallery.collect.value = true;
               "
-              v-tooltip.bottom="
-                appStore.shifting
-                  ? t('gallery.removeFromCollection')
-                  : t('gallery.addToCollectionBulk')
-              "
             >
               <component
                 :is="appStore.shifting ? RiImageCloseLine : RiImageAddLine"
@@ -129,17 +129,17 @@
               />
             </tpu-button>
             <tpu-button
+              v-tooltip.bottom="t('gallery.nav.deselectAll')"
               icon
               variant="passive"
-              v-tooltip.bottom="t('gallery.nav.deselectAll')"
               @click="$emit('select', [])"
             >
               <RiCloseLine style="width: 20px" />
             </tpu-button>
             <tpu-button
+              v-tooltip.bottom="t('gallery.nav.selectAll')"
               icon
               variant="passive"
-              v-tooltip.bottom="t('gallery.nav.selectAll')"
               :disabled="
                 props.items
                   ?.map((item) => item.id)
@@ -150,9 +150,9 @@
               <RiAddLine style="width: 20px" />
             </tpu-button>
             <tpu-button
+              v-tooltip.bottom="t('generic.upload')"
               icon
               variant="passive"
-              v-tooltip.bottom="t('generic.upload')"
               @click="appStore.dialogs.gallery.upload.value = true"
             >
               <RiUploadLine style="width: 20px" />

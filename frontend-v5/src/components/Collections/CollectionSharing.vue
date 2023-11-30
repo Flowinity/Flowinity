@@ -1,16 +1,16 @@
 <template>
   <tpu-dialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     width="600"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #toolbar>
       {{ t("collections.sharing.title") }}
     </template>
-    <div class="py-4 px-4" v-if="collection">
+    <div v-if="collection" class="py-4 px-4">
       <tpu-select
-        label="ShareLink visibility"
         v-model="shareLinkVisibility"
+        label="ShareLink visibility"
         :items="shareLinkOptions"
         @update:model-value="updateCollection"
       />
@@ -18,37 +18,37 @@
         Your collection can be accessed from:
         <a
           class="text-blue"
+          :href="`${appStore.state.hostnameWithProtocol}/collections/${shareLink}`"
           @click.prevent="
             functions.copy(
               `${appStore.state.hostnameWithProtocol}/collections/${shareLink}`
             );
             $toast.success(t('generic.copied'));
           "
-          :href="`${appStore.state.hostnameWithProtocol}/collections/${shareLink}`"
         >
           {{ appStore.state.hostnameWithProtocol }}/collections/{{ shareLink }}
         </a>
       </p>
       <div class="flex items-center">
         <tpu-auto-complete
+          v-model="friend"
           class="flex-1"
           :items="friends"
-          v-model="friend"
           :label="t('collections.sharing.add')"
-          @keydown.enter="friend ? addUser : () => {}"
+          @keydown.enter="friend ? addUser : ''"
         />
         <tpu-button
           icon
           variant="passive"
           style="width: 40px; height: 40px"
-          @click="addUser"
           :disabled="!friend"
+          @click="addUser"
         >
           <RiAddLine />
         </tpu-button>
       </div>
       <tpu-data-table :items="collection.users" :headers="headers" class="pt-2">
-        <template v-slot:item.read="{ item }">
+        <template #item.read="{ item }">
           <tpu-checkbox
             size="s"
             class="items-center flex"
@@ -57,7 +57,7 @@
             :loading="loading"
           />
         </template>
-        <template v-slot:item.write="{ item }">
+        <template #item.write="{ item }">
           <tpu-checkbox
             size="s"
             :model-value="item.write"
@@ -76,7 +76,7 @@
             "
           />
         </template>
-        <template v-slot:item.configure="{ item }">
+        <template #item.configure="{ item }">
           <tpu-checkbox
             size="s"
             :model-value="item.configure"
@@ -93,7 +93,7 @@
             "
           />
         </template>
-        <template v-slot:item.actions="{ item }">
+        <template #[`item.actions`]="{ item }">
           <tpu-button
             style="width: 40px; height: 40px"
             icon
@@ -120,7 +120,6 @@
 <script setup lang="ts">
 import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { useI18n } from "vue-i18n";
-import TextField from "@/components/Framework/Input/TextField.vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useCollectionsStore } from "@/stores/collections.store";
 import CardActions from "@/components/Framework/Card/CardActions.vue";
@@ -130,7 +129,6 @@ import { UpdateCollectionMutation } from "@/graphql/collections/updateCollection
 import TpuSelect from "@/components/Framework/Input/TpuSelect.vue";
 import { useAppStore } from "@/stores/app.store";
 import functions from "@/plugins/functions";
-import { useToast } from "vue-toastification";
 import { Collection } from "@/gql/graphql";
 import TpuDataTable from "@/components/Framework/Table/TpuDataTable.vue";
 import TpuCheckbox from "@/components/Framework/Input/TpuCheckbox.vue";

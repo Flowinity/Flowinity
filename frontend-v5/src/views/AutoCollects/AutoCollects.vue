@@ -5,7 +5,7 @@
     class="my-4 mx-4"
     fetch-policy="network-only"
   >
-    <template v-slot="{ result: { loading, error, data } }">
+    <template #default="{ result: { loading, error, data } }">
       <div v-if="loading" class="loading apollo">Loading...</div>
 
       <div v-else-if="error" class="error apollo">An error occurred</div>

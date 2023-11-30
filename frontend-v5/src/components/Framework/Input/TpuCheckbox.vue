@@ -3,24 +3,24 @@
     variant="passive"
     icon
     class="select-none"
-    @click="$emit('update:modelValue', !modelValue)"
     :disabled="props.disabled"
     :style="{ maxWidth: px, maxHeight: px, minWidth: px, minHeight: px }"
+    @click="$emit('update:modelValue', !modelValue)"
   >
     <RiCheckboxBlankLine
+      v-if="!modelValue"
       class="w-full h-full"
       :style="{ color }"
-      v-if="!modelValue"
     />
-    <RiCheckboxFill class="w-full h-full" v-else :style="{ color }" />
-    <span class="text-gray-900 dark:text-white" v-if="props.label">
+    <RiCheckboxFill v-else class="w-full h-full" :style="{ color }" />
+    <span v-if="props.label" class="text-gray-900 dark:text-white">
       {{ props.label }}
     </span>
   </tpu-button>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import RiCheckboxBlankLine from "vue-remix-icons/icons/ri-checkbox-blank-line.vue";
 import RiCheckboxFill from "vue-remix-icons/icons/ri-checkbox-fill.vue";
 import theme from "@/plugins/theme";
@@ -58,5 +58,5 @@ const color = computed(() => {
   return theme.colors[props.color];
 });
 
-const emits = defineEmits(["update:modelValue"]);
+defineEmits(["update:modelValue"]);
 </script>

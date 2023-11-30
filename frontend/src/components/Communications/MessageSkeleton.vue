@@ -1,6 +1,6 @@
 <template>
   <v-list-item class="skeleton" color="transparent">
-    <template v-if="pfp" v-slot:prepend>
+    <template v-if="pfp" #prepend>
       <v-avatar
         :class="{
           'skeleton-loader': animate,

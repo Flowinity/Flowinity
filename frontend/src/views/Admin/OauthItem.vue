@@ -1,11 +1,11 @@
 <template>
   <div v-if="app">
-    <v-tabs class="mr-2 mb-2" v-model="tab">
+    <v-tabs v-model="tab" class="mr-2 mb-2">
       <v-tab value="home">Home</v-tab>
       <v-tab value="bot">Bot</v-tab>
     </v-tabs>
     <CoreDialog v-model="deleteConfirm" max-width="500">
-      <template v-slot:title>Delete {{ app.name }}?</template>
+      <template #title>Delete {{ app.name }}?</template>
       <v-card-text>
         Are you sure you want to delete {{ app.name }}? This cannot be undone.
         It will delete all sessions, saves, and other data associated with this
@@ -27,13 +27,13 @@
           <v-container>
             <div class="d-flex align-center mb-4">
               <UserAvatar
+                v-if="tab === 'home'"
                 :user="{ avatar: app.icon, username: app.name }"
                 :bot="false"
                 :override-id="app.id"
                 size="128"
                 :edit="true"
                 @refresh="getAppAuth"
-                v-if="tab === 'home'"
               />
               <v-card-text class="ml-n4">
                 <div class="d-flex flex-column flex-grow-1 justify-center">
@@ -54,12 +54,12 @@
               </v-card-text>
             </div>
             <v-text-field
-              label="Username"
               v-model="username"
-              @keyup.enter="addUser()"
+              label="Username"
               class="mx-2"
+              @keyup.enter="addUser()"
             >
-              <template v-slot:append>
+              <template #append>
                 <v-btn color="primary" :loading="loading" @click="addUser()">
                   Add User
                 </v-btn>
@@ -73,20 +73,20 @@
               which will apply to both Public and Private apps.
             </v-card-subtitle>
             <v-data-table :headers="headers" :items="app.oauthUsers">
-              <template v-slot:item.actions="{ item }">
+              <template #[`item.actions`]="{ item }">
                 <v-btn
                   icon
-                  @click="addUser(item.user.username, true)"
                   color="red"
+                  @click="addUser(item.user.username, true)"
                 >
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </template>
-              <template v-slot:item.manage="{ item }">
+              <template #[`item.manage`]="{ item }">
                 <v-checkbox
                   label="Manage"
-                  @update:model-value="updateUser(item.id, $event)"
                   :model-value="item.manage"
+                  @update:model-value="updateUser(item.id, $event)"
                 />
               </template>
             </v-data-table>
@@ -112,8 +112,8 @@
                 dense
               />
               <v-text-field
-                placeholder="https://i.troplo.com/i/50ba79e4.png"
                 v-model="app.icon"
+                placeholder="https://i.troplo.com/i/50ba79e4.png"
                 label="Icon"
                 outlined
                 dense
@@ -136,20 +136,21 @@
                 hint="Private apps can only be used by the owner or manually added users"
               />
               <v-checkbox
+                v-if="$user.user.administrator"
                 v-model="app.verified"
                 label="Verified"
                 dense
-                v-if="$user.user.administrator"
                 required
                 hint="Only use this for public facing and TPU endorsed apps"
                 persistent-hint
               />
               <v-expansion-panels class="my-2">
                 <v-expansion-panel title="Scopes">
-                  <template v-slot:text>
+                  <template #text>
                     <v-container class="my-2">
                       <v-checkbox
                         v-for="scope in scopesDefinitions"
+                        :key="scope.id"
                         v-model="scopes"
                         :value="scope.id"
                         :label="scope.name"
@@ -161,7 +162,7 @@
                   </template>
                 </v-expansion-panel>
               </v-expansion-panels>
-              <v-btn color="primary" @click="updateAppAuth" :loading="loading">
+              <v-btn color="primary" :loading="loading" @click="updateAppAuth">
                 Save
               </v-btn>
             </v-form>
@@ -243,13 +244,13 @@
             <v-container>
               <div class="d-flex align-center mb-4">
                 <UserAvatar
+                  v-if="tab === 'bot'"
                   :size="128"
                   :user="app.bot"
                   :edit="true"
                   :override-id="app.id"
-                  v-if="tab === 'bot'"
-                  @refresh="getAppAuth"
                   :bot="true"
+                  @refresh="getAppAuth"
                 />
                 <v-card-text class="ml-n4">
                   <div class="d-flex flex-column flex-grow-1 justify-center">
@@ -265,8 +266,9 @@
               <v-card-title>Generate Invite Link</v-card-title>
               <v-row>
                 <v-col
-                  cols="12"
                   v-for="permission in availablePermissions"
+                  :key="permission.id"
+                  cols="12"
                   sm="12"
                   md="6"
                   lg="4"
@@ -275,6 +277,8 @@
                   <v-checkbox
                     :label="permission.name"
                     :model-value="selectedPermissions.includes(permission.id)"
+                    persistent-hint
+                    :hint="permission.description"
                     @update:model-value="
                       selectedPermissions.includes(permission.id)
                         ? selectedPermissions.splice(
@@ -283,8 +287,6 @@
                           )
                         : selectedPermissions.push(permission.id)
                     "
-                    persistent-hint
-                    :hint="permission.description"
                   />
                 </v-col>
               </v-row>
@@ -308,11 +310,11 @@
           </template>
           <template v-else>
             <CreateBotAccountDialog
-              v-model="createBot"
               :id="app?.id"
+              v-model="createBot"
               @refresh="getAppAuth"
             />
-            <v-btn @click="createBot = true" class="my-2 mx-2">
+            <v-btn class="my-2 mx-2" @click="createBot = true">
               Create bot account
             </v-btn>
           </template>
@@ -327,7 +329,12 @@ import { defineComponent } from "vue";
 import { ScopeDefinition } from "@/views/Auth/Oauth.vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { MyAppQuery } from "@/graphql/developer/myApps.graphql";
-import { AvailableChatPermissionsDocument, ChatPermission, OauthApp, OauthUser } from "@/gql/graphql";
+import {
+  AvailableChatPermissionsDocument,
+  ChatPermission,
+  OauthApp,
+  OauthUser
+} from "@/gql/graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import CreateBotAccountDialog from "@/components/Admin/AppAuth/CreateBotAccountDialog.vue";
 import {
@@ -387,6 +394,16 @@ export default defineComponent({
         this.app.scopes = value.join(",");
       }
     }
+  },
+  watch: {
+    create() {
+      this.getAppAuth();
+    }
+  },
+  mounted() {
+    this.getAppAuth();
+    this.getScopeDefinitions();
+    this.getPermissions();
   },
   methods: {
     async updateUser(id: string, manage: boolean) {
@@ -521,16 +538,6 @@ export default defineComponent({
         this.getAppAuth();
         this.username = "";
       }
-    }
-  },
-  mounted() {
-    this.getAppAuth();
-    this.getScopeDefinitions();
-    this.getPermissions();
-  },
-  watch: {
-    create() {
-      this.getAppAuth();
     }
   }
 });

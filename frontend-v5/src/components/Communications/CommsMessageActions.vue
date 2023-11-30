@@ -15,7 +15,7 @@
         <RiDeleteBinLine style="width: 20px" />
       </tpu-button>
       <tpu-button variant="passive" icon class="rounded-none">
-        <RiReplyLine @click="$emit('reply')" style="width: 20px" />
+        <RiReplyLine style="width: 20px" @click="$emit('reply')" />
       </tpu-button>
     </div>
   </card>

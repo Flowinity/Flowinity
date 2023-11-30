@@ -56,7 +56,6 @@
 import Card from "@/components/Framework/Card/Card.vue";
 import { useI18n } from "vue-i18n";
 import TpuSwitch from "@/components/Framework/Input/TpuSwitch.vue";
-import { ref } from "vue";
 import { useUserStore } from "@/stores/user.store";
 import {
   UserInsights,
@@ -64,7 +63,6 @@ import {
   UserFriendRequestPrivacy
 } from "@/gql/graphql";
 import TpuSelect from "@/components/Framework/Input/TpuSelect.vue";
-import TpuDivider from "@/components/Framework/Divider/TpuDivider.vue";
 
 const userStore = useUserStore();
 const { t } = useI18n();

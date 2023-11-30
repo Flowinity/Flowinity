@@ -10,12 +10,12 @@ const props = defineProps({
 
 <template>
   <div
+    v-wave
     class="rounded-2xl hover:bg-outline-dark cursor-pointer p-2 relative"
     :class="{
       'bg-outline-dark': props.selected || props.highlighted,
       'rounded-full': props.highlighted
     }"
-    v-wave
     tabindex="0"
     @keydown.enter="$event.target?.click()"
     @keydown.space="

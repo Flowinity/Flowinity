@@ -6,9 +6,9 @@
           {{ $t("dashboard.announcements") }}
         </strong>
         <v-btn
+          v-if="$user.user?.administrator"
           icon
           size="x-small"
-          v-if="$user.user?.administrator"
           style="margin-top: -0.25rem"
           class="ml-1"
           @click="newAnnouncement"
@@ -18,13 +18,13 @@
       </span>
       <v-card
         v-for="announcement in announcements"
+        :key="announcement.id"
         :color="$vuetify.theme.global.name === 'amoled' ? undefined : 'toolbar'"
         :variant="
           $vuetify.theme.global.name === 'amoled' ? 'outlined' : undefined
         "
         class="my-3 pt-3 hover"
         elevation="0"
-        :key="announcement.id"
       >
         <UserAvatar
           :user="announcement.user"
@@ -40,16 +40,16 @@
         </v-card-title>
         <v-card-text>
           <v-textarea
+            v-if="announcement.editing"
+            v-model="announcement.content"
             auto-grow
             variant="underlined"
             color="primary"
             label="Content"
-            v-if="announcement.editing"
-            v-model="announcement.content"
             autofocus
             class="mb-4"
           >
-            <template v-slot:append>
+            <template #append>
               <div class="d-flex flex-column">
                 <v-btn
                   icon
@@ -77,13 +77,13 @@
                 </v-btn>
               </div>
             </template>
-            <template v-slot:details>
+            <template #details>
               May take a few seconds for changes to appear for everyone.
             </template>
           </v-textarea>
           <p
-            class="mb-1 mt-n1"
             v-memo="announcement.content"
+            class="mb-1 mt-n1"
             v-html="$functions.markdownEmail(announcement.content)"
           />
           <small>
@@ -93,11 +93,11 @@
           </small>
           <template v-if="!announcement.editing && $user.user?.administrator">
             <v-btn
+              v-if="announcement.userId === $user.user?.id"
               icon
               size="x-small"
               class="ml-1"
               @click="announcement.editing = true"
-              v-if="announcement.userId === $user.user?.id"
             >
               <v-icon>mdi-pencil</v-icon>
             </v-btn>

@@ -4,7 +4,7 @@
     max-width="500"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
+    <template #title>
       {{ title || $t("dialogs.uploadCropper.title") }}
     </template>
     <v-card-text>
@@ -18,7 +18,7 @@
         id="banner-editor"
         :key="key"
         ref="cropper"
-        :aspectRatio="parseInt(aspectRatio)"
+        :aspect-ratio="parseInt(aspectRatio)"
         :src="result"
         alt="banner"
       />
@@ -34,7 +34,7 @@
       >
         Skip Crop
       </v-btn>
-      <v-btn color="red" @click="$emit('remove')" v-if="supportsRemoval">
+      <v-btn v-if="supportsRemoval" color="red" @click="$emit('remove')">
         {{ removeText || $t("dialogs.uploadCropper.removeProfile") }}
       </v-btn>
       <v-spacer />
@@ -46,7 +46,7 @@
       >
         {{ $t("generic.cancel") }}
       </v-btn>
-      <v-btn color="primary" @click="save" :loading="loading">
+      <v-btn color="primary" :loading="loading" @click="save">
         {{ $t("generic.save") }}
       </v-btn>
     </v-card-actions>
@@ -61,6 +61,7 @@ import "cropperjs/dist/cropper.css";
 
 export default defineComponent({
   name: "UploadCropper",
+  components: { CoreDialog, VueCropper },
   props: {
     modelValue: {
       type: Boolean,
@@ -84,7 +85,6 @@ export default defineComponent({
     }
   },
   emits: ["update:modelValue", "finish", "remove"],
-  components: { CoreDialog, VueCropper },
   data() {
     return {
       file: [] as File[],
@@ -92,6 +92,18 @@ export default defineComponent({
       loading: false,
       key: 0
     };
+  },
+  watch: {
+    async file() {
+      if (!this.file.length) return;
+      this.result = undefined;
+      await this.fileReader();
+      this.key++;
+    },
+    modelValue() {
+      this.file = [];
+      this.result = undefined;
+    }
   },
   methods: {
     async fileReader() {
@@ -119,18 +131,6 @@ export default defineComponent({
       await this.$emit("finish", file);
       this.$emit("update:modelValue", false);
       this.loading = false;
-    }
-  },
-  watch: {
-    async file() {
-      if (!this.file.length) return;
-      this.result = undefined;
-      await this.fileReader();
-      this.key++;
-    },
-    modelValue() {
-      this.file = [];
-      this.result = undefined;
     }
   }
 });

@@ -6,22 +6,22 @@
     <div class="w-full">
       <tpu-toolbar
         class="flex justify-between items-center px-4"
-        @click="selected.length ? $emit('select') : () => {}"
         :class="{
           'cursor-pointer select-none': selected.length
         }"
+        @click="selected.length ? $emit('select') : ''"
       >
         <p class="flex-grow" style="white-space: nowrap; overflow: hidden">
           {{ props.item.name }}
         </p>
         <tpu-button
           icon
-          @click.prevent.stop="$emit('select')"
           variant="passive"
+          @click.prevent.stop="$emit('select')"
         >
           <RiCircleLine
-            style="max-width: 20px; min-width: 20px"
             v-if="!selected.find((i) => i.id === props.item?.id)"
+            style="max-width: 20px; min-width: 20px"
           />
           <RiCheckboxCircleFill
             v-else
@@ -59,21 +59,21 @@
       <div class="pl-2 text-medium-emphasis-dark text-sm">
         <div class="flex mt-2 gap-4">
           <tpu-slide-group
-            class="gap-2 mb-1"
             :key="
               props.item.collections
                 .map((collection) => collection.id)
                 .join(',')
             "
+            class="gap-2 mb-1"
           >
             <tpu-button
+              v-if="props.item.userId === userStore.user?.id"
               v-tooltip="$t('gallery.addToCollection')"
               @click="
                 appStore.dialogs.gallery.collect.remove = false;
                 appStore.dialogs.gallery.collect.items = [props.item];
                 appStore.dialogs.gallery.collect.value = true;
               "
-              v-if="props.item.userId === userStore.user?.id"
             >
               <RiAddLine style="width: 20px" />
             </tpu-button>
@@ -106,35 +106,35 @@
       <card-actions position="center">
         <slot name="actions" :item="props.item">
           <tpu-button
+            v-if="props.item?.userId === userStore.user?.id"
+            v-tooltip="$t('gallery.actions.edit')"
             color="blue"
             icon
-            v-tooltip="$t('gallery.actions.edit')"
             @click="
               appStore.dialogs.gallery.edit.upload = props.item;
               appStore.dialogs.gallery.edit.value = true;
             "
-            v-if="props.item?.userId === userStore.user?.id"
           >
             <RiEditLine style="width: 20px" />
           </tpu-button>
           <tpu-button
+            v-if="props.item?.userId === userStore.user?.id"
+            v-tooltip="$t('gallery.actions.delete')"
             color="red"
             icon
-            v-tooltip="$t('gallery.actions.delete')"
+            :disabled="!item.deletable"
             @click.exact="
               appStore.dialogs.gallery.delete.upload = props.item;
               appStore.dialogs.gallery.delete.value = true;
             "
             @click.shift.exact="galleryStore.deleteUploads([props.item?.id])"
-            v-if="props.item?.userId === userStore.user?.id"
-            :disabled="!item.deletable"
           >
             <RiDeleteBinLine style="width: 20px" />
           </tpu-button>
           <tpu-button
+            v-tooltip="$t('gallery.actions.copy')"
             color="teal"
             icon
-            v-tooltip="$t('gallery.actions.copy')"
             @click="
               functions.copy(appStore.domain + props.item.attachment);
               toast.success(t('generic.copied'));
@@ -143,28 +143,28 @@
             <RiFileCopyLine style="width: 20px" />
           </tpu-button>
           <tpu-button
+            v-tooltip="$t('gallery.actions.download')"
             color="green"
             icon
-            v-tooltip="$t('gallery.actions.download')"
             :href="appStore.domain + props.item.attachment"
             target="_blank"
           >
             <RiDownloadLine style="width: 20px" />
           </tpu-button>
-          <span v-tooltip="ocrStatus.text" v-if="props.item.type === 'image'">
+          <span v-if="props.item.type === 'image'" v-tooltip="ocrStatus.text">
             <tpu-button
               icon
               color="purple"
+              :disabled="!props.item.textMetadata"
+              :loading="ocrStatus.status === 1"
               @click="
                 appStore.dialogs.gallery.ocr.content = props.item.textMetadata;
                 appStore.dialogs.gallery.ocr.value = true;
               "
-              :disabled="!props.item.textMetadata"
               @click.right.prevent="
                 functions.copy(props.item?.textMetadata || '');
                 toast.success(t('generic.copied'));
               "
-              :loading="ocrStatus.status === 1"
             >
               <component
                 :is="
@@ -178,15 +178,15 @@
           </span>
 
           <tpu-button
+            v-if="userStore.user?.id"
+            v-tooltip="$t('gallery.actions.star', props.item.starred ? 2 : 1)"
             icon
             color="star"
-            v-tooltip="$t('gallery.actions.star', props.item.starred ? 2 : 1)"
-            @click="starUpload"
             :loading="loading"
-            v-if="userStore.user?.id"
+            @click="starUpload"
           >
-            <RiStarLine style="width: 20px" v-if="!props.item.starred" />
-            <RiStarFill style="width: 20px" v-else />
+            <RiStarLine v-if="!props.item.starred" style="width: 20px" />
+            <RiStarFill v-else style="width: 20px" />
           </tpu-button>
           <slot name="extra-actions" :item="props.item" />
         </slot>
@@ -213,12 +213,10 @@ import RiDownloadLine from "vue-remix-icons/icons/ri-download-line.vue";
 import RiCharacterRecognitionLine from "vue-remix-icons/icons/ri-character-recognition-line.vue";
 import RiStarFill from "vue-remix-icons/icons/ri-star-fill.vue";
 import RiStarLine from "vue-remix-icons/icons/ri-star-line.vue";
-import RiFileLine from "vue-remix-icons/icons/ri-file-line.vue";
 import RiCircleLine from "vue-remix-icons/icons/ri-circle-line.vue";
 import RiCheckboxCircleFill from "vue-remix-icons/icons/ri-checkbox-circle-fill.vue";
 import RiAlertLine from "vue-remix-icons/icons/ri-alert-line.vue";
 import GalleryPreview from "@/components/Gallery/GalleryPreview.vue";
-import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { computed, ref } from "vue";
 import TpuSlideGroup from "@/components/Framework/SlideGroup/TpuSlideGroup.vue";
 import { useCollectionsStore } from "@/stores/collections.store";

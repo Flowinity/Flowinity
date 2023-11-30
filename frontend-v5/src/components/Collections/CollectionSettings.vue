@@ -1,27 +1,27 @@
 <template>
   <tpu-dialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     width="500"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #toolbar>
       {{ t("collections.settings.title") }}
     </template>
     <div class="py-4 px-4 relative">
       <text-field
-        autofocus
         v-model="name"
+        autofocus
         :label="t('collections.settings.name')"
         class="mb-2"
       />
       <div class="flex relative gap-3 justify-center">
         <div>
           <user-avatar
+            :key="collection?.avatar || ''"
             :username="name"
             :edit="true"
             :src="'/i/' + collection?.avatar"
             :size="100"
-            :key="collection?.avatar || ''"
             @set-image="uploadAvatar"
           />
           <div
@@ -76,8 +76,8 @@
     </card-actions>
   </tpu-dialog>
   <set-picture-dialog
-    :aspect-ratio="157 / 29"
     v-model="banner"
+    :aspect-ratio="157 / 29"
     @set-image="uploadBanner"
   />
 </template>
@@ -99,7 +99,7 @@ import TpuHover from "@/components/Framework/Hover/TpuHover.vue";
 import TpuOverlay from "@/components/Framework/Overlay/TpuOverlay.vue";
 import RiUploadLine from "vue-remix-icons/icons/ri-upload-cloud-2-line.vue";
 import SetPictureDialog from "@/components/Core/Dialogs/SetPictureDialog.vue";
-import axios from "@/plugins/axios";
+import axios from "@/plugins/axios.ts";
 const name = ref("");
 const props = defineProps({
   modelValue: Boolean,

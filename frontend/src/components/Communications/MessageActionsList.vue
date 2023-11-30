@@ -1,7 +1,7 @@
 <template>
   <v-list v-if="$chat.dialogs.message.message" class="mobile-actions">
     <v-list-item @click="$emit('reply')">
-      <template v-slot:prepend>
+      <template #prepend>
         <v-icon>mdi-reply</v-icon>
       </template>
       <v-list-item-title>Reply</v-list-item-title>
@@ -10,7 +10,7 @@
       v-if="$chat.dialogs.message.message.userId === $user.user?.id"
       @click="$emit('edit')"
     >
-      <template v-slot:prepend>
+      <template #prepend>
         <v-icon>mdi-pencil</v-icon>
       </template>
       <v-list-item-title>Edit message</v-list-item-title>
@@ -23,7 +23,7 @@
       "
       @click="$emit('delete', $event.shiftKey)"
     >
-      <template v-slot:prepend>
+      <template #prepend>
         <v-icon>mdi-delete</v-icon>
       </template>
       <v-list-item-title>Delete Message</v-list-item-title>
@@ -42,7 +42,7 @@
         $chat.dialogs.message.value = false;
       "
     >
-      <template v-slot:prepend>
+      <template #prepend>
         <v-icon>
           {{ $chat.dialogs.message.message.pinned ? "mdi-pin-off" : "mdi-pin" }}
         </v-icon>
@@ -57,7 +57,7 @@
         $chat.dialogs.message.value = false;
       "
     >
-      <template v-slot:prepend>
+      <template #prepend>
         <v-icon>mdi-content-copy</v-icon>
       </template>
       <v-list-item-title>Copy message contents</v-list-item-title>
@@ -69,6 +69,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "MessageActionsList"
+  name: "MessageActionsList",
+  emits: ["edit", "reply", "delete"]
 });
 </script>

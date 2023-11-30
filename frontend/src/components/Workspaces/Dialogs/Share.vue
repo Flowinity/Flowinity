@@ -4,7 +4,7 @@
     max-width="600px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>Document Sharing</template>
+    <template #title>Document Sharing</template>
     <v-card-text>
       <v-checkbox
         v-model="share"
@@ -54,6 +54,11 @@ export default defineComponent({
       loading: false
     };
   },
+  async mounted() {
+    const data = await this.$workspaces.getNote(this.$route.params.id);
+    this.shareLink = data.shareLink;
+    this.share = data.shareLink !== null;
+  },
   methods: {
     async update() {
       const {
@@ -67,11 +72,6 @@ export default defineComponent({
       this.shareLink = toggleNoteShare.shareLink;
       this.share = toggleNoteShare.shareLink !== null;
     }
-  },
-  async mounted() {
-    const data = await this.$workspaces.getNote(this.$route.params.id);
-    this.shareLink = data.shareLink;
-    this.share = data.shareLink !== null;
   }
 });
 </script>

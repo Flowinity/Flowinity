@@ -1,8 +1,8 @@
 <template>
   <card class="rounded-lg shadow" secondary>
-    <div @click="expanded = !expanded" class="cursor-pointer p-4">
+    <div class="cursor-pointer p-4" @click="expanded = !expanded">
       <div class="flex items-center justify-between select-none">
-        <h3 class="text-lg font-semibold" v-memo="[$slots.header]">
+        <h3 v-memo="[$slots.header]" class="text-lg font-semibold">
           <slot name="header" />
         </h3>
         <RiArrowDownLine
@@ -13,8 +13,8 @@
       </div>
     </div>
     <div
-      :class="{ 'expanded-show': expanded, 'expanded-collapse': !expanded }"
       ref="expandContent"
+      :class="{ 'expanded-show': expanded, 'expanded-collapse': !expanded }"
       class="expansion-card break-all m-4"
     >
       <div ref="innerContent">

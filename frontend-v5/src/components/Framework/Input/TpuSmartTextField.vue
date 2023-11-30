@@ -9,11 +9,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import TextField from "@/components/Framework/Input/TextField.vue";
-import { GallerySearchMode, PartialUserFriend } from "@/gql/graphql";
+import { PartialUserFriend } from "@/gql/graphql";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
-import { computed, onBeforeUnmount, watch } from "vue";
+import { onBeforeUnmount, watch } from "vue";
 import { Markdown } from "tiptap-markdown";
 import { Mention } from "@tiptap/extension-mention";
 import { useUserStore } from "@/stores/user.store";

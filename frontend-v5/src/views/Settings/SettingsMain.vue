@@ -2,15 +2,15 @@
   <teleport to="#appbar-options">
     <transition mode="out-in" name="slide-up" appear>
       <span
+        v-if="userStore.updatingUser || checkbox"
         v-tooltip.bottom="
           userStore.updatingUser
             ? t('settings.actionBar.saving')
             : t('settings.actionBar.saved')
         "
-        v-if="userStore.updatingUser || checkbox"
       >
         <tpu-button :disabled="true" icon variant="passive">
-          <tpu-spinner :size="24" v-if="userStore.updatingUser" />
+          <tpu-spinner v-if="userStore.updatingUser" :size="24" />
           <RiCheckLine v-else-if="checkbox" style="width: 24px"></RiCheckLine>
         </tpu-button>
       </span>

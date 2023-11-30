@@ -75,7 +75,7 @@
         </v-window-item>
       </v-window>
     </v-container>
-    <v-card-subtitle class="text-left mt-n4" v-if="cache">
+    <v-card-subtitle v-if="cache" class="text-left mt-n4">
       <small>
         {{ $t("generic.cache") }}: {{ $date($app.site._redis).fromNow() }}
       </small>
@@ -90,11 +90,6 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "GraphWidget",
   components: { Chart },
-  data() {
-    return {
-      tab: "uploads"
-    };
-  },
   props: {
     uploadGraph: {
       type: Object
@@ -128,6 +123,11 @@ export default defineComponent({
       type: Boolean,
       default: true
     }
+  },
+  data() {
+    return {
+      tab: "uploads"
+    };
   },
   computed: {
     primaryColorResult() {

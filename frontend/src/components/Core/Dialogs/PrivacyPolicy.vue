@@ -1,6 +1,6 @@
 <template>
   <CoreDialog max-width="900px" :model-value="true" :eager="true">
-    <template v-slot:title>
+    <template #title>
       {{ $t("core.privacy.title") }}
     </template>
     <p class="mx-4">

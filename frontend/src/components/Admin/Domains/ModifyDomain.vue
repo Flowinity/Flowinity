@@ -4,7 +4,7 @@
     max-width="600"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
+    <template #title>
       {{ $t(`settings.domains.dialog.${type}`) }}
     </template>
     <v-card-text v-if="update">
@@ -44,17 +44,6 @@ export default defineComponent({
       loading: false
     };
   },
-  methods: {
-    async updateDomain() {
-      this.loading = true;
-      this.type === "create"
-        ? await this.axios.post("/admin/domain", this.update)
-        : await this.axios.put("/admin/domain", this.update);
-      this.$emit("update:modelValue", false);
-      this.$emit("update");
-      this.loading = false;
-    }
-  },
   watch: {
     modelValue(val) {
       if (val) {
@@ -77,6 +66,17 @@ export default defineComponent({
           });
         this.update = this.domain;
       }
+    }
+  },
+  methods: {
+    async updateDomain() {
+      this.loading = true;
+      this.type === "create"
+        ? await this.axios.post("/admin/domain", this.update)
+        : await this.axios.put("/admin/domain", this.update);
+      this.$emit("update:modelValue", false);
+      this.$emit("update");
+      this.loading = false;
     }
   }
 });

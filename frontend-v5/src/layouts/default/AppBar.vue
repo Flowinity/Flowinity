@@ -1,9 +1,9 @@
 <template>
   <div
-    style="min-height: 64px; max-height: 64px; z-index: 49"
     id="appbar"
-    :class="navbarClasses"
     v-tooltip.bottom="markRaw(MeetActionBar)"
+    style="min-height: 64px; max-height: 64px; z-index: 49"
+    :class="navbarClasses"
   >
     <div
       class="flex p-4 justify-items-end h-full justify-between z-50"
@@ -13,39 +13,40 @@
       <div class="flex select-none">
         <div class="max-sm:block hidden">
           <tpu-button
+            v-if="userStore.user"
             color="white"
             :icon="true"
             variant="passive"
             class="mr-2"
             @click="appStore.drawer = !appStore.drawer"
-            v-if="userStore.user"
           >
             <RiMenuLine style="width: 20px" />
           </tpu-button>
         </div>
         <Transition
+          v-for="(rail, index) in appStore.currentNavItem?.rail"
+          :key="rail.id"
           mode="out-in"
           name="slide-up"
-          v-for="(rail, index) in appStore.currentNavItem?.rail"
         >
           <div
-            class="flex max-sm:hidden"
-            :class="{ 'items-center': !expanded, 'items-end': expanded }"
             v-if="rail.name"
             :key="rail.id"
+            class="flex max-sm:hidden"
+            :class="{ 'items-center': !expanded, 'items-end': expanded }"
           >
             <div class="flex items-center">
               <router-link
                 :to="rail.path"
-                @click="
-                  rail?.fake ? () => {} : (appStore.navigation.mode = rail?.id)
-                "
                 class="cursor-pointer flex items-center"
+                @click="
+                  !rail?.fake ? (appStore.navigation.mode = rail?.id) : ''
+                "
               >
                 <component
                   :is="rail?.icon"
-                  class="w-8"
                   v-if="rail?.icon"
+                  class="w-8"
                   :class="
                     appStore.currentNavItem?.item?.path ===
                     appStore.currentNavItem?.rail[0]?.path
@@ -79,28 +80,28 @@
               appStore.currentNavItem?.item?.path !==
               appStore.currentNavItem?.rail[0]?.path
             "
-            class="flex"
             :key="appStore.currentNavItem?.item"
             v-memo="[
               appStore.currentNavItem?.item?.name,
               appStore.currentNavItem?.rail?.id
             ]"
+            class="flex"
           >
             <RiArrowRightSLine
               v-if="
                 appStore.currentNavItem?.item?.path !==
                 appStore.currentNavItem?.rail[0]?.path
               "
-              class="w-6 fill-medium-emphasis-dark items-center"
               v-memo="[]"
+              class="w-6 fill-medium-emphasis-dark items-center"
               style="margin: 0px 4px 0px 4px"
             />
             <div class="items-center flex">
               <div>
                 <component
                   :is="appStore.currentNavItem?.item.icon"
-                  class="w-8 fill-white"
                   v-if="appStore.currentNavItem?.item.icon"
+                  class="w-8 fill-white"
                 />
               </div>
 
@@ -122,18 +123,18 @@
         class="flex"
       >
         <div
+          v-if="appStore.dialogs.gallery.upload.loading"
           class="flex gap-2 mr-2"
           :class="{ 'items-center': !expanded, 'items-end': expanded }"
-          v-if="appStore.dialogs.gallery.upload.loading"
         >
           <tpu-spinner
-            :percentage="appStore.dialogs.gallery.upload.percentage"
-            size="35"
             v-tooltip.bottom="
               appStore.dialogs.gallery.upload.files
                 .map((file: File) => file.name)
                 .join(', ')
             "
+            :percentage="appStore.dialogs.gallery.upload.percentage"
+            size="35"
           >
             <p style="font-size: 9px">
               {{ appStore.dialogs.gallery.upload.percentage }}%
@@ -253,8 +254,6 @@ document.addEventListener("wheel", () => {
 
 .has-image,
 .no-image {
-  transition:
-    min-height 0.2s ease,
-    max-height 0.2s ease;
+  transition: min-height 0.2s ease, max-height 0.2s ease;
 }
 </style>

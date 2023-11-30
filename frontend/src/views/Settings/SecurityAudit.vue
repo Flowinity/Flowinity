@@ -9,7 +9,7 @@
     :items-per-page="50"
     :loading="loading"
   >
-    <template v-slot:bottom>
+    <template #bottom>
       <div class="text-center pt-2">
         <Paginate
           v-model="pager.currentPage"
@@ -27,7 +27,6 @@ import { defineComponent } from "vue";
 import Paginate from "@/components/Core/Paginate.vue";
 
 export default defineComponent({
-  name: "Security",
   components: { Paginate },
   data() {
     return {
@@ -60,6 +59,14 @@ export default defineComponent({
       ]
     };
   },
+  watch: {
+    "pager.currentPage"() {
+      this.getEntries();
+    }
+  },
+  mounted() {
+    this.getEntries();
+  },
   methods: {
     async getEntries() {
       this.loading = true;
@@ -71,14 +78,6 @@ export default defineComponent({
       this.audit = data.entries;
       this.pager = data.pager;
       this.loading = false;
-    }
-  },
-  mounted() {
-    this.getEntries();
-  },
-  watch: {
-    "pager.currentPage"() {
-      this.getEntries();
     }
   }
 });

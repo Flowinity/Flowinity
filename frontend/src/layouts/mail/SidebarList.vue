@@ -5,7 +5,7 @@
       :key="item.title"
       :to="`/mail/${item.path}`"
     >
-      <template v-slot:prepend>
+      <template #prepend>
         <v-icon v-if="item.name.toLowerCase() === 'inbox'">
           mdi-inbox-arrow-down
         </v-icon>
