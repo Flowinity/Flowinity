@@ -40,6 +40,7 @@ export default defineComponent({
   },
   beforeUnmount() {
     this.stopGameLoop();
+    document.removeEventListener("mousemove", this.movePlayer);
   },
   methods: {
     updateBallPositions() {
