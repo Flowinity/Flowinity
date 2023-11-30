@@ -5,7 +5,6 @@ import { MessageType, ScrollPosition } from "@/gql/graphql";
 import { useFriendsStore } from "@/stores/friends.store";
 import { useUserStore } from "@/stores/user.store";
 import dayjs from "@/plugins/dayjs";
-import { useApolloClient } from "@vue/apollo-composable";
 import { RailMode, useAppStore } from "@/stores/app.store";
 import { useSocket } from "@/boot/socket.service";
 import { useMessagesStore } from "@/stores/messages.store";
