@@ -47,6 +47,9 @@ export default defineComponent({
   mounted() {
     setInterval(this.check, 5000);
   },
+  unmounted() {
+    clearInterval(this.check);
+  },
   methods: {
     check() {
       if (this.checking) return;
