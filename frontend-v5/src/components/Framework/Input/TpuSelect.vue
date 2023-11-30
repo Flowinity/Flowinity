@@ -11,19 +11,9 @@
 </template>
 
 <script setup lang="ts">
-import TextField from "@/components/Framework/Input/TextField.vue";
-import { computed, ref } from "vue";
 import TpuAutoComplete from "@/components/Framework/Input/TpuAutoComplete.vue";
-const props = defineProps({
-  modelValue: [String, Number, Boolean],
-  items: {
-    type: Object as () => {
-      id: string | boolean | number;
-      name: string;
-      [key: string]: any;
-    }[]
-  },
-  disabled: Boolean
+defineProps({
+  modelValue: [String, Number, Boolean]
 });
 defineEmits(["update:modelValue"]);
 </script>

@@ -43,9 +43,10 @@ import TextField from "@/components/Framework/Input/TextField.vue";
 import { useToast } from "vue-toastification";
 
 const { t } = useI18n();
-const props = defineProps({
+defineProps({
   modelValue: Boolean
 });
+defineEmits(["update:modelValue"]);
 const appStore = useAppStore();
 const toast = useToast();
 </script>

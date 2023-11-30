@@ -35,7 +35,6 @@ import TextField from "@/components/Framework/Input/TextField.vue";
 import { nextTick, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useChatStore } from "@/stores/chat.store";
-import TpuSmartTextField from "@/components/Framework/Input/TpuSmartTextField.vue";
 import { useRoute } from "vue-router";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";

@@ -1,4 +1,4 @@
-import { ref, computed, markRaw, type Raw, watch, h, onMounted } from "vue";
+import { ref, computed, markRaw, type Raw, watch } from "vue";
 import { defineStore, getActivePinia } from "pinia";
 import RiAndroidFill, {
   type SVGComponent
@@ -12,7 +12,6 @@ import RiDashboardLine from "vue-remix-icons/icons/ri-dashboard-line.vue";
 import RiFileTextFill from "vue-remix-icons/icons/ri-file-text-fill.vue";
 import RiFileTextLine from "vue-remix-icons/icons/ri-file-text-line.vue";
 import RiFolderImageLine from "vue-remix-icons/icons/ri-folder-image-line.vue";
-import RiGalleryLine from "vue-remix-icons/icons/ri-gallery-line.vue";
 import RiGiftFill from "vue-remix-icons/icons/ri-gift-fill.vue";
 import RiGiftLine from "vue-remix-icons/icons/ri-gift-line.vue";
 import RiGroupFill from "vue-remix-icons/icons/ri-group-fill.vue";
@@ -25,7 +24,6 @@ import RiInformationFill from "vue-remix-icons/icons/ri-information-fill.vue";
 import RiInformationLine from "vue-remix-icons/icons/ri-information-line.vue";
 import RiLineChartFill from "vue-remix-icons/icons/ri-line-chart-fill.vue";
 import RiLineChartLine from "vue-remix-icons/icons/ri-line-chart-line.vue";
-import RiSettings4Line from "vue-remix-icons/icons/ri-settings-4-line.vue";
 import RiSettings5Fill from "vue-remix-icons/icons/ri-settings-5-fill.vue";
 import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
 import RiSparkling2Fill from "vue-remix-icons/icons/ri-sparkling-2-fill.vue";
@@ -51,7 +49,6 @@ import RiLockFill from "vue-remix-icons/icons/ri-lock-fill.vue";
 import RiToolsLine from "vue-remix-icons/icons/ri-tools-line.vue";
 import RiToolsFill from "vue-remix-icons/icons/ri-tools-fill.vue";
 import RiGlobalLine from "vue-remix-icons/icons/ri-global-line.vue";
-import RiGlobalFill from "vue-remix-icons/icons/ri-global-fill.vue";
 import RiLink from "vue-remix-icons/icons/ri-link.vue";
 import RiCodeLine from "vue-remix-icons/icons/ri-code-line.vue";
 import RiCodeFill from "vue-remix-icons/icons/ri-code-fill.vue";
@@ -67,13 +64,11 @@ import { useRoute } from "vue-router";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
 import { useCollectionsStore } from "@/stores/collections.store";
 import type { Ref } from "vue";
-import UserAvatar from "@/components/User/UserAvatar.vue";
 import functions from "@/plugins/functions";
 import type { AxiosProgressEvent } from "axios";
 import { useToast } from "vue-toastification";
-import axios from "@/plugins/axios";
+import axios from "@/plugins/axios.ts";
 import { useFriendsStore } from "@/stores/friends.store";
-import { debounce } from "lodash";
 import RiWebhook from "@/components/Icons/RiWebhook.vue";
 import { useMailStore } from "@/stores/mail.store";
 
@@ -126,7 +121,7 @@ export const useAppStore = defineStore("app", () => {
     data: {} as Weather
   });
   const weatherTemp = computed(() => {
-    const temp = weather.value.data?.temp;
+    const temp = weather.value.data?.temp || -273.15;
     const user = useUserStore()?.user;
     if (!user?.weatherUnit) return 0;
     if (user?.weatherUnit === "kelvin") {

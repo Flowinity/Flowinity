@@ -18,11 +18,9 @@
 <script setup lang="ts">
 import Card from "@/components/Framework/Card/Card.vue";
 import { useAppStore } from "@/stores/app.store";
-import { useUserStore } from "@/stores/user.store";
 import TpuChart from "@/components/Framework/Chart/TpuChart.vue";
 
 const appStore = useAppStore();
-const userStore = useUserStore();
 </script>
 
 <style scoped></style>

@@ -2,7 +2,6 @@
 import { RailMode, useAppStore } from "@/stores/app.store";
 import SuperBarItem from "@/components/Framework/Navigation/SuperBarItem.vue";
 import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
-import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
 import UserAvatar from "@/components/User/UserAvatar.vue";
 import { useUserStore } from "@/stores/user.store";
 import RiNotificationLine from "vue-remix-icons/icons/ri-notification-line.vue";

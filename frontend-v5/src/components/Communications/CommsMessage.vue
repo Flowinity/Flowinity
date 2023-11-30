@@ -120,6 +120,7 @@ const props = defineProps({
   }
 });
 
+defineEmits(["reply"]);
 function blocked(userId?: number) {
   return userStore.blocked.find(
     (block) => block.blockedUserId === userId ?? props.message.userId

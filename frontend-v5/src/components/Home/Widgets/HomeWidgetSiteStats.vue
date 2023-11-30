@@ -36,10 +36,8 @@
 <script setup lang="ts">
 import Card from "@/components/Framework/Card/Card.vue";
 import { useAppStore } from "@/stores/app.store";
-import { useUserStore } from "@/stores/user.store";
 
 const appStore = useAppStore();
-const userStore = useUserStore();
 </script>
 
 <style scoped></style>

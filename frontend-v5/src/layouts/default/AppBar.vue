@@ -25,6 +25,7 @@
         </div>
         <Transition
           v-for="(rail, index) in appStore.currentNavItem?.rail"
+          :key="rail.id"
           mode="out-in"
           name="slide-up"
         >
@@ -253,8 +254,6 @@ document.addEventListener("wheel", () => {
 
 .has-image,
 .no-image {
-  transition:
-    min-height 0.2s ease,
-    max-height 0.2s ease;
+  transition: min-height 0.2s ease, max-height 0.2s ease;
 }
 </style>

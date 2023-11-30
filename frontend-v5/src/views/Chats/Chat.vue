@@ -79,8 +79,8 @@
                   excludedTypers.length > 1
                     ? 1
                     : excludedTypers.length > 5
-                      ? 2
-                      : 0
+                    ? 2
+                    : 0
                 )
               }}
             </p>
@@ -193,8 +193,6 @@ import { useRoute } from "vue-router";
 import RiAtFill from "vue-remix-icons/icons/ri-at-fill.vue";
 import RiAtLine from "vue-remix-icons/icons/ri-at-line.vue";
 import functions from "@/plugins/functions";
-import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
-import RiCheckLine from "vue-remix-icons/icons/ri-check-line.vue";
 import RiUserLine from "vue-remix-icons/icons/ri-user-line.vue";
 import RiUserFill from "vue-remix-icons/icons/ri-user-fill.vue";
 import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";

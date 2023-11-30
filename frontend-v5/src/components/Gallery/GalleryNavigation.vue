@@ -100,17 +100,11 @@
 </template>
 
 <script setup lang="ts">
-import TextField from "@/components/Framework/Input/TextField.vue";
 import TpuSelect from "@/components/Framework/Input/TpuSelect.vue";
 import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
 import { GalleryFilter, GalleryOrder, GallerySort } from "@/gql/graphql";
-import { computed, ref, PropType, onMounted, watch } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
-import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
-import TpuButton from "@/components/Framework/Button/TpuButton.vue";
-import Card from "@/components/Framework/Card/Card.vue";
-import Mentionable from "@/components/Core/Mentionable.vue";
 import GalleryInput from "@/components/Gallery/GalleryInput.vue";
 const { t } = useI18n();
 const galleryInputRef = ref<InstanceType<typeof GalleryInput> | null>(null);

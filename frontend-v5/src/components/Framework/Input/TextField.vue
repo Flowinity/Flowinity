@@ -121,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, toRefs, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -185,7 +185,7 @@ const id = computed(() => {
   return props.htmlId || (Math.random() + 1).toString(36).substring(7);
 });
 
-defineEmits(["update:modelValue"]);
+defineEmits(["update:modelValue", "focus", "blur"]);
 
 const lengthError = computed(() => {
   if (

@@ -78,10 +78,9 @@ import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
 import CardActions from "@/components/Framework/Card/CardActions.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
-import functions from "@/plugins/functions";
 import RiArrowLeftLine from "vue-remix-icons/icons/ri-arrow-left-line.vue";
 
-const props = defineProps({
+defineProps({
   modelValue: Boolean,
   title: String,
   aspectRatio: Number

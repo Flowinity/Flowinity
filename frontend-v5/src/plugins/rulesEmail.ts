@@ -1,6 +1,5 @@
 import MarkdownIt from "markdown-it";
 //@ts-ignore
-import MarkdownItEmoji from "markdown-it-emoji";
 
 const md = new MarkdownIt({
   html: true,

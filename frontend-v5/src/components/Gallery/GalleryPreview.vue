@@ -43,7 +43,6 @@ import RiFileLine from "vue-remix-icons/icons/ri-file-line.vue";
 import RiExternalLinkLine from "vue-remix-icons/icons/ri-external-link-line.vue";
 import TpuImg from "@/components/Framework/Image/TpuImg.vue";
 import { useAppStore } from "@/stores/app.store";
-import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
 import TpuHover from "@/components/Framework/Hover/TpuHover.vue";
 import TpuOverlay from "@/components/Framework/Overlay/TpuOverlay.vue";
 

@@ -1,25 +1,17 @@
 <script setup lang="ts">
-import { RailMode, useAppStore } from "@/stores/app.store";
 import SideBarItem from "@/components/Framework/Navigation/SideBarItem.vue";
 import { useChatStore } from "@/stores/chat.store";
-import { useCollectionsStore } from "@/stores/collections.store";
 import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
 import UserAvatar from "@/components/User/UserAvatar.vue";
-import functions from "@/plugins/functions";
 import RiGroupLine from "vue-remix-icons/icons/ri-group-line.vue";
 import { useFriendsStore } from "@/stores/friends.store";
 import { computed } from "vue";
 import { UserStatus, UserStoredStatus } from "@/gql/graphql";
 import { useUserStore } from "@/stores/user.store";
 import { useI18n } from "vue-i18n";
-const appStore = useAppStore();
 const chatStore = useChatStore();
 const friendStore = useFriendsStore();
 const userStore = useUserStore();
-const collectionsStore = useCollectionsStore();
-const props = defineProps({
-  drawer: Boolean
-});
 const { t } = useI18n();
 
 const ranks = computed(() => {

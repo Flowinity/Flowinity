@@ -1,23 +1,18 @@
 <script setup lang="ts">
-import { RouterView, useRoute } from "vue-router";
+import { RouterView } from "vue-router";
 import SuperBar from "@/layouts/default/SuperBar.vue";
 import SideBar from "@/layouts/default/SideBar.vue";
 import AppBar from "@/layouts/default/AppBar.vue";
 import TpuNavigationDrawer from "@/components/Framework/NavigationDrawer/TpuNavigationDrawer.vue";
 import { useAppStore } from "@/stores/app.store";
 import { useUserStore } from "@/stores/user.store";
-import MemberSideBar from "@/layouts/default/MemberSideBar.vue";
 import QuickSwitcher from "@/components/QuickSwitcher/QuickSwitcher.vue";
-import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { useFrameworkStore } from "@/stores/framework.store";
 import Stats from "stats.js";
-import { useChatStore } from "@/stores/chat.store";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
-const route = useRoute();
 const frameworkStore = useFrameworkStore();
-const chatStore = useChatStore();
 
 function drop(e: Event) {
   if (!e.dataTransfer.files?.length) return;

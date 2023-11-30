@@ -99,7 +99,7 @@ import TpuHover from "@/components/Framework/Hover/TpuHover.vue";
 import TpuOverlay from "@/components/Framework/Overlay/TpuOverlay.vue";
 import RiUploadLine from "vue-remix-icons/icons/ri-upload-cloud-2-line.vue";
 import SetPictureDialog from "@/components/Core/Dialogs/SetPictureDialog.vue";
-import axios from "@/plugins/axios";
+import axios from "@/plugins/axios.ts";
 const name = ref("");
 const props = defineProps({
   modelValue: Boolean,

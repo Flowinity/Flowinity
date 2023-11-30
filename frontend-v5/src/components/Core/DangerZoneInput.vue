@@ -43,7 +43,7 @@ import TextField from "@/components/Framework/Input/TextField.vue";
 import { useUserStore } from "@/stores/user.store";
 import { onMounted } from "vue";
 const userStore = useUserStore();
-const props = defineProps({
+defineProps({
   password: String,
   totp: String,
   passwordMode: Boolean,

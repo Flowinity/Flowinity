@@ -127,7 +127,6 @@ import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiArrowLeftSLine from "vue-remix-icons/icons/ri-arrow-left-s-line.vue";
 import RiArrowRightSLine from "vue-remix-icons/icons/ri-arrow-right-s-line.vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
-import { isNumeric } from "@/plugins/isNumeric";
 
 const props = defineProps({
   modelValue: {

@@ -91,7 +91,6 @@ import OCRScanned from "@/components/Gallery/Dialogs/OCRScanned.vue";
 import UploadEditor from "@/components/Gallery/Dialogs/UploadEditor.vue";
 import { useI18n } from "vue-i18n";
 import dayjs from "@/plugins/dayjs";
-import TextField from "@/components/Framework/Input/TextField.vue";
 
 const { t } = useI18n();
 const page = ref(1);

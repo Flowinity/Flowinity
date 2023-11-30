@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import RiCheckboxBlankLine from "vue-remix-icons/icons/ri-checkbox-blank-line.vue";
 import RiCheckboxFill from "vue-remix-icons/icons/ri-checkbox-fill.vue";
 import theme from "@/plugins/theme";
@@ -58,5 +58,5 @@ const color = computed(() => {
   return theme.colors[props.color];
 });
 
-const emits = defineEmits(["update:modelValue"]);
+defineEmits(["update:modelValue"]);
 </script>

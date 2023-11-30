@@ -120,7 +120,6 @@
 <script setup lang="ts">
 import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 import { useI18n } from "vue-i18n";
-import TextField from "@/components/Framework/Input/TextField.vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useCollectionsStore } from "@/stores/collections.store";
 import CardActions from "@/components/Framework/Card/CardActions.vue";
@@ -130,7 +129,6 @@ import { UpdateCollectionMutation } from "@/graphql/collections/updateCollection
 import TpuSelect from "@/components/Framework/Input/TpuSelect.vue";
 import { useAppStore } from "@/stores/app.store";
 import functions from "@/plugins/functions";
-import { useToast } from "vue-toastification";
 import { Collection } from "@/gql/graphql";
 import TpuDataTable from "@/components/Framework/Table/TpuDataTable.vue";
 import TpuCheckbox from "@/components/Framework/Input/TpuCheckbox.vue";

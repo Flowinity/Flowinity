@@ -64,13 +64,9 @@ import { useAppStore } from "@/stores/app.store";
 import CardActions from "@/components/Framework/Card/CardActions.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
-import TpuSelect from "@/components/Framework/Input/TpuSelect.vue";
 import { ref, watch } from "vue";
-import { useCollectionsStore } from "@/stores/collections.store";
-import axios from "@/plugins/axios";
 import { useApolloClient } from "@vue/apollo-composable";
 import {
-  DeleteUploadMutation,
   UpdateUploadMutation
 } from "@/graphql/gallery/gallery.graphql";
 import { useToast } from "vue-toastification";

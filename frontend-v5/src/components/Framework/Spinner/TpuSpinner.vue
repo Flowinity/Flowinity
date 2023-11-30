@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import theme from "@/plugins/theme";
 
 const props = defineProps({

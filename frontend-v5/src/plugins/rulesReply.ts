@@ -43,7 +43,7 @@ md.renderer.rules = {
     // pass token to default renderer.
     return defaultRender(tokens, idx, options, env, self);
   },
-  emoji(tokens, idx, options, env, self) {
+  emoji(tokens, idx) {
     const codepoint = tokens[idx].content.codePointAt(0)?.toString(16);
     // if emoji is TM or R, return the unicode character
     if (codepoint === "2122" || codepoint === "ae" || codepoint === "a9") {

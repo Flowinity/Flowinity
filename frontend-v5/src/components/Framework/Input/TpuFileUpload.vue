@@ -62,13 +62,11 @@
 </template>
 
 <script setup lang="ts">
-import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
 import RiUploadLine from "vue-remix-icons/icons/ri-upload-cloud-2-line.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import TpuProgressBar from "@/components/Framework/Spinner/TpuProgressBar.vue";
 import { useI18n } from "vue-i18n";
-import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
 
 const props = defineProps({
   files: {

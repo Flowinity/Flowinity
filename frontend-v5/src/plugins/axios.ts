@@ -6,7 +6,6 @@ import axios, { type AxiosRequestConfig, type AxiosStatic } from "axios";
 import { useToast } from "vue-toastification";
 import { useAppStore } from "@/stores/app.store";
 import { useUserStore } from "@/stores/user.store";
-import router from "@/router";
 
 export interface AxiosStaticWithAvoidance extends AxiosStatic {
   _avoidToast: boolean;

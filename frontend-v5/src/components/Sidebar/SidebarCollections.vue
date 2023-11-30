@@ -112,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import { RailMode, useAppStore } from "@/stores/app.store";
+import { useAppStore } from "@/stores/app.store";
 import TextField from "@/components/Framework/Input/TextField.vue";
 import TpuList from "@/components/Framework/List/TpuList.vue";
 import TpuListItem from "@/components/Framework/List/TpuListItem.vue";

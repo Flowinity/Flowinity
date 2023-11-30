@@ -101,7 +101,6 @@
 import TpuAvatar from "@/components/Framework/Avatar/TpuAvatar.vue";
 import { computed, ref } from "vue";
 import { useUserStore } from "@/stores/user.store";
-import { useAppStore } from "@/stores/app.store";
 import functions from "@/plugins/functions";
 import SetPictureDialog from "@/components/Core/Dialogs/SetPictureDialog.vue";
 import TpuHover from "@/components/Framework/Hover/TpuHover.vue";
@@ -110,7 +109,6 @@ import TpuOverlay from "@/components/Framework/Overlay/TpuOverlay.vue";
 import { UserStatus, UserStoredStatus } from "@/gql/graphql";
 import RiMoonFill from "vue-remix-icons/icons/ri-moon-fill.vue";
 import RiCheckLine from "vue-remix-icons/icons/ri-check-line.vue";
-import RiMoreFill from "vue-remix-icons/icons/ri-more-fill.vue";
 const props = defineProps({
   size: {
     default: 40,
@@ -149,7 +147,6 @@ const props = defineProps({
   }
 });
 const userStore = useUserStore();
-const appStore = useAppStore();
 
 const user = computed(() => {
   return {
@@ -174,10 +171,7 @@ defineEmits(["setImage"]);
   height: 12px;
   border-radius: 50%;
   z-index: 1;
-  transition:
-    background-color 0.2s,
-    color 0.2s,
-    width 0.2s;
+  transition: background-color 0.2s, color 0.2s, width 0.2s;
 }
 
 .typing-status {

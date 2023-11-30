@@ -31,7 +31,6 @@
 <script setup lang="ts">
 import SideBarItem from "@/components/Framework/Navigation/SideBarItem.vue";
 import { useMailStore } from "@/stores/mail.store";
-import TpuDivider from "@/components/Framework/Divider/TpuDivider.vue";
 
 const mailStore = useMailStore();
 </script>
