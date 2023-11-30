@@ -3934,9 +3934,9 @@ eslint-config-prettier@^9.0.0:
   integrity sha512-IcJsTkJae2S35pRsRAwoCE+925rJJStOdkKnLVgtE+tEpqU0EVVM7OqrwxqgptKdX29NUwC82I5pXsGFIgSevw==
 
 eslint-plugin-vue@^9.3.0:
-  version "9.19.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-9.19.0.tgz#67b01c9011fdff3ed872e1aba82503998e02b7e6"
-  integrity sha512-6j/rfO9RJtrJ/l9Lk60uMw/rH2VNIDko9uL0FE9c5d1TW500/UxrCKeUkrPXNqVBEaSbc4/8ZNjluw4nGFjJ+Q==
+  version "9.19.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-9.19.1.tgz#b0f553e59ec20a29ebd8906e86cd600ac577ba97"
+  integrity sha512-2+DZhbD1HrHXGcKW7roJhPZW6m+gU5/9uRNoT7dxlLlIhcStsECoYr5WFFtn6UY4IWIrC7Gzp7Y2kK47wdSPVQ==
   dependencies:
     "@eslint-community/eslint-utils" "^4.4.0"
     natural-compare "^1.4.0"
