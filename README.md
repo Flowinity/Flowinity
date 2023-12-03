@@ -2,6 +2,7 @@
 ![TPU Features](https://i.troplo.com/i/086834402e31.png)
 
 # TPU/TroploPrivateUploader [![codecov](https://codecov.io/gh/PrivateUploader/PrivateUploader/branch/api-v4/graph/badge.svg?token=RT9XLUOX5Y)](https://codecov.io/gh/PrivateUploader/PrivateUploader)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FPrivateUploader%2FPrivateUploader.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FPrivateUploader%2FPrivateUploader?ref=badge_shield)
 
 TPU is the next generation image hosting server written in Vue and TypeScript.
 
@@ -154,3 +155,7 @@ automatically scale if you add more CPU cores/threads.
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FPrivateUploader%2FPrivateUploader.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FPrivateUploader%2FPrivateUploader?ref=badge_large)
