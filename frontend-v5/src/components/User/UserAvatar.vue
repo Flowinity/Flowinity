@@ -23,7 +23,15 @@
         :alt="props.alt || props.username"
         :color="src ? undefined : functions.avatar(user) ? undefined : true"
         :size="size"
-        :src="src ? src : user.avatar ? functions.avatar(user) : undefined"
+        :src="
+          src
+            ? src
+            : user.avatar
+              ? functions.avatar(user)
+              : avatar
+                ? appStore.domain + avatar
+                : undefined
+        "
         style="z-index: 0"
       >
         <slot v-if="$slots.default" />
@@ -117,6 +125,9 @@ const props = defineProps({
     type: [Number, String]
   },
   src: {
+    type: String
+  },
+  avatar: {
     type: String
   },
   color: {

@@ -114,6 +114,7 @@ export default function setup(app: App) {
   });
 
   const userStore = useUserStore();
+  let reconnect = false;
 
   const wsClient = createClient({
     url: "wss://dev.privateuploader.gql.troplo.com/graphql",
@@ -128,11 +129,19 @@ export default function setup(app: App) {
     on: {
       error: () => {
         console.log("[Flowinity/GraphQL] Disconnected from socket.");
+        const appStore = useAppStore();
+        reconnect = true;
+        appStore.connected = false;
       },
       connected: (socket: any) => {
+        const appStore = useAppStore();
+        if (reconnect) {
+          appStore.connected = true;
+        }
         console.log("[Flowinity/GraphQL] Connected to socket.");
         gracefullyRestart = () => {
           if (socket.readyState === WebSocket.OPEN) {
+            appStore.connected = false;
             socket.close(4205, "Client Restart");
           }
         };

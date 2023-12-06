@@ -115,22 +115,22 @@ export class ChatResolver {
   }
 
   @FieldResolver(() => PartialUserBase)
-  async user(@Root() chat: Chat): Promise<PartialUserBase> {
-    return (await chat.$get("user", {
+  user(@Root() chat: Chat): Promise<PartialUserBase> {
+    return chat.$get("user", {
       attributes: partialUserBase
-    })) as PartialUserBase
+    }) as Promise<PartialUserBase>
   }
 
   @FieldResolver(() => PartialUserBase)
-  async legacyUser(@Root() chat: Chat): Promise<PartialUserBase> {
-    return (await chat.$get("legacyUser", {
+  legacyUser(@Root() chat: Chat): Promise<PartialUserBase> {
+    return chat.$get("legacyUser", {
       attributes: partialUserBase
-    })) as PartialUserBase
+    }) as Promise<PartialUserBase>
   }
 
   @FieldResolver(() => [ChatAssociation])
-  async users(@Root() chat: Chat) {
-    return await chat.$get("users")
+  users(@Root() chat: Chat) {
+    return chat.$get("users")
   }
 
   @FieldResolver(() => String)
@@ -141,12 +141,12 @@ export class ChatResolver {
   @FieldResolver(() => PartialUserBase || null, {
     nullable: true
   })
-  async recipient(
+  recipient(
     @Root() chat: Chat,
     @Ctx() ctx: Context
   ): Promise<PartialUserBase | null> {
-    if (chat.type !== "direct" || !ctx.user) return null
-    const user = await ChatAssociation.findOne({
+    if (chat.type !== "direct" || !ctx.user) return Promise.resolve(null)
+    const user = ChatAssociation.findOne({
       attributes: ["userId", "legacyUserId", "user"],
       where: {
         chatId: chat.id,
@@ -167,7 +167,11 @@ export class ChatResolver {
         }
       ]
     })
-    return user?.user as PartialUserBase | null
+    return Promise.resolve(
+      user.then((u) => {
+        return u?.user
+      })
+    ) as Promise<PartialUserBase | null>
   }
 
   @RateLimit({

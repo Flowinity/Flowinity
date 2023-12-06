@@ -47,7 +47,27 @@
           <RiAddLine />
         </tpu-button>
       </div>
-      <tpu-data-table :items="collection.users" :headers="headers" class="pt-2">
+      <tpu-data-table :items="users" :headers="headers" class="pt-2">
+        <template v-slot:item.user.username="{ item }">
+          <span class="flex items-center gap-2">
+            <user-avatar
+              :avatar="item.user.avatar"
+              :user-id="item.user.id"
+              :username="item.user.username"
+              size="22"
+            ></user-avatar>
+            {{ item.user.username }}
+            <tpu-button
+              v-if="item.user.id === collection.userId"
+              icon
+              variant="passive"
+              color="yellow"
+              v-tooltip.top="t('collections.sharing.owner')"
+            >
+              <RiVipCrownFill style="width: 20px" />
+            </tpu-button>
+          </span>
+        </template>
         <template v-slot:item.read="{ item }">
           <tpu-checkbox
             size="s"
@@ -64,7 +84,9 @@
             :loading="loading"
             class="justify-center flex"
             :disabled="
-              item.configure || item.recipientId === userStore.user?.id
+              item.configure ||
+              item.recipientId === userStore.user?.id ||
+              item.recipientId === collection.userId
             "
             @update:model-value="
               updateCollectionUser(
@@ -80,7 +102,10 @@
           <tpu-checkbox
             size="s"
             :model-value="item.configure"
-            :disabled="item.recipientId === userStore.user?.id"
+            :disabled="
+              item.recipientId === userStore.user?.id ||
+              item.recipientId === collection.userId
+            "
             :loading="loading"
             class="flex items-center"
             @update:model-value="
@@ -94,11 +119,44 @@
           />
         </template>
         <template v-slot:item.actions="{ item }">
+          <danger-zone-dialog>
+            <template #content>
+              <div class="flex justify-center">
+                <user-avatar :avatar="collection.image" size="70" />
+                <RiArrowRightSLine style="width: 70px" />
+                <user-avatar
+                  :user="transferUser"
+                  :avatar="transferUser?.avatar"
+                  :username="transferUser?.username"
+                  :user-id="transferUser?.id"
+                  size="70"
+                />
+              </div>
+            </template>
+            <template #default="{ toggle }">
+              <tpu-button
+                style="width: 40px; height: 40px"
+                icon
+                variant="passive"
+                @click="
+                  transferUser = item.user;
+                  toggle();
+                "
+                v-if="
+                  item.recipientId !== collection.userId &&
+                  collection.userId === userStore.user?.id
+                "
+              >
+                <RiUserSharedLine class="w-full h-full" />
+              </tpu-button>
+            </template>
+          </danger-zone-dialog>
           <tpu-button
             style="width: 40px; height: 40px"
             icon
             variant="passive"
             @click="removeUser(item.recipientId)"
+            :disabled="item.recipientId === collection.userId"
           >
             <RiCloseLine class="w-full h-full" />
           </tpu-button>
@@ -130,8 +188,7 @@ import { UpdateCollectionMutation } from "@/graphql/collections/updateCollection
 import TpuSelect from "@/components/Framework/Input/TpuSelect.vue";
 import { useAppStore } from "@/stores/app.store";
 import functions from "@/plugins/functions";
-import { useToast } from "vue-toastification";
-import { Collection } from "@/gql/graphql";
+import { Collection, PartialUserFriend } from "@/gql/graphql";
 import TpuDataTable from "@/components/Framework/Table/TpuDataTable.vue";
 import TpuCheckbox from "@/components/Framework/Input/TpuCheckbox.vue";
 import {
@@ -144,6 +201,11 @@ import TpuAutoComplete from "@/components/Framework/Input/TpuAutoComplete.vue";
 import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import { useUserStore } from "@/stores/user.store";
+import UserAvatar from "@/components/User/UserAvatar.vue";
+import RiVipCrownFill from "vue-remix-icons/icons/ri-vip-crown-fill.vue";
+import RiUserSharedLine from "vue-remix-icons/icons/ri-user-shared-line.vue";
+import DangerZoneDialog from "@/components/Core/Dialogs/DangerZoneDialog.vue";
+import RiArrowRightSLine from "vue-remix-icons/icons/ri-arrow-right-s-line.vue";
 
 const shareLinkOptions = [
   {
@@ -191,10 +253,25 @@ const collectionStore = useCollectionsStore();
 const loading = ref(false);
 const appStore = useAppStore();
 const friend = ref<undefined | number>(undefined);
+
+const transferUser = ref<number | PartialUserFriend>(undefined);
+
+const users = computed(() => {
+  return [
+    {
+      recipientId: props.collection?.user?.id,
+      user: props.collection?.user || {},
+      read: true,
+      write: true,
+      configure: true
+    },
+    ...(props.collection?.users || [])
+  ];
+});
+
 watch(
   () => [collectionStore.selected, props.modelValue],
   () => {
-    console.log(collectionStore.selected);
     shareLink.value = collectionStore.selected?.shareLink || null;
     shareLinkVisibility.value = !!collectionStore.selected?.shareLink;
   }

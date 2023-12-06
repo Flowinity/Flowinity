@@ -256,7 +256,7 @@ export async function authSystem(
             }
           ]
         })
-        updateSession(session, req.ip).then(() => {})
+        updateSession(session, req.ip!).then(() => {})
         return
       }
       if (session.user?.banned) {
@@ -268,7 +268,7 @@ export async function authSystem(
         res.json({
           errors: [Errors.BANNED]
         })
-        updateSession(session, req.ip).then(() => {})
+        updateSession(session, req.ip!).then(() => {})
         return
       } else {
         req.user = session.user
@@ -286,11 +286,11 @@ export async function authSystem(
           res.json({
             errors: [Errors.EMAIL_NOT_VERIFIED]
           })
-          updateSession(session, req.ip).then(() => {})
+          updateSession(session, req.ip!).then(() => {})
           return
         }
         next()
-        updateSession(session, req.ip).then(() => {})
+        updateSession(session, req.ip!).then(() => {})
         return session
       }
     } else {

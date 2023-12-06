@@ -27,15 +27,9 @@
           v-model="settings.gqlExclPulse"
           label="Excl. Pulse"
         ></tpu-switch>
+        <text-field v-model="operationsSearch" label="Search" />
         <tpu-list>
-          <tpu-list-item
-            v-for="operation in settings.gqlExclPulse
-              ? debugStore.recentOperations.filter(
-                  (o) => !o.name.includes('Pulse')
-                )
-              : debugStore.recentOperations"
-            :key="operation.id"
-          >
+          <tpu-list-item v-for="operation in operations" :key="operation.id">
             <div>
               {{ operation.name }}
               <div class="flex gap-2">
@@ -91,6 +85,7 @@
             </div>
           </tpu-list-item>
         </tpu-list>
+        <tpu-pager v-model="operationsPage" :pages="operationsPages" />
       </div>
     </tpu-expansion-panel>
     <tpu-expansion-panel v-model:expanded="settings.websocket">
@@ -107,6 +102,14 @@
         </tpu-list>
       </div>
     </tpu-expansion-panel>
+    <tpu-expansion-panel
+      v-model:expanded="settings.comms"
+      v-if="chatStore.selectedChat"
+    >
+      <template #header>Comms</template>
+
+      <sidebar-debug-comms />
+    </tpu-expansion-panel>
   </div>
 </template>
 
@@ -119,11 +122,15 @@ import TpuListItem from "@/components/Framework/List/TpuListItem.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiInformationLine from "vue-remix-icons/icons/ri-information-line.vue";
 import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
 import { useSocket } from "@/boot/socket.service";
 import TpuSwitch from "@/components/Framework/Input/TpuSwitch.vue";
 import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
+import TpuPager from "@/components/Framework/Pager/TpuPager.vue";
+import { useChatStore } from "@/stores/chat.store";
+import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
+import SidebarDebugComms from "@/components/Sidebar/Debug/SidebarDebugComms.vue";
 
 const apollo = useApolloClient();
 const debugStore = useDebugStore();
@@ -133,10 +140,12 @@ const result = ref<any>({});
 const settings = ref({
   graphql: false,
   websocket: false,
-  gqlExclPulse: true
+  gqlExclPulse: true,
+  comms: false
 });
 const sockets = useSocket;
 const socketConnected = ref<Record<string, boolean>>({});
+const chatStore = useChatStore();
 
 setTimeout(() => {
   for (const socket of Object.entries(sockets)) {
@@ -148,12 +157,33 @@ watch(
   () => [
     settings.value.graphql,
     settings.value.websocket,
-    settings.value.gqlExclPulse
+    settings.value.gqlExclPulse,
+    settings.value.comms
   ],
   () => {
     localStorage.setItem("debug", JSON.stringify(settings.value));
   }
 );
+
+const operationsSearch = ref("");
+const operationsPage = ref(1);
+const itemsPerPage = 10;
+const operations = computed(() => {
+  const ops = debugStore.recentOperations.filter((op) =>
+    op.name.toLowerCase().includes(operationsSearch.value.toLowerCase())
+  );
+  if (settings.value.gqlExclPulse) {
+    return ops.filter((op) => !op.name.includes("Pulse"));
+  }
+  return ops.slice(
+    (operationsPage.value - 1) * itemsPerPage,
+    operationsPage.value * itemsPerPage
+  );
+});
+
+const operationsPages = computed(() => {
+  return Math.ceil(operations.value.length / 10);
+});
 
 onMounted(() => {
   const debug = localStorage.getItem("debug");

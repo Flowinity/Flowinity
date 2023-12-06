@@ -43,6 +43,12 @@ import { SocketServerWithUser } from "./types/global"
 import { WebSocketServer } from "ws"
 import { useServer } from "graphql-ws/lib/use/ws"
 import generateContext from "@app/classes/graphql/middleware/generateContext"
+import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
+import { User } from "./models/user.model"
+import { UserUtilsService } from "@app/services/userUtils.service"
+import { Platform, PlatformType } from "@app/classes/graphql/user/platforms"
+import cryptoRandomString from "crypto-random-string"
+import { randomUUID } from "crypto"
 
 @Service({ eager: false })
 export class Server {
@@ -106,6 +112,123 @@ export class Server {
       {
         execute: (args: any) => args.rootValue.execute(args),
         subscribe: (args: any) => args.rootValue.subscribe(args),
+        onConnect: async (ctx) => {
+          const newCtx = await generateContext(ctx)
+          const id = randomUUID()
+          if (
+            newCtx.user &&
+            newCtx.user.storedStatus !== UserStoredStatus.INVISIBLE
+          ) {
+            await User.update(
+              {
+                status: newCtx.user.storedStatus
+              },
+              {
+                where: {
+                  id: newCtx.user.id
+                }
+              }
+            )
+
+            const userService: UserUtilsService =
+              Container.get(UserUtilsService)
+            let devices = (await redis.json.get(
+              `user:${newCtx.user.id}:platforms`
+            )) as unknown as Platform[] | undefined
+            console.log(devices, "devievs")
+            if (!devices) devices = []
+            let platform: PlatformType
+            switch (ctx?.connectionParams?.["x-tpu-client"]) {
+              case "android_kotlin":
+                platform = PlatformType.MOBILE
+                break
+              case "TPUv5 (Flowinity)":
+                platform = PlatformType.WEB
+                break
+              case "TPUvNEXT":
+                platform = PlatformType.WEB
+                break
+              default:
+                platform = PlatformType.WEB
+            }
+            if (devices.length > 3) {
+              devices.pop()
+            }
+            devices.unshift({
+              platform: platform,
+              lastSeen: new Date().toISOString(),
+              status: newCtx.user.storedStatus as unknown as UserStatus,
+              id
+            })
+            await redis.json.set(
+              `user:${newCtx.user.id}:platforms`,
+              "$",
+              devices as any
+            )
+
+            userService.emitToTrackedUsers(
+              newCtx.user.id,
+              "userStatus",
+              {
+                id: newCtx.user.id,
+                status: newCtx.user.storedStatus.toUpperCase(),
+                platforms: devices
+              },
+              true
+            )
+          }
+          //@ts-ignore
+          if (!ctx.extra) ctx.extra = {}
+          //@ts-ignore
+          ctx.extra.id = id
+          //@ts-ignore
+          ctx.extra.userId = newCtx.user?.id
+          return {
+            ...ctx,
+            id
+          }
+        },
+        onDisconnect: async (ctx) => {
+          if (ctx.extra.userId) {
+            let clients = (await redis.json.get(
+              `user:${ctx.extra.userId}:platforms`
+            )) as unknown as Platform[] | undefined
+            if (clients) {
+              clients = clients.filter(
+                (client: any) => client.id !== ctx.extra.id
+              )
+              if (clients.length === 0) {
+                await User.update(
+                  {
+                    status: UserStatus.OFFLINE
+                  },
+                  {
+                    where: {
+                      id: ctx.extra.userId
+                    }
+                  }
+                )
+                const userService: UserUtilsService =
+                  Container.get(UserUtilsService)
+                userService.emitToTrackedUsers(
+                  ctx.extra.userId,
+                  "userStatus",
+                  {
+                    id: ctx.extra.userId,
+                    status: UserStatus.OFFLINE.toUpperCase(),
+                    platforms: clients
+                  },
+                  true
+                )
+              }
+              await redis.json.set(
+                `user:${ctx.extra.userId}:platforms`,
+                "$",
+                clients as any
+              )
+            }
+          }
+        },
         onSubscribe: async (ctx, msg) => {
           const {
             schema,

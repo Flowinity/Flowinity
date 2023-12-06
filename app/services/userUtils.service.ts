@@ -22,16 +22,24 @@ import { LayoutValidate } from "@app/validators/userv3"
 import { ExcludedCollectionsValidate } from "@app/validators/excludedCollections"
 import { FCMDevice } from "@app/models/fcmDevices.model"
 import axios from "axios"
-import { partialUserBase, PartialUserFriend, partialUserFriend } from "@app/classes/graphql/user/partialUser"
+import {
+  partialUserBase,
+  PartialUserFriend,
+  partialUserFriend
+} from "@app/classes/graphql/user/partialUser"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { BlockedUser } from "@app/models/blockedUser.model"
-import { FriendRequestPrivacy, GroupPrivacy } from "@app/classes/graphql/user/privacy"
+import {
+  FriendRequestPrivacy,
+  GroupPrivacy
+} from "@app/classes/graphql/user/privacy"
 import { GqlError } from "@app/lib/gqlErrors"
 import { GraphQLError } from "graphql/error"
+import { pubSub } from "@app/lib/graphql/pubsub"
 
 @Service()
 export class UserUtilsService {
@@ -214,6 +222,7 @@ export class UserUtilsService {
         }
       }
     )
+    redis.json.del(`user:${user.id}`)
     return true
   }
 
@@ -410,7 +419,7 @@ export class UserUtilsService {
         true
       )
     }
-    return await User.update(
+    const update = await User.update(
       {
         [type]: banner
       },
@@ -420,6 +429,8 @@ export class UserUtilsService {
         }
       }
     )
+    redis.json.del(`user:${userId}`)
+    return update
   }
 
   async createNotification(
@@ -624,6 +635,7 @@ export class UserUtilsService {
         }
       }
     )
+    redis.json.del(`user:${id}`)
     return {
       secret: code.base32,
       url: code.otpauth_url
@@ -665,6 +677,8 @@ export class UserUtilsService {
         id
       }
     })
+
+    redis.json.del(`user:${id}`)
 
     return true
   }
@@ -846,6 +860,7 @@ export class UserUtilsService {
           body.storedStatus?.toUpperCase() ?? user.storedStatus.toUpperCase(),
         status: user.status?.toUpperCase() ?? user.status.toUpperCase()
       })
+    redis.json.del(`user:${user.id}`)
     return true
   }
 
@@ -883,7 +898,8 @@ export class UserUtilsService {
     value: any,
     emitToFriends: boolean = false,
     namespace: SocketNamespaces = SocketNamespaces.TRACKED_USERS,
-    important: boolean = false
+    important: boolean = false,
+    legacy: boolean = true
   ) {
     let friends: Friend[] = []
     if (emitToFriends) {
@@ -901,6 +917,13 @@ export class UserUtilsService {
       if (!important) {
         const blocked = await this.blocked(id, userId, true)
         if (blocked) continue
+      }
+      if (legacy) {
+        const translated =
+          key.replace(/([A-Z])/g, "_$1").toUpperCase() + ":" + id
+        pubSub.publish(translated, value)
+      } else {
+        pubSub.publish(key + ":" + id, value)
       }
       socket.of(namespace).to(id).emit(key, value)
     }
@@ -1008,7 +1031,7 @@ export class UserUtilsService {
       delete user.blocked
     }
 
-    return users as PartialUserFriend[]
+    return users as unknown as PartialUserFriend[]
   }
 
   async getAllUsers(
@@ -1308,7 +1331,7 @@ export class UserUtilsService {
       }
     })
     if (!domain) throw Errors.DOMAIN_NOT_FOUND
-    return await User.update(
+    const update = await User.update(
       {
         domainId: domain.id
       },
@@ -1318,6 +1341,8 @@ export class UserUtilsService {
         }
       }
     )
+    redis.json.del(`user:${id}`)
+    return update
   }
 
   async sendFeedback(

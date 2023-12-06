@@ -18,7 +18,17 @@
     "back": "Back",
     "search": "Search",
     "remove": "Remove",
-    "edit": "Edit"
+    "edit": "Edit",
+    "noResults": "No results found"
+  },
+  "dangerZone": {
+    "usePassword": "Use password instead",
+    "useTotp": "Use 2FA code instead",
+    "password": "Password",
+    "totp": "2FA code",
+    "totpRequired": "2FA code is required",
+    "passwordRequired": "Password is required",
+    "passwordMismatch": "Password does not match the confirmation password"
   },
   "gallery": {
     "addToCollection": "Add to Collection",
@@ -213,5 +223,8 @@
   },
   "chats": {
     "typing": "{users} is typing... | {users} are typing... | Many people are typing..."
+  },
+  "connection": {
+    "title": "Connecting..."
   }
 }

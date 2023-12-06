@@ -13,66 +13,62 @@ export const ChatsQuery = gql`
     }
     chats {
       id
-      background
       description
       type
-      name
+      background
       unread
+      name
       userId
       icon
       createdAt
       updatedAt
       legacyUserId
-      user {
-        username
+      invites {
         id
+        userId
         createdAt
-        administrator
-        moderator
-        avatar
+        rankId
+        updatedAt
+        expiredAt
+        invalidated
       }
       association {
         id
+        hidden
         chatId
+        permissions
         userId
         rank
+        createdAt
         lastRead
         notifications
         legacyUserId
-        user {
-          username
-          id
-          createdAt
-          administrator
-          moderator
-          avatar
-        }
       }
       users {
         id
         chatId
         userId
         rank
+        createdAt
         lastRead
-        notifications
         legacyUserId
-        user {
-          username
-          id
-          createdAt
-          administrator
-          moderator
-          avatar
-        }
+        ranksMap
       }
       _redisSortDate
       recipient {
-        username
         id
+      }
+      ranks {
+        id
+        color
+        name
+        userId
         createdAt
-        administrator
-        moderator
-        avatar
+        chatId
+        updatedAt
+        managed
+        index
+        permissionsMap
       }
     }
   }

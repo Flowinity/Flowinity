@@ -43,7 +43,7 @@
         @click="focus()"
       >
         <slot>
-          <ul>
+          <ul v-if="items.length">
             <li
               v-wave
               tabindex="0"
@@ -68,6 +68,9 @@
               </slot>
             </li>
           </ul>
+          <div v-else class="my-2 mx-2">
+            {{ $t("generic.noResults") }}
+          </div>
         </slot>
       </div>
     </transition>

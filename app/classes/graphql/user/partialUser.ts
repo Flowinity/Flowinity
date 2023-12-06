@@ -152,6 +152,10 @@ export class PartialUserFriend extends PartialUserBase {
   blocked?: boolean
   @Field()
   bot: boolean
+  @Field(() => [Platform], {
+    nullable: true
+  })
+  platforms: Platform[] | null | undefined
 }
 
 @ObjectType()

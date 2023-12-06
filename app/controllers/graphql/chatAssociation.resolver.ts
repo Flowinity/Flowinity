@@ -50,6 +50,7 @@ import {
   AuditLogActionType,
   AuditLogCategory
 } from "@app/classes/graphql/chat/auditLog/categories"
+import { EXPECTED_OPTIONS_KEY } from "@app/lib/dataloader"
 
 @Resolver(ChatAssociation)
 @Service()
@@ -62,51 +63,64 @@ export class ChatAssociationResolver {
   @FieldResolver(() => PartialUserBase, {
     nullable: true
   })
-  async user(
+  user(
     @Root() chatAssociation: ChatAssociation
   ): Promise<PartialUserBase | null> {
     if (!chatAssociation.userId)
-      return await chatAssociation.$get("legacyUser", {
+      return chatAssociation.$get("legacyUser", {
         attributes: partialUserBase
       })
-    return (await chatAssociation.$get("tpuUser", {
+    return chatAssociation.$get("tpuUser", {
       attributes: partialUserBase
-    })) as PartialUserBase
+    })
   }
 
-  @FieldResolver(() => PartialUserBase)
-  async tpuUser(
+  @FieldResolver(() => PartialUserBase, {
+    nullable: true
+  })
+  tpuUser(
     @Root() chatAssociation: ChatAssociation
-  ): Promise<PartialUserBase> {
-    return (await chatAssociation.$get("tpuUser", {
+  ): Promise<PartialUserBase | null> {
+    return chatAssociation.$get("tpuUser", {
       attributes: partialUserBase
-    })) as PartialUserBase
+    })
   }
 
-  @FieldResolver(() => PartialUserBase)
-  async legacyUser(
+  @FieldResolver(() => PartialUserBase, {
+    nullable: true
+  })
+  legacyUser(
     @Root() chatAssociation: ChatAssociation
-  ): Promise<PartialUserBase> {
-    return (await chatAssociation.$get("legacyUser", {
+  ): Promise<PartialUserBase | null> {
+    return chatAssociation.$get("legacyUser", {
       attributes: partialUserBase
-    })) as PartialUserBase
+    })
   }
 
   @FieldResolver(() => [ChatPermission])
-  async ranks(@Root() chatAssociation: ChatAssociation) {
-    return await chatAssociation.$get("ranks")
+  ranks(@Root() chatAssociation: ChatAssociation, @Ctx() ctx: Context) {
+    return chatAssociation.$get("ranks", {
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+    })
   }
 
   @FieldResolver(() => [String])
-  async ranksMap(@Root() chatAssociation: ChatAssociation) {
+  async ranksMap(
+    @Root() chatAssociation: ChatAssociation,
+    @Ctx() ctx: Context
+  ) {
     const ranks = await chatAssociation.$get("ranks", {
-      order: [["index", "DESC"]]
+      order: [["index", "DESC"]],
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
     return ranks.map((rank) => rank.id)
   }
 
   @FieldResolver(() => [String])
-  async permissions(@Root() chatAssociation: ChatAssociation) {
+  async permissions(
+    @Root() chatAssociation: ChatAssociation,
+    @Ctx() ctx: Context
+  ) {
     const ranks = await chatAssociation.$get("ranks", {
       order: [["index", "DESC"]],
       include: [
@@ -114,7 +128,8 @@ export class ChatAssociationResolver {
           model: ChatPermission,
           as: "permissions"
         }
-      ]
+      ],
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
     return [
       ...new Set(

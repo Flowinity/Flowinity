@@ -14,6 +14,7 @@ import Stats from "stats.js";
 import { useChatStore } from "@/stores/chat.store";
 import { usePulseStore } from "@/stores/pulse.store";
 import { watch } from "vue";
+import ConnectionOverlay from "@/components/Core/ConnectionOverlay.vue";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -71,6 +72,9 @@ watch(
       @dragover.prevent
       id="main-area"
     >
+      <transition name="dialog-transition">
+        <connection-overlay v-if="userStore.user && !appStore.connected" />
+      </transition>
       <quick-switcher v-model="appStore.dialogs.core.quickSwitcher.value" />
       <tpu-navigation-drawer
         v-model="appStore.drawer"
@@ -91,6 +95,7 @@ watch(
         />
         <div class="flex flex-col w-full">
           <app-bar class="bg-white z-10" v-if="userStore.user" />
+
           <main
             class="w-full overflow-auto"
             :class="appStore.heightOffset"

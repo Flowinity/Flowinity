@@ -70,7 +70,7 @@
 
 <script setup lang="ts">
 import Gallery from "@/views/Gallery/Gallery.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import type { Collection } from "@/gql/graphql";
 import { Chat, GalleryType, Upload } from "@/gql/graphql";
@@ -109,6 +109,14 @@ import { h, markRaw } from "vue";
 import UserAvatar from "@/components/User/UserAvatar.vue";
 import RiCollageLine from "vue-remix-icons/icons/ri-collage-line.vue";
 import RiCollageFill from "vue-remix-icons/icons/ri-collage-fill.vue";
+import { useSubscription } from "@vue/apollo-composable";
+import {
+  CollectionRemovedSubscription,
+  CollectionUpdatedSubscription,
+  CollectionUserAddSubscription,
+  CollectionUserRemoveSubscription,
+  CollectionUserUpdateSubscription
+} from "@/graphql/collections/subscriptions/updateCollection.graphql";
 
 const banner = computed(() => {
   if (!collection.value?.banner) return null;
@@ -156,6 +164,73 @@ watch(
   }
 );
 
+async function refresh() {
+  collection.value = await collectionsStore.getCollection(id.value);
+}
+
+const subscriptions: Record<string, any> = {
+  update: null,
+  userUpdate: null,
+  userAdd: null,
+  userRemove: null,
+  remove: null
+};
+
+function registerSubscriptions() {
+  console.log(id.value);
+  Object.values(subscriptions).forEach((sub) => {
+    if (sub) sub.off();
+  });
+  subscriptions.update = useSubscription(CollectionUpdatedSubscription, {
+    input: {
+      collectionId: id.value
+    }
+  }).onResult(({ data }) => {
+    if (!data) return;
+    refresh();
+  });
+  subscriptions.userUpdate = useSubscription(CollectionUserUpdateSubscription, {
+    input: {
+      collectionId: id.value
+    }
+  }).onResult(({ data }) => {
+    if (!data) return;
+    refresh();
+  });
+  subscriptions.userAdd = useSubscription(CollectionUserAddSubscription, {
+    input: {
+      collectionId: id.value
+    }
+  }).onResult(({ data }) => {
+    console.log(data);
+    if (!data) return;
+    refresh();
+  });
+  subscriptions.userRemove = useSubscription(CollectionUserRemoveSubscription, {
+    input: {
+      collectionId: id.value
+    }
+  }).onResult(({ data }) => {
+    console.log(data);
+    if (!data) return;
+    refresh();
+  });
+  subscriptions.remove = useSubscription(CollectionRemovedSubscription, {
+    input: {
+      collectionId: id.value
+    }
+  }).onResult(({ data }) => {
+    if (!data) return;
+    const router = useRouter();
+    router.push({ name: "Gallery" });
+  });
+}
+
+onMounted(() => {
+  setAppBar();
+  registerSubscriptions();
+});
+
 watch(
   () => route.params.id,
   async () => {
@@ -164,40 +239,12 @@ watch(
       return;
     }
     collection.value = await collectionsStore.getCollection(id.value);
+    registerSubscriptions();
   }
 );
 
-async function onCollectionUpdate(data: { id?: number; name?: string }) {
-  if (data.id !== collection.value?.id) return;
-  refresh();
-}
-
-async function onCollectionUserUpdate(data: {
-  id?: number;
-  collectionId: number;
-}) {
-  if (data.collectionId !== collection.value?.id) return;
-  refresh();
-}
-
-async function refresh() {
-  collection.value = await collectionsStore.getCollection(id.value);
-}
-
-onMounted(() => {
-  useSocket.gallery.on("collectionUpdate", onCollectionUpdate);
-  useSocket.gallery.on("collectionUserUpdate", onCollectionUserUpdate);
-  useSocket.gallery.on("collectionUserAdd", onCollectionUserUpdate);
-  useSocket.gallery.on("collectionUserRemove", onCollectionUserUpdate);
-  setAppBar();
-});
-
 onUnmounted(() => {
   appStore.appBarImage = null;
-  useSocket.gallery.off("collectionUpdate", onCollectionUpdate);
-  useSocket.gallery.off("collectionUserUpdate", onCollectionUserUpdate);
-  useSocket.gallery.off("collectionUserAdd", onCollectionUserUpdate);
-  useSocket.gallery.off("collectionUserRemove", onCollectionUserUpdate);
 });
 </script>
 

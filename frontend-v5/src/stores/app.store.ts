@@ -112,6 +112,8 @@ export const useAppStore = defineStore("app", () => {
     name: "Flowinity"
   } as CoreState);
 
+  const connected = ref(false);
+
   const versioning = ref({
     current: import.meta.env.TPU_VERSION || "N/A",
     date: import.meta.env.TPU_BUILD_DATE || "N/A"
@@ -231,18 +233,7 @@ export const useAppStore = defineStore("app", () => {
     chatStore.init();
     collectionsStore.init();
     const {
-      data: {
-        coreState,
-        experiments,
-        currentUser,
-        collections,
-        chats,
-        workspaces,
-        friends,
-        trackedUsers,
-        blockedUsers,
-        userEmoji
-      }
+      data: { coreState, experiments }
     } = await this.$apollo.query({
       query: CoreStateQuery,
       fetchPolicy: "no-cache"
@@ -252,6 +243,7 @@ export const useAppStore = defineStore("app", () => {
       experimentsStore.experiments[experiment.id] = experiment.value;
     }
     loading.value = false;
+    connected.value = true;
   }
 
   const lookupNav = computed(() => {
@@ -723,6 +715,7 @@ export const useAppStore = defineStore("app", () => {
     shifting,
     dev: import.meta.env.DEV,
     versioning,
-    _currentNavItem
+    _currentNavItem,
+    connected
   };
 });

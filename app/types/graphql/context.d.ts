@@ -18,4 +18,5 @@ export type Context = {
   req: Request
   request: Request
   cache: Cache
+  id: string | undefined
 }

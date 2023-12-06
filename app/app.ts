@@ -70,6 +70,7 @@ import { MulterError } from "multer"
 import { ZodError } from "zod"
 import { generateSchema } from "@app/lib/generateSchema"
 import { WebSocketServer } from "ws"
+import { useResponseCache } from "@graphql-yoga/plugin-response-cache"
 
 @Service()
 @Middleware({ type: "after" })
@@ -311,7 +312,11 @@ export class Application {
     const cache: Cache = createRedisCache({ redis })
     /* gqlPlugins.push(
       useResponseCache({
-        session: () => null,
+        session: (request) => {
+          console.log(request)
+          const token = request?.headers?.get("authorization")
+          return token
+        },
         cache: cache as any
       })
     )*/

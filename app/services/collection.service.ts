@@ -1,4 +1,4 @@
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { CollectionUser } from "@app/models/collectionUser.model"
@@ -17,6 +17,8 @@ import { PaginatedCollectionsResponse } from "@app/controllers/graphql/collectio
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { WhereOptions } from "sequelize"
 import { GqlError } from "@app/lib/gqlErrors"
+import { pubSub } from "@app/lib/graphql/pubsub"
+import { CacheService } from "@app/services/cache.service"
 
 @Service()
 export class CollectionService {
@@ -401,19 +403,23 @@ export class CollectionService {
   }
 
   async removeUserFromCollection(collectionId: number, recipientId: number) {
-    const result = await CollectionUser.destroy({
+    const user = await CollectionUser.findOne({
       where: {
         collectionId,
         recipientId
       }
     })
 
+    if (!user) throw Errors.COLLECTION_USER_NOT_FOUND
+
+    const result = await user.destroy()
+
     this.emitToRecipients(collectionId, "collectionUserRemove", {
       collectionId,
       recipientId
     })
 
-    if (!result) throw Errors.COLLECTION_USER_NOT_FOUND
+    this.emitForAllPubSub(collectionId, "COLLECTION_USER_REMOVED", user)
 
     return result
   }
@@ -490,6 +496,8 @@ export class CollectionService {
       collectionUser.toJSON()
     )
 
+    this.emitForAllPubSub(collectionId, "COLLECTION_USER_ADDED", collectionUser)
+
     socket.of(SocketNamespaces.GALLERY).to(user.id).emit("addedToCollection", {
       id: collection.id,
       name: collection.name
@@ -525,9 +533,11 @@ export class CollectionService {
         }
       }
     )
-    console.log(result)
 
     if (!result) throw Errors.COLLECTION_USER_NOT_FOUND
+
+    const cacheService = Container.get(CacheService)
+    await cacheService.resetCollectionCache(collectionId)
 
     this.emitToRecipients(collectionId, "collectionUserUpdate", {
       collectionId,
@@ -536,6 +546,17 @@ export class CollectionService {
       read,
       configure
     })
+
+    this.emitForAllPubSub(
+      collectionId,
+      "COLLECTION_USER_UPDATED",
+      await CollectionUser.findOne({
+        where: {
+          collectionId,
+          recipientId
+        }
+      })
+    )
 
     return result
   }
@@ -558,6 +579,11 @@ export class CollectionService {
           id: collectionId,
           shareLink
         })
+        this.emitForAllPubSub(
+          collectionId,
+          "COLLECTION_UPDATED",
+          await Collection.findByPk(collectionId)
+        )
         return {
           shareLink
         }
@@ -576,6 +602,11 @@ export class CollectionService {
           id: collectionId,
           shareLink: null
         })
+        this.emitForAllPubSub(
+          collectionId,
+          "COLLECTION_UPDATED",
+          await Collection.findByPk(collectionId)
+        )
         return {
           shareLink: null
         }
@@ -627,6 +658,29 @@ export class CollectionService {
     }
   }
 
+  emitForAllPubSub(collectionId: number, key: string, data: any) {
+    Collection.findByPk(collectionId, {
+      include: [
+        {
+          model: CollectionUser,
+          as: "users"
+        }
+      ]
+    }).then((collection) => {
+      if (!collection) return
+      pubSub.publish(
+        key + ":" + collection.userId,
+        "toJSON" in data ? data.toJSON() : data
+      )
+      for (const user of collection.users) {
+        pubSub.publish(
+          key + ":" + user.recipientId,
+          "toJSON" in data ? data.toJSON() : data
+        )
+      }
+    })
+  }
+
   async updateCollection(id: number, name: string) {
     const collection = await Collection.findOne({
       where: {
@@ -644,6 +698,8 @@ export class CollectionService {
       id,
       name
     })
+
+    this.emitForAllPubSub(collection.id, `COLLECTION_UPDATED`, collection)
 
     return {
       name
@@ -667,6 +723,8 @@ export class CollectionService {
     await collection.update({
       [key]: banner
     })
+
+    this.emitForAllPubSub(collection.id, `COLLECTION_UPDATED`, collection)
 
     return {
       banner

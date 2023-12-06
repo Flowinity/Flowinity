@@ -23,7 +23,7 @@ export const useUserStore = defineStore("user", () => {
 
   const users: ComputedRef<Record<number, PartialUserFriend>> = computed(() => {
     return tracked.value.reduce((acc, item) => {
-      if (item.id === user.value.id) {
+      if (user.value && item.id === user.value.id) {
         const u = user.value;
         acc[item.id] = {
           username: u.username,
@@ -84,6 +84,16 @@ export const useUserStore = defineStore("user", () => {
   }
 
   async function init() {
+    try {
+      const userLocal = localStorage.getItem("userStore");
+      console.log(userLocal);
+      if (userLocal) {
+        user.value = JSON.parse(userLocal);
+      }
+    } catch {
+      //
+    }
+
     const {
       data: { currentUser, trackedUsers, blockedUsers }
     } = await useApolloClient().client.query({
@@ -93,6 +103,7 @@ export const useUserStore = defineStore("user", () => {
     user.value = currentUser;
     tracked.value = trackedUsers;
     blocked.value = blockedUsers;
+    localStorage.setItem("userStore", JSON.stringify(user.value));
   }
 
   return {

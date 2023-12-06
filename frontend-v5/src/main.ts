@@ -11,7 +11,6 @@ import VueApolloComponents from "@vue/apollo-components";
 import "./boot/declarations";
 import globals from "./boot/globals";
 import events from "./boot/events";
-import socket from "./boot/socket";
 import apollo from "./boot/apollo";
 import { registerPlugins } from "@/plugins";
 import VWave from "v-wave";

@@ -990,9 +990,7 @@ export class ChatService {
       // translate camelCase to SCREAMING_SNAKE_CASE and append :userId to the end
       const translated =
         key.replace(/([A-Z])/g, "_$1").toUpperCase() + ":" + user.userId
-      pubSub.publish(translated, data).then(() => {
-        console.log(translated)
-      })
+      pubSub.publish(translated, data)
       socket.of(SocketNamespaces.CHAT).to(user.userId).emit(key, data)
     }
   }
@@ -1339,7 +1337,8 @@ export class ChatService {
           associationId: association.id,
           mention
         } as MessageSubscription
-        await pubSub.publish(`MESSAGES:${association.tpuUser.id}`, {
+        console.log(`MESSAGES:${association.tpuUser.id}`)
+        pubSub.publish(`MESSAGES:${association.tpuUser.id}`, {
           ...data,
           message: {
             ...data.message,

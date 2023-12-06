@@ -110,12 +110,22 @@ export class AdminResolver {
   async adminDebugBatch(@Ctx() ctx: Context) {
     console.log(User.findByPk)
     // get sequelize-typescript instance for dataloader-sequelize
-    let user1 = await User.findByPk(1, {
+    const [user1, user2] = await Promise.all([
+      User.findByPk(1, {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      }),
+      User.findByPk(6, {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
+    ])
+
+    await User.findByPk(1, {
       [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
-    let user2 = await User.findByPk(6, {
+    await User.findByPk(1, {
       [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
+
     console.log(user1?.username, user2?.username)
     return { success: true }
   }

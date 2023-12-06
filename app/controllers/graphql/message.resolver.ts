@@ -210,13 +210,19 @@ export class MessageResolver {
       return `MESSAGES:${context.user!!.id}`
     },
     filter: ({ payload, args }) => {
-      return args.input.associationId === payload.associationId
+      console.log(payload, args)
+      return args.input?.associationId !== undefined
+        ? args.input.associationId === payload.associationId
+        : true
     }
   })
   newMessage(
     @Root() payload: MessageSubscription,
     @Ctx() ctx: Context,
-    @Arg("input") input: SubscriptionMessageInput
+    @Arg("input", {
+      nullable: true
+    })
+    input: SubscriptionMessageInput
   ): MessageSubscription {
     return payload
   }

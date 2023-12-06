@@ -31,9 +31,9 @@ export class BlockedUserResolver {
     userOptional: true
   })
   @Query(() => [BlockedUser])
-  async blockedUsers(@Ctx() ctx: Context) {
+  blockedUsers(@Ctx() ctx: Context) {
     if (!ctx.user) return []
-    return await BlockedUser.findAll({
+    return BlockedUser.findAll({
       where: {
         userId: ctx.user.id
       },
@@ -49,11 +49,7 @@ export class BlockedUserResolver {
     @Ctx() ctx: Context,
     @Arg("input") input: BlockUserInput
   ): Promise<Success> {
-    const user = await User.findOne({
-      where: {
-        id: input.userId
-      }
-    })
+    const user = await User.findByPk(input.userId)
     if (!user) throw new GqlError("USER_NOT_FOUND")
     if (user.id === ctx.user!!.id) throw new GqlError("BLOCK_SELF")
     const exists = await BlockedUser.findOne({
@@ -127,17 +123,15 @@ export class BlockedUserResolver {
   }
 
   @FieldResolver(() => PartialUserBase)
-  async user(@Root() blockedUser: BlockedUser, @Ctx() ctx: Context) {
-    return await blockedUser.$get("user", {
-      attributes: partialUserBase,
+  user(@Root() blockedUser: BlockedUser, @Ctx() ctx: Context) {
+    return blockedUser.$get("user", {
       [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
   }
 
   @FieldResolver(() => PartialUserBase)
-  async blockedUser(@Root() blockedUser: BlockedUser, @Ctx() ctx: Context) {
-    return await blockedUser.$get("blockedUser", {
-      attributes: partialUserBase,
+  blockedUser(@Root() blockedUser: BlockedUser, @Ctx() ctx: Context) {
+    return blockedUser.$get("blockedUser", {
       [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
   }

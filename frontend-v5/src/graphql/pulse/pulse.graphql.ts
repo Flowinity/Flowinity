@@ -7,7 +7,7 @@ export const PulseMutation = gql`
 `;
 
 export const SinglePulseMutation = gql`
-  mutation CreateSinglePulse($input: PulseInput!) {
+  mutation CreateSinglePulse($input: SinglePulseInput!) {
     createSinglePulse(input: $input)
   }
 `;

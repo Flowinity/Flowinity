@@ -1,13 +1,25 @@
-import { Field, ObjectType } from "type-graphql"
+import { Field, ObjectType, registerEnumType } from "type-graphql"
+import { UserStatus } from "@app/classes/graphql/user/status"
+
+export enum PlatformType {
+  DESKTOP = "desktop",
+  WEB = "web",
+  MOBILE = "mobile"
+}
+
+registerEnumType(PlatformType, {
+  name: "PlatformType",
+  description: "Platform type of user device."
+})
 
 @ObjectType()
 export class Platform {
-  @Field()
-  platform: string
+  @Field(() => PlatformType)
+  platform: PlatformType
   @Field()
   id: string
   @Field()
-  lastSeen: String
-  @Field()
-  status: string
+  lastSeen: string
+  @Field(() => UserStatus)
+  status: UserStatus
 }

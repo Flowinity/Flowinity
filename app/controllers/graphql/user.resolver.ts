@@ -7,14 +7,15 @@ import {
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { User } from "@app/models/user.model"
 import { Service } from "typedi"
 import { Session } from "@app/models/session.model"
 import { Op } from "sequelize"
-import { Subscription } from "@app/models/subscription.model"
+import { Subscription as SubscriptionModel } from "@app/models/subscription.model"
 import { Domain } from "@app/models/domain.model"
 import { Plan } from "@app/models/plan.model"
 import { Integration } from "@app/models/integration.model"
@@ -53,9 +54,10 @@ import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import { SessionInput } from "@app/classes/graphql/user/sessionsInput"
 import { SessionType } from "@app/classes/graphql/user/sessions"
-import { UserStoredStatus } from "@app/classes/graphql/user/status"
+import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { Collection } from "@app/models/collection.model"
 import { defaultHomeWidgets } from "@app/classes/graphql/home/homeWidgets"
+import { StatusEvent } from "@app/classes/graphql/user/subscriptions/statusEvent"
 
 @Resolver(User)
 @Service()
@@ -386,6 +388,20 @@ export class UserResolver extends createBaseResolver("User", User) {
   ): Promise<number[]> {
     return await this.userUtilsService.trackedUserIds(ctx.user?.id, false)
   }
+
+  @Authorization({
+    scopes: ["user.view"]
+  })
+  @Subscription(() => StatusEvent, {
+    topics: ({ context }) => {
+      if (!context.user) return []
+      return `USER_STATUS:${context.user.id}`
+    }
+  })
+  userStatus(@Root() status: StatusEvent) {
+    status.status = status.status.toLowerCase() as UserStatus
+    return status
+  }
 }
 
 @Resolver(PartialUserPublic)
@@ -468,7 +484,7 @@ function createBaseResolver<T extends ClassType>(
       })
     }
 
-    @FieldResolver(() => [Subscription])
+    @FieldResolver(() => [SubscriptionModel])
     async subscription(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return null
       return await user.$get("subscription", {
@@ -516,16 +532,14 @@ function createBaseResolver<T extends ClassType>(
           userId: user.id,
           status: "accepted"
         },
-        attributes: ["friendId"],
-        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+        attributes: ["friendId"]
       })
       return await Friend.findAll({
         where: {
           userId: ctx.user.id,
           friendId: friends.map((f) => f.friendId),
           status: "accepted"
-        },
-        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+        }
       })
     }
 
@@ -633,13 +647,12 @@ function createBaseResolver<T extends ClassType>(
 @Service()
 export class PartialUserFriendResolver {
   @FieldResolver(() => FriendNickname)
-  async nickname(@Root() user: User, @Ctx() ctx: Context) {
+  nickname(@Root() user: User, @Ctx() ctx: Context) {
     if (!ctx.user?.id || !user) return null
     return user.$get("nickname", {
       where: {
         userId: ctx.user?.id
-      },
-      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      }
     })
   }
 
@@ -648,15 +661,14 @@ export class PartialUserFriendResolver {
   })
   async blocked(@Ctx() ctx: Context, @Root() user: User) {
     if (!ctx.user?.id || !user) return false
-    const block = await BlockedUser.findOne({
-      where: {
-        userId: user.id,
-        blockedUserId: ctx.user!!.id
-      },
-      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
-    })
-    if (!block) return false
-    return !block.silent
+    const blocks =
+      ctx.meta.blocks ||
+      (await BlockedUser.findAll({
+        where: {
+          userId: ctx.user.id
+        }
+      }))
+    return blocks.some((b: BlockedUser) => b.blockedUserId === user.id)
   }
 }
 
@@ -665,7 +677,7 @@ export class PartialUserFriendResolver {
 export class BadgeResolver {
   @FieldResolver(() => User)
   async users(@Root() badge: Badge, @Ctx() ctx: Context) {
-    return await badge.$get("users", {
+    return badge.$get("users", {
       [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
   }

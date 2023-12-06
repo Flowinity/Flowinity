@@ -19,7 +19,6 @@ export function registerPlugins(app: App) {
     store.$apollo = app.config.globalProperties.$apollo;
     store.$apolloProvider = app.config.globalProperties.$apolloProvider;
     store.$app = app.config.globalProperties;
-    store.$router = useRouter();
   });
   const i18n = createI18n({
     legacy: false,
