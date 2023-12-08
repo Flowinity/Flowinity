@@ -4,16 +4,25 @@ import {
   CollectionRemovedSubscription,
   CollectionUpdatedSubscription
 } from "@/graphql/collections/subscriptions/updateCollection.graphql";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useCollectionsStore } from "@/stores/collections.store";
 
 export default function setup() {
   const collectionsStore = useCollectionsStore();
+  const router = useRouter();
+  const route = useRoute();
 
   useSubscription(CollectionRemovedSubscription).onResult(({ data }) => {
     collectionsStore.items = collectionsStore.items.filter(
       (c) => c.id !== data.collectionRemoved
     );
+
+    if (
+      route.name === "Collection" &&
+      route.params.collectionId === data.collectionRemoved
+    ) {
+      router.push({ name: "Gallery" });
+    }
   });
 
   useSubscription(CollectionCreatedSubscription).onResult(({ data }) => {

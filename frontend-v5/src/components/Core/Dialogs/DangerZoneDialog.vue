@@ -5,6 +5,7 @@
     </template>
     <div class="p-4">
       <slot name="content" />
+      <div v-if="$slots.content" class="pb-4" />
       <danger-zone-input
         v-model:password="password"
         v-model:password-mode="passwordMode"
@@ -14,7 +15,9 @@
         @confirm="confirmSubmit"
       ></danger-zone-input>
     </div>
-    <slot name="actions" />
+    <div class="flex justify-end p-2 gap-2" v-if="$slots.actions">
+      <slot name="actions" :confirm="confirmSubmit" />
+    </div>
   </tpu-dialog>
   <slot :toggle="() => (dialog = !dialog)"></slot>
 </template>
@@ -59,7 +62,11 @@ function confirmSubmit() {
     toast.error(t("dangerZone.passwordMismatch"));
     return;
   }
-  emit("confirm", { password, totp, passwordMode });
+  emit("confirm", {
+    password: password.value,
+    totp: totp.value,
+    passwordMode: passwordMode.value
+  });
 }
 </script>
 

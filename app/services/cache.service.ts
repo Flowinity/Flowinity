@@ -437,7 +437,7 @@ export class CacheService {
             ...collection.toJSON(),
             permissionsMetadata: {
               write: user.write,
-              read: user.read,
+              read: user.accepted !== false,
               configure: user.configure,
               recipient: user?.id ? user : null
             }
@@ -447,7 +447,7 @@ export class CacheService {
             ...collection.toJSON(),
             permissionsMetadata: {
               write: user.write,
-              read: user.read,
+              read: user.accepted !== false,
               configure: user.configure
             },
             recipient: user?.id ? user : null

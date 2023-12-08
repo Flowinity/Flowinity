@@ -31,6 +31,7 @@ export class CollectionService {
       id: collection.id,
       name: collection.name
     })
+    pubSub.publish("COLLECTION_CREATED:" + userId, collection)
     return collection
   }
 
@@ -257,7 +258,7 @@ export class CollectionService {
           return false
         }
       }
-      return true
+      return collection.permissionsMetadata.read
     })
 
     if (search) {
@@ -306,7 +307,8 @@ export class CollectionService {
     }
     const collections = await redis.json.get(`collections:${userId}`)
     const collection = collections.find(
-      (collection: CollectionCache) => collection.id === collectionId
+      (collection: CollectionCache) =>
+        collection.id === collectionId && collection.permissionsMetadata.read
     )
     if (!collection) return false
     return collection

@@ -135,7 +135,6 @@ export class Server {
             let devices = (await redis.json.get(
               `user:${newCtx.user.id}:platforms`
             )) as unknown as Platform[] | undefined
-            console.log(devices, "devievs")
             if (!devices) devices = []
             let platform: PlatformType
             switch (ctx?.connectionParams?.["x-tpu-client"]) {

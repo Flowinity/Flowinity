@@ -8,7 +8,7 @@
       maxHeight: props.height + 'px'
     }"
     class="relative h-full w-full"
-    v-wave
+    :v-wave="ripple"
   >
     <tpu-img
       :src="src"
@@ -32,7 +32,11 @@ import TpuImg from "@/components/Framework/Image/TpuImg.vue";
 const props = defineProps({
   src: String,
   width: [Number, String],
-  height: [Number, String]
+  height: [Number, String],
+  ripple: {
+    type: Boolean,
+    default: true
+  }
 });
 </script>
 

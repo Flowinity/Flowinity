@@ -1,22 +1,39 @@
 <template>
-  <tpu-button
-    variant="passive"
-    icon
-    class="select-none"
-    @click="$emit('update:modelValue', !modelValue)"
-    :disabled="props.disabled"
-    :style="{ maxWidth: px, maxHeight: px, minWidth: px, minHeight: px }"
+  <div
+    class="select-none items-center flex cursor-pointer"
+    @click="props.disabled ? () => {} : $emit('update:modelValue', !modelValue)"
   >
     <RiCheckboxBlankLine
       class="w-full h-full"
-      :style="{ color }"
+      :style="{
+        maxWidth: px,
+        maxHeight: px,
+        minWidth: px,
+        minHeight: px,
+        color
+      }"
       v-if="!modelValue"
     />
-    <RiCheckboxFill class="w-full h-full" v-else :style="{ color }" />
-    <span class="text-gray-900 dark:text-white" v-if="props.label">
-      {{ props.label }}
+    <RiCheckboxFill
+      class=""
+      v-else
+      :style="{
+        maxWidth: px,
+        maxHeight: px,
+        minWidth: px,
+        minHeight: px,
+        color
+      }"
+    />
+    <span
+      class="text-gray-900 dark:text-white ml-2"
+      v-if="props.label || $slots.label"
+    >
+      <slot name="label">
+        {{ props.label }}
+      </slot>
     </span>
-  </tpu-button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -43,11 +60,11 @@ const props = defineProps({
 const px = computed(() => {
   switch (props.size) {
     case "s":
-      return "38px";
+      return "20px";
     case "m":
-      return "40px";
+      return "25px";
     case "l":
-      return "60px";
+      return "40px";
   }
 });
 

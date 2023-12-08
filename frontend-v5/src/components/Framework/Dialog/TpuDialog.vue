@@ -1,5 +1,5 @@
 <template>
-  <teleport to="#main-flex">
+  <teleport to="#main-flex" v-if="ready">
     <div
       class="dialog-scrim"
       :style="{ zIndex: 5000 + indexLayer }"
@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { nextTick, ref, watch } from "vue";
 import TpuToolbar from "@/components/Framework/Toolbar/TpuToolbar.vue";
 import Card from "@/components/Framework/Card/Card.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
@@ -88,9 +88,13 @@ function handleClose(event: KeyboardEvent) {
 
 const framework = useFrameworkStore();
 
+const ready = ref(false);
+
 watch(
   () => props.modelValue,
   (val) => {
+    const mainFlexElement = document.querySelector("#main-flex");
+    ready.value = !!mainFlexElement;
     if (!val) {
       framework.dialogsOpened = framework.dialogsOpened - 1;
       if (!framework.dialogsOpened) {
@@ -114,6 +118,13 @@ watch(
     }
   }
 );
+
+nextTick(() => {
+  const mainFlexElement = document.querySelector("#main-flex");
+  if (mainFlexElement) {
+    ready.value = true;
+  }
+});
 </script>
 
 <style scoped>

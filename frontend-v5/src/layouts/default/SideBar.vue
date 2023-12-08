@@ -33,6 +33,13 @@ const props = defineProps({
 });
 
 const context = ref(0);
+
+watch(
+  () => appStore.currentRail,
+  (value) => {
+    console.log(value);
+  }
+);
 </script>
 
 <template>

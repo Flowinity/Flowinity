@@ -105,7 +105,7 @@
           <template #icon>
             <user-avatar
               :status="false"
-              :src="`/i/${collection.avatar || collection.banner}`"
+              :avatar="collection.avatar || collection.banner"
               :username="collection.name"
             ></user-avatar>
           </template>

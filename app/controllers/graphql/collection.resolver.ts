@@ -35,6 +35,8 @@ import { CacheService } from "@app/services/cache.service"
 import { Success } from "@app/classes/graphql/generic/success"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import {
+  AcceptCollectionInviteInput,
+  LeaveCollectionInput,
   RemoveCollectionUserInput,
   TransferCollectionOwnershipInput,
   UpdateCollectionUserPermissionsInput
@@ -479,6 +481,81 @@ export class CollectionUserResolver {
     )
 
     await this.cacheService.resetCollectionCache(input.collectionId)
+    return { success: true }
+  }
+
+  @Authorization({
+    scopes: "collections.modify"
+  })
+  @Mutation(() => Success)
+  async actOnCollectionInvite(
+    @Ctx() ctx: Context,
+    @Arg("input") input: AcceptCollectionInviteInput
+  ) {
+    const collectionUser = await CollectionUser.findOne({
+      where: {
+        collectionId: input.collectionId,
+        recipientId: ctx.user!!.id,
+        accepted: false
+      }
+    })
+    if (!collectionUser) throw new GqlError("COLLECTION_NOT_FOUND")
+    if (!input.accept) {
+      await collectionUser.destroy()
+      this.collectionService.emitForAllPubSub(
+        input.collectionId,
+        "COLLECTION_USER_REMOVED",
+        collectionUser
+      )
+      await this.cacheService.resetCollectionCache(input.collectionId)
+      return { success: true }
+    }
+    await collectionUser.update({
+      accepted: true
+    })
+    this.collectionService.emitForAllPubSub(
+      input.collectionId,
+      "COLLECTION_USER_UPDATED",
+      collectionUser
+    )
+    pubSub.publish(
+      `COLLECTION_CREATED:${ctx.user!!.id}`,
+      await Collection.findOne({
+        where: {
+          id: input.collectionId
+        }
+      })
+    )
+    await this.cacheService.resetCollectionCache(input.collectionId)
+    return { success: true }
+  }
+
+  @Authorization({
+    scopes: "collections.modify"
+  })
+  @Mutation(() => Success)
+  async leaveCollection(
+    @Ctx() ctx: Context,
+    @Arg("input") input: LeaveCollectionInput
+  ) {
+    const collectionUser = await CollectionUser.findOne({
+      where: {
+        collectionId: input.collectionId,
+        recipientId: ctx.user!!.id
+      }
+    })
+    if (!collectionUser) throw new GqlError("COLLECTION_NOT_FOUND")
+    await collectionUser.destroy()
+    await this.cacheService.resetCollectionCache(
+      input.collectionId,
+      ctx.user!!.id
+    )
+    this.collectionService.emitForAllPubSub(
+      input.collectionId,
+      "COLLECTION_USER_REMOVED",
+      collectionUser
+    )
+    pubSub.publish(`COLLECTION_REMOVED:${ctx.user!!.id}`, input.collectionId)
     return { success: true }
   }
 

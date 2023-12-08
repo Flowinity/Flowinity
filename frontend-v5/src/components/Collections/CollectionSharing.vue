@@ -49,14 +49,19 @@
       </div>
       <tpu-data-table :items="users" :headers="headers" class="pt-2">
         <template v-slot:item.user.username="{ item }">
-          <span class="flex items-center gap-2">
+          <div class="flex items-center gap-2">
             <user-avatar
               :avatar="item.user.avatar"
               :user-id="item.user.id"
               :username="item.user.username"
               size="22"
             ></user-avatar>
-            {{ item.user.username }}
+            <div class="flex flex-col">
+              {{ item.user.username }}
+              <span class="text-medium-emphasis-dark" v-if="!item.accepted">
+                {{ t("collections.sharing.pending") }}
+              </span>
+            </div>
             <tpu-button
               v-if="item.user.id === collection.userId"
               icon
@@ -66,7 +71,7 @@
             >
               <RiVipCrownFill style="width: 20px" />
             </tpu-button>
-          </span>
+          </div>
         </template>
         <template v-slot:item.read="{ item }">
           <tpu-checkbox
@@ -119,18 +124,38 @@
           />
         </template>
         <template v-slot:item.actions="{ item }">
-          <danger-zone-dialog>
+          <danger-zone-dialog @confirm="transferOwnership($event)">
+            <template #toolbar>
+              {{ t("collections.transfer.title") }}
+            </template>
             <template #content>
-              <div class="flex justify-center">
-                <user-avatar :avatar="collection.image" size="70" />
-                <RiArrowRightSLine style="width: 70px" />
-                <user-avatar
-                  :user="transferUser"
-                  :avatar="transferUser?.avatar"
-                  :username="transferUser?.username"
-                  :user-id="transferUser?.id"
-                  size="70"
-                />
+              <div class="flex flex-col items-center">
+                <h2>
+                  {{ t("collections.transfer.title") }}
+                </h2>
+                <p class="text-medium-emphasis-dark pb-4">
+                  {{
+                    t("collections.transfer.description", {
+                      collection: collection.name,
+                      user: transferUser?.username
+                    })
+                  }}
+                </p>
+                <div class="flex justify-center">
+                  <user-avatar
+                    :avatar="collection.avatar || collection.banner"
+                    :username="collection.name"
+                    size="70"
+                  />
+                  <RiArrowRightSLine style="width: 70px" />
+                  <user-avatar
+                    :user="transferUser"
+                    :avatar="transferUser?.avatar"
+                    :username="transferUser?.username"
+                    :user-id="transferUser?.id"
+                    size="70"
+                  />
+                </div>
               </div>
             </template>
             <template #default="{ toggle }">
@@ -146,8 +171,19 @@
                   item.recipientId !== collection.userId &&
                   collection.userId === userStore.user?.id
                 "
+                :disabled="!item.accepted"
               >
                 <RiUserSharedLine class="w-full h-full" />
+              </tpu-button>
+            </template>
+
+            <template #actions="{ confirm }">
+              <tpu-button
+                variant="passive"
+                :loading="loading"
+                @click="confirm()"
+              >
+                {{ t("collections.transfer.action") }}
               </tpu-button>
             </template>
           </danger-zone-dialog>
@@ -206,6 +242,7 @@ import RiVipCrownFill from "vue-remix-icons/icons/ri-vip-crown-fill.vue";
 import RiUserSharedLine from "vue-remix-icons/icons/ri-user-shared-line.vue";
 import DangerZoneDialog from "@/components/Core/Dialogs/DangerZoneDialog.vue";
 import RiArrowRightSLine from "vue-remix-icons/icons/ri-arrow-right-s-line.vue";
+import { TransferCollectionOwnership } from "@/graphql/collections/transferOwnership.graphql";
 
 const shareLinkOptions = [
   {
@@ -254,7 +291,30 @@ const loading = ref(false);
 const appStore = useAppStore();
 const friend = ref<undefined | number>(undefined);
 
-const transferUser = ref<number | PartialUserFriend>(undefined);
+const transferUser = ref<undefined | PartialUserFriend>(undefined);
+async function transferOwnership(args: {
+  passwordMode: boolean;
+  password: string;
+  totp: string;
+}) {
+  loading.value = true;
+  try {
+    await useApolloClient().client.mutate({
+      mutation: TransferCollectionOwnership,
+      variables: {
+        input: {
+          password: args.passwordMode ? args.password : undefined,
+          totp: !args.passwordMode ? args.totp : undefined,
+          collectionId: props.collection?.id,
+          userId: transferUser.value?.id
+        }
+      }
+    });
+    emit("update:modelValue", false);
+  } finally {
+    loading.value = false;
+  }
+}
 
 const users = computed(() => {
   return [
@@ -263,7 +323,8 @@ const users = computed(() => {
       user: props.collection?.user || {},
       read: true,
       write: true,
-      configure: true
+      configure: true,
+      accepted: true
     },
     ...(props.collection?.users || [])
   ];

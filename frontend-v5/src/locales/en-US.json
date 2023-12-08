@@ -3,7 +3,8 @@
     "username": "Username",
     "password": "Password",
     "totp": "2FA code (if enabled)",
-    "login": "Login"
+    "login": "Login",
+    "email": "Email"
   },
   "generic": {
     "minLength": "You need at least 1 character. | You need at least {count} characters.",
@@ -19,7 +20,10 @@
     "search": "Search",
     "remove": "Remove",
     "edit": "Edit",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "accept": "Accept",
+    "reject": "Reject",
+    "deny": "Deny"
   },
   "dangerZone": {
     "usePassword": "Use password instead",
@@ -105,7 +109,8 @@
     "nav": {
       "share": "Sharing",
       "settings": "Settings",
-      "shareLink": "Copy ShareLink"
+      "shareLink": "Copy ShareLink",
+      "leave": "Leave Collection"
     },
     "settings": {
       "title": "Collection Settings",
@@ -113,11 +118,22 @@
     },
     "sharing": {
       "title": "Collection Sharing",
-      "add": "Add friend to collection"
+      "add": "Add friend to collection",
+      "pending": "(pending)"
     },
     "create": {
       "title": "Create Collection",
       "create": "Create"
+    },
+    "transfer": {
+      "title": "Transfer Collection",
+      "description": "Are you sure you want to transfer {collection} to {user}?",
+      "action": "Transfer"
+    },
+    "leave": {
+      "title": "Leave Collection",
+      "description": "Are you sure you want to leave {collection}?",
+      "action": "Leave"
     }
   },
   "communications": {
@@ -209,6 +225,7 @@
     "collections": {
       "create": "Create collection",
       "title": "Collections",
+      "invited": "Invites",
       "sort": {
         "alphabetical": "Alphabetical",
         "updated": "Last updated",

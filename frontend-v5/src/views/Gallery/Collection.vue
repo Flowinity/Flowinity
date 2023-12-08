@@ -31,10 +31,25 @@
   <teleport to="#appbar-options-first">
     <transition mode="out-in" name="slide-up" appear>
       <div class="flex gap-2">
-        <transition appear v-if="collection?.shareLink">
+        <transition name="slide-up" mode="out-in">
+          <leave-collection-dialog :collection="collection" v-slot="{ toggle }">
+            <tpu-button
+              icon
+              v-if="collection?.userId !== userStore.user?.id"
+              :key="collection?.userId"
+              variant="passive"
+              v-tooltip.bottom="t('collections.nav.leave')"
+              @click="toggle"
+            >
+              <RiLogoutBoxLine style="width: 20px" />
+            </tpu-button>
+          </leave-collection-dialog>
+        </transition>
+        <transition name="slide-up" mode="out-in">
           <tpu-button
             icon
-            :key="!!collection?.shareLink"
+            v-if="!!collection?.shareLink"
+            :key="collection?.userId"
             variant="passive"
             @click="
               functions.copy(
@@ -102,7 +117,6 @@ const id: ComputedRef<number | string> = computed(() => {
   const rid = <string>route.params.id;
   return isNumeric(rid) ? (typeof rid === "number" ? rid : parseInt(rid)) : rid;
 });
-const toast = useToast();
 import RiLink from "vue-remix-icons/icons/ri-link.vue";
 import dayjs from "@/plugins/dayjs";
 import { h, markRaw } from "vue";
@@ -117,6 +131,12 @@ import {
   CollectionUserRemoveSubscription,
   CollectionUserUpdateSubscription
 } from "@/graphql/collections/subscriptions/updateCollection.graphql";
+import { useUserStore } from "@/stores/user.store";
+import RiLogoutBoxLine from "vue-remix-icons/icons/ri-logout-box-line.vue";
+import LeaveCollectionDialog from "@/components/Collections/LeaveCollectionDialog.vue";
+
+const userStore = useUserStore();
+const toast = useToast();
 
 const banner = computed(() => {
   if (!collection.value?.banner) return null;
@@ -147,7 +167,8 @@ function setAppBar() {
           })
         : markRaw(RiCollageLine),
       path: route.path,
-      selectedIcon: markRaw(RiCollageFill)
+      selectedIcon: markRaw(RiCollageFill),
+      _rail: RailMode.GALLERY
     },
     rail: [
       appStore.navigation.railOptions.find(

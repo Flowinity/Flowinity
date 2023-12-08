@@ -30,3 +30,15 @@ export class TransferCollectionOwnershipInput extends DangerZoneInput {
   @Field(() => Int)
   collectionId: number
 }
+
+@InputType()
+export class LeaveCollectionInput {
+  @Field(() => Int)
+  collectionId: number
+}
+
+@InputType()
+export class AcceptCollectionInviteInput extends LeaveCollectionInput {
+  @Field(() => Boolean)
+  accept: boolean
+}

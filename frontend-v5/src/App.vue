@@ -15,6 +15,7 @@ import { useChatStore } from "@/stores/chat.store";
 import { usePulseStore } from "@/stores/pulse.store";
 import { watch } from "vue";
 import ConnectionOverlay from "@/components/Core/ConnectionOverlay.vue";
+import ThreePanelLayout from "@/components/Core/ThreePanelLayout.vue";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -73,38 +74,43 @@ watch(
       id="main-area"
     >
       <transition name="dialog-transition">
-        <connection-overlay v-if="userStore.user && !appStore.connected" />
+        <connection-overlay />
       </transition>
       <quick-switcher v-model="appStore.dialogs.core.quickSwitcher.value" />
-      <tpu-navigation-drawer
-        v-model="appStore.drawer"
-        class="flex"
-        v-if="userStore.user && frameworkStore.breakpoints.mobile"
-      >
-        <super-bar class="fixed top-0 left-0" :drawer="true" />
-        <side-bar class="fixed top-0 left-0" :drawer="true" />
-      </tpu-navigation-drawer>
-      <super-bar
-        class="fixed top-0 left-0 z-50"
-        v-if="userStore.user && !frameworkStore.breakpoints.mobile"
-      />
-      <div class="flex w-full" id="main-flex">
-        <side-bar
-          class="fixed top-0 left-0"
+      <template v-if="!frameworkStore.breakpoints.mobile">
+        <tpu-navigation-drawer
+          v-model="appStore.drawer"
+          class="flex"
+          v-if="userStore.user && frameworkStore.breakpoints.mobile"
+        >
+          <super-bar class="fixed top-0 left-0" :drawer="true" />
+          <side-bar class="fixed top-0 left-0" :drawer="true" />
+        </tpu-navigation-drawer>
+        <super-bar
+          class="fixed top-0 left-0 z-50"
           v-if="userStore.user && !frameworkStore.breakpoints.mobile"
         />
-        <div class="flex flex-col w-full">
-          <app-bar class="bg-white z-10" v-if="userStore.user" />
+        <div class="flex w-full" id="main-flex">
+          <side-bar
+            class="fixed top-0 left-0"
+            v-if="userStore.user && !frameworkStore.breakpoints.mobile"
+          />
+          <div class="flex flex-col w-full">
+            <app-bar class="bg-white z-10" v-if="userStore.user" />
 
-          <main
-            class="w-full overflow-auto"
-            :class="appStore.heightOffset"
-            id="app-area"
-          >
-            <RouterView />
-          </main>
+            <main
+              class="w-full overflow-auto"
+              :class="appStore.heightOffset"
+              id="app-area"
+            >
+              <RouterView />
+            </main>
+          </div>
         </div>
-      </div>
+      </template>
+      <template v-else>
+        <three-panel-layout />
+      </template>
     </div>
   </div>
 </template>
