@@ -48,6 +48,12 @@ export const CollectionCreatedSubscription = gql`
       shareLink
       userId
       itemCount
+      new
+      permissionsMetadata {
+        read
+        write
+        configure
+      }
     }
   }
 `;

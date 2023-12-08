@@ -640,7 +640,10 @@ export class CollectionUserResolver {
     }
   })
   collectionCreated(@Root() collection: Collection) {
-    return collection
+    return {
+      ...("toJSON" in collection ? collection.toJSON() : collection),
+      new: true
+    }
   }
 
   @Authorization({

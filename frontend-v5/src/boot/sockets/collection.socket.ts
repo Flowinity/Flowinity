@@ -9,14 +9,14 @@ import { useCollectionsStore } from "@/stores/collections.store";
 
 export default function setup() {
   const collectionsStore = useCollectionsStore();
-  const router = useRouter();
-  const route = useRoute();
 
   useSubscription(CollectionRemovedSubscription).onResult(({ data }) => {
     collectionsStore.items = collectionsStore.items.filter(
       (c) => c.id !== data.collectionRemoved
     );
-
+    const router = useRouter();
+    const route = useRoute();
+    console.log(route);
     if (
       route.name === "Collection" &&
       route.params.collectionId === data.collectionRemoved
@@ -27,8 +27,11 @@ export default function setup() {
 
   useSubscription(CollectionCreatedSubscription).onResult(({ data }) => {
     collectionsStore.items = [
-      ...collectionsStore.items,
-      data.collectionCreated
+      {
+        ...data.collectionCreated,
+        new: true
+      },
+      ...collectionsStore.items
     ];
   });
 

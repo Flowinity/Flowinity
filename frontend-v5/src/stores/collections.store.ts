@@ -16,6 +16,7 @@ export const useCollectionsStore = defineStore("collections", () => {
   const pager = ref<Pager | null>(null);
   const { resolveClient } = useApolloClient();
   const client = resolveClient();
+  const invites = ref<number>(0);
 
   async function getCollection(id: string | number) {
     const {
@@ -71,7 +72,7 @@ export const useCollectionsStore = defineStore("collections", () => {
 
   async function init() {
     const {
-      data: { collections }
+      data: { collections, collectionInvitesCount }
     } = await client.query({
       query: UserLightCollectionsQuery,
       variables: {
@@ -80,6 +81,7 @@ export const useCollectionsStore = defineStore("collections", () => {
       fetchPolicy: "network-only"
     });
     items.value = collections.items;
+    invites.value = collectionInvitesCount;
   }
 
   return {
@@ -90,6 +92,7 @@ export const useCollectionsStore = defineStore("collections", () => {
     removeFromCollection,
     selected,
     writable,
-    init
+    init,
+    invites
   };
 });

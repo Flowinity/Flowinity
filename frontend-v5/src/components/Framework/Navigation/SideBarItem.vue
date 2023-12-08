@@ -43,9 +43,8 @@ const selected = computed(() => {
           'rounded-full': props.highlighted
         }"
         @click.prevent.stop="
-          !selected && !$attrs['onClick']
-            ? router.push(item?.path || to)
-            : () => {};
+          $attrs['onClick'] && $attrs['onClick']();
+          !selected ? router.push(item?.path || to) : () => {};
           props.closeOnClick ? (appStore.drawer = false) : () => {};
         "
         v-wave

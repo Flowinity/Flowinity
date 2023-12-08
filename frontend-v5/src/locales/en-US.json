@@ -23,7 +23,8 @@
     "noResults": "No results found",
     "accept": "Accept",
     "reject": "Reject",
-    "deny": "Deny"
+    "deny": "Deny",
+    "new": "New"
   },
   "dangerZone": {
     "usePassword": "Use password instead",
