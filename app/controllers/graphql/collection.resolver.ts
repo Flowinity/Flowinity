@@ -526,6 +526,15 @@ export class CollectionUserResolver {
         }
       })
     )
+    pubSub.publish(
+      `COLLECTION_INVITE_COUNT:${ctx.user!!.id}`,
+      await CollectionUser.count({
+        where: {
+          recipientId: ctx.user!!.id,
+          accepted: false
+        }
+      })
+    )
     await this.cacheService.resetCollectionCache(input.collectionId)
     return { success: true }
   }
@@ -692,5 +701,18 @@ export class CollectionUserResolver {
     input: FilterCollectionInput
   ) {
     return collectionUser
+  }
+
+  @Authorization({
+    scopes: "collections.view"
+  })
+  @Subscription(() => Int, {
+    topics: ({ context }) => {
+      return `COLLECTION_INVITE_COUNT:${context.user!!.id}`
+    }
+  })
+  collectionInviteCount(@Root() count: number) {
+    console.log(count)
+    return count
   }
 }

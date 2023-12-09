@@ -40,6 +40,7 @@ import { Container } from "typedi"
 import { authChecker } from "@app/lib/graphql/AuthChecker"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import { PulseResolver } from "@app/controllers/graphql/pulse.resolver"
+import { EmbedDataV2Resolver } from "@app/controllers/graphql/messageEmbed.resolver"
 
 export const generateSchema = () => {
   return buildSchema({
@@ -75,7 +76,8 @@ export const generateSchema = () => {
       ChatAuditLogResolver,
       OauthConsentAppResolver,
       AutoCollectRuleResolver,
-      PulseResolver
+      PulseResolver,
+      EmbedDataV2Resolver
     ],
     container: Container,
     authChecker: authChecker,

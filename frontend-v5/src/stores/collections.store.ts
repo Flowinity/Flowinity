@@ -8,7 +8,7 @@ import {
   AddToCollectionMutation,
   RemoveFromCollectionMutation
 } from "@/graphql/collections/addToCollection.graphql";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { UserLightCollectionsQuery } from "@/graphql/collections/getUserCollections.graphql";
 
 export const useCollectionsStore = defineStore("collections", () => {
@@ -84,6 +84,10 @@ export const useCollectionsStore = defineStore("collections", () => {
     invites.value = collectionInvitesCount;
   }
 
+  function navigateToCollection(id: number) {
+    useRouter().push(`/collections/${id}`);
+  }
+
   return {
     items,
     pager,
@@ -93,6 +97,7 @@ export const useCollectionsStore = defineStore("collections", () => {
     selected,
     writable,
     init,
-    invites
+    invites,
+    navigateToCollection
   };
 });

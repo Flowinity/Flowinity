@@ -422,6 +422,7 @@ export class CollectionService {
     })
 
     this.emitForAllPubSub(collectionId, "COLLECTION_USER_REMOVED", user)
+    pubSub.publish(`COLLECTION_REMOVED:${recipientId}`, collectionId)
 
     return result
   }
@@ -499,6 +500,16 @@ export class CollectionService {
     )
 
     this.emitForAllPubSub(collectionId, "COLLECTION_USER_ADDED", collectionUser)
+
+    pubSub.publish(
+      `COLLECTION_INVITE_COUNT:${user.id}`,
+      await CollectionUser.count({
+        where: {
+          recipientId: user.id,
+          accepted: false
+        }
+      })
+    )
 
     socket.of(SocketNamespaces.GALLERY).to(user.id).emit("addedToCollection", {
       id: collection.id,
@@ -701,7 +712,12 @@ export class CollectionService {
       name
     })
 
-    this.emitForAllPubSub(collection.id, `COLLECTION_UPDATED`, collection)
+    this.emitForAllPubSub(
+      collection.id,
+      `
+  }COLLECTION_UPDATED`,
+      collection
+    )
 
     return {
       name

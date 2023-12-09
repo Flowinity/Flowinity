@@ -229,7 +229,8 @@ export const useChatStore = defineStore("chat", () => {
     memberSidebar: !localStorage.getItem("memberList")
       ? true
       : localStorage.getItem("memberList") === "true",
-    searchSidebar: false
+    searchSidebar: false,
+    search: ""
   });
 
   watch(

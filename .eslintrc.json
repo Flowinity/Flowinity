@@ -11,7 +11,6 @@
       { "argsIgnorePattern": "^_" }
     ]
   },
-  "extends": "eslint:all",
   "globals": {
     "NodeJS": true,
     "Express": true,

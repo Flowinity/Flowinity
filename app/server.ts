@@ -1,7 +1,7 @@
 import * as http from "http"
 import { AddressInfo } from "net"
 import { Container, Service } from "typedi"
-import { caching, MemoryCache } from "cache-manager"
+import { MemoryCache, caching } from "cache-manager"
 import dayjs from "dayjs"
 import isoWeek from "dayjs/plugin/isoWeek"
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore"
@@ -49,6 +49,7 @@ import { UserUtilsService } from "@app/services/userUtils.service"
 import { Platform, PlatformType } from "@app/classes/graphql/user/platforms"
 import cryptoRandomString from "crypto-random-string"
 import { randomUUID } from "crypto"
+import { GqlError } from "@app/lib/gqlErrors"
 
 @Service({ eager: false })
 export class Server {
@@ -78,13 +79,18 @@ export class Server {
     const port: number =
       typeof val === "string" ? parseInt(val, this.baseDix) : val
 
-    if (isNaN(port)) return val
-    else if (port >= 0) return port
-    else return false
+    if (isNaN(port)) {
+      return val
+    } else if (port >= 0) {
+      return port
+    }
+    return false
   }
 
   async startSocket() {
-    if (!this.server) this.server = http.createServer(this.application.app)
+    if (!this.server) {
+      this.server = http.createServer(this.application.app)
+    }
     this.socket = await createSocket(this.application.app, this.legacyServer)
     global.socket = this.socket as unknown as SocketServerWithUser
     new SocketControllers({
@@ -113,8 +119,27 @@ export class Server {
         execute: (args: any) => args.rootValue.execute(args),
         subscribe: (args: any) => args.rootValue.subscribe(args),
         onConnect: async (ctx) => {
-          const newCtx = await generateContext(ctx)
+          if (!ctx.extra) {
+            //@ts-ignore
+            ctx.extra = {}
+          }
+          //@ts-ignore
+          ctx.extra.resumableState = ctx?.connectionParams?.[
+            "x-tpu-resumable-state-id"
+          ] as string | undefined
+          //@ts-ignore
           const id = randomUUID()
+          if (
+            !ctx?.extra?.resumableState ||
+            typeof ctx?.extra?.resumableState !== "string" ||
+            // @ts-ignore
+            !ctx?.extra?.resumableState?.match(
+              /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+            )
+          ) {
+            throw new GqlError("INVALID_RESUMABLE_STATE_KEY")
+          }
+          const newCtx = await generateContext(ctx)
           if (
             newCtx.user &&
             newCtx.user.storedStatus !== UserStoredStatus.INVISIBLE
@@ -135,15 +160,16 @@ export class Server {
             let devices = (await redis.json.get(
               `user:${newCtx.user.id}:platforms`
             )) as unknown as Platform[] | undefined
-            if (!devices) devices = []
+            if (!devices) {
+              devices = []
+            }
             let platform: PlatformType
             switch (ctx?.connectionParams?.["x-tpu-client"]) {
               case "android_kotlin":
                 platform = PlatformType.MOBILE
                 break
               case "TPUv5 (Flowinity)":
-                platform = PlatformType.WEB
-                break
+              case "Flowinity5":
               case "TPUvNEXT":
                 platform = PlatformType.WEB
                 break
@@ -154,7 +180,7 @@ export class Server {
               devices.pop()
             }
             devices.unshift({
-              platform: platform,
+              platform,
               lastSeen: new Date().toISOString(),
               status: newCtx.user.storedStatus as unknown as UserStatus,
               id
@@ -177,17 +203,20 @@ export class Server {
             )
           }
           //@ts-ignore
-          if (!ctx.extra) ctx.extra = {}
-          //@ts-ignore
           ctx.extra.id = id
           //@ts-ignore
           ctx.extra.userId = newCtx.user?.id
           return {
             ...ctx,
-            id
+            id,
+            resumableState: ctx.extra.resumableState
           }
         },
-        onDisconnect: async (ctx) => {
+        onDisconnect: async (ctx, code) => {
+          // Get error code
+          console.log(ctx.extra.userId, "DISCONNECTED")
+          if (code !== 1000) {
+          }
           if (ctx.extra.userId) {
             let clients = (await redis.json.get(
               `user:${ctx.extra.userId}:platforms`
@@ -230,45 +259,46 @@ export class Server {
         },
         onSubscribe: async (ctx, msg) => {
           const {
-            schema,
-            execute,
-            subscribe,
-            contextFactory,
-            parse,
-            validate
-          } = this.application.yogaApp.getEnveloped({
-            ...ctx,
-            ...(await generateContext(ctx)),
-            req: ctx.extra.request,
-            socket: ctx.extra.socket,
-            params: msg.payload
-          })
-
-          const args = {
-            schema,
-            operationName: msg.payload.operationName,
-            document: parse(msg.payload.query),
-            variableValues: msg.payload.variables,
-            contextValue: await contextFactory(),
-            rootValue: {
+              schema,
               execute,
-              subscribe
-            }
+              subscribe,
+              contextFactory,
+              parse,
+              validate
+            } = this.application.yogaApp.getEnveloped({
+              ...ctx,
+              ...(await generateContext(ctx)),
+              req: ctx.extra.request,
+              socket: ctx.extra.socket,
+              params: msg.payload
+            }),
+            args = {
+              schema,
+              operationName: msg.payload.operationName,
+              document: parse(msg.payload.query),
+              variableValues: msg.payload.variables,
+              contextValue: await contextFactory(),
+              rootValue: {
+                execute,
+                subscribe
+              }
+            },
+            errors = validate(args.schema, args.document)
+          if (errors.length) {
+            return errors
           }
-
-          const errors = validate(args.schema, args.document)
-          if (errors.length) return errors
           return args
-        }
+        },
+        onNext: async (ctx, msg, args) => {}
       },
       wsServer
     )
   }
 
   async init(port?: number, noBackgroundTasks = false): Promise<void> {
-    const cpuCount: number = os.cpus().length
-    const mainWorker: boolean =
-      !cluster.worker || cluster.worker?.id % cpuCount === 1
+    const cpuCount: number = os.cpus().length,
+      mainWorker: boolean =
+        !cluster.worker || cluster.worker?.id % cpuCount === 1
     global.mainWorker = mainWorker
 
     this.application.app.set(
@@ -293,8 +323,10 @@ export class Server {
       global.domain = await Domain.findOne({
         where: { id: 1 }
       }).then((domain: Domain | null) => {
-        if (domain) return domain.domain
-        else return undefined
+        if (domain) {
+          return domain.domain
+        }
+        return undefined
       })
     }
     global.config = this.config
@@ -322,7 +354,7 @@ export class Server {
 
     process.on(
       "uncaughtException",
-      function (err: Error, origin: NodeJS.UncaughtExceptionOrigin) {
+      (err: Error, origin: NodeJS.UncaughtExceptionOrigin) => {
         console.log(origin)
         console.warn(err)
       }
@@ -344,13 +376,14 @@ export class Server {
   }
 
   private onError(error: NodeJS.ErrnoException): void {
-    if (error.syscall !== "listen") throw error
+    if (error.syscall !== "listen") {
+      throw error
+    }
 
     const port: string | number | boolean = Server.normalizePort(
-      this.config?.port || "34582"
-    )
-    const bind: string =
-      typeof port === "string" ? "Pipe " + port : "Port " + port
+        this.config?.port || "34582"
+      ),
+      bind: string = typeof port === "string" ? `Pipe ${port}` : `Port ${port}`
 
     switch (error.code) {
       case "EACCES":
@@ -382,16 +415,16 @@ export class Server {
 
   // When the Express.JS server starts listening on the port
   private onListening(): void {
-    const addr: AddressInfo = this.server.address() as AddressInfo
-    const bind: string = `port ${addr.port}`
+    const addr: AddressInfo = this.server.address() as AddressInfo,
+      bind: string = `port ${addr.port}`
 
     // eslint-disable-next-line no-console
     console.log(`[SERVER_V5] Listening on ${bind}`)
   }
 
   private onLegacyListening(): void {
-    const addr: AddressInfo = this.legacyServer.address() as AddressInfo
-    const bind: string = `port ${addr.port}`
+    const addr: AddressInfo = this.legacyServer.address() as AddressInfo,
+      bind: string = `port ${addr.port}`
 
     // eslint-disable-next-line no-console
     console.log(`[SERVER_LEGACY] Listening on ${bind}`)

@@ -122,10 +122,12 @@ export default function setup(app: App) {
       return {
         authorization: userStore.token,
         "x-tpu-client-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": "TPUv5 (Flowinity)"
+        "x-tpu-client": "Flowinity5",
+        "x-tpu-resumable-state-id": crypto.randomUUID()
       };
     },
     lazy: false,
+    keepAlive: 5000,
     on: {
       error: () => {
         console.log("[Flowinity/GraphQL] Disconnected from socket.");
@@ -208,6 +210,8 @@ export default function setup(app: App) {
 
   app.use(apolloProvider);
   app.provide(DefaultApolloClient, apolloClient);
+  app.provide("wsClient", wsClient);
+
   provideApolloClient(apolloClient);
 
   watch(

@@ -4,10 +4,12 @@
       :style="{
         maxWidth: width <= 500 ? width + 'px' : 500 + 'px',
         maxHeight:
-          embed.data.height > 400 ? 700 + 'px' : embed.data.height * 2 + 'px'
+          embed?.data?.height > 400
+            ? 700 + 'px'
+            : embed?.data?.height * 2 + 'px'
       }"
-      :src="embed.data.url"
-      class="pointer rounded-xl mb-1"
+      :src="embed?.data?.url"
+      class="pointer rounded mb-1"
     />
   </div>
 </template>

@@ -20,73 +20,13 @@
     </div>
   </tpu-dialog>
   <div class="flex flex-col gap-4">
+    <tpu-expansion-panel v-model:expanded="settings.graphqlActions">
+      <template #header>GraphQL Actions</template>
+      <sidebar-debug-graph-q-l-actions />
+    </tpu-expansion-panel>
     <tpu-expansion-panel v-model:expanded="settings.graphql">
       <template #header>GraphQL</template>
-      <div>
-        <tpu-switch
-          v-model="settings.gqlExclPulse"
-          label="Excl. Pulse"
-        ></tpu-switch>
-        <text-field v-model="operationsSearch" label="Search" />
-        <tpu-list>
-          <tpu-list-item v-for="operation in operations" :key="operation.id">
-            <div>
-              {{ operation.name }}
-              <div class="flex gap-2">
-                <tpu-button
-                  :color="
-                    operation.type === 'mutation'
-                      ? 'green'
-                      : operation.type === 'query'
-                        ? 'blue'
-                        : 'yellow'
-                  "
-                  :no-ripple="true"
-                  style="font-size: 8px"
-                  class="flex items-center"
-                >
-                  {{ operation.type?.toUpperCase().slice(0, 3) }}
-                </tpu-button>
-                <tpu-button
-                  :color="
-                    Math.round(operation.time) > 500
-                      ? 'red'
-                      : Math.round(operation.time) > 300
-                        ? 'yellow'
-                        : 'green'
-                  "
-                  :no-ripple="true"
-                  style="font-size: 14px"
-                  class="flex items-center"
-                >
-                  <template v-if="!operation.pending">
-                    {{ Math.round(operation.time) }}
-                  </template>
-                  <template v-else>
-                    <tpu-spinner
-                      style="width: 20px; height: 22px"
-                      color="green"
-                    />
-                  </template>
-                </tpu-button>
-                <tpu-button
-                  v-tooltip.top="'Arguments'"
-                  @click="
-                    args = JSON.stringify(operation.args, null, 2);
-                    result = JSON.stringify(operation.result, null, 2);
-                    dialog = true;
-                  "
-                  style="font-size: 14px"
-                  class="flex items-center"
-                >
-                  <ri-information-line style="width: 20px" />
-                </tpu-button>
-              </div>
-            </div>
-          </tpu-list-item>
-        </tpu-list>
-        <tpu-pager v-model="operationsPage" :pages="operationsPages" />
-      </div>
+      <sidebar-debug-graph-q-l />
     </tpu-expansion-panel>
     <tpu-expansion-panel v-model:expanded="settings.websocket">
       <template #header>Legacy Gateway</template>
@@ -115,33 +55,35 @@
 
 <script setup lang="ts">
 import TpuExpansionPanel from "@/components/Framework/ExpansionPanel/TpuExpansionPanel.vue";
-import { useApolloClient } from "@vue/apollo-composable";
-import { useDebugStore } from "@/stores/debug.store";
 import TpuList from "@/components/Framework/List/TpuList.vue";
 import TpuListItem from "@/components/Framework/List/TpuListItem.vue";
-import TpuButton from "@/components/Framework/Button/TpuButton.vue";
-import RiInformationLine from "vue-remix-icons/icons/ri-information-line.vue";
 import TpuDialog from "@/components/Framework/Dialog/TpuDialog.vue";
-import { computed, onMounted, ref, watch } from "vue";
+import { onMounted, provide, ref, watch } from "vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
 import { useSocket } from "@/boot/socket.service";
-import TpuSwitch from "@/components/Framework/Input/TpuSwitch.vue";
-import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
-import TpuPager from "@/components/Framework/Pager/TpuPager.vue";
 import { useChatStore } from "@/stores/chat.store";
-import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
 import SidebarDebugComms from "@/components/Sidebar/Debug/SidebarDebugComms.vue";
+import SidebarDebugGraphQL from "@/components/Sidebar/Debug/SidebarDebugGraphQL.vue";
+import SidebarDebugGraphQLActions from "@/components/Sidebar/Debug/SidebarDebugGraphQLActions.vue";
 
-const apollo = useApolloClient();
-const debugStore = useDebugStore();
 const args = ref<any>({});
 const dialog = ref(false);
 const result = ref<any>({});
+
+export type DebugSettings = {
+  graphql: boolean;
+  websocket: boolean;
+  gqlExclPulse: boolean;
+  comms: boolean;
+  graphqlActions: boolean;
+};
+
 const settings = ref({
   graphql: false,
   websocket: false,
   gqlExclPulse: true,
-  comms: false
+  comms: false,
+  graphqlActions: false
 });
 const sockets = useSocket;
 const socketConnected = ref<Record<string, boolean>>({});
@@ -158,32 +100,13 @@ watch(
     settings.value.graphql,
     settings.value.websocket,
     settings.value.gqlExclPulse,
-    settings.value.comms
+    settings.value.comms,
+    settings.value.graphqlActions
   ],
   () => {
     localStorage.setItem("debug", JSON.stringify(settings.value));
   }
 );
-
-const operationsSearch = ref("");
-const operationsPage = ref(1);
-const itemsPerPage = 10;
-const operations = computed(() => {
-  const ops = debugStore.recentOperations.filter((op) =>
-    op.name.toLowerCase().includes(operationsSearch.value.toLowerCase())
-  );
-  if (settings.value.gqlExclPulse) {
-    return ops.filter((op) => !op.name.includes("Pulse"));
-  }
-  return ops.slice(
-    (operationsPage.value - 1) * itemsPerPage,
-    operationsPage.value * itemsPerPage
-  );
-});
-
-const operationsPages = computed(() => {
-  return Math.ceil(operations.value.length / 10);
-});
 
 onMounted(() => {
   const debug = localStorage.getItem("debug");
@@ -191,6 +114,8 @@ onMounted(() => {
     settings.value = JSON.parse(debug);
   }
 });
+
+provide("settings", settings);
 </script>
 
 <style scoped></style>

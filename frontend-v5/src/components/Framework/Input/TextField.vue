@@ -1,10 +1,11 @@
 <template>
+  <slot name="prepend-outer" />
+
   <div
     class="relative mt-3 mb-1 flex"
     :class="parentClasses"
     :style="parentStyle"
   >
-    <slot name="prepend-outer" />
     <div class="absolute left-0">
       <slot name="prepend" />
     </div>

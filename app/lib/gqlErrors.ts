@@ -112,6 +112,10 @@ const Errors = {
   },
   INVALID_FRIEND_SELECTION: {
     message: "You must be friends with the user to add them."
+  },
+  INVALID_RESUMABLE_STATE_KEY: {
+    message:
+      "Invalid resumable state key on x-tpu-resumable-state. Must be a valid UUIDv4."
   }
 }
 

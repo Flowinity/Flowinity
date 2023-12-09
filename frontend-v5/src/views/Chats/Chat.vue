@@ -1,98 +1,128 @@
 <template>
-  <div class="communications">
-    <div
-      class="messages position-relative"
-      :key="chatStore.selectedChatAssociationId"
-    >
-      <div id="sentinel-bottom" ref="sentinelBottom"></div>
-      <CommsMessage
-        :unread-id="0"
-        class="mr-2 ml-2"
-        v-for="(message, index) in messagesStore.messages[
-          chatStore.selectedChatAssociationId
-        ] || []"
-        :id="'message-id-' + message.id"
-        :ref="`message-${index}`"
-        :key="message.id"
-        :class="{
-          'message-jumped': message.id === replyId,
-          'message-mention': message.content?.includes(`<@${$user.user?.id}>`)
-        }"
-        :date-separator="dateSeparator(index)"
-        :editing="editing === message.id"
-        :editingText="editingText"
-        :message="message"
-        :index="index"
-        @editText="editingText = $event"
-        @reply="replyId = $event"
-        :merge="$chat.merge(message, index)"
-      />
-    </div>
-    <div class="input mx-4 my-2">
-      <card v-if="replyId" :padding="false" class="p-3 flex justify-between">
-        <message-reply
-          :line="false"
-          :reply="
-            messagesStore.selected.find((message) => message.id === replyId)
-          "
+  <div class="flex h-full">
+    <div class="communications flex-1">
+      <div
+        class="messages position-relative"
+        :key="chatStore.selectedChatAssociationId"
+      >
+        <div id="sentinel-bottom" ref="sentinelBottom"></div>
+        <CommsMessage
+          :unread-id="0"
+          class="mr-2 ml-2"
+          v-for="(message, index) in messagesStore.messages[
+            chatStore.selectedChatAssociationId
+          ] || []"
+          :id="'message-id-' + message.id"
+          :ref="`message-${index}`"
+          :key="message.id"
+          :class="{
+            'message-jumped': message.id === replyId,
+            'message-mention': message.content?.includes(`<@${$user.user?.id}>`)
+          }"
+          :date-separator="dateSeparator(index)"
+          :editing="editing === message.id"
+          :editingText="editingText"
+          :message="message"
+          :index="index"
+          @editText="editingText = $event"
+          @reply="replyId = $event"
+          :merge="$chat.merge(message, index)"
         />
-        <tpu-button
-          icon
-          variant="passive"
-          style="width: 20px"
-          @click="replyId = undefined"
-        >
-          <RiCloseLine style="width: 40px" />
-        </tpu-button>
-      </card>
-      <div class="flex-col">
-        <comms-input
-          v-model="content"
-          ref="input"
-          @keydown.enter.exact="sendMessage"
-          @update:model-value="type"
-        />
-        <div class="flex justify-between">
-          <div class="flex items-center">
-            <div class="user-avatars">
-              <UserAvatar
-                v-for="typer in excludedTypers"
-                :user-id="typer.userId"
-                class="user-avatar"
-                :key="typer.userId"
-                size="20"
-              />
+      </div>
+      <div class="input mx-4 my-2">
+        <card v-if="replyId" :padding="false" class="p-3 flex justify-between">
+          <message-reply
+            :line="false"
+            :reply="
+              messagesStore.selected.find((message) => message.id === replyId)
+            "
+          />
+          <tpu-button
+            icon
+            variant="passive"
+            style="width: 20px"
+            @click="replyId = undefined"
+          >
+            <RiCloseLine style="width: 40px" />
+          </tpu-button>
+        </card>
+        <div class="flex-col">
+          <comms-input
+            v-model="content"
+            ref="input"
+            @keydown.enter.exact="sendMessage"
+            @update:model-value="type"
+          />
+          <div class="flex justify-between">
+            <div class="flex items-center">
+              <div class="user-avatars">
+                <UserAvatar
+                  v-for="typer in excludedTypers"
+                  :user-id="typer.userId"
+                  class="user-avatar"
+                  :key="typer.userId"
+                  size="20"
+                />
+              </div>
+              <p
+                class="text-medium-emphasis-dark ml-2"
+                v-if="excludedTypers.length"
+              >
+                {{
+                  t(
+                    "chats.typing",
+                    {
+                      users: excludedTypers
+                        .map((typer) => userStore.users[typer.userId]?.username)
+                        .join(", ")
+                    },
+                    excludedTypers.length > 1
+                      ? 1
+                      : excludedTypers.length > 5
+                        ? 2
+                        : 0
+                  )
+                }}
+              </p>
             </div>
-            <p
-              class="text-medium-emphasis-dark ml-2"
-              v-if="excludedTypers.length"
-            >
-              {{
-                t(
-                  "chats.typing",
-                  {
-                    users: excludedTypers
-                      .map((typer) => userStore.users[typer.userId]?.username)
-                      .join(", ")
-                  },
-                  excludedTypers.length > 1
-                    ? 1
-                    : excludedTypers.length > 5
-                      ? 2
-                      : 0
-                )
-              }}
-            </p>
+            <p class="text-medium-emphasis-dark">{{ content.length }}/4000</p>
           </div>
-          <p class="text-medium-emphasis-dark">{{ content.length }}/4000</p>
         </div>
       </div>
+    </div>
+    <div class="h-full">
+      <second-side-bar
+        class="top-0 relative h-full right-0 max-sm:hidden sidebar-transition"
+        v-if="
+          chatStore.uiOptions.memberSidebar || chatStore.uiOptions.searchSidebar
+        "
+        :width="chatStore.uiOptions.searchSidebar ? '384px' : '256px'"
+      >
+        <search-side-bar v-show="chatStore.uiOptions.searchSidebar" />
+        <member-side-bar
+          v-show="
+            chatStore.uiOptions.memberSidebar &&
+            !chatStore.uiOptions.searchSidebar
+          "
+        />
+      </second-side-bar>
     </div>
   </div>
 
   <teleport to="#appbar-options">
     <transition mode="out-in" name="slide-up" appear>
       <div class="flex gap-2">
+        <text-field
+          style="border-bottom: none; margin-top: 0; margin-bottom: 0"
+          v-model="chatStore.uiOptions.search"
+          :label="t('chats.search')"
+          @keydown.enter="chatStore.uiOptions.searchSidebar = true"
+        >
+          <template #prepend-outer>
+            <RiSearchLine style="width: 20px" />
+          </template>
+        </text-field>
+
         <tpu-button
           icon
           variant="passive"
@@ -106,11 +136,11 @@
               !chatStore.uiOptions.searchSidebar
           "
         >
-          <RiSearchLine
+          <RiPushpin2Line
             style="width: 20px"
             v-if="!chatStore.uiOptions.searchSidebar"
           />
-          <RiSearchFill style="width: 20px" v-else />
+          <RiPushpin2Fill style="width: 20px" v-else />
         </tpu-button>
         <tpu-button
           icon
@@ -140,24 +170,6 @@
         </tpu-button>
       </div>
     </transition>
-  </teleport>
-
-  <teleport to="#main-flex">
-    <second-side-bar
-      class="fixed top-0 left-0 max-sm:hidden sidebar-transition"
-      v-if="
-        chatStore.uiOptions.memberSidebar || chatStore.uiOptions.searchSidebar
-      "
-      :width="chatStore.uiOptions.searchSidebar ? '384px' : '256px'"
-    >
-      <search-side-bar v-show="chatStore.uiOptions.searchSidebar" />
-      <member-side-bar
-        v-show="
-          chatStore.uiOptions.memberSidebar &&
-          !chatStore.uiOptions.searchSidebar
-        "
-      />
-    </second-side-bar>
   </teleport>
 </template>
 
@@ -203,7 +215,9 @@ import MemberSideBar from "@/layouts/default/MemberSideBar.vue";
 import SearchSideBar from "@/layouts/default/SearchSideBar.vue";
 import { NewMessageSubscription } from "@/graphql/chats/subscriptions/newMessage.graphql";
 import { useSubscription } from "@vue/apollo-composable";
-
+import RiPushpin2Line from "vue-remix-icons/icons/ri-pushpin-2-line.vue";
+import RiPushpin2Fill from "vue-remix-icons/icons/ri-pushpin-2-fill.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
 const { t } = useI18n();
 const chatStore = useChatStore();
 const userStore = useUserStore();
@@ -332,7 +346,7 @@ function shortcutHandler(e: KeyboardEvent) {
   if (e.key === "Escape") {
     e.preventDefault();
     replyId.value = undefined;
-  } else if (e.ctrlKey && e.key === "ArrowUp") {
+  } else if ((e.ctrlKey || e.metaKey) && e.key === "ArrowUp") {
     e.preventDefault();
     e.stopPropagation();
     // edit next message
@@ -344,7 +358,7 @@ function shortcutHandler(e: KeyboardEvent) {
       return;
     }
     replyId.value = message.id;
-  } else if (e.ctrlKey && e.key === "ArrowDown") {
+  } else if ((e.ctrlKey || e.metaKey) && e.key === "ArrowDown") {
     e.preventDefault();
     if (!replyId.value) return;
     // edit last message
@@ -359,11 +373,12 @@ function shortcutHandler(e: KeyboardEvent) {
     replyId.value = message.id;
     return;
   } else if (
-    (e.key === "v" && e.ctrlKey) ||
+    (e.key === "v" && (e.ctrlKey || e.metaKey)) ||
     (e.target?.tagName !== "INPUT" &&
       e.target?.tagName !== "TEXTAREA" &&
       !e.ctrlKey &&
-      !e.target?.classList.contains("ProseMirror"))
+      !e.target?.classList.contains("ProseMirror") &&
+      !e.metaKey)
   ) {
     focusInput();
   } else if (e.ctrlKey && e.key === "f") {
