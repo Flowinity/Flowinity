@@ -3,10 +3,10 @@
     <v-row align="center" justify="center">
       <v-col cols="12" md="7" sm="8" xl="5">
         <v-card
+          v-if="app"
           :color="$vuetify.display.mobile ? 'transparent' : 'card'"
           :elevation="$vuetify.display.mobile ? 0 : 8"
           :flat="$vuetify.display.mobile"
-          v-if="app"
         >
           <p
             class="text-center text-gradient mt-2"
@@ -18,8 +18,8 @@
           </p>
           <p class="text-center text-grey">
             <UserAvatar
-              :user="{ username: app.name, avatar: app.icon }"
               v-if="app.icon"
+              :user="{ username: app.name, avatar: app.icon }"
               size="28"
               class="mr-2"
             />
@@ -36,13 +36,13 @@
             {{ app.description }}
           </p>
           <v-autocomplete
+            v-if="bot"
+            v-model="selectedBotChat"
             :items="chats"
             item-title="name"
             item-value="association.id"
-            v-model="selectedBotChat"
             label="Add to group"
             class="mx-6"
-            v-if="bot"
           />
           <v-list>
             <template v-if="!bot">
@@ -53,7 +53,7 @@
                 :disabled="true"
                 style="opacity: 1"
               >
-                <template v-slot:prepend>
+                <template #prepend>
                   <v-icon color="green" class="ml-4 mr-1">
                     mdi-check-circle
                   </v-icon>
@@ -83,7 +83,7 @@
                 :disabled="true"
                 style="opacity: 1"
               >
-                <template v-slot:prepend>
+                <template #prepend>
                   <v-icon color="green" class="ml-4 mr-1">
                     mdi-check-circle
                   </v-icon>
@@ -106,7 +106,7 @@
               </v-list-item>
             </template>
             <v-list-item :disabled="true" style="opacity: 1">
-              <template v-slot:prepend>
+              <template #prepend>
                 <v-icon color="red" class="ml-4 mr-1">mdi-close-circle</v-icon>
               </template>
               <v-list-item-title
@@ -140,9 +140,9 @@
             <v-spacer />
             <v-btn
               color="primary"
-              @click="bot ? addBot() : authorize()"
               :loading="loading"
               :disabled="bot && !selectedBotChat"
+              @click="bot ? addBot() : authorize()"
             >
               Authorize
             </v-btn>
@@ -241,6 +241,17 @@ export default defineComponent({
       return this.$route.params.oauthAppId || this.$route.query.client_id;
     }
   },
+  mounted() {
+    this.getAppData();
+    this.getScopeDefinitions();
+    if (!this.$user.user) {
+      this.$app.componentLoading = false;
+      this.$router.push(
+        "/login?redirect=" +
+          this.$route.fullPath.replaceAll("?", "%3F").replaceAll("&", "%26")
+      );
+    }
+  },
   methods: {
     async getAppData() {
       this.$app.componentLoading = true;
@@ -260,7 +271,7 @@ export default defineComponent({
         if (oauthAppConsent.token) {
           window.location.href = `${this.app.redirectUri}?code=${oauthAppConsent.token}&state=${this.$route.query.state}`;
         }
-      } catch {
+      } finally {
         this.$app.componentLoading = false;
       }
     },
@@ -299,17 +310,6 @@ export default defineComponent({
       } finally {
         this.loading = false;
       }
-    }
-  },
-  mounted() {
-    this.getAppData();
-    this.getScopeDefinitions();
-    if (!this.$user.user) {
-      this.$app.componentLoading = false;
-      this.$router.push(
-        "/login?redirect=" +
-          this.$route.fullPath.replaceAll("?", "%3F").replaceAll("&", "%26")
-      );
     }
   }
 });

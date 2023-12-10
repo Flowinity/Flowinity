@@ -76,7 +76,8 @@ export class CoreService {
     }
   }
 
-  async getWeather(ip: string): Promise<WeatherResponse> {
+  async getWeather(ip: string | undefined): Promise<WeatherResponse> {
+    if (!ip) throw Errors.WEATHER_NOT_RESPONDING
     try {
       const cityResponse = await city?.get(
         config.release === "dev" ? "124.169.200.0" : ip
@@ -350,10 +351,10 @@ export class CoreService {
             override?.dataValues?.value === "true"
               ? true
               : override?.dataValues?.value === "false"
-              ? false
-              : isNumeric(override?.dataValues?.value)
-              ? parseInt(override?.dataValues?.value)
-              : experiment.value
+                ? false
+                : isNumeric(override?.dataValues?.value)
+                  ? parseInt(override?.dataValues?.value)
+                  : experiment.value
         }
       })
     ]

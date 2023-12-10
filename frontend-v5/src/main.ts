@@ -24,7 +24,7 @@ const app = createApp(App);
 import VueSimpleContextMenu from "vue-simple-context-menu";
 import { setupSockets } from "@/boot/sockets";
 
-app.component("vue-simple-context-menu", VueSimpleContextMenu);
+app.component("VueSimpleContextMenu", VueSimpleContextMenu);
 
 app.config.performance = true;
 

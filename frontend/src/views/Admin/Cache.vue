@@ -17,7 +17,7 @@
           />
           <v-list-item v-for="item in items" :key="item.id">
             {{ item.name }}
-            <template v-slot:append>
+            <template #append>
               <v-btn @click="purgeKeys(item.id)">Purge</v-btn>
             </template>
           </v-list-item>

@@ -4,8 +4,8 @@
     :model-value="modelValue"
     activator="parent"
     location="top right"
-    @update:model-value="$emit('update:modelValue', $event)"
     height="500"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <v-card width="500" class="position-relative">
       <div class="d-flex flex-row">
@@ -13,20 +13,20 @@
           <v-divider class="mb-2" />
           <v-tab :value="0">All</v-tab>
           <v-divider class="my-1" />
-          <v-tab v-for="chat in chatEmojis" :value="chat.id" :key="chat.id">
+          <v-tab v-for="chat in chatEmojis" :key="chat.id" :value="chat.id">
             {{ chat.name }}
           </v-tab>
           <v-divider class="my-1" />
           <v-tab :value="1">Built-in</v-tab>
         </v-tabs>
         <v-card-text v-if="modelValue">
-          <v-text-field :label="$t('generic.search')" v-model="search" />
+          <v-text-field v-model="search" :label="$t('generic.search')" />
           <RecycleScroller
+            v-slot="{ item: emoji }"
             class="scroller"
             :items="emojiGrid"
             key-field="id"
             :item-size="48"
-            v-slot="{ item: emoji }"
             :grid-items="6"
             style="height: 330px; width: 100%"
           >
@@ -36,13 +36,13 @@
               @mouseover="hover = emoji"
             >
               <v-img
+                v-if="emoji.icon"
                 :src="$app.domain + emoji.icon"
                 width="30"
-                v-if="emoji.icon"
               />
               <v-img
-                draggable="false"
                 v-else
+                draggable="false"
                 width="30"
                 :alt="emoji.id"
                 :src="`/emoji/emoji_u${emoji.id
@@ -57,8 +57,8 @@
             <template v-if="hover">
               <div class="d-flex mx-4">
                 <v-img
-                  :src="$app.domain + hover.icon"
                   v-if="hover.icon"
+                  :src="$app.domain + hover.icon"
                   width="50"
                   height="50"
                   draggable="false"
@@ -104,11 +104,11 @@ import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 
 export default defineComponent({
   name: "EmojiPicker",
-  props: ["modelValue"],
-  emits: ["update:modelValue", "emoji"],
   components: {
     RecycleScroller
   },
+  props: ["modelValue"],
+  emits: ["update:modelValue", "emoji"],
   data() {
     return {
       tab: 0 as string | number,
@@ -170,14 +170,6 @@ export default defineComponent({
       ]
     };
   },
-  methods: {
-    chunk<T>(arr: T[], chunkSize = 1, cache = []) {
-      const tmp = [...arr];
-      if (chunkSize <= 0) return cache;
-      while (tmp.length) cache.push(tmp.splice(0, chunkSize));
-      return cache;
-    }
-  },
   computed: {
     emojiGrid() {
       return [].concat(...this.searchEmojis.map((category) => category.emoji));
@@ -238,6 +230,14 @@ export default defineComponent({
         }
       }
       return map;
+    }
+  },
+  methods: {
+    chunk<T>(arr: T[], chunkSize = 1, cache = []) {
+      const tmp = [...arr];
+      if (chunkSize <= 0) return cache;
+      while (tmp.length) cache.push(tmp.splice(0, chunkSize));
+      return cache;
     }
   }
 });

@@ -12,7 +12,7 @@
         :items="items.filter((item) => item.type === SessionType.Api)"
         :headers="headers.api"
       >
-        <template #item.actions="{ item }">
+        <template #[`item.actions`]>
           <div class="flex">
             <tpu-button icon variant="passive">
               <RiGlobalLine style="width: 20px" />
@@ -77,7 +77,6 @@
 
 <script setup lang="ts">
 import Card from "@/components/Framework/Card/Card.vue";
-import { useAppStore } from "@/stores/app.store";
 import TpuDataTable from "@/components/Framework/Table/TpuDataTable.vue";
 import { useApolloClient } from "@vue/apollo-composable";
 import { SessionsQuery } from "@/graphql/user/sessions.graphql";
@@ -94,7 +93,6 @@ import dayjs from "../../plugins/dayjs";
 
 const items = ref<Session[]>([]);
 const { t } = useI18n();
-const appStore = useAppStore();
 
 const headers = {
   api: [

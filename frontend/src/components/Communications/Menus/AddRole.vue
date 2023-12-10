@@ -1,11 +1,11 @@
 <template>
   <v-menu
-    :close-on-content-click="false"
     v-model="active"
+    :close-on-content-click="false"
     location="end"
     style="z-index: 4001"
   >
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-chip class="ml-2 my-1" v-bind="props" :size="size">
         <v-icon>mdi-plus</v-icon>
       </v-chip>
@@ -26,9 +26,9 @@
         />
         <v-list-item
           v-for="rank in ranksSearch"
+          :key="rank.id"
           :active="association.ranksMap.includes(rank.id)"
           :value="rank.id"
-          :key="rank.id"
           :disabled="
             rank.managed ||
             !$chat.canEditRank(rank.index, chat || $chat.editingChat)
@@ -37,14 +37,14 @@
             $chat.toggleUserRank(association.id, currentAssociationId, rank.id)
           "
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <v-avatar
               class="v-avatar--variant-outlined pointer"
               :color="rank.color"
               size="22"
             />
           </template>
-          <template v-slot:append>
+          <template #append>
             <v-list-item-action start>
               <v-checkbox-btn
                 :model-value="association.ranksMap.includes(rank.id)"
@@ -92,13 +92,13 @@ export default defineComponent({
       selected: [] as number[]
     };
   },
-  methods: {},
   computed: {
     ranksSearch() {
       return this.ranks.filter((rank: ChatRank) =>
         rank.name.toLowerCase().includes(this.search.toLowerCase())
       );
     }
-  }
+  },
+  methods: {}
 });
 </script>

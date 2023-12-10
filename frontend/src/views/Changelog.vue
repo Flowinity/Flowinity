@@ -13,9 +13,9 @@
       <div v-for="change in version.changes" :key="change.text">
         <v-chip
           v-for="tag in change.tags"
+          :key="tag"
           :color="tags[tag]?.color"
           class="my-2 mr-2"
-          :key="tag"
         >
           {{ tag }}
         </v-chip>

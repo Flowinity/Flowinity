@@ -122,7 +122,7 @@
       min="12"
       step="12"
       thumb-label
-      @update:modelValue="$emit('update')"
+      @update:model-value="$emit('update')"
     />
     <!-- select between Farenheit, Celsius or Kelvin -->
     <v-select
@@ -132,7 +132,7 @@
       class="px-6"
       item-title="title"
       item-value="value"
-      @update:modelValue="$emit('update')"
+      @update:model-value="$emit('update')"
     />
     <v-select
       v-model="theme"
@@ -141,7 +141,7 @@
       class="px-6"
       item-title="title"
       item-value="value"
-      @update:modelValue="$emit('update')"
+      @update:model-value="$emit('update')"
     />
     <v-autocomplete
       v-model="$user.user.excludedCollections"
@@ -155,7 +155,7 @@
       item-value="id"
       multiple
       variant="underlined"
-      @update:modelValue="$emit('update')"
+      @update:model-value="$emit('update')"
     />
     <v-select
       v-model="$user.user.language"
@@ -164,7 +164,7 @@
       class="px-6"
       item-title="title"
       item-value="key"
-      @update:modelValue="$emit('update')"
+      @update:model-value="$emit('update')"
     />
     <v-select
       v-model="$experiments.experiments['NOTIFICATION_SOUND']"
@@ -175,9 +175,9 @@
       label="Notification Sound"
     />
     <v-btn
+      v-if="$user.gold || !$app.site.officialInstance"
       class="mb-2 ml-5"
       @click="$app.themeEditor = !$app.themeEditor"
-      v-if="$user.gold || !$app.site.officialInstance"
     >
       <v-icon class="mr-2">mdi-palette</v-icon>
       <span>
@@ -334,6 +334,22 @@ export default defineComponent({
       this.$experiments.setExperiment("NOTIFICATION_SOUND", val);
     }
   },
+  async mounted() {
+    this.$app.title = "Settings";
+    const {
+      data: {
+        collections: { items }
+      }
+    } = await this.$apollo.query({
+      query: UserLightCollectionsQuery,
+      variables: {
+        input: {
+          limit: 99999
+        }
+      }
+    });
+    this.collections = items;
+  },
   methods: {
     async changeEmail() {
       await this.$apollo.mutate({
@@ -378,22 +394,6 @@ export default defineComponent({
       });
       this.$toast.success("Your username has been updated!");
     }
-  },
-  async mounted() {
-    this.$app.title = "Settings";
-    const {
-      data: {
-        collections: { items }
-      }
-    } = await this.$apollo.query({
-      query: UserLightCollectionsQuery,
-      variables: {
-        input: {
-          limit: 99999
-        }
-      }
-    });
-    this.collections = items;
   }
 });
 </script>

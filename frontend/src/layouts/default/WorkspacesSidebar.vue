@@ -25,7 +25,7 @@
       "
     />
     <MemberSidebarList v-else />
-    <template v-slot:append v-if="$workspaces.versionHistory">
+    <template v-if="$workspaces.versionHistory" #append>
       <v-btn
         width="228px"
         class="my-4 mx-4"
@@ -51,15 +51,6 @@ export default defineComponent({
     CoreSidebar,
     MemberSidebarList,
     WorkspacesSidebarList
-  },
-  methods: {
-    async restoreVersion() {
-      await this.axios.patch(
-        `/notes/${this.$route.params.id}/restore/${this.$route.params.version}`
-      );
-      this.$router.push(`/workspaces/notes/${this.$route.params.id}`);
-      this.$workspaces.versionHistory = false;
-    }
   },
   computed: {
     drawer: {
@@ -87,6 +78,15 @@ export default defineComponent({
       ) {
         return "sidebar-patch";
       } else return null;
+    }
+  },
+  methods: {
+    async restoreVersion() {
+      await this.axios.patch(
+        `/notes/${this.$route.params.id}/restore/${this.$route.params.version}`
+      );
+      this.$router.push(`/workspaces/notes/${this.$route.params.id}`);
+      this.$workspaces.versionHistory = false;
     }
   }
 });

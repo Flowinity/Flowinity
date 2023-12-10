@@ -23,5 +23,3 @@ const props = defineProps({
     <slot />
   </span>
 </template>
-
-<style scoped></style>

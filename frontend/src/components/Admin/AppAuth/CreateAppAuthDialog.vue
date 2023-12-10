@@ -5,7 +5,7 @@
     max-height="600px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
+    <template #title>
       <v-toolbar-title>Create app</v-toolbar-title>
     </template>
     <v-card-text>
@@ -28,8 +28,8 @@
           dense
         />
         <v-text-field
-          placeholder="https://i.troplo.com/i/50ba79e4.png"
           v-model="icon"
+          placeholder="https://i.troplo.com/i/50ba79e4.png"
           label="Icon"
           outlined
           dense
@@ -52,20 +52,20 @@
           hint="Private apps can only be used by the owner or manually added users"
         />
         <v-checkbox
+          v-if="$user.user?.administrator"
           v-model="verified"
           label="Verified"
           dense
           required
           hint="Only use this for public facing and TPU endorsed apps"
           persistent-hint
-          v-if="$user.user?.administrator"
         />
       </v-form>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
       <v-btn @click="$emit('update:modelValue', false)">Cancel</v-btn>
-      <v-btn color="primary" @click="createAppAuth" :loading="loading">
+      <v-btn color="primary" :loading="loading" @click="createAppAuth">
         Create
       </v-btn>
     </v-card-actions>

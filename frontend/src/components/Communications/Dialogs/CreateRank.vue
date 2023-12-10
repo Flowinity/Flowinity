@@ -4,13 +4,13 @@
     max-width="500px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
+    <template #title>
       {{ $t("chats.settings.ranks.manage.create") }}
     </template>
     <v-container>
       <v-text-field
-        autofocus
         v-model="name"
+        autofocus
         :label="$t('generic.name')"
         @keydown.enter="create"
       />

@@ -24,9 +24,9 @@
       />
       <v-container>
         <div
-          class="messages communications"
-          id="chat"
           v-if="data.items.length"
+          id="chat"
+          class="messages communications"
           style="flex-direction: column"
         >
           <message-perf
@@ -38,7 +38,7 @@
             :search="true"
             class="pointer"
             @click="$chat.jumpToMessage(message.id)"
-            @jumpToMessage="$chat.jumpToMessage($event.id)"
+            @jump-to-message="$chat.jumpToMessage($event.id)"
             @refresh="getPins(true)"
           />
         </div>
@@ -82,6 +82,11 @@ export default defineComponent({
       }
     };
   },
+  watch: {
+    page() {
+      this.getPins(true);
+    }
+  },
   methods: {
     async getPins(e: boolean) {
       if (!e) return;
@@ -95,11 +100,6 @@ export default defineComponent({
         position: ScrollPosition.Bottom
       });
       this.loading = false;
-    }
-  },
-  watch: {
-    page() {
-      this.getPins(true);
     }
   }
 });

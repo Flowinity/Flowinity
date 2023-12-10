@@ -62,9 +62,9 @@
         <template v-else>
           <v-fade-transition :model-value="loading">
             <v-toolbar
+              v-if="loading"
               density="compact"
               class="text-center justify-center"
-              v-if="loading"
             >
               <v-spacer />
               Saving...

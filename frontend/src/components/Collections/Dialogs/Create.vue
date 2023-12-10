@@ -4,7 +4,7 @@
     max-width="600"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>Create Collection</template>
+    <template #title>Create Collection</template>
     <v-card-text>
       <v-text-field
         v-model="name"

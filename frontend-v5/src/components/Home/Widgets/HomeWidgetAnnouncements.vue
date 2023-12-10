@@ -3,10 +3,10 @@
     <template #header>Announcements</template>
     <div class="mt-4 flex-col flex gap-4">
       <card
-        outlined
-        padding
         v-for="announcement in announcements"
         :key="announcement.id"
+        outlined
+        padding
       >
         <div class="flex flex-col items-center justify-center">
           <user-avatar

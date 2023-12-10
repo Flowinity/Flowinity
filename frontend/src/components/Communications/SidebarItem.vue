@@ -1,10 +1,10 @@
 <template>
   <v-list-item
     class="unselectable"
-    @click="handleClick"
     :class="{ pointer: chat || !legacyUser, selected: isSelected }"
+    @click="handleClick"
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <UserAvatar
         :user="user"
         :status="!!user"
@@ -13,7 +13,7 @@
       />
     </template>
     <div class="ml-2">
-      <span class="limit" v-if="user">
+      <span v-if="user" class="limit">
         {{
           legacyUser
             ? user.username
@@ -33,13 +33,13 @@
           </v-tooltip>
         </span>
       </span>
-      <span class="limit" v-else-if="chat">
+      <span v-else-if="chat" class="limit">
         {{ chat.name }}
       </span>
-      <p class="text-subtitle-2 mt-n1 text-grey" v-if="legacyUser">
+      <p v-if="legacyUser" class="text-subtitle-2 mt-n1 text-grey">
         Legacy user
       </p>
-      <p class="text-subtitle-2 mt-n1 text-grey" v-else-if="subtitle">
+      <p v-else-if="subtitle" class="text-subtitle-2 mt-n1 text-grey">
         {{ subtitle }}
       </p>
     </div>
@@ -78,16 +78,6 @@ export default defineComponent({
       required: false
     }
   },
-  methods: {
-    handleClick() {
-      if (this.chat) {
-        this.$router.push(`/communications/${this.chat.association.id}`);
-      } else if (!this.legacyUser) {
-        this.$chat.dialogs.user.username = this.user.username;
-        this.$chat.dialogs.user.value = true;
-      }
-    }
-  },
   computed: {
     isSelected() {
       if (this.chat) {
@@ -96,6 +86,16 @@ export default defineComponent({
         );
       } else {
         return false;
+      }
+    }
+  },
+  methods: {
+    handleClick() {
+      if (this.chat) {
+        this.$router.push(`/communications/${this.chat.association.id}`);
+      } else if (!this.legacyUser) {
+        this.$chat.dialogs.user.username = this.user.username;
+        this.$chat.dialogs.user.value = true;
       }
     }
   }

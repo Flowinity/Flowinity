@@ -52,7 +52,7 @@ export default defineComponent({
   <slot
     v-else
     :error="err$"
-    :hasError="hasError$"
+    :has-error="hasError$"
     :info="info$"
     name="boundary"
     v-bind="params"

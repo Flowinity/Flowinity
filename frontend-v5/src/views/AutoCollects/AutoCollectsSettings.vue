@@ -28,11 +28,11 @@
                 :no-ripple="true"
               >
                 <RiCheckLine
+                  v-if="item.enabled"
                   style="width: 20px"
                   class="mr-2"
-                  v-if="item.enabled"
                 />
-                <RiCloseLine style="width: 20px" class="mr-2" v-else />
+                <RiCloseLine v-else style="width: 20px" class="mr-2" />
                 {{ t(item.enabled ? "generic.enabled" : "generic.disabled") }}
               </tpu-button>
             </div>
@@ -68,9 +68,7 @@ import RiCheckLine from "vue-remix-icons/icons/ri-check-line.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import { useCollectionsStore } from "@/stores/collections.store";
 import { useI18n } from "vue-i18n";
-import { h, markRaw } from "vue";
-import UserAvatar from "@/components/User/UserAvatar.vue";
-import RiCollageFill from "vue-remix-icons/icons/ri-collage-fill.vue";
+import { markRaw } from "vue";
 import { RailMode, useAppStore } from "@/stores/app.store";
 import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
 const autoCollects = ref<AutoCollectRule[]>([]);

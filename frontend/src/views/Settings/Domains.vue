@@ -1,19 +1,19 @@
 <template>
   <ModifyDomainDialog
-    :type="edit.type"
     v-model="edit.dialog"
+    :type="edit.type"
+    :domain="edit.domain"
     @update="
       getDomains();
       $user.init();
     "
-    :domain="edit.domain"
   />
   <v-card-text class="text-overline mb-n4">
     {{ $t("settings.domains.title") }}
     <v-btn
+      v-if="$user.user?.administrator"
       icon
       size="x-small"
-      v-if="$user.user?.administrator"
       @click="
         edit.dialog = true;
         edit.type === 'update';
@@ -34,21 +34,21 @@
           })
         }}
       </v-list-item-subtitle>
-      <template v-slot:append>
+      <template #append>
         <v-list-item-action>
           <v-btn
+            v-if="$user.user?.administrator"
             icon
             size="x-small"
-            v-if="$user.user?.administrator"
             :disabled="domain.id === 1"
             @click="deleteDomain(domain.id)"
           >
             <v-icon>mdi-delete</v-icon>
           </v-btn>
           <v-btn
+            v-if="$user.user?.administrator"
             icon
             size="x-small"
-            v-if="$user.user?.administrator"
             @click="
               edit.type = 'update';
               edit.domain = domain;
@@ -93,6 +93,9 @@ export default defineComponent({
       }
     };
   },
+  mounted() {
+    this.getDomains();
+  },
   methods: {
     async setDefault(domain: string) {
       if (!this.$user.user) return;
@@ -107,9 +110,6 @@ export default defineComponent({
       await this.axios.delete(`/admin/domain/${id}`);
       this.getDomains();
     }
-  },
-  mounted() {
-    this.getDomains();
   }
 });
 </script>

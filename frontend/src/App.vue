@@ -8,16 +8,14 @@
     "
   />
   <Maintenance
-    v-model="$app.site.maintenance.enabled"
     v-if="$app.site.maintenance.enabled"
+    v-model="$app.site.maintenance.enabled"
   />
   <router-view />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Crash from "@/components/Core/Crash.vue";
-import VErrorBoundary from "./components/Core/ErrorBoundary.vue";
 import Maintenance from "@/components/Core/Dialogs/Maintenance.vue";
 import SocketProfiler from "@/components/Dev/Dialogs/SocketProfiler.vue";
 import ActionDialog from "@/components/Dev/Dialogs/ActionDialog.vue";
@@ -29,27 +27,11 @@ export default defineComponent({
     ExperimentsManagerDialog,
     ActionDialog,
     SocketProfiler,
-    Maintenance,
-    Crash,
-    VErrorBoundary
+    Maintenance
   },
-  data() {
-    return {
-      skullCrash: Crash,
-      error: null
-    };
-  },
-  methods: {
-    async submitFeedback(e: any) {
-      this.error = e;
-      console.log("[TPU/SkullCrash] Error captured:", e);
-      console.error(e.error);
-      /*return;
-      await this.axios.post("/user/feedback", {
-        route: this.$route.path,
-        starRating: 0,
-        text: `{"name":"[TPU/SkullCrash]","msg":${e?.error?.message},"stack":${e?.error?.stack}}`
-      });*/
+  watch: {
+    "$route.path"(val) {
+      this.$app.lastRoute = val;
     }
   },
   mounted() {
@@ -74,11 +56,6 @@ export default defineComponent({
       },
       false
     );
-  },
-  watch: {
-    "$route.path"(val) {
-      this.$app.lastRoute = val;
-    }
   }
 });
 </script>

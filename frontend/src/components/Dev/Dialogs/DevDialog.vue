@@ -2,7 +2,7 @@
   <div :id="`dev-overlay-${id}`" class="dev-overlay">
     <div :id="`dev-header-${id}`" class="dev-header unselectable">
       <slot name="header"></slot>
-      <v-btn @click="$emit('close')" size="small" class="float-right">
+      <v-btn size="small" class="float-right" @click="$emit('close')">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </div>
@@ -20,6 +20,9 @@ export default defineComponent({
     return {
       id: `tpu-dev-${Math.random().toString(36).substring(2, 10)}`
     };
+  },
+  mounted() {
+    this.drag(document.getElementById(`dev-overlay-${this.id}`));
   },
   methods: {
     drag(element: any) {
@@ -67,9 +70,6 @@ export default defineComponent({
         this.$toast.error("Error while initializing dev overlay");
       }
     }
-  },
-  mounted() {
-    this.drag(document.getElementById(`dev-overlay-${this.id}`));
   }
 });
 </script>

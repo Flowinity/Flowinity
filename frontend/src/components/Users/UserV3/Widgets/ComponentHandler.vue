@@ -37,8 +37,8 @@
     <template v-if="editMode && $experiments.experiments.USER_V3_EDITOR">
       <v-card-subtitle class="mt-2">Dev UserV3 actions:</v-card-subtitle>
       <v-btn
-        :key="comp.id"
         v-for="comp in components"
+        :key="comp.id"
         @click="addItemDebug(comp.id)"
       >
         Add {{ comp.name }}
@@ -50,23 +50,23 @@
     <v-row class="c-both">
       <v-col
         v-for="child in component.props.children"
+        :key="child.id"
         :xl="12 / component.props.children.length"
         md="12"
-        :key="child.id"
       >
         <UserV3ComponentHandler
           :component="child"
           :components="components"
-          :editMode="editMode"
+          :edit-mode="editMode"
           :gold="gold"
           :primary="primary"
           :user="user"
           :username="username"
           @delete="$emit('delete', $event)"
-          @moveDown="$emit('moveDown', $event)"
-          @moveUp="$emit('moveUp', $event)"
+          @move-down="$emit('moveDown', $event)"
+          @move-up="$emit('moveUp', $event)"
           @settings="$emit('settings', $event)"
-          @modifyProp="$emit('modifyProp', $event)"
+          @modify-prop="$emit('modifyProp', $event)"
         />
       </v-col>
     </v-row>
@@ -112,7 +112,7 @@
     v-else-if="component.name === 'social-links'"
     :user="user"
     :component="component"
-    @addLink="
+    @add-link="
       $emit('modifyProp', {
         component: component,
         prop: 'links',

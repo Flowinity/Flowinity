@@ -4,8 +4,8 @@
       {{ t("settings.setup.title") }}
     </strong>
     <tpu-select
-      :items="items"
       v-model="selectedId"
+      :items="items"
       :label="t('settings.setup.selectKey')"
     />
     <div class="flex flex-wrap mt-3 gap-2">
@@ -22,9 +22,9 @@
         {{ t("settings.setup.actions.copy") }}
       </tpu-button>
       <tpu-button
+        v-if="platform === 'windows'"
         class="gap-2"
         :disabled="!selected"
-        v-if="platform === 'windows'"
         color="teal"
         @click="saveFile('sharex')"
       >
@@ -32,9 +32,9 @@
         {{ t("settings.setup.actions.downloadShareX") }}
       </tpu-button>
       <tpu-button
+        v-if="platform === 'linux'"
         class="gap-2"
         :disabled="!selected"
-        v-if="platform === 'linux'"
         color="purple"
         @click="saveFile('sharenix')"
       >
@@ -42,9 +42,9 @@
         {{ t("settings.setup.actions.downloadShareNix") }}
       </tpu-button>
       <tpu-button
+        v-if="platform === 'android'"
         class="gap-2"
         :disabled="!selected"
-        v-if="platform === 'android'"
         color="green"
         @click="
           toast.success(t('generic.copied'));
@@ -70,9 +70,9 @@
           {{ t("settings.setup.other.title") }}
         </strong>
         <tpu-select
+          v-model="platform"
           :items="platforms"
           :label="t('settings.setup.selectPlatform')"
-          v-model="platform"
           style="height: 35px"
         ></tpu-select>
       </div>

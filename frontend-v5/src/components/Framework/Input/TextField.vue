@@ -17,24 +17,15 @@
       {{ props.label }}
     </label>
     <textarea
-      tabindex="0"
+      v-if="props.textarea"
       :id="id"
+      ref="input"
+      tabindex="0"
       class="text-field resize-none"
       :placeholder="props.placeholder"
       :rows="computedRows.toString()"
-      @input="$emit('update:modelValue', $event.target?.value)"
       :value="props.modelValue"
-      ref="input"
-      v-if="props.textarea"
-      @focus="
-        focus = true;
-        interactedWith = true;
-      "
       :maxlength="maxlength"
-      @blur="
-        focus = false;
-        interactedWith = true;
-      "
       v-bind="$attrs"
       :disabled="props.disabled"
       :class="{
@@ -44,19 +35,7 @@
         focused: focus
       }"
       :readonly="props.readonly"
-    ></textarea>
-    <input
-      tabindex="0"
-      v-else-if="!props.readonly"
-      :id="id"
-      :placeholder="props.placeholder"
-      @input="
-        $emit('update:modelValue', $event.target?.value);
-        props.dynamicWidth ? setWidth() : () => {};
-      "
-      :value="props.modelValue"
-      ref="input"
-      class="text-field"
+      @input="$emit('update:modelValue', $event.target?.value)"
       @focus="
         focus = true;
         interactedWith = true;
@@ -65,6 +44,15 @@
         focus = false;
         interactedWith = true;
       "
+    ></textarea>
+    <input
+      v-else-if="!props.readonly"
+      :id="id"
+      ref="input"
+      tabindex="0"
+      :placeholder="props.placeholder"
+      :value="props.modelValue"
+      class="text-field"
       :type="type"
       :maxlength="maxlength"
       v-bind="$attrs"
@@ -77,10 +65,31 @@
         'hide-value': props.rawInject
       }"
       :readonly="props.readonly"
+      @input="
+        $emit('update:modelValue', $event.target?.value);
+        props.dynamicWidth ? setWidth() : '';
+      "
+      @focus="
+        focus = true;
+        interactedWith = true;
+      "
+      @blur="
+        focus = false;
+        interactedWith = true;
+      "
     />
     <div
-      class="text-field"
       v-else
+      class="text-field"
+      role="button"
+      tabindex="-1"
+      :class="{
+        'placeholder-shown':
+          !modelValue?.length && (focus || persistentPlaceholder),
+        'text-medium-emphasis-dark': props.disabled,
+        focused: focus
+      }"
+      style="min-width: 200px"
       @click="
         focus = !focus;
         focus ? $emit('focus') : $emit('blur');
@@ -91,15 +100,6 @@
         focus = false;
         interactedWith = false;
       "
-      role="button"
-      tabindex="-1"
-      :class="{
-        'placeholder-shown':
-          !modelValue?.length && (focus || persistentPlaceholder),
-        'text-medium-emphasis-dark': props.disabled,
-        focused: focus
-      }"
-      style="min-width: 200px"
     >
       <span v-if="props.modelValue.length">{{ props.modelValue }}</span>
       <span v-else-if="props.placeholder && focus">
@@ -112,8 +112,8 @@
     </div>
     <slot name="append-outer" />
     <div
-      class="justify-end flex text-red text-xs mt-1"
       v-if="error || lengthError"
+      class="justify-end flex text-red text-xs mt-1"
     >
       {{ error || lengthError }}
     </div>
@@ -122,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, toRefs, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -186,7 +186,7 @@ const id = computed(() => {
   return props.htmlId || (Math.random() + 1).toString(36).substring(7);
 });
 
-defineEmits(["update:modelValue"]);
+defineEmits(["update:modelValue", "focus", "blur"]);
 
 const lengthError = computed(() => {
   if (

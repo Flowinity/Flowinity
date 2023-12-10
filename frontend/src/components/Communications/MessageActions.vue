@@ -7,13 +7,13 @@
   >
     <template v-if="!message.pending && !message.error">
       <button
-        type="button"
-        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
-        @click="$chat.pinMessage(message.id, !message.pinned)"
         v-if="
           $chat.hasPermission('PIN_MESSAGES') &&
           message.type === MessageType.Message
         "
+        type="button"
+        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
+        @click="$chat.pinMessage(message.id, !message.pinned)"
       >
         <v-tooltip activator="parent" location="top" :eager="false">
           {{ message.pinned ? "Unpin" : "Pin" }}
@@ -23,12 +23,12 @@
         </v-icon>
       </button>
       <button
-        type="button"
-        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
         v-if="
           message.userId === $user.user?.id &&
           message.type === MessageType.Message
         "
+        type="button"
+        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
         @click="$emit('edit')"
       >
         <v-tooltip activator="parent" location="top" :eager="false">
@@ -37,14 +37,14 @@
         <v-icon>mdi-pencil</v-icon>
       </button>
       <button
-        type="button"
-        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
         v-if="
           (message.userId === $user.user?.id &&
             message.type === MessageType.Message) ||
           ($chat.hasPermission('DELETE_MESSAGES') &&
             message.type === MessageType.Message)
         "
+        type="button"
+        class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
         @click="$emit('delete', $event.shiftKey)"
       >
         <v-tooltip activator="parent" location="top" :eager="false">
@@ -93,16 +93,17 @@ import { defineComponent } from "vue";
 import { MessageType } from "@/gql/graphql";
 
 export default defineComponent({
-  computed: {
-    MessageType() {
-      return MessageType;
-    }
-  },
   props: ["message", "avoid", "merge"],
+  emits: ["delete", "reply", "edit"],
   data() {
     return {
       size: "small"
     };
+  },
+  computed: {
+    MessageType() {
+      return MessageType;
+    }
   },
   methods: {
     async attemptResend() {

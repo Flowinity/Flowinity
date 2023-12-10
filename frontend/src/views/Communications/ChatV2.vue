@@ -92,7 +92,7 @@
       @scrollend="scrollEvent"
       :key="$chat.selectedChatId"
     >
-      <div id="sentinel-bottom" ref="sentinelBottom"></div>
+      <div id="sentinel-bottom" ref="sentinelBottom" />
       <infinite-loading
         @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
         :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}-bottom`"
@@ -109,7 +109,7 @@
           </div>
         </template>
         <template v-slot:complete>
-          <span></span>
+          <span />
         </template>
       </infinite-loading>
       <message-perf

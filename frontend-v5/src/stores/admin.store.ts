@@ -1,7 +1,7 @@
 // Reusable admin utilities
 // Utilities
 import { defineStore } from "pinia";
-import axios from "@/plugins/axios";
+import axios from "@/plugins/axios.ts";
 import { useUserStore } from "@/stores/user.store";
 import type { User } from "@/gql/graphql";
 

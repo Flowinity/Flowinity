@@ -25,6 +25,14 @@ export default defineComponent({
       }
     };
   },
+  watch: {
+    $route() {
+      this.fetchMessage();
+    }
+  },
+  mounted() {
+    this.fetchMessage();
+  },
   methods: {
     async fetchMessage() {
       const iframe = this.$refs.iframe;
@@ -49,14 +57,6 @@ export default defineComponent({
       if (!iframe) return;
       iframeDoc.write(this.message.parsed.html);
       iframeDoc.close();
-    }
-  },
-  mounted() {
-    this.fetchMessage();
-  },
-  watch: {
-    $route() {
-      this.fetchMessage();
     }
   }
 });

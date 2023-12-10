@@ -135,6 +135,14 @@ export default defineComponent({
       fact: ""
     };
   },
+  mounted() {
+    this.$app.title = "Register";
+    this.inviteKey = this.$route.params.key as string;
+    this.getInviteKey();
+    if (this.$route.query.email) {
+      this.email = this.$route.query.email as string;
+    }
+  },
   methods: {
     async getInviteKey() {
       if (this.$route.params.key) {
@@ -194,14 +202,6 @@ export default defineComponent({
       } catch {
         this.loading = false;
       }
-    }
-  },
-  mounted() {
-    this.$app.title = "Register";
-    this.inviteKey = this.$route.params.key as string;
-    this.getInviteKey();
-    if (this.$route.query.email) {
-      this.email = this.$route.query.email as string;
     }
   }
 });

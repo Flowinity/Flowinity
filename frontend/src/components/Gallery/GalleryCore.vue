@@ -4,7 +4,7 @@
     <AddToCollection
       v-model="addToCollectionDialog"
       :items="collectivize"
-      @collectionAdded="collectionAdded($event)"
+      @collection-added="collectionAdded($event)"
     />
     <div v-if="!selected.length && supports.multiSelect" class="float-right">
       <slot name="multi-select-actions">
@@ -16,8 +16,8 @@
     </div>
     <div v-if="selected.length && supports.multiSelect" class="float-right">
       <slot
-        :deselectAll="deselectAll"
-        :selectAll="selectAll"
+        :deselect-all="deselectAll"
+        :select-all="selectAll"
         :selected="selected"
         name="multi-select-actions-length"
       >
@@ -80,7 +80,7 @@
           @remove="$emit('remove', $event)"
           @select="select($event)"
         >
-          <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
+          <template v-for="(_, name) in $slots" #[name]="slotData">
             <slot :name="name" v-bind="slotData" />
           </template>
         </GalleryItem>
@@ -188,12 +188,30 @@ export default defineComponent({
       }
     }
   },
+  emits: [
+    "delete",
+    "refresh",
+    "remove",
+    "randomAttachment",
+    "updateItem",
+    "page-change"
+  ],
   data() {
     return {
       addToCollectionDialog: false,
       collectivize: null as number | number[] | null,
       selected: [] as number[]
     };
+  },
+  computed: {
+    pageComponent: {
+      get() {
+        return this.page;
+      },
+      set(value: number) {
+        this.$emit("page-change", value);
+      }
+    }
   },
   methods: {
     resetScroll() {
@@ -218,7 +236,7 @@ export default defineComponent({
     },
     select(item: Upload) {
       if (this.selected.includes(item.id)) {
-        this.selected = this.selected.filter((i) => i !== item.id);
+        this.selected = this.selected.filter((i: number) => i !== item.id);
       } else {
         this.selected.push(item.id);
       }
@@ -239,16 +257,6 @@ export default defineComponent({
     },
     deselectAll() {
       this.selected = [];
-    }
-  },
-  computed: {
-    pageComponent: {
-      get() {
-        return this.page;
-      },
-      set(value: number) {
-        this.$emit("page-change", value);
-      }
     }
   }
 });

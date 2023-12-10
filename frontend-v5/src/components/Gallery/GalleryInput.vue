@@ -1,10 +1,11 @@
 <template>
   <text-field
+    ref="input"
     :label="t('generic.search')"
     :assist="true"
     class="flex-grow"
     autocomplete="off"
-    :htmlId="props.inputId"
+    :html-id="props.inputId"
     :model-value="props.modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     @keydown.enter="
@@ -14,7 +15,6 @@
         date: new Date().toISOString()
       });
     "
-    ref="input"
   >
     <template #append>
       <div class="flex items-center justify-center gap-1 mb-4">
@@ -34,17 +34,11 @@
 </template>
 
 <script setup lang="ts">
-import Card from "@/components/Framework/Card/Card.vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
-import Mentionable from "@/components/Core/Mentionable.vue";
-import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
 import { useI18n } from "vue-i18n";
-import { computed, onMounted, ref, watch } from "vue";
-import TpuList from "@/components/Framework/List/TpuList.vue";
-import TpuListItem from "@/components/Framework/List/TpuListItem.vue";
-import TpuAutoComplete from "@/components/Framework/Input/TpuAutoComplete.vue";
+import { onMounted, ref, watch } from "vue";
 const props = defineProps({
   modelValue: String,
   inputId: String

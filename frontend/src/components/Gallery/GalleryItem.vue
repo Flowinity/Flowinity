@@ -1,13 +1,13 @@
 <template>
   <div>
-    <v-card :id="'item-' + item.id" class="d-flex flex-column" v-if="item.id">
+    <v-card v-if="item.id" :id="'item-' + item.id" class="d-flex flex-column">
       <v-toolbar
         :class="{ unselectable: selected.length }"
         style="z-index: 1"
+        :color="selected.includes(item.id) ? '#006fab' : undefined"
         @click.prevent.stop="
           selected.length && supports.multiSelect ? $emit('select', item) : null
         "
-        :color="selected.includes(item.id) ? '#006fab' : undefined"
       >
         <v-toolbar-title>{{ item.name }}</v-toolbar-title>
         <v-btn
@@ -79,15 +79,6 @@
       <v-divider />
       <v-card-text class="text-center">
         <slot :item="item" name="actions">
-          <!--<HoverChip
-            text="Edit & Caption"
-            icon="mdi-pencil"
-            color="indigo-lighten-1"
-            @click="editItem(item)"
-            v-if="supports.permissions.write"
-            class="my-1"
-            aria-label="Edit item"
-           />-->
           <HoverChip
             v-if="supports.permissions.write"
             :aria-label="$t('gallery.actions.delete.aria')"
@@ -131,6 +122,7 @@
             class="my-1"
             color="green"
             icon="mdi-ocr"
+            :disabled="!item.textMetadata"
             @click.right.prevent.stop="
               $functions.copy(item.textMetadata);
               $toast.success('Copied to clipboard!');
@@ -139,7 +131,6 @@
               $app.dialogs.ocr.text = item.textMetadata;
               $app.dialogs.ocr.value = true;
             "
-            :disabled="!item.textMetadata"
           />
           <HoverChip
             v-if="$user.user"
@@ -181,9 +172,19 @@ export default defineComponent({
   name: "GalleryItem",
   components: { HoverChip, GalleryPreview },
   props: ["item", "supports", "selected"],
+  emits: ["delete", "refresh", "remove", "select", "collectivize"],
   computed: {
     fileSize() {
       return this.$functions.fileSize(this.item.fileSize);
+    }
+  },
+  watch: {
+    "$app.dialogs.deleteItem.emit"(value: boolean) {
+      if (value) {
+        this.$app.dialogs.deleteItem.emit = false;
+        this.$emit("delete", this.$app.dialogs.deleteItem.item);
+        this.$app.dialogs.deleteItem.item = undefined;
+      }
     }
   },
   methods: {
@@ -198,9 +199,6 @@ export default defineComponent({
       await this.axios.post("/gallery/star/" + item.attachment);
       item.starred = !item.starred;
     },
-    editItem(item: Upload) {
-      console.log("Edit item", item);
-    },
     async removeItem(item: Upload, collection: Collection) {
       await this.axios.delete(
         `/collections/${collection.id}/remove/${item.id}`
@@ -209,15 +207,6 @@ export default defineComponent({
         item,
         collection
       });
-    }
-  },
-  watch: {
-    "$app.dialogs.deleteItem.emit"(value: boolean) {
-      if (value) {
-        this.$app.dialogs.deleteItem.emit = false;
-        this.$emit("delete", this.$app.dialogs.deleteItem.item);
-        this.$app.dialogs.deleteItem.item = undefined;
-      }
     }
   }
 });

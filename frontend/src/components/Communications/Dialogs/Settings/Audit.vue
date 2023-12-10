@@ -5,7 +5,7 @@
   <div v-if="log?.items.length">
     <v-list v-for="entry in log.items" :key="entry.id">
       <v-list-item>
-        <template v-slot:prepend>
+        <template #prepend>
           <div class="position-relative mr-2">
             <v-icon>
               {{ icon(entry.category, entry.actionType).icon }}
@@ -27,13 +27,13 @@
             </v-icon>
           </div>
         </template>
-        <template v-slot:title>
+        <template #title>
           <span
             v-memo="entry.message"
             v-html="$functions.markdown(entry.message, null)"
           ></span>
         </template>
-        <template v-slot:subtitle>
+        <template #subtitle>
           {{ $date(entry.createdAt).format("YYYY-MM-DD HH:mm:ss A") }}
         </template>
       </v-list-item>
@@ -61,6 +61,9 @@ export default defineComponent({
       log: null as PaginatedChatAuditLogResponse | null,
       page: 1
     };
+  },
+  mounted() {
+    this.getAudit();
   },
   methods: {
     icon(category: AuditLogCategory, action: AuditLogActionType) {
@@ -129,9 +132,6 @@ export default defineComponent({
       });
       this.log = chatAuditLog;
     }
-  },
-  mounted() {
-    this.getAudit();
   }
 });
 </script>

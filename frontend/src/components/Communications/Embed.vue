@@ -19,9 +19,9 @@
         {{ embed?.data?.title }}
       </v-card-text>
       <v-card-text
+        v-memo="embed?.data?.description"
         class="mt-n8"
         style="font-size: 13px; white-space: pre-line"
-        v-memo="embed?.data?.description"
         v-html="$functions.markdown(embed?.data?.description, null)"
       />
     </v-card>
@@ -34,11 +34,11 @@
         }"
         :src="embed.data.url"
         class="pointer rounded-xl mb-1"
+        alt="Embedded image"
         @click="
           $chat.dialogs.image.object = embed.data;
           $chat.dialogs.image.value = true;
         "
-        alt="Embedded image"
       />
     </div>
     <v-card
@@ -76,8 +76,8 @@
     >
       <template v-if="invite">
         <v-img
-          :src="$app.domain + invite.chat.background"
           v-if="invite.chat.background"
+          :src="$app.domain + invite.chat.background"
           cover
           max-height="100"
         />
@@ -93,17 +93,19 @@
           {{ invite.chat.description }}
         </v-card-subtitle>
         <v-btn
+          v-if="!$chat.chats.find((chat) => chat.id === invite.chat.id)"
           variant="outlined"
           class="ml-3 mb-2"
-          @click="join"
           :loading="loadingInvite"
-          v-if="!$chat.chats.find((chat) => chat.id === invite.chat.id)"
+          @click="join"
         >
           Join
         </v-btn>
         <v-btn
+          v-else
           variant="outlined"
           class="ml-3 mb-2"
+          :loading="loadingInvite"
           @click="
             $router.push(
               `/communications/${
@@ -112,13 +114,11 @@
               }`
             )
           "
-          :loading="loadingInvite"
-          v-else
         >
           Go
         </v-btn>
         <br />
-        <small class="ml-3 mb-2" v-if="invite.expiredAt">
+        <small v-if="invite.expiredAt" class="ml-3 mb-2">
           Expires in {{ $date(invite.expiredAt).fromNow() }}
         </small>
       </template>
@@ -164,6 +164,12 @@ export default defineComponent({
   components: { UserAvatar, Overline },
   props: ["embed"],
   emits: ["autoScroll"],
+  data() {
+    return {
+      invite: null as ChatInvite | null,
+      loadingInvite: false
+    };
+  },
   computed: {
     width() {
       if (this.$vuetify.display.width < 600) return undefined;
@@ -171,11 +177,10 @@ export default defineComponent({
       return 700;
     }
   },
-  data() {
-    return {
-      invite: null as ChatInvite | null,
-      loadingInvite: false
-    };
+  mounted() {
+    if (this.embed?.data?.type === "TPU_CHAT_INVITE") {
+      this.getInvite(this.embed?.data?.id);
+    }
   },
   methods: {
     async getInvite(id: string) {
@@ -194,11 +199,6 @@ export default defineComponent({
       } catch {
         this.loadingInvite = false;
       }
-    }
-  },
-  mounted() {
-    if (this.embed?.data?.type === "TPU_CHAT_INVITE") {
-      this.getInvite(this.embed?.data?.id);
     }
   }
 });

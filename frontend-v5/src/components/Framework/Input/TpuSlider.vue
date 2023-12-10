@@ -7,15 +7,15 @@
       {{ label }}
     </label>
     <div
-      class="relative flex-1 w-full range-slider-parent"
       :id="id + '-parent'"
+      class="relative flex-1 w-full range-slider-parent"
     >
-      <div class="absolute pointer-events-none tooltip" :id="id + '-tooltip'">
+      <div :id="id + '-tooltip'" class="absolute pointer-events-none tooltip">
         {{ value }}
       </div>
       <input
-        v-model="value"
         :id="id"
+        v-model="value"
         type="range"
         :min="min"
         :max="max"

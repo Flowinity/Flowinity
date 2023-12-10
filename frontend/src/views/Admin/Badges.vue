@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <CoreDialog v-model="dialog.value" max-width="600">
-      <template v-slot:title>Edit badge</template>
+      <template #title>Edit badge</template>
       <v-col>
         <v-text-field v-model="dialog.item.name" label="Name" />
       </v-col>
@@ -109,7 +109,7 @@
         <v-btn @click="createBadge">Create badge</v-btn>
       </v-container>
       <v-data-table :headers="headers" :items="badges" :items-per-page="-1">
-        <template v-slot:item.actions="{ item }">
+        <template #[`item.actions`]="{ item }">
           <v-btn
             icon
             @click="
@@ -177,6 +177,10 @@ export default defineComponent({
       }
     };
   },
+  mounted() {
+    this.getUsers();
+    this.getBadges();
+  },
   methods: {
     async removeBadges() {
       await this.axios.post("/admin/badge/users/delete", {
@@ -230,10 +234,6 @@ export default defineComponent({
         priority: 0
       };
     }
-  },
-  mounted() {
-    this.getUsers();
-    this.getBadges();
   }
 });
 </script>

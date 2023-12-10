@@ -45,7 +45,7 @@ import RiDragMoveLine from "vue-remix-icons/icons/ri-drag-move-line.vue";
 import HomeWidgetAnnouncements from "@/components/Home/Widgets/HomeWidgetAnnouncements.vue";
 import HomeWidgetSiteGraph from "@/components/Home/Widgets/HomeWidgetSiteGraph.vue";
 
-const props = defineProps({
+defineProps({
   widget: {
     type: Object as PropType<HomeWidget>,
     required: true

@@ -1,8 +1,8 @@
 <template>
   <CoreSidebar
-    name="theme"
     v-if="!$vuetify.display.mobile"
     v-model="$app.themeEditor"
+    name="theme"
     :width="editor ? 450 : 256"
     class="unselectable"
     color="dark"
@@ -13,7 +13,7 @@
     <ThemeEngineSidebar @editor="editor = $event" />
   </CoreSidebar>
   <CoreDialog v-if="$vuetify.display.mobile" v-model="$app.themeEditor">
-    <template v-slot:toolbar>
+    <template #toolbar>
       <div></div>
     </template>
     <ThemeEngineSidebar @editor="editor = $event" />

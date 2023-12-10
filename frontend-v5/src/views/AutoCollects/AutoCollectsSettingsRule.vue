@@ -1,57 +1,57 @@
 <template>
   <transition name="scroll-y-transition" appear>
-    <card padding class="my-4 mx-4 gap-4 flex-col flex" v-if="rule">
-      <text-field :label="t('generic.name')" v-model="rule.name" />
-      <tpu-switch :label="t('generic.enabled')" v-model="rule.enabled" />
+    <card v-if="rule" padding class="my-4 mx-4 gap-4 flex-col flex">
+      <text-field v-model="rule.name" :label="t('generic.name')" />
+      <tpu-switch v-model="rule.enabled" :label="t('generic.enabled')" />
       <tpu-switch
-        :label="t('autoCollects.settings.requireApproval')"
         v-model="rule.requireApproval"
+        :label="t('autoCollects.settings.requireApproval')"
       />
       <tpu-select
-        :items="collectionsStore.items"
         v-model="rule.collectionId"
+        :items="collectionsStore.items"
         :label="t('autoCollects.settings.collection')"
       />
       <tpu-overline position="start">
         {{ t("autoCollects.settings.ruleGroups") }}
       </tpu-overline>
       <div v-for="(parent, i) in rule.rules" :key="parent.id">
-        <tpu-overline position="start" v-if="i !== 0">
+        <tpu-overline v-if="i !== 0" position="start">
           <div class="flex items-center gap-1">
             {{ $t("autoCollects.configure.or") }}
             <tpu-button
               icon
-              @click="removeSubRule(rule, subrule.id)"
               variant="passive"
               style="width: 30px"
+              @click="removeSubRule(rule, subrule.id)"
             >
               <RiAddLine style="width: 20px" />
             </tpu-button>
             <tpu-button
               icon
-              @click="removeSubRule(rule, subrule.id)"
               variant="passive"
               style="width: 30px"
+              @click="removeSubRule(rule, subrule.id)"
             >
               <RiCloseLine style="width: 20px" />
             </tpu-button>
           </div>
         </tpu-overline>
         <div
-          class="flex w-full flex-wrap gap-4 items-center"
           v-for="child in parent.rules"
           :key="child.id"
+          class="flex w-full flex-wrap gap-4 items-center"
         >
           <tpu-select
-            :items="types"
             v-model="child.type"
+            :items="types"
             class="flex-1"
             :label="t('autoCollects.settings.rule')"
           />
           <tpu-select
+            v-model="child.operator"
             class="flex-1"
             :items="operators"
-            v-model="child.operator"
             :label="t('autoCollects.settings.operator')"
           />
           <text-field
@@ -61,9 +61,9 @@
           />
           <tpu-button
             icon
-            @click="removeRule(rule, parent.id)"
             style="width: 40px; height: 40px"
             variant="passive"
+            @click="removeRule(rule, parent.id)"
           >
             <RiCloseLine />
           </tpu-button>

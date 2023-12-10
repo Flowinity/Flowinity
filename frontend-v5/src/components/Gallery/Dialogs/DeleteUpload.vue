@@ -31,10 +31,7 @@ import { useI18n } from "vue-i18n";
 import { useAppStore } from "@/stores/app.store";
 import CardActions from "@/components/Framework/Card/CardActions.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
-import { DeleteUploadMutation } from "@/graphql/gallery/gallery.graphql";
-import { useApolloClient } from "@vue/apollo-composable";
 import { ref } from "vue";
-import { useToast } from "vue-toastification";
 import { useGalleryStore } from "@/stores/gallery.store";
 
 const { t } = useI18n();

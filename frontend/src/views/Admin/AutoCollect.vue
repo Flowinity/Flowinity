@@ -43,6 +43,9 @@ export default defineComponent({
       selectedRule: null as AutoCollectRule | null
     };
   },
+  mounted() {
+    this.getRules();
+  },
   methods: {
     async getRules() {
       const { data } = await this.axios.get("/admin/autoCollects");
@@ -56,9 +59,6 @@ export default defineComponent({
         ruleId: this.selectedRule.id
       });
     }
-  },
-  mounted() {
-    this.getRules();
   }
 });
 </script>

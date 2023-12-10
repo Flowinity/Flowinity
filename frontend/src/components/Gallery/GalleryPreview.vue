@@ -2,13 +2,13 @@
   <div>
     <v-hover v-if="item.type === 'image'" v-slot="{ isHovering, props }">
       <v-img
+        v-if="show || item.fileSize <= 12582912"
         :src="$app.domain + item.attachment"
         contain
         height="220"
         v-bind="props"
-        v-if="show || item.fileSize <= 12582912"
       >
-        <template v-slot:placeholder>
+        <template #placeholder>
           <v-row align="center" class="fill-height ma-0" justify="center">
             <v-progress-circular color="grey lighten-5" indeterminate />
           </v-row>

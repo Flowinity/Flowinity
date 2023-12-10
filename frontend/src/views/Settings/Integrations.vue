@@ -81,7 +81,7 @@
               })
             }}
           </v-list-item-subtitle>
-          <template v-slot:append>
+          <template #append>
             <v-btn icon @click="removeIntegration(integration.type)">
               <v-icon>mdi-close</v-icon>
             </v-btn>
@@ -97,7 +97,7 @@
       </v-toolbar-title>
     </v-toolbar>
     <v-container>
-      <v-card v-for="app in oauth" class="mb-4" :key="app.id">
+      <v-card v-for="app in oauth" :key="app.id" class="mb-4">
         <v-card-title>
           {{ app.name }}
           <span v-if="app.verified">
@@ -113,13 +113,13 @@
           {{ app.description }}
         </v-card-text>
         <v-list-item
-          class="mb-2"
           v-for="scope in scopeToArray(app.sessions[0].scopes)"
           :key="scope.id"
+          class="mb-2"
           :value="scope.id"
           style="opacity: 1"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <v-icon color="green" class="ml-1 mr-4">mdi-check-circle</v-icon>
           </template>
           <v-list-item-title
@@ -128,8 +128,8 @@
           >
             {{ scope.name }}
             <v-btn
-              color="primary"
               v-if="scope.id === 'oauth.save'"
+              color="primary"
               class="ml-1"
             >
               {{ $t("settings.integrations.manageSaves") }}
@@ -143,15 +143,15 @@
           </v-list-item-subtitle>
         </v-list-item>
         <small
-          class="text-red ml-5"
           v-if="app.scopes !== app.sessions[0].scopes"
+          class="text-red ml-5"
         >
           {{ $t("settings.integrations.scopesChanged") }}
         </small>
         <br />
         <small
-          class="text-grey ml-5"
           v-if="app.sessions[0].scopes.includes('oauth.save')"
+          class="text-grey ml-5"
         >
           {{ $t("settings.integrations.unlinkWarningSaves") }}
         </small>
@@ -159,7 +159,7 @@
           <v-btn :to="`/oauth/${app.id}`" color="primary">
             {{ $t("generic.login") }}
           </v-btn>
-          <v-btn @click="disconnect(app.id)" color="red">
+          <v-btn color="red" @click="disconnect(app.id)">
             {{ $t("settings.integrations.disconnect") }}
           </v-btn>
         </v-card-actions>
@@ -199,6 +199,11 @@ export default defineComponent({
       }[],
       scopeDefinitions: [] as ScopeDefinition[]
     };
+  },
+  mounted() {
+    this.getIntegrations();
+    this.getUserOAuth();
+    this.getScopeDefinitions();
   },
   methods: {
     async removeIntegration(type: string) {
@@ -252,11 +257,6 @@ export default defineComponent({
       this.loading = false;
       this.$toast.success("TPU app disconnected!");
     }
-  },
-  mounted() {
-    this.getIntegrations();
-    this.getUserOAuth();
-    this.getScopeDefinitions();
   }
 });
 </script>

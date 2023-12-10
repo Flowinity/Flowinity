@@ -5,7 +5,7 @@
     max-height="600px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
+    <template #title>
       {{ $t("gallery.actions.ocr.title") }}
     </template>
     <v-card-text>

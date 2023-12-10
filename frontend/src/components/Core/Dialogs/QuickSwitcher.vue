@@ -4,7 +4,7 @@
     max-width="600px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>TPU QuickSwitcher</template>
+    <template #title>TPU QuickSwitcher</template>
     <v-container v-if="modelValue">
       <v-autocomplete
         ref="input"

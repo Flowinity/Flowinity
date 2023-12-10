@@ -4,7 +4,7 @@
     max-width="700px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>Share Collection</template>
+    <template #title>Share Collection</template>
     <v-card-text>
       <v-select
         v-model="sharing.public"
@@ -47,7 +47,7 @@
         </v-col>
       </v-row>
       <v-data-table :headers="sharing.headers" :items="collection.users">
-        <template v-slot:item="row">
+        <template #item="row">
           <tr>
             <td>{{ row.item.user.username }}</td>
             <td>
@@ -80,7 +80,7 @@
             </td>
           </tr>
         </template>
-        <template v-slot:no-data>No data</template>
+        <template #no-data>No data</template>
       </v-data-table>
     </v-card-text>
     <v-card-actions>
@@ -160,6 +160,9 @@ export default defineComponent({
       }
     };
   },
+  mounted() {
+    this.sharing.public = this.collection.shareLink ? "link" : "nobody";
+  },
   methods: {
     async addUser() {
       const { data } = await this.axios.post(
@@ -206,9 +209,6 @@ export default defineComponent({
       this.$toast.success("User removed successfully.");
       this.$emit("getCollection");
     }
-  },
-  mounted() {
-    this.sharing.public = this.collection.shareLink ? "link" : "nobody";
   }
 });
 </script>

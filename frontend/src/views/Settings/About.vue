@@ -8,10 +8,10 @@
       @click="rainbowMode(false)"
     />
     <v-img
+      v-else
       src="@/assets/images/tpu-logo-banner.svg"
       max-height="120"
       class="mb-3"
-      v-else
       @click="rainbowMode(true)"
     />
     <v-divider />

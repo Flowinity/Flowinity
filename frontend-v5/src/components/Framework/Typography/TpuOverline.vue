@@ -6,21 +6,21 @@
   >
     <slot name="start" />
     <div
-      class="date-separator-line"
       v-if="
         props.position === 'center' ||
         props.position === 'end' ||
         props.position === 'none'
       "
+      class="date-separator-line"
     ></div>
-    <p class="date-separator-block unselectable" v-if="position !== 'none'">
+    <p v-if="position !== 'none'" class="date-separator-block unselectable">
       <slot />
     </p>
     <div
-      class="date-separator-line"
       v-if="props.position === 'start' || props.position === 'center'"
+      class="date-separator-line"
     ></div>
-    <div class="date-separator-block" v-if="$slots.end">
+    <div v-if="$slots.end" class="date-separator-block">
       <slot name="end" />
     </div>
   </div>

@@ -31,11 +31,12 @@
         </template>
         <template v-else>
           <text-field
-            parent-style="margin: 0"
             v-model="left.content"
+            parent-style="margin: 0"
             style="width: 40px; height: 40px"
             type="number"
             min="1"
+            autofocus
             @keydown.enter="
               $emit('update:modelValue', parseInt(left.content));
               left.value = false;
@@ -48,16 +49,15 @@
               left.value = false;
               left.content = '';
             "
-            autofocus
           />
         </template>
       </template>
       <tpu-button
+        v-for="page in pages"
+        :key="page"
         icon
         class="flex justify-center"
         style="min-width: 40px; min-height: 40px"
-        v-for="page in pages"
-        :key="page"
         :selected="page === modelValue"
         variant="passive"
         color="white"
@@ -78,8 +78,8 @@
         </template>
         <template v-else>
           <text-field
-            parent-style="margin: 0"
             v-model="right.content"
+            parent-style="margin: 0"
             min="1"
             style="width: 40px; height: 40px"
             type="number"
@@ -127,7 +127,6 @@ import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import RiArrowLeftSLine from "vue-remix-icons/icons/ri-arrow-left-s-line.vue";
 import RiArrowRightSLine from "vue-remix-icons/icons/ri-arrow-right-s-line.vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
-import { isNumeric } from "@/plugins/isNumeric";
 
 const props = defineProps({
   modelValue: {

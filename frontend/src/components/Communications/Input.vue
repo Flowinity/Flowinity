@@ -1,17 +1,17 @@
 <template>
   <div style="width: 100%">
     <Mentionable
+      :id="`#${editing ? 'input-editing' : 'input-main-comms'}`"
       :items="users"
       :keys="['@', ':', '!', '#', '&']"
       :omit-key="true"
       insert-space
       offset="6"
-      @open="onOpen"
       :model-value="modelValue"
-      :id="`#${editing ? 'input-editing' : 'input-main-comms'}`"
+      @open="onOpen"
     >
-      <template v-slot:item="{ item }: any">
-        <div class="my-2 mx-2" v-if="key === '@'">
+      <template #item="{ item }: any">
+        <div v-if="key === '@'" class="my-2 mx-2">
           <UserAvatar
             :size="35"
             :user="$chat.lookupUser(item.value)"
@@ -19,12 +19,12 @@
           />
           {{ $chat.lookupUser(item.value).username }}
         </div>
-        <div class="my-2 mx-2" v-else-if="key === ':'">
+        <div v-else-if="key === ':'" class="my-2 mx-2">
           <v-avatar size="24">
             <v-img v-if="item.emoji" :src="$app.domain + item.emoji.icon" />
             <v-img
-              draggable="false"
               v-else
+              draggable="false"
               width="24"
               :alt="item.value"
               :src="`/emoji/emoji_u${item.display
@@ -40,11 +40,11 @@
             }}
           </span>
         </div>
-        <div class="my-2 mx-2" v-else-if="key === '&' || key === '#'">
+        <div v-else-if="key === '&' || key === '#'" class="my-2 mx-2">
           <UserAvatar v-if="key === '#'" :chat="item.chat" size="24" />
           {{ item.label }}
         </div>
-        <div class="my-2 mx-2" v-else>
+        <div v-else class="my-2 mx-2">
           <UserAvatar :user="$user.users[item.botId]" :size="24" class="mr-2" />
           {{ item.command }}
           <span class="text-grey ml-2" style="font-size: 12px">
@@ -62,6 +62,7 @@
     >
       <div class="d-flex flex-column rounded-xl" style="width: 100%">
         <v-textarea
+          :id="editing ? 'input-editing' : 'input-main-comms'"
           ref="textarea"
           :class="!editing ? 'mb-n4 mt-1' : 'mt-2'"
           :maxlength="4000"
@@ -81,6 +82,7 @@
           placeholder="Keep it civil"
           rows="1"
           variant="outlined"
+          style="padding: 16px; width: 100%"
           @update:model-value="$emit('update:modelValue', $event)"
           @keydown.enter.exact="
             isMobile ? null : $event.preventDefault();
@@ -90,10 +92,8 @@
           @keyup.esc="$emit('edit', null)"
           @keydown.up="editing ? cursor($event, true) : null"
           @keydown.down="editing ? cursor($event, false) : null"
-          :id="editing ? 'input-editing' : 'input-main-comms'"
-          style="padding: 16px; width: 100%"
         >
-          <template v-slot:append>
+          <template #append>
             <v-icon
               class="pointer raw-icon"
               @click.prevent.stop="$emit('sendMessage')"
@@ -101,7 +101,7 @@
               mdi-send
             </v-icon>
           </template>
-          <template v-if="!editing" v-slot:prepend>
+          <template v-if="!editing" #prepend>
             <v-menu
               v-model="menu"
               :close-on-content-click="false"
@@ -146,7 +146,7 @@
                     <v-window-item value="gallery">
                       <InlineGallery
                         type="gallery"
-                        @clickItem="
+                        @click-item="
                           $emit('quickTPULink', $event);
                           menu = false;
                         "
@@ -155,7 +155,7 @@
                     <v-window-item value="starred">
                       <InlineGallery
                         type="starred"
-                        @clickItem="
+                        @click-item="
                           $emit('quickTPULink', $event);
                           menu = false;
                         "
@@ -164,7 +164,7 @@
                     <v-window-item value="gif">
                       <InlineGallery
                         type="tenor"
-                        @clickItem="
+                        @click-item="
                           $emit('quickTPULink', $event);
                           menu = false;
                         "
@@ -176,7 +176,7 @@
             </v-menu>
             <v-icon class="pointer raw-icon">mdi-plus-circle</v-icon>
           </template>
-          <template v-slot:append-inner>
+          <template #append-inner>
             <EmojiPicker
               v-model="emojiPicker"
               @emoji="$emit('emoji', $event)"
@@ -321,6 +321,11 @@ export default defineComponent({
       );
     }
   },
+  watch: {
+    "$route.params.chatId"() {
+      this.cachedPrefixes = [];
+    }
+  },
   methods: {
     focus() {
       //@ts-ignore
@@ -364,11 +369,6 @@ export default defineComponent({
           textarea.value.length,
           textarea.value.length
         );
-    }
-  },
-  watch: {
-    "$route.params.chatId"() {
-      this.cachedPrefixes = [];
     }
   }
 });

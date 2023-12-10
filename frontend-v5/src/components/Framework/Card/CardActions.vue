@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import TpuDivider from "@/components/Framework/Divider/TpuDivider.vue";
 
-const props = defineProps({
+defineProps({
   position: {
     type: String as () => "start" | "center" | "end",
     default: "end"

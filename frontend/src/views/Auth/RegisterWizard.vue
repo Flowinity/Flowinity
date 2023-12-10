@@ -37,7 +37,7 @@
                 @keydown.enter="register"
               />
               <v-checkbox v-model="terms" :rules="$validation.user.terms">
-                <template v-slot:label>
+                <template #label>
                   <span>I agree to the</span>
                   <router-link
                     style="text-decoration: none; color: #0190ea"
@@ -123,6 +123,14 @@ export default defineComponent({
       fact: ""
     };
   },
+  mounted() {
+    this.$app.title = "Register";
+    this.inviteKey = this.$route.params.key as string;
+    this.getInviteKey();
+    if (this.$route.query.email) {
+      this.email = this.$route.query.email as string;
+    }
+  },
   methods: {
     async getInviteKey() {
       if (this.$route.params.key) {
@@ -175,14 +183,6 @@ export default defineComponent({
       } catch {
         this.loading = false;
       }
-    }
-  },
-  mounted() {
-    this.$app.title = "Register";
-    this.inviteKey = this.$route.params.key as string;
-    this.getInviteKey();
-    if (this.$route.query.email) {
-      this.email = this.$route.query.email as string;
     }
   }
 });

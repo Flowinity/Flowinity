@@ -9,7 +9,7 @@
     :color="color"
   >
     <div :class="{ container: !$vuetify.display.mobile }">
-      <div class="image" v-if="image && (!right || $vuetify.display.mobile)">
+      <div v-if="image && (!right || $vuetify.display.mobile)" class="image">
         <v-img :src="image" contain />
       </div>
       <div class="text">
@@ -23,12 +23,12 @@
           <slot />
         </div>
       </div>
-      <div class="image" v-if="image && right && !$vuetify.display.mobile">
+      <div v-if="image && right && !$vuetify.display.mobile" class="image">
         <v-img :src="image" contain />
       </div>
     </div>
 
-    <v-row style="margin: 0" v-if="false">
+    <v-row v-if="false" style="margin: 0">
       <v-col
         v-if="image && (!right || $vuetify.display.mobile)"
         cols="12"

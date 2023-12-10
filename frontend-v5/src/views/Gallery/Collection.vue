@@ -103,7 +103,7 @@ import { useSocket } from "@/boot/socket.service";
 import RiImageEditLine from "vue-remix-icons/icons/ri-image-edit-line.vue";
 import CollectionSharing from "@/components/Collections/CollectionSharing.vue";
 import SetPictureDialog from "@/components/Core/Dialogs/SetPictureDialog.vue";
-import axios from "@/plugins/axios";
+import axios from "@/plugins/axios.ts";
 import functions from "@/plugins/functions";
 import { useToast } from "vue-toastification";
 const collectionsStore = useCollectionsStore();

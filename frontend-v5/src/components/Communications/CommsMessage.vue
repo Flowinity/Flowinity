@@ -3,31 +3,31 @@
     <message-reply :reply="message.reply" class="ml-9 items-center mt-2" />
     <div
       v-bind="$attrs"
+      :ref="`message-${message.id}`"
       class="message hover-message-actions flex"
       :class="{
         'mt-2': !merge && !message.reply,
         'mt-1': message.reply
       }"
-      :ref="`message-${message.id}`"
       @mouseenter="hovered = true"
     >
       <div class="flex flex-grow basis-0 message-main relative rounded-l">
         <div class="avatar-section" :class="{ 'justify-center': merge }">
           <UserAvatar
+            v-if="!merge"
             :user-id="message.userId || 0"
             :username="message.user?.username"
-            v-if="!merge"
           />
           <p
+            v-else
             style="font-size: 10px"
             class="text-medium-emphasis-dark merge-date"
-            v-else
           >
             {{ $date(message.createdAt).format("hh:mm A") }}
           </p>
         </div>
         <div class="flex-col">
-          <div class="flex items-center" v-if="!merge">
+          <div v-if="!merge" class="flex items-center">
             {{ friendsStore.getName(message.userId) }}
             <p class="text-medium-emphasis-dark text-sm ml-2">
               {{ dayjs(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
@@ -35,31 +35,31 @@
           </div>
           <div class="relative inline-block">
             <span
+              v-memo="[message.content, message.error, message.pending]"
               class="overflow-content"
-              v-html="$functions.markdown(message.content || '', message)"
               :class="{
                 'text-medium-emphasis-dark': message.pending,
                 'text-red': message.error
               }"
-              v-memo="[message.content, message.error, message.pending]"
+              v-html="$functions.markdown(message.content || '', message)"
             ></span>
           </div>
           <div class="flex-col flex">
             <comms-message-embed
               v-for="embed in message.embeds"
-              :embed="embed"
               :key="embed"
+              :embed="embed"
             />
           </div>
         </div>
         <comms-message-actions
-          @reply="$emit('reply', message.id)"
           v-if="hovered"
+          @reply="$emit('reply', message.id)"
         ></comms-message-actions>
       </div>
       <div
-        class="flex-shrink-1 justify-end align-bottom relative align-self-end h-full flex flex-col items-end"
         v-if="!search"
+        class="flex-shrink-1 justify-end align-bottom relative align-self-end h-full flex flex-col items-end"
         style="width: 100px; height: 100%"
       >
         <div
@@ -68,12 +68,12 @@
         >
           <user-avatar
             v-for="readReceipt in message.readReceipts"
-            :user-id="readReceipt.userId || 0"
             :key="readReceipt.id"
+            v-tooltip="userStore.users[readReceipt.userId || 0]?.username"
+            :user-id="readReceipt.userId || 0"
             :class="{ 'ml-1': message.readReceipts.length <= 3 }"
             size="22"
             class="read-receipt-avatar"
-            v-tooltip="userStore.users[readReceipt.userId || 0]?.username"
           ></user-avatar>
         </div>
       </div>
@@ -120,6 +120,7 @@ const props = defineProps({
   }
 });
 
+defineEmits(["reply"]);
 function blocked(userId?: number) {
   return userStore.blocked.find(
     (block) => block.blockedUserId === userId ?? props.message.userId

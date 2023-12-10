@@ -1,7 +1,7 @@
 <template>
   <CoreSidebar
-    name="chat"
     v-model="val"
+    name="chat"
     :class="{
       'sidebar-patch': $experiments.experiments.RAIL_SIDEBAR && $app.rail
     }"
@@ -9,15 +9,15 @@
     :floating="true"
   >
     <p
-      class="text-blue mt-4 ml-4 text-small pointer unselectable"
       v-if="$vuetify.display.mobile && $chat.isCommunications"
+      class="text-blue mt-4 ml-4 text-small pointer unselectable"
       @click="$app.railMode = 'tpu'"
     >
       <v-icon>mdi-arrow-left</v-icon>
       {{ $t("core.sidebar.backToTPU") }}
     </p>
     <SidebarList />
-    <template v-slot:append>
+    <template #append>
       <StatusSwitcher />
     </template>
   </CoreSidebar>

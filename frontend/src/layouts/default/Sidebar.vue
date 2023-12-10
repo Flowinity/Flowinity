@@ -1,5 +1,6 @@
 <template>
   <CoreSidebar
+    id="main-drawer"
     v-model="$app.mainDrawer"
     app
     name="default"
@@ -7,11 +8,10 @@
     :floating="true"
     :class="$app.mainDrawer && !$vuetify.display.mobile ? 'sidebar-patch' : ''"
     style="z-index: 2001"
-    id="main-drawer"
   >
     <p
-      class="text-blue mt-4 ml-4 text-small pointer unselectable"
       v-if="$vuetify.display.mobile && $chat.isCommunications"
+      class="text-blue mt-4 ml-4 text-small pointer unselectable"
       @click="$app.railMode = 'communications'"
     >
       <v-icon>mdi-arrow-right</v-icon>
@@ -27,18 +27,18 @@
         :link="true"
         :exact="item.exact"
         :to="item.path"
-        @click="handleClick(item.id)"
         :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
         :prepend-icon="item.icon"
+        @click="handleClick(item.id)"
       >
-        <template v-slot:prepend v-if="item.customIcon">
+        <template v-if="item.customIcon" #prepend>
           <DiscordIcon style="margin-right: 32px" />
         </template>
         <v-list-item-title>
           {{ item.name }}
           <v-chip
-            class="pb-n2 ml-1"
             v-if="item.new && !item.warning"
+            class="pb-n2 ml-1"
             color="green"
             variant="tonal"
             size="x-small"
@@ -46,34 +46,34 @@
             {{ $t("generic.new") }}
           </v-chip>
           <v-chip
-            class="pb-n2 ml-1"
             v-if="item.warning"
+            class="pb-n2 ml-1"
             variant="tonal"
             size="x-small"
           >
             {{ item.warning }}
           </v-chip>
           <v-icon
+            v-if="!$functions.checkScope(item.scope, $user.user?.scopes)"
             size="small"
             class="float-right"
             color="grey lighten-1"
-            v-if="!$functions.checkScope(item.scope, $user.user?.scopes)"
           >
             mdi-lock
           </v-icon>
         </v-list-item-title>
       </v-list-item>
     </v-list>
-    <template v-slot:append>
+    <template #append>
       <div
-        class="text-center justify-center"
         v-if="$user.user?.administrator || $user.user?.moderator"
+        class="text-center justify-center"
       >
         <small class="mb-2 text-grey">
           {{ $t("core.sidebar.experiments") }}
         </small>
       </div>
-      <div class="pa-2" v-if="$user.user?.subscription?.metadata?.hours">
+      <div v-if="$user.user?.subscription?.metadata?.hours" class="pa-2">
         <v-progress-linear
           color="gold"
           :model-value="calculateJitsi"
