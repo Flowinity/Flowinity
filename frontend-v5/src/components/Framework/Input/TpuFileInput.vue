@@ -10,13 +10,13 @@
     <input
       type="file"
       class="file-input"
-      v-on:change="$emit('update:modelValue', $event.target?.files)"
+      @change="$emit('update:modelValue', $event.target?.files)"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, toRefs, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

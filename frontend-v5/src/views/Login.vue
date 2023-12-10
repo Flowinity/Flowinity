@@ -20,8 +20,8 @@
           @keydown.enter="login"
         ></text-field>
         <text-field
-          type="number"
           v-model="totp"
+          type="number"
           :label="t('login.totp')"
           :minlength="!totp.length ? undefined : 6"
           @keydown.enter="login"

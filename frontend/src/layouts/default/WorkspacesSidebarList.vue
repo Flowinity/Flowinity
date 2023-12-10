@@ -1,42 +1,42 @@
 <template>
   <CoreDialog v-model="importDoc.dialog" max-width="600px">
-    <template v-slot:title>{{ $t("workspaces.import.title") }}</template>
+    <template #title>{{ $t("workspaces.import.title") }}</template>
     <v-container>
       <v-text-field
+        v-model="importDoc.name"
         :label="$t('workspaces.import.name')"
         required
         :autofocus="true"
-        v-model="importDoc.name"
       />
       <v-file-input
+        ref="importDocFile"
+        v-model="importDoc.file"
         :label="$t('workspaces.import.file')"
         required
         :autofocus="true"
-        v-model="importDoc.file"
-        ref="importDocFile"
         accept=".tpudoc,.html"
       />
     </v-container>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="primary" @click="doImportDoc" :loading="importDoc.loading">
+      <v-btn color="primary" :loading="importDoc.loading" @click="doImportDoc">
         {{ $t("workspaces.import.import") }}
       </v-btn>
     </v-card-actions>
   </CoreDialog>
   <CoreDialog v-model="download.dialog" max-width="600px">
-    <template v-slot:title v-if="!download.workspaceFolderId">
+    <template v-if="!download.workspaceFolderId" #title>
       {{ $t("workspaces.download.title") }}
     </template>
-    <template v-slot:title v-else>
+    <template v-else #title>
       {{ $t("workspaces.download.titleZIP") }}
     </template>
     <v-container>
       <v-select
+        v-model="download.type"
         label="Type"
         required
         :autofocus="true"
-        v-model="download.type"
         :items="download.types"
         item-title="text"
         item-value="value"
@@ -60,69 +60,69 @@
       >
         {{ $t("generic.cancel") }}
       </v-btn>
-      <v-btn color="primary" @click="downloadItem" :loading="download.loading">
+      <v-btn color="primary" :loading="download.loading" @click="downloadItem">
         {{ $t("workspaces.download.title") }}
       </v-btn>
     </v-card-actions>
   </CoreDialog>
   <WorkspaceDeleteDialog
-    @submit="doDeleteNote"
     v-model="deleteNote.dialog"
     title="Delete note"
     :loading="deleteNote.loading"
+    @submit="doDeleteNote"
   />
   <WorkspaceDeleteDialog
-    @submit="doDeleteWorkspace"
     v-model="deleteWorkspace.dialog"
     title="Delete workspace"
     :loading="deleteWorkspace.loading"
+    @submit="doDeleteWorkspace"
   />
   <WorkspaceDeleteDialog
-    @submit="doDeleteFolder"
     v-model="deleteFolder.dialog"
     title="Delete folder"
     :loading="deleteFolder.loading"
+    @submit="doDeleteFolder"
   />
   <WorkspaceDialog
-    @submit="doCreateNote"
     v-model="createNote.dialog"
     title="Create note"
     :loading="createNote.loading"
+    @submit="doCreateNote"
   />
   <WorkspaceDialog
-    @submit="doCreateWorkspace"
     v-model="createWorkspace.dialog"
     title="Create workspace"
     :loading="createWorkspace.loading"
+    @submit="doCreateWorkspace"
   />
   <WorkspaceDialog
-    @submit="doCreateFolder"
     v-model="createFolder.dialog"
     title="Create folder"
     :loading="createFolder.loading"
+    @submit="doCreateFolder"
   />
   <WorkspaceDialog
-    @submit="doRenameNote"
     v-model="renameNote.dialog"
     title="Rename note"
     btn-text="Rename"
     :loading="renameNote.loading"
+    @submit="doRenameNote"
   />
   <WorkspaceDialog
-    @submit="doRenameWorkspace"
     v-model="renameWorkspace.dialog"
     title="Rename workspace"
     btn-text="Rename"
     :loading="renameWorkspace.loading"
+    @submit="doRenameWorkspace"
   />
   <WorkspaceDialog
-    @submit="doRenameFolder"
     v-model="renameFolder.dialog"
     title="Rename folder"
     btn-text="Rename"
     :loading="renameFolder.loading"
+    @submit="doRenameFolder"
   />
-  <v-menu v-model="contextMenu.dialog" :key="contextMenu.id" :style="menuStyle">
+  <v-menu :key="contextMenu.id" v-model="contextMenu.dialog" :style="menuStyle">
     <v-list v-if="!contextMenu.item?.children && !contextMenu.item?.folders">
       <v-list-item @click="renameNote.dialog = true">
         <v-list-item-title>Rename note</v-list-item-title>
@@ -168,42 +168,42 @@
     </v-list>
   </v-menu>
   <v-card-text
+    v-if="!$workspaces.versionHistory && !$app.rail"
     style="color: rgb(var(--v-theme-primary)); cursor: pointer; font-size: 12px"
     class="mb-n4 unselectable"
     @click="$app.workspaceDrawer = false"
-    v-if="!$workspaces.versionHistory && !$app.rail"
   >
     <v-icon size="20">mdi-close</v-icon>
     Close Workspaces
   </v-card-text>
   <v-card-text
     v-else-if="!$app.rail"
+    style="color: #0190ea; cursor: pointer; font-size: 12px"
+    class="mb-n4 unselectable"
     @click="
       $workspaces.versionHistory = false;
       $router.push(`/workspaces/notes/${$route.params.id}`);
     "
-    style="color: #0190ea; cursor: pointer; font-size: 12px"
-    class="mb-n4 unselectable"
   >
     <v-icon>mdi-arrow-left</v-icon>
     Leave version history
   </v-card-text>
   <v-list
+    v-if="!$workspaces.versionHistory"
     density="comfortable"
     nav
     class="mt-2"
-    v-if="!$workspaces.versionHistory"
   >
     <v-list-item
-      class="px-2 unselectable"
       id="workspace-select"
+      class="px-2 unselectable"
       style="cursor: pointer"
       @contextmenu.prevent="
         context($event, 'workspace-select', $workspaces.workspace)
       "
     >
       {{ $workspaces.workspace?.name || "None selected" }}
-      <template v-slot:append>
+      <template #append>
         <v-list-item-action
           v-if="$workspaces.workspace"
           @click.stop="createFolder.dialog = true"
@@ -236,26 +236,26 @@
     <template v-if="$workspaces.workspace">
       <v-list-group
         v-for="item in $workspaces.workspace.folders"
+        :id="`folder-${item.id}`"
         :key="`folder-${item.id}`"
         :value="`folder-${item.id}`"
         :title="item.name"
-        :id="`folder-${item.id}`"
       >
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <v-list-item
             v-bind="props"
-            @contextmenu.prevent="context($event, `folder-${item.id}`, item)"
             class="unselectable"
+            @contextmenu.prevent="context($event, `folder-${item.id}`, item)"
           >
             <v-list-item-title>{{ props.title }}</v-list-item-title>
           </v-list-item>
         </template>
         <v-list-item
           v-for="note in item.children"
+          :id="`note-${note.id}`"
           :key="`note-${note.id}`"
           :to="'/workspaces/notes/' + note.id"
           :value="`note-${note.id}`"
-          :id="`note-${note.id}`"
           :active="$route.path === `/workspaces/notes/${note.id}`"
           @contextmenu.prevent="context($event, `note-${note.id}`, note)"
         >
@@ -389,6 +389,19 @@ export default defineComponent({
         position: absolute;
         top: ${this.contextMenu.y}px;
         left: ${this.contextMenu.x}px;`;
+    }
+  },
+  watch: {
+    "$workspaces.versionHistory"(val) {
+      if (val && this.$route.name === "Workspace Item") {
+        this.getVersions();
+      }
+    }
+  },
+  mounted() {
+    if (this.$route.params.version) {
+      this.$workspaces.versionHistory = true;
+      this.getVersions();
     }
   },
   methods: {
@@ -608,19 +621,6 @@ export default defineComponent({
     async getVersions() {
       const { data } = await this.axios.get("/notes/" + this.$route.params.id);
       this.versions = data.versions;
-    }
-  },
-  mounted() {
-    if (this.$route.params.version) {
-      this.$workspaces.versionHistory = true;
-      this.getVersions();
-    }
-  },
-  watch: {
-    "$workspaces.versionHistory"(val) {
-      if (val && this.$route.name === "Workspace Item") {
-        this.getVersions();
-      }
     }
   }
 });

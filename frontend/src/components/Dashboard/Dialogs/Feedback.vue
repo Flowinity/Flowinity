@@ -4,7 +4,7 @@
     width="700"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>Provide Feedback to TPU</template>
+    <template #title>Provide Feedback to TPU</template>
     <v-card-text>
       <v-container>
         <v-row>

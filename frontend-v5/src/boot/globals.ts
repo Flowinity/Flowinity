@@ -1,4 +1,4 @@
-import axios from "@/plugins/axios";
+import axios from "@/plugins/axios.ts";
 import { useAdminStore } from "@/stores/admin.store";
 import { useUserStore } from "@/stores/user.store";
 import { useAppStore } from "@/stores/app.store";
@@ -11,12 +11,11 @@ import { useMailStore } from "@/stores/mail.store";
 import { useToast } from "vue-toastification";
 import dayjs from "@/plugins/dayjs";
 import validation from "@/plugins/validation";
-import { io } from "socket.io-client";
 import functions from "@/plugins/functions";
-import router from "@/router";
-import type { Router, useRouter } from "vue-router";
-import type { ChatEmoji, Collection } from "@/gql/graphql";
 import { useSocket } from "@/boot/socket.service";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 export default function setup(app) {
   const user = useUserStore();

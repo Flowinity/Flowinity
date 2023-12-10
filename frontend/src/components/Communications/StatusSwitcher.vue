@@ -8,7 +8,7 @@
     <v-card>
       <StatusSwitcherList />
     </v-card>
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-card
         id="status-switcher"
         :rounded="false"

@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
-import axios from "@/plugins/axios";
+import axios from "@/plugins/axios.ts";
 import { computed, Ref, ref, watch } from "vue";
 import { useApolloClient } from "@vue/apollo-composable";
 import { MailStateQuery } from "@/graphql/mail/state.graphql";

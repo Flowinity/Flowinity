@@ -15,13 +15,13 @@
             }
           }"
         >
-          <template v-slot:custom-values="{ item }">
+          <template #custom-values="{ galleryItem }">
             <div style="display: flex; align-items: baseline">
               <v-card-subtitle style="opacity: 0.6; margin-right: -28px">
                 Creator:
               </v-card-subtitle>
               <v-card-subtitle style="opacity: 0.8">
-                <router-link :to="`/u/${item?.user?.username}`">
+                <router-link :to="`/u/${galleryItem?.user?.username}`">
                   {{ item?.user?.username || "Unknown" }}
                 </router-link>
               </v-card-subtitle>
@@ -43,12 +43,14 @@ import { Upload } from "@/models/upload";
 import GalleryItem from "@/components/Gallery/GalleryItem.vue";
 
 export default defineComponent({
-  name: "Item",
   components: { GalleryItem, NotFound },
   data() {
     return {
       item: null as Upload | null
     };
+  },
+  mounted() {
+    this.fetchItem();
   },
   methods: {
     async fetchItem() {
@@ -74,9 +76,6 @@ export default defineComponent({
         this.$app.componentLoading = false;
       }
     }
-  },
-  mounted() {
-    this.fetchItem();
   }
 });
 </script>

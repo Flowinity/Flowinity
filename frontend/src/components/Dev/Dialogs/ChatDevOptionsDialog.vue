@@ -1,6 +1,6 @@
 <template>
   <DevDialog @close="$chat.dialogs.chatDevOptions.value = false">
-    <template v-slot:header>Chat Developer Options & Metrics</template>
+    <template #header>Chat Developer Options & Metrics</template>
     <p class="mt-2 mb-n4">{{ $chat.selectedChat.name }}</p>
     <v-container v-if="$chat.selectedChat">
       <overline>User Permissions for Chat</overline>
@@ -36,7 +36,7 @@
       <p>associationId: {{ $chat.selectedChat.association.id }}</p>
       <p>unread: {{ $chat.totalUnread }}</p>
       <p>group type: {{ $chat.selectedChat.type }}</p>
-      <p style="color: rgb(var(--v-theme-error))" v-if="legacyUsers.length">
+      <p v-if="legacyUsers.length" style="color: rgb(var(--v-theme-error))">
         Colubrina legacy users: {{ legacyUsers.length }}
       </p>
       <p v-if="realUsers.length">Real users: {{ realUsers.length }}</p>
@@ -49,10 +49,10 @@
       >
         Chat loaded
       </p>
-      <p style="color: rgb(var(--v-theme-error))" v-else>Chat not loaded</p>
+      <p v-else style="color: rgb(var(--v-theme-error))">Chat not loaded</p>
       <p
-        style="color: rgb(var(--v-theme-error))"
         v-if="$chat.selectedChat.id.toString().startsWith('-')"
+        style="color: rgb(var(--v-theme-error))"
       >
         Pre-Colubrina migrate group
       </p>

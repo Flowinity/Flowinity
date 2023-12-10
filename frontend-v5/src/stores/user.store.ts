@@ -1,4 +1,4 @@
-import { ref, computed, markRaw, type Raw, type ComputedRef } from "vue";
+import { ref, computed, type ComputedRef } from "vue";
 import { defineStore } from "pinia";
 import type {
   BlockedUser,
@@ -8,7 +8,6 @@ import type {
 } from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { UpdateUserMutation } from "@/graphql/user/update.graphql";
-import { useI18n } from "vue-i18n";
 
 export const useUserStore = defineStore("user", () => {
   const user = ref<User | null>(null);
@@ -21,7 +20,7 @@ export const useUserStore = defineStore("user", () => {
 
   const users: ComputedRef<Record<number, PartialUserFriend>> = computed(() => {
     return tracked.value.reduce((acc, item) => {
-      if (item.id === user.value.id) {
+      if (user.value && item.id === user.value.id) {
         const u = user.value;
         acc[item.id] = {
           username: u.username,

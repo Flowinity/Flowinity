@@ -1,25 +1,12 @@
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { defineStore } from "pinia";
-import type {
-  Chat,
-  ChatEmoji,
-  InfiniteMessagesInput,
-  Message,
-  PagedMessagesInput
-} from "@/gql/graphql";
+import type { Chat, ChatEmoji, Message } from "@/gql/graphql";
 import { MessageType, ScrollPosition } from "@/gql/graphql";
 import { useFriendsStore } from "@/stores/friends.store";
 import { useUserStore } from "@/stores/user.store";
 import dayjs from "@/plugins/dayjs";
-import {
-  MessagesQuery,
-  PagedMessagesQuery
-} from "@/graphql/chats/messages.graphql";
-import { useApolloClient } from "@vue/apollo-composable";
 import { RailMode, useAppStore } from "@/stores/app.store";
 import { useSocket } from "@/boot/socket.service";
-import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
-import { useExperimentsStore } from "@/stores/experiments.store";
 import { useMessagesStore } from "@/stores/messages.store";
 
 export const useChatStore = defineStore("chat", () => {
@@ -36,8 +23,6 @@ export const useChatStore = defineStore("chat", () => {
   const recentEmoji = ref<Record<string, number>>({});
   const loading = ref(false);
   const isReady = ref(0);
-  const { resolveClient } = useApolloClient();
-  const client = resolveClient();
   const messagesStore = useMessagesStore();
   const typers = ref<
     {

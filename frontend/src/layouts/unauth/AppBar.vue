@@ -9,12 +9,12 @@
     floating
   >
     <h1
+      v-if="!$vuetify.display.mobile"
       id="tpu-brand-logo"
       class="text-gradient unselectable ml-4"
       style="z-index: 10; cursor: pointer; font-size: 32px"
       title="TroploPrivateUploader"
       @click="$router.push('/')"
-      v-if="!$vuetify.display.mobile"
     >
       {{ $app.site.name }}
     </h1>
@@ -28,7 +28,7 @@
       origin="top right"
       transition="scale-transition"
     >
-      <template v-slot:activator="{ props }">
+      <template #activator="{ props }">
         <v-btn icon v-bind="props" class="mr-2">
           <v-icon>mdi-theme-light-dark</v-icon>
         </v-btn>
@@ -43,7 +43,7 @@
     </v-menu>
     <v-btn color="primary" to="/register">Register</v-btn>
     <v-btn color="primary" to="/login">Login</v-btn>
-    <template v-if="redirected" v-slot:extension>
+    <template v-if="redirected" #extension>
       <v-alert
         :value="redirected"
         border="start"

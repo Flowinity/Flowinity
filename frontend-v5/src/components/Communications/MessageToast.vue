@@ -4,8 +4,8 @@
       chatStore.chats.find((chat) => chat.id === message!.chatId)?.association
         ?.id
     }`"
-    @click.prevent
     class="relative flex"
+    @click.prevent
   >
     <div class="flex justify-center items-center">
       <user-avatar size="50" :user-id="message!.userId" />

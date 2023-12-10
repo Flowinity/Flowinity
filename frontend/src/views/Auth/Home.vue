@@ -17,7 +17,7 @@
         <v-btn variant="outlined" :class="{'mb-8': $vuetify.display.mobile}" to="/register">
           Register now
         </v-btn>
-        <p class="mb-n2" v-if="!$app.site.officialInstance">
+        <p v-if="!$app.site.officialInstance" class="mb-n2">
           This is a
           <a
             rel="noopener"
@@ -142,6 +142,23 @@ export default defineComponent({
       }
     };
   },
+  mounted() {
+    // Check $app.site.hostnames and window.location.hostname to see if we should redirect
+    if (this.$app.site.release !== "dev") {
+      if (
+        this.$app.site.hostnames &&
+        !this.$app.site.hostnames.includes(window.location.hostname)
+      ) {
+        window.location.href =
+          (this.$app.site.hostnameWithProtocol ??
+            "https://images.flowinity.com") + "/home?redirected=true";
+      }
+    }
+    this.$app.title = "Welcome";
+    if (this.$route.query.ref === "colubrina") {
+      this.$app.dialogs.colubrina = true;
+    }
+  },
   methods: {
     async reportUpload() {
       this.report.loading = true;
@@ -175,23 +192,6 @@ export default defineComponent({
           inline: "nearest"
         });
       }
-    }
-  },
-  mounted() {
-    // Check $app.site.hostnames and window.location.hostname to see if we should redirect
-    if (this.$app.site.release !== "dev") {
-      if (
-        this.$app.site.hostnames &&
-        !this.$app.site.hostnames.includes(window.location.hostname)
-      ) {
-        window.location.href =
-          (this.$app.site.hostnameWithProtocol ??
-            "https://images.flowinity.com") + "/home?redirected=true";
-      }
-    }
-    this.$app.title = "Welcome";
-    if (this.$route.query.ref === "colubrina") {
-      this.$app.dialogs.colubrina = true;
     }
   }
 });

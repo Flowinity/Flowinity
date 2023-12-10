@@ -8,8 +8,8 @@
   />
   <v-card
     v-for="experiment in relevantExperiments"
-    class="my-2"
     :key="experiment.name"
+    class="my-2"
   >
     <v-card-title>{{ experiment.name }}</v-card-title>
     <v-card-subtitle>{{ experiment.meta?.description }}</v-card-subtitle>
@@ -74,13 +74,13 @@ export default defineComponent({
         .filter((experiment) => experiment.name !== "meta");
     }
   },
-  async mounted() {
-    this.users.push(...(await this.$admin.getUsers()));
-  },
   watch: {
     async selected() {
       this.experiments = await this.$admin.getExperimentValues(this.selected);
     }
+  },
+  async mounted() {
+    this.users.push(...(await this.$admin.getUsers()));
   }
 });
 </script>

@@ -11,7 +11,7 @@
     <UserBanner
       :height="username ? 250 : undefined"
       :user="user"
-      @refreshUser="getUser(false)"
+      @refresh-user="getUser(false)"
     />
     <v-container class="mt-2" style="max-width: 100%">
       <v-row>
@@ -60,12 +60,10 @@
                   <h1
                     :class="username ? 'mb-2 pointer' : ''"
                     style="font-weight: 500"
-                    @click="
-                      username ? $router.push(`/u/${username}`) : () => {}
-                    "
+                    @click="username ? $router.push(`/u/${username}`) : ''"
                   >
                     {{ $friends.getName(user) }}
-                    <v-chip class="ml-1" v-if="user?.bot" size="x-small">
+                    <v-chip v-if="user?.bot" class="ml-1" size="x-small">
                       BOT
                     </v-chip>
                     <span
@@ -136,7 +134,7 @@
                   </h1>
                   <UserBadges
                     :class="{ 'justify-center': $vuetify.display.mobile }"
-                    :primaryColor="primaryColorResult.primary"
+                    :primary-color="primaryColorResult.primary"
                     :user="user"
                   />
                 </div>
@@ -197,27 +195,25 @@
               <UserV3ComponentHandler
                 :component="component"
                 :components="visibleComponents"
-                :editMode="config.editMode"
+                :edit-mode="config.editMode"
                 :gold="gold"
                 :primary="primary"
                 :user="user"
                 :username="username"
-                @addToParent="
-                  component.props
-                    ? component.props.children.push($event)
-                    : () => {}
+                @add-to-parent="
+                  component.props ? component.props.children.push($event) : ''
                 "
                 @delete="deleteComponent($event || component)"
-                @moveDown="move($event || component, 1)"
-                @moveUp="move($event || component, -1)"
+                @move-down="move($event || component, 1)"
+                @move-up="move($event || component, -1)"
                 @settings="
                   config.component = $event || component;
                   config.dialog = true;
                 "
-                @modifyProp="
+                @modify-prop="
                   component.props
                     ? (component.props[$event.prop] = $event.value)
-                    : () => {}
+                    : ''
                 "
               />
             </div>
@@ -233,11 +229,11 @@
           style="flex: 0 1 auto; white-space: nowrap"
         >
           <StatsCard
+            v-if="user.xp"
             title="Money donated"
             class="my-3"
             :gold="gold"
             :primary-color="primaryColorResult.primary"
-            v-if="user.xp"
             :value="user.xp < 0 ? '-$' + user.xp * -1 : '$' + user.xp"
           >
             <div>
@@ -343,8 +339,6 @@ import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 import { FriendStatus, ProfileLayout, User, UserInsights } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "UserV3",
-  props: ["username"],
   components: {
     UserV3AddMenu,
     UserV3ComponentHandler,
@@ -356,6 +350,7 @@ export default defineComponent({
     UserBanner,
     VueDraggable
   },
+  props: ["username"],
   data() {
     return {
       config: {
@@ -700,6 +695,28 @@ export default defineComponent({
       }
     }
   },
+  watch: {
+    "$route.params.username"(val) {
+      if (!val) return;
+      this.config.editMode = false;
+      this.getUser();
+    },
+    layout: {
+      handler: function (val) {
+        if (this.user?.id !== this.$user.user?.id) return;
+        this.$user.user.profileLayout = val;
+        this.$user.save();
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    if (!this.username) this.$app.title = "User";
+    this.getUser();
+  },
+  unmounted() {
+    this.setTheme(true);
+  },
   methods: {
     calculatePercentage(value) {
       const rounded = Math.ceil(value / 50) * 50;
@@ -848,28 +865,6 @@ export default defineComponent({
       if (!this.username) this.$app.title = this.user?.username + "'s Profile";
       this.setTheme();
       this.$app.componentLoading = false;
-    }
-  },
-  mounted() {
-    if (!this.username) this.$app.title = "User";
-    this.getUser();
-  },
-  unmounted() {
-    this.setTheme(true);
-  },
-  watch: {
-    "$route.params.username"(val) {
-      if (!val) return;
-      this.config.editMode = false;
-      this.getUser();
-    },
-    layout: {
-      handler: function (val) {
-        if (this.user?.id !== this.$user.user?.id) return;
-        this.$user.user.profileLayout = val;
-        this.$user.save();
-      },
-      deep: true
     }
   }
 });

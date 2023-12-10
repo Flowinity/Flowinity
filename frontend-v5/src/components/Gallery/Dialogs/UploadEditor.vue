@@ -1,18 +1,18 @@
 <template>
   <tpu-dialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     :width="editor ? 800 : 500"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #toolbar>
       {{ t("gallery.dialogs.edit.title") }}
     </template>
-    <template #default v-if="!editor">
+    <template v-if="!editor" #default>
       <transition
+        v-if="!editor"
         name="scroll-x-transition"
         mode="out-in"
         appear
-        v-if="!editor"
       >
         <div>
           <p class="my-4 mx-4">
@@ -25,9 +25,9 @@
           </p>
           <card-actions>
             <tpu-button
-              @click="editor = true"
-              color="purple"
               v-if="appStore.dialogs.gallery.edit.upload?.type === 'image'"
+              color="purple"
+              @click="editor = true"
             >
               {{ t("generic.edit") }}
             </tpu-button>
@@ -40,17 +40,17 @@
     </template>
     <template v-else #default>
       <transition
+        v-if="editor"
         name="scroll-x-reverse-transition"
         mode="out-in"
         appear
-        v-if="editor"
       >
         <GalleryEditor
-          @back="editor = false"
           :name="appStore.dialogs.gallery.edit.upload!.name"
           :image="
             appStore.domain + appStore.dialogs.gallery.edit.upload?.attachment
           "
+          @back="editor = false"
         />
       </transition>
     </template>
@@ -64,13 +64,9 @@ import { useAppStore } from "@/stores/app.store";
 import CardActions from "@/components/Framework/Card/CardActions.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
-import TpuSelect from "@/components/Framework/Input/TpuSelect.vue";
 import { ref, watch } from "vue";
-import { useCollectionsStore } from "@/stores/collections.store";
-import axios from "@/plugins/axios";
 import { useApolloClient } from "@vue/apollo-composable";
 import {
-  DeleteUploadMutation,
   UpdateUploadMutation
 } from "@/graphql/gallery/gallery.graphql";
 import { useToast } from "vue-toastification";

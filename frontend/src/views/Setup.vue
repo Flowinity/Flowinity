@@ -565,6 +565,26 @@ export default defineComponent({
       }
     };
   },
+  watch: {
+    "$app.site.step": {
+      immediate: true,
+      handler: function (step: Step) {
+        this.step = step;
+      }
+    },
+    "$app.site.dbHost": {
+      immediate: true,
+      handler: function () {
+        // Interpret recommended database settings for Docker
+        this.instance.redisHostname = this.$app.site.redisHost || "localhost";
+        this.database.host = this.$app.site.dbHost || "localhost";
+      }
+    }
+  },
+  mounted() {
+    this.getCurrentStep();
+    this.$app.title = "Setup Wizard";
+  },
   methods: {
     async setupDomain() {
       this.loading = true;
@@ -733,26 +753,6 @@ export default defineComponent({
         });
         this.step = data.setupStep;
       } catch {}
-    }
-  },
-  mounted() {
-    this.getCurrentStep();
-    this.$app.title = "Setup Wizard";
-  },
-  watch: {
-    "$app.site.step": {
-      immediate: true,
-      handler: function (step: Step) {
-        this.step = step;
-      }
-    },
-    "$app.site.dbHost": {
-      immediate: true,
-      handler: function () {
-        // Interpret recommended database settings for Docker
-        this.instance.redisHostname = this.$app.site.redisHost || "localhost";
-        this.database.host = this.$app.site.dbHost || "localhost";
-      }
     }
   }
 });

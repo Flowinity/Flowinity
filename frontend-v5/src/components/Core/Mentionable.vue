@@ -2,6 +2,7 @@
   <div ref="el" :class="$attrs.class" class="mentionable" style="width: 100%">
     <slot />
     <VDropdown
+      v-if="displayedItems.length"
       ref="popper"
       :auto-hide="false"
       :shown="currentKey !== null"
@@ -16,7 +17,6 @@
       :theme="theme"
       class="bg-card-secondary-dark"
       style="position: absolute"
-      v-if="displayedItems.length"
       v-bind="{ ...$attrs, class: undefined }"
     >
       <div

@@ -2,12 +2,12 @@
   <span style="position: relative">
     <v-hover v-slot="{ isHovering, props }">
       <UploadCropper
+        v-if="(edit && user?.id === $user.user?.id) || (edit && overrideId)"
         v-model="dialog"
         aspect-ratio="1"
         title="Upload Avatar"
-        @finish="changeAvatar"
-        v-if="(edit && user?.id === $user.user?.id) || (edit && overrideId)"
         type="userProfile"
+        @finish="changeAvatar"
         @remove="removeAvatar"
       />
       <v-avatar
@@ -48,12 +48,12 @@
       </v-avatar>
       <template v-if="status && friendStatus">
         <div
+          v-if="friendDevice === 'web'"
           class="status"
           :class="{ 'dot-status': dotStatus }"
           :style="{
             backgroundColor: $functions.userStatus(friendStatus).color
           }"
-          v-if="friendDevice === 'web'"
         >
           <v-tooltip :eager="false" location="top" activator="parent">
             {{ $functions.userStatus(friendStatus).text }}
@@ -101,6 +101,7 @@ export default defineComponent({
     "overrideId",
     "bot"
   ],
+  emits: ["refresh"],
   data() {
     return {
       dialog: false

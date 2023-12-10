@@ -116,24 +116,13 @@ export default defineComponent({
       default: 15
     }
   },
+  emits: ["update:modelValue"],
   data() {
     return {
       customLeft: false,
       customRight: false,
       customPage: undefined as string | undefined
     };
-  },
-  methods: {
-    doCustomPage() {
-      if (this.totalPages) {
-        if (parseInt(this.customPage || "") > this.totalPages) {
-          this.customPage = this.totalPages.toString();
-        }
-      }
-      this.$emit("update:modelValue", parseInt(this.customPage || ""));
-      this.customLeft = false;
-      this.customRight = false;
-    }
   },
   computed: {
     maxVisibleResponsive() {
@@ -179,6 +168,18 @@ export default defineComponent({
       }
 
       return visiblePages;
+    }
+  },
+  methods: {
+    doCustomPage() {
+      if (this.totalPages) {
+        if (parseInt(this.customPage || "") > this.totalPages) {
+          this.customPage = this.totalPages.toString();
+        }
+      }
+      this.$emit("update:modelValue", parseInt(this.customPage || ""));
+      this.customLeft = false;
+      this.customRight = false;
     }
   }
 });

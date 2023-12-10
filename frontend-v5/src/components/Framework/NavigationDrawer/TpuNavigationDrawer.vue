@@ -6,12 +6,12 @@
   ></div>
   <div
     id="drawer-navigation"
+    ref="drawer"
     class="fixed top-[64px] h-[calc(100vh-64px)] left-0 z-40 transition-transform dark:bg-gray-800"
     :class="{ '-translate-x-full': !modelValue, 'translate-x-0': modelValue }"
+    v-bind="$attrs"
     @touchstart="onTouchStart"
     @touchmove="onTouchMove"
-    ref="drawer"
-    v-bind="$attrs"
   >
     <slot />
   </div>

@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
-import axios from "@/plugins/axios";
+import axios from "@/plugins/axios.ts";
 import {
   type Friend,
   FriendStatus,
@@ -18,7 +18,7 @@ export const useFriendsStore = defineStore("friends", {
   state: () =>
     ({
       friends: []
-    }) as FriendsState,
+    } as FriendsState),
   getters: {
     validFriends(state) {
       return state.friends.filter(

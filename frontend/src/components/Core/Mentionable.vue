@@ -1,10 +1,10 @@
 <template>
   <div
+    v-if="displayedItems.length"
     ref="el"
     :class="$attrs.class"
     class="mentionable"
     style="position: relative; width: 100%"
-    v-if="displayedItems.length"
   >
     <slot />
 

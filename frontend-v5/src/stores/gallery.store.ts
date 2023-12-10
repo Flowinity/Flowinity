@@ -1,10 +1,6 @@
 import { defineStore } from "pinia";
 import { useApolloClient } from "@vue/apollo-composable";
-import {
-  DeleteUploadMutation,
-  GalleryQuery
-} from "@/graphql/gallery/gallery.graphql";
-import { useAppStore } from "@/stores/app.store";
+import { DeleteUploadMutation } from "@/graphql/gallery/gallery.graphql";
 import { useToast } from "vue-toastification";
 
 export const useGalleryStore = defineStore("gallery", () => {

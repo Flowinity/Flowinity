@@ -1,11 +1,11 @@
 <template>
   <teleport
+    v-if="!$chat.isCommunications || $chat.isReady"
     :to="
       $chat.isCommunications && $chat.selectedChat
         ? '#communications-bottom-navigation'
         : 'body'
     "
-    v-if="!$chat.isCommunications || $chat.isReady"
   >
     <div
       class="mt-3 v-bottom-navigation v-bottom-navigation--active v-bottom-navigation--grow v-theme--amoled v-bottom-navigation--density-default justify-center"
@@ -18,22 +18,22 @@
     >
       <div class="v-bottom-navigation__content">
         <v-btn
+          v-for="item in displayed"
+          :key="item.id"
           :href="item.externalPath"
           :to="item.path"
           :exact="item.exact"
-          v-for="item in displayed"
-          :key="item.id"
-          @click="handleClick(item.id)"
           class="rounded-0"
           :height="height"
           width="auto"
+          @click="handleClick(item.id)"
         >
           <v-badge
+            v-if="typeof item.warning === 'number' && item.warning > 0"
             :content="item.warning"
             variant="tonal"
             color="grey-darken-4"
             size="x-small"
-            v-if="typeof item.warning === 'number' && item.warning > 0"
           >
             <v-icon size="22">
               {{ item.icon }}
@@ -45,10 +45,10 @@
         </v-btn>
         <v-btn
           class="rounded-0"
-          @click="drawer = !drawer"
           :active="drawer"
           :height="height"
           width="auto"
+          @click="drawer = !drawer"
         >
           <v-icon size="22">mdi-dots-horizontal</v-icon>
         </v-btn>
@@ -64,8 +64,8 @@
     style="height: 55vh"
   >
     <p
-      class="text-center mt-2 v-card-subtitle"
       v-if="$app.dialogs.selectDefaultMobile"
+      class="text-center mt-2 v-card-subtitle"
     >
       {{ $t("core.sidebar.quickAction") }}
     </p>
@@ -85,12 +85,12 @@
         "
       >
         {{ item.name }}
-        <template v-slot:append>
+        <template #append>
           <v-btn
             icon
             size="small"
-            @click.prevent.stop="pin(item.id)"
             :disabled="displayed.length >= visible && !displayed.includes(item)"
+            @click.prevent.stop="pin(item.id)"
           >
             <v-icon>
               {{ displayed.includes(item) ? "mdi-pin-off" : "mdi-pin" }}
@@ -98,8 +98,8 @@
           </v-btn>
         </template>
         <v-chip
-          class="pb-n2 ml-1"
           v-if="item.warning"
+          class="pb-n2 ml-1"
           variant="tonal"
           size="x-small"
         >
@@ -145,6 +145,26 @@ export default defineComponent({
       }
     }
   },
+  watch: {
+    "$app.dialogs.selectDefaultMobile"() {
+      this.drawer = true;
+    },
+    drawer(val) {
+      if (this.$app.dialogs.selectDefaultMobile && !val) {
+        this.$app.dialogs.selectDefaultMobile = false;
+      }
+    }
+  },
+  mounted() {
+    if (!localStorage.getItem("sidebarPins")) {
+      localStorage.setItem(
+        "sidebarPins",
+        JSON.stringify([1, 6, this.$app.site.features.collections ? 7 : 2])
+      );
+      this.bind = true;
+      this.bind = false;
+    }
+  },
   methods: {
     pin(id: number) {
       try {
@@ -184,26 +204,6 @@ export default defineComponent({
       this.$nextTick(() => {
         this.drawer = false;
       });
-    }
-  },
-  mounted() {
-    if (!localStorage.getItem("sidebarPins")) {
-      localStorage.setItem(
-        "sidebarPins",
-        JSON.stringify([1, 6, this.$app.site.features.collections ? 7 : 2])
-      );
-      this.bind = true;
-      this.bind = false;
-    }
-  },
-  watch: {
-    "$app.dialogs.selectDefaultMobile"() {
-      this.drawer = true;
-    },
-    drawer(val) {
-      if (this.$app.dialogs.selectDefaultMobile && !val) {
-        this.$app.dialogs.selectDefaultMobile = false;
-      }
     }
   }
 });

@@ -1,12 +1,12 @@
 <template>
   <div class="gap-4 p-4 w-full relative md:grid md:grid-cols-3 lg:grid-cols-4">
     <gallery-input
+      ref="galleryInputRef"
       :model-value="props.search"
+      input-id="gallery-input"
+      class="lg:col-span-2"
       @update:model-value="$emit('update:search', $event)"
       @refresh="$emit('refresh')"
-      inputId="gallery-input"
-      class="lg:col-span-2"
-      ref="galleryInputRef"
     />
     <tpu-select
       style="min-width: 200px"
@@ -19,20 +19,20 @@
           <tpu-overline position="start">Filter</tpu-overline>
           <ul>
             <li
+              v-for="item in props.types"
+              :key="item.internalName"
               v-wave
               tabindex="0"
-              :key="item.internalName"
-              v-for="item in props.types"
+              :class="{
+                'bg-card-secondary-dark': filter.includes(item.internalName)
+              }"
+              class="text-ellipsis overflow-hidden pl-2 cursor-pointer"
               @click="
                 filter.find((f) => f === item.internalName)
                   ? removeFilter(item.internalName)
                   : $emit('update:filter', [...filter, item.internalName]);
                 $emit('refresh');
               "
-              :class="{
-                'bg-card-secondary-dark': filter.includes(item.internalName)
-              }"
-              class="text-ellipsis overflow-hidden pl-2 cursor-pointer"
             >
               <div class="my-2 mx-2">
                 {{ item.name }}
@@ -52,18 +52,18 @@
           <tpu-overline position="start">Sort</tpu-overline>
           <ul>
             <li
+              v-for="item in props.sortTypes"
+              :key="item.internalName"
               v-wave
               tabindex="0"
-              :key="item.internalName"
-              v-for="item in props.sortTypes"
               class="text-ellipsis overflow-hidden pl-2 cursor-pointer"
+              :class="{
+                'bg-card-secondary-dark': sort === item.internalName
+              }"
               @click="
                 $emit('update:sort', item.internalName);
                 $emit('refresh');
               "
-              :class="{
-                'bg-card-secondary-dark': sort === item.internalName
-              }"
             >
               <div class="my-2 mx-2">
                 {{ item.name }}
@@ -75,18 +75,18 @@
           <tpu-overline position="start">Direction</tpu-overline>
           <ul>
             <li
+              v-for="item in props.orderTypes"
+              :key="item.internalName"
               v-wave
               tabindex="0"
-              :key="item.internalName"
-              v-for="item in props.orderTypes"
               class="text-ellipsis overflow-hidden pl-2 cursor-pointer"
+              :class="{
+                'bg-card-secondary-dark': order === item.internalName
+              }"
               @click="
                 $emit('update:order', item.internalName);
                 $emit('refresh');
               "
-              :class="{
-                'bg-card-secondary-dark': order === item.internalName
-              }"
             >
               <div class="my-2 mx-2">
                 {{ item.name }}
@@ -100,17 +100,11 @@
 </template>
 
 <script setup lang="ts">
-import TextField from "@/components/Framework/Input/TextField.vue";
 import TpuSelect from "@/components/Framework/Input/TpuSelect.vue";
 import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
 import { GalleryFilter, GalleryOrder, GallerySort } from "@/gql/graphql";
-import { computed, ref, PropType, onMounted, watch } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
-import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
-import TpuButton from "@/components/Framework/Button/TpuButton.vue";
-import Card from "@/components/Framework/Card/Card.vue";
-import Mentionable from "@/components/Core/Mentionable.vue";
 import GalleryInput from "@/components/Gallery/GalleryInput.vue";
 const { t } = useI18n();
 const galleryInputRef = ref<InstanceType<typeof GalleryInput> | null>(null);

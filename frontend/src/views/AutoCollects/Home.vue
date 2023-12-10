@@ -48,6 +48,10 @@ export default defineComponent({
       autoCollects: [] as any[]
     };
   },
+  mounted() {
+    this.getAutoCollects();
+    this.$app.title = "AutoCollects";
+  },
   methods: {
     async getAutoCollects() {
       this.$app.componentLoading = true;
@@ -55,10 +59,6 @@ export default defineComponent({
       this.autoCollects = data;
       this.$app.componentLoading = false;
     }
-  },
-  mounted() {
-    this.getAutoCollects();
-    this.$app.title = "AutoCollects";
   }
 });
 </script>

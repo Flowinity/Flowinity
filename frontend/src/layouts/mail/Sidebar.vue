@@ -1,13 +1,13 @@
 <template>
   <CoreSidebar
-    name="mail"
     v-model="$mail.drawer"
+    name="mail"
     color="dark"
     floating
     permanent
   >
     <MailSidebarList />
-    <template v-slot:append>
+    <template #append>
       <v-btn block>
         <v-icon class="mr-1">mdi-pencil</v-icon>
         Compose

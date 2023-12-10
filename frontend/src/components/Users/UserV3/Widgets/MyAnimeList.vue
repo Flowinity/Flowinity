@@ -26,19 +26,15 @@
       </v-btn>
       <v-btn
         icon
-        @click="page > 1 ? page-- : (page = 1)"
         :disabled="page === 1"
+        @click="page > 1 ? page-- : (page = 1)"
       >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
       <v-btn icon @click="getMAL">
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
-      <v-btn
-        icon
-        @click="page < pages ? page++ : page"
-        :disabled="page >= pages"
-      >
+      <v-btn icon :disabled="page >= pages" @click="page < pages ? page++ : ''">
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
     </v-toolbar>
@@ -49,7 +45,7 @@
           :key="anime.node.id"
           target="_blank"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <a
               target="_blank"
               rel="noopener"
@@ -115,7 +111,7 @@
               )
             "
           >
-            <template v-slot:append>
+            <template #append>
               <div style="display: flex; align-items: center">
                 {{ $date(anime.node.my_list_status.updated_at).fromNow() }}
                 <template
@@ -274,6 +270,9 @@ export default defineComponent({
       return Math.ceil(this.recent.length / this.perPage);
     }
   },
+  mounted() {
+    this.getMAL();
+  },
   methods: {
     async updateAnime(
       id: number,
@@ -328,9 +327,6 @@ export default defineComponent({
       this.loading = false;
       this.partialLoading = false;
     }
-  },
-  mounted() {
-    this.getMAL();
   }
 });
 </script>

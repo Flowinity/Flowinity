@@ -3,10 +3,10 @@
     :close-on-content-click="false"
     :model-value="modelValue"
     location="end"
-    @update:model-value="$emit('update:modelValue', $event)"
     max-width="420"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <slot :props="props" />
     </template>
     <v-card>
@@ -25,15 +25,15 @@
         />
         <v-list-item
           v-for="friend in friends"
+          :key="friend.user.id"
           :active="selected.includes(friend.user.id)"
           :value="friend.user.id"
           @click="add(friend.user.id)"
-          :key="friend.user.id"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <UserAvatar :user="friend.user" class="mr-3" size="38" />
           </template>
-          <template v-slot:append>
+          <template #append>
             <v-list-item-action start>
               <v-checkbox-btn
                 :model-value="selected.includes(friend.user.id)"
@@ -85,7 +85,7 @@
         <v-card-subtitle style="white-space: initial">
           {{ $t("chats.settings.users.addUser.invites.description") }}
         </v-card-subtitle>
-        <p class="mx-4" v-if="invite">
+        <p v-if="invite" class="mx-4">
           {{ $app.site.hostnameWithProtocol + "/invite/" + invite }}
           <v-btn
             icon
@@ -114,21 +114,21 @@
           :indeterminate="true"
         />
         <v-select
+          v-model="expireOption"
           variant="outlined"
           class="mx-4 mt-4"
           density="compact"
           :items="expireOptions"
-          v-model="expireOption"
           :label="$t('chats.settings.users.addUser.invites.expire')"
         />
         <v-select
+          v-model="rankId"
           variant="outlined"
           class="mx-4"
           density="compact"
           :items="$chat.editingChat.ranks"
           item-title="name"
           item-value="id"
-          v-model="rankId"
           :label="$t('chats.settings.users.addUser.invites.rank')"
         />
         <v-btn
@@ -205,6 +205,17 @@ export default defineComponent({
       ]
     };
   },
+  computed: {
+    friends() {
+      return this.$friends.friends.filter(
+        (friend) =>
+          friend.user.username
+            .toLowerCase()
+            .includes(this.search.toLowerCase()) &&
+          friend.status === FriendStatus.Accepted
+      );
+    }
+  },
   methods: {
     add(id: number) {
       if (this.selected.includes(id)) {
@@ -237,17 +248,6 @@ export default defineComponent({
       } finally {
         this.loading = false;
       }
-    }
-  },
-  computed: {
-    friends() {
-      return this.$friends.friends.filter(
-        (friend) =>
-          friend.user.username
-            .toLowerCase()
-            .includes(this.search.toLowerCase()) &&
-          friend.status === FriendStatus.Accepted
-      );
     }
   }
 });

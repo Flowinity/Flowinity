@@ -37,6 +37,10 @@ export default defineComponent({
       error: false
     };
   },
+  mounted() {
+    this.$app.title = "Email Verify";
+    this.verify();
+  },
   methods: {
     async verify() {
       this.loading = true;
@@ -53,10 +57,6 @@ export default defineComponent({
         this.error = true;
       }
     }
-  },
-  mounted() {
-    this.$app.title = "Email Verify";
-    this.verify();
   }
 });
 </script>

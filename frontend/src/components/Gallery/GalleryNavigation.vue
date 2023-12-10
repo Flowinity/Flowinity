@@ -3,7 +3,7 @@
     <v-col v-if="supports.search">
       <GalleryTextField
         v-model="search"
-        @update:modelValue="$emit('update:search', search)"
+        @update:model-value="$emit('update:search', search)"
         @submit="$emit('refreshGallery')"
       />
     </v-col>
@@ -15,19 +15,19 @@
         item-title="name"
         item-value="internalName"
       >
-        <template v-slot:no-data>
+        <template #no-data>
           <overline position="start">
             {{ $t("generic.sortDirection") }}
           </overline>
           <v-list-item
             v-for="item in orderTypes"
+            :key="item.internalName"
+            :active="order === item.internalName"
             @click="
               order = item.internalName;
               $emit('update:order', order);
               $emit('refreshGallery');
             "
-            :active="order === item.internalName"
-            :key="item.internalName"
           >
             {{ item.name }}
           </v-list-item>
@@ -37,13 +37,13 @@
             </overline>
             <v-list-item
               v-for="item in sortTypes"
+              :key="item.internalName"
+              :active="sort === item.internalName"
               @click="
                 sort = item.internalName;
                 $emit('update:sort', sort);
                 $emit('refreshGallery');
               "
-              :active="sort === item.internalName"
-              :key="item.internalName"
             >
               {{ item.name }}
             </v-list-item>
@@ -52,6 +52,8 @@
             <overline position="start">{{ $t("generic.filter") }}</overline>
             <v-list-item
               v-for="item in types"
+              :key="item.internalName"
+              :active="filter.includes(item.internalName)"
               @click="
                 filter.find((f) => f === item.internalName)
                   ? filter.splice(filter.indexOf(item.internalName), 1)
@@ -59,14 +61,12 @@
                 $emit('update:filter', filter);
                 $emit('refreshGallery');
               "
-              :active="filter.includes(item.internalName)"
-              :key="item.internalName"
             >
               {{ item.name }}
             </v-list-item>
           </template>
         </template>
-        <template v-slot:selection>
+        <template #selection>
           {{
             $t("generic.option", {
               count: filter.length
@@ -91,31 +91,19 @@ import GalleryTextField from "@/components/Gallery/GalleryTextField.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
-  name: "GalleryNavigation",
-  computed: {
-    GalleryFilter() {
-      return GalleryFilter;
-    }
-  },
   components: { Overline, GalleryTextField },
-  emits: [
-    "update:filter",
-    "update:search",
-    "update:metadata",
-    "refreshGallery",
-    "update:sort",
-    "update:order"
-  ],
   props: {
     supports: {
       type: Object,
       required: false,
-      default: {
-        filter: true,
-        metadata: true,
-        search: true,
-        upload: false,
-        sort: true
+      default() {
+        return {
+          filter: true,
+          metadata: true,
+          search: true,
+          upload: false,
+          sort: true
+        };
       }
     },
     orderTypes: {
@@ -124,20 +112,22 @@ export default defineComponent({
         internalName: GalleryOrder;
       }[],
       required: false,
-      default: [
-        {
-          name: "Ascending",
-          internalName: GalleryOrder.Asc
-        },
-        {
-          name: "Descending",
-          internalName: GalleryOrder.Desc
-        },
-        {
-          name: "Random",
-          internalName: GalleryOrder.Random
-        }
-      ]
+      default() {
+        return [
+          {
+            name: "Ascending",
+            internalName: GalleryOrder.Asc
+          },
+          {
+            name: "Descending",
+            internalName: GalleryOrder.Desc
+          },
+          {
+            name: "Random",
+            internalName: GalleryOrder.Random
+          }
+        ];
+      }
     },
     sortTypes: {
       type: Array as () => {
@@ -145,20 +135,22 @@ export default defineComponent({
         internalName: GallerySort;
       }[],
       required: false,
-      default: [
-        {
-          name: "Created at",
-          internalName: GallerySort.CreatedAt
-        },
-        {
-          name: "Name",
-          internalName: GallerySort.Name
-        },
-        {
-          name: "Size",
-          internalName: GallerySort.Size
-        }
-      ]
+      default() {
+        return [
+          {
+            name: "Created at",
+            internalName: GallerySort.CreatedAt
+          },
+          {
+            name: "Name",
+            internalName: GallerySort.Name
+          },
+          {
+            name: "Size",
+            internalName: GallerySort.Size
+          }
+        ];
+      }
     },
     types: {
       type: Array as () => {
@@ -166,50 +158,60 @@ export default defineComponent({
         internalName: GalleryFilter;
       }[],
       required: false,
-      default: [
-        {
-          name: "Search in screenshots",
-          internalName: GalleryFilter.IncludeMetadata
-        },
-        {
-          name: "Not collectivized",
-          internalName: GalleryFilter.NoCollection
-        },
-        {
-          name: "Images",
-          internalName: GalleryFilter.Images
-        },
-        {
-          name: "Videos",
-          internalName: GalleryFilter.Videos
-        },
-        {
-          name: "Audio",
-          internalName: GalleryFilter.Audio
-        },
-        {
-          name: "Text",
-          internalName: GalleryFilter.Text
-        },
-        {
-          name: "Other",
-          internalName: GalleryFilter.Other
-        },
-        {
-          name: "Undeletable",
-          internalName: GalleryFilter.OnlyUndeletable
-        },
-        {
-          name: "Owned items",
-          internalName: GalleryFilter.Owned
-        },
-        {
-          name: "Not owned items",
-          internalName: GalleryFilter.Shared
-        }
-      ]
+      default() {
+        return [
+          {
+            name: "Search in screenshots",
+            internalName: GalleryFilter.IncludeMetadata
+          },
+          {
+            name: "Not collectivized",
+            internalName: GalleryFilter.NoCollection
+          },
+          {
+            name: "Images",
+            internalName: GalleryFilter.Images
+          },
+          {
+            name: "Videos",
+            internalName: GalleryFilter.Videos
+          },
+          {
+            name: "Audio",
+            internalName: GalleryFilter.Audio
+          },
+          {
+            name: "Text",
+            internalName: GalleryFilter.Text
+          },
+          {
+            name: "Other",
+            internalName: GalleryFilter.Other
+          },
+          {
+            name: "Undeletable",
+            internalName: GalleryFilter.OnlyUndeletable
+          },
+          {
+            name: "Owned items",
+            internalName: GalleryFilter.Owned
+          },
+          {
+            name: "Not owned items",
+            internalName: GalleryFilter.Shared
+          }
+        ];
+      }
     }
   },
+  emits: [
+    "update:filter",
+    "update:search",
+    "update:metadata",
+    "refreshGallery",
+    "update:sort",
+    "update:order"
+  ],
   data() {
     return {
       metadata: true,
@@ -218,6 +220,11 @@ export default defineComponent({
       order: GalleryOrder.Desc,
       search: ""
     };
+  },
+  computed: {
+    GalleryFilter() {
+      return GalleryFilter;
+    }
   }
 });
 </script>

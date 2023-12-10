@@ -12,7 +12,7 @@
         </v-card-title>
         <v-expansion-panels>
           <v-expansion-panel v-for="rule in rules" :key="rule.id">
-            <template v-slot:title>
+            <template #title>
               {{ rule.name }}
               <div style="float: right">
                 <v-btn icon @click="deleteRule(rule.id)">
@@ -20,7 +20,7 @@
                 </v-btn>
               </div>
             </template>
-            <template v-slot:text>
+            <template #text>
               <v-card-text>
                 <v-switch
                   v-model="rule.enabled"
@@ -244,6 +244,10 @@ export default defineComponent({
       ]
     };
   },
+  mounted() {
+    this.getRules();
+    this.$app.title = "Configure AutoCollects";
+  },
   methods: {
     isUnrecommendedOperator(type: string, operator: string) {
       const typeObj = this?.types?.find((t) => t?.value === type);
@@ -293,10 +297,6 @@ export default defineComponent({
       await this.getRules();
       this.$toast.success("Rule created.");
     }
-  },
-  mounted() {
-    this.getRules();
-    this.$app.title = "Configure AutoCollects";
   }
 });
 </script>

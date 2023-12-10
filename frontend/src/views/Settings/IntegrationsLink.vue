@@ -13,6 +13,9 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "IntegrationsLink",
+  mounted() {
+    this.link();
+  },
   methods: {
     async link() {
       await this.axios
@@ -29,9 +32,6 @@ export default defineComponent({
           await this.$router.push("/settings/integrations");
         });
     }
-  },
-  mounted() {
-    this.link();
   }
 });
 </script>

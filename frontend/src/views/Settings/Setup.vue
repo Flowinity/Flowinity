@@ -148,13 +148,18 @@ import { defineComponent } from "vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 
 export default defineComponent({
-  name: "Setup",
   components: { HoverChip },
   data() {
     return {
       selected: "",
       items: []
     };
+  },
+  mounted() {
+    this.getAPIKeys();
+    if (this.$app.cordova) {
+      console.log(window.cordova.file);
+    }
   },
   methods: {
     config(type: "sharex" | "sharenix" = "sharex") {
@@ -222,12 +227,6 @@ export default defineComponent({
       a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
       e.initEvent("click", true, false);
       a.dispatchEvent(e);
-    }
-  },
-  mounted() {
-    this.getAPIKeys();
-    if (this.$app.cordova) {
-      console.log(window.cordova.file);
     }
   }
 });

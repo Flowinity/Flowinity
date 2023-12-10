@@ -14,11 +14,11 @@
       "
     >
       <v-tooltip
+        v-if="!expanded"
         activator="parent"
         location="top"
         :eager="false"
         offset="18"
-        v-if="!expanded"
       >
         {{ user?.username }}
       </v-tooltip>
@@ -44,11 +44,6 @@ interface ReadReceipt {
 export default defineComponent({
   name: "ReadReceipt",
   components: { UserAvatar },
-  computed: {
-    user() {
-      return this.$user.users[this.readReceipt.userId];
-    }
-  },
   props: {
     readReceipt: {
       type: Object as () => ReadReceipt,
@@ -61,6 +56,11 @@ export default defineComponent({
     expanded: {
       type: Boolean,
       default: false
+    }
+  },
+  computed: {
+    user() {
+      return this.$user.users[this.readReceipt.userId];
     }
   }
 });

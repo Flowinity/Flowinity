@@ -4,9 +4,9 @@
     class="relative w-full select-none"
   >
     <div
+      v-if="loading || errored"
       class="w-full h-full flex items-center justify-center absolute"
       style="z-index: 1"
-      v-if="loading || errored"
       :style="{ height: height + 'px' }"
     >
       <tpu-spinner
@@ -16,12 +16,13 @@
         :inner-width="spinnerInnerWidth"
       />
       <RiLinkUnlinkM
-        :style="{ width: height || 72 + 'px' }"
         v-else
+        :style="{ width: height || 72 + 'px' }"
         alt="Image error"
       />
     </div>
     <img
+      v-if="!errored"
       :src="src"
       :class="[
         cover ? 'object-cover' : 'object-contain',
@@ -35,10 +36,9 @@
         maxWidth: dimensions.width
       }"
       alt="Image"
+      v-bind="$attrs"
       @load="onImageLoad"
       @error="onImageError"
-      v-bind="$attrs"
-      v-if="!errored"
     />
     <slot />
   </div>

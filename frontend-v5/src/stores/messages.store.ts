@@ -1,24 +1,15 @@
-import { computed, type ComputedRef, ref, watch } from "vue";
+import { computed, type ComputedRef, ref } from "vue";
 import { defineStore } from "pinia";
 import type {
-  Chat,
-  ChatEmoji,
   InfiniteMessagesInput,
   Message,
   PagedMessagesInput
 } from "@/gql/graphql";
-import { MessageType, ScrollPosition } from "@/gql/graphql";
-import { useFriendsStore } from "@/stores/friends.store";
-import { useUserStore } from "@/stores/user.store";
-import dayjs from "@/plugins/dayjs";
 import {
   MessagesQuery,
   PagedMessagesQuery
 } from "@/graphql/chats/messages.graphql";
 import { useApolloClient } from "@vue/apollo-composable";
-import { useAppStore } from "@/stores/app.store";
-import { useSocket } from "@/boot/socket.service";
-import { useRoute, useRouter } from "vue-router";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import { useExperimentsStore } from "@/stores/experiments.store";
 import { useChatStore } from "@/stores/chat.store";

@@ -1,13 +1,13 @@
 <template>
   <div :id="'chartnext-' + id">
     <apexchart
+      v-if="apex"
       :height="height"
       :options="chartOptions"
       :series="seriesRes"
       :type="type"
       :width="getWidth()"
       title=""
-      v-if="apex"
     />
     <template v-else-if="type === 'line'">
       <Line
@@ -56,6 +56,7 @@ ChartJS.register(
 );
 export default defineComponent({
   name: "Chart",
+  components: { Line, Bar, apexchart },
   props: [
     "data",
     "height",
@@ -68,7 +69,6 @@ export default defineComponent({
     "horizontal",
     "apex"
   ],
-  components: { Line, Bar, apexchart },
   data() {
     return {
       gradient: ""

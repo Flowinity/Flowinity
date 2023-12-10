@@ -1,6 +1,6 @@
 <template>
   <div class="relative" :class="{ 'cursor-pointer': edit }">
-    <teleport to="#main-area" v-if="edit">
+    <teleport v-if="edit" to="#main-area">
       <set-picture-dialog
         v-model="editing"
         @set-image="
@@ -27,12 +27,13 @@
         style="z-index: 0"
       >
         <slot v-if="$slots.default" />
-        <span style="font-size: 26px" v-else>
+        <span v-else style="font-size: 26px">
           {{ props.username?.charAt(0).toUpperCase() ?? "?" }}
         </span>
         <template #outer>
           <div
             v-if="props.status"
+            v-tooltip="functions.userStatus(user.status).text"
             class="status dark:border-sidebar-dark border-2 fill-black flex items-center justify-center relative"
             :style="{
               backgroundColor:
@@ -41,16 +42,16 @@
                   : functions.userStatus(user.status).color
             }"
             :class="{ 'typing-status': typing }"
-            v-tooltip="functions.userStatus(user.status).text"
           >
             <transition name="scale-transition">
               <template v-if="!typing">
                 <div
+                  v-if="user.status === UserStatus.Busy"
                   style="height: 2px; width: 6px; background: #101113"
                   class="rounded"
-                  v-if="user.status === UserStatus.Busy"
                 />
                 <RiMoonFill
+                  v-else-if="user.status === UserStatus.Idle"
                   style="
                     height: 8px;
                     width: 8px;
@@ -62,17 +63,16 @@
                     fill: functions.userStatus(user.status).color
                   }"
                   class="rounded"
-                  v-else-if="user.status === UserStatus.Idle"
                 />
                 <RiCheckLine
+                  v-else-if="user.status === UserStatus.Online"
                   style="height: 8px; width: 8px"
                   class="rounded"
-                  v-else-if="user.status === UserStatus.Online"
                 />
                 <div
+                  v-else
                   style="height: 4.5px; width: 4.5px; background: #101113"
                   class="rounded"
-                  v-else
                 />
               </template>
               <template v-else>
@@ -101,7 +101,6 @@
 import TpuAvatar from "@/components/Framework/Avatar/TpuAvatar.vue";
 import { computed, ref } from "vue";
 import { useUserStore } from "@/stores/user.store";
-import { useAppStore } from "@/stores/app.store";
 import functions from "@/plugins/functions";
 import SetPictureDialog from "@/components/Core/Dialogs/SetPictureDialog.vue";
 import TpuHover from "@/components/Framework/Hover/TpuHover.vue";
@@ -110,7 +109,6 @@ import TpuOverlay from "@/components/Framework/Overlay/TpuOverlay.vue";
 import { UserStatus, UserStoredStatus } from "@/gql/graphql";
 import RiMoonFill from "vue-remix-icons/icons/ri-moon-fill.vue";
 import RiCheckLine from "vue-remix-icons/icons/ri-check-line.vue";
-import RiMoreFill from "vue-remix-icons/icons/ri-more-fill.vue";
 const props = defineProps({
   size: {
     default: 40,
@@ -149,7 +147,6 @@ const props = defineProps({
   }
 });
 const userStore = useUserStore();
-const appStore = useAppStore();
 
 const user = computed(() => {
   return {
@@ -174,10 +171,7 @@ defineEmits(["setImage"]);
   height: 12px;
   border-radius: 50%;
   z-index: 1;
-  transition:
-    background-color 0.2s,
-    color 0.2s,
-    width 0.2s;
+  transition: background-color 0.2s, color 0.2s, width 0.2s;
 }
 
 .typing-status {

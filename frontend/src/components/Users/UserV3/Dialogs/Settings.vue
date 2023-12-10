@@ -5,7 +5,7 @@
     max-width="600px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
+    <template #title>
       {{ component ? `${metaComponent.name} Settings` : "Settings" }}
     </template>
     <template v-if="!component">
@@ -113,6 +113,7 @@ export default defineComponent({
   name: "UserV3Settings",
   components: { CoreDialog },
   props: ["modelValue", "user", "component", "components"],
+  emits: ["update", "trigger", "update:modelValue"],
   computed: {
     metaComponent() {
       return (

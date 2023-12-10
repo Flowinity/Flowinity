@@ -8,7 +8,7 @@
       height="200px"
       transition="none"
     >
-      <template v-slot:placeholder>
+      <template #placeholder>
         <v-row align="center" class="fill-height ma-0" justify="center">
           <v-progress-circular color="grey lighten-5" indeterminate />
         </v-row>

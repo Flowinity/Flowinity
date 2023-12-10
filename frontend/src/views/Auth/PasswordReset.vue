@@ -68,6 +68,10 @@ export default defineComponent({
       valid: false
     };
   },
+  mounted() {
+    this.$app.title = "Password Reset";
+    this.code = this.$route.params.code as string;
+  },
   methods: {
     async recover() {
       this.loading = true;
@@ -84,10 +88,6 @@ export default defineComponent({
         this.loading = false;
       }
     }
-  },
-  mounted() {
-    this.$app.title = "Password Reset";
-    this.code = this.$route.params.code as string;
   }
 });
 </script>

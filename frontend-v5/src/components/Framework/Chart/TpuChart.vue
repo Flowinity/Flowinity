@@ -33,7 +33,7 @@
 <script lang="ts" setup>
 //@ts-ignore
 import { Bar, Line } from "vue-chartjs";
-import chartJS, {
+import {
   BarElement,
   CategoryScale,
   Chart as ChartJS,

@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from "pinia";
-import axios from "@/plugins/axios";
+import axios from "@/plugins/axios.ts";
 import { useRouter } from "vue-router";
 import { NoteQuery } from "@/graphql/workspaces/note.graphql";
 import { isNumeric } from "@/plugins/isNumeric";

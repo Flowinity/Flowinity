@@ -1,7 +1,7 @@
 <template>
   <core-sidebar
-    name="chat-members"
     v-model="$chat.memberSidebarShown"
+    name="chat-members"
     :class="
       $chat.memberSidebarShown &&
       !$chat.memberSidebar &&

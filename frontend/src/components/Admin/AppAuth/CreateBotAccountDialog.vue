@@ -5,7 +5,7 @@
     max-height="600px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
+    <template #title>
       <v-toolbar-title>Create bot account</v-toolbar-title>
     </template>
     <v-card-text>
@@ -25,7 +25,7 @@
     <v-card-actions>
       <v-spacer />
       <v-btn @click="$emit('update:modelValue', false)">Cancel</v-btn>
-      <v-btn color="primary" @click="createBot" :loading="loading">
+      <v-btn color="primary" :loading="loading" @click="createBot">
         Create
       </v-btn>
     </v-card-actions>

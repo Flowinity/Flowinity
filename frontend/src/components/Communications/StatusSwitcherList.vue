@@ -1,7 +1,7 @@
 <template>
   <v-list>
     <v-list-item @click="$user.changeStatus(UserStoredStatus.Online)">
-      <template v-slot:prepend>
+      <template #prepend>
         <UserAvatar
           :dot-status="true"
           :status="true"
@@ -15,7 +15,7 @@
       <v-list-item-title>Online</v-list-item-title>
     </v-list-item>
     <v-list-item @click="$user.changeStatus(UserStoredStatus.Busy)">
-      <template v-slot:prepend>
+      <template #prepend>
         <UserAvatar
           :dot-status="true"
           :status="true"
@@ -32,7 +32,7 @@
       </v-list-item-subtitle>
     </v-list-item>
     <v-list-item @click="$user.changeStatus(UserStoredStatus.Idle)">
-      <template v-slot:prepend>
+      <template #prepend>
         <UserAvatar
           :dot-status="true"
           :status="true"
@@ -47,7 +47,7 @@
       <v-list-item-subtitle>Appear as idle.</v-list-item-subtitle>
     </v-list-item>
     <v-list-item @click="$user.changeStatus(UserStoredStatus.Invisible)">
-      <template v-slot:prepend>
+      <template #prepend>
         <UserAvatar
           :dot-status="true"
           :status="true"

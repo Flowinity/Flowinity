@@ -1,9 +1,9 @@
 <template>
   <UploadCropper
     v-model="upload"
-    @finish="uploadIcon"
     type="chatIcon"
     :supports-removal="false"
+    @finish="uploadIcon"
   />
   <overline position="center">
     {{ $t("chats.settings.emoji.name") }} ({{ emojis.length }}/100)
@@ -12,12 +12,12 @@
     <v-card-subtitle class="initial" style="max-width: 600px">
       {{ $t("chats.settings.emoji.description") }}
     </v-card-subtitle>
-    <v-btn @click="upload = true" class="my-1 ml-2">
+    <v-btn class="my-1 ml-2" @click="upload = true">
       {{ $t("chats.settings.emoji.add") }}
     </v-btn>
     <v-list v-for="emoji in emojis" :key="emoji.id" max-width="600">
       <v-list-item>
-        <template v-slot:prepend>
+        <template #prepend>
           <v-img
             width="40"
             :src="$app.domain + emoji.icon"
@@ -25,39 +25,39 @@
             max-height="40"
           />
         </template>
-        <template v-slot:append>
-          <v-btn icon @click="deleteEmoji(emoji.id)" size="small">
+        <template #append>
+          <v-btn icon size="small" @click="deleteEmoji(emoji.id)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
         </template>
         <v-list-item-title
+          v-if="editing !== emoji.id"
+          class="pointer"
           @click="
             editing = emoji.id;
             oldName = emoji.name;
           "
-          class="pointer"
-          v-if="editing !== emoji.id"
         >
           {{ emoji.name }}
         </v-list-item-title>
         <v-text-field
+          v-else
+          v-model="emoji.name"
+          style="max-width: 200px"
+          label="Emoji name"
+          maxlength="24"
+          autofocus
           @keydown.esc.prevent.stop="
             editing = '';
             emoji.name = oldName;
           "
-          style="max-width: 200px"
-          label="Emoji name"
-          v-else
           @blur="
             editing = '';
             emoji.name = oldName;
           "
           @keydown.enter="updateEmoji(emoji.id, emoji.name)"
-          maxlength="24"
-          autofocus
-          v-model="emoji.name"
         />
-        <template v-slot:subtitle>
+        <template #subtitle>
           <div>
             {{ $t("chats.settings.emoji.uploadedBy") }}
             <UserAvatar size="18" :user="$user.users[emoji.userId]" />

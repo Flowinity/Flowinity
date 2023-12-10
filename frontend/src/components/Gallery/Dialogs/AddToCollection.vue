@@ -4,7 +4,7 @@
     max-width="600px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>Add to collection</template>
+    <template #title>Add to collection</template>
     <v-card-text>
       <v-autocomplete
         v-model="selectedCollection"
@@ -41,6 +41,11 @@ export default defineComponent({
     return {
       selectedCollection: null as number | null
     };
+  },
+  watch: {
+    modelValue() {
+      this.selectedCollection = null;
+    }
   },
   methods: {
     async addToCollection() {
@@ -79,11 +84,6 @@ export default defineComponent({
         this.selectedCollection = filter[0].id;
         this.addToCollection();
       }
-    }
-  },
-  watch: {
-    modelValue() {
-      this.selectedCollection = null;
     }
   }
 });

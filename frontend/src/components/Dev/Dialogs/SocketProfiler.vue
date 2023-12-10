@@ -1,6 +1,6 @@
 <template>
   <DevDialog @close="$app.dialogs.socketProfiler = false">
-    <template v-slot:header>Socket Profiler (QS -> SP)</template>
+    <template #header>Socket Profiler (QS -> SP)</template>
     <v-container>
       Refreshes every second.
       <div v-for="item in sockets" :key="item.name">
@@ -33,6 +33,13 @@ export default defineComponent({
       }[],
       interval: null
     };
+  },
+  mounted() {
+    this.socketConnections();
+    this.interval = setInterval(this.socketConnections, 1000);
+  },
+  beforeUnmount() {
+    clearInterval(this.interval);
   },
   methods: {
     socketConnections() {
@@ -93,13 +100,6 @@ export default defineComponent({
         }
       ];
     }
-  },
-  mounted() {
-    this.socketConnections();
-    this.interval = setInterval(this.socketConnections, 1000);
-  },
-  beforeUnmount() {
-    clearInterval(this.interval);
   }
 });
 </script>

@@ -20,7 +20,7 @@
           ...overlayClasses
         }"
       ></div>
-      <div class="relative" v-if="props.modelValue">
+      <div v-if="props.modelValue" class="relative">
         <slot></slot>
       </div>
     </div>

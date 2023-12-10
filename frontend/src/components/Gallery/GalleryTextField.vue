@@ -2,19 +2,20 @@
   <v-text-field
     id="gallery-search"
     :model-value="modelValue"
+    :label="$t('generic.search')"
+    append-inner-icon="mdi-magnify"
+    class="rounded-xl"
+    :autofocus="autofocus"
     @update:model-value="
       $emit('update:modelValue', $event);
       focused = true;
     "
-    :label="$t('generic.search')"
-    append-inner-icon="mdi-magnify"
-    class="rounded-xl"
     @click:append-inner="
       $emit('update:modelValue', modelValue);
       $emit('submit');
       focused = false;
     "
-    v-on:keydown.enter="
+    @keydown.enter="
       $emit('update:modelValue', modelValue);
       $emit('submit');
       focused = false;
@@ -22,7 +23,6 @@
     @focus="focused = true"
     @blur="focused = false"
     @change="val = $event.target.value"
-    :autofocus="autofocus"
   />
   <v-scroll-y-transition v-if="false">
     <v-card
@@ -56,10 +56,11 @@
       </v-container>
       <v-container v-else>
         <v-list-item
-          :active="selectedIndex === index"
           v-for="(item, index) of items"
-          @mouseover="selectedIndex = index"
+          :key="item.label"
+          :active="selectedIndex === index"
           class="rounded pointer"
+          @mouseover="selectedIndex = index"
         >
           {{ item.label }}
         </v-list-item>
@@ -124,6 +125,9 @@ export default defineComponent({
       }
     }
   },
+  mounted() {
+    document.addEventListener("keydown", this.onKeyDown);
+  },
   methods: {
     onKeyDown(e: KeyboardEvent) {
       if (e.key === "ArrowDown") {
@@ -161,9 +165,6 @@ export default defineComponent({
     closeMenu() {
       this.focused = false;
     }
-  },
-  mounted() {
-    document.addEventListener("keydown", this.onKeyDown);
   }
 });
 </script>

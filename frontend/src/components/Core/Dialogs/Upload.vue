@@ -4,7 +4,7 @@
     max-width="500px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>Upload to TPU</template>
+    <template #title>Upload to TPU</template>
     <v-progress-linear
       v-if="$app.dialogs.upload.loading"
       :model-value="$app.dialogs.upload.percentage"
@@ -46,8 +46,8 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 export default defineComponent({
   name: "UploadDialog",
   components: { CoreDialog },
-  emits: ["update:modelValue", "upload"],
   props: ["modelValue"],
+  emits: ["update:modelValue", "upload"],
   data() {
     return {
       files: [] as File[],
@@ -58,14 +58,14 @@ export default defineComponent({
       tip: ""
     };
   },
+  mounted() {
+    this.tip = this.tips[Math.floor(Math.random() * this.tips.length)];
+  },
   methods: {
     async upload() {
       this.$app.dialogs.upload.files = this.files;
       await this.$app.upload();
     }
-  },
-  mounted() {
-    this.tip = this.tips[Math.floor(Math.random() * this.tips.length)];
   }
 });
 </script>

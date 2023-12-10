@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
   selected: Boolean
 });
 </script>

@@ -263,17 +263,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUpdated, watch, nextTick } from "vue";
+import { ref, computed, onMounted, watch, nextTick } from "vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import Card from "@/components/Framework/Card/Card.vue";
 import RiFontSize from "vue-remix-icons/icons/ri-font-size.vue";
-import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
 import TpuList from "@/components/Framework/List/TpuList.vue";
 import TpuListItem from "@/components/Framework/List/TpuListItem.vue";
 import RiText from "vue-remix-icons/icons/ri-text.vue";
 import RiSaveLine from "vue-remix-icons/icons/ri-save-line.vue";
-import html2canvas from "html2canvas";
 import RiFontColor from "vue-remix-icons/icons/ri-font-color.vue";
 import RiDragMoveLine from "vue-remix-icons/icons/ri-drag-move-line.vue";
 import RiDeleteBinLine from "vue-remix-icons/icons/ri-delete-bin-line.vue";
@@ -284,6 +282,7 @@ import RiCheckboxBlankFill from "vue-remix-icons/icons/ri-checkbox-blank-fill.vu
 import RiCheckboxBlankLine from "vue-remix-icons/icons/ri-checkbox-blank-line.vue";
 import RiArrowRightFill from "vue-remix-icons/icons/ri-arrow-right-fill.vue";
 import RiArrowGoBack from "vue-remix-icons/icons/ri-arrow-go-back-line.vue";
+
 const props = defineProps({
   image: String,
   name: String

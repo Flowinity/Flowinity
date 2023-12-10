@@ -1,11 +1,11 @@
 <template>
   <CoreDialog
+    v-if="chat"
     :model-value="modelValue"
     max-width="700px"
-    @update:modelValue="$emit('update:modelValue', $event)"
-    v-if="chat"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:title>
+    <template #title>
       {{
         deleteGroup ? $t("chats.leave.delete.title") : $t("chats.leave.title")
       }}

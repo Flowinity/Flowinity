@@ -15,6 +15,7 @@
       :class="{ spinner: indeterminate }"
     >
       <circle
+        v-if="!indeterminate"
         class="path"
         fill="none"
         :stroke-width="innerWidth"
@@ -25,7 +26,6 @@
         cx="33"
         cy="33"
         r="30"
-        v-if="!indeterminate"
       ></circle>
       <circle
         v-else
@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import theme from "@/plugins/theme";
 
 const props = defineProps({

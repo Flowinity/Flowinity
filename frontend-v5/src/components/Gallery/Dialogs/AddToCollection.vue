@@ -1,8 +1,8 @@
 <template>
   <tpu-dialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
     width="500"
+    @update:model-value="$emit('update:modelValue', $event)"
     @keydown.esc="$emit('update:modelValue', false)"
   >
     <template #toolbar>
@@ -15,16 +15,16 @@
     <template #default>
       <p class="my-4 mx-4">
         <tpu-auto-complete
+          v-if="modelValue"
           v-model="selectedCollection"
           autofocus
           label="Select a Collection"
-          v-if="modelValue"
           :items="items"
           @keydown.enter="add"
         />
       </p>
       <card-actions>
-        <tpu-button variant="passive" @click="add" :loading="loading">
+        <tpu-button variant="passive" :loading="loading" @click="add">
           {{ t(remove ? "generic.remove" : "generic.add") }}
         </tpu-button>
       </card-actions>

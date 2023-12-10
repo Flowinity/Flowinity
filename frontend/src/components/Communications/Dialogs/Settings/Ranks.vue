@@ -11,25 +11,25 @@
     :class="{ 'flex-column': $vuetify.display.mobile }"
   >
     <v-tabs
-      :direction="$vuetify.display.mobile ? 'horizontal' : 'vertical'"
       v-model="selected"
+      :direction="$vuetify.display.mobile ? 'horizontal' : 'vertical'"
     >
       <VueDraggable
-        @end="updateRankOrder"
         v-model="$chat.editingChat.ranks"
         item-key="id"
         class="v-slide-group v-slide-group--vertical v-tabs v-tabs--vertical v-tabs--align-tabs-start v-tabs--density-default d-flex"
         handle=".drag-handle"
+        @end="updateRankOrder"
       >
         <v-menu v-model="context" :style="menuStyle" location="end">
           <v-list>
             <v-list-item
               style="color: rgb(var(--v-theme-error))"
-              @click="deleteRank(contextRank?.id)"
               :disabled="
                 !$chat.canEditRank(contextRank?.index, $chat.editingChat) &&
                 !contextRank?.managed
               "
+              @click="deleteRank(contextRank?.id)"
             >
               <v-icon>mdi-delete</v-icon>
               {{ $t("generic.delete") }}
@@ -38,17 +38,17 @@
         </v-menu>
         <v-tab
           v-for="rank in $chat.editingChat.ranks"
+          :id="`rank-${rank.id}`"
           :key="rank.id"
           :value="rank.id"
+          :color="rank.color"
+          item-key="id"
           @contextmenu.prevent="
             contextY = $event.y;
             contextX = $event.x;
             contextRank = rank;
             context = true;
           "
-          :color="rank.color"
-          item-key="id"
-          :id="`rank-${rank.id}`"
         >
           <div class="d-flex justify-space-between align-center">
             <v-avatar
@@ -65,7 +65,7 @@
               >
                 mdi-lock
               </v-icon>
-              <v-icon class="drag-handle" v-else>mdi-drag</v-icon>
+              <v-icon v-else class="drag-handle">mdi-drag</v-icon>
             </div>
             {{ rank.name }}
           </div>
@@ -107,21 +107,21 @@
               {{ $t("chats.settings.ranks.manage.nameDesc") }}
             </v-card-subtitle>
             <v-text-field
+              v-model="rank.name"
               :disabled="!$chat.canEditRank(rank.index, $chat.editingChat)"
               :label="$t('chats.settings.ranks.manage.name')"
-              v-model="rank.name"
             />
             <v-btn
               block
               :disabled="!$chat.canEditRank(rank.index, $chat.editingChat)"
-              @click="updateRank(rank)"
               :loading="$chat.dialogs.groupSettings.loading"
+              @click="updateRank(rank)"
             >
               Save
             </v-btn>
           </div>
         </v-container>
-        <v-list-item-subtitle class="ml-4" v-if="rank.managed">
+        <v-list-item-subtitle v-if="rank.managed" class="ml-4">
           {{ $t("chats.settings.ranks.manage.managedRank") }}
         </v-list-item-subtitle>
         <v-list v-for="group in transformed" :key="group.name">
@@ -152,7 +152,7 @@
               <v-list-item-subtitle>
                 {{ item.description }}
               </v-list-item-subtitle>
-              <template v-slot:append>
+              <template #append>
                 <v-switch
                   density="compact"
                   :model-value="hasPermission(rank.permissionsMap, item.id)"
@@ -227,6 +227,9 @@ export default defineComponent({
       });
     }
   },
+  mounted() {
+    this.getRanks();
+  },
   methods: {
     async deleteRank(id: string) {
       await this.$apollo.mutate({
@@ -279,9 +282,6 @@ export default defineComponent({
       });
       this.availablePermissions = availableChatPermissions;
     }
-  },
-  mounted() {
-    this.getRanks();
   }
 });
 </script>

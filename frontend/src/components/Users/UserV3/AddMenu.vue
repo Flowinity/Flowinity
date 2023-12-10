@@ -1,7 +1,7 @@
 <template>
   <v-btn class="float-right mb-2">
     <v-menu activator="parent" location="bottom">
-      <template v-slot:activator>
+      <template #activator>
         <v-icon class="mr-1">mdi-plus</v-icon>
         Add widget
       </template>

@@ -23,30 +23,30 @@
         </p>
         <div v-if="config">
           <v-btn
-            @click="saveConfig"
             :loading="loading"
             class="mx-3 my-3 ml-n1"
             variant="outlined"
+            @click="saveConfig"
           >
             <v-icon class="mr-2">mdi-content-save</v-icon>
             Save Config
           </v-btn>
           <div v-for="(value, key, i) in config" :key="key">
-            <v-card-text style="padding: 0" v-if="i === 0">root:</v-card-text>
+            <v-card-text v-if="i === 0" style="padding: 0">root:</v-card-text>
             <ConfigObject
               :value="value"
-              :fullConfig="config"
-              :persistentKey="key.toString()"
+              :full-config="config"
+              :persistent-key="key.toString()"
               :name="key.toString()"
               :deep="0"
               @update:object="update"
             />
           </div>
           <v-btn
-            @click="saveConfig"
             :loading="loading"
             class="mx-3 my-3 ml-n1"
             variant="outlined"
+            @click="saveConfig"
           >
             <v-icon class="mr-2">mdi-content-save</v-icon>
             Save Config
@@ -79,6 +79,10 @@ export default defineComponent({
       config: null,
       loading: false
     };
+  },
+  mounted() {
+    this.getDashboard();
+    this.getConfig();
   },
   methods: {
     update(object: { key: string; value: any }) {
@@ -124,10 +128,6 @@ export default defineComponent({
         this.loading = false;
       }
     }
-  },
-  mounted() {
-    this.getDashboard();
-    this.getConfig();
   }
 });
 </script>

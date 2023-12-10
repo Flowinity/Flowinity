@@ -17,19 +17,15 @@
       </v-btn>
       <v-btn
         icon
-        @click="page > 1 ? page-- : (page = 1)"
         :disabled="page === 1"
+        @click="page > 1 ? page-- : (page = 1)"
       >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
       <v-btn icon @click="getLastFM">
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
-      <v-btn
-        icon
-        @click="page < pages ? page++ : page"
-        :disabled="page >= pages"
-      >
+      <v-btn icon :disabled="page >= pages" @click="page < pages ? page++ : ''">
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
     </v-toolbar>
@@ -42,7 +38,7 @@
           :href="track.url"
           target="_blank"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <v-avatar size="36" tile>
               <v-img :src="track.image[1]['#text']" />
             </v-avatar>
@@ -53,7 +49,7 @@
           <v-list-item-subtitle>
             {{ track.artist["#text"] }}
           </v-list-item-subtitle>
-          <template v-slot:append>
+          <template #append>
             <v-list-item-subtitle>
               {{
                 track?.date?.uts
@@ -112,6 +108,9 @@ export default defineComponent({
       );
     }
   },
+  mounted() {
+    this.getLastFM();
+  },
   methods: {
     async getLastFM() {
       this.loading = true;
@@ -128,9 +127,6 @@ export default defineComponent({
       this.attributes = data.recenttracks["@attr"];
       this.loading = false;
     }
-  },
-  mounted() {
-    this.getLastFM();
   }
 });
 </script>

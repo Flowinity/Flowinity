@@ -42,7 +42,6 @@ import { useI18n } from "vue-i18n";
 import CardActions from "@/components/Framework/Card/CardActions.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import { useApolloClient } from "@vue/apollo-composable";
-import { LoginMutation } from "@/graphql/auth/login.graphql";
 import { useRouter } from "vue-router";
 import { RegisterMutation } from "@/graphql/auth/register.graphql";
 

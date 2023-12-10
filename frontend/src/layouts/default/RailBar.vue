@@ -8,10 +8,10 @@
     color="dark"
   >
     <v-list
+      v-model="$app.railMode"
       density="compact"
       nav
       class="mt-2"
-      v-model="$app.railMode"
       aria-label="TPU app selection sidebar"
     >
       <v-list-item
@@ -19,8 +19,8 @@
         title="TPU"
         value="tpu"
         :active="$app.railMode === 'tpu'"
-        @click="$app.railMode = 'tpu'"
         prepend-icon="mdi-home"
+        @click="$app.railMode = 'tpu'"
       />
       <v-list-item
         aria-label="Workspaces"

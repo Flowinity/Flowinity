@@ -1,6 +1,6 @@
 <template>
   <component :is="$route.fullPath.startsWith('/admin') ? VContainer : 'div'">
-    <CreateAppAuthDialog @refresh="getAppAuth" v-model="create" />
+    <CreateAppAuthDialog v-model="create" @refresh="getAppAuth" />
     <v-card>
       <v-toolbar>
         <v-toolbar-title>My Applications</v-toolbar-title>
@@ -14,7 +14,7 @@
       <v-container>
         <v-list>
           <v-list-item v-for="app in apps" :key="app.id">
-            <template v-slot:prepend>
+            <template #prepend>
               <UserAvatar
                 class="mr-3"
                 :edit="false"
@@ -26,7 +26,7 @@
               {{ app.description || "No description" }} -
               {{ app.user.username }}
             </v-list-item-subtitle>
-            <template v-slot:append>
+            <template #append>
               <v-list-item-action>
                 <v-btn
                   :to="
@@ -57,17 +57,25 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
   name: "AdminOAuth",
-  computed: {
-    VContainer() {
-      return VContainer;
-    }
-  },
   components: { UserAvatar, CreateAppAuthDialog },
   data() {
     return {
       apps: [],
       create: false
     };
+  },
+  computed: {
+    VContainer() {
+      return VContainer;
+    }
+  },
+  watch: {
+    create() {
+      this.getAppAuth();
+    }
+  },
+  mounted() {
+    this.getAppAuth();
   },
   methods: {
     async getAppAuth() {
@@ -78,14 +86,6 @@ export default defineComponent({
         fetchPolicy: "network-only"
       });
       this.apps = oauthApps;
-    }
-  },
-  mounted() {
-    this.getAppAuth();
-  },
-  watch: {
-    create() {
-      this.getAppAuth();
     }
   }
 });

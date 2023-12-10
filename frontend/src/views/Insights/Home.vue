@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <CoreDialog v-model="comingSoon" max-width="500px">
-      <template v-slot:title>Coming Soon</template>
+      <template #title>Coming Soon</template>
       <v-container class="text-center justify-center">
         <v-card-text>
           This feature is coming soon! If you'd still like to access your

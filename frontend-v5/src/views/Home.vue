@@ -58,10 +58,8 @@
 import Card from "@/components/Framework/Card/Card.vue";
 import Container from "@/components/Framework/Container/Container.vue";
 import { useUserStore } from "@/stores/user.store";
-import RiPencilLine from "vue-remix-icons/icons/ri-pencil-line.vue";
 import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
 import TpuButton from "@/components/Framework/Button/TpuButton.vue";
-import { useAppStore } from "@/stores/app.store";
 import HomeWidgetHandler from "@/components/Home/Widgets/HomeWidgetHandler.vue";
 import RiRefreshLine from "vue-remix-icons/icons/ri-refresh-line.vue";
 import { useI18n } from "vue-i18n";
@@ -70,7 +68,6 @@ import RiLockUnlockLine from "vue-remix-icons/icons/ri-lock-unlock-line.vue";
 import { computed, provide, ref } from "vue";
 
 const userStore = useUserStore();
-const appStore = useAppStore();
 const { t } = useI18n();
 
 const _locked = ref(localStorage.getItem("homeWidgetsLocked") === "true");
