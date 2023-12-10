@@ -177,10 +177,11 @@ export function checkScope(requiredScope: string | string[], scope: string) {
   return false
 }
 
-export async function updateSession(session: Session, ip: string) {
+export async function updateSession(session: Session, ip: string | undefined) {
   if (
-    session.updatedAt.getTime() + 5 * 60 * 1000 > new Date().getTime() &&
-    session.info?.accessedFrom?.length
+    !ip ||
+    (session.updatedAt.getTime() + 5 * 60 * 1000 > new Date().getTime() &&
+      session.info?.accessedFrom?.length)
   )
     return
   let accessedFrom = session.info?.accessedFrom || []

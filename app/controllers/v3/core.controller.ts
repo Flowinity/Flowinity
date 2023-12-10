@@ -152,7 +152,7 @@ export class CoreControllerV3 {
       req.body.tpuLink,
       req.body.content,
       req.body.email,
-      req.ip,
+      <string>req.ip,
       user?.id
     )
   }

@@ -260,7 +260,7 @@ export default defineComponent({
         if (oauthAppConsent.token) {
           window.location.href = `${this.app.redirectUri}?code=${oauthAppConsent.token}&state=${this.$route.query.state}`;
         }
-      } catch {
+      } finally {
         this.$app.componentLoading = false;
       }
     },
