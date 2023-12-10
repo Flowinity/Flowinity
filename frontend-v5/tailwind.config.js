@@ -15,6 +15,7 @@ export default {
         "gray-light": "#d3dce6",
         dark: "#0e0f11",
         "sidebar-dark": "#101113",
+        "comms-search-dark": "#ffffff15",
         "outline-dark": "#1D2125",
         "medium-emphasis-dark": "#878889",
         "card-dark": "#101113",

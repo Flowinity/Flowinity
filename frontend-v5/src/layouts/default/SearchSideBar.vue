@@ -2,7 +2,7 @@
   <div class="p-2" v-if="query">
     <tpu-overline position="start">
       {{
-        $t("chat.searchIn", {
+        $t("chats.searchIn", {
           chat: chatStore.chatName(chatStore.selectedChat!),
           count: query.pager.totalItems
         })

@@ -240,7 +240,8 @@
     }
   },
   "chats": {
-    "typing": "{users} is typing... | {users} are typing... | Many people are typing..."
+    "typing": "{users} is typing... | {users} are typing... | Many people are typing...",
+    "searchIn": "Searching in {chat}, {count} messages."
   },
   "connection": {
     "title": "Connecting..."

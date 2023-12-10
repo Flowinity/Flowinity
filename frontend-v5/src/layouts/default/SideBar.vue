@@ -23,6 +23,7 @@ import SidebarComms from "@/components/Sidebar/SidebarComms.vue";
 import SidebarMail from "@/components/Sidebar/SidebarMail.vue";
 import SidebarDebug from "@/components/Sidebar/SidebarDebug.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
+import SidebarCommsHeader from "@/components/Sidebar/SidebarCommsHeader.vue";
 
 const appStore = useAppStore();
 const chatStore = useChatStore();
@@ -56,7 +57,9 @@ watch(
         <Transition name="slide-fade" mode="out-in">
           <div
             :key="appStore.currentRail?.id"
-            v-if="appStore.currentRail"
+            v-if="
+              appStore.currentRail && appStore.currentRail?.id !== RailMode.CHAT
+            "
             class="flex items-center"
           >
             <component :is="appStore.currentRail?.icon" class="w-8 ml-4" />
@@ -64,6 +67,9 @@ watch(
               {{ appStore.currentRail.name }}
             </p>
           </div>
+          <SidebarCommsHeader
+            v-else-if="appStore.currentRail?.id === RailMode.CHAT"
+          />
         </Transition>
         <div id="sidebar-actions" class="flex items-center mr-4" />
       </div>

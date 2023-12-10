@@ -112,16 +112,15 @@
   <teleport to="#appbar-options">
     <transition mode="out-in" name="slide-up" appear>
       <div class="flex gap-2">
-        <text-field
-          style="border-bottom: none; margin-top: 0; margin-bottom: 0"
+        <comms-search-input
+          ref="searchInput"
           v-model="chatStore.uiOptions.search"
-          :label="t('chats.search')"
+          :placeholder="t('chats.search')"
+          :style="{
+            width: chatStore.uiOptions.searchSidebar ? '270px' : 'unset'
+          }"
           @keydown.enter="chatStore.uiOptions.searchSidebar = true"
-        >
-          <template #prepend-outer>
-            <RiSearchLine style="width: 20px" />
-          </template>
-        </text-field>
+        />
 
         <tpu-button
           icon
@@ -218,6 +217,7 @@ import { useSubscription } from "@vue/apollo-composable";
 import RiPushpin2Line from "vue-remix-icons/icons/ri-pushpin-2-line.vue";
 import RiPushpin2Fill from "vue-remix-icons/icons/ri-pushpin-2-fill.vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
+import CommsSearchInput from "@/components/Communications/CommsSearchInput.vue";
 const { t } = useI18n();
 const chatStore = useChatStore();
 const userStore = useUserStore();
@@ -231,6 +231,7 @@ const input = ref<InstanceType<typeof CommsInput> | null>(null);
 const avoidAutoScroll = ref(false);
 const appStore = useAppStore();
 const type = throttle(handleTyping, 1000);
+const searchInput = ref<InstanceType<typeof TextField> | null>(null);
 
 const excludedTypers = computed(() => {
   return chatStore.typers.filter(
@@ -345,6 +346,11 @@ function shortcutHandler(e: KeyboardEvent) {
   console.log(e.target?.classList);
   if (e.key === "Escape") {
     e.preventDefault();
+    if (chatStore.uiOptions.searchSidebar) {
+      searchInput.value?.input?.blur();
+      chatStore.uiOptions.search = "";
+      return (chatStore.uiOptions.searchSidebar = false);
+    }
     replyId.value = undefined;
   } else if ((e.ctrlKey || e.metaKey) && e.key === "ArrowUp") {
     e.preventDefault();
@@ -383,6 +389,12 @@ function shortcutHandler(e: KeyboardEvent) {
     focusInput();
   } else if (e.ctrlKey && e.key === "f") {
     e.preventDefault();
+    if (!chatStore.uiOptions.searchSidebar) {
+      searchInput.value?.input?.focus();
+    } else {
+      chatStore.uiOptions.search = "";
+      searchInput.value?.input?.blur();
+    }
     chatStore.uiOptions.searchSidebar = !chatStore.uiOptions.searchSidebar;
   }
 }

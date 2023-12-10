@@ -85,6 +85,7 @@ const ranks = computed(() => {
 
 <template>
   <div>
+    <!--
     <div
       class="flex items-center pt-0 dark:border-outline-dark border-b-2 border-outline-dark"
       style="min-height: 64px; max-height: 64px"
@@ -94,6 +95,7 @@ const ranks = computed(() => {
         {{ $t("communications.members.title") }}
       </p>
     </div>
+    -->
     <Transition name="slide-fade" mode="out-in">
       <div class="mt-2 p-1">
         <div v-for="group in ranks" :key="group.name">
