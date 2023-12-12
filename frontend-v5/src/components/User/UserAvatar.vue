@@ -119,6 +119,7 @@ import TpuOverlay from "@/components/Framework/Overlay/TpuOverlay.vue";
 import { Maybe, UserStatus, UserStoredStatus } from "@/gql/graphql";
 import RiMoonFill from "vue-remix-icons/icons/ri-moon-fill.vue";
 import RiCheckLine from "vue-remix-icons/icons/ri-check-line.vue";
+import { useAppStore } from "@/stores/app.store";
 const props = defineProps({
   size: {
     default: 40,
@@ -160,6 +161,7 @@ const props = defineProps({
   }
 });
 const userStore = useUserStore();
+const appStore = useAppStore();
 
 const user = computed(() => {
   return {
@@ -184,7 +186,10 @@ defineEmits(["setImage"]);
   height: 12px;
   border-radius: 50%;
   z-index: 1;
-  transition: background-color 0.2s, color 0.2s, width 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    width 0.2s;
 }
 
 .typing-status {

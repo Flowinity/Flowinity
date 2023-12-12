@@ -86,7 +86,6 @@ export const useUserStore = defineStore("user", () => {
   async function init() {
     try {
       const userLocal = localStorage.getItem("userStore");
-      console.log(userLocal);
       if (userLocal) {
         user.value = JSON.parse(userLocal);
       }
