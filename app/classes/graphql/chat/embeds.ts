@@ -111,3 +111,15 @@ export class EmbedResolutionFilter {
   })
   messageId: number
 }
+
+@InputType()
+export class EmbedPrecacheInput {
+  @Field({
+    nullable: true
+  })
+  url: string
+  @Field({
+    nullable: true
+  })
+  attachment: string
+}

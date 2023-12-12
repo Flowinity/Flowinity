@@ -49,22 +49,11 @@ function generateImagePayload(imageResult: probe.ProbeResult): {
   return imagePayload
 }
 
-export default async function embedParser(
-  message: Message,
-  chatId: number,
-  userId: number,
-  associationId: number,
-  attachments: string[] = []
-): Promise<void> {
-  // Get all the links in message content, both http and https.
-  let links: RegExpMatchArray | [] =
-    message.content?.match(/(https?:\/\/[^\s]+)/g) || []
-  let embeds: any[] = message.embeds || []
-  embeds = embeds.filter((embed) => embed.type === "bot")
-
-  if (links && links.length > 3) links.slice(0, 3)
-  if (attachments && attachments.length > 5) attachments.slice(0, 5)
-
+export async function embedGenerator(
+  links: string[],
+  attachments: string[]
+): Promise<any[]> {
+  let embeds: any[] = []
   for (const attachment of attachments) {
     const upload: Upload | null = await Upload.findOne({
       where: {
@@ -172,6 +161,26 @@ export default async function embedParser(
       if (test) embeds.push(test)
     }
   }
+  return embeds
+}
+
+export default async function embedParser(
+  message: Message,
+  chatId: number,
+  userId: number,
+  associationId: number,
+  attachments: string[] = []
+): Promise<void> {
+  // Get all the links in message content, both http and https.
+  let links: RegExpMatchArray | [] =
+    message.content?.match(/(https?:\/\/[^\s]+)/g) || []
+  let embeds: any[] = message.embeds || []
+  embeds = embeds.filter((embed) => embed.type === "bot")
+
+  if (links && links.length > 3) links.slice(0, 3)
+  if (attachments && attachments.length > 5) attachments.slice(0, 5)
+
+  embeds = await embedGenerator(links, attachments)
 
   if (embeds.length) {
     await Message.update(
