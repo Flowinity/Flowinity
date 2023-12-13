@@ -977,7 +977,8 @@ export class ChatService {
     userId: number,
     key: string,
     data: any,
-    excludeCreator = false
+    excludeCreator = false,
+    version: 0 | 4 | 5 = 0
   ) {
     let chat = await this.getChatFromAssociation(associationId, userId)
     if (excludeCreator) {
@@ -986,12 +987,25 @@ export class ChatService {
       )
     }
     for (const user of chat.users) {
+      const cData = { ...data }
+      if (data) {
+        for (const [key, value] of Object.entries(data)) {
+          if (value === "__INJECT_ASSOC__") {
+            cData[key] = user.id
+          }
+        }
+      }
       if (!user.userId) continue
-      // translate camelCase to SCREAMING_SNAKE_CASE and append :userId to the end
-      const translated =
-        key.replace(/([A-Z])/g, "_$1").toUpperCase() + ":" + user.userId
-      pubSub.publish(translated, data)
-      socket.of(SocketNamespaces.CHAT).to(user.userId).emit(key, data)
+      if (version === 0 || version === 5) {
+        // translate camelCase to SCREAMING_SNAKE_CASE and append :userId to the end
+        const translated =
+          key.replace(/([A-Z])/g, "_$1").toUpperCase() + ":" + user.userId
+        pubSub.publish(translated, cData)
+      }
+
+      if (version === 0 || version === 4) {
+        socket.of(SocketNamespaces.CHAT).to(user.userId).emit(key, cData)
+      }
     }
   }
 

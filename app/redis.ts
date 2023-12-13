@@ -2,7 +2,7 @@ import { createClient } from "redis"
 
 const config = JSON.parse(process.env.CONFIG || "{}")
 
-const client = createClient({
+const redisClient = createClient({
   socket: {
     host: config.redis.host,
     port: config.redis.port
@@ -14,10 +14,10 @@ const client = createClient({
   database: config.redis.db
 })
 
-client.on("error", (err): void => {
+redisClient.on("error", (err): void => {
   if (err.hostname !== "defaulthostname") console.warn("[REDIS] Error: " + err)
 })
 
-client.connect().then(() => console.log("Redis Client Connected"))
+redisClient.connect().then(() => console.log("Redis Client Connected"))
 
-export default client
+export default redisClient

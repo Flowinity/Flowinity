@@ -11,6 +11,7 @@ import {
   CancelTypingSubscription,
   TypingSubscription
 } from "@/graphql/chats/subscriptions/typing.graphql";
+import { EmbedResolutionSubscription } from "@/graphql/chats/subscriptions/embedResolution.graphql";
 
 export default function setup() {
   const chatStore = useChatStore();
@@ -145,6 +146,24 @@ export default function setup() {
       );
       clearTimeout(val?.timeout);
       chatStore.typers.splice(index, 1);
+    }
+  });
+
+  const embedResolution = useSubscription(EmbedResolutionSubscription);
+
+  embedResolution.onResult(({ data: { embedResolution } }) => {
+    const index = messagesStore.messages[
+      embedResolution.associationId
+    ]?.findIndex((msg) => msg.id === embedResolution.message.id);
+    console.log(embedResolution);
+    if (index !== -1) {
+      console.log(messagesStore.messages[embedResolution.associationId]);
+      const message =
+        messagesStore.messages[embedResolution.associationId][index];
+      messagesStore.messages[embedResolution.associationId].splice(index, 1, {
+        ...message,
+        embeds: embedResolution.message.embeds
+      });
     }
   });
 }

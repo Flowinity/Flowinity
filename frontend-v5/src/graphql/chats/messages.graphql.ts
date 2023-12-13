@@ -1,7 +1,48 @@
 import { gql } from "@apollo/client";
 import { PagerFragment } from "../fragments/pager.graphql";
 
+export const StandardEmbedFragment = gql`
+  fragment StandardEmbed on EmbedDataV2 {
+    media {
+      url
+      proxyUrl
+      attachment
+      width
+      height
+      isInternal
+      videoEmbedUrl
+      upload {
+        id
+        createdAt
+        attachment
+        userId
+        name
+        type
+        fileSize
+      }
+      mimeType
+      type
+    }
+    text {
+      imageProxyUrl
+      text
+      heading
+      imageUrl
+    }
+    metadata {
+      url
+      siteName
+      siteIcon
+      footer
+      type
+      id
+      restricted
+    }
+  }
+`;
+
 export const StandardMessageFragment = gql`
+  ${StandardEmbedFragment}
   fragment StandardMessage on Message {
     id
     createdAt
@@ -17,8 +58,7 @@ export const StandardMessageFragment = gql`
       chatId
     }
     embeds {
-      type
-      data
+      ...StandardEmbed
     }
     reply {
       readReceipts {
@@ -32,7 +72,12 @@ export const StandardMessageFragment = gql`
       id
       legacyUserId
       embeds {
-        type
+        metadata {
+          type
+        }
+        media {
+          type
+        }
       }
       legacyUser {
         username

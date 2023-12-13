@@ -1,64 +1,166 @@
-import { Field, InputType, Int, ObjectType } from "type-graphql"
+import {
+  Field,
+  InputType,
+  Int,
+  ObjectType,
+  registerEnumType
+} from "type-graphql"
 import { Upload } from "@app/models/upload.model"
 import { Message } from "@app/models/message.model"
+
+export enum EmbedMediaType {
+  IMAGE,
+  VIDEO,
+  AUDIO,
+  FILE
+}
+
+registerEnumType(EmbedMediaType, {
+  name: "EmbedMediaType"
+})
+
+export enum EmbedVersion {
+  V2,
+  V1,
+  COLUBRINA
+}
+
+registerEnumType(EmbedVersion, {
+  name: "EmbedVersion"
+})
 
 @InputType("EmbedMediaInput")
 export class EmbedMediaInput {
   @Field({
     nullable: true
   })
-  url: string
+  url?: string
   @Field({
     nullable: true
   })
-  proxyUrl: string
+  proxyUrl?: string
   @Field({
     nullable: true
   })
-  attachment: string
+  attachment?: string
 }
 
-@ObjectType()
-export class EmbedMedia extends EmbedMediaInput {
-  @Field()
-  width: number
-  @Field()
-  height: number
+@ObjectType("EmbedMedia")
+export class EmbedMedia {
+  @Field({
+    nullable: true
+  })
+  url?: string
+  @Field({
+    nullable: true
+  })
+  proxyUrl?: string
+  @Field({
+    nullable: true
+  })
+  attachment?: string
+  @Field({
+    nullable: true
+  })
+  width?: number
+  @Field({
+    nullable: true
+  })
+  height?: number
   @Field()
   isInternal: boolean
   @Field(() => Upload, {
     nullable: true
   })
-  upload: Upload
+  upload?: Upload
+  @Field({
+    nullable: true
+  })
+  mimeType?: string
+  @Field(() => EmbedMediaType)
+  type: EmbedMediaType
+  @Field({
+    nullable: true,
+    description: "Used for trusted video embed sources, such as YouTube."
+  })
+  videoEmbedUrl?: string
 }
 
 @InputType()
 export class EmbedTextInput {
   @Field()
   text: string
-  @Field()
-  heading: boolean
   @Field({
     nullable: true
   })
-  imageUrl: string
+  heading?: boolean
+  @Field({
+    nullable: true
+  })
+  imageUrl?: string
 }
 
 @ObjectType()
-export class EmbedText extends EmbedTextInput {
+export class EmbedText {
+  @Field({
+    nullable: true
+  })
+  imageProxyUrl?: string
   @Field()
-  imageProxyUrl: string
+  text: string
+  @Field({
+    nullable: true
+  })
+  heading?: boolean
+  @Field({
+    nullable: true
+  })
+  imageUrl?: string
 }
+
+export enum EmbedType {
+  REGULAR,
+  CHAT_INVITE,
+  DIRECT
+}
+
+registerEnumType(EmbedType, {
+  name: "EmbedType"
+})
 
 @ObjectType()
 @InputType("EmbedMetadataInput")
 export class EmbedMetadata {
-  @Field()
-  url: string
-  @Field()
-  siteName: string
-  @Field()
-  siteIcon: string
+  @Field({
+    nullable: true
+  })
+  url?: string
+  @Field({
+    nullable: true
+  })
+  siteName?: string
+  @Field({
+    nullable: true
+  })
+  siteIcon?: string
+  @Field({
+    nullable: true
+  })
+  footer?: string
+  @Field({
+    defaultValue: EmbedType.REGULAR
+  })
+  type: EmbedType = EmbedType.REGULAR
+  @Field({
+    nullable: true,
+    description: "Used for chat invites, and other embeds."
+  })
+  id?: string
+  @Field({
+    nullable: true,
+    description: "Used for NSFW embeds and content."
+  })
+  restricted: boolean = false
 }
 
 @ObjectType()
@@ -73,6 +175,10 @@ export class EmbedDataV2 {
   text: EmbedText[]
   @Field(() => EmbedMetadata)
   metadata: EmbedMetadata
+  @Field(() => EmbedVersion, {
+    defaultValue: EmbedVersion.V2
+  })
+  version = EmbedVersion.V2
 }
 
 @InputType()
@@ -89,6 +195,10 @@ export class EmbedDataV2Input {
     nullable: true
   })
   metadata: EmbedMetadata
+  @Field(() => EmbedVersion, {
+    defaultValue: EmbedVersion.V2
+  })
+  version = EmbedVersion.V2
 }
 
 @ObjectType()

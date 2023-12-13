@@ -3,12 +3,13 @@ import { Arg, Mutation, Resolver, Root, Subscription } from "type-graphql"
 import {
   EmbedDataV2,
   EmbedPrecacheInput,
+  EmbedResolutionEvent,
   EmbedResolutionFilter
 } from "@app/classes/graphql/chat/embeds"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { ChatService } from "@app/services/chat.service"
 import RateLimit from "@app/lib/graphql/RateLimit"
-import { embedGenerator } from "@app/lib/embedParser"
+import { embedGenerator, embedTranslator } from "@app/lib/embedParser"
 import { GraphQLError } from "graphql/error"
 
 @Service()
@@ -19,11 +20,12 @@ export class EmbedDataV2Resolver {
   @Authorization({
     scopes: ["chats.view"]
   })
-  @Subscription(() => EmbedDataV2, {
+  @Subscription(() => EmbedResolutionEvent, {
     topics: ({ context }) => {
       return `EMBED_RESOLUTION:${context.user!!.id}`
     },
     filter: ({ payload, args }) => {
+      if (!args.input) return true
       if (args.input.associationId !== undefined) {
         return args.input.associationId === payload.associationId
       }
@@ -34,12 +36,13 @@ export class EmbedDataV2Resolver {
     }
   })
   async embedResolution(
-    @Root() data: EmbedDataV2,
+    @Root() data: EmbedResolutionEvent,
     @Arg("input", {
       nullable: true
     })
     input: EmbedResolutionFilter
-  ): Promise<EmbedDataV2> {
+  ): Promise<EmbedResolutionEvent> {
+    console.log(data)
     return data
   }
 
@@ -50,11 +53,13 @@ export class EmbedDataV2Resolver {
     window: 10,
     max: 5
   })
-  @Mutation(() => EmbedDataV2)
+  @Mutation(() => EmbedDataV2, {
+    nullable: true
+  })
   async embedResolutionPrecache(
     @Arg("input", () => EmbedPrecacheInput)
     input: EmbedPrecacheInput
-  ): Promise<EmbedDataV2> {
+  ): Promise<EmbedDataV2 | null> {
     if (!input.url && !input.attachment)
       throw new GraphQLError(
         "You must provide a URL or Flowinity attachment in the format of a1234567.png"
@@ -63,16 +68,23 @@ export class EmbedDataV2Resolver {
       input.url ? [input.url] : [],
       input.attachment ? [input.attachment] : []
     )
-    const key = `embedResolution:${input.url || input.attachment}`
-    redis.json.set(
-      key,
-      "$",
-      precache,
-      {
-        ttl: 60 * 60
-      },
-      true
-    )
-    return precache[0]
+    console.log(precache)
+    const key = `embedResolution:${input.url ? "url" : "attachment"}:${
+      input.url || input.attachment
+    }`
+
+    if (precache[0]) {
+      redis.json.set(
+        key,
+        "$",
+        precache[0],
+        {
+          ttl: 60 * 60
+        },
+        true
+      )
+      return precache[0]
+    }
+    return null
   }
 }

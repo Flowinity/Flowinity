@@ -32,6 +32,8 @@ import paginate from "jw-paginate"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
 import { GraphQLError } from "graphql/error"
 import { MessageSubscription } from "@app/classes/graphql/chat/messageSubscription"
+import { EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
+import { embedTranslator } from "@app/lib/embedParser"
 
 export const PaginatedMessagesResponse = PagerResponse(Message)
 export type PaginatedMessagesResponse = InstanceType<
@@ -66,6 +68,13 @@ export class MessageResolver {
       input.attachments,
       input.embeds
     )
+  }
+
+  @FieldResolver(() => EmbedDataV2)
+  embeds(@Root() message: Message) {
+    if (!message.embeds) return []
+    const translated = message.embeds.map((embed) => embedTranslator(embed))
+    return translated.filter((embed) => embed !== null)
   }
 
   @Authorization({

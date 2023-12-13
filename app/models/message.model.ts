@@ -1,4 +1,12 @@
-import { BelongsTo, Column, DataType, HasMany, Length, Model, Table } from "sequelize-typescript"
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  HasMany,
+  Length,
+  Model,
+  Table
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { LegacyUser } from "@app/models/legacyUser.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
@@ -8,6 +16,7 @@ import { DateType } from "@app/classes/graphql/serializers/date"
 import { Embed, MessageType } from "@app/classes/graphql/chat/message"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
+import { EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
 
 @ObjectType()
 @Table
@@ -67,12 +76,12 @@ export class Message extends Model {
   })
   type: MessageType
 
-  @Field(() => [Embed])
+  @Field(() => [EmbedDataV2])
   @Column({
     type: DataType.JSON,
     defaultValue: []
   })
-  embeds: Embed[]
+  embeds: EmbedDataV2[]
 
   @Field()
   @Column

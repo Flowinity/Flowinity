@@ -17,7 +17,7 @@ import { useChatStore } from "@/stores/chat.store";
 export const useMessagesStore = defineStore("messages", () => {
   /** @var associationId
    * @var message[] */
-  const messages = ref<Record<number, Message[]>>([]);
+  const messages = ref<Record<number, Message[]>>({});
 
   const { resolveClient } = useApolloClient();
   const client = resolveClient();
