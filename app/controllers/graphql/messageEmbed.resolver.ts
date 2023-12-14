@@ -11,6 +11,7 @@ import { ChatService } from "@app/services/chat.service"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import { embedGenerator, embedTranslator } from "@app/lib/embedParser"
 import { GraphQLError } from "graphql/error"
+import redisClient from "@app/redis"
 
 @Service()
 @Resolver(EmbedDataV2)
@@ -68,23 +69,7 @@ export class EmbedDataV2Resolver {
       input.url ? [input.url] : [],
       input.attachment ? [input.attachment] : []
     )
-    console.log(precache)
-    const key = `embedResolution:${input.url ? "url" : "attachment"}:${
-      input.url || input.attachment
-    }`
 
-    if (precache[0]) {
-      redis.json.set(
-        key,
-        "$",
-        precache[0],
-        {
-          ttl: 60 * 60
-        },
-        true
-      )
-      return precache[0]
-    }
-    return null
+    return precache[0] || null
   }
 }

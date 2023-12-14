@@ -22,6 +22,7 @@ import {
   EmbedVersion
 } from "@app/classes/graphql/chat/embeds"
 import redisClient from "@app/redis"
+import { EmbedDataV2Resolver } from "@app/controllers/graphql/messageEmbed.resolver"
 
 const trusted = ["youtube.com", "youtu.be", "www.youtube.com", "m.youtube.com"]
 
@@ -207,24 +208,24 @@ export async function embedGenerator(
           continue
         }
       }
-      const cache = (await redisClient.json.get(
+
+      const cache = (await redisClient.get(
         `embedResolution:url:${link}`
       )) as EmbedDataV2 | null
+
       if (cache) {
-        embeds.push(cache)
+        const parse = JSON.parse(cache as unknown as string) as EmbedDataV2
+        embeds.push(parse)
         continue
       }
+
       const test = await ogsMetadataParser(link, blacklist)
+
       if (test) {
         embeds.push(test)
-        await redisClient.json.set(
-          `embedResolution:url:${link}`,
-          "$",
-          test as any,
-          {
-            EX: 60 * 60
-          }
-        )
+        redisClient.set(`embedResolution:url:${link}`, JSON.stringify(test), {
+          EX: 900
+        })
       }
     } catch {
       const test = await ogsMetadataParser(link, blacklist)

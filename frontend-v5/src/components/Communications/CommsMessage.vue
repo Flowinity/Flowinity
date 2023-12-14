@@ -88,7 +88,7 @@ import { useUserStore } from "@/stores/user.store";
 import { useFriendsStore } from "@/stores/friends.store";
 import dayjs from "../../plugins/dayjs";
 import CommsMessageActions from "@/components/Communications/CommsMessageActions.vue";
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import MessageReply from "@/components/Communications/MessageReply.vue";
 import CommsMessageEmbed from "@/components/Communications/CommsMessageEmbed.vue";
 
@@ -120,12 +120,25 @@ const props = defineProps({
   }
 });
 
-defineEmits(["reply"]);
+const emit = defineEmits(["reply", "autoScroll"]);
+
 function blocked(userId?: number) {
   return userStore.blocked.find(
     (block) => block.blockedUserId === userId ?? props.message.userId
   );
 }
+
+onMounted(() => {});
+
+watch(
+  () => [props.message?.embeds, props.message?.content],
+  () => {
+    emit("autoScroll");
+  },
+  {
+    deep: true
+  }
+);
 </script>
 
 <style scoped>

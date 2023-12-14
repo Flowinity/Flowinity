@@ -1,7 +1,12 @@
 import { useChatStore } from "@/stores/chat.store";
 import { useApolloClient, useSubscription } from "@vue/apollo-composable";
 import { NewMessageSubscription } from "@/graphql/chats/subscriptions/newMessage.graphql";
-import { Message, UserStoredStatus } from "@/gql/graphql";
+import {
+  EmbedDataV2,
+  EmbedResolutionEvent,
+  Message,
+  UserStoredStatus
+} from "@/gql/graphql";
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user.store";
@@ -151,11 +156,18 @@ export default function setup() {
 
   const embedResolution = useSubscription(EmbedResolutionSubscription);
 
-  embedResolution.onResult(({ data: { embedResolution } }) => {
+  const embedFails = [] as {
+    data: EmbedResolutionEvent;
+    retries: number;
+  }[];
+
+  function onEmbedResolution(embedResolution: EmbedResolutionEvent) {
+    console.log(embedResolution);
+    if (!messagesStore.messages[embedResolution.associationId]) return;
     const index = messagesStore.messages[
       embedResolution.associationId
     ]?.findIndex((msg) => msg.id === embedResolution.message.id);
-    console.log(embedResolution);
+    console.log(index);
     if (index !== -1) {
       console.log(messagesStore.messages[embedResolution.associationId]);
       const message =
@@ -164,6 +176,31 @@ export default function setup() {
         ...message,
         embeds: embedResolution.message.embeds
       });
+    } else {
+      let embedFailIndex = embedFails.findIndex(
+        (e) => e.data.message.id === embedResolution.message.id
+      );
+
+      if (embedFailIndex === -1) {
+        embedFails.push({
+          data: embedResolution,
+          retries: 0
+        });
+        embedFailIndex = embedFails.length - 1;
+      }
+      if (embedFails[embedFailIndex]?.retries > 5) {
+        embedFails.splice(embedFailIndex, 1);
+        return;
+      }
+      setTimeout(() => {
+        onEmbedResolution(embedResolution);
+      }, 50);
+      embedFails[embedFailIndex].retries++;
+      return;
     }
+  }
+
+  embedResolution.onResult(({ data: { embedResolution } }) => {
+    onEmbedResolution(embedResolution);
   });
 }

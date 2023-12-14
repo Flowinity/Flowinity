@@ -20,9 +20,9 @@ registerEnumType(EmbedMediaType, {
 })
 
 export enum EmbedVersion {
-  V2,
+  COLUBRINA,
   V1,
-  COLUBRINA
+  V2
 }
 
 registerEnumType(EmbedVersion, {

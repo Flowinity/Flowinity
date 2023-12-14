@@ -2,7 +2,7 @@
   <div class="p-2" v-if="query">
     <tpu-overline position="start">
       {{
-        $t("chats.searchIn", {
+        $t("chats.pins", {
           chat: chatStore.chatName(chatStore.selectedChat!),
           count: query.pager.totalItems
         })
@@ -20,22 +20,15 @@
 </template>
 
 <script setup lang="ts">
-import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
-import TextField from "@/components/Framework/Input/TextField.vue";
-import { nextTick, onMounted, ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
+import { ref, watch } from "vue";
 import { useChatStore } from "@/stores/chat.store";
-import TpuSmartTextField from "@/components/Framework/Input/TpuSmartTextField.vue";
 import { useRoute } from "vue-router";
-import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
-import TpuButton from "@/components/Framework/Button/TpuButton.vue";
 import { useApolloClient } from "@vue/apollo-composable";
 import { PagedMessagesQuery } from "@/graphql/chats/messages.graphql";
 import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
 import CommsMessage from "@/components/Communications/CommsMessage.vue";
-const { t } = useI18n();
 const chatStore = useChatStore();
-import type { Message, Pager } from "@/gql/graphql";
+import type { Message, PagedMessagesInput, Pager } from "@/gql/graphql";
 
 const query = ref<{
   pager: Pager;
@@ -52,18 +45,15 @@ async function getMessages() {
       input: {
         associationId: chatStore.selectedChatAssociationId,
         page: 1,
-        search: {
-          query: chatStore.uiOptions.search,
-          pins: chatStore.uiOptions.pinSidebar
-        }
-      }
+        search: { query: chatStore.uiOptions.search, pins: true }
+      } as PagedMessagesInput
     }
   });
   query.value = messagesPaged;
 }
 
 watch(
-  () => chatStore.uiOptions.searchSidebar,
+  () => chatStore.uiOptions.pinSidebar,
   async (value) => {
     if (value) {
       getMessages();

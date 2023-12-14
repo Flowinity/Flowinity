@@ -1,9 +1,7 @@
 <template>
-  <card>
-    {{ embeds }}
-  </card>
   <text-field
     ref="input"
+    v-bind="$attrs"
     :model-value="modelValue"
     placeholder="Keep it civil..."
     label="Send a message"

@@ -207,8 +207,6 @@
     "eslint-plugin-unicorn": "43.0.2",
     "jest": "^29.5.0",
     "majestic": "^1.8.1",
-    "mocha": "^10.2.0",
-    "nodemon": "^2.0.22",
     "nyc": "15.1.0",
     "react": "^18.2.0",
     "rimraf": "3.0.2",

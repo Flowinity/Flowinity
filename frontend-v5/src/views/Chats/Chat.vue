@@ -1,9 +1,11 @@
 <template>
-  <div class="flex h-full">
-    <div class="communications flex-1">
+  <div class="flex h-full" id="outer-chat">
+    <div class="communications flex-1" id="communications">
       <div
         class="messages position-relative"
+        id="messages"
         :key="chatStore.selectedChatAssociationId"
+        ref="messages"
       >
         <div id="sentinel-bottom" ref="sentinelBottom"></div>
         <CommsMessage
@@ -26,6 +28,7 @@
           :index="index"
           @editText="editingText = $event"
           @reply="replyId = $event"
+          @auto-scroll="autoScroll"
           :merge="$chat.merge(message, index)"
         />
       </div>
@@ -102,9 +105,11 @@
         <member-side-bar
           v-show="
             chatStore.uiOptions.memberSidebar &&
-            !chatStore.uiOptions.searchSidebar
+            !chatStore.uiOptions.searchSidebar &&
+            !chatStore.uiOptions.pinSidebar
           "
         />
+        <pins-side-bar v-show="chatStore.uiOptions.pinSidebar" />
       </second-side-bar>
     </div>
   </div>
@@ -131,13 +136,12 @@
               : t('chats.searchSidebar.show')
           "
           @click="
-            chatStore.uiOptions.searchSidebar =
-              !chatStore.uiOptions.searchSidebar
+            chatStore.uiOptions.pinSidebar = !chatStore.uiOptions.pinSidebar
           "
         >
           <RiPushpin2Line
             style="width: 20px"
-            v-if="!chatStore.uiOptions.searchSidebar"
+            v-if="!chatStore.uiOptions.pinSidebar"
           />
           <RiPushpin2Fill style="width: 20px" v-else />
         </tpu-button>
@@ -218,6 +222,7 @@ import RiPushpin2Line from "vue-remix-icons/icons/ri-pushpin-2-line.vue";
 import RiPushpin2Fill from "vue-remix-icons/icons/ri-pushpin-2-fill.vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
 import CommsSearchInput from "@/components/Communications/CommsSearchInput.vue";
+import PinsSideBar from "@/layouts/default/PinsSideBar.vue";
 const { t } = useI18n();
 const chatStore = useChatStore();
 const userStore = useUserStore();
@@ -232,6 +237,8 @@ const avoidAutoScroll = ref(false);
 const appStore = useAppStore();
 const type = throttle(handleTyping, 1000);
 const searchInput = ref<InstanceType<typeof TextField> | null>(null);
+
+const messages = ref<HTMLElement | null>(null);
 
 const excludedTypers = computed(() => {
   return chatStore.typers.filter(
@@ -343,7 +350,6 @@ function editLastMessage() {
 }
 
 function shortcutHandler(e: KeyboardEvent) {
-  console.log(e.target?.classList);
   if (e.key === "Escape") {
     e.preventDefault();
     if (chatStore.uiOptions.searchSidebar) {
@@ -379,12 +385,10 @@ function shortcutHandler(e: KeyboardEvent) {
     replyId.value = message.id;
     return;
   } else if (
-    (e.key === "v" && (e.ctrlKey || e.metaKey)) ||
-    (e.target?.tagName !== "INPUT" &&
-      e.target?.tagName !== "TEXTAREA" &&
-      !e.ctrlKey &&
-      !e.target?.classList.contains("ProseMirror") &&
-      !e.metaKey)
+    e.target?.tagName !== "INPUT" &&
+    e.target?.tagName !== "TEXTAREA" &&
+    (!e.ctrlKey || (e.key === "v" && (e.ctrlKey || e.metaKey))) &&
+    !e.target?.classList.contains("ProseMirror")
   ) {
     focusInput();
   } else if (e.ctrlKey && e.key === "f") {
@@ -400,6 +404,7 @@ function shortcutHandler(e: KeyboardEvent) {
 }
 
 function autoScroll() {
+  console.log("asdasdasdadasdasdasdsada");
   if (avoidAutoScroll.value) return;
   if (!messagesStore.selected.length) return;
   const sentinel = document.getElementById("sentinel-bottom");
@@ -407,47 +412,6 @@ function autoScroll() {
   sentinel.scrollIntoView();
   nextTick(() => {
     sentinel.scrollIntoView();
-  });
-}
-
-const embedFails = [] as {
-  data: { chatId: any; id: any; embeds: any };
-  retries: number;
-}[];
-
-function onEmbedResolution(data: { chatId: any; id: any; embeds: any }) {
-  console.log(data);
-  if (data.chatId !== chatStore.selectedChat?.id) return;
-  const messageIndex = messagesStore.messages[
-    chatStore.selectedChat?.association?.id!
-  ].findIndex((m: Message) => m.id === data.id);
-  console.log(messageIndex);
-  if (messageIndex === -1) {
-    let embedFailIndex = embedFails.findIndex((e) => e.data.id === data.id);
-    if (embedFailIndex === -1) {
-      embedFails.push({
-        data,
-        retries: 0
-      });
-      embedFailIndex = embedFails.length - 1;
-    }
-    if (embedFails[embedFailIndex]?.retries > 5) {
-      embedFails.splice(embedFailIndex, 1);
-      return;
-    }
-    setTimeout(() => {
-      onEmbedResolution(data);
-    }, 50);
-    embedFails[embedFailIndex].retries++;
-    return;
-  }
-  messagesStore.messages[chatStore.selectedChat?.association?.id!][
-    messageIndex
-  ].embeds = data.embeds;
-  autoScroll();
-
-  nextTick(() => {
-    autoScroll();
   });
 }
 
@@ -460,11 +424,9 @@ onMounted(() => {
   document.addEventListener("keydown", shortcutHandler);
   useSubscription(NewMessageSubscription, {
     onSubscriptionData: (data) => {
-      console.log(data);
       onMessage(data.subscriptionData.data.message);
     }
   });
-  useSocket.chat.on("embedResolution", onEmbedResolution);
 });
 
 onUnmounted(() => {
@@ -504,6 +466,15 @@ watch(
         )
       ]
     };
+  }
+);
+
+watch(
+  () => messagesStore.messages[chatStore.selectedChatAssociationId]?.length,
+  () => {
+    nextTick(() => {
+      autoScroll();
+    });
   }
 );
 </script>

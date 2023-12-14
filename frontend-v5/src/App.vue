@@ -90,11 +90,11 @@ watch(
           class="fixed top-0 left-0 z-50"
           v-if="userStore.user && !frameworkStore.breakpoints.mobile"
         />
+        <side-bar
+          class="fixed top-0 left-0"
+          v-if="userStore.user && !frameworkStore.breakpoints.mobile"
+        />
         <div class="flex w-full" id="main-flex">
-          <side-bar
-            class="fixed top-0 left-0"
-            v-if="userStore.user && !frameworkStore.breakpoints.mobile"
-          />
           <div class="flex flex-col w-full">
             <app-bar class="bg-white z-10" v-if="userStore.user" />
 
