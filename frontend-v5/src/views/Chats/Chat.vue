@@ -42,7 +42,6 @@
             @send="sendMessage"
           >
             <div
-              v-if="replyId"
               style="
                 overflow: hidden;
                 transition: max-height 0.25s ease-in;
@@ -94,8 +93,8 @@
                     excludedTypers.length > 1
                       ? 1
                       : excludedTypers.length > 5
-                        ? 2
-                        : 0
+                      ? 2
+                      : 0
                   )
                 }}
               </p>
