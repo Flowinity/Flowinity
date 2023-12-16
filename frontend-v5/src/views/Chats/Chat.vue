@@ -8,7 +8,7 @@
         ref="messages"
       >
         <div id="sentinel-bottom" ref="sentinelBottom"></div>
-        <CommsMessage
+        <comms-message
           :unread-id="0"
           class="mr-2 ml-2"
           v-for="(message, index) in messagesStore.messages[
@@ -23,43 +23,55 @@
           }"
           :date-separator="dateSeparator(index)"
           :editing="editing === message.id"
-          :editingText="editingText"
+          @update:editing="editing = $event"
+          v-model:editing-text="editingText"
           :message="message"
           :index="index"
-          @editText="editingText = $event"
           @reply="replyId = $event"
           @auto-scroll="autoScroll"
           :merge="$chat.merge(message, index)"
         />
       </div>
       <div class="input mx-4 my-2">
-        <card v-if="replyId" :padding="false" class="p-3 flex justify-between">
-          <message-reply
-            :line="false"
-            :reply="
-              messagesStore.selected.find((message) => message.id === replyId)
-            "
-          />
-          <tpu-button
-            icon
-            variant="passive"
-            style="width: 20px"
-            @click="replyId = undefined"
-          >
-            <RiCloseLine style="width: 40px" />
-          </tpu-button>
-        </card>
         <div class="flex-col">
           <comms-input
             v-model="content"
             ref="input"
             @keydown.enter.exact="sendMessage"
             @update:model-value="type"
-          />
-          <div class="flex justify-between">
+            @send="sendMessage"
+          >
+            <div
+              v-if="replyId"
+              style="
+                overflow: hidden;
+                transition: max-height 0.25s ease-in;
+                margin-bottom: -8px;
+                max-height: 0;
+              "
+              :style="{
+                'max-height': replyId ? '100px' : '0'
+              }"
+            >
+              <div class="flex w-full justify-between">
+                <message-reply
+                  :line="false"
+                  :reply="
+                    messagesStore.selected.find(
+                      (message) => message.id === replyId
+                    )
+                  "
+                />
+                <tpu-button icon variant="passive" @click="replyId = undefined">
+                  <RiCloseLine style="width: 20px" />
+                </tpu-button>
+              </div>
+            </div>
+          </comms-input>
+          <div class="flex justify-between text-sm mt-2">
             <div class="flex items-center">
               <div class="user-avatars">
-                <UserAvatar
+                <user-avatar
                   v-for="typer in excludedTypers"
                   :user-id="typer.userId"
                   class="user-avatar"
@@ -88,7 +100,12 @@
                 }}
               </p>
             </div>
-            <p class="text-medium-emphasis-dark">{{ content.length }}/4000</p>
+            <p
+              class="text-medium-emphasis-dark"
+              :class="{ 'text-red': content.length > 4000 }"
+            >
+              {{ content.length }}/4000
+            </p>
           </div>
         </div>
       </div>
@@ -361,7 +378,6 @@ function shortcutHandler(e: KeyboardEvent) {
   } else if ((e.ctrlKey || e.metaKey) && e.key === "ArrowUp") {
     e.preventDefault();
     e.stopPropagation();
-    // edit next message
     const message = messagesStore.selected
       .slice()
       .find((message) => (replyId.value ? message.id < replyId.value : true));
@@ -384,6 +400,10 @@ function shortcutHandler(e: KeyboardEvent) {
     }
     replyId.value = message.id;
     return;
+  } else if (e.key === "ArrowUp" && !content.value.length) {
+    e.preventDefault();
+    e.stopPropagation();
+    editLastMessage();
   } else if (
     e.target?.tagName !== "INPUT" &&
     e.target?.tagName !== "TEXTAREA" &&
@@ -404,7 +424,6 @@ function shortcutHandler(e: KeyboardEvent) {
 }
 
 function autoScroll() {
-  console.log("asdasdasdadasdasdasdsada");
   if (avoidAutoScroll.value) return;
   if (!messagesStore.selected.length) return;
   const sentinel = document.getElementById("sentinel-bottom");

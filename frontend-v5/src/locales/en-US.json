@@ -241,7 +241,12 @@
   },
   "chats": {
     "typing": "{users} is typing... | {users} are typing... | Many people are typing...",
-    "searchIn": "Searching in {chat}, {count} messages."
+    "searchIn": "Searching in {chat}, {count} messages.",
+    "input": {
+      "editingHelper": "Press enter to send, and esc to cancel.",
+      "send": "Send",
+      "attachments": "Attachments"
+    }
   },
   "connection": {
     "title": "Connecting..."

@@ -1,13 +1,8 @@
 <template>
-  <div
-    class="three-panel-layout w-full"
-    @touchstart="handleTouchStart"
-    @touchmove="handleTouchMove"
-    @touchend="handleTouchEnd"
-  >
+  <div class="three-panel-layout w-full" v-bind="bind()" :style="style">
     <div
       class="panel left-panel flex"
-      @click="openLeftPanel"
+      @click="leftOffset = 0"
       :style="{
         transform: `translateX(calc(-100% + ${leftOffset}px))`
       }"
@@ -17,81 +12,65 @@
     </div>
     <div class="panel center-panel" ref="centerPanel">
       <app-bar />
+      {{ style }}
       <router-view />
     </div>
     <div
       class="panel right-panel"
-      @click="openRightPanel"
+      @click="rightOffset = 0"
       :style="{
         transform: `translateX(calc(100% - ${rightOffset}px))`
       }"
     >
-      Right Panel
+      right
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useDrag, useGesture, useMove, useSpring } from "vue-use-gesture";
 import AppBar from "@/layouts/default/AppBar.vue";
-import SideBar from "@/layouts/default/SideBar.vue";
 import SuperBar from "@/layouts/default/SuperBar.vue";
+import SideBar from "@/layouts/default/SideBar.vue";
 
-let touchStartX: number | null = null;
-let touchEndX: number | null = null;
-const leftOffset = ref(0);
-const rightOffset = ref(0);
 const centerPanel = ref<HTMLElement | null>(null);
+const rightOffset = ref(0);
+const leftOffset = ref(0);
 
-function handleTouchStart(event: TouchEvent) {
-  touchStartX = event.touches[0].clientX;
-}
-
-function handleTouchMove(event: TouchEvent) {
-  if (!touchStartX) return;
-
-  touchEndX = event.touches[0].clientX;
-
-  const swipeDistance = touchEndX - touchStartX;
-
-  if (swipeDistance > 0) {
-    leftOffset.value = swipeDistance;
-  } else {
-    if (leftOffset.value > 0) {
-      leftOffset.value = -swipeDistance;
-      return;
-    }
-    rightOffset.value = Math.abs(swipeDistance);
-  }
-}
-
-function handleTouchEnd() {
-  touchStartX = null;
-  touchEndX = null;
-
+function handleSwipe(
+  direction: "left" | "right",
+  { deltaX }: { deltaX: number }
+) {
+  console.log("Yes");
+  const distance = Math.abs(deltaX);
   const centerPanelWidth = (centerPanel.value as HTMLElement).offsetWidth;
 
-  if (leftOffset.value > centerPanelWidth / 2) {
-    leftOffset.value = centerPanelWidth;
+  if (direction === "left") {
     rightOffset.value = 0;
-  } else if (rightOffset.value > centerPanelWidth / 2) {
-    rightOffset.value = centerPanelWidth;
+    leftOffset.value = Math.min(distance, centerPanelWidth);
+  } else if (direction === "right") {
     leftOffset.value = 0;
-  } else {
-    leftOffset.value = 0;
-    rightOffset.value = 0;
+    rightOffset.value = Math.min(distance, centerPanelWidth);
   }
 }
 
-function openLeftPanel() {
-  leftOffset.value = 0;
-  rightOffset.value = 0;
-}
+const [{ x }, set] = useSpring(() => ({ x: 0 }));
+const bind = useDrag(
+  ({ down, movement: [mx] }) =>
+    set({ x: down ? mx : 0, immediate: down, config: { duration: 3000 } }),
+  { initial: () => [x.value, 0] }
+);
+const style = computed(() => ({ transform: `translate3d(${x.value}px,0,0)` }));
 
-function openRightPanel() {
+onMounted(() => {
+  console.log(centerPanel);
+});
+
+onUnmounted(() => {
   leftOffset.value = 0;
   rightOffset.value = 0;
-}
+});
 </script>
 
 <style>

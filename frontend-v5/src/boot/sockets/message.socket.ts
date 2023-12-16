@@ -162,14 +162,11 @@ export default function setup() {
   }[];
 
   function onEmbedResolution(embedResolution: EmbedResolutionEvent) {
-    console.log(embedResolution);
     if (!messagesStore.messages[embedResolution.associationId]) return;
     const index = messagesStore.messages[
       embedResolution.associationId
     ]?.findIndex((msg) => msg.id === embedResolution.message.id);
-    console.log(index);
     if (index !== -1) {
-      console.log(messagesStore.messages[embedResolution.associationId]);
       const message =
         messagesStore.messages[embedResolution.associationId][index];
       messagesStore.messages[embedResolution.associationId].splice(index, 1, {

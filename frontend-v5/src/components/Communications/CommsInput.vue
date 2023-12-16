@@ -1,18 +1,46 @@
 <template>
-  <text-field
-    ref="input"
-    v-bind="$attrs"
-    :model-value="modelValue"
-    placeholder="Keep it civil..."
-    label="Send a message"
-    :textarea="true"
-    :max-lines="7"
-    :shift-enter-new-line="true"
-    @update:model-value="
-      $emit('update:modelValue', $event);
-      links($event);
-    "
-  />
+  <div
+    class="flex flex-col gap-2 bg-sidebar-dark mt-2 p-2 rounded outline outline-card-secondary-dark w-full input"
+    style="transition: all 0.5s linear"
+  >
+    <slot />
+    <div class="flex w-full items-center justify-center">
+      <div
+        style="width: 25px"
+        class="cursor-pointer"
+        v-tooltip.top="t('chats.input.attachments')"
+        v-if="!editing"
+      >
+        <RiAddCircleFill style="width: 100%; height: 100%" />
+      </div>
+      <text-field
+        ref="input"
+        v-bind="$attrs"
+        :model-value="modelValue"
+        placeholder="Keep it civil..."
+        :textarea="true"
+        :max-lines="7"
+        :shift-enter-new-line="true"
+        @update:model-value="
+          $emit('update:modelValue', $event);
+          links($event);
+        "
+        :persistent-placeholder="true"
+        style="padding: 0; border-bottom: none; width: 100%"
+        parent-classes="w-full p-2"
+      ></text-field>
+      <slot name="append" :emit="$emit">
+        <div
+          style="width: 25px"
+          class="cursor-pointer"
+          v-tooltip.top="t('chats.input.send')"
+          @click="$emit('send')"
+        >
+          <RiSendPlane2Fill style="width: 100%; height: 100%" />
+        </div>
+      </slot>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -23,13 +51,19 @@ import { EmbedDataV2 } from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { EmbedPrecacheMutation } from "@/graphql/chats/embedPrecache.graphql";
 import { throttle } from "lodash";
-
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
+import RiAddCircleFill from "vue-remix-icons/icons/ri-add-circle-fill.vue";
+import RiSendPlane2Fill from "vue-remix-icons/icons/ri-send-plane-2-fill.vue";
+import { useI18n } from "vue-i18n";
 const input = ref<InstanceType<typeof TextField> | null>(null);
 const props = defineProps({
-  modelValue: String
+  modelValue: String,
+  editing: Boolean
 });
-defineEmits(["update:modelValue"]);
+defineEmits(["update:modelValue", "send"]);
 defineExpose({ input });
+
+const { t } = useI18n();
 
 const cachedLinks = ref<string[]>([]);
 const embeds = ref<EmbedDataV2[]>([]);
@@ -80,3 +114,20 @@ async function handleLinks(val: string) {
   }
 }
 </script>
+
+<style scoped>
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.5s;
+}
+
+.slide-up-enter,
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
+
+.slide-up-leave,
+.slide-up-enter-to {
+  transform: translateY(0);
+}
+</style>

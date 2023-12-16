@@ -1,6 +1,6 @@
 <template>
-  <upload-editor v-model="$app.dialogs.gallery.edit.value" />
-  <OCRScanned v-model="$app.dialogs.gallery.ocr.value" />
+  <upload-editor v-model="appStore.dialogs.gallery.edit.value" />
+  <OCRScanned v-model="appStore.dialogs.gallery.ocr.value" />
   <upload-file v-model="appStore.dialogs.gallery.upload.value" />
   <add-to-collection
     v-model="appStore.dialogs.gallery.collect.value"

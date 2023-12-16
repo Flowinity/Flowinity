@@ -11,7 +11,9 @@
       }"
       @mouseenter="hovered = true"
     >
-      <div class="flex flex-grow basis-0 message-main relative rounded-l">
+      <div
+        class="flex w-full flex-grow basis-0 message-main relative rounded-l"
+      >
         <div class="avatar-section" :class="{ 'justify-center': merge }">
           <UserAvatar
             v-if="!merge"
@@ -26,14 +28,14 @@
             {{ $date(message.createdAt).format("hh:mm A") }}
           </p>
         </div>
-        <div class="flex-col">
+        <div class="flex-col w-full">
           <div v-if="!merge" class="flex items-center">
             {{ friendsStore.getName(message.userId) }}
             <p class="text-medium-emphasis-dark text-sm ml-2">
               {{ dayjs(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
             </p>
           </div>
-          <div class="relative inline-block">
+          <div class="relative inline-block w-full pr-5">
             <span
               v-memo="[message.content, message.error, message.pending]"
               class="overflow-content"
@@ -42,7 +44,44 @@
                 'text-red': message.error
               }"
               v-html="$functions.markdown(message.content || '', message)"
+              v-if="!editing"
             ></span>
+            <comms-input
+              v-else
+              class="m-2 w-full"
+              editing
+              :model-value="editingText"
+              @update:model-value="$emit('update:editingText', $event)"
+              :raw-inject="true"
+              :placeholder="$t('communications.message.editing')"
+              :dynamic-width="true"
+              @keydown.esc="$emit('update:editing', false)"
+              autofocus
+            >
+              <template #append="{ emit }">
+                <div class="flex gap-2">
+                  <div
+                    style="width: 25px"
+                    class="cursor-pointer"
+                    v-tooltip.top="t('chats.input.send')"
+                    @click="emit('send')"
+                  >
+                    <RiCloseCircleFill style="width: 100%; height: 100%" />
+                  </div>
+                  <div
+                    style="width: 25px"
+                    class="cursor-pointer"
+                    v-tooltip.top="t('chats.input.send')"
+                    @click="emit('send')"
+                  >
+                    <RiSendPlane2Fill style="width: 100%; height: 100%" />
+                  </div>
+                </div>
+              </template>
+            </comms-input>
+            <div class="pl-2 text-sm text-medium-emphasis-dark" v-if="editing">
+              {{ t("chats.input.editingHelper") }}
+            </div>
           </div>
           <div class="flex-col flex">
             <comms-message-embed
@@ -53,7 +92,7 @@
           </div>
         </div>
         <comms-message-actions
-          v-if="hovered"
+          v-if="hovered && !editing"
           @reply="$emit('reply', message.id)"
         ></comms-message-actions>
       </div>
@@ -91,10 +130,16 @@ import CommsMessageActions from "@/components/Communications/CommsMessageActions
 import { onMounted, ref, watch } from "vue";
 import MessageReply from "@/components/Communications/MessageReply.vue";
 import CommsMessageEmbed from "@/components/Communications/CommsMessageEmbed.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
+import CommsInput from "@/components/Communications/CommsInput.vue";
+import RiSendPlane2Fill from "vue-remix-icons/icons/ri-send-plane-2-fill.vue";
+import { useI18n } from "vue-i18n";
 
 const hovered = ref(false);
 const friendsStore = useFriendsStore();
 const userStore = useUserStore();
+const { t } = useI18n();
+import RiCloseCircleFill from "vue-remix-icons/icons/ri-close-circle-fill.vue";
 const props = defineProps({
   message: {
     type: Object as () => Message,
@@ -120,7 +165,12 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(["reply", "autoScroll"]);
+const emit = defineEmits([
+  "reply",
+  "autoScroll",
+  "update:editingText",
+  "update:editing"
+]);
 
 function blocked(userId?: number) {
   return userStore.blocked.find(
@@ -164,9 +214,11 @@ watch(
 }
 
 .hover-message-actions:hover .message-actions,
-.message-actions:hover .message-actions {
+.message-actions:hover {
   display: block;
+  z-index: 9999;
 }
+
 .message a {
   color: #0190ea;
 }
