@@ -13,12 +13,15 @@ import { Service } from "typedi"
 import { Message } from "@app/models/message.model"
 import { ChatService } from "@app/services/chat.service"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
-import { SendMessageInput } from "@app/classes/graphql/chat/sendMessage"
+import {
+  DeleteMessageInput,
+  EditMessageInput,
+  SendMessageInput
+} from "@app/classes/graphql/chat/sendMessage"
 import { Context } from "@app/types/graphql/context"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import {
   InfiniteMessagesInput,
-  MessageType,
   PagedMessagesInput,
   ScrollPosition,
   SubscriptionMessageInput
@@ -32,7 +35,7 @@ import paginate from "jw-paginate"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
 import { GraphQLError } from "graphql/error"
 import { MessageSubscription } from "@app/classes/graphql/chat/messageSubscription"
-import { EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
+import { EditMessageEvent, EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
 import { embedTranslator } from "@app/lib/embedParser"
 
 export const PaginatedMessagesResponse = PagerResponse(Message)
@@ -67,6 +70,53 @@ export class MessageResolver {
       "message",
       input.attachments,
       input.embeds
+    )
+  }
+
+  @RateLimit({
+    window: 8,
+    max: 8
+  })
+  @Authorization({
+    scopes: ["chats.send"]
+  })
+  @Mutation(() => Message, {
+    nullable: true
+  })
+  async editMessage(
+    @Arg("input") input: EditMessageInput,
+    @Ctx() ctx: Context
+  ): Promise<Message | null> {
+    if (input.embeds?.length && !ctx.user?.bot)
+      throw new GraphQLError("You need to be a bot to use embeds.")
+    await this.chatService.editMessage(
+      input.messageId,
+      ctx.user!!.id,
+      input.content,
+      input.associationId,
+      input.pinned,
+      input.embeds,
+      input.attachments
+    )
+    return await Message.findByPk(input.messageId)
+  }
+
+  @RateLimit({
+    window: 8,
+    max: 8
+  })
+  @Authorization({
+    scopes: ["chats.send"]
+  })
+  @Mutation(() => Boolean)
+  async deleteMessage(
+    @Arg("input") input: DeleteMessageInput,
+    @Ctx() ctx: Context
+  ): Promise<Message> {
+    return await this.chatService.deleteMessage(
+      input.messageId,
+      ctx.user!!.id,
+      input.associationId
     )
   }
 
@@ -225,7 +275,7 @@ export class MessageResolver {
         : true
     }
   })
-  newMessage(
+  onMessage(
     @Root() payload: MessageSubscription,
     @Ctx() ctx: Context,
     @Arg("input", {
@@ -239,12 +289,36 @@ export class MessageResolver {
   @Authorization({
     scopes: "chats.view"
   })
+  @Subscription(() => EditMessageEvent, {
+    topics: ({ context }) => {
+      return `EDIT_MESSAGE:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      return args.input?.associationId !== undefined
+        ? args.input.associationId === payload.associationId
+        : true
+    }
+  })
+  onMessageEdit(
+    @Root() payload: EditMessageEvent,
+    @Ctx() ctx: Context,
+    @Arg("input", {
+      nullable: true
+    })
+    input: SubscriptionMessageInput
+  ): EditMessageEvent {
+    return payload
+  }
+
+  @Authorization({
+    scopes: "chats.view"
+  })
   @Subscription({
     topics: ({ context }) => {
       return `READ_RECEIPTS:${context.user!!.id}`
     }
   })
-  readReceipt(
+  onReadReceipt(
     @Root() payload: MessageSubscription,
     @Ctx() ctx: Context
   ): MessageSubscription {

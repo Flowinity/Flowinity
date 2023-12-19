@@ -24,10 +24,12 @@
           :date-separator="dateSeparator(index)"
           :editing="editing === message.id"
           @update:editing="editing = $event"
-          v-model:editing-text="editingText"
           :message="message"
           :index="index"
-          @reply="replyId = $event"
+          @reply="
+            replyId = $event;
+            replying = true;
+          "
           @auto-scroll="autoScroll"
           :merge="$chat.merge(message, index)"
         />
@@ -44,12 +46,12 @@
             <div
               style="
                 overflow: hidden;
-                transition: max-height 0.25s ease-in;
+                transition: max-height 0.05s ease-in;
                 margin-bottom: -8px;
                 max-height: 0;
               "
               :style="{
-                'max-height': replyId ? '100px' : '0'
+                'max-height': replying ? '36px' : '0'
               }"
             >
               <div class="flex w-full justify-between">
@@ -61,7 +63,7 @@
                     )
                   "
                 />
-                <tpu-button icon variant="passive" @click="replyId = undefined">
+                <tpu-button icon variant="passive" @click="replying = false">
                   <RiCloseLine style="width: 20px" />
                 </tpu-button>
               </div>
@@ -93,8 +95,8 @@
                     excludedTypers.length > 1
                       ? 1
                       : excludedTypers.length > 5
-                      ? 2
-                      : 0
+                        ? 2
+                        : 0
                   )
                 }}
               </p>
@@ -245,8 +247,8 @@ const userStore = useUserStore();
 const messagesStore = useMessagesStore();
 
 const replyId = ref<number | undefined>(undefined);
+const replying = ref(false);
 const editing = ref<number | undefined>(undefined);
-const editingText = ref("");
 const content = ref("");
 const input = ref<InstanceType<typeof CommsInput> | null>(null);
 const avoidAutoScroll = ref(false);
@@ -300,7 +302,7 @@ async function sendMessage() {
       return match;
     }
   });
-  const replyIdPersistent = replyId.value;
+  const replyIdPersistent = replying.value ? replyId.value : undefined;
   content.value = "";
   replyId.value = undefined;
   const tempId = new Date().getTime();
@@ -358,7 +360,6 @@ function editLastMessage() {
     .slice()
     .find((message) => message.userId === userStore.user?.id);
   if (!lastMessage || lastMessage.id === editing.value) return;
-  editingText.value = lastMessage.content;
   editing.value = lastMessage.id;
   nextTick(() => {
     autoScroll();
@@ -373,18 +374,24 @@ function shortcutHandler(e: KeyboardEvent) {
       chatStore.uiOptions.search = "";
       return (chatStore.uiOptions.searchSidebar = false);
     }
-    replyId.value = undefined;
+    replying.value = false;
+  } else if (editing.value) {
+    return;
   } else if ((e.ctrlKey || e.metaKey) && e.key === "ArrowUp") {
     e.preventDefault();
     e.stopPropagation();
+    if (replyId.value && !replying.value) {
+      replyId.value = undefined;
+    }
     const message = messagesStore.selected
       .slice()
       .find((message) => (replyId.value ? message.id < replyId.value : true));
     if (!message) {
-      replyId.value = undefined;
+      replying.value = false;
       return;
     }
     replyId.value = message.id;
+    replying.value = true;
   } else if ((e.ctrlKey || e.metaKey) && e.key === "ArrowDown") {
     e.preventDefault();
     if (!replyId.value) return;
@@ -394,10 +401,11 @@ function shortcutHandler(e: KeyboardEvent) {
       .reverse()
       .find((message) => (replyId.value ? message.id > replyId.value : true));
     if (!message) {
-      replyId.value = undefined;
+      replying.value = false;
       return;
     }
     replyId.value = message.id;
+    replying.value = true;
     return;
   } else if (e.key === "ArrowUp" && !content.value.length) {
     e.preventDefault();
@@ -445,6 +453,7 @@ onMounted(() => {
       onMessage(data.subscriptionData.data.message);
     }
   });
+  focusInput();
 });
 
 onUnmounted(() => {
@@ -484,6 +493,7 @@ watch(
         )
       ]
     };
+    focusInput();
   }
 );
 

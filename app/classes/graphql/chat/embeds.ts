@@ -202,7 +202,7 @@ export class EmbedDataV2Input {
 }
 
 @ObjectType()
-export class EmbedResolutionEvent {
+export class EditMessageEvent {
   @Field(() => Int)
   associationId: number
 

@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const TypingSubscription = gql`
   subscription TypingEvent {
-    typingEvent {
+    onTyping {
       chatId
       expires
       user {
@@ -14,7 +14,7 @@ export const TypingSubscription = gql`
 
 export const CancelTypingSubscription = gql`
   subscription CancelTypingEvent {
-    cancelTypingEvent {
+    onCancelTyping {
       chatId
       expires
       user {

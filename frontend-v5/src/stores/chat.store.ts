@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import type {
   Chat,
   ChatEmoji,
+  ChatRank,
   InfiniteMessagesInput,
   Message,
   PagedMessagesInput
@@ -244,6 +245,17 @@ export const useChatStore = defineStore("chat", () => {
     }
   );
 
+  function getColor(ranksMap: string[], ranks: ChatRank[]): string {
+    if (!ranksMap) ranksMap = [];
+    for (const rankId of ranksMap) {
+      const rank = ranks.find((r) => r.id === rankId);
+      if (rank?.color) {
+        return rank.color;
+      }
+    }
+    return "inherit";
+  }
+
   return {
     chats,
     selectedChatAssociationId,
@@ -263,6 +275,7 @@ export const useChatStore = defineStore("chat", () => {
     currentTypers,
     type,
     cancelType,
-    uiOptions
+    uiOptions,
+    getColor
   };
 });

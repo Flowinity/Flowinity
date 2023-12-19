@@ -29,13 +29,24 @@
           </p>
         </div>
         <div class="flex-col w-full">
-          <div v-if="!merge" class="flex items-center">
+          <div
+            v-if="!merge"
+            class="flex items-center"
+            :style="{
+              color: chatStore.getColor(
+                chatStore.selectedChat?.users.find(
+                  (assoc) => assoc.userId === message.userId
+                )?.ranksMap || [],
+                chatStore.selectedChat?.ranks || []
+              )
+            }"
+          >
             {{ friendsStore.getName(message.userId) }}
             <p class="text-medium-emphasis-dark text-sm ml-2">
               {{ dayjs(message.createdAt).format("hh:mm:ss A, DD/MM/YYYY") }}
             </p>
           </div>
-          <div class="relative inline-block w-full pr-5">
+          <div class="relative w-full pr-5 inline-block gap-1">
             <span
               v-memo="[message.content, message.error, message.pending]"
               class="overflow-content"
@@ -46,17 +57,22 @@
               v-html="$functions.markdown(message.content || '', message)"
               v-if="!editing"
             ></span>
+            <span
+              v-if="!editing && message.edited"
+              class="fill-medium-emphasis-dark inline-block"
+            >
+              <RiPencilFill style="width: 20px" />
+            </span>
             <comms-input
-              v-else
+              v-if="editing"
               class="m-2 w-full"
               editing
-              :model-value="editingText"
-              @update:model-value="$emit('update:editingText', $event)"
-              :raw-inject="true"
+              v-model="editingText"
               :placeholder="$t('communications.message.editing')"
-              :dynamic-width="true"
               @keydown.esc="$emit('update:editing', false)"
               autofocus
+              @send="editMessage()"
+              @keydown.enter="editMessage()"
             >
               <template #append="{ emit }">
                 <div class="flex gap-2">
@@ -94,6 +110,8 @@
         <comms-message-actions
           v-if="hovered && !editing"
           @reply="$emit('reply', message.id)"
+          @pin="editMessage($event)"
+          :message="message"
         ></comms-message-actions>
       </div>
       <div
@@ -140,6 +158,10 @@ const friendsStore = useFriendsStore();
 const userStore = useUserStore();
 const { t } = useI18n();
 import RiCloseCircleFill from "vue-remix-icons/icons/ri-close-circle-fill.vue";
+import { useChatStore } from "@/stores/chat.store";
+import { useApolloClient } from "@vue/apollo-composable";
+import { EditMessageMutation } from "@/graphql/chats/editMessage.graphql";
+import RiPencilFill from "vue-remix-icons/icons/ri-pencil-fill.vue";
 const props = defineProps({
   message: {
     type: Object as () => Message,
@@ -154,9 +176,6 @@ const props = defineProps({
   editing: {
     type: Boolean
   },
-  editingText: {
-    type: String
-  },
   merge: {
     type: Boolean
   },
@@ -165,12 +184,11 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits([
-  "reply",
-  "autoScroll",
-  "update:editingText",
-  "update:editing"
-]);
+const editingText = ref<undefined | string>(undefined);
+
+const chatStore = useChatStore();
+
+const emit = defineEmits(["reply", "autoScroll", "update:editing"]);
 
 function blocked(userId?: number) {
   return userStore.blocked.find(
@@ -180,6 +198,24 @@ function blocked(userId?: number) {
 
 onMounted(() => {});
 
+async function editMessage(pinned?: boolean) {
+  emit("update:editing", false);
+
+  await useApolloClient().client.mutate({
+    mutation: EditMessageMutation,
+    variables: {
+      input: {
+        messageId: props.message.id,
+        content: editingText.value,
+        associationId: chatStore.selectedChatAssociationId,
+        embeds: [],
+        attachments: [],
+        pinned
+      }
+    }
+  });
+}
+
 watch(
   () => [props.message?.embeds, props.message?.content],
   () => {
@@ -187,6 +223,15 @@ watch(
   },
   {
     deep: true
+  }
+);
+
+watch(
+  () => props.editing,
+  (editing) => {
+    if (editing) {
+      editingText.value = props.message.content!;
+    }
   }
 );
 </script>
@@ -216,7 +261,7 @@ watch(
 .hover-message-actions:hover .message-actions,
 .message-actions:hover {
   display: block;
-  z-index: 9999;
+  z-index: 999;
 }
 
 .message a {

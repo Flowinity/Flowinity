@@ -4,6 +4,7 @@ import axios from "@/plugins/axios";
 import {
   type Friend,
   FriendStatus,
+  Maybe,
   type PartialUserBase,
   type PartialUserFriend,
   type User
@@ -33,7 +34,13 @@ export const useFriendsStore = defineStore("friends", () => {
   }
 
   function getName(
-    user: PartialUserFriend | PartialUserBase | User | number,
+    user:
+      | PartialUserFriend
+      | PartialUserBase
+      | User
+      | number
+      | undefined
+      | Maybe<number>,
     force = false
   ) {
     if (!user) return undefined;

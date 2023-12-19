@@ -483,7 +483,7 @@ export class ChatResolver {
       return `TYPING:${context.user!!.id}`
     }
   })
-  async typingEvent(@Root() data: ChatTypingEvent): Promise<ChatTypingEvent> {
+  async onTyping(@Root() data: ChatTypingEvent): Promise<ChatTypingEvent> {
     return data
   }
 
@@ -495,7 +495,7 @@ export class ChatResolver {
       return `CANCEL_TYPING:${context.user!!.id}`
     }
   })
-  async cancelTypingEvent(
+  async onCancelTyping(
     @Root() data: ChatTypingEvent
   ): Promise<ChatTypingEvent> {
     return data

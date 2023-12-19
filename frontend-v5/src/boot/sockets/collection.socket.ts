@@ -15,12 +15,12 @@ export default function setup() {
 
   useSubscription(CollectionRemovedSubscription).onResult(({ data }) => {
     collectionsStore.items = collectionsStore.items.filter(
-      (c) => c.id !== data.collectionRemoved
+      (c) => c.id !== data.onCollectionRemoved
     );
 
-    console.log(collectionsStore.selected?.id, data.collectionRemoved);
+    console.log(collectionsStore.selected?.id, data.onCollectionRemoved);
 
-    if (collectionsStore.selected?.id === data.collectionRemoved) {
+    if (collectionsStore.selected?.id === data.onCollectionRemoved) {
       frameworkStore.push("/gallery");
     }
   });
@@ -28,7 +28,7 @@ export default function setup() {
   useSubscription(CollectionCreatedSubscription).onResult(({ data }) => {
     collectionsStore.items = [
       {
-        ...data.collectionCreated,
+        ...data.onCollectionCreated,
         new: true
       },
       ...collectionsStore.items
@@ -37,12 +37,12 @@ export default function setup() {
 
   useSubscription(CollectionUpdatedSubscription).onResult(({ data }) => {
     const index = collectionsStore.items.findIndex(
-      (c) => c.id === data.collectionUpdated.id
+      (c) => c.id === data.onCollectionUpdated.id
     );
     if (index === -1) return;
     const collection = {
       ...collectionsStore.items[index],
-      ...data.collectionUpdated
+      ...data.onCollectionUpdated
     };
     collectionsStore.items = [
       ...collectionsStore.items.slice(0, index),
@@ -53,9 +53,9 @@ export default function setup() {
 
   useSubscription(gql`
     subscription CollectionInviteCountSubscription {
-      collectionInviteCount
+      onCollectionInviteCount
     }
   `).onResult(({ data }) => {
-    collectionsStore.invites = data.collectionInviteCount;
+    collectionsStore.invites = data.onCollectionInviteCount;
   });
 }

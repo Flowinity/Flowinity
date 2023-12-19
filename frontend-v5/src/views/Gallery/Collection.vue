@@ -223,7 +223,6 @@ function registerSubscriptions() {
       collectionId: id.value
     }
   }).onResult(({ data }) => {
-    console.log(data);
     if (!data) return;
     refresh();
   });

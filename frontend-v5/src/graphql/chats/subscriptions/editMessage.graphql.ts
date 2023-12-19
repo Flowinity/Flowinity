@@ -1,0 +1,30 @@
+import { gql } from "@apollo/client";
+import { StandardEmbedFragment } from "@/graphql/chats/messages.graphql";
+
+export const EditMessageSubscription = gql`
+  ${StandardEmbedFragment}
+  subscription OnMessageEdit {
+    onMessageEdit {
+      message {
+        content
+        userId
+        pending
+        error
+        edited
+        id
+        pinned
+        editedAt
+        embeds {
+          ...StandardEmbed
+        }
+        emoji {
+          id
+          chatId
+          name
+          icon
+        }
+      }
+      associationId
+    }
+  }
+`;

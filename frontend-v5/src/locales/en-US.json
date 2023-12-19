@@ -246,6 +246,16 @@
       "editingHelper": "Press enter to send, and esc to cancel.",
       "send": "Send",
       "attachments": "Attachments"
+    },
+    "actions": {
+      "pinConfirm": {
+        "title": "Pin message?",
+        "content": "Are you sure you want to pin this message to the chat?"
+      },
+      "unpinConfirm": {
+        "title": "Unpin message?",
+        "content": "Are you sure you want to unpin this message from the chat?"
+      }
     }
   },
   "connection": {

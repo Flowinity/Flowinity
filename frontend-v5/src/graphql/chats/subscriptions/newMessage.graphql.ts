@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const NewMessageSubscription = gql`
   subscription NewMessage {
-    newMessage {
+    onMessage {
       mention
       message {
         id

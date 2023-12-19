@@ -107,6 +107,12 @@ const ranks = computed(() => {
                   userStore.users[assoc?.userId ?? 0]?.status ===
                   UserStatus.Offline
               }"
+              :style="{
+                color: chatStore.getColor(
+                  assoc.ranksMap,
+                  chatStore.selectedChat?.ranks || []
+                )
+              }"
             >
               <template #icon>
                 <user-avatar

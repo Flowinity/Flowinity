@@ -115,7 +115,7 @@ export class AutoCollectApprovalResolver {
       return `AUTO_COLLECT_APPROVAL:${context.user!!.id}`
     }
   })
-  autoCollectApproval(@Root() autoCollectApproval: AutoCollectApprovalEvent) {
+  onAutoCollectApproval(@Root() autoCollectApproval: AutoCollectApprovalEvent) {
     return autoCollectApproval
   }
 

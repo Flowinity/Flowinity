@@ -22,7 +22,6 @@ import {
   EmbedVersion
 } from "@app/classes/graphql/chat/embeds"
 import redisClient from "@app/redis"
-import { EmbedDataV2Resolver } from "@app/controllers/graphql/messageEmbed.resolver"
 
 const trusted = ["youtube.com", "youtu.be", "www.youtube.com", "m.youtube.com"]
 
@@ -281,14 +280,16 @@ export default async function embedParser(
       4
     )
 
+    const msg = await Message.findByPk(message.id)
+
     chatService.emitForAll(
       associationId,
       userId,
-      "embedResolution",
+      "edit",
       {
         associationId: "__INJECT_ASSOC__",
         message: {
-          ...message.toJSON(),
+          ...msg?.toJSON(),
           embeds
         }
       },

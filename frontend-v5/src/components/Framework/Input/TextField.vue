@@ -223,6 +223,7 @@ function onExpandableTextareaInput(
 
   elm.rows = minRows;
   rows = Math.ceil((elm.scrollHeight - elm._baseScrollHeight) / 16);
+
   elm.rows =
     rows > props.maxLines
       ? props.maxLines

@@ -31,6 +31,7 @@ import { Friend } from "@app/models/friend.model"
 import { EmbedInput } from "@app/classes/graphql/chat/message"
 import emojiData from "@app/lib/emoji.json"
 import { pubSub } from "@app/lib/graphql/pubsub"
+import { EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -884,7 +885,9 @@ export class ChatService {
     userId: number,
     content: string,
     associationId: number,
-    pinned?: boolean
+    pinned?: boolean,
+    embeds?: EmbedDataV2[],
+    attachments?: string[]
   ) {
     const matches = content?.match(/:([\w~-]+)(?::([\w~-]+))?:/g)
     const chat = await this.getChatFromAssociation(associationId, userId)
@@ -920,55 +923,96 @@ export class ChatService {
         "pin",
         []
       )
-      this.emitForAll(associationId, userId, "edit", {
-        chatId: chat.id,
+      this.emitForAll(
+        associationId,
+        userId,
+        "edit",
+        {
+          chatId: chat.id,
+          id: messageId,
+          user: await Container.get(UserUtilsService).getUserById(userId),
+          pinned: !message.pinned,
+          content: message.content,
+          edited: message.edited,
+          editedAt: message.editedAt,
+          emoji: await ChatEmoji.findAll({
+            where: {
+              id: matches?.map((match) => match.split(":")[2]) || []
+            }
+          })
+        },
+        false,
+        4
+      )
+      this.emitForAll(
+        associationId,
+        userId,
+        "edit",
+        {
+          message: await Message.findByPk(messageId),
+          associationId: "__INJECT_ASSOC__"
+        },
+        false,
+        5
+      )
+      return true
+    }
+    if (message.userId !== userId) throw Errors.MESSAGE_NOT_FOUND
+    if (!content?.trim()?.length && !attachments?.length)
+      throw Errors.NO_MESSAGE_CONTENT
+    const date = new Date()
+    const update: {
+      content: string
+      edited: boolean
+      editedAt: Date
+      embeds?: EmbedDataV2[]
+    } = {
+      content,
+      edited: true,
+      editedAt: date
+    }
+    if (embeds) update.embeds = embeds
+    await Message.update(update, {
+      where: {
         id: messageId,
+        userId
+      }
+    })
+    this.emitForAll(
+      associationId,
+      userId,
+      "edit",
+      {
+        chatId: message.chatId,
+        id: messageId,
+        content,
+        edited: true,
+        editedAt: date,
         user: await Container.get(UserUtilsService).getUserById(userId),
-        pinned: !message.pinned,
-        content: message.content,
-        edited: message.edited,
-        editedAt: message.editedAt,
+        pinned: message.pinned,
         emoji: await ChatEmoji.findAll({
           where: {
             id: matches?.map((match) => match.split(":")[2]) || []
           }
         })
-      })
-      return true
-    }
-    if (message.userId !== userId) throw Errors.MESSAGE_NOT_FOUND
-    if (!content?.trim()?.length) throw Errors.NO_MESSAGE_CONTENT
-    const date = new Date()
-    await Message.update(
-      {
-        content,
-        edited: true,
-        editedAt: date
       },
-      {
-        where: {
-          id: messageId,
-          userId
-        }
-      }
+      false,
+      4
     )
-    this.emitForAll(associationId, userId, "edit", {
-      chatId: message.chatId,
-      id: messageId,
-      content,
-      edited: true,
-      editedAt: date,
-      user: await Container.get(UserUtilsService).getUserById(userId),
-      pinned: message.pinned,
-      emoji: await ChatEmoji.findAll({
-        where: {
-          id: matches?.map((match) => match.split(":")[2]) || []
-        }
-      })
-    })
+    this.emitForAll(
+      associationId,
+      userId,
+      "edit",
+      {
+        message: await Message.findByPk(messageId),
+        associationId: "__INJECT_ASSOC__"
+      },
+      false,
+      5
+    )
     message.content = content
     message.dataValues.content = content
-    embedParser(message, message.chatId, userId, associationId, [])
+    embedParser(message, message.chatId, userId, associationId, attachments)
     return true
   }
 
@@ -998,8 +1042,15 @@ export class ChatService {
       if (!user.userId) continue
       if (version === 0 || version === 5) {
         // translate camelCase to SCREAMING_SNAKE_CASE and append :userId to the end
-        const translated =
-          key.replace(/([A-Z])/g, "_$1").toUpperCase() + ":" + user.userId
+        let translated: string
+        switch (key) {
+          case "edit":
+            translated = "EDIT_MESSAGE:" + user.userId
+            break
+          default:
+            translated =
+              key.replace(/([A-Z])/g, "_$1").toUpperCase() + ":" + user.userId
+        }
         pubSub.publish(translated, cData)
       }
 

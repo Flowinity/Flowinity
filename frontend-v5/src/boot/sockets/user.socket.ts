@@ -6,7 +6,7 @@ export default function setup() {
   const userStore = useUserStore();
   const userStatus = useSubscription(UserStatusSubscription);
 
-  userStatus.onResult(({ data: { userStatus } }) => {
+  userStatus.onResult(({ data: { onUserStatus } }) => {
     const index = userStore.tracked.findIndex((f) => f.id === userStatus.id);
 
     if (index === -1) return;

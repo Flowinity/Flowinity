@@ -175,7 +175,7 @@ export class GalleryResolver {
       return `DELETE_UPLOAD:${context.user!!.id}`
     }
   })
-  deleteUpload(@Root() id: number) {
+  onDeleteUpload(@Root() id: number) {
     return id
   }
 
@@ -219,7 +219,7 @@ export class GalleryResolver {
       return `UPDATE_UPLOADS:${context.user!!.id}`
     }
   })
-  updateUploads(@Root() uploads: Upload[]) {
+  onUpdateUploads(@Root() uploads: Upload[]) {
     return uploads
   }
 
@@ -227,7 +227,10 @@ export class GalleryResolver {
     scopes: "starred.modify"
   })
   @Mutation(() => StarUploadResponse)
-  async starUpload(@Ctx() ctx: Context, @Arg("input") input: StarUploadInput) {
+  async onStarUpload(
+    @Ctx() ctx: Context,
+    @Arg("input") input: StarUploadInput
+  ) {
     return await this.galleryService.starUpload(input.attachment, ctx.user!!.id)
   }
 
@@ -260,7 +263,7 @@ export class GalleryResolver {
       return args.input.type !== Type.STARRED
     }
   })
-  createUpload(
+  onCreateUpload(
     @Root() uploads: CreateUploadEvent,
     @Arg("input", {
       nullable: true

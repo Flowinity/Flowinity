@@ -582,7 +582,7 @@ export class CollectionUserResolver {
       return true
     }
   })
-  collectionUserAdded(
+  onCollectionUserAdded(
     @Root() collectionUser: CollectionUser,
     @Arg("input", {
       nullable: true
@@ -606,7 +606,7 @@ export class CollectionUserResolver {
       return true
     }
   })
-  collectionUpdated(
+  onCollectionUpdated(
     @Root() collection: Collection,
     @Arg("input", {
       nullable: true
@@ -630,7 +630,7 @@ export class CollectionUserResolver {
       return true
     }
   })
-  collectionRemoved(
+  onCollectionRemoved(
     @Root() collectionId: number,
     @Arg("input", {
       nullable: true
@@ -648,7 +648,7 @@ export class CollectionUserResolver {
       return `COLLECTION_CREATED:${context.user!!.id}`
     }
   })
-  collectionCreated(@Root() collection: Collection) {
+  onCollectionCreated(@Root() collection: Collection) {
     return {
       ...("toJSON" in collection ? collection.toJSON() : collection),
       new: true
@@ -669,7 +669,7 @@ export class CollectionUserResolver {
       return true
     }
   })
-  collectionUserRemoved(
+  onCollectionUserRemoved(
     @Root() collectionUser: CollectionUser,
     @Arg("input", {
       nullable: true
@@ -693,7 +693,7 @@ export class CollectionUserResolver {
       return true
     }
   })
-  collectionUserUpdated(
+  onCollectionUserUpdated(
     @Root() collectionUser: CollectionUser,
     @Arg("input", {
       nullable: true
@@ -711,7 +711,7 @@ export class CollectionUserResolver {
       return `COLLECTION_INVITE_COUNT:${context.user!!.id}`
     }
   })
-  collectionInviteCount(@Root() count: number) {
+  onCollectionInviteCount(@Root() count: number) {
     console.log(count)
     return count
   }

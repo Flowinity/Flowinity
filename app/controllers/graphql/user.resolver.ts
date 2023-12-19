@@ -398,7 +398,7 @@ export class UserResolver extends createBaseResolver("User", User) {
       return `USER_STATUS:${context.user.id}`
     }
   })
-  userStatus(@Root() status: StatusEvent) {
+  onUserStatus(@Root() status: StatusEvent) {
     status.status = status.status.toLowerCase() as UserStatus
     return status
   }
