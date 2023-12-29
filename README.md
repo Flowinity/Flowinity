@@ -1,16 +1,16 @@
-![TroploPrivateUploader Banner](https://i.troplo.com/i/9ea16d8ab178.png)
-![TPU Features](https://i.troplo.com/i/086834402e31.png)
+![PrivateUploader Banner](https://i.troplo.com/i/9ea16d8ab178.png)
+![PrivateUploader Features](https://i.troplo.com/i/086834402e31.png)
 
-# TPU/TroploPrivateUploader [![codecov](https://codecov.io/gh/PrivateUploader/PrivateUploader/branch/api-v4/graph/badge.svg?token=RT9XLUOX5Y)](https://codecov.io/gh/PrivateUploader/PrivateUploader)
+# TPU/PrivateUploader [![codecov](https://codecov.io/gh/PrivateUploader/PrivateUploader/branch/api-v4/graph/badge.svg?token=RT9XLUOX5Y)](https://codecov.io/gh/PrivateUploader/PrivateUploader)
 
-TPU is the next generation image hosting server written in Vue and TypeScript.
+PrivateUploader is the next generation image hosting server written in Vue and TypeScript.
 
-TPU is intended to be an out of the way image hosting server for everyone else,
+PrivateUploader is intended to be an out of the way image hosting server for everyone else,
 thus it doesn't have features you'd regularly find in other ShareX servers, such
 as rich OpenGraph embeds. But instead has unique features like Insights, and
 Collections.
 
-Additionally, TPU has only recently become an open source project, so
+Additionally, PrivateUploader has only recently become an open source project, so
 documentation and resources are lacking initially, but will improve over time.
 
 ## Don't want to host your own server?
@@ -23,7 +23,7 @@ You can use the official public instance of TPU at
   <summary><h2>Screenshots (Click to expand)</h2></summary>
 
 View the full collection on
-[TPU](https://privateuploader.com/collections/2736179e19078284d9a5a4c1241289db7f777b180fed932b88162bbb2ec00ef1).
+[PrivateUploader](https://privateuploader.com/collections/2736179e19078284d9a5a4c1241289db7f777b180fed932b88162bbb2ec00ef1).
 
 ![Gallery](https://i.troplo.com/i/d68241bda319.png)
 ![Collection Page](https://i.troplo.com/i/a1fb3e1af098.png)

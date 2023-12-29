@@ -73,7 +73,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "LogoEasterEgg",
   computed: {
     event() {
       const date = this.$date().format("MMDD");

@@ -67,7 +67,7 @@ const config = {
         "browserconfig.xml"
       ],
       manifest: {
-        name: "TroploPrivateUploader",
+        name: "PrivateUploader",
         short_name: "TPU",
         icons: [
           {

@@ -1,5 +1,5 @@
 [Unit]
-Description=TroploPrivateUploader (TPU)
+Description=PrivateUploader (TPU)
 After=syslog.target
 After=network.target
 Requires=mariadb.service

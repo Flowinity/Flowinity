@@ -124,7 +124,6 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { Announcement } from "@/models/announcement";
 
 export default defineComponent({
-  name: "AnnouncementsWidget",
   components: { UserAvatar },
   data() {
     return {
@@ -134,7 +133,7 @@ export default defineComponent({
         {
           id: 1,
           userId: 1,
-          content: "Welcome to TroploPrivateUploader.",
+          content: "Welcome to PrivateUploader.",
           type: null,
           createdAt: "2023-01-21T15:36:45.000Z",
           updatedAt: "2023-01-21T15:36:45.000Z",

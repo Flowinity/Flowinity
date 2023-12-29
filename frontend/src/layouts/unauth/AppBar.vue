@@ -13,7 +13,7 @@
       id="tpu-brand-logo"
       class="text-gradient unselectable ml-4"
       style="z-index: 10; cursor: pointer; font-size: 32px"
-      title="TroploPrivateUploader"
+      title="PrivateUploader"
       @click="$router.push('/')"
     >
       {{ $app.site.name }}

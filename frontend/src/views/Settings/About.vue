@@ -78,7 +78,7 @@
     </router-link>
     <p class="mt-5">
       <a class="text-gradient" href="https://github.com/Troplo/PrivateUploader">
-        TroploPrivateUploader
+        PrivateUploader
       </a>
       is licensed under AGPLv3, created by
       <a class="text-gradient" href="https://troplo.com">Troplo.</a>
