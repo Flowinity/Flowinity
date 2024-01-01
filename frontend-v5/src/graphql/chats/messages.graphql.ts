@@ -62,10 +62,14 @@ export const StandardMessageFragment = gql`
     }
     reply {
       readReceipts {
-        id
-        userId
-        lastRead
-        legacyUserId
+        associationId
+        user {
+          id
+          avatar
+          username
+          legacy
+        }
+        messageId
       }
       content
       userId
@@ -106,10 +110,14 @@ export const StandardMessageFragment = gql`
     legacyUserId
     pinned
     readReceipts {
-      id
-      userId
-      lastRead
-      legacyUserId
+      associationId
+      user {
+        id
+        avatar
+        username
+        legacy
+      }
+      messageId
     }
   }
 `;

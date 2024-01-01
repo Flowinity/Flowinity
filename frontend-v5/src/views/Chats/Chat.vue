@@ -211,7 +211,6 @@ import CommsMessage from "@/components/Communications/CommsMessage.vue";
 import CommsInput from "@/components/Communications/CommsInput.vue";
 import { useUserStore } from "@/stores/user.store";
 import { Chat, Message, MessageType, UserStoredStatus } from "@/gql/graphql";
-import { useSocket } from "@/boot/socket.service";
 import { useMessagesStore } from "@/stores/messages.store";
 import Card from "@/components/Framework/Card/Card.vue";
 import MessageReply from "@/components/Communications/MessageReply.vue";
@@ -255,6 +254,7 @@ const avoidAutoScroll = ref(false);
 const appStore = useAppStore();
 const type = throttle(handleTyping, 1000);
 const searchInput = ref<InstanceType<typeof TextField> | null>(null);
+const readState = ref(0);
 
 const messages = ref<HTMLElement | null>(null);
 
@@ -304,7 +304,8 @@ async function sendMessage() {
   });
   const replyIdPersistent = replying.value ? replyId.value : undefined;
   content.value = "";
-  replyId.value = undefined;
+  replying.value = false;
+  autoScroll();
   const tempId = new Date().getTime();
   const chatIndex = chatStore.chats.findIndex(
     (c) => c.id === chatStore.selectedChat?.id
@@ -315,7 +316,7 @@ async function sendMessage() {
     updatedAt: undefined,
     content: message,
     createdAt: new Date().toISOString(),
-    user: userStore.users[userStore.user?.id],
+    user: userStore.users[userStore.user?.id!],
     id: tempId,
     chatId: chatStore.selectedChat!.id,
     type: MessageType.Message,
@@ -351,7 +352,11 @@ async function sendMessage() {
 }
 
 function focusInput() {
-  input.value?.input?.input?.focus();
+  const editingInput = document.getElementById("editing-message-input");
+  if (editingInput) {
+    return editingInput.focus();
+  }
+  return input.value?.input?.input?.focus();
 }
 
 function editLastMessage() {
@@ -375,6 +380,14 @@ function shortcutHandler(e: KeyboardEvent) {
       return (chatStore.uiOptions.searchSidebar = false);
     }
     replying.value = false;
+  } else if (
+    e.target?.tagName !== "INPUT" &&
+    e.target?.tagName !== "TEXTAREA" &&
+    ((!e.ctrlKey && !e.metaKey) ||
+      (e.key === "v" && (e.ctrlKey || e.metaKey))) &&
+    !e.target?.classList.contains("ProseMirror")
+  ) {
+    focusInput();
   } else if (editing.value) {
     return;
   } else if ((e.ctrlKey || e.metaKey) && e.key === "ArrowUp") {
@@ -411,13 +424,6 @@ function shortcutHandler(e: KeyboardEvent) {
     e.preventDefault();
     e.stopPropagation();
     editLastMessage();
-  } else if (
-    e.target?.tagName !== "INPUT" &&
-    e.target?.tagName !== "TEXTAREA" &&
-    (!e.ctrlKey || (e.key === "v" && (e.ctrlKey || e.metaKey))) &&
-    !e.target?.classList.contains("ProseMirror")
-  ) {
-    focusInput();
   } else if (e.ctrlKey && e.key === "f") {
     e.preventDefault();
     if (!chatStore.uiOptions.searchSidebar) {
@@ -444,7 +450,14 @@ function autoScroll() {
 function onMessage(message: { message: Message; chat: Chat }) {
   if (message.message.id !== chatStore.selectedChat?.id) return;
   autoScroll();
+
+  if (document.hasFocus()) {
+    readState.value = message.message.id;
+    chatStore.readChat();
+  }
 }
+
+let readStateInterval: number | undefined;
 
 onMounted(() => {
   document.addEventListener("keydown", shortcutHandler);
@@ -454,10 +467,18 @@ onMounted(() => {
     }
   });
   focusInput();
+
+  readStateInterval = window.setInterval(() => {
+    if (readState.value !== messagesStore.selected[0]?.id) {
+      readState.value = messagesStore.selected[0]?.id;
+      chatStore.readChat();
+    }
+  }, 5000);
 });
 
 onUnmounted(() => {
   document.removeEventListener("keydown", shortcutHandler);
+  window.clearInterval(readStateInterval);
 });
 
 const route = useRoute();

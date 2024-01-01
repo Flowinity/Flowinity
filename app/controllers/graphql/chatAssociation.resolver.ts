@@ -2,10 +2,12 @@ import {
   Arg,
   Ctx,
   FieldResolver,
+  Int,
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { Container, Service } from "typedi"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
@@ -51,6 +53,7 @@ import {
   AuditLogCategory
 } from "@app/classes/graphql/chat/auditLog/categories"
 import { EXPECTED_OPTIONS_KEY } from "@app/lib/dataloader"
+import { ReadChatInput } from "@app/classes/graphql/chat/readChat"
 
 @Resolver(ChatAssociation)
 @Service()
@@ -658,5 +661,28 @@ export class ChatAssociationResolver {
       prefix: input.prefix,
       commands
     }
+  }
+
+  @Authorization({
+    scopes: ["chats.view"]
+  })
+  @RateLimit({
+    window: 10,
+    max: 30
+  })
+  @Mutation(() => Success)
+  async readChat(@Ctx() ctx: Context, @Arg("input") input: ReadChatInput) {
+    await this.chatService.readChat(input.associationId, ctx.user!!.id)
+    return { success: true }
+  }
+
+  @Subscription(() => Int, {
+    topics: ({ context }) => {
+      return `READ_CHAT:${context.user!!.id}`
+    },
+    description: "Returns the chat association ID"
+  })
+  async onReadChat(@Root() associationId: number) {
+    return associationId
   }
 }

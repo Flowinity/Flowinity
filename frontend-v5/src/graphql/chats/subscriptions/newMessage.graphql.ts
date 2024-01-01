@@ -83,18 +83,14 @@ export const NewMessageSubscription = gql`
           bot
         }
         readReceipts {
-          id
-          chatId
-          userId
-          rank
-          lastRead
-          createdAt
-          notifications
-          legacyUserId
-          hidden
-          inviteUsed
-          ranksMap
-          permissions
+          associationId
+          user {
+            id
+            avatar
+            username
+            legacy
+          }
+          messageId
         }
       }
       associationId

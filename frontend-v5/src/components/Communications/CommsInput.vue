@@ -16,6 +16,7 @@
       <text-field
         ref="input"
         v-bind="$attrs"
+        :html-id="id"
         :model-value="modelValue"
         placeholder="Keep it civil..."
         :textarea="true"
@@ -58,7 +59,8 @@ import { useI18n } from "vue-i18n";
 const input = ref<InstanceType<typeof TextField> | null>(null);
 const props = defineProps({
   modelValue: String,
-  editing: Boolean
+  editing: Boolean,
+  id: String
 });
 defineEmits(["update:modelValue", "send"]);
 defineExpose({ input });

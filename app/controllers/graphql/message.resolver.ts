@@ -1,8 +1,8 @@
 import {
   Arg,
-  Args,
   Ctx,
   FieldResolver,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -27,9 +27,11 @@ import {
   SubscriptionMessageInput
 } from "@app/classes/graphql/chat/message"
 import { Op, WhereOptions } from "sequelize"
-import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { Chat } from "@app/models/chat.model"
-import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import {
+  partialUserBase,
+  PartialUserBase
+} from "@app/classes/graphql/user/partialUser"
 import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import paginate from "jw-paginate"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
@@ -37,6 +39,10 @@ import { GraphQLError } from "graphql/error"
 import { MessageSubscription } from "@app/classes/graphql/chat/messageSubscription"
 import { EditMessageEvent, EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
 import { embedTranslator } from "@app/lib/embedParser"
+import { ReadReceipt } from "@app/classes/graphql/chat/readReceiptSubscription"
+import { User } from "@app/models/user.model"
+import { LegacyUser } from "@app/models/legacyUser.model"
+import { DeleteMessage } from "@app/classes/graphql/chat/deleteMessage"
 
 export const PaginatedMessagesResponse = PagerResponse(Message)
 export type PaginatedMessagesResponse = InstanceType<
@@ -112,12 +118,13 @@ export class MessageResolver {
   async deleteMessage(
     @Arg("input") input: DeleteMessageInput,
     @Ctx() ctx: Context
-  ): Promise<Message> {
-    return await this.chatService.deleteMessage(
+  ): Promise<Boolean> {
+    await this.chatService.deleteMessage(
       input.messageId,
       ctx.user!!.id,
       input.associationId
     )
+    return true
   }
 
   @FieldResolver(() => EmbedDataV2)
@@ -217,13 +224,34 @@ export class MessageResolver {
     }
   }
 
-  @FieldResolver(() => [ChatAssociation])
-  async readReceipts(@Ctx() ctx: Context, @Root() message: Message) {
-    return await message.$get("readReceipts", {
+  @FieldResolver(() => [ReadReceipt])
+  async readReceipts(
+    @Ctx() ctx: Context,
+    @Root() message: Message
+  ): Promise<ReadReceipt[]> {
+    const receipts = await message.$get("readReceipts", {
       attributes: {
         exclude: ["updatedAt"]
-      }
+      },
+      include: [
+        {
+          model: User,
+          as: "tpuUser",
+          attributes: partialUserBase
+        },
+        {
+          model: LegacyUser,
+          as: "legacyUser",
+          attributes: partialUserBase
+        }
+      ]
     })
+    return receipts.map((receipt) => ({
+      chatId: message.chatId,
+      associationId: receipt.id,
+      messageId: message.id,
+      user: receipt.tpuUser?.toJSON() || receipt.legacyUser?.toJSON()
+    }))
   }
 
   @FieldResolver(() => Chat)
@@ -299,7 +327,7 @@ export class MessageResolver {
         : true
     }
   })
-  onMessageEdit(
+  onEditMessage(
     @Root() payload: EditMessageEvent,
     @Ctx() ctx: Context,
     @Arg("input", {
@@ -319,9 +347,33 @@ export class MessageResolver {
     }
   })
   onReadReceipt(
-    @Root() payload: MessageSubscription,
+    @Root() payload: ReadReceipt,
     @Ctx() ctx: Context
-  ): MessageSubscription {
+  ): ReadReceipt {
+    return payload
+  }
+
+  @Authorization({
+    scopes: "chats.view"
+  })
+  @Subscription(() => DeleteMessage, {
+    topics: ({ context }) => {
+      return `MESSAGE_DELETE:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      return args.input?.associationId !== undefined
+        ? args.input.associationId === payload.associationId
+        : true
+    }
+  })
+  onDeleteMessage(
+    @Root() payload: DeleteMessage,
+    @Ctx() ctx: Context,
+    @Arg("input", {
+      nullable: true
+    })
+    input: SubscriptionMessageInput
+  ): DeleteMessage {
     return payload
   }
 }

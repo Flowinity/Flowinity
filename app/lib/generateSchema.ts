@@ -1,6 +1,7 @@
 import { buildSchema } from "type-graphql"
 import {
   BadgeResolver,
+  PartialUserBaseResolver,
   PartialUserFriendResolver,
   PartialUserPublicResolver,
   UserResolver
@@ -77,7 +78,8 @@ export const generateSchema = () => {
       OauthConsentAppResolver,
       AutoCollectRuleResolver,
       PulseResolver,
-      EmbedDataV2Resolver
+      EmbedDataV2Resolver,
+      PartialUserBaseResolver
     ],
     container: Container,
     authChecker: authChecker,

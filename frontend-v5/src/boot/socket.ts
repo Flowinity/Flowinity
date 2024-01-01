@@ -1,3 +1,5 @@
+// FILE NOT IN USE ANYMORE
+
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import router from "@/router";
 import { useChatStore } from "@/stores/chat.store";

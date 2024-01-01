@@ -1,33 +1,18 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { defineStore } from "pinia";
-import type {
-  Chat,
-  ChatEmoji,
-  ChatRank,
-  InfiniteMessagesInput,
-  Message,
-  PagedMessagesInput
-} from "@/gql/graphql";
+import type { Chat, ChatEmoji, ChatRank, Message } from "@/gql/graphql";
 import { MessageType, ScrollPosition } from "@/gql/graphql";
 import { useFriendsStore } from "@/stores/friends.store";
 import { useUserStore } from "@/stores/user.store";
 import dayjs from "@/plugins/dayjs";
-import {
-  MessagesQuery,
-  PagedMessagesQuery
-} from "@/graphql/chats/messages.graphql";
-import {
-  useApolloClient,
-  useMutation,
-  useSubscription
-} from "@vue/apollo-composable";
+
+import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { RailMode, useAppStore } from "@/stores/app.store";
-import { useSocket } from "@/boot/socket.service";
-import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
-import { useExperimentsStore } from "@/stores/experiments.store";
 import { useMessagesStore } from "@/stores/messages.store";
 import { gql } from "@apollo/client";
 import { ChatsQuery } from "@/graphql/chats/chats.graphql";
+import { ReadChatMutation } from "@/graphql/chats/readChat.graphql";
+import { ChatPermissions } from "@/typecache/tpu-typecache";
 
 export const useChatStore = defineStore("chat", () => {
   const chats = ref<Chat[]>([]);
@@ -197,13 +182,24 @@ export const useChatStore = defineStore("chat", () => {
     loading.value = false;
   }
 
-  function readChat(chatId?: number) {
+  function readChat(associationId?: number) {
     if (document.hasFocus()) {
-      useSocket.chat.emit(
-        "readChat",
-        chatId || selectedChatAssociationId.value
-      );
-      if (selectedChat.value) selectedChat.value.unread = 0;
+      const mutate = useMutation(ReadChatMutation, {
+        variables: {
+          input: {
+            associationId: associationId || selectedChatAssociationId.value
+          }
+        }
+      });
+      mutate.mutate();
+      if (selectedChat.value) {
+        chats.value = chats.value.map((chat) => {
+          return {
+            ...chat,
+            unread: 0
+          };
+        });
+      }
     }
   }
 
@@ -256,6 +252,27 @@ export const useChatStore = defineStore("chat", () => {
     return "inherit";
   }
 
+  function hasPermission(
+    permission: ChatPermissions | ChatPermissions[],
+    chat?: Chat
+  ) {
+    const permissionsArray = Array.isArray(permission)
+      ? permission
+      : [permission];
+
+    const c: Chat | undefined = chat ?? selectedChat.value;
+
+    return (
+      c?.association?.permissions?.some(
+        (perm) =>
+          permissionsArray.includes(<ChatPermissions>perm) ||
+          (!permissionsArray.includes(<ChatPermissions>"TRUSTED") &&
+            perm === "ADMIN")
+      ) ||
+      (c?.association?.userId === c?.userId && c?.type === "group")
+    );
+  }
+
   return {
     chats,
     selectedChatAssociationId,
@@ -276,6 +293,7 @@ export const useChatStore = defineStore("chat", () => {
     type,
     cancelType,
     uiOptions,
-    getColor
+    getColor,
+    hasPermission
   };
 });

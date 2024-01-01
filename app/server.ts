@@ -129,6 +129,7 @@ export class Server {
           ] as string | undefined
           //@ts-ignore
           const id = randomUUID()
+          let resumableStateValid = true
           if (
             !ctx?.extra?.resumableState ||
             typeof ctx?.extra?.resumableState !== "string" ||
@@ -137,7 +138,8 @@ export class Server {
               /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
             )
           ) {
-            throw new GqlError("INVALID_RESUMABLE_STATE_KEY")
+            // throw new GqlError("INVALID_RESUMABLE_STATE_KEY")
+            resumableStateValid = false
           }
           const newCtx = await generateContext(ctx)
           if (
@@ -209,7 +211,9 @@ export class Server {
           return {
             ...ctx,
             id,
-            resumableState: ctx.extra.resumableState
+            resumableState: resumableStateValid
+              ? ctx.extra.resumableState
+              : randomUUID()
           }
         },
         onDisconnect: async (ctx, code) => {

@@ -1,4 +1,10 @@
-import { Column, DataType, DefaultScope, Model, Table } from "sequelize-typescript"
+import {
+  Column,
+  DataType,
+  DefaultScope,
+  Model,
+  Table
+} from "sequelize-typescript"
 import { Field, Int, ObjectType } from "type-graphql"
 
 @ObjectType({
@@ -79,4 +85,9 @@ export class LegacyUser extends Model {
     }
   })
   bot: boolean
+
+  @Field(() => Boolean, {
+    defaultValue: true
+  })
+  legacy?: boolean = true
 }

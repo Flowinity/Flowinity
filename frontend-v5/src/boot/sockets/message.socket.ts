@@ -18,6 +18,7 @@ import {
 } from "@/graphql/chats/subscriptions/typing.graphql";
 import { EmbedResolutionSubscription } from "@/graphql/chats/subscriptions/embedResolution.graphql";
 import { EditMessageSubscription } from "@/graphql/chats/subscriptions/editMessage.graphql";
+import { DeleteMessageSubscription } from "@/graphql/chats/subscriptions/deleteMessage.graphql";
 
 export default function setup() {
   const chatStore = useChatStore();
@@ -193,9 +194,21 @@ export default function setup() {
     }
   }
 
-  const editMessage = useSubscription(EditMessageSubscription);
+  useSubscription(EditMessageSubscription).onResult(
+    ({ data: { onEditMessage } }) => {
+      onEmbedResolution(onEditMessage);
+    }
+  );
 
-  editMessage.onResult(({ data: { onMessageEdit } }) => {
-    onEmbedResolution(onMessageEdit);
-  });
+  useSubscription(DeleteMessageSubscription).onResult(
+    ({ data: { onDeleteMessage } }) => {
+      if (!messagesStore.messages[onDeleteMessage.associationId]) return;
+      const index = messagesStore.messages[
+        onDeleteMessage.associationId
+      ]?.findIndex((msg) => msg.id === onDeleteMessage.id);
+      if (index !== -1) {
+        messagesStore.messages[onDeleteMessage.associationId].splice(index, 1);
+      }
+    }
+  );
 }

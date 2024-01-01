@@ -22,13 +22,14 @@
         "
         @on-confirm="$emit('pin', !message.pinned)"
         button-color="blue"
+        v-if="chatStore.hasPermission(ChatPermissions.PIN_MESSAGES)"
       >
         <template v-slot="{ open }">
           <tpu-button
             variant="passive"
             icon
             class="rounded-none"
-            @click="open()"
+            @click="$event.shiftKey ? $emit('pin', !message.pinned) : open()"
           >
             <component
               :is="message.pinned ? RiPushpinFill : RiPushpinLine"
@@ -38,12 +39,40 @@
         </template>
       </tpu-confirmation-dialog>
 
-      <tpu-button variant="passive" icon class="rounded-none">
+      <tpu-button
+        variant="passive"
+        icon
+        class="rounded-none"
+        v-if="message.userId === userStore.user?.id && !systemMessage"
+        @click="$emit('edit')"
+      >
         <RiEditLine style="width: 20px" />
       </tpu-button>
-      <tpu-button color="red" variant="passive" icon class="rounded-none">
-        <RiDeleteBinLine style="width: 20px" />
-      </tpu-button>
+      <tpu-confirmation-dialog
+        :title="$t(`chats.actions.deleteConfirm.title`)"
+        :content="$t(`chats.actions.deleteConfirm.content`)"
+        @on-confirm="messagesStore.deleteMessage(message.id)"
+        button-color="red"
+        :confirm="$t(`generic.delete`)"
+        v-if="
+          chatStore.hasPermission(ChatPermissions.DELETE_MESSAGES) ||
+          (message.userId === userStore.user?.id && !systemMessage)
+        "
+      >
+        <template v-slot="{ open }">
+          <tpu-button
+            color="red"
+            variant="passive"
+            icon
+            class="rounded-none"
+            @click="
+              $event.shiftKey ? messagesStore.deleteMessage(message.id) : open()
+            "
+          >
+            <RiDeleteBinLine style="width: 20px" />
+          </tpu-button>
+        </template>
+      </tpu-confirmation-dialog>
       <tpu-button
         variant="passive"
         icon
@@ -64,16 +93,28 @@ import RiDeleteBinLine from "vue-remix-icons/icons/ri-delete-bin-line.vue";
 import RiReplyLine from "vue-remix-icons/icons/ri-reply-line.vue";
 import RiPushpinLine from "vue-remix-icons/icons/ri-pushpin-line.vue";
 import RiPushpinFill from "vue-remix-icons/icons/ri-pushpin-fill.vue";
-import { Message } from "@/gql/graphql";
-import { PropType } from "vue";
+import { Message, MessageType } from "@/gql/graphql";
+import { computed, PropType, ref } from "vue";
 import TpuConfirmationDialog from "@/components/Framework/Dialog/TpuConfirmationDialog.vue";
+import { useChatStore } from "@/stores/chat.store";
+import { useMessagesStore } from "@/stores/messages.store";
+import { useUserStore } from "@/stores/user.store";
+import { ChatPermissions } from "@/typecache/tpu-typecache";
 
-defineProps({
+const props = defineProps({
   message: {
     type: Object as PropType<Message>,
     required: true
   }
 });
 
-defineEmits(["reply", "pin"]);
+defineEmits(["reply", "pin", "edit"]);
+
+const messagesStore = useMessagesStore();
+const chatStore = useChatStore();
+const userStore = useUserStore();
+
+const systemMessage = computed(() => {
+  return props.message.type !== MessageType.Message && props.message.type;
+});
 </script>

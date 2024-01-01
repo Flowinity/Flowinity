@@ -32,6 +32,10 @@ export class PartialUserBase {
   avatar?: string
   @Field()
   bot: boolean
+  @Field(() => Boolean, {
+    defaultValue: false
+  })
+  legacy?: boolean = false
 }
 
 export const partialUserBase = [

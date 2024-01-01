@@ -242,6 +242,7 @@
   "chats": {
     "typing": "{users} is typing... | {users} are typing... | Many people are typing...",
     "searchIn": "Searching in {chat}, {count} messages.",
+    "search": "Search {chat}",
     "input": {
       "editingHelper": "Press enter to send, and esc to cancel.",
       "send": "Send",

@@ -32,6 +32,7 @@ import { EmbedInput } from "@app/classes/graphql/chat/message"
 import emojiData from "@app/lib/emoji.json"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import { EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
+import { ReadReceipt } from "@app/classes/graphql/chat/readReceiptSubscription"
 
 class MessageIncludes {
   constructor(showNameColor = true) {
@@ -560,18 +561,56 @@ export class ChatService {
       })
       if (!message || message.type !== "message") throw Errors.MESSAGE_NOT_FOUND
       await message.destroy()
-      this.emitForAll(associationId, userId, "messageDelete", {
-        id: message.id,
-        chatId: chat.id
-      })
+      this.emitForAll(
+        associationId,
+        userId,
+        "messageDelete",
+        {
+          id: message.id,
+          chatId: chat.id
+        },
+        false,
+        4
+      )
+      this.emitForAll(
+        associationId,
+        userId,
+        "messageDelete",
+        {
+          id: message.id,
+          associationId: "__INJECT_ASSOC__",
+          chatId: chat.id
+        },
+        false,
+        5
+      )
       return message
     } else {
       if (message.type !== "message") throw Errors.MESSAGE_NOT_FOUND
       await message.destroy()
-      this.emitForAll(associationId, userId, "messageDelete", {
-        id: message.id,
-        chatId: chat.id
-      })
+      this.emitForAll(
+        associationId,
+        userId,
+        "messageDelete",
+        {
+          id: message.id,
+          chatId: chat.id
+        },
+        false,
+        4
+      )
+      this.emitForAll(
+        associationId,
+        userId,
+        "messageDelete",
+        {
+          id: message.id,
+          associationId: "__INJECT_ASSOC__",
+          chatId: chat.id
+        },
+        false,
+        5
+      )
       return message
     }
   }
@@ -1081,6 +1120,7 @@ export class ChatService {
       socket.of(SocketNamespaces.CHAT).to(userId).emit("readChat", {
         id: chatId
       })
+      pubSub.publish(`READ_CHAT:${userId}`, chatId)
       const message = await Message.findOne({
         where: {
           chatId
@@ -1104,7 +1144,10 @@ export class ChatService {
             "storedStatus",
             "bot",
             "username",
-            "avatar"
+            "avatar",
+            "createdAt",
+            "administrator",
+            "moderator"
           ]
         })
         if (
@@ -1124,17 +1167,37 @@ export class ChatService {
           }
         )
         if (!user) return
-        this.emitForAll(association.id, userId, "readReceipt", {
-          chatId,
-          id: message.id,
-          userId: user.id,
-          lastRead: message.id,
-          user: {
-            id: user.id,
-            username: user?.username,
-            avatar: user?.avatar
-          }
-        })
+        this.emitForAll(
+          association.id,
+          userId,
+          "readReceipt",
+          {
+            chatId,
+            id: message.id,
+            userId: user.id,
+            lastRead: message.id,
+            user: {
+              id: user.id,
+              username: user?.username,
+              avatar: user?.avatar
+            }
+          },
+          false,
+          4
+        )
+        this.emitForAll(
+          association.id,
+          userId,
+          "readReceipts",
+          {
+            messageId: message.id,
+            associationId: "__INJECT_ASSOC__",
+            user,
+            chatId
+          } as unknown as ReadReceipt,
+          false,
+          5
+        )
       }
     } catch (e) {
       console.log(e)

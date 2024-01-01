@@ -72,6 +72,7 @@
               @keydown.esc="$emit('update:editing', false)"
               autofocus
               @send="editMessage()"
+              id="editing-message-input"
               @keydown.enter="editMessage()"
             >
               <template #append="{ emit }">
@@ -111,23 +112,24 @@
           v-if="hovered && !editing"
           @reply="$emit('reply', message.id)"
           @pin="editMessage($event)"
+          @edit="$emit('update:editing', message.id)"
           :message="message"
         ></comms-message-actions>
       </div>
       <div
         v-if="!search"
-        class="flex-shrink-1 justify-end align-bottom relative align-self-end h-full flex flex-col items-end"
-        style="width: 100px; height: 100%"
+        class="flex-shrink-1 justify-end align-bottom relative align-self-end flex flex-col items-end"
+        style="width: 100px"
       >
         <div
-          class="flex align-bottom h-100"
+          class="flex align-bottom"
           :class="{ 'read-receipt-avatars': message.readReceipts.length > 3 }"
         >
           <user-avatar
             v-for="readReceipt in message.readReceipts"
             :key="readReceipt.id"
-            v-tooltip="userStore.users[readReceipt.userId || 0]?.username"
-            :user-id="readReceipt.userId || 0"
+            v-tooltip="userStore.users[readReceipt.user?.id || 0]?.username"
+            :user-id="readReceipt.user?.id || 0"
             :class="{ 'ml-1': message.readReceipts.length <= 3 }"
             size="22"
             class="read-receipt-avatar"
@@ -156,12 +158,14 @@ import { useI18n } from "vue-i18n";
 const hovered = ref(false);
 const friendsStore = useFriendsStore();
 const userStore = useUserStore();
+const messagesStore = useMessagesStore();
 const { t } = useI18n();
 import RiCloseCircleFill from "vue-remix-icons/icons/ri-close-circle-fill.vue";
 import { useChatStore } from "@/stores/chat.store";
 import { useApolloClient } from "@vue/apollo-composable";
 import { EditMessageMutation } from "@/graphql/chats/editMessage.graphql";
 import RiPencilFill from "vue-remix-icons/icons/ri-pencil-fill.vue";
+import { useMessagesStore } from "@/stores/messages.store";
 const props = defineProps({
   message: {
     type: Object as () => Message,
@@ -200,6 +204,10 @@ onMounted(() => {});
 
 async function editMessage(pinned?: boolean) {
   emit("update:editing", false);
+
+  if (pinned === undefined && !editingText.value) {
+    return messagesStore.deleteMessage(props.message.id);
+  }
 
   await useApolloClient().client.mutate({
     mutation: EditMessageMutation,

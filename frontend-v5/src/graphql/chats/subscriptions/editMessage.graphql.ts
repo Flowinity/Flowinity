@@ -4,7 +4,7 @@ import { StandardEmbedFragment } from "@/graphql/chats/messages.graphql";
 export const EditMessageSubscription = gql`
   ${StandardEmbedFragment}
   subscription OnMessageEdit {
-    onMessageEdit {
+    onEditMessage {
       message {
         content
         userId

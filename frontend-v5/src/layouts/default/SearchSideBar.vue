@@ -41,6 +41,7 @@ const query = ref<{
   pager: Pager;
   items: Message[];
 } | null>(null);
+
 const apollo = useApolloClient();
 
 async function getMessages() {

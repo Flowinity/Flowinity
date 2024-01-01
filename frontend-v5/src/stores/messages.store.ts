@@ -13,6 +13,7 @@ import { useApolloClient } from "@vue/apollo-composable";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import { useExperimentsStore } from "@/stores/experiments.store";
 import { useChatStore } from "@/stores/chat.store";
+import { DeleteMessageMutation } from "@/graphql/chats/deleteMessage.graphql";
 
 export const useMessagesStore = defineStore("messages", () => {
   /** @var associationId
@@ -78,11 +79,24 @@ export const useMessagesStore = defineStore("messages", () => {
     return messages.value[chatStore.selectedChatAssociationId] || [];
   });
 
+  async function deleteMessage(messageId: number, associationId?: number) {
+    await client.mutate({
+      mutation: DeleteMessageMutation,
+      variables: {
+        input: {
+          messageId,
+          associationId: associationId || chatStore.selectedChatAssociationId
+        }
+      }
+    });
+  }
+
   return {
     messages,
     sound,
     getMessages,
     sendMessage,
-    selected
+    selected,
+    deleteMessage
   };
 });

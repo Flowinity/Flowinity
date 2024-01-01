@@ -17,6 +17,7 @@ import { Embed, MessageType } from "@app/classes/graphql/chat/message"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
 import { EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
+import { ReadReceipt } from "@app/classes/graphql/chat/readReceiptSubscription"
 
 @ObjectType()
 @Table
@@ -158,7 +159,7 @@ export class Message extends Model {
   })
   error: boolean
 
-  @Field(() => [ChatAssociation])
+  @Field(() => [ReadReceipt])
   @HasMany(() => ChatAssociation, "lastRead")
   readReceipts: ChatAssociation[]
 

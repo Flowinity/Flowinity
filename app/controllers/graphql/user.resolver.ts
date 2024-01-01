@@ -24,6 +24,7 @@ import { Context } from "@app/types/graphql/context"
 import { Notification } from "@app/models/notification.model"
 import {
   PartialUserAuth,
+  PartialUserBase,
   partialUserBase,
   PartialUserFriend,
   PartialUserPublic
@@ -485,9 +486,9 @@ function createBaseResolver<T extends ClassType>(
     }
 
     @FieldResolver(() => [SubscriptionModel])
-    async subscription(@Root() user: User, @Ctx() ctx: Context) {
+    subscription(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return null
-      return await user.$get("subscription", {
+      return user.$get("subscription", {
         [EXPECTED_OPTIONS_KEY]: ctx.dataloader
       })
     }
@@ -680,5 +681,17 @@ export class BadgeResolver {
     return badge.$get("users", {
       [EXPECTED_OPTIONS_KEY]: ctx.dataloader
     })
+  }
+}
+
+@Resolver(PartialUserBase)
+@Service()
+export class PartialUserBaseResolver extends createBaseResolver(
+  "PartialUserBase",
+  PartialUserBase
+) {
+  @FieldResolver(() => Boolean)
+  legacy() {
+    return false
   }
 }
