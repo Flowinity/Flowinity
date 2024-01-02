@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
 import { Workspace } from "@/models/workspace";
 import { Note } from "@/models/note";
-import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { NoteQuery } from "@/graphql/workspaces/note.graphql";
 import { isNumeric } from "@/plugins/isNumeric";
 import { SaveNoteMutation } from "@/graphql/workspaces/saveNote.graphql";
@@ -101,10 +101,10 @@ export const useWorkspacesStore = defineStore("workspaces", {
   },
   getters: {
     isWorkspaces() {
-      const router = useRouter();
+      const route = useRoute();
       return (
-        router.currentRoute.value.path.startsWith("/workspaces/") ||
-        router.currentRoute.value.path.startsWith("/notes/")
+        route.path.startsWith("/workspaces/") ||
+        route.path.startsWith("/notes/")
       );
     },
     recentOverall() {

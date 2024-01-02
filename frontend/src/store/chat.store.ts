@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
 import { useExperimentsStore } from "@/store/experiments.store";
 import vuetify from "@/plugins/vuetify";
-import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useAppStore } from "@/store/app.store";
 import { useUserStore } from "@/store/user.store";
 import { useFriendsStore } from "@/store/friends.store";
@@ -11,27 +11,33 @@ import dayjs from "../plugins/dayjs";
 import { useToast } from "vue-toastification";
 import { SendMessageMutation } from "@/graphql/chats/sendMessage.graphql";
 import {
-    Chat,
-    ChatEmoji,
-    ChatInvite,
-    ChatRank,
-    InfiniteMessagesInput,
-    Message,
-    MessageType,
-    PagedMessagesInput,
-    PartialUserFriend,
-    ScrollPosition,
-    ToggleUser,
-    UpdateChatInput,
-    UserStatus
+  Chat,
+  ChatEmoji,
+  ChatInvite,
+  ChatRank,
+  InfiniteMessagesInput,
+  Message,
+  MessageType,
+  PagedMessagesInput,
+  PartialUserFriend,
+  ScrollPosition,
+  ToggleUser,
+  UpdateChatInput,
+  UserStatus
 } from "@/gql/graphql";
-import { MessagesQuery, PagedMessagesQuery } from "@/graphql/chats/messages.graphql";
+import {
+  MessagesQuery,
+  PagedMessagesQuery
+} from "@/graphql/chats/messages.graphql";
 import { StateHandler } from "@/components/Scroll/types";
 import { CreateChatMutation } from "@/graphql/chats/createChat.graphql";
 import { UpdateChatMutation } from "@/graphql/chats/updateChat.graphql";
 import { AddChatUserMutation } from "@/graphql/chats/addUser.graphql";
 import { LeaveGroupMutation } from "@/graphql/chats/deleteGroup.graphql";
-import { ChatInviteQuery, JoinChatInviteMutation } from "@/graphql/chats/invite.graphql";
+import {
+  ChatInviteQuery,
+  JoinChatInviteMutation
+} from "@/graphql/chats/invite.graphql";
 import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
 import { Typing } from "@/models/chat";
 import { nextTick } from "vue";
@@ -783,8 +789,8 @@ export const useChatStore = defineStore("chat", {
       return !vuetify.display.lgAndDown.value;
     },
     isCommunications() {
-      const router = useRouter();
-      return router.currentRoute.value.path.startsWith("/communications/");
+      const route = useRoute();
+      return route.path.startsWith("/communications/");
     }
   }
 });
