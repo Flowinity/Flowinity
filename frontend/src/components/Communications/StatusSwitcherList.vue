@@ -73,7 +73,6 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { UserStatus, UserStoredStatus } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "StatusSwitcherList",
   components: { UserAvatar },
   computed: {
     UserStoredStatus() {

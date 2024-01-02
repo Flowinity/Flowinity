@@ -72,7 +72,6 @@ import { defineComponent } from "vue";
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 
 export default defineComponent({
-  name: "LastFM",
   components: { MessageSkeleton },
   props: ["user", "component"],
   data() {

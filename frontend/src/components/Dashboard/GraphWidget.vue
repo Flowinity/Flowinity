@@ -88,7 +88,6 @@ import Chart from "@/components/Core/Chart.vue";
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "GraphWidget",
   components: { Chart },
   props: {
     uploadGraph: {

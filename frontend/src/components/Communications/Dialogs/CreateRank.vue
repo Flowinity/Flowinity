@@ -30,7 +30,6 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { CreateRankMutation } from "@/graphql/chats/createRank.graphql";
 
 export default defineComponent({
-  name: "CreateRank",
   components: { CoreDialog },
   props: ["modelValue", "associationId"],
   emits: ["update:modelValue"],

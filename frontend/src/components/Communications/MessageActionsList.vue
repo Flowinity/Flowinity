@@ -65,11 +65,6 @@
   </v-list>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "MessageActionsList",
-  emits: ["edit", "reply", "delete"]
-});
+<script lang="ts" setup>
+defineEmits(["edit", "reply", "delete"]);
 </script>

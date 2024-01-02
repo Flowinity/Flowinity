@@ -28,13 +28,8 @@
   </v-card-text>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
-export default defineComponent({
-  name: "MutualFriends",
-  components: { UserAvatar },
-  props: ["user", "username"]
-});
+defineProps(["user", "username"]);
 </script>

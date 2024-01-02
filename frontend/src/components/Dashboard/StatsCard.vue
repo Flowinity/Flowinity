@@ -19,13 +19,8 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "StatsCard",
-  props: ["title", "value", "gold", "primaryColor", "user"]
-});
+<script lang="ts" setup>
+defineProps(["title", "value", "gold", "primaryColor", "user"]);
 </script>
 
 <style scoped>

@@ -133,7 +133,6 @@ import { defineComponent } from "vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
 
 export default defineComponent({
-  name: "GoldUpsell",
   components: { UserBadges },
   props: ["modelValue"],
   emits: ["update:modelValue"],

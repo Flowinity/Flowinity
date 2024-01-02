@@ -33,14 +33,9 @@
   </CoreDialog>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
-export default defineComponent({
-  name: "URLConfirmDialog",
-  components: { CoreDialog },
-  props: ["modelValue"],
-  emits: ["update:modelValue"]
-});
+defineProps(["modelValue"]);
+defineEmits(["update:modelValue"]);
 </script>

@@ -36,7 +36,7 @@ const config = {
       clientFiles: ["./src/**/*.ts", "./src/**/*.vue"]
     }),
     //@ts-ignore
-    ViteVersion,
+    ViteVersion.default(),
     VitePWA({
       registerType: "autoUpdate",
       workbox: {

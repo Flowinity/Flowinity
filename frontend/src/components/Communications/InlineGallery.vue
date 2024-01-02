@@ -40,7 +40,6 @@ import { CollectionCache } from "@/types/collection";
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "InlineStarred",
   components: { Paginate, InlineGalleryItem },
   props: ["type"],
   emits: ["clickItem"],

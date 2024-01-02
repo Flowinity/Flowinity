@@ -60,7 +60,6 @@ import { defineComponent } from "vue";
 import { FriendStatus, PartialUserFriend } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "UserSidebarOptions",
   props: {
     user: {
       type: Object as () => PartialUserFriend

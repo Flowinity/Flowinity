@@ -27,14 +27,9 @@
   </CoreDialog>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
-export default defineComponent({
-  name: "WorkspaceDeleteDialog",
-  components: { CoreDialog },
-  props: ["submit", "loading", "title", "btnText", "modelValue"],
-  emits: ["update:modelValue", "submit"]
-});
+defineProps(["submit", "loading", "title", "btnText", "modelValue"]);
+defineEmits(["update:modelValue", "submit"]);
 </script>

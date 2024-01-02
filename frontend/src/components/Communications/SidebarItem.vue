@@ -54,7 +54,6 @@ import { User } from "@/models/user";
 import { Chat } from "@/models/chat";
 
 export default defineComponent({
-  name: "SidebarItem",
   components: { UserAvatar },
   props: {
     user: {

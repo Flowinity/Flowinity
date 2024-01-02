@@ -35,7 +35,6 @@ import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
-  name: "OCRMetadata",
   components: { CoreDialog },
   props: ["modelValue"],
   emits: ["update:modelValue"],
