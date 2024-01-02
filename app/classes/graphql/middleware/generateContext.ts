@@ -64,7 +64,7 @@ export default async function generateContext(ctx: any): Promise<Context> {
       : AccessLevel.NO_ACCESS,
     token,
     dataloader: global.config?.finishedSetup ? createContext(db) : null,
-    ip: ctx.req?.ip || "0.0.0.0",
+    ip: ctx.extra?.ip || ctx.req?.ip || "0.0.0.0",
     meta: {},
     request: ctx.request,
     req: ctx.req,

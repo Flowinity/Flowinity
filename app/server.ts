@@ -124,6 +124,8 @@ export class Server {
             ctx.extra = {}
           }
           //@ts-ignore
+          ctx.extra.ip = ctx.extra.request.connection.remoteAddress
+          //@ts-ignore
           ctx.extra.resumableState = ctx?.connectionParams?.[
             "x-tpu-resumable-state-id"
           ] as string | undefined
