@@ -490,7 +490,9 @@ export class CollectionService {
       write,
       configure,
       read,
-      identifier: collectionId + "-" + user.id
+      identifier: collectionId + "-" + user.id,
+      // todo: remove this when v5 is released
+      accepted: !config.isV5
     })
 
     this.emitToRecipients(
@@ -498,6 +500,18 @@ export class CollectionService {
       "collectionUserAdd",
       collectionUser.toJSON()
     )
+
+    // todo: remove this when v5 is released
+    if (!config.isV5) {
+      pubSub.publish(
+        `COLLECTION_CREATED:${user.id}`,
+        await Collection.findOne({
+          where: {
+            id: collectionId
+          }
+        })
+      )
+    }
 
     this.emitForAllPubSub(collectionId, "COLLECTION_USER_ADDED", collectionUser)
 
