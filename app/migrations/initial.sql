@@ -487,13 +487,13 @@ CREATE TABLE `Notifications` (
 CREATE TABLE `Plans` (
   `id` bigint(20) NOT NULL,
   `name` varchar(191) DEFAULT NULL,
-  `quotaMax` bigint(20) DEFAULT NULL,
-  `price` bigint(20) DEFAULT NULL,
+  `quotaMax` bigint(20) DEFAULT 1000,
+  `price` bigint(20) DEFAULT 0,
   `features` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `color` varchar(191) DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
-  `internalName` varchar(191) DEFAULT NULL,
+  `internalName` varchar(191) DEFAULT 0,
   `purchasable` tinyint(1) DEFAULT 0,
   `internalFeatures` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `icon` varchar(191) DEFAULT 'mdi-plus'
