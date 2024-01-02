@@ -199,7 +199,7 @@ export default async function setup(app) {
     chat.chats[index].messages.forEach((message: Message) => {
       message.readReceipts = message.readReceipts.filter(
         (r: ChatAssociation) =>
-          r.user.id !== data.user.id || r.userId !== data.userId
+          r.user.id !== data.user.id && r.userId !== data.userId
       );
     });
     chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
