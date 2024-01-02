@@ -52,12 +52,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, PropType } from "vue";
 
 const props = defineProps({
-  items: Array,
+  items: Array as PropType<Array<any>>,
   headers: Array
 });
+
+type SlotFunctions<T> = {
+  [key: string]: (item: T) => any;
+};
+
+defineSlots<SlotFunctions<any>>();
 
 const sortBy = ref("");
 const sortOrder = ref("asc");

@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="{ gradient: props.gradient }"
+    :class="{ gradient: props.gradient, ...parentClasses }"
     class="relative w-full select-none"
   >
     <div
@@ -45,10 +45,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, PropType } from "vue";
 import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
 import RiLinkUnlinkM from "vue-remix-icons/icons/ri-link-unlink-m.vue";
 import { isNumeric } from "@/plugins/isNumeric";
+import { Maybe } from "@/gql/graphql";
 
 const loading = ref(true);
 const errored = ref(false);
@@ -64,14 +65,18 @@ const onImageError = () => {
 
 const props = defineProps({
   cover: Boolean,
-  src: String,
+  src: String as () => PropType<Maybe<string> | string | undefined>,
   size: [String, Number],
   gradient: String,
   height: [String, Number],
   width: [String, Number],
   imageClasses: String,
   spinnerSize: [String, Number],
-  spinnerInnerWidth: [String, Number]
+  spinnerInnerWidth: [String, Number],
+  parentClasses: {
+    type: [String, Array, Object],
+    default: ""
+  }
 });
 
 const dimensions = computed(() => {
@@ -79,7 +84,7 @@ const dimensions = computed(() => {
     height: isNumeric(props.height)
       ? props.height + "px"
       : props.height || "100%",
-    width: isNumeric(props.width) ? props.width + "px" : props.width || "100%"
+    width: isNumeric(props.width) ? props.width + "px" : props.width || "auto"
   };
 });
 

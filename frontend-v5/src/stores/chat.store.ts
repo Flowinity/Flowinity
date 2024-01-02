@@ -1,13 +1,18 @@
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { defineStore } from "pinia";
-import type { Chat, ChatEmoji, Message } from "@/gql/graphql";
+import type { Chat, ChatEmoji, ChatRank, Message } from "@/gql/graphql";
 import { MessageType, ScrollPosition } from "@/gql/graphql";
 import { useFriendsStore } from "@/stores/friends.store";
 import { useUserStore } from "@/stores/user.store";
 import dayjs from "@/plugins/dayjs";
+
+import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { RailMode, useAppStore } from "@/stores/app.store";
-import { useSocket } from "@/boot/socket.service";
 import { useMessagesStore } from "@/stores/messages.store";
+import { gql } from "@apollo/client";
+import { ChatsQuery } from "@/graphql/chats/chats.graphql";
+import { ReadChatMutation } from "@/graphql/chats/readChat.graphql";
+import { ChatPermissions } from "@/typecache/tpu-typecache";
 
 export const useChatStore = defineStore("chat", () => {
   const chats = ref<Chat[]>([]);
@@ -23,6 +28,8 @@ export const useChatStore = defineStore("chat", () => {
   const recentEmoji = ref<Record<string, number>>({});
   const loading = ref(false);
   const isReady = ref(0);
+  const { resolveClient } = useApolloClient();
+  const client = resolveClient();
   const messagesStore = useMessagesStore();
   const typers = ref<
     {
@@ -71,11 +78,33 @@ export const useChatStore = defineStore("chat", () => {
   }
 
   async function type() {
-    useSocket.chat.emit("typing", selectedChatAssociationId.value);
+    const mutate = useMutation(
+      gql`
+        mutation Typing($input: Float!) {
+          typing(input: $input)
+        }
+      `,
+      {
+        variables: {
+          input: selectedChatAssociationId.value
+        }
+      }
+    );
+    await mutate.mutate();
   }
 
   async function cancelType() {
-    useSocket.chat.emit("cancelTyping", selectedChatAssociationId.value);
+    const mutate = useMutation(
+      gql`
+        mutation CancelTyping($input: Float!) {
+          cancelTyping(input: $input)
+        }
+      `,
+      {
+        variables: { input: selectedChatAssociationId.value }
+      }
+    );
+    await mutate.mutate();
   }
 
   async function init() {
@@ -116,6 +145,14 @@ export const useChatStore = defineStore("chat", () => {
     } catch {
       //
     }
+
+    const {
+      data: { chats, userEmoji }
+    } = await client.query({
+      query: ChatsQuery
+    });
+    this.chats = chats;
+    this.emoji = userEmoji;
   }
 
   function merge(message: Message, index: number) {
@@ -145,13 +182,24 @@ export const useChatStore = defineStore("chat", () => {
     loading.value = false;
   }
 
-  function readChat(chatId?: number) {
+  function readChat(associationId?: number) {
     if (document.hasFocus()) {
-      useSocket.chat.emit(
-        "readChat",
-        chatId || selectedChatAssociationId.value
-      );
-      if (selectedChat.value) selectedChat.value.unread = 0;
+      const mutate = useMutation(ReadChatMutation, {
+        variables: {
+          input: {
+            associationId: associationId || selectedChatAssociationId.value
+          }
+        }
+      });
+      mutate.mutate();
+      if (selectedChat.value) {
+        chats.value = chats.value.map((chat) => {
+          return {
+            ...chat,
+            unread: 0
+          };
+        });
+      }
     }
   }
 
@@ -178,7 +226,9 @@ export const useChatStore = defineStore("chat", () => {
     memberSidebar: !localStorage.getItem("memberList")
       ? true
       : localStorage.getItem("memberList") === "true",
-    searchSidebar: false
+    searchSidebar: false,
+    search: "",
+    pinSidebar: false
   });
 
   watch(
@@ -190,6 +240,38 @@ export const useChatStore = defineStore("chat", () => {
       );
     }
   );
+
+  function getColor(ranksMap: string[], ranks: ChatRank[]): string {
+    if (!ranksMap) ranksMap = [];
+    for (const rankId of ranksMap) {
+      const rank = ranks.find((r) => r.id === rankId);
+      if (rank?.color) {
+        return rank.color;
+      }
+    }
+    return "inherit";
+  }
+
+  function hasPermission(
+    permission: ChatPermissions | ChatPermissions[],
+    chat?: Chat
+  ) {
+    const permissionsArray = Array.isArray(permission)
+      ? permission
+      : [permission];
+
+    const c: Chat | undefined = chat ?? selectedChat.value;
+
+    return (
+      c?.association?.permissions?.some(
+        (perm) =>
+          permissionsArray.includes(<ChatPermissions>perm) ||
+          (!permissionsArray.includes(<ChatPermissions>"TRUSTED") &&
+            perm === "ADMIN")
+      ) ||
+      (c?.association?.userId === c?.userId && c?.type === "group")
+    );
+  }
 
   return {
     chats,
@@ -210,6 +292,8 @@ export const useChatStore = defineStore("chat", () => {
     currentTypers,
     type,
     cancelType,
-    uiOptions
+    uiOptions,
+    getColor,
+    hasPermission
   };
 });

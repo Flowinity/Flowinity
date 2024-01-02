@@ -31,7 +31,6 @@ import ImageDialog from "@/components/Communications/Dialogs/ImageDialog.vue";
 import GroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettingsV2.vue";
 
 export default defineComponent({
-  name: "Colubrina",
   components: {
     GroupSettingsDialog,
     ImageDialog,

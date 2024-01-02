@@ -60,7 +60,9 @@ export default defineComponent({
   },
   computed: {
     user() {
-      return this.$user.users[this.readReceipt.userId];
+      return this.$user.users[
+        this.readReceipt.user.id || this.readReceipt.userId
+      ];
     }
   }
 });

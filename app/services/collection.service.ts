@@ -1,4 +1,4 @@
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
 import { User } from "@app/models/user.model"
 import { Collection } from "@app/models/collection.model"
 import { CollectionUser } from "@app/models/collectionUser.model"
@@ -17,6 +17,8 @@ import { PaginatedCollectionsResponse } from "@app/controllers/graphql/collectio
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { WhereOptions } from "sequelize"
 import { GqlError } from "@app/lib/gqlErrors"
+import { pubSub } from "@app/lib/graphql/pubsub"
+import { CacheService } from "@app/services/cache.service"
 
 @Service()
 export class CollectionService {
@@ -29,6 +31,7 @@ export class CollectionService {
       id: collection.id,
       name: collection.name
     })
+    pubSub.publish("COLLECTION_CREATED:" + userId, collection)
     return collection
   }
 
@@ -82,43 +85,51 @@ export class CollectionService {
     return collection
   }
 
-  async getCollections(userId: number) {
-    const collections = await Collection.findAll({
-      where: {
-        userId
-      },
-      include: [
-        {
-          model: User,
-          as: "user",
-          attributes: partialUserBase
+  async getCollections(
+    userId: number,
+    invited: boolean = false
+  ): Promise<Collection[]> {
+    let collections: Collection[] = []
+
+    if (!invited) {
+      collections = await Collection.findAll({
+        where: {
+          userId
         },
-        {
-          model: CollectionUser,
-          as: "users",
-          include: [
-            {
-              model: User,
-              as: "user",
-              attributes: partialUserBase
-            }
-          ]
-        },
-        {
-          model: CollectionItem,
-          as: "preview",
-          include: [
-            {
-              model: Upload,
-              as: "attachment",
-              where: {
-                type: "image"
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: partialUserBase
+          },
+          {
+            model: CollectionUser,
+            as: "users",
+            include: [
+              {
+                model: User,
+                as: "user",
+                attributes: partialUserBase
               }
-            }
-          ]
-        }
-      ]
-    })
+            ]
+          },
+          {
+            model: CollectionItem,
+            as: "preview",
+            include: [
+              {
+                model: Upload,
+                as: "attachment",
+                where: {
+                  type: "image"
+                }
+              }
+            ]
+          }
+        ]
+      })
+    }
+
     let collectionShared = await Collection.findAll({
       include: [
         {
@@ -142,7 +153,8 @@ export class CollectionService {
           as: "recipient",
           required: true,
           where: {
-            recipientId: userId
+            recipientId: userId,
+            accepted: !invited
           }
         },
         {
@@ -246,7 +258,7 @@ export class CollectionService {
           return false
         }
       }
-      return true
+      return collection.permissionsMetadata.read
     })
 
     if (search) {
@@ -295,7 +307,8 @@ export class CollectionService {
     }
     const collections = await redis.json.get(`collections:${userId}`)
     const collection = collections.find(
-      (collection: CollectionCache) => collection.id === collectionId
+      (collection: CollectionCache) =>
+        collection.id === collectionId && collection.permissionsMetadata.read
     )
     if (!collection) return false
     return collection
@@ -392,19 +405,24 @@ export class CollectionService {
   }
 
   async removeUserFromCollection(collectionId: number, recipientId: number) {
-    const result = await CollectionUser.destroy({
+    const user = await CollectionUser.findOne({
       where: {
         collectionId,
         recipientId
       }
     })
 
+    if (!user) throw Errors.COLLECTION_USER_NOT_FOUND
+
+    const result = await user.destroy()
+
     this.emitToRecipients(collectionId, "collectionUserRemove", {
       collectionId,
       recipientId
     })
 
-    if (!result) throw Errors.COLLECTION_USER_NOT_FOUND
+    this.emitForAllPubSub(collectionId, "COLLECTION_USER_REMOVED", user)
+    pubSub.publish(`COLLECTION_REMOVED:${recipientId}`, collectionId)
 
     return result
   }
@@ -472,13 +490,39 @@ export class CollectionService {
       write,
       configure,
       read,
-      identifier: collectionId + "-" + user.id
+      identifier: collectionId + "-" + user.id,
+      // todo: remove this when v5 is released
+      accepted: !config.isV5
     })
 
     this.emitToRecipients(
       collectionId,
       "collectionUserAdd",
       collectionUser.toJSON()
+    )
+
+    // todo: remove this when v5 is released
+    if (!config.isV5) {
+      pubSub.publish(
+        `COLLECTION_CREATED:${user.id}`,
+        await Collection.findOne({
+          where: {
+            id: collectionId
+          }
+        })
+      )
+    }
+
+    this.emitForAllPubSub(collectionId, "COLLECTION_USER_ADDED", collectionUser)
+
+    pubSub.publish(
+      `COLLECTION_INVITE_COUNT:${user.id}`,
+      await CollectionUser.count({
+        where: {
+          recipientId: user.id,
+          accepted: false
+        }
+      })
     )
 
     socket.of(SocketNamespaces.GALLERY).to(user.id).emit("addedToCollection", {
@@ -516,9 +560,11 @@ export class CollectionService {
         }
       }
     )
-    console.log(result)
 
     if (!result) throw Errors.COLLECTION_USER_NOT_FOUND
+
+    const cacheService = Container.get(CacheService)
+    await cacheService.resetCollectionCache(collectionId)
 
     this.emitToRecipients(collectionId, "collectionUserUpdate", {
       collectionId,
@@ -527,6 +573,17 @@ export class CollectionService {
       read,
       configure
     })
+
+    this.emitForAllPubSub(
+      collectionId,
+      "COLLECTION_USER_UPDATED",
+      await CollectionUser.findOne({
+        where: {
+          collectionId,
+          recipientId
+        }
+      })
+    )
 
     return result
   }
@@ -549,6 +606,11 @@ export class CollectionService {
           id: collectionId,
           shareLink
         })
+        this.emitForAllPubSub(
+          collectionId,
+          "COLLECTION_UPDATED",
+          await Collection.findByPk(collectionId)
+        )
         return {
           shareLink
         }
@@ -567,6 +629,11 @@ export class CollectionService {
           id: collectionId,
           shareLink: null
         })
+        this.emitForAllPubSub(
+          collectionId,
+          "COLLECTION_UPDATED",
+          await Collection.findByPk(collectionId)
+        )
         return {
           shareLink: null
         }
@@ -618,6 +685,29 @@ export class CollectionService {
     }
   }
 
+  emitForAllPubSub(collectionId: number, key: string, data: any) {
+    Collection.findByPk(collectionId, {
+      include: [
+        {
+          model: CollectionUser,
+          as: "users"
+        }
+      ]
+    }).then((collection) => {
+      if (!collection) return
+      pubSub.publish(
+        key + ":" + collection.userId,
+        "toJSON" in data ? data.toJSON() : data
+      )
+      for (const user of collection.users) {
+        pubSub.publish(
+          key + ":" + user.recipientId,
+          "toJSON" in data ? data.toJSON() : data
+        )
+      }
+    })
+  }
+
   async updateCollection(id: number, name: string) {
     const collection = await Collection.findOne({
       where: {
@@ -636,6 +726,13 @@ export class CollectionService {
       name
     })
 
+    this.emitForAllPubSub(
+      collection.id,
+      `
+  }COLLECTION_UPDATED`,
+      collection
+    )
+
     return {
       name
     }
@@ -648,16 +745,18 @@ export class CollectionService {
       }
     })
 
+    if (!collection) throw Errors.COLLECTION_NOT_FOUND
+
     this.emitToRecipients(id, "collectionUpdate", {
       id,
       [key]: banner
     })
 
-    if (!collection) throw Errors.COLLECTION_NOT_FOUND
-
     await collection.update({
       [key]: banner
     })
+
+    this.emitForAllPubSub(collection.id, `COLLECTION_UPDATED`, collection)
 
     return {
       banner

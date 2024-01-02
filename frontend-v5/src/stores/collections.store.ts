@@ -8,13 +8,15 @@ import {
   AddToCollectionMutation,
   RemoveFromCollectionMutation
 } from "@/graphql/collections/addToCollection.graphql";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { UserLightCollectionsQuery } from "@/graphql/collections/getUserCollections.graphql";
 
 export const useCollectionsStore = defineStore("collections", () => {
   const items = ref<Collection[]>([]);
   const pager = ref<Pager | null>(null);
   const { resolveClient } = useApolloClient();
   const client = resolveClient();
+  const invites = ref<number>(0);
 
   async function getCollection(id: string | number) {
     const {
@@ -68,6 +70,24 @@ export const useCollectionsStore = defineStore("collections", () => {
     return items.value.filter((item) => item.permissionsMetadata.write);
   });
 
+  async function init() {
+    const {
+      data: { collections, collectionInvitesCount }
+    } = await client.query({
+      query: UserLightCollectionsQuery,
+      variables: {
+        input: {}
+      } as CollectionInput,
+      fetchPolicy: "network-only"
+    });
+    items.value = collections.items;
+    invites.value = collectionInvitesCount;
+  }
+
+  function navigateToCollection(id: number) {
+    useRouter().push(`/collections/${id}`);
+  }
+
   return {
     items,
     pager,
@@ -75,6 +95,9 @@ export const useCollectionsStore = defineStore("collections", () => {
     addToCollection,
     removeFromCollection,
     selected,
-    writable
+    writable,
+    init,
+    invites,
+    navigateToCollection
   };
 });

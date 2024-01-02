@@ -7,6 +7,8 @@ import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { Upload } from "@app/models/upload.model"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { ActOnAutoCollectAction } from "@app/classes/graphql/autoCollects/actOnAutoCollectsInput"
+import { pubSub } from "@app/lib/graphql/pubsub"
+import { AutoCollectApprovalType } from "@app/classes/graphql/autoCollects/subscriptions/autoCollectApprovalEvent"
 
 @Service()
 export class AutoCollectService {
@@ -47,6 +49,10 @@ export class AutoCollectService {
           userId,
           identifier: autoCollect.uploadId + "-" + autoCollect.collectionId
         })
+        pubSub.publish(`AUTO_COLLECT_APPROVAL:${userId}`, {
+          type: AutoCollectApprovalType.APPROVED,
+          autoCollectApproval: autoCollect.toJSON()
+        })
         socket
           .of(SocketNamespaces.AUTO_COLLECTS)
           .to(userId)
@@ -57,6 +63,10 @@ export class AutoCollectService {
         await autoCollect.destroy()
         return true
       case ActOnAutoCollectAction.REJECT:
+        pubSub.publish(`AUTO_COLLECT_APPROVAL:${userId}`, {
+          type: AutoCollectApprovalType.DENIED,
+          autoCollectApproval: autoCollect.toJSON()
+        })
         socket
           .of(SocketNamespaces.AUTO_COLLECTS)
           .to(userId)

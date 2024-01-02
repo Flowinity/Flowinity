@@ -1,17 +1,21 @@
 <template>
   <component
     :is="props.to ? RouterLink : 'a'"
-    v-wave="!disabled && !table && !noRipple"
     class="rounded-full flex dark:text-white select-none"
+    v-wave="!disabled && !table && !noRipple"
     :to="to ? to : undefined"
     :href="href ? href : undefined"
     :style="{
       background:
-        variant === 'tonal' || selected ? `rgb(${rgbColor})` : undefined,
+        variant === 'tonal' || selected || variant === 'filled'
+          ? `rgb(${rgbColor})`
+          : undefined,
       color:
         variant === 'tonal' || variant === 'passive' || selected
           ? color
-          : undefined,
+          : variant === 'filled'
+            ? '#ffffff'
+            : undefined,
       'margin-left': table ? '-0.75rem' : '0'
     }"
     :class="{
@@ -22,10 +26,23 @@
       'cursor-pointer': !disabled && !noRipple
     }"
     tabindex="0"
+    @keydown.enter="
+      disabled
+        ? () => {}
+        : () => {
+            $event.target.click();
+          }
+    "
+    @keydown.space="
+      disabled
+        ? () => {}
+        : () => {
+            $event.preventDefault();
+            $event.target.click();
+          }
+    "
     :disabled="disabled"
     v-bind="$attrs"
-    @keydown.enter="!disabled ? $event.target.click() : ''"
-    @keydown.space="!disabled ? handleSpace($event) : ''"
   >
     <template v-if="!loading">
       <slot />
@@ -48,7 +65,7 @@ const props = defineProps({
   href: String,
   color: String,
   variant: {
-    type: String as () => "outlined" | "tonal" | "passive",
+    type: String as () => "outlined" | "tonal" | "passive" | "filled",
     default: "tonal"
   },
   table: {
@@ -77,23 +94,20 @@ const color = computed(() => {
   if (
     props.variant !== "tonal" &&
     props.variant !== "passive" &&
+    props.variant !== "filled" &&
     !props.selected
   ) {
     return "#ffffff";
   }
   return theme.colors[props.color] || theme.colors["white"];
 });
+
 const rgbColor = computed(() => {
   if (!color.value) return;
-  const [r, g, b] = color.value
-    .match(/\w\w/g)
-    .map((x: string) => parseInt(x, 16));
+  const [r, g, b] = color.value.match(/\w\w/g).map((x) => parseInt(x, 16));
+  if (props.variant === "filled") return `${r},${g},${b},1.00`;
   return `${r},${g},${b},0.15`;
 });
-const handleSpace = (e: KeyboardEvent) => {
-  e.preventDefault();
-  (e.target as HTMLInputElement).click();
-};
 </script>
 
 <style scoped>

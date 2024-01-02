@@ -7,14 +7,15 @@ import {
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { User } from "@app/models/user.model"
 import { Service } from "typedi"
 import { Session } from "@app/models/session.model"
 import { Op } from "sequelize"
-import { Subscription } from "@app/models/subscription.model"
+import { Subscription as SubscriptionModel } from "@app/models/subscription.model"
 import { Domain } from "@app/models/domain.model"
 import { Plan } from "@app/models/plan.model"
 import { Integration } from "@app/models/integration.model"
@@ -23,6 +24,7 @@ import { Context } from "@app/types/graphql/context"
 import { Notification } from "@app/models/notification.model"
 import {
   PartialUserAuth,
+  PartialUserBase,
   partialUserBase,
   PartialUserFriend,
   PartialUserPublic
@@ -53,9 +55,10 @@ import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import { SessionInput } from "@app/classes/graphql/user/sessionsInput"
 import { SessionType } from "@app/classes/graphql/user/sessions"
-import { UserStoredStatus } from "@app/classes/graphql/user/status"
+import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { Collection } from "@app/models/collection.model"
 import { defaultHomeWidgets } from "@app/classes/graphql/home/homeWidgets"
+import { StatusEvent } from "@app/classes/graphql/user/subscriptions/statusEvent"
 
 @Resolver(User)
 @Service()
@@ -386,6 +389,20 @@ export class UserResolver extends createBaseResolver("User", User) {
   ): Promise<number[]> {
     return await this.userUtilsService.trackedUserIds(ctx.user?.id, false)
   }
+
+  @Authorization({
+    scopes: ["user.view"]
+  })
+  @Subscription(() => StatusEvent, {
+    topics: ({ context }) => {
+      if (!context.user) return []
+      return `USER_STATUS:${context.user.id}`
+    }
+  })
+  onUserStatus(@Root() status: StatusEvent) {
+    status.status = status.status.toLowerCase() as UserStatus
+    return status
+  }
 }
 
 @Resolver(PartialUserPublic)
@@ -417,22 +434,29 @@ function createBaseResolver<T extends ClassType>(
       if (!user.homeWidgets || user.homeWidgets.default) {
         user.homeWidgets = defaultHomeWidgets
       }
+      ctx.dataloader.prime(user)
       return user
     }
 
     async findByUsername(username: string, ctx: Context) {
-      return await User.findOne({
+      const user = await User.findOne({
         [EXPECTED_OPTIONS_KEY]: createContext(db),
         where: {
           username
         }
       })
+      ctx.dataloader.prime(user)
+      return user
     }
 
     @FieldResolver(() => [Badge])
-    async badges(@Root() user: User) {
+    async badges(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return []
-      return await user.$get("badges")
+      const badges = await user.$get("badges", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
+      ctx.dataloader.prime(badges)
+      return badges
     }
 
     @FieldResolver(() => [Notification])
@@ -440,38 +464,49 @@ function createBaseResolver<T extends ClassType>(
       if (!user) return []
       return await user.$get("notifications", {
         limit: 15,
-        order: [["createdAt", "DESC"]]
+        order: [["createdAt", "DESC"]],
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
       })
     }
 
     @FieldResolver(() => [Integration])
     async integrations(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return []
-      return await user.$get("integrations")
+      return await user.$get("integrations", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
     }
 
     @FieldResolver(() => [Domain])
     async domain(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return null
-      return await user.$get("domain")
+      return await user.$get("domain", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
     }
 
-    @FieldResolver(() => [Subscription])
-    async subscription(@Root() user: User, @Ctx() ctx: Context) {
+    @FieldResolver(() => [SubscriptionModel])
+    subscription(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return null
-      return await user.$get("subscription")
+      return user.$get("subscription", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
     }
 
     @FieldResolver(() => Plan)
     async plan(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return await Plan.findByPk(1)
-      return await user.$get("plan")
+      return await user.$get("plan", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
     }
 
     @FieldResolver(() => AutoCollectRule)
     async autoCollectRules(@Root() user: User, @Ctx() ctx: Context) {
       if (!user) return []
-      return await user.$get("autoCollectRules")
+      return await user.$get("autoCollectRules", {
+        [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+      })
     }
 
     @FieldResolver(() => Stats || null)
@@ -613,7 +648,7 @@ function createBaseResolver<T extends ClassType>(
 @Service()
 export class PartialUserFriendResolver {
   @FieldResolver(() => FriendNickname)
-  async nickname(@Root() user: User, @Ctx() ctx: Context) {
+  nickname(@Root() user: User, @Ctx() ctx: Context) {
     if (!ctx.user?.id || !user) return null
     return user.$get("nickname", {
       where: {
@@ -627,14 +662,14 @@ export class PartialUserFriendResolver {
   })
   async blocked(@Ctx() ctx: Context, @Root() user: User) {
     if (!ctx.user?.id || !user) return false
-    const block = await BlockedUser.findOne({
-      where: {
-        userId: user.id,
-        blockedUserId: ctx.user!!.id
-      }
-    })
-    if (!block) return false
-    return !block.silent
+    const blocks =
+      ctx.meta.blocks ||
+      (await BlockedUser.findAll({
+        where: {
+          userId: ctx.user.id
+        }
+      }))
+    return blocks.some((b: BlockedUser) => b.blockedUserId === user.id)
   }
 }
 
@@ -642,7 +677,21 @@ export class PartialUserFriendResolver {
 @Service()
 export class BadgeResolver {
   @FieldResolver(() => User)
-  async users(@Root() badge: Badge) {
-    return await badge.$get("users")
+  async users(@Root() badge: Badge, @Ctx() ctx: Context) {
+    return badge.$get("users", {
+      [EXPECTED_OPTIONS_KEY]: ctx.dataloader
+    })
+  }
+}
+
+@Resolver(PartialUserBase)
+@Service()
+export class PartialUserBaseResolver extends createBaseResolver(
+  "PartialUserBase",
+  PartialUserBase
+) {
+  @FieldResolver(() => Boolean)
+  legacy() {
+    return false
   }
 }

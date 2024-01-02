@@ -3,7 +3,8 @@
     "username": "Username",
     "password": "Password",
     "totp": "2FA code (if enabled)",
-    "login": "Login"
+    "login": "Login",
+    "email": "Email"
   },
   "generic": {
     "minLength": "You need at least 1 character. | You need at least {count} characters.",
@@ -18,7 +19,21 @@
     "back": "Back",
     "search": "Search",
     "remove": "Remove",
-    "edit": "Edit"
+    "edit": "Edit",
+    "noResults": "No results found",
+    "accept": "Accept",
+    "reject": "Reject",
+    "deny": "Deny",
+    "new": "New"
+  },
+  "dangerZone": {
+    "usePassword": "Use password instead",
+    "useTotp": "Use 2FA code instead",
+    "password": "Password",
+    "totp": "2FA code",
+    "totpRequired": "2FA code is required",
+    "passwordRequired": "Password is required",
+    "passwordMismatch": "Password does not match the confirmation password"
   },
   "gallery": {
     "addToCollection": "Add to Collection",
@@ -95,7 +110,8 @@
     "nav": {
       "share": "Sharing",
       "settings": "Settings",
-      "shareLink": "Copy ShareLink"
+      "shareLink": "Copy ShareLink",
+      "leave": "Leave Collection"
     },
     "settings": {
       "title": "Collection Settings",
@@ -103,11 +119,22 @@
     },
     "sharing": {
       "title": "Collection Sharing",
-      "add": "Add friend to collection"
+      "add": "Add friend to collection",
+      "pending": "(pending)"
     },
     "create": {
       "title": "Create Collection",
       "create": "Create"
+    },
+    "transfer": {
+      "title": "Transfer Collection",
+      "description": "Are you sure you want to transfer {collection} to {user}?",
+      "action": "Transfer"
+    },
+    "leave": {
+      "title": "Leave Collection",
+      "description": "Are you sure you want to leave {collection}?",
+      "action": "Leave"
     }
   },
   "communications": {
@@ -199,6 +226,7 @@
     "collections": {
       "create": "Create collection",
       "title": "Collections",
+      "invited": "Invites",
       "sort": {
         "alphabetical": "Alphabetical",
         "updated": "Last updated",
@@ -212,6 +240,26 @@
     }
   },
   "chats": {
-    "typing": "{users} is typing... | {users} are typing... | Many people are typing..."
+    "typing": "{users} is typing... | {users} are typing... | Many people are typing...",
+    "searchIn": "Searching in {chat}, {count} messages.",
+    "search": "Search {chat}",
+    "input": {
+      "editingHelper": "Press enter to send, and esc to cancel.",
+      "send": "Send",
+      "attachments": "Attachments"
+    },
+    "actions": {
+      "pinConfirm": {
+        "title": "Pin message?",
+        "content": "Are you sure you want to pin this message to the chat?"
+      },
+      "unpinConfirm": {
+        "title": "Unpin message?",
+        "content": "Are you sure you want to unpin this message from the chat?"
+      }
+    }
+  },
+  "connection": {
+    "title": "Connecting..."
   }
 }

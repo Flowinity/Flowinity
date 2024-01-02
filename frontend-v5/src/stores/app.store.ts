@@ -71,6 +71,7 @@ import axios from "@/plugins/axios.ts";
 import { useFriendsStore } from "@/stores/friends.store";
 import RiWebhook from "@/components/Icons/RiWebhook.vue";
 import { useMailStore } from "@/stores/mail.store";
+import { useWorkspacesStore } from "@/stores/workspaces.store";
 
 export enum RailMode {
   HOME,
@@ -105,6 +106,8 @@ export const useAppStore = defineStore("app", () => {
     release: "prod",
     name: "Flowinity"
   } as CoreState);
+
+  const connected = ref(false);
 
   const versioning = ref({
     current: import.meta.env.TPU_VERSION || "N/A",
@@ -211,53 +214,31 @@ export const useAppStore = defineStore("app", () => {
         }
       };
     }
-    getWeather();
-    useMailStore().init();
-    const {
-      data: {
-        coreState,
-        experiments,
-        currentUser,
-        collections,
-        chats,
-        workspaces,
-        friends,
-        trackedUsers,
-        blockedUsers,
-        userEmoji
-      }
-    } = await this.$apollo.query({
-      query: CoreStateQuery,
-      fetchPolicy: "no-cache"
-    });
-    state.value = coreState;
     const userStore = useUserStore();
     const chatStore = useChatStore();
     const experimentsStore = useExperimentsStore();
     const collectionsStore = useCollectionsStore();
     const friendsStore = useFriendsStore();
-    friendsStore.friends = friends;
-    userStore.user = currentUser;
-    if (!currentUser) localStorage.removeItem("userStore");
-    if (currentUser)
-      localStorage.setItem("userStore", JSON.stringify(currentUser));
-    userStore.tracked = trackedUsers;
-    userStore.blocked = blockedUsers;
-    chatStore.chats = chats.map((chat: Chat) => {
-      return {
-        ...chat,
-        messages: chatStore.chats.find((c) => c.id === chat.id)?.messages
-      };
+    const workspacesStore = useWorkspacesStore();
+    getWeather();
+    useMailStore().init();
+    userStore.init();
+    workspacesStore.init();
+    friendsStore.init();
+    chatStore.init();
+    collectionsStore.init();
+    const {
+      data: { coreState, experiments }
+    } = await this.$apollo.query({
+      query: CoreStateQuery,
+      fetchPolicy: "no-cache"
     });
-    chatStore.emoji = userEmoji;
+    state.value = coreState;
     for (const experiment of experiments) {
       experimentsStore.experiments[experiment.id] = experiment.value;
     }
-    if (collections) {
-      collectionsStore.items = collections.items;
-      collectionsStore.pager = collections.pager;
-    }
     loading.value = false;
+    connected.value = true;
   }
 
   const lookupNav = computed(() => {
@@ -281,7 +262,7 @@ export const useAppStore = defineStore("app", () => {
   const navigation = ref({
     mode:
       parseInt(localStorage.getItem("railMode") || "0") ||
-      (RailMode.HOME as RailMode),
+      (RailMode.HOME as RailMode as RailMode),
     options: {
       [RailMode.HOME]: [
         {
@@ -729,6 +710,7 @@ export const useAppStore = defineStore("app", () => {
     shifting,
     dev: import.meta.env.DEV,
     versioning,
-    _currentNavItem
+    _currentNavItem,
+    connected
   };
 });

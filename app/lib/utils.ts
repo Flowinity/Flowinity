@@ -21,6 +21,8 @@ import { CacheService } from "@app/services/cache.service"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import os from "os"
+import { pubSub } from "@app/lib/graphql/pubsub"
+import { AutoCollectApprovalType } from "@app/classes/graphql/autoCollects/subscriptions/autoCollectApprovalEvent"
 
 async function generateAPIKey(
   type: "session" | "api" | "email" | "oauth" | "oidc" | "bot-email"
@@ -358,7 +360,10 @@ async function processFile(
           ])
         }
 
-        console.log(`Sending socket,`)
+        pubSub.publish(`AUTO_COLLECT_APPROVAL:${upload.userId}`, {
+          type: AutoCollectApprovalType.NEW,
+          autoCollectApproval: autoCollect.toJSON()
+        })
 
         socket
           .of(SocketNamespaces.AUTO_COLLECTS)
@@ -406,6 +411,12 @@ async function postUpload(upload: Upload): Promise<void> {
           id: upload.id
         }
       })
+      await pubSub.publish(`UPDATE_UPLOADS:${upload.userId}`, [
+        {
+          ...find?.toJSON(),
+          textMetadata: text
+        }
+      ])
       await socket
         .of(SocketNamespaces.GALLERY)
         .to(upload.userId)
@@ -434,6 +445,12 @@ async function postUpload(upload: Upload): Promise<void> {
           id: upload.id
         }
       })
+      await pubSub.publish(`UPDATE_UPLOADS:${upload.userId}`, [
+        {
+          ...find?.toJSON(),
+          textMetadata: ""
+        }
+      ])
       await socket
         .of(SocketNamespaces.GALLERY)
         .to(upload.userId)

@@ -1,16 +1,46 @@
 <script setup lang="ts">
 import { RailMode, useAppStore } from "@/stores/app.store";
 import SideBarItem from "@/components/Framework/Navigation/SideBarItem.vue";
+import { useChatStore } from "@/stores/chat.store";
+import { useCollectionsStore } from "@/stores/collections.store";
+import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
+import UserAvatar from "@/components/User/UserAvatar.vue";
+import functions from "@/plugins/functions";
+import RiAddLine from "vue-remix-icons/icons/ri-add-line.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
+import { computed, ref, watch } from "vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
+import RiSortDesc from "vue-remix-icons/icons/ri-sort-desc.vue";
+import RiSortAsc from "vue-remix-icons/icons/ri-sort-asc.vue";
+import Card from "@/components/Framework/Card/Card.vue";
+import TpuList from "@/components/Framework/List/TpuList.vue";
+import TpuListItem from "@/components/Framework/List/TpuListItem.vue";
+import CreateCollectionDialog from "@/components/Collections/CreateCollectionDialog.vue";
 //@ts-ignore
+import VueSimpleContextMenu from "vue-simple-context-menu";
 import SidebarCollections from "@/components/Sidebar/SidebarCollections.vue";
 import SidebarComms from "@/components/Sidebar/SidebarComms.vue";
 import SidebarMail from "@/components/Sidebar/SidebarMail.vue";
+import SidebarDebug from "@/components/Sidebar/SidebarDebug.vue";
+import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
+import SidebarCommsHeader from "@/components/Sidebar/SidebarCommsHeader.vue";
 
 const appStore = useAppStore();
+const chatStore = useChatStore();
 
+const collectionsStore = useCollectionsStore();
 const props = defineProps({
   drawer: Boolean
 });
+
+const context = ref(0);
+
+watch(
+  () => appStore.currentRail,
+  (value) => {
+    console.log(value);
+  }
+);
 </script>
 
 <template>
@@ -19,29 +49,47 @@ const props = defineProps({
     style="min-width: 256px; max-width: 256px"
     :class="{ 'h-screen': !props.drawer, 'h-[calc(100vh-64px)]': props.drawer }"
   >
-    <div
-      class="flex justify-between pt-0 dark:border-outline-dark border-b-2 border-outline-dark"
-      style="min-height: 64px; max-height: 64px"
-    >
-      <Transition name="slide-fade" mode="out-in">
-        <div
-          v-if="appStore.currentRail"
-          :key="appStore.currentRail?.id"
-          class="flex items-center"
-        >
-          <component :is="appStore.currentRail?.icon" class="w-8 ml-4" />
-          <p class="text-xl font-semibold ml-4">
-            {{ appStore.currentRail.name }}
-          </p>
-        </div>
-      </Transition>
-      <div id="sidebar-actions" class="flex items-center mr-4" />
-    </div>
-
+    <VDropdown :triggers="['click']" placement="top-start" class="w-full">
+      <div
+        class="flex cursor-pointer select-none justify-between pt-0 dark:border-outline-dark border-b-2 border-outline-dark"
+        style="min-height: 64px; max-height: 64px"
+      >
+        <Transition name="slide-fade" mode="out-in">
+          <div
+            :key="appStore.currentRail?.id"
+            v-if="
+              appStore.currentRail && appStore.currentRail?.id !== RailMode.CHAT
+            "
+            class="flex items-center"
+          >
+            <component :is="appStore.currentRail?.icon" class="w-8 ml-4" />
+            <p class="text-xl font-semibold ml-4">
+              {{ appStore.currentRail.name }}
+            </p>
+          </div>
+          <SidebarCommsHeader
+            v-else-if="appStore.currentRail?.id === RailMode.CHAT"
+          />
+        </Transition>
+        <div id="sidebar-actions" class="flex items-center mr-4" />
+      </div>
+      <template #popper>
+        <card class="w-full" :secondary="true">
+          <tpu-list>
+            <tpu-list-item class="p-3 text-red fill-red">
+              <div class="flex">
+                <ri-close-line style="width: 20px" />
+                {{ $t("sidebar.remove") }}
+              </div>
+            </tpu-list-item>
+          </tpu-list>
+        </card>
+      </template>
+    </VDropdown>
     <Transition name="slide-fade" mode="out-in">
       <div
-        :key="appStore.currentRail?.id"
         class="justify-between flex-col flex-1 px-3"
+        :key="appStore.currentRail?.id"
         style="margin-top: 16px"
       >
         <div class="flex-col flex gap-y-2 flex-1 relative">
@@ -56,14 +104,15 @@ const props = defineProps({
           <SidebarCollections
             v-show="appStore.currentRail?.id === RailMode.GALLERY"
           />
+          <SidebarDebug v-if="appStore.currentRail?.id === RailMode.DEBUG" />
         </div>
       </div>
     </Transition>
     <Transition name="slide-fade" mode="out-in">
       <div
-        :key="appStore.currentRail?.id"
         class="flex-col flex gap-y-2 px-3"
         style="margin-bottom: 16px"
+        :key="appStore.currentRail?.id"
       >
         <SideBarItem
           v-for="item in appStore.currentMiscNavOptions"

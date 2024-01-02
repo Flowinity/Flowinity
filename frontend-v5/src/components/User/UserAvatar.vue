@@ -21,9 +21,19 @@
       </tpu-overlay>
       <tpu-avatar
         :alt="props.alt || props.username"
-        :color="src ? undefined : functions.avatar(user) ? undefined : true"
+        :color="
+          src || avatar ? undefined : functions.avatar(user) ? undefined : true
+        "
         :size="size"
-        :src="src ? src : user.avatar ? functions.avatar(user) : undefined"
+        :src="
+          src
+            ? src
+            : user.avatar
+              ? functions.avatar(user)
+              : avatar
+                ? appStore.domain + avatar
+                : undefined
+        "
         style="z-index: 0"
       >
         <slot v-if="$slots.default" />
@@ -99,16 +109,17 @@
 
 <script setup lang="ts">
 import TpuAvatar from "@/components/Framework/Avatar/TpuAvatar.vue";
-import { computed, ref } from "vue";
+import { computed, ref, PropType } from "vue";
 import { useUserStore } from "@/stores/user.store";
 import functions from "@/plugins/functions";
 import SetPictureDialog from "@/components/Core/Dialogs/SetPictureDialog.vue";
 import TpuHover from "@/components/Framework/Hover/TpuHover.vue";
 import RiUploadLine from "vue-remix-icons/icons/ri-upload-cloud-2-line.vue";
 import TpuOverlay from "@/components/Framework/Overlay/TpuOverlay.vue";
-import { UserStatus, UserStoredStatus } from "@/gql/graphql";
+import { Maybe, UserStatus, UserStoredStatus } from "@/gql/graphql";
 import RiMoonFill from "vue-remix-icons/icons/ri-moon-fill.vue";
 import RiCheckLine from "vue-remix-icons/icons/ri-check-line.vue";
+import { useAppStore } from "@/stores/app.store";
 const props = defineProps({
   size: {
     default: 40,
@@ -116,6 +127,9 @@ const props = defineProps({
   },
   src: {
     type: String
+  },
+  avatar: {
+    type: String as PropType<Maybe<string> | string | undefined>
   },
   color: {
     type: String
@@ -147,6 +161,7 @@ const props = defineProps({
   }
 });
 const userStore = useUserStore();
+const appStore = useAppStore();
 
 const user = computed(() => {
   return {
@@ -171,7 +186,10 @@ defineEmits(["setImage"]);
   height: 12px;
   border-radius: 50%;
   z-index: 1;
-  transition: background-color 0.2s, color 0.2s, width 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    width 0.2s;
 }
 
 .typing-status {

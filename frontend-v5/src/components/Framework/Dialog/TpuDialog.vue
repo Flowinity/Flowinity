@@ -1,55 +1,64 @@
 <template>
-  <div v-if="props.modelValue" class="dialog-scrim" />
-  <transition name="dialog-transition" appear>
+  <teleport to="#main-flex" v-if="ready">
     <div
+      class="dialog-scrim"
+      :style="{ zIndex: 5000 + indexLayer }"
       v-if="props.modelValue"
-      class="dialog-outer"
-      @mousedown="scrimDetect"
-      @mouseup="
-        scrim && !props.persistent ? $emit('update:modelValue', false) : ''
-      "
-    >
-      <slot name="dialog-outer">
-        <div
-          class="dialog-content break-all"
-          :style="{
-            height: height + 'px',
-            maxHeight: height + 'px',
-            width: props.width + 'px',
-            maxWidth: props.width + 'px'
-          }"
-        >
-          <slot name="content">
-            <card :padding="false" v-bind="$attrs">
-              <div>
-                <tpu-toolbar class="flex justify-between items-center px-4">
-                  <div>
-                    <slot name="toolbar"></slot>
-                  </div>
-                  <div>
-                    <tpu-button
-                      variant="passive"
-                      icon
-                      @click="$emit('update:modelValue', false)"
-                    >
-                      <RiCloseLine style="height: 20px" />
-                    </tpu-button>
-                  </div>
-                </tpu-toolbar>
+    />
+    <transition name="dialog-transition" appear>
+      <div
+        v-if="props.modelValue"
+        @mousedown="scrimDetect"
+        class="dialog-outer"
+        @mouseup="
+          scrim && !props.persistent
+            ? $emit('update:modelValue', false)
+            : () => {}
+        "
+        :style="{ zIndex: 5000 + indexLayer + 1 }"
+      >
+        <slot name="dialog-outer">
+          <div
+            class="dialog-content break-all"
+            :style="{
+              height: height + 'px',
+              maxHeight: height + 'px',
+              width: props.width + 'px',
+              maxWidth: props.width + 'px'
+            }"
+          >
+            <slot name="content">
+              <card :padding="false" v-bind="$attrs">
                 <div>
-                  <slot></slot>
+                  <tpu-toolbar class="flex justify-between items-center px-4">
+                    <div>
+                      <slot name="toolbar"></slot>
+                    </div>
+                    <div>
+                      <tpu-button
+                        variant="passive"
+                        icon
+                        @click="$emit('update:modelValue', false)"
+                      >
+                        <RiCloseLine style="height: 20px" />
+                      </tpu-button>
+                    </div>
+                  </tpu-toolbar>
+                  <div>
+                    <slot></slot>
+                  </div>
                 </div>
-              </div>
-            </card>
-          </slot>
-        </div>
-      </slot>
-    </div>
-  </transition>
+              </card>
+            </slot>
+          </div>
+        </slot>
+      </div>
+    </transition>
+  </teleport>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { nextTick, ref, watch } from "vue";
 import TpuToolbar from "@/components/Framework/Toolbar/TpuToolbar.vue";
 import Card from "@/components/Framework/Card/Card.vue";
 import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
@@ -64,6 +73,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["update:modelValue"]);
 const scrim = ref(false);
+const indexLayer = ref(0);
 
 function scrimDetect(event) {
   scrim.value = event?.target?.classList.contains("dialog-outer");
@@ -78,9 +88,13 @@ function handleClose(event: KeyboardEvent) {
 
 const framework = useFrameworkStore();
 
+const ready = ref(false);
+
 watch(
   () => props.modelValue,
   (val) => {
+    const mainFlexElement = document.querySelector("#main-flex");
+    ready.value = !!mainFlexElement;
     if (!val) {
       framework.dialogsOpened = framework.dialogsOpened - 1;
       if (!framework.dialogsOpened) {
@@ -93,6 +107,7 @@ watch(
       return;
     }
     framework.dialogsOpened++;
+    indexLayer.value = framework.dialogsOpened;
     document.addEventListener("keydown", handleClose);
     document.body.classList.add("blocked-scroll");
     if (
@@ -103,6 +118,13 @@ watch(
     }
   }
 );
+
+nextTick(() => {
+  const mainFlexElement = document.querySelector("#main-flex");
+  if (mainFlexElement) {
+    ready.value = true;
+  }
+});
 </script>
 
 <style scoped>
@@ -116,7 +138,6 @@ watch(
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3001;
 }
 
 .dialog-outer {
@@ -128,6 +149,5 @@ watch(
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 3002;
 }
 </style>

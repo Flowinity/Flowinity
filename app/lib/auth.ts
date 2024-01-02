@@ -180,7 +180,9 @@ export function checkScope(requiredScope: string | string[], scope: string) {
 export async function updateSession(session: Session, ip: string | undefined) {
   if (
     !ip ||
-    (session.updatedAt.getTime() + 5 * 60 * 1000 > new Date().getTime() &&
+    !session ||
+    (new Date(session.updatedAt).getTime() + 5 * 60 * 1000 >
+      new Date().getTime() &&
       session.info?.accessedFrom?.length)
   )
     return

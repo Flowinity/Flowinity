@@ -1,4 +1,5 @@
 import { Field, InputType, Int } from "type-graphql"
+import { DangerZoneInput } from "@app/classes/graphql/chat/deleteChat"
 
 @InputType()
 export class UpdateCollectionUserPermissionsInput {
@@ -20,4 +21,24 @@ export class RemoveCollectionUserInput {
   userId: number
   @Field(() => Int)
   collectionId: number
+}
+
+@InputType()
+export class TransferCollectionOwnershipInput extends DangerZoneInput {
+  @Field(() => Int)
+  userId: number
+  @Field(() => Int)
+  collectionId: number
+}
+
+@InputType()
+export class LeaveCollectionInput {
+  @Field(() => Int)
+  collectionId: number
+}
+
+@InputType()
+export class AcceptCollectionInviteInput extends LeaveCollectionInput {
+  @Field(() => Boolean)
+  accept: boolean
 }

@@ -1,38 +1,40 @@
 <template>
   <text-field
+    :label="$t('dangerZone.totp')"
     v-if="userStore.user?.totpEnable && !passwordMode"
-    :label="$t('generic.dangerZone.totp')"
     autofocus
-    :model-value="totp"
-    parent-classes="flex-col"
     @keydown.enter="$emit('confirm')"
     @update:model-value="$emit('update:totp', $event)"
+    :model-value="totp"
+    parent-classes="flex-col"
+    type="number"
+    max="6"
   >
     <div class="flex justify-end">
       <a
         class="select-none cursor-pointer text-blue"
         @click="$emit('update:passwordMode', true)"
       >
-        {{ $t("generic.dangerZone.usePassword") }}
+        {{ $t("dangerZone.usePassword") }}
       </a>
     </div>
   </text-field>
   <text-field
+    :label="$t('dangerZone.password')"
     v-else
-    :label="$t('generic.dangerZone.password')"
     autofocus
     type="password"
-    :model-value="password"
-    parent-classes="flex-col"
     @keydown.enter="$emit('confirm')"
     @update:model-value="$emit('update:password', $event)"
+    :model-value="password"
+    parent-classes="flex-col"
   >
-    <div v-if="userStore.user?.totpEnable" class="flex justify-end">
+    <div class="flex justify-end" v-if="userStore.user?.totpEnable">
       <a
         class="select-none cursor-pointer text-blue"
         @click="$emit('update:passwordMode', false)"
       >
-        {{ $t("generic.dangerZone.useTotp") }}
+        {{ $t("dangerZone.useTotp") }}
       </a>
     </div>
   </text-field>
@@ -43,7 +45,7 @@ import TextField from "@/components/Framework/Input/TextField.vue";
 import { useUserStore } from "@/stores/user.store";
 import { onMounted } from "vue";
 const userStore = useUserStore();
-defineProps({
+const props = defineProps({
   password: String,
   totp: String,
   passwordMode: Boolean,

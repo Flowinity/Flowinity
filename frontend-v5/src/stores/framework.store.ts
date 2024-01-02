@@ -1,8 +1,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import theme from "@/plugins/theme";
+import { useRouter } from "vue-router";
 
 export const useFrameworkStore = defineStore("framework", () => {
+  const router = useRouter();
   const dialogsOpened = ref(0);
   const breakpoints = ref({
     mobile: false,
@@ -45,5 +47,9 @@ export const useFrameworkStore = defineStore("framework", () => {
   window.addEventListener("resize", refreshBreakpoints);
   refreshBreakpoints();
 
-  return { dialogsOpened, breakpoints };
+  async function push(path: string) {
+    await router.push(path);
+  }
+
+  return { dialogsOpened, breakpoints, push };
 });

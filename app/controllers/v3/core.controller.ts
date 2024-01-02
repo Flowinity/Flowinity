@@ -121,10 +121,10 @@ export class CoreControllerV3 {
         weather.cached = true
       }
     } catch {}
-    if (!weather?.temp) {
+    if (weather?.temp === undefined && req.ip) {
       weather = await this.coreService.getWeather(req.ip)
     }
-    if (weather.error) {
+    if (weather?.error || !req.ip) {
       throw Errors.WEATHER_NOT_RESPONDING
     } else {
       // redis cache for 5 minutes
@@ -152,7 +152,7 @@ export class CoreControllerV3 {
       req.body.tpuLink,
       req.body.content,
       req.body.email,
-      <string>req.ip,
+      req.ip || "0.0.0.0",
       user?.id
     )
   }

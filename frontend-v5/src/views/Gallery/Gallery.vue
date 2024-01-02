@@ -1,6 +1,6 @@
 <template>
-  <upload-editor v-model="$app.dialogs.gallery.edit.value" />
-  <OCRScanned v-model="$app.dialogs.gallery.ocr.value" />
+  <upload-editor v-model="appStore.dialogs.gallery.edit.value" />
+  <OCRScanned v-model="appStore.dialogs.gallery.ocr.value" />
   <upload-file v-model="appStore.dialogs.gallery.upload.value" />
   <add-to-collection
     v-model="appStore.dialogs.gallery.collect.value"
@@ -9,30 +9,30 @@
   />
   <delete-upload v-model="appStore.dialogs.gallery.delete.value" />
   <gallery-navigation
-    ref="galleryNav"
     v-model:search="search"
+    @refresh="getGallery()"
     v-model:filter="filter"
     v-model:sort="sort"
     v-model:order="order"
     :types="types"
-    @refresh="getGallery()"
+    ref="galleryNav"
   />
   <gallery-core
     :id="id"
-    ref="galleryCore"
-    v-memo="[items, selected, loading]"
     :loading="loading"
     :type="type"
+    ref="galleryCore"
     :selected="selected"
     :items="items"
     @select="select($event)"
+    v-memo="[items, selected, loading]"
   >
-    <template v-for="(_, name) in $slots" #[name]="slotData">
+    <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
       <slot :name="name" v-bind="slotData" />
     </template>
     <template
-      v-if="type === GalleryType.Starred"
       #extra-item-attributes="{ item }: { item: Upload }"
+      v-if="type === GalleryType.Starred"
     >
       <p>
         {{
@@ -54,8 +54,8 @@
     </template>
   </gallery-core>
   <tpu-pager
-    v-model="page"
     class="mb-2"
+    v-model="page"
     :total-pages="pager?.totalPages || 1"
   />
   <div class="mb-2 text-center text-medium-emphasis-dark">
@@ -78,7 +78,11 @@ import {
 import { computed, onMounted, onUnmounted, type Ref, ref, watch } from "vue";
 import { GalleryQuery } from "@/graphql/gallery/gallery.graphql";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
-import { useApolloClient } from "@vue/apollo-composable";
+import {
+  useApolloClient,
+  useSubscription,
+  UseSubscriptionReturn
+} from "@vue/apollo-composable";
 import TpuPager from "@/components/Framework/Pager/TpuPager.vue";
 import DeleteUpload from "@/components/Gallery/Dialogs/DeleteUpload.vue";
 import { useAppStore } from "@/stores/app.store";
@@ -91,6 +95,8 @@ import OCRScanned from "@/components/Gallery/Dialogs/OCRScanned.vue";
 import UploadEditor from "@/components/Gallery/Dialogs/UploadEditor.vue";
 import { useI18n } from "vue-i18n";
 import dayjs from "@/plugins/dayjs";
+import TextField from "@/components/Framework/Input/TextField.vue";
+import { UploadsSubscription } from "@/graphql/gallery/subscriptions/createUploads.graphql";
 
 const { t } = useI18n();
 const page = ref(1);
@@ -138,6 +144,7 @@ function pushCollection(data: AddToCollectionInput) {
 
 async function getGallery() {
   loading.value = true;
+  generateSubscription();
   const {
     data: { gallery }
   } = await useApolloClient().client.query({
@@ -293,12 +300,25 @@ useSocket.gallery.on("update", (data: Upload[]) => {
 useSocket.gallery.on("delete", (data: number) => {
   items.value = items.value.filter((upload) => upload.id !== data);
 });
+let createSubscription: null | UseSubscriptionReturn<any, any> = null;
 
-useSocket.gallery.on("create", (data: { upload: Upload; url: String }[]) => {
-  if (page.value !== 1 || props.type !== GalleryType.Personal) return;
-  items.value = [...data.map((d) => d.upload), ...items.value];
-  console.log("update");
-});
+function generateSubscription() {
+  createSubscription?.stop();
+  createSubscription = useSubscription(UploadsSubscription, {
+    input: {
+      type: props.type,
+      collectionId: typeof props.id === "number" ? props.id : undefined
+    }
+  });
+}
+
+watch(
+  () => createSubscription?.result,
+  (res) => {
+    if (page.value !== 1) return;
+    items.value = [...res.value.data.createUpload.upload, ...items.value];
+  }
+);
 
 defineExpose({
   getGallery

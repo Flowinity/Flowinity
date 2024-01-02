@@ -4,7 +4,12 @@
   "plugins": ["@typescript-eslint"],
   "ignorePatterns": ["projects/**/*"],
   "rules": {
-    "jsdoc/check-indentation": "off"
+    "jsdoc/check-indentation": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_" }
+    ]
   },
   "globals": {
     "NodeJS": true,

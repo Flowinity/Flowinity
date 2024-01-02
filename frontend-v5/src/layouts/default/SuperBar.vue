@@ -1,27 +1,3 @@
-<script setup lang="ts">
-import { RailMode, useAppStore } from "@/stores/app.store";
-import SuperBarItem from "@/components/Framework/Navigation/SuperBarItem.vue";
-import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
-import UserAvatar from "@/components/User/UserAvatar.vue";
-import { useUserStore } from "@/stores/user.store";
-import RiNotificationLine from "vue-remix-icons/icons/ri-notification-line.vue";
-import RiNotificationFill from "vue-remix-icons/icons/ri-notification-fill.vue";
-import UserStatusPicker from "@/components/User/UserStatusPicker.vue";
-import { useChatStore } from "@/stores/chat.store";
-import { useRoute } from "vue-router";
-import functions from "@/plugins/functions";
-import { useExperimentsStore } from "@/stores/experiments.store";
-
-const appStore = useAppStore();
-const props = defineProps({
-  drawer: Boolean
-});
-const userStore = useUserStore();
-const chatStore = useChatStore();
-const experimentsStore = useExperimentsStore();
-const route = useRoute();
-</script>
-
 <template>
   <aside
     class="border-r-2 superbar sticky z-50 dark:border-outline-dark dark:bg-sidebar-dark p-3 border-dark space-x-1 flex flex-col overflow-y-auto overflow-x-hidden"
@@ -32,16 +8,16 @@ const route = useRoute();
       <div class="items-start">
         <div class="flex flex-col gap-y-4">
           <img
-            v-tooltip.right="'Flowinity'"
             src="@/assets/flowinity.svg"
             alt="Flowinity Logo"
-            class="cursor-pointer"
-            draggable="false"
-            style="width: 46.55px; height: 46.55px"
             @click="
               $router.push('/');
               appStore.navigation.mode = RailMode.HOME;
             "
+            class="cursor-pointer"
+            draggable="false"
+            v-tooltip.right="'Flowinity'"
+            style="width: 46.55px; height: 46.55px"
           />
           <super-bar-item
             :highlighted="true"
@@ -67,9 +43,12 @@ const route = useRoute();
             )"
             :key="item.id"
             :selected="appStore.navigation.mode === item.id"
+            @click="appStore.navigation.mode = item.id"
             class="text-gray"
             :badge="item.badge"
-            @click="appStore.navigation.mode = item.id"
+            draggable="true"
+            @dragstart="handleDragStart"
+            @dragend="handleDragEnd"
           >
             <component
               :is="
@@ -89,10 +68,10 @@ const route = useRoute();
               v-for="item in chatStore.chats"
               :key="item.id"
               :selected="route.params.chatId === item.association.id"
+              @click="appStore.navigation.mode = item.id"
               class="flex justify-center align-middle items-center rounded-xl"
               :badge="item?.unread"
               style="height: 47px"
-              @click="appStore.navigation.mode = item.id"
             >
               <user-avatar :src="functions.avatar(item)" />
             </super-bar-item>
@@ -108,9 +87,9 @@ const route = useRoute();
             )"
             :key="item.id"
             :selected="appStore.navigation.mode === item.id"
+            @click="appStore.navigation.mode = item.id"
             class="text-gray"
             highlighted
-            @click="appStore.navigation.mode = item.id"
           >
             <component
               :is="
@@ -140,10 +119,91 @@ const route = useRoute();
             </template>
           </VDropdown>
         </div>
+        {{ isDragging }} {{ isHovering }}
       </div>
     </div>
+    <teleport to="#main-area" v-if="isDragging">
+      <div class="absolute top-0 left-0 z-50 w-full">
+        <div class="flex gap-4 justify-center pt-4 w-full">
+          <tpu-button
+            icon
+            color="red"
+            @dragover.prevent
+            @dragenter="handleDragEnter($event, 'close')"
+            @drop="handleDrop($event, 'close')"
+            :variant="isHovering !== 'close' ? 'tonal' : 'filled'"
+          >
+            <ri-close-line style="width: 40px" />
+          </tpu-button>
+          <tpu-button icon>
+            <ri-arrow-right-s-line style="width: 40px" />
+          </tpu-button>
+        </div>
+      </div>
+    </teleport>
   </aside>
 </template>
+
+<script setup lang="ts">
+import { RailMode, useAppStore } from "@/stores/app.store";
+import SuperBarItem from "@/components/Framework/Navigation/SuperBarItem.vue";
+import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
+import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
+import UserAvatar from "@/components/User/UserAvatar.vue";
+import { useUserStore } from "@/stores/user.store";
+import RiNotificationLine from "vue-remix-icons/icons/ri-notification-line.vue";
+import RiNotificationFill from "vue-remix-icons/icons/ri-notification-fill.vue";
+import UserStatusPicker from "@/components/User/UserStatusPicker.vue";
+import { useChatStore } from "@/stores/chat.store";
+import { useRoute } from "vue-router";
+import functions from "@/plugins/functions";
+import { useExperimentsStore } from "@/stores/experiments.store";
+import { ref } from "vue";
+import TpuButton from "@/components/Framework/Button/TpuButton.vue";
+import RiCloseLine from "vue-remix-icons/icons/ri-close-line.vue";
+import RiArrowRightSLine from "vue-remix-icons/icons/ri-arrow-right-s-line.vue";
+
+const appStore = useAppStore();
+const props = defineProps({
+  drawer: Boolean
+});
+const userStore = useUserStore();
+const chatStore = useChatStore();
+const experimentsStore = useExperimentsStore();
+const route = useRoute();
+const isDragging = ref(false);
+const isHovering = ref<"close" | "move" | null>(null);
+
+const handleDragStart = (e: DragEvent) => {
+  isDragging.value = true;
+};
+
+const handleDragEnd = (e: DragEvent) => {
+  isDragging.value = false;
+};
+
+const handleDragEnter = (e: DragEvent, type: "close" | "move") => {
+  e.preventDefault();
+  e.stopPropagation();
+  isHovering.value = type;
+};
+
+const handleDragLeave = (e: DragEvent, type: "close" | "move") => {
+  e.preventDefault();
+  e.stopPropagation();
+  isHovering.value = null;
+};
+
+const handleDrop = (e: DragEvent, type: "close" | "move") => {
+  e.preventDefault();
+  e.stopPropagation();
+  if (type === "close") {
+    appStore.navigation.mode = RailMode.HOME;
+  }
+  isHovering.value = null;
+  isDragging.value = false;
+};
+</script>
 
 <style scoped>
 .superbar {

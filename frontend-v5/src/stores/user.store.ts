@@ -1,4 +1,4 @@
-import { ref, computed, type ComputedRef } from "vue";
+import { ref, computed, markRaw, type Raw, type ComputedRef } from "vue";
 import { defineStore } from "pinia";
 import type {
   BlockedUser,
@@ -8,11 +8,14 @@ import type {
 } from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { UpdateUserMutation } from "@/graphql/user/update.graphql";
+import { useI18n } from "vue-i18n";
+import { GetUserQuery } from "@/graphql/user/user.graphql";
 
 export const useUserStore = defineStore("user", () => {
   const user = ref<User | null>(null);
   const tracked = ref<PartialUserFriend[]>([]);
   const blocked = ref<BlockedUser[]>([]);
+  const token = ref<string | null>(localStorage.getItem("token"));
 
   const gold = computed(() => {
     return user?.value?.plan?.internalName === "GOLD";
@@ -80,6 +83,28 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
+  async function init() {
+    try {
+      const userLocal = localStorage.getItem("userStore");
+      if (userLocal) {
+        user.value = JSON.parse(userLocal);
+      }
+    } catch {
+      //
+    }
+
+    const {
+      data: { currentUser, trackedUsers, blockedUsers }
+    } = await useApolloClient().client.query({
+      query: GetUserQuery,
+      fetchPolicy: "network-only"
+    });
+    user.value = currentUser;
+    tracked.value = trackedUsers;
+    blocked.value = blockedUsers;
+    localStorage.setItem("userStore", JSON.stringify(user.value));
+  }
+
   return {
     user,
     gold,
@@ -88,6 +113,8 @@ export const useUserStore = defineStore("user", () => {
     users,
     unreadNotifications,
     updatingUser,
-    updateUser
+    updateUser,
+    token,
+    init
   };
 });

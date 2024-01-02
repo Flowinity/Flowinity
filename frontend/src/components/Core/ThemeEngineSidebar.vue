@@ -256,13 +256,11 @@ import VueMonacoEditor from "@guolao/vue-monaco-editor";
 import { useTheme } from "vuetify/lib/framework.mjs";
 
 export default defineComponent({
-  name: "ThemeEngineSidebar",
   components: {
     VueMonacoEditor
   },
   setup() {
     const theme = useTheme();
-
     return {
       toggleTheme: (themeName: string) => {
         localStorage.setItem("theme", themeName);
@@ -270,6 +268,7 @@ export default defineComponent({
       }
     };
   },
+  emits: ["editor"],
   data() {
     return {
       theme: useTheme().global.name,

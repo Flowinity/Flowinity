@@ -5,11 +5,16 @@ export const GetUserQuery = gql`
     currentUser {
       username
       email
+      pulse
+      groupPrivacy
+      friendRequests
+      profileLayout
       description
       administrator
       darkTheme
       emailVerified
       banned
+      createdAt
       inviteId
       discordPrecache
       avatar
@@ -20,6 +25,8 @@ export const GetUserQuery = gql`
       subscriptionId
       itemsPerPage
       banner
+      pendingAutoCollects
+      scopes
       alternatePasswords {
         scopes
         totp
@@ -70,17 +77,48 @@ export const GetUserQuery = gql`
         dismissed
         message
         route
+        createdAt
       }
       integrations {
         type
         providerUsername
         providerUserId
-        providerUserCache
-        createdAt
         id
         error
         expiresAt
       }
+      homeWidgets {
+        rows {
+          widgets {
+            type
+            props
+          }
+        }
+        default
+      }
+    }
+    trackedUsers {
+      username
+      id
+      createdAt
+      administrator
+      moderator
+      avatar
+      blocked
+      status
+      nameColor
+      bot
+      nickname {
+        nickname
+      }
+    }
+    blockedUsers {
+      id
+      userId
+      createdAt
+      updatedAt
+      blockedUserId
+      silent
     }
   }
 `;

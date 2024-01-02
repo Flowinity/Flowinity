@@ -15,11 +15,18 @@ import Errors from "@app/lib/errors"
 import { Plan } from "@app/models/plan.model"
 import { CacheService } from "@app/services/cache.service"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
-import { Filter, GalleryInput, Order, Sort, Type } from "@app/classes/graphql/gallery/galleryInput"
+import {
+  Filter,
+  GalleryInput,
+  Order,
+  Sort,
+  Type
+} from "@app/classes/graphql/gallery/galleryInput"
 import { PaginatedGalleryResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import { CollectionUser } from "@app/models/collectionUser.model"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { GraphQLError } from "graphql/error"
+import { pubSub } from "@app/lib/graphql/pubsub"
 
 @Service()
 export class GalleryService {
@@ -113,6 +120,7 @@ export class GalleryService {
         }
       })
       await upload.destroy()
+      pubSub.publish(`DELETE_UPLOAD:${userId}`, id)
       socket.of(SocketNamespaces.GALLERY).to(userId).emit("delete", id)
 
       return true
@@ -188,10 +196,10 @@ export class GalleryService {
             input.type === Type.COLLECTION
               ? { model: CollectionItem, as: "item" }
               : input.type === Type.STARRED
-              ? { model: Star, as: "starred" }
-              : input.type === Type.AUTO_COLLECT
-              ? { model: AutoCollectApproval, as: "autoCollectApproval" }
-              : {},
+                ? { model: Star, as: "starred" }
+                : input.type === Type.AUTO_COLLECT
+                  ? { model: AutoCollectApproval, as: "autoCollectApproval" }
+                  : {},
             "createdAt",
             input.order || "DESC"
           ]
@@ -251,8 +259,8 @@ export class GalleryService {
         input.type === Type.PERSONAL || input.filters?.includes(Filter.OWNED)
           ? id
           : input.filters?.includes(Filter.SHARED)
-          ? { [Op.not]: id }
-          : undefined,
+            ? { [Op.not]: id }
+            : undefined,
       [Op.or]: [
         input.filters?.includes(Filter.INCLUDE_METADATA)
           ? [{ textMetadata: { [Op.like]: "%" + input.search + "%" } }]
@@ -616,6 +624,12 @@ export class GalleryService {
     })
     if (star) {
       await star.destroy()
+      pubSub.publish(`UPDATE_UPLOADS:${userId}`, [
+        {
+          ...upload.toJSON(),
+          starred: null
+        }
+      ])
       socket
         .of(SocketNamespaces.GALLERY)
         .to(userId)
@@ -634,6 +648,12 @@ export class GalleryService {
         userId,
         attachmentId: upload.id
       })
+      pubSub.publish(`UPDATE_UPLOADS:${userId}`, [
+        {
+          ...upload.toJSON(),
+          starred: star.toJSON()
+        }
+      ])
       socket
         .of(SocketNamespaces.GALLERY)
         .to(userId)

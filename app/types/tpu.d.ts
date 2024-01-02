@@ -138,4 +138,5 @@ declare type TpuConfig = {
         applicationUrl: string
       }
     | undefined
+  isV5?: boolean
 }

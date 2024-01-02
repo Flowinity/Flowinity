@@ -285,7 +285,10 @@
                       :message="message"
                       :read-receipt="readReceipt"
                     />
-                    {{ $user.users[readReceipt.userId]?.username }}
+                    {{
+                      $user.users[readReceipt.user.id || readReceipt.userId]
+                        ?.username
+                    }}
                   </span>
                 </v-container>
               </v-card>
@@ -298,7 +301,7 @@
                 <v-tooltip activator="parent" location="top">
                   <ReadReceipt
                     v-for="readReceipt in message.readReceipts"
-                    :key="readReceipt.userId"
+                    :key="readReceipt.user.id || readReceipt.userId"
                     :message="message"
                     :read-receipt="readReceipt"
                     class="my-1"

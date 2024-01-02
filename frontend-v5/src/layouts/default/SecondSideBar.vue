@@ -12,9 +12,11 @@ defineProps({
   <aside
     class="transition-width border-l-2 sticky z-50 dark:border-outline-dark dark:bg-sidebar-dark border-dark flex flex-col overflow-y-auto overflow-x-hidden"
     :style="{ minWidth: width, width: width }"
-    :class="{ 'h-screen': !drawer, 'h-[calc(100vh-64px)]': drawer }"
+    style="max-height: calc(100vh - 64px)"
   >
-    <slot />
+    <div>
+      <slot />
+    </div>
   </aside>
 </template>
 

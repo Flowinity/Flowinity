@@ -1,18 +1,18 @@
 import {
-    AllowNull,
-    BelongsTo,
-    BelongsToMany,
-    Column,
-    DataType,
-    Default,
-    DefaultScope,
-    HasMany,
-    HasOne,
-    IsEmail,
-    Length,
-    Model,
-    Table,
-    Unique
+  AllowNull,
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  Default,
+  DefaultScope,
+  HasMany,
+  HasOne,
+  IsEmail,
+  Length,
+  Model,
+  Table,
+  Unique
 } from "sequelize-typescript"
 import { Plan } from "@app/models/plan.model"
 import { Theme } from "@app/models/theme.model"
@@ -38,7 +38,10 @@ import { Stats } from "@app/classes/graphql/core/core"
 import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { BlockedUser } from "@app/models/blockedUser.model"
 import { GraphQLJSON } from "graphql-scalars"
-import { FriendRequestPrivacy, GroupPrivacy } from "@app/classes/graphql/user/privacy"
+import {
+  FriendRequestPrivacy,
+  GroupPrivacy
+} from "@app/classes/graphql/user/privacy"
 import { HomeWidgets } from "@app/classes/graphql/home/homeWidgets"
 
 @DefaultScope(() => ({
@@ -505,4 +508,9 @@ export class User extends Model {
 
   @HasOne(() => BlockedUser, "userId")
   blocked?: BlockedUser
+
+  @Field(() => Boolean, {
+    defaultValue: false
+  })
+  legacy?: boolean = false
 }

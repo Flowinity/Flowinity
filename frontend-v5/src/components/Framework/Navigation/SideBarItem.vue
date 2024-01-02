@@ -33,23 +33,24 @@ const selected = computed(() => {
     <a
       :href="item?.path || to"
       class="w-full"
-      tabindex="-1"
       @click.prevent.stop
+      tabindex="-1"
     >
       <div
-        v-wave
         class="rounded-2xl hover:bg-outline-dark cursor-pointer p-2 flex items-center h-full w-full dark:fill-white"
         :class="{
           'bg-outline-dark': selected || props.highlighted,
           'rounded-full': props.highlighted
         }"
-        tabindex="0"
-        v-bind="$attrs"
         @click.prevent.stop="
-          !selected && !$attrs['onClick'] ? router.push(item?.path || to) : '';
+          $attrs['onClick'] && $attrs['onClick']();
+          !selected ? router.push(item?.path || to) : () => {};
           props.closeOnClick ? (appStore.drawer = false) : () => {};
         "
+        v-wave
+        tabindex="0"
         @keydown.enter="$event.target?.click()"
+        v-bind="$attrs"
         @keydown.space="
           $event.preventDefault();
           $event.target?.click();

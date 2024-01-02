@@ -12,7 +12,9 @@ export class PulseSysInfo {
 export class Pulse {
   @Field()
   type: string
-  @Field()
+  @Field({
+    nullable: true
+  })
   id: string
   @Field()
   action: string
@@ -20,6 +22,7 @@ export class Pulse {
   route: string
   @Field()
   device: string
+  @Field(() => PulseSysInfo)
   sysInfo: PulseSysInfo
   @Field(() => String, {
     nullable: true
@@ -34,6 +37,15 @@ export class Pulse {
 @InputType("SinglePulseInput")
 @ObjectType()
 export class SinglePulse extends Pulse {
+  @Field()
+  timeSpent: number
+}
+
+@InputType("PulseUpdateInput")
+@ObjectType()
+export class PulseUpdate {
+  @Field()
+  id: string
   @Field()
   timeSpent: number
 }

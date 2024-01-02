@@ -1,8 +1,8 @@
 <template>
   <card class="rounded-lg shadow" secondary>
-    <div class="cursor-pointer p-4" @click="expanded = !expanded">
+    <div @click="_expanded = !_expanded" class="cursor-pointer p-4">
       <div class="flex items-center justify-between select-none">
-        <h3 v-memo="[$slots.header]" class="text-lg font-semibold">
+        <h3 class="text-lg font-semibold" v-memo="[$slots.header]">
           <slot name="header" />
         </h3>
         <RiArrowDownLine
@@ -13,8 +13,8 @@
       </div>
     </div>
     <div
+      :class="{ 'expanded-show': _expanded, 'expanded-collapse': !_expanded }"
       ref="expandContent"
-      :class="{ 'expanded-show': expanded, 'expanded-collapse': !expanded }"
       class="expansion-card break-all m-4"
     >
       <div ref="innerContent">
@@ -25,22 +25,45 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import Card from "@/components/Framework/Card/Card.vue";
 import RiArrowDownLine from "vue-remix-icons/icons/ri-arrow-down-line.vue";
-const expanded = ref(false);
+const props = defineProps({
+  expanded: {
+    type: Boolean,
+    default: false
+  }
+});
+
+const _expanded = ref(false);
 const expandContent = ref<Element | null>(null);
 const innerContent = ref<Element | null>(null);
 let resizeObserver: ResizeObserver | null = null;
 const height = ref("0px");
+const emit = defineEmits(["update:expanded"]);
 
 onMounted(() => {
+  _expanded.value = props.expanded;
   height.value = expandContent.value?.scrollHeight + "px";
   resizeObserver = new ResizeObserver(() => {
     height.value = expandContent.value?.scrollHeight + "px";
   });
   resizeObserver.observe(innerContent.value!!);
 });
+
+watch(
+  () => _expanded.value,
+  (value) => {
+    emit("update:expanded", value);
+  }
+);
+
+watch(
+  () => props.expanded,
+  (value) => {
+    _expanded.value = value;
+  }
+);
 
 onUnmounted(() => {
   resizeObserver?.disconnect();

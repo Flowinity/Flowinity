@@ -1,126 +1,176 @@
 <template>
-  <div class="communications">
-    <div
-      :key="chatStore.selectedChatAssociationId"
-      class="messages position-relative"
-    >
-      <div id="sentinel-bottom" ref="sentinelBottom"></div>
-      <CommsMessage
-        v-for="(message, index) in messagesStore.messages[
-          chatStore.selectedChatAssociationId
-        ] || []"
-        :id="'message-id-' + message.id"
-        :ref="`message-${index}`"
-        :key="message.id"
-        :unread-id="0"
-        class="mr-2 ml-2"
-        :style="{ zIndex: 1000 - index }"
-        :class="{
-          'message-jumped': message.id === replyId,
-          'message-mention': message.content?.includes(`<@${$user.user?.id}>`)
-        }"
-        :date-separator="dateSeparator(index)"
-        :editing="editing === message.id"
-        :editing-text="editingText"
-        :message="message"
-        :index="index"
-        :merge="$chat.merge(message, index)"
-        @edit-text="editingText = $event"
-        @reply="replyId = $event"
-      />
-    </div>
-    <div class="input mx-4 my-2">
-      <card v-if="replyId" :padding="false" class="p-3 flex justify-between">
-        <message-reply
-          :line="false"
-          :reply="
-            messagesStore.selected.find((message) => message.id === replyId)
+  <div class="flex h-full" id="outer-chat">
+    <div class="communications flex-1" id="communications">
+      <div
+        class="messages position-relative"
+        id="messages"
+        :key="chatStore.selectedChatAssociationId"
+        ref="messages"
+      >
+        <div id="sentinel-bottom" ref="sentinelBottom"></div>
+        <comms-message
+          :unread-id="0"
+          class="mr-2 ml-2"
+          v-for="(message, index) in messagesStore.messages[
+            chatStore.selectedChatAssociationId
+          ] || []"
+          :id="'message-id-' + message.id"
+          :ref="`message-${index}`"
+          :key="message.id"
+          :class="{
+            'message-jumped': message.id === replyId,
+            'message-mention': message.content?.includes(`<@${$user.user?.id}>`)
+          }"
+          :date-separator="dateSeparator(index)"
+          :editing="editing === message.id"
+          @update:editing="editing = $event"
+          :message="message"
+          :index="index"
+          @reply="
+            replyId = $event;
+            replying = true;
           "
+          @auto-scroll="autoScroll"
+          :merge="$chat.merge(message, index)"
         />
-        <tpu-button
-          icon
-          variant="passive"
-          style="width: 20px"
-          @click="replyId = undefined"
-        >
-          <RiCloseLine style="width: 40px" />
-        </tpu-button>
-      </card>
-      <div class="flex-col">
-        <comms-input
-          ref="input"
-          v-model="content"
-          @keydown.enter.exact="sendMessage"
-          @update:model-value="type"
-        />
-        <div class="flex justify-between">
-          <div class="flex items-center">
-            <div class="user-avatars">
-              <UserAvatar
-                v-for="typer in excludedTypers"
-                :key="typer.userId"
-                :user-id="typer.userId"
-                class="user-avatar"
-                size="20"
-              />
+      </div>
+      <div class="input mx-4 my-2">
+        <div class="flex-col">
+          <comms-input
+            v-model="content"
+            ref="input"
+            @keydown.enter.exact="sendMessage"
+            @update:model-value="type"
+            @send="sendMessage"
+          >
+            <div
+              style="
+                overflow: hidden;
+                transition: max-height 0.05s ease-in;
+                margin-bottom: -8px;
+                max-height: 0;
+              "
+              :style="{
+                'max-height': replying ? '36px' : '0'
+              }"
+            >
+              <div class="flex w-full justify-between">
+                <message-reply
+                  :line="false"
+                  :reply="
+                    messagesStore.selected.find(
+                      (message) => message.id === replyId
+                    )
+                  "
+                />
+                <tpu-button icon variant="passive" @click="replying = false">
+                  <RiCloseLine style="width: 20px" />
+                </tpu-button>
+              </div>
+            </div>
+          </comms-input>
+          <div class="flex justify-between text-sm mt-2">
+            <div class="flex items-center">
+              <div class="user-avatars">
+                <user-avatar
+                  v-for="typer in excludedTypers"
+                  :user-id="typer.userId"
+                  class="user-avatar"
+                  :key="typer.userId"
+                  size="20"
+                />
+              </div>
+              <p
+                class="text-medium-emphasis-dark ml-2"
+                v-if="excludedTypers.length"
+              >
+                {{
+                  t(
+                    "chats.typing",
+                    {
+                      users: excludedTypers
+                        .map((typer) => userStore.users[typer.userId]?.username)
+                        .join(", ")
+                    },
+                    excludedTypers.length > 1
+                      ? 1
+                      : excludedTypers.length > 5
+                        ? 2
+                        : 0
+                  )
+                }}
+              </p>
             </div>
             <p
-              v-if="excludedTypers.length"
-              class="text-medium-emphasis-dark ml-2"
+              class="text-medium-emphasis-dark"
+              :class="{ 'text-red': content.length > 4000 }"
             >
-              {{
-                t(
-                  "chats.typing",
-                  {
-                    users: excludedTypers
-                      .map((typer) => userStore.users[typer.userId]?.username)
-                      .join(", ")
-                  },
-                  excludedTypers.length > 1
-                    ? 1
-                    : excludedTypers.length > 5
-                    ? 2
-                    : 0
-                )
-              }}
+              {{ content.length }}/4000
             </p>
           </div>
-          <p class="text-medium-emphasis-dark">{{ content.length }}/4000</p>
         </div>
       </div>
+    </div>
+    <div class="h-full">
+      <second-side-bar
+        class="top-0 relative h-full right-0 max-sm:hidden sidebar-transition"
+        v-if="
+          chatStore.uiOptions.memberSidebar || chatStore.uiOptions.searchSidebar
+        "
+        :width="chatStore.uiOptions.searchSidebar ? '384px' : '256px'"
+      >
+        <search-side-bar v-show="chatStore.uiOptions.searchSidebar" />
+        <member-side-bar
+          v-show="
+            chatStore.uiOptions.memberSidebar &&
+            !chatStore.uiOptions.searchSidebar &&
+            !chatStore.uiOptions.pinSidebar
+          "
+        />
+        <pins-side-bar v-show="chatStore.uiOptions.pinSidebar" />
+      </second-side-bar>
     </div>
   </div>
 
   <teleport to="#appbar-options">
     <transition mode="out-in" name="slide-up" appear>
       <div class="flex gap-2">
+        <comms-search-input
+          ref="searchInput"
+          v-model="chatStore.uiOptions.search"
+          :placeholder="t('chats.search')"
+          :style="{
+            width: chatStore.uiOptions.searchSidebar ? '270px' : 'unset'
+          }"
+          @keydown.enter="chatStore.uiOptions.searchSidebar = true"
+        />
+
         <tpu-button
+          icon
+          variant="passive"
           v-tooltip.bottom="
             chatStore.uiOptions.searchSidebar
               ? t('chats.searchSidebar.hide')
               : t('chats.searchSidebar.show')
           "
-          icon
-          variant="passive"
           @click="
-            chatStore.uiOptions.searchSidebar =
-              !chatStore.uiOptions.searchSidebar
+            chatStore.uiOptions.pinSidebar = !chatStore.uiOptions.pinSidebar
           "
         >
-          <RiSearchLine
-            v-if="!chatStore.uiOptions.searchSidebar"
+          <RiPushpin2Line
             style="width: 20px"
+            v-if="!chatStore.uiOptions.pinSidebar"
           />
-          <RiSearchFill v-else style="width: 20px" />
+          <RiPushpin2Fill style="width: 20px" v-else />
         </tpu-button>
         <tpu-button
+          icon
+          variant="passive"
           v-tooltip.bottom="
             chatStore.uiOptions.memberSidebar
               ? t('chats.memberSidebar.hide')
               : t('chats.memberSidebar.show')
           "
-          icon
-          variant="passive"
           @click="
             chatStore.uiOptions.searchSidebar &&
             chatStore.uiOptions.memberSidebar
@@ -131,34 +181,16 @@
           "
         >
           <RiUserLine
+            style="width: 20px"
             v-if="
               !chatStore.uiOptions.memberSidebar ||
               chatStore.uiOptions.searchSidebar
             "
-            style="width: 20px"
           />
-          <RiUserFill v-else style="width: 20px" />
+          <RiUserFill style="width: 20px" v-else />
         </tpu-button>
       </div>
     </transition>
-  </teleport>
-
-  <teleport to="#main-flex">
-    <second-side-bar
-      v-if="
-        chatStore.uiOptions.memberSidebar || chatStore.uiOptions.searchSidebar
-      "
-      class="fixed top-0 left-0 max-sm:hidden sidebar-transition"
-      :width="chatStore.uiOptions.searchSidebar ? '384px' : '256px'"
-    >
-      <search-side-bar v-show="chatStore.uiOptions.searchSidebar" />
-      <member-side-bar
-        v-show="
-          chatStore.uiOptions.memberSidebar &&
-          !chatStore.uiOptions.searchSidebar
-        "
-      />
-    </second-side-bar>
   </teleport>
 </template>
 
@@ -179,7 +211,6 @@ import CommsMessage from "@/components/Communications/CommsMessage.vue";
 import CommsInput from "@/components/Communications/CommsInput.vue";
 import { useUserStore } from "@/stores/user.store";
 import { Chat, Message, MessageType, UserStoredStatus } from "@/gql/graphql";
-import { useSocket } from "@/boot/socket.service";
 import { useMessagesStore } from "@/stores/messages.store";
 import Card from "@/components/Framework/Card/Card.vue";
 import MessageReply from "@/components/Communications/MessageReply.vue";
@@ -193,6 +224,8 @@ import { useRoute } from "vue-router";
 import RiAtFill from "vue-remix-icons/icons/ri-at-fill.vue";
 import RiAtLine from "vue-remix-icons/icons/ri-at-line.vue";
 import functions from "@/plugins/functions";
+import TpuSpinner from "@/components/Framework/Spinner/TpuSpinner.vue";
+import RiCheckLine from "vue-remix-icons/icons/ri-check-line.vue";
 import RiUserLine from "vue-remix-icons/icons/ri-user-line.vue";
 import RiUserFill from "vue-remix-icons/icons/ri-user-fill.vue";
 import RiSearchLine from "vue-remix-icons/icons/ri-search-line.vue";
@@ -200,20 +233,30 @@ import RiSearchFill from "vue-remix-icons/icons/ri-search-fill.vue";
 import SecondSideBar from "@/layouts/default/SecondSideBar.vue";
 import MemberSideBar from "@/layouts/default/MemberSideBar.vue";
 import SearchSideBar from "@/layouts/default/SearchSideBar.vue";
-
+import { NewMessageSubscription } from "@/graphql/chats/subscriptions/newMessage.graphql";
+import { useSubscription } from "@vue/apollo-composable";
+import RiPushpin2Line from "vue-remix-icons/icons/ri-pushpin-2-line.vue";
+import RiPushpin2Fill from "vue-remix-icons/icons/ri-pushpin-2-fill.vue";
+import TextField from "@/components/Framework/Input/TextField.vue";
+import CommsSearchInput from "@/components/Communications/CommsSearchInput.vue";
+import PinsSideBar from "@/layouts/default/PinsSideBar.vue";
 const { t } = useI18n();
 const chatStore = useChatStore();
 const userStore = useUserStore();
 const messagesStore = useMessagesStore();
 
 const replyId = ref<number | undefined>(undefined);
+const replying = ref(false);
 const editing = ref<number | undefined>(undefined);
-const editingText = ref("");
 const content = ref("");
 const input = ref<InstanceType<typeof CommsInput> | null>(null);
 const avoidAutoScroll = ref(false);
 const appStore = useAppStore();
 const type = throttle(handleTyping, 1000);
+const searchInput = ref<InstanceType<typeof TextField> | null>(null);
+const readState = ref(0);
+
+const messages = ref<HTMLElement | null>(null);
 
 const excludedTypers = computed(() => {
   return chatStore.typers.filter(
@@ -259,9 +302,10 @@ async function sendMessage() {
       return match;
     }
   });
-  const replyIdPersistent = replyId.value;
+  const replyIdPersistent = replying.value ? replyId.value : undefined;
   content.value = "";
-  replyId.value = undefined;
+  replying.value = false;
+  autoScroll();
   const tempId = new Date().getTime();
   const chatIndex = chatStore.chats.findIndex(
     (c) => c.id === chatStore.selectedChat?.id
@@ -272,7 +316,7 @@ async function sendMessage() {
     updatedAt: undefined,
     content: message,
     createdAt: new Date().toISOString(),
-    user: userStore.users[userStore.user?.id],
+    user: userStore.users[userStore.user?.id!],
     id: tempId,
     chatId: chatStore.selectedChat!.id,
     type: MessageType.Message,
@@ -308,7 +352,11 @@ async function sendMessage() {
 }
 
 function focusInput() {
-  input.value?.input?.input?.focus();
+  const editingInput = document.getElementById("editing-message-input");
+  if (editingInput) {
+    return editingInput.focus();
+  }
+  return input.value?.input?.input?.focus();
 }
 
 function editLastMessage() {
@@ -317,7 +365,6 @@ function editLastMessage() {
     .slice()
     .find((message) => message.userId === userStore.user?.id);
   if (!lastMessage || lastMessage.id === editing.value) return;
-  editingText.value = lastMessage.content;
   editing.value = lastMessage.id;
   nextTick(() => {
     autoScroll();
@@ -325,23 +372,40 @@ function editLastMessage() {
 }
 
 function shortcutHandler(e: KeyboardEvent) {
-  console.log(e.target?.classList);
   if (e.key === "Escape") {
     e.preventDefault();
-    replyId.value = undefined;
-  } else if (e.ctrlKey && e.key === "ArrowUp") {
+    if (chatStore.uiOptions.searchSidebar) {
+      searchInput.value?.input?.blur();
+      chatStore.uiOptions.search = "";
+      return (chatStore.uiOptions.searchSidebar = false);
+    }
+    replying.value = false;
+  } else if (
+    e.target?.tagName !== "INPUT" &&
+    e.target?.tagName !== "TEXTAREA" &&
+    ((!e.ctrlKey && !e.metaKey) ||
+      (e.key === "v" && (e.ctrlKey || e.metaKey))) &&
+    !e.target?.classList.contains("ProseMirror")
+  ) {
+    focusInput();
+  } else if (editing.value) {
+    return;
+  } else if ((e.ctrlKey || e.metaKey) && e.key === "ArrowUp") {
     e.preventDefault();
     e.stopPropagation();
-    // edit next message
+    if (replyId.value && !replying.value) {
+      replyId.value = undefined;
+    }
     const message = messagesStore.selected
       .slice()
       .find((message) => (replyId.value ? message.id < replyId.value : true));
     if (!message) {
-      replyId.value = undefined;
+      replying.value = false;
       return;
     }
     replyId.value = message.id;
-  } else if (e.ctrlKey && e.key === "ArrowDown") {
+    replying.value = true;
+  } else if ((e.ctrlKey || e.metaKey) && e.key === "ArrowDown") {
     e.preventDefault();
     if (!replyId.value) return;
     // edit last message
@@ -350,21 +414,24 @@ function shortcutHandler(e: KeyboardEvent) {
       .reverse()
       .find((message) => (replyId.value ? message.id > replyId.value : true));
     if (!message) {
-      replyId.value = undefined;
+      replying.value = false;
       return;
     }
     replyId.value = message.id;
+    replying.value = true;
     return;
-  } else if (
-    (e.key === "v" && e.ctrlKey) ||
-    (e.target?.tagName !== "INPUT" &&
-      e.target?.tagName !== "TEXTAREA" &&
-      !e.ctrlKey &&
-      !e.target?.classList.contains("ProseMirror"))
-  ) {
-    focusInput();
+  } else if (e.key === "ArrowUp" && !content.value.length) {
+    e.preventDefault();
+    e.stopPropagation();
+    editLastMessage();
   } else if (e.ctrlKey && e.key === "f") {
     e.preventDefault();
+    if (!chatStore.uiOptions.searchSidebar) {
+      searchInput.value?.input?.focus();
+    } else {
+      chatStore.uiOptions.search = "";
+      searchInput.value?.input?.blur();
+    }
     chatStore.uiOptions.searchSidebar = !chatStore.uiOptions.searchSidebar;
   }
 }
@@ -380,62 +447,38 @@ function autoScroll() {
   });
 }
 
-const embedFails = [] as {
-  data: { chatId: any; id: any; embeds: any };
-  retries: number;
-}[];
-
-function onEmbedResolution(data: { chatId: any; id: any; embeds: any }) {
-  console.log(data);
-  if (data.chatId !== chatStore.selectedChat?.id) return;
-  const messageIndex = messagesStore.messages[
-    chatStore.selectedChat?.association?.id!
-  ].findIndex((m: Message) => m.id === data.id);
-  console.log(messageIndex);
-  if (messageIndex === -1) {
-    let embedFailIndex = embedFails.findIndex((e) => e.data.id === data.id);
-    if (embedFailIndex === -1) {
-      embedFails.push({
-        data,
-        retries: 0
-      });
-      embedFailIndex = embedFails.length - 1;
-    }
-    if (embedFails[embedFailIndex]?.retries > 5) {
-      embedFails.splice(embedFailIndex, 1);
-      return;
-    }
-    setTimeout(() => {
-      onEmbedResolution(data);
-    }, 50);
-    embedFails[embedFailIndex].retries++;
-    return;
-  }
-  messagesStore.messages[chatStore.selectedChat?.association?.id!][
-    messageIndex
-  ].embeds = data.embeds;
-  autoScroll();
-
-  nextTick(() => {
-    autoScroll();
-  });
-}
-
 function onMessage(message: { message: Message; chat: Chat }) {
   if (message.message.id !== chatStore.selectedChat?.id) return;
   autoScroll();
+
+  if (document.hasFocus()) {
+    readState.value = message.message.id;
+    chatStore.readChat();
+  }
 }
+
+let readStateInterval: number | undefined;
 
 onMounted(() => {
   document.addEventListener("keydown", shortcutHandler);
-  useSocket.chat.on("message", onMessage);
-  useSocket.chat.on("embedResolution", onEmbedResolution);
+  useSubscription(NewMessageSubscription, {
+    onSubscriptionData: (data) => {
+      onMessage(data.subscriptionData.data.message);
+    }
+  });
+  focusInput();
+
+  readStateInterval = window.setInterval(() => {
+    if (readState.value !== messagesStore.selected[0]?.id) {
+      readState.value = messagesStore.selected[0]?.id;
+      chatStore.readChat();
+    }
+  }, 5000);
 });
 
 onUnmounted(() => {
   document.removeEventListener("keydown", shortcutHandler);
-  useSocket.chat.off("message", onMessage);
-  useSocket.chat.off("embedResolution", onEmbedResolution);
+  window.clearInterval(readStateInterval);
 });
 
 const route = useRoute();
@@ -471,6 +514,16 @@ watch(
         )
       ]
     };
+    focusInput();
+  }
+);
+
+watch(
+  () => messagesStore.messages[chatStore.selectedChatAssociationId]?.length,
+  () => {
+    nextTick(() => {
+      autoScroll();
+    });
   }
 );
 </script>

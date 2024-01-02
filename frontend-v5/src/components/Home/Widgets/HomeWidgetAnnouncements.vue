@@ -34,7 +34,7 @@
 
       <tpu-pager
         v-model="page"
-        :total-pages="Math.ceil(appStore.state.announcements.length / 3)"
+        :total-pages="Math.ceil(appStore.state?.announcements?.length / 3)"
       />
     </div>
   </card>
@@ -54,7 +54,7 @@ const appStore = useAppStore();
 const page = ref(1);
 
 const announcements = computed(() => {
-  return appStore.state.announcements.slice(
+  return appStore.state?.announcements?.slice(
     (page.value - 1) * 3,
     page.value * 3
   );

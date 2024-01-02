@@ -85,6 +85,7 @@ describe("AutoCollectRuleResolver", () => {
       name: "test"
     })
   }
+
   test("Create AutoCollect rule (legacy)", async () => {
     await create()
   })

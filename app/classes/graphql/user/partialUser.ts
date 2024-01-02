@@ -32,6 +32,10 @@ export class PartialUserBase {
   avatar?: string
   @Field()
   bot: boolean
+  @Field(() => Boolean, {
+    defaultValue: false
+  })
+  legacy?: boolean = false
 }
 
 export const partialUserBase = [
@@ -152,6 +156,10 @@ export class PartialUserFriend extends PartialUserBase {
   blocked?: boolean
   @Field()
   bot: boolean
+  @Field(() => [Platform], {
+    nullable: true
+  })
+  platforms: Platform[] | null | undefined
 }
 
 @ObjectType()

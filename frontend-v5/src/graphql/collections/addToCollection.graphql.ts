@@ -13,3 +13,11 @@ export const RemoveFromCollectionMutation = gql`
     removeFromCollection(input: $input)
   }
 `;
+
+export const ActOnCollectionInviteMutation = gql`
+  mutation ActOnCollectionInvite($input: AcceptCollectionInviteInput!) {
+    actOnCollectionInvite(input: $input) {
+      success
+    }
+  }
+`;

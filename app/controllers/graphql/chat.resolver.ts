@@ -6,7 +6,8 @@ import {
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { Service } from "typedi"
 import { Chat } from "@app/models/chat.model"
@@ -40,6 +41,7 @@ import { ChatRankAssociation } from "@app/models/chatRankAssociation.model"
 import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation.model"
 import { Success } from "@app/classes/graphql/generic/success"
 import { ChatInvite } from "@app/models/chatInvite.model"
+import { ChatTypingEvent } from "@app/classes/graphql/chat/events/typing"
 
 @Resolver(Chat)
 @Service()
@@ -113,22 +115,22 @@ export class ChatResolver {
   }
 
   @FieldResolver(() => PartialUserBase)
-  async user(@Root() chat: Chat): Promise<PartialUserBase> {
-    return (await chat.$get("user", {
+  user(@Root() chat: Chat): Promise<PartialUserBase> {
+    return chat.$get("user", {
       attributes: partialUserBase
-    })) as PartialUserBase
+    }) as Promise<PartialUserBase>
   }
 
   @FieldResolver(() => PartialUserBase)
-  async legacyUser(@Root() chat: Chat): Promise<PartialUserBase> {
-    return (await chat.$get("legacyUser", {
+  legacyUser(@Root() chat: Chat): Promise<PartialUserBase> {
+    return chat.$get("legacyUser", {
       attributes: partialUserBase
-    })) as PartialUserBase
+    }) as Promise<PartialUserBase>
   }
 
   @FieldResolver(() => [ChatAssociation])
-  async users(@Root() chat: Chat) {
-    return await chat.$get("users")
+  users(@Root() chat: Chat) {
+    return chat.$get("users")
   }
 
   @FieldResolver(() => String)
@@ -139,12 +141,12 @@ export class ChatResolver {
   @FieldResolver(() => PartialUserBase || null, {
     nullable: true
   })
-  async recipient(
+  recipient(
     @Root() chat: Chat,
     @Ctx() ctx: Context
   ): Promise<PartialUserBase | null> {
-    if (chat.type !== "direct" || !ctx.user) return null
-    const user = await ChatAssociation.findOne({
+    if (chat.type !== "direct" || !ctx.user) return Promise.resolve(null)
+    const user = ChatAssociation.findOne({
       attributes: ["userId", "legacyUserId", "user"],
       where: {
         chatId: chat.id,
@@ -165,7 +167,11 @@ export class ChatResolver {
         }
       ]
     })
-    return user?.user as PartialUserBase | null
+    return Promise.resolve(
+      user.then((u) => {
+        return u?.user
+      })
+    ) as Promise<PartialUserBase | null>
   }
 
   @RateLimit({
@@ -433,5 +439,65 @@ export class ChatResolver {
       ...chat,
       userId: remoteAssociation.userId
     }
+  }
+
+  @Authorization({
+    scopes: ["chats.send"]
+  })
+  @Mutation(() => Boolean)
+  async typing(
+    @Ctx() ctx: Context,
+    @Arg("input") input: number
+  ): Promise<Boolean> {
+    if (!ctx.user) return false
+    const typingRateLimit = await redis.get(`user:${ctx.user.id}:typing`)
+
+    if (
+      typingRateLimit &&
+      dayjs().isBefore(dayjs(typingRateLimit).add(2, "second"))
+    )
+      return false
+    await this.chatService.typing(input, ctx.user!!.id, true)
+    return true
+  }
+
+  @Authorization({
+    scopes: ["chats.send"]
+  })
+  @Mutation(() => Boolean)
+  async cancelTyping(
+    @Ctx() ctx: Context,
+    @Arg("input") input: number
+  ): Promise<Boolean> {
+    if (!ctx.user) return false
+    await redis.del(`user:${ctx.user.id}:typing`)
+    await this.chatService.cancelTyping(input, ctx.user!!.id, true)
+    return true
+  }
+
+  @Authorization({
+    scopes: ["chats.view"]
+  })
+  @Subscription(() => ChatTypingEvent, {
+    topics: ({ context }) => {
+      return `TYPING:${context.user!!.id}`
+    }
+  })
+  async onTyping(@Root() data: ChatTypingEvent): Promise<ChatTypingEvent> {
+    return data
+  }
+
+  @Authorization({
+    scopes: ["chats.view"]
+  })
+  @Subscription(() => ChatTypingEvent, {
+    topics: ({ context }) => {
+      return `CANCEL_TYPING:${context.user!!.id}`
+    }
+  })
+  async onCancelTyping(
+    @Root() data: ChatTypingEvent
+  ): Promise<ChatTypingEvent> {
+    return data
   }
 }

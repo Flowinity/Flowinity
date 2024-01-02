@@ -6,7 +6,8 @@ import {
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { Service } from "typedi"
 import { Context } from "@app/types/graphql/context"
@@ -34,11 +35,18 @@ import { CacheService } from "@app/services/cache.service"
 import { Success } from "@app/classes/graphql/generic/success"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import {
+  AcceptCollectionInviteInput,
+  LeaveCollectionInput,
   RemoveCollectionUserInput,
+  TransferCollectionOwnershipInput,
   UpdateCollectionUserPermissionsInput
 } from "@app/classes/graphql/collections/collectionUsers"
 import Errors from "@app/lib/errors"
 import { CreateCollectionInput } from "@app/classes/graphql/collections/createCollection"
+import paginate from "jw-paginate"
+import { AuthService } from "@app/services/auth.service"
+import { pubSub } from "@app/lib/graphql/pubsub"
+import { FilterCollectionInput } from "@app/classes/graphql/collections/subscriptions/filterCollectionInput"
 
 export const PaginatedCollectionsResponse = PagerResponse(Collection)
 export type PaginatedCollectionsResponse = InstanceType<
@@ -64,6 +72,16 @@ export class CollectionResolver {
     @Arg("input", { nullable: true }) input?: UserCollectionsInput
   ): Promise<PaginatedCollectionsResponse | null> {
     if (!ctx.user) return null
+    if (input?.onlyInvited) {
+      const collections = await this.collectionService.getCollections(
+        ctx.user.id,
+        true
+      )
+      return {
+        items: collections,
+        pager: paginate(collections.length, 1, 50)
+      }
+    }
     return (await this.collectionService.getCollectionsFilter(
       ctx.user!!.id,
       input?.filter || [CollectionFilter.ALL],
@@ -145,7 +163,8 @@ export class CollectionResolver {
             type: "image"
           }
         }
-      ]
+      ],
+      order: [["createdAt", "DESC"]]
     })
     if (preview?.attachment?.attachment) return preview?.attachment?.attachment
     return null
@@ -264,7 +283,8 @@ export class CollectionResolver {
 export class CollectionUserResolver {
   constructor(
     private collectionService: CollectionService,
-    private cacheService: CacheService
+    private cacheService: CacheService,
+    private authService: AuthService
   ) {}
 
   @FieldResolver(() => PartialUserBase)
@@ -299,7 +319,6 @@ export class CollectionUserResolver {
       input.configure,
       input.read
     )
-    await this.cacheService.resetCollectionCache(input.collectionId)
     const res = await CollectionUser.findOne({
       where: {
         collectionId: input.collectionId,
@@ -371,5 +390,329 @@ export class CollectionUserResolver {
       input.userId
     )
     return { success: true }
+  }
+
+  @Authorization({
+    scopes: "collections.view",
+    userOptional: true
+  })
+  @Query(() => Int, {
+    description:
+      "Return the number of pending invitations for collections for the current user"
+  })
+  async collectionInvitesCount(@Ctx() ctx: Context) {
+    if (!ctx.user) return 0
+    return await CollectionUser.count({
+      where: {
+        recipientId: ctx.user.id,
+        accepted: false
+      }
+    })
+  }
+
+  @Authorization({
+    scopes: "collections.modify",
+    userOptional: true
+  })
+  @Mutation(() => Success)
+  async transferCollectionOwnership(
+    @Ctx() ctx: Context,
+    @Arg("input") input: TransferCollectionOwnershipInput
+  ) {
+    const collection = await Collection.findOne({
+      where: {
+        id: input.collectionId,
+        userId: ctx.user?.id
+      }
+    })
+    if (!collection) throw new GqlError("COLLECTION_NOT_FOUND")
+
+    const collectionUser = await CollectionUser.findOne({
+      where: {
+        collectionId: input.collectionId,
+        recipientId: input.userId,
+        accepted: true
+      }
+    })
+
+    if (!collectionUser)
+      throw new GraphQLError("User is not in the collection.")
+
+    await this.authService.validateAuthMethod({
+      credentials: {
+        password: input.password,
+        totp: input.totp
+      },
+      userId: ctx.user!!.id,
+      totp: !!input.totp,
+      password: !!input.password,
+      alternatePassword: false
+    })
+
+    const newUser = await CollectionUser.create({
+      collectionId: input.collectionId,
+      userId: ctx.user!!.id,
+      read: true,
+      write: true,
+      configure: true,
+      accepted: true
+    })
+
+    await collectionUser.destroy()
+
+    await collection.update({
+      userId: input.userId
+    })
+
+    this.collectionService.emitForAllPubSub(
+      collection.id,
+      `COLLECTION_UPDATED`,
+      collection
+    )
+    this.collectionService.emitForAllPubSub(
+      collection.id,
+      `COLLECTION_USER_REMOVED`,
+      collectionUser
+    )
+    this.collectionService.emitForAllPubSub(
+      collection.id,
+      `COLLECTION_USER_ADDED`,
+      newUser
+    )
+
+    await this.cacheService.resetCollectionCache(input.collectionId)
+    return { success: true }
+  }
+
+  @Authorization({
+    scopes: "collections.modify"
+  })
+  @Mutation(() => Success)
+  async actOnCollectionInvite(
+    @Ctx() ctx: Context,
+    @Arg("input") input: AcceptCollectionInviteInput
+  ) {
+    const collectionUser = await CollectionUser.findOne({
+      where: {
+        collectionId: input.collectionId,
+        recipientId: ctx.user!!.id,
+        accepted: false
+      }
+    })
+    if (!collectionUser) throw new GqlError("COLLECTION_NOT_FOUND")
+    if (!input.accept) {
+      await collectionUser.destroy()
+      this.collectionService.emitForAllPubSub(
+        input.collectionId,
+        "COLLECTION_USER_REMOVED",
+        collectionUser
+      )
+      await this.cacheService.resetCollectionCache(input.collectionId)
+      return { success: true }
+    }
+    await collectionUser.update({
+      accepted: true
+    })
+    this.collectionService.emitForAllPubSub(
+      input.collectionId,
+      "COLLECTION_USER_UPDATED",
+      collectionUser
+    )
+    pubSub.publish(
+      `COLLECTION_CREATED:${ctx.user!!.id}`,
+      await Collection.findOne({
+        where: {
+          id: input.collectionId
+        }
+      })
+    )
+    pubSub.publish(
+      `COLLECTION_INVITE_COUNT:${ctx.user!!.id}`,
+      await CollectionUser.count({
+        where: {
+          recipientId: ctx.user!!.id,
+          accepted: false
+        }
+      })
+    )
+    await this.cacheService.resetCollectionCache(input.collectionId)
+    return { success: true }
+  }
+
+  @Authorization({
+    scopes: "collections.modify"
+  })
+  @Mutation(() => Success)
+  async leaveCollection(
+    @Ctx() ctx: Context,
+    @Arg("input") input: LeaveCollectionInput
+  ) {
+    const collectionUser = await CollectionUser.findOne({
+      where: {
+        collectionId: input.collectionId,
+        recipientId: ctx.user!!.id
+      }
+    })
+    if (!collectionUser) throw new GqlError("COLLECTION_NOT_FOUND")
+    await collectionUser.destroy()
+    await this.cacheService.resetCollectionCache(
+      input.collectionId,
+      ctx.user!!.id
+    )
+    this.collectionService.emitForAllPubSub(
+      input.collectionId,
+      "COLLECTION_USER_REMOVED",
+      collectionUser
+    )
+    pubSub.publish(`COLLECTION_REMOVED:${ctx.user!!.id}`, input.collectionId)
+    return { success: true }
+  }
+
+  @Authorization({
+    scopes: "collections.view"
+  })
+  @Subscription(() => CollectionUser, {
+    topics: ({ context }) => {
+      return `COLLECTION_USER_ADDED:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      if (args.input) {
+        if (args.input.collectionId !== payload.collectionId) return false
+      }
+      return true
+    }
+  })
+  onCollectionUserAdded(
+    @Root() collectionUser: CollectionUser,
+    @Arg("input", {
+      nullable: true
+    })
+    input: FilterCollectionInput
+  ) {
+    return collectionUser
+  }
+
+  @Authorization({
+    scopes: "collections.view"
+  })
+  @Subscription(() => Collection, {
+    topics: ({ context }) => {
+      return `COLLECTION_UPDATED:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      if (args.input) {
+        if (args.input.collectionId !== payload.id) return false
+      }
+      return true
+    }
+  })
+  onCollectionUpdated(
+    @Root() collection: Collection,
+    @Arg("input", {
+      nullable: true
+    })
+    input: FilterCollectionInput
+  ) {
+    return collection
+  }
+
+  @Authorization({
+    scopes: "collections.view"
+  })
+  @Subscription(() => Int, {
+    topics: ({ context }) => {
+      return `COLLECTION_REMOVED:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      if (args.input) {
+        if (args.input.collectionId !== payload.collectionId) return false
+      }
+      return true
+    }
+  })
+  onCollectionRemoved(
+    @Root() collectionId: number,
+    @Arg("input", {
+      nullable: true
+    })
+    input: FilterCollectionInput
+  ) {
+    return collectionId
+  }
+
+  @Authorization({
+    scopes: "collections.view"
+  })
+  @Subscription(() => Collection, {
+    topics: ({ context }) => {
+      return `COLLECTION_CREATED:${context.user!!.id}`
+    }
+  })
+  onCollectionCreated(@Root() collection: Collection) {
+    return {
+      ...("toJSON" in collection ? collection.toJSON() : collection),
+      new: true
+    }
+  }
+
+  @Authorization({
+    scopes: "collections.view"
+  })
+  @Subscription(() => CollectionUser, {
+    topics: ({ context }) => {
+      return `COLLECTION_USER_REMOVED:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      if (args.input) {
+        if (args.input.collectionId !== payload.collectionId) return false
+      }
+      return true
+    }
+  })
+  onCollectionUserRemoved(
+    @Root() collectionUser: CollectionUser,
+    @Arg("input", {
+      nullable: true
+    })
+    input: FilterCollectionInput
+  ) {
+    return collectionUser
+  }
+
+  @Authorization({
+    scopes: "collections.view"
+  })
+  @Subscription(() => CollectionUser, {
+    topics: ({ context }) => {
+      return `COLLECTION_USER_UPDATED:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      if (args.input) {
+        if (args.input.collectionId !== payload.collectionId) return false
+      }
+      return true
+    }
+  })
+  onCollectionUserUpdated(
+    @Root() collectionUser: CollectionUser,
+    @Arg("input", {
+      nullable: true
+    })
+    input: FilterCollectionInput
+  ) {
+    return collectionUser
+  }
+
+  @Authorization({
+    scopes: "collections.view"
+  })
+  @Subscription(() => Int, {
+    topics: ({ context }) => {
+      return `COLLECTION_INVITE_COUNT:${context.user!!.id}`
+    }
+  })
+  onCollectionInviteCount(@Root() count: number) {
+    console.log(count)
+    return count
   }
 }

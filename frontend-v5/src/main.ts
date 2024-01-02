@@ -11,7 +11,6 @@ import VueApolloComponents from "@vue/apollo-components";
 import "./boot/declarations";
 import globals from "./boot/globals";
 import events from "./boot/events";
-import socket from "./boot/socket";
 import apollo from "./boot/apollo";
 import { registerPlugins } from "@/plugins";
 import VWave from "v-wave";
@@ -23,6 +22,7 @@ import "floating-vue/dist/style.css";
 const app = createApp(App);
 //@ts-ignore
 import VueSimpleContextMenu from "vue-simple-context-menu";
+import { setupSockets } from "@/boot/sockets";
 
 app.component("VueSimpleContextMenu", VueSimpleContextMenu);
 
@@ -55,12 +55,11 @@ app.use(Toast, {
 });
 
 // Register boot plugins
-apollo(app);
 registerPlugins(app);
+apollo(app);
 globals(app);
 events();
-socket(app).then(() => {});
-
+setupSockets();
 app.use(VueApolloComponents);
 
 app.mount("#flowinity-app");

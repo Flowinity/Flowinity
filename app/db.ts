@@ -29,6 +29,7 @@ if (config) {
       return true
     }
   })
+  global.db = sequelize
 }
 
 export default sequelize as Sequelize

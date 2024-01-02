@@ -1,26 +1,43 @@
 <template>
-  <tpu-button
-    variant="passive"
-    icon
-    class="select-none"
-    :disabled="props.disabled"
-    :style="{ maxWidth: px, maxHeight: px, minWidth: px, minHeight: px }"
-    @click="$emit('update:modelValue', !modelValue)"
+  <div
+    class="select-none items-center flex cursor-pointer"
+    @click="props.disabled ? () => {} : $emit('update:modelValue', !modelValue)"
   >
     <RiCheckboxBlankLine
-      v-if="!modelValue"
       class="w-full h-full"
-      :style="{ color }"
+      :style="{
+        maxWidth: px,
+        maxHeight: px,
+        minWidth: px,
+        minHeight: px,
+        color
+      }"
+      v-if="!modelValue"
     />
-    <RiCheckboxFill v-else class="w-full h-full" :style="{ color }" />
-    <span v-if="props.label" class="text-gray-900 dark:text-white">
-      {{ props.label }}
+    <RiCheckboxFill
+      class=""
+      v-else
+      :style="{
+        maxWidth: px,
+        maxHeight: px,
+        minWidth: px,
+        minHeight: px,
+        color
+      }"
+    />
+    <span
+      class="text-gray-900 dark:text-white ml-2"
+      v-if="props.label || $slots.label"
+    >
+      <slot name="label">
+        {{ props.label }}
+      </slot>
     </span>
-  </tpu-button>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import RiCheckboxBlankLine from "vue-remix-icons/icons/ri-checkbox-blank-line.vue";
 import RiCheckboxFill from "vue-remix-icons/icons/ri-checkbox-fill.vue";
 import theme from "@/plugins/theme";
@@ -43,11 +60,11 @@ const props = defineProps({
 const px = computed(() => {
   switch (props.size) {
     case "s":
-      return "38px";
+      return "20px";
     case "m":
-      return "40px";
+      return "25px";
     case "l":
-      return "60px";
+      return "40px";
   }
 });
 
@@ -58,5 +75,5 @@ const color = computed(() => {
   return theme.colors[props.color];
 });
 
-defineEmits(["update:modelValue"]);
+const emits = defineEmits(["update:modelValue"]);
 </script>

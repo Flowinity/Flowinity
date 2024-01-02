@@ -83,29 +83,58 @@
       </VDropdown>
     </div>
     <div class="flex flex-col gap-4 mt-4">
-      <div
-        v-for="collection in filteredCollections"
-        :key="collection.id"
-        @click.right.prevent="collectionCtx?.showMenu($event, collection)"
+      <side-bar-item
+        to="/collections/manage"
+        class="flex h-14 items-center w-full"
+        v-if="collectionsStore.invites > 0"
       >
-        <SideBarItem
+        <template #icon>
+          <span style="width: 40px">
+            <ri-settings5-line class="w-7 ml-2" />
+          </span>
+        </template>
+        <template #title>
+          {{ $t("sidebar.collections.invited") }}
+          <tpu-badge color="red" class="rounded-full ml-1">
+            {{ collectionsStore.invites }}
+          </tpu-badge>
+        </template>
+      </side-bar-item>
+      <div v-for="collection in filteredCollections" :key="collection.id">
+        <side-bar-item
           class="flex h-14 items-center w-full"
           :to="`/collections/${collection.id}`"
+          @click="collection.new ? updateNew(collection.id) : null"
         >
           <template #icon>
             <user-avatar
               :status="false"
-              :src="`/i/${collection.avatar || collection.banner}`"
+              :avatar="collection.avatar || collection.banner"
               :username="collection.name"
             ></user-avatar>
           </template>
           <template #title>
-            {{ collection.name }}
+            <div class="flex items-center gap-2">
+              <div
+                class="bg-green rounded-full"
+                style="
+                  width: 10px;
+                  height: 10px;
+                  min-height: 10px;
+                  min-width: 10px;
+                  user-select: none;
+                "
+                v-if="collection.new"
+                v-tooltip.top="$t('generic.new')"
+              />
+
+              {{ collection.name }}
+            </div>
           </template>
           <template #subtitle>
             {{ collection.itemCount?.toLocaleString() || 0 }} items
           </template>
-        </SideBarItem>
+        </side-bar-item>
       </div>
     </div>
   </div>
@@ -127,6 +156,9 @@ import Card from "@/components/Framework/Card/Card.vue";
 import { computed, ref, watch } from "vue";
 import { useCollectionsStore } from "@/stores/collections.store";
 import CreateCollectionDialog from "@/components/Collections/CreateCollectionDialog.vue";
+import RiSettings5Line from "vue-remix-icons/icons/ri-settings-5-line.vue";
+import { useApolloClient } from "@vue/apollo-composable";
+import TpuBadge from "@/components/Framework/Badge/TpuBadge.vue";
 
 const appStore = useAppStore();
 const collectionsStore = useCollectionsStore();
@@ -189,6 +221,15 @@ const filteredCollections = computed(() => {
 });
 
 const createCollection = ref(false);
+
+function updateNew(id: number) {
+  collectionsStore.items = collectionsStore.items.map((collection) => {
+    if (collection.id === id) {
+      collection.new = false;
+    }
+    return collection;
+  });
+}
 </script>
 
 <style scoped></style>

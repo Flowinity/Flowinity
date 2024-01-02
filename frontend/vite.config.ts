@@ -36,7 +36,7 @@ const config = {
       clientFiles: ["./src/**/*.ts", "./src/**/*.vue"]
     }),
     //@ts-ignore
-    ViteVersion.default(),
+    ViteVersion,
     VitePWA({
       registerType: "autoUpdate",
       workbox: {
@@ -149,7 +149,7 @@ const config = {
         changeOrigin: true
       },
       "/api/v1": "http://localhost:34581",
-      "/graphql": "http://localhost:34582",
+      "/graphql": "http://localhost:34583",
       "/gateway": {
         target: "http://localhost:34582",
         ws: true,

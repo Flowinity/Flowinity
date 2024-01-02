@@ -2,31 +2,47 @@ import {
   Arg,
   Ctx,
   FieldResolver,
+  Int,
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { Service } from "typedi"
 import { Message } from "@app/models/message.model"
 import { ChatService } from "@app/services/chat.service"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
-import { SendMessageInput } from "@app/classes/graphql/chat/sendMessage"
+import {
+  DeleteMessageInput,
+  EditMessageInput,
+  SendMessageInput
+} from "@app/classes/graphql/chat/sendMessage"
 import { Context } from "@app/types/graphql/context"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import {
   InfiniteMessagesInput,
   PagedMessagesInput,
-  ScrollPosition
+  ScrollPosition,
+  SubscriptionMessageInput
 } from "@app/classes/graphql/chat/message"
 import { Op, WhereOptions } from "sequelize"
-import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { Chat } from "@app/models/chat.model"
-import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
+import {
+  partialUserBase,
+  PartialUserBase
+} from "@app/classes/graphql/user/partialUser"
 import { PagerResponse } from "@app/classes/graphql/gallery/galleryResponse"
 import paginate from "jw-paginate"
 import { ChatEmoji } from "@app/models/chatEmoji.model"
 import { GraphQLError } from "graphql/error"
+import { MessageSubscription } from "@app/classes/graphql/chat/messageSubscription"
+import { EditMessageEvent, EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
+import { embedTranslator } from "@app/lib/embedParser"
+import { ReadReceipt } from "@app/classes/graphql/chat/readReceiptSubscription"
+import { User } from "@app/models/user.model"
+import { LegacyUser } from "@app/models/legacyUser.model"
+import { DeleteMessage } from "@app/classes/graphql/chat/deleteMessage"
 
 export const PaginatedMessagesResponse = PagerResponse(Message)
 export type PaginatedMessagesResponse = InstanceType<
@@ -61,6 +77,61 @@ export class MessageResolver {
       input.attachments,
       input.embeds
     )
+  }
+
+  @RateLimit({
+    window: 8,
+    max: 8
+  })
+  @Authorization({
+    scopes: ["chats.send"]
+  })
+  @Mutation(() => Message, {
+    nullable: true
+  })
+  async editMessage(
+    @Arg("input") input: EditMessageInput,
+    @Ctx() ctx: Context
+  ): Promise<Message | null> {
+    if (input.embeds?.length && !ctx.user?.bot)
+      throw new GraphQLError("You need to be a bot to use embeds.")
+    await this.chatService.editMessage(
+      input.messageId,
+      ctx.user!!.id,
+      input.content,
+      input.associationId,
+      input.pinned,
+      input.embeds,
+      input.attachments
+    )
+    return await Message.findByPk(input.messageId)
+  }
+
+  @RateLimit({
+    window: 8,
+    max: 8
+  })
+  @Authorization({
+    scopes: ["chats.send"]
+  })
+  @Mutation(() => Boolean)
+  async deleteMessage(
+    @Arg("input") input: DeleteMessageInput,
+    @Ctx() ctx: Context
+  ): Promise<Boolean> {
+    await this.chatService.deleteMessage(
+      input.messageId,
+      ctx.user!!.id,
+      input.associationId
+    )
+    return true
+  }
+
+  @FieldResolver(() => EmbedDataV2)
+  embeds(@Root() message: Message) {
+    if (!message.embeds) return []
+    const translated = message.embeds.map((embed) => embedTranslator(embed))
+    return translated.filter((embed) => embed !== null)
   }
 
   @Authorization({
@@ -153,13 +224,34 @@ export class MessageResolver {
     }
   }
 
-  @FieldResolver(() => [ChatAssociation])
-  async readReceipts(@Ctx() ctx: Context, @Root() message: Message) {
-    return await message.$get("readReceipts", {
+  @FieldResolver(() => [ReadReceipt])
+  async readReceipts(
+    @Ctx() ctx: Context,
+    @Root() message: Message
+  ): Promise<ReadReceipt[]> {
+    const receipts = await message.$get("readReceipts", {
       attributes: {
         exclude: ["updatedAt"]
-      }
+      },
+      include: [
+        {
+          model: User,
+          as: "tpuUser",
+          attributes: partialUserBase
+        },
+        {
+          model: LegacyUser,
+          as: "legacyUser",
+          attributes: partialUserBase
+        }
+      ]
     })
+    return receipts.map((receipt) => ({
+      chatId: message.chatId,
+      associationId: receipt.id,
+      messageId: message.id,
+      user: receipt.tpuUser?.toJSON() || receipt.legacyUser?.toJSON()
+    }))
   }
 
   @FieldResolver(() => Chat)
@@ -195,5 +287,93 @@ export class MessageResolver {
         id: matches?.map((match) => match.split(":")[2]) || []
       }
     })
+  }
+
+  @Authorization({
+    scopes: "chats.view"
+  })
+  @Subscription(() => MessageSubscription, {
+    topics: ({ context }) => {
+      return `MESSAGES:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      console.log(payload, args)
+      return args.input?.associationId !== undefined
+        ? args.input.associationId === payload.associationId
+        : true
+    }
+  })
+  onMessage(
+    @Root() payload: MessageSubscription,
+    @Ctx() ctx: Context,
+    @Arg("input", {
+      nullable: true
+    })
+    input: SubscriptionMessageInput
+  ): MessageSubscription {
+    return payload
+  }
+
+  @Authorization({
+    scopes: "chats.view"
+  })
+  @Subscription(() => EditMessageEvent, {
+    topics: ({ context }) => {
+      return `EDIT_MESSAGE:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      return args.input?.associationId !== undefined
+        ? args.input.associationId === payload.associationId
+        : true
+    }
+  })
+  onEditMessage(
+    @Root() payload: EditMessageEvent,
+    @Ctx() ctx: Context,
+    @Arg("input", {
+      nullable: true
+    })
+    input: SubscriptionMessageInput
+  ): EditMessageEvent {
+    return payload
+  }
+
+  @Authorization({
+    scopes: "chats.view"
+  })
+  @Subscription({
+    topics: ({ context }) => {
+      return `READ_RECEIPTS:${context.user!!.id}`
+    }
+  })
+  onReadReceipt(
+    @Root() payload: ReadReceipt,
+    @Ctx() ctx: Context
+  ): ReadReceipt {
+    return payload
+  }
+
+  @Authorization({
+    scopes: "chats.view"
+  })
+  @Subscription(() => DeleteMessage, {
+    topics: ({ context }) => {
+      return `MESSAGE_DELETE:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      return args.input?.associationId !== undefined
+        ? args.input.associationId === payload.associationId
+        : true
+    }
+  })
+  onDeleteMessage(
+    @Root() payload: DeleteMessage,
+    @Ctx() ctx: Context,
+    @Arg("input", {
+      nullable: true
+    })
+    input: SubscriptionMessageInput
+  ): DeleteMessage {
+    return payload
   }
 }

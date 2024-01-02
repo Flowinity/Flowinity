@@ -80,7 +80,6 @@ export class MailService {
     let message = await client.fetchOne(client.mailbox.exists, {
       source: true
     })
-    console.log(message)
     if (message.seq < 50) {
       for await (let msg of client.fetch(
         {},
@@ -97,7 +96,6 @@ export class MailService {
         messages.push(msg)
       }
     }
-    console.log(messages.length)
     client.logout()
     return messages
       .map((msg) => {
@@ -118,7 +116,6 @@ export class MailService {
   ) {
     const client = await this.connect(userId, gql)
     await client.mailboxOpen(mailbox)
-    console.log(uid === "22728")
     //@ts-ignore
     const message = await client.fetchOne(uid, {
       uid: true,

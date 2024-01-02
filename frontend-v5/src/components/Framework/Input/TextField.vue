@@ -1,10 +1,7 @@
 <template>
-  <div
-    class="relative mt-3 mb-1 flex"
-    :class="parentClasses"
-    :style="parentStyle"
-  >
-    <slot name="prepend-outer" />
+  <slot name="prepend-outer" />
+
+  <div class="relative flex" :class="parentClasses" :style="parentStyle">
     <div class="absolute left-0">
       <slot name="prepend" />
     </div>
@@ -22,7 +19,8 @@
       tabindex="0"
       class="text-field resize-none"
       :placeholder="props.placeholder"
-      :rows="computedRows.toString()"
+      rows="1"
+      data-min-rows="1"
       :value="props.modelValue"
       :maxlength="maxlength"
       v-bind="$attrs"
@@ -34,7 +32,10 @@
         focused: focus
       }"
       :readonly="props.readonly"
-      @input="$emit('update:modelValue', $event.target?.value)"
+      @input="
+        $emit('update:modelValue', $event.target?.value);
+        onExpandableTextareaInput();
+      "
       @focus="
         focus = true;
         interactedWith = true;
@@ -121,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -149,6 +150,7 @@ onMounted(() => {
   }
 
   if (props.dynamicWidth) setWidth();
+  onExpandableTextareaInput();
 });
 
 const setWidth = () => {
@@ -199,9 +201,41 @@ const lengthError = computed(() => {
   }
 });
 
+function getScrollHeight(elm: HTMLTextAreaElement) {
+  const savedValue = elm.value;
+  elm.value = "";
+  elm._baseScrollHeight = elm.scrollHeight;
+  elm.value = savedValue;
+}
+
+function onExpandableTextareaInput(
+  { target: elm } = {
+    target: input.value as HTMLTextAreaElement
+  } as {
+    target: HTMLTextAreaElement;
+  }
+) {
+  if (elm?.nodeName !== "TEXTAREA") return;
+
+  const minRows = elm.getAttribute("data-min-rows") | 0;
+  let rows: number;
+  !elm._baseScrollHeight && getScrollHeight(elm);
+
+  elm.rows = minRows;
+  rows = Math.ceil((elm.scrollHeight - elm._baseScrollHeight) / 16);
+
+  elm.rows =
+    rows > props.maxLines
+      ? props.maxLines
+      : rows < minRows
+        ? minRows
+        : rows || 1;
+}
+
 const computedRows = computed(() => {
   if (props.textarea) {
     let tmpRows = props.modelValue?.split("\n").length;
+
     if (props.minLines) {
       tmpRows = Math.max(tmpRows, props.minLines);
     }

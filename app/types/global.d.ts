@@ -19,8 +19,11 @@ export interface SocketServerWithUser extends Server {
 }
 
 declare global {
-  var redis: any,
-    db: Sequelize,
+  /** @deprecated
+   * Use redisClient import instead. This will be removed in the future.
+   */
+  var redis: any
+  var db: Sequelize,
     config: TpuConfig,
     dayjs: typeof djs,
     socket: SocketServerWithUser,

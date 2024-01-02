@@ -1,3 +1,5 @@
+// FILE NOT IN USE ANYMORE
+
 import MessageToast from "@/components/Communications/MessageToast.vue";
 import router from "@/router";
 import { useChatStore } from "@/stores/chat.store";
@@ -530,87 +532,6 @@ export default async function setup(app: App) {
       const u = user.tracked.find((user) => user.id === data.id);
       if (!u) return;
       u.avatar = data.avatar;
-    }
-  );
-
-  sockets.gallery.on(
-    "collectionUpdate",
-    (data: { id: number; name?: string; shareLink?: string | null }) => {
-      const collectionIndex = collections.items.findIndex(
-        (collection) => collection.id === data.id
-      );
-
-      if (collectionIndex !== -1) {
-        // Create a new array with the updated object
-        const updatedItems: Collection[] = [...collections.items];
-        updatedItems[collectionIndex] = {
-          ...updatedItems[collectionIndex],
-          ...data
-        };
-
-        collections.items = updatedItems;
-      }
-    }
-  );
-
-  sockets.gallery.on(
-    "addedToCollection",
-    (data: { id: number; name: string }) => {
-      const collectionIndex = collections.items.findIndex(
-        (collection) => collection.id === data.id
-      );
-
-      if (collectionIndex === -1) {
-        collections.items = [data, ...collections.items];
-      }
-    }
-  );
-
-  sockets.chat.on(
-    "typing",
-    (data: { chatId: number; userId: number; expires: string }) => {
-      const index = chat.typers.findIndex(
-        (t) => t.chatId === data.chatId && t.userId === data.userId
-      );
-      if (index !== -1) {
-        const val = chat.typers.find(
-          (t) => t.chatId === data.chatId && t.userId === data.userId
-        );
-        clearTimeout(val?.timeout);
-        chat.typers.splice(index, 1);
-      }
-      chat.typers.push({
-        chatId: data.chatId,
-        userId: data.userId,
-        expires: data.expires,
-        timeout: setTimeout(
-          () => {
-            const index = chat.typers.findIndex(
-              (t) => t.chatId === data.chatId && t.userId === data.userId
-            );
-            if (index !== -1) {
-              chat.typers.splice(index, 1);
-            }
-          },
-          new Date(data.expires).getTime() - Date.now()
-        )
-      });
-    }
-  );
-
-  sockets.chat.on(
-    "cancelTyping",
-    (data: { chatId: number; userId: number }) => {
-      const index = chat.typers.findIndex(
-        (t) => t.chatId === data.chatId && t.userId === data.userId
-      );
-      if (index !== -1) {
-        const val = chat.typers.find(
-          (t) => t.chatId === data.chatId && t.userId === data.userId
-        );
-        clearTimeout(val?.timeout);
-        chat.typers.splice(index, 1);
-      }
     }
   );
 }

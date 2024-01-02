@@ -18,31 +18,63 @@ export interface AuthCheckerOptions {
 export const Authorization = (options: AuthCheckerOptions) =>
   Authorized(options)
 
+export type CacheSession =
+  | {
+      expiredAt: null
+      oauthAppId: string
+      fake: boolean
+      scopes: string
+      type: string
+      userId: number
+      user: PartialUserAuth
+      token: string | null
+    }
+  | (Session & { user: PartialUserAuth })
+  | null
+
 export const authChecker: AuthChecker<Context> = async (
   { root, args, context, info }: ResolverData<Context>,
   options: any[]
 ) => {
+  const token = context.token
+  const cache = await redis.json.get(`session:${token}`)
   let user: PartialUserAuth | null = null
-  let session:
-    | {
-        expiredAt: null
-        oauthAppId: string
-        fake: boolean
-        scopes: string
-        type: string
-        userId: number
-        user: PartialUserAuth
-        token: string | null
+  let session: CacheSession = null
+  if (!cache) {
+    if (global.config.finishedSetup) {
+      const userResolver = Container.get(UserResolver)
+      session = await userResolver.findByToken(token)
+      user = !session?.user?.banned ? session?.user || null : null
+      if (session) {
+        redis.json.set(
+          `session:${token}`,
+          "$",
+          {
+            ...("toJSON" in session ? session.toJSON() : session),
+            user: undefined
+          },
+          {
+            ttl: session?.expiredAt
+              ? dayjs(session.expiredAt).diff(dayjs(), "second")
+              : 60 * 60 * 24 * 7
+          }
+        )
+        redis.json.set(`user:${session?.userId}`, "$", session?.user)
       }
-    | (Session & { user: PartialUserAuth })
-    | null = null
-  if (global.config.finishedSetup) {
-    const userResolver = Container.get(UserResolver)
-    const token = context.token
-    session = await userResolver.findByToken(token)
-    user = !session?.user?.banned ? session?.user || null : null
+    } else {
+      user = null
+    }
   } else {
-    user = null
+    session = cache
+    const userCache = await redis.json.get(`user:${session!.userId}`)
+    if (userCache) {
+      if (!userCache.banned) user = userCache
+    } else {
+      const userResolver = Container.get(UserResolver)
+      session = await userResolver.findByToken(token)
+      user = !session?.user?.banned ? session?.user || null : null
+      redis.json.set(`user:${session?.userId}`, "$", user)
+    }
   }
   const opts = options[0] as AuthCheckerOptions
   context.user = user
