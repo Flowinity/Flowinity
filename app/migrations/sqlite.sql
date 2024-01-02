@@ -321,14 +321,14 @@ CREATE TABLE `Notifications`
 CREATE TABLE `Plans`
 (
     `id`               integer NOT NULL UNIQUE PRIMARY KEY AUTOINCREMENT,
-    `name`             varchar(191) DEFAULT NULL,
-    `quotaMax`         integer      DEFAULT NULL,
+    `name`             varchar(191) DEFAULT New plan,
+    `quotaMax`         integer      DEFAULT 1000,
     `price`            integer      DEFAULT NULL,
     `features`         longtext     DEFAULT NULL,
     `color`            varchar(191) DEFAULT NULL,
     `createdAt`        datetime     DEFAULT NULL,
     `updatedAt`        datetime     DEFAULT NULL,
-    `internalName`     varchar(191) DEFAULT NULL,
+    `internalName`     varchar(191) DEFAULT 'newPlan',
     `purchasable`      integer      DEFAULT 0,
     `internalFeatures` longtext     DEFAULT NULL,
     `icon`             varchar(191) DEFAULT 'mdi-plus'
