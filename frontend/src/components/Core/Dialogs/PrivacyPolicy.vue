@@ -20,13 +20,7 @@
   </CoreDialog>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import PrivacyPolicy from "@/views/Policies/Privacy.vue";
-
-export default defineComponent({
-  name: "PrivacyPolicyDialog",
-  components: { PrivacyPolicy, CoreDialog }
-});
 </script>

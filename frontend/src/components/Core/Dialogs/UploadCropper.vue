@@ -60,7 +60,6 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import "cropperjs/dist/cropper.css";
 
 export default defineComponent({
-  name: "UploadCropper",
   components: { CoreDialog, VueCropper },
   props: {
     modelValue: {

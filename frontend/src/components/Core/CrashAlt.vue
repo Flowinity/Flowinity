@@ -20,7 +20,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "CrashComponent",
   props: ["e", "name"]
 });
 </script>

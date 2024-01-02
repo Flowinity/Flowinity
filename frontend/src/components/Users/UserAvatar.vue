@@ -82,7 +82,6 @@ import { defineComponent } from "vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 
 export default defineComponent({
-  name: "UserAvatar",
   components: { UploadCropper },
   props: [
     "user",

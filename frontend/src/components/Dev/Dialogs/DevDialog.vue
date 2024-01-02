@@ -14,7 +14,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "DevDialog",
   emits: ["close"],
   data() {
     return {

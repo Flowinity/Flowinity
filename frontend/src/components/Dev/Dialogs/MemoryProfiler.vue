@@ -41,7 +41,6 @@ import { useWorkspacesStore } from "@/store/workspaces.store";
 import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
 
 export default defineComponent({
-  name: "MemoryProfiler",
   components: { DevDialog },
   data() {
     return {

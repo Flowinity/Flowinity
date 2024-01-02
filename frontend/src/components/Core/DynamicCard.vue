@@ -46,7 +46,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "DynamicCard",
   props: {
     to: {
       type: String,

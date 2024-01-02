@@ -12,7 +12,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "PromoNoContent",
   props: ["icon", "title", "description"]
 });
 </script>

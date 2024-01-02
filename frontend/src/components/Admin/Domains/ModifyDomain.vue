@@ -34,7 +34,6 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { Domain } from "@/models/domain";
 
 export default defineComponent({
-  name: "ModifyDomainDialog",
   components: { CoreDialog },
   props: ["modelValue", "domain", "type"],
   emits: ["update:modelValue", "update"],

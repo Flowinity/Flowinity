@@ -424,7 +424,6 @@ import HoverChip from "@/components/Core/HoverChip.vue";
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "UserBadges",
   components: { HoverChip },
   props: ["user", "primaryColor"],
   computed: {

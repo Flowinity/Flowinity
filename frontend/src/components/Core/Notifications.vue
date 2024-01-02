@@ -47,7 +47,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Notifications",
   props: ["modelValue"],
   emits: ["update:modelValue"],
   methods: {

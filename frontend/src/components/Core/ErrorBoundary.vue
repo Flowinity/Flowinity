@@ -36,14 +36,6 @@ onErrorCaptured((error: Error, vm, info: string) => {
 });
 </script>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "VErrorBoundary"
-});
-</script>
-
 <template>
   <template v-if="!slots.boundary">
     <slot v-if="!hasError$"></slot>

@@ -100,7 +100,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Paginate",
   props: {
     modelValue: {
       type: Number,

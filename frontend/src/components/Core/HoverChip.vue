@@ -34,7 +34,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "HoverChip",
   props: [
     "text",
     "action",

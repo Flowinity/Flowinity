@@ -55,7 +55,6 @@ ChartJS.register(
   BarElement
 );
 export default defineComponent({
-  name: "Chart",
   components: { Line, Bar, apexchart },
   props: [
     "data",

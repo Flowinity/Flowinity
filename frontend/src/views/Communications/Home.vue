@@ -1,7 +1,7 @@
 <template>
   <v-container class="text-center justify-center">
     <PromoNoContent
-      description="Chat with other TPU users instantly."
+      description="Chat with other PrivateUploader users instantly."
       icon="mdi-message-processing-outline"
       title="TPU Communications"
     />
@@ -13,7 +13,6 @@ import { defineComponent } from "vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 
 export default defineComponent({
-  name: "CommunicationsHome",
   components: { PromoNoContent },
   mounted() {
     this.$app.title = "Communications";

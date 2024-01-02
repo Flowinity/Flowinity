@@ -38,7 +38,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "ExperimentsManager",
   props: ["username"],
   data() {
     return {

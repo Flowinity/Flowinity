@@ -18,7 +18,6 @@ import ExperimentsManager from "@/components/Dev/ExperimentsManager.vue";
 import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
 
 export default defineComponent({
-  name: "ExperimentsManagerDialog",
   components: { DevDialog, ExperimentsManager }
 });
 </script>

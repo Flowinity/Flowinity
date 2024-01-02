@@ -67,7 +67,6 @@ import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
-  name: "ChatDevOptions",
   components: { Overline, DevDialog },
   data() {
     return {};

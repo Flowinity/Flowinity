@@ -2,16 +2,8 @@
   <div class="ball" :style="{ left: x + 'px', top: y + 'px' }"></div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "KollisionBall",
-  props: {
-    x: Number,
-    y: Number
-  }
-});
+<script lang="ts" setup>
+defineProps({ x: Number, y: Number });
 </script>
 
 <style scoped>

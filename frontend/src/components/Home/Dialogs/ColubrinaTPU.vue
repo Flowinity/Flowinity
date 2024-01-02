@@ -34,7 +34,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "ColubrinaTPU",
   props: {
     modelValue: {
       type: Boolean,

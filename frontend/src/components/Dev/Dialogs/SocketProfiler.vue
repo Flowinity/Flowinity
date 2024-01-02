@@ -21,7 +21,6 @@ import { defineComponent } from "vue";
 import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
 
 export default defineComponent({
-  name: "SocketProfiler",
   components: { DevDialog },
   data() {
     return {

@@ -34,7 +34,6 @@ ChartJS.register(
 );
 
 export default defineComponent({
-  name: "LineChart",
   components: { Line },
   props: ["data", "maxHeight"],
   computed: {

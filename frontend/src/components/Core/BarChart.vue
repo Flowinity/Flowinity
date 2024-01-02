@@ -36,7 +36,6 @@ ChartJS.register(
 );
 
 export default defineComponent({
-  name: "BarChart",
   components: { Bar },
   props: ["data", "maxHeight"],
   computed: {

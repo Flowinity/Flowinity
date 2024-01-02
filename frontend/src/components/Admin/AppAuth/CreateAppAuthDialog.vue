@@ -78,7 +78,6 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { CreateOauthAppMutation } from "@/graphql/developer/createApp.graphql";
 
 export default defineComponent({
-  name: "CreateAppAuthDialog",
   components: { CoreDialog },
   props: {
     modelValue: Boolean

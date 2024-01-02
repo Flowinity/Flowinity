@@ -14,15 +14,9 @@
   </CoreSidebar>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
 import AdminSidebarList from "@/components/Admin/AdminSidebarList.vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
-
-export default defineComponent({
-  name: "AdminSidebar",
-  components: { CoreSidebar, AdminSidebarList }
-});
 </script>
 
 <style scoped>

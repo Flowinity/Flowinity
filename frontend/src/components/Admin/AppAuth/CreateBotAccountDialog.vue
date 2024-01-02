@@ -38,7 +38,6 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { CreateBotAccountMutation } from "@/graphql/developer/createApp.graphql";
 
 export default defineComponent({
-  name: "CreateBotAccountDialog",
   components: { CoreDialog },
   props: {
     modelValue: Boolean,

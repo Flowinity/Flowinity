@@ -42,7 +42,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "DangerZoneInput",
   props: ["passwordMode", "password", "totp"],
   emits: ["update:passwordMode", "update:password", "update:totp", "confirm"],
   mounted() {

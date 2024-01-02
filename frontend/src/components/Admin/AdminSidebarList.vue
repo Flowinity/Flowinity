@@ -51,7 +51,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "AdminSidebarList",
   computed: {
     sidebar() {
       return [

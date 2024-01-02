@@ -20,7 +20,6 @@ import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
-  name: "UserCard",
   components: { UserAvatar, UserBanner },
   props: ["username", "subtitle", "user"]
 });
