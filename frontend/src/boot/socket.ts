@@ -6,19 +6,19 @@ import { useUserStore } from "@/store/user.store";
 import { useExperimentsStore } from "@/store/experiments.store";
 import { useToast } from "vue-toastification";
 import {
-    AddRank,
-    BlockedUser,
-    Chat,
-    ChatAssociation,
-    ChatEmoji,
-    ChatRank,
-    Friend,
-    FriendNickname,
-    FriendStatus,
-    Message,
-    PartialUserFriend,
-    User,
-    UserStoredStatus
+  AddRank,
+  BlockedUser,
+  Chat,
+  ChatAssociation,
+  ChatEmoji,
+  ChatRank,
+  Friend,
+  FriendNickname,
+  FriendStatus,
+  Message,
+  PartialUserFriend,
+  User,
+  UserStoredStatus
 } from "@/gql/graphql";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
 
@@ -198,7 +198,8 @@ export default async function setup(app) {
     if (messageIndex === -1) return;
     chat.chats[index].messages.forEach((message: Message) => {
       message.readReceipts = message.readReceipts.filter(
-        (r: ChatAssociation) => r.userId !== data.userId
+        (r: ChatAssociation) =>
+          r.user.id !== data.user.id || r.userId !== data.userId
       );
     });
     chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
