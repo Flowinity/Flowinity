@@ -411,10 +411,7 @@ export class Application {
           }
 
           if (error instanceof GqlError || error instanceof GraphQLError) {
-            return {
-              message: error.message,
-              name: error.name
-            }
+            return error
           }
 
           if (

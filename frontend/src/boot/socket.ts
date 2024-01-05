@@ -17,6 +17,7 @@ import {
   FriendStatus,
   Message,
   PartialUserFriend,
+  ReadReceipt,
   User,
   UserStoredStatus
 } from "@/gql/graphql";
@@ -198,11 +199,15 @@ export default async function setup(app) {
     if (messageIndex === -1) return;
     chat.chats[index].messages.forEach((message: Message) => {
       message.readReceipts = message.readReceipts.filter(
-        (r: ChatAssociation) =>
-          r.user.id !== data.user.id && r.userId !== data.userId
+        (r: ReadReceipt) => r.user.id !== data.user.id
       );
     });
-    chat.chats[index]?.messages[messageIndex].readReceipts.push(data);
+    chat.chats[index]?.messages[messageIndex].readReceipts.push({
+      associationId: chat.chats[index].association?.id,
+      chatId: data.chatId,
+      messageId: data.lastRead,
+      user: data.user
+    });
 
     if (data?.userId === user.user?.id) {
       chat.chats[index].association.lastRead = data.lastRead;

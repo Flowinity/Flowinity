@@ -97,7 +97,12 @@ export default function setup(app: App) {
           error.extensions?.code === "WEATHER_NOT_RESPONDING" ||
           error.extensions?.code === "EXPERIMENT_NOT_ALLOWED"
         ) {
-          //
+          continue;
+        } else if (
+          error.extensions?.code === "USERNAME_TAKEN" &&
+          app.config.globalProperties.$route.path === "/"
+        ) {
+          continue;
         } else if (!ctx.noToast) {
           toast.error(error.message);
         }

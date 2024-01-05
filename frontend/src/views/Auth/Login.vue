@@ -102,9 +102,9 @@ export default defineComponent({
             }
           } as LoginMutationVariables
         });
-        this.$app.token = login.token;
         await localStorage.setItem("token", login.token);
         this.axios.defaults.headers.common["Authorization"] = login.token;
+        this.$app.token = login.token;
         await this.$app.init();
         this.$app.reconnectSocket(login.token);
         if (!this.$route.query.redirect) {

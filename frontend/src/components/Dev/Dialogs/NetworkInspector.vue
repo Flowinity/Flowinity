@@ -125,7 +125,7 @@ const networkInspectionEnabled = ref(
 const dev = import.meta.env.DEV;
 
 watch(networkInspectionEnabled, (value) => {
-  localStorage.setItem("tpuNetworkInspection", value);
+  localStorage.setItem("tpuNetworkInspection", value.toString());
 });
 
 export type DebugSettings = {

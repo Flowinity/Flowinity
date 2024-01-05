@@ -185,7 +185,6 @@ export default defineComponent({
             }
           } as RegisterMutationVariables
         });
-        this.$app.token = register.token;
         await localStorage.setItem("token", register.token);
         this.axios.defaults.headers.common["Authorization"] = register.token;
         this.$app.token = register.token;
