@@ -138,7 +138,6 @@ import SocialLinks from "@/components/Users/UserV3/Widgets/SocialLinks.vue";
 import { FriendStatus, ProfileLayoutComponent, User } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "UserV3ComponentHandler",
   components: {
     SocialLinks,
     UserV3AddMenu,

@@ -24,12 +24,7 @@
   </v-btn>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "UserV3AddMenu",
-  props: ["components"],
-  emits: ["add"]
-});
+<script lang="ts" setup>
+defineProps(["components"]);
+defineEmits(["add"]);
 </script>

@@ -169,7 +169,6 @@ import { Upload } from "@/models/upload";
 import { Collection } from "@/models/collection";
 
 export default defineComponent({
-  name: "GalleryItem",
   components: { HoverChip, GalleryPreview },
   props: ["item", "supports", "selected"],
   emits: ["delete", "refresh", "remove", "select", "collectivize"],

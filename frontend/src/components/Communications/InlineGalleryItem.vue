@@ -28,12 +28,7 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "InlineGalleryItem",
-  props: ["item"],
-  emits: ["clickItem"]
-});
+<script lang="ts" setup>
+defineProps(["item"]);
+defineEmits(["clickItem"]);
 </script>

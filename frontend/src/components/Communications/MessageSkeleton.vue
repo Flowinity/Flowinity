@@ -29,20 +29,15 @@
   </v-list-item>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "MessageSkeleton",
-  props: {
-    animate: {
-      type: Boolean,
-      default: true
-    },
-    pfp: {
-      type: Boolean,
-      default: true
-    }
+<script lang="ts" setup>
+defineProps({
+  animate: {
+    type: Boolean,
+    default: true
+  },
+  pfp: {
+    type: Boolean,
+    default: true
   }
 });
 </script>

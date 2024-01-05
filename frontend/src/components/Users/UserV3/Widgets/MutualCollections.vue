@@ -13,13 +13,8 @@
   </v-card-text>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 
-export default defineComponent({
-  name: "MutualCollections",
-  components: { CollectionCard },
-  props: ["user", "username"]
-});
+defineProps(["user", "username"]);
 </script>

@@ -158,7 +158,6 @@ import InfiniteLoading from "@/components/Scroll/InfiniteScroll.vue";
 import { DragSelect, DragSelectOption } from "@/components/DragToSelect";
 
 export default defineComponent({
-  name: "GalleryCoreInfinite",
   components: {
     DragSelectOption,
     DragSelect,

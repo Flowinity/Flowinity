@@ -12,13 +12,7 @@
   </v-card>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "UserWidget",
-  components: { UserBadges, UserAvatar }
-});
 </script>

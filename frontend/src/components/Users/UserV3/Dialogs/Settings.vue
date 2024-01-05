@@ -110,7 +110,6 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { Component } from "@/types/userv3";
 
 export default defineComponent({
-  name: "UserV3Settings",
   components: { CoreDialog },
   props: ["modelValue", "user", "component", "components"],
   emits: ["update", "trigger", "update:modelValue"],

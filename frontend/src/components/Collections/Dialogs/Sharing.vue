@@ -98,7 +98,6 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { UpdateCollectionMutation } from "@/graphql/collections/updateCollection.graphql";
 
 export default defineComponent({
-  name: "Sharing",
   components: { CoreDialog },
   props: ["modelValue", "collection"],
   emits: ["update:modelValue", "collectionUsersPush", "getCollection"],

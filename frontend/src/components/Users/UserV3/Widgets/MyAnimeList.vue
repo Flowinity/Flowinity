@@ -176,7 +176,6 @@ import { MalUser } from "@/types/mal/user";
 import { MalAnime } from "@/types/mal/anime";
 
 export default defineComponent({
-  name: "MyAnimeList",
   components: { MessageSkeleton },
   props: ["user", "component"],
   data() {

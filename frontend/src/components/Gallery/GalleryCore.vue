@@ -138,7 +138,6 @@ import OCRMetadata from "@/components/Gallery/Dialogs/OCRMetadata.vue";
 import { Pager, Upload } from "@/gql/graphql";
 
 export default defineComponent({
-  name: "GalleryCore",
   components: { OCRMetadata, Paginate, AddToCollection, GalleryItem },
   props: {
     randomAttachmentLoading: {

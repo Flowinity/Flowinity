@@ -69,23 +69,18 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "PromoCard",
-  props: [
-    "title",
-    "image",
-    "icon",
-    "width",
-    "height",
-    "hover",
-    "left",
-    "right",
-    "color"
-  ]
-});
+<script lang="ts" setup>
+defineProps([
+  "title",
+  "image",
+  "icon",
+  "width",
+  "height",
+  "hover",
+  "left",
+  "right",
+  "color"
+]);
 </script>
 
 <style scoped>

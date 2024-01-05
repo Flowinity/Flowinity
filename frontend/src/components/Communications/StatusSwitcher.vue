@@ -45,7 +45,6 @@ import { UserStatus, UserStoredStatus } from "@/gql/graphql";
 import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.vue";
 
 export default defineComponent({
-  name: "StatusSwitcher",
   components: { StatusSwitcherList, UserAvatar },
   computed: {
     UserStoredStatus() {

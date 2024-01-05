@@ -43,7 +43,6 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { UpdateShareLinkMutation } from "@/graphql/workspaces/updateShareLink.graphql";
 
 export default defineComponent({
-  name: "WorkspaceShareDialog",
   components: { CoreDialog },
   props: ["modelValue"],
   emits: ["update:modelValue"],

@@ -93,16 +93,11 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "InsightsDynamicBanner",
-  props: {
-    variant: {
-      type: String,
-      default: "graphical"
-    }
+<script lang="ts" setup>
+defineProps({
+  variant: {
+    type: String,
+    default: "graphical"
   }
 });
 </script>

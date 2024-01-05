@@ -42,7 +42,6 @@ interface ReadReceipt {
 }
 
 export default defineComponent({
-  name: "ReadReceipt",
   components: { UserAvatar },
   props: {
     readReceipt: {

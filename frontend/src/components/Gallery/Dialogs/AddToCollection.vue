@@ -33,7 +33,6 @@ import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 
 export default defineComponent({
-  name: "AddToCollection",
   components: { CoreDialog },
   props: ["modelValue", "items"],
   emits: ["update:modelValue", "collectionAdded"],
