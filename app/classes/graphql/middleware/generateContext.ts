@@ -54,6 +54,8 @@ export default async function generateContext(ctx: any): Promise<Context> {
   let ip =
     ctx.extra?.ip || ctx.req?.ip || ctx.req?.socket?.remoteAddress || "0.0.0.0"
 
+  const realIPHeader = "x-forwarded-for"
+
   if (
     ip === "::1" ||
     ip === "::ffff:" ||
@@ -62,10 +64,10 @@ export default async function generateContext(ctx: any): Promise<Context> {
     ip === "0.0.0.0"
   ) {
     // Depending on GraphQL WebSocket in v5, and normal HTTP v4, the object differs
-    if (ctx?.req?.headers?.["x-real-ip"]) {
-      ip = ctx.req.headers["x-real-ip"]
-    } else if (ctx?.request?.headers?.["x-real-ip"]) {
-      ip = ctx.request.headers["x-real-ip"]
+    if (ctx?.req?.headers?.[realIPHeader]) {
+      ip = ctx.req.headers[realIPHeader]
+    } else if (ctx?.request?.headers?.[realIPHeader]) {
+      ip = ctx.request.headers[realIPHeader]
     } else {
       ip = error()
     }
