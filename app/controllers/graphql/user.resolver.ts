@@ -434,7 +434,6 @@ function createBaseResolver<T extends ClassType>(
       if (!user.homeWidgets || user.homeWidgets.default) {
         user.homeWidgets = defaultHomeWidgets
       }
-      ctx.dataloader.prime(user)
       return user
     }
 
@@ -445,7 +444,6 @@ function createBaseResolver<T extends ClassType>(
           username
         }
       })
-      ctx.dataloader.prime(user)
       return user
     }
 
@@ -455,7 +453,6 @@ function createBaseResolver<T extends ClassType>(
       const badges = await user.$get("badges", {
         [EXPECTED_OPTIONS_KEY]: ctx.dataloader
       })
-      ctx.dataloader.prime(badges)
       return badges
     }
 

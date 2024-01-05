@@ -398,6 +398,8 @@ export class Application {
             }
           }
 
+          console.log(error)
+
           const msg = error.message.toLowerCase()
 
           if (

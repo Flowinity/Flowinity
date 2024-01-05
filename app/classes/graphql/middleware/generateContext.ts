@@ -44,8 +44,9 @@ export default async function generateContext(ctx: any): Promise<Context> {
   }
 
   function error() {
-    console.log(ctx?.extra?.request?.headers)
-
+    if (process.env.NODE_ENV !== "production") {
+      return "0.0.0.0"
+    }
     throw new GqlError("NO_IP")
   }
 
@@ -59,7 +60,8 @@ export default async function generateContext(ctx: any): Promise<Context> {
     ip === "::ffff:" ||
     ip === "::ffff:127.0.0.1" ||
     ip === "127.0.0.1" ||
-    ip === "0.0.0.0"
+    ip === "0.0.0.0" ||
+    ip === "::ffff:192.168.0.60"
   ) {
     // Depending on GraphQL WebSocket in v5, and normal HTTP v4, the object differs
     if (ctx?.extra?.request?.headers?.[realIPHeader]) {
