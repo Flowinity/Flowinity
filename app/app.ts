@@ -71,6 +71,8 @@ import { ZodError } from "zod"
 import { generateSchema } from "@app/lib/generateSchema"
 import { WebSocketServer } from "ws"
 import { useResponseCache } from "@graphql-yoga/plugin-response-cache"
+import { GqlError } from "@app/lib/gqlErrors"
+import * as util from "util"
 
 @Service()
 @Middleware({ type: "after" })
@@ -389,25 +391,36 @@ export class Application {
             }
           }
 
-          if (process.env.NODE_ENV === "development") console.error(error)
-
           if (error instanceof ValidationError) {
             return {
               message: error.toString(),
               name: error.name
             }
           }
+
+          const msg = error.message.toLowerCase()
+
           if (
-            error.message.toLowerCase().includes("sqlstate") ||
-            error.message.toLowerCase().includes("sequelize")
+            msg.includes("sqlstate") ||
+            msg.includes("sequelize") ||
+            msg.includes("typeerror") ||
+            msg.includes("property")
           ) {
+            console.error(error)
+            return maskError(error, message, isDev)
+          }
+
+          if (error instanceof GqlError || error instanceof GraphQLError) {
             return {
-              message: "Something went wrong! Please try again later.",
-              name: "UNKNOWN"
+              message: error.message,
+              name: error.name
             }
           }
 
-          if (config.release === "dev") {
+          if (
+            config.release === "dev" ||
+            process.env.NODE_ENV === "development"
+          ) {
             console.error(error)
           }
 

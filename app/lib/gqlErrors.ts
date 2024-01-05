@@ -116,6 +116,10 @@ const Errors = {
   INVALID_RESUMABLE_STATE_KEY: {
     message:
       "Invalid resumable state key on x-tpu-resumable-state. Must be a valid UUIDv4."
+  },
+  NO_IP: {
+    message:
+      "No valid IP address could be associated with the request.\n\nIf you are a user of PrivateUploader, please try again later.\n\nFor instance administrators: please ensure the reverse proxy is configured correctly."
   }
 }
 

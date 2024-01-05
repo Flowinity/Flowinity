@@ -227,10 +227,7 @@ export class GalleryResolver {
     scopes: "starred.modify"
   })
   @Mutation(() => StarUploadResponse)
-  async onStarUpload(
-    @Ctx() ctx: Context,
-    @Arg("input") input: StarUploadInput
-  ) {
+  async starUpload(@Ctx() ctx: Context, @Arg("input") input: StarUploadInput) {
     return await this.galleryService.starUpload(input.attachment, ctx.user!!.id)
   }
 

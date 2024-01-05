@@ -73,20 +73,6 @@ export class Server {
     private readonly discordService: DiscordService
   ) {}
 
-  private static normalizePort(
-    val: number | string
-  ): number | string | boolean {
-    const port: number =
-      typeof val === "string" ? parseInt(val, this.baseDix) : val
-
-    if (isNaN(port)) {
-      return val
-    } else if (port >= 0) {
-      return port
-    }
-    return false
-  }
-
   async startSocket() {
     if (!this.server) {
       this.server = http.createServer(this.application.app)
@@ -302,15 +288,16 @@ export class Server {
   }
 
   async init(port?: number, noBackgroundTasks = false): Promise<void> {
+    if (!process.env.NODE_ENV && config.release === "prod") {
+      process.env.NODE_ENV = "production"
+    }
+
     const cpuCount: number = os.cpus().length,
       mainWorker: boolean =
         !cluster.worker || cluster.worker?.id % cpuCount === 1
     global.mainWorker = mainWorker
 
-    this.application.app.set(
-      "port",
-      port || Server.normalizePort(this.config?.port || "34582")
-    )
+    this.application.app.set("port", port || 34582)
     this.application.app.set("trust proxy", 1)
 
     const memoryCache: MemoryCache = await caching("memory")
@@ -344,9 +331,7 @@ export class Server {
     this.legacyServer = http.createServer(this.application.app)
     await this.startSocket()
     if (!noBackgroundTasks) {
-      this.legacyServer.listen(
-        port || Server.normalizePort(this.config?.port || "34582")
-      )
+      this.legacyServer.listen(port || 34582)
       this.server.listen(34583)
     }
 
@@ -386,10 +371,9 @@ export class Server {
       throw error
     }
 
-    const port: string | number | boolean = Server.normalizePort(
-        this.config?.port || "34582"
-      ),
-      bind: string = typeof port === "string" ? `Pipe ${port}` : `Port ${port}`
+    const port: number | string = this.config?.port || 34582
+    const bind: string =
+      typeof port === "string" ? `Pipe ${port}` : `Port ${port}`
 
     switch (error.code) {
       case "EACCES":
@@ -399,7 +383,7 @@ export class Server {
         break
       case "EADDRINUSE":
         if (this.config?.release === "dev") {
-          const port: number = parseInt(process.env.PORT || "34582", 10) + 1
+          const port: number = parseInt(process.env.PORT || "34582", 10) + 2
 
           this.init(port).then((): void => {
             console.log(`Listening on ${port}`)

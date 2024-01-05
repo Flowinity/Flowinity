@@ -3,6 +3,7 @@ import { UserResolver } from "@app/controllers/graphql/user.resolver"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { Context } from "@app/types/graphql/context"
 import { createContext } from "@app/lib/dataloader"
+import { GqlError } from "@app/lib/gqlErrors"
 
 export default async function generateContext(ctx: any): Promise<Context> {
   let token
@@ -42,6 +43,14 @@ export default async function generateContext(ctx: any): Promise<Context> {
     }
   }
 
+  function error() {
+    if (process.env.NODE_ENV === "production") {
+      throw new GqlError("NO_IP")
+    } else {
+      return "0.0.0.0"
+    }
+  }
+
   return {
     user: session?.user,
     client: {
@@ -64,7 +73,8 @@ export default async function generateContext(ctx: any): Promise<Context> {
       : AccessLevel.NO_ACCESS,
     token,
     dataloader: global.config?.finishedSetup ? createContext(db) : null,
-    ip: ctx.extra?.ip || ctx.req?.ip || "0.0.0.0",
+    ip:
+      ctx.extra?.ip ?? ctx.req?.ip ?? ctx.req?.socket?.remoteAddress ?? error(),
     meta: {},
     request: ctx.request,
     req: ctx.req,

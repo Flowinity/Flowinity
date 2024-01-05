@@ -1,6 +1,13 @@
 import { App } from "vue";
 import { createApolloProvider } from "@vue/apollo-option";
-import { ApolloClient, ApolloLink, from, HttpLink, InMemoryCache } from "@apollo/client/core";
+import {
+  ApolloClient,
+  ApolloLink,
+  from,
+  HttpLink,
+  InMemoryCache
+  //@ts-ignore
+} from "@privateuploader/apollo-client";
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import { onError } from "@apollo/client/link/error";
 import { useToast } from "vue-toastification";
