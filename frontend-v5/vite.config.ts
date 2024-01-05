@@ -41,6 +41,7 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
+      "/api/v3": "http://localhost:34582",
       "/i/": "http://localhost:34582",
       "/socket.io": {
         target: "http://localhost:34582",
