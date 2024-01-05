@@ -214,6 +214,9 @@ export default defineComponent({
       this.page = parseInt(page) || 1;
       this.getGallery();
     },
+    type() {
+      this.init();
+    },
     endpoint() {
       this.init();
     }
