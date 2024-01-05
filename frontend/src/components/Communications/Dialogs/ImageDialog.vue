@@ -10,7 +10,10 @@
         max-height="500px"
         :width="width"
         :height="height"
-        :src="$chat.dialogs.image.object?.url"
+        :src="
+          $chat.dialogs.image.object?.proxyUrl ||
+          $chat.dialogs.image.object?.url
+        "
       />
     </v-card>
     <a
@@ -23,11 +26,14 @@
       "
       @click="
         $chat.processLink(
-          $chat.dialogs.image.object?.originalURL ||
+          $chat.dialogs.image.object?.url ||
             `https://${$app.site.domain}${$chat.dialogs.image.object.url}`
         )
       "
     >
+      <v-tooltip location="top" activator="parent">
+        {{ domain }}
+      </v-tooltip>
       <span>
         <v-icon size="18" class="mx-1">mdi-open-in-new</v-icon>
       </span>
@@ -49,6 +55,15 @@ export default defineComponent({
     height() {
       if (!this.$chat.dialogs.image.object) return 0;
       return this.$chat.dialogs.image.object?.height * 2.5;
+    },
+    domain() {
+      try {
+        return this.$chat.dialogs.image.object?.url
+          ? new URL(this.$chat.dialogs.image.object?.url).hostname
+          : new URL(this.$chat.dialogs.image.object?.proxyUrl).hostname;
+      } catch (e) {
+        return "Open in new tab";
+      }
     }
   }
 });

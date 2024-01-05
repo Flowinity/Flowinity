@@ -1,6 +1,6 @@
 {
   "name": "tpu-frontend",
-  "version": "4.0.19",
+  "version": "4.0.20",
   "private": true,
   "author": "Troplo <troplo@troplo.com>",
   "type": "module",
@@ -54,6 +54,7 @@
     "@types/vue-cropperjs": "^4.1.6",
     "@types/webfontloader": "^1.6.35",
     "@vitejs/plugin-vue": "^5.0.2",
+    "@vue/apollo-composable": "^4.0.0-beta.12",
     "@vue/apollo-option": "^4.0.0-beta.5",
     "@vue/eslint-config-typescript": "^11.0.0",
     "apexcharts": "^3.37.0",

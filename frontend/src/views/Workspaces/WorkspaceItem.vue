@@ -152,6 +152,7 @@ export default defineComponent({
     this.$app.workspaceDrawer =
       localStorage.getItem("workspaceDrawer") === "true";
     this.$app.forcedWorkspaceDrawer = false;
+    window.editor.destroy();
   },
   methods: {
     async upload(file: any) {
@@ -443,6 +444,9 @@ export default defineComponent({
     },
     async onMounted() {
       try {
+        if (window.editor) {
+          await window.editor.destroy();
+        }
         this.fail = false;
         const res = await this.$workspaces.getNote(
           this.id || this.$route.params.id
@@ -472,11 +476,8 @@ export default defineComponent({
 
       document.addEventListener("keydown", this.saveEvent, false);
     },
-    saveEvent() {
-      if (
-        (window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) &&
-        e.keyCode === 83
-      ) {
+    saveEvent(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
         e.preventDefault();
         editor.save().then((outputData) => {
           window.__TROPLO_INTERNALS_EDITOR_SAVE(outputData, true);

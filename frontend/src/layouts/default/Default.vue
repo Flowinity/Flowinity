@@ -31,6 +31,7 @@
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher" />
     <UploadDialog v-model="$app.dialogs.upload.value" />
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler" />
+    <NetworkInspector v-if="$app.dialogs.networkInspector" />
     <v-overlay
       persistent
       absolute
@@ -108,10 +109,12 @@ import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
 import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
 import BlockUserDialog from "@/components/Users/Dialogs/Block.vue";
+import NetworkInspector from "@/components/Dev/Dialogs/NetworkInspector.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
   components: {
+    NetworkInspector,
     Sidebar,
     WorkspacesSidebar,
     CommsSidebar,
@@ -181,9 +184,8 @@ export default defineComponent({
         (document.createElement("link") as HTMLLinkElement);
       link.type = "image/x-icon";
       link.rel = "shortcut icon";
-      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
-        this.$user.user?.username
-      }&unread=${val || 0}`;
+      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${this
+        .$user.user?.username}&unread=${val || 0}`;
       document.head.appendChild(link);
     },
     $route(to, from) {

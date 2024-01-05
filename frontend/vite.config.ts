@@ -149,7 +149,12 @@ const config = {
         changeOrigin: true
       },
       "/api/v1": "http://localhost:34581",
-      "/graphql": "http://localhost:34583",
+      "/graphql": {
+        target: "http://localhost:34583",
+        ws: true,
+        secure: true,
+        changeOrigin: true
+      },
       "/gateway": {
         target: "http://localhost:34582",
         ws: true,

@@ -20,7 +20,7 @@
     >
       <v-icon>mdi-menu</v-icon>
     </v-app-bar-nav-icon>
-    <template v-if="!$chat.isCommunications || !$chat.selectedChat">
+    <template v-if="!$chat.commsSidebar || !$chat.selectedChat">
       <LogoEasterEgg />
     </template>
     <template v-else>
@@ -74,7 +74,7 @@
       v-if="
         (!$app.weather.loading && !$vuetify.display.mobile) ||
         ($vuetify.display.mobile &&
-          !$chat.isCommunications &&
+          !$chat.commsSidebar &&
           !$workspaces.isWorkspaces)
       "
     >
@@ -108,7 +108,7 @@
       </v-btn>
     </template>
     <!-- Communications custom actions -->
-    <template v-if="$chat.isCommunications && !$vuetify.display.mobile">
+    <template v-if="$chat.commsSidebar && !$vuetify.display.mobile">
       <v-btn v-if="$experiments.experiments.PINNED_MESSAGES" class="mx-1" icon>
         <Pins />
         <v-icon>mdi-pin-outline</v-icon>
@@ -172,7 +172,7 @@
       <v-btn
         v-if="!$app.rail"
         :aria-label="
-          !$chat.communicationsSidebar && $chat.isCommunications
+          !$chat.communicationsSidebar && $chat.commsSidebar
             ? 'Members Sidebar'
             : 'Workspaces Sidebar'
         "
@@ -272,13 +272,13 @@ export default defineComponent({
         $app.workspaceDrawer &&
         !$vuetify.display.mobile &&
         (!$chat.search.value ||
-          !$chat.isCommunications ||
+          !$chat.commsSidebar ||
           $chat.communicationsSidebar),
       'header-patch-workspaces-search':
         $app.workspaceDrawer &&
         !$vuetify.display.mobile &&
         $chat.search.value &&
-        $chat.isCommunications &&
+        $chat.commsSidebar &&
         !$chat.communicationsSidebar*/
       const data = {
         "header-patch": !this.$vuetify.display.mobile,
@@ -288,17 +288,15 @@ export default defineComponent({
             !this.$app.rail) ||
           (!this.$chat.search.value &&
             this.$app.rail &&
-            this.$chat.isCommunications),
+            this.$chat.commsSidebar),
         "header-patch-workspaces-search":
           (this.$app.workspaceDrawer &&
             !this.$vuetify.display.mobile &&
             !this.$app.rail &&
             this.$chat.search.value &&
-            this.$chat.isCommunications &&
+            this.$chat.commsSidebar &&
             !this.$chat.communicationsSidebar) ||
-          (this.$chat.search.value &&
-            this.$app.rail &&
-            this.$chat.isCommunications)
+          (this.$chat.search.value && this.$app.rail && this.$chat.commsSidebar)
       } as { [key: string]: boolean };
       if (this.$app.rail) {
         for (const key in data) {

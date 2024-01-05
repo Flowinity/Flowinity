@@ -19,7 +19,7 @@
   <image-dialog v-model="$chat.dialogs.image.value" />
   <group-settings-dialog v-model="$chat.dialogs.groupSettings.value" />
   <router-view />
-  <member-sidebar v-if="!$vuetify.display.mobile" />
+  <member-sidebar v-if="!$vuetify.display.mobile && $chat.commsSidebar" />
 </template>
 
 <script lang="ts">

@@ -41,6 +41,7 @@ import {
 import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
 import { Typing } from "@/models/chat";
 import { nextTick } from "vue";
+import { useApolloClient } from "@vue/apollo-composable";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -159,7 +160,7 @@ export const useChatStore = defineStore("chat", {
       chatAssociationId: number,
       rankId: string
     ) {
-      await this.$apollo.mutate({
+      await useApolloClient().client.mutate({
         mutation: ToggleUserRankMutation,
         variables: {
           input: {
@@ -173,7 +174,7 @@ export const useChatStore = defineStore("chat", {
     async joinInvite(inviteId: string): Promise<{ id: number }> {
       const {
         data: { joinChatFromInvite }
-      } = await this.$apollo.mutate({
+      } = await useApolloClient().client.mutate({
         mutation: JoinChatInviteMutation,
         variables: {
           input: {
@@ -186,7 +187,7 @@ export const useChatStore = defineStore("chat", {
     async getInvite(inviteId: string): Promise<ChatInvite> {
       const {
         data: { chatInvite }
-      } = await this.$apollo.query({
+      } = await useApolloClient().client.query({
         query: ChatInviteQuery,
         variables: {
           input: {
@@ -197,7 +198,7 @@ export const useChatStore = defineStore("chat", {
       return chatInvite;
     },
     async leaveChat(associationId: number) {
-      await this.$apollo.mutate({
+      await useApolloClient().client.mutate({
         mutation: LeaveGroupMutation,
         variables: {
           input: {
@@ -254,7 +255,7 @@ export const useChatStore = defineStore("chat", {
       replyId?: number,
       associationId?: number
     ) {
-      await this.$apollo.mutate({
+      await useApolloClient().client.mutate({
         mutation: SendMessageMutation,
         variables: {
           input: {
@@ -352,7 +353,7 @@ export const useChatStore = defineStore("chat", {
       this.dialogs.groupSettings.loading = true;
       const {
         data: { updateChat }
-      } = await this.$apollo.mutate({
+      } = await useApolloClient().client.mutate({
         mutation: UpdateChatMutation,
         variables: {
           input: {
@@ -460,7 +461,7 @@ export const useChatStore = defineStore("chat", {
       add: boolean = true,
       chatAssociationId: number
     ) {
-      await this.$apollo.mutate({
+      await useApolloClient().client.mutate({
         mutation: AddChatUserMutation,
         variables: {
           input: {
@@ -474,7 +475,7 @@ export const useChatStore = defineStore("chat", {
     async createChat(users: number[]) {
       const {
         data: { createChat }
-      } = await this.$apollo.mutate({
+      } = await useApolloClient().client.mutate({
         mutation: CreateChatMutation,
         variables: {
           input: {
@@ -499,7 +500,7 @@ export const useChatStore = defineStore("chat", {
     async getMessages(
       input: InfiniteMessagesInput | PagedMessagesInput
     ): Promise<Message[]> {
-      const { data } = await this.$apollo.query({
+      const { data } = await useApolloClient().client.query({
         query: "page" in input ? PagedMessagesQuery : MessagesQuery,
         variables: {
           input
@@ -568,8 +569,8 @@ export const useChatStore = defineStore("chat", {
           offset !== undefined
             ? offset
             : position === ScrollPosition.Top
-            ? this.currentOffset.up
-            : this.currentOffset.down,
+              ? this.currentOffset.up
+              : this.currentOffset.down,
         limit: 50
       });
 
@@ -624,7 +625,7 @@ export const useChatStore = defineStore("chat", {
       }
       const {
         data: { chats }
-      } = await this.$apollo.query({
+      } = await useApolloClient().client.query({
         query: ChatsQuery
       });
       this.chats = chats
@@ -790,7 +791,11 @@ export const useChatStore = defineStore("chat", {
     },
     isCommunications() {
       const route = useRoute();
-      return route.path.startsWith("/communications/");
+      return route.path.startsWith(`/communications/`);
+    },
+    commsSidebar(state) {
+      const route = useRoute();
+      return route.path.startsWith(`/communications/${state.selectedChatId}`);
     }
   }
 });

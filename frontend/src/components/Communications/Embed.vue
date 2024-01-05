@@ -1,74 +1,88 @@
 <template>
   <template v-if="embed.metadata">
-    <v-card
-      v-for="(text, index) in embed.text"
-      :key="index"
-      :max-width="500"
-      elevation="0"
+    <component
+      :is="embed.text.length ? VCard : 'div'"
+      :class="{
+        'pl-4': embed.text.length
+      }"
     >
-      <v-card-text
-        v-if="index === 0 && embed.metadata.siteName"
-        class="text-overline"
-      >
-        {{ embed.metadata.siteName }}
-      </v-card-text>
-      <v-card-text
-        :class="{
-          'text-grey': !text.heading,
-          'text-h2': text.heading
-        }"
-      >
-        {{ text.text }}
-      </v-card-text>
-    </v-card>
-    <div v-for="(media, index) in embed.media" :key="index">
-      <img
-        v-if="media.type === 'IMAGE'"
-        :style="{
-          maxWidth: width <= 500 ? width + 'px' : 500 + 'px',
-          maxHeight: media.height > 400 ? 700 + 'px' : media.height * 2 + 'px'
-        }"
-        :src="media.url"
-        class="pointer rounded-xl mb-1"
-        alt="Embedded image"
-        @click="
-          $chat.dialogs.image.object = media;
-          $chat.dialogs.image.value = true;
-        "
-      />
-      <div v-else-if="media.type === 'FILE'">
-        <v-card-text>
-          <v-icon :size="48" class="mr-2">mdi-file</v-icon>
-          <span>
-            {{ embed.data.upload.name }}
-          </span>
+      <div v-for="(text, index) in embed.text" :key="index">
+        <v-card-text
+          v-if="index === 0 && embed.metadata.siteName"
+          class="text-overline"
+          style="padding-bottom: 0; padding-left: 0"
+        >
+          {{ embed.metadata.siteName }}
         </v-card-text>
-        <v-card-actions class="text-grey">
-          {{ $functions.fileSize(embed.data.upload.fileSize) }}
-          <v-spacer />
-          <v-btn
-            :href="`${$app.domain}${embed.data?.upload?.attachment}`"
-            icon
-            target="_blank"
-          >
-            <v-icon>mdi-download</v-icon>
-          </v-btn>
-        </v-card-actions>
+        <v-card-text
+          style="padding-bottom: 6px; padding-top: 6px; padding-left: 0"
+          :class="{
+            'text-grey': !text.heading
+          }"
+        >
+          {{ text.text }}
+        </v-card-text>
       </div>
-      <v-card
-        v-else-if="media.type === 'VIDEO'"
-        :max-width="width"
-        elevation="0"
-      >
-        <video :style="'max-width:' + width + 'px;'" controls height="300">
-          <source :src="$app.domain + embed.data.upload.attachment" />
-        </video>
-      </v-card>
-      <v-card v-else elevation="0">
-        You must upgrade your version of TPUvNEXT to see the embed type
-        {{ embed.type }}!
-      </v-card>
-    </div>
+      <div v-for="(media, index) in embed.media" :key="index">
+        <img
+          v-if="
+            media.type === EmbedMediaType.Image ||
+            media.type === EmbedMediaTypeLegacy.IMAGE
+          "
+          :style="{
+            maxWidth: width <= 500 ? width + 'px' : 500 + 'px',
+            maxHeight: media.height > 400 ? 700 + 'px' : media.height * 2 + 'px'
+          }"
+          :src="media.proxyUrl"
+          class="pointer rounded-xl mb-1"
+          alt="Embedded image"
+          @click="
+            $chat.dialogs.image.object = media;
+            $chat.dialogs.image.value = true;
+          "
+        />
+        <div
+          v-else-if="
+            media.type === EmbedMediaType.File ||
+            media.type === EmbedMediaTypeLegacy.FILE
+          "
+        >
+          <v-card-text>
+            <v-icon :size="48" class="mr-2">mdi-file</v-icon>
+            <span>
+              {{ embed.data.upload.name }}
+            </span>
+          </v-card-text>
+          <v-card-actions class="text-grey">
+            {{ $functions.fileSize(embed.data.upload.fileSize) }}
+            <v-spacer />
+            <v-btn
+              :href="`${$app.domain}${embed.data?.upload?.attachment}`"
+              icon
+              target="_blank"
+            >
+              <v-icon>mdi-download</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </div>
+        <v-card
+          v-else-if="
+            media.type === EmbedMediaType.Video ||
+            media.type === EmbedMediaTypeLegacy.VIDEO
+          "
+          :max-width="width"
+          elevation="0"
+        >
+          <video :style="'max-width:' + width + 'px;'" controls height="300">
+            <source :src="$app.domain + embed.data.upload.attachment" />
+          </video>
+        </v-card>
+        <v-card v-else-if="embed.type" elevation="0">
+          You must upgrade your version of TPUvNEXT to see the embed type
+          {{ embed.type }}!
+        </v-card>
+      </div>
+    </component>
     <v-card v-if="embed.metadata.type === 'CHAT_INVITE'" :max-width="width">
       <template v-if="invite">
         <v-img
@@ -146,11 +160,21 @@
   </template>
 </template>
 
+<script lang="ts" setup>
+enum EmbedMediaTypeLegacy {
+  IMAGE,
+  VIDEO,
+  AUDIO,
+  FILE
+}
+</script>
+
 <script lang="ts">
 import { defineComponent } from "vue";
-import { ChatInvite } from "@/gql/graphql";
+import { ChatInvite, EmbedMediaType } from "@/gql/graphql";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { VCard } from "vuetify/components";
 
 export default defineComponent({
   components: { UserAvatar, Overline },
@@ -163,6 +187,12 @@ export default defineComponent({
     };
   },
   computed: {
+    EmbedMediaTypeLegacy() {
+      return EmbedMediaType;
+    },
+    VCard() {
+      return VCard;
+    },
     width() {
       if (this.$vuetify.display.width < 600) return undefined;
       if (this.$vuetify.display.width <= 1366) return 350;

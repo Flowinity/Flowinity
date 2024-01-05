@@ -18,10 +18,11 @@ import { WeatherQuery } from "@/graphql/core/weather.graphql";
 import { Chat, CoreState, Upload } from "@/gql/graphql";
 import { useFriendsStore } from "@/store/friends.store";
 import { useMailStore } from "@/store/mail.store";
+import { useApolloClient } from "@vue/apollo-composable";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
-    connected: true,
+    connected: false,
     token: localStorage.getItem("token") || "",
     _postInitRan: false,
     quickAction: parseInt(localStorage.getItem("quickAction") || "1"),
@@ -107,7 +108,8 @@ export const useAppStore = defineStore("app", {
       },
       memoryProfiler: false,
       socketProfiler: false,
-      actionDialog: false
+      actionDialog: false,
+      networkInspector: false
     },
     quickSwitcher: [
       {
@@ -346,8 +348,8 @@ export const useAppStore = defineStore("app", {
           path: route.name?.toString()?.includes("Workspace")
             ? "/workspaces"
             : state.lastNote
-            ? `/workspaces/notes/${state.lastNote}`
-            : "/workspaces",
+              ? `/workspaces/notes/${state.lastNote}`
+              : "/workspaces",
           icon: "mdi-folder-account",
           scope: "workspaces.view",
           experimentsRequired: ["INTERACTIVE_NOTES"]
@@ -509,7 +511,7 @@ export const useAppStore = defineStore("app", {
       try {
         const {
           data: { weather }
-        } = await this.$apollo.query({
+        } = await useApolloClient().client.query({
           query: WeatherQuery
         });
         this.weather.data = weather;
@@ -575,9 +577,12 @@ export const useAppStore = defineStore("app", {
       useWorkspacesStore().init();
       const chat = useChatStore();
       const user = useUserStore();
-      setInterval(() => {
-        this.getWeather();
-      }, 1000 * 60 * 15);
+      setInterval(
+        () => {
+          this.getWeather();
+        },
+        1000 * 60 * 15
+      );
       this._postInitRan = true;
       this.populateQuickSwitcher();
       this.getWeather();
@@ -606,9 +611,8 @@ export const useAppStore = defineStore("app", {
           (document.createElement("link") as HTMLLinkElement);
         link.type = "image/x-icon";
         link.rel = "shortcut icon";
-        link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
-          user.user?.username
-        }&unread=${chat.totalUnread || 0}`;
+        link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${user
+          .user?.username}&unread=${chat.totalUnread || 0}`;
         document.head.appendChild(link);
       }
       i18nObject.global.locale =
@@ -658,7 +662,7 @@ export const useAppStore = defineStore("app", {
           blockedUsers,
           userEmoji
         }
-      } = await this.$apollo.query({
+      } = await useApolloClient().client.query({
         query: CoreStateQuery,
         fetchPolicy: "no-cache"
       });
@@ -711,7 +715,7 @@ export const useAppStore = defineStore("app", {
     async refresh() {
       const {
         data: { coreState }
-      } = await this.$apollo.query({
+      } = await useApolloClient().client.query({
         query: CoreStateQuery
       });
       this.site = coreState;

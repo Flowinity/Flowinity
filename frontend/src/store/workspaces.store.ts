@@ -8,6 +8,7 @@ import { NoteQuery } from "@/graphql/workspaces/note.graphql";
 import { isNumeric } from "@/plugins/isNumeric";
 import { SaveNoteMutation } from "@/graphql/workspaces/saveNote.graphql";
 import { SaveNoteInput, WorkspaceNote } from "@/gql/graphql";
+import { useApolloClient } from "@vue/apollo-composable";
 
 export interface WorkspacesState {
   items: Workspace[];
@@ -31,12 +32,12 @@ export const useWorkspacesStore = defineStore("workspaces", {
         dialog: false,
         loading: false
       }
-    } as WorkspacesState),
+    }) as WorkspacesState,
   actions: {
     async getNote(id: string | number) {
       const {
         data: { note }
-      } = await this.$apollo.query({
+      } = await useApolloClient().client.query({
         query: NoteQuery,
         variables: {
           input: {
@@ -87,7 +88,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
       }
     },
     async saveNote(data: WorkspaceNote, manualSave = false) {
-      await this.$apollo.mutate({
+      await useApolloClient().client.mutate({
         mutation: SaveNoteMutation,
         variables: {
           input: {

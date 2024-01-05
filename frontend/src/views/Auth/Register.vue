@@ -188,6 +188,7 @@ export default defineComponent({
         this.$app.token = register.token;
         await localStorage.setItem("token", register.token);
         this.axios.defaults.headers.common["Authorization"] = register.token;
+        this.$app.token = register.token;
         await this.$app.init();
         this.$app.reconnectSocket(register.token);
         this.$router.push("/");

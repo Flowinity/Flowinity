@@ -27,7 +27,8 @@ import "./boot/declarations";
 import globals from "./boot/globals";
 import events from "./boot/events";
 import socket from "./boot/socket";
-import apollo from "./boot/apollo";
+import apolloWs from "./boot/apollo.wsTransport";
+import apolloHttp from "./boot/apollo.httpTransport";
 import vuetify from "@/plugins/vuetify";
 
 const app = createApp({
@@ -116,8 +117,12 @@ if (import.meta.env.DEV) app.config.performance = true;
 
 // Register boot plugins
 registerPlugins(app);
-apollo(app);
 globals(app);
+if (localStorage.getItem("tpuTransport") === "http") {
+  apolloHttp(app);
+} else {
+  apolloWs(app);
+}
 events();
 socket(app).then(() => {});
 app.mount("#tpu-app");

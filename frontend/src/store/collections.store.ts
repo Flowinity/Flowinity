@@ -3,7 +3,13 @@ import { defineStore } from "pinia";
 import { CollectionCache } from "@/types/collection";
 import { UserCollectionsQuery } from "@/graphql/collections/getUserCollections.graphql";
 import { CollectionQuery } from "@/graphql/collections/getCollection.graphql";
-import { Collection, CollectionInput, Pager, UserCollectionsInput } from "@/gql/graphql";
+import {
+  Collection,
+  CollectionInput,
+  Pager,
+  UserCollectionsInput
+} from "@/gql/graphql";
+import { useApolloClient } from "@vue/apollo-composable";
 
 export const useCollectionsStore = defineStore("collections", {
   state: () => ({
@@ -39,7 +45,7 @@ export const useCollectionsStore = defineStore("collections", {
       if (reset) this.page = 1;
       const {
         data: { collections }
-      } = await this.$apollo.query({
+      } = await useApolloClient().client.query({
         query: UserCollectionsQuery,
         variables: {
           input: {
@@ -64,7 +70,7 @@ export const useCollectionsStore = defineStore("collections", {
     async getCollection(id: number | string): Promise<Collection | null> {
       const {
         data: { collection }
-      } = await this.$apollo.query({
+      } = await useApolloClient().client.query({
         query: CollectionQuery,
         fetchPolicy: "network-only",
         variables: {

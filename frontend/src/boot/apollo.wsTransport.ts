@@ -1,11 +1,14 @@
-import type { App } from "vue";
+import { App, watch } from "vue";
+import { createApolloProvider } from "@vue/apollo-option";
 import {
   ApolloClient,
   ApolloLink,
   from,
   HttpLink,
-  InMemoryCache
+  InMemoryCache,
+  NormalizedCacheObject
 } from "@apollo/client/core";
+import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import { onError } from "@apollo/client/link/error";
 import { useToast } from "vue-toastification";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
@@ -15,24 +18,21 @@ import {
   DefaultApolloClient,
   provideApolloClient
 } from "@vue/apollo-composable";
-import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
-import { createApolloProvider } from "@vue/apollo-option";
-import { getMainDefinition } from "@apollo/client/utilities";
-import { split } from "@apollo/client";
-import { useAppStore } from "@/stores/app.store";
-import { useDebugStore } from "@/stores/debug.store";
-import { watch } from "vue";
-import { useUserStore } from "@/stores/user.store";
+import { useUserStore } from "@/store/user.store";
+import { useAppStore } from "@/store/app.store";
+import { useDebugStore } from "@/store/debug.store";
+import router from "@/router";
 
-function getToken() {
-  return localStorage.getItem("token");
+function getToken(app: App) {
+  return (
+    app.config.globalProperties.$app.token ?? localStorage.getItem("token")
+  );
 }
 
-export default function setup(app: App) {
-  const toast = useToast();
+export function debugLink() {
   const debugStore = useDebugStore();
 
-  const debugLink = new ApolloLink((operation, forward) => {
+  return new ApolloLink((operation, forward) => {
     const id = new Date().getTime() + "-" + Math.random();
     const startTime = performance.now();
     debugStore.recentOperations.unshift({
@@ -41,6 +41,7 @@ export default function setup(app: App) {
       args: operation.variables,
       result: {},
       time: 0,
+      //@ts-ignore
       type: operation.query.definitions[0]?.operation,
       timestamp: new Date().getTime(),
       pending: true,
@@ -61,6 +62,10 @@ export default function setup(app: App) {
       return response;
     });
   });
+}
+
+export default function setup(app: App) {
+  const toast = useToast();
 
   let restartRequestedBeforeConnected = false;
   let gracefullyRestart = () => {
@@ -109,16 +114,17 @@ export default function setup(app: App) {
     }
   });
 
-  const userStore = useUserStore();
   let reconnect = false;
 
   const wsClient = createClient({
-    url: "wss://dev.privateuploader.gql.troplo.com/graphql",
+    url: `${window.location.protocol === "http:" ? "ws" : "wss"}://${
+      window.location.host
+    }/graphql`,
     connectionParams: async () => {
       return {
-        authorization: userStore.token,
+        authorization: getToken(app),
         "x-tpu-client-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": "Flowinity5",
+        "x-tpu-client": "TPUvNEXT",
         "x-tpu-resumable-state-id": crypto.randomUUID()
       };
     },
@@ -126,17 +132,15 @@ export default function setup(app: App) {
     keepAlive: 5000,
     on: {
       error: () => {
-        console.log("[Flowinity/GraphQL] Disconnected from socket.");
+        console.log("[TPU/GraphQL] Disconnected from socket.");
         const appStore = useAppStore();
         reconnect = true;
         appStore.connected = false;
       },
       connected: (socket: any) => {
         const appStore = useAppStore();
-        if (reconnect) {
-          appStore.connected = true;
-        }
-        console.log("[Flowinity/GraphQL] Connected to socket.");
+        appStore.connected = true;
+        console.log("[TPU/GraphQL] Connected to socket.");
         gracefullyRestart = () => {
           if (socket.readyState === WebSocket.OPEN) {
             appStore.connected = false;
@@ -144,7 +148,6 @@ export default function setup(app: App) {
           }
         };
 
-        // just in case you were eager to restart
         if (restartRequestedBeforeConnected) {
           restartRequestedBeforeConnected = false;
           gracefullyRestart();
@@ -157,12 +160,12 @@ export default function setup(app: App) {
 
   const authLink = new ApolloLink((operation, forward) => {
     // add the authorization to the headers
-    const token = getToken();
+    const token = getToken(app);
     operation.setContext({
       headers: {
         authorization: token,
         "x-tpu-client-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": "TPUv5 (Flowinity)"
+        "x-tpu-client": "TPUvNEXT"
       }
     });
     return forward(operation);
@@ -182,7 +185,17 @@ export default function setup(app: App) {
     });
   });
 
-  const appLink = from([cleanTypeName, authLink, errorLink, debugLink, wsLink]);
+  const networkInspection =
+    import.meta.env.DEV ||
+    localStorage.getItem("tpuNetworkInspection") === "true";
+
+  const appLink = from([
+    cleanTypeName,
+    authLink,
+    ...(networkInspection ? [debugLink()] : []),
+    errorLink,
+    wsLink
+  ]);
 
   if (import.meta.env.DEV) {
     loadDevMessages();
@@ -211,9 +224,18 @@ export default function setup(app: App) {
   provideApolloClient(apolloClient);
 
   watch(
-    () => userStore.token,
+    () => useAppStore().token,
     () => {
       gracefullyRestart();
     }
   );
+
+  const appStore = useAppStore();
+
+  appStore.init().then(() => {
+    if (!appStore.site.finishedSetup) {
+      router.push("/setup");
+    }
+    console.info("[TPU/CoreStore] Core initialized");
+  });
 }

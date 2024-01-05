@@ -9,9 +9,16 @@ import i18n from "@/plugins/i18n";
 import functions from "@/plugins/functions";
 import { GetUserQuery } from "@/graphql/user/user.graphql";
 import { UpdateUserMutation } from "@/graphql/user/update.graphql";
-import { BlockedUser, PartialUserFriend, UpdateUserInput, User, UserStoredStatus } from "@/gql/graphql";
+import {
+  BlockedUser,
+  PartialUserFriend,
+  UpdateUserInput,
+  User,
+  UserStoredStatus
+} from "@/gql/graphql";
 import { ProfileQuery } from "@/graphql/user/profile.graphql";
 import { BlockUserMutation } from "@/graphql/user/blockUser.graphql";
+import { useApolloClient } from "@vue/apollo-composable";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -73,7 +80,7 @@ export const useUserStore = defineStore("user", {
   },
   actions: {
     async blockUser() {
-      await this.$apollo.mutate({
+      await useApolloClient().client.mutate({
         mutation: BlockUserMutation,
         variables: {
           input: {
@@ -96,7 +103,7 @@ export const useUserStore = defineStore("user", {
     async getUser(username?: string, id?: number) {
       const {
         data: { user }
-      } = await this.$apollo.query({
+      } = await useApolloClient().client.query({
         query: ProfileQuery,
         fetchPolicy: "network-only",
         variables: {
@@ -240,7 +247,7 @@ export const useUserStore = defineStore("user", {
       }
       const {
         data: { currentUser }
-      } = await this.$apollo.query({
+      } = await useApolloClient().client.query({
         query: GetUserQuery
       });
       this.user = currentUser;
@@ -295,7 +302,7 @@ export const useUserStore = defineStore("user", {
         this.user.themeEngine.theme.amoled.colors =
           this.defaultVuetify.amoled.colors;
       }
-      await this.$apollo.mutate({
+      await useApolloClient().client.mutate({
         mutation: UpdateUserMutation,
         variables: {
           input: {

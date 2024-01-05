@@ -8,6 +8,8 @@ export class StatusEvent {
   id: number
   @Field(() => UserStatus)
   status: UserStatus
-  @Field(() => [Platform])
+  @Field(() => [Platform], {
+    nullable: true
+  })
   platforms: Platform[]
 }

@@ -14,6 +14,10 @@ import { useToast } from "vue-toastification";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import functions from "@/plugins/functions";
+import { useAppStore } from "@/store/app.store";
+import router from "@/router";
+import { provideApolloClient } from "@vue/apollo-composable";
+import { debugLink } from "@/boot/apollo.wsTransport";
 
 function getToken(app: App) {
   return (
@@ -22,6 +26,7 @@ function getToken(app: App) {
 }
 
 export default function setup(app: App) {
+  const appStore = useAppStore();
   const toast = useToast();
   const httpLink = new HttpLink({
     uri: "/graphql"
@@ -109,7 +114,18 @@ export default function setup(app: App) {
     loadErrorMessages();
   }
 
-  const appLink = from([cleanTypeName, authLink, errorLink, httpLink, wsLink]);
+  const networkInspection =
+    import.meta.env.DEV ||
+    localStorage.getItem("tpuNetworkInspection") === "true";
+
+  const appLink = from([
+    cleanTypeName,
+    authLink,
+    ...(networkInspection ? [debugLink()] : []),
+    errorLink,
+    httpLink,
+    wsLink
+  ]);
 
   // Create the apollo client
   const apolloClient = new ApolloClient({
@@ -124,7 +140,18 @@ export default function setup(app: App) {
   const apolloProvider = createApolloProvider({
     defaultClient: apolloClient
   });
+
   app.config.globalProperties.$apollo = apolloClient;
 
   app.use(apolloProvider);
+  appStore.connected = true;
+
+  provideApolloClient(apolloClient);
+
+  appStore.init().then(() => {
+    if (!appStore.site.finishedSetup) {
+      router.push("/setup");
+    }
+    console.info("[TPU/CoreStore] Core initialized");
+  });
 }

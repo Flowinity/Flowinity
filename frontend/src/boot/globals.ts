@@ -72,12 +72,6 @@ export default function setup(app) {
   };
   app.config.globalProperties.$functions = functions;
 
-  core.init().then(() => {
-    if (!core.site.finishedSetup) {
-      router.push("/setup");
-    }
-    console.info("[TPU/CoreStore] Core initialized");
-  });
   window.central = {
     user: user.user,
     emit: (platform: string, event: string, data: any) => {

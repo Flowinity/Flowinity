@@ -1,6 +1,10 @@
 // Utilities
 import { defineStore } from "pinia";
-import { ExperimentsQuery, SetExperimentMutation } from "@/graphql/core/experiments.graphql";
+import {
+  ExperimentsQuery,
+  SetExperimentMutation
+} from "@/graphql/core/experiments.graphql";
+import { useApolloClient } from "@vue/apollo-composable";
 
 export interface ExperimentsState {
   experiments: Record<string, string | number | boolean | object>;
@@ -46,7 +50,7 @@ export const useExperimentsStore = defineStore("experiments", {
       }
       const {
         data: { getExperiments }
-      } = await this.$apollo.query({
+      } = await useApolloClient().client.query({
         query: ExperimentsQuery
       });
       for (const experiment of getExperiments) {
