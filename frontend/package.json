@@ -75,6 +75,7 @@
     "markdown-it-emoji": "^2.0.2",
     "markdown-it-unicode-emoji": "https://github.com/Troplo/markdown-it-unicode-emoji",
     "monaco-editor": "^0.36.1",
+    "patch-package": "^8.0.0",
     "pinia": "^2.0.23",
     "qrcode.vue": "^3.3.3",
     "sass": "^1.55.0",
