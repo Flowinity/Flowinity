@@ -48,7 +48,7 @@ ax.interceptors.response.use(
         return Promise.reject(e);
       } else if (e.response.data.errors[0].name === "SCOPE_REQUIRED") {
         console.warn(
-          `[TPU/HTTP] API key scope ${e.response.data.errors[0].requiredScope} is required to access /api/v2${e.response.config.url}.`
+          `[TPU/HTTP] API key scope ${e.response.data.errors[0].requiredScope} is required to access /api/v3${e.response.config.url}.`
         );
         return Promise.reject(e);
       } else if (
