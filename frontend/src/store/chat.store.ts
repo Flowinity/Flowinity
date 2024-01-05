@@ -444,17 +444,15 @@ export const useChatStore = defineStore("chat", {
     },
     lookupUser(id: number): PartialUserFriend {
       const user = useUserStore();
-      return (
-        user.users[id] || {
-          username: "Unknown User",
-          status: UserStatus.Offline,
-          administrator: false,
-          createdAt: new Date().toISOString(),
-          id: 0,
-          moderator: false,
-          bot: false
-        }
-      );
+      return <PartialUserFriend>(user.users[id] || {
+        username: "Unknown User",
+        status: UserStatus.Offline,
+        administrator: false,
+        createdAt: new Date().toISOString(),
+        id: 0,
+        moderator: false,
+        bot: false
+      });
     },
     async changeUsers(
       users: number[],
