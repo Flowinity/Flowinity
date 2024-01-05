@@ -138,9 +138,7 @@ const config = {
   server: {
     port: 3000,
     proxy: {
-      "/api/v2": "http://localhost:34582",
       "/api/v3": "http://localhost:34582",
-      "/api/v4": "http://localhost:34582",
       "/i/": "http://localhost:34582",
       "/socket.io": {
         target: "http://localhost:34582",
@@ -148,7 +146,6 @@ const config = {
         secure: true,
         changeOrigin: true
       },
-      "/api/v1": "http://localhost:34581",
       "/graphql": {
         target: "http://localhost:34583",
         ws: true,
