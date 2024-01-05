@@ -5,9 +5,9 @@ import {
   ApolloLink,
   from,
   HttpLink,
-  InMemoryCache
-  //@ts-ignore
-} from "@privateuploader/apollo-client";
+  InMemoryCache,
+  NormalizedCacheObject
+} from "@apollo/client/core";
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import { onError } from "@apollo/client/link/error";
 import { useToast } from "vue-toastification";

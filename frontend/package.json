@@ -12,9 +12,12 @@
     "preview": "vite preview",
     "lint": "eslint . --fix --ignore-path .gitignore",
     "build-mobile": "CORDOVA=true vite build && rm -rf ./mobile/www && cp -r ./dist ./mobile/www",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "codegen": "graphql-codegen --config codegen.ts",
+    "postinstall": "patch-package",
+    "postuninstall": "patch-package"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.8",
     "@codemirror/autocomplete": "^6.4.2",
     "@codemirror/basic-setup": "^0.20.0",
     "@codemirror/lang-css": "^6.1.1",
@@ -39,7 +42,6 @@
     "@guolao/vue-monaco-editor": "^1.1.2",
     "@highlightjs/vue-plugin": "1.0.2",
     "@mdi/font": "7.1.96",
-    "@privateuploader/apollo-client": "^3.8.9",
     "@svgmoji/noto": "^3.2.0",
     "@troplo/tpu-editorjs-nested-list": "^1.3.0-troplo1",
     "@troplo/tpu-simple-image": "^1.5.1-troplo1",

@@ -24,6 +24,24 @@
     jsonpointer "^5.0.0"
     leven "^3.1.0"
 
+"@apollo/client@^3.8.8":
+  version "3.8.8"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.8.8.tgz#1a004b2e6de4af38668249a7d7790f6a3431e475"
+  integrity sha512-omjd9ryGDkadZrKW6l5ktUAdS4SNaFOccYQ4ZST0HLW83y8kQaSZOCTNlpkoBUK8cv6qP8+AxOKwLm2ho8qQ+Q==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.1.1"
+    "@wry/equality" "^0.5.6"
+    "@wry/trie" "^0.5.0"
+    graphql-tag "^2.12.6"
+    hoist-non-react-statics "^3.3.2"
+    optimism "^0.18.0"
+    prop-types "^15.7.2"
+    response-iterator "^0.2.6"
+    symbol-observable "^4.0.0"
+    ts-invariant "^0.10.3"
+    tslib "^2.3.0"
+    zen-observable-ts "^1.2.5"
+
 "@ardatan/relay-compiler@12.0.0":
   version "12.0.0"
   resolved "https://registry.yarnpkg.com/@ardatan/relay-compiler/-/relay-compiler-12.0.0.tgz#2e4cca43088e807adc63450e8cab037020e91106"
@@ -2245,24 +2263,6 @@
     pvtsutils "^1.3.2"
     tslib "^2.5.0"
     webcrypto-core "^1.7.7"
-
-"@privateuploader/apollo-client@^3.8.9":
-  version "3.8.9"
-  resolved "https://registry.yarnpkg.com/@privateuploader/apollo-client/-/apollo-client-3.8.9.tgz#be43e87de45ad7879b82bdba2d9a9aedb76acf47"
-  integrity sha512-QbwYkhBqqq1Su8pME1IBN1OmkVDjQcyYTpX4gBHWht+x9DBQmgkp3yWFVFUSAQluXcU+lfYT8dzGrRoH8DDz3Q==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.1.1"
-    "@wry/equality" "^0.5.6"
-    "@wry/trie" "^0.5.0"
-    graphql-tag "^2.12.6"
-    hoist-non-react-statics "^3.3.2"
-    optimism "^0.18.0"
-    prop-types "^15.7.2"
-    response-iterator "^0.2.6"
-    symbol-observable "^4.0.0"
-    ts-invariant "^0.10.3"
-    tslib "^2.3.0"
-    zen-observable-ts "^1.2.5"
 
 "@repeaterjs/repeater@^3.0.4":
   version "3.0.5"
