@@ -76,11 +76,6 @@ declare global {
       user: any;
       emit: (platform: string, event: string, data: any) => void;
     };
-    __TROPLO_INTERNALS_EDITOR_SAVE: (args: any) => any;
-    __TROPLO_INTERNALS_UPDATE_COUNT: (args: any) => any;
-    __TROPLO_INTERNALS_EDITOR_UPLOAD: (args: any) => any;
-    __TROPLO_INTERNALS_NOTE_ID: number;
-    __NOTE_DATA: any;
   }
 
   interface navigator extends Navigator {
