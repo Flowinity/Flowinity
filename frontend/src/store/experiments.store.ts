@@ -23,7 +23,7 @@ export const useExperimentsStore = defineStore("experiments", {
   actions: {
     async setExperiment(key: string, value: number, userId?: number) {
       this.experiments[key] = value;
-      await this.$apollo.mutate({
+      await useApolloClient().client.mutate({
         mutation: SetExperimentMutation,
         variables: {
           input: {
