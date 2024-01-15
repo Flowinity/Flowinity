@@ -1,7 +1,8 @@
 import { Service } from "typedi"
-import { Arg, Mutation, Resolver } from "type-graphql"
+import { Arg, FieldResolver, Mutation, Resolver, Root } from "type-graphql"
 import {
   EmbedDataV2,
+  EmbedMedia,
   EmbedPrecacheInput
 } from "@app/classes/graphql/chat/embeds"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
@@ -9,6 +10,7 @@ import { ChatService } from "@app/services/chat.service"
 import RateLimit from "@app/lib/graphql/RateLimit"
 import { embedGenerator } from "@app/lib/embedParser"
 import { GraphQLError } from "graphql/error"
+import { Upload } from "@app/models/upload.model"
 
 @Service()
 @Resolver(EmbedDataV2)
@@ -39,5 +41,21 @@ export class EmbedDataV2Resolver {
     )
 
     return precache[0] || null
+  }
+}
+
+@Service()
+@Resolver(EmbedMedia)
+export class EmbedMediaResolver {
+  constructor(private readonly chatService: ChatService) {}
+
+  @FieldResolver(() => Upload)
+  upload(@Root() media: EmbedMedia) {
+    if (!media.attachment) return null
+    return Upload.findOne({
+      where: {
+        attachment: media.attachment
+      }
+    })
   }
 }

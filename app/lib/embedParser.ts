@@ -121,7 +121,8 @@ export async function embedGenerator(
               width: result.width,
               mimeType: result.mime,
               isInternal: true,
-              type: EmbedMediaType.IMAGE
+              type: EmbedMediaType.IMAGE,
+              upload
             }
           ],
           text: [],
@@ -141,7 +142,8 @@ export async function embedGenerator(
               type:
                 upload.type === "video"
                   ? EmbedMediaType.VIDEO
-                  : EmbedMediaType.AUDIO
+                  : EmbedMediaType.AUDIO,
+              upload
             }
           ],
           text: [],
@@ -159,7 +161,8 @@ export async function embedGenerator(
               // todo: fix wrong type
               mimeType: "application/octet-stream",
               isInternal: true,
-              type: EmbedMediaType.FILE
+              type: EmbedMediaType.FILE,
+              upload
             }
           ],
           text: [],
@@ -178,7 +181,8 @@ export async function embedGenerator(
             attachment: upload.attachment,
             mimeType: "application/octet-stream",
             isInternal: true,
-            type: EmbedMediaType.FILE
+            type: EmbedMediaType.FILE,
+            upload
           }
         ],
         version: EmbedVersion.V2

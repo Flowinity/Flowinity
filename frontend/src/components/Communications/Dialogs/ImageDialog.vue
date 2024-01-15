@@ -11,8 +11,9 @@
         :width="width"
         :height="height"
         :src="
-          $chat.dialogs.image.object?.proxyUrl ||
-          $chat.dialogs.image.object?.url
+          $chat.dialogs.image.object?.isInternal
+            ? $app.domain + $chat.dialogs.image.object?.attachment
+            : $chat.dialogs.image.object?.proxyUrl
         "
       />
     </v-card>
@@ -27,7 +28,7 @@
       @click="
         $chat.processLink(
           $chat.dialogs.image.object?.url ||
-            `https://${$app.site.domain}${$chat.dialogs.image.object.url}`
+            $app.domain + $chat.dialogs.image.object.attachment
         )
       "
     >
@@ -58,6 +59,8 @@ export default defineComponent({
     },
     domain() {
       try {
+        if (this.$chat.dialogs.image.object?.isInternal)
+          return new URL(this.$app.domain).hostname;
         return this.$chat.dialogs.image.object?.url
           ? new URL(this.$chat.dialogs.image.object?.url).hostname
           : new URL(this.$chat.dialogs.image.object?.proxyUrl).hostname;
