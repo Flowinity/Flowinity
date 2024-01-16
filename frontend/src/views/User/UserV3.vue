@@ -332,7 +332,7 @@ import StatsCard from "@/components/Dashboard/StatsCard.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
 import { DefaultThemes } from "@/plugins/vuetify";
 import UserV3Settings from "@/components/Users/UserV3/Dialogs/Settings.vue";
-import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/ComponentHandler.vue";
+import UserV3ComponentHandler from "@/components/Users/UserV3/Widgets/UserV3ComponentHandler.vue";
 import { VueDraggable } from "vue-draggable-plus";
 import { Component, Rows } from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
@@ -742,8 +742,8 @@ export default defineComponent({
         component = foundRow;
         parent = this.layout.layout.columns[0];
       } else {
-        const foundChildRow = this.layout.layout.columns[0].rows.find((x) =>
-          x?.props?.children?.find((y: Component) => y.id === id)
+        const foundChildRow = this.layout.layout.columns[0].rows.find(
+          (x) => x?.props?.children?.find((y: Component) => y.id === id)
         );
         if (foundChildRow && "children" in foundChildRow.props) {
           component = foundChildRow.props.children?.find(
