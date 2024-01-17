@@ -7,13 +7,20 @@
           :elevation="$vuetify.display.mobile ? 0 : 8"
           :flat="$vuetify.display.mobile"
         >
+          <div
+            class="d-flex justify-center mt-4"
+            v-if="$experiments.experiments.FLOWINITY"
+          >
+            <FlowinityBanner style="width: 256px"></FlowinityBanner>
+          </div>
           <p
+            v-else
             class="text-center text-gradient mt-2"
             :style="
               $vuetify.display.mobile ? 'font-size: 38px' : 'font-size: 48px'
             "
           >
-            {{ $app.site?.name || "PrivateUploader" }}
+            {{ $app.site?.name || "Flowinity" }}
           </p>
           <v-container>
             <v-form>
@@ -58,9 +65,11 @@
 import { defineComponent } from "vue";
 import { LoginMutation } from "@/graphql/auth/login.graphql";
 import { LoginMutationVariables } from "@/gql/graphql";
+import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 
 export default defineComponent({
   name: "Login",
+  components: { FlowinityBanner },
   data() {
     return {
       username: "",

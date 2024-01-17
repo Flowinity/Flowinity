@@ -365,7 +365,7 @@ export class CoreService {
     gold: boolean = false
   ): Record<string, any> {
     const experiments = {
-      FLOWINITY: true,
+      FLOWINITY: config.officialInstance || false,
       PRIDE: false,
       THEME: 3,
       NOTIFICATION_SOUND: 2,

@@ -11,13 +11,20 @@
           :elevation="$vuetify.display.mobile ? 0 : 8"
           :flat="$vuetify.display.mobile"
         >
+          <div
+            class="d-flex justify-center mt-4"
+            v-if="$experiments.experiments.FLOWINITY"
+          >
+            <FlowinityBanner style="width: 256px"></FlowinityBanner>
+          </div>
           <p
+            v-else
             class="text-center text-gradient mt-2"
             :style="
               $vuetify.display.mobile ? 'font-size: 38px' : 'font-size: 48px'
             "
           >
-            {{ $app.site?.name || "PrivateUploader" }}
+            {{ $app.site?.name || "Flowinity" }}
           </p>
           <v-container>
             <v-form v-model="form">
@@ -118,9 +125,11 @@ import { defineComponent } from "vue";
 import { TYPE } from "vue-toastification";
 import { RegisterMutationVariables } from "@/gql/graphql";
 import { RegisterMutation } from "@/graphql/auth/register.graphql";
+import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 
 export default defineComponent({
   name: "Register",
+  components: { FlowinityBanner },
   data() {
     return {
       terms: false,

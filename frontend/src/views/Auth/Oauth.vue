@@ -8,13 +8,20 @@
           :elevation="$vuetify.display.mobile ? 0 : 8"
           :flat="$vuetify.display.mobile"
         >
+          <div
+            class="d-flex justify-center my-4"
+            v-if="$experiments.experiments.FLOWINITY"
+          >
+            <FlowinityBanner style="width: 256px"></FlowinityBanner>
+          </div>
           <p
+            v-else
             class="text-center text-gradient mt-2"
             :style="
               $vuetify.display.mobile ? 'font-size: 38px' : 'font-size: 48px'
             "
           >
-            {{ $app.site?.name || "PrivateUploader" }}
+            {{ $app.site?.name || "Flowinity" }}
           </p>
           <p class="text-center text-grey">
             <UserAvatar
@@ -121,18 +128,17 @@
                   display: unset;
                 "
               >
-                No PrivateUploader app is able to access your password or other
-                sensitive information.
+                No {{ $app.site.name }} app is able to access your password or
+                other sensitive information.
               </v-list-item-subtitle>
             </v-list-item>
           </v-list>
           <small class="text-grey ml-5">
-            You will be redirected to {{ url || "privateuploader.com" }} after
-            authorizing.
+            You will be redirected to {{ url || "unknown" }} after authorizing.
             <template v-if="!app.verified">
               This application is
               <b>not</b>
-              endorsed, or published by PrivateUploader.
+              endorsed, or published by {{ $app.site.name }}.
             </template>
           </small>
           <v-card-actions>
@@ -161,6 +167,7 @@ import {
   OauthAppConsentQuery
 } from "@/graphql/developer/consent.graphql";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 
 export type ScopeDefinition = {
   id: string;
@@ -170,7 +177,7 @@ export type ScopeDefinition = {
 
 export default defineComponent({
   name: "Oauth",
-  components: { UserAvatar },
+  components: { FlowinityBanner, UserAvatar },
   data() {
     return {
       availablePermissions: [] as ChatPermission[],

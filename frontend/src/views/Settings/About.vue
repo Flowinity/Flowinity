@@ -100,6 +100,9 @@
       </a>
       is licensed under AGPLv3, created by
       <a class="text-gradient" href="https://troplo.com">Troplo.</a>
+      <br />
+
+      Flowinity, formerly known as PrivateUploader.
     </p>
     <v-btn
       v-if="$experiments.experiments['ACCOUNT_DEV_ELIGIBLE']"

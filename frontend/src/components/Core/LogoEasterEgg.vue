@@ -17,12 +17,12 @@
       <div class="d-flex">
         <FlowinityBannerRainbow
           v-if="$experiments.experiments.PRIDE"
-          style="height: 48px; width: 150px"
+          style="width: 150px"
           src="@/assets/images/flowinity-logo-banner-rainbow.svg"
         />
         <FlowinityBanner
           v-else
-          style="height: 48px; width: 150px"
+          style="width: 150px"
           src="@/assets/images/flowinity-logo-banner.svg"
         />
       </div>

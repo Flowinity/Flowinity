@@ -8,16 +8,7 @@
     flat
     floating
   >
-    <h1
-      v-if="!$vuetify.display.mobile"
-      id="tpu-brand-logo"
-      class="text-gradient unselectable ml-4"
-      style="z-index: 10; cursor: pointer; font-size: 32px"
-      title="PrivateUploader"
-      @click="$router.push('/')"
-    >
-      {{ $app.site.name }}
-    </h1>
+    <FlowinityBannerHandler v-if="!$vuetify.display.mobile" />
     <v-spacer />
     <!-- theme v-menu -->
     <v-menu
@@ -63,9 +54,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
+import FlowinityBannerHandler from "@/components/Brand/FlowinityBannerHandler.vue";
 
 export default defineComponent({
   name: "UnauthenticatedAppBar",
+  components: { FlowinityBannerHandler, FlowinityBanner },
   computed: {
     redirected() {
       return this.$route.query.redirected && this.$route.path === "/home";
