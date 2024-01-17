@@ -12,7 +12,10 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "codegen": "graphql-codegen --config codegen.ts",
+    "postinstall": "patch-package",
+    "postupdate": "patch-package",
+    "postuninstall": "patch-package"
   },
   "type": "module",
   "dependencies": {
@@ -38,6 +41,7 @@
     "lodash": "^4.17.21",
     "markdown-it": "^13.0.2",
     "markdown-it-emoji": "^2.0.2",
+    "patch-package": "^8.0.0",
     "pinia": "^2.1.6",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",

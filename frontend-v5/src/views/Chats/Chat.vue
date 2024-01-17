@@ -2,10 +2,11 @@
   <div class="flex h-full" id="outer-chat">
     <div class="communications flex-1" id="communications">
       <div
-        class="messages position-relative"
+        class="messages relative"
         id="messages"
         :key="chatStore.selectedChatAssociationId"
         ref="messages"
+        @scroll="handleScroll"
       >
         <div id="sentinel-bottom" ref="sentinelBottom"></div>
         <comms-message
@@ -34,7 +35,7 @@
           :merge="$chat.merge(message, index)"
         />
       </div>
-      <div class="input mx-4 my-2">
+      <div class="relative input mx-4 my-2">
         <div class="flex-col">
           <comms-input
             v-model="content"
@@ -43,29 +44,38 @@
             @update:model-value="type"
             @send="sendMessage"
           >
-            <div
-              style="
-                overflow: hidden;
-                transition: max-height 0.05s ease-in;
-                margin-bottom: -8px;
-                max-height: 0;
-              "
-              :style="{
-                'max-height': replying ? '36px' : '0'
-              }"
-            >
-              <div class="flex w-full justify-between">
-                <message-reply
-                  :line="false"
-                  :reply="
-                    messagesStore.selected.find(
-                      (message) => message.id === replyId
-                    )
-                  "
-                />
-                <tpu-button icon variant="passive" @click="replying = false">
-                  <RiCloseLine style="width: 20px" />
-                </tpu-button>
+            <div class="flex-col flex gap-5">
+              <div
+                class="flex input-expander select-none cursor-pointer"
+                :style="{
+                  'max-height': avoidAutoScroll ? '36px' : '0'
+                }"
+                @click="autoScroll(true)"
+              >
+                <RiArrowDownLine style="width: 25px" />
+                <span class="pl-2">
+                  {{ t("chats.scrollToBottom") }}
+                </span>
+              </div>
+              <div
+                class="input-expander"
+                :style="{
+                  'max-height': replying ? '36px' : '0'
+                }"
+              >
+                <div class="flex w-full justify-between">
+                  <message-reply
+                    :line="false"
+                    :reply="
+                      messagesStore.selected.find(
+                        (message) => message.id === replyId
+                      )
+                    "
+                  />
+                  <tpu-button icon variant="passive" @click="replying = false">
+                    <RiCloseLine style="width: 20px" />
+                  </tpu-button>
+                </div>
               </div>
             </div>
           </comms-input>
@@ -240,6 +250,7 @@ import RiPushpin2Fill from "vue-remix-icons/icons/ri-pushpin-2-fill.vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
 import CommsSearchInput from "@/components/Communications/CommsSearchInput.vue";
 import PinsSideBar from "@/layouts/default/PinsSideBar.vue";
+import RiArrowDownLine from "vue-remix-icons/icons/ri-arrow-down-line.vue";
 const { t } = useI18n();
 const chatStore = useChatStore();
 const userStore = useUserStore();
@@ -371,6 +382,11 @@ function editLastMessage() {
   });
 }
 
+function handleScroll(e: Event) {
+  const element = e.target as HTMLElement;
+  avoidAutoScroll.value = element.scrollTop < -200;
+}
+
 function shortcutHandler(e: KeyboardEvent) {
   if (e.key === "Escape") {
     e.preventDefault();
@@ -436,8 +452,8 @@ function shortcutHandler(e: KeyboardEvent) {
   }
 }
 
-function autoScroll() {
-  if (avoidAutoScroll.value) return;
+function autoScroll(force: boolean = false) {
+  if (avoidAutoScroll.value && !force) return;
   if (!messagesStore.selected.length) return;
   const sentinel = document.getElementById("sentinel-bottom");
   if (!sentinel) return;
@@ -545,5 +561,12 @@ watch(
 .input-container {
   position: sticky;
   bottom: 0;
+}
+
+.input-expander {
+  overflow: hidden;
+  transition: max-height 0.05s ease-in;
+  margin-bottom: -8px;
+  max-height: 0;
 }
 </style>

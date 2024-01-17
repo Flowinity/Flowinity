@@ -1,10 +1,9 @@
 <template>
-  <div class="gap-4 p-4 w-full relative md:grid md:grid-cols-3 lg:grid-cols-4">
+  <div class="gap-4 p-4 w-full relative md:grid md:grid-cols-3 flex">
     <gallery-input
       ref="galleryInputRef"
       :model-value="props.search"
       input-id="gallery-input"
-      class="lg:col-span-2"
       @update:model-value="$emit('update:search', $event)"
       @refresh="$emit('refresh')"
     />
@@ -13,6 +12,8 @@
       :label="t('gallery.options.filter')"
       class="cursor-default"
       :custom-text="filterText"
+      :options="filterOptions"
+      @update:model-value="setFilter"
     >
       <div class="flex-col flex-grow w-full">
         <div class="w-full">

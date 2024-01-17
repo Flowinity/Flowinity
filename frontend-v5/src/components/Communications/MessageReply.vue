@@ -1,12 +1,13 @@
 <template>
-  <div v-if="reply" class="flex">
+  <div v-if="reply" class="flex select-none truncate overflow-hidden">
     <reply-line v-if="line" class="mt-2"></reply-line>
     <UserAvatar :user-id="reply?.userId || 0" size="24" class="mx-1" />
     <span
       v-memo="[reply.content]"
-      class="overflow-content text-[#878787]"
-      v-html="$functions.markdownReply(reply.content || '', reply)"
-    ></span>
+      class="whitespace-nowrap overflow-x-hidden overflow-ellipsis text-[#878787]"
+    >
+      {{ reply.content }}
+    </span>
   </div>
 </template>
 

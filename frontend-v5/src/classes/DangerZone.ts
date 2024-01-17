@@ -2,7 +2,7 @@ export class DangerZone<T> {
   password: string;
   totp: string;
   passwordMode: boolean;
-  attrs: T;
+  attrs: T | undefined;
 
   constructor(hasTotp: boolean, attrs?: T) {
     this.passwordMode = !hasTotp;
