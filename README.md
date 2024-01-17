@@ -1,5 +1,4 @@
-![PrivateUploader Banner](https://i.troplo.com/i/9ea16d8ab178.png)
-![PrivateUploader Features](https://i.troplo.com/i/086834402e31.png)
+![PrivateUploader Banner](https://i.troplo.com/i/cc7ba831c18a.png)
 
 # Flowinity (formerly PrivateUploader) [![codecov](https://codecov.io/gh/PrivateUploader/PrivateUploader/branch/api-v4/graph/badge.svg?token=RT9XLUOX5Y)](https://codecov.io/gh/PrivateUploader/PrivateUploader)
 
@@ -12,6 +11,8 @@ Collections.
 
 Additionally, Flowinity has only recently become an open source project, so
 documentation and resources are lacking initially, but will improve over time.
+
+![PrivateUploader Features](https://i.troplo.com/i/086834402e31.png)
 
 ## Don't want to host your own server?
 

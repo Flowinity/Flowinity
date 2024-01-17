@@ -235,7 +235,7 @@ export class AdminResolver {
           {
             body: {
               name: user.username,
-              intro: `Your Colubrina account has been automatically migrated over to Flowinity.<br>Please login with the username <strong>${user.username}</strong>, or your email address.<br><br><a href="https://flowinity.com"><img src="https://i.troplo.com/i/b510d6e2ec9a.png" alt="Flowinity Promo" style="max-width: 100%; border-radius: 4px"></a><br><br>The best of Colubrina - now in one place!`,
+              intro: `Your Colubrina account has been automatically migrated over to Flowinity.<br>Please login with the username <strong>${user.username}</strong>, or your email address.<br><br><a href="https://flowinity.com"><img src="https://i.troplo.com/i/cc7ba831c18a.png" alt="Flowinity Promo" style="max-width: 100%; border-radius: 4px"></a><br><br>The best of Colubrina - now in one place!`,
               action: [
                 {
                   instructions: `Click the button below to login to your new account!`,
@@ -258,7 +258,7 @@ export class AdminResolver {
           {
             body: {
               name: legacy.username,
-              intro: `Your Colubrina account could not be automatically migrated over to Flowinity.\nIf you wish to seamlessly migrate over your chats and messages, please go to Settings > Integrations, and enter your Colubrina account credentials to complete the migration process!<br><br><a href="https://flowinity.com"><img src="https://i.troplo.com/i/b510d6e2ec9a.png" alt="Flowinity Promo" style="max-width: 100%; border-radius: 4px"></a><br><br>The best of Colubrina - now in one place!`,
+              intro: `Your Colubrina account could not be automatically migrated over to Flowinity.\nIf you wish to seamlessly migrate over your chats and messages, please go to Settings > Integrations, and enter your Colubrina account credentials to complete the migration process!<br><br><a href="https://flowinity.com"><img src="https://i.troplo.com/i/cc7ba831c18a.png" alt="Flowinity Promo" style="max-width: 100%; border-radius: 4px"></a><br><br>The best of Colubrina - now in one place!`,
               action: [
                 {
                   instructions: `Click the button below to register a new account and complete the migration!`,
