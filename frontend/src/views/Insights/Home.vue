@@ -1,20 +1,5 @@
 <template>
   <v-container>
-    <CoreDialog v-model="comingSoon" max-width="500px">
-      <template #title>Coming Soon</template>
-      <v-container class="text-center justify-center">
-        <v-card-text>
-          This feature is coming soon! If you'd still like to access your
-          Insights, you can do so on the
-          <a
-            href="https://legacy.images.flowinity.com/insights"
-            target="_blank"
-          >
-            old TPU.
-          </a>
-        </v-card-text>
-      </v-container>
-    </CoreDialog>
     <v-card>
       <v-toolbar>
         <v-spacer />
@@ -24,7 +9,7 @@
       <v-container class="text-center justify-center">
         <v-card-title>Welcome to the new Insights!</v-card-title>
         <v-card-subtitle class="mb-4">
-          Select a report to gain detailed information on how you use TPU.
+          Select a report to gain detailed information on how you use Flowinity.
         </v-card-subtitle>
         <v-row>
           <v-col cols="12" md="6" sm="1" xl="3">
@@ -32,7 +17,7 @@
               :right-text="`Since ${$date($user.user?.createdAt).format(
                 'YYYY'
               )}`"
-              image="https://i.troplo.com/i/3707e7de31bf.svg"
+              image="https://i.troplo.com/i/113b798b50f9.svg"
               to="/insights/dynamic"
             />
           </v-col>
@@ -42,7 +27,7 @@
               :right-text="`${$date()
                 .subtract(7, 'days')
                 .format('Do of MMMM YYYY')}`"
-              image="https://i.troplo.com/i/b95680817c90.svg"
+              image="https://i.troplo.com/i/ec511f6a168a.svg"
               to="/insights/weekly"
             />
           </v-col>
@@ -52,7 +37,7 @@
                 .subtract(30, 'days')
                 .startOf('month')
                 .format('MMMM YYYY')}`"
-              image="https://i.troplo.com/i/5804cb16c03e.svg"
+              image="https://i.troplo.com/i/b93178346b36.svg"
               to="/insights/monthly"
             />
           </v-col>
@@ -62,7 +47,7 @@
                 .subtract(1, 'years')
                 .startOf('year')
                 .format('YYYY')}`"
-              image="https://i.troplo.com/i/283fd2159008.svg"
+              image="https://i.troplo.com/i/4b18595e5bc2.svg"
               to="/insights/yearly"
             />
           </v-col>
@@ -91,11 +76,6 @@ import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 export default defineComponent({
   name: "Home",
   components: { CoreDialog, DynamicCard },
-  data() {
-    return {
-      comingSoon: false
-    };
-  },
   mounted() {
     this.$app.title = "Insights";
   }

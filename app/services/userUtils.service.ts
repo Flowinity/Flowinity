@@ -259,7 +259,7 @@ export class UserUtilsService {
           name: user.username,
           intro: `${
             !correction
-              ? "You recently requested to verify your email address for your PrivateUploader account. Please"
+              ? "You recently requested to verify your email address for your Flowinity account. Please"
               : "We discovered an issue where some verification emails weren't being sent out correctly. If you did not initially receive a verification email you can click"
           } the button below to verify your email address.`,
           action: [
@@ -272,11 +272,11 @@ export class UserUtilsService {
               }
             }
           ],
-          outro: "Thank you for using PrivateUploader!"
+          outro: "Thank you for using Flowinity!"
         }
       },
       user.email,
-      "PrivateUploader Email Verification"
+      "Flowinity Email Verification"
     )
     return true
   }

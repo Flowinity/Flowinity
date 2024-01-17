@@ -67,8 +67,8 @@ const config = {
         "browserconfig.xml"
       ],
       manifest: {
-        name: "PrivateUploader",
-        short_name: "TPU",
+        name: "Flowinity",
+        short_name: "Flowinity",
         icons: [
           {
             src: "/android-chrome-192x192.png",

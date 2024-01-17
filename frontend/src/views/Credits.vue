@@ -6,7 +6,7 @@
       </v-toolbar>
       <v-container>
         <v-card-title>
-          PrivateUploader was made possible by the following people:
+          Flowinity was made possible by the following people:
         </v-card-title>
         <template v-if="$app.site.officialInstance">
           <UserCard
@@ -84,8 +84,7 @@
         </template>
         <v-card-subtitle>... and everyone else!</v-card-subtitle>
         <v-card-title class="mt-3">
-          PrivateUploader was made possible by the following open source
-          projects:
+          Flowinity was made possible by the following open source projects:
         </v-card-title>
         <ul class="ml-8">
           <li v-for="pkg in items" :key="pkg">

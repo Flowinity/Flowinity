@@ -101,7 +101,7 @@ export class AuthControllerV3 {
 
   @OnUndefined(204)
   @Patch("/recover")
-  @UseBefore(rateLimits.mailLimiter)
+  @UseBefore(rateLimits.standardLimiter)
   async recoverPassword(@Body() body: { code: string; password: string }) {
     return await this.authService.passwordResetConfirm(body.code, body.password)
   }
