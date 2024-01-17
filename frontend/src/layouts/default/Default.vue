@@ -63,7 +63,8 @@
       v-if="
         !$app.rail &&
         (!$vuetify.display.mobile ||
-          ($vuetify.display.mobile && $app.railMode === 'tpu')) &&
+          ($vuetify.display.mobile && $app.railMode === 'tpu') ||
+          !$chat.isCommunications) &&
         $app.site.finishedSetup
       "
     />

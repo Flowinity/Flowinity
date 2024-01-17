@@ -9,5 +9,6 @@ export enum CacheType {
   "insights",
   "userstats",
   "lastfm",
-  "mal"
+  "mal",
+  "trackedUsers"
 }

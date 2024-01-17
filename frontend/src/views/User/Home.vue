@@ -101,18 +101,18 @@ export default defineComponent({
         pageSize: 20,
         currentPage: 1
       },
-      sort: "id",
+      sort: "createdAt",
       order: "desc",
       search: "",
       page: 1,
       sortOptions: [
         {
           text: "Newest users",
-          value: "id desc"
+          value: "createdAt desc"
         },
         {
           text: "Oldest users",
-          value: "id asc"
+          value: "createdAt asc"
         },
         {
           text: "Username (A-Z)",

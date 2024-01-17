@@ -597,4 +597,11 @@ export default defineComponent({
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+.fill-text-gradient {
+  fill: -webkit-linear-gradient(
+    v-bind("$user.primaryColorResult(primary, gold).gradient1"),
+    v-bind("$user.primaryColorResult(primary, gold).gradient2")
+  );
+}
 </style>

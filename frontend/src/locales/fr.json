@@ -15,12 +15,12 @@
       "feedback": "Envoyer des commentaires",
       "changelog": "Journal des modifications",
       "inviteAFriend": "Inviter un ami",
-      "newWithGold": "Quoi de neuf avec TPU Or?",
-      "upgradeToGold": "Mise à niveau vers TPU Or",
+      "newWithGold": "Quoi de neuf avec Flowinity Or?",
+      "upgradeToGold": "Mise à niveau vers Flowinity Or",
       "colubrinaMigrate": "Migrer depuis Colubrina",
       "admin": "Administration",
       "member": "Membre de {names}",
-      "experiments": "Remplacements expérimentaux TPU (NEXT)",
+      "experiments": "Remplacements expérimentaux Flowinity (NEXT)",
       "close": "Fermer la barre latérale"
     }
   },
@@ -91,20 +91,20 @@
       "domains": "Noms de domaine",
       "integrations": "Intégrations",
       "slideshows": "Diaporama",
-      "about": "À propos de TPU",
+      "about": "À propos de Flowinity",
       "integrationError": "Certaines intégrations doivent être revues."
     },
     "home": {
       "privacy": {
         "title": "Vie privée",
         "discordPrecaching": "Mise en cache Discord*",
-        "discordPrecachingDesc": "* La mise en cache Discord envoie le lien TPU de toute pièce jointe à un canal Discord qui est effacé toutes les 10 minutes afin que l'image soit mise en cache par Discord au moment où vous l'envoyez vous-même. N'activez pas cette fonction si vous ne faites pas confiance à Discord.",
+        "discordPrecachingDesc": "* La mise en cache Discord envoie le lien Flowinity de toute pièce jointe à un canal Discord qui est effacé toutes les 10 minutes afin que l'image soit mise en cache par Discord au moment où vous l'envoyez vous-même. N'activez pas cette fonction si vous ne faites pas confiance à Discord.",
         "demoMode": "Mode démonstration",
         "publicProfile": "Profil public",
         "publicProfileDesc": "Autoriser les utilisateurs non connctés à voir votre profil s'ils ont le lien. Par défaut, seuls les utilisateurs connectés peuvent voir votre profil."
       },
       "myAccount": {
-        "title": "Mon compte PrivateUploader",
+        "title": "Mon compte Flowinity",
         "changeUsername": "Changer le nom d'utilisateur",
         "changeEmail": "Changer le courriel",
         "changePassword": "Changer le mot de passe",
@@ -122,7 +122,7 @@
         "disabled": "Donnez à votre compte un niveau de sécurité supplémentaire en activant 2FA.",
         "enable": "Activer 2FA",
         "disable": "Désactiver 2FA?",
-        "enableText": "Si vous souhaitez l'activer, vous pouvez le faire ici. Vous devrez scanner le code QR ou entrer le secret dans l'application 2FA de votre choix, comme Authy ou Bitwarden (recommandé) et entrer le code généré par l'application.<br /> Le 2FA est un excellent moyen d'ajouter une sécurité supplémentaire à votre compte TPU. Veuillez noter que si vous perdez l'accès à l'application 2FA, vous ne pourrez pas vous connecter.",
+        "enableText": "Si vous souhaitez l'activer, vous pouvez le faire ici. Vous devrez scanner le code QR ou entrer le secret dans l'application 2FA de votre choix, comme Authy ou Bitwarden (recommandé) et entrer le code généré par l'application.<br /> Le 2FA est un excellent moyen d'ajouter une sécurité supplémentaire à votre compte Flowinity. Veuillez noter que si vous perdez l'accès à l'application 2FA, vous ne pourrez pas vous connecter.",
         "disableText": "Si vous souhaitez désactiver le 2FA, vous pouvez le faire ici. Votre compte sera moins sûr si le 2FA est désactivé, assurez-vous que votre mot de passe est sécurisé.",
         "code": "Code 2FA",
         "scan": "Veuillez scanner le code QR ou saisir le secret dans l'application 2FA de votre choix.",
@@ -172,14 +172,14 @@
         "2": "Téléchargez et installez Flameshot ou un autre outil de capture d'écran compatible.",
         "3": "Téléchargez le fichier de configuration de ShareNix.",
         "4": "Déplacer la configuration téléchargée vers ~/.sharenix.json, exemple :",
-        "5": "Exécuter <code>sharenix {file}</code> or <code>sharenix-section</code> (pour une capture d'écran) pour téléverser un fichier sur TPU."
+        "5": "Exécuter <code>sharenix {file}</code> or <code>sharenix-section</code> (pour une capture d'écran) pour téléverser un fichier sur Flowinity."
       },
       "automate": "Comment installer la configuration Automate pour Android :",
       "automateSteps": {
         "1": "Télécharger l'application Automate sur le Google Play Store <a href=\"https://play.google.com/store/apps/details?id=com.llamalab.automate\">ici.</a>",
-        "2": "Téléchargez la configuration .flo d'Automate depuis TPU.",
+        "2": "Téléchargez la configuration .flo d'Automate depuis Flowinity.",
         "3": "À partir des trois points situés dans le coin supérieur droit, cliquez sur le bouton \"Importer\" et importez le fichier .flo à l'aide du gestionnaire de fichiers.",
-        "4": "Sélectionner le flux TPU importé et cliquer sur le bouton d'action flottant de l'icône \"Editer\", puis sur l'icône du graphique.",
+        "4": "Sélectionner le flux Flowinity importé et cliquer sur le bouton d'action flottant de l'icône \"Editer\", puis sur l'icône du graphique.",
         "5": "Modifiez les 3 variables du bloc supérieur collectionId, apiKey, path à votre convenance, collectionId peut être nul, cela enverra une requête réseau supplémentaire pour ajouter tout téléchargement à une collection à partir de votre appareil.",
         "6": "Démarrez le flux, et activez l'option de démarrage des flux au démarrage du système dans les paramètres de l'application si vous le souhaitez.",
         "7": "Il est recommandé d'utiliser Android 12 ou une version inférieure. Android 13 peut afficher une notification lorsqu'un élément vient d'être copié dans le presse-papiers. Dans ce cas, vous pouvez désactiver le bloc de copie automatique du presse-papiers."
@@ -187,11 +187,11 @@
       "shortcuts": "Comment installer la configuration de Raccourcis pour Apple iOS :",
       "shortcutsSteps": {
         "1": "Installez le fichier de configuration via iCloud.",
-        "2": "Suivez l'écran de configuration et indiquez la clé API TPU de votre choix.",
-        "3": "Activez la possibilité d'utiliser le bouton d'accessibilité pour les captures d'écran rapides dans Accessibility -> Touch -> Back Tap -> [Select either Double Tap or Triple Tap] -> Scroll down to \"SHORTCUTS\" -> Select TPU."
+        "2": "Suivez l'écran de configuration et indiquez la clé API Flowinity de votre choix.",
+        "3": "Activez la possibilité d'utiliser le bouton d'accessibilité pour les captures d'écran rapides dans Accessibility -> Touch -> Back Tap -> [Select either Double Tap or Triple Tap] -> Scroll down to \"SHORTCUTS\" -> Select Flowinity."
       },
       "mobile": {
-        "title": "Options TPU pour mobile"
+        "title": "Options Flowinity pour mobile"
       },
       "actions": {
         "apiKey": "Copier clé d'API",
@@ -218,7 +218,7 @@
       "none": "Aucun diaporama trouvé."
     },
     "about": {
-      "productName": "Nom de produit: TPUvNEXT",
+      "productName": "Nom de produit: TPUvGQL",
       "version": "Version: {version}",
       "buildDate": "Date de compilation: {date}",
       "relative": "Date de compilation relative: {date}",
@@ -226,9 +226,9 @@
       "ip": "IP de connexion au back-end: {ip}",
       "ipWhitelist": "Groupes de liste blanche IP: {groups}",
       "server": "Serveur: {server}",
-      "docs": "Documentation de l'API TPU (en cours de production, v3)",
+      "docs": "Documentation de l'API Flowinity (en cours de production, v3)",
       "credits": "Crédits",
-      "crash": "Faire planter TPU (dev)",
+      "crash": "Faire planter Flowinity (dev)",
       "expEnable": "Activer tous les tests",
       "expDisable": "Désactiver tous les tests"
     },
@@ -276,7 +276,7 @@
   },
   "setup": {
     "step0": {
-      "description": "Bienvenue à votre nouvelle instance TPU! La suite libre sociale et de partage de fichiers.",
+      "description": "Bienvenue à votre nouvelle instance Flowinity! La suite libre sociale et de partage de fichiers.",
       "subtitle": "Cet assistant vous guidera tout au long de la procédure d'installation initiale, comme la configuration de la base de données et l'enregistrement d'un compte."
     },
     "step1": {
@@ -311,14 +311,14 @@
       "redisHostname": "Nom d'hôte Redis",
       "redisPort": "Port Redis",
       "redisDatabase": "Base de données Redis",
-      "redisHint": "Redis est utilisé pour le caching. TPU ne fonctionnera pas sans Redis, il s'agit d'une part intégrale."
+      "redisHint": "Redis est utilisé pour le caching. Flowinity ne fonctionnera pas sans Redis, il s'agit d'une part intégrale."
     },
     "step4": {
       "title": "Fonctionnalités",
-      "subtitle": "Veuillez choisir les fonctionnalités que vous voudriez activer sur votre instance TPU.\nLes fonctions de base comme la Galerie sont toujours activées.",
+      "subtitle": "Veuillez choisir les fonctionnalités que vous voudriez activer sur votre instance Flowinity.\nLes fonctions de base comme la Galerie sont toujours activées.",
       "autoCollects": {
         "title": "AutoCollections",
-        "description": "Ajouter automatiquement les éléments téléchargés par règles dans les collections TPU"
+        "description": "Ajouter automatiquement les éléments téléchargés par règles dans les collections Flowinity"
       },
       "collections": {
         "title": "Collections",
@@ -326,15 +326,15 @@
       },
       "communications": {
         "title": "Communications",
-        "description": "Une plateforme de clavardage intégrée directement dans TPU."
+        "description": "Une plateforme de clavardage intégrée directement dans Flowinity."
       },
       "insights": {
         "title": "Aperçus",
-        "description": "Obtenez des rapports hebdomadaires, mensuels, annuels et évolutifs sur la façon dont chaque utilisateur utilise son compte TPU."
+        "description": "Obtenez des rapports hebdomadaires, mensuels, annuels et évolutifs sur la façon dont chaque utilisateur utilise son compte Flowinity."
       },
       "workspaces": {
         "title": "Espaces de travail",
-        "description": "Autoriser les utilisateurs à créer des documents au sein de TPU."
+        "description": "Autoriser les utilisateurs à créer des documents au sein de Flowinity."
       }
     },
     "step5": {
@@ -356,18 +356,18 @@
       "testEmail": "Envoyer un courriel de test à"
     },
     "step7": {
-      "title": "Bienvenue sur TPU!",
-      "subtitle": "Avant de continuer, le serveur TPU doit être redémarré, seulement deux redémarrages devraient être nécessaires pour le processus de configuration.",
-      "restart": "Redémarrer le serveur TPU"
+      "title": "Bienvenue sur Flowinity!",
+      "subtitle": "Avant de continuer, le serveur Flowinity doit être redémarré, seulement deux redémarrages devraient être nécessaires pour le processus de configuration.",
+      "restart": "Redémarrer le serveur Flowinity"
     },
     "step8": {
-      "title": "Le serveur TPU est en train de redémarrer... Vous serez redirigé à la prochaine étape automatiquement."
+      "title": "Le serveur Flowinity est en train de redémarrer... Vous serez redirigé à la prochaine étape automatiquement."
     },
     "step9": {
       "title": "Configurer le domaine par défaut",
-      "subtitle": "TPU est configuré pour avoir un nom de domaine par défaut, utilisé pour gérer TPU directement, et des domaines secondaires configurés par les utilisateurs, retournés par les API pour le téléversement de fichiers, généralement en arrière de CloudFront, Cloudflare, ou un autre proxy CDN.",
+      "subtitle": "Flowinity est configuré pour avoir un nom de domaine par défaut, utilisé pour gérer Flowinity directement, et des domaines secondaires configurés par les utilisateurs, retournés par les API pour le téléversement de fichiers, généralement en arrière de CloudFront, Cloudflare, ou un autre proxy CDN.",
       "domain": "Domaine (SVP, seulement le domaine de base, sans HTTPS)",
-      "example": "i.privateuploader.com"
+      "example": "i.Flowinity.com"
     }
   },
   "collections": {

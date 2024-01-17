@@ -14,6 +14,11 @@ import { ClearCacheInput } from "@app/classes/graphql/admin/cache"
 import { AdminService } from "@app/services/admin.service"
 import { EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
 import { Sequelize } from "sequelize-typescript"
+import { LegacyUser } from "@app/models/legacyUser.model"
+import { Message } from "@app/models/message.model"
+import cryptoRandomString from "crypto-random-string"
+import { LegacyFriend } from "@app/models/legacyFriend.model"
+import { Friend } from "@app/models/friend.model"
 
 @Resolver()
 @Service()
@@ -127,6 +132,181 @@ export class AdminResolver {
     })
 
     console.log(user1?.username, user2?.username)
+    return { success: true }
+  }
+
+  async transferToNormal(user: User, legacy: LegacyUser) {
+    await ChatAssociation.update(
+      {
+        userId: user.id,
+        legacyUserId: null
+      },
+      {
+        where: {
+          legacyUserId: legacy.id
+        }
+      }
+    )
+
+    await Chat.update(
+      {
+        userId: user.id,
+        legacyUserId: null
+      },
+      {
+        where: {
+          legacyUserId: legacy.id
+        }
+      }
+    )
+
+    await Message.update(
+      {
+        userId: user.id,
+        legacyUserId: null
+      },
+      {
+        where: {
+          legacyUserId: legacy.id
+        }
+      }
+    )
+  }
+
+  @Authorization({
+    accessLevel: AccessLevel.ADMIN,
+    scopes: "*"
+  })
+  @Mutation(() => Success)
+  async adminMigrateLegacyToNormalUsers(@Ctx() ctx: Context) {
+    const legacyToNormalMap = new Map<number, number>()
+
+    const legacyUsers = await LegacyUser.findAll({
+      attributes: [
+        "id",
+        "username",
+        "email",
+        "emailVerified",
+        "password",
+        "avatar",
+        "createdAt",
+        "updatedAt"
+      ]
+    })
+    for (const [index, legacy] of legacyUsers.entries()) {
+      const user = await User.findOne({
+        where: {
+          email: legacy.email
+        },
+        attributes: ["id", "username", "email", "emailVerified", "password"]
+      })
+      if (legacy.emailVerified && user?.emailVerified) {
+        legacyToNormalMap.set(legacy.id, user.id)
+        await this.transferToNormal(user, legacy)
+        await legacy.destroy()
+        console.log(`migrated ${user.username}, was duplicate, merged.`)
+      } else if (!user) {
+        const usernameCheck = await User.findOne({
+          where: {
+            username: legacy.username
+          },
+          attributes: ["id", "username", "email", "emailVerified", "password"]
+        })
+
+        const desiredUsername = usernameCheck
+          ? `${legacy.username}_${cryptoRandomString({ length: 4 })}`
+          : legacy.username
+
+        const user = await User.create({
+          username: desiredUsername,
+          email: legacy.email,
+          emailVerified: legacy.emailVerified,
+          password: legacy.password,
+          avatar: legacy.avatar,
+          createdAt: legacy.createdAt,
+          updatedAt: legacy.updatedAt
+        })
+        legacyToNormalMap.set(legacy.id, user.id)
+        await this.transferToNormal(user, legacy)
+        await legacy.destroy()
+        console.log(`migrated ${user.username}, was legacy.`)
+
+        this.adminService.sendEmail(
+          {
+            body: {
+              name: user.username,
+              intro: `Your Colubrina account has been automatically migrated over to Flowinity.<br>Please login with the username <strong>${user.username}</strong>, or your email address.<br><br><a href="https://flowinity.com"><img src="https://i.troplo.com/i/debc2a79dd5d.png" alt="Flowinity Promo" style="max-width: 100%; border-radius: 4px"></a><br><br>The best of Colubrina - now in one place!`,
+              action: [
+                {
+                  instructions: `Click the button below to login to your new account!`,
+                  button: {
+                    color: "#0190ea",
+                    text: "Login",
+                    link: "https://flowinity.com/login"
+                  }
+                }
+              ],
+              outro:
+                "Forgot your password? No problem! You can reset it on the Login page with the button above."
+            }
+          },
+          legacy.email,
+          "Colubrina is now Flowinity"
+        )
+      } else {
+        this.adminService.sendEmail(
+          {
+            body: {
+              name: legacy.username,
+              intro: `Your Colubrina account could not be automatically migrated over to Flowinity.\nIf you wish to seamlessly migrate over your chats and messages, please go to Settings > Integrations, and enter your Colubrina account credentials to complete the migration process!<br><br><a href="https://flowinity.com"><img src="https://i.troplo.com/i/debc2a79dd5d.png" alt="Flowinity Promo" style="max-width: 100%; border-radius: 4px"></a><br><br>The best of Colubrina - now in one place!`,
+              action: [
+                {
+                  instructions: `Click the button below to register a new account and complete the migration!`,
+                  button: {
+                    color: "#0190ea",
+                    text: "Register",
+                    link: "https://flowinity.com/register"
+                  }
+                }
+              ]
+            }
+          },
+          legacy.email,
+          "Action Required - Colubrina Account Migration"
+        )
+      }
+
+      console.log(
+        `Done ${legacy.username}, ${index + 1}/${
+          legacyUsers.length
+        }, ${Math.round(((index + 1) / legacyUsers.length) * 100)}%`
+      )
+      await new Promise((resolve) => setTimeout(resolve, 5000))
+    }
+
+    console.log(legacyToNormalMap)
+
+    // migrate the friends
+    const legacyFriends = await LegacyFriend.findAll()
+    for (const legacyFriend of legacyFriends) {
+      const friend = legacyToNormalMap.get(legacyFriend.friendId)
+      const user = legacyToNormalMap.get(legacyFriend.userId)
+      if (!friend || !user || legacyFriend.status === "rejected") continue
+      const status =
+        legacyFriend.status === "pendingCanAccept"
+          ? "incoming"
+          : legacyFriend.status === "pending"
+            ? "outgoing"
+            : "accepted"
+      await legacyFriend.destroy()
+      await Friend.create({
+        userId: user,
+        friendId: friend,
+        createdAt: legacyFriend.createdAt,
+        updatedAt: legacyFriend.updatedAt,
+        status
+      })
+    }
     return { success: true }
   }
 }

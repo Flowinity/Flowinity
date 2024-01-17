@@ -99,8 +99,6 @@ export class UserResolver extends createBaseResolver("User", User) {
       throw new GraphQLError("You must provide a username or id")
     }
 
-    console.log(user, input)
-
     if (!user?.publicProfile && !ctx.user) {
       throw new GraphQLError(
         "You must be logged in to view this user's profile."

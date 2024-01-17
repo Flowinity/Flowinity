@@ -678,7 +678,7 @@ export class ChatAssociationResolver {
 
   @Subscription(() => Int, {
     topics: ({ context }) => {
-      return `READ_CHAT:${context.user!!.id}`
+      return `READ_CHAT:${context.user?.id}`
     },
     description: "Returns the chat association ID"
   })

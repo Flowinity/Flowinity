@@ -47,14 +47,10 @@
           </tpu-button>
         </div>
       </card>
-      <div
-        style="outline: none; border: none; max-height: 500px"
-        :padding="false"
-        class="flex flex-col justify-center m-10"
-      >
+      <div class="flex justify-center m-10">
         <tpu-img
-          src="https://dummyimage.com/3840x2035/0e0f11/ffffff.png&text=placeholder"
-          style="max-width: 512px"
+          src="https://i.troplo.com/i/debc2a79dd5d.png"
+          style=""
           image-classes="mb-8 border-outline-dark border-2 rounded-xl glowing-img"
           :style="{
             transform: `rotateX(${-mouseY / 100}deg) rotateY(${

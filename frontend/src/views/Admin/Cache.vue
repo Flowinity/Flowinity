@@ -93,6 +93,10 @@ export default defineComponent({
         {
           id: 10,
           name: "Provider-MyAnimeList"
+        },
+        {
+          id: 11,
+          name: "Tracked Users*"
         }
       ]
     };

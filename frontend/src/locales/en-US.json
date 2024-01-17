@@ -27,12 +27,12 @@
       "android": "Get the app",
       "discord": "Join the Discord",
       "backToComms": "Back to Communications",
-      "backToTPU": "Back to PrivateUploader",
+      "backToTPU": "Back to Flowinity",
       "communicationsPublic": "Join the Chat"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",
-      "desc": "Please review the updated Privacy Policy. By continuing to use PrivateUploader, you agree to the new Privacy Policy.",
+      "desc": "Please review the updated Privacy Policy. By continuing to use Flowinity, you agree to the new Privacy Policy.",
       "close": "I agree"
     }
   },
@@ -115,17 +115,17 @@
       "privacy": {
         "title": "Privacy",
         "discordPrecaching": "Discord Precaching*",
-        "discordPrecachingDesc": "* Discord precaching sends the PrivateUploader link of any media attachment to a Discord channel that gets cleared every 10 minutes in order to have the image cached by Discord by the time it's sent by yourself. Do not enable this if you don't trust Discord.",
+        "discordPrecachingDesc": "* Discord precaching sends the Flowinity link of any media attachment to a Discord channel that gets cleared every 10 minutes in order to have the image cached by Discord by the time it's sent by yourself. Do not enable this if you don't trust Discord.",
         "demoMode": "Demo Mode",
         "publicProfile": "Public Profile",
         "publicProfileDesc": "Allow non-logged in users to view your profile if they have the link. By default only logged in users can view.",
-        "pulse": "Send usage information to PrivateUploader",
-        "pulseDesc": "By turning this off, you are disabling \"Pulse\" functionality. This is used for tracking how much time you spend on PrivateUploader, and what functions you use to generate your Insights. Some information may still be stored by PrivateUploader as outlined in the Privacy Policy.",
+        "pulse": "Send usage information to Flowinity",
+        "pulseDesc": "By turning this off, you are disabling \"Pulse\" functionality. This is used for tracking how much time you spend on Flowinity, and what functions you use to generate your Insights. Some information may still be stored by Flowinity as outlined in the Privacy Policy.",
         "groupPrivacy": "Who can add you to a group?",
         "friendPrivacy": "Who can send you a friend request?"
       },
       "myAccount": {
-        "title": "My PrivateUploader",
+        "title": "My Flowinity",
         "changeUsername": "Change Username",
         "changeEmail": "Change Email",
         "changePassword": "Change Password",
@@ -162,7 +162,8 @@
         "language": "Language",
         "themeEditor": "Open Theme Editor",
         "disableProfileColors": "Disable profile colors",
-        "disableBatteryPreservation": "Disable battery preservation"
+        "disableBatteryPreservation": "Disable battery preservation",
+        "pride": "Rainbow Mode"
       }
     },
     "security": {
@@ -193,14 +194,14 @@
         "2": "Download and install Flameshot or another supported screenshot tool.",
         "3": "Download the ShareNix configuration file.",
         "4": "Move the downloaded config to ~/.sharenix.json, example:",
-        "5": "Run <code>sharenix {file}</code> or <code>sharenix-section</code> (for a screenshot) to upload a file to PrivateUploader."
+        "5": "Run <code>sharenix {file}</code> or <code>sharenix-section</code> (for a screenshot) to upload a file to Flowinity."
       },
       "automate": "How to install the Automate config for Android:",
       "automateSteps": {
         "1": "Download the Automate app from the Google Play Store <a href=\"https://play.google.com/store/apps/details?id=com.llamalab.automate\">here.</a>",
-        "2": "Download the Automate .flo config from PrivateUploader.",
+        "2": "Download the Automate .flo config from Flowinity.",
         "3": "From the 3 dots on the top right hand corner, press the \"Import\" button and import the .flo file using the file manager.",
-        "4": "Select the imported PrivateUploader flow, and hit the \"Edit\" icon floating action button, and then the graph icon.",
+        "4": "Select the imported Flowinity flow, and hit the \"Edit\" icon floating action button, and then the graph icon.",
         "5": "Modify the 3 top block variables collectionId, apiKey, path to your liking, collectionId may be null, this will send an additional network request to add any uploads to a collection from your device.",
         "6": "Start the flow, and enable the option to start flows at system boot in the app settings if you'd like.",
         "7": "Android 12 or lower is recommended. Android 13 may display a notification when an item has been newly copied to the clipboard, you may want to disable the auto clipboard copy block in this case."
@@ -208,11 +209,11 @@
       "shortcuts": "How to install the Shortcuts config for Apple iOS:",
       "shortcutsSteps": {
         "1": "Install the configuration file via iCloud.",
-        "2": "Follow setup screen and provide your PrivateUploader API key of choice.",
+        "2": "Follow setup screen and provide your Flowinity API key of choice.",
         "3": "Enable the ability to use the accessibility button for quick screenshots in Accessibility -> Touch -> Back Tap -> [Select either Double Tap or Triple Tap] -> Scroll down to \"SHORTCUTS\" -> Select TPU."
       },
       "mobile": {
-        "title": "PrivateUploader Mobile Options"
+        "title": "Flowinity Mobile Options"
       },
       "actions": {
         "apiKey": "Copy API Key",
@@ -252,12 +253,12 @@
       "ip": "Backend connecting IP: {ip}",
       "ipWhitelist": "IP whitelist groups: {groups}",
       "server": "Server: {server}",
-      "docs": "PrivateUploader API Documentation",
+      "docs": "Flowinity API Documentation",
       "credits": "Credits",
       "crash": "Crash TPU (dev)",
       "expEnable": "Enable all experiments",
       "expDisable": "Disable all experiments",
-      "uptime": "Uptime (PrivateUploader): {uptime}",
+      "uptime": "Uptime (Flowinity): {uptime}",
       "sysUptime": "Uptime (System): {uptime}"
     },
     "domains": {
@@ -316,7 +317,7 @@
   },
   "setup": {
     "step0": {
-      "description": "Welcome to your new PrivateUploader instance! The open file sharing and social suite.",
+      "description": "Welcome to your new Flowinity instance! The open file sharing and social suite.",
       "subtitle": "This wizard will guide you through the initial setup process such as setting up the database, and registering an account."
     },
     "step1": {
@@ -351,14 +352,14 @@
       "redisHostname": "Redis Hostname",
       "redisPort": "Redis Port",
       "redisDatabase": "Redis Database",
-      "redisHint": "If you are using Docker, the Redis hostname will likely be \"redis\". Redis is used for caching, this is an integral part of PrivateUploader, and it will not function without it."
+      "redisHint": "If you are using Docker, the Redis hostname will likely be \"redis\". Redis is used for caching, this is an integral part of Flowinity, and it will not function without it."
     },
     "step4": {
       "title": "Features",
-      "subtitle": "Please select the features you'd like to enable on your PrivateUploader instance.\nThe core features like Gallery are always enabled.",
+      "subtitle": "Please select the features you'd like to enable on your Flowinity instance.\nThe core features like Gallery are always enabled.",
       "autoCollects": {
         "title": "AutoCollects",
-        "description": "Automatically add uploaded items by rules into PrivateUploader Collections."
+        "description": "Automatically add uploaded items by rules into Flowinity Collections."
       },
       "collections": {
         "title": "Collections",
@@ -366,15 +367,15 @@
       },
       "communications": {
         "title": "Communications",
-        "description": "A chatting platform built right into PrivateUploader."
+        "description": "A chatting platform built right into Flowinity."
       },
       "insights": {
         "title": "Insights",
-        "description": "Get weekly, monthly, yearly, and an evolving report about how each user uses their PrivateUploader account."
+        "description": "Get weekly, monthly, yearly, and an evolving report about how each user uses their Flowinity account."
       },
       "workspaces": {
         "title": "Workspaces",
-        "description": "Allow users to create documents inside of PrivateUploader."
+        "description": "Allow users to create documents inside of Flowinity."
       }
     },
     "step5": {
@@ -397,18 +398,18 @@
       "enabled": "Enable email verification"
     },
     "step7": {
-      "title": "Welcome to PrivateUploader!",
-      "subtitle": "Before continuing, PrivateUploader Server needs to be restarted, only 2 restarts should be necessary for the entire setup process.",
-      "restart": "Restart PrivateUploader Server"
+      "title": "Welcome to Flowinity!",
+      "subtitle": "Before continuing, Flowinity Server needs to be restarted, only 2 restarts should be necessary for the entire setup process.",
+      "restart": "Restart Flowinity Server"
     },
     "step8": {
-      "title": "PrivateUploader Server is restarting... You will be redirected to the next step automatically."
+      "title": "Flowinity Server is restarting... You will be redirected to the next step automatically."
     },
     "step9": {
       "title": "Setup Default Domain",
-      "subtitle": "PrivateUploader is designed to have an origin domain, this is used to manage PrivateUploader itself, and secondary domains which can be configured by the user, which is returned by the APIs for file uploads, this would usually be behind CloudFront, Cloudflare, or another CDN proxy.",
+      "subtitle": "Flowinity is designed to have an origin domain, this is used to manage Flowinity itself, and secondary domains which can be configured by the user, which is returned by the APIs for file uploads, this would usually be behind CloudFront, Cloudflare, or another CDN proxy.",
       "domain": "Domain (please only base domain, no HTTPS)",
-      "example": "i.privateuploader.com"
+      "example": "i.flowinity.com"
     }
   },
   "collections": {
@@ -522,7 +523,7 @@
           "createGroup": "Create Group",
           "invites": {
             "title": "Send Invite",
-            "description": "Invites allow you to invite users outside of the PrivateUploader platform, and people whom have disabled the ability to directly add to groups.",
+            "description": "Invites allow you to invite users outside of the Flowinity platform, and people whom have disabled the ability to directly add to groups.",
             "rank": "Auto-assign rank on join",
             "expire": "Set invite usage expiry"
           }
@@ -562,7 +563,7 @@
         "subtitle": "This reporting period you uploaded the most at {hour}!"
       },
       "usage": {
-        "subtitle": "See when you used PrivateUploader!",
+        "subtitle": "See when you used Flowinity!",
         "title": "Website usage",
         "chartTitle": "Hours"
       },
@@ -573,7 +574,7 @@
       },
       "platform": {
         "title": "Platform usage",
-        "subtitle": "See what platforms you used PrivateUploader on!",
+        "subtitle": "See what platforms you used Flowinity on!",
         "chartTitle": "Hours"
       },
       "uploadsPerMonth": {
@@ -592,7 +593,7 @@
       },
       "topChats": {
         "title": "Top chats",
-        "subtitle": "See who you talk to in PrivateUploader Communications!"
+        "subtitle": "See who you talk to in Flowinity Communications!"
       },
       "autoCollects": {
         "title": "AutoCollects per hour",
@@ -604,7 +605,7 @@
       },
       "features": {
         "title": "Feature usage",
-        "subtitle": "Explore what PrivateUploader features you use the most!"
+        "subtitle": "Explore what Flowinity features you use the most!"
       }
     },
     "noData": "There is no data for last {type}. Please check back later.",
@@ -622,7 +623,7 @@
       "titleZIP": "Download folder as ZIP",
       "conversionHint": "Please ensure the resulting file meets your expectations as it will be converted.",
       "types": {
-        "tpudoc": "PrivateUploader Document File",
+        "tpudoc": "Flowinity Document File",
         "docx": "DOCX",
         "odt": "LibreOffice ODT",
         "html": "HTML"
@@ -631,7 +632,7 @@
     "import": {
       "title": "Import document",
       "name": "Name",
-      "file": "PrivateUploader Document (.TPUDOC or .HTML)",
+      "file": "Flowinity Document (.TPUDOC or .HTML)",
       "import": "Import"
     }
   },
@@ -666,7 +667,7 @@
     "tip": "Tip:",
     "tipText": "Open with:",
     "compatibilityWarning": "The AMOLED theme is not recommended for use on themes that do not have a black background.",
-    "gold": "You need PrivateUploader Gold.",
+    "gold": "You need Flowinity Gold.",
     "colors": {
       "primary": "Accent Color",
       "logo1": "Logo Gradient 1",

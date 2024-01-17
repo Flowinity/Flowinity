@@ -1,19 +1,37 @@
 <template>
   <v-container class="text-center">
-    <v-img
-      v-if="rainbow()"
-      src="@/assets/images/tpu-logo-banner-rainbow.svg"
-      max-height="120"
-      class="mb-3"
-      @click="rainbowMode(false)"
-    />
-    <v-img
-      v-else
-      src="@/assets/images/tpu-logo-banner.svg"
-      max-height="120"
-      class="mb-3"
-      @click="rainbowMode(true)"
-    />
+    <template v-if="!$experiments.experiments.FLOWINITY">
+      <v-img
+        v-if="rainbow()"
+        src="@/assets/images/tpu-logo-banner-rainbow.svg"
+        max-height="120"
+        class="mb-3"
+        @click="rainbowMode(false)"
+      />
+      <v-img
+        v-else
+        src="@/assets/images/tpu-logo-banner.svg"
+        max-height="120"
+        class="mb-3"
+        @click="rainbowMode(true)"
+      />
+    </template>
+    <template v-else>
+      <v-img
+        v-if="rainbow()"
+        src="@/assets/images/flowinity-logo-banner-rainbow.svg"
+        max-height="120"
+        class="mb-3"
+        @click="rainbowMode(false)"
+      />
+      <v-img
+        v-else
+        src="@/assets/images/flowinity-logo-banner.svg"
+        max-height="120"
+        class="mb-3"
+        @click="rainbowMode(true)"
+      />
+    </template>
     <v-divider />
     <p class="mt-5">
       {{ $t("settings.about.productName") }}
@@ -69,7 +87,7 @@
         })
       }}
     </p>
-    <a class="text-gradient" href="https://docs.privateuploader.com">
+    <a class="text-gradient" href="https://flowinity.com/graphql">
       {{ $t("settings.about.docs") }}
     </a>
     <br />
@@ -78,7 +96,7 @@
     </router-link>
     <p class="mt-5">
       <a class="text-gradient" href="https://github.com/Troplo/PrivateUploader">
-        PrivateUploader
+        Flowinity
       </a>
       is licensed under AGPLv3, created by
       <a class="text-gradient" href="https://troplo.com">Troplo.</a>

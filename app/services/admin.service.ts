@@ -33,6 +33,7 @@ import { Session } from "@app/models/session.model"
 import { OauthSave } from "@app/models/oauthSave.model"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import SMTPTransport from "nodemailer/lib/smtp-transport"
+import { UserUtilsService } from "@app/services/userUtils.service"
 
 const inviteParams = {
   include: [
@@ -222,6 +223,15 @@ export class AdminService {
         console.log("[AdminService] Purging mal cache")
         await redis.del("providers:mal:*")
         return true
+      case CacheType.trackedUsers:
+        const users = await User.findAll({
+          attributes: ["id"]
+        })
+        const userService = Container.get(UserUtilsService)
+        for (const user of users) {
+          await userService.trackedUserIds(user.id, true)
+        }
+        return true
       default:
         return false
     }
@@ -250,7 +260,8 @@ export class AdminService {
       theme: "cerberus",
       product: {
         name: config.siteName,
-        link: config.hostnameWithProtocol
+        link: config.hostnameWithProtocol,
+        logo: "https://i.troplo.com/i/d2b0d719a756.svg"
       }
     })
     let emailBody = mailGenerator.generate(mail)

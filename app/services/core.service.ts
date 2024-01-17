@@ -365,6 +365,7 @@ export class CoreService {
     gold: boolean = false
   ): Record<string, any> {
     const experiments = {
+      FLOWINITY: true,
       PRIDE: false,
       THEME: 3,
       NOTIFICATION_SOUND: 2,
@@ -410,6 +411,10 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        FLOWINITY: {
+          description: "Rebrand PrivateUploader to Flowinity.",
+          createdAt: "2024-01-17T00:00:00.000Z"
+        },
         PRIDE: {
           description: "Enable pride theme.",
           createdAt: "2023-11-08T00:00:00.000Z"
@@ -630,6 +635,7 @@ export class CoreService {
       //experiments.FORCE_DEV_MODE = false
       //experiments.FORCE_STABLE_MODE = false
       //experiments.USER_V3_EDITOR = true
+      experiments.FLOWINITY = true
       experiments.RAIL_SIDEBAR = true
       experiments.USER_V3_MODIFY = true
       experiments.USER_V3 = true

@@ -143,12 +143,18 @@
       item-value="value"
       @update:model-value="$emit('update')"
     />
+    <v-switch
+      :model-value="!!$experiments.experiments.PRIDE"
+      :label="$t('settings.home.preferences.pride')"
+      class="px-6"
+      @update:model-value="$experiments.setExperiment('PRIDE', $event ? 1 : 0)"
+    />
     <v-autocomplete
       v-model="$user.user.excludedCollections"
       :items="collections"
       :label="$t('settings.home.preferences.baseCollections')"
       chips
-      class="px-6 mt-4"
+      class="px-6"
       closable-chips
       color="primary"
       item-title="name"

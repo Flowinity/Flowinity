@@ -14,7 +14,10 @@ import { createVuetify } from "vuetify";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { VInfiniteScroll } from "vuetify/lib/labs/components.mjs";
 import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
-import { VBottomNavigation, VVirtualScroll } from "vuetify/lib/components/index.mjs";
+import {
+  VBottomNavigation,
+  VVirtualScroll
+} from "vuetify/lib/components/index.mjs";
 
 export class DefaultThemes {
   themes: any;
@@ -30,8 +33,8 @@ export class DefaultThemes {
           "primary-darken-1": "#3700B3",
           "secondary-darken-1": "#03DAC5",
           primary: gold ? "#FFD700" : "#0190ea",
-          logo1: gold ? "#FFDB1B" : "#096fea",
-          logo2: gold ? "#FFD700" : "#0166ea",
+          logo1: gold ? "#FFDB1B" : "#489BFE",
+          logo2: gold ? "#FFD700" : "#469AFF",
           secondary: "#757575",
           accent: "#000000",
           error: "#F44336",

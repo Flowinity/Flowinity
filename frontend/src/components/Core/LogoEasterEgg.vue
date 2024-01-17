@@ -3,11 +3,33 @@
     v-if="!$vuetify.display.mobile && event !== 'bc'"
     id="tpu-brand-logo"
     :title="event === 'j' ? 'Jitsi Anniversary' : 'TroploPrivateUploader'"
-    class="text-gradient unselectable ml-4"
-    style="z-index: 10; cursor: pointer; font-size: 32px"
+    class="unselectable ml-4 relative"
+    style="z-index: 10; cursor: pointer; font-size: 32px; font-weight: 500"
     @click="$router.push('/')"
+    :class="{
+      'text-gradient':
+        !$experiments.experiments.FLOWINITY && $app.site.officialInstance
+    }"
   >
-    {{ $app.site.name || "TPU" }}
+    <template
+      v-if="$experiments.experiments.FLOWINITY && $app.site.officialInstance"
+    >
+      <div class="d-flex">
+        <FlowinityBannerRainbow
+          v-if="$experiments.experiments.PRIDE"
+          style="height: 48px; width: 150px"
+          src="@/assets/images/flowinity-logo-banner-rainbow.svg"
+        />
+        <FlowinityBanner
+          v-else
+          style="height: 48px; width: 150px"
+          src="@/assets/images/flowinity-logo-banner.svg"
+        />
+      </div>
+    </template>
+    <template v-else>
+      {{ $app.site.name || "TPU" }}
+    </template>
     <v-hover v-if="event === 'pi'" v-slot="{ isHovering, props }">
       <span class="ml-1" v-bind="props">
         <template v-if="isHovering">
@@ -71,8 +93,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
+import FlowinityBannerRainbow from "@/components/Brand/FlowinityBannerRainbow.vue";
+import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 
 export default defineComponent({
+  components: { FlowinityBanner, FlowinityBannerRainbow, FlowinityLogo },
   computed: {
     event() {
       const date = this.$date().format("MMDD");

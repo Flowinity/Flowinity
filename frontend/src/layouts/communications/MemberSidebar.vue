@@ -1,6 +1,6 @@
 <template>
   <core-sidebar
-    v-model="$chat.memberSidebarShown"
+    :model-value="$chat.memberSidebarShown || $app.rail"
     name="chat-members"
     :class="
       $chat.memberSidebarShown &&
@@ -13,13 +13,14 @@
     color="dark"
     floating
     location="right"
+    @update:model-value="$chat.memberSidebarShown = $event"
   >
     <member-sidebar-list />
   </core-sidebar>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, watch } from "vue";
 import MemberSidebarList from "@/layouts/communications/MemberSidebarList.vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
 
