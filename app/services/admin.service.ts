@@ -261,7 +261,9 @@ export class AdminService {
       product: {
         name: config.siteName,
         link: config.hostnameWithProtocol,
-        logo: "https://i.troplo.com/i/d2b0d719a756.svg"
+        logo: config.officialInstance
+          ? "https://i.troplo.com/i/4ddf963706a3.svg"
+          : undefined
       }
     })
     let emailBody = mailGenerator.generate(mail)

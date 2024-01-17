@@ -80,7 +80,7 @@ export class AuthControllerV3 {
           title: `Hello ${recovery.username}.`,
           action: [
             {
-              instructions: `You requested a password reset for your TPU account. Please use the button below to recover your account.`,
+              instructions: `You requested a password reset for your ${config.siteName} account. Please use the button below to recover your account.`,
               button: {
                 color: "#0190ea", // Optional action button color
                 text: "Recover account",
@@ -94,7 +94,7 @@ export class AuthControllerV3 {
         }
       },
       body.email,
-      "TPU account password reset"
+      `${config.siteName} account password reset`
     )
     return
   }
