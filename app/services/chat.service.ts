@@ -1239,7 +1239,7 @@ export class ChatService {
 
   async createChat(users: number[], userId: number, gql?: boolean) {
     const chatPermissionsHandler = new ChatPermissionsHandler()
-    if (!users.length || users.includes(userId))
+    if (!users?.length || users.includes(userId))
       throw gql
         ? new GqlError("INVALID_FRIEND_SELECTION")
         : Errors.INVALID_FRIEND_SELECTION

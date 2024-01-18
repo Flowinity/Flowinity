@@ -29,6 +29,8 @@ import {
   AuditLogActionType,
   AuditLogCategory
 } from "@app/classes/graphql/chat/auditLog/categories"
+import { embedTranslator } from "@app/lib/embedParser"
+import { Message } from "@app/models/message.model"
 
 @Service()
 @JsonController("/chats")
@@ -307,21 +309,43 @@ export class ChatControllerV3 {
     @QueryParam("offset") offset?: number
   ) {
     if (mode === "paginate") {
-      return await this.chatService.getMessagesPagination(
+      const messages = await this.chatService.getMessagesPagination(
         associationId,
         user.id,
         position || "top",
         type || "messages",
         page || 1
       )
+
+      // standardize the embeds
+      messages.messages = messages.messages.map((message) => {
+        if (!message.embeds?.length) return message as Message
+        return {
+          ...message.toJSON(),
+          embeds: message.embeds.map((embed) => embedTranslator(embed))
+        } as Message
+      })
+
+      return messages
     }
-    return await this.chatService.getMessages(
+    let messages = await this.chatService.getMessages(
       associationId,
       user.id,
       position || "top",
       generateClientSatisfies(client, version),
       offset || 0
     )
+
+    // standardize the embeds
+    messages = messages.map((message) => {
+      if (!message.embeds?.length) return message as Message
+      return {
+        ...message.toJSON(),
+        embeds: message.embeds.map((embed) => embedTranslator(embed))
+      } as Message
+    })
+
+    return messages
   }
 
   @UseBefore(rateLimits.msgLimiter)
