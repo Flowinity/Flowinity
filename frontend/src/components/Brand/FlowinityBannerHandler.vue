@@ -1,6 +1,7 @@
 <template>
   <FlowinityBanner
     v-if="$experiments.experiments.FLOWINITY && !$experiments.experiments.PRIDE"
+    id="tpu-brand-logo"
     style="
       min-height: 48px;
       min-width: 150px;
@@ -8,14 +9,14 @@
       max-width: 150px;
     "
     class="ml-4 unselectable pointer"
-    @click="$router.push('/')"
     src="@/assets/images/flowinity-logo-banner.svg"
-    id="tpu-brand-logo"
+    @click="$router.push('/')"
   />
   <FlowinityBannerRainbow
     v-else-if="
       $experiments.experiments.FLOWINITY && $experiments.experiments.PRIDE
     "
+    id="tpu-brand-logo"
     style="
       min-height: 48px;
       min-width: 150px;
@@ -23,9 +24,8 @@
       max-width: 150px;
     "
     class="ml-4 unselectable pointer"
-    @click="$router.push('/')"
     src="@/assets/images/flowinity-logo-banner.svg"
-    id="tpu-brand-logo"
+    @click="$router.push('/')"
   />
   <h1
     v-else

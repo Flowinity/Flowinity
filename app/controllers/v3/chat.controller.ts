@@ -159,9 +159,7 @@ export class ChatControllerV3 {
     @Auth("chats.view") user: User,
     @Param("chatId") chatId: number,
     @QueryParam("query") query: string,
-    @QueryParam("page") page: number,
-    @HeaderParam("X-TPU-Client") client: string,
-    @HeaderParam("X-TPU-Client-Version") version: string
+    @QueryParam("page") page: number
   ) {
     const chat = await this.chatService.getChatFromAssociation(
       chatId,
@@ -169,12 +167,7 @@ export class ChatControllerV3 {
       false
     )
     if (!chat) throw Errors.CHAT_NOT_FOUND
-    return await this.chatService.searchChat(
-      chat.id,
-      query,
-      page,
-      generateClientSatisfies(client, version)
-    )
+    return await this.chatService.searchChat(chat.id, query, page)
   }
 
   @Delete("/:chatId/messages/:messageId")
@@ -319,8 +312,7 @@ export class ChatControllerV3 {
         user.id,
         position || "top",
         type || "messages",
-        page || 1,
-        generateClientSatisfies(client, version)
+        page || 1
       )
     }
     return await this.chatService.getMessages(

@@ -14,7 +14,7 @@ describe("Gallery.vue", () => {
 
   beforeEach(() => {
     let apollo: ApolloClient<any> | null = null;
-    let app = {
+    const app = {
       config: {
         globalProperties: {
           $apollo: null

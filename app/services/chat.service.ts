@@ -2,7 +2,6 @@ import { Container, Service } from "typedi"
 import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { User } from "@app/models/user.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
 import { Message } from "@app/models/message.model"
 import Errors from "@app/lib/errors"
 import { UserUtilsService } from "@app/services/userUtils.service"
@@ -35,7 +34,7 @@ import { EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
 import { ReadReceipt } from "@app/classes/graphql/chat/readReceiptSubscription"
 
 class MessageIncludes {
-  constructor(showNameColor = true) {
+  constructor() {
     return [
       {
         model: Message,
@@ -260,9 +259,9 @@ export class ChatService {
     permission: ChatPermissions,
     noThrow: boolean = false
   ): Promise<ChatPermissions[]> {
-    const date = new Date().getTime()
     const permissions = await this.getPermissions(userId, associationId)
-    //console.log(`took: ${new Date().getTime() - date}ms`)
+    // const date = new Date().getTime()
+    // console.log(`took: ${new Date().getTime() - date}ms`)
     let hasPermission: boolean
     if (
       permission === ChatPermissions.OWNER ||
@@ -282,7 +281,7 @@ export class ChatService {
     return permissions
   }
 
-  async emitToFCMs(message: Message, chat: Chat, userId: number) {
+  async emitToFCMs(message: Message, chat: Chat) {
     if (!config.providers.google) return
     for (const user of chat.users) {
       const key = await redis.get(`user:${user.userId}:notificationKey`)
@@ -433,12 +432,7 @@ export class ChatService {
     return true
   }
 
-  async searchChat(
-    chatId: number,
-    query: string,
-    page: number = 1,
-    clientSatisfies: ClientSatisfies
-  ) {
+  async searchChat(chatId: number, query: string, page: number = 1) {
     if (!page) page = 1
     const chat = await Chat.findOne({
       where: {
@@ -464,7 +458,7 @@ export class ChatService {
     const messages = await Message.findAll({
       order: [["createdAt", "DESC"]],
       where,
-      include: new MessageIncludes(clientSatisfies.nameColor),
+      include: new MessageIncludes(),
       limit: 20,
       offset: (page - 1) * 20
     })
@@ -642,34 +636,6 @@ export class ChatService {
     })
     return chat
   }
-
-  /*
-   async patchCacheForAll(chatId: number, removeUserId?: number) {
-    const cache = Container.get(CacheService)
-    const chat = await Chat.findOne({
-      where: {
-        id: chatId
-      },
-      include: [
-        {
-          model: ChatAssociation,
-          as: "users",
-          include: this.userIncludes
-        }
-      ]
-    })
-    if (!chat) throw Errors.CHAT_NOT_FOUND
-    if (removeUserId) {
-      await cache.generateChatsCache(removeUserId)
-    }
-    for (const user of chat.users) {
-      if (!user.userId) continue
-      await cache.patchChatsCacheForUser(user.userId, {
-        ...chat.toJSON(),
-        association: user.toJSON()
-      } as ChatCache)
-    }
-  }*/
 
   async removeUserFromChat(
     associationId: number,
@@ -1279,11 +1245,6 @@ export class ChatService {
         : Errors.INVALID_FRIEND_SELECTION
 
     const type = users.length === 1 ? "direct" : "group"
-    const friends = await Container.get(UserUtilsService).validateFriends(
-      userId,
-      users,
-      type !== "direct"
-    )
     const intent = [userId, ...users].sort((a, b) => a - b).join("-")
     if (type === "direct") {
       const chat = await Chat.findOne({
@@ -1386,14 +1347,10 @@ export class ChatService {
     return chatWithUsers
   }
 
-  async sendMessageToUsers(
-    messageId: number,
-    chat: Chat,
-    emojiPermission: boolean = true
-  ) {
+  async sendMessageToUsers(messageId: number, chat: Chat) {
     const message = await Message.findOne({
       where: { id: messageId },
-      include: new MessageIncludes(false)
+      include: new MessageIncludes()
     })
     if (!message) throw Errors.UNKNOWN
     const matches = message.content.match(/:([\w~-]+)(?::([\w~-]+))?:/g)
@@ -1402,8 +1359,7 @@ export class ChatService {
         id: matches?.map((match) => match.split(":")[2]) || []
       }
     })
-
-    this.emitToFCMs(message, chat, message.userId)
+    this.emitToFCMs(message, chat)
     for (const association of chat.users) {
       if (association?.tpuUser) {
         const assoc = await ChatAssociation.findOne({
@@ -1535,11 +1491,6 @@ export class ChatService {
     attachments?: string[],
     embeds?: EmbedInput[]
   ) {
-    const permissions = await this.checkPermissions(
-      userId,
-      associationId,
-      ChatPermissions.SEND_MESSAGES
-    )
     const chat = await this.getChatFromAssociation(associationId, userId)
     if (replyId !== undefined && replyId !== null) {
       const message = await Message.findOne({
@@ -1595,11 +1546,7 @@ export class ChatService {
 
     redis.set(`chat:${chat.id}:sortDate`, dayjs(message.createdAt).valueOf())
     embedParser(message, message.chatId, userId, associationId, attachments)
-    return await this.sendMessageToUsers(
-      message.id,
-      chat,
-      permissions.includes(ChatPermissions.EXTERNAL_EMOJI)
-    )
+    return await this.sendMessageToUsers(message.id, chat)
   }
 
   async getRecipient(chat: Chat, userId: number) {
@@ -1710,7 +1657,7 @@ export class ChatService {
       },
       order: [["id", position === "top" ? "DESC" : "ASC"]],
       limit: 50,
-      include: new MessageIncludes(clientSatisfies.nameColor)
+      include: new MessageIncludes()
     })
     if (position === "bottom") messages.reverse()
     return messages
@@ -1721,8 +1668,7 @@ export class ChatService {
     userId: number,
     position: "top" | "bottom" = "top",
     type: "pins" | "messages" = "messages",
-    page: number = 1,
-    clientSatisfies: ClientSatisfies
+    page: number = 1
   ) {
     const chat = await this.getChatFromAssociation(chatId, userId)
     let messages = await Message.findAll({
@@ -1732,7 +1678,7 @@ export class ChatService {
       },
       order: [["createdAt", position === "top" ? "DESC" : "ASC"]],
       limit: 50,
-      include: new MessageIncludes(clientSatisfies.nameColor)
+      include: new MessageIncludes()
     })
     if (position === "bottom") messages.reverse()
     const count = await Message.count({
@@ -1783,7 +1729,7 @@ export class ChatService {
   }
 
   async getUserChats(userId: number, clientSatisfies: ClientSatisfies) {
-    const chats = await Chat.findAll({
+    return await Chat.findAll({
       include: [
         {
           model: ChatAssociation,
@@ -1821,30 +1767,5 @@ export class ChatService {
         }
       ]
     })
-    return chats
-    /* return chats.map((chat: Chat) => {
-      const recipient =
-        chat.type === "direct"
-          ? chat.users
-              .find((a: ChatAssociation) => a.userId !== userId)
-              ?.toJSON()
-          : null
-      return {
-        ...chat.toJSON(),
-        recipient: recipient
-          ? {
-              ...(recipient.user || recipient.legacyUser),
-              legacyUser: !!recipient.legacyUser
-            }
-          : null,
-        users: chat.users.map((association: ChatAssociation) => {
-          return {
-            ...(association.user?.toJSON() || association.legacyUser?.toJSON()),
-            legacyUser: !!association.legacyUser,
-            association: association.toJSON()
-          }
-        })
-      }
-    })*/
   }
 }
