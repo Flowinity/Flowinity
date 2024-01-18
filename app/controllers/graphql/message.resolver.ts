@@ -2,7 +2,6 @@ import {
   Arg,
   Ctx,
   FieldResolver,
-  Int,
   Mutation,
   Query,
   Resolver,

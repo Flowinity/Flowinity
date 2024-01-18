@@ -24,7 +24,6 @@ import { GraphQLError } from "graphql/error"
 import { CollectionService } from "@app/services/collection.service"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 //@ts-ignore
-import { resolver } from "graphql-sequelize"
 import { CollectionUser } from "@app/models/collectionUser.model"
 import { Op } from "sequelize"
 import { checkScope } from "@app/lib/auth"

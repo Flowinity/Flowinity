@@ -1,14 +1,9 @@
-import { afterAll, beforeAll, expect, test, jest } from "@jest/globals"
+import { beforeAll, expect, test } from "@jest/globals"
 import "@app/lib/init-tests"
-import { Container } from "typedi"
-import { Context } from "@app/types/graphql/context"
-import { gCall, getGqlString } from "@app/lib/test-utils/gCall"
+import { gCall } from "@app/lib/test-utils/gCall"
 import { CoreStateQuery } from "../../../frontend/src/graphql/core/state.graphql"
-import { Authorization } from "@app/lib/graphql/AuthChecker"
-import { SetExperimentInput } from "@app/classes/graphql/core/setExperiment"
-import { getUser, TestUser, testUser } from "@app/lib/test-utils/testUser"
+import { getUser, TestUser } from "@app/lib/test-utils/testUser"
 import { SetExperimentMutation } from "../../../frontend/src/graphql/core/experiments.graphql"
-import { CoreResolver } from "@app/controllers/graphql/core.resolver"
 import { resetState } from "@app/lib/init-tests"
 
 let user: TestUser | null = null

@@ -12,7 +12,6 @@ import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { Insight } from "@app/models/insight.model"
 import dayjsInt from "dayjs"
 import cron from "node-cron"
-import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 export class HoursOfDay {
   hours: { [key: string]: number } = {

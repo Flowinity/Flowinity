@@ -12,8 +12,6 @@ import {
   UseBefore
 } from "routing-controllers"
 import { Service } from "typedi"
-import JSZip from "jszip"
-import fs from "fs"
 import { Response } from "express"
 
 // Import Libs
@@ -35,7 +33,7 @@ import { CollectionUser } from "@app/models/collectionUser.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Upload } from "@app/models/upload.model"
 import { CollectionFilter } from "@app/classes/graphql/collections/collections"
-import rateLimits, { downloadZipFileExportLimiter } from "@app/lib/rateLimits"
+import rateLimits from "@app/lib/rateLimits"
 
 @Service()
 @JsonController("/collections")

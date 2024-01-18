@@ -17,10 +17,7 @@ import { Auth } from "@app/lib/auth"
 import { User } from "@app/models/user.model"
 import Errors from "@app/lib/errors"
 import { GalleryService } from "@app/services/gallery.service"
-import rateLimits, {
-  downloadZipFileExportLimiter,
-  uploadLimiterUser
-} from "@app/lib/rateLimits"
+import rateLimits from "@app/lib/rateLimits"
 import { SortOptions } from "@app/types/sort"
 import uploader from "@app/lib/upload"
 import { RequestAuth } from "@app/types/express"
@@ -28,9 +25,6 @@ import { OpenAPI } from "routing-controllers-openapi"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import { Upload } from "@app/models/upload.model"
-import { Collection } from "@app/models/collection.model"
-import RateLimit from "@app/lib/graphql/RateLimit"
-import { CollectionUser } from "@app/models/collectionUser.model"
 import { Response } from "express"
 
 @Service()

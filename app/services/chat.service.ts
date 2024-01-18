@@ -1491,6 +1491,11 @@ export class ChatService {
     attachments?: string[],
     embeds?: EmbedInput[]
   ) {
+    await this.checkPermissions(
+      userId,
+      associationId,
+      ChatPermissions.SEND_MESSAGES
+    )
     const chat = await this.getChatFromAssociation(associationId, userId)
     if (replyId !== undefined && replyId !== null) {
       const message = await Message.findOne({

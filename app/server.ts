@@ -47,9 +47,7 @@ import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { User } from "./models/user.model"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { Platform, PlatformType } from "@app/classes/graphql/user/platforms"
-import cryptoRandomString from "crypto-random-string"
 import { randomUUID } from "crypto"
-import { GqlError } from "@app/lib/gqlErrors"
 
 @Service({ eager: false })
 export class Server {
