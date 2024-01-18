@@ -39,8 +39,8 @@ View the full collection on
 - **Collections**, which can be shared with multiple users.
 - **AutoCollects**, create custom rules to automatically add items into
   collections.
-- **Workspaces**, create quick notes/documents inside PrivateUploader.
-- **Insights**, see reports about how, and when you use PrivateUploader.
+- **Workspaces**, create quick notes/documents inside Flowinity.
+- **Insights**, see reports about how, and when you use Flowinity.
 - **Communications**, the built-in messaging platform to communicate with other
   users.
 - **Scoped API keys** for additional security.
@@ -70,10 +70,10 @@ these instructions will differ depending on what init system you use.
   <summary><h2>Docker w/ docker-compose (Quickest method)</h2></summary>
 
 1. Clone the Docker-specific repo:
-   `git clone https://github.com/PrivateUploader/docker-compose privateuploader`
-2. Change directory into repo: `cd privateuploader`
+   `git clone https://github.com/PrivateUploader/docker-compose flowinity`
+2. Change directory into repo: `cd flowinity`
 3. Create the container (change the environment variables to your liking):
-   `DB_DATABASE=privateuploader DB_USER=privateuploader DB_PASSWORD=CHANGE_ME DB_ROOT_PASSWORD=CHANGE_ME docker-compose up -d`
+   `DB_DATABASE=flowinity DB_USER=flowinity DB_PASSWORD=CHANGE_ME DB_ROOT_PASSWORD=CHANGE_ME docker-compose up -d`
 4. Follow the setup wizard on http://localhost:34582
 5. You must change the MariaDB server hostname to `mariadb` and the redis
 hostname to `redis` in the setup wizard. (seen below):
@@ -128,7 +128,7 @@ Even if you only have 1 CPU core/thread, you should still use `start` in
 production as it will support the `TPU_RESTART` process command and will
 automatically scale if you add more CPU cores/threads.
 
-#### Do not restart TPU via `pm2` or `systemd` if you are using the `serve-cluster` script in production.<br><br>This can be done in the admin panel or via a POST request to /api/v3/admin/restart (administrator account required, can be automated with "admin.ci" API scope).
+#### Do not restart Flowinity via `pm2` or `systemd` if you are using the `serve-cluster` script in production.<br><br>This can be done in the admin panel or via a POST request to /api/v3/admin/restart (administrator account required, can be automated with "admin.ci" API scope).
 
 #### Having a single CPU core will cause Flowinity to be temporarily unavailable when restarting.
 

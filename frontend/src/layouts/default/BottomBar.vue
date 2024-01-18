@@ -73,7 +73,7 @@
       <v-list-item
         v-for="item in $app.sidebar"
         :key="item.id"
-        :prepend-icon="item.icon"
+        :prepend-icon="<any>item.icon"
         :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
         :to="item.path"
         :exact="item.exact"

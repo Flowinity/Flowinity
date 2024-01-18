@@ -28,7 +28,7 @@
         :exact="item.exact"
         :to="item.path"
         :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
-        :prepend-icon="item.icon"
+        :prepend-icon="<any>item.icon"
         @click="handleClick(item.id)"
       >
         <template v-if="item.customIcon" #prepend>
