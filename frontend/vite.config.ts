@@ -46,8 +46,11 @@ const config = {
           /^\/i\/.*/,
           /^\/api\/.*/,
           /^\/\.well-known\/.*/,
-          /^\/graphql\/.*/,
-          /^\/gateway\/.*/
+          /^\/graphql/,
+          /^\/gateway/,
+          /^\/socket.io/,
+          /^\/privacy.html/,
+          /^\/terms.html/
         ]
       },
       includeAssets: [
