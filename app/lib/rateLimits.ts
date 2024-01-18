@@ -72,6 +72,23 @@ export const uploadLimiterUser: RateLimitRequestHandler = rateLimit({
   })
 })
 
+export const downloadZipFileExportLimiter: RateLimitRequestHandler = rateLimit({
+  windowMs: 60 * 1000,
+  max: 5,
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  skipFailedRequests: false, // Don't count failed requests (status >= 400) towards rate limiting
+  message,
+  async keyGenerator(req: any, res: any) {
+    return req.ip
+  },
+  store: new RedisStore({
+    //@ts-ignore
+    sendCommand: (...args: string[]) => redis.sendCommand(args),
+    prefix: "downloadZipFileExportLimiter:"
+  })
+})
+
 export const msgLimiter: RateLimitRequestHandler = rateLimit({
   windowMs: 8 * 1000,
   max: 8,
@@ -170,5 +187,6 @@ export default {
   standardLimiter,
   uploadLimiter,
   registerLimiter,
-  loginLimiter
+  loginLimiter,
+  downloadZipFileExportLimiter
 }

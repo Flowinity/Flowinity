@@ -51,9 +51,9 @@
     "totalPages": "Total Pages: {count}",
     "totalItems": "Total Items: {count}",
     "randomAttachment": "Random Attachment",
-    "selectAll": "Select all",
-    "deselectAll": "Deselect all",
-    "deleteSelected": "Delete selected",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "deleteSelected": "Delete Selected",
     "collectSelected": "Add to Collection",
     "actions": {
       "delete": {

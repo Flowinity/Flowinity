@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1 class="text-center">TPU Changelogs</h1>
+    <h1 class="text-center">Flowinity Changelogs</h1>
     <template v-for="version in versions" :key="version.changes">
       <h2 class="mt-4">{{ version.version }}</h2>
       <v-card-title

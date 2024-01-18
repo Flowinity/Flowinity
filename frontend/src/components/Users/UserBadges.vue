@@ -8,7 +8,7 @@
       class="user-badge"
       color="#0190ea"
       icon="mdi-shield"
-      text="TPU Administrator"
+      :text="`${$app.site.name} Administrator`"
     />
     <HoverChip
       v-if="user.moderator"
@@ -17,7 +17,7 @@
       class="user-badge"
       color="success"
       icon="mdi-shield"
-      text="TPU Moderator"
+      :text="`${$app.site.name} Moderator`"
     />
     <!-- Plan/joke badges -->
     <HoverChip
@@ -26,7 +26,7 @@
       :color="primaryColor || user.plan?.color"
       :short-text="user.plan?.name"
       :small="true"
-      :text="'PrivateUploader ' + user.plan?.name"
+      :text="`${$app.site.name} ${user.plan?.name}`"
       class="user-badge"
       text-color="black"
     />
@@ -49,7 +49,7 @@
       class="user-badge"
       color="primary"
       icon="mdi-crown"
-      text="TPU God"
+      :text="`${$app.site.name} God`"
       title="You're Better than the rest™."
     />
     <HoverChip
@@ -59,7 +59,7 @@
       class="user-badge"
       color="gold"
       icon="mdi-compass"
-      text="TPU Champion"
+      :text="`${$app.site.name} Champion`"
       title="Champion deez nuts."
     />
     <HoverChip
@@ -69,8 +69,8 @@
       class="user-badge"
       color="purple"
       icon="mdi-chess-knight"
-      text="TPU Legend"
       title="You're a legend."
+      :text="`${$app.site.name} Legend`"
     />
     <HoverChip
       v-if="rank === 'medium'"
@@ -79,8 +79,8 @@
       class="user-badge"
       color="#1ac62b"
       icon="mdi-microsoft-xbox-controller-battery-medium"
-      text="TPU Mediumist"
       title="You're medium."
+      :text="`${$app.site.name} Mediumist`"
     />
     <HoverChip
       v-if="rank === 'intermediate'"
@@ -89,8 +89,8 @@
       class="user-badge"
       color="cyan"
       icon="mdi-target-account"
-      text="TPU Intermediate"
       title="You're getting Better™."
+      :text="`${$app.site.name} Intermediate`"
     />
     <HoverChip
       v-if="rank === 'noob'"
@@ -99,8 +99,8 @@
       class="user-badge"
       color="grey"
       icon="mdi-chess-pawn"
-      text="TPU Noob"
       title="Noob. Get Better™."
+      :text="`${$app.site.name} Noob`"
     />
     <!-- God, #0190ea/primary -->
     <HoverChip
@@ -110,8 +110,8 @@
       class="user-badge"
       color="#0190ea"
       icon="mdi-clock"
-      text="Chronic TPU Addiction Condition Disorder (CTPUACD)"
-      title="Have 100h+ in TPU."
+      :text="`Chronic ${$app.site.name} Addiction Condition Disorder (CFACD)`"
+      :title="`Have 100h+ in ${$app.site.name}.`"
     />
     <HoverChip
       v-if="user.stats?.uploads >= 100000"
@@ -164,8 +164,8 @@
       class="user-badge"
       color="gold"
       icon="mdi-clock"
-      text="TPU Addict"
-      title="Have 72h+ in TPU."
+      :text="`${$app.site.name} Addict`"
+      :title="`Have 72h+ in ${$app.site.name}.`"
     />
     <HoverChip
       v-if="
@@ -210,7 +210,7 @@
       color="purple"
       icon="mdi-clock"
       text="Nice Hours"
-      title="Have 69h+ in TPU."
+      :title="`Have 69h+ in ${$app.site.name}.`"
     />
     <HoverChip
       v-if="
@@ -255,8 +255,8 @@
       class="user-badge"
       color="#1ac62b"
       icon="mdi-clock-fast"
-      text="TPU All Nighter"
-      title="Have 24h+ in TPU."
+      :text="`${$app.site.name} All Nighter`"
+      :title="`Have 24h+ in ${$app.site.name}.`"
     />
     <HoverChip
       v-if="
@@ -301,7 +301,7 @@
       color="cyan"
       icon="mdi-clock"
       text="Better than Average"
-      title="Have 12h+ in TPU."
+      :title="`Have 12h+ in ${$app.site.name}.`"
     />
     <HoverChip
       v-if="
@@ -346,7 +346,7 @@
       color="grey"
       icon="mdi-clock"
       text="Average User"
-      title="Have 8h+ in TPU."
+      :title="`Have 8h+ in ${$app.site.name}.`"
     />
     <HoverChip
       v-if="user.stats?.collections >= 5 && user.stats?.collections < 10"

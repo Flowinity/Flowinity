@@ -29,17 +29,17 @@ async function generateAPIKey(
 ): Promise<string> {
   switch (type) {
     case "session":
-      return "TPU-WEB-" + cryptoRandomString({ length: 128 })
+      return "FLOWINITY-WEB-" + cryptoRandomString({ length: 128 })
     case "email":
-      return "TPU-EMAIL-" + cryptoRandomString({ length: 128 })
+      return "FLOWINITY-EMAIL-" + cryptoRandomString({ length: 128 })
     case "oauth":
-      return "TPU-OAUTH-" + cryptoRandomString({ length: 128 })
+      return "FLOWINITY-OAUTH-" + cryptoRandomString({ length: 128 })
     case "oidc":
-      return "TPU-OIDC-" + cryptoRandomString({ length: 128 })
+      return "FLOWINITY-OIDC-" + cryptoRandomString({ length: 128 })
     case "bot-email":
       return "reject-" + cryptoRandomString({ length: 16 })
     default:
-      return "TPU-API-" + cryptoRandomString({ length: 128 })
+      return "FLOWINITY-API-" + cryptoRandomString({ length: 128 })
   }
 }
 

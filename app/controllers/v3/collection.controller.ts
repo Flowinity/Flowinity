@@ -11,10 +11,10 @@ import {
   UploadedFile,
   UseBefore
 } from "routing-controllers"
-import { Response } from "express"
 import { Service } from "typedi"
 import JSZip from "jszip"
 import fs from "fs"
+import { Response } from "express"
 
 // Import Libs
 import { Auth } from "@app/lib/auth"
@@ -35,7 +35,7 @@ import { CollectionUser } from "@app/models/collectionUser.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { Upload } from "@app/models/upload.model"
 import { CollectionFilter } from "@app/classes/graphql/collections/collections"
-import rateLimits from "@app/lib/rateLimits"
+import rateLimits, { downloadZipFileExportLimiter } from "@app/lib/rateLimits"
 
 @Service()
 @JsonController("/collections")
@@ -517,6 +517,7 @@ export class CollectionControllerV3 {
     }
   }
 
+  @UseBefore(rateLimits.downloadZipFileExportLimiter)
   @Get("/:collectionId/download")
   async downloadCollection(
     @Auth("collections.view") user: User,
@@ -534,40 +535,6 @@ export class CollectionControllerV3 {
     const attachments: Upload[] =
       await this.galleryService.getAttachmentsByCollectionId(collectionId)
 
-    if (attachments.length > 0) {
-      const zip: JSZip = new JSZip()
-      const size: number = attachments.reduce(
-        (acc: number, file: Upload) => acc + file.fileSize,
-        0
-      )
-
-      if (size > 10737418240) throw Errors.COLLECTION_TOO_BIG_TO_DOWNLOAD
-
-      for (let attachment of attachments) {
-        attachment = await this.galleryService.getAttachment(
-          attachment.attachment,
-          attachment.userId
-        )
-
-        const file: Buffer = fs.readFileSync(
-          `${config.storage}/${attachment.attachment}`
-        )
-
-        if (!file) throw new Error("Couldn't archive collection.")
-
-        zip.file(
-          `${attachment.originalFilename.split(".")[0]}.${
-            attachment.attachment
-          }`,
-          file
-        )
-      }
-
-      const buffer: Buffer = await zip.generateAsync({ type: "nodebuffer" })
-
-      return res.send(buffer)
-    } else {
-      throw Errors.COLLECTION_EMPTY_TO_DOWNLOAD
-    }
+    await this.galleryService.downloadAttachments(attachments, res)
   }
 }

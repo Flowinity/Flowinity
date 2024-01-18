@@ -19,6 +19,8 @@ import { Chat, CoreState, Upload } from "@/gql/graphql";
 import { useFriendsStore } from "@/store/friends.store";
 import { useMailStore } from "@/store/mail.store";
 import { useApolloClient } from "@vue/apollo-composable";
+import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
+import { h } from "vue";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
@@ -262,17 +264,6 @@ export const useAppStore = defineStore("app", {
         },
         {
           id: 39,
-          path: "/invite/privateuploader",
-          name: i18n.t("core.sidebar.communicationsPublic"),
-          icon: "mdi-help",
-          new: true,
-          scope: "",
-          if:
-            !chat?.chats?.find((chat) => chat.id === 375) &&
-            app.site.officialInstance
-        },
-        {
-          id: 39,
           externalPath: "https://discord.gg/4fB6GCR3Qv",
           name: i18n.t("core.sidebar.discord"),
           customIcon: "@/assets/images/discord.svg",
@@ -291,6 +282,22 @@ export const useAppStore = defineStore("app", {
           scope: ""
         }
       ] as SidebarItem[];
+
+      if (
+        !chat?.chats?.find((chat) => chat.id === 375) &&
+        app.site.officialInstance
+      ) {
+        // insert above the Discord link
+        items.splice(9, 0, {
+          id: 39,
+          path: "/invite/flowinity",
+          name: i18n.t("core.sidebar.communicationsPublic"),
+          icon: h(FlowinityLogo),
+          new: true,
+          scope: "",
+          externalPath: ""
+        });
+      }
 
       // Server feature options
       if (

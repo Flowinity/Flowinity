@@ -9,7 +9,6 @@ import { CollectionItem } from "@app/models/collectionItem.model"
 import { Message } from "@app/models/message.model"
 import { Chat } from "@app/models/chat.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
 import { Insight } from "@app/models/insight.model"
 import dayjsInt from "dayjs"
 import cron from "node-cron"
@@ -810,45 +809,43 @@ export class PulseService {
     })
 
     // CHATS
-    const messages = await Message.findAll({
-      where: {
-        userId: userId,
-        createdAt: {
-          [Op.gte]: gte,
-          [Op.lte]: lte
-        }
-      },
+    console.log("Started")
+    const date = new Date()
+    const chats = await Chat.findAll({
       include: [
         {
-          model: Chat,
-          as: "chat",
+          model: ChatAssociation,
+          as: "users",
+          attributes: ["userId"],
           include: [
             {
-              model: ChatAssociation,
-              as: "users",
-              include: [
-                {
-                  model: User,
-                  as: "tpuUser",
-                  attributes: partialUserBase
-                },
-                {
-                  model: LegacyUser,
-                  as: "legacyUser",
-                  attributes: partialUserBase
-                }
-              ]
+              model: User,
+              as: "tpuUser",
+              attributes: ["username"]
             }
           ]
+        },
+        {
+          model: Message,
+          as: "messages",
+          attributes: ["userId", "createdAt"],
+          where: {
+            userId: userId,
+            createdAt: {
+              [Op.gte]: gte,
+              [Op.lte]: lte
+            }
+          }
         }
       ]
     })
+    console.log("Finished, took", new Date().getTime() - date.getTime())
 
     const topChats = {} as Record<string, number>
-    for (const message of messages) {
-      const chatName = <string>this.getChatName(message.chat, userId)
+    for (const chat of chats) {
+      const chatName = <string>this.getChatName(chat, userId)
       if (!topChats[chatName]) topChats[chatName] = 0
-      topChats[chatName] += 1
+      topChats[chatName] += chat.messages.length
     }
 
     const topChatsSorted = Object.keys(topChats)
@@ -900,11 +897,14 @@ export class PulseService {
       },
       messages: {
         total: {
-          now: messages.length,
+          now: chats.reduce((acc, chat) => acc + chat.messages.length, 0),
           previous: previous ? previous.data?.messages?.total?.now : 0
         },
         average: {
-          now: Math.round(messages.length / avgModifier),
+          now: Math.round(
+            chats.reduce((acc, chat) => acc + chat.messages.length, 0) /
+              avgModifier
+          ),
           previous: previous ? previous.data?.messages?.average?.now : 0
         },
         topChats: topChatsSorted

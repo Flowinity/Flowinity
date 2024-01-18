@@ -371,6 +371,10 @@ let Errors = {
     message:
       "The maximum amount of items you can add to a collection at a time is 72.",
     status: 400
+  },
+  TOO_MANY_ITEMS_DOWNLOAD: {
+    message: "You cannot bulk download more than 24 items.",
+    status: 400
   }
 }
 

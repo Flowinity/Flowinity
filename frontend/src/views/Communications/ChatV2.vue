@@ -89,7 +89,7 @@
     <div
       class="messages communications position-relative"
       id="chat"
-      @scrollend="scrollEvent"
+      @scroll="scrollEvent"
       :key="$chat.selectedChatId"
     >
       <div id="sentinel-bottom" ref="sentinelBottom" />
@@ -320,6 +320,7 @@ export default defineComponent({
       previousScrollHeight: 0,
       message: "",
       avoidAutoScroll: false,
+      avoidAutoScrollSince: 0,
       editing: undefined as number | undefined,
       editingText: undefined as string | undefined,
       replyId: undefined as number | undefined,
@@ -366,11 +367,11 @@ export default defineComponent({
             you: true
           }
         : this.$user.users[this.$chat.selectedChat?.recipient?.id]?.blocked
-        ? {
-            value: true,
-            you: false
-          }
-        : { value: false, you: false };
+          ? {
+              value: true,
+              you: false
+            }
+          : { value: false, you: false };
     },
     ScrollPosition() {
       return ScrollPosition;
@@ -671,7 +672,11 @@ export default defineComponent({
       }
     },
     autoScroll() {
-      if (this.avoidAutoScroll) return;
+      if (
+        this.avoidAutoScroll &&
+        new Date().getTime() - this.avoidAutoScrollSince > 500
+      )
+        return;
       if (!this.$chat.selectedChat?.messages) return;
       const sentinel = document.getElementById("sentinel-bottom");
       if (!sentinel) return;
@@ -688,10 +693,16 @@ export default defineComponent({
       });
     },
     async scrollEvent() {
+      const cached = this.avoidAutoScroll;
       const elem = document.getElementById("chat");
       if (!elem) return;
       const scrollPos = elem.scrollTop;
       this.avoidAutoScroll = scrollPos < -300;
+      if (this.avoidAutoScroll && !cached) {
+        this.avoidAutoScrollSince = new Date().getTime();
+      } else if (!this.avoidAutoScroll && cached) {
+        this.avoidAutoScrollSince = 0;
+      }
     },
     editLastMessage() {
       // find first message made by user

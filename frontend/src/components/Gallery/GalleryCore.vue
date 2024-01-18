@@ -15,6 +15,10 @@
       </slot>
     </div>
     <div v-if="selected.length && supports.multiSelect" class="float-right">
+      <v-btn class="rounded-xl ml-2" variant="text" @click="download()">
+        <v-icon class="mr-1">mdi-download</v-icon>
+        {{ $t("gallery.downloadSelected") }}
+      </v-btn>
       <slot
         :deselect-all="deselectAll"
         :select-all="selectAll"
@@ -199,7 +203,9 @@ export default defineComponent({
     return {
       addToCollectionDialog: false,
       collectivize: null as number | number[] | null,
-      selected: [] as number[]
+      selected: [] as number[],
+      downloadingLoading: false,
+      selectedMap: new Map<number, string>()
     };
   },
   computed: {
@@ -213,6 +219,37 @@ export default defineComponent({
     }
   },
   methods: {
+    download() {
+      this.downloadingLoading = true;
+      this.axios
+        .post(
+          "/gallery/download",
+          {
+            items: Array.from(this.selectedMap.values())
+          },
+          {
+            responseType: "blob"
+          }
+        )
+        .then((response) => {
+          const url = window.URL.createObjectURL(
+            new Blob([response.data], {
+              type: "application/zip"
+            })
+          );
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute(
+            "download",
+            `gallery-${this.$date().format("YYYY-MM-DD-HH-mm-ss")}.zip`
+          );
+          document.body.appendChild(link);
+          link.click();
+        })
+        .finally(() => {
+          this.downloadingLoading = false;
+        });
+    },
     resetScroll() {
       document.body.scrollTop = document.documentElement.scrollTop = 0;
     },
@@ -232,12 +269,15 @@ export default defineComponent({
         this.$emit("updateItem", { item: items, collection });
       }
       this.selected = [];
+      this.selectedMap = new Map<number, string>();
     },
     select(item: Upload) {
       if (this.selected.includes(item.id)) {
         this.selected = this.selected.filter((i: number) => i !== item.id);
+        this.selectedMap.delete(item.id);
       } else {
         this.selected.push(item.id);
+        this.selectedMap.set(item.id, item.attachment);
       }
     },
     bulkAddCollection() {
@@ -253,9 +293,13 @@ export default defineComponent({
     },
     selectAll() {
       this.selected = this.items.items.map((i: Upload) => i.id);
+      this.selectedMap = new Map<number, string>(
+        this.items.items.map((i: Upload) => [i.id, i.attachment])
+      );
     },
     deselectAll() {
       this.selected = [];
+      this.selectedMap = new Map<number, string>();
     }
   }
 });

@@ -159,11 +159,6 @@ export class ChatResolver {
           model: User,
           as: "tpuUser",
           attributes: partialUserBase
-        },
-        {
-          model: LegacyUser,
-          as: "legacyUser",
-          attributes: partialUserBase
         }
       ]
     })

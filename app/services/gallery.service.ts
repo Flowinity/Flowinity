@@ -27,6 +27,8 @@ import { CollectionUser } from "@app/models/collectionUser.model"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { GraphQLError } from "graphql/error"
 import { pubSub } from "@app/lib/graphql/pubsub"
+import { Response } from "express"
+import JSZip from "jszip"
 
 @Service()
 export class GalleryService {
@@ -730,5 +732,59 @@ export class GalleryService {
     if (!uploads) throw Errors.ATTACHMENT_NOT_FOUND_ROUTE
 
     return uploads
+  }
+
+  async downloadAttachments(
+    attachments: Upload[],
+    res: Response | undefined = undefined
+  ) {
+    if (attachments.length > 0) {
+      const zip: JSZip = new JSZip()
+      const size: number = attachments.reduce(
+        (acc: number, file: Upload) => acc + file.fileSize,
+        0
+      )
+
+      if (size > 10737418240) throw Errors.COLLECTION_TOO_BIG_TO_DOWNLOAD
+
+      for (let attachment of attachments) {
+        attachment = await this.getAttachment(
+          attachment.attachment,
+          attachment.userId
+        )
+
+        const file: Buffer = fs.readFileSync(
+          `${global.storageRoot}/${attachment.attachment}`
+        )
+
+        if (!file) throw new Error("Couldn't archive collection.")
+
+        zip.file(
+          `${attachment.originalFilename.split(".")[0]}.${
+            attachment.attachment
+          }`,
+          file
+        )
+      }
+
+      const buffer: Buffer = await zip.generateAsync({
+        type: "nodebuffer",
+        compression: "DEFLATE",
+        compressionOptions: { level: 9 },
+        streamFiles: true
+      })
+
+      if (res) {
+        // send the zip file to the client
+        res.setHeader("Content-Type", "application/zip")
+        res.setHeader("Content-Length", buffer.length)
+        res.send(buffer)
+        return res
+      } else {
+        return buffer
+      }
+    } else {
+      throw Errors.COLLECTION_EMPTY_TO_DOWNLOAD
+    }
   }
 }

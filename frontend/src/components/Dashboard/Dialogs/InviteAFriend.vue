@@ -7,7 +7,7 @@
     <template #title>Invite a Friend</template>
     <v-card-text>
       Enter your friends email, your invite will be sent to them after Troplo,
-      or another TPU administrator approves it.
+      or another Flowinity administrator approves it.
       <v-text-field
         v-model="email"
         :rules="$validation.user.email"
@@ -20,7 +20,7 @@
       />
       <small>
         You will receive an email when your request is accepted or denied by a
-        TPU administrator.
+        Flowinity administrator.
       </small>
     </v-card-text>
     <v-card-actions>

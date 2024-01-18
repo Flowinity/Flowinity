@@ -51,7 +51,7 @@ View the full collection on
 
 - Node.js 18.0.0 or newer (NodeJS 18 is necessary for structuredClone, no
   polyfills are built-in)
-- 2GB of RAM or more (RAM usage is dependent on the number of threads TPU uses)
+- 2GB of RAM or more (RAM usage is dependent on the number of threads Flowinity uses)
 - 4GB of disk space or more (for core server, database, and frontend files)
 - 64-bit x86 or ARM processor, 1 CPU core or more (4 recommended)
 - MariaDB server (MySQL won't work, Sequelize dialect "mysql" does not support
@@ -84,20 +84,20 @@ hostname to `redis` in the setup wizard. (seen below):
 <details>
   <summary><h2>Manual Setup</h2></summary>
 
-1. Create TPU user and group: `useradd -m tpu`
+1. Create Flowinity user and group: `useradd -m flowinity`
 2. Install MariaDB and Redis (with the RedisJSON plugin) on your server.
-3. Login as the TPU user: `su tpu`
+3. Login as the Flowinity user: `su flowinity`
 4. Change directory into TPU home directory: `cd`
 5. Clone the repository:
-   `git clone https://github.com/Troplo/PrivateUploader private-uploader`
-6. Change directory into the repository: `cd private-uploader`
+   `git clone https://github.com/PrivateUploader/Flowinity flowinity`
+6. Change directory into the repository: `cd flowinity`
 7. Install dependencies: `yarn install`
 8. Create systemd service files for TPU with
-   `cp tpu.service /etc/systemd/system/tpu.service`
+   `cp flowinity.service /etc/systemd/system/flowinity.service`
 9. Modify the systemd service file (use nano, vim, etc), replace all instances
-   of `CHANGE_ME` with your own values. Do not run TPU as root user and use the
+   of `CHANGE_ME` with your own values. Do not run Flowinity as root user and use the
    user created earlier.
-10. Start TPU and start on boot with `systemctl enable tpu --now`
+10. Start TPU and start on boot with `systemctl enable flowinity --now`
 11. Follow the setup wizard on http://localhost:34582 and configure NGINX web
 server.
 </details>
@@ -108,21 +108,21 @@ server.
 1. TPU includes an example NGINX configuration file, you can find it at
    `nginx.conf` in either of the Docker or primary TPU repositories.
 2. Copy it to your NGINX configuration directory:
-   `cp nginx.conf /etc/nginx/conf.d/tpu.conf` (this folder can differ between
+   `cp nginx.conf /etc/nginx/conf.d/flowinity.conf` (this folder can differ between
    distributions, it could be `/etc/nginx/sites-available`, if so, symlink it to
    `/etc/nginx/sites-enabled`).
 3. Modify the NGINX configuration file (use nano, vim, etc), replace all
    instances of `CHANGE_ME` with your own values.
 4. Test the NGINX configuration: `nginx -t`
-5. If the test is successful, reload NGINX: `systemctl restart nginx`
+5. If the test is successful, reload NGINX: `nginx -s reload`
 </details>
 
 ## Scripts
 
-- `yarn build` - Build TPU.
-- `yarn serve` - Start TPU in development mode.
-- `yarn serve-cluster` - Start TPU in development cluster mode.
-- `yarn start` - Start TPU in production mode and build (cluster mode).
+- `yarn build` - Build Flowinity.
+- `yarn serve` - Start Flowinity in development mode.
+- `yarn serve-cluster` - Start Flowinity in development cluster mode.
+- `yarn start` - Start Flowinity in production mode and build (cluster mode).
 
 Even if you only have 1 CPU core/thread, you should still use `start` in
 production as it will support the `TPU_RESTART` process command and will
@@ -130,7 +130,7 @@ automatically scale if you add more CPU cores/threads.
 
 #### Do not restart TPU via `pm2` or `systemd` if you are using the `serve-cluster` script in production.<br><br>This can be done in the admin panel or via a POST request to /api/v3/admin/restart (administrator account required, can be automated with "admin.ci" API scope).
 
-#### Having a single CPU core will cause TPU to be temporarily unavailable when restarting.
+#### Having a single CPU core will cause Flowinity to be temporarily unavailable when restarting.
 
 ## Contributors
 

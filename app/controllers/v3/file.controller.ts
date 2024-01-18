@@ -81,7 +81,13 @@ export class FileControllerV3 {
       upload.type === "audio"
     ) {
       const file = path.resolve(global.storageRoot + "/" + upload.attachment)
-      await promisify<string, void>(res.sendFile.bind(res))(file)
+      const options = {
+        headers: {
+          "Content-Disposition": `inline; filename="${upload.originalFilename}"`
+        }
+      }
+      //@ts-ignore
+      await promisify<string, void>(res.sendFile.bind(res))(file, options)
       return res
     } else {
       //https://github.com/Microsoft/TypeScript/issues/26048

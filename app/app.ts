@@ -248,7 +248,7 @@ export class Application {
       .toString()
       .trim()
     this.app.use((req, res, next: NextFunction): void => {
-      res.setHeader("X-Powered-By", "TroploPrivateUploader/4.0.0")
+      res.setHeader("X-Powered-By", "Flowinity/4.0.0")
       next()
     })
 

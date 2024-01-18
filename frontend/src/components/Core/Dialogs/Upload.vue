@@ -4,7 +4,7 @@
     max-width="500px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template #title>Upload to TPU</template>
+    <template #title>Upload to {{ $app.site.name }}</template>
     <v-progress-linear
       v-if="$app.dialogs.upload.loading"
       :model-value="$app.dialogs.upload.percentage"
@@ -52,7 +52,7 @@ export default defineComponent({
     return {
       files: [] as File[],
       tips: [
-        "You can paste files from your clipboard anywhere inside of TPU to upload it quickly.",
+        "You can paste files from your clipboard anywhere inside of Flowinity to upload it quickly.",
         "Want to automate your file uploading?"
       ],
       tip: ""

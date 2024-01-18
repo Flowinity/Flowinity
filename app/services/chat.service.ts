@@ -48,11 +48,6 @@ class MessageIncludes {
             model: User,
             as: "tpuUser",
             attributes: partialUserBase
-          },
-          {
-            model: LegacyUser,
-            as: "legacyUser",
-            attributes: partialUserBase
           }
         ]
       },
@@ -64,11 +59,6 @@ class MessageIncludes {
           {
             model: User,
             as: "tpuUser",
-            attributes: partialUserBase
-          },
-          {
-            model: LegacyUser,
-            as: "legacyUser",
             attributes: partialUserBase
           }
         ]
@@ -89,11 +79,6 @@ export class ChatService {
       model: User,
       as: "tpuUser",
       attributes: partialUserBase
-    },
-    {
-      model: LegacyUser,
-      as: "legacyUser",
-      attributes: partialUserBase
     }
   ]
   private chatIncludes: Includeable[] = [
@@ -104,11 +89,6 @@ export class ChatService {
         {
           model: User,
           as: "tpuUser",
-          attributes: partialUserBase
-        },
-        {
-          model: LegacyUser,
-          as: "legacyUser",
           attributes: partialUserBase
         }
       ],
@@ -1238,11 +1218,6 @@ export class ChatService {
               model: User,
               as: "tpuUser",
               attributes: partialUserBase
-            },
-            {
-              model: LegacyUser,
-              as: "legacyUser",
-              attributes: partialUserBase
             }
           ],
           attributes: [
@@ -1700,11 +1675,6 @@ export class ChatService {
               model: User,
               as: "tpuUser",
               attributes: partialUserBase
-            },
-            {
-              model: LegacyUser,
-              as: "legacyUser",
-              attributes: partialUserBase
             }
           ]
         }
@@ -1846,11 +1816,6 @@ export class ChatService {
                 "updatedAt",
                 ...(clientSatisfies.nameColor ? ["nameColor"] : [])
               ]
-            },
-            {
-              model: LegacyUser,
-              as: "legacyUser",
-              attributes: partialUserBase
             }
           ]
         }

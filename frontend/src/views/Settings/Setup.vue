@@ -87,7 +87,8 @@
         <li>
           {{ $t("settings.setup.sharenixSteps.4") }}
           <code>
-            mv "{{ $user.user?.username }} - TPU.json" ~/.sharenix.json
+            mv "{{ $user.user?.username }} - {{ $app.site.name }}.json"
+            ~/.sharenix.json
           </code>
         </li>
         <li v-html="$t('settings.setup.sharenixSteps.5')"></li>

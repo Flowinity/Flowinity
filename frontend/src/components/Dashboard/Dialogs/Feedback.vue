@@ -4,7 +4,7 @@
     width="700"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template #title>Provide Feedback to TPU</template>
+    <template #title>Provide Feedback to {{ $app.site.name }}</template>
     <v-card-text>
       <v-container>
         <v-row>
@@ -31,10 +31,10 @@
             <br />
             <br />
             <template v-if="!$app.site.officialInstance">
-              This is a third-party instance of TPU. Feedback will be submitted
-              to the instance administrators, and to the official TPU instance,
-              some information may be recorded such as current instance and user
-              ID to improve your experience.
+              This is a third-party instance of Flowinity. Feedback will be
+              submitted to the instance administrators, and to the official
+              Flowinity instance, some information may be recorded such as
+              current instance and user ID to improve your experience.
             </template>
           </small>
         </v-row>
