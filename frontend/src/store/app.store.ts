@@ -161,7 +161,6 @@ export const useAppStore = defineStore("app", {
     sidebar(state): SidebarItem[] {
       const user = useUserStore();
       const chat = useChatStore();
-      const route = useRoute();
       const experiments = useExperimentsStore();
       const app = useAppStore();
 
@@ -352,7 +351,9 @@ export const useAppStore = defineStore("app", {
           id: 10,
           externalPath: "",
           name: i18n.t("core.sidebar.workspaces"),
-          path: route.name?.toString()?.includes("Workspace")
+          path: this.$router.currentRoute.value.name
+            ?.toString()
+            ?.includes("Workspace")
             ? "/workspaces"
             : state.lastNote
               ? `/workspaces/notes/${state.lastNote}`

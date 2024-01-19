@@ -788,12 +788,15 @@ export const useChatStore = defineStore("chat", {
       return !vuetify.display.lgAndDown.value;
     },
     isCommunications() {
-      const route = useRoute();
-      return route.path.startsWith(`/communications/`);
+      return this.$router.currentRoute.value.path.startsWith(
+        "/communications/"
+      );
     },
     commsSidebar(state) {
-      const route = useRoute();
-      return route.path.startsWith(`/communications/${state.selectedChatId}`);
+      console.log(this);
+      return this.$router.currentRoute.value.path.startsWith(
+        `/communications/${state.selectedChatId}`
+      );
     }
   }
 });

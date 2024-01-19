@@ -1,13 +1,16 @@
 <template>
   <v-text-field
-    v-if="$user.user.totpEnable && !passwordMode"
+    v-if="
+      ($user.user.totpEnable && !passwordMode) ||
+      (both && $user.user.totpEnable)
+    "
     :label="$t('settings.home.totp.code')"
     :model-value="totp"
     autofocus
     @update:model-value="$emit('update:totp', $event)"
     @keydown.enter="$emit('confirm')"
   >
-    <template #details>
+    <template v-if="!both" #details>
       Having problems?
       <a
         class="unselectable pointer"
@@ -18,7 +21,7 @@
     </template>
   </v-text-field>
   <v-text-field
-    v-else
+    v-if="passwordMode || !$user.user.totpEnable || both"
     autofocus
     :model-value="password"
     type="password"
@@ -26,7 +29,7 @@
     @update:model-value="$emit('update:password', $event)"
     @keydown.enter="$emit('confirm')"
   >
-    <template v-if="$user.user.totpEnable" #details>
+    <template v-if="$user.user.totpEnable && !both" #details>
       Having problems?
       <a
         class="unselectable pointer"
@@ -43,7 +46,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "DangerZoneInput",
-  props: ["passwordMode", "password", "totp"],
+  props: ["passwordMode", "password", "totp", "both"],
   emits: ["update:passwordMode", "update:password", "update:totp", "confirm"],
   mounted() {
     if (!this.$user.user?.totpEnable) {

@@ -32,13 +32,11 @@
       <v-expansion-panel :title="$t('settings.home.myAccount.changePassword')">
         <v-expansion-panel-text>
           <v-form v-model="valid.password">
-            <v-text-field
-              v-model="password.password"
-              :label="$t('settings.home.myAccount.currentPassword')"
-              :rules="$validation.user.passwordSettings"
-              class="mt-4"
-              type="password"
-            />
+            <danger-zone-input
+              v-model:password="password.password"
+              v-model:totp="password.totp"
+              :both="true"
+            ></danger-zone-input>
             <v-text-field
               v-model="password.newPassword"
               :label="$t('settings.home.myAccount.newPassword')"
@@ -370,6 +368,7 @@ export default defineComponent({
       });
       this.$user.user.email = this.email.email;
       this.$user.user.emailVerified = false;
+      this.$toast.success("Your email has been updated!");
     },
     async changePassword() {
       if (this.password.newPassword !== this.password.confirmNewPassword) {
@@ -380,10 +379,12 @@ export default defineComponent({
         variables: {
           input: {
             newPassword: this.password.newPassword,
-            currentPassword: this.password.password
+            currentPassword: this.password.password,
+            totp: this.password.totp
           }
         }
       });
+      this.$toast.success("Your password has been updated!");
     },
     async changeUsername() {
       await this.$apollo.mutate({

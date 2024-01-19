@@ -102,10 +102,9 @@ export const useWorkspacesStore = defineStore("workspaces", {
   },
   getters: {
     isWorkspaces() {
-      const route = useRoute();
       return (
-        route.path.startsWith("/workspaces/") ||
-        route.path.startsWith("/notes/")
+        this.$router.currentRoute.value.path.startsWith("/workspaces") ||
+        this.$router.currentRoute.value.path.startsWith("/notes")
       );
     },
     recentOverall() {

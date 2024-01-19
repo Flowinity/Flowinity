@@ -11,9 +11,6 @@ import "@mdi/font/css/materialdesignicons.css";
 import "vuetify/lib/styles/main.sass";
 // Composables
 import { createVuetify } from "vuetify";
-import { VDataTable } from "vuetify/labs/VDataTable";
-import { VInfiniteScroll } from "vuetify/lib/labs/components.mjs";
-import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 import {
   VBottomNavigation,
   VVirtualScroll
@@ -113,10 +110,7 @@ export class DefaultThemes {
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   components: {
-    VDataTable,
-    VSkeletonLoader,
     VVirtualScroll,
-    VInfiniteScroll,
     VBottomNavigation
   },
   display: {
