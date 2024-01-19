@@ -793,7 +793,6 @@ export const useChatStore = defineStore("chat", {
       );
     },
     commsSidebar(state) {
-      console.log(this);
       return this.$router.currentRoute.value.path.startsWith(
         `/communications/${state.selectedChatId}`
       );

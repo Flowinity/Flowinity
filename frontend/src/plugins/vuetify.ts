@@ -13,7 +13,10 @@ import "vuetify/lib/styles/main.sass";
 import { createVuetify } from "vuetify";
 import {
   VBottomNavigation,
-  VVirtualScroll
+  VVirtualScroll,
+  VDataTable,
+  VInfiniteScroll,
+  VSkeletonLoader
 } from "vuetify/lib/components/index.mjs";
 
 export class DefaultThemes {
@@ -111,7 +114,10 @@ export class DefaultThemes {
 export default createVuetify({
   components: {
     VVirtualScroll,
-    VBottomNavigation
+    VBottomNavigation,
+    VDataTable,
+    VInfiniteScroll,
+    VSkeletonLoader
   },
   display: {
     thresholds: {
