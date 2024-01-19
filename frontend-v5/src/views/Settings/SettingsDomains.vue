@@ -4,7 +4,7 @@
       {{ t("settings.domains.title") }}
     </strong>
     <tpu-data-table :items="items" :headers="headers">
-      <template #[`item.user`]="{ item }: any">
+      <template #[`item.user`]="{ item }">
         <router-link
           :to="`/u/${item?.user?.username}`"
           class="flex items-center justify-center my-1"

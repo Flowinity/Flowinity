@@ -48,7 +48,7 @@
         </tpu-button>
       </div>
       <tpu-data-table :items="users" :headers="headers" class="pt-2">
-        <template v-slot:item.user.username="{ item }: any">
+        <template v-slot:item.user.username="{ item }">
           <div class="flex items-center gap-2">
             <user-avatar
               :avatar="item.user.avatar"
@@ -73,7 +73,7 @@
             </tpu-button>
           </div>
         </template>
-        <template v-slot:item.read="{ item }: any">
+        <template v-slot:item.read="{ item }">
           <tpu-checkbox
             size="s"
             class="items-center flex"
@@ -82,7 +82,7 @@
             :loading="loading"
           />
         </template>
-        <template v-slot:item.write="{ item }: any">
+        <template v-slot:item.write="{ item }">
           <tpu-checkbox
             size="s"
             :model-value="item.write"
@@ -103,7 +103,7 @@
             "
           />
         </template>
-        <template v-slot:item.configure="{ item }: any">
+        <template v-slot:item.configure="{ item }">
           <tpu-checkbox
             size="s"
             :model-value="item.configure"
@@ -123,7 +123,7 @@
             "
           />
         </template>
-        <template v-slot:item.actions="{ item }: any">
+        <template v-slot:item.actions="{ item }">
           <danger-zone-dialog @confirm="transferOwnership($event)">
             <template #toolbar>
               {{ t("collections.transfer.title") }}
