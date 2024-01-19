@@ -294,12 +294,12 @@
               :sort-by="[{ key: 'count', order: 'desc' }]"
               class="text-left"
             >
-              <template v-slot:item.word="{ item }">
+              <template v-slot:item.word="{ item }: any">
                 <div class="limit" style="max-width: 200px">
                   {{ item.word }}
                 </div>
               </template>
-              <template v-slot:item.count="{ item }">
+              <template v-slot:item.count="{ item }: any">
                 <div class="limit">
                   {{ item.count }}
                 </div>
@@ -326,12 +326,12 @@
               :sort-by="[{ key: 'count', order: 'desc' }]"
               class="text-left"
             >
-              <template v-slot:item.word="{ item }">
+              <template v-slot:item.word="{ item }: any">
                 <div class="limit" style="max-width: 200px">
                   {{ item.chatName }}
                 </div>
               </template>
-              <template v-slot:item.count="{ item }">
+              <template v-slot:item.count="{ item }: any">
                 <div class="limit">
                   {{ item.count }}
                 </div>

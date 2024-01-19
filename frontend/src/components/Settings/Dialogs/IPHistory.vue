@@ -12,9 +12,9 @@
         :items-per-page="10"
         class="elevation-0"
       >
-        <template #[`item.date`]="{ item }">
+        <template #[`item.date`]="{ item }: any">
           <span>
-            {{ $date(item.columns.date).format("DD/MM/YYYY hh:mm A") }}
+            {{ $date(item.date).format("DD/MM/YYYY hh:mm A") }}
           </span>
         </template>
       </v-data-table>

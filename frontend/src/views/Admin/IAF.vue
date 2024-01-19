@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <v-data-table :items="invites" :headers="headers">
-      <template #[`item.createdAt`]="{ item }">
+      <template #[`item.createdAt`]="{ item }: any">
         {{ $date(item.createdAt).format("MMMM Do YYYY, h:mm:ss A") }}
       </template>
-      <template #[`item.actions`]="{ item }">
+      <template #[`item.actions`]="{ item }: any">
         <v-btn
           v-if="item.status === 'pending'"
           icon

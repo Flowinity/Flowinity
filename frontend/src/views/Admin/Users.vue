@@ -6,25 +6,25 @@
       </v-toolbar>
       <v-container>
         <v-data-table :headers="headers" :items="users">
-          <template #[`item.banned`]="{ item }">
+          <template #[`item.banned`]="{ item }: any">
             <v-checkbox
               :model-value="item.banned"
               @change="ban(item.id, $event.target.checked)"
             />
           </template>
-          <template #[`item.administrator`]="{ item }">
+          <template #[`item.administrator`]="{ item }: any">
             <v-checkbox :model-value="item.administrator" :disabled="true" />
           </template>
-          <template #[`item.planId`]="{ item }">
+          <template #[`item.planId`]="{ item }: any">
             <v-checkbox
               :model-value="item.planId === 6"
               @change="gold(item.id, $event.target.checked, item.createdAt)"
             />
           </template>
-          <template #[`item.createdAt`]="{ item }">
+          <template #[`item.createdAt`]="{ item }: any">
             {{ $date(item.createdAt).format("YYYY/MM/DD hh:mm:ss A") }}
           </template>
-          <template #[`item.emailVerified`]="{ item }">
+          <template #[`item.emailVerified`]="{ item }: any">
             <v-checkbox
               v-model="item.emailVerified"
               @change="verify(item.id, $event.target.checked)"
@@ -93,8 +93,8 @@ export default defineComponent({
           ? gold
             ? 6
             : legacyUser
-            ? 1
-            : 7
+              ? 1
+              : 7
           : 1
       });
       this.$toast.success("User gold status updated.");

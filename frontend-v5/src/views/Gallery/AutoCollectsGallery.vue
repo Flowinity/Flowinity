@@ -15,7 +15,7 @@
         }}
       </p>
     </template>
-    <template #actions="{ item }">
+    <template #actions="{ item }: any">
       <tpu-button
         icon
         color="green"

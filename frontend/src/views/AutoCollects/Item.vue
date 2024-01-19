@@ -48,7 +48,7 @@
           &nbsp;Accept all
         </v-btn>
       </template>
-      <template v-slot:actions="{ item }">
+      <template v-slot:actions="{ item }: any">
         <HoverChip
           color="green"
           icon="mdi-check"

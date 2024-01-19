@@ -4,7 +4,7 @@
       {{ t("settings.domains.title") }}
     </strong>
     <tpu-data-table :items="items" :headers="headers">
-      <template #[`item.user`]="{ item }">
+      <template #[`item.user`]="{ item }: any">
         <router-link
           :to="`/u/${item?.user?.username}`"
           class="flex items-center justify-center my-1"
@@ -17,7 +17,7 @@
           <p class="ml-1">{{ item?.user?.username }}</p>
         </router-link>
       </template>
-      <template #[`item.actions`]="{ item }">
+      <template #[`item.actions`]="{ item }: any">
         <div class="flex justify-center">
           <tpu-button
             :disabled="userStore.user?.domainId === item.id"

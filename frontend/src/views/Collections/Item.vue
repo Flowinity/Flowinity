@@ -83,7 +83,7 @@
       }"
       :path="`/collections/${this.$route.params.id}`"
     >
-      <template v-slot:custom-values="{ item }">
+      <template v-slot:custom-values="{ item }: any">
         <v-card-subtitle>Creator: {{ item?.user?.username }}</v-card-subtitle>
       </template>
     </PersonalGallery>

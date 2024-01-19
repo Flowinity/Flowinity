@@ -15,7 +15,7 @@
     </v-btn>
   </v-toolbar>
   <v-data-table :headers="headers" :items="apiKeys">
-    <template #[`item.actions`]="{ item }">
+    <template #[`item.actions`]="{ item }: any">
       <v-icon
         :disabled="!item.info?.accessedFrom.length"
         class="mr-3"
@@ -58,7 +58,7 @@
     </v-btn>
   </v-toolbar>
   <v-data-table :headers="headers" :items="alternatePasswords.items">
-    <template #[`item.actions`]="{ item }">
+    <template #[`item.actions`]="{ item }: any">
       <v-icon class="mr-2" small @click="deleteAlternatePassword(item.name)">
         mdi-delete
       </v-icon>
