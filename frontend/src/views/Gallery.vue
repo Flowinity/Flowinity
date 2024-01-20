@@ -78,6 +78,8 @@ import {
   Upload
 } from "@/gql/graphql";
 import { isNumeric } from "@/plugins/isNumeric";
+import { useApolloClient } from "@vue/apollo-composable";
+import functions from "@/plugins/functions";
 
 export default defineComponent({
   name: "PersonalGallery",
@@ -116,6 +118,23 @@ export default defineComponent({
       /*this.$functions.copy(
         "https://" + this.$user.user?.domain.domain + "/i/" + data.attachment
       );*/
+      const {
+        data: { gallery }
+      } = await useApolloClient().client.query({
+        query: GalleryQuery,
+        variables: {
+          input: {
+            page: 1,
+            type: this.type,
+            order: GalleryOrder.Random,
+            limit: 1,
+            collectionId: typeof this.id === "number" ? this.id : undefined,
+            shareLink: typeof this.id === "string" ? this.id : undefined
+          }
+        },
+        fetchPolicy: "network-only"
+      });
+      functions.copy(this.$app.domain + gallery.items?.[0]?.attachment);
       this.randomLoading = false;
     },
     removeItemFromCollection(item: Upload, collection: CollectionCache) {
