@@ -5,6 +5,7 @@ import { LoginMutation } from "../../../frontend/src/graphql/auth/login.graphql"
 import cryptoRandomString from "crypto-random-string"
 import "@app/lib/init-tests"
 // REQUIRED IMPORT TO COUNT CODE COVERAGE
+import { AuthResolver } from "@app/controllers/graphql/auth.resolver"
 import { resetState } from "@app/lib/init-tests"
 
 let user = {

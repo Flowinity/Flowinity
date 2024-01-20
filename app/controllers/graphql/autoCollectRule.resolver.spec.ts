@@ -1,10 +1,12 @@
 import "@app/lib/init-tests"
+import { AutoCollectRuleResolver } from "@app/controllers/graphql/autoCollectRule.resolver"
 import supertest from "supertest"
 import { getUser, TestUser } from "@app/lib/test-utils/testUser"
 import { describe, test, beforeAll, expect } from "@jest/globals"
 import { resetState } from "@app/lib/init-tests"
 import { Container } from "typedi"
 import { Application } from "@app/app"
+import { AutoCollectControllerV3 } from "@app/controllers/v3/autoCollect.controller"
 import { gCall } from "@app/lib/test-utils/gCall"
 import { CreateCollectionMutation } from "../../../frontend-v5/src/graphql/collections/createCollection.graphql"
 import {

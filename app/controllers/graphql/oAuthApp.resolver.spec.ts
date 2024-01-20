@@ -1,16 +1,29 @@
-import { beforeAll, expect, test, describe } from "@jest/globals"
+import { afterAll, beforeAll, expect, test, describe } from "@jest/globals"
 import "@app/lib/init-tests"
 import { gCall } from "@app/lib/test-utils/gCall"
 import { RegisterMutation } from "../../../frontend/src/graphql/auth/register.graphql"
+import { LoginMutation } from "../../../frontend/src/graphql/auth/login.graphql"
 import { CoreStateQuery } from "../../../frontend/src/graphql/core/state.graphql"
 import cryptoRandomString from "crypto-random-string"
-
-
-
-
+import { ProfileQuery } from "../../../frontend/src/graphql/user/profile.graphql"
+import { User } from "@app/models/user.model"
+import {
+  SendEmailVerificationMutation,
+  VerifyEmailMutation
+} from "../../../frontend-v5/src/graphql/user/verifyEmail.graphql"
+import { SessionsQuery } from "../../../frontend-v5/src/graphql/user/sessions.graphql"
+import { UpdateUserMutation } from "../../../frontend/src/graphql/user/update.graphql"
+import { UpdateUserStatusMutation } from "../../../frontend-v5/src/graphql/user/update.graphql"
+import { UserStoredStatus } from "../../../frontend/src/gql/graphql"
+import {
+  ChangeUserEmailMutation,
+  ChangeUserPasswordMutation
+} from "../../../frontend/src/graphql/user/changeUsername.graphql"
 import { getUser, TestUser } from "@app/lib/test-utils/testUser"
 import { errorConverter } from "@app/lib/test-utils/errorConverter"
 import { resetState } from "@app/lib/init-tests"
+import { AdminService } from "@app/services/admin.service"
+import { OAuthAppResolver } from "@app/controllers/graphql/oAuthApp.resolver"
 import { CreateOauthAppMutation } from "../../../frontend-v5/src/graphql/developer/createApp.graphql"
 import {
   MyAppQuery,
@@ -24,6 +37,7 @@ import {
 } from "../../../frontend-v5/src/graphql/developer/consent.graphql"
 import supertest from "supertest"
 import { Container } from "typedi"
+import { Server } from "@app/server"
 import { Application } from "@app/app"
 import Errors from "@app/lib/errors"
 import {

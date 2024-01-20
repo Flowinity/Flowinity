@@ -1,4 +1,5 @@
 import "@app/lib/init-tests"
+import { CollectionResolver } from "@app/controllers/graphql/collection.resolver"
 import { gCall } from "@app/lib/test-utils/gCall"
 import { errorConverter } from "@app/lib/test-utils/errorConverter"
 import { UserCollectionsQuery } from "../../../frontend/src/graphql/collections/getUserCollections.graphql"
@@ -16,6 +17,7 @@ import {
 import cryptoRandomString from "crypto-random-string"
 import { AddFriendMutation } from "../../../frontend-v5/src/graphql/friends/addFriend.graphql"
 import { FriendAction, GalleryType } from "../../../frontend-v5/src/gql/graphql"
+import { CollectionItemResolver } from "@app/controllers/graphql/collectionItem.resolver"
 import fs from "fs"
 import { Container } from "typedi"
 import { GalleryControllerV3 } from "@app/controllers/v3/gallery.controller"
