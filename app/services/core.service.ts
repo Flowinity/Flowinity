@@ -412,6 +412,10 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        DEBUG_FAVICON: {
+          description: "Enable debug favicon.",
+          createdAt: "2024-01-20T00:00:00.000Z"
+        },
         FLOWINITY: {
           description: "Rebrand PrivateUploader to Flowinity.",
           createdAt: "2024-01-17T00:00:00.000Z"
