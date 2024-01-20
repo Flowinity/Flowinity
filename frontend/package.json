@@ -90,7 +90,6 @@
     "vite": "^5.0.10",
     "vite-plugin-pwa": "^0.17.4",
     "vite-plugin-vuetify": "^2.0.1",
-    "vite-plugin-warmup": "^0.1.0",
     "vue": "^3.4.15",
     "vue-axios": "^3.5.2",
     "vue-chartjs": "^5.2.0",
