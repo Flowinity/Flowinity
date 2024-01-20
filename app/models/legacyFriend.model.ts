@@ -1,7 +1,6 @@
 import {
   Column,
   DataType,
-  DefaultScope,
   Model,
   Table
 } from "sequelize-typescript"

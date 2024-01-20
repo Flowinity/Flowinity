@@ -19,7 +19,6 @@ import {
   PartialUserBase
 } from "@app/classes/graphql/user/partialUser"
 import { User } from "@app/models/user.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
 import { Op } from "sequelize"
 import { CreateChatInput } from "@app/classes/graphql/chat/createChat"
 import RateLimit from "@app/lib/graphql/RateLimit"

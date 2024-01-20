@@ -56,10 +56,8 @@ import { OidcControllerV3 } from "@app/controllers/v3/oidc.controller"
 import { createYoga, maskError, YogaServerInstance } from "graphql-yoga"
 import { useHive } from "@graphql-hive/client"
 import { execSync } from "child_process"
-import { Context } from "@app/types/graphql/context"
 import { GraphQLError } from "graphql/error"
 //@ts-ignore
-import { createContext, EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
 import { createFetch } from "@whatwg-node/fetch"
 import { createRedisCache } from "@envelop/response-cache-redis"
 import { Cache } from "@envelop/response-cache"
@@ -69,10 +67,7 @@ import generateContext from "@app/classes/graphql/middleware/generateContext"
 import { MulterError } from "multer"
 import { ZodError } from "zod"
 import { generateSchema } from "@app/lib/generateSchema"
-import { WebSocketServer } from "ws"
-import { useResponseCache } from "@graphql-yoga/plugin-response-cache"
 import { GqlError } from "@app/lib/gqlErrors"
-import * as util from "util"
 
 @Service()
 @Middleware({ type: "after" })

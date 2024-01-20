@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, expect, test, jest } from "@jest/globals"
+import { beforeAll, expect, test } from "@jest/globals"
 import "@app/lib/init-tests"
 import { Container } from "typedi"
 import { Context } from "@app/types/graphql/context"
