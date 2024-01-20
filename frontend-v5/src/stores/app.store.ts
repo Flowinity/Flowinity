@@ -194,6 +194,35 @@ export const useAppStore = defineStore("app", () => {
     }
   }
 
+  function setFavicon() {
+    const chat = useChatStore();
+    const user = useUserStore();
+    const experimentsStore = useExperimentsStore();
+    const links = document.getElementsByTagName("link");
+    //@ts-ignore
+    for (const link of links) {
+      if (
+        link.getAttribute("rel") !== "manifest" &&
+        link.getAttribute("rel") !== "stylesheet" &&
+        link.getAttribute("rel") !== "preload" &&
+        link.getAttribute("rel") !== "modulepreload"
+      ) {
+        link.remove();
+      }
+    }
+    // set favicon to gold
+    const link =
+      (document.querySelector("link[rel*='icon']") as HTMLLinkElement) ||
+      (document.createElement("link") as HTMLLinkElement);
+    link.type = "image/x-icon";
+    link.rel = "shortcut icon";
+    link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${user
+      .user?.username}&unread=${chat.unread || 0}&debug=${
+      experimentsStore.experiments.DEBUG_FAVICON
+    }&client=Flowinity5`;
+    document.head.appendChild(link);
+  }
+
   async function init() {
     loading.value = true;
     loadLocalStorage();
@@ -239,6 +268,7 @@ export const useAppStore = defineStore("app", () => {
     }
     loading.value = false;
     connected.value = true;
+    setFavicon();
   }
 
   const lookupNav = computed(() => {
@@ -711,6 +741,7 @@ export const useAppStore = defineStore("app", () => {
     dev: import.meta.env.DEV,
     versioning,
     _currentNavItem,
-    connected
+    connected,
+    setFavicon
   };
 });

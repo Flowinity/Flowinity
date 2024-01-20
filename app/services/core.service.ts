@@ -365,6 +365,7 @@ export class CoreService {
     gold: boolean = false
   ): Record<string, any> {
     const experiments = {
+      DEBUG_FAVICON: false,
       FLOWINITY: config.officialInstance || false,
       PRIDE: false,
       THEME: 3,
@@ -635,6 +636,7 @@ export class CoreService {
       //experiments.FORCE_DEV_MODE = false
       //experiments.FORCE_STABLE_MODE = false
       //experiments.USER_V3_EDITOR = true
+      experiments.DEBUG_FAVICON = true
       experiments.FLOWINITY = true
       experiments.RAIL_SIDEBAR = true
       experiments.USER_V3_MODIFY = true

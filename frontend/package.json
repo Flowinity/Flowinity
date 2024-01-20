@@ -115,6 +115,7 @@
     "@graphql-codegen/introspection": "4.0.0",
     "@parcel/watcher": "^2.2.0",
     "@rollup/plugin-graphql": "^2.0.3",
+    "@vite-pwa/assets-generator": "^0.2.3",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-vue": "^9.3.0",

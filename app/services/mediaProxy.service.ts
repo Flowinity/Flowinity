@@ -14,7 +14,8 @@ export class MediaProxyService {
         const { data } = await axios.get(originalURL, {
           responseType: "arraybuffer",
           headers: {
-            "user-agent": "TroploPrivateUploader-MediaProxyBot/2.0.0"
+            "user-agent":
+              "FlowinityBot/4.0.0 TroploPrivateUploader-MediaProxyBot/2.0.0"
           }
         })
         return {

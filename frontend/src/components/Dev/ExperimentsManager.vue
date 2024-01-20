@@ -28,7 +28,7 @@
         :model-value="$experiments.experiments[experiment.name]"
         type="number"
         @update:model-value="
-          $experiments.experiments[experiment.name] = parseInt($event || '0')
+          $experiments.setExperiment(experiment.name, parseInt($event || '0'))
         "
       />
     </v-card-text>
