@@ -365,6 +365,7 @@ export class CoreService {
     gold: boolean = false
   ): Record<string, any> {
     const experiments = {
+      DEBUG_FAVICON: false,
       FLOWINITY: config.officialInstance || false,
       PRIDE: false,
       THEME: 3,
@@ -411,6 +412,10 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        DEBUG_FAVICON: {
+          description: "Enable debug favicon.",
+          createdAt: "2024-01-20T00:00:00.000Z"
+        },
         FLOWINITY: {
           description: "Rebrand PrivateUploader to Flowinity.",
           createdAt: "2024-01-17T00:00:00.000Z"
@@ -635,6 +640,7 @@ export class CoreService {
       //experiments.FORCE_DEV_MODE = false
       //experiments.FORCE_STABLE_MODE = false
       //experiments.USER_V3_EDITOR = true
+      experiments.DEBUG_FAVICON = true
       experiments.FLOWINITY = true
       experiments.RAIL_SIDEBAR = true
       experiments.USER_V3_MODIFY = true

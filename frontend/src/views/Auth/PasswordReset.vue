@@ -7,8 +7,20 @@
           :elevation="$vuetify.display.mobile ? 0 : 8"
           :flat="$vuetify.display.mobile"
         >
-          <p class="text-center text-gradient mb-n5" style="font-size: 64px">
-            {{ $app.site?.name || "PrivateUploader" }}
+          <div
+            class="d-flex justify-center mt-4"
+            v-if="$experiments.experiments.FLOWINITY"
+          >
+            <FlowinityBanner style="width: 256px"></FlowinityBanner>
+          </div>
+          <p
+            v-else
+            class="text-center text-gradient mt-2"
+            :style="
+              $vuetify.display.mobile ? 'font-size: 38px' : 'font-size: 48px'
+            "
+          >
+            {{ $app.site?.name || "Flowinity" }}
           </p>
           <v-container>
             <v-form v-model="valid">
@@ -49,9 +61,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 
 export default defineComponent({
   name: "Login",
+  components: { FlowinityBanner },
   data() {
     return {
       confirmPassword: "",

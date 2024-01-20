@@ -3,6 +3,7 @@ import {
   Delete,
   Get,
   Head,
+  HeaderParam,
   JsonController,
   OnUndefined,
   Param,
@@ -27,7 +28,7 @@ import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 import { Plan } from "@app/models/plan.model"
 import { Response } from "express"
 import fs from "fs"
-import sharp from "sharp"
+import sharp, { OverlayOptions } from "sharp"
 import { PatchUser } from "@app/types/auth"
 import axios from "axios"
 import { OpenAPI } from "routing-controllers-openapi"
@@ -317,67 +318,78 @@ export class UserControllerV3 {
   async getFavicon(
     @QueryParam("username") username: string,
     @Res() res: Response,
-    @QueryParam("unread") unread?: number
+    @QueryParam("unread") unread?: number,
+    @QueryParam("debug") debug: boolean = false,
+    @QueryParam("client") client?: string
   ) {
-    const user = await User.findOne({
-      where: { username: username },
-      include: [
-        {
-          model: Plan,
-          as: "plan"
-        }
-      ]
-    })
-    if (
-      !user ||
-      !user?.themeEngine ||
-      (user.plan.internalName !== "GOLD" && config.officialInstance)
-    ) {
-      const svg = await fs.readFileSync("./frontend/public/favicon.svg")
-      const png = await sharp(Buffer.from(svg))
-        .png()
-        .resize(128, 128)
-        .composite(
-          unread && unread > 0
-            ? [
-                {
-                  input: `./frontend/public/unread-favicon/${
-                    unread >= 10 ? "10" : unread
-                  }.png`,
-                  blend: "over"
-                }
-              ]
-            : []
-        )
-        .toBuffer()
-
-      res.set("Content-Type", "image/png")
-      res.send(png)
-      return res
+    let user: User | null = null
+    if (username) {
+      user = await User.findOne({
+        where: { username: username },
+        include: [
+          {
+            model: Plan,
+            as: "plan"
+          }
+        ]
+      })
     }
-    const gradient1 = user?.themeEngine?.theme.dark.colors.logo1
-    const gradient2 = user?.themeEngine?.theme.dark.colors.logo2
-    // get SVG file
-    const svg = await fs.readFileSync("./frontend/public/favicon.svg")
-    // replace colors
-    const svgString = svg.toString().replace(/#008FE9/g, gradient1)
-    const svgString2 = svgString.replace(/#006AEE/g, gradient2)
+    let svg: Buffer = await fs.readFileSync("./frontend/public/favicon.svg")
+    if (debug) {
+      switch (client) {
+        case "Flowinity5":
+          svg = await fs.readFileSync("./frontend/public/favicon-debug-v5.svg")
+          break
+        default:
+          svg = await fs.readFileSync("./frontend/public/favicon-debug-v4.svg")
+          break
+      }
+    }
+
+    // if the user has the default "TPU" color scheme, we ignore it
+    let svgString2 = svg.toString()
+    if (
+      user &&
+      !user?.themeEngine &&
+      user.plan.internalName === "GOLD" &&
+      !config.officialInstance &&
+      (user.themeEngine?.theme?.dark?.colors?.logo1?.toLowerCase() !==
+        "#096fea" ||
+        user.themeEngine?.theme?.dark?.colors?.logo2?.toLowerCase() !==
+          "#0166ea")
+    ) {
+      const gradient1 = `stop-color="${user?.themeEngine?.theme.dark.colors.logo1}"`
+      const gradient2 = `offset="1" stop-color="${user?.themeEngine?.theme.dark.colors.logo2}"`
+      // replace colors
+      const svgString = svg
+        .toString()
+        .replace(/stop-color="#[0-9A-F]{6}"/g, gradient1)
+      svgString2 = svgString.replace(
+        /offset="1" stop-color="#[0-9A-F]{6}"/g,
+        gradient2
+      )
+    }
     // convert to PNG
+    const composites: OverlayOptions[] = []
+    if (unread && unread > 0) {
+      composites.push({
+        input: `./frontend/public/unread-favicon/${
+          unread >= 10 ? "10" : unread
+        }.png`,
+        blend: "over"
+      })
+    }
+    if (debug) {
+      composites.push({
+        input: `./frontend/public/dev-favicon/${config.release}.png`,
+        blend: "over",
+        gravity: "northwest"
+      })
+    }
     const png = await sharp(Buffer.from(svgString2))
       .png()
       .resize(128, 128)
-      .composite(
-        unread && unread > 0
-          ? [
-              {
-                input: `./frontend/public/unread-favicon/${
-                  unread >= 10 ? "10" : unread
-                }.png`,
-                blend: "over"
-              }
-            ]
-          : []
-      )
+      .composite(composites)
       .toBuffer()
 
     res.set("Content-Type", "image/png")

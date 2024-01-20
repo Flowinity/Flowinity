@@ -11,12 +11,12 @@ import "@mdi/font/css/materialdesignicons.css";
 import "vuetify/lib/styles/main.sass";
 // Composables
 import { createVuetify } from "vuetify";
-import { VDataTable } from "vuetify/labs/VDataTable";
-import { VInfiniteScroll } from "vuetify/lib/labs/components.mjs";
-import { VSkeletonLoader } from "vuetify/labs/VSkeletonLoader";
 import {
   VBottomNavigation,
-  VVirtualScroll
+  VVirtualScroll,
+  VDataTable,
+  VInfiniteScroll,
+  VSkeletonLoader
 } from "vuetify/lib/components/index.mjs";
 
 export class DefaultThemes {
@@ -33,8 +33,8 @@ export class DefaultThemes {
           "primary-darken-1": "#3700B3",
           "secondary-darken-1": "#03DAC5",
           primary: gold ? "#FFD700" : "#0190ea",
-          logo1: gold ? "#FFDB1B" : "#489BFE",
-          logo2: gold ? "#FFD700" : "#469AFF",
+          logo1: gold ? "#FFDB1B" : "#096fea",
+          logo2: gold ? "#FFD700" : "#0166ea",
           secondary: "#757575",
           accent: "#000000",
           error: "#F44336",
@@ -113,11 +113,11 @@ export class DefaultThemes {
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   components: {
-    VDataTable,
-    VSkeletonLoader,
     VVirtualScroll,
+    VBottomNavigation,
+    VDataTable,
     VInfiniteScroll,
-    VBottomNavigation
+    VSkeletonLoader
   },
   display: {
     thresholds: {

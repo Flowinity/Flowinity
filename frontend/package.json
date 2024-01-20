@@ -1,6 +1,6 @@
 {
   "name": "tpu-frontend",
-  "version": "4.0.23",
+  "version": "4.0.25",
   "private": true,
   "author": "Troplo <troplo@troplo.com>",
   "type": "module",
@@ -91,7 +91,7 @@
     "vite-plugin-pwa": "^0.17.4",
     "vite-plugin-vuetify": "^2.0.1",
     "vite-plugin-warmup": "^0.1.0",
-    "vue": "3.3.13",
+    "vue": "^3.4.15",
     "vue-axios": "^3.5.2",
     "vue-chartjs": "^5.2.0",
     "vue-codemirror": "^6.1.1",
@@ -106,7 +106,7 @@
     "vue-virtual-scroll-grid": "^1.10.2",
     "vue-virtual-scroller": "^2.0.0-beta.8",
     "vue3-apexcharts": "^1.4.1",
-    "vuetify": "3.3.23",
+    "vuetify": "^3.4.11",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
@@ -115,6 +115,7 @@
     "@graphql-codegen/introspection": "4.0.0",
     "@parcel/watcher": "^2.2.0",
     "@rollup/plugin-graphql": "^2.0.3",
+    "@vite-pwa/assets-generator": "^0.2.3",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-vue": "^9.3.0",

@@ -3,7 +3,7 @@
     {{ $t("chats.settings.invites.name") }}
   </overline>
   <v-data-table :items="$chat.editingChat.invites" :headers="headers">
-    <template #[`item.id`]="{ item }">
+    <template #[`item.id`]="{ item }: any">
       {{ item.id }}
       <v-btn
         icon
@@ -15,14 +15,14 @@
         <v-icon>mdi-content-copy</v-icon>
       </v-btn>
     </template>
-    <template #[`item.userId`]="{ item }">
+    <template #[`item.userId`]="{ item }: any">
       <UserAvatar :user="$user.users[item.userId]" size="32" />
       {{ $user.users[item.userId]?.username }}
     </template>
-    <template #[`item.expiredAt`]="{ item }">
+    <template #[`item.expiredAt`]="{ item }: any">
       {{ item.expiredAt ? $date(item.expiredAt).fromNow() : "Never" }}
     </template>
-    <template #[`item.rankId`]="{ item }">
+    <template #[`item.rankId`]="{ item }: any">
       {{
         item.rankId
           ? $chat.editingChat.ranks.find((rank) => rank.id === item.rankId)
@@ -30,7 +30,7 @@
           : "None"
       }}
     </template>
-    <template #[`item.actions`]="{ item }">
+    <template #[`item.actions`]="{ item }: any">
       <v-btn icon @click="invalidate(item.id)">
         <v-icon>mdi-close</v-icon>
       </v-btn>

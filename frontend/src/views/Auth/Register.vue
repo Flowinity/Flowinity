@@ -200,10 +200,13 @@ export default defineComponent({
         await this.$app.init();
         this.$app.reconnectSocket(register.token);
         this.$router.push("/");
-        this.$toast.success("You have been registered, welcome to TPU!", {
-          timeout: 3000,
-          type: TYPE.SUCCESS
-        });
+        this.$toast.success(
+          `You have been registered, welcome to ${this.$app.site.name}!`,
+          {
+            timeout: 3000,
+            type: TYPE.SUCCESS
+          }
+        );
         if (this.$route.query.ref === "colubrina") {
           this.$app.dialogs.migrateWizard = true;
         }

@@ -165,29 +165,8 @@ export default defineComponent({
   },
   watch: {
     "$chat.totalUnread"(val) {
-      console.log(`updating favicon with ${val}`);
-      // remove other favicons
-      const links = document.getElementsByTagName("link");
-      //@ts-ignore
-      for (const link of links) {
-        if (
-          link.getAttribute("rel") !== "manifest" &&
-          link.getAttribute("rel") !== "stylesheet" &&
-          link.getAttribute("rel") !== "preload" &&
-          link.getAttribute("rel") !== "modulepreload"
-        ) {
-          link.remove();
-        }
-      }
-      // set favicon to gold
-      const link =
-        (document.querySelector("link[rel*='icon']") as HTMLLinkElement) ||
-        (document.createElement("link") as HTMLLinkElement);
-      link.type = "image/x-icon";
-      link.rel = "shortcut icon";
-      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${this
-        .$user.user?.username}&unread=${val || 0}`;
-      document.head.appendChild(link);
+      console.debug(`updating favicon with ${val}`);
+      this.$app.setFavicon();
     },
     $route(to, from) {
       if (!this.$user.gold) {

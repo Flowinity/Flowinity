@@ -73,7 +73,7 @@
               which will apply to both Public and Private apps.
             </v-card-subtitle>
             <v-data-table :headers="headers" :items="app.oauthUsers">
-              <template #[`item.actions`]="{ item }">
+              <template #[`item.actions`]="{ item }: any">
                 <v-btn
                   icon
                   color="red"
@@ -82,7 +82,7 @@
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </template>
-              <template #[`item.manage`]="{ item }">
+              <template #[`item.manage`]="{ item }: any">
                 <v-checkbox
                   label="Manage"
                   :model-value="item.manage"

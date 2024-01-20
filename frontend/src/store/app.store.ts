@@ -21,6 +21,7 @@ import { useMailStore } from "@/store/mail.store";
 import { useApolloClient } from "@vue/apollo-composable";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import { h } from "vue";
+import experiments from "@/components/Dev/Dialogs/Experiments.vue";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
@@ -161,7 +162,6 @@ export const useAppStore = defineStore("app", {
     sidebar(state): SidebarItem[] {
       const user = useUserStore();
       const chat = useChatStore();
-      const route = useRoute();
       const experiments = useExperimentsStore();
       const app = useAppStore();
 
@@ -352,7 +352,9 @@ export const useAppStore = defineStore("app", {
           id: 10,
           externalPath: "",
           name: i18n.t("core.sidebar.workspaces"),
-          path: route.name?.toString()?.includes("Workspace")
+          path: this.$router.currentRoute.value.name
+            ?.toString()
+            ?.includes("Workspace")
             ? "/workspaces"
             : state.lastNote
               ? `/workspaces/notes/${state.lastNote}`
@@ -582,7 +584,6 @@ export const useAppStore = defineStore("app", {
         this.connected = true;
       });
       useWorkspacesStore().init();
-      const chat = useChatStore();
       const user = useUserStore();
       setInterval(
         () => {
@@ -599,31 +600,38 @@ export const useAppStore = defineStore("app", {
       ) {
         document.body.classList.add("gold");
         user.applyTheme();
-        // remove other favicons
-        const links = document.getElementsByTagName("link");
-        //@ts-ignore
-        for (const link of links) {
-          if (
-            link.getAttribute("rel") !== "manifest" &&
-            link.getAttribute("rel") !== "stylesheet" &&
-            link.getAttribute("rel") !== "preload" &&
-            link.getAttribute("rel") !== "modulepreload"
-          ) {
-            link.remove();
-          }
-        }
-        // set favicon to gold
-        const link =
-          (document.querySelector("link[rel*='icon']") as HTMLLinkElement) ||
-          (document.createElement("link") as HTMLLinkElement);
-        link.type = "image/x-icon";
-        link.rel = "shortcut icon";
-        link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${user
-          .user?.username}&unread=${chat.totalUnread || 0}`;
-        document.head.appendChild(link);
       }
+      this.setFavicon();
       i18nObject.global.locale =
         (user.user?.language as "en" | "en-GB" | "fr" | "ru") || "en";
+    },
+    setFavicon() {
+      const chat = useChatStore();
+      const user = useUserStore();
+      const experimentsStore = useExperimentsStore();
+      const links = document.getElementsByTagName("link");
+      //@ts-ignore
+      for (const link of links) {
+        if (
+          link.getAttribute("rel") !== "manifest" &&
+          link.getAttribute("rel") !== "stylesheet" &&
+          link.getAttribute("rel") !== "preload" &&
+          link.getAttribute("rel") !== "modulepreload"
+        ) {
+          link.remove();
+        }
+      }
+      // set favicon to gold
+      const link =
+        (document.querySelector("link[rel*='icon']") as HTMLLinkElement) ||
+        (document.createElement("link") as HTMLLinkElement);
+      link.type = "image/x-icon";
+      link.rel = "shortcut icon";
+      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${user
+        .user?.username}&unread=${chat.totalUnread || 0}&debug=${
+        experimentsStore.experiments.DEBUG_FAVICON
+      }&client=TPUvNEXT`;
+      document.head.appendChild(link);
     },
     async init() {
       this.loading = true;

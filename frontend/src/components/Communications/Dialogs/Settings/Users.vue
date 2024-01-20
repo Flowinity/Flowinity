@@ -14,7 +14,7 @@
     autofocus
   />
   <v-data-table :items="users" :headers="headers">
-    <template #[`item.user.username`]="{ item }">
+    <template #[`item.user.username`]="{ item }: any">
       <UserAvatar :user="item.user" />
       {{ item.user?.username || "Unresolved user" }}
       <template v-if="dev">({{ item.id }})</template>
@@ -58,13 +58,13 @@
         </v-icon>
       </v-chip>
     </template>
-    <template #[`item.createdAt`]="{ item }">
+    <template #[`item.createdAt`]="{ item }: any">
       {{ $date(item.createdAt).fromNow() }}
     </template>
-    <template #[`item.user.createdAt`]="{ item }">
+    <template #[`item.user.createdAt`]="{ item }: any">
       {{ $date(item.user?.createdAt).fromNow() }}
     </template>
-    <template #[`item.actions`]="{ item }">
+    <template #[`item.actions`]="{ item }: any">
       <v-btn
         icon
         class="my-1"

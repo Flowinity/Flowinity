@@ -315,7 +315,8 @@ async function ogsMetadataParser(
     const { result } = await ogs({
       url: link,
       headers: {
-        "user-agent": "TroploPrivateUploader-MediaProxyBot/2.0.0"
+        "user-agent":
+          "FlowinityBot/4.0.0 TroploPrivateUploader-MediaProxyBot/2.0.0"
       }
     })
 

@@ -47,7 +47,7 @@
         </v-col>
       </v-row>
       <v-data-table :headers="sharing.headers" :items="collection.users">
-        <template #item="row">
+        <template #item="row: any">
           <tr>
             <td>{{ row.item.user.username }}</td>
             <td>
