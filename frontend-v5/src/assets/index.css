@@ -2,7 +2,7 @@
 @tailwind components;
 * {
     scrollbar-width: thin;
-    scrollbar-color: rgb(16, 17, 19);
+    scrollbar-color: #202020 rgb(16, 17, 19);
 }
 
 *::-webkit-scrollbar {

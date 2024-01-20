@@ -58,7 +58,7 @@
                 </span>
               </div>
               <div
-                class="input-expander"
+                class="input-expander gap-2"
                 :style="{
                   'max-height': replying ? '36px' : '0'
                 }"

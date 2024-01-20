@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col gap-2 bg-sidebar-dark p-2 rounded outline outline-card-secondary-dark w-full input"
+    class="flex flex-col bg-sidebar-dark p-2 rounded outline outline-card-secondary-dark w-full input"
     style="transition: all 0.5s linear"
   >
     <slot />

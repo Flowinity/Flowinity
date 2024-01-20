@@ -201,7 +201,7 @@
         density="compact"
       >
         <small v-if="!$user.actions.emailSent.value" class="mr-2 unselectable">
-          Please verify your email to access all of TPU.
+          Please verify your email to access all of {{ $app.site.name }}.
         </small>
         <small v-else class="mr-2 unselectable">
           Verification email sent! Please check your email,
