@@ -2,17 +2,13 @@
  * plugins/axios.ts
  */
 
-import axios, { AxiosRequestConfig, AxiosStatic } from "axios";
+import axios, { AxiosStatic } from "axios";
 import { useToast } from "vue-toastification";
 import { useAppStore } from "@/store/app.store";
 import { useUserStore } from "@/store/user.store";
 
 export interface AxiosStaticWithAvoidance extends AxiosStatic {
   _avoidToast: boolean;
-}
-
-export interface AxiosRequestConfigWithAvoidance extends AxiosRequestConfig {
-  avoidToast?: boolean;
 }
 
 const ax = axios.create({
@@ -85,13 +81,4 @@ ax.interceptors.request.use((config) => {
   return config;
 });
 
-/*
-ax.interceptors.request.use((config) => {
-  if (config.url.includes("/gallery/site")) {
-    return config;
-  } else {
-    return Promise.reject(config);
-  }
-});
-*/
 export default ax;

@@ -102,14 +102,6 @@
         <GalleryItem :item="item" />
       </v-col>
     </v-row>
-    <!--
-    <v-pagination
-      :length="items.pager?.totalPages"
-      class="mt-3"
-      v-model="pageComponent"
-      :total-visible="$vuetify.display.xlAndUp ? 15 : undefined"
-    >
-    </v-pagination>-->
     <Paginate
       v-model="pageComponent"
       :total-pages="items.pager?.totalPages"
