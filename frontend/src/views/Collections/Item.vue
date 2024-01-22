@@ -63,7 +63,7 @@
     </v-card-text>
   </UserBanner>
   <v-container v-if="collection">
-    <PersonalGallery
+    <Gallery
       :type="GalleryType.Collection"
       :id="collection.id"
       :supports="{
@@ -86,7 +86,7 @@
       <template v-slot:custom-values="{ item }: any">
         <v-card-subtitle>Creator: {{ item?.user?.username }}</v-card-subtitle>
       </template>
-    </PersonalGallery>
+    </Gallery>
   </v-container>
   <v-container v-else-if="!$app.componentLoading">
     <PromoNoContent
@@ -106,7 +106,7 @@ import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import Sharing from "@/components/Collections/Dialogs/Sharing.vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import CollectionSettings from "@/components/Collections/Dialogs/Settings.vue";
-import PersonalGallery from "@/views/Gallery.vue";
+import Gallery from "@/views/Gallery.vue";
 import { GalleryType } from "@/gql/graphql";
 import { Collection } from "@/models/collection";
 import { isNumeric } from "@/plugins/isNumeric";
@@ -121,7 +121,7 @@ export default defineComponent({
   },
   components: {
     PromoNoContent,
-    PersonalGallery,
+    Gallery,
     CollectionSettings,
     UserBanner,
     Sharing,

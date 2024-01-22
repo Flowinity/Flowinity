@@ -173,7 +173,6 @@ export default defineComponent({
         "svgmoji",
         "textarea-caret",
         "vue",
-        "vue-axios",
         "vue-chartjs",
         "vue-codemirror",
         "vue-cropperjs",

@@ -1,7 +1,7 @@
 <template>
   <v-container v-if="collection">
     <CollectionBanner :collection="collection" />
-    <PersonalGallery
+    <Gallery
       ref="gallery"
       :type="GalleryType.AutoCollect"
       :name="`${collection.name} AutoCollects`"
@@ -69,7 +69,7 @@
           @click="$functions.copy($app.domain + item.attachment)"
         />
       </template>
-    </PersonalGallery>
+    </Gallery>
   </v-container>
 </template>
 
@@ -81,7 +81,7 @@ import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
 import { Upload } from "@/models/upload";
 import HoverChip from "@/components/Core/HoverChip.vue";
-import PersonalGallery from "@/views/Gallery.vue";
+import Gallery from "@/views/Gallery.vue";
 import { GalleryType } from "@/gql/graphql";
 
 export default defineComponent({
@@ -92,7 +92,7 @@ export default defineComponent({
     }
   },
   components: {
-    PersonalGallery,
+    Gallery,
     HoverChip,
     CollectionBanner,
     GalleryNavigation,
