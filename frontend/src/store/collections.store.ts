@@ -1,7 +1,10 @@
 // Utilities
 import { defineStore } from "pinia";
 import { CollectionCache } from "@/types/collection";
-import { UserCollectionsQuery } from "@/graphql/collections/getUserCollections.graphql";
+import {
+  UserCollectionsQuery,
+  UserLightCollectionsQuery
+} from "@/graphql/collections/getUserCollections.graphql";
 import { CollectionQuery } from "@/graphql/collections/getCollection.graphql";
 import {
   Collection,
@@ -81,6 +84,20 @@ export const useCollectionsStore = defineStore("collections", {
         } as CollectionInput
       });
       return collection;
+    },
+    async init() {
+      const {
+        data: { collections }
+      } = await useApolloClient().client.query({
+        query: UserLightCollectionsQuery,
+        fetchPolicy: "network-only",
+        variables: {
+          input: {}
+        }
+      });
+      if (collections) {
+        this.persistent = collections.items;
+      }
     }
   }
 });

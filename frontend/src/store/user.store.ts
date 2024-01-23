@@ -238,9 +238,6 @@ export const useUserStore = defineStore("user", {
       if (user) {
         try {
           this.user = JSON.parse(user);
-          if (this.user) {
-            this.runPostTasks();
-          }
         } catch {
           //
         }
@@ -248,7 +245,8 @@ export const useUserStore = defineStore("user", {
       const {
         data: { currentUser }
       } = await useApolloClient().client.query({
-        query: GetUserQuery
+        query: GetUserQuery,
+        fetchPolicy: "network-only"
       });
       this.user = currentUser;
       if (this.user?.themeEngine?.defaults?.prev) {
@@ -256,7 +254,6 @@ export const useUserStore = defineStore("user", {
       }
       this.applyTheme();
       localStorage.setItem("userStore", JSON.stringify(currentUser));
-      this.runPostTasks();
     },
     applyCSS(emergency: boolean = false) {
       //if (this.user?.plan.internalName !== "GOLD") return;

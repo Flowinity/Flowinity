@@ -2,7 +2,7 @@
   <card padding class="my-4 mx-4">
     <div>
       <div class="ml-1 mb-4 flex justify-between items-center">
-        <strong>{{ t("settings.security.apiKeys") }}</strong>
+        <strong>{{ t("settings.security.apiKeys.title") }}</strong>
         <tpu-button icon variant="outlined" class="gap-1">
           <RiAddLine style="width: 20px" />
           New API Key
@@ -25,7 +25,7 @@
       </tpu-data-table>
     </div>
     <div class="ml-1 my-4 flex justify-between items-center">
-      <strong>{{ t("settings.security.sessions") }}</strong>
+      <strong>{{ t("settings.security.sessions.title") }}</strong>
     </div>
     <tpu-list>
       <tpu-list-item

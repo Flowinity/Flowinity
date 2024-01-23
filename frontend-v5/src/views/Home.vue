@@ -23,7 +23,7 @@
         </tpu-button>
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid lg:grid-cols-2 grid-cols-1 gap-4">
       <div class="flex flex-col gap-4">
         <home-widget-handler
           v-for="widget in col1"

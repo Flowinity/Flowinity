@@ -47,7 +47,7 @@
           </tpu-button>
         </div>
       </card>
-      <div class="flex justify-center m-10">
+      <div class="flex justify-center m-10" v-if="false">
         <tpu-img
           src="https://i.troplo.com/i/debc2a79dd5d.png"
           style=""

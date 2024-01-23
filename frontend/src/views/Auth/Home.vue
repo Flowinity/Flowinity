@@ -145,7 +145,7 @@ export default defineComponent({
       sloganInterval: undefined as number | undefined
     };
   },
-  mounted() {
+  async mounted() {
     this.sloganInterval = setInterval(() => {
       this.slogan = this.slogans[(this.slogans.indexOf(this.slogan) + 1) % this.slogans.length];
     }, 2500);
@@ -153,6 +153,7 @@ export default defineComponent({
 
     // Check $app.site.hostnames and window.location.hostname to see if we should redirect
     if (this.$app.site.release !== "dev") {
+      await this.$app.init()
       if (
         this.$app.site.hostnames &&
         !this.$app.site.hostnames.includes(window.location.hostname)

@@ -1,8 +1,17 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
-import { Friend, FriendStatus, PartialUserBase, PartialUserFriend, User } from "@/gql/graphql";
+import {
+  Friend,
+  FriendStatus,
+  PartialUserBase,
+  PartialUserFriend,
+  User
+} from "@/gql/graphql";
 import { useUserStore } from "@/store/user.store";
+import { useApolloClient } from "@vue/apollo-composable";
+import { FriendsQuery } from "@/graphql/user/friends.graphql";
+import { useAppStore } from "@/store/app.store";
 
 export interface FriendsState {
   friends: Friend[];
@@ -12,7 +21,7 @@ export const useFriendsStore = defineStore("friends", {
   state: () =>
     ({
       friends: []
-    } as FriendsState),
+    }) as FriendsState,
   actions: {
     friendStatus(userId: number) {
       return (
@@ -39,15 +48,26 @@ export const useFriendsStore = defineStore("friends", {
       return user.username;
     },
     async getFriends() {
-      const friends = localStorage.getItem("friendsStore");
-      if (friends) {
+      const friendsCache = localStorage.getItem("friendsStore");
+      if (friendsCache) {
         try {
-          this.friends = JSON.parse(friends);
-        } catch {}
+          this.friends = JSON.parse(friendsCache);
+        } catch {
+          //
+        }
       }
-      const { data } = await axios.get("/user/friends");
-      this.friends = data;
+      const {
+        data: { friends, trackedUsers, blockedUsers }
+      } = await useApolloClient().client.query({
+        query: FriendsQuery,
+        fetchPolicy: "network-only"
+      });
+      const userStore = useUserStore();
+      this.friends = friends;
+      userStore.tracked = trackedUsers;
+      userStore.blocked = blockedUsers;
       localStorage.setItem("friendsStore", JSON.stringify(this.friends));
+      localStorage.setItem("trackedUsersStore", JSON.stringify(trackedUsers));
     },
     async actFriend(userId: number) {
       await axios.post(`/user/friends/${userId}`);
