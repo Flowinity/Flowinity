@@ -224,18 +224,18 @@ h6 {
 
 @tailwind utilities;
 
-.grid {
-    display: block!important;
-}
+/*.grid {*/
+/*    display: block!important;*/
+/*}*/
 
-@media screen and (min-width: 1500px) {
-    .grid {
-        display: grid!important;
-    }
-}
+/*@media screen and (min-width: 1500px) {*/
+/*    .grid {*/
+/*        display: grid!important;*/
+/*    }*/
+/*}*/
 
-@media screen and (max-width: 1500px), print {
-    .grid {
-        display: block!important;
-    }
-}
+/*@media screen and (max-width: 1500px), print {*/
+/*    .grid {*/
+/*        display: block!important;*/
+/*    }*/
+/*}*/

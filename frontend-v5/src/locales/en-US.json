@@ -13,6 +13,7 @@
     "OK": "OK",
     "cancel": "Cancel",
     "upload": "Upload",
+    "update": "Update",
     "close": "Close",
     "save": "Save",
     "copied": "Copied to clipboard!",
@@ -173,13 +174,17 @@
     "account": {
       "title": "My Flowinity",
       "username": {
-        "title": "Change Username"
+        "title": "Change Username",
+        "newUsername": "New username"
       },
       "password": {
-        "title": "Change Password"
+        "title": "Change Password",
+        "newPassword": "New password",
+        "confirmNewPassword": "Confirm new password"
       },
       "email": {
-        "title": "Change Email"
+        "title": "Change Email",
+        "newEmail": "New email"
       }
     },
     "preferences": {
@@ -197,7 +202,22 @@
       }
     },
     "setup": {
+      "title": "Setup",
+      "linux": {
+        "title": "Linux"
+      },
+      "microsoftWindows": {
+        "title": "Microsoft Windows"
+      },
+      "android": {
+        "title": "Android"
+      },
+      "otherPlatform": {
+        "title": "Other Platform"
+      },
       "actions": {
+        "selectPlatform": "Select Platform",
+        "selectAPIKey": "Select API Key",
         "copy": "Copy",
         "downloadShareX": "Download ShareX Config",
         "downloadShareNix": "Download ShareNix Config",
@@ -220,6 +240,26 @@
       "insightsPrivacy": "Who can see your Insights",
       "groupPrivacy": "Who can add you to a group",
       "friendPrivacy": "Who can add you as a friend"
+    },
+    "security": {
+      "apiKeys": {
+        "title": "API Keys"
+      },
+      "sessions": {
+        "title": "Sessions"
+      }
+    },
+    "domains": {
+      "title": "Domains",
+      "table": {
+        "createdBy": "Created by",
+        "actions": "Actions",
+        "domain": "Domain"
+      },
+      "actions": {
+        "apply": "Apply",
+        "applied": "Applied"
+      }
     }
   },
   "sidebar": {

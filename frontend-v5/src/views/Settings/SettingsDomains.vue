@@ -25,7 +25,7 @@
             :table="true"
             @click="applyDomain(item.id)"
           >
-            {{ userStore.user?.domainId === item.id ? "Applied" : "Apply" }}
+            {{ userStore.user?.domainId === item.id ? t("settings.domains.actions.applied") : t("settings.domains.actions.apply") }}
           </tpu-button>
         </div>
       </template>
@@ -49,22 +49,21 @@ import { gql } from "@apollo/client";
 const appStore = useAppStore();
 const userStore = useUserStore();
 const items = ref<Domain[]>([]);
+const { t } = useI18n();
 const headers = [
   {
     id: "domain",
-    name: "Domain"
+    name: t("settings.domains.table.domain")
   },
   {
     id: "user",
-    name: "Created by"
+    name: t("settings.domains.table.createdBy")
   },
   {
     id: "actions",
-    name: "Actions"
+    name: t("settings.domains.table.actions")
   }
 ];
-
-const { t } = useI18n();
 
 async function getDomains() {
   const {
