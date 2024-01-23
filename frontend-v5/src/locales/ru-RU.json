@@ -279,7 +279,7 @@
     "privacy": {
       "title": "Приватность",
       "usageInformation": {
-        "title": "Отправлять данные об вашего использовании Flowinity разработчкам",
+        "title": "Отправлять данные о вашего использовании Flowinity разработчкам",
         "description": "By turning this off, you are disabling 'Pulse' functionality. This is used for tracking how much time you spend on Flowinity, and what features you use to generate your Insights. Some information may still be stored by Flowinity as outlined in the Privacy Policy."
       },
       "publicProfile": {
