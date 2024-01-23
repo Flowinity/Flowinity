@@ -326,7 +326,7 @@ export const useUserStore = defineStore("user", {
           }
         } as UpdateUserInput
       });
-      i18n.global.locale = this.user?.language || "ru-RU";
+      i18n.global.locale = this.user?.language || "en";
     },
     async savePasswordRequired() {
       // TODO: new GraphQL mutation
