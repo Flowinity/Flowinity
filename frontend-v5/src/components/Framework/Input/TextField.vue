@@ -263,6 +263,9 @@ defineExpose({
   padding: 7px 0;
   background: transparent;
   transition: border-color 0.2s;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .focused {

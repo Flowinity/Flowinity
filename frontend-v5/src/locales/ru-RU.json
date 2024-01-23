@@ -1,0 +1,406 @@
+{
+  "login": {
+    "username": "Псевдоним",
+    "password": "Пароль",
+    "totp": "2FA код (Если включено)",
+    "login": "Войти",
+    "email": "Электронная почта"
+  },
+  "generic": {
+    "minLength": "Вам нужен как минимум 1 символ. | Вам нужно как минимум {count} символов.",
+    "delete": "Удалить",
+    "add": "Добавить",
+    "OK": "Ок",
+    "cancel": "Отмена",
+    "upload": "Загрузить",
+    "update": "Обновить",
+    "close": "Закрить",
+    "save": "Сохранить",
+    "copied": "Copied to clipboard!",
+    "back": "Назад",
+    "search": "Поиск",
+    "remove": "Удалить",
+    "edit": "Редактировать",
+    "noResults": "No results found",
+    "accept": "Принять",
+    "reject": "Oтклонить",
+    "deny": "Отклонить",
+    "new": "Новое",
+    "loading": "Загрузка"
+  },
+  "dangerZone": {
+    "usePassword": "Вместо этого используйте пароль",
+    "useTotp": "Вместо этого используйте код двухфакторной аутентификации",
+    "password": "Password",
+    "totp": "Kод двухфакторной аутентификации",
+    "totpRequired": "Требуется код двухфакторной аутентификации",
+    "passwordRequired": "Требуется пароль",
+    "passwordMismatch": "Пароль и подтверждение пароля не совпадают"
+  },
+  "railbar": {
+    "actions": {
+      "removeModule": "Удалить модуль с Railbar"
+    }
+  },
+  "home": {
+    "welcomeBack": "Здравствуй",
+    "widgets": {
+      "atAGlance": {
+        "title": "At a Glance",
+        "weather": {
+          "temperatureUnits": {
+            "celsius": "С",
+            "fahrenheit": "Ф",
+            "kelvin": "К",
+            "unknown": "?"
+          }
+        },
+        "todo": {
+          "title": "Список дел"
+        }
+      },
+      "announcements": {
+        "title": "Oбъявления"
+      },
+      "statistics": {
+        "title": "Статистика Flowinity",
+        "categories": {
+          "uploads": "Количество загрузок",
+          "users": "Количество пользователей",
+          "messages": "Количество сообщений",
+          "timeSpent": "Время проведенное на Flowinity"
+        }
+      }
+    },
+    "actions": {
+      "lockGrid": "Заблокировать сетку",
+      "unlockGrid": "Разблокировать сетку",
+      "resetGrid": "Сброс сетки"
+    }
+  },
+  "gallery": {
+    "addToCollection": "Add to Collection",
+    "addToCollectionBulk": "Add to Collection\n(⇧ to bulk-remove)",
+    "removeFromCollection": "Remove from Collection",
+    "editor": {
+      "back": "Назад",
+      "addText": "Добавить текст",
+      "addBox": "Add Box",
+      "addEmptyBox": "Add Empty Box",
+      "saveCopy": "Сохранить копию"
+    },
+    "actions": {
+      "edit": "Edit & Caption",
+      "delete": "Удалить",
+      "copy": "Скопировать ссылку",
+      "download": "Скачать",
+      "ocr": "View Scanned Text",
+      "star": "Добавить в избранное | Удалить с избранных",
+      "ocrProcessing": "Scanned text is being processed...",
+      "approve": "Принять",
+      "reject": "Отклонить",
+      "ocrError": "Scanned text failed to process"
+    },
+    "attributes": {
+      "triggeredByRule": "Triggered by rule: {rule}",
+      "originalName": "Original name: {name}",
+      "uploadedName": "Uploaded name: {name}",
+      "size": "Size: {size}",
+      "createdBy": "Uploaded by: {name}",
+      "addedAt": "Collectivized at: {date}",
+      "starredAt": "Starred at: {date}"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Delete {item}?",
+        "description": "The upload {item} will be permanently deleted from Flowinity."
+      },
+      "collect": {
+        "titleAdd": "Add 1 item to a collection? | Add {count} items to a collection?",
+        "titleRemove": "Remove 1 item from a collection? | Remove {count} items from a collection?"
+      },
+      "ocr": {
+        "title": "View Scanned Text",
+        "copyAll": "Copy all",
+        "tip": "Instantly copy the entire scanned text content by right clicking the purple button."
+      },
+      "edit": {
+        "title": "Edit Upload",
+        "name": "Upload name"
+      },
+      "upload": {
+        "title": "Upload to {collection}",
+        "clickToUpload": "Click to upload",
+        "dragAndDrop": " or drag and drop",
+        "addMore": "Add more files"
+      }
+    },
+    "nav": {
+      "delete": "Delete Selected",
+      "selectAll": "Select all",
+      "deselectAll": "Deselect all",
+      "randomAttachment": "Random Attachment"
+    },
+    "options": {
+      "filter": "Фильтр",
+      "sort": "Сортировка",
+      "filterTypes": {
+        "INCLUDE_METADATA": "Поиск в файлах"
+      }
+    }
+  },
+  "collections": {
+    "nav": {
+      "share": "Sharing",
+      "settings": "Натройки",
+      "shareLink": "Скопировать ShareLink",
+      "leave": "Leave Collection"
+    },
+    "settings": {
+      "title": "Настройки коллекции",
+      "name": "Название"
+    },
+    "sharing": {
+      "title": "Collection Sharing",
+      "add": "Add friend to collection",
+      "pending": "(pending)"
+    },
+    "create": {
+      "title": "Create Collection",
+      "create": "Создать"
+    },
+    "transfer": {
+      "title": "Transfer Collection",
+      "description": "Are you sure you want to transfer {collection} to {user}?",
+      "action": "Transfer"
+    },
+    "leave": {
+      "title": "Leave Collection",
+      "description": "Are you sure you want to leave {collection}?",
+      "action": "Leave"
+    }
+  },
+  "communications": {
+    "members": {
+      "title": "Члены коллекции"
+    }
+  },
+  "dialogs": {
+    "uploadCropper": {
+      "skipCrop": "Skip Crop & Save",
+      "title": "Загрузить"
+    }
+  },
+  "settings":  {
+    "status": {
+      "online": {
+        "title": "В сети"
+      },
+      "idle": {
+        "title": "Неактивен",
+        "description": "Вы будете выглядеть так, как будто вы неактивны."
+      },
+      "busy": {
+        "title": "Не беспокоить",
+        "description": "Вы не будете получать никаких звуковых уведомлений или уведомлений на рабочем столе."
+      },
+      "invisible": {
+        "title": "Невидимый",
+        "description": "Вы будете отображаться как невидимыми, индикатор, показывающий другим пользователям, что вы печатаете или прочитали их сообщения, будет отключен."
+      }
+    },
+    "actionBar": {
+      "saving": "Сохраняется",
+      "saved": "Saved"
+    },
+    "account": {
+      "title": "Моя учётная запись Flowinity",
+      "username": {
+        "title": "Смена псевдоним",
+        "newUsername": "Новый псевдоним",
+        "success": "Ваш псевдоним успешно обновлён!"
+      },
+      "password": {
+        "title": "Смена паролья",
+        "newPassword": "Новый пароль",
+        "confirmNewPassword": "Повторно введите новый пароль",
+        "success": "Ваш пароль успешно обноблён"
+      },
+      "emailAddress": {
+        "title": "Смена электронной почты",
+        "newEmailAddress": "Новая электронная почта",
+        "success": "Ваша электронная почта успешно обновлена!"
+      }
+    },
+    "preferences": {
+      "title": "Настройки",
+      "itemsPerPage": {
+        "title": "Количество элементов на странице"
+      },
+      "language": {
+        "title": "Язык",
+        "options": {
+          "en": "Английский (США)",
+          "ru": "Русский (Россия)"
+        }
+      },
+      "temperatureUnit": {
+        "title": "Единица измерения температуры",
+        "options": {
+          "celsius": "Отображение температуры в градусах Цельсия",
+          "fahrenheit": "Отображение температуры в градусах Фаренгейта",
+          "kelvin": "Отображение температуры в кельвинах"
+        }
+      }
+    },
+    "setup": {
+      "title": "Натройка",
+      "linux": {
+        "title": "Linux"
+      },
+      "microsoftWindows": {
+        "title": "Microsoft Windows"
+      },
+      "android": {
+        "title": "Android"
+      },
+      "otherPlatform": {
+        "title": "Другая платформа"
+      },
+      "actions": {
+        "selectPlatform": "Выбрать платформу",
+        "selectAPIKey": "Выбрать ключ API",
+        "copy": "Скопировать",
+        "downloadShareX": "Скачать файл конфигурации ShareX",
+        "downloadShareNix": "Скачать файл конфигурации ShareNix",
+        "downloadAutomate": "Скчать файл конфигурации Automate"
+      }
+    },
+    "privacy": {
+      "title": "Приватность",
+      "usageInformation": {
+        "title": "Отправлять данные о вашего использовании Flowinity разработчкам",
+        "description": "By turning this off, you are disabling 'Pulse' functionality. This is used for tracking how much time you spend on Flowinity, and what features you use to generate your Insights. Some information may still be stored by Flowinity as outlined in the Privacy Policy."
+      },
+      "publicProfile": {
+        "title": "Публичный профиль",
+        "description": "Когда эта функция включена, любой желающий может просматривать ваш профиль, даже те, у кого нет учетной записи Flowinity."
+      },
+      "discordPrecache": {
+        "title": "Предварительное кэширование Discord",
+        "description": "Discord Precaching has now been replaced with Flowinity Webhooks! The previous Discord Precaching feature sent your newly created uploads in a Discord channel to allow Discord to cache the embed on upload."
+      },
+      "insightsPrivacy": {
+        "title": "Кто может видет ваши инсайты Flowinity",
+        "options": {
+          "everyone": "Кто угодно",
+          "friends": "Только мои друзья",
+          "nobody": "Никто кроме меня"
+        }
+      },
+      "groupPrivacy": {
+        "title": "Кто может вас добавить в группу Flowinity Communications",
+        "options": {
+          "everyone": "Кто угодно",
+          "friends": "Только мои друзья",
+          "nobody": "Никто кроме меня"
+        }
+      },
+      "friendRequestPrivacy": {
+        "title": "Кто может вам отправить вопрос на дружбу",
+        "options": {
+          "everyone": "Кто угодно",
+          "friends": "Только мои друзья",
+          "nobody": "Никто кроме меня"
+        }
+      }
+    },
+    "security": {
+      "apiKeys": {
+        "title": "Ключи API",
+        "table": {
+          "name": "Название",
+          "scopes": "Параметры",
+          "expiry": "Expiry",
+          "createdAt": "Создано",
+          "actions": "Опции"
+        },
+        "actions": {
+          "newAPIKey": "Создать новый ключ API"
+        }
+      },
+      "sessions": {
+        "title": "Сессии",
+        "session": {
+          "unknownLocation": "Неизвесное местоположение",
+          "unknownIPAddress": "Неизвесный IP адрес",
+          "unknownISP": "Unknown ISP",
+          "unknownLastAccessedDate": "Unknown last accessed date",
+          "unknownCreationDate": "Неизвесный день создания",
+          "accessedWithNumberOfIPAddresses": "Accessed with {count} IP addresses.",
+          "created": "Создано",
+          "lastAccessed": "Last accessed"
+        }
+      }
+    },
+    "domains": {
+      "title": "Домейны",
+      "table": {
+        "createdBy": "Создано",
+        "actions": "Опции",
+        "domain": "Домейн"
+      },
+      "actions": {
+        "apply": "Apply",
+        "applied": "Applied"
+      }
+    },
+    "about": {
+      "productName": "Название продукта",
+      "version": "Версия",
+      "buildDate": "Build date",
+      "relativeBuildDate": "Relative build date",
+      "server": "Сервер"
+    }
+  },
+  "sidebar": {
+    "collections": {
+      "create": "Создать коллекцию",
+      "title": "Коллекции",
+      "invited": "Приглашения",
+      "sort": {
+        "alphabetical": "В алфавитном порядке",
+        "updated": "По дню изменения",
+        "createdAt": "По дню создания",
+        "itemCount": "По оличеству элементов",
+        "direction": "По направлению",
+        "sort": "Сортировка",
+        "asc": "Восходящий",
+        "desc": "Нисходящий"
+      }
+    }
+  },
+  "chats": {
+    "typing": "{users} печатает... | {users} печатают... | Много людей печатют...",
+    "searchIn": "Поиск в {chat}, {count} сообщений.",
+    "search": "Поиск в {chat}",
+    "input": {
+      "editingHelper": "Нажмите на Enter, чтобы отправить сообщение, или ESC, чтобы отменить.",
+      "send": "Отправить",
+      "attachments": "Файлы"
+    },
+    "actions": {
+      "pinConfirm": {
+        "title": "Закрепить сообщение?",
+        "content": "Уверены ли вы, что хотите закрепить сообщение?"
+      },
+      "unpinConfirm": {
+        "title": "Октрепить сообщение?",
+        "content": "Уверены ли вы, что хотите открепить сообщение?"
+      }
+    }
+  },
+  "connection": {
+    "title": "Подключение..."
+  }
+}

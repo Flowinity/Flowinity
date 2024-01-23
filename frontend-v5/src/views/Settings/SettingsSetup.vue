@@ -6,7 +6,7 @@
     <tpu-select
       v-model="selectedId"
       :items="items"
-      :label="t('settings.setup.selectKey')"
+      :label="t('settings.setup.actions.selectAPIKey')"
     />
     <div class="flex flex-wrap mt-3 gap-2">
       <tpu-button
@@ -22,7 +22,7 @@
         {{ t("settings.setup.actions.copy") }}
       </tpu-button>
       <tpu-button
-        v-if="platform === 'windows'"
+        v-if="platform === 'microsoftWindows'"
         class="gap-2"
         :disabled="!selected"
         color="teal"
@@ -60,26 +60,26 @@
         <strong v-if="platform === 'linux'">
           {{ t("settings.setup.linux.title") }}
         </strong>
-        <strong v-else-if="platform === 'windows'">
-          {{ t("settings.setup.windows.title") }}
+        <strong v-else-if="platform === 'microsoftWindows'">
+          {{ t("settings.setup.microsoftWindows.title") }}
         </strong>
         <strong v-else-if="platform === 'android'">
           {{ t("settings.setup.android.title") }}
         </strong>
-        <strong v-else-if="platform === 'other'">
-          {{ t("settings.setup.other.title") }}
+        <strong v-else-if="platform === 'otherPlatform'">
+          {{ t("settings.setup.otherPlatform.title") }}
         </strong>
         <tpu-select
           v-model="platform"
           :items="platforms"
-          :label="t('settings.setup.selectPlatform')"
+          :label="t('settings.setup.actions.selectPlatform')"
           style="height: 35px"
         ></tpu-select>
       </div>
       <div v-if="platform === 'linux'"></div>
-      <div v-else-if="platform === 'windows'">
+      <div v-else-if="platform === 'microsoftWindows'">
         <p class="mb-4 -mt-2 ml-1">
-          Setting up {{ appStore.state?.name }} on Windows is easy! Follow the
+          Setting up {{ appStore.state?.name }} on Microsoft Windows is easy! Follow the
           video below to get started.
         </p>
         <video controls="" height="430" width="800">
@@ -89,7 +89,7 @@
           />
         </video>
       </div>
-      <div v-if="platform === 'other'">
+      <div v-if="platform === 'otherPlatform'">
         <p class="mb-4 -mt-2 ml-1">
           Here are the following information you may need to create a custom
           implementation using the API:
@@ -174,15 +174,15 @@ const platforms = [
   },
   {
     name: "Microsoft Windows",
-    id: "windows"
+    id: "microsoftWindows"
   },
   {
     name: "Android",
     id: "android"
   },
   {
-    name: "Other",
-    id: "other"
+    name: "Other Platform",
+    id: "otherPlatform"
   }
 ];
 const appStore = useAppStore();
@@ -247,8 +247,8 @@ function saveFile(type: "sharex" | "sharenix" = "sharex") {
 
 onMounted(() => {
   getAPIKeys();
-  if (window.navigator.userAgent.toLowerCase().includes("windows")) {
-    platform.value = "windows";
+  if (window.navigator.userAgent.toLowerCase().includes("microsoftWindows")) {
+    platform.value = "microsoftWindows";
   } else if (window.navigator.userAgent.toLowerCase().includes("android")) {
     platform.value = "android";
   }

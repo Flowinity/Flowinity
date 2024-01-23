@@ -82,7 +82,6 @@ import { useApolloClient } from "@vue/apollo-composable";
 import functions from "@/plugins/functions";
 
 export default defineComponent({
-  name: "PersonalGallery",
   components: { GalleryNavigation, GalleryCore },
   props: ["path", "type", "name", "random", "supports", "id"],
   data() {
