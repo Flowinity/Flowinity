@@ -104,7 +104,7 @@ import Card from "@/components/Framework/Card/Card.vue";
 import { useI18n } from "vue-i18n";
 import TpuExpansionPanel from "@/components/Framework/ExpansionPanel/TpuExpansionPanel.vue";
 import TextField from "@/components/Framework/Input/TextField.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { DangerZone } from "@/classes/DangerZone";
 import { useUserStore } from "@/stores/user.store";
 import DangerZoneInput from "@/components/Core/DangerZoneInput.vue";
@@ -165,6 +165,7 @@ const languages = [
   }
 ];
 const toast = useToast();
+const i18n = useI18n();
 
 async function changeEmail() {
   await this.$apollo.mutate({
@@ -210,6 +211,13 @@ async function changeUsername() {
   });
   toast.success(t("settings.account.username.success"));
 }
+
+watch(
+  () => userStore.user!.language,
+  () => {
+    i18n.locale.value = userStore.user!.language;
+  }
+);
 </script>
 
 <style scoped></style>

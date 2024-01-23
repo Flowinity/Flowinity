@@ -15,11 +15,6 @@ import en from "@/locales/en-US.json";
 
 export function registerPlugins(app: App) {
   loadFonts();
-  pinia.use(({ store }) => {
-    store.$apollo = app.config.globalProperties.$apollo;
-    store.$apolloProvider = app.config.globalProperties.$apolloProvider;
-    store.$app = app.config.globalProperties;
-  });
   const i18n = createI18n({
     legacy: false,
     locale: "en",
@@ -29,5 +24,11 @@ export function registerPlugins(app: App) {
     }
   });
   app.use(i18n);
+  pinia.use(({ store }) => {
+    store.$apollo = app.config.globalProperties.$apollo;
+    store.$apolloProvider = app.config.globalProperties.$apolloProvider;
+    store.$app = app.config.globalProperties;
+    store.$i18n = i18n.global;
+  });
   app.use(pinia);
 }

@@ -103,6 +103,9 @@ export const useUserStore = defineStore("user", () => {
     tracked.value = trackedUsers;
     blocked.value = blockedUsers;
     localStorage.setItem("userStore", JSON.stringify(user.value));
+    // todo: Do not use `this` in the future.
+    // @ts-ignore
+    this.$i18n.locale = user.value?.language || "en";
   }
 
   return {
