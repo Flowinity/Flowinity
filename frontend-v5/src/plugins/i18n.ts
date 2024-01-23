@@ -1,20 +1,14 @@
 import { createI18n } from "vue-i18n";
 
-// Import locales
-import en from "@/locales/en-US.json";
-import enGB from "@/locales/en-GB.json";
-import ru from "@/locales/ru.json";
-import fr from "@/locales/fr.json";
+import enUS from "@/locales/en-US.json";
+import ruRU from "@/locales/ru-RU.json";
 
 const instance = createI18n({
   legacy: true,
-  locale: "en",
   fallbackLocale: "en",
   messages: {
-    en,
-    "en-GB": enGB,
-    ru,
-    fr
+    "en": enUS,
+    "ru-RU": ruRU,
   }
 });
 

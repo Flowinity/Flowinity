@@ -240,7 +240,8 @@
       "language": {
         "title": "Language",
         "options": {
-          "en": "English (United States)"
+          "en": "English (United States)",
+          "ru": "Russian (Russia)"
         }
       },
       "temperatureUnit": {

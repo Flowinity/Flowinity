@@ -158,6 +158,10 @@ const languages = [
   {
     id: "en",
     name: t("settings.preferences.language.options.en")
+  },
+  {
+    id: "ru-RU",
+    name: t("settings.preferences.language.options.ru")
   }
 ];
 const toast = useToast();
