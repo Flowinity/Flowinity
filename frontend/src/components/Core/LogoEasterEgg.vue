@@ -5,11 +5,11 @@
     :title="event === 'j' ? 'Jitsi Anniversary' : 'TroploPrivateUploader'"
     class="unselectable ml-4 relative"
     style="z-index: 10; cursor: pointer; font-size: 32px; font-weight: 500"
-    @click="$router.push('/')"
     :class="{
       'text-gradient':
         !$experiments.experiments.FLOWINITY && $app.site.officialInstance
     }"
+    @click="$router.push('/')"
   >
     <template
       v-if="$experiments.experiments.FLOWINITY && $app.site.officialInstance"

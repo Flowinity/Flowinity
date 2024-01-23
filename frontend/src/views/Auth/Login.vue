@@ -8,8 +8,8 @@
           :flat="$vuetify.display.mobile"
         >
           <div
-            class="d-flex justify-center mt-4"
             v-if="$experiments.experiments.FLOWINITY"
+            class="d-flex justify-center mt-4"
           >
             <FlowinityBanner style="width: 256px"></FlowinityBanner>
           </div>

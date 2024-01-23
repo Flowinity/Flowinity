@@ -17,7 +17,6 @@ import { User } from "@app/models/user.model"
 import { GqlError } from "@app/lib/gqlErrors"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import {
-  partialUserBase,
   PartialUserBase
 } from "@app/classes/graphql/user/partialUser"
 import { Friend } from "@app/models/friend.model"

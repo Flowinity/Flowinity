@@ -1,7 +1,6 @@
 // Plugins
 import vue from "@vitejs/plugin-vue";
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
-import { warmup } from "vite-plugin-warmup";
 import graphql from "@rollup/plugin-graphql";
 
 // Utilities
@@ -31,10 +30,6 @@ const config = {
   },
   plugins: [
     graphql(),
-    warmup({
-      // warm up the files and its imported JS modules recursively
-      clientFiles: ["./src/**/*.ts", "./src/**/*.vue"]
-    }),
     //@ts-ignore
     ViteVersion.default(),
     VitePWA({
@@ -162,7 +157,10 @@ const config = {
         changeOrigin: true
       }
     },
-    https: undefined
+    https: undefined,
+    warmup: {
+      clientFiles: ["./src/**/*.ts", "./src/**/*.vue"]
+    }
   }
 };
 

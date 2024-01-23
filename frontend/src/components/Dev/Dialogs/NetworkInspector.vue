@@ -6,13 +6,13 @@
         Changing of transport and inspection settings require a refresh.
       </small>
       <v-select
+        id="transport-selector"
         v-model="selectedTransport"
         :items="[
           { value: 'ws', title: 'WebSocket' },
           { value: 'http', title: 'HTTP' }
         ]"
         color="primary"
-        id="transport-selector"
       ></v-select>
       <v-switch
         v-model="networkInspectionEnabled"
@@ -88,7 +88,7 @@
     </v-container>
   </DevDialog>
 
-  <DevDialog v-if="dialog" @close="dialog = false" style="max-width: 500px">
+  <DevDialog v-if="dialog" style="max-width: 500px" @close="dialog = false">
     <template #header>Operation {{ operationName }}</template>
     <div class="p-3">
       <strong>Args:</strong>
