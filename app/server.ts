@@ -48,6 +48,7 @@ import { User } from "./models/user.model"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { Platform, PlatformType } from "@app/classes/graphql/user/platforms"
 import { randomUUID } from "crypto"
+import redisClient from "@app/redis"
 
 @Service({ eager: false })
 export class Server {
@@ -199,7 +200,8 @@ export class Server {
             id,
             resumableState: resumableStateValid
               ? ctx.extra.resumableState
-              : randomUUID()
+              : randomUUID(),
+            createdAt: new Date().toISOString()
           }
         },
         onDisconnect: async (ctx, code) => {
@@ -238,6 +240,7 @@ export class Server {
                   },
                   true
                 )
+                // todo: emit missed messages to FCMs
               }
               await redis.json.set(
                 `user:${ctx.extra.userId}:platforms`,
