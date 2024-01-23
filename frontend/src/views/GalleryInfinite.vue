@@ -68,13 +68,20 @@ import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import { CollectionCache } from "@/types/collection";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import { GalleryQuery } from "@/graphql/gallery/gallery.graphql";
-import { GalleryFilter, GalleryInput, GalleryOrder, GallerySort, GalleryType, Pager, Upload } from "@/gql/graphql";
+import {
+  GalleryFilter,
+  GalleryInput,
+  GalleryOrder,
+  GallerySort,
+  GalleryType,
+  Pager,
+  Upload
+} from "@/gql/graphql";
 import { isNumeric } from "@/plugins/isNumeric";
 import { StateHandler } from "@/components/Scroll/types";
 import GalleryCoreInfinite from "@/components/Gallery/GalleryCoreInfinite.vue";
 
 export default defineComponent({
-  name: "PersonalGallery",
   components: { GalleryCoreInfinite, GalleryNavigation, GalleryCore },
   props: ["path", "type", "name", "random", "supports", "id"],
   data() {
