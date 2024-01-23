@@ -12,7 +12,7 @@ import {
 } from "type-graphql"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { User } from "@app/models/user.model"
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
 import { Session } from "@app/models/session.model"
 import { Op } from "sequelize"
 import { Subscription as SubscriptionModel } from "@app/models/subscription.model"
@@ -59,6 +59,7 @@ import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 import { Collection } from "@app/models/collection.model"
 import { defaultHomeWidgets } from "@app/classes/graphql/home/homeWidgets"
 import { StatusEvent } from "@app/classes/graphql/user/subscriptions/statusEvent"
+import { CacheService } from "@app/services/cache.service"
 
 @Resolver(User)
 @Service()
@@ -232,6 +233,8 @@ export class UserResolver extends createBaseResolver("User", User) {
       SocketNamespaces.TRACKED_USERS,
       true
     )
+    const cacheService = Container.get(CacheService)
+    cacheService.generateUserCache(ctx.user!!.id)
     return true
   }
 
@@ -270,6 +273,8 @@ export class UserResolver extends createBaseResolver("User", User) {
         }
       }
     )
+    const cacheService = Container.get(CacheService)
+    cacheService.generateUserCache(ctx.user!!.id)
     await this.resendVerificationEmail(ctx)
     return true
   }
@@ -580,7 +585,6 @@ function createBaseResolver<T extends ClassType>(
                 "storedStatus",
                 "emailVerified",
                 "pulse",
-                "bot",
                 "banned"
               ]
             }
@@ -626,7 +630,6 @@ function createBaseResolver<T extends ClassType>(
               "storedStatus",
               "emailVerified",
               "pulse",
-              "bot",
               "banned"
             ]
           }

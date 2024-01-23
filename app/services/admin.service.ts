@@ -232,6 +232,9 @@ export class AdminService {
           await userService.trackedUserIds(user.id, true)
         }
         return true
+      case CacheType.users:
+        await cacheService.generateUserCache()
+        return true
       default:
         return false
     }

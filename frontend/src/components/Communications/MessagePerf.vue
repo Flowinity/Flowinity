@@ -42,7 +42,7 @@
           :style="{
             opacity: 0.8,
             color: $chat.getRankColor(
-              $chat.selectedChat.users.find(
+              $chat.selectedChat.users?.find(
                 (assoc) => assoc.userId === message.reply.userId
               )?.ranksMap,
               $chat.selectedChat.ranks
@@ -403,7 +403,7 @@ export default defineComponent({
       return this.$user.disableProfileColors
         ? "unset"
         : this.$chat.getRankColor(
-            this.$chat.selectedChat.users.find(
+            this.$chat.selectedChat.users?.find(
               (assoc) => assoc.userId === this.message.userId
             )?.ranksMap,
             this.$chat.selectedChat.ranks

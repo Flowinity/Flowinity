@@ -74,7 +74,13 @@
       </v-list>
     </v-card>
   </v-menu>
-  <template v-if="$chat.selectedChat && $route.path !== '/communications/home'">
+  <template
+    v-if="
+      $chat.selectedChat &&
+      $route.path !== '/communications/home' &&
+      $chat.selectedChat.users
+    "
+  >
     <div v-if="$vuetify.display.mobile" class="mt-2">
       <UserAvatar
         :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
@@ -237,6 +243,15 @@
       />
     </template>
   </template>
+  <template v-else>
+    <MessageSkeleton
+      v-for="i in $chat.selectedChat.usersCount > 30
+        ? 30
+        : $chat.selectedChat.usersCount"
+      :key="i"
+      :animate="false"
+    />
+  </template>
 </template>
 
 <script lang="ts">
@@ -255,10 +270,12 @@ import {
   UserStatus,
   UserStoredStatus
 } from "@/gql/graphql";
+import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 
 export default defineComponent({
   name: "MemberSidebarList",
   components: {
+    MessageSkeleton,
     UserSidebarOptions,
     Overline,
     MessagePerf,

@@ -54,6 +54,7 @@ import {
 } from "@app/classes/graphql/chat/auditLog/categories"
 import { EXPECTED_OPTIONS_KEY } from "@app/lib/dataloader"
 import { ReadChatInput } from "@app/classes/graphql/chat/readChat"
+import redisClient from "@app/redis"
 
 @Resolver(ChatAssociation)
 @Service()
@@ -124,6 +125,10 @@ export class ChatAssociationResolver {
     @Root() chatAssociation: ChatAssociation,
     @Ctx() ctx: Context
   ) {
+    const cache = await redisClient.json.get(
+      `chatPermissions:${chatAssociation.userId}:${chatAssociation.id}`
+    )
+    if (cache) return cache
     const ranks = await chatAssociation.$get("ranks", {
       order: [["index", "DESC"]],
       include: [

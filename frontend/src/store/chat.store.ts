@@ -42,7 +42,7 @@ import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
 import { Typing } from "@/models/chat";
 import { nextTick } from "vue";
 import { useApolloClient } from "@vue/apollo-composable";
-import { ChatsQuery } from "@/graphql/chats/chats.graphql";
+import { ChatQuery, ChatsQuery } from "@/graphql/chats/chats.graphql";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -208,7 +208,8 @@ export const useChatStore = defineStore("chat", {
         }
       });
     },
-    getRankColor(ranksMap: string[], ranks: ChatRank[]) {
+    getRankColor(ranksMap?: string[], ranks?: ChatRank[]) {
+      if (!ranks) return null;
       if (!ranksMap) ranksMap = [];
       for (const rankId of ranksMap) {
         const rank = ranks.find((r) => r.id === rankId);
@@ -545,6 +546,24 @@ export const useChatStore = defineStore("chat", {
         this.loading = false;
         return;
       }
+      if (!this.selectedChat.users) {
+        const {
+          data: { chat: chatData }
+        } = await useApolloClient().client.query({
+          query: ChatQuery,
+          variables: {
+            input: {
+              associationId: id
+            }
+          }
+        });
+        this.chats[index] = {
+          ...(this.chats.find(
+            (chat: Chat) => chat.association.id === id
+          ) as Chat),
+          ...chatData
+        };
+      }
       this.loading = false;
       this.isReady = id;
       appStore.title = this.chatName(this.selectedChat);
@@ -630,6 +649,7 @@ export const useChatStore = defineStore("chat", {
       });
       this.chats = chats
         .map((chat) => {
+          console.log(this.chats.find((c) => c.id === chat.id)?.messages);
           return {
             ...chat,
             messages: this.chats.find((c) => c.id === chat.id)?.messages
@@ -697,25 +717,6 @@ export const useChatStore = defineStore("chat", {
       if (chat.type === "direct") {
         return useFriendsStore().getName(chat?.recipient) || "Deleted User";
       } else {
-        const userStore = useUserStore();
-        const friendStore = useFriendsStore();
-        if (chat.name === "Unnamed Group") {
-          const users = chat.users
-            .filter((user) => user.userId !== userStore.user?.id)
-            .map(
-              (user) =>
-                friendStore.getName(userStore.users[user.userId]) ||
-                "Deleted User"
-            );
-
-          const limitedUsers = users.slice(0, 3); // Get the first 3 users
-
-          const remainingUsersCount = Math.max(0, users.length - 3); // Calculate the remaining users count
-
-          return `${limitedUsers.join(", ")}${
-            remainingUsersCount > 0 ? `, +${remainingUsersCount} others` : ""
-          }`;
-        }
         return chat.name;
       }
     }

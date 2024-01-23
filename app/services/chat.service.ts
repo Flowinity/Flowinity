@@ -32,6 +32,8 @@ import emojiData from "@app/lib/emoji.json"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import { EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
 import { ReadReceipt } from "@app/classes/graphql/chat/readReceiptSubscription"
+import { Platform, PlatformType } from "@app/classes/graphql/user/platforms"
+import redisClient from "@app/redis"
 
 class MessageIncludes {
   constructor() {
@@ -281,26 +283,57 @@ export class ChatService {
     return permissions
   }
 
-  async emitToFCMs(message: Message, chat: Chat) {
+  async emitToFCMs(
+    message: Message | undefined = undefined,
+    chat: Chat,
+    type: "message" | "read" = "message",
+    individualAssociation?: ChatAssociation
+  ) {
     if (!config.providers.google) return
-    for (const user of chat.users) {
-      const key = await redis.get(`user:${user.userId}:notificationKey`)
+    for (const user of individualAssociation
+      ? [individualAssociation]
+      : chat.users) {
+      console.log(`Sending ${type} notification to ${user.userId}`)
+      const key = await redisClient.get(`user:${user.userId}:notificationKey`)
       if (!key) continue
+
+      const devices = (await redisClient.json.get(
+        `user:${user.userId}:platforms`
+      )) as unknown as Platform[] | undefined
+
+      if (
+        devices?.find(
+          (device) =>
+            device.platform === PlatformType.WEB ||
+            device.platform === PlatformType.DESKTOP
+        ) &&
+        type === "message"
+      )
+        continue
+
       await axios
         .post(
           `https://fcm.googleapis.com/fcm/send`,
           {
             to: key,
-            data: {
-              content: message.content,
-              id: message.id,
-              associationId: user.id,
-              userId: message.userId,
-              username: message.user?.username,
-              avatar: message.user?.avatar,
-              chatName: chat.name,
-              createdAt: message.createdAt
-            }
+            data:
+              type === "message" && message
+                ? {
+                    content: "Please update your version of the Flowinity app.",
+                    id: message.id,
+                    associationId: user.id,
+                    userId: message.userId,
+                    username: message.user?.username || "Unknown",
+                    avatar: message?.user?.avatar || null,
+                    chatName: chat.name,
+                    createdAt: message.createdAt,
+                    type
+                  }
+                : {
+                    content: "Please update your version of the Flowinity app.",
+                    associationId: user.id,
+                    type
+                  }
           },
           {
             headers: {
@@ -1144,6 +1177,7 @@ export class ChatService {
           false,
           5
         )
+        this.emitToFCMs(undefined, chat, "read", association)
       }
     } catch (e) {
       console.log(e)

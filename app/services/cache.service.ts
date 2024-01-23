@@ -15,6 +15,7 @@ import { Message } from "@app/models/message.model"
 import cron from "node-cron"
 import { generateClientSatisfies } from "@app/lib/clientSatisfies"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { UserResolver } from "@app/controllers/graphql/user.resolver"
 
 @Service()
 export class CacheService {
@@ -472,6 +473,38 @@ export class CacheService {
         `[REDIS] Individual collection cache generated in ${end - start}ms`
       )
     } catch {}
+  }
+
+  async generateUserCache(id?: number) {
+    async function generate(id: number) {
+      console.log("[REDIS] Generating user cache for user", id)
+      const user = await User.findOne({
+        where: {
+          id
+        },
+        attributes: [
+          ...partialUserBase,
+          "itemsPerPage",
+          "status",
+          "storedStatus",
+          "emailVerified",
+          "pulse",
+          "banned"
+        ]
+      })
+
+      redis.json.set(`user:${id}`, "$", user?.toJSON())
+    }
+    if (id) {
+      return await generate(id)
+    } else {
+      const users = await User.findAll({
+        attributes: ["id"]
+      })
+      for (const user of users) {
+        await generate(user.id)
+      }
+    }
   }
 
   cacheInit() {

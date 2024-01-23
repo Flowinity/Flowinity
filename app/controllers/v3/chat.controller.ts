@@ -364,4 +364,24 @@ export class ChatControllerV3 {
       body.attachments
     )
   }
+
+  // Flowinity Kotlin
+  // This is used to ensure that the direct message content isn't streamed to Google
+  @Get("/messages/:messageId")
+  async getMessage(
+    @Auth("chats.view") user: User,
+    @Param("messageId") messageId: number
+  ) {
+    const message = await Message.findOne({
+      where: {
+        id: messageId
+      }
+    })
+
+    if (!message) throw Errors.MESSAGE_NOT_FOUND
+
+    await this.chatService.getChat(message.chatId, user.id)
+
+    return message
+  }
 }

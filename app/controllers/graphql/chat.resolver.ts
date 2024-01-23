@@ -41,6 +41,7 @@ import { ChatPermissionAssociation } from "@app/models/chatPermissionAssociation
 import { Success } from "@app/classes/graphql/generic/success"
 import { ChatInvite } from "@app/models/chatInvite.model"
 import { ChatTypingEvent } from "@app/classes/graphql/chat/events/typing"
+import redisClient from "@app/redis"
 
 @Resolver(Chat)
 @Service()
@@ -362,6 +363,49 @@ export class ChatResolver {
   @FieldResolver(() => [Message])
   async messages() {
     return []
+  }
+
+  @FieldResolver(() => String)
+  async name(@Root() chat: Chat, @Ctx() ctx: Context) {
+    if (chat.name === "Unnamed Group") {
+      const users = chat.users || (await chat.$get("users"))
+
+      async function getUsername(id: number) {
+        if (!ctx.meta.userCache) ctx.meta.userCache = {}
+        if (ctx.meta.userCache[id]) return ctx.meta.userCache[id]
+        const user = (await redisClient.json.get(`user:${id}`)) as User | null
+        if (user) {
+          ctx.meta.userCache[id] = user.username
+          return user.username
+        } else {
+          return "Deleted User"
+        }
+      }
+
+      const mappedUsersPromises = users
+        .filter((user) => user.userId !== ctx.user?.id)
+        .map((user) => getUsername(user.userId))
+
+      const mappedUsers = await Promise.all(mappedUsersPromises)
+
+      const limitedUsers = mappedUsers.slice(0, 3)
+
+      const remainingUsersCount = Math.max(0, mappedUsers.length - 3)
+
+      return `${limitedUsers.join(", ")}${
+        remainingUsersCount > 0 ? `, +${remainingUsersCount} others` : ""
+      }`
+    }
+
+    return chat.name
+  }
+
+  @FieldResolver(() => Int)
+  usersCount(@Root() chat: Chat) {
+    if (!chat.users) {
+      return ChatAssociation.count({ where: { chatId: chat.id } })
+    }
+    return chat.users.length
   }
 
   @RateLimit({

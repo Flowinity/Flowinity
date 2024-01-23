@@ -10,5 +10,6 @@ export enum CacheType {
   "userstats",
   "lastfm",
   "mal",
-  "trackedUsers"
+  "trackedUsers",
+  "users"
 }

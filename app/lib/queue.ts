@@ -8,6 +8,7 @@ import utils from "@app/lib/utils"
 
 // Import Services
 import { CacheService } from "@app/services/cache.service"
+import { ChatService } from "@app/services/chat.service"
 
 const config = JSON.parse(process.env.CONFIG || "{}")
 const cpuCount: number = os.cpus().length
@@ -15,6 +16,7 @@ const mainWorker: boolean =
   !cluster.worker || cluster.worker?.id % cpuCount === 1
 
 const cacheService: CacheService = Container.get(CacheService)
+const chatService: ChatService = Container.get(ChatService)
 const connection: {
   port: number
   host: string
@@ -51,6 +53,7 @@ const cacheQueue: Queue = new Queue("queue:cache", {
     }
   }
 })
+
 let worker, cacheWorker
 // Register the worker for only the main thread to avoid the function running multiple times
 if (mainWorker) {
@@ -79,6 +82,7 @@ if (mainWorker) {
       connection
     }
   )
+
   worker.on("completed", (job): void => {
     console.log(`Job ${job.id} completed!`)
   })

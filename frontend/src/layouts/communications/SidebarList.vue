@@ -156,10 +156,10 @@
       :key="chat.id"
       :subtitle="
         chat.type === 'group'
-          ? `${chat.users?.length} members`
+          ? `${chat.usersCount} members`
           : !chat.recipient?.id
-          ? 'Legacy User'
-          : ''
+            ? 'Legacy User'
+            : ''
       "
       :to="`/communications/${chat.association.id}`"
       :class="{

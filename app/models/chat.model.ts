@@ -148,4 +148,7 @@ export class Chat extends Model {
   })
   @HasMany(() => ChatEmoji, "chatId")
   emoji: ChatEmoji
+
+  @Field(() => Int)
+  usersCount: number
 }

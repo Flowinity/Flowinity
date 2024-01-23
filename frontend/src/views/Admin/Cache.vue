@@ -97,6 +97,10 @@ export default defineComponent({
         {
           id: 11,
           name: "Tracked Users*"
+        },
+        {
+          id: 12,
+          name: "Users*"
         }
       ]
     };
