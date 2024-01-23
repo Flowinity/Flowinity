@@ -2,12 +2,12 @@
   <container>
     <div class="flex text-2xl justify-between mb-4">
       <p>
-        Welcome back,
-        <strong>{{ userStore.user?.username }}.</strong>
+        {{ t("home.welcomeBack") }},
+        <strong>{{ userStore.user?.username }}!</strong>
       </p>
       <div class="gap-2 flex">
         <tpu-button
-          v-tooltip.top="t('home.locked')"
+          v-tooltip.top="locked ? t('home.actions.unlockGrid') : t('home.actions.lockGrid')"
           icon
           @click="locked = !locked"
         >
@@ -18,7 +18,7 @@
             class="text-red-500"
           />
         </tpu-button>
-        <tpu-button v-tooltip.top="t('generic.reset')" icon>
+        <tpu-button v-tooltip.top="t('home.actions.resetGrid')" icon>
           <ri-refresh-line style="width: 20px" />
         </tpu-button>
       </div>

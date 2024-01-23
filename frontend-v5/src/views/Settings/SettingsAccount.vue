@@ -50,12 +50,12 @@
       </tpu-expansion-panel>
       <tpu-expansion-panel>
         <template #header>
-          {{ t("settings.account.email.title") }}
+          {{ t("settings.account.emailAddress.title") }}
         </template>
         <div>
           <text-field
             v-model="password.attrs.email"
-            :label="t('settings.account.email.newEmail')"
+            :label="t('settings.account.emailAddress.newEmailAddress')"
           />
           <danger-zone-input
             v-model:password-mode="email.passwordMode"
@@ -77,7 +77,7 @@
 
       <tpu-slider
         v-model="userStore.user!.itemsPerPage"
-        :label="t('settings.preferences.itemsPerPage')"
+        :label="t('settings.preferences.itemsPerPage.title')"
         :step="12"
         :min="12"
         :max="72"
@@ -86,13 +86,13 @@
       <tpu-select
         v-model="userStore.user!.weatherUnit"
         :items="tempOptions"
-        :label="t('settings.preferences.weatherUnit')"
+        :label="t('settings.preferences.temperatureUnit.title')"
         @update:model-value="userStore.updateUser()"
       />
       <tpu-select
         v-model="userStore.user!.language"
         :items="languages"
-        :label="t('settings.preferences.language')"
+        :label="t('settings.preferences.language.title')"
         @update:model-value="userStore.updateUser()"
       />
     </div>
@@ -143,21 +143,21 @@ const { t } = useI18n();
 const tempOptions = [
   {
     id: "celsius",
-    name: t("settings.preferences.temp.celsius")
+    name: t("settings.preferences.temperatureUnit.options.celsius")
   },
   {
     id: "fahrenheit",
-    name: t("settings.preferences.temp.fahrenheit")
+    name: t("settings.preferences.temperatureUnit.options.fahrenheit")
   },
   {
     id: "kelvin",
-    name: t("settings.preferences.temp.kelvin")
+    name: t("settings.preferences.temperatureUnit.options.kelvin")
   }
 ];
 const languages = [
   {
     id: "en",
-    name: t("settings.preferences.languages.en")
+    name: t("settings.preferences.language.options.en")
   }
 ];
 const toast = useToast();
@@ -179,7 +179,7 @@ async function changeEmail() {
 
 async function changePassword() {
   if (password.value.attrs.password !== password.value.attrs.confirmPassword) {
-    return toast.error("Password doesn't match.");
+    return toast.error(t("dangerZone.passwordMismatch"));
   }
   await useApolloClient().client.mutate({
     mutation: ChangeUserPasswordMutation,
@@ -204,7 +204,7 @@ async function changeUsername() {
       }
     }
   });
-  toast.success("Your username has been updated!");
+  toast.success(t("settings.account.username.success"));
 }
 </script>
 

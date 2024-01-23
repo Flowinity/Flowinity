@@ -5,8 +5,8 @@
         v-if="userStore.updatingUser || checkbox"
         v-tooltip.bottom="
           userStore.updatingUser
-            ? t('settings.actionBar.saving')
-            : t('settings.actionBar.saved')
+            ? `${t('settings.actionBar.saving')}...`
+            : `${t('settings.actionBar.saved')}!`
         "
       >
         <tpu-button :disabled="true" icon variant="passive">

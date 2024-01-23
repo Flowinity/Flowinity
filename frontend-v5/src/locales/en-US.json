@@ -25,7 +25,8 @@
     "accept": "Accept",
     "reject": "Reject",
     "deny": "Deny",
-    "new": "New"
+    "new": "New",
+    "loading": "Loading"
   },
   "dangerZone": {
     "usePassword": "Use password instead",
@@ -34,7 +35,48 @@
     "totp": "2FA code",
     "totpRequired": "2FA code is required",
     "passwordRequired": "Password is required",
-    "passwordMismatch": "Password does not match the confirmation password"
+    "passwordMismatch": "Password and confirmation password don't match"
+  },
+  "railbar": {
+    "actions": {
+      "removeModule": "Remove Module from Railbar"
+    }
+  },
+  "home": {
+    "welcomeBack": "Welcome back",
+    "widgets": {
+      "atAGlance": {
+        "title": "At a Glance",
+        "weather": {
+          "temperatureUnits": {
+            "celsius": "C",
+            "fahrenheit": "F",
+            "kelvin": "K",
+            "unknown": "?"
+          }
+        },
+        "todo": {
+          "title": "To-Do"
+        }
+      },
+      "announcements": {
+        "title": "Announcements"
+      },
+      "statistics": {
+        "title": "Flowinity Statistics",
+        "categories": {
+          "uploads": "Uploads",
+          "users": "Users",
+          "messages": "Messages",
+          "timeSpent": "Time Spent"
+        }
+      }
+    },
+    "actions": {
+      "lockGrid": "Lock Grid",
+      "unlockGrid": "Unlock Grid",
+      "resetGrid": "Reset Grid"
+    }
   },
   "gallery": {
     "addToCollection": "Add to Collection",
@@ -168,37 +210,46 @@
       }
     },
     "actionBar": {
-      "saving": "Saving...",
-      "saved": "Saved!"
+      "saving": "Saving",
+      "saved": "Saved"
     },
     "account": {
       "title": "My Flowinity",
       "username": {
         "title": "Change Username",
-        "newUsername": "New username"
+        "newUsername": "New username",
+        "success": "Your username has been updated!"
       },
       "password": {
         "title": "Change Password",
         "newPassword": "New password",
-        "confirmNewPassword": "Confirm new password"
+        "confirmNewPassword": "Confirm new password",
+        "success": "Your password has been updated!"
       },
-      "email": {
-        "title": "Change Email",
-        "newEmail": "New email"
+      "emailAddress": {
+        "title": "Change Email Address",
+        "newEmailAddress": "New Email Address",
+        "success": "Your email address has been updated!"
       }
     },
     "preferences": {
       "title": "Preferences",
-      "itemsPerPage": "Items per page",
-      "language": "Language",
-      "weatherUnit": "Weather unit",
-      "languages": {
-        "en": "English (United States)"
+      "itemsPerPage": {
+        "title": "# of items per page"
       },
-      "temp": {
-        "celsius": "Celsius",
-        "fahrenheit": "Fahrenheit",
-        "kelvin": "Kelvin"
+      "language": {
+        "title": "Language",
+        "options": {
+          "en": "English (United States)"
+        }
+      },
+      "temperatureUnit": {
+        "title": "Temperature Unit",
+        "options": {
+          "celsius": "Celsius",
+          "fahrenheit": "Fahrenheit",
+          "kelvin": "Kelvin"
+        }
       }
     },
     "setup": {
@@ -226,27 +277,69 @@
     },
     "privacy": {
       "title": "Privacy",
-      "usageInformation": "Send usage information to Flowinity",
-      "usageInformationDesc": "By turning this off, you are disabling \"Pulse\" functionality. This is used for tracking how much time you spend on Flowinity, and what features you use to generate your Insights. Some information may still be stored by Flowinity as outlined in the Privacy Policy.",
-      "publicProfile": "Public Profile",
-      "publicProfileDesc": "Your profile can be viewed by anyone, including people who aren't logged into Flowinity.",
-      "discordPrecache": "Discord Precaching",
-      "discordPrecacheDesc": "Discord Precaching has now been replaced with Flowinity Webhooks!\nThe previous Discord Precaching feature sent your newly created uploads in a Discord channel to allow Discord to cache the embed on upload.",
-      "options": {
-        "everyone": "Everyone",
-        "friends": "Friends only",
-        "nobody": "Only myself"
+      "usageInformation": {
+        "title": "Send usage information to Flowinity",
+        "description": "By turning this off, you are disabling 'Pulse' functionality. This is used for tracking how much time you spend on Flowinity, and what features you use to generate your Insights. Some information may still be stored by Flowinity as outlined in the Privacy Policy."
       },
-      "insightsPrivacy": "Who can see your Insights",
-      "groupPrivacy": "Who can add you to a group",
-      "friendPrivacy": "Who can add you as a friend"
+      "publicProfile": {
+        "title": "Public Profile",
+        "description": "Your profile can be viewed by anyone, including people who aren't logged into Flowinity."
+      },
+      "discordPrecache": {
+        "title": "Discord Precaching",
+        "description": "Discord Precaching has now been replaced with Flowinity Webhooks! The previous Discord Precaching feature sent your newly created uploads in a Discord channel to allow Discord to cache the embed on upload."
+      },
+      "insightsPrivacy": {
+        "title": "Who can see your Flowinity Insights",
+        "options": {
+          "everyone": "Everyone",
+          "friends": "Friends only",
+          "nobody": "Only myself"
+        }
+      },
+      "groupPrivacy": {
+        "title": "Who can add you to a Flowinity Communications group",
+        "options": {
+          "everyone": "Everyone",
+          "friends": "Friends only",
+          "nobody": "Only myself"
+        }
+      },
+      "friendRequestPrivacy": {
+        "title": "Who can send you a friend request",
+        "options": {
+          "everyone": "Everyone",
+          "friends": "Friends only",
+          "nobody": "Only myself"
+        }
+      }
     },
     "security": {
       "apiKeys": {
-        "title": "API Keys"
+        "title": "API Keys",
+        "table": {
+          "name": "Name",
+          "scopes": "Scopes",
+          "expiry": "Expiry",
+          "createdAt": "Created at",
+          "actions": "Actions"
+        },
+        "actions": {
+          "newAPIKey": "New API Key"
+        }
       },
       "sessions": {
-        "title": "Sessions"
+        "title": "Sessions",
+        "session": {
+          "unknownLocation": "Unknown location",
+          "unknownIPAddress": "Unknown IP address",
+          "unknownISP": "Unknown ISP",
+          "unknownLastAccessedDate": "Unknown last accessed date",
+          "unknownCreationDate": "Unknown creation date",
+          "accessedWithNumberOfIPAddresses": "Accessed with {count} IP addresses.",
+          "created": "Created",
+          "lastAccessed": "Last accessed"
+        }
       }
     },
     "domains": {
@@ -260,6 +353,13 @@
         "apply": "Apply",
         "applied": "Applied"
       }
+    },
+    "about": {
+      "productName": "Product name",
+      "version": "Version",
+      "buildDate": "Build date",
+      "relativeBuildDate": "Relative build date",
+      "server": "Server"
     }
   },
   "sidebar": {

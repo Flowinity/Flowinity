@@ -5,7 +5,7 @@
         <strong>{{ t("settings.security.apiKeys.title") }}</strong>
         <tpu-button icon variant="outlined" class="gap-1">
           <RiAddLine style="width: 20px" />
-          New API Key
+          {{ t("settings.security.apiKeys.actions.newAPIKey") }}
         </tpu-button>
       </div>
       <tpu-data-table
@@ -39,24 +39,21 @@
           <div>
             <strong>
               {{
-                session.info?.accessedFrom?.[0]?.location || "Unknown Location"
+                session.info?.accessedFrom?.[0]?.location || t("settings.security.sessions.session.unknownLocation")
               }}
             </strong>
             <p class="text-medium-emphasis-dark">
-              {{ session.info?.accessedFrom?.[0]?.ip || "Unknown" }} -
-              {{ session.info?.accessedFrom?.[0]?.isp || "Unknown" }}
+              {{ session.info?.accessedFrom?.[0]?.ip || t("settings.security.sessions.session.unknownIPAddress") }} -
+              {{ session.info?.accessedFrom?.[0]?.isp || t("settings.security.sessions.session.unknownISP") }}
             </p>
             <p class="text-medium-emphasis-dark">
-              Last accessed:
-              {{ dayjs(session.updatedAt).fromNow() || "Unknown" }}
+              {{ t("settings.security.sessions.session.lastAccessed") }}: {{ dayjs(session.updatedAt).fromNow() || t("settings.security.sessions.session.unknownLastAccessedDate") }}
             </p>
             <p class="text-medium-emphasis-dark">
-              Created:
-              {{ dayjs(session.createdAt).fromNow() || "Unknown" }}
+              {{ t("settings.security.sessions.session.created") }}: {{ dayjs(session.createdAt).fromNow() || t("settings.security.sessions.session.unknownCreationDate") }}
             </p>
             <p class="text-medium-emphasis-dark">
-              Accessed with {{ session?.info?.accessedFrom?.length || 0 }} IP
-              addresses.
+              {{ t("settings.security.sessions.session.accessedWithNumberOfIPAddresses", session?.info?.accessedFrom?.length || 0) }}
             </p>
           </div>
           <div>
@@ -98,23 +95,23 @@ const headers = {
   api: [
     {
       id: "name",
-      name: "Name"
+      name: t("settings.security.apiKeys.table.name")
     },
     {
       id: "scopes",
-      name: "Scopes"
+      name: t("settings.security.apiKeys.table.scopes")
     },
     {
       id: "expiry",
-      name: "Expiry"
+      name: t("settings.security.apiKeys.table.expiry")
     },
     {
       id: "createdAt",
-      name: "Created"
+      name: t("settings.security.apiKeys.table.createdAt")
     },
     {
       id: "actions",
-      name: "Actions"
+      name: t("settings.security.apiKeys.table.actions")
     }
   ]
 };

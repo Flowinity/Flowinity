@@ -79,7 +79,7 @@ watch(
             <tpu-list-item class="p-3 text-red fill-red">
               <div class="flex">
                 <ri-close-line style="width: 20px" />
-                {{ $t("sidebar.remove") }}
+                {{ $t("railbar.actions.removeModule") }}
               </div>
             </tpu-list-item>
           </tpu-list>

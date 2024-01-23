@@ -12,7 +12,6 @@
     </div>
     <div class="panel center-panel" ref="centerPanel">
       <app-bar />
-      {{ style }}
       <router-view />
     </div>
     <div

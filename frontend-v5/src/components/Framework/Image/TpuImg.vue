@@ -39,6 +39,7 @@
       v-bind="$attrs"
       @load="onImageLoad"
       @error="onImageError"
+      draggable="false"
     />
     <slot />
   </div>
