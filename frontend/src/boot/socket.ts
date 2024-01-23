@@ -228,6 +228,7 @@ export default async function setup(app) {
   sockets.chat.on("addChatUsers", (data: any) => {
     const index = chat.chats.findIndex((c) => c.id === data.chatId);
     if (index === -1) return;
+    if (!chat.chats[index].users) return;
     for (const user of data.users) {
       if (chat.chats[index].users.find((u) => u.userId === user.id)) return;
       chat.chats[index].users.push(...data.users);
@@ -240,6 +241,7 @@ export default async function setup(app) {
       (u) => u.id === data.id
     );
     if (userIndex === -1) return;
+    if (!chat.chats[index].users) return;
     chat.chats[index].users.splice(userIndex, 1);
   });
   sockets.chat.on("removeChat", (data: any) => {
@@ -313,6 +315,7 @@ export default async function setup(app) {
       return chat.id === data.chatId;
     });
     if (index === -1) return;
+    if (!chat.chats[index].users) return;
     const userAssociation = chat.chats[index].users.find(
       (assoc) => assoc.id === data.updatingChatAssociationId
     );
@@ -326,6 +329,7 @@ export default async function setup(app) {
       return chat.id === data.chatId;
     });
     if (index === -1) return;
+    if (!chat.chats[index].users) return;
     const assocIndex = chat.chats[index].users.findIndex(
       (assoc) => assoc.id === data.updatingChatAssociationId
     );
@@ -366,6 +370,7 @@ export default async function setup(app) {
   );
   sockets.chat.on("rankUpdated", (data: ChatRank) => {
     const localChat = chat.chats.find((chat) => chat.id === data.chatId);
+    if (!localChat.ranks) return;
     const rankIndex = localChat.ranks.findIndex((rank) => rank.id === data.id);
     if (rankIndex === -1) {
       localChat.ranks.push(data);
@@ -381,6 +386,7 @@ export default async function setup(app) {
     "rankOrderUpdated",
     (data: { chatId: number; ranks: Partial<ChatRank>[] }) => {
       const localChat = chat.chats.find((chat) => chat.id === data.chatId);
+      if (!localChat.ranks) return;
       localChat.ranks = localChat.ranks.map((rank) => {
         return {
           ...rank,
@@ -482,7 +488,7 @@ export default async function setup(app) {
   });
   sockets.chat.on("rankDeleted", (data: { id: string; chatId: number }) => {
     const targetedChat = chat.chats.find((chat) => chat.id === data.chatId);
-    if (!targetedChat) return;
+    if (!targetedChat || !targetedChat.users) return;
     for (const user of targetedChat.users) {
       if (user.ranksMap)
         user.ranksMap = user.ranksMap.filter((rank) => rank !== data.id);

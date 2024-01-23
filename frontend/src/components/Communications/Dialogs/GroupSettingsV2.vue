@@ -44,6 +44,14 @@
         </v-btn>
       </v-toolbar>
     </template>
+    <v-overlay
+      absolute
+      class="align-center justify-center"
+      :model-value="!$chat.editingChat.users"
+      persistent
+    >
+      <v-progress-circular indeterminate size="64" />
+    </v-overlay>
     <UploadCropper
       v-model="groupIcon"
       type="chatIcon"
@@ -52,7 +60,7 @@
       @remove="removeIcon"
     />
     <div
-      v-if="$chat.editingChat"
+      v-if="$chat.editingChat && $chat.editingChat.users"
       class="d-flex mt-n4"
       :class="{ 'flex-column': $vuetify.display.mobile }"
     >
@@ -210,6 +218,13 @@ export default defineComponent({
         await this.axios.delete(
           `/chats/${this.$chat.editingChat.association?.id}/icon`
         );
+      }
+    }
+  },
+  watch: {
+    modelValue(val) {
+      if (val) {
+        this.$chat.loadChatUsers(this.$chat.editingChat?.association?.id);
       }
     }
   }

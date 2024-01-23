@@ -546,28 +546,35 @@ export const useChatStore = defineStore("chat", {
         this.loading = false;
         return;
       }
-      if (!this.selectedChat.users) {
+      await this.loadChatUsers(id);
+      this.loading = false;
+      this.isReady = id;
+      appStore.title = this.chatName(this.selectedChat);
+      this.readChat();
+    },
+    async loadChatUsers(associationId: number) {
+      const index = this.chats.findIndex(
+        (chat: Chat) => chat.association.id === associationId
+      );
+      if (index === -1) return;
+      if (!this.chats[index]?.users) {
         const {
           data: { chat: chatData }
         } = await useApolloClient().client.query({
           query: ChatQuery,
           variables: {
             input: {
-              associationId: id
+              associationId
             }
           }
         });
         this.chats[index] = {
           ...(this.chats.find(
-            (chat: Chat) => chat.association.id === id
+            (chat: Chat) => chat.association.id === associationId
           ) as Chat),
           ...chatData
         };
       }
-      this.loading = false;
-      this.isReady = id;
-      appStore.title = this.chatName(this.selectedChat);
-      this.readChat();
     },
     async loadHistory(
       $state?: StateHandler,
