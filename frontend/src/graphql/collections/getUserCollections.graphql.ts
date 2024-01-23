@@ -5,6 +5,11 @@ export const UserLightCollectionsQuery = gql`
     collections(input: $input) {
       items {
         id
+        permissionsMetadata {
+          write
+          read
+          configure
+        }
         name
       }
     }

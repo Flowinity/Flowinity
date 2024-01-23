@@ -13,7 +13,6 @@ import { useExperimentsStore } from "@/store/experiments.store";
 import i18nObject, { i18n } from "@/plugins/i18n";
 import { useRoute } from "vue-router";
 import { SidebarItem } from "@/types/sidebar";
-import { CoreStateQuery } from "@/graphql/core/state.graphql";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
 import { Chat, CoreState, Upload } from "@/gql/graphql";
 import { useFriendsStore } from "@/store/friends.store";
@@ -22,6 +21,7 @@ import { useApolloClient } from "@vue/apollo-composable";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import { h } from "vue";
 import experiments from "@/components/Dev/Dialogs/Experiments.vue";
+import { CoreStateQuery } from "@/graphql/core/stateOnly.graphql";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
@@ -583,7 +583,6 @@ export const useAppStore = defineStore("app", {
       this.$app.$socket.on("connect", () => {
         this.connected = true;
       });
-      useWorkspacesStore().init();
       const user = useUserStore();
       setInterval(
         () => {
@@ -665,18 +664,7 @@ export const useAppStore = defineStore("app", {
         };
       }
       const {
-        data: {
-          coreState,
-          experiments,
-          currentUser,
-          collections,
-          chats,
-          workspaces,
-          friends,
-          trackedUsers,
-          blockedUsers,
-          userEmoji
-        }
+        data: { coreState, experiments }
       } = await useApolloClient().client.query({
         query: CoreStateQuery,
         fetchPolicy: "no-cache"
@@ -685,26 +673,26 @@ export const useAppStore = defineStore("app", {
       const userStore = useUserStore();
       userStore.defaultVuetify = vuetify.theme.themes;
       //userStore.applyTheme();
-      userStore.user = currentUser;
-      userStore.tracked = trackedUsers;
-      userStore.blocked = blockedUsers;
-      if (collections) {
-        collectionsStore.persistent = collections.items;
-      }
-      chatStore.emoji = userEmoji;
-      chatStore.chats = chats
-        .map((chat) => {
-          return {
-            ...chat,
-            messages: chatStore.chats.find((c) => c.id === chat.id)?.messages
-          };
-        })
-        .sort((a: Chat, b: Chat) => {
-          return (
-            Number(b._redisSortDate) - Number(a._redisSortDate) ||
-            Number(b.id) - Number(a.id)
-          );
-        });
+      // userStore.user = currentUser;
+      // userStore.tracked = trackedUsers;
+      // userStore.blocked = blockedUsers;
+      // if (collections) {
+      //   collectionsStore.persistent = collections.items;
+      // }
+      // chatStore.emoji = userEmoji;
+      // chatStore.chats = chats
+      //   .map((chat) => {
+      //     return {
+      //       ...chat,
+      //       messages: chatStore.chats.find((c) => c.id === chat.id)?.messages
+      //     };
+      //   })
+      //   .sort((a: Chat, b: Chat) => {
+      //     return (
+      //       Number(b._redisSortDate) - Number(a._redisSortDate) ||
+      //       Number(b.id) - Number(a.id)
+      //     );
+      //   });
       this.loading = false;
       const experimentsStore = useExperimentsStore();
       for (const experiment of experiments) {
@@ -715,17 +703,17 @@ export const useAppStore = defineStore("app", {
       } else {
         document.body.classList.remove("rainbow");
       }
-      useWorkspacesStore().items = workspaces;
-      useFriendsStore().friends = friends;
       if (experimentsStore.experiments.WEBMAIL) useMailStore().init();
       this.experimentsInherit = experimentsStore.experiments;
       this.domain = "https://" + this.site.domain + "/i/";
       localStorage.setItem("coreStore", JSON.stringify(coreState));
       localStorage.setItem("experimentsStore", JSON.stringify(experiments));
-      localStorage.setItem("userStore", JSON.stringify(currentUser));
-      localStorage.setItem("chatStore", JSON.stringify(chats));
-      localStorage.setItem("trackedUsersStore", JSON.stringify(trackedUsers));
+      await useUserStore().init();
       this.postInit();
+      useChatStore().init();
+      useCollectionsStore().init();
+      useWorkspacesStore().init();
+      useFriendsStore().init();
     },
     async refresh() {
       const {

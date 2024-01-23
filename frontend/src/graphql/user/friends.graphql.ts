@@ -17,5 +17,28 @@ export const FriendsQuery = gql`
         status
       }
     }
+    trackedUsers {
+      username
+      id
+      createdAt
+      administrator
+      moderator
+      avatar
+      blocked
+      status
+      nameColor
+      bot
+      nickname {
+        nickname
+      }
+    }
+    blockedUsers {
+      id
+      userId
+      createdAt
+      updatedAt
+      blockedUserId
+      silent
+    }
   }
 `;

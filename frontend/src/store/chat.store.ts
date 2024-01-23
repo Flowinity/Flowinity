@@ -42,6 +42,7 @@ import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
 import { Typing } from "@/models/chat";
 import { nextTick } from "vue";
 import { useApolloClient } from "@vue/apollo-composable";
+import { ChatsQuery } from "@/graphql/chats/chats.graphql";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -606,7 +607,7 @@ export const useChatStore = defineStore("chat", {
         }
       }
       this.loadingNew = false;
-    } /*
+    },
     async getChats() {
       try {
         const chats = localStorage.getItem("chatStore");
@@ -622,21 +623,25 @@ export const useChatStore = defineStore("chat", {
         //
       }
       const {
-        data: { chats }
+        data: { chats, userEmoji }
       } = await useApolloClient().client.query({
-        query: ChatsQuery
+        query: ChatsQuery,
+        fetchPolicy: "network-only"
       });
       this.chats = chats
-        .map((chat: Chat, index: number) => ({
-          ...chat,
-          messages: this.chats[index]?.messages || null
-        }))
+        .map((chat) => {
+          return {
+            ...chat,
+            messages: this.chats.find((c) => c.id === chat.id)?.messages
+          };
+        })
         .sort((a: Chat, b: Chat) => {
           return (
             Number(b._redisSortDate) - Number(a._redisSortDate) ||
             Number(b.id) - Number(a.id)
           );
         });
+      this.emoji = userEmoji;
       localStorage.setItem(
         "chatStore",
         JSON.stringify(
@@ -646,7 +651,7 @@ export const useChatStore = defineStore("chat", {
           })
         )
       );
-    },*/,
+    },
     async init() {
       try {
         const chats = localStorage.getItem("chatStore");
@@ -685,6 +690,7 @@ export const useChatStore = defineStore("chat", {
       } catch {
         //
       }
+      this.getChats();
     },
     chatName(chat: Chat) {
       if (!chat) return "Communications";

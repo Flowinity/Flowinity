@@ -9,6 +9,7 @@ import { isNumeric } from "@/plugins/isNumeric";
 import { SaveNoteMutation } from "@/graphql/workspaces/saveNote.graphql";
 import { SaveNoteInput, WorkspaceNote } from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
+import { WorkspacesQuery } from "@/graphql/workspaces/workspaces.graphql";
 
 export interface WorkspacesState {
   items: Workspace[];
@@ -59,12 +60,13 @@ export const useWorkspacesStore = defineStore("workspaces", {
       return data;
     },
     async getWorkspaces() {
-      const { data } = await axios.get("/notes/workspaces", {
-        headers: {
-          noToast: true
-        }
+      const {
+        data: { workspaces }
+      } = await useApolloClient().client.query({
+        query: WorkspacesQuery,
+        fetchPolicy: "network-only"
       });
-      this.items = data;
+      this.items = workspaces;
     },
     selectWorkspace(id: number) {
       const workspace = this.items.find((w) => w.id === id);
@@ -82,6 +84,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
       await this.selectWorkspace(<number>this.workspace?.id);
     },
     async init() {
+      await this.getWorkspaces();
       const selectedWorkspace = localStorage.getItem("selectedWorkspace");
       if (selectedWorkspace) {
         this.selectWorkspace(JSON.parse(selectedWorkspace).id);

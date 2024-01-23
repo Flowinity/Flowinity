@@ -4,8 +4,8 @@ export default {
       (value: string) => {
         if (!value) return "Username is required";
         if (value.length < 2) return "Username must be at least 2 characters";
-        if (value.length > 16)
-          return "Username must be less than 16 characters";
+        if (value.length > 32)
+          return "Username must be less than 32 characters";
         if (!/^[a-zA-Z0-9_]+$/.test(value))
           return "Username can only contain letters, numbers, and underscores";
         return true;
