@@ -292,7 +292,9 @@ export const useAppStore = defineStore("app", {
             name: i18n.t("core.sidebar.discord"),
             customIcon: "@/assets/images/discord.svg",
             new: true,
-            scope: ""
+            scope: "",
+            path: "",
+            icon: ""
           }
         );
       }

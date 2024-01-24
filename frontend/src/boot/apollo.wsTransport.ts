@@ -36,6 +36,7 @@ const artificialLatency = parseInt(
 export function debugLink() {
   const debugStore = useDebugStore();
 
+  // @ts-ignore
   return new ApolloLink(async (operation, forward) => {
     const id = new Date().getTime() + "-" + Math.random();
     const startTime = performance.now();
