@@ -29,10 +29,14 @@ function getToken(app: App) {
   );
 }
 
+const artificialLatency = parseInt(
+  localStorage.getItem("tpuArtificialLatency") ?? "0"
+);
+
 export function debugLink() {
   const debugStore = useDebugStore();
 
-  return new ApolloLink((operation, forward) => {
+  return new ApolloLink(async (operation, forward) => {
     const id = new Date().getTime() + "-" + Math.random();
     const startTime = performance.now();
     debugStore.recentOperations.unshift({
@@ -47,20 +51,27 @@ export function debugLink() {
       pending: true,
       sdl: operation.query.loc?.source.body
     });
-    return forward(operation).map((response) => {
-      const endTime = performance.now();
-      const elapsedTime = endTime - startTime;
 
-      const op = debugStore.recentOperations.find((op) => op.id === id);
+    if (artificialLatency > 0) {
+      await new Promise((resolve) => {
+        setTimeout(resolve, artificialLatency);
+      });
+    }
 
-      if (op) {
-        op.pending = false;
-        op.result = response;
-        op.time = elapsedTime;
-      }
+    const response = await Promise.resolve(forward(operation));
 
-      return response;
-    });
+    const endTime = performance.now();
+    const elapsedTime = endTime - startTime;
+
+    const op = debugStore.recentOperations.find((op) => op.id === id);
+
+    if (op) {
+      op.pending = false;
+      op.result = response;
+      op.time = elapsedTime;
+    }
+
+    return response;
   });
 }
 
@@ -185,9 +196,7 @@ export default function setup(app: App) {
         omitTypename
       );
     }
-    return forward(operation).map((data) => {
-      return data;
-    });
+    return forward(operation);
   });
 
   const networkInspection =

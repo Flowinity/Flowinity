@@ -152,7 +152,9 @@ export default defineComponent({
     this.$app.workspaceDrawer =
       localStorage.getItem("workspaceDrawer") === "true";
     this.$app.forcedWorkspaceDrawer = false;
-    window.editor.destroy();
+    if (window.editor) {
+      window?.editor?.destroy?.();
+    }
   },
   methods: {
     async upload(file: any) {
@@ -445,7 +447,7 @@ export default defineComponent({
     async onMounted() {
       try {
         if (window.editor) {
-          await window.editor.destroy();
+          await window?.editor?.destroy?.();
         }
         this.fail = false;
         const res = await this.$workspaces.getNote(

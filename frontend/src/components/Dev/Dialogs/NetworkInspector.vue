@@ -20,6 +20,11 @@
         color="primary"
         :disabled="dev"
       ></v-switch>
+      <v-text-field
+        type="number"
+        label="Artificial Latency (ms)"
+        v-model="artificialLatency"
+      />
 
       <div>
         <v-switch
@@ -122,10 +127,18 @@ const networkInspectionEnabled = ref(
   localStorage.getItem("tpuNetworkInspection") === "true" || import.meta.env.DEV
 );
 
+const artificialLatency = ref(
+  parseInt(localStorage.getItem("tpuArtificialLatency") || "0")
+);
+
 const dev = import.meta.env.DEV;
 
 watch(networkInspectionEnabled, (value) => {
   localStorage.setItem("tpuNetworkInspection", value.toString());
+});
+
+watch(artificialLatency, (value) => {
+  localStorage.setItem("tpuArtificialLatency", value.toString());
 });
 
 export type DebugSettings = {

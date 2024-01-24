@@ -263,14 +263,6 @@ export const useAppStore = defineStore("app", {
           experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
         },
         {
-          id: 39,
-          externalPath: "https://discord.gg/4fB6GCR3Qv",
-          name: i18n.t("core.sidebar.discord"),
-          customIcon: "@/assets/images/discord.svg",
-          new: true,
-          scope: ""
-        },
-        {
           id: 38,
           externalPath:
             "https://play.google.com/store/apps/details?id=com.troplo.privateuploader",
@@ -283,20 +275,26 @@ export const useAppStore = defineStore("app", {
         }
       ] as SidebarItem[];
 
-      if (
-        !chat?.chats?.find((chat) => chat.id === 375) &&
-        app.site.officialInstance
-      ) {
-        // insert above the Discord link
-        items.splice(9, 0, {
-          id: 39,
-          path: "/invite/flowinity",
-          name: i18n.t("core.sidebar.communicationsPublic"),
-          icon: h(FlowinityLogo),
-          new: true,
-          scope: "",
-          externalPath: ""
-        });
+      if (state.site.officialInstance) {
+        items.push(
+          {
+            id: 39,
+            path: "/invite/flowinity",
+            name: i18n.t("core.sidebar.communicationsPublic"),
+            icon: h(FlowinityLogo),
+            new: true,
+            scope: "",
+            externalPath: ""
+          },
+          {
+            id: 39,
+            externalPath: "https://discord.gg/4fB6GCR3Qv",
+            name: i18n.t("core.sidebar.discord"),
+            customIcon: "@/assets/images/discord.svg",
+            new: true,
+            scope: ""
+          }
+        );
       }
 
       // Server feature options

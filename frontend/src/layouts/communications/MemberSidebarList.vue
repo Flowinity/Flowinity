@@ -228,7 +228,7 @@
           @click="
             handleJump(
               message.id,
-              $chat.chats.find((chat) => chat.id === message.chatId)
+              $chat.chats?.find((chat) => chat.id === message.chatId)
                 ?.association.id || 0
             )
           "
@@ -245,9 +245,9 @@
   </template>
   <template v-else>
     <MessageSkeleton
-      v-for="i in $chat.selectedChat.usersCount > 30
+      v-for="i in $chat.selectedChat?.usersCount > 30
         ? 30
-        : $chat.selectedChat.usersCount"
+        : $chat.selectedChat?.usersCount || 5"
       :key="i"
       :animate="false"
     />
@@ -404,6 +404,7 @@ export default defineComponent({
       this.contextMenu.dialog = true;
     },
     chatName(chat: Chat) {
+      if (!chat) return "Communications";
       if (chat.type === "direct") {
         return chat.recipient?.username || "Deleted User";
       } else {

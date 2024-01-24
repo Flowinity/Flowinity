@@ -533,13 +533,27 @@ export const useChatStore = defineStore("chat", {
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === id
       );
-      this.chats[index] = {
-        ...(this.chats.find(
-          (chat: Chat) => chat.association.id === id
-        ) as Chat),
-        messages: data,
-        unread: 0
-      };
+      if (index === -1) {
+        this.chats.push({
+          ...(this.chats.find(
+            (chat: Chat) => chat.association.id === id
+          ) as Chat),
+          messages: data,
+          unread: 0,
+          association: {
+            id
+          }
+        });
+      } else {
+        this.chats[index] = {
+          ...(this.chats.find(
+            (chat: Chat) => chat.association.id === id
+          ) as Chat),
+          messages: data,
+          unread: 0
+        };
+      }
+      console.log(this.chats);
       if (chat?.messages?.length) {
         this.readChat();
         this.isReady = id;
@@ -635,19 +649,6 @@ export const useChatStore = defineStore("chat", {
       this.loadingNew = false;
     },
     async getChats() {
-      try {
-        const chats = localStorage.getItem("chatStore");
-        if (chats) {
-          this.chats = JSON.parse(chats).sort((a: Chat, b: Chat) => {
-            return (
-              Number(b._redisSortDate) - Number(a._redisSortDate) ||
-              Number(b.id) - Number(a.id)
-            );
-          });
-        }
-      } catch {
-        //
-      }
       const {
         data: { chats, userEmoji }
       } = await useApolloClient().client.query({
@@ -656,10 +657,9 @@ export const useChatStore = defineStore("chat", {
       });
       this.chats = chats
         .map((chat) => {
-          console.log(this.chats.find((c) => c.id === chat.id)?.messages);
           return {
             ...chat,
-            messages: this.chats.find((c) => c.id === chat.id)?.messages
+            ...this.chats.find((c) => c.id === chat.id)
           };
         })
         .sort((a: Chat, b: Chat) => {
@@ -669,30 +669,8 @@ export const useChatStore = defineStore("chat", {
           );
         });
       this.emoji = userEmoji;
-      localStorage.setItem(
-        "chatStore",
-        JSON.stringify(
-          this.chats.map((chat) => {
-            chat.messages = undefined;
-            return chat;
-          })
-        )
-      );
     },
     async init() {
-      try {
-        const chats = localStorage.getItem("chatStore");
-        if (chats) {
-          this.chats = JSON.parse(chats).sort((a: Chat, b: Chat) => {
-            return (
-              Number(b._redisSortDate) - Number(a._redisSortDate) ||
-              Number(b.id) - Number(a.id)
-            );
-          });
-        }
-      } catch {
-        //
-      }
       try {
         const trustedDomains = localStorage.getItem("trustedDomainsStore");
         if (trustedDomains) {

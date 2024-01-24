@@ -104,9 +104,7 @@ export default function setup(app: App) {
         omitTypename
       );
     }
-    return forward(operation).map((data) => {
-      return data;
-    });
+    return forward(operation);
   });
 
   if (import.meta.env.DEV) {
