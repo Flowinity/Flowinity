@@ -61,8 +61,8 @@
         :lg="!inline ? 4 : 12"
         cols="12"
         md="6"
-        sm="1"
-        xl="3"
+        sm="6"
+        :xl="$app.workspaceDrawer ? 3 : 2"
       >
         <GalleryItem
           :item="item"
