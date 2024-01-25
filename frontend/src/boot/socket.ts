@@ -340,22 +340,25 @@ export default async function setup(app) {
     );
     if (rankIndex !== -1) return;
     chat.chats[index].users[assocIndex].ranksMap.push(data.rankId);
-
+    if (!chat.chats[index].ranks) return;
     const chatRanks = chat.chats[index].ranks;
-    const rankMap = new Map(chatRanks.map((rank) => [rank.id, rank]));
+    const rankMap: Map<string, ChatRank> = new Map(
+      chatRanks.map((rank) => [rank.id, rank])
+    );
 
-    chat.chats[index].users[assocIndex].ranksMap = chat.chats[index].users[
-      assocIndex
-    ].ranksMap.sort((a, b) => {
-      const rankA = rankMap.get(a);
-      const rankB = rankMap.get(b);
+    if (chat.chats[index].users)
+      chat.chats[index].users[assocIndex].ranksMap = chat.chats[index].users[
+        assocIndex
+      ].ranksMap.sort((a, b) => {
+        const rankA = rankMap.get(a);
+        const rankB = rankMap.get(b);
 
-      if (rankA && rankB) {
-        return rankB.index - rankA.index;
-      }
+        if (rankA && rankB) {
+          return rankB.index - rankA.index;
+        }
 
-      return 0;
-    });
+        return 0;
+      });
   });
   sockets.chat.on(
     "syncPermissions",
