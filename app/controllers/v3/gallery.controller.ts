@@ -194,7 +194,6 @@ export class GalleryControllerV3 {
   @Post("/download")
   @UseBefore(rateLimits.downloadZipFileExportLimiter)
   async downloadUploads(
-    @Auth("uploads.view") user: User,
     @Body() body: { items: string[]; shareLink?: string },
     @Res() res: Response
   ) {
