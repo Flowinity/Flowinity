@@ -5,11 +5,16 @@ export const GetUserQuery = gql`
     currentUser {
       username
       email
+      pulse
+      groupPrivacy
+      friendRequests
+      profileLayout
       description
       administrator
       darkTheme
       emailVerified
       banned
+      createdAt
       inviteId
       discordPrecache
       avatar
@@ -20,7 +25,8 @@ export const GetUserQuery = gql`
       subscriptionId
       itemsPerPage
       banner
-      createdAt
+      pendingAutoCollects
+      scopes
       alternatePasswords {
         scopes
         totp
@@ -31,9 +37,6 @@ export const GetUserQuery = gql`
       weatherUnit
       themeEngine
       xp
-      pulse
-      groupPrivacy
-      friendRequests
       publicProfile
       privacyPolicyAccepted
       plan {
@@ -74,13 +77,12 @@ export const GetUserQuery = gql`
         dismissed
         message
         route
+        createdAt
       }
       integrations {
         type
         providerUsername
         providerUserId
-        providerUserCache
-        createdAt
         id
         error
         expiresAt
