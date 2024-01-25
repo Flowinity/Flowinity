@@ -159,25 +159,17 @@ export default defineComponent({
       return import.meta.env.DEV;
     },
     users() {
-      return this.$chat.editingChat.users
-        .filter(
-          (user) =>
-            !user.legacyUserId &&
-            this.$user.users[user.userId]?.username
-              .toLowerCase()
-              .includes(this.search.toLowerCase())
-        )
-        .map((user) => {
-          return {
-            ...user,
-            user: this.$user.users[user.userId],
-            ranks: user.ranksMap.map((rank) => {
-              return this.$chat.editingChat.ranks.find((r) => {
-                return r.id === rank;
-              });
-            })
-          };
-        });
+      return this.$chat.editingChat.users.map((user) => {
+        return {
+          ...user,
+          user: this.$user.users[user.userId],
+          ranks: user.ranksMap.map((rank) => {
+            return this.$chat.editingChat.ranks.find((r) => {
+              return r.id === rank;
+            });
+          })
+        };
+      });
     }
   }
 });

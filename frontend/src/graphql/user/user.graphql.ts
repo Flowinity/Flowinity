@@ -20,6 +20,7 @@ export const GetUserQuery = gql`
       subscriptionId
       itemsPerPage
       banner
+      createdAt
       alternatePasswords {
         scopes
         totp
@@ -30,6 +31,9 @@ export const GetUserQuery = gql`
       weatherUnit
       themeEngine
       xp
+      pulse
+      groupPrivacy
+      friendRequests
       publicProfile
       privacyPolicyAccepted
       plan {

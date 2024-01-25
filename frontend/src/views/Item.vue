@@ -15,13 +15,13 @@
             }
           }"
         >
-          <template #custom-values="{ galleryItem }">
+          <template #custom-values>
             <div style="display: flex; align-items: baseline">
               <v-card-subtitle style="opacity: 0.6; margin-right: -28px">
                 Creator:
               </v-card-subtitle>
               <v-card-subtitle style="opacity: 0.8">
-                <router-link :to="`/u/${galleryItem?.user?.username}`">
+                <router-link :to="`/u/${item?.user?.username}`">
                   {{ item?.user?.username || "Unknown" }}
                 </router-link>
               </v-card-subtitle>

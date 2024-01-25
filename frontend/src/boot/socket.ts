@@ -22,15 +22,19 @@ import {
   UserStoredStatus
 } from "@/gql/graphql";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
+import { useMessagesStore } from "@/store/message.store";
 
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();
   const index = chat.chats.findIndex((c) => c.id === chatId);
   if (index === -1) return false;
-  if (!chat.chats[index].messages) return false;
+  const associationId = chat.chats[index].association?.id;
+  const messages = useMessagesStore().messages[associationId];
+  if (!messages) return false;
   return {
     index,
-    messageIndex: chat.chats[index].messages.findIndex((m) => m.id === id)
+    messageIndex: messages.findIndex((m) => m.id === id),
+    associationId
   };
 }
 
@@ -40,6 +44,7 @@ export default async function setup(app) {
   const friends = useFriendsStore();
   const user = useUserStore();
   const experiments = useExperimentsStore();
+  const messagesStore = useMessagesStore();
   const toast = useToast();
 
   sockets.chat.on("chatCreated", (newChat: Chat) => {
@@ -65,15 +70,14 @@ export default async function setup(app) {
     chat.chats.splice(index, 1);
     chat.chats.unshift(chatToMove);
     const newIndex = chat.chats.findIndex((c) => c.id === newMessage.chat.id);
+    const associationId = chat.chats[newIndex].association?.id;
+    const messages = messagesStore.messages[associationId];
     if (
       experiments.experiments.COMMUNICATIONS_KEEP_LOADED &&
-      !chat.chats[newIndex].messages &&
-      !chat.chats[newIndex].messages?.find(
-        (m) => m.id === newMessage.message.id
-      )
+      messages &&
+      !messages.find((m) => m.id === newMessage.message.id)
     ) {
-      if (!chat.chats[newIndex]?.messages) chat.chats[newIndex].messages = [];
-      chat.chats[newIndex].messages.unshift(newMessage.message as Message);
+      messagesStore.messages[associationId].unshift(newMessage.message);
     }
     if (
       newMessage.message.userId === user.user?.id ||
@@ -144,25 +148,21 @@ export default async function setup(app) {
     }) => {
       const message = checkMessage(data.id, data.chatId);
       if (!message) return;
+      const messages = messagesStore.messages[message.associationId];
       if (data.content) {
-        chat.chats[message.index].messages[message.messageIndex].content =
-          data.content;
+        messages[message.messageIndex].content = data.content;
       }
       if (data.emoji) {
-        chat.chats[message.index].messages[message.messageIndex].emoji =
-          data.emoji;
+        messages[message.messageIndex].emoji = data.emoji;
       }
       if (data.edited !== undefined) {
-        chat.chats[message.index].messages[message.messageIndex].edited =
-          data.edited;
+        messages[message.messageIndex].edited = data.edited;
       }
       if (data.editedAt !== undefined) {
-        chat.chats[message.index].messages[message.messageIndex].editedAt =
-          data.editedAt;
+        messages[message.messageIndex].editedAt = data.editedAt;
       }
       if (data.pinned !== undefined) {
-        chat.chats[message.index].messages[message.messageIndex].pinned =
-          data.pinned;
+        messages[message.messageIndex].pinned = data.pinned;
       }
     }
   );
@@ -173,7 +173,9 @@ export default async function setup(app) {
   sockets.chat.on("messageDelete", (data: { chatId: number; id: number }) => {
     const message = checkMessage(data.id, data.chatId);
     if (!message) return;
-    chat.chats[message.index].messages.splice(message.messageIndex, 1);
+    const messages = messagesStore.messages[message.associationId];
+    if (!messages) return;
+    messages.splice(message.messageIndex, 1);
   });
   sockets.user.on("userSettingsUpdate", (data: any) => {
     user.user = {
@@ -192,17 +194,16 @@ export default async function setup(app) {
   sockets.chat.on("readReceipt", (data: ChatAssociation) => {
     const index = chat.chats.findIndex((c: Chat) => c.id === data.chatId);
     if (index === -1) return;
-    if (!chat.chats[index].messages) return;
-    const messageIndex = chat.chats[index].messages.findIndex(
-      (m: Message) => m.id === data.id
-    );
+    const messages = messagesStore.messages[chat.chats[index].association?.id];
+    if (!messages) return;
+    const messageIndex = messages.findIndex((m: Message) => m.id === data.id);
     if (messageIndex === -1) return;
-    chat.chats[index].messages.forEach((message: Message) => {
+    messages.forEach((message: Message) => {
       message.readReceipts = message.readReceipts.filter(
         (r: ReadReceipt) => r.user.id !== data.user.id
       );
     });
-    chat.chats[index]?.messages[messageIndex].readReceipts.push({
+    messages[messageIndex].readReceipts.push({
       associationId: chat.chats[index].association?.id,
       chatId: data.chatId,
       messageId: data.lastRead,

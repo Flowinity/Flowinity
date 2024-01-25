@@ -14,6 +14,7 @@ import validation from "@/plugins/validation";
 import { io } from "socket.io-client";
 import functions from "@/plugins/functions";
 import router from "@/router";
+import { useMessagesStore } from "@/store/message.store";
 
 function createSocket(namespace: string) {
   console.log(`[TPU/Socket] Connecting to ${namespace}`);
@@ -44,6 +45,7 @@ export default function setup(app) {
   const chat = useChatStore();
   const friends = useFriendsStore();
   const mail = useMailStore();
+  const messages = useMessagesStore();
   app.config.globalProperties.axios = axios;
   core.themeProviderDefaults.theme = vuetify.theme.themes.value;
   core.themeProviderDefaults.global = vuetify.defaults.value;
@@ -57,6 +59,7 @@ export default function setup(app) {
   app.config.globalProperties.$validation = validation;
   app.config.globalProperties.$workspaces = workspace;
   app.config.globalProperties.$chat = chat;
+  app.config.globalProperties.$messages = messages;
   app.config.globalProperties.$friends = friends;
   app.config.globalProperties.$mail = mail;
   app.config.globalProperties.$socket = createSocket("");

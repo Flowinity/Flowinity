@@ -117,7 +117,7 @@
         @update:uncollapse-blocked="expandBlocked = $event"
         :uncollapse-blocked="expandBlocked"
         class="mr-2 ml-2"
-        v-for="(message, index) in $chat.selectedChat?.messages"
+        v-for="(message, index) in $messages.currentMessages"
         :id="'message-id-' + message.id"
         :ref="`message-${index}`"
         :style="{ zIndex: 1000 - index }"
@@ -417,7 +417,7 @@ export default defineComponent({
       return 0;
     },
     replying() {
-      return this.$chat.selectedChat?.messages?.find(
+      return this.$messages.currentMessages?.find(
         (message) => message.id === this.replyId
       );
     },
@@ -428,8 +428,8 @@ export default defineComponent({
   },
   methods: {
     dateSeparator(index: number) {
-      const message = this.$chat.selectedChat?.messages[index];
-      const previousMessage = this.$chat.selectedChat?.messages[index + 1];
+      const message = this.$messages.currentMessages[index];
+      const previousMessage = this.$messages.currentMessages[index + 1];
       return !this.$date(message?.createdAt).isSame(
         previousMessage?.createdAt,
         "day"
@@ -599,7 +599,7 @@ export default defineComponent({
     async sendMessage() {
       this.focusInput();
       if (this.unreadId) this.unreadId = 0;
-      if (!this.$chat.selectedChat?.messages) return;
+      if (!this.$messages.currentMessages) return;
       if (!this.message && !this.files.length) return;
       if (!this.finished) return;
       let message = this.message.trim();
@@ -624,7 +624,7 @@ export default defineComponent({
       const chatIndex = this.$chat.chats.findIndex(
         (c) => c.id === this.$chat.selectedChat?.id
       );
-      this.$chat.chats[chatIndex].messages.unshift({
+      this.$messages.currentMessages.unshift({
         content: message,
         createdAt: new Date().toISOString(),
         user: this.$user.user,
@@ -658,7 +658,7 @@ export default defineComponent({
       try {
         await this.$chat.sendMessage(message, attachments, replyId);
       } catch (e) {
-        const messageIndex = this.$chat.selectedChat?.messages.findIndex(
+        const messageIndex = this.$messages.currentMessages.findIndex(
           (message) => message.id === tempId
         );
         if (
@@ -667,8 +667,8 @@ export default defineComponent({
           !this.$chat.selectedChat
         )
           return;
-        this.$chat.selectedChat.messages[messageIndex].pending = false;
-        this.$chat.selectedChat.messages[messageIndex].error = true;
+        this.$messages.currentMessages[messageIndex].pending = false;
+        this.$messages.currentMessages[messageIndex].error = true;
       }
     },
     autoScroll() {
@@ -677,7 +677,7 @@ export default defineComponent({
         new Date().getTime() - this.avoidAutoScrollSince > 500
       )
         return;
-      if (!this.$chat.selectedChat?.messages) return;
+      if (!this.$messages.currentMessages) return;
       const sentinel = document.getElementById("sentinel-bottom");
       if (!sentinel) return;
       try {
@@ -706,7 +706,7 @@ export default defineComponent({
     },
     editLastMessage() {
       // find first message made by user
-      const lastMessage = this.$chat.selectedChat?.messages
+      const lastMessage = this.$messages.currentMessages
         .slice()
         .find((message) => message.userId === this.$user.user?.id);
       if (!lastMessage || lastMessage.id === this.editing) return;
@@ -724,7 +724,7 @@ export default defineComponent({
         e.preventDefault();
         if (!this.editing) return this.editLastMessage();
         // edit next message
-        const message = this.$chat.selectedChat?.messages
+        const message = this.$messages.currentMessages
           .slice()
           .find(
             (message) =>
@@ -744,7 +744,7 @@ export default defineComponent({
         e.preventDefault();
         if (!this.editing) return;
         // edit last message
-        const message = this.$chat.selectedChat?.messages
+        const message = this.$messages.currentMessages
           .slice()
           .reverse()
           .find(
@@ -764,7 +764,7 @@ export default defineComponent({
       if (e.ctrlKey && e.key === "ArrowUp" && !e.shiftKey) {
         e.preventDefault();
         // edit next message
-        const message = this.$chat.selectedChat?.messages
+        const message = this.$messages.currentMessages
           .slice()
           .find((message) => (this.replyId ? message.id < this.replyId : true));
         if (!message) {
@@ -778,7 +778,7 @@ export default defineComponent({
         e.preventDefault();
         if (!this.replyId) return;
         // edit last message
-        const message = this.$chat.selectedChat?.messages
+        const message = this.$messages.currentMessages
           .slice()
           .reverse()
           .find((message) => (this.replyId ? message.id > this.replyId : true));
@@ -832,19 +832,17 @@ export default defineComponent({
     },
     async onMessage(message: MessageSocket) {
       if (message.chat.id !== this.$chat.selectedChat?.id) return;
-      const findMessage = this.$chat.selectedChat?.messages.findIndex(
+      const findMessage = this.$messages.currentMessages.findIndex(
         (m) => m.content === message.message.content && m.pending
       );
       if (findMessage !== -1) {
-        if (this.$chat.selectedChat)
-          this.$chat.selectedChat.messages[findMessage] = message.message;
+        if (this.$messages.currentMessages)
+          this.$messages.currentMessages[findMessage] = message.message;
         this.autoScroll();
         this.$chat.readChat();
         return;
       }
-      await this.$chat.chats
-        .find((c) => c.id === this.$chat.selectedChat?.id)
-        ?.messages.unshift(message.message);
+      await this.$messages.currentMessages.unshift(message.message);
       if (document.hasFocus()) {
         this.$chat.readChat();
       } else {
@@ -886,10 +884,10 @@ export default defineComponent({
         (c: Chat) => c.id === data.chatId
       );
       if (index === -1) return;
-      if (!this.$chat.chats[index].messages) return;
-      const messageIndex = this.$chat.chats[index].messages.findIndex(
-        (m: Message) => m.id === data.id
-      );
+      const associationId = this.$chat.chats[index]?.association?.id;
+      const messages = this.$messages.messages[associationId];
+      if (!messages) return;
+      const messageIndex = messages.findIndex((m: Message) => m.id === data.id);
       if (messageIndex === -1) {
         let embedFailIndex = this.embedFails.findIndex(
           (e) => e.data.id === data.id
@@ -911,7 +909,7 @@ export default defineComponent({
         this.embedFails[embedFailIndex].retries++;
         return;
       }
-      this.$chat.chats[index].messages[messageIndex].embeds = data.embeds;
+      messages[messageIndex].embeds = data.embeds;
       this.autoScroll();
     },
     onFocus() {
@@ -984,16 +982,16 @@ export default defineComponent({
       });
 
       if (this.unread) {
-        const lastReadMessage = this.$chat.selectedChat?.messages?.find(
+        const lastReadMessage = this.$messages.currentMessages?.find(
           (message) =>
             message.id === this.$chat.selectedChat?.association?.lastRead
         );
         const nextMessageIndex =
-          this.$chat.selectedChat?.messages?.indexOf(lastReadMessage) - 1;
+          this.$messages.currentMessages?.indexOf(lastReadMessage) - 1;
 
         if (nextMessageIndex !== -1) {
           this.unreadId =
-            this.$chat.selectedChat?.messages?.[nextMessageIndex]?.id;
+            this.$messages.currentMessages?.[nextMessageIndex]?.id;
         } else if (lastReadMessage) {
           this.unreadId = lastReadMessage?.id;
         }

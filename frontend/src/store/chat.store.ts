@@ -43,6 +43,7 @@ import { Typing } from "@/models/chat";
 import { nextTick } from "vue";
 import { useApolloClient } from "@vue/apollo-composable";
 import { ChatQuery, ChatsQuery } from "@/graphql/chats/chats.graphql";
+import { useMessagesStore } from "@/store/message.store";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -299,7 +300,8 @@ export const useChatStore = defineStore("chat", {
     },
     async jumpToMessage(message: number) {
       if (!(await this.doJump(message))) {
-        this.selectedChat.messages = null;
+        const messagesStore = useMessagesStore();
+        messagesStore.messages[this.selectedChatId] = null;
         this.loadingNew = true;
         await this.loadHistory(
           undefined,
@@ -313,7 +315,8 @@ export const useChatStore = defineStore("chat", {
     merge(message: Message, index: number) {
       if (message.replyId) return false;
       if (message.type !== MessageType.Message && message.type) return false;
-      const prev = this.selectedChat?.messages[index + 1];
+      const messagesStore = useMessagesStore();
+      const prev = messagesStore.messages[this.selectedChatId][index + 1];
       if (!prev) return false;
       if (prev.type !== MessageType.Message && prev.type) return false;
       if (dayjs(message.createdAt).diff(prev.createdAt, "minutes") > 5)
@@ -515,8 +518,10 @@ export const useChatStore = defineStore("chat", {
     async setChat(id: number) {
       this.loading = true;
       const experimentsStore = useExperimentsStore();
+      const messagesStore = useMessagesStore();
       if (!experimentsStore.experiments.COMMUNICATIONS_KEEP_LOADED) {
-        if (this.selectedChat?.messages) this.selectedChat.messages = [];
+        if (messagesStore.messages[this.selectedChatId])
+          messagesStore.messages[this.selectedChatId] = [];
       }
       this.selectedChatId = id;
       localStorage.setItem("selectedChatId", id.toString());
@@ -533,12 +538,12 @@ export const useChatStore = defineStore("chat", {
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === id
       );
+      messagesStore.messages[id] = data;
       if (index === -1) {
         this.chats.push({
           ...(this.chats.find(
             (chat: Chat) => chat.association.id === id
           ) as Chat),
-          messages: data,
           unread: 0,
           association: {
             id
@@ -549,16 +554,8 @@ export const useChatStore = defineStore("chat", {
           ...(this.chats.find(
             (chat: Chat) => chat.association.id === id
           ) as Chat),
-          messages: data,
           unread: 0
         };
-      }
-      console.log(this.chats);
-      if (chat?.messages?.length) {
-        this.readChat();
-        this.isReady = id;
-        this.loading = false;
-        return;
       }
       await this.loadChatUsers(id);
       this.loading = false;
@@ -567,6 +564,7 @@ export const useChatStore = defineStore("chat", {
       this.readChat();
     },
     async loadChatUsers(associationId: number) {
+      if (!this.chats.length) await this.getChats();
       const index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === associationId
       );
@@ -595,8 +593,9 @@ export const useChatStore = defineStore("chat", {
       position: ScrollPosition = ScrollPosition.Top,
       offset?: number
     ) {
+      const messagesStore = useMessagesStore();
       if (offset) {
-        this.selectedChat.messages = null;
+        messagesStore.messages[this.selectedChatId] = null;
         this.loadNew = true;
       }
       this.loadingNew = true;
@@ -615,19 +614,19 @@ export const useChatStore = defineStore("chat", {
 
       if (data.length) {
         if (offset) {
-          this.selectedChat.messages = data;
+          messagesStore.messages[this.selectedChatId] = data;
         } else {
           if (position === ScrollPosition.Top) {
-            this.selectedChat?.messages?.push(...data);
+            messagesStore.messages[this.selectedChatId].push(...data);
             if (this.selectedChat?.messages?.length > 350) {
               this.loadNew = true;
-              this.selectedChat.messages.splice(0, 50);
+              messagesStore.messages[this.selectedChatId].splice(0, 50);
             }
           } else {
-            this.selectedChat?.messages?.unshift(...data);
+            messagesStore.messages[this.selectedChatId].unshift(...data);
             if (this.selectedChat?.messages?.length > 350) {
               this.loadNew = true;
-              this.selectedChat.messages.splice(-50);
+              messagesStore.messages[this.selectedChatId].splice(-50);
             }
           }
         }
@@ -658,8 +657,8 @@ export const useChatStore = defineStore("chat", {
       this.chats = chats
         .map((chat) => {
           return {
-            ...chat,
-            ...this.chats.find((c) => c.id === chat.id)
+            ...this.chats.find((c) => c.id === chat.id),
+            ...chat
           };
         })
         .sort((a: Chat, b: Chat) => {
@@ -717,15 +716,12 @@ export const useChatStore = defineStore("chat", {
       return 3;
     },
     currentOffset() {
-      if (!this.selectedChat?.messages?.length) return { up: 0, down: 0 };
-      const down = this.selectedChat?.messages[0]?.id
-        ? this.selectedChat?.messages[0]?.id
-        : 0;
-      const up = this.selectedChat?.messages[
-        this.selectedChat?.messages.length - 1
-      ]?.id
-        ? this.selectedChat?.messages[this.selectedChat?.messages.length - 1]
-            ?.id
+      const messagesStore = useMessagesStore();
+      const messages = messagesStore.messages[this.selectedChatId];
+      if (!messages?.length) return { up: 0, down: 0 };
+      const down = messages[0]?.id ? messages[0]?.id : 0;
+      const up = messages[messages.length - 1]?.id
+        ? messages[messages.length - 1]?.id
         : 0;
       return {
         up,

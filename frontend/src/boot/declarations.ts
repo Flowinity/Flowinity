@@ -17,6 +17,7 @@ import { Axios } from "axios";
 import { ApolloClient } from "@apollo/client/core";
 import { Chat, PartialUserFriend } from "@/gql/graphql";
 import { NormalizedCacheObject } from "@apollo/client/cache";
+import { useMessagesStore } from "@/store/message.store";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -30,6 +31,7 @@ declare module "@vue/runtime-core" {
     $validation: typeof validation;
     $workspaces: ReturnType<typeof useWorkspacesStore>;
     $chat: ReturnType<typeof useChatStore>;
+    $messages: ReturnType<typeof useMessagesStore>;
     $socket: Socket;
     $friends: ReturnType<typeof useFriendsStore>;
     $mail: ReturnType<typeof useMailStore>;
