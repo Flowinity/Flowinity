@@ -565,7 +565,7 @@ export const useChatStore = defineStore("chat", {
     },
     async loadChatUsers(associationId: number) {
       if (!this.chats.length) await this.getChats();
-      const index = this.chats.findIndex(
+      let index = this.chats.findIndex(
         (chat: Chat) => chat.association.id === associationId
       );
       if (index === -1) return;
@@ -580,6 +580,9 @@ export const useChatStore = defineStore("chat", {
             }
           }
         });
+        index = this.chats.findIndex(
+          (chat: Chat) => chat.association.id === associationId
+        );
         this.chats[index] = {
           ...(this.chats.find(
             (chat: Chat) => chat.association.id === associationId
