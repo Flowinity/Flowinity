@@ -23,7 +23,14 @@ import {
 } from "@app/classes/graphql/chat/embeds"
 import redisClient from "@app/redis"
 
-const trusted = ["youtube.com", "youtu.be", "www.youtube.com", "m.youtube.com"]
+const trusted = [
+  "youtube.com",
+  "youtu.be",
+  "www.youtube.com",
+  "m.youtube.com",
+  "vanillo.tv",
+  "www.vanillo.tv"
+]
 
 export interface ImagePayload {
   originalURL: string

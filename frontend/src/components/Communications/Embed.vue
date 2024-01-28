@@ -5,6 +5,9 @@
       :class="{
         'pl-4': embed.text.length
       }"
+      :style="{
+        maxWidth: width >= 500 ? 500 + 'px' : width + 'px'
+      }"
     >
       <div v-for="(text, index) in embed.text" :key="index">
         <v-card-text
@@ -33,9 +36,13 @@
           <img
             v-if="(media.isInternal && media.upload) || !media.isInternal"
             :style="{
-              maxWidth: width <= 500 ? width + 'px' : 500 + 'px',
+              maxWidth:
+                media.width <= 400
+                  ? media.width + 'px'
+                  : media.width - 70 + 'px',
               maxHeight:
-                media.height > 400 ? 700 + 'px' : media.height * 2 + 'px'
+                media.height > 400 ? 700 + 'px' : media.height * 2 + 'px',
+              width: '100%'
             }"
             :src="
               media.isInternal ? $app.domain + media.attachment : media.proxyUrl
@@ -80,14 +87,20 @@
           v-else-if="
             (media.type === EmbedMediaType.Video ||
               media.type === EmbedMediaTypeLegacy.VIDEO) &&
-            media.upload
+            media.upload &&
+            !media.videoEmbedUrl
           "
-          :max-width="width"
+          :max-width="width >= 500 ? 500 : width"
           elevation="0"
         >
           <video :style="'max-width:' + width + 'px;'" controls>
             <source :src="$app.domain + media.attachment" />
           </video>
+        </v-card>
+        <v-card v-else-if="media.videoEmbedUrl" class="ml-n3 mb-1 mr-1 mt-1">
+          <div class="video-container">
+            <iframe :src="media.videoEmbedUrl" allowfullscreen></iframe>
+          </div>
         </v-card>
         <v-card v-else-if="embed.type" elevation="0">
           You must upgrade your version of TPUvNEXT to see the embed type
@@ -240,3 +253,20 @@ export default defineComponent({
   }
 });
 </script>
+
+<style scoped>
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+}
+
+.video-container iframe {
+  position: absolute;
+  border: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+</style>

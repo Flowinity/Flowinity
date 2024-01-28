@@ -357,6 +357,9 @@ export default defineComponent({
     };
   },
   computed: {
+    name() {
+      return this.$chat.selectedChat?.name;
+    },
     blocked(): { value: boolean; you: boolean } {
       return this.$user.blocked.find(
         (block) =>
@@ -963,6 +966,9 @@ export default defineComponent({
     this.$sockets.chat.off("embedResolution", this.onEmbedResolution);
   },
   watch: {
+    name(val) {
+      this.$app.title = val;
+    },
     "$route.params.chatId"(val, oldVal) {
       this.unread = this.$chat.selectedChat?.unread;
       this.$chat.setDraft(oldVal, this.message);
