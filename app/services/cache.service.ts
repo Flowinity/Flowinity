@@ -10,56 +10,12 @@ import { CoreService } from "@app/services/core.service"
 import { AutoCollectApproval } from "@app/models/autoCollectApproval.model"
 import { PulseService } from "@app/services/pulse.service"
 import { ChatService } from "@app/services/chat.service"
-import { Chat } from "@app/models/chat.model"
-import { Message } from "@app/models/message.model"
 import cron from "node-cron"
 import { generateClientSatisfies } from "@app/lib/clientSatisfies"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 
 @Service()
 export class CacheService {
-  async generateMissingChatDates() {
-    console.info("[REDIS] Generating missing chat date keys...")
-    const chats = await Chat.findAll()
-    let start = new Date().getTime()
-    for (const chat of chats) {
-      const sortDate = await redis.get(`chat:${chat.id}:sortDate`)
-      if (!sortDate) {
-        const lastMessage = await Message.findOne({
-          where: { chatId: chat.id },
-          order: [["createdAt", "DESC"]]
-        })
-        if (lastMessage) {
-          await redis.set(
-            `chat:${chat.id}:sortDate`,
-            dayjs(lastMessage.createdAt).valueOf()
-          )
-        } else {
-          await redis.set(
-            `chat:${chat.id}:sortDate`,
-            dayjs(chat.createdAt).valueOf()
-          )
-        }
-      }
-    }
-    let end = new Date().getTime()
-    console.info(`[REDIS] Missing chat date keys generated in ${end - start}ms`)
-  }
-
-  async patchChatsCacheForUser(userId: number, chat: Chat) {
-    let chats = await redis.json.get(`chats:${userId}`)
-    if (!chats?.length) {
-      return await this.generateChatsCache(userId)
-    }
-    const existingChat = chats.find((c: Chat) => c.id === chat.id)
-    if (existingChat) {
-      chats[chats.indexOf(existingChat)] = chat
-    } else {
-      chats.push(chat)
-    }
-    redis.json.set(`chats:${userId}`, "$", chats)
-  }
-
   async generateChatsCache(userId?: number) {
     try {
       console.info("[REDIS] Generating chats cache...")
@@ -526,12 +482,6 @@ export class CacheService {
       })
       this.refreshState().then(() => {})
 
-      /*      this.generateAutoCollectCache().then(() => {})
-      this.generateShareLinkCache().then(() => {})
-      this.generateUserStatsCache().then(() => {})
-      //this.generateChatsCache().then(() => {})
-      this.generateMissingChatDates().then(() => {})
-      //this.generateInsightsCache().then(() => {})*/
       return true
     } catch {
       return false
