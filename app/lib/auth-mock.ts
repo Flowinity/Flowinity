@@ -10,9 +10,6 @@ import { Experiment } from "@app/models/experiment.model"
 import Errors from "@app/lib/errors"
 import { Integration } from "@app/models/integration.model"
 
-let asn: Reader<AsnResponse>
-let city: Reader<CityResponse>
-
 export async function authMock(
   userId: number,
   scope: string | string[],

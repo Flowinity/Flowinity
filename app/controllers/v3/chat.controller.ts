@@ -147,15 +147,6 @@ export class ChatControllerV3 {
     })
   }
 
-  @Delete("/:chatId/association")
-  async leaveChat(
-    @Auth("chats.edit") user: User,
-    @Param("chatId") chatId: number
-  ) {
-    throw Errors.API_REMOVED_V2
-    await this.chatService.leaveGroupChat(chatId, user.id)
-  }
-
   @Get("/:chatId/search")
   async searchChat(
     @Auth("chats.view") user: User,
@@ -242,28 +233,6 @@ export class ChatControllerV3 {
       user.id,
       false,
       permissions
-    )
-  }
-
-  @Put("/:associationId/users/:userId")
-  async updateUserRank(
-    @Auth("chats.edit") user: User,
-    @Param("associationId") associationId: number,
-    @Param("userId") userId: number,
-    @Body() body: { rank: "admin" | "member" | "owner" }
-  ) {
-    throw Errors.API_REMOVED_V2
-    const rank = await this.chatService.checkPermissions(
-      user.id,
-      associationId,
-      ChatPermissions.MANAGE_RANKS
-    )
-    if (!rank) throw Errors.PERMISSION_DENIED_RANK
-    await this.chatService.updateUserRank(
-      userId,
-      associationId,
-      body.rank,
-      user.id
     )
   }
 

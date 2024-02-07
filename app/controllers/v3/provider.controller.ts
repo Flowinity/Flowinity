@@ -79,8 +79,7 @@ export class ProviderControllerV3 {
 
     return await this.lfmService.getOverview(
       user.id,
-      user.integrations[0]?.providerUsername,
-      user.integrations[0]?.accessToken
+      user.integrations[0]?.providerUsername
     )
   }
 
@@ -147,7 +146,6 @@ export class ProviderControllerV3 {
 
     return await this.malService.updateAnime(
       user.id,
-      user.integrations[0]?.providerUsername,
       user.integrations[0]?.accessToken,
       body
     )

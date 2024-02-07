@@ -40,7 +40,6 @@ export class MailResolver {
     return await this.mailService.getMessages(
       ctx.user!!.id,
       input.mailbox,
-      input.page,
       true
     )
   }

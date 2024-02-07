@@ -228,10 +228,10 @@ export class SecurityService {
   }
 
   async createKey(
-    uid: number,
+    userId: number,
     name: string,
     scopes: string[],
-    expiry: Date | null = null
+    expiredAt: Date | null = null
   ): Promise<Session> {
     if (!scopes.length) {
       throw Errors.NO_SCOPES_PROVIDED
@@ -242,11 +242,12 @@ export class SecurityService {
       }
     }
     return await Session.create({
-      userId: uid,
+      userId,
       name,
       scopes: scopes.join(","),
       type: "api",
-      token: await utils.generateAPIKey("api")
+      token: await utils.generateAPIKey("api"),
+      expiredAt
     })
   }
 }

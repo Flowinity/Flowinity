@@ -60,7 +60,6 @@ import { GraphQLError } from "graphql/error"
 //@ts-ignore
 import { createFetch } from "@whatwg-node/fetch"
 import { createRedisCache } from "@envelop/response-cache-redis"
-import { Cache } from "@envelop/response-cache"
 import redis from "@app/redis"
 import { GraphQLSchema } from "graphql/type"
 import generateContext from "@app/classes/graphql/middleware/generateContext"
@@ -72,7 +71,7 @@ import { GqlError } from "@app/lib/gqlErrors"
 @Service()
 @Middleware({ type: "after" })
 export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
-  error(err: any, req: any, res: any, next: (err: any) => any) {
+  error(err: any, res: any) {
     if (err instanceof MulterError) {
       return res.status(400).json({
         errors: [
@@ -127,6 +126,7 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
       err instanceof BadRequestError ||
       err?.httpCode
     ) {
+      // Do not change, this must check only for false
       if (err.expose === false) {
         return res.status(500).json({
           errors: [
@@ -306,18 +306,7 @@ export class Application {
     })
     this.schema = await generateSchema()
     const gqlPlugins = []
-    const cache: Cache = createRedisCache({ redis })
-    /* gqlPlugins.push(
-      useResponseCache({
-        session: (request) => {
-          console.log(request)
-          const token = request?.headers?.get("authorization")
-          return token
-        },
-        cache: cache as any
-      })
-    )*/
-    global.gqlCache = cache
+    global.gqlCache = createRedisCache({ redis })
     if (config.hive?.enabled) {
       gqlPlugins.push(
         useHive({
@@ -446,10 +435,6 @@ export class Application {
       }
     })
     this.onServerStart() // TODO: Fix "Promise returned from onServerStart is ignored".
-  }
-
-  async bindOIDC() {
-    // OIDC
   }
 
   private config() {

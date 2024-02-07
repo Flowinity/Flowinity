@@ -25,8 +25,8 @@ export const mailLimiter: RateLimitRequestHandler = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
   message,
-  async keyGenerator(req: any, res: any) {
-    const user = await simpleAuth(req, res)
+  async keyGenerator(req: any) {
+    const user = await simpleAuth(req)
     return user?.id || req.ip
   },
   store: new RedisStore({
@@ -43,8 +43,8 @@ export const registerLimiter: RateLimitRequestHandler = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
   message,
-  async keyGenerator(req: any, res: any) {
-    const user = await simpleAuth(req, res)
+  async keyGenerator(req: any) {
+    const user = await simpleAuth(req)
     return user?.id || req.ip
   },
   store: new RedisStore({
@@ -61,8 +61,8 @@ export const uploadLimiterUser: RateLimitRequestHandler = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
   message,
-  async keyGenerator(req: any, res: any) {
-    const user = await simpleAuth(req, res)
+  async keyGenerator(req: any) {
+    const user = await simpleAuth(req)
     return user?.id || req.ip
   },
   store: new RedisStore({
@@ -79,7 +79,7 @@ export const downloadZipFileExportLimiter: RateLimitRequestHandler = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipFailedRequests: false, // Don't count failed requests (status >= 400) towards rate limiting
   message,
-  async keyGenerator(req: any, res: any) {
+  async keyGenerator(req: any) {
     return req.ip
   },
   store: new RedisStore({
@@ -96,8 +96,8 @@ export const msgLimiter: RateLimitRequestHandler = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
   message,
-  async keyGenerator(req: any, res: any) {
-    const user = await simpleAuth(req, res)
+  async keyGenerator(req: any) {
+    const user = await simpleAuth(req)
     return user?.id || req.ip
   },
   store: new RedisStore({
@@ -114,8 +114,8 @@ export const inviteLimiter: RateLimitRequestHandler = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
   message,
-  async keyGenerator(req: any, res: any) {
-    const user = await simpleAuth(req, res)
+  async keyGenerator(req: any) {
+    const user = await simpleAuth(req)
     return user?.id || req.ip
   },
   store: new RedisStore({
@@ -132,8 +132,8 @@ export const standardLimiter: RateLimitRequestHandler = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
   message,
-  async keyGenerator(req: any, res: any) {
-    const user = await simpleAuth(req, res)
+  async keyGenerator(req: any) {
+    const user = await simpleAuth(req)
     return user?.id || req.ip
   },
   store: new RedisStore({
@@ -150,8 +150,8 @@ export const loginLimiter: RateLimitRequestHandler = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipFailedRequests: false, // Don't count failed requests (status >= 400) towards rate limiting
   message,
-  async keyGenerator(req: any, res: any) {
-    const user = await simpleAuth(req, res)
+  async keyGenerator(req: any) {
+    const user = await simpleAuth(req)
     return user?.id || req.ip
   },
   store: new RedisStore({
@@ -168,8 +168,8 @@ export const uploadLimiter: RateLimitRequestHandler = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
   message,
-  async keyGenerator(req: any, res: any) {
-    const user = await simpleAuth(req, res)
+  async keyGenerator(req: any) {
+    const user = await simpleAuth(req)
     return user?.id || req.ip
   },
   store: new RedisStore({

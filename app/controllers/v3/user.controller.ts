@@ -3,7 +3,6 @@ import {
   Delete,
   Get,
   Head,
-  HeaderParam,
   JsonController,
   OnUndefined,
   Param,

@@ -217,7 +217,7 @@ export async function updateSession(session: Session, ip: string | undefined) {
   )
 }
 
-export async function simpleAuth(req: RequestAuthSystem, res: Response) {
+export async function simpleAuth(req: RequestAuthSystem) {
   const token = req.header("Authorization")
 
   if (!token) return { id: undefined }

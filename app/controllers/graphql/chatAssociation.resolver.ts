@@ -52,7 +52,7 @@ import {
   AuditLogActionType,
   AuditLogCategory
 } from "@app/classes/graphql/chat/auditLog/categories"
-import { EXPECTED_OPTIONS_KEY } from "@app/lib/dataloader"
+import { EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
 import { ReadChatInput } from "@app/classes/graphql/chat/readChat"
 import redisClient from "@app/redis"
 

@@ -281,12 +281,7 @@ export class UserUtilsService {
     return true
   }
 
-  async validateFriends(
-    userId: number,
-    friendIds: number[],
-    checkDMPrivacy: boolean = false,
-    gql: boolean = false
-  ) {
+  async validateFriends(userId: number, friendIds: number[]) {
     const friends = await Friend.findAll({
       where: {
         userId,

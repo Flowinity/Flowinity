@@ -33,7 +33,7 @@ export type CacheSession =
   | null
 
 export const authChecker: AuthChecker<Context> = async (
-  { root, args, context, info }: ResolverData<Context>,
+  { context }: ResolverData<Context>,
   options: any[]
 ) => {
   const token = context.token

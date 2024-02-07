@@ -505,42 +505,6 @@ export class ChatService {
     }
   }
 
-  async updateUserRank(
-    updatingUserId: number,
-    associationId: number,
-    rank: "owner" | "admin" | "member",
-    userId: number
-  ) {
-    const chat = await this.getChatFromAssociation(associationId, userId)
-    const user = await ChatAssociation.findOne({
-      where: {
-        chatId: chat.id,
-        userId: updatingUserId
-      }
-    })
-    if (!user) throw Errors.USER_NOT_FOUND
-    if (user.rank === "owner") throw Errors.PERMISSION_DENIED_RANK
-    if (user.rank === chat.association?.rank)
-      throw Errors.PERMISSION_DENIED_RANK
-    await ChatAssociation.update(
-      {
-        rank
-      },
-      {
-        where: {
-          chatId: chat.id,
-          userId: updatingUserId
-        }
-      }
-    )
-    this.emitForAll(associationId, userId, "chatUserUpdate", {
-      id: user.id,
-      rank: rank,
-      chatId: chat.id
-    })
-    return user
-  }
-
   async deleteMessage(
     messageId: number,
     userId: number,
@@ -784,8 +748,7 @@ export class ChatService {
     if (!force) {
       friends = await Container.get(UserUtilsService).validateFriends(
         userId,
-        userIds,
-        true
+        userIds
       )
     }
     let newAssociations = []

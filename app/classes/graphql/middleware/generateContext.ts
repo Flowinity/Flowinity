@@ -2,7 +2,7 @@ import { Container } from "typedi"
 import { UserResolver } from "@app/controllers/graphql/user.resolver"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
 import { Context } from "@app/types/graphql/context"
-import { createContext } from "@app/lib/dataloader"
+import { createContext } from "dataloader-sequelize"
 import { GqlError } from "@app/lib/gqlErrors"
 
 export default async function generateContext(ctx: any): Promise<Context> {
@@ -92,8 +92,8 @@ export default async function generateContext(ctx: any): Promise<Context> {
       ? session?.user?.administrator
         ? AccessLevel.ADMIN
         : session?.user?.moderator
-          ? AccessLevel.MODERATOR
-          : AccessLevel.USER
+        ? AccessLevel.MODERATOR
+        : AccessLevel.USER
       : AccessLevel.NO_ACCESS,
     token,
     dataloader: global.config?.finishedSetup ? createContext(db) : null,
