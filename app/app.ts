@@ -252,6 +252,25 @@ export class Application {
     this.createExpressServerV3("/api/v3")
     this.createExpressServerV3("/api/v2")
 
+    // For clients that still use /api/v1, the schema is still the same for upload API, so we'll use v3
+    useExpressServer(this.app, {
+      controllers: config.finishedSetup ? [GalleryControllerV3] : [],
+      routePrefix: "/api/v1",
+      middlewares: [HttpErrorHandler],
+      defaultErrorHandler: false,
+      classTransformer: false,
+      defaults: {
+        undefinedResultCode: 204,
+        nullResultCode: 404
+      },
+      validation: true
+    })
+
+    // OIDC
+    /*const provider = new Provider("http://localhost:34583", {
+      adapter: OidcAdapter
+    })
+    provider.listen(34583, () => {})*/
     this.app.get("/.well-known/openid-configuration", (req, res) => {
       res.json(wellKnownOidc())
     })
