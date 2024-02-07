@@ -126,7 +126,8 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
       err instanceof BadRequestError ||
       err?.httpCode
     ) {
-      if (!err.expose) {
+      // Do not change, this must check only for false
+      if (err.expose === false) {
         return res.status(500).json({
           errors: [
             {

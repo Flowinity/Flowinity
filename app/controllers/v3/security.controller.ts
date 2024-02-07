@@ -46,7 +46,12 @@ export class SecurityControllerV3 {
       expiry?: Date
     }
   ) {
-    return await this.securityService.createKey(user.id, body.name, body.scopes)
+    return await this.securityService.createKey(
+      user.id,
+      body.name,
+      body.scopes,
+      body.expiry
+    )
   }
 
   @Get("/logins")
