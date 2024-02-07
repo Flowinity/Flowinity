@@ -254,7 +254,7 @@ export class Application {
     // For clients that still use /api/v1, the schema is still the same for upload API, so we'll use v3
     useExpressServer(this.app, {
       controllers: config.finishedSetup
-        ? [GalleryControllerV3, CoreControllerV3]
+        ? [CoreControllerV3, GalleryControllerV3]
         : [],
       routePrefix: "/api/v1",
       middlewares: [HttpErrorHandler],
