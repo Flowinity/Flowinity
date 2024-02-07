@@ -89,15 +89,12 @@ export class PulseControllerV3 {
   }
 
   @OpenAPI({ deprecated: true })
-  @Get("/insights/:year/:id")
-  @Get("/insights/:year")
-  @Get("/insights")
+  @Get("/insights/:year/global")
   async getLegacyInsights(
     @Auth("insights.view") authUser: User,
     @Params()
     { id, year }: { id: string | "global"; year: string | number }
   ) {
-    if (id !== "global") throw Errors.API_REMOVED_V2
     return await this.pulseService.getCachedInsights(
       id || authUser.id,
       year,

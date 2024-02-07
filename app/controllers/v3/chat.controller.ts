@@ -147,15 +147,6 @@ export class ChatControllerV3 {
     })
   }
 
-  @Delete("/:chatId/association")
-  async leaveChat(
-    @Auth("chats.edit") user: User,
-    @Param("chatId") chatId: number
-  ) {
-    throw Errors.API_REMOVED_V2
-    await this.chatService.leaveGroupChat(chatId, user.id)
-  }
-
   @Get("/:chatId/search")
   async searchChat(
     @Auth("chats.view") user: User,
