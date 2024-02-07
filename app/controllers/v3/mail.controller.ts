@@ -37,10 +37,10 @@ export class MailControllerV3 {
   @Get("/mailbox/:mailbox/:page?")
   async getEmails(
     @Auth("mail.view") user: User,
-    @Params() { mailbox, page }: { mailbox: string; page?: number }
+    @Params() { mailbox }: { mailbox: string; page?: number }
   ) {
     await this.checkExperiment(user, "WEBMAIL")
-    return await this.mailService.getMessages(user.id, mailbox, page)
+    return await this.mailService.getMessages(user.id, mailbox)
   }
 
   @Get("/message/:mailbox/:uid")

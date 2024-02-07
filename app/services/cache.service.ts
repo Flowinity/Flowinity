@@ -15,7 +15,6 @@ import { Message } from "@app/models/message.model"
 import cron from "node-cron"
 import { generateClientSatisfies } from "@app/lib/clientSatisfies"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
-import { UserResolver } from "@app/controllers/graphql/user.resolver"
 
 @Service()
 export class CacheService {

@@ -748,8 +748,7 @@ export class ChatService {
     if (!force) {
       friends = await Container.get(UserUtilsService).validateFriends(
         userId,
-        userIds,
-        true
+        userIds
       )
     }
     let newAssociations = []

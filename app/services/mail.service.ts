@@ -67,12 +67,7 @@ export class MailService {
     return unread
   }
 
-  async getMessages(
-    userId: number,
-    mailbox: string,
-    page: number = 1,
-    gql?: boolean
-  ) {
+  async getMessages(userId: number, mailbox: string, gql?: boolean) {
     const client = await this.connect(userId, gql)
     await client.mailboxOpen(mailbox)
     let messages = []

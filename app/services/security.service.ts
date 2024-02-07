@@ -230,8 +230,7 @@ export class SecurityService {
   async createKey(
     uid: number,
     name: string,
-    scopes: string[],
-    expiry: Date | null = null
+    scopes: string[]
   ): Promise<Session> {
     if (!scopes.length) {
       throw Errors.NO_SCOPES_PROVIDED

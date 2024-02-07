@@ -19,7 +19,6 @@ let schema: GraphQLSchema | null = null
 export async function gCall<T>({
   source,
   variableValues,
-  userId,
   token
 }: Options): Promise<ExecutionResult<T | any>> {
   if (!schema) schema = await generateSchema()

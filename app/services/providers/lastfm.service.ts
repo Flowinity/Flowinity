@@ -63,7 +63,7 @@ export class LastfmService {
     await existing.destroy()
   }
 
-  async getOverview(userId: number, username: string, accessToken: string) {
+  async getOverview(userId: number, username: string) {
     try {
       const cache = await redis.get(`providers:lastfm:${userId}:overview`)
 

@@ -11,7 +11,7 @@ import Errors from "@app/lib/errors"
 export class SteamService {
   constructor() {}
 
-  async link(userId: string, token: string) {
+  async link() {
     if (!config.providers.steam)
       throw Errors.INTEGRATION_PROVIDER_NOT_CONFIGURED
   }

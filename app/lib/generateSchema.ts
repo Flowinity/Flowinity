@@ -1,4 +1,4 @@
-import { buildSchema, PubSub } from "type-graphql"
+import { buildSchema } from "type-graphql"
 import {
   BadgeResolver,
   PartialUserBaseResolver,

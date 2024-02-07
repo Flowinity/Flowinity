@@ -197,7 +197,7 @@ export class MyAnimeListService {
 
     const d = {
       ...data,
-      user: await this.getUserCache(userId, username, accessToken)
+      user: await this.getUserCache(userId)
     }
 
     redis.set(`providers:mal:${userId}:overview`, JSON.stringify(d), {
@@ -208,14 +208,9 @@ export class MyAnimeListService {
     return d
   }
 
-  async updateAnime(
-    userId: number,
-    username: string,
-    accessToken: string,
-    body: MalBody
-  ) {
+  async updateAnime(userId: number, accessToken: string, body: MalBody) {
     try {
-      const { data } = await axios.put(
+      await axios.put(
         `https://api.myanimelist.net/v2/anime/${body.id}/my_list_status`,
         qs.stringify({
           num_watched_episodes: body.num_episodes_watched,
@@ -238,7 +233,7 @@ export class MyAnimeListService {
     }
   }
 
-  async getUserCache(userId: number, username: string, accessToken: string) {
+  async getUserCache(userId: number) {
     try {
       const integration = await Integration.findOne({
         where: {
