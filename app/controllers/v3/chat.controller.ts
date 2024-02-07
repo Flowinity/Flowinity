@@ -245,28 +245,6 @@ export class ChatControllerV3 {
     )
   }
 
-  @Put("/:associationId/users/:userId")
-  async updateUserRank(
-    @Auth("chats.edit") user: User,
-    @Param("associationId") associationId: number,
-    @Param("userId") userId: number,
-    @Body() body: { rank: "admin" | "member" | "owner" }
-  ) {
-    throw Errors.API_REMOVED_V2
-    const rank = await this.chatService.checkPermissions(
-      user.id,
-      associationId,
-      ChatPermissions.MANAGE_RANKS
-    )
-    if (!rank) throw Errors.PERMISSION_DENIED_RANK
-    await this.chatService.updateUserRank(
-      userId,
-      associationId,
-      body.rank,
-      user.id
-    )
-  }
-
   @Put("/:associationId/message")
   async updateMessage(
     @Auth("chats.edit") user: User,
