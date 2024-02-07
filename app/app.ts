@@ -127,7 +127,7 @@ export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
       err instanceof BadRequestError ||
       err?.httpCode
     ) {
-      if (err.expose === false) {
+      if (!err.expose) {
         return res.status(500).json({
           errors: [
             {
@@ -285,18 +285,7 @@ export class Application {
     })
     this.schema = await generateSchema()
     const gqlPlugins = []
-    const cache: Cache = createRedisCache({ redis })
-    /* gqlPlugins.push(
-      useResponseCache({
-        session: (request) => {
-          console.log(request)
-          const token = request?.headers?.get("authorization")
-          return token
-        },
-        cache: cache as any
-      })
-    )*/
-    global.gqlCache = cache
+    global.gqlCache = createRedisCache({ redis })
     if (config.hive?.enabled) {
       gqlPlugins.push(
         useHive({
@@ -425,10 +414,6 @@ export class Application {
       }
     })
     this.onServerStart() // TODO: Fix "Promise returned from onServerStart is ignored".
-  }
-
-  async bindOIDC() {
-    // OIDC
   }
 
   private config() {
