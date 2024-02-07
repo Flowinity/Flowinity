@@ -60,7 +60,6 @@ import { GraphQLError } from "graphql/error"
 //@ts-ignore
 import { createFetch } from "@whatwg-node/fetch"
 import { createRedisCache } from "@envelop/response-cache-redis"
-import { Cache } from "@envelop/response-cache"
 import redis from "@app/redis"
 import { GraphQLSchema } from "graphql/type"
 import generateContext from "@app/classes/graphql/middleware/generateContext"
