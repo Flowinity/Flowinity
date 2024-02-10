@@ -67,11 +67,12 @@ import { MulterError } from "multer"
 import { ZodError } from "zod"
 import { generateSchema } from "@app/lib/generateSchema"
 import { GqlError } from "@app/lib/gqlErrors"
+import { Response, Request } from "express"
 
 @Service()
 @Middleware({ type: "after" })
 export class HttpErrorHandler implements ExpressErrorMiddlewareInterface {
-  error(err: any, res: any) {
+  error(err: any, _: Request, res: Response) {
     if (err instanceof MulterError) {
       return res.status(400).json({
         errors: [
