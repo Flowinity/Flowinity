@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "@alt3/sequelize-to-json-schemas": "^0.3.56",
+    "@babel/preset-env": "^7.23.9",
     "@editorjs/editorjs": "^2.27.2",
     "@elysiajs/graphql-yoga": "^0.7.1",
     "@envelop/response-cache-redis": "^3.1.0",
@@ -87,6 +88,7 @@
     "@types/nodemailer": "^6.4.7",
     "@types/oidc-provider": "^7.14.0",
     "@types/probe-image-size": "^7.2.0",
+    "@types/sanitize-html": "^2.11.0",
     "@types/sequelize": "^4.28.14",
     "@types/shimmer": "^1.0.5",
     "@types/sinon": "10.0.13",
@@ -165,6 +167,7 @@
     "reflect-metadata": "0.1.13",
     "routing-controllers": "^0.10.4",
     "routing-controllers-openapi": "^4.0.0",
+    "sanitize-html": "^2.11.0",
     "sequelize": "^6.35.1",
     "sequelize-cli": "^6.6.0",
     "sequelize-pool": "8.0.0",

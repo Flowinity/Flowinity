@@ -26,6 +26,9 @@ export class AuthResolver {
       input.username,
       input.password,
       input.totp,
+      `${ctx.client?.name} v${ctx.client?.version}`,
+      ctx.ip,
+      ctx.client.userAgent || "",
       true
     )
   }

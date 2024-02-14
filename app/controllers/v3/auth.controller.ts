@@ -1,10 +1,12 @@
 import {
   Body,
+  HeaderParam,
   JsonController,
   OnUndefined,
   Patch,
   Post,
-  UseBefore
+  UseBefore,
+  Req
 } from "routing-controllers"
 import { Service } from "typedi"
 import Errors from "@app/lib/errors"
@@ -13,6 +15,7 @@ import { AuthService } from "@app/services/auth.service"
 import { InviteService } from "@app/services/invite.service"
 import { AdminService } from "@app/services/admin.service"
 import blacklist from "@app/lib/word-blacklist.json"
+import { Request } from "express"
 
 @Service()
 @JsonController("/auth")
@@ -26,13 +29,19 @@ export class AuthControllerV3 {
   @Post("/login")
   @UseBefore(rateLimits.loginLimiter)
   async login(
-    @Body() body: { email: string; password: string; code?: string }
+    @Body() body: { email: string; password: string; code?: string },
+    @HeaderParam("x-tpu-client") client: string,
+    @HeaderParam("x-tpu-client-version") version: string,
+    @Req() req: Request
   ) {
     if (!body.email || !body.password) throw Errors.INVALID_CREDENTIALS
     return await this.authService.login(
       body.email,
       body.password,
       body.code,
+      `${client || "Flowinity Web"} v${version || "4.0.0"}`,
+      req.ip || "0.0.0.0",
+      req.headers["user-agent"] || "",
       false
     )
   }

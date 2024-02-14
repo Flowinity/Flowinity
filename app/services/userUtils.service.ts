@@ -259,7 +259,7 @@ export class UserUtilsService {
           name: user.username,
           intro: `${
             !correction
-              ? "You recently requested to verify your email address for your Flowinity account. Please"
+              ? "You recently requested to verify your email address for your Flowinity account. Please click"
               : "We discovered an issue where some verification emails weren't being sent out correctly. If you did not initially receive a verification email you can click"
           } the button below to verify your email address.`,
           action: [

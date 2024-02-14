@@ -7,6 +7,7 @@ export type Context = {
   client: {
     name?: string
     version?: string
+    userAgent?: string
   }
   scopes: string
   role: AccessLevel

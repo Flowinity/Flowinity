@@ -99,23 +99,16 @@ export default defineComponent({
     async login() {
       this.loading = true;
       try {
-        const {
-          data: { login }
-        } = await this.$apollo.mutate({
-          mutation: LoginMutation,
-          variables: {
-            input: {
-              username: this.username,
-              password: this.password,
-              totp: this.totp
-            }
-          } as LoginMutationVariables
+        const { data } = await this.axios.post("/auth/login", {
+          email: this.username,
+          password: this.password,
+          code: this.totp
         });
-        await localStorage.setItem("token", login.token);
-        this.axios.defaults.headers.common["Authorization"] = login.token;
-        this.$app.token = login.token;
+        await localStorage.setItem("token", data.token);
+        this.axios.defaults.headers.common["Authorization"] = data.token;
+        this.$app.token = data.token;
         await this.$app.init();
-        this.$app.reconnectSocket(login.token);
+        this.$app.reconnectSocket(data.token);
         if (!this.$route.query.redirect) {
           this.$router.push("/");
         } else {

@@ -85,15 +85,18 @@ export default async function generateContext(ctx: any): Promise<Context> {
       name:
         ctx?.request?.headers?.get("X-TPU-Client") ||
         ctx?.connectionParams?.["x-tpu-client"] ||
-        "unknown"
+        "unknown",
+      userAgent:
+        ctx?.request?.headers?.get("User-Agent") ||
+        ctx?.connectionParams?.["user-agent"]
     },
     scopes: session?.scopes || "",
     role: session
       ? session?.user?.administrator
         ? AccessLevel.ADMIN
         : session?.user?.moderator
-        ? AccessLevel.MODERATOR
-        : AccessLevel.USER
+          ? AccessLevel.MODERATOR
+          : AccessLevel.USER
       : AccessLevel.NO_ACCESS,
     token,
     dataloader: global.config?.finishedSetup ? createContext(db) : null,

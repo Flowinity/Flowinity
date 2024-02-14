@@ -14,11 +14,16 @@ import {
   AuthValidationResponse
 } from "@app/classes/graphql/auth/requirements"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
-import { LoginResponse } from "@app/classes/graphql/auth/login"
+import { LoginResponse, LoginUser } from "@app/classes/graphql/auth/login"
 import { GqlError } from "@app/lib/gqlErrors"
+import { AdminService } from "@app/services/admin.service"
+import uaParser from "ua-parser-js"
+import sanitizeHtml from "sanitize-html"
 
 @Service()
 export class AuthService {
+  constructor(private readonly adminService: AdminService) {}
+
   async passwordResetConfirm(code: string, password: string) {
     if (password?.length < 8) {
       throw Errors.PASSWORD_TOO_SHORT
@@ -185,7 +190,10 @@ export class AuthService {
   async login(
     username: string,
     password: string,
-    totp?: string,
+    totp: string | undefined,
+    platform: string,
+    ip: string,
+    userAgent: string,
     gql: boolean = false
   ): Promise<LoginResponse> {
     const validation = await this.validateAuthMethod(
@@ -209,6 +217,15 @@ export class AuthService {
         : "*",
       "session"
     )
+
+    this.sendSecurityEmail(
+      validation.user,
+      platform,
+      ip,
+      userAgent,
+      validation.alternatePassword?.name
+    )
+
     return {
       user: validation.user,
       token: session
@@ -267,5 +284,97 @@ export class AuthService {
     }
     await session.destroy()
     return true
+  }
+
+  async sendSecurityEmail(
+    user: LoginUser,
+    platform: string,
+    ip: string,
+    userAgent: string,
+    scopedPasswordName?: string
+  ) {
+    let friendlyPlatform: string
+
+    switch (platform) {
+      case "TPUvNEXT":
+        friendlyPlatform = "Flowinity Web"
+        break
+      case "android_kotlin":
+        friendlyPlatform = "Flowinity Android"
+        break
+      case "TPUvFLUTTER":
+        friendlyPlatform = "Flowinity"
+        break
+      case "TPUMac":
+        friendlyPlatform = "Flowinity Mac"
+        break
+      case "TPUiOS":
+        friendlyPlatform = "Flowinity iOS"
+        break
+      default:
+        friendlyPlatform = "Flowinity Web"
+        break
+    }
+
+    friendlyPlatform =
+      friendlyPlatform +
+      " v" +
+      platform.split("v")[platform.split("v").length - 1]
+
+    let browserAndOS = ""
+
+    if (uaParser(userAgent).browser.name) {
+      browserAndOS = `${uaParser(userAgent).browser.name} ${
+        uaParser(userAgent).browser.version
+      } on ${uaParser(userAgent).os.name} ${uaParser(userAgent).os.version}`
+    } else {
+      browserAndOS = "Unknown"
+    }
+    await this.adminService.sendEmail(
+      {
+        body: {
+          name: user.username,
+          intro: `A new login was detected on your account from <strong>${sanitizeHtml(
+            friendlyPlatform,
+            {
+              allowedTags: [],
+              allowedAttributes: {}
+            }
+          )}</strong><br>${
+            scopedPasswordName
+              ? ` with scoped password <strong>${sanitizeHtml(
+                  scopedPasswordName,
+                  {
+                    allowedTags: [],
+                    allowedAttributes: {}
+                  }
+                )}</strong>`
+              : ""
+          }<br><strong>IP address: ${ip}</strong><br><strong>Browser & Platform: ${sanitizeHtml(
+            browserAndOS,
+            {
+              allowedTags: [],
+              allowedAttributes: {}
+            }
+          )}</strong>`,
+          action: [
+            {
+              instructions: `Not you? Click the button below to start account recovery.`,
+              button: {
+                color: "#0190ea", // Optional action button color
+                text: "Reset password",
+                link: config.hostnameWithProtocol + "/login"
+              }
+            }
+          ],
+          outro:
+            "If you did not perform this action, please reset your password immediately and contact us at <a href='mailto:help@flowinity.com'>help@flowinity.com</a>.<br>If you did perform this action, you can ignore this email."
+        }
+      },
+      user.email,
+      `New ${config.siteName} login on ${friendlyPlatform} ${
+        scopedPasswordName ? `with scoped password ${scopedPasswordName}` : ""
+      }`
+    )
   }
 }
