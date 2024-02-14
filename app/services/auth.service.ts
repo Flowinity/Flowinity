@@ -9,7 +9,10 @@ import { CacheService } from "@app/services/cache.service"
 import { Login } from "@app/types/auth"
 import { Session } from "@app/models/session.model"
 import { GraphQLError } from "graphql/error"
-import { AuthValidationRequirements, AuthValidationResponse } from "@app/classes/graphql/auth/requirements"
+import {
+  AuthValidationRequirements,
+  AuthValidationResponse
+} from "@app/classes/graphql/auth/requirements"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import { LoginResponse } from "@app/classes/graphql/auth/login"
 import { GqlError } from "@app/lib/gqlErrors"
@@ -222,7 +225,6 @@ export class AuthService {
       if (password.length < 8) {
         throw new GraphQLError("Password is too short!")
       }
-      console.log(`EMAIL CFG: ${!config.email.enabled}`)
       const user = await User.create({
         username,
         password: await argon2.hash(password),
