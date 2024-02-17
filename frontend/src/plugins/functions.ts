@@ -7,6 +7,8 @@ import { Message, UserStatus, UserStoredStatus } from "@/gql/graphql";
 
 export default {
   fileSize(size: number): string {
+    if (size === 0) return "0KB";
+
     let i = -1;
     const byteUnits = ["KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     do {

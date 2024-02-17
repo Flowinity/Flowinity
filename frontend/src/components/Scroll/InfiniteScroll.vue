@@ -2,7 +2,7 @@
 import type { Params, Props, State, StateHandler } from "./types";
 import { nextTick, onMounted, onUnmounted, ref, toRefs, watch } from "vue";
 import { getParentEl, isVisible, startObserver } from "./utils";
-import { useChatStore } from "@/store/chat.store";
+import { useMessagesStore } from "@/store/message.store";
 
 const emit = defineEmits<{ infinite: [$state: StateHandler] }>();
 const props = withDefaults(defineProps<Props>(), {
@@ -24,7 +24,7 @@ const infiniteLoading = ref(null);
 const state = ref<State>("");
 const { top, firstload, distance } = props;
 const { identifier, target } = toRefs(props);
-const chat = useChatStore();
+const messages = useMessagesStore();
 const params: Params = {
   infiniteLoading,
   top,
@@ -40,10 +40,10 @@ const params: Params = {
       return;
     }
     if (!top) {
-      prevMessage = chat.selectedChat?.messages[0]?.id;
+      prevMessage = messages.currentMessages?.[0]?.id;
     } else {
       prevMessage =
-        chat.selectedChat?.messages[chat.selectedChat?.messages.length - 1]?.id;
+        messages.currentMessages?.[messages.currentMessages.length - 1]?.id;
     }
     stateHandler.loading();
     emit("infinite", stateHandler);

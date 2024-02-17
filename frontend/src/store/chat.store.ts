@@ -596,6 +596,7 @@ export const useChatStore = defineStore("chat", {
       position: ScrollPosition = ScrollPosition.Top,
       offset?: number
     ) {
+      console.log("called history", offset, position);
       const messagesStore = useMessagesStore();
       if (offset) {
         messagesStore.messages[this.selectedChatId] = null;
@@ -621,13 +622,13 @@ export const useChatStore = defineStore("chat", {
         } else {
           if (position === ScrollPosition.Top) {
             messagesStore.messages[this.selectedChatId].push(...data);
-            if (this.selectedChat?.messages?.length > 350) {
+            if (messagesStore.messages[this.selectedChatId]?.length > 350) {
               this.loadNew = true;
               messagesStore.messages[this.selectedChatId].splice(0, 50);
             }
           } else {
             messagesStore.messages[this.selectedChatId].unshift(...data);
-            if (this.selectedChat?.messages?.length > 350) {
+            if (messagesStore.messages[this.selectedChatId]?.length > 350) {
               this.loadNew = true;
               messagesStore.messages[this.selectedChatId].splice(-50);
             }

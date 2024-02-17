@@ -96,7 +96,7 @@
       <infinite-loading
         @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
         :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}-bottom`"
-        v-if="$chat.selectedChat?.messages && $chat.loadNew"
+        v-if="$messages.currentMessages && $chat.loadNew"
       >
         <template v-slot:spinner>
           <div class="text-center">
@@ -156,7 +156,7 @@
         direction="top"
         :top="true"
         :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}`"
-        v-if="$chat.selectedChat?.messages"
+        v-if="$messages.currentMessages"
         :value="'bottom'"
       >
         <template v-slot:spinner>
@@ -1045,6 +1045,7 @@ export default defineComponent({
   overflow-y: auto;
   display: flex;
   flex-direction: column-reverse;
+  outline: none;
 }
 
 .input-container {

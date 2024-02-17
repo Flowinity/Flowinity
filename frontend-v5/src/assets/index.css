@@ -1,9 +1,5 @@
 @tailwind base;
 @tailwind components;
-* {
-    scrollbar-width: thin;
-    scrollbar-color: #202020 rgb(16, 17, 19);
-}
 
 *::-webkit-scrollbar {
     width: 8px;
