@@ -794,10 +794,9 @@ export default defineComponent({
       }
       if (
         e.ctrlKey &&
-        e.key === "v" &&
+        (e.key === "v" || (e.key === "a" && this.message.length)) &&
         e.target.tagName !== "INPUT" &&
-        e.target.tagName !== "TEXTAREA" &&
-        e.target.tagName !== "DIV"
+        e.target.tagName !== "TEXTAREA"
       ) {
         this.focusInput();
       }
@@ -810,12 +809,6 @@ export default defineComponent({
         e.preventDefault();
         return this.editLastMessage();
       }
-      if (
-        e.target.tagName === "INPUT" &&
-        e.target.tagName === "TEXTAREA" &&
-        e.target.tagName === "DIV"
-      )
-        return;
       if (e.key === "Escape") {
         if (this.unreadId) this.unreadId = 0;
         if (this.replyId) return (this.replyId = undefined);
@@ -825,11 +818,7 @@ export default defineComponent({
         }
         this.jumpToBottom();
       }
-      if (
-        e.target.tagName !== "INPUT" &&
-        e.target.tagName !== "TEXTAREA" &&
-        e.target.tagName !== "DIV"
-      ) {
+      if (e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
         this.focusInput();
       }
     },
