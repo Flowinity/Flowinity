@@ -20,11 +20,11 @@ export class ChatAssociation extends Model {
   })
   id: number
 
-  @Field()
+  @Field(() => Int)
   @Column
   chatId: number
 
-  @Field({
+  @Field(() => Int, {
     nullable: true
   })
   @Column
@@ -39,7 +39,7 @@ export class ChatAssociation extends Model {
   })
   rank: "owner" | "admin" | "member"
 
-  @Field({
+  @Field(() => Int, {
     nullable: true
   })
   @Column
@@ -55,7 +55,7 @@ export class ChatAssociation extends Model {
   })
   notifications: "all" | "none" | "mentions"
 
-  @Field({
+  @Field(() => Int, {
     nullable: true,
     deprecationReason: "Use `userId` instead.",
     description: "Used for legacy Colubrina accounts."
