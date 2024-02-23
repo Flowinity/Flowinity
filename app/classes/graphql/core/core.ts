@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { Announcement } from "@app/models/announcement.model"
 import { GraphQLJSON } from "graphql-scalars"
 
@@ -189,4 +189,9 @@ export class CoreState {
   uptimeSys: number
   @Field()
   commitVersion: string
+  @Field(() => Int, {
+    description:
+      "If finishedSetup is false, this will be the step the setup is on. If the setup is completed, it will return `-1`"
+  })
+  step: number
 }

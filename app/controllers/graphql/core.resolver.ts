@@ -116,6 +116,11 @@ export class CoreResolver {
     } as Partial<CoreState>
   }
 
+  @FieldResolver(() => Int)
+  async step(@Ctx() ctx: Context) {
+    return this.setupStep(ctx)
+  }
+
   @Query(() => Int)
   async setupStep(@Ctx() ctx: Context) {
     try {
