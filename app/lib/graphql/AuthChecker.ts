@@ -37,7 +37,10 @@ export const authChecker: AuthChecker<Context> = async (
   options: any[]
 ) => {
   const token = context.token
-  const cache = await redis.json.get(`session:${token}`)
+  let cache
+  if (config.finishedSetup) {
+    cache = await redis.json.get(`session:${token}`)
+  }
   let user: PartialUserAuth | null = null
   let session: CacheSession = null
   if (!cache) {

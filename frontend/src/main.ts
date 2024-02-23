@@ -118,11 +118,16 @@ if (import.meta.env.DEV) app.config.performance = true;
 // Register boot plugins
 registerPlugins(app);
 globals(app);
-if (localStorage.getItem("tpuTransport") === "http") {
+
+if (
+  localStorage.getItem("tpuTransport") === "http" ||
+  location.port === "34582"
+) {
   apolloHttp(app);
 } else {
   apolloWs(app);
 }
+
 events();
 socket(app).then(() => {});
 app.mount("#tpu-app");

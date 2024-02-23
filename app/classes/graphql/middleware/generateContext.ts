@@ -64,7 +64,9 @@ export default async function generateContext(ctx: any): Promise<Context> {
     ip === "::ffff:192.168.0.60"
   ) {
     // Depending on GraphQL WebSocket in v5, and normal HTTP v4, the object differs
-    if (ctx?.extra?.request?.headers?.[realIPHeader]) {
+    if (ctx?.req?.ip) {
+      ip = ctx.req.ip
+    } else if (ctx?.extra?.request?.headers?.[realIPHeader]) {
       ip = ctx.extra.request.headers[realIPHeader]
     } else if (ctx?.req?.headers?.[realIPHeader]) {
       ip = ctx.req.headers[realIPHeader]

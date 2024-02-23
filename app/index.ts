@@ -49,10 +49,9 @@ async function checkFrontend() {
       )
       return buildFrontend()
     }
-    const pkg = require(path.join(
-      global.rawAppRoot,
-      "../frontend/package.json"
-    ))
+    const pkg = require(
+      path.join(global.rawAppRoot, "../frontend/package.json")
+    )
     console.info(
       `[FRONTEND] Compiled frontend version: ${version}, latest frontend revision from local disk: ${pkg.version}`
     )

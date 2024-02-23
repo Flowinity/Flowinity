@@ -416,6 +416,8 @@ export class Application {
       }
     })
 
+    this.app.use("/graphql", this.yogaApp)
+
     this.app.use(express.static(path.join(global.appRoot, "../frontend_build")))
     this.app.get("*", function (req, res, next): void {
       if (req.url.startsWith("/api/")) return next()
