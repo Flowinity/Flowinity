@@ -13,9 +13,7 @@
           variant="outlined"
         >
           <div>
-            <p class="text-center text-gradient mb-n5" style="font-size: 64px">
-              PrivateUploader
-            </p>
+            <FlowinityBanner style="width: 300px" class="mt-6" />
             <v-container>
               <v-card-text>
                 {{ $t("setup.step0.description") }}
@@ -493,6 +491,7 @@
 import { defineComponent } from "vue";
 import PromoCard from "@/components/Home/PromoCard.vue";
 import { gql } from "@apollo/client";
+import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 
 enum Step {
   Welcome = 0,
@@ -509,7 +508,7 @@ enum Step {
 
 export default defineComponent({
   name: "InstanceSetupWizard",
-  components: { PromoCard },
+  components: { FlowinityBanner, PromoCard },
   data() {
     return {
       // TODO: GQL

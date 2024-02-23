@@ -40,6 +40,19 @@
       >
         {{ dialog }}
       </v-btn>
+
+      <v-btn
+        @click="
+          $router.push('/setup');
+          $app.site.finishedSetup = false;
+          $app.site.step = 1;
+          $nextTick(() => {
+            $app.site.step = 0;
+          });
+        "
+      >
+        force setup step 0
+      </v-btn>
     </v-container>
   </DevDialog>
 </template>
