@@ -14,6 +14,7 @@ import { User } from "@app/models/user.model"
 import { SocketAuth } from "@app/types/socket"
 import setupV4Socket from "@app/lib/socket-v3"
 import setupV3Socket from "@app/lib/socket-v3"
+import { redisHandleError } from "@app/lib/redisHandleError"
 
 interface Platform {
   platform: string
@@ -44,7 +45,7 @@ export async function setDominateDevice(
 
 export default {
   async init(app: any, server: any): Promise<void> {
-    if (!config.finishedSetup) return
+    if (!config.finishedSetup || config.redis.host === "defaulthostname") return
     const subClient = redis.duplicate()
     const io = require("socket.io")(server, {
       cors: {
@@ -53,8 +54,11 @@ export default {
       }
     })
 
-    await subClient.connect()
-
+    try {
+      await subClient.connect()
+    } catch (e) {
+      redisHandleError(e)
+    }
     io.adapter(createAdapter(redis, subClient))
     io.use(auth)
     io.on("connection", async (socket: SocketAuth): Promise<void> => {
