@@ -4725,6 +4725,18 @@
             "deprecationReason": null
           },
           {
+            "name": "step",
+            "description": "If finishedSetup is false, this will be the step the setup is on.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "termsNoteId",
             "description": "Workspaces Note ID for the Terms of Service.",
             "args": [],
