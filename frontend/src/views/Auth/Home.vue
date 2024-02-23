@@ -19,11 +19,11 @@
         <v-btn variant="outlined" :class="{'mb-8': $vuetify.display.mobile}" to="/register">
           Get started
         </v-btn>
-        <p v-if="!$app.site.officialInstance" class="mb-n2">
+        <p v-if="!$app.site.officialInstance" class="mb-n2 mt-4">
           This is a
           <a
+            class="text-white font-weight-bold"
             rel="noopener"
-            class="text-gradient"
             target="_blank"
             href="https://github.com/Flowinity/Flowinity"
           >
@@ -108,7 +108,7 @@
         </v-card-actions>
       </div>
     </PromoCard>
-    <div class="text-center">
+    <div v-if="$app.site.officialInstance" class="text-center">
       <small>Flowinity, formerly PrivateUploader.</small>
     </div>
   </v-container>
