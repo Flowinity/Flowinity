@@ -247,7 +247,7 @@ export class SecurityService {
       scopes: scopes.join(","),
       type: "api",
       token: await utils.generateAPIKey("api"),
-      expiredAt
+      expiredAt: expiredAt ? new Date(expiredAt) : null
     })
   }
 }
