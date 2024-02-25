@@ -8,6 +8,7 @@ services:
     volumes:
       - /var/lib/tpu_server/config:/app/app/config
       - /var/lib/tpu_server/storage:/app/storage
+      - /var/lib/tpu_server/storage:/app/app/storage
       - /var/lib/tpu_server/frontend_build:/app/frontend_build
     depends_on:
       - redis
