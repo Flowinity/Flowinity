@@ -12,17 +12,17 @@ export class DataLabelsGraph {
 
 @ObjectType()
 export class Stats {
-  @Field()
+  @Field(() => Int)
   users: number
-  @Field()
+  @Field(() => Int)
   announcements: number
-  @Field({
+  @Field(() => Int, {
     nullable: true
   })
   usage: number
-  @Field()
+  @Field(() => Int)
   collections: number
-  @Field()
+  @Field(() => Int)
   collectionItems: number
   @Field(() => DataLabelsGraph, {
     nullable: true
@@ -36,33 +36,33 @@ export class Stats {
     nullable: true
   })
   pulseGraph: DataLabelsGraph | null
-  @Field()
+  @Field(() => Int)
   uploads: number
-  @Field()
+  @Field(() => Int)
   pulse: number
-  @Field()
+  @Field(() => Int)
   pulses: number
-  @Field()
+  @Field(() => Int)
   docs: number
   @Field(() => GraphQLJSON, {
     nullable: true
   })
   hours: Record<string, number> | null
-  @Field()
+  @Field(() => Int)
   messages: number
 }
 
 @ObjectType()
 export class CoreStats extends Stats {
-  @Field()
+  @Field(() => Int)
   users: number
-  @Field()
+  @Field(() => Int)
   announcements: number
-  @Field()
+  @Field(() => Int)
   invites: number
-  @Field()
+  @Field(() => Int)
   inviteMilestone: number
-  @Field()
+  @Field(() => Int)
   chats: number
 }
 
