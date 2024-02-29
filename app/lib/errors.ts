@@ -226,7 +226,8 @@ let Errors = {
     status: 500
   },
   BANNED: {
-    message: "You have been banned from using TPU. Please contact support.",
+    message:
+      "Your account has been disabled. Please check your email and contact support if required.",
     status: 401
   },
   EMAIL_NOT_VERIFIED: {

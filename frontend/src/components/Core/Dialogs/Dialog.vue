@@ -4,12 +4,13 @@
     :model-value="modelValue"
     v-bind="$attrs"
     @update:model-value="$emit('update:modelValue', $event)"
+    :persistent="persistent"
   >
     <v-card class="no-border">
       <slot name="toolbar">
         <v-toolbar color="toolbar">
           <v-btn
-            v-if="$vuetify.display.mobile"
+            v-if="$vuetify.display.mobile && !persistent"
             icon
             @click="$emit('update:modelValue', false)"
           >
@@ -19,7 +20,7 @@
             <slot name="title">Default title</slot>
           </v-toolbar-title>
           <v-btn
-            v-if="!$vuetify.display.mobile"
+            v-if="!$vuetify.display.mobile && !persistent"
             class="float-end"
             icon
             @click="$emit('update:modelValue', false)"
@@ -37,7 +38,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: ["modelValue"],
+  props: ["modelValue", "persistent"],
   emits: ["update:modelValue"]
 });
 </script>

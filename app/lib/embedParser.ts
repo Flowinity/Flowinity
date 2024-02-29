@@ -263,6 +263,7 @@ export default async function embedParser(
 
   embeds = await embedGenerator(links, attachments)
 
+
   if (embeds.length) {
     await Message.update(
       {
@@ -328,10 +329,10 @@ async function ogsMetadataParser(
     })
 
     if (result) {
-      console.log(result)
       let imagePayload: ImagePayload | null = null
 
-      if (result.ogImage) {
+      //@ts-ignore
+      if (result.ogImage?.url) {
         //@ts-ignore
         const imgResult = await probe(result.ogImage.url)
         imagePayload = generateImagePayload(imgResult)

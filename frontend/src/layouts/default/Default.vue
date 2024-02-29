@@ -1,5 +1,6 @@
 <template>
   <BlockUserDialog v-model="$user.dialogs.block.value" />
+  <DateOfBirthConfirm v-model="$user.dialogs.dateOfBirth.value" />
   <PrivacyPolicyDialog v-if="$user.user?.privacyPolicyAccepted == false" />
   <WorkspaceDeleteDialog
     v-model="$app.dialogs.deleteItem.value"
@@ -111,10 +112,12 @@ import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
 import BlockUserDialog from "@/components/Users/Dialogs/Block.vue";
 import NetworkInspector from "@/components/Dev/Dialogs/NetworkInspector.vue";
+import DateOfBirthConfirm from "@/components/Users/Dialogs/DateOfBirthConfirm.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
   components: {
+    DateOfBirthConfirm,
     NetworkInspector,
     Sidebar,
     WorkspacesSidebar,

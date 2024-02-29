@@ -1,5 +1,59 @@
 <template>
   <template v-if="embed.metadata">
+    <v-card
+      v-if="
+        embed.metadata.restricted &&
+        !$user.user.canAccessRestrictedContent &&
+        !$user.user.dateOfBirth
+      "
+      class="d-flex align-center"
+      :style="{
+        maxWidth: width >= 500 ? 500 + 'px' : width + 'px'
+      }"
+    >
+      <div>
+        <v-icon class="text-grey ml-4" size="28">mdi-lock</v-icon>
+      </div>
+      <div class="">
+        <v-card-title class="mb-n2">
+          {{ $t("chats.restricted.setup.title") }}
+        </v-card-title>
+        <v-card-subtitle class="text-wrap">
+          {{ $t("chats.restricted.setup.description") }}
+        </v-card-subtitle>
+        <v-btn
+          class="mb-2 mt-1 ml-4"
+          color="blue"
+          variant="tonal"
+          @click="$user.dialogs.dateOfBirth.value = true"
+        >
+          {{ $t("chats.restricted.setup.confirm") }}
+        </v-btn>
+      </div>
+    </v-card>
+    <v-card
+      v-else-if="
+        embed.metadata.restricted &&
+        !$user.user.canAccessRestrictedContent &&
+        $user.user.dateOfBirth
+      "
+      class="d-flex align-center"
+      :style="{
+        maxWidth: width >= 500 ? 500 + 'px' : width + 'px'
+      }"
+    >
+      <div>
+        <v-icon class="text-grey ml-4" size="28">mdi-lock</v-icon>
+      </div>
+      <div class="">
+        <v-card-title>
+          {{ $t("chats.restricted.ineligible.title") }}
+        </v-card-title>
+        <v-card-subtitle class="mb-3">
+          {{ $t("chats.restricted.ineligible.description") }}
+        </v-card-subtitle>
+      </div>
+    </v-card>
     <component
       :is="embed.text.length ? VCard : 'div'"
       :class="{
@@ -8,6 +62,7 @@
       :style="{
         maxWidth: width >= 500 ? 500 + 'px' : width + 'px'
       }"
+      v-else
     >
       <div v-for="(text, index) in embed.text" :key="index">
         <v-card-text
@@ -223,7 +278,7 @@ export default defineComponent({
     },
     width() {
       if (this.$vuetify.display.width < 600) return undefined;
-      if (this.$vuetify.display.width <= 1366) return 350;
+      if (this.$vuetify.display.width <= 1366) return 450;
       return 700;
     }
   },

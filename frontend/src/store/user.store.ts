@@ -36,6 +36,9 @@ export const useUserStore = defineStore("user", {
         value: false,
         silent: false,
         username: ""
+      },
+      dateOfBirth: {
+        value: false
       }
     },
     defaultVuetify: null as any,
@@ -53,7 +56,7 @@ export const useUserStore = defineStore("user", {
     },
     gold(state) {
       if (!state.user) return false;
-      return state.user.plan.internalName === "GOLD";
+      return state.user.plan?.internalName === "GOLD";
     },
     unreadNotifications(state) {
       if (!state.user) return 0;

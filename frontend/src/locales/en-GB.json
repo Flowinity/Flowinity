@@ -27,6 +27,31 @@
   "dashboard": {
     "announcements": "Announcements"
   },
+  "workspaces": {
+    "sidebar": {
+      "rename": "Rename workspace",
+      "renameNote": "Rename note",
+      "delete": "Delete workspace",
+      "deleteNote": "Delete note"
+    },
+    "download": {
+      "title": "Download",
+      "titleZIP": "Download folder as Postcode",
+      "conversionHint": "Please ensure the resulting file meets your expectations as it will be converted.",
+      "types": {
+        "tpudoc": "Flowinity Document File",
+        "docx": "Microsoft DOCX",
+        "odt": "LibreOffice ODT",
+        "html": "HTML"
+      }
+    },
+    "import": {
+      "title": "Import document",
+      "name": "Name",
+      "file": "Flowinity Document (.TPUDOC or .HTML)",
+      "import": "Import"
+    }
+  },
   "stats": {
     "collections": "Collections",
     "collectivized": "Collectivised",
@@ -84,14 +109,14 @@
   },
   "settings": {
     "tabs": {
-      "account": "Account",
+      "account": "My Account",
       "security": "Security",
       "setup": "Setup",
       "mobileSetup": "Mobile Setup",
       "domains": "Domains",
       "integrations": "Integrations",
       "slideshows": "Slideshows",
-      "about": "About Flowinity"
+      "about": "About"
     },
     "home": {
       "privacy": {
@@ -139,6 +164,13 @@
         "themeEditor": "Open Theme Editor",
         "disableProfileColors": "Disable profile colours",
         "disableBatteryPreservation": "Disable battery preservation"
+      },
+      "deleteAccount": {
+        "title": "Delete Account",
+        "description": "If you'd like to delete your account, you may do so here. Please note that this action is irreversible after the 14 day wait period, and will delete the following:\n\n- Gallery items (including the direct links to your uploads, links will be deactivated immediately after the deletion request, without the 14 day wait, however reactivating your account will reactivate the links)\n- Messages from Communications will be anonymised, not deleted.\n- Workspace documents\n- Collections\n- Insights data\n- All other data associated with your account\n\nYou will be able to reactivate your account within 14 days of the deletion request, after this time, your account will be permanently deleted.",
+        "delete": "Delete Account",
+        "deleteText": "Are you sure you want to delete your account? This action is irreversible and will delete all of your data.",
+        "purgeGallery": "Delete all gallery items instead"
       }
     },
     "security": {

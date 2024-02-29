@@ -39,6 +39,9 @@ export const GetUserQuery = gql`
       xp
       publicProfile
       privacyPolicyAccepted
+      dateOfBirth
+      canAccessRestrictedContent
+      forceAgeVerification
       plan {
         quotaMax
         color

@@ -37,7 +37,7 @@ export function debugLink() {
   const debugStore = useDebugStore();
 
   // @ts-ignore
-  return new ApolloLink(async (operation, forward) => {
+  return new ApolloLink((operation, forward) => {
     const id = new Date().getTime() + "-" + Math.random();
     const startTime = performance.now();
     debugStore.recentOperations.unshift({
@@ -52,27 +52,20 @@ export function debugLink() {
       pending: true,
       sdl: operation.query.loc?.source.body
     });
+    return forward(operation).map((response) => {
+      const endTime = performance.now();
+      const elapsedTime = endTime - startTime;
 
-    if (artificialLatency > 0) {
-      await new Promise((resolve) => {
-        setTimeout(resolve, artificialLatency);
-      });
-    }
+      const op = debugStore.recentOperations.find((op) => op.id === id);
 
-    const response = await Promise.resolve(forward(operation));
+      if (op) {
+        op.pending = false;
+        op.result = response;
+        op.time = elapsedTime;
+      }
 
-    const endTime = performance.now();
-    const elapsedTime = endTime - startTime;
-
-    const op = debugStore.recentOperations.find((op) => op.id === id);
-
-    if (op) {
-      op.pending = false;
-      op.result = response;
-      op.time = elapsedTime;
-    }
-
-    return response;
+      return response;
+    });
   });
 }
 

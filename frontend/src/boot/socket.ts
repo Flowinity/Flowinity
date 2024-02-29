@@ -178,6 +178,11 @@ export default async function setup(app) {
     messages.splice(message.messageIndex, 1);
   });
   sockets.user.on("userSettingsUpdate", (data: any) => {
+    if (data.banned) {
+      user.logout();
+      return;
+    }
+    if (!user.user) return;
     user.user = {
       ...user.user,
       ...data

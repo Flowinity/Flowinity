@@ -1,5 +1,24 @@
 <template>
   <v-text-field
+    v-if="passwordMode || !$user.user.totpEnable || both"
+    autofocus
+    :model-value="password"
+    type="password"
+    :label="$t('settings.home.myAccount.currentPassword')"
+    @update:model-value="$emit('update:password', $event)"
+    @keydown.enter="$emit('confirm')"
+  >
+    <template v-if="$user.user.totpEnable && !both" #details>
+      Having problems?
+      <a
+        class="unselectable pointer"
+        @click="$emit('update:passwordMode', false)"
+      >
+        &nbsp;Use your 2FA code instead.
+      </a>
+    </template>
+  </v-text-field>
+  <v-text-field
     v-if="
       ($user.user.totpEnable && !passwordMode) ||
       (both && $user.user.totpEnable)
@@ -17,25 +36,6 @@
         @click="$emit('update:passwordMode', true)"
       >
         &nbsp;Use your password instead.
-      </a>
-    </template>
-  </v-text-field>
-  <v-text-field
-    v-if="passwordMode || !$user.user.totpEnable || both"
-    autofocus
-    :model-value="password"
-    type="password"
-    :label="$t('settings.home.myAccount.currentPassword')"
-    @update:model-value="$emit('update:password', $event)"
-    @keydown.enter="$emit('confirm')"
-  >
-    <template v-if="$user.user.totpEnable && !both" #details>
-      Having problems?
-      <a
-        class="unselectable pointer"
-        @click="$emit('update:passwordMode', false)"
-      >
-        &nbsp;Use your 2FA code instead.
       </a>
     </template>
   </v-text-field>

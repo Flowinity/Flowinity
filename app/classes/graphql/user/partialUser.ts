@@ -178,6 +178,10 @@ export class PartialUserAuth extends PartialUserBase {
   bot: boolean
   @Field(() => Boolean)
   banned: boolean
+  @Field(() => DateType, {
+    nullable: true
+  })
+  dateOfBirth: Date
 }
 
 export const partialUserFriend = [...partialUserBase, "status", "nameColor"]

@@ -293,23 +293,23 @@ export class ChatService {
     for (const user of individualAssociation
       ? [individualAssociation]
       : chat.users) {
-      console.log(`Sending ${type} notification to ${user.userId}`)
       const key = await redisClient.get(`user:${user.userId}:notificationKey`)
       if (!key) continue
 
-      const devices = (await redisClient.json.get(
-        `user:${user.userId}:platforms`
-      )) as unknown as Platform[] | undefined
-
-      if (
-        devices?.find(
-          (device) =>
-            device.platform === PlatformType.WEB ||
-            device.platform === PlatformType.DESKTOP
-        ) &&
-        type === "message"
-      )
-        continue
+      // TODO: Implement proper idle states, and emit missed messages
+      // const devices = (await redisClient.json.get(
+      //   `user:${user.userId}:platforms`
+      // )) as unknown as Platform[] | undefined
+      //
+      // if (
+      //   devices?.find(
+      //     (device) =>
+      //       device.platform === PlatformType.WEB ||
+      //       device.platform === PlatformType.DESKTOP
+      //   ) &&
+      //   type === "message"
+      // )
+      //   continue
 
       await axios
         .post(

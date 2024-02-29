@@ -60,6 +60,9 @@ import { Collection } from "@app/models/collection.model"
 import { defaultHomeWidgets } from "@app/classes/graphql/home/homeWidgets"
 import { StatusEvent } from "@app/classes/graphql/user/subscriptions/statusEvent"
 import { CacheService } from "@app/services/cache.service"
+import { DateType } from "@app/classes/graphql/serializers/date"
+import { EmailNotificationService } from "@app/services/emailNotification.service"
+import dayjs from "dayjs"
 
 @Resolver(User)
 @Service()
@@ -370,6 +373,78 @@ export class UserResolver extends createBaseResolver("User", User) {
       })
   }
 
+  @FieldResolver(() => Boolean)
+  forceAgeVerification() {
+    return false
+  }
+
+  @FieldResolver(() => Boolean)
+  async canAccessRestrictedContent(@Root() user: User) {
+    let dob = user.dateOfBirth
+    if (!dob) return false
+    const age = dayjs().diff(dob, "year")
+    return age >= 18
+  }
+
+  @Authorization({
+    scopes: "user.modify",
+    neverUseCache: true
+  })
+  @Mutation(() => Boolean)
+  async confirmDateOfBirth(
+    @Arg("dateOfBirth", () => String) dateOfBirth: string,
+    @Ctx() ctx: Context
+  ) {
+    if (ctx.user?.dateOfBirth) return false
+    await User.update(
+      {
+        dateOfBirth
+      },
+      {
+        where: {
+          id: ctx.user!!.id
+        }
+      }
+    )
+
+    // if under 13 years old, they will be banned
+    const date = new Date(dateOfBirth)
+    const age = new Date().getFullYear() - date.getFullYear()
+    if (age < 13) {
+      socket
+        .of(SocketNamespaces.USER)
+        .to(ctx.user!!.id)
+        .emit("userSettingsUpdate", {
+          banned: true,
+          dateOfBirth,
+          forceAgeVerification: false
+        })
+
+      await User.update(
+        {
+          banned: true
+        },
+        {
+          where: {
+            id: ctx.user!!.id
+          }
+        }
+      )
+      redis.json.del(`user:${ctx.user!!.id}`)
+      const emailNotificationService = Container.get(EmailNotificationService)
+      emailNotificationService.banUnderagedUserNotification(ctx.user!!.id)
+    }
+    socket
+      .of(SocketNamespaces.USER)
+      .to(ctx.user!!.id)
+      .emit("userSettingsUpdate", {
+        dateOfBirth,
+        canAccessRestrictedContent: dayjs().diff(date, "year") >= 18,
+        forceAgeVerification: false
+      })
+    return true
+  }
+
   @Authorization({
     scopes: ["user.view"],
     userOptional: true
@@ -428,9 +503,8 @@ function createBaseResolver<T extends ClassType>(
 
     async findByPk(id: number, ctx: Context) {
       const user = await User.findByPk(id, {
-        [EXPECTED_OPTIONS_KEY]: createContext(db),
         attributes: {
-          include: ["alternatePasswords"]
+          include: ["alternatePasswords", "dateOfBirth"]
         }
       })
       if (!user) return null
@@ -585,7 +659,8 @@ function createBaseResolver<T extends ClassType>(
                 "storedStatus",
                 "emailVerified",
                 "pulse",
-                "banned"
+                "banned",
+                "dateOfBirth"
               ]
             }
           ]
@@ -630,7 +705,8 @@ function createBaseResolver<T extends ClassType>(
               "storedStatus",
               "emailVerified",
               "pulse",
-              "banned"
+              "banned",
+              "dateOfBirth"
             ]
           }
         ]

@@ -1,7 +1,26 @@
 <template>
   <text-field
+    :label="$t('dangerZone.password')"
+    v-if="!userStore.user?.totpEnable || passwordMode"
+    autofocus
+    type="password"
+    @keydown.enter="$emit('confirm')"
+    @update:model-value="$emit('update:password', $event)"
+    :model-value="password"
+    parent-classes="flex-col"
+  >
+    <div class="flex justify-end" v-if="userStore.user?.totpEnable">
+      <a
+        class="select-none cursor-pointer text-blue"
+        @click="$emit('update:passwordMode', false)"
+      >
+        {{ $t("dangerZone.useTotp") }}
+      </a>
+    </div>
+  </text-field>
+  <text-field
     :label="$t('dangerZone.totp')"
-    v-if="userStore.user?.totpEnable && !passwordMode"
+    v-else
     autofocus
     @keydown.enter="$emit('confirm')"
     @update:model-value="$emit('update:totp', $event)"
@@ -16,25 +35,6 @@
         @click="$emit('update:passwordMode', true)"
       >
         {{ $t("dangerZone.usePassword") }}
-      </a>
-    </div>
-  </text-field>
-  <text-field
-    :label="$t('dangerZone.password')"
-    v-else
-    autofocus
-    type="password"
-    @keydown.enter="$emit('confirm')"
-    @update:model-value="$emit('update:password', $event)"
-    :model-value="password"
-    parent-classes="flex-col"
-  >
-    <div class="flex justify-end" v-if="userStore.user?.totpEnable">
-      <a
-        class="select-none cursor-pointer text-blue"
-        @click="$emit('update:passwordMode', false)"
-      >
-        {{ $t("dangerZone.useTotp") }}
       </a>
     </div>
   </text-field>

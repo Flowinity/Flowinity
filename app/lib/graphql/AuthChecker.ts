@@ -13,6 +13,7 @@ export interface AuthCheckerOptions {
   userOptional?: boolean
   accessLevel?: AccessLevel
   emailOptional?: boolean
+  neverUseCache?: boolean
 }
 
 export const Authorization = (options: AuthCheckerOptions) =>
@@ -38,7 +39,7 @@ export const authChecker: AuthChecker<Context> = async (
 ) => {
   const token = context.token
   let cache
-  if (config.finishedSetup) {
+  if (config.finishedSetup && !options[0]?.neverUseCache) {
     cache = await redis.json.get(`session:${token}`)
   }
   let user: PartialUserAuth | null = null

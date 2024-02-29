@@ -93,7 +93,8 @@ const Errors = {
     message: "The requested upload(s) couldn't be found."
   },
   USER_BANNED: {
-    message: "Your account has been disabled. Please contact support."
+    message:
+      "Your account has been disabled. Please check your email and contact support if required."
   },
   EXPERIMENT_NOT_ALLOWED: {
     message: "You are not allowed to use this experimental feature."

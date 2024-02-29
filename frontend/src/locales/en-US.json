@@ -165,6 +165,13 @@
         "disableProfileColors": "Disable profile colors",
         "disableBatteryPreservation": "Disable battery preservation",
         "pride": "Rainbow Mode"
+      },
+      "deleteAccount": {
+        "title": "Delete Account",
+        "description": "If you'd like to delete your account, you may do so here. Please note that this action is irreversible after the 14 day wait period and will delete the following:\n\n- Gallery items (including the direct links to your uploads, links will be deactivated immediately after the deletion request, without the 14 day wait, however reactivating your account will reactivate the links)\n- Messages from Communications will be anonymized, not deleted.\n- Workspace documents\n- Collections\n- Insights data\n- All other data associated with your account\n\nYou will be able to reactivate your account within 14 days of the deletion request, after this time, your account will be permanently deleted.",
+        "delete": "Delete Account",
+        "deleteText": "Are you sure you want to delete your account? This action is irreversible and will delete all of your data.",
+        "purgeGallery": "Delete all gallery items instead"
       }
     },
     "security": {
@@ -543,6 +550,17 @@
         "name": "Group Invites",
         "message": "Some information may be hidden based on your permissions and the auto-granting rank."
       }
+    },
+    "restricted": {
+      "ineligible": {
+        "title": "This content is restricted.",
+        "description": "You must be 18 years or older to view this content."
+      },
+      "setup": {
+        "title": "Please confirm your age.",
+        "description": "Please confirm your age to view this content.",
+        "confirm": "Confirm"
+      }
     }
   },
   "insights": {
@@ -625,7 +643,7 @@
       "conversionHint": "Please ensure the resulting file meets your expectations as it will be converted.",
       "types": {
         "tpudoc": "Flowinity Document File",
-        "docx": "DOCX",
+        "docx": "Microsoft DOCX",
         "odt": "LibreOffice ODT",
         "html": "HTML"
       }
@@ -715,6 +733,12 @@
       "title": "Unblock User",
       "description": "The user will not be notified that they are unblocked, but they will immediately be able to message you and view your profile again.",
       "action": "Unblock"
+    },
+    "dateOfBirthConfirm": {
+      "title": "Confirm your date of birth",
+      "description": "Please confirm your date of birth to continue.",
+      "action": "Confirm",
+      "label": "Date of Birth"
     }
   }
 }

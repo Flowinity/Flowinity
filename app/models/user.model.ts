@@ -54,7 +54,8 @@ import { HomeWidgets } from "@app/classes/graphql/home/homeWidgets"
       "passwordResetExpiry",
       "alternatePasswords",
       "mailToken",
-      "fcmNotificationKey"
+      "fcmNotificationKey",
+      "dateOfBirth"
     ]
   }
 }))
@@ -429,6 +430,22 @@ export class User extends Model {
   })
   homeWidgets: HomeWidgets | null
 
+  @Field(() => DateType, {
+    nullable: true
+  })
+  @Column({
+    type: DataType.DATE
+  })
+  dateOfBirth: Date | null
+
+  @Field(() => DateType, {
+    nullable: true
+  })
+  @Column({
+    type: DataType.DATE
+  })
+  pendingDeletionDate: Date | null
+
   @Field(() => Plan, {
     nullable: true
   })
@@ -513,4 +530,14 @@ export class User extends Model {
     defaultValue: false
   })
   legacy?: boolean = false
+
+  @Field(() => Boolean, {
+    defaultValue: false
+  })
+  forceAgeVerification: boolean = false
+
+  @Field(() => Boolean, {
+    defaultValue: false
+  })
+  canAccessRestrictedContent: boolean = false
 }
