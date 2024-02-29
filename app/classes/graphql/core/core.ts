@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from "type-graphql"
 import { Announcement } from "@app/models/announcement.model"
-import { GraphQLJSON } from "graphql-scalars"
+import { GraphQLBigInt, GraphQLJSON } from "graphql-scalars"
 
 @ObjectType()
 export class DataLabelsGraph {
@@ -16,7 +16,7 @@ export class Stats {
   users: number
   @Field(() => Int)
   announcements: number
-  @Field(() => Int, {
+  @Field(() => GraphQLBigInt, {
     nullable: true
   })
   usage: number
