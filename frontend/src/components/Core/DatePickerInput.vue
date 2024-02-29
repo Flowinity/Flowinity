@@ -16,7 +16,7 @@
         v-bind="{ ...props, ...$attrs }"
         :model-value="transformDate"
         :label="label"
-        :prepend-icon="calendarIcon"
+        prepend-icon="mdi-calendar"
         style="max-width: 360px"
       ></v-text-field>
     </template>
@@ -43,8 +43,7 @@ const props = defineProps({
 });
 
 const open = ref(false);
-const date = ref<Date | null>(props.modelValue);
-const calendarIcon = "mdi-calendar";
+const date = ref<Date | string | null>(props.modelValue);
 
 watch(
   () => props.modelValue,
