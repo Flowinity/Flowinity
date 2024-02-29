@@ -43,6 +43,7 @@ import {
   GroupPrivacy
 } from "@app/classes/graphql/user/privacy"
 import { HomeWidgets } from "@app/classes/graphql/home/homeWidgets"
+import { BanReason } from "@app/classes/graphql/user/ban"
 
 @DefaultScope(() => ({
   attributes: {
@@ -445,6 +446,29 @@ export class User extends Model {
     type: DataType.DATE
   })
   pendingDeletionDate: Date | null
+
+  @Field(() => BanReason, {
+    nullable: true
+  })
+  @Column({
+    type: DataType.ENUM(
+      "OTHER",
+      "PENDING_MANUAL_ACCOUNT_DELETION",
+      "ILLEGAL_CONTENT",
+      "SPAM",
+      "HARASSMENT",
+      "UNDER_AGE"
+    )
+  })
+  banReasonType: BanReason | null
+
+  @Field(() => String, {
+    nullable: true
+  })
+  @Column({
+    type: DataType.TEXT
+  })
+  banReason: string | null
 
   @Field(() => Plan, {
     nullable: true

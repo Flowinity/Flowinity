@@ -110,6 +110,54 @@
           <TwoFactor />
         </v-expansion-panel-text>
       </v-expansion-panel>
+      <v-expansion-panel class="text-red v-card--variant-tonal">
+        <span class="v-card__underlay"></span>
+        <v-expansion-panel-title>
+          {{ $t("settings.home.deleteAccount.title") }}
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-card-text style="white-space: pre-line">
+            {{ $t("settings.home.deleteAccount.description") }}
+          </v-card-text>
+          <v-card-actions>
+            <danger-zone-dialog :require-both="true" @confirm="deleteAccount">
+              <template #title>
+                {{ $t("settings.home.deleteAccount.title") }}
+              </template>
+              <template #content>
+                {{ $t("settings.home.deleteAccount.deleteText") }}
+              </template>
+              <template #default="{ toggle }">
+                <v-btn
+                  color="red"
+                  :loading="deletion.deleting"
+                  variant="tonal"
+                  @click="toggle()"
+                >
+                  {{ $t("settings.home.deleteAccount.delete") }}
+                </v-btn>
+              </template>
+              <template #actions="{ confirm }">
+                <v-btn
+                  color="red"
+                  :loading="deletion.deleting"
+                  @click="confirm()"
+                >
+                  {{ $t("settings.home.deleteAccount.delete") }}
+                </v-btn>
+              </template>
+            </danger-zone-dialog>
+            <v-btn
+              color="red"
+              variant="tonal"
+              :loading="deletion.purging"
+              @click="purgeGallery"
+            >
+              {{ $t("settings.home.deleteAccount.purgeGallery") }}
+            </v-btn>
+          </v-card-actions>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
     </v-expansion-panels>
     <v-card-title>{{ $t("settings.home.preferences.title") }}</v-card-title>
     <v-slider
@@ -209,10 +257,12 @@ import {
   ChangeUsernameMutation,
   ChangeUserPasswordMutation
 } from "@/graphql/user/changeUsername.graphql";
+import DangerZoneDialog from "@/components/Core/DangerZoneDialog.vue";
+import { DeleteAccountMutation } from "@/graphql/user/deleteAccount.graphql";
 
 export default defineComponent({
   name: "SettingsHome",
-  components: { DangerZoneInput, TwoFactor },
+  components: { DangerZoneDialog, DangerZoneInput, TwoFactor },
   emits: ["update"],
   setup() {
     const theme = useTheme();
@@ -298,6 +348,10 @@ export default defineComponent({
         password: true,
         username: true,
         email: true
+      },
+      deletion: {
+        deleting: false,
+        purging: false
       }
     };
   },
@@ -400,6 +454,24 @@ export default defineComponent({
         }
       });
       this.$toast.success("Your username has been updated!");
+    },
+    async deleteAccount(dangerZone: { password: string; totp: string }) {
+      this.deletion.deleting = true;
+      try {
+        await this.$apollo.mutate({
+          mutation: DeleteAccountMutation,
+          variables: {
+            input: {
+              password: dangerZone.password,
+              totp: dangerZone.totp
+            }
+          }
+        });
+        this.$toast.success("Your account has been deleted!");
+        await this.$router.push("/");
+      } finally {
+        this.deletion.deleting = false;
+      }
     }
   }
 });

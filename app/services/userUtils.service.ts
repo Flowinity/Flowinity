@@ -40,6 +40,9 @@ import {
 import { GqlError } from "@app/lib/gqlErrors"
 import { GraphQLError } from "graphql/error"
 import { pubSub } from "@app/lib/graphql/pubsub"
+import dayjs from "dayjs"
+import { EmailNotificationService } from "@app/services/emailNotification.service"
+import { BanReason } from "@app/classes/graphql/user/ban"
 
 @Service()
 export class UserUtilsService {
@@ -50,6 +53,38 @@ export class UserUtilsService {
     })
     // @ts-ignore
     return user?.[attribute] ?? null
+  }
+
+  async queueDeleteAccount(
+    userId: number,
+    email: boolean = true,
+    banReasonType: BanReason = BanReason.PENDING_MANUAL_ACCOUNT_DELETION
+  ) {
+    const user = await User.findByPk(userId, {
+      attributes: ["email", "username", "id"]
+    })
+
+    if (!user || user.banned) return
+
+    const pendingDeletionDate = dayjs().add(14, "day").toDate()
+
+    await user.update({
+      banned: true,
+      pendingDeletionDate,
+      banReasonType
+    })
+
+    if (email) {
+      const emailNotificationService = Container.get(EmailNotificationService)
+      emailNotificationService.confirmDeleteAccountNotification(user.id)
+    }
+
+    redis.json.del(`user:${user!!.id}`)
+
+    socket.of(SocketNamespaces.USER).to(user.id).emit("userSettingsUpdate", {
+      banned: true,
+      pendingDeletionDate
+    })
   }
   async registerFCMToken(userId: number, token: string) {
     if (!config.providers.google) return
@@ -264,7 +299,7 @@ export class UserUtilsService {
           } the button below to verify your email address.`,
           action: [
             {
-              instructions: `Click the button below to verify your account and start using PrivateUploader!`,
+              instructions: `Click the button below to verify your account and start using Flowinity!`,
               button: {
                 color: "#0190ea", // Optional action button color
                 text: "Verify",

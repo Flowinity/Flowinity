@@ -63,6 +63,8 @@ import { CacheService } from "@app/services/cache.service"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { EmailNotificationService } from "@app/services/emailNotification.service"
 import dayjs from "dayjs"
+import { DangerZoneInput } from "@app/classes/graphql/chat/deleteChat"
+import { BanReason } from "@app/classes/graphql/user/ban"
 
 @Resolver(User)
 @Service()
@@ -417,22 +419,17 @@ export class UserResolver extends createBaseResolver("User", User) {
         .emit("userSettingsUpdate", {
           banned: true,
           dateOfBirth,
-          forceAgeVerification: false
+          forceAgeVerification: false,
+          canAccessRestrictedContent: false
         })
-
-      await User.update(
-        {
-          banned: true
-        },
-        {
-          where: {
-            id: ctx.user!!.id
-          }
-        }
+      await this.userUtilsService.queueDeleteAccount(
+        ctx.user!!.id,
+        false,
+        BanReason.UNDER_AGE
       )
-      redis.json.del(`user:${ctx.user!!.id}`)
       const emailNotificationService = Container.get(EmailNotificationService)
       emailNotificationService.banUnderagedUserNotification(ctx.user!!.id)
+      return true
     }
     socket
       .of(SocketNamespaces.USER)
@@ -442,6 +439,29 @@ export class UserResolver extends createBaseResolver("User", User) {
         canAccessRestrictedContent: dayjs().diff(date, "year") >= 18,
         forceAgeVerification: false
       })
+    return true
+  }
+
+  @Authorization({
+    scopes: "user.modify",
+    emailOptional: true
+  })
+  @Mutation(() => Boolean)
+  async deleteAccount(
+    @Ctx() ctx: Context,
+    @Arg("input") input: DangerZoneInput
+  ) {
+    await this.authService.validateAuthMethod({
+      credentials: {
+        password: input.password,
+        totp: input.totp
+      },
+      userId: ctx.user!!.id,
+      totp: true,
+      password: true,
+      alternatePassword: false
+    })
+    await this.userUtilsService.queueDeleteAccount(ctx.user!!.id)
     return true
   }
 

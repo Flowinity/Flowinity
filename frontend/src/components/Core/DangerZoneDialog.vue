@@ -18,7 +18,7 @@
         @confirm="confirmSubmit"
       ></danger-zone-input>
     </div>
-    <div v-if="$slots.actions" class="d-flex justify-end pr-2">
+    <div v-if="$slots.actions" class="d-flex justify-end pr-2 pb-2">
       <slot name="actions" :confirm="confirmSubmit" />
     </div>
   </CoreDialog>
@@ -31,6 +31,7 @@ import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 import DangerZoneInput from "@/components/Core/DangerZoneInput.vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import { useUserStore } from "@/store/user.store";
 
 const props = defineProps({
   requireBoth: {
@@ -40,10 +41,10 @@ const props = defineProps({
 });
 
 const password = ref("");
-const passwordConfirm = ref("");
 const totp = ref("");
 const passwordMode = ref(false);
 const dialog = ref(false);
+const userStore = useUserStore();
 
 const emit = defineEmits(["confirm"]);
 const toast = useToast();
@@ -52,18 +53,15 @@ const t = getCurrentInstance().ctx.$t;
 
 function confirmSubmit() {
   if ((props.requireBoth || passwordMode.value) && !password.value) {
-    toast.error(t("dangerZone.passwordRequired"));
-    return;
-  }
-  if ((props.requireBoth || !passwordMode.value) && !totp.value) {
-    toast.error(t("dangerZone.totpRequired"));
+    toast.error("Password is required");
     return;
   }
   if (
-    (props.requireBoth || passwordMode.value) &&
-    password.value !== passwordConfirm.value
+    (props.requireBoth || !passwordMode.value) &&
+    !totp.value &&
+    userStore.user?.totpEnable
   ) {
-    toast.error(t("dangerZone.passwordMismatch"));
+    toast.error("2FA code is required");
     return;
   }
   emit("confirm", {

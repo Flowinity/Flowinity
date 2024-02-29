@@ -1,9 +1,9 @@
 <template>
   <v-container class="text-center justify-center">
     <PromoNoContent
-      description="Chat with other TPU users instantly."
+      :description="`Chat with other ${$app.site.name} users instantly.`"
       icon="mdi-message-processing-outline"
-      title="TPU Communications"
+      :title="`${$app.site.name} Communications`"
     />
   </v-container>
 </template>
