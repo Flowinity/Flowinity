@@ -1,4 +1,13 @@
-import { BelongsTo, Column, DataType, DefaultScope, HasMany, HasOne, Model, Table } from "sequelize-typescript"
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  DefaultScope,
+  HasMany,
+  HasOne,
+  Model,
+  Table
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Session } from "@app/models/session.model"
 import { OauthUser } from "@app/models/oauthUser.model"
@@ -79,7 +88,9 @@ export class OauthApp extends Model {
   @Column
   private: boolean
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "userId")
   user: PartialUserBase
 

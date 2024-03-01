@@ -65,6 +65,9 @@ import { EmailNotificationService } from "@app/services/emailNotification.servic
 import dayjs from "dayjs"
 import { DangerZoneInput } from "@app/classes/graphql/chat/deleteChat"
 import { BanReason } from "@app/classes/graphql/user/ban"
+import { DeletionService } from "@app/services/deletion.service"
+import { Chat } from "@app/models/chat.model"
+import { ChatAssociation } from "@app/models/chatAssociation.model"
 
 @Resolver(User)
 @Service()
@@ -461,10 +464,56 @@ export class UserResolver extends createBaseResolver("User", User) {
       password: true,
       alternatePassword: false
     })
+
+    // check if user owns any chats
+    const count = await Chat.count({
+      where: {
+        userId: ctx.user!!.id,
+        type: "group"
+      },
+      include: [
+        {
+          model: ChatAssociation,
+          required: true,
+          as: "association",
+          where: {
+            userId: ctx.user!!.id
+          }
+        }
+      ]
+    })
+
+    if (count > 0) {
+      throw new GqlError("OWNED_CHATS_ACCOUNT_DELETION")
+    }
+
     await this.userUtilsService.queueDeleteAccount(ctx.user!!.id)
     return true
   }
 
+  @Authorization({
+    scopes: "user.modify"
+  })
+  @Mutation(() => Boolean)
+  async deleteGallery(
+    @Ctx() ctx: Context,
+    @Arg("input") input: DangerZoneInput
+  ) {
+    await this.authService.validateAuthMethod({
+      credentials: {
+        password: input.password,
+        totp: input.totp
+      },
+      userId: ctx.user!!.id,
+      totp: true,
+      password: true,
+      alternatePassword: false
+    })
+    const user = await User.findByPk(ctx.user!!.id)
+    if (!user) return false
+    await this.deletionService.deleteGallery(user)
+    return true
+  }
   @Authorization({
     scopes: ["user.view"],
     userOptional: true
@@ -518,7 +567,8 @@ function createBaseResolver<T extends ClassType>(
   abstract class UserResolver {
     constructor(
       public userUtilsService: UserUtilsService,
-      public authService: AuthService
+      public authService: AuthService,
+      public deletionService: DeletionService
     ) {}
 
     async findByPk(id: number, ctx: Context) {

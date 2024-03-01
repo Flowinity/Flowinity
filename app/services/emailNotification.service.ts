@@ -52,7 +52,7 @@ export class EmailNotificationService {
     this.adminService.sendEmail(
       {
         body: {
-          name: `Sorry to see you go, ${user.username}`,
+          name: user.username,
           intro: `You have requested to delete your account. If you do nothing within 14 days, your account will be permanently deleted, including your files, Workspaces, and other information. Your chat messages will be anonymized.`,
           action: [
             {
@@ -81,7 +81,7 @@ export class EmailNotificationService {
     )
   }
 
-  // If the user's account is to be deleted in 24 hours
+  // If the user's account is to be deleted in 48 hours
   async warnDeleteAccountNotification(userId: number) {
     const user = await User.findOne({
       where: {
@@ -96,11 +96,11 @@ export class EmailNotificationService {
       {
         body: {
           name: user.username,
-          intro: `You have requested to delete your account. Your account will be permanently deleted in 24 hours, including your files, Workspaces, and your chat messages will be anonymized if you do nothing within this period.`,
+          intro: `You have requested to delete your account. Your account will be permanently deleted in 48 hours, including your files, Workspaces, and your chat messages will be anonymized if you do nothing within this period.`,
           action: [
             {
               instructions:
-                "Want to reactivate your account? You can do so within 24 hours by logging in.",
+                "Want to reactivate your account? You can do so within 48 hours by logging in.",
               button: {
                 color: "#0190ea", // Optional action button color
                 text: "Login",
@@ -120,7 +120,7 @@ export class EmailNotificationService {
         }
       },
       user.email,
-      "Your account will be deleted in 24 hours"
+      "Your account will be deleted in 48 hours"
     )
   }
 }

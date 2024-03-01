@@ -76,7 +76,9 @@ export class Collection extends Model {
   })
   banner: string
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "userId")
   user: User
 

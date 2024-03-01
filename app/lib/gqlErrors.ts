@@ -121,6 +121,10 @@ const Errors = {
   NO_IP: {
     message:
       "No valid IP address could be associated with the request.\n\nIf you are a user of PrivateUploader, please try again later.\n\nFor instance administrators: please ensure the reverse proxy is configured correctly."
+  },
+  OWNED_CHATS_ACCOUNT_DELETION: {
+    message:
+      "You cannot delete your account whilst owning chats. Please transfer them before trying again."
   }
 }
 

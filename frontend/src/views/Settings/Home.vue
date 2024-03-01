@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="$user.user">
     <v-card-title>{{ $t("settings.home.myAccount.title") }}</v-card-title>
     <v-expansion-panels class="px-4">
       <v-expansion-panel :title="$t('settings.home.myAccount.changeUsername')">
@@ -119,13 +119,21 @@
           <v-card-text style="white-space: pre-line">
             {{ $t("settings.home.deleteAccount.description") }}
           </v-card-text>
+          <delete-account v-model="deletion.deletionDialog" />
           <v-card-actions>
-            <danger-zone-dialog :require-both="true" @confirm="deleteAccount">
+            <v-btn
+              color="red"
+              variant="tonal"
+              @click="deletion.deletionDialog = true"
+            >
+              {{ $t("settings.home.deleteAccount.delete") }}
+            </v-btn>
+            <danger-zone-dialog :require-both="true" @confirm="deleteGallery">
               <template #title>
-                {{ $t("settings.home.deleteAccount.title") }}
+                {{ $t("settings.home.deleteAccount.purgeGallery") }}
               </template>
               <template #content>
-                {{ $t("settings.home.deleteAccount.deleteText") }}
+                {{ $t("settings.home.deleteAccount.purgeText") }}
               </template>
               <template #default="{ toggle }">
                 <v-btn
@@ -134,27 +142,19 @@
                   variant="tonal"
                   @click="toggle()"
                 >
-                  {{ $t("settings.home.deleteAccount.delete") }}
+                  {{ $t("settings.home.deleteAccount.purgeGallery") }}
                 </v-btn>
               </template>
               <template #actions="{ confirm }">
                 <v-btn
                   color="red"
-                  :loading="deletion.deleting"
+                  :loading="deletion.purging"
                   @click="confirm()"
                 >
-                  {{ $t("settings.home.deleteAccount.delete") }}
+                  {{ $t("settings.home.deleteAccount.purgeGallery") }}
                 </v-btn>
               </template>
             </danger-zone-dialog>
-            <v-btn
-              color="red"
-              variant="tonal"
-              :loading="deletion.purging"
-              @click="purgeGallery"
-            >
-              {{ $t("settings.home.deleteAccount.purgeGallery") }}
-            </v-btn>
           </v-card-actions>
         </v-expansion-panel-text>
       </v-expansion-panel>
@@ -258,11 +258,15 @@ import {
   ChangeUserPasswordMutation
 } from "@/graphql/user/changeUsername.graphql";
 import DangerZoneDialog from "@/components/Core/DangerZoneDialog.vue";
-import { DeleteAccountMutation } from "@/graphql/user/deleteAccount.graphql";
+import {
+  DeleteAccountMutation,
+  DeleteGalleryMutation
+} from "@/graphql/user/deleteAccount.graphql";
+import DeleteAccount from "@/components/Users/Dialogs/DeleteAccount.vue";
 
 export default defineComponent({
   name: "SettingsHome",
-  components: { DangerZoneDialog, DangerZoneInput, TwoFactor },
+  components: { DeleteAccount, DangerZoneDialog, DangerZoneInput, TwoFactor },
   emits: ["update"],
   setup() {
     const theme = useTheme();
@@ -351,7 +355,8 @@ export default defineComponent({
       },
       deletion: {
         deleting: false,
-        purging: false
+        purging: false,
+        deletionDialog: false
       }
     };
   },
@@ -455,11 +460,11 @@ export default defineComponent({
       });
       this.$toast.success("Your username has been updated!");
     },
-    async deleteAccount(dangerZone: { password: string; totp: string }) {
-      this.deletion.deleting = true;
+    async deleteGallery(dangerZone: { password: string; totp: string }) {
+      this.deletion.purging = true;
       try {
         await this.$apollo.mutate({
-          mutation: DeleteAccountMutation,
+          mutation: DeleteGalleryMutation,
           variables: {
             input: {
               password: dangerZone.password,
@@ -467,10 +472,10 @@ export default defineComponent({
             }
           }
         });
-        this.$toast.success("Your account has been deleted!");
+        this.$toast.success("Your gallery has been purged.");
         await this.$router.push("/");
       } finally {
-        this.deletion.deleting = false;
+        this.deletion.purging = false;
       }
     }
   }

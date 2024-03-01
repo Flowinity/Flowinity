@@ -156,3 +156,20 @@ export const _OldChatsQuery = gql`
     }
   }
 `;
+
+export const GetChatUsersQuery = gql`
+  query GetChatUsers($input: ChatInput!) {
+    chat(input: $input) {
+      users {
+        id
+        chatId
+        userId
+        user {
+          id
+          username
+          avatar
+        }
+      }
+    }
+  }
+`;

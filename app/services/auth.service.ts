@@ -14,11 +14,16 @@ import {
   AuthValidationResponse
 } from "@app/classes/graphql/auth/requirements"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
-import { LoginResponse, LoginUser } from "@app/classes/graphql/auth/login"
+import {
+  BanResponse,
+  LoginResponse,
+  LoginUser
+} from "@app/classes/graphql/auth/login"
 import { GqlError } from "@app/lib/gqlErrors"
 import { AdminService } from "@app/services/admin.service"
 import uaParser from "ua-parser-js"
 import sanitizeHtml from "sanitize-html"
+import { BanReason } from "@app/classes/graphql/user/ban"
 
 @Service()
 export class AuthService {
@@ -173,7 +178,7 @@ export class AuthService {
         throw gql ? new GqlError("INVALID_TOTP") : Errors.INVALID_TOTP
       }
     }
-    if (user.banned) {
+    if (user.banned && !requirements.allowBanned) {
       throw gql ? new GqlError("USER_BANNED") : Errors.BANNED
     }
     return {
@@ -182,7 +187,8 @@ export class AuthService {
       user: {
         id: user.id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        banned: user.banned
       }
     }
   }
@@ -205,12 +211,13 @@ export class AuthService {
         username,
         password: true,
         alternatePassword: true,
-        totp: true
+        totp: true,
+        allowBanned: true
       },
       gql
     )
 
-    const session = await utils.createSession(
+    let session = await utils.createSession(
       validation.user.id,
       validation.alternatePassword?.scopes
         ? validation.alternatePassword.scopes
@@ -226,9 +233,28 @@ export class AuthService {
       validation.alternatePassword?.name
     )
 
+    let ban: BanResponse | null = null
+
+    if (validation.user.banned) {
+      const userBanInformation = await User.findOne({
+        where: {
+          id: validation.user.id
+        },
+        attributes: ["banReason", "banReasonType", "pendingDeletionDate"]
+      })
+      if (userBanInformation) {
+        ban = {
+          message: userBanInformation.banReason,
+          type: userBanInformation.banReasonType!,
+          pendingDeletionDate: userBanInformation.pendingDeletionDate
+        }
+      }
+    }
+
     return {
       user: validation.user,
-      token: session
+      token: session,
+      ban
     }
   }
 
@@ -376,5 +402,42 @@ export class AuthService {
         scopedPasswordName ? `with scoped password ${scopedPasswordName}` : ""
       }`
     )
+  }
+
+  async reactivateAccount(
+    userId: number,
+    gql: boolean = true
+  ): Promise<Boolean> {
+    const user = await User.findByPk(userId, {
+      attributes: ["banned", "banReason", "banReasonType"]
+    })
+
+    if (!user)
+      throw gql ? new GqlError("USER_NOT_FOUND") : Errors.USER_NOT_FOUND
+
+    if (
+      !user.banned ||
+      user.banReasonType !== BanReason.PENDING_MANUAL_ACCOUNT_DELETION
+    ) {
+      throw gql
+        ? new GraphQLError("You are not eligible to reactivate your account.")
+        : Errors.INVALID_REACTIVATION
+    }
+
+    await User.update(
+      {
+        banned: false,
+        banReason: null,
+        banReasonType: null,
+        pendingDeletionDate: null
+      },
+      {
+        where: {
+          id: userId
+        }
+      }
+    )
+
+    return true
   }
 }

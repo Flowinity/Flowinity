@@ -410,7 +410,7 @@ export class ChatResolver {
 
   @RateLimit({
     window: 10,
-    max: 10
+    max: 100
   })
   @Authorization({
     scopes: ["*"]

@@ -48,6 +48,7 @@ import { User } from "./models/user.model"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { Platform, PlatformType } from "@app/classes/graphql/user/platforms"
 import { randomUUID } from "crypto"
+import { DeletionService } from "@app/services/deletion.service"
 
 @Service({ eager: false })
 export class Server {
@@ -68,7 +69,8 @@ export class Server {
     private readonly pulseService: PulseService,
     private readonly badgeService: OfficialInstBadge,
     private readonly malService: MyAnimeListService,
-    private readonly discordService: DiscordService
+    private readonly discordService: DiscordService,
+    private readonly deletionService: DeletionService
   ) {}
 
   async startSocket() {
@@ -355,6 +357,7 @@ export class Server {
     this.legacyServer.on("listening", () => this.onLegacyListening())
 
     if (mainWorker && !noBackgroundTasks) {
+      await this.deletionService.deletionInit()
       await this.cacheService.cacheInit()
       await this.billingService.billingInit()
       await this.pulseService.pulseInit()

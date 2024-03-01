@@ -636,7 +636,12 @@ export default defineComponent({
         .get(
           this.$route.params.username
             ? `/pulse/insights/v2/${id}/${this.$route.params.username}`
-            : `/pulse/insights/v2/${id}`
+            : `/pulse/insights/v2/${id}`,
+          {
+            headers: {
+              noToast: true
+            }
+          }
         )
         .then((res) => {
           this.report = res.data;

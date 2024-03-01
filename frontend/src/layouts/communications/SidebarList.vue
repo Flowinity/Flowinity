@@ -154,13 +154,7 @@
     <v-list-item
       v-for="chat in $chat.chats"
       :key="chat.id"
-      :subtitle="
-        chat.type === 'group'
-          ? `${chat.usersCount} members`
-          : !chat.recipient?.id
-            ? 'Legacy User'
-            : ''
-      "
+      :subtitle="chat.type === 'group' ? `${chat.usersCount} members` : ''"
       :to="`/communications/${chat.association.id}`"
       :class="{
         'black-and-white': chat.association.notifications === 'none'

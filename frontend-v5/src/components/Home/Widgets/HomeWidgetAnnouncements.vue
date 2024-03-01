@@ -11,10 +11,13 @@
         <div class="flex flex-col items-center justify-center">
           <user-avatar
             :size="58"
-            :src="appStore.domain + announcement.user.avatar"
+            :src="appStore.domain + announcement.user?.avatar"
+            v-if="announcement.user?.avatar"
           />
           <div class="my-2 text-xl">
-            <strong>{{ announcement.user.username }}</strong>
+            <strong>
+              {{ announcement.user?.username || "Flowinity Staff" }}
+            </strong>
           </div>
         </div>
 

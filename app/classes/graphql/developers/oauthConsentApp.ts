@@ -48,7 +48,9 @@ export class OauthConsentApp {
   @Field()
   private: boolean
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "userId")
   user: PartialUserBase
 

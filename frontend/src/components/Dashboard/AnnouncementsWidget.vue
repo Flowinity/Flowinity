@@ -30,13 +30,17 @@
           :user="announcement.user"
           size="58"
           style="cursor: pointer"
-          @click="$router.push(`/u/${announcement.user.username}`)"
+          @click="
+            $router.push(`/u/${announcement.user?.username || 'Flowinity'}`)
+          "
         />
         <v-card-title
           style="cursor: pointer"
-          @click="$router.push(`/u/${announcement.user.username}`)"
+          @click="
+            $router.push(`/u/${announcement.user?.username || 'Flowinity'}`)
+          "
         >
-          {{ announcement.user.username }}
+          {{ announcement.user?.username || "Flowinity Staff" }}
         </v-card-title>
         <v-card-text>
           <v-textarea

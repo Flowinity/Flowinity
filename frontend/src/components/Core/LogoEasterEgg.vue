@@ -2,7 +2,7 @@
   <h1
     v-if="!$vuetify.display.mobile && event !== 'bc'"
     id="tpu-brand-logo"
-    :title="event === 'j' ? 'Jitsi Anniversary' : 'TroploPrivateUploader'"
+    :title="event === 'j' ? 'Jitsi Anniversary' : $app.site.name || 'Flowinity'"
     class="unselectable ml-4 relative"
     style="z-index: 10; cursor: pointer; font-size: 32px; font-weight: 500"
     :class="{

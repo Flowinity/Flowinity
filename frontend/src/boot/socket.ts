@@ -448,12 +448,22 @@ export default async function setup(app) {
         data.status === FriendStatus.Incoming ||
         data.status === FriendStatus.Outgoing
       ) {
-        friends.friends.push(data.friend);
+        friends.friends.push({
+          ...data.friend,
+          otherUser: data.friend.user,
+          user: data.friend.otherUser
+        });
       } else {
         const friend = friends.friends.find(
           (friend) => friend.id === data.friend.id
         );
-        if (!friend) return;
+        if (!friend) {
+          friends.friends.push({
+            ...data.friend,
+            otherUser: data.friend.user,
+            user: data.friend.otherUser
+          });
+        }
         friend.status = FriendStatus.Accepted;
       }
     }

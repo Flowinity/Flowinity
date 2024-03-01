@@ -15,7 +15,9 @@ export class Announcement extends Model {
   })
   id: number
 
-  @Field()
+  @Field({
+    nullable: true
+  })
   @Column
   userId: number
 
@@ -41,7 +43,9 @@ export class Announcement extends Model {
   @Column
   updatedAt: Date
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "userId")
   user: PartialUserBase
 }

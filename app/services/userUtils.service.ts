@@ -370,6 +370,18 @@ export class UserUtilsService {
               attributes: ["id", "name", "color", "icon", "internalName"]
             }
           ]
+        },
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "username", "avatar", "description", "banner"],
+          include: [
+            {
+              model: Plan,
+              as: "plan",
+              attributes: ["id", "name", "color", "icon", "internalName"]
+            }
+          ]
         }
       ]
     })

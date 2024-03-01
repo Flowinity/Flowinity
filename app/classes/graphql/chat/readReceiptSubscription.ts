@@ -9,6 +9,8 @@ export class ReadReceipt {
   associationId: number
   @Field(() => Int)
   messageId: number
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   user: PartialUserBase
 }

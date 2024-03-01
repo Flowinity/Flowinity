@@ -1,4 +1,10 @@
-import { BelongsToMany, Column, DataType, Model, Table } from "sequelize-typescript"
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  Model,
+  Table
+} from "sequelize-typescript"
 import { Field, Int, ObjectType } from "type-graphql"
 import { DateType } from "@app/classes/graphql/serializers/date"
 import { ChatPermission } from "@app/models/chatPermission.model"
@@ -27,8 +33,12 @@ export class ChatRank extends Model {
   @Column
   name: string
 
-  @Field(() => Int)
-  @Column
+  @Field(() => Int, {
+    nullable: true
+  })
+  @Column({
+    allowNull: true
+  })
   userId: number
 
   @Field(() => DateType, {

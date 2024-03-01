@@ -18,7 +18,9 @@ export class Experiment extends Model {
   @Column
   userId: number
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "userId")
   user: User
 }

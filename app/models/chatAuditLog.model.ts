@@ -1,7 +1,10 @@
 import { Field, Int, ObjectType } from "type-graphql"
 import { Column, DataType, Model, Table } from "sequelize-typescript"
 import { DateType } from "@app/classes/graphql/serializers/date"
-import { AuditLogActionType, AuditLogCategory } from "@app/classes/graphql/chat/auditLog/categories"
+import {
+  AuditLogActionType,
+  AuditLogCategory
+} from "@app/classes/graphql/chat/auditLog/categories"
 
 @ObjectType()
 @Table
@@ -14,7 +17,9 @@ export class ChatAuditLog extends Model {
   })
   id: string
 
-  @Field(() => Int)
+  @Field(() => Int, {
+    nullable: true
+  })
   @Column
   userId: number
 

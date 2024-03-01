@@ -1,4 +1,13 @@
-import { BelongsTo, Column, DataType, Default, HasMany, Model, Table, Unique } from "sequelize-typescript"
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  Default,
+  HasMany,
+  Model,
+  Table,
+  Unique
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
@@ -20,7 +29,9 @@ export class Domain extends Model {
   })
   domain: string
 
-  @Field(() => Int)
+  @Field(() => Int, {
+    nullable: true
+  })
   @Column
   userId: number
 
@@ -84,7 +95,9 @@ export class Domain extends Model {
   })
   restricted: "disabled" | "user" | "premium"
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "userId")
   user: User
 

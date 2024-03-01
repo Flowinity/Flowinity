@@ -32,7 +32,9 @@ export class Star extends Model {
   @Column
   updatedAt: Date
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "userId")
   user: User
 

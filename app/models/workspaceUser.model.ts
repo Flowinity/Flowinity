@@ -1,4 +1,11 @@
-import { BelongsTo, Column, DataType, Model, Table, Unique } from "sequelize-typescript"
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  Model,
+  Table,
+  Unique
+} from "sequelize-typescript"
 import { Workspace } from "@app/models/workspace.model"
 import { User } from "@app/models/user.model"
 import { Field, Int, ObjectType } from "type-graphql"
@@ -64,11 +71,15 @@ export class WorkspaceUser extends Model {
   @BelongsTo(() => Workspace, "workspaceId")
   workspace: Workspace
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "recipientId")
   user: User
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "senderId")
   sender: User
 }

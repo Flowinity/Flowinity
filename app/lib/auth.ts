@@ -382,7 +382,12 @@ export function Auth(scope: Scope | Scope[], required: boolean = true) {
           if (session.user?.banned) {
             updateSession(session, action.request.ip).then(() => {})
             if (!required) return null
-            throw Errors.BANNED
+            console.log(action.request.path)
+            if (action.request.path !== "/api/v3/auth/reactivate") {
+              throw Errors.BANNED
+            } else {
+              return session.toJSON().user
+            }
           } else {
             if (!session.user.emailVerified) {
               session.user.dataValues.scopes = "user.view,user.modify"

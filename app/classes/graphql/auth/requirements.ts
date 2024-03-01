@@ -34,6 +34,10 @@ export class AuthValidationRequirements {
     nullable: true
   })
   username?: string
+  @Field(() => Boolean, {
+    nullable: true
+  })
+  allowBanned?: boolean
 }
 
 @ObjectType()

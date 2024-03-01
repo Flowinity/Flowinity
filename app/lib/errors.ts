@@ -376,6 +376,10 @@ let Errors = {
   TOO_MANY_ITEMS_DOWNLOAD: {
     message: "You cannot bulk download more than 24 items.",
     status: 400
+  },
+  INVALID_REACTIVATION: {
+    message: "You are not eligible to reactivate your account.",
+    status: 400
   }
 }
 

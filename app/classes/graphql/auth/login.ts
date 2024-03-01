@@ -1,5 +1,7 @@
 import { Field, InputType, ObjectType } from "type-graphql"
 import { IsEmail, Matches, MaxLength, MinLength } from "class-validator"
+import { BanReason } from "@app/classes/graphql/user/ban"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 export class LoginUser {
@@ -11,6 +13,9 @@ export class LoginUser {
 
   @Field()
   email: string
+
+  @Field()
+  banned: boolean
 }
 
 @ObjectType()
@@ -20,6 +25,11 @@ export class LoginResponse {
 
   @Field()
   user: LoginUser
+
+  @Field(() => BanResponse, {
+    nullable: true
+  })
+  ban: BanResponse | null
 }
 
 @InputType()
@@ -56,4 +66,18 @@ export class RegisterInput {
 
   @Field({ nullable: true })
   inviteKey?: string
+}
+
+@ObjectType()
+export class BanResponse {
+  @Field(() => String, {
+    nullable: true
+  })
+  message: string | null
+  @Field()
+  type: BanReason
+  @Field(() => DateType, {
+    nullable: true
+  })
+  pendingDeletionDate: Date | null
 }

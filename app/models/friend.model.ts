@@ -1,4 +1,11 @@
-import { AllowNull, BelongsTo, Column, DataType, Model, Table } from "sequelize-typescript"
+import {
+  AllowNull,
+  BelongsTo,
+  Column,
+  DataType,
+  Model,
+  Table
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Field, Int, ObjectType } from "type-graphql"
 import { FriendStatus } from "@app/classes/graphql/user/friends"
@@ -29,7 +36,9 @@ export class Friend extends Model {
   @Column(DataType.ENUM("incoming", "outgoing", "accepted"))
   status: "incoming" | "outgoing" | "accepted"
 
-  @Field(() => Int)
+  @Field(() => Int, {
+    nullable: true
+  })
   @Column
   userId: number
 

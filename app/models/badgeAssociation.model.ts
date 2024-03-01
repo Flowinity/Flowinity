@@ -42,7 +42,9 @@ export class BadgeAssociation extends Model {
   })
   hidden: boolean
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "userId")
   user: User
 }

@@ -13,7 +13,9 @@ export class ChatEmoji extends Model {
   })
   id: string
 
-  @Field(() => Int)
+  @Field(() => Int, {
+    nullable: true
+  })
   @Column
   userId: number
 

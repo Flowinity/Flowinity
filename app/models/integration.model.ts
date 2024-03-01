@@ -73,7 +73,9 @@ export class Integration extends Model {
   @Column
   error: string
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "userId")
   user: User
 }

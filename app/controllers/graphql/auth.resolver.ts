@@ -11,6 +11,10 @@ import { AuthService } from "@app/services/auth.service"
 import Errors from "@app/lib/errors"
 import blacklist from "@app/lib/word-blacklist.json"
 import { InviteService } from "@app/services/invite.service"
+import { Authorization } from "@app/lib/graphql/AuthChecker"
+import { BanReason } from "@app/classes/graphql/user/ban"
+import { GqlError } from "@app/lib/gqlErrors"
+import { GraphQLError } from "graphql/error"
 
 @Resolver(User)
 @Service()
@@ -59,5 +63,14 @@ export class AuthResolver {
       input.email,
       invite?.id
     )
+  }
+
+  @Authorization({
+    scopes: "user.modify",
+    emailOptional: true
+  })
+  @Mutation(() => Boolean)
+  async reactivateAccount(@Ctx() ctx: Context) {
+    return await this.authService.reactivateAccount(ctx.user!!.id, true)
   }
 }

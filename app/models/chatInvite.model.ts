@@ -17,7 +17,9 @@ export class ChatInvite extends Model {
   })
   id: string
 
-  @Field(() => Int)
+  @Field(() => Int, {
+    nullable: true
+  })
   @Column
   userId: number
 
@@ -53,7 +55,9 @@ export class ChatInvite extends Model {
   })
   invalidated: boolean
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "userId")
   user: PartialUserBase
 

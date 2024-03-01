@@ -456,7 +456,10 @@ export default async function setup(app: App) {
         const friend = friends.friends.find(
           (friend) => friend.id === data.friend.id
         );
-        if (!friend) return;
+        if (!friend) {
+          friends.friends.push(data.friend);
+          return;
+        }
         friend.status = FriendStatus.Accepted;
       }
     }

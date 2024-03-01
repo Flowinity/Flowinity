@@ -1,4 +1,11 @@
-import { BelongsTo, Column, DataType, Default, Model, Table } from "sequelize-typescript"
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  Default,
+  Model,
+  Table
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
 import { Field, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
@@ -42,7 +49,9 @@ export class Subscription extends Model {
   })
   metadata: object
 
-  @Field(() => PartialUserBase)
+  @Field(() => PartialUserBase, {
+    nullable: true
+  })
   @BelongsTo(() => User, "userId")
   user: User
 }

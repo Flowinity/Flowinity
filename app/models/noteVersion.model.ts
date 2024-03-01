@@ -21,7 +21,9 @@ export class NoteVersion extends Model {
   @Column
   noteId: number
 
-  @Field(() => Int)
+  @Field(() => Int, {
+    nullable: true
+  })
   @Column
   userId: number
 

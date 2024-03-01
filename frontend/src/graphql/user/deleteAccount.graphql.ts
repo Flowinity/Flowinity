@@ -5,3 +5,9 @@ export const DeleteAccountMutation = gql`
     deleteAccount(input: $input)
   }
 `;
+
+export const DeleteGalleryMutation = gql`
+  mutation DeleteGallery($input: DangerZoneInput!) {
+    deleteGallery(input: $input)
+  }
+`;

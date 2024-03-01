@@ -36,7 +36,9 @@ export class AutoCollectApproval extends Model {
   @Column
   collectionId: number
 
-  @Field(() => Int)
+  @Field(() => Int, {
+    nullable: true
+  })
   @Column
   userId: number
 

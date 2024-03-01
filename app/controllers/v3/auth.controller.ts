@@ -16,6 +16,8 @@ import { InviteService } from "@app/services/invite.service"
 import { AdminService } from "@app/services/admin.service"
 import blacklist from "@app/lib/word-blacklist.json"
 import { Request } from "express"
+import { Auth } from "@app/lib/auth"
+import { User } from "@app/models/user.model"
 
 @Service()
 @JsonController("/auth")
@@ -113,5 +115,13 @@ export class AuthControllerV3 {
   @UseBefore(rateLimits.standardLimiter)
   async recoverPassword(@Body() body: { code: string; password: string }) {
     return await this.authService.passwordResetConfirm(body.code, body.password)
+  }
+
+  @Patch("/reactivate")
+  @UseBefore(rateLimits.standardLimiter)
+  async reactivateAccount(@Auth("user.modify") user: User) {
+    return {
+      success: await this.authService.reactivateAccount(user!!.id, false)
+    }
   }
 }

@@ -44,6 +44,10 @@ export const useAppStore = defineStore("app", {
     workspaceDrawer: localStorage.getItem("workspaceDrawer") === "true",
     forcedWorkspaceDrawer: false,
     loading: true,
+    /**
+     * @deprecated
+     * Use a custom loading screen, such as a skeleton loader for each individual component/page context
+     */
     componentLoading: false,
     apiVersion: "v3",
     title: "",
