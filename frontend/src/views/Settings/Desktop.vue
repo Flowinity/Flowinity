@@ -19,14 +19,16 @@
       @update:model-value="updateSettings"
     />
     <v-switch
-      v-model="settings.autoUpdate"
       :model-value="
         $app.platform === Platform.LINUX ? false : settings.autoUpdate
       "
       :label="$t('settings.desktop.autoUpdate')"
       :disabled="$app.platform === Platform.LINUX"
       :class="{ 'mb-n6': $app.platform === Platform.LINUX }"
-      @update:model-value="updateSettings"
+      @update:model-value="
+        settings.autoUpdate = $event;
+        updateSettings();
+      "
     />
     <small v-if="$app.platform === Platform.LINUX" class="text-grey">
       {{ $t("settings.desktop.linuxUpdater") }}

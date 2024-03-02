@@ -561,7 +561,6 @@ export const useAppStore = defineStore("app", {
         try {
           this.site = JSON.parse(core);
           this.domain = "https://" + this.site.domain + "/i/";
-          window.tpuInternals.imageDomain = this.domain;
           this.loading = false;
         } catch {
           //
@@ -729,7 +728,6 @@ export const useAppStore = defineStore("app", {
       if (experimentsStore.experiments.WEBMAIL) useMailStore().init();
       this.experimentsInherit = experimentsStore.experiments;
       this.domain = "https://" + this.site.domain + "/i/";
-      window.tpuInternals.imageDomain = this.domain;
       localStorage.setItem("coreStore", JSON.stringify(coreState));
       localStorage.setItem("experimentsStore", JSON.stringify(experiments));
       await useUserStore().init();
@@ -747,7 +745,6 @@ export const useAppStore = defineStore("app", {
       });
       this.site = coreState;
       this.domain = "https://" + this.site.domain + "/i/";
-      window.tpuInternals.imageDomain = this.domain;
       localStorage.setItem("coreStore", JSON.stringify(coreState));
     },
     async upload() {
