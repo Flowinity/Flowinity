@@ -314,7 +314,8 @@
       "flowshot": {
         "title": "Flowshot Settings (Flowinity Flameshot)",
         "launchConfig": "Launch Flowshot Configurator"
-      }
+      },
+      "startMinimized": "Start Flowinity minimized"
     }
   },
   "generic": {

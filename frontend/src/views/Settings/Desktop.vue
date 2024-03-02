@@ -9,6 +9,11 @@
       @update:model-value="updateSettings"
     />
     <v-switch
+      v-model="settings.startMinimized"
+      :label="$t('settings.desktop.startMinimized')"
+      @update:model-value="updateSettings"
+    />
+    <v-switch
       v-model="settings.minimizeToTray"
       :label="$t('settings.desktop.minimizeToTray')"
       @update:model-value="updateSettings"
@@ -79,7 +84,8 @@ const settings = ref({
   autoUpdate: false,
   windowBorder: false,
   restartRequired: false,
-  init: false
+  init: false,
+  startMinimized: false
 });
 
 const flowshotVersion = ref("");
@@ -98,7 +104,6 @@ onMounted(() => {
   window.electron.ipcRenderer.on(
     IpcChannels.FLOWSHOT_VERSION,
     (event, data) => {
-      console.log(data);
       flowshotVersion.value = data;
     }
   );
