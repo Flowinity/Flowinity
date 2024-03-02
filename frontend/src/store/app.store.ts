@@ -285,17 +285,18 @@ export const useAppStore = defineStore("app", {
         }
       ] as SidebarItem[];
 
-      if (state.platform === Platform.WEB) {
-        items.push({
-          id: 38,
-          externalPath: "",
-          path: "/downloads",
-          name: i18n.t("core.sidebar.download"),
-          icon: "mdi-download",
-          new: true,
-          scope: ""
-        });
-      }
+      // TODO: Downloads page
+      // if (state.platform === Platform.WEB) {
+      //   items.push({
+      //     id: 38,
+      //     externalPath: "",
+      //     path: "/downloads",
+      //     name: i18n.t("core.sidebar.download"),
+      //     icon: "mdi-download",
+      //     new: true,
+      //     scope: ""
+      //   });
+      // }
 
       if (state.site.officialInstance) {
         items.push(

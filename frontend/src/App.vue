@@ -57,6 +57,10 @@ export default defineComponent({
       window.electron.ipcRenderer.on(IpcChannels.UPDATE_DOWNLOADED, () => {
         this.$app.updateAvailable = true;
       });
+      window.electron.ipcRenderer.on(IpcChannels.FOCUS_CHAT, (_, data) => {
+        this.$router.push(`/communications/${data}`);
+        window.electron.ipcRenderer.send(IpcChannels.FOCUS_WINDOW);
+      });
     }
   }
 });

@@ -121,7 +121,7 @@ export default async function setup(app) {
           hostname: appStore.site.hostname,
           hostnameWithProtocol: appStore.site.hostnameWithProtocol,
           notificationIcon: functions.avatar(
-            chat.chats.find((c) => c.id === newMessage.chat.id)
+            user.users[newMessage.message.userId]
           )
         }
       });

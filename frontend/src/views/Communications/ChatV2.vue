@@ -292,6 +292,9 @@ import "v3-infinite-loading/lib/style.css";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import { Chat, Message, ScrollPosition } from "@/gql/graphql";
 import ChatDevOptions from "@/components/Dev/Dialogs/ChatDevOptionsDialog.vue";
+import { Platform } from "@/store/app.store";
+import { IpcChannels } from "@/electron-types/ipc";
+import functions from "@/plugins/functions";
 
 export default defineComponent({
   components: {
@@ -838,7 +841,23 @@ export default defineComponent({
       if (document.hasFocus()) {
         this.$chat.readChat();
       } else {
-        if (message.message.userId !== this.$user.user?.id) this.$chat.sound();
+        if (message.message.userId !== this.$user.user?.id) {
+          this.$chat.sound();
+          if (this.$app.platform !== Platform.WEB) {
+            window.electron.ipcRenderer.send(IpcChannels.NEW_MESSAGE, {
+              ...message,
+              instance: {
+                name: this.$app.site.name,
+                domain: this.$app.domain,
+                hostname: this.$app.site.hostname,
+                hostnameWithProtocol: this.$app.site.hostnameWithProtocol,
+                notificationIcon: functions.avatar(
+                  this.$chat.chats.find((c) => c.id === message.chat.id)
+                )
+              }
+            });
+          }
+        }
       }
       this.autoScroll();
     },

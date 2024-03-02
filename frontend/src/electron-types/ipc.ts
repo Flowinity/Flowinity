@@ -10,5 +10,7 @@ export enum IpcChannels {
   UNREAD_MESSAGES_COUNT = "unread-messages-count",
   VERSION = "version",
   UPDATE_DOWNLOADED = "update-downloaded",
-  UPDATE = "update"
+  UPDATE = "update",
+  FOCUS_CHAT = "focus-chat",
+  FOCUS_WINDOW = "focus-window"
 }
