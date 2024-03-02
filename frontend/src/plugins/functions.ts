@@ -3,7 +3,12 @@ import mdEmail from "./rulesEmail";
 import { useAppStore } from "@/store/app.store";
 import { Chat } from "@/models/chat";
 import { User } from "@/models/user";
-import { Message, UserStatus, UserStoredStatus } from "@/gql/graphql";
+import {
+  Message,
+  PartialUserFriend,
+  UserStatus,
+  UserStoredStatus
+} from "@/gql/graphql";
 
 export default {
   fileSize(size: number): string {
@@ -34,7 +39,7 @@ export default {
       other
     });
   },
-  avatar(chat?: Chat | User) {
+  avatar(chat?: Chat | User | PartialUserFriend) {
     const app = useAppStore();
     if (!chat) return undefined;
     if ("username" in chat) {
