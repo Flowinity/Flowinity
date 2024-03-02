@@ -4,7 +4,7 @@ import axios from "@/plugins/axios";
 import { useExperimentsStore } from "@/store/experiments.store";
 import vuetify from "@/plugins/vuetify";
 import { useRoute } from "vue-router";
-import { useAppStore } from "@/store/app.store";
+import { Platform, useAppStore } from "@/store/app.store";
 import { useUserStore } from "@/store/user.store";
 import { useFriendsStore } from "@/store/friends.store";
 import dayjs from "../plugins/dayjs";
@@ -44,6 +44,7 @@ import { nextTick } from "vue";
 import { useApolloClient } from "@vue/apollo-composable";
 import { ChatQuery, ChatsQuery } from "@/graphql/chats/chats.graphql";
 import { useMessagesStore } from "@/store/message.store";
+import { IpcChannels } from "@/electron-types/ipc";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -755,9 +756,18 @@ export const useChatStore = defineStore("chat", {
       }
     },
     totalUnread(state) {
-      return state.chats.reduce((total: number, chat: Chat) => {
+      const val = state.chats.reduce((total: number, chat: Chat) => {
         return total + chat.unread;
       }, 0);
+      const appStore = useAppStore();
+      if (appStore.platform !== Platform.WEB) {
+        console.log("Unread messages count", val);
+        window.electron.ipcRenderer.send(
+          IpcChannels.UNREAD_MESSAGES_COUNT,
+          val
+        );
+      }
+      return val;
     },
     selectedChat(state) {
       return state.chats.find(

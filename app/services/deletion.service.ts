@@ -371,8 +371,6 @@ export class DeletionService {
 
   deletionInit() {
     try {
-      // run every 30 seconds for testing
-      //
       this.checkUsers()
       cron.schedule("0 0 * * *", () => {
         this.checkUsers().then(() => {})

@@ -38,9 +38,14 @@
     </p>
     <p>
       {{
-        $t("settings.about.version", {
-          version: $app.version.current
-        })
+        $app.platform === Platform.WEB
+          ? $t("settings.about.version", {
+              version: $app.version.current
+            })
+          : $t("settings.about.versionDesktop", {
+              version: $app.version.current,
+              desktopVersion
+            })
       }}
     </p>
     <p>
@@ -87,6 +92,7 @@
         })
       }}
     </p>
+    <p>Platform: {{ $app.platform }}</p>
     <a class="text-gradient" href="https://flowinity.com/graphql">
       {{ $t("settings.about.docs") }}
     </a>
@@ -130,15 +136,30 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { Platform } from "../../store/app.store";
 
 export default defineComponent({
   name: "About",
+  computed: {
+    Platform() {
+      return Platform;
+    }
+  },
   data() {
     return {
-      clickCount: 0
+      clickCount: 0,
+      desktopVersion: ""
     };
   },
   methods: {
+    getDesktopVersion() {
+      if (this.$app.platform === Platform.WEB) return;
+      window.electron.ipcRenderer
+        .invoke("get-version")
+        .then((version: string) => {
+          this.desktopVersion = version;
+        });
+    },
     rainbowMode(val: boolean) {
       this.clickCount++;
       if (val && this.clickCount > 4) {
@@ -170,6 +191,9 @@ export default defineComponent({
         this.$experiments.experiments[key] = false;
       }
     }
+  },
+  mounted() {
+    this.getDesktopVersion();
   }
 });
 </script>

@@ -1377,6 +1377,11 @@
   dependencies:
     "@codexteam/icons" "^0.0.4"
 
+"@electron-toolkit/preload@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@electron-toolkit/preload/-/preload-3.0.0.tgz#34a801a7038e80fa7dd41cd5d114ce5b0ae3ffc4"
+  integrity sha512-DTyvNGits43J1RiQGFN00/OxjjcTcozLWMjgQBANt97FFptEYiLVasq7kMC24nMwwoOpdDYY9CE6C+4wQJ55/w==
+
 "@emnapi/runtime@^0.45.0":
   version "0.45.0"
   resolved "https://registry.yarnpkg.com/@emnapi/runtime/-/runtime-0.45.0.tgz#e754de04c683263f34fd0c7f32adfe718bbe4ddd"

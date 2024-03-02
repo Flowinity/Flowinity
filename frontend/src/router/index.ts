@@ -159,6 +159,11 @@ const routes = [
             path: "privacy",
             name: "Privacy",
             component: () => import("@/views/Settings/Privacy.vue")
+          },
+          {
+            path: "desktop",
+            name: "Desktop",
+            component: () => import("@/views/Settings/Desktop.vue")
           }
         ]
       },
@@ -357,9 +362,9 @@ const routes = [
         component: () => import("@/views/Auth/Oauth.vue")
       },
       {
-        path: "/games/kollision",
-        name: "Kollision",
-        component: () => import("@/views/Games/Kollision/Game.vue")
+        path: "/downloads",
+        name: "Downloads",
+        component: () => import("@/views/Downloads.vue")
       },
       {
         path: "/:id",

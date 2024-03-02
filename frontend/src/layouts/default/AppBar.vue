@@ -70,6 +70,18 @@
     <small v-if="$app.notesSaving && !$vuetify.display.mobile" class="mr-3">
       Saving...
     </small>
+    <v-btn
+      icon
+      class="mx-2"
+      size="40"
+      @click="updateDesktopApp"
+      v-if="$app.updateAvailable"
+    >
+      <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
+        Update Desktop App
+      </v-tooltip>
+      <v-icon>mdi-cloud-download</v-icon>
+    </v-btn>
     <template
       v-if="
         (!$app.weather.loading && !$vuetify.display.mobile) ||
@@ -244,6 +256,8 @@ import { useTheme } from "vuetify";
 import Pins from "@/components/Communications/Menus/Pins.vue";
 import LogoEasterEgg from "@/components/Core/LogoEasterEgg.vue";
 import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.vue";
+import { Platform } from "@/store/app.store";
+import { IpcChannels } from "@/electron-types/ipc";
 
 export default defineComponent({
   components: {
@@ -342,6 +356,10 @@ export default defineComponent({
     }
   },
   methods: {
+    updateDesktopApp() {
+      if (this.$app.platform === Platform.WEB) return;
+      window.electron.ipcRenderer.send(IpcChannels.UPDATE);
+    },
     handleClickDropdown(index: number) {
       this.dropdown[index].click.call(this);
     },

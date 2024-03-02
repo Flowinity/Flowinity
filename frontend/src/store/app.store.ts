@@ -23,6 +23,21 @@ import { h } from "vue";
 import experiments from "@/components/Dev/Dialogs/Experiments.vue";
 import { CoreStateQuery } from "@/graphql/core/stateOnly.graphql";
 
+export enum Platform {
+  WEB = "WEB",
+  WINDOWS = "WINDOWS",
+  MAC = "MAC",
+  LINUX = "LINUX"
+}
+
+function getPlatform(): Platform {
+  if (!window.electron) return Platform.WEB;
+  if (window.electron.process.platform === "win32") return Platform.WINDOWS;
+  if (window.electron.process.platform === "darwin") return Platform.MAC;
+  if (window.electron.process.platform === "linux") return Platform.LINUX;
+  return Platform.WEB;
+}
+
 export const useAppStore = defineStore("app", {
   state: () => ({
     connected: false,
@@ -155,7 +170,9 @@ export const useAppStore = defineStore("app", {
         route: "/workspaces",
         name: "Workspaces"
       }
-    ]
+    ],
+    platform: getPlatform(),
+    updateAvailable: false
   }),
   getters: {
     quickActionItem(state): SidebarItem {
@@ -265,19 +282,20 @@ export const useAppStore = defineStore("app", {
           new: false,
           scope: "admin.view",
           experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
-        },
-        {
-          id: 38,
-          externalPath:
-            "https://play.google.com/store/apps/details?id=com.troplo.privateuploader",
-          path: "",
-          name: i18n.t("core.sidebar.android"),
-          icon: "mdi-android",
-          new: false,
-          warning: "BETA",
-          scope: ""
         }
       ] as SidebarItem[];
+
+      if (state.platform === Platform.WEB) {
+        items.push({
+          id: 38,
+          externalPath: "",
+          path: "/downloads",
+          name: i18n.t("core.sidebar.download"),
+          icon: "mdi-download",
+          new: true,
+          scope: ""
+        });
+      }
 
       if (state.site.officialInstance) {
         items.push(
@@ -543,6 +561,7 @@ export const useAppStore = defineStore("app", {
         try {
           this.site = JSON.parse(core);
           this.domain = "https://" + this.site.domain + "/i/";
+          window.tpuInternals.imageDomain = this.domain;
           this.loading = false;
         } catch {
           //
@@ -710,6 +729,7 @@ export const useAppStore = defineStore("app", {
       if (experimentsStore.experiments.WEBMAIL) useMailStore().init();
       this.experimentsInherit = experimentsStore.experiments;
       this.domain = "https://" + this.site.domain + "/i/";
+      window.tpuInternals.imageDomain = this.domain;
       localStorage.setItem("coreStore", JSON.stringify(coreState));
       localStorage.setItem("experimentsStore", JSON.stringify(experiments));
       await useUserStore().init();
@@ -727,6 +747,7 @@ export const useAppStore = defineStore("app", {
       });
       this.site = coreState;
       this.domain = "https://" + this.site.domain + "/i/";
+      window.tpuInternals.imageDomain = this.domain;
       localStorage.setItem("coreStore", JSON.stringify(coreState));
     },
     async upload() {

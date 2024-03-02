@@ -53,6 +53,12 @@
       >
         force setup step 0
       </v-btn>
+      <br />
+      <template v-if="$app.platform !== Platform.WEB">
+        <overline>Desktop</overline>
+        <v-btn @click="$app.platform = Platform.WEB">Force Web</v-btn>
+        <v-btn @click="emitIPCComms">Send IPC New Comms Message</v-btn>
+      </template>
     </v-container>
   </DevDialog>
 </template>
@@ -60,16 +66,25 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
+import Overline from "@/components/Core/Typography/Overline.vue";
+import { Platform } from "@/store/app.store";
+import { IpcChannels } from "@/electron-types/ipc";
 
 export default defineComponent({
   name: "ActionDialog",
-  components: { DevDialog },
+  components: { Overline, DevDialog },
   data() {
     return {
       usage: []
     };
   },
   computed: {
+    IpcChannels() {
+      return IpcChannels;
+    },
+    Platform() {
+      return Platform;
+    },
     socketConnections() {
       return [
         {
@@ -78,6 +93,26 @@ export default defineComponent({
           readyState: this.$sockets.chat.readyState
         }
       ];
+    }
+  },
+  methods: {
+    emitIPCComms() {
+      window.electron.ipcRenderer.send(IpcChannels.NEW_MESSAGE, {
+        chat: {
+          name: "Direct Message",
+          recipient: {
+            userId: 1,
+            username: "troplo"
+          }
+        },
+        message: {
+          content: "Sup"
+        },
+        instance: {
+          notificationIcon:
+            "https://dev.privateuploader.gql.troplo.com/i/fd75518264a0.png"
+        }
+      });
     }
   }
 });

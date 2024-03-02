@@ -20,6 +20,8 @@ import Maintenance from "@/components/Core/Dialogs/Maintenance.vue";
 import SocketProfiler from "@/components/Dev/Dialogs/SocketProfiler.vue";
 import ActionDialog from "@/components/Dev/Dialogs/ActionDialog.vue";
 import ExperimentsManagerDialog from "@/components/Dev/Dialogs/Experiments.vue";
+import { Platform } from "@/store/app.store";
+import { IpcChannels } from "@/electron-types/ipc";
 
 export default defineComponent({
   name: "TPUApp",
@@ -42,6 +44,19 @@ export default defineComponent({
     }
     if (window._cordovaNative) {
       this.$app.cordova = true;
+    }
+
+    if (this.$app.platform !== Platform.WEB) {
+      console.log("Electron detected");
+      window.electron.ipcRenderer.on(IpcChannels.OPEN_SETTINGS, () => {
+        this.$router.push("/settings/desktop");
+      });
+      window.electron.ipcRenderer.on(IpcChannels.OPEN_ABOUT, () => {
+        this.$router.push("/settings/about");
+      });
+      window.electron.ipcRenderer.on(IpcChannels.UPDATE_DOWNLOADED, () => {
+        this.$app.updateAvailable = true;
+      });
     }
   }
 });

@@ -23,6 +23,9 @@ import {
 } from "@/gql/graphql";
 import emojiData from "markdown-it-emoji/lib/data/full.json";
 import { useMessagesStore } from "@/store/message.store";
+import { Platform, useAppStore } from "@/store/app.store";
+import { IpcChannels } from "@/electron-types/ipc";
+import functions from "@/plugins/functions";
 
 function checkMessage(id: number, chatId: number) {
   const chat = useChatStore();
@@ -45,6 +48,7 @@ export default async function setup(app) {
   const user = useUserStore();
   const experiments = useExperimentsStore();
   const messagesStore = useMessagesStore();
+  const appStore = useAppStore();
   const toast = useToast();
 
   sockets.chat.on("chatCreated", (newChat: Chat) => {
@@ -107,6 +111,20 @@ export default async function setup(app) {
           }
         }
       );
+    }
+    if (appStore.platform !== Platform.WEB) {
+      window.electron.ipcRenderer.send(IpcChannels.NEW_MESSAGE, {
+        ...newMessage,
+        instance: {
+          name: appStore.site.name,
+          domain: appStore.domain,
+          hostname: appStore.site.hostname,
+          hostnameWithProtocol: appStore.site.hostnameWithProtocol,
+          notificationIcon: functions.avatar(
+            chat.chats.find((c) => c.id === newMessage.chat.id)
+          )
+        }
+      });
     }
   });
   sockets.trackedUsers.on("userStatus", (data: User) => {

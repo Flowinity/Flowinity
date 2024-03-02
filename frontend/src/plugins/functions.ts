@@ -267,5 +267,18 @@ export default {
     const b = parseInt(hex.substr(5, 2), 16);
     const yiq = (r * 299 + g * 587 + b * 114) / 1000;
     return yiq >= 100;
+  },
+  getPlatform() {
+    if (navigator.userAgent.indexOf("Win") != -1) {
+      return "Windows";
+    } else if (navigator.userAgent.indexOf("iOS") != -1) {
+      return "iOS";
+    } else if (navigator.userAgent.indexOf("Mac") != -1) {
+      return "Mac";
+    } else if (navigator.userAgent.indexOf("Linux") != -1) {
+      return "Linux";
+    } else if (navigator.userAgent.indexOf("Android") != -1) {
+      return "Android";
+    }
   }
 };

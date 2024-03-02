@@ -46,6 +46,19 @@
         <v-tab prepend-icon="mdi-image-multiple" to="/settings/slideshows">
           {{ $t("settings.tabs.slideshows") }}
         </v-tab>
+        <v-tab
+          :prepend-icon="`mdi-${
+            $app.platform === Platform.LINUX
+              ? 'linux'
+              : $app.platform === Platform.MAC
+                ? 'apple'
+                : 'microsoft'
+          }`"
+          to="/settings/desktop"
+          v-if="$app.platform !== Platform.WEB"
+        >
+          {{ $t(`settings.tabs.platforms.${$app.platform}`) }}
+        </v-tab>
         <v-tab prepend-icon="mdi-information" to="/settings/about">
           {{ $t("settings.tabs.about") }}
         </v-tab>
@@ -82,9 +95,15 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { Platform } from "@/store/app.store";
 
 export default defineComponent({
   name: "SettingsCore",
+  computed: {
+    Platform() {
+      return Platform;
+    }
+  },
   data() {
     return {
       loading: false

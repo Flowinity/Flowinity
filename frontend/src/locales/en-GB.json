@@ -27,31 +27,6 @@
   "dashboard": {
     "announcements": "Announcements"
   },
-  "workspaces": {
-    "sidebar": {
-      "rename": "Rename workspace",
-      "renameNote": "Rename note",
-      "delete": "Delete workspace",
-      "deleteNote": "Delete note"
-    },
-    "download": {
-      "title": "Download",
-      "titleZIP": "Download folder as Postcode",
-      "conversionHint": "Please ensure the resulting file meets your expectations as it will be converted.",
-      "types": {
-        "tpudoc": "Flowinity Document File",
-        "docx": "Microsoft DOCX",
-        "odt": "LibreOffice ODT",
-        "html": "HTML"
-      }
-    },
-    "import": {
-      "title": "Import document",
-      "name": "Name",
-      "file": "Flowinity Document (.TPUDOC or .HTML)",
-      "import": "Import"
-    }
-  },
   "stats": {
     "collections": "Collections",
     "collectivized": "Collectivised",
@@ -66,7 +41,7 @@
     "chats": "Chats",
     "stats": "Stats",
     "uploadStats": "Upload Stats",
-    "messageStats": "Messages Stats",
+    "messageStats": "Message Stats",
     "hourStats": "Hours Used"
   },
   "errors": {

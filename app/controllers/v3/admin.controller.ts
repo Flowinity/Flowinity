@@ -150,10 +150,10 @@ export class AdminControllerV3 {
       this.adminService.sendEmail(
         {
           body: {
-            intro: `Your friend ${invite.user.username} has invited you to join TPU.`,
+            intro: `Your friend ${invite.user.username} has invited you to join ${config.siteName}`,
             action: [
               {
-                instructions: `TPU is a free invite-only image and file hosting service.`,
+                instructions: `${config.siteName} is a free invite-only image and file hosting service.`,
                 button: {
                   color: "#0190ea", // Optional action button color
                   text: "Create your account",
@@ -164,11 +164,11 @@ export class AdminControllerV3 {
                 }
               },
               {
-                instructions: "Want to learn more about the advantages of TPU?",
+                instructions: `Want to learn more about the advantages of ${config.siteName}?`,
                 button: {
                   color: "#0190ea", // Optional action button color
                   text: "Learn more",
-                  link: "https://images.flowinity.com"
+                  link: config.hostnameWithProtocol
                 }
               }
             ],
@@ -177,7 +177,7 @@ export class AdminControllerV3 {
           }
         },
         invite.email,
-        `Your friend ${invite.user.username} has invited you to join TPU`
+        `Your friend ${invite.user.username} has invited you to join ${config.siteName}!`
       )
       return
     }
@@ -198,7 +198,7 @@ export class AdminControllerV3 {
         }
       },
       invite.user.email,
-      `Your TPU invite request has been ${body.type}.`
+      `Your ${config.siteName} invite request has been ${body.type}.`
     )
   }
 

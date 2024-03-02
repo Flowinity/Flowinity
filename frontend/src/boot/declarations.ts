@@ -18,6 +18,7 @@ import { ApolloClient } from "@apollo/client/core";
 import { Chat, PartialUserFriend } from "@/gql/graphql";
 import { NormalizedCacheObject } from "@apollo/client/cache";
 import { useMessagesStore } from "@/store/message.store";
+import { ElectronAPI } from "@electron-toolkit/preload";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -69,6 +70,7 @@ declare global {
       router: Router;
       pulse: Socket;
       openEmoji: (...args) => void;
+      imageDomain: string | undefined;
     };
     _paq: {
       push: (args: any[]) => void;
@@ -84,6 +86,7 @@ declare global {
     __TROPLO_INTERNALS_EDITOR_UPLOAD: (args: any) => any;
     __TROPLO_INTERNALS_NOTE_ID: number;
     __NOTE_DATA: any;
+    electron: ElectronAPI | undefined;
   }
 
   interface navigator extends Navigator {

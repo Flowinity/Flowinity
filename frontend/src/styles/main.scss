@@ -146,16 +146,16 @@
   }
 }
 
-body::-webkit-scrollbar,.scroll-bar::-webkit-scrollbar {
+*::-webkit-scrollbar,.scroll-bar::-webkit-scrollbar {
   width: 6px
 }
 
-body::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   background: #282a2b;
   border-radius: 3px
 }
 
-body::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   background: #212425;
   border-radius: 3px
 }

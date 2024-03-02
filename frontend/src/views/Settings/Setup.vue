@@ -1,7 +1,25 @@
 <template>
   <template v-if="!$app.cordova">
-    <v-card-title>
-      {{ $t("settings.setup.title") }}
+    <a href="https://github.com/Flowinity/Flameshot" target="_blank">
+      <v-alert variant="tonal" color="blue">
+        <div class="d-flex align-center">
+          <v-chip>NEW</v-chip>
+          <div class="ml-2 justify-space-between d-flex">
+            {{ $t("settings.setup.flowinityFlameshot") }}
+          </div>
+        </div>
+      </v-alert>
+    </a>
+    <v-card-title class="d-flex justify-space-between align-center mt-n5">
+      <div>{{ $t("settings.setup.title") }}</div>
+      <v-select
+        v-model="platform"
+        :items="['Windows', 'Mac', 'Linux', 'Android', 'iOS']"
+        placeholder="Select"
+        class="mx-3"
+        dense
+        style="max-width: 150px; margin-top: 10px"
+      ></v-select>
     </v-card-title>
     <v-select
       v-model="selected"
@@ -13,6 +31,17 @@
       item-value="token"
     />
     <div class="mt-n3 mx-3">
+      <HoverChip
+        v-if="platform === 'Linux' || platform === 'Mac'"
+        :disabled-text="$t('settings.setup.label')"
+        :old="true"
+        :text="$t('settings.setup.actions.getFlowshot')"
+        class="mr-2 mt-2"
+        color="primary"
+        icon="mdi-download"
+        target="_blank"
+        href="https://github.com/Flowinity/Flameshot/releases"
+      />
       <HoverChip
         :disabled="!selected"
         :disabled-text="$t('settings.setup.label')"
@@ -61,81 +90,114 @@
         target="_blank"
       />
     </div>
-    <v-card-title>
-      {{ $t("settings.setup.sharex") }}
-    </v-card-title>
-    <v-container>
-      <video controls height="430" muted>
-        <source
-          src="https://i.troplo.com/i/e66cb847249e.mp4"
-          type="video/mp4"
-        />
-      </video>
-    </v-container>
-    <v-card-title>
-      {{ $t("settings.setup.sharenix") }}
-    </v-card-title>
-    <v-container>
-      <ol>
-        <li>
-          {{ $t("settings.setup.sharenixSteps.1") }}
-        </li>
-        <li>
-          {{ $t("settings.setup.sharenixSteps.2") }}
-        </li>
-        <li>{{ $t("settings.setup.sharenixSteps.3") }}</li>
-        <li>
-          {{ $t("settings.setup.sharenixSteps.4") }}
-          <code>
-            mv "{{ $user.user?.username }} - {{ $app.site.name }}.json"
-            ~/.sharenix.json
-          </code>
-        </li>
-        <li v-html="$t('settings.setup.sharenixSteps.5')"></li>
-      </ol>
-    </v-container>
-    <v-card-title>
-      {{ $t("settings.setup.automate") }}
-    </v-card-title>
-    <v-container>
-      <ol>
-        <li v-html="$t('settings.setup.automateSteps.1')"></li>
-        <li>
-          {{ $t("settings.setup.automateSteps.2") }}
-        </li>
-        <li>
-          {{ $t("settings.setup.automateSteps.3") }}
-        </li>
-        <li>
-          {{ $t("settings.setup.automateSteps.4") }}
-        </li>
-        <li>
-          {{ $t("settings.setup.automateSteps.5") }}
-        </li>
-        <li>
-          {{ $t("settings.setup.automateSteps.6") }}
-        </li>
-        <small>
-          {{ $t("settings.setup.automateSteps.7") }}
-        </small>
-      </ol>
-    </v-container>
-    <v-card-title>
-      {{ $t("settings.setup.shortcuts") }}
-    </v-card-title>
-    <v-container>
-      <ol>
-        <li>
-          {{ $t("settings.setup.shortcutsSteps.1") }}
-        </li>
-        <li>
-          {{ $t("settings.setup.shortcutsSteps.2") }}
-        </li>
-        <li>
-          {{ $t("settings.setup.shortcutsSteps.3") }}
-        </li>
-      </ol>
-    </v-container>
+    <template v-if="platform === 'Windows'">
+      <v-card-title>
+        {{ $t("settings.setup.sharex") }}
+      </v-card-title>
+      <v-container>
+        <video controls height="430" muted>
+          <source
+            src="https://i.troplo.com/i/e66cb847249e.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </v-container>
+    </template>
+    <template v-if="platform === 'Windows' || platform === 'Mac'">
+      <v-alert color="red" variant="tonal" class="mx-4 my-4">
+        Flowshot has not been tested on Windows or Mac. It's only officially
+        supported on Linux. You will need to compile it yourself from
+        <a href="https://github.com/Flowinity/flameshot">here</a>
+        if you want to use it.
+      </v-alert>
+    </template>
+    <template v-if="platform === 'Linux' || platform === 'Mac'">
+      <v-card-title>
+        {{ $t("settings.setup.flowshot") }}
+      </v-card-title>
+      <v-container>
+        <ol>
+          <li v-html="$t('settings.setup.flowshotSteps.1')"></li>
+          <li v-html="$t('settings.setup.flowshotSteps.2')"></li>
+          <li>{{ $t("settings.setup.flowshotSteps.3") }}</li>
+          <li>
+            {{ $t("settings.setup.flowshotSteps.4") }}
+          </li>
+          <li v-html="$t('settings.setup.flowshotSteps.5')"></li>
+          <li v-html="$t('settings.setup.flowshotSteps.6')"></li>
+        </ol>
+      </v-container>
+    </template>
+    <template v-if="platform === 'Linux'">
+      <v-card-title>
+        {{ $t("settings.setup.sharenix") }}
+      </v-card-title>
+      <v-container>
+        <ol>
+          <li>
+            {{ $t("settings.setup.sharenixSteps.1") }}
+          </li>
+          <li>
+            {{ $t("settings.setup.sharenixSteps.2") }}
+          </li>
+          <li>{{ $t("settings.setup.sharenixSteps.3") }}</li>
+          <li>
+            {{ $t("settings.setup.sharenixSteps.4") }}
+            <code>
+              mv "{{ $user.user?.username }} - {{ $app.site.name }}.json"
+              ~/.sharenix.json
+            </code>
+          </li>
+          <li v-html="$t('settings.setup.sharenixSteps.5')"></li>
+        </ol>
+      </v-container>
+    </template>
+    <template v-if="platform === 'Android'">
+      <v-card-title>
+        {{ $t("settings.setup.automate") }}
+      </v-card-title>
+      <v-container>
+        <ol>
+          <li v-html="$t('settings.setup.automateSteps.1')"></li>
+          <li>
+            {{ $t("settings.setup.automateSteps.2") }}
+          </li>
+          <li>
+            {{ $t("settings.setup.automateSteps.3") }}
+          </li>
+          <li>
+            {{ $t("settings.setup.automateSteps.4") }}
+          </li>
+          <li>
+            {{ $t("settings.setup.automateSteps.5") }}
+          </li>
+          <li>
+            {{ $t("settings.setup.automateSteps.6") }}
+          </li>
+          <small>
+            {{ $t("settings.setup.automateSteps.7") }}
+          </small>
+        </ol>
+      </v-container>
+    </template>
+    <template v-if="platform === 'iOS'">
+      <v-card-title>
+        {{ $t("settings.setup.shortcuts") }}
+      </v-card-title>
+      <v-container>
+        <ol>
+          <li>
+            {{ $t("settings.setup.shortcutsSteps.1") }}
+          </li>
+          <li>
+            {{ $t("settings.setup.shortcutsSteps.2") }}
+          </li>
+          <li>
+            {{ $t("settings.setup.shortcutsSteps.3") }}
+          </li>
+        </ol>
+      </v-container>
+    </template>
   </template>
   <template v-else>
     <v-card-title>
@@ -147,13 +209,15 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
+import functions from "@/plugins/functions";
 
 export default defineComponent({
   components: { HoverChip },
   data() {
     return {
       selected: "",
-      items: []
+      items: [],
+      platform: "Windows"
     };
   },
   mounted() {
@@ -161,6 +225,7 @@ export default defineComponent({
     if (this.$app.cordova) {
       console.log(window.cordova.file);
     }
+    this.platform = functions.getPlatform();
   },
   methods: {
     config(type: "sharex" | "sharenix" = "sharex") {
@@ -232,3 +297,6 @@ export default defineComponent({
   }
 });
 </script>
+<script setup lang="ts"></script>
+<script setup lang="ts"></script>
+<script setup lang="ts"></script>

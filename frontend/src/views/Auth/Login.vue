@@ -79,10 +79,6 @@
                 an instant.
               </p>
               <p>
-                <strong>Reason:</strong>
-                {{ ban.message || ban.type }}
-              </p>
-              <p>
                 <strong>Permanent account deletion:</strong>
                 {{ $date(ban.pendingDeletionDate).format("MMMM Do, YYYY") }}
               </p>

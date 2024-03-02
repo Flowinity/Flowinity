@@ -28,7 +28,8 @@
       "discord": "Join the Discord",
       "backToComms": "Back to Communications",
       "backToTPU": "Back to Flowinity",
-      "communicationsPublic": "Join the Chat"
+      "communicationsPublic": "Join the Chat",
+      "download": "Download"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",
@@ -53,7 +54,7 @@
     "chats": "Chats",
     "stats": "Stats",
     "uploadStats": "Upload Stats",
-    "messageStats": "Messages Stats",
+    "messageStats": "Message Stats",
     "hourStats": "Hours Used"
   },
   "errors": {
@@ -110,7 +111,12 @@
       "about": "About",
       "integrationError": "Some integrations need attention.",
       "developer": "My Apps & Bots",
-      "privacy": "Privacy"
+      "privacy": "Privacy",
+      "platforms": {
+        "LINUX": "Linux Settings",
+        "WINDOWS": "Windows Settings",
+        "MAC": "Mac Settings"
+      }
     },
     "home": {
       "privacy": {
@@ -199,7 +205,7 @@
       "title": "API Key Options",
       "label": "Select an API Key",
       "sharex": "How to install the ShareX configuration:",
-      "sharenix": "How to install the ShareNix configuration:",
+      "sharenix": "How to install the ShareNix configuration (Without Flowshot):",
       "sharenixSteps": {
         "1": "Download and install ShareNix for your distribution.",
         "2": "Download and install Flameshot or another supported screenshot tool.",
@@ -231,7 +237,18 @@
         "sharex": "Download ShareX Config",
         "sharenix": "Download ShareNix Config",
         "automate": "Download Automate Config",
-        "shortcuts": "Download Shortcuts Config"
+        "shortcuts": "Download Shortcuts Config",
+        "getFlowshot": "Get Flowshot"
+      },
+      "flowinityFlameshot": "Introducing Flowshot, a fork of Flameshot with the ability to upload directly to Flowinity.",
+      "flowshot": "How to install and use Flowshot:",
+      "flowshotSteps": {
+          "1": "Download and install Flowshot for your distribution (you can download the binary with the binary above, or you can compile it yourself).",
+          "2": "Run Flowshot, and right click the Flameshot icon in the system tray, and open the Configuration page. If you do not have a system tray, you can run <code>flameshot config</code>.",
+          "3": "Enter your API key which can be created in the Security tab of the General tab of the Configuration program.",
+          "4": "Check \"Upload without confirmation\" for the most optimal experience.",
+          "5": "You can now take screenshots and upload them directly to Flowinity! Depending on your distribution, you may need to manually configure a custom shortcut to launch Flowshot with Print Screen.",
+          "6": "Tip: you can use <code>dbus-send --session --dest=org.flameshot.Flameshot --type=method_call / org.flameshot.Flameshot.captureScreen string:1</code> to take a screenshot with Flowshot instead of <code>flameshot gui</code> for decreased latency (Linux only)."
       }
     },
     "integrations": {
@@ -258,6 +275,8 @@
     "about": {
       "productName": "Product name: TPUvGQL (NEXT)",
       "version": "Version: {version}",
+      "versionDesktop": "Version/Desktop: {version}/{desktopVersion}",
+      "platform": "Platform: {platform}",
       "buildDate": "Build date: {date}",
       "relative": "Build date relative: {date}",
       "backend": "Backend environment: {release}",
@@ -280,6 +299,21 @@
         "create": "Create Domain",
         "domain": "Domain",
         "update": "Update Domain"
+      }
+    },
+    "desktop": {
+      "settings": "Desktop Settings",
+      "startup": "Start Flowinity on startup",
+      "desktopNotifications": "Show Desktop Notifications",
+      "autoUpdate": "Automatically update Flowinity (recommended)",
+      "windowBorder": "Show Window Border",
+      "windowBorderDesc": "Disabling this will disable the window border, if you're not using a window manager that has it's own method of managing windows, you may want to keep this enabled.",
+      "restartRequired": "Restart Flowinity",
+      "minimizeToTray": "Minimize to Tray",
+      "linuxUpdater": "Flowinity updates are managed by your package manager.",
+      "flowshot": {
+        "title": "Flowshot Settings (Flowinity Flameshot)",
+        "launchConfig": "Launch Flowshot Configurator"
       }
     }
   },

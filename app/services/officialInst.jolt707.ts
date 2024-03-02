@@ -164,7 +164,8 @@ export class OfficialInstJolt707 {
             const user = await User.findOne({
               where: {
                 id: 6
-              }
+              },
+              attributes: ["username", "email", "id"]
             })
             console.log("[BILLING] Jolt707's subscription expired")
             // @ts-ignore
@@ -172,13 +173,17 @@ export class OfficialInstJolt707 {
               this.adminService.sendEmail(
                 {
                   body: {
-                    intro: `Your TPU Gold has expired!`,
+                    intro: `Your ${config.siteName} Gold has expired!`,
                     title: `Hello ${user.username}.`,
                     action: [
                       {
-                        instructions: `Your TPU Gold has expired. You only have ${Math.round(
+                        instructions: `Your ${
+                          config.siteName
+                        } Gold has expired. You only have ${Math.round(
                           nesyLength
-                        )} hours of Speaker Stats in the past 14 days. You need 14 hours to keep your TPU Gold.`,
+                        )} hours of Speaker Stats in the past 14 days. You need 8 hours to keep your ${
+                          config.siteName
+                        } Gold.`,
                         button: {
                           color: "#0190ea", // Optional action button color
                           text: "Go to TPU",
@@ -189,7 +194,7 @@ export class OfficialInstJolt707 {
                   }
                 },
                 user.email,
-                "Your TPU Gold has expired!"
+                `Your ${config.siteName} Gold has expired!`
               )
             }
             await Subscription.update(
