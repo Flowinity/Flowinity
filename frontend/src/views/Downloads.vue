@@ -192,20 +192,4 @@ onMounted(async () => {
 .mobile .subtitle {
   font-size: 1.25rem;
 }
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); /* Adjust shadow color here */
-  }
-  70% {
-    box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); /* Adjust shadow color here */
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); /* Adjust shadow color here */
-  }
-}
-
-.download-button {
-  animation: pulse 1.5s infinite alternate;
-}
 </style>
