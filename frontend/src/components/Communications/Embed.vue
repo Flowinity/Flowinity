@@ -91,13 +91,9 @@
           <img
             v-if="(media.isInternal && media.upload) || !media.isInternal"
             :style="{
-              maxWidth:
-                media.width <= 400
-                  ? media.width + 'px'
-                  : media.width - 70 + 'px',
+              maxWidth: media.width <= 400 ? media.width + 'px' : 500 + 'px',
               maxHeight:
-                media.height > 400 ? 700 + 'px' : media.height * 2 + 'px',
-              width: '100%'
+                media.height > 400 ? 700 + 'px' : media.height * 2 + 'px'
             }"
             :src="
               media.isInternal ? $app.domain + media.attachment : media.proxyUrl
