@@ -245,7 +245,13 @@ export class CoreResolver {
     @Ctx() ctx: Context,
     @Arg("input") input: SetExperimentInput
   ) {
-    const validExperiments = ["NOTIFICATION_SOUND", "THEME", "PRIDE"]
+    const validExperiments = [
+      "NOTIFICATION_SOUND",
+      "THEME",
+      "PRIDE",
+      "DOWNLOAD_THE_APP_NAG",
+      "ENABLE_AUTOSTART_APP_NAG"
+    ]
     if (input.userId && !ctx.user?.administrator)
       throw new GqlError("NOT_ADMIN")
     if (!validExperiments.includes(input.key) && !ctx.user?.administrator)

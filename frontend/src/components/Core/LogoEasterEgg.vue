@@ -11,80 +11,80 @@
     }"
     @click="$router.push('/')"
   >
-    <template
-      v-if="$experiments.experiments.FLOWINITY && $app.site.officialInstance"
-    >
-      <div class="d-flex">
+    <div class="d-flex align-center">
+      <template
+        v-if="$experiments.experiments.FLOWINITY && $app.site.officialInstance"
+      >
         <FlowinityBannerRainbow
           v-if="$experiments.experiments.PRIDE"
-          style="width: 150px"
+          style="width: 150px; height: 60px"
           src="@/assets/images/flowinity-logo-banner-rainbow.svg"
         />
         <FlowinityBanner
           v-else
-          style="width: 150px"
+          style="width: 150px; height: 60px"
           src="@/assets/images/flowinity-logo-banner.svg"
         />
-      </div>
-    </template>
-    <template v-else>
-      {{ $app.site.name || "TPU" }}
-    </template>
-    <v-hover v-if="event === 'pi'" v-slot="{ isHovering, props }">
-      <span class="ml-1" v-bind="props">
-        <template v-if="isHovering">
-          <span style="font-size: 1.15em">
-            {{ Math.PI }}
-          </span>
-        </template>
-        <template v-else>
-          <span style="font-size: 1.15em">π</span>
-        </template>
-      </span>
-    </v-hover>
-    <v-icon
-      v-if="event === 'bd'"
-      class="text-gradient"
-      size="23"
-      style="bottom: 0.05em"
-    >
-      mdi-numeric-1-box
-    </v-icon>
-    <v-icon
-      v-if="event === 'bd'"
-      class="text-gradient"
-      size="23"
-      style="bottom: 0.05em"
-    >
-      mdi-numeric-7-box
-    </v-icon>
-    <v-img
-      v-if="event === 'j'"
-      height="32"
-      src="https://i.troplo.com/i/1bcf4db450ba.svg"
-      style="position: relative; top: 0.15em; display: inline-block"
-      width="32"
-    />
-    <v-icon
-      v-if="event === '420'"
-      class="text-gradient ml-n1"
-      size="34"
-      style="bottom: 0.05em"
-    >
-      mdi-cannabis
-    </v-icon>
+      </template>
+      <template v-else>
+        {{ $app.site.name || "TPU" }}
+      </template>
+      <v-hover v-if="event === 'pi'" v-slot="{ isHovering, props }">
+        <span class="ml-1" v-bind="props">
+          <template v-if="isHovering">
+            <span style="font-size: 1.15em">
+              {{ Math.PI }}
+            </span>
+          </template>
+          <template v-else>
+            <span style="font-size: 1.15em">π</span>
+          </template>
+        </span>
+      </v-hover>
+      <v-icon
+        v-if="event === 'bd'"
+        class="text-gradient"
+        size="23"
+        style="bottom: 0.05em"
+      >
+        mdi-numeric-1-box
+      </v-icon>
+      <v-icon
+        v-if="event === 'bd'"
+        class="text-gradient"
+        size="23"
+        style="bottom: 0.05em"
+      >
+        mdi-numeric-7-box
+      </v-icon>
+      <v-img
+        v-if="event === 'j'"
+        height="32"
+        src="https://i.troplo.com/i/1bcf4db450ba.svg"
+        style="position: relative; top: 0.15em; display: inline-block"
+        width="32"
+      />
+      <v-icon
+        v-if="event === '420'"
+        class="text-gradient ml-n1"
+        size="34"
+        style="bottom: 0.05em"
+      >
+        mdi-cannabis
+      </v-icon>
+    </div>
   </h1>
   <template v-if="event === 'bc'">
     <v-card-title
       id="bettercompass-title"
       class="text-gradient unselectable"
       style="cursor: pointer"
-      title="BetterCompass is 1 year old today!"
+      title="BetterCompass is 2 years old today!"
       @click="$router.push('/')"
     >
       BetterCompass
       <v-icon class="text-gradient" size="23" style="bottom: 0.05em">
-        mdi-numeric-1-box
+        mdi-numeric-2-box
       </v-icon>
     </v-card-title>
     <v-btn class="ml-n5" disabled>Dev</v-btn>
@@ -93,12 +93,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import FlowinityBannerRainbow from "@/components/Brand/FlowinityBannerRainbow.vue";
 import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 
 export default defineComponent({
-  components: { FlowinityBanner, FlowinityBannerRainbow, FlowinityLogo },
+  components: { FlowinityBanner, FlowinityBannerRainbow },
   computed: {
     event() {
       const date = this.$date().format("MMDD");

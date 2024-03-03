@@ -226,6 +226,26 @@
       item-value="key"
       label="Notification Sound"
     />
+    <v-slider
+      v-model="volume"
+      label="Notification Volume"
+      thumb-label
+      class="px-4"
+      :color="volume > 100 ? 'red' : 'primary'"
+    >
+      <template #append>
+        <v-icon>
+          {{
+            volume > 70
+              ? "mdi-volume-high"
+              : volume > 0
+                ? "mdi-volume-medium"
+                : "mdi-volume-off"
+          }}
+        </v-icon>
+      </template>
+      <template #thumb-label>{{ volume.toFixed(2) }}%</template>
+    </v-slider>
     <v-btn
       v-if="$user.gold || !$app.site.officialInstance"
       class="mb-2 ml-5"
@@ -280,6 +300,7 @@ export default defineComponent({
   },
   data() {
     return {
+      volume: 100,
       email: {
         password: "",
         totp: "",
@@ -389,6 +410,10 @@ export default defineComponent({
     }
   },
   watch: {
+    volume() {
+      this.$chat.volume = this.volume / 100;
+      localStorage.setItem("volume", this.$chat.volume);
+    },
     theme() {
       this.toggleTheme(this.theme);
     },
@@ -412,6 +437,8 @@ export default defineComponent({
       }
     });
     this.collections = items;
+    console.log(this.$chat.volume);
+    this.volume = this.$chat.volume * 100;
   },
   methods: {
     async changeEmail() {

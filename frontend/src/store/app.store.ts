@@ -172,9 +172,32 @@ export const useAppStore = defineStore("app", {
       }
     ],
     platform: getPlatform(),
-    updateAvailable: false
+    updateAvailable: false,
+    nagStartup: false
   }),
   getters: {
+    activeNags() {
+      const userStore = useUserStore();
+      const experimentsStore = useExperimentsStore();
+
+      const nags = {
+        DOWNLOAD_THE_APP_NAG:
+          this.platform === Platform.WEB &&
+          (experimentsStore.experiments.DOWNLOAD_THE_APP_NAG === 1
+            ? userStore.user?.emailVerified
+            : experimentsStore.experiments.DOWNLOAD_THE_APP_NAG === 2),
+        EMAIL_VERIFICATION: !userStore.user?.emailVerified,
+        ENABLE_AUTOSTART_APP_NAG:
+          this.platform !== Platform.WEB &&
+          !this.nagStartup &&
+          experimentsStore.experiments.ENABLE_AUTOSTART_APP_NAG === 1
+      };
+
+      return {
+        ...nags,
+        offset: Object.keys(nags).filter((key) => nags[key]).length * 42
+      };
+    },
     quickActionItem(state): SidebarItem {
       const item = this.sidebar.find((item) => item.id === state.quickAction);
       if (!item) return this.sidebar.find((item) => item.id === 1);
@@ -285,18 +308,17 @@ export const useAppStore = defineStore("app", {
         }
       ] as SidebarItem[];
 
-      // TODO: Downloads page
-      // if (state.platform === Platform.WEB) {
-      //   items.push({
-      //     id: 38,
-      //     externalPath: "",
-      //     path: "/downloads",
-      //     name: i18n.t("core.sidebar.download"),
-      //     icon: "mdi-download",
-      //     new: true,
-      //     scope: ""
-      //   });
-      // }
+      if (state.platform === Platform.WEB) {
+        items.push({
+          id: 38,
+          externalPath: "",
+          path: "/downloads",
+          name: i18n.t("core.sidebar.download"),
+          icon: "mdi-download",
+          new: true,
+          scope: ""
+        });
+      }
 
       if (state.site.officialInstance) {
         items.push(

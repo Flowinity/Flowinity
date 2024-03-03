@@ -135,7 +135,8 @@ export const useChatStore = defineStore("chat", {
       }
     },
     emoji: [] as ChatEmoji[],
-    recentEmoji: {} as Record<string, number>
+    recentEmoji: {} as Record<string, number>,
+    volume: parseFloat(localStorage.getItem("volume") || "1")
   }),
   actions: {
     openEmoji(
@@ -387,6 +388,7 @@ export const useChatStore = defineStore("chat", {
         sound = await import("@/assets/audio/proposal1.wav");
       }
       const audio = new Audio(sound.default);
+      audio.volume = this.volume >= 2 ? 1 : this.volume;
       await audio.play();
     },
     confirmLink(trust: boolean = false) {

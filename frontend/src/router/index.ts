@@ -367,6 +367,10 @@ const routes = [
         component: () => import("@/views/Downloads.vue")
       },
       {
+        path: "/download",
+        redirect: "/downloads"
+      },
+      {
         path: "/:id",
         name: "Attachment Item",
         component: () => import("@/views/Item.vue")

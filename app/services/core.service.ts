@@ -365,6 +365,8 @@ export class CoreService {
     gold: boolean = false
   ): Record<string, any> {
     const experiments = {
+      DOWNLOAD_THE_APP_NAG: 1,
+      ENABLE_AUTOSTART_APP_NAG: 1,
       DEBUG_FAVICON: false,
       FLOWINITY: config.officialInstance || false,
       PRIDE: false,
@@ -412,6 +414,16 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        DOWNLOAD_THE_APP_NAG: {
+          description:
+            "Show the download the app nag. 0 for disabled, 1 for verified users, 2 for everyone, 3 for disabled with nag interaction.",
+          createdAt: "2024-03-03T00:00:00.000Z"
+        },
+        ENABLE_AUTOSTART_APP_NAG: {
+          description:
+            "Enable autostart app nag. 0 for disabled, 1 for enabled, 2 for disabled with nag interaction.",
+          createdAt: "2024-03-03T00:00:00.000Z"
+        },
         DEBUG_FAVICON: {
           description: "Enable debug favicon.",
           createdAt: "2024-01-20T00:00:00.000Z"

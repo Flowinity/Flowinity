@@ -1,9 +1,9 @@
 <template>
   <v-app-bar
     id="navbar"
-    :key="$user.user?.emailVerified ? 1 : 2"
+    :key="$app.activeNags.offset"
     :class="classString"
-    :extension-height="$user.user?.emailVerified ? 0 : 42"
+    :extension-height="$app.activeNags.offset"
     app
     class="navbar"
     color="dark"
@@ -63,19 +63,19 @@
       />
     </template>
     <v-spacer />
-    <template v-if="!$app.connected">
+    <template v-if="!appStore.connected">
       <v-progress-circular indeterminate size="24" class="ml-2" />
       <span class="mx-2">Reconnecting...</span>
     </template>
-    <small v-if="$app.notesSaving && !$vuetify.display.mobile" class="mr-3">
+    <small v-if="appStore.notesSaving && !display.mobile" class="mr-3">
       Saving...
     </small>
     <v-btn
+      v-if="appStore.updateAvailable"
       icon
       class="mx-2"
       size="40"
       @click="updateDesktopApp"
-      v-if="$app.updateAvailable"
     >
       <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
         Update Desktop App
@@ -84,24 +84,22 @@
     </v-btn>
     <template
       v-if="
-        (!$app.weather.loading && !$vuetify.display.mobile) ||
-        ($vuetify.display.mobile &&
-          !$chat.commsSidebar &&
-          !$workspaces.isWorkspaces)
+        (!appStore.weather.loading && !display.mobile) ||
+        (display.mobile && !$chat.commsSidebar && !$workspaces.isWorkspaces)
       "
     >
       <span>
         <v-img
-          :src="`https://openweathermap.org/img/wn/${$app.weather.data?.icon}@2x.png`"
+          :src="`https://openweathermap.org/img/wn/${appStore.weather.data?.icon}@2x.png`"
           height="32"
           width="32"
         />
         <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
-          {{ $app.weather.data?.main }}
+          {{ appStore.weather.data?.main }}
         </v-tooltip>
       </span>
       <span class="mr-3">
-        {{ $app.weatherTemp
+        {{ appStore.weatherTemp
         }}{{ $user.user?.weatherUnit.charAt(0).toUpperCase() === "K" ? "" : "°"
         }}{{ $user.user?.weatherUnit.charAt(0).toUpperCase() }}
       </span>
@@ -120,7 +118,7 @@
       </v-btn>
     </template>
     <!-- Communications custom actions -->
-    <template v-if="$chat.commsSidebar && !$vuetify.display.mobile">
+    <template v-if="$chat.commsSidebar && !display.mobile">
       <v-btn v-if="$experiments.experiments.PINNED_MESSAGES" class="mx-1" icon>
         <Pins />
         <v-icon>mdi-pin-outline</v-icon>
@@ -182,7 +180,7 @@
         </v-card>
       </v-menu>
       <v-btn
-        v-if="!$app.rail"
+        v-if="!appStore.rail"
         :aria-label="
           !$chat.communicationsSidebar && $chat.commsSidebar
             ? 'Members Sidebar'
@@ -190,30 +188,30 @@
         "
         class="ml-2"
         icon
-        @click="$app.toggleWorkspace()"
+        @click="appStore.toggleWorkspace()"
       >
         <v-icon>mdi-menu-open</v-icon>
       </v-btn>
     </template>
     <template #extension>
       <v-progress-linear
-        v-if="$app.dialogs.upload.loading"
-        :model-value="$app.dialogs.upload.percentage"
+        v-if="appStore.dialogs.upload.loading"
+        :model-value="appStore.dialogs.upload.percentage"
         color="primary"
       >
         <v-tooltip activator="parent" location="top">
-          <span>{{ $app.dialogs.upload.percentage }}%</span>
+          <span>{{ appStore.dialogs.upload.percentage }}%</span>
         </v-tooltip>
       </v-progress-linear>
       <v-alert
-        v-if="!$user.user?.emailVerified"
+        v-if="$app.activeNags.EMAIL_VERIFICATION"
         :icon="false"
         :type="!$user.actions.emailSent.value ? 'error' : 'success'"
         class="rounded-0"
         density="compact"
       >
         <small v-if="!$user.actions.emailSent.value" class="mr-2 unselectable">
-          Please verify your email to access all of {{ $app.site.name }}.
+          Please verify your email to access all of {{ appStore.site.name }}.
         </small>
         <small v-else class="mr-2 unselectable">
           Verification email sent! Please check your email,
@@ -230,146 +228,171 @@
         </template>
       </v-alert>
       <v-alert
-        v-if="false"
+        v-if="$app.activeNags.DOWNLOAD_THE_APP_NAG"
         variant="tonal"
         :icon="false"
         type="info"
         class="rounded-0"
         density="compact"
       >
-        <small class="unselectable">Welcome to the new PrivateUploader!</small>
+        <v-icon
+          @click="$experiments.setExperiment('DOWNLOAD_THE_APP_NAG', 0)"
+          size="16"
+          class="mr-1"
+        >
+          mdi-close-circle
+        </v-icon>
+        <small class="unselectable">
+          It's better in the app! Download the brand new desktop app for the
+          best {{ appStore.site.name }} experience.
+        </small>
         <template #append>
-          <v-btn size="x-small" href="https://privateuploader.com">
-            Go to Stable
+          <v-btn
+            size="x-small"
+            to="/downloads"
+            @click="$experiments.setExperiment('DOWNLOAD_THE_APP_NAG', 3)"
+          >
+            Download now!
           </v-btn>
+        </template>
+      </v-alert>
+      <v-alert
+        v-if="$app.activeNags.ENABLE_AUTOSTART_APP_NAG"
+        variant="tonal"
+        :icon="false"
+        type="info"
+        class="rounded-0 align-center"
+        density="compact"
+      >
+        <v-icon
+          @click="$experiments.setExperiment('ENABLE_AUTOSTART_APP_NAG', 0)"
+          size="16"
+          class="mr-1"
+        >
+          mdi-close-circle
+        </v-icon>
+        <small class="unselectable">
+          Never miss a message with Flowinity the auto-start feature.
+        </small>
+        <template #append>
+          <v-btn size="x-small" @click="enableStartup">Enable now!</v-btn>
         </template>
       </v-alert>
     </template>
   </v-app-bar>
 </template>
-
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script setup lang="ts">
+import { computed, onMounted, ref } from "vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import Notifications from "@/components/Core/Notifications.vue";
-import { useTheme } from "vuetify";
 import Pins from "@/components/Communications/Menus/Pins.vue";
 import LogoEasterEgg from "@/components/Core/LogoEasterEgg.vue";
 import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.vue";
-import { Platform } from "@/store/app.store";
+import { Platform, useAppStore } from "@/store/app.store";
 import { IpcChannels } from "@/electron-types/ipc";
+import { useUserStore } from "@/store/user.store";
+import { useExperimentsStore } from "@/store/experiments.store";
+import { useDisplay, useTheme } from "vuetify";
+import { useChatStore } from "@/store/chat.store";
+import { useRouter } from "vue-router";
 
-export default defineComponent({
-  components: {
-    StatusSwitcherList,
-    LogoEasterEgg,
-    Pins,
-    Notifications,
-    UserAvatar
-  },
-  setup() {
-    const theme = useTheme();
-    const editingName = ref(false);
-    return {
-      editingName,
-      toggleTheme: () => {
-        const themeName = "amoled";
-        localStorage.setItem("theme", themeName);
-        theme.global.name.value = themeName;
-      }
-    };
-  },
-  computed: {
-    classString() {
-      /* 'header-patch': $app.mainDrawer && !$vuetify.display.mobile,
-      'header-patch-workspaces':
-        $app.workspaceDrawer &&
-        !$vuetify.display.mobile &&
-        (!$chat.search.value ||
-          !$chat.commsSidebar ||
-          $chat.communicationsSidebar),
-      'header-patch-workspaces-search':
-        $app.workspaceDrawer &&
-        !$vuetify.display.mobile &&
-        $chat.search.value &&
-        $chat.commsSidebar &&
-        !$chat.communicationsSidebar*/
-      const data = {
-        "header-patch": !this.$vuetify.display.mobile,
-        "header-patch-workspaces":
-          (this.$app.workspaceDrawer &&
-            !this.$vuetify.display.mobile &&
-            !this.$app.rail) ||
-          (!this.$chat.search.value &&
-            this.$app.rail &&
-            this.$chat.commsSidebar),
-        "header-patch-workspaces-search":
-          (this.$app.workspaceDrawer &&
-            !this.$vuetify.display.mobile &&
-            !this.$app.rail &&
-            this.$chat.search.value &&
-            this.$chat.commsSidebar &&
-            !this.$chat.communicationsSidebar) ||
-          (this.$chat.search.value && this.$app.rail && this.$chat.commsSidebar)
-      } as { [key: string]: boolean };
-      if (this.$app.rail) {
-        for (const key in data) {
-          data[key + "-rail"] = data[key];
-          delete data[key];
-        }
-      }
-      return data;
-    },
-    dropdown() {
-      if (!this.$user?.user) return [];
-      return [
-        {
-          icon: "mdi-account",
-          id: 12,
-          click() {},
-          path: "/u/" + this.$user.user.username,
-          name: this.$user.user.username,
-          disabled: false
-        },
-        {
-          icon: "mdi-palette",
-          id: 13,
-          click() {},
-          path: "/settings",
-          name: "Change Theme",
-          disabled: false
-        },
-        {
-          icon: "mdi-exit-to-app",
-          id: 15,
-          async click() {
-            //@ts-ignore
-            await this.$user.logout();
-            //@ts-ignore
-            this.$router.push("/login");
-          },
-          path: "",
-          name: "Logout",
-          disabled: false
-        }
-      ];
-    }
-  },
-  methods: {
-    updateDesktopApp() {
-      if (this.$app.platform === Platform.WEB) return;
-      window.electron.ipcRenderer.send(IpcChannels.UPDATE);
-    },
-    handleClickDropdown(index: number) {
-      this.dropdown[index].click.call(this);
-    },
-    handleClick(id: number) {
-      //@ts-ignore
-      const item = this.$app.sidebar.find((item) => item.id === id);
-      if (item?.click) {
-        item.click(this);
-      }
+const theme = useTheme();
+const editingName = ref(false);
+const appStore = useAppStore();
+const userStore = useUserStore();
+const experimentsStore = useExperimentsStore();
+const chatStore = useChatStore();
+
+onMounted(() => {
+  if (appStore.platform === Platform.WEB) return;
+  window.electron.ipcRenderer.invoke(IpcChannels.GET_SETTINGS).then((data) => {
+    appStore.nagStartup = data.startup;
+  });
+});
+
+const toggleTheme = () => {
+  const themeName = "amoled";
+  localStorage.setItem("theme", themeName);
+  theme.global.name.value = themeName;
+};
+
+const display = useDisplay();
+
+const classString = computed(() => {
+  const data = {
+    "header-patch": !display.mobile.value,
+    "header-patch-workspaces":
+      (appStore.workspaceDrawer && !display.mobile.value && !appStore.rail) ||
+      (!chatStore.search.value && appStore.rail && chatStore.commsSidebar),
+    "header-patch-workspaces-search":
+      (appStore.workspaceDrawer &&
+        !display.mobile.value &&
+        !appStore.rail &&
+        chatStore.search.value &&
+        chatStore.commsSidebar &&
+        !chatStore.communicationsSidebar) ||
+      (chatStore.search.value && appStore.rail && chatStore.commsSidebar)
+  } as { [key: string]: boolean };
+  if (appStore.rail) {
+    for (const key in data) {
+      data[key + "-rail"] = data[key];
+      delete data[key];
     }
   }
+  return data;
 });
+
+const router = useRouter();
+
+const dropdown = computed(() => {
+  if (!userStore.user) return [];
+  return [
+    {
+      icon: "mdi-account",
+      id: 12,
+      click() {},
+      path: "/u/" + userStore.user.username,
+      name: userStore.user.username,
+      disabled: false
+    },
+    {
+      icon: "mdi-palette",
+      id: 13,
+      click() {},
+      path: "/settings",
+      name: "Change Theme",
+      disabled: false
+    },
+    {
+      icon: "mdi-exit-to-app",
+      id: 15,
+      async click() {
+        await userStore.logout();
+        router.push("/login");
+      },
+      path: "",
+      name: "Logout",
+      disabled: false
+    }
+  ];
+});
+
+const enableStartup = () => {
+  window.electron.ipcRenderer.send(
+    IpcChannels.SET_SETTINGS,
+    JSON.stringify({
+      startup: true
+    })
+  );
+  experimentsStore.setExperiment("ENABLE_AUTOSTART_APP_NAG", 2);
+};
+
+const updateDesktopApp = () => {
+  if (appStore.platform === Platform.WEB) return;
+  window.electron.ipcRenderer.send(IpcChannels.UPDATE);
+};
+
+const handleClickDropdown = (index: number) => {
+  dropdown.value[index].click();
+};
 </script>

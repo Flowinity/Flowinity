@@ -2,7 +2,7 @@
   <div class="hero">
     <div :class="{ 'mx-5 mobile': $vuetify.display.mobile }" class="hero-body">
       <div class="title">
-        <p class="text-6xl font-bold">Download Flowinity</p>
+        <p class="font-bold">Download Flowinity</p>
       </div>
       <div class="subtitle">
         <p class="text-2xl font-semibold">
@@ -10,11 +10,33 @@
         </p>
       </div>
       <div class="mt-4">
-        <v-btn-toggle variant="outlined" divided>
-          <v-btn class="download-button" variant="tonal">
-            Download for {{ platform }} ({{ version }})
+        <div
+          v-if="platform !== 'Android'"
+          class="v-btn-group v-btn-group--divided v-theme--amoled v-btn-group--density-default v-btn-toggle"
+        >
+          <v-btn
+            v-if="platform !== 'iOS'"
+            class="download-button"
+            style="height: 100%"
+            variant="tonal"
+            :href="
+              downloadUrls[platform]?.filter(
+                (item) => item.ext === defaults[platform]
+              )[0]?.url
+            "
+          >
+            Download for {{ platform }} ({{ defaults[platform] }})
           </v-btn>
-          <v-btn class="download-button" variant="tonal">
+          <v-btn v-else class="download-button" disabled variant="tonal">
+            Unavailable for iOS
+          </v-btn>
+          <v-btn
+            class="download-button"
+            variant="tonal"
+            style="height: 100%"
+            :disabled="platform === 'iOS'"
+            v-if="downloadUrls[platform].length > 1"
+          >
             <v-menu
               :close-on-content-click="false"
               offset-y
@@ -38,7 +60,18 @@
             </v-menu>
             <v-icon>mdi-chevron-down</v-icon>
           </v-btn>
-        </v-btn-toggle>
+        </div>
+        <a
+          v-else
+          href="https://play.google.com/store/apps/details?id=com.troplo.privateuploader"
+        >
+          <img
+            src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+            target="_blank"
+            width="200"
+            class="align-center text-center"
+          />
+        </a>
       </div>
     </div>
   </div>
@@ -50,51 +83,74 @@ import axios from "axios";
 import { onMounted, ref } from "vue";
 
 const platform = functions.getPlatform();
-const downloadUrls = {
+const downloadUrls = ref({
   Windows: [],
-  Linux: [
-    {
-      ext: "AppImage",
-      url: "https://flowinity.com/download/linux"
-    },
-    {
-      ext: "deb",
-      url: "https://flowinity.com/download/linux"
-    }
-  ]
+  Linux: [],
+  Mac: [],
+  Android: []
+});
+const defaults = {
+  Windows: "exe",
+  Linux: "tar.gz",
+  Mac: "dmg",
+  Android: "Google Play"
 };
 const version = ref("");
+
 async function getVersions() {
   const { data } = await axios.get(
     "https://updates.flowinity.com/versions/sorted"
   );
 
+  downloadUrls.value = {
+    Windows: [],
+    Linux: [],
+    Mac: [],
+    Android: []
+  };
+
   version.value = data.items[0].name;
 
   for (const item of data.items[0].assets) {
-    if (item.filetype === "exe") {
-      downloadUrls.Windows = [
-        {
-          ext: "exe",
-          url: `https://updates.flowinity.com/download/flavor/default/${version.value}/windows_64/${item.name}.exe`
-        }
-      ];
-    }
-
-    if (item.filetype === "AppImage") {
-      downloadUrls.Linux.push({
-        ext: "AppImage",
-        url: `https://updates.flowinity.com/download/flavor/default/${version.value}/linux_64/${item.name}.AppImage`
-      });
-    }
-
-    if (item.filetype === "deb") {
-      downloadUrls.Linux.push({
-        ext: "deb",
-        url: `https://updates.flowinity.com/download/flavor/default/${version.value}/linux_64/${item.name}.deb`
-      });
+    console.log(item.filetype);
+    switch (item.filetype) {
+      case ".msi":
+      case ".exe":
+        downloadUrls.value.Windows.push({
+          ext: item.filetype.replace(".", ""),
+          url: `https://updates.flowinity.com/download/flavor/default/${version.value}/windows_64/${item.name}`
+        });
+        break;
+      case ".AppImage":
+      case ".deb":
+      case ".rpm":
+        downloadUrls.value.Linux.push({
+          ext: item.filetype.replace(".", ""),
+          url: `https://updates.flowinity.com/download/flavor/default/${version.value}/linux_64/${item.name}`
+        });
+        break;
+      case ".gz":
+        downloadUrls.value.Linux.push({
+          ext: "tar.gz",
+          url: `https://updates.flowinity.com/download/flavor/default/${version.value}/linux_64/${item.name}`
+        });
+        break;
+      case ".pkg":
+      case ".dmg":
+        downloadUrls.value.Mac.push({
+          ext: item.filetype.replace(".", ""),
+          url: `https://updates.flowinity.com/download/flavor/default/${version.value}/mac/${item.name}`
+        });
+        break;
+      default:
+        break;
     }
   }
+
+  downloadUrls.value.Android.push({
+    ext: "Google Play",
+    url: `https://play.google.com/store/apps/details?id=com.troplo.privateuploader`
+  });
 
   return data;
 }
@@ -125,7 +181,7 @@ onMounted(async () => {
 }
 
 .mobile .title {
-  font-size: 2.5rem;
+  font-size: 2rem;
 }
 
 .subtitle {
@@ -136,12 +192,20 @@ onMounted(async () => {
 .mobile .subtitle {
   font-size: 1.25rem;
 }
-</style>
 
-<style>
-.sign-up-button,
-.v-input__prepend,
-.v-input__append {
-  padding-top: 0 !important;
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); /* Adjust shadow color here */
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); /* Adjust shadow color here */
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); /* Adjust shadow color here */
+  }
+}
+
+.download-button {
+  animation: pulse 1.5s infinite alternate;
 }
 </style>

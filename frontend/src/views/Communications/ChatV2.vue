@@ -383,6 +383,7 @@ export default defineComponent({
       return ScrollPosition;
     },
     height() {
+      [this.$app.activeNags.offset];
       const navbar = document.getElementById("navbar");
       if (!navbar) return "calc(100vh)";
       return "calc(100vh - " + navbar.offsetHeight + "px)";
