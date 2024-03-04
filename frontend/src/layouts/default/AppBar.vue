@@ -63,15 +63,15 @@
       />
     </template>
     <v-spacer />
-    <template v-if="!appStore.connected">
+    <template v-if="!$app.connected">
       <v-progress-circular indeterminate size="24" class="ml-2" />
       <span class="mx-2">Reconnecting...</span>
     </template>
-    <small v-if="appStore.notesSaving && !display.mobile" class="mr-3">
+    <small v-if="$app.notesSaving && !$vuetify.display.mobile" class="mr-3">
       Saving...
     </small>
     <v-btn
-      v-if="appStore.updateAvailable"
+      v-if="$app.updateAvailable"
       icon
       class="mx-2"
       size="40"
@@ -84,13 +84,15 @@
     </v-btn>
     <template
       v-if="
-        (!appStore.weather.loading && !display.mobile) ||
-        (display.mobile && !$chat.commsSidebar && !$workspaces.isWorkspaces)
+        (!appStore.weather.loading && !$vuetify.display.mobile) ||
+        ($vuetify.display.mobile &&
+          !$chat.commsSidebar &&
+          !$workspaces.isWorkspaces)
       "
     >
       <span>
         <v-img
-          :src="`https://openweathermap.org/img/wn/${appStore.weather.data?.icon}@2x.png`"
+          :src="`https://openweathermap.org/img/wn/${$app.weather.data?.icon}@2x.png`"
           height="32"
           width="32"
         />
@@ -99,7 +101,7 @@
         </v-tooltip>
       </span>
       <span class="mr-3">
-        {{ appStore.weatherTemp
+        {{ $app.weatherTemp
         }}{{ $user.user?.weatherUnit.charAt(0).toUpperCase() === "K" ? "" : "°"
         }}{{ $user.user?.weatherUnit.charAt(0).toUpperCase() }}
       </span>
@@ -118,7 +120,7 @@
       </v-btn>
     </template>
     <!-- Communications custom actions -->
-    <template v-if="$chat.commsSidebar && !display.mobile">
+    <template v-if="$chat.commsSidebar && !$vuetify.display.mobile">
       <v-btn v-if="$experiments.experiments.PINNED_MESSAGES" class="mx-1" icon>
         <Pins />
         <v-icon>mdi-pin-outline</v-icon>
@@ -180,7 +182,7 @@
         </v-card>
       </v-menu>
       <v-btn
-        v-if="!appStore.rail"
+        v-if="!$app.rail"
         :aria-label="
           !$chat.communicationsSidebar && $chat.commsSidebar
             ? 'Members Sidebar'
@@ -188,19 +190,19 @@
         "
         class="ml-2"
         icon
-        @click="appStore.toggleWorkspace()"
+        @click="$app.toggleWorkspace()"
       >
         <v-icon>mdi-menu-open</v-icon>
       </v-btn>
     </template>
     <template #extension>
       <v-progress-linear
-        v-if="appStore.dialogs.upload.loading"
-        :model-value="appStore.dialogs.upload.percentage"
+        v-if="$app.dialogs.upload.loading"
+        :model-value="$app.dialogs.upload.percentage"
         color="primary"
       >
         <v-tooltip activator="parent" location="top">
-          <span>{{ appStore.dialogs.upload.percentage }}%</span>
+          <span>{{ $app.dialogs.upload.percentage }}%</span>
         </v-tooltip>
       </v-progress-linear>
       <v-alert
