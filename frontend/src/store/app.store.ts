@@ -173,7 +173,7 @@ export const useAppStore = defineStore("app", {
     ],
     platform: getPlatform(),
     updateAvailable: false,
-    nagStartup: false
+    nagStartup: true
   }),
   getters: {
     activeNags() {

@@ -196,90 +196,95 @@
       </v-btn>
     </template>
     <template #extension>
-      <v-progress-linear
-        v-if="$app.dialogs.upload.loading"
-        :model-value="$app.dialogs.upload.percentage"
-        color="primary"
-      >
-        <v-tooltip activator="parent" location="top">
-          <span>{{ $app.dialogs.upload.percentage }}%</span>
-        </v-tooltip>
-      </v-progress-linear>
-      <v-alert
-        v-if="$app.activeNags.EMAIL_VERIFICATION"
-        :icon="false"
-        :type="!$user.actions.emailSent.value ? 'error' : 'success'"
-        class="rounded-0"
-        density="compact"
-      >
-        <small v-if="!$user.actions.emailSent.value" class="mr-2 unselectable">
-          Please verify your email to access all of {{ appStore.site.name }}.
-        </small>
-        <small v-else class="mr-2 unselectable">
-          Verification email sent! Please check your email,
-          <strong>{{ $user.user?.email }}</strong>
-        </small>
-        <template #append>
-          <v-btn
-            :loading="$user.actions.emailSent.loading"
-            size="x-small"
-            @click="$user.resendVerificationEmail"
-          >
-            Resend Verification Email
-          </v-btn>
-        </template>
-      </v-alert>
-      <v-alert
-        v-if="$app.activeNags.DOWNLOAD_THE_APP_NAG"
-        variant="tonal"
-        :icon="false"
-        type="info"
-        class="rounded-0"
-        density="compact"
-      >
-        <v-icon
-          @click="$experiments.setExperiment('DOWNLOAD_THE_APP_NAG', 0)"
-          size="16"
-          class="mr-1"
+      <div class="d-flex flex-column" style="width: 100%">
+        <v-progress-linear
+          v-if="$app.dialogs.upload.loading"
+          :model-value="$app.dialogs.upload.percentage"
+          color="primary"
         >
-          mdi-close-circle
-        </v-icon>
-        <small class="unselectable">
-          It's better in the app! Download the brand new desktop app for the
-          best {{ appStore.site.name }} experience.
-        </small>
-        <template #append>
-          <v-btn
-            size="x-small"
-            to="/downloads"
-            @click="$experiments.setExperiment('DOWNLOAD_THE_APP_NAG', 3)"
-          >
-            Download now!
-          </v-btn>
-        </template>
-      </v-alert>
-      <v-alert
-        v-if="$app.activeNags.ENABLE_AUTOSTART_APP_NAG"
-        variant="tonal"
-        :icon="false"
-        type="info"
-        class="rounded-0 align-center"
-        density="compact"
-      >
-        <v-icon
-          @click="$experiments.setExperiment('ENABLE_AUTOSTART_APP_NAG', 0)"
-          size="16"
-          class="mr-1"
+          <v-tooltip activator="parent" location="top">
+            <span>{{ $app.dialogs.upload.percentage }}%</span>
+          </v-tooltip>
+        </v-progress-linear>
+        <v-alert
+          v-if="$app.activeNags.EMAIL_VERIFICATION"
+          :icon="false"
+          :type="!$user.actions.emailSent.value ? 'error' : 'success'"
+          class="rounded-0"
+          density="compact"
         >
-          mdi-close-circle
-        </v-icon>
-        <small class="unselectable">
-          Never miss a message with Flowinity the auto-start feature.
-        </small>
-        <template #append>
-          <v-btn size="x-small" @click="enableStartup">Enable now!</v-btn>
-        </template>
-      </v-alert>
+          <small
+            v-if="!$user.actions.emailSent.value"
+            class="mr-2 unselectable"
+          >
+            Please verify your email to access all of {{ appStore.site.name }}!
+          </small>
+          <small v-else class="mr-2 unselectable">
+            Verification email sent! Please check your email,
+            <strong>{{ $user.user?.email }}</strong>
+          </small>
+          <template #append>
+            <v-btn
+              :loading="$user.actions.emailSent.loading"
+              size="x-small"
+              @click="$user.resendVerificationEmail"
+            >
+              Resend Verification Email
+            </v-btn>
+          </template>
+        </v-alert>
+        <v-alert
+          v-if="$app.activeNags.DOWNLOAD_THE_APP_NAG"
+          variant="tonal"
+          :icon="false"
+          type="info"
+          class="rounded-0"
+          density="compact"
+        >
+          <small class="unselectable">
+            It's better in the app! Download the brand new desktop app for the
+            best {{ appStore.site.name }} experience.
+          </small>
+          <template #append>
+            <v-btn
+              size="x-small"
+              to="/downloads"
+              @click="$experiments.setExperiment('DOWNLOAD_THE_APP_NAG', 3)"
+            >
+              Download now!
+            </v-btn>
+            <v-icon
+              @click="$experiments.setExperiment('DOWNLOAD_THE_APP_NAG', 0)"
+              size="16"
+              class="ml-3"
+            >
+              mdi-close-circle
+            </v-icon>
+          </template>
+        </v-alert>
+        <v-alert
+          v-if="$app.activeNags.ENABLE_AUTOSTART_APP_NAG"
+          variant="tonal"
+          :icon="false"
+          type="info"
+          class="rounded-0 align-center"
+          density="compact"
+        >
+          <small class="unselectable">
+            Never miss a message when Flowinity starts at boot!
+          </small>
+          <template #append>
+            <v-btn size="x-small" @click="enableStartup">Enable now!</v-btn>
+            <v-icon
+              @click="$experiments.setExperiment('DOWNLOAD_THE_APP_NAG', 0)"
+              size="16"
+              class="ml-3"
+            >
+              mdi-close-circle
+            </v-icon>
+          </template>
+        </v-alert>
+      </div>
     </template>
   </v-app-bar>
 </template>
