@@ -276,7 +276,7 @@
           <template #append>
             <v-btn size="x-small" @click="enableStartup">Enable now!</v-btn>
             <v-icon
-              @click="$experiments.setExperiment('DOWNLOAD_THE_APP_NAG', 0)"
+              @click="$experiments.setExperiment('ENABLE_AUTOSTART_APP_NAG', 0)"
               size="16"
               class="ml-3"
             >
