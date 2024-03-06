@@ -280,9 +280,17 @@ export default {
       return "Android";
     } else if (navigator.userAgent.indexOf("iOS") != -1) {
       return "iOS";
+    } else if (navigator.userAgent.indexOf("iPhone") != -1) {
+      return "iOS";
+    } else if (navigator.userAgent.indexOf("iPad") != -1) {
+      return "iOS";
+    } else if (navigator.userAgent.indexOf("iPod") != -1) {
+      return "iOS";
     } else if (navigator.userAgent.indexOf("Mac") != -1) {
       return "Mac";
     } else if (navigator.userAgent.indexOf("Linux") != -1) {
+      return "Linux";
+    } else if (navigator.userAgent.indexOf("X11") != -1) {
       return "Linux";
     }
   },

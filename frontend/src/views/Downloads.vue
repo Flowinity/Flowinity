@@ -51,4 +51,9 @@
 </style>
 <script setup lang="ts">
 import DownloadButton from "@/components/Downloads/DownloadButton.vue";
+import { useAppStore } from "@/store/app.store";
+
+const appStore = useAppStore();
+
+appStore.title = "Downloads";
 </script>

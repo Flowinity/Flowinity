@@ -1,6 +1,6 @@
 <template>
   <ColubrinaTPU v-model="$app.dialogs.colubrina"/>
-  <div class="hero">
+  <div class="register-hero">
     <div :class="{ 'mx-5 mobile': $vuetify.display.mobile }" class="hero-body">
       <div class="title">
         <transition name="slide-y-transition" mode="out-in">
@@ -20,7 +20,7 @@
           <v-btn variant="outlined" style="height: 100%" to="/register">
             Register now
           </v-btn>
-          <DownloadButton v-if="$app.platform === Platform.WEB && platform !== 'Android' && platform !== 'iOS'" :outlined="true"/>
+          <DownloadButton v-if="$app.platform === Platform.WEB && platform !== 'Android' && platform !== 'iOS' && !$vuetify.display.mobile" :outlined="true"/>
         </div>
         <p v-if="!$app.site.officialInstance" class="mb-n2 mt-4">
           This is a
@@ -223,54 +223,51 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
-.hero {
+<style lang="scss">
+.register-hero {
   height: 400px;
   width: 100%;
   display: flex;
   position: relative;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 67, 143, 0.8)
+  background: rgba(0, 67, 143, 0.8);
+  color: white !important;
 }
 
-.hero-body {
+.register-hero .v-btn__content {
+  color: white !important;
+}
+
+.register-hero .hero-body {
   text-align: center;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-.hero-body .title {
+.register-hero .hero-body .title {
   font-size: 4rem;
   font-weight: 700;
 }
 
-.mobile .title {
+.register-hero .mobile .title {
   font-size: 2.5rem;
 }
 
-.subtitle {
+.register-hero .subtitle {
   font-size: 1.5rem;
   font-weight: 500;
 }
 
-.mobile .subtitle {
+.register-hero .mobile .subtitle {
   font-size: 1.25rem;
 }
 
-.learn-more {
+.register-hero .learn-more {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   text-align: center;
   margin-bottom: 1rem;
-}
-</style>
-
-<style>
-.sign-up-button,
-.v-input__prepend,
-.v-input__append {
-  padding-top: 0 !important;
 }
 </style>
