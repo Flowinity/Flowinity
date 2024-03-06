@@ -1,6 +1,6 @@
 import md from "./rules";
 import mdEmail from "./rulesEmail";
-import { useAppStore } from "@/store/app.store";
+import { Platform, useAppStore } from "@/store/app.store";
 import { Chat } from "@/models/chat";
 import { User } from "@/models/user";
 import {
@@ -276,14 +276,25 @@ export default {
   getPlatform() {
     if (navigator.userAgent.indexOf("Win") != -1) {
       return "Windows";
+    } else if (navigator.userAgent.indexOf("Android") != -1) {
+      return "Android";
     } else if (navigator.userAgent.indexOf("iOS") != -1) {
       return "iOS";
     } else if (navigator.userAgent.indexOf("Mac") != -1) {
       return "Mac";
     } else if (navigator.userAgent.indexOf("Linux") != -1) {
       return "Linux";
-    } else if (navigator.userAgent.indexOf("Android") != -1) {
-      return "Android";
     }
+  },
+  platformIcon(platform?: "Windows" | "Mac" | "Linux") {
+    const app = useAppStore();
+    return `mdi-${
+      app.platform === Platform.LINUX || platform === "Linux"
+        ? "linux"
+        : app.platform === Platform.MAC || platform === "Mac"
+          ? "apple"
+          : "microsoft"
+    }
+    `;
   }
 };

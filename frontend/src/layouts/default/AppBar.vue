@@ -70,18 +70,28 @@
     <small v-if="$app.notesSaving && !$vuetify.display.mobile" class="mr-3">
       Saving...
     </small>
-    <v-btn
-      v-if="$app.updateAvailable"
-      icon
-      class="mx-2"
-      size="40"
-      @click="updateDesktopApp"
-    >
+    <span>
       <v-tooltip activator="parent" location="bottom" style="z-index: 2001">
-        Update Desktop App
+        {{
+          $app.platform === Platform.LINUX
+            ? "Update available in your package manager"
+            : "Update available to install"
+        }}
       </v-tooltip>
-      <v-icon>mdi-cloud-download</v-icon>
-    </v-btn>
+      <v-btn
+        v-if="$app.desktop.updateAvailable"
+        icon
+        class="mr-4"
+        size="40"
+        :ripple="false"
+        @click="
+          $app.platform === Platform.LINUX ? () => {} : updateDesktopApp()
+        "
+      >
+        <v-icon>mdi-cloud-download</v-icon>
+      </v-btn>
+    </span>
+
     <template
       v-if="
         (!appStore.weather.loading && !$vuetify.display.mobile) ||
@@ -271,7 +281,7 @@
           density="compact"
         >
           <small class="unselectable">
-            Never miss a message when Flowinity starts at boot!
+            Never miss a message when {{ appStore.site.name }} starts at boot!
           </small>
           <template #append>
             <v-btn size="x-small" @click="enableStartup">Enable now!</v-btn>
@@ -313,7 +323,7 @@ const chatStore = useChatStore();
 onMounted(() => {
   if (appStore.platform === Platform.WEB) return;
   window.electron.ipcRenderer.invoke(IpcChannels.GET_SETTINGS).then((data) => {
-    appStore.nagStartup = data.startup;
+    appStore.desktop.nagStartup = data.startup;
   });
 });
 

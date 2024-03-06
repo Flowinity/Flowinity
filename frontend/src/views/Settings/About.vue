@@ -44,7 +44,7 @@
             })
           : $t("settings.about.versionDesktop", {
               version: $app.version.current,
-              desktopVersion
+              desktopVersion: $app.desktop.version
             })
       }}
     </p>
@@ -147,19 +147,10 @@ export default defineComponent({
   },
   data() {
     return {
-      clickCount: 0,
-      desktopVersion: ""
+      clickCount: 0
     };
   },
   methods: {
-    getDesktopVersion() {
-      if (this.$app.platform === Platform.WEB) return;
-      window.electron.ipcRenderer
-        .invoke("get-version")
-        .then((version: string) => {
-          this.desktopVersion = version;
-        });
-    },
     rainbowMode(val: boolean) {
       this.clickCount++;
       if (val && this.clickCount > 4) {
@@ -191,9 +182,6 @@ export default defineComponent({
         this.$experiments.experiments[key] = false;
       }
     }
-  },
-  mounted() {
-    this.getDesktopVersion();
   }
 });
 </script>

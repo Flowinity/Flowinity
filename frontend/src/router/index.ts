@@ -368,7 +368,8 @@ const routes = [
       },
       {
         path: "/download",
-        redirect: "/downloads"
+        redirect: "/downloads",
+        name: "Download Redirect"
       },
       {
         path: "/:id",
@@ -412,7 +413,9 @@ router.beforeEach(async (to, from) => {
       "TPU Setup Wizard",
       "User",
       "OAuth",
-      "Join Chat"
+      "Join Chat",
+      "Download Redirect",
+      "Downloads"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");

@@ -55,12 +55,24 @@ export default defineComponent({
         this.$router.push("/settings/about");
       });
       window.electron.ipcRenderer.on(IpcChannels.UPDATE_DOWNLOADED, () => {
-        this.$app.updateAvailable = true;
+        this.$app.desktop.updateAvailable = true;
       });
       window.electron.ipcRenderer.on(IpcChannels.FOCUS_CHAT, (_, data) => {
         this.$router.push(`/communications/${data}`);
         window.electron.ipcRenderer.send(IpcChannels.FOCUS_WINDOW);
       });
+      window.electron.ipcRenderer
+        .invoke("get-version")
+        .then((version: string) => {
+          this.$app.desktop.version = version;
+        });
+
+      if (this.$app.platform === Platform.LINUX) {
+        this.$app.checkForUpdates();
+        setInterval(() => {
+          this.$app.checkForUpdates();
+        }, 60000);
+      }
     }
   }
 });

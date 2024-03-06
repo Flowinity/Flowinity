@@ -1,6 +1,7 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
+import ax from "axios";
 import { useToast } from "vue-toastification";
 import functions from "@/plugins/functions";
 import { AxiosProgressEvent } from "axios";
@@ -172,8 +173,11 @@ export const useAppStore = defineStore("app", {
       }
     ],
     platform: getPlatform(),
-    updateAvailable: false,
-    nagStartup: true
+    desktop: {
+      updateAvailable: false,
+      nagStartup: true,
+      version: ""
+    }
   }),
   getters: {
     activeNags() {
@@ -189,7 +193,7 @@ export const useAppStore = defineStore("app", {
         EMAIL_VERIFICATION: !userStore.user?.emailVerified,
         ENABLE_AUTOSTART_APP_NAG:
           this.platform !== Platform.WEB &&
-          !this.nagStartup &&
+          !this.desktop.nagStartup &&
           experimentsStore.experiments.ENABLE_AUTOSTART_APP_NAG === 1
       };
 
@@ -474,6 +478,21 @@ export const useAppStore = defineStore("app", {
     }
   },
   actions: {
+    async checkForUpdates() {
+      if (this.platform !== Platform.LINUX) return;
+      const { data } = await ax.get(
+        "https://updates.flowinity.com/versions/sorted"
+      );
+
+      for (const version of data.items) {
+        if (version.channel.name === "stable") {
+          if (version.name !== this.desktop.version) {
+            this.desktop.updateAvailable = true;
+          }
+          break;
+        }
+      }
+    },
     toggleWorkspace() {
       this.workspaceDrawer = !this.workspaceDrawer;
       if (vuetify.display.mobile.value && this.workspaceDrawer) {

@@ -47,13 +47,7 @@
           {{ $t("settings.tabs.slideshows") }}
         </v-tab>
         <v-tab
-          :prepend-icon="`mdi-${
-            $app.platform === Platform.LINUX
-              ? 'linux'
-              : $app.platform === Platform.MAC
-                ? 'apple'
-                : 'microsoft'
-          }`"
+          :prepend-icon="functions.platformIcon()"
           to="/settings/desktop"
           v-if="$app.platform !== Platform.WEB"
         >
@@ -96,10 +90,14 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Platform } from "@/store/app.store";
+import functions from "@/plugins/functions";
 
 export default defineComponent({
   name: "SettingsCore",
   computed: {
+    functions() {
+      return functions;
+    },
     Platform() {
       return Platform;
     }

@@ -16,9 +16,12 @@
         <strong>everyone.</strong>
       </div>
       <div class="mt-4">
-        <v-btn variant="outlined" :class="{'mb-8': $vuetify.display.mobile}" to="/register">
-          Get started
-        </v-btn>
+        <div class="d-flex justify-center" style="height: 48px; gap: 10px" :class="{'mb-8': $vuetify.display.mobile}" >
+          <v-btn variant="outlined" style="height: 100%" to="/register">
+            Register now
+          </v-btn>
+          <DownloadButton v-if="$app.platform === Platform.WEB && platform !== 'Android' && platform !== 'iOS'" :outlined="true"/>
+        </div>
         <p v-if="!$app.site.officialInstance" class="mb-n2 mt-4">
           This is a
           <a
@@ -50,11 +53,11 @@
         You can add as many files as you please into Collections, which can be shared publicly, or to other {{ $app.site.name }} users with different permissions.
       </PromoCard>
       <PromoCard width="100%" title="Security First" image="https://i.troplo.com/i/34f6a6a57bc9.png">
-        With PrivateUploader, you can easily create as many API keys as you want, all with different account access permissions.<br><br>You can even create Alternate Passwords which have different account permissions when used.
+        With {{$app.site.name}}, you can easily create as many API keys as you want, all with different account access permissions.<br><br>You can even create Alternate Passwords which have different account permissions when used.
       </PromoCard>
       <PromoCard width="100%" title="100% Open Source" image="https://i.troplo.com/i/1ff020441915.png" :right="true">
         {{ $app.site.name }} is completely open source on GitHub, and can also be easily self-hosted bare-metal or under Docker (Only Linux supported).<br><br>
-        <v-btn variant="outlined" href="https://github.com/PrivateUploader/PrivateUploader"><v-icon class="mr-2">mdi-star</v-icon>Star on GitHub</v-btn>
+        <v-btn variant="outlined" href="https://github.com/Flowinity/Flowinity"><v-icon class="mr-2">mdi-star</v-icon>Star on GitHub</v-btn>
       </PromoCard>
     </div>
     <PromoCard
@@ -119,11 +122,19 @@ import PromoCard from "@/components/Home/PromoCard.vue";
 import { defineComponent } from "vue";
 import ColubrinaTPU from "@/components/Home/Dialogs/ColubrinaTPU.vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
+import DownloadButton from "@/components/Downloads/DownloadButton.vue";
+import { Platform } from "@/store/app.store";
+import functions from "@/plugins/functions";
 
 
 export default defineComponent({
   name: "UnauthHome",
-  components: { HoverChip, ColubrinaTPU, PromoCard },
+  computed: {
+    Platform() {
+      return Platform
+    }
+  } ,
+  components: {DownloadButton , HoverChip, ColubrinaTPU, PromoCard },
   data() {
     return {
       email: "",
@@ -142,7 +153,8 @@ export default defineComponent({
         "Work.",
         "Flowinity."
       ],
-      sloganInterval: undefined as number | undefined
+      sloganInterval: undefined as number | undefined,
+      platform: functions.getPlatform()
     };
   },
   async mounted() {
