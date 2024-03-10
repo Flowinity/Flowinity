@@ -6,7 +6,7 @@ import { Chat } from "@app/models/chat.model"
 @InputType("MessageSubscriptionInput")
 export class MessageSubscription {
   @Field(() => Message)
-  message: Message | null
+  message: Message
 
   @Field(() => Int)
   associationId: number
