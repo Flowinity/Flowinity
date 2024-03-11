@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "serve": "vite",
-    "build-prod": "VITE_PROD_ANALYTICS=true vue-tsc --noEmit && vite build && cp -r dist/* /var/www/html/tpu",
+    "build-prod": "VITE_PROD_ANALYTICS=true vue-tsc --noEmit && VITE_PROD_ANALYTICS=true vite build && cp -r dist/* /var/www/html/tpu",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix --ignore-path .gitignore",
