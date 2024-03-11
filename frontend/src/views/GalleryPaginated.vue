@@ -1,5 +1,5 @@
 <template>
-  <v-container class="gallery-infinite">
+  <v-container>
     <GalleryNavigation
       :supports="
         supports || {
@@ -10,7 +10,7 @@
           sort: true
         }
       "
-      @refreshGallery="getGallery(undefined, true)"
+      @refreshGallery="getGallery()"
       @update:show="show = $event"
       v-model:search="show.search"
       @update:filter="
@@ -30,7 +30,7 @@
         page = 1;
       "
     />
-    <GalleryCoreInfinite
+    <GalleryCore
       :items="gallery"
       :page="page"
       :loading="loading"
@@ -58,7 +58,7 @@
       <template v-for="(_, name) in $slots" v-slot:[name]="slotData">
         <slot :name="name" v-bind="slotData" />
       </template>
-    </GalleryCoreInfinite>
+    </GalleryCore>
   </v-container>
 </template>
 
@@ -78,11 +78,11 @@ import {
   Upload
 } from "@/gql/graphql";
 import { isNumeric } from "@/plugins/isNumeric";
-import { StateHandler } from "@/components/Scroll/types";
-import GalleryCoreInfinite from "@/components/Gallery/GalleryCoreInfinite.vue";
+import { useApolloClient } from "@vue/apollo-composable";
+import functions from "@/plugins/functions";
 
 export default defineComponent({
-  components: { GalleryCoreInfinite, GalleryNavigation, GalleryCore },
+  components: { GalleryNavigation, GalleryCore },
   props: ["path", "type", "name", "random", "supports", "id"],
   data() {
     return {
@@ -97,7 +97,7 @@ export default defineComponent({
       show: {
         search: "",
         metadata: true,
-        selected: [GalleryFilter.All],
+        selected: [GalleryFilter.IncludeMetadata],
         sort: GallerySort.CreatedAt,
         order: GalleryOrder.Desc
       },
@@ -106,7 +106,8 @@ export default defineComponent({
   },
   computed: {
     rid() {
-      return this.$route.params.id;
+      const id = this.$route.params.id;
+      return isNumeric(id) ? parseInt(id) : id;
     }
   },
   methods: {
@@ -116,6 +117,23 @@ export default defineComponent({
       /*this.$functions.copy(
         "https://" + this.$user.user?.domain.domain + "/i/" + data.attachment
       );*/
+      const {
+        data: { gallery }
+      } = await useApolloClient().client.query({
+        query: GalleryQuery,
+        variables: {
+          input: {
+            page: 1,
+            type: this.type,
+            order: GalleryOrder.Random,
+            limit: 1,
+            collectionId: typeof this.id === "number" ? this.id : undefined,
+            shareLink: typeof this.id === "string" ? this.id : undefined
+          }
+        },
+        fetchPolicy: "network-only"
+      });
+      functions.copy(this.$app.domain + gallery.items?.[0]?.attachment);
       this.randomLoading = false;
     },
     removeItemFromCollection(item: Upload, collection: CollectionCache) {
@@ -149,15 +167,8 @@ export default defineComponent({
         collections: [...this.gallery.items[index]?.collections, collection]
       };
     },
-    async getGallery(
-      input?: { state: StateHandler; page: number },
-      reset: boolean = false
-    ) {
+    async getGallery() {
       this.loading = true;
-      if (input) {
-        input.state.loading();
-        this.page++;
-      }
       const {
         data: { gallery }
       } = await this.$apollo.query({
@@ -171,27 +182,12 @@ export default defineComponent({
             sort: this.show.sort,
             type: this.type,
             order: this.show.order,
-            collectionId: isNumeric(this.rid) ? parseInt(this.rid) : undefined,
-            shareLink: isNumeric(this.rid) ? undefined : this.rid,
-            limit: 12
+            collectionId: typeof this.rid === "number" ? this.rid : undefined,
+            shareLink: typeof this.rid === "string" ? this.rid : undefined
           }
         } as GalleryInput
       });
-      if (this.gallery && !reset) {
-        this.gallery = {
-          items: [...this.gallery.items, ...gallery.items],
-          pager: gallery.pager
-        };
-      } else {
-        this.gallery = gallery;
-        this.$route.params.page = 1;
-      }
-      if (!gallery.items.length && input) {
-        input.state.complete();
-      } else if (input) {
-        input.state.loaded();
-      }
-
+      this.gallery = gallery;
       this.loading = false;
       return gallery;
     },
@@ -203,7 +199,10 @@ export default defineComponent({
       if (this.page !== 1) return;
       if (Array.isArray(uploads)) {
         for (const upload of uploads) {
-          this.gallery.items.unshift(upload.upload);
+          this.gallery = {
+            items: [upload.upload, ...this.gallery.items],
+            pager: this.gallery.pager
+          };
         }
       } else {
         this.gallery.items.unshift(uploads.upload);
@@ -233,29 +232,12 @@ export default defineComponent({
       this.page = parseInt(page) || 1;
       this.getGallery();
     },
-    endpoint() {
+    type() {
       this.init();
     },
-    "show.selected"() {
-      if (
-        this.show.selected.includes(GalleryFilter.All) &&
-        this.show.selected.length > 1
-      ) {
-        this.show.selected.splice(
-          this.show.selected.indexOf(GalleryFilter.All),
-          1
-        );
-      }
-    },
-    type() {
-      this.getGallery(undefined, true);
+    endpoint() {
+      this.init();
     }
   }
 });
 </script>
-
-<style>
-.gallery-infinite {
-  user-select: none;
-}
-</style>

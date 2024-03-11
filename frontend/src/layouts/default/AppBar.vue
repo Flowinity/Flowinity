@@ -249,8 +249,10 @@
           :icon="false"
           type="info"
           class="rounded-0"
+          color="light-blue"
           density="compact"
         >
+          <v-icon size="16" class="mr-1">mdi-download</v-icon>
           <small class="unselectable">
             It's better in the app! Download the brand new desktop app for the
             best {{ appStore.site.name }} experience.
@@ -277,6 +279,7 @@
           variant="tonal"
           :icon="false"
           type="info"
+          color="light-blue"
           class="rounded-0 align-center"
           density="compact"
         >
@@ -287,6 +290,43 @@
             <v-btn size="x-small" @click="enableStartup">Enable now!</v-btn>
             <v-icon
               @click="$experiments.setExperiment('ENABLE_AUTOSTART_APP_NAG', 0)"
+              size="16"
+              class="ml-3"
+            >
+              mdi-close-circle
+            </v-icon>
+          </template>
+        </v-alert>
+        <v-alert
+          v-if="$app.activeNags.IAF_NAG"
+          variant="tonal"
+          type="info"
+          color="light-blue"
+          class="rounded-0 align-center"
+          density="compact"
+          :icon="false"
+        >
+          <v-icon size="16" class="mr-2">mdi-gift</v-icon>
+          <small class="unselectable">
+            {{
+              $user.gold
+                ? `Invite a friend to Flowinity today!`
+                : `Share the love! Invite a friend to ${appStore.site.name} and both get a free month of Gold!`
+            }}
+          </small>
+          <template #append>
+            <v-btn
+              size="x-small"
+              @click="
+                $user.gold
+                  ? ($app.dialogs.inviteAFriend = true)
+                  : ($app.dialogs.gold.value = true)
+              "
+            >
+              {{ $user.gold ? `Invite a friend!` : `Claim now!` }}
+            </v-btn>
+            <v-icon
+              @click="$experiments.setExperiment('IAF_NAG', 0)"
               size="16"
               class="ml-3"
             >

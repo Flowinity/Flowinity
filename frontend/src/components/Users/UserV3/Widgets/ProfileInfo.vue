@@ -2,7 +2,7 @@
   <v-card-text class="text-overline">About {{ user.username }}</v-card-text>
   <v-card-text
     v-if="!settings.description.value"
-    class="mt-n7"
+    class="mt-n7 user-content"
     style="overflow-wrap: break-word; white-space: pre-line"
   >
     {{ user.description }}

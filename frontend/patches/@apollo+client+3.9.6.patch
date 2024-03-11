@@ -1,8 +1,8 @@
 diff --git a/node_modules/@apollo/client/apollo-client.cjs b/node_modules/@apollo/client/apollo-client.cjs
-index 1b1f2b5..3cf88bb 100644
+index 8c23dd1..cf3a159 100644
 --- a/node_modules/@apollo/client/apollo-client.cjs
 +++ b/node_modules/@apollo/client/apollo-client.cjs
-@@ -1066,34 +1066,12 @@ function cloneDeepHelper(val, seen) {
+@@ -1235,34 +1235,12 @@ function cloneDeepHelper(val, seen) {
  }
  
  function deepFreeze(value) {
@@ -38,11 +38,11 @@ index 1b1f2b5..3cf88bb 100644
  }
  
 diff --git a/node_modules/@apollo/client/utilities/common/maybeDeepFreeze.js b/node_modules/@apollo/client/utilities/common/maybeDeepFreeze.js
-index ad943bf..87055e8 100644
+index ad943bf..e5b72d3 100644
 --- a/node_modules/@apollo/client/utilities/common/maybeDeepFreeze.js
 +++ b/node_modules/@apollo/client/utilities/common/maybeDeepFreeze.js
-@@ -1,36 +1,10 @@
--import { isNonNullObject } from "./objects.js";
+@@ -1,36 +1,11 @@
+ import { isNonNullObject } from "./objects.js";
  function deepFreeze(value) {
 -    var workSet = new Set([value]);
 -    workSet.forEach(function (obj) {
@@ -79,10 +79,10 @@ index ad943bf..87055e8 100644
  }
  //# sourceMappingURL=maybeDeepFreeze.js.map
 diff --git a/node_modules/@apollo/client/utilities/utilities.cjs b/node_modules/@apollo/client/utilities/utilities.cjs
-index 3665428..81d7ca3 100644
+index e059cc9..c638da0 100644
 --- a/node_modules/@apollo/client/utilities/utilities.cjs
 +++ b/node_modules/@apollo/client/utilities/utilities.cjs
-@@ -1216,34 +1216,12 @@ function cloneDeepHelper(val, seen) {
+@@ -1294,34 +1294,12 @@ function cloneDeepHelper(val, seen) {
  }
  
  function deepFreeze(value) {
@@ -118,10 +118,10 @@ index 3665428..81d7ca3 100644
  }
  
 diff --git a/node_modules/@apollo/client/utilities/utilities.cjs.native.js b/node_modules/@apollo/client/utilities/utilities.cjs.native.js
-index 3665428..81d7ca3 100644
+index e059cc9..c638da0 100644
 --- a/node_modules/@apollo/client/utilities/utilities.cjs.native.js
 +++ b/node_modules/@apollo/client/utilities/utilities.cjs.native.js
-@@ -1216,34 +1216,12 @@ function cloneDeepHelper(val, seen) {
+@@ -1294,34 +1294,12 @@ function cloneDeepHelper(val, seen) {
  }
  
  function deepFreeze(value) {

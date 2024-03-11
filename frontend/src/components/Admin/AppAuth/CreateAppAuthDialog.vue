@@ -57,7 +57,7 @@
           label="Verified"
           dense
           required
-          hint="Only use this for public facing and TPU endorsed apps"
+          hint="Only use this for public facing and Flowinity endorsed apps"
           persistent-hint
         />
       </v-form>

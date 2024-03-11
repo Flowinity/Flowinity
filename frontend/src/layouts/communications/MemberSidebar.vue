@@ -13,6 +13,7 @@
     color="dark"
     floating
     location="right"
+    class="user-content"
     @update:model-value="$chat.memberSidebarShown = $event"
   >
     <member-sidebar-list />

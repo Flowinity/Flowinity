@@ -153,7 +153,7 @@
             >
               <span
                 :id="'message-author-' + message.id"
-                class="mr-2 pointer underline-on-hover"
+                class="mr-2 pointer underline-on-hover user-content"
                 :style="`color: ${getColor}`"
                 @click.prevent="
                   $emit('authorClick', {
@@ -190,7 +190,7 @@
                   'text-grey': message.pending,
                   'text-red': message.error
                 }"
-                class="overflow-content message-content d-inline-block"
+                class="overflow-content message-content user-content d-inline-block"
                 v-html="$functions.markdown(message.content, message)"
               ></span>
               <span
@@ -219,6 +219,7 @@
               :editing="true"
               :model-value="editingText"
               style="width: 100%"
+              class="user-content"
               @edit="$emit('edit', { id: null, content: null })"
               @send-message="$emit('editMessage', $event)"
               @update:model-value="$emit('editText', $event)"

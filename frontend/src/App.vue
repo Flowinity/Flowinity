@@ -1,12 +1,7 @@
 <template>
   <SocketProfiler v-if="$app.dialogs.socketProfiler" />
   <ActionDialog v-if="$app.dialogs.actionDialog" />
-  <ExperimentsManagerDialog
-    v-if="
-      $app.dialogs.experiments &&
-      ($user.user?.administrator || $user.user?.moderator)
-    "
-  />
+  <ExperimentsManagerDialog v-if="$app.dialogs.experiments" />
   <Maintenance
     v-if="$app.site.maintenance.enabled"
     v-model="$app.site.maintenance.enabled"
@@ -33,6 +28,10 @@ export default defineComponent({
   },
   watch: {
     "$route.path"(val) {
+      // Reset component loading state if it's still true on route change
+      if (this.$app.componentLoading) {
+        this.$app.componentLoading = false;
+      }
       this.$app.lastRoute = val;
     }
   },

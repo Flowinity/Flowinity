@@ -1,6 +1,7 @@
 import { AdminService } from "@app/services/admin.service"
 import { Service } from "typedi"
 import { User } from "@app/models/user.model"
+import { Invite } from "@app/models/invite.model"
 
 @Service()
 export class EmailNotificationService {
@@ -121,6 +122,43 @@ export class EmailNotificationService {
       },
       user.email,
       "Your account will be deleted in 48 hours"
+    )
+  }
+
+  async inviteAFriendAccept(invite: Invite) {
+    const user = await invite.$get("user", {
+      attributes: ["username"]
+    })
+    if (!user) return
+    this.adminService.sendEmail(
+      {
+        body: {
+          intro: `Your friend ${user.username} has invited you to join ${config.siteName}`,
+          action: [
+            {
+              instructions: `${config.siteName} is a free invite-only image and file hosting service.`,
+              button: {
+                color: "#0190ea", // Optional action button color
+                text: "Create your account",
+                link:
+                  config.hostnameWithProtocol + "/register/" + invite.inviteKey
+              }
+            },
+            {
+              instructions: `Want to learn more about the advantages of ${config.siteName}?`,
+              button: {
+                color: "#0190ea", // Optional action button color
+                text: "Learn more",
+                link: config.hostnameWithProtocol
+              }
+            }
+          ],
+          outro:
+            "If you do not intend to create an account, you can ignore this email."
+        }
+      },
+      invite.email,
+      `Your friend ${user.username} has invited you to join ${config.siteName}!`
     )
   }
 }

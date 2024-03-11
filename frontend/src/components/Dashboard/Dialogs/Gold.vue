@@ -7,19 +7,12 @@
     <v-card class="text-center" color="#151515">
       <h1 class="mt-2">
         Introducing
-        <span class="gold-text-gradient">TPU Gold</span>
+        <span class="gold-text-gradient">Gold</span>
       </h1>
       <p class="text-overline">Get access to¹:</p>
       <v-list style="background-color: #151515 !important">
         <v-list-item color="transparent">
-          <v-list-item-title>
-            <v-icon
-              class="mr-2"
-              color="green"
-              style="display: inline-block; position: relative; top: -0.75em"
-            >
-              mdi-check
-            </v-icon>
+          <v-list-item-title class="d-flex justify-center">
             <UserBadges
               :user="{
                 id: $user.user?.id,
@@ -32,36 +25,26 @@
                   name: 'Gold'
                 }
               }"
-              class="justify-center"
-              style="display: inline-block"
             />
-            <span style="display: inline-block; position: relative; top: -1em">
-              Swagger badge
-            </span>
+            <span>Swagger profile badge</span>
           </v-list-item-title>
         </v-list-item>
         <v-list-item>
           <v-list-item-title>
             <v-icon color="green">mdi-check</v-icon>
-            Unlimited storage
+            100GB of storage, up from 10GB
           </v-list-item-title>
         </v-list-item>
         <v-list-item>
           <v-list-item-title>
             <v-icon color="green">mdi-check</v-icon>
-            Historical Insights² (coming soon)
+            Custom Flowinity theme with the Theme Editor
           </v-list-item-title>
         </v-list-item>
         <v-list-item>
           <v-list-item-title>
             <v-icon color="green">mdi-check</v-icon>
-            Custom accent color (coming soon)
-          </v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>
-            <v-icon color="green">mdi-check</v-icon>
-            Support TPU development
+            Support Flowinity development
           </v-list-item-title>
         </v-list-item>
         <v-list-item>
@@ -73,13 +56,7 @@
         <v-list-item>
           <v-list-item-title>
             <v-icon color="green">mdi-check</v-icon>
-            A dynamic profile that reacts to your accent color
-          </v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>
-            <v-icon color="green">mdi-check</v-icon>
-            Custom name color in Communications (coming soon)
+            A dynamic user profile that reacts to your theme
           </v-list-item-title>
         </v-list-item>
         <v-list-item>
@@ -92,12 +69,6 @@
       <small>
         <sup>1</sup>
         Perks can be altered at any time without prior notice.
-        <br />
-        <sup>2</sup>
-        Only includes historical insights for Weekly, Monthly and Annual
-        reports, excludes the Dynamic report.
-        <br />
-        You can still view your current reports.
       </small>
       <v-card-actions>
         <v-spacer />
@@ -113,14 +84,24 @@
           <v-btn
             class="no-capital"
             color="primary"
+            @click="startTrial"
+            v-if="$app.activeNags.IAF_NAG"
+          >
+            Get your free month
+            <v-icon class="ml-1">mdi-arrow-right</v-icon>
+          </v-btn>
+          <v-btn
+            class="no-capital"
+            color="primary"
             :disabled="true"
             @click="step++"
+            v-if="!$app.activeNags.IAF_NAG"
           >
             Get started
             <v-icon class="ml-1">mdi-arrow-right</v-icon>
           </v-btn>
-          <v-tooltip activator="parent" location="top">
-            {{ $user.gold ? "You're already a Gold member!" : "Coming soon!" }}
+          <v-tooltip activator="parent" location="top" v-if="$user.gold">
+            You're already a Gold member!
           </v-tooltip>
         </span>
       </v-card-actions>
@@ -147,6 +128,12 @@ export default defineComponent({
       handler(val) {
         if (!val) this.step = 1;
       }
+    }
+  },
+  methods: {
+    startTrial() {
+      this.$emit("update:modelValue", false);
+      this.$app.dialogs.inviteAFriend = true;
     }
   }
 });

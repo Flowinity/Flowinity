@@ -24,6 +24,9 @@ import { AdminService } from "@app/services/admin.service"
 import uaParser from "ua-parser-js"
 import sanitizeHtml from "sanitize-html"
 import { BanReason } from "@app/classes/graphql/user/ban"
+import { Invite } from "@app/models/invite.model"
+import { CoreService } from "@app/services/core.service"
+import { OfficialInstJolt707 } from "@app/services/officialInst.jolt707"
 
 @Service()
 export class AuthService {
@@ -262,7 +265,7 @@ export class AuthService {
     username: string,
     password: string,
     email: string,
-    inviteId?: number
+    invite: Invite | null
   ): Promise<Login> {
     try {
       if (password.length < 8) {
@@ -272,10 +275,30 @@ export class AuthService {
         username,
         password: await argon2.hash(password),
         email,
-        inviteId: inviteId || null,
+        inviteId: invite?.id || null,
         planId: config.defaultPlanId || 1,
-        emailVerified: !config.email.enabled
+        emailVerified: !config.email.enabled || invite?.email === email
       })
+      if (invite) {
+        await Invite.update(
+          { registerUserId: user.id },
+          { where: { id: invite.id } }
+        )
+
+        const coreService = Container.get(CoreService)
+        const experiment = await coreService.checkExperiment(
+          invite.userId,
+          "IAF_NAG",
+          false,
+          false
+        )
+        const eligible = experiment === 3 || experiment === 5
+        if (eligible) {
+          const billingService = Container.get(OfficialInstJolt707)
+          await billingService.grantMonth(invite.userId)
+          await billingService.grantMonth(user.id)
+        }
+      }
       const session = await utils.createSession(user.id, "*", "session")
       const cacheService = Container.get(CacheService)
       //await cacheService.generateChatsCache(user.id)
@@ -292,6 +315,7 @@ export class AuthService {
         token: session
       }
     } catch (e) {
+      console.log(e)
       if (!(e instanceof GraphQLError)) {
         throw new GqlError("USERNAME_TAKEN")
       }

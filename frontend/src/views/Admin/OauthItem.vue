@@ -141,7 +141,7 @@
                 label="Verified"
                 dense
                 required
-                hint="Only use this for public facing and TPU endorsed apps"
+                hint="Only use this for public facing and Flowinity endorsed apps"
                 persistent-hint
               />
               <v-expansion-panels class="my-2">
@@ -226,8 +226,7 @@
                   Add
                   <br />
                   <code>
-                    error_page 500
-                    https://privateuploader.com/oauth/$tpu_app_id;
+                    error_page 500 https://flowinity.com/oauth/$tpu_app_id;
                     <br />
                     auth_request /_tpu_get_user;
                   </code>
@@ -501,7 +500,8 @@ export default defineComponent({
               redirectUri: this.app.redirectUri,
               private: this.app.private,
               verified: this.app.verified,
-              id: this.app.id
+              id: this.app.id,
+              scopes: this.app.scopes.split(",")
             }
           }
         });

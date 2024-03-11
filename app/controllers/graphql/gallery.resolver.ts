@@ -39,11 +39,7 @@ import {
 } from "@app/classes/graphql/gallery/star"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import { CreateUploadEvent } from "@app/classes/graphql/autoCollects/subscriptions/createUploadEvent"
-
-const FileScalar = new GraphQLScalarType({
-  name: "File",
-  description: "File custom scalar type"
-})
+import RateLimit from "@app/lib/graphql/RateLimit"
 
 @Resolver(Upload)
 @Service()
@@ -54,6 +50,10 @@ export class GalleryResolver {
     private collectionService: CollectionService
   ) {}
 
+  @RateLimit({
+    window: 7,
+    max: 10
+  })
   @Authorization({
     scopes: ["uploads.view", "collections.view", "starred.view"],
     userOptional: true
@@ -152,6 +152,10 @@ export class GalleryResolver {
     })
   }
 
+  @RateLimit({
+    window: 10,
+    max: 5
+  })
   @Authorization({
     scopes: "uploads.modify"
   })
@@ -178,6 +182,10 @@ export class GalleryResolver {
     return id
   }
 
+  @RateLimit({
+    window: 10,
+    max: 5
+  })
   @Authorization({
     scopes: "uploads.modify"
   })

@@ -10,7 +10,7 @@ import { Service } from "typedi"
 import { Auth } from "@app/lib/auth"
 import { User } from "@app/models/user.model"
 import { InviteService } from "@app/services/invite.service"
-import rateLimits from "@app/lib/rateLimits"
+import rateLimits, { inviteAFriendLimiter } from "@app/lib/rateLimits"
 import Errors from "@app/lib/errors"
 
 @Service()
@@ -20,11 +20,13 @@ export class InviteControllerV3 {
 
   @Get("/:inviteKey")
   async getInvite(@Param("inviteKey") inviteKey: string) {
-    return await this.inviteService.getInvite(inviteKey)
+    const invite = await this.inviteService.getInvite(inviteKey)
+    if (!invite) throw Errors.INVITE_NOT_FOUND
+    return invite
   }
 
   @Post("")
-  @UseBefore(rateLimits.uploadLimiterUser)
+  @UseBefore(rateLimits.inviteAFriendLimiter)
   async createInvite(
     @Auth("user.view") user: User,
     @Body()

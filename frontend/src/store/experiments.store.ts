@@ -55,6 +55,8 @@ export const useExperimentsStore = defineStore("experiments", {
       });
       for (const experiment of getExperiments) {
         this.experiments[experiment.id] = experiment.value;
+        if (!this.experiments["meta"]) this.experiments["meta"] = {};
+        this.experiments["meta"][experiment.id] = experiment;
       }
       this.experimentsInherit = this.experiments;
       localStorage.setItem(

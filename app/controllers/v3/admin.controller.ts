@@ -14,7 +14,7 @@ import {
   Res,
   UseBefore
 } from "routing-controllers"
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
 import { Auth, authSystem } from "@app/lib/auth"
 import { User } from "@app/models/user.model"
 import { CoreService } from "@app/services/core.service"
@@ -32,6 +32,7 @@ import { TpuConfigValidator } from "@app/validators/setup"
 import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
 import { mergeDeep } from "@app/lib/deepMerge"
 import { OauthApp } from "@app/models/oauthApp.model"
+import { EmailNotificationService } from "@app/services/emailNotification.service"
 
 @Service()
 @Middleware({ type: "before" })
@@ -147,38 +148,8 @@ export class AdminControllerV3 {
     if (!invite) throw Errors.INVITE_NOT_FOUND
     this.cacheService.purgeInvite(inviteKey)
     if (body.type === "accepted") {
-      this.adminService.sendEmail(
-        {
-          body: {
-            intro: `Your friend ${invite.user.username} has invited you to join ${config.siteName}`,
-            action: [
-              {
-                instructions: `${config.siteName} is a free invite-only image and file hosting service.`,
-                button: {
-                  color: "#0190ea", // Optional action button color
-                  text: "Create your account",
-                  link:
-                    config.hostnameWithProtocol +
-                    "/register/" +
-                    invite.inviteKey
-                }
-              },
-              {
-                instructions: `Want to learn more about the advantages of ${config.siteName}?`,
-                button: {
-                  color: "#0190ea", // Optional action button color
-                  text: "Learn more",
-                  link: config.hostnameWithProtocol
-                }
-              }
-            ],
-            outro:
-              "If you do not intend to create an account, you can ignore this email."
-          }
-        },
-        invite.email,
-        `Your friend ${invite.user.username} has invited you to join ${config.siteName}!`
-      )
+      const emailNotificationService = Container.get(EmailNotificationService)
+      emailNotificationService.inviteAFriendAccept(invite)
       return
     }
     this.adminService.sendEmail(

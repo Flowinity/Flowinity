@@ -214,10 +214,17 @@ export const useUserStore = defineStore("user", {
       try {
         const toast = useToast();
         this.actions.emailSent.loading = true;
-        await axios.post("/user/verification/send");
-        this.actions.emailSent.value = true;
-        this.actions.emailSent.loading = false;
-        toast.success("Verification email sent!");
+        const {
+          data: { success }
+        } = await axios.post("/user/verification/send");
+        if (success) {
+          this.actions.emailSent.value = true;
+          this.actions.emailSent.loading = false;
+          toast.success("Verification email sent!");
+        } else {
+          // the user is assumed to already be verified
+          this.user.emailVerified = true;
+        }
       } catch {
         this.actions.emailSent.loading = false;
       }

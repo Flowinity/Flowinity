@@ -380,6 +380,19 @@ let Errors = {
   INVALID_REACTIVATION: {
     message: "You are not eligible to reactivate your account.",
     status: 400
+  },
+  USER_ALREADY_EXISTS_IAF: {
+    message: "The user you are trying to invite is already on Flowinity.",
+    status: 400
+  },
+  USER_ALREADY_INVITED_IAF: {
+    message: "The user has already been invited to Flowinity.",
+    status: 400
+  },
+  QUOTA_EXCEEDED: {
+    message:
+      "You have exceeded your quota. Please visit Flowinity to upgrade to Gold or delete some files.",
+    status: 400
   }
 }
 

@@ -89,10 +89,13 @@
       <div class="pa-2">
         <v-progress-linear
           :color="calculateColorQuota"
-          :value="calculateQuota"
+          :model-value="calculateQuota"
           height="25"
           rounded
-          class="text-white"
+          :class="{
+            'text-white': calculateColorQuota === '#256928',
+            'text-black': calculateColorQuota !== '#256928'
+          }"
         >
           {{ Math.ceil(calculateQuota) }}% ({{
             $functions.fileSize($user.user?.quota || 0)
@@ -127,7 +130,7 @@ export default defineComponent({
       } else if (this.calculateQuota >= 95) {
         return "error";
       } else {
-        return "success";
+        return "#256928";
       }
     },
     calculateJitsi() {

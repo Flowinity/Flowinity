@@ -3,7 +3,7 @@ import "@app/lib/init-tests"
 import { gCall } from "@app/lib/test-utils/gCall"
 import { RegisterMutation } from "../../../frontend/src/graphql/auth/register.graphql"
 import { LoginMutation } from "../../../frontend/src/graphql/auth/login.graphql"
-import { CoreStateQuery } from "../../../frontend/src/graphql/core/state.graphql"
+import { ECoreStateQuery } from "../../../frontend/src/graphql/core/state.graphql"
 import cryptoRandomString from "crypto-random-string"
 import { ProfileQuery } from "../../../frontend/src/graphql/user/profile.graphql"
 import { User } from "@app/models/user.model"
@@ -30,7 +30,7 @@ let token = ""
 describe("UserResolver", () => {
   test("Get user and test token", async () => {
     const state = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token
     })
     console.log(JSON.stringify(state.errors, null, 2))
@@ -38,7 +38,7 @@ describe("UserResolver", () => {
     expect(state).toMatchObject({
       data: {
         coreState: {
-          name: "PrivateUploader"
+          name: "Flowinity"
         },
         currentUser: {
           id: user!.id,
@@ -81,7 +81,7 @@ describe("UserResolver", () => {
     expect(data.data.changeUserEmail).toBe(true)
 
     const data2 = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token
     })
     expect(data2.errors).toBeUndefined()
@@ -164,7 +164,7 @@ describe("UserResolver", () => {
     expect(state.data.updateUser).toBe(true)
 
     const state2 = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token
     })
     expect(state2.errors).toBeUndefined()

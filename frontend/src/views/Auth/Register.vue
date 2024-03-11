@@ -181,24 +181,17 @@ export default defineComponent({
       if (!this.terms) return;
       this.loading = true;
       try {
-        const {
-          data: { register }
-        } = await this.$apollo.mutate({
-          mutation: RegisterMutation,
-          variables: {
-            input: {
-              email: this.email,
-              username: this.username,
-              password: this.password,
-              inviteKey: this.inviteKey
-            }
-          } as RegisterMutationVariables
+        const { data } = await this.axios.post("/register", {
+          email: this.email,
+          username: this.username,
+          password: this.password,
+          inviteKey: this.inviteKey
         });
-        await localStorage.setItem("token", register.token);
-        this.axios.defaults.headers.common["Authorization"] = register.token;
-        this.$app.token = register.token;
+        await localStorage.setItem("token", data.token);
+        this.axios.defaults.headers.common["Authorization"] = data.token;
+        this.$app.token = data.token;
         await this.$app.init();
-        this.$app.reconnectSocket(register.token);
+        this.$app.reconnectSocket(data.token);
         this.$router.push("/");
         this.$toast.success(
           `You have been registered, welcome to ${this.$app.site.name}!`,

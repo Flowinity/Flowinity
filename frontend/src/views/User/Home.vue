@@ -41,7 +41,7 @@
                 />
               </router-link>
             </div>
-            <v-card-title class="text-center">
+            <v-card-title class="text-center user-content">
               <router-link
                 :to="'/u/' + user.username"
                 style="text-decoration: none; color: unset"
@@ -58,7 +58,7 @@
               </router-link>
             </v-card-title>
             <UserBadges :user="user" class="justify-center mt-n1 mb-2" />
-            <div class="ml-n1 text-center justify-center limit">
+            <div class="ml-n1 text-center justify-center limit user-content">
               {{ user.description }}
             </div>
           </v-container>

@@ -3,7 +3,7 @@ import "@app/lib/init-tests"
 import { Container } from "typedi"
 import { Context } from "@app/types/graphql/context"
 import { gCall, getGqlString } from "@app/lib/test-utils/gCall"
-import { CoreStateQuery } from "../../../frontend/src/graphql/core/state.graphql"
+import { ECoreStateQuery } from "../../../frontend/src/graphql/core/state.graphql"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { SetExperimentInput } from "@app/classes/graphql/core/setExperiment"
 import { getUser, TestUser, testUser } from "@app/lib/test-utils/testUser"
@@ -357,7 +357,7 @@ describe("Delete Items", () => {
 
   test("Delete Workspace Document", async () => {
     const coreStateBefore = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token: user?.token
     })
     let findWorkspace = coreStateBefore.data?.workspaces.find(
@@ -406,7 +406,7 @@ describe("Delete Items", () => {
     expect(note.data?.note).toBeNull()
 
     const coreStateAfter = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token: user?.token
     })
 
@@ -420,7 +420,7 @@ describe("Delete Items", () => {
 
   test("Delete Workspace Folder", async () => {
     const coreStateBefore = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token: user?.token
     })
     let findWorkspace = coreStateBefore.data?.workspaces.find(
@@ -444,7 +444,7 @@ describe("Delete Items", () => {
     expect(folder.data?.deleteWorkspaceItem).toBeTruthy()
 
     const coreStateAfter = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token: user?.token
     })
     findWorkspace = coreStateAfter.data?.workspaces.find(
@@ -456,7 +456,7 @@ describe("Delete Items", () => {
 
   test("Delete Workspace", async () => {
     const coreStateBefore = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token: user?.token
     })
     let findWorkspace = coreStateBefore.data?.workspaces.find(
@@ -478,7 +478,7 @@ describe("Delete Items", () => {
     expect(workspace.data?.deleteWorkspaceItem).toBeTruthy()
 
     const coreStateAfter = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token: user?.token
     })
     findWorkspace = coreStateAfter.data?.workspaces.find(

@@ -6,8 +6,33 @@
   >
     <template #title>Invite a Friend</template>
     <v-card-text>
-      Enter your friends email, your invite will be sent to them after Troplo,
-      or another Flowinity administrator approves it.
+      <template v-if="$app.activeNags.IAF_NAG">
+        <p v-if="!$user.gold">
+          <v-icon color="green" class="mr-2">mdi-check-circle</v-icon>
+          By inviting a friend to {{ $app.site.name }}, you will both get a free
+          month of
+          <span class="gold-text-gradient">Gold</span>
+        </p>
+        <p v-else>
+          <v-icon color="green" class="mr-2">mdi-check-circle</v-icon>
+          By inviting a friend to {{ $app.site.name }}, you will receive an
+          additional free month of
+          <span class="gold-text-gradient">Gold</span>
+          and your friend will get a free month of
+          <span class="gold-text-gradient">Gold</span>
+        </p>
+        <small>
+          You will automatically be granted Flowinity Gold when the user
+          registers. It will not auto-renew by default.
+        </small>
+      </template>
+      <p
+        class="mb-2"
+        :class="{ 'mt-2': $app.activeNags.IAF_NAG && !$user.gold }"
+      >
+        Enter your friends email to invite them to
+        {{ $app.site.name }} instantly!
+      </p>
       <v-text-field
         v-model="email"
         :rules="$validation.user.email"
@@ -18,10 +43,6 @@
         type="email"
         @keyup.enter="inviteFriend"
       />
-      <small>
-        You will receive an email when your request is accepted or denied by a
-        Flowinity administrator.
-      </small>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
@@ -60,8 +81,11 @@ export default defineComponent({
       await this.axios.post("/invites", {
         email: this.email
       });
+      if (this.$app.activeNags.IAF_NAG) {
+        this.$experiments.setExperiment("IAF_NAG", 3);
+      }
       this.$emit("update:modelValue", false);
-      this.$toast.success("Request received!");
+      this.$toast.success("Invitation sent!");
     }
   }
 });

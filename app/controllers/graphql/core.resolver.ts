@@ -250,7 +250,8 @@ export class CoreResolver {
       "THEME",
       "PRIDE",
       "DOWNLOAD_THE_APP_NAG",
-      "ENABLE_AUTOSTART_APP_NAG"
+      "ENABLE_AUTOSTART_APP_NAG",
+      "IAF_NAG"
     ]
     if (input.userId && !ctx.user?.administrator)
       throw new GqlError("NOT_ADMIN")

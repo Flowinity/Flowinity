@@ -7,6 +7,7 @@
     }"
     color="dark"
     :floating="true"
+    class="user-content"
   >
     <p
       v-if="$vuetify.display.mobile && $chat.isCommunications"

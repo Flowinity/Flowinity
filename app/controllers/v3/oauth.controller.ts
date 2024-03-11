@@ -47,9 +47,9 @@ export class OauthControllerV3 {
       },
       {
         id: "oauth.save",
-        name: "Save a unique object to your account",
+        name: "Cloud Save & Sync",
         description:
-          "This can be used for game saves, will sync across devices, and can only be accessed by the application."
+          "The app can save and sync application-specific data to your Flowinity account for cross-device access."
       }
     ]
   }

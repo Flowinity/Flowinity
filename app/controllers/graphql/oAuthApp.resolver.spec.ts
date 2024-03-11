@@ -3,7 +3,7 @@ import "@app/lib/init-tests"
 import { gCall } from "@app/lib/test-utils/gCall"
 import { RegisterMutation } from "../../../frontend/src/graphql/auth/register.graphql"
 import { LoginMutation } from "../../../frontend/src/graphql/auth/login.graphql"
-import { CoreStateQuery } from "../../../frontend/src/graphql/core/state.graphql"
+import { ECoreStateQuery } from "../../../frontend/src/graphql/core/state.graphql"
 import cryptoRandomString from "crypto-random-string"
 import { ProfileQuery } from "../../../frontend/src/graphql/user/profile.graphql"
 import { User } from "@app/models/user.model"
@@ -872,7 +872,7 @@ describe("OAuthAppResolver", () => {
     expect(data.errors).toBeUndefined()
 
     const acc = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token: appSecret
     })
     expect(acc.errors).toBeUndefined()
@@ -896,7 +896,7 @@ describe("OAuthAppResolver", () => {
     expect(data.data.resetOauthSecret.success).toBe(true)
 
     const acc = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token: appSecret
     })
     expect(acc.errors).toBeUndefined()
@@ -918,7 +918,7 @@ describe("OAuthAppResolver", () => {
     appSecret = app.data.oauthApp.secret
 
     const acc2 = await gCall({
-      source: CoreStateQuery,
+      source: ECoreStateQuery,
       token: appSecret
     })
     expect(acc2.errors).toBeUndefined()

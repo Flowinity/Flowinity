@@ -39,7 +39,7 @@
           target="_blank"
         >
           <template #prepend>
-            <v-avatar size="36" tile>
+            <v-avatar size="36">
               <v-img :src="track.image[1]['#text']" />
             </v-avatar>
           </template>

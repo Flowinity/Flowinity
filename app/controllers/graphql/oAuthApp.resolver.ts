@@ -230,16 +230,19 @@ export class OAuthAppResolver {
     if (app.verified !== input.verified && !ctx.user!!.administrator)
       throw new GqlError("NOT_ADMIN")
     const availableScopes = await this.oauthController.getScopeDefinitions()
+    console.log(availableScopes, input)
 
-    input.scopes.forEach((scope) => {
-      if (!availableScopes.find((s) => s.id === scope))
-        throw new GqlError("SCOPE_NOT_FOUND")
-    })
+    if (input.scopes) {
+      input.scopes.forEach((scope) => {
+        if (!availableScopes.find((s) => s.id === scope))
+          throw new GqlError("SCOPE_NOT_FOUND")
+      })
+    }
 
     await this.adminService.updateOauth(
       {
         ...input,
-        scopes: input.scopes.join(",")
+        scopes: input.scopes ? input.scopes.join(",") : app.scopes
       },
       ctx.user!!.id
     )

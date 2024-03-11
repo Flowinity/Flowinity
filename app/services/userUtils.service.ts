@@ -266,13 +266,13 @@ export class UserUtilsService {
     correction: boolean = false,
     updateCode: boolean = true
   ) {
-    if (!config.email.enabled) return true
+    if (!config.email.enabled) return false
     const user = await User.findOne({
       where: {
         id: userId
       }
     })
-    if (!user || user.emailVerified) throw Errors.USER_NOT_FOUND
+    if (!user || user.emailVerified) return false
     let code = user.emailToken
     if (updateCode || !user.emailToken) {
       code = await utils.generateAPIKey("email")

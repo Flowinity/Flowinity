@@ -194,7 +194,11 @@ export const useAppStore = defineStore("app", {
         ENABLE_AUTOSTART_APP_NAG:
           this.platform !== Platform.WEB &&
           !this.desktop.nagStartup &&
-          experimentsStore.experiments.ENABLE_AUTOSTART_APP_NAG === 1
+          experimentsStore.experiments.ENABLE_AUTOSTART_APP_NAG === 1,
+        IAF_NAG:
+          (experimentsStore.experiments.IAF_NAG === 1 &&
+            userStore.user?.emailVerified) ||
+          experimentsStore.experiments.IAF_NAG === 2
       };
 
       return {
@@ -298,7 +302,7 @@ export const useAppStore = defineStore("app", {
           icon: "mdi-plus",
           new: false,
           scope: "user.view",
-          experimentsRequired: ["EARLY_ACCESS", "OFFICIAL_INSTANCE"]
+          experimentsRequired: ["OFFICIAL_INSTANCE"]
         },
         {
           id: 37,
@@ -761,7 +765,11 @@ export const useAppStore = defineStore("app", {
       const experimentsStore = useExperimentsStore();
       for (const experiment of experiments) {
         experimentsStore.experiments[experiment.id] = experiment.value;
+        if (!experimentsStore.experiments["meta"])
+          experimentsStore.experiments["meta"] = {};
+        experimentsStore.experiments["meta"][experiment.id] = experiment;
       }
+      experimentsStore.experimentsInherit = experimentsStore.experiments;
       if (experimentsStore.experiments.PRIDE) {
         document.body.classList.add("rainbow");
       } else {

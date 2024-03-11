@@ -476,6 +476,11 @@ export class User extends Model {
   @BelongsTo(() => Plan, "planId")
   plan: Plan
 
+  @Field(() => Int, {
+    nullable: true
+  })
+  planId: number
+
   @BelongsTo(() => Theme, "themeId")
   theme: Theme
 

@@ -7,10 +7,12 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: true
     })
-    await queryInterface.removeConstraint(
-      "ChatAssociations",
-      "ChatAssociations_inviteUsed_foreign_idx"
-    )
+    try {
+      await queryInterface.removeConstraint(
+        "ChatAssociations",
+        "ChatAssociations_inviteUsed_foreign_idx"
+      )
+    } catch {}
   },
 
   async down(queryInterface, Sequelize) {

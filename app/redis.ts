@@ -1,6 +1,8 @@
 import { createClient } from "redis"
 
-const config = JSON.parse(process.env.CONFIG || "{}")
+const config = process.env.CONFIG
+  ? JSON.parse(process.env.CONFIG || "{}")
+  : require(global.appRoot + "/config/tpu.json")
 
 const redisClient = createClient({
   socket: {

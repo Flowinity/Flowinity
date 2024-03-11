@@ -13,19 +13,45 @@ import {
   UseBefore
 } from "routing-controllers"
 import { Service } from "typedi"
-import { Auth } from "@app/lib/auth"
+import { Auth, authSystem } from "@app/lib/auth"
 import { User } from "@app/models/user.model"
 import Errors from "@app/lib/errors"
 import { GalleryService } from "@app/services/gallery.service"
 import rateLimits from "@app/lib/rateLimits"
 import { SortOptions } from "@app/types/sort"
 import uploader from "@app/lib/upload"
-import { RequestAuth } from "@app/types/express"
+import { RequestAuth, RequestAuthSystem } from "@app/types/express"
 import { OpenAPI } from "routing-controllers-openapi"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import { Upload } from "@app/models/upload.model"
-import { Response } from "express"
+import { NextFunction, Response } from "express"
+
+async function checkUserQuota(
+  req: RequestAuthSystem,
+  res: Response,
+  next: NextFunction
+) {
+  function e(error: keyof typeof Errors = "QUOTA_EXCEEDED") {
+    return res.status(400).json({
+      errors: [{ name: error, ...Errors[error] }]
+    })
+  }
+  await authSystem("uploads.create", true, req, res, () => {})
+  if (!req.user) {
+    return e("UNAUTHORIZED")
+  }
+  if (req.user.quota >= req.user.plan.quotaMax) {
+    return e()
+  }
+
+  // Ensure the file isn't larger than the user's quota
+  const size = parseInt(req.headers["content-length"] as string)
+  if (size > req.user.plan.quotaMax - req.user.quota) {
+    return e()
+  }
+  return next()
+}
 
 @Service()
 @JsonController("/gallery")
@@ -40,8 +66,7 @@ export class GalleryControllerV3 {
     @QueryParam("search") search: string = "",
     @QueryParam("array") array: boolean = false,
     @QueryParam("textMetadata") textMetadata: boolean = false,
-    @QueryParam("filter") filter: string = "",
-    @Req() req: RequestAuth
+    @QueryParam("filter") filter: string = ""
   ) {
     return await this.galleryService.getGallery(
       user.id,
@@ -66,8 +91,7 @@ export class GalleryControllerV3 {
     @QueryParam("search") search: string = "",
     @QueryParam("array") array: boolean = false,
     @QueryParam("textMetadata") textMetadata: boolean = false,
-    @QueryParam("filter") filter: string = "",
-    @Req() req: RequestAuth
+    @QueryParam("filter") filter: string = ""
   ) {
     return await this.galleryService.getGallery(
       user.id,
@@ -85,38 +109,38 @@ export class GalleryControllerV3 {
   }
 
   @Post("")
+  @UseBefore(checkUserQuota)
   @UseBefore(rateLimits.uploadLimiter)
   async upload(
-    @Auth("uploads.create") user: User,
     @UploadedFile("attachment", {
       options: uploader
     })
     attachment: Express.Multer.File,
-    @Req() req: Request
+    @Req() req: RequestAuth
   ) {
     if (!attachment) throw Errors.NO_FILE
     const upload = await this.galleryService.createUpload(
-      user.id,
+      req.user.id,
       attachment,
-      user.discordPrecache
+      req.user.discordPrecache
     )
-    pubSub.publish(`CREATE_UPLOADS:${user.id}`, [upload])
-    socket.of(SocketNamespaces.GALLERY).to(user.id).emit("create", [upload])
+    pubSub.publish(`CREATE_UPLOADS:${req.user.id}`, [upload])
+    socket.of(SocketNamespaces.GALLERY).to(req.user.id).emit("create", [upload])
     return upload
   }
 
   @Post("/upload")
   @OpenAPI({ deprecated: true, description: "Upload API for legacy clients" })
+  @UseBefore(checkUserQuota)
   @UseBefore(rateLimits.uploadLimiter)
   async uploadLegacy(
-    @Auth("uploads.create") user: User,
     @UploadedFile("attachment", {
       options: uploader
     })
     attachment: Express.Multer.File,
-    @Req() req: Request
+    @Req() req: RequestAuth
   ) {
-    return await this.upload(user, attachment, req)
+    return await this.upload(attachment, req)
   }
 
   @Get("/starred/random")
@@ -130,26 +154,27 @@ export class GalleryControllerV3 {
   }
 
   @Post("/site")
+  @UseBefore(checkUserQuota)
   @UseBefore(rateLimits.uploadLimiter)
   async uploadSite(
-    @Auth("uploads.create") user: User,
     @UploadedFiles("attachments", {
       options: uploader
     })
-    attachments: Express.Multer.File[]
+    attachments: Express.Multer.File[],
+    @Req() req: RequestAuth
   ) {
     let files = []
     for (const attachment of attachments) {
       const upload = await this.galleryService.createUpload(
-        user.id,
+        req.user.id,
         attachment,
         false
       )
 
       files.push(upload)
-      pubSub.publish(`CREATE_UPLOAD:${user.id}`, upload)
+      pubSub.publish(`CREATE_UPLOAD:${req.user.id}`, upload)
     }
-    socket.of(SocketNamespaces.GALLERY).to(user.id).emit("create", files)
+    socket.of(SocketNamespaces.GALLERY).to(req.user.id).emit("create", files)
     return files
   }
 

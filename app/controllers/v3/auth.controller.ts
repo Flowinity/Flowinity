@@ -75,7 +75,7 @@ export class AuthControllerV3 {
       body.username,
       body.password,
       body.email,
-      invite?.id
+      invite
     )
   }
 

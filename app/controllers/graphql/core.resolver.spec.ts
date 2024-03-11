@@ -3,7 +3,7 @@ import "@app/lib/init-tests"
 import { Container } from "typedi"
 import { Context } from "@app/types/graphql/context"
 import { gCall, getGqlString } from "@app/lib/test-utils/gCall"
-import { CoreStateQuery } from "../../../frontend/src/graphql/core/state.graphql"
+import { ECoreStateQuery } from "../../../frontend/src/graphql/core/state.graphql"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { SetExperimentInput } from "@app/classes/graphql/core/setExperiment"
 import { getUser, TestUser, testUser } from "@app/lib/test-utils/testUser"
@@ -15,7 +15,7 @@ let user: TestUser | null = null
 
 test("Get core state", async () => {
   const state = await gCall({
-    source: CoreStateQuery
+    source: ECoreStateQuery
   })
   expect(state.errors).toBeUndefined()
   expect(state).toMatchObject({
@@ -65,7 +65,7 @@ test("Set experiments", async () => {
 
   // Test "PRIDE" is set
   const state2 = await gCall({
-    source: CoreStateQuery,
+    source: ECoreStateQuery,
     token: user?.token
   })
   expect(state2.errors).toBeUndefined()

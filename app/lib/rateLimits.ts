@@ -36,6 +36,24 @@ export const mailLimiter: RateLimitRequestHandler = rateLimit({
   })
 })
 
+export const inviteAFriendLimiter: RateLimitRequestHandler = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 5,
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting
+  message,
+  async keyGenerator(req: any) {
+    const user = await simpleAuth(req)
+    return user?.id || req.ip
+  },
+  store: new RedisStore({
+    //@ts-ignore
+    sendCommand: (...args: string[]) => redis.sendCommand(args),
+    prefix: "inviteAFriendLimiter:"
+  })
+})
+
 export const registerLimiter: RateLimitRequestHandler = rateLimit({
   windowMs: 5 * 60 * 1000,
   max: 1,
@@ -188,5 +206,6 @@ export default {
   uploadLimiter,
   registerLimiter,
   loginLimiter,
-  downloadZipFileExportLimiter
+  downloadZipFileExportLimiter,
+  inviteAFriendLimiter
 }

@@ -61,6 +61,7 @@
                     :class="username ? 'mb-2 pointer' : ''"
                     style="font-weight: 500"
                     @click="username ? $router.push(`/u/${username}`) : ''"
+                    class="user-content"
                   >
                     {{ $friends.getName(user) }}
                     <v-chip v-if="user?.bot" class="ml-1" size="x-small">
@@ -68,7 +69,7 @@
                     </v-chip>
                     <span
                       v-if="$friends.getName(user) !== user.username"
-                      class="text-grey"
+                      class="text-grey user-content"
                       style="font-size: 18px"
                     >
                       ({{ user.username }})
@@ -856,15 +857,19 @@ export default defineComponent({
       }
     },
     async getUser(load = true) {
-      if (load && !this.username) {
-        this.$app.componentLoading = true;
+      try {
+        if (load && !this.username) {
+          this.$app.componentLoading = true;
+        }
+        const username = this.username || this.$route.params.username;
+        this.user = await this.$user.getUser(username);
+        this.layout = this.user?.profileLayout || this.defaultLayout;
+        if (!this.username)
+          this.$app.title = this.user?.username + "'s Profile";
+        this.setTheme();
+      } finally {
+        this.$app.componentLoading = false;
       }
-      const username = this.username || this.$route.params.username;
-      this.user = await this.$user.getUser(username);
-      this.layout = this.user?.profileLayout || this.defaultLayout;
-      if (!this.username) this.$app.title = this.user?.username + "'s Profile";
-      this.setTheme();
-      this.$app.componentLoading = false;
     }
   }
 });

@@ -63,14 +63,14 @@
         :value="$app.site.stats.docs?.toLocaleString()"
       />
     </v-col>
-    <v-col :cols="cols" :sm="6">
+    <v-col :cols="cols" :lg="lg" :md="md" :sm="sm" :xl="6">
       <StatsCard
         :title="$t('stats.messages')"
         :user="true"
         :value="$app.site.stats.messages?.toLocaleString()"
       />
     </v-col>
-    <v-col :cols="cols" :lg="12" :sm="6" :xl="6">
+    <v-col :cols="cols" :lg="12" :md="md" :sm="sm" :xl="6">
       <StatsCard
         :title="$t('stats.chats')"
         :user="true"
@@ -101,11 +101,11 @@ export default defineComponent({
     },
     md: {
       type: Number,
-      default: 4
+      default: 12
     },
     sm: {
       type: Number,
-      default: 4
+      default: 12
     }
   }
 });

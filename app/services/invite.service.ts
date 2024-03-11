@@ -1,18 +1,42 @@
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
 import { User } from "@app/models/user.model"
 import Errors from "@app/lib/errors"
 import { Invite } from "@app/models/invite.model"
 import { Upload } from "@app/models/upload.model"
 import { CollectionItem } from "@app/models/collectionItem.model"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
+import { EmailNotificationService } from "@app/services/emailNotification.service"
 
 @Service()
 export class InviteService {
   async createInvite(userId: number, email: string): Promise<Invite> {
-    return await Invite.create({
-      userId,
-      email
+    const existingInvite = await Invite.findOne({
+      where: {
+        email
+      }
     })
+    const existingUser = await User.findOne({
+      where: {
+        email
+      }
+    })
+    if (existingUser) throw Errors.USER_ALREADY_EXISTS_IAF
+    if (existingInvite) {
+      // ensure it's older than 14 days
+      if (dayjs().diff(existingInvite.createdAt, "days") >= 14) {
+        await existingInvite.destroy()
+      } else {
+        throw Errors.USER_ALREADY_INVITED_IAF
+      }
+    }
+    const invite = await Invite.create({
+      userId,
+      email,
+      status: "accepted"
+    })
+    const emailNotificationService = Container.get(EmailNotificationService)
+    emailNotificationService.inviteAFriendAccept(invite)
+    return invite
   }
 
   async useInvite(inviteKey: string, userId: number): Promise<boolean> {
@@ -30,7 +54,6 @@ export class InviteService {
   }
 
   async getInviteCache(inviteKey: string) {
-    console.log(69)
     const cache = await redis.json.get(`invites:${inviteKey}`)
     if (cache) {
       console.log(cache)
@@ -39,7 +62,7 @@ export class InviteService {
     const inv = await this.getInvite(inviteKey)
     if (!inv) return null
     const invite = {
-      ...inv.toJSON(),
+      ...inv,
       facts: await this.getFacts(inviteKey)
     }
     redis.json.set(`invites:${inviteKey}`, "$", invite, {
@@ -67,7 +90,10 @@ export class InviteService {
       return null
     }
 
-    return invite
+    return {
+      ...invite.toJSON(),
+      facts: await this.getFacts(inviteKey)
+    }
   }
 
   async getFacts(inviteKey: string): Promise<string[]> {
@@ -95,17 +121,21 @@ export class InviteService {
     result.push(
       `${
         invite.user.username
-      } has uploaded ${userUploads.toLocaleString()} items to TPU.`
+      } has uploaded ${userUploads.toLocaleString()} items to ${
+        config.siteName
+      }.`
     )
     // user-percentage
     const uploads = await Upload.count()
     result.push(
       `${invite.user.username} has uploaded ${
         Math.round((userUploads / uploads) * 10000) / 100 + "%"
-      } of the total uploads to TPU.`
+      } of the total uploads to ${config.siteName}.`
     )
     // total-uploads
-    result.push(`TPU has a total of ${uploads.toLocaleString()} uploads.`)
+    result.push(
+      `${config.siteName} has a total of ${uploads.toLocaleString()} uploads.`
+    )
     // total-collectivized
     const collectionItems = await CollectionItem.findAll({
       attributes: ["userId"]
@@ -116,10 +146,14 @@ export class InviteService {
     result.push(
       `${
         invite.user.username
-      } has put ${totalCollectivized.toLocaleString()} items in TPU collections.`
+      } has put ${totalCollectivized.toLocaleString()} items in ${
+        config.siteName
+      } collections.`
     )
     result.push(
-      `${totalCollectivized.toLocaleString()} items have been collectivized out of ${collectionItems.length.toLocaleString()} total items.`
+      `${totalCollectivized.toLocaleString()} items have been collectivized out of ${collectionItems.length.toLocaleString()} total items. That's ${
+        Math.round((totalCollectivized / collectionItems.length) * 10000) / 100
+      }%!`
     )
     return result
   }

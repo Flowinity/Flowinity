@@ -326,7 +326,7 @@ export class CoreService {
       ...overrides.map((override) => ({
         [override.dataValues.key]: JSON.parse(override.value)
       }))[0]
-    } as Record<string, boolean>
+    } as Record<string, boolean | number>
   }
 
   async getUserExperimentsV4(
@@ -365,6 +365,8 @@ export class CoreService {
     gold: boolean = false
   ): Record<string, any> {
     const experiments = {
+      IAF_NAG: config.officialInstance ? 1 : 0,
+      GALLERY_INFINITE_SCROLL: false,
       DOWNLOAD_THE_APP_NAG: 1,
       ENABLE_AUTOSTART_APP_NAG: 1,
       DEBUG_FAVICON: false,
@@ -414,6 +416,16 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        IAF_NAG: {
+          description:
+            "Show the Invite a Friend nag. 0 for disabled, 1 for enabled on verified users, 2 for everyone, 3 is disabled with positive interaction. 4 is disabled with redeemed. 5 is disabled with negative interaction",
+          createdAt: "2024-03-11T00:00:00.000Z"
+        },
+        GALLERY_INFINITE_SCROLL: {
+          description:
+            "Enable next generation gallery experience. Includes drag-to-select and infinite scrolling.",
+          createdAt: "2024-03-11T00:00:00.000Z"
+        },
         DOWNLOAD_THE_APP_NAG: {
           description:
             "Show the download the app nag. 0 for disabled, 1 for verified users, 2 for everyone, 3 for disabled with nag interaction.",

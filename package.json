@@ -168,7 +168,7 @@
     "routing-controllers": "^0.10.4",
     "routing-controllers-openapi": "^4.0.0",
     "sanitize-html": "^2.11.0",
-    "sequelize": "^6.37.1",
+    "sequelize": "6.37.1",
     "sequelize-cli": "^6.6.0",
     "sequelize-pool": "8.0.0",
     "sequelize-proxy": "^0.2.5",

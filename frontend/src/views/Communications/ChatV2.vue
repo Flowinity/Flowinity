@@ -256,7 +256,7 @@
       <CommunicationsInput
         ref="input"
         v-model="message"
-        class="message-input"
+        class="message-input user-content"
         style="margin-top: auto; z-index: 1001"
         @emoji="
           message += $event;

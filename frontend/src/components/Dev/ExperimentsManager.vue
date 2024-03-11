@@ -12,7 +12,9 @@
     class="my-2"
   >
     <v-card-title>{{ experiment.name }}</v-card-title>
-    <v-card-subtitle>{{ experiment.meta?.description }}</v-card-subtitle>
+    <v-card-subtitle style="white-space: pre-line">
+      {{ experiment.meta?.description }}
+    </v-card-subtitle>
     <v-card-subtitle>
       {{ $date(experiment.meta?.createdAt).format("YYYY-MM-DD") }}
     </v-card-subtitle>
@@ -71,7 +73,15 @@ export default defineComponent({
             createdAt: string;
           }
         }))
-        .filter((experiment) => experiment.name !== "meta");
+        .filter((experiment) => experiment.name !== "meta")
+        .sort((a, b) => {
+          const metaA = this.$experiments.experimentsInherit?.meta?.[a.name];
+          const metaB = this.$experiments.experimentsInherit?.meta?.[b.name];
+          if (!metaA || !metaB) return 0;
+          if (metaA.createdAt < metaB.createdAt) return 1;
+          if (metaA.createdAt > metaB.createdAt) return -1;
+          return 0;
+        });
     }
   },
   watch: {
