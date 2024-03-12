@@ -13,8 +13,7 @@ export enum UserStatus {
   ONLINE = "online",
   IDLE = "idle",
   OFFLINE = "offline",
-  BUSY = "busy",
-  UNKNOWN = "unknown"
+  BUSY = "busy"
 }
 
 registerEnumType(UserStoredStatus, {

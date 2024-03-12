@@ -164,6 +164,11 @@ const routes = [
             path: "desktop",
             name: "Desktop",
             component: () => import("@/views/Settings/Desktop.vue")
+          },
+          {
+            path: "subscriptions",
+            name: "Subscriptions & Billing",
+            component: () => import("@/views/Settings/Subscriptions.vue")
           }
         ]
       },

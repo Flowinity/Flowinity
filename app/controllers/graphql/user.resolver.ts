@@ -145,20 +145,36 @@ export class UserResolver extends createBaseResolver("User", User) {
 
   @RateLimit({
     window: 30,
-    max: 30
+    max: 40
   })
   @Authorization({
     scopes: ["user.modify", "chats.send"],
     emailOptional: true
   })
-  @Mutation(() => UserStoredStatus)
+  @Mutation(() => UserStoredStatus, {
+    nullable: true
+  })
   async updateStatus(
     @Arg("input") input: UpdateUserStatusInput,
     @Ctx() ctx: Context
   ) {
-    await this.userUtilsService.updateUser(ctx.user!!.id, {
-      storedStatus: input.storedStatus
-    })
+    console.log(input)
+    if (
+      (!input.storedStatus && !input.status) ||
+      (input.storedStatus && input.status)
+    ) {
+      throw new GraphQLError("Please provide a status or storedStatus")
+    }
+    if (input.storedStatus) {
+      await this.userUtilsService.updateUser(ctx.user!!.id, {
+        storedStatus: input.storedStatus
+      })
+    } else {
+      await this.userUtilsService.updateTempUserStatus(
+        ctx.user!!.id,
+        input.status
+      )
+    }
     return input.storedStatus
   }
 

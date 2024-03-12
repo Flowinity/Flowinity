@@ -391,7 +391,11 @@ let Errors = {
   },
   QUOTA_EXCEEDED: {
     message:
-      "You have exceeded your quota. Please visit Flowinity to upgrade to Gold or delete some files.",
+      "You have exceeded your quota. Please visit Flowinity to upgrade to Pro or delete some files.",
+    status: 400
+  },
+  USERNAME_TAKEN: {
+    message: "The entered username or email is already taken.",
     status: 400
   }
 }

@@ -72,6 +72,10 @@ export const GetUserQuery = gql`
         metadata {
           hours
         }
+        expiredAt
+        cancelledAt
+        createdAt
+        price
         cancelled
       }
       insights

@@ -61,7 +61,8 @@ export class AuthResolver {
       input.username,
       input.password,
       input.email,
-      invite?.id
+      invite?.id,
+      true
     )
   }
 

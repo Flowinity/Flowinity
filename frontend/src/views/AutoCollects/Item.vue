@@ -116,7 +116,7 @@ export default defineComponent({
     async act(id: number | number[], action: "approve" | "deny") {
       if (typeof id === "object") {
         const applicable = id.map((id) => {
-          const objectWithID = this.$refs.gallery.gallery.items.find(
+          const objectWithID = this.$refs.gallery.gallery.gallery.items.find(
             (upload) => upload.id === id
           );
           return objectWithID ? objectWithID.autoCollectApproval.id : null;
@@ -139,7 +139,7 @@ export default defineComponent({
         count: 1
       });
       this.$toast.success("Action performed");
-      const gallery = await this.$refs.gallery?.getGallery();
+      const gallery = await this.$refs.gallery.gallery.getGallery();
       if (!gallery.items.length) await this.$router.push(`/autoCollect`);
     },
     updateItem({

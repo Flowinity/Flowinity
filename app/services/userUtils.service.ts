@@ -258,6 +258,9 @@ export class UserUtilsService {
       }
     )
     redis.json.del(`user:${user.id}`)
+    socket.of(SocketNamespaces.USER).to(user.id).emit("userSettingsUpdate", {
+      emailVerified: true
+    })
     return true
   }
 
@@ -736,6 +739,39 @@ export class UserUtilsService {
     return await argon2.verify(user.password, password)
   }
 
+  async updateTempUserStatus(id: number, status: UserStatus) {
+    await User.update(
+      {
+        status
+      },
+      {
+        where: {
+          id
+        }
+      }
+    )
+
+    if (status !== UserStatus.OFFLINE) {
+      await this.emitToTrackedUsers(
+        id,
+        "userStatus",
+        {
+          id,
+          status: status.toUpperCase()
+        },
+        true
+      )
+    }
+
+    console.log(`User ${id} is now ${status}`)
+
+    socket.of(SocketNamespaces.USER).to(id).emit("userSettingsUpdate", {
+      status: status.toUpperCase()
+    })
+
+    return true
+  }
+
   async updateUser(id: number, body: any) {
     const user = await User.findOne({
       where: {
@@ -900,7 +936,7 @@ export class UserUtilsService {
         ...body,
         storedStatus:
           body.storedStatus?.toUpperCase() ?? user.storedStatus.toUpperCase(),
-        status: user.status?.toUpperCase() ?? user.status.toUpperCase()
+        status: user.status?.toUpperCase()
       })
     redis.json.del(`user:${user.id}`)
     return true

@@ -1,7 +1,9 @@
 import {
   ConnectedSocket,
+  MessageBody,
   OnConnect,
   OnDisconnect,
+  OnMessage,
   SocketController
 } from "socket-controllers"
 import { Service } from "typedi"
@@ -81,6 +83,22 @@ export class UserSocketController {
           platforms: []
         })
       }
+    }
+  }
+
+  @OnMessage("idleTime")
+  async idleTime(
+    @ConnectedSocket() skt: SocketAuth,
+    @MessageBody() data: number
+  ) {
+    const session = await this.socketAuthMiddleware.use(
+      skt,
+      () => {},
+      SocketNamespaces.USER
+    )
+    if (session) {
+      const user = session.user
+      socket.of(SocketNamespaces.USER).to(user.id).emit("idleTime", data)
     }
   }
 }

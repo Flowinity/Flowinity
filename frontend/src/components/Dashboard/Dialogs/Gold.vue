@@ -7,7 +7,7 @@
     <v-card class="text-center" color="#151515">
       <h1 class="mt-2">
         Introducing
-        <span class="gold-text-gradient">Gold</span>
+        <span class="gold-text-gradient">Flowinity Pro</span>
       </h1>
       <p class="text-overline">Get access to¹:</p>
       <v-list style="background-color: #151515 !important">
@@ -20,9 +20,9 @@
                 plan: {
                   id: 6,
                   internalName: 'GOLD',
-                  color: '#FFD700',
+                  color: '#2396ff',
                   icon: 'mdi-plus',
-                  name: 'Gold'
+                  name: 'Pro'
                 }
               }"
             />
@@ -62,7 +62,7 @@
         <v-list-item>
           <v-list-item-title>
             <v-icon color="green">mdi-check</v-icon>
-            Want to see a feature in Gold that isn't listed here? Let us know!
+            Want to see a feature in Pro that isn't listed here? Let us know!
           </v-list-item-title>
         </v-list-item>
       </v-list>
@@ -93,16 +93,20 @@
           <v-btn
             class="no-capital"
             color="primary"
-            :disabled="true"
-            @click="step++"
-            v-if="!$app.activeNags.IAF_NAG"
+            href="https://github.com/sponsors/Flowinity"
+            v-if="!$app.activeNags.IAF_NAG && !$user.gold"
           >
             Get started
             <v-icon class="ml-1">mdi-arrow-right</v-icon>
           </v-btn>
-          <v-tooltip activator="parent" location="top" v-if="$user.gold">
-            You're already a Gold member!
-          </v-tooltip>
+          <v-btn
+            class="no-capital"
+            color="primary"
+            to="/settings/subscriptions"
+            v-else
+          >
+            Settings
+          </v-btn>
         </span>
       </v-card-actions>
     </v-card>

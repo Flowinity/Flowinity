@@ -5,3 +5,9 @@ export const UpdateUserMutation = gql`
     updateUser(input: $input)
   }
 `;
+
+export const UpdateUserStatusMutation = gql`
+  mutation UpdateStatus($input: UpdateUserStatusInput!) {
+    updateStatus(input: $input)
+  }
+`;

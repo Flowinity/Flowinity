@@ -88,7 +88,6 @@ export default defineComponent({
     "user",
     "size",
     "noColor",
-    "noBadges",
     "edit",
     "status",
     "outline",

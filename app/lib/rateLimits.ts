@@ -55,8 +55,8 @@ export const inviteAFriendLimiter: RateLimitRequestHandler = rateLimit({
 })
 
 export const registerLimiter: RateLimitRequestHandler = rateLimit({
-  windowMs: 5 * 60 * 1000,
-  max: 1,
+  windowMs: 60 * 1000,
+  max: 2,
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipFailedRequests: true, // Don't count failed requests (status >= 400) towards rate limiting

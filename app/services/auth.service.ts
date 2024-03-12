@@ -265,11 +265,14 @@ export class AuthService {
     username: string,
     password: string,
     email: string,
-    invite: Invite | null
+    invite: Invite | null,
+    gql: boolean = false
   ): Promise<Login> {
     try {
       if (password.length < 8) {
-        throw new GraphQLError("Password is too short!")
+        throw gql
+          ? new GraphQLError("Password is too short!")
+          : Errors.PASSWORD_TOO_SHORT
       }
       const user = await User.create({
         username,
@@ -292,9 +295,10 @@ export class AuthService {
           false,
           false
         )
-        const eligible = experiment === 3 || experiment === 5
+        const eligible = experiment !== 4 && experiment !== 0
         if (eligible) {
           const billingService = Container.get(OfficialInstJolt707)
+          await coreService.setExperiment(user.id, "IAF_NAG", 4)
           await billingService.grantMonth(invite.userId)
           await billingService.grantMonth(user.id)
         }
@@ -317,7 +321,9 @@ export class AuthService {
     } catch (e) {
       console.log(e)
       if (!(e instanceof GraphQLError)) {
-        throw new GqlError("USERNAME_TAKEN")
+        throw gql
+          ? new GraphQLError("Username is taken!")
+          : Errors.USERNAME_TAKEN
       }
       throw e
     }

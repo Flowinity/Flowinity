@@ -321,11 +321,13 @@ export class CoreService {
         userId
       }
     })
+    const overrideObject = overrides.reduce((acc: any, override) => {
+      acc[override.dataValues.key] = JSON.parse(override.value)
+      return acc
+    }, {})
     return {
       ...this.getExperiments(dev, gold),
-      ...overrides.map((override) => ({
-        [override.dataValues.key]: JSON.parse(override.value)
-      }))[0]
+      ...overrideObject
     } as Record<string, boolean | number>
   }
 
@@ -714,5 +716,26 @@ export class CoreService {
   ) {
     const experiments = await this.getUserExperiments(userId, dev, gold)
     return experiments[experiment]
+  }
+
+  async setExperiment(userId: number, key: string, value: boolean | number) {
+    const experiment = await Experiment.findOne({
+      where: {
+        userId,
+        key
+      }
+    })
+    if (experiment) {
+      await experiment.update({
+        value
+      })
+      return experiment
+    } else {
+      return await Experiment.create({
+        userId,
+        key,
+        value
+      })
+    }
   }
 }

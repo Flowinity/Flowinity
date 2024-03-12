@@ -183,6 +183,7 @@ export const useAppStore = defineStore("app", {
     activeNags() {
       const userStore = useUserStore();
       const experimentsStore = useExperimentsStore();
+      const iaf = experimentsStore.experiments.IAF_NAG;
 
       const nags = {
         DOWNLOAD_THE_APP_NAG:
@@ -195,15 +196,14 @@ export const useAppStore = defineStore("app", {
           this.platform !== Platform.WEB &&
           !this.desktop.nagStartup &&
           experimentsStore.experiments.ENABLE_AUTOSTART_APP_NAG === 1,
-        IAF_NAG:
-          (experimentsStore.experiments.IAF_NAG === 1 &&
-            userStore.user?.emailVerified) ||
-          experimentsStore.experiments.IAF_NAG === 2
+        IAF_NAG: (iaf === 1 && userStore.user?.emailVerified) || iaf === 2
       };
 
       return {
         ...nags,
-        offset: Object.keys(nags).filter((key) => nags[key]).length * 42
+        offset: Object.keys(nags).filter((key) => nags[key]).length * 42,
+        IAF_PROMO:
+          experimentsStore.experiments.IAF_NAG === 0 || experimentsStore
       };
     },
     quickActionItem(state): SidebarItem {

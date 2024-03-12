@@ -767,13 +767,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -783,13 +779,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1194,13 +1186,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1912,13 +1900,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2844,13 +2828,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2975,13 +2955,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3169,13 +3145,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3185,13 +3157,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3499,13 +3467,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3895,13 +3859,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4184,13 +4144,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -6193,13 +6149,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -6209,13 +6161,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -7028,13 +6976,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -7402,13 +7346,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -7474,13 +7414,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -7554,13 +7490,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -8592,13 +8524,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -9675,9 +9603,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "Message",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Message",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -10908,6 +10840,39 @@
             "deprecationReason": null
           },
           {
+            "name": "deleteGallery",
+            "description": null,
+            "args": [
+              {
+                "name": "input",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "DangerZoneInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "deleteGroup",
             "description": null,
             "args": [
@@ -11404,6 +11369,22 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "GenericSuccessObject",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "reactivateAccount",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },
@@ -12281,13 +12262,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "UserStoredStatus",
-                "ofType": null
-              }
+              "kind": "ENUM",
+              "name": "UserStoredStatus",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -12735,13 +12712,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -13093,13 +13066,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -13300,13 +13269,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -13455,13 +13420,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -17334,13 +17295,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -18336,13 +18293,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -19422,13 +19375,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -20505,16 +20454,24 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "storedStatus",
-            "description": null,
+            "name": "status",
+            "description": "Temporary status change, for IDLE status.",
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "UserStoredStatus",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "storedStatus",
+            "description": "Permanent status change.",
+            "type": {
+              "kind": "ENUM",
+              "name": "UserStoredStatus",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -21554,6 +21511,18 @@
             "deprecationReason": null
           },
           {
+            "name": "planId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "privacyPolicyAccepted",
             "description": null,
             "args": [],
@@ -22116,12 +22085,6 @@
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
-          },
-          {
-            "name": "UNKNOWN",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
           }
         ],
         "possibleTypes": null
@@ -22486,13 +22449,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -22502,13 +22461,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -22950,13 +22905,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -22998,13 +22949,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PartialUserBase",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "PartialUserBase",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

@@ -15,8 +15,8 @@
       "feedback": "Provide Feedback",
       "changelog": "Changelog",
       "inviteAFriend": "Invite a Friend",
-      "newWithGold": "My Flowinity Gold",
-      "upgradeToGold": "Upgrade to Gold",
+      "newWithGold": "My Flowinity Pro",
+      "upgradeToGold": "Upgrade to Pro",
       "colubrinaMigrate": "Migrate from Colubrina",
       "admin": "Admin Panel",
       "member": "Member of {names}",
@@ -116,7 +116,9 @@
         "LINUX": "Linux Settings",
         "WINDOWS": "Windows Settings",
         "MAC": "Mac Settings"
-      }
+      },
+      "subscriptions": "Upgrade to Pro",
+      "subscriptionsSettings": "Billing & Pro"
     },
     "home": {
       "privacy": {

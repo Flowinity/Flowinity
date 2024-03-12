@@ -16,46 +16,36 @@
     <v-container class="mt-2" style="max-width: 100%">
       <v-row>
         <v-col cols="12" style="flex: 1 1 auto; width: 200px">
-          <v-row
-            :class="{ 'text-center': $vuetify.display.mobile }"
-            class="mb-2"
-            no-gutters
-          >
-            <v-col
-              :cols="$vuetify.display.mobile ? 12 : undefined"
-              sm="auto"
-              class="fix-profile-v3"
-            >
-              <v-hover v-slot="{ isHovering }">
-                <UserAvatar
-                  :class="{ 'mr-4': !$vuetify.display.mobile }"
-                  :edit="user.id === $user.user?.id"
-                  :no-badges="true"
-                  :status="true"
-                  :user="user"
-                  size="110"
-                  @refresh="getUser(false)"
-                >
-                  <transition
-                    v-if="$user.user?.id === user.id"
-                    :duration="{ enter: 300, leave: 300 }"
-                    appear
-                    name="fade-transition"
-                  >
-                    <v-btn
-                      v-if="isHovering"
-                      class="rounded-xl"
-                      icon
-                      style="position: absolute; top: 10px; right: 10px"
-                    >
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                  </transition>
-                </UserAvatar>
-              </v-hover>
-            </v-col>
+          <v-row class="mb-2" no-gutters>
             <v-col class="d-flex align-center fix-profile-v3" sm="100%">
-              <v-card-text class="ml-n2 fix-profile-v3">
+              <v-hover v-slot="{ isHovering }">
+                <div class="position-relative">
+                  <UserAvatar
+                    :edit="user.id === $user.user?.id"
+                    :status="true"
+                    :user="user"
+                    size="110"
+                    @refresh="getUser(false)"
+                  >
+                    <transition
+                      v-if="$user.user?.id === user.id"
+                      :duration="{ enter: 300, leave: 300 }"
+                      appear
+                      name="fade-transition"
+                    >
+                      <v-btn
+                        v-if="isHovering"
+                        class="rounded-xl"
+                        icon
+                        style="position: absolute; top: 10px; right: 10px"
+                      >
+                        <v-icon>mdi-pencil</v-icon>
+                      </v-btn>
+                    </transition>
+                  </UserAvatar>
+                </div>
+              </v-hover>
+              <v-card-text style="max-width: calc(100% - 110px)">
                 <div>
                   <h1
                     :class="username ? 'mb-2 pointer' : ''"
@@ -134,7 +124,6 @@
                     </v-btn>
                   </h1>
                   <UserBadges
-                    :class="{ 'justify-center': $vuetify.display.mobile }"
                     :primary-color="primaryColorResult.primary"
                     :user="user"
                   />
@@ -143,11 +132,11 @@
             </v-col>
             <v-col
               v-if="user.id !== $user.user?.id"
-              class="d-flex align-center fix-profile-v3"
+              class="d-flex align-center"
               sm="auto"
               style="justify-content: flex-end"
             >
-              <v-card-text class="fix-profile-v3">
+              <v-card-text>
                 <v-btn
                   v-if="friends"
                   :color="friends.color"

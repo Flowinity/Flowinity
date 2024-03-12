@@ -12,5 +12,6 @@ export enum IpcChannels {
   UPDATE_DOWNLOADED = "update-downloaded",
   UPDATE = "update",
   FOCUS_CHAT = "focus-chat",
-  FOCUS_WINDOW = "focus-window"
+  FOCUS_WINDOW = "focus-window",
+  GET_IDLE_TIME = "get-idle-time"
 }

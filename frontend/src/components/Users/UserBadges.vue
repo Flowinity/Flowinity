@@ -1,6 +1,11 @@
 <template>
   <div class="user-badges-group">
-    <v-chip-group :model-value="selected" class="mt-n2" disabled>
+    <v-chip-group
+      :model-value="selected"
+      class="mt-n2"
+      disabled
+      :show-arrows="true"
+    >
       <!-- Permission badges -->
       <HoverChip
         v-if="user.admin || user.administrator"

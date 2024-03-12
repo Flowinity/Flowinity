@@ -53,7 +53,7 @@ export class FriendResolver {
       attributes: partialUserFriend
     })
     if (friend.status !== FriendStatus.ACCEPTED && fr)
-      fr.status = UserStatus.UNKNOWN
+      fr.status = UserStatus.OFFLINE
     return fr
   }
 

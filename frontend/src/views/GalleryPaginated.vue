@@ -84,6 +84,14 @@ import functions from "@/plugins/functions";
 export default defineComponent({
   components: { GalleryNavigation, GalleryCore },
   props: ["path", "type", "name", "random", "supports", "id"],
+  provide() {
+    return {
+      getGallery: this.getGallery,
+      removeItemFromCollection: this.removeItemFromCollection,
+      deleteItem: this.deleteItem,
+      updateItem: this.updateItem
+    };
+  },
   data() {
     return {
       gallery: undefined as

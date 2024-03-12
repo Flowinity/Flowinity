@@ -559,4 +559,7 @@ export default async function setup(app) {
       u.avatar = data.avatar;
     }
   );
+  sockets.user.on("idleTime", (data: number) => {
+    user.idleTimer = data;
+  });
 }

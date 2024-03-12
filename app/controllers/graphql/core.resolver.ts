@@ -265,6 +265,23 @@ export class CoreResolver {
         key: input.key
       }
     })
+
+    // validation for IAF_NAG
+    if (input.key === "IAF_NAG") {
+      // it needs to be only 3 or 4
+      if (input.value !== 3 && input.value !== 5) {
+        throw new GraphQLError(
+          `The experiment specified "${input.key}" can only be 3 or 5.`
+        )
+      }
+
+      if (parseInt(experiment?.value || "1") === 4) {
+        throw new GraphQLError(
+          `The experiment specified "${input.key}" cannot be reassigned.`
+        )
+      }
+    }
+
     if (experiment) {
       await experiment.update({
         value: input.value

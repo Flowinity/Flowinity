@@ -310,8 +310,8 @@
           <small class="unselectable">
             {{
               $user.gold
-                ? `Invite a friend to Flowinity today!`
-                : `Share the love! Invite a friend to ${appStore.site.name} and both get a free month of Gold!`
+                ? `Invite a friend to Flowinity today and get another free month of Pro!`
+                : `Share the love! Invite a friend to ${appStore.site.name} and both get a free month of Pro!`
             }}
           </small>
           <template #append>
@@ -326,7 +326,7 @@
               {{ $user.gold ? `Invite a friend!` : `Claim now!` }}
             </v-btn>
             <v-icon
-              @click="$experiments.setExperiment('IAF_NAG', 0)"
+              @click="$experiments.setExperiment('IAF_NAG', 5)"
               size="16"
               class="ml-3"
             >

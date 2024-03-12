@@ -1,36 +1,50 @@
 <template>
   <CoreDialog
     :model-value="modelValue"
-    max-width="700px"
+    max-width="750px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template #title>Invite a Friend</template>
+    <template #title>
+      <div class="d-flex align-center">
+        Invite a Friend
+        <v-chip
+          v-if="$app.activeNags.IAF_PROMO"
+          color="blue"
+          class="ml-2"
+          size="small"
+          variant="tonal"
+        >
+          PROMOTION
+        </v-chip>
+      </div>
+    </template>
     <v-card-text>
-      <template v-if="$app.activeNags.IAF_NAG">
+      <v-alert
+        color="blue"
+        variant="tonal"
+        v-if="$app.activeNags.IAF_PROMO"
+        icon="mdi-check-circle"
+      >
         <p v-if="!$user.gold">
-          <v-icon color="green" class="mr-2">mdi-check-circle</v-icon>
+          <v-icon color="blue" class="mr-2">mdi-gift</v-icon>
           By inviting a friend to {{ $app.site.name }}, you will both get a free
           month of
-          <span class="gold-text-gradient">Gold</span>
+          <span class="gold-text-gradient">Pro</span>
         </p>
-        <p v-else>
-          <v-icon color="green" class="mr-2">mdi-check-circle</v-icon>
+        <p v-else class="gold-text-gradient">
           By inviting a friend to {{ $app.site.name }}, you will receive an
           additional free month of
-          <span class="gold-text-gradient">Gold</span>
+          <span class="gold-text-gradient">Pro</span>
           and your friend will get a free month of
-          <span class="gold-text-gradient">Gold</span>
+          <span class="gold-text-gradient">Pro</span>
         </p>
         <small>
-          You will automatically be granted Flowinity Gold when the user
+          You will automatically be granted Flowinity Pro when the user
           registers. It will not auto-renew by default.
         </small>
-      </template>
-      <p
-        class="mb-2"
-        :class="{ 'mt-2': $app.activeNags.IAF_NAG && !$user.gold }"
-      >
-        Enter your friends email to invite them to
+      </v-alert>
+      <p class="mb-2" :class="{ 'mt-2': $app.activeNags.IAF_PROMO }">
+        Enter your friend's email to invite them to
         {{ $app.site.name }} instantly!
       </p>
       <v-text-field

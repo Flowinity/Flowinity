@@ -181,7 +181,7 @@ export default defineComponent({
       if (!this.terms) return;
       this.loading = true;
       try {
-        const { data } = await this.axios.post("/register", {
+        const { data } = await this.axios.post("/auth/register", {
           email: this.email,
           username: this.username,
           password: this.password,

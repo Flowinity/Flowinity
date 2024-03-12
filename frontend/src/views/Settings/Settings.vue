@@ -18,6 +18,18 @@
               : $t("settings.tabs.setup")
           }}
         </v-tab>
+        <v-tab
+          v-if="$app.site.officialInstance"
+          prepend-icon="mdi-plus"
+          class="gold-promo"
+          to="/settings/subscriptions"
+        >
+          {{
+            $user.gold
+              ? $t("settings.tabs.subscriptionsSettings")
+              : $t("settings.tabs.subscriptions")
+          }}
+        </v-tab>
         <v-tab prepend-icon="mdi-web" to="/settings/domains">
           {{ $t("settings.tabs.domains") }}
         </v-tab>

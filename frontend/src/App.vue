@@ -35,6 +35,11 @@ export default defineComponent({
       this.$app.lastRoute = val;
     }
   },
+  methods: {
+    resetTimer() {
+      this.$user.idleTimer = 0;
+    }
+  },
   mounted() {
     window._tpu_router = this.$router;
     if (this.$vuetify.display.mobile) {
@@ -72,6 +77,18 @@ export default defineComponent({
           this.$app.checkForUpdates();
         }, 60000);
       }
+    }
+
+    setInterval(() => {
+      this.$user.checkIdleState();
+    }, 3000);
+
+    // Electron app uses the native idle time instead
+    if (this.$app.platform === Platform.WEB) {
+      document.onmousemove = this.resetTimer;
+      document.onmousedown = this.resetTimer;
+      document.ontouchstart = this.resetTimer;
+      document.onkeydown = this.resetTimer;
     }
   }
 });

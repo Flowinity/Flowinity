@@ -84,6 +84,14 @@ import GalleryCoreInfinite from "@/components/Gallery/GalleryCoreInfinite.vue";
 export default defineComponent({
   components: { GalleryCoreInfinite, GalleryNavigation, GalleryCore },
   props: ["path", "type", "name", "random", "supports", "id"],
+  provide() {
+    return {
+      getGallery: this.getGallery,
+      removeItemFromCollection: this.removeItemFromCollection,
+      deleteItem: this.deleteItem,
+      updateItem: this.updateItem
+    };
+  },
   data() {
     return {
       gallery: undefined as

@@ -23,10 +23,21 @@
 
 .gold-text-gradient {
   font-weight: 500;
-  background: -webkit-radial-gradient(#ffdb1b, #ffd700);
+  background-image: -webkit-radial-gradient(
+                  rgba(1, 144, 234, 1),
+                  rgba(1, 121, 243, 1)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.gold-promo {
+  background-image: -webkit-radial-gradient(
+                  rgba(1, 144, 234, 0.5),
+                  rgba(1, 121, 243, 0.5)
+  );
+  opacity: 0.95;
 }
 
 .unselectable {

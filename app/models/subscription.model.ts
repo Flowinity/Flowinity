@@ -7,22 +7,23 @@ import {
   Table
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
-import { Field, ObjectType } from "type-graphql"
+import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { SubscriptionMetadata } from "@app/classes/graphql/user/subscription"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType("TPUSubscription")
 @Table
 export class Subscription extends Model {
-  @Field()
+  @Field(() => Int)
   @Column
   planId: number
 
-  @Field()
+  @Field(() => Int)
   @Column
   userId: number
 
-  @Field()
+  @Field(() => Int)
   @Column
   price: number
 
@@ -31,7 +32,7 @@ export class Subscription extends Model {
   @Column
   cancelled: boolean
 
-  @Field()
+  @Field(() => Int)
   @Column
   paymentId: number
 
@@ -43,11 +44,21 @@ export class Subscription extends Model {
   @Column
   cancelledAt: Date
 
-  @Field(() => SubscriptionMetadata)
+  @Field(() => SubscriptionMetadata, {
+    nullable: true
+  })
   @Column({
     type: DataType.JSON
   })
   metadata: object
+
+  @Field(() => DateType)
+  @Column
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column
+  updatedAt: Date
 
   @Field(() => PartialUserBase, {
     nullable: true

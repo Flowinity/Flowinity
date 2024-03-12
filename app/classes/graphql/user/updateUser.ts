@@ -1,11 +1,20 @@
 import { Field, InputType } from "type-graphql"
 import { ProfileLayout } from "@app/classes/graphql/user/profileLayout"
-import { IsEmail, IsHexColor, Matches, MaxLength, MinLength } from "class-validator"
+import {
+  IsEmail,
+  IsHexColor,
+  Matches,
+  MaxLength,
+  MinLength
+} from "class-validator"
 import { ThemeEngine } from "@app/classes/graphql/user/themeEngine"
 import { DangerZoneInput } from "@app/classes/graphql/chat/deleteChat"
 import { GraphQLJSON } from "graphql-scalars"
-import { FriendRequestPrivacy, GroupPrivacy } from "@app/classes/graphql/user/privacy"
-import { UserStoredStatus } from "@app/classes/graphql/user/status"
+import {
+  FriendRequestPrivacy,
+  GroupPrivacy
+} from "@app/classes/graphql/user/privacy"
+import { UserStatus, UserStoredStatus } from "@app/classes/graphql/user/status"
 
 @InputType()
 export class UpdateUserInput {
@@ -124,6 +133,14 @@ export class ChangeEmailInput extends DangerZoneInput {
 
 @InputType()
 export class UpdateUserStatusInput {
-  @Field(() => UserStoredStatus)
+  @Field(() => UserStoredStatus, {
+    nullable: true,
+    description: "Permanent status change."
+  })
   storedStatus: UserStoredStatus
+  @Field({
+    nullable: true,
+    description: "Temporary status change, for IDLE status."
+  })
+  status: UserStatus
 }

@@ -1,4 +1,4 @@
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
 import axios from "axios"
 import { Subscription } from "@app/models/subscription.model"
 import { User } from "@app/models/user.model"
@@ -6,6 +6,7 @@ import { AdminService } from "@app/services/admin.service"
 import { Op } from "sequelize"
 import { Plan } from "@app/models/plan.model"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
+import { CoreService } from "@app/services/core.service"
 
 type Jitsi = {
   id: string
@@ -287,7 +288,7 @@ export class OfficialInstJolt707 {
     for (const user of users) {
       if (user.id === 6 || !user.subscription) continue
       if (
-        dayjs(user.subscription.expiredAt).isAfter(dayjs().subtract(3, "day"))
+        dayjs(user.subscription.expiredAt).isBefore(dayjs().subtract(3, "day"))
       ) {
         await User.update(
           {
@@ -304,18 +305,21 @@ export class OfficialInstJolt707 {
             userId: user.id
           }
         })
-        this.emitEvent(user.id, config.defaultPlanId!)
+        this.emitEvent(user.id, config.defaultPlanId!, false)
       }
     }
   }
 
-  async emitEvent(userId: number, planId: number) {
+  async emitEvent(userId: number, planId: number, free: boolean) {
     socket
       .of(SocketNamespaces.USER)
       .to(userId)
       .emit("userSettingsUpdate", {
         planId: planId,
-        plan: await Plan.findByPk(planId)
+        plan: await Plan.findByPk(planId),
+        _meta: {
+          freePromo: free
+        }
       })
   }
 
@@ -326,29 +330,28 @@ export class OfficialInstJolt707 {
       }
     })
     if (user?.planId === 6) return
-    const subscription = await Subscription.findOne({
+    let subscription = await Subscription.findOne({
       where: {
         userId: userId
       }
     })
     if (!subscription) {
-      await Subscription.create({
+      subscription = await Subscription.create({
         planId: 6,
         userId: userId,
-        price: 0,
+        price: 999,
         cancelled: true,
         paymentId: 0,
-        expiredAt: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
+        expiredAt: dayjs().add(30, "day").toDate(),
         cancelledAt: new Date()
       })
-      return
     } else {
       await Subscription.update(
         {
-          expiredAt: new Date(
-            new Date(subscription.expiredAt).getTime() +
-              1000 * 60 * 60 * 24 * 30
-          )
+          // if the subscription expiry is in the future, add 30 days to it, if not, set it to 30 days from now
+          expiredAt: dayjs(subscription.expiredAt).isAfter(dayjs())
+            ? dayjs(subscription.expiredAt).add(30, "day").toDate()
+            : dayjs().add(30, "day").toDate()
         },
         {
           where: {
@@ -359,7 +362,8 @@ export class OfficialInstJolt707 {
     }
     await User.update(
       {
-        planId: 6
+        planId: 6,
+        subscriptionId: subscription.id
       },
       {
         where: {
@@ -367,7 +371,7 @@ export class OfficialInstJolt707 {
         }
       }
     )
-    this.emitEvent(userId, 6)
+    this.emitEvent(userId, 6, true)
   }
 
   async checkGitHub() {
@@ -386,7 +390,7 @@ export class OfficialInstJolt707 {
     })
   }
 
-  billingInit() {
+  async billingInit() {
     if (!config.jitsiToken || !config.officialInstance) return
     try {
       // 30 minutes

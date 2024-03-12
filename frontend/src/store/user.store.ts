@@ -2,23 +2,28 @@
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
 import { useFriendsStore } from "@/store/friends.store";
-import { useAppStore } from "@/store/app.store";
+import { Platform, useAppStore } from "@/store/app.store";
 import { useToast } from "vue-toastification";
 import vuetify from "@/plugins/vuetify";
 import i18n from "@/plugins/i18n";
 import functions from "@/plugins/functions";
 import { GetUserQuery } from "@/graphql/user/user.graphql";
-import { UpdateUserMutation } from "@/graphql/user/update.graphql";
+import {
+  UpdateUserMutation,
+  UpdateUserStatusMutation
+} from "@/graphql/user/update.graphql";
 import {
   BlockedUser,
   PartialUserFriend,
   UpdateUserInput,
   User,
+  UserStatus,
   UserStoredStatus
 } from "@/gql/graphql";
 import { ProfileQuery } from "@/graphql/user/profile.graphql";
 import { BlockUserMutation } from "@/graphql/user/blockUser.graphql";
 import { useApolloClient } from "@vue/apollo-composable";
+import { IpcChannels } from "@/electron-types/ipc";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -45,7 +50,9 @@ export const useUserStore = defineStore("user", {
     disableProfileColors:
       localStorage.getItem("disableProfileColors") === "true",
     tracked: [] as PartialUserFriend[],
-    blocked: [] as BlockedUser[]
+    blocked: [] as BlockedUser[],
+    idleTimer: 0,
+    ignoreTab: false
   }),
   getters: {
     contrast() {
@@ -82,6 +89,56 @@ export const useUserStore = defineStore("user", {
     }
   },
   actions: {
+    async setIdleStateFromIdleTime(idleTime: number) {
+      if (idleTime >= 300) {
+        if (
+          this.user.status !== UserStatus.Idle &&
+          this.user.storedStatus !== UserStoredStatus.Idle &&
+          this.user.storedStatus !== UserStoredStatus.Busy &&
+          this.user.storedStatus !== UserStoredStatus.Invisible
+        ) {
+          this.user.status = UserStatus.Idle;
+          await useApolloClient().client.mutate({
+            mutation: UpdateUserStatusMutation,
+            variables: {
+              input: {
+                status: UserStatus.Idle
+              }
+            },
+            fetchPolicy: "no-cache"
+          });
+        }
+      } else if (
+        this.user.status === UserStatus.Idle &&
+        this.user.storedStatus !== UserStoredStatus.Idle
+      ) {
+        this.user.status = this.user.storedStatus;
+        await useApolloClient().client.mutate({
+          mutation: UpdateUserStatusMutation,
+          variables: {
+            input: {
+              status: this.user.storedStatus
+            }
+          },
+          fetchPolicy: "no-cache"
+        });
+        this.$app.$sockets.user.emit("idleTime", this.idleTimer);
+      }
+    },
+    checkIdleState() {
+      if (!this.user) return;
+      const appStore = useAppStore();
+      if (appStore.platform !== Platform.WEB) {
+        window.electron.ipcRenderer
+          .invoke(IpcChannels.GET_IDLE_TIME)
+          .then(async (idleTime: number) => {
+            await this.setIdleStateFromIdleTime(idleTime);
+          });
+      } else {
+        this.idleTimer += 3;
+        this.setIdleStateFromIdleTime(this.idleTimer);
+      }
+    },
     async blockUser() {
       await useApolloClient().client.mutate({
         mutation: BlockUserMutation,
@@ -97,7 +154,7 @@ export const useUserStore = defineStore("user", {
       this.dialogs.block.silent = false;
     },
     getStatus(user: Partial<User>) {
-      if (user.id === this.user?.id) return this.user?.storedStatus;
+      if (user.id === this.user?.id) return this.user?.status;
       const tracked = this.tracked.find((tracked) => tracked.id === user.id);
       if (tracked) return tracked.status;
       return useFriendsStore().friends.find((f) => f.friendId === user.id)?.user
