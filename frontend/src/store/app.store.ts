@@ -396,8 +396,7 @@ export const useAppStore = defineStore("app", {
             ? chat.totalUnread
             : false,
           scope: "chats.view",
-          experimentsRequired: ["COMMUNICATIONS"],
-          new: true
+          experimentsRequired: ["COMMUNICATIONS"]
         });
       }
 

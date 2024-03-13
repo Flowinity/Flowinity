@@ -274,11 +274,6 @@ export class AuthService {
           ? new GraphQLError("Password is too short!")
           : Errors.PASSWORD_TOO_SHORT
       }
-      console.log(
-        invite?.email,
-        email,
-        !config.email.enabled || invite?.email === email
-      )
       const user = await User.create({
         username,
         password: await argon2.hash(password),

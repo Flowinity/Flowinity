@@ -25,6 +25,16 @@
         <p v-if="$user.user.subscription.cancelled">
           Your subscription will not auto-renew.
         </p>
+        Payment methods & options are coming soon. If you wish to purchase Pro
+        now, you can do so by becoming a
+        <strong>
+          <a
+            href="https://github.com/sponsors/Flowinity"
+            style="color: white; text-decoration: underline"
+          >
+            GitHub Sponsor!
+          </a>
+        </strong>
       </div>
       <div v-else class="ml-3">
         <strong>
