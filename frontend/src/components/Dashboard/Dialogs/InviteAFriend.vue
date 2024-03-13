@@ -26,7 +26,6 @@
         icon="mdi-check-circle"
       >
         <p v-if="!$user.gold">
-          <v-icon color="blue" class="mr-2">mdi-gift</v-icon>
           By inviting a friend to {{ $app.site.name }}, you will both get a free
           month of
           <span class="gold-text-gradient">Pro</span>

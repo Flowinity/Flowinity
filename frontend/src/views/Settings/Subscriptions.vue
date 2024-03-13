@@ -1,5 +1,8 @@
 <template>
-  <v-alert class="gold-promo">
+  <div
+    class="gold-promo v-alert"
+    v-if="!$user.user.plan.internalName.includes('FREE')"
+  >
     <div class="d-flex">
       <v-icon v-if="!$user.user.subscription?.cancelled">
         mdi-check-circle
@@ -33,11 +36,15 @@
         </p>
       </div>
     </div>
-  </v-alert>
+  </div>
+  <div v-else class="ml-3">
+    <GoldContent class="text-center" :centered-buttons="true" />
+  </div>
 </template>
 
 <script lang="ts" setup>
 import dayjs from "@/plugins/dayjs";
+import GoldContent from "@/components/Dashboard/Dialogs/GoldContent.vue";
 </script>
 
 <style scoped></style>

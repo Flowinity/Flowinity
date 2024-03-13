@@ -1230,7 +1230,8 @@ export class ChatService {
           return b.index - a.index || 0
         }),
       unread: 0,
-      recipient: recipient
+      recipient: recipient,
+      usersCount: await ChatAssociation.count({ where: { chatId: chat.id } })
     }
   }
 

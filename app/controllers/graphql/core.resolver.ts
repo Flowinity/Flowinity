@@ -238,7 +238,7 @@ export class CoreResolver {
 
   @Mutation(() => Experiment)
   @Authorization({
-    scopes: ["user.modify"],
+    scopes: ["user.view"],
     emailOptional: true
   })
   async setExperiment(

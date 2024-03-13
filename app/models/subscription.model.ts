@@ -23,7 +23,9 @@ export class Subscription extends Model {
   @Column
   userId: number
 
-  @Field(() => Int)
+  @Field(() => Int, {
+    nullable: true
+  })
   @Column
   price: number
 
@@ -36,11 +38,15 @@ export class Subscription extends Model {
   @Column
   paymentId: number
 
-  @Field()
+  @Field({
+    nullable: true
+  })
   @Column
   expiredAt: Date
 
-  @Field()
+  @Field({
+    nullable: true
+  })
   @Column
   cancelledAt: Date
 

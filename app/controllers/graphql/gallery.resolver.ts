@@ -51,8 +51,8 @@ export class GalleryResolver {
   ) {}
 
   @RateLimit({
-    window: 7,
-    max: 10
+    window: 10,
+    max: 20
   })
   @Authorization({
     scopes: ["uploads.view", "collections.view", "starred.view"],

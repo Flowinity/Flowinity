@@ -1,4 +1,4 @@
-import { Arg, Ctx, Mutation, Resolver } from "type-graphql"
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql"
 import { Container, Service } from "typedi"
 import { Authorization } from "@app/lib/graphql/AuthChecker"
 import { AccessLevel } from "@app/enums/admin/AccessLevel"
@@ -19,6 +19,7 @@ import cryptoRandomString from "crypto-random-string"
 import { LegacyFriend } from "@app/models/legacyFriend.model"
 import { Friend } from "@app/models/friend.model"
 import { PulseService } from "@app/services/pulse.service"
+import { Plan } from "@app/models/plan.model"
 
 @Resolver()
 @Service()
@@ -324,5 +325,14 @@ export class AdminResolver {
     const pulseService = Container.get(PulseService)
     pulseService.generateInsights(userId, <any>type, customGte)
     return { success: true }
+  }
+
+  @Authorization({
+    accessLevel: AccessLevel.MODERATOR,
+    scopes: "*"
+  })
+  @Query(() => [Plan])
+  async adminPlans(@Ctx() ctx: Context) {
+    return await Plan.findAll()
   }
 }

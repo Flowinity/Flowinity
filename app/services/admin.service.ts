@@ -34,6 +34,12 @@ import { OauthSave } from "@app/models/oauthSave.model"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
 import SMTPTransport from "nodemailer/lib/smtp-transport"
 import { UserUtilsService } from "@app/services/userUtils.service"
+import { BanReason } from "@app/classes/graphql/user/ban"
+import redisClient from "@app/redis"
+import { DeletionService } from "@app/services/deletion.service"
+import { Plan } from "@app/models/plan.model"
+import { Subscription } from "@app/models/subscription.model"
+import { OfficialInstJolt707 } from "@app/services/officialInst.jolt707"
 
 const inviteParams = {
   include: [
@@ -148,7 +154,17 @@ export class AdminService {
     return User.findAll({
       attributes: {
         exclude: ["emailToken", "storedStatus"]
-      }
+      },
+      include: [
+        {
+          model: Plan,
+          as: "plan"
+        },
+        {
+          model: Subscription,
+          as: "subscription"
+        }
+      ]
     })
   }
 
@@ -443,32 +459,35 @@ export class AdminService {
     )
   }
 
-  async updatePlanId(userId: number, planId: number) {
+  async updatePlanId(userId: number, planId: number, expiredAt: string) {
     const user = await User.findByPk(userId)
     if (!user) throw Errors.USER_NOT_FOUND
-    if (userId === 6 && planId === 6 && config.officialInstance) {
+    if (userId === 6 && config.officialInstance) {
       throw Errors.HANDLED_BY_PAYMENT_PROVIDER
     }
-    await User.update(
-      {
-        planId
-      },
-      {
-        where: {
-          id: userId
-        }
-      }
-    )
+    const billingService = Container.get(OfficialInstJolt707)
+    await billingService.handleSubscription(userId, planId, expiredAt)
     return true
   }
 
-  async updateBanned(userId: number, banned: boolean) {
+  async updateBanned(
+    userId: number,
+    banned: boolean,
+    banReason: string | null,
+    banReasonType: BanReason | null,
+    pendingDeletionDate: string | null
+  ) {
     const user = await User.findByPk(userId)
     if (!user) throw Errors.USER_NOT_FOUND
     if (user.administrator || user.moderator) throw Errors.MANUAL_BAN_REQUIRED
+    if (banned && (!banReason || !banReasonType || !pendingDeletionDate))
+      throw Errors.INVALID_PARAMETERS
     await User.update(
       {
-        banned
+        banned,
+        banReason: banned ? banReason : null,
+        banReasonType: banned ? banReasonType : null,
+        pendingDeletionDate: banned ? pendingDeletionDate : null
       },
       {
         where: {
@@ -476,6 +495,9 @@ export class AdminService {
         }
       }
     )
+    await redisClient.json.del(`user:${userId}`)
+    const deletionService = Container.get(DeletionService)
+    deletionService.checkUsers()
     return true
   }
 

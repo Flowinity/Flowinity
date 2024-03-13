@@ -323,35 +323,69 @@ export class OfficialInstJolt707 {
       })
   }
 
-  async grantMonth(userId: number) {
-    const user = await User.findOne({
-      where: {
-        id: userId
-      }
-    })
-    if (user?.planId === 6) return
+  async handleSubscription(
+    userId: number,
+    planId: number,
+    expiredAt?: Date | string,
+    days?: number,
+    append?: boolean,
+    cancelled?: boolean
+  ) {
+    const user = await User.findByPk(userId)
+    if (!user) return
     let subscription = await Subscription.findOne({
       where: {
         userId: userId
       }
     })
+    if (planId === config.defaultPlanId || planId === 1) {
+      await Subscription.destroy({
+        where: {
+          userId: userId
+        }
+      })
+      await User.update(
+        {
+          planId,
+          subscriptionId: null
+        },
+        {
+          where: {
+            id: userId
+          }
+        }
+      )
+      return
+    }
+    const plan = await Plan.findByPk(planId)
     if (!subscription) {
       subscription = await Subscription.create({
-        planId: 6,
+        planId: planId,
         userId: userId,
-        price: 999,
-        cancelled: true,
+        price: plan?.price || 0,
+        cancelled,
         paymentId: 0,
-        expiredAt: dayjs().add(30, "day").toDate(),
-        cancelledAt: new Date()
+        expiredAt:
+          expiredAt ||
+          dayjs()
+            .add(days || 30, "day")
+            .toDate(),
+        cancelledAt: cancelled ? new Date() : undefined
       })
     } else {
       await Subscription.update(
         {
-          // if the subscription expiry is in the future, add 30 days to it, if not, set it to 30 days from now
-          expiredAt: dayjs(subscription.expiredAt).isAfter(dayjs())
-            ? dayjs(subscription.expiredAt).add(30, "day").toDate()
-            : dayjs().add(30, "day").toDate()
+          planId: planId,
+          expiredAt:
+            expiredAt || append
+              ? dayjs(subscription.expiredAt)
+                  .add(days || 30, "day")
+                  .toDate()
+              : dayjs()
+                  .add(days || 30, "day")
+                  .toDate(),
+          cancelled,
+          cancelledAt: cancelled ? new Date() : undefined
         },
         {
           where: {
@@ -360,9 +394,10 @@ export class OfficialInstJolt707 {
         }
       )
     }
+
     await User.update(
       {
-        planId: 6,
+        planId: planId,
         subscriptionId: subscription.id
       },
       {
@@ -371,6 +406,11 @@ export class OfficialInstJolt707 {
         }
       }
     )
+    return subscription
+  }
+
+  async grantMonth(userId: number) {
+    await this.handleSubscription(userId, 6, undefined, 30, true, true)
     this.emitEvent(userId, 6, true)
   }
 

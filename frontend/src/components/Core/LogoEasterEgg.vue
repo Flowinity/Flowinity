@@ -30,7 +30,7 @@
         {{ $app.site.name || "TPU" }}
       </template>
       <v-hover v-if="event === 'pi'" v-slot="{ isHovering, props }">
-        <span class="ml-1" v-bind="props">
+        <span class="ml-3" v-bind="props">
           <template v-if="isHovering">
             <span style="font-size: 1.15em">
               {{ Math.PI }}

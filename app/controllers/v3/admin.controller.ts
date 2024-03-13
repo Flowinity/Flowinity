@@ -33,6 +33,7 @@ import { SetupControllerV3 } from "@app/controllers/v3/setup.controller"
 import { mergeDeep } from "@app/lib/deepMerge"
 import { OauthApp } from "@app/models/oauthApp.model"
 import { EmailNotificationService } from "@app/services/emailNotification.service"
+import { BanReason } from "@app/classes/graphql/user/ban"
 
 @Service()
 @Middleware({ type: "before" })
@@ -196,10 +197,19 @@ export class AdminControllerV3 {
     body: {
       id: number
       banned: boolean
+      banReasonType: BanReason | null
+      banReason: string | null
+      pendingDeletionDate: string | null
     }
   ) {
     if (!body.id) throw Errors.INVALID_PARAMETERS
-    await this.adminService.updateBanned(body.id, body.banned)
+    await this.adminService.updateBanned(
+      body.id,
+      body.banned,
+      body.banReason,
+      body.banReasonType,
+      body.pendingDeletionDate
+    )
   }
 
   @UseBefore(LowLevel)
@@ -424,10 +434,12 @@ export class AdminControllerV3 {
     body: {
       id: number
       planId: number
+      expiredAt: string
     }
   ) {
-    if (!body.id || !body.planId) throw Errors.INVALID_PARAMETERS
-    await this.adminService.updatePlanId(body.id, body.planId)
+    if (!body.id || !body.planId || !body.expiredAt)
+      throw Errors.INVALID_PARAMETERS
+    await this.adminService.updatePlanId(body.id, body.planId, body.expiredAt)
   }
 
   @UseBefore(HighLevel)

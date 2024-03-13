@@ -106,8 +106,8 @@
                     </v-btn>
                     <v-btn
                       v-if="user?.friend === FriendStatus.Accepted"
-                      icon
                       size="x-small"
+                      class="ml-2"
                       @click.stop="
                         $app.dialogs.nickname.userId = user?.id || 0;
                         $app.dialogs.nickname.value = true;
@@ -118,9 +118,52 @@
                         activator="parent"
                         location="top"
                       >
-                        Set friend nickname
+                        Set Friend Nickname
                       </v-tooltip>
-                      <v-icon>mdi-rename</v-icon>
+                      <v-icon class="mr-2">mdi-rename</v-icon>
+                      Set Nickname
+                    </v-btn>
+                    <v-btn
+                      v-if="friends && user.id !== $user.user?.id"
+                      size="x-small"
+                      class="ml-2"
+                      :color="friends.color"
+                      :loading="friendLoading"
+                      @click.stop="doFriendRequest"
+                    >
+                      <v-tooltip
+                        :eager="false"
+                        activator="parent"
+                        location="top"
+                      >
+                        {{ friends.text }}
+                      </v-tooltip>
+                      <v-icon class="mr-2">
+                        {{ friends.icon }}
+                      </v-icon>
+                      {{ friends.text }}
+                    </v-btn>
+                    <v-btn
+                      v-if="
+                        friends.status === FriendStatus.Accepted &&
+                        $experiments.experiments['COMMUNICATIONS']
+                      "
+                      size="x-small"
+                      class="ml-2"
+                      color="primary"
+                      shaped
+                      @click="chat"
+                      :loading="friendLoading"
+                    >
+                      <v-tooltip
+                        :eager="false"
+                        activator="parent"
+                        location="top"
+                      >
+                        Message
+                      </v-tooltip>
+                      <v-icon class="mr-2">mdi-message-processing</v-icon>
+                      Message
                     </v-btn>
                   </h1>
                   <UserBadges
@@ -136,34 +179,7 @@
               sm="auto"
               style="justify-content: flex-end"
             >
-              <v-card-text>
-                <v-btn
-                  v-if="friends"
-                  :color="friends.color"
-                  :loading="friendLoading"
-                  shaped
-                  @click="doFriendRequest"
-                >
-                  <v-icon class="mr-2">
-                    {{ friends.icon }}
-                  </v-icon>
-                  {{ friends.text }}
-                </v-btn>
-                <v-btn
-                  v-if="
-                    friends.status === FriendStatus.Accepted &&
-                    $experiments.experiments['COMMUNICATIONS']
-                  "
-                  :loading="friendLoading"
-                  class="ml-2"
-                  color="primary"
-                  shaped
-                  @click="chat"
-                >
-                  <v-icon class="mr-2">mdi-message-processing</v-icon>
-                  Message
-                </v-btn>
-              </v-card-text>
+              <v-card-text></v-card-text>
             </v-col>
           </v-row>
           <UserV3AddMenu

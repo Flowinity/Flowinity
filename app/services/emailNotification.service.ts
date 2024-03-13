@@ -1,5 +1,5 @@
 import { AdminService } from "@app/services/admin.service"
-import { Service } from "typedi"
+import { Container, Service } from "typedi"
 import { User } from "@app/models/user.model"
 import { Invite } from "@app/models/invite.model"
 
@@ -16,8 +16,8 @@ export class EmailNotificationService {
     })
 
     if (!user) return
-
-    this.adminService.sendEmail(
+    const adminService = Container.get(AdminService)
+    adminService.sendEmail(
       {
         body: {
           name: user.username,
@@ -49,8 +49,8 @@ export class EmailNotificationService {
     })
 
     if (!user) return
-
-    this.adminService.sendEmail(
+    const adminService = Container.get(AdminService)
+    adminService.sendEmail(
       {
         body: {
           name: user.username,
@@ -92,8 +92,8 @@ export class EmailNotificationService {
     })
 
     if (!user) return
-
-    this.adminService.sendEmail(
+    const adminService = Container.get(AdminService)
+    adminService.sendEmail(
       {
         body: {
           name: user.username,
@@ -130,7 +130,8 @@ export class EmailNotificationService {
       attributes: ["username"]
     })
     if (!user) return
-    this.adminService.sendEmail(
+    const adminService = Container.get(AdminService)
+    adminService.sendEmail(
       {
         body: {
           intro: `Your friend ${user.username} has invited you to join ${config.siteName}`,

@@ -190,7 +190,8 @@ export const useAppStore = defineStore("app", {
           this.platform === Platform.WEB &&
           (experimentsStore.experiments.DOWNLOAD_THE_APP_NAG === 1
             ? userStore.user?.emailVerified
-            : experimentsStore.experiments.DOWNLOAD_THE_APP_NAG === 2),
+            : experimentsStore.experiments.DOWNLOAD_THE_APP_NAG === 2) &&
+          !vuetify.display.mobile.value,
         EMAIL_VERIFICATION: !userStore.user?.emailVerified,
         ENABLE_AUTOSTART_APP_NAG:
           this.platform !== Platform.WEB &&

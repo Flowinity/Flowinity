@@ -122,7 +122,8 @@ export const authChecker: AuthChecker<Context> = async (
   if (
     (opts.accessLevel === AccessLevel.ADMIN && !user?.administrator) ||
     (opts.accessLevel === AccessLevel.MODERATOR &&
-      (!user?.administrator || !user?.moderator))
+      !user?.administrator &&
+      !user?.moderator)
   )
     throw new GraphQLError(
       "You need to be a TPU Instance Administrator to perform this action.",

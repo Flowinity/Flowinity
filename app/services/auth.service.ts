@@ -274,6 +274,11 @@ export class AuthService {
           ? new GraphQLError("Password is too short!")
           : Errors.PASSWORD_TOO_SHORT
       }
+      console.log(
+        invite?.email,
+        email,
+        !config.email.enabled || invite?.email === email
+      )
       const user = await User.create({
         username,
         password: await argon2.hash(password),
@@ -298,7 +303,7 @@ export class AuthService {
         const eligible = experiment !== 4 && experiment !== 0
         if (eligible) {
           const billingService = Container.get(OfficialInstJolt707)
-          await coreService.setExperiment(user.id, "IAF_NAG", 4)
+          await coreService.setExperiment(invite.userId, "IAF_NAG", 4)
           await billingService.grantMonth(invite.userId)
           await billingService.grantMonth(user.id)
         }
