@@ -130,13 +130,7 @@ export default defineComponent({
       if (this.$vuetify.display.xl) {
         return this.maxVisible;
       } else if (this.$vuetify.display.mobile) {
-        if (
-          !this.pages?.includes(1) &&
-          !this.pages?.includes(this.totalPages)
-        ) {
-          return 1;
-        }
-        return 2;
+        return 3;
       } else if (this.$vuetify.display.lg) {
         return Math.floor(this.maxVisible / 2);
       } else {
