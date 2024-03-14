@@ -130,7 +130,12 @@ export class ChatControllerV3 {
       for (const user of chat.users) {
         redis.json.del(`emoji:${user.userId}`)
       }
-      this.chatService.emitForAll(chatId, user.id, "emojiCreated", emoji)
+      this.chatService.emitForAll(
+        chatId,
+        user.id,
+        "emojiCreated",
+        emoji.toJSON()
+      )
       return emoji
     } else {
       throw Errors.INVALID_PARAMETERS

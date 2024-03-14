@@ -200,7 +200,8 @@ export class AuthService {
     username: string,
     password: string,
     totp: string | undefined,
-    platform: string,
+    platform: string | undefined,
+    version: string | undefined,
     ip: string,
     userAgent: string,
     gql: boolean = false
@@ -231,6 +232,7 @@ export class AuthService {
     this.sendSecurityEmail(
       validation.user,
       platform,
+      version,
       ip,
       userAgent,
       validation.alternatePassword?.name
@@ -344,13 +346,13 @@ export class AuthService {
 
   async sendSecurityEmail(
     user: LoginUser,
-    platform: string,
+    platform: string | undefined,
+    version: string | undefined,
     ip: string,
     userAgent: string,
     scopedPasswordName?: string
   ) {
     let friendlyPlatform: string
-
     switch (platform) {
       case "TPUvNEXT":
         friendlyPlatform = "Flowinity Web"
@@ -367,15 +369,15 @@ export class AuthService {
       case "TPUiOS":
         friendlyPlatform = "Flowinity iOS"
         break
+      case "FlowinityElectron":
+        friendlyPlatform = "Flowinity Desktop"
+        break
       default:
         friendlyPlatform = "Flowinity Web"
         break
     }
 
-    friendlyPlatform =
-      friendlyPlatform +
-      " v" +
-      platform.split("v")[platform.split("v").length - 1]
+    friendlyPlatform = `${friendlyPlatform}${version ? ` v${version}` : ""}`
 
     let browserAndOS = ""
 

@@ -499,7 +499,7 @@ export default async function setup(app) {
     for (const e of chat.emoji) {
       const emojiName = e.name;
 
-      if (emojiNameCount.hasOwnProperty(emojiName)) {
+      if (Object.prototype.hasOwnProperty.call(emojiNameCount, emojiName)) {
         emojiNameCount[emojiName]++;
 
         e.name = `${emojiName}~${emojiNameCount[emojiName]}`;

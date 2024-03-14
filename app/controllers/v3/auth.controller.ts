@@ -37,11 +37,13 @@ export class AuthControllerV3 {
     @Req() req: Request
   ) {
     if (!body.email || !body.password) throw Errors.INVALID_CREDENTIALS
+    console.log(client, version, req.headers)
     return await this.authService.login(
       body.email,
       body.password,
       body.code,
-      `${client || "Flowinity Web"} v${version || "4.0.0"}`,
+      client || "Flowinity Web",
+      version,
       req.ip || "0.0.0.0",
       req.headers["user-agent"] || "",
       false
