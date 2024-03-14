@@ -222,6 +222,7 @@ export class CollectionService {
     filters: CollectionFilter[] = [CollectionFilter.ALL],
     search: string = "",
     page: number = 1,
+    version: number = 3,
     limit?: number
   ): Promise<CollectionCache[] | PaginatedCollectionsResponse> {
     let collections: CollectionCache[] =
@@ -267,12 +268,14 @@ export class CollectionService {
       )
     }
 
-    return {
-      items: limit
-        ? collections.slice((page - 1) * limit, (page - 1) * limit + limit)
-        : collections,
-      pager: paginate(collections.length, page, limit)
-    } as PaginatedCollectionsResponse
+    return version === 3
+      ? ({
+          items: limit
+            ? collections.slice((page - 1) * limit, (page - 1) * limit + limit)
+            : collections,
+          pager: paginate(collections.length, page, limit)
+        } as PaginatedCollectionsResponse)
+      : collections
   }
 
   async getCollectionPermissions(

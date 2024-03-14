@@ -87,6 +87,7 @@ export class CollectionResolver {
       input?.filter || [CollectionFilter.ALL],
       input?.search || "",
       input?.page || 1,
+      3,
       input?.limit
     )) as PaginatedCollectionsResponse
   }

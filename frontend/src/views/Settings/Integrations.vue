@@ -39,12 +39,12 @@
     </v-container>
     <v-container>
       <small>
-        GitHub integration for Flowinity Gold is coming soon. Please email
+        GitHub integration for Flowinity Pro is coming soon. Please email
         <a href="mailto:troplo@troplo.com">troplo@troplo.com</a>
         with your GitHub account username from your Flowinity account if you are
         a recent sponsor and would like to claim your benefits. Please ensure
         the email address linked to your GitHub account is the same as the one
-        linked to your Flowinity account. Your Flowinity Gold expiration date
+        linked to your Flowinity account. Your Flowinity Pro expiration date
         will start when it's been added to your account and will last for as
         long as you are a sponsor.
       </small>

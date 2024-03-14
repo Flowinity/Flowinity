@@ -2,17 +2,19 @@ import {
   Body,
   Delete,
   Get,
+  HeaderParam,
   JsonController,
   Param,
   Patch,
   Post,
   QueryParam,
+  Req,
   Res,
   UploadedFile,
   UseBefore
 } from "routing-controllers"
 import { Service } from "typedi"
-import { Response } from "express"
+import { Response, Request } from "express"
 
 // Import Libs
 import { Auth } from "@app/lib/auth"
@@ -65,12 +67,18 @@ export class CollectionControllerV3 {
     @Auth("collections.view") user: User,
     @QueryParam("type")
     type: "owned" | "shared" | "write" | "configure" | "all" = "all",
-    @QueryParam("search") search: string = ""
+    @QueryParam("search") search: string = "",
+    @HeaderParam("x-tpu-client") client: string
   ): Promise<CollectionCache[]> {
+    // hack to avoid the Android Kotlin client from crashing due to incompatible API
+    const apiVersion = client === "android_kotlin" ? 3 : 2
+    // legacy APIv3 should use the Collection[] response, not the GraphQL paginated response to avoid breaking older clients
     return (await this.collectionService.getCollectionsFilter(
       user.id,
       [CollectionFilter.ALL],
-      search
+      search,
+      undefined,
+      apiVersion
     )) as CollectionCache[]
   }
 
