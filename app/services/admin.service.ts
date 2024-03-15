@@ -1010,7 +1010,6 @@ export class AdminService {
   async deleteOauth(appId: string, userId: number) {
     const app = await this.getOauthById(appId, userId)
     if (!app) throw Errors.NOT_FOUND
-    await app.destroy()
     await OauthUser.destroy({
       where: {
         oauthAppId: app.id
@@ -1027,5 +1026,6 @@ export class AdminService {
         oauthAppId: app.id
       }
     })
+    await app.destroy()
   }
 }
