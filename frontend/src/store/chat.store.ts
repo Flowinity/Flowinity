@@ -786,10 +786,10 @@ export const useChatStore = defineStore("chat", {
         return true;
       if (
         experimentsStore.experiments["COMMUNICATIONS_INLINE_SIDEBAR_HIRES"] &&
-        vuetify.display.lgAndUp.value
+        vuetify.display.mdAndDown.value
       )
         return false;
-      return !vuetify.display.lgAndDown.value;
+      return !vuetify.display.mdAndDown.value;
     },
     isCommunications() {
       return this.$router.currentRoute.value.path.startsWith(

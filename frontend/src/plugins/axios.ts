@@ -19,7 +19,7 @@ const ax = axios.create({
   headers: {
     Authorization: localStorage.getItem("token"),
     Accept: "application/json",
-    "X-TPU-Client": "TPUvNEXT",
+    "X-TPU-Client": window.electron ? "FlowinityElectron" : "TPUvNEXT",
     "X-TPU-Client-Version": import.meta.env.TPU_VERSION
   }
 }) as AxiosStaticWithAvoidance;

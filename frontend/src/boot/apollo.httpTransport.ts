@@ -77,7 +77,7 @@ export default function setup(app: App) {
       connectionParams: {
         token: localStorage.getItem("token") || "",
         "x-tpu-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": "TPUvNEXT"
+        "x-tpu-client": window.electron ? "FlowinityElectron" : "TPUvNEXT"
       }
     })
   );
@@ -89,7 +89,7 @@ export default function setup(app: App) {
       headers: {
         authorization: token,
         "x-tpu-client-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": "TPUvNEXT"
+        "x-tpu-client": window.electron ? "FlowinityElectron" : "TPUvNEXT"
       }
     });
     return forward(operation);

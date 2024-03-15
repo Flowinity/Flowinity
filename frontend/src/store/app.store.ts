@@ -463,7 +463,7 @@ export const useAppStore = defineStore("app", {
       const experiments = useExperimentsStore();
       return (
         experiments.experiments.RAIL_SIDEBAR &&
-        !vuetify.display.xlAndUp.value &&
+        !vuetify.display.lgAndUp.value &&
         !vuetify.display.mobile.value
       );
     },

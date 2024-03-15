@@ -134,7 +134,7 @@ export default function setup(app: App) {
       return {
         authorization: getToken(app),
         "x-tpu-client-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": "TPUvNEXT",
+        "x-tpu-client": window.electron ? "FlowinityElectron" : "TPUvNEXT",
         "x-tpu-resumable-state-id": crypto.randomUUID()
       };
     },
@@ -175,7 +175,7 @@ export default function setup(app: App) {
       headers: {
         authorization: token,
         "x-tpu-client-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": "TPUvNEXT"
+        "x-tpu-client": window.electron ? "FlowinityElectron" : "TPUvNEXT"
       }
     });
     return forward(operation);

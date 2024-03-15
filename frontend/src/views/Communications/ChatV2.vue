@@ -842,6 +842,7 @@ export default defineComponent({
       if (document.hasFocus()) {
         this.$chat.readChat();
       } else {
+        this.$chat.selectedChat.unread++;
         if (message.message.userId !== this.$user.user?.id) {
           this.$chat.sound();
           if (this.$app.platform !== Platform.WEB) {
@@ -952,6 +953,7 @@ export default defineComponent({
     document.body.classList.add("disable-overscroll");
     document.addEventListener("keydown", this.shortcutHandler);
     this.focusInterval = setInterval(this.onFocus, 2000);
+    window.addEventListener("focus", this.onFocus);
     // re-enable auto scroll for flex-direction: column-reverse;
     this.$sockets.chat.on("message", this.onMessage);
     this.$sockets.chat.on("embedResolution", this.onEmbedResolution);
@@ -969,6 +971,7 @@ export default defineComponent({
     document
       .querySelector(".message-input")
       ?.removeEventListener("resize", this.onResize);
+    window.removeEventListener("focus", this.onFocus);
     clearInterval(this.focusInterval);
     this.$sockets.chat.off("message", this.onMessage);
     this.$sockets.chat.off("typing", this.onTyping);
