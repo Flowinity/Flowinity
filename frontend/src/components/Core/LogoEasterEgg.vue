@@ -55,7 +55,7 @@
         size="23"
         style="bottom: 0.05em"
       >
-        mdi-numeric-7-box
+        mdi-numeric-8-box
       </v-icon>
       <v-img
         v-if="event === 'j'"
