@@ -116,8 +116,6 @@ export const useAppStore = defineStore("app", {
       gold: {
         value: false
       },
-      colubrina: false,
-      migrateWizard: false,
       quickSwitcher: false,
       upload: {
         value: false,

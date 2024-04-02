@@ -15,10 +15,6 @@
   />
   <InviteAFriend v-model="$app.dialogs.inviteAFriend" />
   <Feedback v-model="$app.dialogs.feedback" />
-  <Migrate
-    v-if="$experiments.experiments.PROJECT_MERGE"
-    v-model="$app.dialogs.migrateWizard"
-  />
   <Gold v-model="$app.dialogs.gold.value" />
   <v-app
     v-if="$user.user"
@@ -108,7 +104,6 @@ import RailBar from "@/layouts/default/RailBar.vue";
 import Gold from "@/components/Dashboard/Dialogs/Gold.vue";
 import InviteAFriend from "@/components/Dashboard/Dialogs/InviteAFriend.vue";
 import Feedback from "@/components/Dashboard/Dialogs/Feedback.vue";
-import Migrate from "@/components/Dashboard/Dialogs/Migrate.vue";
 import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
 import BlockUserDialog from "@/components/Users/Dialogs/Block.vue";
 import NetworkInspector from "@/components/Dev/Dialogs/NetworkInspector.vue";
@@ -136,7 +131,6 @@ export default defineComponent({
     Gold,
     InviteAFriend,
     Feedback,
-    Migrate,
     PrivacyPolicyDialog,
     BlockUserDialog
   },

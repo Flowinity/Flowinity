@@ -1,5 +1,4 @@
 <template>
-  <ColubrinaTPU v-model="$app.dialogs.colubrina"/>
   <div class="register-hero">
     <div :class="{ 'mx-5 mobile': $vuetify.display.mobile }" class="hero-body">
       <div class="title">
@@ -120,7 +119,6 @@
 <script lang="ts">
 import PromoCard from "@/components/Home/PromoCard.vue";
 import { defineComponent } from "vue";
-import ColubrinaTPU from "@/components/Home/Dialogs/ColubrinaTPU.vue";
 import HoverChip from "@/components/Core/HoverChip.vue";
 import DownloadButton from "@/components/Downloads/DownloadButton.vue";
 import { Platform } from "@/store/app.store";
@@ -134,7 +132,7 @@ export default defineComponent({
       return Platform
     }
   } ,
-  components: {DownloadButton , HoverChip, ColubrinaTPU, PromoCard },
+  components: {DownloadButton , HoverChip, PromoCard },
   data() {
     return {
       email: "",
@@ -176,9 +174,6 @@ export default defineComponent({
       }
     }
     this.$app.title = "Welcome";
-    if (this.$route.query.ref === "colubrina") {
-      this.$app.dialogs.colubrina = true;
-    }
   },
   beforeUnmount() {
     if (this.sloganInterval !== undefined) {

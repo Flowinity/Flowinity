@@ -200,9 +200,6 @@ export default defineComponent({
             type: TYPE.SUCCESS
           }
         );
-        if (this.$route.query.ref === "colubrina") {
-          this.$app.dialogs.migrateWizard = true;
-        }
         this.$user.resendVerificationEmail();
       } catch {
         this.loading = false;
