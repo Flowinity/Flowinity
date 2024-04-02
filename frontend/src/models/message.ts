@@ -20,7 +20,6 @@ export interface Message {
   replyId?: number;
   tpuUser?: User | null;
   reply?: Message;
-  legacyUser?: User | null;
   user?: User | null;
   pending?: boolean;
   error?: boolean;

@@ -8,6 +8,5 @@ export interface ChatAssociation {
   lastRead: number;
   notifications: "all" | "none" | "mentions";
   tpuUser: User | null;
-  legacyUser: User | null;
   user: User;
 }
