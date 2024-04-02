@@ -58,7 +58,6 @@ export const ECoreStateQuery = gql`
       icon
       createdAt
       updatedAt
-      legacyUserId
       invites {
         id
         userId
@@ -78,7 +77,6 @@ export const ECoreStateQuery = gql`
         createdAt
         lastRead
         notifications
-        legacyUserId
       }
       users {
         id
@@ -87,7 +85,6 @@ export const ECoreStateQuery = gql`
         rank
         createdAt
         lastRead
-        legacyUserId
         ranksMap
       }
       _redisSortDate

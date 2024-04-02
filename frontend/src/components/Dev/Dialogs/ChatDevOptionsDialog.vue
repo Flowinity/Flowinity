@@ -36,12 +36,12 @@
       <p>associationId: {{ $chat.selectedChat.association.id }}</p>
       <p>unread: {{ $chat.totalUnread }}</p>
       <p>group type: {{ $chat.selectedChat.type }}</p>
-      <p v-if="legacyUsers.length" style="color: rgb(var(--v-theme-error))">
-        Colubrina legacy users: {{ legacyUsers.length }}
+      <p v-if="realUsers.length" style="color: rgb(var(--v-theme-error))">
+        Colubrina legacy users: {{ realUsers.length }}
       </p>
       <p v-if="realUsers.length">Real users: {{ realUsers.length }}</p>
       <p>
-        Total (real + legacy) users: {{ realUsers.length + legacyUsers.length }}
+        Total (real + legacy) users: {{ realUsers.length + realUsers.length }}
       </p>
       <p
         v-if="$chat.selectedChat.messages"
@@ -67,17 +67,10 @@ import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
 import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
-  name: "ChatDevOptions",
   components: { Overline, DevDialog },
-  data() {
-    return {};
-  },
   computed: {
-    legacyUsers() {
-      return this.$chat.selectedChat.users.filter((user) => user.legacyUserId);
-    },
     realUsers() {
-      return this.$chat.selectedChat.users.filter((user) => !user.legacyUserId);
+      return this.$chat.selectedChat.users;
     }
   }
 });

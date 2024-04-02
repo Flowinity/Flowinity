@@ -21,7 +21,6 @@ export interface Chat {
   icon: string;
   createdAt: Date;
   updatedAt: Date;
-  legacyUserId: number;
   user: User;
   legacyUser: User;
   association: ChatAssociation;

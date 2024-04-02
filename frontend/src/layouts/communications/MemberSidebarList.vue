@@ -142,7 +142,6 @@
           <v-list-item
             v-for="association in group.users"
             :key="association.id"
-            :subtitle="association.legacyUser ? 'Legacy User' : undefined"
             :style="{
               color: $chat.getRankColor(
                 association.ranksMap,
@@ -168,9 +167,6 @@
               >
                 BOT
               </v-chip>
-            </template>
-            <template v-if="association.legacyUserId" #subtitle>
-              {{ $t("chats.roles.legacyUser") }}
             </template>
             <template #prepend>
               <UserAvatar
@@ -273,7 +269,6 @@ import {
 import MessageSkeleton from "@/components/Communications/MessageSkeleton.vue";
 
 export default defineComponent({
-  name: "MemberSidebarList",
   components: {
     MessageSkeleton,
     UserSidebarOptions,
@@ -346,8 +341,7 @@ export default defineComponent({
             .filter((user) => {
               return (
                 this.$user.users[user.userId]?.status !== UserStatus.Offline &&
-                !user.ranksMap.length &&
-                !user.legacyUserId
+                !user.ranksMap.length
               );
             })
             .map((user) => {
