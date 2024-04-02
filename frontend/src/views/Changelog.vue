@@ -29,7 +29,6 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Changelog",
   data() {
     return {
       tags: {

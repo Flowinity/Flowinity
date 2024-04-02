@@ -16,7 +16,7 @@ const routes = [
       {
         path: "/communications",
         name: "Communications",
-        component: () => import("@/layouts/communications/Colubrina.vue"),
+        component: () => import("@/layouts/communications/Comms.vue"),
         redirect: "/communications/home",
         children: [
           {
