@@ -36,13 +36,7 @@
       <p>associationId: {{ $chat.selectedChat.association.id }}</p>
       <p>unread: {{ $chat.totalUnread }}</p>
       <p>group type: {{ $chat.selectedChat.type }}</p>
-      <p v-if="realUsers.length" style="color: rgb(var(--v-theme-error))">
-        Colubrina legacy users: {{ realUsers.length }}
-      </p>
       <p v-if="realUsers.length">Real users: {{ realUsers.length }}</p>
-      <p>
-        Total (real + legacy) users: {{ realUsers.length + realUsers.length }}
-      </p>
       <p
         v-if="$chat.selectedChat.messages"
         style="color: rgb(var(--v-theme-success))"
