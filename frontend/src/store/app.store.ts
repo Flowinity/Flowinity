@@ -12,16 +12,14 @@ import { useWorkspacesStore } from "@/store/workspaces.store";
 import vuetify from "@/plugins/vuetify";
 import { useExperimentsStore } from "@/store/experiments.store";
 import i18nObject, { i18n } from "@/plugins/i18n";
-import { useRoute } from "vue-router";
 import { SidebarItem } from "@/types/sidebar";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
-import { Chat, CoreState, Upload } from "@/gql/graphql";
+import { CoreState, Upload } from "@/gql/graphql";
 import { useFriendsStore } from "@/store/friends.store";
 import { useMailStore } from "@/store/mail.store";
 import { useApolloClient } from "@vue/apollo-composable";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import { h } from "vue";
-import experiments from "@/components/Dev/Dialogs/Experiments.vue";
 import { CoreStateQuery } from "@/graphql/core/stateOnly.graphql";
 
 export enum Platform {
@@ -116,6 +114,7 @@ export const useAppStore = defineStore("app", {
       gold: {
         value: false
       },
+      colubrina: false,
       quickSwitcher: false,
       upload: {
         value: false,
@@ -408,8 +407,8 @@ export const useAppStore = defineStore("app", {
             ?.includes("Workspace")
             ? "/workspaces"
             : state.lastNote
-              ? `/workspaces/notes/${state.lastNote}`
-              : "/workspaces",
+            ? `/workspaces/notes/${state.lastNote}`
+            : "/workspaces",
           icon: "mdi-folder-account",
           scope: "workspaces.view",
           experimentsRequired: ["INTERACTIVE_NOTES"]
@@ -650,12 +649,9 @@ export const useAppStore = defineStore("app", {
         this.connected = true;
       });
       const user = useUserStore();
-      setInterval(
-        () => {
-          this.getWeather();
-        },
-        1000 * 60 * 15
-      );
+      setInterval(() => {
+        this.getWeather();
+      }, 1000 * 60 * 15);
       this._postInitRan = true;
       this.populateQuickSwitcher();
       this.getWeather();
@@ -692,8 +688,9 @@ export const useAppStore = defineStore("app", {
         (document.createElement("link") as HTMLLinkElement);
       link.type = "image/x-icon";
       link.rel = "shortcut icon";
-      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${user
-        .user?.username}&unread=${chat.totalUnread || 0}&debug=${
+      link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
+        user.user?.username
+      }&unread=${chat.totalUnread || 0}&debug=${
         experimentsStore.experiments.DEBUG_FAVICON
       }&client=TPUvNEXT`;
       document.head.appendChild(link);

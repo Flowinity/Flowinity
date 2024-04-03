@@ -264,14 +264,12 @@ export default defineComponent({
       switch (this.key) {
         case "@":
           if (!this.$chat.selectedChat?.users) return [];
-          return this.$chat.selectedChat?.users
-            .filter((user) => !user.legacyUserId)
-            .map((user: any) => {
-              return {
-                label: this.$user.users[user.userId]?.username,
-                value: this.$user.users[user.userId]?.id
-              };
-            });
+          return this.$chat.selectedChat?.users.map((user: any) => {
+            return {
+              label: this.$user.users[user.userId]?.username,
+              value: this.$user.users[user.userId]?.id
+            };
+          });
         case ":":
           return [
             ...this.$chat.emoji.map((emoji) => {

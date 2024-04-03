@@ -20,12 +20,7 @@
   </core-sidebar>
 </template>
 
-<script lang="ts">
-import { defineComponent, watch } from "vue";
+<script setup lang="ts">
 import MemberSidebarList from "@/layouts/communications/MemberSidebarList.vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
-
-export default defineComponent({
-  components: { CoreSidebar, MemberSidebarList }
-});
 </script>

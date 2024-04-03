@@ -18,10 +18,8 @@ export interface Message {
   edited: boolean;
   editedAt?: Date;
   replyId?: number;
-  legacyUserId?: number;
   tpuUser?: User | null;
   reply?: Message;
-  legacyUser?: User | null;
   user?: User | null;
   pending?: boolean;
   error?: boolean;

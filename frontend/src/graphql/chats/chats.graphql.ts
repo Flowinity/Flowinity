@@ -22,7 +22,6 @@ export const ChatsQuery = gql`
       icon
       createdAt
       updatedAt
-      legacyUserId
       _redisSortDate
       usersCount
       recipient {
@@ -38,7 +37,6 @@ export const ChatsQuery = gql`
         createdAt
         lastRead
         notifications
-        legacyUserId
       }
     }
   }
@@ -55,7 +53,6 @@ export const ChatQuery = gql`
         rank
         createdAt
         lastRead
-        legacyUserId
         ranksMap
       }
       ranks {
@@ -105,7 +102,6 @@ export const _OldChatsQuery = gql`
       icon
       createdAt
       updatedAt
-      legacyUserId
       invites {
         id
         userId
@@ -125,7 +121,6 @@ export const _OldChatsQuery = gql`
         createdAt
         lastRead
         notifications
-        legacyUserId
       }
       users {
         id
@@ -134,7 +129,6 @@ export const _OldChatsQuery = gql`
         rank
         createdAt
         lastRead
-        legacyUserId
         ranksMap
       }
       _redisSortDate

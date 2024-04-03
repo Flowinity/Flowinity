@@ -16204,6 +16204,30 @@
         "description": null,
         "fields": [
           {
+            "name": "adminPlans",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "Plan",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "autoCollectRule",
             "description": null,
             "args": [
@@ -19279,11 +19303,23 @@
             "description": null,
             "args": [],
             "type": {
+              "kind": "SCALAR",
+              "name": "DateTimeISO",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createdAt",
+            "description": null,
+            "args": [],
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "DateTimeISO",
+                "name": "Date",
                 "ofType": null
               }
             },
@@ -19295,13 +19331,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTimeISO",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "DateTimeISO",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -19311,13 +19343,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "SubscriptionMetadata",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "SubscriptionMetadata",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -19331,7 +19359,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -19347,7 +19375,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -19359,11 +19387,23 @@
             "description": null,
             "args": [],
             "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updatedAt",
+            "description": null,
+            "args": [],
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Date",
                 "ofType": null
               }
             },
@@ -19391,7 +19431,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Int",
                 "ofType": null
               }
             },

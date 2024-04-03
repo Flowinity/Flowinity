@@ -74,7 +74,6 @@ export const StandardMessageFragment = gql`
       content
       userId
       id
-      legacyUserId
       embeds {
         metadata {
           type
@@ -83,21 +82,11 @@ export const StandardMessageFragment = gql`
           type
         }
       }
-      legacyUser {
-        username
-        id
-        avatar
-      }
       user {
         username
         id
         avatar
       }
-    }
-    legacyUser {
-      username
-      id
-      avatar
     }
     user {
       username
@@ -107,7 +96,6 @@ export const StandardMessageFragment = gql`
     edited
     editedAt
     replyId
-    legacyUserId
     pinned
     readReceipts {
       associationId

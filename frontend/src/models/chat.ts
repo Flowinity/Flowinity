@@ -2,10 +2,6 @@ import { User } from "@/models/user";
 import { ChatAssociation } from "@/models/chatAssociation";
 import { Message } from "@/models/message";
 
-export interface Recipient extends User {
-  legacyUser: boolean;
-}
-
 export interface Typing {
   chatId: number;
   userId: number;
@@ -21,13 +17,11 @@ export interface Chat {
   icon: string;
   createdAt: Date;
   updatedAt: Date;
-  legacyUserId: number;
   user: User;
-  legacyUser: User;
   association: ChatAssociation;
   users: ChatAssociation[];
   messages: Message[];
-  recipient: Recipient;
+  recipient: User;
   unread: number;
   typers: Typing[];
 }
