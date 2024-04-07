@@ -49,22 +49,8 @@ export default {
         return undefined;
       }
     }
-    if (
-      chat.type === "direct" &&
-      chat.recipient?.avatar &&
-      chat.recipient.avatar.length > 20
-    ) {
-      return (
-        "https://colubrina.troplo.com/usercontent/" + chat.recipient.avatar
-      );
-    } else if (chat.type === "direct" && chat.recipient?.avatar) {
+    if (chat.type === "direct" && chat.recipient?.avatar) {
       return app.domain + chat.recipient.avatar;
-    } else if (
-      chat.type === "direct" &&
-      !chat.recipient?.avatar &&
-      chat.recipient?.legacyUser
-    ) {
-      return undefined;
     } else if (chat.type === "group" && chat.icon?.length > 20) {
       return "https://colubrina.troplo.com/usercontent/" + chat.icon;
     } else if (chat.type === "group" && chat.icon) {
