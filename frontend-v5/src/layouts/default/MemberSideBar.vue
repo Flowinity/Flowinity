@@ -44,8 +44,7 @@ const ranks = computed(() => {
         .filter((user) => {
           return (
             userStore.users[user.userId!]?.status !== UserStatus.Offline &&
-            !user.ranksMap.length &&
-            !user.legacyUserId
+            !user.ranksMap.length
           );
         })
         .map((user) => {

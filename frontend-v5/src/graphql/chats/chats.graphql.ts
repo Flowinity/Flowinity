@@ -22,7 +22,6 @@ export const ChatsQuery = gql`
       icon
       createdAt
       updatedAt
-      legacyUserId
       invites {
         id
         userId
@@ -42,7 +41,6 @@ export const ChatsQuery = gql`
         createdAt
         lastRead
         notifications
-        legacyUserId
       }
       users {
         id
@@ -51,7 +49,6 @@ export const ChatsQuery = gql`
         rank
         createdAt
         lastRead
-        legacyUserId
         ranksMap
       }
       _redisSortDate
