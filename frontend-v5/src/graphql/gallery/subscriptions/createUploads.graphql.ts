@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const UploadsSubscription = gql`
   subscription CreateUploads {
-    createUpload {
+    onCreateUpload {
       upload {
         id
         createdAt

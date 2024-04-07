@@ -16,7 +16,6 @@ import {
   CancelTypingSubscription,
   TypingSubscription
 } from "@/graphql/chats/subscriptions/typing.graphql";
-import { EmbedResolutionSubscription } from "@/graphql/chats/subscriptions/embedResolution.graphql";
 import { EditMessageSubscription } from "@/graphql/chats/subscriptions/editMessage.graphql";
 import { DeleteMessageSubscription } from "@/graphql/chats/subscriptions/deleteMessage.graphql";
 
@@ -122,17 +121,14 @@ export default function setup() {
       chatId: onTyping.chatId,
       userId: onTyping.user.id,
       expires: onTyping.expires,
-      timeout: setTimeout(
-        () => {
-          const index = chatStore.typers.findIndex(
-            (t) => t.chatId === onTyping.chatId && t.userId === onTyping.user.id
-          );
-          if (index !== -1) {
-            chatStore.typers.splice(index, 1);
-          }
-        },
-        new Date(onTyping.expires).getTime() - Date.now()
-      )
+      timeout: setTimeout(() => {
+        const index = chatStore.typers.findIndex(
+          (t) => t.chatId === onTyping.chatId && t.userId === onTyping.user.id
+        );
+        if (index !== -1) {
+          chatStore.typers.splice(index, 1);
+        }
+      }, new Date(onTyping.expires).getTime() - Date.now())
     });
   });
 

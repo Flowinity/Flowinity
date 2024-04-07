@@ -69,7 +69,7 @@ import type { AxiosProgressEvent } from "axios";
 import { useToast } from "vue-toastification";
 import axios from "@/plugins/axios.ts";
 import { useFriendsStore } from "@/stores/friends.store";
-import RiWebhook from "@/components/Icons/RiWebhook.vue";
+import RiWebhook from "@/components/icons/RiWebhook.vue";
 import { useMailStore } from "@/stores/mail.store";
 import { useWorkspacesStore } from "@/stores/workspaces.store";
 
@@ -216,8 +216,9 @@ export const useAppStore = defineStore("app", () => {
       (document.createElement("link") as HTMLLinkElement);
     link.type = "image/x-icon";
     link.rel = "shortcut icon";
-    link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${user
-      .user?.username}&unread=${chat.unread || 0}&debug=${
+    link.href = `/api/v3/user/favicon.png?cache=${Date.now()}&username=${
+      user.user?.username
+    }&unread=${chat.unread || 0}&debug=${
       experimentsStore.experiments.DEBUG_FAVICON
     }&client=Flowinity5`;
     document.head.appendChild(link);

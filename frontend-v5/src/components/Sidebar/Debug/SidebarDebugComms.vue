@@ -35,14 +35,7 @@
     <p>associationId: {{ chatStore.selectedChat.association!.id }}</p>
     <p>unread: {{ chatStore.unread }}</p>
     <p>group type: {{ chatStore.selectedChat.type }}</p>
-    <p v-if="legacyUsers!.length">
-      Colubrina legacy users: {{ legacyUsers!.length }}
-    </p>
     <p v-if="realUsers!.length">Real users: {{ realUsers!.length }}</p>
-    <p>
-      Total (real + legacy) users:
-      {{ realUsers!.length + legacyUsers!.length }}
-    </p>
     <p v-if="chatStore.selectedChat.messages">Chat loaded</p>
     <p v-else>Chat not loaded</p>
     <p v-if="chatStore.selectedChat.id.toString().startsWith('-')">
@@ -55,19 +48,9 @@
 import TpuOverline from "@/components/Framework/Typography/TpuOverline.vue";
 
 import { useChatStore } from "@/stores/chat.store";
-import { useUserStore } from "@/stores/user.store";
 import { computed } from "vue";
 
 const chatStore = useChatStore();
-const userStore = useUserStore();
 
-const legacyUsers = computed(
-  () => chatStore.selectedChat?.users.filter((user) => user.legacyUserId)
-);
-
-const realUsers = computed(
-  () => chatStore.selectedChat?.users.filter((user) => !user.legacyUserId)
-);
+const realUsers = computed(() => chatStore.selectedChat?.users);
 </script>
-
-<style scoped></style>

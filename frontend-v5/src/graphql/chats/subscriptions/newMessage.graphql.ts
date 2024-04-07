@@ -15,7 +15,6 @@ export const NewMessageSubscription = gql`
         edited
         editedAt
         replyId
-        legacyUserId
         pinned
         pending
         error
@@ -36,15 +35,6 @@ export const NewMessageSubscription = gql`
             avatar
             bot
           }
-          legacyUser {
-            username
-            id
-            createdAt
-            administrator
-            moderator
-            avatar
-            bot
-          }
           tpuUser {
             username
             id
@@ -56,15 +46,6 @@ export const NewMessageSubscription = gql`
           }
         }
         tpuUser {
-          username
-          id
-          createdAt
-          administrator
-          moderator
-          avatar
-          bot
-        }
-        legacyUser {
           username
           id
           createdAt
