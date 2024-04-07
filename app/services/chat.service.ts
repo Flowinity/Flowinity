@@ -1559,7 +1559,9 @@ export class ChatService {
     )
     if (recipient) {
       return {
-        ...recipient.user.toJSON(),
+        ...("toJSON" in recipient.user
+          ? recipient.user.toJSON()
+          : recipient.user),
         legacyUser: !!recipient.legacyUser
       }
     } else {
