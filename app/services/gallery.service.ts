@@ -29,6 +29,7 @@ import { GraphQLError } from "graphql/error"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import { Response } from "express"
 import JSZip from "jszip"
+import redisClient from "@app/redis"
 
 @Service()
 export class GalleryService {
@@ -124,6 +125,40 @@ export class GalleryService {
       pubSub.publish(`DELETE_UPLOAD:${userId}`, id)
       socket.of(SocketNamespaces.GALLERY).to(userId).emit("delete", id)
 
+      // Clear out the user AutoCollects cache
+      let autoCollects = (await redisClient.json.get(
+        `autoCollects:${upload.userId}`
+      )) as Collection[] | null
+      if (autoCollects?.length) {
+        autoCollects = autoCollects.map((collection) => {
+          // if there's a difference emit a WS
+          if (
+            collection.autoCollectApprovals.find(
+              (approval) => approval.uploadId === id
+            )
+          ) {
+            socket
+              .of(SocketNamespaces.AUTO_COLLECTS)
+              .to(upload.userId)
+              .emit("autoCollectApproval", {
+                type: "deny"
+              })
+          }
+          collection.autoCollectApprovals =
+            collection.autoCollectApprovals.filter(
+              (approval) => approval.uploadId !== id
+            )
+          return collection
+        })
+        autoCollects = autoCollects.filter(
+          (collection) => collection.autoCollectApprovals.length
+        )
+        await redisClient.json.set(
+          `autoCollects:${upload.userId}`,
+          "$",
+          autoCollects as any
+        )
+      }
       return true
     } else {
       return false
@@ -197,10 +232,10 @@ export class GalleryService {
             input.type === Type.COLLECTION
               ? { model: CollectionItem, as: "item" }
               : input.type === Type.STARRED
-              ? { model: Star, as: "starred" }
-              : input.type === Type.AUTO_COLLECT
-              ? { model: AutoCollectApproval, as: "autoCollectApproval" }
-              : {},
+                ? { model: Star, as: "starred" }
+                : input.type === Type.AUTO_COLLECT
+                  ? { model: AutoCollectApproval, as: "autoCollectApproval" }
+                  : {},
             "createdAt",
             input.order || "DESC"
           ]
@@ -260,8 +295,8 @@ export class GalleryService {
         input.type === Type.PERSONAL || input.filters?.includes(Filter.OWNED)
           ? id
           : input.filters?.includes(Filter.SHARED)
-          ? { [Op.not]: id }
-          : undefined,
+            ? { [Op.not]: id }
+            : undefined,
       [Op.or]: [
         input.filters?.includes(Filter.INCLUDE_METADATA)
           ? [{ textMetadata: { [Op.like]: "%" + input.search + "%" } }]
