@@ -8,7 +8,7 @@
       dialogs.delete.value = false;
     "
   />
-  <div class="container">
+  <div class="container" @dragover="dragDropHandler" @drop="dragDropHandler">
     <v-menu
       :attach="$chat.dialogs.emojiMenu.bindingElement"
       v-model="$chat.dialogs.emojiMenu.value"

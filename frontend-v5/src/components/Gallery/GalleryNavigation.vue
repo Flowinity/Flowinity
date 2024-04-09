@@ -12,8 +12,6 @@
       :label="t('gallery.options.filter')"
       class="cursor-default"
       :custom-text="filterText"
-      :options="filterOptions"
-      @update:model-value="setFilter"
     >
       <div class="flex-col flex-grow w-full">
         <div class="w-full">

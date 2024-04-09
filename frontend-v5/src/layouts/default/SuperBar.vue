@@ -44,7 +44,6 @@
             :key="item.id"
             :selected="appStore.navigation.mode === item.id"
             @click="appStore.navigation.mode = item.id"
-            class="text-gray"
             :badge="item.badge"
             draggable="true"
             @dragstart="handleDragStart"
@@ -88,7 +87,6 @@
             :key="item.id"
             :selected="appStore.navigation.mode === item.id"
             @click="appStore.navigation.mode = item.id"
-            class="text-gray"
             highlighted
           >
             <component

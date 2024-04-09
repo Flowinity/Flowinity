@@ -69,7 +69,7 @@ import type { AxiosProgressEvent } from "axios";
 import { useToast } from "vue-toastification";
 import axios from "@/plugins/axios.ts";
 import { useFriendsStore } from "@/stores/friends.store";
-import RiWebhook from "@/components/icons/RiWebhook.vue";
+import RiWebhook from "@/components/Icons/RiWebhook.vue";
 import { useMailStore } from "@/stores/mail.store";
 import { useWorkspacesStore } from "@/stores/workspaces.store";
 
