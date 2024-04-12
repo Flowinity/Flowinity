@@ -36,7 +36,6 @@ import { Op } from "sequelize"
 import { ChatRank } from "@app/models/chatRank.model"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { User } from "@app/models/user.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
 import { AddBotToChatInput } from "@app/classes/graphql/developers/addBotToChat"
 import { OauthService } from "@app/services/oauth.service"
 import { OauthUser } from "@app/models/oauthUser.model"
@@ -70,10 +69,6 @@ export class ChatAssociationResolver {
   user(
     @Root() chatAssociation: ChatAssociation
   ): Promise<PartialUserBase | null> {
-    if (!chatAssociation.userId)
-      return chatAssociation.$get("legacyUser", {
-        attributes: partialUserBase
-      })
     return chatAssociation.$get("tpuUser", {
       attributes: partialUserBase
     })
@@ -86,17 +81,6 @@ export class ChatAssociationResolver {
     @Root() chatAssociation: ChatAssociation
   ): Promise<PartialUserBase | null> {
     return chatAssociation.$get("tpuUser", {
-      attributes: partialUserBase
-    })
-  }
-
-  @FieldResolver(() => PartialUserBase, {
-    nullable: true
-  })
-  legacyUser(
-    @Root() chatAssociation: ChatAssociation
-  ): Promise<PartialUserBase | null> {
-    return chatAssociation.$get("legacyUser", {
       attributes: partialUserBase
     })
   }
@@ -456,11 +440,6 @@ export class ChatAssociationResolver {
           model: User,
           as: "tpuUser",
           attributes: partialUserBase
-        },
-        {
-          model: LegacyUser,
-          as: "legacyUser",
-          attributes: partialUserBase
         }
       ]
     })
@@ -475,11 +454,6 @@ export class ChatAssociationResolver {
         {
           model: User,
           as: "tpuUser",
-          attributes: partialUserBase
-        },
-        {
-          model: LegacyUser,
-          as: "legacyUser",
           attributes: partialUserBase
         },
         {

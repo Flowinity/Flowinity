@@ -8,14 +8,5 @@ module.exports = {
       allowNull: false,
       defaultValue: 0
     })
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

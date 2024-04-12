@@ -72,7 +72,6 @@ CREATE TABLE `ChatAssociations`
     `lastRead`      integer           DEFAULT NULL,
     `notifications` text     NOT NULL DEFAULT 'all',
     `createdAt`     datetime NOT NULL,
-    `legacyUserId`  integer           DEFAULT NULL,
     `updatedAt`     datetime NOT NULL,
     `identifier`    varchar(255)      DEFAULT NULL UNIQUE
 );
@@ -85,7 +84,6 @@ CREATE TABLE `Chats`
     `icon`         varchar(255) DEFAULT NULL,
     `createdAt`    datetime     NOT NULL,
     `updatedAt`    datetime     NOT NULL,
-    `legacyUserId` integer      DEFAULT NULL,
     `intent`       varchar(255) DEFAULT NULL
 );
 CREATE TABLE `CollectionItems`
@@ -239,28 +237,12 @@ CREATE TABLE `Invites`
     `registerUserId` integer DEFAULT NULL,
     `adminId`        integer DEFAULT NULL
 );
-CREATE TABLE `LegacyUsers`
-(
-    `id`            integer      NOT NULL UNIQUE PRIMARY KEY AUTOINCREMENT,
-    `username`      varchar(255) NOT NULL,
-    `name`          varchar(255) NOT NULL,
-    `email`         varchar(255) NOT NULL,
-    `password`      varchar(255) NOT NULL,
-    `createdAt`     datetime     NOT NULL,
-    `updatedAt`     datetime     NOT NULL,
-    `emailVerified` integer      NOT NULL DEFAULT 0,
-    `admin`         integer      NOT NULL DEFAULT 0,
-    `status`        text         NOT NULL DEFAULT 'offline',
-    `storedStatus`  text         NOT NULL DEFAULT 'online',
-    `avatar`        varchar(255)          DEFAULT NULL
-);
 CREATE TABLE `MessageAttachments`
 (
     `id`           integer  NOT NULL UNIQUE PRIMARY KEY AUTOINCREMENT,
     `messageId`    integer  NOT NULL,
     `attachmentId` integer  NOT NULL,
     `userId`       integer DEFAULT NULL,
-    `legacyUserId` integer DEFAULT NULL,
     `createdAt`    datetime NOT NULL,
     `updatedAt`    datetime NOT NULL
 );
@@ -279,7 +261,6 @@ CREATE TABLE `Messages`
     `edited`       integer  DEFAULT 0,
     `editedAt`     datetime DEFAULT NULL,
     `replyId`      integer  DEFAULT NULL,
-    `legacyUserId` integer  DEFAULT NULL,
     `pinned`       integer  DEFAULT 0
 );
 CREATE TABLE `Notes`

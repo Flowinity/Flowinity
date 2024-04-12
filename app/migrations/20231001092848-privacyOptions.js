@@ -15,14 +15,5 @@ module.exports = {
       type: Sequelize.ENUM(["EVERYONE", "NOBODY"]),
       defaultValue: "EVERYONE"
     })
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

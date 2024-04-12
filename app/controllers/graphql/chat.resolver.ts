@@ -121,13 +121,6 @@ export class ChatResolver {
     }) as Promise<PartialUserBase>
   }
 
-  @FieldResolver(() => PartialUserBase)
-  legacyUser(@Root() chat: Chat): Promise<PartialUserBase> {
-    return chat.$get("legacyUser", {
-      attributes: partialUserBase
-    }) as Promise<PartialUserBase>
-  }
-
   @FieldResolver(() => [ChatAssociation])
   users(@Root() chat: Chat) {
     return chat.$get("users")
@@ -147,7 +140,7 @@ export class ChatResolver {
   ): Promise<PartialUserBase | null> {
     if (chat.type !== "direct" || !ctx.user) return Promise.resolve(null)
     const user = ChatAssociation.findOne({
-      attributes: ["userId", "legacyUserId", "user"],
+      attributes: ["userId", "user"],
       where: {
         chatId: chat.id,
         userId: {

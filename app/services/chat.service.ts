@@ -97,7 +97,6 @@ export class ChatService {
         "id",
         "userId",
         "rank",
-        "legacyUserId",
         "user",
         "lastRead",
         "createdAt",
@@ -148,7 +147,6 @@ export class ChatService {
                 "id",
                 "userId",
                 "rank",
-                "legacyUserId",
                 "user",
                 "lastRead",
                 "createdAt",
@@ -1187,7 +1185,6 @@ export class ChatService {
             "id",
             "userId",
             "rank",
-            "legacyUserId",
             "user",
             "lastRead",
             "createdAt",
@@ -1558,10 +1555,7 @@ export class ChatService {
       (a: ChatAssociation) => a.userId !== userId
     )
     if (recipient) {
-      return {
-        ...(recipient?.user?.toJSON() || recipient?.user),
-        legacyUser: !!recipient.legacyUser
-      }
+      return recipient?.user?.toJSON() || recipient?.user
     } else {
       const intent = chat.intent
         ?.split("-")
@@ -1581,10 +1575,7 @@ export class ChatService {
           ]
         })
         if (!user) return null
-        return {
-          ...user.toJSON(),
-          legacyUser: false
-        }
+        return user.toJSON()
       } else {
         return null
       }
@@ -1615,7 +1606,6 @@ export class ChatService {
             "userId",
             "user",
             "rank",
-            "legacyUserId",
             "lastRead",
             "createdAt",
             "updatedAt"
@@ -1748,7 +1738,6 @@ export class ChatService {
             "userId",
             "user",
             "rank",
-            "legacyUserId",
             "lastRead",
             "createdAt",
             "updatedAt"

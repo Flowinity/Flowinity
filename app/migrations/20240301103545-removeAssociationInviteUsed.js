@@ -13,14 +13,5 @@ module.exports = {
         "ChatAssociations_inviteUsed_foreign_idx"
       )
     } catch {}
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

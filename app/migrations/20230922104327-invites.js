@@ -62,14 +62,5 @@ module.exports = {
     })
     await queryInterface.addIndex("ChatInvites", ["chatId", "invalidated"])
     await queryInterface.addIndex("OauthApps", ["botId"])
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

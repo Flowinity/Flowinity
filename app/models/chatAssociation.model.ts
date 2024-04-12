@@ -1,6 +1,13 @@
-import { BelongsTo, BelongsToMany, Column, DataType, Model, Table, Unique } from "sequelize-typescript"
+import {
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  Model,
+  Table,
+  Unique
+} from "sequelize-typescript"
 import { User } from "@app/models/user.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
 import { Chat } from "@app/models/chat.model"
 import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
@@ -55,14 +62,6 @@ export class ChatAssociation extends Model {
   })
   notifications: "all" | "none" | "mentions"
 
-  @Field(() => Int, {
-    nullable: true,
-    deprecationReason: "Use `userId` instead.",
-    description: "Used for legacy Colubrina accounts."
-  })
-  @Column
-  legacyUserId: number
-
   @Unique
   @Column
   identifier: string
@@ -98,23 +97,15 @@ export class ChatAssociation extends Model {
   tpuUser: User
 
   @Field(() => PartialUserBase, {
-    nullable: true,
-    deprecationReason: "Use `user` instead.",
-    description: "Used for legacy Colubrina accounts."
-  })
-  @BelongsTo(() => LegacyUser, "legacyUserId")
-  legacyUser: LegacyUser
-
-  @Field(() => PartialUserBase, {
     nullable: true
   })
   @Column({
     type: DataType.VIRTUAL,
     get(this: ChatAssociation) {
-      return this.tpuUser || this.legacyUser
+      return this.tpuUser
     }
   })
-  user: User | LegacyUser
+  user: User
 
   @BelongsTo(() => Chat, "chatId")
   chat: Chat

@@ -21,7 +21,6 @@ import { Badge } from "@app/models/badge.model"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
 import { Message } from "@app/models/message.model"
 import { CacheType } from "@app/enums/admin/CacheType"
 import { Domain } from "@app/models/domain.model"
@@ -611,7 +610,6 @@ export class AdminService {
             "userId",
             "user",
             "rank",
-            "legacyUserId",
             "lastRead",
             "createdAt",
             "updatedAt"
@@ -620,11 +618,6 @@ export class AdminService {
             {
               model: User,
               as: "tpuUser",
-              attributes: partialUserBase
-            },
-            {
-              model: LegacyUser,
-              as: "legacyUser",
               attributes: partialUserBase
             }
           ]

@@ -10,7 +10,6 @@ export const messageExpectations = {
       bot: expect.any(Boolean),
       createdAt: expect.any(String),
       id: expect.any(Number),
-      legacyUser: expect.any(Boolean),
       moderator: expect.any(Boolean),
       username: expect.any(String)
     },
