@@ -150,7 +150,7 @@ export class ChatResolver {
       include: [
         {
           model: User,
-          as: "tpuUser",
+          as: "user",
           attributes: partialUserBase
         }
       ]

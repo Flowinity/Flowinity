@@ -26,11 +26,6 @@ export const messageExpectations = {
     id: expect.any(Number),
     pinned: expect.any(Boolean),
     readReceipts: expect.any(Array),
-    tpuUser: {
-      bot: expect.any(Boolean),
-      id: expect.any(Number),
-      username: expect.any(String)
-    },
     type: expect.any(String),
     updatedAt: expect.any(String),
     user: {

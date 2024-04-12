@@ -109,24 +109,13 @@ export class Message extends Model {
     nullable: true
   })
   @BelongsTo(() => User, "userId")
-  tpuUser: User
+  user: User
 
   @Field(() => Message, {
     nullable: true
   })
   @BelongsTo(() => Message, "replyId")
   reply: Message
-
-  @Field(() => PartialUserBase, {
-    nullable: true
-  })
-  @Column({
-    type: DataType.VIRTUAL,
-    get(this: Message) {
-      return this.tpuUser
-    }
-  })
-  user: User
 
   @Field()
   @Column({

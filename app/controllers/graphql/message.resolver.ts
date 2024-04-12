@@ -234,7 +234,7 @@ export class MessageResolver {
       include: [
         {
           model: User,
-          as: "tpuUser",
+          as: "user",
           attributes: partialUserBase
         }
       ]
@@ -243,7 +243,7 @@ export class MessageResolver {
       chatId: message.chatId,
       associationId: receipt.id,
       messageId: message.id,
-      user: receipt.tpuUser?.toJSON()
+      user: receipt.user?.toJSON()
     }))
   }
 
@@ -254,12 +254,7 @@ export class MessageResolver {
 
   @FieldResolver(() => PartialUserBase)
   async user(@Root() message: Message) {
-    return await message.$get("tpuUser")
-  }
-
-  @FieldResolver(() => PartialUserBase)
-  async tpuUser(@Root() message: Message) {
-    return await message.$get("tpuUser")
+    return await message.$get("user")
   }
 
   @FieldResolver(() => Message)

@@ -18,7 +18,6 @@ export interface Message {
   edited: boolean;
   editedAt?: Date;
   replyId?: number;
-  tpuUser?: User | null;
   reply?: Message;
   user?: User | null;
   pending?: boolean;

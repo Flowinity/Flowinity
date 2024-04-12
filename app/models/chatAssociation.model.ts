@@ -89,22 +89,9 @@ export class ChatAssociation extends Model {
   invite: ChatInvite
 
   @Field(() => PartialUserBase, {
-    nullable: true,
-    description:
-      "Used for user virtual which falls back to a Colubrina account."
-  })
-  @BelongsTo(() => User, "userId")
-  tpuUser: User
-
-  @Field(() => PartialUserBase, {
     nullable: true
   })
-  @Column({
-    type: DataType.VIRTUAL,
-    get(this: ChatAssociation) {
-      return this.tpuUser
-    }
-  })
+  @BelongsTo(() => User, "userId")
   user: User
 
   @BelongsTo(() => Chat, "chatId")

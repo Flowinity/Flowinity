@@ -2617,18 +2617,6 @@
             "deprecationReason": null
           },
           {
-            "name": "tpuUser",
-            "description": "Used for user virtual which falls back to a Colubrina account.",
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PartialUserBase",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "user",
             "description": null,
             "args": [],
@@ -9398,18 +9386,6 @@
             "type": {
               "kind": "SCALAR",
               "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "tpuUser",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PartialUserBase",
               "ofType": null
             },
             "isDeprecated": false,

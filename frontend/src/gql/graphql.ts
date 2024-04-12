@@ -319,8 +319,6 @@ export type ChatAssociation = {
   rank: Scalars['String']['output'];
   ranks: Array<ChatRank>;
   ranksMap: Array<Scalars['String']['output']>;
-  /** Used for user virtual which falls back to a Colubrina account. */
-  tpuUser?: Maybe<PartialUserBase>;
   user?: Maybe<PartialUserBase>;
   userId?: Maybe<Scalars['Int']['output']>;
 };
@@ -1081,7 +1079,6 @@ export type Message = {
   readReceipts: Array<ReadReceipt>;
   reply?: Maybe<Message>;
   replyId?: Maybe<Scalars['Int']['output']>;
-  tpuUser?: Maybe<PartialUserBase>;
   type?: Maybe<MessageType>;
   updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
