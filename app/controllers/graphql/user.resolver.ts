@@ -566,6 +566,11 @@ export class UserResolver extends createBaseResolver("User", User) {
     status.status = status.status.toLowerCase() as UserStatus
     return status
   }
+
+  @FieldResolver(() => Boolean)
+  emailVerified(@Root() user: User) {
+    return config.email.enabled ? user.emailVerified : true
+  }
 }
 
 @Resolver(PartialUserPublic)

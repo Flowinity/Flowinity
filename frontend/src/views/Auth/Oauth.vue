@@ -275,11 +275,23 @@ export default defineComponent({
         });
         this.app = oauthAppConsent;
         this.availablePermissions = availableChatPermissions;
-        if (oauthAppConsent.token) {
-          window.location.href = `${this.app.redirectUri}?code=${oauthAppConsent.token}&state=${this.$route.query.state}`;
-        }
+        this.doRedirect(oauthAppConsent.token);
       } finally {
         this.$app.componentLoading = false;
+      }
+    },
+    doRedirect(token: string) {
+      if (token) {
+        let redirectPath = "";
+        if (this.$route.query.redirect_path) {
+          try {
+            const url = new URL(this.$route.query.redirect_path);
+            redirectPath = url.pathname;
+          } catch {
+            redirectPath = this.$route.query.redirect_path;
+          }
+        }
+        window.location.href = `${this.app.redirectUri}?code=${token}&state=${this.$route.query.state}&redirect_path=${redirectPath}`;
       }
     },
     async getScopeDefinitions() {
@@ -313,7 +325,7 @@ export default defineComponent({
             scopes: this.app.scopes
           }
         );
-        window.location.href = `${this.app.redirectUri}?code=${data.token}&state=${this.$route.query.state}`;
+        this.doRedirect(data.token);
       } finally {
         this.loading = false;
       }

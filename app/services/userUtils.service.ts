@@ -667,7 +667,7 @@ export class UserUtilsService {
 
   async enable2FA(id: number): Promise<object> {
     const code = speakeasy.generateSecret({
-      name: "TroploPrivateUploader"
+      name: config.siteName
     })
     await User.update(
       {

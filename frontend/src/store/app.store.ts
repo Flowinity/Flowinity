@@ -76,7 +76,7 @@ export const useAppStore = defineStore("app", {
       date: import.meta.env.TPU_BUILD_DATE || "N/A"
     },
     site: {
-      name: "TPU",
+      name: "Flowinity",
       maintenance: {
         enabled: false
       }
@@ -407,8 +407,8 @@ export const useAppStore = defineStore("app", {
             ?.includes("Workspace")
             ? "/workspaces"
             : state.lastNote
-            ? `/workspaces/notes/${state.lastNote}`
-            : "/workspaces",
+              ? `/workspaces/notes/${state.lastNote}`
+              : "/workspaces",
           icon: "mdi-folder-account",
           scope: "workspaces.view",
           experimentsRequired: ["INTERACTIVE_NOTES"]
@@ -649,9 +649,12 @@ export const useAppStore = defineStore("app", {
         this.connected = true;
       });
       const user = useUserStore();
-      setInterval(() => {
-        this.getWeather();
-      }, 1000 * 60 * 15);
+      setInterval(
+        () => {
+          this.getWeather();
+        },
+        1000 * 60 * 15
+      );
       this._postInitRan = true;
       this.populateQuickSwitcher();
       this.getWeather();

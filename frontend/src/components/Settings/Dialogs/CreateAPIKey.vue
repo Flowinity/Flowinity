@@ -33,7 +33,7 @@
         :items="availableScopes"
         item-title="name"
         item-value="id"
-        label="Select"
+        label="Permissions"
         multiple
       />
     </v-card-text>

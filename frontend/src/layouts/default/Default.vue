@@ -45,7 +45,8 @@
     >
       <v-progress-circular indeterminate size="64" />
     </v-overlay>
-    <default-bar v-if="$app.site.finishedSetup" />
+    <!-- must be false because if it's undefined, the appbar will render after the state is loaded -->
+    <default-bar v-if="$app.site.finishedSetup !== false" />
     <rail-bar
       v-if="
         $experiments.experiments.RAIL_SIDEBAR &&
@@ -80,7 +81,10 @@
     >
       <v-progress-circular indeterminate size="64" />
     </v-overlay>
-    <unauth-bar v-if="$route.name !== 'Slideshow' && $app.site.finishedSetup" />
+    <!-- must be false because if it's undefined, the appbar will render after the state is loaded -->
+    <unauth-bar
+      v-if="$route.name !== 'Slideshow' && $app.site.finishedSetup !== false"
+    />
     <default-view />
   </v-app>
 </template>

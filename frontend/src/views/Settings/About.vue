@@ -1,37 +1,19 @@
 <template>
   <v-container class="text-center">
-    <template v-if="!$experiments.experiments.FLOWINITY">
-      <v-img
-        v-if="rainbow()"
-        src="@/assets/images/tpu-logo-banner-rainbow.svg"
-        max-height="120"
-        class="mb-3"
-        @click="rainbowMode(false)"
-      />
-      <v-img
-        v-else
-        src="@/assets/images/tpu-logo-banner.svg"
-        max-height="120"
-        class="mb-3"
-        @click="rainbowMode(true)"
-      />
-    </template>
-    <template v-else>
-      <v-img
-        v-if="rainbow()"
-        src="@/assets/images/flowinity-logo-banner-rainbow.svg"
-        max-height="120"
-        class="mb-3"
-        @click="rainbowMode(false)"
-      />
-      <v-img
-        v-else
-        src="@/assets/images/flowinity-logo-banner.svg"
-        max-height="120"
-        class="mb-3"
-        @click="rainbowMode(true)"
-      />
-    </template>
+    <v-img
+      v-if="rainbow()"
+      src="@/assets/images/flowinity-logo-banner-rainbow.svg"
+      max-height="120"
+      class="mb-3"
+      @click="rainbowMode(false)"
+    />
+    <v-img
+      v-else
+      src="@/assets/images/flowinity-logo-banner.svg"
+      max-height="120"
+      class="mb-3"
+      @click="rainbowMode(true)"
+    />
     <v-divider />
     <p class="mt-5">
       {{ $t("settings.about.productName") }}

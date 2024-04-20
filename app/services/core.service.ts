@@ -367,6 +367,7 @@ export class CoreService {
     gold: boolean = false
   ): Record<string, any> {
     const experiments = {
+      V5_FLOAT: true,
       IAF_NAG: config.officialInstance ? 1 : 0,
       GALLERY_INFINITE_SCROLL: false,
       DOWNLOAD_THE_APP_NAG: 1,
@@ -418,6 +419,10 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        V5_FLOAT: {
+          description: "Enable V5 floating UI",
+          createdAt: "2024-04-01T00:00:00.000Z"
+        },
         IAF_NAG: {
           description:
             "Show the Invite a Friend nag. 0 for disabled, 1 for enabled on verified users, 2 for everyone, 3 is disabled with positive interaction. 4 is disabled with redeemed. 5 is disabled with negative interaction",
