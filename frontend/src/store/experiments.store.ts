@@ -15,7 +15,8 @@ export const useExperimentsStore = defineStore("experiments", {
   state: () =>
     ({
       experiments: {
-        API_VERSION: 3
+        API_VERSION: 3,
+        FLOWINITY: 1
       } as Record<string, number>,
       experimentsInherit: {} as Record<string, number>
     }) as ExperimentsState,
