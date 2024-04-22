@@ -102,7 +102,7 @@ export class GalleryResolver {
     }
     if (
       input.type === Type.PERSONAL &&
-      !checkScope("gallery.view", ctx.scopes)
+      !checkScope("uploads.view", ctx.scopes)
     ) {
       throw new GqlError("INVALID_SCOPE")
     } else if (

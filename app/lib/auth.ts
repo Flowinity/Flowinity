@@ -141,12 +141,11 @@ async function getSession(token: string) {
   })
 }
 
-export function checkScope(requiredScope: string | string[], scope: string) {
+export function checkScope(requiredScope: Scope | Scope[], scope: string) {
   if (
     requiredScope === "none" ||
     requiredScope?.length === 0 ||
-    (typeof requiredScope === "object" && requiredScope?.includes("none")) ||
-    (typeof requiredScope === "object" && requiredScope?.includes(""))
+    (typeof requiredScope === "object" && requiredScope?.includes("none"))
   )
     return true
   if (scope === undefined) return true
@@ -157,7 +156,6 @@ export function checkScope(requiredScope: string | string[], scope: string) {
     return true
   }
   // scope is the current session scope, and requiredScope is the scope required for the route, formatted like user.read or user.write
-  // check if the required scope is contained in the current scope, comma separated
   const scopes = scope.split(",")
   for (const scope of scopes) {
     if (typeof requiredScope === "string") {
@@ -167,9 +165,9 @@ export function checkScope(requiredScope: string | string[], scope: string) {
         return true
       }
     } else {
-      if (requiredScope.includes(scope)) {
+      if (requiredScope.includes(<Scope>scope)) {
         return true
-      } else if (requiredScope.includes(scope?.split(".")[0])) {
+      } else if (requiredScope.includes(<Scope>scope.split(".")[0])) {
         return true
       }
     }
@@ -230,7 +228,7 @@ export async function simpleAuth(req: RequestAuthSystem) {
 }
 
 export async function authSystem(
-  scope: string | string[],
+  scope: Scope | Scope[],
   passthrough: boolean = false,
   req: RequestAuthSystem,
   res: Response,
@@ -331,7 +329,7 @@ export async function authSystem(
   }
 }
 
-const auth = (scope: string | string[], passthrough: boolean = false) => {
+const auth = (scope: Scope | Scope[], passthrough: boolean = false) => {
   return async function (req: any, res: Response, next: NextFunction) {
     try {
       return await authSystem(scope, passthrough, req, res, next)
