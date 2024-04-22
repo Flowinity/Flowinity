@@ -71,6 +71,7 @@ export type Scope =
   | "none"
   | "dev.view"
   | "dev.modify"
+  | ""
 
 async function getSession(token: string) {
   return await Session.findOne({
@@ -145,7 +146,8 @@ export function checkScope(requiredScope: Scope | Scope[], scope: string) {
   if (
     requiredScope === "none" ||
     requiredScope?.length === 0 ||
-    (typeof requiredScope === "object" && requiredScope?.includes("none"))
+    (typeof requiredScope === "object" && requiredScope?.includes("none")) ||
+    (typeof requiredScope === "object" && requiredScope?.includes(""))
   )
     return true
   if (scope === undefined) return true
