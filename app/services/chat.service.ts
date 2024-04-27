@@ -55,7 +55,7 @@ class MessageIncludes {
       {
         model: ChatAssociation,
         as: "readReceipts",
-        attributes: ["userId", "lastRead", "user"],
+        attributes: ["userId", "lastRead"],
         include: [
           {
             model: User,
@@ -97,7 +97,6 @@ export class ChatService {
         "id",
         "userId",
         "rank",
-        "user",
         "lastRead",
         "createdAt",
         "hidden",
@@ -147,7 +146,6 @@ export class ChatService {
                 "id",
                 "userId",
                 "rank",
-                "user",
                 "lastRead",
                 "createdAt",
                 "updatedAt"
@@ -1185,7 +1183,6 @@ export class ChatService {
             "id",
             "userId",
             "rank",
-            "user",
             "lastRead",
             "createdAt",
             "updatedAt"
@@ -1604,7 +1601,6 @@ export class ChatService {
           attributes: [
             "id",
             "userId",
-            "user",
             "rank",
             "lastRead",
             "createdAt",
@@ -1736,7 +1732,6 @@ export class ChatService {
           attributes: [
             "id",
             "userId",
-            "user",
             "rank",
             "lastRead",
             "createdAt",
