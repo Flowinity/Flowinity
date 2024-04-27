@@ -542,7 +542,6 @@ export class AdminService {
           attributes: [
             "id",
             "userId",
-            "user",
             "rank",
             "lastRead",
             "createdAt",
