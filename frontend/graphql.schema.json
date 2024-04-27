@@ -2222,30 +2222,6 @@
             "deprecationReason": null
           },
           {
-            "name": "legacyUser",
-            "description": "This is used if the chat is owned by a Colubrina legacy user.",
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PartialUserBase",
-              "ofType": null
-            },
-            "isDeprecated": true,
-            "deprecationReason": "Use user instead."
-          },
-          {
-            "name": "legacyUserId",
-            "description": "This is used if the chat is owned by a Colubrina legacy user.",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": true,
-            "deprecationReason": "Use userId instead."
-          },
-          {
             "name": "messages",
             "description": null,
             "args": [],
@@ -2537,30 +2513,6 @@
             "deprecationReason": null
           },
           {
-            "name": "legacyUser",
-            "description": "Used for legacy Colubrina accounts.",
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PartialUserBase",
-              "ofType": null
-            },
-            "isDeprecated": true,
-            "deprecationReason": "Use `user` instead."
-          },
-          {
-            "name": "legacyUserId",
-            "description": "Used for legacy Colubrina accounts.",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": true,
-            "deprecationReason": "Use `userId` instead."
-          },
-          {
             "name": "notifications",
             "description": null,
             "args": [],
@@ -2660,18 +2612,6 @@
                   }
                 }
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "tpuUser",
-            "description": "Used for user virtual which falls back to a Colubrina account.",
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PartialUserBase",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -9395,30 +9335,6 @@
             "deprecationReason": null
           },
           {
-            "name": "legacyUser",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PartialUserBase",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "legacyUserId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "pending",
             "description": null,
             "args": [],
@@ -9493,18 +9409,6 @@
             "type": {
               "kind": "SCALAR",
               "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "tpuUser",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PartialUserBase",
               "ofType": null
             },
             "isDeprecated": false,
@@ -10156,22 +10060,6 @@
           },
           {
             "name": "adminMigrateLegacyRanksForChat",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "GenericSuccessObject",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "adminMigrateLegacyToNormalUsers",
             "description": null,
             "args": [],
             "type": {

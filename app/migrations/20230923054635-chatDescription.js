@@ -10,14 +10,5 @@ module.exports = {
     await queryInterface.addColumn("Chats", "background", {
       type: Sequelize.STRING
     })
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

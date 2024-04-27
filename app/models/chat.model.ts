@@ -8,7 +8,6 @@ import {
   Table
 } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
 import { Field, Int, ObjectType } from "type-graphql"
 import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
@@ -60,15 +59,6 @@ export class Chat extends Model {
   @Column
   updatedAt: Date
 
-  @Field({
-    nullable: true,
-    description:
-      "This is used if the chat is owned by a Colubrina legacy user.",
-    deprecationReason: "Use userId instead."
-  })
-  @Column
-  legacyUserId: number
-
   @Column({
     type: DataType.STRING,
     allowNull: true
@@ -82,15 +72,6 @@ export class Chat extends Model {
   })
   @BelongsTo(() => User, "userId")
   user: User
-
-  @Field(() => PartialUserBase, {
-    nullable: true,
-    description:
-      "This is used if the chat is owned by a Colubrina legacy user.",
-    deprecationReason: "Use user instead."
-  })
-  @BelongsTo(() => LegacyUser, "legacyUserId")
-  legacyUser: LegacyUser
 
   @Field(() => ChatAssociation, {
     nullable: true

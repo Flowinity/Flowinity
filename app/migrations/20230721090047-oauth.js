@@ -121,14 +121,5 @@ module.exports = {
     await queryInterface.addIndex("OauthSaves", ["userId"])
     await queryInterface.addIndex("OauthSaves", ["oauthAppId"])
     await queryInterface.addIndex("Sessions", ["oauthAppId"])
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

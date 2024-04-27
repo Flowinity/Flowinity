@@ -8,14 +8,5 @@ module.exports = {
       allowNull: true
     })
     await queryInterface.removeConstraint("ChatInvites", "chatinvites_ibfk_1")
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

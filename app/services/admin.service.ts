@@ -9,8 +9,6 @@ import { Experiment } from "@app/models/experiment.model"
 import { CoreService } from "@app/services/core.service"
 import { Feedback } from "@app/models/feedback.model"
 import { Upload } from "@app/models/upload.model"
-import path from "path"
-import * as fs from "fs"
 import { Friend } from "@app/models/friend.model"
 import Errors from "@app/lib/errors"
 import { Collection } from "@app/models/collection.model"
@@ -21,7 +19,6 @@ import { Badge } from "@app/models/badge.model"
 import { BadgeAssociation } from "@app/models/badgeAssociation.model"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
 import { ChatAssociation } from "@app/models/chatAssociation.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
 import { Message } from "@app/models/message.model"
 import { CacheType } from "@app/enums/admin/CacheType"
 import { Domain } from "@app/models/domain.model"
@@ -383,70 +380,6 @@ export class AdminService {
       .join("\n")
   }
 
-  async getServices() {
-    // get all typedi service functions
-    const container = Container as any
-    const services = container?.globalInstance?.services
-    if (!services) return []
-    const serviceNames = Object.keys(services)
-    const serviceFunctions = serviceNames.map((name) => {
-      return services[name]
-    })
-    // get all typedi service names
-    let serviceNamesWithTypes = serviceFunctions.map((service) => {
-      return {
-        name: service.type.name,
-        functions: [] as (string[] | null)[]
-      }
-    })
-    for (const service of serviceNamesWithTypes) {
-      // contains controller, application or server
-      if (
-        service.name.toLowerCase().includes("controller") ||
-        service.name.toLowerCase().includes("application") ||
-        service.name.toLowerCase().includes("server")
-      )
-        continue
-      const name =
-        service.name.charAt(0).toLowerCase() +
-        service.name.slice(1).replace("Service", ".service")
-      const file = fs.readFileSync(
-        path.join(__dirname, `../../app/services/${name}.ts`),
-        "utf8"
-      )
-      // get the function names and also provide the parameters like {"name": "yes", "params": {"id": "number"}}]}
-      let functionNames
-      try {
-        functionNames = file
-          .split("\n")
-          .filter((line) => line.includes("async"))
-          .map((line) => {
-            const functionName = line.split("async ")[1].split("(")[0]
-            const params = line
-              .split("(")[1]
-              .split(")")[0]
-              .split(",")
-              .map((param) => {
-                const name = param.split(":")[0]?.trim()
-                const type = param.split(":")[1]?.trim()
-                return {
-                  name,
-                  type
-                }
-              })
-            return {
-              name: functionName,
-              params
-            }
-          })
-      } catch {}
-      if (!functionNames) continue
-      // @ts-ignore
-      service.functions = functionNames
-    }
-    return serviceNamesWithTypes
-  }
-
   //dev
   async devAcceptFriends() {
     await Friend.update(
@@ -611,7 +544,6 @@ export class AdminService {
             "userId",
             "user",
             "rank",
-            "legacyUserId",
             "lastRead",
             "createdAt",
             "updatedAt"
@@ -619,174 +551,13 @@ export class AdminService {
           include: [
             {
               model: User,
-              as: "tpuUser",
-              attributes: partialUserBase
-            },
-            {
-              model: LegacyUser,
-              as: "legacyUser",
+              as: "user",
               attributes: partialUserBase
             }
           ]
         }
       ]
     })
-  }
-
-  async scriptColubrinaGroupOwner() {
-    const chats = await this.scriptFindChats("group")
-    for (const chat of chats) {
-      // if the chat has no owners
-      if (!chat.users.find((user) => user.rank === "owner")) {
-        // get the owner
-        const owner = chat.users.find(
-          (user) => user.tpuUser?.id === chat.userId
-        )
-        if (owner?.tpuUser) {
-          await ChatAssociation.update(
-            {
-              rank: "owner"
-            },
-            {
-              where: {
-                id: owner.id
-              }
-            }
-          )
-        } else {
-          // make a random admin the owner
-          const admin = chat.users.find((user) => user.rank === "admin")
-          if (admin?.tpuUser) {
-            await ChatAssociation.update(
-              {
-                rank: "owner"
-              },
-              {
-                where: {
-                  id: admin.id
-                }
-              }
-            )
-          } else {
-            const user = chat.users.find((user) => user.rank === "member")
-            if (user?.tpuUser) {
-              await ChatAssociation.update(
-                {
-                  rank: "owner"
-                },
-                {
-                  where: {
-                    id: user.id
-                  }
-                }
-              )
-            } else {
-              console.log("no users in chat", chat.id)
-            }
-          }
-        }
-      }
-    }
-    console.log("OK, clearing cache")
-    this.purgeCache(6)
-  }
-
-  async scriptColubrinaDMOwners() {
-    const chats = await this.scriptFindChats("direct")
-    for (const chat of chats) {
-      // if any of the chats have users of rank admin or owner, set them to member
-      for (const user of chat.users) {
-        if (user.rank === "admin" || user.rank === "owner") {
-          console.log(`changing ${user.user?.username} to member`)
-          await ChatAssociation.update(
-            {
-              rank: "member"
-            },
-            {
-              where: {
-                id: user.id
-              }
-            }
-          )
-        }
-      }
-    }
-    console.log("OK, clearing cache")
-    this.purgeCache(6)
-  }
-
-  async scriptColubrinaDMMerge() {
-    const chats = await this.scriptFindChats("direct")
-    // if any of the chats have the same users, merge them
-    for (const chat of chats) {
-      for (const chat2 of chats) {
-        if (chat.id === chat2.id) continue
-        const users = chat.users.map((user) => user.tpuUser?.id)
-        const users2 = chat2.users.map((user) => user.tpuUser?.id)
-        if (users.length === users2.length) {
-          if (users.every((user) => users2.includes(user))) {
-            // if the users or users2 contains undefined, skip
-            //@ts-ignore
-            if (users.includes(undefined) || users2.includes(undefined))
-              continue
-            if (users.length !== 2 || users2.length !== 2) continue
-            // delete the other chat from array
-            chats.splice(chats.indexOf(chat2), 1)
-            // merge the chats
-            console.log(
-              `merging ${chat.id} and ${chat2.id}, Users: ${users}, Users2: ${users2}`
-            )
-            await ChatAssociation.destroy({
-              where: {
-                chatId: chat2.id
-              }
-            })
-            await Message.update(
-              {
-                chatId: chat.id
-              },
-              {
-                where: {
-                  chatId: chat2.id
-                }
-              }
-            )
-            await Chat.destroy({
-              where: {
-                id: chat2.id
-              }
-            })
-          }
-        }
-      }
-    }
-    console.log("OK, clearing cache")
-    this.purgeCache(6)
-  }
-
-  async scriptColubrinaDMIntents() {
-    const chats = await this.scriptFindChats("direct")
-    for (const chat of chats) {
-      if (chat.intent?.length) continue
-      const users = chat.users.map((user) => user.tpuUser?.id)
-      //@ts-ignore
-      if (users.length !== 2 || users.includes(undefined)) continue
-      users.sort((a, b) => a - b)
-      console.log(`setting intent for ${chat.id} to ${users}`)
-      // set the intent
-      await Chat.update(
-        {
-          intent: users.join("-")
-        },
-        {
-          where: {
-            id: chat.id
-          }
-        }
-      )
-    }
-    console.log("OK, clearing cache")
-    this.purgeCache(6)
   }
 
   async deleteCommunicationsMessage(messageId: number) {

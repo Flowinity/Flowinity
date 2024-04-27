@@ -10,7 +10,6 @@ export const messageExpectations = {
       bot: expect.any(Boolean),
       createdAt: expect.any(String),
       id: expect.any(Number),
-      legacyUser: expect.any(Boolean),
       moderator: expect.any(Boolean),
       username: expect.any(String)
     },
@@ -27,11 +26,6 @@ export const messageExpectations = {
     id: expect.any(Number),
     pinned: expect.any(Boolean),
     readReceipts: expect.any(Array),
-    tpuUser: {
-      bot: expect.any(Boolean),
-      id: expect.any(Number),
-      username: expect.any(String)
-    },
     type: expect.any(String),
     updatedAt: expect.any(String),
     user: {

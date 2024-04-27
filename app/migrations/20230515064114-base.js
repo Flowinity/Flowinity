@@ -41,14 +41,5 @@ module.exports = {
           throw new Error("Dialect not supported")
         }
     }
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

@@ -36,7 +36,6 @@ import { Op } from "sequelize"
 import { ChatRank } from "@app/models/chatRank.model"
 import { UserUtilsService } from "@app/services/userUtils.service"
 import { User } from "@app/models/user.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
 import { AddBotToChatInput } from "@app/classes/graphql/developers/addBotToChat"
 import { OauthService } from "@app/services/oauth.service"
 import { OauthUser } from "@app/models/oauthUser.model"
@@ -70,33 +69,7 @@ export class ChatAssociationResolver {
   user(
     @Root() chatAssociation: ChatAssociation
   ): Promise<PartialUserBase | null> {
-    if (!chatAssociation.userId)
-      return chatAssociation.$get("legacyUser", {
-        attributes: partialUserBase
-      })
-    return chatAssociation.$get("tpuUser", {
-      attributes: partialUserBase
-    })
-  }
-
-  @FieldResolver(() => PartialUserBase, {
-    nullable: true
-  })
-  tpuUser(
-    @Root() chatAssociation: ChatAssociation
-  ): Promise<PartialUserBase | null> {
-    return chatAssociation.$get("tpuUser", {
-      attributes: partialUserBase
-    })
-  }
-
-  @FieldResolver(() => PartialUserBase, {
-    nullable: true
-  })
-  legacyUser(
-    @Root() chatAssociation: ChatAssociation
-  ): Promise<PartialUserBase | null> {
-    return chatAssociation.$get("legacyUser", {
+    return chatAssociation.$get("user", {
       attributes: partialUserBase
     })
   }
@@ -212,7 +185,7 @@ export class ChatAssociationResolver {
       include: [
         {
           model: User,
-          as: "tpuUser"
+          as: "user"
         }
       ]
     })
@@ -260,7 +233,7 @@ export class ChatAssociationResolver {
         actionType: AuditLogActionType.MODIFY,
         message: `<@${ctx.user!!.id}> removed the rank **${
           rank.name
-        }** from <@${user.tpuUser.id}>`
+        }** from <@${user.user.id}>`
       })
       await rankAssoc.destroy()
       this.chatService.emitForAll(
@@ -289,7 +262,7 @@ export class ChatAssociationResolver {
         category: AuditLogCategory.USER,
         actionType: AuditLogActionType.MODIFY,
         message: `<@${ctx.user!!.id}> added the rank **${rank.name}** to <@${
-          user.tpuUser.id
+          user.user.id
         }>`
       })
       await ChatRankAssociation.create({
@@ -454,12 +427,7 @@ export class ChatAssociationResolver {
       include: [
         {
           model: User,
-          as: "tpuUser",
-          attributes: partialUserBase
-        },
-        {
-          model: LegacyUser,
-          as: "legacyUser",
+          as: "user",
           attributes: partialUserBase
         }
       ]
@@ -474,12 +442,7 @@ export class ChatAssociationResolver {
       include: [
         {
           model: User,
-          as: "tpuUser",
-          attributes: partialUserBase
-        },
-        {
-          model: LegacyUser,
-          as: "legacyUser",
+          as: "user",
           attributes: partialUserBase
         },
         {
@@ -641,7 +604,7 @@ export class ChatAssociationResolver {
       input.chatAssociationId,
       ctx.user!!.id
     )
-    const bots = chat.users.filter((user) => user?.tpuUser?.bot)
+    const bots = chat.users.filter((user) => user?.user?.bot)
     if (!bots.length)
       return {
         prefix: input.prefix,

@@ -8,14 +8,5 @@ module.exports = {
       allowNull: true
     })
     await queryInterface.removeConstraint("ChatEmojis", "chatemojis_ibfk_2")
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

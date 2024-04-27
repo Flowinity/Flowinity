@@ -397,6 +397,10 @@ let Errors = {
   USERNAME_TAKEN: {
     message: "The entered username or email is already taken.",
     status: 400
+  },
+  FEATURE_REMOVED: {
+    message: "This feature is no longer available",
+    status: 400
   }
 }
 

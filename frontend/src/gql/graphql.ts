@@ -288,16 +288,6 @@ export type Chat = {
   id: Scalars['Int']['output'];
   /** Array is empty if you don't have the `OVERVIEW` permission in the chat. */
   invites: Array<ChatInvite>;
-  /**
-   * This is used if the chat is owned by a Colubrina legacy user.
-   * @deprecated Use user instead.
-   */
-  legacyUser?: Maybe<PartialUserBase>;
-  /**
-   * This is used if the chat is owned by a Colubrina legacy user.
-   * @deprecated Use userId instead.
-   */
-  legacyUserId?: Maybe<Scalars['Float']['output']>;
   messages: Array<Message>;
   name: Scalars['String']['output'];
   ranks: Array<ChatRank>;
@@ -323,24 +313,12 @@ export type ChatAssociation = {
   invite?: Maybe<ChatInvite>;
   inviteUsed?: Maybe<Scalars['String']['output']>;
   lastRead?: Maybe<Scalars['Int']['output']>;
-  /**
-   * Used for legacy Colubrina accounts.
-   * @deprecated Use `user` instead.
-   */
-  legacyUser?: Maybe<PartialUserBase>;
-  /**
-   * Used for legacy Colubrina accounts.
-   * @deprecated Use `userId` instead.
-   */
-  legacyUserId?: Maybe<Scalars['Int']['output']>;
   notifications: Scalars['String']['output'];
   permissions: Array<Scalars['String']['output']>;
   /** @deprecated `ChatRank` has replaced legacy rank for granular permission control. */
   rank: Scalars['String']['output'];
   ranks: Array<ChatRank>;
   ranksMap: Array<Scalars['String']['output']>;
-  /** Used for user virtual which falls back to a Colubrina account. */
-  tpuUser?: Maybe<PartialUserBase>;
   user?: Maybe<PartialUserBase>;
   userId?: Maybe<Scalars['Int']['output']>;
 };
@@ -1101,14 +1079,11 @@ export type Message = {
   emoji?: Maybe<Array<ChatEmoji>>;
   error: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
-  legacyUser?: Maybe<PartialUserBase>;
-  legacyUserId?: Maybe<Scalars['Int']['output']>;
   pending: Scalars['Boolean']['output'];
   pinned: Scalars['Boolean']['output'];
   readReceipts: Array<ReadReceipt>;
   reply?: Maybe<Message>;
   replyId?: Maybe<Scalars['Int']['output']>;
-  tpuUser?: Maybe<PartialUserBase>;
   type?: Maybe<MessageType>;
   updatedAt: Scalars['Date']['output'];
   user?: Maybe<PartialUserBase>;
@@ -1156,7 +1131,6 @@ export type Mutation = {
   adminDebugBatch: GenericSuccessObject;
   adminGenerateInsights: GenericSuccessObject;
   adminMigrateLegacyRanksForChat: GenericSuccessObject;
-  adminMigrateLegacyToNormalUsers: GenericSuccessObject;
   adminSendEmailForUnverifiedUsers: GenericSuccessObject;
   applyDomain: Domain;
   blockUser: GenericSuccessObject;

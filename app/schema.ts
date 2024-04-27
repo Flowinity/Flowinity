@@ -18,7 +18,6 @@ import { Message } from "@app/models/message.model"
 import { CollectionUser } from "@app/models/collectionUser.model"
 import { Invite } from "@app/models/invite.model"
 import { MessageAttachment } from "@app/models/messageAttachment.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
 import { Plan } from "@app/models/plan.model"
 import { Experiment } from "@app/models/experiment.model"
 import { AutoCollectRule } from "@app/models/autoCollectRule.model"
@@ -80,10 +79,6 @@ export class ApiSchema {
                 ),
                 MessageAttachment: schemaManager.generate(
                   MessageAttachment,
-                  new OpenApi3Strategy()
-                ),
-                LegacyUser: schemaManager.generate(
-                  LegacyUser,
                   new OpenApi3Strategy()
                 ),
                 Invite: schemaManager.generate(Invite, new OpenApi3Strategy()),
