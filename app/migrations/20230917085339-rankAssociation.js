@@ -10,14 +10,5 @@ module.exports = {
     await queryInterface.addIndex("ChatRankAssociations", ["chatAssociationId"])
     await queryInterface.addIndex("ChatRankAssociations", ["rankId"])
     await queryInterface.addIndex("ChatRanks", ["chatId"])
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

@@ -819,7 +819,7 @@ export class PulseService {
           include: [
             {
               model: User,
-              as: "tpuUser",
+              as: "user",
               attributes: ["username"]
             }
           ]

@@ -2,7 +2,7 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     await queryInterface.addIndex("Experiments", ["userId"])
     await queryInterface.addIndex("Experiments", ["key"])
 
@@ -16,10 +16,8 @@ module.exports = {
 
     await queryInterface.addIndex("ChatAssociations", ["userId"])
     await queryInterface.addIndex("ChatAssociations", ["chatId"])
-    await queryInterface.addIndex("ChatAssociations", ["legacyUserId"])
 
     await queryInterface.addIndex("Chats", ["userId"])
-    await queryInterface.addIndex("Chats", ["legacyUserId"])
 
     await queryInterface.addIndex("Feedback", ["userId"])
 
@@ -54,14 +52,5 @@ module.exports = {
     await queryInterface.addIndex("WorkspaceFolders", ["folderId"])
 
     await queryInterface.addIndex("Workspaces", ["userId"])
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

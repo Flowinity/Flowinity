@@ -35,24 +35,6 @@ export const NewMessageSubscription = gql`
             avatar
             bot
           }
-          tpuUser {
-            username
-            id
-            createdAt
-            administrator
-            moderator
-            avatar
-            bot
-          }
-        }
-        tpuUser {
-          username
-          id
-          createdAt
-          administrator
-          moderator
-          avatar
-          bot
         }
         user {
           username

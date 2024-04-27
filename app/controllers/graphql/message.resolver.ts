@@ -40,7 +40,6 @@ import { EditMessageEvent, EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
 import { embedTranslator } from "@app/lib/embedParser"
 import { ReadReceipt } from "@app/classes/graphql/chat/readReceiptSubscription"
 import { User } from "@app/models/user.model"
-import { LegacyUser } from "@app/models/legacyUser.model"
 import { DeleteMessage } from "@app/classes/graphql/chat/deleteMessage"
 
 export const PaginatedMessagesResponse = PagerResponse(Message)
@@ -235,12 +234,7 @@ export class MessageResolver {
       include: [
         {
           model: User,
-          as: "tpuUser",
-          attributes: partialUserBase
-        },
-        {
-          model: LegacyUser,
-          as: "legacyUser",
+          as: "user",
           attributes: partialUserBase
         }
       ]
@@ -249,7 +243,7 @@ export class MessageResolver {
       chatId: message.chatId,
       associationId: receipt.id,
       messageId: message.id,
-      user: receipt.tpuUser?.toJSON() || receipt.legacyUser?.toJSON()
+      user: receipt.user?.toJSON()
     }))
   }
 
@@ -260,17 +254,7 @@ export class MessageResolver {
 
   @FieldResolver(() => PartialUserBase)
   async user(@Root() message: Message) {
-    return (await message.$get("tpuUser")) || (await message.$get("legacyUser"))
-  }
-
-  @FieldResolver(() => PartialUserBase)
-  async tpuUser(@Root() message: Message) {
-    return await message.$get("tpuUser")
-  }
-
-  @FieldResolver(() => PartialUserBase)
-  async legacyUser(@Root() message: Message) {
-    return await message.$get("legacyUser")
+    return await message.$get("user")
   }
 
   @FieldResolver(() => Message)

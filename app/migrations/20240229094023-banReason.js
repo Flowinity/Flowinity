@@ -16,14 +16,5 @@ module.exports = {
     await queryInterface.addColumn("Users", "banReason", {
       type: Sequelize.TEXT
     })
-  },
-
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
   }
 }

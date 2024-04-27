@@ -123,7 +123,6 @@ CREATE TABLE `ChatAssociations` (
   `lastRead` int(11) DEFAULT NULL,
   `notifications` enum('all','none','mentions') NOT NULL DEFAULT 'all',
   `createdAt` datetime NOT NULL,
-  `legacyUserId` int(11) DEFAULT NULL,
   `updatedAt` datetime NOT NULL,
   `identifier` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -142,7 +141,6 @@ CREATE TABLE `Chats` (
   `icon` varchar(255) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
-  `legacyUserId` int(11) DEFAULT NULL,
   `intent` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -374,27 +372,6 @@ CREATE TABLE `Invites` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `legacyusers`
---
-
-CREATE TABLE `LegacyUsers` (
-  `id` int(11) NOT NULL,
-  `username` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
-  `emailVerified` tinyint(1) NOT NULL DEFAULT 0,
-  `admin` tinyint(1) NOT NULL DEFAULT 0,
-  `status` enum('online','busy','away','offline','invisible') NOT NULL DEFAULT 'offline',
-  `storedStatus` enum('online','busy','away','invisible') NOT NULL DEFAULT 'online',
-  `avatar` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `messageattachments`
 --
 
@@ -403,7 +380,6 @@ CREATE TABLE `MessageAttachments` (
   `messageId` int(11) NOT NULL,
   `attachmentId` int(11) NOT NULL,
   `userId` int(11) DEFAULT NULL,
-  `legacyUserId` int(11) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -426,7 +402,6 @@ CREATE TABLE `Messages` (
   `edited` tinyint(1) DEFAULT 0,
   `editedAt` datetime DEFAULT NULL,
   `replyId` int(11) DEFAULT NULL,
-  `legacyUserId` int(11) DEFAULT NULL,
   `pinned` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -943,14 +918,6 @@ ALTER TABLE `Invites`
   ADD KEY `adminId` (`adminId`);
 
 --
--- Indexes for table `legacyusers`
---
-ALTER TABLE `LegacyUsers`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
 -- Indexes for table `messageattachments`
 --
 ALTER TABLE `MessageAttachments`
@@ -1228,12 +1195,6 @@ ALTER TABLE `Integrations`
 --
 ALTER TABLE `Invites`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `legacyusers`
---
-ALTER TABLE `LegacyUsers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `messageattachments`

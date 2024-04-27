@@ -47,7 +47,7 @@ class MessageIncludes {
         include: [
           {
             model: User,
-            as: "tpuUser",
+            as: "user",
             attributes: partialUserBase
           }
         ]
@@ -59,14 +59,14 @@ class MessageIncludes {
         include: [
           {
             model: User,
-            as: "tpuUser",
+            as: "user",
             attributes: partialUserBase
           }
         ]
       },
       {
         model: User,
-        as: "tpuUser",
+        as: "user",
         attributes: ["id", "avatar", "username", "bot"]
       }
     ]
@@ -78,7 +78,7 @@ export class ChatService {
   private userIncludes = [
     {
       model: User,
-      as: "tpuUser",
+      as: "user",
       attributes: partialUserBase
     }
   ]
@@ -89,7 +89,7 @@ export class ChatService {
       include: [
         {
           model: User,
-          as: "tpuUser",
+          as: "user",
           attributes: partialUserBase
         }
       ],
@@ -97,7 +97,6 @@ export class ChatService {
         "id",
         "userId",
         "rank",
-        "legacyUserId",
         "user",
         "lastRead",
         "createdAt",
@@ -148,7 +147,6 @@ export class ChatService {
                 "id",
                 "userId",
                 "rank",
-                "legacyUserId",
                 "user",
                 "lastRead",
                 "createdAt",
@@ -1179,7 +1177,7 @@ export class ChatService {
             },
             {
               model: User,
-              as: "tpuUser",
+              as: "user",
               attributes: partialUserBase
             }
           ],
@@ -1187,7 +1185,6 @@ export class ChatService {
             "id",
             "userId",
             "rank",
-            "legacyUserId",
             "user",
             "lastRead",
             "createdAt",
@@ -1359,11 +1356,11 @@ export class ChatService {
     })
     this.emitToFCMs(message, chat)
     for (const association of chat.users) {
-      if (association?.tpuUser) {
+      if (association?.user) {
         const assoc = await ChatAssociation.findOne({
           where: {
             id: association.id,
-            userId: association.tpuUser.id
+            userId: association.user.id
           },
           attributes: ["id", "notifications", "userId", "hidden"]
         })
@@ -1379,7 +1376,7 @@ export class ChatService {
             .to(assoc.userId)
             .emit("chatCreated", chatWithUsers)
         }
-        const mention = message.content.includes(`<@${association.tpuUser.id}>`)
+        const mention = message.content.includes(`<@${association.user.id}>`)
         const data = {
           message: {
             ...message.toJSON(),
@@ -1394,8 +1391,8 @@ export class ChatService {
           associationId: association.id,
           mention
         } as MessageSubscription
-        console.log(`MESSAGES:${association.tpuUser.id}`)
-        pubSub.publish(`MESSAGES:${association.tpuUser.id}`, {
+        console.log(`MESSAGES:${association.user.id}`)
+        pubSub.publish(`MESSAGES:${association.user.id}`, {
           ...data,
           message: {
             ...data.message,
@@ -1404,18 +1401,18 @@ export class ChatService {
         })
         socket
           .of(SocketNamespaces.CHAT)
-          .to(association.tpuUser.id)
+          .to(association.user.id)
           .emit("message", data)
 
         if (
-          association.tpuUser.id === message.userId ||
+          association.user.id === message.userId ||
           assoc.notifications === "none" ||
           (assoc.notifications === "mentions" && !mention)
         )
           continue
 
         let notifications = await redis.json.get(
-          `unread:${association.tpuUser.id}`
+          `unread:${association.user.id}`
         )
         if (notifications) {
           notifications[chat.id] += 1 || 1
@@ -1424,7 +1421,7 @@ export class ChatService {
             [chat.id]: 1
           }
         }
-        redis.json.set(`unread:${association.tpuUser.id}`, "$", notifications)
+        redis.json.set(`unread:${association.user.id}`, "$", notifications)
       }
     }
 
@@ -1558,10 +1555,7 @@ export class ChatService {
       (a: ChatAssociation) => a.userId !== userId
     )
     if (recipient) {
-      return {
-        ...(recipient?.user?.toJSON() || recipient?.user),
-        legacyUser: !!recipient.legacyUser
-      }
+      return recipient?.user?.toJSON() || recipient?.user
     } else {
       const intent = chat.intent
         ?.split("-")
@@ -1581,10 +1575,7 @@ export class ChatService {
           ]
         })
         if (!user) return null
-        return {
-          ...user.toJSON(),
-          legacyUser: false
-        }
+        return user.toJSON()
       } else {
         return null
       }
@@ -1615,7 +1606,6 @@ export class ChatService {
             "userId",
             "user",
             "rank",
-            "legacyUserId",
             "lastRead",
             "createdAt",
             "updatedAt"
@@ -1623,7 +1613,7 @@ export class ChatService {
           include: [
             {
               model: User,
-              as: "tpuUser",
+              as: "user",
               attributes: partialUserBase
             }
           ]
@@ -1748,7 +1738,6 @@ export class ChatService {
             "userId",
             "user",
             "rank",
-            "legacyUserId",
             "lastRead",
             "createdAt",
             "updatedAt"
@@ -1756,7 +1745,7 @@ export class ChatService {
           include: [
             {
               model: User,
-              as: "tpuUser",
+              as: "user",
               attributes: [
                 "id",
                 "username",
