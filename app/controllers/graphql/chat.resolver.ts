@@ -140,7 +140,7 @@ export class ChatResolver {
   ): Promise<PartialUserBase | null> {
     if (chat.type !== "direct" || !ctx.user) return Promise.resolve(null)
     const user = ChatAssociation.findOne({
-      attributes: ["userId", "user"],
+      attributes: ["userId"],
       where: {
         chatId: chat.id,
         userId: {
