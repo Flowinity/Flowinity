@@ -91,6 +91,7 @@ declare global {
       type: UpdateNoteEventType
     ) => void;
     __TROPLO_INTERNALS_EDITOR_COLLAB_MODE: boolean;
+    __TROPLO_INTERNALS_EDITOR_SAVE_POSITION: (args: any) => any;
     __NOTE_DATA: any;
     electron: ElectronAPI | undefined;
   }

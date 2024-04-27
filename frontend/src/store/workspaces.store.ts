@@ -116,14 +116,7 @@ export const useWorkspacesStore = defineStore("workspaces", {
     },
     async saveBlock(data: BlockAPI, type: UpdateNoteEventType) {
       if (!data && type !== UpdateNoteEventType.Delete) {
-        data = {
-          id: "",
-          type: "paragraph",
-          name: "paragraph",
-          data: {
-            text: "WAIT FOR CONTENT"
-          }
-        };
+        return;
       }
       await useApolloClient().client.mutate({
         mutation: SaveNoteBlockMutation,

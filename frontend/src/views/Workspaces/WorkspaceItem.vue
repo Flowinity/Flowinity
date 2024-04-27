@@ -35,6 +35,15 @@
         <template v-if="!$vuetify.display.mobile">
           &bullet; Blocks: {{ blocks?.toLocaleString() || 0 }}
         </template>
+        <template v-if="collaborators.length">
+          &bullet; Collaborators:
+          <template v-for="(collab, index) in collaborators">
+            <UserAvatar
+              :user="$user.users[collab.userId]"
+              :id="collab.userId"
+            />
+          </template>
+        </template>
       </v-card-subtitle>
     </v-toolbar>
     <WorkspaceHome v-if="fail" />
@@ -100,9 +109,10 @@ import {
   SaveNoteCollabPositionMutation,
   UpdateNoteSubscription
 } from "@/graphql/workspaces/collaboration";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
 
 export default defineComponent({
-  components: { WorkspaceShareDialog, WorkspaceHome },
+  components: { UserAvatar, WorkspaceShareDialog, WorkspaceHome },
   props: ["id"],
   data: function () {
     return {
@@ -200,14 +210,6 @@ export default defineComponent({
           const updateData = data.data.onUpdateNote;
           switch (updateData.type) {
             case UpdateNoteEventType.Insert:
-              window.editor.blocks.insert(
-                updateData.data || {
-                  type: "paragraph",
-                  data: {
-                    text: "WAIT FOR CONTENT"
-                  }
-                }
-              );
               break;
             case UpdateNoteEventType.Delete:
               window.editor.blocks.delete(updateData.data.id);
@@ -215,7 +217,15 @@ export default defineComponent({
             case UpdateNoteEventType.Update:
               if (!window.editor.blocks?.getById(updateData.blockId)) {
                 if (!updateData.data) return;
-                window.editor.blocks.insert(updateData.data);
+                window.editor.blocks.insert(
+                  updateData.data.type,
+                  updateData.data.data,
+                  updateData.data.config,
+                  undefined,
+                  undefined,
+                  undefined,
+                  updateData.blockId
+                );
                 break;
               }
               window.editor.blocks.update(updateData.blockId, {
@@ -261,7 +271,7 @@ export default defineComponent({
           const block = window.editor.blocks.getBlockByIndex(
             updateData.blockIndex
           );
-          const holder = block.holder.querySelector(".ce-paragraph");
+          const holder = block.holder;
           console.log(cursor, holder, block);
 
           if (!cursor) {
@@ -275,15 +285,17 @@ export default defineComponent({
             holder.appendChild(cursor);
           }
 
-          // Calculate position for the cursor
-          let range = document.createRange();
-          let sel = window.getSelection();
-          range.setStart(holder.childNodes[0] || holder, updateData.position);
-          sel.removeAllRanges();
-          sel.addRange(range);
-
           // Get the bounding client rect of the cursor position
-          let rect = range.getBoundingClientRect();
+          console.log(
+            window.getSelection()?.getRangeAt(0).startContainer.parentElement
+          );
+          const rect = this.getCharacterCoordinates(
+            // get current selected dom
+            window.getSelection()?.getRangeAt(0).startContainer.parentElement,
+            updateData.position
+          );
+          console.log(`RECT for ${this.$user.user?.id}`, rect);
+          if (!rect) return console.error("Could not get rect");
 
           // Position the cursor indicator
           cursor.style.position = "absolute";
@@ -291,6 +303,32 @@ export default defineComponent({
           cursor.style.top = rect.top + "px";
         }
       });
+    },
+    getCharacterCoordinates(container, index) {
+      const range = document.createRange();
+      const sel = window.getSelection();
+      let targetNode = container;
+      let currentIndex = 0;
+      console.log(targetNode, index);
+
+      while (targetNode && currentIndex < index) {
+        const nextNode = targetNode.nextSibling;
+        if (nextNode) {
+          currentIndex += targetNode.textContent.length;
+        }
+        targetNode = nextNode;
+      }
+      console.log(targetNode, index);
+
+      if (targetNode) {
+        range.setStart(targetNode, index - currentIndex);
+        range.setEnd(targetNode, index - currentIndex + 1);
+        const rect = range.getBoundingClientRect();
+        range.detach(); // Clean up range object
+        return rect;
+      }
+
+      return null; // Character index out of range or element structure issue
     },
     unsubscribeFromNote() {
       if (this.activeSubscription) this.activeSubscription?.unsubscribe?.();
@@ -442,6 +480,7 @@ export default defineComponent({
         this.$experiments.experiments.NOTE_COLLAB;
       //window.__TROPLO_INTENRALS_SOCKET = this.$socket;
       window.__TROPLO_INTERNALS_NOTE_ID = this.$route.params.id;
+      window.__TROPLO_INTERNALS_EDITOR_SAVE_POSITION = this.updateCursor;
       window.__NOTE_DATA = data;
       //this.$socket.emit("notes/subscribe", this.$route.params.id);
       let init: EditorConfig = {
@@ -589,6 +628,7 @@ export default defineComponent({
           window.__TROPLO_INTERNALS_UPDATE_COUNT(
             window.editor.configuration.data.blocks
           );
+          window.__TROPLO_INTERNALS_EDITOR_SAVE_POSITION({ isTrusted: true });
         },
         onChange(data, block) {
           console.log("[TPU/Editor] Saving...");
@@ -625,6 +665,7 @@ export default defineComponent({
       window.editor = new EditorJS(init);
     },
     updateCursor(e: Event) {
+      // complete disaster
       if (e.isTrusted) {
         const currentBlock = window.editor.blocks.getCurrentBlockIndex();
         const position = window.getSelection()?.getRangeAt(0).startOffset;
@@ -685,7 +726,8 @@ export default defineComponent({
       document.addEventListener("keydown", this.saveEvent, false);
 
       // watch for changes to cursor position, editorjs does not provide a way to do this
-      document.addEventListener("selectionchange", this.updateCursor);
+      document.addEventListener("keydown", this.updateCursor);
+      document.addEventListener("click", this.updateCursor);
     },
     saveEvent(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "s") {
