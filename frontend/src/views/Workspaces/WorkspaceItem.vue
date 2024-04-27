@@ -87,6 +87,7 @@ import { defineComponent } from "vue";
 import SimpleImage from "@troplo/tpu-simple-image";
 import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue";
 import {
+  CollabEventType,
   NoteCollabPosition,
   UpdateNoteEventType,
   WorkspaceNote
@@ -94,10 +95,10 @@ import {
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client/core";
 import { isNumeric } from "@/plugins/isNumeric";
 import { useApolloClient } from "@vue/apollo-composable";
-import { UpdateNoteSubscription } from "@/graphql/workspaces/collaboration";
 import {
   NoteCollabPositionSubscription,
-  SaveNoteCollabPositionMutation
+  SaveNoteCollabPositionMutation,
+  UpdateNoteSubscription
 } from "@/graphql/workspaces/collaboration";
 
 export default defineComponent({
@@ -115,7 +116,11 @@ export default defineComponent({
       activeSubscription: null as ApolloClient<NormalizedCacheObject> | null,
       activeSubscriptionPosition:
         null as ApolloClient<NormalizedCacheObject> | null,
-      collaborators: [] as NoteCollabPosition[]
+      collaborators: [] as NoteCollabPosition[],
+      position: {
+        blockIndex: 0,
+        position: 0
+      }
     };
   },
   computed: {
@@ -167,6 +172,7 @@ export default defineComponent({
   },
   unmounted() {
     document.removeEventListener("keydown", this.saveEvent);
+    document.removeEventListener("selectionchange", this.updateCursor);
     this.$app.workspaceDrawer =
       localStorage.getItem("workspaceDrawer") === "true";
     this.$app.forcedWorkspaceDrawer = false;
@@ -231,6 +237,58 @@ export default defineComponent({
         next: (data) => {
           const updateData = data.data.onNoteCollabPosition;
           console.log(updateData);
+          const index = this.collaborators.findIndex(
+            (c) => c.userId === updateData.userId
+          );
+          if (updateData.type === CollabEventType.Join) {
+            if (index === -1) {
+              this.collaborators.push(updateData);
+            } else {
+              this.collaborators[index] = updateData;
+            }
+          } else if (updateData.type === CollabEventType.Leave) {
+            if (index !== -1) {
+              this.collaborators.splice(index, 1);
+            }
+          }
+          // rerender cursor logic
+          let cursor: HTMLElement = document.getElementById(
+            `workspaces-cursor-${updateData.userId}`
+          );
+          console.log("UPDATE DATA", updateData);
+          // it uses block index and character offset to calculate the position
+          // so we need to get the block index and character offset
+          const block = window.editor.blocks.getBlockByIndex(
+            updateData.blockIndex
+          );
+          const holder = block.holder.querySelector(".ce-paragraph");
+          console.log(cursor, holder, block);
+
+          if (!cursor) {
+            cursor = document.createElement("span");
+            cursor.className = "cursor";
+            cursor.id = `workspaces-cursor-${updateData.userId}`;
+            cursor.style.backgroundColor = "#0190ea";
+            cursor.style.width = "2px";
+            cursor.style.height = "1em";
+            cursor.style.borderRadius = "2px";
+            holder.appendChild(cursor);
+          }
+
+          // Calculate position for the cursor
+          let range = document.createRange();
+          let sel = window.getSelection();
+          range.setStart(holder.childNodes[0] || holder, updateData.position);
+          sel.removeAllRanges();
+          sel.addRange(range);
+
+          // Get the bounding client rect of the cursor position
+          let rect = range.getBoundingClientRect();
+
+          // Position the cursor indicator
+          cursor.style.position = "absolute";
+          cursor.style.left = rect.left + "px";
+          cursor.style.top = rect.top + "px";
         }
       });
     },
@@ -566,6 +624,31 @@ export default defineComponent({
       //@ts-ignore
       window.editor = new EditorJS(init);
     },
+    updateCursor(e: Event) {
+      if (e.isTrusted) {
+        const currentBlock = window.editor.blocks.getCurrentBlockIndex();
+        const position = window.getSelection()?.getRangeAt(0).startOffset;
+        if (
+          position === this.position.position &&
+          currentBlock === this.position.blockIndex
+        )
+          return;
+        this.position = {
+          blockIndex: currentBlock,
+          position
+        };
+        this.$apollo.mutate({
+          mutation: SaveNoteCollabPositionMutation,
+          variables: {
+            input: {
+              noteId: parseInt(this.$route.params.id),
+              position,
+              blockIndex: currentBlock
+            }
+          }
+        });
+      }
+    },
     async onMounted() {
       try {
         if (window.editor) {
@@ -602,21 +685,7 @@ export default defineComponent({
       document.addEventListener("keydown", this.saveEvent, false);
 
       // watch for changes to cursor position, editorjs does not provide a way to do this
-      document.addEventListener("selectionchange", () => {
-        const currentBlock = window.editor.blocks.getCurrentBlockIndex();
-        const position = window.getSelection()?.getRangeAt(0).startOffset;
-
-        this.$apollo.mutate({
-          mutation: SaveNoteCollabPositionMutation,
-          variables: {
-            input: {
-              noteId: parseInt(this.$route.params.id),
-              position,
-              blockIndex: currentBlock
-            }
-          }
-        });
-      });
+      document.addEventListener("selectionchange", this.updateCursor);
     },
     saveEvent(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "s") {

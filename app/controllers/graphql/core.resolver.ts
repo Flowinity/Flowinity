@@ -178,14 +178,19 @@ export class CoreResolver {
   @Query(() => [ExperimentType])
   async experiments(@Ctx() ctx: Context) {
     if (!ctx.user?.id) {
-      return this.coreService.getExperimentsV4(config.release === "dev", false)
+      return this.coreService.getExperimentsV4(
+        config.release === "dev",
+        false,
+        ctx.client.majorVersion
+      )
     }
     return await this.coreService.getUserExperimentsV4(
       ctx.user.id,
       config.release === "dev" ||
         ctx.user?.administrator ||
         ctx.user?.moderator,
-      false
+      false,
+      ctx.client.majorVersion
     )
   }
 

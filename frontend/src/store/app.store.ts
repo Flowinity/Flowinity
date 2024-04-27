@@ -819,7 +819,7 @@ export const useAppStore = defineStore("app", {
         if (this.dialogs.upload.files.length === 1) {
           functions.copy(data[0].url);
           toast.success(
-            "Successfully uploaded file and copied TPU link to clipboard!"
+            `Successfully uploaded file and copied the ${this.site.name} link to the clipboard!`
           );
         } else {
           toast.success("Successfully uploaded files!");

@@ -1,4 +1,11 @@
-import { Body, Get, JsonController, Post, Req } from "routing-controllers"
+import {
+  Body,
+  Get,
+  HeaderParam,
+  JsonController,
+  Post,
+  Req
+} from "routing-controllers"
 import { Service } from "typedi"
 import { Auth } from "@app/lib/auth"
 import { User } from "@app/models/user.model"
@@ -72,11 +79,20 @@ export class CoreControllerV3 {
   }
 
   @Get("/experiments")
-  async getExperiments(@Auth("user.view", false) user: User | null) {
+  async getExperiments(
+    @Auth("user.view", false) user: User | null,
+    @HeaderParam("X-TPU-Client-Version") version: string
+  ) {
     const dev = user ? user.administrator || user.moderator : false
     const gold = user ? user.plan.internalName === "GOLD" : false
-    if (!user) return this.coreService.getExperiments(dev, gold)
-    return await this.coreService.getUserExperiments(user.id, dev, gold)
+    const majorVersion = parseInt(version.split(".")[0] || "3")
+    if (!user) return this.coreService.getExperiments(dev, gold, majorVersion)
+    return await this.coreService.getUserExperiments(
+      user.id,
+      dev,
+      gold,
+      majorVersion
+    )
   }
 
   @Get("")

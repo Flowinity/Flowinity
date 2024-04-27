@@ -252,7 +252,7 @@ let Errors = {
     status: 400
   },
   INVALID_TPU_LINK: {
-    message: "The provided TPU link is invalid.",
+    message: "The provided Flowinity link is invalid.",
     status: 400
   },
   REPORT_ALREADY_EXISTS_FOR_IP: {
@@ -310,7 +310,7 @@ let Errors = {
     status: 400
   },
   NOT_SETUP: {
-    message: "The TPU instance is still being configured.",
+    message: "The Flowinity instance is still being configured.",
     status: 500
   },
   CANNOT_DELETE_DEFAULT: {

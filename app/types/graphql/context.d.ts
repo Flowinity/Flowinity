@@ -8,6 +8,7 @@ export type Context = {
     name?: string
     version?: string
     userAgent?: string
+    majorVersion?: number
   }
   scopes: string
   role: AccessLevel

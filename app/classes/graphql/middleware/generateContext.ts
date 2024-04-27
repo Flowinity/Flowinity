@@ -90,7 +90,12 @@ export default async function generateContext(ctx: any): Promise<Context> {
         "unknown",
       userAgent:
         ctx?.request?.headers?.get("User-Agent") ||
-        ctx?.connectionParams?.["user-agent"]
+        ctx?.connectionParams?.["user-agent"],
+      majorVersion: parseInt(
+        ctx?.request?.headers?.get("X-TPU-Client-Version")?.split(".")[0] ||
+          ctx?.connectionParams?.["x-tpu-client-version"]?.split(".")[0] ||
+          "4"
+      )
     },
     scopes: session?.scopes || "",
     role: session
