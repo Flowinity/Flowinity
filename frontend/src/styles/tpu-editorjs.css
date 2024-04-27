@@ -1,5 +1,6 @@
 .v-theme--dark,
 .v-theme--amoled {
+  --color-background: #121212 !important;
   --v-bg-base: #121212;
   --v-bg-lighten5: #858585;
   --v-bg-lighten4: #6c6c6c;
@@ -1651,22 +1652,9 @@
 }
 
 .ce-popover {
-  opacity: 0;
-  will-change: opacity, transform;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  padding: 6px;
-  min-width: 200px;
-  width: 200px;
-  overflow: hidden;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  -ms-flex-negative: 0;
+
+
+
   flex-shrink: 0;
   max-height: 0;
   pointer-events: none;
@@ -1704,6 +1692,11 @@
   z-index: 4;
   -ms-flex-wrap: nowrap;
   flex-wrap: nowrap;
+}
+
+.ce-popover__container {
+  background: var(--v-bg-base);
+  border: 1px solid var(--v-bg-lighten2) !important;
 }
 
 .ce-popover--opened {
@@ -2349,7 +2342,8 @@
   --color-background-confirm: #e24a4a;
   --color-background-confirm-hover: #d54040;
   --color-text-confirm: var(--v-bg-base);
-  background: var(--v-bg-base) !important;
+  background-color: var(--v-bg-base) !important;
+  background: red !important;
   border: 1px solid var(--v-bg-lighten2) !important;
   box-shadow: 0 3px 15px -3px rgba(13, 20, 33, 0.13);
   border-radius: 6px;

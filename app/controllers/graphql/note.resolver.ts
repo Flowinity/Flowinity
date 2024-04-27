@@ -6,7 +6,8 @@ import {
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Subscription
 } from "type-graphql"
 import { Service } from "typedi"
 import { Context } from "@app/types/graphql/context"
@@ -20,6 +21,13 @@ import {
   NoteInput,
   SaveNoteInput
 } from "@app/classes/graphql/workspaces/noteInput"
+import {
+  CollabEventType,
+  NoteCollabPosition,
+  NoteCollabPositionInput,
+  UpdateNoteEvent,
+  UpdateNoteEventInput
+} from "@app/classes/graphql/workspaces/note"
 
 @Resolver(Note)
 @Service()
@@ -59,7 +67,10 @@ export class NoteResolver {
   @Authorization({
     scopes: ["workspaces.modify"]
   })
-  @Mutation(() => Note)
+  @Mutation(() => Note, {
+    deprecationReason:
+      "Use `saveNoteBlock` instead to support collaborative editing."
+  })
   async saveNote(
     @Arg("input", () => SaveNoteInput) input: SaveNoteInput,
     @Ctx() ctx: Context
@@ -120,5 +131,90 @@ export class NoteResolver {
       },
       ctx
     )
+  }
+
+  @Authorization({
+    scopes: ["workspaces.view"]
+  })
+  @Subscription(() => UpdateNoteEvent, {
+    description: "Subscribe to Note updates.",
+    topics: ({ context }) => {
+      return `NOTE_UPDATE:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      return payload.id === args.id || payload.shareLink === args.shareLink
+    }
+  })
+  onUpdateNote(
+    @Root() data: UpdateNoteEvent,
+    @Arg("id", () => Int, { nullable: true }) id: number,
+    @Arg("shareLink", { nullable: true }) shareLink: string
+  ) {
+    return data
+  }
+
+  @Authorization({
+    scopes: ["workspaces.modify"]
+  })
+  @Mutation(() => Boolean)
+  async saveNoteBlock(
+    @Arg("input", () => UpdateNoteEventInput) input: UpdateNoteEventInput,
+    @Ctx() ctx: Context
+  ) {
+    try {
+      await this.workspaceService.saveNoteBlock({
+        ...input,
+        userId: ctx.user!!.id,
+        shareLink: null
+      })
+      return true
+    } catch (e) {
+      console.error(e)
+      return false
+    }
+  }
+
+  @Authorization({
+    scopes: ["workspaces.modify"]
+  })
+  @Mutation(() => Boolean)
+  async saveNoteCollabPosition(
+    @Arg("input", () => NoteCollabPositionInput) input: NoteCollabPositionInput,
+    @Ctx() ctx: Context
+  ) {
+    try {
+      await this.workspaceService.saveNoteCollabPosition({
+        ...input,
+        userId: ctx.user!!.id,
+        shareLink: null,
+        type: CollabEventType.JOIN
+      })
+      return true
+    } catch (e) {
+      console.error(e)
+      return false
+    }
+  }
+
+  @Authorization({
+    scopes: ["workspaces.view"]
+  })
+  @Subscription(() => NoteCollabPosition, {
+    description: "Subscribe to Note collaborative user positions.",
+    topics: ({ context }) => {
+      return `NOTE_POSITION_UPDATE:${context.user!!.id}`
+    },
+    filter: ({ payload, args }) => {
+      return (
+        payload.noteId === args.noteId || payload.shareLink === args.shareLink
+      )
+    }
+  })
+  onNoteCollabPosition(
+    @Root() data: NoteCollabPosition,
+    @Arg("noteId", () => Int, { nullable: true }) noteId: number,
+    @Arg("shareLink", { nullable: true }) shareLink: string
+  ) {
+    return data
   }
 }

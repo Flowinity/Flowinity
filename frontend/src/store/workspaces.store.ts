@@ -6,10 +6,22 @@ import { Note } from "@/models/note";
 import { useRoute } from "vue-router";
 import { NoteQuery } from "@/graphql/workspaces/note.graphql";
 import { isNumeric } from "@/plugins/isNumeric";
-import { SaveNoteMutation } from "@/graphql/workspaces/saveNote.graphql";
-import { SaveNoteInput, WorkspaceNote } from "@/gql/graphql";
+import {
+  SaveNoteBlockMutation,
+  SaveNoteMutation
+} from "@/graphql/workspaces/saveNote.graphql";
+import {
+  SaveNoteInput,
+  UpdateNoteEvent,
+  UpdateNoteEventInput,
+  UpdateNoteEventType,
+  WorkspaceNote
+} from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { WorkspacesQuery } from "@/graphql/workspaces/workspaces.graphql";
+import { BlockAPI } from "@editorjs/editorjs";
+import { UpdateNoteSubscription } from "@/graphql/workspaces/noteSubscription";
+import { ApolloClient, NormalizedCacheObject } from "@apollo/client/core";
 
 export interface WorkspacesState {
   items: Workspace[];
@@ -99,6 +111,29 @@ export const useWorkspacesStore = defineStore("workspaces", {
             data,
             manualSave
           } as SaveNoteInput
+        }
+      });
+    },
+    async saveBlock(data: BlockAPI, type: UpdateNoteEventType) {
+      if (!data && type !== UpdateNoteEventType.Delete) {
+        data = {
+          id: "",
+          type: "paragraph",
+          name: "paragraph",
+          data: {
+            text: "WAIT FOR CONTENT"
+          }
+        };
+      }
+      await useApolloClient().client.mutate({
+        mutation: SaveNoteBlockMutation,
+        variables: {
+          input: {
+            blockId: data?.id,
+            id: parseInt(this.$app.$route.params.id),
+            data: data,
+            type: type
+          } as UpdateNoteEventInput
         }
       });
     }

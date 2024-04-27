@@ -367,6 +367,7 @@ export class CoreService {
     gold: boolean = false
   ): Record<string, any> {
     const experiments = {
+      NOTE_COLLAB: false,
       V5_FLOAT: true,
       IAF_NAG: config.officialInstance ? 1 : 0,
       GALLERY_INFINITE_SCROLL: false,
@@ -419,6 +420,10 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        NOTE_COLLAB: {
+          description: "Enable note collaboration",
+          createdAt: "2024-04-26T00:00:00.000Z"
+        },
         V5_FLOAT: {
           description: "Enable V5 floating UI",
           createdAt: "2024-04-01T00:00:00.000Z"
@@ -664,28 +669,16 @@ export class CoreService {
         }
       }
     }
-    if (config.release === "dev") {
-      experiments.API_VERSION = 3
-    }
     if (dev || config.release === "dev") {
+      experiments.NOTE_COLLAB = true
       //experiments.FORCE_DEV_MODE = false
       //experiments.FORCE_STABLE_MODE = false
       //experiments.USER_V3_EDITOR = true
       experiments.DEBUG_FAVICON = true
       experiments.FLOWINITY = true
-      experiments.RAIL_SIDEBAR = true
-      experiments.USER_V3_MODIFY = true
-      experiments.USER_V3 = true
-      experiments.USER_V2 = true
-      experiments.INTERACTIVE_NOTES = true
-      experiments.QUICK_NOTES = true
       experiments.ACCOUNT_DEV_ELIGIBLE = true
-      experiments.WORKSPACES_SIDEBAR = true
-      experiments.PROJECT_MERGE = true
       experiments.SURVEYS = true
-      experiments.COMMUNICATIONS = true
       experiments.WEBMAIL = true
-      experiments.PINNED_MESSAGES = true
       experiments.EARLY_ACCESS = true
       return experiments
     } else {

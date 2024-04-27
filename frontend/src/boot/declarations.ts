@@ -15,10 +15,11 @@ import { RouteLocationNormalizedLoaded, Router } from "vue-router";
 import { useAdminStore } from "@/store/admin.store";
 import { Axios } from "axios";
 import { ApolloClient } from "@apollo/client/core";
-import { Chat, PartialUserFriend } from "@/gql/graphql";
+import { Chat, PartialUserFriend, UpdateNoteEventType } from "@/gql/graphql";
 import { NormalizedCacheObject } from "@apollo/client/cache";
 import { useMessagesStore } from "@/store/message.store";
 import { ElectronAPI } from "@electron-toolkit/preload";
+import EditorJS, { BlockAPI, EditorConfig } from "@editorjs/editorjs";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -58,6 +59,7 @@ declare global {
   interface Window {
     socket: Socket;
     _tpu_router: Router;
+    editor?: EditorJS & { configuration: EditorConfig };
     tpuInternals: {
       processLink: (link: string) => void;
       readChat: () => void;
@@ -84,6 +86,11 @@ declare global {
     __TROPLO_INTERNALS_UPDATE_COUNT: (args: any) => any;
     __TROPLO_INTERNALS_EDITOR_UPLOAD: (args: any) => any;
     __TROPLO_INTERNALS_NOTE_ID: number;
+    __TROPLO_INTERNALS_EDITOR_SAVE_BLOCK: (
+      data: BlockAPI,
+      type: UpdateNoteEventType
+    ) => void;
+    __TROPLO_INTERNALS_EDITOR_COLLAB_MODE: boolean;
     __NOTE_DATA: any;
     electron: ElectronAPI | undefined;
   }

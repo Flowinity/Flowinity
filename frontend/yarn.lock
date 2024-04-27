@@ -1289,10 +1289,13 @@
   dependencies:
     "@codexteam/icons" "^0.0.5"
 
-"@editorjs/editorjs@^2.26.5":
-  version "2.29.1"
-  resolved "https://registry.yarnpkg.com/@editorjs/editorjs/-/editorjs-2.29.1.tgz#d7c644c5c3fc1ea1022373cbf2c8c3ac9f990b7b"
-  integrity sha512-WRT2pCfikMsvySQJqpCU21LfTZaPuxUWsDO8aFGrPx4MKzOR9D+Ur4mNb3jq0FXx2EMqvIWfTyFixJxtjGHTyQ==
+"@editorjs/editorjs@https://github.com/Flowinity/editor.js":
+  version "2.30.0-rc.4"
+  resolved "https://github.com/Flowinity/editor.js#4118dc3aeaa218b3ac17b8767a3702a2fd9f71b9"
+
+"@editorjs/editorjs@link:./../../editor.js":
+  version "0.0.0"
+  uid ""
 
 "@editorjs/embed@^2.5.3":
   version "2.7.0"

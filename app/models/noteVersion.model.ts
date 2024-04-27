@@ -1,6 +1,5 @@
 import { BelongsTo, Column, DataType, Model, Table } from "sequelize-typescript"
 import { User } from "@app/models/user.model"
-import { NoteDataV2 } from "@app/services/note.service"
 import { Note } from "@app/models/note.model"
 import { Field, Int, ObjectType } from "type-graphql"
 import { WorkspaceNote } from "@app/classes/graphql/workspaces/note"
@@ -34,7 +33,7 @@ export class NoteVersion extends Model {
     type: DataType.JSON,
     allowNull: false
   })
-  data: NoteDataV2
+  data: WorkspaceNote
 
   @BelongsTo(() => Note, "noteId")
   note: Note

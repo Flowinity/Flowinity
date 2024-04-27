@@ -34,11 +34,23 @@ export class WorkspaceResolver {
   @Query(() => [Workspace])
   async workspaces(@Ctx() ctx: Context) {
     if (!ctx.user) return []
-    return await Workspace.findAll({
+    const owned = await Workspace.findAll({
       where: {
         userId: ctx.user.id
       }
     })
+    const shared = await Workspace.findAll({
+      include: [
+        {
+          model: WorkspaceUser,
+          as: "recipient",
+          where: {
+            recipientId: ctx.user.id
+          }
+        }
+      ]
+    })
+    return [...owned, ...shared]
   }
 
   @FieldResolver(() => [WorkspaceUser])

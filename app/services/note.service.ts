@@ -11,7 +11,14 @@ import { Friend } from "@app/models/friend.model"
 import { WorkspacesDownloadService } from "@app/services/workspaces/download.service"
 import { BadRequestError } from "routing-controllers"
 import { partialUserBase } from "@app/classes/graphql/user/partialUser"
-import { WorkspaceNote } from "@app/classes/graphql/workspaces/note"
+import {
+  NoteCollabPosition,
+  UpdateNoteEvent,
+  UpdateNoteEventType,
+  WorkspaceNote
+} from "@app/classes/graphql/workspaces/note"
+import { pubSub } from "@app/lib/graphql/pubsub"
+import redisClient from "@app/redis"
 
 //create class of NoteData
 export class NoteField {
@@ -57,10 +64,6 @@ export class NoteData {
     this.creatorId = userId
     this.lastEditorId = userId
   }
-}
-
-export class NoteDataV2 {
-  blocks: object[]
 }
 
 @Service()
@@ -656,6 +659,118 @@ export class NoteService {
     }
   }
 
+  async saveNoteBlock(data: UpdateNoteEvent) {
+    let note = await Note.findOne({
+      where: {
+        id: data.id
+      },
+      attributes: ["id", "shareLink", "data", "workspaceFolderId"]
+    })
+    console.log(data)
+    if (!note) throw Errors.NOT_FOUND
+    const workspace = await this.getWorkspace(
+      note.workspaceFolderId,
+      data.userId,
+      "folder"
+    )
+    if (!workspace?.permissionsMetadata?.write) throw Errors.NOT_FOUND
+    if (!note.data.blocks) note.data.blocks = []
+    switch (data.type) {
+      case UpdateNoteEventType.DELETE:
+        note.data.blocks = note.data.blocks = note.data.blocks.filter(
+          (block) => block.id !== data.blockId
+        )
+        break
+      case UpdateNoteEventType.UPDATE:
+        console.log(note)
+        // find, if doesn't exist, insert it
+        const index = note.data.blocks.findIndex(
+          (block) => block.id === data.blockId
+        )
+        if (index === -1) {
+          note.data.blocks.push(data.data)
+          break
+        }
+        note.data.blocks[index] = data.data
+        break
+      case UpdateNoteEventType.INSERT:
+        note.data.blocks.push(data.data)
+        break
+    }
+    console.log([...workspace.users, workspace.user])
+    for (const user of [...workspace.users, { user: workspace.user }]) {
+      console.log(user.user.id)
+      pubSub.publish(`NOTE_UPDATE:${user.user.id}`, {
+        ...data,
+        userId: data.userId,
+        shareLink: note.shareLink
+      } as UpdateNoteEvent)
+      console.log({
+        ...data,
+        userId: data.userId,
+        shareLink: note.shareLink
+      })
+    }
+    await Note.update(
+      {
+        data: note.data
+      },
+      {
+        where: {
+          id: data.id
+        }
+      }
+    )
+    return note
+  }
+
+  async saveNoteCollabPosition(data: NoteCollabPosition) {
+    let note = await Note.findOne({
+      where: {
+        id: data.noteId
+      },
+      attributes: ["id", "workspaceFolderId"]
+    })
+    if (!note) throw Errors.NOT_FOUND
+    const workspace = await this.getWorkspace(
+      note.workspaceFolderId,
+      data.userId,
+      "folder"
+    )
+    if (!workspace?.permissionsMetadata?.write) throw Errors.NOT_FOUND
+    let collaborators: any = await redisClient.json.get(
+      `notes:${note.id}:collaborators`
+    )
+    if (!collaborators) collaborators = []
+    for (const user of [...workspace.users, { user: workspace.user }]) {
+      pubSub.publish(
+        `NOTE_POSITION_UPDATE:${user.user.id}`,
+        data as NoteCollabPosition
+      )
+    }
+    const index = collaborators.findIndex(
+      (collab: NoteCollabPosition) => collab.userId === data.userId
+    )
+    if (index === -1) {
+      collaborators.push({
+        userId: data.userId,
+        blockIndex: data.blockIndex,
+        position: data.position
+      })
+    } else {
+      collaborators[index] = {
+        userId: data.userId,
+        blockIndex: data.blockIndex,
+        position: data.position
+      }
+    }
+    await redisClient.json.set(
+      `notes:${note.id}:collaborators`,
+      "$",
+      collaborators
+    )
+  }
+
   async createNote(name: string, workspaceFolderId: number, userId: number) {
     const workspace = await this.getWorkspace(
       workspaceFolderId,
@@ -833,10 +948,10 @@ export class NoteService {
         return note.data
       }
       case "html": {
-        return await this.downloadService.html(<NoteDataV2>note.data)
+        return await this.downloadService.html(<WorkspaceNote>note.data)
       }
       case "docx": {
-        return await this.downloadService.docx(<NoteDataV2>note.data)
+        return await this.downloadService.docx(<WorkspaceNote>note.data)
       }
       default: {
         throw new BadRequestError("Invalid type, must be tpudoc, html or docx")

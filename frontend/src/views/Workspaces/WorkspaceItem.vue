@@ -2,11 +2,11 @@
   <div id="workspaces-editor">
     <WorkspaceShareDialog
       v-if="$route.params.id"
-      :key="$route.params.id"
+      :key="$route.params.id as string"
       v-model="$workspaces.share.dialog"
     />
     <div
-      :key="$route.params.version || $route.params.id"
+      :key="($route.params.version || $route.params.id) as string"
       class="editorx_body mt-3"
     >
       <div id="tpu-editor" />
@@ -42,7 +42,6 @@
 </template>
 
 <script lang="ts">
-// @ts-nocheck
 //@ts-ignore
 import Header from "editorjs-header-with-anchor";
 //@ts-ignore
@@ -72,7 +71,7 @@ import Delimiter from "@editorjs/delimiter";
 //@ts-ignore
 import ImageTool from "@editorjs/image";
 //@ts-ignore
-import EditorJS from "@editorjs/editorjs";
+import EditorJS, { BlockAPI, EditorConfig } from "@editorjs/editorjs";
 //@ts-ignore
 import Attaches from "@editorjs/attaches";
 //@ts-ignore
@@ -87,12 +86,24 @@ import { defineComponent } from "vue";
 //@ts-ignore
 import SimpleImage from "@troplo/tpu-simple-image";
 import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue";
-import { WorkspaceNote } from "@/gql/graphql";
+import {
+  NoteCollabPosition,
+  UpdateNoteEventType,
+  WorkspaceNote
+} from "@/gql/graphql";
+import { ApolloClient, NormalizedCacheObject } from "@apollo/client/core";
+import { isNumeric } from "@/plugins/isNumeric";
+import { useApolloClient } from "@vue/apollo-composable";
+import { UpdateNoteSubscription } from "@/graphql/workspaces/collaboration";
+import {
+  NoteCollabPositionSubscription,
+  SaveNoteCollabPositionMutation
+} from "@/graphql/workspaces/collaboration";
 
 export default defineComponent({
   components: { WorkspaceShareDialog, WorkspaceHome },
   props: ["id"],
-  data() {
+  data: function () {
     return {
       data: null,
       fail: false,
@@ -100,7 +111,11 @@ export default defineComponent({
       characters: 0,
       lastSave: null as any,
       blocks: 0,
-      lines: 0
+      lines: 0,
+      activeSubscription: null as ApolloClient<NormalizedCacheObject> | null,
+      activeSubscriptionPosition:
+        null as ApolloClient<NormalizedCacheObject> | null,
+      collaborators: [] as NoteCollabPosition[]
     };
   },
   computed: {
@@ -147,6 +162,9 @@ export default defineComponent({
     }
     this.$app.title = "Workspace Editor";
   },
+  beforeUnmount() {
+    this.unsubscribeFromNote();
+  },
   unmounted() {
     document.removeEventListener("keydown", this.saveEvent);
     this.$app.workspaceDrawer =
@@ -157,6 +175,68 @@ export default defineComponent({
     }
   },
   methods: {
+    subscribeToNote() {
+      const id = isNumeric(this.$route.params.id)
+        ? parseInt(this.$route.params.id)
+        : this.$route.params.id;
+      this.unsubscribeFromNote();
+      const observer = useApolloClient().client.subscribe({
+        query: UpdateNoteSubscription,
+        variables: {
+          id: typeof id === "number" ? id : null,
+          shareLink: typeof id === "string" ? id : null
+        }
+      });
+
+      this.activeSubscription = observer.subscribe({
+        next: (data) => {
+          console.log(data);
+          const updateData = data.data.onUpdateNote;
+          switch (updateData.type) {
+            case UpdateNoteEventType.Insert:
+              window.editor.blocks.insert(
+                updateData.data || {
+                  type: "paragraph",
+                  data: {
+                    text: "WAIT FOR CONTENT"
+                  }
+                }
+              );
+              break;
+            case UpdateNoteEventType.Delete:
+              window.editor.blocks.delete(updateData.data.id);
+              break;
+            case UpdateNoteEventType.Update:
+              if (!window.editor.blocks?.getById(updateData.blockId)) {
+                if (!updateData.data) return;
+                window.editor.blocks.insert(updateData.data);
+                break;
+              }
+              window.editor.blocks.update(updateData.blockId, {
+                ...updateData.data,
+                collab: true
+              });
+              break;
+          }
+        }
+      });
+      const observerPosition = useApolloClient().client.subscribe({
+        query: NoteCollabPositionSubscription,
+        variables: {
+          id: typeof id === "number" ? id : null,
+          shareLink: typeof id === "string" ? id : null
+        }
+      });
+      this.activeSubscriptionPosition = observerPosition.subscribe({
+        next: (data) => {
+          const updateData = data.data.onNoteCollabPosition;
+          console.log(updateData);
+        }
+      });
+    },
+    unsubscribeFromNote() {
+      if (this.activeSubscription) this.activeSubscription?.unsubscribe?.();
+    },
     async upload(file: any) {
       try {
         let formData = new FormData();
@@ -186,7 +266,24 @@ export default defineComponent({
         };
       }
     },
+    async saveBlock(data: BlockAPI, type: UpdateNoteEventType) {
+      if (!this.$experiments.experiments.NOTE_COLLAB) return;
+      try {
+        if (!this.$route.params.id) return;
+        if (this.lastSave && Date.now() - this.lastSave < 500) return;
+        this.lastSave = Date.now();
+        this.$app.notesSaving = true;
+        await this.$workspaces.saveBlock(data, type);
+        this.$app.notesSaving = false;
+        console.log("[TPU/Editor] Saved!");
+      } catch (e) {
+        console.log(e);
+        this.$app.notesSaving = false;
+        this.$toast.error("The document could not be saved.");
+      }
+    },
     async save(data: WorkspaceNote, manualSave = false) {
+      if (this.$experiments.experiments.NOTE_COLLAB) return;
       try {
         if (!this.$route.params.id) return;
         if (this.lastSave && Date.now() - this.lastSave < 500) return;
@@ -280,17 +377,21 @@ export default defineComponent({
     },
     editor(data, readOnly) {
       window.__TROPLO_INTERNALS_EDITOR_SAVE = this.save;
+      window.__TROPLO_INTERNALS_EDITOR_SAVE_BLOCK = this.saveBlock;
       window.__TROPLO_INTERNALS_EDITOR_UPLOAD = this.upload;
       window.__TROPLO_INTERNALS_UPDATE_COUNT = this.count;
+      window.__TROPLO_INTERNALS_EDITOR_COLLAB_MODE =
+        this.$experiments.experiments.NOTE_COLLAB;
       //window.__TROPLO_INTENRALS_SOCKET = this.$socket;
       window.__TROPLO_INTERNALS_NOTE_ID = this.$route.params.id;
       window.__NOTE_DATA = data;
       //this.$socket.emit("notes/subscribe", this.$route.params.id);
-      let init = {
+      let init: EditorConfig = {
         holder: "tpu-editor",
-        autofocus: true,
+        autofocus: !readOnly,
+        readOnly: false,
+        //@ts-ignore
         logLevel: "ERROR",
-        readOnly,
         /**
          * This Tool will be used as default
          */
@@ -416,7 +517,7 @@ export default defineComponent({
             window.editor.blocks.renderFromHTML(window.__NOTE_DATA);
           }
           const undo = new Undo({
-            editor,
+            editor: window.editor,
             config: {
               debounceTimer: 30,
               shortcuts: {
@@ -428,13 +529,32 @@ export default defineComponent({
           undo.initialize(init.data);
           console.log("[TPU/Editor] Ready.");
           window.__TROPLO_INTERNALS_UPDATE_COUNT(
-            editor.configuration.data.blocks
+            window.editor.configuration.data.blocks
           );
         },
-        onChange() {
+        onChange(data, block) {
           console.log("[TPU/Editor] Saving...");
-          editor.save().then(async (outputData) => {
-            await window.__TROPLO_INTERNALS_EDITOR_SAVE(outputData);
+          console.log(data, block);
+          window.editor.save().then(async (outputData) => {
+            if (window.__TROPLO_INTERNALS_EDITOR_COLLAB_MODE) {
+              console.log(block.type);
+              const type =
+                block.type === "block_added"
+                  ? UpdateNoteEventType.Insert
+                  : block.type === "block_removed"
+                    ? UpdateNoteEventType.Delete
+                    : UpdateNoteEventType.Update;
+              console.log(data, block);
+              window.__TROPLO_INTERNALS_EDITOR_SAVE_BLOCK(
+                outputData.blocks?.find(
+                  (b) => b.id === block.detail?.target?.id
+                ),
+                type
+              );
+              //window.__TROPLO_INTERNALS_EDITOR_SAVE_BLOCK(block);
+            } else {
+              window.__TROPLO_INTERNALS_EDITOR_SAVE(outputData);
+            }
             await window.__TROPLO_INTERNALS_UPDATE_COUNT(outputData.blocks);
           });
         }
@@ -442,6 +562,8 @@ export default defineComponent({
       if (Object.keys(data).length) {
         init.data = data;
       }
+      // the configuration object is present
+      //@ts-ignore
       window.editor = new EditorJS(init);
     },
     async onMounted() {
@@ -471,18 +593,36 @@ export default defineComponent({
           console.log(e);
           this.editor(null);
         }
+        this.subscribeToNote();
       } catch (e) {
         console.log(e);
         this.fail = true;
       }
 
       document.addEventListener("keydown", this.saveEvent, false);
+
+      // watch for changes to cursor position, editorjs does not provide a way to do this
+      document.addEventListener("selectionchange", () => {
+        const currentBlock = window.editor.blocks.getCurrentBlockIndex();
+        const position = window.getSelection()?.getRangeAt(0).startOffset;
+
+        this.$apollo.mutate({
+          mutation: SaveNoteCollabPositionMutation,
+          variables: {
+            input: {
+              noteId: parseInt(this.$route.params.id),
+              position,
+              blockIndex: currentBlock
+            }
+          }
+        });
+      });
     },
     saveEvent(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "s") {
         e.preventDefault();
-        editor.save().then((outputData) => {
-          window.__TROPLO_INTERNALS_EDITOR_SAVE(outputData, true);
+        window.editor.save().then((outputData) => {
+          window.__TROPLO_INTERNALS_EDITOR_SAVE(outputData);
         });
       }
     }

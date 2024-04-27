@@ -1,11 +1,11 @@
 import { Service } from "typedi"
 import { CacheService } from "@app/services/cache.service"
-import { NoteDataV2, NoteService } from "@app/services/note.service"
+import { NoteService } from "@app/services/note.service"
 //@ts-ignore
 import edjsHTML from "editorjs-parser"
-import { OutputData } from "@editorjs/editorjs"
 //@ts-ignore
 import HTMLtoDOCX from "html-to-docx"
+import { WorkspaceNote } from "@app/classes/graphql/workspaces/note"
 
 @Service()
 export class WorkspacesDownloadService {
@@ -14,7 +14,7 @@ export class WorkspacesDownloadService {
     private readonly cacheService: CacheService
   ) {}
 
-  async html(data: NoteDataV2) {
+  async html(data: WorkspaceNote) {
     const parsers = {
       list: (data: any) => {
         const string = data.style === "ordered" ? "ol" : "ul"
@@ -48,11 +48,11 @@ export class WorkspacesDownloadService {
       }
     }
     const edjsParser = new edjsHTML(undefined, parsers)
-    const html = edjsParser.parse(data as OutputData)
+    const html = edjsParser.parse(data)
     return html
   }
 
-  async docx(data: NoteDataV2) {
+  async docx(data: WorkspaceNote) {
     const html = await this.html(data)
 
     return await HTMLtoDOCX(html)

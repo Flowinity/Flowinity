@@ -177,6 +177,19 @@
     Close Workspaces
   </v-card-text>
   <v-card-text
+    v-if="$experiments.experiments.ACCOUNT_DEV_ELIGIBLE"
+    style="color: rgb(var(--v-theme-error)); cursor: pointer; font-size: 12px"
+    class="mb-n4 unselectable"
+    @click="
+      $experiments.setExperiment(
+        'NOTE_COLLAB',
+        $experiments.experiments.NOTE_COLLAB ? 0 : 1
+      )
+    "
+  >
+    Toggle Experimental Collab ({{ $experiments.experiments.NOTE_COLLAB }})
+  </v-card-text>
+  <v-card-text
     v-else-if="!$app.rail"
     style="color: #0190ea; cursor: pointer; font-size: 12px"
     class="mb-n4 unselectable"

@@ -9,3 +9,9 @@ export const SaveNoteMutation = gql`
     }
   }
 `;
+
+export const SaveNoteBlockMutation = gql`
+  mutation SaveNoteBlock($input: UpdateNoteEventInput!) {
+    saveNoteBlock(input: $input)
+  }
+`;
