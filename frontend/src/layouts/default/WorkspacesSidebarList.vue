@@ -235,7 +235,10 @@
       {{ $workspaces.workspace?.name || "None selected" }}
       <template #append>
         <v-chip
-          v-if="$workspaces.workspace?.userId !== $user.user?.id"
+          v-if="
+            $workspaces.workspace &&
+            $workspaces.workspace?.userId !== $user.user?.id
+          "
           color="primary"
           class="mr-2"
         >
