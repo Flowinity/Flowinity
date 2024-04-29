@@ -81,7 +81,10 @@ export class CoreControllerV3 {
   @Get("/experiments")
   async getExperiments(
     @Auth("user.view", false) user: User | null,
-    @HeaderParam("X-TPU-Client-Version") version: string | undefined
+    @HeaderParam("X-TPU-Client-Version", {
+      required: false
+    })
+    version: string
   ) {
     const dev = user ? user.administrator || user.moderator : false
     const gold = user ? user.plan.internalName === "GOLD" : false
