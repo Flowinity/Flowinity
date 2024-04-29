@@ -1,0 +1,60 @@
+diff --git a/node_modules/vuetify/dist/vuetify-labs.esm.js b/node_modules/vuetify/dist/vuetify-labs.esm.js
+index 276bd71..b6eac66 100644
+--- a/node_modules/vuetify/dist/vuetify-labs.esm.js
++++ b/node_modules/vuetify/dist/vuetify-labs.esm.js
+@@ -5300,6 +5300,7 @@ function rippleShow(e) {
+     if (element._ripple.isTouch) return;
+   }
+   value.center = element._ripple.centered || isKeyboardEvent(e);
++  ripples.hide(element);
+   if (element._ripple.class) {
+     value.class = element._ripple.class;
+   }
+diff --git a/node_modules/vuetify/dist/vuetify-labs.js b/node_modules/vuetify/dist/vuetify-labs.js
+index f9834b3..8233773 100644
+--- a/node_modules/vuetify/dist/vuetify-labs.js
++++ b/node_modules/vuetify/dist/vuetify-labs.js
+@@ -5304,6 +5304,7 @@
+       if (element._ripple.isTouch) return;
+     }
+     value.center = element._ripple.centered || isKeyboardEvent(e);
++    ripples.hide(element);
+     if (element._ripple.class) {
+       value.class = element._ripple.class;
+     }
+diff --git a/node_modules/vuetify/dist/vuetify.esm.js b/node_modules/vuetify/dist/vuetify.esm.js
+index 28ff521..e16057d 100644
+--- a/node_modules/vuetify/dist/vuetify.esm.js
++++ b/node_modules/vuetify/dist/vuetify.esm.js
+@@ -5533,6 +5533,7 @@ function rippleShow(e) {
+     if (element._ripple.isTouch) return;
+   }
+   value.center = element._ripple.centered || isKeyboardEvent(e);
++  ripples.hide(element);
+   if (element._ripple.class) {
+     value.class = element._ripple.class;
+   }
+diff --git a/node_modules/vuetify/dist/vuetify.js b/node_modules/vuetify/dist/vuetify.js
+index cceeb0b..4ce4413 100644
+--- a/node_modules/vuetify/dist/vuetify.js
++++ b/node_modules/vuetify/dist/vuetify.js
+@@ -5537,6 +5537,7 @@
+       if (element._ripple.isTouch) return;
+     }
+     value.center = element._ripple.centered || isKeyboardEvent(e);
++    ripples.hide(element);
+     if (element._ripple.class) {
+       value.class = element._ripple.class;
+     }
+diff --git a/node_modules/vuetify/lib/directives/ripple/index.mjs b/node_modules/vuetify/lib/directives/ripple/index.mjs
+index a060ba9..45de0e2 100644
+--- a/node_modules/vuetify/lib/directives/ripple/index.mjs
++++ b/node_modules/vuetify/lib/directives/ripple/index.mjs
+@@ -132,6 +132,7 @@ function rippleShow(e) {
+     if (element._ripple.isTouch) return;
+   }
+   value.center = element._ripple.centered || isKeyboardEvent(e);
++  ripples.hide(element);
+   if (element._ripple.class) {
+     value.class = element._ripple.class;
+   }

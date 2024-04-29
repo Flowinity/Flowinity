@@ -35,18 +35,24 @@
         <template v-if="!$vuetify.display.mobile">
           &bullet; Blocks: {{ blocks?.toLocaleString() || 0 }}
         </template>
-        <template v-if="collaborators.length">
-          &bullet; Collaborators:
-          <template v-for="(collab, index) in collaborators">
-            <UserAvatar
-              :user="$user.users[collab.userId]"
-              :id="collab.userId"
-            />
-          </template>
-        </template>
       </v-card-subtitle>
     </v-toolbar>
     <WorkspaceHome v-if="fail" />
+    <template v-if="collaborators.length">
+      <teleport v-if="!$vuetify.display.mobile" to="#header-actions">
+        <div style="display: flex; gap: 4px">
+          <UserAvatar
+            v-for="collab in collaborators"
+            :key="collab.userId"
+            :user="$user.users[collab.userId]"
+            :status="true"
+            size="32"
+            :dot-status="true"
+            :typing="collab.typing"
+          />
+        </div>
+      </teleport>
+    </template>
   </div>
 </template>
 
@@ -110,6 +116,12 @@ import {
   UpdateNoteSubscription
 } from "@/graphql/workspaces/collaboration";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
+import functions from "@/plugins/functions";
+
+interface NoteCollabPositionWithTyping extends NoteCollabPosition {
+  typing: boolean;
+  timeout: NodeJS.Timeout;
+}
 
 export default defineComponent({
   components: { UserAvatar, WorkspaceShareDialog, WorkspaceHome },
@@ -126,7 +138,7 @@ export default defineComponent({
       activeSubscription: null as ApolloClient<NormalizedCacheObject> | null,
       activeSubscriptionPosition:
         null as ApolloClient<NormalizedCacheObject> | null,
-      collaborators: [] as NoteCollabPosition[],
+      collaborators: [] as NoteCollabPositionWithTyping[],
       position: {
         blockIndex: 0,
         position: 0
@@ -182,7 +194,9 @@ export default defineComponent({
   },
   unmounted() {
     document.removeEventListener("keydown", this.saveEvent);
-    document.removeEventListener("selectionchange", this.updateCursor);
+    document.removeEventListener("keydown", this.updateCursor);
+    document.removeEventListener("click", this.updateCursor);
+    this.destroyCollabCursors();
     this.$app.workspaceDrawer =
       localStorage.getItem("workspaceDrawer") === "true";
     this.$app.forcedWorkspaceDrawer = false;
@@ -207,6 +221,19 @@ export default defineComponent({
       this.activeSubscription = observer.subscribe({
         next: (data) => {
           console.log(data);
+          // set to typing, and then set typing to false after 5 seconds of no event
+          const index = this.collaborators.findIndex(
+            (c) => c.userId === data.data.onUpdateNote.userId
+          );
+          if (index !== -1) {
+            this.collaborators[index].typing = true;
+            if (this.collaborators[index].timeout) {
+              clearTimeout(this.collaborators[index].timeout);
+            }
+            this.collaborators[index].timeout = setTimeout(() => {
+              this.collaborators[index].typing = false;
+            }, 5000);
+          }
           const updateData = data.data.onUpdateNote;
           switch (updateData.type) {
             case UpdateNoteEventType.Insert:
@@ -247,6 +274,8 @@ export default defineComponent({
         next: (data) => {
           const updateData = data.data.onNoteCollabPosition;
           console.log(updateData);
+          // do not render own cursor
+          // TODO: add different session support for tab instances
           const index = this.collaborators.findIndex(
             (c) => c.userId === updateData.userId
           );
@@ -261,6 +290,7 @@ export default defineComponent({
               this.collaborators.splice(index, 1);
             }
           }
+          if (updateData.userId === this.$user.user?.id) return;
           // rerender cursor logic
           let cursor: HTMLElement = document.getElementById(
             `workspaces-cursor-${updateData.userId}`
@@ -276,59 +306,60 @@ export default defineComponent({
 
           if (!cursor) {
             cursor = document.createElement("span");
-            cursor.className = "cursor";
+            cursor.className = "workspaces-cursor";
             cursor.id = `workspaces-cursor-${updateData.userId}`;
-            cursor.style.backgroundColor = "#0190ea";
-            cursor.style.width = "2px";
+            cursor.style.backgroundColor = functions.randomColorGenerator(
+              this.collaborators.findIndex(
+                (c) => c.userId === updateData.userId
+              )
+            );
+            cursor.style.width = "3px";
             cursor.style.height = "1em";
             cursor.style.borderRadius = "2px";
-            holder.appendChild(cursor);
+            cursor.style.zIndex = "1000";
+            cursor.style.position = "absolute";
           }
 
           // Get the bounding client rect of the cursor position
           console.log(
             window.getSelection()?.getRangeAt(0).startContainer.parentElement
           );
-          const rect = this.getCharacterCoordinates(
-            // get current selected dom
-            window.getSelection()?.getRangeAt(0).startContainer.parentElement,
-            updateData.position
+          const rect = this.getCaretCoordinates(
+            updateData.position,
+            block.holder.querySelector(".cdx-block")
           );
           console.log(`RECT for ${this.$user.user?.id}`, rect);
           if (!rect) return console.error("Could not get rect");
 
           // Position the cursor indicator
-          cursor.style.position = "absolute";
-          cursor.style.left = rect.left + "px";
-          cursor.style.top = rect.top + "px";
+          cursor.style.left = rect.x + "px";
+          cursor.style.top = rect.y + 2 + "px";
+          console.log(cursor, cursor.style, rect.x, rect.y);
+          // on hover, tooltip with username
+          cursor.onmouseover = () => {
+            this.$toast.success(
+              `${this.$user.users[updateData.userId].username} (dev placeholder)`
+            );
+          };
+          document.body.appendChild(cursor);
         }
       });
     },
-    getCharacterCoordinates(container, index) {
+    getCaretCoordinates(offset: number, element: HTMLElement) {
+      let x = 0,
+        y = 0;
       const range = document.createRange();
-      const sel = window.getSelection();
-      let targetNode = container;
-      let currentIndex = 0;
-      console.log(targetNode, index);
+      console.log(element);
+      const node = element.childNodes[0]; // Assuming the text node is the first child
+      range.setStart(node, offset); // Set the range start at the specified offset
+      range.collapse(true); // Collapse the range to the start
 
-      while (targetNode && currentIndex < index) {
-        const nextNode = targetNode.nextSibling;
-        if (nextNode) {
-          currentIndex += targetNode.textContent.length;
-        }
-        targetNode = nextNode;
+      const rect = range.getClientRects()[0];
+      if (rect) {
+        x = rect.left; // X-coordinate of the caret
+        y = rect.top; // Y-coordinate of the caret
       }
-      console.log(targetNode, index);
-
-      if (targetNode) {
-        range.setStart(targetNode, index - currentIndex);
-        range.setEnd(targetNode, index - currentIndex + 1);
-        const rect = range.getBoundingClientRect();
-        range.detach(); // Clean up range object
-        return rect;
-      }
-
-      return null; // Character index out of range or element structure issue
+      return { x, y };
     },
     unsubscribeFromNote() {
       if (this.activeSubscription) this.activeSubscription?.unsubscribe?.();
@@ -665,6 +696,7 @@ export default defineComponent({
       window.editor = new EditorJS(init);
     },
     updateCursor(e: Event) {
+      if (!this.$experiments.experiments.NOTE_COLLAB) return;
       // complete disaster
       if (e.isTrusted) {
         const currentBlock = window.editor.blocks.getCurrentBlockIndex();
@@ -690,7 +722,14 @@ export default defineComponent({
         });
       }
     },
+    destroyCollabCursors() {
+      // destroy collaborative cursors
+      document.querySelectorAll(".workspaces-cursor").forEach((cursor) => {
+        cursor.remove();
+      });
+    },
     async onMounted() {
+      this.destroyCollabCursors();
       try {
         if (window.editor) {
           await window?.editor?.destroy?.();

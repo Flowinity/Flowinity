@@ -81,11 +81,11 @@ export class CoreControllerV3 {
   @Get("/experiments")
   async getExperiments(
     @Auth("user.view", false) user: User | null,
-    @HeaderParam("X-TPU-Client-Version") version: string
+    @HeaderParam("X-TPU-Client-Version") version: string | undefined
   ) {
     const dev = user ? user.administrator || user.moderator : false
     const gold = user ? user.plan.internalName === "GOLD" : false
-    const majorVersion = parseInt(version.split(".")[0] || "3")
+    const majorVersion = parseInt(version?.split(".")[0] || "0")
     if (!user) return this.coreService.getExperiments(dev, gold, majorVersion)
     return await this.coreService.getUserExperiments(
       user.id,

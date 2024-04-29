@@ -48,17 +48,51 @@
       </v-avatar>
       <template v-if="status && friendStatus">
         <div
-          v-if="friendDevice === 'web'"
-          class="status"
-          :class="{ 'dot-status': dotStatus }"
+          class="status align-center justify-center d-flex"
+          :class="{ 'dot-status': dotStatus, 'typing-status': typing }"
           :style="{
-            backgroundColor: $functions.userStatus(friendStatus).color
+            backgroundColor:
+              friendStatus === UserStatus.Idle
+                ? 'rgb(var(--v-theme-background))'
+                : functions.userStatus(friendStatus).color
           }"
         >
           <v-tooltip :eager="false" location="top" activator="parent">
-            {{ $functions.userStatus(friendStatus).text }}
+            {{ statusTooltip || $functions.userStatus(friendStatus).text }}
           </v-tooltip>
+          <transition>
+            <slot v-if="!typing" name="status-content">
+              <div
+                v-if="friendStatus === UserStatus.Busy"
+                class="rounded do-not-disturb"
+                :class="{ lg: !dotStatus }"
+              />
+              <RiMoonFill
+                v-else-if="friendStatus === UserStatus.Idle"
+                style="stroke-width: 1px; transform: rotate(-90deg)"
+                :style="{
+                  strokeColor: functions.userStatus(friendStatus).color,
+                  fill: functions.userStatus(friendStatus).color
+                }"
+              />
+              <RiCheckLine
+                v-else-if="friendStatus === UserStatus.Online"
+                style="fill: black"
+                :style="{
+                  height: statusSize,
+                  width: statusSize
+                }"
+              />
+              <div v-else style="background: #101113; border-radius: 100%" />
+            </slot>
+            <div v-else class="d-inline-flex align-center justify-center">
+              <div class="dot" style="margin-right: 2px"></div>
+              <div class="dot" style="margin-right: 2px"></div>
+              <div class="dot"></div>
+            </div>
+          </transition>
         </div>
+        <!-- TODO: reimplement mobile status
         <span v-else>
           <v-tooltip :eager="false" location="top" activator="parent">
             {{ $functions.userStatus(friendStatus).text }}
@@ -72,6 +106,7 @@
             mdi-cellphone
           </v-icon>
         </span>
+        -->
       </template>
     </v-hover>
   </span>
@@ -80,10 +115,14 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
+import { UserStatus, UserStoredStatus } from "@/gql/graphql";
+import functions from "@/plugins/functions";
+import RiMoonFill from "@/components/Icons/v5/ri-moon-fill.vue";
+import RiCheckLine from "@/components/Icons/v5/ri-check-line.vue";
 
 export default defineComponent({
   name: "UserAvatar",
-  components: { UploadCropper },
+  components: { RiCheckLine, RiMoonFill, UploadCropper },
   props: [
     "user",
     "size",
@@ -98,7 +137,9 @@ export default defineComponent({
     "light",
     "chat",
     "overrideId",
-    "bot"
+    "bot",
+    "typing",
+    "statusTooltip"
   ],
   emits: ["refresh"],
   data() {
@@ -107,6 +148,12 @@ export default defineComponent({
     };
   },
   computed: {
+    functions() {
+      return functions;
+    },
+    UserStatus() {
+      return UserStatus;
+    },
     x() {
       return this.statusXOffset || 0 + "px";
     },
@@ -117,8 +164,8 @@ export default defineComponent({
       return this.size / 4;
     },
     statusSize() {
-      if (this.dotStatus) return 10 + "px";
-      return 15 + "px";
+      if (this.dotStatus) return 14 + "px";
+      return 20 + "px";
     },
     textSize() {
       let classes = "";
@@ -137,8 +184,14 @@ export default defineComponent({
       return classes;
     },
     friendStatus() {
-      if (!this.user) return;
+      if (this.emulatedStatus === UserStoredStatus.Busy) return UserStatus.Busy;
+      if (this.emulatedStatus === UserStoredStatus.Idle) return UserStatus.Idle;
+      if (this.emulatedStatus === UserStoredStatus.Online)
+        return UserStatus.Online;
+      if (this.emulatedStatus === UserStoredStatus.Invisible)
+        return UserStatus.Offline;
       if (this.emulatedStatus) return this.emulatedStatus;
+      if (!this.user) return;
       return this.$user.getStatus(this.user);
     },
     friendDevice() {
@@ -186,7 +239,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .status {
   position: absolute;
   right: 0.4rem;
@@ -196,15 +249,65 @@ export default defineComponent({
   border-radius: 50%;
   border: 2px solid rgb(var(--v-theme-background));
   z-index: 100;
+  display: flex;
+  justify-content: center;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    width 0.2s;
+  align-items: center;
 }
 
 .dot-status {
-  bottom: 0;
+  bottom: -1px;
   right: 0;
 }
 
 .outline {
   border: 2px solid #151515;
   border-radius: 50%;
+}
+
+.dot {
+  width: 0.2em;
+  height: 0.2em;
+  background: #101113;
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+  opacity: 0;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.375s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.75s;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+}
+
+.typing-status {
+  width: 22px;
+  border-radius: 12px;
+}
+
+.do-not-disturb {
+  height: 2px;
+  width: 6px;
+  background: #101113;
+}
+
+.do-not-disturb.lg {
+  height: 2.5px;
+  width: 8px;
 }
 </style>

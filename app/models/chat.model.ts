@@ -132,4 +132,7 @@ export class Chat extends Model {
 
   @Field(() => Int)
   usersCount: number
+
+  @Field(() => Int)
+  onlineCount: number
 }

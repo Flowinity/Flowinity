@@ -42,6 +42,7 @@ import { Success } from "@app/classes/graphql/generic/success"
 import { ChatInvite } from "@app/models/chatInvite.model"
 import { ChatTypingEvent } from "@app/classes/graphql/chat/events/typing"
 import redisClient from "@app/redis"
+import { UserStatus } from "@app/classes/graphql/user/status"
 
 @Resolver(Chat)
 @Service()
@@ -394,9 +395,34 @@ export class ChatResolver {
   }
 
   @FieldResolver(() => Int)
-  usersCount(@Root() chat: Chat) {
+  usersCount(@Root() chat: Chat, @Ctx() ctx: Context) {
     if (!chat.users) {
       return ChatAssociation.count({ where: { chatId: chat.id } })
+    }
+    return chat.users.length
+  }
+
+  @FieldResolver(() => Int)
+  onlineCount(@Root() chat: Chat, @Ctx() ctx: Context) {
+    if (!ctx.meta.chatMemberCount) ctx.meta.chatMemberCount = {}
+    if (!chat.users && !ctx.meta.chatMemberCount[chat.id]) {
+      return ChatAssociation.count({
+        where: {
+          chatId: chat.id
+        },
+        include: [
+          {
+            model: User,
+            where: {
+              status: {
+                [Op.not]: UserStatus.OFFLINE
+              }
+            },
+            required: true,
+            as: "user"
+          }
+        ]
+      })
     }
     return chat.users.length
   }

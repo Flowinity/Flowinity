@@ -290,7 +290,7 @@ import UserCard from "@/components/Users/UserCard.vue";
 import InfiniteLoading from "@/components/Scroll/InfiniteScroll.vue";
 import "v3-infinite-loading/lib/style.css";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
-import { Chat, Message, ScrollPosition } from "@/gql/graphql";
+import { Chat, Message, ScrollPosition, UserStoredStatus } from "@/gql/graphql";
 import ChatDevOptions from "@/components/Dev/Dialogs/ChatDevOptionsDialog.vue";
 import { Platform } from "@/store/app.store";
 import { IpcChannels } from "@/electron-types/ipc";
@@ -864,6 +864,7 @@ export default defineComponent({
       this.autoScroll();
     },
     onTyping(data: Typing) {
+      console.log(data);
       if (!data) return;
       const chat =
         this.$chat.chats[
@@ -1016,6 +1017,7 @@ export default defineComponent({
       }
     },
     message() {
+      if (this.$user.user.storedStatus === UserStoredStatus.Invisible) return;
       if (this.message.length > 0) {
         if (
           !this.typingStatus.rateLimit ||

@@ -9,6 +9,17 @@ export const WorkspacesQuery = gql`
       createdAt
       updatedAt
       icon
+      users {
+        id
+        read
+        write
+        configure
+        user {
+          username
+          id
+          avatar
+        }
+      }
       folders {
         id
         createdAt

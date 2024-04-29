@@ -24,6 +24,7 @@ export const ChatsQuery = gql`
       updatedAt
       _redisSortDate
       usersCount
+      onlineCount
       recipient {
         id
       }

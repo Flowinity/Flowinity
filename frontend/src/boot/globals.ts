@@ -25,7 +25,13 @@ function createSocket(namespace: string) {
     transports: ["websocket"],
     reconnection: true,
     path: "/gateway",
-    reconnectionAttempts: 99999
+    reconnectionAttempts: 99999,
+    query: {
+      // In v4 legacy socket, the typing will not be emit to the user itself
+      // In v5, this was changed, however, we need to access the typing status of the user in v4
+      // This is the only difference
+      version: "5"
+    }
   });
   socket.on("connect", () => {
     console.log(`[TPU/Socket] Connected to ${namespace}`);

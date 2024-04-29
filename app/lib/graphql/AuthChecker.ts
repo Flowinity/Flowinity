@@ -7,6 +7,7 @@ import { Container } from "typedi"
 import { UserResolver } from "@app/controllers/graphql/user.resolver"
 import { Session } from "@app/models/session.model"
 import { PartialUserAuth } from "@app/classes/graphql/user/partialUser"
+import { CoreService } from "@app/services/core.service"
 
 export interface AuthCheckerOptions {
   scopes: Scope[] | Scope
@@ -14,6 +15,10 @@ export interface AuthCheckerOptions {
   accessLevel?: AccessLevel
   emailOptional?: boolean
   neverUseCache?: boolean
+  /**
+   * Only supports truthy experiments, it will pass if it's true, or 1 or more for example.
+   */
+  requiredExperiments?: string[]
 }
 
 export const Authorization = (options: AuthCheckerOptions) =>
@@ -152,6 +157,29 @@ export const authChecker: AuthChecker<Context> = async (
     }
     context.user = null
     return true
+  }
+
+  if (opts.requiredExperiments?.length) {
+    const core = Container.get(CoreService)
+    let experiments
+    if (user) {
+      const dev = user ? user.administrator || user.moderator : false
+      experiments = await core.getUserExperiments(user!!.id, dev, false, 0)
+    } else {
+      experiments = await core.getExperiments(false, false, 0)
+    }
+    for (const experiment of opts.requiredExperiments) {
+      if (!experiments[experiment]) {
+        throw new GraphQLError(
+          `You need to be part of the ${experiment} experiment to do this.`,
+          {
+            extensions: {
+              code: "EXPERIMENT_NOT_ALLOWED"
+            }
+          }
+        )
+      }
+    }
   }
   return true
 }

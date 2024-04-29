@@ -181,7 +181,27 @@
           "
           :dot-status="true"
           class="mr-2"
-        />
+          :typing="
+            chat.recipient
+              ? chat.typers?.find((typer) => typer.userId === chat.recipient.id)
+              : // exclude the current user from the typers list
+                chat.typers?.find((typer) => typer.userId !== $user.user?.id)
+          "
+          :emulated-status="
+            chat.type === 'group' && chat.onlineCount > 1
+              ? UserStatus.Online
+              : undefined
+          "
+          :status-tooltip="
+            chat.type === 'group' ? `${chat.onlineCount} online` : undefined
+          "
+        >
+          <template v-if="chat.type === 'group'" #status-content>
+            <p style="font-size: 0.6em; color: black">
+              {{ chat.onlineCount }}
+            </p>
+          </template>
+        </UserAvatar>
       </template>
       <template v-if="chat.unread" #append>
         a

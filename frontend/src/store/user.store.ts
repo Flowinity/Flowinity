@@ -297,6 +297,7 @@ export const useUserStore = defineStore("user", {
     },
     async changeStatus(status: UserStoredStatus) {
       if (!this.user) return;
+      this.user.status = status;
       this.user.storedStatus = status;
       await this.save();
     },

@@ -315,7 +315,7 @@ export class CoreService {
     userId: number,
     dev: boolean = false,
     gold: boolean = false,
-    majorVersion: number = 3
+    majorVersion: number | undefined = undefined
   ) {
     const overrides = await Experiment.findAll({
       where: {
@@ -367,7 +367,7 @@ export class CoreService {
   getExperiments(
     dev: boolean = false,
     gold: boolean = false,
-    majorVersion: number = 3
+    majorVersion: number | undefined = undefined
   ): Record<string, any> {
     const experiments = {
       NOTE_AI_ASSIST: false,
@@ -751,17 +751,19 @@ export class CoreService {
     }
 
     // only return experiments that are available for the major version
-    for (const key in experiments) {
-      if (key === "meta") continue
-      if (
-        experiments.meta[
-          key as keyof typeof experiments.meta
-        ].versions?.includes(majorVersion)
-      ) {
-        continue
+    if (majorVersion) {
+      for (const key in experiments) {
+        if (key === "meta") continue
+        if (
+          experiments.meta[
+            key as keyof typeof experiments.meta
+          ].versions?.includes(majorVersion)
+        ) {
+          continue
+        }
+        delete experiments[key as keyof typeof experiments]
+        delete experiments.meta[key as keyof typeof experiments.meta]
       }
-      delete experiments[key as keyof typeof experiments]
-      delete experiments.meta[key as keyof typeof experiments.meta]
     }
 
     return experiments

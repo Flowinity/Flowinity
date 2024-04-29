@@ -9,6 +9,7 @@ import {
   UserStatus,
   UserStoredStatus
 } from "@/gql/graphql";
+import colors from "vuetify/util/colors";
 
 export default {
   fileSize(size: number): string {
@@ -172,7 +173,7 @@ export default {
       case UserStoredStatus.Busy:
         return {
           color: "#f44336",
-          text: "Busy"
+          text: "Do not disturb"
         };
       case UserStoredStatus.Invisible:
         return {
@@ -286,9 +287,32 @@ export default {
       app.platform === Platform.LINUX || platform === "Linux"
         ? "linux"
         : app.platform === Platform.MAC || platform === "Mac"
-        ? "apple"
-        : "microsoft"
+          ? "apple"
+          : "microsoft"
     }
     `;
+  },
+  randomColorGenerator(index) {
+    const approvedColors = [
+      "blue",
+      "green",
+      "yellow",
+      "indigo",
+      "red",
+      "orange",
+      "purple",
+      "amber",
+      "lightGreen",
+      "deepPurple",
+      "teal",
+      "cyan",
+      "pink",
+      "lime",
+      "grey",
+      "deepOrange",
+      "blueGrey"
+    ];
+    const randomColor = colors[approvedColors[index % approvedColors.length]];
+    return randomColor.base;
   }
 };

@@ -105,6 +105,9 @@ const Errors = {
   NOT_FRIENDS_WITH_USER_COLLECTION: {
     message: "You must be friends with the user to add them to your collection."
   },
+  NOT_FRIENDS_WITH_USER_WORKSPACE: {
+    message: "You must be friends with the user to add them to your workspace."
+  },
   CANNOT_FRIEND_SELF: {
     message: "You cannot friend yourself."
   },
@@ -125,6 +128,9 @@ const Errors = {
   OWNED_CHATS_ACCOUNT_DELETION: {
     message:
       "You cannot delete your account whilst owning chats. Please transfer them before trying again."
+  },
+  WORKSPACE_NOT_FOUND: {
+    message: "The requested workspace could not be found."
   }
 }
 

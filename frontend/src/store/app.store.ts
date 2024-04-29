@@ -213,6 +213,7 @@ export const useAppStore = defineStore("app", {
       const user = useUserStore();
       const chat = useChatStore();
       const experiments = useExperimentsStore();
+      const mail = useMailStore();
       const app = useAppStore();
 
       if (!user.user) return [];
@@ -250,7 +251,8 @@ export const useAppStore = defineStore("app", {
           path: "/mail",
           icon: "mdi-email",
           scope: "mail.view",
-          experimentsRequired: ["WEBMAIL", "OFFICIAL_INSTANCE"]
+          experimentsRequired: ["WEBMAIL", "OFFICIAL_INSTANCE"],
+          warning: mail.unread > 0 ? mail.unread : false
         },
         {
           id: 14,

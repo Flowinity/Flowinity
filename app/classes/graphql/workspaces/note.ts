@@ -128,3 +128,21 @@ export class NoteCollabPosition {
   @Field(() => CollabEventType)
   type: CollabEventType
 }
+
+@InputType("SaveNoteCharacterInput")
+export class SaveNoteCharacterInput {
+  @Field(() => String, {
+    nullable: true
+  })
+  blockId: string
+  @Field(() => [String])
+  characters: string[]
+  @Field(() => Int)
+  start: number
+  @Field(() => Int)
+  end: number
+  @Field(() => UpdateNoteEventType)
+  type: UpdateNoteEventType
+  @Field(() => Int)
+  noteId: number
+}

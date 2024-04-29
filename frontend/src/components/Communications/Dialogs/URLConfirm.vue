@@ -4,10 +4,10 @@
     style="max-width: 548px"
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template #title>You are leaving TPU</template>
+    <template #title>You are leaving {{ $app.site.name }}</template>
     <v-card-text>
       <p>
-        You are about to leave TPU and go to:
+        You are about to leave {{ $app.site.name }} and go to:
         <v-textarea
           auto-grow
           rows="1"
@@ -15,8 +15,8 @@
           :disabled="true"
           :model-value="$chat.dialogs.externalSite.url"
         />
-        This link is not part of TPU and might be unsafe. Do you want to
-        continue?
+        This link is not part of {{ $app.site.name }} and might be unsafe. Do
+        you want to continue?
       </p>
     </v-card-text>
     <v-card-actions>

@@ -673,7 +673,8 @@
       "rename": "Rename workspace",
       "renameNote": "Rename note",
       "delete": "Delete workspace",
-      "deleteNote": "Delete note"
+      "deleteNote": "Delete note",
+      "share": "Share workspace"
     },
     "download": {
       "title": "Download",

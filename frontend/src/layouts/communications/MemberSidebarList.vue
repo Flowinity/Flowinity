@@ -174,6 +174,11 @@
                 :dot-status="true"
                 :status="true"
                 :user="association.user"
+                :typing="
+                  $chat.selectedChat.typers?.find(
+                    (typer) => typer.userId === association.userId
+                  )
+                "
               />
             </template>
           </v-list-item>

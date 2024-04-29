@@ -91,7 +91,6 @@
         <v-icon>mdi-cloud-download</v-icon>
       </v-btn>
     </span>
-
     <template
       v-if="
         (!appStore.weather.loading && !$vuetify.display.mobile) ||
@@ -116,6 +115,7 @@
         }}{{ $user.user?.weatherUnit.charAt(0).toUpperCase() }}
       </span>
     </template>
+    <span id="header-actions" />
     <!-- Workspaces custom actions -->
     <template v-if="$route.path.startsWith('/workspaces/notes/')">
       <v-btn

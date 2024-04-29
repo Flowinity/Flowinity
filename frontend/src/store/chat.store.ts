@@ -737,6 +737,7 @@ export const useChatStore = defineStore("chat", {
     },
     typers() {
       const user = useUserStore();
+      const friends = useFriendsStore();
       if (!this.selectedChat) return "";
       if (!this.selectedChat.typers?.length) return "";
       if (this.selectedChat?.typers?.length > 3) {
@@ -747,14 +748,16 @@ export const useChatStore = defineStore("chat", {
       const typers = this.selectedChat.typers
         .filter((typer: Typing) => typer.userId !== user.user?.id)
         .map((typer: Typing) => {
-          return typer.user.username;
+          return friends.getName(typer.userId);
         });
 
       const last = typers.pop();
       if (typers.length) {
         return `${typers.join(", ")} and ${last} are typing...`;
-      } else {
+      } else if (last) {
         return `${last} is typing...`;
+      } else {
+        return "";
       }
     },
     totalUnread(state) {

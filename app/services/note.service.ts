@@ -19,6 +19,7 @@ import {
 } from "@app/classes/graphql/workspaces/note"
 import { pubSub } from "@app/lib/graphql/pubsub"
 import redisClient from "@app/redis"
+import { GqlError } from "@app/lib/gqlErrors"
 
 //create class of NoteData
 export class NoteField {
@@ -825,34 +826,31 @@ export class NoteService {
   async addUserToWorkspace(
     workspaceId: number,
     senderId: number,
-    username: string,
+    userId: number,
     write: boolean,
     configure: boolean,
     read: boolean
   ) {
-    const workspace = await Workspace.findOne({
-      where: {
-        id: workspaceId
-      }
-    })
-
-    if (!workspace) {
-      throw Errors.WORKSPACE_NOT_FOUND
-    }
-
+    const workspace = await this.getWorkspace(
+      workspaceId,
+      senderId,
+      "workspace"
+    )
+    if (!workspace?.permissionsMetadata?.configure)
+      throw new GqlError("WORKSPACE_NOT_FOUND")
     const user = await User.findOne({
       where: {
-        username
+        id: userId
       },
       attributes: ["id", "username", "avatar", "email"]
     })
 
     if (!user) {
-      throw Errors.USER_NOT_FOUND
+      throw new GqlError("USER_NOT_FOUND")
     }
 
     if (workspace.userId === user.id) {
-      throw Errors.CANNOT_ADD_OWNER
+      throw new GqlError("CANNOT_ADD_OWNER")
     }
 
     const friend = await Friend.findOne({
@@ -864,27 +862,18 @@ export class NoteService {
     })
 
     if (!friend) {
-      throw Errors.NOT_FRIENDS_WITH_USER_COLLECTION
+      throw new GqlError("NOT_FRIENDS_WITH_USER_WORKSPACE")
     }
 
-    return {
-      ...(
-        await WorkspaceUser.create({
-          workspaceId,
-          recipientId: user.id,
-          senderId: senderId,
-          write,
-          configure,
-          read,
-          identifier: workspaceId + "-" + user.id
-        })
-      ).dataValues,
-      user,
-      workspace: {
-        id: workspace.id,
-        name: workspace.name
-      }
-    }
+    return await WorkspaceUser.create({
+      workspaceId,
+      recipientId: user.id,
+      senderId: senderId,
+      write,
+      configure,
+      read,
+      identifier: workspaceId + "-" + user.id
+    })
   }
 
   async updateUser(

@@ -7,19 +7,19 @@
       {{ $chat.selectedChat.association.permissions }}
       <overline>User Ranks for Chat</overline>
       {{
-        $chat.selectedChat.users.find(
+        $chat.selectedChat.users?.find(
           (assoc) => assoc.userId === $chat.selectedChat.association.userId
         )?.ranks
       }}
       <template
-        v-for="rank in $chat.selectedChat.users.find(
+        v-for="rank in $chat.selectedChat.users?.find(
           (assoc) => assoc.userId === $chat.selectedChat.association.userId
         )?.ranksMap"
         :key="rank"
       >
         <p>
           {{
-            $chat.selectedChat.ranks.find((r) => r.id === rank)?.name ||
+            $chat.selectedChat.ranks?.find((r) => r.id === rank)?.name ||
             "Unknown? Sync issue?"
           }}
           - {{ rank }}
@@ -36,9 +36,9 @@
       <p>associationId: {{ $chat.selectedChat.association.id }}</p>
       <p>unread: {{ $chat.totalUnread }}</p>
       <p>group type: {{ $chat.selectedChat.type }}</p>
-      <p v-if="realUsers.length">Real users: {{ realUsers.length }}</p>
+      <p v-if="realUsers.length">users: {{ realUsers.length }}</p>
       <p
-        v-if="$chat.selectedChat.messages"
+        v-if="$messages.messages[$chat.selectedChat.association.id]?.length"
         style="color: rgb(var(--v-theme-success))"
       >
         Chat loaded
@@ -64,7 +64,7 @@ export default defineComponent({
   components: { Overline, DevDialog },
   computed: {
     realUsers() {
-      return this.$chat.selectedChat.users;
+      return this.$chat.selectedChat.users || [];
     }
   }
 });

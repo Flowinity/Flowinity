@@ -45,6 +45,7 @@ import {
   EmbedDataV2Resolver,
   EmbedMediaResolver
 } from "@app/controllers/graphql/messageEmbed.resolver"
+import { WorkspaceUserResolver } from "@app/controllers/graphql/workspaceUser.resolver"
 
 export const generateSchema = () => {
   return buildSchema({
@@ -83,7 +84,8 @@ export const generateSchema = () => {
       PulseResolver,
       EmbedDataV2Resolver,
       PartialUserBaseResolver,
-      EmbedMediaResolver
+      EmbedMediaResolver,
+      WorkspaceUserResolver
     ],
     container: Container,
     authChecker: authChecker,

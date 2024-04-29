@@ -154,7 +154,8 @@ export class NoteResolver {
   }
 
   @Authorization({
-    scopes: ["workspaces.modify"]
+    scopes: ["workspaces.modify"],
+    requiredExperiments: ["NOTE_COLLAB"]
   })
   @Mutation(() => Boolean)
   async saveNoteBlock(
@@ -175,7 +176,8 @@ export class NoteResolver {
   }
 
   @Authorization({
-    scopes: ["workspaces.modify"]
+    scopes: ["workspaces.modify"],
+    requiredExperiments: ["NOTE_COLLAB"]
   })
   @Mutation(() => Boolean)
   async saveNoteCollabPosition(

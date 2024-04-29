@@ -1,6 +1,8 @@
 // Utilities
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
+import { UnreadMailQuery } from "@/graphql/mail/unreadMail.graphql";
+import { useApolloClient } from "@vue/apollo-composable";
 
 export interface MailState {
   // temp
@@ -9,6 +11,7 @@ export interface MailState {
   mailboxDrawer: boolean;
   selectedMailbox: string;
   loading: boolean;
+  unread: number;
 }
 
 export interface Email {
@@ -31,7 +34,8 @@ export const useMailStore = defineStore("mail", {
       drawer: true,
       mailboxDrawer: true,
       selectedMailbox: "INBOX",
-      loading: false
+      loading: false,
+      unread: 0
     }) as MailState,
   actions: {
     getSender(email: Email) {
@@ -50,6 +54,12 @@ export const useMailStore = defineStore("mail", {
     async getMailboxes() {
       const response = await axios.get("/mail/mailboxes");
       this.mailboxes = response.data;
+
+      const apolloClient = useApolloClient();
+      const { data } = await apolloClient.client.query({
+        query: UnreadMailQuery
+      });
+      this.unread = data.unreadMail;
     },
     async init() {
       this.getMailboxes();

@@ -885,6 +885,8 @@ export class UserUtilsService {
             }
           }
         )
+        user.status = status
+        user.dataValues.status = status
         if (body.storedStatus !== "invisible" || user.status !== "offline") {
           await this.emitToTrackedUsers(
             user.id,

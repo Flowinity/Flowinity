@@ -98,7 +98,7 @@
             :src="
               media.isInternal ? $app.domain + media.attachment : media.proxyUrl
             "
-            class="pointer rounded-xl mb-1"
+            class="undraggable pointer rounded-xl mb-1"
             alt="Embedded image"
             @click="
               $chat.dialogs.image.object = media;

@@ -41,9 +41,6 @@ class MessageIncludes {
       {
         model: Message,
         as: "reply",
-        attributes: {
-          include: ["user"]
-        },
         include: [
           {
             model: User,

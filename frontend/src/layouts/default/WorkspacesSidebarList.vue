@@ -24,6 +24,10 @@
       </v-btn>
     </v-card-actions>
   </CoreDialog>
+  <ShareWorkspace
+    v-model="shareWorkspace.dialog"
+    :workspace="contextMenu.item"
+  />
   <CoreDialog v-model="download.dialog" max-width="600px">
     <template v-if="!download.workspaceFolderId" #title>
       {{ $t("workspaces.download.title") }}
@@ -159,11 +163,23 @@
       </v-list-item>
     </v-list>
     <v-list v-else>
+      <v-list-item
+        @click="shareWorkspace.dialog = true"
+        v-if="$experiments.experiments.NOTE_COLLAB"
+      >
+        <v-list-item-title>
+          {{ $t("workspaces.sidebar.share") }}
+        </v-list-item-title>
+      </v-list-item>
       <v-list-item @click="renameWorkspace.dialog = true">
-        <v-list-item-title>Rename workspace</v-list-item-title>
+        <v-list-item-title>
+          {{ $t("workspaces.sidebar.rename") }}
+        </v-list-item-title>
       </v-list-item>
       <v-list-item @click="deleteWorkspace.dialog = true">
-        <v-list-item-title>Delete</v-list-item-title>
+        <v-list-item-title>
+          {{ $t("workspaces.sidebar.delete") }}
+        </v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -175,6 +191,18 @@
   >
     <v-icon size="20">mdi-close</v-icon>
     Close Workspaces
+  </v-card-text>
+  <v-card-text
+    v-else-if="!$app.rail"
+    style="color: #0190ea; cursor: pointer; font-size: 12px"
+    class="mb-n4 unselectable"
+    @click="
+      $workspaces.versionHistory = false;
+      $router.push(`/workspaces/notes/${$route.params.id}`);
+    "
+  >
+    <v-icon>mdi-arrow-left</v-icon>
+    Leave version history
   </v-card-text>
   <v-card-text
     v-if="$experiments.experiments.ACCOUNT_DEV_ELIGIBLE"
@@ -189,18 +217,7 @@
   >
     Toggle Experimental Collab ({{ $experiments.experiments.NOTE_COLLAB }})
   </v-card-text>
-  <v-card-text
-    v-else-if="!$app.rail"
-    style="color: #0190ea; cursor: pointer; font-size: 12px"
-    class="mb-n4 unselectable"
-    @click="
-      $workspaces.versionHistory = false;
-      $router.push(`/workspaces/notes/${$route.params.id}`);
-    "
-  >
-    <v-icon>mdi-arrow-left</v-icon>
-    Leave version history
-  </v-card-text>
+
   <v-list
     v-if="!$workspaces.versionHistory"
     density="comfortable"
@@ -217,6 +234,13 @@
     >
       {{ $workspaces.workspace?.name || "None selected" }}
       <template #append>
+        <v-chip
+          v-if="$workspaces.workspace?.userId !== $user.user?.id"
+          color="primary"
+          class="mr-2"
+        >
+          <v-icon>mdi-swap-horizontal</v-icon>
+        </v-chip>
         <v-list-item-action
           v-if="$workspaces.workspace"
           @click.stop="createFolder.dialog = true"
@@ -237,6 +261,12 @@
           class="unselectable"
           @click="$workspaces.selectWorkspace(item.id)"
         >
+          <template #append>
+            <v-chip v-if="item.userId !== $user.user?.id" color="primary">
+              <v-icon class="mr-1">mdi-swap-horizontal</v-icon>
+              Shared
+            </v-chip>
+          </template>
           <v-list-item-title>{{ item.name }}</v-list-item-title>
         </v-list-item>
         <v-list-item @click="createWorkspace.dialog = true">
@@ -316,10 +346,16 @@ import { NoteDataV2, NoteVersion } from "@/models/noteVersion";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
 import { CreateWorkspaceMutation } from "@/graphql/workspaces/createWorkspace.graphql";
 import { CreateNoteMutation } from "@/graphql/workspaces/createNote.graphql";
+import ShareWorkspace from "@/components/Workspaces/Dialogs/ShareWorkspace.vue";
 
 export default defineComponent({
   name: "WorkspacesSidebarList",
-  components: { CoreDialog, WorkspaceDeleteDialog, WorkspaceDialog },
+  components: {
+    ShareWorkspace,
+    CoreDialog,
+    WorkspaceDeleteDialog,
+    WorkspaceDialog
+  },
   data() {
     return {
       versions: [] as NoteVersion[],
@@ -362,6 +398,10 @@ export default defineComponent({
       renameWorkspace: {
         dialog: false,
         workspaceId: undefined as number | undefined,
+        loading: false
+      },
+      shareWorkspace: {
+        dialog: false,
         loading: false
       },
       deleteNote: {
