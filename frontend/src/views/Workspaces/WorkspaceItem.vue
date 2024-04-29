@@ -86,7 +86,7 @@ import Delimiter from "@editorjs/delimiter";
 //@ts-ignore
 import ImageTool from "@editorjs/image";
 //@ts-ignore
-import EditorJS, { BlockAPI, EditorConfig } from "@editorjs/editorjs";
+import EditorJS, { BlockAPI, EditorConfig } from "@flowinity/editorjs";
 //@ts-ignore
 import Attaches from "@editorjs/attaches";
 //@ts-ignore

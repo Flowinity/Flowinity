@@ -19,7 +19,7 @@ import {
 } from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { WorkspacesQuery } from "@/graphql/workspaces/workspaces.graphql";
-import { BlockAPI } from "@editorjs/editorjs";
+import { BlockAPI } from "@flowinity/editorjs";
 import { UpdateNoteSubscription } from "@/graphql/workspaces/noteSubscription";
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client/core";
 

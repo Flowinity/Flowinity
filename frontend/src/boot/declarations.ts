@@ -19,7 +19,7 @@ import { Chat, PartialUserFriend, UpdateNoteEventType } from "@/gql/graphql";
 import { NormalizedCacheObject } from "@apollo/client/cache";
 import { useMessagesStore } from "@/store/message.store";
 import { ElectronAPI } from "@electron-toolkit/preload";
-import EditorJS, { BlockAPI, EditorConfig } from "@editorjs/editorjs";
+import EditorJS, { BlockAPI, EditorConfig } from "@flowinity/editorjs";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
