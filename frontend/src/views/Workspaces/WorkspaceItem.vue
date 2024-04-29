@@ -666,16 +666,22 @@ export default defineComponent({
           console.log(data, block);
           window.editor.save().then(async (outputData) => {
             if (window.__TROPLO_INTERNALS_EDITOR_COLLAB_MODE) {
+              // TODO: Fix type errors here for experimental collaboration
+              //@ts-ignore
               console.log(block.type);
               const type =
+                //@ts-ignore
                 block.type === "block_added"
                   ? UpdateNoteEventType.Insert
-                  : block.type === "block_removed"
+                  : //@ts-ignore
+                    block.type === "block_removed"
                     ? UpdateNoteEventType.Delete
                     : UpdateNoteEventType.Update;
               console.log(data, block);
               window.__TROPLO_INTERNALS_EDITOR_SAVE_BLOCK(
+                //@ts-ignore
                 outputData.blocks?.find(
+                  //@ts-ignore
                   (b) => b.id === block.detail?.target?.id
                 ),
                 type
