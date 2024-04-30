@@ -63,27 +63,36 @@
           <transition>
             <slot v-if="!typing" name="status-content">
               <div
-                v-if="friendStatus === UserStatus.Busy"
-                class="rounded do-not-disturb"
-                :class="{ lg: !dotStatus }"
-              />
-              <RiMoonFill
-                v-else-if="friendStatus === UserStatus.Idle"
-                style="stroke-width: 1px; transform: rotate(-90deg)"
                 :style="{
-                  strokeColor: functions.userStatus(friendStatus).color,
-                  fill: functions.userStatus(friendStatus).color
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }"
-              />
-              <RiCheckLine
-                v-else-if="friendStatus === UserStatus.Online"
-                style="fill: black"
-                :style="{
-                  height: statusSize,
-                  width: statusSize
-                }"
-              />
-              <div v-else style="background: #101113; border-radius: 100%" />
+              >
+                <div
+                  v-if="friendStatus === UserStatus.Busy"
+                  class="rounded do-not-disturb"
+                  :class="{ lg: !dotStatus }"
+                />
+                <RiMoonFill
+                  v-else-if="friendStatus === UserStatus.Idle"
+                  style="stroke-width: 1px; transform: rotate(-90deg)"
+                  :style="{
+                    strokeColor: functions.userStatus(friendStatus).color,
+                    fill: functions.userStatus(friendStatus).color
+                  }"
+                />
+                <RiCheckLine
+                  v-else-if="friendStatus === UserStatus.Online"
+                  style="fill: black"
+                  :style="{
+                    height: statusSize,
+                    width: statusSize
+                  }"
+                />
+              </div>
             </slot>
             <div v-else class="d-inline-flex align-center justify-center">
               <div class="dot" style="margin-right: 2px"></div>
@@ -119,10 +128,16 @@ import { UserStatus, UserStoredStatus } from "@/gql/graphql";
 import functions from "@/plugins/functions";
 import RiMoonFill from "@/components/Icons/v5/ri-moon-fill.vue";
 import RiCheckLine from "@/components/Icons/v5/ri-check-line.vue";
+import RiCheckboxBlankCircleFill from "@/components/Icons/v5/ri-checkbox-blank-circle-fill.vue";
 
 export default defineComponent({
   name: "UserAvatar",
-  components: { RiCheckLine, RiMoonFill, UploadCropper },
+  components: {
+    RiCheckboxBlankCircleFill,
+    RiCheckLine,
+    RiMoonFill,
+    UploadCropper
+  },
   props: [
     "user",
     "size",
@@ -246,8 +261,9 @@ export default defineComponent({
   bottom: -190%;
   width: v-bind(statusSize);
   height: v-bind(statusSize);
-  border-radius: 50%;
-  border: 2px solid rgb(var(--v-theme-background));
+  border-radius: 100%;
+  box-sizing: border-box;
+  border: 0.15em solid rgb(var(--v-theme-background));
   z-index: 100;
   display: flex;
   justify-content: center;
@@ -256,6 +272,7 @@ export default defineComponent({
     color 0.2s,
     width 0.2s;
   align-items: center;
+  flex: 0 0 auto;
 }
 
 .dot-status {

@@ -303,7 +303,7 @@ export default defineComponent({
             .filter((chat) => chat.type === "group")
             .map((chat) => {
               return {
-                label: this.$chat.getChatName(chat),
+                label: this.$chat.chatName(chat),
                 value: chat.id,
                 chat: chat
               };

@@ -18,51 +18,55 @@
       {{ $t("core.sidebar.backToComms") }}
     </p>
     <v-list density="comfortable" :nav="true" class="mt-1">
-      <v-list-item
-        v-for="item in $app.sidebar"
-        :key="item.id"
-        class="mx-1 my-1 unselectable"
-        style="text-transform: unset !important"
-        :href="item.externalPath"
-        :link="true"
-        :exact="item.exact"
-        :to="item.path"
-        :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
-        :prepend-icon="<any>item.icon"
-        @click="handleClick(item.id)"
-      >
-        <template v-if="item.customIcon" #prepend>
-          <DiscordIcon style="margin-right: 32px" />
-        </template>
-        <v-list-item-title>
+      <template v-for="item in $app.sidebar" :key="item.id">
+        <overline v-if="item.separator" position="start">
           {{ item.name }}
-          <v-chip
-            v-if="item.new && !item.warning"
-            class="pb-n2 ml-1"
-            color="green"
-            variant="tonal"
-            size="x-small"
-          >
-            {{ $t("generic.new") }}
-          </v-chip>
-          <v-chip
-            v-if="item.warning"
-            class="pb-n2 ml-1"
-            variant="tonal"
-            size="x-small"
-          >
-            {{ item.warning }}
-          </v-chip>
-          <v-icon
-            v-if="!$functions.checkScope(item.scope, $user.user?.scopes)"
-            size="small"
-            class="float-right"
-            color="grey lighten-1"
-          >
-            mdi-lock
-          </v-icon>
-        </v-list-item-title>
-      </v-list-item>
+        </overline>
+        <v-list-item
+          v-else
+          class="mx-1 my-1 unselectable"
+          style="text-transform: unset !important"
+          :href="item.externalPath"
+          :link="true"
+          :exact="item.exact"
+          :to="item.path"
+          :disabled="!$functions.checkScope(item.scope, $user.user?.scopes)"
+          :prepend-icon="<any>item.icon"
+          @click="handleClick(item.id)"
+        >
+          <template v-if="item.customIcon" #prepend>
+            <DiscordIcon style="margin-right: 32px" />
+          </template>
+          <v-list-item-title>
+            {{ item.name }}
+            <v-chip
+              v-if="item.new && !item.warning"
+              class="pb-n2 ml-1"
+              color="green"
+              variant="tonal"
+              size="x-small"
+            >
+              {{ $t("generic.new") }}
+            </v-chip>
+            <v-chip
+              v-if="item.warning"
+              class="pb-n2 ml-1"
+              variant="tonal"
+              size="x-small"
+            >
+              {{ item.warning }}
+            </v-chip>
+            <v-icon
+              v-if="!$functions.checkScope(item.scope, $user.user?.scopes)"
+              size="small"
+              class="float-right"
+              color="grey lighten-1"
+            >
+              mdi-lock
+            </v-icon>
+          </v-list-item-title>
+        </v-list-item>
+      </template>
     </v-list>
     <template #append>
       <div
@@ -110,10 +114,11 @@
 import { defineComponent } from "vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
 import DiscordIcon from "@/components/Icons/Discord.vue";
+import Overline from "@/components/Core/Typography/Overline.vue";
 
 export default defineComponent({
   name: "Sidebar",
-  components: { DiscordIcon, CoreSidebar },
+  components: { Overline, DiscordIcon, CoreSidebar },
   data() {
     return {
       order: []

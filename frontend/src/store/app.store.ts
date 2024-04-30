@@ -228,6 +228,11 @@ export const useAppStore = defineStore("app", {
           exact: true
         },
         {
+          separator: true,
+          id: 14,
+          name: i18n.t("core.sidebar.flowinity")
+        },
+        {
           id: 2,
           externalPath: "",
           path: "/settings",
@@ -245,7 +250,22 @@ export const useAppStore = defineStore("app", {
           scope: "uploads.view"
         },
         {
-          id: 12,
+          id: 10,
+          externalPath: "",
+          name: i18n.t("core.sidebar.starred"),
+          path: "/starred",
+          icon: "mdi-star",
+          scope: ["uploads.view", "starred.view"],
+          new: false
+        },
+        {
+          id: 5,
+          externalPath: "",
+          name: i18n.t("core.sidebar.files"),
+          separator: true
+        },
+        {
+          id: 13,
           externalPath: "",
           name: i18n.t("core.sidebar.mail"),
           path: "/mail",
@@ -255,22 +275,13 @@ export const useAppStore = defineStore("app", {
           warning: mail.unread > 0 ? mail.unread : false
         },
         {
-          id: 14,
-          externalPath: "",
-          name: i18n.t("core.sidebar.starred"),
-          path: "/starred",
-          icon: "mdi-star",
-          scope: ["uploads.view", "starred.view"],
-          new: false
-        },
-        {
           id: 20,
           externalPath: "",
           path: "/users",
           name: i18n.t("core.sidebar.users"),
           icon: "mdi-account-group",
           scope: "user.view"
-        },
+        } /*
         {
           id: 29,
           click() {
@@ -288,7 +299,7 @@ export const useAppStore = defineStore("app", {
           path: "/changelog",
           name: i18n.t("core.sidebar.changelog"),
           icon: "mdi-history"
-        },
+        },*/,
         {
           id: 33,
           click() {
@@ -327,7 +338,7 @@ export const useAppStore = defineStore("app", {
           scope: ""
         });
       }
-
+      /*
       if (state.site.officialInstance) {
         items.push(
           {
@@ -350,7 +361,7 @@ export const useAppStore = defineStore("app", {
             icon: ""
           }
         );
-      }
+      }*/
 
       // Server feature options
       if (
@@ -373,7 +384,7 @@ export const useAppStore = defineStore("app", {
 
       if (state.site.features?.insights) {
         items.push({
-          id: 13,
+          id: 16,
           externalPath: "",
           name: i18n.t("core.sidebar.insights"),
           path: "/insights",
@@ -385,6 +396,12 @@ export const useAppStore = defineStore("app", {
       if (state.site.features?.communications) {
         items.push({
           id: 11,
+          externalPath: "",
+          name: i18n.t("core.sidebar.comms"),
+          separator: true
+        });
+        items.push({
+          id: 12,
           externalPath: "",
           name: i18n.t("core.sidebar.communications"),
           path: chat.selectedChatId
@@ -557,7 +574,7 @@ export const useAppStore = defineStore("app", {
       for (const chat of chats.chats) {
         value.push({
           route: `/communications/${chat.association?.id}`,
-          name: chats.getChatName(chat)
+          name: chats.chatName(chat)
         });
       }
       const collections = useCollectionsStore();

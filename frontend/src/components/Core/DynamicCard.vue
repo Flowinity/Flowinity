@@ -8,11 +8,11 @@
   >
     <v-img
       :gradient="
-        rightText
+        rightText && !normalGradient
           ? 'to top, rgba(0,0,0,.0), rgba(0,0,0,0.2)'
           : title
-          ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)'
-          : undefined
+            ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)'
+            : undefined
       "
       :src="<string>image"
       class="white--text align-end"
@@ -31,6 +31,9 @@
           {{ subtitle }}
         </small>
       </v-card-title>
+      <v-card-text v-if="secondaryText" class="mt-n2">
+        {{ secondaryText }}
+      </v-card-text>
       <v-card-text
         v-if="rightText"
         :style="blackText ? 'color: black !important;' : 'color: white'"
@@ -64,6 +67,10 @@ export default defineComponent({
       type: String,
       required: false
     },
+    secondaryText: {
+      type: String,
+      required: false
+    },
     rightText: {
       type: String,
       required: false
@@ -74,6 +81,10 @@ export default defineComponent({
     },
     height: {
       type: String
+    },
+    normalGradient: {
+      type: Boolean,
+      default: false
     }
   }
 });

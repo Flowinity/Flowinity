@@ -30,6 +30,7 @@ export const useCollectionsStore = defineStore("collections", {
         read: boolean;
         configure: boolean;
       };
+      avatar: string | null;
     }[]
   }),
   getters: {

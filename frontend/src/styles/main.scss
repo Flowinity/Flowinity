@@ -729,3 +729,7 @@ p:has(.emoji-large) img {
 .d-grid {
   display: grid;
 }
+
+.v-btn {
+  letter-spacing: unset !important;
+}

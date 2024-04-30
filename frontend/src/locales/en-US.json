@@ -28,7 +28,10 @@
       "backToComms": "Back to Communications",
       "backToTPU": "Back to Flowinity",
       "communicationsPublic": "Join the Chat",
-      "download": "Download"
+      "download": "Download",
+      "flowinity": "Flowinity",
+      "files": "Files",
+      "comms": "Social"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",
@@ -598,6 +601,26 @@
         "title": "Please confirm your age.",
         "description": "Please confirm your age to view this content.",
         "confirm": "Confirm"
+      }
+    },
+    "socialHub": {
+      "title": "Social Hub",
+      "activeNow": "Recently active",
+      "friends": {
+        "title": "Friends",
+        "incoming": "Incoming Friend Requests",
+        "outgoing": "Outgoing Friend Requests",
+        "current": "Your Friends",
+        "removeFriend": "Unfriend {username}",
+        "blockedSince": "Blocked since {date}",
+        "unblock": "Unblock {username}",
+        "cancelRequest": "Cancel Friend Request to {username}",
+        "acceptRequest": "Accept Friend Request from {username}",
+        "noFriends": "There are no friends to show.",
+        "addFriend": "Send Friend Request",
+        "friendRequestSuccess": "Friend request sent!",
+        "addFriendTitle": "Flowinity Friends",
+        "addFriendDesc": "Add a friend by using their unique Flowinity username which can be found on the bottom left of their screen, or on the dashboard."
       }
     }
   },

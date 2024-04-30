@@ -2,7 +2,9 @@
 import { defineStore } from "pinia";
 import axios from "@/plugins/axios";
 import {
+  AddFriendInput,
   Friend,
+  FriendAction,
   FriendStatus,
   PartialUserBase,
   PartialUserFriend,
@@ -12,6 +14,7 @@ import { useUserStore } from "@/store/user.store";
 import { useApolloClient } from "@vue/apollo-composable";
 import { FriendsQuery } from "@/graphql/user/friends.graphql";
 import { useAppStore } from "@/store/app.store";
+import { AddFriendMutation } from "@/graphql/friends/addFriend.graphql";
 
 export interface FriendsState {
   friends: Friend[];
@@ -76,6 +79,19 @@ export const useFriendsStore = defineStore("friends", {
     },
     async init() {
       this.getFriends();
+    },
+    async actOnFriend(friendId: number | number, action: FriendAction) {
+      const apolloClient = useApolloClient();
+      await apolloClient.client.mutate({
+        mutation: AddFriendMutation,
+        variables: {
+          input: {
+            userId: typeof friendId === "number" ? friendId : undefined,
+            username: typeof friendId === "string" ? friendId : undefined,
+            action
+          } as AddFriendInput
+        }
+      });
     }
   }
 });

@@ -1060,8 +1060,17 @@ export class UserUtilsService {
           }
         ]
       })
+      const friends = await Friend.findAll({
+        where: {
+          userId
+        },
+        attributes: ["friendId"]
+      })
       uniqueUserIds = Array.from(
-        new Set(chats.flatMap((chat) => chat.users?.map((user) => user.userId)))
+        new Set([
+          ...chats.flatMap((chat) => chat.users?.map((user) => user.userId)),
+          ...friends.map((friend) => friend.friendId)
+        ])
       )
       await redis.json.set(`trackedUsers:${userId}`, "$", uniqueUserIds)
     }

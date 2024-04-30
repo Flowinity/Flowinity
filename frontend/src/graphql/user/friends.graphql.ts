@@ -6,6 +6,7 @@ export const FriendsQuery = gql`
       id
       status
       userId
+      createdAt
       friendId
       user {
         username
@@ -39,6 +40,11 @@ export const FriendsQuery = gql`
       updatedAt
       blockedUserId
       silent
+      blockedUser {
+        id
+        avatar
+        username
+      }
     }
   }
 `;

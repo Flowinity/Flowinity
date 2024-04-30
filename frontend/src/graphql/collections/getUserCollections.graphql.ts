@@ -11,6 +11,7 @@ export const UserLightCollectionsQuery = gql`
           configure
         }
         name
+        avatar
       }
     }
   }

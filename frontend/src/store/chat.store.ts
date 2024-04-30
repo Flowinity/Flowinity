@@ -337,14 +337,6 @@ export const useChatStore = defineStore("chat", {
       });
       this.search.loading = false;
     },
-    getChatName(chat: Chat) {
-      if (!chat) return "Communications";
-      if (chat.type === "direct") {
-        return chat.recipient?.username || "Deleted User";
-      } else {
-        return chat.name;
-      }
-    },
     getDraft(chatId: string) {
       return this.drafts[chatId];
     },

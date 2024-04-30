@@ -28,7 +28,7 @@
           <v-card-subtitle class="mt-n3">
             {{
               $chat.dialogs.emojiMenu.chat
-                ? $chat.getChatName($chat.dialogs.emojiMenu.chat)
+                ? $chat.chatName($chat.dialogs.emojiMenu.chat)
                 : "Private group"
             }}
           </v-card-subtitle>

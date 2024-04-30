@@ -437,7 +437,6 @@ export default defineComponent({
       }
     });
     this.collections = items;
-    console.log(this.$chat.volume);
     this.volume = this.$chat.volume * 100;
   },
   methods: {
