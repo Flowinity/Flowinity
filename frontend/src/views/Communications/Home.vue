@@ -56,12 +56,15 @@
       </div>
     </template>
     <template v-else-if="tab === 1">
-      <template v-if="currentFriendsOnline.length">
-        <overline position="start">Online</overline>
-        <FriendsList :friends="<Friend[]>searchWrapper" />
+      <template v-if="!search.length">
+        <template v-if="currentFriendsOnline.length">
+          <overline position="start">Online</overline>
+          <FriendsList :friends="currentFriendsOnline" />
+        </template>
+        <overline position="start">Offline</overline>
+        <FriendsList :friends="currentFriendsOffline" />
       </template>
-      <overline position="start">Offline</overline>
-      <FriendsList :friends="<Friend[]>searchWrapper" />
+      <FriendsList :friends="<Friend[]>searchWrapper" v-else />
     </template>
     <template v-else-if="tab === 2">
       <FriendsList :friends="<Friend[]>searchWrapper" />
