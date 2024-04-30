@@ -290,6 +290,7 @@ export type Chat = {
   invites: Array<ChatInvite>;
   messages: Array<Message>;
   name: Scalars['String']['output'];
+  onlineCount: Scalars['Int']['output'];
   ranks: Array<ChatRank>;
   recipient?: Maybe<PartialUserBase>;
   type: Scalars['String']['output'];
@@ -410,6 +411,11 @@ export type ClearCacheInput = {
   type: AdminCacheType;
   userId?: InputMaybe<Scalars['Int']['input']>;
 };
+
+export enum CollabEventType {
+  Join = 'JOIN',
+  Leave = 'LEAVE'
+}
 
 export type Collection = {
   __typename?: 'Collection';
@@ -1122,6 +1128,8 @@ export type Mutation = {
   addCollectionUser: CollectionUser;
   addOauthUser: OauthUser;
   addToCollection: Array<CollectionItem>;
+  /** Currently in beta and only available to people with experiment opt-in. */
+  addWorkspaceUser: WorkspaceUser;
   adminClearCache: GenericSuccessObject;
   adminDebugBatch: GenericSuccessObject;
   adminGenerateInsights: GenericSuccessObject;
@@ -1176,7 +1184,10 @@ export type Mutation = {
   removeFromCollection: Scalars['Int']['output'];
   resendVerificationEmail: Scalars['Boolean']['output'];
   resetOauthSecret: GenericSuccessObject;
+  /** @deprecated Use `saveNoteBlock` instead to support collaborative editing. */
   saveNote: Note;
+  saveNoteBlock: Scalars['Boolean']['output'];
+  saveNoteCollabPosition: Scalars['Boolean']['output'];
   sendMessage: Message;
   setExperiment: Experiment;
   starUpload: StarUploadResponse;
@@ -1239,6 +1250,11 @@ export type MutationAddOauthUserArgs = {
 
 export type MutationAddToCollectionArgs = {
   input: AddToCollectionInput;
+};
+
+
+export type MutationAddWorkspaceUserArgs = {
+  input: WorkspaceUserInput;
 };
 
 
@@ -1474,6 +1490,16 @@ export type MutationSaveNoteArgs = {
 };
 
 
+export type MutationSaveNoteBlockArgs = {
+  input: UpdateNoteEventInput;
+};
+
+
+export type MutationSaveNoteCollabPositionArgs = {
+  input: NoteCollabPositionInput;
+};
+
+
 export type MutationSendMessageArgs = {
   input: SendMessageInput;
 };
@@ -1594,6 +1620,22 @@ export type Note = {
   updatedAt: Scalars['Date']['output'];
   versions: Array<NoteVersion>;
   workspaceFolderId: Scalars['Float']['output'];
+};
+
+export type NoteCollabPosition = {
+  __typename?: 'NoteCollabPosition';
+  blockIndex: Scalars['Int']['output'];
+  noteId: Scalars['Int']['output'];
+  position: Scalars['Int']['output'];
+  shareLink?: Maybe<Scalars['String']['output']>;
+  type: CollabEventType;
+  userId: Scalars['Int']['output'];
+};
+
+export type NoteCollabPositionInput = {
+  blockIndex: Scalars['Int']['input'];
+  noteId: Scalars['Int']['input'];
+  position: Scalars['Int']['input'];
 };
 
 export type NoteInput = {
@@ -2251,10 +2293,14 @@ export type Subscription = {
   onDeleteUpload: Scalars['Int']['output'];
   onEditMessage: EditMessageEvent;
   onMessage: MessageSubscription;
+  /** Subscribe to Note collaborative user positions. */
+  onNoteCollabPosition: NoteCollabPosition;
   /** Returns the chat association ID */
   onReadChat: Scalars['Int']['output'];
   onReadReceipt: ReadReceipt;
   onTyping: ChatTypingEvent;
+  /** Subscribe to Note updates. */
+  onUpdateNote: UpdateNoteEvent;
   onUpdateUploads: Array<Upload>;
   onUserStatus: StatusEvent;
 };
@@ -2302,6 +2348,18 @@ export type SubscriptionOnEditMessageArgs = {
 
 export type SubscriptionOnMessageArgs = {
   input?: InputMaybe<SubscriptionMessageInput>;
+};
+
+
+export type SubscriptionOnNoteCollabPositionArgs = {
+  noteId?: InputMaybe<Scalars['Int']['input']>;
+  shareLink?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type SubscriptionOnUpdateNoteArgs = {
+  id?: InputMaybe<Scalars['Int']['input']>;
+  shareLink?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SubscriptionMessageInput = {
@@ -2399,6 +2457,29 @@ export type UpdateEmojiInput = {
   id: Scalars['String']['input'];
   name: Scalars['String']['input'];
 };
+
+export type UpdateNoteEvent = {
+  __typename?: 'UpdateNoteEvent';
+  blockId?: Maybe<Scalars['String']['output']>;
+  data?: Maybe<Scalars['JSON']['output']>;
+  id: Scalars['Int']['output'];
+  shareLink?: Maybe<Scalars['String']['output']>;
+  type: UpdateNoteEventType;
+  userId: Scalars['Int']['output'];
+};
+
+export type UpdateNoteEventInput = {
+  blockId?: InputMaybe<Scalars['String']['input']>;
+  data?: InputMaybe<Scalars['JSON']['input']>;
+  id: Scalars['Int']['input'];
+  type: UpdateNoteEventType;
+};
+
+export enum UpdateNoteEventType {
+  Delete = 'DELETE',
+  Insert = 'INSERT',
+  Update = 'UPDATE'
+}
 
 export type UpdateRank = {
   associationId: Scalars['Int']['input'];
@@ -2709,6 +2790,14 @@ export type WorkspaceUser = {
   workspace: Workspace;
   workspaceId: Scalars['Float']['output'];
   write: Scalars['Boolean']['output'];
+};
+
+export type WorkspaceUserInput = {
+  configure: Scalars['Boolean']['input'];
+  read: Scalars['Boolean']['input'];
+  userId: Scalars['Int']['input'];
+  workspaceId: Scalars['Int']['input'];
+  write: Scalars['Boolean']['input'];
 };
 
 export type AdminClearCacheMutationVariables = Exact<{
