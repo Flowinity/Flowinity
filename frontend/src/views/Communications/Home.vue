@@ -8,14 +8,17 @@
     >
       {{ tab.title }}
       <v-btn
-        icon
         v-if="tab.badge"
+        icon
         size="x-small"
         variant="outlined"
         class="ml-2"
         :ripple="false"
       >
-        {{ tab.badge() }}
+        {{
+          //@ts-ignore
+          tab.badge()
+        }}
       </v-btn>
     </v-tab>
   </v-tabs>
@@ -55,19 +58,19 @@
     <template v-else-if="tab === 1">
       <template v-if="currentFriendsOnline.length">
         <overline position="start">Online</overline>
-        <FriendsList :friends="searchWrapper" />
+        <FriendsList :friends="<Friend[]>searchWrapper" />
       </template>
       <overline position="start">Offline</overline>
-      <FriendsList :friends="searchWrapper" />
+      <FriendsList :friends="<Friend[]>searchWrapper" />
     </template>
     <template v-else-if="tab === 2">
-      <FriendsList :friends="searchWrapper" />
+      <FriendsList :friends="<Friend[]>searchWrapper" />
     </template>
     <template v-else-if="tab === 3">
-      <FriendsList :friends="searchWrapper" />
+      <FriendsList :friends="<Friend[]>searchWrapper" />
     </template>
     <template v-else-if="tab === 4">
-      <BlockList :friends="searchWrapper" />
+      <BlockList :friends="<BlockedUser[]>searchWrapper" />
     </template>
     <template v-else-if="tab === 5">
       <div class="d-flex flex-column">
@@ -124,11 +127,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, ComputedRef, onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import { useChatStore } from "@/store/chat.store";
-import { Chat, FriendAction, FriendStatus, UserStatus } from "@/gql/graphql";
+import {
+  BlockedUser,
+  Chat,
+  Friend,
+  FriendAction,
+  FriendStatus,
+  UserStatus
+} from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
 import { ChatInviteQuery } from "@/graphql/chats/invite.graphql";
 import DynamicCard from "@/components/Core/DynamicCard.vue";
@@ -238,7 +248,7 @@ const outgoingFriends = computed(() => {
   );
 });
 
-const searchWrapper = computed(() => {
+const searchWrapper: ComputedRef<BlockedUser[] | Friend[]> = computed(() => {
   if (tab.value === 1) {
     return currentFriendsOnline.value
       .concat(currentFriendsOffline.value)
@@ -260,12 +270,13 @@ const searchWrapper = computed(() => {
         .includes(search.value.toLowerCase())
     );
   }
+  return [];
 });
 
 async function sendFriendRequest() {
   addFriend.value.loading = true;
   try {
-    await friendsStore.actOnFriend(addFriend.value.username, FriendAction.Add);
+    await friendsStore.actOnFriend(addFriend.value.username, FriendAction.Send);
     addFriend.value.username = "";
     addFriend.value.success = true;
     setTimeout(() => {

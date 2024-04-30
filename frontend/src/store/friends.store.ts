@@ -80,7 +80,7 @@ export const useFriendsStore = defineStore("friends", {
     async init() {
       this.getFriends();
     },
-    async actOnFriend(friendId: number | number, action: FriendAction) {
+    async actOnFriend(friendId: number | string, action: FriendAction) {
       const apolloClient = useApolloClient();
       await apolloClient.client.mutate({
         mutation: AddFriendMutation,

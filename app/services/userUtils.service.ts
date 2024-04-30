@@ -600,7 +600,9 @@ export class UserUtilsService {
     switch (friend.status) {
       case "outgoing":
         if (action === "send" || action == "accept")
-          throw Errors.FRIEND_REQUEST_ALREADY_SENT
+          throw gql
+            ? new GqlError("FRIEND_REQUEST_ALREADY_SENT")
+            : Errors.FRIEND_REQUEST_ALREADY_SENT
         if (action === "remove") {
           await this.removeFriend(userId, user.id)
           return true
@@ -608,7 +610,10 @@ export class UserUtilsService {
         await this.removeFriend(userId, user.id)
         return true
       case "incoming":
-        if (action === "send") throw Errors.FRIEND_REQUEST_ALREADY_SENT
+        if (action === "send")
+          throw gql
+            ? new GqlError("FRIEND_REQUEST_ALREADY_SENT")
+            : Errors.FRIEND_REQUEST_ALREADY_SENT
         if (action === "remove") {
           await this.removeFriend(userId, user.id)
           return true

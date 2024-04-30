@@ -131,6 +131,9 @@ const Errors = {
   },
   WORKSPACE_NOT_FOUND: {
     message: "The requested workspace could not be found."
+  },
+  FRIEND_REQUEST_ALREADY_SENT: {
+    message: "You have already sent a friend request to this user."
   }
 }
 
