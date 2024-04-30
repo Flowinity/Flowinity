@@ -49,7 +49,11 @@
           "
           :right-text="chat._redisSortDate ? undefined : 'Promoted'"
           :title="$chat.chatName(chat)"
-          :to="`/communications/${chat.association?.id}`"
+          :to="
+            chat._redisSortDate
+              ? `/communications/${chat.association?.id}`
+              : '/invite/flowinity'
+          "
           style="width: 350px; height: 200px"
           :normal-gradient="true"
         ></DynamicCard>
