@@ -1,11 +1,11 @@
 import md from "./rules";
 import mdEmail from "./rulesEmail";
 import { Platform, useAppStore } from "@/store/app.store";
-import { Chat } from "@/models/chat";
-import { User } from "@/models/user";
 import {
+  Chat,
   Message,
   PartialUserFriend,
+  User,
   UserStatus,
   UserStoredStatus
 } from "@/gql/graphql";

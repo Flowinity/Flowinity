@@ -145,7 +145,6 @@
   <v-btn block :rounded="false" to="/communications/home">
     <v-icon class="mr-1">mdi-account-multiple</v-icon>
     {{ $t("chats.socialHub.title") }}
-    <v-chip size="x-small" variant="outlined" class="ml-2">BETA</v-chip>
   </v-btn>
   <overline class="ml-3 mb-n1" position="start">
     <CreateChat v-slot="{ props }" v-model="create" type="create">

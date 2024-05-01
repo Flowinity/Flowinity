@@ -81,7 +81,9 @@
                   style="stroke-width: 1px; transform: rotate(-90deg)"
                   :style="{
                     strokeColor: functions.userStatus(friendStatus).color,
-                    fill: functions.userStatus(friendStatus).color
+                    fill: functions.userStatus(friendStatus).color,
+                    height: statusSize,
+                    width: statusSize
                   }"
                 />
                 <RiCheckLine
@@ -313,7 +315,7 @@ export default defineComponent({
 }
 
 .typing-status {
-  width: 22px;
+  width: 24px;
   border-radius: 12px;
 }
 

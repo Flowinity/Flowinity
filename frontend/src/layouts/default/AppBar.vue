@@ -94,7 +94,8 @@
     <template
       v-if="
         (!appStore.weather.loading && !$vuetify.display.mobile) ||
-        ($vuetify.display.mobile &&
+        (!appStore.weather.loading &&
+          $vuetify.display.mobile &&
           !$chat.commsSidebar &&
           !$workspaces.isWorkspaces)
       "

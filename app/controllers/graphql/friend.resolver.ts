@@ -20,6 +20,8 @@ import { UserStatus } from "@app/classes/graphql/user/status"
 import { FriendsInput } from "@app/classes/graphql/friends/getFriends"
 import { AddFriendInput } from "@app/classes/graphql/friends/addFriend"
 import { UserUtilsService } from "@app/services/userUtils.service"
+import { GqlError } from "@app/lib/gqlErrors"
+import { GraphQLError } from "graphql/error"
 
 @Resolver(Friend)
 @Service()
@@ -69,6 +71,9 @@ export class FriendResolver {
   })
   @Mutation(() => Boolean)
   async friend(@Ctx() ctx: Context, @Arg("input") input: AddFriendInput) {
+    if (!input.username && !input.userId) {
+      throw new GraphQLError("Please enter a username.")
+    }
     return await this.userUtilsService.friend(
       ctx.user!!.id,
       input.username || input.userId,

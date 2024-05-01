@@ -39,7 +39,7 @@
         <DynamicCard
           v-for="chat in recentChats"
           :key="chat.id"
-          :image="`${appStore.domain}${chat.recipient ? $user.users[chat.recipient.id]?.avatar || 'a050d6f271c3.png' : chat.background || chat.icon || 'a050d6f271c3.png'}`"
+          :image="image(chat)"
           :secondary-text="
             chat._redisSortDate
               ? `Last message was ${$date(
@@ -85,6 +85,7 @@
           v-model="addFriend.username"
           label="Username"
           @keydown.enter="sendFriendRequest()"
+          autofocus
         />
         <v-btn
           :loading="addFriend.loading"
@@ -134,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ComputedRef, onMounted, ref } from "vue";
+import { computed, ComputedRef, h, onMounted, ref } from "vue";
 import { useAppStore } from "@/store/app.store";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import { useChatStore } from "@/store/chat.store";
@@ -154,6 +155,8 @@ import Overline from "@/components/Core/Typography/Overline.vue";
 import BlockList from "@/components/Communications/SocialHub/BlockList.vue";
 import { useFriendsStore } from "@/store/friends.store";
 import { useUserStore } from "@/store/user.store";
+import functions from "@/plugins/functions";
+import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
 
 const appStore = useAppStore();
 const chatStore = useChatStore();
@@ -292,6 +295,17 @@ async function sendFriendRequest() {
   } finally {
     addFriend.value.loading = false;
   }
+}
+
+function image(chat: Chat) {
+  if (chat.recipient) {
+    return functions.avatar(userStore.users[chat.recipient.id]);
+  } else if (chat.background) {
+    return appStore.domain + chat.background;
+  } else if (chat.icon) {
+    return functions.avatar(chat);
+  }
+  return "https://i.troplo.com/i/a050d6f271c3.png";
 }
 </script>
 

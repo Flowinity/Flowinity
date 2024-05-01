@@ -65,13 +65,14 @@
           <v-btn
             v-if="friend.status === FriendStatus.Incoming"
             color="success"
+            icon
             @click="
               () => $friends.actOnFriend(friend.friendId, FriendAction.Accept)
             "
           >
             <v-tooltip activator="parent" location="top">
               {{
-                $t("chats.socialHub.friends.acceptFriend", {
+                $t("chats.socialHub.friends.acceptRequest", {
                   username: friend.user.username
                 })
               }}
