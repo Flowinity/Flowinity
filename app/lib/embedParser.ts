@@ -200,6 +200,7 @@ export async function embedGenerator(
   for (let [, link] of links.entries()) {
     try {
       const url = new URL(link)
+      console.log(url.host, config.hostname, config.hostnames)
       if (
         config.hostname === url.host ||
         config.hostnames?.includes(url.host)
@@ -262,7 +263,6 @@ export default async function embedParser(
   if (attachments && attachments.length > 5) attachments.slice(0, 5)
 
   embeds = await embedGenerator(links, attachments)
-
 
   if (embeds.length) {
     await Message.update(

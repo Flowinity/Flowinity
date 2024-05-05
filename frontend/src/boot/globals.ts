@@ -43,8 +43,12 @@ function createSocket(namespace: string) {
 }
 
 export default function setup(app) {
+  app.config.globalProperties.axios = axios;
   const user = useUserStore();
   const core = useAppStore();
+  app.config.globalProperties.$user = user;
+  app.config.globalProperties.$app = core;
+  if (window.location.pathname.startsWith("/slideshow/")) return;
   const experiments = useExperimentsStore();
   const collections = useCollectionsStore();
   const workspace = useWorkspacesStore();
@@ -52,14 +56,10 @@ export default function setup(app) {
   const friends = useFriendsStore();
   const mail = useMailStore();
   const messages = useMessagesStore();
-  app.config.globalProperties.axios = axios;
   core.themeProviderDefaults.theme = vuetify.theme.themes.value;
   core.themeProviderDefaults.global = vuetify.defaults.value;
-  app.config.globalProperties.$user = user;
-  app.config.globalProperties.$app = core;
   app.config.globalProperties.$experiments = experiments;
   app.config.globalProperties.$admin = useAdminStore();
-  if (window.location.pathname.startsWith("/slideshow/")) return;
   app.config.globalProperties.$date = dayjs;
   app.config.globalProperties.$collections = collections;
   app.config.globalProperties.$validation = validation;

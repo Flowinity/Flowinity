@@ -622,6 +622,12 @@
         "addFriendTitle": "Flowinity Friends",
         "addFriendDesc": "Add a friend by using their unique Flowinity username which can be found on the bottom left of their screen, or on the dashboard."
       }
+    },
+    "join": {
+      "title": "Join or Create",
+      "description": "If you have an invite code, you can join the group by entering it below.",
+      "code": "Invite Code",
+      "join": "Join Group"
     }
   },
   "insights": {

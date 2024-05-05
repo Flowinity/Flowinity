@@ -1,4 +1,13 @@
-import { Field, InputType } from "type-graphql"
+import { Field, InputType, registerEnumType } from "type-graphql"
+
+export enum ChatType {
+  GROUP = "group",
+  DIRECT = "direct"
+}
+
+registerEnumType(ChatType, {
+  name: "ChatType"
+})
 
 @InputType()
 export class CreateChatInput {
@@ -9,4 +18,9 @@ export class CreateChatInput {
     nullable: true
   })
   name?: string
+
+  @Field(() => ChatType, {
+    nullable: true
+  })
+  type?: ChatType
 }

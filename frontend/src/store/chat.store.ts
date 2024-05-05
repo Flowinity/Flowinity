@@ -15,6 +15,7 @@ import {
   ChatEmoji,
   ChatInvite,
   ChatRank,
+  ChatType,
   InfiniteMessagesInput,
   Message,
   MessageType,
@@ -419,6 +420,14 @@ export const useChatStore = defineStore("chat", {
       const domain = url.hostname;
       const core = useAppStore();
       if (
+        (core.site.hostnames.includes(domain) ||
+          core.site.hostname === domain) &&
+        !url.pathname.startsWith("/i/")
+      ) {
+        this.$router.push(url.pathname);
+        return;
+      }
+      if (
         this.trustedDomains.includes(domain) ||
         core.site.preTrustedDomains.includes(domain)
       ) {
@@ -470,14 +479,16 @@ export const useChatStore = defineStore("chat", {
         }
       });
     },
-    async createChat(users: number[]) {
+    async createChat(users: number[], type?: ChatType) {
+      console.log(users, type);
       const {
         data: { createChat }
       } = await useApolloClient().client.mutate({
         mutation: CreateChatMutation,
         variables: {
           input: {
-            users
+            users,
+            type
           }
         }
       });
@@ -534,23 +545,25 @@ export const useChatStore = defineStore("chat", {
         (chat: Chat) => chat.association.id === id
       );
       messagesStore.messages[id] = data;
-      if (index === -1) {
-        this.chats.push({
-          ...(this.chats.find(
-            (chat: Chat) => chat.association.id === id
-          ) as Chat),
-          unread: 0,
-          association: {
-            id
-          }
-        });
-      } else {
-        this.chats[index] = {
-          ...(this.chats.find(
-            (chat: Chat) => chat.association.id === id
-          ) as Chat),
-          unread: 0
-        };
+      if (this.chats.length) {
+        if (index === -1) {
+          this.chats.push({
+            ...(this.chats.find(
+              (chat: Chat) => chat.association.id === id
+            ) as Chat),
+            unread: 0,
+            association: {
+              id
+            }
+          });
+        } else {
+          this.chats[index] = {
+            ...(this.chats.find(
+              (chat: Chat) => chat.association.id === id
+            ) as Chat),
+            unread: 0
+          };
+        }
       }
       await this.loadChatUsers(id);
       this.loading = false;
@@ -591,7 +604,7 @@ export const useChatStore = defineStore("chat", {
       position: ScrollPosition = ScrollPosition.Top,
       offset?: number
     ) {
-      console.log("called history", offset, position);
+      if (import.meta.env.DEV) console.log("called history", offset, position);
       const messagesStore = useMessagesStore();
       if (offset) {
         messagesStore.messages[this.selectedChatId] = null;

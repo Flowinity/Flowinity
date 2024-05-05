@@ -34,6 +34,7 @@ import { EmbedDataV2 } from "@app/classes/graphql/chat/embeds"
 import { ReadReceipt } from "@app/classes/graphql/chat/readReceiptSubscription"
 import { Platform, PlatformType } from "@app/classes/graphql/user/platforms"
 import redisClient from "@app/redis"
+import { ChatType } from "@app/classes/graphql/chat/createChat"
 
 class MessageIncludes {
   constructor() {
@@ -1226,16 +1227,21 @@ export class ChatService {
     }
   }
 
-  async createChat(users: number[], userId: number, gql?: boolean) {
+  async createChat(
+    users: number[],
+    userId: number,
+    gql?: boolean,
+    type?: ChatType
+  ) {
     const chatPermissionsHandler = new ChatPermissionsHandler()
-    if (!users?.length || users.includes(userId))
+    if (users.includes(userId))
       throw gql
         ? new GqlError("INVALID_FRIEND_SELECTION")
         : Errors.INVALID_FRIEND_SELECTION
 
-    const type = users.length === 1 ? "direct" : "group"
+    if (!type) type = users.length === 1 ? ChatType.DIRECT : ChatType.GROUP
     const intent = [userId, ...users].sort((a, b) => a - b).join("-")
-    if (type === "direct") {
+    if (type === ChatType.DIRECT) {
       const chat = await Chat.findOne({
         where: {
           type: "direct",

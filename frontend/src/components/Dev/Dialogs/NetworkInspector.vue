@@ -66,7 +66,7 @@
                     {{ Math.round(operation.time) }}
                   </template>
                   <template v-else>
-                    <tpu-spinner
+                    <v-progress-circular
                       style="width: 20px; height: 22px"
                       color="green"
                     />

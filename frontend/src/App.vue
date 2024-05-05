@@ -1,12 +1,17 @@
 <template>
-  <SocketProfiler v-if="$app.dialogs.socketProfiler" />
-  <ActionDialog v-if="$app.dialogs.actionDialog" />
-  <ExperimentsManagerDialog v-if="$app.dialogs.experiments" />
-  <Maintenance
-    v-if="$app.site.maintenance.enabled"
-    v-model="$app.site.maintenance.enabled"
-  />
-  <router-view />
+  <template v-if="slideshow === false">
+    <SocketProfiler v-if="$app.dialogs.socketProfiler" />
+    <ActionDialog v-if="$app.dialogs.actionDialog" />
+    <ExperimentsManagerDialog v-if="$app.dialogs.experiments" />
+    <Maintenance
+      v-if="$app.site.maintenance.enabled"
+      v-model="$app.site.maintenance.enabled"
+    />
+    <router-view />
+  </template>
+  <template v-else-if="slideshow === true">
+    <Slideshow />
+  </template>
 </template>
 
 <script lang="ts">
@@ -17,6 +22,7 @@ import ActionDialog from "@/components/Dev/Dialogs/ActionDialog.vue";
 import ExperimentsManagerDialog from "@/components/Dev/Dialogs/Experiments.vue";
 import { Platform } from "@/store/app.store";
 import { IpcChannels } from "@/electron-types/ipc";
+import Slideshow from "@/views/Slideshow.vue";
 
 export default defineComponent({
   name: "TPUApp",
@@ -24,7 +30,13 @@ export default defineComponent({
     ExperimentsManagerDialog,
     ActionDialog,
     SocketProfiler,
-    Maintenance
+    Maintenance,
+    Slideshow
+  },
+  data: () => {
+    return {
+      slideshow: undefined as boolean | undefined
+    };
   },
   watch: {
     "$route.path"(val) {
@@ -41,6 +53,10 @@ export default defineComponent({
     }
   },
   mounted() {
+    this.slideshow = window.location.pathname.startsWith("/slideshow/");
+    if (this.slideshow) {
+      return;
+    }
     window._tpu_router = this.$router;
     if (this.$vuetify.display.mobile) {
       this.$app.mainDrawer = false;

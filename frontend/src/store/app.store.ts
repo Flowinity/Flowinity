@@ -229,7 +229,7 @@ export const useAppStore = defineStore("app", {
         },
         {
           separator: true,
-          id: 14,
+          id: 15,
           name: i18n.t("core.sidebar.flowinity")
         },
         {
@@ -265,7 +265,7 @@ export const useAppStore = defineStore("app", {
           separator: true
         },
         {
-          id: 13,
+          id: 14,
           externalPath: "",
           name: i18n.t("core.sidebar.mail"),
           path: "/mail",
@@ -393,13 +393,14 @@ export const useAppStore = defineStore("app", {
         });
       }
 
+      items.push({
+        id: 11,
+        externalPath: "",
+        name: i18n.t("core.sidebar.comms"),
+        separator: true
+      });
+
       if (state.site.features?.communications) {
-        items.push({
-          id: 11,
-          externalPath: "",
-          name: i18n.t("core.sidebar.comms"),
-          separator: true
-        });
         items.push({
           id: 12,
           externalPath: "",
@@ -415,6 +416,15 @@ export const useAppStore = defineStore("app", {
           experimentsRequired: ["COMMUNICATIONS"]
         });
       }
+
+      items.push({
+        id: 13,
+        externalPath: "",
+        name: i18n.t("chats.socialHub.title"),
+        path: "/communications/home",
+        icon: "mdi-account-multiple",
+        scope: "user.modify"
+      });
 
       if (state.site.features?.workspaces) {
         items.push({

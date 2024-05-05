@@ -147,7 +147,7 @@ export class EmbedMetadata {
     nullable: true
   })
   footer?: string
-  @Field({
+  @Field(() => EmbedType, {
     defaultValue: EmbedType.REGULAR
   })
   type: EmbedType = EmbedType.REGULAR

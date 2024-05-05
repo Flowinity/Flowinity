@@ -208,9 +208,9 @@ export class Server {
         onDisconnect: async (ctx, code) => {
           // Get error code
           console.log(ctx.extra.userId, "DISCONNECTED")
-          if (code !== 1000) {
-          }
           if (ctx.extra.userId) {
+            // Check legacy sockets, still used in v3, v4 and Kotlin. Status via the legacy socket will be removed in the future.
+            const sockets = await socket.in(ctx.extra.userId).allSockets()
             let clients = (await redis.json.get(
               `user:${ctx.extra.userId}:platforms`
             )) as unknown as Platform[] | undefined
@@ -218,7 +218,14 @@ export class Server {
               clients = clients.filter(
                 (client: any) => client.id !== ctx.extra.id
               )
-              if (clients.length === 0) {
+              console.log(
+                `DBGCLIENTS FOR ${ctx.extra.userId}`,
+                clients,
+                ctx.extra.id,
+                code,
+                sockets.size
+              )
+              if (clients.length === 0 && sockets.size === 0) {
                 await User.update(
                   {
                     status: UserStatus.OFFLINE

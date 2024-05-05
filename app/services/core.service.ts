@@ -370,6 +370,7 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Record<string, any> {
     const experiments = {
+      CHAT_GUIDED_WIZARD: true,
       NOTE_AI_ASSIST: false,
       NOTE_COLLAB: false,
       V5_FLOAT: true,
@@ -424,6 +425,11 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        CHAT_GUIDED_WIZARD: {
+          description: "Enable guided wizard for chat join and create",
+          createdAt: "2024-05-03T00:00:00.000Z",
+          versions: [4]
+        },
         NOTE_AI_ASSIST: {
           description: "Enable AI assistance in notes",
           createdAt: "2024-04-27T00:00:00.000Z",
@@ -734,6 +740,7 @@ export class CoreService {
       }
     }
     if (dev || config.release === "dev") {
+      experiments.CHAT_GUIDED_WIZARD = true
       experiments.NOTE_COLLAB = true
       //experiments.FORCE_DEV_MODE = false
       //experiments.FORCE_STABLE_MODE = false

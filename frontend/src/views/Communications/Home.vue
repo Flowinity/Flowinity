@@ -1,137 +1,136 @@
 <template>
-  <v-tabs v-model="tab" background-color="transparent" grow>
-    <v-tab
-      v-for="(tab, index) in tabs"
-      :key="index"
-      :prepend-icon="tab.icon"
-      :value="index"
+  <div class="d-flex">
+    <v-tabs
+      v-model="tab"
+      background-color="transparent"
+      :direction="$vuetify.display.mobile ? 'horizontal' : 'vertical'"
     >
-      {{ tab.title }}
-      <v-btn
-        v-if="tab.badge"
-        icon
-        size="x-small"
-        variant="outlined"
-        class="ml-2"
-        :ripple="false"
+      <v-tab
+        v-for="(tab, index) in tabs"
+        :key="index"
+        :prepend-icon="tab.icon"
+        :value="index"
       >
-        {{
-          //@ts-ignore
-          tab.badge()
-        }}
-      </v-btn>
-    </v-tab>
-  </v-tabs>
-  <v-container>
-    <v-text-field
-      v-if="tab !== 0 && tab !== 5"
-      v-model="search"
-      label="Search"
-      placeholder="Search for friends"
-      outlined
-      dense
-      clearable
-      hide-details
-      class="mx-4 mb-4"
-    />
-    <template v-if="tab === 0">
-      <div class="d-flex flex-wrap" style="gap: 12px">
-        <DynamicCard
-          v-for="chat in recentChats"
-          :key="chat.id"
-          :image="image(chat)"
-          :secondary-text="
-            chat._redisSortDate
-              ? `Last message was ${$date(
-                  parseInt(chat._redisSortDate)
-                ).fromNow()}`
-              : chat.description
-          "
-          :right-text="chat._redisSortDate ? undefined : 'Promoted'"
-          :title="$chat.chatName(chat)"
-          :to="
-            chat._redisSortDate
-              ? `/communications/${chat.association?.id}`
-              : '/invite/flowinity'
-          "
-          style="width: 350px; height: 200px"
-          :normal-gradient="true"
-        ></DynamicCard>
-      </div>
-    </template>
-    <template v-else-if="tab === 1">
-      <template v-if="!search.length">
-        <template v-if="currentFriendsOnline.length">
-          <overline position="start">Online</overline>
-          <FriendsList :friends="currentFriendsOnline" />
-        </template>
-        <overline position="start">Offline</overline>
-        <FriendsList :friends="currentFriendsOffline" />
-      </template>
-      <FriendsList :friends="<Friend[]>searchWrapper" v-else />
-    </template>
-    <template v-else-if="tab === 2">
-      <FriendsList :friends="<Friend[]>searchWrapper" />
-    </template>
-    <template v-else-if="tab === 3">
-      <FriendsList :friends="<Friend[]>searchWrapper" />
-    </template>
-    <template v-else-if="tab === 4">
-      <BlockList :friends="<BlockedUser[]>searchWrapper" />
-    </template>
-    <template v-else-if="tab === 5">
-      <div class="d-flex flex-column">
-        <v-text-field
-          v-model="addFriend.username"
-          label="Username"
-          @keydown.enter="sendFriendRequest()"
-          autofocus
-        />
+        {{ tab.title }}
         <v-btn
-          :loading="addFriend.loading"
-          :color="addFriend.success ? 'success' : 'primary'"
-          class="mb-5 friend-button"
-          variant="tonal"
-          @click="sendFriendRequest()"
+          v-if="tab.badge"
+          icon
+          size="x-small"
+          variant="outlined"
+          class="ml-2"
+          :ripple="false"
         >
-          <v-icon class="mr-1">
-            {{ addFriend.success ? "mdi-check" : "mdi-account-plus" }}
-          </v-icon>
           {{
-            addFriend.success
-              ? $t("chats.socialHub.friends.friendRequestSuccess")
-              : $t("chats.socialHub.friends.addFriend")
+            //@ts-ignore
+            tab.badge()
           }}
         </v-btn>
-      </div>
-      <div>
-        <v-divider></v-divider>
-        <div class="d-flex justify-center align-center">
-          <v-icon size="96">mdi-account-multiple-plus</v-icon>
-          <div class="ml-2" style="max-width: 400px">
-            <v-card-title
-              class="text-h6"
-              style="white-space: pre-wrap; overflow-wrap: anywhere"
-            >
-              {{ $t("chats.socialHub.friends.addFriendTitle") }}
-            </v-card-title>
-            <v-card-subtitle
-              style="white-space: pre-wrap; overflow-wrap: anywhere"
-            >
-              {{ $t("chats.socialHub.friends.addFriendDesc") }}
-            </v-card-subtitle>
+      </v-tab>
+    </v-tabs>
+    <v-container>
+      <v-text-field
+        v-if="tab !== 0 && tab !== 5"
+        v-model="search"
+        label="Search"
+        placeholder="Search for friends"
+        outlined
+        dense
+        clearable
+        hide-details
+        class="mx-4 mb-4"
+      />
+      <template v-if="tab === 0">
+        <div class="d-flex flex-wrap" style="gap: 12px">
+          <DynamicCard
+            v-for="chat in recentChats"
+            :key="chat.id"
+            :image="image(chat)"
+            :secondary-text="
+              chat._redisSortDate
+                ? `Last message was ${$date(
+                    parseInt(chat._redisSortDate)
+                  ).fromNow()}`
+                : chat.description
+            "
+            :right-text="chat._redisSortDate ? undefined : 'Promoted'"
+            :title="$chat.chatName(chat)"
+            :to="
+              chat._redisSortDate
+                ? `/communications/${chat.association?.id}`
+                : '/invite/flowinity'
+            "
+            style="width: 350px; height: 200px"
+            :normal-gradient="true"
+          ></DynamicCard>
+        </div>
+      </template>
+      <template v-else-if="tab === 1">
+        <template v-if="!search.length">
+          <template v-if="currentFriendsOnline.length">
+            <overline position="start">Online</overline>
+            <FriendsList :friends="currentFriendsOnline" />
+          </template>
+          <overline position="start">Offline</overline>
+          <FriendsList :friends="currentFriendsOffline" />
+        </template>
+        <FriendsList :friends="<Friend[]>searchWrapper" v-else />
+      </template>
+      <template v-else-if="tab === 2">
+        <FriendsList :friends="<Friend[]>searchWrapper" />
+      </template>
+      <template v-else-if="tab === 3">
+        <FriendsList :friends="<Friend[]>searchWrapper" />
+      </template>
+      <template v-else-if="tab === 4">
+        <BlockList :friends="<BlockedUser[]>searchWrapper" />
+      </template>
+      <template v-else-if="tab === 5">
+        <div class="d-flex flex-column">
+          <v-text-field
+            v-model="addFriend.username"
+            label="Username"
+            @keydown.enter="sendFriendRequest()"
+            autofocus
+          />
+          <v-btn
+            :loading="addFriend.loading"
+            :color="addFriend.success ? 'success' : 'primary'"
+            class="mb-5 friend-button"
+            variant="tonal"
+            @click="sendFriendRequest()"
+          >
+            <v-icon class="mr-1">
+              {{ addFriend.success ? "mdi-check" : "mdi-account-plus" }}
+            </v-icon>
+            {{
+              addFriend.success
+                ? $t("chats.socialHub.friends.friendRequestSuccess")
+                : $t("chats.socialHub.friends.addFriend")
+            }}
+          </v-btn>
+        </div>
+        <div>
+          <v-divider></v-divider>
+          <div class="d-flex justify-center align-center">
+            <v-icon size="96">mdi-account-multiple-plus</v-icon>
+            <div class="ml-2" style="max-width: 400px">
+              <v-card-title
+                class="text-h6"
+                style="white-space: pre-wrap; overflow-wrap: anywhere"
+              >
+                {{ $t("chats.socialHub.friends.addFriendTitle") }}
+              </v-card-title>
+              <v-card-subtitle
+                style="white-space: pre-wrap; overflow-wrap: anywhere"
+              >
+                {{ $t("chats.socialHub.friends.addFriendDesc") }}
+              </v-card-subtitle>
+            </div>
           </div>
         </div>
-      </div>
-    </template>
-  </v-container>
-  <v-container class="text-center justify-center" v-if="false">
-    <PromoNoContent
-      :description="`Chat with other ${$app.site.name} users instantly.`"
-      icon="mdi-message-processing-outline"
-      :title="`${$app.site.name} Communications`"
-    />
-  </v-container>
+      </template>
+    </v-container>
+  </div>
 </template>
 
 <script setup lang="ts">

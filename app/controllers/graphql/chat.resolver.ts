@@ -175,7 +175,12 @@ export class ChatResolver {
     @Ctx() ctx: Context,
     @Arg("input") input: CreateChatInput
   ): Promise<Chat> {
-    return await this.chatService.createChat(input.users, ctx.user!!.id, true)
+    return await this.chatService.createChat(
+      input.users,
+      ctx.user!!.id,
+      true,
+      input.type
+    )
   }
 
   @RateLimit({
@@ -386,9 +391,11 @@ export class ChatResolver {
 
       const remainingUsersCount = Math.max(0, mappedUsers.length - 3)
 
-      return `${limitedUsers.join(", ")}${
-        remainingUsersCount > 0 ? `, +${remainingUsersCount} others` : ""
-      }`
+      return (
+        `${limitedUsers.join(", ")}${
+          remainingUsersCount > 0 ? `, +${remainingUsersCount} others` : ""
+        }` || "Unnamed Group"
+      )
     }
 
     return chat.name

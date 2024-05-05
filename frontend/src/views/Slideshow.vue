@@ -46,7 +46,8 @@ export default defineComponent({
       config: {
         speed: 5
       },
-      model: 0
+      model: 0,
+      id: undefined as string | undefined
     };
   },
   computed: {
@@ -65,6 +66,8 @@ export default defineComponent({
     }
   },
   mounted() {
+    const url = new URL(window.location.href);
+    this.id = url.pathname.split("/")[2];
     this.getSlideshow();
     this.getSlideshowConfig();
   },
@@ -73,15 +76,11 @@ export default defineComponent({
       navigator.clipboard.writeText(this.$app.domain + text);
     },
     async getSlideshow() {
-      const { data } = await this.axios.get(
-        `/slideshows/${this.$route.params.code}`
-      );
+      const { data } = await this.axios.get(`/slideshows/${this.id}`);
       this.slideshow = data;
     },
     async getSlideshowConfig() {
-      const { data } = await this.axios.get(
-        `/slideshows/${this.$route.params.code}/config`
-      );
+      const { data } = await this.axios.get(`/slideshows/${this.id}/config`);
       this.config = data;
     }
   }

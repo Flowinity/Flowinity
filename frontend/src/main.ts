@@ -31,6 +31,8 @@ import apolloWs from "./boot/apollo.wsTransport";
 import apolloHttp from "./boot/apollo.httpTransport";
 import vuetify from "@/plugins/vuetify";
 
+const isSlideshow = window.location.pathname.startsWith("/slideshow/");
+
 const app = createApp({
   ...App,
   ...{
@@ -119,15 +121,19 @@ if (import.meta.env.DEV) app.config.performance = true;
 registerPlugins(app);
 globals(app);
 
-if (
-  localStorage.getItem("tpuTransport") === "http" ||
-  location.port === "34582"
-) {
-  apolloHttp(app);
-} else {
-  apolloWs(app);
+if (!isSlideshow) {
+  if (
+    localStorage.getItem("tpuTransport") === "http" ||
+    location.port === "34582"
+  ) {
+    apolloHttp(app);
+  } else {
+    apolloWs(app);
+  }
 }
 
-events();
-socket(app).then(() => {});
+if (!isSlideshow) {
+  events();
+  socket(app).then(() => {});
+}
 app.mount("#tpu-app");

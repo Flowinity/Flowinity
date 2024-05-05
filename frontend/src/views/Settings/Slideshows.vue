@@ -23,7 +23,7 @@
             <v-card-text>
               <v-text-field
                 :label="$t('settings.slideshows.shareLink')"
-                :model-value="`${$app.site.hostnameWithProtocol}/slideshows/${slideshow.shareLink}`"
+                :model-value="`${$app.site.hostnameWithProtocol}/slideshow/${slideshow.shareLink}`"
                 disabled
               />
               <v-text-field

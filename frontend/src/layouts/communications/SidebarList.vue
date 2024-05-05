@@ -142,11 +142,22 @@
       </v-list>
     </v-card>
   </v-menu>
-  <v-btn block :rounded="false" to="/communications/home">
-    <v-icon class="mr-1">mdi-account-multiple</v-icon>
-    {{ $t("chats.socialHub.title") }}
-  </v-btn>
-  <overline class="ml-3 mb-n1" position="start">
+  <GroupWizard v-model="create" />
+  <div class="d-flex flex-column" style="gap: 4px">
+    <v-btn
+      class="mx-2"
+      v-if="$experiments.experiments.CHAT_GUIDED_WIZARD"
+      @click="create = !create"
+    >
+      <v-icon class="mr-1">mdi-plus</v-icon>
+      {{ $t("chats.join.title") }}
+    </v-btn>
+  </div>
+  <overline
+    class="ml-3 mb-n1"
+    position="start"
+    v-if="!$experiments.experiments.CHAT_GUIDED_WIZARD"
+  >
     <CreateChat v-slot="{ props }" v-model="create" type="create">
       <v-btn class="mr-1" icon size="xsmall" v-bind="props">
         <v-icon>mdi-plus</v-icon>
@@ -231,9 +242,11 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { Chat, UserStatus } from "@/gql/graphql";
 import Overline from "@/components/Core/Typography/Overline.vue";
 import UserSidebarOptions from "@/components/Communications/Menus/UserSidebarOptions.vue";
+import GroupWizard from "@/components/Communications/Dialogs/GroupWizard.vue";
 
 export default defineComponent({
   components: {
+    GroupWizard,
     UserSidebarOptions,
     Overline,
     UserAvatar,

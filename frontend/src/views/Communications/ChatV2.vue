@@ -692,7 +692,7 @@ export default defineComponent({
           this.resizeObserver.observe(this.$refs[`message-0`][0]?.$el);
         }
       } catch (e) {
-        console.log(e);
+        if (import.meta.env.DEV) console.log(e);
       }
       sentinel.scrollIntoView();
       this.$nextTick(() => {

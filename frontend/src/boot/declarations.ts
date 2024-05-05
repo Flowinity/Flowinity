@@ -59,6 +59,7 @@ declare global {
   interface Window {
     socket: Socket;
     _tpu_router: Router;
+    isSlideshow: boolean | undefined;
     editor?: EditorJS & { configuration: EditorConfig };
     tpuInternals: {
       processLink: (link: string) => void;

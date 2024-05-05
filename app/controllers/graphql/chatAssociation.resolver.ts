@@ -357,9 +357,16 @@ export class ChatAssociationResolver {
     @Arg("input") input: JoinChatFromInviteInput
   ) {
     if (ctx.user?.bot) throw new GqlError("INVITE_BOT")
+    let id = input.inviteId
+    if (id.startsWith(config.hostnameWithProtocol)) {
+      try {
+        const url = new URL(id)
+        id = url.pathname.split("/").pop() || id
+      } catch {}
+    }
     const invite = await ChatInvite.findOne({
       where: {
-        id: input.inviteId,
+        id,
         invalidated: false,
         expiredAt: {
           [Op.or]: [
@@ -390,7 +397,9 @@ export class ChatAssociationResolver {
         chatId: invite.chat.id
       }
     })
-    if (existing) throw new GqlError("ALREADY_IN_CHAT")
+    if (existing) {
+      return existing
+    }
     const rank = invite.rank
       ? invite.rank
       : await ChatRank.findOne({
@@ -407,7 +416,7 @@ export class ChatAssociationResolver {
       chatId: invite.chat.id,
       rank: "member",
       identifier: invite.chat.id + "-" + ctx.user!!.id,
-      inviteUsed: invite.id
+      inviteUsed: id
     })
     await ChatRankAssociation.create({
       rankId: rank.id,
