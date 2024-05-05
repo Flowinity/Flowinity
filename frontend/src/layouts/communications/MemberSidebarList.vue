@@ -145,7 +145,7 @@
             :style="{
               color: $chat.getRankColor(
                 association.ranksMap,
-                $chat.selectedChat.ranks
+                $chat.selectedChat?.ranks
               )
             }"
             :class="{
