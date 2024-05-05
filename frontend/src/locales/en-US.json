@@ -31,7 +31,10 @@
       "download": "Download",
       "flowinity": "Flowinity",
       "files": "Files",
-      "comms": "Social"
+      "comms": "Social",
+      "account": "Account",
+      "adminSeparator": "Admin",
+      "secretMenu": "Secret Menu"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",

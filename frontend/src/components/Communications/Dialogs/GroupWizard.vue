@@ -130,6 +130,7 @@
         <template v-else-if="selection === 'create' && step === Step.Create">
           <CreateChatWizard
             :type="type"
+            class="mt-4"
             @done="
               createdChat = $event;
               generateInvite();
@@ -272,10 +273,6 @@ async function joinChat() {
 </script>
 
 <style scoped>
-.wizard-transition {
-  transition: width 0.3s;
-}
-
 .scroll-x-reverse-transition-leave-active {
   position: absolute;
 }

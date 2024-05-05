@@ -87,7 +87,7 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style scoped>
 :root {
   background-color: transparent !important;
   overflow: hidden;

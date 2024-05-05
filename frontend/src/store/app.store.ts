@@ -230,7 +230,7 @@ export const useAppStore = defineStore("app", {
         {
           separator: true,
           id: 15,
-          name: i18n.t("core.sidebar.flowinity")
+          name: i18n.t("core.sidebar.account")
         },
         {
           id: 2,
@@ -275,7 +275,7 @@ export const useAppStore = defineStore("app", {
           warning: mail.unread > 0 ? mail.unread : false
         },
         {
-          id: 20,
+          id: 13,
           externalPath: "",
           path: "/users",
           name: i18n.t("core.sidebar.users"),
@@ -317,6 +317,12 @@ export const useAppStore = defineStore("app", {
         },
         {
           id: 37,
+          separator: true,
+          name: i18n.t("core.sidebar.adminSeparator"),
+          experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
+        },
+        {
+          id: 38,
           externalPath: "",
           path: "/admin",
           name: i18n.t("core.sidebar.admin"),
@@ -324,12 +330,21 @@ export const useAppStore = defineStore("app", {
           new: false,
           scope: "admin.view",
           experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
+        },
+        {
+          id: 39,
+          name: i18n.t("core.sidebar.secretMenu"),
+          click() {
+            state.dialogs.actionDialog = !state.dialogs.actionDialog;
+          },
+          icon: "mdi-bug",
+          experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
         }
       ] as SidebarItem[];
 
       if (state.platform === Platform.WEB) {
         items.push({
-          id: 38,
+          id: 36,
           externalPath: "",
           path: "/downloads",
           name: i18n.t("core.sidebar.download"),
@@ -370,7 +385,7 @@ export const useAppStore = defineStore("app", {
         user.user?.administrator
       ) {
         items.push({
-          id: 32,
+          id: 14,
           click() {
             state.dialogs.inviteAFriend = true;
           },
@@ -416,15 +431,6 @@ export const useAppStore = defineStore("app", {
           experimentsRequired: ["COMMUNICATIONS"]
         });
       }
-
-      items.push({
-        id: 13,
-        externalPath: "",
-        name: i18n.t("chats.socialHub.title"),
-        path: "/communications/home",
-        icon: "mdi-account-multiple",
-        scope: "user.modify"
-      });
 
       if (state.site.features?.workspaces) {
         items.push({

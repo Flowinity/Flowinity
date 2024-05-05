@@ -144,6 +144,10 @@
   </v-menu>
   <GroupWizard v-model="create" />
   <div class="d-flex flex-column" style="gap: 4px">
+    <v-btn class="mx-2" to="/communications/home">
+      <v-icon class="mr-1">mdi-account-multiple</v-icon>
+      {{ $t("chats.socialHub.title") }}
+    </v-btn>
     <v-btn
       class="mx-2"
       v-if="$experiments.experiments.CHAT_GUIDED_WIZARD"
