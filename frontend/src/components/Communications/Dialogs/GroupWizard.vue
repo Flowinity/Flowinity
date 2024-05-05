@@ -161,7 +161,7 @@
             class="mx-5 my-4"
             autofocus
             placeholder="200847c91a"
-            @keydown.enter="loading.value ? () => {} : joinChat()"
+            @keydown.enter="loading ? () => {} : joinChat()"
           />
           <p class="text-wrap text-subtitle-2 mx-5">
             An invite code will look like one of the following:
