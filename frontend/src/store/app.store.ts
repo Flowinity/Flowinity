@@ -229,7 +229,7 @@ export const useAppStore = defineStore("app", {
         },
         {
           separator: true,
-          id: 15,
+          id: 16,
           name: i18n.t("core.sidebar.account")
         },
         {
@@ -385,7 +385,7 @@ export const useAppStore = defineStore("app", {
         user.user?.administrator
       ) {
         items.push({
-          id: 14,
+          id: 15,
           click() {
             state.dialogs.inviteAFriend = true;
           },
@@ -399,7 +399,7 @@ export const useAppStore = defineStore("app", {
 
       if (state.site.features?.insights) {
         items.push({
-          id: 16,
+          id: 17,
           externalPath: "",
           name: i18n.t("core.sidebar.insights"),
           path: "/insights",
