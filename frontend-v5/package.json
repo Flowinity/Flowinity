@@ -19,7 +19,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@apollo/client": "^3.8.5",
+    "@apollo/client": "3.9.6",
     "@tiptap/extension-mention": "^2.1.12",
     "@tiptap/pm": "^2.1.12",
     "@tiptap/starter-kit": "^2.1.12",

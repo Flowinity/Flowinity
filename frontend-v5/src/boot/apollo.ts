@@ -118,7 +118,7 @@ export default function setup(app: App) {
   let reconnect = false;
 
   const wsClient = createClient({
-    url: "wss://dev.privateuploader.gql.troplo.com/graphql",
+    url: `wss://${import.meta.env.VITE_API_URL}/graphql`,
     connectionParams: async () => {
       return {
         authorization: userStore.token,
