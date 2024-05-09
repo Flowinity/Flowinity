@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   font-family: Inter, sans-serif;
 }
@@ -51,6 +55,11 @@
 
 .header-patch {
   left: 256px !important;
+  width: calc(100% - 256px) !important;
+}
+
+.header-patch-progressive {
+  left: 310px !important;
   width: calc(100% - 256px) !important;
 }
 
@@ -732,4 +741,29 @@ p:has(.emoji-large) img {
 
 .v-btn {
   letter-spacing: unset !important;
+}
+
+// Tailwind hacks
+h1 {
+  font-size: 2em !important;
+}
+
+h2 {
+  font-size: 1.5em !important;
+}
+
+h3 {
+  font-size: 1.17em !important;
+}
+
+h4 {
+  font-size: 1em !important;
+}
+
+h5 {
+  font-size: 0.83em !important;
+}
+
+h6 {
+  font-size: 0.67em !important;
 }

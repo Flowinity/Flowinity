@@ -23,6 +23,7 @@
     @dragover="dragOver"
     @touchstart="touchStart($event)"
     @touchend="touchEnd($event)"
+    :class="{ dark: $vuetify.theme.current.dark }"
   >
     <NicknameDialog v-model="$app.dialogs.nickname.value" />
     <QuickSwitcher v-model="$app.dialogs.quickSwitcher" />
@@ -46,7 +47,30 @@
       <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <!-- must be false because if it's undefined, the appbar will render after the state is loaded -->
-    <default-bar v-if="$app.site.finishedSetup !== false" />
+    <default-bar
+      v-if="
+        $app.site.finishedSetup !== false &&
+        !$experiments.experiments.PROGRESSIVE_UI
+      "
+    />
+    <progressive-app-bar
+      v-else-if="
+        $app.site.finishedSetup !== false &&
+        $experiments.experiments.PROGRESSIVE_UI
+      "
+    />
+    <progressive-super-bar
+      v-if="
+        $app.site.finishedSetup !== false &&
+        $experiments.experiments.PROGRESSIVE_UI
+      "
+    />
+    <progressive-side-bar
+      v-if="
+        $app.site.finishedSetup !== false &&
+        $experiments.experiments.PROGRESSIVE_UI
+      "
+    />
     <rail-bar
       v-if="
         $experiments.experiments.RAIL_SIDEBAR &&
@@ -54,20 +78,22 @@
         $app.site.finishedSetup
       "
     />
-    <keep-alive v-if="$app.rail">
-      <component :is="currentRailComponent" />
-    </keep-alive>
-    <sidebar
-      v-if="
-        !$app.rail &&
-        (!$vuetify.display.mobile ||
-          ($vuetify.display.mobile && $app.railMode === 'tpu') ||
-          !$chat.isCommunications) &&
-        $app.site.finishedSetup
-      "
-    />
-    <comms-sidebar v-if="!$app.rail && $chat.isCommunications" />
-    <workspaces-sidebar v-if="!$app.rail" />
+    <template v-if="!$experiments.experiments.PROGRESSIVE_UI">
+      <keep-alive v-if="$app.rail">
+        <component :is="currentRailComponent" />
+      </keep-alive>
+      <sidebar
+        v-if="
+          !$app.rail &&
+          (!$vuetify.display.mobile ||
+            ($vuetify.display.mobile && $app.railMode === 'tpu') ||
+            !$chat.isCommunications) &&
+          $app.site.finishedSetup
+        "
+      />
+      <comms-sidebar v-if="!$app.rail && $chat.isCommunications" />
+      <workspaces-sidebar v-if="!$app.rail" />
+    </template>
     <theme-engine-wrapper />
     <default-view />
   </v-app>
@@ -112,10 +138,16 @@ import PrivacyPolicyDialog from "@/components/Core/Dialogs/PrivacyPolicy.vue";
 import BlockUserDialog from "@/components/Users/Dialogs/Block.vue";
 import NetworkInspector from "@/components/Dev/Dialogs/NetworkInspector.vue";
 import DateOfBirthConfirm from "@/components/Users/Dialogs/DateOfBirthConfirm.vue";
+import ProgressiveAppBar from "@/layouts/progressive/ProgressiveAppBar.vue";
+import ProgressiveSideBar from "@/layouts/progressive/ProgressiveSideBar.vue";
+import ProgressiveSuperBar from "@/layouts/progressive/ProgressiveSuperBar.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
   components: {
+    ProgressiveSuperBar,
+    ProgressiveSideBar,
+    ProgressiveAppBar,
     DateOfBirthConfirm,
     NetworkInspector,
     Sidebar,
