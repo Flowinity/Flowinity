@@ -370,6 +370,7 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Record<string, any> {
     const experiments = {
+      PROGRESSIVE_UI: false,
       CHAT_GUIDED_WIZARD: true,
       NOTE_AI_ASSIST: false,
       NOTE_COLLAB: false,
@@ -425,6 +426,11 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        PROGRESSIVE_UI: {
+          description: "TPUv4 overhaul project",
+          createdAt: "2024-05-09T00:00:00.000Z",
+          versions: [4]
+        },
         CHAT_GUIDED_WIZARD: {
           description: "Enable guided wizard for chat join and create",
           createdAt: "2024-05-03T00:00:00.000Z",
@@ -740,6 +746,7 @@ export class CoreService {
       }
     }
     if (dev || config.release === "dev") {
+      experiments.PROGRESSIVE_UI = true
       experiments.CHAT_GUIDED_WIZARD = true
       experiments.NOTE_COLLAB = true
       //experiments.FORCE_DEV_MODE = false
