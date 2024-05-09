@@ -824,7 +824,8 @@ export const useAppStore = defineStore("app", {
       const {
         data: { coreState }
       } = await useApolloClient().client.query({
-        query: CoreStateQuery
+        query: CoreStateQuery,
+        fetchPolicy: "no-cache"
       });
       this.site = coreState;
       this.domain = "https://" + this.site.domain + "/i/";

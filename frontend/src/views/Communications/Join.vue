@@ -26,7 +26,7 @@
       <v-card-subtitle class="initial">
         {{
           invite.chat.description ||
-          "Get involved in the conversation today, only on PrivateUploader!"
+          `Get involved in the conversation today, only on ${$app.site.name}!`
         }}
       </v-card-subtitle>
       <v-card-actions>
@@ -106,7 +106,7 @@ export default defineComponent({
       } finally {
         this.$app.componentLoading = false;
         this.$app.title = this.invite
-          ? `Join ${this.invite.chat.name} on PrivateUploader!`
+          ? `Join ${this.invite.chat.name} on ${this.$app.site.name}!`
           : "Invalid Invite";
       }
     },

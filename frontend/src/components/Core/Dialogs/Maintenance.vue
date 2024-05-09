@@ -7,9 +7,10 @@
   >
     <div class="crash-parent">
       <div class="crashed">
-        <p class="text-center text-gradient mb-n2" style="font-size: 64px">
-          TPU
-        </p>
+        <FlowinityBannerHandler
+          style="max-width: 500px; max-height: 80px; margin-left: 0 !important"
+          class="mb-2"
+        />
         <div class="title">Maintenance...</div>
         <div class="crashed subtitle">
           {{ $app.site.maintenance.message }}
@@ -35,8 +36,10 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import FlowinityBannerHandler from "@/components/Brand/FlowinityBannerHandler.vue";
 
 export default defineComponent({
+  components: { FlowinityBannerHandler },
   props: ["modelValue"],
   emits: ["update:modelValue"],
   data() {
@@ -51,12 +54,11 @@ export default defineComponent({
     clearInterval(this.check);
   },
   methods: {
-    check() {
+    async check() {
       if (this.checking) return;
       this.checking = true;
-      this.$app.refresh().then(() => {
-        this.checking = false;
-      });
+      await this.$app.refresh();
+      this.checking = false;
       return this.checking;
     }
   }
