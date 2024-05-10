@@ -260,7 +260,11 @@ export class CoreResolver {
     ]
     if (input.userId && !ctx.user?.administrator)
       throw new GqlError("NOT_ADMIN")
-    if (!validExperiments.includes(input.key) && !ctx.user?.administrator)
+    if (
+      !validExperiments.includes(input.key) &&
+      !ctx.user?.administrator &&
+      !ctx.user?.moderator
+    )
       throw new GraphQLError(
         `The experiment specified "${input.key}" cannot be manually reassigned.`
       )

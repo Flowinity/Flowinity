@@ -1,9 +1,10 @@
 <template>
   <v-navigation-drawer
+    v-model="$app.mainDrawer"
     rail
-    class="border-r-2 superbar sticky z-50 dark:border-outline-dark p-3 border-dark space-x-1 flex flex-col overflow-y-auto overflow-x-hidden sidebar-patch"
+    class="border-r-2 superbar sticky z-50 dark:border-outline-dark p-3 border-dark space-x-1 flex flex-col overflow-y-auto overflow-x-hidden"
     style="scrollbar-width: none; min-width: 72px; max-width: 72px; width: 72px"
-    :class="{ 'h-screen': !props.drawer, 'h-[calc(100vh-64px)]': props.drawer }"
+    :class="{ 'sidebar-patch': !$vuetify.display.mobile }"
   >
     <div class="justify-between flex flex-col h-full">
       <div class="items-start">

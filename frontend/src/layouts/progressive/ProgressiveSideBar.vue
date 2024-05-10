@@ -1,8 +1,9 @@
 <template>
   <v-navigation-drawer
-    style="min-width: 256px; max-width: 256px; left: 68px"
-    :class="{ 'h-screen': !drawer, 'h-[calc(100vh-64px)]': drawer }"
-    class="sidebar-patch"
+    v-model="$app.mainDrawer"
+    style="min-width: 256px; max-width: 256px; z-index: 2000"
+    :class="{ 'sidebar-patch': !$vuetify.display.mobile }"
+    :style="{ left: !$app.mainDrawer ? '0' : '68px' }"
   >
     <VDropdown :triggers="['click']" placement="top-start" class="w-full">
       <div
@@ -91,8 +92,6 @@ import SidebarDebug from "@/layouts/progressive/SidebarDebug.vue";
 
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();
-
-const drawer = computed(() => appStore.mainDrawer);
 </script>
 <style>
 .slide-fade-enter-active {

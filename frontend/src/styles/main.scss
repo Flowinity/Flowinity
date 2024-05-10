@@ -767,3 +767,24 @@ h5 {
 h6 {
   font-size: 0.67em !important;
 }
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: inline !important;
+}
+
+img,
+video {
+  max-width: inherit !important;
+  height: inherit !important;
+}
+
+.emoji {
+  vertical-align: top !important;
+}

@@ -45,7 +45,9 @@ const selected = computed(() => {
           //@ts-ignore
           $attrs['onClick'] && $attrs['onClick']();
           !selected ? router.push(item?.path || to) : () => {};
-          props.closeOnClick ? (appStore.mainDrawer = false) : () => {};
+          props.closeOnClick && $vuetify.display.mobile
+            ? (appStore.mainDrawer = false)
+            : () => {};
         "
         v-ripple
         tabindex="0"

@@ -541,74 +541,6 @@ export const useAppStore = defineStore("app", {
         this.workspaceDrawer = false;
       }
     },
-    populateQuickSwitcher() {
-      const value = [
-        {
-          route: "/",
-          name: "Home"
-        },
-        {
-          route: "/gallery",
-          name: "Gallery"
-        },
-        {
-          route: "/collections",
-          name: "Collections"
-        },
-        {
-          route: "/insights",
-          name: "Insights"
-        },
-        {
-          route: "/settings",
-          name: "Settings"
-        },
-        {
-          route: "/autoCollects",
-          name: "AutoCollects"
-        },
-        {
-          route: "/starred",
-          name: "Starred"
-        },
-        {
-          route: "/users",
-          name: "Users"
-        },
-        {
-          route: "/workspaces",
-          name: "Workspaces"
-        },
-        {
-          name: "SP Socket Profiler",
-          click: () => {
-            this.dialogs.socketProfiler = true;
-          }
-        }
-      ];
-      const chats = useChatStore();
-      for (const chat of chats.chats) {
-        value.push({
-          route: `/communications/${chat.association?.id}`,
-          name: chats.chatName(chat)
-        });
-      }
-      const collections = useCollectionsStore();
-      for (const collection of collections.items) {
-        value.push({
-          route: `/collections/${collection.id}`,
-          name: collection.name
-        });
-      }
-      const workspaces = useWorkspacesStore();
-      for (const workspace of workspaces.recentOverall) {
-        value.push({
-          route: `/workspaces/${workspace.id}`,
-          name: workspace.name
-        });
-      }
-      this.quickSwitcher = value;
-    },
     async deleteItem(item: Upload | undefined) {
       if (!item) return;
       this.dialogs.deleteItem.item = item;
@@ -691,7 +623,6 @@ export const useAppStore = defineStore("app", {
         1000 * 60 * 15
       );
       this._postInitRan = true;
-      this.populateQuickSwitcher();
       this.getWeather();
       if (
         user.user?.plan?.internalName === "GOLD" ||
