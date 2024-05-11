@@ -15,9 +15,13 @@ const props = defineProps({
     }"
     style="width: 40px; height: 40px"
     tabindex="0"
-    @keydown.enter="$event.target?.click()"
+    @keydown.enter="
+      //@ts-ignore
+      $event.target?.click()
+    "
     @keydown.space="
       $event.preventDefault();
+      //@ts-ignore
       $event.target?.click();
     "
   >

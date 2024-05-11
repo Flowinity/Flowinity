@@ -14,7 +14,7 @@
             ? 'to bottom, rgba(0,0,0,.1), rgba(0,0,0,1.0)'
             : undefined
       "
-      :src="<string>image"
+      :src="image"
       class="white--text align-end"
       :cover="true"
       transition="none"
@@ -50,7 +50,6 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "DynamicCard",
-  slots: ["image"],
   props: {
     to: {
       type: String,

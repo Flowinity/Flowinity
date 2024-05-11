@@ -31,6 +31,19 @@ export const useCollectionsStore = defineStore("collections", {
         configure: boolean;
       };
       avatar: string | null;
+      banner: string | null;
+      itemCount: number;
+      createdAt: string;
+      image: string | null;
+      updatedAt: string;
+      new: boolean | undefined;
+      preview: {
+        createdAt: string;
+        attachment: {
+          id: number;
+          attachment: string;
+        };
+      };
     }[],
     invites: 0
   }),

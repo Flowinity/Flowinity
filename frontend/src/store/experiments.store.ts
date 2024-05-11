@@ -76,6 +76,7 @@ export const useExperimentsStore = defineStore("experiments", () => {
   return {
     experiments,
     setExperiment,
-    init
+    init,
+    experimentsInherit
   };
 });

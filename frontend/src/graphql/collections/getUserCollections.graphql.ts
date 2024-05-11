@@ -19,6 +19,7 @@ export const UserLightCollectionsQuery = gql`
         }
         banner
         image
+        updatedAt
         preview {
           attachment {
             attachment

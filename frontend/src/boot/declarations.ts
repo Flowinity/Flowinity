@@ -38,6 +38,8 @@ declare module "@vue/runtime-core" {
     $socket: Socket;
     $friends: ReturnType<typeof useFriendsStore>;
     $mail: ReturnType<typeof useMailStore>;
+    // TODO: fix
+    //@ts-ignore
     $ui: ReturnType<typeof useProgressiveUIStore>;
     $router: Router;
     $route: RouteLocationNormalizedLoaded;

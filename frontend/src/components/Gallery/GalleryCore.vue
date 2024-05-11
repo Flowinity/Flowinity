@@ -202,7 +202,7 @@
               icon
               size="small"
               :loading="randomAttachmentLoading"
-              @click="randomAttachment()"
+              @click="$emit('randomAttachment')"
             >
               <v-icon style="width: 20px">mdi-dice</v-icon>
             </v-btn>
@@ -211,10 +211,6 @@
               icon
               size="small"
               color="red"
-              @click.exact=""
-              @click.shift.exact="
-                deleteUploads(selected.map((item) => item.id))
-              "
             >
               <RiDeleteBinLine style="width: 20px" />
             </v-btn>
@@ -248,7 +244,7 @@
               :disabled="
                 items.items
                   ?.map((item) => item.id)
-                  .every((id) => selected.some((item) => item.id === id))
+                  .every((id) => selected.includes(id))
               "
               @click="selectAll()"
             >

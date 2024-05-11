@@ -34,6 +34,7 @@
             <RiMenuLine style="width: 20px" />
           </v-btn>
         </div>
+        <!-- @vue-ignore -->
         <accessible-transition
           v-for="(rail, index) in uiStore.currentNavItem?.rail"
           mode="out-in"
@@ -237,7 +238,7 @@ function showLoadingSpinner() {
   showLoading.value = true;
 }
 
-let loadingSpinnerTimeout: Timeout | undefined = undefined;
+let loadingSpinnerTimeout = undefined;
 
 watch(
   () => appStore.componentLoading,

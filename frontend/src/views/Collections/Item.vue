@@ -99,9 +99,8 @@
                 icon
                 v-if="collection?.userId !== $user.user?.id"
                 :key="collection?.userId"
-                variant="passive"
+                size="small"
                 v-tooltip.bottom="$t('collections.nav.leave')"
-                @click="toggle"
               >
                 <RiLogoutBoxLine style="width: 20px" />
               </v-btn>
@@ -155,7 +154,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, markRaw } from "vue";
+import { defineComponent, h, markRaw } from "vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
 import { CollectionCache } from "@/types/collection";

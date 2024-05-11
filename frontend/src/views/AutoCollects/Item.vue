@@ -75,7 +75,7 @@
 
 <script lang="ts">
 import { CollectionCache } from "@/types/collection";
-import { defineComponent, markRaw } from "vue";
+import { defineComponent, h, markRaw } from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";

@@ -215,12 +215,14 @@ const filteredCollections = computed(() => {
 const createCollection = ref(false);
 
 function updateNew(id: number) {
-  collectionsStore.items = collectionsStore.items.map((collection) => {
-    if (collection.id === id) {
-      collection.new = false;
+  collectionsStore.persistent = collectionsStore.persistent.map(
+    (collection) => {
+      if (collection.id === id) {
+        collection.new = false;
+      }
+      return collection;
     }
-    return collection;
-  });
+  );
 }
 </script>
 
