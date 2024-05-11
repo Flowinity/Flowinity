@@ -3,82 +3,92 @@
     v-model="$app.mainDrawer"
     style="min-width: 256px; max-width: 256px; z-index: 2000"
     :class="{ 'sidebar-patch': !$vuetify.display.mobile }"
-    :style="{ left: !$app.mainDrawer ? '0' : '68px' }"
+    :style="{ left: !$app.mainDrawer ? '0' : '72px' }"
+    color="dark"
+    elevation="0"
   >
-    <VDropdown :triggers="['click']" placement="top-start" class="w-full">
-      <div
-        class="flex cursor-pointer select-none justify-between pt-0 dark:border-outline-dark border-b-2 border-outline-dark"
-        style="min-height: 64px; max-height: 64px"
-      >
-        <Transition name="slide-fade" mode="out-in">
-          <div
-            :key="uiStore.currentRail?.id"
-            v-if="
-              uiStore.currentRail && uiStore.currentRail?.id !== RailMode.CHAT
-            "
-            class="flex items-center"
-          >
-            <component :is="uiStore.currentRail?.icon" class="w-8 ml-4" />
-            <p class="text-xl font-semibold ml-4">
-              {{ uiStore.currentRail.name }}
-            </p>
-          </div>
-          <SidebarCommsHeader
-            v-else-if="uiStore.currentRail?.id === RailMode.CHAT"
-          />
-        </Transition>
-        <div id="sidebar-actions" class="flex items-center mr-4" />
-      </div>
-      <template #popper>
-        <card class="w-full" :secondary="true">
-          <tpu-list>
-            <tpu-list-item class="p-3 text-red fill-red">
-              <div class="flex">
-                <ri-close-line style="width: 20px" />
-                {{ $t("railbar.actions.removeModule") }}
-              </div>
-            </tpu-list-item>
-          </tpu-list>
-        </card>
-      </template>
-    </VDropdown>
-    <Transition name="slide-fade" mode="out-in">
+    <div
+      class="flex cursor-pointer select-none justify-between pt-0 flowinity-border border-b-2"
+      style="min-height: 64px; max-height: 64px"
+    >
+      <accessible-transition name="slide-fade" mode="out-in">
+        <div :key="uiStore.currentRail?.id" class="flex items-center">
+          <component :is="uiStore.currentRail?.icon" class="w-8 ml-4" />
+          <p class="text-xl font-semibold ml-4">
+            {{ uiStore.currentRail.name }}
+          </p>
+        </div>
+      </accessible-transition>
+      <div id="sidebar-actions" class="flex items-center mr-4" />
+    </div>
+    <div
+      class="flex justify-between flex-col"
+      style="
+        height: calc(100vh - 64px);
+        width: 255px;
+        min-width: 255px;
+        max-width: 255px;
+      "
+    >
       <div
         class="justify-between flex-col flex-1 px-3"
-        :key="uiStore.currentRail?.id"
         style="margin-top: 16px"
       >
         <div class="flex-col flex gap-y-2 flex-1 relative">
-          <SidebarList v-if="uiStore.currentRail?.id === RailMode.CHAT" />
-          <SidebarMail v-show="uiStore.currentRail?.id === RailMode.MAIL" />
-          <SideBarItem
-            v-for="item in uiStore.currentNavOptions"
-            :key="item.name"
-            class="flex h-12 items-center"
-            :item="item"
-          />
-          <SidebarCollections
-            v-show="uiStore.currentRail?.id === RailMode.GALLERY"
-          />
-          <SidebarDebug v-if="uiStore.currentRail?.id === RailMode.DEBUG" />
+          <accessible-transition name="slide-fade" mode="out-in">
+            <SidebarList v-show="uiStore.currentRail?.id === RailMode.CHAT" />
+          </accessible-transition>
+          <accessible-transition name="slide-fade" mode="out-in">
+            <MailSidebarList
+              v-show="uiStore.currentRail?.id === RailMode.MAIL"
+            />
+          </accessible-transition>
+          <accessible-transition name="slide-fade" mode="out-in">
+            <div :key="uiStore.currentRail?.id">
+              <SideBarItem
+                v-for="item in uiStore.currentNavOptions"
+                :key="item.id + item.path"
+                class="flex h-12 items-center"
+                :item="item"
+              />
+            </div>
+          </accessible-transition>
+          <accessible-transition name="slide-fade" mode="out-in">
+            <SidebarCollections
+              v-show="uiStore.currentRail?.id === RailMode.GALLERY"
+            />
+          </accessible-transition>
+          <accessible-transition name="slide-fade" mode="out-in">
+            <SidebarDebug v-show="uiStore.currentRail?.id === RailMode.DEBUG" />
+          </accessible-transition>
+          <accessible-transition name="slide-fade" mode="out-in">
+            <WorkspacesSidebarList
+              v-show="uiStore.currentRail?.id === RailMode.WORKSPACES"
+            />
+          </accessible-transition>
+          <accessible-transition name="slide-fade" mode="out-in">
+            <AdminSidebarList
+              v-show="uiStore.currentRail?.id === RailMode.ADMIN"
+            />
+          </accessible-transition>
         </div>
       </div>
-    </Transition>
-    <Transition name="slide-fade" mode="out-in">
-      <div
-        class="flex-col flex gap-y-2 px-3"
-        style="margin-bottom: 16px"
-        :key="uiStore.currentRail?.id"
-      >
-        <SideBarItem
-          v-for="item in uiStore.currentMiscNavOptions"
-          :key="item.name"
-          class="flex items-center text-medium-emphasis-dark"
-          :item="item"
-          style="fill: #878889"
-        />
-      </div>
-    </Transition>
+      <accessible-transition name="slide-fade" mode="out-in">
+        <div
+          class="flex-col flex gap-y-2 px-3"
+          style="margin-bottom: 16px"
+          :key="uiStore.currentRail?.id"
+        >
+          <SideBarItem
+            v-for="item in uiStore.currentMiscNavOptions"
+            :key="item.name"
+            class="flex items-center text-medium-emphasis-dark"
+            :item="item"
+            style="fill: #878889"
+          />
+        </div>
+      </accessible-transition>
+    </div>
   </v-navigation-drawer>
 </template>
 
@@ -89,23 +99,46 @@ import { computed } from "vue";
 import SidebarList from "@/layouts/communications/SidebarList.vue";
 import SideBarItem from "@/layouts/progressive/SideBarItem.vue";
 import SidebarDebug from "@/layouts/progressive/SidebarDebug.vue";
+import SidebarCollections from "@/layouts/progressive/SidebarCollections.vue";
+import MailSidebarList from "@/layouts/mail/SidebarList.vue";
+import WorkspacesSidebarList from "@/layouts/default/WorkspacesSidebarList.vue";
+import AdminSidebarList from "@/components/Admin/AdminSidebarList.vue";
+import CoreSidebar from "@/components/Core/Sidebar.vue";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
+import CrashComponent from "@/components/Core/CrashAlt.vue";
 
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();
 </script>
 <style>
-.slide-fade-enter-active {
+body:not(.resize-nonez) .slide-fade-enter-active {
   transition: all 0.2s ease-out;
 }
 
-.slide-fade-leave-active {
+body:not(.zz) .slide-fade-leave-active {
   transition: all 0.1s cubic-bezier(0.49, 0.61, 0.83, 0.67);
 }
 
-.slide-fade-enter-from,
-.slide-fade-leave-to {
+body:not(.zz) .slide-fade-enter-from,
+body:not(.z) .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
+}
+
+.slide-in-enter-active {
+  transition: transform 0.5s ease; /* Adjust timing and easing as needed */
+}
+
+.slide-in-enter {
+  transform: translateX(100%); /* Start position for entering element */
+}
+
+.slide-in-leave-active {
+  transition: transform 0.5s ease; /* Adjust timing and easing as needed */
+}
+
+.slide-in-leave-to {
+  transform: translateX(100%); /* End position for leaving element */
 }
 </style>
 

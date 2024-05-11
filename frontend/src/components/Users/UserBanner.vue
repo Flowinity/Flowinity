@@ -41,7 +41,7 @@
           <v-progress-circular color="grey lighten-5" indeterminate />
         </v-row>
       </template>
-      <transition
+      <accessible-transition
         v-if="canEdit"
         :duration="{ enter: 300, leave: 300 }"
         appear
@@ -55,7 +55,7 @@
         >
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-      </transition>
+      </accessible-transition>
       <slot :hovering="isHovering" />
     </v-img>
   </v-hover>
@@ -66,10 +66,11 @@ import "cropperjs/dist/cropper.css";
 import { defineComponent } from "vue";
 import UploadCropper from "@/components/Core/Dialogs/UploadCropper.vue";
 import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 
 export default defineComponent({
   name: "UserBanner",
-  components: { PlaceholderCheckerboard, UploadCropper },
+  components: { AccessibleTransition, PlaceholderCheckerboard, UploadCropper },
   props: ["user", "height", "collection", "gold", "darken"],
   emits: ["refreshUser", "sharingDialog"],
   data() {

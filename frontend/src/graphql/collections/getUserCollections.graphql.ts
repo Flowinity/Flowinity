@@ -12,6 +12,21 @@ export const UserLightCollectionsQuery = gql`
         }
         name
         avatar
+        itemCount
+        user {
+          username
+          id
+        }
+        banner
+        image
+        preview {
+          attachment {
+            attachment
+            id
+          }
+          createdAt
+        }
+        createdAt
       }
     }
   }
@@ -25,6 +40,8 @@ export const UserCollectionsQuery = gql`
         name
         image
         userId
+        banner
+        avatar
         shareLink
         user {
           username

@@ -44,7 +44,11 @@ const selected = computed(() => {
         @click.prevent.stop="
           //@ts-ignore
           $attrs['onClick'] && $attrs['onClick']();
-          !selected ? router.push(item?.path || to) : () => {};
+          !selected
+            ? item?.click
+              ? item?.click()
+              : router.push(item?.path || to)
+            : () => {};
           props.closeOnClick && $vuetify.display.mobile
             ? (appStore.mainDrawer = false)
             : () => {};
@@ -78,9 +82,9 @@ const selected = computed(() => {
           <template v-if="item?.name">
             {{ item.name }}
             <template v-if="item?.badge">
-              <v-badge class="ml-2">
+              <v-chip size="x-small" class="ml-1">
                 {{ item.badge }}
-              </v-badge>
+              </v-chip>
             </template>
           </template>
           <template v-else>

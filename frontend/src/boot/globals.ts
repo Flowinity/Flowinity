@@ -15,6 +15,7 @@ import { io } from "socket.io-client";
 import functions from "@/plugins/functions";
 import router from "@/router";
 import { useMessagesStore } from "@/store/message.store";
+import { useProgressiveUIStore } from "@/store/progressive.store";
 
 function createSocket(namespace: string) {
   console.log(`[TPU/Socket] Connecting to ${namespace}`);
@@ -56,6 +57,7 @@ export default function setup(app) {
   const friends = useFriendsStore();
   const mail = useMailStore();
   const messages = useMessagesStore();
+  const ui = useProgressiveUIStore();
   core.themeProviderDefaults.theme = vuetify.theme.themes.value;
   core.themeProviderDefaults.global = vuetify.defaults.value;
   app.config.globalProperties.$experiments = experiments;
@@ -68,6 +70,7 @@ export default function setup(app) {
   app.config.globalProperties.$messages = messages;
   app.config.globalProperties.$friends = friends;
   app.config.globalProperties.$mail = mail;
+  app.config.globalProperties.$ui = ui;
   app.config.globalProperties.$socket = createSocket("");
   app.config.globalProperties.$sockets = {
     chat: createSocket("chat"),

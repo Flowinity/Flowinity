@@ -295,6 +295,7 @@ import ChatDevOptions from "@/components/Dev/Dialogs/ChatDevOptionsDialog.vue";
 import { Platform } from "@/store/app.store";
 import { IpcChannels } from "@/electron-types/ipc";
 import functions from "@/plugins/functions";
+import { RailMode } from "@/store/progressive.store";
 
 export default defineComponent({
   components: {
@@ -383,7 +384,7 @@ export default defineComponent({
       return ScrollPosition;
     },
     height() {
-      [this.$app.activeNags.offset];
+      [this.$app.activeNags.offset, this.$ui.appBarImage];
       const navbar = document.getElementById("navbar");
       if (!navbar) return "calc(100vh)";
       return "calc(100vh - " + navbar.offsetHeight + "px)";
@@ -962,6 +963,7 @@ export default defineComponent({
     this.$sockets.chat.on("cancelTyping", this.onCancelTyping);
     this.message = this.$chat.getDraft(<string>this.$route.params.chatId) || "";
     this.$app.railMode = "communications";
+    this.$ui.navigation.mode = RailMode.CHAT;
   },
   unmounted() {
     this.unread = 0;

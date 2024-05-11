@@ -245,6 +245,9 @@ export default defineComponent({
     },
     endpoint() {
       this.init();
+    },
+    id() {
+      this.init();
     }
   }
 });

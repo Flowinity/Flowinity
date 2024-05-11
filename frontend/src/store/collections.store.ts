@@ -31,7 +31,8 @@ export const useCollectionsStore = defineStore("collections", {
         configure: boolean;
       };
       avatar: string | null;
-    }[]
+    }[],
+    invites: 0
   }),
   getters: {
     write(state) {

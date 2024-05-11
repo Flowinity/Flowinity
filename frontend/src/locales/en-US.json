@@ -34,7 +34,8 @@
       "comms": "Social",
       "account": "Account",
       "adminSeparator": "Admin",
-      "secretMenu": "Secret Menu"
+      "secretMenu": "Secret Menu",
+      "tryProgressive": "Try new layout"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",

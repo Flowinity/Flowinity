@@ -478,25 +478,25 @@ export default defineComponent({
       switch (this.type) {
         case "weekly":
           return {
-            banner: "https://i.troplo.com/i/4edb6d006e06.png",
+            banner: "https://i.troplo.com/i/cd6cb95ad829.svg",
             plural: "weeks",
             singular: "week"
           };
         case "monthly":
           return {
-            banner: "https://i.troplo.com/i/1f91557f0dc4.png",
+            banner: "https://i.troplo.com/i/387bead79d09.svg",
             plural: "months",
             singular: "month"
           };
         case "yearly":
           return {
-            banner: "https://i.troplo.com/i/34b61673eac5.png",
+            banner: "https://i.troplo.com/i/1881f4ee9fa7.svg",
             plural: "years",
             singular: "year"
           };
         case "dynamic":
           return {
-            banner: "https://i.troplo.com/i/c0bc710f80cf.png",
+            banner: "https://i.troplo.com/i/a8976dc4c0b0.svg",
             plural: "all time",
             singular: "all time"
           };

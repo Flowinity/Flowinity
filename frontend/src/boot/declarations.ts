@@ -20,6 +20,7 @@ import { NormalizedCacheObject } from "@apollo/client/cache";
 import { useMessagesStore } from "@/store/message.store";
 import { ElectronAPI } from "@electron-toolkit/preload";
 import EditorJS, { BlockAPI, EditorConfig } from "@flowinity/editorjs";
+import { useProgressiveUIStore } from "@/store/progressive.store";
 
 declare module "@vue/runtime-core" {
   export interface ComponentCustomProperties {
@@ -37,6 +38,7 @@ declare module "@vue/runtime-core" {
     $socket: Socket;
     $friends: ReturnType<typeof useFriendsStore>;
     $mail: ReturnType<typeof useMailStore>;
+    $ui: ReturnType<typeof useProgressiveUIStore>;
     $router: Router;
     $route: RouteLocationNormalizedLoaded;
     $admin: ReturnType<typeof useAdminStore>;

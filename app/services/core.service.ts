@@ -370,6 +370,8 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Record<string, any> {
     const experiments = {
+      PROGRESSIVE_HOME: false,
+      DISABLE_ANIMATIONS: false,
       PROGRESSIVE_UI: false,
       CHAT_GUIDED_WIZARD: true,
       NOTE_AI_ASSIST: false,
@@ -426,6 +428,16 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        PROGRESSIVE_HOME: {
+          description: "Enable redesigned homepage with Progressive UI.",
+          createdAt: "2024-05-12T00:00:00.000Z",
+          versions: [4]
+        },
+        DISABLE_ANIMATIONS: {
+          description: "Disable Progressive UI animations.",
+          createdAt: "2024-05-11T00:00:00.000Z",
+          versions: [4]
+        },
         PROGRESSIVE_UI: {
           description: "TPUv4 overhaul project",
           createdAt: "2024-05-09T00:00:00.000Z",

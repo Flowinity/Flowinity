@@ -3,11 +3,11 @@
   <div class="register-hero">
     <div :class="{ 'mx-5 mobile': $vuetify.display.mobile }" class="hero-body">
       <div class="title">
-        <transition name="slide-y-transition" mode="out-in">
+        <accessible-transition name="slide-y-transition" mode="out-in">
           <p :key="slogan" class="text-6xl font-bold">
             {{ slogan }}
           </p>
-        </transition>
+        </accessible-transition>
       </div>
       <div class="subtitle">
         The
@@ -140,9 +140,10 @@ import DownloadButton from "@/components/Downloads/DownloadButton.vue";
 import {Platform} from "@/store/app.store";
 import functions from "@/plugins/functions";
 import ColubrinaRedirect from "@/components/Home/ColubrinaRedirect.vue";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 
 export default defineComponent({
-  components: {ColubrinaRedirect, DownloadButton, PromoCard},
+  components: {AccessibleTransition , ColubrinaRedirect, DownloadButton, PromoCard},
   data() {
     return {
       email: "",

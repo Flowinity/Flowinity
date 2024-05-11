@@ -6,7 +6,14 @@
       :items="collectivize"
       @collection-added="collectionAdded($event)"
     />
-    <div v-if="!selected.length && supports.multiSelect" class="float-right">
+    <div
+      v-if="
+        !selected.length &&
+        supports.multiSelect &&
+        !$experiments.experiments.PROGRESSIVE_UI
+      "
+      class="float-right"
+    >
       <slot name="multi-select-actions">
         <v-btn class="rounded-xl ml-2" variant="text" @click="selectAll()">
           <v-icon>mdi-plus</v-icon>
@@ -14,7 +21,14 @@
         </v-btn>
       </slot>
     </div>
-    <div v-if="selected.length && supports.multiSelect" class="float-right">
+    <div
+      v-if="
+        selected.length &&
+        supports.multiSelect &&
+        !$experiments.experiments.PROGRESSIVE_UI
+      "
+      class="float-right"
+    >
       <v-btn class="rounded-xl ml-2" variant="text" @click="download()">
         <v-icon class="mr-1">mdi-download</v-icon>
         {{ $t("gallery.downloadSelected") }}
@@ -52,9 +66,9 @@
         </v-btn>
       </slot>
     </div>
-    <br />
-    <br />
-    <br />
+    <br v-if="!$experiments.experiments.PROGRESSIVE_UI" />
+    <br v-if="!$experiments.experiments.PROGRESSIVE_UI" />
+    <br v-if="!$experiments.experiments.PROGRESSIVE_UI" />
     <v-row v-if="!loading">
       <v-col
         v-for="item in items.items"
@@ -112,7 +126,9 @@
     <small>
       Total Pages: {{ items.pager?.totalPages.toLocaleString() }}
       <v-btn
-        v-if="supports.randomAttachment"
+        v-if="
+          supports.randomAttachment && !$experiments.experiments.PROGRESSIVE_UI
+        "
         :loading="randomAttachmentLoading"
         style="float: right"
         @click="$emit('randomAttachment')"
@@ -123,6 +139,135 @@
       Total Items: {{ items.pager?.totalItems.toLocaleString() }}
     </small>
   </div>
+
+  <!-- Progressive Action Bar options -->
+  <teleport
+    to="#appbar-options"
+    v-if="items.items && $experiments.experiments.PROGRESSIVE_UI"
+  >
+    <accessible-transition mode="out-in" name="slide-up" appear>
+      <slot
+        name="appbar-options"
+        :items="items.items"
+        :selected="selected"
+        :emit="$emit"
+      >
+        <template v-if="!selected.length">
+          <slot
+            name="appbar-options-unselected"
+            :items="items.items"
+            :selected="selected"
+            :emit="$emit"
+          >
+            <div class="flex gap-2">
+              <v-btn
+                icon
+                size="small"
+                :loading="randomAttachmentLoading"
+                @click="$emit('randomAttachment')"
+              >
+                <v-tooltip activator="parent" location="bottom">
+                  {{ $t("gallery.nav.randomAttachment") }}
+                </v-tooltip>
+                <v-icon>mdi-dice-multiple</v-icon>
+              </v-btn>
+              <v-btn icon size="small" @click="selectAll()">
+                <v-tooltip activator="parent" location="bottom">
+                  {{ $t("gallery.nav.selectAll") }}
+                </v-tooltip>
+                <RiAddLine style="width: 20px" />
+              </v-btn>
+              <v-btn
+                icon
+                size="small"
+                @click="$app.dialogs.upload.value = true"
+              >
+                <v-tooltip activator="parent" location="bottom">
+                  {{ $t("generic.upload") }}
+                </v-tooltip>
+                <RiUploadCloud2Line style="width: 20px" />
+              </v-btn>
+            </div>
+          </slot>
+        </template>
+        <div v-else class="flex gap-2">
+          <slot
+            name="appbar-options-selected"
+            :items="items"
+            :selected="selected"
+            :emit="$emit"
+          >
+            <v-btn
+              v-tooltip.bottom="$t('gallery.nav.randomAttachment')"
+              icon
+              size="small"
+              :loading="randomAttachmentLoading"
+              @click="randomAttachment()"
+            >
+              <v-icon style="width: 20px">mdi-dice</v-icon>
+            </v-btn>
+            <v-btn
+              v-tooltip.bottom="$t('gallery.nav.delete')"
+              icon
+              size="small"
+              color="red"
+              @click.exact=""
+              @click.shift.exact="
+                deleteUploads(selected.map((item) => item.id))
+              "
+            >
+              <RiDeleteBinLine style="width: 20px" />
+            </v-btn>
+            <v-btn
+              icon
+              size="small"
+              :color="$ui.shifting ? 'red' : 'blue'"
+              @click="bulkAddCollection()"
+            >
+              <v-tooltip activator="parent" location="bottom">
+                {{
+                  $ui.shifting
+                    ? $t("gallery.removeFromCollection")
+                    : $t("gallery.addToCollectionBulk")
+                }}
+              </v-tooltip>
+              <component
+                :is="$app.shifting ? RiFolderImageFill : RiImageAddLine"
+                style="width: 20px"
+              />
+            </v-btn>
+            <v-btn icon size="small" @click="deselectAll()">
+              <v-tooltip activator="parent" location="bottom">
+                {{ $t("gallery.deselectAll") }}
+              </v-tooltip>
+              <RiCloseLine style="width: 20px" />
+            </v-btn>
+            <v-btn
+              icon
+              size="small"
+              :disabled="
+                items.items
+                  ?.map((item) => item.id)
+                  .every((id) => selected.some((item) => item.id === id))
+              "
+              @click="selectAll()"
+            >
+              <v-tooltip activator="parent" location="bottom">
+                {{ $t("gallery.selectAll") }}
+              </v-tooltip>
+              <RiAddLine />
+            </v-btn>
+            <v-btn icon size="small" @click="$app.dialogs.upload.value = true">
+              <v-tooltip activator="parent" location="bottom">
+                {{ $t("generic.upload") }}
+              </v-tooltip>
+              <RiUploadCloud2Line style="width: 20px" />
+            </v-btn>
+          </slot>
+        </div>
+      </slot>
+    </accessible-transition>
+  </teleport>
 </template>
 
 <script lang="ts">
@@ -133,9 +278,31 @@ import { CollectionCache } from "@/types/collection";
 import Paginate from "@/components/Core/Paginate.vue";
 import OCRMetadata from "@/components/Gallery/Dialogs/OCRMetadata.vue";
 import { Pager, Upload } from "@/gql/graphql";
+import {
+  RiAddLine,
+  RiCloseLine,
+  RiDeleteBinLine,
+  RiFolderImageFill,
+  RiImageAddLine,
+  RiUploadCloud2Line,
+  RiUploadLine
+} from "@remixicon/vue";
+import { RailMode } from "@/store/progressive.store";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 
 export default defineComponent({
-  components: { OCRMetadata, Paginate, AddToCollection, GalleryItem },
+  components: {
+    AccessibleTransition,
+    RiUploadCloud2Line,
+    RiDeleteBinLine,
+    RiCloseLine,
+    RiUploadLine,
+    RiAddLine,
+    OCRMetadata,
+    Paginate,
+    AddToCollection,
+    GalleryItem
+  },
   props: {
     randomAttachmentLoading: {
       type: Boolean,
@@ -202,6 +369,12 @@ export default defineComponent({
     };
   },
   computed: {
+    RiFolderImageFill() {
+      return RiFolderImageFill;
+    },
+    RiImageAddLine() {
+      return RiImageAddLine;
+    },
     pageComponent: {
       get() {
         return this.page;
@@ -294,6 +467,9 @@ export default defineComponent({
       this.selected = [];
       this.selectedMap = new Map<number, string>();
     }
+  },
+  mounted() {
+    this.$ui.navigation.mode = RailMode.GALLERY;
   }
 });
 </script>

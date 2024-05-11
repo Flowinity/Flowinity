@@ -54,11 +54,40 @@
         force setup step 0
       </v-btn>
       <br />
+      <br />
+      <v-btn
+        @click="
+          $experiments.setExperiment(
+            'PROGRESSIVE_UI',
+            $experiments.experiments.PROGRESSIVE_UI ? 0 : 1
+          )
+        "
+      >
+        {{ $experiments.experiments.PROGRESSIVE_UI ? "Disable" : "Enable" }}
+        Progressive UI
+      </v-btn>
+      <v-btn
+        @click="
+          $experiments.setExperiment(
+            'DISABLE_ANIMATIONS',
+            $experiments.experiments.DISABLE_ANIMATIONS ? 0 : 1
+          )
+        "
+      >
+        {{ $experiments.experiments.DISABLE_ANIMATIONS ? "Enable" : "Disable" }}
+        Progressive Animations
+      </v-btn>
+      <br />
       <template v-if="$app.platform !== Platform.WEB">
         <overline>Desktop</overline>
         <v-btn @click="$app.platform = Platform.WEB">Force Web</v-btn>
         <v-btn @click="emitIPCComms">Send IPC New Comms Message</v-btn>
       </template>
+      <v-text-field
+        v-model="route"
+        @keydown.enter="goToRoute"
+        label="Go to route"
+      ></v-text-field>
     </v-container>
   </DevDialog>
 </template>
@@ -75,7 +104,8 @@ export default defineComponent({
   components: { Overline, DevDialog },
   data() {
     return {
-      usage: []
+      usage: [],
+      route: ""
     };
   },
   computed: {
@@ -96,6 +126,9 @@ export default defineComponent({
     }
   },
   methods: {
+    goToRoute() {
+      this.$router.push(this.route);
+    },
     emitIPCComms() {
       window.electron.ipcRenderer.send(IpcChannels.NEW_MESSAGE, {
         chat: {

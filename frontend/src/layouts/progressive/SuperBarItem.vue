@@ -9,19 +9,15 @@ const props = defineProps({
 <template>
   <div
     v-ripple
-    class="rounded-2xl hover:bg-outline-dark cursor-pointer p-2 relative flex items-center justify-center"
+    class="rounded-full hover:bg-outline-dark cursor-pointer p-2 relative flex items-center justify-center"
     :class="{
-      'bg-outline-dark': props.selected || props.highlighted,
-      'rounded-full': props.highlighted
+      'bg-outline-dark': props.selected || props.highlighted
     }"
+    style="width: 40px; height: 40px"
     tabindex="0"
-    @keydown.enter="
-      //@ts-ignore
-      $event.target?.click()
-    "
+    @keydown.enter="$event.target?.click()"
     @keydown.space="
       $event.preventDefault();
-      //@ts-ignore
       $event.target?.click();
     "
   >

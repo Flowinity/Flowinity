@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <div class="float-right">
+    <div class="float-right" v-if="!$experiments.experiments.PROGRESSIVE_UI">
       <v-btn class="rounded-xl ml-2" to="/autoCollect/configure">
         <v-icon class="mr-2">mdi-cog</v-icon>
         {{ $t("autoCollects.configure.title") }}
@@ -33,16 +33,25 @@
       }}
     </small>
   </v-container>
+
+  <teleport v-if="$experiments.experiments.PROGRESSIVE_UI" to="#appbar-options">
+    <accessible-transition mode="out-in" name="slide-up" appear>
+      <v-btn icon size="small" to="/autoCollect/configure">
+        <v-icon>mdi-cog</v-icon>
+      </v-btn>
+    </accessible-transition>
+  </teleport>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import CollectionCard from "@/components/Collections/CollectionCard.vue";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 
 export default defineComponent({
   name: "AutoCollectsHome",
-  components: { PromoNoContent, CollectionCard },
+  components: { AccessibleTransition, PromoNoContent, CollectionCard },
   data() {
     return {
       autoCollects: [] as any[]

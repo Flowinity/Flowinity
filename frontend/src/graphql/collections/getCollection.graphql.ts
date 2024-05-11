@@ -5,6 +5,8 @@ export const CollectionQuery = gql`
     collection(input: $input) {
       id
       name
+      banner
+      avatar
       image
       userId
       shareLink

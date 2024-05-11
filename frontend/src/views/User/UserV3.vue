@@ -27,7 +27,7 @@
                     size="110"
                     @refresh="getUser(false)"
                   >
-                    <transition
+                    <accessible-transition
                       v-if="$user.user?.id === user.id"
                       :duration="{ enter: 300, leave: 300 }"
                       appear
@@ -41,7 +41,7 @@
                       >
                         <v-icon>mdi-pencil</v-icon>
                       </v-btn>
-                    </transition>
+                    </accessible-transition>
                   </UserAvatar>
                 </div>
               </v-hover>
@@ -330,7 +330,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, h, markRaw } from "vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import UserBadges from "@/components/Users/UserBadges.vue";
@@ -343,9 +343,13 @@ import { VueDraggable } from "vue-draggable-plus";
 import { Component, Rows } from "@/types/userv3";
 import UserV3AddMenu from "@/components/Users/UserV3/AddMenu.vue";
 import { FriendStatus, ProfileLayout, User, UserInsights } from "@/gql/graphql";
+import { RiSettings5Line } from "@remixicon/vue";
+import { RailMode } from "@/store/progressive.store";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 
 export default defineComponent({
   components: {
+    AccessibleTransition,
     UserV3AddMenu,
     UserV3ComponentHandler,
     UserV3Settings,
@@ -748,8 +752,8 @@ export default defineComponent({
         component = foundRow;
         parent = this.layout.layout.columns[0];
       } else {
-        const foundChildRow = this.layout.layout.columns[0].rows.find(
-          (x) => x?.props?.children?.find((y: Component) => y.id === id)
+        const foundChildRow = this.layout.layout.columns[0].rows.find((x) =>
+          x?.props?.children?.find((y: Component) => y.id === id)
         );
         if (foundChildRow && "children" in foundChildRow.props) {
           component = foundChildRow.props.children?.find(
@@ -872,6 +876,27 @@ export default defineComponent({
         if (!this.username)
           this.$app.title = this.user?.username + "'s Profile";
         this.setTheme();
+
+        if (!this.username) {
+          this.$ui.currentNavItem = {
+            item: {
+              name: this.user?.username,
+              icon: h(UserAvatar, {
+                user: this.user,
+                size: 40
+              }),
+              path: `/u/${this.user?.username}`
+            },
+            rail: [
+              this.$ui.navigation.railOptions.find(
+                (rail) => rail.id === RailMode.HOME
+              ),
+              this.$ui.navigation.railOptions.find(
+                (rail) => rail.id === RailMode.USERS
+              )
+            ]
+          };
+        }
       } finally {
         this.$app.componentLoading = false;
       }

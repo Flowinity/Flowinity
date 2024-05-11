@@ -59,7 +59,7 @@ const routes = [
       {
         path: "/",
         name: "Dashboard",
-        component: () => import("@/views/Home.vue")
+        component: () => import("@/views/HomeHandler.vue")
       },
       {
         path: "/dashboard",

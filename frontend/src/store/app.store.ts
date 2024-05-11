@@ -353,6 +353,19 @@ export const useAppStore = defineStore("app", {
           scope: ""
         });
       }
+
+      items.push({
+        id: 36.5,
+        name: i18n.t("core.sidebar.tryProgressive"),
+        click() {
+          const experiments = useExperimentsStore();
+          experiments.setExperiment("PROGRESSIVE_UI", 1);
+        },
+        new: true,
+        scope: "",
+        icon: "mdi-new-box",
+        experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
+      });
       /*
       if (state.site.officialInstance) {
         items.push(

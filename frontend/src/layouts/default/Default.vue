@@ -39,6 +39,7 @@
       <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <v-overlay
+      v-if="!$experiments.experiments.PROGRESSIVE_UI"
       persistent
       :model-value="$app.componentLoading"
       class="align-center justify-center"
@@ -75,7 +76,8 @@
       v-if="
         $experiments.experiments.RAIL_SIDEBAR &&
         $app.rail &&
-        $app.site.finishedSetup
+        $app.site.finishedSetup &&
+        !$experiments.experiments.PROGRESSIVE_UI
       "
     />
     <template v-if="!$experiments.experiments.PROGRESSIVE_UI">
@@ -95,7 +97,14 @@
       <workspaces-sidebar v-if="!$app.rail" />
     </template>
     <theme-engine-wrapper />
-    <default-view />
+    <default-view
+      :style="{
+        'margin-left':
+          $experiments.experiments.PROGRESSIVE_UI && !$vuetify.display.mobile
+            ? '16px'
+            : undefined
+      }"
+    />
   </v-app>
   <v-app v-else>
     <v-overlay :model-value="$app.loading" class="align-center justify-center">

@@ -1,24 +1,26 @@
 <template>
   <v-app-bar
-    id="appbar"
-    style="min-height: 64px; max-height: 64px; z-index: 1001"
+    id="navbar"
     :key="$app.activeNags.offset"
-    :class="{ ...navbarClasses, ...classString }"
+    :class="{ ...navbarClasses, ...classString, 'has-image': image }"
     :extension-height="$app.activeNags.offset"
     app
-    class="navbar"
+    class="navbar border-b-2 w-full backdrop-blur-lg sticky top-0 z-50 overflow-clip no-image"
     color="dark"
-    density="comfortable"
     :flat="true"
     :floating="true"
+    v-memo="[
+      uiStore.currentNavItem?.item?.name,
+      uiStore.currentNavItem?.rail[0]?.id,
+      expanded,
+      image,
+      $vuetify.display.mobile
+    ]"
+    :style="{ height: expanded ? '195px' : '64px' }"
   >
     <div
-      class="flex p-4 justify-items-end h-full justify-between z-50"
-      :class="{ 'items-center': !expanded, 'items-end': expanded }"
-      :style="{
-        'max-height': expanded ? '63px' : undefined,
-        'min-height': expanded ? '63px' : undefined
-      }"
+      class="flex p-4 justify-between z-50 w-full"
+      :class="{ 'items-center': !expanded, 'items-end h-full': expanded }"
     >
       <div class="flex select-none">
         <div class="max-sm:block hidden">
@@ -32,9 +34,8 @@
             <RiMenuLine style="width: 20px" />
           </v-btn>
         </div>
-        <Transition
+        <accessible-transition
           v-for="(rail, index) in uiStore.currentNavItem?.rail"
-          :key="rail.id"
           mode="out-in"
           name="slide-up"
         >
@@ -80,8 +81,8 @@
               />
             </div>
           </div>
-        </Transition>
-        <Transition mode="out-in" name="slide-up" appear>
+        </accessible-transition>
+        <accessible-transition mode="out-in" name="slide-up" appear>
           <div
             v-if="
               uiStore.currentNavItem?.item?.path !==
@@ -91,11 +92,7 @@
               uiStore.currentNavItem?.item.name +
               uiStore.currentNavItem?.rail[0]?.id
             "
-            v-memo="[
-              uiStore.currentNavItem?.item?.name,
-              uiStore.currentNavItem?.rail[0]?.id
-            ]"
-            class="flex"
+            class="flex items-center"
           >
             <RiArrowRightSLine
               v-if="
@@ -103,7 +100,7 @@
                 uiStore.currentNavItem?.rail[0]?.path
               "
               v-memo="[]"
-              class="w-6 fill-medium-emphasis-dark items-center"
+              class="w-6 fill-medium-emphasis-dark"
               style="margin: 0px 4px 0px 4px"
             />
             <div class="items-center flex">
@@ -122,29 +119,40 @@
               </div>
             </div>
           </div>
-        </Transition>
+        </accessible-transition>
       </div>
       <!-- TODO: Meet Action Bar -->
-      <VDropdown :distance="6" :triggers="[]" :shown="false" class="flex">
-        <div
-          v-if="appStore.dialogs.upload.loading"
-          class="flex gap-2 mr-2"
-          :class="{ 'items-center': !expanded, 'items-end': expanded }"
-        >
-          <tpu-spinner
-            v-tooltip.bottom="
-              appStore.dialogs.upload.files
-                .map((file: File) => file.name)
-                .join(', ')
-            "
-            :percentage="appStore.dialogs.upload.percentage"
-            size="35"
+      <div class="flex">
+        <accessible-transition mode="out-in" name="slide-up" appear>
+          <div
+            v-if="appStore.dialogs.upload.loading"
+            class="flex gap-2 mr-2"
+            :class="{ 'items-center': !expanded, 'items-end': expanded }"
           >
-            <p style="font-size: 9px">
-              {{ appStore.dialogs.upload.percentage }}%
-            </p>
-          </tpu-spinner>
-        </div>
+            <v-progress-circular
+              v-tooltip.bottom="
+                appStore.dialogs.upload.files
+                  .map((file: File) => file.name)
+                  .join(', ')
+              "
+              :percentage="appStore.dialogs.upload.percentage"
+              size="35"
+            >
+              <p style="font-size: 9px">
+                {{ appStore.dialogs.upload.percentage }}%
+              </p>
+            </v-progress-circular>
+          </div>
+        </accessible-transition>
+        <accessible-transition mode="out-in" name="slide-up" appear>
+          <div
+            v-if="showLoading"
+            class="flex gap-2 mr-2"
+            :class="{ 'items-center': !expanded, 'items-end': expanded }"
+          >
+            <v-progress-circular size="24" indeterminate />
+          </div>
+        </accessible-transition>
         <div
           id="appbar-options-first"
           class="flex gap-2 mr-2"
@@ -152,14 +160,10 @@
         />
         <div
           id="appbar-options"
-          class="flex gap-2"
+          class="flex gap-2 mr-4"
           :class="{ 'items-center': !expanded, 'items-end': expanded }"
         />
-
-        <template #popper>
-          <meet-action-bar />
-        </template>
-      </VDropdown>
+      </div>
     </div>
   </v-app-bar>
 </template>
@@ -168,12 +172,12 @@
 import { useAppStore } from "@/store/app.store";
 import { useProgressiveUIStore } from "@/store/progressive.store";
 import { useUserStore } from "@/store/user.store";
-import { computed, ref, watch, markRaw } from "vue";
-import { debounce } from "lodash";
+import { computed, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { RiArrowRightSLine, RiMenuLine } from "@remixicon/vue";
 import { useDisplay } from "vuetify";
 import { useChatStore } from "@/store/chat.store";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 
 const uiStore = useProgressiveUIStore();
 const userStore = useUserStore();
@@ -185,11 +189,9 @@ const image = computed(() => {
   return uiStore.appBarImage ? `url(${uiStore.appBarImage})` : undefined;
 });
 const scrolled = ref(false);
-const navbarClasses: Record<any, any> = ref({
-  "border-b-2 w-full dark:border-outline-dark dark:bg-dark backdrop-blur-lg sticky top-0 z-50 overflow-clip no-image":
-    true
-});
+const navbarClasses: Record<any, any> = ref({});
 const expanded = ref(false);
+/*
 const handleScroll = () => {
   const hasImage = !!image.value;
   scrolled.value = uiStore.scrollPosition > 1;
@@ -204,43 +206,53 @@ const handleScroll = () => {
 };
 // Define a debounce function with a 200ms delay (adjust as needed)
 const debouncedHandleScroll = debounce(handleScroll, 10);
-const route = useRoute();
+
 watch(
   () => image.value,
   () => {
     handleScroll();
   }
 );
+
 document.addEventListener("touchstart", () => {
   debouncedHandleScroll();
 });
 document.addEventListener("wheel", () => {
   debouncedHandleScroll();
 });
+*/
+const route = useRoute();
+
 const display = useDisplay();
 
 const classString = computed(() => {
-  const data = {
-    "header-patch-progressive": !display.mobile.value,
-    "header-patch-workspaces":
-      (appStore.workspaceDrawer && !display.mobile.value && !appStore.rail) ||
-      (!chatStore.search.value && appStore.rail && chatStore.commsSidebar),
-    "header-patch-workspaces-search":
-      (appStore.workspaceDrawer &&
-        !display.mobile.value &&
-        !appStore.rail &&
-        chatStore.search.value &&
-        chatStore.commsSidebar &&
-        !chatStore.communicationsSidebar) ||
-      (chatStore.search.value && appStore.rail && chatStore.commsSidebar)
+  return {
+    "header-patch-progressive": !display.mobile.value
   } as { [key: string]: boolean };
-  if (appStore.rail) {
-    for (const key in data) {
-      data[key + "-rail"] = data[key];
-      delete data[key];
+});
+
+const showLoading = ref(false);
+
+function showLoadingSpinner() {
+  showLoading.value = true;
+}
+
+let loadingSpinnerTimeout: Timeout | undefined = undefined;
+
+watch(
+  () => appStore.componentLoading,
+  () => {
+    loadingSpinnerTimeout && clearTimeout(loadingSpinnerTimeout);
+    if (appStore.componentLoading) {
+      loadingSpinnerTimeout = setTimeout(showLoadingSpinner, 50);
+    } else {
+      showLoading.value = false;
     }
   }
-  return data;
+);
+
+onUnmounted(() => {
+  loadingSpinnerTimeout && clearTimeout(loadingSpinnerTimeout);
 });
 </script>
 
@@ -288,5 +300,9 @@ const classString = computed(() => {
   transition:
     min-height 0.2s ease,
     max-height 0.2s ease;
+}
+
+.expanded .v-toolbar__content {
+  height: unset !important;
 }
 </style>

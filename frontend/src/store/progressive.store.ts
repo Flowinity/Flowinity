@@ -1,7 +1,7 @@
 /**
  * @fileoverview progressive UI store
  * @module store/progressive
- * @description The store for the new "Progressive UI" overhaul features for TPUv4. Manages railbar and sidebar state.
+ * @description The store for the new "Progressive UI" overhaul features for TPUv4 (TPUv5in4). Manages railbar and sidebar state.
  */
 
 import { defineStore } from "pinia";
@@ -60,13 +60,16 @@ import {
   RiCodeFill,
   RiCollageFill,
   RiCollageLine,
-  RiWebhookFill
+  RiWebhookFill,
+  RiGroup2Line,
+  RiGroup2Fill
 } from "@remixicon/vue";
 import { useUserStore } from "@/store/user.store";
 import { useRoute } from "vue-router";
 import { useCollectionsStore } from "@/store/collections.store";
 import { useChatStore } from "@/store/chat.store";
 import { useExperimentsStore } from "@/store/experiments.store";
+import { useAppStore } from "@/store/app.store";
 
 export enum RailMode {
   HOME,
@@ -80,7 +83,8 @@ export enum RailMode {
   SETTINGS,
   // Fake rail-modes
   AUTO_COLLECTS,
-  COLLECTIONS
+  COLLECTIONS,
+  USERS
 }
 
 export interface NavigationOption {
@@ -94,6 +98,7 @@ export interface NavigationOption {
   fake?: boolean;
   allowOverride?: boolean;
   rail?: NavigationOption;
+  click?: () => void;
 }
 
 export const useProgressiveUIStore = defineStore("progressive", () => {
@@ -131,9 +136,16 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
           selectedIcon: markRaw(RiLineChartFill)
         },
         {
+          icon: markRaw(RiGroup2Line),
+          name: "Social Hub",
+          path: "/communications/home",
+          selectedIcon: markRaw(RiGroup2Fill)
+        },
+        {
+          // Users
           icon: markRaw(RiGroupLine),
-          name: "Friends",
-          path: "/friends",
+          name: "Users",
+          path: "/users",
           selectedIcon: markRaw(RiGroupFill)
         },
         {
@@ -160,14 +172,14 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         {
           icon: markRaw(RiSparkling2Line),
           name: `AutoCollects`,
-          path: "/auto-collects",
+          path: "/autoCollect",
           selectedIcon: markRaw(RiSparkling2Fill),
           badge: userStore.user?.pendingAutoCollects || ""
         },
         {
           icon: markRaw(RiSlideshow2Line),
           name: "Slideshows",
-          path: "/slideshows",
+          path: "/settings/slideshows",
           selectedIcon: markRaw(RiSlideshow2Fill)
         }
       ],
@@ -194,8 +206,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         },
         {
           icon: markRaw(RiToolsLine),
-          name: "Setup",
-          path: "/settings/setup",
+          name: "Setup & Clients",
+          path: "/settings/clients",
           selectedIcon: markRaw(RiToolsFill)
         },
         {
@@ -234,7 +246,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
       [RailMode.DEBUG]: [],
       [RailMode.MEET]: [],
       [RailMode.AUTO_COLLECTS]: [],
-      [RailMode.COLLECTIONS]: []
+      [RailMode.COLLECTIONS]: [],
+      [RailMode.USERS]: []
     } as Record<RailMode, NavigationOption[]>,
     miscOptions: {
       [RailMode.HOME]: [
@@ -242,7 +255,10 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
           icon: markRaw(RiGiftLine),
           name: "Invite a Friend",
           path: "",
-          selectedIcon: markRaw(RiGiftFill)
+          selectedIcon: markRaw(RiGiftFill),
+          click: () => {
+            useAppStore().dialogs.inviteAFriend = true;
+          }
         },
         {
           icon: markRaw(RiAndroidLine),
@@ -328,7 +344,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         name: "AutoCollects",
         id: RailMode.AUTO_COLLECTS,
         selectedIcon: markRaw(RiSparkling2Fill),
-        path: "/auto-collects",
+        path: "/autoCollect",
         fake: true
       },
       {
@@ -337,6 +353,14 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         id: RailMode.COLLECTIONS,
         selectedIcon: markRaw(RiCollageFill),
         path: "/gallery",
+        fake: true
+      },
+      {
+        icon: markRaw(RiGroupLine),
+        name: "Users",
+        id: RailMode.USERS,
+        selectedIcon: markRaw(RiGroupFill),
+        path: "/users",
         fake: true
       }
     ] as NavigationOption[]
@@ -369,10 +393,21 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     () => userStore.user?.pendingAutoCollects,
     (val) => {
       const item = navigation.value.options[RailMode.GALLERY].find(
-        (item) => item.path === "/auto-collects"
+        (item) => item.path === "/autoCollect"
       );
       if (!item) return;
       item.badge = !val ? undefined : val.toString();
+    }
+  );
+
+  watch(
+    () => userStore.user?.username,
+    (val) => {
+      const item = navigation.value.options[RailMode.HOME].find(
+        (item) => item.name === "My Profile"
+      );
+      if (!item) return;
+      item.path = `/u/${val}`;
     }
   );
 

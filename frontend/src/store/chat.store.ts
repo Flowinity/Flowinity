@@ -41,11 +41,14 @@ import {
 } from "@/graphql/chats/invite.graphql";
 import { ToggleUserRankMutation } from "@/graphql/chats/toggleUserRank.graphql";
 import { Typing } from "@/models/chat";
-import { nextTick } from "vue";
+import { h, markRaw, nextTick } from "vue";
 import { useApolloClient } from "@vue/apollo-composable";
 import { ChatQuery, ChatsQuery } from "@/graphql/chats/chats.graphql";
 import { useMessagesStore } from "@/store/message.store";
 import { IpcChannels } from "@/electron-types/ipc";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { RiCollageFill, RiCollageLine } from "@remixicon/vue";
+import { RailMode, useProgressiveUIStore } from "@/store/progressive.store";
 
 export const useChatStore = defineStore("chat", {
   state: () => ({
@@ -565,11 +568,35 @@ export const useChatStore = defineStore("chat", {
           };
         }
       }
+      if (chat) this.setNavItem(chat);
       await this.loadChatUsers(id);
       this.loading = false;
       this.isReady = id;
       appStore.title = this.chatName(this.selectedChat);
       this.readChat();
+    },
+    setNavItem(chat: Chat) {
+      const uiStore = useProgressiveUIStore();
+      const route = useRoute();
+      const userStore = useUserStore();
+      uiStore.currentNavItem = {
+        item: {
+          name: this.chatName(chat) || "Loading...",
+          icon: h(UserAvatar, {
+            chat: chat.recipient ? undefined : chat,
+            user: chat.recipient
+              ? userStore.users[chat.recipient?.id]
+              : undefined,
+            size: 32,
+            style: "margin: 0px 4px 0px 4px"
+          })
+        },
+        rail: [
+          uiStore.navigation.railOptions.find(
+            (rail) => rail.id === RailMode.CHAT
+          )
+        ]
+      };
     },
     async loadChatUsers(associationId: number) {
       if (!this.chats.length) await this.getChats();
@@ -597,6 +624,7 @@ export const useChatStore = defineStore("chat", {
           ) as Chat),
           ...chatData
         };
+        this.setNavItem(this.chats[index]);
       }
     },
     async loadHistory(

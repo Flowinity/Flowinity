@@ -1,344 +1,368 @@
 <template>
-  <CoreDialog v-model="importDoc.dialog" max-width="600px">
-    <template #title>{{ $t("workspaces.import.title") }}</template>
-    <v-container>
-      <v-text-field
-        v-model="importDoc.name"
-        :label="$t('workspaces.import.name')"
-        required
-        :autofocus="true"
-      />
-      <v-file-input
-        ref="importDocFile"
-        v-model="importDoc.file"
-        :label="$t('workspaces.import.file')"
-        required
-        :autofocus="true"
-        accept=".tpudoc,.html"
-      />
-    </v-container>
-    <v-card-actions>
-      <v-spacer />
-      <v-btn color="primary" :loading="importDoc.loading" @click="doImportDoc">
-        {{ $t("workspaces.import.import") }}
-      </v-btn>
-    </v-card-actions>
-  </CoreDialog>
-  <ShareWorkspace
-    v-model="shareWorkspace.dialog"
-    :workspace="contextMenu.item"
-  />
-  <CoreDialog v-model="download.dialog" max-width="600px">
-    <template v-if="!download.workspaceFolderId" #title>
-      {{ $t("workspaces.download.title") }}
-    </template>
-    <template v-else #title>
-      {{ $t("workspaces.download.titleZIP") }}
-    </template>
-    <v-container>
-      <v-select
-        v-model="download.type"
-        label="Type"
-        required
-        :autofocus="true"
-        :items="download.types"
-        item-title="text"
-        item-value="value"
-        :hint="
-          download.type !== 'tpudoc'
-            ? $t('workspaces.download.conversionHint')
-            : undefined
-        "
-        :persistent-hint="true"
-      />
-    </v-container>
-    <v-card-actions>
-      <v-spacer />
-      <v-btn
-        color="red"
-        @click="
-          download.dialog = false;
-          download.workspaceFolderId = undefined;
-          download.id = undefined;
-        "
-      >
-        {{ $t("generic.cancel") }}
-      </v-btn>
-      <v-btn color="primary" :loading="download.loading" @click="downloadItem">
-        {{ $t("workspaces.download.title") }}
-      </v-btn>
-    </v-card-actions>
-  </CoreDialog>
-  <WorkspaceDeleteDialog
-    v-model="deleteNote.dialog"
-    title="Delete note"
-    :loading="deleteNote.loading"
-    @submit="doDeleteNote"
-  />
-  <WorkspaceDeleteDialog
-    v-model="deleteWorkspace.dialog"
-    title="Delete workspace"
-    :loading="deleteWorkspace.loading"
-    @submit="doDeleteWorkspace"
-  />
-  <WorkspaceDeleteDialog
-    v-model="deleteFolder.dialog"
-    title="Delete folder"
-    :loading="deleteFolder.loading"
-    @submit="doDeleteFolder"
-  />
-  <WorkspaceDialog
-    v-model="createNote.dialog"
-    title="Create note"
-    :loading="createNote.loading"
-    @submit="doCreateNote"
-  />
-  <WorkspaceDialog
-    v-model="createWorkspace.dialog"
-    title="Create workspace"
-    :loading="createWorkspace.loading"
-    @submit="doCreateWorkspace"
-  />
-  <WorkspaceDialog
-    v-model="createFolder.dialog"
-    title="Create folder"
-    :loading="createFolder.loading"
-    @submit="doCreateFolder"
-  />
-  <WorkspaceDialog
-    v-model="renameNote.dialog"
-    title="Rename note"
-    btn-text="Rename"
-    :loading="renameNote.loading"
-    @submit="doRenameNote"
-  />
-  <WorkspaceDialog
-    v-model="renameWorkspace.dialog"
-    title="Rename workspace"
-    btn-text="Rename"
-    :loading="renameWorkspace.loading"
-    @submit="doRenameWorkspace"
-  />
-  <WorkspaceDialog
-    v-model="renameFolder.dialog"
-    title="Rename folder"
-    btn-text="Rename"
-    :loading="renameFolder.loading"
-    @submit="doRenameFolder"
-  />
-  <v-menu :key="contextMenu.id" v-model="contextMenu.dialog" :style="menuStyle">
-    <v-list v-if="!contextMenu.item?.children && !contextMenu.item?.folders">
-      <v-list-item @click="renameNote.dialog = true">
-        <v-list-item-title>Rename note</v-list-item-title>
-      </v-list-item>
-      <v-list-item
-        @click="
-          download.dialog = true;
-          download.id = contextMenu.item?.id;
-        "
-      >
-        <v-list-item-title>Download...</v-list-item-title>
-      </v-list-item>
-      <v-list-item @click="deleteNote.dialog = true">
-        <v-list-item-title>Delete</v-list-item-title>
-      </v-list-item>
-    </v-list>
-    <v-list v-else-if="!contextMenu.item?.folders">
-      <v-list-item @click="importDoc.dialog = true">
-        <v-list-item-title>Import TPUDOC/HTML</v-list-item-title>
-      </v-list-item>
-      <v-list-item
-        @click="
-          download.dialog = true;
-          download.workspaceFolderId = contextMenu.item?.id;
-        "
-      >
-        <v-list-item-title>Download folder...</v-list-item-title>
-      </v-list-item>
-      <v-list-item @click="renameFolder.dialog = true">
-        <v-list-item-title>Rename folder</v-list-item-title>
-      </v-list-item>
-      <v-list-item @click="deleteFolder.dialog = true">
-        <v-list-item-title>Delete</v-list-item-title>
-      </v-list-item>
-    </v-list>
-    <v-list v-else>
-      <v-list-item
-        @click="shareWorkspace.dialog = true"
-        v-if="$experiments.experiments.NOTE_COLLAB"
-      >
-        <v-list-item-title>
-          {{ $t("workspaces.sidebar.share") }}
-        </v-list-item-title>
-      </v-list-item>
-      <v-list-item @click="renameWorkspace.dialog = true">
-        <v-list-item-title>
-          {{ $t("workspaces.sidebar.rename") }}
-        </v-list-item-title>
-      </v-list-item>
-      <v-list-item @click="deleteWorkspace.dialog = true">
-        <v-list-item-title>
-          {{ $t("workspaces.sidebar.delete") }}
-        </v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
-  <v-card-text
-    v-if="!$workspaces.versionHistory && !$app.rail"
-    style="color: rgb(var(--v-theme-primary)); cursor: pointer; font-size: 12px"
-    class="mb-n4 unselectable"
-    @click="$app.workspaceDrawer = false"
-  >
-    <v-icon size="20">mdi-close</v-icon>
-    Close Workspaces
-  </v-card-text>
-  <v-card-text
-    v-else-if="!$app.rail"
-    style="color: #0190ea; cursor: pointer; font-size: 12px"
-    class="mb-n4 unselectable"
-    @click="
-      $workspaces.versionHistory = false;
-      $router.push(`/workspaces/notes/${$route.params.id}`);
-    "
-  >
-    <v-icon>mdi-arrow-left</v-icon>
-    Leave version history
-  </v-card-text>
-  <v-card-text
-    v-if="$experiments.experiments.ACCOUNT_DEV_ELIGIBLE"
-    style="color: rgb(var(--v-theme-error)); cursor: pointer; font-size: 12px"
-    class="mb-n4 unselectable"
-    @click="
-      $experiments.setExperiment(
-        'NOTE_COLLAB',
-        $experiments.experiments.NOTE_COLLAB ? 0 : 1
-      )
-    "
-  >
-    Toggle Experimental Collab ({{ $experiments.experiments.NOTE_COLLAB }})
-  </v-card-text>
-
-  <v-list
-    v-if="!$workspaces.versionHistory"
-    density="comfortable"
-    nav
-    class="mt-2"
-  >
-    <v-list-item
-      id="workspace-select"
-      class="px-2 unselectable"
-      style="cursor: pointer"
-      @contextmenu.prevent="
-        context($event, 'workspace-select', $workspaces.workspace)
-      "
-    >
-      {{ $workspaces.workspace?.name || "None selected" }}
-      <template #append>
-        <v-chip
-          v-if="
-            $workspaces.workspace &&
-            $workspaces.workspace?.userId !== $user.user?.id
-          "
+  <div>
+    <CoreDialog v-model="importDoc.dialog" max-width="600px">
+      <template #title>{{ $t("workspaces.import.title") }}</template>
+      <v-container>
+        <v-text-field
+          v-model="importDoc.name"
+          :label="$t('workspaces.import.name')"
+          required
+          :autofocus="true"
+        />
+        <v-file-input
+          ref="importDocFile"
+          v-model="importDoc.file"
+          :label="$t('workspaces.import.file')"
+          required
+          :autofocus="true"
+          accept=".tpudoc,.html"
+        />
+      </v-container>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
           color="primary"
-          class="mr-2"
+          :loading="importDoc.loading"
+          @click="doImportDoc"
         >
-          <v-icon>mdi-swap-horizontal</v-icon>
-        </v-chip>
-        <v-list-item-action
-          v-if="$workspaces.workspace"
-          @click.stop="createFolder.dialog = true"
-        >
-          <v-icon>mdi-plus</v-icon>
-        </v-list-item-action>
-        <v-list-item-action>
-          <v-icon>mdi-menu-down</v-icon>
-        </v-list-item-action>
+          {{ $t("workspaces.import.import") }}
+        </v-btn>
+      </v-card-actions>
+    </CoreDialog>
+    <ShareWorkspace
+      v-model="shareWorkspace.dialog"
+      :workspace="contextMenu.item"
+    />
+    <CoreDialog v-model="download.dialog" max-width="600px">
+      <template v-if="!download.workspaceFolderId" #title>
+        {{ $t("workspaces.download.title") }}
       </template>
-    </v-list-item>
-    <v-menu activator="#workspace-select">
-      <v-list>
-        <v-list-item
-          v-for="item in $workspaces.items"
-          :key="item.id"
-          :value="item.id"
-          class="unselectable"
-          @click="$workspaces.selectWorkspace(item.id)"
+      <template v-else #title>
+        {{ $t("workspaces.download.titleZIP") }}
+      </template>
+      <v-container>
+        <v-select
+          v-model="download.type"
+          label="Type"
+          required
+          :autofocus="true"
+          :items="download.types"
+          item-title="text"
+          item-value="value"
+          :hint="
+            download.type !== 'tpudoc'
+              ? $t('workspaces.download.conversionHint')
+              : undefined
+          "
+          :persistent-hint="true"
+        />
+      </v-container>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          color="red"
+          @click="
+            download.dialog = false;
+            download.workspaceFolderId = undefined;
+            download.id = undefined;
+          "
         >
-          <template #append>
-            <v-chip v-if="item.userId !== $user.user?.id" color="primary">
-              <v-icon class="mr-1">mdi-swap-horizontal</v-icon>
-              Shared
-            </v-chip>
-          </template>
-          <v-list-item-title>{{ item.name }}</v-list-item-title>
+          {{ $t("generic.cancel") }}
+        </v-btn>
+        <v-btn
+          color="primary"
+          :loading="download.loading"
+          @click="downloadItem"
+        >
+          {{ $t("workspaces.download.title") }}
+        </v-btn>
+      </v-card-actions>
+    </CoreDialog>
+    <WorkspaceDeleteDialog
+      v-model="deleteNote.dialog"
+      title="Delete note"
+      :loading="deleteNote.loading"
+      @submit="doDeleteNote"
+    />
+    <WorkspaceDeleteDialog
+      v-model="deleteWorkspace.dialog"
+      title="Delete workspace"
+      :loading="deleteWorkspace.loading"
+      @submit="doDeleteWorkspace"
+    />
+    <WorkspaceDeleteDialog
+      v-model="deleteFolder.dialog"
+      title="Delete folder"
+      :loading="deleteFolder.loading"
+      @submit="doDeleteFolder"
+    />
+    <WorkspaceDialog
+      v-model="createNote.dialog"
+      title="Create note"
+      :loading="createNote.loading"
+      @submit="doCreateNote"
+    />
+    <WorkspaceDialog
+      v-model="createWorkspace.dialog"
+      title="Create workspace"
+      :loading="createWorkspace.loading"
+      @submit="doCreateWorkspace"
+    />
+    <WorkspaceDialog
+      v-model="createFolder.dialog"
+      title="Create folder"
+      :loading="createFolder.loading"
+      @submit="doCreateFolder"
+    />
+    <WorkspaceDialog
+      v-model="renameNote.dialog"
+      title="Rename note"
+      btn-text="Rename"
+      :loading="renameNote.loading"
+      @submit="doRenameNote"
+    />
+    <WorkspaceDialog
+      v-model="renameWorkspace.dialog"
+      title="Rename workspace"
+      btn-text="Rename"
+      :loading="renameWorkspace.loading"
+      @submit="doRenameWorkspace"
+    />
+    <WorkspaceDialog
+      v-model="renameFolder.dialog"
+      title="Rename folder"
+      btn-text="Rename"
+      :loading="renameFolder.loading"
+      @submit="doRenameFolder"
+    />
+    <v-menu
+      :key="contextMenu.id"
+      v-model="contextMenu.dialog"
+      :style="menuStyle"
+    >
+      <v-list v-if="!contextMenu.item?.children && !contextMenu.item?.folders">
+        <v-list-item @click="renameNote.dialog = true">
+          <v-list-item-title>Rename note</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="createWorkspace.dialog = true">
+        <v-list-item
+          @click="
+            download.dialog = true;
+            download.id = contextMenu.item?.id;
+          "
+        >
+          <v-list-item-title>Download...</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="deleteNote.dialog = true">
+          <v-list-item-title>Delete</v-list-item-title>
+        </v-list-item>
+      </v-list>
+      <v-list v-else-if="!contextMenu.item?.folders">
+        <v-list-item @click="importDoc.dialog = true">
+          <v-list-item-title>Import TPUDOC/HTML</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          @click="
+            download.dialog = true;
+            download.workspaceFolderId = contextMenu.item?.id;
+          "
+        >
+          <v-list-item-title>Download folder...</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="renameFolder.dialog = true">
+          <v-list-item-title>Rename folder</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="deleteFolder.dialog = true">
+          <v-list-item-title>Delete</v-list-item-title>
+        </v-list-item>
+      </v-list>
+      <v-list v-else>
+        <v-list-item
+          @click="shareWorkspace.dialog = true"
+          v-if="$experiments.experiments.NOTE_COLLAB"
+        >
           <v-list-item-title>
-            <strong>Create workspace</strong>
+            {{ $t("workspaces.sidebar.share") }}
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="renameWorkspace.dialog = true">
+          <v-list-item-title>
+            {{ $t("workspaces.sidebar.rename") }}
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="deleteWorkspace.dialog = true">
+          <v-list-item-title>
+            {{ $t("workspaces.sidebar.delete") }}
           </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
-    <template v-if="$workspaces.workspace">
-      <v-list-group
-        v-for="item in $workspaces.workspace.folders"
-        :id="`folder-${item.id}`"
-        :key="`folder-${item.id}`"
-        :value="`folder-${item.id}`"
-        :title="item.name"
+    <v-card-text
+      v-if="
+        !$workspaces.versionHistory &&
+        !$app.rail &&
+        !$experiments.experiments.PROGRESSIVE_UI
+      "
+      style="
+        color: rgb(var(--v-theme-primary));
+        cursor: pointer;
+        font-size: 12px;
+      "
+      class="mb-n4 unselectable"
+      @click="$app.workspaceDrawer = false"
+    >
+      <v-icon size="20">mdi-close</v-icon>
+      Close Workspaces
+    </v-card-text>
+    <v-card-text
+      v-else-if="!$app.rail && $workspaces.versionHistory"
+      style="color: #0190ea; cursor: pointer; font-size: 12px"
+      class="mb-n4 unselectable"
+      @click="
+        $workspaces.versionHistory = false;
+        $router.push(`/workspaces/notes/${$route.params.id}`);
+      "
+    >
+      <v-icon>mdi-arrow-left</v-icon>
+      Leave version history
+    </v-card-text>
+    <v-card-text
+      v-if="$experiments.experiments.ACCOUNT_DEV_ELIGIBLE"
+      style="color: rgb(var(--v-theme-error)); cursor: pointer; font-size: 12px"
+      class="my-n3 unselectable"
+      @click="
+        $experiments.setExperiment(
+          'NOTE_COLLAB',
+          $experiments.experiments.NOTE_COLLAB ? 0 : 1
+        )
+      "
+    >
+      Toggle Experimental Collab ({{ $experiments.experiments.NOTE_COLLAB }})
+    </v-card-text>
+
+    <v-list
+      v-if="!$workspaces.versionHistory"
+      density="comfortable"
+      nav
+      :class="{
+        'mt-2': !$experiments.experiments.PROGRESSIVE_UI
+      }"
+    >
+      <v-list-item
+        id="workspace-select"
+        class="px-2 unselectable"
+        style="cursor: pointer"
+        @contextmenu.prevent="
+          context($event, 'workspace-select', $workspaces.workspace)
+        "
       >
-        <template #activator="{ props }">
-          <v-list-item
-            v-bind="props"
-            class="unselectable"
-            @contextmenu.prevent="context($event, `folder-${item.id}`, item)"
+        {{ $workspaces.workspace?.name || "None selected" }}
+        <template #append>
+          <v-chip
+            v-if="
+              $workspaces.workspace &&
+              $workspaces.workspace?.userId !== $user.user?.id
+            "
+            color="primary"
+            class="mr-2"
           >
-            <v-list-item-title>{{ props.title }}</v-list-item-title>
-          </v-list-item>
+            <v-icon>mdi-swap-horizontal</v-icon>
+          </v-chip>
+          <v-list-item-action
+            v-if="$workspaces.workspace"
+            @click.stop="createFolder.dialog = true"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-list-item-action>
+          <v-list-item-action>
+            <v-icon>mdi-menu-down</v-icon>
+          </v-list-item-action>
         </template>
-        <v-list-item
-          v-for="note in item.children"
-          :id="`note-${note.id}`"
-          :key="`note-${note.id}`"
-          :to="'/workspaces/notes/' + note.id"
-          :value="`note-${note.id}`"
-          :active="$route.path === `/workspaces/notes/${note.id}`"
-          @contextmenu.prevent="context($event, `note-${note.id}`, note)"
-        >
-          <v-list-item-title
-            style="text-overflow: ellipsis"
+      </v-list-item>
+      <v-menu activator="#workspace-select">
+        <v-list>
+          <v-list-item
+            v-for="item in $workspaces.items"
+            :key="item.id"
+            :value="item.id"
             class="unselectable"
+            @click="$workspaces.selectWorkspace(item.id)"
           >
-            {{ note.name }}
-          </v-list-item-title>
-        </v-list-item>
+            <template #append>
+              <v-chip v-if="item.userId !== $user.user?.id" color="primary">
+                <v-icon class="mr-1">mdi-swap-horizontal</v-icon>
+                Shared
+              </v-chip>
+            </template>
+            <v-list-item-title>{{ item.name }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="createWorkspace.dialog = true">
+            <v-list-item-title>
+              <strong>Create workspace</strong>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <template v-if="$workspaces.workspace">
+        <v-list-group
+          v-for="item in $workspaces.workspace.folders"
+          :id="`folder-${item.id}`"
+          :key="`folder-${item.id}`"
+          :value="`folder-${item.id}`"
+          :title="item.name"
+        >
+          <template #activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              class="unselectable"
+              @contextmenu.prevent="context($event, `folder-${item.id}`, item)"
+            >
+              <v-list-item-title>{{ props.title }}</v-list-item-title>
+            </v-list-item>
+          </template>
+          <v-list-item
+            v-for="note in item.children"
+            :id="`note-${note.id}`"
+            :key="`note-${note.id}`"
+            :to="'/workspaces/notes/' + note.id"
+            :value="`note-${note.id}`"
+            :active="$route.path === `/workspaces/notes/${note.id}`"
+            @contextmenu.prevent="context($event, `note-${note.id}`, note)"
+          >
+            <v-list-item-title
+              style="text-overflow: ellipsis"
+              class="unselectable"
+            >
+              {{ note.name }}
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            @click="
+              createNote.folderId = item.id;
+              createNote.dialog = true;
+            "
+          >
+            <v-list-item-title>
+              <strong>Create a new note</strong>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list-group>
+      </template>
+    </v-list>
+    <template v-else>
+      <v-card-title>Version history</v-card-title>
+      <v-list>
         <v-list-item
-          @click="
-            createNote.folderId = item.id;
-            createNote.dialog = true;
-          "
+          v-for="version in versions"
+          :key="version.id"
+          :to="'/workspaces/notes/' + $route.params.id + '/' + version.id"
         >
           <v-list-item-title>
-            <strong>Create a new note</strong>
+            {{ $date(version.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
           </v-list-item-title>
         </v-list-item>
-      </v-list-group>
+      </v-list>
     </template>
-  </v-list>
-  <template v-else>
-    <v-card-title>Version history</v-card-title>
-    <v-list>
-      <v-list-item
-        v-for="version in versions"
-        :key="version.id"
-        :to="'/workspaces/notes/' + $route.params.id + '/' + version.id"
-      >
-        <v-list-item-title>
-          {{ $date(version.createdAt).format("hh:mm:ss A DD/MM/YYYY") }}
-        </v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </template>
+  </div>
 </template>
 
 <script lang="ts">

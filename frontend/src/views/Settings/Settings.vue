@@ -1,6 +1,9 @@
 <template>
   <v-container>
-    <v-card :class="{ 'd-flex': !$vuetify.display.mobile }">
+    <v-card
+      :class="{ 'd-flex': !$vuetify.display.mobile }"
+      v-if="!$experiments.experiments.PROGRESSIVE_UI"
+    >
       <v-tabs :direction="$vuetify.display.mobile ? 'horizontal' : 'vertical'">
         <v-tab prepend-icon="mdi-account" to="/settings/dashboard">
           {{ $t("settings.tabs.account") }}
@@ -96,6 +99,7 @@
         <router-view @loading="loading = $event" @update="update" />
       </v-container>
     </v-card>
+    <router-view v-else />
   </v-container>
 </template>
 
@@ -103,6 +107,7 @@
 import { defineComponent } from "vue";
 import { Platform } from "@/store/app.store";
 import functions from "@/plugins/functions";
+import { RailMode } from "@/store/progressive.store";
 
 export default defineComponent({
   name: "SettingsCore",
@@ -129,6 +134,13 @@ export default defineComponent({
         this.loading = false;
       }
     }
+  },
+  mounted() {
+    if (
+      this.$route.path !== "/settings/slideshows" &&
+      this.$route.path !== "/settings/about"
+    )
+      this.$ui.navigation.mode = RailMode.SETTINGS;
   }
 });
 </script>

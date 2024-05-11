@@ -11,7 +11,7 @@
     @refreshCollection="getCollection"
   />
   <UserBanner
-    v-if="collection"
+    v-if="collection && !$experiments.experiments.PROGRESSIVE_UI"
     :collection="collection"
     :gold="$user.gold"
     @sharing-dialog="sharing = true"
@@ -87,6 +87,63 @@
         <v-card-subtitle>Creator: {{ item?.user?.username }}</v-card-subtitle>
       </template>
     </Gallery>
+    <teleport
+      to="#appbar-options-first"
+      v-if="$experiments.experiments.PROGRESSIVE_UI"
+    >
+      <accessible-transition mode="out-in" name="slide-up" appear>
+        <div class="flex gap-2">
+          <accessible-transition name="slide-up" mode="out-in">
+            <leave-collection-dialog :collection="collection">
+              <v-btn
+                icon
+                v-if="collection?.userId !== $user.user?.id"
+                :key="collection?.userId"
+                variant="passive"
+                v-tooltip.bottom="$t('collections.nav.leave')"
+                @click="toggle"
+              >
+                <RiLogoutBoxLine style="width: 20px" />
+              </v-btn>
+            </leave-collection-dialog>
+          </accessible-transition>
+          <accessible-transition name="slide-up" mode="out-in">
+            <v-btn
+              icon
+              v-if="!!collection?.shareLink"
+              :key="collection?.userId"
+              size="small"
+              @click="
+                $functions.copy(
+                  `${$app.site.hostnameWithProtocol}/collections/${collection?.shareLink}`
+                );
+                $toast.success($t('generic.copied'));
+              "
+              v-tooltip.bottom="$t('collections.nav.shareLink')"
+            >
+              <RiLink style="width: 20px" />
+            </v-btn>
+          </accessible-transition>
+          <v-btn
+            icon
+            size="small"
+            v-tooltip.bottom="$t('collections.nav.share')"
+            @click="sharing = true"
+          >
+            <RiShareForwardFill style="width: 20px" />
+          </v-btn>
+          <v-btn
+            icon
+            size="small"
+            v-tooltip.bottom="$t('collections.nav.settings')"
+            @click="settings = true"
+          >
+            <RiSettings5Line style="width: 20px" />
+          </v-btn>
+          <div class="border-r border-outline-dark"></div>
+        </div>
+      </accessible-transition>
+    </teleport>
   </v-container>
   <v-container v-else-if="!$app.componentLoading">
     <PromoNoContent
@@ -98,7 +155,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, markRaw } from "vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
 import { CollectionCache } from "@/types/collection";
@@ -111,6 +168,17 @@ import { GalleryType } from "@/gql/graphql";
 import { Collection } from "@/models/collection";
 import { isNumeric } from "@/plugins/isNumeric";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
+import {
+  RiCollageFill,
+  RiCollageLine,
+  RiLink,
+  RiLogoutBoxLine,
+  RiSettings5Line,
+  RiShareForwardFill
+} from "@remixicon/vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { RailMode } from "@/store/progressive.store";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 
 export default defineComponent({
   name: "CollectionsItem",
@@ -120,6 +188,11 @@ export default defineComponent({
     }
   },
   components: {
+    AccessibleTransition,
+    RiLogoutBoxLine,
+    RiSettings5Line,
+    RiShareForwardFill,
+    RiLink,
     PromoNoContent,
     Gallery,
     CollectionSettings,
@@ -154,6 +227,35 @@ export default defineComponent({
       this.$app.componentLoading = false;
       this.collection = collection;
       this.$app.title = this.collection?.name || "Collection";
+
+      this.$ui.currentNavItem = {
+        item: {
+          name: this.collection?.name || "Loading...",
+          icon: this.collection?.avatar
+            ? h(UserAvatar, {
+                user: {
+                  avatar: this.collection?.avatar,
+                  username: this.collection?.name
+                },
+                size: 32,
+                style: "margin: 0px 4px 0px 4px"
+              })
+            : markRaw(RiCollageLine),
+          path: this.$route.path,
+          selectedIcon: markRaw(RiCollageFill)
+        },
+        rail: [
+          this.$ui.navigation.railOptions.find(
+            (rail) => rail.id === RailMode.GALLERY
+          )
+        ]
+      };
+
+      console.log(this.collection);
+
+      this.$ui.appBarImage = this.collection?.banner
+        ? this.$app.domain + this.collection?.banner
+        : null;
     },
     async onCollectionUserUpdate(data: { id?: number; collectionId: number }) {
       if (data.collectionId !== this.collection?.id) return;
@@ -179,6 +281,7 @@ export default defineComponent({
     );
   },
   unmounted() {
+    this.$ui.appBarImage = null;
     this.$sockets.gallery.off("collectionUpdate", this.onCollectionUpdate);
     this.$sockets.gallery.off(
       "collectionUserUpdate",

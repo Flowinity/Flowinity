@@ -75,7 +75,7 @@
 
 <script lang="ts">
 import { CollectionCache } from "@/types/collection";
-import { defineComponent } from "vue";
+import { defineComponent, markRaw } from "vue";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
@@ -83,6 +83,9 @@ import { Upload } from "@/models/upload";
 import HoverChip from "@/components/Core/HoverChip.vue";
 import Gallery from "@/views/Gallery.vue";
 import { GalleryType } from "@/gql/graphql";
+import { RiCollageFill, RiCollageLine } from "@remixicon/vue";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { RailMode } from "@/store/progressive.store";
 
 export default defineComponent({
   name: "AutoCollectsItem",
@@ -169,6 +172,32 @@ export default defineComponent({
       this.collection = data;
       if (this.collection)
         this.$app.title = this.collection.name + " - AutoCollects";
+
+      this.$ui.currentNavItem = {
+        item: {
+          name: this.collection?.name || "Loading...",
+          icon: this.collection?.avatar
+            ? h(UserAvatar, {
+                user: {
+                  avatar: this.collection?.avatar,
+                  username: this.collection?.name
+                },
+                size: 32,
+                style: "margin: 0px 4px 0px 4px"
+              })
+            : markRaw(RiCollageLine),
+          path: this.$route.path,
+          selectedIcon: markRaw(RiCollageFill)
+        },
+        rail: [
+          this.$ui.navigation.railOptions.find(
+            (rail) => rail.id === RailMode.GALLERY
+          ),
+          this.$ui.navigation.railOptions.find(
+            (rail) => rail.id === RailMode.AUTO_COLLECTS
+          )
+        ]
+      };
     },
     selectAll(selected: any[]) {
       //

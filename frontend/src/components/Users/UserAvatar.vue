@@ -60,7 +60,7 @@
           <v-tooltip :eager="false" location="top" activator="parent">
             {{ statusTooltip || $functions.userStatus(friendStatus).text }}
           </v-tooltip>
-          <transition>
+          <accessible-transition name="fade" mode="out-in">
             <slot v-if="!typing" name="status-content">
               <div
                 :style="{
@@ -101,7 +101,7 @@
               <div class="dot" style="margin-right: 2px"></div>
               <div class="dot"></div>
             </div>
-          </transition>
+          </accessible-transition>
         </div>
         <!-- TODO: reimplement mobile status
         <span v-else>
@@ -131,10 +131,12 @@ import functions from "@/plugins/functions";
 import RiMoonFill from "@/components/Icons/v5/ri-moon-fill.vue";
 import RiCheckLine from "@/components/Icons/v5/ri-check-line.vue";
 import RiCheckboxBlankCircleFill from "@/components/Icons/v5/ri-checkbox-blank-circle-fill.vue";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 
 export default defineComponent({
   name: "UserAvatar",
   components: {
+    AccessibleTransition,
     RiCheckboxBlankCircleFill,
     RiCheckLine,
     RiMoonFill,

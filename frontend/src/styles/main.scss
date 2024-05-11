@@ -59,8 +59,8 @@
 }
 
 .header-patch-progressive {
-  left: 310px !important;
-  width: calc(100% - 256px) !important;
+  left: 328px !important;
+  width: calc(100% - 310px) !important;
 }
 
 .header-patch-rail {
@@ -745,46 +745,34 @@ p:has(.emoji-large) img {
 
 // Tailwind hacks
 h1 {
-  font-size: 2em !important;
+  font-size: 2em;
 }
 
 h2 {
-  font-size: 1.5em !important;
+  font-size: 1.5em;
 }
 
 h3 {
-  font-size: 1.17em !important;
+  font-size: 1.17em;
 }
 
 h4 {
-  font-size: 1em !important;
+  font-size: 1em;
 }
 
 h5 {
-  font-size: 0.83em !important;
+  font-size: 0.83em;
 }
 
 h6 {
-  font-size: 0.67em !important;
-}
-
-img,
-svg,
-video,
-canvas,
-audio,
-iframe,
-embed,
-object {
-  display: inline !important;
-}
-
-img,
-video {
-  max-width: inherit !important;
-  height: inherit !important;
+  font-size: 0.67em;
 }
 
 .emoji {
   vertical-align: top !important;
+  display: inline !important;
+}
+
+.flowinity-border {
+  border-color: rgba(var(--v-border-color), var(--v-border-opacity))
 }

@@ -251,6 +251,8 @@ export class CoreResolver {
     @Arg("input") input: SetExperimentInput
   ) {
     const validExperiments = [
+      "DISABLE_ANIMATIONS",
+      "PROGRESSIVE_UI",
       "NOTIFICATION_SOUND",
       "THEME",
       "PRIDE",

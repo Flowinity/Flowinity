@@ -193,7 +193,9 @@
 
 <script lang="ts">
 import { AutoCollectRule, SubRule, SubSubRule } from "@/models/autoCollectRule";
-import { defineComponent } from "vue";
+import { defineComponent, markRaw } from "vue";
+import { RiSettings5Line } from "@remixicon/vue";
+import { RailMode } from "@/store/progressive.store";
 
 export default defineComponent({
   name: "AutoCollectSettings",
@@ -247,6 +249,22 @@ export default defineComponent({
   mounted() {
     this.getRules();
     this.$app.title = "Configure AutoCollects";
+    this.$ui.currentNavItem = {
+      item: {
+        name: "Settings",
+        icon: markRaw(RiSettings5Line),
+        path: "/autoCollect/settings",
+        selectedIcon: markRaw(RiSettings5Line)
+      },
+      rail: [
+        this.$ui.navigation.railOptions.find(
+          (rail) => rail.id === RailMode.GALLERY
+        ),
+        this.$ui.navigation.railOptions.find(
+          (rail) => rail.id === RailMode.AUTO_COLLECTS
+        )
+      ]
+    };
   },
   methods: {
     isUnrecommendedOperator(type: string, operator: string) {

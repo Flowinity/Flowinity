@@ -20,7 +20,7 @@
                   class="mr-4"
                   @refresh="getUser(false)"
                 >
-                  <transition
+                  <accessible-transition
                     v-if="$user.user?.id === user.id"
                     :duration="{ enter: 300, leave: 300 }"
                     appear
@@ -34,7 +34,7 @@
                     >
                       <v-icon>mdi-pencil</v-icon>
                     </v-btn>
-                  </transition>
+                  </accessible-transition>
                 </UserAvatar>
               </v-hover>
             </v-col>
@@ -351,9 +351,11 @@ import GraphWidget from "@/components/Dashboard/GraphWidget.vue";
 import InsightsPromoCard from "@/views/Insights/PromoCard.vue";
 import { DefaultThemes } from "@/plugins/vuetify";
 import { FriendStatus, User, UserInsights } from "@/gql/graphql";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 
 export default defineComponent({
   components: {
+    AccessibleTransition,
     InsightsPromoCard,
     GraphWidget,
     Chart,

@@ -50,6 +50,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "DynamicCard",
+  slots: ["image"],
   props: {
     to: {
       type: String,

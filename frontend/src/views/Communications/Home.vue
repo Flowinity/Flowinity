@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex">
+  <v-container class="d-flex">
     <v-tabs
       v-model="tab"
       background-color="transparent"
@@ -130,7 +130,7 @@
         </div>
       </template>
     </v-container>
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
