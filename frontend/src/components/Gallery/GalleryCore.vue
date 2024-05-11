@@ -77,7 +77,11 @@
         cols="12"
         md="6"
         sm="6"
-        :xl="$app.workspaceDrawer ? 3 : 2"
+        :xl="
+          $app.workspaceDrawer && !$experiments.experiments.PROGRESSIVE_UI
+            ? 3
+            : 2
+        "
       >
         <GalleryItem
           :item="item"
