@@ -39,6 +39,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   props: ["modelValue", "persistent"],
-  emits: ["update:modelValue"]
+  emits: ["update:modelValue"],
+  name: "CoreDialog"
 });
 </script>

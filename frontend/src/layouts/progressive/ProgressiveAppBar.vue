@@ -207,7 +207,7 @@
 import { useAppStore } from "@/store/app.store";
 import { RailMode, useProgressiveUIStore } from "@/store/progressive.store";
 import { useUserStore } from "@/store/user.store";
-import { computed, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { RiArrowRightSLine, RiMenuLine } from "@remixicon/vue";
 import { useDisplay } from "vuetify";
@@ -291,6 +291,10 @@ watch(
 
 onUnmounted(() => {
   loadingSpinnerTimeout && clearTimeout(loadingSpinnerTimeout);
+});
+
+onMounted(() => {
+  uiStore.ready = true;
 });
 </script>
 

@@ -4,6 +4,7 @@
     <AddToCollection
       v-model="addToCollectionDialog"
       :items="collectivize"
+      :remove="removeFromCollection"
       @collection-added="collectionAdded($event)"
     />
     <div
@@ -51,7 +52,7 @@
           class="rounded-xl"
           color="red darken-1"
           variant="text"
-          @click="bulkDeleteConfirm()"
+          @click="$ui.shifting ? bulkDeleteConfirm() : (deleteConfirm = true)"
         >
           <v-icon class="mr-1">mdi-delete</v-icon>
           {{ $t("gallery.deleteSelected") }}
@@ -96,7 +97,7 @@
           }"
           @collectivize="
             addToCollectionDialog = true;
-            collectivize = $event;
+            collectivize = [$event];
           "
           @delete="$emit('delete', $event)"
           @refresh="$emit('refresh', $event)"
@@ -113,10 +114,15 @@
       <v-col
         v-for="item in 24"
         :key="item"
-        :lg="!inline ? 3 : 12"
+        :lg="!inline ? 4 : 12"
         cols="12"
         md="6"
-        sm="1"
+        sm="6"
+        :xl="
+          $app.workspaceDrawer && !$experiments.experiments.PROGRESSIVE_UI
+            ? 3
+            : 2
+        "
       >
         <GalleryItem :item="item" />
       </v-col>
@@ -144,10 +150,16 @@
     </small>
   </div>
 
+  <WorkspaceDeleteDialog
+    v-model="deleteConfirm"
+    :title="`Delete ${selected.length} items?`"
+    @submit="bulkDeleteConfirm()"
+  />
   <!-- Progressive Action Bar options -->
+
   <teleport
     to="#appbar-options"
-    v-if="items.items && $experiments.experiments.PROGRESSIVE_UI"
+    v-if="$experiments.experiments.PROGRESSIVE_UI && $ui.ready"
   >
     <accessible-transition mode="out-in" name="slide-up" appear>
       <slot
@@ -171,13 +183,13 @@
                 @click="$emit('randomAttachment')"
               >
                 <v-tooltip activator="parent" location="bottom">
-                  {{ $t("gallery.nav.randomAttachment") }}
+                  {{ $t("gallery.randomAttachment") }}
                 </v-tooltip>
                 <v-icon>mdi-dice-multiple</v-icon>
               </v-btn>
               <v-btn icon size="small" @click="selectAll()">
                 <v-tooltip activator="parent" location="bottom">
-                  {{ $t("gallery.nav.selectAll") }}
+                  {{ $t("gallery.selectAll") }}
                 </v-tooltip>
                 <RiAddLine style="width: 20px" />
               </v-btn>
@@ -211,29 +223,50 @@
               <v-icon style="width: 20px">mdi-dice</v-icon>
             </v-btn>
             <v-btn
-              v-tooltip.bottom="$t('gallery.nav.delete')"
+              icon
+              size="small"
+              @click="download()"
+              :loading="downloadingLoading"
+            >
+              <v-tooltip activator="parent" location="bottom">
+                {{ $t("gallery.downloadSelected") }}
+              </v-tooltip>
+              <RiDownloadLine style="width: 20px" />
+            </v-btn>
+
+            <v-btn
               icon
               size="small"
               color="red"
+              @click="
+                $ui.shifting ? bulkDeleteConfirm() : (deleteConfirm = true)
+              "
             >
+              <v-tooltip activator="parent" location="bottom">
+                {{ $t("gallery.deleteSelected") }}
+              </v-tooltip>
               <RiDeleteBinLine style="width: 20px" />
             </v-btn>
             <v-btn
               icon
               size="small"
               :color="$ui.shifting ? 'red' : 'blue'"
-              @click="bulkAddCollection()"
+              @click="bulkAddCollection($ui.shifting)"
             >
               <v-tooltip activator="parent" location="bottom">
-                {{
-                  $ui.shifting
-                    ? $t("gallery.removeFromCollection")
-                    : $t("gallery.addToCollectionBulk")
-                }}
+                <div
+                  class="text-center"
+                  v-html="
+                    $ui.shifting
+                      ? $t('gallery.removeFromCollectionBulk')
+                      : $t('gallery.addToCollectionBulk')
+                  "
+                ></div>
               </v-tooltip>
               <component
-                :is="$app.shifting ? RiFolderImageFill : RiImageAddLine"
+                :is="$ui.shifting ? RiImageCloseLine : RiImageAddLine"
                 style="width: 20px"
+                :style="{ fill: $ui.shifting ? '#F44336' : undefined }"
               />
             </v-btn>
             <v-btn icon size="small" @click="deselectAll()">
@@ -247,8 +280,8 @@
               size="small"
               :disabled="
                 items.items
-                  ?.map((item) => item.id)
-                  .every((id) => selected.includes(id))
+                  .map((i) => i.id)
+                  .filter((i) => !selected.find((s) => s.id === i)).length === 0
               "
               @click="selectAll()"
             >
@@ -282,6 +315,7 @@ import {
   RiAddLine,
   RiCloseLine,
   RiDeleteBinLine,
+  RiDownloadLine,
   RiFolderImageFill,
   RiImageAddLine,
   RiUploadCloud2Line,
@@ -289,9 +323,14 @@ import {
 } from "@remixicon/vue";
 import { RailMode } from "@/store/progressive.store";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
+import RiImageCloseLine from "@/components/Icons/v5/ri-image-close-line.vue";
+import WorkspaceDeleteDialog from "@/components/Workspaces/Dialogs/Delete.vue";
 
 export default defineComponent({
   components: {
+    WorkspaceDeleteDialog,
+    RiImageCloseLine,
+    RiDownloadLine,
     AccessibleTransition,
     RiUploadCloud2Line,
     RiDeleteBinLine,
@@ -362,13 +401,17 @@ export default defineComponent({
   data() {
     return {
       addToCollectionDialog: false,
-      collectivize: null as number | number[] | null,
-      selected: [] as number[],
+      removeFromCollection: false,
+      collectivize: [] as Upload[],
+      selected: [] as Upload[],
       downloadingLoading: false,
-      selectedMap: new Map<number, string>()
+      deleteConfirm: false
     };
   },
   computed: {
+    RiImageCloseLine() {
+      return RiImageCloseLine;
+    },
     RiFolderImageFill() {
       return RiFolderImageFill;
     },
@@ -391,7 +434,7 @@ export default defineComponent({
         .post(
           "/gallery/download",
           {
-            items: Array.from(this.selectedMap.values())
+            items: this.selected.map((i) => i.id)
           },
           {
             responseType: "blob"
@@ -435,37 +478,33 @@ export default defineComponent({
         this.$emit("updateItem", { item: items, collection });
       }
       this.selected = [];
-      this.selectedMap = new Map<number, string>();
     },
     select(item: Upload) {
-      if (this.selected.includes(item.id)) {
-        this.selected = this.selected.filter((i: number) => i !== item.id);
-        this.selectedMap.delete(item.id);
+      if (this.selected.find((i) => i.id === item.id)) {
+        this.selected = this.selected.filter((upload) => upload.id !== item.id);
       } else {
-        this.selected.push(item.id);
-        this.selectedMap.set(item.id, item.attachment);
+        this.selected.push(item);
       }
     },
-    bulkAddCollection() {
+    bulkAddCollection(remove: boolean = false) {
+      this.removeFromCollection = remove;
       this.addToCollectionDialog = true;
       this.collectivize = this.selected;
     },
     async bulkDeleteConfirm() {
+      this.deleteConfirm = false;
       await this.axios.post("/gallery/delete", {
-        items: this.selected
+        items: this.selected.map((i) => i.id)
       });
       this.$emit("refresh");
       this.$toast.success("Deleted selected items!");
+      this.deselectAll();
     },
     selectAll() {
-      this.selected = this.items.items.map((i: Upload) => i.id);
-      this.selectedMap = new Map<number, string>(
-        this.items.items.map((i: Upload) => [i.id, i.attachment])
-      );
+      this.selected = this.items.items;
     },
     deselectAll() {
       this.selected = [];
-      this.selectedMap = new Map<number, string>();
     }
   },
   mounted() {

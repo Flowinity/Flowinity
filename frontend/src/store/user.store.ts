@@ -52,7 +52,8 @@ export const useUserStore = defineStore("user", {
     tracked: [] as PartialUserFriend[],
     blocked: [] as BlockedUser[],
     idleTimer: 0,
-    ignoreTab: false
+    ignoreTab: false,
+    loggedOut: true
   }),
   getters: {
     contrast() {
@@ -71,7 +72,7 @@ export const useUserStore = defineStore("user", {
     },
     users(): Record<number, PartialUserFriend> {
       return this.tracked.reduce((acc, item) => {
-        if (item.id === this.user.id) {
+        if (item.id === this.user?.id) {
           acc[item.id] = {
             username: this.user.username,
             status: this.user.storedStatus,
@@ -294,6 +295,8 @@ export const useUserStore = defineStore("user", {
       this.user = null;
       useAppStore().reconnectSocket("");
       this._postInitRan = false;
+      this.loggedOut = true;
+      this.$router.push("/home");
     },
     async changeStatus(status: UserStoredStatus) {
       if (!this.user) return;
@@ -306,6 +309,7 @@ export const useUserStore = defineStore("user", {
       if (user) {
         try {
           this.user = JSON.parse(user);
+          this.loggedOut = false;
         } catch {
           //
         }
@@ -317,6 +321,7 @@ export const useUserStore = defineStore("user", {
         fetchPolicy: "network-only"
       });
       this.user = currentUser;
+      this.loggedOut = !currentUser;
       if (this.user?.themeEngine?.defaults?.prev) {
         delete this.user.themeEngine.defaults?.prev;
       }

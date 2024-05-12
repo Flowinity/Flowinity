@@ -36,7 +36,10 @@
         y2="741"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="1" stop-color="white" />
+        <stop
+          offset="1"
+          :stop-color="$vuetify.theme.current.dark ? 'white' : 'black'"
+        />
       </linearGradient>
     </defs>
   </svg>
@@ -62,6 +65,8 @@ const id = `flowinity-logo-animated-${Math.random().toString(36).substring(7)}`;
 
 const internalColor = computed(() => {
   if (!props.color) return theme.current.value.colors.background;
+  if (theme.current.value.colors[props.color])
+    return theme.current.value.colors[props.color];
   return props.color;
 });
 
@@ -80,64 +85,68 @@ const tlUp = anime.timeline({
 
 onMounted(() => {
   // animate each path separately to animate up and down, one by one
-  tlUp
-    .add({
-      targets: `#${id}-path-0`,
-      translateY: [0, 1000],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-1`,
-      translateY: [0, 1000],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-2`,
-      translateY: [0, 1000],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-3`,
-      translateY: [0, 1000],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-0`,
-      translateY: [1000, 0],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-1`,
-      translateY: [1000, 0],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-2`,
-      translateY: [1000, 0],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      targets: `#${id}-path-3`,
-      translateY: [1000, 0],
-      loop: true,
-      direction: "alternate"
-    })
-    .add({
-      duration: 1000
-    });
+  setTimeout(() => {
+    tlUp
+      .add({
+        targets: `#${id}-path-0`,
+        translateY: [0, 1000],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-1`,
+        translateY: [0, 1000],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-2`,
+        translateY: [0, 1000],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-3`,
+        translateY: [0, 1000],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-0`,
+        translateY: [1000, 0],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-1`,
+        translateY: [1000, 0],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-2`,
+        translateY: [1000, 0],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        targets: `#${id}-path-3`,
+        translateY: [1000, 0],
+        loop: true,
+        direction: "alternate"
+      })
+      .add({
+        duration: 1000
+      });
+  }, 0);
 });
 
 watch(
   () => props.animate,
   (newVal) => {
-    if (tlUp.paused && newVal) tlUp.play();
+    setTimeout(() => {
+      if (tlUp.paused && newVal) tlUp.play();
+    }, 0);
   }
 );
 </script>

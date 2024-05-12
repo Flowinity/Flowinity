@@ -354,37 +354,34 @@ export class CollectionService {
   }
 
   async emitUpdate(uploadId: number | number[], userId: number) {
-    socket
-      .of(SocketNamespaces.GALLERY)
-      .to(userId)
-      .emit(
-        "update",
-        await Upload.findAll({
+    const items = await Upload.findAll({
+      where: {
+        id: uploadId
+      },
+      include: [
+        {
+          model: Star,
+          as: "starred",
+          required: false,
           where: {
-            id: uploadId
-          },
-          include: [
-            {
-              model: Star,
-              as: "starred",
-              required: false,
-              where: {
-                userId: userId
-              }
-            },
-            {
-              model: Collection,
-              as: "collections",
-              attributes: ["id", "name"]
-            },
-            {
-              model: User,
-              as: "user",
-              attributes: partialUserBase
-            }
-          ]
-        })
-      )
+            userId: userId
+          }
+        },
+        {
+          model: Collection,
+          as: "collections",
+          attributes: ["id", "name"]
+        },
+        {
+          model: User,
+          as: "user",
+          attributes: partialUserBase
+        }
+      ]
+    })
+
+    socket.of(SocketNamespaces.GALLERY).to(userId).emit("update", items)
+    pubSub.publish(`UPDATE_UPLOADS:${userId}`, items)
   }
 
   async removeFromCollection(

@@ -12,11 +12,15 @@ import {
   Pager,
   UserCollectionsInput
 } from "@/gql/graphql";
-import { useApolloClient } from "@vue/apollo-composable";
+import { useApolloClient, useMutation } from "@vue/apollo-composable";
 import { useRoute } from "vue-router";
 import { isNumeric } from "@/plugins/isNumeric";
 import { computed, ref } from "vue";
 import { undefined } from "zod";
+import {
+  AddToCollectionMutation,
+  RemoveFromCollectionMutation
+} from "@/graphql/collections/addToCollection.graphql";
 
 export const useCollectionsStore = defineStore("collections", () => {
   const route = useRoute();
@@ -144,6 +148,30 @@ export const useCollectionsStore = defineStore("collections", () => {
     }
   }
 
+  async function addToCollection(collectionId: number, items: number[]) {
+    const data = useMutation(AddToCollectionMutation, {
+      variables: {
+        input: {
+          collectionId,
+          items
+        }
+      }
+    });
+    return await data.mutate();
+  }
+
+  async function removeFromCollection(collectionId: number, items: number[]) {
+    const data = useMutation(RemoveFromCollectionMutation, {
+      variables: {
+        input: {
+          collectionId,
+          items
+        }
+      }
+    });
+    return await data.mutate();
+  }
+
   return {
     items,
     pager,
@@ -155,6 +183,8 @@ export const useCollectionsStore = defineStore("collections", () => {
     selected,
     getCollections,
     getCollection,
-    init
+    init,
+    addToCollection,
+    removeFromCollection
   };
 });

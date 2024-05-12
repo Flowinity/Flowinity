@@ -78,8 +78,14 @@ import {
   Upload
 } from "@/gql/graphql";
 import { isNumeric } from "@/plugins/isNumeric";
-import { useApolloClient } from "@vue/apollo-composable";
+import {
+  useApolloClient,
+  useSubscription,
+  UseSubscriptionReturn
+} from "@vue/apollo-composable";
 import functions from "@/plugins/functions";
+import { UploadsSubscription } from "@/graphql/gallery/subscriptions/createUploads.graphql";
+import { UpdateUploadsSubscription } from "@/graphql/gallery/subscriptions/updateUploads.graphql";
 
 export default defineComponent({
   components: { GalleryNavigation, GalleryCore },
@@ -109,7 +115,9 @@ export default defineComponent({
         sort: GallerySort.CreatedAt,
         order: GalleryOrder.Desc
       },
-      randomLoading: false
+      randomLoading: false,
+      createSubscription: null as UseSubscriptionReturn<any, any> | null,
+      updateSubscription: null as UseSubscriptionReturn<any, any> | null
     };
   },
   computed: {
@@ -217,24 +225,49 @@ export default defineComponent({
       }
     },
     init() {
-      this.$socket.off("gallery/create", this.socketRegister);
       this.$app.title = this.name || "Gallery";
       this.page = parseInt(<string>this.$route.params.page) || 1;
       this.getGallery();
-      if (this.type === GalleryType.Personal) {
-        this.$sockets.gallery.on("create", this.socketRegister);
-      }
+      this.generateSubscription();
+    },
+    generateSubscription() {
+      this.createSubscription?.stop();
+      this.createSubscription = useSubscription(UploadsSubscription, {
+        input: {
+          type: this.type,
+          collectionId: typeof this.id === "number" ? this.id : undefined
+        }
+      });
+
+      this.updateSubscription?.stop();
+      this.updateSubscription = useSubscription(UpdateUploadsSubscription);
     }
   },
   mounted() {
     this.init();
   },
   unmounted() {
-    if (this.type === GalleryType.Personal) {
-      this.$socket.off("gallery/create", this.socketRegister);
-    }
+    this.createSubscription?.stop();
+    this.updateSubscription?.stop();
   },
   watch: {
+    "createSubscription.result"(val) {
+      if (this.page !== 1 || !val) return;
+      this.gallery.items = [val.onCreateUpload.upload, ...this.gallery.items];
+    },
+    "updateSubscription.result"(val) {
+      if (!val) return;
+      for (const upload of val.onUpdateUploads) {
+        const index = this.gallery.items.findIndex(
+          (i: any) => i.id === upload.id
+        );
+        if (index === -1) return;
+        this.gallery.items[index] = {
+          ...this.gallery.items[index],
+          ...upload
+        };
+      }
+    },
     "$route.params.page"(page) {
       if (!page) return;
       this.page = parseInt(page) || 1;

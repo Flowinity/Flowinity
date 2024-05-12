@@ -19,7 +19,7 @@
       <div class="items-start">
         <div class="flex flex-col gap-y-4">
           <div
-            class="flex cursor-pointer select-none justify-between pt-0 border-b-2 flowinity-border"
+            class="flex cursor-pointer select-none justify-between pt-0 border-b-2 flowinity-border relative"
             style="min-height: 64px; max-height: 64px"
           >
             <component
@@ -29,7 +29,9 @@
                   : FlowinityLogoAnimated
               "
               src="@/"
-              :animate="$app.componentLoading || $app.loading"
+              :animate="
+                $app.componentLoading || $app.loading || !$app.connected
+              "
               alt="Flowinity Logo"
               @click="
                 $router.push('/');
@@ -39,7 +41,20 @@
               draggable="false"
               v-tooltip.right="'Flowinity'"
               style="width: 40px"
+              color="dark"
+              :fill="
+                !$app.connected && $experiments.experiments.DISABLE_ANIMATIONS
+                  ? '#F44336'
+                  : undefined
+              "
             />
+            <v-tooltip activator="parent" location="right">
+              <template v-if="!$app.connected">Reconnecting...</template>
+              <template v-else-if="$app.componentLoading || $app.loading">
+                Loading...
+              </template>
+              <template v-else>Flowinity</template>
+            </v-tooltip>
           </div>
 
           <super-bar-item
@@ -122,12 +137,21 @@
           </super-bar-item>
           <super-bar-item
             highlighted
-            @click="$experiments.setExperiment('PROGRESSIVE_UI', 0)"
+            @click="
+              $experiments.setExperiment('PROGRESSIVE_UI', 0);
+              $app.dialogs.feedback = true;
+            "
           >
             <v-tooltip activator="parent" location="right">
               Restore Old Layout
             </v-tooltip>
             <RiLogoutCircleLine />
+          </super-bar-item>
+          <super-bar-item highlighted @click="$app.dialogs.feedback = true">
+            <v-tooltip activator="parent" location="right">
+              Provide Feedback
+            </v-tooltip>
+            <RiFeedbackLine />
           </super-bar-item>
           <v-menu location="end">
             <template #activator="{ props }">
@@ -146,6 +170,15 @@
                   <RiAccountCircleLine class="mr-2" style="width: 36px" />
                 </template>
                 My Profile
+              </v-list-item>
+              <v-list-item
+                style="color: rgb(var(--v-theme-error))"
+                @click="$user.logout"
+              >
+                <template #prepend>
+                  <RiLogoutCircleLine class="mr-2" style="width: 36px" />
+                </template>
+                Logout
               </v-list-item>
             </status-switcher-list>
           </v-menu>
@@ -167,7 +200,9 @@ import { onMounted, ref } from "vue";
 import SuperBarItem from "@/layouts/progressive/SuperBarItem.vue";
 import {
   RiAccountCircleLine,
+  RiFeedbackLine,
   RiLogoutCircleLine,
+  RiLogoutCircleRLine,
   RiNotificationFill,
   RiNotificationLine,
   RiSearchLine

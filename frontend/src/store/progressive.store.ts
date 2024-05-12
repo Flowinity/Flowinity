@@ -107,6 +107,7 @@ export interface NavigationOption {
 export const useProgressiveUIStore = defineStore("progressive", () => {
   const userStore = useUserStore();
   const drawer = ref(false);
+  const ready = ref(false);
   const lookupNav = computed(() => {
     const pathToOption: Record<string, NavigationOption & { _rail: number }> =
       {};
@@ -529,6 +530,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     currentRail,
     shifting,
     lookupNav,
-    userRail
+    userRail,
+    ready
   };
 });

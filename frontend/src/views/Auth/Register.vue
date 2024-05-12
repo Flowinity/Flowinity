@@ -191,6 +191,7 @@ export default defineComponent({
         await localStorage.setItem("token", data.token);
         this.axios.defaults.headers.common["Authorization"] = data.token;
         this.$app.token = data.token;
+        this.$user.loggedOut = false;
         await this.$app.init();
         this.$app.reconnectSocket(data.token);
         this.$router.push("/");

@@ -364,7 +364,7 @@ export const useAppStore = defineStore("app", {
         new: true,
         scope: "",
         icon: "mdi-new-box",
-        experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
+        experimentsRequired: ["EARLY_ACCESS"]
       });
       /*
       if (state.site.officialInstance) {

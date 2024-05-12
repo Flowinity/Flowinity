@@ -122,7 +122,6 @@
                   user-select: none;
                 "
                 v-if="collection.new"
-                v-tooltip.top="$t('generic.new')"
               />
 
               {{ collection.name }}

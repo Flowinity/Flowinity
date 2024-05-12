@@ -6,6 +6,7 @@
     :style="{ left: !$app.mainDrawer ? '0' : '72px' }"
     color="dark"
     elevation="0"
+    class="no-scroll"
   >
     <div
       class="flex cursor-pointer select-none justify-between pt-0 flowinity-border border-b-2"
@@ -35,23 +36,25 @@
         style="margin-top: 16px"
       >
         <div class="flex-col flex gap-y-2 flex-1 relative">
-          <accessible-transition name="slide-fade" mode="out-in">
-            <SidebarList v-show="uiStore.currentRail?.id === RailMode.CHAT" />
-          </accessible-transition>
-          <accessible-transition name="slide-fade" mode="out-in">
-            <MailSidebarList
-              v-show="uiStore.currentRail?.id === RailMode.MAIL"
-            />
-          </accessible-transition>
-          <accessible-transition name="slide-fade" mode="out-in">
-            <div :key="uiStore.currentRail?.id">
+          <transition
+            name="slide-fade"
+            mode="out-in"
+            v-for="[rail, entries] in Object.entries(
+              uiStore.navigation.options
+            )"
+            :key="rail"
+          >
+            <div v-show="uiStore.currentRail?.id === parseInt(rail)">
               <SideBarItem
-                v-for="item in uiStore.currentNavOptions"
+                v-for="item in entries"
                 :key="item.id + item.path"
                 class="flex h-12 items-center"
                 :item="item"
               />
             </div>
+          </transition>
+          <accessible-transition name="slide-fade" mode="out-in">
+            <SidebarList v-show="uiStore.currentRail?.id === RailMode.CHAT" />
           </accessible-transition>
           <accessible-transition name="slide-fade" mode="out-in">
             <SidebarCollections
@@ -60,6 +63,11 @@
           </accessible-transition>
           <accessible-transition name="slide-fade" mode="out-in">
             <SidebarDebug v-show="uiStore.currentRail?.id === RailMode.DEBUG" />
+          </accessible-transition>
+          <accessible-transition name="slide-fade" mode="out-in">
+            <MailSidebarList
+              v-show="uiStore.currentRail?.id === RailMode.MAIL"
+            />
           </accessible-transition>
           <accessible-transition name="slide-fade" mode="out-in">
             <WorkspacesSidebarList
@@ -111,34 +119,22 @@ const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();
 </script>
 <style>
-body:not(.resize-nonez) .slide-fade-enter-active {
+.slide-fade-enter-active {
   transition: all 0.2s ease-out;
 }
 
-body:not(.zz) .slide-fade-leave-active {
-  transition: all 0.1s cubic-bezier(0.49, 0.61, 0.83, 0.67);
-}
-
-body:not(.zz) .slide-fade-enter-from,
-body:not(.z) .slide-fade-leave-to {
+.slide-fade-enter-from {
   transform: translateX(20px);
   opacity: 0;
 }
 
-.slide-in-enter-active {
-  transition: transform 0.5s ease; /* Adjust timing and easing as needed */
+.slide-fade-leave-active {
+  opacity: 0;
+  overflow: hidden;
 }
 
-.slide-in-enter {
-  transform: translateX(100%); /* Start position for entering element */
-}
-
-.slide-in-leave-active {
-  transition: transform 0.5s ease; /* Adjust timing and easing as needed */
-}
-
-.slide-in-leave-to {
-  transform: translateX(100%); /* End position for leaving element */
+.no-scroll * {
+  scrollbar-width: none;
 }
 </style>
 

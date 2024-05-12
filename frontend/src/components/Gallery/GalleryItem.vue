@@ -4,7 +4,11 @@
       <v-toolbar
         :class="{ unselectable: selected.length }"
         style="z-index: 1"
-        :color="selected.includes(item.id) ? '#006fab' : undefined"
+        :color="
+          selected.find((select) => select.id === item.id)
+            ? '#006fab'
+            : undefined
+        "
         @click.prevent.stop="
           selected.length && supports.multiSelect ? $emit('select', item) : null
         "
@@ -17,7 +21,7 @@
         >
           <v-icon>
             {{
-              selected.includes(item.id)
+              selected.find((select) => select.id === item.id)
                 ? "mdi-checkbox-marked-circle"
                 : "mdi-circle-outline"
             }}
@@ -57,7 +61,7 @@
             v-if="supports.permissions.write && supports.collections"
             :text="$t('gallery.collectSelected')"
             icon="mdi-plus"
-            @click="$emit('collectivize', item.id)"
+            @click="$emit('collectivize', item)"
           />
           <v-chip
             v-for="collection in item.collections"

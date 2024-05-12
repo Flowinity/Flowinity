@@ -2,6 +2,9 @@
   <BlockUserDialog v-model="$user.dialogs.block.value" />
   <DateOfBirthConfirm v-model="$user.dialogs.dateOfBirth.value" />
   <PrivacyPolicyDialog v-if="$user.user?.privacyPolicyAccepted == false" />
+  <Connecting
+    :model-value="!$app.connected && !$user.loggedOut && !$user.user"
+  />
   <WorkspaceDeleteDialog
     v-model="$app.dialogs.deleteItem.value"
     :item="$app.dialogs.deleteItem.item"
@@ -153,10 +156,12 @@ import DateOfBirthConfirm from "@/components/Users/Dialogs/DateOfBirthConfirm.vu
 import ProgressiveAppBar from "@/layouts/progressive/ProgressiveAppBar.vue";
 import ProgressiveSideBar from "@/layouts/progressive/ProgressiveSideBar.vue";
 import ProgressiveSuperBar from "@/layouts/progressive/ProgressiveSuperBar.vue";
+import Connecting from "@/components/Core/Dialogs/Connecting.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
   components: {
+    Connecting,
     ProgressiveSuperBar,
     ProgressiveSideBar,
     ProgressiveAppBar,

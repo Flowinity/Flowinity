@@ -103,7 +103,9 @@
       }
     },
     "displayLargeFile": "Preview large file",
-    "downloadSelected": "Download Selected"
+    "downloadSelected": "Download Selected",
+    "removeFromCollectionBulk": "Remove from Collection",
+    "addToCollectionBulk": "Add to Collection<br>(SHIFT to remove)"
   },
   "settings": {
     "tabs": {
@@ -500,6 +502,10 @@
       "direction": "Direction",
       "asc": "Ascending",
       "desc": "Descending"
+    },
+    "add": {
+      "titleAdd": "Add {count} item to collection | Add {count} items to collection",
+      "titleRemove": "Remove {count} item from collection | Remove {count} items from collection"
     }
   },
   "chats": {

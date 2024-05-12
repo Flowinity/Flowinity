@@ -64,14 +64,16 @@ export class CollectionResolver {
     scopes: "collections.view",
     userOptional: true
   })
-  @Query(() => PaginatedCollectionsResponse, {
-    nullable: true
-  })
+  @Query(() => PaginatedCollectionsResponse)
   async collections(
     @Ctx() ctx: Context,
     @Arg("input", { nullable: true }) input?: UserCollectionsInput
   ): Promise<PaginatedCollectionsResponse | null> {
-    if (!ctx.user) return null
+    if (!ctx.user)
+      return {
+        items: [],
+        pager: paginate(0, 1, 50)
+      }
     if (input?.onlyInvited) {
       const collections = await this.collectionService.getCollections(
         ctx.user.id,

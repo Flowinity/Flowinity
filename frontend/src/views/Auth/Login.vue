@@ -173,6 +173,7 @@ export default defineComponent({
         this.axios.defaults.headers.common["Authorization"] = data.token;
         this.$app.token = data.token;
         if (!data.ban) {
+          this.$user.loggedOut = false;
           await this.$app.init();
           if (!this.$route.query.redirect) {
             this.$router.push("/");
@@ -197,6 +198,7 @@ export default defineComponent({
       this.loading = true;
       try {
         await this.axios.patch("/auth/reactivate");
+        this.$user.loggedOut = false;
         await this.$app.init();
         this.$app.reconnectSocket(this.$app.token);
         this.$toast.success("Account reactivated successfully");
