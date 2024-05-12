@@ -587,7 +587,7 @@ export const useChatStore = defineStore("chat", {
             user: chat.recipient
               ? userStore.users[chat.recipient?.id]
               : undefined,
-            size: 32,
+            size: 30,
             style: "margin: 0px 4px 0px 4px"
           })
         },

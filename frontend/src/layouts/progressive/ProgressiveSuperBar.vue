@@ -33,19 +33,18 @@
                 $app.componentLoading || $app.loading || !$app.connected
               "
               alt="Flowinity Logo"
-              @click="
-                $router.push('/');
-                uiStore.navigation.mode = RailMode.HOME;
-              "
               class="cursor-pointer"
               draggable="false"
-              v-tooltip.right="'Flowinity'"
               style="width: 40px"
-              color="dark"
+              :color="$app.fluidGradient ? 'background' : 'dark'"
               :fill="
                 !$app.connected && $experiments.experiments.DISABLE_ANIMATIONS
                   ? '#F44336'
                   : undefined
+              "
+              @click="
+                $router.push('/');
+                uiStore.navigation.mode = RailMode.HOME;
               "
             />
             <v-tooltip activator="parent" location="right">
@@ -58,21 +57,20 @@
           </div>
 
           <super-bar-item
+            class="mt-n1"
             :highlighted="true"
             @click="$app.dialogs.quickSwitcher = true"
           >
             <RiSearchLine />
           </super-bar-item>
-          <super-bar-item
-            :highlighted="true"
-            @click="$app.dialogs.quickSwitcher = true"
-          >
+          <super-bar-item :highlighted="true">
+            <Notifications location="right" />
             <RiNotificationLine v-if="!userStore.unreadNotifications" />
             <RiNotificationFill v-else />
           </super-bar-item>
         </div>
-        <div class="border-b-2 mt-4 w-full flowinity-border" />
-        <div class="flex flex-col gap-y-2 mt-4">
+        <div class="border-b-2 mt-3 w-full flowinity-border" />
+        <div class="flex flex-col gap-y-2 mt-3">
           <super-bar-item
             v-for="item in uiStore.navigation.railOptions.filter(
               (opt) =>
@@ -98,19 +96,18 @@
         </div>
         <template v-if="experimentsStore.experiments.COMMS_SUPERBAR">
           <div
-            class="divide-outline-dark border flowinity-border mt-4 w-full"
+            class="divide-outline-dark border flowinity-border mt-3 w-full"
           />
-          <div class="flex flex-col gap-y-2 mt-4">
+          <div class="flex flex-col gap-y-2 mt-3">
             <super-bar-item
-              v-for="item in chatStore.chats"
+              v-for="item in chatStore.chats.slice(0, 3)"
               :key="item.id"
-              :selected="route.params.chatId === item.association.id"
-              @click="uiStore.navigation.mode = item.id"
+              @click="$router.push(`/communications/${item.association.id}`)"
               class="flex justify-center align-middle items-center rounded-xl"
-              :badge="item?.unread"
               style="height: 47px"
+              :badge="item.unread"
             >
-              <user-avatar :src="functions.avatar(item)" />
+              <user-avatar :chat="item" :status="true" :dot-status="true" />
             </super-bar-item>
           </div>
         </template>
@@ -200,6 +197,7 @@ import { onMounted, ref } from "vue";
 import SuperBarItem from "@/layouts/progressive/SuperBarItem.vue";
 import {
   RiAccountCircleLine,
+  RiDownloadLine,
   RiFeedbackLine,
   RiLogoutCircleLine,
   RiLogoutCircleRLine,
@@ -211,6 +209,7 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.vue";
 import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
+import Notifications from "@/components/Core/Notifications.vue";
 
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();

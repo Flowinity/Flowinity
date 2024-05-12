@@ -30,6 +30,11 @@ export const useFriendsStore = defineStore("friends", {
       return this.friends.filter(
         (friend) => friend.status === FriendStatus.Accepted
       );
+    },
+    incomingFriends() {
+      return this.friends.filter(
+        (friend) => friend.status === FriendStatus.Incoming
+      );
     }
   },
   actions: {

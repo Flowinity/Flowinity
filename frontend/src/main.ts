@@ -30,6 +30,7 @@ import socket from "./boot/socket";
 import apolloWs from "./boot/apollo.wsTransport";
 import apolloHttp from "./boot/apollo.httpTransport";
 import vuetify from "@/plugins/vuetify";
+import { setupSockets } from "./boot/sockets";
 
 const isSlideshow = window.location.pathname.startsWith("/slideshow/");
 
@@ -135,5 +136,7 @@ if (!isSlideshow) {
 if (!isSlideshow) {
   events();
   socket(app).then(() => {});
+  setupSockets(app);
 }
+
 app.mount("#tpu-app");

@@ -7,6 +7,7 @@
     max-height="500"
     min-width="300"
     style="z-index: 2001"
+    v-bind="$attrs"
     @update:model-value="dismissNotifications"
   >
     <v-card>

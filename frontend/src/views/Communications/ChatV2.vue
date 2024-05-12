@@ -286,7 +286,7 @@
           size="small"
         >
           <Pins />
-          <RiPushpin2Line />
+          <RiPushpin2Line style="width: 20px" />
         </v-btn>
         <v-btn
           icon
@@ -294,7 +294,7 @@
           size="small"
           @click="$chat.search.value = !$chat.search.value"
         >
-          <RiSearchLine />
+          <RiSearchLine style="width: 20px" />
         </v-btn>
       </div>
     </accessible-transition>

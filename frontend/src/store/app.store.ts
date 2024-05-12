@@ -59,8 +59,11 @@ export const useAppStore = defineStore("app", {
     forcedWorkspaceDrawer: false,
     loading: true,
     /**
-     * @deprecated
+     * v4 classic UI:
      * Use a custom loading screen, such as a skeleton loader for each individual component/page context
+     *
+     * Progressive UI:
+     * Used to trigger the Flowinity logo animation, for this, `componentLoading` can be used
      */
     componentLoading: false,
     apiVersion: "v3",

@@ -26,9 +26,15 @@ const props = defineProps({
     "
   >
     <div class="blue-line bg-blue" :class="{ active: props.selected }"></div>
-    <v-badge v-if="props.badge" class="absolute -top-1 -right-1" color="red">
+    <v-chip
+      class="absolute z-20 bottom-0 right-0 text-center flex justify-center"
+      v-if="props.badge"
+      color="red"
+      variant="elevated"
+      size="x-small"
+    >
       {{ props.badge }}
-    </v-badge>
+    </v-chip>
     <slot />
   </div>
 </template>

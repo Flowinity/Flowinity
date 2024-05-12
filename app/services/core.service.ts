@@ -370,6 +370,7 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Record<string, any> {
     const experiments = {
+      COMMS_SUPERBAR: false,
       PROGRESSIVE_HOME: false,
       DISABLE_ANIMATIONS: false,
       PROGRESSIVE_UI: false,
@@ -428,6 +429,11 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        COMMS_SUPERBAR: {
+          description: "Enable communications in superbar.",
+          createdAt: "2024-05-12T00:00:00.000Z",
+          versions: [4, 5]
+        },
         PROGRESSIVE_HOME: {
           description: "Enable redesigned homepage with Progressive UI.",
           createdAt: "2024-05-12T00:00:00.000Z",

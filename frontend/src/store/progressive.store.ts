@@ -62,7 +62,9 @@ import {
   RiCollageLine,
   RiWebhookFill,
   RiGroup2Line,
-  RiGroup2Fill
+  RiGroup2Fill,
+  RiDownloadLine,
+  RiDownloadFill
 } from "@remixicon/vue";
 import { useUserStore } from "@/store/user.store";
 import { useRoute } from "vue-router";
@@ -72,6 +74,9 @@ import { useExperimentsStore } from "@/store/experiments.store";
 import { useAppStore } from "@/store/app.store";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { PartialUserBase, PartialUserFriend, User } from "@/gql/graphql";
+import { useMailStore } from "@/store/mail.store";
+import { useFriendsStore } from "@/store/friends.store";
+import { VIcon } from "vuetify/components";
 
 export enum RailMode {
   HOME,
@@ -106,6 +111,7 @@ export interface NavigationOption {
 
 export const useProgressiveUIStore = defineStore("progressive", () => {
   const userStore = useUserStore();
+  const chatStore = useChatStore();
   const drawer = ref(false);
   const ready = ref(false);
   const lookupNav = computed(() => {
@@ -222,6 +228,16 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
           selectedIcon: markRaw(RiToolsFill)
         },
         {
+          icon: h(VIcon, {
+            icon: "mdi-plus"
+          }),
+          name: "Flowinity Pro",
+          path: "/settings/subscriptions",
+          selectedIcon: h(VIcon, {
+            icon: "mdi-plus"
+          })
+        },
+        {
           icon: markRaw(RiGlobalLine),
           name: "Domains",
           path: "/settings/domains",
@@ -232,13 +248,13 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
           name: "Linked Applications",
           path: "/settings/integrations",
           selectedIcon: markRaw(RiLink)
-        },
+        } /*
         {
           icon: markRaw(RiWebhookLine),
           name: "Webhooks",
           path: "/settings/webhooks",
           selectedIcon: markRaw(RiWebhookFill)
-        },
+        },*/,
         {
           icon: markRaw(RiCodeLine),
           name: "Developer Portal",
@@ -272,10 +288,10 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
           }
         },
         {
-          icon: markRaw(RiAndroidLine),
+          icon: markRaw(RiDownloadLine),
           name: "Get the App",
-          path: "",
-          selectedIcon: markRaw(RiAndroidFill)
+          path: "/downloads",
+          selectedIcon: markRaw(RiDownloadFill)
         },
         {
           icon: markRaw(RiInformationLine),
@@ -305,7 +321,10 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         name: "Comms",
         id: RailMode.CHAT,
         path: "/communications",
-        selectedIcon: markRaw(RiChat1Fill)
+        selectedIcon: markRaw(RiChat1Fill),
+        badge: chatStore.totalUnread
+          ? chatStore.totalUnread.toLocaleString()
+          : undefined
       },
       {
         icon: markRaw(RiFileTextLine),
@@ -386,6 +405,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
   document.addEventListener("keydown", (e: KeyboardEvent) => {
     const experiments = useExperimentsStore();
     if (!experiments.experiments.PROGRESSIVE_UI) return;
+
     shifting.value = e.shiftKey;
 
     const eligible = navigation.value.railOptions.filter((rail) => {
@@ -402,9 +422,11 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
       (rail) => rail.id === navigation.value.mode
     );
     if (e.ctrlKey && e.shiftKey && e.key === "ArrowUp") {
+      e.preventDefault();
       if (navigation.value.mode <= 0) return;
       navigation.value.mode = eligible[currentIndex - 1].id;
     } else if (e.ctrlKey && e.shiftKey && e.key === "ArrowDown") {
+      e.preventDefault();
       if (!eligible[currentIndex + 1]) return;
       navigation.value.mode = eligible[currentIndex + 1].id;
     }
@@ -424,7 +446,49 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         (item) => item.path === "/autoCollect"
       );
       if (!item) return;
-      item.badge = !val ? undefined : val.toString();
+      item.badge = !val ? undefined : val.toLcoaleString();
+
+      // update the gallery rail
+      const galleryRail = navigation.value.railOptions.find(
+        (rail) => rail.id === RailMode.GALLERY
+      );
+      if (!galleryRail) return;
+      galleryRail.badge = !val ? undefined : val.toLocaleString();
+    }
+  );
+
+  watch(
+    () => chatStore.totalUnread,
+    (val) => {
+      const item = navigation.value.railOptions.find(
+        (item) => item.id === RailMode.CHAT
+      );
+      if (!item) return;
+      item.badge = !val ? undefined : val.toLocaleString();
+    }
+  );
+
+  const mailStore = useMailStore();
+  watch(
+    () => mailStore.unread,
+    (val) => {
+      const item = navigation.value.railOptions.find(
+        (item) => item.id === RailMode.MAIL
+      );
+      if (!item) return;
+      item.badge = !val ? undefined : val.toLocaleString();
+    }
+  );
+
+  const friendStore = useFriendsStore();
+  watch(
+    () => friendStore.incomingFriends.length,
+    (val) => {
+      const item = navigation.value.options[RailMode.HOME].find(
+        (item) => item.path === "/communications/home"
+      );
+      if (!item) return;
+      item.badge = !val ? undefined : val.toLocaleString();
     }
   );
 

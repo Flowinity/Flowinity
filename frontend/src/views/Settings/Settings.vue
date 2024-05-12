@@ -99,7 +99,7 @@
         <router-view @loading="loading = $event" @update="update" />
       </v-container>
     </v-card>
-    <router-view v-else />
+    <router-view v-else @loading="loading = $event" @update="update" />
   </v-container>
 </template>
 
@@ -128,10 +128,14 @@ export default defineComponent({
     async update() {
       try {
         this.loading = true;
+        if (this.$experiments.experiments.PROGRESSIVE_UI)
+          this.$app.componentLoading = true;
         await this.$user.save();
         await new Promise((resolve) => setTimeout(resolve, 300));
+        this.$app.componentLoading = false;
       } finally {
         this.loading = false;
+        this.$app.componentLoading = false;
       }
     }
   },

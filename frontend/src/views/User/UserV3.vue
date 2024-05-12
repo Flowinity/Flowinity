@@ -879,14 +879,7 @@ export default defineComponent({
 
         if (!this.username) {
           this.$ui.currentNavItem = {
-            item: {
-              name: this.user?.username,
-              icon: h(UserAvatar, {
-                user: this.user,
-                size: 40
-              }),
-              path: `/u/${this.user?.username}`
-            },
+            item: this.$ui.userRail(this.user),
             rail: [
               this.$ui.navigation.railOptions.find(
                 (rail) => rail.id === RailMode.HOME

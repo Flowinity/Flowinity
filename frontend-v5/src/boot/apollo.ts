@@ -123,8 +123,7 @@ export default function setup(app: App) {
       return {
         authorization: userStore.token,
         "x-tpu-client-version": import.meta.env.TPU_VERSION,
-        "x-tpu-client": "Flowinity5",
-        "x-tpu-resumable-state-id": crypto.randomUUID()
+        "x-tpu-client": "Flowinity5"
       };
     },
     lazy: false,

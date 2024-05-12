@@ -185,6 +185,9 @@ export default defineComponent({
     },
     async getGallery() {
       this.loading = true;
+      if (this.$experiments.experiments.PROGRESSIVE_UI) {
+        this.$app.componentLoading = true;
+      }
       const {
         data: { gallery }
       } = await this.$apollo.query({
@@ -205,6 +208,9 @@ export default defineComponent({
       });
       this.gallery = gallery;
       this.loading = false;
+      if (this.$experiments.experiments.PROGRESSIVE_UI) {
+        this.$app.componentLoading = false;
+      }
       return gallery;
     },
     socketRegister(

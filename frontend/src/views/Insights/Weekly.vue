@@ -664,6 +664,46 @@ export default defineComponent({
         .catch(() => {
           this.$app.componentLoading = false;
         });
+    },
+    setSuperBar() {
+      this.$ui.currentNavItem = {
+        item: {
+          name:
+            this.type === "yearly"
+              ? "Annually"
+              : this.type.charAt(0).toUpperCase() + this.type.slice(1),
+          icon: markRaw(
+            this.type === "weekly"
+              ? RiFlowChart
+              : this.type === "monthly"
+                ? RiPieChartLine
+                : this.type === "yearly"
+                  ? h(VIcon, { icon: "mdi-chart-gantt" })
+                  : RiBarChartFill
+          ),
+          path: this.$route.path
+        },
+        rail: [
+          this.$ui.navigation.railOptions.find(
+            (rail) => rail.id === RailMode.HOME
+          ),
+          ...(this.$route.params.username
+            ? [
+                this.$ui.navigation.options[RailMode.HOME].find(
+                  (option) => option.path === "/users"
+                ),
+                this.$ui.userRail(this.$route.params.username),
+                this.$ui.navigation.options[RailMode.HOME].find(
+                  (option) => option.path === "/insights"
+                )
+              ]
+            : [
+                this.$ui.navigation.options[RailMode.HOME].find(
+                  (option) => option.path === "/insights"
+                )
+              ])
+        ]
+      };
     }
   },
   mounted() {
@@ -673,41 +713,7 @@ export default defineComponent({
     this.$app.title = `${
       this.type.charAt(0).toUpperCase() + this.type.slice(1)
     } Insights`;
-    this.$ui.currentNavItem = {
-      item: {
-        name: this.type.charAt(0).toUpperCase() + this.type.slice(1),
-        icon: markRaw(
-          this.type === "weekly"
-            ? RiFlowChart
-            : this.type === "monthly"
-              ? RiPieChartLine
-              : this.type === "yearly"
-                ? h(VIcon, { icon: "mdi-chart-gantt" })
-                : RiBarChartFill
-        ),
-        path: this.$route.path
-      },
-      rail: [
-        this.$ui.navigation.railOptions.find(
-          (rail) => rail.id === RailMode.HOME
-        ),
-        ...(this.$route.params.username
-          ? [
-              this.$ui.navigation.options[RailMode.HOME].find(
-                (option) => option.path === "/users"
-              ),
-              this.$ui.userRail(this.$route.params.username),
-              this.$ui.navigation.options[RailMode.HOME].find(
-                (option) => option.path === "/insights"
-              )
-            ]
-          : [
-              this.$ui.navigation.options[RailMode.HOME].find(
-                (option) => option.path === "/insights"
-              )
-            ])
-      ]
-    };
+    this.setSuperBar();
   },
   watch: {
     type(val) {
@@ -718,6 +724,7 @@ export default defineComponent({
       this.$app.title = `${
         this.type.charAt(0).toUpperCase() + this.type.slice(1)
       } Insights`;
+      this.setSuperBar();
     }
   }
 });

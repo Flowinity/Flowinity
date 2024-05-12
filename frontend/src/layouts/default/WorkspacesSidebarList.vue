@@ -207,7 +207,8 @@
         cursor: pointer;
         font-size: 12px;
       "
-      class="my-n4 unselectable"
+      class="unselectable"
+      :class="{ 'my-n4': $experiments.experiments.PROGRESSIVE_UI }"
       @click="$app.workspaceDrawer = false"
     >
       <v-icon size="20">mdi-close</v-icon>
