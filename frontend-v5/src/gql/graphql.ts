@@ -395,6 +395,11 @@ export type ChatRank = {
   userId?: Maybe<Scalars['Int']['output']>;
 };
 
+export enum ChatType {
+  Direct = 'DIRECT',
+  Group = 'GROUP'
+}
+
 export type ChatTypingEvent = {
   __typename?: 'ChatTypingEvent';
   chatId: Scalars['Float']['output'];
@@ -574,6 +579,7 @@ export type CreateBotInput = {
 
 export type CreateChatInput = {
   name?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<ChatType>;
   users: Array<Scalars['Float']['input']>;
 };
 
@@ -755,7 +761,7 @@ export type EmbedMetadata = {
   restricted?: Maybe<Scalars['Boolean']['output']>;
   siteIcon?: Maybe<Scalars['String']['output']>;
   siteName?: Maybe<Scalars['String']['output']>;
-  type: Scalars['Float']['output'];
+  type: EmbedType;
   url?: Maybe<Scalars['String']['output']>;
 };
 
@@ -771,6 +777,12 @@ export type EmbedText = {
   imageUrl?: Maybe<Scalars['String']['output']>;
   text: Scalars['String']['output'];
 };
+
+export enum EmbedType {
+  ChatInvite = 'CHAT_INVITE',
+  Direct = 'DIRECT',
+  Regular = 'REGULAR'
+}
 
 export enum EmbedVersion {
   Colubrina = 'COLUBRINA',
@@ -1652,9 +1664,11 @@ export type NotePermissionsMetadata = {
 
 export type NoteVersion = {
   __typename?: 'NoteVersion';
+  createdAt: Scalars['Date']['output'];
   data?: Maybe<WorkspaceNote>;
   id: Scalars['String']['output'];
   noteId: Scalars['Int']['output'];
+  updatedAt: Scalars['Date']['output'];
   userId?: Maybe<Scalars['Int']['output']>;
 };
 
@@ -1984,7 +1998,7 @@ export type Query = {
   collection?: Maybe<Collection>;
   /** Return the number of pending invitations for collections for the current user */
   collectionInvitesCount: Scalars['Int']['output'];
-  collections?: Maybe<PaginatedCollectionResponse>;
+  collections: PaginatedCollectionResponse;
   coreState: CoreState;
   currentUser?: Maybe<User>;
   domains: Array<Domain>;
@@ -2967,12 +2981,12 @@ export type CreateChatInviteMutationVariables = Exact<{
 
 export type CreateChatInviteMutation = { __typename?: 'Mutation', createChatInvite: { __typename?: 'ChatInvite', id: string, userId?: number | null, chatId: number, rankId?: string | null, createdAt: any, updatedAt: any, expiredAt?: any | null, invalidated: boolean } };
 
-export type StandardEmbedFragment = { __typename?: 'EmbedDataV2', media?: Array<{ __typename?: 'EmbedMedia', url?: string | null, proxyUrl?: string | null, attachment?: string | null, width?: number | null, height?: number | null, isInternal: boolean, videoEmbedUrl?: string | null, mimeType?: string | null, type: EmbedMediaType, upload?: { __typename?: 'Upload', id: number, createdAt: any, attachment: string, userId: number, name?: string | null, type: string, fileSize: number } | null }> | null, text?: Array<{ __typename?: 'EmbedText', imageProxyUrl?: string | null, text: string, heading?: boolean | null, imageUrl?: string | null }> | null, metadata: { __typename?: 'EmbedMetadata', url?: string | null, siteName?: string | null, siteIcon?: string | null, footer?: string | null, type: number, id?: string | null, restricted?: boolean | null } } & { ' $fragmentName'?: 'StandardEmbedFragment' };
+export type StandardEmbedFragment = { __typename?: 'EmbedDataV2', media?: Array<{ __typename?: 'EmbedMedia', url?: string | null, proxyUrl?: string | null, attachment?: string | null, width?: number | null, height?: number | null, isInternal: boolean, videoEmbedUrl?: string | null, mimeType?: string | null, type: EmbedMediaType, upload?: { __typename?: 'Upload', id: number, createdAt: any, attachment: string, userId: number, name?: string | null, type: string, fileSize: number } | null }> | null, text?: Array<{ __typename?: 'EmbedText', imageProxyUrl?: string | null, text: string, heading?: boolean | null, imageUrl?: string | null }> | null, metadata: { __typename?: 'EmbedMetadata', url?: string | null, siteName?: string | null, siteIcon?: string | null, footer?: string | null, type: EmbedType, id?: string | null, restricted?: boolean | null } } & { ' $fragmentName'?: 'StandardEmbedFragment' };
 
 export type StandardMessageFragment = { __typename?: 'Message', id: number, createdAt: any, updatedAt: any, chatId: number, userId?: number | null, content?: string | null, type?: MessageType | null, edited: boolean, editedAt?: any | null, replyId?: number | null, pinned: boolean, emoji?: Array<{ __typename?: 'ChatEmoji', name?: string | null, icon?: string | null, id: string, chatId: number }> | null, embeds: Array<(
     { __typename?: 'EmbedDataV2' }
     & { ' $fragmentRefs'?: { 'StandardEmbedFragment': StandardEmbedFragment } }
-  )>, reply?: { __typename?: 'Message', content?: string | null, userId?: number | null, id: number, readReceipts: Array<{ __typename?: 'ReadReceipt', associationId: number, messageId: number, user?: { __typename?: 'PartialUserBase', id: number, avatar?: string | null, username: string, legacy: boolean } | null }>, embeds: Array<{ __typename?: 'EmbedDataV2', metadata: { __typename?: 'EmbedMetadata', type: number }, media?: Array<{ __typename?: 'EmbedMedia', type: EmbedMediaType }> | null }>, user?: { __typename?: 'PartialUserBase', username: string, id: number, avatar?: string | null } | null } | null, user?: { __typename?: 'PartialUserBase', username: string, id: number, avatar?: string | null } | null, readReceipts: Array<{ __typename?: 'ReadReceipt', associationId: number, messageId: number, user?: { __typename?: 'PartialUserBase', id: number, avatar?: string | null, username: string, legacy: boolean } | null }> } & { ' $fragmentName'?: 'StandardMessageFragment' };
+  )>, reply?: { __typename?: 'Message', content?: string | null, userId?: number | null, id: number, readReceipts: Array<{ __typename?: 'ReadReceipt', associationId: number, messageId: number, user?: { __typename?: 'PartialUserBase', id: number, avatar?: string | null, username: string, legacy: boolean } | null }>, embeds: Array<{ __typename?: 'EmbedDataV2', metadata: { __typename?: 'EmbedMetadata', type: EmbedType }, media?: Array<{ __typename?: 'EmbedMedia', type: EmbedMediaType }> | null }>, user?: { __typename?: 'PartialUserBase', username: string, id: number, avatar?: string | null } | null } | null, user?: { __typename?: 'PartialUserBase', username: string, id: number, avatar?: string | null } | null, readReceipts: Array<{ __typename?: 'ReadReceipt', associationId: number, messageId: number, user?: { __typename?: 'PartialUserBase', id: number, avatar?: string | null, username: string, legacy: boolean } | null }> } & { ' $fragmentName'?: 'StandardMessageFragment' };
 
 export type MessagesQueryVariables = Exact<{
   input: InfiniteMessagesInput;
@@ -3155,14 +3169,14 @@ export type CollectionQuery = { __typename?: 'Query', collection?: { __typename?
 export type UserLightCollectionsQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserLightCollectionsQueryQuery = { __typename?: 'Query', collectionInvitesCount: number, collections?: { __typename?: 'PaginatedCollectionResponse', items: Array<{ __typename?: 'Collection', updatedAt: any, createdAt: any, avatar?: string | null, banner?: string | null, itemCount?: number | null, id: number, image?: string | null, shareLink?: string | null, name: string, preview?: { __typename?: 'CollectionItem', updatedAt: any } | null, permissionsMetadata: { __typename?: 'PermissionsMetadata', write: boolean, read: boolean, configure: boolean } }> } | null };
+export type UserLightCollectionsQueryQuery = { __typename?: 'Query', collectionInvitesCount: number, collections: { __typename?: 'PaginatedCollectionResponse', items: Array<{ __typename?: 'Collection', updatedAt: any, createdAt: any, avatar?: string | null, banner?: string | null, itemCount?: number | null, id: number, image?: string | null, shareLink?: string | null, name: string, preview?: { __typename?: 'CollectionItem', updatedAt: any } | null, permissionsMetadata: { __typename?: 'PermissionsMetadata', write: boolean, read: boolean, configure: boolean } }> } };
 
 export type UserCollectionsQueryQueryVariables = Exact<{
   input: UserCollectionsInput;
 }>;
 
 
-export type UserCollectionsQueryQuery = { __typename?: 'Query', collections?: { __typename?: 'PaginatedCollectionResponse', items: Array<{ __typename?: 'Collection', id: number, name: string, image?: string | null, userId: number, shareLink?: string | null, shared?: boolean | null, itemCount?: number | null, user?: { __typename?: 'PartialUserBase', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null } | null, preview?: { __typename?: 'CollectionItem', attachment: { __typename?: 'Upload', attachment: string, id: number } } | null, users: Array<{ __typename?: 'CollectionUser', id: number, createdAt: any, updatedAt: any, collectionId: number, read: boolean, write: boolean, configure: boolean, accepted: boolean, recipientId?: number | null, senderId?: number | null, identifier?: string | null, user?: { __typename?: 'PartialUserBase', username: string, id: number, administrator: boolean, moderator: boolean, avatar?: string | null } | null, sender?: { __typename?: 'PartialUserBase', username: string, id: number, administrator: boolean, moderator: boolean, avatar?: string | null } | null }>, recipient?: { __typename?: 'CollectionUser', id: number, createdAt: any, updatedAt: any, collectionId: number, read: boolean, write: boolean, configure: boolean, accepted: boolean, recipientId?: number | null, senderId?: number | null } | null, permissionsMetadata: { __typename?: 'PermissionsMetadata', write: boolean, read: boolean, configure: boolean } }>, pager: { __typename?: 'Pager', totalItems: number, currentPage: number, pageSize: number, totalPages: number, startPage: number, endPage: number, startIndex: number, endIndex: number, pages: Array<number> } } | null };
+export type UserCollectionsQueryQuery = { __typename?: 'Query', collections: { __typename?: 'PaginatedCollectionResponse', items: Array<{ __typename?: 'Collection', id: number, name: string, image?: string | null, userId: number, shareLink?: string | null, shared?: boolean | null, itemCount?: number | null, user?: { __typename?: 'PartialUserBase', username: string, id: number, createdAt: any, administrator: boolean, moderator: boolean, avatar?: string | null } | null, preview?: { __typename?: 'CollectionItem', attachment: { __typename?: 'Upload', attachment: string, id: number } } | null, users: Array<{ __typename?: 'CollectionUser', id: number, createdAt: any, updatedAt: any, collectionId: number, read: boolean, write: boolean, configure: boolean, accepted: boolean, recipientId?: number | null, senderId?: number | null, identifier?: string | null, user?: { __typename?: 'PartialUserBase', username: string, id: number, administrator: boolean, moderator: boolean, avatar?: string | null } | null, sender?: { __typename?: 'PartialUserBase', username: string, id: number, administrator: boolean, moderator: boolean, avatar?: string | null } | null }>, recipient?: { __typename?: 'CollectionUser', id: number, createdAt: any, updatedAt: any, collectionId: number, read: boolean, write: boolean, configure: boolean, accepted: boolean, recipientId?: number | null, senderId?: number | null } | null, permissionsMetadata: { __typename?: 'PermissionsMetadata', write: boolean, read: boolean, configure: boolean } }>, pager: { __typename?: 'Pager', totalItems: number, currentPage: number, pageSize: number, totalPages: number, startPage: number, endPage: number, startIndex: number, endIndex: number, pages: Array<number> } } };
 
 export type LeaveCollectionMutationVariables = Exact<{
   input: LeaveCollectionInput;
