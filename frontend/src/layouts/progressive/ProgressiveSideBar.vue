@@ -36,7 +36,7 @@
         style="margin-top: 16px"
       >
         <div class="flex-col flex gap-y-2 flex-1 relative">
-          <transition
+          <accessible-transition
             name="slide-fade"
             mode="out-in"
             v-for="[rail, entries] in Object.entries(
@@ -52,7 +52,7 @@
                 :item="item"
               />
             </div>
-          </transition>
+          </accessible-transition>
           <accessible-transition name="slide-fade" mode="out-in">
             <SidebarList v-show="uiStore.currentRail?.id === RailMode.CHAT" />
           </accessible-transition>
