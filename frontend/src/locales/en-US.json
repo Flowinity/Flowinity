@@ -367,7 +367,8 @@
     "beta": "BETA",
     "options": "Options",
     "option": "No options selected | {count} option selected | {count} options selected",
-    "copied": "Copied to clipboard!"
+    "copied": "Copied to clipboard!",
+    "getStarted": "Get Started"
   },
   "setup": {
     "step0": {
@@ -467,13 +468,39 @@
     }
   },
   "collections": {
+    "sharing": {
+      "title": "Collection Sharing",
+      "add": "Add friend to collection",
+      "pending": "(pending)",
+      "users": "Users"
+    },
+    "transfer": {
+      "title": "Transfer Collection Ownership",
+      "description": "Are you sure you want to transfer ownership of {collection} to {user}?",
+      "action": "Transfer"
+    },
+    "leave": {
+      "title": "Leave Collection",
+      "description": "Are you sure you want to leave {collection}? Any files you have added to the collection will not be automatically removed.",
+      "action": "Leave"
+    },
     "settings": {
       "title": "Collection Settings",
       "removeBanner": "Remove Banner",
       "export": "Export Collection",
       "delete": "Delete Collection"
     },
-    "create": "Create Collection"
+    "create": "Create Collection",
+    "progressive": {
+      "sort": "Sort",
+      "updated": "Recently Updated",
+      "createdAt": "Recently Created",
+      "alphabetical": "Name (A-Z)",
+      "itemCount": "Item Count",
+      "direction": "Direction",
+      "asc": "Ascending",
+      "desc": "Descending"
+    }
   },
   "chats": {
     "start": {

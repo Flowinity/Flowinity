@@ -13,16 +13,29 @@ import {
   UserCollectionsInput
 } from "@/gql/graphql";
 import { useApolloClient } from "@vue/apollo-composable";
+import { useRoute } from "vue-router";
+import { isNumeric } from "@/plugins/isNumeric";
+import { computed, ref } from "vue";
+import { undefined } from "zod";
 
-export const useCollectionsStore = defineStore("collections", {
-  state: () => ({
-    items: [] as CollectionCache[],
-    pager: {
-      totalItems: 0
-    } as Pager,
-    complete: false,
-    page: 1,
-    persistent: [] as {
+export const useCollectionsStore = defineStore("collections", () => {
+  const route = useRoute();
+  const items = ref<CollectionCache[]>([]);
+  const pager = ref<Pager>({
+    currentPage: 0,
+    endIndex: 0,
+    endPage: 0,
+    pageSize: 0,
+    pages: [],
+    startIndex: 0,
+    startPage: 0,
+    totalPages: 0,
+    totalItems: 0
+  });
+  const complete = ref(false);
+  const page = ref(1);
+  const persistent = ref<
+    {
       id: number;
       name: string;
       permissionsMetadata: {
@@ -44,75 +57,104 @@ export const useCollectionsStore = defineStore("collections", {
           attachment: string;
         };
       };
-    }[],
-    invites: 0
-  }),
-  getters: {
-    write(state) {
-      return state.persistent.filter(
-        (c) => c.permissionsMetadata.write || c.permissionsMetadata.configure
-      );
+      shareLink: string | null;
+    }[]
+  >([]);
+  const invites = ref(0);
+
+  const write = computed(() => {
+    return persistent.value.filter(
+      (c) => c.permissionsMetadata.write || c.permissionsMetadata.configure
+    );
+  });
+
+  const selected = computed(() => {
+    if (!route.path.startsWith("/collections/")) return;
+    const id: string | number = isNumeric(<string>route.params.id)
+      ? parseInt(<string>route.params.id)
+      : <string>route.params.id;
+    return persistent.value.find(
+      (collection) =>
+        (typeof id === "number" && collection.id === id) ||
+        collection.shareLink === id
+    );
+  });
+
+  async function getCollections(
+    input: UserCollectionsInput,
+    store = true,
+    reset = false
+  ) {
+    if (reset) page.value = 1;
+    const {
+      data: { collections }
+    } = await useApolloClient().client.query({
+      query: UserCollectionsQuery,
+      variables: {
+        input: {
+          ...input,
+          page: page.value,
+          limit: 24
+        }
+      }
+    });
+    if (store && !reset) {
+      items.value.push(...collections.items);
+      pager.value = collections.pager;
+    } else if (store && reset) {
+      items.value = collections.items;
+      pager.value = collections.pager;
     }
-  },
-  actions: {
-    async getCollections(
-      input: UserCollectionsInput,
-      store = true,
-      reset = false
-    ) {
-      if (reset) this.page = 1;
-      const {
-        data: { collections }
-      } = await useApolloClient().client.query({
-        query: UserCollectionsQuery,
-        variables: {
-          input: {
-            ...input,
-            page: this.page,
-            limit: 24
-          }
+    if (!collections.items.length) {
+      complete.value = true;
+    }
+    return collections;
+  }
+
+  async function getCollection(
+    id: number | string
+  ): Promise<Collection | null> {
+    const {
+      data: { collection }
+    } = await useApolloClient().client.query({
+      query: CollectionQuery,
+      fetchPolicy: "network-only",
+      variables: {
+        input: {
+          id: typeof id === "string" ? undefined : id,
+          shareLink: typeof id === "string" ? id : undefined
         }
-      });
-      if (store && !reset) {
-        this.items.push(...collections.items);
-        this.pager = collections.pager;
-      } else if (store && reset) {
-        this.items = collections.items;
-        this.pager = collections.pager;
+      } as CollectionInput
+    });
+    return collection;
+  }
+
+  async function init() {
+    const {
+      data: { collections }
+    } = await useApolloClient().client.query({
+      query: UserLightCollectionsQuery,
+      fetchPolicy: "network-only",
+      variables: {
+        input: {}
       }
-      if (!collections.items.length) {
-        this.complete = true;
-      }
-      return collections;
-    },
-    async getCollection(id: number | string): Promise<Collection | null> {
-      const {
-        data: { collection }
-      } = await useApolloClient().client.query({
-        query: CollectionQuery,
-        fetchPolicy: "network-only",
-        variables: {
-          input: {
-            id: typeof id === "string" ? undefined : id,
-            shareLink: typeof id === "string" ? id : undefined
-          }
-        } as CollectionInput
-      });
-      return collection;
-    },
-    async init() {
-      const {
-        data: { collections }
-      } = await useApolloClient().client.query({
-        query: UserLightCollectionsQuery,
-        fetchPolicy: "network-only",
-        variables: {
-          input: {}
-        }
-      });
-      if (collections) {
-        this.persistent = collections.items;
-      }
+    });
+    if (collections) {
+      persistent.value = collections.items;
     }
   }
+
+  return {
+    items,
+    pager,
+    complete,
+    page,
+    persistent,
+    invites,
+    write,
+    selected,
+    getCollections,
+    getCollection,
+    init
+  };
 });

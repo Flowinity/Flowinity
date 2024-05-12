@@ -52,7 +52,7 @@
           :class="{ 'dot-status': dotStatus, 'typing-status': typing }"
           :style="{
             backgroundColor:
-              friendStatus === UserStatus.Idle
+              friendStatus === UserStatus.Idle && !typing
                 ? 'rgb(var(--v-theme-background))'
                 : functions.userStatus(friendStatus).color
           }"

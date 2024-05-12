@@ -272,6 +272,33 @@
       />
     </div>
   </div>
+
+  <teleport
+    v-if="$experiments.experiments.PROGRESSIVE_UI && $chat.isReady"
+    to="#appbar-options"
+  >
+    <accessible-transition mode="out-in" name="slide-up" appear>
+      <div class="flex gap-2">
+        <v-btn
+          v-if="$experiments.experiments.PINNED_MESSAGES"
+          class="mx-1"
+          icon
+          size="small"
+        >
+          <Pins />
+          <RiPushpin2Line />
+        </v-btn>
+        <v-btn
+          icon
+          class="mx-1"
+          size="small"
+          @click="$chat.search.value = !$chat.search.value"
+        >
+          <RiSearchLine />
+        </v-btn>
+      </div>
+    </accessible-transition>
+  </teleport>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -296,9 +323,17 @@ import { Platform } from "@/store/app.store";
 import { IpcChannels } from "@/electron-types/ipc";
 import functions from "@/plugins/functions";
 import { RailMode } from "@/store/progressive.store";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
+import Pins from "@/components/Communications/Menus/Pins.vue";
+import { RiPushpin2Line, RiPushpinLine, RiSearchLine } from "@remixicon/vue";
 
 export default defineComponent({
   components: {
+    RiSearchLine,
+    RiPushpin2Line,
+    RiPushpinLine,
+    Pins,
+    AccessibleTransition,
     ChatDevOptions,
     PromoNoContent,
     MessageActionsList,

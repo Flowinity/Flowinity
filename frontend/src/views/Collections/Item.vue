@@ -94,8 +94,12 @@
       <accessible-transition mode="out-in" name="slide-up" appear>
         <div class="flex gap-2">
           <accessible-transition name="slide-up" mode="out-in">
-            <leave-collection-dialog :collection="collection">
+            <leave-collection-dialog
+              :collection="collection"
+              v-slot="{ toggle }"
+            >
               <v-btn
+                @click="toggle"
                 icon
                 v-if="collection?.userId !== $user.user?.id"
                 :key="collection?.userId"
@@ -178,6 +182,7 @@ import {
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { RailMode } from "@/store/progressive.store";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
+import LeaveCollectionDialog from "@/components/Collections/Dialogs/LeaveCollectionDialog.vue";
 
 export default defineComponent({
   name: "CollectionsItem",
@@ -187,6 +192,7 @@ export default defineComponent({
     }
   },
   components: {
+    LeaveCollectionDialog,
     AccessibleTransition,
     RiLogoutBoxLine,
     RiSettings5Line,

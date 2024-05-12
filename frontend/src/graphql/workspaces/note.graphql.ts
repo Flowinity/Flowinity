@@ -23,6 +23,7 @@ export const NoteQuery = gql`
         id
         noteId
         userId
+        createdAt
         data {
           version
           blocks

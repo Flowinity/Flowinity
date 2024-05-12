@@ -15,15 +15,21 @@
     color="dark"
     elevation="0"
   >
-    <div class="justify-between flex flex-col h-full">
+    <div class="justify-between superbar flex flex-col h-full">
       <div class="items-start">
         <div class="flex flex-col gap-y-4">
           <div
             class="flex cursor-pointer select-none justify-between pt-0 border-b-2 flowinity-border"
             style="min-height: 64px; max-height: 64px"
           >
-            <FlowinityLogo
+            <component
+              :is="
+                $experiments.experiments.DISABLE_ANIMATIONS
+                  ? FlowinityLogo
+                  : FlowinityLogoAnimated
+              "
               src="@/"
+              :animate="$app.componentLoading || $app.loading"
               alt="Flowinity Logo"
               @click="
                 $router.push('/');
@@ -54,7 +60,12 @@
         <div class="flex flex-col gap-y-2 mt-4">
           <super-bar-item
             v-for="item in uiStore.navigation.railOptions.filter(
-              (opt) => !opt.misc && !opt.fake
+              (opt) =>
+                !opt.misc &&
+                !opt.fake &&
+                (opt.experimentsRequired
+                  ? $experiments.experiments[opt.experimentsRequired]
+                  : true)
             )"
             :key="item.id"
             :selected="uiStore.navigation.mode === item.id"
@@ -128,7 +139,15 @@
                 />
               </super-bar-item>
             </template>
-            <status-switcher-list />
+            <status-switcher-list>
+              <v-divider />
+              <v-list-item :to="`/u/${$user.user.username}`">
+                <template #prepend>
+                  <RiAccountCircleLine class="mr-2" style="width: 36px" />
+                </template>
+                My Profile
+              </v-list-item>
+            </status-switcher-list>
           </v-menu>
         </div>
       </div>
@@ -144,9 +163,10 @@ import { useChatStore } from "@/store/chat.store";
 import { useRoute } from "vue-router";
 import functions from "@/plugins/functions";
 import { useExperimentsStore } from "@/store/experiments.store";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import SuperBarItem from "@/layouts/progressive/SuperBarItem.vue";
 import {
+  RiAccountCircleLine,
   RiLogoutCircleLine,
   RiNotificationFill,
   RiNotificationLine,
@@ -155,6 +175,7 @@ import {
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.vue";
+import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
 
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();
@@ -166,12 +187,17 @@ const chatStore = useChatStore();
 const experimentsStore = useExperimentsStore();
 const route = useRoute();
 </script>
-<style scoped>
+<style>
 .superbar {
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
 }
 .superbar::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
+  display: none;
+}
+
+.superbar .v-navigation-drawer__content,
+.superbar {
+  overflow-x: hidden !important;
+  overflow-y: inherit !important;
 }
 </style>

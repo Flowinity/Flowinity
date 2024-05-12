@@ -419,13 +419,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, h, markRaw } from "vue";
 import DynamicCard from "@/components/Core/DynamicCard.vue";
 import InsightsStatsCard from "@/components/Insights/StatsCard.vue";
 import { Insight } from "@/models/insight";
 import Chart from "@/components/Core/Chart.vue";
 import InsightsPageBanner from "@/components/Insights/Banners/Page.vue";
 import PlaceholderCheckerboard from "@/components/Core/PlaceholderCheckerboard.vue";
+import { RailMode } from "@/store/progressive.store";
+import {
+  RiBarChartFill,
+  RiBarChartLine,
+  RiFlowChart,
+  RiLineChartLine,
+  RiPieChartLine
+} from "@remixicon/vue";
+import { VIcon } from "vuetify/components";
 
 export default defineComponent({
   name: "InsightsReport",
@@ -664,6 +673,41 @@ export default defineComponent({
     this.$app.title = `${
       this.type.charAt(0).toUpperCase() + this.type.slice(1)
     } Insights`;
+    this.$ui.currentNavItem = {
+      item: {
+        name: this.type.charAt(0).toUpperCase() + this.type.slice(1),
+        icon: markRaw(
+          this.type === "weekly"
+            ? RiFlowChart
+            : this.type === "monthly"
+              ? RiPieChartLine
+              : this.type === "yearly"
+                ? h(VIcon, { icon: "mdi-chart-gantt" })
+                : RiBarChartFill
+        ),
+        path: this.$route.path
+      },
+      rail: [
+        this.$ui.navigation.railOptions.find(
+          (rail) => rail.id === RailMode.HOME
+        ),
+        ...(this.$route.params.username
+          ? [
+              this.$ui.navigation.options[RailMode.HOME].find(
+                (option) => option.path === "/users"
+              ),
+              this.$ui.userRail(this.$route.params.username),
+              this.$ui.navigation.options[RailMode.HOME].find(
+                (option) => option.path === "/insights"
+              )
+            ]
+          : [
+              this.$ui.navigation.options[RailMode.HOME].find(
+                (option) => option.path === "/insights"
+              )
+            ])
+      ]
+    };
   },
   watch: {
     type(val) {

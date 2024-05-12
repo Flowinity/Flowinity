@@ -2,7 +2,7 @@
   <v-app-bar
     id="navbar"
     :key="$app.activeNags.offset"
-    :class="{ ...navbarClasses, ...classString, 'has-image': image }"
+    :class="{ ...navbarClasses, ...classString }"
     :extension-height="$app.activeNags.offset"
     app
     class="navbar border-b-2 w-full backdrop-blur-lg sticky top-0 z-50 overflow-clip no-image"
@@ -19,8 +19,30 @@
     :style="{ height: expanded ? '195px' : '64px' }"
   >
     <div
+      v-if="!$user.user"
+      class="bg-dark h-full flex items-center justify-center p-4"
+      style="z-index: 999"
+    >
+      {{ $user.user }}
+      <FlowinityBanner
+        alt="Flowinity Logo"
+        @click="
+          $router.push('/');
+          uiStore.navigation.mode = RailMode.HOME;
+        "
+        class="cursor-pointer"
+        draggable="false"
+        v-tooltip.right="'Flowinity'"
+        style="height: 40px; z-index: 9999"
+      />
+    </div>
+    <div
       class="flex p-4 justify-between z-50 w-full"
-      :class="{ 'items-center': !expanded, 'items-end h-full': expanded }"
+      :class="{
+        'items-center': !expanded,
+        'items-end h-full': expanded,
+        'has-image': image
+      }"
     >
       <div class="flex select-none">
         <div class="max-sm:block hidden">
@@ -50,7 +72,11 @@
               <router-link
                 :to="rail.path"
                 class="cursor-pointer flex items-center"
-                @click="!rail?.fake ? (uiStore.navigation.mode = rail?.id) : ''"
+                @click="
+                  !rail?.fake && rail?.id
+                    ? (uiStore.navigation.mode = rail?.id)
+                    : ''
+                "
               >
                 <component
                   :is="rail?.icon"
@@ -164,6 +190,14 @@
           class="flex gap-2 mr-4"
           :class="{ 'items-center': !expanded, 'items-end': expanded }"
         />
+        <div id="logged-out-actions">
+          <v-btn v-if="!$user.user" color="white" class="mr-2" to="/login">
+            {{ $t("generic.login") }}
+          </v-btn>
+          <v-btn v-if="!$user.user" color="blue" variant="tonal" to="/register">
+            {{ $t("generic.getStarted") }}
+          </v-btn>
+        </div>
       </div>
     </div>
   </v-app-bar>
@@ -171,7 +205,7 @@
 
 <script setup lang="ts">
 import { useAppStore } from "@/store/app.store";
-import { useProgressiveUIStore } from "@/store/progressive.store";
+import { RailMode, useProgressiveUIStore } from "@/store/progressive.store";
 import { useUserStore } from "@/store/user.store";
 import { computed, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
@@ -179,6 +213,8 @@ import { RiArrowRightSLine, RiMenuLine } from "@remixicon/vue";
 import { useDisplay } from "vuetify";
 import { useChatStore } from "@/store/chat.store";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
+import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
+import { useExperimentsStore } from "@/store/experiments.store";
 
 const uiStore = useProgressiveUIStore();
 const userStore = useUserStore();
@@ -223,12 +259,12 @@ document.addEventListener("wheel", () => {
 });
 */
 const route = useRoute();
-
+const experimentsStore = useExperimentsStore();
 const display = useDisplay();
 
 const classString = computed(() => {
   return {
-    "header-patch-progressive": !display.mobile.value
+    "header-patch-progressive": !display.mobile.value && userStore.user
   } as { [key: string]: boolean };
 });
 
@@ -243,6 +279,7 @@ let loadingSpinnerTimeout = undefined;
 watch(
   () => appStore.componentLoading,
   () => {
+    if (!experimentsStore.experiments.DISABLE_ANIMATIONS) return;
     loadingSpinnerTimeout && clearTimeout(loadingSpinnerTimeout);
     if (appStore.componentLoading) {
       loadingSpinnerTimeout = setTimeout(showLoadingSpinner, 50);

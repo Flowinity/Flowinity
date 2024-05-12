@@ -172,6 +172,7 @@ export default defineComponent({
     }
   },
   async mounted() {
+    this.$ui.currentNavItem = null
     this.sloganInterval = setInterval(() => {
       this.slogan = this.slogans[(this.slogans.indexOf(this.slogan) + 1) % this.slogans.length];
     }, 2500);

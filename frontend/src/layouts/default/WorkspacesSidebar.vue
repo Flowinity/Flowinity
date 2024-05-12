@@ -25,17 +25,6 @@
       "
     />
     <MemberSidebarList v-else />
-    <template v-if="$workspaces.versionHistory" #append>
-      <v-btn
-        width="228px"
-        class="my-4 mx-4"
-        variant="outlined"
-        color="green"
-        @click="restoreVersion"
-      >
-        Restore Version
-      </v-btn>
-    </template>
   </CoreSidebar>
 </template>
 
@@ -78,15 +67,6 @@ export default defineComponent({
       ) {
         return "sidebar-patch";
       } else return null;
-    }
-  },
-  methods: {
-    async restoreVersion() {
-      await this.axios.patch(
-        `/notes/${this.$route.params.id}/restore/${this.$route.params.version}`
-      );
-      this.$router.push(`/workspaces/notes/${this.$route.params.id}`);
-      this.$workspaces.versionHistory = false;
     }
   }
 });

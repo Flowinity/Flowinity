@@ -5,7 +5,7 @@
  */
 
 import { defineStore } from "pinia";
-import { computed, markRaw, Raw, Ref, ref, watch } from "vue";
+import { computed, h, markRaw, Raw, Ref, ref, watch } from "vue";
 import {
   RiGroupFill,
   RiGroupLine,
@@ -70,6 +70,8 @@ import { useCollectionsStore } from "@/store/collections.store";
 import { useChatStore } from "@/store/chat.store";
 import { useExperimentsStore } from "@/store/experiments.store";
 import { useAppStore } from "@/store/app.store";
+import UserAvatar from "@/components/Users/UserAvatar.vue";
+import { PartialUserBase, PartialUserFriend, User } from "@/gql/graphql";
 
 export enum RailMode {
   HOME,
@@ -99,6 +101,7 @@ export interface NavigationOption {
   allowOverride?: boolean;
   rail?: NavigationOption;
   click?: () => void;
+  experimentsRequired?: string[];
 }
 
 export const useProgressiveUIStore = defineStore("progressive", () => {
@@ -184,7 +187,14 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         }
       ],
       [RailMode.CHAT]: [],
-      [RailMode.WORKSPACES]: [],
+      [RailMode.WORKSPACES]: [
+        {
+          icon: markRaw(RiFileTextLine),
+          name: "Recent",
+          path: "/workspaces",
+          selectedIcon: markRaw(RiFileTextFill)
+        }
+      ],
       [RailMode.SETTINGS]: [
         {
           icon: markRaw(RiUserLine),
@@ -308,28 +318,32 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         name: "Meet",
         id: RailMode.MEET,
         path: "/meet",
-        selectedIcon: markRaw(RiVideoChatFill)
+        selectedIcon: markRaw(RiVideoChatFill),
+        experimentsRequired: ["MEET"]
       },
       {
         icon: markRaw(RiMailLine),
         name: "Mail",
         id: RailMode.MAIL,
         path: "/mail",
-        selectedIcon: markRaw(RiMailFill)
+        selectedIcon: markRaw(RiMailFill),
+        experimentsRequired: ["WEBMAIL"]
       },
       {
         icon: markRaw(RiAuctionLine),
         name: "Admin",
         id: RailMode.ADMIN,
         path: "/admin",
-        selectedIcon: markRaw(RiAuctionFill)
+        selectedIcon: markRaw(RiAuctionFill),
+        experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
       },
       {
         icon: markRaw(RiBug2Line),
         name: "Debug",
         id: RailMode.DEBUG,
         path: "/debug",
-        selectedIcon: markRaw(RiBug2Fill)
+        selectedIcon: markRaw(RiBug2Fill),
+        experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
       },
       {
         icon: markRaw(RiSettings5Line),
@@ -373,12 +387,25 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     if (!experiments.experiments.PROGRESSIVE_UI) return;
     shifting.value = e.shiftKey;
 
+    const eligible = navigation.value.railOptions.filter((rail) => {
+      if (rail.fake) return false;
+      if (!rail.experimentsRequired) return true;
+      return rail.experimentsRequired.every(
+        (exp) => experiments.experiments[exp]
+      );
+    });
+
+    // Sort eligible rails by id in ascending order
+    eligible.sort((a, b) => a.id - b.id);
+    const currentIndex = eligible.findIndex(
+      (rail) => rail.id === navigation.value.mode
+    );
     if (e.ctrlKey && e.shiftKey && e.key === "ArrowUp") {
       if (navigation.value.mode <= 0) return;
-      navigation.value.mode--;
+      navigation.value.mode = eligible[currentIndex - 1].id;
     } else if (e.ctrlKey && e.shiftKey && e.key === "ArrowDown") {
-      if (navigation.value.mode > RailMode.SETTINGS - 1) return;
-      navigation.value.mode++;
+      if (!eligible[currentIndex + 1]) return;
+      navigation.value.mode = eligible[currentIndex + 1].id;
     }
   });
 
@@ -412,6 +439,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
   );
 
   const currentRail = computed(() => {
+    if (!navigation.value.mode) return navigation.value.railOptions[0];
     return navigation.value.railOptions.find(
       (rail) => rail.id === navigation.value.mode
     );
@@ -469,6 +497,26 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     scrollPosition.value = Math.ceil(window.scrollY);
   });
 
+  function userRail(
+    user: User | PartialUserBase | PartialUserFriend | number | string
+  ) {
+    if (typeof user === "number") {
+      const userStore = useUserStore();
+      user = userStore.users[user];
+    } else if (typeof user === "string") {
+      const userStore = useUserStore();
+      user = userStore.tracked.find((u) => u.username === user);
+    }
+    return {
+      name: user?.username,
+      icon: h(UserAvatar, {
+        user,
+        size: 30
+      }),
+      path: `/u/${user?.username}`
+    };
+  }
+
   return {
     drawer,
     navigation,
@@ -480,6 +528,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     currentMiscNavOptions,
     currentRail,
     shifting,
-    lookupNav
+    lookupNav,
+    userRail
   };
 });

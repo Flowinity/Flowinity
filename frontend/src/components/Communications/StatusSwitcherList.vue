@@ -64,6 +64,7 @@
         disabled.
       </v-list-item-subtitle>
     </v-list-item>
+    <slot />
   </v-list>
 </template>
 

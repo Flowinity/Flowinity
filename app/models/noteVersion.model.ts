@@ -3,6 +3,7 @@ import { User } from "@app/models/user.model"
 import { Note } from "@app/models/note.model"
 import { Field, Int, ObjectType } from "type-graphql"
 import { WorkspaceNote } from "@app/classes/graphql/workspaces/note"
+import { DateType } from "@app/classes/graphql/serializers/date"
 
 @ObjectType()
 @Table
@@ -34,6 +35,14 @@ export class NoteVersion extends Model {
     allowNull: false
   })
   data: WorkspaceNote
+
+  @Field(() => DateType)
+  @Column
+  createdAt: Date
+
+  @Field(() => DateType)
+  @Column
+  updatedAt: Date
 
   @BelongsTo(() => Note, "noteId")
   note: Note

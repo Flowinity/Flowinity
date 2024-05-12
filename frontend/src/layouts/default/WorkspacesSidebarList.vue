@@ -207,16 +207,19 @@
         cursor: pointer;
         font-size: 12px;
       "
-      class="mb-n4 unselectable"
+      class="my-n4 unselectable"
       @click="$app.workspaceDrawer = false"
     >
       <v-icon size="20">mdi-close</v-icon>
       Close Workspaces
     </v-card-text>
     <v-card-text
-      v-else-if="!$app.rail && $workspaces.versionHistory"
+      v-else-if="
+        (!$app.rail || $experiments.experiments.PROGRESSIVE_UI) &&
+        $workspaces.versionHistory
+      "
       style="color: #0190ea; cursor: pointer; font-size: 12px"
-      class="mb-n4 unselectable"
+      class="my-n4 unselectable"
       @click="
         $workspaces.versionHistory = false;
         $router.push(`/workspaces/notes/${$route.params.id}`);
@@ -228,7 +231,7 @@
     <v-card-text
       v-if="$experiments.experiments.ACCOUNT_DEV_ELIGIBLE"
       style="color: rgb(var(--v-theme-error)); cursor: pointer; font-size: 12px"
-      class="my-n3 unselectable"
+      class="my-n4 unselectable"
       @click="
         $experiments.setExperiment(
           'NOTE_COLLAB',
@@ -350,6 +353,15 @@
     </v-list>
     <template v-else>
       <v-card-title>Version history</v-card-title>
+      <v-btn
+        block
+        variant="outlined"
+        color="green"
+        @click="restoreVersion()"
+        v-if="$route.params.version"
+      >
+        Restore Version
+      </v-btn>
       <v-list>
         <v-list-item
           v-for="version in versions"
@@ -485,6 +497,13 @@ export default defineComponent({
     }
   },
   methods: {
+    async restoreVersion() {
+      await this.axios.patch(
+        `/notes/${this.$route.params.id}/restore/${this.$route.params.version}`
+      );
+      this.$router.push(`/workspaces/notes/${this.$route.params.id}`);
+      this.$workspaces.versionHistory = false;
+    },
     async doImportDoc() {
       try {
         this.importDoc.loading = true;

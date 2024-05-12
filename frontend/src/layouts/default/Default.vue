@@ -117,9 +117,12 @@
       <v-progress-circular indeterminate size="64" />
     </v-overlay>
     <!-- must be false because if it's undefined, the appbar will render after the state is loaded -->
-    <unauth-bar
+    <template
       v-if="$route.name !== 'Slideshow' && $app.site.finishedSetup !== false"
-    />
+    >
+      <unauth-bar v-if="!$experiments.experiments.PROGRESSIVE_UI" />
+      <progressive-app-bar v-else />
+    </template>
     <default-view />
   </v-app>
 </template>

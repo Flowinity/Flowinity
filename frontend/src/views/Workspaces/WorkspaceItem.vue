@@ -39,7 +39,12 @@
     </v-toolbar>
     <WorkspaceHome v-if="fail" />
     <template v-if="collaborators.length">
-      <teleport v-if="!$vuetify.display.mobile" to="#header-actions">
+      <teleport
+        v-if="
+          !$vuetify.display.mobile && !$experiments.experiments.PROGRESSIVE_UI
+        "
+        to="#header-actions"
+      >
         <div style="display: flex; gap: 4px">
           <UserAvatar
             v-for="collab in collaborators"
@@ -51,6 +56,48 @@
             :typing="collab.typing"
           />
         </div>
+      </teleport>
+    </template>
+    <template v-if="!fail && ready && $experiments.experiments.PROGRESSIVE_UI">
+      <teleport to="#appbar-options">
+        <accessible-transition mode="out-in" name="slide-up" appear>
+          <span class="flex gap-2 items-center">
+            <small v-if="$app.notesSaving && !$vuetify.display.mobile">
+              Saving...
+            </small>
+            <accessible-transition
+              v-for="collab in collaborators"
+              :key="collab.userId"
+              mode="out-in"
+              name="slide-up"
+              appear
+            >
+              <div class="flex p-2">
+                <UserAvatar
+                  :user="$user.users[collab.userId]"
+                  :status="true"
+                  size="32"
+                  :dot-status="true"
+                  :typing="collab.typing"
+                />
+              </div>
+            </accessible-transition>
+            <v-btn
+              size="small"
+              icon
+              :active="$workspaces.versionHistory"
+              @click="
+                $workspaces.versionHistory = !$workspaces.versionHistory;
+                $ui.navigation.mode = RailMode.WORKSPACES;
+              "
+            >
+              <RiHistoryLine />
+            </v-btn>
+            <v-btn size="small" icon @click="$workspaces.share.dialog = true">
+              <RiShareForwardFill />
+            </v-btn>
+          </span>
+        </accessible-transition>
       </teleport>
     </template>
   </div>
@@ -97,7 +144,7 @@ import AlignmentTuneTool from "editorjs-text-alignment-blocktune";
 import WorkspaceHome from "@/views/Workspaces/WorkspaceHome.vue";
 //@ts-ignore
 import Undo from "editorjs-undo";
-import { defineComponent } from "vue";
+import { defineComponent, h, markRaw } from "vue";
 //@ts-ignore
 import SimpleImage from "@troplo/tpu-simple-image";
 import WorkspaceShareDialog from "@/components/Workspaces/Dialogs/Share.vue";
@@ -117,6 +164,20 @@ import {
 } from "@/graphql/workspaces/collaboration";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import functions from "@/plugins/functions";
+import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
+import {
+  RiCollageFill,
+  RiCollageLine,
+  RiFileTextFill,
+  RiFileTextLine,
+  RiHistoryLine,
+  RiShare2Line,
+  RiShareForwardFill,
+  RiShareLine,
+  RiStickyNoteFill,
+  RiStickyNoteLine
+} from "@remixicon/vue";
+import { RailMode } from "@/store/progressive.store";
 
 interface NoteCollabPositionWithTyping extends NoteCollabPosition {
   typing: boolean;
@@ -124,7 +185,16 @@ interface NoteCollabPositionWithTyping extends NoteCollabPosition {
 }
 
 export default defineComponent({
-  components: { UserAvatar, WorkspaceShareDialog, WorkspaceHome },
+  components: {
+    RiHistoryLine,
+    RiShareForwardFill,
+    RiShareLine,
+    RiShare2Line,
+    AccessibleTransition,
+    UserAvatar,
+    WorkspaceShareDialog,
+    WorkspaceHome
+  },
   props: ["id"],
   data: function () {
     return {
@@ -142,10 +212,14 @@ export default defineComponent({
       position: {
         blockIndex: 0,
         position: 0
-      }
+      },
+      ready: false
     };
   },
   computed: {
+    RailMode() {
+      return RailMode;
+    },
     speakingTime() {
       const avgWordsPerMinute = 150;
       const minutes = Math.floor(this.words / avgWordsPerMinute);
@@ -517,7 +591,7 @@ export default defineComponent({
       let init: EditorConfig = {
         holder: "tpu-editor",
         autofocus: !readOnly,
-        readOnly: false,
+        readOnly,
         //@ts-ignore
         logLevel: "ERROR",
         /**
@@ -735,6 +809,7 @@ export default defineComponent({
       });
     },
     async onMounted() {
+      this.$ui.navigation.mode = RailMode.WORKSPACES;
       this.destroyCollabCursors();
       try {
         if (window.editor) {
@@ -745,13 +820,39 @@ export default defineComponent({
           this.id || this.$route.params.id
         );
         this.$app.title = res.name;
+        this.ready = true;
+        console.log(res);
+        const note = this.$route.params.version
+          ? res.versions?.find((v) => v.id === this.$route.params.version)?.data
+          : res.data;
+        const workspaceRail = {
+          name: this.$workspaces.items.find((i) =>
+            i.folders.find((f) => f.id === res.workspaceFolderId)
+          )?.name,
+          icon: markRaw(RiFileTextLine),
+          path: "/workspaces"
+        };
+        let versionItem = null;
+        if (this.$route.params.version) {
+          versionItem = {
+            name: `${this.$date(res.versions?.find((v) => v.id === this.$route.params.version).createdAt).fromNow()}`,
+            icon: markRaw(RiHistoryLine),
+            path: this.$route.path
+          };
+        }
+        const item = {
+          name: res.name,
+          icon: markRaw(RiStickyNoteLine),
+          path: `/workspaces/notes/${res.id}`
+        };
+        this.$ui.currentNavItem = {
+          item: versionItem ? versionItem : item,
+          rail: versionItem ? [workspaceRail, item] : [workspaceRail]
+        };
         if (!this.id) {
           this.$app.lastNote = parseInt(this.$route.params.id);
           localStorage.setItem("lastNote", this.$route.params.id);
         }
-        const note = this.$route.params.version
-          ? res.versions?.find((v) => v.id === this.$route.params.version)?.data
-          : res.data;
         try {
           this.editor(
             note,

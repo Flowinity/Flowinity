@@ -145,6 +145,7 @@ export default defineComponent({
     };
   },
   mounted() {
+    this.$ui.currentNavItem = null;
     this.$app.title = "Register";
     this.inviteKey = this.$route.params.key as string;
     this.getInviteKey();

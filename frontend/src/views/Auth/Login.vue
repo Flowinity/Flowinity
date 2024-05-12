@@ -143,6 +143,7 @@ export default defineComponent({
     };
   },
   mounted() {
+    this.$ui.currentNavItem = null;
     this.$app.title = "Login";
   },
   methods: {

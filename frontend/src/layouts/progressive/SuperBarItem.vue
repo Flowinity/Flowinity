@@ -9,7 +9,7 @@ const props = defineProps({
 <template>
   <div
     v-ripple
-    class="rounded-full hover:bg-outline-dark cursor-pointer p-2 relative flex items-center justify-center"
+    class="rounded-full hover:bg-outline-dark cursor-pointer p-2 relative flex items-center justify-center super-bar-item"
     :class="{
       'bg-outline-dark': props.selected || props.highlighted
     }"

@@ -28,6 +28,7 @@ export const UserLightCollectionsQuery = gql`
           createdAt
         }
         createdAt
+        shareLink
       }
     }
   }

@@ -2720,6 +2720,11 @@
   resolved "https://npm.troplo.com/@troplo/vite-version/-/vite-version-1.0.3.tgz#354f1ef8d42d252d98c6d9813a9936d46bef343c"
   integrity sha512-/6Ocju/FR3MAdYbwPm5tjhGvDddPPOakcbP47EdMW3PZrFfDczZ7/z45c7OjbAUIReFXKv63Z5aBSVY5xmAQ4w==
 
+"@types/animejs@^3.1.12":
+  version "3.1.12"
+  resolved "https://registry.yarnpkg.com/@types/animejs/-/animejs-3.1.12.tgz#78fcc3df03ac07cbaef50fd37512e5031826dc42"
+  integrity sha512-fpdH+ZtlO0kqjTOqRaBdsEmvpRNOayI8k4EVkEtitL5l6wducDOXk0rgQgfZqWf/ZX9DzXrHf257S5i9xTcISQ==
+
 "@types/codeflask@^1.4.3":
   version "1.4.6"
   resolved "https://registry.yarnpkg.com/@types/codeflask/-/codeflask-1.4.6.tgz#ded56b0171aa13f46e0d1e2a3d4377e491860be3"
@@ -3287,6 +3292,11 @@ ajv@^8.6.0:
     json-schema-traverse "^1.0.0"
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
+
+animejs@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/animejs/-/animejs-3.2.2.tgz#59be98c58834339d5847f4a70ddba74ac75b6afc"
+  integrity sha512-Ao95qWLpDPXXM+WrmwcKbl6uNlC5tjnowlaRYtuVDHHoygjtIPfDUoK9NthrlZsQSKjZXlmji2TrBUAVbiH0LQ==
 
 ansi-escapes@^4.2.1, ansi-escapes@^4.3.0:
   version "4.3.2"

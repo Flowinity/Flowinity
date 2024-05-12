@@ -1,8 +1,8 @@
 <template>
   <div>
     <CreateCollectionDialog v-model="createCollection" />
-    <overline position="start" style="margin-right: -8px; margin-left: 0.25rem">
-      {{ $t("sidebar.collections.title") }}
+    <overline position="start" style="margin-right: -8px; margin-left: 0rem">
+      {{ $t("core.sidebar.collections") }}
       <template #end>
         <v-btn
           icon
@@ -37,40 +37,40 @@
         <v-card :padding="false" class="py-1">
           <v-list>
             <overline position="start">
-              {{ $t("sidebar.collections.sort.sort") }}
+              {{ $t("collections.progressive.sort") }}
             </overline>
             <v-list-item
               :selected="sortOption === SortOption.UPDATED"
               @click="sortOption = SortOption.UPDATED"
             >
-              {{ $t("sidebar.collections.sort.updated") }}
+              {{ $t("collections.progressive.updated") }}
             </v-list-item>
             <v-list-item
               :selected="sortOption === SortOption.ALPHABETICAL"
               @click="sortOption = SortOption.ALPHABETICAL"
             >
-              {{ $t("sidebar.collections.sort.alphabetical") }}
+              {{ $t("collections.progressive.alphabetical") }}
             </v-list-item>
             <v-list-item
               :selected="sortOption === SortOption.CREATED_AT"
               @click="sortOption = SortOption.CREATED_AT"
             >
-              {{ $t("sidebar.collections.sort.createdAt") }}
+              {{ $t("collections.progressive.createdAt") }}
             </v-list-item>
             <v-list-item
               :selected="sortOption === SortOption.ITEM_COUNT"
               @click="sortOption = SortOption.ITEM_COUNT"
             >
-              {{ $t("sidebar.collections.sort.itemCount") }}
+              {{ $t("collections.progressive.itemCount") }}
             </v-list-item>
             <overline position="start">
-              {{ $t("sidebar.collections.sort.direction") }}
+              {{ $t("collections.progressive.direction") }}
             </overline>
             <v-list-item :selected="!desc" @click="desc = false">
-              {{ $t("sidebar.collections.sort.asc") }}
+              {{ $t("collections.progressive.asc") }}
             </v-list-item>
             <v-list-item :selected="desc" @click="desc = true">
-              {{ $t("sidebar.collections.sort.desc") }}
+              {{ $t("collections.progressive.desc") }}
             </v-list-item>
           </v-list>
         </v-card>
