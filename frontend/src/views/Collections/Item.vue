@@ -161,14 +161,12 @@
 import { defineComponent, h, markRaw } from "vue";
 import GalleryNavigation from "@/components/Gallery/GalleryNavigation.vue";
 import CollectionBanner from "@/components/Collections/CollectionBanner.vue";
-import { CollectionCache } from "@/types/collection";
 import GalleryCore from "@/components/Gallery/GalleryCore.vue";
 import Sharing from "@/components/Collections/Dialogs/Sharing.vue";
 import UserBanner from "@/components/Users/UserBanner.vue";
 import CollectionSettings from "@/components/Collections/Dialogs/Settings.vue";
 import Gallery from "@/views/Gallery.vue";
-import { GalleryType } from "@/gql/graphql";
-import { Collection } from "@/models/collection";
+import { GalleryType, Collection } from "@/gql/graphql";
 import { isNumeric } from "@/plugins/isNumeric";
 import PromoNoContent from "@/components/Core/PromoNoContent.vue";
 import {
@@ -209,7 +207,7 @@ export default defineComponent({
   },
   data() {
     return {
-      collection: undefined as CollectionCache | undefined,
+      collection: undefined as Collection | undefined,
       sharing: false,
       settings: false
     };

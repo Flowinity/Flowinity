@@ -264,8 +264,9 @@ const display = useDisplay();
 
 const classString = computed(() => {
   return {
-    "header-patch-progressive": !display.mobile.value && userStore.user
-  } as { [key: string]: boolean };
+    "header-patch-progressive":
+      (!display.mobile.value && userStore.user) || false
+  } as Record<string, boolean>;
 });
 
 const showLoading = ref(false);

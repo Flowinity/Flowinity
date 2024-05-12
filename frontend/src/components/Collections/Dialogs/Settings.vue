@@ -8,12 +8,7 @@
       {{ $t("collections.settings.title") }}
     </template>
     <v-card-text v-if="collection">
-      <v-text-field
-        v-model="collection.name"
-        :autofocus="true"
-        label="Name"
-        required
-      />
+      <v-text-field v-model="name" :autofocus="true" label="Name" required />
       <v-btn class="ml-n4" color="red" @click="removeBanner">
         {{ $t("collections.settings.removeBanner") }}
       </v-btn>
@@ -46,9 +41,9 @@
 </template>
 
 <script lang="ts">
-import { Collection } from "@/models/collection";
 import { defineComponent } from "vue";
 import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import { Collection } from "@/gql/graphql";
 
 export default defineComponent({
   components: { CoreDialog },
@@ -58,19 +53,21 @@ export default defineComponent({
       default: false
     },
     collection: {
-      type: Object as () => Collection
+      type: Object as () => Collection,
+      default: null
     }
   },
   emits: ["update:modelValue", "refreshCollection"],
   data() {
     return {
-      loading: false
+      loading: false,
+      name: ""
     };
   },
   methods: {
     async updateSettings() {
       await this.axios.patch(`/collections/${this.collection?.id}`, {
-        name: this.collection?.name
+        name: this.name
       });
       this.$toast.success("Collection settings updated.");
       this.$emit("update:modelValue", false);
@@ -99,6 +96,14 @@ export default defineComponent({
       link.download = `${this.collection?.name}.zip`;
       link.click();
       this.loading = false;
+    }
+  },
+  watch: {
+    collection: {
+      immediate: true,
+      handler(val) {
+        this.name = val?.name || "";
+      }
     }
   }
 });

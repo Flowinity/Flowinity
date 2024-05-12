@@ -227,8 +227,8 @@ export default defineComponent({
   data() {
     return {
       addToCollectionDialog: false,
-      collectivize: null as number | number[] | null,
-      selected: [] as number[]
+      collectivize: [] as Upload[],
+      selected: [] as Upload[]
     };
   },
   computed: {

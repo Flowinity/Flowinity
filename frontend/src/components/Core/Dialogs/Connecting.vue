@@ -1,5 +1,5 @@
 <template>
-  <v-dialog fullscreen v-model="model">
+  <v-dialog v-model="model" fullscreen>
     <v-card class="flex w-full h-full items-center justify-center">
       <FlowinityLogoAnimated
         :animate="true"
@@ -26,9 +26,9 @@
 import { onMounted, ref, watch } from "vue";
 import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
 
-const model = defineModel();
+const model = defineModel<boolean>();
 const status = ref(false);
-const timeout = ref(0);
+const timeout = ref<undefined | ReturnType<typeof setTimeout>>(undefined);
 
 onMounted(() => {
   clearTimeout(timeout.value);
