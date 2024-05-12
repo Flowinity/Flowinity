@@ -446,7 +446,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         (item) => item.path === "/autoCollect"
       );
       if (!item) return;
-      item.badge = !val ? undefined : val.toLcoaleString();
+      item.badge = !val ? undefined : val.toLocaleString();
 
       // update the gallery rail
       const galleryRail = navigation.value.railOptions.find(

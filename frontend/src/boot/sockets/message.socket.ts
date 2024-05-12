@@ -1,4 +1,4 @@
-import { useChatStore } from "@/stores/chat.store";
+/*import { useChatStore } from "@/stores/chat.store";
 import { useApolloClient, useSubscription } from "@vue/apollo-composable";
 import { NewMessageSubscription } from "@/graphql/chats/subscriptions/newMessage.graphql";
 import {
@@ -208,3 +208,4 @@ export default function setup() {
     }
   );
 }
+*/

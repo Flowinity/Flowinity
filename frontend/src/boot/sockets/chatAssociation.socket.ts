@@ -1,4 +1,4 @@
-import { useSubscription } from "@vue/apollo-composable";
+/*import { useSubscription } from "@vue/apollo-composable";
 import { ReadChatSubscription } from "@/graphql/chats/subscriptions/readChat.graphql";
 import { useChatStore } from "@/stores/chat.store";
 import { ReadReceiptSubscription } from "@/graphql/chats/subscriptions/readReceipt.graphql";
@@ -56,4 +56,4 @@ export default function setup() {
       );
     }
   );
-}
+}*/

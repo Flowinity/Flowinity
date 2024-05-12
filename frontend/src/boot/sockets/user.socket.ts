@@ -1,4 +1,4 @@
-import { useSubscription } from "@vue/apollo-composable";
+/*import { useSubscription } from "@vue/apollo-composable";
 import { UserStatusSubscription } from "@/graphql/user/subscriptions/status.graphql";
 import { useUserStore } from "@/stores/user.store";
 
@@ -14,3 +14,4 @@ export default function setup() {
     userStore.tracked[index].platforms = userStatus.platforms;
   });
 }
+*/
