@@ -101,6 +101,10 @@ export default defineComponent({
         {
           id: 12,
           name: "Users*"
+        },
+        {
+          id: 13,
+          name: "Sessions"
         }
       ]
     };

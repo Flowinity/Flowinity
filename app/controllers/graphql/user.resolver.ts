@@ -751,7 +751,8 @@ function createBaseResolver<T extends ClassType>(
                 "emailVerified",
                 "pulse",
                 "banned",
-                "dateOfBirth"
+                "dateOfBirth",
+                "planId"
               ]
             }
           ]
@@ -797,7 +798,8 @@ function createBaseResolver<T extends ClassType>(
               "emailVerified",
               "pulse",
               "banned",
-              "dateOfBirth"
+              "dateOfBirth",
+              "planId"
             ]
           }
         ]

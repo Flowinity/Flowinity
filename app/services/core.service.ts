@@ -770,10 +770,8 @@ export class CoreService {
       experiments.SURVEYS = true
       experiments.WEBMAIL = true
       experiments.EARLY_ACCESS = true
-    } else {
-      if (gold) {
-        experiments.EARLY_ACCESS = true
-      }
+    } else if (gold) {
+      experiments.EARLY_ACCESS = true
     }
 
     // only return experiments that are available for the major version

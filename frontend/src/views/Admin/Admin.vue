@@ -1,5 +1,5 @@
 <template>
-  <AdminSidebar />
+  <AdminSidebar v-if="!$experiments.experiments.PROGRESSIVE_UI" />
   <router-view />
 </template>
 

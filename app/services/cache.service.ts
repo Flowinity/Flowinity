@@ -444,7 +444,9 @@ export class CacheService {
           "storedStatus",
           "emailVerified",
           "pulse",
-          "banned"
+          "banned",
+          "dateOfBirth",
+          "planId"
         ]
       })
 

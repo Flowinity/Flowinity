@@ -189,7 +189,7 @@ export class CoreResolver {
       config.release === "dev" ||
         ctx.user?.administrator ||
         ctx.user?.moderator,
-      false,
+      ctx.user.planId === 6,
       ctx.client.majorVersion
     )
   }

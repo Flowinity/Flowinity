@@ -248,6 +248,9 @@ export class AdminService {
       case CacheType.users:
         await cacheService.generateUserCache()
         return true
+      case CacheType.sessions:
+        await redis.del("session:*")
+        return true
       default:
         return false
     }
