@@ -10,7 +10,7 @@
     </template>
     <template v-if="!component">
       <v-container>
-        <v-switch
+        <tpu-switch
           v-model="$user.user.profileLayout.config.showStatsSidebar"
           label="Stats sidebar"
           @change="
@@ -49,7 +49,7 @@
             />
           </template>
           <template v-else-if="prop.type === 'boolean'">
-            <v-switch
+            <tpu-switch
               :label="prop.meta?.name || prop.key"
               :model-value="component.props[prop.key]"
               @update:model-value="

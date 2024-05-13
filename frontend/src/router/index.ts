@@ -377,6 +377,11 @@ const routes = [
         name: "Download Redirect"
       },
       {
+        path: "/e/:experiment/:value",
+        name: "Experiment Set",
+        component: () => import("@/views/Admin/SetExperimentRedirect.vue")
+      },
+      {
         path: "/:id",
         name: "Attachment Item",
         component: () => import("@/views/Item.vue")
@@ -420,7 +425,8 @@ router.beforeEach(async (to, from) => {
       "OAuth",
       "Join Chat",
       "Download Redirect",
-      "Downloads"
+      "Downloads",
+      "Experiment Set"
     ].includes(to.name as string)
   ) {
     console.log("Redirecting to login");

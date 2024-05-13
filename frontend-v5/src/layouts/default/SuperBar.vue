@@ -16,7 +16,6 @@
             "
             class="cursor-pointer"
             draggable="false"
-            v-tooltip.right="'Flowinity'"
             style="width: 46.55px; height: 46.55px"
           />
           <super-bar-item

@@ -88,7 +88,7 @@
               :active="$workspaces.versionHistory"
               @click="
                 $workspaces.versionHistory = !$workspaces.versionHistory;
-                $ui.navigation.mode = RailMode.WORKSPACES;
+                $ui.navigationMode = RailMode.WORKSPACES;
               "
             >
               <RiHistoryLine style="width: 20px" />
@@ -809,7 +809,7 @@ export default defineComponent({
       });
     },
     async onMounted() {
-      this.$ui.navigation.mode = RailMode.WORKSPACES;
+      this.$ui.navigationMode = RailMode.WORKSPACES;
       this.destroyCollabCursors();
       try {
         if (window.editor) {

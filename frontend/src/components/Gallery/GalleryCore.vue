@@ -214,12 +214,14 @@
             :emit="$emit"
           >
             <v-btn
-              v-tooltip.bottom="$t('gallery.nav.randomAttachment')"
               icon
               size="small"
               :loading="randomAttachmentLoading"
               @click="$emit('randomAttachment')"
             >
+              <v-tooltip activator="parent" location="bottom">
+                {{ $t("gallery.randomAttachment") }}
+              </v-tooltip>
               <v-icon style="width: 20px">mdi-dice</v-icon>
             </v-btn>
             <v-btn
@@ -508,7 +510,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.$ui.navigation.mode = RailMode.GALLERY;
+    this.$ui.navigationMode = RailMode.GALLERY;
   }
 });
 </script>

@@ -65,8 +65,10 @@
             icon
             :ripple="false"
             color="yellow"
-            v-tooltip.top="$t('collections.sharing.owner')"
           >
+            <v-tooltip activator="parent" location="top">
+              {{ $t("chats.roles.owner") }}
+            </v-tooltip>
             <RiVipCrownFill style="width: 20px" />
           </v-btn>
         </div>

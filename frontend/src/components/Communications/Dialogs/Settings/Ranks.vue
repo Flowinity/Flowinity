@@ -153,7 +153,7 @@
                 {{ item.description }}
               </v-list-item-subtitle>
               <template #append>
-                <v-switch
+                <tpu-switch
                   density="compact"
                   :model-value="hasPermission(rank.permissionsMap, item.id)"
                   @update:model-value="updateRank(rank, item.id, $event)"

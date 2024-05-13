@@ -175,7 +175,7 @@
         </v-chip>
       </v-card-title>
       <v-card-title>
-        <v-switch
+        <tpu-switch
           v-model="$app.fluidGradient"
           :label="$t('themeEditor.attributes.fluidGradient')"
           @update:model-value="triggerSave"
@@ -197,24 +197,23 @@
           thumb-label
           @update:model-value="triggerSave"
         />
-        <v-switch
+        <tpu-switch
           v-model="showOnProfile"
           :label="$t('themeEditor.attributes.showOnProfile')"
           @update:model-value="triggerSave"
         />
-        <v-switch
+        <tpu-switch
           v-model="deviceSync"
-          class="mt-n6"
           :label="$t('themeEditor.attributes.deviceSync')"
           @update:model-value="triggerSave"
         />
       </v-card-title>
       <v-btn
-        class="mt-n8"
         @click="
           editor = !editor;
           $emit('editor', editor);
         "
+        class="mb-2"
       >
         {{
           editor

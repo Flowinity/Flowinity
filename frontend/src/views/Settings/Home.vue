@@ -189,7 +189,7 @@
       item-value="value"
       @update:model-value="$emit('update')"
     />
-    <v-switch
+    <tpu-switch
       :model-value="!!$experiments.experiments.PRIDE"
       :label="$t('settings.home.preferences.pride')"
       class="px-6"
@@ -200,7 +200,7 @@
       :items="collections"
       :label="$t('settings.home.preferences.baseCollections')"
       chips
-      class="px-6"
+      class="px-6 mt-6"
       closable-chips
       color="primary"
       item-title="name"
@@ -257,7 +257,7 @@
         <v-chip size="x-small">{{ $t("generic.new") }}</v-chip>
       </span>
     </v-btn>
-    <v-switch
+    <tpu-switch
       v-model="disableProfileColors"
       :label="$t('settings.home.preferences.disableProfileColors')"
       class="px-6"

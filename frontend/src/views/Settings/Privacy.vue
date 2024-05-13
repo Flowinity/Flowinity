@@ -4,27 +4,24 @@
       {{ $t("settings.home.privacy.title") }}
     </v-card-title>
     <v-card-text>
-      <v-switch
+      <tpu-switch
         v-model="$user.user.pulse"
-        class="mb-n7"
         :label="$t('settings.home.privacy.pulse')"
         @update:model-value="$emit('update')"
       />
       <small>
         {{ $t("settings.home.privacy.pulseDesc") }}
       </small>
-      <v-switch
+      <tpu-switch
         v-model="$user.user.discordPrecache"
-        class="mb-n7"
         :label="$t('settings.home.privacy.discordPrecaching')"
         @update:model-value="$emit('update')"
       />
       <small>
         {{ $t("settings.home.privacy.discordPrecachingDesc") }}
       </small>
-      <v-switch
+      <tpu-switch
         v-model="$user.user.publicProfile"
-        class="mb-n7"
         :label="$t('settings.home.privacy.publicProfile')"
         @update:model-value="$emit('update')"
       />
@@ -41,10 +38,9 @@
       <small>
         {{ $t("settings.home.preferences.insightsDesc") }}
       </small>
-      <v-switch
+      <tpu-switch
         v-if="$app.site.release === 'dev'"
         v-model="$app.demo"
-        class="mb-n7"
         :label="$t('settings.home.privacy.demoMode')"
       />
       <v-select

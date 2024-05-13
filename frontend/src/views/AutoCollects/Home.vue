@@ -33,8 +33,10 @@
       }}
     </small>
   </v-container>
-
-  <teleport v-if="$experiments.experiments.PROGRESSIVE_UI" to="#appbar-options">
+  <teleport
+    v-if="$experiments.experiments.PROGRESSIVE_UI && $ui.ready"
+    to="#appbar-options"
+  >
     <accessible-transition mode="out-in" name="slide-up" appear>
       <v-btn icon size="small" to="/autoCollect/configure">
         <v-icon>mdi-cog</v-icon>

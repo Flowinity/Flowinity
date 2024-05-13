@@ -144,7 +144,7 @@ export default defineComponent({
       this.$route.path !== "/settings/slideshows" &&
       this.$route.path !== "/settings/about"
     )
-      this.$ui.navigation.mode = RailMode.SETTINGS;
+      this.$ui.navigationMode = RailMode.SETTINGS;
   }
 });
 </script>

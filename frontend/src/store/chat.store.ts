@@ -422,6 +422,7 @@ export const useChatStore = defineStore("chat", {
       const url = new URL(link);
       const domain = url.hostname;
       const core = useAppStore();
+      console.log(domain);
       if (
         (core.site.hostnames.includes(domain) ||
           core.site.hostname === domain) &&

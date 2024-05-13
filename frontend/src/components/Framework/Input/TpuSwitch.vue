@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center min-w"
+    class="flex items-center my-2"
     :class="{
       'opacity-60': disabled,
       'cursor-pointer': !disabled,
@@ -13,11 +13,11 @@
       tabindex="0"
       class="flex rounded-full items-center transition duration-200 ease-in-out border-2"
       :class="{
-        'transition-background-color duration-300 ease-in-out bg-blue dark:border-blue':
+        'transition-background-color duration-300 ease-in-out border-blue':
           value,
-        'transition-background-color duration-300 ease-in-out bg-gray dark:bg-transparent dark:border-gray':
+        'transition-background-color duration-300 ease-in-out bg-gray bg-transparent border-gray':
           !value,
-        'bg-opacity-10 border-opacity-10': variant === 'tonal'
+        'bg-blue/10': variant === 'tonal'
       }"
       style="
         min-width: 56px;
@@ -36,7 +36,7 @@
         :aria-disabled="disabled"
       />
       <div
-        class="w-6 h-6 flex justify-center rounded-full shadow-md transform transition duration-200 ease-in-out text-card-dark fill-card-dark"
+        class="w-6 h-6 flex justify-center rounded-full shadow-md transform transition duration-200 ease-in-out text-black fill-card-dark"
         :class="{
           'translate-x-6': value,
           'translate-x-1': !value,
@@ -50,7 +50,7 @@
       </div>
     </div>
     <div
-      class="block select-none ml-3 text-sm font-medium dark:text-medium-emphasis-dark"
+      class="select-none ml-3 text-sm font-medium text-medium-emphasis-dark whitespace-pre-wrap"
     >
       {{ label }}
     </div>

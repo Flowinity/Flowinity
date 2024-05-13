@@ -34,7 +34,7 @@
                 v-model="slideshow.speed"
                 :label="$t('settings.slideshows.speed')"
               />
-              <v-switch
+              <tpu-switch
                 v-model="slideshow.includeGallery"
                 :label="$t('settings.slideshows.includeGallery')"
                 inset

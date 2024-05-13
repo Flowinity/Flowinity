@@ -474,7 +474,8 @@
       "title": "Collection Sharing",
       "add": "Add friend to collection",
       "pending": "(pending)",
-      "users": "Users"
+      "users": "Users",
+      "copy": "Copy ShareLink"
     },
     "transfer": {
       "title": "Transfer Collection Ownership",

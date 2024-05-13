@@ -21,7 +21,7 @@
         })
       "
     />
-    <v-switch
+    <tpu-switch
       v-else-if="typeof value === 'boolean'"
       :model-value="value"
       :label="name"

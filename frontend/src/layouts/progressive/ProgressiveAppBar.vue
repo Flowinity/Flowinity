@@ -28,11 +28,10 @@
         alt="Flowinity Logo"
         @click="
           $router.push('/');
-          uiStore.navigation.mode = RailMode.HOME;
+          uiStore.navigationMode = RailMode.HOME;
         "
         class="cursor-pointer"
         draggable="false"
-        v-tooltip.right="'Flowinity'"
         style="height: 40px; z-index: 9999"
       />
     </div>
@@ -74,7 +73,7 @@
                 class="cursor-pointer flex items-center"
                 @click="
                   !rail?.fake && rail?.id
-                    ? (uiStore.navigation.mode = rail?.id)
+                    ? (uiStore.navigationMode = rail?.id)
                     : ''
                 "
               >
@@ -156,13 +155,16 @@
             class="flex gap-2 mr-2"
             :class="{ 'items-center': !expanded, 'items-end': expanded }"
           >
-            <v-progress-circular
-              v-tooltip.bottom="
+            <v-tooltip activator="parent" location="bottom">
+              Uploading
+              {{
                 appStore.dialogs.upload.files
                   .map((file: File) => file.name)
-                  .join(', ')
-              "
-              :percentage="appStore.dialogs.upload.percentage"
+                  .join(", ")
+              }}
+            </v-tooltip>
+            <v-progress-circular
+              :model-value="appStore.dialogs.upload.percentage"
               size="35"
             >
               <p style="font-size: 9px">

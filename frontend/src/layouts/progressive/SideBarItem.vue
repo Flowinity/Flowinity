@@ -47,7 +47,7 @@ const selected = computed(() => {
           !selected
             ? item?.click
               ? item?.click()
-              : router.push(item?.path || to)
+              : router.push(item?.path || to || '')
             : () => {};
           props.closeOnClick && $vuetify.display.mobile
             ? (appStore.mainDrawer = false)
@@ -67,10 +67,11 @@ const selected = computed(() => {
         "
       >
         <slot />
-        <template v-if="item?.selectedIcon && item.icon">
+        <template v-if="item?.selectedIcon || item?.icon">
           <component
             :is="selected && item.selectedIcon ? item.selectedIcon : item.icon"
             class="w-7 ml-2"
+            style="min-width: 24px"
           />
         </template>
         <template v-else>

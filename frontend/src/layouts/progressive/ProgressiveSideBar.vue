@@ -65,18 +65,8 @@
             <SidebarDebug v-show="uiStore.currentRail?.id === RailMode.DEBUG" />
           </accessible-transition>
           <accessible-transition name="slide-fade" mode="out-in">
-            <MailSidebarList
-              v-show="uiStore.currentRail?.id === RailMode.MAIL"
-            />
-          </accessible-transition>
-          <accessible-transition name="slide-fade" mode="out-in">
             <WorkspacesSidebarList
               v-show="uiStore.currentRail?.id === RailMode.WORKSPACES"
-            />
-          </accessible-transition>
-          <accessible-transition name="slide-fade" mode="out-in">
-            <AdminSidebarList
-              v-show="uiStore.currentRail?.id === RailMode.ADMIN"
             />
           </accessible-transition>
         </div>

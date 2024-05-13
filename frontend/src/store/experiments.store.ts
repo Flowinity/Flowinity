@@ -46,30 +46,31 @@ export const useExperimentsStore = defineStore("experiments", () => {
   );
 
   async function init() {
-    const localExperiments = localStorage.getItem("experimentsStore");
+    let localExperiments = localStorage.getItem("experimentsStore");
     if (localExperiments) {
       try {
-        this.experiments = JSON.parse(localExperiments);
-        /*if (this.experiments.API_VERSION) {
-          axios.defaults.baseURL = import.meta.env.CORDOVA
-            ? `https://images.flowinity.com/api/${this.experiments.API_VERSION}`
-            : `/api/v${this.experiments.API_VERSION}`;
-        }*/
+        localExperiments = JSON.parse(localExperiments);
+        for (const experiment of localExperiments) {
+          experiments.value[experiment.id] = experiment.value;
+        }
+        if (experiments.value.PRIDE) {
+          document.body.classList.add("rainbow");
+        }
       } catch {
         //
       }
     }
     const {
-      data: { getExperiments }
+      data: { experiments: getExperiments }
     } = await useApolloClient().client.query({
       query: ExperimentsQuery
     });
     for (const experiment of getExperiments) {
+      console.log(experiment);
       experiments.value[experiment.id] = experiment.value;
       if (!experiments.value["meta"]) experiments.value.meta = {};
       experiments.value["meta"][experiment.id] = experiment;
     }
-    experimentsInherit.value = experiments.value;
     localStorage.setItem("experimentsStore", JSON.stringify(experiments.value));
   }
 

@@ -22,12 +22,12 @@
             </template>
             <template #text>
               <v-card-text>
-                <v-switch
+                <tpu-switch
                   v-model="rule.enabled"
                   inset
                   :label="$t('generic.enabled')"
                 />
-                <v-switch
+                <tpu-switch
                   v-model="rule.requireApproval"
                   inset
                   :label="$t('autoCollects.configure.requireApproval')"

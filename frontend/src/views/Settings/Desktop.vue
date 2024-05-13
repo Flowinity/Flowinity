@@ -3,33 +3,32 @@
     {{ $t("settings.desktop.settings") }}
   </v-card-title>
   <div class="mx-4">
-    <v-switch
+    <tpu-switch
       v-model="settings.startup"
       :label="$t('settings.desktop.startup')"
       @update:model-value="updateSettings"
     />
-    <v-switch
+    <tpu-switch
       v-model="settings.startMinimized"
       :label="$t('settings.desktop.startMinimized')"
       @update:model-value="updateSettings"
     />
-    <v-switch
+    <tpu-switch
       v-model="settings.minimizeToTray"
       :label="$t('settings.desktop.minimizeToTray')"
       @update:model-value="updateSettings"
     />
-    <v-switch
+    <tpu-switch
       v-model="settings.desktopNotifications"
       :label="$t('settings.desktop.desktopNotifications')"
       @update:model-value="updateSettings"
     />
-    <v-switch
+    <tpu-switch
       :model-value="
         $app.platform === Platform.LINUX ? false : settings.autoUpdate
       "
       :label="$t('settings.desktop.autoUpdate')"
       :disabled="$app.platform === Platform.LINUX"
-      :class="{ 'mb-n6': $app.platform === Platform.LINUX }"
       @update:model-value="
         settings.autoUpdate = $event;
         updateSettings();
@@ -38,10 +37,9 @@
     <small v-if="$app.platform === Platform.LINUX" class="text-grey">
       {{ $t("settings.desktop.linuxUpdater") }}
     </small>
-    <v-switch
+    <tpu-switch
       v-model="settings.windowBorder"
       :label="$t('settings.desktop.windowBorder')"
-      class="mb-n6"
       @update:model-value="updateSettings"
     />
     <small class="text-grey">

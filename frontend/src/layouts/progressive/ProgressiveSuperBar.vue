@@ -47,7 +47,7 @@
               "
               @click="
                 $router.push('/');
-                uiStore.navigation.mode = RailMode.HOME;
+                uiStore.navigationMode = RailMode.HOME;
                 clicked = true;
               "
             />
@@ -85,13 +85,13 @@
                   : true)
             )"
             :key="item.id"
-            :selected="uiStore.navigation.mode === item.id"
-            @click="uiStore.navigation.mode = item.id"
+            :selected="uiStore.navigationMode === item.id"
+            @click="uiStore.navigationMode = item.id"
             :badge="item.badge"
           >
             <component
               :is="
-                uiStore.navigation.mode === item.id
+                uiStore.navigationMode === item.id
                   ? item.selectedIcon
                   : item.icon
               "
@@ -124,13 +124,13 @@
               (opt) => opt.misc
             )"
             :key="item.id"
-            :selected="uiStore.navigation.mode === item.id"
-            @click="uiStore.navigation.mode = item.id"
+            :selected="uiStore.navigationMode === item.id"
+            @click="uiStore.navigationMode = item.id"
             highlighted
           >
             <component
               :is="
-                uiStore.navigation.mode === item.id
+                uiStore.navigationMode === item.id
                   ? item.selectedIcon
                   : item.icon
               "

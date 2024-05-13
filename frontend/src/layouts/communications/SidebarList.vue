@@ -143,8 +143,15 @@
         </v-list>
       </v-card>
     </v-menu>
-    <GroupWizard v-model="create" />
-    <div class="d-flex flex-column" style="gap: 4px">
+    <GroupWizard
+      v-model="$app.dialogs.createChat"
+      v-if="$experiments.experiments.CHAT_GUIDED_WIZARD"
+    />
+    <div
+      class="d-flex flex-column"
+      style="gap: 4px"
+      v-if="!$experiments.experiments.PROGRESSIVE_UI"
+    >
       <v-btn class="mx-2" to="/communications/home">
         <v-icon class="mr-1">mdi-account-multiple</v-icon>
         {{ $t("chats.socialHub.title") }}
@@ -152,7 +159,7 @@
       <v-btn
         class="mx-2"
         v-if="$experiments.experiments.CHAT_GUIDED_WIZARD"
-        @click="create = !create"
+        @click="$app.dialogs.createChat = !$app.dialogs.createChat"
       >
         <v-icon class="mr-1">mdi-plus</v-icon>
         {{ $t("chats.join.title") }}
@@ -163,7 +170,11 @@
       position="start"
       v-if="!$experiments.experiments.CHAT_GUIDED_WIZARD"
     >
-      <CreateChat v-slot="{ props }" v-model="create" type="create">
+      <CreateChat
+        v-slot="{ props }"
+        v-model="$app.dialogs.createChat"
+        type="create"
+      >
         <v-btn class="mr-1" icon size="xsmall" v-bind="props">
           <v-icon>mdi-plus</v-icon>
         </v-btn>
@@ -266,7 +277,6 @@ export default defineComponent({
   },
   data() {
     return {
-      create: false,
       leave: {
         dialog: false,
         chat: undefined as Chat | undefined

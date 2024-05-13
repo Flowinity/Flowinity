@@ -52,7 +52,7 @@ export const useAppStore = defineStore("app", {
     fluidGradient: false,
     demo: false,
     cordova: false,
-    lastRoute: null,
+    lastRoute: "/",
     domain: "/i/",
     mainDrawer: true,
     workspaceDrawer: localStorage.getItem("workspaceDrawer") === "true",
@@ -132,7 +132,8 @@ export const useAppStore = defineStore("app", {
       memoryProfiler: false,
       socketProfiler: false,
       actionDialog: false,
-      networkInspector: false
+      networkInspector: false,
+      createChat: false
     },
     quickSwitcher: [
       {

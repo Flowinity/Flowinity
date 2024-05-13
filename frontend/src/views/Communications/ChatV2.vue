@@ -998,7 +998,7 @@ export default defineComponent({
     this.$sockets.chat.on("cancelTyping", this.onCancelTyping);
     this.message = this.$chat.getDraft(<string>this.$route.params.chatId) || "";
     this.$app.railMode = "communications";
-    this.$ui.navigation.mode = RailMode.CHAT;
+    this.$ui.navigationMode = RailMode.CHAT;
   },
   unmounted() {
     this.unread = 0;

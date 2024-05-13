@@ -104,8 +104,10 @@
                 v-if="collection?.userId !== $user.user?.id"
                 :key="collection?.userId"
                 size="small"
-                v-tooltip.bottom="$t('collections.nav.leave')"
               >
+                <v-tooltip activator="parent" location="bottom">
+                  {{ $t("collections.leave.title") }}
+                </v-tooltip>
                 <RiLogoutBoxLine style="width: 20px" />
               </v-btn>
             </leave-collection-dialog>
@@ -122,25 +124,23 @@
                 );
                 $toast.success($t('generic.copied'));
               "
-              v-tooltip.bottom="$t('collections.nav.shareLink')"
             >
+              <v-tooltip activator="parent" location="bottom">
+                {{ $t("collections.sharing.copy") }}
+              </v-tooltip>
               <RiLink style="width: 20px" />
             </v-btn>
           </accessible-transition>
-          <v-btn
-            icon
-            size="small"
-            v-tooltip.bottom="$t('collections.nav.share')"
-            @click="sharing = true"
-          >
+          <v-btn icon size="small" @click="sharing = true">
+            <v-tooltip activator="parent" location="bottom">
+              {{ $t("collections.sharing.title") }}
+            </v-tooltip>
             <RiShareForwardFill style="width: 20px" />
           </v-btn>
-          <v-btn
-            icon
-            size="small"
-            v-tooltip.bottom="$t('collections.nav.settings')"
-            @click="settings = true"
-          >
+          <v-btn icon size="small" @click="settings = true">
+            <v-tooltip activator="parent" location="bottom">
+              {{ $t("collections.settings.title") }}
+            </v-tooltip>
             <RiSettings5Line style="width: 20px" />
           </v-btn>
           <div class="border-r border-outline-dark"></div>

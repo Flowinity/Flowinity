@@ -14,12 +14,12 @@
         ]"
         color="primary"
       ></v-select>
-      <v-switch
+      <tpu-switch
         v-model="networkInspectionEnabled"
         label="Network Inspection Enabled (increased RAM usage)"
         color="primary"
         :disabled="dev"
-      ></v-switch>
+      />
       <v-text-field
         type="number"
         label="Artificial Latency (ms)"
@@ -27,10 +27,7 @@
       />
 
       <div>
-        <v-switch
-          v-model="settings.gqlExclPulse"
-          label="Excl. Pulse"
-        ></v-switch>
+        <tpu-switch v-model="settings.gqlExclPulse" label="Excl. Pulse" />
         <v-text-field v-model="operationsSearch" label="Search" />
         <v-list>
           <v-list-item v-for="operation in operations" :key="operation.id">

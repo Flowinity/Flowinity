@@ -370,6 +370,7 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Record<string, any> {
     const experiments = {
+      MEET: false,
       COMMS_SUPERBAR: false,
       PROGRESSIVE_HOME: false,
       DISABLE_ANIMATIONS: false,
@@ -429,6 +430,11 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        MEET: {
+          description: "Enable Flowinity Meet.",
+          createdAt: "2024-05-13T00:00:00.000Z",
+          versions: [4, 5]
+        },
         COMMS_SUPERBAR: {
           description: "Enable communications in superbar.",
           createdAt: "2024-05-12T00:00:00.000Z",
@@ -587,13 +593,13 @@ export class CoreService {
           description:
             "Enable inline sidebar for communications on high resolution devices.",
           createdAt: "2023-02-18T00:00:00.000Z",
-          versions: [3, 4]
+          versions: [3]
         },
         COMMUNICATIONS_QUAD_SIDEBAR_LOWRES: {
           description:
             "Enable quad sidebar for communications on low resolution devices (not inline).",
           createdAt: "2023-02-18T00:00:00.000Z",
-          versions: [3, 4]
+          versions: [3]
         },
         COMMUNICATIONS: {
           description: "Enable TPU Communications.",

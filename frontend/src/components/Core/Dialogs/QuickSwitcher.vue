@@ -138,7 +138,6 @@ const props = defineProps({
 const appStore = useAppStore();
 const content = ref("");
 const emit = defineEmits(["update:modelValue"]);
-const lastRoute = ref("/");
 const chatStore = useChatStore();
 const collectionStore = useCollectionsStore();
 const workspaceStore = useWorkspacesStore();
@@ -255,9 +254,9 @@ const results = computed(() => {
             ),
 
             name: "Go back",
-            path: lastRoute.value,
+            path: appStore.lastRoute,
             rail: -1,
-            subtitle: lastRoute.value,
+            subtitle: appStore.lastRoute,
             id: -1
           }
         ]
@@ -295,7 +294,7 @@ const route = useRoute();
 watch(
   () => route.path,
   (_, val) => {
-    lastRoute.value = val;
+    appStore.lastRoute = val;
   }
 );
 

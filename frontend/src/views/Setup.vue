@@ -221,7 +221,7 @@
                 v-model="instance.multiThreaded"
                 :label="$t('setup.step3.multiThreaded')"
               />
-              <v-switch
+              <tpu-switch
                 v-model="instance.allowRegistrations"
                 :label="$t('setup.step3.allowRegistration')"
               />
@@ -271,7 +271,7 @@
             image="https://i.troplo.com/i/3276e55f5ce4.png"
           >
             {{ $t("setup.step4.collections.description") }}
-            <v-switch
+            <tpu-switch
               v-model="features.collections"
               hide-details
               style="display: flex; justify-content: center"
@@ -283,7 +283,7 @@
             image="https://i.troplo.com/i/f8e3d77d3128.png"
           >
             {{ $t("setup.step4.autoCollects.description") }}
-            <v-switch
+            <tpu-switch
               v-model="features.autoCollects"
               hide-details
               style="display: flex; justify-content: center"
@@ -295,7 +295,7 @@
             image="https://i.troplo.com/i/356a95ba22ff.png"
           >
             {{ $t("setup.step4.communications.description") }}
-            <v-switch
+            <tpu-switch
               v-model="features.communications"
               hide-details
               style="display: flex; justify-content: center"
@@ -307,7 +307,7 @@
             image="https://i.troplo.com/i/ff3eda567a8e.png"
           >
             {{ $t("setup.step4.insights.description") }}
-            <v-switch
+            <tpu-switch
               v-model="features.insights"
               hide-details
               style="display: flex; justify-content: center"
@@ -319,7 +319,7 @@
             image="https://i.troplo.com/i/d251cd7d08af.png"
           >
             {{ $t("setup.step4.workspaces.description") }}
-            <v-switch
+            <tpu-switch
               v-model="features.workspaces"
               hide-details
               style="display: flex; justify-content: center"
@@ -355,7 +355,7 @@
 
           <v-form>
             <v-card-text>
-              <v-switch
+              <tpu-switch
                 v-model="mail.enabled"
                 :label="$t('setup.step6.enabled')"
               />
@@ -385,7 +385,7 @@
                 :label="$t('setup.step6.from')"
                 required
               />
-              <v-switch
+              <tpu-switch
                 v-model="mail.secure"
                 :label="$t('setup.step6.secure')"
               />
