@@ -616,9 +616,6 @@ export const useAppStore = defineStore("app", {
           for (const experiment of experiments) {
             experimentsStore.experiments[experiment.id] = experiment.value;
           }
-          if (experimentsStore.experiments.PRIDE) {
-            document.body.classList.add("rainbow");
-          }
         } catch {
           //
         }
@@ -751,11 +748,6 @@ export const useAppStore = defineStore("app", {
         experimentsStore.experiments["meta"][experiment.id] = experiment;
       }
       experimentsStore.experimentsInherit = experimentsStore.experiments;
-      if (experimentsStore.experiments.PRIDE) {
-        document.body.classList.add("rainbow");
-      } else {
-        document.body.classList.remove("rainbow");
-      }
       if (experimentsStore.experiments.WEBMAIL) useMailStore().init();
       this.experimentsInherit = experimentsStore.experiments;
       this.domain = "https://" + this.site.domain + "/i/";

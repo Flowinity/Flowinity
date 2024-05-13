@@ -45,16 +45,24 @@ export const useExperimentsStore = defineStore("experiments", () => {
     }
   );
 
+  watch(
+    () => experiments.value.PRIDE,
+    (value) => {
+      if (value) {
+        document.body.classList.add("rainbow");
+      } else {
+        document.body.classList.remove("rainbow");
+      }
+    }
+  );
+
   async function init() {
-    let localExperiments = localStorage.getItem("experimentsStore");
+    let localExperiments: any = localStorage.getItem("experimentsStore");
     if (localExperiments) {
       try {
         localExperiments = JSON.parse(localExperiments);
         for (const experiment of localExperiments) {
           experiments.value[experiment.id] = experiment.value;
-        }
-        if (experiments.value.PRIDE) {
-          document.body.classList.add("rainbow");
         }
       } catch {
         //
