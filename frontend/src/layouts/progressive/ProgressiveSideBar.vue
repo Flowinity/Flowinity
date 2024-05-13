@@ -47,7 +47,7 @@
             <div v-show="uiStore.currentRail?.id === parseInt(rail)">
               <SideBarItem
                 v-for="item in entries as NavigationOption[]"
-                :key="item.id + item.path"
+                :key="item.id + item.path + ''"
                 class="flex h-12 items-center"
                 :item="item"
               />

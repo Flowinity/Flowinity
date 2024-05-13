@@ -7,74 +7,74 @@
 import { defineStore } from "pinia";
 import { computed, h, markRaw, Raw, Ref, ref, watch } from "vue";
 import {
-  RiGroupFill,
-  RiGroupLine,
-  RiHome5Fill,
-  RiHome5Line,
-  RiLineChartFill,
-  RiLineChartLine,
-  RiStarFill,
-  RiUserFill,
-  RiUserLine,
-  RiImage2Fill,
-  RiImage2Line,
-  RiStarLine,
-  RiSparkling2Fill,
-  RiSparkling2Line,
-  RiSlideshow2Fill,
-  RiSlideshow2Line,
-  RiGiftFill,
-  RiGiftLine,
-  RiAndroidFill,
-  RiAndroidLine,
-  RiInformationFill,
-  RiInformationLine,
-  RiDashboardFill,
-  RiDashboardLine,
-  RiFolderImageFill,
-  RiFolderImageLine,
-  RiChat1Fill,
-  RiChat1Line,
-  RiFileTextFill,
-  RiFileTextLine,
-  RiVideoChatFill,
-  RiVideoChatLine,
-  RiMailFill,
-  RiMailLine,
+  RiAddLine,
+  RiAppleFill,
+  RiAppleLine,
   RiAuctionFill,
   RiAuctionLine,
   RiBug2Fill,
   RiBug2Line,
+  RiChat1Fill,
+  RiChat1Line,
+  RiCodeFill,
+  RiCodeLine,
+  RiCollageFill,
+  RiCollageLine,
+  RiDashboardFill,
+  RiDashboardLine,
+  RiDownloadFill,
+  RiDownloadLine,
+  RiFileTextFill,
+  RiFileTextLine,
+  RiFolderImageFill,
+  RiFolderImageLine,
+  RiGiftFill,
+  RiGiftLine,
+  RiGlobalLine,
+  RiGroup2Fill,
+  RiGroup2Line,
+  RiGroupFill,
+  RiGroupLine,
+  RiHome5Fill,
+  RiHome5Line,
+  RiImage2Fill,
+  RiImage2Line,
+  RiInformationFill,
+  RiInformationLine,
+  RiLineChartFill,
+  RiLineChartLine,
+  RiLink,
+  RiLockFill,
+  RiLockLine,
+  RiMailFill,
+  RiMailLine,
+  RiMicrosoftFill,
+  RiMicrosoftLine,
+  RiRefreshFill,
+  RiRefreshLine,
   RiSettings5Fill,
   RiSettings5Line,
   RiShieldUserFill,
   RiShieldUserLine,
-  RiLockFill,
-  RiLockLine,
+  RiSlideshow2Fill,
+  RiSlideshow2Line,
+  RiSparkling2Fill,
+  RiSparkling2Line,
+  RiStarFill,
+  RiStarLine,
   RiToolsFill,
   RiToolsLine,
-  RiGlobalLine,
-  RiLink,
-  RiWebhookLine,
-  RiCodeLine,
-  RiCodeFill,
-  RiCollageFill,
-  RiCollageLine,
-  RiWebhookFill,
-  RiGroup2Line,
-  RiGroup2Fill,
-  RiDownloadLine,
-  RiDownloadFill,
-  RiRefreshLine,
-  RiRefreshFill,
-  RiAddLine
+  RiUserFill,
+  RiUserLine,
+  RiVideoChatFill,
+  RiVideoChatLine,
+  RiWindowsLine
 } from "@remixicon/vue";
 import { useUserStore } from "@/store/user.store";
 import { useRoute } from "vue-router";
-import { useCollectionsStore } from "@/store/collections.store";
 import { useChatStore } from "@/store/chat.store";
 import { useExperimentsStore } from "@/store/experiments.store";
-import { useAppStore } from "@/store/app.store";
+import { Platform, useAppStore } from "@/store/app.store";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { PartialUserBase, PartialUserFriend, User } from "@/gql/graphql";
 import { useMailStore } from "@/store/mail.store";
@@ -117,6 +117,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
   const chatStore = useChatStore();
   const mailStore = useMailStore();
   const friendStore = useFriendsStore();
+  const appStore = useAppStore();
   const drawer = ref(false);
   const ready = ref(false);
   const lookupNav = computed(() => {
@@ -212,7 +213,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               icon: markRaw(RiAddLine),
               name: "Join or Create",
               click: () => {
-                useAppStore().dialogs.createChat = true;
+                appStore.dialogs.createChat = true;
               },
               selectedIcon: markRaw(RiChat1Fill),
               badge: chatStore.totalUnread
@@ -303,6 +304,32 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               path: "/settings/developer",
               selectedIcon: markRaw(RiCodeFill)
             },
+            ...(appStore.platform !== Platform.WEB
+              ? [
+                  {
+                    icon: markRaw(
+                      appStore.platform === Platform.WINDOWS
+                        ? RiMicrosoftLine
+                        : appStore.platform === Platform.MAC
+                          ? RiAppleLine
+                          : h(VIcon, {
+                              icon: "mdi-linux"
+                            })
+                    ),
+                    name: "Desktop Settings",
+                    path: "/settings/desktop",
+                    selectedIcon: markRaw(
+                      appStore.platform === Platform.WINDOWS
+                        ? RiMicrosoftFill
+                        : appStore.platform === Platform.MAC
+                          ? RiAppleFill
+                          : h(VIcon, {
+                              icon: "mdi-linux"
+                            })
+                    )
+                  }
+                ]
+              : []),
             {
               icon: markRaw(RiInformationLine),
               name: "About",
@@ -393,7 +420,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               path: "",
               selectedIcon: markRaw(RiGiftFill),
               click: () => {
-                useAppStore().dialogs.inviteAFriend = true;
+                appStore.dialogs.inviteAFriend = true;
               }
             },
             {
