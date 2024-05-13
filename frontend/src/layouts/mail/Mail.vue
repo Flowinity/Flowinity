@@ -1,5 +1,5 @@
 <template>
-  <MailSidebar />
+  <MailSidebar v-if="!$experiments.experiments.PROGRESSIVE_UI" />
   <MailboxSidebar />
   <router-view />
 </template>

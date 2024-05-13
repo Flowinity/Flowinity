@@ -30,7 +30,10 @@
               "
               src="@/"
               :animate="
-                $app.componentLoading || $app.loading || !$app.connected
+                $app.componentLoading ||
+                $app.loading ||
+                !$app.connected ||
+                clicked
               "
               alt="Flowinity Logo"
               class="cursor-pointer"
@@ -45,6 +48,7 @@
               @click="
                 $router.push('/');
                 uiStore.navigation.mode = RailMode.HOME;
+                clicked = true;
               "
             />
             <v-tooltip activator="parent" location="right">
@@ -193,7 +197,7 @@ import { useChatStore } from "@/store/chat.store";
 import { useRoute } from "vue-router";
 import functions from "@/plugins/functions";
 import { useExperimentsStore } from "@/store/experiments.store";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import SuperBarItem from "@/layouts/progressive/SuperBarItem.vue";
 import {
   RiAccountCircleLine,
@@ -220,6 +224,24 @@ const userStore = useUserStore();
 const chatStore = useChatStore();
 const experimentsStore = useExperimentsStore();
 const route = useRoute();
+
+// Animating the logo when clicked
+const clicked = ref(false);
+const clickedTimeout = ref<undefined | ReturnType<typeof setTimeout>>(
+  undefined
+);
+
+watch(
+  () => clicked.value,
+  (value) => {
+    if (value) {
+      if (clickedTimeout.value) clearTimeout(clickedTimeout.value);
+      clickedTimeout.value = setTimeout(() => {
+        clicked.value = false;
+      }, 100);
+    }
+  }
+);
 </script>
 <style>
 .superbar {

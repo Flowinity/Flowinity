@@ -31,6 +31,7 @@ import apolloWs from "./boot/apollo.wsTransport";
 import apolloHttp from "./boot/apollo.httpTransport";
 import vuetify from "@/plugins/vuetify";
 import { setupSockets } from "./boot/sockets";
+import TpuSwitch from "@/components/Framework/Input/TpuSwitch.vue";
 
 const isSlideshow = window.location.pathname.startsWith("/slideshow/");
 
@@ -138,5 +139,7 @@ if (!isSlideshow) {
   socket(app).then(() => {});
   setupSockets(app);
 }
+
+app.component("TpuSwitch", TpuSwitch);
 
 app.mount("#tpu-app");
