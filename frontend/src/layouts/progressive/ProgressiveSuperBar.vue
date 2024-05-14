@@ -65,9 +65,15 @@
             :highlighted="true"
             @click="$app.dialogs.quickSwitcher = true"
           >
+            <v-tooltip activator="parent" location="right">
+              {{ $t("generic.search") }}
+            </v-tooltip>
             <RiSearchLine />
           </super-bar-item>
           <super-bar-item :highlighted="true">
+            <v-tooltip activator="parent" location="right">
+              {{ $t("core.sidebar.notifications") }}
+            </v-tooltip>
             <Notifications location="right" />
             <RiNotificationLine v-if="!userStore.unreadNotifications" />
             <RiNotificationFill v-else />
@@ -129,6 +135,9 @@
               @click="$router.push(`/communications/${item.association.id}`)"
               :badge="item.unread"
             >
+              <v-tooltip activator="parent" location="right">
+                {{ $chat.chatName(item) }}
+              </v-tooltip>
               <user-avatar
                 :chat="item.recipient ? null : item"
                 :user="item.recipient ? $user.users[item.recipient.id] : null"
@@ -171,6 +180,9 @@
           <v-menu location="end">
             <template #activator="{ props }">
               <super-bar-item v-bind="props" class="mb-2">
+                <v-tooltip activator="parent" location="right">
+                  {{ $user.user.username }}
+                </v-tooltip>
                 <user-avatar
                   :user="$user.user"
                   :status="true"
@@ -182,7 +194,7 @@
               <v-divider />
               <v-list-item :to="`/u/${$user.user.username}`">
                 <template #prepend>
-                  <RiAccountCircleLine class="mr-2" style="width: 36px" />
+                  <RiUserLine class="mr-2" style="width: 36px" />
                 </template>
                 My Profile
               </v-list-item>
@@ -191,7 +203,7 @@
                 @click="$user.logout"
               >
                 <template #prepend>
-                  <RiLogoutCircleLine class="mr-2" style="width: 36px" />
+                  <RiLogoutBoxLine class="mr-2" style="width: 36px" />
                 </template>
                 Logout
               </v-list-item>
@@ -214,16 +226,13 @@ import { useExperimentsStore } from "@/store/experiments.store";
 import { onMounted, ref, watch } from "vue";
 import SuperBarItem from "@/layouts/progressive/SuperBarItem.vue";
 import {
-  RiAccountCircleLine,
-  RiCloudLine,
-  RiDownloadLine,
   RiFeedbackLine,
-  RiLockLine,
   RiLogoutCircleLine,
-  RiLogoutCircleRLine,
   RiNotificationFill,
   RiNotificationLine,
-  RiSearchLine
+  RiSearchLine,
+  RiUserLine,
+  RiLogoutBoxLine
 } from "@remixicon/vue";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
 import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";

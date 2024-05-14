@@ -35,7 +35,8 @@
       "account": "Account",
       "adminSeparator": "Admin",
       "secretMenu": "Secret Menu",
-      "tryProgressive": "Try new layout"
+      "tryProgressive": "Try new layout",
+      "notifications": "Notifications"
     },
     "privacy": {
       "title": "The Privacy Policy has been updated.",
