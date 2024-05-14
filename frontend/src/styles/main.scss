@@ -136,6 +136,10 @@
   opacity: 1 !important;
 }
 
+.v-overlay-container .v-theme--light.v-tooltip .v-overlay__content {
+  color: #000000 !important;
+}
+
 .v-overlay-container .v-theme--dark.v-tooltip .v-overlay__content {
   background-color: #222222 !important;
   color: #fff !important;
