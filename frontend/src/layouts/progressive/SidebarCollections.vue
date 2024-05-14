@@ -3,19 +3,16 @@
     <CreateCollectionDialog v-model="createCollection" />
     <overline position="start" style="margin-right: -8px; margin-left: 0rem">
       {{ $t("core.sidebar.collections") }}
-      <template #end>
-        <v-btn
-          icon
-          size="x-small"
-          class="flex items-center justify-center"
-          style="margin-right: 2.25px; margin-left: 6px; margin-top: -0.4rem"
-          @click="createCollection = true"
-        >
-          <RiAddLine style="width: 20px" class="fill-medium-emphasis-dark" />
-        </v-btn>
-      </template>
     </overline>
-    <div class="pl-1 gap-1 flex">
+    <side-bar-item
+      class="flex h-14 items-center w-full"
+      @click="createCollection = true"
+      :item="{
+        icon: RiAddLine,
+        name: $t('collections.create')
+      }"
+    ></side-bar-item>
+    <div class="pl-1 gap-1 flex items-center">
       <v-text-field
         v-model="search"
         class="flex-grow"
@@ -24,12 +21,7 @@
 
       <v-menu location="right">
         <template #activator="{ props }">
-          <v-btn
-            icon
-            v-bind="props"
-            class="flex items-center justify-center"
-            style="width: 40px; height: 40px"
-          >
+          <v-btn icon v-bind="props" style="width: 40px; height: 40px">
             <RiSortDesc v-if="desc" style="width: 20px" />
             <RiSortAsc v-else style="width: 20px" />
           </v-btn>

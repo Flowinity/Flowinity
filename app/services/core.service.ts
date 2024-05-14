@@ -370,6 +370,8 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Record<string, any> {
     const experiments = {
+      WEATHER: true,
+      BREADCRUMB_SHOW_PARENT: false,
       MEET: false,
       COMMS_SUPERBAR: false,
       PROGRESSIVE_HOME: false,
@@ -430,6 +432,16 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        WEATHER: {
+          description: "Enable weather in New and Old UI.",
+          createdAt: "2024-05-14T00:00:00.000Z",
+          versions: [4, 5]
+        },
+        BREADCRUMB_SHOW_PARENT: {
+          description: "Show parent railbar item in breadcrumb.",
+          createdAt: "2024-05-14T00:00:00.000Z",
+          versions: [4, 5]
+        },
         MEET: {
           description: "Enable Flowinity Meet.",
           createdAt: "2024-05-13T00:00:00.000Z",
@@ -683,7 +695,7 @@ export class CoreService {
         MEME_GEN: {
           description: "Add overlay text to existing images.",
           createdAt: "2023-01-10T00:00:00.000Z",
-          versions: [1, 2]
+          versions: [1, 2, 4, 5]
         },
         AUG_2021_UI: {
           description: "Re-enable Initial TPU UI.",

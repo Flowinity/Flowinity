@@ -8,20 +8,26 @@
     elevation="0"
     class="no-scroll"
   >
-    <div
-      class="flex cursor-pointer select-none justify-between pt-0 flowinity-border border-b-2"
-      style="min-height: 64px; max-height: 64px"
+    <router-link
+      :to="uiStore.currentRail?.path"
+      class="text-inherit"
+      @click.prevent
     >
-      <accessible-transition name="slide-fade" mode="out-in">
-        <div :key="uiStore.currentRail?.id" class="flex items-center">
-          <component :is="uiStore.currentRail?.icon" class="w-8 ml-4" />
-          <p class="text-xl font-semibold ml-4">
-            {{ uiStore.currentRail.name }}
-          </p>
-        </div>
-      </accessible-transition>
-      <div id="sidebar-actions" class="flex items-center mr-4" />
-    </div>
+      <div
+        class="flex cursor-pointer select-none justify-between pt-0 flowinity-border border-b-2"
+        style="min-height: 64px; max-height: 64px"
+      >
+        <accessible-transition name="slide-fade" mode="out-in">
+          <div :key="uiStore.currentRail?.id" class="flex items-center">
+            <component :is="uiStore.currentRail?.icon" class="w-8 ml-4" />
+            <p class="text-xl font-semibold ml-4">
+              {{ uiStore.currentRail.name }}
+            </p>
+          </div>
+        </accessible-transition>
+        <div id="sidebar-actions" class="flex items-center mr-4" />
+      </div>
+    </router-link>
     <div
       class="flex justify-between flex-col"
       style="
@@ -50,7 +56,41 @@
                 :key="item.id + item.path + ''"
                 class="flex h-12 items-center"
                 :item="item"
-              />
+                :disabled="
+                  item.scopesRequired &&
+                  !functions.checkScope(item.scopesRequired, $user.user?.scopes)
+                "
+              >
+                <v-tooltip
+                  activator="parent"
+                  location="right"
+                  v-if="
+                    item.scopesRequired &&
+                    !functions.checkScope(
+                      item.scopesRequired,
+                      $user.user?.scopes
+                    )
+                  "
+                >
+                  Insufficient Permissions
+                </v-tooltip>
+                <template
+                  #append
+                  v-if="
+                    item.scopesRequired &&
+                    !functions.checkScope(
+                      item.scopesRequired,
+                      $user.user?.scopes
+                    )
+                  "
+                >
+                  <div
+                    class="text-center flex justify-center bg-badge-default-dark rounded-full p-1"
+                  >
+                    <RiLockLine style="width: 15px; height: 15px" />
+                  </div>
+                </template>
+              </SideBarItem>
             </div>
           </accessible-transition>
           <accessible-transition name="slide-fade" mode="out-in">
@@ -83,6 +123,10 @@
             class="flex items-center text-medium-emphasis-dark"
             :item="item"
             style="fill: #878889"
+            :disabled="
+              item.scopesRequired &&
+              !functions.checkScope(item.scopesRequired, $user.user?.scopes)
+            "
           />
         </div>
       </accessible-transition>
@@ -108,6 +152,8 @@ import AdminSidebarList from "@/components/Admin/AdminSidebarList.vue";
 import CoreSidebar from "@/components/Core/Sidebar.vue";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 import CrashComponent from "@/components/Core/CrashAlt.vue";
+import functions from "@/plugins/functions";
+import { RiLock2Line, RiLockLine } from "@remixicon/vue";
 
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();

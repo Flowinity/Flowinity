@@ -51,7 +51,7 @@ export const useExperimentsStore = defineStore("experiments", () => {
       if (value) {
         document.body.classList.add("rainbow");
       } else {
-        document.body.classList.remove("rainbow");
+        document.body.classList.remove("rainbow ");
       }
     }
   );

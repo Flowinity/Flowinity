@@ -72,10 +72,40 @@
             <RiNotificationLine v-if="!userStore.unreadNotifications" />
             <RiNotificationFill v-else />
           </super-bar-item>
+          <super-bar-item
+            v-if="$experiments.experiments.WEATHER && !$app.weather.loading"
+            class="unselectable"
+            :highlighted="true"
+          >
+            <v-tooltip activator="parent" location="right">
+              {{ appStore.weather.data?.main }}
+              <template v-if="appStore.weather.data?.name">
+                in {{ appStore.weather.data?.name }}
+              </template>
+            </v-tooltip>
+            <template #badge>
+              <div
+                class="absolute z-20 -top-2 right-0 text-center flex justify-center bg-outline-dark rounded-full p-1"
+                style="font-size: 9px"
+              >
+                {{ $app.weatherTemp
+                }}{{
+                  $user.user?.weatherUnit.charAt(0).toUpperCase() === "K"
+                    ? ""
+                    : "°"
+                }}{{ $user.user?.weatherUnit.charAt(0).toUpperCase() }}
+              </div>
+            </template>
+            <v-img
+              :src="`https://openweathermap.org/img/wn/${$app.weather.data?.icon}@2x.png`"
+              height="32"
+              width="32"
+            />
+          </super-bar-item>
         </div>
         <div class="border-b-2 mt-3 w-full flowinity-border" />
         <div class="flex flex-col gap-y-2 mt-3">
-          <super-bar-item
+          <super-bar-item-template
             v-for="item in uiStore.navigation.railOptions.filter(
               (opt) =>
                 !opt.misc &&
@@ -85,18 +115,8 @@
                   : true)
             )"
             :key="item.id"
-            :selected="uiStore.navigationMode === item.id"
-            @click="uiStore.navigationMode = item.id"
-            :badge="item.badge"
-          >
-            <component
-              :is="
-                uiStore.navigationMode === item.id
-                  ? item.selectedIcon
-                  : item.icon
-              "
-            />
-          </super-bar-item>
+            :item="item"
+          />
         </div>
         <template v-if="experimentsStore.experiments.COMMS_SUPERBAR">
           <div
@@ -107,11 +127,14 @@
               v-for="item in chatStore.chats.slice(0, 3)"
               :key="item.id"
               @click="$router.push(`/communications/${item.association.id}`)"
-              class="flex justify-center align-middle items-center rounded-xl"
-              style="height: 47px"
               :badge="item.unread"
             >
-              <user-avatar :chat="item" :status="true" :dot-status="true" />
+              <user-avatar
+                :chat="item.recipient ? null : item"
+                :user="item.recipient ? $user.users[item.recipient.id] : null"
+                :status="true"
+                :dot-status="true"
+              />
             </super-bar-item>
           </div>
         </template>
@@ -119,23 +142,14 @@
       <div class="items-center"></div>
       <div class="items-end">
         <div class="flex flex-col gap-y-2">
-          <super-bar-item
+          <super-bar-item-template
             v-for="item in uiStore.navigation.railOptions.filter(
               (opt) => opt.misc
             )"
             :key="item.id"
-            :selected="uiStore.navigationMode === item.id"
-            @click="uiStore.navigationMode = item.id"
-            highlighted
-          >
-            <component
-              :is="
-                uiStore.navigationMode === item.id
-                  ? item.selectedIcon
-                  : item.icon
-              "
-            />
-          </super-bar-item>
+            :item="item"
+            :highlighted="true"
+          />
           <super-bar-item
             highlighted
             @click="
@@ -201,8 +215,10 @@ import { onMounted, ref, watch } from "vue";
 import SuperBarItem from "@/layouts/progressive/SuperBarItem.vue";
 import {
   RiAccountCircleLine,
+  RiCloudLine,
   RiDownloadLine,
   RiFeedbackLine,
+  RiLockLine,
   RiLogoutCircleLine,
   RiLogoutCircleRLine,
   RiNotificationFill,
@@ -214,6 +230,7 @@ import FlowinityLogo from "@/components/Brand/FlowinityLogo.vue";
 import StatusSwitcherList from "@/components/Communications/StatusSwitcherList.vue";
 import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
 import Notifications from "@/components/Core/Notifications.vue";
+import SuperBarItemTemplate from "@/layouts/progressive/SuperBarItemTemplate.vue";
 
 const appStore = useAppStore();
 const uiStore = useProgressiveUIStore();

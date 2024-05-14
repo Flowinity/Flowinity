@@ -62,6 +62,10 @@ const props = defineProps({
   animate: {
     type: Boolean,
     default: true
+  },
+  skipInit: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -101,29 +105,33 @@ const tlInit = anime.timeline({
 onMounted(() => {
   // animate each path separately to animate up and down, one by one
   // play tlInit, all paths will start at the bottom and animate up
-  setTimeout(() => {
-    tlInit
-      .add({
-        targets: `#${id}-path-0`,
-        translateY: [1000, 0],
-        delay: 50
-      })
-      .add({
-        targets: `#${id}-path-1`,
-        translateY: [1000, 0] // Animate from 1000px translateY to 0px
-      })
-      .add({
-        targets: `#${id}-path-2`,
-        translateY: [1000, 0] // Animate from 1000px translateY to 0px
-      })
-      .add({
-        targets: `#${id}-path-3`,
-        translateY: [1000, 0] // Animate from 1000px translateY to 0px
-      }).complete = () => {
-      hasPlayedInit.value = true;
-    };
-    // animate each path separately to animate up and down, one by one
-  }, 0);
+  if (props.skipInit) {
+    hasPlayedInit.value = true;
+  } else {
+    setTimeout(() => {
+      tlInit
+        .add({
+          targets: `#${id}-path-0`,
+          translateY: [1000, 0],
+          delay: 50
+        })
+        .add({
+          targets: `#${id}-path-1`,
+          translateY: [1000, 0] // Animate from 1000px translateY to 0px
+        })
+        .add({
+          targets: `#${id}-path-2`,
+          translateY: [1000, 0] // Animate from 1000px translateY to 0px
+        })
+        .add({
+          targets: `#${id}-path-3`,
+          translateY: [1000, 0] // Animate from 1000px translateY to 0px
+        }).complete = () => {
+        hasPlayedInit.value = true;
+      };
+      // animate each path separately to animate up and down, one by one
+    }, 0);
+  }
 
   tlLoading
     .add({
@@ -176,8 +184,8 @@ onMounted(() => {
     })
     .add({
       duration: 1000
-    })
-    .pause();
+    });
+  if (!props.skipInit) tlLoading.pause();
 });
 
 watch(

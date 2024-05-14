@@ -139,7 +139,7 @@
         "baseCollections": "Exclure les collections du filtre non collectivisé",
         "language": "Langage",
         "themeEditor": "Ouvrir l'éditeur de thèmes",
-        "disableProfileColors": "Désactiver les profils couleur",
+        "disableProfileColors": "Profils couleur",
         "disableBatteryPreservation": "Désactiver la préservation de la batterie"
       }
     },

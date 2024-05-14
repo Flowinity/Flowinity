@@ -580,6 +580,7 @@ export const useChatStore = defineStore("chat", {
       const uiStore = useProgressiveUIStore();
       const route = useRoute();
       const userStore = useUserStore();
+      const experiments = useExperimentsStore();
       uiStore.currentNavItem = {
         item: {
           name: this.chatName(chat) || "Loading...",
@@ -590,13 +591,16 @@ export const useChatStore = defineStore("chat", {
               : undefined,
             size: 30,
             style: "margin: 0px 4px 0px 4px"
-          })
+          }),
+          path: `/communications/${chat.association.id}`
         },
-        rail: [
-          uiStore.navigation.railOptions.find(
-            (rail) => rail.id === RailMode.CHAT
-          )
-        ]
+        rail: experiments.experiments.BREADCRUMB_SHOW_PARENT
+          ? [
+              uiStore.navigation.railOptions.find(
+                (rail) => rail.id === RailMode.CHAT
+              )
+            ]
+          : []
       };
     },
     async loadChatUsers(associationId: number) {

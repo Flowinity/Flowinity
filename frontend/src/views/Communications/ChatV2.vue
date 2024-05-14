@@ -281,7 +281,6 @@
       <div class="flex gap-2">
         <v-btn
           v-if="$experiments.experiments.PINNED_MESSAGES"
-          class="mx-1"
           icon
           size="small"
         >
@@ -290,7 +289,6 @@
         </v-btn>
         <v-btn
           icon
-          class="mx-1"
           size="small"
           @click="$chat.search.value = !$chat.search.value"
         >

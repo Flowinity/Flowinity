@@ -95,7 +95,7 @@
         {{ $t("settings.setup.sharex") }}
       </v-card-title>
       <v-container>
-        <video controls height="430" muted>
+        <video controls height="430" style="max-height: 430px" muted>
           <source
             src="https://i.troplo.com/i/e66cb847249e.mp4"
             type="video/mp4"

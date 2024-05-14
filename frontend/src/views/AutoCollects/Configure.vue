@@ -257,9 +257,13 @@ export default defineComponent({
         selectedIcon: markRaw(RiSettings5Line)
       },
       rail: [
-        this.$ui.navigation.railOptions.find(
-          (rail) => rail.id === RailMode.GALLERY
-        ),
+        ...(this.$experiments.experiments.BREADCRUMB_SHOW_PARENT
+          ? [
+              this.$ui.navigation.railOptions.find(
+                (rail) => rail.id === RailMode.GALLERY
+              )
+            ]
+          : []),
         this.$ui.navigation.railOptions.find(
           (rail) => rail.id === RailMode.AUTO_COLLECTS
         )

@@ -52,7 +52,7 @@ const props = defineProps({
 });
 const collectionsStore = useCollectionsStore();
 const emit = defineEmits(["update:modelValue", "addToCollection", "selected"]);
-const selectedCollection = ref(0);
+const selectedCollection = ref<number | null>(null);
 const loading = ref(false);
 
 watch(
@@ -60,8 +60,8 @@ watch(
   (val) => {
     if (!val) return;
     if (props.remove)
-      return (selectedCollection.value = collectionsStore.selected?.id || 0);
-    selectedCollection.value = 0;
+      return (selectedCollection.value = collectionsStore.selected?.id || null);
+    selectedCollection.value = null;
   }
 );
 

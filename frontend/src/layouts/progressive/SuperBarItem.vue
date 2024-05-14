@@ -2,7 +2,8 @@
 const props = defineProps({
   selected: Boolean,
   highlighted: Boolean,
-  badge: [Number, String]
+  badge: [Number, String],
+  disabled: Boolean
 });
 </script>
 
@@ -11,24 +12,29 @@ const props = defineProps({
     v-ripple
     class="rounded-full hover:bg-outline-dark cursor-pointer p-2 relative flex items-center justify-center super-bar-item"
     :class="{
-      'bg-outline-dark': props.selected || props.highlighted
+      'bg-outline-dark': props.selected || props.highlighted,
+      'cursor-not-allowed opacity-50': props.disabled
     }"
     style="width: 40px; height: 40px"
     tabindex="0"
     @keydown.enter="
       //@ts-ignore
-      $event.target?.click()
+      props.disabled ? () => {} : $event.target?.click()
     "
     @keydown.space="
-      $event.preventDefault();
-      //@ts-ignore
-      $event.target?.click();
+      props.disabled
+        ? () => {}
+        : () => {
+            $event.preventDefault();
+            $event.target?.click();
+          }
     "
   >
     <div class="blue-line bg-blue" :class="{ active: props.selected }"></div>
+    <slot name="badge"></slot>
     <v-chip
       class="absolute z-20 bottom-0 right-0 text-center flex justify-center"
-      v-if="props.badge"
+      v-if="props.badge && !$slots.badge"
       color="red"
       variant="elevated"
       size="x-small"

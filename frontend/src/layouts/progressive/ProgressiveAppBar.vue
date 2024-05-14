@@ -123,7 +123,8 @@
             <RiArrowRightSLine
               v-if="
                 uiStore.currentNavItem?.item?.path !==
-                uiStore.currentNavItem?.rail[0]?.path
+                  uiStore.currentNavItem?.rail[0]?.path &&
+                uiStore.currentNavItem?.rail?.length
               "
               v-memo="[]"
               class="w-6 fill-medium-emphasis-dark"

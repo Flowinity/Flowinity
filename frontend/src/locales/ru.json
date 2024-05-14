@@ -136,7 +136,7 @@
         "baseCollections": "Исключить коллекции из неколлективизированного фильтра",
         "language": "Язык",
         "themeEditor": "Открыть редактор тем",
-        "disableProfileColors": "Отключить цвета профиля",
+        "disableProfileColors": "Цвета профиля",
         "disableBatteryPreservation": "Отключить сохранение заряда батареи"
       }
     },

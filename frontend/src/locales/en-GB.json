@@ -136,7 +136,7 @@
         "baseCollections": "Exclude collections from non-collectivised filter",
         "language": "Language",
         "themeEditor": "Open Theme Editor",
-        "disableProfileColors": "Disable profile colours",
+        "disableProfileColors": "Profile Colours",
         "disableBatteryPreservation": "Disable battery preservation"
       },
       "deleteAccount": {

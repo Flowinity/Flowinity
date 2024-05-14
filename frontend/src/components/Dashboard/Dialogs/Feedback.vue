@@ -78,7 +78,9 @@ export default defineComponent({
         text: this.text
       });
       this.$emit("update:modelValue", false);
-      this.$toast.success("Feedback submitted, thanks for making TPU better!");
+      this.$toast.success(
+        `Feedback submitted. Thank you for making ${this.$app.site.name} better!`
+      );
     }
   }
 });

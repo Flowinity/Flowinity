@@ -80,6 +80,7 @@ import { PartialUserBase, PartialUserFriend, User } from "@/gql/graphql";
 import { useMailStore } from "@/store/mail.store";
 import { useFriendsStore } from "@/store/friends.store";
 import { VIcon } from "vuetify/components";
+import functions from "@/plugins/functions";
 
 export enum RailMode {
   HOME,
@@ -110,6 +111,7 @@ export interface NavigationOption {
   rail?: NavigationOption;
   click?: () => void;
   experimentsRequired?: string[];
+  scopesRequired?: string[];
 }
 
 export const useProgressiveUIStore = defineStore("progressive", () => {
@@ -156,7 +158,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               icon: markRaw(RiLineChartLine),
               name: "Insights",
               path: "/insights",
-              selectedIcon: markRaw(RiLineChartFill)
+              selectedIcon: markRaw(RiLineChartFill),
+              scopesRequired: ["insights.view"]
             },
             {
               icon: markRaw(RiGroupLine),
@@ -177,26 +180,30 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               icon: markRaw(RiImage2Line),
               name: "My Gallery",
               path: "/gallery",
-              selectedIcon: markRaw(RiImage2Fill)
+              selectedIcon: markRaw(RiImage2Fill),
+              scopesRequired: ["gallery.view"]
             },
             {
               icon: markRaw(RiStarLine),
               name: "Starred",
               path: "/starred",
-              selectedIcon: markRaw(RiStarFill)
+              selectedIcon: markRaw(RiStarFill),
+              scopesRequired: ["starred.view"]
             },
             {
               icon: markRaw(RiSparkling2Line),
               name: `AutoCollects`,
               path: "/autoCollect",
               selectedIcon: markRaw(RiSparkling2Fill),
-              badge: userStore.user?.pendingAutoCollects || ""
+              badge: userStore.user?.pendingAutoCollects || "",
+              scopesRequired: ["collections.view"]
             },
             {
               icon: markRaw(RiSlideshow2Line),
               name: "Slideshows",
               path: "/settings/slideshows",
-              selectedIcon: markRaw(RiSlideshow2Fill)
+              selectedIcon: markRaw(RiSlideshow2Fill),
+              scopesRequired: ["user.modify"]
             }
           ],
           [RailMode.CHAT]: [
@@ -207,7 +214,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               selectedIcon: markRaw(RiGroup2Fill),
               badge: friendStore.incomingFriends.length
                 ? friendStore.incomingFriends.length.toLocaleString()
-                : undefined
+                : undefined,
+              scopesRequired: ["user.view"]
             },
             {
               icon: markRaw(RiAddLine),
@@ -216,9 +224,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                 appStore.dialogs.createChat = true;
               },
               selectedIcon: markRaw(RiChat1Fill),
-              badge: chatStore.totalUnread
-                ? chatStore.totalUnread.toLocaleString()
-                : undefined
+              scopesRequired: ["chats.create"]
             }
             /*   ...chatStore.chats.map((chat) => ({
               icon: markRaw(
@@ -451,7 +457,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             id: RailMode.GALLERY,
             path: "/gallery",
             selectedIcon: markRaw(RiFolderImageFill),
-            badge: userStore.user?.pendingAutoCollects || ""
+            badge: userStore.user?.pendingAutoCollects || "",
+            scopesRequired: ["gallery", "starred", "collections"]
           },
           {
             icon: markRaw(RiChat1Line),
@@ -462,7 +469,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             badge: chatStore.totalUnread
               ? chatStore.totalUnread.toLocaleString()
               : undefined,
-            experimentsRequired: ["COMMUNICATIONS"]
+            experimentsRequired: ["COMMUNICATIONS"],
+            scopesRequired: ["chats.view"]
           },
           {
             icon: markRaw(RiFileTextLine),
@@ -470,7 +478,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             id: RailMode.WORKSPACES,
             path: "/workspaces",
             selectedIcon: markRaw(RiFileTextFill),
-            experimentsRequired: ["INTERACTIVE_NOTES"]
+            experimentsRequired: ["INTERACTIVE_NOTES"],
+            scopesRequired: ["workspaces.view"]
           },
           {
             icon: markRaw(RiVideoChatLine),
@@ -478,7 +487,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             id: RailMode.MEET,
             path: "/meet",
             selectedIcon: markRaw(RiVideoChatFill),
-            experimentsRequired: ["MEET"]
+            experimentsRequired: ["MEET"],
+            scopesRequired: ["meet.view"]
           },
           {
             icon: markRaw(RiMailLine),
@@ -489,7 +499,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             experimentsRequired: ["WEBMAIL"],
             badge: mailStore.unread
               ? mailStore.unread.toLocaleString()
-              : undefined
+              : undefined,
+            scopesRequired: ["mail.view"]
           },
           {
             icon: markRaw(RiAuctionLine),
@@ -497,13 +508,14 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             id: RailMode.ADMIN,
             path: "/admin",
             selectedIcon: markRaw(RiAuctionFill),
-            experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
+            experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"],
+            scopesRequired: ["*"]
           },
           {
             icon: markRaw(RiBug2Line),
             name: "Debug",
             id: RailMode.DEBUG,
-            path: "/debug",
+            path: "",
             selectedIcon: markRaw(RiBug2Fill),
             experimentsRequired: ["ACCOUNT_DEV_ELIGIBLE"]
           },
@@ -513,7 +525,8 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             id: RailMode.SETTINGS,
             path: "/settings",
             selectedIcon: markRaw(RiSettings5Fill),
-            misc: true
+            misc: true,
+            scopesRequired: ["user.modify"]
           },
           {
             icon: markRaw(RiSparkling2Line),
@@ -558,8 +571,13 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     const eligible = navigation.value.railOptions.filter((rail) => {
       if (rail.fake) return false;
       if (!rail.experimentsRequired) return true;
-      return rail.experimentsRequired.every(
-        (exp) => experiments.experiments[exp]
+
+      return (
+        rail.experimentsRequired.every((exp) => experiments.experiments[exp]) &&
+        (!rail.scopesRequired ||
+          rail.scopesRequired.every((scope) =>
+            functions.checkScope(scope, userStore.user?.scopes || "")
+          ))
       );
     });
 
@@ -571,11 +589,11 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     if (e.ctrlKey && e.shiftKey && e.key === "ArrowUp") {
       e.preventDefault();
       if (navigation.value.mode <= 0) return;
-      navigation.value.mode = eligible[currentIndex - 1].id;
+      navigationMode.value = eligible[currentIndex - 1]?.id || 0;
     } else if (e.ctrlKey && e.shiftKey && e.key === "ArrowDown") {
       e.preventDefault();
       if (!eligible[currentIndex + 1]) return;
-      navigation.value.mode = eligible[currentIndex + 1].id;
+      navigationMode.value = eligible[currentIndex + 1]?.id || 0;
     }
   });
 
@@ -631,9 +649,13 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
       if (!lookup) return null;
       return {
         item: lookup,
-        rail: [
-          navigation.value.railOptions.find((rail) => rail.id === lookup._rail)
-        ]
+        rail: useExperimentsStore().experiments.BREADCRUMB_SHOW_PARENT
+          ? [
+              navigation.value.railOptions.find(
+                (rail) => rail.id === lookup._rail
+              )
+            ]
+          : []
       };
     },
     set(val) {

@@ -170,15 +170,34 @@
       thumb-label
       @update:model-value="$emit('update')"
     />
-    <!-- select between Farenheit, Celsius or Kelvin -->
     <v-select
-      v-model="$user.user.weatherUnit"
-      :items="temperatureUnits"
-      :label="$t('settings.home.preferences.tempUnit')"
+      v-model="$user.user.language"
+      :items="languages"
+      :label="$t('settings.home.preferences.language')"
       class="px-6"
       item-title="title"
-      item-value="value"
+      item-value="key"
       @update:model-value="$emit('update')"
+    />
+    <tpu-switch
+      :model-value="!!$experiments.experiments.PRIDE"
+      :label="$t('settings.home.preferences.pride')"
+      class="px-6"
+      @update:model-value="$experiments.setExperiment('PRIDE', $event ? 1 : 0)"
+    />
+    <tpu-switch
+      :model-value="!disableProfileColors"
+      :label="$t('settings.home.preferences.disableProfileColors')"
+      class="px-6"
+      @update:model-value="disableProfileColors = !$event"
+    />
+    <tpu-switch
+      :model-value="!$experiments.experiments.DISABLE_ANIMATIONS"
+      :label="$t('settings.home.preferences.animations')"
+      class="px-6"
+      @update:model-value="
+        $experiments.setExperiment('DISABLE_ANIMATIONS', $event ? 0 : 1)
+      "
     />
     <v-select
       v-model="theme"
@@ -189,34 +208,30 @@
       item-value="value"
       @update:model-value="$emit('update')"
     />
+    <!-- select between Farenheit, Celsius or Kelvin -->
     <tpu-switch
-      :model-value="!!$experiments.experiments.PRIDE"
-      :label="$t('settings.home.preferences.pride')"
+      :model-value="!!$experiments.experiments.WEATHER"
+      :label="$t('settings.home.preferences.weather')"
       class="px-6"
-      @update:model-value="$experiments.setExperiment('PRIDE', $event ? 1 : 0)"
-    />
-    <v-autocomplete
-      v-model="$user.user.excludedCollections"
-      :items="collections"
-      :label="$t('settings.home.preferences.baseCollections')"
-      chips
-      class="px-6 mt-6"
-      closable-chips
-      color="primary"
-      item-title="name"
-      item-value="id"
-      multiple
-      variant="underlined"
-      @update:model-value="$emit('update')"
+      @update:model-value="
+        $experiments.setExperiment('WEATHER', $event ? 1 : 0)
+      "
     />
     <v-select
-      v-model="$user.user.language"
-      :items="languages"
-      :label="$t('settings.home.preferences.language')"
+      v-model="$user.user.weatherUnit"
+      :items="temperatureUnits"
+      :label="$t('settings.home.preferences.tempUnit')"
       class="px-6"
       item-title="title"
-      item-value="key"
+      item-value="value"
+      :disabled="!$experiments.experiments.WEATHER"
       @update:model-value="$emit('update')"
+    />
+    <tpu-switch
+      :model-value="volume === 0"
+      label="Mute Notifications"
+      class="px-6"
+      @update:model-value="volume = $event ? 0 : 100"
     />
     <v-select
       v-model="$experiments.experiments['NOTIFICATION_SOUND']"
@@ -225,13 +240,13 @@
       item-title="title"
       item-value="key"
       label="Notification Sound"
+      :disabled="volume === 0"
     />
     <v-slider
       v-model="volume"
       label="Notification Volume"
       thumb-label
       class="px-4"
-      :color="volume > 100 ? 'red' : 'primary'"
     >
       <template #append>
         <v-icon>
@@ -246,6 +261,20 @@
       </template>
       <template #thumb-label>{{ volume.toFixed(2) }}%</template>
     </v-slider>
+    <v-autocomplete
+      v-model="$user.user.excludedCollections"
+      :items="collections"
+      :label="$t('settings.home.preferences.baseCollections')"
+      chips
+      class="px-6"
+      closable-chips
+      color="primary"
+      item-title="name"
+      item-value="id"
+      multiple
+      variant="underlined"
+      @update:model-value="$emit('update')"
+    />
     <v-btn
       v-if="$user.gold || !$app.site.officialInstance"
       class="mb-2 ml-5"
@@ -254,14 +283,9 @@
       <v-icon class="mr-2">mdi-palette</v-icon>
       <span>
         {{ $t("settings.home.preferences.themeEditor") }}
-        <v-chip size="x-small">{{ $t("generic.new") }}</v-chip>
+        <v-chip size="x-small" class="ml-1">{{ $t("generic.beta") }}</v-chip>
       </span>
     </v-btn>
-    <tpu-switch
-      v-model="disableProfileColors"
-      :label="$t('settings.home.preferences.disableProfileColors')"
-      class="px-6"
-    />
   </div>
 </template>
 

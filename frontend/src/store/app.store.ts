@@ -524,9 +524,9 @@ export const useAppStore = defineStore("app", {
         // round to 2 decimal places
         return Math.round((temp + 273.15) * 100) / 100;
       } else if (user?.weatherUnit === "fahrenheit") {
-        return Math.round(((temp * 9) / 5 + 32) * 100) / 100;
+        return Math.round((temp * 9) / 5 + 32);
       } else {
-        return temp;
+        return Math.round(temp);
       }
     }
   },

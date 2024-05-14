@@ -216,7 +216,7 @@ async function getPromotedChat() {
 }
 
 onMounted(() => {
-  appStore.title = "Communications";
+  appStore.title = "Social Hub";
   appStore.railMode = "communications";
   getPromotedChat();
 });

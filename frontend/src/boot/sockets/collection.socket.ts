@@ -12,7 +12,15 @@ import { App } from "vue";
 export default function setup(app: App) {
   const collectionsStore = useCollectionsStore();
 
-  useSubscription(CollectionRemovedSubscription).onResult(({ data }) => {
+  useSubscription(
+    CollectionRemovedSubscription,
+    {},
+    {
+      context: {
+        noToast: true
+      }
+    }
+  ).onResult(({ data }) => {
     if (collectionsStore.selected?.id === data.onCollectionRemoved) {
       app.config.globalProperties.$router.push("/gallery");
     }
@@ -21,7 +29,15 @@ export default function setup(app: App) {
     );
   });
 
-  useSubscription(CollectionCreatedSubscription).onResult(({ data }) => {
+  useSubscription(
+    CollectionCreatedSubscription,
+    {},
+    {
+      context: {
+        noToast: true
+      }
+    }
+  ).onResult(({ data }) => {
     collectionsStore.persistent = [
       {
         ...data.onCollectionCreated,
@@ -31,7 +47,15 @@ export default function setup(app: App) {
     ];
   });
 
-  useSubscription(CollectionUpdatedSubscription).onResult(({ data }) => {
+  useSubscription(
+    CollectionUpdatedSubscription,
+    {},
+    {
+      context: {
+        noToast: true
+      }
+    }
+  ).onResult(({ data }) => {
     const index = collectionsStore.persistent.findIndex(
       (c) => c.id === data.onCollectionUpdated.id
     );
@@ -47,11 +71,19 @@ export default function setup(app: App) {
     ];
   });
 
-  useSubscription(gql`
-    subscription CollectionInviteCountSubscription {
-      onCollectionInviteCount
+  useSubscription(
+    gql`
+      subscription CollectionInviteCountSubscription {
+        onCollectionInviteCount
+      }
+    `,
+    {},
+    {
+      context: {
+        noToast: true
+      }
     }
-  `).onResult(({ data }) => {
+  ).onResult(({ data }) => {
     collectionsStore.invites = data.onCollectionInviteCount;
   });
 }

@@ -11,13 +11,13 @@
   >
     <div
       tabindex="0"
-      class="flex rounded-full items-center transition duration-200 ease-in-out border-2"
+      class="flex rounded-full items-center duration-200 ease-in-out border-2"
       :class="{
-        'transition-background-color duration-300 ease-in-out border-blue':
-          value,
-        'transition-background-color duration-300 ease-in-out bg-gray bg-transparent border-gray':
-          !value,
-        'bg-blue/10': variant === 'tonal'
+        'border-blue': value,
+        'bg-gray bg-transparent border-gray': !value,
+        'bg-blue/10': variant === 'tonal',
+        'transition-background-color transition duration-300 ease-in-out':
+          !$experiments.experiments.DISABLE_ANIMATIONS
       }"
       style="
         min-width: 56px;
@@ -36,12 +36,14 @@
         :aria-disabled="disabled"
       />
       <div
-        class="w-6 h-6 flex justify-center rounded-full shadow-md transform transition duration-200 ease-in-out text-black fill-card-dark"
+        class="w-6 h-6 flex justify-center rounded-full shadow-md text-black fill-card-dark"
         :class="{
           'translate-x-6': value,
           'translate-x-1': !value,
           'bg-white': variant === 'filled' || !value,
-          'bg-blue fill-[#0e1e29]': variant === 'tonal' && value
+          'bg-blue fill-[#0e1e29]': variant === 'tonal' && value,
+          'transition transform ease-in-out duration-200':
+            !$experiments.experiments.DISABLE_ANIMATIONS
         }"
         style="margin-left: 0.5px"
       >

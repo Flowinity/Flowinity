@@ -273,7 +273,11 @@
             class="text-grey ml-1 mr-2"
             @click.stop
           >
-            <v-menu activator="parent" location="top">
+            <v-menu
+              v-if="$vuetify.display.mobile"
+              activator="parent"
+              location="top"
+            >
               <v-card>
                 <v-container>
                   <span
@@ -299,7 +303,7 @@
                 +{{
                   message.readReceipts?.length - $chat.renderableReadReceipts
                 }}
-                <v-tooltip activator="parent" location="top">
+                <v-tooltip activator="parent" location="top" :eager="false">
                   <ReadReceipt
                     v-for="readReceipt in message.readReceipts"
                     :key="readReceipt.user.id || readReceipt.userId"

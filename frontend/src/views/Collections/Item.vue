@@ -247,11 +247,13 @@ export default defineComponent({
           path: this.$route.path,
           selectedIcon: markRaw(RiCollageFill)
         },
-        rail: [
-          this.$ui.navigation.railOptions.find(
-            (rail) => rail.id === RailMode.GALLERY
-          )
-        ]
+        rail: this.$experiments.experiments.BREADCRUMB_SHOW_PARENT
+          ? [
+              this.$ui.navigation.railOptions.find(
+                (rail) => rail.id === RailMode.GALLERY
+              )
+            ]
+          : []
       };
 
       console.log(this.collection);

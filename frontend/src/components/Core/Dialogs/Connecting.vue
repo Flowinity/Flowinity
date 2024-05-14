@@ -3,6 +3,7 @@
     <v-card class="flex w-full h-full items-center justify-center">
       <FlowinityLogoAnimated
         :animate="true"
+        :skip-init="true"
         style="max-height: 128px"
         color="card"
       />

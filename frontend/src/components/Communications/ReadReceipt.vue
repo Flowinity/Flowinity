@@ -1,5 +1,5 @@
 <template>
-  <span class="d-flex flex-col">
+  <span class="flex">
     <UserAvatar
       v-if="user"
       :id="'message-read-receipt-' + message.id + '-' + user.userId"

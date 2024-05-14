@@ -238,15 +238,31 @@ export default defineComponent({
     },
     generateSubscription() {
       this.createSubscription?.stop();
-      this.createSubscription = useSubscription(UploadsSubscription, {
-        input: {
-          type: this.type,
-          collectionId: typeof this.id === "number" ? this.id : undefined
+      this.createSubscription = useSubscription(
+        UploadsSubscription,
+        {
+          input: {
+            type: this.type,
+            collectionId: typeof this.id === "number" ? this.id : undefined
+          }
+        },
+        {
+          context: {
+            noToast: true
+          }
         }
-      });
+      );
 
       this.updateSubscription?.stop();
-      this.updateSubscription = useSubscription(UpdateUploadsSubscription);
+      this.updateSubscription = useSubscription(
+        UpdateUploadsSubscription,
+        {},
+        {
+          context: {
+            noToast: true
+          }
+        }
+      );
     }
   },
   mounted() {

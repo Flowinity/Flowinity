@@ -178,9 +178,11 @@
         "baseCollections": "Exclude collections from non-collectivized filter",
         "language": "Language",
         "themeEditor": "Open Theme Editor",
-        "disableProfileColors": "Disable profile colors",
+        "disableProfileColors": "Profile Colors",
         "disableBatteryPreservation": "Disable battery preservation",
-        "pride": "Rainbow Mode"
+        "pride": "Rainbow Mode",
+        "weather": "Weather Widget",
+        "animations": "Animations"
       },
       "deleteAccount": {
         "title": "Delete Account",
@@ -370,7 +372,9 @@
     "options": "Options",
     "option": "No options selected | {count} option selected | {count} options selected",
     "copied": "Copied to clipboard!",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "add": "Add",
+    "remove": "Remove"
   },
   "setup": {
     "step0": {

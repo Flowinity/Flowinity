@@ -136,9 +136,16 @@
   opacity: 1 !important;
 }
 
-.v-tooltip .v-overlay__content {
+.v-overlay-container .v-theme--dark.v-tooltip .v-overlay__content {
   background-color: #222222 !important;
   color: #fff !important;
+}
+
+.v-overlay-container .v-theme--amoled.v-tooltip .v-overlay__content {
+  background-color: #000000 !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 0;
+  border: 1px solid #191919;
 }
 
 .v-table {

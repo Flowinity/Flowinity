@@ -93,11 +93,12 @@
     </span>
     <template
       v-if="
-        (!appStore.weather.loading && !$vuetify.display.mobile) ||
-        (!appStore.weather.loading &&
-          $vuetify.display.mobile &&
-          !$chat.commsSidebar &&
-          !$workspaces.isWorkspaces)
+        ((!appStore.weather.loading && !$vuetify.display.mobile) ||
+          (!appStore.weather.loading &&
+            $vuetify.display.mobile &&
+            !$chat.commsSidebar &&
+            !$workspaces.isWorkspaces)) &&
+        $experiments.experiments.WEATHER
       "
     >
       <span>
