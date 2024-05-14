@@ -26,6 +26,7 @@ const props = defineProps({
         ? () => {}
         : () => {
             $event.preventDefault();
+            //@ts-ignore
             $event.target?.click();
           }
     "

@@ -38,6 +38,7 @@ function handleClick() {
     return;
   } else {
     if (attrs["onClick"]) {
+      // @ts-ignore
       attrs["onClick"]();
     }
 
