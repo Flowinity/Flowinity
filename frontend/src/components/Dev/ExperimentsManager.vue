@@ -114,6 +114,7 @@ export default defineComponent({
           meta: this.$experiments?.experimentsInherit?.meta?.[name] as {
             description: string;
             createdAt: string;
+            versions: number[];
           }
         }))
         .filter((experiment) => experiment.name !== "meta")

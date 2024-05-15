@@ -126,7 +126,7 @@ export interface NavigationOption {
   experimentsRequired?: string[];
   scopesRequired?: string[];
   subtitle?: string;
-  menu: ContextMenuItem[];
+  menu?: ContextMenuItem[];
 }
 
 export interface ContextMenuItem {
