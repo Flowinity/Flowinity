@@ -14,7 +14,7 @@ import { useExperimentsStore } from "@/store/experiments.store";
 import i18nObject, { i18n } from "@/plugins/i18n";
 import { SidebarItem } from "@/types/sidebar";
 import { WeatherQuery } from "@/graphql/core/weather.graphql";
-import { CoreState, Upload } from "@/gql/graphql";
+import { CoreState, Upload, Weather } from "@/gql/graphql";
 import { useFriendsStore } from "@/store/friends.store";
 import { useMailStore } from "@/store/mail.store";
 import { useApolloClient } from "@vue/apollo-composable";
@@ -94,8 +94,11 @@ export const useAppStore = defineStore("app", {
         temp_min: 0,
         name: "Australia",
         id: 2643743,
-        main: "Clouds"
-      }
+        main: "Clouds",
+        humidity: 0,
+        pressure: 0,
+        feels_like: 0
+      } as Weather
     },
     dialogs: {
       deleteItem: {
@@ -135,44 +138,6 @@ export const useAppStore = defineStore("app", {
       networkInspector: false,
       createChat: false
     },
-    quickSwitcher: [
-      {
-        route: "/",
-        name: "Home"
-      },
-      {
-        route: "/gallery",
-        name: "Gallery"
-      },
-      {
-        route: "/collections",
-        name: "Collections"
-      },
-      {
-        route: "/insights",
-        name: "Insights"
-      },
-      {
-        route: "/settings",
-        name: "Settings"
-      },
-      {
-        route: "/autoCollects",
-        name: "AutoCollects"
-      },
-      {
-        route: "/starred",
-        name: "Starred"
-      },
-      {
-        route: "/users",
-        name: "Users"
-      },
-      {
-        route: "/workspaces",
-        name: "Workspaces"
-      }
-    ],
     platform: getPlatform(),
     desktop: {
       updateAvailable: false,
@@ -513,24 +478,27 @@ export const useAppStore = defineStore("app", {
       return (
         experiments.experiments.RAIL_SIDEBAR &&
         !vuetify.display.lgAndUp.value &&
-        !vuetify.display.mobile.value
+        !vuetify.display.mobile.value &&
+        !experiments.experiments.PROGRESSIVE_UI
       );
     },
     weatherTemp(state) {
       const temp = state.weather.data?.temp;
+      return this.convertTemp(temp);
+    }
+  },
+  actions: {
+    convertTemp(temp: number) {
       const user = useUserStore()?.user;
       if (!user?.weatherUnit) return 0;
       if (user?.weatherUnit === "kelvin") {
-        // round to 2 decimal places
         return Math.round((temp + 273.15) * 100) / 100;
       } else if (user?.weatherUnit === "fahrenheit") {
         return Math.round((temp * 9) / 5 + 32);
       } else {
         return Math.round(temp);
       }
-    }
-  },
-  actions: {
+    },
     async checkForUpdates() {
       if (this.platform !== Platform.LINUX) return;
       const { data } = await ax.get(

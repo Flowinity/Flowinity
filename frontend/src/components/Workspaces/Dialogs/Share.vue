@@ -19,9 +19,7 @@
           class="pointer"
           @click="
             $functions.copy(
-              `https://${
-                $user.user?.domain?.domain || $app.site.hostnameWithProtocol
-              }/notes/${shareLink}`
+              `https://${$app.site.hostnameWithProtocol}/notes/${shareLink}`
             );
             $toast.info('Link copied to clipboard');
           "

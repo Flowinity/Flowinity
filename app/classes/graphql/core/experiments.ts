@@ -19,4 +19,6 @@ export class ExperimentType {
     nullable: true
   })
   refresh?: boolean
+  @Field(() => [Int])
+  versions: number[]
 }

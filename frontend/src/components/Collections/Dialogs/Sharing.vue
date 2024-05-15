@@ -69,7 +69,7 @@
             <v-tooltip activator="parent" location="top">
               {{ $t("chats.roles.owner") }}
             </v-tooltip>
-            <RiVipCrownFill style="width: 20px" />
+            <RiVipCrownFill class="action-bar-item" />
           </v-btn>
         </div>
       </template>

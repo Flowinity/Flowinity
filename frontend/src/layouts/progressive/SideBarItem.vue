@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import type { NavigationOption } from "@/store/progressive.store";
-import { computed, useAttrs } from "vue";
+import {
+  NavigationOption,
+  useProgressiveUIStore
+} from "@/store/progressive.store";
+import { computed, ref, useAttrs } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAppStore } from "@/store/app.store";
 import { useDisplay } from "vuetify";
@@ -28,6 +31,7 @@ const router = useRouter();
 const route = useRoute();
 const attrs = useAttrs();
 const display = useDisplay();
+const uiStore = useProgressiveUIStore();
 
 const selected = computed(() => {
   return props.selected || route?.path === (props.item?.path || props.to);
@@ -55,57 +59,80 @@ function handleClick() {
     }
   }
 }
+
+function openContextMenu(event: MouseEvent) {
+  if (!props.item?.menu?.length || props.disabled) return;
+  event.preventDefault();
+  uiStore.activeContextMenu = {
+    x: event.clientX,
+    y: event.clientY,
+    menu: props.item.menu,
+    show: true
+  };
+}
 </script>
 
 <template>
-  <div>
-    <component
-      :is="disabled ? 'div' : 'a'"
-      :href="item?.path || to"
-      class="w-full text-white"
-      @click.prevent.stop
-      tabindex="-1"
+  <component
+    :is="disabled ? 'div' : 'a'"
+    :href="item?.path || to"
+    class="w-full text-white"
+    @click.prevent.stop
+    tabindex="-1"
+  >
+    <div
+      class="rounded-2xl hover:bg-outline-dark p-2 cursor-pointer flex items-center h-full w-full relative dark:fill-white"
+      :class="{
+        'bg-outline-dark': selected || props.highlighted,
+        'rounded-full': props.highlighted,
+        'cursor-not-allowed opacity-50': props.disabled
+      }"
+      @click.prevent.stop="handleClick"
+      v-ripple
+      tabindex="0"
+      @keydown.enter="
+        //@ts-ignore
+        $event.target?.click()
+      "
+      v-bind="$attrs"
+      @keydown.space="
+        $event.preventDefault();
+        //@ts-ignore
+        $event.target?.click();
+      "
+      @contextmenu="openContextMenu"
     >
+      <slot />
+      <template v-if="item?.selectedIcon || item?.icon">
+        <component
+          :is="selected && item.selectedIcon ? item.selectedIcon : item.icon"
+          class="w-7 ml-2"
+          style="min-width: 24px"
+        />
+      </template>
+      <template v-else>
+        <div class="flex">
+          <slot name="icon" />
+        </div>
+      </template>
       <div
-        class="rounded-2xl hover:bg-outline-dark cursor-pointer p-2 flex items-center h-full w-full dark:fill-white"
-        :class="{
-          'bg-outline-dark': selected || props.highlighted,
-          'rounded-full': props.highlighted,
-          'cursor-not-allowed opacity-50': props.disabled
-        }"
-        @click.prevent.stop="handleClick"
-        v-ripple
-        tabindex="0"
-        @keydown.enter="
-          //@ts-ignore
-          $event.target?.click()
-        "
-        v-bind="$attrs"
-        @keydown.space="
-          $event.preventDefault();
-          //@ts-ignore
-          $event.target?.click();
-        "
+        class="ml-4 pr-14 select-none flex justify-between w-full align-center"
       >
-        <slot />
-        <template v-if="item?.selectedIcon || item?.icon">
-          <component
-            :is="selected && item.selectedIcon ? item.selectedIcon : item.icon"
-            class="w-7 ml-2"
-            style="min-width: 24px"
-          />
-        </template>
-        <template v-else>
-          <div class="flex">
-            <slot name="icon" />
-          </div>
-        </template>
-        <div class="ml-4 select-none flex justify-between w-full">
-          <div>
+        <div
+          style="
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+            word-wrap: break-word;
+          "
+          class="flex flex-col w-full justify-center"
+        >
+          <div class="flex align-center">
             <template v-if="item?.name">
               {{ item.name }}
               <template v-if="item?.badge">
-                <v-chip size="x-small" class="ml-1">
+                <v-chip size="x-small" class="ml-2">
                   {{ item.badge }}
                 </v-chip>
               </template>
@@ -113,18 +140,18 @@ function handleClick() {
             <template v-else>
               <slot name="title" />
             </template>
-            <div class="text-medium-emphasis-dark">
-              <slot name="subtitle" />
-            </div>
           </div>
-          <!-- append slot -->
-          <div>
-            <slot name="append" />
+          <div class="text-medium-emphasis-dark" style="font-size: 0.85rem">
+            {{ item?.subtitle }}
+            <slot name="subtitle" />
           </div>
         </div>
+        <div>
+          <slot name="append" />
+        </div>
       </div>
-    </component>
-  </div>
+    </div>
+  </component>
 </template>
 
 <style scoped></style>

@@ -684,9 +684,6 @@ export default defineComponent({
           path: this.$route.path
         },
         rail: [
-          this.$ui.navigation.railOptions.find(
-            (rail) => rail.id === RailMode.HOME
-          ),
           ...(this.$route.params.username
             ? [
                 this.$ui.navigation.options[RailMode.HOME].find(

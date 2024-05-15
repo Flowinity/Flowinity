@@ -9,6 +9,7 @@ export interface WeatherResponse {
   wind_deg?: number
   clouds?: number
   visibility?: number
+  location?: string
   error?: boolean
   cached?: boolean
   errors?: {

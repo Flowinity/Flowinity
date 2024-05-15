@@ -92,6 +92,13 @@ export class CoreService {
       return {
         ...data.main,
         ...data.weather[0],
+        wind_speed: data.wind.speed,
+        wind_deg: data.wind.deg,
+        wind_gust: data.wind.gust,
+        rain_1h: data.rain?.["1h"],
+        rain_3h: data.rain?.["3h"],
+        sunrise: data.sys.sunrise,
+        sunset: data.sys.sunset,
         location: data.name,
         _redis: new Date().toISOString()
       }
@@ -370,6 +377,8 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Record<string, any> {
     const experiments = {
+      EXPAND_APP_BAR_IMAGE: false,
+      COPY_MSG_ID: false,
       WEATHER: true,
       BREADCRUMB_SHOW_PARENT: false,
       MEET: false,
@@ -432,6 +441,16 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        EXPAND_APP_BAR_IMAGE: {
+          description: "Expand app bar image on scroll up.",
+          createdAt: "2024-05-15T00:00:00.000Z",
+          versions: [4, 5]
+        },
+        COPY_MSG_ID: {
+          description: "Copy message ID to clipboard via MessageActions.",
+          createdAt: "2024-05-15T00:00:00.000Z",
+          versions: [4, 5]
+        },
         WEATHER: {
           description: "Enable weather in New and Old UI.",
           createdAt: "2024-05-14T00:00:00.000Z",

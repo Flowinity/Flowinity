@@ -12,6 +12,13 @@
       item.scopesRequired &&
       !functions.checkScope(item.scopesRequired, $user.user?.scopes)
     "
+    @dblclick="
+      (item.scopesRequired &&
+        !functions.checkScope(item.scopesRequired, $user.user?.scopes)) ||
+      !uiStore.lastRailRoutes[item.id.toString()]
+        ? () => {}
+        : $router.push(uiStore.lastRailRoutes[item.id.toString()])
+    "
   >
     <v-tooltip activator="parent" location="right">
       {{

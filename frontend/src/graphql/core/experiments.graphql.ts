@@ -1,12 +1,13 @@
 import { gql } from "@apollo/client";
 
 export const ExperimentsQuery = gql`
-  query GetExperiments {
-    experiments {
+  query GetExperiments($version: Int) {
+    experiments(version: $version) {
       id
       value
       description
       createdAt
+      versions
     }
   }
 `;

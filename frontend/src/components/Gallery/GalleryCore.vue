@@ -191,7 +191,7 @@
                 <v-tooltip activator="parent" location="bottom">
                   {{ $t("gallery.selectAll") }}
                 </v-tooltip>
-                <RiAddLine style="width: 20px" />
+                <RiAddLine class="action-bar-item" />
               </v-btn>
               <v-btn
                 icon
@@ -201,7 +201,7 @@
                 <v-tooltip activator="parent" location="bottom">
                   {{ $t("generic.upload") }}
                 </v-tooltip>
-                <RiUploadCloud2Line style="width: 20px" />
+                <RiUploadCloud2Line class="action-bar-item" />
               </v-btn>
             </div>
           </slot>
@@ -222,7 +222,7 @@
               <v-tooltip activator="parent" location="bottom">
                 {{ $t("gallery.randomAttachment") }}
               </v-tooltip>
-              <v-icon style="width: 20px">mdi-dice</v-icon>
+              <v-icon class="action-bar-item">mdi-dice</v-icon>
             </v-btn>
             <v-btn
               icon
@@ -233,7 +233,7 @@
               <v-tooltip activator="parent" location="bottom">
                 {{ $t("gallery.downloadSelected") }}
               </v-tooltip>
-              <RiDownloadLine style="width: 20px" />
+              <RiDownloadLine class="action-bar-item" />
             </v-btn>
 
             <v-btn
@@ -247,7 +247,7 @@
               <v-tooltip activator="parent" location="bottom">
                 {{ $t("gallery.deleteSelected") }}
               </v-tooltip>
-              <RiDeleteBinLine style="width: 20px" />
+              <RiDeleteBinLine class="action-bar-item" />
             </v-btn>
             <v-btn
               icon
@@ -267,7 +267,7 @@
               </v-tooltip>
               <component
                 :is="$ui.shifting ? RiImageCloseLine : RiImageAddLine"
-                style="width: 20px"
+                class="action-bar-item"
                 :style="{ fill: $ui.shifting ? '#F44336' : undefined }"
               />
             </v-btn>
@@ -275,7 +275,7 @@
               <v-tooltip activator="parent" location="bottom">
                 {{ $t("gallery.deselectAll") }}
               </v-tooltip>
-              <RiCloseLine style="width: 20px" />
+              <RiCloseLine class="action-bar-item" />
             </v-btn>
             <v-btn
               icon
@@ -296,7 +296,7 @@
               <v-tooltip activator="parent" location="bottom">
                 {{ $t("generic.upload") }}
               </v-tooltip>
-              <RiUploadCloud2Line style="width: 20px" />
+              <RiUploadCloud2Line class="action-bar-item" />
             </v-btn>
           </slot>
         </div>

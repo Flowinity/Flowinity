@@ -84,10 +84,26 @@
             :highlighted="true"
           >
             <v-tooltip activator="parent" location="right">
-              {{ appStore.weather.data?.main }}
-              <template v-if="appStore.weather.data?.name">
-                in {{ appStore.weather.data?.name }}
-              </template>
+              <div class="flex flex-col">
+                <p>{{ appStore.weather.data?.main }}</p>
+                <small>
+                  Feels like:
+                  {{ $app.convertTemp(appStore.weather.data?.feels_like) }}°{{
+                    userStore.user?.weatherUnit.charAt(0).toUpperCase()
+                  }}
+                </small>
+                <small>Humidity: {{ appStore.weather.data?.humidity }}%</small>
+                <small>
+                  Wind Speed: {{ appStore.weather.data?.wind_speed }} m/s
+                </small>
+                <small>
+                  Wind Direction: {{ appStore.weather.data?.wind_deg }}°
+                </small>
+                <small>
+                  Pressure: {{ appStore.weather.data?.pressure }} hPa
+                </small>
+                <small>Location: {{ appStore.weather.data?.location }}</small>
+              </div>
             </v-tooltip>
             <template #badge>
               <div

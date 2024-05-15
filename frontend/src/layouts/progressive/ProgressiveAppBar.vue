@@ -2,7 +2,15 @@
   <v-app-bar
     id="navbar"
     :key="$app.activeNags.offset"
-    :class="{ ...navbarClasses, ...classString }"
+    :class="{
+      ...navbarClasses,
+      ...classString,
+      ...{
+        'has-image': image,
+        expanded: expanded,
+        collapsed: !expanded
+      }
+    }"
     :extension-height="$app.activeNags.offset"
     app
     class="navbar border-b-2 w-full backdrop-blur-lg sticky top-0 z-50 overflow-clip no-image"
@@ -17,6 +25,16 @@
       $vuetify.display.mobile
     ]"
     :style="{ height: expanded ? '195px' : '64px' }"
+    @mouseover="
+      $experiments.experiments.EXPAND_APP_BAR_IMAGE &&
+        image &&
+        (expanded = true)
+    "
+    @mouseleave="
+      $experiments.experiments.EXPAND_APP_BAR_IMAGE &&
+        image &&
+        (expanded = false)
+    "
   >
     <div
       v-if="!$user.user"
@@ -36,7 +54,8 @@
       />
     </div>
     <div
-      class="flex p-4 justify-between z-50 w-full"
+      class="flex p-4 justify-between z-50 w-full transition-all"
+      style="height: 200px"
       :class="{
         'items-center': !expanded,
         'items-end h-full': expanded,
@@ -52,7 +71,7 @@
             class="mr-2"
             @click="appStore.mainDrawer = !appStore.mainDrawer"
           >
-            <RiMenuLine style="width: 20px" />
+            <RiMenuLine class="action-bar-item" />
           </v-btn>
         </div>
         <!-- @vue-ignore -->
@@ -60,13 +79,19 @@
           v-for="(rail, index) in uiStore.currentNavItem?.rail"
           mode="out-in"
           name="slide-up"
+          appear
         >
           <div
             v-if="rail.name"
-            :key="rail.id"
+            :key="rail.path"
             class="flex max-sm:hidden"
             :class="{ 'items-center': !expanded, 'items-end': expanded }"
           >
+            <RiArrowRightSLine
+              v-if="items.length > 1 && index !== 0"
+              class="w-6 fill-medium-emphasis-dark items-center"
+              style="margin: 0px 4px 0px 4px"
+            />
             <div class="flex items-center">
               <router-link
                 :to="rail.path"
@@ -82,8 +107,7 @@
                   v-if="rail?.icon"
                   class="w-8"
                   :class="
-                    uiStore.currentNavItem?.item?.path ===
-                    uiStore.currentNavItem?.rail[0]?.path
+                    uiStore.currentNavItem?.item?.path === rail.path
                       ? 'fill-white'
                       : 'fill-medium-emphasis-dark'
                   "
@@ -91,8 +115,7 @@
                 <span
                   style="margin: 0px 0px 0px 8px"
                   :class="
-                    uiStore.currentNavItem?.item?.path ===
-                    uiStore.currentNavItem?.rail[0]?.path
+                    uiStore.currentNavItem?.item?.path === rail.path
                       ? 'text-white'
                       : 'text-medium-emphasis-dark'
                   "
@@ -100,11 +123,6 @@
                   {{ rail.name }}
                 </span>
               </router-link>
-              <RiArrowRightSLine
-                v-if="uiStore.currentNavItem?.rail?.length - 1 !== index"
-                class="w-6 fill-medium-emphasis-dark items-center"
-                style="margin: 0px 4px 0px 4px"
-              />
             </div>
           </div>
         </accessible-transition>
@@ -218,6 +236,7 @@ import { useChatStore } from "@/store/chat.store";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 import FlowinityBanner from "@/components/Brand/FlowinityBanner.vue";
 import { useExperimentsStore } from "@/store/experiments.store";
+import { debounce } from "lodash";
 
 const uiStore = useProgressiveUIStore();
 const userStore = useUserStore();
@@ -231,20 +250,23 @@ const image = computed(() => {
 const scrolled = ref(false);
 const navbarClasses: Record<any, any> = ref({});
 const expanded = ref(false);
-/*
+
 const handleScroll = () => {
-  const hasImage = !!image.value;
-  scrolled.value = uiStore.scrollPosition > 1;
-  navbarClasses.value = {
-    "border-b-2 w-full dark:border-outline-dark dark:bg-dark backdrop-blur-lg sticky top-0 z-50 overflow-clip":
-      true,
-    "has-image expanded": hasImage && !scrolled.value,
-    "has-image collapsed": hasImage && scrolled.value,
-    "no-image collapsed": !hasImage
-  };
-  expanded.value = hasImage && !scrolled.value;
+  // if (!experimentsStore.experiments.EXPAND_APP_BAR_IMAGE) {
+  //   return;
+  // }
+  // const hasImage = !!image.value;
+  // scrolled.value = uiStore.scrollPosition > 1;
+  // navbarClasses.value = {
+  //   "border-b-2 w-full dark:border-outline-dark dark:bg-dark backdrop-blur-lg sticky top-0 z-50 overflow-clip":
+  //     true,
+  //   "has-image expanded": hasImage && !scrolled.value,
+  //   "has-image collapsed": hasImage && scrolled.value,
+  //   "no-image collapsed": !hasImage
+  // };
+  // expanded.value = hasImage && !scrolled.value;
 };
-// Define a debounce function with a 200ms delay (adjust as needed)
+
 const debouncedHandleScroll = debounce(handleScroll, 10);
 
 watch(
@@ -254,13 +276,6 @@ watch(
   }
 );
 
-document.addEventListener("touchstart", () => {
-  debouncedHandleScroll();
-});
-document.addEventListener("wheel", () => {
-  debouncedHandleScroll();
-});
-*/
 const route = useRoute();
 const experimentsStore = useExperimentsStore();
 const display = useDisplay();
@@ -299,6 +314,26 @@ onUnmounted(() => {
 
 onMounted(() => {
   uiStore.ready = true;
+});
+
+watch(
+  () => experimentsStore.experiments.EXPAND_APP_BAR_IMAGE,
+  (val) => {
+    if (val) {
+      document.addEventListener("touchstart", debouncedHandleScroll);
+      document.addEventListener("wheel", debouncedHandleScroll);
+    } else {
+      document.removeEventListener("touchstart", debouncedHandleScroll);
+      document.removeEventListener("wheel", debouncedHandleScroll);
+    }
+  }
+);
+
+const items = computed(() => {
+  return [
+    ...(uiStore.currentNavItem?.rail || []),
+    ...(uiStore.currentNavItem?.item ? [uiStore.currentNavItem.item] : [])
+  ];
 });
 </script>
 

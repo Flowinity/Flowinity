@@ -63,6 +63,7 @@
         <v-icon>mdi-reply</v-icon>
       </button>
       <button
+        v-if="$experiments.experiments.COPY_MSG_ID"
         type="button"
         class="v-btn v-btn--icon v-theme--amoled v-btn--density-default rounded-0 v-btn--size-small v-btn--variant-text"
         @click="$functions.copy(message.id)"

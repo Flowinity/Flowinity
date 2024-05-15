@@ -1,9 +1,5 @@
 <template>
-  <UserV3
-    v-if="$experiments.experiments.USER_V3 && !$route.query.forceV2"
-    :username="username"
-  />
-  <div v-else>UserV2 no longer available.</div>
+  <UserV3 :username="username" />
 </template>
 
 <script lang="ts">

@@ -274,7 +274,7 @@
   </div>
 
   <teleport
-    v-if="$experiments.experiments.PROGRESSIVE_UI && $chat.isReady"
+    v-if="$experiments.experiments.PROGRESSIVE_UI && $chat.isReady && $ui.ready"
     to="#appbar-options"
   >
     <accessible-transition mode="out-in" name="slide-up" appear>
@@ -285,14 +285,25 @@
           size="small"
         >
           <Pins />
-          <RiPushpin2Line style="width: 20px" />
+          <RiPushpin2Line class="action-bar-item" />
         </v-btn>
         <v-btn
           icon
           size="small"
           @click="$chat.search.value = !$chat.search.value"
         >
-          <RiSearchLine style="width: 20px" />
+          <RiSearchLine class="action-bar-item" />
+        </v-btn>
+        <v-btn
+          icon
+          size="small"
+          @click="$chat.memberSidebarShown = !$chat.memberSidebarShown"
+        >
+          <RiUserLine
+            class="action-bar-item"
+            v-if="!$chat.memberSidebarShown"
+          />
+          <RiUserFill class="action-bar-item" v-else />
         </v-btn>
       </div>
     </accessible-transition>
@@ -323,10 +334,18 @@ import functions from "@/plugins/functions";
 import { RailMode } from "@/store/progressive.store";
 import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 import Pins from "@/components/Communications/Menus/Pins.vue";
-import { RiPushpin2Line, RiPushpinLine, RiSearchLine } from "@remixicon/vue";
+import {
+  RiPushpin2Line,
+  RiPushpinLine,
+  RiSearchLine,
+  RiUserFill,
+  RiUserLine
+} from "@remixicon/vue";
 
 export default defineComponent({
   components: {
+    RiUserFill,
+    RiUserLine,
     RiSearchLine,
     RiPushpin2Line,
     RiPushpinLine,
@@ -639,6 +658,10 @@ export default defineComponent({
     },
     async sendMessage() {
       this.focusInput();
+      this.$sockets.chat.emit(
+        "cancelTyping",
+        this.$chat.selectedChat?.association?.id
+      );
       if (this.unreadId) this.unreadId = 0;
       if (!this.$messages.currentMessages) return;
       if (!this.message && !this.files.length) return;
@@ -761,26 +784,26 @@ export default defineComponent({
       this.$refs.input?.$refs?.textarea?.focus();
     },
     shortcutHandler(e: any) {
-      if (e.ctrlKey && e.key === "ArrowUp" && e.shiftKey) {
-        e.preventDefault();
-        if (!this.editing) return this.editLastMessage();
-        // edit next message
-        const message = this.$messages.currentMessages
-          .slice()
-          .find(
-            (message) =>
-              message.id !== this.editing &&
-              message.userId === this.$user.user?.id &&
-              message.id < this.editing
-          );
-        if (!message) {
-          this.editing = undefined;
-          return;
-        }
-        this.editing = message.id;
-        this.editingText = message.content;
-        return;
-      }
+      // if (e.ctrlKey && e.key === "ArrowUp" && e.shiftKey) {
+      //   e.preventDefault();
+      //   if (!this.editing) return this.editLastMessage();
+      //   // edit next message
+      //   const message = this.$messages.currentMessages
+      //     .slice()
+      //     .find(
+      //       (message) =>
+      //         message.id !== this.editing &&
+      //         message.userId === this.$user.user?.id &&
+      //         message.id < this.editing
+      //     );
+      //   if (!message) {
+      //     this.editing = undefined;
+      //     return;
+      //   }
+      //   this.editing = message.id;
+      //   this.editingText = message.content;
+      //   return;
+      // }
       if (e.ctrlKey && e.key === "ArrowDown" && e.shiftKey) {
         e.preventDefault();
         if (!this.editing) return;
@@ -898,7 +921,6 @@ export default defineComponent({
       this.autoScroll();
     },
     onTyping(data: Typing) {
-      console.log(data);
       if (!data) return;
       const chat =
         this.$chat.chats[

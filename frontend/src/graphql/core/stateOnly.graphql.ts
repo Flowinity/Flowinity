@@ -7,6 +7,7 @@ export const CoreStateQuery = gql`
       value
       description
       createdAt
+      versions
     }
     coreState {
       connection {

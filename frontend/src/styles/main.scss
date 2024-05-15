@@ -446,8 +446,8 @@ p:has(.emoji-large) img {
   background: transparent !important;
 }
 
-.fluid-gradient .bg-dark,
-.fluid-gradient .bg-light,
+.fluid-gradient .bg-dark:not(.force-bg),
+.fluid-gradient .bg-light:not(.force-bg),
 .fluid-gradient
   .v-overlay__content:not(.v-progress-circular):has(.v-card):not(.v-menu) {
   background: transparent !important;
@@ -566,7 +566,14 @@ p:has(.emoji-large) img {
   width: 500px;
   right: 25px;
   top: 25px;
-  overflow: visible;
+}
+
+.dev-overlay .content {
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  border: 1px solid #0190ea;
 }
 
 .dev-header {
@@ -779,11 +786,15 @@ h6 {
   font-size: 0.67em;
 }
 
-.emoji {
+.emoji:not(.emoji-large) {
   vertical-align: top !important;
   display: inline !important;
 }
 
 .flowinity-border {
   border-color: rgba(var(--v-border-color), var(--v-border-opacity))
+}
+
+.action-bar-item {
+  width: 20px;
 }

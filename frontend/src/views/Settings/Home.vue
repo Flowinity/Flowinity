@@ -347,10 +347,6 @@ export default defineComponent({
       notificationSounds: [
         {
           title: "Default",
-          key: 1
-        },
-        {
-          title: "Classic",
           key: 2
         },
         {

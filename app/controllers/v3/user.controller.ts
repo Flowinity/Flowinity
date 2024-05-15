@@ -140,7 +140,7 @@ export class UserControllerV3 {
   @Post("/feedback")
   @UseBefore(rateLimits.standardLimiter)
   async sendFeedback(
-    @Auth("user.modify") user: User,
+    @Auth("user.view") user: User,
     @Body() body: { text: string; starRating: number; route: string }
   ) {
     if (!config.officialInstance) {

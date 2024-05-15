@@ -176,12 +176,18 @@ export class CoreResolver {
     emailOptional: true
   })
   @Query(() => [ExperimentType])
-  async experiments(@Ctx() ctx: Context) {
+  async experiments(
+    @Ctx() ctx: Context,
+    @Arg("version", () => Int, {
+      nullable: true
+    })
+    version: number | null
+  ) {
     if (!ctx.user?.id) {
       return this.coreService.getExperimentsV4(
         config.release === "dev",
         false,
-        ctx.client.majorVersion
+        version !== null ? version : ctx.client.majorVersion
       )
     }
     return await this.coreService.getUserExperimentsV4(
@@ -190,7 +196,7 @@ export class CoreResolver {
         ctx.user?.administrator ||
         ctx.user?.moderator,
       ctx.user.planId === 6,
-      ctx.client.majorVersion
+      version !== null ? version : ctx.client.majorVersion
     )
   }
 

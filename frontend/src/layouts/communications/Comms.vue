@@ -16,10 +16,13 @@
   >
     <user-menu />
   </v-menu>
-  <image-dialog v-model="$chat.dialogs.image.value" />
-  <group-settings-dialog v-model="$chat.dialogs.groupSettings.value" />
   <router-view />
-  <member-sidebar v-if="!$vuetify.display.mobile && $chat.commsSidebar" />
+  <member-sidebar
+    v-if="
+      (!$vuetify.display.mobile || $experiments.experiments.PROGRESSIVE_UI) &&
+      $chat.commsSidebar
+    "
+  />
 </template>
 
 <script lang="ts">

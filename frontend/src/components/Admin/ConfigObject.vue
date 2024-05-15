@@ -26,7 +26,6 @@
       :model-value="value"
       :label="name"
       :disabled="name === 'officialInstance'"
-      class="mb-n6"
       @update:model-value="
         $emit('update:object', { key: persistentKey, value: $event })
       "

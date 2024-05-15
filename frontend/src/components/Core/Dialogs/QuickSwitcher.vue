@@ -18,15 +18,14 @@
           "
           @keydown.enter.prevent.stop="navigate"
           ref="quickInput"
-          :class="{ 'mb-n4': !showTips }"
+          class="mb-n4"
         />
         <small
-          v-if="!showTips"
           class="text-blue cursor-pointer"
           style="font-size: 9pt; opacity: 0.9"
-          @click="showTips = true"
+          @click="showTips = !showTips"
         >
-          Help
+          {{ showTips ? "Hide" : "Show" }} help
         </small>
       </v-card>
       <div key="cards">
@@ -43,7 +42,15 @@
                 $router.push(result.path);
                 $emit('update:modelValue', false);
               "
-              :color="selected === index ? 'toolbar' : 'dark'"
+              :color="
+                selected === index
+                  ? dark
+                    ? amoled
+                      ? 'toolbar'
+                      : ''
+                    : '#d6d6d6'
+                  : 'dark'
+              "
               @mouseover="selected = index"
             >
               <component
@@ -106,7 +113,7 @@
           </div>
           <div>
             <v-btn icon @click="showTips = false">
-              <v-tooltip location="top" activator="parent">
+              <v-tooltip location="bottom" activator="parent">
                 Close tips
               </v-tooltip>
               <v-icon>mdi-close</v-icon>
@@ -130,6 +137,8 @@ import UserAvatar from "@/components/Users/UserAvatar.vue";
 import { VIcon, VTextField } from "vuetify/components";
 import { useUserStore } from "@/store/user.store";
 import { useWorkspacesStore } from "@/store/workspaces.store";
+import { useTheme } from "vuetify";
+import { useProgressiveUIStore } from "@/store/progressive.store";
 
 const selected = ref(0);
 const props = defineProps({
@@ -142,8 +151,13 @@ const chatStore = useChatStore();
 const collectionStore = useCollectionsStore();
 const workspaceStore = useWorkspacesStore();
 const userStore = useUserStore();
+const uiStore = useProgressiveUIStore();
 const quickInput = ref<InstanceType<typeof VTextField>>(null);
 const showTips = ref(localStorage.getItem("quickSwitcherTips") !== "false");
+const theme = useTheme();
+
+const dark = computed(() => theme.current.value.dark);
+const amoled = computed(() => theme.name.value === "amoled");
 
 interface HistoryItem {
   path: string;
@@ -207,7 +221,7 @@ const options = computed(() => {
                   size: 25,
                   class: "mr-4",
                   icon: "mdi-folder-image",
-                  color: "white"
+                  color: dark.value ? "white" : "black"
                 })
               )
         )
@@ -226,7 +240,7 @@ const options = computed(() => {
             size: 25,
             class: "mr-4",
             icon: "mdi-folder-account",
-            color: "white"
+            color: dark.value ? "white" : "black"
           })
         )
       };
@@ -249,7 +263,7 @@ const results = computed(() => {
                 size: 25,
                 class: "mr-4",
                 icon: "mdi-arrow-left",
-                color: "white"
+                color: dark.value ? "white" : "black"
               })
             ),
 
@@ -295,6 +309,25 @@ watch(
   () => route.path,
   (_, val) => {
     appStore.lastRoute = val;
+  }
+);
+
+watch(
+  () => uiStore.currentNavItem,
+  (_, val) => {
+    if (
+      val?.item?.path &&
+      (uiStore.currentNavItem?.rail?.id !== undefined ||
+        uiStore.currentNavItem?.item?._rail !== undefined)
+    ) {
+      uiStore.lastRailRoutes[
+        uiStore.currentNavItem?.rail?.id ?? uiStore.currentNavItem?.item?._rail
+      ] = val?.item?.path;
+      localStorage.setItem(
+        "lastRailRoutes",
+        JSON.stringify(uiStore.lastRailRoutes)
+      );
+    }
   }
 );
 

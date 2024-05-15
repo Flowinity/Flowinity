@@ -18,8 +18,11 @@ export const WeatherQuery = gql`
       icon
       main
       description
-      name
       location
+      wind_gust
+      sunset
+      sunrise
+      rain_1h
     }
   }
 `;

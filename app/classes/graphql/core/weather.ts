@@ -69,5 +69,21 @@ export class Weather {
   @Field({
     nullable: true
   })
-  name: string
+  wind_gust: number
+  @Field({
+    nullable: true
+  })
+  sunrise: number
+  @Field({
+    nullable: true
+  })
+  sunset: number
+  @Field({
+    nullable: true
+  })
+  rain_1h: number
+  @Field({
+    nullable: true
+  })
+  rain_3h: number
 }

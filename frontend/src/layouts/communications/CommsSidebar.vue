@@ -3,7 +3,7 @@
     v-model="val"
     name="chat"
     :class="{
-      'sidebar-patch': $experiments.experiments.RAIL_SIDEBAR && $app.rail
+      'sidebar-patch': $app.rail
     }"
     color="dark"
     :floating="true"

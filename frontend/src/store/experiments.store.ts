@@ -51,12 +51,12 @@ export const useExperimentsStore = defineStore("experiments", () => {
       if (value) {
         document.body.classList.add("rainbow");
       } else {
-        document.body.classList.remove("rainbow ");
+        document.body.classList.remove("rainbow");
       }
     }
   );
 
-  async function init() {
+  async function init(version?: number) {
     let localExperiments: any = localStorage.getItem("experimentsStore");
     if (localExperiments) {
       try {
@@ -71,10 +71,17 @@ export const useExperimentsStore = defineStore("experiments", () => {
     const {
       data: { experiments: getExperiments }
     } = await useApolloClient().client.query({
-      query: ExperimentsQuery
+      query: ExperimentsQuery,
+      variables:
+        version !== undefined
+          ? {
+              version
+            }
+          : undefined,
+      fetchPolicy: "network-only"
     });
     for (const experiment of getExperiments) {
-      console.log(experiment);
+      console.log(`Loaded: ${experiment.id}`);
       experiments.value[experiment.id] = experiment.value;
       if (!experiments.value["meta"]) experiments.value.meta = {};
       experiments.value["meta"][experiment.id] = experiment;

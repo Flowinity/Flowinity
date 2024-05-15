@@ -5,7 +5,17 @@
  */
 
 import { defineStore } from "pinia";
-import { computed, h, markRaw, Raw, Ref, ref, watch } from "vue";
+import {
+  computed,
+  ComputedRef,
+  h,
+  markRaw,
+  Raw,
+  Ref,
+  ref,
+  VNode,
+  watch
+} from "vue";
 import {
   RiAddLine,
   RiAppleFill,
@@ -16,6 +26,9 @@ import {
   RiBug2Line,
   RiChat1Fill,
   RiChat1Line,
+  RiCheckboxCircleFill,
+  RiCloseCircleFill,
+  RiCloseLine,
   RiCodeFill,
   RiCodeLine,
   RiCollageFill,
@@ -50,6 +63,7 @@ import {
   RiMailLine,
   RiMicrosoftFill,
   RiMicrosoftLine,
+  RiNotificationLine,
   RiRefreshFill,
   RiRefreshLine,
   RiSettings5Fill,
@@ -67,11 +81,10 @@ import {
   RiUserFill,
   RiUserLine,
   RiVideoChatFill,
-  RiVideoChatLine,
-  RiWindowsLine
+  RiVideoChatLine
 } from "@remixicon/vue";
 import { useUserStore } from "@/store/user.store";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useChatStore } from "@/store/chat.store";
 import { useExperimentsStore } from "@/store/experiments.store";
 import { Platform, useAppStore } from "@/store/app.store";
@@ -112,6 +125,19 @@ export interface NavigationOption {
   click?: () => void;
   experimentsRequired?: string[];
   scopesRequired?: string[];
+  subtitle?: string;
+  menu: ContextMenuItem[];
+}
+
+export interface ContextMenuItem {
+  name: string;
+  icon: Raw<any>;
+  action: () => void;
+  menu?: ContextMenuItem[];
+  color?: string;
+  shown?: boolean;
+  subtitle?: string;
+  append?: VNode;
 }
 
 export const useProgressiveUIStore = defineStore("progressive", () => {
@@ -225,23 +251,205 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               },
               selectedIcon: markRaw(RiChat1Fill),
               scopesRequired: ["chats.create"]
-            }
-            /*   ...chatStore.chats.map((chat) => ({
+            },
+            ...chatStore.chats.map((chat) => ({
               icon: markRaw(
-                h(UserAvatar, {
-                  chat: chat.recipient ? undefined : chat,
-                  user: chat.recipient
-                    ? userStore.users[chat.recipient.id]
-                    : undefined,
-                  size: 40,
-                  status: true,
-                  dotStatus: true
-                })
+                h(
+                  "span",
+                  {
+                    class: "flex items-center mr-3",
+                    style: "height: 40px"
+                  },
+                  [
+                    h(UserAvatar, {
+                      chat: chat.recipient ? undefined : chat,
+                      user: chat.recipient
+                        ? userStore.users[chat.recipient.id]
+                        : undefined,
+                      size: 40,
+                      status: true,
+                      dotStatus: true
+                    })
+                  ]
+                )
               ),
+              subtitle:
+                chat.type === "group"
+                  ? `${chat.usersCount} members`
+                  : undefined,
               name: chatStore.chatName(chat),
               path: `/communications/${chat.association.id}`,
-              badge: chat.unread ? chat.unread.toLocaleString() : undefined
-            }))*/
+              badge: chat.unread ? chat.unread.toLocaleString() : undefined,
+              menu: [
+                {
+                  name: "Notifications",
+                  icon: markRaw(RiNotificationLine),
+                  menu: [
+                    {
+                      name: "All",
+                      action: () => {
+                        chatStore.setNotifications("all", chat.association.id);
+                      },
+                      append: computed(() => {
+                        return chat.association.notifications === "all"
+                          ? h(VIcon, {
+                              icon: "mdi-check"
+                            })
+                          : "deez";
+                      })
+                    },
+                    {
+                      name: "Mentions",
+                      action: () => {
+                        chatStore.setNotifications(
+                          "mentions",
+                          chat.association.id
+                        );
+                      },
+                      append: computed(() => {
+                        return chat.association.notifications === "mentions"
+                          ? h(VIcon, {
+                              icon: "mdi-check"
+                            })
+                          : undefined;
+                      })
+                    },
+                    {
+                      name: "None",
+                      action: () => {
+                        chatStore.setNotifications("none", chat.association.id);
+                      },
+                      append: computed(() => {
+                        return chat.association.notifications === "none"
+                          ? h(VIcon, {
+                              icon: "mdi-check"
+                            })
+                          : undefined;
+                      })
+                    }
+                  ]
+                },
+                {
+                  name: "Group Settings",
+                  icon: markRaw(RiGroup2Line),
+                  action: () => {
+                    chatStore.dialogs.groupSettings.itemId = chat.id;
+                    chatStore.dialogs.groupSettings.value = true;
+                  },
+                  shown: computed(() => {
+                    return chatStore.hasPermission(
+                      [
+                        "ADMIN",
+                        "OVERVIEW",
+                        "VIEW_AUDIT_LOG",
+                        "ADD_USERS",
+                        "REMOVE_USERS",
+                        "OWNER",
+                        "BAN_USERS",
+                        "REMOVE_USERS",
+                        "CREATE_EMOJI",
+                        "MANAGE_INTEGRATIONS",
+                        "MANAGE_RANKS",
+                        "VIEW_INSIGHTS"
+                      ],
+                      chat
+                    );
+                  })
+                },
+                {
+                  name: "View Profile Page",
+                  icon: markRaw(RiUserLine),
+                  action: () => {
+                    const router = window._tpu_router;
+                    router.push(
+                      `/u/${userStore.users[chat.recipient.id]?.username}`
+                    );
+                  },
+                  shown: computed(() => {
+                    return chat.type === "direct" && chat.recipient;
+                  })
+                },
+                {
+                  name: "Message",
+                  icon: markRaw(RiChat1Line),
+                  action: async () => {
+                    const data = await chatStore.createChat(
+                      [chat.recipient.id],
+                      "DIRECT"
+                    );
+                    const router = window._tpu_router;
+                    router.push(`/communications/${data.association.id}`);
+                  },
+                  shown: computed(() => {
+                    return chat.type === "direct";
+                  })
+                },
+                {
+                  name: "Block",
+                  icon: markRaw(RiCloseCircleFill),
+                  action: () => {
+                    userStore.dialogs.block.userId = chat.recipient.id;
+                    userStore.dialogs.block.username =
+                      userStore.users[chat.recipient.id]?.username;
+                    userStore.dialogs.block.value = true;
+                  },
+                  color: "red",
+                  shown: computed(() => {
+                    return (
+                      chat.recipient &&
+                      !userStore.blocked.find(
+                        (b) => b.blockedUserId === chat.recipient.id
+                      )
+                    );
+                  })
+                },
+                {
+                  name: "Unblock",
+                  icon: markRaw(RiCheckboxCircleFill),
+                  action: () => {
+                    userStore.dialogs.block.userId = chat.recipient.id;
+                    userStore.dialogs.block.username =
+                      userStore.users[chat.recipient.id]?.username;
+                    userStore.dialogs.block.value = true;
+                  },
+                  color: "green",
+                  shown: computed(() => {
+                    return (
+                      chat.recipient &&
+                      userStore.blocked.find(
+                        (b) => b.blockedUserId === chat.recipient.id
+                      ) !== undefined
+                    );
+                  })
+                },
+                {
+                  name: "Leave",
+                  icon: markRaw(RiCloseLine),
+                  action: () => {
+                    chatStore.dialogs.leave.itemId = chat.id;
+                    chatStore.dialogs.leave.value = true;
+                  },
+                  color: "red",
+                  shown: computed(() => {
+                    return (
+                      chat.userId !== userStore.user?.id &&
+                      chat.type !== "direct"
+                    );
+                  })
+                },
+                {
+                  name: "Close",
+                  icon: markRaw(RiCloseLine),
+                  action: () => {
+                    chatStore.leaveChat(chat.association.id);
+                  },
+                  color: "red",
+                  shown: computed(() => {
+                    return chat.type === "direct";
+                  })
+                }
+              ]
+            }))
           ],
           [RailMode.WORKSPACES]: [
             {
@@ -687,6 +895,45 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     };
   }
 
+  const _activeContextMenu = ref({
+    menu: [] as ContextMenuItem[],
+    x: 0,
+    y: 0,
+    show: false
+  });
+
+  const activeContextMenu = computed({
+    get() {
+      const filterMenu = (menu: ContextMenuItem[]) => {
+        return menu.filter((item) => {
+          if (item.shown === undefined || item.shown) {
+            if (item.menu?.length) {
+              const filtered = filterMenu(item.menu);
+              if (filtered.length !== item.menu.length) {
+                item.menu = filterMenu(item.menu);
+              }
+            }
+            return true;
+          }
+          return false;
+        });
+      };
+      return {
+        ..._activeContextMenu.value,
+        menu: filterMenu(_activeContextMenu.value.menu)
+      };
+    },
+    set(val) {
+      _activeContextMenu.value = val;
+    }
+  });
+
+  const lastRailRoutes = ref<Record<RailMode, string>>(
+    localStorage.getItem("lastRailRoutes")
+      ? JSON.parse(localStorage.getItem("lastRailRoutes")!)
+      : {}
+  );
+
   return {
     drawer,
     navigation,
@@ -701,6 +948,9 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
     lookupNav,
     userRail,
     ready,
-    navigationMode
+    navigationMode,
+    activeContextMenu,
+    _activeContextMenu,
+    lastRailRoutes
   };
 });

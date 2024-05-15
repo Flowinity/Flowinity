@@ -19,6 +19,8 @@
   <InviteAFriend v-model="$app.dialogs.inviteAFriend" />
   <Feedback v-model="$app.dialogs.feedback" />
   <Gold v-model="$app.dialogs.gold.value" />
+  <image-dialog v-model="$chat.dialogs.image.value" />
+  <group-settings-dialog v-model="$chat.dialogs.groupSettings.value" />
   <v-app
     v-if="$user.user"
     class="bg"
@@ -157,10 +159,14 @@ import ProgressiveAppBar from "@/layouts/progressive/ProgressiveAppBar.vue";
 import ProgressiveSideBar from "@/layouts/progressive/ProgressiveSideBar.vue";
 import ProgressiveSuperBar from "@/layouts/progressive/ProgressiveSuperBar.vue";
 import Connecting from "@/components/Core/Dialogs/Connecting.vue";
+import ImageDialog from "@/components/Communications/Dialogs/ImageDialog.vue";
+import GroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettingsV2.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
   components: {
+    GroupSettingsDialog,
+    ImageDialog,
     Connecting,
     ProgressiveSuperBar,
     ProgressiveSideBar,
@@ -277,7 +283,14 @@ export default defineComponent({
         )
           return;
       }
-      if (this.$app.workspaceDrawer || this.$app.mainDrawer) return;
+      if (
+        (this.$experiments.experiments.PROGRESSIVE_UI &&
+          this.$chat.memberSidebarShown) ||
+        (!this.$experiments.experiments.PROGRESSIVE_UI &&
+          this.$app.workspaceDrawer) ||
+        this.$app.mainDrawer
+      )
+        return;
       this.touchEndX = event.changedTouches[0].screenX;
       if (!this.touchStartX || !this.touchEndX) return;
       if (this.touchEndX > this.touchStartX) {
@@ -290,7 +303,11 @@ export default defineComponent({
         if (this.touchStartX - this.touchEndX > 130) {
           this.touchStartX = null;
           this.touchEndX = null;
-          this.$app.toggleWorkspace();
+          if (!this.$experiments.experiments.PROGRESSIVE_UI) {
+            this.$app.toggleWorkspace();
+          } else if (this.$chat.isCommunications) {
+            this.$chat.memberSidebarShown = true;
+          }
         }
       }
     },
@@ -396,7 +413,11 @@ export default defineComponent({
       } else if ((e.ctrlKey && e.key === "k") || (e.metaKey && e.key === "k")) {
         e.preventDefault();
         this.$app.dialogs.quickSwitcher = !this.$app.dialogs.quickSwitcher;
-      } else if (e.ctrlKey && e.key === "q") {
+      } else if (
+        e.ctrlKey &&
+        e.key === "q" &&
+        this.$app.site.release === "dev"
+      ) {
         e.preventDefault();
         this.$app.dialogs.experiments = !this.$app.dialogs.experiments;
       }

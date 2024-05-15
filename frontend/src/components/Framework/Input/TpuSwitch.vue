@@ -36,12 +36,13 @@
         :aria-disabled="disabled"
       />
       <div
-        class="w-6 h-6 flex justify-center rounded-full shadow-md text-black fill-card-dark"
+        class="w-6 h-6 flex justify-center rounded-full shadow-md dark:text-black fill-card-dark bg-black"
         :class="{
           'translate-x-6': value,
           'translate-x-1': !value,
-          'bg-white': variant === 'filled' || !value,
-          'bg-blue fill-[#0e1e29]': variant === 'tonal' && value,
+          'bg-white':
+            (variant === 'filled' || !value) && $vuetify.theme.current.dark,
+          'bg-blue text-black fill-[#0e1e29]': variant === 'tonal' && value,
           'transition transform ease-in-out duration-200':
             !$experiments.experiments.DISABLE_ANIMATIONS
         }"

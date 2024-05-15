@@ -140,7 +140,8 @@ export const useChatStore = defineStore("chat", {
     },
     emoji: [] as ChatEmoji[],
     recentEmoji: {} as Record<string, number>,
-    volume: parseFloat(localStorage.getItem("volume") || "1")
+    volume: parseFloat(localStorage.getItem("volume") || "1"),
+    soundPlaying: false
   }),
   actions: {
     openEmoji(
@@ -373,19 +374,20 @@ export const useChatStore = defineStore("chat", {
       return updateChat;
     },
     async sound() {
+      if (this.soundPlaying) return;
+      this.soundPlaying = true;
       const experiments = useExperimentsStore();
       let sound;
       const id = experiments.experiments.NOTIFICATION_SOUND;
       if (id === 3) {
         sound = await import("@/assets/audio/kfx.wav");
-      } else if (id === 2) {
-        sound = await import("@/assets/audio/notification.wav");
       } else {
-        sound = await import("@/assets/audio/proposal1.wav");
+        sound = await import("@/assets/audio/notification.wav");
       }
       const audio = new Audio(sound.default);
-      audio.volume = this.volume >= 2 ? 1 : this.volume;
+      audio.volume = this.volume >= 1 ? 1 : this.volume;
       await audio.play();
+      this.soundPlaying = false;
     },
     confirmLink(trust: boolean = false) {
       const url = new URL(this.$state.dialogs.externalSite.url);
@@ -748,6 +750,11 @@ export const useChatStore = defineStore("chat", {
       } else {
         return chat.name;
       }
+    },
+    setNotifications(type: "all" | "mentions" | "none", associationId: number) {
+      axios.patch(`/chats/association/${associationId}`, {
+        notifications: type
+      });
     }
   },
   getters: {

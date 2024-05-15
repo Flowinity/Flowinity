@@ -91,10 +91,10 @@
                 $ui.navigationMode = RailMode.WORKSPACES;
               "
             >
-              <RiHistoryLine style="width: 20px" />
+              <RiHistoryLine class="action-bar-item" />
             </v-btn>
             <v-btn size="small" icon @click="$workspaces.share.dialog = true">
-              <RiShareForwardFill style="width: 20px" />
+              <RiShareForwardFill class="action-bar-item" />
             </v-btn>
           </span>
         </accessible-transition>

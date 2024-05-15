@@ -882,9 +882,6 @@ export default defineComponent({
             item: this.$ui.userRail(this.user),
             rail: [
               this.$ui.navigation.railOptions.find(
-                (rail) => rail.id === RailMode.HOME
-              ),
-              this.$ui.navigation.railOptions.find(
                 (rail) => rail.id === RailMode.USERS
               )
             ]

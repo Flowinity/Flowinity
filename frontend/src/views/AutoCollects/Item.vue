@@ -191,9 +191,6 @@ export default defineComponent({
         },
         rail: [
           this.$ui.navigation.railOptions.find(
-            (rail) => rail.id === RailMode.GALLERY
-          ),
-          this.$ui.navigation.railOptions.find(
             (rail) => rail.id === RailMode.AUTO_COLLECTS
           )
         ]

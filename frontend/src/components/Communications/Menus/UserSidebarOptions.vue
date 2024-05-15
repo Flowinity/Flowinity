@@ -75,7 +75,7 @@ export default defineComponent({
   },
   methods: {
     async chat(userId: number) {
-      const data = await this.$chat.createChat([userId]);
+      const data = await this.$chat.createChat([userId], "DIRECT");
       this.$router.push(`/communications/${data.association.id}`);
     }
   }

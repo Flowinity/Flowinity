@@ -6,7 +6,9 @@
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </div>
-    <slot />
+    <div class="content">
+      <slot />
+    </div>
   </div>
 </template>
 

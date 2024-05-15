@@ -108,7 +108,7 @@
                 <v-tooltip activator="parent" location="bottom">
                   {{ $t("collections.leave.title") }}
                 </v-tooltip>
-                <RiLogoutBoxLine style="width: 20px" />
+                <RiLogoutBoxLine class="action-bar-item" />
               </v-btn>
             </leave-collection-dialog>
           </accessible-transition>
@@ -128,20 +128,20 @@
               <v-tooltip activator="parent" location="bottom">
                 {{ $t("collections.sharing.copy") }}
               </v-tooltip>
-              <RiLink style="width: 20px" />
+              <RiLink class="action-bar-item" />
             </v-btn>
           </accessible-transition>
           <v-btn icon size="small" @click="sharing = true">
             <v-tooltip activator="parent" location="bottom">
               {{ $t("collections.sharing.title") }}
             </v-tooltip>
-            <RiShareForwardFill style="width: 20px" />
+            <RiShareForwardFill class="action-bar-item" />
           </v-btn>
           <v-btn icon size="small" @click="settings = true">
             <v-tooltip activator="parent" location="bottom">
               {{ $t("collections.settings.title") }}
             </v-tooltip>
-            <RiSettings5Line style="width: 20px" />
+            <RiSettings5Line class="action-bar-item" />
           </v-btn>
           <div class="border-r border-outline-dark"></div>
         </div>

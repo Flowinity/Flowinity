@@ -98,6 +98,7 @@ export interface NavigationOption {
   id?: RailMode;
   fake?: boolean;
   allowOverride?: boolean;
+  menu?: ContextMenuItem[];
 }
 
 export const useAppStore = defineStore("app", () => {

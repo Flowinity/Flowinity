@@ -7,14 +7,77 @@
     color="dark"
     elevation="0"
     class="no-scroll"
+    id="sidebar"
   >
+    <Leave v-model="$chat.dialogs.leave.value" />
+    <GroupWizard
+      v-model="$app.dialogs.createChat"
+      v-if="$experiments.experiments.CHAT_GUIDED_WIZARD"
+    />
+    <v-menu v-model="$ui._activeContextMenu.show" :style="menuStyle">
+      <v-list>
+        <v-list-item
+          v-for="menu in uiStore.activeContextMenu.menu"
+          :key="menu.name"
+          @click="menu.action"
+          :base-color="menu.color"
+        >
+          <v-menu
+            :close-delay="100"
+            :close-on-click="false"
+            :close-on-content-click="false"
+            :nudge-right="10"
+            :open-delay="0"
+            activator="parent"
+            class="ml-2"
+            location="right"
+            offset-x
+            open-on-hover
+            v-if="menu.menu?.length"
+          >
+            <v-card>
+              <v-list>
+                <v-list-item
+                  v-for="subMenu in menu.menu"
+                  :key="subMenu.name"
+                  @click="subMenu.action"
+                  :base-color="subMenu.color"
+                  class="flex"
+                >
+                  <div>
+                    <v-list-item-title>{{ subMenu.name }}</v-list-item-title>
+                    <v-list-item-subtitle v-if="subMenu.subtitle">
+                      {{ subMenu.subtitle }}
+                    </v-list-item-subtitle>
+                  </div>
+                  <template #append>
+                    <component :is="subMenu.append" />
+                  </template>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-menu>
+          <template #prepend>
+            <component :is="menu.icon" class="mr-2" />
+          </template>
+          <v-list-item-title>{{ menu.name }}</v-list-item-title>
+          <template #append v-if="menu.menu?.length">
+            <v-icon>mdi-arrow-right</v-icon>
+          </template>
+          <template #append v-else>
+            <component :is="menu.append" />
+          </template>
+        </v-list-item>
+      </v-list>
+    </v-menu>
     <router-link
       :to="uiStore.currentRail?.path"
-      class="text-inherit"
+      class="text-inherit sticky top-0"
+      style="z-index: 200"
       @click.prevent
     >
       <div
-        class="flex cursor-pointer select-none justify-between pt-0 flowinity-border border-b-2"
+        class="flex cursor-pointer select-none justify-between pt-0 flowinity-border border-b-2 force-bg bg-dark"
         style="min-height: 64px; max-height: 64px"
       >
         <accessible-transition name="slide-fade" mode="out-in">
@@ -29,6 +92,7 @@
       </div>
     </router-link>
     <div
+      id="sidebar-content"
       class="flex justify-between flex-col"
       style="
         height: calc(100vh - 64px);
@@ -37,11 +101,12 @@
         max-width: 255px;
       "
     >
+      <div id="sidebar-top" />
       <div
         class="justify-between flex-col flex-1 px-3"
         style="margin-top: 16px"
       >
-        <div class="flex-col flex gap-y-2 flex-1 relative">
+        <div class="flex-col flex flex-1 relative" id="sidebar-flex">
           <accessible-transition
             name="slide-fade"
             mode="out-in"
@@ -50,11 +115,14 @@
             )"
             :key="rail"
           >
-            <div v-show="uiStore.currentRail?.id === parseInt(rail)">
+            <div
+              v-show="uiStore.currentRail?.id === parseInt(rail)"
+              class="flex flex-col gap-1"
+            >
               <SideBarItem
                 v-for="item in entries as NavigationOption[]"
                 :key="item.id + item.path + ''"
-                class="flex h-12 items-center"
+                class="flex items-center"
                 :item="item"
                 :disabled="
                   item.scopesRequired &&
@@ -92,9 +160,6 @@
                 </template>
               </SideBarItem>
             </div>
-          </accessible-transition>
-          <accessible-transition name="slide-fade" mode="out-in">
-            <SidebarList v-show="uiStore.currentRail?.id === RailMode.CHAT" />
           </accessible-transition>
           <accessible-transition name="slide-fade" mode="out-in">
             <SidebarCollections
@@ -141,7 +206,7 @@ import {
   NavigationOption
 } from "@/store/progressive.store";
 import { useAppStore } from "@/store/app.store";
-import { computed } from "vue";
+import { computed, nextTick, watch } from "vue";
 import SidebarList from "@/layouts/communications/SidebarList.vue";
 import SideBarItem from "@/layouts/progressive/SideBarItem.vue";
 import SidebarDebug from "@/layouts/progressive/SidebarDebug.vue";
@@ -154,9 +219,46 @@ import AccessibleTransition from "@/components/Core/AccessibleTransition.vue";
 import CrashComponent from "@/components/Core/CrashAlt.vue";
 import functions from "@/plugins/functions";
 import { RiLock2Line, RiLockLine } from "@remixicon/vue";
+import { useChatStore } from "@/store/chat.store";
+import { useDisplay } from "vuetify";
+import Leave from "@/components/Communications/Dialogs/Leave.vue";
+import GroupWizard from "@/components/Communications/Dialogs/GroupWizard.vue";
 
 const appStore = useAppStore();
+const chatStore = useChatStore();
 const uiStore = useProgressiveUIStore();
+const display = useDisplay();
+
+watch(
+  () => appStore.mainDrawer,
+  (val) => {
+    if (!val && !display.mobile.value) {
+      appStore.mainDrawer = true;
+    }
+    if (val && chatStore.memberSidebarShown && display.mobile.value) {
+      chatStore.memberSidebarShown = false;
+    }
+  }
+);
+
+const menuStyle = computed(() => {
+  return `
+        position: absolute;
+        top: ${uiStore.activeContextMenu.y}px;
+        left: ${uiStore.activeContextMenu.x + 10}px;`;
+});
+
+// watch(
+//   () => uiStore.currentRail,
+//   async (val) => {
+//     await nextTick();
+//     const yOffset = -10;
+//     const element = document.getElementById("sidebar-content");
+//     if (element) {
+//       element.scrollTop = 0;
+//     }
+//   }
+// );
 </script>
 <style>
 .slide-fade-enter-active {

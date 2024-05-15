@@ -200,7 +200,7 @@ export class WorkspaceControllerV3 {
           `${dataValues.name
             .replaceAll("/", "-")
             .replaceAll("\\", "-")}.${type}`,
-          data
+          typeof data === "string" ? data : JSON.stringify(data)
         )
       } catch (e) {
         console.error(e)

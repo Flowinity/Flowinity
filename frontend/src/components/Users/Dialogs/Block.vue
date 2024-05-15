@@ -21,7 +21,7 @@
           :label="$t('dialogs.block.silentMode')"
           class="ml-4"
         />
-        <v-card-text class="mt-n8">
+        <v-card-text>
           {{ $t("dialogs.block.silentModeDesc") }}
         </v-card-text>
       </v-container>

@@ -1,11 +1,11 @@
 <template>
   <div>
     <CreateCollectionDialog v-model="createCollection" />
-    <overline position="start" style="margin-right: -8px; margin-left: 0rem">
+    <overline position="start" style="margin-left: 0rem">
       {{ $t("core.sidebar.collections") }}
     </overline>
     <side-bar-item
-      class="flex h-14 items-center w-full"
+      class="flex my-1 items-center w-full"
       @click="createCollection = true"
       :item="{
         icon: RiAddLine,
@@ -22,8 +22,8 @@
       <v-menu location="right">
         <template #activator="{ props }">
           <v-btn icon v-bind="props" style="width: 40px; height: 40px">
-            <RiSortDesc v-if="desc" style="width: 20px" />
-            <RiSortAsc v-else style="width: 20px" />
+            <RiSortDesc v-if="desc" class="action-bar-item" />
+            <RiSortAsc v-else class="action-bar-item" />
           </v-btn>
         </template>
         <v-card :padding="false" class="py-1">
@@ -68,10 +68,10 @@
         </v-card>
       </v-menu>
     </div>
-    <div class="flex flex-col gap-4 mt-4">
+    <div class="flex flex-col gap-1">
       <side-bar-item
         to="/collections/manage"
-        class="flex h-14 items-center w-full"
+        class="flex items-center w-full"
         v-if="collectionsStore.invites > 0"
       >
         <template #icon>
@@ -88,7 +88,7 @@
       </side-bar-item>
       <div v-for="collection in filteredCollections" :key="collection.id">
         <side-bar-item
-          class="flex h-14 items-center w-full"
+          class="flex items-center w-full"
           :to="`/collections/${collection.id}`"
           @click="collection.new ? updateNew(collection.id) : null"
         >
