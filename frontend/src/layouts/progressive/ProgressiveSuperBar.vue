@@ -85,12 +85,14 @@
           >
             <v-tooltip activator="parent" location="right">
               <div class="flex flex-col">
-                <p>{{ appStore.weather.data?.main }}</p>
+                <p>
+                  {{ appStore.weather.data?.main }} ({{ $app.weatherTemp
+                  }}{{ $app.weatherUnitText }})
+                </p>
                 <small>
                   Feels like:
-                  {{ $app.convertTemp(appStore.weather.data?.feels_like) }}°{{
-                    userStore.user?.weatherUnit.charAt(0).toUpperCase()
-                  }}
+                  {{ $app.convertTemp(appStore.weather.data?.feels_like, true)
+                  }}{{ $app.weatherUnitText }}
                 </small>
                 <small>Humidity: {{ appStore.weather.data?.humidity }}%</small>
                 <small>
@@ -110,12 +112,8 @@
                 class="absolute z-20 -top-2 right-0 text-center flex justify-center bg-outline-dark rounded-full p-1"
                 style="font-size: 9px"
               >
-                {{ $app.weatherTemp
-                }}{{
-                  $user.user?.weatherUnit.charAt(0).toUpperCase() === "K"
-                    ? ""
-                    : "°"
-                }}{{ $user.user?.weatherUnit.charAt(0).toUpperCase() }}
+                {{ $app.convertTemp(appStore.weather.data?.temp, false)
+                }}{{ $app.weatherUnitText }}
               </div>
             </template>
             <v-img

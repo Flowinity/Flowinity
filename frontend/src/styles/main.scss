@@ -559,9 +559,8 @@ p:has(.emoji-large) img {
 }
 
 .dev-overlay {
-  position: absolute;
+  position: fixed;
   z-index: 99999;
-  background-color: rgba(0, 0, 0, 0.9);
   text-align: center;
   width: 500px;
   right: 25px;
@@ -573,16 +572,29 @@ p:has(.emoji-large) img {
   display: flex;
   flex-direction: column;
   overflow: scroll;
-  border: 1px solid #0190ea;
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 .dev-header {
   padding: 10px;
   cursor: move;
   z-index: 2001;
-  background-color: #0190ea;
+  background-color: #757575 ;
   color: black;
   text-align: left;
+  border-radius: 8px 8px 0 0;
+}
+
+.foreground .dev-header {
+  background-color: #0190ea;
+}
+
+.dev-overlay.foreground .content {
+  border: 1px solid #0190ea;
+}
+
+.dev-overlay .content {
+  border: 1px solid #757575;
 }
 
 // Align v-icon with text

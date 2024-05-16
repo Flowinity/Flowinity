@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 
 type Operation = {
   id: string;
@@ -13,8 +13,14 @@ type Operation = {
   sdl: string;
 };
 
+type Dialog = {
+  id: string;
+  lastInteracted: number;
+};
+
 export const useDebugStore = defineStore("debug", () => {
   const recentOperations = ref<Operation[]>([]);
+  const dialogs = ref<Dialog[]>([]);
 
   watch(recentOperations, (value) => {
     if (value.length > 100) {
@@ -42,6 +48,7 @@ export const useDebugStore = defineStore("debug", () => {
   });
 
   return {
-    recentOperations
+    recentOperations,
+    dialogs
   };
 });

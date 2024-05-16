@@ -399,7 +399,7 @@ let Errors = {
     status: 400
   },
   FEATURE_REMOVED: {
-    message: "This feature is no longer available",
+    message: "This feature is no longer available.",
     status: 400
   }
 }

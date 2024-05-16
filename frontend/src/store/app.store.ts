@@ -484,18 +484,26 @@ export const useAppStore = defineStore("app", {
     },
     weatherTemp(state) {
       const temp = state.weather.data?.temp;
-      return this.convertTemp(temp);
+      return this.convertTemp(temp, true);
+    },
+    weatherUnitText() {
+      const user = useUserStore()?.user;
+      if (user?.weatherUnit === "kelvin") return "K";
+      if (user?.weatherUnit === "fahrenheit") return "°F";
+      return "°C";
     }
   },
   actions: {
-    convertTemp(temp: number) {
+    convertTemp(temp: number, decimals = false) {
       const user = useUserStore()?.user;
       if (!user?.weatherUnit) return 0;
       if (user?.weatherUnit === "kelvin") {
         return Math.round((temp + 273.15) * 100) / 100;
       } else if (user?.weatherUnit === "fahrenheit") {
+        if (decimals) return Math.round((temp * 9) / 5 + 32 * 100) / 100;
         return Math.round((temp * 9) / 5 + 32);
       } else {
+        if (decimals) return Math.round(temp * 100) / 100;
         return Math.round(temp);
       }
     },
