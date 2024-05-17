@@ -755,6 +755,9 @@ export const useChatStore = defineStore("chat", {
       axios.patch(`/chats/association/${associationId}`, {
         notifications: type
       });
+      this.chats.find(
+        (chat: Chat) => chat.association.id === associationId
+      ).association.notifications = type;
     }
   },
   getters: {

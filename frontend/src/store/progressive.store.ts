@@ -5,17 +5,7 @@
  */
 
 import { defineStore } from "pinia";
-import {
-  computed,
-  ComputedRef,
-  h,
-  markRaw,
-  Raw,
-  Ref,
-  ref,
-  VNode,
-  watch
-} from "vue";
+import { computed, h, markRaw, Raw, Ref, ref, VNode, watch } from "vue";
 import {
   RiAddLine,
   RiAppleFill,
@@ -84,12 +74,18 @@ import {
   RiVideoChatLine
 } from "@remixicon/vue";
 import { useUserStore } from "@/store/user.store";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useChatStore } from "@/store/chat.store";
 import { useExperimentsStore } from "@/store/experiments.store";
 import { Platform, useAppStore } from "@/store/app.store";
 import UserAvatar from "@/components/Users/UserAvatar.vue";
-import { PartialUserBase, PartialUserFriend, User } from "@/gql/graphql";
+import {
+  FriendAction,
+  FriendStatus,
+  PartialUserBase,
+  PartialUserFriend,
+  User
+} from "@/gql/graphql";
 import { useMailStore } from "@/store/mail.store";
 import { useFriendsStore } from "@/store/friends.store";
 import { VIcon } from "vuetify/components";
@@ -289,14 +285,20 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                       name: "All",
                       action: () => {
                         chatStore.setNotifications("all", chat.association.id);
+                        // TODO: implement proper reactivity
+                        _activeContextMenu.value.menu =
+                          navigation.value.options[navigation.value.mode].find(
+                            (option) =>
+                              option.path ===
+                              `/communications/${chat.association.id}`
+                          )?.menu || [];
                       },
-                      append: computed(() => {
-                        return chat.association.notifications === "all"
+                      append:
+                        chat.association.notifications === "all"
                           ? h(VIcon, {
                               icon: "mdi-check"
                             })
-                          : "deez";
-                      })
+                          : undefined
                     },
                     {
                       name: "Mentions",
@@ -305,39 +307,52 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                           "mentions",
                           chat.association.id
                         );
+                        // TODO: implement proper reactivity
+                        _activeContextMenu.value.menu =
+                          navigation.value.options[navigation.value.mode].find(
+                            (option) =>
+                              option.path ===
+                              `/communications/${chat.association.id}`
+                          )?.menu || [];
                       },
-                      append: computed(() => {
-                        return chat.association.notifications === "mentions"
+                      append:
+                        chat.association.notifications === "mentions"
                           ? h(VIcon, {
                               icon: "mdi-check"
                             })
-                          : undefined;
-                      })
+                          : undefined
                     },
                     {
                       name: "None",
                       action: () => {
                         chatStore.setNotifications("none", chat.association.id);
+                        // TODO: implement proper reactivity
+                        _activeContextMenu.value.menu =
+                          navigation.value.options[navigation.value.mode].find(
+                            (option) =>
+                              option.path ===
+                              `/communications/${chat.association.id}`
+                          )?.menu || [];
+                        console.log(chat);
                       },
-                      append: computed(() => {
-                        return chat.association.notifications === "none"
+                      append:
+                        chat.association.notifications === "none"
                           ? h(VIcon, {
                               icon: "mdi-check"
                             })
-                          : undefined;
-                      })
+                          : undefined
                     }
                   ]
                 },
                 {
                   name: "Group Settings",
-                  icon: markRaw(RiGroup2Line),
+                  icon: markRaw(RiSettings5Line),
                   action: () => {
                     chatStore.dialogs.groupSettings.itemId = chat.id;
                     chatStore.dialogs.groupSettings.value = true;
                   },
-                  shown: computed(() => {
-                    return chatStore.hasPermission(
+                  shown:
+                    chatStore.hasPermission(
                       [
                         "ADMIN",
                         "OVERVIEW",
@@ -353,8 +368,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                         "VIEW_INSIGHTS"
                       ],
                       chat
-                    );
-                  })
+                    ) && chat.type === "group"
                 },
                 {
                   name: "View Profile Page",
@@ -365,9 +379,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                       `/u/${userStore.users[chat.recipient.id]?.username}`
                     );
                   },
-                  shown: computed(() => {
-                    return chat.type === "direct" && chat.recipient;
-                  })
+                  shown: chat.type === "direct" && chat.recipient
                 },
                 {
                   name: "Message",
@@ -380,9 +392,50 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                     const router = window._tpu_router;
                     router.push(`/communications/${data.association.id}`);
                   },
-                  shown: computed(() => {
-                    return chat.type === "direct";
-                  })
+                  shown: chat.type === "direct"
+                },
+                {
+                  name: "Send Friend Request",
+                  icon: markRaw(RiAddLine),
+                  action: () => {
+                    friendStore.actOnFriend(
+                      chat.recipient.id,
+                      FriendAction.Send
+                    );
+                  },
+                  color: "green",
+                  shown:
+                    chat.recipient &&
+                    !friendStore.friends.find(
+                      (f) => f.friendId === chat.recipient.id
+                    )
+                },
+                {
+                  name: "Friend Request Sent",
+                  icon: markRaw(RiAddLine),
+                  action: () => {},
+                  color: "grey",
+                  shown:
+                    chat.recipient &&
+                    friendStore.friends.find(
+                      (f) => f.friendId === chat.recipient.id
+                    )?.status === FriendStatus.Outgoing
+                },
+                {
+                  name: "Accept Friend Request",
+                  icon: markRaw(RiAddLine),
+                  action: () => {
+                    friendStore.actOnFriend(
+                      chat.recipient.id,
+                      FriendAction.Accept
+                    );
+                  },
+                  color: "green",
+                  shown:
+                    chat.recipient &&
+                    friendStore.friends.find(
+                      (f) => f.friendId === chat.recipient.id
+                    )?.status === FriendStatus.Incoming
                 },
                 {
                   name: "Block",
@@ -394,14 +447,11 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                     userStore.dialogs.block.value = true;
                   },
                   color: "red",
-                  shown: computed(() => {
-                    return (
-                      chat.recipient &&
-                      !userStore.blocked.find(
-                        (b) => b.blockedUserId === chat.recipient.id
-                      )
-                    );
-                  })
+                  shown:
+                    chat.recipient &&
+                    !userStore.blocked.find(
+                      (b) => b.blockedUserId === chat.recipient.id
+                    )
                 },
                 {
                   name: "Unblock",
@@ -413,14 +463,11 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                     userStore.dialogs.block.value = true;
                   },
                   color: "green",
-                  shown: computed(() => {
-                    return (
-                      chat.recipient &&
-                      userStore.blocked.find(
-                        (b) => b.blockedUserId === chat.recipient.id
-                      ) !== undefined
-                    );
-                  })
+                  shown:
+                    chat.recipient &&
+                    userStore.blocked.find(
+                      (b) => b.blockedUserId === chat.recipient.id
+                    ) !== undefined
                 },
                 {
                   name: "Leave",

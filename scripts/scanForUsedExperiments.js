@@ -1,7 +1,6 @@
 const fs = require("fs")
 const path = require("path")
 
-// Function to recursively get all files in a directory
 const getAllFiles = (dirPath, arrayOfFiles) => {
   const files = fs.readdirSync(dirPath)
 
@@ -18,9 +17,7 @@ const getAllFiles = (dirPath, arrayOfFiles) => {
   return arrayOfFiles
 }
 
-// Function to search for FLAGs in the provided files
 const searchFlags = (files) => {
-  // Regex patterns to match different forms of experiments.FLAG
   const flagPatterns = [
     /experiments\.experiments\.(\w+)/g, // experiments.experiments.FLAG
     /experiments\.(\w+)/g, // experiments.FLAG
@@ -51,7 +48,6 @@ const searchFlags = (files) => {
   return flagCounts
 }
 
-// Main function to find and count FLAGs
 const main = (src = "../frontend/src") => {
   const parentDir = path.join(__dirname, src)
   const allFiles = getAllFiles(parentDir)
