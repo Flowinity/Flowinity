@@ -377,6 +377,10 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Record<string, any> {
     const experiments = {
+      FAB: false,
+      ENABLE_PULSE_TAB: false,
+      LEGACY_FLOWINITY_SSO: false,
+      CLASSIC_MIGRATE: false,
       EXPAND_APP_BAR_IMAGE: false,
       COPY_MSG_ID: false,
       WEATHER: true,
@@ -443,6 +447,26 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        FAB: {
+          description: "Enable the global floating action button.",
+          createdAt: "2024-05-18T00:00:00.000Z",
+          versions: [3]
+        },
+        ENABLE_PULSE_TAB: {
+          description: "Enable Insights Pulse tab.",
+          createdAt: "2024-05-18T00:00:00.000Z",
+          versions: [2]
+        },
+        LEGACY_FLOWINITY_SSO: {
+          description: "Enable legacy Flowinity SSO.",
+          createdAt: "2024-05-18T00:00:00.000Z",
+          versions: [1, 2]
+        },
+        CLASSIC_MIGRATE: {
+          description: "Enable classic migration.",
+          createdAt: "2024-05-18T00:00:00.000Z",
+          versions: [3]
+        },
         EXPAND_APP_BAR_IMAGE: {
           description: "Expand app bar image on scroll up.",
           createdAt: "2024-05-15T00:00:00.000Z",
