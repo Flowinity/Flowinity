@@ -400,7 +400,9 @@ export class CoreService {
       THEME: 3,
       NOTIFICATION_SOUND: 2,
       RESIZABLE_SIDEBARS: false,
-      LEGACY_MOBILE_NAV: true,
+      // TPUv3 frontend has a broken traditional mobile navigation (sidebar), thus the experimental BottomBar component
+      // in this version must be enabled to make navigation possible. This flag is unused in any other version.
+      LEGACY_MOBILE_NAV: false,
       OFFICIAL_INSTANCE: config?.officialInstance || false,
       API_FALLBACK_ON_ERROR: false,
       API_VERSION: 3,
@@ -566,7 +568,7 @@ export class CoreService {
         LEGACY_MOBILE_NAV: {
           description: "Legacy mobile navigation.",
           createdAt: "2023-06-16T00:00:00.000Z",
-          versions: [3, 4]
+          versions: [3]
         },
         OFFICIAL_INSTANCE: {
           description: "Official PrivateUploader instance.",
