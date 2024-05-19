@@ -33,14 +33,13 @@
                 :active="contextMenu.item.ranksMap.includes(rank.id)"
                 :value="rank.id"
                 :disabled="
-                  !$chat.hasPermission('MANAGE_RANKS', $chat.selectedChat) &&
-                  (rank.managed ||
-                    !$chat.canEditRank(rank.index, $chat.selectedChat))
+                  !$chat.hasPermission('MANAGE_RANKS', chat) &&
+                  (rank.managed || !$chat.canEditRank(rank.index, chat))
                 "
                 @click="
                   $chat.toggleUserRank(
                     contextMenu.item.id,
-                    $chat.selectedChat.association.id,
+                    chat.association.id,
                     rank.id
                   )
                 "
@@ -74,18 +73,12 @@
       </v-list>
     </v-card>
   </v-menu>
-  <template
-    v-if="
-      $chat.selectedChat &&
-      $route.path !== '/communications/home' &&
-      $chat.selectedChat.users
-    "
-  >
+  <template v-if="chat && $route.path !== '/communications/home' && chat.users">
     <div v-if="$vuetify.display.mobile" class="mt-2">
       <UserAvatar
-        :chat="$chat.selectedChat?.recipient ? null : $chat.selectedChat"
+        :chat="chat?.recipient ? null : chat"
         :status="true"
-        :user="$chat.selectedChat?.recipient"
+        :user="chat?.recipient"
         class="ml-4"
         size="32"
         style="display: inline-block"
@@ -97,9 +90,9 @@
         style="display: inline-block; align-self: center; text-align: center"
         title="TPU Communications"
       >
-        {{ $chat.chatName($chat.selectedChat) }}
+        {{ $chat.chatName(chat) }}
       </h4>
-      <v-card-actions v-if="$chat.selectedChat">
+      <v-card-actions v-if="chat">
         <v-spacer />
         <v-btn
           v-if="$experiments.experiments.PINNED_MESSAGES"
@@ -123,9 +116,7 @@
           icon
           @click="
             $chat.dialogs.groupSettings.value = true;
-            $chat.selectedChat
-              ? ($chat.dialogs.groupSettings.itemId = $chat.selectedChat.id)
-              : '';
+            chat ? ($chat.dialogs.groupSettings.itemId = chat.id) : '';
           "
         >
           <v-icon>mdi-cog</v-icon>
@@ -143,10 +134,7 @@
             v-for="association in group.users"
             :key="association.id"
             :style="{
-              color: $chat.getRankColor(
-                association.ranksMap,
-                $chat.selectedChat?.ranks
-              )
+              color: $chat.getRankColor(association.ranksMap, chat?.ranks)
             }"
             :class="{
               'black-and-white':
@@ -175,7 +163,7 @@
                 :status="true"
                 :user="association.user"
                 :typing="
-                  $chat.selectedChat.typers?.find(
+                  chat.typers?.find(
                     (typer) => typer.userId === association.userId
                   )
                 "
@@ -246,9 +234,7 @@
   </template>
   <template v-else>
     <MessageSkeleton
-      v-for="i in $chat.selectedChat?.usersCount > 30
-        ? 30
-        : $chat.selectedChat?.usersCount || 5"
+      v-for="i in chat?.usersCount > 30 ? 30 : chat?.usersCount || 5"
       :key="i"
       :animate="false"
     />
@@ -283,6 +269,12 @@ export default defineComponent({
     Paginate,
     UserAvatar
   },
+  props: {
+    chatId: {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
       create: false,
@@ -297,9 +289,14 @@ export default defineComponent({
     };
   },
   computed: {
+    chat() {
+      return this.$chat.chats.find(
+        (chat) => chat.association.id === this.chatId
+      );
+    },
     ranksFiltered() {
       return (
-        this.$chat.selectedChat?.ranks.filter((rank: ChatRank) =>
+        this.chat?.ranks.filter((rank: ChatRank) =>
           rank.name.toLowerCase().includes(this.searchRanks.toLowerCase())
         ) || []
       );
@@ -315,12 +312,12 @@ export default defineComponent({
       return "calc(100vh - 64px)";
     },
     ranks() {
-      if (!this.$chat.selectedChat) return [];
+      if (!this.chat) return [];
       return [
-        ...this.$chat.selectedChat.ranks.map((rank) => {
+        ...this.chat.ranks.map((rank) => {
           return {
             ...rank,
-            users: this.$chat.selectedChat.users
+            users: this.chat.users
               .filter((user) => {
                 return (
                   user.ranksMap[0] === rank.id &&
@@ -342,7 +339,7 @@ export default defineComponent({
         }),
         {
           name: this.$t("chats.roles.online"),
-          users: this.$chat.selectedChat.users
+          users: this.chat.users
             .filter((user) => {
               return (
                 this.$user.users[user.userId]?.status !== UserStatus.Offline &&
@@ -358,7 +355,7 @@ export default defineComponent({
         },
         {
           name: this.$t("chats.roles.offline"),
-          users: this.$chat.selectedChat.users
+          users: this.chat.users
             .filter((user) => {
               return (
                 this.$user.users[user.userId]?.status === UserStatus.Offline &&
@@ -388,8 +385,7 @@ export default defineComponent({
   },
   methods: {
     async handleJump(messageId: number, associationId: number) {
-      if (this.$chat.selectedChatId !== associationId) {
-        this.$chat.selectedChatId = associationId;
+      if (this.chatId !== associationId) {
         this.$router.push(`/communications/${associationId}`);
         await this.$chat.setChat(associationId);
       }

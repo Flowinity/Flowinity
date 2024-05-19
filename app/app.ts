@@ -437,7 +437,7 @@ export class Application {
         })
       }
     })
-    this.onServerStart() // TODO: Fix "Promise returned from onServerStart is ignored".
+    this.onServerStart()
   }
 
   private config() {

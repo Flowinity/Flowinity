@@ -401,6 +401,10 @@ let Errors = {
   FEATURE_REMOVED: {
     message: "This feature is no longer available.",
     status: 400
+  },
+  BLOCKED: {
+    message: "You have been blocked by this user.",
+    status: 400
   }
 }
 

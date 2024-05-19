@@ -11,7 +11,7 @@ export default async function (socket: SocketAuth, next: NextFunction) {
     if (!config.finishedSetup)
       socket.emit("error", {
         code: 500,
-        message: "TPU instance is misconfigured."
+        message: "Flowinity instance is misconfigured."
       })
     const token = socket.handshake.auth.token
     if (token && config.finishedSetup) {

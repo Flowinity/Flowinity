@@ -305,10 +305,10 @@ export const useChatStore = defineStore("chat", {
       });
       return true;
     },
-    async jumpToMessage(message: number) {
+    async jumpToMessage(message: number, associationId: number) {
       if (!(await this.doJump(message))) {
         const messagesStore = useMessagesStore();
-        messagesStore.messages[this.selectedChatId] = null;
+        messagesStore.messages[associationId] = null;
         this.loadingNew = true;
         await this.loadHistory(
           undefined,
@@ -319,11 +319,12 @@ export const useChatStore = defineStore("chat", {
         await this.doJump(message);
       }
     },
-    merge(message: Message, index: number) {
+    merge(message: Message, index: number, associationId: number) {
       if (message.replyId) return false;
       if (message.type !== MessageType.Message && message.type) return false;
       const messagesStore = useMessagesStore();
-      const prev = messagesStore.messages[this.selectedChatId][index + 1];
+      if (!messagesStore.messages[associationId]) return false;
+      const prev = messagesStore.messages[associationId][index + 1];
       if (!prev) return false;
       if (prev.type !== MessageType.Message && prev.type) return false;
       if (dayjs(message.createdAt).diff(prev.createdAt, "minutes") > 5)

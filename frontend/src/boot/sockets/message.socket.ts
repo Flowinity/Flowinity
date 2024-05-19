@@ -1,29 +1,31 @@
-/*import { useChatStore } from "@/stores/chat.store";
-import { useApolloClient, useSubscription } from "@vue/apollo-composable";
-import { NewMessageSubscription } from "@/graphql/chats/subscriptions/newMessage.graphql";
-import {
-  EmbedDataV2,
-  EmbedResolutionEvent,
-  Message,
-  UserStoredStatus
-} from "@/gql/graphql";
-import MessageToast from "@/components/Communications/MessageToast.vue";
+import { useChatStore } from "@/store/chat.store";
 import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/user.store";
-import { useMessagesStore } from "@/stores/messages.store";
+import { useUserStore } from "@/store/user.store";
+import { useMessagesStore } from "@/store/message.store";
 import { useToast } from "vue-toastification";
+import { useSubscription } from "@vue/apollo-composable";
+import { NewMessageSubscription } from "@/graphql/chats/subscriptions/newMessage.graphql";
+import { EditMessageEvent, Message, UserStoredStatus } from "@/gql/graphql";
+import MessageToast from "@/components/Communications/MessageToast.vue";
 import {
   CancelTypingSubscription,
   TypingSubscription
 } from "@/graphql/chats/subscriptions/typing.graphql";
 import { EditMessageSubscription } from "@/graphql/chats/subscriptions/editMessage.graphql";
 import { DeleteMessageSubscription } from "@/graphql/chats/subscriptions/deleteMessage.graphql";
+import { Ref } from "vue";
+import { Chat, Typing } from "@/models/chat";
+import router from "@/router";
+import { Platform, useAppStore } from "@/store/app.store";
+import { IpcChannels } from "@/electron-types/ipc";
+import functions from "@/plugins/functions";
 
 export default function setup() {
   const chatStore = useChatStore();
   const router = useRouter();
   const userStore = useUserStore();
   const messagesStore = useMessagesStore();
+  const appStore = useAppStore();
   const toast = useToast();
 
   const newMsg = useSubscription(NewMessageSubscription);
@@ -84,7 +86,7 @@ export default function setup() {
       userStore.user?.storedStatus !== UserStoredStatus.Busy &&
       onMessage.message.userId !== userStore.user?.id
     ) {
-      messagesStore.sound();
+      chatStore.sound();
       toast.info(
         {
           component: MessageToast,
@@ -101,60 +103,95 @@ export default function setup() {
         }
       );
     }
+
+    if (appStore.platform !== Platform.WEB) {
+      window.electron.ipcRenderer.send(IpcChannels.NEW_MESSAGE, {
+        ...onMessage,
+        instance: {
+          name: appStore.site.name,
+          domain: appStore.domain,
+          hostname: appStore.site.hostname,
+          hostnameWithProtocol: appStore.site.hostnameWithProtocol,
+          notificationIcon: functions.avatar(
+            userStore.users[onMessage.message.userId]
+          )
+        }
+      });
+    }
   });
 
   const typing = useSubscription(TypingSubscription);
   const cancelTyping = useSubscription(CancelTypingSubscription);
 
   typing.onResult(({ data: { onTyping } }) => {
-    const index = chatStore.typers.findIndex(
-      (t) => t.chatId === onTyping.chatId && t.userId === onTyping.user.id
+    const index = chatStore.chats.findIndex((c) => c.id === onTyping.chatId);
+    if (index === -1) return;
+    const chat: Chat = chatStore.chats[index];
+    if (!chat) return;
+    if (!chat.typers) chat.typers = [] as Typing[];
+    const find = chat.typers.find(
+      (t) => t.userId === onTyping.user.id && t.chatId === onTyping.chatId
     );
-    if (index !== -1) {
-      const val = chatStore.typers.find(
-        (t) => t.chatId === onTyping.chatId && t.userId === onTyping.user.id
+    if (find) {
+      clearTimeout(find?.timeout);
+      chat.typers.splice(
+        chat.typers.findIndex(
+          (t) => t.chatId === onTyping.chatId && t.userId === onTyping.user.id
+        ),
+        1
       );
-      clearTimeout(val?.timeout);
-      chatStore.typers.splice(index, 1);
     }
-    chatStore.typers.push({
+    chat.typers.push({
       chatId: onTyping.chatId,
       userId: onTyping.user.id,
       expires: onTyping.expires,
-      timeout: setTimeout(() => {
-        const index = chatStore.typers.findIndex(
-          (t) => t.chatId === onTyping.chatId && t.userId === onTyping.user.id
-        );
-        if (index !== -1) {
-          chatStore.typers.splice(index, 1);
-        }
-      }, new Date(onTyping.expires).getTime() - Date.now())
+      user: onTyping.user,
+      timeout: setTimeout(
+        () => {
+          const chat: Ref<Chat> = chatStore.chats.find(
+            (c) => c.id === onTyping.chatId
+          );
+          if (!chat || !chat.typers) return;
+          chat.typers.splice(
+            chat.typers.findIndex(
+              (t) =>
+                t.chatId === onTyping.chatId && t.userId === onTyping.user.id
+            ),
+            1
+          );
+        },
+        new Date(onTyping.expires).getTime() - Date.now()
+      )
     });
   });
 
   cancelTyping.onResult(({ data: { onCancelTyping } }) => {
-    const index = chatStore.typers.findIndex(
-      (t) =>
-        t.chatId === onCancelTyping.chatId &&
-        t.userId === onCancelTyping.user.id
+    const index = chatStore.chats.findIndex(
+      (c) => c.id === onCancelTyping.chatId
     );
-    if (index !== -1) {
-      const val = chatStore.typers.find(
-        (t) =>
-          t.chatId === onCancelTyping.chatId &&
-          t.userId === onCancelTyping.user.id
+    if (index === -1) return;
+    const chat: Ref<Chat> = chatStore.chats[index];
+    if (!chat.typers) chat.typers = [] as Typing[];
+    const find = chat.typers.find((t) => t.userId === onCancelTyping.user.id);
+    if (find) {
+      clearTimeout(find?.timeout);
+      chat.typers.splice(
+        chat.typers.findIndex(
+          (t) =>
+            t.chatId === onCancelTyping.chatId &&
+            t.userId === onCancelTyping.user.id
+        ),
+        1
       );
-      clearTimeout(val?.timeout);
-      chatStore.typers.splice(index, 1);
     }
   });
 
   const embedFails = [] as {
-    data: EmbedResolutionEvent;
+    data: EditMessageEvent;
     retries: number;
   }[];
 
-  function onEmbedResolution(embedResolution: EmbedResolutionEvent) {
+  function onEmbedResolution(embedResolution: EditMessageEvent) {
     if (!messagesStore.messages[embedResolution.associationId]) return;
     const index = messagesStore.messages[
       embedResolution.associationId
@@ -208,4 +245,3 @@ export default function setup() {
     }
   );
 }
-*/

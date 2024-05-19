@@ -7,6 +7,7 @@ export interface Typing {
   userId: number;
   user: User;
   expires: Date | string;
+  timeout: ReturnType<typeof setTimeout>;
 }
 
 export interface Chat {

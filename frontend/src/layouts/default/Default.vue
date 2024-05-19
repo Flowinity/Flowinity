@@ -36,21 +36,17 @@
     <MemoryProfiler v-if="$app.dialogs.memoryProfiler" />
     <NetworkInspector v-if="$app.dialogs.networkInspector" />
     <v-overlay
-      persistent
-      absolute
-      :model-value="$app.loading"
-      class="align-center justify-center"
-    >
-      <v-progress-circular indeterminate size="64" />
-    </v-overlay>
-    <v-overlay
       v-if="!$experiments.experiments.PROGRESSIVE_UI"
       persistent
-      :model-value="$app.componentLoading"
+      :model-value="$app.componentLoading && $app.loading"
       class="align-center justify-center"
       absolute
     >
-      <v-progress-circular indeterminate size="64" />
+      <FlowinityLogoAnimated
+        :animated="true"
+        :skip-init="true"
+        style="width: 128px"
+      />
     </v-overlay>
     <!-- must be false because if it's undefined, the appbar will render after the state is loaded -->
     <default-bar
@@ -161,10 +157,12 @@ import ProgressiveSuperBar from "@/layouts/progressive/ProgressiveSuperBar.vue";
 import Connecting from "@/components/Core/Dialogs/Connecting.vue";
 import ImageDialog from "@/components/Communications/Dialogs/ImageDialog.vue";
 import GroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettingsV2.vue";
+import FlowinityLogoAnimated from "@/components/Brand/FlowinityLogoAnimated.vue";
 
 export default defineComponent({
   name: "TPUDefaultLayout",
   components: {
+    FlowinityLogoAnimated,
     GroupSettingsDialog,
     ImageDialog,
     Connecting,

@@ -105,7 +105,9 @@ if (process.env.NODE_ENV === "development") {
         return;
       // find where the component is defined
       //@ts-ignore
-      console.log(`[TPU/Dev] ${this.$options.name} mounted`);
+      console.log(
+        `[TPU/Dev] ${this.$options.__file?.split("/")?.pop()} mounted`
+      );
     }
   };
   app.mixin(loggingMixin);

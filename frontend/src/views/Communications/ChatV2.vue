@@ -8,7 +8,11 @@
       dialogs.delete.value = false;
     "
   />
-  <div class="container" @dragover="dragDropHandler" @drop="dragDropHandler">
+  <div
+    class="chat-container"
+    @dragover="dragDropHandler"
+    @drop="dragDropHandler"
+  >
     <v-menu
       :attach="$chat.dialogs.emojiMenu.bindingElement"
       v-model="$chat.dialogs.emojiMenu.value"
@@ -90,34 +94,14 @@
       class="messages communications position-relative"
       id="chat"
       @scroll="scrollEvent"
-      :key="$chat.selectedChatId"
+      :key="chatId"
     >
-      <div id="sentinel-bottom" ref="sentinelBottom" />
-      <infinite-loading
-        @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
-        :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}-bottom`"
-        v-if="$messages.currentMessages && $chat.loadNew"
-      >
-        <template v-slot:spinner>
-          <div class="text-center">
-            <v-progress-circular
-              :size="36"
-              :width="2"
-              indeterminate
-              :model-value="1"
-            />
-          </div>
-        </template>
-        <template v-slot:complete>
-          <span />
-        </template>
-      </infinite-loading>
       <message-perf
         :unread-id="unreadId"
         @update:uncollapse-blocked="expandBlocked = $event"
         :uncollapse-blocked="expandBlocked"
         class="mr-2 ml-2"
-        v-for="(message, index) in $messages.currentMessages"
+        v-for="(message, index) in messages"
         :id="'message-id-' + message.id"
         :ref="`message-${index}`"
         :style="{ zIndex: 1000 - index }"
@@ -129,7 +113,7 @@
         :date-separator="dateSeparator(index)"
         :editing="editing === message.id"
         :editingText="editingText"
-        :merge="$chat.merge(message, index)"
+        :merge="$chat.merge(message, index, chatId)"
         :message="message"
         :index="index"
         @authorClick="handleAuthorClick($event, message.user.username)"
@@ -141,47 +125,9 @@
         @edit="handleEdit"
         @editMessage="doEditMessage"
         @editText="editingText = $event"
-        @jumpToMessage="$chat.jumpToMessage($event)"
+        @jumpToMessage="$chat.jumpToMessage($event, chatId)"
         @reply="replyId = $event.id"
       />
-      <v-skeleton-loader
-        v-if="!$chat.selectedChat?.messages?.length && $chat.loading"
-        v-for="index in 20"
-        :key="index"
-        type="list-item-avatar-three-line"
-        color="background no-border"
-      />
-      <infinite-loading
-        @infinite="$chat.loadHistory"
-        direction="top"
-        :top="true"
-        :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}`"
-        v-if="$messages.currentMessages"
-        :value="'bottom'"
-      >
-        <template v-slot:spinner>
-          <div class="text-center">
-            <v-progress-circular
-              :size="36"
-              :width="2"
-              indeterminate
-              :model-value="1"
-            />
-          </div>
-        </template>
-        <template v-slot:complete>
-          <div class="text-center">
-            <PromoNoContent
-              icon="mdi-message-processing-outline"
-              :title="`Welcome to the start of ${$chat.chatName(
-                $chat.selectedChat
-              )}!`"
-              description="Send a message to start the conversation!"
-            />
-          </div>
-        </template>
-      </infinite-loading>
-      <div id="sentinel" ref="sentinel" v-if="$chat.isReady"></div>
     </div>
     <div class="input-container">
       <v-toolbar
@@ -272,42 +218,6 @@
       />
     </div>
   </div>
-
-  <teleport
-    v-if="$experiments.experiments.PROGRESSIVE_UI && $chat.isReady && $ui.ready"
-    to="#appbar-options"
-  >
-    <accessible-transition mode="out-in" name="slide-up" appear>
-      <div class="flex gap-2">
-        <v-btn
-          v-if="$experiments.experiments.PINNED_MESSAGES"
-          icon
-          size="small"
-        >
-          <Pins />
-          <RiPushpin2Line class="action-bar-item" />
-        </v-btn>
-        <v-btn
-          icon
-          size="small"
-          @click="$chat.search.value = !$chat.search.value"
-        >
-          <RiSearchLine class="action-bar-item" />
-        </v-btn>
-        <v-btn
-          icon
-          size="small"
-          @click="$chat.memberSidebarShown = !$chat.memberSidebarShown"
-        >
-          <RiUserLine
-            class="action-bar-item"
-            v-if="!$chat.memberSidebarShown"
-          />
-          <RiUserFill class="action-bar-item" v-else />
-        </v-btn>
-      </div>
-    </accessible-transition>
-  </teleport>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -365,6 +275,12 @@ export default defineComponent({
     UserCard,
     InfiniteLoading
   },
+  props: {
+    chatId: {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
       resizeObserver: null as ResizeObserver | null,
@@ -402,7 +318,6 @@ export default defineComponent({
           message: undefined as Message | undefined
         }
       },
-      focusInterval: undefined as ReturnType<typeof setTimeout> | undefined,
       limit: false,
       inputHeight: 87,
       embedFails: [] as {
@@ -413,19 +328,26 @@ export default defineComponent({
     };
   },
   computed: {
+    chat() {
+      return this.$chat.chats.find(
+        (chat) => chat.association.id === this.chatId
+      );
+    },
+    messages() {
+      return this.$messages.messages[this.chatId];
+    },
     name() {
-      return this.$chat.selectedChat?.name;
+      return this.chat?.name;
     },
     blocked(): { value: boolean; you: boolean } {
       return this.$user.blocked.find(
-        (block) =>
-          block.blockedUserId === this.$chat.selectedChat?.recipient?.id
+        (block) => block.blockedUserId === this.chat?.recipient?.id
       )
         ? {
             value: true,
             you: true
           }
-        : this.$user.users[this.$chat.selectedChat?.recipient?.id]?.blocked
+        : this.$user.users[this.chat?.recipient?.id]?.blocked
           ? {
               value: true,
               you: false
@@ -477,9 +399,7 @@ export default defineComponent({
       return 0;
     },
     replying() {
-      return this.$messages.currentMessages?.find(
-        (message) => message.id === this.replyId
-      );
+      return this.messages?.find((message) => message.id === this.replyId);
     },
     finished() {
       if (!this.files.length) return true;
@@ -488,8 +408,9 @@ export default defineComponent({
   },
   methods: {
     dateSeparator(index: number) {
-      const message = this.$messages.currentMessages[index];
-      const previousMessage = this.$messages.currentMessages[index + 1];
+      if (!this.messages) return false;
+      const message = this.messages[index];
+      const previousMessage = this.messages[index + 1];
       return !this.$date(message?.createdAt).isSame(
         previousMessage?.createdAt,
         "day"
@@ -621,13 +542,10 @@ export default defineComponent({
           return match;
         }
       });
-      await this.axios.put(
-        `/chats/${this.$chat.selectedChat?.association?.id}/message`,
-        {
-          id: this.editing,
-          content: this.editingText
-        }
-      );
+      await this.axios.put(`/chats/${this.chat?.association?.id}/message`, {
+        id: this.editing,
+        content: this.editingText
+      });
       this.editing = undefined;
       this.editingText = undefined;
       this.focusInput();
@@ -645,7 +563,7 @@ export default defineComponent({
     async jumpToBottom() {
       this.avoidAutoScroll = false;
       if (this.$chat.loadNew) {
-        this.$chat.setChat(this.$chat.selectedChat?.association.id);
+        this.$chat.setChat(this.chat?.association.id);
         this.$chat.loadNew = false;
       }
       this.autoScroll();
@@ -653,17 +571,14 @@ export default defineComponent({
     async deleteMessage(id: number | undefined) {
       if (!id) return;
       await this.axios.delete(
-        `/chats/${this.$chat.selectedChat?.association?.id}/messages/${id}`
+        `/chats/${this.chat?.association?.id}/messages/${id}`
       );
     },
     async sendMessage() {
       this.focusInput();
-      this.$sockets.chat.emit(
-        "cancelTyping",
-        this.$chat.selectedChat?.association?.id
-      );
+      this.$sockets.chat.emit("cancelTyping", this.chat?.association?.id);
       if (this.unreadId) this.unreadId = 0;
-      if (!this.$messages.currentMessages) return;
+      if (!this.messages) return;
       if (!this.message && !this.files.length) return;
       if (!this.finished) return;
       let message = this.message.trim();
@@ -686,9 +601,9 @@ export default defineComponent({
       this.message = "";
       const tempId = new Date().getTime();
       const chatIndex = this.$chat.chats.findIndex(
-        (c) => c.id === this.$chat.selectedChat?.id
+        (c) => c.id === this.chat?.id
       );
-      this.$messages.currentMessages.unshift({
+      this.messages.unshift({
         content: message,
         createdAt: new Date().toISOString(),
         user: this.$user.user,
@@ -717,22 +632,18 @@ export default defineComponent({
         this.$chat.chats.unshift(chatToMove);
       }
 
-      this.$chat.setDraft(<string>this.$route.params.chatId, "");
+      this.$chat.setDraft(this.chatId.toString(), "");
 
       try {
         await this.$chat.sendMessage(message, attachments, replyId);
       } catch (e) {
-        const messageIndex = this.$messages.currentMessages.findIndex(
+        const messageIndex = this.messages.findIndex(
           (message) => message.id === tempId
         );
-        if (
-          messageIndex === -1 ||
-          messageIndex === undefined ||
-          !this.$chat.selectedChat
-        )
+        if (messageIndex === -1 || messageIndex === undefined || !this.chat)
           return;
-        this.$messages.currentMessages[messageIndex].pending = false;
-        this.$messages.currentMessages[messageIndex].error = true;
+        this.messages[messageIndex].pending = false;
+        this.messages[messageIndex].error = true;
       }
     },
     autoScroll() {
@@ -741,7 +652,7 @@ export default defineComponent({
         new Date().getTime() - this.avoidAutoScrollSince > 500
       )
         return;
-      if (!this.$messages.currentMessages) return;
+      if (!this.messages) return;
       const sentinel = document.getElementById("sentinel-bottom");
       if (!sentinel) return;
       try {
@@ -770,7 +681,7 @@ export default defineComponent({
     },
     editLastMessage() {
       // find first message made by user
-      const lastMessage = this.$messages.currentMessages
+      const lastMessage = this.messages
         .slice()
         .find((message) => message.userId === this.$user.user?.id);
       if (!lastMessage || lastMessage.id === this.editing) return;
@@ -788,7 +699,7 @@ export default defineComponent({
       //   e.preventDefault();
       //   if (!this.editing) return this.editLastMessage();
       //   // edit next message
-      //   const message = this.$messages.currentMessages
+      //   const message = this.messages
       //     .slice()
       //     .find(
       //       (message) =>
@@ -808,7 +719,7 @@ export default defineComponent({
         e.preventDefault();
         if (!this.editing) return;
         // edit last message
-        const message = this.$messages.currentMessages
+        const message = this.messages
           .slice()
           .reverse()
           .find(
@@ -828,7 +739,7 @@ export default defineComponent({
       if (e.ctrlKey && e.key === "ArrowUp" && !e.shiftKey) {
         e.preventDefault();
         // edit next message
-        const message = this.$messages.currentMessages
+        const message = this.messages
           .slice()
           .find((message) => (this.replyId ? message.id < this.replyId : true));
         if (!message) {
@@ -842,7 +753,7 @@ export default defineComponent({
         e.preventDefault();
         if (!this.replyId) return;
         // edit last message
-        const message = this.$messages.currentMessages
+        const message = this.messages
           .slice()
           .reverse()
           .find((message) => (this.replyId ? message.id > this.replyId : true));
@@ -884,22 +795,23 @@ export default defineComponent({
       }
     },
     async onMessage(message: MessageSocket) {
-      if (message.chat.id !== this.$chat.selectedChat?.id) return;
-      const findMessage = this.$messages.currentMessages.findIndex(
+      if (message.chat.id !== this.chat?.id) return;
+      const messages = this.$messages.messages[this.chatId];
+      const findMessage = messages.findIndex(
         (m) => m.content === message.message.content && m.pending
       );
       if (findMessage !== -1) {
-        if (this.$messages.currentMessages)
-          this.$messages.currentMessages[findMessage] = message.message;
+        if (this.messages) messages[findMessage] = message.message;
         this.autoScroll();
         this.$chat.readChat();
         return;
       }
-      await this.$messages.currentMessages.unshift(message.message);
+      await messages.unshift(message.message);
       if (document.hasFocus()) {
         this.$chat.readChat();
       } else {
-        this.$chat.selectedChat.unread++;
+        const chat = this.$chat.chats.find((c) => c.id === message.chat.id);
+        if (chat) chat.unread++;
         if (message.message.userId !== this.$user.user?.id) {
           this.$chat.sound();
           if (this.$app.platform !== Platform.WEB) {
@@ -1009,14 +921,15 @@ export default defineComponent({
     this.resizeObserver = new ResizeObserver(this.onResize);
     document.body.classList.add("disable-overscroll");
     document.addEventListener("keydown", this.shortcutHandler);
-    this.focusInterval = setInterval(this.onFocus, 2000);
     window.addEventListener("focus", this.onFocus);
     // re-enable auto scroll for flex-direction: column-reverse;
-    this.$sockets.chat.on("message", this.onMessage);
-    this.$sockets.chat.on("embedResolution", this.onEmbedResolution);
-    this.$sockets.chat.on("typing", this.onTyping);
-    this.$sockets.chat.on("cancelTyping", this.onCancelTyping);
-    this.message = this.$chat.getDraft(<string>this.$route.params.chatId) || "";
+    if (!this.$experiments.experiments.REMOVE_LEGACY_SOCKET) {
+      this.$sockets.chat.on("message", this.onMessage);
+      this.$sockets.chat.on("embedResolution", this.onEmbedResolution);
+      this.$sockets.chat.on("typing", this.onTyping);
+      this.$sockets.chat.on("cancelTyping", this.onCancelTyping);
+    }
+    this.message = this.$chat.getDraft(this.chatId.toString()) || "";
     this.$app.railMode = "communications";
     this.$ui.navigationMode = RailMode.CHAT;
   },
@@ -1024,25 +937,26 @@ export default defineComponent({
     this.unread = 0;
     document.body.classList.remove("disable-overscroll");
     this.$chat.isReady = 0;
-    this.$chat.setDraft(<string>this.$route.params.chatId, this.message);
+    this.$chat.setDraft(this.chatId.toString(), this.message);
     document.removeEventListener("keydown", this.shortcutHandler);
     document
       .querySelector(".message-input")
       ?.removeEventListener("resize", this.onResize);
     window.removeEventListener("focus", this.onFocus);
-    clearInterval(this.focusInterval);
-    this.$sockets.chat.off("message", this.onMessage);
-    this.$sockets.chat.off("typing", this.onTyping);
-    this.$sockets.chat.off("embedResolution", this.onEmbedResolution);
+    if (!this.$experiments.experiments.REMOVE_LEGACY_SOCKET) {
+      this.$sockets.chat.off("message", this.onMessage);
+      this.$sockets.chat.off("typing", this.onTyping);
+      this.$sockets.chat.off("embedResolution", this.onEmbedResolution);
+    }
   },
   watch: {
     name(val) {
       this.$app.title = val;
     },
-    "$route.params.chatId"(val, oldVal) {
-      this.unread = this.$chat.selectedChat?.unread;
+    chatId(val, oldVal) {
+      this.unread = this.chat?.unread;
       this.$chat.setDraft(oldVal, this.message);
-      this.message = this.$chat.getDraft(val) || "";
+      this.message = this.$chat.getDraft(val.toString()) || "";
       this.files = [];
       this.replyId = undefined;
       this.focusInput();
@@ -1058,16 +972,13 @@ export default defineComponent({
       });
 
       if (this.unread) {
-        const lastReadMessage = this.$messages.currentMessages?.find(
-          (message) =>
-            message.id === this.$chat.selectedChat?.association?.lastRead
+        const lastReadMessage = this.messages?.find(
+          (message) => message.id === this.chat?.association?.lastRead
         );
-        const nextMessageIndex =
-          this.$messages.currentMessages?.indexOf(lastReadMessage) - 1;
+        const nextMessageIndex = this.messages?.indexOf(lastReadMessage) - 1;
 
         if (nextMessageIndex !== -1) {
-          this.unreadId =
-            this.$messages.currentMessages?.[nextMessageIndex]?.id;
+          this.unreadId = this.messages?.[nextMessageIndex]?.id;
         } else if (lastReadMessage) {
           this.unreadId = lastReadMessage?.id;
         }
@@ -1080,17 +991,11 @@ export default defineComponent({
           !this.typingStatus.rateLimit ||
           this.typingStatus.rateLimit < Date.now()
         ) {
-          this.$sockets.chat.emit(
-            "typing",
-            this.$chat.selectedChat?.association?.id
-          );
+          this.$sockets.chat.emit("typing", this.chat?.association?.id);
           this.typingStatus.rateLimit = Date.now() + 2000;
         }
       } else {
-        this.$sockets.chat.emit(
-          "cancelTyping",
-          this.$chat.selectedChat?.association?.id
-        );
+        this.$sockets.chat.emit("cancelTyping", this.chat?.association?.id);
         this.typingStatus.rateLimit = null;
       }
     },
@@ -1105,10 +1010,11 @@ export default defineComponent({
 </script>
 
 <style>
-.container {
+.chat-container {
   display: flex;
   flex-direction: column;
   height: v-bind(height);
+  width: 100%;
 }
 
 .messages {

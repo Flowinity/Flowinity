@@ -12,7 +12,13 @@
     class="user-content"
     @update:model-value="$chat.memberSidebarShown = $event"
   >
-    <member-sidebar-list />
+    <keep-alive :max="<number>$experiments.experiments.CHAT_CACHING || 0">
+      <component
+        :is="MemberSidebarList"
+        :key="parseInt(<string>$route.params.chatId)"
+        :chat-id="parseInt(<string>$route.params.chatId)"
+      />
+    </keep-alive>
   </core-sidebar>
 </template>
 

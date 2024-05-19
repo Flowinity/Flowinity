@@ -209,6 +209,10 @@ a {
   color: rgb(var(--v-theme-primary));
 }
 
+.navbar a {
+  color: inherit;
+}
+
 .pointer {
   cursor: pointer;
 }

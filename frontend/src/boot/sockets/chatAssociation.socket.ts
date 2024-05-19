@@ -1,8 +1,8 @@
-/*import { useSubscription } from "@vue/apollo-composable";
+import { useChatStore } from "@/store/chat.store";
+import { useMessagesStore } from "@/store/message.store";
+import { useSubscription } from "@vue/apollo-composable";
 import { ReadChatSubscription } from "@/graphql/chats/subscriptions/readChat.graphql";
-import { useChatStore } from "@/stores/chat.store";
 import { ReadReceiptSubscription } from "@/graphql/chats/subscriptions/readReceipt.graphql";
-import { useMessagesStore } from "@/stores/messages.store";
 
 export default function setup() {
   const chatStore = useChatStore();
@@ -29,7 +29,7 @@ export default function setup() {
       //     const assocId = chat1.association?.id || -1;
       //     if (!messages.messages[assocId]?.length) return;
       //     const messageIndex = messages.messages[assocId].findIndex(
-      //       (m: Message) => m.id === data.id
+      //       (m: Message) => m. id === data.id
       //     );
       //     if (messageIndex === -1) return;
       //     messages.messages[assocId].forEach((message: Message) => {
@@ -56,4 +56,4 @@ export default function setup() {
       );
     }
   );
-}*/
+}

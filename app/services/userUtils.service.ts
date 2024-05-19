@@ -556,6 +556,9 @@ export class UserUtilsService {
     if (!friend) {
       if (user.friendRequests === FriendRequestPrivacy.NOBODY)
         throw new GqlError("FRIEND_REQUESTS_DISABLED")
+      if (await this.blocked(user.id, userId, true)) {
+        throw gql ? new GqlError("BLOCKED") : Errors.BLOCKED
+      }
       // Prevent user spam by avoiding to send the notification if the request is made <30minutes
       console.log(await redis.get(`friendNotification:${user.id}:${userId}`))
       if (!(await redis.get(`friendNotification:${user.id}:${userId}`))) {

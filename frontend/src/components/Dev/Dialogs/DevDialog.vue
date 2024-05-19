@@ -7,8 +7,11 @@
       foreground: sortedDialogs.slice().reverse()[0]?.id === id
     }"
     @click="
-      debugStore.dialogs.find((dialog) => dialog.id === id).lastInteracted =
-        Date.now()
+      debugStore.dialogs.find((dialog) => dialog.id === id)
+        ? (debugStore.dialogs.find(
+            (dialog) => dialog.id === id
+          ).lastInteracted = Date.now())
+        : () => {}
     "
   >
     <div :id="`dev-header-${id}`" class="dev-header unselectable">

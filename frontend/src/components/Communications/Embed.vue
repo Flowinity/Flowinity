@@ -182,7 +182,11 @@
           <div>
             <overline position="start" class="mb-n2">
               Invited by
-              <UserAvatar :user="invite.user" size="20" />
+              <UserAvatar
+                :user="invite.user"
+                size="20"
+                style="filter: brightness(0.8)"
+              />
               {{ invite.user.username }}
             </overline>
             <v-card-title>

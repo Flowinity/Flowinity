@@ -49,6 +49,7 @@ import { UserUtilsService } from "@app/services/userUtils.service"
 import { Platform, PlatformType } from "@app/classes/graphql/user/platforms"
 import { randomUUID } from "crypto"
 import { DeletionService } from "@app/services/deletion.service"
+import { GraphQLExtra } from "@app/classes/graphql/request/extra"
 
 @Service({ eager: false })
 export class Server {
@@ -106,29 +107,12 @@ export class Server {
         subscribe: (args: any) => args.rootValue.subscribe(args),
         onConnect: async (ctx) => {
           if (!ctx.extra) {
-            //@ts-ignore
+            // @ts-ignore
             ctx.extra = {}
           }
-          //@ts-ignore
+          // @ts-ignore
           ctx.extra.ip = ctx.extra.request.connection.remoteAddress
-          //@ts-ignore
-          ctx.extra.resumableState = ctx?.connectionParams?.[
-            "x-tpu-resumable-state-id"
-          ] as string | undefined
-          //@ts-ignore
           const id = randomUUID()
-          let resumableStateValid = true
-          if (
-            !ctx?.extra?.resumableState ||
-            typeof ctx?.extra?.resumableState !== "string" ||
-            // @ts-ignore
-            !ctx?.extra?.resumableState?.match(
-              /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-            )
-          ) {
-            // throw new GqlError("INVALID_RESUMABLE_STATE_KEY")
-            resumableStateValid = false
-          }
           const newCtx = await generateContext(ctx)
           if (
             newCtx.user &&
@@ -192,16 +176,13 @@ export class Server {
               true
             )
           }
-          //@ts-ignore
+          // @ts-ignore
           ctx.extra.id = id
-          //@ts-ignore
+          // @ts-ignore
           ctx.extra.userId = newCtx.user?.id
           return {
             ...ctx,
             id,
-            resumableState: resumableStateValid
-              ? ctx.extra.resumableState
-              : randomUUID(),
             createdAt: new Date().toISOString()
           }
         },
@@ -210,7 +191,6 @@ export class Server {
           console.log(ctx.extra.userId, "DISCONNECTED")
           if (ctx.extra.userId) {
             // Check legacy sockets, still used in v3, v4 and Kotlin. Status via the legacy socket will be removed in the future.
-            const sockets = await socket.in(ctx.extra.userId).allSockets()
             let clients = (await redis.json.get(
               `user:${ctx.extra.userId}:platforms`
             )) as unknown as Platform[] | undefined
@@ -222,10 +202,9 @@ export class Server {
                 `DBGCLIENTS FOR ${ctx.extra.userId}`,
                 clients,
                 ctx.extra.id,
-                code,
-                sockets.size
+                code
               )
-              if (clients.length === 0 && sockets.size === 0) {
+              if (clients.length === 0) {
                 await User.update(
                   {
                     status: UserStatus.OFFLINE

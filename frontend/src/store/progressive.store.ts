@@ -12,6 +12,7 @@ import {
   RiAppleLine,
   RiAuctionFill,
   RiAuctionLine,
+  RiBarChartFill,
   RiBug2Fill,
   RiBug2Line,
   RiChat1Fill,
@@ -29,6 +30,7 @@ import {
   RiDownloadLine,
   RiFileTextFill,
   RiFileTextLine,
+  RiFlowChart,
   RiFolderImageFill,
   RiFolderImageLine,
   RiGiftFill,
@@ -54,6 +56,7 @@ import {
   RiMicrosoftFill,
   RiMicrosoftLine,
   RiNotificationLine,
+  RiPieChartLine,
   RiRefreshFill,
   RiRefreshLine,
   RiSettings5Fill,
@@ -69,7 +72,10 @@ import {
   RiToolsFill,
   RiToolsLine,
   RiUserFill,
+  RiUserFollowLine,
+  RiUserForbidLine,
   RiUserLine,
+  RiUserUnfollowLine,
   RiVideoChatFill,
   RiVideoChatLine
 } from "@remixicon/vue";
@@ -90,6 +96,7 @@ import { useMailStore } from "@/store/mail.store";
 import { useFriendsStore } from "@/store/friends.store";
 import { VIcon } from "vuetify/components";
 import functions from "@/plugins/functions";
+import { useTheme } from "vuetify";
 
 export enum RailMode {
   HOME,
@@ -123,6 +130,8 @@ export interface NavigationOption {
   scopesRequired?: string[];
   subtitle?: string;
   menu?: ContextMenuItem[];
+  options?: NavigationOption[];
+  parentPath?: string;
 }
 
 export interface ContextMenuItem {
@@ -147,16 +156,26 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
   const lookupNav = computed(() => {
     const pathToOption: Record<string, NavigationOption & { _rail: number }> =
       {};
-    for (const railMode of navigation.value.railOptions) {
-      for (const option of [
-        ...(navigation.value.options[railMode.id] || []),
-        ...(navigation.value.miscOptions[railMode.id] || [])
-      ]) {
-        pathToOption[<string>option.path] = {
-          ...option,
-          _rail: railMode.id
-        };
-      }
+    // Flatten the navigation options recursively, if it's a sub-option, the parent path for all nav options will be included
+    const flattenNavigation = (
+      options: NavigationOption[],
+      parentPath = ""
+    ) => {
+      options.forEach((option) => {
+        if (option.path) {
+          pathToOption[option.path] = {
+            ...option,
+            _rail: options[0].id,
+            parentPath
+          };
+        }
+        if (option.options) {
+          flattenNavigation(option.options, option.path || parentPath);
+        }
+      });
+    };
+    for (const mode in navigation.value.options) {
+      flattenNavigation(navigation.value.options[mode]);
     }
     return pathToOption;
   });
@@ -181,7 +200,34 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               name: "Insights",
               path: "/insights",
               selectedIcon: markRaw(RiLineChartFill),
-              scopesRequired: ["insights.view"]
+              scopesRequired: ["insights.view"],
+              options: [
+                {
+                  icon: markRaw(RiFlowChart),
+                  name: "Weekly",
+                  path: "/insights/weekly"
+                },
+                {
+                  icon: markRaw(RiPieChartLine),
+                  name: "Monthly",
+                  path: "/insights/monthly"
+                },
+                {
+                  icon: markRaw(
+                    h(VIcon, {
+                      icon: "mdi-chart-gantt",
+                      color: userStore.theme.dark ? "white" : "black"
+                    })
+                  ),
+                  name: "Annually",
+                  path: "/insights/yearly"
+                },
+                {
+                  icon: markRaw(RiBarChartFill),
+                  name: "Dynamic",
+                  path: "/insights/dynamic"
+                }
+              ]
             },
             {
               icon: markRaw(RiGroupLine),
@@ -218,7 +264,15 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
               path: "/autoCollect",
               selectedIcon: markRaw(RiSparkling2Fill),
               badge: userStore.user?.pendingAutoCollects || "",
-              scopesRequired: ["collections.view"]
+              scopesRequired: ["collections.view"],
+              options: [
+                {
+                  icon: markRaw(RiSettings5Line),
+                  name: "Settings",
+                  path: "/autoCollect/configure",
+                  selectedIcon: markRaw(RiSettings5Fill)
+                }
+              ]
             },
             {
               icon: markRaw(RiSlideshow2Line),
@@ -408,6 +462,9 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                     chat.recipient &&
                     !friendStore.friends.find(
                       (f) => f.friendId === chat.recipient.id
+                    ) &&
+                    !userStore.blocked.find(
+                      (b) => b.blockedUserId === chat.recipient.id
                     )
                 },
                 {
@@ -423,7 +480,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                 },
                 {
                   name: "Accept Friend Request",
-                  icon: markRaw(RiAddLine),
+                  icon: markRaw(RiUserFollowLine),
                   action: () => {
                     friendStore.actOnFriend(
                       chat.recipient.id,
@@ -438,8 +495,24 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                     )?.status === FriendStatus.Incoming
                 },
                 {
+                  name: "Remove Friend",
+                  icon: markRaw(RiUserUnfollowLine),
+                  action: () => {
+                    friendStore.actOnFriend(
+                      chat.recipient.id,
+                      FriendAction.Remove
+                    );
+                  },
+                  color: "red",
+                  shown:
+                    chat.recipient &&
+                    friendStore.friends.find(
+                      (f) => f.friendId === chat.recipient.id
+                    )?.status === FriendStatus.Accepted
+                },
+                {
                   name: "Block",
-                  icon: markRaw(RiCloseCircleFill),
+                  icon: markRaw(RiUserForbidLine),
                   action: () => {
                     userStore.dialogs.block.userId = chat.recipient.id;
                     userStore.dialogs.block.username =
@@ -455,7 +528,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                 },
                 {
                   name: "Unblock",
-                  icon: markRaw(RiCheckboxCircleFill),
+                  icon: markRaw(RiUserFollowLine),
                   action: () => {
                     userStore.dialogs.block.userId = chat.recipient.id;
                     userStore.dialogs.block.username =
@@ -899,20 +972,34 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
   const currentNavItem = computed({
     get() {
       const lookup = lookupNav.value[route.path];
-      if ((!lookup && _currentNavItem.value) || lookup?.allowOverride)
+      if (
+        (!lookup || lookup.allowOverride) &&
+        _currentNavItem.value?.item?.path === route.path
+      )
         return _currentNavItem.value;
-      if (!lookup) return null;
+      if (!lookup) {
+        console.warn(
+          "[Flowinity/Nav] No automatic navigation option found for",
+          route.path + ", this can have unintended consequences."
+        );
+        return null;
+      }
+      // include parentPath recursively so that all parents are in the one array
+      const parents = (path: string) => {
+        const parent = lookupNav.value[path];
+        if (!parent) return [];
+        return [parent, ...parents(parent.parentPath || "")];
+      };
+      const rail = parents(lookup.parentPath || "");
+      console.log(lookupNav);
       return {
         item: lookup,
-        rail: useExperimentsStore().experiments.BREADCRUMB_SHOW_PARENT
-          ? [
-              navigation.value.railOptions.find(
-                (rail) => rail.id === lookup._rail
-              )
-            ]
-          : []
+        rail
       };
     },
+    /**
+     * @deprecated Do not set the currentNavItem directly, they should be added to the navigation options instead if possible.
+     */
     set(val) {
       _currentNavItem.value = val;
     }

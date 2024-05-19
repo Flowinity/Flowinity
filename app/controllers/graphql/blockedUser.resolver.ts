@@ -16,9 +16,7 @@ import { BlockUserInput } from "@app/classes/graphql/blockedUsers/blockUser"
 import { User } from "@app/models/user.model"
 import { GqlError } from "@app/lib/gqlErrors"
 import { SocketNamespaces } from "@app/classes/graphql/SocketEvents"
-import {
-  PartialUserBase
-} from "@app/classes/graphql/user/partialUser"
+import { PartialUserBase } from "@app/classes/graphql/user/partialUser"
 import { Friend } from "@app/models/friend.model"
 import { EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
 
@@ -57,6 +55,7 @@ export class BlockedUserResolver {
         blockedUserId: input.userId
       }
     })
+
     if (exists) {
       await exists.destroy()
       socket.of(SocketNamespaces.USER).to(ctx.user!!.id).emit("userBlocked", {

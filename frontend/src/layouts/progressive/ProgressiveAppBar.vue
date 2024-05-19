@@ -41,7 +41,6 @@
       class="bg-dark h-full flex items-center justify-center p-4"
       style="z-index: 999"
     >
-      {{ $user.user }}
       <FlowinityBanner
         alt="Flowinity Logo"
         @click="
@@ -62,7 +61,7 @@
         'has-image': image
       }"
     >
-      <div class="flex select-none">
+      <div class="flex select-none flex-grow">
         <div class="max-sm:block hidden">
           <v-btn
             v-if="userStore.user"
@@ -75,96 +74,96 @@
           </v-btn>
         </div>
         <!-- @vue-ignore -->
-        <accessible-transition
-          v-for="(rail, index) in uiStore.currentNavItem?.rail"
-          mode="out-in"
-          name="slide-up"
-          appear
-        >
+        <transition-group name="slide-up" mode="out-in" tag="div" class="flex">
           <div
-            v-if="rail.name"
+            v-for="(rail, index) in items"
             :key="rail.path"
-            class="flex max-sm:hidden"
-            :class="{ 'items-center': !expanded, 'items-end': expanded }"
+            class="relative overflow-visible whitespace-nowrap items-center flex"
           >
-            <RiArrowRightSLine
-              v-if="items.length > 1 && index !== 0"
-              class="w-6 fill-medium-emphasis-dark items-center"
-              style="margin: 0px 4px 0px 4px"
-            />
-            <div class="flex items-center">
-              <router-link
-                :to="rail.path"
-                class="cursor-pointer flex items-center"
-                @click="
-                  !rail?.fake && rail?.id
-                    ? (uiStore.navigationMode = rail?.id)
-                    : ''
-                "
-              >
-                <component
-                  :is="rail?.icon"
-                  v-if="rail?.icon"
-                  class="w-8"
-                  :class="
-                    uiStore.currentNavItem?.item?.path === rail.path
-                      ? 'fill-white'
-                      : 'fill-medium-emphasis-dark'
-                  "
-                />
-                <span
-                  style="margin: 0px 0px 0px 8px"
-                  :class="
-                    uiStore.currentNavItem?.item?.path === rail.path
-                      ? 'text-white'
-                      : 'text-medium-emphasis-dark'
+            <div
+              class="flex max-sm:hidden app-bar-item items-center"
+              :class="{ 'items-center': !expanded, 'items-end': expanded }"
+            >
+              <RiArrowRightSLine
+                v-if="items.length > 1 && index !== 0"
+                class="w-6 fill-medium-emphasis-dark items-center"
+                style="margin: 0 4px 0 4px"
+              />
+              <div class="flex items-center flex-grow">
+                <router-link
+                  :to="rail.path"
+                  class="cursor-pointer flex items-center"
+                  @click="
+                    !rail?.fake && rail?.id
+                      ? (uiStore.navigationMode = rail?.id)
+                      : ''
                   "
                 >
-                  {{ rail.name }}
-                </span>
-              </router-link>
+                  <component
+                    :is="rail?.icon"
+                    v-if="rail?.icon"
+                    class="w-8"
+                    :class="
+                      uiStore.currentNavItem?.item?.path === rail.path
+                        ? 'fill-white'
+                        : 'fill-medium-emphasis-dark'
+                    "
+                  />
+                  <span
+                    style="margin: 0 0 0 8px"
+                    class=""
+                    :class="
+                      uiStore.currentNavItem?.item?.path === rail.path
+                        ? 'text-white'
+                        : 'text-medium-emphasis-dark'
+                    "
+                  >
+                    {{ rail.name }}
+                  </span>
+                </router-link>
+              </div>
             </div>
           </div>
-        </accessible-transition>
-        <accessible-transition mode="out-in" name="slide-up" appear>
-          <div
-            v-if="
-              uiStore.currentNavItem?.item?.path !==
-              uiStore.currentNavItem?.rail[0]?.path
-            "
-            :key="
-              uiStore.currentNavItem?.item.name +
-              uiStore.currentNavItem?.rail[0]?.id
-            "
-            class="flex items-center"
-          >
-            <RiArrowRightSLine
-              v-if="
-                uiStore.currentNavItem?.item?.path !==
-                  uiStore.currentNavItem?.rail[0]?.path &&
-                uiStore.currentNavItem?.rail?.length
-              "
-              v-memo="[]"
-              class="w-6 fill-medium-emphasis-dark"
-              style="margin: 0px 4px 0px 4px"
-            />
-            <div class="items-center flex">
-              <div>
-                <component
-                  :is="uiStore.currentNavItem?.item.icon"
-                  v-if="uiStore.currentNavItem?.item.icon"
-                  class="w-8 fill-white"
-                />
-              </div>
+        </transition-group>
+        <!--        <accessible-transition mode="out-in" name="slide-up" appear>-->
+        <!--          <div-->
+        <!--            v-if="-->
+        <!--              uiStore.currentNavItem?.item?.path !==-->
+        <!--              uiStore.currentNavItem?.rail[0]?.path-->
+        <!--            "-->
+        <!--            :key="-->
+        <!--              uiStore.currentNavItem?.item.name +-->
+        <!--              uiStore.currentNavItem?.rail[0]?.id-->
+        <!--            "-->
+        <!--            class="flex items-center"-->
+        <!--          >-->
+        <!--            <RiArrowRightSLine-->
+        <!--              v-if="-->
+        <!--                uiStore.currentNavItem?.item?.path !==-->
+        <!--                  uiStore.currentNavItem?.rail[0]?.path &&-->
+        <!--                uiStore.currentNavItem?.rail?.length-->
+        <!--              "-->
+        <!--              v-memo="[]"-->
+        <!--              class="w-6 fill-medium-emphasis-dark"-->
+        <!--              style="margin: 0px 4px 0px 4px"-->
+        <!--            />-->
+        <!--            <div class="items-center flex">-->
+        <!--              <div>-->
+        <!--                <component-->
+        <!--                  :is="uiStore.currentNavItem?.item.icon"-->
+        <!--                  v-if="uiStore.currentNavItem?.item.icon"-->
+        <!--                  class="w-8 fill-white"-->
+        <!--                />-->
+        <!--              </div>-->
 
-              <div style="padding-left: 8px">
-                {{
-                  uiStore.currentNavItem?.item.name || route.name || "Flowinity"
-                }}
-              </div>
-            </div>
-          </div>
-        </accessible-transition>
+        <!--              <div style="padding-left: 8px">-->
+        <!--                {{-->
+        <!--                  uiStore.currentNavItem?.item.name || route.name || "Flowinity"-->
+        <!--                }}-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </accessible-transition>-->
       </div>
       <!-- TODO: Meet Action Bar -->
       <div class="flex">
@@ -335,6 +334,13 @@ const items = computed(() => {
     ...(uiStore.currentNavItem?.item ? [uiStore.currentNavItem.item] : [])
   ];
 });
+
+watch(
+  () => items.value,
+  (val) => {
+    console.log(val, uiStore.currentNavItem);
+  }
+);
 </script>
 
 <style>
@@ -351,6 +357,11 @@ const items = computed(() => {
 .slide-up-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+.slide-up-leave-to .app-bar-item {
+  position: absolute;
+  left: 0;
 }
 
 .has-image::before {

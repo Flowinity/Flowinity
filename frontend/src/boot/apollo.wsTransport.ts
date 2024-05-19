@@ -22,6 +22,7 @@ import { useUserStore } from "@/store/user.store";
 import { useAppStore } from "@/store/app.store";
 import { useDebugStore } from "@/store/debug.store";
 import router from "@/router";
+import { setupSockets } from "@/boot/sockets";
 
 function getToken(app: App) {
   return (
@@ -147,6 +148,7 @@ export default function setup(app: App) {
         appStore.connected = false;
       },
       connected: (socket: any) => {
+        setupSockets(app);
         const appStore = useAppStore();
         appStore.connected = true;
         console.log("[TPU/GraphQL] Connected to socket.");

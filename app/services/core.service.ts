@@ -377,6 +377,8 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Record<string, any> {
     const experiments = {
+      REMOVE_LEGACY_SOCKET: false,
+      CHAT_CACHING: 1,
       FAB: false,
       ENABLE_PULSE_TAB: false,
       LEGACY_FLOWINITY_SSO: false,
@@ -447,6 +449,17 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        REMOVE_LEGACY_SOCKET: {
+          description: "Remove legacy /gateway support.",
+          createdAt: "2024-05-19T00:00:00.000Z",
+          versions: [4]
+        },
+        CHAT_CACHING: {
+          description:
+            "Caches the ChatV2 & MemberSidebarList components, improving future render for chat. Set 0 for unlimited caching. Set 1 to disable (only 1 allowed in store). Set custom number for max cache storage.",
+          createdAt: "2024-05-19T00:00:00.000Z",
+          versions: [4, 5]
+        },
         FAB: {
           description: "Enable the global floating action button.",
           createdAt: "2024-05-18T00:00:00.000Z",
@@ -500,32 +513,35 @@ export class CoreService {
         PROGRESSIVE_HOME: {
           description: "Enable redesigned homepage with Progressive UI.",
           createdAt: "2024-05-12T00:00:00.000Z",
+          // TODO: Old UI will be removed for v5 milestone
           versions: [4]
         },
         DISABLE_ANIMATIONS: {
           description: "Disable Progressive UI animations.",
           createdAt: "2024-05-11T00:00:00.000Z",
-          versions: [4]
+          versions: [4, 5]
         },
         PROGRESSIVE_UI: {
           description: "TPUv4 overhaul project",
           createdAt: "2024-05-09T00:00:00.000Z",
+          // TODO: Old UI will be removed for v5 milestone
           versions: [4]
         },
         CHAT_GUIDED_WIZARD: {
           description: "Enable guided wizard for chat join and create",
           createdAt: "2024-05-03T00:00:00.000Z",
+          // TODO: Remove redundant flag for v5 milestone
           versions: [4]
         },
         NOTE_AI_ASSIST: {
           description: "Enable AI assistance in notes",
           createdAt: "2024-04-27T00:00:00.000Z",
-          versions: [4]
+          versions: [4, 5]
         },
         NOTE_COLLAB: {
           description: "Enable note collaboration",
           createdAt: "2024-04-26T00:00:00.000Z",
-          versions: [4]
+          versions: [4, 5]
         },
         V5_FLOAT: {
           description: "Enable V5 floating UI",
@@ -536,25 +552,25 @@ export class CoreService {
           description:
             "Show the Invite a Friend nag. 0 for disabled, 1 for enabled on verified users, 2 for everyone, 3 is disabled with positive interaction. 4 is disabled with redeemed. 5 is disabled with negative interaction",
           createdAt: "2024-03-11T00:00:00.000Z",
-          versions: [4]
+          versions: [4, 5]
         },
         GALLERY_INFINITE_SCROLL: {
           description:
             "Enable next generation gallery experience. Includes drag-to-select and infinite scrolling.",
           createdAt: "2024-03-11T00:00:00.000Z",
-          versions: [4]
+          versions: [4, 5]
         },
         DOWNLOAD_THE_APP_NAG: {
           description:
             "Show the download the app nag. 0 for disabled, 1 for verified users, 2 for everyone, 3 for disabled with nag interaction.",
           createdAt: "2024-03-03T00:00:00.000Z",
-          versions: [4]
+          versions: [4, 5]
         },
         ENABLE_AUTOSTART_APP_NAG: {
           description:
             "Enable autostart app nag. 0 for disabled, 1 for enabled, 2 for disabled with nag interaction.",
           createdAt: "2024-03-03T00:00:00.000Z",
-          versions: [4]
+          versions: [4, 5]
         },
         DEBUG_FAVICON: {
           description: "Enable debug favicon.",
@@ -564,7 +580,7 @@ export class CoreService {
         FLOWINITY: {
           description: "Rebrand PrivateUploader to Flowinity.",
           createdAt: "2024-01-17T00:00:00.000Z",
-          versions: [4]
+          versions: [4, 5]
         },
         PRIDE: {
           description: "Enable pride theme.",
@@ -612,11 +628,12 @@ export class CoreService {
         USER_V3_EDITOR: {
           description: "Development JSON editor and buttons for UserV3.",
           createdAt: "2023-05-09T00:00:00.000Z",
-          versions: [3, 4]
+          versions: [3, 4, 5]
         },
         RAIL_SIDEBAR: {
           description: "Enable the new sidebar.",
           createdAt: "2023-05-07T00:00:00.000Z",
+          // TODO: Remove for v5
           versions: [3, 4]
         },
         USER_V3_MODIFY: {
@@ -639,6 +656,7 @@ export class CoreService {
         PINNED_MESSAGES: {
           description: "Enable pinned messages in Communications.",
           createdAt: "2023-03-07T00:00:00.000Z",
+          // TODO: Redundant experiment, remove for v5
           versions: [3, 4, 5]
         },
         COMMUNICATIONS_KEEP_LOADED: {
@@ -827,6 +845,7 @@ export class CoreService {
       }
     }
     if (dev || config.release === "dev") {
+      experiments.CHAT_CACHING = 10
       experiments.PROGRESSIVE_UI = true
       experiments.CHAT_GUIDED_WIZARD = true
       experiments.NOTE_COLLAB = true
