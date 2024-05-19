@@ -148,7 +148,7 @@ export default function setup() {
       user: onTyping.user,
       timeout: setTimeout(
         () => {
-          const chat: Ref<Chat> = chatStore.chats.find(
+          const chat: Chat = chatStore.chats.find(
             (c) => c.id === onTyping.chatId
           );
           if (!chat || !chat.typers) return;
@@ -170,7 +170,7 @@ export default function setup() {
       (c) => c.id === onCancelTyping.chatId
     );
     if (index === -1) return;
-    const chat: Ref<Chat> = chatStore.chats[index];
+    const chat: Chat = chatStore.chats[index];
     if (!chat.typers) chat.typers = [] as Typing[];
     const find = chat.typers.find((t) => t.userId === onCancelTyping.user.id);
     if (find) {

@@ -24,7 +24,16 @@
         $app.forcedWorkspaceDrawer
       "
     />
-    <MemberSidebarList v-else />
+    <keep-alive
+      :max="<number>$experiments.experiments.CHAT_CACHING || 0"
+      v-else
+    >
+      <component
+        :is="MemberSidebarList"
+        :key="parseInt(<string>$route.params.chatId)"
+        :chat-id="parseInt(<string>$route.params.chatId)"
+      />
+    </keep-alive>
   </CoreSidebar>
 </template>
 
@@ -42,6 +51,9 @@ export default defineComponent({
     WorkspacesSidebarList
   },
   computed: {
+    MemberSidebarList() {
+      return MemberSidebarList;
+    },
     drawer: {
       get: function () {
         if (this.$app.rail && this.$chat.memberSidebar) return true;
