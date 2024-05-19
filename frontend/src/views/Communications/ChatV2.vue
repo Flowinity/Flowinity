@@ -96,6 +96,26 @@
       @scroll="scrollEvent"
       :key="chatId"
     >
+      <div id="sentinel-bottom" ref="sentinelBottom" />
+      <infinite-loading
+        @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
+        :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}-bottom`"
+        v-if="messages && $chat.loadNew"
+      >
+        <template v-slot:spinner>
+          <div class="text-center">
+            <v-progress-circular
+              :size="36"
+              :width="2"
+              indeterminate
+              :model-value="1"
+            />
+          </div>
+        </template>
+        <template v-slot:complete>
+          <span />
+        </template>
+      </infinite-loading>
       <message-perf
         :unread-id="unreadId"
         @update:uncollapse-blocked="expandBlocked = $event"
@@ -128,6 +148,44 @@
         @jumpToMessage="$chat.jumpToMessage($event, chatId)"
         @reply="replyId = $event.id"
       />
+      <v-skeleton-loader
+        v-if="!$chat.selectedChat?.messages?.length && $chat.loading"
+        v-for="index in 20"
+        :key="index"
+        type="list-item-avatar-three-line"
+        color="background no-border"
+      />
+      <infinite-loading
+        @infinite="$chat.loadHistory"
+        direction="top"
+        :top="true"
+        :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}`"
+        v-if="$messages.currentMessages"
+        :value="'bottom'"
+      >
+        <template v-slot:spinner>
+          <div class="text-center">
+            <v-progress-circular
+              :size="36"
+              :width="2"
+              indeterminate
+              :model-value="1"
+            />
+          </div>
+        </template>
+        <template v-slot:complete>
+          <div class="text-center">
+            <PromoNoContent
+              icon="mdi-message-processing-outline"
+              :title="`Welcome to the start of ${$chat.chatName(
+                $chat.selectedChat
+              )}!`"
+              description="Send a message to start the conversation!"
+            />
+          </div>
+        </template>
+      </infinite-loading>
+      <div id="sentinel" ref="sentinel" v-if="$chat.isReady"></div>
     </div>
     <div class="input-container">
       <v-toolbar

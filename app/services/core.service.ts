@@ -378,7 +378,7 @@ export class CoreService {
   ): Record<string, any> {
     const experiments = {
       REMOVE_LEGACY_SOCKET: false,
-      CHAT_CACHING: 1,
+      CHAT_CACHING: 10,
       FAB: false,
       ENABLE_PULSE_TAB: false,
       LEGACY_FLOWINITY_SSO: false,
