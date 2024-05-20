@@ -15,6 +15,10 @@ import { AdminService } from "@app/services/admin.service"
 import { EXPECTED_OPTIONS_KEY } from "dataloader-sequelize"
 import { PulseService } from "@app/services/pulse.service"
 import { Plan } from "@app/models/plan.model"
+import {
+  ExperimentOverride,
+  ExperimentType
+} from "@app/classes/graphql/core/experiments"
 
 @Resolver()
 @Service()
@@ -154,5 +158,66 @@ export class AdminResolver {
   @Query(() => [Plan])
   async adminPlans(@Ctx() ctx: Context) {
     return await Plan.findAll()
+  }
+
+  @Authorization({
+    accessLevel: AccessLevel.MODERATOR,
+    scopes: "*"
+  })
+  @Query(() => [ExperimentOverride])
+  async adminGetExperimentOverrides(@Ctx() ctx: Context) {
+    return (await redis.json.get("experimentOverridesGlobal")) || []
+  }
+
+  @Authorization({
+    accessLevel: AccessLevel.MODERATOR,
+    scopes: "*"
+  })
+  @Mutation(() => ExperimentOverride)
+  async adminSetExperimentOverride(
+    @Ctx() ctx: Context,
+    @Arg("input", () => ExperimentOverride) override: ExperimentOverride
+  ) {
+    try {
+      console.log(override)
+      const overrides =
+        (await redis.json.get("experimentOverridesGlobal")) || []
+      const existing = overrides.find(
+        (o: ExperimentOverride) => o.id === override.id
+      )
+      if (existing) {
+        overrides.splice(overrides.indexOf(existing), 1)
+      }
+      overrides.push({
+        ...override,
+        userId: ctx.user!!.id
+      })
+      await redis.json.set("experimentOverridesGlobal", "$", overrides)
+      return {
+        ...override,
+        userId: ctx.user!!.id
+      }
+    } catch (e) {
+      console.error(e)
+      return e
+    }
+  }
+
+  @Authorization({
+    accessLevel: AccessLevel.MODERATOR,
+    scopes: "*"
+  })
+  @Mutation(() => Success)
+  async adminDeleteExperimentOverride(
+    @Ctx() ctx: Context,
+    @Arg("id") id: string
+  ) {
+    const overrides = (await redis.json.get("experimentOverridesGlobal")) || []
+    const existing = overrides.find((o: ExperimentOverride) => o.id === id)
+    if (existing) {
+      overrides.splice(overrides.indexOf(existing), 1)
+    }
+    await redis.json.set("experimentOverridesGlobal", "$", overrides)
+    return { success: true }
   }
 }

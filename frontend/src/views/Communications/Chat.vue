@@ -1,6 +1,7 @@
 <template>
   <keep-alive :max="<number>$experiments.experiments.CHAT_CACHING || 0">
     <component
+      v-if="$route.params.chatId"
       :is="ChatV2"
       :key="parseInt(<string>$route.params.chatId)"
       :chat-id="parseInt(<string>$route.params.chatId)"

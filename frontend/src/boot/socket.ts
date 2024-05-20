@@ -65,8 +65,6 @@ export default async function setup(app) {
     chat.chats.splice(index, 1);
   });
   sockets.chat.on("message", async (newMessage: any) => {
-    if (newMessage.chat.id === chat.selectedChat?.id && chat.isCommunications)
-      return;
     const index = chat.chats.findIndex((c) => c.id === newMessage.chat.id);
     if (index === -1) return;
     // move chat to top
@@ -76,12 +74,18 @@ export default async function setup(app) {
     const newIndex = chat.chats.findIndex((c) => c.id === newMessage.chat.id);
     const associationId = chat.chats[newIndex].association?.id;
     const messages = messagesStore.messages[associationId];
-    if (
-      experiments.experiments.COMMUNICATIONS_KEEP_LOADED &&
-      messages &&
-      !messages.find((m) => m.id === newMessage.message.id)
-    ) {
-      messagesStore.messages[associationId].unshift(newMessage.message);
+    if (messages) {
+      const findMessage = messages.findIndex(
+        (m) => m.content === newMessage.message.content && m.pending
+      );
+      if (findMessage !== -1) {
+        messages[findMessage] = newMessage.message;
+      } else if (!messages.find((m) => m.id === newMessage.message.id)) {
+        messagesStore.messages[associationId].unshift(newMessage.message);
+      }
+    }
+    if (chat.selectedChat?.id === newMessage.chat.id && document.hasFocus()) {
+      chat.readChat();
     }
     if (
       newMessage.message.userId === user.user?.id ||
@@ -93,7 +97,8 @@ export default async function setup(app) {
     chat.chats[newIndex].unread++;
     if (
       user.user?.storedStatus !== UserStoredStatus.Busy &&
-      newMessage.message.userId !== user.user?.id
+      newMessage.message.userId !== user.user?.id &&
+      (chat.selectedChat?.id !== newMessage.chat.id || !document.hasFocus())
     ) {
       chat.sound();
       toast.info(

@@ -1,6 +1,10 @@
 <template>
   <v-main>
-    <router-view />
+    <router-view v-slot="{ Component }">
+      <keep-alive include="ChatLayout">
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
   </v-main>
 </template>
 

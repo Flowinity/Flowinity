@@ -1,8 +1,8 @@
 <template>
   <chat-dev-options v-if="$chat.dialogs.chatDevOptions.value" />
   <WorkspaceDeleteDialog
-    title="Delete Message"
     v-model="dialogs.delete.value"
+    title="Delete Message"
     @submit="
       deleteMessage(dialogs.delete.message?.id);
       dialogs.delete.value = false;
@@ -14,17 +14,17 @@
     @drop="dragDropHandler"
   >
     <v-menu
-      :attach="$chat.dialogs.emojiMenu.bindingElement"
       v-model="$chat.dialogs.emojiMenu.value"
+      :attach="$chat.dialogs.emojiMenu.bindingElement"
       style="margin-left: 60px; z-index: 99999"
       height="60px"
       content-class="force-bg"
     >
       <v-card color="toolbar" width="100%" class="no-border">
         <div
+          v-if="$chat.dialogs.emojiMenu.emoji"
           class="justify-items-center align-content-center width flex-row"
           style="width: 100%"
-          v-if="$chat.dialogs.emojiMenu.emoji"
         >
           <v-card-title class="mt-n1">
             :{{ $chat.dialogs.emojiMenu.emoji.name }}:
@@ -91,18 +91,18 @@
       />
     </v-menu>
     <div
-      class="messages communications position-relative"
       id="chat"
-      @scroll="scrollEvent"
       :key="chatId"
+      class="messages communications position-relative"
+      @scroll="scrollEvent"
     >
       <div id="sentinel-bottom" ref="sentinelBottom" />
       <infinite-loading
-        @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
-        :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}-bottom`"
         v-if="messages && $chat.loadNew"
+        :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}-bottom`"
+        @infinite="$chat.loadHistory($event, ScrollPosition.Bottom)"
       >
-        <template v-slot:spinner>
+        <template #spinner>
           <div class="text-center">
             <v-progress-circular
               :size="36"
@@ -112,58 +112,58 @@
             />
           </div>
         </template>
-        <template v-slot:complete>
+        <template #complete>
           <span />
         </template>
       </infinite-loading>
       <message-perf
-        :unread-id="unreadId"
-        @update:uncollapse-blocked="expandBlocked = $event"
-        :uncollapse-blocked="expandBlocked"
-        class="mr-2 ml-2"
         v-for="(message, index) in messages"
         :id="'message-id-' + message.id"
         :ref="`message-${index}`"
-        :style="{ zIndex: 1000 - index }"
+        :unread-id="unreadId"
         :key="message.id"
+        :uncollapse-blocked="expandBlocked"
+        class="mr-2 ml-2"
+        :style="{ zIndex: 1000 - index }"
         :class="{
           'message-jumped': message.id === replyId,
           'message-mention': message.content.includes(`<@${$user.user?.id}>`)
         }"
         :date-separator="dateSeparator(index)"
         :editing="editing === message.id"
-        :editingText="editingText"
+        @update:uncollapse-blocked="expandBlocked = $event"
+        :editing-text="editingText"
         :merge="$chat.merge(message, index, chatId)"
         :message="message"
         :index="index"
-        @authorClick="handleAuthorClick($event, message.user.username)"
+        @author-click="handleAuthorClick($event, message.user.username)"
         @delete="
           $event.shifting
             ? deleteMessage($event.message.id)
             : confirmDelete($event.message)
         "
         @edit="handleEdit"
-        @editMessage="doEditMessage"
-        @editText="editingText = $event"
-        @jumpToMessage="$chat.jumpToMessage($event, chatId)"
+        @edit-message="doEditMessage"
+        @edit-text="editingText = $event"
+        @jump-to-message="$chat.jumpToMessage($event, chatId)"
         @reply="replyId = $event.id"
       />
       <v-skeleton-loader
-        v-if="!$chat.selectedChat?.messages?.length && $chat.loading"
         v-for="index in 20"
+        v-if="!$chat.selectedChat?.messages?.length && $chat.loading"
         :key="index"
         type="list-item-avatar-three-line"
         color="background no-border"
       />
       <infinite-loading
-        @infinite="$chat.loadHistory"
+        v-if="$messages.currentMessages"
         direction="top"
         :top="true"
         :identifier="`${$chat.selectedChat?.id}-${$chat.loadNew}`"
-        v-if="$messages.currentMessages"
         :value="'bottom'"
+        @infinite="$chat.loadHistory"
       >
-        <template v-slot:spinner>
+        <template #spinner>
           <div class="text-center">
             <v-progress-circular
               :size="36"
@@ -173,7 +173,7 @@
             />
           </div>
         </template>
-        <template v-slot:complete>
+        <template #complete>
           <div class="text-center">
             <PromoNoContent
               icon="mdi-message-processing-outline"
@@ -185,7 +185,7 @@
           </div>
         </template>
       </infinite-loading>
-      <div id="sentinel" ref="sentinel" v-if="$chat.isReady"></div>
+      <div v-if="$chat.isReady" id="sentinel" ref="sentinel"></div>
     </div>
     <div class="input-container">
       <v-toolbar
@@ -262,17 +262,18 @@
         v-model="message"
         class="message-input user-content"
         style="margin-top: auto; z-index: 1001"
+        :blocked="blocked"
+        :editing="false"
+        :active="active"
         @emoji="
           message += $event;
           $nextTick(() => focusInput());
         "
-        @fileUpload="uploadHandle"
+        @file-upload="uploadHandle"
         @paste="handlePaste"
-        @quickTPULink="handleQuickTPULink"
-        @sendMessage="sendMessage"
-        @focusInput="focusInput"
-        :blocked="blocked"
-        :editing="false"
+        @quick-t-p-u-link="handleQuickTPULink"
+        @send-message="sendMessage"
+        @focus-input="focusInput"
       />
     </div>
   </div>
@@ -382,7 +383,8 @@ export default defineComponent({
         data: { chatId: any; id: any; embeds: any };
         retries: number;
       }[],
-      unread: 0
+      unread: 0,
+      active: false
     };
   },
   computed: {
@@ -463,6 +465,100 @@ export default defineComponent({
       if (!this.files.length) return true;
       return !!this.files.filter((file) => file.finished).length;
     }
+  },
+  watch: {
+    name(val) {
+      this.$app.title = val;
+    },
+    chatId(val, oldVal) {
+      this.unread = this.chat?.unread;
+      this.$chat.setDraft(oldVal, this.message);
+      this.message = this.$chat.getDraft(val.toString()) || "";
+      this.files = [];
+      this.replyId = undefined;
+      this.focusInput();
+      this.autoScroll();
+      this.$nextTick(() => {
+        this.autoScroll();
+      });
+    },
+    "$chat.isReady"() {
+      this.avoidAutoScroll = false;
+      this.$nextTick(() => {
+        this.autoScroll();
+      });
+
+      if (this.unread) {
+        const lastReadMessage = this.messages?.find(
+          (message) => message.id === this.chat?.association?.lastRead
+        );
+        const nextMessageIndex = this.messages?.indexOf(lastReadMessage) - 1;
+
+        if (nextMessageIndex !== -1) {
+          this.unreadId = this.messages?.[nextMessageIndex]?.id;
+        } else if (lastReadMessage) {
+          this.unreadId = lastReadMessage?.id;
+        }
+      }
+    },
+    message() {
+      if (this.$user.user.storedStatus === UserStoredStatus.Invisible) return;
+      if (this.message.length > 0) {
+        if (
+          !this.typingStatus.rateLimit ||
+          this.typingStatus.rateLimit < Date.now()
+        ) {
+          this.$sockets.chat.emit("typing", this.chat?.association?.id);
+          this.typingStatus.rateLimit = Date.now() + 2000;
+        }
+      } else {
+        this.$sockets.chat.emit("cancelTyping", this.chat?.association?.id);
+        this.typingStatus.rateLimit = null;
+      }
+    },
+    replyId() {
+      this.focusInput();
+      this.$nextTick(() => {
+        this.autoScroll();
+      });
+    }
+  },
+  mounted() {
+    if (!this.$experiments.experiments.REMOVE_LEGACY_SOCKET) {
+      this.$sockets.chat.on("message", this.onMessage);
+      this.$sockets.chat.on("embedResolution", this.onEmbedResolution);
+      this.$sockets.chat.on("typing", this.onTyping);
+      this.$sockets.chat.on("cancelTyping", this.onCancelTyping);
+    }
+  },
+  unmounted() {
+    if (!this.$experiments.experiments.REMOVE_LEGACY_SOCKET) {
+      this.$sockets.chat.off("message", this.onMessage);
+      this.$sockets.chat.off("typing", this.onTyping);
+      this.$sockets.chat.off("embedResolution", this.onEmbedResolution);
+    }
+  },
+  activated() {
+    this.active = true;
+    this.resizeObserver = new ResizeObserver(this.onResize);
+    document.body.classList.add("disable-overscroll");
+    document.addEventListener("keydown", this.shortcutHandler);
+    window.addEventListener("focus", this.onFocus);
+    this.message = this.$chat.getDraft(this.chatId.toString()) || "";
+    this.$app.railMode = "communications";
+    this.$ui.navigationMode = RailMode.CHAT;
+  },
+  deactivated() {
+    this.active = false;
+    this.unread = 0;
+    document.body.classList.remove("disable-overscroll");
+    this.$chat.isReady = 0;
+    this.$chat.setDraft(this.chatId.toString(), this.message);
+    document.removeEventListener("keydown", this.shortcutHandler);
+    document
+      .querySelector(".message-input")
+      ?.removeEventListener("resize", this.onResize);
+    window.removeEventListener("focus", this.onFocus);
   },
   methods: {
     dateSeparator(index: number) {
@@ -637,9 +733,9 @@ export default defineComponent({
       this.$sockets.chat.emit("cancelTyping", this.chat?.association?.id);
       if (this.unreadId) this.unreadId = 0;
       if (!this.messages) return;
-      if (!this.message && !this.files.length) return;
-      if (!this.finished) return;
       let message = this.message.trim();
+      if (!message && !this.files.length) return;
+      if (!this.finished) return;
 
       // this system appends the IDs of the emojis to the message for backend parsing.
       // messages without :emoji-name:uuid: will not be turned into emojis.
@@ -852,44 +948,50 @@ export default defineComponent({
         this.focusInput();
       }
     },
+    // TODO: to be moved to watcher probably
     async onMessage(message: MessageSocket) {
       if (message.chat.id !== this.chat?.id) return;
-      const messages = this.$messages.messages[this.chatId];
-      const findMessage = messages.findIndex(
-        (m) => m.content === message.message.content && m.pending
-      );
-      if (findMessage !== -1) {
-        if (this.messages) messages[findMessage] = message.message;
-        this.autoScroll();
-        this.$chat.readChat();
-        return;
-      }
-      await messages.unshift(message.message);
-      if (document.hasFocus()) {
-        this.$chat.readChat();
-      } else {
-        const chat = this.$chat.chats.find((c) => c.id === message.chat.id);
-        if (chat) chat.unread++;
-        if (message.message.userId !== this.$user.user?.id) {
-          this.$chat.sound();
-          if (this.$app.platform !== Platform.WEB) {
-            window.electron.ipcRenderer.send(IpcChannels.NEW_MESSAGE, {
-              ...message,
-              instance: {
-                name: this.$app.site.name,
-                domain: this.$app.domain,
-                hostname: this.$app.site.hostname,
-                hostnameWithProtocol: this.$app.site.hostnameWithProtocol,
-                notificationIcon: functions.avatar(
-                  this.$chat.chats.find((c) => c.id === message.chat.id)
-                )
-              }
-            });
-          }
-        }
-      }
       this.autoScroll();
     },
+    // Moved to global socket
+    // async onMessage(message: MessageSocket) {
+    //   if (message.chat.id !== this.chat?.id) return;
+    //   const messages = this.$messages.messages[this.chatId];
+    //   const findMessage = messages.findIndex(
+    //     (m) => m.content === message.message.content && m.pending
+    //   );
+    //   if (findMessage !== -1) {
+    //     if (this.messages) messages[findMessage] = message.message;
+    //     this.autoScroll();
+    //     this.$chat.readChat();
+    //     return;
+    //   }
+    //   await messages.unshift(message.message);
+    //   if (document.hasFocus()) {
+    //     this.$chat.readChat();
+    //   } else {
+    //     const chat = this.$chat.chats.find((c) => c.id === message.chat.id);
+    //     if (chat) chat.unread++;
+    //     if (message.message.userId !== this.$user.user?.id) {
+    //       this.$chat.sound();
+    //       if (this.$app.platform !== Platform.WEB) {
+    //         window.electron.ipcRenderer.send(IpcChannels.NEW_MESSAGE, {
+    //           ...message,
+    //           instance: {
+    //             name: this.$app.site.name,
+    //             domain: this.$app.domain,
+    //             hostname: this.$app.site.hostname,
+    //             hostnameWithProtocol: this.$app.site.hostnameWithProtocol,
+    //             notificationIcon: functions.avatar(
+    //               this.$chat.chats.find((c) => c.id === message.chat.id)
+    //             )
+    //           }
+    //         });
+    //       }
+    //     }
+    //   }
+    //   this.autoScroll();
+    // },
     onTyping(data: Typing) {
       if (!data) return;
       const chat =
@@ -973,95 +1075,6 @@ export default defineComponent({
         this.$chat.dialogs.userMenu.location = event.location || "top";
         this.$chat.dialogs.userMenu.value = true;
       }
-    }
-  },
-  mounted() {
-    this.resizeObserver = new ResizeObserver(this.onResize);
-    document.body.classList.add("disable-overscroll");
-    document.addEventListener("keydown", this.shortcutHandler);
-    window.addEventListener("focus", this.onFocus);
-    // re-enable auto scroll for flex-direction: column-reverse;
-    if (!this.$experiments.experiments.REMOVE_LEGACY_SOCKET) {
-      this.$sockets.chat.on("message", this.onMessage);
-      this.$sockets.chat.on("embedResolution", this.onEmbedResolution);
-      this.$sockets.chat.on("typing", this.onTyping);
-      this.$sockets.chat.on("cancelTyping", this.onCancelTyping);
-    }
-    this.message = this.$chat.getDraft(this.chatId.toString()) || "";
-    this.$app.railMode = "communications";
-    this.$ui.navigationMode = RailMode.CHAT;
-  },
-  unmounted() {
-    this.unread = 0;
-    document.body.classList.remove("disable-overscroll");
-    this.$chat.isReady = 0;
-    this.$chat.setDraft(this.chatId.toString(), this.message);
-    document.removeEventListener("keydown", this.shortcutHandler);
-    document
-      .querySelector(".message-input")
-      ?.removeEventListener("resize", this.onResize);
-    window.removeEventListener("focus", this.onFocus);
-    if (!this.$experiments.experiments.REMOVE_LEGACY_SOCKET) {
-      this.$sockets.chat.off("message", this.onMessage);
-      this.$sockets.chat.off("typing", this.onTyping);
-      this.$sockets.chat.off("embedResolution", this.onEmbedResolution);
-    }
-  },
-  watch: {
-    name(val) {
-      this.$app.title = val;
-    },
-    chatId(val, oldVal) {
-      this.unread = this.chat?.unread;
-      this.$chat.setDraft(oldVal, this.message);
-      this.message = this.$chat.getDraft(val.toString()) || "";
-      this.files = [];
-      this.replyId = undefined;
-      this.focusInput();
-      this.autoScroll();
-      this.$nextTick(() => {
-        this.autoScroll();
-      });
-    },
-    "$chat.isReady"() {
-      this.avoidAutoScroll = false;
-      this.$nextTick(() => {
-        this.autoScroll();
-      });
-
-      if (this.unread) {
-        const lastReadMessage = this.messages?.find(
-          (message) => message.id === this.chat?.association?.lastRead
-        );
-        const nextMessageIndex = this.messages?.indexOf(lastReadMessage) - 1;
-
-        if (nextMessageIndex !== -1) {
-          this.unreadId = this.messages?.[nextMessageIndex]?.id;
-        } else if (lastReadMessage) {
-          this.unreadId = lastReadMessage?.id;
-        }
-      }
-    },
-    message() {
-      if (this.$user.user.storedStatus === UserStoredStatus.Invisible) return;
-      if (this.message.length > 0) {
-        if (
-          !this.typingStatus.rateLimit ||
-          this.typingStatus.rateLimit < Date.now()
-        ) {
-          this.$sockets.chat.emit("typing", this.chat?.association?.id);
-          this.typingStatus.rateLimit = Date.now() + 2000;
-        }
-      } else {
-        this.$sockets.chat.emit("cancelTyping", this.chat?.association?.id);
-        this.typingStatus.rateLimit = null;
-      }
-    },
-    replyId() {
-      this.focusInput();
-      this.$nextTick(() => {
-        this.autoScroll();
-      });
     }
   }
 });

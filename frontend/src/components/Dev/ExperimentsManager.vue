@@ -1,4 +1,46 @@
 <template>
+  <teleport to="body">
+    <DevDialog
+      v-if="emergency.value"
+      max-width="600"
+      @close="emergency.value = false"
+    >
+      <template #header>Emergency Override</template>
+      <v-container>
+        <v-autocomplete
+          v-model="emergency.experiment.id"
+          :items="relevantExperiments"
+          label="Experiment"
+          item-value="name"
+          item-title="name"
+        />
+        <v-text-field v-model="emergency.experiment.value" label="Value" />
+        <v-checkbox
+          v-model="emergency.experiment.force"
+          label="Force for everyone (even when overridden in ExpMan)"
+        />
+        <v-btn @click="emergency.value = false">Cancel</v-btn>
+        <v-btn @click="createEmergencyOverride" color="red">Create</v-btn>
+      </v-container>
+      <v-card-title>Active</v-card-title>
+      <v-card
+        v-for="override in emergency.active"
+        :key="override.id"
+        class="my-2"
+      >
+        <v-card-title>ID: {{ override.id }}</v-card-title>
+        <v-card-subtitle>Value: {{ override.value }}</v-card-subtitle>
+        <v-card-subtitle>Forced: {{ override.force }}</v-card-subtitle>
+        <v-card-subtitle>User ID: {{ override.userId }}</v-card-subtitle>
+        <v-btn @click="deleteEmergencyOverride(override.id)" color="red">
+          Delete
+        </v-btn>
+      </v-card>
+    </DevDialog>
+  </teleport>
+  <v-btn color="red" variant="tonal" @click="emergency.value = true">
+    !! Create global emergency override !!
+  </v-btn>
   <v-autocomplete
     v-model="selected"
     :items="users"
@@ -79,9 +121,14 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
+import CoreDialog from "@/components/Core/Dialogs/Dialog.vue";
+import DevDialog from "@/components/Dev/Dialogs/DevDialog.vue";
+import { gql } from "@apollo/client";
+import { ExperimentOverride } from "@/gql/graphql";
 
 export default defineComponent({
   name: "ExperimentsManager",
+  components: { DevDialog, CoreDialog },
   props: ["username"],
   data() {
     return {
@@ -95,7 +142,16 @@ export default defineComponent({
           id: 0,
           username: "LocalState"
         }
-      ]
+      ],
+      emergency: {
+        value: false,
+        experiment: {
+          value: 0,
+          id: "",
+          force: false
+        },
+        active: [] as ExperimentOverride[]
+      }
     };
   },
   computed: {
@@ -137,13 +193,84 @@ export default defineComponent({
         });
     }
   },
+  methods: {
+    async createEmergencyOverride() {
+      await this.$apollo.mutate({
+        mutation: gql`
+          mutation AdminSetExperimentOverride(
+            $input: ExperimentOverrideInput!
+          ) {
+            adminSetExperimentOverride(input: $input) {
+              id
+            }
+          }
+        `,
+        variables: {
+          input: {
+            id: this.emergency.experiment.id,
+            value: parseInt(this.emergency.experiment.value),
+            force: this.emergency.experiment.force
+          }
+        }
+      });
+      this.emergency.experiment = {
+        value: 0,
+        id: "",
+        force: false
+      };
+      this.getEmergencyOverrides();
+    },
+    async deleteEmergencyOverride(id: string) {
+      await this.$apollo.mutate({
+        mutation: gql`
+          mutation AdminDeleteExperimentOverride($id: String!) {
+            adminDeleteExperimentOverride(id: $id) {
+              success
+            }
+          }
+        `,
+        variables: {
+          id
+        }
+      });
+      this.getEmergencyOverrides();
+    },
+    async getEmergencyOverrides() {
+      const {
+        data: { adminGetExperimentOverrides }
+      } = await this.$apollo.query({
+        query: gql`
+          query AdminGetExperimentOverrides {
+            adminGetExperimentOverrides {
+              id
+              value
+              force
+              userId
+            }
+          }
+        `,
+        fetchPolicy: "network-only"
+      });
+      this.emergency.active = adminGetExperimentOverrides;
+    }
+  },
   watch: {
     async selected() {
       this.experiments = await this.$admin.getExperimentValues(this.selected);
+    },
+    "emergency.experiment.id": {
+      handler() {
+        this.emergency.experiment.value =
+          this.$experiments.experiments[this.emergency.experiment.id];
+      }
+    },
+    "emergency.value"() {
+      this.getEmergencyOverrides();
     }
   },
   async mounted() {
     this.users.push(...(await this.$admin.getUsers()));
+    this.getEmergencyOverrides();
   }
 });
 </script>

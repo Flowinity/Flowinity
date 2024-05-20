@@ -76,16 +76,17 @@ function openContextMenu(event: MouseEvent) {
   <component
     :is="disabled ? 'div' : 'a'"
     :href="item?.path || to"
-    class="w-full text-white"
+    class="w-full text-inherit"
     @click.prevent.stop
     tabindex="-1"
   >
     <div
-      class="rounded-2xl hover:bg-outline-dark p-2 cursor-pointer flex items-center h-full w-full relative dark:fill-white"
+      class="rounded-2xl hover:bg-outline-light p-2 cursor-pointer flex items-center h-full w-full relative dark:fill-white"
       :class="{
-        'bg-outline-dark': selected || props.highlighted,
+        'dark:bg-outline-dark bg-outline-light': selected || props.highlighted,
         'rounded-full': props.highlighted,
-        'cursor-not-allowed opacity-50': props.disabled
+        'cursor-not-allowed opacity-50': props.disabled,
+        'dark:hover:bg-outline-amoled': !selected && !props.highlighted
       }"
       @click.prevent.stop="handleClick"
       v-ripple
@@ -115,28 +116,21 @@ function openContextMenu(event: MouseEvent) {
           <slot name="icon" />
         </div>
       </template>
-      <div
-        class="ml-4 pr-14 select-none flex justify-between w-full align-center"
-      >
+      <div class="ml-4 select-none flex justify-between w-full align-center">
         <div
           style="
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
-            width: 100%;
+
             word-wrap: break-word;
           "
           class="flex flex-col w-full justify-center"
         >
           <div class="flex align-center">
-            <template v-if="item?.name">
+            <div v-if="item?.name">
               {{ item.name }}
-              <template v-if="item?.badge">
-                <v-chip size="x-small" class="ml-2">
-                  {{ item.badge }}
-                </v-chip>
-              </template>
-            </template>
+            </div>
             <template v-else>
               <slot name="title" />
             </template>
@@ -148,6 +142,11 @@ function openContextMenu(event: MouseEvent) {
         </div>
         <div>
           <slot name="append" />
+          <template v-if="item?.badge">
+            <v-chip size="x-small" class="mr-2" color="red">
+              {{ item.badge }}
+            </v-chip>
+          </template>
         </div>
       </div>
     </div>

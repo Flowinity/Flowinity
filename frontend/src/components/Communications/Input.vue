@@ -1,6 +1,7 @@
 <template>
   <div style="width: 100%">
     <Mentionable
+      v-if="active"
       :id="`#${editing ? 'input-editing' : 'input-main-comms'}`"
       :items="users"
       :keys="['@', ':', '!', '#', '&']"
@@ -222,7 +223,7 @@ export default defineComponent({
     InlineGallery,
     Mentionable
   },
-  props: ["modelValue", "editing", "blocked"],
+  props: ["modelValue", "editing", "blocked", "active"],
   emits: [
     "update:modelValue",
     "sendMessage",

@@ -228,14 +228,8 @@ a {
   width: 3.5em;
   height: 3.5em;
   position: relative;
-  top: 0.15em;
-}
-
-.emoji-large {
-  width: 3.5em;
-  height: 3.5em;
-  position: relative;
-  top: 0.15em;
+  display: inline-block;
+  margin-bottom: 0.28em;
 }
 
 p:has(.emoji-large) img {

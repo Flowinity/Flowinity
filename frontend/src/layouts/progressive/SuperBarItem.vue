@@ -10,10 +10,12 @@ const props = defineProps({
 <template>
   <div
     v-ripple
-    class="rounded-full hover:bg-outline-dark cursor-pointer p-2 relative flex items-center justify-center super-bar-item"
+    class="rounded-full hover:bg-outline-light cursor-pointer p-2 relative flex items-center justify-center super-bar-item"
     :class="{
-      'bg-outline-dark': props.selected || props.highlighted,
-      'cursor-not-allowed opacity-50': props.disabled
+      'bg-outline-dark dark:hover:bg-outline-dark':
+        props.selected || props.highlighted,
+      'cursor-not-allowed opacity-50': props.disabled,
+      'dark:hover:bg-outline-amoled': !props.selected && !props.highlighted
     }"
     style="width: 40px; height: 40px"
     tabindex="0"
@@ -34,10 +36,10 @@ const props = defineProps({
     <div class="blue-line bg-blue" :class="{ active: props.selected }"></div>
     <slot name="badge"></slot>
     <v-chip
-      class="absolute z-20 bottom-0 right-0 text-center flex justify-center"
+      class="absolute text-black z-20 bottom-0 right-0 text-center flex justify-center"
       v-if="props.badge && !$slots.badge"
       color="red"
-      variant="elevated"
+      variant="flat"
       size="x-small"
     >
       {{ props.badge }}

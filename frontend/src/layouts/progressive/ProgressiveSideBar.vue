@@ -106,14 +106,14 @@
         class="justify-between flex-col flex-1 px-3"
         style="margin-top: 16px"
       >
-        <div class="flex-col flex flex-1 relative" id="sidebar-flex">
+        <div id="sidebar-flex" class="flex-col flex flex-1 relative">
           <accessible-transition
-            name="slide-fade"
-            mode="out-in"
             v-for="[rail, entries] in Object.entries(
               uiStore.navigation.options
             )"
             :key="rail"
+            name="slide-fade"
+            mode="out-in"
           >
             <div
               v-show="uiStore.currentRail?.id === parseInt(rail)"
@@ -130,8 +130,6 @@
                 "
               >
                 <v-tooltip
-                  activator="parent"
-                  location="right"
                   v-if="
                     item.scopesRequired &&
                     !functions.checkScope(
@@ -139,11 +137,12 @@
                       $user.user?.scopes
                     )
                   "
+                  activator="parent"
+                  location="right"
                 >
                   Insufficient Permissions
                 </v-tooltip>
                 <template
-                  #append
                   v-if="
                     item.scopesRequired &&
                     !functions.checkScope(
@@ -151,6 +150,7 @@
                       $user.user?.scopes
                     )
                   "
+                  #append
                 >
                   <div
                     class="text-center flex justify-center bg-badge-default-dark rounded-full p-1"

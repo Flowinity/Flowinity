@@ -286,7 +286,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
             {
               icon: markRaw(RiGroup2Line),
               name: "Social Hub",
-              path: "/communications/home",
+              path: "/social",
               selectedIcon: markRaw(RiGroup2Fill),
               badge: friendStore.incomingFriends.length
                 ? friendStore.incomingFriends.length.toLocaleString()

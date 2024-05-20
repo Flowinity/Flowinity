@@ -71,6 +71,18 @@
             <RiSearchLine />
           </super-bar-item>
           <super-bar-item :highlighted="true">
+            <template #badge>
+              <div
+                v-if="userStore.unreadNotifications"
+                class="absolute z-20 -top-2 right-0 bg-red text-center flex justify-center rounded-full px-1 border-2"
+                style="font-size: 9px"
+                :style="{
+                  'border-color': $vuetify.theme.current.colors.background
+                }"
+              >
+                {{ userStore.unreadNotifications }}
+              </div>
+            </template>
             <v-tooltip activator="parent" location="right">
               {{ $t("core.sidebar.notifications") }}
             </v-tooltip>

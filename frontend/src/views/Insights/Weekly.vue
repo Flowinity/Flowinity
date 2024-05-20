@@ -664,6 +664,29 @@ export default defineComponent({
         .catch(() => {
           this.$app.componentLoading = false;
         });
+    },
+    setAppBarItem() {
+      if (!this.$route.params.username) return;
+      console.log(this.$ui.navigation.options[RailMode.HOME]);
+      this.$ui.currentNavItem = {
+        item: {
+          ...this.$ui.navigation.options[RailMode.HOME]
+            .find((item) => item.path === "/insights")
+            .options.find(
+              (item) => item.path === `/insights/${this.$route.params.type}`
+            ),
+          path: this.$route.path
+        },
+        rail: [
+          this.$ui.navigation.options[RailMode.HOME].find(
+            (item) => item.path === "/users"
+          ),
+          this.$ui.userRail(this.$route.params.username),
+          this.$ui.navigation.options[RailMode.HOME].find(
+            (item) => item.path === "/insights"
+          )
+        ]
+      };
     }
   },
   mounted() {
@@ -673,10 +696,12 @@ export default defineComponent({
     this.$app.title = `${
       this.type.charAt(0).toUpperCase() + this.type.slice(1)
     } Insights`;
+    this.setAppBarItem();
   },
   watch: {
     type(val) {
       if (!val) return;
+      this.setAppBarItem();
       // find the latest in this.reports
       this.id = null;
       this.getReport();

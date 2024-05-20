@@ -16,7 +16,7 @@
   >
     <user-menu />
   </v-menu>
-  <router-view />
+  <Chat />
   <member-sidebar
     v-if="
       (!$vuetify.display.mobile || $experiments.experiments.PROGRESSIVE_UI) &&
@@ -32,9 +32,12 @@ import User from "@/views/User/User.vue";
 import UserMenu from "@/components/Communications/Menus/UserMenu.vue";
 import ImageDialog from "@/components/Communications/Dialogs/ImageDialog.vue";
 import GroupSettingsDialog from "@/components/Communications/Dialogs/GroupSettingsV2.vue";
+import Chat from "@/views/Communications/Chat.vue";
 
 export default defineComponent({
+  name: "ChatLayout",
   components: {
+    Chat,
     GroupSettingsDialog,
     ImageDialog,
     MemberSidebar,

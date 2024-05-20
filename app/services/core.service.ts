@@ -329,12 +329,18 @@ export class CoreService {
         userId
       }
     })
+    const experiments = await this.getExperiments(dev, gold, majorVersion)
     const overrideObject = overrides.reduce((acc: any, override) => {
       acc[override.dataValues.key] = JSON.parse(override.value)
       return acc
     }, {})
+    for (const key in overrideObject) {
+      if (experiments.meta[key]?.force) {
+        delete overrideObject[key]
+      }
+    }
     return {
-      ...this.getExperiments(dev, gold, majorVersion),
+      ...experiments,
       ...overrideObject
     } as Record<string, boolean | number>
   }
@@ -350,9 +356,12 @@ export class CoreService {
         userId
       }
     })
-    const experiments = this.getExperimentsV4(dev, gold, majorVersion)
+    const experiments = await this.getExperimentsV4(dev, gold, majorVersion)
     return [
       ...experiments.map((experiment) => {
+        if (experiment.force) {
+          return experiment
+        }
         const override = overrides.find(
           (override) => override.key === experiment.id
         )
@@ -371,11 +380,11 @@ export class CoreService {
     ]
   }
 
-  getExperiments(
+  async getExperiments(
     dev: boolean = false,
     gold: boolean = false,
     majorVersion: number | undefined = undefined
-  ): Record<string, any> {
+  ): Promise<Record<string, any>> {
     const experiments = {
       REMOVE_LEGACY_SOCKET: false,
       CHAT_CACHING: 10,
@@ -402,7 +411,8 @@ export class CoreService {
       ENABLE_AUTOSTART_APP_NAG: 1,
       DEBUG_FAVICON: false,
       FLOWINITY: config.officialInstance || false,
-      PRIDE: false,
+      // This can be enabled/disabled in the Settings at any time.
+      PRIDE: config.officialInstance ? dayjs().month() === 6 : false,
       THEME: 3,
       NOTIFICATION_SOUND: 2,
       RESIZABLE_SIDEBARS: false,
@@ -660,7 +670,8 @@ export class CoreService {
           versions: [3, 4, 5]
         },
         COMMUNICATIONS_KEEP_LOADED: {
-          description: "Keep communication messages loaded in the store.",
+          description:
+            "Keep communication messages loaded in the store. Removed in v4.1.18+",
           createdAt: "2023-03-02T00:00:00.000Z",
           versions: [3, 4, 5]
         },
@@ -842,6 +853,15 @@ export class CoreService {
           createdAt: "2022-12-15T00:00:00.000Z",
           versions: [1, 2]
         }
+      } as {
+        [key: string]: {
+          description: string
+          createdAt: string
+          versions: number[]
+          refresh?: boolean
+          force?: boolean
+          override?: boolean
+        }
       }
     }
     if (dev || config.release === "dev") {
@@ -878,15 +898,32 @@ export class CoreService {
       }
     }
 
+    const global:
+      | {
+          id: keyof typeof experiments
+          value: never
+          force: boolean
+          userId: number
+        }[]
+      | null = await redis.json.get("experimentOverridesGlobal")
+    if (global) {
+      for (const override of global) {
+        if (experiments[override.id] !== undefined) {
+          experiments[override.id] = override.value
+          experiments.meta[override.id].force = override.force
+          experiments.meta[override.id].override = true
+        }
+      }
+    }
     return experiments
   }
 
-  getExperimentsV4(
+  async getExperimentsV4(
     dev: boolean = false,
     gold: boolean = false,
     majorVersion: number = 4
-  ): ExperimentType[] {
-    const experiments = this.getExperiments(dev, gold, majorVersion)
+  ): Promise<ExperimentType[]> {
+    const experiments = await this.getExperiments(dev, gold, majorVersion)
     // remove meta from object.entries
     return Object.entries(experiments)
       .filter((experiment) => {

@@ -208,7 +208,7 @@ export default createVuetify({
       fluid: true
     },
     VList: {
-      bgColor: "card"
+      bgColor: "transparent"
     }
   },
   theme: {
