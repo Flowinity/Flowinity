@@ -165,6 +165,7 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         if (option.path) {
           pathToOption[option.path] = {
             ...option,
+            rail: options[0],
             _rail: options[0].id,
             parentPath
           };
@@ -387,7 +388,6 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
                               option.path ===
                               `/communications/${chat.association.id}`
                           )?.menu || [];
-                        console.log(chat);
                       },
                       append:
                         chat.association.notifications === "none"
@@ -991,7 +991,6 @@ export const useProgressiveUIStore = defineStore("progressive", () => {
         return [parent, ...parents(parent.parentPath || "")];
       };
       const rail = parents(lookup.parentPath || "");
-      console.log(lookupNav);
       return {
         item: lookup,
         rail

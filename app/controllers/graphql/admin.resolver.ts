@@ -179,7 +179,6 @@ export class AdminResolver {
     @Arg("input", () => ExperimentOverride) override: ExperimentOverride
   ) {
     try {
-      console.log(override)
       const overrides =
         (await redis.json.get("experimentOverridesGlobal")) || []
       const existing = overrides.find(

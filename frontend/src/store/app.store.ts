@@ -324,13 +324,13 @@ export const useAppStore = defineStore("app", {
       }
 
       items.push({
-        id: 36.5,
+        id: 30,
         name: i18n.t("core.sidebar.tryProgressive"),
         click() {
           const experiments = useExperimentsStore();
           experiments.setExperiment("PROGRESSIVE_UI", 1);
         },
-        new: true,
+        warning: i18n.t("generic.beta"),
         scope: "",
         icon: "mdi-new-box",
         experimentsRequired: ["EARLY_ACCESS"]

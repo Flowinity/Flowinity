@@ -54,9 +54,10 @@
               @mouseover="selected = index"
             >
               <component
-                style="width: 40px"
-                :is="result.icon"
                 v-if="result.icon"
+                :is="result.icon"
+                style="width: 40px"
+                class="mr-4"
               />
               <div>
                 <p class="text-grey" v-if="result.subtitle">
@@ -127,7 +128,16 @@
 
 <script setup lang="ts">
 import { useAppStore } from "@/store/app.store";
-import { computed, h, markRaw, onMounted, Ref, ref, watch } from "vue";
+import {
+  computed,
+  ComputedRef,
+  h,
+  markRaw,
+  onMounted,
+  Ref,
+  ref,
+  watch
+} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useChatStore } from "@/store/chat.store";
 import { Chat } from "@/gql/graphql";
@@ -138,7 +148,11 @@ import { VIcon, VTextField } from "vuetify/components";
 import { useUserStore } from "@/store/user.store";
 import { useWorkspacesStore } from "@/store/workspaces.store";
 import { useTheme } from "vuetify";
-import { useProgressiveUIStore } from "@/store/progressive.store";
+import {
+  NavigationOption,
+  useProgressiveUIStore
+} from "@/store/progressive.store";
+import { RiCollageLine } from "@remixicon/vue";
 
 const selected = ref(0);
 const props = defineProps({
@@ -163,12 +177,37 @@ interface HistoryItem {
   path: string;
   count: number;
 }
+
 const history: Ref<HistoryItem[]> = ref(
   JSON.parse(localStorage.getItem("quickSwitcherHistory") || "[]")
 );
 
+const flattenedOptions: ComputedRef<any> = computed(() => {
+  return Object.values(uiStore.lookupNav).reduce(
+    (acc: NavigationOption[], val: NavigationOption) => {
+      if (val.path.startsWith("/communications")) return acc;
+      return [
+        ...acc,
+        {
+          name: val.name,
+          path: val.path,
+          id: val.id,
+          subtitle: val.parentPath
+            ? uiStore.navigation.railOptions.find(
+                (rail) => rail.id === val.rail?.id
+              )?.name || uiStore.lookupNav[val.parentPath]?.name
+            : val.rail?.name,
+          icon: val.icon
+        }
+      ];
+    },
+    []
+  );
+});
+
 const options = computed(() => {
   return [
+    ...flattenedOptions.value,
     ...chatStore.chats
       .map((chat) => {
         return {
@@ -188,7 +227,6 @@ const options = computed(() => {
               chat: chat.recipient ? null : chat,
               user: userStore.users[chat.recipient?.id] || chat.recipient,
               size: 40,
-              class: "mr-4",
               status: true,
               dotStatus: true
             })
@@ -213,17 +251,9 @@ const options = computed(() => {
                   avatar: collection.avatar,
                   username: collection.name
                 },
-                username: collection.name,
-                class: "mr-4"
+                username: collection.name
               })
-            : markRaw(
-                h(VIcon, {
-                  size: 25,
-                  class: "mr-4",
-                  icon: "mdi-folder-image",
-                  color: dark.value ? "white" : "black"
-                })
-              )
+            : markRaw(RiCollageLine)
         )
       };
     }),
@@ -238,7 +268,6 @@ const options = computed(() => {
         icon: markRaw(
           h(VIcon, {
             size: 25,
-            class: "mr-4",
             icon: "mdi-folder-account",
             color: dark.value ? "white" : "black"
           })
@@ -261,7 +290,6 @@ const results = computed(() => {
             icon: markRaw(
               h(VIcon, {
                 size: 25,
-                class: "mr-4",
                 icon: "mdi-arrow-left",
                 color: dark.value ? "white" : "black"
               })
@@ -291,7 +319,8 @@ const results = computed(() => {
           return (
             option.shortCode === shortCode &&
             (option.name.toLowerCase().includes(searchString.slice(1)) ||
-              option.rawName?.toLowerCase().includes(searchString.slice(1)))
+              option.rawName?.toLowerCase().includes(searchString.slice(1)) ||
+              option.subtitle.toLowerCase().includes(searchString.slice(1)))
           );
         }
         return (

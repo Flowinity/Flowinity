@@ -143,7 +143,12 @@ function openContextMenu(event: MouseEvent) {
         <div>
           <slot name="append" />
           <template v-if="item?.badge">
-            <v-chip size="x-small" class="mr-2" color="red">
+            <v-chip
+              size="x-small"
+              class="mr-2 text-black"
+              color="red"
+              variant="flat"
+            >
               {{ item.badge }}
             </v-chip>
           </template>

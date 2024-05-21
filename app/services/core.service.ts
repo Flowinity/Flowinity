@@ -387,7 +387,7 @@ export class CoreService {
   ): Promise<Record<string, any>> {
     const experiments = {
       REMOVE_LEGACY_SOCKET: false,
-      CHAT_CACHING: 10,
+      CHAT_CACHING: 5,
       FAB: false,
       ENABLE_PULSE_TAB: false,
       LEGACY_FLOWINITY_SSO: false,

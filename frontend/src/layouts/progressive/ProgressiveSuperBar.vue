@@ -14,9 +14,10 @@
     :class="{ 'sidebar-patch': !$vuetify.display.mobile }"
     color="dark"
     elevation="0"
+    id="superbar"
   >
-    <div class="justify-between superbar flex flex-col h-full">
-      <div class="items-start">
+    <div class="justify-between superbar flex flex-col h-full overflow-y-auto">
+      <div class="flex flex-col items-start flex-grow overflow-y-auto">
         <div class="flex flex-col gap-y-4">
           <div
             class="flex cursor-pointer select-none justify-between pt-0 border-b-2 flowinity-border relative"
@@ -146,6 +147,7 @@
                   ? $experiments.experiments[opt.experimentsRequired]
                   : true)
             )"
+            :id="`superbar-${item.id}`"
             :key="item.id"
             :item="item"
           />
@@ -174,8 +176,8 @@
           </div>
         </template>
       </div>
-      <div class="items-center"></div>
-      <div class="items-end">
+      <div class="items-end sticky bottom-0">
+        <div class="border-b-2 my-3 w-full flowinity-border" />
         <div class="flex flex-col gap-y-2">
           <super-bar-item-template
             v-for="item in uiStore.navigation.railOptions.filter(

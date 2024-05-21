@@ -6,74 +6,72 @@
         <v-tab value="messages">{{ $t("stats.messages") }}</v-tab>
         <v-tab value="hours">{{ $t("stats.hours") }}</v-tab>
       </v-tabs>
-      <v-window v-model="tab">
-        <v-window-item value="uploads">
-          <strong
-            :class="{
-              'text-gradient-custom text-gradient': !user,
-              'text-gradient': user
-            }"
-            style="font-size: 24px"
-          >
-            {{ $t("stats.uploadStats") }}
-          </strong>
-          <div class="mx-1">
-            <Chart
-              v-if="uploadGraph || $app.site.stats.uploadGraph"
-              id="global-uploads"
-              :color="primaryColorResult.primary"
-              :data="uploadGraph || $app.site.stats.uploadGraph"
-              :height="height"
-              name="Uploads"
-              type="line"
-            />
-          </div>
-        </v-window-item>
-        <v-window-item value="messages">
-          <strong
-            :class="{
-              'text-gradient-custom text-gradient': !user,
-              'text-gradient': user
-            }"
-            style="font-size: 24px"
-          >
-            {{ $t("stats.messageStats") }}
-          </strong>
-          <div class="mx-1">
-            <Chart
-              v-if="messageGraph || $app.site.stats.messageGraph"
-              id="global-messages"
-              :color="primaryColorResult.primary"
-              :data="messageGraph || $app.site.stats.messageGraph"
-              :height="height"
-              name="Messages"
-              type="line"
-            />
-          </div>
-        </v-window-item>
-        <v-window-item value="hours">
-          <strong
-            :class="{
-              'text-gradient-custom text-gradient': !user,
-              'text-gradient': user
-            }"
-            style="font-size: 24px"
-          >
-            {{ $t("stats.hourStats") }}
-          </strong>
-          <div class="mx-1">
-            <Chart
-              v-if="pulseGraph || $app.site.stats.pulseGraph"
-              id="global-hours"
-              :color="primaryColorResult.primary"
-              :data="pulseGraph || $app.site.stats.pulseGraph"
-              :height="height"
-              name="Hours"
-              type="line"
-            />
-          </div>
-        </v-window-item>
-      </v-window>
+      <template v-if="tab === 'uploads'">
+        <strong
+          :class="{
+            'text-gradient-custom text-gradient': !user,
+            'text-gradient': user
+          }"
+          style="font-size: 24px"
+        >
+          {{ $t("stats.uploadStats") }}
+        </strong>
+        <div class="mx-1">
+          <Chart
+            v-if="uploadGraph || $app.site.stats.uploadGraph"
+            id="global-uploads"
+            :color="primaryColorResult.primary"
+            :data="uploadGraph || $app.site.stats.uploadGraph"
+            :height="height"
+            name="Uploads"
+            type="line"
+          />
+        </div>
+      </template>
+      <template v-if="tab === 'messages'">
+        <strong
+          :class="{
+            'text-gradient-custom text-gradient': !user,
+            'text-gradient': user
+          }"
+          style="font-size: 24px"
+        >
+          {{ $t("stats.messageStats") }}
+        </strong>
+        <div class="mx-1">
+          <Chart
+            v-if="messageGraph || $app.site.stats.messageGraph"
+            id="global-messages"
+            :color="primaryColorResult.primary"
+            :data="messageGraph || $app.site.stats.messageGraph"
+            :height="height"
+            name="Messages"
+            type="line"
+          />
+        </div>
+      </template>
+      <template v-if="tab === 'hours'">
+        <strong
+          :class="{
+            'text-gradient-custom text-gradient': !user,
+            'text-gradient': user
+          }"
+          style="font-size: 24px"
+        >
+          {{ $t("stats.hourStats") }}
+        </strong>
+        <div class="mx-1">
+          <Chart
+            v-if="pulseGraph || $app.site.stats.pulseGraph"
+            id="global-hours"
+            :color="primaryColorResult.primary"
+            :data="pulseGraph || $app.site.stats.pulseGraph"
+            :height="height"
+            name="Hours"
+            type="line"
+          />
+        </div>
+      </template>
     </v-container>
     <v-card-subtitle v-if="cache" class="text-left mt-n4">
       <small>
