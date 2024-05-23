@@ -386,6 +386,8 @@ export class CoreService {
     majorVersion: number | undefined = undefined
   ): Promise<Record<string, any>> {
     const experiments = {
+      BADGES: !config.officialInstance,
+      NATIVE_BADGES: true,
       REMOVE_LEGACY_SOCKET: false,
       CHAT_CACHING: 5,
       FAB: false,
@@ -459,6 +461,16 @@ export class CoreService {
       ANDROID_CONFIG: true,
       LEGACY_ATTRIBUTES_UI: false,
       meta: {
+        BADGES: {
+          description: "Enable the extended custom badges.",
+          createdAt: "2024-05-22T00:00:00.000Z",
+          versions: [4, 5]
+        },
+        NATIVE_BADGES: {
+          description: "Enable the native badges.",
+          createdAt: "2024-05-22T00:00:00.000Z",
+          versions: [4, 5]
+        },
         REMOVE_LEGACY_SOCKET: {
           description: "Remove legacy /gateway support.",
           createdAt: "2024-05-19T00:00:00.000Z",

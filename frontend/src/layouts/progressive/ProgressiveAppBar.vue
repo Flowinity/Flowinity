@@ -62,7 +62,7 @@
       }"
     >
       <div class="flex select-none flex-grow">
-        <div class="max-sm:block hidden">
+        <div v-if="$vuetify.display.mobile">
           <v-btn
             v-if="userStore.user"
             color="white"
