@@ -153,9 +153,7 @@
           />
         </div>
         <template v-if="experimentsStore.experiments.COMMS_SUPERBAR">
-          <div
-            class="divide-outline-dark border flowinity-border mt-3 w-full"
-          />
+          <div class="divide-outline-dark border flowinity-border w-full" />
           <div class="flex flex-col gap-y-2 my-3">
             <super-bar-item
               v-for="item in chatStore.chats.slice(0, 3)"
