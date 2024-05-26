@@ -23,7 +23,7 @@ export class MailService {
       throw Errors.EXPERIMENT_NOT_ALLOWED
     }
     const client = new ImapFlow({
-      host: "mail.troplo.com",
+      host: "mail.flowinity.com",
       port: 993,
       secure: true,
       auth: {
